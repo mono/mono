@@ -7,6 +7,7 @@
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -81,6 +82,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
@@ -99,6 +101,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="AddAttribute">
@@ -120,6 +123,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="AddChild">
@@ -139,6 +143,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Attribute">
@@ -159,6 +164,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Attributes">
@@ -175,6 +181,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Children">
@@ -191,6 +198,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Copy">
@@ -208,6 +216,7 @@ representations aids in readability.</para>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -233,6 +242,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Escape">
@@ -253,6 +263,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="FromString">
@@ -273,6 +284,7 @@ representations aids in readability.</para>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsValidAttributeName">
@@ -293,6 +305,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsValidAttributeValue">
@@ -313,6 +326,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsValidTag">
@@ -333,6 +347,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsValidText">
@@ -353,6 +368,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="SearchForChildByTag">
@@ -373,6 +389,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="SearchForTextOfTag">
@@ -393,6 +410,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Tag">
@@ -409,6 +427,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Text">
@@ -425,6 +444,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
@@ -456,6 +476,7 @@ representations aids in readability.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

@@ -4,6 +4,7 @@
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Attributes>
@@ -43,6 +44,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="DeclaringType">
@@ -60,6 +62,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
@@ -81,6 +84,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="FieldHandle">
@@ -98,6 +102,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="FieldType">
@@ -115,6 +120,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -136,6 +142,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -159,6 +166,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
@@ -177,6 +185,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetIDsOfNames">
@@ -205,6 +214,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetType">
@@ -223,6 +233,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetTypeInfo">
@@ -247,6 +258,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetTypeInfoCount">
@@ -267,6 +279,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetValue">
@@ -288,6 +301,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetValueDirect">
@@ -309,6 +323,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Invoke">
@@ -343,6 +358,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsAssembly">
@@ -360,6 +376,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsDefined">
@@ -383,6 +400,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsFamily">
@@ -400,6 +418,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsFamilyAndAssembly">
@@ -417,6 +436,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsFamilyOrAssembly">
@@ -434,6 +454,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsInitOnly">
@@ -451,6 +472,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsLiteral">
@@ -468,6 +490,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsNotSerialized">
@@ -485,6 +508,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsPinvokeImpl">
@@ -502,6 +526,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsPrivate">
@@ -519,6 +544,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsPublic">
@@ -536,6 +562,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsSpecialName">
@@ -553,6 +580,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsStatic">
@@ -570,6 +598,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="MemberType">
@@ -587,6 +616,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
@@ -604,6 +634,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ReflectedType">
@@ -621,6 +652,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="SetValue">
@@ -643,6 +675,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="SetValue">
@@ -671,6 +704,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="SetValueDirect">
@@ -693,6 +727,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
@@ -711,6 +746,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

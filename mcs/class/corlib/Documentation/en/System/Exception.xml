@@ -7,6 +7,7 @@
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -170,6 +171,7 @@ ArithmeticException Handler: System.DivideByZeroException: Attempted to divide b
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
@@ -198,6 +200,7 @@ system-supplied message provided by the constructor that takes no arguments. The
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
@@ -216,6 +219,7 @@ system-supplied message provided by the constructor that takes no arguments. The
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
@@ -247,6 +251,7 @@ class.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Data">
@@ -263,6 +268,7 @@ class.</para>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetBaseException">
@@ -331,6 +337,7 @@ property always contains a null reference.</block>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetObjectData">
@@ -352,6 +359,7 @@ property always contains a null reference.</block>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetType">
@@ -369,6 +377,7 @@ property always contains a null reference.</block>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="HelpLink">
@@ -385,6 +394,7 @@ property always contains a null reference.</block>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="HResult">
@@ -401,6 +411,7 @@ property always contains a null reference.</block>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="InnerException">
@@ -485,6 +496,7 @@ Inner Exception is MyAppException: ExceptExample inner exception
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Message">
@@ -539,7 +551,22 @@ control over message content or format.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+    </Member>
+    <Member MemberName="SerializeObjectState">
+      <MemberSignature Language="C#" Value="protected event EventHandler&lt;System.Runtime.Serialization.SafeSerializationEventArgs&gt; SerializeObjectState;" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.Runtime.Serialization.SafeSerializationEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="Source">
       <MemberSignature Language="C#" Value="public virtual string Source { set; get; }" />
@@ -555,6 +582,7 @@ control over message content or format.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="StackTrace">
@@ -604,6 +632,7 @@ the time the exception was thrown.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="TargetSite">
@@ -620,6 +649,7 @@ the time the exception was thrown.</para>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
@@ -704,6 +734,7 @@ Error: System.ArgumentException: Object must be of type String.
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

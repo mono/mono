@@ -1,0 +1,84 @@
+<Type Name="ContractHelper" FullName="System.Diagnostics.Contracts.Internal.ContractHelper">
+  <TypeSignature Language="C#" Value="public static class ContractHelper" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="RaiseContractFailedEvent">
+      <MemberSignature Language="C#" Value="public static string RaiseContractFailedEvent (System.Diagnostics.Contracts.ContractFailureKind failureKind, string userMessage, string conditionText, Exception innerException);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerNonUserCode</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="failureKind" Type="System.Diagnostics.Contracts.ContractFailureKind" />
+        <Parameter Name="userMessage" Type="System.String" />
+        <Parameter Name="conditionText" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="failureKind">To be added.</param>
+        <param name="userMessage">To be added.</param>
+        <param name="conditionText">To be added.</param>
+        <param name="innerException">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TriggerFailure">
+      <MemberSignature Language="C#" Value="public static void TriggerFailure (System.Diagnostics.Contracts.ContractFailureKind kind, string displayMessage, string userMessage, string conditionText, Exception innerException);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerNonUserCode</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="kind" Type="System.Diagnostics.Contracts.ContractFailureKind" />
+        <Parameter Name="displayMessage" Type="System.String" />
+        <Parameter Name="userMessage" Type="System.String" />
+        <Parameter Name="conditionText" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="kind">To be added.</param>
+        <param name="displayMessage">To be added.</param>
+        <param name="userMessage">To be added.</param>
+        <param name="conditionText">To be added.</param>
+        <param name="innerException">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

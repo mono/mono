@@ -1,0 +1,76 @@
+<Type Name="Func&lt;T1,T2,T3,T4,T5,T6,TResult&gt;" FullName="System.Func&lt;T1,T2,T3,T4,T5,T6,TResult&gt;">
+  <TypeSignature Language="C#" Value="public delegate TResult Func&lt;in T1,in T2,in T3,in T4,in T5,in T6,out TResult&gt;(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6);" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T1">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T2">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T3">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T4">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T5">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T6">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="TResult">
+      <Constraints>
+        <ParameterAttribute>Covariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="arg1" Type="T1" />
+    <Parameter Name="arg2" Type="T2" />
+    <Parameter Name="arg3" Type="T3" />
+    <Parameter Name="arg4" Type="T4" />
+    <Parameter Name="arg5" Type="T5" />
+    <Parameter Name="arg6" Type="T6" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>TResult</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="T1">To be added.</typeparam>
+    <typeparam name="T2">To be added.</typeparam>
+    <typeparam name="T3">To be added.</typeparam>
+    <typeparam name="T4">To be added.</typeparam>
+    <typeparam name="T5">To be added.</typeparam>
+    <typeparam name="T6">To be added.</typeparam>
+    <typeparam name="TResult">To be added.</typeparam>
+    <param name="arg1">To be added.</param>
+    <param name="arg2">To be added.</param>
+    <param name="arg3">To be added.</param>
+    <param name="arg4">To be added.</param>
+    <param name="arg5">To be added.</param>
+    <param name="arg6">To be added.</param>
+    <summary>To be added.</summary>
+    <value>To be added.</value>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

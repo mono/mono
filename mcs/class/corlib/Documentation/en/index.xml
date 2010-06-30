@@ -7,8 +7,10 @@
       <Type Name="RegistryHive" Kind="Enumeration" />
       <Type Name="RegistryKey" Kind="Class" />
       <Type Name="RegistryKeyPermissionCheck" Kind="Enumeration" />
+      <Type Name="RegistryOptions" Kind="Enumeration" />
       <Type Name="RegistryValueKind" Kind="Enumeration" />
       <Type Name="RegistryValueOptions" Kind="Enumeration" />
+      <Type Name="RegistryView" Kind="Enumeration" />
     </Namespace>
     <Namespace Name="Microsoft.Win32.SafeHandles">
       <Type Name="CriticalHandleMinusOneIsInvalid" Kind="Class" />
@@ -16,15 +18,25 @@
       <Type Name="SafeFileHandle" Kind="Class" />
       <Type Name="SafeHandleMinusOneIsInvalid" Kind="Class" />
       <Type Name="SafeHandleZeroOrMinusOneIsInvalid" Kind="Class" />
+      <Type Name="SafeRegistryHandle" Kind="Class" />
       <Type Name="SafeWaitHandle" Kind="Class" />
     </Namespace>
     <Namespace Name="System">
       <Type Name="_AppDomain" Kind="Interface" />
       <Type Name="AccessViolationException" Kind="Class" />
+      <Type Name="Action" Kind="Delegate" />
       <Type Name="Action`1" DisplayName="Action&lt;T&gt;" Kind="Delegate" />
+      <Type Name="Action`2" DisplayName="Action&lt;T1,T2&gt;" Kind="Delegate" />
+      <Type Name="Action`3" DisplayName="Action&lt;T1,T2,T3&gt;" Kind="Delegate" />
+      <Type Name="Action`4" DisplayName="Action&lt;T1,T2,T3,T4&gt;" Kind="Delegate" />
+      <Type Name="Action`5" DisplayName="Action&lt;T1,T2,T3,T4,T5&gt;" Kind="Delegate" />
+      <Type Name="Action`6" DisplayName="Action&lt;T1,T2,T3,T4,T5,T6&gt;" Kind="Delegate" />
+      <Type Name="Action`7" DisplayName="Action&lt;T1,T2,T3,T4,T5,T6,T7&gt;" Kind="Delegate" />
+      <Type Name="Action`8" DisplayName="Action&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt;" Kind="Delegate" />
       <Type Name="ActivationContext" Kind="Class" />
       <Type Name="ActivationContext+ContextForm" Kind="Enumeration" />
       <Type Name="Activator" Kind="Class" />
+      <Type Name="AggregateException" Kind="Class" />
       <Type Name="AppDomain" Kind="Class" />
       <Type Name="AppDomainInitializer" Kind="Delegate" />
       <Type Name="AppDomainManager" Kind="Class" />
@@ -89,6 +101,7 @@
       <Type Name="Enum" Kind="Class" />
       <Type Name="Environment" Kind="Class" />
       <Type Name="Environment+SpecialFolder" Kind="Enumeration" />
+      <Type Name="Environment+SpecialFolderOption" Kind="Enumeration" />
       <Type Name="EnvironmentVariableTarget" Kind="Enumeration" />
       <Type Name="EventArgs" Kind="Class" />
       <Type Name="EventHandler" Kind="Delegate" />
@@ -98,8 +111,18 @@
       <Type Name="FieldAccessException" Kind="Class" />
       <Type Name="FlagsAttribute" Kind="Class" />
       <Type Name="FormatException" Kind="Class" />
+      <Type Name="Func`1" DisplayName="Func&lt;TResult&gt;" Kind="Delegate" />
+      <Type Name="Func`2" DisplayName="Func&lt;T,TResult&gt;" Kind="Delegate" />
+      <Type Name="Func`3" DisplayName="Func&lt;T1,T2,TResult&gt;" Kind="Delegate" />
+      <Type Name="Func`4" DisplayName="Func&lt;T1,T2,T3,TResult&gt;" Kind="Delegate" />
+      <Type Name="Func`5" DisplayName="Func&lt;T1,T2,T3,T4,TResult&gt;" Kind="Delegate" />
+      <Type Name="Func`6" DisplayName="Func&lt;T1,T2,T3,T4,T5,TResult&gt;" Kind="Delegate" />
+      <Type Name="Func`7" DisplayName="Func&lt;T1,T2,T3,T4,T5,T6,TResult&gt;" Kind="Delegate" />
+      <Type Name="Func`8" DisplayName="Func&lt;T1,T2,T3,T4,T5,T6,T7,TResult&gt;" Kind="Delegate" />
+      <Type Name="Func`9" DisplayName="Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,TResult&gt;" Kind="Delegate" />
       <Type Name="GC" Kind="Class" />
       <Type Name="GCCollectionMode" Kind="Enumeration" />
+      <Type Name="GCNotificationStatus" Kind="Enumeration" />
       <Type Name="Guid" Kind="Structure" />
       <Type Name="IAppDomainSetup" Kind="Interface" />
       <Type Name="IAsyncResult" Kind="Interface" />
@@ -113,6 +136,7 @@
       <Type Name="IFormatProvider" Kind="Interface" />
       <Type Name="IFormattable" Kind="Interface" />
       <Type Name="IndexOutOfRangeException" Kind="Class" />
+      <Type Name="InsufficientExecutionStackException" Kind="Class" />
       <Type Name="InsufficientMemoryException" Kind="Class" />
       <Type Name="Int16" Kind="Structure" />
       <Type Name="Int32" Kind="Structure" />
@@ -121,7 +145,11 @@
       <Type Name="InvalidCastException" Kind="Class" />
       <Type Name="InvalidOperationException" Kind="Class" />
       <Type Name="InvalidProgramException" Kind="Class" />
+      <Type Name="InvalidTimeZoneException" Kind="Class" />
+      <Type Name="IObservable`1" DisplayName="IObservable&lt;T&gt;" Kind="Interface" />
+      <Type Name="IObserver`1" DisplayName="IObserver&lt;T&gt;" Kind="Interface" />
       <Type Name="IServiceProvider" Kind="Interface" />
+      <Type Name="Lazy`1" DisplayName="Lazy&lt;T&gt;" Kind="Class" />
       <Type Name="LoaderOptimization" Kind="Enumeration" />
       <Type Name="LoaderOptimizationAttribute" Kind="Class" />
       <Type Name="LocalDataStoreSlot" Kind="Class" />
@@ -177,7 +205,21 @@
       <Type Name="TimeoutException" Kind="Class" />
       <Type Name="TimeSpan" Kind="Structure" />
       <Type Name="TimeZone" Kind="Class" />
+      <Type Name="TimeZoneInfo" Kind="Class" />
+      <Type Name="TimeZoneInfo+AdjustmentRule" Kind="Class" />
+      <Type Name="TimeZoneInfo+TransitionTime" Kind="Structure" />
+      <Type Name="TimeZoneNotFoundException" Kind="Class" />
+      <Type Name="Tuple" Kind="Class" />
+      <Type Name="Tuple`1" DisplayName="Tuple&lt;T1&gt;" Kind="Class" />
+      <Type Name="Tuple`2" DisplayName="Tuple&lt;T1,T2&gt;" Kind="Class" />
+      <Type Name="Tuple`3" DisplayName="Tuple&lt;T1,T2,T3&gt;" Kind="Class" />
+      <Type Name="Tuple`4" DisplayName="Tuple&lt;T1,T2,T3,T4&gt;" Kind="Class" />
+      <Type Name="Tuple`5" DisplayName="Tuple&lt;T1,T2,T3,T4,T5&gt;" Kind="Class" />
+      <Type Name="Tuple`6" DisplayName="Tuple&lt;T1,T2,T3,T4,T5,T6&gt;" Kind="Class" />
+      <Type Name="Tuple`7" DisplayName="Tuple&lt;T1,T2,T3,T4,T5,T6,T7&gt;" Kind="Class" />
+      <Type Name="Tuple`8" DisplayName="Tuple&lt;T1,T2,T3,T4,T5,T6,T7,TRest&gt;" Kind="Class" />
       <Type Name="Type" Kind="Class" />
+      <Type Name="TypeAccessException" Kind="Class" />
       <Type Name="TypeCode" Kind="Enumeration" />
       <Type Name="TypedReference" Kind="Structure" />
       <Type Name="TypeInitializationException" Kind="Class" />
@@ -214,10 +256,22 @@
       <Type Name="IEqualityComparer" Kind="Interface" />
       <Type Name="IHashCodeProvider" Kind="Interface" />
       <Type Name="IList" Kind="Interface" />
+      <Type Name="IStructuralComparable" Kind="Interface" />
+      <Type Name="IStructuralEquatable" Kind="Interface" />
       <Type Name="Queue" Kind="Class" />
       <Type Name="ReadOnlyCollectionBase" Kind="Class" />
       <Type Name="SortedList" Kind="Class" />
       <Type Name="Stack" Kind="Class" />
+      <Type Name="StructuralComparisons" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Collections.Concurrent">
+      <Type Name="ConcurrentDictionary`2" DisplayName="ConcurrentDictionary&lt;TKey,TValue&gt;" Kind="Class" />
+      <Type Name="ConcurrentQueue`1" DisplayName="ConcurrentQueue&lt;T&gt;" Kind="Class" />
+      <Type Name="ConcurrentStack`1" DisplayName="ConcurrentStack&lt;T&gt;" Kind="Class" />
+      <Type Name="IProducerConsumerCollection`1" DisplayName="IProducerConsumerCollection&lt;T&gt;" Kind="Interface" />
+      <Type Name="OrderablePartitioner`1" DisplayName="OrderablePartitioner&lt;TSource&gt;" Kind="Class" />
+      <Type Name="Partitioner" Kind="Class" />
+      <Type Name="Partitioner`1" DisplayName="Partitioner&lt;TSource&gt;" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Collections.Generic">
       <Type Name="Comparer`1" DisplayName="Comparer&lt;T&gt;" Kind="Class" />
@@ -274,6 +328,22 @@
     <Namespace Name="System.Diagnostics.CodeAnalysis">
       <Type Name="SuppressMessageAttribute" Kind="Class" />
     </Namespace>
+    <Namespace Name="System.Diagnostics.Contracts">
+      <Type Name="Contract" Kind="Class" />
+      <Type Name="ContractClassAttribute" Kind="Class" />
+      <Type Name="ContractClassForAttribute" Kind="Class" />
+      <Type Name="ContractFailedEventArgs" Kind="Class" />
+      <Type Name="ContractFailureKind" Kind="Enumeration" />
+      <Type Name="ContractInvariantMethodAttribute" Kind="Class" />
+      <Type Name="ContractPublicPropertyNameAttribute" Kind="Class" />
+      <Type Name="ContractReferenceAssemblyAttribute" Kind="Class" />
+      <Type Name="ContractRuntimeIgnoredAttribute" Kind="Class" />
+      <Type Name="ContractVerificationAttribute" Kind="Class" />
+      <Type Name="PureAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Diagnostics.Contracts.Internal">
+      <Type Name="ContractHelper" Kind="Class" />
+    </Namespace>
     <Namespace Name="System.Diagnostics.SymbolStore">
       <Type Name="ISymbolBinder" Kind="Interface" />
       <Type Name="ISymbolBinder1" Kind="Interface" />
@@ -300,6 +370,7 @@
       <Type Name="CompareInfo" Kind="Class" />
       <Type Name="CompareOptions" Kind="Enumeration" />
       <Type Name="CultureInfo" Kind="Class" />
+      <Type Name="CultureNotFoundException" Kind="Class" />
       <Type Name="CultureTypes" Kind="Enumeration" />
       <Type Name="DateTimeFormatInfo" Kind="Class" />
       <Type Name="DateTimeStyles" Kind="Enumeration" />
@@ -327,6 +398,7 @@
       <Type Name="TextElementEnumerator" Kind="Class" />
       <Type Name="TextInfo" Kind="Class" />
       <Type Name="ThaiBuddhistCalendar" Kind="Class" />
+      <Type Name="TimeSpanStyles" Kind="Enumeration" />
       <Type Name="UmAlQuraCalendar" Kind="Class" />
       <Type Name="UnicodeCategory" Kind="Enumeration" />
     </Namespace>
@@ -365,6 +437,7 @@
       <Type Name="StringWriter" Kind="Class" />
       <Type Name="TextReader" Kind="Class" />
       <Type Name="TextWriter" Kind="Class" />
+      <Type Name="UnmanagedMemoryAccessor" Kind="Class" />
       <Type Name="UnmanagedMemoryStream" Kind="Class" />
     </Namespace>
     <Namespace Name="System.IO.IsolatedStorage">
@@ -374,6 +447,8 @@
       <Type Name="IsolatedStorageFile" Kind="Class" />
       <Type Name="IsolatedStorageFileStream" Kind="Class" />
       <Type Name="IsolatedStorageScope" Kind="Enumeration" />
+      <Type Name="IsolatedStorageSecurityOptions" Kind="Enumeration" />
+      <Type Name="IsolatedStorageSecurityState" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Reflection">
       <Type Name="AmbiguousMatchException" Kind="Class" />
@@ -506,9 +581,11 @@
       <Type Name="UltimateResourceFallbackLocation" Kind="Enumeration" />
     </Namespace>
     <Namespace Name="System.Runtime">
+      <Type Name="AssemblyTargetedPatchBandAttribute" Kind="Class" />
       <Type Name="GCLatencyMode" Kind="Enumeration" />
       <Type Name="GCSettings" Kind="Class" />
       <Type Name="MemoryFailPoint" Kind="Class" />
+      <Type Name="TargetedPatchingOptOutAttribute" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Runtime.CompilerServices">
       <Type Name="AccessedThroughPropertyAttribute" Kind="Class" />
@@ -521,6 +598,8 @@
       <Type Name="CompilerGeneratedAttribute" Kind="Class" />
       <Type Name="CompilerGlobalScopeAttribute" Kind="Class" />
       <Type Name="CompilerMarshalOverride" Kind="Class" />
+      <Type Name="ConditionalWeakTable`2" DisplayName="ConditionalWeakTable&lt;TKey,TValue&gt;" Kind="Class" />
+      <Type Name="ConditionalWeakTable`2+CreateValueCallback" DisplayName="ConditionalWeakTable&lt;TKey,TValue&gt;+CreateValueCallback" Kind="Delegate" />
       <Type Name="CustomConstantAttribute" Kind="Class" />
       <Type Name="DateTimeConstantAttribute" Kind="Class" />
       <Type Name="DecimalConstantAttribute" Kind="Class" />
@@ -551,6 +630,7 @@
       <Type Name="MethodImplAttribute" Kind="Class" />
       <Type Name="MethodImplOptions" Kind="Enumeration" />
       <Type Name="NativeCppClassAttribute" Kind="Class" />
+      <Type Name="ReferenceAssemblyAttribute" Kind="Class" />
       <Type Name="RequiredAttributeAttribute" Kind="Class" />
       <Type Name="RuntimeCompatibilityAttribute" Kind="Class" />
       <Type Name="RuntimeHelpers" Kind="Class" />
@@ -561,6 +641,7 @@
       <Type Name="SpecialNameAttribute" Kind="Class" />
       <Type Name="StringFreezingAttribute" Kind="Class" />
       <Type Name="SuppressIldasmAttribute" Kind="Class" />
+      <Type Name="TypeForwardedFromAttribute" Kind="Class" />
       <Type Name="TypeForwardedToAttribute" Kind="Class" />
       <Type Name="UnsafeValueTypeAttribute" Kind="Class" />
     </Namespace>
@@ -607,6 +688,7 @@
       <Type Name="_Thread" Kind="Interface" />
       <Type Name="_Type" Kind="Interface" />
       <Type Name="_TypeBuilder" Kind="Interface" />
+      <Type Name="AllowReversePInvokeCallsAttribute" Kind="Class" />
       <Type Name="ArrayWithOffset" Kind="Structure" />
       <Type Name="AssemblyRegistrationFlags" Kind="Enumeration" />
       <Type Name="AutomationProxyAttribute" Kind="Class" />
@@ -698,6 +780,7 @@
       <Type Name="RuntimeEnvironment" Kind="Class" />
       <Type Name="SafeArrayRankMismatchException" Kind="Class" />
       <Type Name="SafeArrayTypeMismatchException" Kind="Class" />
+      <Type Name="SafeBuffer" Kind="Class" />
       <Type Name="SafeHandle" Kind="Class" />
       <Type Name="SEHException" Kind="Class" />
       <Type Name="SetWin32ContextInIDispatchAttribute" Kind="Class" />
@@ -967,6 +1050,7 @@
       <Type Name="IFormatter" Kind="Interface" />
       <Type Name="IFormatterConverter" Kind="Interface" />
       <Type Name="IObjectReference" Kind="Interface" />
+      <Type Name="ISafeSerializationData" Kind="Interface" />
       <Type Name="ISerializable" Kind="Interface" />
       <Type Name="ISerializationSurrogate" Kind="Interface" />
       <Type Name="ISurrogateSelector" Kind="Interface" />
@@ -977,6 +1061,7 @@
       <Type Name="OnSerializedAttribute" Kind="Class" />
       <Type Name="OnSerializingAttribute" Kind="Class" />
       <Type Name="OptionalFieldAttribute" Kind="Class" />
+      <Type Name="SafeSerializationEventArgs" Kind="Class" />
       <Type Name="SerializationBinder" Kind="Class" />
       <Type Name="SerializationEntry" Kind="Structure" />
       <Type Name="SerializationException" Kind="Class" />
@@ -1006,6 +1091,7 @@
       <Type Name="ResourceConsumptionAttribute" Kind="Class" />
       <Type Name="ResourceExposureAttribute" Kind="Class" />
       <Type Name="ResourceScope" Kind="Enumeration" />
+      <Type Name="TargetFrameworkAttribute" Kind="Class" />
       <Type Name="VersioningHelper" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Security">
@@ -1024,12 +1110,16 @@
       <Type Name="PolicyLevelType" Kind="Enumeration" />
       <Type Name="SecureString" Kind="Class" />
       <Type Name="SecurityContext" Kind="Class" />
+      <Type Name="SecurityContextSource" Kind="Enumeration" />
       <Type Name="SecurityCriticalAttribute" Kind="Class" />
       <Type Name="SecurityCriticalScope" Kind="Enumeration" />
       <Type Name="SecurityElement" Kind="Class" />
       <Type Name="SecurityException" Kind="Class" />
       <Type Name="SecurityManager" Kind="Class" />
+      <Type Name="SecurityRulesAttribute" Kind="Class" />
+      <Type Name="SecurityRuleSet" Kind="Enumeration" />
       <Type Name="SecuritySafeCriticalAttribute" Kind="Class" />
+      <Type Name="SecurityState" Kind="Class" />
       <Type Name="SecurityTransparentAttribute" Kind="Class" />
       <Type Name="SecurityTreatAsSafeAttribute" Kind="Class" />
       <Type Name="SecurityZone" Kind="Enumeration" />
@@ -1091,6 +1181,7 @@
       <Type Name="ObjectAceFlags" Kind="Enumeration" />
       <Type Name="ObjectAuditRule" Kind="Class" />
       <Type Name="ObjectSecurity" Kind="Class" />
+      <Type Name="ObjectSecurity`1" DisplayName="ObjectSecurity&lt;T&gt;" Kind="Class" />
       <Type Name="PrivilegeNotHeldException" Kind="Class" />
       <Type Name="PropagationFlags" Kind="Enumeration" />
       <Type Name="QualifiedAce" Kind="Class" />
@@ -1105,6 +1196,7 @@
       <Type Name="SystemAcl" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Security.Cryptography">
+      <Type Name="Aes" Kind="Class" />
       <Type Name="AsymmetricAlgorithm" Kind="Class" />
       <Type Name="AsymmetricKeyExchangeDeformatter" Kind="Class" />
       <Type Name="AsymmetricKeyExchangeFormatter" Kind="Class" />
@@ -1341,8 +1433,12 @@
       <Type Name="ApartmentState" Kind="Enumeration" />
       <Type Name="AsyncFlowControl" Kind="Structure" />
       <Type Name="AutoResetEvent" Kind="Class" />
+      <Type Name="CancellationToken" Kind="Structure" />
+      <Type Name="CancellationTokenRegistration" Kind="Structure" />
+      <Type Name="CancellationTokenSource" Kind="Class" />
       <Type Name="CompressedStack" Kind="Class" />
       <Type Name="ContextCallback" Kind="Delegate" />
+      <Type Name="CountdownEvent" Kind="Class" />
       <Type Name="EventResetMode" Kind="Enumeration" />
       <Type Name="EventWaitHandle" Kind="Class" />
       <Type Name="ExecutionContext" Kind="Class" />
@@ -1350,8 +1446,12 @@
       <Type Name="HostExecutionContextManager" Kind="Class" />
       <Type Name="Interlocked" Kind="Class" />
       <Type Name="IOCompletionCallback" Kind="Delegate" />
+      <Type Name="LazyInitializer" Kind="Class" />
+      <Type Name="LazyThreadSafetyMode" Kind="Enumeration" />
       <Type Name="LockCookie" Kind="Structure" />
+      <Type Name="LockRecursionException" Kind="Class" />
       <Type Name="ManualResetEvent" Kind="Class" />
+      <Type Name="ManualResetEventSlim" Kind="Class" />
       <Type Name="Monitor" Kind="Class" />
       <Type Name="Mutex" Kind="Class" />
       <Type Name="NativeOverlapped" Kind="Structure" />
@@ -1359,12 +1459,17 @@
       <Type Name="ParameterizedThreadStart" Kind="Delegate" />
       <Type Name="ReaderWriterLock" Kind="Class" />
       <Type Name="RegisteredWaitHandle" Kind="Class" />
+      <Type Name="SemaphoreFullException" Kind="Class" />
+      <Type Name="SemaphoreSlim" Kind="Class" />
       <Type Name="SendOrPostCallback" Kind="Delegate" />
+      <Type Name="SpinLock" Kind="Structure" />
+      <Type Name="SpinWait" Kind="Structure" />
       <Type Name="SynchronizationContext" Kind="Class" />
       <Type Name="SynchronizationLockException" Kind="Class" />
       <Type Name="Thread" Kind="Class" />
       <Type Name="ThreadAbortException" Kind="Class" />
       <Type Name="ThreadInterruptedException" Kind="Class" />
+      <Type Name="ThreadLocal`1" DisplayName="ThreadLocal&lt;T&gt;" Kind="Class" />
       <Type Name="ThreadPool" Kind="Class" />
       <Type Name="ThreadPriority" Kind="Enumeration" />
       <Type Name="ThreadStart" Kind="Delegate" />
@@ -1379,10 +1484,28 @@
       <Type Name="WaitHandleCannotBeOpenedException" Kind="Class" />
       <Type Name="WaitOrTimerCallback" Kind="Delegate" />
     </Namespace>
+    <Namespace Name="System.Threading.Tasks">
+      <Type Name="Parallel" Kind="Class" />
+      <Type Name="ParallelLoopResult" Kind="Structure" />
+      <Type Name="ParallelLoopState" Kind="Class" />
+      <Type Name="ParallelOptions" Kind="Class" />
+      <Type Name="Task" Kind="Class" />
+      <Type Name="Task`1" DisplayName="Task&lt;TResult&gt;" Kind="Class" />
+      <Type Name="TaskCanceledException" Kind="Class" />
+      <Type Name="TaskCompletionSource`1" DisplayName="TaskCompletionSource&lt;TResult&gt;" Kind="Class" />
+      <Type Name="TaskContinuationOptions" Kind="Enumeration" />
+      <Type Name="TaskCreationOptions" Kind="Enumeration" />
+      <Type Name="TaskFactory" Kind="Class" />
+      <Type Name="TaskFactory`1" DisplayName="TaskFactory&lt;TResult&gt;" Kind="Class" />
+      <Type Name="TaskScheduler" Kind="Class" />
+      <Type Name="TaskSchedulerException" Kind="Class" />
+      <Type Name="TaskStatus" Kind="Enumeration" />
+      <Type Name="UnobservedTaskExceptionEventArgs" Kind="Class" />
+    </Namespace>
   </Types>
   <Title>mscorlib</Title>
   <Assemblies>
-    <Assembly Name="mscorlib" Version="2.0.0.0">
+    <Assembly Name="mscorlib" Version="4.0.0.0">
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(true)</AttributeName>
@@ -1403,10 +1526,10 @@
           <AttributeName>System.Reflection.AssemblyDescription("mscorlib.dll")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("4.0.30319.1")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("4.0.30319.1")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
@@ -1418,7 +1541,7 @@
           <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+          <AttributeName>System.Resources.SatelliteContractVersion("4.0.0.0")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>

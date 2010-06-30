@@ -1,11 +1,16 @@
 <Type Name="IEnumerable&lt;T&gt;" FullName="System.Collections.Generic.IEnumerable&lt;T&gt;">
-  <TypeSignature Language="C#" Value="public interface IEnumerable&lt;T&gt; : System.Collections.IEnumerable" />
+  <TypeSignature Language="C#" Value="public interface IEnumerable&lt;out T&gt; : System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="T" />
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>Covariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
   </TypeParameters>
   <Interfaces>
     <Interface>
@@ -27,7 +32,7 @@
   </Docs>
   <Members>
     <Member MemberName="GetEnumerator">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;T&gt; GetEnumerator ();" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;out T&gt; GetEnumerator ();" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerator&lt;T&gt;</ReturnType>
@@ -56,6 +61,7 @@ that can be used for simple iteration over a collection.</para>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

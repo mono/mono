@@ -1,12 +1,13 @@
 <Type Name="Assembly" FullName="System.Reflection.Assembly" FullNameSP="System_Reflection_Assembly" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable Assembly extends System.Object" />
-  <TypeSignature Language="C#" Value="public class Assembly : System.Reflection.ICustomAttributeProvider, System.Runtime.InteropServices._Assembly, System.Runtime.Serialization.ISerializable, System.Security.IEvidenceFactory" />
+  <TypeSignature Language="C#" Value="public abstract class Assembly : System.Reflection.ICustomAttributeProvider, System.Runtime.InteropServices._Assembly, System.Runtime.Serialization.ISerializable, System.Security.IEvidenceFactory" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>This type is safe for multithreaded operations. </ThreadingSafetyStatement>
   <Base>
@@ -106,6 +107,18 @@ self-describing building block of an application.</para>
     </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Assembly ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="CodeBase">
       <MemberSignature Language="C#" Value="public virtual string CodeBase { get; }" />
       <MemberType>Property</MemberType>
@@ -139,6 +152,7 @@ CodeBase: file:///usr/local/lib/mono/1.0/mscorlib.dll
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
@@ -169,6 +183,7 @@ CodeBase: file:///usr/local/lib/mono/1.0/mscorlib.dll
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
@@ -191,10 +206,11 @@ CodeBase: file:///usr/local/lib/mono/1.0/mscorlib.dll
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public object CreateInstance (string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
+      <MemberSignature Language="C#" Value="public virtual object CreateInstance (string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -223,6 +239,7 @@ CodeBase: file:///usr/local/lib/mono/1.0/mscorlib.dll
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="CreateQualifiedName">
@@ -245,6 +262,7 @@ CodeBase: file:///usr/local/lib/mono/1.0/mscorlib.dll
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="EntryPoint">
@@ -262,7 +280,28 @@ CodeBase: file:///usr/local/lib/mono/1.0/mscorlib.dll
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="o">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="EscapedCodeBase">
       <MemberSignature Language="C#" Value="public virtual string EscapedCodeBase { get; }" />
@@ -278,6 +317,7 @@ CodeBase: file:///usr/local/lib/mono/1.0/mscorlib.dll
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Evidence">
@@ -294,6 +334,7 @@ CodeBase: file:///usr/local/lib/mono/1.0/mscorlib.dll
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="FullName">
@@ -370,6 +411,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetAssembly">
@@ -390,6 +432,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetCallingAssembly">
@@ -407,6 +450,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -427,6 +471,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -449,6 +494,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetEntryAssembly">
@@ -466,6 +512,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetExecutingAssembly">
@@ -483,6 +530,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetExportedTypes">
@@ -500,6 +548,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetFile">
@@ -520,6 +569,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetFiles">
@@ -537,6 +587,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetFiles">
@@ -557,7 +608,24 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="GetLoadedModules">
       <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetLoadedModules ();" />
@@ -574,10 +642,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetLoadedModules">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetLoadedModules (bool getResourceModules);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Module[] GetLoadedModules (bool getResourceModules);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module[]</ReturnType>
@@ -594,6 +663,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetManifestResourceInfo">
@@ -614,6 +684,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetManifestResourceNames">
@@ -631,6 +702,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetManifestResourceStream">
@@ -651,6 +723,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetManifestResourceStream">
@@ -673,10 +746,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetModule">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module GetModule (string name);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Module GetModule (string name);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module</ReturnType>
@@ -693,6 +767,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetModules">
@@ -710,10 +785,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetModules">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetModules (bool getResourceModules);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Module[] GetModules (bool getResourceModules);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module[]</ReturnType>
@@ -730,6 +806,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetName">
@@ -747,6 +824,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetName">
@@ -767,6 +845,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetObjectData">
@@ -788,10 +867,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetReferencedAssemblies">
-      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyName[] GetReferencedAssemblies ();" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.AssemblyName[] GetReferencedAssemblies ();" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyName[]</ReturnType>
@@ -805,10 +885,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetSatelliteAssembly">
-      <MemberSignature Language="C#" Value="public System.Reflection.Assembly GetSatelliteAssembly (System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Assembly GetSatelliteAssembly (System.Globalization.CultureInfo culture);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Assembly</ReturnType>
@@ -825,10 +906,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetSatelliteAssembly">
-      <MemberSignature Language="C#" Value="public System.Reflection.Assembly GetSatelliteAssembly (System.Globalization.CultureInfo culture, Version version);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Assembly GetSatelliteAssembly (System.Globalization.CultureInfo culture, Version version);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Assembly</ReturnType>
@@ -847,6 +929,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetType">
@@ -903,6 +986,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetType">
@@ -925,10 +1009,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetType">
-      <MemberSignature Language="C#" Value="public Type GetType (string name, bool throwOnError, bool ignoreCase);" />
+      <MemberSignature Language="C#" Value="public virtual Type GetType (string name, bool throwOnError, bool ignoreCase);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
@@ -949,6 +1034,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetTypes">
@@ -975,10 +1061,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GlobalAssemblyCache">
-      <MemberSignature Language="C#" Value="public bool GlobalAssemblyCache { get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool GlobalAssemblyCache { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -991,10 +1078,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="HostContext">
-      <MemberSignature Language="C#" Value="public long HostContext { get; }" />
+      <MemberSignature Language="C#" Value="public virtual long HostContext { get; }" />
       <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
@@ -1012,6 +1100,7 @@ public class AssemblyExample {
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ImageRuntimeVersion">
@@ -1033,6 +1122,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsDefined">
@@ -1055,7 +1145,23 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+    </Member>
+    <Member MemberName="IsDynamic">
+      <MemberSignature Language="C#" Value="public virtual bool IsDynamic { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public static System.Reflection.Assembly Load (byte[] rawAssembly);" />
@@ -1075,6 +1181,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
@@ -1095,6 +1202,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
@@ -1128,6 +1236,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
@@ -1150,6 +1259,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
@@ -1172,7 +1282,13 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public static System.Reflection.Assembly Load (string assemblyString, System.Security.Policy.Evidence assemblySecurity);" />
@@ -1194,7 +1310,13 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public static System.Reflection.Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, System.Security.Policy.Evidence securityEvidence);" />
@@ -1218,7 +1340,36 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, System.Security.SecurityContextSource securityContextSource);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rawAssembly" Type="System.Byte[]" />
+        <Parameter Name="rawSymbolStore" Type="System.Byte[]" />
+        <Parameter Name="securityContextSource" Type="System.Security.SecurityContextSource" />
+      </Parameters>
+      <Docs>
+        <param name="rawAssembly">To be added.</param>
+        <param name="rawSymbolStore">To be added.</param>
+        <param name="securityContextSource">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="LoadFile">
       <MemberSignature Language="C#" Value="public static System.Reflection.Assembly LoadFile (string path);" />
@@ -1238,6 +1389,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="LoadFile">
@@ -1260,7 +1412,13 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
     </Member>
     <Member MemberName="LoadFrom">
       <MemberSignature Language="C#" Value="public static System.Reflection.Assembly LoadFrom (string assemblyFile);" />
@@ -1280,6 +1438,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="LoadFrom">
@@ -1302,7 +1461,36 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+    <Member MemberName="LoadFrom">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Assembly LoadFrom (string assemblyFile, byte[] hashValue, System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyFile" Type="System.String" />
+        <Parameter Name="hashValue" Type="System.Byte[]" />
+        <Parameter Name="hashAlgorithm" Type="System.Configuration.Assemblies.AssemblyHashAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyFile">To be added.</param>
+        <param name="hashValue">To be added.</param>
+        <param name="hashAlgorithm">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="LoadFrom">
       <MemberSignature Language="C#" Value="public static System.Reflection.Assembly LoadFrom (string assemblyFile, System.Security.Policy.Evidence securityEvidence, byte[] hashValue, System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm);" />
@@ -1328,7 +1516,13 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
     </Member>
     <Member MemberName="LoadModule">
       <MemberSignature Language="C#" Value="public System.Reflection.Module LoadModule (string moduleName, byte[] rawModule);" />
@@ -1350,10 +1544,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="LoadModule">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module LoadModule (string moduleName, byte[] rawModule, byte[] rawSymbolStore);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Module LoadModule (string moduleName, byte[] rawModule, byte[] rawSymbolStore);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module</ReturnType>
@@ -1374,6 +1569,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="LoadWithPartialName">
@@ -1394,10 +1590,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Obsolete("")</AttributeName>
+          <AttributeName>System.Obsolete</AttributeName>
         </Attribute>
       </Attributes>
     </Member>
@@ -1421,10 +1618,11 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Obsolete("")</AttributeName>
+          <AttributeName>System.Obsolete</AttributeName>
         </Attribute>
       </Attributes>
     </Member>
@@ -1442,16 +1640,12 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ManifestModule">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module ManifestModule { get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Module ManifestModule { get; }" />
       <MemberType>Property</MemberType>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
       <ReturnValue>
         <ReturnType>System.Reflection.Module</ReturnType>
       </ReturnValue>
@@ -1463,6 +1657,7 @@ public class AssemblyExample {
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ModuleResolve">
@@ -1478,7 +1673,65 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool op_Equality (System.Reflection.Assembly left, System.Reflection.Assembly right);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Reflection.Assembly" />
+        <Parameter Name="right" Type="System.Reflection.Assembly" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Reflection.Assembly left, System.Reflection.Assembly right);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Reflection.Assembly" />
+        <Parameter Name="right" Type="System.Reflection.Assembly" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PermissionSet">
+      <MemberSignature Language="C#" Value="public System.Security.PermissionSet PermissionSet { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.PermissionSet</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="ReflectionOnly">
       <MemberSignature Language="C#" Value="public virtual bool ReflectionOnly { get; }" />
@@ -1499,6 +1752,7 @@ public class AssemblyExample {
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ReflectionOnlyLoad">
@@ -1519,6 +1773,7 @@ public class AssemblyExample {
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ReflectionOnlyLoad">
@@ -1539,6 +1794,7 @@ public class AssemblyExample {
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ReflectionOnlyLoadFrom">
@@ -1559,6 +1815,7 @@ public class AssemblyExample {
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
@@ -1611,6 +1868,7 @@ public class AssemblyExample {
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

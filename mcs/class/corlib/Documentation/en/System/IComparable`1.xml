@@ -1,11 +1,16 @@
 <Type Name="IComparable&lt;T&gt;" FullName="System.IComparable&lt;T&gt;">
-  <TypeSignature Language="C#" Value="public interface IComparable&lt;T&gt;" />
+  <TypeSignature Language="C#" Value="public interface IComparable&lt;in T&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="T" />
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
   </TypeParameters>
   <Interfaces />
   <Docs>
@@ -86,6 +91,7 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

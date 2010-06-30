@@ -1,11 +1,16 @@
 <Type Name="Predicate&lt;T&gt;" FullName="System.Predicate&lt;T&gt;">
-  <TypeSignature Language="C#" Value="public delegate bool Predicate&lt;T&gt;(T obj);" />
+  <TypeSignature Language="C#" Value="public delegate bool Predicate&lt;in T&gt;(T obj);" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="T" />
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
   </TypeParameters>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

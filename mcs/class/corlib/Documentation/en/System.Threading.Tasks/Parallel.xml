@@ -1,0 +1,795 @@
+<Type Name="Parallel" FullName="System.Threading.Tasks.Parallel">
+  <TypeSignature Language="C#" Value="public static class Parallel" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="For">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int from, int to, Action&lt;int,System.Threading.Tasks.ParallelLoopState&gt; action);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="from" Type="System.Int32" />
+        <Parameter Name="to" Type="System.Int32" />
+        <Parameter Name="action" Type="System.Action&lt;System.Int32,System.Threading.Tasks.ParallelLoopState&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="from">To be added.</param>
+        <param name="to">To be added.</param>
+        <param name="action">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="For">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int from, int to, Action&lt;int&gt; action);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="from" Type="System.Int32" />
+        <Parameter Name="to" Type="System.Int32" />
+        <Parameter Name="action" Type="System.Action&lt;System.Int32&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="from">To be added.</param>
+        <param name="to">To be added.</param>
+        <param name="action">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="For">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int from, int to, System.Threading.Tasks.ParallelOptions options, Action&lt;int,System.Threading.Tasks.ParallelLoopState&gt; action);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="from" Type="System.Int32" />
+        <Parameter Name="to" Type="System.Int32" />
+        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="action" Type="System.Action&lt;System.Int32,System.Threading.Tasks.ParallelLoopState&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="from">To be added.</param>
+        <param name="to">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="action">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="For">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int from, int to, System.Threading.Tasks.ParallelOptions options, Action&lt;int&gt; action);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="from" Type="System.Int32" />
+        <Parameter Name="to" Type="System.Int32" />
+        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="action" Type="System.Action&lt;System.Int32&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="from">To be added.</param>
+        <param name="to">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="action">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="For&lt;TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt; (int from, int to, Func&lt;TLocal&gt; init, Func&lt;int,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; action, Action&lt;TLocal&gt; destruct);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="from" Type="System.Int32" />
+        <Parameter Name="to" Type="System.Int32" />
+        <Parameter Name="init" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="action" Type="System.Func&lt;System.Int32,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="destruct" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="from">To be added.</param>
+        <param name="to">To be added.</param>
+        <param name="init">To be added.</param>
+        <param name="action">To be added.</param>
+        <param name="destruct">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="For&lt;TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt; (int from, int to, System.Threading.Tasks.ParallelOptions options, Func&lt;TLocal&gt; init, Func&lt;int,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; action, Action&lt;TLocal&gt; destruct);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="from" Type="System.Int32" />
+        <Parameter Name="to" Type="System.Int32" />
+        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="init" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="action" Type="System.Func&lt;System.Int32,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="destruct" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="from">To be added.</param>
+        <param name="to">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="init">To be added.</param>
+        <param name="action">To be added.</param>
+        <param name="destruct">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; source, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,long&gt; body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;" />
+        <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Concurrent.Partitioner&lt;TSource&gt;" />
+        <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, Action&lt;TSource&gt; body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Concurrent.Partitioner&lt;TSource&gt;" />
+        <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; enumerable, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,long&gt; action);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="enumerable" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="action" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="enumerable">To be added.</param>
+        <param name="action">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; enumerable, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt; action);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="enumerable" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="action" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="enumerable">To be added.</param>
+        <param name="action">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; enumerable, Action&lt;TSource&gt; action);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="enumerable" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="action" Type="System.Action&lt;TSource&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="enumerable">To be added.</param>
+        <param name="action">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,long&gt; body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="parallelOptions">To be added.</param>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Concurrent.Partitioner&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="parallelOptions">To be added.</param>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource&gt; body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Concurrent.Partitioner&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="parallelOptions">To be added.</param>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,long&gt; body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="parallelOptions">To be added.</param>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="parallelOptions">To be added.</param>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource&gt; body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="parallelOptions">To be added.</param>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; source, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,long,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="localInit">To be added.</param>
+        <param name="body">To be added.</param>
+        <param name="localFinally">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Concurrent.Partitioner&lt;TSource&gt;" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="localInit">To be added.</param>
+        <param name="body">To be added.</param>
+        <param name="localFinally">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,long,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="localInit">To be added.</param>
+        <param name="body">To be added.</param>
+        <param name="localFinally">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="localInit">To be added.</param>
+        <param name="body">To be added.</param>
+        <param name="localFinally">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; enumerable, System.Threading.Tasks.ParallelOptions options, Func&lt;TLocal&gt; init, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,long,TLocal,TLocal&gt; action, Action&lt;TLocal&gt; destruct);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="enumerable" Type="System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;" />
+        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="init" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="action" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64,TLocal,TLocal&gt;" />
+        <Parameter Name="destruct" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="enumerable">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="init">To be added.</param>
+        <param name="action">To be added.</param>
+        <param name="destruct">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; enumerable, System.Threading.Tasks.ParallelOptions options, Func&lt;TLocal&gt; init, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; action, Action&lt;TLocal&gt; destruct);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="enumerable" Type="System.Collections.Concurrent.Partitioner&lt;TSource&gt;" />
+        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="init" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="action" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="destruct" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="enumerable">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="init">To be added.</param>
+        <param name="action">To be added.</param>
+        <param name="destruct">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,long,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="parallelOptions">To be added.</param>
+        <param name="localInit">To be added.</param>
+        <param name="body">To be added.</param>
+        <param name="localFinally">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <typeparam name="TLocal">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="parallelOptions">To be added.</param>
+        <param name="localInit">To be added.</param>
+        <param name="body">To be added.</param>
+        <param name="localFinally">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="C#" Value="public static void Invoke (Action[] actions);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="actions" Type="System.Action[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="actions">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="C#" Value="public static void Invoke (System.Threading.Tasks.ParallelOptions parallelOptions, Action[] actions);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="actions" Type="System.Action[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="parallelOptions">To be added.</param>
+        <param name="actions">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

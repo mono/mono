@@ -1,11 +1,16 @@
 <Type Name="IEnumerator&lt;T&gt;" FullName="System.Collections.Generic.IEnumerator&lt;T&gt;">
-  <TypeSignature Language="C#" Value="public interface IEnumerator&lt;T&gt; : IDisposable, System.Collections.IEnumerator" />
+  <TypeSignature Language="C#" Value="public interface IEnumerator&lt;out T&gt; : IDisposable, System.Collections.IEnumerator" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="T" />
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>Covariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
   </TypeParameters>
   <Interfaces>
     <Interface>
@@ -82,6 +87,7 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

@@ -1,8 +1,9 @@
 <Type Name="MethodBody" FullName="System.Reflection.MethodBody">
-  <TypeSignature Language="C#" Value="public sealed class MethodBody" />
+  <TypeSignature Language="C#" Value="public class MethodBody" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -19,8 +20,20 @@
     <since version=".NET 2.0" />
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MethodBody ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="ExceptionHandlingClauses">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;System.Reflection.ExceptionHandlingClause&gt; ExceptionHandlingClauses { get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IList&lt;System.Reflection.ExceptionHandlingClause&gt; ExceptionHandlingClauses { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Reflection.ExceptionHandlingClause&gt;</ReturnType>
@@ -33,10 +46,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetILAsByteArray">
-      <MemberSignature Language="C#" Value="public byte[] GetILAsByteArray ();" />
+      <MemberSignature Language="C#" Value="public virtual byte[] GetILAsByteArray ();" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
@@ -50,10 +64,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="InitLocals">
-      <MemberSignature Language="C#" Value="public bool InitLocals { get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool InitLocals { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -66,10 +81,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="LocalSignatureMetadataToken">
-      <MemberSignature Language="C#" Value="public int LocalSignatureMetadataToken { get; }" />
+      <MemberSignature Language="C#" Value="public virtual int LocalSignatureMetadataToken { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -82,10 +98,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="LocalVariables">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;System.Reflection.LocalVariableInfo&gt; LocalVariables { get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IList&lt;System.Reflection.LocalVariableInfo&gt; LocalVariables { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Reflection.LocalVariableInfo&gt;</ReturnType>
@@ -98,10 +115,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="MaxStackSize">
-      <MemberSignature Language="C#" Value="public int MaxStackSize { get; }" />
+      <MemberSignature Language="C#" Value="public virtual int MaxStackSize { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -114,6 +132,7 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

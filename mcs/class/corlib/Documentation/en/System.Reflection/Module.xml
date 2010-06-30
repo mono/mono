@@ -1,12 +1,13 @@
 <Type Name="Module" FullName="System.Reflection.Module" FullNameSP="System_Reflection_Module" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable Module extends System.Object" />
-  <TypeSignature Language="C#" Value="public class Module : System.Reflection.ICustomAttributeProvider, System.Runtime.InteropServices._Module, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="C#" Value="public abstract class Module : System.Reflection.ICustomAttributeProvider, System.Runtime.InteropServices._Module, System.Runtime.Serialization.ISerializable" />
   <MemberOfLibrary>Reflection</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -40,9 +41,21 @@
     </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Module ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Assembly">
       <MemberSignature Language="ILASM" Value=".property class System.Reflection.Assembly Assembly { public hidebysig specialname instance class System.Reflection.Assembly get_Assembly() }" />
-      <MemberSignature Language="C#" Value="public System.Reflection.Assembly Assembly { get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Assembly Assembly { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Assembly</ReturnType>
@@ -65,6 +78,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="FilterTypeName">
@@ -81,6 +95,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="FilterTypeNameIgnoreCase">
@@ -97,6 +112,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="FindTypes">
@@ -119,6 +135,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="FullyQualifiedName">
@@ -168,6 +185,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -188,6 +206,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -210,7 +229,24 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCustomAttributesData">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IList&lt;System.Reflection.CustomAttributeData&gt; GetCustomAttributesData ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Reflection.CustomAttributeData&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="GetField">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.FieldInfo GetField(string name)" />
@@ -249,11 +285,12 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetField">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.FieldInfo GetField(string name, valuetype System.Reflection.BindingFlags bindingAttr)" />
-      <MemberSignature Language="C#" Value="public System.Reflection.FieldInfo GetField (string name, System.Reflection.BindingFlags bindingAttr);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.FieldInfo GetField (string name, System.Reflection.BindingFlags bindingAttr);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldInfo</ReturnType>
@@ -291,6 +328,7 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetFields">
@@ -321,10 +359,11 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetFields">
-      <MemberSignature Language="C#" Value="public System.Reflection.FieldInfo[] GetFields (System.Reflection.BindingFlags bindingFlags);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.FieldInfo[] GetFields (System.Reflection.BindingFlags bindingFlags);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldInfo[]</ReturnType>
@@ -349,6 +388,7 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetMethod">
@@ -388,6 +428,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetMethod">
@@ -436,6 +477,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetMethod">
@@ -466,6 +508,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetMethodImpl">
@@ -496,6 +539,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetMethods">
@@ -525,10 +569,11 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetMethods">
-      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo[] GetMethods (System.Reflection.BindingFlags bindingFlags);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo[] GetMethods (System.Reflection.BindingFlags bindingFlags);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
@@ -553,6 +598,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetObjectData">
@@ -574,10 +620,11 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetPEKind">
-      <MemberSignature Language="C#" Value="public void GetPEKind (out System.Reflection.PortableExecutableKinds peKind, out System.Reflection.ImageFileMachine machine);" />
+      <MemberSignature Language="C#" Value="public virtual void GetPEKind (out System.Reflection.PortableExecutableKinds peKind, out System.Reflection.ImageFileMachine machine);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -595,10 +642,11 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetSignerCertificate">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509Certificate GetSignerCertificate ();" />
+      <MemberSignature Language="C#" Value="public virtual System.Security.Cryptography.X509Certificates.X509Certificate GetSignerCertificate ();" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate</ReturnType>
@@ -612,6 +660,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetType">
@@ -632,6 +681,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -659,6 +709,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -688,6 +739,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -710,6 +762,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsDefined">
@@ -732,10 +785,11 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="IsResource">
-      <MemberSignature Language="C#" Value="public bool IsResource ();" />
+      <MemberSignature Language="C#" Value="public virtual bool IsResource ();" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -749,10 +803,11 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="MDStreamVersion">
-      <MemberSignature Language="C#" Value="public int MDStreamVersion { get; }" />
+      <MemberSignature Language="C#" Value="public virtual int MDStreamVersion { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -765,10 +820,11 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="MetadataToken">
-      <MemberSignature Language="C#" Value="public int MetadataToken { get; }" />
+      <MemberSignature Language="C#" Value="public virtual int MetadataToken { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -781,6 +837,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ModuleHandle">
@@ -797,10 +854,11 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ModuleVersionId">
-      <MemberSignature Language="C#" Value="public Guid ModuleVersionId { get; }" />
+      <MemberSignature Language="C#" Value="public virtual Guid ModuleVersionId { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -813,11 +871,12 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="ILASM" Value=".property string Name { public hidebysig specialname instance string get_Name() }" />
-      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="C#" Value="public virtual string Name { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -850,6 +909,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveField">
@@ -870,13 +930,15 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveField">
-      <MemberSignature Language="C#" Value="public System.Reflection.FieldInfo ResolveField (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.FieldInfo ResolveField (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldInfo</ReturnType>
@@ -913,13 +975,15 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveMember">
-      <MemberSignature Language="C#" Value="public System.Reflection.MemberInfo ResolveMember (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MemberInfo ResolveMember (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MemberInfo</ReturnType>
@@ -956,13 +1020,15 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveMethod">
-      <MemberSignature Language="C#" Value="public System.Reflection.MethodBase ResolveMethod (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodBase ResolveMethod (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodBase</ReturnType>
@@ -982,7 +1048,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
     </Member>
     <Member MemberName="ResolveSignature">
-      <MemberSignature Language="C#" Value="public byte[] ResolveSignature (int metadataToken);" />
+      <MemberSignature Language="C#" Value="public virtual byte[] ResolveSignature (int metadataToken);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
@@ -999,10 +1065,11 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveString">
-      <MemberSignature Language="C#" Value="public string ResolveString (int metadataToken);" />
+      <MemberSignature Language="C#" Value="public virtual string ResolveString (int metadataToken);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1019,6 +1086,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveType">
@@ -1039,13 +1107,15 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveType">
-      <MemberSignature Language="C#" Value="public Type ResolveType (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
+      <MemberSignature Language="C#" Value="public virtual Type ResolveType (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
@@ -1065,7 +1135,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       </Docs>
     </Member>
     <Member MemberName="ScopeName">
-      <MemberSignature Language="C#" Value="public string ScopeName { get; }" />
+      <MemberSignature Language="C#" Value="public virtual string ScopeName { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1078,6 +1148,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._Module.GetIDsOfNames">
@@ -1105,6 +1176,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._Module.GetTypeInfo">
@@ -1128,6 +1200,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._Module.GetTypeInfoCount">
@@ -1147,6 +1220,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._Module.Invoke">
@@ -1180,6 +1254,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
@@ -1209,6 +1284,7 @@ current instance, if found; otherwise, returns <see langword="null" />
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

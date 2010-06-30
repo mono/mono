@@ -1,12 +1,21 @@
 <Type Name="Converter&lt;TInput,TOutput&gt;" FullName="System.Converter&lt;TInput,TOutput&gt;">
-  <TypeSignature Language="C#" Value="public delegate TOutput Converter&lt;TInput,TOutput&gt;(TInput input);" />
+  <TypeSignature Language="C#" Value="public delegate TOutput Converter&lt;in TInput,out TOutput&gt;(TInput input);" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="TInput" />
-    <TypeParameter Name="TOutput" />
+    <TypeParameter Name="TInput">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="TOutput">
+      <Constraints>
+        <ParameterAttribute>Covariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
   </TypeParameters>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

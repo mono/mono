@@ -1,0 +1,313 @@
+<Type Name="Tuple" FullName="System.Tuple">
+  <TypeSignature Language="C#" Value="public static class Tuple" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Create&lt;T1&gt;">
+      <MemberSignature Language="C#" Value="public static Tuple&lt;T1&gt; Create&lt;T1&gt; (T1 item1);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;T1&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T1" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="item1" Type="T1" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T1">To be added.</typeparam>
+        <param name="item1">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;T1,T2&gt;">
+      <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2&gt; Create&lt;T1,T2&gt; (T1 item1, T2 item2);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;T1,T2&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T1" />
+        <TypeParameter Name="T2" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="item1" Type="T1" />
+        <Parameter Name="item2" Type="T2" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T1">To be added.</typeparam>
+        <typeparam name="T2">To be added.</typeparam>
+        <param name="item1">To be added.</param>
+        <param name="item2">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;T1,T2,T3&gt;">
+      <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3&gt; Create&lt;T1,T2,T3&gt; (T1 item1, T2 item2, T3 item3);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;T1,T2,T3&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T1" />
+        <TypeParameter Name="T2" />
+        <TypeParameter Name="T3" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="item1" Type="T1" />
+        <Parameter Name="item2" Type="T2" />
+        <Parameter Name="item3" Type="T3" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T1">To be added.</typeparam>
+        <typeparam name="T2">To be added.</typeparam>
+        <typeparam name="T3">To be added.</typeparam>
+        <param name="item1">To be added.</param>
+        <param name="item2">To be added.</param>
+        <param name="item3">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;T1,T2,T3,T4&gt;">
+      <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4&gt; Create&lt;T1,T2,T3,T4&gt; (T1 item1, T2 item2, T3 item3, T4 item4);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;T1,T2,T3,T4&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T1" />
+        <TypeParameter Name="T2" />
+        <TypeParameter Name="T3" />
+        <TypeParameter Name="T4" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="item1" Type="T1" />
+        <Parameter Name="item2" Type="T2" />
+        <Parameter Name="item3" Type="T3" />
+        <Parameter Name="item4" Type="T4" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T1">To be added.</typeparam>
+        <typeparam name="T2">To be added.</typeparam>
+        <typeparam name="T3">To be added.</typeparam>
+        <typeparam name="T4">To be added.</typeparam>
+        <param name="item1">To be added.</param>
+        <param name="item2">To be added.</param>
+        <param name="item3">To be added.</param>
+        <param name="item4">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;T1,T2,T3,T4,T5&gt;">
+      <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4,T5&gt; Create&lt;T1,T2,T3,T4,T5&gt; (T1 item1, T2 item2, T3 item3, T4 item4, T5 item5);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;T1,T2,T3,T4,T5&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T1" />
+        <TypeParameter Name="T2" />
+        <TypeParameter Name="T3" />
+        <TypeParameter Name="T4" />
+        <TypeParameter Name="T5" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="item1" Type="T1" />
+        <Parameter Name="item2" Type="T2" />
+        <Parameter Name="item3" Type="T3" />
+        <Parameter Name="item4" Type="T4" />
+        <Parameter Name="item5" Type="T5" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T1">To be added.</typeparam>
+        <typeparam name="T2">To be added.</typeparam>
+        <typeparam name="T3">To be added.</typeparam>
+        <typeparam name="T4">To be added.</typeparam>
+        <typeparam name="T5">To be added.</typeparam>
+        <param name="item1">To be added.</param>
+        <param name="item2">To be added.</param>
+        <param name="item3">To be added.</param>
+        <param name="item4">To be added.</param>
+        <param name="item5">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;T1,T2,T3,T4,T5,T6&gt;">
+      <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4,T5,T6&gt; Create&lt;T1,T2,T3,T4,T5,T6&gt; (T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;T1,T2,T3,T4,T5,T6&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T1" />
+        <TypeParameter Name="T2" />
+        <TypeParameter Name="T3" />
+        <TypeParameter Name="T4" />
+        <TypeParameter Name="T5" />
+        <TypeParameter Name="T6" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="item1" Type="T1" />
+        <Parameter Name="item2" Type="T2" />
+        <Parameter Name="item3" Type="T3" />
+        <Parameter Name="item4" Type="T4" />
+        <Parameter Name="item5" Type="T5" />
+        <Parameter Name="item6" Type="T6" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T1">To be added.</typeparam>
+        <typeparam name="T2">To be added.</typeparam>
+        <typeparam name="T3">To be added.</typeparam>
+        <typeparam name="T4">To be added.</typeparam>
+        <typeparam name="T5">To be added.</typeparam>
+        <typeparam name="T6">To be added.</typeparam>
+        <param name="item1">To be added.</param>
+        <param name="item2">To be added.</param>
+        <param name="item3">To be added.</param>
+        <param name="item4">To be added.</param>
+        <param name="item5">To be added.</param>
+        <param name="item6">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;T1,T2,T3,T4,T5,T6,T7&gt;">
+      <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4,T5,T6,T7&gt; Create&lt;T1,T2,T3,T4,T5,T6,T7&gt; (T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;T1,T2,T3,T4,T5,T6,T7&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T1" />
+        <TypeParameter Name="T2" />
+        <TypeParameter Name="T3" />
+        <TypeParameter Name="T4" />
+        <TypeParameter Name="T5" />
+        <TypeParameter Name="T6" />
+        <TypeParameter Name="T7" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="item1" Type="T1" />
+        <Parameter Name="item2" Type="T2" />
+        <Parameter Name="item3" Type="T3" />
+        <Parameter Name="item4" Type="T4" />
+        <Parameter Name="item5" Type="T5" />
+        <Parameter Name="item6" Type="T6" />
+        <Parameter Name="item7" Type="T7" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T1">To be added.</typeparam>
+        <typeparam name="T2">To be added.</typeparam>
+        <typeparam name="T3">To be added.</typeparam>
+        <typeparam name="T4">To be added.</typeparam>
+        <typeparam name="T5">To be added.</typeparam>
+        <typeparam name="T6">To be added.</typeparam>
+        <typeparam name="T7">To be added.</typeparam>
+        <param name="item1">To be added.</param>
+        <param name="item2">To be added.</param>
+        <param name="item3">To be added.</param>
+        <param name="item4">To be added.</param>
+        <param name="item5">To be added.</param>
+        <param name="item6">To be added.</param>
+        <param name="item7">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt;">
+      <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4,T5,T6,T7,Tuple&lt;T8&gt;&gt; Create&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt; (T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7, T8 item8);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;T1,T2,T3,T4,T5,T6,T7,System.Tuple&lt;T8&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T1" />
+        <TypeParameter Name="T2" />
+        <TypeParameter Name="T3" />
+        <TypeParameter Name="T4" />
+        <TypeParameter Name="T5" />
+        <TypeParameter Name="T6" />
+        <TypeParameter Name="T7" />
+        <TypeParameter Name="T8" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="item1" Type="T1" />
+        <Parameter Name="item2" Type="T2" />
+        <Parameter Name="item3" Type="T3" />
+        <Parameter Name="item4" Type="T4" />
+        <Parameter Name="item5" Type="T5" />
+        <Parameter Name="item6" Type="T6" />
+        <Parameter Name="item7" Type="T7" />
+        <Parameter Name="item8" Type="T8" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T1">To be added.</typeparam>
+        <typeparam name="T2">To be added.</typeparam>
+        <typeparam name="T3">To be added.</typeparam>
+        <typeparam name="T4">To be added.</typeparam>
+        <typeparam name="T5">To be added.</typeparam>
+        <typeparam name="T6">To be added.</typeparam>
+        <typeparam name="T7">To be added.</typeparam>
+        <typeparam name="T8">To be added.</typeparam>
+        <param name="item1">To be added.</param>
+        <param name="item2">To be added.</param>
+        <param name="item3">To be added.</param>
+        <param name="item4">To be added.</param>
+        <param name="item5">To be added.</param>
+        <param name="item6">To be added.</param>
+        <param name="item7">To be added.</param>
+        <param name="item8">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

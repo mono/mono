@@ -1,0 +1,429 @@
+<Type Name="Task&lt;TResult&gt;" FullName="System.Threading.Tasks.Task&lt;TResult&gt;">
+  <TypeSignature Language="C#" Value="public class Task&lt;TResult&gt; : System.Threading.Tasks.Task" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TResult" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Threading.Tasks.Task</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <typeparam name="TResult">To be added.</typeparam>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Task (Func&lt;TResult&gt; function);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="function" Type="System.Func&lt;TResult&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="function">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Task (Func&lt;object,TResult&gt; function, object state);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="function" Type="System.Func&lt;System.Object,TResult&gt;" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="function">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Task (Func&lt;TResult&gt; function, System.Threading.CancellationToken token);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="function" Type="System.Func&lt;TResult&gt;" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="function">To be added.</param>
+        <param name="token">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Task (Func&lt;TResult&gt; function, System.Threading.Tasks.TaskCreationOptions options);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="function" Type="System.Func&lt;TResult&gt;" />
+        <Parameter Name="options" Type="System.Threading.Tasks.TaskCreationOptions" />
+      </Parameters>
+      <Docs>
+        <param name="function">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Task (Func&lt;object,TResult&gt; function, object state, System.Threading.CancellationToken token);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="function" Type="System.Func&lt;System.Object,TResult&gt;" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="function">To be added.</param>
+        <param name="state">To be added.</param>
+        <param name="token">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Task (Func&lt;object,TResult&gt; function, object state, System.Threading.Tasks.TaskCreationOptions options);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="function" Type="System.Func&lt;System.Object,TResult&gt;" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="options" Type="System.Threading.Tasks.TaskCreationOptions" />
+      </Parameters>
+      <Docs>
+        <param name="function">To be added.</param>
+        <param name="state">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Task (Func&lt;TResult&gt; function, System.Threading.CancellationToken token, System.Threading.Tasks.TaskCreationOptions options);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="function" Type="System.Func&lt;TResult&gt;" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="options" Type="System.Threading.Tasks.TaskCreationOptions" />
+      </Parameters>
+      <Docs>
+        <param name="function">To be added.</param>
+        <param name="token">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Task (Func&lt;object,TResult&gt; function, object state, System.Threading.CancellationToken token, System.Threading.Tasks.TaskCreationOptions options);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="function" Type="System.Func&lt;System.Object,TResult&gt;" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="options" Type="System.Threading.Tasks.TaskCreationOptions" />
+      </Parameters>
+      <Docs>
+        <param name="function">To be added.</param>
+        <param name="state">To be added.</param>
+        <param name="token">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ContinueWith (Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt; a);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ContinueWith (Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt; a, System.Threading.CancellationToken token);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="token">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ContinueWith (Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt; a, System.Threading.Tasks.TaskContinuationOptions options);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" />
+        <Parameter Name="options" Type="System.Threading.Tasks.TaskContinuationOptions" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ContinueWith (Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt; a, System.Threading.Tasks.TaskScheduler scheduler);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" />
+        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="scheduler">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ContinueWith (Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt; a, System.Threading.CancellationToken token, System.Threading.Tasks.TaskContinuationOptions options, System.Threading.Tasks.TaskScheduler scheduler);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Action&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="options" Type="System.Threading.Tasks.TaskContinuationOptions" />
+        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="token">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="scheduler">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith&lt;TNewResult&gt;">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;TNewResult&gt; ContinueWith&lt;TNewResult&gt; (Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt; a);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;TNewResult&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TNewResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="a" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TNewResult">To be added.</typeparam>
+        <param name="a">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith&lt;TNewResult&gt;">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;TNewResult&gt; ContinueWith&lt;TNewResult&gt; (Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt; a, System.Threading.CancellationToken token);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;TNewResult&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TNewResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="a" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt;" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TNewResult">To be added.</typeparam>
+        <param name="a">To be added.</param>
+        <param name="token">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith&lt;TNewResult&gt;">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;TNewResult&gt; ContinueWith&lt;TNewResult&gt; (Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt; a, System.Threading.Tasks.TaskContinuationOptions options);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;TNewResult&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TNewResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="a" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt;" />
+        <Parameter Name="options" Type="System.Threading.Tasks.TaskContinuationOptions" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TNewResult">To be added.</typeparam>
+        <param name="a">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith&lt;TNewResult&gt;">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;TNewResult&gt; ContinueWith&lt;TNewResult&gt; (Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt; a, System.Threading.Tasks.TaskScheduler scheduler);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;TNewResult&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TNewResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="a" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt;" />
+        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TNewResult">To be added.</typeparam>
+        <param name="a">To be added.</param>
+        <param name="scheduler">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContinueWith&lt;TNewResult&gt;">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;TNewResult&gt; ContinueWith&lt;TNewResult&gt; (Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt; a, System.Threading.CancellationToken token, System.Threading.Tasks.TaskContinuationOptions options, System.Threading.Tasks.TaskScheduler scheduler);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;TNewResult&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TNewResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="a" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;,TNewResult&gt;" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="options" Type="System.Threading.Tasks.TaskContinuationOptions" />
+        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TNewResult">To be added.</typeparam>
+        <param name="a">To be added.</param>
+        <param name="token">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="scheduler">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Factory">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.TaskFactory&lt;TResult&gt; Factory { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.TaskFactory&lt;TResult&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Result">
+      <MemberSignature Language="C#" Value="public TResult Result { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TResult</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

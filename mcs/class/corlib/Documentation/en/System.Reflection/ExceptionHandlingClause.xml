@@ -1,8 +1,9 @@
 <Type Name="ExceptionHandlingClause" FullName="System.Reflection.ExceptionHandlingClause">
-  <TypeSignature Language="C#" Value="public sealed class ExceptionHandlingClause" />
+  <TypeSignature Language="C#" Value="public class ExceptionHandlingClause" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -19,8 +20,20 @@
     <since version=".NET 2.0" />
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ExceptionHandlingClause ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="CatchType">
-      <MemberSignature Language="C#" Value="public Type CatchType { get; }" />
+      <MemberSignature Language="C#" Value="public virtual Type CatchType { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
@@ -33,10 +46,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="FilterOffset">
-      <MemberSignature Language="C#" Value="public int FilterOffset { get; }" />
+      <MemberSignature Language="C#" Value="public virtual int FilterOffset { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -49,10 +63,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Flags">
-      <MemberSignature Language="C#" Value="public System.Reflection.ExceptionHandlingClauseOptions Flags { get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.ExceptionHandlingClauseOptions Flags { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.ExceptionHandlingClauseOptions</ReturnType>
@@ -65,10 +80,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="HandlerLength">
-      <MemberSignature Language="C#" Value="public int HandlerLength { get; }" />
+      <MemberSignature Language="C#" Value="public virtual int HandlerLength { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -81,10 +97,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="HandlerOffset">
-      <MemberSignature Language="C#" Value="public int HandlerOffset { get; }" />
+      <MemberSignature Language="C#" Value="public virtual int HandlerOffset { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -97,6 +114,7 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
@@ -104,6 +122,7 @@
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -116,7 +135,7 @@
       </Docs>
     </Member>
     <Member MemberName="TryLength">
-      <MemberSignature Language="C#" Value="public int TryLength { get; }" />
+      <MemberSignature Language="C#" Value="public virtual int TryLength { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -129,10 +148,11 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="TryOffset">
-      <MemberSignature Language="C#" Value="public int TryOffset { get; }" />
+      <MemberSignature Language="C#" Value="public virtual int TryOffset { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -145,6 +165,7 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

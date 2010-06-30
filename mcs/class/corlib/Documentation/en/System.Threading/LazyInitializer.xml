@@ -1,0 +1,129 @@
+<Type Name="LazyInitializer" FullName="System.Threading.LazyInitializer">
+  <TypeSignature Language="C#" Value="public static class LazyInitializer" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="EnsureInitialized&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T EnsureInitialized&lt;T&gt; (ref T target) where T : class;" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="target" Type="T&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EnsureInitialized&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T EnsureInitialized&lt;T&gt; (ref T target, Func&lt;T&gt; initFunc) where T : class;" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="target" Type="T&amp;" RefType="ref" />
+        <Parameter Name="initFunc" Type="System.Func&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="target">To be added.</param>
+        <param name="initFunc">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EnsureInitialized&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T EnsureInitialized&lt;T&gt; (ref T target, ref bool initialized, ref object syncRoot);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="target" Type="T&amp;" RefType="ref" />
+        <Parameter Name="initialized" Type="System.Boolean&amp;" RefType="ref" />
+        <Parameter Name="syncRoot" Type="System.Object&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="target">To be added.</param>
+        <param name="initialized">To be added.</param>
+        <param name="syncRoot">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EnsureInitialized&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T EnsureInitialized&lt;T&gt; (ref T target, ref bool initialized, ref object syncRoot, Func&lt;T&gt; initFunc);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="target" Type="T&amp;" RefType="ref" />
+        <Parameter Name="initialized" Type="System.Boolean&amp;" RefType="ref" />
+        <Parameter Name="syncRoot" Type="System.Object&amp;" RefType="ref" />
+        <Parameter Name="initFunc" Type="System.Func&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="target">To be added.</param>
+        <param name="initialized">To be added.</param>
+        <param name="syncRoot">To be added.</param>
+        <param name="initFunc">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

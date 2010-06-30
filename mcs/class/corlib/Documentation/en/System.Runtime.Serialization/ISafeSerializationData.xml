@@ -1,0 +1,32 @@
+<Type Name="ISafeSerializationData" FullName="System.Runtime.Serialization.ISafeSerializationData">
+  <TypeSignature Language="C#" Value="public interface ISafeSerializationData" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CompleteDeserialization">
+      <MemberSignature Language="C#" Value="public void CompleteDeserialization (object deserialized);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="deserialized" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="deserialized">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

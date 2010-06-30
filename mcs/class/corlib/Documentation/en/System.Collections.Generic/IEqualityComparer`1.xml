@@ -1,11 +1,16 @@
 <Type Name="IEqualityComparer&lt;T&gt;" FullName="System.Collections.Generic.IEqualityComparer&lt;T&gt;">
-  <TypeSignature Language="C#" Value="public interface IEqualityComparer&lt;T&gt;" />
+  <TypeSignature Language="C#" Value="public interface IEqualityComparer&lt;in T&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="T" />
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
   </TypeParameters>
   <Interfaces />
   <Docs>
@@ -45,6 +50,7 @@ y.Equals(z) implies x.Equals(z); for any values x, y and z for  which these expr
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
@@ -81,6 +87,7 @@ y.Equals(z) implies x.Equals(z); for any values x, y and z for  which these expr
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>

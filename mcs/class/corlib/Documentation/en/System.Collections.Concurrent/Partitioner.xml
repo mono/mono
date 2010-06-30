@@ -1,0 +1,178 @@
+<Type Name="Partitioner" FullName="System.Collections.Concurrent.Partitioner">
+  <TypeSignature Language="C#" Value="public static class Partitioner" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;int,int&gt;&gt; Create (int fromInclusive, int toExclusive);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.OrderablePartitioner&lt;System.Tuple&lt;System.Int32,System.Int32&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int32" />
+        <Parameter Name="toExclusive" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="fromInclusive">To be added.</param>
+        <param name="toExclusive">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;long,long&gt;&gt; Create (long fromInclusive, long toExclusive);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.OrderablePartitioner&lt;System.Tuple&lt;System.Int64,System.Int64&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int64" />
+        <Parameter Name="toExclusive" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="fromInclusive">To be added.</param>
+        <param name="toExclusive">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;int,int&gt;&gt; Create (int fromInclusive, int toExclusive, int rangeSize);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.OrderablePartitioner&lt;System.Tuple&lt;System.Int32,System.Int32&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int32" />
+        <Parameter Name="toExclusive" Type="System.Int32" />
+        <Parameter Name="rangeSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="fromInclusive">To be added.</param>
+        <param name="toExclusive">To be added.</param>
+        <param name="rangeSize">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;long,long&gt;&gt; Create (long fromInclusive, long toExclusive, long rangeSize);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.OrderablePartitioner&lt;System.Tuple&lt;System.Int64,System.Int64&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int64" />
+        <Parameter Name="toExclusive" Type="System.Int64" />
+        <Parameter Name="rangeSize" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="fromInclusive">To be added.</param>
+        <param name="toExclusive">To be added.</param>
+        <param name="rangeSize">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IList&lt;TSource&gt; source, bool loadBalance);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="System.Collections.Generic.IList&lt;TSource&gt;" />
+        <Parameter Name="loadBalance" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="loadBalance">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (TSource[] source, bool loadBalance);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="source" Type="TSource[]" />
+        <Parameter Name="loadBalance" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="source">To be added.</param>
+        <param name="loadBalance">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
