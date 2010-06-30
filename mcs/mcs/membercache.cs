@@ -1,4 +1,4 @@
-n//
+//
 // membercache.cs: A container for all member lookups
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
