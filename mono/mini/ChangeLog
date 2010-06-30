@@ -1,3 +1,7 @@
+2010-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_cleanup): Avoid calling mono_runtime_shutdown () if cross
+	compiling.
 
 Wed Jun 30 12:10:57 CEST 2010 Paolo Molaro <lupus@ximian.com>
 
