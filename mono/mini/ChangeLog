@@ -1,3 +1,8 @@
+
+Wed Jun 30 12:02:39 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mini-llvm.c: remove direct access to mono_defaults.
+
 2010-06-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_get_vcall_slot): This is no longer used on ARM, so make it
