@@ -1948,8 +1948,7 @@ namespace Mono.CSharp {
 					throw new NotImplementedException ();
 
 				MethodGroupExpr method_expr = MethodGroupExpr.CreatePredefined (base_dtor, base_type, Location);
-				method_expr.QueriedBaseType = base_type;
-				method_expr.InstanceExpression = new CompilerGeneratedThis (Parent.Definition, Location);
+				method_expr.InstanceExpression = new BaseThis (base_type, Location);
 
 				ToplevelBlock new_block = new ToplevelBlock (Compiler, Block.StartLocation);
 				new_block.EndLocation = Block.EndLocation;

@@ -420,12 +420,7 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		public virtual object Visit (BaseAccess baseAccessExpression)
-		{
-			return null;
-		}
-
-		public virtual object Visit (BaseIndexerAccess baseIndexerAccess)
+		public virtual object Visit (BaseThis baseAccessExpression)
 		{
 			return null;
 		}

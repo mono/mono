@@ -4918,7 +4918,7 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Brfalse, skip);
 			}
 
-			Invocation.EmitCall (ec, false, var, TypeManager.void_dispose_void, null, loc);
+			Invocation.EmitCall (ec, var, TypeManager.void_dispose_void, null, loc);
 
 			if (emit_null_check)
 				ec.MarkLabel (skip);

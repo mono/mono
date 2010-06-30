@@ -4920,9 +4920,6 @@ namespace Mono.CSharp {
 				instance,
 				mg.CreateExpressionTree (ec));
 
-			if (mg.IsBase)
-				MemberExpr.Error_BaseAccessInExpressionTree (ec, loc);
-
 			return CreateExpressionFactoryCall (ec, "Call", args);
 		}
 
@@ -5105,11 +5102,10 @@ namespace Mono.CSharp {
 		///
 		///   Arguments is the list of arguments to pass to the method or constructor.
 		/// </remarks>
-		public static void EmitCall (EmitContext ec, bool is_base,
-					     Expression instance_expr,
+		public static void EmitCall (EmitContext ec, Expression instance_expr,
 					     MethodSpec method, Arguments Arguments, Location loc)
 		{
-			EmitCall (ec, is_base, instance_expr, method, Arguments, loc, false, false);
+			EmitCall (ec, instance_expr, method, Arguments, loc, false, false);
 		}
 		
 		// `dup_args' leaves an extra copy of the arguments on the stack
@@ -5118,8 +5114,7 @@ namespace Mono.CSharp {
 		// and then another with `omit_args' set to true, and the two calls
 		// would have the same set of arguments. However, each argument would
 		// only have been evaluated once.
-		public static void EmitCall (EmitContext ec, bool is_base,
-					     Expression instance_expr,
+		public static void EmitCall (EmitContext ec, Expression instance_expr,
 					     MethodSpec method, Arguments Arguments, Location loc,
 		                             bool dup_args, bool omit_args)
 		{
@@ -5140,7 +5135,7 @@ namespace Mono.CSharp {
 			} else {
 				iexpr_type = instance_expr.Type;
 
-				if (is_base || decl_type.IsStruct || decl_type.IsEnum || (instance_expr is This && !method.IsVirtual)) {
+				if (decl_type.IsStruct || decl_type.IsEnum || (instance_expr is This && !method.IsVirtual) || (instance_expr is BaseThis)) {
 					call_op = OpCodes.Call;
 				} else {
 					call_op = OpCodes.Callvirt;
@@ -7956,7 +7951,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Expressions that represent an indexer call.
 	/// </summary>
-	public class IndexerAccess : Expression, IDynamicAssign
+	class IndexerAccess : Expression, IDynamicAssign
 	{
 		class IndexerMethodGroupExpr : MethodGroupExpr
 		{
@@ -8020,28 +8015,19 @@ namespace Mono.CSharp {
 		// Points to our "data" repository
 		//
 		IndexerSpec spec;
-		bool is_base_indexer;
 		bool prepared;
 		LocalTemporary temp;
 		LocalTemporary prepared_value;
 		Expression set_expr;
 
 		protected TypeSpec indexer_type;
-		protected TypeSpec current_type;
 		protected Expression instance_expr;
 		protected Arguments arguments;
 		
 		public IndexerAccess (ElementAccess ea, Location loc)
-			: this (ea.Expr, false, loc)
 		{
+			this.instance_expr = ea.Expr;
 			this.arguments = ea.Arguments;
-		}
-
-		protected IndexerAccess (Expression instance_expr, bool is_base_indexer,
-					 Location loc)
-		{
-			this.instance_expr = instance_expr;
-			this.is_base_indexer = is_base_indexer;
 			this.loc = loc;
 		}
 
@@ -8062,12 +8048,6 @@ namespace Mono.CSharp {
 		static IEnumerable<IndexerSpec> GetIndexersForType (TypeSpec lookup_type)
 		{
 			return MemberCache.FindIndexers (lookup_type, BindingRestriction.AccessibleOnly | BindingRestriction.DefaultMemberLookup);
-		}
-
-		protected virtual void CommonResolve (ResolveContext ec)
-		{
-			indexer_type = instance_expr.Type;
-			current_type = ec.CurrentType;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -8092,10 +8072,9 @@ namespace Mono.CSharp {
 
 		Expression ResolveAccessor (ResolveContext ec, Expression right_side)
 		{
-			CommonResolve (ec);
+			indexer_type = instance_expr.Type;
 
 			bool dynamic;
-
 			arguments.Resolve (ec, out dynamic);
 
 			if (indexer_type == InternalType.Dynamic) {
@@ -8112,9 +8091,6 @@ namespace Mono.CSharp {
 					InstanceExpression = instance_expr
 				};
 
-				if (is_base_indexer)
-					mg.QueriedBaseType = current_type;
-
 				mg = mg.OverloadResolve (ec, ref arguments, false, loc) as IndexerMethodGroupExpr;
 				if (mg == null)
 					return null;
@@ -8125,7 +8101,7 @@ namespace Mono.CSharp {
 
 			if (dynamic) {
 				Arguments args = new Arguments (arguments.Count + 1);
-				if (is_base_indexer) {
+				if (instance_expr is BaseThis) {
 					ec.Report.Error (1972, loc, "The indexer base access cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access");
 				} else {
 					args.Add (new Argument (instance_expr));
@@ -8168,7 +8144,7 @@ namespace Mono.CSharp {
 			//
 			// Only base will allow this invocation to happen.
 			//
-			if (spec.IsAbstract && this is BaseIndexerAccess) {
+			if (spec.IsAbstract && instance_expr is BaseThis) {
 				Error_CannotCallAbstractBase (ec, spec.GetSignatureForError ());
 			}
 
@@ -8187,6 +8163,7 @@ namespace Mono.CSharp {
 			instance_expr.CheckMarshalByRefAccess (ec);
 
 			if (must_do_cs1540_check && (instance_expr != EmptyExpression.Null) &&
+				!(instance_expr is BaseThis) &&
 			    !TypeManager.IsInstantiationOfSameGenericType (instance_expr.Type, ec.CurrentType) &&
 			    !TypeManager.IsNestedChildOf (ec.CurrentType, instance_expr.Type) &&
 			    !TypeManager.IsSubclassOf (instance_expr.Type, ec.CurrentType)) {
@@ -8209,7 +8186,7 @@ namespace Mono.CSharp {
 			if (prepared) {
 				prepared_value.Emit (ec);
 			} else {
-				Invocation.EmitCall (ec, is_base_indexer, instance_expr, spec.Get,
+				Invocation.EmitCall (ec, instance_expr, spec.Get,
 					arguments, loc, false, false);
 			}
 
@@ -8231,7 +8208,7 @@ namespace Mono.CSharp {
 			Expression value = set_expr;
 
 			if (prepared) {
-				Invocation.EmitCall (ec, is_base_indexer, instance_expr, spec.Get,
+				Invocation.EmitCall (ec, instance_expr, spec.Get,
 					arguments, loc, true, false);
 
 				prepared_value = new LocalTemporary (type);
@@ -8254,7 +8231,7 @@ namespace Mono.CSharp {
 			if (!prepared)
 				arguments.Add (new Argument (value));
 
-			Invocation.EmitCall (ec, is_base_indexer, instance_expr, spec.Set, arguments, loc, false, prepared);
+			Invocation.EmitCall (ec, instance_expr, spec.Set, arguments, loc, false, prepared);
 			
 			if (temp != null) {
 				temp.Emit (ec);
@@ -8297,162 +8274,59 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	///   The base operator for method names
-	/// </summary>
-	public class BaseAccess : Expression {
-		readonly string identifier;
-		TypeArguments args;
-
-		public BaseAccess (string member, Location l)
+	//
+	// A base access expression
+	//
+	public class BaseThis : Expression
+	{
+		public BaseThis (Location loc)
 		{
-			this.identifier = member;
-			loc = l;
+			this.loc = loc;
 		}
 
-		public BaseAccess (string member, TypeArguments args, Location l)
-			: this (member, l)
+		public BaseThis (TypeSpec type, Location loc)
 		{
-			this.args = args;
+			this.type = type;
+			eclass = ExprClass.Variable;
+			this.loc = loc;
 		}
-
-		#region Properties
-
-		public string Identifier {
-			get {
-				return identifier;
-			}
-		}
-
-		public TypeArguments TypeArguments {
-			get {
-				return args;
-			}
-		}
-		#endregion
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			throw new NotSupportedException ("ET");
+			ec.Report.Error (831, loc, "An expression tree may not contain a base access");
+
+			Arguments args = new Arguments (1);
+			args.Add (new Argument (this));
+			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
-			Expression c = CommonResolve (ec);
+			type = rc.CurrentType.BaseType;
 
-			if (c == null)
-				return null;
-
-			//
-			// MethodGroups use this opportunity to flag an error on lacking ()
-			//
-			if (!(c is MethodGroupExpr))
-				return c.Resolve (ec);
-			return c;
-		}
-
-		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
-		{
-			Expression c = CommonResolve (ec);
-
-			if (c == null)
-				return null;
-
-			//
-			// MethodGroups use this opportunity to flag an error on lacking ()
-			//
-			if (! (c is MethodGroupExpr))
-				return c.DoResolveLValue (ec, right_side);
-
-			return c;
-		}
-
-		Expression CommonResolve (ResolveContext ec)
-		{
-			Expression member_lookup;
-			TypeSpec current_type = ec.CurrentType;
-			TypeSpec base_type = current_type.BaseType;
-
-			if (!This.IsThisAvailable (ec, false)) {
-				if (ec.IsStatic) {
-					ec.Report.Error (1511, loc, "Keyword `base' is not available in a static method");
+			if (!This.IsThisAvailable (rc, false)) {
+				if (rc.IsStatic) {
+					rc.Report.Error (1511, loc, "Keyword `base' is not available in a static method");
 				} else {
-					ec.Report.Error (1512, loc, "Keyword `base' is not available in the current context");
+					rc.Report.Error (1512, loc, "Keyword `base' is not available in the current context");
 				}
-				return null;
 			}
 
-			var arity = args == null ? -1 : args.Count;
-			member_lookup = MemberLookup (ec.Compiler, ec.CurrentType, null, base_type, identifier, arity,
-							  MemberKind.All, BindingRestriction.AccessibleOnly | BindingRestriction.DefaultMemberLookup, loc);
-			if (member_lookup == null) {
-				Error_MemberLookupFailed (ec, ec.CurrentType, base_type, base_type, identifier, arity,
-					null, MemberKind.All, BindingRestriction.AccessibleOnly);
-				return null;
-			}
-
-			MemberExpr me = member_lookup as MemberExpr;
-			if (me == null){
-				if (member_lookup is TypeExpression){
-					ec.Report.Error (582, loc, "{0}: Can not reference a type through an expression, try `{1}' instead",
-							 identifier, member_lookup.GetSignatureForError ());
-				} else {
-					ec.Report.Error (582, loc, "{0}: Can not reference a {1} through an expression", 
-							 identifier, member_lookup.ExprClassName);
-				}
-				
-				return null;
-			}
-			
-			me.QueriedBaseType = base_type;
-
-			if (args != null) {
-				args.Resolve (ec);
-				me.SetTypeArguments (ec, args);
-			}
-
-			return me;
+			eclass = ExprClass.Variable;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Should never be called"); 
-		}
+			ec.Emit (OpCodes.Ldarg_0);
 
-		protected override void CloneTo (CloneContext clonectx, Expression t)
-		{
-			BaseAccess target = (BaseAccess) t;
-
-			if (args != null)
-				target.args = args.Clone ();
+			if (ec.CurrentType.IsStruct) {
+				ec.Emit (OpCodes.Ldobj, ec.CurrentType);
+				ec.Emit (OpCodes.Box, ec.CurrentType);
+			}
 		}
 	}
 
-	/// <summary>
-	///   The base indexer operator
-	/// </summary>
-	public class BaseIndexerAccess : IndexerAccess {
-		public BaseIndexerAccess (Arguments args, Location loc)
-			: base (null, true, loc)
-		{
-			this.arguments = args;
-		}
-
-		protected override void CommonResolve (ResolveContext ec)
-		{
-			instance_expr = ec.GetThis (loc);
-
-			current_type = ec.CurrentType.BaseType;
-			indexer_type = current_type;
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			MemberExpr.Error_BaseAccessInExpressionTree (ec, loc);
-			return base.CreateExpressionTree (ec);
-		}
-	}
-	
 	/// <summary>
 	///   This class exists solely to pass the Type around and to be a dummy
 	///   that can be passed to the conversion functions (this is used by

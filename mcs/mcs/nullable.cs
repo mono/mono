@@ -136,15 +136,15 @@ namespace Mono.CSharp.Nullable
 		{
 			Store (ec);
 			if (useDefaultValue)
-				Invocation.EmitCall (ec, false, this, NullableInfo.GetGetValueOrDefault (expr.Type), null, loc);
+				Invocation.EmitCall (ec, this, NullableInfo.GetGetValueOrDefault (expr.Type), null, loc);
 			else
-				Invocation.EmitCall (ec, false, this, NullableInfo.GetValue (expr.Type), null, loc);
+				Invocation.EmitCall (ec, this, NullableInfo.GetValue (expr.Type), null, loc);
 		}
 
 		public void EmitCheck (EmitContext ec)
 		{
 			Store (ec);
-			Invocation.EmitCall (ec, false, this, NullableInfo.GetHasValue (expr.Type), null, loc);
+			Invocation.EmitCall (ec, this, NullableInfo.GetHasValue (expr.Type), null, loc);
 		}
 
 		public override bool Equals (object obj)

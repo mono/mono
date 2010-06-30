@@ -2673,13 +2673,8 @@ namespace Mono.CSharp {
 		// When base.member is used
 		//
 		public bool IsBase {
-			get { return QueriedBaseType != null; }
+			get { return InstanceExpression is BaseThis; }
 		}
-
-		//
-		// A type used for base.member lookup or null
-		//
-		public TypeSpec QueriedBaseType { get; set; }
 
 		/// <summary>
 		///   Whether this is an instance member.
@@ -2702,11 +2697,6 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		public static void Error_BaseAccessInExpressionTree (ResolveContext ec, Location loc)
-		{
-			ec.Report.Error (831, loc, "An expression tree may not contain a base access");
-		}
-
 		//
 		// Converts best base candidate for virtual method starting from QueriedBaseType
 		//
@@ -2715,7 +2705,7 @@ namespace Mono.CSharp {
 			//
 			// Only when base.member is used
 			//
-			if (QueriedBaseType == null || method.DeclaringType == QueriedBaseType)
+			if (!IsBase || method.DeclaringType == InstanceExpression.Type)
 				return method;
 
 			//
@@ -2723,7 +2713,7 @@ namespace Mono.CSharp {
 			// means for base.member access we have to find the closest match after we found best candidate
 			//
 			if ((method.Modifiers & Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.STATIC) != Modifiers.STATIC) {
-				var base_override = MemberCache.FindMember (QueriedBaseType, new MemberFilter (method), BindingRestriction.InstanceOnly) as MethodSpec;
+				var base_override = MemberCache.FindMember (InstanceExpression.Type, new MemberFilter (method), BindingRestriction.InstanceOnly) as MethodSpec;
 				if (base_override != null && base_override.DeclaringType != method.DeclaringType) {
 					if (base_override.IsGeneric)
 						return base_override.MakeGenericMethod (method.TypeArguments);
@@ -3308,7 +3298,7 @@ namespace Mono.CSharp {
 		
 		public void EmitCall (EmitContext ec, Arguments arguments)
 		{
-			Invocation.EmitCall (ec, IsBase, InstanceExpression, best_candidate, arguments, loc);			
+			Invocation.EmitCall (ec, InstanceExpression, best_candidate, arguments, loc);			
 		}
 
 		void Error_AmbiguousCall (ResolveContext ec, MethodSpec ambiguous)
@@ -3898,8 +3888,7 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			if (IsBase)
-				best_candidate = CandidateToBaseOverride (best_candidate);
+			best_candidate = CandidateToBaseOverride (best_candidate);
 
 			//
 			// And now check if the arguments are all
@@ -4733,11 +4722,6 @@ namespace Mono.CSharp {
 				return CreateExpressionFactoryCall (ec, "ArrayLength", args);
 			}
 
-			if (IsBase) {
-				Error_BaseAccessInExpressionTree (ec, loc);
-				return null;
-			}
-
 			args = new Arguments (2);
 			if (InstanceExpression == null)
 				args.Add (new Argument (new NullLiteral (loc)));
@@ -4788,6 +4772,7 @@ namespace Mono.CSharp {
 			InstanceExpression.CheckMarshalByRefAccess (ec);
 
 			if (must_do_cs1540_check && (InstanceExpression != EmptyExpression.Null) &&
+				!(InstanceExpression is BaseThis) &&
 			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.CurrentType) &&
 			    !TypeManager.IsNestedChildOf (ec.CurrentType, InstanceExpression.Type) &&
 			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.CurrentType)) {
@@ -4968,7 +4953,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			Invocation.EmitCall (ec, IsBase, InstanceExpression, getter, null, loc, prepared, false);
+			Invocation.EmitCall (ec, InstanceExpression, getter, null, loc, prepared, false);
 			
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
@@ -5007,7 +4992,7 @@ namespace Mono.CSharp {
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (my_source));
 			
-			Invocation.EmitCall (ec, IsBase, InstanceExpression, setter, args, loc, false, prepared);
+			Invocation.EmitCall (ec, InstanceExpression, setter, args, loc, false, prepared);
 			
 			if (temp != null) {
 				temp.Emit (ec);
@@ -5242,9 +5227,7 @@ namespace Mono.CSharp {
 		{
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (source));
-			Invocation.EmitCall (ec, IsBase, InstanceExpression,
-				is_add ? spec.AccessorAdd : spec.AccessorRemove,
-				args, loc);
+			Invocation.EmitCall (ec, InstanceExpression, is_add ? spec.AccessorAdd : spec.AccessorRemove, args, loc);
 		}
 	}
 

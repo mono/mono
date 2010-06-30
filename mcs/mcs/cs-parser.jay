@@ -3148,6 +3148,12 @@ member_access
 		$$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4, lt.Location);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| BASE DOT IDENTIFIER opt_type_argument_list
+	  {
+		var lt = (Tokenizer.LocatedToken) $3;
+		$$ = new MemberAccess (new BaseThis (GetLocation ($1)), lt.Value, (TypeArguments) $4, lt.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
 	| qualified_alias_member IDENTIFIER opt_type_argument_list
 	  {
 		var lt1 = (Tokenizer.LocatedToken) $1;
@@ -3416,21 +3422,15 @@ this_access
 	;
 
 base_access
-	: BASE DOT IDENTIFIER opt_type_argument_list
+	: BASE OPEN_BRACKET_EXPR expression_list_arguments CLOSE_BRACKET
 	  {
-		var lt = (Tokenizer.LocatedToken) $3;
-		$$ = new BaseAccess (lt.Value, (TypeArguments) $4, lt.Location);
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($2));
-	  }
-	| BASE OPEN_BRACKET_EXPR expression_list_arguments CLOSE_BRACKET
-	  {
-		$$ = new BaseIndexerAccess ((Arguments) $3, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+	  	$$ = new ElementAccess (new BaseThis (GetLocation ($1)), (Arguments) $3, GetLocation ($2));
+		lbag.AddLocation ($$, GetLocation ($4));
 	  }
 	| BASE OPEN_BRACKET error
 	  {
 	  	Error_SyntaxError (yyToken);
-		$$ = new BaseAccess (null, GetLocation ($1));
+		$$ = new ElementAccess (null, null, GetLocation ($2));
 	  }
 	;
 
@@ -3572,12 +3572,6 @@ anonymous_type_parameter
 	  	$$ = new AnonymousTypeParameter (new SimpleName (lt.Value, lt.Location),
 	  		lt.Value, lt.Location);
 	  }
-	| BASE DOT IDENTIFIER opt_type_argument_list
-	  {
-		var lt = (Tokenizer.LocatedToken) $3;
-		BaseAccess ba = new BaseAccess (lt.Value, (TypeArguments) $4, lt.Location);
-	  	$$ = new AnonymousTypeParameter (ba, lt.Value, lt.Location);
-	  }	  
 	| member_access
 	  {
 	  	MemberAccess ma = (MemberAccess) $1;
