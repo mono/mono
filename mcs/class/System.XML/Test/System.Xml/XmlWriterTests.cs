@@ -353,7 +353,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Create_XmlWriter2 ()
 		{
 			MemoryStream ms = new MemoryStream ();
@@ -368,10 +367,12 @@ namespace MonoTests.System.Xml
 			ms = new MemoryStream ();
 			settings = new XmlWriterSettings ();
 			settings.CloseOutput = true;
+			settings.OmitXmlDeclaration = true;
 			xw = XmlWriter.Create (ms, settings);
 			writer = XmlWriter.Create (xw, new XmlWriterSettings ());
 			Assert.IsNotNull (writer.Settings, "#B1");
 			Assert.IsTrue (writer.Settings.CloseOutput, "#B2");
+			Assert.IsTrue (writer.Settings.OmitXmlDeclaration, "#B3");
 			writer.Close ();
 			Assert.IsFalse (ms.CanWrite, "#B3");
 		}
@@ -575,23 +576,23 @@ namespace MonoTests.System.Xml
 			AssertType.AreEqual ("<?xml version='1.0' encoding='utf-16'?><foo></foo>".Replace ('\'', '"'), sw.ToString ());
 		}
 
-		//          |       |        |returns the same reader
+		//          |       |      |returns the same reader
 		// source   |wrapper|result| |checks state (and err)
 		// overrides|setting|      | | |test name
 		// ---------+----------------------------
-		//      -   |   -   | Doc  | |x|0:CreateNOCL
+		//      -   | -(Doc)| Doc  | |x|0:CreateNOCL
 		//          | Auto  | Doc  | |x|1:CreateNOCLSettingsCLAuto
 		//          | Doc   | Doc  | |x|2:CreateNOCLSettingsCLDoc
 		//          | Frag  | Doc  | |x|3:CreateNOCLSettingsCLFrag
-		// Auto     |   -   | Doc  | | |4:CreateCLAuto
+		// Auto     | -(Doc)| Doc  | | |4:CreateCLAuto
 		//          | Auto  | Auto |=|x|5:CreateCLAutoSettingsCLAuto
 		//          | Doc   | Doc  | | |6:CreateCLAutoSettingsCLDoc
 		//          | Frag  | Frag | | |7:CreateCLAutoSettingsCLFrag
-		// Document |   -   | Doc  |=|x|8:CreateCLDoc
+		// Document | -(Doc)| Doc  |=|x|8:CreateCLDoc
 		//          | Auto  | Doc  |=|x|9:CreateCLDocSettingsCLAuto
 		//          | Doc   | Doc  |=|x|A:CreateCLDocSettingsCLDoc
 		//          | Frag  | Frag | | |B:CreateCLDocSettingsCLFrag
-		// Fragment |   -   | Doc  | | |C:CreateCLFrag
+		// Fragment | -(Doc)| Doc  | | |C:CreateCLFrag
 		//          | Auto  | Frag |=|x|D:CreateCLFragSettingsCLAuto
 		//          | Doc   | Doc  | | |E:CreateCLFragSettingsCLDoc
 		//          | Frag  | Frag |=|x|F:CreateCLFragSettingsCLFrag
@@ -644,6 +645,7 @@ namespace MonoTests.System.Xml
 		public void CreateNOCL ()
 		{
 			InvalidWriteState cl = new InvalidWriteState ();
+			Assert.IsNull (cl.Settings, "#0");
 			XmlWriter xw = XmlWriter.Create (cl);
 			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			Assert.AreNotEqual (xw, cl, "#2");
@@ -652,7 +654,6 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void CreateNOCLSettingsCLAuto ()
 		{
 			InvalidWriteState cl = new InvalidWriteState ();
@@ -675,7 +676,6 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void CreateNOCLSettingsCLFrag ()
 		{
 			InvalidWriteState cl = new InvalidWriteState ();
@@ -731,7 +731,6 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void CreateCLDocSettingsCLDoc ()
 		{
 			ConformanceLevelDocument cl = new ConformanceLevelDocument ();

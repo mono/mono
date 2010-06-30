@@ -83,6 +83,7 @@ System.Xml/DTDAutomata.cs
 System.Xml/DTDObjectModel.cs
 System.Xml/DTDReader.cs
 System.Xml/DTDValidatingReader2.cs
+System.Xml/DefaultXmlWriter.cs
 System.Xml/EntityResolvingXmlReader.cs
 System.Xml/EntityHandling.cs
 System.Xml/Formatting.cs

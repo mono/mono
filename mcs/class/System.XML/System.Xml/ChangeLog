@@ -1,3 +1,11 @@
+2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDefaultWriter.cs : new source (which I once wrote for relaxng
+	  and corcompare).
+	* XmlWriter.cs : in some cases XmlWriter.Create() returns a new
+	  wrapping writer instance.
+	  If there was no Settings specified, return null.
+
 2010-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs : do not try to parse xml:base="".

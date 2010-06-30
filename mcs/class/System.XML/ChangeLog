@@ -1,3 +1,9 @@
+2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources,
+	  moonlight_raw_System.Xml.dll.sources,
+	  monotouch_System.Xml.dll.sources : add DefaultXmlWriter.cs.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: rename the net_2_1 profile to moonlight.

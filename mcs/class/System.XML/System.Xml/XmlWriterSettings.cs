@@ -61,6 +61,15 @@ namespace System.Xml
 			return (XmlWriterSettings) MemberwiseClone ();
 		}
 
+		// This might better be rewrite to "examine two settings and return the existing one or new one if required".
+		internal void MergeFrom (XmlWriterSettings other)
+		{
+			CloseOutput |= other.CloseOutput;
+			OmitXmlDeclaration |= other.OmitXmlDeclaration;
+			if (ConformanceLevel == ConformanceLevel.Auto)
+				ConformanceLevel = other.ConformanceLevel;
+		}
+
 		public void Reset ()
 		{
 			checkCharacters = true;
