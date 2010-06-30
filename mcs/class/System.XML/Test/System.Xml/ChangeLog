@@ -1,5 +1,9 @@
 2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlWriterTests.cs : more notes and assertions.
+
+2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlWriterTests.cs : more notes and tests.
 
 2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
