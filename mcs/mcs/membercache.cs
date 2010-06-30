@@ -1,4 +1,4 @@
-//
+n//
 // membercache.cs: A container for all member lookups
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
@@ -204,8 +204,8 @@ namespace Mono.CSharp {
 	{
 		enum StateFlags
 		{
-			HasNoImplicitOperator = 1,
-			HasNoExplicitOperator = 1 << 1
+			HasConversionOperator = 1 << 1,
+			HasUserOperator = 1 << 2
 		}
 
 		readonly Dictionary<string, IList<MemberSpec>> member_hash;
@@ -230,6 +230,7 @@ namespace Mono.CSharp {
 		public MemberCache (MemberCache cache)
 			: this (cache.member_hash.Count)
 		{
+			this.state = cache.state;
 		}
 
 		//
@@ -295,6 +296,21 @@ namespace Mono.CSharp {
 
 		void AddMember (string name, MemberSpec member)
 		{
+			if (member.Kind == MemberKind.Operator) {
+				var dt = member.DeclaringType;
+				if (dt == TypeManager.string_type || dt == TypeManager.delegate_type || dt == TypeManager.multicast_delegate_type) {
+					// Some core types have user operators but they cannot be used as normal
+					// user operators as they are predefined and therefore having different
+					// rules (e.g. binary operators) by not setting the flag we hide them for
+					// user conversions
+					// TODO: Should I do this for all core types ?
+				} else if (name == Operator.GetMetadataName (Operator.OpType.Implicit) || name == Operator.GetMetadataName (Operator.OpType.Explicit)) {
+					state |= StateFlags.HasConversionOperator;
+				} else {
+					state |= StateFlags.HasUserOperator;
+				}
+			}
+
 			IList<MemberSpec> list;
 			if (!member_hash.TryGetValue (name, out list)) {
 				member_hash.Add (name, new MemberSpec[] { member });
@@ -891,36 +907,56 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Returns all operators declared on container and its base types
+		// Returns all operators declared on container and its base types (until declaredOnly is used)
 		//
-		public static MethodSpec[] GetUserOperator (TypeSpec container, Operator.OpType op, bool declaredOnly)
+		public static IList<MemberSpec> GetUserOperator (TypeSpec container, Operator.OpType op, bool declaredOnly)
 		{
-			MethodSpec[] found = null;
+			IList<MemberSpec> found = null;
 
 			IList<MemberSpec> applicable;
 			do {
 				var mc = container.MemberCache;
-				if (op == Operator.OpType.Implicit && (mc.state & StateFlags.HasNoImplicitOperator) == 0 ||
-					op == Operator.OpType.Explicit && (mc.state & StateFlags.HasNoExplicitOperator) == 0) {
+
+				if (((op == Operator.OpType.Implicit || op == Operator.OpType.Explicit) && (mc.state & StateFlags.HasConversionOperator) != 0) ||
+					 (mc.state & StateFlags.HasUserOperator) != 0) {
 
 					if (mc.member_hash.TryGetValue (Operator.GetMetadataName (op), out applicable)) {
-						int start_index;
-						if (found == null) {
-							start_index = 0;
-							found = new MethodSpec[applicable.Count];
-						} else {
-							start_index = found.Length;
-							Array.Resize (ref found, found.Length + applicable.Count);
+						int match_count = 0;
+						for (int i = 0; i < applicable.Count; ++i) {
+							if (applicable[i].Kind == MemberKind.Operator) {
+								++match_count;
+								continue;
+							}
+
+							// Handles very rare case where a method exists with same name as operator (op_xxxx)
+							if (found == null) {
+								found = new List<MemberSpec> ();
+								found.Add (applicable [i]);
+							} else {
+								var prev = found as List<MemberSpec>;
+								if (prev == null) {
+									prev = new List<MemberSpec> (found.Count + 1);
+									prev.AddRange (found);
+								}
+
+								prev.Add (applicable[i]);
+							}
 						}
 
-						for (int i = 0; i < applicable.Count; ++i) {
-							if (applicable[i].Kind == MemberKind.Operator)
-								found[i + start_index] = (MethodSpec) applicable[i];
+						if (match_count > 0 && match_count == applicable.Count) {
+							if (found == null) {
+								found = applicable;
+							} else {
+								var merged = found as List<MemberSpec>;
+								if (merged == null) {
+									merged = new List<MemberSpec> (found.Count + applicable.Count);
+									merged.AddRange (found);
+									found = merged;
+								}
+
+								merged.AddRange (applicable);
+							}
 						}
-					} else if (op == Operator.OpType.Implicit) {
-						mc.state |= StateFlags.HasNoImplicitOperator;
-					} else if (op == Operator.OpType.Explicit) {
-						mc.state |= StateFlags.HasNoExplicitOperator;
 					}
 				}
 
@@ -929,7 +965,7 @@ namespace Mono.CSharp {
 					break;
 
 				container = container.BaseType;
-			} while (container != null && container.BaseType != null);
+			} while (container != null);
 
 			return found;
 		}

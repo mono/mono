@@ -687,10 +687,11 @@ namespace Mono.CSharp {
 				throw new InternalErrorException (Oper.ToString ());
 			}
 
-			string op_name = CSharp.Operator.GetMetadataName (op_type);
-			MethodGroupExpr user_op = MethodLookup (ec.Compiler, ec.CurrentType, expr.Type, MemberKind.Operator, op_name, 0, expr.Location);
-			if (user_op == null)
+			var methods = MemberCache.GetUserOperator (expr.Type, op_type, false);
+			if (methods == null)
 				return null;
+
+			var user_op = new MethodGroupExpr (methods, expr.Type, loc);
 
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (expr));
@@ -1132,18 +1133,14 @@ namespace Mono.CSharp {
 			//
 			// Step 2: Perform Operator Overload location
 			//
-			string op_name;
+			var user_op = IsDecrement ? Operator.OpType.Decrement : Operator.OpType.Increment;
+			var methods = MemberCache.GetUserOperator (type, user_op, false);
 
-			if (IsDecrement)
-				op_name = Operator.GetMetadataName (Operator.OpType.Decrement);
-			else
-				op_name = Operator.GetMetadataName (Operator.OpType.Increment);
-
-			var mg = MethodLookup (ec.Compiler, ec.CurrentType, type, MemberKind.Operator, op_name, 0, loc);
-
-			if (mg != null) {
+			if (methods != null) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
+
+				var mg = new MethodGroupExpr (methods, type, loc);
 				mg = mg.OverloadResolve (ec, ref args, false, loc);
 				if (mg == null)
 					return null;
@@ -2104,47 +2101,46 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static string GetOperatorMetadataName (Operator op)
+		static CSharp.Operator.OpType ConvertBinaryToUserOperator (Operator op)
 		{
-			CSharp.Operator.OpType op_type;
 			switch (op) {
 			case Operator.Addition:
-				op_type = CSharp.Operator.OpType.Addition; break;
+				return CSharp.Operator.OpType.Addition;
 			case Operator.BitwiseAnd:
-				op_type = CSharp.Operator.OpType.BitwiseAnd; break;
+			case Operator.LogicalAnd:
+				return CSharp.Operator.OpType.BitwiseAnd;
 			case Operator.BitwiseOr:
-				op_type = CSharp.Operator.OpType.BitwiseOr; break;
+			case Operator.LogicalOr:
+				return CSharp.Operator.OpType.BitwiseOr;
 			case Operator.Division:
-				op_type = CSharp.Operator.OpType.Division; break;
+				return CSharp.Operator.OpType.Division;
 			case Operator.Equality:
-				op_type = CSharp.Operator.OpType.Equality; break;
+				return CSharp.Operator.OpType.Equality;
 			case Operator.ExclusiveOr:
-				op_type = CSharp.Operator.OpType.ExclusiveOr; break;
+				return CSharp.Operator.OpType.ExclusiveOr;
 			case Operator.GreaterThan:
-				op_type = CSharp.Operator.OpType.GreaterThan; break;
+				return CSharp.Operator.OpType.GreaterThan;
 			case Operator.GreaterThanOrEqual:
-				op_type = CSharp.Operator.OpType.GreaterThanOrEqual; break;
+				return CSharp.Operator.OpType.GreaterThanOrEqual;
 			case Operator.Inequality:
-				op_type = CSharp.Operator.OpType.Inequality; break;
+				return CSharp.Operator.OpType.Inequality;
 			case Operator.LeftShift:
-				op_type = CSharp.Operator.OpType.LeftShift; break;
+				return CSharp.Operator.OpType.LeftShift;
 			case Operator.LessThan:
-				op_type = CSharp.Operator.OpType.LessThan; break;
+				return CSharp.Operator.OpType.LessThan;
 			case Operator.LessThanOrEqual:
-				op_type = CSharp.Operator.OpType.LessThanOrEqual; break;
+				return CSharp.Operator.OpType.LessThanOrEqual;
 			case Operator.Modulus:
-				op_type = CSharp.Operator.OpType.Modulus; break;
+				return CSharp.Operator.OpType.Modulus;
 			case Operator.Multiply:
-				op_type = CSharp.Operator.OpType.Multiply; break;
+				return CSharp.Operator.OpType.Multiply;
 			case Operator.RightShift:
-				op_type = CSharp.Operator.OpType.RightShift; break;
+				return CSharp.Operator.OpType.RightShift;
 			case Operator.Subtraction:
-				op_type = CSharp.Operator.OpType.Subtraction; break;
+				return CSharp.Operator.OpType.Subtraction;
 			default:
 				throw new InternalErrorException (op.ToString ());
 			}
-
-			return CSharp.Operator.GetMetadataName (op_type);
 		}
 
 		public static void EmitOperatorOpcode (EmitContext ec, Operator oper, TypeSpec l)
@@ -2484,8 +2480,6 @@ namespace Mono.CSharp {
 			temp.Add (new PredefinedOperator (TypeManager.double_type, Operator.ComparisonMask, bool_type));
 			temp.Add (new PredefinedOperator (TypeManager.decimal_type, Operator.ComparisonMask, bool_type));
 
-			temp.Add (new PredefinedOperator (TypeManager.string_type, Operator.EqualityMask, bool_type));
-
 			temp.Add (new PredefinedStringOperator (TypeManager.string_type, Operator.AdditionMask));
 			temp.Add (new PredefinedStringOperator (TypeManager.string_type, TypeManager.object_type, Operator.AdditionMask));
 			temp.Add (new PredefinedStringOperator (TypeManager.object_type, TypeManager.string_type, Operator.AdditionMask));
@@ -2771,12 +2765,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			//
-			// Resolve delegate equality as a user operator
-			//
-			if (is_equality)
-				return ResolveUserOperator (ec, l, r);
-
 			MethodSpec method;
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (left));
@@ -2789,20 +2777,43 @@ namespace Mono.CSharp {
 				}
 
 				method = TypeManager.delegate_combine_delegate_delegate;
-			} else {
+			} else if (oper == Operator.Subtraction) {
 				if (TypeManager.delegate_remove_delegate_delegate == null) {
 					TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
 						TypeManager.delegate_type, "Remove", loc, TypeManager.delegate_type, TypeManager.delegate_type);
 				}
 
 				method = TypeManager.delegate_remove_delegate_delegate;
+			} else if (oper == Operator.Equality) {
+				if (TypeManager.delegate_equal == null) {
+					TypeManager.delegate_equal = TypeManager.GetPredefinedMethod (
+						TypeManager.delegate_type,
+						new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Equality), 0, MemberKind.Operator,
+							ParametersCompiled.CreateFullyResolved (new [] { TypeManager.delegate_type, TypeManager.delegate_type }), TypeManager.bool_type), loc);
+				}
+
+				method = TypeManager.delegate_equal;
+			} else {
+				if (TypeManager.delegate_inequal == null) {
+					TypeManager.delegate_inequal = TypeManager.GetPredefinedMethod (
+						TypeManager.delegate_type,
+						new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Inequality), 0, MemberKind.Operator,
+							ParametersCompiled.CreateFullyResolved (new [] { TypeManager.delegate_type, TypeManager.delegate_type }), TypeManager.bool_type), loc);
+				}
+
+				method = TypeManager.delegate_inequal;
 			}
 
 			if (method == null)
 				return new EmptyExpression (TypeManager.decimal_type);
 
 			MethodGroupExpr mg = MethodGroupExpr.CreatePredefined (method, TypeManager.delegate_type, loc);
-			return new ClassCast (new UserOperatorCall (mg, args, CreateExpressionTree, loc), l);
+			Expression expr = new UserOperatorCall (mg, args, CreateExpressionTree, loc);
+			if (expr.Type != TypeManager.bool_type) {
+				expr = new ClassCast (expr, l);
+			}
+
+			return expr;
 		}
 
 		//
@@ -2965,11 +2976,14 @@ namespace Mono.CSharp {
 		//
 		// 7.9.6 Reference type equality operators
 		//
-		Binary ResolveOperatorEqualityRerefence (ResolveContext ec, TypeSpec l, TypeSpec r)
+		Expression ResolveOperatorEqualityRerefence (ResolveContext ec, TypeSpec l, TypeSpec r)
 		{
 			//
-			// operator != (object a, object b)
-			// operator == (object a, object b)
+			// bool operator != (object a, object b)
+			// bool operator == (object a, object b)
+			//
+			// bool operator != (string a, string b)
+			// bool operator == (string a, string b)
 			//
 
 			// TODO: this method is almost equivalent to Convert.ImplicitReferenceConversion
@@ -3000,6 +3014,64 @@ namespace Mono.CSharp {
 
 				if (TypeManager.IsValueType (l))
 					return null;
+
+				if (l == TypeManager.string_type) {
+					Arguments args = new Arguments (2);
+					args.Add (new Argument (left));
+					args.Add (new Argument (right));
+
+					MethodSpec method;
+					if (oper == Operator.Equality) {
+						if (TypeManager.string_equal == null) {
+							TypeManager.string_equal = TypeManager.GetPredefinedMethod (TypeManager.string_type,
+								new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Equality), 0, MemberKind.Operator, null, type), loc);
+						}
+
+						method = TypeManager.string_equal;
+					} else {
+						if (TypeManager.string_inequal == null) {
+							TypeManager.string_inequal = TypeManager.GetPredefinedMethod (TypeManager.string_type,
+								new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Inequality), 0, MemberKind.Operator, null, type), loc);
+						}
+
+						method = TypeManager.string_inequal;
+					}
+
+					if (method == null)
+						return new EmptyExpression (type);
+
+					var mg = MethodGroupExpr.CreatePredefined (method, TypeManager.string_type, loc);
+					return new UserOperatorCall (mg, args, CreateExpressionTree, loc);
+				}
+
+				if (l == TypeManager.delegate_type || l == TypeManager.multicast_delegate_type) {
+					Arguments args = new Arguments (2);
+					args.Add (new Argument (left));
+					args.Add (new Argument (right));
+
+					MethodSpec method;
+					if (oper == Operator.Equality) {
+						if (TypeManager.delegate_equal == null) {
+							TypeManager.delegate_equal = TypeManager.GetPredefinedMethod (TypeManager.delegate_type,
+								new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Equality), 0, MemberKind.Operator, null, type), loc);
+						}
+
+						method = TypeManager.delegate_equal;
+					} else {
+						if (TypeManager.delegate_inequal == null) {
+							TypeManager.delegate_inequal = TypeManager.GetPredefinedMethod (TypeManager.delegate_type,
+								new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Inequality), 0, MemberKind.Operator, null, type), loc);
+						}
+
+						method = TypeManager.delegate_inequal;
+					}
+
+					if (method == null)
+						return new EmptyExpression (type);
+
+					var mg = MethodGroupExpr.CreatePredefined (method, TypeManager.delegate_type, loc);
+					return new UserOperatorCall (mg, args, CreateExpressionTree, loc);
+				}
 
 				return this;
 			}
@@ -3200,21 +3272,12 @@ namespace Mono.CSharp {
 		//
 		protected virtual Expression ResolveUserOperator (ResolveContext ec, TypeSpec l, TypeSpec r)
 		{
-			Operator user_oper;
-			if (oper == Operator.LogicalAnd)
-				user_oper = Operator.BitwiseAnd;
-			else if (oper == Operator.LogicalOr)
-				user_oper = Operator.BitwiseOr;
-			else
-				user_oper = oper;
+			var op = ConvertBinaryToUserOperator (oper);
+			IList<MemberSpec> left_operators = MemberCache.GetUserOperator (l, op, false);
+			IList<MemberSpec> right_operators = null;
 
-			string op = GetOperatorMetadataName (user_oper);
-
-			MethodGroupExpr left_operators = MethodLookup (ec.Compiler, ec.CurrentType, l, MemberKind.Operator, op, 0, loc);
-			MethodGroupExpr right_operators = null;
-
-			if (!TypeManager.IsEqual (r, l)) {
-				right_operators = MethodLookup (ec.Compiler, ec.CurrentType, r, MemberKind.Operator, op, 0, loc);
+			if (l != r) {
+				right_operators = MemberCache.GetUserOperator (r, op, false);
 				if (right_operators == null && left_operators == null)
 					return null;
 			} else if (left_operators == null) {
@@ -3227,68 +3290,58 @@ namespace Mono.CSharp {
 			Argument rarg = new Argument (right);
 			args.Add (rarg);
 
-			MethodGroupExpr union;
-
 			//
 			// User-defined operator implementations always take precedence
 			// over predefined operator implementations
 			//
 			if (left_operators != null && right_operators != null) {
-				if (IsPredefinedUserOperator (l, user_oper)) {
-					union = right_operators.OverloadResolve (ec, ref args, true, loc);
-					if (union == null)
-						union = left_operators;
-				} else if (IsPredefinedUserOperator (r, user_oper)) {
-					union = left_operators.OverloadResolve (ec, ref args, true, loc);
-					if (union == null)
-						union = right_operators;
-				} else {
-					union = MethodGroupExpr.MakeUnionSet (left_operators, right_operators, loc);
-				}
-			} else if (left_operators != null) {
-				union = left_operators;
-			} else {
-				union = right_operators;
+				left_operators = CombineUserOperators (left_operators, right_operators);
+			} else if (right_operators != null) {
+				left_operators = right_operators;
 			}
 
-			union = union.OverloadResolve (ec, ref args, true, loc);
-			if (union == null)
+			var mg = new MethodGroupExpr (left_operators, l, loc);
+			mg = mg.OverloadResolve (ec, ref args, true, loc);
+			if (mg == null)
 				return null;
 
 			Expression oper_expr;
 
 			// TODO: CreateExpressionTree is allocated every time
-			if (user_oper != oper) {
-				oper_expr = new ConditionalLogicalOperator (union, args, CreateExpressionTree,
+			if ((oper & Operator.LogicalMask) != 0) {
+				oper_expr = new ConditionalLogicalOperator (mg, args, CreateExpressionTree,
 					oper == Operator.LogicalAnd, loc).Resolve (ec);
 			} else {
-				oper_expr = new UserOperatorCall (union, args, CreateExpressionTree, loc);
-
-				//
-				// This is used to check if a test 'x == null' can be optimized to a reference equals,
-				// and not invoke user operator
-				//
-				if ((oper & Operator.EqualityMask) != 0) {
-					if ((left is NullLiteral && IsBuildInEqualityOperator (r)) ||
-						(right is NullLiteral && IsBuildInEqualityOperator (l))) {
-						type = TypeManager.bool_type;
-						if (left is NullLiteral || right is NullLiteral)
-							oper_expr = ReducedExpression.Create (this, oper_expr);
-					} else if (l != r) {
-						var mi = union.BestCandidate;
-						
-						//
-						// Two System.Delegate(s) are never equal
-						//
-						if (mi.DeclaringType == TypeManager.multicast_delegate_type)
-							return null;
-					}
-				}
+				oper_expr = new UserOperatorCall (mg, args, CreateExpressionTree, loc);
 			}
 
 			left = larg.Expr;
 			right = rarg.Expr;
 			return oper_expr;
+		}
+
+		//
+		// Merge two sets of user operators into one, they are mostly distinguish
+		// expect when they share base type and it contains an operator
+		//
+		static IList<MemberSpec> CombineUserOperators (IList<MemberSpec> left, IList<MemberSpec> right)
+		{
+			var combined = new List<MemberSpec> (left.Count + right.Count);
+			combined.AddRange (left);
+			foreach (var r in right) {
+				bool same = false;
+				foreach (var l in left) {
+					if (l.DeclaringType == r.DeclaringType) {
+						same = true;
+						break;
+					}
+				}
+
+				if (!same)
+					combined.Add (r);
+			}
+
+			return combined;
 		}
 
 		public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
@@ -3359,20 +3412,6 @@ namespace Mono.CSharp {
 				type == TypeManager.ushort_type && value >= 0x10000 ||
 				type == TypeManager.int32_type && (value >= 0x80000000 || value < -0x80000000) ||
 				type == TypeManager.uint32_type && value >= 0x100000000;
-		}
-
-		static bool IsBuildInEqualityOperator (TypeSpec t)
-		{
-			return t == TypeManager.object_type || t == TypeManager.string_type ||
-				t == TypeManager.delegate_type || TypeManager.IsDelegateType (t);
-		}
-
-		static bool IsPredefinedUserOperator (TypeSpec t, Operator op)
-		{
-			//
-			// Some predefined types have user operators
-			//
-			return (op & Operator.EqualityMask) != 0 && (t == TypeManager.string_type || t == TypeManager.decimal_type);
 		}
 
 		private static bool IsTypeIntegral (TypeSpec type)

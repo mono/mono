@@ -113,6 +113,7 @@ namespace Mono.CSharp {
 	static public MethodSpec void_initializearray_array_fieldhandle;
 	static public MethodSpec delegate_combine_delegate_delegate;
 	static public MethodSpec delegate_remove_delegate_delegate;
+	public static MethodSpec delegate_equal, delegate_inequal;
 	static public PropertySpec int_get_offset_to_string_data;
 	static public MethodSpec int_interlocked_compare_exchange;
 	static public PropertySpec ienumerator_getcurrent;
@@ -120,7 +121,8 @@ namespace Mono.CSharp {
 	public static MethodSpec methodbase_get_type_from_handle_generic;
 	public static MethodSpec fieldinfo_get_field_from_handle;
 	public static MethodSpec fieldinfo_get_field_from_handle_generic;
-	static public MethodSpec activator_create_instance;
+	public static MethodSpec activator_create_instance;
+	public static MethodSpec string_equal, string_inequal;
 
 	//
 	// The constructors.
@@ -156,7 +158,11 @@ namespace Mono.CSharp {
 		fieldinfo_get_field_from_handle_generic =
 		activator_create_instance =
 		delegate_combine_delegate_delegate =
-		delegate_remove_delegate_delegate = null;
+		delegate_remove_delegate_delegate =
+		string_equal =
+		string_inequal =
+		delegate_equal =
+		delegate_inequal = null;
 
 		int_get_offset_to_string_data =
 		ienumerator_getcurrent = null;
@@ -834,43 +840,6 @@ namespace Mono.CSharp {
 			CSharpName (t));
 
 		return false;	
-	}
-	
-	//
-	// Returns whether the array of memberinfos contains the given method
-	//
-	public static bool ArrayContainsMethod (List<MemberSpec> array, MethodSpec new_method, bool ignoreDeclType)
-	{
-		AParametersCollection new_args = new_method.Parameters;
-
-		foreach (MethodSpec method in array) {
-			if (!ignoreDeclType && method.DeclaringType != new_method.DeclaringType)
-				continue;
-
-			if (method.Name != new_method.Name)
-				continue;
-
-			if (!TypeSpecComparer.Override.IsEqual (method.ReturnType, new_method.ReturnType))
-				continue;
-
-			AParametersCollection old_args = method.Parameters;
-			int old_count = old_args.Count;
-			int i;
-
-			if (new_args.Count != old_count)
-				continue;
-
-			for (i = 0; i < old_count; i++) {
-				if (!TypeSpecComparer.Override.IsEqual (old_args.Types[i], new_args.Types[i]))
-					break;
-			}
-			if (i != old_count)
-				continue;
-
-			return true;
-		}
-
-		return false;
 	}
 #region Generics
 	// This method always return false for non-generic compiler,

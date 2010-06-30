@@ -1,3 +1,10 @@
+2010-06-30  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, membercache.cs, convert.cs, expression.cs,
+	ecore.cs: Replace remaining MethodLookup with correct user operator
+	lookup (to do correct deep lookup). Clean up most of outstanding
+	quirks in binary operator overload resolution.
+
 2010-06-29  Marek Safar  <marek.safar@gmail.com>
 
 	* import.cs: Operators must have between 1 and 2 parameters.

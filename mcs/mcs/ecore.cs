@@ -680,13 +680,6 @@ namespace Mono.CSharp {
 						 name, arity, MemberKind.All, binding | BindingRestriction.AccessibleOnly, loc);
 		}
 
-		public static MethodGroupExpr MethodLookup (CompilerContext ctx, TypeSpec container_type, TypeSpec queried_type,
-						       MemberKind kind, string name, int arity, Location loc)
-		{
-			return (MethodGroupExpr)MemberLookup (ctx, container_type, null, queried_type, name, arity,
-					     kind, BindingRestriction.AccessibleOnly | BindingRestriction.StopOnFirstMatch, loc);
-		}
-
 		/// <summary>
 		///   This is a wrapper for MemberLookup that is not used to "probe", but
 		///   to find a final definition.  If the final definition is not found, we
@@ -812,23 +805,23 @@ namespace Mono.CSharp {
 
 		static Expression GetOperatorTrueOrFalse (ResolveContext ec, Expression e, bool is_true, Location loc)
 		{
-			MethodGroupExpr operator_group;
-			string mname = Operator.GetMetadataName (is_true ? Operator.OpType.True : Operator.OpType.False);
-			operator_group = MethodLookup (ec.Compiler, ec.CurrentType, e.Type, MemberKind.Operator, mname, 0, loc);
-			if (operator_group == null)
+			var op = is_true ? Operator.OpType.True : Operator.OpType.False;
+			var methods = MemberCache.GetUserOperator (e.type, op, false);
+			if (methods == null)
 				return null;
+
+			var mg = new MethodGroupExpr (methods, e.type, loc);
 
 			Arguments arguments = new Arguments (1);
 			arguments.Add (new Argument (e));
-			operator_group = operator_group.OverloadResolve (
-				ec, ref arguments, false, loc);
+			mg = mg.OverloadResolve (ec, ref arguments, false, loc);
 
-			if (operator_group == null)
+			if (mg == null)
 				return null;
 
-			return new UserOperatorCall (operator_group, arguments, null, loc);
+			return new UserOperatorCall (mg, arguments, null, loc);
 		}
-
+		
 		public virtual string ExprClassName
 		{
 			get {
@@ -3642,26 +3635,6 @@ namespace Mono.CSharp {
 
 			return 0;
 		}
-
-		public static MethodGroupExpr MakeUnionSet (MethodGroupExpr mg1, MethodGroupExpr mg2, Location loc)
-		{
-			if (mg1 == null) {
-				if (mg2 == null)
-					return null;
-				return mg2;
-			}
-
-			if (mg2 == null)
-				return mg1;
-
-			var all = new List<MemberSpec> (mg1.Methods);
-			foreach (MethodSpec m in mg2.Methods){
-				if (!TypeManager.ArrayContainsMethod (all, m, false))
-					all.Add (m);
-			}
-
-			return new MethodGroupExpr (all, null, loc);
-		}		
 
 		static TypeSpec MoreSpecific (TypeSpec p, TypeSpec q)
 		{

@@ -966,7 +966,7 @@ namespace Mono.CSharp {
 			return UserDefinedConversion (ec, source, target, false, loc);
 		}
 
-		static void FindApplicableUserDefinedConversionOperators (MethodSpec[] operators, Expression source, TypeSpec target, bool implicitOnly, ref List<MethodSpec> candidates)
+		static void FindApplicableUserDefinedConversionOperators (IList<MemberSpec> operators, Expression source, TypeSpec target, bool implicitOnly, ref List<MethodSpec> candidates)
 		{
 			//
 			// LAMESPEC: Undocumented IntPtr/UIntPtr conversions
@@ -989,7 +989,7 @@ namespace Mono.CSharp {
 
 			Expression texpr = null;
 
-			foreach (var op in operators) {
+			foreach (MethodSpec op in operators) {
 				
 				// Can be null because MemberCache.GetUserOperator does not resize the array
 				if (op == null)
