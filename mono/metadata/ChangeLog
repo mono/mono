@@ -1,5 +1,12 @@
 2010-06-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_image_create_token): Handle a
+	FieldBuilder from a different assembly.
+
+	Fixes #611836.
+
+2010-06-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_store_static_field): Improve error
 	message.
 
