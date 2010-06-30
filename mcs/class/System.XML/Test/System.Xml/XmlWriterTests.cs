@@ -576,25 +576,29 @@ namespace MonoTests.System.Xml
 		}
 
 		//
-		// Reader      | wrapper   |
-		// overrides   | argument  | sample
+		// Reader      |wrapper| result |checks state (and err)
+		// overrides   |       |        | |test name
 		// ------------+--------------------------
-		//      -      |     -     | CreateNOCL
-		//             | Auto      | CreateNOCLSettingsCLAuto
-		//             | Document  | CreateNOCLSettingsCLDoc
-		//             | Fragment  | CreateNOCLSettingsCLFrag
-		// Auto        |     -     | CreateCLAuto
-		//             | Auto      |  -
-		//             | Document  | CreateCLAutoSettingsCLDoc
-		//             | Fragment  | CreateCLAutoSettingsCLFrag
-		// Document    |     -     | CreateCLDoc
-		//             | Auto      | CreateCLDocSettingsCLAuto
-		//             | Document  |  -
-		//             | Fragment  | CreateCLDocSettingsCLFrag
-		// Fragment    |     -     | CreateCLFlag
-		//             | Auto      | CreateCLFragSettingsCLAuto
-		//             | Document  | CreateCLFragSettingsCLDoc
-		//             | Fragment  |  -
+		//      -      |   -   | Doc    |x| CreateNOCL
+		//             | Auto  | Doc    |x| CreateNOCLSettingsCLAuto
+		//             | Doc   | Doc    |x| CreateNOCLSettingsCLDoc
+		//             | Frag  | Doc    |x| CreateNOCLSettingsCLFrag
+		// Auto        |   -   | Doc    | | CreateCLAuto
+		//             | Auto  | Auto(!)|x| CreateCLAutoSettingsCLAuto
+		//             | Doc   | Doc    | | CreateCLAutoSettingsCLDoc
+		//             | Frag  | Frag   | | CreateCLAutoSettingsCLFrag
+		// Document    |   -   | Doc    |x| CreateCLDoc
+		//             | Auto  | Doc    |x| CreateCLDocSettingsCLAuto
+		//             | Doc   |        |x| CreateCLDocSettingsCLDoc
+		//             | Frag  | Frag   | | CreateCLDocSettingsCLFrag
+		// Fragment    |   -   | Doc    | | CreateCLFrag
+		//             | Auto  | Frag   |x| CreateCLFragSettingsCLAuto
+		//             | Doc   | Doc    | | CreateCLFragSettingsCLDoc
+		//             | Frag  | Frag   |x| CreateCLFragSettingsCLFrag
+		//
+		// What we can see from above:
+		// - default ConformanceLevel is Document.
+		// - Auto can happen only if both inputs are Auto
 		//
 
 		[Test]
@@ -670,6 +674,16 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void CreateCLAutoSettingsCLAuto ()
+		{
+			ConformanceLevelAuto cl = new ConformanceLevelAuto ();
+			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Auto });
+			Assert.AreEqual (ConformanceLevel.Auto, xw.Settings.ConformanceLevel, "#1");
+			WriteState state = xw.WriteState;
+		}
+
+		[Test]
 		[Category ("NotWorking")]
 		public void CreateCLAutoSettingsCLDoc ()
 		{
@@ -695,6 +709,17 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelDocument cl = new ConformanceLevelDocument ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Auto });
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
+			WriteState state = xw.WriteState;
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void CreateCLDocSettingsCLDoc ()
+		{
+			ConformanceLevelDocument cl = new ConformanceLevelDocument ();
+			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Document });
 			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
@@ -726,6 +751,16 @@ namespace MonoTests.System.Xml
 			ConformanceLevelFragment cl = new ConformanceLevelFragment ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Document });
 			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
+			WriteState state = xw.WriteState;
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void CreateCLFragSettingsCLFrag ()
+		{
+			ConformanceLevelFragment cl = new ConformanceLevelFragment ();
+			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Fragment });
+			Assert.AreEqual (ConformanceLevel.Fragment, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
