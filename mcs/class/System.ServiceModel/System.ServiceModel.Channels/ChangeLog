@@ -1,3 +1,12 @@
+2010-07-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Message.cs, MessageImpl.cs, MessageBufferImpl.cs : remove BodyId.
+	  XML attributes on s:Body are handled appropriately, not limited to
+	  wsu:Id. Added several required overrides to Message and
+	  MessageBuffer implementation classes.
+	* SecureMessageGenerator.cs : so, don't use BodyId. Treat it as a
+	  specific case but still fallback.
+
 2010-06-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpTransportBindingElement.cs :

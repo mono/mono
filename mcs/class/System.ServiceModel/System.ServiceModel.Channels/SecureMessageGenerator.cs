@@ -577,10 +577,9 @@ else
 				break;
 			}
 
-			Message ret = Message.CreateMessage (msg.Version, msg.Headers.Action, new XmlNodeReader (doc.SelectSingleNode ("/s:Envelope/s:Body/*", nsmgr) as XmlElement));
+			Message ret = new WSSecurityMessage (Message.CreateMessage (msg.Version, msg.Headers.Action, new XmlNodeReader (doc.SelectSingleNode ("/s:Envelope/s:Body/*", nsmgr) as XmlElement)), bodyId);
 			ret.Properties.Security = (SecurityMessageProperty) secprop.CreateCopy ();
 			ret.Properties.Security.EncryptionKey = masterKey.Key;
-			ret.BodyId = bodyId;
 
 			// FIXME: can we support TransportToken here?
 			if (element is AsymmetricSecurityBindingElement) {
@@ -706,6 +705,51 @@ else
 					ret = reqprop.Headers ["Action"];
 			}
 			return ret;
+		}
+	}
+
+	internal class WSSecurityMessage : Message
+	{
+		Message msg;
+		string body_id;
+
+		public WSSecurityMessage (Message msg, string bodyId)
+		{
+			this.msg = msg;
+			this.body_id = bodyId;
+		}
+
+		public override MessageVersion Version {
+			get { return msg.Version; }
+		}
+
+		public override MessageHeaders Headers {
+			get { return msg.Headers; }
+		}
+
+		public override MessageProperties Properties {
+			get { return msg.Properties; }
+		}
+
+		protected override string OnGetBodyAttribute (string localName, string ns)
+		{
+			if (localName == "Id" && ns == Constants.WsuNamespace)
+				return body_id;
+			return msg.GetBodyAttribute (localName, ns);
+		}
+
+		protected override void OnWriteStartBody (
+			XmlDictionaryWriter writer)
+		{
+			var dic = Constants.SoapDictionary;
+			writer.WriteStartElement ("s", dic.Add ("Body"), dic.Add (Version.Envelope.Namespace));
+			if (body_id != null)
+				writer.WriteAttributeString ("Id", Constants.WsuNamespace, body_id);
+		}
+
+		protected override void OnWriteBodyContents (XmlDictionaryWriter w)
+		{
+			msg.WriteBodyContents (w);
 		}
 	}
 }

@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
@@ -45,10 +46,7 @@ namespace System.ServiceModel.Channels
 
 		public abstract MessageHeaders Headers { get; }
 
-		internal string BodyId {
-			get { return body_id; }
-			set { body_id = value; }
-		}
+		Dictionary<XmlQualifiedName,string> attributes = new Dictionary<XmlQualifiedName,string> ();
 
 		public virtual bool IsEmpty {
 			get { return false; }
@@ -185,6 +183,9 @@ namespace System.ServiceModel.Channels
 				throw new InvalidOperationException (String.Format ("The message is already at {0} state", State));
 
 			OnWriteStartBody (writer);
+
+			foreach (var a in attributes)
+				writer.WriteAttributeString (a.Key.Name, a.Key.Namespace, a.Value);
 		}
 
 		public void WriteStartBody (XmlWriter writer)
@@ -223,14 +224,15 @@ namespace System.ServiceModel.Channels
 				WriteBodyContents (w);
 			var headers = new MessageHeaders (Headers);
 			var props = new MessageProperties (Properties);
-			return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (sw.ToString (), maxBufferSize, null), false);
+			return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (sw.ToString (), maxBufferSize, null), false, attributes);
 		}
 
 		protected virtual string OnGetBodyAttribute (
 			string localName, string ns)
 		{
-			// other than XmlReaderMessage it cannot return anything
-			return null;
+			var q = new XmlQualifiedName (localName, ns);
+			string v;
+			return attributes.TryGetValue (q, out v) ? v : null;
 		}
 
 		protected virtual XmlDictionaryReader OnGetReaderAtBodyContents ()
@@ -272,8 +274,6 @@ namespace System.ServiceModel.Channels
 		{
 			var dic = Constants.SoapDictionary;
 			writer.WriteStartElement ("s", dic.Add ("Body"), dic.Add (Version.Envelope.Namespace));
-			if (BodyId != null)
-				writer.WriteAttributeString ("u", dic.Add ("Id"), dic.Add (Constants.WsuNamespace), BodyId);
 		}
 
 		protected virtual void OnWriteStartEnvelope (
@@ -334,7 +334,7 @@ namespace System.ServiceModel.Channels
 			MessageFault fault, string action)
 		{
 			return new SimpleMessage (version, action,
-				new MessageFaultBodyWriter (fault, version), true);
+				new MessageFaultBodyWriter (fault, version), true, empty_attributes);
 		}
 
 		// 4)
@@ -385,6 +385,8 @@ namespace System.ServiceModel.Channels
 
 		// Core implementations of CreateMessage.
 
+		static readonly Dictionary<XmlQualifiedName,string> empty_attributes = new Dictionary<XmlQualifiedName,string> ();
+
 		// 9)
 		public static Message CreateMessage (MessageVersion version,
 			string action, BodyWriter body)
@@ -393,7 +395,7 @@ namespace System.ServiceModel.Channels
 				throw new ArgumentNullException ("version");
 			if (body == null)
 				throw new ArgumentNullException ("body");
-			return new SimpleMessage (version, action, body, false);
+			return new SimpleMessage (version, action, body, false, empty_attributes);
 		}
 
 		// 10)
