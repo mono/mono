@@ -1,3 +1,9 @@
+
+Wed Jun 30 12:08:36 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, domain-internals.h: mark functions that are
+	needed by the llvm module.
+
 2010-06-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* assembly.c (framework_assemblies): Add 3.5 assemblies.
