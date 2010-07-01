@@ -84,7 +84,7 @@ namespace Mono.Xml.XPath
 
 		private void Init (XmlReader reader, XmlSpace space, int defaultCapacity)
 		{
-			this.xmlReader = reader;
+			xmlReader = reader;
 			this.validatingReader = reader as XmlValidatingReader;
 			lineInfo = reader as IXmlLineInfo;
 			this.xmlSpace = space;
@@ -184,9 +184,12 @@ namespace Mono.Xml.XPath
 			this.lastNsInScope = 1;
 			parentStack [0] = nodeIndex;
 
-			// LAMESPEC: it should not read more than one top-level element, but .NET sucks here. See bug #81932
-			while (!xmlReader.EOF && parentStackIndex >= 0)
+			if (xmlReader.ReadState == ReadState.Initial)
+				xmlReader.Read ();
+			int startDepth = xmlReader.Depth;
+			do {
 				Read ();
+			} while (skipRead || xmlReader.Read () && xmlReader.Depth >= startDepth);
 			SetNodeArrayLength (nodeIndex + 1);
 			SetAttributeArrayLength (attributeIndex + 1);
 			SetNsArrayLength (nsIndex + 1);
@@ -204,9 +207,6 @@ namespace Mono.Xml.XPath
 
 		public void Read ()
 		{
-			if (!skipRead)
-				if (!xmlReader.Read ())
-					return;
 			skipRead = false;
 			int parent = parentStack [parentStackIndex];
 			int prevSibling = nodeIndex;
@@ -214,10 +214,73 @@ namespace Mono.Xml.XPath
 			switch (xmlReader.NodeType) {
 			case XmlNodeType.Element:
 			case XmlNodeType.CDATA:
+			case XmlNodeType.Whitespace:
 			case XmlNodeType.SignificantWhitespace:
 			case XmlNodeType.Comment:
 			case XmlNodeType.Text:
 			case XmlNodeType.ProcessingInstruction:
+				break;
+			case XmlNodeType.EndElement:
+				int endedNode = parentStack [parentStackIndex];
+				AdjustLastNsInScope (endedNode);
+				parentStackIndex--;
+				return;
+			default:
+				// No operations. Doctype, EntityReference, 
+				return;
+			}
+
+			string value = null;
+			XPathNodeType nodeType = XPathNodeType.Root; // dummy
+			bool containsCDATA = false;
+
+			switch (xmlReader.NodeType) {
+			case XmlNodeType.Element:
+				nodeType = XPathNodeType.Element;
+				goto case XmlNodeType.None;
+			case XmlNodeType.SignificantWhitespace:
+			case XmlNodeType.Whitespace:
+			case XmlNodeType.CDATA:
+			case XmlNodeType.Text:
+				skipRead = true;
+				do {
+					switch (xmlReader.NodeType) {
+					case XmlNodeType.Whitespace:
+						switch (nodeType) {
+						case XPathNodeType.Root:
+							nodeType = XPathNodeType.Whitespace;
+							break;
+						}
+						// whitespaces after CDATA are ignored
+						if (!containsCDATA)
+							value += xmlReader.Value;
+						continue;
+					case XmlNodeType.SignificantWhitespace:
+						if (nodeType == XPathNodeType.Root ||
+						    nodeType == XPathNodeType.Whitespace)
+							nodeType = XPathNodeType.SignificantWhitespace;
+						value += xmlReader.Value;
+						continue;
+					case XmlNodeType.CDATA:
+						// whitespaces before CDATA are ignored
+						if (nodeType != XPathNodeType.Text)
+							value = String.Empty;
+						containsCDATA = true;
+						goto case XmlNodeType.Text;
+					case XmlNodeType.Text:
+						nodeType = XPathNodeType.Text;
+						value += xmlReader.Value;
+						continue;
+					}
+					break;
+				} while (xmlReader.Read ());
+				goto case XmlNodeType.None;
+			case XmlNodeType.None:
+				if (nodeType == XPathNodeType.Root ||
+				    nodeType == XPathNodeType.Whitespace && xmlSpace != XmlSpace.Preserve)
+					return; // do not process as a node.
+
+				// prepare a slot for new node.
 				if (parent == nodeIndex)
 					prevSibling = 0;
 				else
@@ -230,91 +293,35 @@ namespace Mono.Xml.XPath
 					nodes [prevSibling].NextSibling = nodeIndex;
 				if (parentStack [parentStackIndex] == nodeIndex - 1)
 					nodes [parent].FirstChild = nodeIndex;
-				break;
-			case XmlNodeType.Whitespace:
-				if (xmlSpace == XmlSpace.Preserve)
-					goto case XmlNodeType.Text;
-				else
-					goto default;
-			case XmlNodeType.EndElement:
-				int endedNode = parentStack [parentStackIndex];
-				AdjustLastNsInScope (endedNode);
-				parentStackIndex--;
-				return;
-			default:
-				// No operations. Doctype, EntityReference, 
-				return;
-			}
 
-			string value = null;
-			XPathNodeType nodeType = XPathNodeType.Text;
-
-			switch (xmlReader.NodeType) {
-			case XmlNodeType.Element:
-				ProcessElement (parent, prevSibling);
-				break;
-			case XmlNodeType.SignificantWhitespace:
-				nodeType = XPathNodeType.SignificantWhitespace;
-				goto case XmlNodeType.Text;
-			case XmlNodeType.Whitespace:
-				nodeType = XPathNodeType.Whitespace;
-				goto case XmlNodeType.Text;
-			case XmlNodeType.CDATA:
-			case XmlNodeType.Text:
+				// append new node.
+				if (nodeType == XPathNodeType.Element) {
+					ProcessElement (parent, prevSibling);
+					break;
+				}
 				AddNode (parent,
 					0,
 					prevSibling,
 					nodeType,
 					AtomicIndex (xmlReader.BaseURI),
 					xmlReader.IsEmptyElement,
-					AtomicIndex (xmlReader.LocalName),	// for PI
-					AtomicIndex (xmlReader.NamespaceURI),	// for PI
+					skipRead ? 0 : AtomicIndex (xmlReader.LocalName),	// for PI
+					skipRead ? 0 : AtomicIndex (xmlReader.NamespaceURI),	// for PI
 					AtomicIndex (xmlReader.Prefix),
 					value == null ? 0 : NonAtomicIndex (value),
 					AtomicIndex (xmlReader.XmlLang),
 					nsIndex,
 					lineInfo != null ? lineInfo.LineNumber : 0,
 					lineInfo != null ? lineInfo.LinePosition : 0);
-				// this code is tricky, but after sequential
-				// Read() invokation, xmlReader is moved to
-				// next node.
-				if (value == null) {
-					bool loop = true;
-					value = String.Empty;
-					XPathNodeType type = XPathNodeType.Whitespace;
-					do {
-						switch (xmlReader.NodeType) {
-						case XmlNodeType.Text:
-						case XmlNodeType.CDATA:
-							type = XPathNodeType.Text;
-							goto case XmlNodeType.Whitespace;
-						case XmlNodeType.SignificantWhitespace:
-							if (type == XPathNodeType.Whitespace)
-								type = XPathNodeType.SignificantWhitespace;
-							goto case XmlNodeType.Whitespace;
-						case XmlNodeType.Whitespace:
-							if (xmlReader.NodeType != XmlNodeType.Whitespace || xmlSpace == XmlSpace.Preserve)
-								value += xmlReader.Value;
-							loop = xmlReader.Read ();
-							skipRead = true;
-							continue;
-						default:
-							loop = false;
-							break;
-						}
-					} while (loop);
-					nodes [nodeIndex].Value = NonAtomicIndex (value);
-					nodes [nodeIndex].NodeType = type;
-				}
 				break;
 			case XmlNodeType.Comment:
 				value = xmlReader.Value;
 				nodeType = XPathNodeType.Comment;
-				goto case XmlNodeType.Text;
+				goto case XmlNodeType.None;
 			case XmlNodeType.ProcessingInstruction:
 				value = xmlReader.Value;
 				nodeType = XPathNodeType.ProcessingInstruction;
-				goto case XmlNodeType.Text;
+				goto case XmlNodeType.None;
 			}
 		}
 
