@@ -1,3 +1,9 @@
+2010-07-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* filewatcher.h filewatcher.h decimal.c threads-types.h: Applied patch
+	from Elijah Taylor (elijahtaylor@google.com). Fix some definitions to
+	match their declarations and vice-versa.
+
 
 Wed Jun 30 12:08:36 CEST 2010 Paolo Molaro <lupus@ximian.com>
 
