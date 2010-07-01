@@ -1,5 +1,7 @@
 2010-07-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (common_sources): Add mini-llvm.h.
+
 	* unwind.c (mono_unwind_decode_fde): Fix the decoding of the lsda offset.
 
 2010-06-30  Zoltan Varga  <vargaz@gmail.com>
