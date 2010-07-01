@@ -382,7 +382,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public IEnumerator<Argument> GetEnumerator ()
+		public List<Argument>.Enumerator GetEnumerator ()
 		{
 			return args.GetEnumerator ();
 		}
@@ -413,7 +413,7 @@ namespace Mono.CSharp
 
 			var exprs = new System.Linq.Expressions.Expression [args.Count];
 			for (int i = 0; i < exprs.Length; ++i) {
-				Argument a = (Argument) args.args [i];
+				Argument a = args.args [i];
 				exprs[i] = a.Expr.MakeExpression (ctx);
 			}
 
@@ -452,7 +452,7 @@ namespace Mono.CSharp
 		}
 
 		public Argument this [int index] {
-			get { return (Argument) args [index]; }
+			get { return args [index]; }
 			set { args [index] = value; }
 		}
 	}
