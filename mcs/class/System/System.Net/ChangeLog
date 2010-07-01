@@ -1,3 +1,8 @@
+2010-07-01  Marek Habersack  <mhabersack@novell.com>
+
+	* WebRequest.cs: DefaultCachePolicy and CachePolicy return a
+	NoCacheNoStore policy in all cases now. Workaround for bug #583934
+
 2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ServicePointManager.cs: Remove NET_2_0 defines around 

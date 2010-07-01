@@ -60,6 +60,7 @@ namespace System.Net
 #if NET_2_0
 		static bool isDefaultWebProxySet;
 		static IWebProxy defaultWebProxy;
+		static RequestCachePolicy defaultCachePolicy;
 #endif
 		
 		// Constructors
@@ -74,6 +75,9 @@ namespace System.Net
 			AddPrefix ("ftp", typeof (FtpRequestCreator));
 	#endif
 #else
+	#if NET_2_0
+			defaultCachePolicy = new HttpRequestCachePolicy (HttpRequestCacheLevel.NoCacheNoStore);
+	#endif
 	#if NET_2_0 && CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
 			WebRequestModulesSection s = cfg as WebRequestModulesSection;
@@ -119,11 +123,10 @@ namespace System.Net
 			}
 		}
 
+		[MonoTODO ("Implement the caching system. Currently always returns a policy with the NoCacheNoStore level")]
 		public virtual RequestCachePolicy CachePolicy
 		{
-			get {
-				throw GetMustImplement ();
-			}
+			get { return DefaultCachePolicy; }
 			set {
 			}
 		}
@@ -152,9 +155,7 @@ namespace System.Net
 #if NET_2_0
 		public static RequestCachePolicy DefaultCachePolicy
 		{
-			get {
-				throw GetMustImplement ();
-			}
+			get { return defaultCachePolicy; }
 			set {
 				throw GetMustImplement ();
 			}
