@@ -1,3 +1,12 @@
+2010-07-01  Martin Baulig  <martin@ximian.com>
+
+	Backport r157195:
+
+	2010-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+		* mono-sigcontext.h: Define UCONTEXT_REG_ constants for amd64 even if the gregs
+		  array is available.
+
 2010-05-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-logger.h (mono_trace_message): Fix some warnings.

@@ -1,3 +1,32 @@
+2010-07-01  Martin Baulig  <martin@ximian.com>
+
+	Resume from the signal handler and do most of the work on the normal stack.
+
+	* exceptions-x86.c (mono_arch_handle_exception): Port this to Windows.
+
+	Backport r157282:
+
+	2010-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+		* exceptions-amd64.c (mono_arch_handle_exception): Resume from the signal handler
+		and do most of the work on the normal stack even if
+		sigaltstack is disabled.
+
+	Backport r157380:
+
+	2010-05-14  Geoff Norton  <gnorton@novell.com>
+
+		* exceptions-x86.c: Fix the alignment of this trampoline so we dont get a
+		misaligned stack on darwin.
+
+	Backport r157327:
+
+	2010-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+		* exceptions-x86.c (mono_arch_handle_exception): Resume from the signal handler
+		and do most of the work on the normal stack.
+		(mono_x86_get_signal_exception_trampoline): New x86 specific trampoline function.
+
 2010-06-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c (mono_arch_create_generic_trampoline): Increase the buf len a little,

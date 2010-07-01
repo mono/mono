@@ -797,6 +797,8 @@ typedef struct {
 	void            (*abort_func) (MonoObject *object);
 	/* Used to implement --debug=casts */
 	MonoClass       *class_cast_from, *class_cast_to;
+
+	MonoContext      ex_ctx;
 } MonoJitTlsData;
 
 typedef enum {

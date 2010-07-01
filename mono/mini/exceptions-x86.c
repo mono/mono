@@ -27,6 +27,11 @@
 #include "tasklets.h"
 #include "debug-mini.h"
 
+static gpointer signal_exception_trampoline;
+
+gpointer
+mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot) MONO_INTERNAL;
+
 #ifdef PLATFORM_WIN32
 static void (*restore_stack) (void *);
 
@@ -825,6 +830,18 @@ mono_arch_get_throw_corlib_exception (void)
 
 #endif
 
+void
+mono_arch_exceptions_init (void)
+{
+	if (mono_aot_only) {
+		signal_exception_trampoline = mono_aot_get_named_code ("x86_signal_exception_trampoline");
+		return;
+	}
+
+	signal_exception_trampoline = mono_x86_get_signal_exception_trampoline (NULL, FALSE);
+}
+
+
 /*
  * mono_arch_find_jit_info_ext:
  *
@@ -1055,9 +1072,133 @@ mono_arch_ip_from_context (void *sigctx)
 #endif	
 }
 
+/*
+ * handle_exception:
+ *
+ *   Called by resuming from a signal handler.
+ */
+static void
+handle_signal_exception (gpointer obj)
+{
+	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoContext ctx;
+	static void (*restore_context) (MonoContext *);
+
+	if (!restore_context)
+		restore_context = mono_get_restore_context ();
+
+	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
+
+	if (mono_debugger_handle_exception (&ctx, (MonoObject *)obj))
+		return;
+
+	mono_handle_exception (&ctx, obj, MONO_CONTEXT_GET_IP (&ctx), FALSE);
+
+	restore_context (&ctx);
+}
+
+/*
+ * mono_x86_get_signal_exception_trampoline:
+ *
+ *   This x86 specific trampoline is used to call handle_signal_exception.
+ */
+gpointer
+mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot)
+{
+	guint8 *start, *code;
+	MonoJumpInfo *ji = NULL;
+	GSList *unwind_ops = NULL;
+	int stack_size;
+
+	start = code = mono_global_codeman_reserve (128);
+
+	/* Caller ip */
+	x86_push_reg (code, X86_ECX);
+
+	mono_add_unwind_op_def_cfa (unwind_ops, (guint8*)NULL, (guint8*)NULL, X86_ESP, 4);
+	mono_add_unwind_op_offset (unwind_ops, (guint8*)NULL, (guint8*)NULL, X86_NREG, -4);
+
+	/* Fix the alignment to be what apple expects */
+	stack_size = 12;
+
+	x86_alu_reg_imm (code, X86_SUB, X86_ESP, stack_size);
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, stack_size + 4);
+
+	/* Arg1 */
+	x86_mov_membase_reg (code, X86_ESP, 0, X86_EAX, 4);
+	/* Branch to target */
+	x86_call_reg (code, X86_EDX);
+
+	g_assert ((code - start) < 128);
+
+	mono_save_trampoline_xdebug_info ("x86_signal_exception_trampoline", start, code - start, unwind_ops);
+
+	if (info)
+		*info = mono_tramp_info_create (g_strdup ("x86_signal_exception_trampoline"), start, code - start, ji, unwind_ops);
+
+	return start;
+}
+
 gboolean
 mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 {
+#if defined(MONO_ARCH_USE_SIGACTION)
+	/*
+	 * Handling the exception in the signal handler is problematic, since the original
+	 * signal is disabled, and we could run arbitrary code though the debugger. So
+	 * resume into the normal stack and do most work there if possible.
+	 */
+	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	guint64 sp = UCONTEXT_REG_ESP (sigctx);
+
+	/* Pass the ctx parameter in TLS */
+	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
+	/*
+	 * Can't pass the obj on the stack, since we are executing on the
+	 * same stack. Can't save it into MonoJitTlsData, since it needs GC tracking.
+	 * So put it into a register, and branch to a trampoline which
+	 * pushes it.
+	 */
+	g_assert (!test_only);
+	UCONTEXT_REG_EAX (sigctx) = (gsize)obj;
+	UCONTEXT_REG_ECX (sigctx) = UCONTEXT_REG_EIP (sigctx);
+	UCONTEXT_REG_EDX (sigctx) = (gsize)handle_signal_exception;
+
+	/* Allocate a stack frame, align it to 16 bytes which is needed on apple */
+	sp -= 16;
+	sp &= ~15;
+	UCONTEXT_REG_ESP (sigctx) = sp;
+
+	UCONTEXT_REG_EIP (sigctx) = (gsize)signal_exception_trampoline;
+
+	return TRUE;
+#elif defined (PLATFORM_WIN32)
+	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	struct sigcontext *ctx = (struct sigcontext *)sigctx;
+	guint64 sp = ctx->SC_ESP;
+
+	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
+
+	/*
+	 * Can't pass the obj on the stack, since we are executing on the
+	 * same stack. Can't save it into MonoJitTlsData, since it needs GC tracking.
+	 * So put it into a register, and branch to a trampoline which
+	 * pushes it.
+	 */
+	g_assert (!test_only);
+	ctx->SC_EAX = (gsize)obj;
+	ctx->SC_ECX = ctx->SC_EIP;
+	ctx->SC_EDX = (gsize)handle_signal_exception;
+
+	/* Allocate a stack frame, align it to 16 bytes which is needed on apple */
+	sp -= 16;
+	sp &= ~15;
+	ctx->SC_ESP = sp;
+
+	ctx->SC_EIP = (gsize)signal_exception_trampoline;
+
+	return TRUE;
+#else
 	MonoContext mctx;
 
 	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
@@ -1070,6 +1211,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 	mono_arch_monoctx_to_sigctx (&mctx, sigctx);
 
 	return TRUE;
+#endif
 }
 
 static void
