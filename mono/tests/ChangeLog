@@ -1,3 +1,11 @@
+2010-06-26  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-616463.cs: New test.
+
+	* Makefile.am: Test added to generic tests.
+
+	Backport of r159578.
+
 2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* typeload-unaligned.cs: Move the reference to the broken type

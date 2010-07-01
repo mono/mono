@@ -1,3 +1,10 @@
+2010-06-25  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c (mono_class_inflate_generic_method_full_checked): Added
+	a comment regarding a hack in mini-trampolines.c.
+
+	Backport of r159578.
+
 2010-06-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_Type_make_array_type): Raise a TLE if a
