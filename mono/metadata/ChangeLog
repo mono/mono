@@ -1,3 +1,13 @@
+2010-07-02  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* object-internals.h, object.h: Make mono_string_to_utf_8_checked 
+	public, as mono_string_to_utf_8 is deprecated.
+
+	* object.(c|h): Added mono_object_to_string, a public helper function 
+	that calls ToString on a MonoObject and returns a MonoString.
+
+	* object.c (mono_print_unhandled_exception): Use mono_object_to_string.
+
 2010-07-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* filewatcher.h filewatcher.h decimal.c threads-types.h: Applied patch
