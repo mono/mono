@@ -1,3 +1,9 @@
+2010-07-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageProcessingContext.cs : update possibly-updated ReplyMessage
+	  to send, by message inspectors. Fix by Clovis Ribeiro, should fix
+	  bug #619534.
+
 2010-06-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : enable service throttling again.

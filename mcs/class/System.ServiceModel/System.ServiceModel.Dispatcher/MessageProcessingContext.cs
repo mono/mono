@@ -127,6 +127,7 @@ namespace System.ServiceModel.Dispatcher
 			Message toBeChanged = request_context.ReplyMessage;
 			for (int i = 0; i < dispatch_runtime.MessageInspectors.Count; ++i)
 				dispatch_runtime.MessageInspectors [i].BeforeSendReply (ref toBeChanged, msg_inspectors_states [i]);
+			request_context.ReplyMessage = toBeChanged;
 		}
 
 		public void BeforeInvoke (DispatchOperation operation)
