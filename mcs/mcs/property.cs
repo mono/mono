@@ -521,11 +521,13 @@ namespace Mono.CSharp
 			var base_prop = (PropertySpec) base_member;
 			if (Get != null) {
 				if (!base_prop.HasGet) {
-					Report.SymbolRelatedToPreviousError (base_prop);
-					Report.Error (545, Get.Location,
-						"`{0}': cannot override because `{1}' does not have an overridable get accessor",
-						Get.GetSignatureForError (), base_prop.GetSignatureForError ());
-					ok = false;
+					if (ok) {
+						Report.SymbolRelatedToPreviousError (base_prop);
+						Report.Error (545, Get.Location,
+							"`{0}': cannot override because `{1}' does not have an overridable get accessor",
+							Get.GetSignatureForError (), base_prop.GetSignatureForError ());
+						ok = false;
+					}
 				} else if (Get.HasCustomAccessModifier || base_prop.HasDifferentAccessibility) {
 					if (!CheckAccessModifiers (Get, base_prop.Get)) {
 						Error_CannotChangeAccessModifiers (Get, base_prop.Get);
@@ -536,11 +538,13 @@ namespace Mono.CSharp
 
 			if (Set != null) {
 				if (!base_prop.HasSet) {
-					Report.SymbolRelatedToPreviousError (base_prop);
-					Report.Error (546, Set.Location,
-						"`{0}': cannot override because `{1}' does not have an overridable set accessor",
-						Set.GetSignatureForError (), base_prop.GetSignatureForError ());
-					ok = false;
+					if (ok) {
+						Report.SymbolRelatedToPreviousError (base_prop);
+						Report.Error (546, Set.Location,
+							"`{0}': cannot override because `{1}' does not have an overridable set accessor",
+							Set.GetSignatureForError (), base_prop.GetSignatureForError ());
+						ok = false;
+					}
 				} else if (Set.HasCustomAccessModifier || base_prop.HasDifferentAccessibility) {
 					if (!CheckAccessModifiers (Set, base_prop.Set)) {
 						Error_CannotChangeAccessModifiers (Set, base_prop.Set);

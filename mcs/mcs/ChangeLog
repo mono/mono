@@ -1,5 +1,11 @@
 2010-07-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #360820
+	* membercache.cs, property.cs: Check accessors of base property and
+	not the closest one.
+
+2010-07-02  Marek Safar  <marek.safar@gmail.com>
+
 	* modifiers.cs, membercache.cs, import.cs, class.cs: Moved imported
 	override method checks into import.
 

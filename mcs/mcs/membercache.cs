@@ -607,6 +607,7 @@ namespace Mono.CSharp {
 			var member_param = member is IParametersMember ? ((IParametersMember) member).Parameters : null;
 
 			var mkind = GetMemberCoreKind (member);
+			bool member_with_accessors = mkind == MemberKind.Indexer || mkind == MemberKind.Property;
 
 			do {
 				if (container.MemberCache.member_hash.TryGetValue (name, out applicable)) {
@@ -614,6 +615,12 @@ namespace Mono.CSharp {
 						var entry = applicable [i];
 
 						if ((entry.Modifiers & Modifiers.PRIVATE) != 0)
+							continue;
+
+						//
+						// Skip override members with accessors they may not fully implement the base member
+						//
+						if (member_with_accessors && (entry.Modifiers & (Modifiers.OVERRIDE | Modifiers.SEALED)) == Modifiers.OVERRIDE)
 							continue;
 
 						if ((entry.Modifiers & Modifiers.AccessibilityMask) == Modifiers.INTERNAL) {
@@ -655,9 +662,6 @@ namespace Mono.CSharp {
 						if (bestCandidate == null)
 							bestCandidate = entry;
 					}
-
-					if (member_param == null)
-						return null;
 				}
 
 				if (container.IsInterface)
