@@ -30,9 +30,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
+using System.Security.Principal;
 using System.ServiceModel;
 using System.Text;
 using System.Threading;
+using System.Web;
 
 namespace System.ServiceModel.Channels.Http
 {
@@ -81,6 +83,49 @@ namespace System.ServiceModel.Channels.Http
 
 		public override string Password {
 			get { return ctx.User != null ? ((HttpListenerBasicIdentity) ctx.User.Identity).Password : null; }
+		}
+
+		public override void ReturnUnauthorized ()
+		{
+			ctx.Response.StatusCode = 401;
+		}
+	}
+
+	class AspNetHttpContextInfo : HttpContextInfo
+	{
+		public AspNetHttpContextInfo (HttpContext ctx)
+		{
+			this.ctx = ctx;
+		}
+		
+		HttpContext ctx;
+
+		public HttpContext Source {
+			get { return ctx; }
+		}
+
+		public override NameValueCollection QueryString {
+			get { return ctx.Request.QueryString; }
+		}
+		public override Uri RequestUrl {
+			get { return ctx.Request.Url; }
+		}
+		public override string HttpMethod {
+			get { return ctx.Request.HttpMethod; }
+		}
+
+		public override void Abort ()
+		{
+			ctx.Response.Close ();
+		}
+
+		public override string User {
+			get { return ctx.User != null ? ((GenericIdentity) ctx.User.Identity).Name : null; }
+		}
+
+		// FIXME: how to acquire this?
+		public override string Password {
+			get { return null; }
 		}
 
 		public override void ReturnUnauthorized ()
