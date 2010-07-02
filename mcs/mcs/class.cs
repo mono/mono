@@ -2830,7 +2830,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			if ((base_member.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE | Modifiers.OVERRIDE_UNCHECKED)) == 0) {
+			if ((base_member.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) == 0) {
 				Report.SymbolRelatedToPreviousError (base_member);
 				Report.Error (506, Location,
 					"`{0}': cannot override inherited member `{1}' because it is not marked virtual, abstract or override",

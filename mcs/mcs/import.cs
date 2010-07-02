@@ -215,7 +215,7 @@ namespace Mono.CSharp
 			//    mod = (mod & ~Modifiers.ABSTRACT) | Modifiers.VIRTUAL;
 			//}
 
-			bool is_generic;
+			TypeParameterSpec[] tparams;
 			ImportedMethodDefinition definition;
 
 			var parameters = ParametersImported.Create (declaringType, mb);
@@ -224,12 +224,11 @@ namespace Mono.CSharp
 				if (!mb.IsGenericMethodDefinition)
 					throw new NotSupportedException ("assert");
 
-				var tparams = CreateGenericParameters<TypeParameterSpec>(0, mb.GetGenericArguments ());
+				tparams = CreateGenericParameters<TypeParameterSpec>(0, mb.GetGenericArguments ());
 				definition = new ImportedGenericMethodDefinition ((MethodInfo) mb, parameters, tparams);
-				is_generic = true;
 			} else {
 				definition = new ImportedMethodDefinition (mb, parameters);
-				is_generic = false;
+				tparams = null;
 			}
 
 			MemberKind kind;
@@ -243,7 +242,7 @@ namespace Mono.CSharp
 				//
 				string name = mb.Name;
 				kind = MemberKind.Method;
-				if (!is_generic && !mb.DeclaringType.IsInterface && name.Length > 6) {
+				if (tparams == null && !mb.DeclaringType.IsInterface && name.Length > 6) {
 					if ((mod & (Modifiers.STATIC | Modifiers.PUBLIC)) == (Modifiers.STATIC | Modifiers.PUBLIC)) {
 						if (name[2] == '_' && name[1] == 'p' && name[0] == 'o') {
 							var op_type = Operator.GetType (name);
@@ -257,10 +256,29 @@ namespace Mono.CSharp
 				}
 
 				returnType = ImportType (((MethodInfo)mb).ReturnType);
+
+				// Cannot set to OVERRIDE without full hierarchy checks
+				// this flag indicates that the method could be override
+				// but further validation is needed
+				if ((mod & Modifiers.OVERRIDE) != 0 && kind == MemberKind.Method && declaringType.BaseType != null) {
+					var filter = MemberFilter.Method (name, tparams != null ? tparams.Length : 0, parameters, null);
+					var candidate = MemberCache.FindMember (declaringType.BaseType, filter, BindingRestriction.None);
+
+					//
+					// For imported class method do additional validation to be sure that metadata
+					// override flag was correct
+					// 
+					// Difference between protected internal and protected is ok
+					//
+					const Modifiers conflict_mask = Modifiers.AccessibilityMask & ~Modifiers.INTERNAL;
+					if (candidate == null || (candidate.Modifiers & conflict_mask) != (mod & conflict_mask) || candidate.IsStatic) {
+						mod &= ~Modifiers.OVERRIDE;
+					}
+				}
 			}
 
 			MethodSpec ms = new MethodSpec (kind, declaringType, definition, returnType, mb, parameters, mod);
-			if (is_generic)
+			if (tparams != null)
 				ms.IsGeneric = true;
 
 			return ms;
@@ -313,7 +331,7 @@ namespace Mono.CSharp
 						is_valid_property = false;
 
 					// Possible custom accessor modifiers
-					if ((mod & ~Modifiers.AccessibilityMask) != (set.Modifiers & ~Modifiers.AccessibilityMask)) {
+					if ((mod & Modifiers.AccessibilityMask) != (set.Modifiers & Modifiers.AccessibilityMask)) {
 						var get_acc = mod & Modifiers.AccessibilityMask;
 						if (get_acc != Modifiers.PUBLIC) {
 							var set_acc = set.Modifiers & Modifiers.AccessibilityMask;
@@ -325,7 +343,7 @@ namespace Mono.CSharp
 									is_valid_property = false; // Neither is more restrictive
 								}
 
-								if (set_restr) {
+								if (get_restr) {
 									mod &= ~Modifiers.AccessibilityMask;
 									mod |= set_acc;
 								}
@@ -656,10 +674,7 @@ namespace Mono.CSharp
 				if ((ma & MethodAttributes.NewSlot) != 0 || !declaringType.IsClass || mod == Modifiers.PRIVATE) {
 					mod |= Modifiers.VIRTUAL;
 				} else {
-					// Cannot set to OVERRIDE without full hierarchy checks
-					// this flag indicates that the method could be override
-					// but further validation is needed
-					mod |= Modifiers.OVERRIDE_UNCHECKED;
+					mod |= Modifiers.OVERRIDE;
 				}
 			}
 

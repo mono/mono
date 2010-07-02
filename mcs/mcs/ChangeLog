@@ -1,3 +1,10 @@
+2010-07-02  Marek Safar  <marek.safar@gmail.com>
+
+	* modifiers.cs, membercache.cs, import.cs, class.cs: Moved imported
+	override method checks into import.
+
+	* expression.cs: Removed redundant check.
+
 2010-06-30  Marek Safar  <marek.safar@gmail.com>
 
 	* nullable.cs, expression.cs, statement.cs, method.cs, ecore.cs,

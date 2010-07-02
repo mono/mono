@@ -29,7 +29,7 @@ namespace Mono.CSharp
 		// Compiler specific flags
 		//
 		PROPERTY_CUSTOM 		= 0x4000,
-		OVERRIDE_UNCHECKED		= 0x8000,
+
 		PARTIAL					= 0x20000,
 		DEFAULT_ACCESS_MODIFER	= 0x40000,
 		METHOD_EXTENSION		= 0x80000,

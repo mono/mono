@@ -454,25 +454,6 @@ namespace Mono.CSharp {
 						if ((restrictions & BindingRestriction.NoOverrides) != 0 && (entry.Kind & overloadable) != 0) {
 							if ((entry.Modifiers & Modifiers.OVERRIDE) != 0)
 								continue;
-
-							if ((entry.Modifiers & Modifiers.OVERRIDE_UNCHECKED) != 0) {
-								bool is_override = true;
-								var ms = entry as MethodSpec;
-								if (ms != null) {
-									is_override = IsRealMethodOverride (ms);
-								} else {
-									var ps = (PropertySpec) entry;
-									if (ps.HasGet)
-										is_override = IsRealMethodOverride (ps.Get);
-									if (is_override && ps.HasSet)
-										is_override = IsRealMethodOverride (ps.Set);
-								}
-
-								if (is_override) {
-									entry.Modifiers = (entry.Modifiers & ~Modifiers.OVERRIDE_UNCHECKED) | Modifiers.OVERRIDE;
-									continue;
-								}
-							}
 						}
 
 						if ((restrictions & BindingRestriction.InstanceOnly) != 0 && entry.IsStatic)
@@ -849,8 +830,7 @@ namespace Mono.CSharp {
 
 					var filter = new MemberFilter (candidate);
 					foreach (var item in applicable) {
-						// TODO: Need to test what should happen for OVERRIDE_UNCHECKED
-						if ((item.Modifiers & (Modifiers.OVERRIDE | Modifiers.OVERRIDE_UNCHECKED | Modifiers.VIRTUAL)) == 0)
+						if ((item.Modifiers & (Modifiers.OVERRIDE | Modifiers.VIRTUAL)) == 0)
 							continue;
 
 						if (filter.Equals (item)) {
@@ -1099,41 +1079,6 @@ namespace Mono.CSharp {
 					ev.AccessorRemove = accessor_relation[ev.AccessorRemove];
 				}
 			}
-		}
-
-		//
-		// For imported class method do additional validation to be sure that metadata
-		// override flag was correct
-		//
-		static bool IsRealMethodOverride (MethodSpec ms)
-		{
-			IList<MemberSpec> candidates;
-			var dt = ms.DeclaringType;
-			while (dt.BaseType != null) {
-				var base_cache = dt.BaseType.MemberCache;
-				if (base_cache.member_hash.TryGetValue (ms.Name, out candidates)) {
-					foreach (var candidate in candidates) {
-						if (candidate.Kind != ms.Kind)
-							continue;
-
-						if (candidate.Arity != ms.Arity)
-							continue;
-
-						if (!TypeSpecComparer.Override.IsEqual (((MethodSpec) candidate).Parameters, ms.Parameters))
-							continue;
-
-						// Everything matches except modifiers, it's not correct soverride
-						if ((candidate.Modifiers & Modifiers.AccessibilityMask) != (ms.Modifiers & Modifiers.AccessibilityMask))
-							return false;
-
-						return true;
-					}
-				}
-
-				dt = dt.BaseType;
-			}
-
-			return false;
 		}
 
 		//

@@ -7696,15 +7696,8 @@ namespace Mono.CSharp {
 			// We perform some simple tests, and then to "split" the emit and store
 			// code we create an instance of a different class, and return that.
 			//
-			// I am experimenting with this pattern.
-			//
 			TypeSpec t = Expr.Type;
 
-			if (t == TypeManager.array_type){
-				ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `System.Array'");
-				return null;
-			}
-			
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).Resolve (ec);
 			if (t.IsPointer)
