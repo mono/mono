@@ -459,8 +459,10 @@ namespace System.Web.UI
 			}
 			return retval;
 		}
-
-		public static Type GetCompiledPageType (string virtualPath, string inputFile, HttpContext context)
+#if !NET_4_0
+		public static
+#endif
+		Type GetCompiledPageType (string virtualPath, string inputFile, HttpContext context)
 		{
 			return BuildManager.GetCompiledType (virtualPath);
 		}

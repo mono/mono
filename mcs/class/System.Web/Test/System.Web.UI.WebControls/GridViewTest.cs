@@ -592,7 +592,39 @@ namespace MonoTests.System.Web.UI.WebControls
 			g.UseAccessibleHeader = false;
 			Assert.AreEqual (false, g.UseAccessibleHeader, "UseAccessibleHeader");
 		}
+#if NET_4_0
+		[Test]
+		public void SortedAscendingCellStyle ()
+		{
+			var g = new PokerGridView ();
 
+			Assert.IsNotNull (g.SortedAscendingCellStyle, "#A1-1");
+		}
+
+		[Test]
+		public void SortedAscendingHeaderStyle ()
+		{
+			var g = new PokerGridView ();
+
+			Assert.IsNotNull (g.SortedAscendingHeaderStyle, "#A1-1");
+		}
+
+		[Test]
+		public void SortedDescendingCellStyle ()
+		{
+			var g = new PokerGridView ();
+
+			Assert.IsNotNull (g.SortedDescendingCellStyle, "#A1-1");
+		}
+
+		[Test]
+		public void SortedDescendingHeaderStyle ()
+		{
+			var g = new PokerGridView ();
+
+			Assert.IsNotNull (g.SortedDescendingHeaderStyle, "#A1-1");
+		}
+#endif
 		[Test]
 		public void GridView_DefaultProtectedProperties ()
 		{
@@ -1565,7 +1597,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderAllowPaging)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Item</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Norway</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Sweden</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$2&#39;)\">2</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Item</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Norway</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Sweden</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('ctl01','Page$2')\">2</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderDefault");
 		}
 
@@ -1594,7 +1630,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderAllowPaging2)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Item</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>France</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Italy</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$1&#39;)\">1</a></td><td><span>2</span></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$3&#39;)\">3</a></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$4&#39;)\">4</a></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$5&#39;)\">...</a></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$Last&#39;)\">&gt;&gt;</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Item</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>France</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Italy</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><a href=\"javascript:__doPostBack('ctl01','Page$1')\">1</a></td><td><span>2</span></td><td><a href=\"javascript:__doPostBack('ctl01','Page$3')\">3</a></td><td><a href=\"javascript:__doPostBack('ctl01','Page$4')\">4</a></td><td><a href=\"javascript:__doPostBack('ctl01','Page$5')\">...</a></td><td><a href=\"javascript:__doPostBack('ctl01','Page$Last')\">&gt;&gt;</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderDefault");
 		}
 
@@ -1633,7 +1673,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderProperty)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+				string OriginControlHtml = "<div id=\"__gvctl01__div\">\r\n\t<table cellspacing=\"1\" cellpadding=\"0\" align=\"Justify\" rules=\"rows\" border=\"1\" style=\"background-image:url(http://test);\">\r\n\t\t<caption align=\"Left\">\r\n\t\t\ttest\r\n\t\t</caption><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Edit$0&#39;)\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Delete$0&#39;)\">Delete</a></td><td>Norway</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Edit$1&#39;)\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Delete$1&#39;)\">Delete</a></td><td>Sweden</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Edit$2&#39;)\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Delete$2&#39;)\">Delete</a></td><td>France</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Edit$3&#39;)\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Delete$3&#39;)\">Delete</a></td><td>Italy</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>&nbsp;</td><td>&nbsp;</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string OriginControlHtml = "<div id=\"__gvctl01__div\">\r\n\t<table cellspacing=\"1\" cellpadding=\"0\" align=\"Justify\" rules=\"rows\" border=\"1\" style=\"background-image:url(http://test);\">\r\n\t\t<caption align=\"Left\">\r\n\t\t\ttest\r\n\t\t</caption><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack('ctl01','Edit$0')\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','Delete$0')\">Delete</a></td><td>Norway</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack('ctl01','Edit$1')\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','Delete$1')\">Delete</a></td><td>Sweden</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack('ctl01','Edit$2')\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','Delete$2')\">Delete</a></td><td>France</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack('ctl01','Edit$3')\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','Delete$3')\">Delete</a></td><td>Italy</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>&nbsp;</td><td>&nbsp;</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderDefault");
 		}
 
@@ -1695,7 +1739,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingCheckBoxField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">HeaderText</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span class=\"aspNetDisabled\"><input id=\"ctl01_ctl00_0\" type=\"checkbox\" name=\"ctl01$ctl02$ctl00\" checked=\"checked\" disabled=\"disabled\" /></span></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span class=\"aspNetDisabled\"><input id=\"ctl01_ctl00_1\" type=\"checkbox\" name=\"ctl01$ctl03$ctl00\" disabled=\"disabled\" /></span></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FooterText</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">HeaderText</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span disabled=\"disabled\"><input id=\"ctl01_ctl02_ctl00\" type=\"checkbox\" name=\"ctl01$ctl02$ctl00\" checked=\"checked\" disabled=\"disabled\" /></span></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span disabled=\"disabled\"><input id=\"ctl01_ctl03_ctl00\" type=\"checkbox\" name=\"ctl01$ctl03$ctl00\" disabled=\"disabled\" /></span></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FooterText</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingCheckBoxField");
 		}
 
@@ -1704,7 +1752,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingCheckBoxField2)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">bool</th><th scope=\"col\">str</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span class=\"aspNetDisabled\" title=\"bool\"><input id=\"ctl01_ctl00_0\" type=\"checkbox\" name=\"ctl01$ctl02$ctl00\" checked=\"checked\" disabled=\"disabled\" /></span></td><td>1</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span class=\"aspNetDisabled\" title=\"bool\"><input id=\"ctl01_ctl00_1\" type=\"checkbox\" name=\"ctl01$ctl03$ctl00\" disabled=\"disabled\" /></span></td><td>2</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>&nbsp;</td><td>&nbsp;</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">bool</th><th scope=\"col\">str</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span disabled=\"disabled\" title=\"bool\"><input id=\"ctl01_ctl02_ctl00\" type=\"checkbox\" name=\"ctl01$ctl02$ctl00\" checked=\"checked\" disabled=\"disabled\" /></span></td><td>1</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span disabled=\"disabled\" title=\"bool\"><input id=\"ctl01_ctl03_ctl00\" type=\"checkbox\" name=\"ctl01$ctl03$ctl00\" disabled=\"disabled\" /></span></td><td>2</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>&nbsp;</td><td>&nbsp;</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingCheckBoxField2");
 		}
 		
@@ -1713,7 +1765,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingImageField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">HeaderText</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"1\" alt=\"1\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"2\" alt=\"2\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FooterText</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">HeaderText</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"1\" alt=\"1\" style=\"border-width:0px;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"2\" alt=\"2\" style=\"border-width:0px;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FooterText</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingImageField");
 		}
 
@@ -1722,7 +1778,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingCommandField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">HeaderText</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Edit$0&#39;)\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Delete$0&#39;)\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;New$0&#39;)\">New</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Select$0&#39;)\">Select</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Edit$1&#39;)\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Delete$1&#39;)\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;New$1&#39;)\">New</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Select$1&#39;)\">Select</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FooterText</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">HeaderText</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack('ctl01','Edit$0')\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','Delete$0')\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','New$0')\">New</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','Select$0')\">Select</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack('ctl01','Edit$1')\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','Delete$1')\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','New$1')\">New</a>&nbsp;<a href=\"javascript:__doPostBack('ctl01','Select$1')\">Select</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FooterText</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingCommandField");
 		}
 
@@ -1740,7 +1800,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingButtonField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">HeaderText</th><th scope=\"col\">HeaderText</th><th scope=\"col\">HeaderText</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input type=\"button\" value=\"1\" onclick=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;$0&#39;)\" /></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;cmd2$0&#39;)\">1</a></td><td><input type=\"image\" src=\"\" alt=\"1\" onclick=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;cmd3$0&#39;);return false;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input type=\"button\" value=\"2\" onclick=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;$1&#39;)\" /></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;cmd2$1&#39;)\">2</a></td><td><input type=\"image\" src=\"\" alt=\"2\" onclick=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;cmd3$1&#39;);return false;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FooterText</td><td>FooterText</td><td>FooterText</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">HeaderText</th><th scope=\"col\">HeaderText</th><th scope=\"col\">HeaderText</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input type=\"button\" value=\"1\" onclick=\"javascript:__doPostBack('ctl01','$0')\" /></td><td><a href=\"javascript:__doPostBack('ctl01','cmd2$0')\">1</a></td><td><input type=\"image\" src=\"\" alt=\"1\" onclick=\"javascript:__doPostBack('ctl01','cmd3$0')\" style=\"border-width:0px;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input type=\"button\" value=\"2\" onclick=\"javascript:__doPostBack('ctl01','$1')\" /></td><td><a href=\"javascript:__doPostBack('ctl01','cmd2$1')\">2</a></td><td><input type=\"image\" src=\"\" alt=\"2\" onclick=\"javascript:__doPostBack('ctl01','cmd3$1')\" style=\"border-width:0px;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FooterText</td><td>FooterText</td><td>FooterText</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingButtonField");
 		}
 
@@ -1757,10 +1821,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void GridView_RenderingTemplateField ()
 		{
-			
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingTemplateField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\"><input name=\"grid$ctl01$TextBox1\" type=\"text\" id=\"grid_TextBox1\" /></th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input name=\"grid$ctl02$TextBox1\" type=\"text\" value=\"1\" id=\"grid_TextBox1_0\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input name=\"grid$ctl03$TextBox1\" type=\"text\" value=\"2\" id=\"grid_TextBox1_1\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input name=\"grid$ctl04$TextBox1\" type=\"text\" id=\"grid_TextBox1\" /></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string OriginControlHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\"><input name=\"grid$ctl01$TextBox1\" type=\"text\" id=\"grid_ctl01_TextBox1\" /></th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input name=\"grid$ctl02$TextBox1\" type=\"text\" value=\"1\" id=\"grid_ctl02_TextBox1\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input name=\"grid$ctl03$TextBox1\" type=\"text\" value=\"2\" id=\"grid_ctl03_TextBox1\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input name=\"grid$ctl04$TextBox1\" type=\"text\" id=\"grid_ctl04_TextBox1\" /></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingTemplateField");
 		}
 		

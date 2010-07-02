@@ -189,7 +189,11 @@ namespace System.Web.UI.WebControls {
 			}
 			set { TableItemStyle.Wrap = value; }
 		}
-
+#if NET_4_0
+		public override bool SupportsDisabledAttribute {
+			get { return RenderingCompatibilityLessThan40; }
+		}
+#endif
 		TableItemStyle TableItemStyle {
 			get { return (ControlStyle as TableItemStyle); }
 		}

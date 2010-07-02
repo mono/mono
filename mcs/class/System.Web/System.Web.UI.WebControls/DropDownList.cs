@@ -81,7 +81,11 @@ namespace System.Web.UI.WebControls
 
 			set { base.SelectedIndex = value; }
 		}
-
+#if NET_4_0
+		public override bool SupportsDisabledAttribute {
+			get { return RenderingCompatibilityLessThan40; }
+		}
+#endif
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods

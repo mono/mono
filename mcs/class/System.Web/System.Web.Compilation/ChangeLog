@@ -1,3 +1,11 @@
+2010-07-02  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: added support for ClientIDMode 4.0
+	property
+
+	* PageCompiler.cs, UserControlCompiler.cs: AddStatementsToInitTop
+	must call the base implementation.
+
 2010-06-15  Marek Habersack  <mhabersack@novell.com>
 
 	* ResourceExpressionBuilder.cs: cast the return value of

@@ -42,9 +42,12 @@ using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.IO;
 using System.Security.Permissions;
+using System.Text;
 using System.Web;
-using System.Web.Util;
+using System.Web.Configuration;
 using System.Web.UI.Adapters;
+using System.Web.UI.WebControls;
+using System.Web.Util;
 
 #if NET_4_0
 using System.Web.Routing;
@@ -86,6 +89,7 @@ namespace System.Web.UI
 		static Dictionary <Type, bool> loadViewStateByIDCache;
 		bool? loadViewStateByID;
 		string uniqueID;
+		string clientID;
 		string _userId;
 		ControlCollection _controls;
 		Control _namingContainer;
@@ -105,6 +109,10 @@ namespace System.Web.UI
 		string _templateSourceDirectory;
 #if NET_4_0
 		ViewStateMode viewStateMode;
+		ClientIDMode? clientIDMode;
+		ClientIDMode? effectiveClientIDMode;
+		Version renderingCompatibility;
+		bool? renderingCompatibilityOld;
 #endif
 		/*************/
 		int stateMask;
@@ -190,6 +198,9 @@ namespace System.Web.UI
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never), Browsable (false)]
+#if NET_4_0
+		[Bindable (true)]
+#endif
 		public Control BindingContainer {
 			get {
 				Control container = NamingContainer;
@@ -205,18 +216,227 @@ namespace System.Web.UI
 		[WebSysDescription ("An Identification of the control that is rendered.")]
 		public virtual string ClientID {
 			get {
-				string client = UniqueID;
+				if (clientID != null)
+					return clientID;
+#if NET_4_0
+				switch (EffectiveClientIDMode) {
+					case ClientIDMode.AutoID:
+						clientID = UniqueID2ClientID (UniqueID);
+						break;
 
-				if (client != null)
-					client = UniqueID2ClientID (client);
+					case ClientIDMode.Predictable:
+						EnsureID ();
+						clientID = GeneratePredictableClientID ();
+						break;
 
+					case ClientIDMode.Static:
+						EnsureID ();
+						clientID = ID;
+						break;
+				}
+#else
+				clientID = UniqueID2ClientID (UniqueID);
+#endif				
 				stateMask |= ID_SET;
-				return client;
+				return clientID;
+			}
+		}
+#if NET_4_0
+		[Bindable (false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public virtual Version RenderingCompatibility {
+			get {
+				if (renderingCompatibility == null) {
+					var ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+					renderingCompatibility = ps != null ? ps.ControlRenderingCompatibilityVersion : new Version (4, 0);
+				}
+
+				return renderingCompatibility;
+			}
+			
+			set {
+				renderingCompatibility = value;
+				renderingCompatibilityOld = null;
 			}
 		}
 
+		internal bool RenderingCompatibilityLessThan40 {
+			get {
+				if (!renderingCompatibilityOld.HasValue)
+					renderingCompatibilityOld = RenderingCompatibility < new Version (4, 0);
+
+				return renderingCompatibilityOld.Value;
+			}
+		}
+		
+		[Bindable (false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		public Control DataItemContainer {
+			get {
+				Control container = NamingContainer;
+				if (container == null)
+					return null;
+
+				if (container is IDataItemContainer)
+					return container;
+
+				return container.DataItemContainer;
+			}
+		}
+
+		[Bindable (false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		public Control DataKeysContainer {
+			get {
+				Control container = NamingContainer;
+				if (container == null)
+					return null;
+
+				if (container is IDataKeysControl)
+					return container;
+
+				return container.DataKeysContainer;
+			}
+		}
+
+		[Themeable (false)]
+		[DefaultValue (ClientIDMode.Inherit)]
+		public virtual ClientIDMode ClientIDMode {
+			get {
+				if (!clientIDMode.HasValue)
+					return ClientIDMode.Inherit;
+
+				return clientIDMode.Value;
+			}
+			
+			set {
+				if (clientIDMode.HasValue && clientIDMode.Value != value) {
+					ClearCachedClientID ();
+					ClearEffectiveClientIDMode ();
+					clientIDMode = value;
+				}
+			}
+		}
+
+		internal ClientIDMode EffectiveClientIDMode {
+			get {
+				if (effectiveClientIDMode.HasValue)
+					return effectiveClientIDMode.Value;
+				
+				ClientIDMode ret = ClientIDMode;
+				if (ret != ClientIDMode.Inherit) {
+					effectiveClientIDMode = ret;
+					return ret;
+				}
+				
+				// not sure about this, but it seems logical as INamingContainer is
+				// the top of the hierarchy and it should "reset" the mode.
+				Control container = NamingContainer;
+				if (container != null) {
+					effectiveClientIDMode = container.EffectiveClientIDMode;
+					return effectiveClientIDMode.Value;
+				}
+
+				var ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+				effectiveClientIDMode = ps.ClientIDMode;
+
+				return effectiveClientIDMode.Value;
+			}	
+		}
+
+		protected void ClearCachedClientID ()
+		{
+			clientID = null;
+			if (!HasControls ())
+				return;
+
+			for (int i = 0; i < _controls.Count; i++)
+				_controls [i].ClearCachedClientID ();
+		}
+
+		protected void ClearEffectiveClientIDMode ()
+		{
+			effectiveClientIDMode = null;
+			if (!HasControls ())
+				return;
+
+			for (int i = 0; i < _controls.Count; i++)
+				_controls [i].ClearEffectiveClientIDMode ();
+		}
+		
+		string GeneratePredictableClientID ()
+		{
+			string myID = ID;
+			char separator = ClientIDSeparator;
+			
+			var sb = new StringBuilder ();
+			Control container = NamingContainer;
+			if (container != null && container != Page) {
+				string containerID = container.ID;
+				if (!String.IsNullOrEmpty (containerID)) {
+					sb.Append (container.ClientID);
+					sb.Append (separator);
+				} else
+					sb.Append (container.GeneratePredictableClientID ());
+			}
+
+			if (String.IsNullOrEmpty (myID))
+				return sb.ToString ();
+			
+			sb.Append (myID);
+			IDataItemContainer dataItemContainer = DataItemContainer as IDataItemContainer;
+			if (dataItemContainer == null)
+				return sb.ToString ();
+
+			IDataKeysControl dataKeysContainer = DataKeysContainer as IDataKeysControl;
+			GetDataBoundControlFieldValue (sb, separator, dataItemContainer, dataKeysContainer);
+			
+			return sb.ToString ();
+		}
+
+		void GetDataBoundControlFieldValue (StringBuilder sb, char separator, IDataItemContainer dataItemContainer, IDataKeysControl dataKeysContainer)
+		{
+			if (dataItemContainer is IDataBoundItemControl)
+				return;
+			
+			int index = dataItemContainer.DisplayIndex;
+			if (dataKeysContainer == null) {
+				if (index >= 0) {
+					sb.Append (separator);
+					sb.Append (index);
+				}
+				return;
+			}
+			
+			string[] suffixes = dataKeysContainer.ClientIDRowSuffix;
+			DataKeyArray keys = dataKeysContainer.ClientIDRowSuffixDataKeys;
+			if (keys == null || suffixes == null || suffixes.Length == 0) {
+				sb.Append (separator);
+				sb.Append (index);
+				return;
+			}
+
+			object value;
+			DataKey key = keys [index];
+			foreach (string suffix in suffixes) {
+				sb.Append (separator);
+				value = key != null ? key [suffix] : null;
+				if (value == null)
+					continue;
+				sb.Append (value.ToString ());
+			}
+		}
+#endif
 		internal string UniqueID2ClientID (string uniqueId)
 		{
+			if (String.IsNullOrEmpty (uniqueId))
+				return null;
+			
 			return uniqueId.Replace (IdSeparator, ClientIDSeparator);
 		}
 
@@ -301,6 +521,9 @@ namespace System.Web.UI
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("The container that this control is part of. The control's name has to be unique within the container.")]
+#if NET_4_0
+		[Bindable (true)]
+#endif
 		public virtual Control NamingContainer {
 			get {
 				if (_namingContainer == null && _parent != null) {
@@ -335,6 +558,9 @@ namespace System.Web.UI
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("The parent control of this control.")]
+#if NET_4_0
+		[Bindable (true)]
+#endif
 		public virtual Control Parent { //DIT
 			get { return _parent; }
 		}
@@ -349,6 +575,9 @@ namespace System.Web.UI
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if NET_4_0
+		[Bindable (true)]
+#endif
 		public TemplateControl TemplateControl {
 			get { return TemplateControlInternal; }
 
@@ -412,13 +641,13 @@ namespace System.Web.UI
 				if (uniqueID != null)
 					return uniqueID;
 
-				if (NamingContainer == null)
+				Control container = NamingContainer;
+				if (container == null)
 					return _userId;
 
 				EnsureIDInternal ();
-
-				string prefix = NamingContainer.UniqueID;
-				if (NamingContainer == Page || prefix == null) {
+				string prefix = container.UniqueID;
+				if (container == Page || prefix == null) {
 					uniqueID = _userId;
 #if TARGET_J2EE
 					if (getFacesContext () != null)
@@ -566,6 +795,9 @@ namespace System.Web.UI
 		void NullifyUniqueID ()
 		{
 			uniqueID = null;
+#if NET_4_0
+			ClearCachedClientID ();
+#endif
 			if (!HasControls ())
 				return;
 

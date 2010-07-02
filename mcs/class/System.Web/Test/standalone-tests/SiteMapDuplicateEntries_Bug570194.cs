@@ -60,19 +60,19 @@ namespace StandAloneTests.SiteMapDuplicateEntries_Bug570194
 
 		void Default_Aspx (string result, TestRunItem runItem)
 		{
-			string originalHtml = @"<span><a href=""#ctl03_SkipLink""><img height=""0"" width=""0"" src=""/WebResource.axd"" alt=""Skip Navigation Links"" style=""border-width:0px;"" /></a><span><a href=""/Default.aspx"">Main</a></span><a id=""ctl03_SkipLink""></a></span>";
+			string originalHtml = "<span><a href=\"#ctl03_SkipLink\"><img alt=\"Skip Navigation Links\" height=\"0\" width=\"0\" src=\"/WebResource.axd\" style=\"border-width:0px;\" /></a><span><a href=\"/Default.aspx\">Main</a></span><a id=\"ctl03_SkipLink\"></a></span>";
 			Helpers.ExtractAndCompareCodeFromHtml (Helpers.StripWebResourceAxdQuery (result), originalHtml, "#A1");
 		}
 
 		void Default_Foo_Aspx (string result, TestRunItem runItem)
 		{
-			string originalHtml = @"<span><a href=""#ctl03_SkipLink""><img height=""0"" width=""0"" src=""/WebResource.axd"" alt=""Skip Navigation Links"" style=""border-width:0px;"" /></a><span><a href=""/Default.aspx"">Main</a></span><span> > </span><span><a href=""/Default.aspx?mode=foo"">Foo</a></span><a id=""ctl03_SkipLink""></a></span>";
+			string originalHtml = "<span><a href=\"#ctl03_SkipLink\"><img alt=\"Skip Navigation Links\" height=\"0\" width=\"0\" src=\"/WebResource.axd\" style=\"border-width:0px;\" /></a><span><a href=\"/Default.aspx\">Main</a></span><span> &gt; </span><span><a href=\"/Default.aspx?mode=foo\">Foo</a></span><a id=\"ctl03_SkipLink\"></a></span>";
 			Helpers.ExtractAndCompareCodeFromHtml (Helpers.StripWebResourceAxdQuery (result), originalHtml, "#A1");
 		}
 
 		void Default_Bar_Aspx (string result, TestRunItem runItem)
 		{
-			string originalHtml = @"<span><a href=""#ctl03_SkipLink""><img height=""0"" width=""0"" src=""/WebResource.axd"" alt=""Skip Navigation Links"" style=""border-width:0px;"" /></a><span><a href=""/Default.aspx"">Main</a></span><span> > </span><span><a href=""/Default.aspx?mode=bar"">Bar</a></span><a id=""ctl03_SkipLink""></a></span>";
+			string originalHtml = "<span><a href=\"#ctl03_SkipLink\"><img alt=\"Skip Navigation Links\" height=\"0\" width=\"0\" src=\"/WebResource.axd\" style=\"border-width:0px;\" /></a><span><a href=\"/Default.aspx\">Main</a></span><span> &gt; </span><span><a href=\"/Default.aspx?mode=bar\">Bar</a></span><a id=\"ctl03_SkipLink\"></a></span>";
 			Helpers.ExtractAndCompareCodeFromHtml (Helpers.StripWebResourceAxdQuery (result), originalHtml, "#A1");
 		}
 	}

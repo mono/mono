@@ -1,3 +1,30 @@
+2010-07-02  Marek Habersack  <mhabersack@novell.com>
+
+	* Menu.cs: 4.0 API updates.
+
+	* GridView.cs: implemented 4.0 properties -
+	SortedAscendingCellStyle, SortedAscendingHeaderStyle,
+	SortedDescendingCellStyle, SortedDescendingHeaderStyle,
+	ClientIDRowSuffix, ClientIDRowSuffixDataKeys, ShowHeaderWhenEmpty
+	along with associated rendering changes.
+
+	* DetailsView.cs, FormView.cs, GridView.cs: 4.0 API changes -
+	renamed ShowPage to SetPageIndex and made it public.
+	Added 4.0 interfaces to inheritance list and implemented them.
+
+	* DataKeyArray.cs: added internal constructor which accepts IList
+	instead of ArrayList. Changed the 'keys' field type to IList.
+
+	* ContainedTable.cs: the 'id' attribute must be rendered last.
+
+	* CheckBox.cs, CheckBoxList.cs, SiteMapPath.cs, Table.cs,
+	TableStyle.cs, TextBox.cs, WebControl.cs: 4.0 rendering changes.
+
+	* Calendar.cs, CompositeControl.cs, DropDownList.cs, HyperLink.cs,
+	Image.cs, ImageButton.cs, Label.cs, LinkButton.cs, LoginName.cs,
+	Panel.cs, Table.cs, TableCell.cs, TableRow.cs:
+	added new 4.0 property, SupportsDisabledAttribute.
+
 2010-06-21  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseValidator.cs, BulletedList.cs, Calendar.cs, CheckBox.cs,

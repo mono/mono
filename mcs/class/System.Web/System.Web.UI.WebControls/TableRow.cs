@@ -108,8 +108,11 @@ namespace System.Web.UI.WebControls {
 		TableItemStyle TableItemStyle {
 			get { return (ControlStyle as TableItemStyle); }
 		}
-
-
+#if NET_4_0
+		public override bool SupportsDisabledAttribute {
+			get { return RenderingCompatibilityLessThan40; }
+		}
+#endif
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return new CellControlCollection (this);

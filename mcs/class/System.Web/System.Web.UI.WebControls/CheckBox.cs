@@ -313,17 +313,22 @@ namespace System.Web.UI.WebControls
 			}
 			
 			bool need_span = ControlStyleCreated && !ControlStyle.IsEmpty;
+			bool enabled = IsEnabled;
+			if (!enabled) {
+#if NET_4_0
+				if (!RenderingCompatibilityLessThan40)
+					ControlStyle.PrependCssClass (DisabledCssClass);
+				else
+#endif
+					w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
+				need_span = true;
+			}
+
 			if (need_span) {
 				AddDisplayStyleAttribute (w);
 				ControlStyle.AddAttributesToRender (w, this);
 			}
-
-			bool enabled = IsEnabled;
-			if (!enabled) {
-				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
-				need_span = true;
-			}
-
+			
 			string tt = ToolTip;
 			if (tt != null && tt.Length > 0){
 				w.AddAttribute ("title", tt);
@@ -332,7 +337,7 @@ namespace System.Web.UI.WebControls
 
 			if (HasAttributes && AddAttributesForSpan (w))
 				need_span = true;
-
+			
 			if (need_span)
 				w.RenderBeginTag (HtmlTextWriterTag.Span);
 
@@ -359,9 +364,7 @@ namespace System.Web.UI.WebControls
 				w.AddAttribute (HtmlTextWriterAttribute.Name, nameAttr);
 			InternalAddAttributesToRender (w, enabled);
 			AddAttributesToRender (w);
-			if (inputAttributes != null)
-				inputAttributes.AddAttributes (w);
-
+			
 			if (Checked)
 				w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked", false);
 
@@ -381,6 +384,10 @@ namespace System.Web.UI.WebControls
 
 			if (common_attrs != null)
 				common_attrs.AddAttributes (w);
+
+			if (inputAttributes != null)
+				inputAttributes.AddAttributes (w);
+			
 			w.RenderBeginTag (HtmlTextWriterTag.Input);
 			w.RenderEndTag ();
 		}

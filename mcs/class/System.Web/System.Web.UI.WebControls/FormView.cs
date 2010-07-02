@@ -45,6 +45,9 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class FormView: CompositeDataBoundControl, IDataItemContainer, INamingContainer, IPostBackEventHandler, IPostBackContainer
+#if NET_4_0
+		, IDataBoundItemControl, IDataBoundControl
+#endif
 	{
 		object dataItem;
 		
@@ -793,8 +796,33 @@ namespace System.Web.UI.WebControls
 	
 		int IDataItemContainer.DisplayIndex {
 			get { return PageIndex; }
-		}		
-	
+		}
+#if NET_4_0
+		[MonoTODO ("Make use of it in the code")]
+		[DefaultValue (true)]
+		public virtual bool EnableModelValidation {
+			get;
+			set;
+		}
+
+		DataBoundControlMode IDataBoundItemControl.Mode {
+			get {
+				switch (CurrentMode) {
+					case FormViewMode.ReadOnly:
+						return DataBoundControlMode.ReadOnly;
+
+					case FormViewMode.Edit:
+						return DataBoundControlMode.Edit;
+
+					case FormViewMode.Insert:
+						return DataBoundControlMode.Insert;
+
+					default:
+						throw new InvalidOperationException ("Unsupported mode value.");
+				}
+			}
+		}
+#endif
 		public virtual bool IsBindableType (Type type)
 		{
 			return type.IsPrimitive || type == typeof (string) || type == typeof (DateTime) || type == typeof (Guid) || type == typeof (Decimal);
@@ -1222,25 +1250,25 @@ namespace System.Web.UI.WebControls
 							newIndex = paramIndex - 1;
 							break;
 					}
-					ShowPage (newIndex);
+					SetPageIndex (newIndex);
 					break;
 					
 				case DataControlCommands.FirstPageCommandArgument:
-					ShowPage (0);
+					SetPageIndex (0);
 					break;
 
 				case DataControlCommands.LastPageCommandArgument:
-					ShowPage (PageCount - 1);
+					SetPageIndex (PageCount - 1);
 					break;
 					
 				case DataControlCommands.NextPageCommandArgument:
 					if (PageIndex < PageCount - 1)
-						ShowPage (PageIndex + 1);
+						SetPageIndex (PageIndex + 1);
 					break;
 
 				case DataControlCommands.PreviousPageCommandArgument:
 					if (PageIndex > 0)
-						ShowPage (PageIndex - 1);
+						SetPageIndex (PageIndex - 1);
 					break;
 					
 				case DataControlCommands.EditCommandName:
@@ -1268,8 +1296,10 @@ namespace System.Web.UI.WebControls
 					break;
 			}
 		}
-		
-		void ShowPage (int index)
+#if NET_4_0
+		public
+#endif
+		void SetPageIndex (int index)
 		{
 			FormViewPageEventArgs args = new FormViewPageEventArgs (index);
 			OnPageIndexChanging (args);

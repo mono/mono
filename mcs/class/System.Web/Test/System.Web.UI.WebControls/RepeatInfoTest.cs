@@ -153,7 +153,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			HtmlTextWriter writer = GetWriter ();
 			ri.RenderRepeater (writer, new RepeatInfoUser (false, false, false, 1), new TableStyle (), wc);
-			Assert.AreEqual (s, writer.InnerWriter.ToString (), msg);
+			string rendered = writer.InnerWriter.ToString ();
+			Assert.AreEqual (s, rendered, msg);
 		}
 
 		[Test]
@@ -166,12 +167,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void RenderRepeater_BaseControl ()
 		{
-#if NET_2_0
+#if NET_4_0
+			string noid = "<table>\n\t<tr>\n\t\t<td>0</td><td></td><td></td>\n\t</tr>\n</table>";
+			string id_enabled = "<table id=\"foo\" class=\"aspNetDisabled\">\n\t<tr>\n\t\t<td>0</td><td></td><td></td>\n\t</tr>\n</table>";
+#else
 			string noid = "<table border=\"0\">\n\t<tr>\n\t\t<td>0</td><td></td><td></td>\n\t</tr>\n</table>";
 			string id_enabled = "<table id=\"foo\" disabled=\"disabled\" border=\"0\">\n\t<tr>\n\t\t<td>0</td><td></td><td></td>\n\t</tr>\n</table>";
-#else
-			string noid = "<table border=\"0\">\n\t<tr>\n\t\t<td>0</td>\n\t</tr>\n</table>";
-			string id_enabled = "<table id=\"foo\" disabled=\"disabled\" border=\"0\">\n\t<tr>\n\t\t<td>0</td>\n\t</tr>\n</table>";
 #endif
 			RenderRepeater_BaseControl (noid, "Table", new Table ());
 			RenderRepeater_BaseControl (noid, "DataList", new DataList ());

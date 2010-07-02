@@ -110,10 +110,10 @@ class X {
 
 	static void Main ()
 	{
-#if NET_2_0
-	  Console.WriteLine ("#if NET_2_0");
+#if NET_4_0
+		Console.WriteLine ("#if NET_4_0");
 #else
-	  Console.WriteLine ("#if !NET_2_0");
+		Console.WriteLine ("#if NET_2_0 && !NET_4_0");
 #endif
 
 		Console.WriteLine (@"

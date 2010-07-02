@@ -260,8 +260,13 @@ namespace System.Web.UI.WebControls
 		public Unit StaticSubMenuIndent {
 			get {
 				object o = ViewState ["StaticSubMenuIndent"];
-				if (o != null) return (Unit)o;
+				if (o != null)
+					return (Unit)o;
+#if NET_4_0
+				return Unit.Empty;
+#else
 				return new Unit (16);
+#endif
 			}
 			set {
 				ViewState["StaticSubMenuIndent"] = value;

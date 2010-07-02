@@ -634,8 +634,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			result = t.Run ();
-			string newHtml = HtmlDiff.GetControlFromPageHtml (result); 
+			string newHtml = HtmlDiff.GetControlFromPageHtml (result);
+#if NET_4_0
+			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\r\n\t</table>\r\n</div><a id=\"LinkButton1\" href=\"javascript:__doPostBack(&#39;LinkButton1&#39;,&#39;&#39;)\">Test</a>";
+#else
 			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\r\n\t</table>\r\n</div><a id=\"LinkButton1\" href=\"javascript:__doPostBack('LinkButton1','')\">Test</a>";
+#endif
 			HtmlDiff.AssertAreEqual(origHtml, newHtml, "EmptyContentTest");
 		}
 		
@@ -678,7 +682,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			result = t.Run ();
 			string newHtml = HtmlDiff.GetControlFromPageHtml (result); 
+#if NET_4_0
+			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\r\n\t</table>\r\n</div><a id=\"LinkButton1\" href=\"javascript:__doPostBack(&#39;LinkButton1&#39;,&#39;&#39;)\">Test</a>";
+#else
 			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\r\n\t</table>\r\n</div><a id=\"LinkButton1\" href=\"javascript:__doPostBack('LinkButton1','')\">Test</a>";
+#endif
 			HtmlDiff.AssertAreEqual(origHtml, newHtml, "EmptyFooterTextTest");
 		}
 		
@@ -720,7 +728,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			result = t.Run ();
 			string newHtml = HtmlDiff.GetControlFromPageHtml (result); 
+#if NET_4_0
+			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\r\n\t</table>\r\n</div><a id=\"LinkButton1\" href=\"javascript:__doPostBack(&#39;LinkButton1&#39;,&#39;&#39;)\">Test</a>";
+#else
 			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\r\n\t</table>\r\n</div><a id=\"LinkButton1\" href=\"javascript:__doPostBack('LinkButton1','')\">Test</a>";
+#endif
 			HtmlDiff.AssertAreEqual(origHtml, newHtml, "EmptyHeaderTextTest");
 		}
 		
@@ -759,7 +771,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			//t.Invoker = PageInvoker.CreateOnLoad (pd);
 			result = t.Run ();
 			string newHtml = HtmlDiff.GetControlFromPageHtml (result); 
+#if NET_4_0
+			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>Empty Data</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"LinkButton1\" href=\"javascript:__doPostBack(&#39;LinkButton1&#39;,&#39;&#39;)\">Test</a>";
+#else
 			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>Empty Data</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"LinkButton1\" href=\"javascript:__doPostBack('LinkButton1','')\">Test</a>";
+#endif
 			HtmlDiff.AssertAreEqual(origHtml, newHtml, "EmptyDataTextTest");
 		}
 
@@ -864,7 +880,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			string html = new WebTest (PageInvoker.CreateOnLoad (
 				new PageDelegate (DetailsView_DeleteItem))).Run ();
 			string newHtml = HtmlDiff.GetControlFromPageHtml (html);
+#if NET_4_0
+			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1002</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Melanie</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Talmadge</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$2&#39;)\">2</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1002</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Melanie</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Talmadge</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('ctl01','Page$2')\">2</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "DeleteItemMethod");
 		}
 
@@ -1183,9 +1203,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerDetailsView dv = new PokerDetailsView ();
 			Table tb = dv.DoCreateTable();
 			Assert.AreEqual (null, tb.Parent, "CreateTable1");
-			Assert.AreEqual ("", tb.BackImageUrl, "CreateTable2");
+			Assert.AreEqual (String.Empty, tb.BackImageUrl, "CreateTable2");
 			Assert.AreEqual (0, tb.Rows.Count, "CreateTable3");
+#if NET_4_0
+			Assert.AreEqual (String.Empty, tb.ClientID, "CreateTable3");
+#else
 			Assert.AreEqual (null, tb.ClientID , "CreateTable3");
+#endif
 			dv.ID = "testId"; //private filed _parentID should be set to "testId"			
 			tb = dv.DoCreateTable ();
 			Assert.AreEqual (-1, tb.CellSpacing, "CreateTable4");
@@ -1418,7 +1442,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			//Footer Template property is checked.
 			string renderedPageHtml = new WebTest ("FooterTemplateTest.aspx").Run ();
 			string newHtmlValue = HtmlDiff.GetControlFromPageHtml (renderedPageHtml);
+#if NET_4_0
+			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Mahesh</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\">\n                Footer Template Test<a id=\"DetailsView1_HyperLink1\">Footer</a>\n            </td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$2&#39;)\">2</a></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$3&#39;)\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Mahesh</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\">\n                Footer Template Test<a id=\"DetailsView1_HyperLink1\">Footer</a>\n            </td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$3')\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";	
+#endif
 
 			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderFooterTemplate");
 		}
@@ -1430,8 +1458,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			//Header Template property is checked
 			string renderedPageHtml = new WebTest ("DetailsViewTemplates.aspx").Run ();
 			string newHtmlValue = HtmlDiff.GetControlFromPageHtml (renderedPageHtml);
+#if NET_4_0
+			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td colspan=\"2\">\n                Header Template<input type=\"submit\" name=\"DetailsView1$Button1\" value=\"Header button\" id=\"DetailsView1_Button1\" />\n            </td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Mahesh</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Delete$0&#39;)\">Delete</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$2&#39;)\">2</a></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$3&#39;)\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td colspan=\"2\">\n                Header Template<input type=\"submit\" name=\"DetailsView1$Button1\" value=\"Header button\" id=\"DetailsView1_Button1\" />\n            </td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Mahesh</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack('DetailsView1','Delete$0')\">Delete</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$3')\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
-		
+#endif
 			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderHeaderTemplate");
 		}
 
@@ -1453,7 +1484,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string renderedPageHtml = new WebTest ("DetailsViewTemplates_3.aspx").Run ();
 			string newHtmlValue = HtmlDiff.GetControlFromPageHtml (renderedPageHtml);
+#if NET_4_0
+			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView3\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Mahesh</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack(&#39;DetailsView3&#39;,&#39;$0&#39;)\">TestButtonField</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>&nbsp;</td><td><a></a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Image field</td><td></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>&nbsp;</td><td></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Template Field</td><td style=\"background-color:#FFE0C0;\">&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView3&#39;,&#39;Page$2&#39;)\">2</a></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView3&#39;,&#39;Page$3&#39;)\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView3\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Mahesh</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack('DetailsView3','$0')\">TestButtonField</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>&nbsp;</td><td><a></a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Image field</td><td></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>&nbsp;</td><td></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Template Field</td><td style=\"background-color:#FFE0C0;\">&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('DetailsView3','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('DetailsView3','Page$3')\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 					
 			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderDataFields");
 		}
@@ -1466,7 +1501,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Invoker = PageInvoker.CreateOnLoad (PagingPostback_Load);
 			string pageHTML = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+#if NET_4_0
+			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Mahesh</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Edit$0&#39;)\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Delete$0&#39;)\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;New$0&#39;)\">New</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$2&#39;)\">2</a></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$3&#39;)\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Mahesh</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack('DetailsView1','Edit$0')\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack('DetailsView1','Delete$0')\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack('DetailsView1','New$0')\">New</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$3')\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (origHtmlValue, renderedHtml, "BeforePagingDataPostback");
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
@@ -1476,7 +1515,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			pageHTML = t.Run ();
 			renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+#if NET_4_0
+			origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1002</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Melanie</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Talmadge</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Edit$1&#39;)\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Delete$1&#39;)\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;New$1&#39;)\">New</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$1&#39;)\">1</a></td><td><span>2</span></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$3&#39;)\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else			
 			origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1002</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Melanie</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Talmadge</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack('DetailsView1','Edit$1')\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack('DetailsView1','Delete$1')\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack('DetailsView1','New$1')\">New</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><a href=\"javascript:__doPostBack('DetailsView1','Page$1')\">1</a></td><td><span>2</span></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$3')\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (origHtmlValue, renderedHtml, "AfterPagingDataPostback");
 
 			// Checking for change index event fired.
@@ -1547,7 +1590,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;			
 			pageHTML = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+#if NET_4_0
+			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td><input name=\"DetailsView1$ctl01\" type=\"text\" value=\"Mahesh\" title=\"FName\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td><input name=\"DetailsView1$ctl02\" type=\"text\" value=\"Chand\" title=\"LName\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack(&#39;DetailsView1$ctl03&#39;,&#39;&#39;)\">Update</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Cancel$0&#39;)\">Cancel</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$2&#39;)\">2</a></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$3&#39;)\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1001</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td><input name=\"DetailsView1$ctl01\" type=\"text\" value=\"Mahesh\" title=\"FName\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td><input name=\"DetailsView1$ctl02\" type=\"text\" value=\"Chand\" title=\"LName\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack('DetailsView1$ctl03','')\">Update</a>&nbsp;<a href=\"javascript:__doPostBack('DetailsView1','Cancel$0')\">Cancel</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$3')\">3</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (origHtmlValue, renderedHtml, "AfterEditPostback");
 			// Checking for change mode event fired.
 			ArrayList eventlist = t.UserData as ArrayList;
@@ -1618,7 +1665,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			pageHTML = t.Run ();
 			//Console.WriteLine ("XXXXFAIL {0}", pageHTML);
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+#if NET_4_0
+			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1002</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Melanie</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Talmadge</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Edit$0&#39;)\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Delete$0&#39;)\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;New$0&#39;)\">New</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Page$2&#39;)\">2</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1002</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Melanie</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Talmadge</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack('DetailsView1','Edit$0')\">Edit</a>&nbsp;<a href=\"javascript:__doPostBack('DetailsView1','Delete$0')\">Delete</a>&nbsp;<a href=\"javascript:__doPostBack('DetailsView1','New$0')\">New</a></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('DetailsView1','Page$2')\">2</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 
 			HtmlDiff.AssertAreEqual (origHtmlValue, renderedHtml, "DeleteDataPostback");
 			Assert.AreEqual (false, renderedHtml.Contains ("1001"), "AfterDeletePostback");
@@ -1690,7 +1741,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;			
 			pageHTML = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+#if NET_4_0
+			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td><input name=\"DetailsView1$ctl01\" type=\"text\" title=\"ID\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td><input name=\"DetailsView1$ctl02\" type=\"text\" title=\"FName\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td><input name=\"DetailsView1$ctl03\" type=\"text\" title=\"LName\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack(&#39;DetailsView1$ctl04&#39;,&#39;&#39;)\">Insert</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;DetailsView1&#39;,&#39;Cancel$-1&#39;)\">Cancel</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origHtmlValue = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"DetailsView1\" style=\"height:50px;width:125px;border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td><input name=\"DetailsView1$ctl01\" type=\"text\" title=\"ID\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td><input name=\"DetailsView1$ctl02\" type=\"text\" title=\"FName\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td><input name=\"DetailsView1$ctl03\" type=\"text\" title=\"LName\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><a href=\"javascript:__doPostBack('DetailsView1$ctl04','')\">Insert</a>&nbsp;<a href=\"javascript:__doPostBack('DetailsView1','Cancel$-1')\">Cancel</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";    
+#endif
 
 			HtmlDiff.AssertAreEqual (origHtmlValue, renderedHtml, "InsertDataPostback");
 			

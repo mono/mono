@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
 
 using System;
 using System.ComponentModel;
@@ -63,7 +61,10 @@ namespace System.Web.Configuration
 		static ConfigurationProperty userControlBaseTypeProp;
 		static ConfigurationProperty validateRequestProp;
 		static ConfigurationProperty viewStateEncryptionModeProp;
-
+#if NET_4_0
+		static ConfigurationProperty clientIDModeProp;
+		static ConfigurationProperty controlRenderingCompatibilityVersionProp;
+#endif
 		static PagesSection ()
 		{
 			asyncTimeoutProp = new ConfigurationProperty ("asyncTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (45.0),
@@ -98,7 +99,15 @@ namespace System.Web.Configuration
 			viewStateEncryptionModeProp = new ConfigurationProperty ("viewStateEncryptionMode", typeof (ViewStateEncryptionMode), ViewStateEncryptionMode.Auto,
 										 new GenericEnumConverter (typeof (ViewStateEncryptionMode)), PropertyHelper.DefaultValidator,
 										 ConfigurationPropertyOptions.None);
-
+#if NET_4_0
+			clientIDModeProp = new ConfigurationProperty ("clientIDMode", typeof (ClientIDMode), ClientIDMode.Predictable,
+								      new GenericEnumConverter (typeof (ClientIDMode)), PropertyHelper.DefaultValidator,
+								      ConfigurationPropertyOptions.None);
+			controlRenderingCompatibilityVersionProp = new ConfigurationProperty ("controlRenderingCompatibilityVersion", typeof (Version), new Version (4, 0),
+											      new VersionConverter (3, 5, "The value for the property 'controlRenderingCompatibilityVersion' is not valid. The error is: The control rendering compatibility version must not be less than {1}."),
+											      PropertyHelper.DefaultValidator,
+											      ConfigurationPropertyOptions.None);
+#endif
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (asyncTimeoutProp);
 			properties.Add (autoEventWireupProp);
@@ -122,6 +131,10 @@ namespace System.Web.Configuration
 			properties.Add (userControlBaseTypeProp);
 			properties.Add (validateRequestProp);
 			properties.Add (viewStateEncryptionModeProp);
+#if NET_4_0
+			properties.Add (clientIDModeProp);
+			properties.Add (controlRenderingCompatibilityVersionProp);
+#endif
 		}
 
 		public PagesSection ()
@@ -284,7 +297,24 @@ namespace System.Web.Configuration
 			get { return (ViewStateEncryptionMode) base [viewStateEncryptionModeProp]; }
 			set { base [viewStateEncryptionModeProp] = value; }
 		}
+#if NET_4_0
+		[ConfigurationProperty ("clientIDMode", DefaultValue = ClientIDMode.Predictable)]
+		public ClientIDMode ClientIDMode {
+			get { return (ClientIDMode) base [clientIDModeProp]; }
+			set { base [clientIDModeProp] = value; }
+		}
 
+		[ConfigurationProperty ("controlRenderingCompatibilityVersion", DefaultValue = "4.0")]
+		public Version ControlRenderingCompatibilityVersion {
+			get { return (Version) base [controlRenderingCompatibilityVersionProp]; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				
+				base [controlRenderingCompatibilityVersionProp] = value;
+			}
+		}
+#endif
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
@@ -298,4 +328,3 @@ namespace System.Web.Configuration
 	}
 }
 
-#endif

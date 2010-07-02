@@ -402,10 +402,9 @@ namespace System.Web.UI.WebControls
 					if (PathSeparatorTemplate != null) {
 						item.ApplyStyle (PathSeparatorStyle);
 						PathSeparatorTemplate.InstantiateIn (item);
-					}
-					else {
+					} else {
 						Literal h = new Literal ();
-						h.Text = PathSeparator;
+						h.Text = HttpUtility.HtmlEncode (PathSeparator);
 						item.ApplyStyle (PathSeparatorStyle);
 						item.Controls.Add (h);
 					}
@@ -461,28 +460,32 @@ namespace System.Web.UI.WebControls
 		protected internal override void RenderContents (HtmlTextWriter w)
 		{
 			string skip_id = ClientID + "_SkipLink";
+			string altText = SkipLinkText;
+			bool needAnchor = !String.IsNullOrEmpty (altText);
+			
+			if (needAnchor) {
+				// Anchor start
+				w.AddAttribute (HtmlTextWriterAttribute.Href, "#" + skip_id);
+				w.RenderBeginTag (HtmlTextWriterTag.A);
 
-			if (SkipLinkText != "") {
-				HtmlAnchor anchor = new HtmlAnchor ();
-				anchor.HRef = "#" + skip_id;
+				// Image
+				w.AddAttribute (HtmlTextWriterAttribute.Alt, altText);
+				w.AddAttribute (HtmlTextWriterAttribute.Height, "0");
+				w.AddAttribute (HtmlTextWriterAttribute.Width, "0");
+				w.AddAttribute (HtmlTextWriterAttribute.Src, Page.ClientScript.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif"));
+				w.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+				w.RenderBeginTag (HtmlTextWriterTag.Img);
+				w.RenderEndTag ();
 
-				Image img = new Image ();
-				img.ImageUrl = Page.ClientScript.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
-				img.Attributes.Add ("height", "0");
-				img.Attributes.Add ("width", "0");
-				img.AlternateText = SkipLinkText;
-
-				anchor.Controls.Add (img);
-
-				anchor.Render (w);
+				w.RenderEndTag ();
 			}
 
 			base.RenderContents (w);
 
-			if (SkipLinkText != "") {
-				HtmlAnchor anchor = new HtmlAnchor ();
-				anchor.ID = skip_id;
-				anchor.Render (w);
+			if (needAnchor) {
+				 w.AddAttribute(HtmlTextWriterAttribute.Id, skip_id);
+				 w.RenderBeginTag(HtmlTextWriterTag.A);
+				 w.RenderEndTag();
 			}
 		}
 		

@@ -34,6 +34,19 @@ namespace System.Web.Configuration
 {
 	sealed class VersionConverter : ConfigurationConverterBase
 	{
+		Version minVersion;
+		string exceptionText;
+
+		public VersionConverter ()
+		{
+		}
+		
+		public VersionConverter (int minMajor, int minMinor, string exceptionText = null)
+		{
+			minVersion = new Version (minMajor, minMinor);
+			this.exceptionText = exceptionText;
+		}
+		
 		public override object ConvertFrom (ITypeDescriptorContext ctx, CultureInfo ci, object data)
                 {
 			string input = data as string;
@@ -45,6 +58,9 @@ namespace System.Web.Configuration
 			if (!Version.TryParse (input, out result))
 				throw new ConfigurationErrorsException ("The input string wasn't in correct format.");
 
+			if (minVersion != null && result < minVersion)
+				throw new ConfigurationErrorsException (String.Format (exceptionText, result, minVersion));
+			
 			return result;
                 }
 

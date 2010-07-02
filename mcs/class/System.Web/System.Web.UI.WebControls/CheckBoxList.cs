@@ -274,6 +274,9 @@ namespace System.Web.UI.WebControls
 		{
 			ListItem item = Items [repeatIndex];
 
+			string cssClass = check_box.CssClass;
+			if (!String.IsNullOrEmpty (cssClass))
+				check_box.CssClass = String.Empty;
 			check_box.ID = repeatIndex.ToString (Helpers.InvariantCulture);
 			check_box.Text = item.Text;
 			check_box.AutoPostBack = AutoPostBack;
@@ -290,7 +293,14 @@ namespace System.Web.UI.WebControls
 				check_box.Attributes.Clear ();
 			if (item.HasAttributes)
 				check_box.Attributes.CopyFrom (item.Attributes);
-
+#if NET_4_0
+			if (!RenderingCompatibilityLessThan40) {
+				var attrs = check_box.InputAttributes;
+			
+				attrs.Clear ();
+				attrs.Add ("value", item.Value);
+			}
+#endif
 			check_box.RenderControl (writer);
 		}
 

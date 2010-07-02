@@ -171,7 +171,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsNotNull (p.StaticMenuStyle, "StaticMenuStyle");
 			Assert.AreEqual ("", p.StaticPopOutImageUrl, "StaticPopOutImageUrl");
 			Assert.IsNotNull (p.StaticSelectedStyle, "StaticSelectedStyle");
+#if NET_4_0
+			Assert.IsTrue (p.StaticSubMenuIndent.IsEmpty, "StaticSubMenuIndent");
+#else
 			Assert.AreEqual (Unit.Pixel(16), p.StaticSubMenuIndent, "StaticSubMenuIndent");
+#endif
 			Assert.AreEqual ("", p.StaticTopSeparatorImageUrl, "StaticTopSeparatorImageUrl");
 			Assert.AreEqual ("", p.Target, "Target");
 			Assert.IsNotNull (p.OnTagKey (), "TagKey");
@@ -404,7 +408,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 			pm.RenderBeginTag (tw);
 			string RenderedControlHtml = sw.ToString();
+#if NET_4_0
+			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"ctl01\">\r\n";
+#else
 			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=4RHYfeNnynkXiM59uthjZg2&amp;t=633802729995006876\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><table id=\"ctl01\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n";
+#endif
 
 			HtmlDiff.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderBeginTag");
 		}
@@ -424,7 +432,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			pm.RenderBeginTag (tw);
 			pm.RenderEndTag (tw);
 			string RenderedControlHtml = sw.ToString ();
+#if NET_4_0
+			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"ctl01\">\r\n\r\n</div><a id=\"ctl01_SkipLink\"></a>";
+#else
 			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=4RHYfeNnynkXiM59uthjZg2&amp;t=633802729995006876\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><table id=\"ctl01\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n\r\n</table><a id=\"ctl01_SkipLink\"></a>";
+#endif
 
 			HtmlDiff.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"RenderEndTag");	
 		}
@@ -879,6 +891,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Menu_RenderStaticItems () {
 			string RenderedPageHtml, RenderedControlHtml, OriginControlHtml;
 			#region OriginControlHtml
+#if NET_4_0
+			OriginControlHtml = "<a href=\"#Menu_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"Menu\">\r\n\t<ul class=\"level1\">\r\n\t\t<li><a class=\"level1\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value&#39;)\">one-black</a></li><li><a class=\"level2\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value&#39;)\">two-black-1</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value&#39;)\">three-black-1</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-1-value&#39;)\">four-black-1</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-2-value&#39;)\">four-black-2</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value&#39;)\">three-black-2</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-3-value&#39;)\">four-black-3</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-4-value&#39;)\">four-black-4</a></li><li><a class=\"level2\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value&#39;)\">two-black-2</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value&#39;)\">three-black-3</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-5-value&#39;)\">four-black-5</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-6-value&#39;)\">four-black-6</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value&#39;)\">three-black-4</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-7-value&#39;)\">four-black-7</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-8-value&#39;)\">four-black-8</a></li>\r\n\t</ul>\r\n</div><a id=\"Menu_SkipLink\"></a>";
+#else
 			OriginControlHtml = @"<a href=""#Menu_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><table id=""Menu"" class=""Menu_2"" cellpadding=""0"" cellspacing=""0"" border=""0"">
 	<tr onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun0"">
 		<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
@@ -1000,6 +1015,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		</table></td>
 	</tr>
 </table><a id=""Menu_SkipLink""></a>";
+#endif
 			#endregion
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Vertical)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
@@ -1009,6 +1025,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItemsWithDefaultAdapter_Vertical");
 
 			#region OriginControlHtml
+#if NET_4_0
+			OriginControlHtml = "";
+#else
 			OriginControlHtml = @"<a href=""#Menu_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><table id=""Menu"" class=""Menu_2"" cellpadding=""0"" cellspacing=""0"" border=""0"">
 	<tr>
 		<td onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun0""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
@@ -1102,6 +1121,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		</table></td>
 	</tr>
 </table><a id=""Menu_SkipLink""></a>";
+#endif
 			#endregion
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Horizontal)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
@@ -1583,7 +1603,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void MenuClass ()
 		{
 			string res = new WebTest ("menuclass.aspx").Run ();
+#if NET_4_0
+			string menua_pattern="<div[^>]*class=\"[^\"]*menua[^\"]*\"[^>]*>";
+#else
 			string menua_pattern="<table[^>]*class=\"[^\"]*menua[^\"]*\"[^>]*>";
+#endif
 			Assert.IsTrue (Regex.IsMatch (res, ".*"+menua_pattern+".*",
 				RegexOptions.IgnoreCase|RegexOptions.Singleline),
 				"check that <table class=\"menua\"> is found");

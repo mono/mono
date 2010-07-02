@@ -88,7 +88,8 @@ namespace System.Web.Compilation
 
 		protected void EnsureID (ControlBuilder builder)
 		{
-			if (builder.ID == null || builder.ID.Trim () == "")
+			string id = builder.ID;
+			if (id == null || id.Trim () == String.Empty)
 				builder.ID = builder.GetNextID (null);
 		}
 
@@ -424,6 +425,19 @@ namespace System.Web.Compilation
 		
 		protected virtual void AddStatementsToInitMethodTop (ControlBuilder builder, CodeMemberMethod method)
 		{
+#if NET_4_0
+			ClientIDMode? mode = parser.ClientIDMode;
+			if (mode.HasValue) {
+				var cimRef = new CodeTypeReferenceExpression (typeof (ClientIDMode));
+				cimRef.Type.Options = CodeTypeReferenceOptions.GlobalReference;
+				
+				var assign = new CodeAssignStatement ();
+				assign.Left = new CodePropertyReferenceExpression (thisRef, "ClientIDMode");
+				assign.Right = new CodeFieldReferenceExpression (cimRef, mode.Value.ToString ());
+
+				method.Statements.Add (assign);
+			}
+#endif
 		}
 
 		protected virtual void AddStatementsToInitMethodBottom (ControlBuilder builder, CodeMemberMethod method)

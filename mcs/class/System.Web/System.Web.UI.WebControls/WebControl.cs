@@ -41,7 +41,11 @@ namespace System.Web.UI.WebControls {
 #else	
 	[PersistChildrenAttribute (false)]
 #endif		
-	public class WebControl : Control, IAttributeAccessor {
+	public class WebControl : Control, IAttributeAccessor
+	{
+#if NET_4_0
+		const string DEFAULT_DISABLED_CSS_CLASS = "aspNetDisabled";
+#endif
 		Style style;
 		HtmlTextWriterTag tag;
 		string tag_name;
@@ -49,7 +53,12 @@ namespace System.Web.UI.WebControls {
 		StateBag attribute_state;
 		bool enabled;
 		bool track_enabled_state;
-
+#if NET_4_0
+		static WebControl ()
+		{
+			DisabledCssClass = DEFAULT_DISABLED_CSS_CLASS;
+		}
+#endif
 		public WebControl (HtmlTextWriterTag tag) 
 		{
 			this.tag = tag;
@@ -424,7 +433,17 @@ namespace System.Web.UI.WebControls {
 #endif
 			}
 		}
-
+#if NET_4_0
+		public static string DisabledCssClass {
+			get;
+			set;
+		}
+		
+		[Browsable (false)]
+		public virtual bool SupportsDisabledAttribute {
+			get { return true; }
+		}
+#endif
 		public void ApplyStyle (Style s) 
 		{
 			if (s != null && !s.IsEmpty)
@@ -506,24 +525,38 @@ namespace System.Web.UI.WebControls {
 				return;
 
 			if (!ControlStyle.BorderWidth.IsEmpty ||
-			(ControlStyle.BorderStyle != BorderStyle.None && ControlStyle.BorderStyle != BorderStyle.NotSet) ||
-			!ControlStyle.Height.IsEmpty ||
-			!ControlStyle.Width.IsEmpty)
+			    (ControlStyle.BorderStyle != BorderStyle.None && ControlStyle.BorderStyle != BorderStyle.NotSet) ||
+			    !ControlStyle.Height.IsEmpty ||
+			    !ControlStyle.Width.IsEmpty)
 				writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "inline-block");
 		}
 #endif
+		void RenderDisabled (HtmlTextWriter writer)
+		{
+			if (!IsEnabled) {
+#if NET_4_0
+				if (!SupportsDisabledAttribute)
+					ControlStyle.PrependCssClass (DisabledCssClass);
+				else
+#endif
+					writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
+			}
 
+		}
+		
 		protected virtual void AddAttributesToRender (HtmlTextWriter writer) 
 		{
+#if NET_4_0
+			RenderDisabled (writer);
+#endif
 			if (ID != null)
 				writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
-
+#if !NET_4_0
+			RenderDisabled (writer);
+#endif
 			if (AccessKey != string.Empty)
 				writer.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
-
-			if (!IsEnabled)
-				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
-
+			
 			if (ToolTip != string.Empty)
 				writer.AddAttribute (HtmlTextWriterAttribute.Title, ToolTip);
 

@@ -47,7 +47,7 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DetailsView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IDataItemContainer, INamingContainer, IPostBackEventHandler, IPostBackContainer
 #if NET_4_0
-		, IDataBoundItemControl
+		, IDataBoundItemControl, IDataBoundControl, IFieldControl
 #endif
 	{
 		object dataItem;
@@ -319,7 +319,17 @@ namespace System.Web.UI.WebControls
 		IDataSource IDataBoundControl.DataSourceObject {
 			get { return base.DataSourceObject; }
 		}
-#endif	
+
+		IAutoFieldGenerator IFieldControl.FieldsGenerator {
+			get {
+				throw new NotImplementedException ();
+			}
+			
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		[WebCategoryAttribute ("Paging")]
 		[DefaultValueAttribute (false)]
 		public virtual bool AllowPaging {
@@ -890,6 +900,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IAutoFieldGenerator RowsGenerator {
 			get;
 			set;
@@ -953,7 +964,14 @@ namespace System.Web.UI.WebControls
 		int IDataItemContainer.DataItemIndex {
 			get { return DataItemIndex; }
 		}
-	
+#if NET_4_0
+		[MonoTODO ("Make use of it in the code")]
+		[DefaultValue (true)]
+		public virtual bool EnableModelValidation {
+			get;
+			set;
+		}
+#endif
 		public virtual bool IsBindableType (Type type)
 		{
 			return type.IsPrimitive || type == typeof (string) || type == typeof (DateTime) || type == typeof (Guid) || type == typeof (Decimal);
@@ -1533,25 +1551,25 @@ namespace System.Web.UI.WebControls
 							newIndex = paramIndex - 1;
 							break;
 					}
-					ShowPage (newIndex);
+					SetPageIndex (newIndex);
 					break;
 					
 				case DataControlCommands.FirstPageCommandArgument:
-					ShowPage (0);
+					SetPageIndex (0);
 					break;
 
 				case DataControlCommands.LastPageCommandArgument:
-					ShowPage (PageCount - 1);
+					SetPageIndex (PageCount - 1);
 					break;
 					
 				case DataControlCommands.NextPageCommandArgument:
 					if (PageIndex < PageCount - 1)
-						ShowPage (PageIndex + 1);
+						SetPageIndex (PageIndex + 1);
 					break;
 
 				case DataControlCommands.PreviousPageCommandArgument:
 					if (PageIndex > 0)
-						ShowPage (PageIndex - 1);
+						SetPageIndex (PageIndex - 1);
 					break;
 					
 				case DataControlCommands.EditCommandName:
@@ -1579,8 +1597,10 @@ namespace System.Web.UI.WebControls
 					break;
 			}
 		}
-		
-		void ShowPage (int newIndex)
+#if NET_4_0
+		public
+#endif
+		void SetPageIndex (int newIndex)
 		{
 			DetailsViewPageEventArgs args = new DetailsViewPageEventArgs (newIndex);
 			OnPageIndexChanging (args);

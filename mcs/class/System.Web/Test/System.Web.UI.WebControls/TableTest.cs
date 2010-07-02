@@ -117,7 +117,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TestTable t = new TestTable ();
 			t.Caption = "CaptionText";
 			string html = t.Render ();
+#if NET_4_0
+			string orig = "<table>\n\t<caption>\n\t\tCaptionText\n\t</caption>\n</table>";
+#else
 			string orig = "<table border=\"0\">\n\t<caption>\n\t\tCaptionText\n\t</caption>\n</table>";
+#endif
 			HtmlDiff.AssertAreEqual (orig, html, "Caption");
 		}
 
@@ -128,7 +132,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.Caption = "CaptionText";
 			t.CaptionAlign = TableCaptionAlign.Left; 
 			string html = t.Render ();
+#if NET_4_0
+			string orig = "<table>\n\t<caption align=\"Left\">\n\t\tCaptionText\n\t</caption>\n</table>";
+#else
 			string orig = "<table border=\"0\">\n\t<caption align=\"Left\">\n\t\tCaptionText\n\t</caption>\n</table>";
+#endif
 			HtmlDiff.AssertAreEqual (orig, html, "CaptionAlign");
 		}
 #endif
@@ -249,16 +257,28 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			TestTable t = new TestTable ();
 			string s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n\n</table>", s, "empty/default");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n\n</table>", s, "empty/default");
+#endif
 
 			t.CellPadding = 1;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table cellpadding=\"1\">\n\n</table>", s, "CellPadding");
+#else
 			Assert.AreEqual ("<table cellpadding=\"1\" border=\"0\">\n\n</table>", s, "CellPadding");
+#endif
 			t.CellPadding = -1;
 
 			t.CellSpacing = 2;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table cellspacing=\"2\">\n\n</table>", s, "CellSpacing");
+#else
 			Assert.AreEqual ("<table cellspacing=\"2\" border=\"0\">\n\n</table>", s, "CellSpacing");
+#endif
 			t.CellSpacing = -1;
 
 			t.GridLines = GridLines.Horizontal;
@@ -274,60 +294,125 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			t.BorderWidth = new Unit (2);
 			s = t.Render ();
+#if NET_4_0
+			Assert.IsTrue ((s.IndexOf ("\"border-width:2px;border-style:solid;\"") > 0), "border=0/2");
+#else
 			Assert.IsTrue ((s.IndexOf ("border=\"0\"") > 0), "border=0/2");
+#endif
 			t.GridLines = GridLines.Horizontal;
 			s = t.Render ();
+#if NET_4_0
+			Console.WriteLine (s);
+			Assert.IsTrue ((s.IndexOf ("rules=\"rows\" style=\"border-width:2px;border-style:solid;\"") > 0), "2/GridLines.Horizontal");
+#else
 			Assert.IsTrue ((s.IndexOf ("rules=\"rows\" border=\"2\"") > 0), "2/GridLines.Horizontal");
+#endif
 			t.GridLines = GridLines.Vertical;
 			s = t.Render ();
+#if NET_4_0
+			Assert.IsTrue ((s.IndexOf ("rules=\"cols\" style=\"border-width:2px;border-style:solid;\"") > 0), "2/GridLines.Vertical");
+#else
 			Assert.IsTrue ((s.IndexOf ("rules=\"cols\" border=\"2\"") > 0), "2/GridLines.Vertical");
+#endif
 			t.GridLines = GridLines.Both;
 			s = t.Render ();
+#if NET_4_0
+			Assert.IsTrue ((s.IndexOf ("rules=\"all\" style=\"border-width:2px;border-style:solid;\"") > 0), "2/GridLines.Both");
+#else
 			Assert.IsTrue ((s.IndexOf ("rules=\"all\" border=\"2\"") > 0), "2/GridLines.Both");
+#endif
 			t.GridLines = GridLines.None;
 			t.BorderWidth = new Unit ();
 
 			t.HorizontalAlign = HorizontalAlign.Left;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table align=\"left\">\n\n</table>", s.ToLower (), "HorizontalAlign.Left");
+#else
 			Assert.AreEqual ("<table align=\"left\" border=\"0\">\n\n</table>", s.ToLower (), "HorizontalAlign.Left");
+#endif
 			t.HorizontalAlign = HorizontalAlign.Center;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table align=\"center\">\n\n</table>", s.ToLower (), "HorizontalAlign.Center");
+#else
 			Assert.AreEqual ("<table align=\"center\" border=\"0\">\n\n</table>", s.ToLower (), "HorizontalAlign.Center");
+#endif
 			t.HorizontalAlign = HorizontalAlign.Right;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table align=\"right\">\n\n</table>", s.ToLower (), "HorizontalAlign.Right");
+#else
 			Assert.AreEqual ("<table align=\"right\" border=\"0\">\n\n</table>", s.ToLower (), "HorizontalAlign.Right");
+#endif
 			t.HorizontalAlign = HorizontalAlign.Justify;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table align=\"justify\">\n\n</table>", s.ToLower (), "HorizontalAlign.Justify");
+#else
 			Assert.AreEqual ("<table align=\"justify\" border=\"0\">\n\n</table>", s.ToLower (), "HorizontalAlign.Justify");
+#endif
 			t.HorizontalAlign = HorizontalAlign.NotSet;
 
 			t.Caption = "mono";
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n\t<caption>\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n\t<caption>\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption");
+#endif
 
 			t.CaptionAlign = TableCaptionAlign.Top;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n\t<caption align=\"top\">\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption/Top");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n\t<caption align=\"top\">\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption/Top");
+#endif
 			t.CaptionAlign = TableCaptionAlign.Bottom;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n\t<caption align=\"bottom\">\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption/Bottom");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n\t<caption align=\"bottom\">\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption/Bottom");
+#endif
 			t.CaptionAlign = TableCaptionAlign.Right;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n\t<caption align=\"right\">\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption/Right");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n\t<caption align=\"right\">\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption/Right");
+#endif
 			t.CaptionAlign = TableCaptionAlign.Left;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n\t<caption align=\"left\">\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption/Left");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n\t<caption align=\"left\">\n\t\tmono\n\t</caption>\n</table>", s.ToLower (), "Caption/Left");
+#endif
 			t.Caption = null;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n\n</table>", s, "CaptionAlign without Caption");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n\n</table>", s, "CaptionAlign without Caption");
+#endif
 			t.CaptionAlign = TableCaptionAlign.NotSet;
 
 			t.BackImageUrl = imageUrl;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table style=\"background-image:url(http://www.mono-project.com/stylesheets/images.wiki.png);\">\n\n</table>", s, "BackImageUrl");
+#else
 			Assert.AreEqual ("<table border=\"0\" style=\"background-image:url(http://www.mono-project.com/stylesheets/images.wiki.png);\">\n\n</table>", s, "BackImageUrl");
+#endif
 			t.BackImageUrl = localImageUrl;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual ("<table style=\"background-image:url(foo.jpg);\">\n\n</table>", s, "BackImageUrl");
+#else
 			Assert.AreEqual ("<table border=\"0\" style=\"background-image:url(foo.jpg);\">\n\n</table>", s, "BackImageUrl");
+#endif
 			t.BackImageUrl = String.Empty;
 		}
 
@@ -338,7 +423,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (RenderInAspxPage_OnLoad));
 			string res = t.Run ();
+#if NET_4_0
+			Assert.IsTrue (res.IndexOf ("<table id=\"MagicID_A1C3\" style=\"background-image:url(foo.jpg);\"") != -1, res);
+#else
 			Assert.IsTrue (res.IndexOf ("<table id=\"MagicID_A1C3\" border=\"0\" style=\"background-image:url(foo.jpg);\"")!= -1, res);
+#endif
 		}
 
 		public static void RenderInAspxPage_OnLoad (Page p)
@@ -393,19 +482,31 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (1, t.Rows.Count, "r1");
 			Assert.AreEqual (1, t.Controls.Count, "c1");
 			string s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual (Adjust ("<table>\n\t<tr>\n\n\t</tr>\n</table>"), Adjust (s), "tr-1");
+#else
 			Assert.AreEqual (Adjust ("<table border=\"0\">\n\t<tr>\n\n\t</tr>\n</table>"), Adjust (s), "tr-1");
+#endif
 
 			// change instance properties
 			tr.HorizontalAlign = HorizontalAlign.Justify;
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual (Adjust ("<table>\n\t<tr align=\"justify\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-1j");
+#else
 			Assert.AreEqual (Adjust ("<table border=\"0\">\n\t<tr align=\"justify\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-1j");
+#endif
 
 			// add it again (same instance)
 			t.Rows.Add (tr);
 			Assert.AreEqual (1, t.Rows.Count, "t1bis");
 			Assert.AreEqual (1, t.Controls.Count, "c1bis");
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual (Adjust ("<table>\n\t<tr align=\"justify\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-1bis");
+#else
 			Assert.AreEqual (Adjust ("<table border=\"0\">\n\t<tr align=\"justify\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-1bis");
+#endif
 			tr.HorizontalAlign = HorizontalAlign.NotSet;
 
 			tr = new TableRow ();
@@ -414,7 +515,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (2, t.Rows.Count, "r2");
 			Assert.AreEqual (2, t.Controls.Count, "c2");
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual (Adjust ("<table>\n\t<tr>\n\n\t</tr><tr align=\"justify\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-2");
+#else
 			Assert.AreEqual (Adjust ("<table border=\"0\">\n\t<tr>\n\n\t</tr><tr align=\"justify\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-2");
+#endif
 
 			tr = new TableRow ();
 			tr.VerticalAlign = VerticalAlign.Bottom;
@@ -422,11 +527,19 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (3, t.Rows.Count, "r3");
 			Assert.AreEqual (3, t.Controls.Count, "c3");
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual (Adjust ("<table>\n\t<tr>\n\n\t</tr><tr align=\"justify\">\n\n\t</tr><tr valign=\"bottom\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-3");
+#else
 			Assert.AreEqual (Adjust ("<table border=\"0\">\n\t<tr>\n\n\t</tr><tr align=\"justify\">\n\n\t</tr><tr valign=\"bottom\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-3");
+#endif
 
 			t.Caption = "caption";
 			s = t.Render ();
+#if NET_4_0
+			Assert.AreEqual (Adjust ("<table>\n\t<caption>\n\t\tcaption\n\t</caption><tr>\n\n\t</tr><tr align=\"justify\">\n\n\t</tr><tr valign=\"bottom\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-2c");
+#else
 			Assert.AreEqual (Adjust ("<table border=\"0\">\n\t<caption>\n\t\tcaption\n\t</caption><tr>\n\n\t</tr><tr align=\"justify\">\n\n\t</tr><tr valign=\"bottom\">\n\n\t</tr>\n</table>"), Adjust (s), "tr-2c");
+#endif
 		}
 
 		[Test]
@@ -515,7 +628,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Table t = new Table ();
 			t.RenderBeginTag (writer);
 			string s = writer.InnerWriter.ToString ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n", s, "empty");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n", s, "empty");
+#endif
 		}
 
 		[Test]
@@ -526,7 +643,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.CellPadding = 1;
 			t.RenderBeginTag (writer);
 			string s = writer.InnerWriter.ToString ();
+#if NET_4_0
+			Assert.AreEqual ("<table cellpadding=\"1\">\n", s, "CellPadding");
+#else
 			Assert.AreEqual ("<table cellpadding=\"1\" border=\"0\">\n", s, "CellPadding");
+#endif
 		}
 
 		[Test]
@@ -537,7 +658,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.Caption = "caption";
 			t.RenderBeginTag (writer);
 			string s = writer.InnerWriter.ToString ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n\t<caption>\n\t\tcaption\n\t</caption>", s, "caption");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n\t<caption>\n\t\tcaption\n\t</caption>", s, "caption");
+#endif
 		}
 
 		[Test]
@@ -549,7 +674,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.CaptionAlign = TableCaptionAlign.Top;
 			t.RenderBeginTag (writer);
 			string s = writer.InnerWriter.ToString ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n\t<caption align=\"top\">\n\t\tcaption\n\t</caption>", s.ToLower (), "caption");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n\t<caption align=\"top\">\n\t\tcaption\n\t</caption>", s.ToLower (), "caption");
+#endif
 		}
 
 		[Test]
@@ -560,7 +689,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.Rows.Add (new TableRow ());
 			t.RenderBeginTag (writer);
 			string s = writer.InnerWriter.ToString ();
+#if NET_4_0
+			Assert.AreEqual ("<table>\n", s, "tr");
+#else
 			Assert.AreEqual ("<table border=\"0\">\n", s, "tr");
+#endif
 		}
 
 #if NET_2_0

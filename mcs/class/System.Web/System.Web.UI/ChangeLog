@@ -1,3 +1,13 @@
+2010-07-02  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlParser.cs: added support for ClientIDMode
+	property
+
+	* Control.cs: implemented 4.0 features - ClientIDMode and
+	RenderingCompatibility.
+
+	* ClientIDMode.cs, IDataKeysControl.cs: added
+
 2010-06-17  Marek Habersack  <mhabersack@novell.com>
 
 	* RootBuilder.cs: both LINK and META HTML tags must be represented

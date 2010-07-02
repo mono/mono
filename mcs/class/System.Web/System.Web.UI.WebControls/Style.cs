@@ -433,105 +433,6 @@ namespace System.Web.UI.WebControls {
 #endif
 			}
 		}
-
-#if ONLY_1_1
-		void WriteStyleAttributes (HtmlTextWriter writer) 
-		{
-			string s;
-			Color		color;
-			BorderStyle	bs;
-			Unit		u;
-
-			if (CheckBit ((int) Styles.BackColor)) {
-				color = (Color)viewstate["BackColor"];
-				if (!color.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BackgroundColor, ColorTranslator.ToHtml(color));
-			}
-
-			if (CheckBit ((int) Styles.BorderColor)) {
-				color = (Color)viewstate["BorderColor"];
-				if (!color.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderColor, ColorTranslator.ToHtml(color));
-			}
-
-			bool have_width = false;
-			if (CheckBit ((int) Styles.BorderWidth)) {
-				u = (Unit)viewstate["BorderWidth"];
-				if (!u.IsEmpty) {
-					if (u.Value > 0)
-						have_width = true;
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, u.ToString());
-				}
-			}
-
-			if (CheckBit ((int) Styles.BorderStyle)) {
-				bs = (BorderStyle)viewstate["BorderStyle"];
-				if (bs != BorderStyle.NotSet) 
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, bs.ToString());
-				else {
-					if (CheckBit ((int) Styles.BorderWidth))
-						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "solid");
-				}
-			} else if (have_width) {
-				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "solid");
-			}
-
-			if (CheckBit ((int) Styles.ForeColor)) {
-				color = (Color)viewstate["ForeColor"];
-				if (!color.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.Color, ColorTranslator.ToHtml(color));
-			}
-
-			if (CheckBit ((int) Styles.Height)) {
-				u = (Unit)viewstate["Height"];
-				if (!u.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.Height, u.ToString());
-			}
-
-			if (CheckBit ((int) Styles.Width)) {
-				u = (Unit)viewstate["Width"];
-				if (!u.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.Width, u.ToString());
-			}
-
-			if (CheckBit ((int) Style.Styles.FontAll)) {
-				// Fonts are a bit weird
-				FontInfo font = Font;
-				if (font.Name != string.Empty) {
-					s = font.Names[0];
-					for (int i = 1; i < font.Names.Length; i++)
-						s += "," + font.Names[i];
-					writer.AddStyleAttribute (HtmlTextWriterStyle.FontFamily, s);
-				}
-
-				if (font.Bold)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.FontWeight, "bold");
-
-				if (font.Italic)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.FontStyle, "italic");
-
-				if (!font.Size.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.FontSize, font.Size.ToString());
-
-				// These styles are munged into a attribute decoration
-				s = string.Empty;
-
-				if (font.Overline)
-					s += "overline ";
-
-				if (font.Strikeout)
-					s += "line-through ";
-
-				if (font.Underline)
-					s += "underline ";
-
-				s = (s != "") ? s : AlwaysRenderTextDecoration ? "none" : "";
-				if (s != "")
-					writer.AddStyleAttribute (HtmlTextWriterStyle.TextDecoration, s);
-			}
-		}
-#endif
-
 #if NET_2_0
 		protected virtual void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver)
 		{
@@ -856,15 +757,29 @@ namespace System.Web.UI.WebControls {
 			fontinfo = null;
 		}
 
-		internal void AddCssClass (string cssClass) {
+		internal void AddCssClass (string cssClass)
+		{
 			if (String.IsNullOrEmpty (cssClass))
 				return;
 
-			if (CssClass.Length > 0)
-				CssClass += " ";
-			CssClass += cssClass;
+			string newClass = CssClass;
+			if (newClass.Length > 0)
+				newClass += " ";
+			newClass += cssClass;
+			CssClass = newClass;
 		}
+#if NET_4_0
+		internal void PrependCssClass (string cssClass)
+		{
+			if (String.IsNullOrEmpty (cssClass))
+				return;
 
+			string oldClass = CssClass;
+			if (oldClass.Length > 0)
+				cssClass += " ";
+			CssClass = cssClass + oldClass;
+		}
+#endif
 		public void SetDirty ()
 		{
 			if (viewstate != null)

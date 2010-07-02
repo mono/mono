@@ -32,11 +32,10 @@ using System;
 using System.ComponentModel;
 using System.Configuration;
 
-#if NET_2_0
-
-namespace System.Web.Configuration {
-
-	internal static class PropertyHelper {
+namespace System.Web.Configuration
+{
+	static class PropertyHelper
+	{
 		internal static WhiteSpaceTrimStringConverter WhiteSpaceTrimStringConverter = new WhiteSpaceTrimStringConverter ();
 		internal static InfiniteTimeSpanConverter InfiniteTimeSpanConverter = new InfiniteTimeSpanConverter ();
 		internal static InfiniteIntConverter InfiniteIntConverter = new InfiniteIntConverter ();
@@ -51,11 +50,9 @@ namespace System.Web.Configuration {
 
 		internal static IntegerValidator IntFromZeroToMaxValidator = new IntegerValidator (0, Int32.MaxValue);
 		internal static IntegerValidator IntFromOneToMax_1Validator = new IntegerValidator (1, Int32.MaxValue - 1);
-
 #if NET_4_0
 		internal static VersionConverter VersionConverter = new VersionConverter ();
 #endif
 	}
 }
 
-#endif

@@ -46,6 +46,9 @@ namespace System.Web.UI
 		bool autoEventWireup = true;
 		bool enableViewState = true;
 		CompilationMode compilationMode = CompilationMode.Always;
+#if NET_4_0
+		ClientIDMode? clientIDMode;
+#endif
 		TextReader reader;
 
 		protected TemplateControlParser ()
@@ -67,19 +70,26 @@ namespace System.Web.UI
 			autoEventWireup = GetBool (atts, "AutoEventWireup", autoEventWireup);
 			enableViewState = GetBool (atts, "EnableViewState", enableViewState);
 
-			string cmode = GetString (atts, "CompilationMode", compilationMode.ToString ());
-			if (!String.IsNullOrEmpty (cmode)) {
-				if (String.Compare (cmode, "always", StringComparison.InvariantCultureIgnoreCase) == 0)
-					compilationMode = CompilationMode.Always;
-				else if (String.Compare (cmode, "auto", StringComparison.InvariantCultureIgnoreCase) == 0)
-					compilationMode = CompilationMode.Auto;
-				else if (String.Compare (cmode, "never", StringComparison.InvariantCultureIgnoreCase) == 0)
-					compilationMode = CompilationMode.Never;
-				else
-					ThrowParseException ("Invalid value of the CompilationMode attribute");
+			string value = GetString (atts, "CompilationMode", compilationMode.ToString ());
+			if (!String.IsNullOrEmpty (value)) {
+				try {
+					compilationMode = (CompilationMode) Enum.Parse (typeof (CompilationMode), value, true);
+				} catch (Exception ex) {
+					ThrowParseException ("Invalid value of the CompilationMode attribute.", ex);
+				}
 			}
+			
 			atts.Remove ("TargetSchema"); // Ignored
-
+#if NET_4_0
+			value = GetString (atts, "ClientIDMode", null);
+			if (!String.IsNullOrEmpty (value)) {
+				try {
+					clientIDMode = (ClientIDMode) Enum.Parse (typeof (ClientIDMode), value, true);
+				} catch (Exception ex) {
+					ThrowParseException ("Invalid value of the ClientIDMode attribute.", ex);
+				}
+			}
+#endif
 			base.ProcessMainAttributes (atts);
 		}
 
@@ -196,8 +206,12 @@ namespace System.Web.UI
 		
 		internal CompilationMode CompilationMode {
 			get { return compilationMode; }
+		}		
+#if NET_4_0
+		internal ClientIDMode? ClientIDMode {
+			get { return clientIDMode; }
 		}
-		
+#endif
 		internal override TextReader Reader {
 			get { return reader; }
 			set { reader = value; }

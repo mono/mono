@@ -83,10 +83,12 @@ namespace StandAloneRunner
 		{
 			bool showHelp = false;
 			string testName = null;
+			string outputName = null;
 			
 			var options = new OptionSet () {
 				{"?|h|help", "Show short usage screen.", v => showHelp = true},
 				{"t=|test=", "Run this test only (full type name)", (string s) => testName = s},
+				{"o=|output=", "Output test results to the console and to the indicated file", (string s) => outputName = s},
 			}; 
 			
 			List <string> extra = options.Parse (args);
@@ -134,23 +136,45 @@ namespace StandAloneRunner
 			
 			DateTime end = DateTime.Now;
 			Console.WriteLine ();
+			StreamWriter writer;
 
-			if (reports.Count > 0) {
-				int repCounter = 0;
-				int numWidth = reports.Count.ToString ().Length;
-				string indent = String.Empty.PadLeft (numWidth + 2);
-				string numFormat = "{0," + numWidth + "}) ";
-			
-				foreach (string r in reports) {
-					repCounter++;
-					Console.Write (numFormat, repCounter);
-					Console.WriteLine (FormatLines (indent, r, Environment.NewLine, true));
+			if (!String.IsNullOrEmpty (outputName))
+				writer = new StreamWriter (outputName);
+			else
+				writer = null;
+
+			try {
+				string report;
+				if (reports.Count > 0) {
+					int repCounter = 0;
+					int numWidth = reports.Count.ToString ().Length;
+					string indent = String.Empty.PadLeft (numWidth + 2);
+					string numFormat = "{0," + numWidth + "}) ";
+					
+					foreach (string r in reports) {
+						repCounter++;
+						Console.Write (numFormat, repCounter);
+						report = FormatLines (indent, r, Environment.NewLine, true);
+						Console.WriteLine (report);
+						if (writer != null) {
+							writer.Write (numFormat, repCounter);
+							writer.WriteLine (report);
+						}
+					}
+				} else
+					Console.WriteLine ();
+
+				report = String.Format ("Tests run: {0}; Total tests: {1}; Failed: {2}; Not run: {3}; Time taken: {4}",
+							runCounter, tests.Count, failedCounter, tests.Count - runCounter, end - start);
+				Console.WriteLine (report);
+				if (writer != null)
+					writer.WriteLine (report);
+			} finally {
+				if (writer != null) {
+					writer.Close ();
+					writer.Dispose ();
 				}
-			} else
-				Console.WriteLine ();
-			
-			Console.WriteLine ("Tests run: {0}; Total tests: {1}; Failed: {2}; Not run: {3}; Time taken: {4}",
-					   runCounter, tests.Count, failedCounter, tests.Count - runCounter, end - start);
+			}
 		}
 
 		static string FormatReport (StandaloneTest test)

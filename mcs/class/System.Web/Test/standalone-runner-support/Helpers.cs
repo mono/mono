@@ -54,19 +54,24 @@ namespace StandAloneRunnerSupport
 
 		public static string StripWebResourceAxdQuery (string origHtml)
 		{
+			return StripWebResourceAxdQuery (StripWebResourceAxdQuery (origHtml, "\""), "&quot;");
+		}
+
+		static string StripWebResourceAxdQuery (string origHtml, string delimiter)
+		{
 			if (String.IsNullOrEmpty (origHtml))
 				return origHtml;
 			
 			// Naive approach, enough for now
-			int idx = origHtml.IndexOf ("\"/WebResource.axd");
+			int idx = origHtml.IndexOf (delimiter + "/WebResource.axd");
 			if (idx == -1)
 				return origHtml;
 
 			var sb = new StringBuilder ();
 			sb.Append (origHtml.Substring (0, idx));
-			sb.Append ('"');
+			sb.Append (delimiter);
 			idx++;
-			int idx2 = origHtml.IndexOf ("\"", idx);
+			int idx2 = origHtml.IndexOf (delimiter, idx);
 			string webRes;
 			sb.Append ("/WebResource.axd");
 			

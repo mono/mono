@@ -147,7 +147,11 @@ namespace System.Web.UI.WebControls
 			}
 			set { ViewState ["GenerateEmptyAlternateText"] = value; }
 		}
-
+#if NET_4_0
+		public override bool SupportsDisabledAttribute {
+			get { return RenderingCompatibilityLessThan40; }
+		}
+#endif
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);
@@ -189,20 +193,12 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute (HtmlTextWriterAttribute.Align, "texttop", false);
 					break;
 			}
-#if NET_2_0
 #if BUG_78875_FIXED
 			if (Context.Request.Browser.SupportsCss)
 #endif
+#if !NET_4_0
 			if (BorderWidth.IsEmpty)
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-#if BUG_78875_FIXED
-			else
-#endif
-#else
-			// if border-with is not specified in style or 
-			// no style is defined - set image to no border
-			if (!ControlStyleCreated || ControlStyle.BorderWidth.IsEmpty)
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
 #endif
 		}
 

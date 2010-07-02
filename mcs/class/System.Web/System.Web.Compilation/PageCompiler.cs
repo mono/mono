@@ -318,6 +318,8 @@ namespace System.Web.Compilation
 		
 		protected override void AddStatementsToInitMethodTop (ControlBuilder builder, CodeMemberMethod method)
 		{
+			base.AddStatementsToInitMethodTop (builder, method);
+			
 			ILocation directiveLocation = pageParser.DirectiveLocation;
 			AddStatementsFromDirective (builder, method, directiveLocation);
 

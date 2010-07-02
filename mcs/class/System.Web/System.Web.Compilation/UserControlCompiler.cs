@@ -80,6 +80,7 @@ namespace System.Web.Compilation
 
 		protected override void AddStatementsToInitMethodTop (ControlBuilder builder, CodeMemberMethod method)
 		{
+			base.AddStatementsToInitMethodTop (builder, method);
 			if (parser.MasterPageFile != null) {
 				CodeExpression prop;
 				prop = new CodePropertyReferenceExpression (new CodeArgumentReferenceExpression("__ctrl"), "MasterPageFile");
