@@ -2777,6 +2777,7 @@ namespace System.Windows.Forms
 							int image_width = control.SmallImageList.ImageSize.Width + 5;
 							int text_width = (int)dc.MeasureString (col.Text, control.Font).Width;
 							int x_origin = rect.X;
+							int y_origin = rect.Y + ((rect.Height - control.SmallImageList.ImageSize.Height) / 2);
 
 							switch (col.TextAlign) {
 								case HorizontalAlignment.Left:
@@ -2792,7 +2793,7 @@ namespace System.Windows.Forms
 							if (x_origin < rect.X)
 								x_origin = rect.X;
 
-							control.SmallImageList.Draw (dc, new Point (x_origin, rect.Y), image_index);
+							control.SmallImageList.Draw (dc, new Point (x_origin, y_origin), image_index);
 							rect.X += image_width;
 							rect.Width -= image_width;
 						}
