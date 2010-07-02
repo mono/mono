@@ -68,7 +68,7 @@ namespace System.ServiceModel.Channels.Http
 			entry.WaitHandle.Set (); // make sure to finish pending requests.
 		}
 
-		protected void ProcessNewContext (HttpContextInfo ctxi)
+		public void ProcessNewContext (HttpContextInfo ctxi)
 		{
 			var ce = SelectChannel (ctxi);
 			if (ce == null)
@@ -185,17 +185,16 @@ namespace System.ServiceModel.Channels.Http
 	{
 		public AspNetHttpListenerManager (Uri uri)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public override void RegisterListener (ChannelDispatcher channel, TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			RegisterListenerCommon (channel, timeout);
 		}
 
 		public override void UnregisterListener (ChannelDispatcher channel, TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			UnregisterListenerCommon (channel, timeout);
 		}
 	}
 }

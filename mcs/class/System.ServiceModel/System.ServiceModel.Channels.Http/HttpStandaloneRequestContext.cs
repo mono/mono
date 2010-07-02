@@ -32,13 +32,11 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels.Http
 {
-	internal class HttpStandaloneRequestContext : HttpStandaloneRequestContextBase
+	internal class HttpStandaloneRequestContext : HttpRequestContextBase
 	{
 		HttpListenerContext ctx;
 
-		public HttpStandaloneRequestContext (
-			HttpStandaloneReplyChannel channel,
-			Message msg, HttpListenerContext ctx)
+		public HttpStandaloneRequestContext (HttpReplyChannel channel, Message msg, HttpListenerContext ctx)
 			: base (channel, msg)
 		{
 			if (ctx == null)
@@ -100,13 +98,37 @@ namespace System.ServiceModel.Channels.Http
 		}
 	}
 
-	internal abstract class HttpStandaloneRequestContextBase : RequestContext
+	internal class AspNetRequestContext : HttpRequestContextBase
+	{
+		public AspNetRequestContext (HttpReplyChannel channel, Message request)
+			: base (channel, request)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void Abort ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void ProcessReply (Message msg, TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void Close (TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+
+	internal abstract class HttpRequestContextBase : RequestContext
 	{
 		Message request;
-		HttpStandaloneReplyChannel channel;
+		HttpReplyChannel channel;
 
-		public HttpStandaloneRequestContextBase (
-			HttpStandaloneReplyChannel channel,
+		public HttpRequestContextBase (
+			HttpReplyChannel channel,
 			Message request)
 		{
 			if (channel == null)
@@ -121,7 +143,7 @@ namespace System.ServiceModel.Channels.Http
 			get { return request; }
 		}
 
-		public HttpStandaloneReplyChannel Channel {
+		public HttpReplyChannel Channel {
 			get { return channel; }
 		}
 
