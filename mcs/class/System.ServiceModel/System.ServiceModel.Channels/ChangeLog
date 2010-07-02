@@ -1,5 +1,11 @@
 2010-07-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandlerFactory.cs : remove unused code.
+	* SvcHttpHandler.cs : ditto. Add some code for what new asp.net
+	  support will look like.
+
+2010-07-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Message.cs, MessageImpl.cs, MessageBufferImpl.cs : remove BodyId.
 	  XML attributes on s:Body are handled appropriately, not limited to
 	  wsu:Id. Added several required overrides to Message and

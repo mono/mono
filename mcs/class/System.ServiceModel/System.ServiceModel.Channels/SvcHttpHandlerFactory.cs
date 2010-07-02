@@ -52,11 +52,6 @@ namespace System.ServiceModel.Channels {
 			ServiceHostingEnvironment.InAspNet = true;
 		}
 
-		public static SvcHttpHandler GetHandlerForListener (IChannelListener listener)
-		{
-			return handlers.Values.First (h => h.Host.ChannelDispatchers.Any (cd => cd.Listener == listener));
-		}
-
 		public IHttpHandler GetHandler (HttpContext context, string requestType, string url, string pathTranslated)
 		{
 			lock (handlers) {

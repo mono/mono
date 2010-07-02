@@ -40,6 +40,7 @@ using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels {
 
+#if !NEW_CODE
 	internal class WcfListenerInfo
 	{
 		public WcfListenerInfo ()
@@ -60,6 +61,7 @@ namespace System.ServiceModel.Channels {
 			return info.Listener;
 		}
 	}
+#endif
 
 	internal class SvcHttpHandler : IHttpHandler
 	{
@@ -71,7 +73,9 @@ namespace System.ServiceModel.Channels {
 		Type factory_type;
 		string path;
 		ServiceHostBase host;
+#if !NEW_CODE
 		WcfListenerInfoCollection listeners = new WcfListenerInfoCollection ();
+#endif
 		Dictionary<HttpContext,ManualResetEvent> wcf_wait_handles = new Dictionary<HttpContext,ManualResetEvent> ();
 		int close_state;
 
@@ -91,6 +95,7 @@ namespace System.ServiceModel.Channels {
 			get { return host; }
 		}
 
+#if !NEW_CODE
 		public HttpContext WaitForRequest (IChannelListener listener)
 		{
 			if (close_state > 0)
@@ -139,14 +144,27 @@ namespace System.ServiceModel.Channels {
 			if (best != null)
 				return best;
 			throw new InvalidOperationException (String.Format ("The argument HTTP context did not match any of the registered listener manager (could be mismatch in URL, method etc.) {0}", ctx.Request.Url));
-/*
-			var actx = new AspNetHttpContextInfo (ctx);
-			foreach (var i in listeners)
-				if (i.Listener.GetProperty<HttpListenerManager> ().FilterHttpContext (actx))
-					return i.Listener;
-			throw new InvalidOperationException ();
-*/
 		}
+#endif
+
+#if NEW_CODE
+
+		public void ProcessRequest (HttpContext context)
+		{
+			EnsureServiceHost ();
+
+			var table = HttpListenerManagerTable.GetOrCreate (host);
+			var manager = table.GetOrCreateManager (host.BaseAddresses [0]);
+			var wait = new ManualResetEvent (false);
+			wcf_wait_handles [context] = wait;
+			manager.ProcessNewContext (new AspNetContextInfo (context));
+			// This method must not return until the RequestContext
+			// explicitly finishes replying. Otherwise xsp will
+			// close the connection after this method call.
+			wait.WaitOne ();
+		}
+
+#else
 
 		public void ProcessRequest (HttpContext context)
 		{
@@ -164,6 +182,7 @@ namespace System.ServiceModel.Channels {
 
 			wait.WaitOne ();
 		}
+#endif
 
 		public void EndRequest (IChannelListener listener, HttpContext context)
 		{
@@ -183,6 +202,7 @@ namespace System.ServiceModel.Channels {
 			host = null;
 		}
 
+#if !NEW_CODE
 		public void RegisterListener (IChannelListener listener)
 		{
 			lock (type_lock)
@@ -193,6 +213,8 @@ namespace System.ServiceModel.Channels {
 		{
 			listeners.Remove (listener);
 		}
+
+#endif
 
 		void EnsureServiceHost ()
 		{

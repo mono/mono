@@ -1,5 +1,10 @@
 2010-07-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpStandaloneReplyChannel.cs, HttpStandaloneRequestContext.cs:
+	  add more code that the asp.net stuff will become like.
+
+2010-07-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpStandaloneReplyChannel.cs, HttpListenerManager.cs,
 	  HttpStandaloneRequestContext.cs :
 	  refactoring, to add ASP.NET implementation. (not in use yet)

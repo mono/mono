@@ -100,6 +100,29 @@ namespace System.ServiceModel.Channels.Http
 		}
 	}
 
+	internal class AspNetReplyChannel : HttpReplyChannel
+	{
+		public AspNetReplyChannel (HttpStandaloneChannelListener<IReplyChannel> listener)
+			: base (listener)
+		{
+		}
+
+		protected override RequestContext CreateRequestContext (HttpContextInfo ctxi, Message msg)
+		{
+			return new AspNetRequestContext (this, ctxi, msg);
+		}
+
+		protected override Message CreatePostMessage (HttpContextInfo ctxi)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool WaitForRequest (TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+
 	internal abstract class HttpReplyChannel : InternalReplyChannelBase
 	{
 		HttpStandaloneChannelListener<IReplyChannel> source;

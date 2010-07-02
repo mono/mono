@@ -100,7 +100,7 @@ namespace System.ServiceModel.Channels.Http
 
 	internal class AspNetRequestContext : HttpRequestContextBase
 	{
-		public AspNetRequestContext (HttpReplyChannel channel, Message request)
+		public AspNetRequestContext (AspNetReplyChannel channel, HttpContextInfo ctxi, Message request)
 			: base (channel, request)
 		{
 			throw new NotImplementedException ();
