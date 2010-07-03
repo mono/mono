@@ -4727,7 +4727,7 @@ namespace Mono.CSharp {
 				args.Add (new Argument (new NullLiteral (loc)));
 			else
 				args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
-			args.Add (new Argument (new TypeOfMethod (spec.Get, loc)));
+			args.Add (new Argument (new TypeOfMethod (getter, loc)));
 			return CreateExpressionFactoryCall (ec, "Property", args);
 		}
 
@@ -4749,12 +4749,12 @@ namespace Mono.CSharp {
 
 		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) spec.Set.GetMetaInfo ());
+			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) setter.GetMetaInfo ());
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) spec.Get.GetMetaInfo ());
+			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) getter.GetMetaInfo ());
 		}
 
 		bool InstanceResolve (ResolveContext ec, bool lvalue_instance, bool must_do_cs1540_check)

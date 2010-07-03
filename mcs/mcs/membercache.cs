@@ -990,6 +990,9 @@ namespace Mono.CSharp {
 			Dictionary<MethodSpec, MethodSpec> accessor_relation = null;
 			List<MemberSpec> accessor_members = null;
 
+			// Copy member specific flags when all members were added
+			cacheToInflate.state = state;
+
 			foreach (var item in member_hash) {
 				var members = item.Value;
 				IList<MemberSpec> inflated_members = null;
