@@ -1,3 +1,9 @@
+2010-07-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #609935
+	* TdsComm.cs (Append[string]): Fix boundary calculations of bytes 
+	to be written and available free buffer.
+	
 2010-06-15 Jonathan Chambers  <joncham@gmail.com>
 
 	* Tds.cs: Add {} around default switch case.
