@@ -1,3 +1,7 @@
+2010-07-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (process_bb): Disable OP_MEMORY_BARRIER on arm.
+
 2010-07-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h: Applied patch from Elijah Taylor (elijahtaylor@google.com). Fix some
