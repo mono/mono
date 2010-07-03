@@ -374,23 +374,28 @@ namespace Mono.Data.Tds.Protocol {
 			if (tdsVersion < TdsVersion.tds70) { 
 				Append (encoder.GetBytes (s));
 			} else {
-				int lenToWrite = s.Length * 2;
-				int count = lenToWrite/outBufferLength;
 				int cindex = 0, index;
-				int remBufLen = 0;
+				int ssize = sizeof (short);
+				int lenToWrite = s.Length * ssize;
+				// if nextOutBufferLength points to the last buffer in outBuffer, 
+				// we would get a DivisionByZero while calculating remBufLen
+				if (outBufferLength - nextOutBufferIndex < 1)
+					SendIfFull (ssize);
 				
-				if (lenToWrite % outBufferLength > 0)
+				int remBufLen = outBufferLength - nextOutBufferIndex;
+				int count = lenToWrite/remBufLen;
+				
+				if (lenToWrite % remBufLen > 0)
 					count++;
 			
-				remBufLen = outBufferLength - nextOutBufferIndex;
 				for (int i = 0; i < count; i++) {
-					index = System.Math.Min (remBufLen, lenToWrite);
-					for (int j = 0; j < index; j+=2, cindex++)
+					index = System.Math.Min (remBufLen/ssize, lenToWrite/ssize);
+					for (int j = 0; j < index*ssize; j+=2, cindex++)
 						AppendInternal ((short)s[cindex]);
 					
-					lenToWrite -= System.Math.Min (remBufLen, lenToWrite);
+					lenToWrite -= index*ssize;
 					// Just make sure to flush the buffer
-					SendIfFull (lenToWrite+2);
+					SendIfFull ((lenToWrite+1)*ssize);
 				}
 			}
 		}	
