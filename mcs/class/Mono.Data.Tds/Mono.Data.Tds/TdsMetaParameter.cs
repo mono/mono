@@ -246,7 +246,8 @@ namespace Mono.Data.Tds {
 				break;
 			case "nvarchar":
 			case "xml":
-				result.Append (Size > 0 ? (Size > 8000 ? "(max)" : String.Format ("({0})", Size)) : "(4000)");
+				int paramSize = GetActualSize ();
+				result.Append (paramSize > 0 ? (paramSize > 8000 ? "(max)" : String.Format ("({0})", paramSize)) : "(4000)");
 				break;
 			case "char":
 			case "nchar":
