@@ -24,7 +24,8 @@ namespace MonoTests.System.IO
 [TestFixture]
 public class DirectoryTest
 {
-	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+	static readonly string TempSubFolder = "MonoTests.System.IO.Tests";
+	string TempFolder = Path.Combine (Path.GetTempPath (), TempSubFolder);
 	static readonly char DSC = Path.DirectorySeparatorChar;
 
 	[SetUp]
@@ -1673,6 +1674,26 @@ public class DirectoryTest
 		else // on Windows, the trailing dot is automatically trimmed
 			Assert.AreEqual (Path.Combine (TempFolder, "tempFile4"), files [0], "#N3");
 	}
+
+	[Test]
+	public void GetFiles_580090 ()
+	{
+		string cwd = Directory.GetCurrentDirectory ();
+		Directory.SetCurrentDirectory (Path.GetTempPath ());
+
+		string tempFile = Path.Combine (TempFolder, "tempFile.txt");
+		File.Create (tempFile).Close ();
+
+		try {
+			string [] files = Directory.GetFiles (".", TempSubFolder + DSC + "*.t*");
+			Assert.IsNotNull (files, "#J1");
+			Assert.AreEqual (1, files.Length, "#J2");
+		}
+		finally	{
+			Directory.SetCurrentDirectory (cwd);
+		}
+	}
+
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]

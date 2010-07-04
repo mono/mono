@@ -1,3 +1,9 @@
+2010-05-27  William Holmes  <billholmes54@gmail.com>
+
+	* DirectoryTest.cs: Adding test for bug 580090.
+
+	Code is contributed under MIT/X11 license.
+
 2010-05-08  Marek Habersack  <mhabersack@novell.com>
 
 	* PathTest.cs: added tests for the 4.0 Combine overloads.
