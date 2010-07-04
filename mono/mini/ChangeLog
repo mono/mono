@@ -1,3 +1,13 @@
+2010-07-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c: Always use V5 for passing IMT/RGCTX when running under LLVM.
+
+	* method-to-ir.c (emit_imt_argument): Fix LLVM support for architectures
+	without IMT_REG defined (ARM).
+
+	* exceptions-arm.c: Add LLVM throw exception trampolines, add xdebug info for
+	the trampolines.
+
 2010-07-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (process_bb): Disable OP_MEMORY_BARRIER on arm.
