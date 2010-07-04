@@ -1,3 +1,7 @@
+2010-07-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (arch_emit_unbox_trampoline): Fix this after the callconv changes.
+
 2010-07-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-arm.c (mono_arch_create_generic_trampoline): Fix the max trampoline
