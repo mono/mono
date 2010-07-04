@@ -481,7 +481,7 @@ namespace System.IO
 			}
 
 			stop = false;
-			return Path.Combine (wildpath, searchPattern);
+			return wild;
 		}
 		
 		private static string [] GetFileSystemEntries (string path, string searchPattern, FileAttributes mask, FileAttributes attrs)

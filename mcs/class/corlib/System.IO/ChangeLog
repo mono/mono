@@ -1,3 +1,10 @@
+2010-05-27  William Holmes  <billholmes54@gmail.com>
+
+	* Directory.cs (ValidateDirectoryListing): Removing an unnecessary
+	Path.Combine call. Part of the fix for bug #580090.
+
+	Code is contributed under MIT/X11 license.
+
 2010-06-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* FileStream.cs: Include a required ctor in NET_2_1 so that it compiles.
