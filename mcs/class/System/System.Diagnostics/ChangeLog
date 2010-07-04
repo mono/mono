@@ -1,3 +1,8 @@
+2010-07-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Process.cs: ignore processes that finish while we are looking for
+	processes by name. Fixes bug #596779.
+
 2010-04-06  Jb Evain  <jbevain@novell.com>
 
 	* Debug.cs: make class static.
