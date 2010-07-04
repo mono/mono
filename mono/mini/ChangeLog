@@ -1,5 +1,8 @@
 2010-07-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.h (MonoContext): Get rid of the 'ebp' field, use
+	regs [ARMREG_FP] instead.
+
 	* unwind.c (decode_lsda): Use read32 for reading 32 bit quantities.
 
 	* tramp-arm.c (mono_arch_create_generic_trampoline): Save the original sp to
