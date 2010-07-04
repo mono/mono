@@ -1,3 +1,8 @@
+2010-07-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* file-io.c: don't prepend anything to the names returned
+	from FindFirst/FindNext.
+
 2010-07-02  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* object-internals.h, object.h: Make mono_string_to_utf_8_checked 
