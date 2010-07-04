@@ -1,5 +1,14 @@
 2010-07-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.c (decode_lsda): Use read32 for reading 32 bit quantities.
+
+	* tramp-arm.c (mono_arch_create_generic_trampoline): Save the original sp to
+	lmf->iregs [ARMREG_IP] to be consistent with mono_arch_emit_prolog ().
+
+	* mini-arm.h (MonoLMF): Remove unused fregs field, add comments for other fields.
+
+	* exceptions-arm.c: Clean up the handling of LMFs. Add LLVM exception trampolines.
+
 	* mini-arm.c: Always use V5 for passing IMT/RGCTX when running under LLVM.
 
 	* method-to-ir.c (emit_imt_argument): Fix LLVM support for architectures
