@@ -1,3 +1,9 @@
+2010-07-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.h mini-amd64.c tramp-amd64.c aot-compiler.c: Change the IMT
+	register to be the same as the RGCTX register, the two can't be used together on
+	the same call.
+
 2010-07-05  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.c (mono_main), main.c: Add support for MONO_VM_CONFIG
