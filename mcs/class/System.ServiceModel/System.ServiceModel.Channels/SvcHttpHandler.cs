@@ -1,3 +1,5 @@
+#define NEW_CODE
+#define OLD_CODE
 //
 // SvcHttpHandler.cs
 //
@@ -5,7 +7,7 @@
 //	Ankit Jain  <jankit@novell.com>
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006,2009 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2009-2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,12 +37,13 @@ using System.Threading;
 
 using System.ServiceModel;
 using System.ServiceModel.Activation;
+using System.ServiceModel.Channels.Http;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels {
 
-#if !NEW_CODE
+#if OLD_CODE
 	internal class WcfListenerInfo
 	{
 		public WcfListenerInfo ()
@@ -73,7 +76,7 @@ namespace System.ServiceModel.Channels {
 		Type factory_type;
 		string path;
 		ServiceHostBase host;
-#if !NEW_CODE
+#if OLD_CODE
 		WcfListenerInfoCollection listeners = new WcfListenerInfoCollection ();
 #endif
 		Dictionary<HttpContext,ManualResetEvent> wcf_wait_handles = new Dictionary<HttpContext,ManualResetEvent> ();
@@ -95,7 +98,7 @@ namespace System.ServiceModel.Channels {
 			get { return host; }
 		}
 
-#if !NEW_CODE
+#if OLD_CODE
 		public HttpContext WaitForRequest (IChannelListener listener)
 		{
 			if (close_state > 0)
@@ -157,11 +160,18 @@ namespace System.ServiceModel.Channels {
 			var manager = table.GetOrCreateManager (host.BaseAddresses [0]);
 			var wait = new ManualResetEvent (false);
 			wcf_wait_handles [context] = wait;
-			manager.ProcessNewContext (new AspNetContextInfo (context));
+			manager.ProcessNewContext (new System.ServiceModel.Channels.Http.AspNetHttpContextInfo (this, context));
 			// This method must not return until the RequestContext
 			// explicitly finishes replying. Otherwise xsp will
 			// close the connection after this method call.
 			wait.WaitOne ();
+		}
+
+		public void EndHttpRequest (HttpContext context)
+		{
+			var wait = wcf_wait_handles [context];
+			wcf_wait_handles.Remove (context);
+			wait.Set ();
 		}
 
 #else
@@ -184,12 +194,14 @@ namespace System.ServiceModel.Channels {
 		}
 #endif
 
+#if OLD_CODE
 		public void EndRequest (IChannelListener listener, HttpContext context)
 		{
 			var wait = wcf_wait_handles [context];
 			wcf_wait_handles.Remove (context);
 			wait.Set ();
 		}
+#endif
 
 		// called from SvcHttpHandlerFactory's remove callback (i.e.
 		// unloading asp.net). It closes ServiceHost, then the host
@@ -202,7 +214,7 @@ namespace System.ServiceModel.Channels {
 			host = null;
 		}
 
-#if !NEW_CODE
+#if OLD_CODE
 		public void RegisterListener (IChannelListener listener)
 		{
 			lock (type_lock)

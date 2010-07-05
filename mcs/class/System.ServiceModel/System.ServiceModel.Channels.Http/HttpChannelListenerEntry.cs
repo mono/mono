@@ -76,7 +76,7 @@ namespace System.ServiceModel.Channels.Http
 		{
 			if (ChannelDispatcher == null)
 				return true; // no mex can be involved.
-			if (ctx.HttpMethod.ToUpper () != "GET")
+			if (ctx.Request.HttpMethod.ToUpper () != "GET")
 				return !ChannelDispatcher.IsMex; // non-GET request never matches mex channel dispatcher.
 			var sme = ChannelDispatcher.Host.Extensions.Find<ServiceMetadataExtension> ();
 			if (sme == null)
@@ -92,8 +92,8 @@ namespace System.ServiceModel.Channels.Http
 			//                     |  T  | F  |  F  |  T |
 
 			bool match =
-				(mex.WsdlUrl != null && Uri.Compare (ctx.RequestUrl, mex.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) ||
-				(mex.HelpUrl != null && Uri.Compare (ctx.RequestUrl, mex.HelpUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0);
+				(mex.WsdlUrl != null && Uri.Compare (ctx.Request.Url, mex.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) ||
+				(mex.HelpUrl != null && Uri.Compare (ctx.Request.Url, mex.HelpUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0);
 
 			return !(match ^ ChannelDispatcher.IsMex);
 		}

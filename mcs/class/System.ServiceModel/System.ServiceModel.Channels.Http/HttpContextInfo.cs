@@ -28,24 +28,43 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Security.Principal;
 using System.ServiceModel;
 using System.Text;
 using System.Threading;
+using System.Web;
 
 namespace System.ServiceModel.Channels.Http
 {
+	// Context
+	
 	abstract class HttpContextInfo
 	{
-		public abstract NameValueCollection QueryString { get; }
-		public abstract Uri RequestUrl { get; }
-		public abstract string HttpMethod { get; }
-		public abstract void Abort ();
+		public abstract HttpRequestInfo Request { get; }
+		public abstract HttpResponseInfo Response { get; }
 
 		public abstract string User { get; }
 		public abstract string Password { get; }
 		public abstract void ReturnUnauthorized ();
+
+		public void Abort ()
+		{
+			Response.Abort ();
+			OnContextClosed ();
+		}
+
+		public void Close ()
+		{
+			Response.Close ();
+			OnContextClosed ();
+		}
+		
+		protected virtual void OnContextClosed ()
+		{
+		}
 	}
 
 	class HttpStandaloneContextInfo : HttpContextInfo
@@ -53,26 +72,24 @@ namespace System.ServiceModel.Channels.Http
 		public HttpStandaloneContextInfo (HttpListenerContext ctx)
 		{
 			this.ctx = ctx;
+			request = new HttpStandaloneRequestInfo (ctx.Request);
+			response = new HttpStandaloneResponseInfo (ctx.Response);
 		}
 		
 		HttpListenerContext ctx;
+		HttpStandaloneRequestInfo request;
+		HttpStandaloneResponseInfo response;
 
 		public HttpListenerContext Source {
 			get { return ctx; }
 		}
 
-		public override NameValueCollection QueryString {
-			get { return ctx.Request.QueryString; }
+		public override HttpRequestInfo Request {
+			get { return request; }
 		}
-		public override Uri RequestUrl {
-			get { return ctx.Request.Url; }
-		}
-		public override string HttpMethod {
-			get { return ctx.Request.HttpMethod; }
-		}
-		public override void Abort ()
-		{
-			ctx.Response.Abort ();
+
+		public override HttpResponseInfo Response {
+			get { return response; }
 		}
 
 		public override string User {
@@ -86,6 +103,234 @@ namespace System.ServiceModel.Channels.Http
 		public override void ReturnUnauthorized ()
 		{
 			ctx.Response.StatusCode = 401;
+		}
+	}
+
+	class AspNetHttpContextInfo : HttpContextInfo
+	{
+		public AspNetHttpContextInfo (SvcHttpHandler handler, HttpContext ctx)
+		{
+			this.ctx = ctx;
+			this.handler = handler;
+			this.request = new AspNetHttpRequestInfo (ctx.Request);
+			this.response = new AspNetHttpResponseInfo (ctx.Response);
+		}
+		
+		HttpContext ctx;
+		SvcHttpHandler handler;
+		AspNetHttpRequestInfo request;
+		AspNetHttpResponseInfo response;
+
+		public HttpContext Source {
+			get { return ctx; }
+		}
+		
+		public override HttpRequestInfo Request {
+			get { return request; }
+		}
+
+		public override HttpResponseInfo Response {
+			get { return response; }
+		}
+
+		public override string User {
+			get { return ctx.User != null ? ((GenericIdentity) ctx.User.Identity).Name : null; }
+		}
+
+		// FIXME: how to acquire this?
+		public override string Password {
+			get { return null; }
+		}
+
+		public override void ReturnUnauthorized ()
+		{
+			ctx.Response.StatusCode = 401;
+		}
+
+		protected override void OnContextClosed ()
+		{
+			handler.EndHttpRequest (ctx);
+		}
+	}
+
+	// Request
+
+	abstract class HttpRequestInfo
+	{
+		public abstract NameValueCollection QueryString { get; }
+		public abstract NameValueCollection Headers { get; }
+		public abstract Uri Url { get; }
+		public abstract string ContentType { get; }
+		public abstract string HttpMethod { get; }
+		public abstract Stream InputStream { get; }
+	}
+
+	class HttpStandaloneRequestInfo : HttpRequestInfo
+	{
+		public HttpStandaloneRequestInfo (HttpListenerRequest request)
+		{
+			this.req = request;
+		}
+		
+		HttpListenerRequest req;
+
+		public override NameValueCollection QueryString {
+			get { return req.QueryString; }
+		}
+		public override NameValueCollection Headers {
+			get { return req.Headers; }
+		}
+		public override Uri Url {
+			get { return req.Url; }
+		}
+		public override string ContentType {
+			get { return req.ContentType; }
+		}
+		public override string HttpMethod {
+			get { return req.HttpMethod; }
+		}
+		public override Stream InputStream {
+			get { return req.InputStream; }
+		}
+	}
+
+	class AspNetHttpRequestInfo : HttpRequestInfo
+	{
+		public AspNetHttpRequestInfo (HttpRequest request)
+		{
+			this.req = request;
+		}
+		
+		HttpRequest req;
+
+		public override NameValueCollection QueryString {
+			get { return req.QueryString; }
+		}
+		public override NameValueCollection Headers {
+			get { return req.Headers; }
+		}
+		public override Uri Url {
+			get { return req.Url; }
+		}
+		public override string ContentType {
+			get { return req.ContentType; }
+		}
+		public override string HttpMethod {
+			get { return req.HttpMethod; }
+		}
+		public override Stream InputStream {
+			get { return req.InputStream; }
+		}
+	}
+	
+	// Response
+	
+	abstract class HttpResponseInfo
+	{
+		public abstract string ContentType { get; set; }
+		public abstract NameValueCollection Headers { get; }
+		public abstract Stream OutputStream { get; }
+		public abstract int StatusCode { get; set; }
+		public abstract string StatusDescription { get; set; }
+		public abstract void Abort ();
+		public abstract void Close ();
+		public abstract void SetLength (long value);
+		
+		public virtual bool SuppressContent { get; set; }
+	}
+
+	class HttpStandaloneResponseInfo : HttpResponseInfo
+	{
+		public HttpStandaloneResponseInfo (HttpListenerResponse response)
+		{
+			this.res = response;
+		}
+		
+		HttpListenerResponse res;
+
+		public override string ContentType {
+			get { return res.ContentType; }
+			set { res.ContentType = value; }
+		}
+		public override NameValueCollection Headers {
+			get { return res.Headers; }
+		}
+		public override int StatusCode {
+			get { return res.StatusCode; }
+			set { res.StatusCode = value; }
+		}
+		public override string StatusDescription {
+			get { return res.StatusDescription; }
+			set { res.StatusDescription = value; }
+		}
+		public override Stream OutputStream {
+			get { return res.OutputStream; }
+		}
+		
+		public override void Abort ()
+		{
+			res.Abort ();
+		}
+		
+		public override void Close ()
+		{
+			res.Close ();
+		}
+		
+		public override void SetLength (long value)
+		{
+			res.ContentLength64 = value;
+		}
+	}
+
+	class AspNetHttpResponseInfo : HttpResponseInfo
+	{
+		public AspNetHttpResponseInfo (HttpResponse response)
+		{
+			this.res = response;
+		}
+		
+		HttpResponse res;
+		
+		public override bool SuppressContent {
+			get { return res.SuppressContent; }
+			set { res.SuppressContent = value; }
+		}
+		public override string ContentType {
+			get { return res.ContentType; }
+			set { res.ContentType = value; }
+		}
+		public override NameValueCollection Headers {
+			get { return res.Headers; }
+		}
+		public override int StatusCode {
+			get { return res.StatusCode; }
+			set { res.StatusCode = value; }
+		}
+		
+		public override string StatusDescription {
+			get { return res.StatusDescription; }
+			set { res.StatusDescription = value; }
+		}
+		public override Stream OutputStream {
+			get { return res.OutputStream; }
+		}
+		
+		public override void Abort ()
+		{
+			res.Flush ();
+			res.Close ();
+		}
+		
+		public override void Close ()
+		{
+			res.Flush ();
+			res.Close ();
+		}
+		
+		public override void SetLength (long value)
+		{
+			res.AddHeader ("Content-Length", value.ToString (CultureInfo.InvariantCulture));
 		}
 	}
 }

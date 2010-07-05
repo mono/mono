@@ -1,5 +1,14 @@
 2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpStandaloneReplyChannel.cs, HttpChannelListenerEntry.cs,
+	  HttpContextInfo.cs, HttpListenerManager.cs,
+	  HttpStandaloneRequestContext.cs, HttpListenerManagerTable.cs:
+	  Fixed wsdl support in the new codebase, so enabled it again, and
+	  made significant changes for ASP.NET integration. Now ASP.NET
+	  implementation switched to the new one.
+
+2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpStandaloneReplyChannel.cs
 	  HttpContextInfo.cs
 	  HttpListenerManager.cs

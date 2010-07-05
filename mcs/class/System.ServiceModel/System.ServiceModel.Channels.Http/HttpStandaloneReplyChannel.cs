@@ -36,7 +36,7 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels.Http
 {
-	internal class HttpStandaloneReplyChannel : HttpReplyChannel
+	internal class HttpStandaloneReplyChannel : InternalReplyChannelBase
 	{
 		HttpStandaloneChannelListener<IReplyChannel> source;
 		RequestContext reqctx;
@@ -45,6 +45,26 @@ namespace System.ServiceModel.Channels.Http
 			: base (listener)
 		{
 			this.source = listener;
+		}
+
+		public MessageEncoder Encoder {
+			get { return source.MessageEncoder; }
+		}
+
+		internal MessageVersion MessageVersion {
+			get { return source.MessageEncoder.MessageVersion; }
+		}
+
+		public override RequestContext ReceiveRequest (TimeSpan timeout)
+		{
+			RequestContext ctx;
+			if (!TryReceiveRequest (timeout, out ctx))
+				throw new TimeoutException ();
+			return ctx;
+		}
+
+		protected override void OnOpen (TimeSpan timeout)
+		{
 		}
 
 		protected override void OnAbort ()
@@ -84,96 +104,6 @@ namespace System.ServiceModel.Channels.Http
 			base.OnClose (timeout - (DateTime.Now - start));
 		}
 
-		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
-		{
-			context = null;
-			HttpContextInfo ctxi;
-			if (!source.ListenerManager.TryDequeueRequest (source.ChannelDispatcher, timeout, out ctxi))
-				return false;
-			if (ctxi == null)
-				return true; // returning true, yet context is null. This happens at closing phase.
-
-			var ctx = ((HttpStandaloneContextInfo) ctxi).Source;
-			if (ctx.Response.StatusCode != 200) { // it's already invalid.
-				ctx.Response.Close ();
-				return false;
-			}
-
-			// FIXME: supply maxSizeOfHeaders.
-			int maxSizeOfHeaders = 0x10000;
-
-			Message msg = null;
-
-			if (ctx.Request.HttpMethod == "POST") {
-				if (!Encoder.IsContentTypeSupported (ctx.Request.ContentType)) {
-					ctx.Response.StatusCode = (int) HttpStatusCode.UnsupportedMediaType;
-					ctx.Response.StatusDescription = String.Format (
-							"Expected content-type '{0}' but got '{1}'", Encoder.ContentType, ctx.Request.ContentType);
-					ctx.Response.Close ();
-
-					return false;
-				}
-
-				msg = Encoder.ReadMessage (
-					ctx.Request.InputStream, maxSizeOfHeaders);
-
-				if (MessageVersion.Envelope.Equals (EnvelopeVersion.Soap11) ||
-				    MessageVersion.Addressing.Equals (AddressingVersion.None)) {
-					string action = GetHeaderItem (ctx.Request.Headers ["SOAPAction"]);
-					if (action != null) {
-						if (action.Length > 2 && action [0] == '"' && action [action.Length] == '"')
-							action = action.Substring (1, action.Length - 2);
-						msg.Headers.Action = action;
-					}
-				}
-			} else if (ctx.Request.HttpMethod == "GET") {
-				msg = Message.CreateMessage (MessageVersion.None, null); // HTTP GET-based request
-			}
-			if (msg.Headers.To == null)
-				msg.Headers.To = ctx.Request.Url;
-			msg.Properties.Add ("Via", LocalAddress.Uri);
-			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (ctx.Request.HttpMethod, ctx.Request.Url.Query, ctx.Request.Headers));
-			context = new HttpStandaloneRequestContext (this, msg, ctx);
-			reqctx = context;
-			return true;
-		}
-
-		public override bool WaitForRequest (TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-
-	internal abstract class HttpReplyChannel : InternalReplyChannelBase
-	{
-		HttpStandaloneChannelListener<IReplyChannel> source;
-
-		protected HttpReplyChannel (HttpStandaloneChannelListener<IReplyChannel> listener)
-			: base (listener)
-		{
-			this.source = listener;
-		}
-
-		public MessageEncoder Encoder {
-			get { return source.MessageEncoder; }
-		}
-
-		internal MessageVersion MessageVersion {
-			get { return source.MessageEncoder.MessageVersion; }
-		}
-
-		public override RequestContext ReceiveRequest (TimeSpan timeout)
-		{
-			RequestContext ctx;
-			if (!TryReceiveRequest (timeout, out ctx))
-				throw new TimeoutException ();
-			return ctx;
-		}
-
-		protected override void OnOpen (TimeSpan timeout)
-		{
-		}
-
 		protected string GetHeaderItem (string raw)
 		{
 			if (raw == null || raw.Length == 0)
@@ -189,14 +119,83 @@ namespace System.ServiceModel.Channels.Http
 			return raw;
 		}
 
-		protected HttpRequestMessageProperty CreateRequestProperty (string method, string query, NameValueCollection headers)
+		protected HttpRequestMessageProperty CreateRequestProperty (HttpContextInfo ctxi)
 		{
+			var query = ctxi.Request.Url.Query;
 			var prop = new HttpRequestMessageProperty ();
-			prop.Method = method;
+			prop.Method = ctxi.Request.HttpMethod;
 			prop.QueryString = query.StartsWith ("?") ? query.Substring (1) : query;
 			// FIXME: prop.SuppressEntityBody
-			prop.Headers.Add (headers);
+			prop.Headers.Add (ctxi.Request.Headers);
 			return prop;
+		}
+
+		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
+		{
+			context = null;
+			HttpContextInfo ctxi;
+			if (!source.ListenerManager.TryDequeueRequest (source.ChannelDispatcher, timeout, out ctxi))
+				return false;
+			if (ctxi == null)
+				return true; // returning true, yet context is null. This happens at closing phase.
+
+			Message msg = null;
+
+			if (ctxi.Request.HttpMethod == "POST") {
+				msg = CreatePostMessage (ctxi);
+				if (msg == null)
+					return false;
+			} else if (ctxi.Request.HttpMethod == "GET")
+				msg = Message.CreateMessage (MessageVersion.None, null); // HTTP GET-based request
+
+			if (msg.Headers.To == null)
+				msg.Headers.To = ctxi.Request.Url;
+			msg.Properties.Add ("Via", LocalAddress.Uri);
+			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (ctxi));
+
+			context = new HttpStandaloneRequestContext (this, ctxi, msg);
+			reqctx = context;
+			return true;
+		}
+
+		protected Message CreatePostMessage (HttpContextInfo ctxi)
+		{
+			if (ctxi.Response.StatusCode != 200) { // it's already invalid.
+				ctxi.Close ();
+				return null;
+			}
+
+			if (!Encoder.IsContentTypeSupported (ctxi.Request.ContentType)) {
+				ctxi.Response.StatusCode = (int) HttpStatusCode.UnsupportedMediaType;
+				ctxi.Response.StatusDescription = String.Format (
+						"Expected content-type '{0}' but got '{1}'", Encoder.ContentType, ctxi.Request.ContentType);
+				ctxi.Close ();
+
+				return null;
+			}
+
+			// FIXME: supply maxSizeOfHeaders.
+			int maxSizeOfHeaders = 0x10000;
+
+			var msg = Encoder.ReadMessage (
+				ctxi.Request.InputStream, maxSizeOfHeaders);
+
+			if (MessageVersion.Envelope.Equals (EnvelopeVersion.Soap11) ||
+			    MessageVersion.Addressing.Equals (AddressingVersion.None)) {
+				string action = GetHeaderItem (ctxi.Request.Headers ["SOAPAction"]);
+				if (action != null) {
+					if (action.Length > 2 && action [0] == '"' && action [action.Length] == '"')
+						action = action.Substring (1, action.Length - 2);
+					msg.Headers.Action = action;
+				}
+			}
+
+			return msg;
+		}
+
+		public override bool WaitForRequest (TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
