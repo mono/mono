@@ -1,5 +1,10 @@
 2010-07-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (emit_imt_argument): Fix llvm support.
+
+	* mini-llvm.c: Use only one mono specific LLVM calling convention since imt/rgctx
+	cannot be passed in the same call.
+
 	* mini-amd64.h mini-amd64.c tramp-amd64.c aot-compiler.c: Change the IMT
 	register to be the same as the RGCTX register, the two can't be used together on
 	the same call.
