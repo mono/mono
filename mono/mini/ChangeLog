@@ -1,3 +1,11 @@
+2010-07-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.h (MONO_CONTEXT_SET_SP): Define this to fix the PPC build.
+
+	* mini-ppc.c tramp-ppc.c aot-compiler.c: Change the managed calling convention so
+	'this' is always passed as the first argument, before the vtype ret arg. This
+	simplifies get_this_arg_reg () and LLVM integration.
+
 2010-07-05  Martin Baulig  <martin@ximian.com>
 
 	* exceptions-x86.c (mono_arch_handle_exception): Port this to
