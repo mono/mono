@@ -1334,6 +1334,55 @@ the right file name it is not necessarily possible to open the file.
 In general if you have problems with encodings in your filenames you
 should use the "convmv" program.
 .TP
+\fBMONO_GC_DEBUG\fR
+When using Mono with the SGen garbage collector this environment
+variable can be used to control different aspects of the GC processs.
+The value of this variable is a comma separated list of words.   
+.RS
+.ne 8
+.TP
+\fInumber\fR
+Sets the debug level to the specified number.
+.TP
+\fBcollect-before-allocs\fR
+.TP
+\fBcheck-at-minor-collections\fR
+This performs a consistency check on minor collections and also clears
+the nursery at collection time, instead of the default, when buffers
+are allocated (clear-at-gc).   The consistency check ensures that
+there are no major to minor references that are not on the remembered
+sets. 
+.TP
+\fBxdomain-checks\fR
+Performs a check to make sure that no references are left to an
+unloaded AppDomain.
+.TP
+\fBclear-at-gc\fR
+This clears the nursery at GC time instead of doing it when the thread
+local allocation buffer (TLAB) is created.  The default is to clear
+the nursery at TLAB creation time.
+.TP
+\fBconservative-stack-mark\fR
+Forces the GC to scan the stack conservatively, even if precise
+scanning is available.
+.TP
+\fBcheck-scan-starts\fR
+If set, does a plausibility check on the scan_starts before and after each collection
+.TP
+\fBheap-dump=\fIfile\fR
+Dumps the heap contents to the specified file.   To visualize the
+information, use the mono-heapviz tool.
+.TP
+\fBbinary-protocol=\fIfile\fR
+Outputs the debugging output to the specified file.   For this to
+work, Mono needs to be compiled with the BINARY_PROTOCOL define on
+sgen-gc.c.   You can then use this command to explore the output
+.nf
+                sgen-grep-binprot 0x1234 0x5678 < file
+.fi
+.ne
+.RE
+.TP
 \fBMONO_GAC_PREFIX\fR
 Provides a prefix the runtime uses to look for Global Assembly Caches.
 Directories are separated by the platform path separator (colons on
