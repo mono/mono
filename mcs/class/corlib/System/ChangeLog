@@ -1,3 +1,8 @@
+2010-07-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TimeSpan.cs: two consecutive colons produce an error now.
+	Fixes bug #598467.
+
 2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Attribute.cs: Fix GetHashCode to match MS behavior (needed for

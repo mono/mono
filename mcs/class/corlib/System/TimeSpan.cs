@@ -1072,11 +1072,15 @@ namespace System
 				value1 = ParseInt (false);
 				if (!ParseOptDaysSeparator ()) // Parse either day separator or colon
 					ParseColon (false);
+				int p = _cur;
 				value2 = ParseInt (true);
-				ParseColon (true);
-				value3 = ParseInt (true);
-				ParseColon (true);
-				value4 = ParseInt (true);
+				value3 = value4 = 0;
+				if (p < _cur) {
+					ParseColon (true);
+					value3 = ParseInt (true);
+					ParseColon (true);
+					value4 = ParseInt (true);
+				}
 
 				// We know the precise separator for ticks, so there's no need to guess.
 				if (ParseOptDecimalSeparator ())
@@ -1177,9 +1181,13 @@ namespace System
 					days = 0;
 				}
 				ParseColon(false);
+				int p = _cur;
 				minutes = ParseInt (true);
-				ParseColon (true);
-				seconds = ParseInt (true);
+				seconds = 0;
+				if (p < _cur) {
+					ParseColon (true);
+					seconds = ParseInt (true);
+				}
 
 				if ( ParseOptDot () ) {
 					ticks = ParseTicks ();
