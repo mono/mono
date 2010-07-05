@@ -6505,12 +6505,41 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+		#region Properties
+
+		public override string Name {
+			get { return "this"; }
+		}
+
+		public override bool IsRef {
+			get { return type.IsStruct; }
+		}
+
+		protected override ILocalVariable Variable {
+			get { return ThisVariable.Instance; }
+		}
+
 		public override VariableInfo VariableInfo {
 			get { return variable_info; }
 		}
 
 		public override bool IsFixed {
 			get { return false; }
+		}
+
+		#endregion
+
+		protected virtual void Error_ThisNotAvailable (ResolveContext ec)
+		{
+			if (ec.IsStatic && !ec.HasSet (ResolveContext.Options.ConstantScope)) {
+				ec.Report.Error (26, loc, "Keyword `this' is not valid in a static property, static method, or static field initializer");
+			} else if (ec.CurrentAnonymousMethod != null) {
+				ec.Report.Error (1673, loc,
+					"Anonymous methods inside structs cannot access instance members of `this'. " +
+					"Consider copying `this' to a local variable outside the anonymous method and using the local instead");
+			} else {
+				ec.Report.Error (27, loc, "Keyword `this' is not available in the current context");
+			}
 		}
 
 		public override HoistedVariable GetHoistedVariable (AnonymousExpression ae)
@@ -6530,14 +6559,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override bool IsRef {
-			get { return type.IsStruct; }
-		}
-
-		protected override ILocalVariable Variable {
-			get { return ThisVariable.Instance; }
-		}
-
 		public static bool IsThisAvailable (ResolveContext ec, bool ignoreAnonymous)
 		{
 			if (ec.IsStatic || ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.BaseInitializer | ResolveContext.Options.ConstantScope))
@@ -6552,21 +6573,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool ResolveBase (ResolveContext ec)
+		public virtual void ResolveBase (ResolveContext ec)
 		{
-			eclass = ExprClass.Variable;
-			type = ec.CurrentType;
-
 			if (!IsThisAvailable (ec, false)) {
-				if (ec.IsStatic && !ec.HasSet (ResolveContext.Options.ConstantScope)) {
-					ec.Report.Error (26, loc, "Keyword `this' is not valid in a static property, static method, or static field initializer");
-				} else if (ec.CurrentAnonymousMethod != null) {
-					ec.Report.Error (1673, loc,
-						"Anonymous methods inside structs cannot access instance members of `this'. " +
-						"Consider copying `this' to a local variable outside the anonymous method and using the local instead");
-				} else {
-					ec.Report.Error (27, loc, "Keyword `this' is not available in the current context");
-				}
+				Error_ThisNotAvailable (ec);
 			}
 
 			var block = ec.CurrentBlock;
@@ -6579,8 +6589,9 @@ namespace Mono.CSharp {
 					am.SetHasThisAccess ();
 				}
 			}
-			
-			return true;
+
+			eclass = ExprClass.Variable;
+			type = ec.CurrentType;
 		}
 
 		//
@@ -6614,8 +6625,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			if (!ResolveBase (ec))
-				return null;
+			ResolveBase (ec);
 
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
@@ -6635,10 +6645,6 @@ namespace Mono.CSharp {
 		public override int GetHashCode()
 		{
 			throw new NotImplementedException ();
-		}
-
-		public override string Name {
-			get { return "this"; }
 		}
 
 		public override bool Equals (object obj)
@@ -7499,7 +7505,7 @@ namespace Mono.CSharp {
 
 		protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
 		{
-			if (RootContext.Version > LanguageVersion.ISO_2 && !ec.Compiler.IsRuntimeBinder &&
+			if (RootContext.Version > LanguageVersion.ISO_2 && !ec.Compiler.IsRuntimeBinder && !(expr is BaseThis) &&
 				((expr.eclass & (ExprClass.Value | ExprClass.Variable)) != 0)) {
 				ec.Report.Error (1061, loc, "Type `{0}' does not contain a definition for `{1}' and no " +
 					"extension method `{1}' of type `{0}' could be found " +
@@ -8270,57 +8276,48 @@ namespace Mono.CSharp {
 	//
 	// A base access expression
 	//
-	public class BaseThis : Expression
+	public class BaseThis : This
 	{
 		public BaseThis (Location loc)
+			: base (loc)
 		{
-			this.loc = loc;
 		}
 
 		public BaseThis (TypeSpec type, Location loc)
+			: base (loc)
 		{
 			this.type = type;
 			eclass = ExprClass.Variable;
-			this.loc = loc;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			ec.Report.Error (831, loc, "An expression tree may not contain a base access");
-
-			Arguments args = new Arguments (1);
-			args.Add (new Argument (this));
-			return CreateExpressionFactoryCall (ec, "Constant", args);
+			return base.CreateExpressionTree (ec);
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Expression target)
+		public override void ResolveBase (ResolveContext ec)
 		{
-			// Nothing to clone
-		}
-
-		protected override Expression DoResolve (ResolveContext rc)
-		{
-			type = rc.CurrentType.BaseType;
-
-			if (!This.IsThisAvailable (rc, false)) {
-				if (rc.IsStatic) {
-					rc.Report.Error (1511, loc, "Keyword `base' is not available in a static method");
-				} else {
-					rc.Report.Error (1512, loc, "Keyword `base' is not available in the current context");
-				}
-			}
-
-			eclass = ExprClass.Variable;
-			return this;
+			base.ResolveBase (ec);
+			type = ec.CurrentType.BaseType;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.Emit (OpCodes.Ldarg_0);
+			base.Emit (ec);
 
 			if (ec.CurrentType.IsStruct) {
 				ec.Emit (OpCodes.Ldobj, ec.CurrentType);
 				ec.Emit (OpCodes.Box, ec.CurrentType);
+			}
+		}
+
+		protected override void Error_ThisNotAvailable (ResolveContext ec)
+		{
+			if (ec.IsStatic) {
+				ec.Report.Error (1511, loc, "Keyword `base' is not available in a static method");
+			} else {
+				ec.Report.Error (1512, loc, "Keyword `base' is not available in the current context");
 			}
 		}
 	}

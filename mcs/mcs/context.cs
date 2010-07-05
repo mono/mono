@@ -403,10 +403,7 @@ namespace Mono.CSharp
 		public Expression GetThis (Location loc)
 		{
 			This my_this = new This (loc);
-
-			if (!my_this.ResolveBase (this))
-				my_this = null;
-
+			my_this.ResolveBase (this);
 			return my_this;
 		}
 

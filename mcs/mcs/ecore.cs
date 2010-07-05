@@ -2700,10 +2700,10 @@ namespace Mono.CSharp {
 		//
 		// Converts best base candidate for virtual method starting from QueriedBaseType
 		//
-		protected MethodSpec CandidateToBaseOverride (MethodSpec method)
+		protected MethodSpec CandidateToBaseOverride (ResolveContext rc, MethodSpec method)
 		{
 			//
-			// Only when base.member is used
+			// Only when base.member is used and method is virtual
 			//
 			if (!IsBase || method.DeclaringType == InstanceExpression.Type)
 				return method;
@@ -2712,11 +2712,14 @@ namespace Mono.CSharp {
 			// Overload resulution works on virtual or non-virtual members only (no overrides). That
 			// means for base.member access we have to find the closest match after we found best candidate
 			//
-			if ((method.Modifiers & Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.STATIC) != Modifiers.STATIC) {
+			if ((method.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.STATIC)) != Modifiers.STATIC) {
 				var base_override = MemberCache.FindMember (InstanceExpression.Type, new MemberFilter (method), BindingRestriction.InstanceOnly) as MethodSpec;
 				if (base_override != null && base_override.DeclaringType != method.DeclaringType) {
 					if (base_override.IsGeneric)
-						return base_override.MakeGenericMethod (method.TypeArguments);
+						base_override = base_override.MakeGenericMethod (method.TypeArguments);
+
+					if (rc.CurrentAnonymousMethod != null)
+						throw new NotImplementedException ("base call hoisting");
 
 					return base_override;
 				}
@@ -3888,7 +3891,7 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			best_candidate = CandidateToBaseOverride (best_candidate);
+			best_candidate = CandidateToBaseOverride (ec, best_candidate);
 
 			//
 			// And now check if the arguments are all
@@ -4840,7 +4843,7 @@ namespace Mono.CSharp {
 				UnsafeError (ec, loc);
 			}
 
-			getter = CandidateToBaseOverride (spec.Get);
+			getter = CandidateToBaseOverride (ec, spec.Get);
 
 			//
 			// Only base will allow this invocation to happen.
@@ -4913,7 +4916,7 @@ namespace Mono.CSharp {
 			if (!InstanceResolve (ec, TypeManager.IsStruct (spec.DeclaringType), must_do_cs1540_check))
 				return null;
 
-			setter = CandidateToBaseOverride (spec.Set);
+			setter = CandidateToBaseOverride (ec, spec.Set);
 			
 			//
 			// Only base will allow this invocation to happen.
