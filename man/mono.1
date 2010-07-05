@@ -1539,6 +1539,12 @@ The maximum number of threads in the general threadpool will be
 20 + (MONO_THREADS_PER_CPU * number of CPUs). The default value for this
 variable is 10.
 .TP
+\fBMONO_VM_OPTIONS\fR
+You can use this environment variable to turn on the LLVM engine 
+(MONO_VM_OPTIONS=llvm) or switch to using the SGen garbage collector
+version of Mono (this works by execing mono-sgen in place).
+.Sp
+.TP
 \fBMONO_XMLSERIALIZER_THS\fR
 Controls the threshold for the XmlSerializer to produce a custom
 serializer for a given class instead of using the Reflection-based

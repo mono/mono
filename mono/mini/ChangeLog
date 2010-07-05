@@ -1,3 +1,8 @@
+2010-07-05  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.c (mono_main), main.c: Add support for MONO_VM_CONFIG
+	that allows the user to force the VM to use llvm or sgen.
+
 2010-07-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-ppc.c (mono_arch_handle_exception): Resume from the signal handler
