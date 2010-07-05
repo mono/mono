@@ -1,3 +1,8 @@
+2010-07-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* NetworkInterface.cs: avoid endless loop when a bad length is
+	received for AF_PACKET. Fixes bug #601783.
+
 2010-06-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Ping.cs: we need to read the output to give the process time
