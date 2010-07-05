@@ -41,71 +41,9 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels.Http
 {
-	internal abstract class HttpListenerManager
+	internal class HttpListenerManager
 	{
-		protected HttpListenerManager ()
-		{
-			Entries = new List<HttpChannelListenerEntry> ();
-		}
-
-		public List<HttpChannelListenerEntry> Entries { get; private set; }
-
-		public abstract void RegisterListener (ChannelDispatcher channel, TimeSpan timeout);
-		public abstract void UnregisterListener (ChannelDispatcher channel, TimeSpan timeout);
-
-		protected void RegisterListenerCommon (ChannelDispatcher channel, TimeSpan timeout)
-		{
-			Entries.Add (new HttpChannelListenerEntry (channel, new AutoResetEvent (false)));
-
-			Entries.Sort (HttpChannelListenerEntry.CompareEntries);
-		}
-
-		protected void UnregisterListenerCommon (ChannelDispatcher channel, TimeSpan timeout)
-		{
-			var entry = Entries.First (e => e.ChannelDispatcher == channel);
-			Entries.Remove (entry);
-
-			entry.WaitHandle.Set (); // make sure to finish pending requests.
-		}
-
-		public void ProcessNewContext (HttpContextInfo ctxi)
-		{
-			var ce = SelectChannel (ctxi);
-			if (ce == null)
-				throw new InvalidOperationException ("HttpListenerContext does not match any of the registered channels");
-			ce.ContextQueue.Enqueue (ctxi);
-			ce.WaitHandle.Set ();
-		}
-
-		HttpChannelListenerEntry SelectChannel (HttpContextInfo ctx)
-		{
-			foreach (var e in Entries)
-				if (e.FilterHttpContext (ctx))
-					return e;
-			return null;
-		}
-
-		public bool TryDequeueRequest (ChannelDispatcher channel, TimeSpan timeout, out HttpContextInfo context)
-		{
-			DateTime start = DateTime.Now;
-
-			context = null;
-			var ce = Entries.First (e => e.ChannelDispatcher == channel);
-			lock (ce.RetrieverLock) {
-				var q = ce.ContextQueue;
-				if (q.Count == 0) {
-					bool ret = ce.WaitHandle.WaitOne (timeout);
-					return ret && TryDequeueRequest (channel, timeout - (DateTime.Now - start), out context); // recurse, am lazy :/
-				}
-				context = q.Dequeue ();
-				return true;
-			}
-		}
-	}
-
-	internal class HttpStandaloneListenerManager : HttpListenerManager
-	{
-		public HttpStandaloneListenerManager (Uri uri)
+		public HttpListenerManager (Uri uri)
 		{
 			var l = new HttpListener ();
 
@@ -119,15 +57,18 @@ namespace System.ServiceModel.Channels.Http
 		}
 		
 		HttpListener listener;
+		List<HttpChannelListenerEntry> entries = new List<HttpChannelListenerEntry> ();
 
 		Thread loop;
 
 		// FIXME: use timeout
-		public override void RegisterListener (ChannelDispatcher channel, TimeSpan timeout)
+		public void RegisterListener (ChannelDispatcher channel, TimeSpan timeout)
 		{
-			RegisterListenerCommon (channel, timeout);
+			entries.Add (new HttpChannelListenerEntry (channel, new AutoResetEvent (false)));
 
-			if (Entries.Count != 1)
+			entries.Sort (HttpChannelListenerEntry.CompareEntries);
+
+			if (entries.Count != 1)
 				return;
 
 			// Start here. It is shared between channel listeners
@@ -150,12 +91,15 @@ namespace System.ServiceModel.Channels.Http
 		}
 
 		// FIXME: use timeout
-		public override void UnregisterListener (ChannelDispatcher channel, TimeSpan timeout)
+		public void UnregisterListener (ChannelDispatcher channel, TimeSpan timeout)
 		{
-			UnregisterListenerCommon (channel, timeout);
+			var entry = entries.First (e => e.ChannelDispatcher == channel);
+			entries.Remove (entry);
+
+			entry.WaitHandle.Set (); // make sure to finish pending requests.
 
 			// stop the server if there is no more registered listener.
-			if (Entries.Count > 0)
+			if (entries.Count > 0)
 				return;
 
 #if true
@@ -177,24 +121,38 @@ namespace System.ServiceModel.Channels.Http
 		{
 			if (ctx == null)
 				return;
-			ProcessNewContext (new HttpStandaloneContextInfo (ctx));
-		}
-	}
 
-	internal class AspNetHttpListenerManager : HttpListenerManager
-	{
-		public AspNetHttpListenerManager (Uri uri)
-		{
-		}
-
-		public override void RegisterListener (ChannelDispatcher channel, TimeSpan timeout)
-		{
-			RegisterListenerCommon (channel, timeout);
+			var ctxi = new HttpStandaloneContextInfo (ctx);
+			var ce = SelectChannel (ctxi);
+			if (ce == null)
+				throw new InvalidOperationException ("HttpListenerContext does not match any of the registered channels");
+			ce.ContextQueue.Enqueue (ctxi);
+			ce.WaitHandle.Set ();
 		}
 
-		public override void UnregisterListener (ChannelDispatcher channel, TimeSpan timeout)
+		HttpChannelListenerEntry SelectChannel (HttpContextInfo ctx)
 		{
-			UnregisterListenerCommon (channel, timeout);
+			foreach (var e in entries)
+				if (e.FilterHttpContext (ctx))
+					return e;
+			return null;
+		}
+
+		public bool TryDequeueRequest (ChannelDispatcher channel, TimeSpan timeout, out HttpContextInfo context)
+		{
+			DateTime start = DateTime.Now;
+
+			context = null;
+			var ce = entries.First (e => e.ChannelDispatcher == channel);
+			lock (ce.RetrieverLock) {
+				var q = ce.ContextQueue;
+				if (q.Count == 0) {
+					bool ret = ce.WaitHandle.WaitOne (timeout);
+					return ret && TryDequeueRequest (channel, timeout - (DateTime.Now - start), out context); // recurse, am lazy :/
+				}
+				context = q.Dequeue ();
+				return true;
+			}
 		}
 	}
 }

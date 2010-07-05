@@ -1,3 +1,12 @@
+2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpStandaloneReplyChannel.cs
+	  HttpContextInfo.cs
+	  HttpListenerManager.cs
+	  HttpStandaloneRequestContext.cs
+	  HttpListenerManagerTable.cs : revert previous changes, regression
+	  on wsdl support.
+
 2010-07-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpStandaloneReplyChannel.cs, HttpStandaloneRequestContext.cs:

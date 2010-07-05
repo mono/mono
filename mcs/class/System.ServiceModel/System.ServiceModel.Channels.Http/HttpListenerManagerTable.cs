@@ -74,10 +74,7 @@ namespace System.ServiceModel.Channels.Http
 		{
 			var m = listeners.FirstOrDefault (p => p.Key.Equals (uri)).Value;
 			if (m == null) {
-				if (ServiceHostingEnvironment.InAspNet)
-					m = new AspNetHttpListenerManager (uri);
-				else
-					m = new HttpStandaloneListenerManager (uri);
+				m = new HttpListenerManager (uri);
 				listeners [uri] = m;
 			}
 			return m;

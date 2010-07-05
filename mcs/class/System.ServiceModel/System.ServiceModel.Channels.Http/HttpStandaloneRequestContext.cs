@@ -32,11 +32,13 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels.Http
 {
-	internal class HttpStandaloneRequestContext : HttpRequestContextBase
+	internal class HttpStandaloneRequestContext : HttpStandaloneRequestContextBase
 	{
 		HttpListenerContext ctx;
 
-		public HttpStandaloneRequestContext (HttpReplyChannel channel, Message msg, HttpListenerContext ctx)
+		public HttpStandaloneRequestContext (
+			HttpStandaloneReplyChannel channel,
+			Message msg, HttpListenerContext ctx)
 			: base (channel, msg)
 		{
 			if (ctx == null)
@@ -98,37 +100,13 @@ namespace System.ServiceModel.Channels.Http
 		}
 	}
 
-	internal class AspNetRequestContext : HttpRequestContextBase
-	{
-		public AspNetRequestContext (AspNetReplyChannel channel, HttpContextInfo ctxi, Message request)
-			: base (channel, request)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void Abort ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override void ProcessReply (Message msg, TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void Close (TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-
-	internal abstract class HttpRequestContextBase : RequestContext
+	internal abstract class HttpStandaloneRequestContextBase : RequestContext
 	{
 		Message request;
-		HttpReplyChannel channel;
+		HttpStandaloneReplyChannel channel;
 
-		public HttpRequestContextBase (
-			HttpReplyChannel channel,
+		public HttpStandaloneRequestContextBase (
+			HttpStandaloneReplyChannel channel,
 			Message request)
 		{
 			if (channel == null)
@@ -143,7 +121,7 @@ namespace System.ServiceModel.Channels.Http
 			get { return request; }
 		}
 
-		public HttpReplyChannel Channel {
+		public HttpStandaloneReplyChannel Channel {
 			get { return channel; }
 		}
 
