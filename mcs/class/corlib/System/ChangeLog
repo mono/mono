@@ -1,3 +1,8 @@
+2010-07-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TimeSpan.cs: two consecutive colons produce an error now.
+	Fixes bug #598467.
+
 2010-06-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* String.cs: Fix String.Split(String[],int,StringSplitOptions) so that:

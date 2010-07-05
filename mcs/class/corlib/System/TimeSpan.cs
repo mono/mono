@@ -595,9 +595,13 @@ namespace System
 					days = 0;
 				}
 				ParseOptColon();
+				int p = _cur;
 				minutes = ParseInt (true);
-				ParseOptColon ();
-				seconds = ParseInt (true);
+				seconds = 0;
+				if (p < _cur) {
+					ParseOptColon ();
+					seconds = ParseInt (true);
+				}
 				if ( ParseOptDot () ) {
 					ticks = ParseTicks ();
 				}
