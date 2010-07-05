@@ -37,6 +37,11 @@ using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Dispatcher
 {
+	internal interface IChannelDispatcherBoundListener
+	{
+		ChannelDispatcher ChannelDispatcher { get; set; }
+	}
+
 	public class ChannelDispatcher : ChannelDispatcherBase
 	{
 		class EndpointDispatcherCollection : SynchronizedCollection<EndpointDispatcher>

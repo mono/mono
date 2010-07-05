@@ -136,8 +136,6 @@ System.ServiceModel.Activation/VirtualPathExtension.cs
 System.ServiceModel.Channels/AddressHeader.cs
 System.ServiceModel.Channels/AddressHeaderCollection.cs
 System.ServiceModel.Channels/AddressingVersion.cs
-System.ServiceModel.Channels/AspNetReplyChannel.cs
-System.ServiceModel.Channels/AspNetRequestContext.cs
 System.ServiceModel.Channels/AsymmetricSecurityBindingElement.cs
 System.ServiceModel.Channels/BinaryMessageEncoder.cs
 System.ServiceModel.Channels/BinaryMessageEncoderFactory.cs
@@ -171,11 +169,7 @@ System.ServiceModel.Channels/FaultConverter.cs
 System.ServiceModel.Channels/HostedTransportConfiguration.cs
 System.ServiceModel.Channels/HtmlizedException.cs
 System.ServiceModel.Channels/HttpChannelFactory.cs
-System.ServiceModel.Channels/HttpChannelListener.cs
-System.ServiceModel.Channels/HttpListenerManager.cs
-System.ServiceModel.Channels/HttpReplyChannel.cs
 System.ServiceModel.Channels/HttpRequestChannel.cs
-System.ServiceModel.Channels/HttpRequestContext.cs
 System.ServiceModel.Channels/HttpRequestMessageProperty.cs
 System.ServiceModel.Channels/HttpResponseMessageProperty.cs
 System.ServiceModel.Channels/HttpTransportBindingElement.cs
@@ -316,9 +310,9 @@ System.ServiceModel.Channels.Http/HttpChannelListenerEntry.cs
 System.ServiceModel.Channels.Http/HttpContextInfo.cs
 System.ServiceModel.Channels.Http/HttpListenerManager.cs
 System.ServiceModel.Channels.Http/HttpListenerManagerTable.cs
-System.ServiceModel.Channels.Http/HttpStandaloneChannelListener.cs
-System.ServiceModel.Channels.Http/HttpStandaloneReplyChannel.cs
-System.ServiceModel.Channels.Http/HttpStandaloneRequestContext.cs
+System.ServiceModel.Channels.Http/HttpChannelListener.cs
+System.ServiceModel.Channels.Http/HttpReplyChannel.cs
+System.ServiceModel.Channels.Http/HttpRequestContext.cs
 System.ServiceModel.ComIntegration/Dummy.cs
 System.ServiceModel.Configuration/AddressHeaderCollectionElement.cs
 System.ServiceModel.Configuration/AllowedAudienceUriElement.cs

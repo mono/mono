@@ -1,5 +1,9 @@
 2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs : removed old code and #if blocks.
+
+2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs : add required code for new ASP.NET HTTP stack.
 	  Support for new and old stack (both) are temporarily enabled.
 	* HttpTransportBindingElement.cs : switch to new ASP.NET stack.

@@ -1,5 +1,3 @@
-#define NEW_CODE
-#define OLD_CODE
 //
 // SvcHttpHandler.cs
 //
@@ -41,31 +39,8 @@ using System.ServiceModel.Channels.Http;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 
-namespace System.ServiceModel.Channels {
-
-#if OLD_CODE
-	internal class WcfListenerInfo
-	{
-		public WcfListenerInfo ()
-		{
-			Pending = new List<HttpContext> ();
-			ProcessRequestHandles = new List<ManualResetEvent> ();
-		}
-
-		public IChannelListener Listener { get; set; }
-		public List<ManualResetEvent> ProcessRequestHandles { get; private set; }
-		public List<HttpContext> Pending { get; private set; }
-	}
-
-	internal class WcfListenerInfoCollection : KeyedCollection<IChannelListener,WcfListenerInfo>
-	{
-		protected override IChannelListener GetKeyForItem (WcfListenerInfo info)
-		{
-			return info.Listener;
-		}
-	}
-#endif
-
+namespace System.ServiceModel.Channels
+{
 	internal class SvcHttpHandler : IHttpHandler
 	{
 		internal static SvcHttpHandler Current;
@@ -76,9 +51,6 @@ namespace System.ServiceModel.Channels {
 		Type factory_type;
 		string path;
 		ServiceHostBase host;
-#if OLD_CODE
-		WcfListenerInfoCollection listeners = new WcfListenerInfoCollection ();
-#endif
 		Dictionary<HttpContext,ManualResetEvent> wcf_wait_handles = new Dictionary<HttpContext,ManualResetEvent> ();
 		int close_state;
 
@@ -97,60 +69,6 @@ namespace System.ServiceModel.Channels {
 		public ServiceHostBase Host {
 			get { return host; }
 		}
-
-#if OLD_CODE
-		public HttpContext WaitForRequest (IChannelListener listener)
-		{
-			if (close_state > 0)
-				return null;
-
-			var info = listeners [listener];
-			var ctx = info.Pending.Count == 0 ? null : info.Pending [0];
-			if (ctx == null) {
-				var wait = new ManualResetEvent (false);
-				info.ProcessRequestHandles.Add (wait);
-				wait.WaitOne ();
-				ctx = info.Pending [0];
-				info.ProcessRequestHandles.Remove (wait);
-			}
-
-			info.Pending.RemoveAt (0);
-			return ctx;
-		}
-
-		IChannelListener FindBestMatchListener (HttpContext ctx)
-		{
-			var actx = new AspNetHttpContextInfo (ctx);
-
-			// Select the best-match listener.
-			IChannelListener best = null;
-			string rel = null;
-			foreach (var li in listeners) {
-				var l = li.Listener;
-				if (!l.GetProperty<HttpListenerManager> ().FilterHttpContext (actx))
-					continue;
-				if (l.Uri.Equals (ctx.Request.Url)) {
-					best = l;
-					break;
-				}
-			}
-			// FIXME: the matching must be better-considered.
-			foreach (var li in listeners) {
-				var l = li.Listener;
-				if (!l.GetProperty<HttpListenerManager> ().FilterHttpContext (actx))
-					continue;
-				if (!ctx.Request.Url.ToString ().StartsWith (l.Uri.ToString (), StringComparison.Ordinal))
-					continue;
-				if (best == null)
-					best = l;
-			}
-			if (best != null)
-				return best;
-			throw new InvalidOperationException (String.Format ("The argument HTTP context did not match any of the registered listener manager (could be mismatch in URL, method etc.) {0}", ctx.Request.Url));
-		}
-#endif
-
-#if NEW_CODE
 
 		public void ProcessRequest (HttpContext context)
 		{
@@ -174,35 +92,6 @@ namespace System.ServiceModel.Channels {
 			wait.Set ();
 		}
 
-#else
-
-		public void ProcessRequest (HttpContext context)
-		{
-			EnsureServiceHost ();
-
-			var wait = new ManualResetEvent (false);
-			var l = FindBestMatchListener (context);
-			var i = listeners [l];
-			lock (i) {
-				i.Pending.Add (context);
-				wcf_wait_handles [context] = wait;
-				if (i.ProcessRequestHandles.Count > 0)
-					i.ProcessRequestHandles [0].Set ();
-			}
-
-			wait.WaitOne ();
-		}
-#endif
-
-#if OLD_CODE
-		public void EndRequest (IChannelListener listener, HttpContext context)
-		{
-			var wait = wcf_wait_handles [context];
-			wcf_wait_handles.Remove (context);
-			wait.Set ();
-		}
-#endif
-
 		// called from SvcHttpHandlerFactory's remove callback (i.e.
 		// unloading asp.net). It closes ServiceHost, then the host
 		// in turn closes the listener and the channels it opened.
@@ -213,20 +102,6 @@ namespace System.ServiceModel.Channels {
 			host.Close ();
 			host = null;
 		}
-
-#if OLD_CODE
-		public void RegisterListener (IChannelListener listener)
-		{
-			lock (type_lock)
-				listeners.Add (new WcfListenerInfo () {Listener = listener});
-		}
-
-		public void UnregisterListener (IChannelListener listener)
-		{
-			listeners.Remove (listener);
-		}
-
-#endif
 
 		void EnsureServiceHost ()
 		{

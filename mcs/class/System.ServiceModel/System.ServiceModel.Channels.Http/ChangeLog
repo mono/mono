@@ -1,5 +1,14 @@
 2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpStandaloneReplyChannel.cs
+	  HttpStandaloneRequestContext.cs
+	  HttpStandaloneChannelListener.cs
+	  HttpReplyChannel.cs
+	  HttpRequestContext.cs
+	  HttpChannelListener.cs : renamed former 3 files to latter 3 files.
+
+2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpStandaloneReplyChannel.cs, HttpChannelListenerEntry.cs,
 	  HttpContextInfo.cs, HttpListenerManager.cs,
 	  HttpStandaloneRequestContext.cs, HttpListenerManagerTable.cs:
