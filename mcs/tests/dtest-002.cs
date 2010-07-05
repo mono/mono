@@ -21,3 +21,15 @@ public class C : I
 		return 0;
 	}
 }
+
+abstract class AC
+{
+	public abstract void Foo(dynamic[] d);
+}
+
+class BC : AC
+{
+	public override void Foo(params object[] d)
+	{
+	}
+}
