@@ -1,3 +1,7 @@
+2010-06-07  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h, debug-mono-symfile.h: Kill glib dependencies.
+
 2010-07-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* file-io.c: don't prepend anything to the names returned
