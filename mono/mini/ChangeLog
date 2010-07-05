@@ -1,5 +1,8 @@
 2010-07-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-ppc.c (mono_arch_handle_exception): Resume from the signal handler
+	before processing the exception on PPC too.
+
 	* mini-ppc.h (MONO_CONTEXT_SET_SP): Define this to fix the PPC build.
 
 	* mini-ppc.c tramp-ppc.c aot-compiler.c: Change the managed calling convention so
