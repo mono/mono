@@ -1,3 +1,8 @@
+2010-07-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* AssemblyInfo.cs: Re-remove [StringFreezing], [DefaultDependency] and
+	[InternalsVisibleTo] from NET_2_1 builds.
+
 2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Remove [StringFreezing] and [DefaultDependency]
