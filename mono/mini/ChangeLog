@@ -1,3 +1,8 @@
+2010-07-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile.am: Don't build the debug assembler files if we're building without
+	debugger support.
+
 2010-07-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (arch_emit_unbox_trampoline): Fix this after the callconv changes.
