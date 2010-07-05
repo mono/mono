@@ -1,3 +1,8 @@
+2010-07-05  Martin Baulig  <martin@ximian.com>
+
+	* exceptions-x86.c (mono_arch_handle_exception): Port this to
+	Windows; apply my patch from r159782 in the mono-2-6 branch.
+
 2010-07-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile.am: Don't build the debug assembler files if we're building without
