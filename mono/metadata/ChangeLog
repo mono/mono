@@ -1,5 +1,11 @@
 2010-06-07  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.c (mono_debugger_get_thread_abort_signal):
+	New helper function since mono_thread_get_abort_signal() is now
+	internal.
+
+2010-06-07  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.h, debug-mono-symfile.h: Kill glib dependencies.
 
 2010-07-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
