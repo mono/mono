@@ -1,3 +1,8 @@
+2010-07-05  Jb Evain  <jbevain@novell.com>
+
+	* TypeTest.cs: prefixed TypedReference with global:: to
+	remove confusion with the test suite namespace.
+
 2010-06-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Add tests for #612780.

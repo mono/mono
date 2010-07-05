@@ -3325,17 +3325,17 @@ PublicKeyToken=b77a5c561934e089"));
 		public void CannotMakeDerivedTypesFromTypedByRef ()
 		{
 		try {
-	        typeof (System.TypedReference).MakeArrayType ();
+	        typeof (global::System.TypedReference).MakeArrayType ();
 	        Assert.Fail ("#1");
 		} catch (TypeLoadException) { }
 
 		try {
-	        typeof (System.TypedReference).MakeByRefType ();
+	        typeof (global::System.TypedReference).MakeByRefType ();
 	        Assert.Fail ("#2");
 		} catch (TypeLoadException) { }
 
 		try {
-	        typeof (System.TypedReference).MakePointerType ();
+	        typeof (global::System.TypedReference).MakePointerType ();
 	        Assert.Fail ("#3");
 		} catch (TypeLoadException) { }
 
