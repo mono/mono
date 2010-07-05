@@ -1,5 +1,10 @@
 2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpRequestContext.cs, HttpChannelListener.cs, HttpReplyChannel.cs:
+	  rename unnecessary "Standalone" (removed).
+
+2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpStandaloneReplyChannel.cs
 	  HttpStandaloneRequestContext.cs
 	  HttpStandaloneChannelListener.cs

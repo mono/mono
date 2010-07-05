@@ -32,9 +32,9 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels.Http
 {
-	internal class HttpStandaloneRequestContext : RequestContext
+	internal class HttpRequestContext : RequestContext
 	{
-		public HttpStandaloneRequestContext (HttpStandaloneReplyChannel channel, HttpContextInfo context, Message request)
+		public HttpRequestContext (HttpReplyChannel channel, HttpContextInfo context, Message request)
 		{
 			if (channel == null)
 				throw new ArgumentNullException ("channel");
@@ -48,14 +48,14 @@ namespace System.ServiceModel.Channels.Http
 		}
 
 		Message request;
-		HttpStandaloneReplyChannel channel;
+		HttpReplyChannel channel;
 		HttpContextInfo context;
 
 		public override Message RequestMessage {
 			get { return request; }
 		}
 
-		public HttpStandaloneReplyChannel Channel {
+		public HttpReplyChannel Channel {
 			get { return channel; }
 		}
 		

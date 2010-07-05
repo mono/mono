@@ -1,5 +1,9 @@
 2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpTransportbindingElement.cs : remove "Standalone".
+
+2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs : removed old code and #if blocks.
 
 2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>

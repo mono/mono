@@ -1,5 +1,5 @@
 //
-// HttpStandaloneReplyChannel.cs
+// HttpReplyChannel.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -36,12 +36,12 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels.Http
 {
-	internal class HttpStandaloneReplyChannel : InternalReplyChannelBase
+	internal class HttpReplyChannel : InternalReplyChannelBase
 	{
-		HttpStandaloneChannelListener<IReplyChannel> source;
+		HttpChannelListener<IReplyChannel> source;
 		RequestContext reqctx;
 
-		public HttpStandaloneReplyChannel (HttpStandaloneChannelListener<IReplyChannel> listener)
+		public HttpReplyChannel (HttpChannelListener<IReplyChannel> listener)
 			: base (listener)
 		{
 			this.source = listener;
@@ -153,7 +153,7 @@ namespace System.ServiceModel.Channels.Http
 			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (ctxi));
 
-			context = new HttpStandaloneRequestContext (this, ctxi, msg);
+			context = new HttpRequestContext (this, ctxi, msg);
 			reqctx = context;
 			return true;
 		}

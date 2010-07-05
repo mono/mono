@@ -1,5 +1,5 @@
 //
-// HttpStandaloneChannelListener.cs
+// HttpChannelListener.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -45,12 +45,12 @@ namespace System.ServiceModel.Channels.Http
 		ChannelDispatcher ChannelDispatcher { get; set; }
 	}
 
-	internal class HttpStandaloneChannelListener<TChannel> : InternalChannelListenerBase<TChannel>, IChannelDispatcherBoundListener
+	internal class HttpChannelListener<TChannel> : InternalChannelListenerBase<TChannel>, IChannelDispatcherBoundListener
 		where TChannel : class, IChannel
 	{
 		HttpListenerManager listener_manager;
 
-		public HttpStandaloneChannelListener (HttpTransportBindingElement source, BindingContext context)
+		public HttpChannelListener (HttpTransportBindingElement source, BindingContext context)
 			: base (context)
 		{
 			if (ServiceHostBase.CurrentServiceHostHack != null)
@@ -112,7 +112,7 @@ namespace System.ServiceModel.Channels.Http
 		TChannel CreateChannelCore (TimeSpan timeout)
 		{
 			if (typeof (TChannel) == typeof (IReplyChannel))
-				return (TChannel) (object) new HttpStandaloneReplyChannel ((HttpStandaloneChannelListener<IReplyChannel>) (object) this);
+				return (TChannel) (object) new HttpReplyChannel ((HttpChannelListener<IReplyChannel>) (object) this);
 
 			throw new NotSupportedException (String.Format ("Channel type {0} is not supported", typeof (TChannel)));
 		}
