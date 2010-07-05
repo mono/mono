@@ -8293,6 +8293,11 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
 
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			// Nothing to clone
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			type = rc.CurrentType.BaseType;
