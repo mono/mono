@@ -13053,6 +13053,112 @@
       </method>
     </type>
   </test>
+  <test name="gtest-521.cs">
+    <type name="D">
+      <method name="Void Invoke(System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="E`1[T]">
+      <method name="Void Test()">
+        <size>25</size>
+      </method>
+      <method name="Void EH(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="E`1+I[T]">
+      <method name="Void add_E(D)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_E(D)">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void Main()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-523.cs">
+    <type name="Test.TestClass4`1[T]">
+      <method name="Boolean Equals(T)">
+        <size>2</size>
+      </method>
+      <method name="Boolean Equals(TestClass4`1)">
+        <size>2</size>
+      </method>
+      <method name="Boolean Equals(TestClass4`1, TestClass4`1)">
+        <size>9</size>
+      </method>
+      <method name="Int32 GetHashCode(TestClass4`1)">
+        <size>14</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>2</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Boolean op_Equality(TestClass4`1, TestClass4`1)">
+        <size>9</size>
+      </method>
+      <method name="Boolean op_Equality(T, TestClass4`1)">
+        <size>9</size>
+      </method>
+      <method name="Boolean op_Equality(TestClass4`1, T)">
+        <size>9</size>
+      </method>
+      <method name="Boolean op_Equality(System.Object, TestClass4`1)">
+        <size>15</size>
+      </method>
+      <method name="Boolean op_Equality(TestClass4`1, System.Object)">
+        <size>15</size>
+      </method>
+      <method name="Boolean op_Inequality(TestClass4`1, TestClass4`1)">
+        <size>11</size>
+      </method>
+      <method name="Boolean op_Inequality(T, TestClass4`1)">
+        <size>11</size>
+      </method>
+      <method name="Boolean op_Inequality(TestClass4`1, T)">
+        <size>11</size>
+      </method>
+      <method name="Boolean op_Inequality(System.Object, TestClass4`1)">
+        <size>11</size>
+      </method>
+      <method name="Boolean op_Inequality(TestClass4`1, System.Object)">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="Test.C">
+      <method name="Void Main()">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -13655,7 +13761,7 @@
         <size>1</size>
       </method>
       <method name="Void Main()">
-        <size>200</size>
+        <size>212</size>
       </method>
     </type>
     <type name="C+D">
@@ -13676,30 +13782,48 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>38</size>
-      </method>
       <method name="Void &lt;&gt;m__1()">
-        <size>32</size>
+        <size>38</size>
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Main&gt;m__2()">
-        <size>16</size>
-      </method>
       <method name="Void &lt;Main&gt;m__3()">
         <size>16</size>
       </method>
       <method name="Void &lt;Main&gt;m__4()">
-        <size>61</size>
+        <size>16</size>
       </method>
       <method name="Void &lt;Main&gt;m__5()">
-        <size>53</size>
+        <size>61</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void BaseM()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void InstanceTests()">
+        <size>35</size>
+      </method>
+      <method name="Void &lt;InstanceTests&gt;m__0()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__6()">
+        <size>53</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__2()">
+        <size>32</size>
       </method>
     </type>
   </test>
@@ -19133,6 +19257,35 @@
     <type name="InlineAssignmentTest.MainClass">
       <method name="Int32 Main()">
         <size>30</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-initialize-12.cs">
+    <type name="C">
+      <method name="Void set_Foo(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void set_Foo(Int32)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void set_Foo(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>16</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -40128,6 +40281,71 @@
         <size>25</size>
       </method>
       <method name="Void M(E)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-785.cs">
+    <type name="Base">
+      <method name="Int32 get_Prop()">
+        <size>0</size>
+      </method>
+      <method name="Void set_Prop(Int32)">
+        <size>0</size>
+      </method>
+      <method name="Int32 get_Item(Int32)">
+        <size>0</size>
+      </method>
+      <method name="Void TestVoid()">
+        <size>0</size>
+      </method>
+      <method name="Void TestInt(Int32)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="DeriveVTable">
+      <method name="Int32 get_Prop()">
+        <size>2</size>
+      </method>
+      <method name="Int32 get_Item(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void TestVoid()">
+        <size>1</size>
+      </method>
+      <method name="Void TestInt(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="NewVTable">
+      <method name="Int32 get_Prop()">
+        <size>0</size>
+      </method>
+      <method name="Int32 get_Item(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void TestVoid()">
+        <size>1</size>
+      </method>
+      <method name="Void TestInt(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Overload()">
+        <size>1</size>
+      </method>
+      <method name="Void Overload(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
         <size>1</size>
       </method>
       <method name="Void .ctor()">

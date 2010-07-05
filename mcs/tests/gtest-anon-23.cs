@@ -20,12 +20,24 @@ class MemberAccessData
 	}
 }
 
-public class C
+public class B
+{
+	protected virtual void BaseM ()
+	{
+	}
+}
+
+public class C : B
 {
 	delegate void D ();
 	
 	static void Test (D d)
 	{
+	}
+	
+	void InstanceTests ()
+	{
+		Test (() => base.BaseM ());
 	}
 	
 	public static void Main ()
@@ -69,5 +81,8 @@ public class C
 				VolatileValue = 2, StringValues = new string [] { "sv" }, MyTypeProperty = null
 			};
 		});
+		
+		var c = new C ();
+		c.InstanceTests ();
 	}
 }
