@@ -1,3 +1,8 @@
+2010-07-05  Dick Porter  <dporter@codicesoftware.com>
+
+	* MenuAPI.cs: Only handle mnemonic key shortcuts when the context
+	menu is visible.  Fixes bug 616739.
+
 2010-07-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWin32Classic.cs: The images drawn in the column header must be
