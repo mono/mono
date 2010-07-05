@@ -617,12 +617,6 @@ namespace Mono.CSharp {
 						if ((entry.Modifiers & Modifiers.PRIVATE) != 0)
 							continue;
 
-						//
-						// Skip override members with accessors they may not fully implement the base member
-						//
-						if (member_with_accessors && (entry.Modifiers & (Modifiers.OVERRIDE | Modifiers.SEALED)) == Modifiers.OVERRIDE)
-							continue;
-
 						if ((entry.Modifiers & Modifiers.AccessibilityMask) == Modifiers.INTERNAL) {
 							if (!TypeManager.IsThisOrFriendAssembly (member.Assembly, entry.Assembly))
 								continue;
@@ -640,27 +634,46 @@ namespace Mono.CSharp {
 							continue;
 						}
 
-						if (member_param == null)
-							return entry;
-
-						// Check arity match
-						int arity = member.MemberName.Arity;
-						if (arity != entry.Arity)
-							continue;
-
-						if (entry is IParametersMember) {
-							if (entry.IsAccessor != member is AbstractPropertyEventMethod)
-								continue;
-
-							var entry_param = ((IParametersMember) entry).Parameters;
-							if (TypeSpecComparer.Override.IsEqual (entry_param, member_param))
-								return entry;
+						if (entry.Kind != mkind) {
+							if (bestCandidate == null)
+								bestCandidate = entry;
 
 							continue;
 						}
 
-						if (bestCandidate == null)
-							bestCandidate = entry;
+						if (member_param != null) {
+							// Check arity match
+							int arity = member.MemberName.Arity;
+							if (arity != entry.Arity)
+								continue;
+
+							var pm = entry as IParametersMember;
+							if (pm == null)
+								continue;
+
+							if (entry.IsAccessor != member is AbstractPropertyEventMethod)
+								continue;
+
+							if (!TypeSpecComparer.Override.IsEqual (pm.Parameters, member_param))
+								continue;
+						}
+
+						//
+						// Skip override members with accessors they may not fully implement the base member
+						//
+						if (member_with_accessors) {
+							if ((entry.Modifiers & (Modifiers.OVERRIDE | Modifiers.SEALED)) == Modifiers.OVERRIDE) {
+								//
+								// Set candidate to member override to flag we found an implementation
+								//
+								bestCandidate = entry;
+								continue;
+							}
+						} else {
+							bestCandidate = null;
+						}
+
+						return entry;
 					}
 				}
 

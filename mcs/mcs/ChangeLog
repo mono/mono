@@ -1,3 +1,8 @@
+2010-07-05  Marek Safar  <marek.safar@gmail.com>
+
+	* membercache.cs, class.cs: Don't use base member to check for
+	property or indexer base implementation.
+
 2010-07-03  Marek Safar  <marek.safar@gmail.com>
 
 	* membercache.cs: Copy Membercache member state flags for 2 stage

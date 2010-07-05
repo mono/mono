@@ -2807,7 +2807,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!IsInterface && base_member.IsAbstract) {
+				if (!IsInterface && base_member.IsAbstract && candidate == null) {
 					Report.SymbolRelatedToPreviousError (base_member);
 					Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
 						GetSignatureForError (), base_member.GetSignatureForError ());
