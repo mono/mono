@@ -1,3 +1,8 @@
+2010-07-05  Dick Porter  <dporter@codicesoftware.com>
+
+	* MenuAPI.cs: Only handle mnemonic key shortcuts when the context
+	menu is visible.  Fixes bug 616739.
+
 2010-06-24  Dick Porter  <dporter@codicesoftware.com>
 
 	* Fix NullReferenceException when keyboard shortcut activates

@@ -629,7 +629,7 @@ namespace System.Windows.Forms {
 		{
 			keynav_state = KeyNavState.Navigating;
 			MenuItem item = FindItemByKey (CurrentMenu, msg.WParam);
-			if ((item == null) || (GrabControl == null))
+			if ((item == null) || (GrabControl == null) || (GrabControl.ActiveTracker == null))
 				return false;
 
 			active = true;
