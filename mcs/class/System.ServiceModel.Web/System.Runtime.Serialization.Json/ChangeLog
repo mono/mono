@@ -1,5 +1,11 @@
 2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeMap.cs :
+	  Do not try to add static members as serialization targets.
+	  Support OnDeserializing and OnDeserialized. Fixed bug #615800.
+
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* JsonSerializationWriter.cs : it cannot serialize DateTime in
 	  double, which causes crash in deserializer.
 

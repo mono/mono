@@ -1373,6 +1373,20 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			a = (ClassA) ds.ReadObject (stream);
 			Assert.IsNull (a.B, "#1");
 		}
+
+		[Test]
+		public void OnDeserializationMethods ()
+		{
+			var ds = new DataContractJsonSerializer (typeof (GSPlayerListErg));
+			var obj = new GSPlayerListErg ();
+			var ms = new MemoryStream ();
+			ds.WriteObject (ms, obj);
+			ms.Position = 0;
+			ds.ReadObject (ms);
+			Assert.IsTrue (GSPlayerListErg.A, "A");
+			Assert.IsTrue (GSPlayerListErg.B, "B");
+			Assert.IsTrue (GSPlayerListErg.C, "C");
+		}
 	}
 
 	public class TestData
@@ -1552,6 +1566,38 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 	public class ClassB
 	{
+	}
+
+	public class GSPlayerListErg
+	{
+		public GSPlayerListErg ()
+		{
+			Init ();
+		}
+
+		void Init ()
+		{
+			C = true;
+		}
+
+		[OnDeserializing]
+		public void OnDeserializing (StreamingContext c)
+		{
+			A = true;
+			Init ();
+		}
+
+		[OnDeserialized]
+		void OnDeserialized (StreamingContext c)
+		{
+			B = true;
+		}
+
+		public static bool A, B, C;
+
+		[DataMember (Name = "T")]
+		public long CodedServerTimeUTC { get; set; }
+		public DateTime ServerTimeUTC { get; set; }
 	}
 }
 
