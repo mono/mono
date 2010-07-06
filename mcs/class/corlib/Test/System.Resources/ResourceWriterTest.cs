@@ -12,6 +12,7 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Resources;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -342,6 +343,244 @@ namespace MonoTests.System.Resources
 			writer.AddResource ("Name", "Miguel");
 			writer.Close ();
 		}
+
+#if NET_4_0
+		// We are using a FileStream instead of a MemoryStream
+		// to test that we support all kind of Stream instances,
+		// and not only MemoryStream, as it used to be before 4.0.
+		[Test]
+		public void AddResource_Stream_Default ()
+		{
+			MemoryStream stream = new MemoryStream ();
+			byte [] buff = Encoding.Unicode.GetBytes ("Miguel");
+			stream.Write (buff, 0, buff.Length);
+			stream.Position = 0;
+
+			ResourceWriter rw = new ResourceWriter ("TestResources.resources");
+			rw.AddResource ("Name", (object)stream);
+			rw.Close ();
+
+			ResourceReader rr = new ResourceReader ("TestResources.resources");
+			IDictionaryEnumerator enumerator = rr.GetEnumerator ();
+
+			// Get the first element
+			Assert.AreEqual (true, enumerator.MoveNext (), "#A0");
+
+			DictionaryEntry de = enumerator.Entry;
+			Assert.AreEqual ("Name", enumerator.Key, "#A1");
+			Stream result_stream = de.Value as Stream;
+			Assert.AreEqual (true, result_stream != null, "#A2");
+
+			// Get the data and compare
+			byte [] result_buff = new byte [result_stream.Length];
+			result_stream.Read (result_buff, 0, result_buff.Length);
+			string string_res = Encoding.Unicode.GetString (result_buff);
+			Assert.AreEqual ("Miguel", string_res, "#A3");
+
+			rr.Close ();
+			stream.Close ();
+		}
+
+		[Test]
+		public void AddResource_Stream_Errors ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			ResourceWriter rw = new ResourceWriter (ms);
+
+			ResourceStream stream = new ResourceStream ("Test");
+			stream.SetCanSeek (false);
+
+			// 
+			// Seek not supported.
+			// 
+			try {
+				rw.AddResource ("Name", stream);
+				Assert.Fail ("#Exc1");
+			} catch (ArgumentException) {
+			}
+
+			//
+			// Even using the overload taking an object
+			// seems to check for that
+			//
+			try {
+				rw.AddResource ("Name", (object)stream);
+				Assert.Fail ("#Exc2");
+			} catch (ArgumentException) {
+			}
+
+			rw.Close ();
+		}
+
+		[Test]
+		public void AddResource_Stream_Details ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			ResourceWriter rw = new ResourceWriter (ms);
+
+			ResourceStream stream = new ResourceStream ("MonoTest");
+
+			// Set Position so we can test the ResourceWriter is resetting
+			// it to 0 when generating.
+			stream.Position = 2;
+			rw.AddResource ("Name", stream);
+			rw.Generate ();
+
+			ms.Position = 0;
+			ResourceReader rr = new ResourceReader (ms);
+			string value = GetStringFromResource (rr, "Name");
+			Assert.AreEqual ("MonoTest", value, "#A1");
+			Assert.AreEqual (false, stream.IsDiposed, "#A2");
+
+			// Test the second overload
+			stream.Reset ();
+			ms = new MemoryStream ();
+			rw = new ResourceWriter (ms);
+			rw.AddResource ("Name", stream, true);
+			rw.Generate ();
+
+			ms.Position = 0;
+			rr = new ResourceReader (ms);
+			value = GetStringFromResource (rr, "Name");
+			Assert.AreEqual ("MonoTest", value, "#B1");
+			Assert.AreEqual (true, stream.IsDiposed, "#B2");
+
+			rr.Close ();
+			rw.Close ();
+			stream.Close ();
+		}
+
+		string GetStringFromResource (ResourceReader reader, string name)
+		{
+			Stream s = null;
+
+			foreach (DictionaryEntry de in reader)
+				if ((string)de.Key == name)
+					s = (Stream)de.Value;
+
+			if (s == null)
+				return null;
+
+			byte [] buff = new byte [s.Length];
+			s.Read (buff, 0, buff.Length);
+			return Encoding.Unicode.GetString (buff, 0, buff.Length);
+		}
+
+		class ResourceStream : Stream
+		{
+			bool can_seek;
+			bool disposed;
+			byte [] buff;
+			int pos;
+
+			public ResourceStream (string src)
+			{
+				buff = Encoding.Unicode.GetBytes (src);
+				Reset ();
+			}
+
+			public void Reset ()
+			{
+				can_seek = true;
+				pos = 0;
+			}
+
+			public override bool CanRead
+			{
+				get { 
+					return true; 
+				}
+			}
+
+			public override bool CanWrite
+			{
+				get { 
+					throw new NotSupportedException (); 
+				}
+			}
+
+			public override bool CanSeek
+			{
+				get { 
+					return can_seek; 
+				}
+			}
+
+			public void SetCanSeek (bool value)
+			{
+				can_seek = value;
+			}
+
+			public override long Position
+			{
+				get {
+					return pos;
+				}
+				set {
+					pos = (int)value;
+				}
+			}
+
+			public override long Length {
+				get { 
+					return buff.Length; 
+				}
+			}
+
+			public override void SetLength (long value)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override void Flush ()
+			{
+				// Nothing.
+			}
+
+			protected override void Dispose (bool disposing)
+			{
+				base.Dispose (disposing);
+				disposed = true;
+			}
+
+			public bool IsDiposed {
+				get { 
+					return disposed; 
+				}
+			}
+
+			// We are going to be returning bytes in blocks of three
+			// Just to show a slightly anormal but correct behaviour.
+			public override int Read (byte [] buffer, int offset, int count)
+			{
+				if (disposed)
+					throw new ObjectDisposedException ("ResourcesStream");
+
+				// Check if we are done.
+				if (pos == buff.Length)
+					return 0;
+
+				if (buff.Length - pos < 3)
+					count = buff.Length - pos;
+				else
+					count = 3;
+
+				Buffer.BlockCopy (buff, pos, buffer, offset, count);
+				pos += count;
+				return count;
+			}
+
+			public override void Write (byte [] buffer, int offset, int count)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override long Seek (long offset, SeekOrigin origin)
+			{
+				throw new NotSupportedException ();
+			}
+		}
+#endif
 
 #if NET_2_0
 		[Test]
