@@ -1,3 +1,8 @@
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlInputStream.cs : it had been failing to retrieve correct
+	  encoding due to insufficient buffer reading. Fixed bug #615499.
+
 2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDefaultWriter.cs : add state management support. 
