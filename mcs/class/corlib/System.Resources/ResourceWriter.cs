@@ -90,6 +90,19 @@ namespace System.Resources
 			stream = new FileStream(fileName, FileMode.Create,
 				FileAccess.Write);
 		}
+
+#if NET_4_0
+		Func <Type, string> type_name_converter;
+
+		public Func<Type, string> TypeNameConverter {
+			get {
+				return type_name_converter;
+			}
+			set {
+				type_name_converter = value;
+			}
+		}
+#endif
 		
 		public void AddResource (string name, byte[] value)
 		{
@@ -226,7 +239,17 @@ namespace System.Resources
 			BinaryWriter resman = new BinaryWriter (resman_stream,
 							     Encoding.UTF8);
 
+#if NET_4_0
+			string type_name = null;
+			if (type_name_converter != null)
+				type_name = type_name_converter (typeof (ResourceReader));
+			if (type_name == null)
+				type_name = typeof (ResourceReader).AssemblyQualifiedName;
+
+			resman.Write (type_name);
+#else
 			resman.Write (typeof (ResourceReader).AssemblyQualifiedName);
+#endif
 			resman.Write (typeof (RuntimeResourceSet).FullName);
 
 			/* Only space for 32 bits of header len in the
