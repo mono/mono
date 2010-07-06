@@ -1644,6 +1644,7 @@ namespace System.Diagnostics {
 		static void CBOnExit (object state, bool unused)
 		{
 			Process p = (Process) state;
+			p.already_waiting = false;
 			p.OnExited ();
 		}
 

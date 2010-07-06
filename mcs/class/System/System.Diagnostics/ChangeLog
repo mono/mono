@@ -1,3 +1,8 @@
+2010-07-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Process.cs: allow the exit callback to be used more than once. Fixes
+	bug #614909.
+
 2010-07-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Process.cs: ignore processes that finish while we are looking for
