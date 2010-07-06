@@ -1,3 +1,9 @@
+2010-07-06  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+        ** Fixes #609109
+        * TdsComm.cs (Append[DateTime]): Handle datetime values sanely
+        that are less than epoch.
+        
 2010-06-15  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #613087
