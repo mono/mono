@@ -1,3 +1,7 @@
+2010-07-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (sgen_sources): Add missing sgen files.
+
 2010-06-07  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c (mono_debugger_get_thread_abort_signal):
