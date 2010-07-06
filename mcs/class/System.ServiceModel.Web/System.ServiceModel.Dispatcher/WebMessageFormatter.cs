@@ -38,6 +38,10 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Xml;
 
+#if NET_2_1
+using XmlObjectSerializer = System.Object;
+#endif
+
 namespace System.ServiceModel.Description
 {
 	internal abstract class WebMessageFormatter
@@ -56,10 +60,12 @@ namespace System.ServiceModel.Description
 			this.converter = converter;
 			this.behavior = behavior;
 			ApplyWebAttribute ();
+#if !NET_2_1
 			// This is a hack for WebScriptEnablingBehavior
 			var jqc = converter as JsonQueryStringConverter;
 			if (jqc != null)
 				BodyName = jqc.CustomWrapperName;
+#endif
 		}
 
 		void ApplyWebAttribute ()
@@ -313,7 +319,13 @@ namespace System.ServiceModel.Description
 						reader.ReadStartElement (md.Body.WrapperName, md.Body.WrapperNamespace);
 				}
 
+#if NET_2_1
+				var ret = (serializer is DataContractJsonSerializer) ?
+					((DataContractJsonSerializer) serializer).ReadObject (reader) :
+					((DataContractSerializer) serializer).ReadObject (reader, true);
+#else
 				var ret = serializer.ReadObject (reader, true);
+#endif
 
 				if (IsResponseBodyWrapped)
 					reader.ReadEndElement ();
@@ -360,7 +372,7 @@ namespace System.ServiceModel.Description
 					writer.WriteStartElement ("root");
 					writer.WriteAttributeString ("type", "object");
 				}
-				serializer.WriteObject (writer, value);
+				WriteObject (serializer, writer, value);
 				if (name != null)
 					writer.WriteEndElement ();
 			}
@@ -369,9 +381,21 @@ namespace System.ServiceModel.Description
 			{
 				if (name != null)
 					writer.WriteStartElement (name, ns);
-				serializer.WriteObject (writer, value);
+				WriteObject (serializer, writer, value);
 				if (name != null)
 					writer.WriteEndElement ();
+			}
+
+			void WriteObject (XmlObjectSerializer serializer, XmlDictionaryWriter writer, object value)
+			{
+#if NET_2_1
+					if (serializer is DataContractJsonSerializer)
+						((DataContractJsonSerializer) serializer).WriteObject (writer, value);
+					else
+						((DataContractSerializer) serializer).WriteObject (writer, value);
+#else
+					serializer.WriteObject (writer, value);
+#endif
 			}
 		}
 

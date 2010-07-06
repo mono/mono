@@ -1,3 +1,7 @@
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageFormatter.cs : add NET_2_1 profile build.
+
 2010-05-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonQueryStringConverter.cs : objects are regarded serializable as

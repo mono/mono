@@ -1,3 +1,7 @@
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AssemblyInfo.cs : InternalVisibleTo System.ServiceModel.Web.Extensions.
+
 2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AssemblyInfo.cs: added InternalVisibleTo(System.Json). Also added

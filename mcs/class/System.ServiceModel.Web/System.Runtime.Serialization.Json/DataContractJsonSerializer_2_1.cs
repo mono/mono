@@ -72,7 +72,18 @@ namespace System.Runtime.Serialization.Json {
 		{
 			var r = (JsonReader) JsonReaderWriterFactory.CreateJsonReader (stream, XmlDictionaryReaderQuotas.Max);
 			r.LameSilverlightLiteralParser = true;
+			return ReadObject (r);
+		}
 
+		// FIXME: should be internal
+		public object ReadObject (XmlReader r)
+		{
+			return ReadObject (XmlDictionaryReader.CreateDictionaryReader (r));
+		}
+		
+		// FIXME: should be internal
+		public object ReadObject (XmlDictionaryReader r)
+		{
 			try {
 				r.MoveToContent ();
 				if (!r.IsStartElement ("root", String.Empty)) {
@@ -95,6 +106,19 @@ namespace System.Runtime.Serialization.Json {
 		public void WriteObject (Stream stream, object graph)
 		{
 			using (var writer = JsonReaderWriterFactory.CreateJsonWriter (stream)) {
+				WriteObject (writer, graph);
+			}
+		}
+		
+		// FIXME: should be internal
+		public void WriteObject (XmlWriter writer, object graph)
+		{
+			WriteObject (XmlDictionaryWriter.CreateDictionaryWriter (writer), graph);
+		}
+		
+		// FIXME: should be internal
+		public void WriteObject (XmlDictionaryWriter writer, object graph)
+		{
 				try {
 					writer.WriteStartElement ("root");
 					new JsonSerializationWriter (this, writer, type, false).WriteObjectContent (graph, true, false);
@@ -110,7 +134,6 @@ namespace System.Runtime.Serialization.Json {
 				} catch (Exception ex) {
 					throw new SerializationException (String.Format ("There was an error during serialization for object of type {0}", graph != null ? graph.GetType () : null), ex);
 				}
-			}
 		}
 	}
 }
