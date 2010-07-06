@@ -1,3 +1,7 @@
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : do not keep Attribute state once Read() is called.
+
 2010-04-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonSerializationReader.cs : use List<T> if the contract member

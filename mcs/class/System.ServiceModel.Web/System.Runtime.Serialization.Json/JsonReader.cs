@@ -422,6 +422,8 @@ namespace System.Runtime.Serialization.Json
 				break;
 			}
 
+			MoveToElement ();
+
 			if (content_stored) {
 				if (current_node == XmlNodeType.Element) {
 					if (elements.Peek ().Type == "null") {
