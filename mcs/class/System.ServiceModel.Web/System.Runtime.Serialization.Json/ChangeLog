@@ -1,5 +1,10 @@
 2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeMap.cs : when an object is null, return null, not just an 
+	  uninitialized object.
+
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataContractJsonSerializer_2_1.cs : add extra methods for
 	  Sys.SM.Web.Extensions build.
 

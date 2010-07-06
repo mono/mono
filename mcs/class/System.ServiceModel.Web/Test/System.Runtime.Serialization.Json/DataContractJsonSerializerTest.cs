@@ -1361,6 +1361,18 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			Assert.AreEqual (query.StartDate, q.StartDate, "#2");
 			Assert.AreEqual (query.EndDate, q.EndDate, "#3");
 		}
+		
+		[Test]
+		public void DeserializeNullMember ()
+		{
+			var ds = new DataContractJsonSerializer (typeof (ClassA));
+			var stream = new MemoryStream ();
+			var a = new ClassA ();
+			ds.WriteObject (stream, a);
+			stream.Position = 0;
+			a = (ClassA) ds.ReadObject (stream);
+			Assert.IsNull (a.B, "#1");
+		}
 	}
 
 	public class TestData
@@ -1533,9 +1545,18 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		[DataMember (Order=2)]
 		public DateTime EndDate { get; set; }
 	}
+
+	public class ClassA {
+		public ClassB B { get; set; }
+	}
+
+	public class ClassB
+	{
+	}
 }
 
 [DataContract]
 class GlobalSample1
 {
 }
+

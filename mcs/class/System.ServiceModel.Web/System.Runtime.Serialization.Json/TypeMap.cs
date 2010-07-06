@@ -169,7 +169,9 @@ namespace System.Runtime.Serialization.Json
 		public object Deserialize (JsonSerializationReader jsr)
 		{
 			XmlReader reader = jsr.Reader;
-			object ret = FormatterServices.GetUninitializedObject (type);
+			bool isNull = reader.GetAttribute ("type") == "null";
+
+			object ret = isNull ? null : FormatterServices.GetUninitializedObject (type);
 			Dictionary<TypeMapMember,bool> filled = new Dictionary<TypeMapMember,bool> ();
 
 			reader.ReadStartElement ();

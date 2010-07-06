@@ -1,3 +1,7 @@
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs : add test for bug #615801.
+
 2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializerTest.cs : don't use ToUniversalTime()
