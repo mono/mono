@@ -1,3 +1,8 @@
+2010-07-06  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* TdsMetaParameter.cs (Prepare): Use the count of characters in nvarchar 
+	param as the size, to match .NET implementation.
+	
 2010-07-03  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #609935

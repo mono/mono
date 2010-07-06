@@ -266,13 +266,28 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			DateTime epoch = new DateTime (1900,1,1);
 			
-			TimeSpan span = t - epoch;
-			int days = span.Days ;
+			TimeSpan span = t - epoch; //new TimeSpan (t.Ticks - epoch.Ticks);
+			int days, hours, minutes, secs;
+			long msecs;
 			int val = 0;	
 
+			days = span.Days;
+			hours = span.Hours;
+			minutes = span.Minutes;
+			secs = span.Seconds;
+			msecs = span.Milliseconds;
+			
+			if (epoch > t) {
+				hours = t.Hour - epoch.Hour;
+				minutes = t.Minute - epoch.Minute;
+				secs = t.Second - epoch.Second;
+				msecs = t.Millisecond - epoch.Millisecond;
+				days--;
+			}
+			
 			SendIfFull (bytes);
 			if (bytes == 8) {
-				long ms = (span.Hours * 3600 + span.Minutes * 60 + span.Seconds)*1000L + (long)span.Milliseconds;
+				long ms = (hours * 3600 + minutes * 60 + secs)*1000L + (long)msecs;
 				val = (int) ((ms*300)/1000);
 				AppendInternal ((int) days);
 				AppendInternal ((int) val);
@@ -379,7 +394,7 @@ namespace Mono.Data.Tds.Protocol {
 				int lenToWrite = s.Length * ssize;
 				// if nextOutBufferLength points to the last buffer in outBuffer, 
 				// we would get a DivisionByZero while calculating remBufLen
-				if (outBufferLength - nextOutBufferIndex < 1)
+				if (outBufferLength - nextOutBufferIndex < ssize)
 					SendIfFull (ssize);
 				
 				int remBufLen = outBufferLength - nextOutBufferIndex;

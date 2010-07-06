@@ -1,3 +1,9 @@
+2010-07-06  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #609109
+	* TdsComm.cs (Append[DateTime]): Handle datetime values sanely that are less than epoch.
+	(Append[string]): Fix boundary checking for availability of enough buffer
+	
 2010-07-03  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #609935
