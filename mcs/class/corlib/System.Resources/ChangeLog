@@ -1,3 +1,9 @@
+2010-07-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ResourceWriter.cs: Implement 4.0 AddResource overloads taking a
+	Stream, as well as implement the same support in our AddResource that
+	takes an object too.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* ResourceManager.cs: use MOONLIGHT symbol to disambiguate

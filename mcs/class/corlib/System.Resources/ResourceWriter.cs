@@ -55,6 +55,20 @@ namespace System.Resources
 			}
 		}
 
+#if NET_4_0
+		class StreamWrapper
+		{
+			public readonly bool CloseAfterWrite;
+			public readonly Stream Stream;
+
+			public StreamWrapper (Stream stream, bool closeAfterWrite)
+			{
+				Stream = stream;
+				CloseAfterWrite = closeAfterWrite;
+			}
+		}
+#endif
+
 		SortedList resources = new SortedList (StringComparer.OrdinalIgnoreCase);
 		Stream stream;
 		
@@ -97,6 +111,16 @@ namespace System.Resources
 				throw new InvalidOperationException ("The resource writer has already been closed and cannot be edited");
 			if (resources[name] != null)
 				throw new ArgumentException ("Resource already present: " + name);
+#if NET_4_0
+			if (value is Stream) {
+				Stream stream = value as Stream;
+				if (!stream.CanSeek)
+					throw new ArgumentException ("Stream does not support seeking.");
+
+				if (!(value is MemoryStream)) // We already support MemoryStream
+					value = new StreamWrapper (stream, false);
+			}
+#endif
 
 			resources.Add(name, value);
 		}
@@ -112,6 +136,35 @@ namespace System.Resources
 
 			resources.Add(name, value);
 		}
+
+#if NET_4_0
+		public void AddResource (string name, Stream value)
+		{
+			// It seems .Net adds this overload just to make the api complete,
+			// but AddResource (string name, object value) is already checking for Stream.
+			AddResource (name, (object)value);
+		}
+
+		public void AddResource (string name, Stream value, bool closeAfterWrite)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (resources == null)
+				throw new InvalidOperationException ("The resource writer has already been closed and cannot be edited");
+			if (resources [name] != null)
+				throw new ArgumentException ("Resource already present: " + name);
+
+			if (stream == null) {
+				resources.Add (name, null); // Odd.
+				return;
+			}
+				
+			if (!stream.CanSeek)
+				throw new ArgumentException ("Stream does not support seeking.");
+
+			resources.Add (name, new StreamWrapper (value, true));
+		}
+#endif
 
 		public void Close ()
 		{
@@ -250,6 +303,10 @@ namespace System.Resources
 						break;
 					if (type == typeof (MemoryStream))
 						break;
+#if NET_4_0
+					if (type == typeof (StreamWrapper))
+						break;
+#endif
 					if (type==typeof(byte[]))
 						break;
 
@@ -317,6 +374,19 @@ namespace System.Resources
 					byte [] data = ((MemoryStream) res_enum.Value).ToArray ();
 					res_data.Write ((uint) data.Length);
 					res_data.Write (data, 0, data.Length);
+#if NET_4_0
+				} else if (type == typeof (StreamWrapper)) {
+					StreamWrapper sw = (StreamWrapper) res_enum.Value;
+					sw.Stream.Position = 0;
+
+					res_data.Write ((byte) PredefinedResourceType.Stream);
+					byte [] data = ReadStream (sw.Stream);
+					res_data.Write ((uint) data.Length);
+					res_data.Write (data, 0, data.Length);
+
+					if (sw.CloseAfterWrite)
+						sw.Stream.Close ();
+#endif
 				} else {
 					/* non-intrinsic types are
 					 * serialized
@@ -386,6 +456,27 @@ namespace System.Resources
 			// ResourceWriter is no longer editable
 			resources = null;
 		}
+
+#if NET_4_0
+		byte [] ReadStream (Stream stream)
+		{
+			byte [] buff = new byte [stream.Length];
+			int pos = 0;
+
+			// Read Stream.Length bytes at most, and stop
+			// immediately if Read returns 0.
+			do {
+				int n = stream.Read (buff, pos, buff.Length - pos);
+				if (n == 0)
+					break;
+
+				pos += n;
+
+			} while (pos < stream.Length);
+
+			return buff;
+		}
+#endif
 
 		// looks like it is (similar to) DJB hash
 		int GetHash (string name)
