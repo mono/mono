@@ -1,3 +1,8 @@
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs : add test for
+	  ChannelFactoryBase`1.CreateChannel() with null via uri.
+
 2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpTransportBindingElementTest.cs : rename misleading test.

@@ -1,3 +1,7 @@
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactoryBase.cs : null via uri parameter is not allowed.
+
 2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpTransportbindingElement.cs : remove "Standalone".

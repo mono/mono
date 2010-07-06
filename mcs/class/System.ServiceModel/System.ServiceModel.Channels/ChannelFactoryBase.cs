@@ -100,7 +100,9 @@ namespace System.ServiceModel.Channels
 		public TChannel CreateChannel (
 			EndpointAddress remoteAddress)
 		{
-			return CreateChannel (remoteAddress, null);
+			if (remoteAddress == null)
+				throw new ArgumentNullException ("remoteAddress");
+			return CreateChannel (remoteAddress, remoteAddress.Uri);
 		}
 
 		public TChannel CreateChannel (
@@ -108,6 +110,9 @@ namespace System.ServiceModel.Channels
 		{
 			if (remoteAddress == null)
 				throw new ArgumentNullException ("remoteAddress");
+			if (via == null)
+				throw new ArgumentNullException ("via");
+
 			ValidateCreateChannel ();
 			var ch = OnCreateChannel (remoteAddress, via);
 			channels.Add (ch);
