@@ -1,5 +1,8 @@
 2010-07-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-<ARCH>.c mini-llvm.c: Clean up the naming of the llvm related trampoline
+	functions, now its 'llvm_<FOO>_trampoline'.
+
 	* method-to-ir.c (emit_imt_argument): Fix llvm support.
 
 	* mini-llvm.c: Use only one mono specific LLVM calling convention since imt/rgctx
