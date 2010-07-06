@@ -707,7 +707,7 @@ namespace Mono.Xml.XPath
 
 		public override void WriteBase64 (byte [] buffer, int index, int count)
 		{
-			throw new NotSupportedException ();
+			WriteString (Convert.ToBase64String (buffer, index, count));
 		}
 
 		public override void WriteBinHex (byte [] buffer, int index, int count)
@@ -717,12 +717,12 @@ namespace Mono.Xml.XPath
 
 		public override void WriteChars (char [] buffer, int index, int count)
 		{
-			throw new NotSupportedException ();
+			WriteString (new string (buffer, index, count));
 		}
 
 		public override void WriteCharEntity (char c)
 		{
-			throw new NotSupportedException ();
+			WriteString (c.ToString ());
 		}
 
 		public override void WriteDocType (string name, string pub, string sys, string intSubset)
@@ -737,12 +737,17 @@ namespace Mono.Xml.XPath
 
 		public override void WriteQualifiedName (string localName, string ns)
 		{
-			throw new NotSupportedException ();
+			string prefix = (ns == null || ns.Length == 0) ? null : LookupPrefix (ns);
+			if (prefix != null && prefix.Length > 0)
+				WriteString (prefix + ":" + localName);
+			else
+				WriteString (localName);
 		}
 
 		public override void WriteSurrogateCharEntity (char high, char low)
 		{
-			throw new NotSupportedException ();
+			WriteString (high.ToString ());
+			WriteString (low.ToString ());
 		}
 
 		private bool IsWhitespace (string data)

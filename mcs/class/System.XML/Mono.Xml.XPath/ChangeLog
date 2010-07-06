@@ -1,3 +1,7 @@
+2010-07-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentWriter2.cs : implement some writer methods.
+
 2010-01-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs : add support for WriteRaw().
