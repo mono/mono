@@ -106,7 +106,17 @@ namespace System.Runtime.Serialization
 
 			XmlName = qname;
 			Members = new List<DataMemberInfo> ();
+
+			foreach (var mi in type.GetMethods (AllInstanceFlags)) {
+				if (mi.GetCustomAttributes (typeof (OnDeserializingAttribute), false).Length > 0)
+					OnDeserializing = mi;
+				else if (mi.GetCustomAttributes (typeof (OnDeserializedAttribute), false).Length > 0)
+					OnDeserialized = mi;
+			}
 		}
+
+		public MethodInfo OnDeserializing { get; set; }
+		public MethodInfo OnDeserialized { get; set; }
 
 		public virtual bool OutputXsiType {
 			get { return true; }
@@ -376,6 +386,10 @@ namespace System.Runtime.Serialization
 			XmlFormatterDeserializer deserializer, bool empty)
 		{
 			object instance = FormatterServices.GetUninitializedObject (RuntimeType);
+
+			if (OnDeserializing != null)
+				OnDeserializing.Invoke (instance, new object [] {new StreamingContext (StreamingContextStates.All)});
+
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			bool [] filled = new bool [Members.Count];
 			int memberInd = -1, ordered = -1;
@@ -415,6 +429,9 @@ namespace System.Runtime.Serialization
 			for (int i = 0; i < Members.Count; i++)
 				if (!filled [i] && Members [i].IsRequired)
 					throw MissingRequiredMember (Members [i], reader);
+
+			if (OnDeserialized != null)
+				OnDeserialized.Invoke (instance, new object [] {new StreamingContext (StreamingContextStates.All)});
 
 			return instance;
 		}
@@ -693,15 +710,24 @@ namespace System.Runtime.Serialization
 		public override object DeserializeEmptyContent (XmlReader reader, XmlFormatterDeserializer deserializer)
 		{
 			var instance = CreateInstance ();
-			if (RuntimeType.IsArray)
-				return ((ArrayList)instance).ToArray (element_type);
-			else
-				return instance;
+			if (OnDeserializing != null)
+				OnDeserializing.Invoke (instance, new object [] {new StreamingContext (StreamingContextStates.All)});
+			try {
+				if (RuntimeType.IsArray)
+					return ((ArrayList)instance).ToArray (element_type);
+				else
+					return instance;
+			} finally {
+				if (OnDeserialized != null)
+					OnDeserialized.Invoke (instance, new object [] {new StreamingContext (StreamingContextStates.All)});
+			}
 		}
 
 		public override object DeserializeContent (XmlReader reader, XmlFormatterDeserializer deserializer)
 		{
 			object instance = CreateInstance ();
+			if (OnDeserializing != null)
+				OnDeserializing.Invoke (instance, new object [] {new StreamingContext (StreamingContextStates.All)});
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				object elem = deserializer.Deserialize (element_type, reader);
@@ -713,9 +739,14 @@ namespace System.Runtime.Serialization
 					throw new NotImplementedException (String.Format ("Type {0} is not supported", RuntimeType));
 				reader.MoveToContent ();
 			}
-			if (RuntimeType.IsArray)
-				return ((ArrayList)instance).ToArray (element_type);
-			return instance;
+			try {
+				if (RuntimeType.IsArray)
+					return ((ArrayList)instance).ToArray (element_type);
+				return instance;
+			} finally {
+				if (OnDeserialized != null)
+					OnDeserialized.Invoke (instance, new object [] {new StreamingContext (StreamingContextStates.All)});
+			}
 		}
 
 		public override List<DataMemberInfo> GetMembers ()

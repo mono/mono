@@ -1,3 +1,7 @@
+2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs : add OnDeserializing/OnDeserialized support.
+
 2010-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlFormatterDeserializer.cs: Fix some issues in Moonlight when 
