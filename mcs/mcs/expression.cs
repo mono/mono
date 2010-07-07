@@ -1742,7 +1742,7 @@ namespace Mono.CSharp {
 				}
 
 				//
-				// When second arguments are same as the first one, the result is same
+				// When second argument is same as the first one, the result is same
 				//
 				if (right != null && (left != right || best_operator.left != best_operator.right)) {
 					result |= MethodGroupExpr.BetterTypeConversion (ec, best_operator.right, right);
@@ -1828,7 +1828,50 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class PredefinedPointerOperator : PredefinedOperator {
+		class PredefinedEqualityOperator : PredefinedOperator
+		{
+			MethodSpec equal_method, inequal_method;
+
+			public PredefinedEqualityOperator (TypeSpec arg, TypeSpec retType)
+				: base (arg, arg, Operator.EqualityMask, retType)
+			{
+			}
+
+			public override Expression ConvertResult (ResolveContext ec, Binary b)
+			{
+				b.type = ReturnType;
+
+				b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
+				b.right = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
+
+				Arguments args = new Arguments (2);
+				args.Add (new Argument (b.left));
+				args.Add (new Argument (b.right));
+
+				MethodSpec method;
+				if (b.oper == Operator.Equality) {
+					if (equal_method == null) {
+						equal_method = TypeManager.GetPredefinedMethod (left,
+							new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Equality), 0, MemberKind.Operator, null, ReturnType), b.loc);
+					}
+
+					method = equal_method;
+				} else {
+					if (inequal_method == null) {
+						inequal_method = TypeManager.GetPredefinedMethod (left,
+							new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Inequality), 0, MemberKind.Operator, null, ReturnType), b.loc);
+					}
+
+					method = inequal_method;
+				}
+
+				var mg = MethodGroupExpr.CreatePredefined (method, left, b.loc);
+				return new UserOperatorCall (mg, args, b.CreateExpressionTree, b.loc);
+			}
+		}
+
+		class PredefinedPointerOperator : PredefinedOperator
+		{
 			public PredefinedPointerOperator (TypeSpec ltype, TypeSpec rtype, Operator op_mask)
 				: base (ltype, rtype, op_mask)
 			{
@@ -1940,6 +1983,7 @@ namespace Mono.CSharp {
 		Expression enum_conversion;
 
 		static PredefinedOperator[] standard_operators;
+		static PredefinedOperator[] equality_operators;
 		static PredefinedOperator[] pointer_operators;
 		
 		public Binary (Operator oper, Expression left, Expression right, bool isCompound, Location loc)
@@ -2291,7 +2335,7 @@ namespace Mono.CSharp {
 
 		public static void Reset ()
 		{
-			pointer_operators = standard_operators = null;
+			equality_operators = pointer_operators = standard_operators = null;
 		}
 
 		Expression ResolveOperator (ResolveContext ec)
@@ -2331,8 +2375,7 @@ namespace Mono.CSharp {
 				}
 
 				// Delegates
-				if ((oper == Operator.Addition || oper == Operator.Subtraction || (oper & Operator.EqualityMask) != 0) &&
-					 (TypeManager.IsDelegateType (l) || TypeManager.IsDelegateType (r))) {
+				if ((oper == Operator.Addition || oper == Operator.Subtraction) && (l.IsDelegate || r.IsDelegate)) {
 						
 					expr = ResolveOperatorDelegate (ec, l, r);
 
@@ -2348,7 +2391,7 @@ namespace Mono.CSharp {
 
 				// Predefined reference types equality
 				if ((oper & Operator.EqualityMask) != 0) {
-					expr = ResolveOperatorEqualityRerefence (ec, l, r);
+					expr = ResolveOperatorEquality (ec, l, r);
 					if (expr != null)
 						return expr;
 				}
@@ -2493,6 +2536,14 @@ namespace Mono.CSharp {
 			temp.Add (new PredefinedShiftOperator (TypeManager.uint64_type, Operator.ShiftMask));
 
 			standard_operators = temp.ToArray ();
+
+			var equality = new List<PredefinedOperator> () {
+				new PredefinedEqualityOperator (TypeManager.string_type, bool_type),
+				new PredefinedEqualityOperator (TypeManager.delegate_type, bool_type),
+				new PredefinedOperator (bool_type, Operator.EqualityMask, bool_type)
+			};
+
+			equality_operators = equality.ToArray ();
 		}
 
 		//
@@ -2740,21 +2791,18 @@ namespace Mono.CSharp {
 		//
 		// D operator + (D x, D y)
 		// D operator - (D x, D y)
-		// bool operator == (D x, D y)
-		// bool operator != (D x, D y)
 		//
 		Expression ResolveOperatorDelegate (ResolveContext ec, TypeSpec l, TypeSpec r)
 		{
-			bool is_equality = (oper & Operator.EqualityMask) != 0;
 			if (!TypeManager.IsEqual (l, r) && !TypeSpecComparer.Variant.IsEqual (r, l)) {
 				Expression tmp;
-				if (right.eclass == ExprClass.MethodGroup || (r == InternalType.AnonymousMethod && !is_equality)) {
+				if (right.eclass == ExprClass.MethodGroup || (r == InternalType.AnonymousMethod)) {
 					tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
 					if (tmp == null)
 						return null;
 					right = tmp;
 					r = right.Type;
-				} else if (left.eclass == ExprClass.MethodGroup || (l == InternalType.AnonymousMethod && !is_equality)) {
+				} else if (left.eclass == ExprClass.MethodGroup || (l == InternalType.AnonymousMethod)) {
 					tmp = Convert.ImplicitConversionRequired (ec, left, r, loc);
 					if (tmp == null)
 						return null;
@@ -2784,36 +2832,13 @@ namespace Mono.CSharp {
 				}
 
 				method = TypeManager.delegate_remove_delegate_delegate;
-			} else if (oper == Operator.Equality) {
-				if (TypeManager.delegate_equal == null) {
-					TypeManager.delegate_equal = TypeManager.GetPredefinedMethod (
-						TypeManager.delegate_type,
-						new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Equality), 0, MemberKind.Operator,
-							ParametersCompiled.CreateFullyResolved (new [] { TypeManager.delegate_type, TypeManager.delegate_type }), TypeManager.bool_type), loc);
-				}
-
-				method = TypeManager.delegate_equal;
 			} else {
-				if (TypeManager.delegate_inequal == null) {
-					TypeManager.delegate_inequal = TypeManager.GetPredefinedMethod (
-						TypeManager.delegate_type,
-						new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Inequality), 0, MemberKind.Operator,
-							ParametersCompiled.CreateFullyResolved (new [] { TypeManager.delegate_type, TypeManager.delegate_type }), TypeManager.bool_type), loc);
-				}
-
-				method = TypeManager.delegate_inequal;
-			}
-
-			if (method == null)
 				return new EmptyExpression (TypeManager.decimal_type);
+			}
 
 			MethodGroupExpr mg = MethodGroupExpr.CreatePredefined (method, TypeManager.delegate_type, loc);
 			Expression expr = new UserOperatorCall (mg, args, CreateExpressionTree, loc);
-			if (expr.Type != TypeManager.bool_type) {
-				expr = new ClassCast (expr, l);
-			}
-
-			return expr;
+			return new ClassCast (expr, l);
 		}
 
 		//
@@ -2976,184 +3001,132 @@ namespace Mono.CSharp {
 		//
 		// 7.9.6 Reference type equality operators
 		//
-		Expression ResolveOperatorEqualityRerefence (ResolveContext ec, TypeSpec l, TypeSpec r)
+		Expression ResolveOperatorEquality (ResolveContext ec, TypeSpec l, TypeSpec r)
 		{
-			//
-			// bool operator != (object a, object b)
-			// bool operator == (object a, object b)
-			//
-			// bool operator != (string a, string b)
-			// bool operator == (string a, string b)
-			//
-
-			// TODO: this method is almost equivalent to Convert.ImplicitReferenceConversion
-
-			if (left.eclass == ExprClass.MethodGroup || right.eclass == ExprClass.MethodGroup)
-				return null;
-
+			Expression result;
 			type = TypeManager.bool_type;
-
-			var lgen = l as TypeParameterSpec;
-
-			if (l == r) {
-				if (l is InternalType)
-					return null;
-
-				if (lgen != null) {
-					//
-					// Only allow to compare same reference type parameter
-					//
-					if (TypeManager.IsReferenceType (l)) {
-						left = new BoxedCast (left, TypeManager.object_type);
-						right = new BoxedCast (right, TypeManager.object_type);
-						return this;
-					}
-
-					return null;
-				}
-
-				if (TypeManager.IsValueType (l))
-					return null;
-
-				if (l == TypeManager.string_type) {
-					Arguments args = new Arguments (2);
-					args.Add (new Argument (left));
-					args.Add (new Argument (right));
-
-					MethodSpec method;
-					if (oper == Operator.Equality) {
-						if (TypeManager.string_equal == null) {
-							TypeManager.string_equal = TypeManager.GetPredefinedMethod (TypeManager.string_type,
-								new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Equality), 0, MemberKind.Operator, null, type), loc);
-						}
-
-						method = TypeManager.string_equal;
-					} else {
-						if (TypeManager.string_inequal == null) {
-							TypeManager.string_inequal = TypeManager.GetPredefinedMethod (TypeManager.string_type,
-								new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Inequality), 0, MemberKind.Operator, null, type), loc);
-						}
-
-						method = TypeManager.string_inequal;
-					}
-
-					if (method == null)
-						return new EmptyExpression (type);
-
-					var mg = MethodGroupExpr.CreatePredefined (method, TypeManager.string_type, loc);
-					return new UserOperatorCall (mg, args, CreateExpressionTree, loc);
-				}
-
-				if (l == TypeManager.delegate_type || l == TypeManager.multicast_delegate_type) {
-					Arguments args = new Arguments (2);
-					args.Add (new Argument (left));
-					args.Add (new Argument (right));
-
-					MethodSpec method;
-					if (oper == Operator.Equality) {
-						if (TypeManager.delegate_equal == null) {
-							TypeManager.delegate_equal = TypeManager.GetPredefinedMethod (TypeManager.delegate_type,
-								new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Equality), 0, MemberKind.Operator, null, type), loc);
-						}
-
-						method = TypeManager.delegate_equal;
-					} else {
-						if (TypeManager.delegate_inequal == null) {
-							TypeManager.delegate_inequal = TypeManager.GetPredefinedMethod (TypeManager.delegate_type,
-								new MemberFilter (CSharp.Operator.GetMetadataName (CSharp.Operator.OpType.Inequality), 0, MemberKind.Operator, null, type), loc);
-						}
-
-						method = TypeManager.delegate_inequal;
-					}
-
-					if (method == null)
-						return new EmptyExpression (type);
-
-					var mg = MethodGroupExpr.CreatePredefined (method, TypeManager.delegate_type, loc);
-					return new UserOperatorCall (mg, args, CreateExpressionTree, loc);
-				}
-
-				return this;
-			}
-
-			var rgen = r as TypeParameterSpec;
 
 			//
 			// a, Both operands are reference-type values or the value null
 			// b, One operand is a value of type T where T is a type-parameter and
 			// the other operand is the value null. Furthermore T does not have the
-			// value type constrain
+			// value type constraint
 			//
-			if (left is NullLiteral || right is NullLiteral) {
-				if (lgen != null) {
-					if (lgen.HasSpecialStruct)
-						return null;
-
+			// LAMESPEC: Very confusing details in the specification, basically any
+			// reference like type-parameter is allowed
+			//
+			var tparam_l = l as TypeParameterSpec;
+			var tparam_r = r as TypeParameterSpec;
+			if (tparam_l != null) {
+				if (right is NullLiteral && !tparam_l.HasSpecialStruct) {
 					left = new BoxedCast (left, TypeManager.object_type);
 					return this;
 				}
 
-				if (rgen != null) {
-					if (rgen.HasSpecialStruct)
-						return null;
+				if (!tparam_l.IsReferenceType)
+					return null;
 
+				l = tparam_l.GetEffectiveBase ();
+				left = new BoxedCast (left, l);
+			} else if (left is NullLiteral && tparam_r == null) {
+				if (!TypeManager.IsReferenceType (r) || r.Kind == MemberKind.InternalCompilerType)
+					return null;
+
+				return this;
+			}
+
+			if (tparam_r != null) {
+				if (left is NullLiteral && !tparam_r.HasSpecialStruct) {
 					right = new BoxedCast (right, TypeManager.object_type);
 					return this;
 				}
-			}
 
-			//
-			// An interface is converted to the object before the
-			// standard conversion is applied. It's not clear from the
-			// standard but it looks like it works like that.
-			//
-			if (lgen != null) {
-				if (!TypeManager.IsReferenceType (l))
+				if (!tparam_r.IsReferenceType)
 					return null;
 
-				l = TypeManager.object_type;
-				left = new BoxedCast (left, l);
-			} else if (l.IsInterface) {
-				l = TypeManager.object_type;
-			} else if (TypeManager.IsStruct (l)) {
-				return null;
-			}
-
-			if (rgen != null) {
-				if (!TypeManager.IsReferenceType (r))
-					return null;
-
-				r = TypeManager.object_type;
+				r = tparam_r.GetEffectiveBase ();
 				right = new BoxedCast (right, r);
-			} else if (r.IsInterface) {
-				r = TypeManager.object_type;
-			} else if (TypeManager.IsStruct (r)) {
+			} else if (right is NullLiteral) {
+				if (!TypeManager.IsReferenceType (l) || l.Kind == MemberKind.InternalCompilerType)
+					return null;
+
+				return this;
+			}
+
+			//
+			// LAMESPEC: method groups can be compared when they convert to other side delegate
+			//
+			if (l.IsDelegate) {
+				if (right.eclass == ExprClass.MethodGroup) {
+					result = Convert.ImplicitConversion (ec, right, l, loc);
+					if (result == null)
+						return null;
+
+					right = result;
+					r = l;
+				} else if (r.IsDelegate && l != r) {
+					return null;
+				}
+			} else if (left.eclass == ExprClass.MethodGroup && r.IsDelegate) {
+				result = Convert.ImplicitConversionRequired (ec, left, r, loc);
+				if (result == null)
+					return null;
+
+				left = result;
+				l = r;
+			}
+
+			//
+			// bool operator != (string a, string b)
+			// bool operator == (string a, string b)
+			//
+			// bool operator != (Delegate a, Delegate b)
+			// bool operator == (Delegate a, Delegate b)
+			//
+			// bool operator != (bool a, bool b)
+			// bool operator == (bool a, bool b)
+			//
+			// LAMESPEC: Reference equality comparison can apply to value types when
+			// they implement an implicit conversion to any of types above.
+			//
+			if (r != TypeManager.object_type && l != TypeManager.object_type) {
+				result = ResolveOperatorPredefined (ec, equality_operators, false, null);
+				if (result != null)
+					return result;
+			}
+
+			//
+			// bool operator != (object a, object b)
+			// bool operator == (object a, object b)
+			//
+			// An explicit reference conversion exists from the
+			// type of either operand to the type of the other operand.
+			//
+
+			// Optimize common path
+			if (l == r) {
+				return l.Kind == MemberKind.InternalCompilerType || l.Kind == MemberKind.Struct ? null : this;
+			}
+
+			if (!Convert.ExplicitReferenceConversionExists (l, r) &&
+				!Convert.ExplicitReferenceConversionExists (r, l))
 				return null;
-			}
 
+			// Reject allowed explicit conversions like int->object
+			if (!TypeManager.IsReferenceType (l) || !TypeManager.IsReferenceType (r))
+				return null;
 
-			const string ref_comparison = "Possible unintended reference comparison. " +
-				"Consider casting the {0} side of the expression to `string' to compare the values";
+			if (l == TypeManager.string_type || l == TypeManager.delegate_type || MemberCache.GetUserOperator (l, CSharp.Operator.OpType.Equality, false) != null)
+				ec.Report.Warning (253, 2, loc,
+					"Possible unintended reference comparison. Consider casting the right side expression to type `{0}' to get value comparison",
+					l.GetSignatureForError ());
 
-			//
-			// A standard implicit conversion exists from the type of either
-			// operand to the type of the other operand
-			//
-			if (Convert.ImplicitReferenceConversionExists (left, r)) {
-				if (l == TypeManager.string_type)
-					ec.Report.Warning (253, 2, loc, ref_comparison, "right");
+			if (r == TypeManager.string_type || r == TypeManager.delegate_type || MemberCache.GetUserOperator (r, CSharp.Operator.OpType.Equality, false) != null)
+				ec.Report.Warning (252, 2, loc,
+					"Possible unintended reference comparison. Consider casting the left side expression to type `{0}' to get value comparison",
+					r.GetSignatureForError ());
 
-				return this;
-			}
-
-			if (Convert.ImplicitReferenceConversionExists (right, l)) {
-				if (r == TypeManager.string_type)
-					ec.Report.Warning (252, 2, loc, ref_comparison, "left");
-
-				return this;
-			}
-
-			return null;
+			return this;
 		}
 
 

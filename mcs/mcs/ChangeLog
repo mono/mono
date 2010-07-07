@@ -1,3 +1,8 @@
+2010-07-07  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, convert.cs, expression.cs: Another reference
+	equality implementation attack (Fixes #620025, #579058).
+
 2010-07-05  Marek Safar  <marek.safar@gmail.com>
 
 	* context.cs, expression.cs, ecore.cs: BaseThis is fully based on

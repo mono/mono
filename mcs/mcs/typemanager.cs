@@ -113,7 +113,6 @@ namespace Mono.CSharp {
 	static public MethodSpec void_initializearray_array_fieldhandle;
 	static public MethodSpec delegate_combine_delegate_delegate;
 	static public MethodSpec delegate_remove_delegate_delegate;
-	public static MethodSpec delegate_equal, delegate_inequal;
 	static public PropertySpec int_get_offset_to_string_data;
 	static public MethodSpec int_interlocked_compare_exchange;
 	static public PropertySpec ienumerator_getcurrent;
@@ -122,7 +121,6 @@ namespace Mono.CSharp {
 	public static MethodSpec fieldinfo_get_field_from_handle;
 	public static MethodSpec fieldinfo_get_field_from_handle_generic;
 	public static MethodSpec activator_create_instance;
-	public static MethodSpec string_equal, string_inequal;
 
 	//
 	// The constructors.
@@ -158,11 +156,7 @@ namespace Mono.CSharp {
 		fieldinfo_get_field_from_handle_generic =
 		activator_create_instance =
 		delegate_combine_delegate_delegate =
-		delegate_remove_delegate_delegate =
-		string_equal =
-		string_inequal =
-		delegate_equal =
-		delegate_inequal = null;
+		delegate_remove_delegate_delegate = null;
 
 		int_get_offset_to_string_data =
 		ienumerator_getcurrent = null;

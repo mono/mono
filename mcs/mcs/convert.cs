@@ -1652,7 +1652,7 @@ namespace Mono.CSharp {
 			//
 			// From any class S to any class-type T, provided S is a base class of T
 			//
-			if (TypeManager.IsSubclassOf (target_type, source_type))
+			if (source_type.Kind == MemberKind.Class && TypeManager.IsSubclassOf (target_type, source_type))
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 			//
