@@ -181,7 +181,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			img.Enabled = false;
 
 			string html = img.Render ();
+#if NET_4_0
+			Assert.IsTrue (html.IndexOf (" class=\"aspNetDisabled\"") > 0, "#");
+#else
 			Assert.IsTrue (html.IndexOf (" disabled=\"") > 0, "#");
+#endif
 		}
 
 		[Test]
@@ -192,7 +196,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// while 1.x adds: border="0". Both aren't coming from Image
 			// so we're testing subparts of the string here
 			string s = i.Render ();
-#if NET_2_0
 			Assert.IsTrue (i.Render ().IndexOf (" src=\"\"") > 0, "src");
 
 			i.GenerateEmptyAlternateText = true;
@@ -202,28 +205,26 @@ namespace MonoTests.System.Web.UI.WebControls {
 			i.GenerateEmptyAlternateText = false;
 			s = i.Render ();
 			Assert.IsTrue (i.Render ().IndexOf (" alt=\"\"") < 0, "alt/GenerateEmptyAlternateText-false");
-#else
-			i.DescriptionUrl = "description";
-			s = i.Render ();
-			Assert.IsTrue (i.Render ().IndexOf (" longdesc=\"description\"") > 0, "longdesc");
-			i.DescriptionUrl = null;
-			s = i.Render ();
-			Assert.IsTrue (i.Render ().IndexOf (" longdesc=\"") < 0, "longdesc/none");
 
-			Assert.IsTrue (i.Render ().IndexOf (" src=\"\"") < 0, "src"); // absent
-			Assert.IsTrue (i.Render ().IndexOf (" alt=\"\"") > 0, "alt-empty"); // present
-#endif
 			i.AlternateText = "alt";
 			s = i.Render ();
 			Assert.IsTrue (i.Render ().IndexOf (" alt=\"alt\"") > 0, "alt");
 			i.AlternateText = String.Empty;
-
+#if NET_4_0
+			s = i.Render ();
+			Assert.IsTrue (s.IndexOf (" class=\"aspNetDisabled\"") < 0, "enabled");
+			i.Enabled = false;
+			s = i.Render ();
+			Assert.IsTrue (s.IndexOf (" class=\"aspNetDisabled\"") > 0, "disabled");
+			i.Enabled = true;
+#else
 			s = i.Render ();
 			Assert.IsTrue (i.Render ().IndexOf (" disabled=\"disabled\"") < 0, "enabled");
 			i.Enabled = false;
 			s = i.Render ();
 			Assert.IsTrue (i.Render ().IndexOf (" disabled=\"disabled\"") > 0, "disabled");
 			i.Enabled = true;
+#endif
 
 			// note: align is in mixed-case in 1.x so we lower everything to test
 			i.ImageAlign = ImageAlign.AbsBottom;

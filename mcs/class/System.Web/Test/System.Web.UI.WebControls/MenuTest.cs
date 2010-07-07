@@ -1020,13 +1020,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Vertical)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItems_Vertical");
+#if !NET_4_0 || (NET_4_0 && !DOT_NET)
+			// Throws NREX on .NET 4.0, most probably because the adapter's Control is null
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItemsWithBaseAdapter_Vertical)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItemsWithDefaultAdapter_Vertical");
-
+#endif
 			#region OriginControlHtml
 #if NET_4_0
-			OriginControlHtml = "";
+			OriginControlHtml = "<a href=\"#Menu_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"Menu\">\r\n\t<ul class=\"level1\">\r\n\t\t<li><a class=\"level1\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value&#39;)\">one-black</a></li><li><a class=\"level2\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value&#39;)\">two-black-1</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value&#39;)\">three-black-1</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-1-value&#39;)\">four-black-1</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-2-value&#39;)\">four-black-2</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value&#39;)\">three-black-2</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-3-value&#39;)\">four-black-3</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-4-value&#39;)\">four-black-4</a></li><li><a class=\"level2\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value&#39;)\">two-black-2</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value&#39;)\">three-black-3</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-5-value&#39;)\">four-black-5</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-6-value&#39;)\">four-black-6</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value&#39;)\">three-black-4</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-7-value&#39;)\">four-black-7</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-8-value&#39;)\">four-black-8</a></li>\r\n\t</ul>\r\n</div><a id=\"Menu_SkipLink\"></a>";
 #else
 			OriginControlHtml = @"<a href=""#Menu_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><table id=""Menu"" class=""Menu_2"" cellpadding=""0"" cellspacing=""0"" border=""0"">
 	<tr>
@@ -1126,9 +1128,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Horizontal)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItems_Horizontal");
+#if !NET_4_0 || (NET_4_0 && !DOT_NET)
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItemsWithBaseAdapter_Horizontal)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItemsWithBaseAdapter_Horizontal");
+#endif
 		}
 
 		class MyMenuAdapter : global::System.Web.UI.WebControls.Adapters.MenuAdapter
@@ -1145,6 +1149,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+#if NET_4_0
+		[Category ("NotDotNet")]
+#endif
 		public void Menu_RenderStaticItemsWithAdapter () {
 			string RenderedPageHtml, RenderedControlHtml, OriginControlHtml;
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItemsWithAdapter_Vertical)).Run ();

@@ -1331,15 +1331,19 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute (HtmlTextWriterAttribute.Href, "#" + ClientID + "_SkipLink");
 				writer.RenderBeginTag (HtmlTextWriterTag.A);
 
-				Image img = new Image ();
 				ClientScriptManager csm = new ClientScriptManager (null);
-				img.ImageUrl = csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
-				img.Attributes.Add ("height", "0");
-				img.Attributes.Add ("width", "0");
-				img.AlternateText = skipLinkText;
-				img.Render (writer);
-
-				writer.RenderEndTag ();
+				
+				writer.AddAttribute (HtmlTextWriterAttribute.Alt, skipLinkText);
+				writer.AddAttribute (HtmlTextWriterAttribute.Src, csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif"));
+				writer.AddAttribute (HtmlTextWriterAttribute.Height, "0");
+				writer.AddAttribute (HtmlTextWriterAttribute.Width, "0");
+#if NET_4_0
+				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+#endif
+				writer.RenderBeginTag (HtmlTextWriterTag.Img);
+				
+				writer.RenderEndTag (); // img
+				writer.RenderEndTag (); // a
 			}
 			base.RenderBeginTag (writer);
 		}
@@ -1383,10 +1387,10 @@ namespace System.Web.UI.WebControls
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 
 			Unit nodeSpacing = GetNodeSpacing (node);
-
+#if !NET_4_0
 			if (nodeSpacing != Unit.Empty && (node.Depth > 0 || node.Index > 0))
 				RenderMenuItemSpacing (writer, nodeSpacing);
-			
+#endif
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			
 			// Vertical lines from previous levels
@@ -1485,6 +1489,9 @@ namespace System.Web.UI.WebControls
 			
 			if (!String.IsNullOrEmpty (imageUrl)) {
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
+#if NET_4_0
+				writer.AddAttribute (HtmlTextWriterAttribute.Tabindex, "-1");
+#endif
 				BeginNodeTag (writer, node, clientExpand);
 				writer.AddAttribute (HtmlTextWriterAttribute.Src, imageUrl);
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0");
@@ -1516,8 +1523,11 @@ namespace System.Web.UI.WebControls
 			if (node.ShowCheckBoxInternal) {
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID + "_cs_" + node.Path);
 				writer.AddAttribute (HtmlTextWriterAttribute.Type, "checkbox", false);
+#if !NET_4_0
 				writer.AddAttribute (HtmlTextWriterAttribute.Title, node.Text);
-				if (node.Checked) writer.AddAttribute (HtmlTextWriterAttribute.Checked, "checked", false);
+#endif
+				if (node.Checked)
+					writer.AddAttribute (HtmlTextWriterAttribute.Checked, "checked", false);
 				writer.RenderBeginTag (HtmlTextWriterTag.Input);	// INPUT
 				writer.RenderEndTag ();	// INPUT
 			}
@@ -1538,9 +1548,10 @@ namespace System.Web.UI.WebControls
 			writer.RenderEndTag ();	// TD
 			
 			writer.RenderEndTag ();	// TR
-
+#if !NET_4_0
 			if (nodeSpacing != Unit.Empty)
 				RenderMenuItemSpacing (writer, nodeSpacing);
+#endif
 			
 			writer.RenderEndTag ();	// TABLE
 			
@@ -1602,7 +1613,7 @@ namespace System.Web.UI.WebControls
 				return;
 
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
-			writer.AddAttribute (HtmlTextWriterAttribute.Height, ((int) value).ToString (), false);
+			writer.AddAttribute (HtmlTextWriterAttribute.Height, ((int) value).ToString () + "dupa1", false);
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);
 			writer.RenderEndTag (); // td
@@ -1612,7 +1623,9 @@ namespace System.Web.UI.WebControls
 		
 		void RenderMenuItemSpacing (HtmlTextWriter writer, Unit itemSpacing)
 		{
+#if !NET_4_0
 			writer.AddStyleAttribute (HtmlTextWriterStyle.Height, itemSpacing.ToString ());
+#endif
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);
 			writer.RenderEndTag ();
@@ -1708,6 +1721,9 @@ namespace System.Web.UI.WebControls
 		void AddNodeLinkStyle (HtmlTextWriter writer, TreeNode node, int level, bool nodeIsSelected)
 		{
 			Style style = new Style ();
+#if NET_4_0
+			bool addBorderStyle = false;
+#endif
 			if (Page.Header != null) {
 				// styles are registered
 				style.AddCssClass (ControlLinkStyle.RegisteredCssClass);
@@ -1720,6 +1736,9 @@ namespace System.Web.UI.WebControls
 				if (levelLinkStyles != null && levelLinkStyles.Count > level) {
 					style.AddCssClass (levelLinkStyles [level].CssClass);
 					style.AddCssClass (levelLinkStyles [level].RegisteredCssClass);
+#if NET_4_0
+					addBorderStyle = true;
+#endif
 				}
 				
 				if (node.IsLeafNode) {
@@ -1748,28 +1767,38 @@ namespace System.Web.UI.WebControls
 				style.CopyFrom (ControlLinkStyle);
 				if (nodeStyle != null)
 					style.CopyFrom (nodeLinkStyle);
-
-				if (levelLinkStyles != null && levelLinkStyles.Count > level)
+				
+				if (levelLinkStyles != null && levelLinkStyles.Count > level) {
 					style.CopyFrom (levelLinkStyles [level]);
+#if NET_4_0
+					addBorderStyle = true;
+#endif
+				}
 				
 				if (node.IsLeafNode) {
-					if (node.IsLeafNode && leafNodeStyle != null) {
+					if (node.IsLeafNode && leafNodeStyle != null)
 						style.CopyFrom (leafNodeLinkStyle);
-					}
 				} else if (node.IsRootNode) {
-					if (node.IsRootNode && rootNodeStyle != null) {
+					if (node.IsRootNode && rootNodeStyle != null)
 						style.CopyFrom (rootNodeLinkStyle);
-					}
 				} else if (node.IsParentNode) {
-					if (node.IsParentNode && parentNodeStyle != null) {
+					if (node.IsParentNode && parentNodeStyle != null)
 						style.CopyFrom (parentNodeLinkStyle);
-					}
 				}
 				
 				if (nodeIsSelected)
 					style.CopyFrom (selectedNodeLinkStyle);
+				
 				style.AlwaysRenderTextDecoration = true;
 			}
+#if NET_4_0
+			if (addBorderStyle) {
+				// This appears not to come from any style. Instead, it's added
+				// whenever a level style is present.
+				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "none");
+				writer.AddStyleAttribute (HtmlTextWriterStyle.FontSize, "1em");
+			}		
+#endif
 			style.AddAttributesToRender (writer);
 		}
 
@@ -1795,6 +1824,7 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute (HtmlTextWriterAttribute.Href, GetClientExpandEvent (node));
 				else
 					writer.AddAttribute (HtmlTextWriterAttribute.Href, GetClientEvent (node, "sel"));
+
 				writer.RenderBeginTag (HtmlTextWriterTag.A);
 			} else
 				writer.RenderBeginTag (HtmlTextWriterTag.Span);
