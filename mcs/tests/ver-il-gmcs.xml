@@ -13159,6 +13159,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-524.cs">
+    <type name="C">
+      <method name="T M[T]()">
+        <size>16</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -22838,6 +22851,22 @@
     <type name="C">
       <method name="Void Main()">
         <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-repl-01.cs">
+    <type name="MyTest">
+      <method name="Void Run(System.String, System.String)">
+        <size>23</size>
+      </method>
+      <method name="Void Evaluate(System.String, System.String, System.Object)">
+        <size>80</size>
+      </method>
+      <method name="Void Main()">
+        <size>540</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
