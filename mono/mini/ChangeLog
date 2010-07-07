@@ -1,3 +1,8 @@
+2010-07-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (emit_imt_argument): Call add_outarg_reg even if MONO_ARCH_IMT_REG
+	is not defined in the LLVM case to keep the imt arg alive.
+
 2010-07-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-<ARCH>.c mini-llvm.c: Clean up the naming of the llvm related trampoline
