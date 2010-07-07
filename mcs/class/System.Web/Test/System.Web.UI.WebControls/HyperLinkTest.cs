@@ -81,6 +81,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void ImageUrlWithoutText ()
 		{
+#if NET_4_0
+			string origHtml = "<a><img src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" alt=\"\" /></a>";
+#else
+			string origHtml = "<a><img src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" style=\"border-width:0px;\" /></a>";
+#endif
 			TestHyperLink hl = new TestHyperLink ();
 			hl.ImageUrl = imageUrl;
 			Assert.AreEqual (imageUrl, hl.ImageUrl, "ImageUrl");
@@ -88,11 +93,31 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (String.Empty, hl.Target, "Target");
 			Assert.AreEqual (String.Empty, hl.Text, "Text");
 			// an empty alt attribute is begin added
-#if NET_2_0
-			Assert.AreEqual ("<a><img src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" style=\"border-width:0px;\" /></a>", hl.Render (), "Empty");
+			
+			string renderedHtml = hl.Render ();
+			Assert.AreEqual (origHtml, renderedHtml, "Empty");
+		}
+
+		[Test]
+		public void ImageUrlWithoutText_ToolTip ()
+		{
+#if NET_4_0
+			string origHtml = "<a title=\"Some message\"><img title=\"Some message\" src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" alt=\"\" /></a>";
 #else
-			Assert.AreEqual ("<a><img src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" alt=\"\" border=\"0\" /></a>", hl.Render (), "Empty");
+			string origHtml = "<a title=\"Some message\"><img title=\"Some message\" src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" style=\"border-width:0px;\" /></a>";
 #endif
+			TestHyperLink hl = new TestHyperLink ();
+			hl.ImageUrl = imageUrl;
+			hl.ToolTip = "Some message";
+
+			Assert.AreEqual (imageUrl, hl.ImageUrl, "ImageUrl");
+			Assert.AreEqual (String.Empty, hl.NavigateUrl, "NavigateUrl");
+			Assert.AreEqual (String.Empty, hl.Target, "Target");
+			Assert.AreEqual (String.Empty, hl.Text, "Text");
+			// an empty alt attribute is begin added
+
+			string renderedHtml = hl.Render ();
+			Assert.AreEqual (origHtml, renderedHtml, "Empty");
 		}
 
 		[Test]
@@ -111,6 +136,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void ImageUrl_NO_ResolveUrl ()
 		{
+#if NET_4_0
+			string origHtml = "<a><img src=\"~/ben.jpeg\" alt=\"\" /></a>";
+#else
+			string origHtml = "<a><img src=\"~/ben.jpeg\" style=\"border-width:0px;\" /></a>";
+#endif
 			TestHyperLink hl = new TestHyperLink ();
 			hl.ImageUrl = "~/ben.jpeg";
 			Assert.AreEqual ("~/ben.jpeg", hl.ImageUrl, "ImageUrl");
@@ -118,11 +148,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (String.Empty, hl.Target, "Target");
 			Assert.AreEqual (String.Empty, hl.Text, "Text");
 			// Note: resolve only occurs inside a Page
-#if NET_2_0
-			Assert.AreEqual ("<a><img src=\"~/ben.jpeg\" style=\"border-width:0px;\" /></a>", hl.Render (), "Resolve");
-#else
-			Assert.AreEqual ("<a><img src=\"~/ben.jpeg\" alt=\"\" border=\"0\" /></a>", hl.Render (), "Resolve");
-#endif
+
+			string renderedHtml = hl.Render ();
+			Assert.AreEqual (origHtml, renderedHtml, "Resolve");
 		}
 	}
 }

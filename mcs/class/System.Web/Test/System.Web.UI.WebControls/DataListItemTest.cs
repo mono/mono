@@ -243,28 +243,64 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void Controls_Table ()
 		{
+#if NET_4_0
+			string origHtml1 = "<tr>\n\t<td>mono</td>\n</tr>";
+			string origHtml2 = "<tr>\n\t<td>mono</td>\n</tr>";
+			string origHtml3 = "<table>\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table>";
+			string origHtml4 = "<span><table>\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table></span>";
+#else
+			string origHtml1 = "<tr>\n\t<td>mono</td>\n</tr>";
+			string origHtml2 = "<tr>\n\t<td>mono</td>\n</tr>";
+			string origHtml3 = "<table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table>";
+			string origHtml4 = "<span><table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table></span>";
+#endif
 			TestDataListItem dli = new TestDataListItem (0, ListItemType.Item);
 			dli.Controls.Add (GetTable ("mono"));
 
-			Assert.AreEqual ("<tr>\n\t<td>mono</td>\n</tr>", dli.Render (true, true), "Render-Empty-T-T");
-			Assert.AreEqual ("<tr>\n\t<td>mono</td>\n</tr>", dli.Render (true, false), "Render-Empty-T-F");
-			Assert.AreEqual (Adjust ("<table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table>"), Adjust (dli.Render (false, true)), "Render-Empty-F-T");
-			Assert.AreEqual (Adjust ("<span><table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table></span>"), Adjust (dli.Render (false, false)), "Render-Empty-F-F");
+			string renderedHtml = dli.Render (true, true);
+			Assert.AreEqual (origHtml1, renderedHtml, "Render-Empty-T-T");
+
+			renderedHtml = dli.Render (true, false);
+			Assert.AreEqual (origHtml2, renderedHtml, "Render-Empty-T-F");
+
+			renderedHtml = dli.Render (false, true);
+			Assert.AreEqual (Adjust (origHtml3), Adjust (renderedHtml), "Render-Empty-F-T");
+
+			renderedHtml = dli.Render (false, false);
+			Assert.AreEqual (Adjust (origHtml4), Adjust (renderedHtml), "Render-Empty-F-F");
 		}
 
 		[Test]
 		public void Controls_Table_Dual ()
 		{
+#if NET_4_0
+			string origHtml1 = "<tr>\n\t<td>mono</td>\n</tr>";
+			string origHtml2 = "<tr>\n\t<td>mono</td>\n</tr>";
+			string origHtml3 = "<table>\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table>\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table>";
+			string origHtml4 = "<span><table>\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table>\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table></span>";
+#else
+			string origHtml1 = "<tr>\n\t<td>mono</td>\n</tr>";
+			string origHtml2 = "<tr>\n\t<td>mono</td>\n</tr>";
+			string origHtml3 = "<table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table border=\"0\">\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table>";
+			string origHtml4 = "<span><table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table border=\"0\">\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table></span>";
+#endif
 			TestDataListItem dli = new TestDataListItem (0, ListItemType.Item);
 			dli.Controls.Add (GetTable ("mono"));
 			dli.Controls.Add (GetTable ("monkey"));
 
 			// the second table is ignored if extractRows is true
-			Assert.AreEqual ("<tr>\n\t<td>mono</td>\n</tr>", dli.Render (true, true), "Render-Empty-T-T");
-			Assert.AreEqual ("<tr>\n\t<td>mono</td>\n</tr>", dli.Render (true, false), "Render-Empty-T-F");
+			string renderedHtml = dli.Render (true, true);
+			Assert.AreEqual (origHtml1, renderedHtml, "Render-Empty-T-T");
+
+			renderedHtml = dli.Render (true, false);
+			Assert.AreEqual (origHtml2, renderedHtml, "Render-Empty-T-F");
+
 			// but not if extractRows is false
-			Assert.AreEqual (Adjust ("<table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table border=\"0\">\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table>"), Adjust (dli.Render (false, true)), "Render-Empty-F-T");
-			Assert.AreEqual (Adjust ("<span><table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table border=\"0\">\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table></span>"), Adjust (dli.Render (false, false)), "Render-Empty-F-F");
+			renderedHtml = dli.Render (false, true);
+			Assert.AreEqual (Adjust (origHtml3), Adjust (renderedHtml), "Render-Empty-F-T");
+
+			renderedHtml = dli.Render (false, false);
+			Assert.AreEqual (Adjust (origHtml4), Adjust (renderedHtml), "Render-Empty-F-F");
 		}
 
 		[Test]

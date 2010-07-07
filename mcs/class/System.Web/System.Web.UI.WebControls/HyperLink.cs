@@ -102,21 +102,21 @@ namespace System.Web.UI.WebControls
 			}
 			string image_url = ImageUrl;
 			if (!String.IsNullOrEmpty (image_url)) {
-				Image img = new Image ();
-				img.ImageUrl = ResolveClientUrl (image_url);
-				string str = Text;
+				string str = ToolTip;
 				if (!String.IsNullOrEmpty (str))
-					img.AlternateText = str;
-// #if NET_4_0
-// 				else
-// 					img.GenerateEmptyAlternateText = true;
-// #else
-// 				img.BorderWidth = 0;
-// #endif
-				str = ToolTip;
+					w.AddAttribute (HtmlTextWriterAttribute.Title, str);
+
+				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (image_url));
+				str = Text;
+#if !NET_4_0
 				if (!String.IsNullOrEmpty (str))
-					img.ToolTip = str;
-				img.RenderControl (w);
+#endif
+					w.AddAttribute (HtmlTextWriterAttribute.Alt, str);
+#if !NET_4_0
+				w.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+#endif
+				w.RenderBeginTag (HtmlTextWriterTag.Img);
+				w.RenderEndTag ();
 			} else
 				w.Write (Text);
 		}

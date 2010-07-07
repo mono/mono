@@ -123,7 +123,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void InitializeCell () {
+		public void InitializeCell () 
+		{
+#if NET_4_0
+			string origHtml = "<table><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
+#else
+			string origHtml = "<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
+#endif
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
 			EditCommandColumn	e;
@@ -160,24 +166,19 @@ namespace MonoTests.System.Web.UI.WebControls
 			markup = markup.Replace ("\r", "");
 			markup = markup.Replace ("\n", "");
 
-#if NET_2_0
-			HtmlDiff.AssertAreEqual (
-				"<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
-				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" +
-				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
-				"</tr></table>", markup, "I2");
-#else
-			Assert.AreEqual (
-				"<table border=\"0\" id=\"sucker\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
-				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker:_ctl1:_ctl0\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" + 
-				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
-				"</tr></table>", markup, "I2");
-#endif
+			HtmlDiff.AssertAreEqual (origHtml, markup, "I2");
+
 			//ShowControlsRecursive (p.Controls [0], 1);
 		}
 
 		[Test]
-		public void ThisIsADGTest () {
+		public void ThisIsADGTest () 
+		{
+#if NET_4_0
+			string origHtml = "<table id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
+#else
+			string origHtml = "<table border=\"0\" id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
+#endif
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
 			EditCommandColumn	e;
@@ -216,17 +217,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			markup = markup.Replace("\t", "");
 			markup = markup.Replace ("\r", "");
 			markup = markup.Replace ("\n", "");
-
-#if NET_2_0
-			string origHtml = "<table border=\"0\" id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
+			
 			HtmlDiff.AssertAreEqual (origHtml, markup, "I2");
-#else
-			Assert.AreEqual (
-				"<table border=\"0\" id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
-				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker:_ctl1:_ctl0\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" + 
-				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
-				"</tr></table>", markup, "I2");
-#endif
 		}
 
 		static void GetHierarchy (ControlCollection coll, int level, StringBuilder sb)
@@ -238,7 +230,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void InitializeEditCell () {
+		public void InitializeEditCell () 
+		{
+#if NET_4_0
+			string origHtml = "<table><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Refresh\" />&nbsp;<input name=\"sucker$ctl02$ctl01\" type=\"submit\" value=\"Abbrechen\" /></td><td><input name=\"sucker$ctl02$ctl02\" type=\"text\" value=\"1\" /></td><td><input name=\"sucker$ctl02$ctl03\" type=\"text\" value=\"2\" /></td><td><input name=\"sucker$ctl02$ctl04\" type=\"text\" value=\"3\" /></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
+#else
+			string origHtml = "<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Refresh\" />&nbsp;<input name=\"sucker$ctl02$ctl01\" type=\"submit\" value=\"Abbrechen\" /></td><td><input name=\"sucker$ctl02$ctl02\" type=\"text\" value=\"1\" /></td><td><input name=\"sucker$ctl02$ctl03\" type=\"text\" value=\"2\" /></td><td><input name=\"sucker$ctl02$ctl04\" type=\"text\" value=\"3\" /></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
+#endif
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
 			EditCommandColumn	e;
@@ -293,27 +291,7 @@ namespace MonoTests.System.Web.UI.WebControls
 //Console.WriteLine("Markup:>{0}<", markup);
 			Assert.AreEqual (2, p.Columns.Count, "I1");
 
-#if NET_2_0
-			HtmlDiff.AssertAreEqual (
-				"<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" + 
-				"</tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Refresh\" />&nbsp;" + 
-				"<input name=\"sucker$ctl02$ctl01\" type=\"submit\" value=\"Abbrechen\" /></td>" + 
-				"<td><input name=\"sucker$ctl02$ctl02\" type=\"text\" value=\"1\" /></td>" + 
-				"<td><input name=\"sucker$ctl02$ctl03\" type=\"text\" value=\"2\" /></td>" + 
-				"<td><input name=\"sucker$ctl02$ctl04\" type=\"text\" value=\"3\" /></td>" + 
-				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
-				"</tr></table>", markup, "I2");
-#else
-			Assert.AreEqual (
-				"<table border=\"0\" id=\"sucker\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
-				"</tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name=\"sucker:_ctl1:_ctl0\" type=\"submit\" value=\"Refresh\" />&nbsp;" +
-				"<input name=\"sucker:_ctl1:_ctl1\" type=\"submit\" value=\"Abbrechen\" /></td>" +
-				"<td><input name=\"sucker:_ctl1:_ctl2\" type=\"text\" value=\"1\" /></td>" +
-				"<td><input name=\"sucker:_ctl1:_ctl3\" type=\"text\" value=\"2\" /></td>" +
-				"<td><input name=\"sucker:_ctl1:_ctl4\" type=\"text\" value=\"3\" /></td>" + 
-				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
-				"</tr></table>", markup, "I2");
-#endif
+			HtmlDiff.AssertAreEqual (origHtml, markup, "I2");
 		}
 
 		[Test]
