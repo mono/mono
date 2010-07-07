@@ -278,13 +278,20 @@ namespace Mono.Data.Tds.Protocol {
 			msecs = span.Milliseconds;
 			
 			if (epoch > t) {
-				hours = t.Hour - epoch.Hour;
-				minutes = t.Minute - epoch.Minute;
-				secs = t.Second - epoch.Second;
-				msecs = t.Millisecond - epoch.Millisecond;
-				days--;
+				// If t.Hour is > 0, days points to the next day and hence, 
+				// we move it back by a day - otherwise, no change
+				if (t.Hour > 0) {
+					days--;
+					hours = t.Hour;
+				} else {
+					hours = 12;
+				}
+				
+				minutes = t.Minute;
+				secs = t.Second;
+				msecs = t.Millisecond;
 			}
-			
+
 			SendIfFull (bytes);
 			if (bytes == 8) {
 				long ms = (hours * 3600 + minutes * 60 + secs)*1000L + (long)msecs;
