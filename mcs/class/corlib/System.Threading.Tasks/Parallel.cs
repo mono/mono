@@ -453,7 +453,7 @@ namespace System.Threading.Tasks
 			if (actions == null)
 				throw new ArgumentNullException ("actions");
 			
-			Invoke (actions, (Action a) => Task.Factory.StartNew (a, CancellationToken.None, TaskCreationOptions.None, parallelOptions.TaskScheduler));
+			Invoke (actions, (Action a) => Task.Factory.StartNew (a, parallelOptions.CancellationToken, TaskCreationOptions.None, parallelOptions.TaskScheduler));
 		}
 		
 		static void Invoke (Action[] actions, Func<Action, Task> taskCreator)

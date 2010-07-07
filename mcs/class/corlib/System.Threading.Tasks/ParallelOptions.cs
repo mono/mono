@@ -33,14 +33,12 @@ namespace System.Threading.Tasks
 	
 	public class ParallelOptions
 	{
-		static CancellationTokenSource src = new CancellationTokenSource ();
-		
 		internal static readonly ParallelOptions Default = new ParallelOptions ();
 		
 		public ParallelOptions()
 		{
 			this.MaxDegreeOfParallelism = -1;
-			this.CancellationToken = src.Token;
+			this.CancellationToken = CancellationToken.None;
 			this.TaskScheduler = TaskScheduler.Current;
 		}
 		

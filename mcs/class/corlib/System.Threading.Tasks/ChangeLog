@@ -1,3 +1,9 @@
+2010-07-07  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Parallel.cs: Fix Parallel.Invoke to use all data supplied in
+	ParallelOptions
+	* ParallelOptions.cs: Use CancellationToken.None for initialization
+
 2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Future.cs:
