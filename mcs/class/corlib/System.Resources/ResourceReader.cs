@@ -476,6 +476,13 @@ namespace System.Resources
 		{
 			Dispose(true);
 		}
+
+#if NET_4_0
+		public void Dispose ()
+		{
+			Dispose(true);
+		}
+#endif
 		
 		public IDictionaryEnumerator GetEnumerator () {
 			if (reader == null){

@@ -1,3 +1,10 @@
+2010-07-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	4.0 updates.
+
+	* ResourceManager.cs: Mark ResourceSets as obsolete.
+	* ResourceReader.cs: New public Dispose method.
+
 2010-07-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ResourceWriter.cs: Implement 4.0 TypeNameConverter.
