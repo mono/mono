@@ -1337,9 +1337,7 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute (HtmlTextWriterAttribute.Src, csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif"));
 				writer.AddAttribute (HtmlTextWriterAttribute.Height, "0");
 				writer.AddAttribute (HtmlTextWriterAttribute.Width, "0");
-#if NET_4_0
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-#endif
 				writer.RenderBeginTag (HtmlTextWriterTag.Img);
 				
 				writer.RenderEndTag (); // img
