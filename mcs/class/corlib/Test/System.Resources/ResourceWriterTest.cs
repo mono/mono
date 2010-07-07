@@ -356,7 +356,7 @@ namespace MonoTests.System.Resources
 			stream.Write (buff, 0, buff.Length);
 			stream.Position = 0;
 
-			ResourceWriter rw = new ResourceWriter ("TestResources.resources");
+			ResourceWriter rw = new ResourceWriter ("Test/resources/AddResource_Stream.resources");
 			rw.AddResource ("Name", (object)stream);
 			rw.Close ();
 
