@@ -1,5 +1,9 @@
 2010-07-07  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs: Don't report NRE warning for lifted null.
+
+2010-07-07  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, convert.cs, expression.cs: Another reference
 	equality implementation attack (Fixes #620025, #579058).
 

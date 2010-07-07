@@ -2808,8 +2808,7 @@ namespace Mono.CSharp {
 
 		public virtual MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
-			Constant c = left as Constant;
-			if (c != null && c.GetValue () == null) {
+			if (left != null && left.IsNull && TypeManager.IsReferenceType (left.Type)) {
 				ec.Report.Warning (1720, 1, left.Location,
 					"Expression will always cause a `{0}'", "System.NullReferenceException");
 			}
