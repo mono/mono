@@ -1,5 +1,9 @@
 2010-07-07  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* TdsComm.cs (Append[DateTime]): Ugh.. ugh.. final fix for handling MinValue for DateTime.
+	
+2010-07-07  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	** Fixes #609109 - DateTime part
 	* TdsComm.cs (Append[DateTime]): More fix for handling SqlServer MinValue for DateTime.
 	

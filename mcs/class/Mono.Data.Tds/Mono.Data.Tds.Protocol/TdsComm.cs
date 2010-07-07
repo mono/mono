@@ -280,13 +280,8 @@ namespace Mono.Data.Tds.Protocol {
 			if (epoch > t) {
 				// If t.Hour is > 0, days points to the next day and hence, 
 				// we move it back by a day - otherwise, no change
-				if (t.Hour > 0) {
-					days--;
-					hours = t.Hour;
-				} else {
-					hours = 12;
-				}
-				
+				days = t.Hour > 0 ? days-1: days;
+				hours = t.Hour;
 				minutes = t.Minute;
 				secs = t.Second;
 				msecs = t.Millisecond;
