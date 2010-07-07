@@ -824,7 +824,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			tns = new TreeNodeStyle ();
 			tns.CssClass = "TestCssClass2";
 			tv.LevelStyles.Add (tns);
-			
+
 			XmlDataSource xmlds = new XmlDataSource ();
 			xmlds.EnableCaching = false;
 			xmlds.Data = xmlDataBind;

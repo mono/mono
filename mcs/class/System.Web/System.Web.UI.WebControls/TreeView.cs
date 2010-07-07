@@ -1661,33 +1661,64 @@ namespace System.Web.UI.WebControls
 			if (Page.Header != null) {
 				// styles are registered
 				if (nodeStyle != null) {
+#if NET_4_0
+ 					style.PrependCssClass (nodeStyle.RegisteredCssClass);
+ 					style.PrependCssClass (nodeStyle.CssClass);
+#else
 					style.AddCssClass (nodeStyle.CssClass);
 					style.AddCssClass (nodeStyle.RegisteredCssClass);
+#endif
 				}
 				if (node.IsLeafNode) {
 					if (leafNodeStyle != null) {
+#if NET_4_0
+						style.PrependCssClass (leafNodeStyle.RegisteredCssClass);
+						style.PrependCssClass (leafNodeStyle.CssClass);
+#else
 						style.AddCssClass (leafNodeStyle.CssClass);
 						style.AddCssClass (leafNodeStyle.RegisteredCssClass);
+#endif
 					}
 				} else if (node.IsRootNode) {
 					if (rootNodeStyle != null) {
+#if NET_4_0
+						style.PrependCssClass (rootNodeStyle.RegisteredCssClass);
+						style.PrependCssClass (rootNodeStyle.CssClass);
+#else
 						style.AddCssClass (rootNodeStyle.CssClass);
 						style.AddCssClass (rootNodeStyle.RegisteredCssClass);
+#endif
 					}
 				} else if (node.IsParentNode) {
 					if (parentNodeStyle != null) {
+#if NET_4_0
+						style.AddCssClass (parentNodeStyle.RegisteredCssClass);
+						style.AddCssClass (parentNodeStyle.CssClass);
+#else
 						style.AddCssClass (parentNodeStyle.CssClass);
 						style.AddCssClass (parentNodeStyle.RegisteredCssClass);
+#endif
 					}
 				}
+				
 				if (levelStyles != null && levelStyles.Count > level) {
+#if NET_4_0
+ 					style.PrependCssClass (levelStyles [level].RegisteredCssClass);
+ 					style.PrependCssClass (levelStyles [level].CssClass);
+#else
 					style.AddCssClass (levelStyles [level].CssClass);
 					style.AddCssClass (levelStyles [level].RegisteredCssClass);
+#endif
 				}
 				
 				if (nodeIsSelected) {
+#if NET_4_0
+					style.AddCssClass (selectedNodeStyle.RegisteredCssClass);
+					style.AddCssClass (selectedNodeStyle.CssClass);
+#else
 					style.AddCssClass (selectedNodeStyle.CssClass);
 					style.AddCssClass (selectedNodeStyle.RegisteredCssClass);
+#endif
 				}
 			} else {
 				// styles are not registered

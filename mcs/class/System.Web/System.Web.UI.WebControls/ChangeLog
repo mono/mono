@@ -1,6 +1,8 @@
 2010-07-07  Marek Habersack  <mhabersack@novell.com>
 
 	* TreeView.cs: 4.0 rendering changes.
+	When using registered CSS classes, the node style must use them in
+	reverse order.
 
 2010-07-06  Marek Habersack  <mhabersack@novell.com>
 
