@@ -278,9 +278,9 @@ namespace Mono.Data.Tds.Protocol {
 			msecs = span.Milliseconds;
 			
 			if (epoch > t) {
-				// If t.Hour is > 0, days points to the next day and hence, 
+				// If t.Hour/Min/Sec/MSec is > 0, days points to the next day and hence, 
 				// we move it back by a day - otherwise, no change
-				days = t.Hour > 0 ? days-1: days;
+				days = (t.Hour > 0 || t.Minute > 0 || t.Second > 0 || t.Millisecond > 0) ? days-1: days;
 				hours = t.Hour;
 				minutes = t.Minute;
 				secs = t.Second;
