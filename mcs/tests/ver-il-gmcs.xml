@@ -13812,7 +13812,7 @@
     </type>
     <type name="C">
       <method name="Void InstanceTests()">
-        <size>35</size>
+        <size>18</size>
       </method>
       <method name="Void &lt;InstanceTests&gt;m__0()">
         <size>7</size>
@@ -17680,6 +17680,12 @@
       </method>
       <method name="Void ConvertTest_16()">
         <size>81</size>
+      </method>
+      <method name="Int32 ReturnNumber()">
+        <size>2</size>
+      </method>
+      <method name="Void EqualTestDelegate_3()">
+        <size>227</size>
       </method>
     </type>
   </test>
@@ -40353,6 +40359,42 @@
       </method>
     </type>
   </test>
+  <test name="test-786.cs">
+    <type name="A">
+      <method name="System.String op_Implicit(A)">
+        <size>18</size>
+      </method>
+      <method name="System.Delegate op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.String op_Implicit(B)">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="System.Delegate op_Implicit(D)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="E">
+      <method name="Boolean op_Implicit(E)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>372</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-79.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -44837,6 +44879,35 @@
     <type name="BaseTest.MainClass+&lt;&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__1(System.Object, System.EventArgs)">
         <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-94.cs">
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>29</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+BaseClass">
+      <method name="Void Print()">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+Derived">
+      <method name="Void Print()">
+        <size>20</size>
+      </method>
+      <method name="Void &lt;Print&gt;m__0()">
+        <size>7</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

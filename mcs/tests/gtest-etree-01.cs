@@ -299,6 +299,10 @@ class Tester
 {
 	delegate void EmptyDelegate ();
 	delegate int IntDelegate ();
+	static int ReturnNumber ()
+	{
+		return 8;
+	}
 
 	static void AssertNodeType (LambdaExpression e, ExpressionType et)
 	{
@@ -1206,6 +1210,14 @@ class Tester
 		Assert (false, e2.Compile ().Invoke (delegate () {}, delegate {}));
 		Assert (false, e2.Compile ().Invoke (ed, delegate {}));
 		Assert (true, e2.Compile ().Invoke (ed, ed));
+	}
+	
+	void EqualTestDelegate_3 ()
+	{
+		Expression<Func<Func<int>, bool>> e1 = (a) => a == ReturnNumber;
+		AssertNodeType (e1, ExpressionType.Equal);
+		Assert (false, e1.Compile ().Invoke (null));
+		Assert (true, e1.Compile ().Invoke (ReturnNumber));
 	}
 
 	void ExclusiveOrTest ()
