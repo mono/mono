@@ -1,5 +1,7 @@
 2010-07-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-arm.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Add xdebug info.
+
 	* method-to-ir.c (emit_imt_argument): Call add_outarg_reg even if MONO_ARCH_IMT_REG
 	is not defined in the LLVM case to keep the imt arg alive.
 
