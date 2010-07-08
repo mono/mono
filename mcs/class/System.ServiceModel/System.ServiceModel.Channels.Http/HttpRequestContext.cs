@@ -133,17 +133,6 @@ namespace System.ServiceModel.Channels.Http
 			if (msg == null)
 				throw new ArgumentNullException ("msg");
 
-			// FIXME: probably in WebHttpBinding land, there should 
-			// be some additional code (probably IErrorHandler) that
-			// treats DestinationUnreachable (and possibly any other)
-			// errors as HTTP 400 or something appropriate. 
-			// I originally rewrote the HTTP status here, but it 
-			// was wrong.
-
-			// FIXME: should this be done here?
-			if (Channel.MessageVersion.Addressing.Equals (AddressingVersion.None))
-				msg.Headers.Action = null; // prohibited
-
 			MemoryStream ms = new MemoryStream ();
 			Channel.Encoder.WriteMessage (msg, ms);
 			Context.Response.ContentType = Channel.Encoder.ContentType;

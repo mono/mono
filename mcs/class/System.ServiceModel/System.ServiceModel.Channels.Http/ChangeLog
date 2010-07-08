@@ -1,3 +1,7 @@
+2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestContext.cs : remove extra Action handling and old comment.
+
 2010-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpRequestContext.cs, HttpChannelListener.cs, HttpReplyChannel.cs:
