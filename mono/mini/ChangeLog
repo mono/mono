@@ -1,3 +1,11 @@
+2010-07-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* xdebug.c (mono_save_trampoline_xdebug_info): Make this receive a MonoTrampInfo.
+
+	* tramp-<ARCH>.c: Move the calls to save_trampoline_xdebug_info () into
+	mini-trampolines.c/mini-exceptions.c. Use a more human readable name for
+	generic trampolines+rgctx fetch trampolines.
+
 2010-07-08  Geoff Norton  <gnorton@novell.com>
 
 	* genmdesc.pl: nacl is not a new inst slot, it just modifies the size slot.
