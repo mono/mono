@@ -94,8 +94,13 @@ namespace System.Web.UI.WebControls
 		public virtual RepeatLayout RepeatLayout {
 			get { return (RepeatLayout) ViewState.GetInt ("RepeatLayout", (int) RepeatLayout.Table); }
 			set {
-				if (value < RepeatLayout.Table ||
-						value > RepeatLayout.Flow)
+				bool outOfRange;
+#if NET_4_0
+				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.OrderedList;
+#else
+				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.Flow;
+#endif
+				if (outOfRange)
 					throw new ArgumentOutOfRangeException ("value");
 				ViewState ["RepeatLayout"] = value;
 			}
