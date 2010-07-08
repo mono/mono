@@ -1,0 +1,6 @@
+2010-07-08  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptModule.cs: PostAcquireRequestState must check if the
+	current context and the current handler aren't null before
+	attempting to use them.
+
