@@ -1,3 +1,9 @@
+2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBehavior.cs : Set an a default DispatchOperation to throw 
+	  EndpointNotFoundException instead of raising null Invoker error.
+	  And add error handler that converts the exception to HTTP 404.
+
 2010-03-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebHttpBehavior.cs : set FilterPriority to make it in higher

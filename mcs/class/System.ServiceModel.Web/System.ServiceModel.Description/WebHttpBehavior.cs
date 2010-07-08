@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
@@ -92,10 +93,9 @@ namespace System.ServiceModel.Description
 		}
 
 #if !NET_2_1
-		[MonoTODO]
 		protected virtual void AddServerErrorHandlers (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
-			// endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add (something);
+			endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add (new WebHttpErrorHandler ());
 		}
 #endif
 
@@ -128,6 +128,10 @@ namespace System.ServiceModel.Description
 				var res = GetReplyDispatchFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
 				oper.Formatter = new DispatchPairFormatter (req, res);
 			}
+			endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation = new DispatchOperation (endpointDispatcher.DispatchRuntime, "*", "*", "*") {
+				Invoker = new EndpointNotFoundOperationInvoker (),
+				DeserializeRequest = false,
+				SerializeReply = false};
 		}
 #endif
 
@@ -257,6 +261,51 @@ namespace System.ServiceModel.Description
 				throw new InvalidOperationException ("Only MessageVersion.None is allowed for WebHttpBehavior");
 			if (!endpoint.Binding.CreateBindingElements ().Find<TransportBindingElement> ().ManualAddressing)
 				throw new InvalidOperationException ("ManualAddressing in the transport binding element in the binding must be true for WebHttpBehavior");
+		}
+
+		internal class WebHttpErrorHandler : IErrorHandler
+		{
+			public void ProvideFault (Exception error, MessageVersion version, ref Message fault)
+			{
+				if (!(error is EndpointNotFoundException))
+					return;
+				fault = Message.CreateMessage (version, null);
+				var prop = new HttpResponseMessageProperty ();
+				prop.StatusCode = HttpStatusCode.NotFound;
+				fault.Properties.Add (HttpResponseMessageProperty.Name, prop);
+			}
+			
+			public bool HandleError (Exception error)
+			{
+				return false;
+			}
+		}
+
+		class EndpointNotFoundOperationInvoker : IOperationInvoker
+		{
+			public bool IsSynchronous {
+				get { return true; }
+			}
+
+			public object [] AllocateInputs ()
+			{
+				return new object [1];
+			}
+			
+			public object Invoke (object instance, object [] inputs, out object [] outputs)
+			{
+				throw new EndpointNotFoundException ();
+			}
+			
+			public IAsyncResult InvokeBegin (object instance, object [] inputs, AsyncCallback callback, object state)
+			{
+				throw new EndpointNotFoundException ();
+			}
+
+			public object InvokeEnd (object instance, out object [] outputs, IAsyncResult result)
+			{
+				throw new InvalidOperationException ();
+			}
 		}
 	}
 }
