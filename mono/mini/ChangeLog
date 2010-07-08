@@ -1,3 +1,7 @@
+2010-07-08  Geoff Norton  <gnorton@novell.com>
+
+	* genmdesc.pl: nacl is not a new inst slot, it just modifies the size slot.
+
 2010-07-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-arm.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Add xdebug info.
