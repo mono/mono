@@ -1,5 +1,9 @@
 2010-07-02  Michael Hutchinson  <mhutchinson@novell.com>
 
+	* mono-compiler.h: Add MONO_THREAD_VAR_OFFSET macro for s390x.
+
+2010-07-02  Michael Hutchinson  <mhutchinson@novell.com>
+
 	* Makefile.am: Add mono-error.h to public headers.
 	* mono-error.h: Use public version of API.
 
