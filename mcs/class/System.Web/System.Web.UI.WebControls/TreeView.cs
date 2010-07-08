@@ -1521,7 +1521,11 @@ namespace System.Web.UI.WebControls
 			if (node.ShowCheckBoxInternal) {
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID + "_cs_" + node.Path);
 				writer.AddAttribute (HtmlTextWriterAttribute.Type, "checkbox", false);
-#if !NET_4_0
+#if NET_4_0
+				string str = node.ToolTip;
+				if (!String.IsNullOrEmpty (str))
+					writer.AddAttribute (HtmlTextWriterAttribute.Title, str);
+#else
 				writer.AddAttribute (HtmlTextWriterAttribute.Title, node.Text);
 #endif
 				if (node.Checked)

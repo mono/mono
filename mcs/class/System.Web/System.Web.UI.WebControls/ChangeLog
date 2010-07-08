@@ -1,5 +1,8 @@
 2010-07-08  Marek Habersack  <mhabersack@novell.com>
 
+	* TreeView.cs: in 4.0, checkbox renders the value of the current
+	node's ToolTip, if anything, and not Text.
+
 	* RepeatLayout.cs: added two new members, UnorderedList and
 	OrderedList (4.0)
 
