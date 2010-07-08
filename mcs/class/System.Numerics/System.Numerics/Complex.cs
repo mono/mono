@@ -4,17 +4,14 @@
 // Author:
 //   Miguel de Icaza (miguel@gnome.org)
 //   Marek Safar (marek.safar@gmail.com)
+//   Jb Evain (jbevain@novell.com)
 //
 // Copyright 2009, 2010 Novell, Inc.
-//
-//
 //
 // TODO:
 // string ToString (string format, IFormatProvider)
 // string ToString (string format)
 // string ToString (IFormatProvider)
-//
-// Acos, Asin, Atan, Exp, Log, Log10, Pow, Sqrt
 
 using System;
 
@@ -27,6 +24,22 @@ namespace System.Numerics {
 		public static readonly Complex ImaginaryOne = new Complex (0, 1);
 		public static readonly Complex One = new Complex (1, 0);
 		public static readonly Complex Zero = new Complex (0, 0);
+
+		public double Imaginary {
+			get { return imaginary; }
+		}
+
+		public double Real {
+			get { return real; }
+		}
+
+		public double Magnitude {
+			get { return Math.Sqrt (imaginary * imaginary + real * real); }
+		}
+
+		public double Phase {
+			get { return Math.Atan2 (imaginary, real); }
+		}
 		
 		public Complex (double real, double imaginary)
 		{
@@ -245,25 +258,62 @@ namespace System.Numerics {
 		{
 			return Sinh (value) / Cosh (value);
 		}
-		
+
+		public static Complex Acos (Complex value)
+		{
+			return -ImaginaryOne * Log (value + (ImaginaryOne * Sqrt (One - (value * value))));
+		}
+
+		public static Complex Asin (Complex value)
+		{
+			return -ImaginaryOne * Log ((ImaginaryOne * value) + Sqrt (One - (value * value)));
+		}
+
+		public static Complex Atan (Complex value)
+		{
+			return (ImaginaryOne / new Complex (2, 0)) * (Log (One - (ImaginaryOne * value)) - Log (One + (ImaginaryOne * value)));
+		}
+
+		public static Complex Exp (Complex value)
+		{
+			var e = Math.Exp (value.real);
+
+			return new Complex (e * Math.Cos (value.imaginary), e * Math.Sin (value.imaginary));
+		}
+
+		public static Complex Log (Complex value)
+		{
+			return new Complex (Math.Log (Abs (value)), value.Phase);
+		}
+
+		public static Complex Log (Complex value, double baseValue)
+		{
+			return Log (value)/ Log (new Complex (baseValue, 0));
+		}
+
+		public static Complex Log10 (Complex value)
+		{
+			return Log (value, 10);
+		}
+
+		public static Complex Sqrt (Complex value)
+		{
+			return FromPolarCoordinates (Math.Sqrt (value.Magnitude), value.Phase / 2);
+		}
+
+		public static Complex Pow (Complex value, double power)
+		{
+			return Pow (value, new Complex (power, 0));
+		}
+
+		public static Complex Pow (Complex value, Complex power)
+		{
+			return Exp (Log (value) * power);
+		}
+
 		public override int GetHashCode ()
 		{
 			return real.GetHashCode () ^ imaginary.GetHashCode ();
-		}
-		
-		public double Imaginary { get { return imaginary; } }
-		public double Real { get { return real; } }
-
-		public double Magnitude {
-			get {
-				return Math.Sqrt (imaginary * imaginary + real * real);
-			}
-		}
-
-		public double Phase {
-			get {
-				return Math.Atan (imaginary / real);
-			}
 		}
 	}
 }
