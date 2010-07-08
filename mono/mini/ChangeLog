@@ -1,5 +1,8 @@
 2010-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm-cpp.cpp (force_pass_linking): Link in more function passes so
+	MONO_LLVM=xxx is actually usable.
+
 	* mini-llvm.c (emit_load): Use the mono specific load intrinsics even outside clauses
 	since LLVM might be able to hoist them out of loops.
 	(emit_store): Ditto.
