@@ -244,10 +244,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void Text ()
 		{
+#if NET_4_0
+			string origHtml = "<input type=\"image\" src=\"\" alt=\"MyText\" />";
+#else
+			string origHtml = "<input type=\"image\" src=\"\" alt=\"MyText\" style=\"border-width:0px;\" />";
+#endif
 			PokerImageButton b = new PokerImageButton ();
 			b.Text = "MyText";
 			string html = b.Render ();
-			HtmlDiff.AssertAreEqual ("<input type=\"image\" src=\"\" alt=\"MyText\" style=\"border-width:0px;\" />", html, "Text#1");
+			HtmlDiff.AssertAreEqual (origHtml, html, "Text#1");
 		}
 
 		[Test]
