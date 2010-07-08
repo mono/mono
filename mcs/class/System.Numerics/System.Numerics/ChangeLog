@@ -1,5 +1,9 @@
 2010-07-08  Jb Evain  <jbevain@novell.com>
 
+	* Complex.cs: implement the different ToString overrides.
+
+2010-07-08  Jb Evain  <jbevain@novell.com>
+
 	* Complex.cs: Fix Phase. Implement Acos, Asin, Atan, Exp,
 	Log, Log10, Pow and Sqrt.
 
