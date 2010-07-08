@@ -241,14 +241,6 @@ Console.WriteLine (mb.CreateMessage ());
 					rp.Headers [key] = hrr.Headers [key];
 				ret.Properties.Add (HttpResponseMessageProperty.Name, rp);
 
-/*
-MessageBuffer buf = ret.CreateBufferedCopy (0x10000);
-ret = buf.CreateMessage ();
-System.Xml.XmlTextWriter w = new System.Xml.XmlTextWriter (Console.Out);
-w.Formatting = System.Xml.Formatting.Indented;
-buf.CreateMessage ().WriteMessage (w);
-w.Close ();
-*/
 				channelResult.Response = ret;
 				channelResult.Complete ();
 			} catch (Exception ex) {

@@ -1,5 +1,9 @@
 2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpRequestChannel.cs : remove extra code.
+
+2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReaderBodyWriter.cs, MessageFault.cs: warning cleanups.
 
 2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
