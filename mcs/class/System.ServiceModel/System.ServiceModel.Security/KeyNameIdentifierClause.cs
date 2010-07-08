@@ -36,9 +36,9 @@ namespace System.ServiceModel.Security
 	public class KeyNameIdentifierClause : SecurityKeyIdentifierClause
 	{
 		public KeyNameIdentifierClause (string keyName)
-			: base (keyName)
+			: base (null)
 		{
-			throw new NotImplementedException ();
+			key_name = keyName;
 		}
 
 		string key_name;
@@ -61,10 +61,9 @@ namespace System.ServiceModel.Security
 			return key_name == keyName;
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			return base.ToString ();
+			return String.Concat ("KeyNameIdentifierClause(KeyName = '", KeyName, "')");
 		}
 	}
 }
