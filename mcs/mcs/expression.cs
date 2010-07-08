@@ -4858,7 +4858,6 @@ namespace Mono.CSharp {
 		protected Arguments arguments;
 		protected Expression expr;
 		protected MethodGroupExpr mg;
-		bool arguments_resolved;
 		
 		public Invocation (Expression expr, Arguments arguments)
 		{
@@ -4868,12 +4867,6 @@ namespace Mono.CSharp {
 				loc = expr.Location;
 		}
 
-		public Invocation (Expression expr, Arguments arguments, bool arguments_resolved)
-			: this (expr, arguments)
-		{
-			this.arguments_resolved = arguments_resolved;
-		}
-		
 		#region Properties
 		public Arguments Arguments {
 			get {
@@ -4911,7 +4904,7 @@ namespace Mono.CSharp {
 			// Next, evaluate all the expressions in the argument list
 			//
 			bool dynamic_arg = false;
-			if (arguments != null && !arguments_resolved)
+			if (arguments != null)
 				arguments.Resolve (ec, out dynamic_arg);
 
 			TypeSpec expr_type = member_expr.Type;
