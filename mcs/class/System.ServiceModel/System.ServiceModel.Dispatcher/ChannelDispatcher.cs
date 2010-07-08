@@ -578,13 +578,22 @@ namespace System.ServiceModel.Dispatcher
 					var ed = FindEndpointDispatcher (req);
 					new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply).ProcessReply (rc);
 				} catch (Exception ex) {
+					foreach (var eh in owner.ErrorHandlers)
+						if (eh.HandleError (ex))
+							return; // error is handled appropriately.
+
 					// FIXME: log it.
 					Console.WriteLine (ex);
 
-					var conv = reply.GetProperty<FaultConverter> () ?? FaultConverter.GetDefaultFaultConverter (rc.RequestMessage.Version);
-					Message res;
-					if (!conv.TryCreateFaultMessage (ex, out res))
-						res = Message.CreateMessage (req.Version, new FaultCode ("Receiver"), ex.Message, req.Version.Addressing.FaultNamespace);
+					Message res = null;
+					foreach (var eh in owner.ErrorHandlers)
+						eh.ProvideFault (ex, owner.MessageVersion, ref res);
+					if (res == null) {
+						var conv = reply.GetProperty<FaultConverter> () ?? FaultConverter.GetDefaultFaultConverter (rc.RequestMessage.Version);
+						if (!conv.TryCreateFaultMessage (ex, out res))
+							res = Message.CreateMessage (req.Version, new FaultCode ("Receiver"), ex.Message, req.Version.Addressing.FaultNamespace);
+					}
+
 					rc.Reply (res);
 				} finally {
 					if (rc != null)
