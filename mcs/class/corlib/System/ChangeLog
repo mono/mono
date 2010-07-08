@@ -1,3 +1,8 @@
+2010-07-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DateTime.cs: allow between 1 and 7 digits after the dot.
+	Fixes bug #594559.
+
 2010-07-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TimeSpan.cs: two consecutive colons produce an error now.
