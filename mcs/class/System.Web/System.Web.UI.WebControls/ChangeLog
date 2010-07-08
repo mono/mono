@@ -1,5 +1,8 @@
 2010-07-08  Marek Habersack  <mhabersack@novell.com>
 
+	* RepeatLayout.cs: added two new members, UnorderedList and
+	OrderedList (4.0)
+
 	* ImageMap.cs: implemented missing Enabled property (2.0+)
 	RaisePostBackEvent must be protected and virtual (2.0+)
 	NavigateUrl is ignored if the control is disabled (4.0)

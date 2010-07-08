@@ -3,7 +3,7 @@
 //
 // Author: Duncan Mak (duncan@novell.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +35,10 @@ namespace System.Web.UI.WebControls {
 	public enum RepeatLayout
 	{
 		Table,
-		Flow
+		Flow,
+#if NET_4_0
+		UnorderedList,
+		OrderedList
+#endif
 	}
 }
