@@ -1,3 +1,8 @@
+2010-07-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebClient.cs: handle compressed streams when automatic decompression
+	is turned on by a class derived from WebClient.
+
 2010-07-01  Marek Habersack  <mhabersack@novell.com>
 
 	* WebRequest.cs: DefaultCachePolicy and CachePolicy return a
