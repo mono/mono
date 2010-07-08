@@ -992,12 +992,14 @@ namespace System.Net
 			int length = (int) response.ContentLength;
 			HttpWebRequest wreq = request as HttpWebRequest;
 
+#if NET_2_0
 			if (length > -1 && wreq != null && (int) wreq.AutomaticDecompression != 0) {
 				string content_encoding = ((HttpWebResponse) response).ContentEncoding;
 				if (((content_encoding == "gzip" && (wreq.AutomaticDecompression & DecompressionMethods.GZip) != 0)) ||
 					((content_encoding == "deflate" && (wreq.AutomaticDecompression & DecompressionMethods.Deflate) != 0)))
 					length = -1;
 			}
+#endif
 
 			MemoryStream ms = null;
 			bool nolength = (length == -1);
