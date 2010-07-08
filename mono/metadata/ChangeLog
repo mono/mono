@@ -5,6 +5,11 @@
 
 2010-07-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* assembly.c (mono_assembly_load_reference): Replace a g_warning
+	with a mono_trace calls. This makes compiling MD a lot less scary.
+
+2010-07-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_stobj): Improve error message.
 
 2010-07-08  Mark Probst  <mark.probst@gmail.com>
