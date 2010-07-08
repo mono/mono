@@ -65,9 +65,13 @@ namespace System.Windows.Forms
 		#region	Principal Theme Methods
 		public ThemeWin32Classic ()
 		{			
+			ResetDefaults ();
+		}
+
+		public override void ResetDefaults() {
 			defaultWindowBackColor = this.ColorWindow;
 			defaultWindowForeColor = this.ColorControlText;
-            window_border_font = new Font(FontFamily.GenericSansSerif, 8.25f, FontStyle.Bold);
+			window_border_font = new Font(FontFamily.GenericSansSerif, 8.25f, FontStyle.Bold);
 			
 			/* Menu string formats */
 			string_format_menu_text = new StringFormat ();
@@ -85,11 +89,6 @@ namespace System.Windows.Forms
 			string_format_menu_menubar_text.LineAlignment = StringAlignment.Center;
 			string_format_menu_menubar_text.Alignment = StringAlignment.Center;
 			string_format_menu_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;
-		}
-
-		public override void ResetDefaults() {
-			Console.WriteLine("NOT IMPLEMENTED: ResetDefault()");
-			//throw new NotImplementedException("Need to implement ResetDefaults() for Win32 theme");
 		}
 
 		public override bool DoubleBufferingSupported {
