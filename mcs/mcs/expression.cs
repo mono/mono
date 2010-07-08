@@ -4860,18 +4860,9 @@ namespace Mono.CSharp {
 		protected MethodGroupExpr mg;
 		bool arguments_resolved;
 		
-		//
-		// arguments is an ArrayList, but we do not want to typecast,
-		// as it might be null.
-		//
 		public Invocation (Expression expr, Arguments arguments)
 		{
-			SimpleName sn = expr as SimpleName;
-			if (sn != null)
-				this.expr = sn.GetMethodGroup ();
-			else
-				this.expr = expr;
-			
+			this.expr = expr;		
 			this.arguments = arguments;
 			if (expr != null)
 				loc = expr.Location;
@@ -4882,6 +4873,20 @@ namespace Mono.CSharp {
 		{
 			this.arguments_resolved = arguments_resolved;
 		}
+		
+		#region Properties
+		public Arguments Arguments {
+			get {
+				return arguments;
+			}
+		}
+		
+		public Expression Expression {
+			get {
+				return expr;
+			}
+		}
+		#endregion
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{

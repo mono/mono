@@ -1,3 +1,7 @@
+2010-07-08  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs (Invocation): Don't recreate simple-name expression.
+
 2010-07-07  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs: Don't report NRE warning for lifted null.
