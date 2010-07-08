@@ -119,6 +119,9 @@ namespace Microsoft.Build.BuildEngine {
 #if NET_4_0
 			Toolsets.Add (new Toolset ("4.0",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
+#else
+			Toolsets.Add (new Toolset ("4.0",
+						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35)));
 #endif
 		}
 		
