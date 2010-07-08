@@ -1,3 +1,9 @@
+2010-07-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (emit_load): Use the mono specific load intrinsics even outside clauses
+	since LLVM might be able to hoist them out of loops.
+	(emit_store): Ditto.
+
 2010-07-08  Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390x.c: Correct setting value of header from cfg->header - fix crash
