@@ -1,3 +1,9 @@
+2010-07-08  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: if generating a predictable ID and the current
+	control is a naming container, ensure that an ID is generated if
+	not specified by user.
+
 2010-07-02  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlParser.cs: added support for ClientIDMode

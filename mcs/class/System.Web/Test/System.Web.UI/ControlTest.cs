@@ -996,8 +996,11 @@ namespace MonoTests.System.Web.UI
 			fr.Controls ["__EVENTTARGET"].Value = "container$children$lb";
 			fr.Controls ["__EVENTARGUMENT"].Value = String.Empty;
 			t.Request = fr;
-
+#if NET_4_0
+			string originalHtml = "<span id=\"container\"><a id=\"container_children_lb\" href=\"javascript:__doPostBack(&#39;container$children$lb&#39;,&#39;&#39;)\">Woot! I got clicked!</a></span><hr/>";
+#else
 			string originalHtml = @"<span id=""container""><a href=""javascript:__doPostBack('container$children$lb','')"" id=""container_children_lb"">Woot! I got clicked!</a></span><hr/>";
+#endif
 			string pageHtml = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 

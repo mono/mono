@@ -372,27 +372,39 @@ namespace System.Web.UI
 		string GeneratePredictableClientID ()
 		{
 			string myID = ID;
+			bool haveMyID = !String.IsNullOrEmpty (myID);
 			char separator = ClientIDSeparator;
-			
+
 			var sb = new StringBuilder ();
 			Control container = NamingContainer;
+			if (this is INamingContainer && !haveMyID) {
+				if (container != null)
+					EnsureIDInternal ();
+				myID = _userId;
+			}
+			
 			if (container != null && container != Page) {
 				string containerID = container.ID;
 				if (!String.IsNullOrEmpty (containerID)) {
 					sb.Append (container.ClientID);
 					sb.Append (separator);
-				} else
+				} else {
 					sb.Append (container.GeneratePredictableClientID ());
+					if (sb.Length > 0)
+						sb.Append (separator);
+				}
 			}
 
-			if (String.IsNullOrEmpty (myID))
+			if (!haveMyID) {
+				sb.Append (myID);
 				return sb.ToString ();
+			}
 			
 			sb.Append (myID);
 			IDataItemContainer dataItemContainer = DataItemContainer as IDataItemContainer;
 			if (dataItemContainer == null)
 				return sb.ToString ();
-
+			
 			IDataKeysControl dataKeysContainer = DataKeysContainer as IDataKeysControl;
 			GetDataBoundControlFieldValue (sb, separator, dataItemContainer, dataKeysContainer);
 			
