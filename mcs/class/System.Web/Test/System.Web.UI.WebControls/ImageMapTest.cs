@@ -263,9 +263,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			string originalHtml = "<img disabled=\"disabled\" src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\" id=\"ImageMap\">\r\n\t<area shape=\"circle\" coords=\"0,0,0\" href=\"NavigateURL\" target=\"Target\" title=\"\" alt=\"\" />\r\n</map>";
 #endif
 			string renderedHtml = imageMap.Render ();
-			Console.WriteLine (renderedHtml);
-			Console.WriteLine ("-----------");
-			Console.WriteLine (originalHtml);
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "RenderDisabledTextAssigne");
 		}
 

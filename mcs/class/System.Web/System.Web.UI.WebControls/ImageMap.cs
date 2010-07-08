@@ -60,6 +60,14 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		// Why override?
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public override bool Enabled {
+			get { return base.Enabled; }
+			set { base.Enabled = value; }
+		}
+		
 		[DefaultValueAttribute (HotSpotMode.NotSet)]
 		public virtual HotSpotMode HotSpotMode {
 			get {
@@ -121,14 +129,19 @@ namespace System.Web.UI.WebControls
 			base.LoadViewState (pair.First);
 			((IStateManager)HotSpots).LoadViewState (pair.Second);
 		}
-		
-		public void RaisePostBackEvent (string eventArgument)
+
+		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
 			ValidateEvent (UniqueID, eventArgument);
 			HotSpot spot = HotSpots [int.Parse (eventArgument)];
 			OnClick (new ImageMapEventArgs (spot.PostBackValue));
 		}
 
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
+		}
+		
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);
@@ -141,6 +154,7 @@ namespace System.Web.UI.WebControls
 			base.Render (writer);
 
 			if (spots != null && spots.Count > 0) {
+				bool enabled = Enabled;
 				writer.AddAttribute (HtmlTextWriterAttribute.Id, "ImageMap" + ClientID);
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, "ImageMap" + ClientID);
 				writer.RenderBeginTag (HtmlTextWriterTag.Map);
@@ -164,12 +178,18 @@ namespace System.Web.UI.WebControls
 							string target = spot.Target.Length > 0 ? spot.Target : Target;
 							if (!String.IsNullOrEmpty (target))
 								writer.AddAttribute (HtmlTextWriterAttribute.Target, target);
-#if TARGET_J2EE
-							string navUrl = ResolveClientUrl (spot.NavigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
-#else
-							string navUrl = ResolveClientUrl (spot.NavigateUrl);
+#if NET_4_0
+							if (enabled) {
 #endif
-							writer.AddAttribute (HtmlTextWriterAttribute.Href, navUrl);
+#if TARGET_J2EE
+								string navUrl = ResolveClientUrl (spot.NavigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
+#else
+								string navUrl = ResolveClientUrl (spot.NavigateUrl);
+#endif
+								writer.AddAttribute (HtmlTextWriterAttribute.Href, navUrl);
+#if NET_4_0
+							}
+#endif
 							break;
 						case HotSpotMode.PostBack:
 							writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, n.ToString(), true));
