@@ -1,3 +1,9 @@
+2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceRuntimeChannel.cs, NetNamedPipeBinding.cs,
+	  ClientProxyGenerator.cs NetPeerTcpBinding.cs, DuplexClientBase.cs:
+	  couple of warning cleanups.
+
 2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs : give non-null Via uri.

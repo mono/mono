@@ -57,7 +57,7 @@ namespace System.ServiceModel
 			ClientProxyKey key = o as ClientProxyKey;
 			if (key == null)
 				return false;
-			return contractInterface == key.contractInterface && cd == key.cd && duplex == duplex;
+			return contractInterface == key.contractInterface && cd == key.cd && duplex == key.duplex;
 		}
 	}
 

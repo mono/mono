@@ -75,7 +75,7 @@ namespace System.ServiceModel
 		}
 
 		[MonoTODO]
-		public new long MaxBufferPoolSize {
+		public long MaxBufferPoolSize {
 			get { return transport.MaxBufferPoolSize; }
 			set { transport.MaxBufferPoolSize = value; }
 		}

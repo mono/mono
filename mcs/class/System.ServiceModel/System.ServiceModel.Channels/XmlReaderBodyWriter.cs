@@ -73,7 +73,6 @@ namespace System.ServiceModel.Channels
 				xw.WriteStartElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
 				xw.WriteAttributes (reader, false);
 
-				var nsmgr = new XmlNamespaceManager (reader.NameTable);
 				var inr = reader as IXmlNamespaceResolver;
 				if (inr != null)
 					foreach (var p in inr.GetNamespacesInScope (XmlNamespaceScope.ExcludeXml))

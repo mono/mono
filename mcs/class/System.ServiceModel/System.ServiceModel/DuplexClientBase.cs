@@ -89,7 +89,7 @@ namespace System.ServiceModel
 			ChannelFactory = new DuplexChannelFactory<TChannel> (instance, endpointConfigurationName, remoteAddress);
 		}
 
-		internal virtual void Initialize (InstanceContext instance,
+		internal override void Initialize (InstanceContext instance,
 			Binding binding, EndpointAddress remoteAddress)
 		{
 			ChannelFactory = new DuplexChannelFactory<TChannel> (instance, binding, remoteAddress);

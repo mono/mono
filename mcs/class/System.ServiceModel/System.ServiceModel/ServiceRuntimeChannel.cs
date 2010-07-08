@@ -55,7 +55,7 @@ namespace System.ServiceModel.MonoInternal
 			set { client.AllowOutputBatching = value; }
 		}
 
-		public virtual TimeSpan OperationTimeout {
+		public override TimeSpan OperationTimeout {
 			get { return client.OperationTimeout; }
 			set { client.OperationTimeout = value; }
 		}

@@ -47,7 +47,6 @@ namespace System.ServiceModel.Channels
 			} catch (XmlException ex) {
 				throw new CommunicationException ("Received an invalid SOAP Fault message", ex);
 			}
-			throw new InvalidOperationException ("The input message is not a SOAP envelope.");
 		}
 
 		static MessageFault CreateFault11 (Message message, int maxBufferSize)
