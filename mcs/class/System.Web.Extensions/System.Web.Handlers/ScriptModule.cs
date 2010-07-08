@@ -65,16 +65,22 @@ namespace System.Web.Handlers
 			// instead of having to create a web service to call a method.
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
+			if (context == null)
+				return;
+			
 			HttpRequest request = context.Request;
 			string contentType = request.ContentType;
-			Type pageType = context.CurrentHandler.GetType ();
+			IHttpHandler currentHandler = context.CurrentHandler;
+			if (currentHandler == null)
+				return;
 #if TARGET_J2EE
-			if (!(context.CurrentHandler is Page) && context.CurrentHandler is IServiceProvider) {
-				pageType = (Type) ((IServiceProvider) context.CurrentHandler).GetService (typeof (Type));
+			if (!(currentHandler is Page) && currentHandler is IServiceProvider) {
+				pageType = (Type) ((IServiceProvider) currentHandler).GetService (typeof (Type));
 				if (pageType == null)
 					return;
 			}
 #endif
+			Type pageType = currentHandler.GetType ();
 			if (typeof (Page).IsAssignableFrom (pageType) && !String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
 				IHttpHandler h = RestHandler.GetHandler (context, pageType, request.FilePath);
 				h.ProcessRequest (context);
