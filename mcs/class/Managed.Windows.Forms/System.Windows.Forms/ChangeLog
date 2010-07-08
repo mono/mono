@@ -1,3 +1,8 @@
+2010-07-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ThemeWin32Classic.cs: implement ResetDefaults.
+	Fixes bug #581956.
+
 2010-07-05  Dick Porter  <dporter@codicesoftware.com>
 
 	* MenuAPI.cs: Only handle mnemonic key shortcuts when the context
