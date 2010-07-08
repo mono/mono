@@ -423,7 +423,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			string html = new WebTest (PageInvoker.CreateOnLoad (
 				new PageDelegate (EnablePaging))).Run ();
 			string newHtml = HtmlDiff.GetControlFromPageHtml (html);
+#if NET_4_0
+			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Name</th><th scope=\"col\">Number</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number0</td><td>0</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number1</td><td>1</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number2</td><td>2</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number3</td><td>3</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number4</td><td>4</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$2&#39;)\">2</a></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$3&#39;)\">3</a></td><td><a href=\"javascript:__doPostBack(&#39;ctl01&#39;,&#39;Page$4&#39;)\">4</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Name</th><th scope=\"col\">Number</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number0</td><td>0</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number1</td><td>1</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number2</td><td>2</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number3</td><td>3</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number4</td><td>4</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('ctl01','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('ctl01','Page$3')\">3</a></td><td><a href=\"javascript:__doPostBack('ctl01','Page$4')\">4</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "EnablePaging");
 		}
 

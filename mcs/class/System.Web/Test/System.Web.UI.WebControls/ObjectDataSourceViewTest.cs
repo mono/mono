@@ -505,7 +505,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (select));
 			string html = t.Run ();
+#if NET_4_0
 			string origin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"Grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">ID</th><th scope=\"col\">FName</th><th scope=\"col\">LName</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>1001</td><td>Mahesh</td><td>Chand</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
+			string origin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"Grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">ID</th><th scope=\"col\">FName</th><th scope=\"col\">LName</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>1001</td><td>Mahesh</td><td>Chand</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
 			HtmlDiff.AssertAreEqual (origin, renderedHtml, "ObjectDataSourceViewSelect");
 		}
@@ -549,7 +553,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			// Note : ObjectDataSource will return page counter 5 hard coded
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (selectcount));
 			string html = t.Run ();
+#if NET_4_0
+			string origin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"Grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">ID</th><th scope=\"col\">FName</th><th scope=\"col\">LName</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>1001</td><td>Mahesh</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"3\"><table>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack(&#39;Grid&#39;,&#39;Page$2&#39;)\">2</a></td><td><a href=\"javascript:__doPostBack(&#39;Grid&#39;,&#39;Page$3&#39;)\">3</a></td><td><a href=\"javascript:__doPostBack(&#39;Grid&#39;,&#39;Page$4&#39;)\">4</a></td><td><a href=\"javascript:__doPostBack(&#39;Grid&#39;,&#39;Page$5&#39;)\">5</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#else
 			string origin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"Grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">ID</th><th scope=\"col\">FName</th><th scope=\"col\">LName</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>1001</td><td>Mahesh</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"3\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('Grid','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('Grid','Page$3')\">3</a></td><td><a href=\"javascript:__doPostBack('Grid','Page$4')\">4</a></td><td><a href=\"javascript:__doPostBack('Grid','Page$5')\">5</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+#endif
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
 			HtmlDiff.AssertAreEqual (origin, renderedHtml, "ObjectDataSourceViewSelectCount");
 		}

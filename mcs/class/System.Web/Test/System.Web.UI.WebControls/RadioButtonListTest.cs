@@ -191,7 +191,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Render_Load)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+#if NET_4_0
+			string OriginControlHtml = "<table id=\"ctl01\">\r\n\t<tr>\r\n\t\t<td><input id=\"ctl01_0\" type=\"radio\" name=\"ctl01\" value=\"value1\" /><label for=\"ctl01_0\">text2</label></td>\r\n\t</tr>\r\n</table>";
+#else
 			string OriginControlHtml = "<table id=\"ctl01\" border=\"0\">\r\n\t<tr>\r\n\t\t<td><input id=\"ctl01_0\" type=\"radio\" name=\"ctl01\" value=\"value1\" /><label for=\"ctl01_0\">text2</label></td>\r\n\t</tr>\r\n</table>";
+#endif
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Render");
 		}
 
@@ -244,7 +248,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void RepeatLayoutException ()
 		{
 			TestRadioButtonList r = new TestRadioButtonList ();
-			r.RepeatLayout = (RepeatLayout) 3;
+			Array a = Enum.GetValues (typeof (RepeatLayout));
+			int max = (int) a.GetValue (a.Length - 1) + 1;
+			r.RepeatLayout = (RepeatLayout) max;
 		}
 
 		bool event_called;
