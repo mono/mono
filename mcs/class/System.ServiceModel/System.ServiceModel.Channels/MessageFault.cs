@@ -125,7 +125,7 @@ namespace System.ServiceModel.Channels
 
 			r.ReadEndElement ();
 
-			return CreateFault (fc, fr, null, null, null, node);
+			return new SimpleMessageFault (fc, fr, false, null, null, null, node);
 		}
 
 		static FaultCode ReadFaultCode11 (XmlDictionaryReader r)
@@ -329,11 +329,18 @@ namespace System.ServiceModel.Channels
 		{
 			XmlDictionaryReader reader;
 			bool consumed;
+			bool has_detail;
 
 			public XmlReaderDetailMessageFault (Message message, XmlDictionaryReader reader, FaultCode code, FaultReason reason, string actor, string node)
 				: base (code, reason, actor, node)
 			{
 				this.reader = reader;
+				if (reader.IsEmptyElement)
+					has_detail = false;
+				reader.MoveToContent ();
+				reader.ReadStartElement (); // consume the wrapper
+				reader.MoveToContent ();
+				has_detail = reader.NodeType != XmlNodeType.EndElement;
 			}
 
 			void Consume ()
@@ -341,12 +348,10 @@ namespace System.ServiceModel.Channels
 				if (consumed)
 					throw new InvalidOperationException ("The fault detail content is already consumed");
 				consumed = true;
-				reader.ReadStartElement (); // consume the wrapper
-				reader.MoveToContent ();
 			}
 
 			public override bool HasDetail {
-				get { return true; }
+				get { return has_detail; }
 			}
 
 			protected override XmlDictionaryReader OnGetReaderAtDetailContents ()
