@@ -1,4 +1,19 @@
+2010-07-09  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.c (mini_usage): Change the name of the --sgen flag to be
+	--gc=sgen and also support --gc=boehm.   These flags can also be
+	set on MONO_ENV_OPTIONS to propagate this to children processes. 
+
+	* main.c: Remove the MONO_VM_OPTIONS environment variable that
+	only supported "sgen" and "llvm" config options and instead parse
+	the MONO_ENV_OPTIONS as options that are parsed by the command
+	line parser.   Any command line option that Mono supports can be
+	passed in this environment variable.
+
 2010-07-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* ir-emit.h mini-llvm.c: Fix support for explicit-null-checks +
+	LLVM.
 
 	* mini.c (mini_method_compile): Run abcrem uncoditionally when LLVM is used since
 	it can now eliminate more than just bounds checks.

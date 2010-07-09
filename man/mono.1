@@ -184,17 +184,6 @@ For more information about AOT, see: http://www.mono-project.com/AOT
 Currently the only option supported by this command line argument is
 \fBdisable\fR which disables the attach functionality.
 .TP
-\fB--full-aot\fR
-This is an experimental flag that instructs the Mono runtime to not
-generate any code at runtime and depend exclusively on the code
-generated from using mono --aot=full previously.   This is useful for
-platforms that do not permit dynamic code generation.
-.Sp
-Notice that this feature will abort execution at runtime if a codepath
-in your program, or Mono's class libraries attempts to generate code
-dynamically.  You should test your software upfront and make sure that
-you do not use any dynamic features.
-.TP
 \fB--config filename\fR
 Load the specified configuration file instead of the default one(s).
 The default files are /etc/mono/config and ~/.mono/config or the file
@@ -239,6 +228,24 @@ Configures the virtual machine to be better suited for desktop
 applications.  Currently this sets the GC system to avoid expanding
 the heap as much as possible at the expense of slowing down garbage
 collection a bit.
+.TP
+\fB--full-aot\fR
+This is an experimental flag that instructs the Mono runtime to not
+generate any code at runtime and depend exclusively on the code
+generated from using mono --aot=full previously.   This is useful for
+platforms that do not permit dynamic code generation.
+.Sp
+Notice that this feature will abort execution at runtime if a codepath
+in your program, or Mono's class libraries attempts to generate code
+dynamically.  You should test your software upfront and make sure that
+you do not use any dynamic features.
+.TP
+\fB--gc=boehm\fR, \fB--gc=sgen\fR
+Selects the Garbage Collector engine for Mono to use, Boehm or SGen.
+Currently this merely ensures that you are running either the
+\fImono\fR or \fImono-sgen\fR commands.    This flag can be set in the
+\fBMONO_ENV_OPTIONS\fR environment variable to force all of your child
+processes to use one particular kind of GC with the Mono runtime.
 .TP
 \fB--help\fR, \fB-h\fR
 Displays usage instructions.
@@ -1279,6 +1286,12 @@ Unix only: Enable support for cross-process handles.  Cross-process
 handles are used to expose process handles, thread handles, named
 mutexes, named events and named semaphores across Unix processes.
 .TP
+\fBMONO_ENV_OPTIONS\fR
+This environment variable allows you to pass command line arguments to
+a Mono process through the environment.   This is useful for example
+to force all of your Mono processes to use LLVM or SGEN without having
+to modify any launch scripts.
+.TP
 \fBMONO_EVENTLOG_TYPE\fR
 Sets the type of event log provider to use (for System.Diagnostics.EventLog).
 .Sp
@@ -1544,12 +1557,6 @@ The default is 180 seconds.
 The maximum number of threads in the general threadpool will be
 20 + (MONO_THREADS_PER_CPU * number of CPUs). The default value for this
 variable is 10.
-.TP
-\fBMONO_VM_OPTIONS\fR
-You can use this environment variable to turn on the LLVM engine 
-(MONO_VM_OPTIONS=llvm) or switch to using the SGen garbage collector
-version of Mono (this works by execing mono-sgen in place).
-.Sp
 .TP
 \fBMONO_XMLSERIALIZER_THS\fR
 Controls the threshold for the XmlSerializer to produce a custom
