@@ -1,5 +1,10 @@
 2010-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (emit_load): Revert the last changes, the load/store intrinsics
+	are only callable using invoke.
+
+2010-07-09  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-llvm.c (process_bb): Use emit_load () in one more place.
 
 	* mini-llvm-cpp.cpp (force_pass_linking): Link in more function passes so
