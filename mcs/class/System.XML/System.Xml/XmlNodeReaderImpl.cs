@@ -471,14 +471,17 @@ namespace System.Xml
 		public IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			IDictionary<string, string> table = new Dictionary<string, string> ();
-			XmlNode n = current;
+			XmlNode n = current ?? startNode;
 			do {
 				if (n.NodeType == XmlNodeType.Document)
 					break;
-				for (int i = 0; i < current.Attributes.Count; i++) {
-					XmlAttribute a = current.Attributes [i];
-					if (a.NamespaceURI == XmlNamespaceManager.XmlnsXmlns)
-						table.Add (a.Prefix == XmlNamespaceManager.PrefixXmlns ? a.LocalName : String.Empty, a.Value);
+				for (int i = 0; i < n.Attributes.Count; i++) {
+					XmlAttribute a = n.Attributes [i];
+					if (a.NamespaceURI == XmlNamespaceManager.XmlnsXmlns) {
+						string key = a.Prefix == XmlNamespaceManager.PrefixXmlns ? a.LocalName : String.Empty;
+						if (!table.ContainsKey (key))
+							table.Add (key, a.Value);
+					}
 				}
 				if (scope == XmlNamespaceScope.Local)
 					return table;

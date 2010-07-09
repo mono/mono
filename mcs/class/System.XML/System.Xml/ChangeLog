@@ -1,3 +1,9 @@
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNodeReaderImpl.cs : in GetNamespacesInScope(), avoid NREs under
+	  "no current node" situation. Also, look for attributes on iterated
+	  nodes, not current ones.
+
 2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlInputStream.cs : it had been failing to retrieve correct
