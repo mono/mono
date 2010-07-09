@@ -1,3 +1,8 @@
+2010-07-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* file-io.c: fix GetFileSystemEntries for patterns containing
+	directories.
+
 2010-07-09  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-marksweep.c (major_finish_major_collection): Don't free
@@ -60,11 +65,6 @@
 2010-06-07  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h, debug-mono-symfile.h: Kill glib dependencies.
-
-2010-07-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* file-io.c: don't prepend anything to the names returned
-	from FindFirst/FindNext.
 
 2010-07-02  Michael Hutchinson  <mhutchinson@novell.com>
 

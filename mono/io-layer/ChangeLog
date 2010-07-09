@@ -1,7 +1,3 @@
-2010-07-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* io.c: don't strip out directory paths in the pattern.
-
 2010-06-29  Geoff Norton  <gnorton@novell.com>
 
 	* atomics.h: Implement armv6+ variants of our atomics.
