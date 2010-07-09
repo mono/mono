@@ -1,3 +1,9 @@
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : do not swallow exception during
+	  RequestContext.get_RequestMessage() and thus return SOAP Fault for
+	  MessageSecurityException to the client.
+
 2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : support ErrorHandlers.

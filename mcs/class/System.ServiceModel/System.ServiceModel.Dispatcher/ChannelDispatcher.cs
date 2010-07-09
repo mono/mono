@@ -573,8 +573,8 @@ namespace System.ServiceModel.Dispatcher
 
 			void ProcessRequest (IReplyChannel reply, RequestContext rc)
 			{
-				var req = rc.RequestMessage;
 				try {
+					var req = rc.RequestMessage;
 					var ed = FindEndpointDispatcher (req);
 					new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply).ProcessReply (rc);
 				} catch (Exception ex) {
@@ -591,7 +591,7 @@ namespace System.ServiceModel.Dispatcher
 					if (res == null) {
 						var conv = reply.GetProperty<FaultConverter> () ?? FaultConverter.GetDefaultFaultConverter (rc.RequestMessage.Version);
 						if (!conv.TryCreateFaultMessage (ex, out res))
-							res = Message.CreateMessage (req.Version, new FaultCode ("Receiver"), ex.Message, req.Version.Addressing.FaultNamespace);
+							res = Message.CreateMessage (owner.MessageVersion, new FaultCode ("Receiver"), ex.Message, owner.MessageVersion.Addressing.FaultNamespace);
 					}
 
 					rc.Reply (res);
