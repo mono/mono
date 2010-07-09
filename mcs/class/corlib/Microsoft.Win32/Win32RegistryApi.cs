@@ -60,8 +60,10 @@ namespace Microsoft.Win32
 		// FIXME this is hard coded on Mono, can it be determined dynamically? 
 		readonly int NativeBytesPerCharacter = Marshal.SystemDefaultCharSize;
 
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCreateKey")]
-		static extern int RegCreateKey (IntPtr keyBase, string keyName, out IntPtr keyHandle);
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCreateKeyEx")]
+		static extern int RegCreateKeyEx (IntPtr keyBase, string keyName, int reserved, 
+			IntPtr lpClass, int options, int access, IntPtr securityAttrs,
+			out IntPtr keyHandle, out int disposition);
 	       
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCloseKey")]
 		static extern int RegCloseKey (IntPtr keyHandle);
@@ -426,7 +428,10 @@ namespace Microsoft.Win32
 		{
 			IntPtr handle = GetHandle (rkey);
 			IntPtr subKeyHandle;
-			int result = RegCreateKey (handle , keyName, out subKeyHandle);
+			int disposition;
+			int result = RegCreateKeyEx (handle , keyName, 0, IntPtr.Zero,
+				0,
+				OpenRegKeyRead | OpenRegKeyWrite, IntPtr.Zero, out subKeyHandle, out disposition);
 
 			if (result == Win32ResultCode.MarkedForDeletion)
 				throw RegistryKey.CreateMarkedForDeletionException ();

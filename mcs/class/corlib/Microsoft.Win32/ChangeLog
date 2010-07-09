@@ -1,3 +1,9 @@
+2010-07-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Win32RegistryApi.cs: Use RegCreateKeyEx instead of RegCreateKey, as
+	we need it to further support both the missing bits and the 4.0
+	features.
+
 2010-02-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* UnixRegistryApi.cs: When retrieving the registry keys from file in a
