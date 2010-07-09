@@ -1,5 +1,10 @@
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PostReceiveRequestHandler.cs : don't replace correctly passed-by-
+	  reference Message with wrong, consumed Message.
+
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs : do not swallow exception during
 	  RequestContext.get_RequestMessage() and thus return SOAP Fault for
 	  MessageSecurityException to the client.

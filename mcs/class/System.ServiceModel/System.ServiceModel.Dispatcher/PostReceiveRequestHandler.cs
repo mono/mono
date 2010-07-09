@@ -10,14 +10,12 @@ namespace System.ServiceModel.Dispatcher
 	{
 		protected override bool ProcessRequest (MessageProcessingContext mrc)
 		{
-			Message incomingMessage = mrc.IncomingMessage;
 			EnsureInstanceContextOpen (mrc.InstanceContext);
-			AfterReceiveRequest (ref incomingMessage, mrc);
-			mrc.IncomingMessage = incomingMessage;
+			AfterReceiveRequest (mrc);
 			return false;
 		}
 
-		void AfterReceiveRequest (ref Message message, MessageProcessingContext mrc)
+		void AfterReceiveRequest (MessageProcessingContext mrc)
 		{
 			mrc.EventsHandler.AfterReceiveRequest ();
 		}
