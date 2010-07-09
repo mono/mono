@@ -40,14 +40,14 @@ namespace System.ServiceModel.Channels
 		BodyWriter body;
 		bool closed, is_fault;
 		int max_buffer_size;
-		Dictionary<XmlQualifiedName,string> attributes;
+		AttributeCollection attributes;
 
-		internal DefaultMessageBuffer (MessageHeaders headers, MessageProperties properties, Dictionary<XmlQualifiedName,string> attributes)
+		internal DefaultMessageBuffer (MessageHeaders headers, MessageProperties properties, AttributeCollection attributes)
 			: this (0, headers, properties, null, false, attributes)
 		{
 		}
 
-		internal DefaultMessageBuffer (int maxBufferSize, MessageHeaders headers, MessageProperties properties, BodyWriter body, bool isFault, Dictionary<XmlQualifiedName,string> attributes)
+		internal DefaultMessageBuffer (int maxBufferSize, MessageHeaders headers, MessageProperties properties, BodyWriter body, bool isFault, AttributeCollection attributes)
 		{
 			this.max_buffer_size = maxBufferSize;
 			this.headers = headers;
@@ -96,9 +96,9 @@ namespace System.ServiceModel.Channels
 		MessageVersion version;
 		int max_header_size;
 		MessageProperties properties;
-		Dictionary<XmlQualifiedName,string> attributes;
+		AttributeCollection attributes;
 
-		public XPathMessageBuffer (IXPathNavigable source, MessageVersion version, int maxSizeOfHeaders, MessageProperties properties, Dictionary<XmlQualifiedName,string> attributes)
+		public XPathMessageBuffer (IXPathNavigable source, MessageVersion version, int maxSizeOfHeaders, MessageProperties properties, AttributeCollection attributes)
 		{
 			this.source = source;
 			this.version = version;

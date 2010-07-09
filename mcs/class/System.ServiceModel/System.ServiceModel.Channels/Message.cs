@@ -46,8 +46,6 @@ namespace System.ServiceModel.Channels
 
 		public abstract MessageHeaders Headers { get; }
 
-		Dictionary<XmlQualifiedName,string> attributes = new Dictionary<XmlQualifiedName,string> ();
-
 		public virtual bool IsEmpty {
 			get { return false; }
 		}
@@ -183,9 +181,6 @@ namespace System.ServiceModel.Channels
 				throw new InvalidOperationException (String.Format ("The message is already at {0} state", State));
 
 			OnWriteStartBody (writer);
-
-			foreach (var a in attributes)
-				writer.WriteAttributeString (a.Key.Name, a.Key.Namespace, a.Value);
 		}
 
 		public void WriteStartBody (XmlWriter writer)
@@ -224,15 +219,13 @@ namespace System.ServiceModel.Channels
 				WriteBodyContents (w);
 			var headers = new MessageHeaders (Headers);
 			var props = new MessageProperties (Properties);
-			return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (sw.ToString (), maxBufferSize, null), false, attributes);
+			return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (sw.ToString (), maxBufferSize, null), false, new AttributeCollection ());
 		}
 
 		protected virtual string OnGetBodyAttribute (
 			string localName, string ns)
 		{
-			var q = new XmlQualifiedName (localName, ns);
-			string v;
-			return attributes.TryGetValue (q, out v) ? v : null;
+			return null;
 		}
 
 		protected virtual XmlDictionaryReader OnGetReaderAtBodyContents ()
@@ -385,7 +378,7 @@ namespace System.ServiceModel.Channels
 
 		// Core implementations of CreateMessage.
 
-		static readonly Dictionary<XmlQualifiedName,string> empty_attributes = new Dictionary<XmlQualifiedName,string> ();
+		static readonly AttributeCollection empty_attributes = new AttributeCollection ();
 
 		// 9)
 		public static Message CreateMessage (MessageVersion version,

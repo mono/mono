@@ -1,5 +1,11 @@
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Message.cs, MessageBufferImpl.cs, MessageImpl.cs: preserve and
+	  output attributes prefixes, to copy Body/@wsu:Id to successfully
+	  verify the xmldsig.
+
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageFault.cs : MessageFault from Message could have empty
 	  detail. Have it return HasDetail as expected.
 

@@ -27,12 +27,30 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.IO;
 
 namespace System.ServiceModel.Channels
 {
+	internal class AttributeInfo
+	{
+		public string Prefix, Name, Namespace, Value;
+	}
+	
+	internal class AttributeCollection : List<AttributeInfo>
+	{
+		public AttributeCollection ()
+		{
+		}
+
+		public AttributeCollection (AttributeCollection copy)
+			: base (copy)
+		{
+		}
+	}
+
 	internal class XmlReaderMessage : Message
 	{
 		MessageVersion version;
@@ -41,7 +59,7 @@ namespace System.ServiceModel.Channels
 		MessageProperties properties = new MessageProperties ();
 		bool is_empty, is_fault, body_started, body_consumed;
 		int max_headers;
-		Dictionary<XmlQualifiedName,string> attributes;
+		AttributeCollection attributes;
 
 		public XmlReaderMessage (MessageVersion version, XmlDictionaryReader reader, int maxSizeOfHeaders)
 		{
@@ -95,8 +113,8 @@ namespace System.ServiceModel.Channels
 			string localName, string ns)
 		{
 			ReadBodyStart ();
-			string v;
-			return attributes.TryGetValue (new XmlQualifiedName (localName, ns), out v) ? v : null;
+			var att = attributes.FirstOrDefault (a => a.Name == localName && a.Namespace == ns);
+			return att != null ? att.Value : null;
 		}
 
 		protected override XmlDictionaryReader OnGetReaderAtBodyContents ()
@@ -179,11 +197,11 @@ namespace System.ServiceModel.Channels
 			// SOAP Body
 			body_started = true;
 			is_empty = reader.IsEmptyElement;
-			attributes = new Dictionary<XmlQualifiedName,string> ();
+			attributes = new AttributeCollection ();
 			reader.MoveToContent ();
 			if (reader.MoveToFirstAttribute ()) {
 				do {
-					attributes [new XmlQualifiedName (reader.LocalName, reader.NamespaceURI)] = reader.Value;
+					attributes.Add (new AttributeInfo () { Prefix = reader.Prefix, Name = reader.LocalName, Namespace = reader.NamespaceURI, Value = reader.Value});
 				} while (reader.MoveToNextAttribute ());
 				reader.MoveToElement ();
 			}
@@ -207,7 +225,7 @@ namespace System.ServiceModel.Channels
 
 			base.OnWriteStartBody (writer);
 			foreach (var p in attributes)
-				writer.WriteAttributeString (p.Key.Name, p.Key.Namespace, p.Value);
+				writer.WriteAttributeString (p.Prefix, p.Name, p.Namespace, p.Value);
 		}
 	}
 
@@ -215,9 +233,9 @@ namespace System.ServiceModel.Channels
 	{
 		MessageHeaders headers;
 		MessageProperties properties = new MessageProperties ();
-		Dictionary<XmlQualifiedName,string> attributes;
+		AttributeCollection attributes;
 
-		public MessageImplBase (MessageVersion version, string action, Dictionary<XmlQualifiedName,string> attributes)
+		public MessageImplBase (MessageVersion version, string action, AttributeCollection attributes)
 		{
 			headers = new MessageHeaders (version);
 			if (action != null)
@@ -225,7 +243,7 @@ namespace System.ServiceModel.Channels
 			this.attributes = attributes;
 		}
 
-		internal Dictionary<XmlQualifiedName,string> Attributes {
+		internal AttributeCollection Attributes {
 			get { return attributes; }
 		}
 
@@ -244,8 +262,8 @@ namespace System.ServiceModel.Channels
 		protected override string OnGetBodyAttribute (
 			string localName, string ns)
 		{
-			string v;
-			return attributes.TryGetValue (new XmlQualifiedName (localName, ns), out v) ? v : null;
+			var att = attributes.FirstOrDefault (a => a.Name == localName && a.Namespace == ns);
+			return att != null ? att.Value : null;
 		}
 
 		protected override void OnWriteStartBody (
@@ -254,13 +272,13 @@ namespace System.ServiceModel.Channels
 			var dic = Constants.SoapDictionary;
 			writer.WriteStartElement ("s", dic.Add ("Body"), dic.Add (Version.Envelope.Namespace));
 			foreach (var p in Attributes)
-				writer.WriteAttributeString (p.Key.Name, p.Key.Namespace, p.Value);
+				writer.WriteAttributeString (p.Prefix, p.Name, p.Namespace, p.Value);
 		}
 	}
 
 	internal class EmptyMessage : MessageImplBase
 	{
-		static readonly Dictionary<XmlQualifiedName,string> empty_attributes = new Dictionary<XmlQualifiedName,string> ();
+		static readonly AttributeCollection empty_attributes = new AttributeCollection ();
 
 		public EmptyMessage (MessageVersion version, string action)
 			: base (version, action, empty_attributes)
@@ -289,7 +307,7 @@ namespace System.ServiceModel.Channels
 		bool is_fault;
 
 		public SimpleMessage (MessageVersion version,
-			string action, BodyWriter body, bool isFault, Dictionary<XmlQualifiedName,string> attributes)
+			string action, BodyWriter body, bool isFault, AttributeCollection attributes)
 			: base (version, action, attributes)
 		{
 			this.body = body;
@@ -315,7 +333,7 @@ namespace System.ServiceModel.Channels
 		{
 			var headers = new MessageHeaders (Headers);
 			var props = new MessageProperties (Properties);
-			var atts = new Dictionary<XmlQualifiedName,string> (Attributes);
+			var atts = new AttributeCollection (Attributes);
 			return new DefaultMessageBuffer (maxBufferSize, headers, props, body.CreateBufferedCopy (maxBufferSize), IsFault, atts);
 		}
 	}
