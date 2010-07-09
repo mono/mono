@@ -1,3 +1,9 @@
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SignedXml.cs : avoid using LoadXml() to load xml element as in
+	  literal string. Use ImportNode() instead.
+	  Copy namespaces for a referenced node found in envelope document too.
+
 2009-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXml.cs: Fix HMACOutputLength to match XMLDSIG erratum (ref: 

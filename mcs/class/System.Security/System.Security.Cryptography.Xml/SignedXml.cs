@@ -236,7 +236,7 @@ namespace System.Security.Cryptography.Xml {
 					XmlElement xel = GetIdElement (signatureElement.OwnerDocument, r.Uri.Substring (1));
 					if (xel == null)
 						throw new CryptographicException ("Manifest targeted by Reference was not found: " + r.Uri.Substring (1));
-					doc.LoadXml (xel.OuterXml);
+					doc.AppendChild (doc.ImportNode (xel, true));
 					FixupNamespaceNodes (xel, doc.DocumentElement, false);
 				}
 			}
@@ -318,7 +318,7 @@ namespace System.Security.Cryptography.Xml {
 						if (obj.Id == objectName) {
 							found = obj.GetXml ();
 							found.SetAttribute ("xmlns", SignedXml.XmlDsigNamespaceUrl);
-							doc.LoadXml (found.OuterXml);
+							doc.AppendChild (doc.ImportNode (found, true));
 							// FIXME: there should be theoretical justification of copying namespace declaration nodes this way.
 							foreach (XmlNode n in found.ChildNodes)
 								// Do not copy default namespace as it must be xmldsig namespace for "Object" element.
@@ -329,8 +329,10 @@ namespace System.Security.Cryptography.Xml {
 					}
 					if (found == null && envdoc != null) {
 						found = GetIdElement (envdoc, objectName);
-						if (found != null)
-							doc.LoadXml (found.OuterXml);
+						if (found != null) {
+							doc.AppendChild (doc.ImportNode (found, true));
+							FixupNamespaceNodes (found, doc.DocumentElement, false);
+						}
 					}
 					if (found == null)
 						throw new CryptographicException (String.Format ("Malformed reference object: {0}", objectName));
