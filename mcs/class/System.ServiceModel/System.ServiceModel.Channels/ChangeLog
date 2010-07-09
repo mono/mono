@@ -1,5 +1,9 @@
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecurityRequestContext.cs : remove extraneous buffering.
+
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecureMessageDecryptor.cs : avoid duplicate copy of headers into
 	  the decrypted message.
 

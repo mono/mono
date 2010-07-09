@@ -59,18 +59,10 @@ namespace System.ServiceModel.Channels
 			security = channel.Source.SecuritySupport;
 		}
 
-		MessageBuffer SourceBuffer {
-			get {
-				if (source_request == null)
-					source_request = source.RequestMessage.CreateBufferedCopy (0x10000);
-				return source_request;
-			}
-		}
-
 		public override Message RequestMessage {
 			get {
 				if (msg == null) {
-					msg = SourceBuffer.CreateMessage (); // default
+					msg = source.RequestMessage;
 					switch (msg.Headers.Action) {
 					case Constants.WstIssueAction:
 					case Constants.WstIssueReplyAction:
