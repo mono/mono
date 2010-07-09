@@ -1,5 +1,10 @@
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageImpl.cs : When XmlReaderMessage was writing its contents,
+	  it was dropping body attributes, including wsu:Id for WS-Security.
+
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecureMessageGenerator.cs : MessageBuffer was missing copy of
 	  Body wsu:Id attribute.
 	* HttpRequestChannel.cs : remove comment for resolved issue.

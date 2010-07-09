@@ -199,6 +199,16 @@ namespace System.ServiceModel.Channels
 					is_fault = true;
 			}
 		}
+
+		protected override void OnWriteStartBody (
+			XmlDictionaryWriter writer)
+		{
+			ReadBodyStart (); // consume up to attributes
+
+			base.OnWriteStartBody (writer);
+			foreach (var p in attributes)
+				writer.WriteAttributeString (p.Key.Name, p.Key.Namespace, p.Value);
+		}
 	}
 
 	internal abstract class MessageImplBase : Message
