@@ -1,3 +1,8 @@
+2010-07-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_deep_nested_type_visibility.cs: Regression test
+	for #619300.
+
 2010-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* invalid_generic_constraints_with_loop.il:
