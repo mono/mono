@@ -746,12 +746,14 @@ namespace System
 			if (dateTime.Kind == DateTimeKind.Utc && this != TimeZoneInfo.Utc)
 				date = date + BaseUtcOffset;
 
-			foreach (AdjustmentRule rule in adjustmentRules) {
-				if (rule.DateStart > date.Date)
-					return null;
-				if (rule.DateEnd < date.Date)
-					continue;
-				return rule;
+			if (adjustmentRules != null) {
+				foreach (AdjustmentRule rule in adjustmentRules) {
+					if (rule.DateStart > date.Date)
+						return null;
+					if (rule.DateEnd < date.Date)
+						continue;
+					return rule;
+				}
 			}
 			return null;
 		}

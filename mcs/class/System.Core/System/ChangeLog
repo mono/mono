@@ -1,3 +1,8 @@
+2010-07-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TimeZoneInfo.cs: avoid nullref when there are no adjustment rules.
+	Fixes bug #619811.
+
 2010-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Actions.cs: Add missing v4 type forwarding.
