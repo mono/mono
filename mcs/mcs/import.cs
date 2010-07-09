@@ -306,22 +306,32 @@ namespace Mono.CSharp
 					is_valid_property = false;
 
 				var set_param_count = set.Parameters.Count - 1;
-				if (set_param_count < 0)
-					is_valid_property = false;
 
-				var data = new IParameterData [set_param_count];
-				var types = new TypeSpec[set_param_count];
-				for (int i = 0; i < set_param_count; ++i ) {
-					data[i] = set.Parameters.FixedParameters[i];
-					types[i] = set.Parameters.Types[i];
+				if (set_param_count < 0) {
+					set_param_count = 0;
+					is_valid_property = false;
 				}
 
-				var set_param = new ParametersImported (data, types);
 				var set_type = set.Parameters.Types[set_param_count];
 
 				if (mod == 0) {
+					AParametersCollection set_based_param;
+
+					if (set_param_count == 0) {
+						set_based_param = ParametersCompiled.EmptyReadOnlyParameters;
+					} else {
+						//
+						// Create indexer parameters based on setter method parameters (the last parameter has to be removed)
+						//
+						var data = new IParameterData[set_param_count];
+						var types = new TypeSpec[set_param_count];
+						Array.Copy (set.Parameters.FixedParameters, data, set_param_count);
+						Array.Copy (set.Parameters.Types, types, set_param_count);
+						set_based_param = new ParametersImported (data, types, set.Parameters.HasParams);
+					}
+
 					mod = set.Modifiers;
-					param = set_param;
+					param = set_based_param;
 					type = set_type;
 				} else {
 					if (set_param_count != get.Parameters.Count)

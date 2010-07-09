@@ -64,7 +64,7 @@ namespace Mono.CSharp
 						Array.Copy (parameters.Types, types, data.Length - 1);
 						types[data.Length - 1] = member_type;
 
-						parameters = new ParametersImported (data, types);
+						parameters = new ParametersImported (data, types, false);
 					}
 				} else {
 					if (prefix[0] == 's')
@@ -1566,15 +1566,24 @@ namespace Mono.CSharp
 			this.parameters = parameters;
 		}
 
+		#region Properties
+		public AParametersCollection Parameters {
+			get {
+				return parameters;
+			}
+		}
+		#endregion
+
 		public override string GetSignatureForError ()
 		{
 			return DeclaringType.GetSignatureForError () + ".this" + parameters.GetSignatureForError ("[", "]", parameters.Count);
 		}
 
-		public AParametersCollection Parameters {
-			get {
-				return parameters;
-			}
+		public override MemberSpec InflateMember (TypeParameterInflator inflator)
+		{
+			var spec = (IndexerSpec) base.InflateMember (inflator);
+			spec.parameters = parameters.Inflate (inflator);
+			return spec;
 		}
 	}
 }

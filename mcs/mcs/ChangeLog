@@ -1,3 +1,9 @@
+2010-07-09  Marek Safar  <marek.safar@gmail.com>
+
+	* property.cs, parameters.cs: Inflated IndexerSpec parameters.
+	
+	* import.cs: Don't build unused parameters.
+
 2010-07-08  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs (Invocation): Don't recreate simple-name expression.

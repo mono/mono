@@ -916,10 +916,11 @@ namespace Mono.CSharp {
 			this.has_params = hasParams;
 		}
 
-		public ParametersImported (IParameterData [] param, TypeSpec[] types)
+		public ParametersImported (IParameterData[] param, TypeSpec[] types, bool hasParams)
 		{
 			this.parameters = param;
 			this.types = types;
+			this.has_params = hasParams;
 		}
 
 		public static AParametersCollection Create (TypeSpec parent, MethodBase method)
@@ -991,7 +992,7 @@ namespace Mono.CSharp {
 
 			return method != null ?
 				new ParametersImported (par, types, varargs != 0, is_params) :
-				new ParametersImported (par, types);
+				new ParametersImported (par, types, is_params);
 		}
 
 		static bool HasExtensionAttribute (MethodBase mb)
