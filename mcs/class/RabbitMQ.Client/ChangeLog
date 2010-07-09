@@ -1,6 +1,7 @@
 2010-07-09  Andrew Jorgensen  <ajorgensen@novell.com>
 
 	* Makefile: Fix make dist again (IntAllocator.cs)
+	  ... and fix an embarassing typo
 
 2010-06-27  Michael Barker  <mike@middlesoft.co.uk>
 

@@ -7,7 +7,7 @@ DISTFILES = \
 	src/util/BlockingCell.cs \
 	src/util/DebugUtil.cs \
 	src/util/Either.cs \
-	src/util/IntAllocator.cs
+	src/util/IntAllocator.cs \
 	src/util/NetworkBinaryReader.cs \
 	src/util/NetworkBinaryWriter.cs \
 	src/util/Semaphore.cs \
