@@ -1,3 +1,14 @@
+2010-07-09  Ankit Jain  <jankit@novell.com>
+
+	Correctly handle precedence of ToolsVersion value coming
+	from various points.
+	* BuildEngine.cs (BuildProjectFile): Restore project.ToolsVersion .
+	* Engine.cs: Likewise. Also validate DefaultToolsVersion .
+	* Project.cs: Handle invalid tools version specified in the project
+	file, and fall back to engine's version.
+	* MSBuild.cs: Fix the precedence order, and validate.
+	* UnknownToolsVersionException.cs: New.
+
 2010-06-23  Ankit Jain  <jankit@novell.com>
 
 	* TargetBatchingImpl.cs (BuildTargetNeeded): Fix var names to

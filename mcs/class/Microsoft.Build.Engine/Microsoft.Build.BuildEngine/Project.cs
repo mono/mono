@@ -798,12 +798,13 @@ namespace Microsoft.Build.BuildEngine {
 			targets = new TargetCollection (this);
 			last_item_group_containing = new Dictionary <string, BuildItemGroup> ();
 			
+			string effective_tools_version = GetToolsVersionToUse ();
 			taskDatabase = new TaskDatabase ();
-			taskDatabase.CopyTasks (ParentEngine.GetDefaultTasks (GetToolsVersionToUse ()));
+			taskDatabase.CopyTasks (ParentEngine.GetDefaultTasks (effective_tools_version));
 
 			initialTargets = new List<string> ();
 			defaultTargets = new string [0];
-			PrepareForEvaluate ();
+			PrepareForEvaluate (effective_tools_version);
 			ProcessElements (xmlDocument.DocumentElement, null);
 			
 			isDirty = false;
@@ -871,7 +872,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		void PrepareForEvaluate ()
+		void PrepareForEvaluate (string effective_tools_version)
 		{
 			evaluatedItems = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
@@ -880,7 +881,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (building && current_settings == BuildSettings.None)
 				RemoveBuiltTargets ();
 
-			InitializeProperties ();
+			InitializeProperties (effective_tools_version);
 		}
 
 		void Evaluate ()
@@ -899,7 +900,7 @@ namespace Microsoft.Build.BuildEngine {
 				ParentEngine.BuiltTargetsOutputByName.Remove (key);
 		}
 
-		void InitializeProperties ()
+		void InitializeProperties (string effective_tools_version)
 		{
 			BuildProperty bp;
 
@@ -932,13 +933,12 @@ namespace Microsoft.Build.BuildEngine {
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectName",
 						Path.GetFileNameWithoutExtension (fullFileName),
 						PropertyType.Reserved));
-			string toolsVersionToUse = GetToolsVersionToUse ();
-			string toolsPath = parentEngine.Toolsets [toolsVersionToUse].ToolsPath;
+			string toolsPath = parentEngine.Toolsets [effective_tools_version].ToolsPath;
 			if (toolsPath == null)
-				throw new Exception ("Unknown toolsVersion: " + toolsVersionToUse);
+				throw new Exception (String.Format ("Invalid tools version '{0}', no tools path set for this.", effective_tools_version));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", toolsPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", toolsPath, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsVersion", toolsVersionToUse, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsVersion", effective_tools_version, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath32", ExtensionsPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
@@ -954,16 +954,25 @@ namespace Microsoft.Build.BuildEngine {
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDirectory", projectDir, PropertyType.Reserved));
 		}
 
+		// precedence:
+		// ToolsVersion property
+		// ToolsVersion attribute on the project
+		// parentEngine's DefaultToolsVersion
 		string GetToolsVersionToUse ()
 		{
-			if (String.IsNullOrEmpty (ToolsVersion)) {
-				if (HasToolsVersionAttribute)
-					return DefaultToolsVersion;
-				else
-					return parentEngine.DefaultToolsVersion;
-			} else {
+			if (!String.IsNullOrEmpty (ToolsVersion))
 				return ToolsVersion;
+
+			if (!HasToolsVersionAttribute)
+				return parentEngine.DefaultToolsVersion;
+
+			if (parentEngine.Toolsets [DefaultToolsVersion] == null) {
+				LogWarning (FullFileName, "Project has unknown ToolsVersion '{0}'. Using the default tools version '{1}' instead.",
+						DefaultToolsVersion, parentEngine.DefaultToolsVersion);
+				return parentEngine.DefaultToolsVersion;
 			}
+
+			return DefaultToolsVersion;
 		}
 		
 		void AddProjectExtensions (XmlElement xmlElement)

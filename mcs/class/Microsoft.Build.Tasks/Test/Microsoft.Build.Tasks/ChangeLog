@@ -1,3 +1,8 @@
+2010-07-09  Ankit Jain  <jankit@novell.com>
+
+	* MessageTest (TestExecution): Additional messages with 'low'
+	importance get emitted, so don't expect sequential messages.
+
 2010-04-06  Ankit Jain  <jankit@novell.com>
 
 	* Consts.cs: Remove.

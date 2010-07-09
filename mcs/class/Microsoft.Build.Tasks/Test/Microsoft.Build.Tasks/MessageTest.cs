@@ -72,14 +72,14 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<Target Name='1'>
-						<Message Text='Text' Importance='Low'/>
-						<Message Text='Text' Importance='Normal'/>
-						<Message Text='Text' Importance='High'/>
-						<Message Text='Text' Importance='low'/>
-						<Message Text='Text' Importance='normal'/>
-						<Message Text='Text' Importance='high'/>
-						<Message Text='Text' />
-						<Message Text='Text' Importance='weird_importance'/>
+						<Message Text='Text1' Importance='Low'/>
+						<Message Text='Text2' Importance='Normal'/>
+						<Message Text='Text3' Importance='High'/>
+						<Message Text='Text4' Importance='low'/>
+						<Message Text='Text5' Importance='normal'/>
+						<Message Text='Text6' Importance='high'/>
+						<Message Text='Text7' />
+						<Message Text='Text8' Importance='weird_importance'/>
 					</Target>
 				</Project>
 			";
@@ -90,16 +90,20 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
-			project.Build ("1");
+			if (project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build should have failed");
+			}
 			
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Low), "A1");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Normal), "A2");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.High), "A3");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Low), "A4");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Normal), "A5");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.High), "A6");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Normal), "A7");
-			Assert.AreEqual (1, testLogger.CheckHead ("Text", MessageImportance.Normal), "A8");
+			testLogger.DumpMessages ();
+			Assert.AreEqual (0, testLogger.CheckAny ("Text1", MessageImportance.Low), "A1");
+			Assert.AreEqual (0, testLogger.CheckAny ("Text2", MessageImportance.Normal), "A2");
+			Assert.AreEqual (0, testLogger.CheckAny ("Text3", MessageImportance.High), "A3");
+			Assert.AreEqual (0, testLogger.CheckAny ("Text4", MessageImportance.Low), "A4");
+			Assert.AreEqual (0, testLogger.CheckAny ("Text5", MessageImportance.Normal), "A5");
+			Assert.AreEqual (0, testLogger.CheckAny ("Text6", MessageImportance.High), "A6");
+			Assert.AreEqual (0, testLogger.CheckAny ("Text7", MessageImportance.Normal), "A7");
+			Assert.AreEqual (1, testLogger.CheckAny ("Text8", MessageImportance.Normal), "A8");
 			
 		}
 	}

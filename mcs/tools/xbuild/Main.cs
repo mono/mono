@@ -34,6 +34,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -78,11 +79,10 @@ namespace Mono.XBuild.CommandLine {
 				if (parameters.DisplayVersion)
 					ErrorUtilities.ShowVersion (false);
 				
-				//FIXME: cmd line arg to set toolsversion
 				engine  = Engine.GlobalEngine;
 				if (!String.IsNullOrEmpty (parameters.ToolsVersion)) {
 					if (engine.Toolsets [parameters.ToolsVersion] == null)
-						ErrorUtilities.ReportError (0, String.Format ("Unknown tools version : {0}", parameters.ToolsVersion));
+						ErrorUtilities.ReportError (0, new UnknownToolsVersionException (parameters.ToolsVersion).Message);
 
 					engine.DefaultToolsVersion = parameters.ToolsVersion;
 				}
@@ -125,14 +125,7 @@ namespace Mono.XBuild.CommandLine {
 					return;
 				}
 
-				project.Load (projectFile);
-				
-				string oldCurrentDirectory = Environment.CurrentDirectory;
-				string dir = Path.GetDirectoryName (projectFile);
-				if (!String.IsNullOrEmpty (dir))
-					Directory.SetCurrentDirectory (dir);
-				result = engine.BuildProject (project, parameters.Targets, null);
-				Directory.SetCurrentDirectory (oldCurrentDirectory);
+				result = engine.BuildProjectFile (projectFile, parameters.Targets, null, null, BuildSettings.None, parameters.ToolsVersion);
 			}
 			
 			catch (InvalidProjectFileException ipfe) {
@@ -159,7 +152,6 @@ namespace Mono.XBuild.CommandLine {
 			}
 
 		}
-
 	}
 
 	// code from mcs/report.cs
