@@ -4,12 +4,13 @@ SUBDIRS = src/apigen docs/specs src/client
 include ../../build/rules.make
 
 DISTFILES = \
+	src/util/BlockingCell.cs \
 	src/util/DebugUtil.cs \
+	src/util/Either.cs \
+	src/util/IntAllocator.cs
 	src/util/NetworkBinaryReader.cs \
 	src/util/NetworkBinaryWriter.cs \
-	src/util/BlockingCell.cs \
 	src/util/Semaphore.cs \
-	src/util/Either.cs \
 	src/util/SharedQueue.cs \
 	src/util/XmlUtil.cs \
 	src/apigen/AmqpClass.cs \
