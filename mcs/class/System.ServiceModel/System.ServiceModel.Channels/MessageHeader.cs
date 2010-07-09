@@ -210,7 +210,14 @@ namespace System.ServiceModel.Channels
 			string soap_ns;
 			bool is_ref, must_understand, relay;
 			string actor;
+#if NET_2_1
 			string body;
+#else
+			// This is required to completely clone body xml that 
+			// does not introduce additional xmlns declarations that
+			// blocks canonicalized copy of the input XML.
+			XmlDocument body;
+#endif
 			string local_name;
 			string namespace_uri;
 
@@ -230,12 +237,23 @@ namespace System.ServiceModel.Channels
 
 				local_name = reader.LocalName;
 				namespace_uri = reader.NamespaceURI;
+#if NET_2_1
 				body = reader.ReadOuterXml ();
+#else
+				body = new XmlDocument ();
+				var w = body.CreateNavigator ().AppendChild ();
+				w.WriteNode (reader, false);
+				w.Close ();
+#endif
 			}
 
 			public XmlReader CreateReader ()
 			{
+#if NET_2_1
 				var reader = XmlReader.Create (new StringReader (body));
+#else
+				var reader = new XmlNodeReader (body);
+#endif
 				reader.MoveToContent ();
 				return reader;
 			}

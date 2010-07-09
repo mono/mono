@@ -1,5 +1,11 @@
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeader.cs : to clone raw xml completely, avoid using 
+	  ReadOuterXml() and text reader but use XmlNodeReader instaed.
+	* Message.cs : avoid extraneous xmlns:u attribute.
+
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeader.cs, MessageHeaderInfo.cs: add internal Prefix
 	  property and copy them from source to destination.
 

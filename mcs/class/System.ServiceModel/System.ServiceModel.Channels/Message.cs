@@ -284,7 +284,7 @@ namespace System.ServiceModel.Channels
 			if (Headers.Action != null && Version.Addressing.Namespace != MessageVersion.None.Addressing.Namespace)
 				writer.WriteXmlnsAttribute ("a", dic.Add (Version.Addressing.Namespace));
 			foreach (MessageHeaderInfo h in Headers)
-				if (h.Id != null) {
+				if (h.Id != null && writer.LookupPrefix (Constants.WsuNamespace) != "u") {
 					writer.WriteXmlnsAttribute ("u", dic.Add (Constants.WsuNamespace));
 					break;
 				}
