@@ -1,3 +1,8 @@
+2010-07-09  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Engine.dll.sources: Add
+	UnknownToolsVersionException.cs
+
 2010-04-06  Ankit Jain  <jankit@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Remove TestTasks.dll.config .

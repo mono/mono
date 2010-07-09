@@ -69,9 +69,14 @@ namespace Microsoft.Build.BuildEngine {
 				       IDictionary targetOutputs, string toolsVersion)
 		{
 			if (String.IsNullOrEmpty (projectFileName)) {
+				string oldProjectToolsVersion = project.ToolsVersion;
 				project.ToolsVersion = toolsVersion;
-				return engine.BuildProject (project, targetNames, targetOutputs,
+				try {
+					return engine.BuildProject (project, targetNames, targetOutputs,
 						BuildSettings.DoNotResetPreviouslyBuiltTargets);
+				} finally {
+					project.ToolsVersion = oldProjectToolsVersion;
+				}
 			} else {
 				BuildPropertyGroup bpg = new BuildPropertyGroup ();
 				if (globalProperties != null)

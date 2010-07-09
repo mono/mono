@@ -1,3 +1,10 @@
+2010-07-09  Ankit Jain  <jankit@novell.com>
+
+	* Main.cs: Use tools version specified on the command line, if
+	any.
+	* xbuild.exe.sources: Include UnknownToolsVersionException.cs from
+	MS.B.Engine
+
 2010-06-23  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.CSharp.targets (CoreCompile): Fix inputs.

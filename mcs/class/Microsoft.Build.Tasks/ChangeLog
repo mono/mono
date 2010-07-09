@@ -1,3 +1,8 @@
+2010-07-09  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks.dll.sources: Use
+	UnknownToolsVersionException.cs from Engine.
+
 2010-04-03  Ankit Jain  <jankit@novell.com>
 
 	* Makefile: Import tools/xbuild/xbuild_targets.make, which copies

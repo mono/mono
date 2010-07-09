@@ -60,6 +60,7 @@ Microsoft.Build.BuildEngine/Token.cs
 Microsoft.Build.BuildEngine/Toolset.cs
 Microsoft.Build.BuildEngine/ToolsetCollection.cs
 Microsoft.Build.BuildEngine/ToolsetDefinitionLocations.cs
+Microsoft.Build.BuildEngine/UnknownToolsVersionException.cs
 Microsoft.Build.BuildEngine/UsingTask.cs
 Microsoft.Build.BuildEngine/UsingTaskCollection.cs
 Microsoft.Build.BuildEngine/Utilities.cs
