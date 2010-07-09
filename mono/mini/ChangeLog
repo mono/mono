@@ -1,3 +1,7 @@
+2010-07-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* ir-emit.h mini-llvm.c: Fix support for explicit-null-checks + LLVM.
+
 2010-07-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* driver.c: Moonlight: Force line buffering for stdout.
