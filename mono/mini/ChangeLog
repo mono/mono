@@ -1,3 +1,7 @@
+2010-07-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* driver.c: Moonlight: Force line buffering for stdout.
+
 2010-07-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (emit_load): Revert the last changes, the load/store intrinsics
