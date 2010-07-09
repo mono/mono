@@ -146,13 +146,6 @@ namespace System.ServiceModel.Channels
 			}
 #endif
 
-/*
-// FIXME: this causes invalid message security.
-var mb = message.CreateBufferedCopy (0x10000);
-message = mb.CreateMessage ();
-Console.WriteLine (mb.CreateMessage ());
-*/
-
 			if (!suppressEntityBody && String.Compare (web_request.Method, "GET", StringComparison.OrdinalIgnoreCase) != 0) {
 				MemoryStream buffer = new MemoryStream ();
 				Encoder.WriteMessage (message, buffer);

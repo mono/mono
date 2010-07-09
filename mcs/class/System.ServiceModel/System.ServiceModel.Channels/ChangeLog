@@ -1,5 +1,11 @@
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecureMessageGenerator.cs : MessageBuffer was missing copy of
+	  Body wsu:Id attribute.
+	* HttpRequestChannel.cs : remove comment for resolved issue.
+
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : move another old code.
 
 2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>

@@ -731,6 +731,11 @@ else
 			get { return msg.Properties; }
 		}
 
+		protected override MessageBuffer OnCreateBufferedCopy (int maxBufferSize)
+		{
+			return new WSSecurityMessageBuffer (msg.CreateBufferedCopy (maxBufferSize), body_id);
+		}
+
 		protected override string OnGetBodyAttribute (string localName, string ns)
 		{
 			if (localName == "Id" && ns == Constants.WsuNamespace)
@@ -750,6 +755,32 @@ else
 		protected override void OnWriteBodyContents (XmlDictionaryWriter w)
 		{
 			msg.WriteBodyContents (w);
+		}
+	}
+	
+	internal class WSSecurityMessageBuffer : MessageBuffer
+	{
+		public WSSecurityMessageBuffer (MessageBuffer mb, string bodyId)
+		{
+			buffer = mb;
+			body_id = bodyId;
+		}
+		
+		MessageBuffer buffer;
+		string body_id;
+		
+		public override int BufferSize {
+			get { return buffer.BufferSize; }
+		}
+		
+		public override void Close ()
+		{
+			buffer.Close ();
+		}
+		
+		public override Message CreateMessage ()
+		{
+			return new WSSecurityMessage (buffer.CreateMessage (), body_id);
 		}
 	}
 }
