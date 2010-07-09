@@ -1,5 +1,11 @@
 2010-07-09  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-marksweep.c (major_finish_major_collection): Don't free
+	major heap blocks on 32 bit platforms because it can lead to
+	address space fragmentation.  We'll figure this out later.
+
+2010-07-09  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-marksweep.c, sgen-gc.c, sgen-major-copying.c: Free major
 	heap blocks for mark&sweep eventually.
 
