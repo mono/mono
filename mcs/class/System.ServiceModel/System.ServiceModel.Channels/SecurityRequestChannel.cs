@@ -132,7 +132,7 @@ namespace System.ServiceModel.Channels
 		Message ProcessReply (Message message, SecurityMessageProperty secprop)
 		{
 			// FIXME: provide correct parameters
-			return new InitiatorSecureMessageDecryptor (message, secprop, security).DecryptMessage ();
+			return message.IsFault ? message : new InitiatorSecureMessageDecryptor (message, secprop, security).DecryptMessage ();
 		}
 
 		void AcquireSecurityKey (object o, EventArgs e)

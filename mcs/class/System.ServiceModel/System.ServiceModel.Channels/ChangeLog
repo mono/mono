@@ -1,5 +1,10 @@
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecurityRequestChannel.cs : do not try to decrypt faults, they
+	  are not encrypted.
+
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeader.cs : to clone raw xml completely, avoid using 
 	  ReadOuterXml() and text reader but use XmlNodeReader instaed.
 	* Message.cs : avoid extraneous xmlns:u attribute.
