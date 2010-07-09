@@ -1,3 +1,8 @@
+2010-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (set_metadata_flag): Set metadata flags only when using the LLVM
+	mono branch.
+
 2010-07-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MONO_INST_HAS_CONSTANT_LOAD): New instruction flag marking loads which load
@@ -13,7 +18,7 @@
 
 	* driver.c (mini_usage): Change the name of the --sgen flag to be
 	--gc=sgen and also support --gc=boehm.   These flags can also be
-	set on MONO_ENV_OPTIONS to propagate this to children processes. 
+	set on MONO_ENV_OPTIONS to propagate this to children processes.
 
 	* main.c: Remove the MONO_VM_OPTIONS environment variable that
 	only supported "sgen" and "llvm" config options and instead parse
