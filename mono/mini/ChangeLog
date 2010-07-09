@@ -1,3 +1,14 @@
+2010-07-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MONO_INST_HAS_CONSTANT_LOAD): New instruction flag marking loads which load
+	from constant memory.
+
+	* ir-emit.h: Clean up the _FAULT macros a bit.
+
+	* decompose.c: Mark some loads as constant.
+
+	* mini-llvm.c: Pass the constant-ness of loads to LLVM using custom metadata.
+
 2010-07-09  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.c (mini_usage): Change the name of the --sgen flag to be
