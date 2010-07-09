@@ -1,3 +1,9 @@
+2010-07-10  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c, sgen-los.c, sgen-major-copying.c, sgen-marksweep.c,
+	sgen-scan-object.h: Use a macro for rounding up sizes and
+	addresses to ALLOC_ALIGN.
+
 2010-07-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* file-io.c: fix GetFileSystemEntries for patterns containing
