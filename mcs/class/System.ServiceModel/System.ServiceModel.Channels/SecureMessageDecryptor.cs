@@ -183,16 +183,17 @@ doc.PreserveWhitespace = true;
 			Message msg = Message.CreateMessage (new XmlNodeReader (doc), srcmsg.Headers.Count, srcmsg.Version);
 			for (int i = 0; i < srcmsg.Headers.Count; i++) {
 				MessageHeaderInfo header = srcmsg.Headers [i];
-				if (header == wss_header)
+				if (header == wss_header) {
+					msg.Headers.RemoveAt (i);
 					msg.Headers.Add (wss_header);
-				else
-					msg.Headers.CopyHeaderFrom (srcmsg, i);
+				}
 			}
 
 			// FIXME: when Local[Client|Service]SecuritySettings.DetectReplays
 			// is true, reject such messages which don't have <wsu:Timestamp>
 
 			msg.Properties.Add ("Security", sec_prop);
+
 			return msg;
 		}
 

@@ -1,5 +1,10 @@
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecureMessageDecryptor.cs : avoid duplicate copy of headers into
+	  the decrypted message.
+
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Message.cs, MessageBufferImpl.cs, MessageImpl.cs: preserve and
 	  output attributes prefixes, to copy Body/@wsu:Id to successfully
 	  verify the xmldsig.
