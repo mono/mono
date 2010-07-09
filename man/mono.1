@@ -1437,7 +1437,13 @@ in the following way:
 	mono --profile=iomap yourapplication.exe
 
 .fi
-Note, however, that Mono currently supports only one profiler module at a time.
+Note, however, that Mono currently supports only one profiler module
+at a time.
+.TP
+\fBMONO_LLVM\fR
+When Mono is using the LLVM code generation backend you can use this
+environment variable to pass code generation options to the LLVM
+compiler.   
 .TP
 \fBMONO_MANAGED_WATCHER\fR
 If set to "disabled", System.IO.FileSystemWatcher will use a file watcher 
