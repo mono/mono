@@ -1,3 +1,8 @@
+2010-07-09  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-protocol.c, sgen-gc.c: Make binary protocol lock-freely
+	thread-safe.
+
 2010-07-08 Neale Ferguson <neale@sinenomine.net>
 
 	* sgen-archdep.h: Add support for s390x
