@@ -61,6 +61,11 @@ For comments, corrections and updates, please contact mono@novell.com
 	by third party projects, follows the same spirit than the
 	Boehm GC.
 
+** mono/arch/*/XXX-codegen.h
+
+	This are C macros that are useful when generating native
+	code on various platforms.   This code is MIT X11 licensed.
+
 ** mcs/mcs, mcs/gmcs
 
   	The C# Compilers (1.0 and 2.0)
