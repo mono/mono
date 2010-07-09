@@ -123,7 +123,7 @@ namespace System.ServiceModel.Channels
 		{
 			var dic = Constants.SoapDictionary;
 			XmlDictionaryString name, ns;
-			var prefix = Namespace.Length > 0 ? writer.LookupPrefix (Namespace) : String.Empty;
+			var prefix = Prefix ?? (Namespace.Length > 0 ? writer.LookupPrefix (Namespace) : String.Empty);
 			if (dic.TryLookup (Name, out name) && dic.TryLookup (Namespace, out ns))
 				writer.WriteStartElement (prefix, name, ns);
 			else
@@ -216,6 +216,7 @@ namespace System.ServiceModel.Channels
 
 			public RawMessageHeader (XmlReader reader, string soap_ns)
 			{
+				Prefix = reader.Prefix;
 				Id = reader.GetAttribute ("Id", Constants.WsuNamespace);
 
 				string s = reader.GetAttribute ("relay", soap_ns);

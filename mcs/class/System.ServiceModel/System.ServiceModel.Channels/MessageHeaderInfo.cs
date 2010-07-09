@@ -42,5 +42,7 @@ namespace System.ServiceModel.Channels
 			get { return id; }
 			set { id = value; }
 		}
+
+		internal string Prefix { get; set; }
 	}
 }

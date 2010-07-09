@@ -1,5 +1,10 @@
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeader.cs, MessageHeaderInfo.cs: add internal Prefix
+	  property and copy them from source to destination.
+
+2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageImpl.cs : When XmlReaderMessage was writing its contents,
 	  it was dropping body attributes, including wsu:Id for WS-Security.
 
