@@ -1,5 +1,24 @@
 2010-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Run abcrem uncoditionally when LLVM is used since
+	it can now eliminate more than just bounds checks.
+
+	* ir-emit.h: Add MAY_FAULT versions of the LOAD_MEMBASE macros which take
+	an extra 'fault' argument.
+
+	* method-to-ir.c: Set the MONO_INST_FAULT of the array opcodes which are decomposed
+	later.
+
+	* decompose.c: Propagate the MONO_INST_FAULT flag from the array opcodes to their
+	decomposition.
+
+	* mini-llvm.c: Remove support for the X86/AMD64 COMPARE_MEMBASE opcodes, they are
+	no longer generated when LLVM is used.
+
+	* abcremoval.c: Eliminate MONO_INST_FAULT flags if possible.
+
+2010-07-09  Zoltan Varga  <vargaz@gmail.com>
+
 	* ir-emit.h mini-llvm.c: Fix support for explicit-null-checks + LLVM.
 
 2010-07-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
