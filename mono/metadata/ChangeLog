@@ -1,5 +1,9 @@
 2010-07-09  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-protocol.c: Fix build when binary protocol is disabled.
+
+2010-07-09  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-protocol.c, sgen-gc.c: Make binary protocol lock-freely
 	thread-safe.
 
