@@ -11,6 +11,13 @@
 
 2010-07-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_method_signature_checked): Use checked
+	variant of inflate_generic_signature.
+
+	Fixes #606353.
+
+2010-07-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c (mono_metadata_parse_type_internal): Don't use
 	cannonical types when a transient type was requested.
 
