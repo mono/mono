@@ -61,6 +61,10 @@ namespace Mono.Data.Tds.Protocol {
 		protected override byte[] ClientVersion {
 			get { return new byte[] {0x00, 0x0, 0x0, 0x71};}
 		}
+		protected override byte Precision {
+			get { return 38; }
+		}
+		
 		#endregion // Properties
 		
 		#region Methods

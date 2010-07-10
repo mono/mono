@@ -1,3 +1,12 @@
+2010-07-10  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes 620860
+	* Tds70.cs (Precision): New virtual property to handle Precision values 
+	across different Tds versions.
+	(WriteParameterInfo): Use defined Precision property instead of 
+	constant value.  Also handle Ulong and long max/min values properly.
+	* Tds80.cs (Precision): Override property to provide Tds 8 precision value.
+	
 2010-07-07  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* TdsComm.cs (Append[DateTime]): Ugh.. ugh.. final fix for handling MinValue for DateTime.
