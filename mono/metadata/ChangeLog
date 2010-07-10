@@ -1,3 +1,10 @@
+2010-07-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (mono_method_signature_checked): Use checked
+	variant of inflate_generic_signature.
+
+	Fixes #606353.
+
 2010-07-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_method_can_access_method_full): Handle type
