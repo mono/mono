@@ -233,7 +233,11 @@ namespace System.Web.UI.HtmlControls {
 				}
 
 				if (onclick.Length > 0) {
-					writer.WriteAttribute ("onclick", onclick, true);
+					bool encode = true;
+					if (Events [ServerClickEvent] != null)
+						encode = false; // tests show that this is indeed
+								// the case...
+					writer.WriteAttribute ("onclick", onclick, encode);
 					writer.WriteAttribute ("language", "javascript");
 				}
 			}

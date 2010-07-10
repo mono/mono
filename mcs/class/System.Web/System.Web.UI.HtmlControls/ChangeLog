@@ -1,3 +1,8 @@
+2010-07-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlInputButton.cs: if ServerClick handler is found, do NOT
+	attribute-encode the onclick attribute.
+
 2010-06-21  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlControl.cs: PreProcessRelativeReference deos not

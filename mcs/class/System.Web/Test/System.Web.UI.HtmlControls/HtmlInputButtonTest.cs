@@ -169,6 +169,14 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		[Test]
 		public void OnClickAttributeWithSpecials ()
 		{
+#if NET_4_0
+			string origHtml = "alert(&#39;&lt;&amp;&#39;);";
+			string origHtml2 = "alert('<&');";
+#else
+			string origHtml = "alert('&lt;&amp;');";
+			string origHtml2 = "alert('<&');";
+#endif
+
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 
@@ -177,14 +185,14 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			p.Attributes["onclick"] = "alert('<&');";
 			p.DoRenderAttributes (tw);
 			string str = sw.ToString ();
-			int found = str.IndexOf ("alert('&lt;&amp;');");
+			int found = str.IndexOf (origHtml);
 			Assert.IsTrue (found >= 0, "#01");
 			p.ServerClick += new EventHandler (EmptyHandler);
 			sw = new StringWriter ();
 			tw = new HtmlTextWriter (sw);
 			p.DoRenderAttributes (tw);
 			str = sw.ToString ();
-			found = str.IndexOf ("alert('&lt;&amp;');");
+			found = str.IndexOf (origHtml2);
 			Assert.IsTrue (found >= 0, "#02" + str);
 		}
 
@@ -228,7 +236,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
-                [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void RenderOnclick4 ()
 		{
 			Page page = new Page ();
