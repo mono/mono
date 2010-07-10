@@ -315,7 +315,7 @@ namespace System.Web.UI
 			}
 			
 			set {
-				if (clientIDMode.HasValue && clientIDMode.Value != value) {
+				if (!clientIDMode.HasValue || clientIDMode.Value != value) {
 					ClearCachedClientID ();
 					ClearEffectiveClientIDMode ();
 					clientIDMode = value;

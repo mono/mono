@@ -1,3 +1,8 @@
+2010-07-10  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: when setting ClientIDMode remember the value when
+	setting the property for the first time.
+
 2010-07-08  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: if generating a predictable ID and the current
