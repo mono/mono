@@ -1,3 +1,7 @@
+2010-06-10  Ankit Jain  <jankit@novell.com>
+
+	* Csc.cs: Quote -define: arguments.
+
 2010-06-09  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask.cs: Don't check for tool's existence, as we might

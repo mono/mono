@@ -65,7 +65,7 @@ namespace Microsoft.Build.Tasks {
 				string [] defines = DefineConstants.Split (new char [] {';', ' '},
 						StringSplitOptions.RemoveEmptyEntries);
 				if (defines.Length > 0)
-					commandLine.AppendSwitchUnquotedIfNotNull ("/define:",
+					commandLine.AppendSwitchIfNotNull ("/define:",
 							String.Join (";", defines));
 			}
 
