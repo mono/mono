@@ -1,3 +1,8 @@
+2010-07-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (mono_method_signature_checked): Release the domain
+	lock on failure.
+
 2010-07-10  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Store the forwarding address in the first word of an
