@@ -1,3 +1,7 @@
+2010-07-10  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-darwin.c: Register the exception thread with the GC.
+
 2010-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (set_metadata_flag): Set metadata flags only when using the LLVM

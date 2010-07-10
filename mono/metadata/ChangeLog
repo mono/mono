@@ -1,3 +1,9 @@
+2010-07-10  Mark Probst  <mark.probst@gmail.com>
+
+	* gc.c, gc-internal.h, sgen-gc.c, sgen-gc.h, sgen-os-mach.c: An
+	interface to register our Mach exception thread which will not be
+	suspended by stop-the-world.
+
 2010-07-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c (mono_metadata_parse_type_internal): Don't use
