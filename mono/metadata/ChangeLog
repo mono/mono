@@ -11,6 +11,12 @@
 
 2010-07-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_get_method_constrained): Properly unlock the
+	domain lock on failure. Use checked variant of
+	inflate_generic_signature.
+
+2010-07-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_method_signature_checked): Use checked
 	variant of inflate_generic_signature.
 
