@@ -1,6 +1,12 @@
 2010-07-10  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gray.c, sgen-gc.c, sgen-major-copying.c, sgen-marksweep.c:
+	All functions that touch the gray queue directly or indirectly now
+	take it as an argument.
+
+2010-07-10  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gray.c, sgen-gc.c, sgen-major-copying.c, sgen-marksweep.c:
 	Put the gray queue data into a struct and pass it around.
 
 2010-07-09 Rodrigo Kumpera  <rkumpera@novell.com>
