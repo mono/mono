@@ -213,9 +213,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 </div><a id=""treeview1_SkipLink""></a>";
 #endif
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
-			Console.WriteLine (strTarget);
-			Console.WriteLine ("-------------------");
-			Console.WriteLine (str);
 			HtmlDiff.AssertAreEqual (strTarget, str, "Render");
 		}
 		public static void pageLoadRender (Page page) {
