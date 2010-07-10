@@ -1,5 +1,10 @@
 2010-07-10  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Store the forwarding address in the first word of an
+	object, where the forwarding bit is stored.
+
+2010-07-10  Mark Probst  <mark.probst@gmail.com>
+
 	* gc.c, gc-internal.h, sgen-gc.c, sgen-gc.h, sgen-os-mach.c: An
 	interface to register our Mach exception thread which will not be
 	suspended by stop-the-world.
