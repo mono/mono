@@ -1,5 +1,7 @@
 2010-07-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir): Kill some duplicated code.
+
 	* mini-<ARCH>.c (get_call_info): Call mini_type_get_underlying_type () before passing
 	a type to MONO_TYPE_IS_REFERENCE (), since the latter can't handle VAR/MVAR.
 	Fixes #620864.
