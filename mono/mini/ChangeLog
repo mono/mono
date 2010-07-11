@@ -1,3 +1,8 @@
+2010-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_jit_compile_method_inner): Don't bomb out if we don't
+	support a given runtime implemented method.
+
 2010-07-10  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-darwin.c: Register the exception thread with the GC.
