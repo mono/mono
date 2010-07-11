@@ -303,6 +303,31 @@ namespace Microsoft.Win32
 		{
 			return CreateSubKey (subkey);
 		}
+
+#if NET_4_0
+		[ComVisible (false)]
+		[MonoLimitation ("permissionCheck is ignored in Mono")]
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions options)
+		{
+			AssertKeyStillValid ();
+			AssertKeyNameNotNull (subkey);
+			AssertKeyNameLength (subkey);
+
+			if (!IsWritable)
+				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
+
+			return RegistryApi.CreateSubKey (this, subkey, options);
+		}
+
+		[ComVisible (false)]
+		[MonoLimitation ("permissionCheck and registrySecurity are ignored in Mono")]
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions options,
+			RegistrySecurity registrySecurity)
+		{
+			return RegistryApi.CreateSubKey (this, subkey, options);
+		}
+#endif
+
 		
 		/// <summary>
 		///	Delete the specified subkey.

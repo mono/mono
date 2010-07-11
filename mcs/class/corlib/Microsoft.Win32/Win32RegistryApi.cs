@@ -60,6 +60,9 @@ namespace Microsoft.Win32
 		// FIXME this is hard coded on Mono, can it be determined dynamically? 
 		readonly int NativeBytesPerCharacter = Marshal.SystemDefaultCharSize;
 
+		const int RegOptionsNonVolatile = 0x00000000;
+		const int RegOptionsVolatile = 0x00000001;
+
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCreateKeyEx")]
 		static extern int RegCreateKeyEx (IntPtr keyBase, string keyName, int reserved, 
 			IntPtr lpClass, int options, int access, IntPtr securityAttrs,
@@ -430,7 +433,7 @@ namespace Microsoft.Win32
 			IntPtr subKeyHandle;
 			int disposition;
 			int result = RegCreateKeyEx (handle , keyName, 0, IntPtr.Zero,
-				0,
+				RegOptionsNonVolatile,
 				OpenRegKeyRead | OpenRegKeyWrite, IntPtr.Zero, out subKeyHandle, out disposition);
 
 			if (result == Win32ResultCode.MarkedForDeletion)
@@ -443,6 +446,27 @@ namespace Microsoft.Win32
 			return new RegistryKey (subKeyHandle, CombineName (rkey, keyName),
 				true);
 		}
+
+#if NET_4_0
+		public RegistryKey CreateSubKey (RegistryKey rkey, string keyName, RegistryOptions options)
+		{
+			IntPtr handle = GetHandle (rkey);
+			IntPtr subKeyHandle;
+			int disposition;
+			int result = RegCreateKeyEx (handle , keyName, 0, IntPtr.Zero,
+				options == RegistryOptions.Volatile ? RegOptionsVolatile : RegOptionsNonVolatile,
+				OpenRegKeyRead | OpenRegKeyWrite, IntPtr.Zero, out subKeyHandle, out disposition);
+
+			if (result == Win32ResultCode.MarkedForDeletion)
+				throw RegistryKey.CreateMarkedForDeletionException ();
+
+			if (result != Win32ResultCode.Success)
+				GenerateException (result);
+			
+			return new RegistryKey (subKeyHandle, CombineName (rkey, keyName),
+				true);
+		}
+#endif
 
 		public void DeleteKey (RegistryKey rkey, string keyName, bool shouldThrowWhenKeyMissing)
 		{

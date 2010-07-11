@@ -603,6 +603,13 @@ namespace Microsoft.Win32 {
 			return CreateSubKey (rkey, keyname, true);
 		}
 
+#if NET_4_0
+		public RegistryKey CreateSubKey (RegistryKey rkey, string keyname, RegistryOptions options)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName)
 		{
 			throw new NotImplementedException ();

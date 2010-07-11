@@ -1,3 +1,14 @@
+2010-07-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RegistryKey.cs: Add 4.0 CreateSubKey overloads taking a RegistryOptions
+	parameter.
+	* IRegistryApi.cs: Add a new overload for CreateSubKey for the 4.0
+	profile. Not nice, but better than to change the signature for each
+	profile.
+	* Win32RegistryApi.cs: Properly recognize a handle where a volatile
+	key is requested.
+	* UnixRegistryApi.cs: Stubbed.
+
 2010-07-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Win32RegistryApi.cs: Use RegCreateKeyEx instead of RegCreateKey, as
