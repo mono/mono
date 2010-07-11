@@ -1,3 +1,7 @@
+2010-07-10  Jonathan Pryor <jpryor@novell.com>
+
+	* Makfile.am (test-process-exit): Expected output is in $srcdir.
+
 2010-07-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* bug-81691.cs: Fix this test by catching FileNotFoundException as well.
