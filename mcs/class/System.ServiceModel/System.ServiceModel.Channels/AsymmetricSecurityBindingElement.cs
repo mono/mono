@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using System.Net.Security;
 using System.IdentityModel.Selectors;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Channels.Security;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Security;

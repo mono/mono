@@ -26,6 +26,12 @@ namespace System.ServiceModel.Channels
 {
 	public interface ITransportTokenAssertionProvider {}
 }
+namespace System.ServiceModel.Channels.Http
+{
+}
+namespace System.ServiceModel.Channels.Security
+{
+}
 namespace System.ServiceModel.Configuration
 {
 	class Dummy {}

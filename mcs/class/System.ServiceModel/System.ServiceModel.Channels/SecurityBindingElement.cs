@@ -31,6 +31,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
 #if !NET_2_1
+using System.ServiceModel.Channels.Security;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using System.ServiceModel.Security.Tokens;
@@ -205,7 +206,6 @@ namespace System.ServiceModel.Channels
 			return CreateCertificateOverTransportBindingElement (MessageSecurityVersion.Default);
 		}
 
-		[MonoTODO]
 		public static TransportSecurityBindingElement 
 			CreateCertificateOverTransportBindingElement (MessageSecurityVersion version)
 		{
@@ -343,7 +343,6 @@ namespace System.ServiceModel.Channels
 			return CreateSecureConversationBindingElement (binding, requireCancellation, null);
 		}
 
-		[MonoTODO]
 		public static SecurityBindingElement 
 			CreateSecureConversationBindingElement (
 			SecurityBindingElement binding, bool requireCancellation,
@@ -357,7 +356,6 @@ namespace System.ServiceModel.Channels
 			return be;
 		}
 
-		[MonoTODO]
 		public static SymmetricSecurityBindingElement 
 			CreateSslNegotiationBindingElement (bool requireClientCertificate)
 		{
@@ -365,7 +363,6 @@ namespace System.ServiceModel.Channels
 				requireClientCertificate, false);
 		}
 
-		[MonoTODO]
 		public static SymmetricSecurityBindingElement 
 			CreateSslNegotiationBindingElement (
 			bool requireClientCertificate,
@@ -376,14 +373,12 @@ namespace System.ServiceModel.Channels
 			return be;
 		}
 
-		[MonoTODO]
 		public static SymmetricSecurityBindingElement 
 			CreateSspiNegotiationBindingElement ()
 		{
 			return CreateSspiNegotiationBindingElement (true);
 		}
 
-		[MonoTODO]
 		public static SymmetricSecurityBindingElement 
 			CreateSspiNegotiationBindingElement (bool requireCancellation)
 		{
@@ -415,7 +410,6 @@ namespace System.ServiceModel.Channels
 			return p;
 		}
 
-		[MonoTODO]
 		public static SymmetricSecurityBindingElement 
 			CreateUserNameForCertificateBindingElement ()
 		{
@@ -427,14 +421,12 @@ namespace System.ServiceModel.Channels
 			return be;
 		}
 
-		[MonoTODO]
 		public static SymmetricSecurityBindingElement 
 			CreateUserNameForSslBindingElement ()
 		{
 			return CreateUserNameForSslBindingElement (false);
 		}
 
-		[MonoTODO]
 		public static SymmetricSecurityBindingElement 
 			CreateUserNameForSslBindingElement (bool requireCancellation)
 		{

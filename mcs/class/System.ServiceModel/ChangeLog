@@ -1,3 +1,8 @@
+2010-07-12  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy_2_1.cs : add internal namespaces.
+	* System.ServiceModel.dll.sources: add SecurityReplyChannel.cs
+
 2010-07-05  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources :

@@ -45,7 +45,7 @@ using System.Xml.XPath;
 
 using ReqType = System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.Security
 {
 	class SecurityOutputChannel : SecurityOutputChannelBase
 	{

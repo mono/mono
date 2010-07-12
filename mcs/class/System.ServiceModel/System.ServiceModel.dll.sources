@@ -264,6 +264,7 @@ System.ServiceModel.Channels/SecurityBindingElementImporter.cs
 System.ServiceModel.Channels/SecurityChannelFactory.cs
 System.ServiceModel.Channels/SecurityChannelListener.cs
 System.ServiceModel.Channels/SecurityOutputChannel.cs
+System.ServiceModel.Channels/SecurityReplyChannel.cs
 System.ServiceModel.Channels/SecurityRequestChannel.cs
 System.ServiceModel.Channels/SecurityRequestContext.cs
 System.ServiceModel.Channels/ServiceHostParser.cs

@@ -1,3 +1,21 @@
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityReplyChannel.cs : split from SecurityChannelListener.cs.
+	* AsymmetricSecurityBindingElement.cs
+	  WSSecurityMessageHeader.cs
+	  SecureMessageDecryptor.cs
+	  SecureMessageGenerator.cs
+	  SecurityChannelListener.cs
+	  SecurityRequestContext.cs
+	  WSEncryptedXml.cs
+	  SecurityRequestChannel.cs
+	  SymmetricSecurityBindingElement.cs
+	  SecurityOutputChannel.cs
+	  SecurityChannelFactory.cs
+	  WSSignedXml.cs
+	  SecurityBindingElement.cs : change namespace to move to internal
+	  namespace directory.
+
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SecurityRequestContext.cs : remove extraneous buffering.

@@ -44,7 +44,7 @@ using System.ServiceModel.Security.Tokens;
 using System.Text;
 using System.Xml;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.Security
 {
 	internal class WSSecurityMessageHeaderReader
 	{

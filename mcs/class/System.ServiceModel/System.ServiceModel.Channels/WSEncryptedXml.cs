@@ -29,7 +29,7 @@ using System;
 using System.Security.Cryptography.Xml;
 using System.Xml;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.Security
 {
 	// See http://blogs.msdn.com/shawnfa/archive/2004/04/05/108098.aspx :)
 	class WSEncryptedXml : EncryptedXml

@@ -31,6 +31,7 @@ using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using System.Net.Security;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Channels.Security;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;

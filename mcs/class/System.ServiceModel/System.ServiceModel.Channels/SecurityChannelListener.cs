@@ -32,11 +32,12 @@ using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.Security
 {
 	internal class SecurityChannelListener<TChannel> : ChannelListenerBase<TChannel>
 		  where TChannel : class, IChannel
@@ -154,65 +155,6 @@ namespace System.ServiceModel.Channels
 		protected override void OnEndOpen (IAsyncResult result)
 		{
 			inner.EndOpen (result);
-		}
-	}
-
-	internal class SecurityReplyChannel : InternalReplyChannelBase
-	{
-		IReplyChannel inner;
-
-		public SecurityReplyChannel (
-			SecurityChannelListener<IReplyChannel> source,
-			IReplyChannel innerChannel)
-			: base (source)
-		{
-			this.inner = innerChannel;
-		}
-
-		public SecurityChannelListener<IReplyChannel> Source {
-			get { return (SecurityChannelListener<IReplyChannel>) Listener; }
-		}
-
-		// IReplyChannel
-
-		protected override void OnOpen (TimeSpan timeout)
-		{
-			inner.Open (timeout);
-		}
-
-		protected override void OnClose (TimeSpan timeout)
-		{
-			inner.Close (timeout);
-		}
-
-		public override RequestContext ReceiveRequest (TimeSpan timeout)
-		{
-			RequestContext ctx;
-			if (TryReceiveRequest (timeout, out ctx))
-				return ctx;
-			throw new TimeoutException ("Failed to receive request context");
-		}
-
-		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
-		{
-			if (!inner.TryReceiveRequest (timeout, out context))
-				return false;
-			context = new SecurityRequestContext (this, context);
-			return true;
-		}
-
-		[MonoTODO]
-		public override bool WaitForRequest (TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-
-		// IChannel
-
-		public override T GetProperty<T> ()
-		{
-			// FIXME: implement
-			return inner.GetProperty<T> ();
 		}
 	}
 }

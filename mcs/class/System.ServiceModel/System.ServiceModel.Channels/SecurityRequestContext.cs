@@ -35,13 +35,14 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.Security
 {
 	internal class SecurityRequestContext : RequestContext
 	{
@@ -57,26 +58,23 @@ namespace System.ServiceModel.Channels
 			this.channel = channel;
 
 			security = channel.Source.SecuritySupport;
+
+			msg = source.RequestMessage;
+			switch (msg.Headers.Action) {
+			case Constants.WstIssueAction:
+			case Constants.WstIssueReplyAction:
+			case Constants.WstRenewAction:
+			case Constants.WstCancelAction:
+			case Constants.WstValidateAction:
+				break;
+			default:
+				msg = new RecipientSecureMessageDecryptor (msg, security).DecryptMessage ();
+				break;
+			}
 		}
 
 		public override Message RequestMessage {
-			get {
-				if (msg == null) {
-					msg = source.RequestMessage;
-					switch (msg.Headers.Action) {
-					case Constants.WstIssueAction:
-					case Constants.WstIssueReplyAction:
-					case Constants.WstRenewAction:
-					case Constants.WstCancelAction:
-					case Constants.WstValidateAction:
-						break;
-					default:
-						msg = new RecipientSecureMessageDecryptor (msg, security).DecryptMessage ();
-						break;
-					}
-				}
-				return msg;
-			}
+			get { return msg; }
 		}
 
 		public override void Abort ()

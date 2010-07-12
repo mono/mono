@@ -47,7 +47,7 @@ using System.Xml.XPath;
 
 using ReqType = System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement;
 
-namespace System.ServiceModel.Channels
+namespace System.ServiceModel.Channels.Security
 {
 	internal class InitiatorMessageSecurityGenerator : MessageSecurityGenerator
 	{
