@@ -578,23 +578,13 @@ namespace System.ServiceModel.Dispatcher
 					var ed = FindEndpointDispatcher (req);
 					new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply).ProcessReply (rc);
 				} catch (Exception ex) {
-					foreach (var eh in owner.ErrorHandlers)
-						if (eh.HandleError (ex))
-							return; // error is handled appropriately.
-
-					// FIXME: log it.
-					Console.WriteLine (ex);
-
-					Message res = null;
-					foreach (var eh in owner.ErrorHandlers)
-						eh.ProvideFault (ex, owner.MessageVersion, ref res);
-					if (res == null) {
-						var conv = reply.GetProperty<FaultConverter> () ?? FaultConverter.GetDefaultFaultConverter (rc.RequestMessage.Version);
-						if (!conv.TryCreateFaultMessage (ex, out res))
-							res = Message.CreateMessage (owner.MessageVersion, new FaultCode ("Receiver"), ex.Message, owner.MessageVersion.Addressing.FaultNamespace);
-					}
+					Message res;
+					if (ProcessErrorWithHandlers (reply, ex, out res))
+						return;
 
 					rc.Reply (res);
+					
+					reply.Close (owner.DefaultCloseTimeout); // close the channel
 				} finally {
 					if (rc != null)
 						rc.Close ();
@@ -602,6 +592,28 @@ namespace System.ServiceModel.Dispatcher
 					if (loop && reply.State != CommunicationState.Closed)
 						ProcessRequestOrInput (reply);
 				}
+			}
+
+			bool ProcessErrorWithHandlers (IChannel ch, Exception ex, out Message res)
+			{
+				res = null;
+
+				foreach (var eh in owner.ErrorHandlers)
+					if (eh.HandleError (ex))
+						return true; // error is handled appropriately.
+
+				// FIXME: log it.
+				Console.WriteLine (ex);
+
+				foreach (var eh in owner.ErrorHandlers)
+					eh.ProvideFault (ex, owner.MessageVersion, ref res);
+				if (res == null) {
+					var conv = ch.GetProperty<FaultConverter> () ?? FaultConverter.GetDefaultFaultConverter (owner.MessageVersion);
+					if (!conv.TryCreateFaultMessage (ex, out res))
+						res = Message.CreateMessage (owner.MessageVersion, new FaultCode ("Receiver"), ex.Message, owner.MessageVersion.Addressing.FaultNamespace);
+				}
+
+				return false;
 			}
 
 			void ProcessInput (IInputChannel input, Message message)
@@ -613,8 +625,8 @@ namespace System.ServiceModel.Dispatcher
 						ProcessInput (message);
 				}
 				catch (Exception ex) {
-					// FIXME: log it.
-					Console.WriteLine (ex);
+					Message dummy;
+					ProcessErrorWithHandlers (input, ex, out dummy);
 				} finally {
 					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
 					if (loop && input.State != CommunicationState.Closed)
