@@ -1,3 +1,7 @@
+2010-07-12  Marek Safar  <marek.safar@gmail.com>
+
+	* tests.make: Run all tests under verifier.
+
 2010-05-28  Marek Safar  <marek.safar@gmail.com>
 
 	* library.make: Don't sort source input files on windows to
