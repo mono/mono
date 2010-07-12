@@ -43,9 +43,17 @@ namespace System.Net.NetworkInformation {
 
 		static void StateChangedCallback (IntPtr sender, IntPtr data)
 		{
-			NetworkAddressChangedEventHandler h = NetworkAddressChanged;
-			if (h != null)
-				h (null, EventArgs.Empty);
+			try {
+				NetworkAddressChangedEventHandler h = NetworkAddressChanged;
+				if (h != null)
+					h (null, EventArgs.Empty);
+			} catch (Exception ex) {
+				try {
+					Console.WriteLine ("Unhandled exception: {0}", ex);
+				} catch {
+					// Ignore
+				}
+			}
 		}
 
 		protected NetworkChange ()

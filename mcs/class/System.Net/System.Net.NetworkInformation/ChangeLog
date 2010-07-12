@@ -1,3 +1,7 @@
+2010-07-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* NetworkChange_2_1.cs: Don't leak exceptions to native code.
+
 2010-05-05  Chris Toshok  <toshok@ximian.com>
 
 	* NetworkInterface_2_1.cs: implement for moonlight.
