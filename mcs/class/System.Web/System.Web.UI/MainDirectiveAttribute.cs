@@ -34,7 +34,7 @@ namespace System.Web.UI
 		string unparsedValue;
 		T value;
 		bool isExpression;
-		bool isDataBound;
+//		bool isDataBound;
 		
 		public string UnparsedValue {
 			get { return unparsedValue; }

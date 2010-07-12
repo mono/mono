@@ -1521,7 +1521,6 @@ namespace System.Web.UI.WebControls
 				} 
 			}
 
-			int retValue;
 			if (list.Count == 0) {
 #if NET_4_0
  				if (ShowHeader && ShowHeaderWhenEmpty)
