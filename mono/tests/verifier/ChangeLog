@@ -1,3 +1,8 @@
+2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_generic_arg_satisty_constraint_compat_check.cs:
+	Regression test for #621599.
+
 2010-07-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_deep_nested_type_visibility.cs: Regression test
