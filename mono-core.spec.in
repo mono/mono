@@ -173,6 +173,8 @@ Authors:
 %_prefix/lib/mono/gac/Mono.Security
 %_prefix/lib/mono/1.0/Mono.Security.dll
 %_prefix/lib/mono/2.0/Mono.Security.dll
+%_prefix/lib/mono/gac/System.Runtime.Serialization
+%_prefix/lib/mono/2.0/System.Runtime.Serialization.dll
 %_prefix/lib/mono/gac/System.Security
 %_prefix/lib/mono/1.0/System.Security.dll
 %_prefix/lib/mono/2.0/System.Security.dll
@@ -357,7 +359,6 @@ Authors:
 %_prefix/lib/mono/2.0/System.Data.dll
 %_prefix/lib/mono/gac/System.Data.Linq
 %_prefix/lib/mono/2.0/System.Data.Linq.dll
-%_prefix/lib/mono/gac/System.Data.Services
 %_prefix/lib/mono/gac/Mono.Data
 %_prefix/lib/mono/1.0/Mono.Data.dll
 %_prefix/lib/mono/2.0/Mono.Data.dll
@@ -609,12 +610,11 @@ Authors:
 %files -n mono-wcf
 %defattr(-, root, root)
 %_bindir/svcutil
+%_prefix/lib/mono/gac/System.Data.Services
 %_prefix/lib/mono/gac/System.IdentityModel
 %_prefix/lib/mono/2.0/System.IdentityModel.dll
 %_prefix/lib/mono/gac/System.IdentityModel.Selectors
 %_prefix/lib/mono/2.0/System.IdentityModel.Selectors.dll
-%_prefix/lib/mono/gac/System.Runtime.Serialization
-%_prefix/lib/mono/2.0/System.Runtime.Serialization.dll
 %_prefix/lib/mono/gac/System.ServiceModel
 %_prefix/lib/mono/2.0/System.ServiceModel.dll
 %_prefix/lib/mono/gac/System.ServiceModel.Web
@@ -716,6 +716,7 @@ Authors:
 %_prefix/lib/mono/2.0/System.ComponentModel.DataAnnotations.dll
 %_prefix/lib/mono/gac/System.Web.Mvc
 %_prefix/lib/mono/2.0/System.Web.Mvc.dll
+%_prefix/lib/mono/compat-2.0/System.Web.Mvc.dll
 # pkg-config files
 %_libdir/pkgconfig/mono.web.pc
 %_libdir/pkgconfig/system.web.extensions_1.0.pc
@@ -1004,14 +1005,22 @@ Authors:
 %_prefix/lib/mono/2.0/mono-xmltool.exe*
 %_prefix/lib/mono/2.0/pdb2mdb.exe*
 # xbuild related files
-%_prefix/lib/mono/2.0/xbuild.exe*
-%_prefix/lib/mono/2.0/Microsoft.Build.xsd
-%_prefix/lib/mono/2.0/Microsoft.Common.tasks
-%_prefix/lib/mono/2.0/Microsoft.Common.targets
-%_prefix/lib/mono/2.0/Microsoft.CSharp.targets
-%_prefix/lib/mono/2.0/Microsoft.VisualBasic.targets
 %_prefix/lib/mono/2.0/MSBuild
+%_prefix/lib/mono/2.0/Microsoft.Build.xsd
+%_prefix/lib/mono/2.0/Microsoft.CSharp.targets
+%_prefix/lib/mono/2.0/Microsoft.Common.targets
+%_prefix/lib/mono/2.0/Microsoft.Common.tasks
+%_prefix/lib/mono/2.0/Microsoft.VisualBasic.targets
+%_prefix/lib/mono/2.0/xbuild.exe*
 %_prefix/lib/mono/2.0/xbuild.rsp
+%_prefix/lib/mono/3.5/MSBuild
+%_prefix/lib/mono/3.5/Microsoft.Build.xsd
+%_prefix/lib/mono/3.5/Microsoft.CSharp.targets
+%_prefix/lib/mono/3.5/Microsoft.Common.targets
+%_prefix/lib/mono/3.5/Microsoft.Common.tasks
+%_prefix/lib/mono/3.5/Microsoft.VisualBasic.targets
+%_prefix/lib/mono/3.5/xbuild.exe*
+%_prefix/lib/mono/3.5/xbuild.rsp
 %_prefix/lib/mono/xbuild
 # man pages
 %_mandir/man1/cert2spc.1%ext_man
@@ -1129,6 +1138,8 @@ Summary:        Monodoc - Documentation tools for C# code
 Group:          Development/Tools/Other
 Provides:       monodoc
 Obsoletes:      monodoc
+# Added to uncompress and compare documentation used by build-compare
+Requires:       unzip
 
 %description -n monodoc-core
 Monodoc-core contains documentation tools for C#.
@@ -1229,46 +1240,13 @@ make
 %install
 make install DESTDIR=%buildroot
 # Remove unused files
-rm -f $RPM_BUILD_ROOT%_libdir/libmono.la
-rm $RPM_BUILD_ROOT%_libdir/libMonoPosixHelper.a
-rm $RPM_BUILD_ROOT%_libdir/libMonoPosixHelper.la
+rm -f $RPM_BUILD_ROOT%_libdir/*.la
+rm -f $RPM_BUILD_ROOT%_libdir/libMonoPosixHelper.a
 rm -f $RPM_BUILD_ROOT%_libdir/libikvm-native.a
-rm -f $RPM_BUILD_ROOT%_libdir/libikvm-native.la
 rm -fr $RPM_BUILD_ROOT%_prefix/lib/mono/gac/Mono.Security.Win32/[12]*
 rm $RPM_BUILD_ROOT%_prefix/lib/mono/1.0/Mono.Security.Win32.dll
 rm $RPM_BUILD_ROOT%_prefix/lib/mono/2.0/Mono.Security.Win32.dll
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.DGUX386
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.Mac
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.MacOSX
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.OS2
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.amiga
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.arm.cross
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.autoconf
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.changes
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.contributors
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.cords
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.darwin
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.dj
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.environment
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.ews4800
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.hp
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.linux
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.macros
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.rs6000
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.sgi
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.solaris2
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.uts
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/README.win32
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/barrett_diagram
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/debugging.html
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/gc.man
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/gcdescr.html
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/gcinterface.html
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/leak.html
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/scale.html
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/simple_example.html
-rm $RPM_BUILD_ROOT%_datadir/libgc-mono/tree.html
+rm -fr $RPM_BUILD_ROOT%_datadir/libgc-mono
 rm $RPM_BUILD_ROOT%_mandir/man1/cilc.1
 rm $RPM_BUILD_ROOT%_mandir/man1/monostyle.1
 rm $RPM_BUILD_ROOT%_mandir/man1/oldmono.1
