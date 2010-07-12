@@ -58,23 +58,26 @@ namespace System.ServiceModel.Channels.Security
 			this.channel = channel;
 
 			security = channel.Source.SecuritySupport;
-
-			msg = source.RequestMessage;
-			switch (msg.Headers.Action) {
-			case Constants.WstIssueAction:
-			case Constants.WstIssueReplyAction:
-			case Constants.WstRenewAction:
-			case Constants.WstCancelAction:
-			case Constants.WstValidateAction:
-				break;
-			default:
-				msg = new RecipientSecureMessageDecryptor (msg, security).DecryptMessage ();
-				break;
-			}
 		}
 
 		public override Message RequestMessage {
-			get { return msg; }
+			get {
+				if (msg == null) {
+					msg = source.RequestMessage;
+					switch (msg.Headers.Action) {
+					case Constants.WstIssueAction:
+					case Constants.WstIssueReplyAction:
+					case Constants.WstRenewAction:
+					case Constants.WstCancelAction:
+					case Constants.WstValidateAction:
+						break;
+					default:
+						msg = new RecipientSecureMessageDecryptor (msg, security).DecryptMessage ();
+						break;
+					}
+				}
+				return msg; 
+			}
 		}
 
 		public override void Abort ()

@@ -1,0 +1,19 @@
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityRequestContext.cs : revert extra and bogus changes I had
+	  locally.
+
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityChannelFactory.cs
+	  SecurityChannelListener.cs
+	  SecurityRequestContext.cs
+	  SecurityOutputChannel.cs
+	  SecurityReplyChannel.cs
+	  SecurityRequestChannel.cs
+	  SecureMessageGenerator.cs
+	  SecureMessageDecryptor.cs
+	  WSEncryptedXml.cs
+	  WSSignedXml.cs
+	  WSSecurityMessageHeader.cs : moved from System.ServiceModel.Channels.
+
