@@ -1662,8 +1662,8 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (IMemberContext ec)
 		{
-			// should not be called
-			throw new NotSupportedException ();
+			// Nothing to be resolved
+			return true;
 		}
 	}
 
@@ -1764,7 +1764,7 @@ namespace Mono.CSharp {
 			if (constraints == null)
 				return true;
 
-			return ConstraintChecker.CheckAll (open_type, args.Arguments, constraints, loc, ec.Compiler.Report);
+			return ConstraintChecker.CheckAll (ec, open_type, args.Arguments, constraints, loc);
 		}
 	
 		public override bool CheckAccessLevel (IMemberContext mc)
@@ -1835,30 +1835,30 @@ namespace Mono.CSharp {
 		///   Check the constraints; we're called from ResolveAsTypeTerminal()
 		///   after fully resolving the constructed type.
 		/// </summary>
-		public static bool CheckAll (MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc, Report report)
+		public static bool CheckAll (IMemberContext mc, MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
 			for (int i = 0; i < tparams.Length; i++) {
-				if (!CheckConstraint (context, targs [i], tparams [i], loc, report))
+				if (!CheckConstraint (mc, context, targs [i], tparams [i], loc))
 					return false;
 			}
 
 			return true;
 		}
 
-		static bool CheckConstraint (MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, Location loc, Report report)
+		static bool CheckConstraint (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, Location loc)
 		{
 			//
 			// First, check the `class' and `struct' constraints.
 			//
 			if (tparam.HasSpecialClass && !TypeManager.IsReferenceType (atype)) {
-				report.Error (452, loc,
+				mc.Compiler.Report.Error (452, loc,
 					"The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
 					TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				return false;
 			}
 
 			if (tparam.HasSpecialStruct && (!TypeManager.IsValueType (atype) || TypeManager.IsNullableType (atype))) {
-				report.Error (453, loc,
+				mc.Compiler.Report.Error (453, loc,
 					"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
 					TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				return false;
@@ -1868,7 +1868,7 @@ namespace Mono.CSharp {
 			// The class constraint comes next.
 			//
 			if (tparam.HasTypeConstraint) {
-				CheckConversion (context, atype, tparam, tparam.BaseType, loc, report);
+				CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc);
 			}
 
 			//
@@ -1876,12 +1876,12 @@ namespace Mono.CSharp {
 			//
 			if (tparam.Interfaces != null) {
 				if (TypeManager.IsNullableType (atype)) {
-					report.Error (313, loc,
+					mc.Compiler.Report.Error (313, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' never satisfies interface constraint",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				} else {
 					foreach (TypeSpec iface in tparam.Interfaces) {
-						CheckConversion (context, atype, tparam, iface, loc, report);
+						CheckConversion (mc, context, atype, tparam, iface, loc);
 					}
 				}
 			}
@@ -1893,8 +1893,8 @@ namespace Mono.CSharp {
 				return true;
 
 			if (!HasDefaultConstructor (atype)) {
-				report.SymbolRelatedToPreviousError (atype);
-				report.Error (310, loc,
+				mc.Compiler.Report.SymbolRelatedToPreviousError (atype);
+				mc.Compiler.Report.Error (310, loc,
 					"The type `{0}' must have a public parameterless constructor in order to use it as parameter `{1}' in the generic type or method `{2}'",
 					TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				return false;
@@ -1903,19 +1903,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static void CheckConversion (MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc, Report report)
+		static void CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
 		{
 			var expr = new EmptyExpression (atype);
 			if (!Convert.ImplicitStandardConversionExists (expr, ttype)) {
-				report.SymbolRelatedToPreviousError (tparam);
+				mc.Compiler.Report.SymbolRelatedToPreviousError (tparam);
 				if (TypeManager.IsValueType (atype)) {
-					report.Error (315, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
+					mc.Compiler.Report.Error (315, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else if (atype.IsGenericParameter) {
-					report.Error (314, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
+					mc.Compiler.Report.Error (314, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else {
-					report.Error (311, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no implicit reference conversion from `{0}' to `{3}'",
+					mc.Compiler.Report.Error (311, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no implicit reference conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				}
 			}

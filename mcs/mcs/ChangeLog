@@ -1,3 +1,10 @@
+2010-07-12  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs: Don't use Report directly.
+	
+	* expression.cs, ecore.cs: UserOperatorCall uses MethodSpec without
+	MethodGroupExpr, will be simplified later.
+
 2010-07-09  Marek Safar  <marek.safar@gmail.com>
 
 	* property.cs, parameters.cs: Inflated IndexerSpec parameters.

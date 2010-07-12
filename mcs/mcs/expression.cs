@@ -24,19 +24,17 @@ namespace Mono.CSharp {
 	// resolve phase
 	//
 	public class UserOperatorCall : Expression {
-		public delegate Expression ExpressionTreeExpression (ResolveContext ec, MethodGroupExpr mg);
-
 		protected readonly Arguments arguments;
-		protected readonly MethodGroupExpr mg;
-		readonly ExpressionTreeExpression expr_tree;
+		protected readonly MethodSpec oper;
+		readonly Func<ResolveContext, Expression, Expression> expr_tree;
 
-		public UserOperatorCall (MethodGroupExpr mg, Arguments args, ExpressionTreeExpression expr_tree, Location loc)
+		public UserOperatorCall (MethodSpec oper, Arguments args, Func<ResolveContext, Expression, Expression> expr_tree, Location loc)
 		{
-			this.mg = mg;
+			this.oper = oper;
 			this.arguments = args;
 			this.expr_tree = expr_tree;
 
-			type = mg.BestCandidate.ReturnType;
+			type = oper.ReturnType;
 			eclass = ExprClass.Value;
 			this.loc = loc;
 		}
@@ -44,11 +42,11 @@ namespace Mono.CSharp {
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (expr_tree != null)
-				return expr_tree (ec, mg);
+				return expr_tree (ec, new TypeOfMethod (oper, loc));
 
 			Arguments args = Arguments.CreateForExpressionTree (ec, arguments,
 				new NullLiteral (loc),
-				mg.CreateExpressionTree (ec));
+				new TypeOfMethod (oper, loc));
 
 			return CreateExpressionFactoryCall (ec, "Call", args);
 		}
@@ -68,17 +66,13 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			mg.EmitCall (ec, arguments);
+			Invocation.EmitCall (ec, null, oper, arguments, loc);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			var method = mg.BestCandidate.GetMetaInfo () as MethodInfo;
+			var method = oper.GetMetaInfo () as MethodInfo;
 			return SLE.Expression.Call (method, Arguments.MakeExpression (arguments, ctx));
-		}
-
-		public MethodGroupExpr Method {
-			get { return mg; }
 		}
 	}
 
@@ -330,7 +324,7 @@ namespace Mono.CSharp {
 			return CreateExpressionTree (ec, null);
 		}
 
-		Expression CreateExpressionTree (ResolveContext ec, MethodGroupExpr user_op)
+		Expression CreateExpressionTree (ResolveContext ec, Expression user_op)
 		{
 			string method_name;
 			switch (Oper) {
@@ -357,7 +351,8 @@ namespace Mono.CSharp {
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (Expr.CreateExpressionTree (ec)));
 			if (user_op != null)
-				args.Add (new Argument (user_op.CreateExpressionTree (ec)));
+				args.Add (new Argument (user_op));
+
 			return CreateExpressionFactoryCall (ec, method_name, args);
 		}
 
@@ -701,7 +696,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Expr = args [0].Expr;
-			return new UserOperatorCall (user_op, args, CreateExpressionTree, expr.Location);
+			return new UserOperatorCall (user_op.BestCandidate, args, CreateExpressionTree, expr.Location);
 		}
 
 		//
@@ -1146,7 +1141,7 @@ namespace Mono.CSharp {
 					return null;
 
 				args[0].Expr = operation;
-				operation = new UserOperatorCall (mg, args, null, loc);
+				operation = new UserOperatorCall (mg.BestCandidate, args, null, loc);
 				operation = Convert.ImplicitConversionRequired (ec, operation, type, loc);
 				return this;
 			}
@@ -1865,8 +1860,7 @@ namespace Mono.CSharp {
 					method = inequal_method;
 				}
 
-				var mg = MethodGroupExpr.CreatePredefined (method, left, b.loc);
-				return new UserOperatorCall (mg, args, b.CreateExpressionTree, b.loc);
+				return new UserOperatorCall (method, args, b.CreateExpressionTree, b.loc);
 			}
 		}
 
@@ -2837,7 +2831,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodGroupExpr mg = MethodGroupExpr.CreatePredefined (method, TypeManager.delegate_type, loc);
-			Expression expr = new UserOperatorCall (mg, args, CreateExpressionTree, loc);
+			Expression expr = new UserOperatorCall (mg.BestCandidate, args, CreateExpressionTree, loc);
 			return new ClassCast (expr, l);
 		}
 
@@ -3282,10 +3276,10 @@ namespace Mono.CSharp {
 
 			// TODO: CreateExpressionTree is allocated every time
 			if ((oper & Operator.LogicalMask) != 0) {
-				oper_expr = new ConditionalLogicalOperator (mg, args, CreateExpressionTree,
+				oper_expr = new ConditionalLogicalOperator (mg.BestCandidate, args, CreateExpressionTree,
 					oper == Operator.LogicalAnd, loc).Resolve (ec);
 			} else {
-				oper_expr = new UserOperatorCall (mg, args, CreateExpressionTree, loc);
+				oper_expr = new UserOperatorCall (mg.BestCandidate, args, CreateExpressionTree, loc);
 			}
 
 			left = larg.Expr;
@@ -3672,7 +3666,7 @@ namespace Mono.CSharp {
 			return CreateExpressionTree (ec, null);
 		}
 
-		Expression CreateExpressionTree (ResolveContext ec, MethodGroupExpr method)		
+		Expression CreateExpressionTree (ResolveContext ec, Expression method)		
 		{
 			string method_name;
 			bool lift_arg = false;
@@ -3758,8 +3752,8 @@ namespace Mono.CSharp {
 			if (method != null) {
 				if (lift_arg)
 					args.Add (new Argument (new BoolConstant (false, loc)));
-				
-				args.Add (new Argument (method.CreateExpressionTree (ec)));
+
+				args.Add (new Argument (method));
 			}
 			
 			return CreateExpressionFactoryCall (ec, method_name, args);
@@ -3905,11 +3899,10 @@ namespace Mono.CSharp {
 	//
 	public class ConditionalLogicalOperator : UserOperatorCall {
 		readonly bool is_and;
-		Expression oper;
+		Expression oper_expr;
 
-		public ConditionalLogicalOperator (MethodGroupExpr oper_method, Arguments arguments,
-			ExpressionTreeExpression expr_tree, bool is_and, Location loc)
-			: base (oper_method, arguments, expr_tree, loc)
+		public ConditionalLogicalOperator (MethodSpec oper, Arguments arguments, Func<ResolveContext, Expression, Expression> expr_tree, bool is_and, Location loc)
+			: base (oper, arguments, expr_tree, loc)
 		{
 			this.is_and = is_and;
 			eclass = ExprClass.Unresolved;
@@ -3917,13 +3910,11 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			var method = mg.BestCandidate;
-			type = method.ReturnType;
-			AParametersCollection pd = method.Parameters;
+			AParametersCollection pd = oper.Parameters;
 			if (!TypeManager.IsEqual (type, type) || !TypeManager.IsEqual (type, pd.Types [0]) || !TypeManager.IsEqual (type, pd.Types [1])) {
 				ec.Report.Error (217, loc,
 					"A user-defined operator `{0}' must have parameters and return values of the same type in order to be applicable as a short circuit operator",
-					TypeManager.CSharpSignature (method));
+					oper.GetSignatureForError ());
 				return null;
 			}
 
@@ -3933,11 +3924,11 @@ namespace Mono.CSharp {
 			if (op_true == null || op_false == null) {
 				ec.Report.Error (218, loc,
 					"The type `{0}' must have operator `true' and operator `false' defined when `{1}' is used as a short circuit operator",
-					TypeManager.CSharpName (type), TypeManager.CSharpSignature (method));
+					TypeManager.CSharpName (type), oper.GetSignatureForError ());
 				return null;
 			}
 
-			oper = is_and ? op_false : op_true;
+			oper_expr = is_and ? op_false : op_true;
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -3953,7 +3944,7 @@ namespace Mono.CSharp {
 			ec.Emit (OpCodes.Dup);
 			arguments.RemoveAt (0);
 
-			oper.EmitBranchable (ec, end_target, true);
+			oper_expr.EmitBranchable (ec, end_target, true);
 			base.Emit (ec);
 			ec.MarkLabel (end_target);
 		}

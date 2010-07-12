@@ -819,7 +819,7 @@ namespace Mono.CSharp {
 			if (mg == null)
 				return null;
 
-			return new UserOperatorCall (mg, arguments, null, loc);
+			return new UserOperatorCall (mg.BestCandidate, arguments, null, loc);
 		}
 		
 		public virtual string ExprClassName
@@ -3918,8 +3918,8 @@ namespace Mono.CSharp {
 			}
 
 			if (best_candidate.IsGeneric) {
-				ConstraintChecker.CheckAll (best_candidate.GetGenericMethodDefinition (), best_candidate.TypeArguments,
-					best_candidate.Constraints, loc, ec.Report);
+				ConstraintChecker.CheckAll (ec, best_candidate.GetGenericMethodDefinition (), best_candidate.TypeArguments,
+					best_candidate.Constraints, loc);
 			}
 
 			//
