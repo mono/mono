@@ -1,3 +1,11 @@
+2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (fix_partial_generic_class): Inflate the
+	generic instance parent in case it was changed after
+	MonoGenericClass was instantiated.
+
+	Fixes one of the issues from #389886.
+
 2010-07-10  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gray.c: Store only a pointer to one end of the gray queue.
