@@ -1,5 +1,10 @@
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecurityCapabilities.cs, SupportingTokenInfo.cs :
+	  new internal types, split from MessageSecurityBindingSupport.cs.
+
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecurityRequestContext.cs : revert extra and bogus changes I had
 	  locally.
 

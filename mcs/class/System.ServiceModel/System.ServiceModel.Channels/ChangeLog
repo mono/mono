@@ -1,5 +1,10 @@
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageSecurityBindingSupport.cs : split a couple of classes out.
+	  Changed namespace to internal one.
+
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecurityChannelFactory.cs
 	  SecurityChannelListener.cs
 	  SecurityRequestContext.cs

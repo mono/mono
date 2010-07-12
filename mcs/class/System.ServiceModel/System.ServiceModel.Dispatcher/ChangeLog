@@ -1,5 +1,9 @@
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecurityHandler.cs : add new using. Though this class will vanish.
+
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs : apply ErrorHandlers to IInputChannel too.
 
 2010-07-09  Atsushi Enomoto  <atsushi@ximian.com>

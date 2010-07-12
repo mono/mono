@@ -305,12 +305,14 @@ System.ServiceModel.Channels.Http/HttpReplyChannel.cs
 System.ServiceModel.Channels.Http/HttpRequestContext.cs
 System.ServiceModel.Channels.Security/SecureMessageDecryptor.cs
 System.ServiceModel.Channels.Security/SecureMessageGenerator.cs
+System.ServiceModel.Channels.Security/SecurityCapabilities.cs
 System.ServiceModel.Channels.Security/SecurityChannelFactory.cs
 System.ServiceModel.Channels.Security/SecurityChannelListener.cs
 System.ServiceModel.Channels.Security/SecurityOutputChannel.cs
 System.ServiceModel.Channels.Security/SecurityReplyChannel.cs
 System.ServiceModel.Channels.Security/SecurityRequestChannel.cs
 System.ServiceModel.Channels.Security/SecurityRequestContext.cs
+System.ServiceModel.Channels.Security/SupportingTokenInfo.cs
 System.ServiceModel.Channels.Security/WSEncryptedXml.cs
 System.ServiceModel.Channels.Security/WSSecurityMessageHeader.cs
 System.ServiceModel.Channels.Security/WSSignedXml.cs

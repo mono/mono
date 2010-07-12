@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Channels.Security;
 using System.ServiceModel;
 using System.ServiceModel.Security.Tokens;
 
