@@ -32,7 +32,7 @@ using System;
 
 namespace System.Numerics {
 
-	public struct Complex : IEquatable<Complex>
+	public struct Complex : IEquatable<Complex>, IFormattable
 	{
 		double real, imaginary;
 
