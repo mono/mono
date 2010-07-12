@@ -895,7 +895,8 @@ namespace System
 				}
 				return CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName);
 			} else {
-				return CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName, ValidateRules (adjustmentRules).ToArray ());
+				return CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName,
+								(AdjustmentRule []) ValidateRules (adjustmentRules).ToArray ());
 			}
 		}
 
