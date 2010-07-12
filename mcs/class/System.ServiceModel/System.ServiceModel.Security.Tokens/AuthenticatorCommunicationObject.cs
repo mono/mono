@@ -42,7 +42,7 @@ namespace System.ServiceModel.Security.Tokens
 {
 	abstract class AuthenticatorCommunicationObject : CommunicationObject
 	{
-		public abstract Message ProcessNegotiation (Message request);
+		public abstract Message ProcessNegotiation (Message request, TimeSpan timeout);
 
 		Binding issuer_binding;
 		EndpointAddress issuer_address;

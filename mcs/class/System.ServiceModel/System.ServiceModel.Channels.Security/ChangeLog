@@ -1,5 +1,10 @@
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecurityReplyChannel.cs : handle WS-Trust message here.
+	* SecurityRequestContext.cs : so, do not pass those messages here.
+
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageSecurityBindingSupport.cs : and move this to here too.
 
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>

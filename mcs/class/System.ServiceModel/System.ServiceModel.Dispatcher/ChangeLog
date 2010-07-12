@@ -1,5 +1,12 @@
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* InputOrReplyProcessor.cs : remove SecurityHandler. WS-Trust must
+	  be handled before endpoint dispatching (it must not pass contract
+	  filter) and doesn't make sense to be here.
+	* SecurityHandler.cs : move to old-code.
+
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecurityHandler.cs : add new using. Though this class will vanish.
 
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>

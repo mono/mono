@@ -672,7 +672,6 @@ System.ServiceModel.Dispatcher/OperationInvokerHandler.cs
 System.ServiceModel.Dispatcher/PostReceiveRequestHandler.cs
 System.ServiceModel.Dispatcher/PrefixEndpointAddressMessageFilter.cs
 System.ServiceModel.Dispatcher/ReplyHandler.cs
-System.ServiceModel.Dispatcher/SecurityHandler.cs
 System.ServiceModel.Dispatcher/SeekableXPathNavigator.cs
 System.ServiceModel.Dispatcher/ServiceThrottle.cs
 System.ServiceModel.Dispatcher/SessionInstanceContextProvider.cs

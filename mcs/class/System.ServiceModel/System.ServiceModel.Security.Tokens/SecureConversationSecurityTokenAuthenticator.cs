@@ -82,7 +82,7 @@ namespace System.ServiceModel.Security.Tokens
 			get { throw new NotImplementedException (); }
 		}
 
-		public override Message ProcessNegotiation (Message request)
+		public override Message ProcessNegotiation (Message request, TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
 		}

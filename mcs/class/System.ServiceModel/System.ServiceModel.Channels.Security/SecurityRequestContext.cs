@@ -62,20 +62,8 @@ namespace System.ServiceModel.Channels.Security
 
 		public override Message RequestMessage {
 			get {
-				if (msg == null) {
-					msg = source.RequestMessage;
-					switch (msg.Headers.Action) {
-					case Constants.WstIssueAction:
-					case Constants.WstIssueReplyAction:
-					case Constants.WstRenewAction:
-					case Constants.WstCancelAction:
-					case Constants.WstValidateAction:
-						break;
-					default:
-						msg = new RecipientSecureMessageDecryptor (msg, security).DecryptMessage ();
-						break;
-					}
-				}
+				if (msg == null)
+					msg = new RecipientSecureMessageDecryptor (source.RequestMessage, security).DecryptMessage ();
 				return msg; 
 			}
 		}

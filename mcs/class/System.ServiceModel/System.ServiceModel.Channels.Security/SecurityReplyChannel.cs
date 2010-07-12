@@ -77,8 +77,30 @@ namespace System.ServiceModel.Channels.Security
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
 		{
+			DateTime start = DateTime.Now;
+
 			if (!inner.TryReceiveRequest (timeout, out context))
 				return false;
+
+			var msg = context.RequestMessage;
+			switch (msg.Headers.Action) {
+			case Constants.WstIssueAction:
+			case Constants.WstIssueReplyAction:
+			case Constants.WstRenewAction:
+			case Constants.WstCancelAction:
+			case Constants.WstValidateAction:
+				var support = Source.SecuritySupport;
+				var commAuth = support.TokenAuthenticator as CommunicationSecurityTokenAuthenticator;
+				if (commAuth!= null)
+					msg = commAuth.Communication.ProcessNegotiation (msg, timeout - (DateTime.Now - start));
+				context.Reply (msg, timeout - (DateTime.Now - start));
+				context.Close (timeout - (DateTime.Now - start));
+				// wait for another incoming message
+				return TryReceiveRequest (timeout - (DateTime.Now - start), out context);
+
+				break;
+			}
+
 			context = new SecurityRequestContext (this, context);
 			return true;
 		}

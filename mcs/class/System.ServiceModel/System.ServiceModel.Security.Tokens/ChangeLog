@@ -1,3 +1,10 @@
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SslSecurityTokenAuthenticator.cs,
+	  AuthenticatorCommunicationObject.cs,
+	  SecureConversationSecurityTokenAuthenticator.cs :
+	  add timeout argument to negotication requests.
+
 2008-02-27 Eyal Alaluf <eyala@mainsoft.com>
 
 	* InternalEncryptedKeyIdentifierClause.cs IssuedTokenCommunicationObject.cs:

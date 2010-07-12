@@ -101,12 +101,12 @@ namespace System.ServiceModel.Security.Tokens
 			get { throw new NotImplementedException (); }
 		}
 
-		public override Message ProcessNegotiation (Message request)
+		public override Message ProcessNegotiation (Message request, TimeSpan timeout)
 		{
 			if (request.Headers.Action == Constants.WstIssueAction)
-				return ProcessMessageType1 (request);
+				return ProcessMessageType1 (request, timeout);
 			else
-				return ProcessMessageType3 (request);
+				return ProcessMessageType3 (request, timeout);
 		}
 
 		class TlsServerSessionInfo
@@ -138,7 +138,8 @@ namespace System.ServiceModel.Security.Tokens
 			tlsInfo.Messages.Write (bytes, 0, bytes.Length);
 		}
 
-		Message ProcessMessageType1 (Message request)
+		// FIXME: use timeout
+		Message ProcessMessageType1 (Message request, TimeSpan timeout)
 		{
 			// FIXME: use correct buffer size
 			MessageBuffer buffer = request.CreateBufferedCopy (0x10000);
@@ -190,7 +191,8 @@ Console.WriteLine (buffer.CreateMessage ());
 			return buffer.CreateMessage ();
 		}
 
-		Message ProcessMessageType3 (Message request)
+		// FIXME: use timeout
+		Message ProcessMessageType3 (Message request, TimeSpan timeout)
 		{
 			// FIXME: use correct buffer size
 			MessageBuffer buffer = request.CreateBufferedCopy (0x10000);
