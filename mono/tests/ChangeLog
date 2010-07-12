@@ -1,3 +1,7 @@
+2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-389886-3.cs: New regression test.
+
 2010-07-10  Jonathan Pryor <jpryor@novell.com>
 
 	* Makfile.am (test-process-exit): Expected output is in $srcdir.
