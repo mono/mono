@@ -1,5 +1,11 @@
 2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_MonoMethod_get_base_method): If
+	the method slot is bigger than the class vtable, return
+	the original method. Makes booc work again.
+
+2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_generic_param_is_constraint_compatible):
 	The candidate type itself might satisty the required
 	constraints.
