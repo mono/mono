@@ -1,3 +1,7 @@
+2010-07-12  Andrew Jorgensen  <ajorgensen@novell.com>
+
+	* mono-core.spec.in: Updates, including breaking a circular dep.
+
 2010-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Applied patch from Robert Nagy (robert@openbsd.org). Add

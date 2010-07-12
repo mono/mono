@@ -1,5 +1,4 @@
 %{!?ext_man: %define ext_man .gz}
-
 Name:           mono-core
 License:        LGPL v2.1 only
 Group:          Development/Languages/Mono
@@ -91,8 +90,8 @@ BuildRequires:  libunwind-devel
 # Allows overrides of __find_provides in fedora distros... (already set to zero on newer suse distros)
 %define _use_internal_dependency_generator 0
 %endif
-%define __find_provides env sh -c 'filelist=($(cat)) && { printf "%s\\n" "${filelist[@]}" | /usr/lib/rpm/find-provides && printf "%s\\n" "${filelist[@]}" | prefix=%{buildroot}/usr %{buildroot}%{_bindir}/mono-find-provides ; } | sort | uniq'
-%define __find_requires env sh -c 'filelist=($(cat)) && { printf "%s\\n" "${filelist[@]}" | /usr/lib/rpm/find-requires && printf "%s\\n" "${filelist[@]}" | prefix=%{buildroot}/usr %{buildroot}%{_bindir}/mono-find-requires ; } | sort | uniq'
+%define __find_provides env sh -c 'filelist=($(cat)) && { printf "%s\\n" "${filelist[@]}" | /usr/lib/rpm/find-provides && printf "%s\\n" "${filelist[@]}" | prefix=%{buildroot}%{_prefix} %{buildroot}%{_bindir}/mono-find-provides ; } | sort | uniq'
+%define __find_requires env sh -c 'filelist=($(cat)) && { printf "%s\\n" "${filelist[@]}" | /usr/lib/rpm/find-requires && printf "%s\\n" "${filelist[@]}" | prefix=%{buildroot}%{_prefix} %{buildroot}%{_bindir}/mono-find-requires ; } | sort | uniq'
 
 %description
 The Mono Project is an open development initiative that is working to
@@ -240,7 +239,6 @@ Authors:
 %_prefix/lib/mono/gac/Mono.Cecil.Mdb
 # localizations?
 #%_datadir/locale/*/LC_MESSAGES/mcs.mo
-# Not sure if autobuild allows this...
 
 %post
 /sbin/ldconfig
@@ -585,6 +583,7 @@ Authors:
 %_prefix/lib/mono/2.0/Mono.Data.SybaseClient.dll
 
 %package -n mono-wcf
+License:        MIT License (or similar) ; Ms-Pl
 Summary:        Mono implementation of WCF, Windows Communication Foundation
 Group:          Development/Languages/Mono
 Requires:       mono-core == %version-%release
@@ -624,9 +623,10 @@ Authors:
 %_libdir/pkgconfig/wcf.pc
 
 %package -n mono-winfxcore
-Summary: Mono implementation of core WinFX APIs
-Group: Development/Languages/Mono
-Requires: mono-core == %version-%release
+License:        MIT License (or similar) ; Ms-Pl
+Summary:        Mono implementation of core WinFX APIs
+Group:          Development/Languages/Mono
+Requires:       mono-core == %version-%release
 
 %description -n mono-winfxcore
 The Mono Project is an open development initiative that is working to
@@ -652,7 +652,7 @@ Dietmar Maurer <dietmar@ximian.com>
 %_prefix/lib/mono/2.0/WindowsBase.dll*
 
 %package -n mono-web
-License:        X11/MIT; Ms-Pl
+License:        MIT License (or similar) ; Ms-Pl
 Summary:        Mono implementation of ASP.NET, Remoting and Web Services
 Group:          Development/Languages/Mono
 Requires:       mono-core == %version-%release
@@ -918,7 +918,6 @@ Authors:
 %_prefix/lib/mono/gac/nunit-console-runner
 %_prefix/lib/mono/1.0/nunit-console-runner.dll
 %_prefix/lib/mono/2.0/nunit-console-runner.dll
-
 %_libdir/pkgconfig/mono-nunit.pc
 
 %package -n mono-devel
@@ -926,6 +925,15 @@ License:        LGPL v2.1 only
 Summary:        Mono development tools
 Group:          Development/Languages/Mono
 Requires:       mono-core == %version-%release
+Recommends:     glib2-devel
+Requires:       pkgconfig
+# Required because they are referenced by .pc files
+Requires:       mono-data == %version-%release
+Requires:       mono-data-oracle == %version-%release
+Requires:       mono-extras == %version-%release
+Requires:       mono-jscript == %version-%release
+Requires:       mono-web == %version-%release
+Requires:       mono-winforms == %version-%release
 %if 0%{?monobuild}
 Requires:       libgdiplus0
 %else
@@ -954,11 +962,7 @@ Authors:
     Paolo Molaro <lupus@ximian.com>
     Dietmar Maurer <dietmar@ximian.com>
 
-%post -n mono-devel
-/sbin/ldconfig
-if [ ! -d /opt/gnome ]; then
-sed -i 's:/opt/gnome:/usr:g' %_libdir/libmono.la
-fi
+%post -n mono-devel -p /sbin/ldconfig
 
 %postun -n mono-devel -p /sbin/ldconfig
 
@@ -967,7 +971,6 @@ fi
 # libs
 %_libdir/libmono.so
 %_libdir/libmono.a
-%verify(not size md5 mtime) %_libdir/libmono.la
 # exes
 %_prefix/lib/mono/1.0/makecert.exe*
 %_prefix/lib/mono/2.0/mono-api-info.exe*
@@ -1121,10 +1124,9 @@ fi
 #  yet gzipped
 
 %package -n monodoc-core
-License:        GNU General Public License (GPL)
-Summary:        Monodoc-Documentation tools for C# code
+License:        LGPL v2.1 only
+Summary:        Monodoc - Documentation tools for C# code
 Group:          Development/Tools/Other
-URL:            http://go-mono.org/
 Provides:       monodoc
 Obsoletes:      monodoc
 
@@ -1227,6 +1229,7 @@ make
 %install
 make install DESTDIR=%buildroot
 # Remove unused files
+rm -f $RPM_BUILD_ROOT%_libdir/libmono.la
 rm $RPM_BUILD_ROOT%_libdir/libMonoPosixHelper.a
 rm $RPM_BUILD_ROOT%_libdir/libMonoPosixHelper.la
 rm -f $RPM_BUILD_ROOT%_libdir/libikvm-native.a
