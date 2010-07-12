@@ -1,5 +1,20 @@
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecurityChannelFactory.cs
+	  SecurityChannelListener.cs
+	  SecurityRequestContext.cs
+	  SecurityOutputChannel.cs
+	  SecurityReplyChannel.cs
+	  SecurityRequestChannel.cs
+	  SecureMessageGenerator.cs
+	  SecureMessageDecryptor.cs
+	  WSEncryptedXml.cs
+	  WSSignedXml.cs
+	  WSSecurityMessageHeader.cs :
+	  moved to System.ServiceModel.Channels.Security.
+
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecurityReplyChannel.cs : split from SecurityChannelListener.cs.
 	* AsymmetricSecurityBindingElement.cs
 	  WSSecurityMessageHeader.cs
