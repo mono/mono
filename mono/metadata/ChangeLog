@@ -1,3 +1,11 @@
+2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_generic_param_is_constraint_compatible):
+	The candidate type itself might satisty the required
+	constraints.
+
+	Fixes #621599.
+
 2010-07-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (mono_method_signature_checked): Use checked
