@@ -1,5 +1,10 @@
 2010-07-12  Astushi Enomoto  <atsushi@ximian.com>
 
+	* System.ServiceModel.dll.sources:
+	  move MessageSecurityBindingSupport.cs too.
+
+2010-07-12  Astushi Enomoto  <atsushi@ximian.com>
+
 	* System.ServiceModel.dll.sources: moved bunch of security internal
 	  classes to System.ServiceModel.Channels.Security directory.
 

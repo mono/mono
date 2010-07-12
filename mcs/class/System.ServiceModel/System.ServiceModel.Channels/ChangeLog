@@ -1,5 +1,9 @@
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageSecurityBindingSupport.cs : and move this too.
+
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageSecurityBindingSupport.cs : split a couple of classes out.
 	  Changed namespace to internal one.
 

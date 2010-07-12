@@ -1,5 +1,9 @@
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageSecurityBindingSupport.cs : and move this to here too.
+
+2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecurityCapabilities.cs, SupportingTokenInfo.cs :
 	  new internal types, split from MessageSecurityBindingSupport.cs.
 

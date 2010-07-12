@@ -220,7 +220,6 @@ System.ServiceModel.Channels/MessageHeaderInfo.cs
 System.ServiceModel.Channels/MessageHeaders.cs
 System.ServiceModel.Channels/MessageImpl.cs
 System.ServiceModel.Channels/MessageProperties.cs
-System.ServiceModel.Channels/MessageSecurityBindingSupport.cs
 System.ServiceModel.Channels/MessageVersion.cs
 System.ServiceModel.Channels/MsmqBindingElementBase.cs
 System.ServiceModel.Channels/MsmqChannelFactory.cs
@@ -303,6 +302,7 @@ System.ServiceModel.Channels.Http/HttpListenerManagerTable.cs
 System.ServiceModel.Channels.Http/HttpChannelListener.cs
 System.ServiceModel.Channels.Http/HttpReplyChannel.cs
 System.ServiceModel.Channels.Http/HttpRequestContext.cs
+System.ServiceModel.Channels.Security/MessageSecurityBindingSupport.cs
 System.ServiceModel.Channels.Security/SecureMessageDecryptor.cs
 System.ServiceModel.Channels.Security/SecureMessageGenerator.cs
 System.ServiceModel.Channels.Security/SecurityCapabilities.cs
