@@ -1,3 +1,9 @@
+2010-07-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* mini.c|h:
+	* mini-exceptions.c: Add an option to MONO_DEBUG for tracking down exceptions
+	that reach native code from a reverse pinvoke.
+
 2010-07-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Kill some duplicated code.

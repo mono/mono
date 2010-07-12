@@ -1616,6 +1616,16 @@ passed to unmanaged code, and no references kept in managed code,
 which will garbage collect the code.  With this option it is possible
 to track down the source of the problems. 
 .TP
+\fBreverse-pinvoke-exceptions
+This option will cause mono to abort with a descriptive message when
+during stack unwinding after an exception it reaches a native stack
+frame. This happens when a managed delegate is passed to native code,
+and the managed delegate throws an exception. Mono will normally try
+to unwind the stack to the first (managed) exception handler, and it
+will skip any native stack frames in the process. This leads to 
+undefined behaviour (since mono doesn't know how to process native
+frames), leaks, and possibly crashes too.
+.TP
 \fBno-gdb-backtrace\fR
 This option will disable the GDB backtrace emitted by the runtime
 after a SIGSEGV or SIGABRT in unmanaged code.
