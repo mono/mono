@@ -1,5 +1,13 @@
 2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_generic_param_is_constraint_compatible):
+	The candidate type itself might satisty the required
+	constraints.
+
+	Fixes #621599.
+
+2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (fix_partial_generic_class): Inflate the
 	generic instance parent in case it was changed after
 	MonoGenericClass was instantiated.
