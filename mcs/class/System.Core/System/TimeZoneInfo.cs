@@ -380,7 +380,20 @@ namespace System
 			else
 				ParseRegTzi(adjustmentRules, 1, 9999, reg_tzi);
 
-			return CreateCustomTimeZone (id, baseUtcOffset, display_name, standard_name, daylight_name, ValidateRules (adjustmentRules).ToArray ());
+			return CreateCustomTimeZone (id, baseUtcOffset, display_name, standard_name, daylight_name,
+							(AdjustmentRule []) ValidateRules (adjustmentRules).ToArray ());
+		}
+
+		static List<AdjustmentRule> ValidateRules (List<AdjustmentRule> adjustmentRules)
+		{
+			AdjustmentRule prev = null;
+			foreach (AdjustmentRule current in adjustmentRules.ToArray ()) {
+				if (prev != null && prev.DateEnd > current.DateStart) {
+					adjustmentRules.Remove (current);
+				}
+				prev = current;
+			}
+			return adjustmentRules;
 		}
 
 		private static void ParseRegTzi (List<AdjustmentRule> adjustmentRules, int start_year, int end_year, byte [] buffer)
@@ -898,18 +911,6 @@ namespace System
 				return CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName,
 								(AdjustmentRule []) ValidateRules (adjustmentRules).ToArray ());
 			}
-		}
-
-		static List<AdjustmentRule> ValidateRules (List<AdjustmentRule> adjustmentRules)
-		{
-			AdjustmentRule prev = null;
-			foreach (AdjustmentRule current in adjustmentRules.ToArray ()) {
-				if (prev != null && prev.DateEnd > current.DateStart) {
-					adjustmentRules.Remove (current);
-				}
-				prev = current;
-			}
-			return adjustmentRules;
 		}
 
 		static Dictionary<int, string> ParseAbbreviations (byte [] buffer, int index, int count)
