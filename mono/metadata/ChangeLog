@@ -1,5 +1,11 @@
 2010-07-13  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Versions of safe_object_get_size() and
+	copy_object_no_checks() that work without the object's vtable
+	intact, by passing the correct vtable as an argument.
+
+2010-07-13  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-marksweep.c: Make allocation of major sections thread-safe.
 
 2010-07-13  Mark Probst  <mark.probst@gmail.com>
