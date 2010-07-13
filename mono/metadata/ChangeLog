@@ -1,3 +1,8 @@
+2010-07-13  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c, sgen-gc.h, sgen-major-copying.c: Lock the internal
+	allocator if parallel mark (not committed yet) is enabled.
+
 2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (inflate_mono_method): Handle dynamic
