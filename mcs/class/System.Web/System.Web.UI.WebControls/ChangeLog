@@ -1,3 +1,11 @@
+2010-07-13  Marek Habersack  <mhabersack@novell.com>
+
+	* Wizard.cs: wizard table doesn't contain any instances of
+	HtmlAnchor or Image controls. Moved rendering of the skip link
+	anchor to the TableCellNamingContainer class, which does that in
+	RenderChildren by directly writing to the passed writer. Fixes 4.0
+	rendering and all the failing Wizard tests.
+
 2010-07-08  Marek Habersack  <mhabersack@novell.com>
 
 	* CheckBoxList.cs: RepeatLayout property update for new values of

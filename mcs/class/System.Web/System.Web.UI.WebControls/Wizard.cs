@@ -867,7 +867,7 @@ namespace System.Web.UI.WebControls
 
 				TableRow row = new TableRow ();
 
-				TableCellNamingContainer sideBarCell = new TableCellNamingContainer ();
+				TableCellNamingContainer sideBarCell = new TableCellNamingContainer (SkipLinkText, ClientID);
 				sideBarCell.ID = "SideBarContainer";
 				sideBarCell.ControlStyle.Height = Unit.Percentage (100);
 				CreateSideBar (sideBarCell);
@@ -1091,22 +1091,6 @@ namespace System.Web.UI.WebControls
 		void CreateSideBar (TableCell sideBarCell)
 		{
 			RegisterApplyStyle (sideBarCell, SideBarStyle);
-
-			if (SkipLinkText != "") {
-				System.Web.UI.HtmlControls.HtmlAnchor anchor = new System.Web.UI.HtmlControls.HtmlAnchor ();
-				anchor.HRef = "#" + ClientID + "_SkipLink";
-
-				Image img = new Image ();
-				ClientScriptManager csm = new ClientScriptManager (null);
-				img.ImageUrl = csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
-				img.Attributes.Add ("height", "0");
-				img.Attributes.Add ("width", "0");
-				img.AlternateText = SkipLinkText;
-
-				anchor.Controls.Add (img);
-				sideBarCell.Controls.Add (anchor);
-			}
-
 			if (sideBarTemplate != null) {
 				sideBarTemplate.InstantiateIn (sideBarCell);
 				stepDatalist = sideBarCell.FindControl (DataListID) as DataList;
@@ -1119,12 +1103,6 @@ namespace System.Web.UI.WebControls
 				stepDatalist.SelectedItemStyle.Font.Bold = true;
 				stepDatalist.ItemTemplate = SideBarItemTemplate;
 				sideBarCell.Controls.Add (stepDatalist);
-			}
-
-			if (SkipLinkText != "") {
-				System.Web.UI.HtmlControls.HtmlAnchor anchor = new System.Web.UI.HtmlControls.HtmlAnchor ();
-				anchor.ID = "SkipLink";
-				sideBarCell.Controls.Add (anchor);
 			}
 
 			stepDatalist.ItemCommand += new DataListCommandEventHandler (StepDatalistItemCommand);
@@ -1476,14 +1454,57 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		class TableCellNamingContainer : TableCell, INamingContainer, INonBindingContainer
+		sealed class TableCellNamingContainer : TableCell, INamingContainer, INonBindingContainer
 		{
-			public TableCellNamingContainer ()
+			string skipLinkText;
+			string clientId;
+			bool haveSkipLink;
+			
+			protected internal override void RenderChildren (HtmlTextWriter writer)
 			{
+				if (haveSkipLink) {
+					// <a href="#ID_SkipLink">
+					writer.AddAttribute (HtmlTextWriterAttribute.Href, "#" + clientId + "_SkipLink");
+					writer.RenderBeginTag (HtmlTextWriterTag.A);
+
+					// <img alt="" height="0" width="0" src="" style="border-width:0px;"/>
+					writer.AddAttribute (HtmlTextWriterAttribute.Alt, skipLinkText);
+					writer.AddAttribute (HtmlTextWriterAttribute.Height, "0");
+					writer.AddAttribute (HtmlTextWriterAttribute.Width, "0");
+
+					Page page = Page;
+					ClientScriptManager csm;
+					
+					if (page != null)
+						csm = page.ClientScript;
+					else
+						csm = new ClientScriptManager (null);
+					writer.AddAttribute (HtmlTextWriterAttribute.Src, csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif"));
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+					writer.RenderBeginTag (HtmlTextWriterTag.Img);
+					writer.RenderEndTag ();
+					
+					writer.RenderEndTag (); // </a>
+				}
+				
+				base.RenderChildren (writer);
+
+				if (haveSkipLink) {
+					writer.AddAttribute (HtmlTextWriterAttribute.Id, "SkipLink");
+					writer.RenderBeginTag (HtmlTextWriterTag.A);
+					writer.RenderEndTag ();
+				}
+			}
+			
+			public TableCellNamingContainer (string skipLinkText, string clientId)
+			{
+				this.skipLinkText = skipLinkText;
+				this.clientId = clientId;
+				this.haveSkipLink = !String.IsNullOrEmpty (skipLinkText);
 			}
 		}
 
-		class SideBarButtonTemplate: ITemplate
+		sealed class SideBarButtonTemplate: ITemplate
 		{
 			Wizard wizard;
 			

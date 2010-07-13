@@ -219,21 +219,7 @@ namespace System.Web.UI
 				if (clientID != null)
 					return clientID;
 #if NET_4_0
-				switch (EffectiveClientIDMode) {
-					case ClientIDMode.AutoID:
-						clientID = UniqueID2ClientID (UniqueID);
-						break;
-
-					case ClientIDMode.Predictable:
-						EnsureID ();
-						clientID = GeneratePredictableClientID ();
-						break;
-
-					case ClientIDMode.Static:
-						EnsureID ();
-						clientID = ID;
-						break;
-				}
+				clientID = GetClientID ();
 #else
 				clientID = UniqueID2ClientID (UniqueID);
 #endif				
@@ -368,6 +354,25 @@ namespace System.Web.UI
 			for (int i = 0; i < _controls.Count; i++)
 				_controls [i].ClearEffectiveClientIDMode ();
 		}
+
+		string GetClientID ()
+		{
+			switch (EffectiveClientIDMode) {
+				case ClientIDMode.AutoID:
+					return UniqueID2ClientID (UniqueID);
+
+				case ClientIDMode.Predictable:
+					EnsureID ();
+					return GeneratePredictableClientID ();
+
+				case ClientIDMode.Static:
+					EnsureID ();
+					return ID;
+
+				default:
+					throw new InvalidOperationException ("Unsupported ClientIDMode value.");
+			}
+		}
 		
 		string GeneratePredictableClientID ()
 		{
@@ -386,7 +391,7 @@ namespace System.Web.UI
 			if (container != null && container != Page) {
 				string containerID = container.ID;
 				if (!String.IsNullOrEmpty (containerID)) {
-					sb.Append (container.ClientID);
+					sb.Append (container.GetClientID ());
 					sb.Append (separator);
 				} else {
 					sb.Append (container.GeneratePredictableClientID ());
