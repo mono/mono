@@ -1,3 +1,8 @@
+2010-07-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-semaphore.h:
+	* mono-semaphore.c: use io-layer wait functions in OSX.
+
 2010-07-01  Martin Baulig  <martin@ximian.com>
 
 	Backport r157195:
