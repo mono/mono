@@ -1,3 +1,7 @@
+2010-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* driver.c : windows build fix for --with-moonlight.
+
 2010-07-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* mini.c|h:
