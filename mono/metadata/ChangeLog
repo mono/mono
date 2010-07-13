@@ -1,5 +1,11 @@
 2010-07-13  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-gc.h, sgen-los.c, sgen-major-copying.c,
+	sgen-marksweep.c: Update the heap boundaries thread-safe and lock
+	free if parallel mark is enabled.
+
+2010-07-13  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c, sgen-gc.h, sgen-major-copying.c: Lock the internal
 	allocator if parallel mark (not committed yet) is enabled.
 
