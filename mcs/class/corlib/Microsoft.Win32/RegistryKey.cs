@@ -324,7 +324,7 @@ namespace Microsoft.Win32
 		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions options,
 			RegistrySecurity registrySecurity)
 		{
-			return RegistryApi.CreateSubKey (this, subkey, options);
+			return CreateSubKey (subkey, permissionCheck, options);
 		}
 #endif
 

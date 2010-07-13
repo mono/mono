@@ -96,15 +96,27 @@ namespace Microsoft.Win32 {
 		static Hashtable key_to_handler = new Hashtable ();
 		static Hashtable dir_to_handler = new Hashtable (
 			new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
+		static Hashtable volatile_keys = new Hashtable ();
 		public string Dir;
+		public bool IsVolatile;
 
 		Hashtable values;
 		string file;
 		bool dirty;
 
-		KeyHandler (RegistryKey rkey, string basedir)
+		KeyHandler (RegistryKey rkey, string basedir) : this (rkey, basedir, false)
 		{
-			if (!Directory.Exists (basedir)){
+		}
+
+		KeyHandler (RegistryKey rkey, string basedir, bool is_volatile)
+		{
+			// Force ourselved to reuse the key, if any.
+			if (Directory.Exists (basedir))
+				is_volatile = false;
+			else if (VolatileKeyExists (basedir))
+				is_volatile = true;
+
+			if (!is_volatile && !Directory.Exists (basedir)){
 				try {
 					Directory.CreateDirectory (basedir);
 				} catch (UnauthorizedAccessException){
@@ -112,12 +124,18 @@ namespace Microsoft.Win32 {
 				}
 			}
 			Dir = basedir;
+			IsVolatile = is_volatile;
 			file = Path.Combine (Dir, "values.xml");
 			Load ();
 		}
 
 		public void Load ()
 		{
+			if (IsVolatile) {
+				LoadAsVolatile ();
+				return;
+			}
+
 			values = new Hashtable ();
 			if (!File.Exists (file))
 				return;
@@ -188,14 +206,29 @@ namespace Microsoft.Win32 {
 				// We ignore individual errors in the file.
 			}
 		}
-		
+
+		void LoadAsVolatile ()
+		{
+			if (volatile_keys [Dir] == null)
+				volatile_keys [Dir] = new Hashtable ();
+
+			values = (Hashtable) volatile_keys [Dir];
+			return;
+		}
+			
 		public RegistryKey Ensure (RegistryKey rkey, string extra, bool writable)
+		{
+			return Ensure (rkey, extra, writable, false);
+		}
+
+		// 'is_volatile' is used only if the key hasn't been created already.
+		public RegistryKey Ensure (RegistryKey rkey, string extra, bool writable, bool is_volatile)
 		{
 			lock (typeof (KeyHandler)){
 				string f = Path.Combine (Dir, extra);
 				KeyHandler kh = (KeyHandler) dir_to_handler [f];
 				if (kh == null)
-					kh = new KeyHandler (rkey, f);
+					kh = new KeyHandler (rkey, f, is_volatile);
 				RegistryKey rk = new RegistryKey (kh, CombineName (rkey, extra), writable);
 				key_to_handler [rk] = kh;
 				dir_to_handler [f] = kh;
@@ -214,7 +247,7 @@ namespace Microsoft.Win32 {
 					rk = new RegistryKey (kh, CombineName (rkey,
 						extra), writable);
 					key_to_handler [rk] = kh;
-				} else if (Directory.Exists (f)) {
+				} else if (Directory.Exists (f) || VolatileKeyExists (f)) {
 					kh = new KeyHandler (rkey, f);
 					rk = new RegistryKey (kh, CombineName (rkey, extra),
 						writable);
@@ -232,7 +265,17 @@ namespace Microsoft.Win32 {
 			
 			return String.Concat (rkey.Name, "\\", extra);
 		}
-		
+				
+		public static bool VolatileKeyExists (string dir)
+		{
+			return volatile_keys.Contains (dir);
+		}
+
+		public static void DeleteVolatileKey (string dir)
+		{
+			volatile_keys [dir] = null;
+		}
+
 		public static KeyHandler Lookup (RegistryKey rkey, bool createNonExisting)
 		{
 			lock (typeof (KeyHandler)){
@@ -505,6 +548,9 @@ namespace Microsoft.Win32 {
 			if (IsMarkedForDeletion)
 				return;
 
+			if (IsVolatile)
+				return; // Nothing to save to disk.
+
 			if (!File.Exists (file) && values.Count == 0)
 				return;
 
@@ -606,7 +652,7 @@ namespace Microsoft.Win32 {
 #if NET_4_0
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyname, RegistryOptions options)
 		{
-			throw new NotImplementedException ();
+			return CreateSubKey (rkey, keyname, true, options == RegistryOptions.Volatile);
 		}
 #endif
 
@@ -719,6 +765,12 @@ namespace Microsoft.Win32 {
 
 			string dir = Path.Combine (self.Dir, ToUnix (keyname));
 			
+			if (KeyHandler.VolatileKeyExists (dir)) {
+				KeyHandler.DeleteVolatileKey (dir);
+				KeyHandler.Drop (dir);
+				return;
+			}
+
 			if (Directory.Exists (dir)){
 				Directory.Delete (dir, true);
 				KeyHandler.Drop (dir);
@@ -754,10 +806,18 @@ namespace Microsoft.Win32 {
 
 		private RegistryKey CreateSubKey (RegistryKey rkey, string keyname, bool writable)
 		{
+			return CreateSubKey (rkey, keyname, writable, false);
+		}
+
+		private RegistryKey CreateSubKey (RegistryKey rkey, string keyname, bool writable, bool is_volatile)
+		{
 			KeyHandler self = KeyHandler.Lookup (rkey, true);
 			if (self == null)
 				throw RegistryKey.CreateMarkedForDeletionException ();
-			return self.Ensure (rkey, ToUnix (keyname), writable);
+			if (KeyHandler.VolatileKeyExists (self.Dir) && !is_volatile)
+				throw new IOException ("Cannot create a non volatile subkey under a volatile key.");
+
+			return self.Ensure (rkey, ToUnix (keyname), writable, is_volatile);
 		}
 
 		public RegistryValueKind GetValueKind (RegistryKey rkey, string name)

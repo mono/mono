@@ -1,3 +1,11 @@
+2010-07-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RegistryKey.cs: Call the proper UnixRegistryApi.CreateSubKey overload.
+	* UnixRegistryApi.cs: Implement basic support for volatile keys, by
+	storing them in memory instead of disk. We lack the support to have
+	them available to other processes - and given the fact that a
+	workaround would be gross, just don't implement that now.
+
 2010-07-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RegistryKey.cs: Add 4.0 CreateSubKey overloads taking a RegistryOptions
