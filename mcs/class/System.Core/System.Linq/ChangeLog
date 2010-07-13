@@ -1,3 +1,10 @@
+2010-07-13  Jb Evain  <jbevain@novell.com>
+
+	backport of 160298.
+
+	* Enumerable.cs (Except): fix HashSet.Contains call.
+	Fixes #621911.
+
 2010-06-22  Jb Evain  <jbevain@novell.com>
 
 	backport of r159337.
