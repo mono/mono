@@ -631,7 +631,8 @@ namespace Mono.Data.Tds.Protocol
 			if (size > 0) {
 				switch (param.TypeName) {
 				case "money" : {
-					Decimal val = (decimal) param.Value;
+					// 4 == SqlMoney::MoneyFormat.NumberDecimalDigits
+					Decimal val = Decimal.Round ((decimal) param.Value, 4);
 					int[] arr = Decimal.GetBits (val);
 
 					if (val >= 0) {
