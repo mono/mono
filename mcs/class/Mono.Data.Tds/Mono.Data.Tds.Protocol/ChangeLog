@@ -1,3 +1,10 @@
+2010-07-12  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	** Fixes #569543
+	* Tds70.cs (ExecPrepared): Revert back to old changes.
+	* Tds80.cs (ExecPrepared): Override for Tds 8 version that optimizes 
+	network bandwidth.
+	
 2010-07-10  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes 620860
