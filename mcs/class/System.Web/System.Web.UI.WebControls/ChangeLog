@@ -1,5 +1,15 @@
 2010-07-13  Marek Habersack  <mhabersack@novell.com>
 
+	* ListBox.cs, CheckBoxList.cs, ListControl.cs: VerifyMultiSelect
+	is not part of the official API. MultiSelect capability validation
+	is performed using an internal virtual method MultiSelectOk ().
+
+	* BaseDataList.cs: OnPagePreLoad is not part of the official API
+
+	* BaseDataBoundControl.cs, BaseDataList.cs, DataListItem.cs,
+	ValidationSummary.cs: implemented 4.0 SupportsDisabledAttribute
+	property.
+
 	* Wizard.cs: wizard table doesn't contain any instances of
 	HtmlAnchor or Image controls. Moved rendering of the skip link
 	anchor to the TableCellNamingContainer class, which does that in

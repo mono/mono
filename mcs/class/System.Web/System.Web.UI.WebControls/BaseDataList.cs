@@ -262,7 +262,11 @@ namespace System.Web.UI.WebControls
 				return selectArguments;
 			}
 		}
-
+#if NET_4_0
+		public override bool SupportsDisabledAttribute {
+			get { return RenderingCompatibilityLessThan40; }
+		}
+#endif
 		TableStyle TableStyle {
 			// this will throw an InvalidCasException just like we need
 			get { return (TableStyle) ControlStyle; }
@@ -380,9 +384,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected virtual void OnPagePreLoad (object sender, EventArgs e)
+		void OnPagePreLoad (object sender, EventArgs e)
 		{
-			Initialize ();
+			if (!Initialized)
+				Initialize ();
 		}
 		
 		protected internal override void OnLoad (EventArgs e)

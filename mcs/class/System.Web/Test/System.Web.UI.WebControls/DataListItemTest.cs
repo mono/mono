@@ -317,5 +317,20 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("mono", dli.Render (false, true), "Render-Empty-F-T");
 			Assert.AreEqual ("<span>mono</span>", dli.Render (false, false), "Render-Empty-F-F");
 		}
+#if NET_4_0
+		[Test]
+		public void SupportsDisabledAttribute ()
+		{
+			var ver40 = new Version (4, 0);
+			var ver35 = new Version (3, 5);
+			var p = new TestDataListItem (0, ListItemType.Item);
+			Assert.AreEqual (ver40, p.RenderingCompatibility, "#A1-1");
+			Assert.IsFalse (p.SupportsDisabledAttribute, "#A1-2");
+
+			p.RenderingCompatibility = new Version (3, 5);
+			Assert.AreEqual (ver35, p.RenderingCompatibility, "#A2-1");
+			Assert.IsTrue (p.SupportsDisabledAttribute, "#A2-2");
+		}
+#endif
 	}
 }

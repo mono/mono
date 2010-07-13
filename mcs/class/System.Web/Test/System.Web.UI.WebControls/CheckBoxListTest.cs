@@ -736,7 +736,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 #if NET_2_0
 	class TestCheckBoxList : CheckBoxList
 	{
-	    public new virtual void VerifyMultiSelect()
+	    public void CallVerifyMultiSelect()
 	    {
 		base.VerifyMultiSelect();
 	    }
@@ -745,7 +745,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 	public void VerifyMultiSelectTest()
 	{
 	    TestCheckBoxList list = new TestCheckBoxList();
-	    list.VerifyMultiSelect();
+	    list.CallVerifyMultiSelect();
 	}
 	[TestFixtureTearDown]
 		public void teardown ()

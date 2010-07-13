@@ -619,7 +619,13 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0		
 		protected internal virtual void VerifyMultiSelect ()
 		{
-            throw new HttpException("Multi select is not supported");
+			if (!MultiSelectOk ())
+				throw new HttpException("Multi select is not supported");
+		}
+
+		internal virtual bool MultiSelectOk ()
+		{
+			return false;
 		}
 #endif		
 
