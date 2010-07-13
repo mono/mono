@@ -1,5 +1,11 @@
 2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (inflate_mono_method): Handle dynamic
+	generic instances that have method.count set but
+	methods not. Fixes another crash from boo's test suite.
+
+2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_MonoMethod_get_base_method): If
 	the method slot is bigger than the class vtable, return
 	the original method. Makes booc work again.
