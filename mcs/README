@@ -1,4 +1,4 @@
-This contains code written in C# of Mono, it contains:
+This contains the C# components of the Mono project.
 
 	* Compilers written in C#
 
@@ -22,16 +22,11 @@ package module which drives the compilation of this directory.
 	errors/
 		Sample programs that should generate errors by the C# compiler.
 
-	gmcs/
-
-		The Mono C# compiler with Generics support.  This will
-	  	become the default in Mono 2.0.
-
 	jay/
 		Yacc-based parser generator.
 
 	mcs/
-		The Mono C# compiler (1.0 + 2.0 minus generics).
+		The Mono C# compiler
 
 	tests/
 		Regression test suite for the C# compiler
