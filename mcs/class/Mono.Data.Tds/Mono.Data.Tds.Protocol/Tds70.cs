@@ -408,10 +408,7 @@ namespace Mono.Data.Tds.Protocol
 		public override void ExecPrepared (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 		{
 			Parameters = parameters;
-			if (Parameters != null && Parameters.Count > 0)
-				ExecRPC (TdsRpcProcId.ExecuteSql, commandText, parameters, timeout, wantResults);
-			else
-				ExecuteQuery (BuildPreparedQuery (commandText), timeout, wantResults);
+			ExecuteQuery (BuildPreparedQuery (commandText), timeout, wantResults);
 		}
 			
 		public override void ExecProc (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)

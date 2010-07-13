@@ -233,6 +233,23 @@ namespace Mono.Data.Tds.Protocol {
 				ExecuteQuery (sql, timeout, wantResults);
 			}
 		}
+		
+		public override void ExecPrepared (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+		{
+			Parameters = parameters;
+			// We are connected to a Sql 7.0 server
+			if (TdsVersion < TdsVersion.tds80 || 
+			    Parameters == null || Parameters.Count < 1) {
+				base.ExecPrepared (commandText, parameters, timeout, wantResults);
+				return;
+			}
+			TdsMetaParameterCollection parms = new TdsMetaParameterCollection ();
+			parms.Add (new TdsMetaParameter ("@Handle", "int", Int32.Parse (commandText)));
+			foreach (TdsMetaParameter parm in Parameters)
+				parms.Add (parm);
+			
+			ExecRPC ("sp_execute", parms, timeout, wantResults);			
+		}
 
 		#endregion // Methods
 	}
