@@ -1,3 +1,8 @@
+2010-07-13  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs (Except): fix HashSet.Contains call.
+	Fixes #621911.
+
 2010-06-22  Jb Evain  <jbevain@novell.com>
 
 	* Queryable.cs: properly set the constants types in the queryable
