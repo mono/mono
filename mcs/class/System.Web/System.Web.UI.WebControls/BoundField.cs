@@ -129,6 +129,14 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		public virtual bool HtmlEncodeFormatString {
+			get { return ViewState.GetBool ("HtmlEncodeFormatString", true); }
+			set {
+				ViewState ["HtmlEncodeFormatString"] = value;
+				OnFieldChanged ();
+			}
+		}
+		
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
@@ -180,20 +188,29 @@ namespace System.Web.UI.WebControls
 		protected virtual string FormatDataValue (object value, bool encode)
 		{
 			string res;
-			string stringValue = (value != null) ? value.ToString () : string.Empty;
+			bool htmlEncodeFormatString = HtmlEncodeFormatString;
+			string stringValue = (value != null) ? value.ToString () : String.Empty;
 			if (value == null || (stringValue.Length == 0 && ConvertEmptyStringToNull)) {
 				if (NullDisplayText.Length == 0) {
 					encode = false;
 					res = "&nbsp;";
 				} else
 					res = NullDisplayText;
-			} else if (DataFormatString.Length > 0)
-				res = string.Format (DataFormatString, value);
+			} else {
+				string format = DataFormatString;
+				if (!String.IsNullOrEmpty (format)) {
+					if (!encode || htmlEncodeFormatString)
+						res = String.Format (format, value);
+					else
+						res = String.Format (format, encode ? HttpUtility.HtmlEncode (stringValue) : stringValue);
+				} else
+					res = stringValue;
+			}
+			
+			if (encode && htmlEncodeFormatString)
+				return HttpUtility.HtmlEncode (res);
 			else
-				res = stringValue;
-				
-			if (encode) return HttpUtility.HtmlEncode (res);
-			else return res;
+				return res;
 		}
 		
 		protected virtual object GetValue (Control controlContainer)
@@ -221,6 +238,12 @@ namespace System.Web.UI.WebControls
 				return null;
 
 			return DataBinder.GetPropertyValue (dataItem, DataField);
+		}
+		
+		protected override void LoadViewState (object state)
+		{
+			// Why override?
+			base.LoadViewState (state);
 		}
 		
 		protected virtual void OnDataBindField (object sender, EventArgs e)

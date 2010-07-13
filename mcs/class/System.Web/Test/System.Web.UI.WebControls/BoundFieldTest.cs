@@ -49,6 +49,14 @@ using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
+	class EncodingTest
+	{
+		public override string ToString ()
+		{
+			return "<EncodingTest>&";
+		}
+	}
+
 	class PokerBoundField : BoundField
 	{
 		public Button bindbutoon;
@@ -100,6 +108,11 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public Control GetControl {
 			get { return base.Control; }
+		}
+
+		public object DoSaveViewState ()
+		{
+			return SaveViewState ();
 		}
 	}
 
@@ -299,6 +312,53 @@ namespace MonoTests.System.Web.UI.WebControls
 			bf.DataFormatString = "-{0,8:G}-";
 			result = bf.DoFormatDataValue (10, false);
 			Assert.AreEqual ("-      10-", result, "FormatDataValueWithFormat");
+
+			bf.DataFormatString = "-{0:X}-";
+			result = bf.DoFormatDataValue (10, true);
+			Assert.AreEqual ("-A-", result, "FormatDataValueWithFormatAndHtmlEncode");
+
+			bf.DataFormatString = "-{0:X}-";
+			result = bf.DoFormatDataValue (10, false);
+			Assert.AreEqual ("-A-", result, "FormatDataValueWithFormatAndNoHtmlEncode");
+
+			bf.HtmlEncodeFormatString = false;
+			bf.DataFormatString = "-{0:X}-";
+			result = bf.DoFormatDataValue (10, true);
+			Assert.AreEqual ("-10-", result, "NoHtmlEncodeFormatString_HtmlEncode");
+
+			bf.DataFormatString = "-{0:X}-";
+			result = bf.DoFormatDataValue (10, false);
+			Assert.AreEqual ("-A-", result, "NoHtmlEncodeFormatString_NoHtmlEncode");
+		}
+
+		[Test]
+		public void HtmlEncodeFormatString ()
+		{
+			string formatString = "<script>alert ('{0}');</script>"; 
+			var bf = new PokerBoundField ();
+
+			Assert.IsTrue (bf.HtmlEncodeFormatString, "#A1-2");
+			Assert.IsTrue (bf.HtmlEncode, "#A1-2");
+			Assert.IsTrue (bf.DoSupportsHtmlEncode, "#A1-3");
+
+			bf.DataFormatString = formatString;
+#if NET_4_0
+			Assert.AreEqual ("&lt;script&gt;alert (&#39;&lt;test&gt;&#39;);&lt;/script&gt;", bf.DoFormatDataValue ("<test>", true), "#A2");
+#else
+			Assert.AreEqual ("&lt;script&gt;alert ('&lt;test&gt;');&lt;/script&gt;", bf.DoFormatDataValue ("<test>", true), "#A2");
+#endif
+			Assert.AreEqual (String.Format (formatString, "<test>"), bf.DoFormatDataValue ("<test>", false), "#A3");
+
+			bf.HtmlEncodeFormatString = false;
+			Assert.AreEqual ("<script>alert ('&lt;test&gt;');</script>", bf.DoFormatDataValue ("<test>", true), "#A4");
+
+			var ec = new EncodingTest ();
+			bf.HtmlEncodeFormatString = true;
+#if NET_4_0
+			Assert.AreEqual ("&lt;script&gt;alert (&#39;&lt;EncodingTest&gt;&amp;&#39;);&lt;/script&gt;", bf.DoFormatDataValue (ec, true), "#A4");
+#else
+			Assert.AreEqual ("&lt;script&gt;alert ('&lt;EncodingTest&gt;&amp;');&lt;/script&gt;", bf.DoFormatDataValue (ec, true), "#A4");
+#endif
 		}
 
 		[Test]
