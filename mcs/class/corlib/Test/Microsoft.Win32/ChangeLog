@@ -1,3 +1,7 @@
+2010-07-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RegistryKeyTest.cs: New tests for volatile keys.
+
 2008-02-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegistryKeyTest.cs: Added tests for max length of subkey and value

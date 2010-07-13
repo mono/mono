@@ -655,6 +655,110 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
+#if NET_4_0
+		// Unfortunately we can't test that the scenario where a volatile
+		// key is not alive after a reboot, but we can test other bits.
+		[Test]
+		public void CreateSubKey_Volatile ()
+		{
+			RegistryKey key = null;
+			RegistryKey subkey = null;
+			string subKeyName = "VolatileKey";
+
+			try {
+				key = Registry.CurrentUser.CreateSubKey (subKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				subkey = key.CreateSubKey ("Child", RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				key.Close ();
+
+				key = Registry.CurrentUser.OpenSubKey (subKeyName);
+				subkey = key.OpenSubKey ("Child");
+				Assert.AreEqual (true, subkey != null, "#A1");
+			} finally {
+				if (subkey != null)
+					subkey.Close ();
+				if (key != null)
+					key.Close ();
+			}
+		}
+
+		[Test]
+		public void CreateSubKey_Volatile_Child ()
+		{
+			RegistryKey key = null;
+			RegistryKey subkey = null;
+			string subKeyName = "VolatileKey";
+
+			try {
+				key = Registry.CurrentUser.CreateSubKey (subKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				subkey = key.CreateSubKey ("Child"); // Non volatile child
+				Assert.Fail ("#Exc");
+			} catch (IOException) {
+			} finally {
+				if (subkey != null)
+					subkey.Close ();
+				if (key != null)
+					key.Close ();
+			}
+		}
+
+		[Test]
+		public void CreateSubKey_Volatile_Conflict ()
+		{
+			RegistryKey key = null;
+			RegistryKey key2 = null;
+			RegistryKey subkey = null;
+			string subKeyName = "VolatileKey";
+
+			try {
+				// 
+				// Create a volatile key and try to open it as a normal one
+				//
+				key = Registry.CurrentUser.CreateSubKey (subKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				key2 = Registry.CurrentUser.CreateSubKey (subKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.None);
+				Assert.AreEqual (key.Name, key2.Name, "A0");
+
+				subkey = key2.CreateSubKey ("Child", RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				Assert.AreEqual (true, key.OpenSubKey ("Child") != null, "#A1");
+				Assert.AreEqual (true, key2.OpenSubKey ("Child") != null, "#A2");
+
+				subkey.Close ();
+				key.Close ();
+				key2.Close ();
+
+				// 
+				// Create a non-volatile key and try to open it as a volatile one
+				//
+				subKeyName = "NonVolatileKey";
+				key2 = Registry.CurrentUser.CreateSubKey (subKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.None);
+				key2.SetValue ("Name", "Mono");
+				key = Registry.CurrentUser.CreateSubKey (subKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				Assert.AreEqual (key.Name, key2.Name, "B0");
+				Assert.AreEqual ("Mono", key.GetValue ("Name"), "#B1");
+				Assert.AreEqual ("Mono", key2.GetValue ("Name"), "#B2");
+
+				key.CreateSubKey ("Child");
+				Assert.AreEqual (true, key.OpenSubKey ("Child") != null, "#B3");
+				Assert.AreEqual (true, key2.OpenSubKey ("Child") != null, "#B4");
+
+				// 
+				// Close the non-volatile key and try to re-open it as a volatile one
+				//
+				key.Close ();
+				key2.Close ();
+				key = Registry.CurrentUser.CreateSubKey (subKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				Assert.AreEqual ("Mono", key.GetValue ("Name"), "#C0");
+				Assert.AreEqual (true, key.OpenSubKey ("Child") != null, "#C1");
+			} finally {
+				if (subkey != null)
+					subkey.Close ();
+				if (key != null)
+					key.Close ();
+				if (key2 != null)
+					key2.Close ();
+			}
+		}
+#endif
+
 		[Test]
 		public void DeleteSubKey ()
 		{
