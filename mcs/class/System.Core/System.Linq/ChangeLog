@@ -1,6 +1,7 @@
 2010-07-14  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs (Union): fix HashSet.Contains call.
+
 2010-07-13  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs (Except): fix HashSet.Contains call.
