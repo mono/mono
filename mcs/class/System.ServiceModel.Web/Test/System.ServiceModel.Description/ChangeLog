@@ -1,3 +1,8 @@
+2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBehaviorTest.cs : add test for bug #619542 (not sure if it
+	  works on mono; run-test is broken in trunk. Verified under .NET).
+
 2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebScriptEnablingBehaviorTest.cs : new test.
