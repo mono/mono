@@ -1,3 +1,7 @@
+2010-07-14  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Heavy statistics on the internal allocator.
+
 2010-07-13  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-marksweep.c, sgen-gc.h: Keep track of num_empty_blocks
