@@ -1,5 +1,5 @@
 <%@ Page Language="C#" Debug="true"  AutoEventWireup="true" CodeFile="MyPage.aspx.cs" Inherits="MyPage" %>
-<%@ Register Namespace="Samples.AspNet.CS.Controls" Assembly="System.Web_test_net_2_0" TagPrefix="aspSample" %>
+<%@ Register Namespace="Samples.AspNet.CS.Controls" Assembly="System.Web_test" TagPrefix="aspSample" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <script runat="server">
   void Button_Click(object sender, EventArgs e)

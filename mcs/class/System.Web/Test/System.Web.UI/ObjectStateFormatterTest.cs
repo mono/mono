@@ -30,6 +30,7 @@
 
 #if NET_2_0
 using System;
+using System.Reflection;
 using System.Web;
 using System.Web.UI;
 
@@ -52,22 +53,35 @@ namespace MonoTests.System.Web.UI
 			WebTest.CopyResource (t, "StateFormatter_CollectionConverter.aspx.cs", "StateFormatter_CollectionConverter.aspx.cs");
 		}
 
+		public static Assembly ResolveAssemblyHandler (object sender, ResolveEventArgs e)
+		{
+			if (e.Name != "System.Web_test")
+				return null;
+
+			return Assembly.GetExecutingAssembly ();
+		}
+		
 		[Test (Description="Bug #545979")]
 		public void StateFormatter_CorrectConverter ()
 		{
 			// We test only if it doesn't throw exception on postback
-			WebTest t = new WebTest ("StateFormatter_CorrectConverter.aspx");
-			t.Run ();
+			try {
+				WebTest.Host.AppDomain.AssemblyResolve += new ResolveEventHandler (ResolveAssemblyHandler);
+				WebTest t = new WebTest ("StateFormatter_CorrectConverter.aspx");
+				t.Run ();
 
-			var fr = new FormRequest (t.Response, "Form1");
-			fr.Controls.Add ("Button1");
-			fr.Controls ["Button1"].Value = "Change";
-			t.Request = fr;
-			t.Run ();
+				var fr = new FormRequest (t.Response, "Form1");
+				fr.Controls.Add ("Button1");
+				fr.Controls ["Button1"].Value = "Change";
+				t.Request = fr;
+				t.Run ();
 
-			fr = new FormRequest (t.Response, "Form1");
-			fr.Controls.Add ("Button2");
-			fr.Controls ["Button2"].Value = "Refresh";
+				fr = new FormRequest (t.Response, "Form1");
+				fr.Controls.Add ("Button2");
+				fr.Controls ["Button2"].Value = "Refresh";
+			} finally {
+				WebTest.Host.AppDomain.AssemblyResolve -= new ResolveEventHandler (ResolveAssemblyHandler);
+			}
 		}
 
 		[Test (Description="Bug #565547")]

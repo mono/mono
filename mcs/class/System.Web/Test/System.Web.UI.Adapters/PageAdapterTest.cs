@@ -40,7 +40,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.Adapters;
 using System.Web.Configuration;
 using MonoTests.SystemWeb.Framework;
-
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.Adapters
 {
@@ -170,35 +170,39 @@ namespace MonoTests.System.Web.UI.Adapters
 		
 		public static void RenderPostBackEvent_OnSaveStateComplete (Page p)
 		{
-			TestPageWithAdapter pageWithAdapter = (TestPageWithAdapter) p;			
+			TestPageWithAdapter pageWithAdapter = (TestPageWithAdapter) p;
 			TestAdapter testAdapter = (TestAdapter)pageWithAdapter.PageAdapter;
 			{
 				StringWriter sw = new StringWriter ();
 				HtmlTextWriter htw = new HtmlTextWriter (sw);
 				testAdapter.RenderPostBackEvent (htw, "target", "argument", "softKeyLabel", "text", "postUrl", "X", true);
-				Assert.AreEqual("<a href=\"postUrl?__VIEWSTATE=DAAAAA%3d%3d&amp;__EVENTTARGET=target&amp;__EVENTARGUMENT=argument&amp;__PREVIOUSPAGE=/NunitWeb/PageWithAdapter.aspx\" accesskey=\"X\">text</a>",
-					sw.ToString(), "RenderPostBackEvent #1");
+				string origHtml = "<a href=\"postUrl?__VIEWSTATE=DAAAAA%3d%3d&amp;__EVENTTARGET=target&amp;__EVENTARGUMENT=argument&amp;__PREVIOUSPAGE=/NunitWeb/PageWithAdapter.aspx\" accesskey=\"X\">text</a>";
+				string renderedHtml = sw.ToString ();
+				HtmlDiff.AssertAreEqual(origHtml, renderedHtml, "RenderPostBackEvent #1");
 			}
 			{
 				StringWriter sw = new StringWriter ();
 				HtmlTextWriter htw = new HtmlTextWriter (sw);
 				testAdapter.RenderPostBackEvent (htw, "target", "argument", "softKeyLabel", "text", "postUrl", "X", false);
-				Assert.AreEqual("<a href=\"postUrl?__VIEWSTATE=DAAAAA%3d%3d&__EVENTTARGET=target&__EVENTARGUMENT=argument&__PREVIOUSPAGE=/NunitWeb/PageWithAdapter.aspx\" accesskey=\"X\">text</a>",
-					sw.ToString(), "RenderPostBackEvent #2");
+				string origHtml = "<a href=\"postUrl?__VIEWSTATE=DAAAAA%3d%3d&__EVENTTARGET=target&__EVENTARGUMENT=argument&__PREVIOUSPAGE=/NunitWeb/PageWithAdapter.aspx\" accesskey=\"X\">text</a>";
+				string renderedHtml = sw.ToString ();
+				HtmlDiff.AssertAreEqual(origHtml, renderedHtml, "RenderPostBackEvent #2");
 			}
 			{
 				StringWriter sw = new StringWriter ();
 				HtmlTextWriter htw = new HtmlTextWriter (sw);
+				string origHtml = "<a href=\"postUrl?__VIEWSTATE=DAAAAA%3d%3d&amp;__EVENTTARGET=target&amp;__EVENTARGUMENT=argument&amp;__PREVIOUSPAGE=/NunitWeb/PageWithAdapter.aspx\" accesskey=\"X\">text</a>";
 				testAdapter.RenderPostBackEvent (htw, "target", "argument", "softKeyLabel", "text", "postUrl", "X");
-				Assert.AreEqual("<a href=\"postUrl?__VIEWSTATE=DAAAAA%3d%3d&amp;__EVENTTARGET=target&amp;__EVENTARGUMENT=argument&amp;__PREVIOUSPAGE=/NunitWeb/PageWithAdapter.aspx\" accesskey=\"X\">text</a>",
-					sw.ToString(), "RenderPostBackEvent #3");
+				string renderedHtml = sw.ToString ();
+				HtmlDiff.AssertAreEqual(origHtml, renderedHtml, "RenderPostBackEvent #3");
 			}
 			{
 				StringWriter sw = new StringWriter ();
 				HtmlTextWriter htw = new HtmlTextWriter (sw);
+				string origHtml = "<a href=\"/NunitWeb/PageWithAdapter.aspx?__VIEWSTATE=DAAAAA%3d%3d&amp;__EVENTTARGET=target&amp;__EVENTARGUMENT=argument&amp;__PREVIOUSPAGE=/NunitWeb/PageWithAdapter.aspx\">text</a>";
 				testAdapter.RenderPostBackEvent (htw, "target", "argument", "softKeyLabel", "text");
-				Assert.AreEqual("<a href=\"/NunitWeb/PageWithAdapter.aspx?__VIEWSTATE=DAAAAA%3d%3d&amp;__EVENTTARGET=target&amp;__EVENTARGUMENT=argument&amp;__PREVIOUSPAGE=/NunitWeb/PageWithAdapter.aspx\">text</a>",
-					sw.ToString(), "RenderPostBackEvent #4");
+				string renderedHtml = sw.ToString ();
+				HtmlDiff.AssertAreEqual(origHtml, renderedHtml, "RenderPostBackEvent #4");
 			}
 
 		}

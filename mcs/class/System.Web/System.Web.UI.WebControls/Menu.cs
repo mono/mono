@@ -262,6 +262,7 @@ namespace System.Web.UI.WebControls
 				object o = ViewState ["StaticSubMenuIndent"];
 				if (o != null)
 					return (Unit)o;
+				// LAMESPEC: on 4.0 it returns Unit.Empty and on 3.5 16px
 #if NET_4_0
 				return Unit.Empty;
 #else
@@ -1321,19 +1322,30 @@ namespace System.Web.UI.WebControls
 		
 		public override void RenderBeginTag (HtmlTextWriter writer)
 		{
-			if (SkipLinkText != "") {
-				System.Web.UI.HtmlControls.HtmlAnchor anchor = new System.Web.UI.HtmlControls.HtmlAnchor ();
-				anchor.HRef = "#" + ClientID + "_SkipLink";
-
-				Image img = new Image ();
-				ClientScriptManager csm = new ClientScriptManager (null);
-				img.ImageUrl = csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
-				img.Attributes.Add ("height", "0");
-				img.Attributes.Add ("width", "0");
-				img.AlternateText = SkipLinkText;
-
-				anchor.Controls.Add (img);
-				anchor.Render (writer);
+			string skipLinkText = SkipLinkText;
+			if (!String.IsNullOrEmpty (skipLinkText)) {
+				// <a href="#ID_SkipLink">
+				writer.AddAttribute (HtmlTextWriterAttribute.Href, "#" + ClientID + "_SkipLink");
+				writer.RenderBeginTag (HtmlTextWriterTag.A);
+				
+				// <img alt="" height="0" width="0" src="" style="border-width:0px;"/>
+				writer.AddAttribute (HtmlTextWriterAttribute.Alt, skipLinkText);
+				writer.AddAttribute (HtmlTextWriterAttribute.Height, "0");
+				writer.AddAttribute (HtmlTextWriterAttribute.Width, "0");
+				
+				Page page = Page;
+				ClientScriptManager csm;
+				
+				if (page != null)
+					csm = page.ClientScript;
+				else
+					csm = new ClientScriptManager (null);
+				writer.AddAttribute (HtmlTextWriterAttribute.Src, csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif"));
+				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+				writer.RenderBeginTag (HtmlTextWriterTag.Img);
+				writer.RenderEndTag ();
+				
+				writer.RenderEndTag (); // </a>
 			}
 			base.RenderBeginTag (writer);
 		}
@@ -1345,10 +1357,11 @@ namespace System.Web.UI.WebControls
 			if (StaticDisplayLevels == 1 && MaximumDynamicDisplayLevels > 0)
 				RenderDynamicMenu (writer, Items);
 
-			if (SkipLinkText != "") {
-				System.Web.UI.HtmlControls.HtmlAnchor anchor = new System.Web.UI.HtmlControls.HtmlAnchor ();
-				anchor.ID = ClientID + "_SkipLink";
-				anchor.Render (writer);
+			string skipLinkText = SkipLinkText;
+			if (!String.IsNullOrEmpty (skipLinkText)) {
+				writer.AddAttribute (HtmlTextWriterAttribute.Id, "SkipLink");
+				writer.RenderBeginTag (HtmlTextWriterTag.A);
+				writer.RenderEndTag ();
 			}
 		}
 		
@@ -1818,8 +1831,18 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute ("id", GetItemClientId (item, "l"));
 			
 			if (item.Depth > 0 && !isDynamicItem) {
-				Unit indent = new Unit (StaticSubMenuIndent.Value * item.Depth, StaticSubMenuIndent.Type);
-				writer.AddStyleAttribute ("margin-left", indent.ToString ());
+				double value;
+#if NET_4_0
+				Unit unit = StaticSubMenuIndent;
+				if (unit == Unit.Empty)
+					value = 16;
+				else
+					value = unit.Value;
+#else
+				value = StaticSubMenuIndent.Value;
+#endif
+				Unit indent = new Unit (value * item.Depth, StaticSubMenuIndent.Type);
+				writer.AddStyleAttribute (HtmlTextWriterStyle.MarginLeft, indent.ToString ());
 			}
 			writer.RenderBeginTag (HtmlTextWriterTag.A);
 			RenderItemContent (writer, item, isDynamicItem);

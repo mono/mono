@@ -1,3 +1,11 @@
+2010-07-14  Marek Habersack  <mhabersack@novell.com>
+
+	* Menu.cs: fixed skip link rendering (no child controls are added
+	in the process, writing directly to HtmlTextWriter). Fixes tests
+	for 4.0
+	If StaticSubMenuIndent equals Unit.Empty on 4.0, default to using
+	16px as the value of the margin-left CSS attribute.
+
 2010-07-13  Marek Habersack  <mhabersack@novell.com>
 
 	* BoundField.cs: implemented HtmlEncodeFormatString property
