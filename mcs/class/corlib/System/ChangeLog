@@ -1,3 +1,18 @@
+2010-07-14  Miguel de Icaza  <miguel@novell.com>
+
+	* DateTime.cs: This is the Retina Display of DateTime structs.
+	Unlike our previous Chubby DateTime that took 16 bytes of memory,
+	this slim version of DateTime only uses 8 bytes.
+
+	This fixes a couple of bugs 592221 and 622127.   Additionally, it
+	turns out that the original Microsoft documentation did not spell
+	this out, but newer versions of the docs state that SetConstant on
+	a FieldBuilder should be capable of serializing DateTimes (which
+	is where this issue came from).
+
+	This is necessary to fix two crashers exposed by the CLR test
+	suite. 
+
 2010-07-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DateTime.cs: allow between 1 and 7 digits after the dot.
