@@ -1,3 +1,7 @@
+2010-07-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* IPAddress.cs: allow values out of range as MS does.
+
 2010-07-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebClient.cs: handle compressed streams when automatic decompression
