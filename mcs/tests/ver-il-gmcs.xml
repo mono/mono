@@ -18873,6 +18873,37 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-36.cs">
+    <type name="S">
+      <method name="System.String get_Prop()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="E">
+      <method name="Int32 Prop(S)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Prop(S2)">
+        <size>3</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()">
+        <size>43</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -19011,6 +19042,16 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-friend-14.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -40418,6 +40459,41 @@
     <type name="Program">
       <method name="Int32 Main()">
         <size>372</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-787.cs">
+    <type name="A">
+      <method name="Void set_Prop(System.String)">
+        <size>1</size>
+      </method>
+      <method name="System.String get_Prop()">
+        <size>2</size>
+      </method>
+      <method name="Int32 Field()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void set_Prop(System.String)">
+        <size>1</size>
+      </method>
+      <method name="System.String get_Prop()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()">
+        <size>1</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
