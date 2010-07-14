@@ -1,3 +1,8 @@
+2010-07-13  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c: LLVM is disabled by default on LLVM builds.  You can use
+	the MONO_ENV_OPTIONS to set the --llvm flag.
+	
 2010-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* driver.c : windows build fix for --with-moonlight.
