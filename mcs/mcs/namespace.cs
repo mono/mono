@@ -111,7 +111,7 @@ namespace Mono.CSharp {
 				if (t.Name[0] == '<')
 					continue;
 
-				var it = Import.CreateType (t);
+				var it = Import.CreateType (t, null);
 				if (it == null)
 					continue;
 

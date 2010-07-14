@@ -405,7 +405,13 @@ namespace Mono.CSharp
 
 		public static TypeSpec CreateType (Type type)
 		{
-			return CreateType (type, null);
+			TypeSpec declaring_type;
+			if (type.IsNested && !type.IsGenericParameter)
+				declaring_type = CreateType (type.DeclaringType);
+			else
+				declaring_type = null;
+
+			return CreateType (type, declaring_type);
 		}
 
 		public static TypeSpec CreateType (Type type, TypeSpec declaringType)

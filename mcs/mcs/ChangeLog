@@ -1,5 +1,10 @@
 2010-07-14  Marek Safar  <marek.safar@gmail.com>
 
+	* namespace.cs, import.cs: When importing nested type via type
+	arguments set their parent type correctly (Fixes #622051).
+
+2010-07-14  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #622104
 	* attribute.cs: Add default lookup flags.
 	
