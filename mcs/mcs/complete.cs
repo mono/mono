@@ -32,10 +32,10 @@ namespace Mono.CSharp {
 		public static void AppendResults (List<string> results, string prefix, IEnumerable<string> names)
 		{
 			foreach (string name in names) {
-				if (name == null || prefix == null)
+				if (name == null)
 					continue;
 
-				if (!name.StartsWith (prefix))
+				if (prefix != null && !name.StartsWith (prefix))
 					continue;
 
 				if (results.Contains (name))
