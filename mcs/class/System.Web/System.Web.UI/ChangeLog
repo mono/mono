@@ -1,3 +1,7 @@
+2010-07-14  Marek Habersack  <mhabersack@novell.com>
+
+	* DataKeyPropertyAttribute.cs: added (4.0)
+
 2010-07-13  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: moved 4.0 ClientID code to a separate method, so

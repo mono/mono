@@ -202,14 +202,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-#if NET_4_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public
-#else
-		internal
-#endif
-		IDataSource DataSourceObject {
+		public IDataSource DataSourceObject {
 			get { return GetDataSource (); }
 		}
 		
@@ -247,12 +242,7 @@ namespace System.Web.UI.WebControls
 			InternalPerformDataBinding (data);
 		}
 
-#if NET_4_0
-		internal
-#else
-		protected
-#endif
-		void InternalPerformDataBinding (IEnumerable data)
+		internal void InternalPerformDataBinding (IEnumerable data)
 		{
 			DataBoundControlAdapter adapter = Adapter as DataBoundControlAdapter;
 			if (adapter != null)

@@ -41,6 +41,7 @@ namespace System.Web.UI.WebControls
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+		[DefaultValue (ButtonColumnType.LinkButton)]
 		public virtual ButtonColumnType ButtonType {
 			get {
 				object obj;

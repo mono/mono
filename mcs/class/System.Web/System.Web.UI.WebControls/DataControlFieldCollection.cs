@@ -128,6 +128,12 @@ namespace System.Web.UI.WebControls
 			if (eh != null)
 				eh (this, EventArgs.Empty);
 		}
+
+		[MonoTODO ("Validate whatever needs to be validated here.")]
+		protected override void OnValidate (object o)
+		{
+			base.OnValidate (o);
+		}
 		
 		protected override void SetDirtyObject (object o)
 		{

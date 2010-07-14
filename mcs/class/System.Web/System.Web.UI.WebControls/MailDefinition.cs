@@ -42,12 +42,16 @@ using System.Collections;
 namespace System.Web.UI.WebControls
 {
 	[BindableAttribute (false)]
+	[ParseChildren (true)]
+	//[TypeConverter ("System.Web.UI.WebControls.EmptyStringExpandableObjectConverter")]
 	public sealed class MailDefinition : IStateManager
 	{
 		StateBag _bag = new StateBag ();
 
+		[Editor ("System.Web.UI.Design.MailDefinitionBodyFileNameEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValue ("")]
 		[NotifyParentProperty (true)]
+		[UrlProperty ("*.*")]
 		public string BodyFileName {
 			get { return _bag.GetString ("BodyFileName", String.Empty); }
 			set { _bag ["BodyFileName"] = value; }
@@ -81,6 +85,7 @@ namespace System.Web.UI.WebControls
 			set { _bag ["IsBodyHtml"] = value; }
 		}
 
+		[DefaultValue (MailPriority.Normal)]
 		[NotifyParentProperty (true)]
 		public MailPriority Priority {
 			get { return _bag ["Priority"] == null ? MailPriority.Normal : (MailPriority) _bag ["Priority"]; }

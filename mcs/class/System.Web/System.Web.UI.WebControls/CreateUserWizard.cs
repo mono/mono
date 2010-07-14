@@ -36,7 +36,10 @@ using System.Net.Mail;
 
 namespace System.Web.UI.WebControls
 {
-	[BindableAttribute (false)]
+	[DefaultEvent ("CreatedUser")]
+	[Designer ("System.Web.UI.Design.WebControls.CreateUserWizardDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[ToolboxData ("   ")]
+	[Bindable (false)]
 	public class CreateUserWizard : Wizard
 	{
 		public static readonly string ContinueButtonCommandName = "Continue";
@@ -75,11 +78,13 @@ namespace System.Web.UI.WebControls
 
 		#region Public Properties
 
+		[DefaultValue (0)]
 		public override int ActiveStepIndex {
 			get { return base.ActiveStepIndex; }
 			set { base.ActiveStepIndex = value; }
 		}
 
+		[DefaultValue ("")]
 		[LocalizableAttribute (true)]
 		[ThemeableAttribute (false)]
 		public virtual string Answer {
@@ -123,6 +128,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false)]
 		[ThemeableAttribute (false)]
 		public virtual bool AutoGeneratePassword {
 			get {
@@ -132,6 +138,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["AutoGeneratePassword"] = value; }
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public CompleteWizardStep CompleteStep {
 			get {
 				if (_completeWizardStep == null) {
@@ -161,6 +169,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public TableItemStyle CompleteSuccessTextStyle {
 			get {
 				if (_completeSuccessTextStyle == null) {
@@ -172,6 +184,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual string ConfirmPassword {
 			get { return _confirmPassword; }
 		}
@@ -218,11 +232,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string ContinueButtonImageUrl {
 			get { return ViewState.GetString ("ContinueButtonImageUrl", String.Empty); }
 			set { ViewState ["ContinueButtonImageUrl"] = value; }
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public Style ContinueButtonStyle {
 			get {
 				if (_continueButtonStyle == null) {
@@ -240,6 +261,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["ContinueButtonText"] = value; }
 		}
 
+		[DefaultValue (ButtonType.Button)]
 		public virtual ButtonType ContinueButtonType {
 			get {
 				object v = ViewState ["ContinueButtonType"];
@@ -250,6 +272,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[ThemeableAttribute (false)]
 		public virtual string ContinueDestinationPageUrl {
 			get {
@@ -264,11 +289,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string CreateUserButtonImageUrl {
 			get { return ViewState.GetString ("CreateUserButtonImageUrl", String.Empty); }
 			set { ViewState ["CreateUserButtonImageUrl"] = value; }
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public Style CreateUserButtonStyle {
 			get {
 				if (_createUserButtonStyle == null) {
@@ -286,6 +318,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["CreateUserButtonText"] = value; }
 		}
 
+		[DefaultValue (ButtonType.Button)]
 		public virtual ButtonType CreateUserButtonType {
 			get {
 				object v = ViewState ["CreateUserButtonType"];
@@ -294,6 +327,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["CreateUserButtonType"] = value; }
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public CreateUserWizardStep CreateUserStep {
 			get {
 				if (_createUserWizardStep == null) {
@@ -309,6 +344,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false)]
 		[ThemeableAttribute (false)]
 		public virtual bool DisableCreatedUser {
 			get {
@@ -318,6 +354,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["DisableCreatedUser"] = value; }
 		}
 
+		[DefaultValue (false)]
 		public override bool DisplaySideBar {
 			get { return ViewState.GetBool ("DisplaySideBar", false); }
 			set {
@@ -354,6 +391,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string EditProfileIconUrl {
 			get {
 				object o = ViewState ["EditProfileIconUrl"];
@@ -367,6 +407,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[LocalizableAttribute (true)]
 		public virtual string EditProfileText {
 			get {
@@ -381,6 +422,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string EditProfileUrl {
 			get {
 				object o = ViewState ["EditProfileUrl"];
@@ -394,6 +438,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		public virtual string Email {
 			get {
 				object o = ViewState ["Email"];
@@ -461,6 +506,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public TableItemStyle ErrorMessageStyle {
 			get {
 				if (_errorMessageStyle == null) {
@@ -472,6 +521,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string HelpPageIconUrl {
 			get {
 				object o = ViewState ["HelpPageIconUrl"];
@@ -485,6 +537,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[LocalizableAttribute (true)]
 		public virtual string HelpPageText {
 			get {
@@ -499,6 +552,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string HelpPageUrl {
 			get {
 				object o = ViewState ["HelpPageUrl"];
@@ -512,6 +568,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public TableItemStyle HyperLinkStyle {
 			get {
 				if (_hyperLinkStyle == null) {
@@ -523,6 +583,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[LocalizableAttribute (true)]
 		public virtual string InstructionText {
 			get {
@@ -537,6 +598,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public TableItemStyle InstructionTextStyle {
 			get {
 				if (_instructionTextStyle == null) {
@@ -605,6 +670,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public TableItemStyle LabelStyle {
 			get {
 				if (_labelStyle == null) {
@@ -616,6 +685,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true)]
 		[ThemeableAttribute (false)]
 		public virtual bool LoginCreatedUser {
 			get {
@@ -627,6 +697,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[ThemeableAttribute (false)]
 		public MailDefinition MailDefinition {
 			get {
@@ -639,6 +712,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[ThemeableAttribute (false)]
 		public virtual string MembershipProvider {
 			get {
@@ -664,10 +738,16 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public virtual string Password {
 			get { return _password; }
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public TableItemStyle PasswordHintStyle {
 			get {
 				if (_passwordHintStyle == null) {
@@ -747,6 +827,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[LocalizableAttribute (true)]
 		[ThemeableAttribute (false)]
 		public virtual string Question {
@@ -790,6 +871,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true)]
 		[ThemeableAttribute (false)]
 		public virtual bool RequireEmail {
 			get {
@@ -801,6 +883,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[MonoTODO ("doesnt work")]
 		public override string SkipLinkText {
 			get {
@@ -815,6 +898,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public Style TextBoxStyle {
 			get {
 				if (_textBoxStyle == null) {
@@ -826,6 +913,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public TableItemStyle TitleTextStyle {
 			get {
 				if (_titleTextStyle == null) {
@@ -851,6 +942,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		public virtual string UserName {
 			get {
 				object o = ViewState ["UserName"];
@@ -892,6 +984,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public Style ValidatorTextStyle {
 			get {
 				if (_validatorTextStyle == null) {
@@ -902,8 +998,8 @@ namespace System.Web.UI.WebControls
 				return _validatorTextStyle;
 			}
 		}
-
-		[ThemeableAttribute (false)]
+		
+		[Editor ("System.Web.UI.Design.WebControls.CreateUserWizardStepCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public override WizardStepCollection WizardSteps {
 			get { return base.WizardSteps; }
 		}
@@ -912,6 +1008,7 @@ namespace System.Web.UI.WebControls
 
 		#region Protected Properties
 
+		[DefaultValue (true)]
 		protected internal bool QuestionAndAnswerRequired {
 			get { return MembershipProviderInternal.RequiresQuestionAndAnswer; }
 		}

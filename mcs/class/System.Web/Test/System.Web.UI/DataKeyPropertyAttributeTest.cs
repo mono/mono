@@ -1,10 +1,8 @@
-//
-// System.Web.UI.WebControls.EmbeddedMailObject.cs
-//
+﻿//
 // Authors:
-//	Igor Zelmanovich (igorz@mainsoft.com)
+//	Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2006 Mainsoft, Inc (http://www.mainsoft.com)
+// (C) 2010 Novell, Inc (http://novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,40 +23,41 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if NET_4_0
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
+using System.Web.UI;
 
-namespace System.Web.UI.WebControls
+using NUnit.Framework;
+
+namespace MonoTests.System.Web.UI
 {
-	//[TypeConverter (""System.Web.UI.WebControls.EmbeddedMailObject+EmbeddedMailObjectTypeConverter"")]
-	public sealed class EmbeddedMailObject
+	[TestFixture]
+	public class DataKeyPropertyAttributeTest
 	{
-		public EmbeddedMailObject ()
-		{ }
-
-		public EmbeddedMailObject (string name, string path)
+		[Test]
+		public void Constructor ()
 		{
-			Name = name;
-			Path = path;
+			var a = new DataKeyPropertyAttribute (null);
+			Assert.AreEqual (null, a.Name, "#A1");
+
+			a = new DataKeyPropertyAttribute ("test");
+			Assert.AreEqual ("test", a.Name, "#A2");
 		}
 
-		[NotifyParentProperty (true)]
-		[DefaultValue ("")]
-		public string Name {
-			get;
-			set;
-		}
+		[Test]
+		public void EqualsTest ()
+		{
+			var a = new DataKeyPropertyAttribute (null);
 
-		[DefaultValue ("")]
-		[NotifyParentProperty (true)]
-		[UrlProperty]
-		[Editor ("System.Web.UI.Design.MailFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public string Path {
-			get;
-			set;
+			Assert.IsFalse (a.Equals (null), "#A1-1");
+			Assert.IsFalse (a.Equals ("test"), "#A1-2");
+
+			a = new DataKeyPropertyAttribute ("test");
+			Assert.IsFalse (a.Equals ("test"), "#A2-1");
+			Assert.IsTrue (a.Equals ((object)new DataKeyPropertyAttribute ("test")), "#A2-2");
+			Assert.IsFalse (a.Equals (new DataKeyPropertyAttribute ("invalid")), "#A2-3");
+			Assert.IsFalse (a.Equals ((object) new DataKeyPropertyAttribute ("TEST")), "#A2-3");
 		}
 	}
 }
+#endif

@@ -129,6 +129,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true)]
 		public virtual bool HtmlEncodeFormatString {
 			get { return ViewState.GetBool ("HtmlEncodeFormatString", true); }
 			set {

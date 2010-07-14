@@ -42,6 +42,9 @@ namespace System.Web.UI.WebControls
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.FormViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ControlValuePropertyAttribute ("SelectedValue")]
 	[DefaultEventAttribute ("PageIndexChanging")]
+#if NET_4_0
+	[DataKeyProperty ("DataKey")]
+#endif
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class FormView: CompositeDataBoundControl, IDataItemContainer, INamingContainer, IPostBackEventHandler, IPostBackContainer
@@ -797,14 +800,14 @@ namespace System.Web.UI.WebControls
 		int IDataItemContainer.DisplayIndex {
 			get { return PageIndex; }
 		}
-#if NET_4_0
+
 		[MonoTODO ("Make use of it in the code")]
 		[DefaultValue (true)]
 		public virtual bool EnableModelValidation {
 			get;
 			set;
 		}
-
+#if NET_4_0
 		DataBoundControlMode IDataBoundItemControl.Mode {
 			get {
 				switch (CurrentMode) {

@@ -43,6 +43,9 @@ namespace System.Web.UI.WebControls
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.GridViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ControlValuePropertyAttribute ("SelectedValue")]
 	[DefaultEventAttribute ("SelectedIndexChanged")]
+#if NET_4_0
+	[DataKeyProperty ("DataKey")]
+#endif
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class GridView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IPostBackEventHandler, IPostBackContainer, IPersistedSelector

@@ -37,6 +37,7 @@ namespace System.Web.UI.WebControls {
 	// attributes
 	[ControlBuilder(typeof(ListItemControlBuilder))]
 	[TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+	[ParseChildren (true, "Text")]
 	public sealed class ListItem : IAttributeAccessor, IParserAccessor, IStateManager
 	{
 #if NET_2_0
@@ -196,6 +197,7 @@ namespace System.Web.UI.WebControls {
 			get { return tracking; }
 		}
 
+		[TypeConverter ("System.Web.UI.MinimizableAttributeTypeConverter")]
 		[DefaultValue(false)]
 		public bool Selected {
 			get { return selected; }
@@ -206,6 +208,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[Localizable (true)]
 		[DefaultValue("")]
 		[PersistenceMode(PersistenceMode.EncodedInnerDefaultProperty)]
 		public string Text {
@@ -225,6 +228,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[Localizable (true)]
 		[DefaultValue("")]
 		public string Value {
 			get {
@@ -249,6 +253,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
+		[DefaultValue (true)]
 		public bool Enabled
 		{
 			get { return enabled; }

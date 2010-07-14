@@ -115,7 +115,6 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["Operator"] = (int)value; }
 		}
 
-		[Bindable(true)]
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]

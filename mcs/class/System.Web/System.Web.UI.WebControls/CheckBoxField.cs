@@ -55,7 +55,13 @@ namespace System.Web.UI.WebControls
 			get { throw GetNotSupportedPropException ("ConvertEmptyStringToNull"); } 
 			set { throw GetNotSupportedPropException ("ConvertEmptyStringToNull"); } 
 		}
-		
+
+		[TypeConverter ("System.Web.UI.Design.DataSourceBooleanViewSchemaConverter, " + Consts.AssemblySystem_Design)]
+		public override string DataField {
+			get { return base.DataField; }
+			set { base.DataField = value; }
+		}
+
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
@@ -70,6 +76,14 @@ namespace System.Web.UI.WebControls
 		public override bool HtmlEncode {
 			get { throw GetNotSupportedPropException ("HtmlEncode"); } 
 			set { throw GetNotSupportedPropException ("HtmlEncode"); } 
+		}
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override bool HtmlEncodeFormatString {
+			get { return base.HtmlEncodeFormatString; }
+			set { base.HtmlEncodeFormatString = value; }
 		}
 		
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
@@ -172,6 +186,11 @@ namespace System.Web.UI.WebControls
 			field.DataField = DataField;
 			field.ReadOnly = ReadOnly;
 			field.Text = Text;
+		}
+
+		public override void ValidateSupportsCallback ()
+		{
+			// why override?
 		}
 	}
 }

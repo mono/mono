@@ -35,8 +35,8 @@ using System.Security.Permissions;
 using System.Security.Principal;
 using System.Web.Security;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -47,6 +47,7 @@ namespace System.Web.UI.WebControls {
 	[ParseChildren (true)]
 	[PersistChildren (false)]
 	[Themeable (true)]
+	[Bindable (true)]
 	public class LoginView : Control, INamingContainer 
 	{
 		static readonly object viewChangedEvent = new object ();

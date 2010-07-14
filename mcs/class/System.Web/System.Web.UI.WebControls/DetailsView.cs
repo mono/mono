@@ -43,6 +43,9 @@ namespace System.Web.UI.WebControls
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.DetailsViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ControlValuePropertyAttribute ("SelectedValue")]
 	[DefaultEventAttribute ("PageIndexChanging")]
+#if NET_4_0
+	[DataKeyProperty ("DataKey")]
+#endif
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DetailsView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IDataItemContainer, INamingContainer, IPostBackEventHandler, IPostBackContainer
@@ -964,14 +967,14 @@ namespace System.Web.UI.WebControls
 		int IDataItemContainer.DataItemIndex {
 			get { return DataItemIndex; }
 		}
-#if NET_4_0
+
 		[MonoTODO ("Make use of it in the code")]
 		[DefaultValue (true)]
 		public virtual bool EnableModelValidation {
 			get;
 			set;
 		}
-#endif
+
 		public virtual bool IsBindableType (Type type)
 		{
 			return type.IsPrimitive || type == typeof (string) || type == typeof (DateTime) || type == typeof (Guid) || type == typeof (Decimal);

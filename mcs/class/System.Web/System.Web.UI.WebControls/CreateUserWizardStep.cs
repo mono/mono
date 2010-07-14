@@ -33,13 +33,15 @@ using System.Text;
 
 namespace System.Web.UI.WebControls
 {
+	[Browsable (false)]
 	public sealed class CreateUserWizardStep : TemplatedWizardStep
 	{
 		public CreateUserWizardStep ()
 		{
 		}
 
-		[DefaultValueAttribute (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public override bool AllowReturn {
 			get { return ViewState.GetBool ("AllowReturn", false); }
 			set { ViewState ["AllowReturn"] = value; }
@@ -61,6 +63,9 @@ namespace System.Web.UI.WebControls
 
 		// MSDN: If you attempt to change the StepType property to any value other than the Auto value of the WizardStepType enumeration, an 
 		// InvalidOperationException will be thrown.
+		[Filterable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		[ThemeableAttribute (false)]
 		public override WizardStepType StepType {
 			get { return WizardStepType.Auto; }

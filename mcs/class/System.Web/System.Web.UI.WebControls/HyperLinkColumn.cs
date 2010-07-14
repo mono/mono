@@ -79,7 +79,8 @@ namespace System.Web.UI.WebControls {
 			}
 			set { ViewState ["DataTextFormatString"] = value; }
 		}
-		
+
+		[UrlProperty]
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Misc")]
@@ -93,6 +94,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Misc")]
+		[TypeConverter ("System.Web.UI.WebControls.TargetConverter")]
 		public virtual string Target {
 			get {
 				return ViewState.GetString ("Target", String.Empty);
@@ -100,6 +102,7 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["Target"] = value; }
 		}
 
+		[Localizable (true)]
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Misc")]

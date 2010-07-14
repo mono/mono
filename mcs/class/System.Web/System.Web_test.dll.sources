@@ -112,6 +112,7 @@ System.Web.UI/CleanHtmlTextWriter.cs
 System.Web.UI/ClientScriptManagerTest.cs
 System.Web.UI/ControlTest.cs
 System.Web.UI/ControlCollectionTest.cs
+System.Web.UI/DataKeyPropertyAttributeTest.cs
 System.Web.UI/CssStyleCollectionTest.cs
 System.Web.UI/DataBindingCollectionTest.cs
 System.Web.UI/DataBindingHandlerAttributeTest.cs

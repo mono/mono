@@ -30,18 +30,20 @@
 
 #if NET_2_0
 using System;
+using System.ComponentModel;
+using System.Drawing;
 
-namespace System.Web.UI.WebControls {
-    public class Localize : Literal
-#if NET_2_0
-		, ITextControl
-#endif
-    {
-        //No methods/properties/defined for this class. It inherits
-        // everything from literal class
-        public Localize ()
-        {}
-    }
+namespace System.Web.UI.WebControls
+{
+	[Designer ("System.Web.UI.Design.WebControls.LocalizeDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[ToolboxBitmap ("")]
+	public class Localize : Literal, ITextControl
+	{
+		//No methods/properties/defined for this class. It inherits
+		// everything from literal class
+		public Localize ()
+		{}
+	}
 }
 
 #endif

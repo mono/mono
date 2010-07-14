@@ -1,10 +1,8 @@
 //
-// System.Web.UI.WebControls.EmbeddedMailObject.cs
-//
 // Authors:
-//	Igor Zelmanovich (igorz@mainsoft.com)
+//	Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2006 Mainsoft, Inc (http://www.mainsoft.com)
+// (C) 2010 Novell, Inc (http://novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,40 +23,36 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
 
-namespace System.Web.UI.WebControls
+namespace System.Web.UI
 {
-	//[TypeConverter (""System.Web.UI.WebControls.EmbeddedMailObject+EmbeddedMailObjectTypeConverter"")]
-	public sealed class EmbeddedMailObject
+	[AttributeUsage (AttributeTargets.Class)]
+	public sealed class DataKeyPropertyAttribute : Attribute
 	{
-		public EmbeddedMailObject ()
-		{ }
-
-		public EmbeddedMailObject (string name, string path)
+		public string Name { get; private set; }
+		
+		public DataKeyPropertyAttribute (string name)
 		{
-			Name = name;
-			Path = path;
+			this.Name = name;
 		}
 
-		[NotifyParentProperty (true)]
-		[DefaultValue ("")]
-		public string Name {
-			get;
-			set;
+		public override bool Equals (object obj)
+		{
+			var attr = obj as DataKeyPropertyAttribute;
+			if (attr == null)
+				return false;
+
+			return String.Compare (this.Name, attr.Name, StringComparison.Ordinal) == 0;
 		}
 
-		[DefaultValue ("")]
-		[NotifyParentProperty (true)]
-		[UrlProperty]
-		[Editor ("System.Web.UI.Design.MailFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public string Path {
-			get;
-			set;
-		}
+		public override int GetHashCode ()
+		{
+			string name = Name;
+			if (name == null)
+				return 0;
+
+			return name.GetHashCode ();
+		}		
 	}
 }

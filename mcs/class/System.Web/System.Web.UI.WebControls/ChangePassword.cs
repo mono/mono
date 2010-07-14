@@ -38,6 +38,9 @@ using System.Net.Mail;
 
 namespace System.Web.UI.WebControls
 {
+	[Bindable (true)]
+	[DefaultEvent ("ChangedPassword")]
+	[Designer ("System.Web.UI.Design.WebControls.ChangePasswordDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ChangePassword : CompositeControl, INamingContainer
 	{
 		static readonly object cancelButtonClickEvent = new object ();
@@ -133,11 +136,14 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string CancelButtonImageUrl {
 			get { return ViewState.GetString ("CancelButtonImageUrl", String.Empty); }
 			set { ViewState ["CancelButtonImageUrl"] = value; }
 		}
 
+		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
@@ -158,17 +164,24 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["CancelButtonText"] = value; }
 		}
 
+		[DefaultValue (ButtonType.Button)]
 		public virtual ButtonType CancelButtonType {
 			get { return ViewState ["CancelButtonType"] == null ? ButtonType.Button : (ButtonType) ViewState ["CancelButtonType"]; }
 			set { ViewState ["CancelButtonType"] = value; }
 		}
 
 		[Themeable (false)]
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string CancelDestinationPageUrl {
 			get { return ViewState.GetString ("CancelDestinationPageUrl", String.Empty); }
 			set { ViewState ["CancelDestinationPageUrl"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string ChangePasswordButtonImageUrl {
 			get { return ViewState.GetString ("ChangePasswordButtonImageUrl", String.Empty); }
 			set { ViewState ["ChangePasswordButtonImageUrl"] = value; }
@@ -195,6 +208,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["ChangePasswordButtonText"] = value; }
 		}
 
+		[DefaultValue (ButtonType.Button)]
 		public virtual ButtonType ChangePasswordButtonType {
 			get { return ViewState ["ChangePasswordButtonType"] == null ? ButtonType.Button : (ButtonType) ViewState ["ChangePasswordButtonType"]; }
 			set { ViewState ["ChangePasswordButtonType"] = value; }
@@ -256,11 +270,15 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["ConfirmPasswordRequiredErrorMessage"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string ContinueButtonImageUrl {
 			get { return ViewState.GetString ("ContinueButtonImageUrl", String.Empty); }
 			set { ViewState ["ContinueButtonImageUrl"] = value; }
 		}
 
+		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
@@ -281,28 +299,39 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["ContinueButtonText"] = value; }
 		}
 
+		[DefaultValue (ButtonType.Button)]
 		public virtual ButtonType ContinueButtonType {
 			get { return ViewState ["ContinueButtonType"] == null ? ButtonType.Button : (ButtonType) ViewState ["ContinueButtonType"]; }
 			set { ViewState ["ContinueButtonType"] = value; }
 		}
 
 		[Themeable (false)]
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string ContinueDestinationPageUrl {
 			get { return ViewState.GetString ("ContinueDestinationPageUrl", String.Empty); }
 			set { ViewState ["ContinueDestinationPageUrl"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string CreateUserIconUrl {
 			get { return ViewState.GetString ("CreateUserIconUrl", String.Empty); }
 			set { ViewState ["CreateUserIconUrl"] = value; }
 		}
 
+		[DefaultValue ("")]
 		[Localizable (true)]
 		public virtual string CreateUserText {
 			get { return ViewState.GetString ("CreateUserText", String.Empty); }
 			set { ViewState ["CreateUserText"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string CreateUserUrl {
 			get { return ViewState.GetString ("CreateUserUrl", String.Empty); }
 			set { ViewState ["CreateUserUrl"] = value; }
@@ -311,6 +340,7 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[Themeable (false)]
+		[Filterable (false)]
 		public virtual string CurrentPassword {
 			get { return _currentPassword != null ? _currentPassword : String.Empty; }
 		}
@@ -321,22 +351,30 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["DisplayUserName"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string EditProfileIconUrl {
 			get { return ViewState.GetString ("EditProfileIconUrl", String.Empty); }
 			set { ViewState ["EditProfileIconUrl"] = value; }
 		}
 
 		[Localizable (true)]
+		[DefaultValue ("")]
 		public virtual string EditProfileText {
 			get { return ViewState.GetString ("EditProfileText", String.Empty); }
 			set { ViewState ["EditProfileText"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string EditProfileUrl {
 			get { return ViewState.GetString ("EditProfileUrl", String.Empty); }
 			set { ViewState ["EditProfileUrl"] = value; }
 		}
 
+		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
@@ -351,22 +389,30 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string HelpPageIconUrl {
 			get { return ViewState.GetString ("HelpPageIconUrl", String.Empty); }
 			set { ViewState ["HelpPageIconUrl"] = value; }
 		}
 
+		[DefaultValue ("")]
 		[Localizable (true)]
 		public virtual string HelpPageText {
 			get { return ViewState.GetString ("HelpPageText", String.Empty); }
 			set { ViewState ["HelpPageText"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string HelpPageUrl {
 			get { return ViewState.GetString ("HelpPageUrl", String.Empty); }
 			set { ViewState ["HelpPageUrl"] = value; }
 		}
 
+		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
@@ -381,12 +427,14 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[Localizable (true)]
 		public virtual string InstructionText {
 			get { return ViewState.GetString ("InstructionText", String.Empty); }
 			set { ViewState ["InstructionText"] = value; }
 		}
 
+		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
@@ -401,6 +449,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
@@ -448,6 +497,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Filterable (false)]
+		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Themeable (false)]
 		public virtual string NewPassword {
@@ -476,6 +527,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["NewPasswordRequiredErrorMessage"] = value; }
 		}
 
+		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
@@ -490,6 +542,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[Localizable (true)]
 		public virtual string PasswordHintText {
 			get { return ViewState.GetString ("PasswordHintText", String.Empty); }
@@ -502,17 +555,24 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["PasswordLabelText"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string PasswordRecoveryIconUrl {
 			get { return ViewState.GetString ("PasswordRecoveryIconUrl", String.Empty); }
 			set { ViewState ["PasswordRecoveryIconUrl"] = value; }
 		}
 
+		[DefaultValue ("")]
 		[Localizable (true)]
 		public virtual string PasswordRecoveryText {
 			get { return ViewState.GetString ("PasswordRecoveryText", String.Empty); }
 			set { ViewState ["PasswordRecoveryText"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string PasswordRecoveryUrl {
 			get { return ViewState.GetString ("PasswordRecoveryUrl", String.Empty); }
 			set { ViewState ["PasswordRecoveryUrl"] = value; }
@@ -524,6 +584,9 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["PasswordRequiredErrorMessage"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[Themeable (false)]
 		public virtual string SuccessPageUrl {
 			get { return ViewState.GetString ("SuccessPageUrl", String.Empty); }
@@ -555,6 +618,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["SuccessText"] = value; }
 		}
 
+		[DefaultValue (null)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
@@ -575,6 +639,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["SuccessTitleText"] = value; }
 		}
 
+		[DefaultValue (null)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
@@ -589,6 +654,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
@@ -626,6 +692,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["UserNameRequiredErrorMessage"] = value; }
 		}
 
+		[DefaultValue (null)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]

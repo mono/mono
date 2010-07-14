@@ -33,6 +33,14 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent ("ValueChanged")]
+	[DefaultProperty ("Value")]
+	[Designer ("System.Web.UI.Design.WebControls.HiddenFieldDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[ControlValueProperty ("Value")]
+	[NonVisualControl]
+	[ParseChildren]
+	[PersistChildren (false)]
+	[SupportsEventValidation]
 	public class HiddenField : Control, IPostBackDataHandler
 	{
 		static readonly object ValueChangedEvent = new object ();
@@ -42,22 +50,28 @@ namespace System.Web.UI.WebControls
 			remove { Events.RemoveHandler (ValueChangedEvent, value); }
 		}
 
+		[DefaultValue ("")]
 		[Bindable (true)]
 		public virtual string Value {
 			get { return ViewState.GetString ("Value", String.Empty); }
 			set { ViewState ["Value"] = value; }
 		}
 
+		[DefaultValue (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool EnableTheming {
 			get { return false; }
 			set { throw new NotSupportedException (); }
 		}
 
+		[DefaultValue ("")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string SkinID {
 			get { return String.Empty; }
 			set { throw new NotSupportedException (); }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void Focus ()
 		{
 			throw new NotSupportedException ();
