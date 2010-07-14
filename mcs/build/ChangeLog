@@ -1,3 +1,9 @@
+2010-07-14  Miguel de Icaza  <miguel@novell.com>
+
+	* tests.make: Do not run the tests under the verifier until the
+	verifier bug is fixed so at least we can see what is going on in
+	our buildbots.
+
 2010-07-12  Marek Safar  <marek.safar@gmail.com>
 
 	* tests.make: Run all tests under verifier.
