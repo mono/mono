@@ -460,7 +460,7 @@ namespace Mono.CSharp {
 				Expression member = Expression.MemberLookup (ec.Compiler,
 					ec.CurrentType, Type, name, 0,
 					MemberKind.All,
-					BindingRestriction.AccessibleOnly,
+					BindingRestriction.AccessibleOnly | BindingRestriction.DefaultMemberLookup,
 					Location);
 
 				if (member == null) {

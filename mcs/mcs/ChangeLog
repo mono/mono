@@ -1,3 +1,8 @@
+2010-07-14  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #622104
+	* attribute.cs: Add default lookup flags.
+	
 2010-07-12  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs: Don't use Report directly.
