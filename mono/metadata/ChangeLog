@@ -1,3 +1,9 @@
+2010-07-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c: Don't abort (only warn) if we cannot find 
+	a caller for relfecting code (transparent is assumed). Fix
+	get_method_access_exception to accept a NULL caller.
+
 2010-07-14  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Heavy statistics on the internal allocator.
