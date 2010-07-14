@@ -1,5 +1,10 @@
 2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebHttpBehaviorTest.cs : add test for deserializing Raw request
+	  message too.
+
+2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebHttpBehaviorTest.cs : add test for bug #619542 (not sure if it
 	  works on mono; run-test is broken in trunk. Verified under .NET).
 

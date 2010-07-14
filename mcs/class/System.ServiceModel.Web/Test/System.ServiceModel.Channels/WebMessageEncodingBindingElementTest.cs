@@ -146,5 +146,12 @@ namespace MonoTests.System.ServiceModel
 			var bc = new BindingContext (new CustomBinding (), new BindingParameterCollection ());
 			Assert.AreEqual (MessageVersion.None, m.GetProperty<MessageVersion> (bc), "#1");
 		}
+
+		[Test]
+		public void ReadMessageNullContentType ()
+		{
+			var e = CreateEncoder ();
+			e.ReadMessage (new MemoryStream (), 10, null);
+		}
 	}
 }

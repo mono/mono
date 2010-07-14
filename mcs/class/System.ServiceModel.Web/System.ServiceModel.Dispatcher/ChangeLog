@@ -1,5 +1,10 @@
 2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebMessageFormatter.cs : do not depend on WebOperationContext.
+	  add support for Raw format request.
+
+2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebMessageFormatter.cs : add support for Raw format.
 
 2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>

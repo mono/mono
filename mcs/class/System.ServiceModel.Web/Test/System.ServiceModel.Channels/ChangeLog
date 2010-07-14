@@ -1,3 +1,8 @@
+2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageEncodingBindingElementTest.cs : add test for null
+	  content type for ReadMessage() (allowed),
+
 2010-06-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebMessageEncodingBindingElementTest.cs : add test for

@@ -499,16 +499,26 @@ namespace System.ServiceModel.Dispatcher
 					throw new ArgumentNullException ("parameters");
 				CheckMessageVersion (message.Version);
 
-				OperationContext.Current.Extensions.Add (new WebOperationContext (OperationContext.Current));
-
-				IncomingWebRequestContext iwc = WebOperationContext.Current.IncomingRequest;
+				IncomingWebRequestContext iwc = null;
+				if (OperationContext.Current != null) {
+					OperationContext.Current.Extensions.Add (new WebOperationContext (OperationContext.Current));
+					iwc = WebOperationContext.Current.IncomingRequest;
+				}
+				
+				var wp = message.Properties [WebBodyFormatMessageProperty.Name] as WebBodyFormatMessageProperty;
+				if (wp != null && wp.Format == WebContentFormat.Raw) {
+					var rmsg = (RawMessage) message;
+					parameters [0] = rmsg.Stream;
+					return;
+				}
 
 				Uri to = message.Headers.To;
 				UriTemplateMatch match = UriTemplate.Match (Endpoint.Address.Uri, to);
 				if (match == null)
 					// not sure if it could happen
 					throw new SystemException (String.Format ("INTERNAL ERROR: UriTemplate does not match with the request: {0} / {1}", UriTemplate, to));
-				iwc.UriTemplateMatch = match;
+				if (iwc != null)
+					iwc.UriTemplateMatch = match;
 
 				MessageDescription md = GetMessageDescription (MessageDirection.Input);
 

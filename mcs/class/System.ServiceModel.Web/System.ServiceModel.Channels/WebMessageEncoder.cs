@@ -73,8 +73,8 @@ namespace System.ServiceModel.Channels
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-			if (contentType == null)
-				throw new ArgumentNullException ("contentType");
+
+			contentType = contentType ?? "application/octet-stream";
 
 			Encoding enc = Encoding.UTF8;
 			ContentType ct = new ContentType (contentType);
@@ -92,7 +92,7 @@ namespace System.ServiceModel.Channels
 				case "application/xml":
 					fmt = WebContentFormat.Xml;
 					break;
-				case "application/octet-stream":
+				default:
 					fmt = WebContentFormat.Raw;
 					break;
 				}
@@ -116,7 +116,9 @@ namespace System.ServiceModel.Channels
 				wp = new WebBodyFormatMessageProperty (WebContentFormat.Json);
 				break;
 			case WebContentFormat.Raw:
-				throw new NotImplementedException ();
+				msg = new WebMessageFormatter.RawMessage (stream);
+				wp = new WebBodyFormatMessageProperty (WebContentFormat.Raw);
+				break;
 			default:
 				throw new SystemException ("INTERNAL ERROR: cannot determine content format");
 			}

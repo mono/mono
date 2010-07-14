@@ -1,5 +1,10 @@
 2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebMessageEncoder.cs : support Raw message in ReadMessage() too.
+	  Allow null content type.
+
+2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebMessageEncoder.cs : support Raw message. Fixed bug #619542.
 
 2010-06-22  Atsushi Enomoto  <atsushi@ximian.com>
