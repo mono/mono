@@ -2189,6 +2189,16 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void CompareTicks ()
+		{
+			// Only ticks are compared, not kind.
+			var d = new DateTime (0, DateTimeKind.Utc);
+			var f = new DateTime (0);
+
+			Assert.AreEqual (d == f, true, "#1");
+		}
+		
+		[Test]
 		public void FromBinary ()
 		{
 			DateTime dt_utc = DateTime.FromBinary (0x4000000000000001);
