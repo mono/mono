@@ -1,3 +1,7 @@
+2010-07-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebHeaderCollection_2_1.cs: Fix IEnumerable.GetEnumerator
+
 2010-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebHeaderCollection_2_1.cs: Hide the internal Dictionary and 

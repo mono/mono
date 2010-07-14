@@ -119,7 +119,7 @@ namespace System.Net {
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return headers.GetEnumerator ();
+			return headers.Keys.GetEnumerator ();
 		}
 
 		static string HttpResponseHeaderToString (HttpResponseHeader header)
