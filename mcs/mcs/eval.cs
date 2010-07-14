@@ -1070,7 +1070,9 @@ namespace Mono.CSharp {
 		static public object quit {
 			get {
 				QuitRequested = true;
-				return null;
+
+				// To avoid print null at the exit
+				return typeof (Evaluator.NoValueSet);
 			}
 		}
 
