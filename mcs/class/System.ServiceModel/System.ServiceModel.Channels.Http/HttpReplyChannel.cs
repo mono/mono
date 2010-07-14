@@ -178,7 +178,7 @@ namespace System.ServiceModel.Channels.Http
 			int maxSizeOfHeaders = 0x10000;
 
 			var msg = Encoder.ReadMessage (
-				ctxi.Request.InputStream, maxSizeOfHeaders);
+				ctxi.Request.InputStream, maxSizeOfHeaders, ctxi.Request.ContentType);
 
 			if (MessageVersion.Envelope.Equals (EnvelopeVersion.Soap11) ||
 			    MessageVersion.Addressing.Equals (AddressingVersion.None)) {

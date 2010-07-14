@@ -1,3 +1,8 @@
+2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs : pass HTTP ContentType header value to
+	  MessageEncoder.ReadMessage().
+
 2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpRequestContext.cs : remove extra Action handling and old comment.

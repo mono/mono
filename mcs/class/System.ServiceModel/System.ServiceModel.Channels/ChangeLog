@@ -1,3 +1,8 @@
+2010-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncoder.cs, MessageEncoder.cs:
+	  The default content type value is null, not the ContentType value.
+
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageSecurityBindingSupport.cs : and move this too.
