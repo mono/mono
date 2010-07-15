@@ -42,6 +42,11 @@ namespace System.ServiceModel.Security
 		}
 
 		string username, password;
+		
+		internal UserNamePasswordClientCredential Clone ()
+		{
+			return (UserNamePasswordClientCredential) MemberwiseClone ();
+		}
 
 		public string Password {
 			get { return password; }

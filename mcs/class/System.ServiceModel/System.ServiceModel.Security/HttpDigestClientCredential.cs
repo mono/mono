@@ -42,6 +42,11 @@ namespace System.ServiceModel.Security
 		NetworkCredential credential = new NetworkCredential ();
 		TokenImpersonationLevel level;
 
+		internal HttpDigestClientCredential Clone ()
+		{
+			return (HttpDigestClientCredential) MemberwiseClone ();
+		}
+
 		public NetworkCredential ClientCredential {
 			get { return credential; }
 			set { credential = value; }

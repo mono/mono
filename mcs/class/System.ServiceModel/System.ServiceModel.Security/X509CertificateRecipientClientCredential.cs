@@ -50,6 +50,14 @@ namespace System.ServiceModel.Security
 		X509RevocationMode revocation_mode;
 		StoreLocation store_loc;
 
+		internal X509CertificateRecipientClientCredential Clone ()
+		{
+			var ret = (X509CertificateRecipientClientCredential) MemberwiseClone ();
+			ret.auth = auth.Clone ();
+			ret.scoped = new Dictionary<Uri,X509Certificate2> (scoped);
+			return ret;
+		}
+
 		public X509ServiceCertificateAuthentication Authentication {
 			get { return auth; }
 		}

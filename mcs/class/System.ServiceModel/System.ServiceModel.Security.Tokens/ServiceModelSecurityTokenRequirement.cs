@@ -59,6 +59,10 @@ namespace System.ServiceModel.Security.Tokens
 			get { return "http://schemas.microsoft.com/ws/2006/05/servicemodel/securitytokenrequirement/EndpointFilterTable"; }
 		}
 
+		public static string ExtendedProtectionPolicy {
+			get { return "http://schemas.microsoft.com/ws/2006/05/servicemodel/securitytokenrequirement/ExtendedProtectionPolicy"; }
+		}
+
 		public static string HttpAuthenticationSchemeProperty {
 			get { return "http://schemas.microsoft.com/ws/2006/05/servicemodel/securitytokenrequirement/HttpAuthenticationScheme"; }
 		}

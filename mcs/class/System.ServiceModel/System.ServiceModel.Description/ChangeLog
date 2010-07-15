@@ -1,3 +1,11 @@
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientCredentials.cs : implement Clone() here too.
+
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceCredentials.cs : implement Clone().
+
 2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : Reduced not a few lines of code,

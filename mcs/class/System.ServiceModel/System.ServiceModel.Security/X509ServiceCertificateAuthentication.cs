@@ -46,6 +46,11 @@ namespace System.ServiceModel.Security
 		X509RevocationMode revocation_mode;
 		StoreLocation trusted_store_loc;
 
+		internal X509ServiceCertificateAuthentication Clone ()
+		{
+			return (X509ServiceCertificateAuthentication) MemberwiseClone ();
+		}
+
 		public X509CertificateValidationMode CertificateValidationMode {
 			get { return validation_mode; }
 			set { validation_mode = value; }

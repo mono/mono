@@ -39,6 +39,11 @@ namespace System.ServiceModel.Security
 
 		bool allow_anon, inc_win_groups;
 
+		internal WindowsServiceCredential Clone ()
+		{
+			return (WindowsServiceCredential) MemberwiseClone ();
+		}
+
 		public bool AllowAnonymousLogons {
 			get { return allow_anon; }
 			set { allow_anon = value; }

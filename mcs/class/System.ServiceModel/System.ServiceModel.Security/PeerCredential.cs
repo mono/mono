@@ -43,6 +43,11 @@ namespace System.ServiceModel.Security
 		X509PeerCertificateAuthentication peer_auth =
 			new X509PeerCertificateAuthentication ();
 
+		internal PeerCredential Clone ()
+		{
+			return new PeerCredential () { cert = this.cert, cert_auth = this.cert_auth.Clone (), peer_auth = this.peer_auth.Clone () };
+		}
+
 		public X509Certificate2 Certificate {
 			get { return cert; }
 			set { cert = value; }

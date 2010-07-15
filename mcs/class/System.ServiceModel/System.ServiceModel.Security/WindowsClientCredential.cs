@@ -40,6 +40,11 @@ namespace System.ServiceModel.Security
 		bool allow_ntlm = true;
 		TokenImpersonationLevel impersonation_level = TokenImpersonationLevel.Identification;
 		NetworkCredential client_credential = new NetworkCredential ();
+		
+		internal WindowsClientCredential Clone ()
+		{
+			return (WindowsClientCredential) MemberwiseClone ();
+		}
 
 		public TokenImpersonationLevel AllowedImpersonationLevel {
 			get { return impersonation_level; }

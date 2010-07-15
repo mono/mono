@@ -81,9 +81,12 @@ namespace System.ServiceModel.Channels.Security
 
 			if (!inner.TryReceiveRequest (timeout, out context))
 				return false;
+			if (context == null)
+				return true;
 
-			var msg = context.RequestMessage;
-			switch (msg.Headers.Action) {
+			Message req, res;
+			req = context.RequestMessage;
+			switch (req.Headers.Action) {
 			case Constants.WstIssueAction:
 			case Constants.WstIssueReplyAction:
 			case Constants.WstRenewAction:
@@ -91,9 +94,12 @@ namespace System.ServiceModel.Channels.Security
 			case Constants.WstValidateAction:
 				var support = Source.SecuritySupport;
 				var commAuth = support.TokenAuthenticator as CommunicationSecurityTokenAuthenticator;
-				if (commAuth!= null)
-					msg = commAuth.Communication.ProcessNegotiation (msg, timeout - (DateTime.Now - start));
-				context.Reply (msg, timeout - (DateTime.Now - start));
+				if (commAuth != null)
+					res = commAuth.Communication.ProcessNegotiation (req, timeout - (DateTime.Now - start));
+				else
+					throw new MessageSecurityException ("This reply channel does not expect incoming WS-Trust requests");
+
+				context.Reply (res, timeout - (DateTime.Now - start));
 				context.Close (timeout - (DateTime.Now - start));
 				// wait for another incoming message
 				return TryReceiveRequest (timeout - (DateTime.Now - start), out context);

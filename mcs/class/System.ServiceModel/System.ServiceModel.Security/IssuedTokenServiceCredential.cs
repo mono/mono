@@ -54,6 +54,13 @@ namespace System.ServiceModel.Security
 			AllowedAudienceUris = new List<string> ();
 		}
 
+		internal IssuedTokenServiceCredential Clone ()
+		{
+			var ret = (IssuedTokenServiceCredential) MemberwiseClone ();
+			ret.known_certs = new List<X509Certificate2> (known_certs);
+			return ret;
+		}
+
 		[MonoTODO]
 		public IList<string> AllowedAudienceUris { get; private set; }
 

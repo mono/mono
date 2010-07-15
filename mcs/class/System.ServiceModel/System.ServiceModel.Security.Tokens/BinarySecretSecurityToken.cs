@@ -103,6 +103,10 @@ namespace System.ServiceModel.Security.Tokens
 			get { return id; }
 		}
 
+		public int KeySize {
+			get { return key.Length; }
+		}
+
 		public override ReadOnlyCollection<SecurityKey> SecurityKeys {
 			get { return keys; }
 		}

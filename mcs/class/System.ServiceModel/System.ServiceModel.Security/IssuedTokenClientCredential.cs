@@ -54,6 +54,14 @@ namespace System.ServiceModel.Security
 		// FIXME: could be related to LocalClientSecuritysettings.CookieRenewalThresholdPercentage ?
 		int renewal_threshold = 60;
 
+		internal IssuedTokenClientCredential Clone ()
+		{
+			var ret = (IssuedTokenClientCredential) MemberwiseClone ();
+			ret.local_behaviors = new KeyedByTypeCollection<IEndpointBehavior> (local_behaviors);
+			ret.behaviors = new Dictionary<Uri,KeyedByTypeCollection<IEndpointBehavior>> (behaviors);
+			return ret;
+		}
+
 		public bool CacheIssuedTokens {
 			get { return cache; }
 			set { cache = value; }

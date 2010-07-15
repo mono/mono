@@ -42,6 +42,11 @@ namespace System.ServiceModel.Security
 
 		X509Certificate2 certificate;
 
+		internal X509CertificateInitiatorClientCredential Clone ()
+		{
+			return (X509CertificateInitiatorClientCredential) MemberwiseClone ();
+		}
+
 		public X509Certificate2 Certificate {
 			get { return certificate; }
 			set { certificate = value; }

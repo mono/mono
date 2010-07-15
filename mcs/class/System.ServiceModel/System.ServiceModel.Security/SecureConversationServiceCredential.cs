@@ -51,6 +51,13 @@ namespace System.ServiceModel.Security
 		{
 		}
 
+		internal SecureConversationServiceCredential Clone ()
+		{
+			var ret = (SecureConversationServiceCredential) MemberwiseClone ();
+			ret.ctx_claim_types = new Collection<Type> (ctx_claim_types);
+			return ret;
+		}
+
 		public Collection<Type> SecurityContextClaimTypes {
 			get { return ctx_claim_types; }
 		}

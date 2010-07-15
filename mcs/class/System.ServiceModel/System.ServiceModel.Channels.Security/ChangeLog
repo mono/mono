@@ -1,3 +1,9 @@
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityReplyChannel.cs : when the inner channel gave null
+	  context while returning true, also output null as context.
+	  Throw an error if the inner authenticator is invalid.
+
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SecurityReplyChannel.cs : handle WS-Trust message here.

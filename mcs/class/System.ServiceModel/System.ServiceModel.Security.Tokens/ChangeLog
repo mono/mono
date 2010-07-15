@@ -1,3 +1,13 @@
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinarySecretSecurityToken.cs : add KeySize.
+	* SslSecurityTokenAuthenticator.cs : add some comments.
+
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceModelSecurityTokenRequirement.cs :
+	  add ExtendedProtectionPolicy.
+
 2010-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SslSecurityTokenAuthenticator.cs,

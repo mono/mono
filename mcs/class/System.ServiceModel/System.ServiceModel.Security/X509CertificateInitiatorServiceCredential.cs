@@ -35,7 +35,6 @@ using System.ServiceModel.Security.Tokens;
 
 namespace System.ServiceModel.Security
 {
-	[MonoTODO]
 	public sealed class X509CertificateInitiatorServiceCredential
 	{
 		internal X509CertificateInitiatorServiceCredential ()
@@ -46,7 +45,11 @@ namespace System.ServiceModel.Security
 			new X509ClientCertificateAuthentication ();
 		X509Certificate2 certificate;
 
-		[MonoTODO]
+		internal X509CertificateInitiatorServiceCredential Clone ()
+		{
+			return new X509CertificateInitiatorServiceCredential () { auth = this.auth.Clone (), certificate = this.certificate };
+		}
+
 		public X509ClientCertificateAuthentication Authentication {
 			get { return auth; }
 		}

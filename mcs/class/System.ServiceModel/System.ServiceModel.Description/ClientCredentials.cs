@@ -53,7 +53,14 @@ namespace System.ServiceModel.Description
 		[MonoTODO]
 		protected ClientCredentials (ClientCredentials source)
 		{
-			throw new NotImplementedException ();
+			userpass = source.userpass.Clone ();
+			issued_token = source.issued_token.Clone ();
+			digest = source.digest.Clone ();
+			initiator = source.initiator.Clone ();
+			recipient = source.recipient.Clone ();
+			windows = source.windows.Clone ();
+			peer = source.peer.Clone ();
+			support_interactive = source.support_interactive;
 		}
 
 		UserNamePasswordClientCredential userpass =

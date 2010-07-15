@@ -42,6 +42,11 @@ namespace System.ServiceModel.Security
 
 		X509Certificate2 certificate;
 
+		internal X509CertificateRecipientServiceCredential Clone ()
+		{
+			return new X509CertificateRecipientServiceCredential () { certificate = this.certificate };
+		}
+		
 		public X509Certificate2 Certificate {
 			get { return certificate; }
 			set { certificate = value; }

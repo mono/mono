@@ -1,3 +1,25 @@
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpDigestClientCredential.cs
+	  IssuedTokenClientCredential.cs
+	  UserNamePasswordClientCredential.cs
+	  WindowsClientCredential.cs
+	  X509CertificateInitiatorClientCredential.cs
+	  X509CertificateRecipientClientCredential.cs : add Clone() helper.
+
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IssuedTokenServiceCredential.cs
+	* PeerCredential.cs
+	  SecureConversationServiceCredential.cs
+	  UserNamePasswordServiceCredential.cs
+	  WindowsServiceCredential.cs
+	  X509CertificateInitiatorServiceCredential.cs
+	  X509CertificateRecipientServiceCredential.cs
+	  X509ClientCertificateAuthentication.cs
+	  X509PeerCertificateAuthentication.cs
+	  X509ServiceCertificateAuthentication.cs : add Clone() helper.
+
 2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* KeyNameIdentifierClause.cs : warning cleanup and implement.

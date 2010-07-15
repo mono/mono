@@ -48,6 +48,11 @@ namespace System.ServiceModel.Security
 		X509CertificateValidationMode validation_mode =
 			X509CertificateValidationMode.PeerOrChainTrust;
 
+		internal X509PeerCertificateAuthentication Clone ()
+		{
+			return (X509PeerCertificateAuthentication) MemberwiseClone ();
+		}
+
 		public X509CertificateValidator CustomCertificateValidator {
 			get { return validator; }
 			set { validator = value; }

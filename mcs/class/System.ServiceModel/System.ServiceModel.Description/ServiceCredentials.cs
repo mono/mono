@@ -43,10 +43,15 @@ namespace System.ServiceModel.Description
 		{
 		}
 
-		[MonoTODO]
 		protected ServiceCredentials (ServiceCredentials other)
 		{
-			throw new NotImplementedException ();
+			initiator = other.initiator.Clone ();
+			peer = other.peer.Clone ();
+			recipient = other.recipient.Clone ();
+			userpass = other.userpass.Clone ();
+			windows = other.windows.Clone ();
+			issued_token = other.issued_token.Clone ();
+			secure_conversation = other.secure_conversation.Clone ();
 		}
 
 		X509CertificateInitiatorServiceCredential initiator
@@ -63,8 +68,7 @@ namespace System.ServiceModel.Description
 		SecureConversationServiceCredential secure_conversation =
 			new SecureConversationServiceCredential ();
 
-		public X509CertificateInitiatorServiceCredential 
-			ClientCertificate {
+		public X509CertificateInitiatorServiceCredential ClientCertificate {
 			get { return initiator; }
 		}
 
@@ -80,8 +84,7 @@ namespace System.ServiceModel.Description
 			get { return secure_conversation; }
 		}
 
-		public X509CertificateRecipientServiceCredential 
-			ServiceCertificate {
+		public X509CertificateRecipientServiceCredential ServiceCertificate {
 			get { return recipient; }
 		}
 

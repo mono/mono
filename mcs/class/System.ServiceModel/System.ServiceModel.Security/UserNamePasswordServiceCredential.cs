@@ -50,6 +50,11 @@ namespace System.ServiceModel.Security
 		UserNamePasswordValidator validator;
 		UserNamePasswordValidationMode mode;
 
+		internal UserNamePasswordServiceCredential Clone ()
+		{
+			return (UserNamePasswordServiceCredential) MemberwiseClone ();
+		}
+
 		[MonoTODO]
 		public UserNamePasswordValidationMode UserNamePasswordValidationMode {
 			get { return mode; }
