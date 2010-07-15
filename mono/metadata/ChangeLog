@@ -1,4 +1,9 @@
 
+2010-07-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: use a monitor thread to start up new ones when needed.
+	Fixes bug #622398.
+
 Thu Jul 15 18:44:44 CEST 2010 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c, class-internals.h, class.c, icall.c: support
