@@ -29,7 +29,7 @@ using System.Xaml;
 using System.Xaml.Schema;
 using NUnit.Framework;
 
-using Category = NUnit.Framework.CategoryAttribute;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Xaml
 {

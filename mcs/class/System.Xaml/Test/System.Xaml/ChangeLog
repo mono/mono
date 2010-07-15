@@ -4,6 +4,7 @@
 	portable way to resolve the CategoryAttribute ambiguity.
 	* XamlObjectReaderTest.cs, XamlObjectWriterTest.cs: Likewise.
 	* XamlTypeTest.cs, XamlXmlReaderTest.cs, XamlXmlWriterTest.cs: Likewise.
+	* XamlDirectiveTest.cs: Likewise.
 
 2010-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
