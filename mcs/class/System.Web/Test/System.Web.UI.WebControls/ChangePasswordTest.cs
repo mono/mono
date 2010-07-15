@@ -41,6 +41,7 @@ using System.Web.Security;
 using System.Text.RegularExpressions;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
+using MonoTests.Common;
 
 using NUnit.Framework;
 using System.Collections.Specialized;
@@ -823,7 +824,74 @@ namespace MonoTests.System.Web.UI.WebControls
 			RequiredFieldValidator rfv = cp.ChangePasswordTemplateContainer.FindControl ("text1required") as RequiredFieldValidator;
 			Assert.IsNotNull (rfv, "#A2");
 		}
-		
+#if NET_4_0
+		[Test]
+		public void RenderOuterTableForbiddenStyles ()
+		{
+			var cp = new ChangePassword ();
+			cp.RenderOuterTable = false;
+			cp.BackColor = Color.Red;
+
+			TestRenderFailure (cp, "BackColor");
+
+			cp = new ChangePassword ();
+			cp.RenderOuterTable = false;
+			cp.BorderColor = Color.Red;
+			TestRenderFailure (cp, "BorderColor");
+
+			cp = new ChangePassword ();
+			cp.RenderOuterTable = false;
+			cp.BorderStyle = BorderStyle.Dashed;
+			TestRenderFailure (cp, "BorderStyle");
+
+			cp = new ChangePassword ();
+			cp.RenderOuterTable = false;
+			cp.BorderWidth = new Unit (10, UnitType.Pixel);
+			TestRenderFailure (cp, "BorderWidth");
+
+			cp = new ChangePassword ();
+			cp.RenderOuterTable = false;
+			cp.CssClass = "MyClass";
+			TestRenderFailure (cp, "CssClass");
+
+			cp = new ChangePassword ();
+			cp.RenderOuterTable = false;
+			cp.Font.Bold = true;
+
+			TestRenderFailure (cp, "Font", false);
+
+			cp = new ChangePassword ();
+			cp.RenderOuterTable = false;
+			cp.ForeColor = Color.Red;
+			TestRenderFailure (cp, "ForeColor");
+
+			cp = new ChangePassword ();
+			cp.RenderOuterTable = false;
+			cp.Height = new Unit (20, UnitType.Pixel);
+			TestRenderFailure (cp, "Height");
+
+			cp = new ChangePassword ();
+			cp.RenderOuterTable = false;
+			cp.Width = new Unit (20, UnitType.Pixel);
+			TestRenderFailure (cp, "Width");
+		}
+
+		void TestRenderFailure (ChangePassword cp, string message, bool shouldFail = true)
+		{
+			using (var sw = new StringWriter ()) {
+				using (var w = new HtmlTextWriter (sw)) {
+					if (shouldFail)
+						AssertExtensions.Throws<InvalidOperationException> (() => {
+							cp.RenderControl (w);
+						}, message);
+					else {
+						cp.RenderControl (w);
+						Assert.IsTrue (sw.ToString ().Length > 0, message);
+					}
+				}
+			}
+		}
+#endif
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{

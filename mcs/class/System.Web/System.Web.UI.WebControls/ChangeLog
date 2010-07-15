@@ -1,5 +1,21 @@
 2010-07-15  Marek Habersack  <mhabersack@novell.com>
 
+	* WebControl.cs: implemented verifying that no inline style
+	property is set for controls which support the RenderOuterTable
+	property (4.0)
+
+	* IRenderOuterTable.cs: internal helper interface for controls
+	which support the RenderOuterTable property (for now only
+	ChangePassword, 3 more to come)
+
+	* ChangePassword.cs: implemented RenderOuterTable property and the
+	corresponding behavior of not rendering surrounding table when the
+	property is set to false (4.0).
+	Modified BaseChangePasswordContainer to not inherit from Table
+	anymore. Table is an instance variable (always used as the
+	template container in 2.0) which is optionally (and by default)
+	used to contain the templates.
+
 	* PlaceHolder.cs, View.cs, WizardStepBase: added EnableTheming
 	property
 

@@ -23,7 +23,7 @@
 //	Peter Bartok	(pbartok@novell.com)
 //
 //
-
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Security.Permissions;
@@ -606,7 +606,60 @@ namespace System.Web.UI.WebControls {
 
 			enabled = ViewState.GetBool ("Enabled", enabled);
 		}
+#if NET_4_0
+		internal virtual string InlinePropertiesSet ()
+		{
+			var properties = new List <string> ();
+			
+			if (BackColor != Color.Empty)
+				properties.Add ("BackColor");
 
+			if (BorderColor != Color.Empty)
+				properties.Add ("BorderColor");
+
+			if (BorderStyle != BorderStyle.NotSet)
+				properties.Add ("BorderStyle");
+
+			if (BorderWidth != Unit.Empty)
+				properties.Add ("BorderWidth");
+
+			if (CssClass != String.Empty)
+				properties.Add ("CssClass");
+
+			if (ForeColor != Color.Empty)
+				properties.Add ("ForeColor");
+
+			if (Height != Unit.Empty)
+				properties.Add ("Height");
+
+			if (Width != Unit.Empty)
+				properties.Add ("Width");
+
+			if (properties.Count == 0)
+				return null;
+
+			return String.Join (", ", properties);
+		}
+
+		internal void VerifyInlinePropertiesNotSet ()
+		{
+			var renderOuterTableControl = this as IRenderOuterTable;
+			if (renderOuterTableControl == null || renderOuterTableControl.RenderOuterTable)
+				return;
+
+			string properties = InlinePropertiesSet ();
+			if (!String.IsNullOrEmpty (properties)) {
+				bool many = properties.IndexOf (',') > -1;
+				throw new InvalidOperationException (
+					String.Format ("The style propert{0} '{1}' cannot be used while RenderOuterTable is disabled on the {2} control with ID '{3}'",
+						       many ? "ies" : "y",
+						       properties,
+						       GetType ().Name,
+						       ID)
+				);
+			}
+		}
+#endif
 #if NET_2_0
 		protected internal
 #else		
