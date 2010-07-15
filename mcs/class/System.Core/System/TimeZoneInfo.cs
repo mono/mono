@@ -133,6 +133,7 @@ namespace System
 #endif
 		private AdjustmentRule [] adjustmentRules;
 
+#if !MONOTOUCH
 		static RegistryKey timeZoneKey = null;
 		static bool timeZoneKeySet = false;
 		static RegistryKey TimeZoneKey {
@@ -149,6 +150,7 @@ namespace System
 				return timeZoneKey;
 			}
 		}
+#endif
 
 		public static void ClearCachedData ()
 		{
@@ -307,6 +309,7 @@ namespace System
 			//FIXME: this method should check for cached values in systemTimeZones
 			if (id == null)
 				throw new ArgumentNullException ("id");
+#if !MONOTOUCH
 			if (TimeZoneKey != null)
 			{
 				RegistryKey key = TimeZoneKey.OpenSubKey (id, false);
@@ -314,6 +317,7 @@ namespace System
 					throw new TimeZoneNotFoundException ();
 				return FromRegistryKey(id, key);
 			}
+#endif
 #if LIBC	
 			string filepath = Path.Combine (TimeZoneDirectory, id);
 			return FindSystemTimeZoneByFileName (id, filepath);
@@ -346,6 +350,7 @@ namespace System
 		}
 #endif
 
+#if !MONOTOUCH
 		private static TimeZoneInfo FromRegistryKey (string id, RegistryKey key)
 		{
 			byte [] reg_tzi = (byte []) key.GetValue ("TZI");
@@ -383,6 +388,7 @@ namespace System
 			return CreateCustomTimeZone (id, baseUtcOffset, display_name, standard_name, daylight_name,
 							(AdjustmentRule []) ValidateRules (adjustmentRules).ToArray ());
 		}
+#endif
 
 		static List<AdjustmentRule> ValidateRules (List<AdjustmentRule> adjustmentRules)
 		{
@@ -512,6 +518,7 @@ namespace System
 		{
 			if (systemTimeZones == null) {
 				systemTimeZones = new List<TimeZoneInfo> ();
+#if !MONOTOUCH
 				if (TimeZoneKey != null) {
 					foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
 						try {
@@ -519,6 +526,10 @@ namespace System
 						} catch {}
 					}
 				}
+#else
+				if (false) {
+				}
+#endif
 #if LIBC
 				else {
 					string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
