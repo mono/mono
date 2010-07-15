@@ -167,6 +167,15 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void TestSetConstantDateTime ()
+		{
+			FieldBuilder field = _tb.DefineField ("datetime",
+				typeof(DateTime), FieldAttributes.Public);
+			field.SetConstant (DateTime.MinValue);
+			_tb.CreateType ();
+		}
+		
+		[Test]
 		[ExpectedException (typeof(InvalidOperationException))]
 		public void TestSetCustomAttributeCaBuilderComplete ()
 		{

@@ -1,3 +1,8 @@
+2010-07-15  Miguel de Icaza  <miguel@novell.com>
+
+	* FieldBuilderTest.cs: Add new test that exercises encoding
+	datetime constants with SetConstant.
+
 2010-06-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* GenericTypeParameterBuilderTest.cs: Fix test
