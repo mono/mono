@@ -1,7 +1,8 @@
+﻿//
+// Authors:
+//	Marek Habersack <mhabersack@novell.com>
 //
-// System.Web.UI.WebControls.SiteMapViewType.cs
-//
-// Author: Sanjay Gupta (gsanjay@novell.com)
+// (C) 2010 Novell, Inc (http://novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -22,18 +23,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
+using System;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
-#if NET_2_0
-namespace System.Web.UI.WebControls
+using NUnit.Framework;
+
+namespace MonoTests.System.Web.UI.WebControls
 {
-        enum SiteMapViewType
+	[TestFixture]
+	public class MultiViewControlBuilderTest
 	{
-                Automatic = 0,
-		Flat = 1,
-		Path = 2,
-		Tree = 3				
-        }
+		[Test (Description="Just check if it throws any exception")]
+		public void AppendSubBuilder ()
+		{
+			var bldr = new MultiViewControlBuilder ();
+			var subbldr = new ControlBuilder ();
+
+			bldr.AppendSubBuilder (subbldr);
+
+			subbldr = ControlBuilder.CreateBuilderFromType (null, null, typeof (TextBox), "TextBox", null, null, 0, "dummy");
+			bldr.AppendSubBuilder (subbldr);
+
+			subbldr = ControlBuilder.CreateBuilderFromType (null, null, typeof (View), "View", null, null, 0, "dummy");
+			bldr.AppendSubBuilder (subbldr);
+
+			subbldr = ControlBuilder.CreateBuilderFromType (null, null, typeof (string), "Literal", null, null, 0, "dummy");
+			bldr.AppendSubBuilder (subbldr);
+		}
+	}
 }
-#endif

@@ -215,9 +215,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
+		[CssClassProperty]
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]

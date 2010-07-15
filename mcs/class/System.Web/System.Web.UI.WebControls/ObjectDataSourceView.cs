@@ -403,6 +403,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("{0}")]
 		public string OldValuesParameterFormatString {
 			get {
 				return oldValuesParameterFormatString != null ? oldValuesParameterFormatString : "{0}";

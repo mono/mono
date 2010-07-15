@@ -955,6 +955,7 @@ System.Web.UI.WebControls/MenuItemTemplateContainer.cs
 System.Web.UI.WebControls/MonthChangedEventArgs.cs
 System.Web.UI.WebControls/MonthChangedEventHandler.cs
 System.Web.UI.WebControls/MultiView.cs
+System.Web.UI.WebControls/MultiViewControlBuilder.cs
 System.Web.UI.WebControls/NextPrevFormat.cs
 System.Web.UI.WebControls/ObjectDataSource.cs
 System.Web.UI.WebControls/ObjectDataSourceDisposingEventArgs.cs

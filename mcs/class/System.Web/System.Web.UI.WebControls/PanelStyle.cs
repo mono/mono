@@ -53,6 +53,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
 		public virtual string BackImageUrl {
 			get {
 				if (!CheckBit ((int) PanelStyles.BackImageUrl))
@@ -67,6 +69,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (ContentDirection.NotSet)]
 		public virtual ContentDirection Direction {
 			get {
 				if (!CheckBit ((int) PanelStyles.Direction))
@@ -80,6 +83,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (HorizontalAlign.NotSet)]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
 				if (!CheckBit ((int) PanelStyles.HorizontalAlign))
@@ -93,6 +97,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (ScrollBars.None)]
 		public virtual ScrollBars ScrollBars {
 			get {
 				if (!CheckBit ((int) PanelStyles.ScrollBars))
@@ -106,6 +111,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true)]
 		public virtual bool Wrap {
 			get {
 				if (!CheckBit ((int) PanelStyles.Wrap))

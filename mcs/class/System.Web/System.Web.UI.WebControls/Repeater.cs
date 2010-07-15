@@ -52,8 +52,8 @@ namespace System.Web.UI.WebControls {
 	[Designer ("System.Web.UI.Design.WebControls.RepeaterDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildren (true)]
 	[PersistChildren (false)]
-	public class Repeater : Control, INamingContainer {
-
+	public class Repeater : Control, INamingContainer
+	{
 		object dataSource;
 #if NET_2_0
 		IDataSource boundDataSource;
@@ -310,7 +310,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Browsable (true)]
-		[DefaultValue(false)]
 		public override bool EnableTheming {
 			get { return base.EnableTheming; }
 			set { base.EnableTheming = value; }
@@ -542,7 +541,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		protected virtual void OnPagePreLoad (object sender, EventArgs e) 
+		void OnPagePreLoad (object sender, EventArgs e) 
 		{
 			Initialize ();
 		}

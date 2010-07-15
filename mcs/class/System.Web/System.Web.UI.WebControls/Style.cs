@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls {
 		internal const string BitStateKey = "_!SB";
 
 		[Flags]
-		public enum Styles 
+		internal enum Styles 
 		{
 			BackColor	= 0x00000008,
 			BorderColor	= 0x00000010,
@@ -212,14 +212,14 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		//[TypeConverter ("System.Web.UI.WebControls.EmptyStringExpandableObjectConverter")]
+		[CssClassProperty]
 		[DefaultValue("")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
-		public string CssClass 
-		{
-			get 
-			{
+		public string CssClass {
+			get {
 				if (!CheckBit ((int) Styles.CssClass))
 				{
 					return String.Empty;
@@ -232,8 +232,7 @@ namespace System.Web.UI.WebControls {
 				return ret;
 			}
 
-			set 
-			{
+			set {
 				viewstate["CssClass"] = value;
 				SetBit ((int) Styles.CssClass);
 			}

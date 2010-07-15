@@ -40,6 +40,7 @@ namespace System.Web.UI.WebControls
 	[DefaultProperty ("MethodName")]
 	[ParseChildren (true)]
 	[PersistChildren (false)]
+	[Designer ("System.Web.UI.Design.WebControls.SubstitutionDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class Substitution : Control
 	{
 		[DefaultValue ("")]

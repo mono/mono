@@ -41,9 +41,6 @@ namespace System.Web.UI.WebControls {
 	[Designer ("System.Web.UI.Design.WebControls.PanelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildren (false)]
 	[PersistChildren (true)]
-#if !NET_4_0
-	[ToolboxData ("<{0}:Panel runat=server>Panel</{0}:Panel>")]
-#endif
 	public class Panel : WebControl {
 
 		public Panel () : base (HtmlTextWriterTag.Div) 
@@ -124,11 +121,8 @@ namespace System.Web.UI.WebControls {
 		PanelStyle PanelStyle {
 			get { return (ControlStyle as PanelStyle); }
 		}
-#if NET_4_0
+
 		[UrlProperty]
-#else
-		[Bindable (true)]
-#endif
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("")]
@@ -150,9 +144,7 @@ namespace System.Web.UI.WebControls {
 					ViewState ["BackImageUrl"] = value;
 			}
 		}
-#if !NET_4_0
-		[Bindable (true)]
-#endif
+
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -173,9 +165,7 @@ namespace System.Web.UI.WebControls {
 					ViewState ["HorizontalAlign"] = value;
 			}
 		}
-#if !NET_4_0
-		[Bindable (true)]
-#endif
+
 		[DefaultValue (true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -198,9 +188,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[ThemeableAttribute (false)]
-#if NET_4_0
 		[DefaultValue ("")]
-#endif
 		public virtual string DefaultButton {
 			get {
 				return ViewState.GetString ("DefaultButton", String.Empty);
@@ -209,9 +197,8 @@ namespace System.Web.UI.WebControls {
 				ViewState ["DefaultButton"] = value;
 			}
 		}
-#if NET_4_0
+
 		[DefaultValue (ContentDirection.NotSet)]
-#endif
 		public virtual ContentDirection Direction {
 			get {
 				if (ControlStyleCreated) {
@@ -231,9 +218,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[LocalizableAttribute (true)]
-#if NET_4_0
 		[DefaultValue ("")]
-#endif
 		public virtual string GroupingText {
 			get {
 				return ViewState.GetString ("GroupingText", String.Empty);
@@ -242,9 +227,8 @@ namespace System.Web.UI.WebControls {
 				ViewState ["GroupingText"] = value;
 			}
 		}
-#if NET_4_0
+
 		[DefaultValue (ScrollBars.None)]
-#endif
 		public virtual ScrollBars ScrollBars {
 			get {
 				if (ControlStyleCreated) {

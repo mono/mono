@@ -6,9 +6,6 @@
 //
 // (C) 2005 Novell, Inc (http://www.novell.com)
 //
-// TODO: Are we missing something in LoadViewState?
-// What to do in AddParsedSubObject
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -28,10 +25,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace System.Web.UI.WebControls {
+using System;
+using System.ComponentModel;
+using System.Web.UI;
+
+namespace System.Web.UI.WebControls
+{
 	[ControlBuilder (typeof (PlaceHolderControlBuilder))]
-	public class PlaceHolder : Control {
-		// Nada?
+	public class PlaceHolder : Control
+	{
+		[BrowsableAttribute(true)]
+		public override bool EnableTheming {
+			get;
+			set;
+		}
 	}
 	
 }

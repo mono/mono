@@ -44,7 +44,8 @@ namespace System.Web.UI.WebControls
 		StateBag ViewState = new StateBag ();
 		Control ctrl;
 		EventHandlerList events = new EventHandlerList ();
-		
+
+		[Browsable (false)]
 		public event EventHandler PropertyChanged {
 			add { events.AddHandler (propertyChangedEvent, value); }
 			remove { events.RemoveHandler (propertyChangedEvent, value); }

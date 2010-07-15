@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
@@ -275,8 +276,9 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [UrlPropertyAttribute]
-	    [EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [DefaultValueAttribute ("")]
+		    [EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[DefaultValueAttribute ("")]
+		[Themeable (false)]
 		public virtual string CancelDestinationPageUrl {
 			get {
 				object v = ViewState ["CancelDestinationPageUrl"];
@@ -389,6 +391,7 @@ namespace System.Web.UI.WebControls
 	    [UrlPropertyAttribute]
 	    [EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute ("")]
+		[Themeable (false)]
 		public virtual string FinishDestinationPageUrl {
 			get {
 				object v = ViewState ["FinishDestinationPageUrl"];

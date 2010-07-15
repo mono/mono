@@ -29,9 +29,13 @@
 //
 
 #if NET_2_0
+using System;
+using System.ComponentModel;
+using System.Drawing;
 
 namespace System.Web.UI.WebControls
 {
+	[ToolboxItem (false)]
 	public class SiteMapNodeItem: WebControl, IDataItemContainer, INamingContainer
 	{
 		int itemIndex;

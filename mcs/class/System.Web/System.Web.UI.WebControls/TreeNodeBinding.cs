@@ -68,7 +68,6 @@ namespace System.Web.UI.WebControls
 
 		[Localizable (true)]
 		[DefaultValue ("")]
-		[UrlProperty]
 		public string FormatString {
 			get {
 				object o = ViewState ["FormatString"];

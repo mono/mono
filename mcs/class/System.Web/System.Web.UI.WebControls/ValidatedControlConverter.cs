@@ -86,14 +86,6 @@ namespace System.Web.UI.WebControls {
 		{
 			return BaseValidator.GetValidationProperty (control) != null;
 		}
-
-		public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) {
-			return false;
-		}
-
-		public override bool GetStandardValuesSupported(ITypeDescriptorContext context) {
-			return true;
-		}
 		#endregion	// Public Instance Methods
 	}
 }

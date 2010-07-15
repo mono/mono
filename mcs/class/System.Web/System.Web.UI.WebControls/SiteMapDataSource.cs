@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Drawing;
 using System.Web.UI;
 using System.Web.Util;
 using System.ComponentModel;
@@ -42,6 +43,7 @@ namespace System.Web.UI.WebControls
 	[PersistChildrenAttribute (false)]
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.SiteMapDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildrenAttribute (true)]
+	[ToolboxBitmap ("")]
 	public class SiteMapDataSource : HierarchicalDataSourceControl, IDataSource, IListSource
 	{
 		static string[] emptyNames = new string[] { "DefaultView" };

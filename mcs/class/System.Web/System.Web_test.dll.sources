@@ -251,6 +251,7 @@ System.Web.UI.WebControls/MappingUrlTest.cs
 System.Web.UI.WebControls/MasterPageTest.cs
 System.Web.UI.WebControls/MonthChangedEventArgsTest.cs
 System.Web.UI.WebControls/MultiViewTest.cs
+System.Web.UI.WebControls/MultiViewControlBuilderTest.cs
 System.Web.UI.WebControls/PagedDataSourceTest.cs
 System.Web.UI.WebControls/PagerSettingsTest.cs
 System.Web.UI.WebControls/PanelTest.cs

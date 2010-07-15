@@ -491,7 +491,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[WebSysDescription ("")]
-		[DefaultValue (TableCaptionAlign.NotSet)]
 		[WebCategory ("Accessibility")]
 		public TableCaptionAlign CaptionAlign {
 			get {return captionAlign;}
@@ -499,7 +498,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[WebSysDescription ("")]
-		[DefaultValue (false)]
 		[WebCategory ("Accessibility")]
 		public bool UseAccessibleHeader {
 			get {return useAccessibleHeader;}

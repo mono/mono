@@ -33,6 +33,7 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
+using System.Drawing;
 using System.Text;
 using System.Xml;
 using System.Xml.Xsl;
@@ -54,6 +55,7 @@ namespace System.Web.UI.WebControls {
 	[PersistChildren (false)]
 	[WebSysDescription ("Connect to an XML file.")]
 //	[WebSysDisplayName ("XML file")]
+	[ToolboxBitmap ("")]
 	public class XmlDataSource : HierarchicalDataSourceControl, IDataSource, IListSource {
 
 		string _data = string.Empty;

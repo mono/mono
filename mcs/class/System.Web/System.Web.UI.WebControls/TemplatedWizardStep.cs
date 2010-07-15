@@ -37,6 +37,8 @@ namespace System.Web.UI.WebControls
 	[BindableAttribute (false)]
 	[PersistChildren (false)]
 	[ParseChildren (true)]
+	[ToolboxItem (false)]
+	[ControlBuilder (typeof (WizardStepControlBuilder))]
 	public class TemplatedWizardStep : WizardStepBase
 	{
 		ITemplate _contentTemplate = null;
@@ -44,19 +46,27 @@ namespace System.Web.UI.WebControls
 		ITemplate _customNavigationTemplate = null;
 		Control _customNavigationTemplateContainer = null;
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Browsable (false)]
 		[TemplateContainerAttribute (typeof (System.Web.UI.WebControls.Wizard))]
-		public virtual ITemplate ContentTemplate
-		{
+		public virtual ITemplate ContentTemplate {
 			get { return _contentTemplate; }
 			set { _contentTemplate = value; }
 		}
 
-		public Control ContentTemplateContainer
-		{
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public Control ContentTemplateContainer {
 			get { return _contentTemplateContainer; }
 			internal set { _contentTemplateContainer = value; }
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Browsable (false)]
 		[TemplateContainerAttribute (typeof (System.Web.UI.WebControls.Wizard))]
 		public virtual ITemplate CustomNavigationTemplate
 		{
@@ -64,16 +74,17 @@ namespace System.Web.UI.WebControls
 			set { _customNavigationTemplate = value; }
 		}
 
-		[BindableAttribute (false)]
-		public Control CustomNavigationTemplateContainer
-		{
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Bindable (false)]
+		public Control CustomNavigationTemplateContainer {
 			get { return _customNavigationTemplateContainer; }
 			internal set { _customNavigationTemplateContainer = value; }
 		}
 
+		[Browsable (true)]
 		[MonoTODO("Why override?")]
-		public override string SkinID
-		{
+		public override string SkinID {
 			get { return base.SkinID; }
 			set { base.SkinID = value; }
 		}

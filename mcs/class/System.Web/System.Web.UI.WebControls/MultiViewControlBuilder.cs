@@ -1,7 +1,8 @@
 //
-// System.Web.UI.WebControls.SiteMapViewType.cs
+// Authors:
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Author: Sanjay Gupta (gsanjay@novell.com)
+// (C) 2010 Novell, Inc (http://novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -22,18 +23,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
+using System;
+using System.Web;
+using System.Web.UI;
 
-#if NET_2_0
 namespace System.Web.UI.WebControls
 {
-        enum SiteMapViewType
+	public class MultiViewControlBuilder : ControlBuilder
 	{
-                Automatic = 0,
-		Flat = 1,
-		Path = 2,
-		Tree = 3				
-        }
+		public MultiViewControlBuilder ()
+		{
+		}
+
+		public override void AppendSubBuilder (ControlBuilder subBuilder)
+		{
+			// LAMESPEC: docs suggest that only View controls are accepted, but tests
+			// show that anything goes here (including subBuilder.ControlType == null),
+			// so we're just passing the call up the chain
+			base.AppendSubBuilder (subBuilder);
+		}
+	}
 }
-#endif

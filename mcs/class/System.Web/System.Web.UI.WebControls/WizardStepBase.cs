@@ -54,6 +54,19 @@ namespace System.Web.UI.WebControls
 				ViewState ["AllowReturn"] = value;
 			}
 		}
+
+		[Browsable (true)]
+		public override bool EnableTheming {
+			get { return base.EnableTheming; }
+			set { base.EnableTheming = value; }
+		}
+
+		// .NET version of this property performs design-time checks, which we don't
+		// support, thus our version is just a do-nothing override
+		public override string ID {
+			get { return base.ID; }
+			set { base.ID = value; }
+		}
 		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]

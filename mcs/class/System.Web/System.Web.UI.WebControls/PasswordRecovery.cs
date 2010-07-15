@@ -41,6 +41,8 @@ using System.Web.Security;
 namespace System.Web.UI.WebControls
 {
 	[Bindable (false)]
+	[DefaultEvent ("SendingMail")]
+	[Designer ("System.Web.UI.Design.WebControls.PasswordRecoveryDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class PasswordRecovery : CompositeControl
 	{
 		static readonly object answerLookupErrorEvent = new object ();
@@ -116,9 +118,11 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[Browsable (false)]
+		[Filterable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Themeable (false)]
-		public virtual string Answer
-		{
+		public virtual string Answer {
 			get { return _answer != null ? _answer : string.Empty; }
 		}
 
@@ -136,6 +140,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["AnswerRequiredErrorMessage"] = value; }
 		}
 
+		[DefaultValue (1)]
 		public virtual int BorderPadding
 		{
 			get { return ViewState.GetInt ("BorderPadding", 1); }
@@ -154,12 +159,16 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["GeneralFailureText"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]	
 		public virtual string HelpPageIconUrl
 		{
 			get { return ViewState.GetString ("HelpPageIconUrl", String.Empty); }
 			set { ViewState ["HelpPageIconUrl"] = value; }
 		}
 
+		[DefaultValue ("")]
 		[Localizable (true)]
 		public virtual string HelpPageText
 		{
@@ -167,17 +176,21 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["HelpPageText"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]	
 		public virtual string HelpPageUrl
 		{
 			get { return ViewState.GetString ("HelpPageUrl", String.Empty); }
 			set { ViewState ["HelpPageUrl"] = value; }
 		}
 
+		[NotifyParentProperty (true)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Themeable (false)]
-		public MailDefinition MailDefinition
-		{
-			get
-			{
+		public MailDefinition MailDefinition {
+			get {
 				if (_mailDefinition == null) {
 					_mailDefinition = new MailDefinition ();
 					if (IsTrackingViewState)
@@ -187,6 +200,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[Themeable (false)]
 		public virtual string MembershipProvider
 		{
@@ -194,9 +208,11 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["MembershipProvider"] = value; }
 		}
 
+		[Browsable (false)]
+		[Filterable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Themeable (false)]
-		public virtual string Question
-		{
+		public virtual string Question {
 			get { return ViewState.GetString ("Question", ""); }
 			private set { ViewState ["Question"] = value; }
 		}
@@ -229,6 +245,9 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["QuestionTitleText"] = value; }
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]	
 		public virtual string SubmitButtonImageUrl
 		{
 			get { return ViewState.GetString ("SubmitButtonImageUrl", String.Empty); }
@@ -242,6 +261,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["SubmitButtonText"] = value; }
 		}
 
+		[DefaultValue (ButtonType.Button)]
 		public virtual ButtonType SubmitButtonType
 		{
 			get
@@ -257,6 +277,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]	
 		[Themeable (false)]
 		public virtual string SuccessPageUrl
 		{
@@ -271,8 +294,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["SuccessText"] = value; }
 		}
 
-		public virtual LoginTextLayout TextLayout
-		{
+		[DefaultValue (LoginTextLayout.TextOnLeft)]
+		public virtual LoginTextLayout TextLayout {
 			get
 			{
 				object o = ViewState ["TextLayout"];
@@ -286,10 +309,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		[Localizable (true)]
-		public virtual string UserName
-		{
-			get { return _username != null ? _username : ""; }
+		public virtual string UserName {
+			get { return _username != null ? _username : String.Empty; }
 			set { _username = value; }
 		}
 
@@ -328,6 +351,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["UserNameTitleText"] = value; }
 		}
 
+		[Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (PasswordRecovery))]
 		public virtual ITemplate QuestionTemplate
 		{
@@ -335,6 +360,8 @@ namespace System.Web.UI.WebControls
 			set { _questionTemplate = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Control QuestionTemplateContainer
 		{
 			get {
@@ -349,6 +376,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (PasswordRecovery))]
 		public virtual ITemplate SuccessTemplate
 		{
@@ -356,6 +385,8 @@ namespace System.Web.UI.WebControls
 			set { _successTemplate = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Control SuccessTemplateContainer
 		{
 			get {
@@ -370,17 +401,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (PasswordRecovery))]
-		public virtual ITemplate UserNameTemplate
-		{
+		public virtual ITemplate UserNameTemplate {
 			get { return _userNameTemplate; }
 			set { _userNameTemplate = value; }
 		}
 
-		public Control UserNameTemplateContainer
-		{
-			get
-			{
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public Control UserNameTemplateContainer {
+			get {
 				if (_userNameTemplateContainer == null) {
 					_userNameTemplateContainer = new UserNameContainer (this);
 					ITemplate template = UserNameTemplate;
@@ -392,10 +424,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public TableItemStyle FailureTextStyle
-		{
-			get
-			{
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		public TableItemStyle FailureTextStyle {
+			get {
 				if (_failureTextStyle == null) {
 					_failureTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -405,10 +439,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public TableItemStyle HyperLinkStyle
-		{
-			get
-			{
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		public TableItemStyle HyperLinkStyle {
+			get {
 				if (_hyperLinkStyle == null) {
 					_hyperLinkStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -418,10 +454,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public TableItemStyle InstructionTextStyle
-		{
-			get
-			{
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		public TableItemStyle InstructionTextStyle {
+			get {
 				if (_instructionTextStyle == null) {
 					_instructionTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -431,10 +469,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public TableItemStyle LabelStyle
-		{
-			get
-			{
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		public TableItemStyle LabelStyle {
+			get {
 				if (_labelStyle == null) {
 					_labelStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -444,10 +484,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public Style SubmitButtonStyle
-		{
-			get
-			{
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		public Style SubmitButtonStyle {
+			get {
 				if (_submitButtonStyle == null) {
 					_submitButtonStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -457,10 +499,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public TableItemStyle SuccessTextStyle
-		{
-			get
-			{
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		public TableItemStyle SuccessTextStyle {
+			get {
 				if (_successTextStyle == null) {
 					_successTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -470,10 +514,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public Style TextBoxStyle
-		{
-			get
-			{
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		public Style TextBoxStyle {
+			get {
 				if (_textBoxStyle == null) {
 					_textBoxStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -483,10 +529,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public TableItemStyle TitleTextStyle
-		{
-			get
-			{
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		public TableItemStyle TitleTextStyle {
+			get {
 				if (_titleTextStyle == null) {
 					_titleTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -496,10 +544,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public Style ValidatorTextStyle
-		{
-			get
-			{
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		public Style ValidatorTextStyle {
+			get {
 				if (_validatorTextStyle == null) {
 					_validatorTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -511,8 +561,7 @@ namespace System.Web.UI.WebControls
 
 		#region Protected Properties
 
-		protected override HtmlTextWriterTag TagKey
-		{
+		protected override HtmlTextWriterTag TagKey {
 			get { return HtmlTextWriterTag.Table; }
 		}
 

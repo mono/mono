@@ -38,7 +38,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
-//	[ControlBuilder (typeof(MultiViewControlBuilder)]
+	[ControlBuilder (typeof(MultiViewControlBuilder))]
 	[Designer ("System.Web.UI.Design.WebControls.MultiViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxData ("<{0}:MultiView runat=\"server\"></{0}:MultiView>")]
 #if NET_2_0

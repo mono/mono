@@ -1,3 +1,10 @@
+2010-07-15  Marek Habersack  <mhabersack@novell.com>
+
+	* PlaceHolder.cs, View.cs, WizardStepBase: added EnableTheming
+	property
+
+	* MultiViewControlBuilder.cs: added
+
 2010-07-14  Marek Habersack  <mhabersack@novell.com>
 
 	* Menu.cs: fixed skip link rendering (no child controls are added

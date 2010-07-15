@@ -46,6 +46,12 @@ namespace System.Web.UI.WebControls
 		static readonly object ActivateEvent = new object();
 		static readonly object DeactivateEvent = new object();
 
+		[BrowsableAttribute(true)]
+		public override bool EnableTheming {
+			get { return base.EnableTheming; }
+			set { base.EnableTheming = value; }
+		}
+
 		public View ()
 		{
 			base.Visible = false;
@@ -89,11 +95,11 @@ namespace System.Web.UI.WebControls
 			set { base.Visible = value; }
 		}
 
-		public override bool Visible
-		{
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override bool Visible {
 			get { return base.Visible; }
-			set
-			{
+			set {
 				throw new InvalidOperationException ("The Visible property of a View control can only be set by setting the active View of a MultiView.");
 			}
 		}
