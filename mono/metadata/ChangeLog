@@ -1,3 +1,17 @@
+2010-07-14  Miguel de Icaza  <miguel@novell.com>
+
+	* reflection.c (load_cattr_value): Add support for encoding
+	DateTime constants into the blob.    Turns out that this is
+	required by .NET, it was only documented post 1.0.
+
+	* icall.c (ves_icall_type_GetTypeCodeInternal): Guard test for
+	System.Decimal and System.DateTime inside a mono_is_corlib_image
+	call.   A sample program showed that we could return the wrong
+	TypeCode just by creating a class with those names. 
+
+	* class.c (mono_is_corlib_image): Exposed this to other metadata/
+	code.
+
 2010-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c: Don't abort (only warn) if we cannot find 
