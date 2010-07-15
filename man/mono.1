@@ -1584,6 +1584,11 @@ If this variable is set, when the Mono VM runs into a verification
 problem, instead of throwing an exception it will break into the
 debugger.  This is useful when debugging verifier problems
 .TP
+\fBcasts\fR
+This option can be used to get more detailed information from
+InvalidCast exceptions, it will provide informationabout the types
+involved.     
+.TP
 \fBcollect-pagefault-stats\fR
 Collects information about pagefaults.   This is used internally to
 track the number of page faults produced to load metadata.  To display
