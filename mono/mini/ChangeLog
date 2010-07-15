@@ -1,8 +1,14 @@
+2010-07-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c: Change the calling convention to pass this as first as on other
+	architectures. Remove some dead code from the get_vcall_slot() and the implementation
+	of the CALL_MEMBASE opcodes as a result.
+
 2010-07-13  Miguel de Icaza  <miguel@novell.com>
 
 	* mini.c: LLVM is disabled by default on LLVM builds.  You can use
 	the MONO_ENV_OPTIONS to set the --llvm flag.
-	
+
 2010-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* driver.c : windows build fix for --with-moonlight.
