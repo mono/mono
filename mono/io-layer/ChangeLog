@@ -1,3 +1,8 @@
+2010-07-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* wthreads.c (CreateThread): Avoid an assert if the stack size specified by the
+	caller is smaller than the system minimum.
+
 2010-06-29  Geoff Norton  <gnorton@novell.com>
 
 	* atomics.h: Implement armv6+ variants of our atomics.
