@@ -1,3 +1,9 @@
+
+Thu Jul 15 18:44:44 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, class-internals.h, class.c, icall.c: support
+	reflection of default constant value for Re.Emit properties.
+
 2010-07-14  Miguel de Icaza  <miguel@novell.com>
 
 	* reflection.c (load_cattr_value): Add support for encoding
