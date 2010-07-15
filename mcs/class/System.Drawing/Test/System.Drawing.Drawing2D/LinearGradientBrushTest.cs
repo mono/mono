@@ -894,5 +894,23 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			default_brush.Blend = null;
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ZeroWidthRectangle ()
+		{
+			Rectangle r = new Rectangle (10, 10, 0, 10);
+			Assert.AreEqual (0, r.Width, "Width");
+			new LinearGradientBrush (r, Color.Red, Color.Blue, LinearGradientMode.Vertical);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ZeroHeightRectangleF ()
+		{
+			RectangleF r = new RectangleF (10.0f, 10.0f, 10.0f, 0.0f);
+			Assert.AreEqual (0.0f, r.Height, "Height");
+			new LinearGradientBrush (r, Color.Red, Color.Blue, LinearGradientMode.Vertical);
+		}
 	}
 }

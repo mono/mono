@@ -1,3 +1,7 @@
+2010-07-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* LinearGradientBrushTest.cs: Add test case for #537396 (empty rects)
+
 2009-08-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TestBlend.cs, TestMatrix.cs : nunit test upgrade to modern style.
