@@ -185,6 +185,8 @@ namespace Mono.Security.Protocol.Tls
 															X509CertificateCollection serverRequestedCertificates);
 
 		internal abstract bool OnRemoteCertificateValidation(X509Certificate certificate, int[] errors);
+		internal abstract ValidationResult OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection);
+		internal abstract bool HaveRemoteValidation2Callback { get; }
 
 		internal abstract AsymmetricAlgorithm OnLocalPrivateKeySelection(X509Certificate certificate, string targetHost);
 
@@ -203,6 +205,11 @@ namespace Mono.Security.Protocol.Tls
 		internal bool RaiseRemoteCertificateValidation(X509Certificate certificate, int[] errors)
 		{
 			return OnRemoteCertificateValidation(certificate, errors);
+		}
+
+		internal ValidationResult RaiseRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		{
+			return OnRemoteCertificateValidation2 (collection);
 		}
 
 		internal AsymmetricAlgorithm RaiseLocalPrivateKeySelection(
@@ -605,7 +612,7 @@ namespace Mono.Security.Protocol.Tls
 				{
 					asyncResult.SetComplete(preReadSize);
 				}
-				else if (!this.context.ConnectionEnd)
+				else if (!this.context.ReceivedConnectionEnd)
 				{
 					// this will read data from the network until we have (at least) one
 					// record to send back to the caller
@@ -724,11 +731,15 @@ namespace Mono.Security.Protocol.Tls
 
 				if (!dataToReturn && (n > 0))
 				{
-					// there is no record to return to caller and (possibly) more data waiting
-					// so continue reading from network (and appending to stream)
-					recordStream.Position = recordStream.Length;
-					this.innerStream.BeginRead(recbuf, 0, recbuf.Length,
-						new AsyncCallback(InternalReadCallback), state);
+					if (context.ReceivedConnectionEnd) {
+						internalResult.SetComplete (0);
+					} else {
+						// there is no record to return to caller and (possibly) more data waiting
+						// so continue reading from network (and appending to stream)
+						recordStream.Position = recordStream.Length;
+						this.innerStream.BeginRead(recbuf, 0, recbuf.Length,
+							new AsyncCallback(InternalReadCallback), state);
+					}
 				}
 				else
 				{
@@ -901,11 +912,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void Close()
 		{
-#if NET_2_0
 			base.Close ();
-#else
-			((IDisposable)this).Dispose();
-#endif
 		}
 
 		public override void Flush()
@@ -1164,17 +1171,7 @@ namespace Mono.Security.Protocol.Tls
 			this.Dispose(false);
 		}
 
-#if !NET_2_0
-		public void Dispose()
-		{
-			this.Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected virtual void Dispose (bool disposing)
-#else
 		protected override void Dispose (bool disposing)
-#endif
 		{
 			if (!this.disposed)
 			{
@@ -1183,10 +1180,13 @@ namespace Mono.Security.Protocol.Tls
 					if (this.innerStream != null)
 					{
 						if (this.context.HandshakeState == HandshakeState.Finished &&
-							!this.context.ConnectionEnd)
+							!this.context.SentConnectionEnd)
 						{
-							// Write close notify							
-							this.protocol.SendAlert(AlertDescription.CloseNotify);
+							// Write close notify
+							try {
+								this.protocol.SendAlert(AlertDescription.CloseNotify);
+							} catch {
+							}
 						}
 
 						if (this.ownsStream)
@@ -1200,9 +1200,7 @@ namespace Mono.Security.Protocol.Tls
 				}
 
 				this.disposed = true;
-#if NET_2_0
 				base.Dispose (disposing);
-#endif
 			}
 		}
 

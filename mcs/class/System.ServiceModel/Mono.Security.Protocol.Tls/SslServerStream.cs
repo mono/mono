@@ -76,6 +76,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
+		public event CertificateValidationCallback2 ClientCertValidation2;
 		#region Constructors
 
 		public SslServerStream(
@@ -103,9 +104,30 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		public SslServerStream(
+			Stream			stream,
+			X509Certificate serverCertificate,
+			bool			clientCertificateRequired,
+			bool			requestClientCertificate,
+			bool			ownsStream)
+				: this (stream, serverCertificate, clientCertificateRequired, requestClientCertificate, ownsStream, SecurityProtocolType.Default)
+		{
+		}
+
+		public SslServerStream(
 			Stream					stream,
 			X509Certificate			serverCertificate,
 			bool					clientCertificateRequired,
+			bool					ownsStream,
+			SecurityProtocolType	securityProtocolType)
+			: this (stream, serverCertificate, clientCertificateRequired, false, ownsStream, securityProtocolType)
+		{
+		}
+
+		public SslServerStream(
+			Stream					stream,
+			X509Certificate			serverCertificate,
+			bool					clientCertificateRequired,
+			bool					requestClientCertificate,
 			bool					ownsStream,
 			SecurityProtocolType	securityProtocolType)
 			: base(stream, ownsStream)
@@ -114,7 +136,8 @@ namespace Mono.Security.Protocol.Tls
 				this,
 				securityProtocolType,
 				serverCertificate,
-				clientCertificateRequired);
+				clientCertificateRequired,
+				requestClientCertificate);
 
 			this.protocol = new ServerRecordProtocol(innerStream, (ServerContext)this.context);
 		}
@@ -216,7 +239,8 @@ namespace Mono.Security.Protocol.Tls
 			// If the negotiated cipher is a KeyEx cipher or
 			// the client certificate is required send the CertificateRequest message
 			if (this.context.Negotiating.Cipher.IsExportable ||
-				((ServerContext)this.context).ClientCertificateRequired)
+				((ServerContext)this.context).ClientCertificateRequired ||
+				((ServerContext)this.context).RequestClientCertificate)
 			{
 				this.protocol.SendRecord(HandshakeType.CertificateRequest);
 				certRequested = true;
@@ -239,16 +263,13 @@ namespace Mono.Security.Protocol.Tls
 				}
 			}
 
-			if (certRequested && (this.context.ClientSettings.ClientCertificate == null))
-			{
-				// we asked for a certificate but didn't receive one
-				// e.g. wget for SSL3
-				if (!RaiseClientCertificateValidation(null, new int[0]))
-				{
-					throw new TlsException(
-						AlertDescription.BadCertificate,
-						"No certificate received from client.");
-				}
+			if (certRequested) {
+				X509Certificate client_cert = this.context.ClientSettings.ClientCertificate;
+				if (client_cert == null && ((ServerContext)this.context).ClientCertificateRequired)
+					throw new TlsException (AlertDescription.BadCertificate, "No certificate received from client.");
+
+				if (!RaiseClientCertificateValidation (client_cert, new int[0]))
+					throw new TlsException (AlertDescription.BadCertificate, "Client certificate not accepted.");
 			}
 
 			// Send ChangeCipherSpec and ServerFinished messages
@@ -282,6 +303,18 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			return (errors != null && errors.Length == 0);
+		}
+
+		internal override bool HaveRemoteValidation2Callback {
+			get { return ClientCertValidation2 != null; }
+		}
+
+		internal override ValidationResult OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		{
+			CertificateValidationCallback2 cb = ClientCertValidation2;
+			if (cb != null)
+				return cb (collection);
+			return null;
 		}
 
 		internal bool RaiseClientCertificateValidation(

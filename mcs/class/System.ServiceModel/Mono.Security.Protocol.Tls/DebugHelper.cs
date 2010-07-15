@@ -36,10 +36,12 @@ namespace Mono.Security.Protocol.Tls
 		{
 			if (!isInitialized)
 			{
+#if !NET_2_1
 				Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
 				// Debug.Listeners.Add(new TextWriterTraceListener(@"c:\ssl.log"));
 				Debug.AutoFlush = true;
 				Debug.Indent();
+#endif
 
 				isInitialized = true;
 			}
@@ -81,11 +83,12 @@ namespace Mono.Security.Protocol.Tls
 			for (int i = index; i < length; i += 16)
 			{
 				int count = (length - i) >= 16 ? 16 : (length - i);
+				string buf = "";
 				for (int j = 0; j < count; j++)
 				{
-					Debug.Write(buffer[i + j].ToString("x2") + " ");
+					buf += buffer[i + j].ToString("x2") + " ";
 				}
-				Debug.WriteLine("");
+				Debug.WriteLine(buf);
 			}
 		}
 	}

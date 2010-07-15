@@ -1,3 +1,32 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificateVerify.cs: Let it compile for Moonlight -
+	where the file is compiled inside System.dll
+
+2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TlsServerCertificate.cs: display the error code.
+
+2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TlsServerCertificate.cs: chain is built and validated in
+	System.dll now.
+
+2010-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TlsServerCertificate.cs:
+	added a new callback for certificate validation that gets all the
+	certificates received from the server/client. The callee should
+	build the chain and validate it.
+
+2009-08-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsServerCertificate.cs: If no usage information is available then
+	assume it's ok for SSL since we'll (later) check that the CN contains
+	a host name (that match the server) and such a certificate wouldn't
+	be much useful for anything but SSL/TLS. Fix the new stmp.gmail.com
+	certificate usage failure.
+
 2007-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsServerCertificate.cs: Add support for wilcard (*) when matching

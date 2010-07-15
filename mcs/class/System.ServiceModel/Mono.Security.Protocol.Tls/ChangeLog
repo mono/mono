@@ -1,3 +1,58 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CipherSuite.cs:
+	* DebugHelper.cs:
+	* RecordProtocol.cs:
+	* SslClientStream.cs:
+		Let them compile for Moonlight (where the files are 
+		compiled inside System.dll)
+
+2010-04-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Context.cs:
+	* SslStreamBase.cs:
+	* RecordProtocol.cs: differentiate a received 'CloseNotify' alert from
+	one that we sent. Disposing the stream will try to send the
+	'CloseNotify' alert, if it hasn't already, and ignore any errors. This
+	is needed for FTPS to work.
+
+2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SslStreamBase.cs:
+	* SslClientStream.cs:
+	* SslServerStream.cs: modify the 2.0 callback to return more info.
+
+2010-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpsClientStream.cs: use Address instead
+	of RequestUri to get the right host name when the request is
+	redirected.
+
+	* SslStreamBase.cs:
+	* SslClientStream.cs:
+	* SslServerStream.cs:
+	added a new callback for certificate validation that gets all the
+	certificates received from the server/client. The callee should
+	build the chain and validate it.
+
+2009-10-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ServerContext.cs:
+	* SslServerStream.cs: add new parameter that forces sending the
+	CertificateRequest record. Make sure we raise the client certificate
+	validation event when it is requested or required.
+
+2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpsClientStream.cs: if there's only an ICertificatePolicy and no
+	ServerCertificateValicationCallback, don't fail.
+
+2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpsClientStream.cs: invoke the ServerCertificateValidationCallback
+	in the 2.0 profile. If there's a CertificatePolicy, it is run before
+	the 2.0 callback.
+
 2007-09-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Context.cs: Clear key info memory (not just nullify). Fix bug #82819

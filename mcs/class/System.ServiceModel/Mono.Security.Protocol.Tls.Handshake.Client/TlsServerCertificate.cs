@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-// Copyright (C) 2004, 2006-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -177,15 +177,47 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				return ct.Support (NetscapeCertTypeExtension.CertTypes.SslServer);
 			}
 
-			// certificate isn't valid for SSL server usage
-			return false;
+			// if the CN=host (checked later) then we assume this is meant for SSL/TLS
+			// e.g. the new smtp.gmail.com certificate
+			return true;
 		}
 
+		
+		static private void VerifyOSX (X509CertificateCollection certificates)
+		{
+			
+		}
+		
 		private void validateCertificates(X509CertificateCollection certificates)
 		{
 			ClientContext		context			= (ClientContext)this.Context;
 			AlertDescription	description		= AlertDescription.BadCertificate;
 
+#if NET_2_0
+			if (context.SslStream.HaveRemoteValidation2Callback) {
+				ValidationResult res = context.SslStream.RaiseServerCertificateValidation2 (certificates);
+				if (res.Trusted)
+					return;
+
+				long error = res.ErrorCode;
+				switch (error) {
+				case 0x800B0101:
+					description = AlertDescription.CertificateExpired;
+					break;
+				case 0x800B010A:
+					description = AlertDescription.UnknownCA;
+					break;
+				case 0x800B0109:
+					description = AlertDescription.UnknownCA;
+					break;
+				default:
+					description = AlertDescription.CertificateUnknown;
+					break;
+				}
+				string err = String.Format ("0x{0:x}", error);
+				throw new TlsException (description, "Invalid certificate received from server. Error code: " + err);
+			}
+#endif
 			// the leaf is the web server certificate
 			X509Certificate leaf = certificates [0];
 			X509Cert.X509Certificate cert = new X509Cert.X509Certificate (leaf.RawData);

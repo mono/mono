@@ -41,6 +41,38 @@ namespace Mono.Security.Protocol.Tls
 		X509Certificate certificate, 
 		int[]			certificateErrors);
 
+	public class ValidationResult {
+		bool trusted;
+		bool user_denied;
+		int error_code;
+
+		public ValidationResult (bool trusted, bool user_denied, int error_code)
+		{
+			this.trusted = trusted;
+			this.user_denied = user_denied;
+			this.error_code = error_code;
+		}
+
+		public bool Trusted {
+			get { return trusted; }
+		}
+
+		public bool UserDenied {
+			get { return user_denied; }
+		}
+
+		public int ErrorCode {
+			get { return error_code; }
+		}
+	}
+
+#if MOONLIGHT
+	internal
+#else
+	public
+#endif
+	delegate ValidationResult CertificateValidationCallback2 (Mono.Security.X509.X509CertificateCollection collection);
+
 	public delegate X509Certificate CertificateSelectionCallback(
 		X509CertificateCollection	clientCertificates, 
 		X509Certificate				serverCertificate, 
@@ -104,6 +136,12 @@ namespace Mono.Security.Protocol.Tls
 		}
 		
 		#endregion
+
+#if MOONLIGHT
+		internal event CertificateValidationCallback2 ServerCertValidation2;
+#else
+		public event CertificateValidationCallback2 ServerCertValidation2;
+#endif
 
 		#region Constructors
 		
@@ -192,6 +230,7 @@ namespace Mono.Security.Protocol.Tls
 				this.ServerCertValidation = null;
 				this.ClientCertSelection = null;
 				this.PrivateKeySelection = null;
+				this.ServerCertValidation2 = null;
 			}
 		}
 
@@ -372,7 +411,19 @@ namespace Mono.Security.Protocol.Tls
 
 			return null;
 		}
-		
+
+		internal override bool HaveRemoteValidation2Callback {
+			get { return ServerCertValidation2 != null; }
+		}
+
+		internal override ValidationResult OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		{
+			CertificateValidationCallback2 cb = ServerCertValidation2;
+			if (cb != null)
+				return cb (collection);
+			return null;
+		}
+
 		internal override bool OnRemoteCertificateValidation(X509Certificate certificate, int[] errors)
 		{
 			if (this.ServerCertValidation != null)
@@ -388,6 +439,11 @@ namespace Mono.Security.Protocol.Tls
 			int[]			certificateErrors)
 		{
 			return base.RaiseRemoteCertificateValidation(certificate, certificateErrors);
+		}
+
+		internal virtual ValidationResult RaiseServerCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		{
+			return base.RaiseRemoteCertificateValidation2 (collection);
 		}
 
 		internal X509Certificate RaiseClientCertificateSelection(
