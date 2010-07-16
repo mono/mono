@@ -67,7 +67,9 @@ namespace Moonlight.Build.Tasks {
 					string full_source_path = source_item.GetMetadata ("FullPath");
 					try {
 						if (!XamlGCompiler.GenerateFile (codedom_provider, AssemblyName, full_source_path,
-										source_item.GetMetadata ("RelativeDir"), dest_item.ItemSpec, Log)) {
+										Path.Combine (source_item.GetMetadata ("RelativeDir"),
+											Path.GetFileName (source_item.ItemSpec)),
+										dest_item.ItemSpec, Log)) {
 							Log.LogError ("Error generating {0} from {1}", full_source_path, dest_item.ItemSpec);
 							return false;
 						}

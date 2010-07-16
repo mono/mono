@@ -1,5 +1,9 @@
 2010-07-16  Ankit Jain  <jankit@novell.com>
 
+	* XamlG.cs (Execute): Fix earlier commit, include the filename.
+
+2010-07-16  Ankit Jain  <jankit@novell.com>
+
 	* Respack.cs (Execute): Skip if output file is up-to-date wrt
 	the input files. Bug reported by Rolf.
 
