@@ -1,3 +1,8 @@
+2010-07-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebClient.cs: ignore values set in CachePolicy and
+	UseDefaultCredentials instead of throwing NIEX.
+
 2010-07-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* IPAddress.cs: allow values out of range as MS does.

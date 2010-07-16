@@ -86,6 +86,7 @@ namespace System.Net
 		Thread async_thread;
 		Encoding encoding = Encoding.Default;
 		IWebProxy proxy;
+		RequestCachePolicy cache_policy;
 
 		// Constructors
 		static WebClient ()
@@ -130,25 +131,23 @@ namespace System.Net
 			return new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Value can be set but is currently ignored")]
 		public RequestCachePolicy CachePolicy
 		{
 			get {
 				throw GetMustImplement ();
 			}
-			set {
-				throw GetMustImplement ();
-			}
+			set { cache_policy = value; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Value can be set but is ignored")]
 		public bool UseDefaultCredentials
 		{
 			get {
 				throw GetMustImplement ();
 			}
 			set {
-				throw GetMustImplement ();
+				// This makes no sense in mono
 			}
 		}
 		
