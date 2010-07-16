@@ -2,9 +2,6 @@
 // Based on the C implementation from the RFC:
 // http://tools.ietf.org/html/rfc3492
 //
-// See the following url for documentation:
-//     http://www.mono-project.com/Mono_DataConvert
-//
 // Compilation Options:
 //     MONO_PUNYCODE_PUBLIC:
 //         Makes the class public instead of the default internal.
