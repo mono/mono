@@ -1,3 +1,8 @@
+2010-07-16  Ankit Jain  <jankit@novell.com>
+
+	* XamlG.cs: Fix arg to XamlGCompiler, to use path relative to project
+	dir. Bug uncovered by Rolf.
+
 2010-04-13  Ankit Jain  <jankit@novell.com>
 
 	* CreateTestPage.cs:
