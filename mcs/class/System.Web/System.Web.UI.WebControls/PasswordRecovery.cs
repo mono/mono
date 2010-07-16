@@ -44,6 +44,9 @@ namespace System.Web.UI.WebControls
 	[DefaultEvent ("SendingMail")]
 	[Designer ("System.Web.UI.Design.WebControls.PasswordRecoveryDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class PasswordRecovery : CompositeControl
+#if NET_4_0
+	, IRenderOuterTable
+#endif
 	{
 		static readonly object answerLookupErrorEvent = new object ();
 		static readonly object sendingMailEvent = new object ();
@@ -53,7 +56,9 @@ namespace System.Web.UI.WebControls
 		static readonly object verifyingUserEvent = new object ();
 		
 		public static readonly string SubmitButtonCommandName = "Submit";
-
+#if NET_4_0
+		bool renderOuterTable = true;
+#endif
 		TableItemStyle _failureTextStyle;
 		TableItemStyle _hyperLinkStyle;
 		TableItemStyle _instructionTextStyle;
@@ -244,7 +249,13 @@ namespace System.Web.UI.WebControls
 			get { return ViewState.GetString ("QuestionTitleText", "Identity Confirmation"); }
 			set { ViewState ["QuestionTitleText"] = value; }
 		}
-
+#if NET_4_0
+		[DefaultValue (true)]
+		public virtual bool RenderOuterTable {
+			get { return renderOuterTable; }
+			set { renderOuterTable = value; }
+		}
+#endif
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]	
@@ -992,40 +1003,59 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 
-
-		abstract class BasePasswordRecoveryContainer : Table, INamingContainer
+		// TODO: merge with BaseCheckPasswordContainer
+		abstract class BasePasswordRecoveryContainer : Control, INamingContainer
 		{
 			protected readonly PasswordRecovery _owner = null;
+#if NET_4_0
+			bool renderOuterTable;
+#endif
+			Table _table;
 			TableCell _containerCell = null;
 
 			public BasePasswordRecoveryContainer (PasswordRecovery owner)
 			{
 				_owner = owner;
-				InitTable ();
+#if NET_4_0
+				renderOuterTable = _owner.RenderOuterTable;
+				if (renderOuterTable)
+#endif
+					InitTable ();
 			}
 
 			public void InstantiateTemplate (ITemplate template)
 			{
-				template.InstantiateIn (_containerCell);
+#if NET_4_0
+				if (!renderOuterTable)
+					template.InstantiateIn (this);
+				else
+#endif					
+					template.InstantiateIn (_containerCell);
 			}
 
 			void InitTable ()
 			{
-				Attributes.Add ("ID", _owner.ID);
+				_table = new Table ();
+				string id = _owner.ID;
+				if (!String.IsNullOrEmpty (id))
+					_table.Attributes.Add ("id", id);
 
-				CellSpacing = 0;
-				CellPadding = _owner.BorderPadding;
+				_table.CellSpacing = 0;
+				_table.CellPadding = _owner.BorderPadding;
 
 				_containerCell = new TableCell ();
 
 				TableRow row = new TableRow ();
 				row.Cells.Add (_containerCell);
-				Rows.Add (row);
+				_table.Rows.Add (row);
+
+				Controls.AddAt (0, _table);
 			}
 
 			protected internal override void OnPreRender (EventArgs e)
 			{
-				ApplyStyle (_owner.ControlStyle);
+				if (_table != null)
+					_table.ApplyStyle (_owner.ControlStyle);
 				base.OnPreRender (e);
 			}
 

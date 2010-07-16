@@ -1,6 +1,7 @@
 2010-07-16  Marek Habersack  <mhabersack@novell.com>
 
-	* Login.cs: implemented RenderOuterTable (4.0)
+	* Login.cs, PasswordRecovery.cs: implemented RenderOuterTable
+	(4.0)
 
 	* FormViewRow.cs: added internal property RenderJustCellContents
 	which makes the control render only its children (4.0)
