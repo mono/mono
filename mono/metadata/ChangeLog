@@ -1,3 +1,6 @@
+2010-07-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_print_unhandled_exception): Fix a warning.
 
 2010-07-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
