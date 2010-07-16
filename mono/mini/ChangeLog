@@ -1,5 +1,9 @@
 2010-07-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c: Fix the arm build by passing a MonoGenericSharingContext to get_call_info.
+
+2010-07-16  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-llvm.c: Add more SIMD instructions.
 
 2010-07-15  Miguel de Icaza  <miguel@novell.com>
