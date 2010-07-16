@@ -20,10 +20,10 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHRespackL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DERespackINGS IN THE SOFTWARE.
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Diagnostics;
@@ -44,7 +44,22 @@ namespace Moonlight.Build.Tasks {
 				return true;
 			}
 
-			return base.Execute ();
+			return BuildRequired () ? base.Execute () : true;
+		}
+
+		bool BuildRequired ()
+		{
+			if (!File.Exists (OutputFile.ItemSpec))
+				return true;
+
+			DateTime outputFileTime = File.GetLastWriteTime (OutputFile.ItemSpec);
+			foreach (var res in Resources) {
+				string file = res.ItemSpec;
+				if (File.Exists (file) && File.GetLastWriteTime (file) > outputFileTime)
+					return true;
+			}
+
+			return false;
 		}
 
 		void AddCommandLineCommands (CommandLineBuilderExtension commandLine)

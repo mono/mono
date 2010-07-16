@@ -1,5 +1,10 @@
 2010-07-16  Ankit Jain  <jankit@novell.com>
 
+	* Respack.cs (Execute): Skip if output file is up-to-date wrt
+	the input files. Bug reported by Rolf.
+
+2010-07-16  Ankit Jain  <jankit@novell.com>
+
 	* XamlG.cs: Fix arg to XamlGCompiler, to use path relative to project
 	dir. Bug uncovered by Rolf.
 
