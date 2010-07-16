@@ -254,7 +254,7 @@ namespace System.Net {
 				long a = 0;
 				long val = 0;
 				for (int i = 0; i < ips.Length; i++) {
- 					string subnet = ips [i];
+					string subnet = ips [i];
 					if ((3 <= subnet.Length && subnet.Length <= 4) &&
 					    (subnet [0] == '0') && (subnet [1] == 'x' || subnet [1] == 'X')) {
 						if (subnet.Length == 3)
