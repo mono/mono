@@ -350,6 +350,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			public bool GetInitialized () {
 				return Initialized;
 			}
+#if NET_4_0
+			public string CallModifiedOuterTableStylePropertyName ()
+			{
+				return ModifiedOuterTableStylePropertyName ();
+			}
+#endif
 		}
 		
 		class Template : ITemplate
@@ -812,7 +818,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void FormView_PrepareControlHierarcy ()
+		public void FormView_PrepareControlHierarchy ()
 		{
 			Poker fv = new Poker ();
 			fv.Page = new Page ();
@@ -2425,6 +2431,60 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		public static void BuildTemplateMethod (Control c) { }
+#if NET_4_0
+		[Test]
+		public void ModifiedOuterTableStylePropertyName ()
+		{
+			var fv = new Poker ();
+			string props;
+
+			props = fv.CallModifiedOuterTableStylePropertyName ();
+			Assert.AreEqual (String.Empty, props, "#A1");
+
+			fv.BackImageUrl = "http://example.com/image.png";
+			props = fv.CallModifiedOuterTableStylePropertyName ();
+			Assert.IsNotNull (props, "#A2-1");
+			Assert.AreEqual ("BackImageUrl", props, "#A2-2");
+
+			fv = new Poker ();
+			fv.CellPadding = 10;
+			props = fv.CallModifiedOuterTableStylePropertyName ();
+			Assert.IsNotNull (props, "#A3-1");
+			Assert.AreEqual ("CellPadding", props, "#A3-2");
+
+			fv = new Poker ();
+			fv.CellSpacing = 10;
+			props = fv.CallModifiedOuterTableStylePropertyName ();
+			Assert.IsNotNull (props, "#A4-1");
+			Assert.AreEqual ("CellSpacing", props, "#A4-2");
+
+			fv = new Poker ();
+			fv.GridLines = GridLines.Both;
+			props = fv.CallModifiedOuterTableStylePropertyName ();
+			Assert.IsNotNull (props, "#A5-1");
+			Assert.AreEqual ("GridLines", props, "#A5-2");
+
+			fv = new Poker ();
+			fv.HorizontalAlign = HorizontalAlign.Justify;
+			props = fv.CallModifiedOuterTableStylePropertyName ();
+			Assert.IsNotNull (props, "#A6-1");
+			Assert.AreEqual ("HorizontalAlign", props, "#A6-2");
+
+			fv = new Poker ();
+			fv.Font.Bold = true;
+			props = fv.CallModifiedOuterTableStylePropertyName ();
+			Assert.IsNotNull (props, "#A6-1");
+			Assert.AreEqual ("Font", props, "#A6-2");
+
+			// Just one property is reported at a time
+			fv = new Poker ();
+			fv.BackImageUrl = "http://example.com/image.png";
+			fv.CellPadding = 10;
+			props = fv.CallModifiedOuterTableStylePropertyName ();
+			Assert.IsNotNull (props, "#B1-1");
+			Assert.AreEqual ("BackImageUrl", props, "#B1-2");
+		}
+#endif
 	}
 
 	public class TestMyData

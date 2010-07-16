@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class FormView: CompositeDataBoundControl, IDataItemContainer, INamingContainer, IPostBackEventHandler, IPostBackContainer
 #if NET_4_0
-		, IDataBoundItemControl, IDataBoundControl
+		, IDataBoundItemControl, IDataBoundControl, IRenderOuterTable
 #endif
 	{
 		object dataItem;
@@ -91,7 +91,9 @@ namespace System.Web.UI.WebControls
 		IOrderedDictionary _keyTable;
 		DataKey key;
 		DataKey oldEditValues;
-		
+#if NET_4_0
+		bool renderOuterTable = true;
+#endif
 		static readonly object PageIndexChangedEvent = new object();
 		static readonly object PageIndexChangingEvent = new object();
 		static readonly object ItemCommandEvent = new object();
@@ -808,6 +810,12 @@ namespace System.Web.UI.WebControls
 			set;
 		}
 #if NET_4_0
+		[DefaultValue (true)]
+		public virtual bool RenderOuterTable {
+			get { return renderOuterTable; }
+			set { renderOuterTable = value; }
+		}
+		
 		DataBoundControlMode IDataBoundItemControl.Mode {
 			get {
 				switch (CurrentMode) {
@@ -824,6 +832,42 @@ namespace System.Web.UI.WebControls
 						throw new InvalidOperationException ("Unsupported mode value.");
 				}
 			}
+		}
+
+		protected internal virtual string ModifiedOuterTableStylePropertyName ()
+		{
+			if (BackImageUrl != String.Empty)
+				return "BackImageUrl";
+
+			if (CellPadding != -1)
+				return "CellPadding";
+
+			if (CellSpacing != 0)
+				return "CellSpacing";
+
+			if (GridLines != GridLines.None)
+				return "GridLines";
+
+			if (HorizontalAlign != HorizontalAlign.NotSet)
+				return "HorizontalAlign";
+
+			if (ControlStyle.CheckBit ((int)global::System.Web.UI.WebControls.Style.Styles.FontAll))
+				return "Font";
+			
+			return String.Empty;
+		}
+
+		internal override string InlinePropertiesSet ()
+		{
+			string baseProps = base.InlinePropertiesSet ();
+			string props = ModifiedOuterTableStylePropertyName ();
+			if (String.IsNullOrEmpty (props))
+				return baseProps;
+
+			if (String.IsNullOrEmpty (baseProps))
+				return props;
+			
+			return baseProps + ", " + props;
 		}
 #endif
 		public virtual bool IsBindableType (Type type)
@@ -1026,7 +1070,6 @@ namespace System.Web.UI.WebControls
 		protected virtual void InitializeRow (FormViewRow row)
 		{
 			TableCell cell = new TableCell ();
-			
 			if (row.RowType == DataControlRowType.DataRow) {
 				if ((row.RowState & DataControlRowState.Edit) != 0) {
 					if (editItemTemplate != null)
@@ -1042,8 +1085,7 @@ namespace System.Web.UI.WebControls
 					itemTemplate.InstantiateIn (cell);
 				else
 					row.Visible = false;
-			} else if (row.RowType == DataControlRowType.EmptyDataRow)
-			{
+			} else if (row.RowType == DataControlRowType.EmptyDataRow) {
 				if (emptyDataTemplate != null)
 					emptyDataTemplate.InstantiateIn (cell);
 				else if (!String.IsNullOrEmpty (EmptyDataText))
@@ -1069,6 +1111,9 @@ namespace System.Web.UI.WebControls
 			}
 			cell.ColumnSpan = 2;
 			row.Cells.Add (cell);
+#if NET_4_0
+			row.RenderJustCellContents = !RenderOuterTable;
+#endif
 		}
 		
 		void FillRowDataKey (object dataItem)
@@ -1568,12 +1613,17 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			PrepareControlHierarchy ();
-			
-			if (table == null)
-				return;
-
-			table.Render (writer);
+#if NET_4_0
+			VerifyInlinePropertiesNotSet ();
+			if (RenderOuterTable) {
+#endif
+				PrepareControlHierarchy ();
+				if (table != null)
+					table.Render (writer);
+#if NET_4_0
+			} else if (table != null)
+				table.RenderChildren (writer);
+#endif
 		}
 
 		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)

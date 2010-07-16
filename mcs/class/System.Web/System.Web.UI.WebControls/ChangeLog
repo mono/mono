@@ -1,3 +1,11 @@
+2010-07-16  Marek Habersack  <mhabersack@novell.com>
+
+	* FormViewRow.cs: added internal property RenderJustCellContents
+	which makes the control render only its children (4.0)
+
+	* FormView.cs: implemented RenderOuterTable property and the
+	ModifiedOuterTableStylePropertyName method (4.0)
+
 2010-07-15  Marek Habersack  <mhabersack@novell.com>
 
 	* WebControl.cs: implemented verifying that no inline style
