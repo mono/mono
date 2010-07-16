@@ -31,6 +31,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
+using System.Text;
 
 namespace Mono.XBuild.Utilities {
 
@@ -89,7 +90,7 @@ namespace Mono.XBuild.Utilities {
 			case "extension":
 				return Path.GetExtension (itemSpec);
 			case "relativedir":
-				return WithTrailingSlash (Path.GetDirectoryName (itemSpec));
+				return WithTrailingSlash (AbsoluteToRelativePath (Environment.CurrentDirectory, Path.GetDirectoryName (itemSpec)));
 			case "directory":
 				string fullpath = Path.GetFullPath (itemSpec);
 				return WithTrailingSlash (
@@ -129,10 +130,54 @@ namespace Mono.XBuild.Utilities {
 
 		static string WithTrailingSlash (string path)
 		{
+			if (String.IsNullOrEmpty (path))
+				return String.Empty;
+
 			if (path.Length > 0)
 				return path + Path.DirectorySeparatorChar;
 			else
 				return path;
+		}
+
+		readonly static char[] separators = { Path.DirectorySeparatorChar, Path.VolumeSeparatorChar, Path.AltDirectorySeparatorChar };
+		static string AbsoluteToRelativePath (string baseDirectoryPath, string absPath)
+		{
+			if (!Path.IsPathRooted (absPath))
+				return absPath;
+
+			absPath           = Path.GetFullPath (absPath);
+			baseDirectoryPath = Path.GetFullPath (baseDirectoryPath.TrimEnd (Path.DirectorySeparatorChar));
+
+			string[] bPath = baseDirectoryPath.Split (separators);
+			string[] aPath = absPath.Split (separators);
+			int indx = 0;
+
+			for (; indx < System.Math.Min (bPath.Length, aPath.Length); indx++) {
+				if (!bPath[indx].Equals(aPath[indx]))
+					break;
+			}
+
+			if (indx == 0) 
+				return absPath;
+
+			StringBuilder result = new StringBuilder ();
+
+			for (int i = indx; i < bPath.Length; i++) {
+				result.Append ("..");
+				if (i + 1 < bPath.Length || aPath.Length - indx > 0)
+					result.Append (Path.DirectorySeparatorChar);
+			}
+
+
+			result.Append (String.Join(Path.DirectorySeparatorChar.ToString(), aPath, indx, aPath.Length - indx));
+			if (result.Length == 0)
+				return ".";
+			return result.ToString ();
+		}
+
+		static string RelativeToAbsolutePath (string baseDirectoryPath, string relPath)
+		{
+			return Path.GetFullPath (Path.Combine (baseDirectoryPath, relPath));
 		}
 	}
 }
