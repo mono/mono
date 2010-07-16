@@ -5,7 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2001-2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005,2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -120,7 +120,7 @@ namespace Mono.Security.Cryptography {
 
 				for (i = partLen; i + 15 < cbSize; i += 16) {
 					// MD2Transform (context->state, context->checksum, &input[i]);
-					MD2Transform (state, checksum, array, i);
+					MD2Transform (state, checksum, array, ibStart + i);
 				}
 
 				index = 0;
