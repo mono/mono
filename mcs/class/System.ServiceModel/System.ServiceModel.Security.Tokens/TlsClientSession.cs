@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IdentityModel.Selectors;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -150,7 +151,7 @@ namespace System.ServiceModel.Security.Tokens
 		MemoryStream stream;
 		bool mutual;
 
-		public TlsClientSession (string host, X509Certificate2 clientCert)
+		public TlsClientSession (string host, X509Certificate2 clientCert, X509ServiceCertificateAuthentication auth)
 		{
 			stream = new MemoryStream ();
 			if (clientCert == null)
@@ -166,6 +167,28 @@ namespace System.ServiceModel.Security.Tokens
 					return clientCertificates [0];
 				};
 			}
+			X509CertificateValidator v = null;
+			switch (auth.CertificateValidationMode) {
+			case X509CertificateValidationMode.None:
+				v = X509CertificateValidator.None;
+				break;
+			case X509CertificateValidationMode.PeerTrust:
+				v = X509CertificateValidator.PeerTrust;
+				break;
+			case X509CertificateValidationMode.ChainTrust:
+				v = X509CertificateValidator.ChainTrust;
+				break;
+			case X509CertificateValidationMode.PeerOrChainTrust:
+				v = X509CertificateValidator.PeerOrChainTrust;
+				break;
+			case X509CertificateValidationMode.Custom:
+				v = auth.CustomCertificateValidator;
+				break;
+			}
+			ssl.ServerCertValidationDelegate = delegate (X509Certificate certificate, int [] certificateErrors) {
+				v.Validate (new X509Certificate2 (certificate)); // will throw SecurityTokenvalidationException if invalid.
+				return true;
+				};
 		}
 
 		protected override Context Context {
@@ -192,11 +215,21 @@ namespace System.ServiceModel.Security.Tokens
 			stream.Write (raw, 0, raw.Length);
 			stream.Seek (0, SeekOrigin.Begin);
 
+//foreach (var b in raw) Console.Write ("{0:X02} ", b); Console.WriteLine ();
+
+#if false // FIXME: should be enabled, taking some right shape.
+			ReadNextOperation (stream, HandshakeType.ServerHello);
+			ReadNextOperation (stream, HandshakeType.Certificate);
+			if (mutual)
+				ReadNextOperation (stream, HandshakeType.CertificateRequest);
+			ReadNextOperation (stream, HandshakeType.ServerHelloDone);
+#else
 			Protocol.ReceiveRecord (stream); // ServerHello
 			Protocol.ReceiveRecord (stream); // ServerCertificate
 			if (mutual)
 				Protocol.ReceiveRecord (stream); // CertificateRequest
 			Protocol.ReceiveRecord (stream); // ServerHelloDone
+#endif
 			if (stream.Position != stream.Length)
 				throw new SecurityNegotiationException (String.Format ("Unexpected SSL negotiation binary: {0} bytes of excess in {1} bytes of the octets", stream.Length - stream.Position, stream.Length));
 		}

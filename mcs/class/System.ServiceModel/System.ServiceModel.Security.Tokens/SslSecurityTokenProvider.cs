@@ -113,7 +113,7 @@ namespace System.ServiceModel.Security.Tokens
 		{
 			TlsnegoClientSessionContext tlsctx =
 				new TlsnegoClientSessionContext ();
-			TlsClientSession tls = new TlsClientSession (IssuerAddress.Uri.ToString (), client_certificate);
+			TlsClientSession tls = new TlsClientSession (IssuerAddress.Uri.ToString (), client_certificate, owner.Manager.ClientCredentials.ServiceCertificate.Authentication);
 			WstRequestSecurityToken rst =
 				new WstRequestSecurityToken ();
 			string contextId = rst.Context;
@@ -224,9 +224,9 @@ foreach (byte b in proof) Console.Write ("{0:X02} ", b); Console.WriteLine ();
 				for (int i = 0; i < referent.Length; i++)
 					if (referent [i] != actual [i])
 						mismatch = true;
-			// FIXME: enable verification
-//			if (mismatch)
-//				throw new SecurityNegotiationException ("The CombinedHash does not match the expected value.");
+
+			if (mismatch)
+				throw new SecurityNegotiationException ("The CombinedHash does not match the expected value.");
 
 			return sctSrc;
 		}

@@ -40,6 +40,8 @@ namespace System.ServiceModel.Channels
 	{
 		MessageVersion version;
 		Encoding encoding;
+		int max_buffer_size = 0x10000, max_read_pool_size = 64, max_write_pool_size = 16;
+		XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas ();
 
 		public MtomMessageEncodingBindingElement ()
 			: this (MessageVersion.Default, Encoding.UTF8)
@@ -53,6 +55,21 @@ namespace System.ServiceModel.Channels
 			this.encoding = encoding;
 		}
 
+		public int MaxBufferSize {
+			get { return max_buffer_size; }
+			set { max_buffer_size = value; }
+		}
+
+		public int MaxReadPoolSize {
+			get { return max_read_pool_size; }
+			set { max_read_pool_size = value; }
+		}
+
+		public int MaxWritePoolSize {
+			get { return max_write_pool_size; }
+			set { max_write_pool_size = value; }
+		}
+
 		public override MessageVersion MessageVersion {
 			get { return version; }
 			set { version = value; }
@@ -61,6 +78,11 @@ namespace System.ServiceModel.Channels
 		public Encoding WriteEncoding {
 			get { return encoding; }
 			set { encoding = value; }
+		}
+
+		public XmlDictionaryReaderQuotas ReaderQuotas {
+			get { return quotas; }
+			set { quotas = value; }
 		}
 
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
@@ -91,8 +113,7 @@ namespace System.ServiceModel.Channels
 
 		public override BindingElement Clone ()
 		{
-			return new MtomMessageEncodingBindingElement (
-				version, encoding);
+			return (MtomMessageEncodingBindingElement) MemberwiseClone ();
 		}
 
 		public override T GetProperty<T> (BindingContext context)

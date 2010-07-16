@@ -1,5 +1,24 @@
 2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SslSecurityTokenProvider.cs : verify mismatch. We don't have
+	  correct verification code yet, but ignoring this only brings
+	  further mismatch error.
+	* TlsClientSession.cs : add some commented code.
+
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SslSecurityTokenProvider.cs : pass X509 auth credential, which
+	  contains X509 validation information.
+	* TlsClientSession.cs : use x509 auth settings to validate service
+	  certificate.
+
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TlsServerSession.cs : SendRecord() somehow doesn't work, so
+	  use separate stream instread.
+
+2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BinarySecretSecurityToken.cs : add KeySize.
 	* SslSecurityTokenAuthenticator.cs : add some comments.
 

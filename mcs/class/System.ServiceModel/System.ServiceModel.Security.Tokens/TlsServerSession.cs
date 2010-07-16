@@ -131,9 +131,16 @@ namespace System.ServiceModel.Security.Tokens
 		{
 			stream.SetLength (0);
 			Protocol.SendChangeCipherSpec ();
+#if false
 			Protocol.SendRecord (HandshakeType.Finished);
 			stream.Flush ();
 			return stream.ToArray ();
+#else
+			MemoryStream ms = new MemoryStream ();
+			WriteOperations (ms, new TlsServerFinished (ssl.context));
+			ms.Flush ();
+			return ms.ToArray ();
+#endif
 		}
 
 		public byte [] ProcessApplicationData (byte [] raw)
