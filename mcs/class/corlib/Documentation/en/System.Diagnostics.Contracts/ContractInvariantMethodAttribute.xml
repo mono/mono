@@ -17,8 +17,8 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Specifies that this method contains Contract invariant conditions for this class.</summary>
+    <remarks>There may be multiple methods with this attribute in one class, their effect is accumulated. The method must take no parameters and return void, and may be any visibility.</remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +29,8 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Construct a ContractInvariantMethodAttribute.</summary>
+        <remarks />
       </Docs>
     </Member>
   </Members>

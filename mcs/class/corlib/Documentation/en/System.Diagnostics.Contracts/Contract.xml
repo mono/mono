@@ -9,8 +9,8 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Contains methods that allow various contracts to be specified in code.</summary>
+    <remarks />
   </Docs>
   <Members>
     <Member MemberName="Assert">
@@ -37,9 +37,9 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The condition to verify.</param>
+        <summary>Trigger a contract failure if condition is false.</summary>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Assert">
@@ -67,10 +67,10 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <param name="userMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The condition to verify.</param>
+        <param name="userMessage">Message to display if condition is false.</param>
+        <summary>Trigger a contract failure if condition is false.</summary>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Assume">
@@ -97,9 +97,9 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The condition that is assumed to be true.</param>
+        <summary>Forces the condition specified to be considered true by the code contract tools.</summary>
+        <remarks>If the code contracts are included at runtime, this acts like a <see cref="m:System.Diagnostics.Contracts.Contract.Assert()" />.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Assume">
@@ -127,10 +127,10 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <param name="userMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The condition that is assumed to be true.</param>
+        <param name="userMessage">Message to display if condition is false.</param>
+        <summary>Forces the condition specified to be considered true by the code contract tools.</summary>
+        <remarks>If the code contracts are included at runtime, this acts like a <see cref="m:System.Diagnostics.Contracts.Contract.Assert()" />.</remarks>
       </Docs>
     </Member>
     <Member MemberName="ContractFailed">
@@ -143,8 +143,13 @@
         <ReturnType>System.EventHandler&lt;System.Diagnostics.Contracts.ContractFailedEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Called on any contract failure.</summary>
+        <remarks><para>
+Event handlers can mark the contract failure as having been handling by calling <see cref="m:System.Diagnostics.Contracts.ContractFailedEventArgs.SetHandled()" />.
+</para>
+<para>
+Event handlers can this current contract failure unwind the stack by calling <see cref="m:System.Diagnostics.Contracts.ContractFailedEventArgs.SetUnwind()" />. This causes a <see cref="T:System.Diagnostics.Contracts.ContractException" /> to be thrown.
+</para></remarks>
       </Docs>
     </Member>
     <Member MemberName="EndContractBlock">
@@ -166,8 +171,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Marker method to mark the end of the legacy requires code block.</summary>
+        <remarks>Legacy requires are preconditions that perform tests and throw exceptions. This is the only form of legacy require allowed.
+
+<example>
+  <code lang="C#">
+if (parameter &lt; 0) {
+	throw new ArgumentException();
+}
+Contracts.EndContractBlock();
+  </code>
+</example></remarks>
       </Docs>
     </Member>
     <Member MemberName="Ensures">
@@ -191,9 +205,9 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The postcondition to verify.</param>
+        <summary>Specifies a postconditon contract for normal return.</summary>
+        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Ensures">
@@ -218,10 +232,10 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <param name="userMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The postcondition to verify.</param>
+        <param name="userMessage">Message to display on contract failure.</param>
+        <summary>Specifies a postconditon contract for normal return.</summary>
+        <remarks>ll code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="EnsuresOnThrow&lt;TException&gt;">
@@ -252,10 +266,10 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">To be added.</typeparam>
-        <param name="condition">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <typeparam name="TException">The exception type that causes this postcondition to be verified.</typeparam>
+        <param name="condition">The postcondition to verify.</param>
+        <summary>Specifies a postcondition contract for when an exception is thrown.</summary>
+        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="EnsuresOnThrow&lt;TException&gt;">
@@ -287,11 +301,11 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">To be added.</typeparam>
-        <param name="condition">To be added.</param>
-        <param name="userMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <typeparam name="TException">The exception type that causes this postcondition to be verified.</typeparam>
+        <param name="condition">The postcondition to verify.</param>
+        <param name="userMessage">Message to display on contract failure.</param>
+        <summary>Specifies a postcondition contract for when an exception is thrown.</summary>
+        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Exists">
@@ -314,12 +328,12 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">To be added.</param>
-        <param name="toExclusive">To be added.</param>
-        <param name="predicate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="fromInclusive">The inclusive start of the range.</param>
+        <param name="toExclusive">The exclusive end of the range.</param>
+        <param name="predicate">TThe predicate to apply to each value within the range.</param>
+        <summary>Determines that at least one value in the range satisfies the predicate.</summary>
+        <returns>Whether at least one value in the range satisfies the predicate.</returns>
+        <remarks>This method can be used within a contract condition to allow contracts to be applied to integer ranges.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Exists&lt;T&gt;">
@@ -344,12 +358,12 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="collection">To be added.</param>
-        <param name="predicate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <typeparam name="T">The type of elements in the collection.</typeparam>
+        <param name="collection">The collection to check.</param>
+        <param name="predicate">The predicate to apply to each element of the collection.</param>
+        <summary>Determines that at least one element in the collection satisfies the predicate.</summary>
+        <returns>Whether at least one element in the collection satisfies the predicate.</returns>
+        <remarks>This method can be used within a contract condition to allow contracts to be applied to collections.</remarks>
       </Docs>
     </Member>
     <Member MemberName="ForAll">
@@ -372,12 +386,12 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">To be added.</param>
-        <param name="toExclusive">To be added.</param>
-        <param name="predicate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="fromInclusive">The inclusive start of the range.</param>
+        <param name="toExclusive">The exclusive end of the range.</param>
+        <param name="predicate">The predicate to apply to each value within the range.</param>
+        <summary>Determines that all values in the range satisfy the predicate.</summary>
+        <returns>Whether all values in the range satisfy the predicate.</returns>
+        <remarks>This method can be used within a contract condition to allow contracts to be applied to integer ranges.</remarks>
       </Docs>
     </Member>
     <Member MemberName="ForAll&lt;T&gt;">
@@ -402,12 +416,12 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="collection">To be added.</param>
-        <param name="predicate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <typeparam name="T">The type of elements in the collection.</typeparam>
+        <param name="collection">The collection to check.</param>
+        <param name="predicate">The predicate to apply to each element of the collection.</param>
+        <summary>Determines that all elements in the collection satisfy the predicate.</summary>
+        <returns>Whether all elements in the collection satisfy the predicate.</returns>
+        <remarks>This method can be used within a contract condition to allow contracts to be applied to collections.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Invariant">
@@ -431,9 +445,9 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The invariant condition to verify.</param>
+        <summary>Specifies an invariant class-level condition.</summary>
+        <remarks>Invariant conditions can only be used in a method marked with the <see cref="T:System.Diagnostics.Contracts.ContractInvariantMethodAttribute" /> attribute. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Invariant">
@@ -458,10 +472,10 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <param name="userMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The invariant condition to verify.</param>
+        <param name="userMessage">Message to display on contract failure.</param>
+        <summary>Specifies an invariant class-level condition.</summary>
+        <remarks>Invariant conditions can only be used in a method marked with the <see cref="T:System.Diagnostics.Contracts.ContractInvariantMethodAttribute" /> attribute. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="OldValue&lt;T&gt;">
@@ -485,11 +499,11 @@
         <Parameter Name="value" Type="T" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <typeparam name="T">The type of the value.</typeparam>
+        <param name="value">The field or parameter of which to represent the initial value.</param>
+        <summary>Used within a postcondition to represent an initial value.</summary>
+        <returns>The initial value.</returns>
+        <remarks>The code contract rewriter tool must be used for this method to be effective. Otherwise the default value for the type is returned.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Requires">
@@ -513,9 +527,9 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The precondition to verify.</param>
+        <summary>Specifies a precondition contract for normal return.</summary>
+        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Requires">
@@ -540,10 +554,10 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <param name="userMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="condition">The precondition to verify.</param>
+        <param name="userMessage">Message to display on contract failure.</param>
+        <summary>Specifies a precondition contract for normal return.</summary>
+        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -571,10 +585,10 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">To be added.</typeparam>
-        <param name="condition">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <typeparam name="TException">The exception type that causes this precondition to be verified.</typeparam>
+        <param name="condition">The precondition to verify.</param>
+        <summary>Specifies a precondition contract for when an exception is thrown.</summary>
+        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -603,11 +617,11 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">To be added.</typeparam>
-        <param name="condition">To be added.</param>
-        <param name="userMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <typeparam name="TException">The exception type that causes this precondition to be verified.</typeparam>
+        <param name="condition">The precondition to verify.</param>
+        <param name="userMessage">Message to display on contract failure.</param>
+        <summary>Specifies a precondition contract for when an exception is thrown.</summary>
+        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Result&lt;T&gt;">
@@ -629,10 +643,10 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <typeparam name="T">The type of the return value.</typeparam>
+        <summary>Used within a postcondition to represent the return value.</summary>
+        <returns>The return value.</returns>
+        <remarks>The code contract rewriter tool must be used for this method to be effective. Otherwise the default value for the type is returned.</remarks>
       </Docs>
     </Member>
     <Member MemberName="ValueAtReturn&lt;T&gt;">
@@ -656,11 +670,11 @@
         <Parameter Name="value" Type="T&amp;" RefType="out" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <typeparam name="T">The type of the out parameter.</typeparam>
+        <param name="value">The out parameter.</param>
+        <summary>Used within a postcondition to represent the final value of an out parameter.</summary>
+        <returns>The final value of the out parameter.</returns>
+        <remarks>The code contract rewriter tool must be used for this method to be effective. Otherwise the default value for the type is returned in the out parameter and the return value.</remarks>
       </Docs>
     </Member>
   </Members>

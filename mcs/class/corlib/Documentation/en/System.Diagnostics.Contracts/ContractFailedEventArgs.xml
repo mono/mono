@@ -9,8 +9,8 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Contains event data for the Contract.ContractFailed event.</summary>
+    <remarks />
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,12 +31,12 @@
         <Parameter Name="originalException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="failureKind">To be added.</param>
-        <param name="message">To be added.</param>
-        <param name="condition">To be added.</param>
-        <param name="originalException">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="failureKind">The kind of contract failure.</param>
+        <param name="message">The message associated with this contract failure.</param>
+        <param name="condition">The condition that caused the contract failure.</param>
+        <param name="originalException">The original exception that caused this contract failure, if any.</param>
+        <summary>Construct a ContractFailedEventArgs.</summary>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Condition">
@@ -49,9 +49,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets the condition that caused the contract failure.</summary>
+        <value>The condition that caused the contract failure.</value>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="FailureKind">
@@ -64,9 +64,9 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets the kind of contract failure.</summary>
+        <value>The kind of contract failure.</value>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Handled">
@@ -79,9 +79,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets whether the contract failure has been handled.</summary>
+        <value>Whether the contract failure has been handled.</value>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Message">
@@ -94,9 +94,9 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets the message associated with this contract failure.</summary>
+        <value>The message associated with this contract failure.</value>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="OriginalException">
@@ -109,9 +109,9 @@
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets the original exception that caused this contract failure, if any.</summary>
+        <value>The original exception that caused this contract failure, if any.</value>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="SetHandled">
@@ -125,8 +125,8 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Mark this contract failure as having been handled.</summary>
+        <remarks>Marking the contract failure as having been handled suppresses the default contract failure behaviour. </remarks>
       </Docs>
     </Member>
     <Member MemberName="SetUnwind">
@@ -140,8 +140,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Request that this contract failure unwind the stack by throwing an exception.</summary>
+        <remarks>Marking the contract failure as having been handled suppresses the default contract failure behaviour.
+Requesting the contract failure unwind the stack suppresses the default contract failure behaviour, and throws a <see cref="T:System.Diagnostics.Contracts.ContractException" /> instead.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Unwind">
@@ -154,9 +155,9 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets whether the contract failure should unwind the stack.</summary>
+        <value>Whether the contract failure should unwind the stack.</value>
+        <remarks />
       </Docs>
     </Member>
   </Members>

@@ -17,8 +17,13 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Marks a method or type to indicate that it has no side effects.</summary>
+    <remarks><para>
+Only methods marked Pure may be used within code contract definitions. This is to ensure that checking a contract causes no side-effects.
+</para>
+<para>
+Methods within the System.Diagnostics.Contracts namespace are always considered to be pure. Some delegates are always considered to be pure, such as <see cref="T:System.Predicate&lt;T&gt;" /> and <see cref="T:System.Comparison&lt;T&gt;" />.
+</para></remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +34,8 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Construct a PureAttribute.</summary>
+        <remarks />
       </Docs>
     </Member>
   </Members>

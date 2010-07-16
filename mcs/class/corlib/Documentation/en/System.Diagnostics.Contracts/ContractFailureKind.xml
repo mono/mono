@@ -8,8 +8,8 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>The different kinds of code contract that can fail.</summary>
+    <remarks />
   </Docs>
   <Members>
     <Member MemberName="Assert">
@@ -22,7 +22,7 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>An Assert contract.</summary>
       </Docs>
     </Member>
     <Member MemberName="Assume">
@@ -35,7 +35,7 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>An Assume contract.</summary>
       </Docs>
     </Member>
     <Member MemberName="Invariant">
@@ -48,7 +48,7 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>A type-level Invariant contract.</summary>
       </Docs>
     </Member>
     <Member MemberName="Postcondition">
@@ -61,7 +61,7 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>A Post-Condition contract.</summary>
       </Docs>
     </Member>
     <Member MemberName="PostconditionOnException">
@@ -74,7 +74,7 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>A Post-Condition contract, that is only active when an exception is thrown to be handled outside the current method.</summary>
       </Docs>
     </Member>
     <Member MemberName="Precondition">
@@ -87,7 +87,7 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>A Pre-Condition contract.</summary>
       </Docs>
     </Member>
   </Members>

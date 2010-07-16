@@ -1,6 +1,6 @@
 <Namespace Name="System.Diagnostics.Contracts">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>This namespace contains classes for specifying code contracts.</summary>
+    <remarks>To enforce the code contracts at runtime use the ccrewrite tool. To statically check the code contracts use the cccheck tool.</remarks>
   </Docs>
 </Namespace>

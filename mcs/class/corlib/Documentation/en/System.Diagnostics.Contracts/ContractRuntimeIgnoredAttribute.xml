@@ -17,8 +17,8 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Marks a method or property as having no runtime behaviour when called in methods in System.Diagnostics.Contracts.Contract.</summary>
+    <remarks />
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +29,8 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Construct a ContractRuntimeIgnoredAttribute.</summary>
+        <remarks />
       </Docs>
     </Member>
   </Members>

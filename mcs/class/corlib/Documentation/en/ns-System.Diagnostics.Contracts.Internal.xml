@@ -1,6 +1,6 @@
 <Namespace Name="System.Diagnostics.Contracts.Internal">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>This namespace contains classes for handling code contract failures.</summary>
+    <remarks></remarks>
   </Docs>
 </Namespace>

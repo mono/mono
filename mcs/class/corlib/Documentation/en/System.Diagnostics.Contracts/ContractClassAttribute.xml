@@ -20,8 +20,8 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Marks a class as having another class that contains its code contracts.</summary>
+    <remarks>Interfaces and abstract methods cannot have their contracts written directly in the code. The <see cref="T:System.Diagnostics.Contracts.ContractClassAttribute" /> and <see cref="T:System.Diagnostics.Contracts.ContractClassForAttribute" /> may be used to specify another class that contains the contracts for an interface or abstract class.</remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,9 +34,9 @@
         <Parameter Name="typeContainingContracts" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="typeContainingContracts">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="typeContainingContracts">The type that contains the code contract specifications.</param>
+        <summary>Constructs a ContractClassAttribute, specifying the type that contains the code contract specifications.</summary>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="TypeContainingContracts">
@@ -49,9 +49,9 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Get the type that contains the code contract specifications.</summary>
+        <value>The type that contains the code contract specifications.</value>
+        <remarks />
       </Docs>
     </Member>
   </Members>
