@@ -45,18 +45,31 @@ namespace System.Web.UI.WebControls {
 	[Bindable (false)]
 	[DefaultEvent ("Authenticate")]
 	[Designer ("System.Web.UI.Design.WebControls.LoginDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public class Login : CompositeControl 
+	public class Login : CompositeControl
+#if NET_4_0
+	, IRenderOuterTable
+#endif
 	{
 		#region LoginContainer
-		sealed class LoginContainer : Table
+		// TODO: This class should probably be folded into a generic one with BaseChangePasswordContainer
+		sealed class LoginContainer : Control
 		{
-			readonly Login _owner = null;
-			TableCell _containerCell = null;
+			readonly Login _owner;
+#if NET_4_0
+			bool renderOuterTable;
+#endif
+			Table _table;
+			TableCell _containerCell;
 
 			public LoginContainer (Login owner)
 			{
 				_owner = owner;
-				InitTable ();
+#if NET_4_0
+				renderOuterTable = _owner.RenderOuterTable;
+
+				if (renderOuterTable)
+#endif
+					InitTable ();
 			}
 			
 			public override string ID {
@@ -76,23 +89,35 @@ namespace System.Web.UI.WebControls {
 
 			public void InstantiateTemplate (ITemplate template)
 			{
-				template.InstantiateIn (_containerCell);
+#if NET_4_0
+				if (!renderOuterTable)
+					template.InstantiateIn (this);
+				else
+#endif
+					template.InstantiateIn (_containerCell);
 			}
 
 			void InitTable ()
 			{
+				_table = new Table ();
 				_containerCell = new TableCell ();
 
 				TableRow row = new TableRow ();
 				row.Cells.Add (_containerCell);
-				Rows.Add (row);
-			}
+				_table.Rows.Add (row);
 
-			protected internal override void Render (HtmlTextWriter writer) {
-				CellSpacing = 0;
-				CellPadding = _owner.BorderPadding;
-				ApplyStyle (_owner.ControlStyle);
-				Attributes.CopyFrom (_owner.Attributes);
+				Controls.AddAt (0, _table);
+			}
+			
+			protected internal override void Render (HtmlTextWriter writer)
+			{
+				if (_table != null) {
+					_table.CellSpacing = 0;
+					_table.CellPadding = _owner.BorderPadding;
+					_table.ApplyStyle (_owner.ControlStyle);
+					_table.Attributes.CopyFrom (_owner.Attributes);
+				}
+				
 				base.Render (writer);
 			}
 			
@@ -417,9 +442,9 @@ namespace System.Web.UI.WebControls {
 		LoginContainer container;
 
 		string _password;
-
-
-
+#if NET_4_0
+		bool renderOuterTable = true;
+#endif
 		public Login ()
 		{
 		}
@@ -862,7 +887,13 @@ namespace System.Web.UI.WebControls {
 					ViewState ["PasswordRequiredErrorMessage"] = value;
 			}
 		}
-
+#if NET_4_0
+		[DefaultValue (true)]
+		public virtual bool RenderOuterTable {
+			get { return renderOuterTable; }
+			set { renderOuterTable = value; }
+		}
+#endif
 		[DefaultValue (false)]
 		[Themeable (false)]
 		public virtual bool RememberMeSet {
@@ -1161,13 +1192,16 @@ namespace System.Web.UI.WebControls {
 
 		protected internal override void Render (HtmlTextWriter writer)
 		{
+#if NET_4_0
+			VerifyInlinePropertiesNotSet ();
+#endif
 			// VisibleWhenLoggedIn isn't applicable to the default login page
 			if (!VisibleWhenLoggedIn && !IsDefaultLoginPage () && IsLoggedIn ())
 				return;
 
-			if (Page != null) {
-				Page.VerifyRenderingInServerForm (this);
-			}
+			Page page = Page;
+			if (page != null)
+				page.VerifyRenderingInServerForm (this);
 
 			EnsureChildControls ();
 
