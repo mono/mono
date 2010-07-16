@@ -1,3 +1,8 @@
+2010-07-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-semaphore.c: fixes bug #622398 for real in OSX.
+	This was preventing the WSQ from working.
+
 2010-07-01  Martin Baulig  <martin@ximian.com>
 
 	Backport r157195:
