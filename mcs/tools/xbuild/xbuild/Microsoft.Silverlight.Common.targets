@@ -106,7 +106,8 @@
 			GetXapInputFiles
 		</GenerateXapDependsOn>
 	</PropertyGroup>
-	<Target Name="GenerateXap" DependsOnTargets="$(GenerateXapDependsOn)" Condition="'$(XapOutputs)' == 'true'">
+	<Target Name="GenerateXap" DependsOnTargets="$(GenerateXapDependsOn)" Condition="'$(XapOutputs)' == 'true'"
+		Inputs="@(XapInputFiles)" Outputs="$(OutDir)$(XapFilename)">
 		<!-- Looks for %(DestinationSubdirectory) in LocalCopyReferences -->
 		<GenerateXap
 			InputFiles="@(XapInputFiles)"
