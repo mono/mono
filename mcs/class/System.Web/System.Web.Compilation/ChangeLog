@@ -1,3 +1,8 @@
+2010-07-16  Marek Habersack  <mhabersack@novell.com>
+
+	* FolderLevelBuildProviderAppliesTo.cs,
+	FolderLevelBuildProviderAppliesToAttribute.cs: added
+
 2010-07-02  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: added support for ClientIDMode 4.0
