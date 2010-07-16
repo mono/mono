@@ -1,8 +1,3 @@
-2010-07-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* mono-semaphore.h:
-	* mono-semaphore.c: use io-layer wait functions in OSX.
-
 2010-07-02  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* mono-compiler.h: Add MONO_THREAD_VAR_OFFSET macro for s390x.
