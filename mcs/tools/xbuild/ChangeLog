@@ -1,3 +1,8 @@
+2010-07-16  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Silverlight.Common.targets: Set Inputs/Outputs
+	for GenerateXap target.
+
 2010-07-09  Ankit Jain  <jankit@novell.com>
 
 	* Main.cs: Use tools version specified on the command line, if
