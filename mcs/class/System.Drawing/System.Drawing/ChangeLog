@@ -1,3 +1,8 @@
+2010-07-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs (CopyFromScreen): Avoid crash if asked for a region
+	to big for XGetImage to return. Fix bug #582823
+
 2010-03-01  Miguel de Icaza  <miguel@novell.com>
 
 	* Point.cs: Fix #554635, our constructor that takes an int had the
