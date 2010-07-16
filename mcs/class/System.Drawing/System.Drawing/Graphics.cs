@@ -246,6 +246,11 @@ namespace System.Drawing
 #endif
 			image = GDIPlus.XGetImage (GDIPlus.Display, window, sourceX, sourceY, blockRegionSize.Width,
 				blockRegionSize.Height, AllPlanes, 2 /* ZPixmap*/);
+			if (image == IntPtr.Zero) {
+				string s = String.Format ("XGetImage returned NULL when asked to for a {0}x{1} region block", 
+					blockRegionSize.Width, blockRegionSize.Height);
+				throw new InvalidOperationException (s);
+			}
 				
 			Bitmap bmp = new Bitmap (blockRegionSize.Width, blockRegionSize.Height);
 			int red, blue, green;
