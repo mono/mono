@@ -80,7 +80,7 @@ internal
 			int h, b;
 			h = b = result.Length;
 			
-			if (h > 0)
+			if (h != input.Length)
 				result.Append ('-');
 	
 			int n = 128;
