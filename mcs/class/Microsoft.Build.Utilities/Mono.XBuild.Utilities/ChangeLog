@@ -1,3 +1,9 @@
+2010-07-16  Ankit Jain  <jankit@novell.com>
+
+	* AbsoluteToRelativePath: New.
+	* RelativeToAbsolutePath: New. Taken from monodevelop.
+	* GetReservedMetadata: Correctly handle 'RelativeDir' .
+
 2010-02-19  Ankit Jain  <jankit@novell.com>
 
 	* ReservedNameUtils.cs (GetReservedMetadata): Add dictionary param
