@@ -1,3 +1,10 @@
+2010-07-17  Miguel de Icaza  <miguel@novell.com>
+
+	* Array.cs: Fix for bug #622101, this reverts portions of the
+	broken patch that was introduced as part of the fix for #351638
+	which was mostly a set of optimizations, but some were just
+	wrong. 
+
 2010-07-14  Miguel de Icaza  <miguel@novell.com>
 
 	* DateTime.cs: This is the Retina Display of DateTime structs.

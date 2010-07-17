@@ -3162,6 +3162,32 @@ public class ArrayTest
 		Assert.AreEqual (null, array.GetValue (0));
 	}
 
+	//
+	// This is a test case for the case that was broken by the code contributed
+	// for bug  #351638.
+	//
+	// This tests the fix for: #622101
+	//
+	[Test]
+	public void SortActuallyWorks ()
+	{
+		string[] data = new string[9]{"Foo", "Bar", "Dingus", null, "Dingu4", "123", "Iam", null, "NotNull"};
+		IComparer comparer = new NullAtEndComparer ();
+		Array.Sort (data, comparer);
+
+		Assert.AreEqual (data [7], null);
+		Assert.AreNotEqual (data [0], null);
+	}
+
+	class NullAtEndComparer : IComparer {
+		public int Compare(object x, object y)
+		{
+			if (x == null) return 1;
+			if (y == null) return -1;
+			return ((string)x).CompareTo((string)y);
+		}
+	}
+	
 #if NET_4_0
 	[Test]
 	[ExpectedException (typeof (ArgumentException))]
