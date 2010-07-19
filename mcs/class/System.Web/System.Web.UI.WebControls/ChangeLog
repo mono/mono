@@ -1,5 +1,7 @@
 2010-07-19  Marek Habersack  <mhabersack@novell.com>
 
+	* DataKey.cs: implemented IEquatable interface methods (4.0)
+
 	* XmlDataSource.cs: implemented CacheKeyContext property (4.0)
 
 2010-07-16  Marek Habersack  <mhabersack@novell.com>

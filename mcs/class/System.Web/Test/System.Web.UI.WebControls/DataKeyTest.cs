@@ -68,6 +68,169 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (2, iDictionary.Count, "AllValuesReferringToKey#1");
 			Assert.AreEqual ("value1", iDictionary[1], "ValueReferringToKey#1");
 		}
+#if NET_4_0
+		[Test]
+		public void DataKey_Equals ()
+		{
+			var dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			var key1 = new DataKey (dict);
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			var key2 = new DataKey (dict);
+
+			Assert.IsTrue (key1.Equals (key2), "#A1-1");
+			Assert.IsTrue (key2.Equals (key1), "#A1-2");
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key1 = new DataKey (dict);
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key2", "value2");
+			dict.Add ("key1", "value1");
+			key2 = new DataKey (dict);
+
+			Assert.IsFalse (key1.Equals (key2), "#A2-1");
+			Assert.IsFalse (key2.Equals (key1), "#A2-2");
+
+			dict = new OrderedDictionary ();
+			key1 = new DataKey (dict);
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key1", "value1");
+			key2 = new DataKey (dict);
+
+			Assert.IsFalse (key1.Equals (key2), "#A3-1");
+			Assert.IsFalse (key2.Equals (key1), "#A3-2");
+
+			dict = new OrderedDictionary ();
+			key1 = new DataKey (dict);
+
+			dict = new OrderedDictionary ();
+			key2 = new DataKey (dict);
+			Assert.IsTrue (key1.Equals (key2), "#A4-1");
+			Assert.IsTrue (key2.Equals (key1), "#A4-2");
+
+			dict = new OrderedDictionary ();
+			key1 = new DataKey (null);
+			key2 = new DataKey (dict);
+			Assert.IsTrue (key1.Equals (key2), "#A5-1");
+			// Throws NREX on .NET
+			//Assert.IsTrue (key2.Equals (key1), "#A5-2");
+
+			key1 = new DataKey (null);
+			key2 = new DataKey (null);
+			Assert.IsTrue (key1.Equals (key2), "#A6-1");
+			Assert.IsTrue (key2.Equals (key1), "#A6-2");
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key1 = new DataKey (dict, new string[] { "key" });
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key2 = new DataKey (dict, new string[] { "key1" });
+			Assert.IsFalse (key1.Equals (key2), "#A7-1");
+			Assert.IsFalse (key2.Equals (key1), "#A7-2");
+
+			Assert.IsFalse (key1.Equals ((DataKey) null), "#A8");
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key1 = new DataKey (dict);			
+			key2 = new DataKey (null);
+			// Throws NREX on .NET
+			//Assert.IsFalse (key1.Equals (key2), "#A8-1");
+			Assert.IsTrue (key2.Equals (key1), "#A8-2");
+
+			key1 = new DataKey (null);
+			Assert.IsFalse (key1.Equals ((DataKey) null), "#A9");
+
+			dict = new OrderedDictionary ();
+			key1 = new DataKey (dict, new string [] { "key" });
+
+			dict = new OrderedDictionary ();
+			key2 = new DataKey (dict, new string [] { "key1" });
+			Assert.IsFalse (key1.Equals (key2), "#A10-1");
+			Assert.IsFalse (key2.Equals (key1), "#A10-2");
+
+			dict = new OrderedDictionary ();
+			dict.Add ("KEY", "value");
+			dict.Add ("key1", "value1");
+			key1 = new DataKey (dict);
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key2 = new DataKey (dict);
+
+			Assert.IsFalse (key1.Equals (key2), "#A11-1");
+			Assert.IsFalse (key2.Equals (key1), "#A11-2");
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "VALUE");
+			dict.Add ("key1", "value1");
+			key1 = new DataKey (dict);
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key2 = new DataKey (dict);
+
+			Assert.IsFalse (key1.Equals (key2), "#A12-1");
+			Assert.IsFalse (key2.Equals (key1), "#A12-2");
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key1 = new DataKey (dict);
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key2 = new DataKey (dict, new string [] { "key1" });
+			Assert.IsFalse (key1.Equals (key2), "#A13-1");
+			Assert.IsFalse (key2.Equals (key1), "#A13-2");
+
+			dict = new OrderedDictionary ();
+			key1 = new DataKey (dict, new string [] { "key" });
+
+			dict = new OrderedDictionary ();
+			key2 = new DataKey (dict, new string [] { "KEY" });
+			Assert.IsFalse (key1.Equals (key2), "#A14-1");
+			Assert.IsFalse (key2.Equals (key1), "#A14-2");
+			
+			key1 = new DataKey (null, new string [] { "key" });
+			key2 = new DataKey (null, new string [] { "key" });
+			Assert.IsTrue (key1.Equals (key2), "#A15-1");
+			Assert.IsTrue (key2.Equals (key1), "#A15-2");
+
+			key1 = new DataKey (null, new string [] { "KEY" });
+			key2 = new DataKey (null, new string [] { "key" });
+			Assert.IsFalse (key1.Equals (key2), "#A16-1");
+			Assert.IsFalse (key2.Equals (key1), "#A16-2");
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key2 = new DataKey (dict, new string [] { });
+
+			dict = new OrderedDictionary ();
+			dict.Add ("key", "value");
+			dict.Add ("key1", "value1");
+			key1 = new DataKey (dict);
+			Assert.IsFalse (key1.Equals (key2), "#A17-1");
+			Assert.IsFalse (key2.Equals (key1), "#A17-2");
+		}
+#endif
 	}
 }
 #endif

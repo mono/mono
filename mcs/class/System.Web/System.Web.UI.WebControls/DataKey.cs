@@ -34,6 +34,9 @@ using System.Collections.Specialized;
 namespace System.Web.UI.WebControls
 {
 	public class DataKey : IStateManager
+#if NET_4_0
+	, IEquatable <DataKey>
+#endif
 	{
 		IOrderedDictionary keyTable;
 		string[] keyNames;
@@ -41,8 +44,8 @@ namespace System.Web.UI.WebControls
 		IOrderedDictionary readonlyKeyTable;
 
 		public DataKey (IOrderedDictionary keyTable)
+			: this (keyTable, null)
 		{
-			this.keyTable = keyTable;
 		}
 
 		public DataKey (IOrderedDictionary keyTable, string[] keyNames)
@@ -78,7 +81,50 @@ namespace System.Web.UI.WebControls
 				return readonlyKeyTable; 
 			}
 		}
-		
+#if NET_4_0
+		public bool Equals (DataKey other)
+		{
+			if (other == null)
+				return false;
+
+			int thisCount, otherCount;
+			IOrderedDictionary otherKeyTable = other.keyTable;
+			if (keyTable != null && otherKeyTable != null) {
+				if (keyTable.Count != otherKeyTable.Count)
+					return false;
+				
+				object thisValue, otherValue;
+				
+				foreach (object key in keyTable.Keys) {
+					if (!otherKeyTable.Contains (key))
+						return false;
+
+					thisValue = keyTable [key];
+					otherValue = otherKeyTable [key];
+
+					if (thisValue == null ^ otherValue == null)
+						return false;
+
+					if (!thisValue.Equals (otherValue))
+						return false;
+				}
+			}
+			
+			string[] otherKeyNames = other.keyNames;
+			if (keyNames != null && otherKeyNames != null) {
+				int len = keyNames.Length;
+				if (len != otherKeyNames.Length)
+					return false;
+
+				for (int i = 0; i < len; i++)
+					if (String.Compare (keyNames [i], otherKeyNames [i], StringComparison.Ordinal) != 0)
+						return false;
+			} else if (keyNames == null ^ otherKeyNames == null)
+				return false;
+			
+			return true;
+		}
+#endif
 		protected virtual void LoadViewState (object savedState)
 		{
 			if (savedState is Pair) {
