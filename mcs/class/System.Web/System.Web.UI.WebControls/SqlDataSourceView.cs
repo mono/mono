@@ -486,6 +486,23 @@ namespace System.Web.UI.WebControls {
 		{
 			TrackViewState ();
 		}
+
+		NotSupportedException CreateNotSupportedException (string capabilityName)
+		{
+			return new NotSupportedException ("Data source does not have the '" + capabilityName + "' capability enabled.");
+		}
+		
+		protected internal override void RaiseUnsupportedCapabilityError (DataSourceCapabilities capability)
+		{
+			if ((capability & DataSourceCapabilities.Sort) != 0 && !CanSort)
+				throw CreateNotSupportedException ("Sort");
+
+			if ((capability & DataSourceCapabilities.Page) != 0 && !CanPage)
+				throw CreateNotSupportedException ("Page");
+
+			if ((capability & DataSourceCapabilities.RetrieveTotalRowCount) != 0 && !CanRetrieveTotalRowCount)
+				throw CreateNotSupportedException ("RetrieveTotalRowCount");
+		}
 		
 		protected virtual void LoadViewState (object savedState)
 		{

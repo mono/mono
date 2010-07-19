@@ -1,5 +1,15 @@
 2010-07-19  Marek Habersack  <mhabersack@novell.com>
 
+	* SqlDataSourceView.cs: added the RaiseUnsupportedCapabilityError
+	method (2.0+)
+
+	* RoleGroupCollection.cs: added OnValidate (undocumented) overload
+
+	* ParameterCollection.cs: added missing Add method overload (2.0+)
+
+	* LiteralControlBuilder.cs: added the AppendLiteralString method
+	override (2.0+)
+
 	* DataKey.cs: implemented IEquatable interface methods (4.0)
 
 	* XmlDataSource.cs: implemented CacheKeyContext property (4.0)

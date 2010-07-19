@@ -32,6 +32,7 @@ using System.Web.UI;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data;
 
 namespace System.Web.UI.WebControls
 {
@@ -65,6 +66,11 @@ namespace System.Web.UI.WebControls
 			return ((IList)this).Add (new Parameter (name, type, value));
 		}
 
+		public int Add (string name, DbType dbType, string value)
+		{
+			return ((IList)this).Add (new Parameter (name, dbType, value));
+		}
+		
 		protected override object CreateKnownType (int idx)
 		{
 			switch (idx) {

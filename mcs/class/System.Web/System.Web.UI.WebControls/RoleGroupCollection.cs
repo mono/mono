@@ -33,14 +33,14 @@ using System.ComponentModel;
 using System.Security.Permissions;
 using System.Security.Principal;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS (no InheritanceDemand for sealed class)
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[Editor ("System.Web.UI.Design.WebControls.RoleGroupCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	public sealed class RoleGroupCollection : CollectionBase {
-
+	public sealed class RoleGroupCollection : CollectionBase
+	{
 		public RoleGroupCollection ()
 		{
 		}
@@ -98,6 +98,14 @@ namespace System.Web.UI.WebControls {
 			List.Insert (index, group);
 		}
 
+		protected override void OnValidate (object value)
+		{
+			// LAMESPEC: undocumented
+			//
+			// What do we validate here?
+			base.OnValidate (value);
+		}
+		
 		public void Remove (RoleGroup group)
 		{
 			// note: checks required or we'll throw more exceptions :(
