@@ -81,7 +81,7 @@ namespace System.Web.UI.WebControls {
 			add { Events.AddHandler (EventTransforming, value); }
 			remove { Events.RemoveHandler (EventTransforming, value); }
 		}
-		
+
 		protected virtual void OnTransforming (EventArgs e)
 		{
 			EventHandler eh = Events [EventTransforming] as EventHandler;
@@ -150,6 +150,13 @@ namespace System.Web.UI.WebControls {
 
 		string GetDataKey ()
 		{
+#if NET_4_0
+			if (String.IsNullOrEmpty (DataFile) && !String.IsNullOrEmpty (Data)) {
+				string key = CacheKeyContext;
+				if (!String.IsNullOrEmpty (key))
+					return key;
+			}
+#endif
 			Page page = Page;
 			string p = page != null ? page.ToString () : "NullPage";
 			
@@ -175,8 +182,9 @@ namespace System.Web.UI.WebControls {
 			if (DataCache == null)
 				return;
 
-			if (DataCache [GetDataKey ()] != null)
-				DataCache.Remove (GetDataKey ());
+			string dataKey = GetDataKey ();
+			if (DataCache [dataKey] != null)
+				DataCache.Remove (dataKey);
 
 			DateTime absoluteExpiration = Cache.NoAbsoluteExpiration;
 			TimeSpan slidindExpiraion = Cache.NoSlidingExpiration;
@@ -194,7 +202,7 @@ namespace System.Web.UI.WebControls {
 			else
 				dependency = new CacheDependency (new string [] { }, new string [] { });
 
-			DataCache.Add (GetDataKey (), xmlDocument, dependency,
+			DataCache.Add (dataKey, xmlDocument, dependency,
 				absoluteExpiration, slidindExpiraion, CacheItemPriority.Default, null);
 		}
 		
@@ -307,7 +315,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("Inline XML data.")]
 		[WebCategory ("Data")]
 		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-//		[TypeConverter (typeof(MultilineStringConverter))]
+		[TypeConverter (typeof(MultilineStringConverter))]
 		public virtual string Data {
 			get { return _data; }
 			set {
@@ -344,7 +352,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
-//		[TypeConverterAttribute (typeof(System.ComponentModel.MultilineStringConverter))]
+		[TypeConverterAttribute (typeof(MultilineStringConverter))]
 		public virtual string Transform {
 			get { return _transform; }
 			set {
@@ -380,6 +388,13 @@ namespace System.Web.UI.WebControls {
 				}
 			}
 		}
+#if NET_4_0
+		[DefaultValue ("")]
+		public virtual string CacheKeyContext {
+			get { return ViewState.GetString ("CacheKeyContext", String.Empty); }
+			set { ViewState ["CacheKeyContext"] = value; }
+		}
+#endif
 	}
 }
 #endif

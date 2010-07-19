@@ -466,7 +466,19 @@ namespace MonoTests.System.Web.UI.WebControls
 			DSPoker p = new DSPoker ();
 			p.GetXmlDocument ();
 		}
+#if NET_4_0
+		[Test]
+		public void CacheKeyContext ()
+		{
+			var xds = new XmlDataSource ();
 
+			Assert.AreEqual (String.Empty, xds.CacheKeyContext, "#A1");
+			xds.CacheKeyContext = null;
+			Assert.AreEqual (String.Empty, xds.CacheKeyContext, "#A2");
+			xds.CacheKeyContext = "MyKey";
+			Assert.AreEqual ("MyKey", xds.CacheKeyContext, "#A1");
+		}
+#endif
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{

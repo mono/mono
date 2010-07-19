@@ -1,3 +1,7 @@
+2010-07-19  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlDataSource.cs: implemented CacheKeyContext property (4.0)
+
 2010-07-16  Marek Habersack  <mhabersack@novell.com>
 
 	* Login.cs, PasswordRecovery.cs: implemented RenderOuterTable
