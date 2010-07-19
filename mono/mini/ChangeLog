@@ -1,3 +1,8 @@
+2010-07-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mini_emit_inst_for_method): Add Array.GetLength/GetLowerBound ().
+	Fixes #618176.
+
 2010-07-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c: Fix the arm build by passing a MonoGenericSharingContext to get_call_info.
