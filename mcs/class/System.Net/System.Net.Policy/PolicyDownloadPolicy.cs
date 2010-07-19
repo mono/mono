@@ -47,6 +47,10 @@ namespace System.Net.Policy {
 
 			return false;
 		}
+
+		public Exception Exception {
+			get { return null; }
+		}
 	}
 }
 

@@ -32,9 +32,19 @@ namespace System.Net.Policy {
 
 	sealed class NoAccessPolicy : ICrossDomainPolicy {
 
+		Exception ex = null; // default is a SecurityException
+
 		public bool IsAllowed (WebRequest request)
 		{
+			foreach (string header in request.Headers) {
+				if (String.Compare ("Content-Type", header, StringComparison.OrdinalIgnoreCase) != 0)
+					ex = new NotSupportedException ();
+			}
 			return false;
+		}
+
+		public Exception Exception {
+			get { return ex; }
 		}
 	}
 }

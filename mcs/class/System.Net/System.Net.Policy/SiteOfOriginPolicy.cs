@@ -44,6 +44,10 @@ namespace System.Net.Policy {
 			return ((a.Scheme == b.Scheme) && (a.DnsSafeHost == b.DnsSafeHost) &&
 				((a.Port == -1) || (b.Port == -1) || (a.Port == b.Port)));
 		}
+
+		public Exception Exception {
+			get { return null; }
+		}
 	}
 }
 

@@ -1,3 +1,13 @@
+2010-07-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDomainPolicy.cs:
+	* ICrossDomainPolicy.cs:
+	* NoAccessPolicy.cs:
+	* PolicyDownloadPolicy.cs:
+	* SiteOfOriginPolicy.cs:
+		Allow throwing something else than a SecurityException
+		which is pretty rare but we got a DRT for it
+
 2010-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FlashCrossDomainPolicy.cs: Reverse conditions order on secure=true

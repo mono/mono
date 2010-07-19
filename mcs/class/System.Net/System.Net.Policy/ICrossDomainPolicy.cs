@@ -33,6 +33,8 @@ namespace System.Net.Policy {
 	interface ICrossDomainPolicy {
 
 		bool IsAllowed (WebRequest request);
+
+		Exception Exception { get; }
 	}
 }
 
