@@ -54,6 +54,7 @@ namespace System.ServiceModel.Description
 		protected ClientCredentials (ClientCredentials source)
 		{
 			userpass = source.userpass.Clone ();
+#if !NET_2_1
 			issued_token = source.issued_token.Clone ();
 			digest = source.digest.Clone ();
 			initiator = source.initiator.Clone ();
@@ -61,6 +62,7 @@ namespace System.ServiceModel.Description
 			windows = source.windows.Clone ();
 			peer = source.peer.Clone ();
 			support_interactive = source.support_interactive;
+#endif
 		}
 
 		UserNamePasswordClientCredential userpass =
