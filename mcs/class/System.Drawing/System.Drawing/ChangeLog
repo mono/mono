@@ -1,3 +1,8 @@
+2010-07-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Icon.cs: Remove width==height check when deserializing (uncommon
+	but valid icons). Fix bug #581400
+
 2010-07-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs (CopyFromScreen): Avoid crash if asked for a region
