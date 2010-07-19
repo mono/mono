@@ -96,8 +96,10 @@ namespace Microsoft.Win32 {
 		static Hashtable key_to_handler = new Hashtable ();
 		static Hashtable dir_to_handler = new Hashtable (
 			new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
-		static Hashtable volatile_keys = new Hashtable ();
+		const string VolatileDirectoryName = "volatile-keys";
+
 		public string Dir;
+		string ActualDir; // Lets keep this one private.
 		public bool IsVolatile;
 
 		Hashtable values;
@@ -111,31 +113,33 @@ namespace Microsoft.Win32 {
 		KeyHandler (RegistryKey rkey, string basedir, bool is_volatile)
 		{
 			// Force ourselved to reuse the key, if any.
+			string volatile_basedir = GetVolatileDir (basedir);
+			string actual_basedir = basedir;
+
 			if (Directory.Exists (basedir))
 				is_volatile = false;
-			else if (VolatileKeyExists (basedir))
+			else if (Directory.Exists (volatile_basedir)) {
+				actual_basedir = volatile_basedir;
 				is_volatile = true;
+			} else if (is_volatile)
+				actual_basedir = volatile_basedir;
 
-			if (!is_volatile && !Directory.Exists (basedir)){
+			if (!Directory.Exists (actual_basedir)) {
 				try {
-					Directory.CreateDirectory (basedir);
+					Directory.CreateDirectory (actual_basedir);
 				} catch (UnauthorizedAccessException){
 					throw new SecurityException ("No access to the given key");
 				}
 			}
-			Dir = basedir;
+			Dir = basedir; // This is our identifier.
+			ActualDir = actual_basedir; // This our actual location.
 			IsVolatile = is_volatile;
-			file = Path.Combine (Dir, "values.xml");
+			file = Path.Combine (ActualDir, "values.xml");
 			Load ();
 		}
 
 		public void Load ()
 		{
-			if (IsVolatile) {
-				LoadAsVolatile ();
-				return;
-			}
-
 			values = new Hashtable ();
 			if (!File.Exists (file))
 				return;
@@ -207,15 +211,6 @@ namespace Microsoft.Win32 {
 			}
 		}
 
-		void LoadAsVolatile ()
-		{
-			if (volatile_keys [Dir] == null)
-				volatile_keys [Dir] = new Hashtable ();
-
-			values = (Hashtable) volatile_keys [Dir];
-			return;
-		}
-			
 		public RegistryKey Ensure (RegistryKey rkey, string extra, bool writable)
 		{
 			return Ensure (rkey, extra, writable, false);
@@ -268,12 +263,23 @@ namespace Microsoft.Win32 {
 				
 		public static bool VolatileKeyExists (string dir)
 		{
-			return volatile_keys.Contains (dir);
+			lock (typeof (KeyHandler)) {
+				KeyHandler kh = (KeyHandler) dir_to_handler [dir];
+				if (kh != null)
+					return kh.IsVolatile;
+			}
+
+			if (Directory.Exists (dir)) // Non-volatile key exists.
+				return false;
+
+			return Directory.Exists (GetVolatileDir (dir));
 		}
 
-		public static void DeleteVolatileKey (string dir)
+		public static string GetVolatileDir (string dir)
 		{
-			volatile_keys [dir] = null;
+			string root = GetRootFromDir (dir);
+			string volatile_dir = dir.Replace (root, Path.Combine (root, VolatileDirectoryName));
+			return volatile_dir;
 		}
 
 		public static KeyHandler Lookup (RegistryKey rkey, bool createNonExisting)
@@ -313,6 +319,16 @@ namespace Microsoft.Win32 {
 			}
 		}
 
+		static string GetRootFromDir (string dir)
+		{
+			if (dir.IndexOf (UserStore) > -1)
+				return UserStore;
+			else if (dir.IndexOf (MachineStore) > -1)
+				return MachineStore;
+
+			throw new Exception ("Could not get root for dir " + dir);
+		}
+
 		public static void Drop (RegistryKey rkey)
 		{
 			lock (typeof (KeyHandler)) {
@@ -349,6 +365,21 @@ namespace Microsoft.Win32 {
 				foreach (object key in keys)
 					key_to_handler.Remove (key);
 			}
+		}
+
+		public static bool Delete (string dir)
+		{
+			if (!Directory.Exists (dir)) {
+				string volatile_dir = GetVolatileDir (dir);
+				if (!Directory.Exists (volatile_dir))
+					return false;
+
+				dir = volatile_dir;
+			}
+
+			Directory.Delete (dir, true);
+			Drop (dir);
+			return true;
 		}
 
 		public RegistryValueKind GetValueKind (string name)
@@ -548,9 +579,6 @@ namespace Microsoft.Win32 {
 			if (IsMarkedForDeletion)
 				return;
 
-			if (IsVolatile)
-				return; // Nothing to save to disk.
-
 			if (!File.Exists (file) && values.Count == 0)
 				return;
 
@@ -604,23 +632,31 @@ namespace Microsoft.Win32 {
 				throw RegistryKey.CreateMarkedForDeletionException ();
 		}
 
+		static string user_store;
+		static string machine_store;
+
 		private static string UserStore {
 			get {
-				return Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal),
+				if (user_store == null)
+					user_store = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal),
 					".mono/registry");
+
+				return user_store;
 			}
 		}
 
 		private static string MachineStore {
 			get {
-				string s;
+				if (machine_store == null) {
+					machine_store = Environment.GetEnvironmentVariable ("MONO_REGISTRY_PATH");
+					if (machine_store == null) {
+						string s = Environment.GetMachineConfigPath ();
+						int p = s.IndexOf ("machine.config");
+						machine_store = Path.Combine (Path.Combine (s.Substring (0, p-1), ".."), "registry");
+					}
+				}
 
-				s = Environment.GetEnvironmentVariable ("MONO_REGISTRY_PATH");
-				if (s != null)
-					return s;
-				s = Environment.GetMachineConfigPath ();
-				int p = s.IndexOf ("machine.config");
-				return Path.Combine (Path.Combine (s.Substring (0, p-1), ".."), "registry");
+				return machine_store;
 			}
 		}
 	}
@@ -765,16 +801,7 @@ namespace Microsoft.Win32 {
 
 			string dir = Path.Combine (self.Dir, ToUnix (keyname));
 			
-			if (KeyHandler.VolatileKeyExists (dir)) {
-				KeyHandler.DeleteVolatileKey (dir);
-				KeyHandler.Drop (dir);
-				return;
-			}
-
-			if (Directory.Exists (dir)){
-				Directory.Delete (dir, true);
-				KeyHandler.Drop (dir);
-			} else if (throw_if_missing)
+			if (!KeyHandler.Delete (dir) && throw_if_missing)
 				throw new ArgumentException ("the given value does not exist");
 		}
 		

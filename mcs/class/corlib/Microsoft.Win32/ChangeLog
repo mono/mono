@@ -1,3 +1,10 @@
+2010-07-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* UnixRegistryApi.cs: Remove the in-memmory approach to volatile keys,
+	as it becomes trickier to handle deep hiearchies, subkeys and values
+	in some scenarios. So for now we keep them in disk, we in an
+	alternative directory, so we can cleam them properly later.
+
 2010-07-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RegistryKey.cs: Call the proper UnixRegistryApi.CreateSubKey overload.
