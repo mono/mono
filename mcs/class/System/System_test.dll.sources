@@ -140,6 +140,7 @@ System.ComponentModel/LicenseManagerTests.cs
 System.ComponentModel/ListChangedEventArgsTest.cs
 System.ComponentModel/LookupBindingPropertiesAttributeTest.cs
 System.ComponentModel/MaskedTextProviderTest.cs
+System.ComponentModel/MultilineStringConverterTest.cs
 System.ComponentModel/NestedContainerTest.cs
 System.ComponentModel/NullableConverterTest.cs
 System.ComponentModel/PropertyDescriptorCollectionTests.cs

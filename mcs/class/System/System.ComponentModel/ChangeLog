@@ -1,3 +1,7 @@
+2010-07-19  Marek Habersack  <mhabersack@novell.com>
+
+	* MultilineStringConverter.cs: implemented
+
 2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ComplexBindingPropertiesAttribute.cs:

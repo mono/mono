@@ -1,10 +1,11 @@
 //
 // MultilineStringConverter.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2007 Novell, Inc. http://www.novell.com
+// Copyright (C) 2007-2010 Novell, Inc. http://www.novell.com
 //
 
 //
@@ -37,22 +38,25 @@ namespace System.ComponentModel
 {
 	public class MultilineStringConverter : TypeConverter
 	{
-		[MonoTODO]
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException ();
-		}
+			if (destinationType == null)
+				throw new ArgumentNullException ("destinationType");
 
-		[MonoTODO]
+			if (destinationType == typeof (string) && value is string)
+				return "(Text)";
+
+			return base.ConvertTo (context, culture, value, destinationType);
+		}
+		
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object value, Attribute [] attributes)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 	}
 }
