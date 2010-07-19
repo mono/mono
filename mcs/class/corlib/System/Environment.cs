@@ -546,10 +546,31 @@ namespace System {
 #endif
 			// use FDO's CONFIG_HOME. This data will be synced across a network like the windows counterpart.
 			case SpecialFolder.ApplicationData:
+#if MONOTOUCH
+			{
+				string dir = Path.Combine (Path.Combine (home, "Documents"), ".config");
+				if (!Directory.Exists (dir))
+					Directory.CreateDirectory (dir);
+
+				return dir;
+			}
+#else
 				return config;
+#endif
 			//use FDO's DATA_HOME. This is *NOT* synced
 			case SpecialFolder.LocalApplicationData:
+#if MONOTOUCH
+			{
+				string dir = Path.Combine (home, "Documents");
+				if (!Directory.Exists (dir))
+					Directory.CreateDirectory (dir);
+
+				return dir;
+			}
+#else
 				return data;
+#endif
+
 			case SpecialFolder.Desktop:
 			case SpecialFolder.DesktopDirectory:
 				return ReadXdgUserDir (config, home, "XDG_DESKTOP_DIR", "Desktop");
