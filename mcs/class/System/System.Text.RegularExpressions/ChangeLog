@@ -1,3 +1,14 @@
+2010-07-20  Miguel de Icaza  <miguel@novell.com>
+
+	* parser.cs (ParseEscape): Now parses with some context, whether
+	we are parsing inside a character range which can not contain
+	back-references or when we are parsing on a string context which
+	can contain back references.
+
+	This fixes bug #577346 which exposed a bug parsing this:
+
+	new Regex("[\\177-\\377]")
+
 2010-06-29  Raja R Harinath  <harinath@hurrynot.org>
 
 	Mitigate a possible source of unbounded memory growth

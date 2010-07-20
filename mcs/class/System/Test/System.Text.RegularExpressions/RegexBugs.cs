@@ -87,6 +87,12 @@ namespace MonoTests.System.Text.RegularExpressions
 			Assert.IsTrue (Regex.IsMatch (s, p));
 		}
 
+		[Test] // Bug #577346
+		public void CharacterClassParse ()
+		{
+			var foo = new Regex("[\\177-\\377]");
+		}
+		
 		[Test] // bug #45976
 		public void RangeIgnoreCase()
 		{
