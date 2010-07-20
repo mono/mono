@@ -1,5 +1,10 @@
 2010-07-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (op_to_op_src2_membase): Reorganize the amd64 op->op membase
+	code, it was missing a few 'break's.
+
+2010-07-20  Zoltan Varga  <vargaz@gmail.com>
+
 	* method-to-ir.c (mini_emit_inst_for_method): Add Array.GetLength/GetLowerBound ().
 	Fixes #618176.
 
