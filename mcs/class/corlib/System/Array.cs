@@ -1634,11 +1634,11 @@ namespace System
 			if (comparer == null)
 				CheckComparerAvailable<TKey> (keys, low, high);
  
-			try {
+			//try {
 				qsort (keys, items, low, high, comparer);
-			} catch (Exception e) {
-				throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
-			}
+				//} catch (Exception e) {
+				//throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
+				//}
 		}
 		
 		public static void Sort<T> (T [] array, Comparison<T> comparison)
@@ -1723,10 +1723,15 @@ namespace System
 							++low;
 						while (high > low0 && genCmpPivot.CompareTo (keys [high]) < 0)
 							--high;
-					} else {
+					} else if (cmpPivot != null) {
 						while (low < high0 && cmpPivot.CompareTo (keys [low]) > 0)
 							++low;
 						while (high > low0 && cmpPivot.CompareTo (keys [high]) < 0)
+							--high;
+					} else {
+						while (low < high0 && keys [low] == null)
+							++low;
+						while (high > low0 && keys [high] == null)
 							--high;
 					}
 				}

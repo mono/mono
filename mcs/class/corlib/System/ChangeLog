@@ -1,3 +1,8 @@
+2010-07-20  Miguel de Icaza  <miguel@novell.com>
+
+	* Array.cs: fast path for the case where the pivot is null;
+	Fixes the crash on the build.
+
 2010-07-17  Miguel de Icaza  <miguel@novell.com>
 
 	* Array.cs: Fix for bug #622101, this reverts portions of the

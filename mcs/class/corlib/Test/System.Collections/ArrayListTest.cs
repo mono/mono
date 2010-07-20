@@ -1679,10 +1679,10 @@ namespace MonoTests.System.Collections
 				al1.Add (null);
 
 				al1.Sort ();
-				Assert.AreEqual (null, al1 [0], "Should be null");
-				Assert.AreEqual (null, al1 [1], "Should be 2. null");
-				Assert.AreEqual (null, al1 [2], "Should be 3. null");
-				Assert.AreEqual (null, al1 [3], "Should be 4. null");
+				Assert.AreEqual (null, al1 [0], "Should be null (0)");
+				Assert.AreEqual (null, al1 [1], "Should be null (1)");
+				Assert.AreEqual (null, al1 [2], "Should be null (2)");
+				Assert.AreEqual (null, al1 [3], "Should be null (3)");
 				Assert.AreEqual (32, al1 [4], "Should be 32");
 				Assert.AreEqual (33, al1 [5], "Should be 33");
 			}
