@@ -211,7 +211,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				}
 
 				case '\\': {
-					int c = ParseEscape ();
+					int c = ParseEscape (false);
 					if (c >= 0)
 						ch = (char)c;
 					else {
@@ -671,7 +671,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				}
 
 				if (c == '\\') {
-					c = ParseEscape ();
+					c = ParseEscape (true);
 					if (c >= 0)
 						goto char_recognized;
 
@@ -860,6 +860,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			case '1': case '2': case '3': case '4': case '5':
 			case '6': case '7': case '8': case '9': {
 				ptr --;
+				int oldptr = ptr;
 				int n = ParseNumber (10, 1, 0);
 				if (n < 0) {
 					ptr = p;
@@ -904,7 +905,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			return expr;
 		}
 
-		private int ParseEscape () {
+		private int ParseEscape (bool inCharacterClass) {
 			int p = ptr;
 			int c;
 
@@ -929,6 +930,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			// character codes
 
 			case '0':
+				
 				//
 				// Turns out that octal values can be specified
 				// without a leading zero.   But also the limit
@@ -943,6 +945,14 @@ namespace System.Text.RegularExpressions.Syntax {
 
 				return result;
 
+			case '1': case '2': case '3': case '4': case '5':
+			case '6': case '7':
+				if (inCharacterClass){
+					ptr--;
+					return ParseOctal (pattern, ref ptr);
+				}
+				break;
+				
 			case 'x':
 				c = ParseHex (pattern, ref ptr, 2);
 				if (c < 0)
@@ -965,13 +975,11 @@ namespace System.Text.RegularExpressions.Syntax {
 					return c - '@';
 				else
 					throw NewParseException ("Unrecognized control character.");
+			}
 
 			// unknown escape
-
-			default:
-				ptr = p;
-				return -1;
-			}
+			ptr = p;
+			return -1;
 		}
 
 		private string ParseName () {
@@ -1051,7 +1059,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			while (ptr < pattern.Length) {
 				int c = pattern[ptr ++];
 				if (c == '\\') {
-					c = ParseEscape ();
+					c = ParseEscape (false);
 
 					if(c < 0) {
 						c = pattern[ptr ++];
