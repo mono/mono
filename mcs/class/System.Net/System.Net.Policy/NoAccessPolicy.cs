@@ -28,17 +28,24 @@
 
 #if NET_2_1
 
+using System.Security;
+
 namespace System.Net.Policy {
 
 	sealed class NoAccessPolicy : ICrossDomainPolicy {
 
-		Exception ex = null; // default is a SecurityException
+		static SecurityException security_exception = new SecurityException ();
+		static NotSupportedException not_supported_exception = new NotSupportedException ();
+
+		Exception ex;
 
 		public bool IsAllowed (WebRequest request)
 		{
+			ex = security_exception;
+
 			foreach (string header in request.Headers) {
 				if (String.Compare ("Content-Type", header, StringComparison.OrdinalIgnoreCase) != 0)
-					ex = new NotSupportedException ();
+					ex = not_supported_exception;
 			}
 			return false;
 		}

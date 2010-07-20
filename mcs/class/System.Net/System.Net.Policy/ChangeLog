@@ -1,3 +1,8 @@
+2010-07-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NoAccessPolicy.cs: Set default to SecurityException each time
+	IsAllowed is called since we share a single instance of this type
+
 2010-07-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BaseDomainPolicy.cs:
