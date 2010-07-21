@@ -477,7 +477,12 @@ namespace System.Web
 					// recursively for all subdirectories and adds them to the
 					// watch set. This can take a lot of time for deep directory
 					// trees (see bug #490497)
-					ThreadPool.QueueUserWorkItem (new WaitCallback (SetUpWebConfigWatchers), null);
+					ThreadPool.QueueUserWorkItem (delegate {
+						try {
+							WatchLocationForRestart (String.Empty, "?eb.?onfig", true);
+						} catch (Exception e) {
+							Console.Error.WriteLine (e);
+						} }, null);
 #endif
 					
 					needs_init = false;
@@ -491,11 +496,6 @@ namespace System.Web
 					throw;
 				}
 			}
-		}
-
-		static void SetUpWebConfigWatchers (object state)
-		{
-			WatchLocationForRestart (String.Empty, "?eb.?onfig", true);
 		}
 		
 		//
@@ -714,13 +714,15 @@ namespace System.Web
 	        {
 			string name = args.Name;
 			bool isConfig = false;
-			
+
 			if (StrUtils.EndsWith (name, "onfig", true)) {
 				if (String.Compare (Path.GetFileName (name), "web.config", true, Helpers.InvariantCulture) != 0)
 					return;
 				isConfig = true;
 			} else if (StrUtils.EndsWith (name, "lobal.asax", true) && String.Compare (name, "global.asax", true, Helpers.InvariantCulture) != 0)
 				return;
+
+			Console.WriteLine ("Change: " + name);
 
 			// {Inotify,FAM}Watcher will notify about events for a directory regardless
 			// of the filter pattern. This might be a bug in the watchers code, but

@@ -1,3 +1,9 @@
+2010-07-21  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplication.cs, HttpRuntime.cs, HttpApplicationFactory.cs:
+	Prepare for the runtime change that will terminate threadpool
+	threads when exception are not caught.
+
 2010-06-27  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpUtility.cs: if IHtmlString instance is passed to HtmlEncode

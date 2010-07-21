@@ -1521,7 +1521,7 @@ namespace System.Web
 
 		void Start (object x)
 		{
-			CultureInfo[] cultures = x as CultureInfo[];
+			var cultures = x as CultureInfo [];
 			if (cultures != null && cultures.Length == 2) {
 				Thread ct = Thread.CurrentThread;
 				ct.CurrentCulture = cultures [0];
@@ -1654,7 +1654,13 @@ namespace System.Web
 #endif
 				Start (null);
 			else
-				ThreadPool.QueueUserWorkItem (new WaitCallback (Start), cultures);
+				ThreadPool.QueueUserWorkItem (x => {
+					try {
+						Start (x);
+					} catch (Exception e) {
+						Console.Error.WriteLine (e);
+					}
+				});
 			
 			return begin_iar;
 		}

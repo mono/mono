@@ -573,23 +573,34 @@ namespace System.Web
 			// TODO: call ReleaseResources
 			//
 			domainUnloading = true;
-			ThreadPool.QueueUserWorkItem (new WaitCallback (ShutdownAppDomain), null);
+			ThreadPool.QueueUserWorkItem (delegate {
+				try {
+					ShutdownAppDomain ();
+				} catch (Exception e){
+					Console.Error.WriteLine (e);
+				}
+			});
 		}
 #endif
 		//
 		// Shuts down the AppDomain
 		//
-		static void ShutdownAppDomain (object args)
+		static void ShutdownAppDomain ()
 		{
 			queue_manager.Dispose ();
 			// This will call Session_End if needed.
 			InternalCache.InvokePrivateCallbacks ();
 			// Kill our application.
 			HttpApplicationFactory.Dispose ();
-			ThreadPool.QueueUserWorkItem (new WaitCallback (DoUnload), null);
+			ThreadPool.QueueUserWorkItem (delegate {
+				try {
+					DoUnload ();
+				} catch (Exception e){
+					Console.Error.WriteLine (e);
+				}});
 		}
 
-		static void DoUnload (object state)
+		static void DoUnload ()
 		{
 #if TARGET_J2EE
 			// No unload support for appdomains under Grasshopper
