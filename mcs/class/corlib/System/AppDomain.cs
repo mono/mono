@@ -1379,6 +1379,11 @@ namespace System {
 		public bool IsHomogenous {
 			get { return true; }
 		}
+
+		[MonoTODO]
+		public bool IsFullyTrusted {
+			get { return true; }
+		}
 #endif
 
         #pragma warning disable 649

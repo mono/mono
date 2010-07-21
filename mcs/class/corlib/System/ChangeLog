@@ -1,3 +1,7 @@
+2010-07-21  Jb Evain  <jbevain@novell.com>
+
+	* AppDomain.cs: add IsFullyTrusted stub.
+
 2010-07-20  Miguel de Icaza  <miguel@novell.com>
 
 	* Array.cs: fast path for the case where the pivot is null;
