@@ -1,3 +1,10 @@
+2010-07-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* LocalCertificateSelectionCallback.cs:
+	* SslStream.cs:
+		Don't use alias in moonlight build (not needed and breaks
+		compilation otherwise)
+
 2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RemoteCertificateValidationCallback.cs: Remove SECURITY_DEP use

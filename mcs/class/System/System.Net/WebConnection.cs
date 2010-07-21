@@ -209,7 +209,7 @@ namespace System.Net
 				if (sslStream != null)
 					return;
 
-#if MONOTOUCH && SECURITY_DEP
+#if NET_2_1 && SECURITY_DEP
 				sslStream = typeof (Mono.Security.Protocol.Tls.HttpsClientStream);
 #else
 				// HttpsClientStream is an internal glue class in Mono.Security.dll

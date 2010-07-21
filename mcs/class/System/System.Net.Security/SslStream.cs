@@ -31,7 +31,11 @@
 //
 
 #if NET_2_0 && SECURITY_DEP
+
+#if !MOONLIGHT
 extern alias PrebuiltSystem;
+using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+#endif
 
 using System;
 using System.IO;
@@ -50,8 +54,6 @@ using MonoCipherAlgorithmType = Mono.Security.Protocol.Tls.CipherAlgorithmType;
 using MonoHashAlgorithmType = Mono.Security.Protocol.Tls.HashAlgorithmType;
 using MonoExchangeAlgorithmType = Mono.Security.Protocol.Tls.ExchangeAlgorithmType;
 using MonoSecurityProtocolType = Mono.Security.Protocol.Tls.SecurityProtocolType;
-
-using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 
 namespace System.Net.Security 
 {

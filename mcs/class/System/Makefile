@@ -31,6 +31,9 @@ NOT_SL := $(filter net_2_0 net_4_0 monotouch, $(PROFILE))
 endif
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
+ifeq (moonlight_raw, $(PROFILE))
+LIB_MCS_FLAGS += -d:SECURITY_DEP
+endif
 endif
 
 EXTRA_DISTFILES = \

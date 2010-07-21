@@ -377,7 +377,25 @@ namespace System.Net
 					servicePoints.Remove (list.GetByIndex (i));
 			}
 		}
-#if NET_2_0 && SECURITY_DEP
+#if MOONLIGHT && SECURITY_DEP
+		internal class ChainValidationHelper {
+			object sender;
+
+			public ChainValidationHelper (object sender)
+			{
+				this.sender = sender;
+			}
+
+			// no need to check certificates since we are either
+			// (a) loading from the site of origin (and we accepted its certificate to load from it)
+			// (b) loading from a cross-domain site and we downloaded the policy file using the browser stack
+			//     i.e. the certificate was accepted (or the policy would not be valid)
+			internal ValidationResult ValidateChain (Mono.Security.X509.X509CertificateCollection certs)
+			{
+				return new ValidationResult (true, false, 0);
+			}
+		}
+#elif NET_2_0 && SECURITY_DEP
 		internal class ChainValidationHelper {
 			object sender;
 			string host;

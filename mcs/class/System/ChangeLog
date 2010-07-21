@@ -1,3 +1,8 @@
+2010-07-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Ensure SECURITY_DEP gets defined in our moonlight
+	raw profile
+
 2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* moonlight_bootstrap_System.dll.sources: Minimal build for 
