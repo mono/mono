@@ -28,6 +28,15 @@
 		<SilverlightVersion Condition="'$(SilverlightVersion)' == ''">@SILVERLIGHT_VERSION@</SilverlightVersion>
 		<RuntimeVersion Condition="'$(RuntimeVersion)' == '' and '$(SilverlightVersion)' == '2.0'">2.0.31005.0</RuntimeVersion>
 		<RuntimeVersion Condition="'$(RuntimeVersion)' == '' and '$(SilverlightVersion)' == '3.0'">3.0.40624.0</RuntimeVersion>
+
+		<AssemblySearchPaths>
+			{CandidateAssemblyFiles};
+			$(ReferencePath);
+			{HintPathFromItem};
+			{TargetFrameworkDirectory};
+			{RawFileName};
+			$(OutDir)
+		</AssemblySearchPaths>
 	</PropertyGroup>
 
 	<ItemGroup>

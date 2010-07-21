@@ -1,3 +1,8 @@
+2010-07-21  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Silverlight.Common.targets: Set AssemblySearchPaths
+	to the default value except PkgConfig and GAC. Suggested by Rolf.
+
 2010-07-16  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Silverlight.Common.targets: Set Inputs/Outputs
