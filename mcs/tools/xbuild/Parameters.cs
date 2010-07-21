@@ -332,7 +332,11 @@ namespace Mono.XBuild.CommandLine {
 		
 		internal void ProcessConsoleLoggerParameters (string s)
 		{
-			consoleLoggerParameters = s; 
+			int colon = s.IndexOf (':');
+			if (colon + 1 == s.Length)
+				ReportError (5, "Invalid syntax, specify parameters as /clp:parameters");
+
+			consoleLoggerParameters = s.Substring (colon + 1);
 		}
 		
 		internal void ProcessValidate (string s)

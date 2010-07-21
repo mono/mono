@@ -1,5 +1,9 @@
 2010-07-22  Ankit Jain  <jankit@novell.com>
 
+	* ConsoleLogger.cs: Add support for parameter 'NoItemAndPropertyList'.
+
+2010-07-22  Ankit Jain  <jankit@novell.com>
+
 	* Project.cs: Add reserved properties MSBuildProjectFullPath
 	and MSBuildProjectExtension .
 
