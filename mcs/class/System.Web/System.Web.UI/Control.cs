@@ -401,7 +401,14 @@ namespace System.Web.UI
 			}
 
 			if (!haveMyID) {
-				sb.Append (myID);
+				if (this is INamingContainer || !AutoID)
+					sb.Append (myID);
+				else {
+					int length = sb.Length;
+					if (length > 0 && sb [length - 1] == separator)
+						sb.Length = length - 1;
+				}
+				
 				return sb.ToString ();
 			}
 			

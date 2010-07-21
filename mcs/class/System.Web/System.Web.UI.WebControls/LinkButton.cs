@@ -55,6 +55,7 @@ namespace System.Web.UI.WebControls
 			if (page != null)
 				page.VerifyRenderingInServerForm (this);
 
+			base.AddAttributesToRender (w);
 			bool enabled = IsEnabled;
 			string onclick = OnClientClick;
 			onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick);
@@ -71,7 +72,7 @@ namespace System.Web.UI.WebControls
 				string href = page.ClientScript.GetPostBackEventReference (options, true);
 				w.AddAttribute (HtmlTextWriterAttribute.Href, href);
 			}
-			base.AddAttributesToRender (w);
+			
 			AddDisplayStyleAttribute (w);
 		}
 

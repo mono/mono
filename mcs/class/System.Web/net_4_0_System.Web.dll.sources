@@ -29,6 +29,8 @@ System.Web.UI.WebControls/IDataBoundListControl.cs
 System.Web.UI.WebControls/IFieldControl.cs
 System.Web.UI.WebControls/IRenderOuterTable.cs
 System.Web.UI.WebControls/RouteParameter.cs
+System.Web.UI.WebControls/WizardLayoutContainer.cs
+System.Web.UI.WebControls/WizardLayoutNavigationContainer.cs
 System.Web.Util/RequestValidationSource.cs
 System.Web.Util/RequestValidator.cs
 

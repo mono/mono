@@ -185,17 +185,17 @@ namespace System.Web.UI.WebControls {
 				return;
 
 			// note: avoid calling properties multiple times
-			int i = CellPadding;
-			if (i != -1)
-				writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, i.ToString (Helpers.InvariantCulture), false);
-			
-			i = CellSpacing;
+			int i = CellSpacing;
 			if (i != -1) {
 				writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, i.ToString (Helpers.InvariantCulture), false);
 				if (i == 0)
 					writer.AddStyleAttribute(HtmlTextWriterStyle.BorderCollapse, "collapse");
 			}
 
+			i = CellPadding;
+			if (i != -1)
+				writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, i.ToString (Helpers.InvariantCulture), false);
+			
 			GridLines g = GridLines;
 			switch (g) {
 			case GridLines.Horizontal:

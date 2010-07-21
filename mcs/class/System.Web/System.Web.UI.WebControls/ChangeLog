@@ -1,3 +1,14 @@
+2010-07-21  Marek Habersack  <mhabersack@novell.com>
+
+	* Wizard.cs: made rendering 100% compliant with .NET (button IDs,
+	2.0+)
+	Implemented LayoutTemplate (4.0+)
+
+	* LinkButton.cs: render id first
+
+	* CreateUserWizard.cs: CreateUserNavigationContainer.UpdateState
+	doesn't add a previous button if we're on the first step.
+
 2010-07-20  Marek Habersack  <mhabersack@novell.com>
 
 	* StyleCollection.cs: added

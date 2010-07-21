@@ -47,7 +47,7 @@ using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Threading;
 
-
+using MonoTests.Common;
 
 
 namespace MonoTests.System.Web.UI.WebControls
@@ -301,7 +301,67 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.EnsureChildControls ();
 		}
 	}
+#if NET_4_0
+	class TestHeaderSpan : WebControl
+	{
+		public TestHeaderSpan ()
+			: base (HtmlTextWriterTag.Span)
+		{ }
+	}
+	class TestHeaderTemplate : ITemplate
+	{
+		public void InstantiateIn (Control container)
+		{
+			container.Controls.Add (new LiteralControl ("Header"));
+		}
+	}
 
+	class TestLayoutTemplate : ITemplate
+	{
+		public bool HasHeaderPlaceHolder { get; set; }
+		public bool HasNavigationPlaceHolder { get; set; }
+		public bool HasSideBarPlaceHolder { get; set; }
+		public bool HasWizardStepPlaceHolder { get; set; }
+
+		public Type HeaderPlaceHolderType { get; set; }
+		public Type NavigationPlaceHolderType { get; set; }
+		public Type SideBarPlaceHolderType { get; set; }
+		public Type WizardStepPlaceHolderType { get; set; }
+
+		public TestLayoutTemplate ()
+		{
+			HeaderPlaceHolderType = typeof (PlaceHolder);
+			NavigationPlaceHolderType = typeof (PlaceHolder);
+			SideBarPlaceHolderType = typeof (PlaceHolder);
+			WizardStepPlaceHolderType = typeof (PlaceHolder);
+		}
+
+		public void InstantiateIn (Control container)
+		{
+			if (HasHeaderPlaceHolder)
+				container.Controls.Add (MakePlaceHolder (HeaderPlaceHolderType, Wizard.HeaderPlaceholderId));
+
+			if (HasSideBarPlaceHolder)
+				container.Controls.Add (MakePlaceHolder (SideBarPlaceHolderType, Wizard.SideBarPlaceholderId));
+
+			if (HasNavigationPlaceHolder)
+				container.Controls.Add (MakePlaceHolder (NavigationPlaceHolderType, Wizard.NavigationPlaceholderId));
+
+			if (HasWizardStepPlaceHolder)
+				container.Controls.Add (MakePlaceHolder (WizardStepPlaceHolderType, Wizard.WizardStepPlaceholderId));
+		}
+
+		Control MakePlaceHolder (Type type, string id)
+		{
+			Control ctl = Activator.CreateInstance (type) as Control;
+			if (ctl == null)
+				throw new InvalidOperationException ("Placeholder must descend from the Control type.");
+
+			ctl.ID = id;
+			return ctl;
+		}
+	}
+#endif
 	[TestFixture]
 	public class WizardTest
 	{
@@ -315,6 +375,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("MoveNext", Wizard.MoveNextCommandName, "MoveNextCommandName");
 			Assert.AreEqual ("MovePrevious", Wizard.MovePreviousCommandName, "MovePreviousCommandName");
 			Assert.AreEqual ("Move", Wizard.MoveToCommandName, "MoveToCommandName");
+#if NET_4_0
+			Assert.AreEqual ("headerPlaceholder", Wizard.HeaderPlaceholderId, "HeaderPlaceHolderId");
+			Assert.AreEqual ("navigationPlaceholder", Wizard.NavigationPlaceholderId, "NavigationPlaceHolderId");
+			Assert.AreEqual ("sideBarPlaceholder", Wizard.SideBarPlaceholderId, "SidePlaceholderId");
+			Assert.AreEqual ("wizardStepPlaceholder", Wizard.WizardStepPlaceholderId, "WizardStepPlaceholderId");
+#endif
 			// Protected Fields 
 			Assert.AreEqual ("CancelButton", PokerWizard.PokerCancelButtonID, "CancelButtonID");
 			Assert.AreEqual ("CustomFinishButton", PokerWizard.PokerCustomFinishButtonID, "CustomFinishButtonID");
@@ -1101,6 +1167,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		public void Wizard_AllowNavigationToStep_NoIndexCheck ()
+		{
+			PokerWizard wizard = new PokerWizard ();
+			Assert.IsTrue (wizard.PokerAllowNavigationToStep (0), "#A1-1");
+			Assert.IsTrue (wizard.PokerAllowNavigationToStep (10), "#A1-2");
+			Assert.IsTrue (wizard.PokerAllowNavigationToStep (-10), "#A1-3");
+		}
+
+		[Test]
 		public void Wizard_CreateControlCollection ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1456,7 +1531,229 @@ namespace MonoTests.System.Web.UI.WebControls
 				Assert.Fail ("FinishButtonNotCreated");
 			Assert.AreEqual (-1, result.IndexOf ("Next"), "NextButtonCreatedOnLastPage");
 		}
+#if NET_4_0
+		[Test]
+		public void Wizard_LayoutTemplate ()
+		{
+			var w = new Wizard ();
 
+			Assert.IsNull (w.LayoutTemplate, "#A1");
+		}
+
+		[Test]
+		public void Wizard_LayoutTemplate_Empty ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
+			t.UserData = "Empty";
+			string result;
+
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				result = t.Run ();
+			}, "#A1");
+		}
+
+		[Test]
+		public void Wizard_LayoutTemplate_OptionalSideBar ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
+			t.UserData = "OptionalSideBar_NoSideBar";
+			string result = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
+
+			Assert.AreEqual (String.Empty, renderedHtml, "#A1");
+
+			t.UserData = "OptionalSideBar_WithSideBar";
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				result = t.Run ();
+			}, "#A2");
+		}
+
+		[Test]
+		public void Wizard_LayoutTemplate_RenderSideBar ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
+			t.UserData = "RenderSideBar";
+			string result = t.Run ();
+#if DOT_NET
+			string origHtml = "<table id=\"MyWizard_SideBarList\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td style=\"font-weight:bold;\"><a id=\"MyWizard_SideBarList_SideBarButton_0\" href=\"javascript:__doPostBack(&#39;MyWizard$SideBarList$ctl00$SideBarButton&#39;,&#39;&#39;)\">step1</a></td>\r\n\t</tr>\r\n</table><table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\r\n\t</tr>\r\n</table>Step";
+#else
+			string origHtml = "<table id=\"MyWizard_SideBarList\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td style=\"font-weight:bold;\"><a id=\"MyWizard_SideBarList_ctl00_SideBarButton_0\" href=\"javascript:__doPostBack(&#39;MyWizard$SideBarList$ctl00$SideBarButton&#39;,&#39;&#39;)\">step1</a></td>\r\n\t</tr>\r\n</table><table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\r\n\t</tr>\r\n</table>Step";
+#endif
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
+			Console.WriteLine (origHtml);
+			Console.WriteLine ("----------------------------");
+			Console.WriteLine (renderedHtml);
+			
+			Assert.AreEqual (origHtml, renderedHtml, "#A1");
+		}
+
+		[Test]
+		public void Wizard_LayoutTemplate_OptionalHeader ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
+			t.UserData = "OptionalHeader_NoHeaderTemplate";
+			string result = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
+
+			Assert.AreEqual (String.Empty, renderedHtml, "#A1");
+
+			t.UserData = "OptionalHeader_WithHeaderTemplate";
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				result = t.Run ();
+			}, "#A2");
+		}
+
+		[Test]
+		public void Wizard_LayoutTemplate_RenderHeader ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
+			t.UserData = "RenderHeader";
+			string result = t.Run ();
+			string origHtml = "Header<table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\r\n\t</tr>\r\n</table>Step";
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
+
+			Assert.AreEqual (origHtml, renderedHtml, "#A1");
+
+			t.UserData = "RenderHeader_InSpan";
+			result = t.Run ();
+			origHtml = "Header<table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\r\n\t</tr>\r\n</table>Step";
+			renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
+			Assert.AreEqual (origHtml, renderedHtml, "#A2");
+		}
+
+		[Test]
+		public void Wizard_LayoutTemplate_StepPlaceHolder ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
+			t.UserData = "StepPlaceHolder";
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				string result = t.Run ();
+			}, "#A1");
+		}
+
+		[Test]
+		public void Wizard_LayoutTemplate_NavigationPlaceHolder ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
+			t.UserData = "NavigationPlaceHolder";
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				string result = t.Run ();
+			}, "#A1");
+		}
+
+		public static void LayoutTemplateRender (Page p)
+		{
+			var w = new Wizard ();
+			w.ID = "MyWizard";
+			WebTest curTest = WebTest.CurrentTest;
+			string id = (string)curTest.UserData;
+
+			switch (id) {
+				case "Empty":
+					w.LayoutTemplate = new TestLayoutTemplate ();
+					break;
+
+				case "OptionalSideBar_NoSideBar":
+					w.LayoutTemplate = new TestLayoutTemplate {
+						HasHeaderPlaceHolder = true,
+						HasNavigationPlaceHolder = true,
+						HasWizardStepPlaceHolder = true
+					};
+					w.DisplaySideBar = false;
+					break;
+
+				case "OptionalSideBar_WithSideBar":
+					w.LayoutTemplate = new TestLayoutTemplate {
+						HasHeaderPlaceHolder = true,
+						HasNavigationPlaceHolder = true,
+						HasWizardStepPlaceHolder = true
+					};
+					w.DisplaySideBar = true;
+					break;
+
+				case "RenderSideBar":
+					w.LayoutTemplate = new TestLayoutTemplate {
+						HasHeaderPlaceHolder = true,
+						HasNavigationPlaceHolder = true,
+						HasWizardStepPlaceHolder = true,
+						HasSideBarPlaceHolder = true
+					};
+					AddWizardStep (w, "Step", "step1");
+					break;
+
+				case "OptionalHeader_NoHeaderTemplate":
+					w.LayoutTemplate = new TestLayoutTemplate {
+						HasNavigationPlaceHolder = true,
+						HasWizardStepPlaceHolder = true
+					};
+					w.DisplaySideBar = false;
+					break;
+
+				case "OptionalHeader_WithHeaderTemplate":
+					w.LayoutTemplate = new TestLayoutTemplate {
+						HasNavigationPlaceHolder = true,
+						HasWizardStepPlaceHolder = true
+					};
+					w.HeaderTemplate = new TestHeaderTemplate ();
+					w.DisplaySideBar = false;
+					break;
+
+				case "RenderHeader":
+					w.LayoutTemplate = new TestLayoutTemplate {
+						HasNavigationPlaceHolder = true,
+						HasWizardStepPlaceHolder = true,
+						HasHeaderPlaceHolder = true
+					};
+					w.HeaderTemplate = new TestHeaderTemplate ();
+					w.DisplaySideBar = false;
+					AddWizardStep (w, "Step", "step1");
+					break;
+
+				case "RenderHeader_InSpan":
+					w.LayoutTemplate = new TestLayoutTemplate {
+						HasNavigationPlaceHolder = true,
+						HasWizardStepPlaceHolder = true,
+						HasHeaderPlaceHolder = true,
+						HeaderPlaceHolderType = typeof (TestHeaderSpan)
+					};
+					w.HeaderTemplate = new TestHeaderTemplate ();
+					w.DisplaySideBar = false;
+					AddWizardStep (w, "Step", "step1");
+					break;
+
+				case "StepPlaceHolder":
+					w.LayoutTemplate = new TestLayoutTemplate {
+						HasNavigationPlaceHolder = true,
+					};
+					w.DisplaySideBar = false;
+					break;
+
+				case "NavigationPlaceHolder":
+					w.LayoutTemplate = new TestLayoutTemplate {
+						HasWizardStepPlaceHolder = true,
+					};
+					w.DisplaySideBar = false;
+					break;
+
+				default:
+					throw new InvalidOperationException ("Unknown id '" + id + "'");
+			}
+
+			p.Form.Controls.Add (new LiteralControl (HtmlDiff.BEGIN_TAG));
+			p.Form.Controls.Add (w);
+			p.Form.Controls.Add (new LiteralControl (HtmlDiff.END_TAG));
+		}
+
+		static void AddWizardStep (Wizard w, string stepText, string stepID, WizardStepType type = WizardStepType.Step)
+		{
+			var ws = new WizardStep ();
+			ws.ID = stepID;
+			ws.StepType = type;
+			ws.Controls.Add (new LiteralControl (stepText));
+
+			w.WizardSteps.Add (ws);
+		}
+#endif
 		[Test]
 		[Category ("NunitWeb")]
 		public void Wizard_RenderTestCompleteItem ()
@@ -1524,48 +1821,31 @@ namespace MonoTests.System.Web.UI.WebControls
 			FormRequest fr = new FormRequest (t.Response, "form1");
 
 			//Cancel
-#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$StartNavigationTemplateContainerID$CancelButton");
-			fr.Controls["__EVENTTARGET"].Value = "";
-			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls["Wizard1$StartNavigationTemplateContainerID$CancelButton"].Value = "Cancel";
-#else
-			fr.Controls.Add ("__EVENTTARGET");
-			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1$StartNavContainer$CancelButtonButton");
 			fr.Controls ["__EVENTTARGET"].Value = "";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1$StartNavContainer$CancelButtonButton"].Value = "Cancel";
-#endif
+			fr.Controls ["Wizard1$StartNavigationTemplateContainerID$CancelButton"].Value = "Cancel";
+
 			t.Request = fr;
 			html = t.Run ();
 			Assert.AreEqual ("CancelButtonClick", t.UserData.ToString (), "Cancel");
 			
 			// Next
-#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$StartNavigationTemplateContainerID$StartNextButton");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["Wizard1$StartNavigationTemplateContainerID$StartNextButton"].Value = "Next";
-#else
-			fr.Controls.Add ("__EVENTTARGET");
-			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1$StartNavContainer$StartNextButtonButton");
-			fr.Controls["__EVENTTARGET"].Value = "";
-			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1$StartNavContainer$StartNextButtonButton"].Value = "Next";
-#endif
+
 			t.Request = fr;
 			html = t.Run ();
 			Assert.AreEqual ("NextButtonClick", t.UserData.ToString (), "Next");
 
 			// Previous
 			fr = new FormRequest (t.Response, "form1");
-#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$FinishNavigationTemplateContainerID$FinishPreviousButton");
@@ -1573,15 +1853,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["Wizard1$FinishNavigationTemplateContainerID$FinishPreviousButton"].Value = "Previous";
-#else
-			fr.Controls.Add ("__EVENTTARGET");
-			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1$FinishNavContainer$FinishPreviousButtonButton");
 
-			fr.Controls ["__EVENTTARGET"].Value = "";
-			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1$FinishNavContainer$FinishPreviousButtonButton"].Value = "Previous";
-#endif
 			t.Request = fr;
 			html = t.Run ();
 			Assert.AreEqual ("PreviousButtonClick", t.UserData.ToString (), "Previous");
@@ -1600,42 +1872,24 @@ namespace MonoTests.System.Web.UI.WebControls
 			FormRequest fr = new FormRequest (t.Response, "form1");
 
 			// Next
-#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$StartNavigationTemplateContainerID$StartNextButton");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["Wizard1$StartNavigationTemplateContainerID$StartNextButton"].Value = "Next";
-#else
-			fr.Controls.Add ("__EVENTTARGET");
-			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1$StartNavContainer$StartNextButtonButton");
-			fr.Controls ["__EVENTTARGET"].Value = "";
-			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1$StartNavContainer$StartNextButtonButton"].Value = "Next";
-#endif
 			t.Request = fr;
 			html = t.Run ();
 			Assert.AreEqual ("NextButtonClick", t.UserData.ToString (), "Next");
 
 			// Finish
 			fr = new FormRequest (t.Response, "form1");
-#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$FinishNavigationTemplateContainerID$FinishButton");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["Wizard1$FinishNavigationTemplateContainerID$FinishButton"].Value = "Finish";
-#else
-			fr.Controls.Add ("__EVENTTARGET");
-			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1$FinishNavContainer$FinishButtonButton");
-			fr.Controls ["__EVENTTARGET"].Value = "";
-			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1$FinishNavContainer$FinishButtonButton"].Value = "Finish";
-#endif
 			t.Request = fr;
 			t.Run ();
 			Assert.AreEqual ("FinishButtonClick", t.UserData.ToString (), "Finish");
@@ -1655,19 +1909,11 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			//SideBarButton
 			fr = new FormRequest (t.Response, "form1");
-#if DOT_NET
-			fr.Controls.Add ("__EVENTTARGET");
-			fr.Controls.Add ("__EVENTARGUMENT");
-
-			fr.Controls["__EVENTTARGET"].Value = "Wizard1$SideBarContainer$SideBarList$ctl01$SideBarButton";
-			fr.Controls["__EVENTARGUMENT"].Value = "";
-#else
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 
 			fr.Controls ["__EVENTTARGET"].Value = "Wizard1$SideBarContainer$SideBarList$ctl01$SideBarButton";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-#endif
 			t.Request = fr;
 			html = t.Run ();
 			Assert.AreEqual ("SideBarButtonClick", t.UserData.ToString (), "SideBarButton");

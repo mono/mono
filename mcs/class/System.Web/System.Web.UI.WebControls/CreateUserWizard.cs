@@ -1122,7 +1122,7 @@ namespace System.Web.UI.WebControls
 
 			if (CompleteStep == null)
 				WizardSteps.AddAt (WizardSteps.Count, new CompleteWizardStep ());
-
+			
 			base.CreateChildControls ();
 		}
 
@@ -1589,23 +1589,20 @@ namespace System.Web.UI.WebControls
 			protected override void UpdateState ()
 			{
 				// previous
-				if (_createUserWizard.AllowNavigationToStep (_createUserWizard.ActiveStepIndex - 1)) {
+				int previous = _createUserWizard.ActiveStepIndex - 1;
+				if (previous >= 0 && _createUserWizard.AllowNavigationToStep (previous))
 					UpdateNavButtonState (Wizard.StepPreviousButtonID + Wizard.StepPreviousButtonType, Wizard.StepPreviousButtonText, Wizard.StepPreviousButtonImageUrl, Wizard.StepPreviousButtonStyle);
-				}
-				else {
+				else
 					((Table) Controls [0]).Rows [0].Cells [0].Visible = false;
-				}
 
 				// create user
 				UpdateNavButtonState (Wizard.StepNextButtonID + _createUserWizard.CreateUserButtonType, _createUserWizard.CreateUserButtonText, _createUserWizard.CreateUserButtonImageUrl, _createUserWizard.CreateUserButtonStyle);
 
 				// cancel
-				if (Wizard.DisplayCancelButton) {
+				if (Wizard.DisplayCancelButton)
 					UpdateNavButtonState (Wizard.CancelButtonID + Wizard.CancelButtonType, Wizard.CancelButtonText, Wizard.CancelButtonImageUrl, Wizard.CancelButtonStyle);
-				}
-				else {
+				else
 					((Table) Controls [0]).Rows [0].Cells [2].Visible = false;
-				}
 			}
 		}
 
