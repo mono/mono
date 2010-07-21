@@ -1136,6 +1136,40 @@ namespace Mono.Unix.Native {
 		}
 	}
 
+	[Flags][Map]
+	public enum EpollFlags {
+		EPOLL_CLOEXEC = 02000000,
+		EPOLL_NONBLOCK = 04000,
+	}
+
+	[Flags][Map]
+	public enum EpollEvents : uint {
+		EPOLLIN = 0x001,
+		EPOLLPRI = 0x002,
+		EPOLLOUT = 0x004,
+		EPOLLRDNORM = 0x040,
+		EPOLLRDBAND = 0x080,
+		EPOLLWRNORM = 0x100,
+		EPOLLWRBAND = 0x200,
+		EPOLLMSG = 0x400,
+		EPOLLERR = 0x008,
+		EPOLLHUP = 0x010,
+		EPOLLRDHUP = 0x2000,
+		EPOLLONESHOT = 1 << 30,
+		EPOLLET = unchecked ((uint) (1 << 31))
+	}
+
+	public enum EpollOp {
+		EPOLL_CTL_ADD = 1,
+		EPOLL_CTL_DEL = 2,
+		EPOLL_CTL_MOD = 3,
+	}
+
+	[StructLayout (LayoutKind.Sequential, Pack = 1)]
+	public struct EpollEvent {
+		public EpollEvents events;
+		public IntPtr fd;
+	}
 	#endregion
 
 	#region Classes
@@ -2623,6 +2657,48 @@ namespace Mono.Unix.Native {
 
 		#endregion
 
+		#region <sys/epoll.h> Declarations
+
+		public static int epoll_create (int size)
+		{
+			return sys_epoll_create (size);
+		}
+
+		public static int epoll_create (EpollFlags flags)
+		{
+			return sys_epoll_create1 (flags);
+		}
+
+		public static int epoll_ctl (int epfd, EpollOp op, IntPtr fd, EpollEvents events)
+		{
+			EpollEvent ee = new EpollEvent ();
+			ee.events = events;
+			ee.fd = fd;
+
+			return sys_epoll_ctl (epfd, op, fd, ref ee);
+		}
+
+		public static int epoll_wait (int epfd, EpollEvent [] events, int max_events, int timeout)
+		{
+			if (events.Length < max_events)
+				throw new ArgumentOutOfRangeException ("events", "Must refer to at least 'max_events' elements.");
+
+			return sys_epoll_wait (epfd, events, max_events, timeout);
+		}
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_create")]
+		private static extern int sys_epoll_create (int size);
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_create1")]
+		private static extern int sys_epoll_create1 (EpollFlags flags);
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_ctl")]
+		private static extern int sys_epoll_ctl (int epfd, EpollOp op, IntPtr fd, ref EpollEvent ee);
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_wait")]
+		private static extern int sys_epoll_wait (int epfd, EpollEvent [] ee, int maxevents, int timeout);
+		#endregion
+		
 		#region <sys/mman.h> Declarations
 		//
 		// <sys/mman.h>
