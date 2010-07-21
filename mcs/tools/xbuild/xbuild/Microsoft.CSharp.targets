@@ -16,6 +16,8 @@
 
 		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0'">gmcs</CscToolExe>
 		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.0'">dmcs</CscToolExe>
+
+		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildToolsPath)\Microsoft.CSharp.targets</MSBuildAllProjects>
 	</PropertyGroup>
 
 	<ItemGroup>
