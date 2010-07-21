@@ -1023,6 +1023,7 @@ System.Web.UI.WebControls/SiteMapNodeItemType.cs
 System.Web.UI.WebControls/SiteMapPath.cs
 System.Web.UI.WebControls/SiteMapViewType.cs
 System.Web.UI.WebControls/SortDirection.cs
+System.Web.UI.WebControls/StyleCollection.cs
 System.Web.UI.WebControls/SqlDataSourceCommandEventArgs.cs
 System.Web.UI.WebControls/SqlDataSourceCommandEventHandler.cs
 System.Web.UI.WebControls/SqlDataSourceCommandType.cs

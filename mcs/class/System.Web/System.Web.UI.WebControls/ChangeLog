@@ -1,3 +1,7 @@
+2010-07-20  Marek Habersack  <mhabersack@novell.com>
+
+	* StyleCollection.cs: added
+
 2010-07-19  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlDataSourceView.cs: added the RaiseUnsupportedCapabilityError
