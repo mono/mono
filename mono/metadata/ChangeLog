@@ -1,3 +1,9 @@
+2010-07-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: don't accept more work items or keep waiting for them
+	if the runtime is shutting down. This way, even the idle threads will
+	exit when teh runtime is being shut down.
+
 2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_generic_param_is_constraint_compatible):

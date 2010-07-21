@@ -1245,6 +1245,9 @@ null_array (MonoArray *a, int first, int last)
 static void
 append_job (CRITICAL_SECTION *cs, TPQueue *list, MonoObject *ar)
 {
+	if (mono_runtime_is_shutting_down ())
+		return;
+
 	threadpool_jobs_inc (ar); 
 
 	EnterCriticalSection (cs);
@@ -1478,14 +1481,14 @@ async_invoke_thread (gpointer data)
 				if (wr != WAIT_TIMEOUT && wr != WAIT_IO_COMPLETION)
 					data = dequeue_job (&mono_delegate_section, &async_call_queue);
 			}
-			while (!data && timeout > 0);
+			while (!mono_runtime_is_shutting_down () && !data && timeout > 0);
 		}
 
 		if (!data) {
 			workers = (int) InterlockedCompareExchange (&mono_worker_threads, 0, -1); 
 			min = (int) InterlockedCompareExchange (&mono_min_worker_threads, 0, -1); 
 	
-			while (!data && workers <= min) {
+			while (!mono_runtime_is_shutting_down () && !data && workers <= min) {
 				WaitForSingleObjectEx (job_added, INFINITE, TRUE);
 				if (THREAD_WANTS_A_BREAK (thread))
 					mono_thread_interruption_checkpoint ();
