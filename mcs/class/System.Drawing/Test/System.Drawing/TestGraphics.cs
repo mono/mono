@@ -3611,6 +3611,23 @@ namespace MonoTests.System.Drawing {
 				}
 			}
 		}
+
+		[Test]
+		public void Dpi_556181 ()
+		{
+			float x, y;
+			using (Bitmap bmp = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					x = g.DpiX - 10;
+					y = g.DpiY + 10;
+				}
+				bmp.SetResolution (x, y);
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					Assert.AreEqual (x, g.DpiX, "DpiX");
+					Assert.AreEqual (y, g.DpiY, "DpiY");
+				}
+			}
+		}
 	}
 
 	[TestFixture]
