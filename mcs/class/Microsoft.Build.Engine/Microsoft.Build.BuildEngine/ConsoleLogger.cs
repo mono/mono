@@ -55,6 +55,7 @@ namespace Microsoft.Build.BuildEngine {
 		ColorSetter colorSet;
 		ColorResetter colorReset;
 		bool no_message_color, use_colors;
+		bool noItemAndPropertyList;
 
 		List<BuildStatusEventArgs> events;
 		Dictionary<string, List<string>> errorsTable;
@@ -500,8 +501,11 @@ namespace Microsoft.Build.BuildEngine {
 				case "NoSummary":
 					this.showSummary = false;
 					break;
+				case "NoItemAndPropertyList":
+					this.noItemAndPropertyList = true;
+					break;
 				default:
-					throw new ArgumentException ("Invalid parameter.");
+					throw new ArgumentException ("Invalid parameter : " + s);
 				}
 			}
 		}
@@ -586,7 +590,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		void DumpProperties (IEnumerable properties)
 		{
-			if (!IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
+			if (noItemAndPropertyList || !IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
 				return;
 
 			SetColor (eventColor);
@@ -608,7 +612,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		void DumpItems (IEnumerable items)
 		{
-			if (!IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic) || items == null)
+			if (noItemAndPropertyList || !IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic) || items == null)
 				return;
 
 			SetColor (eventColor);
