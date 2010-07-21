@@ -1,3 +1,9 @@
+
+Wed Jul 21 16:00:08 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* SecurityRuleSet.cs: this enum is actually a byte, the msdn docs are
+	wrong.
+
 2010-05-27  Jb Evain  <jbevain@novell.com>
 
 	* SecurityContextSource.cs: add new enum in net_4_0.

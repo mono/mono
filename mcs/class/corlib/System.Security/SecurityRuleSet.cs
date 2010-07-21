@@ -30,7 +30,7 @@
 
 namespace System.Security {
 
-	public enum SecurityRuleSet
+	public enum SecurityRuleSet : byte
 	{
 		None	= 0,
 		Level1	= 1,
