@@ -1,3 +1,8 @@
+2010-07-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig_2_1.cs: Ensure Aes[Managed] can be created from
+	our managed SSL/TLS implementation
+
 2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DES.cs:

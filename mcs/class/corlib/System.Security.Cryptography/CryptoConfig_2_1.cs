@@ -133,6 +133,8 @@ namespace System.Security.Cryptography {
 			return String.Empty;
 		}
 
+		private const string AES = "System.Security.Cryptography.AesManaged, System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+
 		// non-configurable (versus machine.config) mappings for Moonlight (to avoid loading custom code)
 		public static object CreateFromName (string name)
 		{
@@ -150,6 +152,8 @@ namespace System.Security.Cryptography {
 				return new RNGCryptoServiceProvider ();
 			case "System.Security.Cryptography.RSA":
 				return new Mono.Security.Cryptography.RSAManaged ();
+			case "AES":
+				return (Aes) Activator.CreateInstance (Type.GetType (AES), null);
 			default:
 				throw new NotImplementedException (name);
 			}
