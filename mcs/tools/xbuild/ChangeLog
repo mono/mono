@@ -1,3 +1,8 @@
+2010-07-22  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/*/Microsoft.Common.targets: Set MSBuildAllProjects property.
+	* xbuild/Microsoft.CSharp.targets: Likewise.
+
 2010-07-21  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Silverlight.Common.targets: Set AssemblySearchPaths

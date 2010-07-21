@@ -930,9 +930,14 @@ namespace Microsoft.Build.BuildEngine {
 
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectFile", Path.GetFileName (fullFileName),
 						PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectFullPath", fullFileName, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectName",
 						Path.GetFileNameWithoutExtension (fullFileName),
 						PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectExtension",
+						Path.GetExtension (fullFileName),
+						PropertyType.Reserved));
+
 			string toolsPath = parentEngine.Toolsets [effective_tools_version].ToolsPath;
 			if (toolsPath == null)
 				throw new Exception (String.Format ("Invalid tools version '{0}', no tools path set for this.", effective_tools_version));

@@ -1,3 +1,8 @@
+2010-07-22  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs: Add reserved properties MSBuildProjectFullPath
+	and MSBuildProjectExtension .
+
 2010-07-09  Ankit Jain  <jankit@novell.com>
 
 	Correctly handle precedence of ToolsVersion value coming
