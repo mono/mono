@@ -1,3 +1,8 @@
+2010-07-21  Jackson Harper  <jackson@ximian.com>
+
+	* Syscall.cs: Add bindings to the various epoll
+	functions. (epoll_create, epoll_ctl, epoll_wait).
+
 2008-12-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* NativeConvert.cs: Add FromRealTimeSignum(), ToRealTimeSignum().
