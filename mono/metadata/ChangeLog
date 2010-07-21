@@ -1,3 +1,7 @@
+2010-07-21  Geoff Norton  <gnorton@novell.com>
+
+	* sgen-archdep.h: Fix the build on amd64-darwin.
+
 2010-07-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_print_unhandled_exception): Fix a warning.
