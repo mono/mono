@@ -3162,6 +3162,30 @@ public class ArrayTest
 		Assert.AreEqual (null, array.GetValue (0));
 	}
 
+	[Test]
+	public void SortNullsWithGenericVersion ()
+	{
+            string[] s1 = new string[6]{
+	        "J",
+                "M",
+                 null,
+                "P",
+                "T",
+                "A"};
+
+            string[] s2 = new string[]{null,
+                "A",
+                "J",
+                "M",
+                "P",
+                "T"};
+
+	    Array.Sort<string> (s1);
+            for (int i = 0; i < 6; i++) {
+		    Assert.AreEqual (s1[i], s2[i], "At:" + i);
+            }
+	}
+	
 	//
 	// This is a test case for the case that was broken by the code contributed
 	// for bug  #351638.
@@ -3187,7 +3211,7 @@ public class ArrayTest
 			return ((string)x).CompareTo((string)y);
 		}
 	}
-	
+
 #if NET_4_0
 	[Test]
 	[ExpectedException (typeof (ArgumentException))]

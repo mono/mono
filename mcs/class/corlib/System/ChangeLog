@@ -1,3 +1,9 @@
+2010-07-21  Miguel de Icaza  <miguel@novell.com>
+
+	* Array.cs: Fixes a couple of other cases where we were missing
+	the handling for null values, fixes a broken case of null
+	handling. 
+
 2010-07-21  Jb Evain  <jbevain@novell.com>
 
 	* AppDomain.cs: add IsFullyTrusted stub.

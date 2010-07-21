@@ -1427,6 +1427,8 @@ namespace System
 						// This has the effect of moving the null values to the front if comparer is null
 						while (high > low0 && keys.GetValueImpl (high) != null)
 							--high;
+						while (low < high0 && keys.GetValueImpl (low) == null)
+							++low;
 					} else {
 						while (low < high0 && cmpPivot.CompareTo (keys.GetValueImpl (low)) > 0)
 							++low;
@@ -1679,12 +1681,19 @@ namespace System
 			var keyPivot = array [mid];
 
 			while (true) {
-				// Move the walls in
-				while (low < high0 && keyPivot.CompareTo (array [low]) > 0)
-					++low;
-				while (high > low0 && keyPivot.CompareTo (array [high]) < 0)
-					--high;
-
+				if (keyPivot == null){
+					while (low < high0 && array [low] == null)
+						++low;
+					while (high > low0 && array [high] != null)
+						--high;
+				} else {
+					// Move the walls in
+					while (low < high0 && keyPivot.CompareTo (array [low]) > 0)
+						++low;
+					while (high > low0 && keyPivot.CompareTo (array [high]) < 0)
+						--high;
+				}
+				
 				if (low <= high) {
 					swap (array, items, low, high);
 					++low;
@@ -1731,7 +1740,7 @@ namespace System
 					} else {
 						while (low < high0 && keys [low] == null)
 							++low;
-						while (high > low0 && keys [high] == null)
+						while (high > low0 && keys [high] != null)
 							--high;
 					}
 				}
@@ -1760,11 +1769,18 @@ namespace System
 			T keyPivot = array [mid];
 
 			while (true) {
-				// Move the walls in
-				while (low < high0 && comparison (array [low], keyPivot) < 0)
-					++low;
-				while (high > low0 && comparison (keyPivot, array [high]) < 0)
-					--high;
+				if (keyPivot == null){
+					while (low < high0 && array [low] == null)
+						++low;
+					while (high > low0 && array [high] != null)
+						--high;
+				} else {
+					// Move the walls in
+					while (low < high0 && comparison (array [low], keyPivot) < 0)
+						++low;
+					while (high > low0 && comparison (keyPivot, array [high]) < 0)
+						--high;
+				}
 
 				if (low <= high) {
 					swap<T> (array, low, high);
