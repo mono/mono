@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,10 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -44,301 +40,163 @@ namespace System.Web.UI.WebControls
 		
 		[DefaultValue ("")]
 		public string DataMember {
-			get {
-				object o = ViewState ["DataMember"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["DataMember"] = value;
-			}
+			get { return ViewState.GetString ("DataMember", String.Empty); }
+			set { ViewState ["DataMember"] = value; }
 		}
 
 		[DefaultValue (-1)]
 		public int Depth {
-			get {
-				object o = ViewState ["Depth"];
-				if (o != null) return (int) o;
-				return -1;
-			}
-			set {
-				ViewState ["Depth"] = value;
-			}
+			get { return ViewState.GetInt ("Depth", -1); }
+			set { ViewState ["Depth"] = value; }
 		}
 
 		[DefaultValue (true)]
 		public bool Enabled {
-			get {
-				object o = ViewState ["Enabled"];
-				if (o != null) return (bool) o;
-				return true;
-			}
-			set {
-				ViewState ["Enabled"] = value;
-			}
+			get { return ViewState.GetBool ("Enabled", true); }
+			set { ViewState ["Enabled"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string EnabledField {
-			get {
-				object o = ViewState ["EnabledField"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["EnabledField"] = value;
-			}
+			get { return ViewState.GetString ("EnabledField", String.Empty); }
+			set { ViewState ["EnabledField"] = value; }
 		}
 
 		[Localizable (true)]
 		[DefaultValue ("")]
 		public string FormatString {
-			get {
-				object o = ViewState ["FormatString"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["FormatString"] = value;
-			}
+			get { return ViewState.GetString ("FormatString", String.Empty); }
+			set { ViewState ["FormatString"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageUrl {
-			get {
-				object o = ViewState ["ImageUrl"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["ImageUrl"] = value;
-			}
+			get { return ViewState.GetString ("ImageUrl", String.Empty); }
+			set { ViewState ["ImageUrl"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string ImageUrlField {
-			get {
-				object o = ViewState ["ImageUrlField"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["ImageUrlField"] = value;
-			}
+			get { return ViewState.GetString ("ImageUrlField", String.Empty); }
+			set { ViewState ["ImageUrlField"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string NavigateUrl {
-			get {
-				object o = ViewState ["NavigateUrl"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["NavigateUrl"] = value;
-			}
+			get { return ViewState.GetString ("NavigateUrl", String.Empty); }
+			set { ViewState ["NavigateUrl"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string NavigateUrlField {
-			get {
-				object o = ViewState ["NavigateUrlField"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["NavigateUrlField"] = value;
-			}
+			get { return ViewState.GetString ("NavigateUrlField", String.Empty); }
+			set { ViewState ["NavigateUrlField"] = value; }
 		}
 
 		[DefaultValue (true)]
 		public bool Selectable {
-			get {
-				object o = ViewState ["Selectable"];
-				if (o != null) return (bool) o;
-				return true;
-			}
-			set {
-				ViewState ["Selectable"] = value;
-			}
+			get { return ViewState.GetBool ("Selectable", true); }
+			set { ViewState ["Selectable"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string SelectableField {
-			get {
-				object o = ViewState ["SelectableField"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["SelectableField"] = value;
-			}
+			get { return ViewState.GetString ("SelectableField", String.Empty); }
+			set { ViewState ["SelectableField"] = value; }
 		}
 
 		[DefaultValue ("")]
 		public string Target {
-			get {
-				object o = ViewState ["Target"];
-				if(o != null) return (string)o;
-				return "";
-			}
-			set {
-				ViewState ["Target"] = value;
-			}
+			get { return ViewState.GetString ("Target", String.Empty); }
+			set { ViewState ["Target"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string TargetField {
-			get {
-				object o = ViewState ["TargetField"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["TargetField"] = value;
-			}
+			get { return ViewState.GetString ("TargetField", String.Empty); }
+			set { ViewState ["TargetField"] = value; }
 		}
 
 		[Localizable (true)]
 		[DefaultValue ("")]
 		[WebSysDescription ("The display text of the menu item.")]
 		public string Text {
-			get {
-				object o = ViewState ["Text"];
-				if(o != null) return (string)o;
-				return "";
-			}
-			set {
-				ViewState ["Text"] = value;
-			}
+			get { return ViewState.GetString ("Text", String.Empty); }
+			set { ViewState ["Text"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string TextField {
-			get {
-				object o = ViewState ["TextField"];
-				if(o != null) return (string)o;
-				return "";
-			}
-			set {
-				ViewState ["TextField"] = value;
-			}
+			get { return ViewState.GetString ("TextField", String.Empty); }
+			set { ViewState ["TextField"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[Localizable (true)]
 		public string ToolTip {
-			get {
-				object o = ViewState ["ToolTip"];
-				if(o != null) return (string)o;
-				return "";
-			}
-			set {
-				ViewState ["ToolTip"] = value;
-			}
+			get { return ViewState.GetString ("ToolTip", String.Empty); }
+			set { ViewState ["ToolTip"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string ToolTipField {
-			get {
-				object o = ViewState ["ToolTipField"];
-				if(o != null) return (string)o;
-				return "";
-			}
-			set {
-				ViewState ["ToolTipField"] = value;
-			}
+			get { return ViewState.GetString ("ToolTipField", String.Empty); }
+			set { ViewState ["ToolTipField"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[Localizable (true)]
 		public string Value {
-			get {
-				object o = ViewState ["Value"];
-				if(o != null) return (string)o;
-				return "";
-			}
-			set {
-				ViewState ["Value"] = value;
-			}
+			get { return ViewState.GetString ("Value", String.Empty); }
+			set { ViewState ["Value"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string ValueField {
-			get {
-				object o = ViewState ["ValueField"];
-				if(o != null) return (string)o;
-				return "";
-			}
-			set {
-				ViewState ["ValueField"] = value;
-			}
+			get { return ViewState.GetString ("ValueField", String.Empty); }
+			set { ViewState ["ValueField"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string PopOutImageUrl {
-			get {
-				object o = ViewState ["PopOutImageUrl"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["PopOutImageUrl"] = value;
-			}
+			get { return ViewState.GetString ("PopOutImageUrl", String.Empty); }
+			set { ViewState ["PopOutImageUrl"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string PopOutImageUrlField {
-			get {
-				object o = ViewState ["PopOutImageUrlField"];
-				if(o != null) return (string)o;
-				return "";
-			}
-			set {
-				ViewState ["PopOutImageUrlField"] = value;
-			}
+			get { return ViewState.GetString ("PopOutImageUrlField", String.Empty); }
+			set { ViewState ["PopOutImageUrlField"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string SeparatorImageUrl {
-			get {
-				object o = ViewState ["SeparatorImageUrl"];
-				if (o != null) return (string) o;
-				return "";
-			}
-			set {
-				ViewState ["SeparatorImageUrl"] = value;
-			}
+			get { return ViewState.GetString ("SeparatorImageUrl", String.Empty); }
+			set { ViewState ["SeparatorImageUrl"] = value; }
 		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string SeparatorImageUrlField {
-			get {
-				object o = ViewState ["SeparatorImageUrlField"];
-				if(o != null) return (string)o;
-				return "";
-			}
-			set {
-				ViewState ["SeparatorImageUrlField"] = value;
-			}
+			get { return ViewState.GetString ("SeparatorImageUrlField", String.Empty); }
+			set { ViewState ["SeparatorImageUrlField"] = value; }
 		}
 
 		void IStateManager.LoadViewState (object savedState)
@@ -376,10 +234,10 @@ namespace System.Web.UI.WebControls
 
 		internal void SetDirty ()
 		{
-			foreach (string key in ViewState.Keys)
-				ViewState.SetItemDirty (key, true);
+			StateBag vs = ViewState;
+			foreach (string key in vs.Keys)
+				vs.SetItemDirty (key, true);
 		}
 	}
 }
 
-#endif

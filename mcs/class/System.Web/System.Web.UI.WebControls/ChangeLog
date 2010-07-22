@@ -1,5 +1,7 @@
 2010-07-22  Marek Habersack  <mhabersack@novell.com>
 
+	* MenuItemBinding.cs: made code a bit more compact.
+
 	* MenuRenderingMode.cs: added (4.0)
 
 	* Menu.cs: added the IncludeStyleBlock and RenderingMode 4.0
