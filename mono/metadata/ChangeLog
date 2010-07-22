@@ -1,5 +1,13 @@
 2010-07-24  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-internal.c, sgen-gc.c, sgen-gc.h, sgen-gray.c,
+	sgen-major-copying.c, sgen-marksweep.c, sgen-pinning-stats.c,
+	sgen-pinning.c: Allocate fixed-size structs without specifying the
+	size, instead registering it once with its type.
+	Dynamically-sized need their size specified when being freed.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-major-copying.c, sgen-internal.c, sgen-gc.c, sgen-gc.h,
 	sgen-pinning.c: Copying major collector doesn't mess around with
 	internals of the internal allocator anymore, instead using public
