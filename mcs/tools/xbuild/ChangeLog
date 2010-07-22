@@ -1,5 +1,10 @@
 2010-07-22  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.Silverlight.Common.targets(GenerateMoonlightManifest):
+	Set Inputs/Outputs for the target.
+
+2010-07-22  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/Microsoft.CSharp.targets (CoreCompile): Add
 	$(MSBuildAllProjects) to inputs.
 	* xbuild/Microsoft.VisualBasic.targets (CoreCompile): Likewise.
