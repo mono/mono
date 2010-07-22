@@ -1,3 +1,7 @@
+2010-07-22  Jb Evain  <jbevain@novell.com>
+
+	* method-to-ir.c (BRANCH_COST): set to 10.
+
 2010-07-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (op_to_op_src2_membase): Reorganize the amd64 op->op membase
