@@ -1,3 +1,14 @@
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-internal.c: Internal allocator in its own module.
+
+	* sgen-gc.c, sgen-gc.h, sgen-gray.c, sgen-los.c,
+	sgen-major-copying.c, sgen-marksweep.c, sgen-pinning.c,
+	sgen-pinning-stats.c: Remove internal allocator and call the
+	public functions now.
+
+	* Makefile.am: Added new file.
+
 2010-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-archdep.h (ARCH_COPY_SIGCTX_REGS): Fix warnings on amd64.
