@@ -1,5 +1,12 @@
 2010-07-24  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-major-copying.c, sgen-internal.c, sgen-gc.c, sgen-gc.h,
+	sgen-pinning.c: Copying major collector doesn't mess around with
+	internals of the internal allocator anymore, instead using public
+	functions.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-internal.c: Internal allocator in its own module.
 
 	* sgen-gc.c, sgen-gc.h, sgen-gray.c, sgen-los.c,
