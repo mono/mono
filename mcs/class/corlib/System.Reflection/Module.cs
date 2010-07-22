@@ -290,6 +290,37 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+#if NET_4_0
+		public override bool Equals (object obj)
+		{
+			return obj == this;
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public static bool operator == (Module left, Module right)
+		{
+			if ((object)left == (object)right)
+				return true;
+			if ((object)left == null ^ (object)right == null)
+				return false;
+			return left.Equals (right);
+		}
+
+		public static bool operator != (Module left, Module right)
+		{
+			if ((object)left != (object)right)
+				return false;
+			if ((object)left == null ^ (object)right == null)
+				return true;
+			return !left.Equals (right);
+		}
+
+#endif
+
 #if NET_4_0 || MOONLIGHT
 
 		public virtual Assembly Assembly {
