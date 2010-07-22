@@ -1,6 +1,7 @@
 2010-07-22  Marek Habersack  <mhabersack@novell.com>
 
 	* MenuItemBinding.cs: made code a bit more compact.
+	Implemented ToString (4.0)
 
 	* MenuRenderingMode.cs: added (4.0)
 

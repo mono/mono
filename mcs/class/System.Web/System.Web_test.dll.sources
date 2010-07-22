@@ -503,6 +503,7 @@ System.Web.UI.WebControls/LoginCas.cs
 System.Web.UI.WebControls/LoginNameCas.cs
 System.Web.UI.WebControls/LoginStatusCas.cs
 System.Web.UI.WebControls/MenuTest.cs
+System.Web.UI.WebControls/MenuItemBindingTest.cs
 System.Web.UI.WebControls/MonthChangedEventArgsCas.cs
 System.Web.UI.WebControls/PagedDataSourceCas.cs
 System.Web.UI.WebControls/PanelCas.cs
