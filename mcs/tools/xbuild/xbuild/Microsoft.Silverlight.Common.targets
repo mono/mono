@@ -93,7 +93,9 @@
 		</XamlG>
 	</Target>
 
-	<Target Name="GenerateMoonlightManifest">
+	<Target Name="GenerateMoonlightManifest"
+		Inputs="$(MSBuildAllProjects);$(SilverlightManifestTemplate)"
+		Outputs="@(MoonlightManifestFile->'%(Identity)')">
 		<GenerateMoonlightManifest
 			ManifestFile="@(MoonlightManifestFile->'%(Identity)')"
 			EntryPointAssembly="$(AssemblyName)$(TargetExt)"
