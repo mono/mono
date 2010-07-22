@@ -1,3 +1,9 @@
+2010-07-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_loader_lock_if_inited): New helper function which can be called
+	during startup before the loader lock is initialized.
+	(mono_loader_unlock_if_inited): Ditto.
+
 2010-07-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: don't accept more work items or keep waiting for them
