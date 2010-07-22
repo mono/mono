@@ -1,5 +1,11 @@
 2010-07-22  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.CSharp.targets (CoreCompile): Add
+	$(MSBuildAllProjects) to inputs.
+	* xbuild/Microsoft.VisualBasic.targets (CoreCompile): Likewise.
+
+2010-07-22  Ankit Jain  <jankit@novell.com>
+
 	* Parameters.cs (ProcessConsoleLoggerParameters): Correctly split arg.
 
 2010-07-22  Ankit Jain  <jankit@novell.com>
