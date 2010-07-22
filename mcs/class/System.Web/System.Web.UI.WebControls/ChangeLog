@@ -1,3 +1,10 @@
+2010-07-22  Marek Habersack  <mhabersack@novell.com>
+
+	* MenuRenderingMode.cs: added (4.0)
+
+	* Menu.cs: added the IncludeStyleBlock and RenderingMode 4.0
+	properties (not used in the code yet).
+
 2010-07-21  Marek Habersack  <mhabersack@novell.com>
 
 	* Wizard.cs: made rendering 100% compliant with .NET (button IDs,

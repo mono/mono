@@ -48,6 +48,8 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Xml;
 
+using MonoTests.Common;
+
 namespace MonoTests.System.Web.UI.WebControls
 {
 	
@@ -1023,6 +1025,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			#endregion
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Vertical)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+			Console.WriteLine (OriginControlHtml);
+			Console.WriteLine ("----------------");
+			Console.WriteLine (RenderedControlHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItems_Vertical");
 #if !NET_4_0 || (NET_4_0 && !DOT_NET)
 			// Throws NREX on .NET 4.0, most probably because the adapter's Control is null
@@ -1891,6 +1896,34 @@ namespace MonoTests.System.Web.UI.WebControls
 			item.Text = null;
 			Assert.AreEqual ("VVV", item.Text, "MenuItem_TextValue2#3");
 		}
+#if NET_4_0
+		[Test]
+		public void Menu_RenderingMode ()
+		{
+			var m = new PokerMenu ();
+
+			Assert.AreEqual (MenuRenderingMode.Default, m.RenderingMode, "#A1");
+
+			Array values = Enum.GetValues (typeof (MenuRenderingMode));
+			int minValue = Int32.MaxValue, maxValue = Int32.MinValue;
+
+			foreach (object v in values) {
+				int value = (int) v;
+				if (value < minValue)
+					minValue = value;
+				else if (value > maxValue)
+					maxValue = value;
+			}
+
+			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+				m.RenderingMode = (MenuRenderingMode) (minValue - 1);
+			}, "#A2-1");
+
+			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+				m.RenderingMode = (MenuRenderingMode) (maxValue + 1);
+			}, "#A2-2");
+		}
+#endif
 	}
 }
 #endif

@@ -85,7 +85,10 @@ namespace System.Web.UI.WebControls
 		Style staticSelectedLinkStyle;
 		Style dynamicHoverLinkStyle;
 		Style staticHoverLinkStyle;
-
+#if NET_4_0
+		bool includeStyleBlock = true;
+		MenuRenderingMode renderingMode = MenuRenderingMode.Default;
+#endif
 		static readonly object MenuItemClickEvent = new object();
 		static readonly object MenuItemDataBoundEvent = new object();
 		
@@ -116,7 +119,25 @@ namespace System.Web.UI.WebControls
 				if (eh != null) eh (this, e);
 			}
 		}
+#if NET_4_0
+		[DefaultValue (true)]
+		[Description ("Determines whether or not to render the inline style block (only used in standards compliance mode)")]
+		public bool IncludeStyleBlock {
+			get { return includeStyleBlock; }
+			set { includeStyleBlock = value; }
+		}
 
+		[DefaultValue (MenuRenderingMode.Default)]
+		public MenuRenderingMode RenderingMode {
+			get { return renderingMode; }
+			set {
+				if (value < MenuRenderingMode.Default || value > MenuRenderingMode.List)
+					throw new ArgumentOutOfRangeException ("value");
+
+				renderingMode = value;
+			}
+		}
+#endif
 		[DefaultValueAttribute (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[EditorAttribute ("System.Web.UI.Design.WebControls.MenuBindingsEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
@@ -160,7 +181,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
 		public string DynamicItemFormatString {
 			get {
 				object o = ViewState ["DynamicItemFormatString"];
@@ -243,7 +264,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
 		public string StaticItemFormatString {
 			get {
 				object o = ViewState ["StaticItemFormatString"];
@@ -541,7 +562,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public MenuItemStyleCollection LevelMenuItemStyles {
 			get {
 				if (levelMenuItemStyles == null) {
@@ -555,7 +576,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public MenuItemStyleCollection LevelSelectedStyles {
 			get {
 				if (levelSelectedStyles == null) {
@@ -569,7 +590,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Editor ("System.Web.UI.Design.WebControls.SubMenuStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[Editor ("System.Web.UI.Design.WebControls.SubMenuStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public SubMenuStyleCollection LevelSubMenuStyles {
 			get {
 				if (levelSubMenuStyles == null) {
@@ -705,7 +726,7 @@ namespace System.Web.UI.WebControls
 				ViewState ["spoitf"] = value;
 			}
 		}
-		
+
 
 		[DefaultValue ("")]
 		[UrlProperty]
@@ -736,7 +757,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(MenuItemTemplateContainer), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
+		[Browsable (false)]
 		public ITemplate StaticItemTemplate {
 			get { return staticItemTemplate; }
 			set { staticItemTemplate = value; }
@@ -745,7 +766,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(MenuItemTemplateContainer), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
+		[Browsable (false)]
 		public ITemplate DynamicItemTemplate {
 			get { return dynamicItemTemplate; }
 			set { dynamicItemTemplate = value; }

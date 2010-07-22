@@ -28,6 +28,7 @@ System.Web.UI.WebControls/IDataBoundItemControl.cs
 System.Web.UI.WebControls/IDataBoundListControl.cs
 System.Web.UI.WebControls/IFieldControl.cs
 System.Web.UI.WebControls/IRenderOuterTable.cs
+System.Web.UI.WebControls/MenuRenderingMode.cs
 System.Web.UI.WebControls/RouteParameter.cs
 System.Web.UI.WebControls/WizardLayoutContainer.cs
 System.Web.UI.WebControls/WizardLayoutNavigationContainer.cs
