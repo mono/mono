@@ -143,6 +143,9 @@ namespace Microsoft.Build.Utilities
 
 				try {
 					ProcessWrapper pw = ProcessService.StartProcess (pinfo, outwr, errwr, null, environmentOverride);
+					pw.OutputStreamChanged += delegate (object o, string msg) { ProcessLine (msg, StandardOutputLoggingImportance); };
+					pw.ErrorStreamChanged += delegate (object o, string msg) { ProcessLine (msg, StandardErrorLoggingImportance); };
+
 					pw.WaitForOutput (timeout == Int32.MaxValue ? -1 : timeout);
 					exitCode = pw.ExitCode;
 					outwr.Close();
@@ -153,8 +156,8 @@ namespace Microsoft.Build.Utilities
 					return -1;
 				}
 
-				ProcessOutputFile (output, StandardOutputLoggingImportance);
-				ProcessOutputFile (error, StandardErrorLoggingImportance);
+				if (typeLoadException)
+					ProcessTypeLoadException ();
 
 				Log.LogMessage (MessageImportance.Low, "Tool {0} execution finished.", pathToTool);
 				return exitCode;
@@ -170,34 +173,33 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-		void ProcessOutputFile (string filename, MessageImportance importance)
+		void ProcessTypeLoadException ()
 		{
-			using (StreamReader sr = File.OpenText (filename)) {
-				string line;
-				while ((line = sr.ReadLine ()) != null) {
-					if (typeLoadException) {
-						toolOutput.Append (sr.ReadToEnd ());
-						string output_str = toolOutput.ToString ();
-						Regex reg  = new Regex (@".*WARNING.*used in (mscorlib|System),.*",
-								RegexOptions.Multiline);
+			string output_str = toolOutput.ToString ();
+			Regex reg  = new Regex (@".*WARNING.*used in (mscorlib|System),.*",
+					RegexOptions.Multiline);
 
-						if (reg.Match (output_str).Success)
-							Log.LogError (
-								"Error: A referenced assembly may be built with an incompatible " + 
-								"CLR version. See the compilation output for more details.");
-						else
-							Log.LogError (
-								"Error: A dependency of a referenced assembly may be missing, or " +
-								"you may be referencing an assembly created with a newer CLR " +
-								"version. See the compilation output for more details.");
+			if (reg.Match (output_str).Success)
+				Log.LogError (
+					"Error: A referenced assembly may be built with an incompatible " +
+					"CLR version. See the compilation output for more details.");
+			else
+				Log.LogError (
+					"Error: A dependency of a referenced assembly may be missing, or " +
+					"you may be referencing an assembly created with a newer CLR " +
+					"version. See the compilation output for more details.");
 
-						Log.LogError (output_str);
-					}
+			Log.LogError (output_str);
+		}
 
-					toolOutput.AppendLine (line);
-					LogEventsFromTextOutput (line, importance);
-				}
-			}
+		void ProcessLine (string line, MessageImportance importance)
+		{
+			toolOutput.AppendLine (line);
+
+			// in case of typeLoadException, collect all the output
+			// and then handle in ProcessTypeLoadException
+			if (!typeLoadException)
+				LogEventsFromTextOutput (line, importance);
 		}
 
 		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)

@@ -1,5 +1,11 @@
 2010-04-10  Ankit Jain  <jankit@novell.com>
 
+	* ToolTask.cs: Don't wait for the process to end, before emitting
+	it's stdout/stderr, emit as it is received. This helps with time
+	consuming tools.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
 	* ReservedNameUtils.cs (GetReservedMetadata): Handle empty item.
 
 2010-04-08  Ankit Jain  <jankit@novell.com>
