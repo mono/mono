@@ -1,5 +1,12 @@
 2010-07-24  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-internal.c, sgen-gc.h, sgen-major-copying.c: Make the
+	internal allocator fast by keeping free-lists of chunks, not only
+	within chunks.  Align the chunks, so that on freeing we can get
+	the chunk without searching.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-internal.c, sgen-gc.c, sgen-gc.h, sgen-gray.c,
 	sgen-major-copying.c, sgen-marksweep.c, sgen-pinning-stats.c,
 	sgen-pinning.c: Allocate fixed-size structs without specifying the
