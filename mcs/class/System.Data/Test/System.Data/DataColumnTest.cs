@@ -872,5 +872,46 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (-1, col2.Ordinal, "#D1");
 			Assert.IsNull (col2.Table, "#D2");
 		}
+		
+		[Test]
+		public void B565616_NonIConvertibleTypeTest ()
+		{
+			try {
+				DataTable dt = new DataTable ();
+				Guid id = Guid.NewGuid();
+				dt.Columns.Add ("ID", typeof(string));
+				DataRow row = dt.NewRow ();
+				row["ID"]= id;
+				Assert.AreEqual (id.ToString(), row["ID"], "#N1");
+			} catch (InvalidCastException ex) {
+				Assert.Fail ("#NonIConvertibleType Test");
+			}
+		}
+		
+		[Test]
+		public void B623451_SetOrdinalTest ()
+		{
+			try {
+				DataTable t = new DataTable();
+				t.Columns.Add("one");
+				t.Columns.Add("two");
+				t.Columns.Add("three");
+				Assert.AreEqual ("one", t.Columns[0].ColumnName, "#SO1-1");
+				Assert.AreEqual ("two", t.Columns[1].ColumnName, "#SO1-2");
+				Assert.AreEqual ("three", t.Columns[2].ColumnName, "#SO1-3");
+
+				t.Columns["three"].SetOrdinal(0);
+				Assert.AreEqual ("three", t.Columns[0].ColumnName, "S02-1");
+				Assert.AreEqual ("one", t.Columns[1].ColumnName, "S02-2");
+				Assert.AreEqual ("two", t.Columns[2].ColumnName, "S02-3");
+
+				t.Columns["three"].SetOrdinal(1);
+				Assert.AreEqual ("one", t.Columns[0].ColumnName, "S03-1");
+				Assert.AreEqual ("three", t.Columns[1].ColumnName, "S03-2");
+				Assert.AreEqual ("two", t.Columns[2].ColumnName, "S03-3");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.Fail ("SetOrdinalTest failed");
+			}
+		}
 	}
 }

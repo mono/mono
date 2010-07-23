@@ -714,9 +714,16 @@ namespace System.Data {
 			int start = newOrdinal > oldOrdinal ? oldOrdinal : newOrdinal;
 			int end = newOrdinal > oldOrdinal ?  newOrdinal : oldOrdinal;
 			int direction = newOrdinal > oldOrdinal ? 1 : (-1);
+			
+			// swap ordinals as per direction of column movement
+			if (direction < 0) {
+				start = start + end;
+				end = start - end;
+				start -= end;
+			}
 
 			DataColumn currColumn = this [start];
-			for (int i = start; i < end; i += direction) {
+			for (int i = start; (direction>0 ? i<end : i>end); i += direction) {
 				List [i] = List [i+direction];
 				((DataColumn) List [i]).Ordinal = i;
 			}

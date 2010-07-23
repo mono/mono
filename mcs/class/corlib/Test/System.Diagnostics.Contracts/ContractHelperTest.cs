@@ -240,6 +240,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Contract.TriggerFailure() triggers the assert. Check that the assert is triggered, with the correct text.
 		/// </summary>
 		[Test]
+		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestTriggerFailure ()
 		{
 			try {

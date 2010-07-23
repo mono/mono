@@ -107,6 +107,24 @@ namespace System.Web.UI.WebControls
 			get { return wizard; }
 		}
 		
+		protected override void LoadViewState (object savedState)
+		{
+			// why override?
+			base.LoadViewState (savedState);
+		}
+
+		protected internal override void OnLoad (EventArgs e)
+		{
+			// why override?
+			base.OnLoad (e);
+		}
+
+		protected internal override void RenderChildren (HtmlTextWriter writer)
+		{
+			// why override?
+			base.RenderChildren (writer);
+		}
+		
 		internal void SetWizard (Wizard w)
 		{
 			wizard = w;

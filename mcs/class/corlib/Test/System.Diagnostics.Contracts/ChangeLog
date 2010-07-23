@@ -1,3 +1,11 @@
+2010-07-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractAssertTest.cs
+	  ContractAssumeTest.cs
+	  ContractHelperTest.cs
+	  ContractMustUseRewriterTest.cs:
+	  Mark couple of runtime breaking tests (on .NET 4.0) as [Ignore].
+
 2010-06-23  Chris Bacon <chrisbacon76@gmail.com>
 
 	* Added all files

@@ -55,10 +55,10 @@ namespace Mono.Security.Protocol.Tls {
 			_status = 0;
 			if (buffer != null)
 				InputBuffer.Write (buffer, 0, buffer.Length);
-#if !NET_1_0
+#if !MOONLIGHT
                         // also saved from reflection
                         base.CheckCertRevocationStatus = ServicePointManager.CheckCertificateRevocationList;
-#endif
+
 			ClientCertSelection += delegate (X509CertificateCollection clientCerts, X509Certificate serverCertificate,
 				string targetHost, X509CertificateCollection serverRequestedCertificates) {
 				return ((clientCerts == null) || (clientCerts.Count == 0)) ? null : clientCerts [0];
@@ -67,6 +67,7 @@ namespace Mono.Security.Protocol.Tls {
 				X509Certificate2 cert = (certificate as X509Certificate2);
 				return (cert == null) ? null : cert.PrivateKey;
 			};
+#endif
                }
 
 		public bool TrustFailure {
@@ -81,6 +82,12 @@ namespace Mono.Security.Protocol.Tls {
 			}
 		}
 
+#if MOONLIGHT
+                internal override bool RaiseServerCertificateValidation (X509Certificate certificate, int[] certificateErrors)
+		{
+			return true;
+		}
+#else
                 internal override bool RaiseServerCertificateValidation (X509Certificate certificate, int[] certificateErrors)
                 {
 			bool failed = (certificateErrors.Length > 0);
@@ -118,5 +125,6 @@ namespace Mono.Security.Protocol.Tls {
 			}
 			return failed;
 		}
+#endif
         }
 }
