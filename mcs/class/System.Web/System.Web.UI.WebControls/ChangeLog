@@ -1,5 +1,7 @@
 2010-07-23  Marek Habersack  <mhabersack@novell.com>
 
+	* ValidationSummary.cs: implemented OnInit (4.0)
+
 	* WizardStepBase.cs: added the LoadViewState, OnLoad and
 	RenderChildren methods (2.0+)
 
