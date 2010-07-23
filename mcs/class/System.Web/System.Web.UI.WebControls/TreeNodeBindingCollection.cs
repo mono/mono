@@ -98,6 +98,25 @@ namespace System.Web.UI.WebControls
 		{
 			((TreeNodeBinding)o).SetDirty ();
 		}
+
+		// These three methods are present, but undocumented
+		protected override void OnClear ()
+		{
+			// Why override?
+			base.OnClear ();
+		}
+
+		protected override void OnRemoveComplete (int index, object value)
+		{
+			// Why override?
+			base.OnRemoveComplete (index, value);
+		}
+
+		protected override void OnValidate (object value)
+		{
+			// Why override?
+			base.OnValidate (value);
+		}
 	}
 }
 

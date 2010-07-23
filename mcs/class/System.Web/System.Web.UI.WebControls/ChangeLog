@@ -1,5 +1,10 @@
 2010-07-23  Marek Habersack  <mhabersack@novell.com>
 
+	* TreeNodeStyleCollection.cs: added the OnInsert method (2.0+)
+
+	* TreeNodeBindingCollection.cs: added the OnClear,
+	OnRemoveComplete and OnValidate methods (2.0+)
+
 	* ValidationSummary.cs: implemented OnInit (4.0)
 
 	* WizardStepBase.cs: added the LoadViewState, OnLoad and

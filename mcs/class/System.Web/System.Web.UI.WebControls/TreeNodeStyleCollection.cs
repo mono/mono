@@ -102,6 +102,12 @@ namespace System.Web.UI.WebControls
 		{
 			((TreeNodeStyle)o).SetDirty ();
 		}
+
+		protected override void OnInsert (int index, object value)
+		{
+			// Why override?
+			base.OnInsert (index, value);
+		}
 	}
 }
 
