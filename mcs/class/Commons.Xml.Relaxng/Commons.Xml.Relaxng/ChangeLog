@@ -1,3 +1,8 @@
+2010-07-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngPattern.cs : inherit XmlResolver to parsed rng component.
+	  Fixed bug #622630.
+
 2010-06-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngReader.cs : don't use Name, use LocalName. Fixed bug #617264.

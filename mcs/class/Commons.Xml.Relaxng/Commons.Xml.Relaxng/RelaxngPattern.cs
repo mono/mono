@@ -81,14 +81,15 @@ namespace Commons.Xml.Relaxng
 		{
 			XmlTextReader xtr = null;
 			RelaxngGrammar g = null;
+			RelaxngPattern p;
 			try {
 				if (grammar.IsSourceCompactSyntax) {
-					return RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream))), null, BaseUri, nsContext);
+					p = RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream))), null, BaseUri, nsContext);
 				} else {
 					xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
 					RelaxngReader r = new RelaxngReader (xtr, nsContext, grammar.Resolver);
 					r.MoveToContent ();
-					return r.ReadPattern ();
+					p = r.ReadPattern ();
 				}
 			} catch (Exception ex) { // umm, bad catch though :-(
 				throw new RelaxngException (this, String.Format("Could not include grammar {0}: {1}", uri.AbsoluteUri, ex.Message), ex);
@@ -96,6 +97,8 @@ namespace Commons.Xml.Relaxng
 				if (xtr != null)
 					xtr.Close ();
 			}
+			p.XmlResolver = grammar.Resolver;
+			return p;
 		}
 	}
 
