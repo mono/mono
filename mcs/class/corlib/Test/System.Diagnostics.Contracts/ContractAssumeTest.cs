@@ -21,6 +21,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// or exception is slightly different.
 		/// </summary>
 		[Test]
+		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestAssumeMessage ()
 		{
 			try {

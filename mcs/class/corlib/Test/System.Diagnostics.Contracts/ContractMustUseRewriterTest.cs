@@ -48,6 +48,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Contract.Requires() ALWAYS triggers an assert, regardless of any other factors.
 		/// </summary>
 		[Test]
+		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestRequires ()
 		{
 			CheckMustUseRewriter ("Description: Must use the rewriter when using Contract.Requires",
@@ -62,6 +63,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Contract.Requires() ALWAYS triggers an assert, regardless of any other factors.
 		/// </summary>
 		[Test]
+		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestRequiresTException ()
 		{
 			CheckMustUseRewriter ("Description: Must use the rewriter when using Contract.Requires<TException>",
@@ -76,6 +78,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Contract.Ensures() ALWAYS triggers an assert, regardless of any other factors.
 		/// </summary>
 		[Test]
+		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestEnsures ()
 		{
 			CheckMustUseRewriter ("Description: Must use the rewriter when using Contract.Ensures",
@@ -90,6 +93,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Contract.Ensures() ALWAYS triggers an assert, regardless of any other factors.
 		/// </summary>
 		[Test]
+		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestEnsuresOnThrow ()
 		{
 			CheckMustUseRewriter ("Description: Must use the rewriter when using Contract.EnsuresOnThrow",
@@ -104,6 +108,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Contract.Ensures() ALWAYS triggers an assert, regardless of any other factors.
 		/// </summary>
 		[Test]
+		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestInvariant ()
 		{
 			CheckMustUseRewriter ("Description: Must use the rewriter when using Contract.Invariant",
