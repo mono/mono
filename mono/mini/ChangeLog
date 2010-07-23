@@ -1,3 +1,9 @@
+2010-07-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* xdebug.c (mono_save_trampoline_xdebug_info): Call
+	mono_loader_lock/unlock_if_inited () to avoid asserts on some platforms during
+	startup.
+
 2010-07-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (op_to_op_src2_membase): Reorganize the amd64 op->op membase

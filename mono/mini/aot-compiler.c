@@ -6096,7 +6096,7 @@ mono_save_trampoline_xdebug_info (const char *tramp_name, guint8 *code, guint32 
 		MonoImageWriter *w;
 		MonoDwarfWriter *dw;
 
-		mono_loader_lock ();
+		mono_loader_lock_if_inited ();
 
 		xdebug_begin_emit (&w, &dw);
 
@@ -6104,15 +6104,15 @@ mono_save_trampoline_xdebug_info (const char *tramp_name, guint8 *code, guint32 
 
 		xdebug_end_emit (w, dw, NULL);
 		
-		mono_loader_unlock ();
+		mono_loader_unlock_if_inited ();
 	} else {
 		if (!xdebug_writer)
 			return;
 
-		mono_loader_lock ();
+		mono_loader_lock_if_inited ();
 		mono_dwarf_writer_emit_trampoline (xdebug_writer, tramp_name, NULL, NULL, code, code_size, unwind_info);
 		fflush (xdebug_fp);
-		mono_loader_unlock ();
+		mono_loader_unlock_if_inited ();
 	}
 }
 
