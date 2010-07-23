@@ -1,3 +1,8 @@
+2010-07-23  Marek Habersack  <mhabersack@novell.com>
+
+	* ClientScriptManager.cs: 4.0 adds a class="aspNetHidden"
+	attribute to the div element surrounding the hidden elements.
+
 2010-07-14  Marek Habersack  <mhabersack@novell.com>
 
 	* DataKeyPropertyAttribute.cs: added (4.0)
