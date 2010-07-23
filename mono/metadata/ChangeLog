@@ -1,5 +1,8 @@
 2010-07-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* file-io.c (ves_icall_System_IO_MonoIO_Read): Add a null check.
+	(ves_icall_System_IO_MonoIO_Write): Ditto.
+
 	* loader.c (mono_loader_cleanup): Delete loader_mutex, the shutdown races should
 	be fixed now.
 
