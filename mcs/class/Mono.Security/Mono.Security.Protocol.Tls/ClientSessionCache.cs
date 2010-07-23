@@ -47,6 +47,9 @@ namespace Mono.Security.Protocol.Tls {
 
 		static ClientSessionInfo ()
 		{
+#if MOONLIGHT
+			ValidityInterval = DefaultValidityInterval;
+#else
 			string user_cache_timeout = Environment.GetEnvironmentVariable ("MONO_TLS_SESSION_CACHE_TIMEOUT");
 			if (user_cache_timeout == null) {
 				ValidityInterval = DefaultValidityInterval;
@@ -58,6 +61,7 @@ namespace Mono.Security.Protocol.Tls {
 					ValidityInterval = DefaultValidityInterval;
 				}
 			}
+#endif
 		}
 
 		public ClientSessionInfo (string hostname, byte[] id)

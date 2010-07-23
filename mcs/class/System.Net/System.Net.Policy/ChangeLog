@@ -1,3 +1,9 @@
+2010-07-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDomainPolicy.cs: Add internal setter for Exception property
+	* ClientAccessPolicy.cs: Re-order checks (to match SL) and throw 
+	NotSupportedException for invalid headers
+
 2010-07-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NoAccessPolicy.cs: Set default to SecurityException each time

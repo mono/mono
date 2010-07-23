@@ -1,3 +1,8 @@
+
+Fri Jul 23 16:46:38 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* Funcs.cs: Fixed typo in Func`15.
+
 2010-07-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TimeZoneInfo.cs: avoid nullref when there are no adjustment rules.
