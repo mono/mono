@@ -157,19 +157,20 @@ namespace System.Data.Common
 		internal object GetContainerData (object value) 
 		{
 			object obj; 
+			TypeCode tc;
 
 			if (_type.IsInstanceOfType (value)) {
 				return value;
+			} else if ((tc = Type.GetTypeCode (_type)) == TypeCode.String) {
+				return (Convert.ToString (value));
 			} else if (value is IConvertible) {
-				switch (Type.GetTypeCode(_type)) {
+				switch (tc) {
 					case TypeCode.Int16:
 						return (Convert.ToInt16 (value));
 					case TypeCode.Int32:
 						return (Convert.ToInt32 (value));
 					case TypeCode.Int64:
 						return (Convert.ToInt64 (value));
-					case TypeCode.String:
-						return (Convert.ToString (value));
 					case TypeCode.Boolean:
 						return (Convert.ToBoolean (value));
 					case TypeCode.Byte:

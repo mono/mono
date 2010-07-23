@@ -872,5 +872,20 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (-1, col2.Ordinal, "#D1");
 			Assert.IsNull (col2.Table, "#D2");
 		}
+		
+		[Test]
+		public void B565616_NonIConvertibleTypeTest ()
+		{
+			try {
+				DataTable dt = new DataTable ();
+				Guid id = Guid.NewGuid();
+				dt.Columns.Add ("ID", typeof(string));
+				DataRow row = dt.NewRow ();
+				row["ID"]= id;
+				Assert.AreEqual (id.ToString(), row["ID"], "#N1");
+			} catch (InvalidCastException ex) {
+				Assert.Fail ("#NonIConvertibleType Test");
+			}
+		}
 	}
 }
