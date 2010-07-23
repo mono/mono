@@ -1,3 +1,9 @@
+2010-07-23  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	** Fixes #623451
+	* DataColumnCollection.cs (MoveColumn): Fix shifting of DataColumn  
+	according to the direction of movement.
+	
 2010-06-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #581679
