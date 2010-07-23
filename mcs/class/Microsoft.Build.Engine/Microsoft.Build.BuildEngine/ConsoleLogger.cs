@@ -213,9 +213,11 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void BuildStartedHandler (object sender, BuildStartedEventArgs args)
 		{
-			WriteLine (String.Empty);
-			WriteLine (String.Format ("Build started {0}.", args.Timestamp));
-			WriteLine ("__________________________________________________");
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+				WriteLine (String.Empty);
+				WriteLine (String.Format ("Build started {0}.", args.Timestamp));
+				WriteLine ("__________________________________________________");
+			}
 			buildStart = args.Timestamp;
 
 			PushEvent (args);
@@ -223,6 +225,11 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void BuildFinishedHandler (object sender, BuildFinishedEventArgs args)
 		{
+			if (!IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+				PopEvent ();
+				return;
+			}
+
 			if (args.Succeeded == true && !projectFailed) {
 				WriteLine ("Build succeeded.");
 			} else {
@@ -280,13 +287,15 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void ProjectStartedHandler (object sender, ProjectStartedEventArgs args)
 		{
-			SetColor (eventColor);
-			WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile,
-						String.IsNullOrEmpty (args.TargetNames) ? "default" : args.TargetNames));
-			ResetColor ();
-			WriteLine (String.Empty);
-			DumpProperties (args.Properties);
-			DumpItems (args.Items);
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+				SetColor (eventColor);
+				WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile,
+							String.IsNullOrEmpty (args.TargetNames) ? "default" : args.TargetNames));
+				ResetColor ();
+				WriteLine (String.Empty);
+				DumpProperties (args.Properties);
+				DumpItems (args.Items);
+			}
 			PushEvent (args);
 		}
 		
@@ -310,25 +319,28 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void TargetStartedHandler (object sender, TargetStartedEventArgs args)
 		{
-			indent++;
-			SetColor (eventColor);
-			WriteLine (String.Format ("Target {0}:",args.TargetName));
-			ResetColor ();
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+				indent++;
+				SetColor (eventColor);
+				WriteLine (String.Format ("Target {0}:",args.TargetName));
+				ResetColor ();
+			}
 			PushEvent (args);
 		}
 		
 		public void TargetFinishedHandler (object sender, TargetFinishedEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) || !args.Succeeded) {
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) ||
+					(!args.Succeeded && IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal))) {
 				SetColor (eventColor);
 				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".{2}",
 					args.TargetName, args.ProjectFile,
 					args.Succeeded ? String.Empty : "-- FAILED"));
 				ResetColor ();
+				WriteLine (String.Empty);
 			}
 			indent--;
 
-			WriteLine (String.Empty);
 			PopEvent ();
 		}
 		
@@ -346,7 +358,8 @@ namespace Microsoft.Build.BuildEngine {
 		public void TaskFinishedHandler (object sender, TaskFinishedEventArgs args)
 		{
 			indent--;
-			if (this.verbosity == LoggerVerbosity.Detailed || !args.Succeeded) {
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) ||
+					(!args.Succeeded && IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal))) {
 				SetColor (eventColor);
 				if (args.Succeeded)
 					WriteLine (String.Format ("Done executing task \"{0}\"", args.TaskName));
@@ -373,7 +386,7 @@ namespace Microsoft.Build.BuildEngine {
 		public void WarningHandler (object sender, BuildWarningEventArgs args)
 		{
 			string msg = FormatWarningEvent (args);
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Quiet)) {
 				SetColor (warningColor);
 				WriteLineWithoutIndent (msg);
 				ResetColor ();
@@ -391,7 +404,7 @@ namespace Microsoft.Build.BuildEngine {
 		public void ErrorHandler (object sender, BuildErrorEventArgs args)
 		{
 			string msg = FormatErrorEvent (args);
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Minimal)) {
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Quiet)) {
 				SetColor (errorColor);
 				WriteLineWithoutIndent (msg);
 				ResetColor ();
