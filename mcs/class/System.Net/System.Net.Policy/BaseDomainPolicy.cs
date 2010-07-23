@@ -131,7 +131,7 @@ namespace System.Net.Policy {
 		abstract public bool IsAllowed (WebRequest request);
 
 		public Exception Exception {
-			get { return null; }
+			get; internal set;
 		}
 	}
 }
