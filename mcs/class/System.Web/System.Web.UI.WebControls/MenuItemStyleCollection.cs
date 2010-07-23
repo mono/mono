@@ -98,6 +98,13 @@ namespace System.Web.UI.WebControls
 		{
 			((MenuItemStyle)o).SetDirty ();
 		}
+
+		// Present but not documented
+		protected override void OnInsert (int index, object value)
+		{
+			// Why override?
+			base.OnInsert (index, value);
+		}
 	}
 }
 

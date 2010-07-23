@@ -1,3 +1,10 @@
+2010-07-23  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	** Fixes #565616 - Based on Patch by Hubert FONGARNAND
+	* DataContainer.cs (GetContainerData): If typecode is string, 
+	call Convert.ToString() irrespective of whether value is 
+	IConvertible or not. 
+	
 2010-03-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
     ** Fixes #564833/580736

@@ -1,3 +1,7 @@
+2010-07-23  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	* DataColumnTest.cs (B565616_NonIConvertibleTypeTest): Added new.
+	
 2010-01-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataTableTest2.cs: Mark PrimaryKey test as NotWorking.
