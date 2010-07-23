@@ -30,6 +30,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Contract.Assert(false) will cause an assert to be triggered with the correct message.
 		/// </summary>
 		[Test]
+		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestAssertNoEventHandler ()
 		{
 			try {
@@ -53,6 +54,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Because nothing is done in the event handler, an assert should be triggered.
 		/// </summary>
 		[Test]
+		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestAssertEventHandlerNoAction ()
 		{
 			bool visitedEventHandler = false;
