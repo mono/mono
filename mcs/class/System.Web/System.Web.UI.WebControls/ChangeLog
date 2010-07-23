@@ -1,3 +1,8 @@
+2010-07-23  Marek Habersack  <mhabersack@novell.com>
+
+	* WizardStepBase.cs: added the LoadViewState, OnLoad and
+	RenderChildren methods (2.0+)
+
 2010-07-22  Marek Habersack  <mhabersack@novell.com>
 
 	* MenuItemBinding.cs: made code a bit more compact.
