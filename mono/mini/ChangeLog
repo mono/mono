@@ -1,3 +1,8 @@
+2010-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390x.c: Change the calling convention to pass this as first as on other
+	architectures. Remove some dead code from the get_vcall_slot().
+
 2010-07-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* xdebug.c (mono_save_trampoline_xdebug_info): Call
