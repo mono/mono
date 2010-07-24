@@ -1,3 +1,7 @@
+2010-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-archdep.h (ARCH_COPY_SIGCTX_REGS): Fix warnings on amd64.
+
 2010-07-24  Sanjoy Das <sanjoy@playingwithpointers.com>
 
 	* sgen-gc.h: Removed 'foo defined but not used' warnings for the
