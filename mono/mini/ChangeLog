@@ -1,3 +1,7 @@
+2010-07-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (common_call_trampoline): Fix a warning.
+
 2010-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390x.c: Change the calling convention to pass this as first as on other
