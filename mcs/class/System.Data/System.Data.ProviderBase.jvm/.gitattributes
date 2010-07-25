@@ -1,0 +1,13 @@
+/AbstractDBCommand.cs -crlf
+/AbstractDBConnection.cs -crlf
+/AbstractDBParameter.cs -crlf
+/AbstractDataReader.cs -crlf
+/AbstractDbError.cs -crlf
+/AbstractDbErrorCollection.cs -crlf
+/AbstractDbException.cs -crlf
+/AbstractDbParameterCollection.cs -crlf
+/AbstractTransaction.cs -crlf
+/DbConvert.cs -crlf
+/ParameterMetadataWrapper.cs -crlf
+/ReaderCache.cs -crlf
+/regex.cs -crlf

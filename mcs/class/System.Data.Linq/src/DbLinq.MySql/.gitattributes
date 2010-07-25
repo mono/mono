@@ -1,0 +1,8 @@
+/MySqlDataContext.cs -crlf
+/MySqlSchemaLoader.Columns.cs -crlf
+/MySqlSchemaLoader.Constraints.cs -crlf
+/MySqlSchemaLoader.StoredProcedures.cs -crlf
+/MySqlSchemaLoader.Tables.cs -crlf
+/MySqlSchemaLoader.cs -crlf
+/MySqlSqlProvider.cs -crlf
+/MySqlVendor.cs -crlf

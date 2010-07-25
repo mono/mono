@@ -1,0 +1,13 @@
+/AdaptingCollectionTests.cs -crlf
+/CatalogFilteringTests.cs -crlf
+/CompositionContainerAttributedModelCycleTests.cs -crlf
+/ConstructorInjectionTests.cs -crlf
+/DelayLoadingTests.cs -crlf
+/DelegateCompositionTests.cs -crlf
+/DiscoveryTests.cs -crlf
+/ExportProviderEventTests.cs -crlf
+/LifetimeTests.cs -crlf
+/PartCreatorTests.cs -crlf
+/RecompositionTests.cs -crlf
+/RejectionTests.cs -crlf
+/RequiredCreationPolicyTests.cs -crlf

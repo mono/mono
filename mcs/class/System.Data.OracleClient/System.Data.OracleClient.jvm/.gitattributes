@@ -1,0 +1,12 @@
+/OracleCommand.cs -crlf
+/OracleCommandBuilder.cs -crlf
+/OracleConnection.cs -crlf
+/OracleConvert.cs -crlf
+/OracleDataReader.cs -crlf
+/OracleError.cs -crlf
+/OracleErrorCollection.cs -crlf
+/OracleException.cs -crlf
+/OracleInfoMessageEventArgs.cs -crlf
+/OracleParameter.cs -crlf
+/OracleParameterCollection.cs -crlf
+/OracleTransaction.cs -crlf

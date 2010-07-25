@@ -1,0 +1,13 @@
+/AssemblyInfo.cs -crlf
+/DynamicMock.cs -crlf
+/ICall.cs -crlf
+/ICallHandler.cs -crlf
+/IMethod.cs -crlf
+/IMock.cs -crlf
+/IVerify.cs -crlf
+/MethodSignature.cs -crlf
+/Mock.cs -crlf
+/MockCall.cs -crlf
+/MockInterfaceHandler.cs -crlf
+/MockMethod.cs -crlf
+/nunit.mocks.build -crlf

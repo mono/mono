@@ -1,0 +1,5 @@
+/ConnectionStrings.xml -crlf
+/instnwnd.MySql.sql -crlf
+/instnwnd.Oracle.sql -crlf
+/instnwnd.SQLite.sql -crlf
+/instnwnd.SqlServer.sql -crlf

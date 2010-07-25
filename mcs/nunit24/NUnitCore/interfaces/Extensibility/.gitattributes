@@ -1,0 +1,14 @@
+/Addin.cs -crlf
+/AddinStatus.cs -crlf
+/ExtensionType.cs -crlf
+/IAddin.cs -crlf
+/IAddinManager.cs -crlf
+/IAddinRegistry.cs -crlf
+/IExtensionHost.cs -crlf
+/IExtensionPoint.cs -crlf
+/IFrameworkRegistry.cs -crlf
+/ISuiteBuilder.cs -crlf
+/ITestCaseBuilder.cs -crlf
+/ITestDecorator.cs -crlf
+/NUnitAddinAttribute.cs -crlf
+/TestFramework.cs -crlf

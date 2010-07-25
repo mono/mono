@@ -1,0 +1,8 @@
+/IngresDataContext.cs -crlf
+/IngresSchemaLoader.Columns.cs -crlf
+/IngresSchemaLoader.Constraints.cs -crlf
+/IngresSchemaLoader.StoredProcedures.cs -crlf
+/IngresSchemaLoader.Tables.cs -crlf
+/IngresSchemaLoader.cs -crlf
+/IngresSqlProvider.cs -crlf
+/IngresVendor.cs -crlf

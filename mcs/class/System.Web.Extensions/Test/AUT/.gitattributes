@@ -1,0 +1,11 @@
+/CalendarInCalendarOut.aspx -crlf
+/CancelPostback.js -crlf
+/ClientPageLifecycleEvents.aspx -crlf
+/NoScriptManager.aspx -crlf
+/StopAsynchronousPostback.aspx -crlf
+/TwoPanelsProgress.aspx -crlf
+/TwoScriptManagers.aspx -crlf
+/TwoUpdatePanels.aspx -crlf
+/UpdateButtonInside.aspx -crlf
+/UpdateButtonOutside.aspx -crlf
+/Web.config -crlf

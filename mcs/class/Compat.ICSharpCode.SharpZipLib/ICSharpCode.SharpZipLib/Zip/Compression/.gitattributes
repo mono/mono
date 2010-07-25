@@ -1,0 +1,9 @@
+/Deflater.cs -crlf
+/DeflaterConstants.cs -crlf
+/DeflaterEngine.cs -crlf
+/DeflaterHuffman.cs -crlf
+/DeflaterPending.cs -crlf
+/Inflater.cs -crlf
+/InflaterDynHeader.cs -crlf
+/InflaterHuffmanTree.cs -crlf
+/PendingBuffer.cs -crlf

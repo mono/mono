@@ -1,0 +1,14 @@
+/Assumes.InternalErrorException.cs -crlf
+/Assumes.cs -crlf
+/AttributeServices.cs -crlf
+/ContractServices.cs -crlf
+/GenerationServices.cs -crlf
+/LazyServices.cs -crlf
+/Lock.Reader.cs -crlf
+/Lock.Writer.cs -crlf
+/Lock.cs -crlf
+/ReflectionInvoke.cs -crlf
+/ReflectionServices.cs -crlf
+/Requires.cs -crlf
+/SilverlightReflectionInvoke.cs -crlf
+/StringComparers.cs -crlf

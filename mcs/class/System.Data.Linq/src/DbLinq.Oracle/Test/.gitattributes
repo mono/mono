@@ -1,0 +1,4 @@
+/NorthwindOraODP.dbml -crlf
+/NorthwindOracle.dbml -crlf
+/TestBase.cs -crlf
+/TestBase_odp.cs -crlf

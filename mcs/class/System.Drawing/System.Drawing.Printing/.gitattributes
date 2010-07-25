@@ -1,0 +1,15 @@
+/Duplex.cs -crlf
+/MarginsConverter.cs -crlf
+/PaperKind.cs -crlf
+/PaperSource.cs -crlf
+/PaperSourceKind.cs -crlf
+/PrintAction.cs -crlf
+/PrintController.cs -crlf
+/PrintPageEventHandler.cs -crlf
+/PrintRange.cs -crlf
+/PrinterResolution.cs -crlf
+/PrinterResolutionKind.cs -crlf
+/PrinterUnit.cs -crlf
+/PrintingPermissionLevel.cs -crlf
+/PrintingServices.cs -crlf
+/QueryPageSettingsEventArgs.cs -crlf

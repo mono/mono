@@ -1,0 +1,9 @@
+/DbSchemaLoader.cs -crlf
+/IDataName.cs -crlf
+/IDataTableColumn.cs -crlf
+/IDataType.cs -crlf
+/INameAliases.cs -crlf
+/ISchemaLoader.cs -crlf
+/ISqlProvider.cs -crlf
+/IVendor.cs -crlf
+/VendorAttribute.cs -crlf

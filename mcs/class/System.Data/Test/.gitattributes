@@ -1,0 +1,8 @@
+/MySqlTestBed.dll.config -crlf
+/OdbcTest.cs -crlf
+/PostgresTest.cs -crlf
+/SqlTest.cs -crlf
+/TestExecuteScalar.cs -crlf
+/TestSqlConnection.cs -crlf
+/TestSqlDataReader.cs -crlf
+/TestSqlParameters.cs -crlf

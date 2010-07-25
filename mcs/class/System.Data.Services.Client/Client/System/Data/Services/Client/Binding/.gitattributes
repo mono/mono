@@ -1,0 +1,10 @@
+/BindingEntityInfo.cs -crlf
+/BindingGraph.cs -crlf
+/BindingObserver.cs -crlf
+/BindingUtils.cs -crlf
+/DataServiceCollectionOfT.cs -crlf
+/DataServiceEntityAttribute.cs -crlf
+/DataServiceSaveChangesEventArgs.cs -crlf
+/EntityChangedParams.cs -crlf
+/EntityCollectionChangedParams.cs -crlf
+/LoadCompletedEventArgs.cs -crlf

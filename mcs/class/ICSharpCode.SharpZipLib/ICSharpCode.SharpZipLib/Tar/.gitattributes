@@ -1,0 +1,8 @@
+/InvalidHeaderException.cs -crlf
+/TarArchive.cs -crlf
+/TarBuffer.cs -crlf
+/TarEntry.cs -crlf
+/TarException.cs -crlf
+/TarHeader.cs -crlf
+/TarInputStream.cs -crlf
+/TarOutputStream.cs -crlf

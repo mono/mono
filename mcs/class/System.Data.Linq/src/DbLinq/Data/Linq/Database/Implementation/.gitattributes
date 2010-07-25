@@ -1,0 +1,4 @@
+/DatabaseConnection.cs -crlf
+/DatabaseContext.cs -crlf
+/DatabaseTransaction.cs -crlf
+/TransactionalCommand.cs -crlf

@@ -1,0 +1,10 @@
+/CodeAccessSecurityAttribute.cs -crlf
+/EnvironmentPermission.cs -crlf
+/EnvironmentPermissionAttribute.cs -crlf
+/FileDialogPermission.cs -crlf
+/FileDialogPermissionAttribute.cs -crlf
+/FileIOPermissionAttribute.cs -crlf
+/GacIdentityPermission.cs -crlf
+/IUnrestrictedPermission.cs -crlf
+/IsolatedStoragePermissionAttribute.cs -crlf
+/RegistryPermissionAttribute.cs -crlf
