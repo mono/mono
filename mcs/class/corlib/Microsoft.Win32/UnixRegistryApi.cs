@@ -106,6 +106,11 @@ namespace Microsoft.Win32 {
 		string file;
 		bool dirty;
 
+		static KeyHandler ()
+		{
+			CleanVolatileKeys ();
+		}
+
 		KeyHandler (RegistryKey rkey, string basedir) : this (rkey, basedir, false)
 		{
 		}
@@ -260,7 +265,100 @@ namespace Microsoft.Win32 {
 			
 			return String.Concat (rkey.Name, "\\", extra);
 		}
-				
+
+		static long GetSystemBootTime ()
+		{
+			if (!File.Exists ("/proc/stat"))
+				return -1;
+
+			string btime = null;
+			string line;
+
+			try {
+				using (StreamReader stat_file = new StreamReader ("/proc/stat", Encoding.ASCII)) {
+					while ((line = stat_file.ReadLine ()) != null)
+						if (line.StartsWith ("btime")) {
+							btime = line;
+							break;
+						}
+				}
+			} catch (Exception e) {
+				Console.Error.WriteLine ("While reading system info {0}", e);
+			}
+
+			if (btime == null)
+				return -1;
+
+			int space = btime.IndexOf (' ');
+			long res;
+			if (!Int64.TryParse (btime.Substring (space, btime.Length - space), out res))
+				return -1;
+
+			return res;
+		}
+
+		// The registered boot time it's a simple line containing the last system btime.
+		static long GetRegisteredBootTime (string path)
+		{
+			if (!File.Exists (path))
+				return -1;
+
+			string line = null;
+			try {
+				using (StreamReader reader = new StreamReader (path, Encoding.ASCII))
+					line = reader.ReadLine ();
+			} catch (Exception e) {
+				Console.Error.WriteLine ("While reading registry data at {0}: {1}", path, e);
+			}
+
+			if (line == null)
+				return -1;
+
+			long res;
+			if (!Int64.TryParse (line, out res))
+				return -1;
+
+			return res;
+		}
+
+		static void SaveRegisteredBootTime (string path, long btime)
+		{
+			try {
+				using (StreamWriter writer = new StreamWriter (path, false, Encoding.ASCII))
+					writer.WriteLine (btime.ToString ());
+			} catch (Exception e) {
+				Console.Error.WriteLine ("While saving registry data at {0}: {1}", path, e);
+			}
+		}
+			
+		// We save the last boot time in a last-btime file in every root, and we use it
+		// to clean the volatile keys directory in case the system btime changed.
+		static void CleanVolatileKeys ()
+		{
+			long system_btime = GetSystemBootTime ();
+
+			string [] roots = new string [] {
+				UserStore,
+				MachineStore
+			};
+
+			foreach (string root in roots) {
+				if (!Directory.Exists (root))
+					continue;
+
+				string btime_file = Path.Combine (root, "last-btime");
+				string volatile_dir = Path.Combine (root, VolatileDirectoryName);
+
+				if (Directory.Exists (volatile_dir)) {
+					long registered_btime = GetRegisteredBootTime (btime_file);
+					if (system_btime < 0 || registered_btime < 0 || registered_btime != system_btime)
+						Directory.Delete (volatile_dir, true);
+				}
+
+				SaveRegisteredBootTime (btime_file, system_btime);
+			}
+		}
+	
 		public static bool VolatileKeyExists (string dir)
 		{
 			lock (typeof (KeyHandler)) {
