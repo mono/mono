@@ -2,7 +2,6 @@
 /AsymmetricKeyExchangeFormatter.cs -crlf
 /Base64Constants.cs -crlf
 /CspParameters.cs -crlf
-/DES.cs -crlf
 /DSAParameters.cs -crlf
 /DeriveBytes.cs -crlf
 /MD5.cs -crlf
@@ -12,4 +11,3 @@
 /SHA256.cs -crlf
 /SHA384.cs -crlf
 /SHA512.cs -crlf
-/SHAConstants.cs -crlf

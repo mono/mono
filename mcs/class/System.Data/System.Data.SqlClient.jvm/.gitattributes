@@ -1,15 +1,11 @@
-/MetaType.cs -crlf
 /SqlClientPermission.cs -crlf
 /SqlClientPermissionAttribute.cs -crlf
-/SqlCollation.cs -crlf
 /SqlCommand.resx -crlf
 /SqlCommandBuilder.cs -crlf
 /SqlConnection.resx -crlf
 /SqlConvert.cs -crlf
 /SqlDataAdapter.cs -crlf
-/SqlError.cs -crlf
 /SqlException.cs -crlf
-/SqlInfoMessageEventArgs.cs -crlf
 /SqlInfoMessageEventHandler.cs -crlf
 /SqlRowUpdatedEventArgs.cs -crlf
 /SqlRowUpdatedEventHandler.cs -crlf

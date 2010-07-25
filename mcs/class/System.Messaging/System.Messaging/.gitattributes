@@ -19,7 +19,6 @@
 /MessageQueueCriteria.cs -crlf
 /MessageQueueEnumerator.cs -crlf
 /MessageQueueErrorCode.cs -crlf
-/MessageQueueInstaller.cs -crlf
 /MessageQueuePermission.cs -crlf
 /MessageQueuePermissionAccess.cs -crlf
 /MessageQueuePermissionAttribute.cs -crlf

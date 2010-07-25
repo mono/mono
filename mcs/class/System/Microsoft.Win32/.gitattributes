@@ -6,8 +6,6 @@
 /SessionEndedEventHandler.cs -crlf
 /SessionEndingEventArgs.cs -crlf
 /SessionEndingEventHandler.cs -crlf
-/SystemEvents.cs -crlf
-/TimerElapsedEventArgs.cs -crlf
 /TimerElapsedEventHandler.cs -crlf
 /UserPreferenceCategory.cs -crlf
 /UserPreferenceChangedEventArgs.cs -crlf

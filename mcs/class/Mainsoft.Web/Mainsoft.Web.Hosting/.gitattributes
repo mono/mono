@@ -6,7 +6,6 @@
 /BaseFacesViewHandler.cs -crlf
 /ChangeLog -crlf
 /IExtendedViewHandler.cs -crlf
-/IncludeHelperServlet.cs -crlf
 /OutputStreamWrapper.cs -crlf
 /RequestParameterMap.cs -crlf
 /RequestParameterValuesMap.cs -crlf
@@ -17,5 +16,4 @@
 /ServletFacesViewHandler.cs -crlf
 /ServletIncludeUtils.cs -crlf
 /ServletResourceLoader.cs -crlf
-/ServletWorkerRequest.cs -crlf
 /SessionWrapper.cs -crlf

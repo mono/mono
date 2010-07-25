@@ -1,7 +1,6 @@
 /XmlDocumentEventTests.cs -crlf
 /XmlNodeReaderTests.cs -crlf
 /XmlReaderCommonTests.cs -crlf
-/XmlResolverTest.cs -crlf
 /XmlUrlResolverTests.cs -crlf
 /XmlValidatingReaderTests.cs -crlf
 /XmlWriterTests.cs -crlf

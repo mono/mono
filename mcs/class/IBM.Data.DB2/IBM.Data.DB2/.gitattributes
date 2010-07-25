@@ -1,6 +1,5 @@
 /DB2ClientUtils.cs -crlf
 /DB2Command.cs -crlf
-/DB2CommandBuilder.cs -crlf
 /DB2Connection.cs -crlf
 /DB2ConnectionPool.cs -crlf
 /DB2ConnectionSettings.cs -crlf

@@ -1,6 +1,3 @@
-/INullable.cs -crlf
-/SqlBinary.cs -crlf
-/SqlBoolean.cs -crlf
 /SqlByte.cs -crlf
 /SqlCompareOptions.cs -crlf
 /SqlDateTime.cs -crlf
@@ -11,8 +8,5 @@
 /SqlInt32.cs -crlf
 /SqlInt64.cs -crlf
 /SqlMoney.cs -crlf
-/SqlNullValueException.cs -crlf
 /SqlSingle.cs -crlf
 /SqlString.cs -crlf
-/SqlTruncateException.cs -crlf
-/SqlTypeException.cs -crlf

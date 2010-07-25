@@ -15,7 +15,6 @@
 /Error.aspx.designer.cs -crlf
 /GridButton.cs -crlf
 /GridCheckBox.cs -crlf
-/HttpHandlersSectionHandler.cs -crlf
 /Mainsoft.Web.AspnetConfig.css -crlf
 /ManageRole.aspx -crlf
 /ManageRole.aspx.cs -crlf
@@ -28,7 +27,6 @@
 /SecurError.aspx.cs -crlf
 /SecurError.aspx.designer.cs -crlf
 /StrUtils.cs -crlf
-/UrlUtils.cs -crlf
 /Util.Master -crlf
 /Util.Master.cs -crlf
 /Util.Master.designer.cs -crlf

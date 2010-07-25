@@ -1,12 +1,6 @@
-/ConstructionCallDictionary.cs -crlf
-/ConstructionResponse.cs -crlf
 /EnvoyTerminatorSink.cs -crlf
-/ErrorMessage.cs -crlf
 /Header.cs -crlf
 /IInternalMessage.cs -crlf
 /MethodCallDictionary.cs -crlf
-/MethodCallMessageWrapper.cs -crlf
 /MethodReturnDictionary.cs -crlf
-/MethodReturnMessageWrapper.cs -crlf
 /RemotingSurrogate.cs -crlf
-/RemotingSurrogateSelector.cs -crlf
