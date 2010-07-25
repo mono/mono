@@ -1,0 +1,7 @@
+/AuthenticationCallbackHandler.cs -crlf
+/CreateContextPrivilegedAction.cs -crlf
+/ExchangeTokenPrivilegedAction.cs -crlf
+/Krb5Helper.cs -crlf
+/SecureStream.cs -crlf
+/UnwrapPrivilegedAction.cs -crlf
+/WrapPrivilegedAction.cs -crlf

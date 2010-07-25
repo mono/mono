@@ -1,0 +1,10 @@
+/FirebirdProvider.cs -crlf
+/IngresProvider.cs -crlf
+/MySqlProvider.cs -crlf
+/OracleProvider.cs -crlf
+/PostgreSqlProvider.cs -crlf
+/Sql2000Provider.cs -crlf
+/Sql2005Provider.cs -crlf
+/Sql2008Provider.cs -crlf
+/SqlServerProvider.cs -crlf
+/SqliteProvider.cs -crlf

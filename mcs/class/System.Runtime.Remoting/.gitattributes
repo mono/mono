@@ -1,0 +1,3 @@
+/makefile.build -crlf
+/net_1_1_java_System.Runtime.Remoting.dll.exclude.sources -crlf
+/net_1_1_java_System.Runtime.Remoting.dll.sources -crlf

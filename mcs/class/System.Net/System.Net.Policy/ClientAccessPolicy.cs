@@ -75,7 +75,7 @@ namespace System.Net.Policy {
 				// does something allow our URI in this policy ?
 				foreach (AllowFrom af in policy.AllowedServices) {
 					// fake "GET" as method as this does not apply to sockets
-					if (af.IsAllowed (ApplicationUri, "GET", null)) {
+					if (af.IsAllowed (ApplicationUri, "GET")) {
 						// if so, is our request port allowed ?
 						if (policy.PortAllowed (endpoint.Port))
 							return true;
@@ -122,19 +122,24 @@ namespace System.Net.Policy {
 
 		public bool IsAllowed (Uri uri, string method, params string [] headerKeys)
 		{
-			// at this stage the URI has removed the "offending" characters so we need to look at the original
-			if (!CheckOriginalPath (uri)) 
-				return false;
-
 			foreach (AccessPolicy policy in AccessPolicyList) {
 				// does something allow our URI in this policy ?
 				foreach (AllowFrom af in policy.AllowedServices) {
 					// is the application (XAP) URI allowed by the policy ?
-					if (af.IsAllowed (ApplicationUri, method, headerKeys)) {
+					// check headers
+					if (!af.HttpRequestHeaders.IsAllowed (headerKeys)) {
+						Exception = new NotSupportedException ();
+						return false;
+					}
+
+					if (af.IsAllowed (ApplicationUri, method)) {
 						foreach (GrantTo gt in policy.GrantedResources) {
 							// is the requested access to the Uri granted under this policy ?
-							if (gt.IsGranted (uri))
-								return true;
+							if (gt.IsGranted (uri)) {
+								// at this stage the URI has removed the "offending" characters so 
+								// we need to look at the original
+								return CheckOriginalPath (uri);
+							}
 						}
 					}
 				}
@@ -162,12 +167,8 @@ namespace System.Net.Policy {
 
 			public string Scheme { get; internal set; }
 
-			public bool IsAllowed (Uri uri, string method, string [] headerKeys)
+			public bool IsAllowed (Uri uri, string method)
 			{
-				// check headers
-				if (!HttpRequestHeaders.IsAllowed (headerKeys))
-					return false;
-
 				// check scheme
 				if ((Scheme.Length > 0) && (Scheme == uri.Scheme)) {
 					switch (Scheme) {

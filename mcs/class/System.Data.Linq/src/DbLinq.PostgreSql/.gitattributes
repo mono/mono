@@ -1,0 +1,8 @@
+/PgsqlDataContext.cs -crlf
+/PgsqlSchemaLoader.Columns.cs -crlf
+/PgsqlSchemaLoader.Constraints.cs -crlf
+/PgsqlSchemaLoader.StoredProcedures.cs -crlf
+/PgsqlSchemaLoader.Tables.cs -crlf
+/PgsqlSchemaLoader.cs -crlf
+/PgsqlSqlProvider.cs -crlf
+/PgsqlVendor.cs -crlf

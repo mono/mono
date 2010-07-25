@@ -1,0 +1,13 @@
+/SqlClientPermission.cs -crlf
+/SqlClientPermissionAttribute.cs -crlf
+/SqlCommand.resx -crlf
+/SqlCommandBuilder.cs -crlf
+/SqlConnection.resx -crlf
+/SqlConvert.cs -crlf
+/SqlDataAdapter.cs -crlf
+/SqlException.cs -crlf
+/SqlInfoMessageEventHandler.cs -crlf
+/SqlRowUpdatedEventArgs.cs -crlf
+/SqlRowUpdatedEventHandler.cs -crlf
+/SqlRowUpdatingEventArgs.cs -crlf
+/SqlRowUpdatingEventHandler.cs -crlf

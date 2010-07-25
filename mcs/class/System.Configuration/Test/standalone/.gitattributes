@@ -1,0 +1,14 @@
+/t11.exe.expected -crlf
+/t32.exe.expected -crlf
+/t33.exe.expected -crlf
+/t34.exe.expected -crlf
+/t35.exe.config -crlf
+/t35.exe.expected -crlf
+/t36.exe.expected -crlf
+/t38.exe.expected -crlf
+/t39.exe.expected -crlf
+/t40.exe.expected -crlf
+/t41.exe.expected -crlf
+/t42.exe.config -crlf
+/t42.exe.expected -crlf
+/t45.exe.expected -crlf

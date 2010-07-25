@@ -1,0 +1,5 @@
+/ObjectInputStream.cs -crlf
+/ObjectOutputStream.cs -crlf
+/ServletSessionIDManager.cs -crlf
+/ServletSessionStateItemCollection.cs -crlf
+/ServletSessionStateStoreProvider.cs -crlf

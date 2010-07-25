@@ -1,0 +1,17 @@
+/Binary.cs -crlf
+/ChangeConflictCollection.cs -crlf
+/ChangeConflictException.cs -crlf
+/CompiledQuery.cs -crlf
+/ConflictMode.cs -crlf
+/DBConvert.cs -crlf
+/DuplicateKeyException.cs -crlf
+/EntitySet.cs -crlf
+/ForeignKeyReferenceAlreadyHasValueException.cs -crlf
+/IFunctionResult.cs -crlf
+/IMultipleResults.cs -crlf
+/ISingleResult.cs -crlf
+/Link.cs -crlf
+/Makefile -crlf
+/MemberChangeConflict.cs -crlf
+/ModifiedMemberInfo.cs -crlf
+/ObjectChangeConflict.cs -crlf

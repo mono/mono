@@ -1,3 +1,9 @@
+2010-07-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientSessionCache.cs: Do not let the ValidityInterval be 
+	controlled by an environment variable for Moonlight
+	* HttpsClientStream.cs: Simplify code for Moonlight profile
+
 2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CipherSuite.cs:

@@ -1,0 +1,10 @@
+/CharStream.cs -crlf
+/FastCharStream.cs -crlf
+/MultiFieldQueryParser.cs -crlf
+/Package.html -crlf
+/ParseException.cs -crlf
+/QueryParser.cs -crlf
+/QueryParserConstants.cs -crlf
+/QueryParserTokenManager.cs -crlf
+/Token.cs -crlf
+/TokenMgrError.cs -crlf

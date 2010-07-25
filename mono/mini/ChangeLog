@@ -1,3 +1,18 @@
+2010-07-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (common_call_trampoline): Fix a warning.
+
+2010-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390x.c: Change the calling convention to pass this as first as on other
+	architectures. Remove some dead code from the get_vcall_slot().
+
+2010-07-24  Geoff Norton  <gnorton@novell.com>
+
+	* mini-darwin.c: Having reviewed xnu-1504.7.4 it is safe to call fork directly
+	here, it seems the old implementation was a hold over from the linux behaviour
+	This fixed gdb backtrace on amd64 and ppc.
+
 2010-07-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* xdebug.c (mono_save_trampoline_xdebug_info): Call

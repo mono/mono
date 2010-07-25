@@ -1,0 +1,7 @@
+/SqliteDataContext.cs -crlf
+/SqliteSchemaLoader.Columns.cs -crlf
+/SqliteSchemaLoader.Constraints.cs -crlf
+/SqliteSchemaLoader.Tables.cs -crlf
+/SqliteSchemaLoader.cs -crlf
+/SqliteSqlProvider.cs -crlf
+/SqliteVendor.cs -crlf

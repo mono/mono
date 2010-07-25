@@ -1,8 +1,63 @@
+2010-07-25  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-internal.c: Only compile this if HAVE_SGEN_GC is defined.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-internal.c, sgen-gc.h, sgen-major-copying.c: Make the
+	internal allocator fast by keeping free-lists of chunks, not only
+	within chunks.  Align the chunks, so that on freeing we can get
+	the chunk without searching.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-internal.c, sgen-gc.c, sgen-gc.h, sgen-gray.c,
+	sgen-major-copying.c, sgen-marksweep.c, sgen-pinning-stats.c,
+	sgen-pinning.c: Allocate fixed-size structs without specifying the
+	size, instead registering it once with its type.
+	Dynamically-sized need their size specified when being freed.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-major-copying.c, sgen-internal.c, sgen-gc.c, sgen-gc.h,
+	sgen-pinning.c: Copying major collector doesn't mess around with
+	internals of the internal allocator anymore, instead using public
+	functions.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-internal.c: Internal allocator in its own module.
+
+	* sgen-gc.c, sgen-gc.h, sgen-gray.c, sgen-los.c,
+	sgen-major-copying.c, sgen-marksweep.c, sgen-pinning.c,
+	sgen-pinning-stats.c: Remove internal allocator and call the
+	public functions now.
+
+	* Makefile.am: Added new file.
+
+2010-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-archdep.h (ARCH_COPY_SIGCTX_REGS): Fix warnings on amd64.
+
+2010-07-24  Sanjoy Das <sanjoy@playingwithpointers.com>
+
+	* sgen-gc.h: Removed 'foo defined but not used' warnings for the
+	  *_signal_num variables.
+
+2010-07-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_Read): Add a null check.
+	(ves_icall_System_IO_MonoIO_Write): Ditto.
+
+	* loader.c (mono_loader_cleanup): Delete loader_mutex, the shutdown races should
+	be fixed now.
+
 2010-07-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_loader_lock_if_inited): New helper function which can be called
 	during startup before the loader lock is initialized.
 	(mono_loader_unlock_if_inited): Ditto.
+
 
 2010-07-21  Geoff Norton  <gnorton@novell.com>
 

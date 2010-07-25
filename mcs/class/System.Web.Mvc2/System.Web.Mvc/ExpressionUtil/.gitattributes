@@ -1,0 +1,14 @@
+/BinaryExpressionFingerprint.cs -crlf
+/CachedExpressionCompiler.cs -crlf
+/CompiledExpressionDelegate`2.cs -crlf
+/ConditionalExpressionFingerprint.cs -crlf
+/ConstantExpressionFingerprint.cs -crlf
+/ExpressionFingerprint.cs -crlf
+/ExpressionParser.cs -crlf
+/FastTrack`2.cs -crlf
+/HashCodeCombiner.cs -crlf
+/MemberExpressionFingerprint.cs -crlf
+/MethodCallExpressionFingerprint.cs -crlf
+/ParameterExpressionFingerprint.cs -crlf
+/ParserContext.cs -crlf
+/UnaryExpressionFingerprint.cs -crlf

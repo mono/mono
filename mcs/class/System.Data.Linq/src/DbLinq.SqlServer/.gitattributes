@@ -1,0 +1,6 @@
+/SqlServerDataContext.cs -crlf
+/SqlServerExpressionTranslator.cs -crlf
+/SqlServerSchemaLoader.cs -crlf
+/SqlServerSqlProvider.cs -crlf
+/SqlServerTypeConversions.cs -crlf
+/SqlServerVendor.cs -crlf

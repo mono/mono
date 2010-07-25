@@ -1,0 +1,8 @@
+/OracleDataContext.cs -crlf
+/OracleSchemaLoader.Columns.cs -crlf
+/OracleSchemaLoader.Constraints.cs -crlf
+/OracleSchemaLoader.StoredProcedures.cs -crlf
+/OracleSchemaLoader.Tables.cs -crlf
+/OracleSchemaLoader.cs -crlf
+/OracleSqlProvider.cs -crlf
+/OracleVendor.cs -crlf
