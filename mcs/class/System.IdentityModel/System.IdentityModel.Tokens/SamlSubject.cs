@@ -44,7 +44,7 @@ namespace System.IdentityModel.Tokens
 		string name_format, name_qualifier, name;
 		SecurityKey crypto;
 		SecurityKeyIdentifier key_identifier;
-		List<string> confirmation_methods = new List<string> ();
+		List<string> confirmation_methods;
 		string confirmation_data;
 
 		public SamlSubject ()
@@ -52,12 +52,21 @@ namespace System.IdentityModel.Tokens
 		}
 
 		public SamlSubject (string nameFormat, string nameQualifier, string name)
+			: this (nameFormat, nameQualifier, name, new string [0], null, null)
+		{
+		}
+
+		public SamlSubject (string nameFormat, string nameQualifier, string name, IEnumerable<string> confirmations, string confirmationData, SecurityKeyIdentifier securityKeyIdentifier)
 		{
 			if (name == null || name.Length == 0)
 				throw new ArgumentException ("non-zero length string must be specified for name of SAML Subject.");
 			name_format = nameFormat;
 			name_qualifier = nameQualifier;
 			this.name = name;
+
+			confirmation_methods = new List<string> (confirmations);
+			confirmation_data = confirmationData;
+			key_identifier = securityKeyIdentifier;
 		}
 
 		public bool IsReadOnly {

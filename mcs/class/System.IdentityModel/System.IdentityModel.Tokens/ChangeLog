@@ -1,3 +1,7 @@
+2010-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SamlSubject.cs : add missing .ctor().
+
 2007-11-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SecurityKeyIdentifier.cs : fill 'out' parameter properly (gmcs
