@@ -1,3 +1,10 @@
+2010-07-26  Jb Evain  <jbevain@novell.com>
+
+	backport of b48826ee..8e47921f.
+
+  * EmitContext.cs: Properly call methods on enumerations.
+  Fixes #625367.	
+
 2010-05-19  Jb Evain  <jbevain@novell.com>
 
 	backport of r157550.
