@@ -298,8 +298,25 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Ldloca, EmitStored (expression));
 		}
 
+		public void EmitLoadEnum (Expression expression)
+		{
+			expression.Emit (this);
+			ig.Emit (OpCodes.Box, expression.Type);
+		}
+
+		public void EmitLoadEnum (LocalBuilder local)
+		{
+			ig.Emit (OpCodes.Ldloc, local);
+			ig.Emit (OpCodes.Box, local.LocalType);
+		}
+
 		public void EmitLoadSubject (Expression expression)
 		{
+			if (expression.Type.IsEnum) {
+				EmitLoadEnum (expression);
+				return;
+			}
+
 			if (expression.Type.IsValueType) {
 				EmitLoadAddress (expression);
 				return;
@@ -310,6 +327,11 @@ namespace System.Linq.Expressions {
 
 		public void EmitLoadSubject (LocalBuilder local)
 		{
+			if (local.LocalType.IsEnum) {
+				EmitLoadEnum (local);
+				return;
+			}
+
 			if (local.LocalType.IsValueType) {
 				EmitLoadAddress (local);
 				return;

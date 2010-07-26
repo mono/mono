@@ -1,3 +1,8 @@
+2010-07-26  Jb Evain  <jbevain@novell.com>
+
+	* EmitContext.cs: Properly call methods on enumerations.
+	Fixes #625367.
+
 2010-05-19  Jb Evain  <jbevain@novell.com>
 
 	* ConstantExpression.cs: fix emission of nullable constants.
