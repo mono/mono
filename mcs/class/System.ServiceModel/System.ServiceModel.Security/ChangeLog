@@ -1,3 +1,9 @@
+2010-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509CertificateInitiatorClientCredential.cs,
+	  X509CertificateInitiatorServiceCredential.cs :
+	  implement x509 store support.
+
 2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpDigestClientCredential.cs

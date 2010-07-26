@@ -186,7 +186,7 @@ namespace System.ServiceModel.Configuration
 
 		X509Certificate2 GetCertificate (StoreLocation storeLocation, StoreName storeName, X509FindType findType, object findValue)
 		{
-			throw new NotImplementedException ();
+			return ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
 		}
 
 		object CreateInstance (string typeName)

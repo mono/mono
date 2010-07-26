@@ -118,16 +118,24 @@ namespace System.ServiceModel.Configuration
 				return null;
 		}
 
+		public static X509Certificate2 CreateCertificateFrom (StoreLocation storeLocation, StoreName storeName, X509FindType findType, Object findValue)
+		{
+			var store = new X509Store (storeName, storeLocation);
+			store.Open (OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
+			try {
+				foreach (var c in store.Certificates.Find (findType, findValue, false))
+					return c;
+				throw new InvalidOperationException (String.Format ("Specified X509 certificate with find type {0} and find value {1} was not found", findType, findValue));
+			} finally {
+				store.Close ();
+			}
+		}
+
 		public static X509Certificate2 CreateInstance (this CertificateElement el)
 		{
 			return new X509Certificate2 (Convert.FromBase64String (el.EncodedValue));
 		}
 		
-		public static X509Certificate2 CreateCertificateFrom (StoreLocation storeLocation, StoreName storeName, X509FindType findType, Object findValue)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public static X509Certificate2 CreateInstance (this CertificateReferenceElement el)
 		{
 			return CreateCertificateFrom (el.StoreLocation, el.StoreName, el.X509FindType, el.FindValue);

@@ -1,3 +1,8 @@
+2010-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigUtil.cs, ServiceCredentialsElement.cs :
+	  implement x509 store support.
+
 2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientCredentialsElement.cs : warning cleanup.
