@@ -494,5 +494,16 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (2, getter (null, 2));
 			Assert.AreEqual (4, getter (4, 2));
 		}
+
+		[Test]
+		public void CallToStringOnEnum () // #625367
+		{
+			var lambda = Expression.Lambda<Func<string>> (
+				Expression.Call (
+					Expression.Constant (TypeCode.Boolean, typeof (TypeCode)),
+					typeof (object).GetMethod ("ToString"))).Compile ();
+
+			Assert.AreEqual ("Boolean", lambda ());
+		}
 	}
 }
