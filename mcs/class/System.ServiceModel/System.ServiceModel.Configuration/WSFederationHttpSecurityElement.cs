@@ -54,7 +54,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public sealed partial class WSFederationHttpSecurityElement
 		 : ConfigurationElement
 	{
@@ -103,7 +102,11 @@ namespace System.ServiceModel.Configuration
 			get { return properties; }
 		}
 
-
+		internal void ApplyConfiguration (WSFederationHttpSecurity security)
+		{
+			security.Mode = Mode;
+			Message.ApplyConfiguration (security.Message);
+		}
 	}
 
 }

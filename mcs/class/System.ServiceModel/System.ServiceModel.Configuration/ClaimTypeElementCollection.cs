@@ -59,7 +59,6 @@ namespace System.ServiceModel.Configuration
 		 RemoveItemName = "remove",
 		 ClearItemsName = "clear",
 		 CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-	[MonoTODO]
 	public sealed partial class ClaimTypeElementCollection
 		 : ServiceModelConfigurationElementCollection<ClaimTypeElement>,  ICollection,  IEnumerable
 	{
@@ -77,8 +76,6 @@ namespace System.ServiceModel.Configuration
 
 
 		// Properties
-
-
 	}
 
 }

@@ -137,10 +137,13 @@ namespace System.ServiceModel.Configuration
 			get { return (WSFederationHttpSecurityElement) base [security]; }
 		}
 
-
-
-		protected override void OnApplyConfiguration (Binding binding) {
-			throw new NotImplementedException ();
+		protected override void OnApplyConfiguration (Binding binding)
+		{
+			base.OnApplyConfiguration (binding);
+			var b = (WSFederationHttpBinding) binding;
+			b.PrivacyNoticeAt = PrivacyNoticeAt;
+			b.PrivacyNoticeVersion = PrivacyNoticeVersion;
+			Security.ApplyConfiguration (b.Security);
 		}
 	}
 

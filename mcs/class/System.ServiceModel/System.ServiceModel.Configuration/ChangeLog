@@ -1,5 +1,17 @@
 2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClaimTypeElement.cs
+	  ClaimTypeElementCollection.cs
+	  FederatedMessageSecurityOverHttpElement.cs
+	  StandardBindingOptionalReliableSessionElement.cs
+	  StandardBindingReliableSessionElement.cs
+	  WSFederationHttpBindingElement.cs
+	  WSFederationHttpSecurityElement.cs
+	  WSHttpBindingBaseElement.cs : implemented ApplyConfiguration and
+	  add/fix descendants' members.
+
+2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* FederatedMessageSecurityOverHttpElement.cs : use correct converter.
 	* WSFederationHttpBindingCollectionElement.cs : remove extra members.
 	* WSDualHttpBindingElement.cs, WSFederationHttpBindingElement.cs :

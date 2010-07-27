@@ -62,6 +62,7 @@ namespace System.ServiceModel.Configuration
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty algorithm_suite;
 		static ConfigurationProperty claim_type_requirements;
+		static ConfigurationProperty establish_security_context;
 		static ConfigurationProperty issued_key_type;
 		static ConfigurationProperty issued_token_type;
 		static ConfigurationProperty issuer;
@@ -78,6 +79,10 @@ namespace System.ServiceModel.Configuration
 
 			claim_type_requirements = new ConfigurationProperty ("claimTypeRequirements",
 				typeof (ClaimTypeElementCollection), null, null/* FIXME: get converter for ClaimTypeElementCollection*/, null,
+				ConfigurationPropertyOptions.None);
+
+			establish_security_context = new ConfigurationProperty ("establishSecurityContext",
+				typeof (bool), "true", new BooleanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			issued_key_type = new ConfigurationProperty ("issuedKeyType",
@@ -106,6 +111,7 @@ namespace System.ServiceModel.Configuration
 
 			properties.Add (algorithm_suite);
 			properties.Add (claim_type_requirements);
+			properties.Add (establish_security_context);
 			properties.Add (issued_key_type);
 			properties.Add (issued_token_type);
 			properties.Add (issuer);
@@ -134,6 +140,14 @@ namespace System.ServiceModel.Configuration
 			 Options = ConfigurationPropertyOptions.None)]
 		public ClaimTypeElementCollection ClaimTypeRequirements {
 			get { return (ClaimTypeElementCollection) base [claim_type_requirements]; }
+		}
+
+		[ConfigurationProperty ("establishSecurityContext",
+			 Options = ConfigurationPropertyOptions.None,
+			DefaultValue = true)]
+		public bool EstablishSecurityContext {
+			get { return (bool) base [establish_security_context]; }
+			set { base [establish_security_context] = value; }
 		}
 
 		[ConfigurationProperty ("issuedKeyType",
@@ -185,7 +199,25 @@ namespace System.ServiceModel.Configuration
 			get { return (XmlElementElementCollection) base [token_request_parameters]; }
 		}
 
-
+		// Methods
+		internal void ApplyConfiguration (FederatedMessageSecurityOverHttp s)
+		{
+			s.AlgorithmSuite = AlgorithmSuite;
+			foreach (ClaimTypeElement cte in ClaimTypeRequirements)
+				s.ClaimTypeRequirements.Add (cte.Create ());
+			s.EstablishSecurityContext = EstablishSecurityContext;
+			s.IssuedKeyType = IssuedKeyType;
+			s.IssuedTokenType = IssuedTokenType;
+			if (Issuer.Address != null)
+				s.IssuerAddress = new EndpointAddress (Issuer.Address, Issuer.Identity.Create (), Issuer.Headers.Headers);
+			if (!String.IsNullOrEmpty (Issuer.Binding))
+				s.IssuerBinding = ConfigUtil.CreateBinding (Issuer.Binding, Issuer.BindingConfiguration);
+			if (IssuerMetadata.Address != null)
+				s.IssuerMetadataAddress = new EndpointAddress (IssuerMetadata.Address, IssuerMetadata.Identity.Create (), IssuerMetadata.Headers.Headers);
+			s.NegotiateServiceCredential = NegotiateServiceCredential;
+			foreach (XmlElementElement xee in TokenRequestParameters)
+				s.TokenRequestParameters.Add (xee.XmlElement);
+		}
 	}
 
 }

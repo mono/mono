@@ -38,6 +38,8 @@ namespace System.ServiceModel
 	public class WSFederationHttpBinding : WSHttpBindingBase
 	{
 		WSFederationHttpSecurity security;
+		Uri privacy_notice_at;
+		int privacy_notice_ver;
 		bool allow_cookies;
 
 		public WSFederationHttpBinding ()
@@ -68,6 +70,18 @@ namespace System.ServiceModel
 		public bool AllowCookies {
 			get { return allow_cookies; }
 			set { allow_cookies = value; }
+		}
+
+		[MonoTODO]
+		public Uri PrivacyNoticeAt {
+			get { return privacy_notice_at; }
+			set { privacy_notice_at = value; }
+		}
+
+		[MonoTODO]
+		public int PrivacyNoticeVersion {
+			get { return privacy_notice_ver; }
+			set { privacy_notice_ver = value; }
 		}
 
 		[MonoTODO]

@@ -113,7 +113,13 @@ namespace System.ServiceModel.Configuration
 			get { return properties; }
 		}
 
+		// Methods
 
+		internal void ApplyConfiguration (ReliableSession s)
+		{
+			s.InactivityTimeout = InactivityTimeout;
+			s.Ordered = Ordered;
+		}
 	}
 
 }
