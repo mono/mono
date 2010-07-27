@@ -1,5 +1,10 @@
 2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WSDualHttpBindingElement.cs, WSFederationHttpBindingElement.cs :
+	  BindingElementType is not a configuration property.
+
+2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConfigUtil.cs : the error message can be less ambiguous.
 
 2010-07-26  Atsushi Enomoto  <atsushi@ximian.com>

@@ -60,7 +60,6 @@ namespace System.ServiceModel.Configuration
 	{
 		// Static Fields
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty binding_element_type;
 		static ConfigurationProperty privacy_notice_at;
 		static ConfigurationProperty privacy_notice_version;
 		static ConfigurationProperty security;
@@ -81,7 +80,6 @@ namespace System.ServiceModel.Configuration
 				typeof (WSFederationHttpSecurityElement), null, null/* FIXME: get converter for WSFederationHttpSecurityElement*/, null,
 				ConfigurationPropertyOptions.None);
 
-			properties.Add (binding_element_type);
 			properties.Add (privacy_notice_at);
 			properties.Add (privacy_notice_version);
 			properties.Add (security);
@@ -95,7 +93,7 @@ namespace System.ServiceModel.Configuration
 		// Properties
 
 		protected override Type BindingElementType {
-			get { return (Type) base [binding_element_type]; }
+			get { return typeof (WSFederationHttpBinding); }
 		}
 
 		[ConfigurationProperty ("privacyNoticeAt",
