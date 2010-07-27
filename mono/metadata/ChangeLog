@@ -1,3 +1,12 @@
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_generic_param_is_constraint_compatible): Don't
+	fail a contraint check even if the candidate has no constraints.
+	All constraints might resolve to the candidate itself so it can
+	have none.
+
+	Fixes #622225.
+
 2010-07-25  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-internal.c: Only compile this if HAVE_SGEN_GC is defined.
