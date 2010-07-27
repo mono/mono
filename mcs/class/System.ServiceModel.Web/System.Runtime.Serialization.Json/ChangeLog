@@ -1,5 +1,10 @@
 2010-07-27  Andreia Gaita  <avidigal@novell.com>
 
+	* JsonSerializationReader.cs: Add Char type to the switch. Reads the
+	  content as a string and validates its length
+
+2010-07-27  Andreia Gaita  <avidigal@novell.com>
+
 	* JsonSerializationReader.cs, JsonSerializationWriter.cs:
 	  Add a special case for IDictionary, since KeyValuePair objects
 	  have private setters and can't be processed via the normal

@@ -86,6 +86,11 @@ namespace System.Runtime.Serialization.Json
 				}
 				else
 					return reader.ReadElementContentAsString ();
+			case TypeCode.Char:
+				var c = reader.ReadElementContentAsString ();
+				if (c.Length > 1)
+					throw new XmlException ("Invalid JSON char");
+				return Char.Parse(c);
 			case TypeCode.Single:
 				return reader.ReadElementContentAsFloat ();
 			case TypeCode.Double:
