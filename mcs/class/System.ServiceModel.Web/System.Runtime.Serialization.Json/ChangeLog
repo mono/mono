@@ -1,3 +1,10 @@
+2010-07-27  Andreia Gaita  <avidigal@novell.com>
+
+	* JsonSerializationReader.cs, JsonSerializationWriter.cs:
+	  Add a special case for IDictionary, since KeyValuePair objects
+	  have private setters and can't be processed via the normal
+	  object code path.
+
 2010-07-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeMap.cs :
