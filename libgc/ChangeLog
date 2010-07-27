@@ -1,3 +1,7 @@
+2010-07-27  Geoff Norton  <gnorton@novell.com>
+
+	* darwin_stop_world.c: Dont track unneeded registers for amd64.
+
 2010-06-29  Geoff Norton  <gnorton@novell.com>
 
 	* include/private/gc_locks.h: Implement armv6+ variants of
