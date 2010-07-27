@@ -125,7 +125,7 @@ namespace System.ServiceModel.Configuration
 			try {
 				foreach (var c in store.Certificates.Find (findType, findValue, false))
 					return c;
-				throw new InvalidOperationException (String.Format ("Specified X509 certificate with find type {0} and find value {1} was not found", findType, findValue));
+				throw new InvalidOperationException (String.Format ("Specified X509 certificate with find type {0} and find value {1} was not found in X509 store {2} location {3}", findType, findValue, storeName, storeLocation));
 			} finally {
 				store.Close ();
 			}
