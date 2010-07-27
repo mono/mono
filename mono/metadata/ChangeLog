@@ -1,5 +1,16 @@
 2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* image.c (mono_image_load_module): Handle the case of
+	module index equal or smaller than zero. It is possible
+	to embed a valid zero index into metadata so this case
+	must be explicitly handled.
+
+	Patch by Sebastien Pouliot.
+
+	Fixes #623581.
+
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (INVALID_IMPLMAP_FLAGS_BITS): Add non standard
 	bits for best fit on/off (4,5) and throw on unmappable on/off (12/13).
 
