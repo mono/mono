@@ -54,7 +54,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public partial class WSFederationHttpBindingElement
 		 : WSHttpBindingBaseElement,  IBindingConfigurationElement
 	{
@@ -66,7 +65,13 @@ namespace System.ServiceModel.Configuration
 
 		static WSFederationHttpBindingElement ()
 		{
+		}
+
+		static void FillProperties (ConfigurationPropertyCollection baseProps)
+		{
 			properties = new ConfigurationPropertyCollection ();
+			foreach (ConfigurationProperty item in baseProps)
+				properties.Add (item);
 
 			privacy_notice_at = new ConfigurationProperty ("privacyNoticeAt",
 				typeof (Uri), null, new UriTypeConverter (), null,
@@ -116,7 +121,14 @@ namespace System.ServiceModel.Configuration
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+			get {
+				if (properties == null) {
+					var baseProps = base.Properties;
+					lock (baseProps)
+						FillProperties (baseProps);
+				}
+				return properties;
+			}
 		}
 
 		[ConfigurationProperty ("security",

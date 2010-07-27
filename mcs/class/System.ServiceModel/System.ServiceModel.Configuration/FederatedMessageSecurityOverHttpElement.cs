@@ -73,7 +73,7 @@ namespace System.ServiceModel.Configuration
 		{
 			properties = new ConfigurationPropertyCollection ();
 			algorithm_suite = new ConfigurationProperty ("algorithmSuite",
-				typeof (SecurityAlgorithmSuite), "Default", null/* FIXME: get converter for SecurityAlgorithmSuite*/, null,
+				typeof (SecurityAlgorithmSuite), "Default", new SecurityAlgorithmSuiteConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			claim_type_requirements = new ConfigurationProperty ("claimTypeRequirements",

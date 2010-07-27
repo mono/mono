@@ -76,7 +76,13 @@ namespace System.ServiceModel.Configuration
 
 		static WSDualHttpBindingElement ()
 		{
+		}
+		
+		static void FillProperties (ConfigurationPropertyCollection baseProps)
+		{
 			properties = new ConfigurationPropertyCollection ();
+			foreach (ConfigurationProperty prop in baseProps)
+				properties.Add (prop);
 
 			bypass_proxy_on_local = new ConfigurationProperty ("bypassProxyOnLocal",
 				typeof (bool), "false", new BooleanConverter (), null,
@@ -211,7 +217,14 @@ namespace System.ServiceModel.Configuration
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+			get {
+				if (properties == null) {
+					var baseProps = base.Properties;
+					lock (baseProps)
+						FillProperties (baseProps);
+				}
+				return properties;
+			}
 		}
 
 		[ConfigurationProperty ("proxyAddress",

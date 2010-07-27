@@ -1,5 +1,12 @@
 2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* FederatedMessageSecurityOverHttpElement.cs : use correct converter.
+	* WSFederationHttpBindingCollectionElement.cs : remove extra members.
+	* WSDualHttpBindingElement.cs, WSFederationHttpBindingElement.cs :
+	  fill base properties expectedly.
+
+2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WSDualHttpBindingElement.cs, WSFederationHttpBindingElement.cs :
 	  BindingElementType is not a configuration property.
 
