@@ -1,5 +1,14 @@
 2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (concat_two_strings_with_zero): Guard against
+	null strings.
+
+	Modified version of patch by Sebastien Pouliot.
+
+	Fixes #623653.
+
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* image.c (mono_image_load_module): Handle the case of
 	module index equal or smaller than zero. It is possible
 	to embed a valid zero index into metadata so this case
