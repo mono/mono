@@ -1,3 +1,10 @@
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (INVALID_IMPLMAP_FLAGS_BITS): Add non standard
+	bits for best fit on/off (4,5) and throw on unmappable on/off (12/13).
+
+	Fixes #622221.
+
 2010-07-27  Geoff Norton  <gnorton@novell.com>
 
 	* sgen-archdep.h: Ensure we store the registers we actually
