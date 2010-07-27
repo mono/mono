@@ -125,10 +125,14 @@ namespace MonoTests.System.Windows.Forms
 			
 			TypeBuilder logType = module.DefineType ("Logger");
 			FieldBuilder logField = logType.DefineField ("log", ListType, FieldAttributes.Public);
-			ConstructorBuilder logCtor = logType.DefineConstructor (MethodAttributes.Public, CallingConventions.HasThis, new Type [] {ListType, typeof (object)});
+			ConstructorBuilder logCtor = logType.DefineConstructor (MethodAttributes.Public, CallingConventions.HasThis, new Type [] {ListType, itemType});
 			logCtor.DefineParameter (1, ParameterAttributes.None, "test");
 			logCtor.DefineParameter (2, ParameterAttributes.None, "obj");
 			ILGenerator logIL = logCtor.GetILGenerator ();
+
+			logIL.Emit (OpCodes.Ldarg_0);
+			logIL.Emit (OpCodes.Call, typeof (object).GetConstructor (Type.EmptyTypes));
+
 			logIL.Emit (OpCodes.Ldarg_0);
 			logIL.Emit (OpCodes.Ldarg_1);
 			logIL.Emit (OpCodes.Stfld, logField);
