@@ -1,3 +1,8 @@
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* EventLogger.cs: Emit verifiable code. This was blocking the SWF
+	test suite from running under the verifier.
+
 2010-06-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControlTest.cs: New test to assert that getting focus is not
