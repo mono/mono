@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Selectors;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security.Tokens;
 
@@ -71,34 +72,30 @@ namespace System.ServiceModel.Security
 			get { return scoped; }
 		}
 
-		[MonoTODO]
 		public void SetDefaultCertificate (string subjectName,
 			StoreLocation storeLocation, StoreName storeName)
 		{
-			throw new NotImplementedException ();
+			SetDefaultCertificate (storeLocation, storeName, X509FindType.FindBySubjectName, subjectName);
 		}
 
-		[MonoTODO]
 		public void SetDefaultCertificate (StoreLocation storeLocation,
 			StoreName storeName, X509FindType findType, Object findValue)
 		{
-			throw new NotImplementedException ();
+			DefaultCertificate = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
 		}
 
-		[MonoTODO]
 		public void SetScopedCertificate (string subjectName,
 			StoreLocation storeLocation, StoreName storeName,
 			Uri targetService)
 		{
-			throw new NotImplementedException ();
+			SetScopedCertificate (storeLocation, storeName, X509FindType.FindBySubjectName, subjectName, targetService);
 		}
 
-		[MonoTODO]
 		public void SetScopedCertificate (StoreLocation storeLocation,
 			StoreName storeName, X509FindType findType,
 			Object findValue, Uri targetService)
 		{
-			throw new NotImplementedException ();
+			ScopedCertificates [targetService] = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
 		}
 	}
 }
