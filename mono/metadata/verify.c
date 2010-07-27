@@ -3552,10 +3552,13 @@ do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 		}
 		if (!verify_stack_type_compatibility (ctx, type, &copy)) {
 			char *expected = mono_type_full_name (type);
-			char *found = stack_slot_full_name (&copy);
-			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible this argument on stack. Expected %s but found %s at 0x%04x", expected, found, ctx->ip_offset));
+			char *effective = stack_slot_full_name (&copy);
+			char *method_name = mono_method_full_name (method, TRUE);
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible this argument on stack with method signature expected '%s' but got '%s' for a call to '%s' at 0x%04x",
+					expected, effective, method_name, ctx->ip_offset));
+			g_free (method_name);
+			g_free (effective);
 			g_free (expected);
-			g_free (found);
 		}
 
 		if (!IS_SKIP_VISIBILITY (ctx) && !mono_method_can_access_method_full (ctx->method, method, mono_class_from_mono_type (value->type))) {
