@@ -5,6 +5,10 @@
 
 2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_invoke_method): Improve error message.
+
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_generic_param_is_constraint_compatible): Don't
 	fail a contraint check even if the candidate has no constraints.
 	All constraints might resolve to the candidate itself so it can
