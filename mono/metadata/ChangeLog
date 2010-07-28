@@ -1,5 +1,14 @@
 2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object.c (mono_get_delegate_invoke): Don't assert if
+	the Invoke method is not found. This can happen with
+	broken types and it's the caller resposibility to deal
+	with a null return.
+
+	Fixes #553403
+
+2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_assembly_name_from_token): Handle
 	images with null assembly. This can happen with resource
 	or broken assemblies.
