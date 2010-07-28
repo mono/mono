@@ -146,7 +146,7 @@ namespace System.IdentityModel.Selectors
 				value = (TValue) tmp;
 			else
 				throw new ArgumentException (String.Format ("The value of property '{0}' is of type '{1}', while '{2}' is expected.", property, tmp.GetType (), typeof (TValue)));
-			return true;
+			return value != null;
 		}
 	}
 }
