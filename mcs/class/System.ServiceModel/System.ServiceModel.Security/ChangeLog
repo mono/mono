@@ -1,3 +1,8 @@
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceCredentialsSecurityTokenManager.cs : implement some
+	  requirement check for WS-SecureConversation.
+
 2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X509CertificateRecipientClientCredential.cs,

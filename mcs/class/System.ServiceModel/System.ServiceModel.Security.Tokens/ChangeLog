@@ -1,3 +1,11 @@
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenParameters.cs, SupportingTokenParameters.cs,
+	  SslSecurityTokenParameters.cs, IssuedSecurityTokenParameters.cs,
+	  SspiSecurityTokenParameters.cs,
+	  SecureConversationSecurityTokenParameters.cs :
+	  implement ToString().
+
 2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SslSecurityTokenProvider.cs : verify mismatch. We don't have
