@@ -301,7 +301,10 @@ namespace System.Net
 				result.InnerAsyncResult = r;
 				result.DoCallback ();
 			} else {
-				EndRead (r);
+				try {
+					EndRead (r);
+				} catch {
+				}
 			}
 		}
 

@@ -39,7 +39,8 @@ namespace System.Net
 		private FileStream fileStream;
 		private long contentLength;
 		private WebHeaderCollection webHeaders;
-		private bool disposed = false;
+		private bool disposed;
+		Exception exception;
 		
 		// Constructors
 		
@@ -56,6 +57,12 @@ namespace System.Net
 				throw new WebException (e.Message, e);
 			}
 		}
+
+		internal FileWebResponse (Uri responseUri, WebException exception)
+		{
+			this.responseUri = responseUri;
+			this.exception = exception;
+		}
 		
 #if NET_2_0
 		[Obsolete ("Serialization is obsoleted for this type", false)]
@@ -70,6 +77,13 @@ namespace System.Net
 		}
 		
 		// Properties
+		internal bool HasError {
+			get { return exception != null; }
+		}
+
+		internal Exception Error {
+			get { return exception; }
+		}
 		
 		public override long ContentLength {
 			get {
