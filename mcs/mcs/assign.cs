@@ -330,11 +330,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if ((RootContext.Version == LanguageVersion.ISO_1) && (source is MethodGroupExpr)){
-				((MethodGroupExpr) source).ReportUsageError (ec);
-				return null;
-			}
-
 			if (!TypeManager.IsEqual (target_type, source_type)) {
 				Expression resolved = ResolveConversions (ec);
 
@@ -352,7 +347,7 @@ namespace Mono.CSharp {
 			if (tassign == null)
 				throw new InternalErrorException (target.GetType () + " does not support dynamic assignment");
 
-			var target_object = tassign.MakeAssignExpression (ctx);
+			var target_object = tassign.MakeAssignExpression (ctx, source);
 
 			//
 			// Some hacking is needed as DLR does not support void type and requires

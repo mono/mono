@@ -3764,7 +3764,7 @@ namespace Mono.CSharp {
 				Arguments get_value_args = new Arguments (1);
 				get_value_args.Add (new Argument (value));
 
-				Expression get_item = new IndexerAccess (new ElementAccess (switch_cache_field, get_value_args, loc), loc).Resolve (rc);
+				Expression get_item = new ElementAccess (switch_cache_field, get_value_args, loc).Resolve (rc);
 				if (get_item == null)
 					return;
 
@@ -5157,7 +5157,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		sealed class CollectionForeach : Statement, MethodGroupExpr.IErrorHandler
+		sealed class CollectionForeach : Statement, OverloadResolver.IErrorHandler
 		{
 			class Body : Statement
 			{
@@ -5286,20 +5286,26 @@ namespace Mono.CSharp {
 						enumerator.ReturnType.GetSignatureForError (), enumerator.GetSignatureForError ());
 			}
 
+			void Error_AmbiguousIEnumerable (ResolveContext rc, TypeSpec type)
+			{
+				rc.Report.SymbolRelatedToPreviousError (type);
+				rc.Report.Error (1640, loc,
+					"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
+					type.GetSignatureForError (), TypeManager.generic_ienumerable_type.GetSignatureForError ());
+			}
+
 			MethodGroupExpr ResolveGetEnumerator (ResolveContext rc)
 			{
 				//
 				// Option 1: Try to match by name GetEnumerator first
 				//
-				var mexpr = Expression.MemberLookup (rc.Compiler, rc.CurrentType, null, expr.Type, "GetEnumerator", -1,
-					MemberKind.All, BindingRestriction.DefaultMemberLookup | BindingRestriction.AccessibleOnly, loc);
+				var mexpr = Expression.MemberLookup (rc, rc.CurrentType, expr.Type, "GetEnumerator", 0, true, loc);		// TODO: What if CS0229 ?
 
 				var mg = mexpr as MethodGroupExpr;
 				if (mg != null) {
 					mg.InstanceExpression = expr;
-					mg.CustomErrorHandler = this;
 					Arguments args = new Arguments (0);
-					mg = mg.OverloadResolve (rc, ref args, false, loc);
+					mg = mg.OverloadResolve (rc, ref args, this, OverloadResolver.Restrictions.None);
 
 					if (mg != null && args.Count == 0 && !mg.BestCandidate.IsStatic && mg.BestCandidate.IsPublic) {
 						return mg;
@@ -5316,11 +5322,7 @@ namespace Mono.CSharp {
 						foreach (var iface in ifaces) {
 							if (TypeManager.generic_ienumerable_type != null && iface.MemberDefinition == TypeManager.generic_ienumerable_type.MemberDefinition) {
 								if (iface_candidate != null && iface_candidate != TypeManager.ienumerable_type) {
-									rc.Report.SymbolRelatedToPreviousError (expr.Type);
-									rc.Report.Error(1640, loc,
-										"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
-										expr.Type.GetSignatureForError (), TypeManager.generic_ienumerable_type.GetSignatureForError ());
-
+									Error_AmbiguousIEnumerable (rc, expr.Type);
 									return null;
 								}
 
@@ -5337,7 +5339,7 @@ namespace Mono.CSharp {
 
 				if (iface_candidate == null) {
 					rc.Report.Error (1579, loc,
-						"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `{1}' or is not accessible",
+						"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `{1}' or is inaccessible",
 						expr.Type.GetSignatureForError (), "GetEnumerator");
 
 					return null;
@@ -5470,18 +5472,29 @@ namespace Mono.CSharp {
 
 			#region IErrorHandler Members
 
-			bool MethodGroupExpr.IErrorHandler.AmbiguousCall (ResolveContext ec, MethodGroupExpr mg, MethodSpec ambiguous)
+			bool OverloadResolver.IErrorHandler.AmbiguousCandidates (ResolveContext ec, MemberSpec best, MemberSpec ambiguous)
 			{
-				ec.Report.SymbolRelatedToPreviousError (mg.BestCandidate);
+				ec.Report.SymbolRelatedToPreviousError (best);
 				ec.Report.Warning (278, 2, loc,
 					"`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
-					mg.DeclaringType.GetSignatureForError (), "enumerable",
-					mg.BestCandidate.GetSignatureForError (), ambiguous.GetSignatureForError ());
+					expr.Type.GetSignatureForError (), "enumerable",
+					best.GetSignatureForError (), ambiguous.GetSignatureForError ());
 
+				Error_AmbiguousIEnumerable (ec, expr.Type);
 				return true;
 			}
 
-			bool MethodGroupExpr.IErrorHandler.NoExactMatch (ResolveContext ec, MethodSpec method)
+			bool OverloadResolver.IErrorHandler.ArgumentMismatch (ResolveContext rc, MemberSpec best, Argument arg, int index)
+			{
+				return false;
+			}
+
+			bool OverloadResolver.IErrorHandler.NoArgumentMatch (ResolveContext rc, MemberSpec best)
+			{
+				return false;
+			}
+
+			bool OverloadResolver.IErrorHandler.TypeInferenceFailed (ResolveContext rc, MemberSpec best)
 			{
 				return false;
 			}

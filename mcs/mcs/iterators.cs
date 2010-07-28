@@ -336,7 +336,7 @@ namespace Mono.CSharp {
 			readonly Method method;
 
 			public DynamicMethodGroupExpr (Method method, Location loc)
-				: base (null, loc)
+				: base ((IList<MemberSpec>) null, null, loc)
 			{
 				this.method = method;
 				eclass = ExprClass.Unresolved;

@@ -386,7 +386,7 @@ namespace Mono.CSharp {
 	//
 	// Base class for `NewDelegate' and `ImplicitDelegateCreation'
 	//
-	public abstract class DelegateCreation : Expression, MethodGroupExpr.IErrorHandler
+	public abstract class DelegateCreation : Expression, OverloadResolver.IErrorHandler
 	{
 		protected MethodSpec constructor_method;
 		protected MethodGroupExpr method_group;
@@ -438,11 +438,9 @@ namespace Mono.CSharp {
 			constructor_method = Delegate.GetConstructor (ec.Compiler, ec.CurrentType, type);
 
 			var invoke_method = Delegate.GetInvokeMethod (ec.Compiler, type);
-			method_group.DelegateType = type;
-			method_group.CustomErrorHandler = this;
 
 			Arguments arguments = CreateDelegateMethodArguments (invoke_method.Parameters, invoke_method.Parameters.Types, loc);
-			method_group = method_group.OverloadResolve (ec, ref arguments, false, loc);
+			method_group = method_group.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.Covariant);
 			if (method_group == null)
 				return null;
 
@@ -527,6 +525,7 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (invoke_method.ReturnType), Delegate.FullDelegateDesc (invoke_method));
 				return;
 			}
+
 			if (return_type == null) {
 				ec.Report.Error (123, loc, "A method or delegate `{0}' parameters do not match delegate `{1}' parameters",
 					member_name, Delegate.FullDelegateDesc (invoke_method));
@@ -543,25 +542,32 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.delegate_type || target_type == TypeManager.multicast_delegate_type)
 				return false;
 
-			mg.DelegateType = target_type;
 			var invoke = Delegate.GetInvokeMethod (ec.Compiler, target_type);
 
 			Arguments arguments = CreateDelegateMethodArguments (invoke.Parameters, invoke.Parameters.Types, mg.Location);
-			return mg.OverloadResolve (ec, ref arguments, true, mg.Location) != null;
+			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.Covariant | OverloadResolver.Restrictions.ProbingOnly) != null;
 		}
 
 		#region IErrorHandler Members
 
-		public bool NoExactMatch (ResolveContext ec, MethodSpec method)
+		bool OverloadResolver.IErrorHandler.AmbiguousCandidates (ResolveContext ec, MemberSpec best, MemberSpec ambiguous)
 		{
-			if (method.IsGeneric)
-				return false;
+			return false;
+		}
 
-			Error_ConversionFailed (ec, method, null);
+		bool OverloadResolver.IErrorHandler.ArgumentMismatch (ResolveContext rc, MemberSpec best, Argument arg, int index)
+		{
+			Error_ConversionFailed (rc, best as MethodSpec, null);
 			return true;
 		}
 
-		public bool AmbiguousCall (ResolveContext ec, MethodGroupExpr mg, MethodSpec ambiguous)
+		bool OverloadResolver.IErrorHandler.NoArgumentMatch (ResolveContext rc, MemberSpec best)
+		{
+			Error_ConversionFailed (rc, best as MethodSpec, null);
+			return true;
+		}
+
+		bool OverloadResolver.IErrorHandler.TypeInferenceFailed (ResolveContext rc, MemberSpec best)
 		{
 			return false;
 		}
@@ -682,30 +688,16 @@ namespace Mono.CSharp {
 			TypeSpec del_type = InstanceExpr.Type;
 			if (del_type == null)
 				return null;
-			
+
+			//
+			// Do only core overload resolution the rest of the checks has been
+			// done on primary expression
+			//
 			method = Delegate.GetInvokeMethod (ec.Compiler, del_type);
-			var mb = method;
-			var me = new MethodGroupExpr (mb, del_type, loc);
-			me.InstanceExpression = InstanceExpr;
-
-			AParametersCollection pd = mb.Parameters;
-			int pd_count = pd.Count;
-
-			int arg_count = arguments == null ? 0 : arguments.Count;
-
-			bool params_method = pd.HasParams;
-			bool is_params_applicable = false;
-			bool is_applicable = me.IsApplicable (ec, ref arguments, arg_count, ref mb, ref is_params_applicable) == 0;
-			if (arguments != null)
-				arg_count = arguments.Count;
-
-			if (!is_applicable && !params_method && arg_count != pd_count) {
-				ec.Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
-					TypeManager.CSharpName (del_type), arg_count.ToString ());
-			} else if (arguments == null || !arguments.HasDynamic) {
-				me.VerifyArgumentsCompat (ec, ref arguments, arg_count, mb,
-					is_params_applicable || (!is_applicable && params_method), false, loc);
-			}
+			var res = new OverloadResolver (new MemberSpec[] { method }, OverloadResolver.Restrictions.DelegateInvoke, loc);
+			var valid = res.ResolveMember<MethodSpec> (ec, ref arguments);
+			if (valid == null && !res.BestCandidateIsDynamic)
+				return null;
 
 			type = method.ReturnType;
 			eclass = ExprClass.Value;
