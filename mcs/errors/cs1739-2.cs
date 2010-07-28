@@ -1,4 +1,4 @@
-// CS1739: The best overloaded method match for `A.this[int].set' does not contain a parameter named `value'
+// CS1739: The best overloaded method match for `A.this[int]' does not contain a parameter named `value'
 // Line: 17
 
 class A

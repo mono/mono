@@ -1,4 +1,4 @@
-// cs1579-2.cs: foreach statement cannot operate on variables of type `Foo' because it does not contain a definition for `GetEnumerator' or is not accessible
+// Cs1579: foreach statement cannot operate on variables of type `Foo' because it does not contain a definition for `GetEnumerator' or is inaccessible
 // Line: 12
 
 using System;

@@ -1,4 +1,4 @@
-// cs0119.cs: Expression denotes a `method group', where a `variable', `value' or `type' was expected
+// CS0023: The `.' operator cannot be applied to operand of type `method group'
 // Line: 14
 
 using System;

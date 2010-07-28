@@ -1,5 +1,5 @@
-// cs0205-2.cs: Cannot call an abstract base member `A.Foobar'
-// Line: 15
+// CS0205: Cannot call an abstract base member `A.Foobar.get'
+// Line: 22
 
 using System;
 
@@ -10,17 +10,17 @@ public abstract class A
 
 public class B: A
 {
-        public override int Foobar  {
+	public override int Foobar {
 		get {
-                	return base.Foobar;
+			return base.Foobar;
 		}
-        }
+	}
 
-        static void Main ()
-        {
-                B b = new B ();
-                if (b.Foobar == 1)
-			;
-        }
+	static void Main ()
+	{
+		B b = new B ();
+		if (b.Foobar == 1) {
+		}
+	}
 }
 

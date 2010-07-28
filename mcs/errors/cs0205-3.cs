@@ -1,22 +1,22 @@
-// cs0205-3.cs: Cannot call an abstract base member `A.Foobar'
-// Line: 15
+// CS0205: Cannot call an abstract base member `A.Foobar.get'
+// Line: 18
 // Compiler options: -r:CS0205-3-lib.dll
 
 using System;
 
 public class B: A1
 {
-        protected override int Foobar  {
+	protected override int Foobar  {
 		get {
-                	return base.Foobar;
+			return base.Foobar;
 		}
-        }
+	}
 
-        static void Main ()
-        {
-                B b = new B ();
-                if (b.Foobar == 1)
-			;
-        }
+	static void Main ()
+	{
+		B b = new B ();
+		if (b.Foobar == 1) {
+		}
+	}
 }
 

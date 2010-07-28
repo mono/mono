@@ -1,4 +1,4 @@
-// CS1746: The delegate `C.IntDelegate' does not contain a parameter named `b'
+// CS1739: The best overloaded method match for `System.Delegate.DynamicInvoke(params object[])' does not contain a parameter named `b'
 // Line: 18
 
 using System;
@@ -15,6 +15,6 @@ class C
 	public static void Main ()
 	{
 		var del = new IntDelegate (TestInt);
-		del (b : 7);
+		del.DynamicInvoke (b : 7);
 	}
 }

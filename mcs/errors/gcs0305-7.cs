@@ -1,4 +1,4 @@
-// CS0411: The type arguments for method `X.G<T>()' cannot be inferred from the usage. Try specifying the type arguments explicitly
+// CS0305: Using the generic method `X.G<T>()' requires `1' type argument(s)
 // Line: 17
 
 using System;

@@ -1,4 +1,4 @@
-// CS0271: The property or indexer `C.this[string]' cannot be used in this context because a `set' accessor is inaccessible
+// CS0272: The property or indexer `C.this[string]' cannot be used in this context because the set accessor is inaccessible
 // Line: 13
 
 class C

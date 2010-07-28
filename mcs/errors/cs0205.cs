@@ -1,5 +1,6 @@
-// cs0205.cs: Cannot call an abstract base member `A.Foobar()'
-// Line: 20
+// CS0205: Cannot call an abstract base member `A.Foobar()'
+// Line: 21
+
 using System;
 
 public abstract class A

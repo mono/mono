@@ -1,4 +1,4 @@
-// CS1928: Type `Test.mFoo' does not contain a member `Frobnicate' and the best extension method overload `Extensions.Frobnicate<Test>(this Test)' has some invalid arguments
+// CS1928: Type `System.Collections.IList' does not contain a member `Frobnicate' and the best extension method overload `Extensions.Frobnicate<Test>(this Test)' has some invalid arguments
 // Line: 20
 
 using System;
