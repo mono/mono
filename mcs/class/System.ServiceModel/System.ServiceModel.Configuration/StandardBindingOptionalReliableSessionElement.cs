@@ -92,7 +92,7 @@ namespace System.ServiceModel.Configuration
 
 		// Methods
 
-		internal void ApplyConfiguration (OptionalReliableSession s)
+		public void ApplyConfiguration (OptionalReliableSession s)
 		{
 			base.ApplyConfiguration (s);
 			s.Enabled = this.Enabled;

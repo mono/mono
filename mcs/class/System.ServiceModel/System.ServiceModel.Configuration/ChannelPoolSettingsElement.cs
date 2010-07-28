@@ -66,6 +66,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("idleTimeout",
 			 DefaultValue = "00:02:00",
 			 Options = ConfigurationPropertyOptions.None)]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan IdleTimeout {
 			get { return (TimeSpan) base ["idleTimeout"]; }
 			set { base ["idleTimeout"] = value; }
@@ -74,6 +75,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("leaseTimeout",
 			 DefaultValue = "00:10:00",
 			 Options = ConfigurationPropertyOptions.None)]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan LeaseTimeout {
 			get { return (TimeSpan) base ["leaseTimeout"]; }
 			set { base ["leaseTimeout"] = value; }
