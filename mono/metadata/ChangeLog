@@ -1,5 +1,13 @@
 2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): Don't move forward
+	with verification if a stack overflow is detected for
+	the ARGLIST opcode.
+
+	Fixes #601953
+
+2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_bounded_array_class_get): Fail arrays
 	of void or typedbyref. Those two types are not allowed
 	to be used with arrays. Failing them is easier and less
