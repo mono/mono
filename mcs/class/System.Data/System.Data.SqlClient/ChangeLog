@@ -1,3 +1,9 @@
+2010-07-28  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #584833
+	* SqlCommand.cs (DeriveParameters): Support procedure name nomenclature 
+	of the form <database>.<user>.<procname> .
+	
 2010-06-15  Veerapuram Varadhan  <vvaradhan@novell.com> 
 	** Fixes #613087
 	* SqlDataReader.cs (GetSqlValue): Tds70 returns decimal (18,0) 
