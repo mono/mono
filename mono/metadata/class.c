@@ -5655,7 +5655,10 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 	class->parent = parent;
 	class->instance_size = mono_class_instance_size (class->parent);
 
-	if (eclass->enumtype && !mono_class_enum_basetype (eclass)) {
+	if (eclass->byval_arg.type == MONO_TYPE_TYPEDBYREF || eclass->byval_arg.type == MONO_TYPE_VOID) {
+		/*Arrays of those two types are invalid.*/
+		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+	} else if (eclass->enumtype && !mono_class_enum_basetype (eclass)) {
 		if (!eclass->reflection_info || eclass->wastypebuilder) {
 			g_warning ("Only incomplete TypeBuilder objects are allowed to be an enum without base_type");
 			g_assert (eclass->reflection_info && !eclass->wastypebuilder);
