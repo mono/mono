@@ -76,14 +76,12 @@ namespace System.ServiceModel.Description
 			if (HttpHelpPageEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("http", HttpHelpPageUrl);
 				if (uri != null)
-					// FIXME: wrong. It should add help page
 					sme.EnsureChannelDispatcher (false, "http", uri, HttpHelpPageBinding);
 			}
 
 			if (HttpsHelpPageEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("https", HttpsHelpPageUrl);
 				if (uri != null)
-					// FIXME: wrong. It should add help page
 					sme.EnsureChannelDispatcher (false, "https", uri, HttpsHelpPageBinding);
 			}
 		}
