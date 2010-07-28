@@ -510,6 +510,18 @@ namespace MonoTests.System.ServiceModel.Security
 		}
 
 		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		[Category ("NotDotNet")] // it results in NRE inside InitializeSecurityTokenRequirement().
+		public void CreateProviderSecureConv2 ()
+		{
+			var sbe = (SymmetricSecurityBindingElement) SecurityBindingElement.CreateSecureConversationBindingElement (SecurityBindingElement.CreateUserNameForCertificateBindingElement ());
+			var p = new MySecureConversationSecurityTokenParameters ((SecureConversationSecurityTokenParameters) sbe.ProtectionTokenParameters);
+			var r = new RecipientServiceModelSecurityTokenRequirement ();
+			p.InitRequirement (r);
+			def_c.CreateSecurityTokenProvider (r);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void CreateAuthenticatorSecureConvNoSecurityBindingElement ()
 		{

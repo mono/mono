@@ -1,5 +1,9 @@
 2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceCredentialsSecurityTokenManagerTest.cs : another WS-SC test.
+
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceCredentialsSecurityTokenManagerTest.cs :
 	  enable some WS-SC tests.
 

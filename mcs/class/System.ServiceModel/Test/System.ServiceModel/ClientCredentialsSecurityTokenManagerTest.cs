@@ -731,6 +731,11 @@ Assert.IsFalse (new MyManager (new MyClientCredentials ()).IsIssued (r), "premis
 		{
 		}
 
+		public MySecureConversationSecurityTokenParameters (SecureConversationSecurityTokenParameters clone)
+			: base (clone)
+		{
+		}
+
 		public MySecureConversationSecurityTokenParameters (SecurityBindingElement element)
 			: base (element)
 		{

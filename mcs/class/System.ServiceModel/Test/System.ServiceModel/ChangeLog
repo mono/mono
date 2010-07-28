@@ -1,3 +1,7 @@
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientCredentialsSecurityTokenManagerTest.cs : add utility .ctor.
+
 2010-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EndpointAddressTest.cs : add more ReadFrom() tests.
