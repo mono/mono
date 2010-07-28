@@ -369,6 +369,13 @@ namespace System.Threading {
 			ResetAbort_internal ();
 		}
 
+#if NET_4_0 || BOOTSTRAP_NET_4_0
+		[HostProtectionAttribute (SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static bool Yield ();
+#endif
+
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Sleep_internal(int ms);
 
