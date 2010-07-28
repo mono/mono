@@ -57,6 +57,58 @@ namespace System.ServiceModel.Configuration
 	public sealed class LocalClientSecuritySettingsElement
 		 : ConfigurationElement
 	{
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty cache_cookies;
+		static ConfigurationProperty cookie_renewal_threshold_percentage;
+		static ConfigurationProperty detect_replays;
+		static ConfigurationProperty max_clock_skew;
+		static ConfigurationProperty max_cookie_caching_time;
+		static ConfigurationProperty reconnect_transport_on_failure;
+		static ConfigurationProperty replay_cache_size;
+		static ConfigurationProperty replay_window;
+		static ConfigurationProperty session_key_renewal_interval;
+		static ConfigurationProperty session_key_rollover_interval;
+		static ConfigurationProperty timestamp_validity_duration;
+
+		static LocalClientSecuritySettingsElement ()
+		{
+			cache_cookies = new ConfigurationProperty ("cacheCookies", typeof (bool), true, null, null, ConfigurationPropertyOptions.None);
+
+			cookie_renewal_threshold_percentage = new ConfigurationProperty ("cookieRenewalThresholdPercentage", typeof (int), 60, null, new IntegerValidator (0, 100, false), ConfigurationPropertyOptions.None);
+
+			detect_replays = new ConfigurationProperty ("detectReplays", typeof (bool), true, null, null, ConfigurationPropertyOptions.None);
+
+			max_clock_skew = new ConfigurationProperty ("maxClockSkew", typeof (TimeSpan), "00:05:00", new TimeSpanConverter (), null, ConfigurationPropertyOptions.None);
+
+			max_cookie_caching_time = new ConfigurationProperty ("maxCookieCachingTime", typeof (TimeSpan), "10675199.02:48:05.4775807", new TimeSpanConverter (), null, ConfigurationPropertyOptions.None);
+
+			reconnect_transport_on_failure = new ConfigurationProperty ("reconnectTransportOnFailure", typeof (bool), true, null, null, ConfigurationPropertyOptions.None);
+
+			replay_cache_size = new ConfigurationProperty ("replayCacheSize", typeof (int), 900000, null, new IntegerValidator (1, int.MaxValue, false), ConfigurationPropertyOptions.None);
+
+			replay_window = new ConfigurationProperty ("replayWindow", typeof (TimeSpan), "00:05:00", new TimeSpanConverter (), null, ConfigurationPropertyOptions.None);
+
+			session_key_renewal_interval = new ConfigurationProperty ("sessionKeyRenewalInterval", typeof (TimeSpan), "10:00:00", new TimeSpanConverter (), null, ConfigurationPropertyOptions.None);
+
+			session_key_rollover_interval = new ConfigurationProperty ("sessionKeyRolloverInterval", typeof (TimeSpan), "00:05:00", new TimeSpanConverter (), null, ConfigurationPropertyOptions.None);
+
+			timestamp_validity_duration = new ConfigurationProperty ("timestampValidityDuration", typeof (TimeSpan), "00:05:00", new TimeSpanConverter (), null, ConfigurationPropertyOptions.None);
+
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (cache_cookies);
+			properties.Add (cookie_renewal_threshold_percentage);
+			properties.Add (detect_replays);
+			properties.Add (max_clock_skew);
+			properties.Add (max_cookie_caching_time);
+			properties.Add (reconnect_transport_on_failure);
+			properties.Add (replay_cache_size);
+			properties.Add (replay_window);
+			properties.Add (session_key_renewal_interval);
+			properties.Add (session_key_rollover_interval);
+			properties.Add (timestamp_validity_duration);
+		}
+
 		public LocalClientSecuritySettingsElement ()
 		{
 		}
@@ -110,7 +162,7 @@ namespace System.ServiceModel.Configuration
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return base.Properties; }
+			get { return properties; }
 		}
 
 		[ConfigurationProperty ("reconnectTransportOnFailure",
@@ -153,6 +205,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("sessionKeyRolloverInterval",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:05:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan SessionKeyRolloverInterval {
 			get { return (TimeSpan) base ["sessionKeyRolloverInterval"]; }
 			set { base ["sessionKeyRolloverInterval"] = value; }

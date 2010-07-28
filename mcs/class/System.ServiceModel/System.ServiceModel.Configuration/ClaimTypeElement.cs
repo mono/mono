@@ -82,6 +82,11 @@ namespace System.ServiceModel.Configuration
 		{
 		}
 
+		public ClaimTypeElement (string claimType, bool isOptional)
+		{
+			ClaimType = claimType;
+			IsOptional = isOptional;
+		}
 
 		// Properties
 

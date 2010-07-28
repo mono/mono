@@ -143,6 +143,12 @@ namespace System.ServiceModel.Configuration
 		protected internal override object CreateBehavior ()
 		{
 			var cb = new ClientCredentials ();
+			ApplyConfiguration (cb);
+			return cb;
+		}
+
+		protected internal void ApplyConfiguration (ClientCredentials cb)
+		{
 			cb.SupportInteractive = SupportInteractive;
 			// how is "Type" used?
 
@@ -198,8 +204,6 @@ namespace System.ServiceModel.Configuration
 			// Windows
 			cb.Windows.AllowedImpersonationLevel = Windows.AllowedImpersonationLevel;
 			cb.Windows.AllowNtlm = Windows.AllowNtlm;
-
-			return cb;
 		}
 
 		object CreateInstance (string typeName)
