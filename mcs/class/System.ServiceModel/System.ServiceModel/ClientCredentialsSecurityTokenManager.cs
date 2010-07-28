@@ -74,7 +74,7 @@ namespace System.ServiceModel
 			else if (requirement.TokenType == ServiceModelSecurityTokenTypes.Spnego)
 				return new SspiClientSecurityTokenAuthenticator (this, requirement);
 			else
-				throw new NotImplementedException ();
+				throw new NotImplementedException ("Security token type " + requirement.TokenType);
 
 			throw new NotSupportedException (String.Format ("Security token requirement '{0}' is not supported to create SecurityTokenAuthenticator.", requirement));
 		}

@@ -189,14 +189,14 @@ namespace System.ServiceModel
 			string implementedContract, Binding binding,
 			Uri address)
 		{
-			return AddServiceEndpoint (implementedContract, binding, address, address);
+			return AddServiceEndpoint (implementedContract, binding, address, null);
 		}
 
 		public ServiceEndpoint AddServiceEndpoint (
 			string implementedContract, Binding binding,
 			Uri address, Uri listenUri)
 		{
-			EndpointAddress ea = BuildEndpointAddress (address, binding);
+			EndpointAddress ea = new EndpointAddress (BuildAbsoluteUri (address, binding));
 			ContractDescription cd = GetContract (implementedContract, binding.Namespace == "http://schemas.microsoft.com/ws/2005/02/mex/bindings");
 			if (cd == null)
 				throw new InvalidOperationException (String.Format ("Contract '{0}' was not found in the implemented contracts in this service host.", implementedContract));
@@ -258,7 +258,7 @@ namespace System.ServiceModel
 			return null;
 		}
 
-		internal EndpointAddress BuildEndpointAddress (Uri address, Binding binding)
+		internal Uri BuildAbsoluteUri (Uri address, Binding binding)
 		{
 			if (!address.IsAbsoluteUri) {
 				// Find a Base address with matching scheme,
@@ -272,17 +272,21 @@ namespace System.ServiceModel
 					baseaddr = new Uri (baseaddr.AbsoluteUri + "/");
 				address = new Uri (baseaddr, address);
 			}
-			return new EndpointAddress (address);
+			return address;
 		}
 
 		internal ServiceEndpoint AddServiceEndpointCore (
 			ContractDescription cd, Binding binding, EndpointAddress address, Uri listenUri)
 		{
+			if (listenUri != null)
+				listenUri = BuildAbsoluteUri (listenUri, binding);
+
 			foreach (ServiceEndpoint e in Description.Endpoints)
 				if (e.Contract == cd && e.Binding == binding && e.Address == address && e.ListenUri.Equals (listenUri))
 					return e;
 			ServiceEndpoint se = new ServiceEndpoint (cd, binding, address);
-			se.ListenUri = listenUri.IsAbsoluteUri ? listenUri : new Uri (address.Uri, listenUri);
+			// FIXME: should we reject relative ListenUri?
+			se.ListenUri = listenUri ?? address.Uri;
 			Description.Endpoints.Add (se);
 			return se;
 		}
@@ -293,8 +297,6 @@ namespace System.ServiceModel
 				throw new InvalidOperationException ("ApplyConfiguration requires that the Description property be initialized. Either provide a valid ServiceDescription in the CreateDescription method or override the ApplyConfiguration method to provide an alternative implementation");
 
 			ServiceElement service = GetServiceElement ();
-
-			//TODO: Should we call here LoadServiceElement ?
 			if (service != null) {
 				
 				//base addresses
@@ -304,7 +306,6 @@ namespace System.ServiceModel
 				}
 
 				// behaviors
-				// TODO: use EvaluationContext of ServiceElement.
 				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors [service.BehaviorConfiguration];
 				if (behavior != null) {
 					foreach (var bxe in behavior) {
@@ -312,13 +313,15 @@ namespace System.ServiceModel
 						Description.Behaviors.Add (b);
 					}
 				}
+				else
+					throw new ArgumentException (String.Format ("Service behavior {0} is specified, but was not found", service.BehaviorConfiguration));
 
 				// services
 				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
 					ServiceEndpoint se = AddServiceEndpoint (
 						endpoint.Contract,
 						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
-						endpoint.Address.ToString ());
+						endpoint.Address);
 					// endpoint behaviors
 					EndpointBehaviorElement epbehavior = ConfigUtil.BehaviorsSection.EndpointBehaviors [endpoint.BehaviorConfiguration];
 					if (epbehavior != null)
@@ -379,7 +382,6 @@ namespace System.ServiceModel
 			Description.Endpoints.CopyTo (endPoints, 0);
 			var builder = new DispatcherBuilder (this);
 			foreach (ServiceEndpoint se in endPoints) {
-
 				var commonParams = new BindingParameterCollection ();
 				foreach (IServiceBehavior b in Description.Behaviors)
 					b.AddBindingParameters (Description, this, Description.Endpoints, commonParams);
