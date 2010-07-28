@@ -511,7 +511,6 @@ namespace MonoTests.System.ServiceModel.Security
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
 		public void CreateAuthenticatorSecureConvNoSecurityBindingElement ()
 		{
 			RecipientServiceModelSecurityTokenRequirement r =
@@ -523,7 +522,6 @@ namespace MonoTests.System.ServiceModel.Security
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
 		public void CreateAuthenticatorSecureConvNoIssuedSecurityTokenParameters ()
 		{
 			RecipientServiceModelSecurityTokenRequirement r =
@@ -535,7 +533,6 @@ namespace MonoTests.System.ServiceModel.Security
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
 		public void CreateAuthenticatorSecureConvNoIssuerBindingContext ()
 		{
 			RecipientServiceModelSecurityTokenRequirement r =
@@ -546,21 +543,7 @@ namespace MonoTests.System.ServiceModel.Security
 		}
 
 		[Test]
-		// The type of exception should not matter though.
-		[ExpectedException (typeof (NotSupportedException))]
-		[Category ("NotWorking")]
-		public void CreateAuthenticatorSecureConvNullMessageSecurityVersion ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				CreateSecureConvRequirement ();
-			r.MessageSecurityVersion = null;
-			SecurityTokenResolver resolver;
-			def_c.CreateSecurityTokenAuthenticator (r, out resolver);
-		}
-
-		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
 		public void CreateAuthenticatorSecureConvNoMessageSecurityVersion ()
 		{
 			RecipientServiceModelSecurityTokenRequirement r =
