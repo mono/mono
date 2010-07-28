@@ -110,7 +110,7 @@ namespace Mono.CSharp
 			if (Expr == EmptyExpression.Null)
 				return;
 
-			using (ec.With (ResolveContext.Options.DoFlowAnalysis, true)) {
+//			using (ec.With (ResolveContext.Options.DoFlowAnalysis, true)) {
 				// Verify that the argument is readable
 				if (ArgType != AType.Out)
 					Expr = Expr.Resolve (ec);
@@ -121,7 +121,7 @@ namespace Mono.CSharp
 
 				if (Expr == null)
 					Expr = EmptyExpression.Null;
-			}
+//			}
 		}
 
 		public virtual void Emit (EmitContext ec)
