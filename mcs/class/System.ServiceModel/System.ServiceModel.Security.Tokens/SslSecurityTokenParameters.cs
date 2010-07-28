@@ -71,7 +71,6 @@ namespace System.ServiceModel.Security.Tokens
 			set { cancel = value; }
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
 			return base.ToString ();

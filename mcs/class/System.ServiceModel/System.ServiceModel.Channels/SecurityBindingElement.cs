@@ -36,6 +36,7 @@ using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using System.ServiceModel.Security.Tokens;
 #endif
+using System.Text;
 
 namespace System.ServiceModel.Channels
 {
@@ -176,10 +177,20 @@ namespace System.ServiceModel.Channels
 				p.SetKeyDerivation (requireDerivedKeys);
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			return base.ToString ();
+			var sb = new StringBuilder ();
+			sb.Append (GetType ().FullName).Append (":\n");
+			foreach (var pi in GetType ().GetProperties ()) {
+				var simple = Type.GetTypeCode (pi.PropertyType) != TypeCode.Object;
+				var val = pi.GetValue (this, null);
+				sb.Append (pi.Name).Append (':');
+				if (val != null)
+					sb.AppendFormat ("{0}{1}{2}", simple ? " " : "\n", simple ? "" : "  ", String.Join ("\n  ", val.ToString ().Split ('\n')));
+				sb.Append ('\n');
+			}
+			sb.Length--; // chop trailing EOL.
+			return sb.ToString ();
 		}
 #else
 		[MonoTODO]

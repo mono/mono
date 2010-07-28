@@ -155,7 +155,6 @@ namespace System.ServiceModel.Security.Tokens
 			requirement.KeyType = SecurityKeyType.SymmetricKey;
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
 			return base.ToString ();
