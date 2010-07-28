@@ -49,9 +49,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			var ctx = CSharpBinder.CreateDefaultCompilerContext ();
 			CSharpBinder.InitializeCompiler (ctx);
-			var context = TypeImporter.Import (callingContext);
+			var context_type = TypeImporter.Import (callingContext);
+			var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, context_type), 0);
 
-			var expr = Compiler.Expression.MemberLookup (ctx, context, context, name, 0, Compiler.BindingRestriction.None, Compiler.Location.Null);
+			var expr = Compiler.Expression.MemberLookup (rc, context_type, context_type, name, 0, false, Compiler.Location.Null);
 
 			var binder = new CSharpBinder (
 				this, new Compiler.BoolConstant (expr is Compiler.EventExpr, Compiler.Location.Null), null);
