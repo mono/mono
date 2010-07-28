@@ -91,9 +91,6 @@ namespace System.ServiceModel.Description
 			return sme;
 		}
 
-		// FIXME: distinguish HTTP and HTTPS in the Url properties.
-		// FIXME: reject such ServiceDescription that has no HTTP(S) binding.
-		// FIXME: it should not use the binding that is used in the ServiceEndpoint. For example, WSDL results have to be given as text, not binary.
 		// FIXME: if the ServiceDescription has a base address (e.g. http://localhost:8080) and HttpGetUrl is empty, it returns UnknownDestination while it is expected to return the HTTP help page.
 		internal void EnsureChannelDispatcher (bool isMex, string scheme, Uri uri, WCFBinding binding)
 		{

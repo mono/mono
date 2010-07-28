@@ -174,7 +174,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				new HandlerTransportBindingElement (sender));
 
 			EndpointAddress address = new EndpointAddress (
-				new Uri ("http://localhost:8080"),
+				new Uri ("http://localhost:37564"),
 				new X509CertificateEndpointIdentity (new X509Certificate2 ("Test/Resources/test.pfx", "mono")));
 
 			ChannelFactory<IRequestChannel> cf =
@@ -222,7 +222,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				new HandlerTransportBindingElement (sender));
 
 			EndpointAddress address = new EndpointAddress (
-				new Uri ("http://localhost:8080"),
+				new Uri ("http://localhost:37564"),
 				new X509CertificateEndpointIdentity (new X509Certificate2 ("Test/Resources/test.pfx", "mono")));
 
 			ChannelProtectionRequirements reqs =
@@ -285,7 +285,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				new HttpTransportBindingElement ());
 			BindingContext ctx = new BindingContext (
 				cb, new BindingParameterCollection (),
-				new Uri ("http://localhost:8080"), String.Empty, ListenUriMode.Unique);
+				new Uri ("http://localhost:37564"), String.Empty, ListenUriMode.Unique);
 			new TextMessageEncodingBindingElement ().BuildChannelListener<IReplyChannel> (ctx);
 		}
 
@@ -299,7 +299,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			ServiceHost host = new ServiceHost (typeof (FooService));
 			host.AddServiceEndpoint (typeof (IFooService),
 				new CustomBinding (new MyBindingElement (false), new HttpTransportBindingElement ()),
-				"http://localhost:8080");
+				"http://localhost:37564");
 			host.Open ();
 		}
 
@@ -312,7 +312,33 @@ namespace MonoTests.System.ServiceModel.Channels
 			ServiceHost host = new ServiceHost (typeof (FooService));
 			host.AddServiceEndpoint (typeof (IFooService),
 				new CustomBinding (new MyBindingElement (true), new HttpTransportBindingElement ()),
-				"http://localhost:8080");
+				"http://localhost:37564");
+			host.Open ();
+			host.Close ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void RelativeListenUriNoBaseAddress ()
+		{
+			// MyBindingElement overrides GetProperty<T>() to call GetInnerProperty<T>() (default implementation).
+			// HttpTransportBindingElement should return Soap11.
+			ServiceHost host = new ServiceHost (typeof (FooService));
+			host.AddServiceEndpoint (typeof (IFooService),
+				new CustomBinding (new MyBindingElement (true), new HttpTransportBindingElement ()),
+				"http://localhost:37564", new Uri ("foobar", UriKind.Relative));
+		}
+
+		[Test]
+		[ExpectedException (typeof (MyException))]
+		public void RelativeListenUriWithBaseAddress ()
+		{
+			// MyBindingElement overrides GetProperty<T>() to call GetInnerProperty<T>() (default implementation).
+			// HttpTransportBindingElement should return Soap11.
+			ServiceHost host = new ServiceHost (typeof (FooService), new Uri ("http://localhost:37564"));
+			host.AddServiceEndpoint (typeof (IFooService),
+				new CustomBinding (new MyBindingElement (true), new HttpTransportBindingElement ()),
+				"http://localhost:37564", new Uri ("foobar", UriKind.Relative));
 			host.Open ();
 			host.Close ();
 		}

@@ -1,3 +1,12 @@
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDebugBehavior.cs, ServiceMetadataExtension.cs :
+	  remove invalid comments.
+
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDescription.cs : fill Name and Namespace. Remove extra code.
+
 2010-07-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ClientCredentials.cs: Fix NET_2_1 builds

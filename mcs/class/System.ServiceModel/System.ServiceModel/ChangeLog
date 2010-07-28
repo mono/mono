@@ -1,3 +1,9 @@
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHost.cs, ServiceHostBase.cs : handle ListenUri to give
+	  correct Uri. Reject wrong service endpoint configuration.
+	* ClientCredentialSecurityTokenManager.cs : give a bit kind error.
+
 2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FederatedMessageSecurityOverHttp.cs, OptionalReliableSession.cs,
