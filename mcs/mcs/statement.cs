@@ -1946,7 +1946,9 @@ namespace Mono.CSharp {
 				ec.CurrentBlock = this;
 				Expression e;
 				using (ec.With (ResolveContext.Options.ConstantCheckState, (flags & Flags.Unchecked) == 0)) {
-					e = cv.Resolve (ec);
+					using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
+						e = cv.Resolve (ec);
+					}
 				}
 				if (e == null)
 					continue;
