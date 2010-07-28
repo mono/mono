@@ -303,6 +303,27 @@ namespace MonoTests.System.Threading {
 				Assert.IsFalse (Monitor.Wait (o, SmallNegative), "Wait");
 			}
 		}
+#if NET_4_0
+		[Test]
+		public void Enter_bool ()
+		{
+			object o = new object ();
+			bool taken = false;
+			Monitor.Enter (o, ref taken);
+			Assert.IsTrue (taken, "Monitor.Enter (obj, ref taken)");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Enter_bool_argcheck ()
+		{
+			object o = new object ();
+			bool taken = true;
+			Monitor.Enter (o, ref taken);
+		}
+
+#endif
+
 	}
 }
 
