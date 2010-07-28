@@ -55,23 +55,13 @@ namespace Mono.CSharp {
 	{
 		None = 0,
 
-		// Member has to be accessible
-		AccessibleOnly = 1,
-
 		// Inspect only queried type members
 		DeclaredOnly = 1 << 1,
 
 		// Exclude static
 		InstanceOnly = 1 << 2,
 
-		// Ignore member overrides
-		NoOverrides	= 1 << 3,
-
-		NoAccessors = 1 << 4,
-
-		StopOnFirstMatch = 1 << 5,
-
-		DefaultMemberLookup = NoOverrides | StopOnFirstMatch
+		NoAccessors = 1 << 3
 	}
 
 	public struct MemberFilter : IEquatable<MemberSpec>
@@ -82,7 +72,6 @@ namespace Mono.CSharp {
 		public readonly TypeSpec MemberType;
 
 		int arity; // -1 to ignore the check
-		TypeSpec invocation_type;
 
 		private MemberFilter (string name, MemberKind kind)
 		{
@@ -91,7 +80,6 @@ namespace Mono.CSharp {
 			Parameters = null;
 			MemberType = null;
 			arity = -1;
-			invocation_type = null;
 		}
 
 		public MemberFilter (MethodSpec m)
@@ -101,7 +89,6 @@ namespace Mono.CSharp {
 			Parameters = m.Parameters;
 			MemberType = m.ReturnType;
 			arity = m.Arity;
-			invocation_type = null;
 		}
 
 		public MemberFilter (string name, int arity, MemberKind kind, AParametersCollection param, TypeSpec type)
@@ -111,16 +98,6 @@ namespace Mono.CSharp {
 			Parameters = param;
 			MemberType = type;
 			this.arity = arity;
-			invocation_type = null;
-		}
-
-		public TypeSpec InvocationType {
-			get {
-				return invocation_type;
-			}
-			set {
-				invocation_type = value;
-			}
 		}
 
 		public static MemberFilter Constructor (AParametersCollection param)
@@ -176,16 +153,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (invocation_type != null && !IsAccessible (other))
-				return false;
-
 			return true;
-		}
-
-		bool IsAccessible (MemberSpec other)
-		{
-			bool extra;
-			return Expression.IsMemberAccessible (invocation_type, other, out extra);
 		}
 
 		#endregion
@@ -380,13 +348,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public static IEnumerable<IndexerSpec> FindIndexers (TypeSpec container, BindingRestriction restrictions)
-		{
-			var filter = new MemberFilter (IndexerNameAlias, 0, MemberKind.Indexer, null, null);
-			var found = FindMembers (container, filter, restrictions);
-			return found == null ? null : found.Cast<IndexerSpec> ();
-		}
-
 		public static MemberSpec FindMember (TypeSpec container, MemberFilter filter, BindingRestriction restrictions)
 		{
 			do {
@@ -409,10 +370,6 @@ namespace Mono.CSharp {
 							continue;
 
 						return entry;
-
-						// TODO MemberCache:
-						//if ((restrictions & BindingRestriction.AccessibleOnly) != 0)
-						//	throw new NotImplementedException ("net");
 					}
 				}
 
@@ -426,91 +383,21 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Returns the first set of members starting from
-		// container, the returned list must not be modified
+		// A special method to work with member lookup only. It returns a list of all members named @name
+		// starting from @container. It's very performance sensitive
 		//
-		public static IList<MemberSpec> FindMembers (TypeSpec container, MemberFilter filter, BindingRestriction restrictions)
+		public static IList<MemberSpec> FindMembers (TypeSpec container, string name, bool declaredOnly)
 		{
 			IList<MemberSpec> applicable;
-			List<MemberSpec> found = null;
-			int match_counter = 0;
 
 			do {
-				int i;
-				if (container.MemberCache.member_hash.TryGetValue (filter.Name, out applicable)) {
-					for (i = 0; i < applicable.Count; ++i) {
-						var entry = applicable [i];
-
-						// Is the member of the correct type
-						if ((entry.Kind & filter.Kind & MemberKind.MaskType) == 0)
-							continue;
-
-						//
-						// When using overloadable overrides filter ignore members which
-						// are not base members. Including properties because overrides can
-						// implement get or set only and we are looking for complete base member
-						//
-						const MemberKind overloadable = MemberKind.Indexer | MemberKind.Method | MemberKind.Property;
-						if ((restrictions & BindingRestriction.NoOverrides) != 0 && (entry.Kind & overloadable) != 0) {
-							if ((entry.Modifiers & Modifiers.OVERRIDE) != 0)
-								continue;
-						}
-
-						if ((restrictions & BindingRestriction.InstanceOnly) != 0 && entry.IsStatic)
-							continue;
-
-						// Apply the filter to it.
-						if (!filter.Equals (entry))
-							continue;
-
-						// Try not to allocate a new list until it's necessary
-						if (found == null) {
-							if (i == match_counter) {
-								++match_counter;
-								continue;
-							}
-
-							found = new List<MemberSpec> (System.Math.Max (4, match_counter + 1));
-							for (int ii = 0; ii < match_counter; ++ii)
-								found.Add (applicable [ii]);
-						}
-
-						found.Add (entry);
-					}
-
-					// Deal with allocation-less optimization
-					if ((restrictions & (BindingRestriction.DeclaredOnly | BindingRestriction.StopOnFirstMatch)) != 0) {
-						if (found != null)
-							return found;
-
-						if (i == match_counter)
-							return applicable;
-
-						if (match_counter > 0) {
-							found = new List<MemberSpec> (match_counter);
-							for (int ii = 0; ii < match_counter; ++ii)
-								found.Add (applicable[ii]);
-
-							return found;
-						}
-
-						if ((restrictions & BindingRestriction.DeclaredOnly) != 0)
-							return null;
-					} else if (found == null) {
-						if (i == match_counter) {
-							found = new List<MemberSpec> (applicable);
-						} else if (match_counter > 0) {
-							found = new List<MemberSpec> (System.Math.Max (4, match_counter));
-							for (int ii = 0; ii < match_counter; ++ii)
-								found.Add (applicable[ii]);
-						}
-					}
-				}
+				if (container.MemberCache.member_hash.TryGetValue (name, out applicable) || declaredOnly)
+					return applicable;
 
 				container = container.BaseType;
 			} while (container != null);
 
-			return found;
+			return null;
 		}
 
 		//
@@ -567,15 +454,14 @@ namespace Mono.CSharp {
 
 			List<MethodSpec> candidates = null;
 			foreach (var entry in entries) {
-				if (entry.Kind != MemberKind.Method || (arity >= 0 && entry.Arity != arity))
+				if (entry.Kind != MemberKind.Method || (arity > 0 && entry.Arity != arity))
 					continue;
 
 				var ms = (MethodSpec) entry;
 				if (!ms.IsExtensionMethod)
 					continue;
 
-				bool extra;
-				if (!Expression.IsMemberAccessible (invocationType, ms, out extra))
+				if (!ms.IsAccessible (invocationType))
 					continue;
 
 				// TODO: CodeGen.Assembly.Builder
@@ -742,8 +628,7 @@ namespace Mono.CSharp {
 					if ((name_entry.Kind & (MemberKind.Constructor | MemberKind.Destructor | MemberKind.Operator)) != 0)
 						continue;
 
-					bool extra;
-					if (!Expression.IsMemberAccessible (InternalType.FakeInternalType, name_entry, out extra))
+					if (!name_entry.IsAccessible (InternalType.FakeInternalType))
 						continue;
 
 					if (name == null || name_entry.Name.StartsWith (name)) {

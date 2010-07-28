@@ -361,10 +361,10 @@ namespace Mono.CSharp {
 			string cref, bool warn419, string name_for_error, Report Report)
 		{
 			warning_type = 0;
-			var filter = new MemberFilter (member_name, 0, MemberKind.All, param_list, null);
+//			var filter = new MemberFilter (member_name, 0, MemberKind.All, param_list, null);
 			IList<MemberSpec> found = null;
 			while (type != null && found == null) {
-				found = MemberCache.FindMembers (type, filter, BindingRestriction.StopOnFirstMatch);
+				found = MemberCache.FindMembers (type, member_name, false);
 				type = type.DeclaringType;
 			}
 

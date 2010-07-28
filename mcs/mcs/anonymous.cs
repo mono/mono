@@ -1073,11 +1073,12 @@ namespace Mono.CSharp {
 				for (int i = 0; i < delegate_parameters.Count; i++) {
 					Parameter.Modifier i_mod = delegate_parameters.FixedParameters [i].ModFlags;
 					if (i_mod == Parameter.Modifier.OUT) {
-						ec.Report.Error (1688, loc, "Cannot convert anonymous " +
-								  "method block without a parameter list " +
-								  "to delegate type `{0}' because it has " +
-								  "one or more `out' parameters.",
-								  TypeManager.CSharpName (delegate_type));
+						if (!ec.IsInProbingMode) {
+							ec.Report.Error (1688, loc,
+								"Cannot convert anonymous method block without a parameter list to delegate type `{0}' because it has one or more `out' parameters",
+								delegate_type.GetSignatureForError ());
+						}
+
 						return null;
 					}
 					fixedpars[i] = new Parameter (

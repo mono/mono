@@ -1181,7 +1181,7 @@ namespace Mono.CSharp {
 	public abstract class ConstructorInitializer : ExpressionStatement
 	{
 		Arguments argument_list;
-		MethodGroupExpr base_constructor_group;
+		MethodSpec base_ctor;
 
 		public ConstructorInitializer (Arguments argument_list, Location loc)
 		{
@@ -1247,25 +1247,8 @@ namespace Mono.CSharp {
 					return this;			
 			}
 
-			base_constructor_group = MemberLookupFinal (
-				ec, null, type, ConstructorBuilder.ConstructorName, 0, MemberKind.Constructor,
-				BindingRestriction.AccessibleOnly | BindingRestriction.DeclaredOnly,
-				loc) as MethodGroupExpr;
-			
-			if (base_constructor_group == null)
-				return this;
-			
-			base_constructor_group = base_constructor_group.OverloadResolve (
-				ec, ref argument_list, false, loc);
-			
-			if (base_constructor_group == null)
-				return this;
-
-			if (!ec.IsStatic)
-				base_constructor_group.InstanceExpression = ec.GetThis (loc);
-			
-			var base_ctor = base_constructor_group.BestCandidate;
-
+			base_ctor = ConstructorLookup (ec, type, ref argument_list, loc);
+	
 			// TODO MemberCache: Does it work for inflated types ?
 			if (base_ctor == caller_builder.Spec){
 				ec.Report.Error (516, loc, "Constructor `{0}' cannot call itself",
@@ -1278,12 +1261,12 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			// It can be null for static initializers
-			if (base_constructor_group == null)
+			if (base_ctor == null)
 				return;
 			
 			ec.Mark (loc);
 
-			base_constructor_group.EmitCall (ec, argument_list);
+			Invocation.EmitCall (ec, new CompilerGeneratedThis (type, loc), base_ctor, argument_list, loc);
 		}
 
 		public override void EmitStatement (EmitContext ec)
