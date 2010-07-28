@@ -1,5 +1,14 @@
 2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_bounded_array_class_get): Fail arrays
+	of void or typedbyref. Those two types are not allowed
+	to be used with arrays. Failing them is easier and less
+	error prone than returning NULL.
+
+	Fixes #603279
+
+2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object.c (mono_get_delegate_invoke): Don't assert if
 	the Invoke method is not found. This can happen with
 	broken types and it's the caller resposibility to deal
