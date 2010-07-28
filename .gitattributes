@@ -1,11 +1,11 @@
-*.c	crlf
-*.h	crlf
-*.cs	crlf
-*.sh	crlf
+#*.c	crlf
+#*.h	crlf
+#*.cs	crlf
+#*.sh	crlf
 
-ChangeLog	crlf
-*akefile*	crlf
-*.sources	crlf
+#ChangeLog	crlf
+#*akefile*	crlf
+#*.sources	crlf
 
 # don't do anything to line-endings.  Let CRLFs go into the repo
 *.bat	  	-crlf

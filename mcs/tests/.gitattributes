@@ -42,3 +42,7 @@
 /test-xml-037-ref.xml -crlf
 /test-xml-038-ref.xml -crlf
 /test-xml-050-ref.xml -crlf
+/gtest-522.cs -crlf
+/gtest-525.cs -crlf
+/gtest-linq-24.cs -crlf
+/test-788.cs -crlf
