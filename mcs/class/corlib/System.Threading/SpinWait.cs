@@ -32,6 +32,7 @@ namespace System.Threading
 	{
 		// The number of step until SpinOnce yield on multicore machine
 		const           int  step = 5;
+		const           int  maxSpin = 10000;
 		static readonly bool isSingleCpu = (Environment.ProcessorCount == 1);
 
 		int ntime;
@@ -46,7 +47,7 @@ namespace System.Threading
 					Yield ();
 				} else {
 					// Multi-CPU system might be hyper-threaded, let other thread run
-					Thread.SpinWait (2 * (ntime + 1));
+					Thread.SpinWait (Math.Min (2 * (ntime + 1), maxSpin));
 				}
 			}
 		}
