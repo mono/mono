@@ -1,3 +1,8 @@
+2010-07-30  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-archdep.h (ARCH_COPY_SIGCTX_REGS): Add casts to fix
+	compiler warnings on AMD64.
+
 2010-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Add support for calling vararg methods from SRE code.
