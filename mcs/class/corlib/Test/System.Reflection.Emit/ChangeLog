@@ -1,3 +1,7 @@
+2010-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodBuilderTest.cs: Add test for #626441.
+
 2010-07-15  Miguel de Icaza  <miguel@novell.com>
 
 	* FieldBuilderTest.cs: Add new test that exercises encoding

@@ -1020,5 +1020,40 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (99, rt, "#1");
 		}
 
+	    public static void VarargMethod (string headline, __arglist) {
+	        ArgIterator ai = new ArgIterator (__arglist);
+	
+	        Console.Write (headline);
+	        while (ai.GetRemainingCount () > 0)
+	            Console.Write (TypedReference.ToObject (ai.GetNextArg ()));
+	        Console.WriteLine ();
+	    }
+
+		[Test]//bug #626441
+		public void CanCallVarargMethods ()
+		{
+			var tb = module.DefineType ("foo");
+			MethodBuilder mb = tb.DefineMethod ("CallVarargMethod", 
+				MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard,
+				typeof (void), Type.EmptyTypes);
+
+			ILGenerator il = mb.GetILGenerator ();
+			MethodInfo miVarargMethod = typeof (MethodBuilderTest).GetMethod ("VarargMethod");
+			
+			il.Emit (OpCodes.Ldstr, "Hello world from ");
+			il.Emit (OpCodes.Call, typeof(Assembly).GetMethod ("GetExecutingAssembly"));
+			il.EmitCall (OpCodes.Call, miVarargMethod, new Type[] { typeof(Assembly) });
+			
+			il.Emit (OpCodes.Ldstr, "Current time: ");
+			il.Emit (OpCodes.Call, typeof(DateTime).GetMethod("get_Now"));
+			il.Emit (OpCodes.Ldstr, " (UTC ");
+			il.Emit (OpCodes.Call, typeof(DateTime).GetMethod("get_UtcNow"));
+			il.Emit (OpCodes.Ldstr, ")");
+			il.EmitCall (OpCodes.Call, miVarargMethod, new Type[] { typeof (DateTime), typeof (string), typeof (DateTime), typeof (string) });
+			il.Emit (OpCodes.Ret);
+
+			Type type = tb.CreateType ();
+			type.GetMethod ("CallVarargMethod").Invoke (null, null);
+		}
 	}
 }
