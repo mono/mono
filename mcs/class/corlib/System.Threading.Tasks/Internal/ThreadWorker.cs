@@ -212,6 +212,8 @@ namespace System.Threading.Tasks
 		public static void WorkerMethod (Func<bool> predicate, IProducerConsumerCollection<Task> sharedWorkQueue,
 		                                 ThreadWorker[] others)
 		{
+			SpinWait wait = new SpinWait ();
+
 			while (!predicate ()) {
 				Task value;
 				
@@ -226,9 +228,8 @@ namespace System.Threading.Tasks
 				}
 				
 				// First check to see if we comply to predicate
-				if (predicate ()) {
+				if (predicate ())
 					return;
-				}
 				
 				// Try to complete other work by stealing since our desired tasks may be in other worker
 				ThreadWorker other;
@@ -245,10 +246,11 @@ namespace System.Threading.Tasks
 						}
 					}
 					
-					if (predicate ()) {
+					if (predicate ())
 						return;
-					}
 				}
+
+				wait.SpinOnce ();
 			}
 		}
 		
