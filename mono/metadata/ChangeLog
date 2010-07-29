@@ -1,3 +1,31 @@
+2010-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Add support for calling vararg methods from SRE code.
+	This requires storing per-memberref signatures so
+	the JIT can know how many varargs parameters are
+	been passed.
+
+	* loader.c (mono_method_get_signature_full): If the
+	image is dynamic call mono_reflection_lookup_signature
+	to lookup the signature.
+
+	* reflection.c (mono_image_create_method_token): Save
+	the method object into the MonoDynamicImage::tokens.
+	Create a signature struct for MethodBuilders.
+	Save the signature into vararg_aux_hash so it can be
+	retrieved later.
+
+	* reflection.c (mono_reflection_lookup_signature): New
+	function. Check vararg_aux_hash for a signature before
+	returning method's own signature.
+
+	* metadata-internals.h (MonoDynamicImage): Add new
+	vararg_aux_hash hashtable.
+
+	* object-internals.h: Add mono_reflection_lookup_signature.
+
+	Fixes #626441
+
 2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): Don't move forward
