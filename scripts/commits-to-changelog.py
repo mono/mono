@@ -228,10 +228,15 @@ def append_lines (file, lines):
 def main ():
     usage = "usage: %prog [options] <start-commit>"
     parser = OptionParser (usage)
+    parser.add_option ("-r", "--root", dest = "root", help = "Root directory of the working tree to be changed")
     (options, args) = parser.parse_args ()
     if len (args) != 1:
         parser.error ("incorrect number of arguments")
     start_commit = args [0]
+
+    if options.root:
+        global path_to_root
+        path_to_root = options.root + "/"
 
     for filename in git ("ls-tree", "-r", "--name-only", "HEAD").splitlines ():
         if re.search ("(^|/)Change[Ll]og$", filename):
