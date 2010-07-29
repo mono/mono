@@ -2693,6 +2693,21 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// Creates an arguments set from all parameters, useful for method proxy calls
+		//
+		public Arguments GetAllParametersArguments ()
+		{
+			int count = parameters.Count;
+			Arguments args = new Arguments (count);
+			for (int i = 0; i < count; ++i) {
+				var arg_expr = new ParameterReference (parameter_info[i], parameters[i].Location);
+				args.Add (new Argument (arg_expr));
+			}
+
+			return args;
+		}
+
+		//
 		// Returns a parameter reference expression for the given name,
 		// or null if there is no such parameter
 		//

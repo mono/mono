@@ -813,12 +813,7 @@ namespace Mono.CSharp {
 			else
 				return 0;
 		}
-
-		protected void Error_CannotCallAbstractBase (ResolveContext ec, string name)
-		{
-			ec.Report.Error (205, loc, "Cannot call an abstract base member `{0}'", name);
-		}
-		
+	
 		protected void Error_CannotModifyIntermediateExpressionValue (ResolveContext ec)
 		{
 			ec.Report.SymbolRelatedToPreviousError (type);
@@ -2543,17 +2538,43 @@ namespace Mono.CSharp {
 			// Overload resulution works on virtual or non-virtual members only (no overrides). That
 			// means for base.member access we have to find the closest match after we found best candidate
 			//
-			if ((method.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.STATIC)) != Modifiers.STATIC && method.DeclaringType != InstanceExpression.Type) {
-				var base_override = MemberCache.FindMember (InstanceExpression.Type, new MemberFilter (method), BindingRestriction.InstanceOnly) as MethodSpec;
-				if (base_override != null && base_override.DeclaringType != method.DeclaringType) {
-					if (base_override.IsGeneric)
-						base_override = base_override.MakeGenericMethod (method.TypeArguments);
+			if ((method.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.STATIC)) != Modifiers.STATIC) {
+				//
+				// The method could already be what we are looking for
+				//
+				TypeSpec[] targs = null;
+				if (method.DeclaringType != InstanceExpression.Type) {
+					var base_override = MemberCache.FindMember (InstanceExpression.Type, new MemberFilter (method), BindingRestriction.InstanceOnly) as MethodSpec;
+					if (base_override != null && base_override.DeclaringType != method.DeclaringType) {
+						if (base_override.IsGeneric)
+							targs = method.TypeArguments;
 
-					if (rc.CurrentAnonymousMethod != null)
-						throw new NotImplementedException ("base call hoisting");
-
-					return base_override;
+						method = base_override;
+					}
 				}
+
+				// TODO: For now we do it for any hoisted call even if it's needed for
+				// hoisted stories only but that requires a new expression wrapper
+				if (rc.CurrentAnonymousMethod != null) {
+					if (targs == null && method.IsGeneric) {
+						targs = method.TypeArguments;
+						method = method.GetGenericMethodDefinition ();
+					}
+
+					if (method.Parameters.HasArglist)
+						throw new NotImplementedException ("__arglist base call proxy");
+
+					method = rc.CurrentMemberDefinition.Parent.PartialContainer.CreateHoistedBaseCallProxy (rc, method);
+
+					// Ideally this should apply to any proxy rewrite but in the case of unary mutators on
+					// get/set member expressions second call would fail to proxy because left expression
+					// would be of 'this' and not 'base'
+					if (rc.CurrentType.IsStruct)
+						InstanceExpression = rc.GetThis (loc);
+				}
+
+				if (targs != null)
+					method = method.MakeGenericMethod (targs);
 			}
 
 			//
@@ -2619,6 +2640,11 @@ namespace Mono.CSharp {
 
 			if (!(member is FieldSpec))
 				member.MemberDefinition.SetIsUsed ();
+		}
+
+		protected virtual void Error_CannotCallAbstractBase (ResolveContext rc, string name)
+		{
+			rc.Report.Error (205, loc, "Cannot call an abstract base member `{0}'", name);
 		}
 
 		//
@@ -5037,14 +5063,23 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to an Event
 	/// </summary>
-	public class EventExpr : MemberExpr
+	public class EventExpr : MemberExpr, IAssignMethod
 	{
 		readonly EventSpec spec;
+		MethodSpec op;
 
 		public EventExpr (EventSpec spec, Location loc)
 		{
 			this.spec = spec;
 			this.loc = loc;
+		}
+
+		#region Properties
+
+		protected override TypeSpec DeclaringType {
+			get {
+				return spec.DeclaringType;
+			}
 		}
 
 		public override string Name {
@@ -5065,17 +5100,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override TypeSpec DeclaringType {
+		public MethodSpec Operator {
 			get {
-				return spec.DeclaringType;
+				return op;
 			}
 		}
-		
-		public void Error_AssignmentEventOnly (ResolveContext ec)
-		{
-			ec.Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of `+=' or `-=' operator",
-				GetSignatureForError ());
-		}
+
+		#endregion
 
 		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
@@ -5122,24 +5153,25 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			// contexts where an LValue is valid have already devolved to FieldExprs
-			Error_CannotAssign (ec);
-			return null;
+			if (right_side == EmptyExpression.EventAddition) {
+				op = spec.AccessorAdd;
+			} else if (right_side == EmptyExpression.EventSubtraction) {
+				op = spec.AccessorRemove;
+			}
+
+			if (op == null) {
+				Error_AssignmentEventOnly (ec);
+				return null;
+			}
+
+			op = CandidateToBaseOverride (ec, op);
+			return this;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.EventAccess;
 			type = spec.MemberType;
-/*
-			if (!spec.IsAccessible (ec.CurrentType)) {
-				ec.Report.SymbolRelatedToPreviousError (spec);
-				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (spec), ec.Report);
-			}
-*/
-			if (IsBase && spec.IsAbstract) {
-				Error_CannotCallAbstractBase (ec, GetSignatureForError ());
-			}
 
 			ResolveInstanceExpression (ec);
 
@@ -5157,6 +5189,31 @@ namespace Mono.CSharp {
 			//Error_CannotAssign ();
 		}
 
+		#region IAssignMethod Members
+
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		{
+			if (leave_copy || !prepare_for_load)
+				throw new NotImplementedException ("EventExpr::EmitAssign");
+
+			Arguments args = new Arguments (1);
+			args.Add (new Argument (source));
+			Invocation.EmitCall (ec, InstanceExpression, op, args, loc);
+		}
+
+		#endregion
+
+		void Error_AssignmentEventOnly (ResolveContext ec)
+		{
+			ec.Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of `+=' or `-=' operator",
+				GetSignatureForError ());
+		}
+
 		public void Error_CannotAssign (ResolveContext ec)
 		{
 			ec.Report.Error (70, loc,
@@ -5164,16 +5221,15 @@ namespace Mono.CSharp {
 				GetSignatureForError (), TypeManager.CSharpName (spec.DeclaringType));
 		}
 
+		protected override void Error_CannotCallAbstractBase (ResolveContext rc, string name)
+		{
+			name = name.Substring (0, name.LastIndexOf ('.'));
+			base.Error_CannotCallAbstractBase (rc, name);
+		}
+
 		public override string GetSignatureForError ()
 		{
 			return TypeManager.CSharpSignature (spec);
-		}
-
-		public void EmitAddOrRemove (EmitContext ec, bool is_add, Expression source)
-		{
-			Arguments args = new Arguments (1);
-			args.Add (new Argument (source));
-			Invocation.EmitCall (ec, InstanceExpression, is_add ? spec.AccessorAdd : spec.AccessorRemove, args, loc);
 		}
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)

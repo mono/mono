@@ -306,15 +306,23 @@ namespace Mono.CSharp {
 		
 		Constraints constraints;
 		GenericTypeParameterBuilder builder;
-//		Variance variance;
 		TypeParameterSpec spec;
 
 		public TypeParameter (DeclSpace parent, int index, MemberName name, Constraints constraints, Attributes attrs, Variance variance)
 			: base (parent, name, attrs)
 		{
 			this.constraints = constraints;
-//			this.variance = variance;
 			this.spec = new TypeParameterSpec (null, index, this, SpecialConstraint.None, variance, null);
+		}
+
+		public TypeParameter (TypeParameterSpec spec, DeclSpace parent, TypeSpec parentSpec, MemberName name, Attributes attrs)
+			: base (parent, name, attrs)
+		{
+			this.spec = new TypeParameterSpec (parentSpec, spec.DeclaredPosition, spec.MemberDefinition, spec.SpecialConstraint, spec.Variance, null) {
+				BaseType = spec.BaseType,
+				InterfacesDefined = spec.InterfacesDefined,
+				TypeArguments = spec.TypeArguments
+			};
 		}
 
 		#region Properties
@@ -421,15 +429,9 @@ namespace Mono.CSharp {
 				constraints.CheckGenericConstraints (this);
 		}
 
-		public TypeParameter CreateHoistedCopy (TypeSpec declaringType)
+		public TypeParameter CreateHoistedCopy (TypeContainer declaringType, TypeSpec declaringSpec)
 		{
-			return new TypeParameter (Parent, spec.DeclaredPosition, MemberName, constraints, null, spec.Variance) {
-				spec = new TypeParameterSpec (declaringType, spec.DeclaredPosition, spec.MemberDefinition, spec.SpecialConstraint, spec.Variance, null) {
-					BaseType = spec.BaseType,
-					InterfacesDefined = spec.InterfacesDefined,
-					TypeArguments = spec.TypeArguments
-				}
-			};
+			return new TypeParameter (spec, declaringType, declaringSpec, MemberName, null);
 		}
 
 		public override bool Define ()
@@ -543,7 +545,9 @@ namespace Mono.CSharp {
 			if (constraints != null)
 				return constraints.Resolve (context, this);
 
-			spec.BaseType = TypeManager.object_type;
+			if (spec.BaseType == null)
+				spec.BaseType = TypeManager.object_type;
+
 			return true;
 		}
 
