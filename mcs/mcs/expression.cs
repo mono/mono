@@ -5049,7 +5049,7 @@ namespace Mono.CSharp {
 			if (!method.IsReservedMethod)
 				return false;
 
-			if (ec.HasSet (ResolveContext.Options.InvokeSpecialName))
+			if (ec.HasSet (ResolveContext.Options.InvokeSpecialName) || ec.CurrentMemberDefinition.IsCompilerGenerated)
 				return false;
 
 			ec.Report.SymbolRelatedToPreviousError (method);
@@ -8158,16 +8158,20 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 		}
 
+		#region Properties
+
+		public override string Name {
+			get {
+				return "base";
+			}
+		}
+
+		#endregion
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			ec.Report.Error (831, loc, "An expression tree may not contain a base access");
 			return base.CreateExpressionTree (ec);
-		}
-
-		public override void ResolveBase (ResolveContext ec)
-		{
-			base.ResolveBase (ec);
-			type = ec.CurrentType.BaseType;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -8187,6 +8191,12 @@ namespace Mono.CSharp {
 			} else {
 				ec.Report.Error (1512, loc, "Keyword `base' is not available in the current context");
 			}
+		}
+
+		public override void ResolveBase (ResolveContext ec)
+		{
+			base.ResolveBase (ec);
+			type = ec.CurrentType.BaseType;
 		}
 	}
 

@@ -135,7 +135,7 @@ namespace Mono.CSharp {
 				var hoisted_tparams = generic.CurrentTypeParameters;
 				type_params = new TypeParameter [hoisted_tparams.Length];
 				for (int i = 0; i < type_params.Length; ++i) {
-					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (spec);
+					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (this, spec);
 				}
 			}
 		}
@@ -1436,7 +1436,7 @@ namespace Mono.CSharp {
 				var hoisted_tparams = ec.CurrentTypeParameters;
 				var type_params = new TypeParameter[hoisted_tparams.Length];
 				for (int i = 0; i < type_params.Length; ++i) {
-					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (null);
+					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (null, null);
 				}
 
 				generic_method = new GenericMethod (parent.NamespaceEntry, parent, member_name, type_params,

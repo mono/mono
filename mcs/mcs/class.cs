@@ -168,6 +168,8 @@ namespace Mono.CSharp {
 		// Holds the compiler generated classes
 		List<CompilerGeneratedClass> compiler_generated;
 
+		Dictionary<MethodSpec, Method> hoisted_base_call_proxies;
+
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
@@ -1030,6 +1032,84 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		//
+		// Creates a proxy base method call inside this container for hoisted base member calls
+		//
+		public MethodSpec CreateHoistedBaseCallProxy (ResolveContext rc, MethodSpec method)
+		{
+			Method proxy_method;
+
+			//
+			// One proxy per base method is enough
+			//
+			if (hoisted_base_call_proxies == null) {
+				hoisted_base_call_proxies = new Dictionary<MethodSpec, Method> ();
+				proxy_method = null;
+			} else {
+				hoisted_base_call_proxies.TryGetValue (method, out proxy_method);
+			}
+
+			if (proxy_method == null) {
+				string name = CompilerGeneratedClass.MakeName (method.Name, null, "BaseCallProxy", hoisted_base_call_proxies.Count);
+				var cloned_params = ParametersCompiled.CreateFullyResolved (method.Parameters.FixedParameters, method.Parameters.Types);
+				if (method.Parameters.HasArglist) {
+					cloned_params.FixedParameters[0] = new Parameter (null, "__arglist", Parameter.Modifier.NONE, null, Location);
+					cloned_params.Types[0] = TypeManager.runtime_argument_handle_type;
+				}
+
+				GenericMethod generic_method;
+				MemberName member_name;
+				if (method.IsGeneric) {
+					//
+					// Copy all base generic method type parameters info
+					//
+					var hoisted_tparams = method.GenericDefinition.TypeParameters;
+					var targs = new TypeArguments ();
+					var type_params = new TypeParameter[hoisted_tparams.Length];
+					for (int i = 0; i < type_params.Length; ++i) {
+						var tp = hoisted_tparams[i];
+						targs.Add (new TypeParameterName (tp.Name, null, Location));
+						type_params[i] = new TypeParameter (tp, null, null, new MemberName (tp.Name), null);
+					}
+
+					member_name = new MemberName (name, targs, Location);
+					generic_method = new GenericMethod (NamespaceEntry, this, member_name, type_params,
+						new TypeExpression (method.ReturnType, Location), cloned_params);
+				} else {
+					member_name = new MemberName (name);
+					generic_method = null;
+				}
+
+				// Compiler generated proxy
+				proxy_method = new Method (this, generic_method, new TypeExpression (method.ReturnType, Location),
+					Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED | Modifiers.DEBUGGER_HIDDEN,
+					member_name, cloned_params, null);
+
+				var block = new ToplevelBlock (Compiler, proxy_method.ParameterInfo, Location);
+
+				var mg = MethodGroupExpr.CreatePredefined (method, method.DeclaringType, Location);
+				mg.InstanceExpression = new BaseThis (method.DeclaringType, Location);
+
+				// Get all the method parameters and pass them as arguments
+				var real_base_call = new Invocation (mg, block.GetAllParametersArguments ());
+				Statement statement;
+				if (method.ReturnType == TypeManager.void_type)
+					statement = new StatementExpression (real_base_call);
+				else
+					statement = new Return (real_base_call, Location);
+
+				block.AddStatement (statement);
+				proxy_method.Block = block;
+
+				methods.Add (proxy_method);
+				proxy_method.Define ();
+
+				hoisted_base_call_proxies.Add (method, proxy_method);
+			}
+
+			return proxy_method.Spec;
 		}
 
 		bool DefineBaseTypes ()

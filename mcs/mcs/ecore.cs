@@ -2543,17 +2543,43 @@ namespace Mono.CSharp {
 			// Overload resulution works on virtual or non-virtual members only (no overrides). That
 			// means for base.member access we have to find the closest match after we found best candidate
 			//
-			if ((method.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.STATIC)) != Modifiers.STATIC && method.DeclaringType != InstanceExpression.Type) {
-				var base_override = MemberCache.FindMember (InstanceExpression.Type, new MemberFilter (method), BindingRestriction.InstanceOnly) as MethodSpec;
-				if (base_override != null && base_override.DeclaringType != method.DeclaringType) {
-					if (base_override.IsGeneric)
-						base_override = base_override.MakeGenericMethod (method.TypeArguments);
+			if ((method.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.STATIC)) != Modifiers.STATIC) {
+				//
+				// The method could already be what we are looking for
+				//
+				TypeSpec[] targs = null;
+				if (method.DeclaringType != InstanceExpression.Type) {
+					var base_override = MemberCache.FindMember (InstanceExpression.Type, new MemberFilter (method), BindingRestriction.InstanceOnly) as MethodSpec;
+					if (base_override != null && base_override.DeclaringType != method.DeclaringType) {
+						if (base_override.IsGeneric)
+							targs = method.TypeArguments;
 
-					if (rc.CurrentAnonymousMethod != null)
-						throw new NotImplementedException ("base call hoisting");
-
-					return base_override;
+						method = base_override;
+					}
 				}
+
+				// TODO: For now we do it for any hoisted call even if it's needed for
+				// hoisted stories only but that requires a new expression wrapper
+				if (rc.CurrentAnonymousMethod != null) {
+					if (targs == null && method.IsGeneric) {
+						targs = method.TypeArguments;
+						method = method.GetGenericMethodDefinition ();
+					}
+
+					if (method.Parameters.HasArglist)
+						throw new NotImplementedException ("__arglist base call proxy");
+
+					method = rc.CurrentMemberDefinition.Parent.PartialContainer.CreateHoistedBaseCallProxy (rc, method);
+
+					// Ideally this should apply to any proxy rewrite but in the case of unary mutators on
+					// get/set member expressions second call would fail to proxy because left expression
+					// would be of 'this' and not 'base'
+					if (rc.CurrentType.IsStruct)
+						InstanceExpression = rc.GetThis (loc);
+				}
+
+				if (targs != null)
+					method = method.MakeGenericMethod (targs);
 			}
 
 			//
