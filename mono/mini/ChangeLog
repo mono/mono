@@ -1,3 +1,10 @@
+2010-07-29  Mark Mason <glowingpurple@gmail.com>
+	
+	* mini-ops.h: Fix mips branch opcodes
+	* mini-mips.h: enable IMT for MIPS
+	* mini-mips.c: Use NULLIFY_INS(), fixup *_OVF expansions with extra move.
+	* tramp-mips.c: Some cleanups to trampoline handling
+	
 2010-07-27  Mark Mason <glowingpurple@gmail.com>
 
 	* mini-mips.c: Fix compilation errors.
