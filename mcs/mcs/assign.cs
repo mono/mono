@@ -501,56 +501,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class EventAddOrRemove : ExpressionStatement {
-		EventExpr target;
-		Binary.Operator op;
-		Expression source;
-
-		public EventAddOrRemove (Expression target, Binary.Operator op, Expression source, Location loc)
-		{
-			this.target = target as EventExpr;
-			this.op = op;
-			this.source = source;
-			this.loc = loc;
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			return new SimpleAssign (target, source).CreateExpressionTree (ec);
-		}
-
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			if (op != Binary.Operator.Addition && op != Binary.Operator.Subtraction)
-				target.Error_AssignmentEventOnly (ec);
-
-			source = source.Resolve (ec);
-			if (source == null)
-				return null;
-
-			source = Convert.ImplicitConversionRequired (ec, source, target.Type, loc);
-			if (source == null)
-				return null;
-
-			eclass = ExprClass.Value;
-			type = TypeManager.void_type;
-			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			if (RootContext.EvalMode)
-				EmitStatement (ec);
-			else
-				throw new InternalErrorException ("don't know what to emit");				
-		}
-
-		public override void EmitStatement (EmitContext ec)
-		{
-			target.EmitAddOrRemove (ec, op == Binary.Operator.Addition, source);
-		}
-	}
-
 	//
 	// This class is used for compound assignments.
 	//
@@ -623,8 +573,28 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (target is EventExpr)
-				return new EventAddOrRemove (target, op, right, loc).Resolve (ec);
+			var event_expr = target as EventExpr;
+			if (event_expr != null) {
+				source = Convert.ImplicitConversionRequired (ec, right, target.Type, loc);
+				if (source == null)
+					return null;
+
+				Expression rside;
+				if (op == Binary.Operator.Addition)
+					rside = EmptyExpression.EventAddition;
+				else if (op == Binary.Operator.Subtraction)
+					rside = EmptyExpression.EventSubtraction;
+				else
+					rside = null;
+
+				target = target.ResolveLValue (ec, rside);
+				if (target == null)
+					return null;
+
+				eclass = ExprClass.Value;
+				type = event_expr.Operator.ReturnType;
+				return this;
+			}
 
 			//
 			// Only now we can decouple the original source/target

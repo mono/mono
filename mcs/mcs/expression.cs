@@ -8229,6 +8229,8 @@ namespace Mono.CSharp {
 		public static readonly EmptyExpression LValueMemberAccess = new EmptyExpression ();
 		public static readonly EmptyExpression LValueMemberOutAccess = new EmptyExpression ();
 		public static readonly EmptyExpression UnaryAddress = new EmptyExpression ();
+		public static readonly EmptyExpression EventAddition = new EmptyExpression ();
+		public static readonly EmptyExpression EventSubtraction = new EmptyExpression ();
 
 		static EmptyExpression temp = new EmptyExpression ();
 		public static EmptyExpression Grab ()

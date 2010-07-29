@@ -45334,6 +45334,72 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-95.cs">
+    <type name="D">
+      <method name="Int32 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void add_Event(D)">
+        <size>0</size>
+      </method>
+      <method name="Void remove_Event(D)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void add_Event(D)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_Event(D)">
+        <size>24</size>
+      </method>
+      <method name="Int32 Run()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Test(Int32)">
+        <size>46</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>23</size>
+      </method>
+      <method name="Void &lt;add_Event&gt;__BaseCallProxy0(D)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0()">
+        <size>24</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__1()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">
