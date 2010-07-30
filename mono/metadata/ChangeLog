@@ -1,3 +1,9 @@
+2010-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_layout_fields): Comment out an
+	assert from a backport. It can't be done under 2.6
+	due to weaker SRE implementation.
+
 2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): Don't move forward

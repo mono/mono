@@ -1721,8 +1721,8 @@ mono_class_layout_fields (MonoClass *class)
 					field->offset += align - 1;
 					field->offset &= ~(align - 1);
 				}
-				/*TypeBuilders produce all sort of weird things*/
-				g_assert (class->image->dynamic || field->offset > 0);
+				/*can't have this assert on 2.6 since its SRE has much more trouble handling inflated types in SRE context.*/
+				/*g_assert (class->image->dynamic || field->offset > 0);*/
 				real_size = field->offset + size;
 			}
 
