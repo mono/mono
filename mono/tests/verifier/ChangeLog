@@ -1,3 +1,7 @@
+2010-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Makefile: Fix build.
+
 2010-07-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_generic_arg_satisty_constraint_compat_check.cs:
