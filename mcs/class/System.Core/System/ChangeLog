@@ -1,3 +1,8 @@
+2010-07-30  Andrés G. Aragoneses  <andres@lindenlab.com>
+
+	* TimezoneInfo.cs: fix the NET_2_1 build in the same way as the
+	MONOTOUCH build was. (This was failing on Debian etch with 1.9)
+
 2010-01-04  Jb Evain  <jbevain@novell.com>
 
 	* TimeZoneInfo.AdjustmentRule.cs, TimeZoneInfo.TransitionTime.cs:

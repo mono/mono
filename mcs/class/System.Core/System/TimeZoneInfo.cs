@@ -133,7 +133,7 @@ namespace System
 #endif
 		private AdjustmentRule [] adjustmentRules;
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !NET_2_1
 		static RegistryKey timeZoneKey = null;
 		static bool timeZoneKeySet = false;
 		static RegistryKey TimeZoneKey {
@@ -309,7 +309,7 @@ namespace System
 			//FIXME: this method should check for cached values in systemTimeZones
 			if (id == null)
 				throw new ArgumentNullException ("id");
-#if !MONOTOUCH
+#if !MONOTOUCH && !NET_2_1
 			if (TimeZoneKey != null)
 			{
 				RegistryKey key = TimeZoneKey.OpenSubKey (id, false);
@@ -350,7 +350,7 @@ namespace System
 		}
 #endif
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !NET_2_1
 		private static TimeZoneInfo FromRegistryKey (string id, RegistryKey key)
 		{
 			byte [] reg_tzi = (byte []) key.GetValue ("TZI");
@@ -518,7 +518,7 @@ namespace System
 		{
 			if (systemTimeZones == null) {
 				systemTimeZones = new List<TimeZoneInfo> ();
-#if !MONOTOUCH
+#if !MONOTOUCH && !NET_2_1
 				if (TimeZoneKey != null) {
 					foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
 						try {
