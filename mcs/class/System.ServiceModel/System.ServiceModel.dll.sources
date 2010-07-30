@@ -374,6 +374,7 @@ System.ServiceModel.Configuration/EncodingConverter.cs
 System.ServiceModel.Configuration/EndpointAddressElementBase.cs
 System.ServiceModel.Configuration/EndpointBehaviorElement.cs
 System.ServiceModel.Configuration/EndpointBehaviorElementCollection.cs
+System.ServiceModel.Configuration/EndpointCollectionElement.cs
 System.ServiceModel.Configuration/ExtensionElement.cs
 System.ServiceModel.Configuration/ExtensionElementCollection.cs
 System.ServiceModel.Configuration/ExtensionsSection.cs
@@ -484,6 +485,9 @@ System.ServiceModel.Configuration/StandardBindingElement.cs
 System.ServiceModel.Configuration/StandardBindingElementCollection.cs
 System.ServiceModel.Configuration/StandardBindingOptionalReliableSessionElement.cs
 System.ServiceModel.Configuration/StandardBindingReliableSessionElement.cs
+System.ServiceModel.Configuration/StandardEndpointCollectionElement.cs
+System.ServiceModel.Configuration/StandardEndpointElement.cs
+System.ServiceModel.Configuration/StandardEndpointElementCollection.cs
 System.ServiceModel.Configuration/SynchronousReceiveElement.cs
 System.ServiceModel.Configuration/TcpConnectionPoolSettingsElement.cs
 System.ServiceModel.Configuration/TcpTransportElement.cs

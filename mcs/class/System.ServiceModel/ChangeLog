@@ -1,3 +1,7 @@
+2010-07-30  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources: add 4.0 standard endpoint types.
+
 2010-07-12  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: remove SecurityHandler.cs
