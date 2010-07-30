@@ -879,6 +879,14 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		public void RemoveDelegateTypeMismatch ()
+		{
+			Delegate boxer = new Boxer (() => new object ());
+			Delegate.Remove (boxer, new WrongDelegate (() => 42));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void WrongReturnTypeContravariance ()
 		{
 			Delegate.CreateDelegate (
