@@ -625,7 +625,7 @@ namespace Mono.CSharp {
 						// Both are private and share same parent
 						//
 						if (al == AccessLevel.Private) {
-							var decl = mc.Parent;
+							DeclSpace decl = mc.Parent;
 							do {
 								same_access_restrictions = TypeManager.IsEqual (decl.TypeBuilder, p_parent);
 							} while (!same_access_restrictions && !decl.IsTopLevel && (decl = decl.Parent) != null);

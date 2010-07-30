@@ -1,3 +1,8 @@
+2010-07-30  Andrés G. Aragoneses  <andres@lindenlab.com>
+
+	* decl.cs: Avoid using "var" so this can be compiled with Mono 1.9
+	(current version of Debian etch).
+
 2010-02-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #577029
