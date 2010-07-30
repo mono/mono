@@ -1,3 +1,8 @@
+2010-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_method_to_ir): Handle method with invalid
+	signature. This can happen now with the verifier checking them.
+
 2010-07-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* xdebug.c (mono_save_trampoline_xdebug_info): Call

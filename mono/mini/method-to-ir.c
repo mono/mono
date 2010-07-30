@@ -6364,6 +6364,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					array_rank = cmethod->klass->rank;
 					fsig = mono_method_signature (cmethod);
 				} else {
+					if (!mono_method_signature (cmethod))
+						goto load_error;
+
 					if (mono_method_signature (cmethod)->pinvoke) {
 						MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod,
 							check_for_pending_exc, FALSE);
