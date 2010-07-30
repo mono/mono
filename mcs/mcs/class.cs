@@ -90,7 +90,7 @@ namespace Mono.CSharp {
 				return tc.GetSignatureForError ();
 			}
 
-			public ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+			public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 			{
 				return null;
 			}
@@ -2237,7 +2237,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+		public override IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 		{
 			DeclSpace top_level = Parent;
 			if (top_level != null) {
@@ -2245,11 +2245,13 @@ namespace Mono.CSharp {
 					top_level = top_level.Parent;
 
 				var candidates = NamespaceEntry.NS.LookupExtensionMethod (extensionType, this, name, arity);
-				if (candidates != null)
-					return new ExtensionMethodGroupExpr (candidates, NamespaceEntry, extensionType, loc);
+				if (candidates != null) {
+					scope = NamespaceEntry;
+					return candidates;
+				}
 			}
 
-			return NamespaceEntry.LookupExtensionMethod (extensionType, name, arity, loc);
+			return NamespaceEntry.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
 
 		protected override TypeAttributes TypeAttr {

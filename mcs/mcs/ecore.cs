@@ -2766,26 +2766,46 @@ namespace Mono.CSharp {
 		public abstract void SetTypeArguments (ResolveContext ec, TypeArguments ta);
 	}
 
-	/// 
-	/// Represents group of extension method candidates
-	/// 
-	public class ExtensionMethodGroupExpr : MethodGroupExpr, OverloadResolver.IErrorHandler
+	// 
+	// Represents a group of extension method candidates for whole namespace
+	// 
+	class ExtensionMethodGroupExpr : MethodGroupExpr, OverloadResolver.IErrorHandler
 	{
-		readonly NamespaceEntry namespace_entry;
-		public Expression ExtensionExpression;
+		NamespaceEntry namespace_entry;
+		public readonly Expression ExtensionExpression;
 
-		public ExtensionMethodGroupExpr (List<MethodSpec> list, NamespaceEntry n, TypeSpec extensionType, Location l)
-			: base (list.Cast<MemberSpec>().ToList (), extensionType, l)
+		public ExtensionMethodGroupExpr (IList<MethodSpec> list, NamespaceEntry n, Expression extensionExpr, Location l)
+			: base (list.Cast<MemberSpec>().ToList (), extensionExpr.Type, l)
 		{
 			this.namespace_entry = n;
+			this.ExtensionExpression = extensionExpr;
 		}
 
 		public override bool IsStatic {
 			get { return true; }
 		}
 
-		public bool IsTopLevel {
-			get { return namespace_entry == null; }
+		public override IList<MemberSpec> GetBaseMembers (TypeSpec baseType)
+		{
+			if (namespace_entry == null)
+				return null;
+
+			//
+			// For extension methodgroup we are not looking for base members but parent
+			// namespace extension methods
+			//
+			int arity = type_arguments == null ? 0 : type_arguments.Count;
+			var found = namespace_entry.LookupExtensionMethod (DeclaringType, Name, arity, ref namespace_entry);
+			if (found == null)
+				return null;
+
+			return found.Cast<MemberSpec> ().ToList ();
+		}
+
+		public override MethodGroupExpr LookupExtensionMethod (ResolveContext rc)
+		{
+			// We are already here
+			return null;
 		}
 
 		public override MethodGroupExpr OverloadResolve (ResolveContext ec, ref Arguments arguments, OverloadResolver.IErrorHandler ehandler, OverloadResolver.Restrictions restr)
@@ -2794,39 +2814,21 @@ namespace Mono.CSharp {
 				arguments = new Arguments (1);
 
 			arguments.Insert (0, new Argument (ExtensionExpression));
-			MethodGroupExpr mg = ResolveOverloadExtensions (ec, ref arguments, ehandler ?? this, namespace_entry, loc);
+			var res = base.OverloadResolve (ec, ref arguments, ehandler ?? this, restr);
 
 			// Store resolved argument and restore original arguments
-			if (mg == null) {
-				arguments.RemoveAt (0);	// Clean-up modified arguments for error reporting
-			} else {
-				var me = ExtensionExpression as MemberExpr;
-				if (me != null)
-					me.ResolveInstanceExpression (ec);
+			if (res == null) {
+				// Clean-up modified arguments for error reporting
+				arguments.RemoveAt (0);
+				return null;
 			}
 
-			return mg;
-		}
+			var me = ExtensionExpression as MemberExpr;
+			if (me != null)
+				me.ResolveInstanceExpression (ec);
 
-		MethodGroupExpr ResolveOverloadExtensions (ResolveContext ec, ref Arguments arguments, OverloadResolver.IErrorHandler ehandler, NamespaceEntry ns, Location loc)
-		{
-			// Use normal resolve rules
-			MethodGroupExpr mg = base.OverloadResolve (ec, ref arguments, ehandler, ns != null ? OverloadResolver.Restrictions.ProbingOnly : OverloadResolver.Restrictions.None);
-			if (mg != null)
-				return mg;
-
-			if (ns == null)
-				return null;
-
-			// Search continues
-			int arity = type_arguments == null ? 0 : type_arguments.Count;
-			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, Name, arity, loc);
-			if (e == null)
-				return base.OverloadResolve (ec, ref arguments, ehandler, OverloadResolver.Restrictions.None);
-
-			e.ExtensionExpression = ExtensionExpression;
-			e.SetTypeArguments (ec, type_arguments);			
-			return e.ResolveOverloadExtensions (ec, ref arguments, ehandler, e.namespace_entry, loc);
+			InstanceExpression = null;
+			return this;
 		}
 
 		#region IErrorHandler Members
@@ -2958,13 +2960,6 @@ namespace Mono.CSharp {
 			return Methods.First ().GetSignatureForError ();
 		}
 
-		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
-		{
-			simple_name = original;
-
-			return base.ResolveMemberAccess (ec, left, original);
-		}
-
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (best_candidate == null) {
@@ -3051,6 +3046,10 @@ namespace Mono.CSharp {
 			if (best_candidate == null)
 				return r.BestCandidateIsDynamic ? this : null;
 
+			// Overload resolver had to create a new method group, all checks bellow have already been executed
+			if (r.BestCandidateNewMethodGroup != null)
+				return r.BestCandidateNewMethodGroup;
+
 			if (best_candidate.Kind == MemberKind.Method) {
 				if (InstanceExpression != null) {
 					if (best_candidate.IsExtensionMethod && args[0].Expr == InstanceExpression) {
@@ -3078,6 +3077,12 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
+		{
+			simple_name = original;
+			return base.ResolveMemberAccess (ec, left, original);
+		}
+
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
 			type_arguments = ta;
@@ -3085,12 +3090,15 @@ namespace Mono.CSharp {
 
 		#region IBaseMembersProvider Members
 
-		IList<MemberSpec> OverloadResolver.IBaseMembersProvider.GetBaseMembers (TypeSpec baseType)
+		public virtual IList<MemberSpec> GetBaseMembers (TypeSpec baseType)
 		{
 			return baseType == null ? null : MemberCache.FindMembers (baseType, Methods [0].Name, false);
 		}
 
-		MethodGroupExpr OverloadResolver.IBaseMembersProvider.LookupExtensionMethod (ResolveContext rc, int arity)
+		//
+		// Extension methods lookup after ordinary methods candidates failed to apply
+		//
+		public virtual MethodGroupExpr LookupExtensionMethod (ResolveContext rc)
 		{
 			if (InstanceExpression == null)
 				return null;
@@ -3099,12 +3107,14 @@ namespace Mono.CSharp {
 			if (!IsExtensionMethodArgument (InstanceExpression))
 				return null;
 
-			var emg = rc.LookupExtensionMethod (InstanceExpression.Type, Methods [0].Name, arity, loc);
-			if (emg != null) {
-				emg.ExtensionExpression = InstanceExpression;
-				emg.SetTypeArguments (rc, type_arguments);
-			}
+			int arity = type_arguments == null ? 0 : type_arguments.Count;
+			NamespaceEntry methods_scope = null;
+			var methods = rc.LookupExtensionMethod (InstanceExpression.Type, Methods[0].Name, arity, ref methods_scope);
+			if (methods == null)
+				return null;
 
+			var emg = new ExtensionMethodGroupExpr (methods, methods_scope, InstanceExpression, loc);
+			emg.SetTypeArguments (rc, type_arguments);
 			return emg;
 		}
 
@@ -3126,7 +3136,7 @@ namespace Mono.CSharp {
 		public interface IBaseMembersProvider
 		{
 			IList<MemberSpec> GetBaseMembers (TypeSpec baseType);
-			MethodGroupExpr LookupExtensionMethod (ResolveContext rc, int arity);
+			MethodGroupExpr LookupExtensionMethod (ResolveContext rc);
 		}
 
 		public interface IErrorHandler
@@ -3146,7 +3156,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			public MethodGroupExpr LookupExtensionMethod (ResolveContext rc, int arity)
+			public MethodGroupExpr LookupExtensionMethod (ResolveContext rc)
 			{
 				return null;
 			}
@@ -3170,6 +3180,7 @@ namespace Mono.CSharp {
 		IBaseMembersProvider base_provider;
 		IErrorHandler custom_errors;
 		Restrictions restrictions;
+		MethodGroupExpr best_candidate_extension_group;
 
 		SessionReportPrinter lambda_conv_msgs;
 		ReportPrinter prev_recorder;
@@ -3207,6 +3218,15 @@ namespace Mono.CSharp {
 		}
 
 		public bool BestCandidateIsDynamic { get; set; }
+
+		//
+		// Best candidate was found in newly created MethodGroupExpr, used by extension methods
+		//
+		public MethodGroupExpr BestCandidateNewMethodGroup {
+			get {
+				return best_candidate_extension_group;
+			}
+		}
 
 		public IErrorHandler CustomErrors {
 			get {
@@ -3766,7 +3786,7 @@ namespace Mono.CSharp {
 			var current_type = rc.CurrentType;
 			MemberSpec invocable_member = null;
 
-			// Cannot return until error reporter is restored
+			// Be careful, cannot return until error reporter is restored
 			while (true) {
 				best_candidate = null;
 				best_candidate_rate = int.MaxValue;
@@ -3842,14 +3862,16 @@ namespace Mono.CSharp {
 					break;
 
 				//
-				// Extension methods lookup when no ordinary method match was found
+				// Try extension methods lookup when no ordinary method match was found and provider enables it
 				//
 				if (!error_mode) {
-					var emg = base_provider.LookupExtensionMethod (rc, type_arguments == null ? 0 : type_arguments.Count);
+					var emg = base_provider.LookupExtensionMethod (rc);
 					if (emg != null) {
-						emg = emg.OverloadResolve (rc, ref args, custom_errors, error_mode ? Restrictions.ProbingOnly : Restrictions.None);
-						if (emg != null)
+						emg = emg.OverloadResolve (rc, ref args, null, restrictions);
+						if (emg != null) {
+							best_candidate_extension_group = emg;
 							return (T) (MemberSpec) emg.BestCandidate;
+						}
 					}
 				}
 

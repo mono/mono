@@ -899,7 +899,7 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 		{
 			throw new NotImplementedException ();
 		}

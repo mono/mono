@@ -4929,14 +4929,9 @@ namespace Mono.CSharp {
 							return null;
 						}
 
-						mg = ec.LookupExtensionMethod (me.Type, me.Name, -1, loc);
-						if (mg == null) {
-							ec.Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
+						ec.Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
 								member_expr.GetSignatureForError ());
-							return null;
-						}
-
-						((ExtensionMethodGroupExpr) mg).ExtensionExpression = me.InstanceExpression;
+						return null;
 					}
 				}
 
@@ -7314,18 +7309,19 @@ namespace Mono.CSharp {
 					// Try to look for extension method when member lookup failed
 					//
 					if (MethodGroupExpr.IsExtensionMethodArgument (expr)) {
-						ExtensionMethodGroupExpr ex_method_lookup = rc.LookupExtensionMethod (expr_type, Name, lookup_arity, loc);
-						if (ex_method_lookup != null) {
-							ex_method_lookup.ExtensionExpression = expr;
-
+						NamespaceEntry scope = null;
+						var methods = rc.LookupExtensionMethod (expr_type, Name, lookup_arity, ref scope);
+						if (methods != null) {
+							var emg = new ExtensionMethodGroupExpr (methods, scope, expr, loc);
 							if (HasTypeArguments) {
 								if (!targs.Resolve (rc))
 									return null;
 
-								ex_method_lookup.SetTypeArguments (rc, targs);
+								emg.SetTypeArguments (rc, targs);
 							}
 
-							return ex_method_lookup.Resolve (rc);
+							// TODO: Should it really skip the checks bellow
+							return emg.Resolve (rc);
 						}
 					}
 				}
@@ -8133,7 +8129,7 @@ namespace Mono.CSharp {
 			return baseType == null ? null : MemberCache.FindMembers (baseType, MemberCache.IndexerNameAlias, false);
 		}
 
-		MethodGroupExpr OverloadResolver.IBaseMembersProvider.LookupExtensionMethod (ResolveContext rc, int arity)
+		MethodGroupExpr OverloadResolver.IBaseMembersProvider.LookupExtensionMethod (ResolveContext rc)
 		{
 			return null;
 		}
