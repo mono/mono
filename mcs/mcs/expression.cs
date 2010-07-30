@@ -2789,7 +2789,7 @@ namespace Mono.CSharp {
 		{
 			if (!TypeManager.IsEqual (l, r) && !TypeSpecComparer.Variant.IsEqual (r, l)) {
 				Expression tmp;
-				if (right.eclass == ExprClass.MethodGroup || (r == InternalType.AnonymousMethod)) {
+				if (right.eclass == ExprClass.MethodGroup || r == InternalType.AnonymousMethod || r == InternalType.Null) {
 					tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
 					if (tmp == null)
 						return null;
