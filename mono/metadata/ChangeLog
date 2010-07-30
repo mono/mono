@@ -1,5 +1,12 @@
 2010-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (find_method): Return null if from_class number
+	of interfaces doesnt't match in_class.
+
+	Fixes #567859
+
+2010-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_layout_fields): Comment out an
 	assert from a backport. It can't be done under 2.6
 	due to weaker SRE implementation.

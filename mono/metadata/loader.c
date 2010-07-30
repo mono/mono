@@ -670,7 +670,9 @@ find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSig
 		if (name [0] == '.' && (!strcmp (name, ".ctor") || !strcmp (name, ".cctor")))
 			break;
 
-		g_assert (from_class->interface_offsets_count == in_class->interface_offsets_count);
+		/*This is a workaround for 2.6 since 2.8 doesn't show this behavior. See #567859*/
+		if (from_class->interface_offsets_count != in_class->interface_offsets_count)
+			return NULL;
 		for (i = 0; i < in_class->interface_offsets_count; i++) {
 			MonoClass *in_ic = in_class->interfaces_packed [i];
 			MonoClass *from_ic = from_class->interfaces_packed [i];
