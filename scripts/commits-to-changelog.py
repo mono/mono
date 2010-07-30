@@ -71,7 +71,7 @@ def append_paragraph (lines, paragraph):
         lines.append ("")
     lines += paragraph
 
-def format_changelog_entries (commit, changed_files, prefix, file_entries):
+def format_changelog_entries (commit, changed_files, prefix, file_entries, all_paragraphs):
     changelogs = set ()
     for f in changed_files:
         changelogs.add (changelog_for_file (f))
@@ -104,8 +104,10 @@ def format_changelog_entries (commit, changed_files, prefix, file_entries):
     for changelog in unmarked_changelogs:
         if len (prefix) == 0:
             print "Warning: empty entry in %s for commit %s" % (changelog_path (changelog), commit)
-            append_paragraph (paragraphs [changelog], format_paragraph ("FIXME: empty entry!"))
-        for paragraph in prefix:
+            insert_paragraphs = all_paragraphs
+        else:
+            insert_paragraphs = prefix
+        for paragraph in insert_paragraphs:
             append_paragraph (paragraphs [changelog], format_paragraph (paragraph))
 
     return paragraphs
@@ -175,7 +177,8 @@ def process_commit (commit):
     current_files = None
     current_files_comments = None
 
-    for line in message.splitlines ():
+    message_lines = message.splitlines ()
+    for line in message_lines:
         if re.match ("\*\s[^:]+:", line):
             if current_files:
                 file_entries.append ((current_files, current_files_comments))
@@ -202,7 +205,7 @@ def process_commit (commit):
     if current_files:
         file_entries.append ((current_files, current_files_comments))
 
-    changelog_entries = format_changelog_entries (commit, changed_files, prefix, file_entries)
+    changelog_entries = format_changelog_entries (commit, changed_files, prefix, file_entries, message_lines)
 
     #debug_print_commit (commit, raw_message, prefix, file_entries, changed_files, changelog_entries)
 
