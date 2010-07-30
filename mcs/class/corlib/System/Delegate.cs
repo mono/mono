@@ -486,6 +486,12 @@ namespace System
 			if (source == null)
 				return null;
 
+			if (value == null)
+				return source;
+
+			if (source.GetType () != value.GetType ())
+				throw new ArgumentException ("Delegate type mismatch");
+
 			return source.RemoveImpl (value);
 		}
 
