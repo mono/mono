@@ -1,3 +1,14 @@
+2010-07-28  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs, assign.cs, attribute.cs, decl.cs, delegate.cs,
+	doc.cs, dynamic.cs, ecore.cs, expression.cs, generic.cs, import.cs,
+	iterators.cs, linq.cs, membercache.cs, method.cs, report.cs,
+	statement.cs, typemanager.cs: Major name lookup fixes to deal with
+	C# 3.0 invocable members, correctly handle accessibility hidding and
+	property-like different get/set base accessors.
+	
+	Also fixes bugs #624870, #618522, #616068, #444180, #333891
+
 2010-07-14  Marek Safar  <marek.safar@gmail.com>
 
 	* namespace.cs, import.cs: When importing nested type via type

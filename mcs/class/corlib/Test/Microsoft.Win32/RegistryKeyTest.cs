@@ -757,6 +757,65 @@ namespace MonoTests.Microsoft.Win32
 					key2.Close ();
 			}
 		}
+
+		[Test]
+		public void DeleteSubKey_Volatile ()
+		{			
+			RegistryKey key = null;
+			RegistryKey subkey = null;
+			string subKeyName = "VolatileKey";
+
+			try {
+				key = Registry.CurrentUser.CreateSubKey (subKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				key.CreateSubKey ("VolatileKeyChild", RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				key.SetValue ("Name", "Mono");
+				key.Close ();
+
+				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+
+				key = Registry.CurrentUser.OpenSubKey (subKeyName);
+				Assert.AreEqual (null, key, "#A0");
+			} finally {
+				if (subkey != null)
+					subkey.Close ();
+				if (key != null)
+					key.Close ();
+			}
+		}
+
+		// Define a normal key, and create a normal and a volatile key under it, and retrieve their names.
+		[Test]
+		public void GetSubKeyNames_Volatile ()
+		{           
+			RegistryKey key = null;
+			RegistryKey subkey = null;
+			string subKeyName = Guid.NewGuid ().ToString ();
+			string volChildKeyName = "volatilechildkey";
+			string childKeyName = "childkey";
+
+			try {
+				key = Registry.CurrentUser.CreateSubKey (subKeyName);
+				key.CreateSubKey (volChildKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.Volatile);
+				key.CreateSubKey (childKeyName, RegistryKeyPermissionCheck.Default, RegistryOptions.None);
+				key.Close ();
+
+				key = Registry.CurrentUser.OpenSubKey (subKeyName);
+				string [] keyNames = key.GetSubKeyNames ();
+
+				// we can guarantee the order of the child keys, so we sort the two of them
+				Array.Sort (keyNames);
+
+				Assert.AreEqual (2, keyNames.Length, "#A0");
+				Assert.AreEqual (childKeyName, keyNames [0], "#A1");
+				Assert.AreEqual (volChildKeyName, keyNames [1], "#A2");
+			} finally {
+				if (subkey != null)
+					subkey.Close ();
+				if (key != null)
+					key.Close ();
+			}
+
+		}
 #endif
 
 		[Test]

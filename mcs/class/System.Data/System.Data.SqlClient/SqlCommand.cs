@@ -434,10 +434,14 @@ namespace System.Data.SqlClient {
 
 			string procName = CommandText;
 			string schemaName = String.Empty;
-			int dotPosition = procName.IndexOf ('.');
+			int dotPosition = procName.LastIndexOf ('.');
+
+			// Procedure name can be: [database].[user].[procname]
 			if (dotPosition >= 0) {
 				schemaName = procName.Substring (0, dotPosition);
 				procName = procName.Substring (dotPosition + 1);
+				if ((dotPosition = schemaName.LastIndexOf ('.')) >= 0)
+					schemaName = schemaName.Substring (dotPosition + 1);
 			}
 			
 			procName = EscapeProcName (procName, false);

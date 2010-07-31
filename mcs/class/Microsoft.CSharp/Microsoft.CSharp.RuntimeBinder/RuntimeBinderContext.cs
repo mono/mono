@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
@@ -88,7 +89,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			throw new NotImplementedException ();
 		}
 
-		public Compiler.ExtensionMethodGroupExpr LookupExtensionMethod (Compiler.TypeSpec extensionType, string name, int arity, Mono.CSharp.Location loc)
+		public IList<Compiler.MethodSpec> LookupExtensionMethod (Compiler.TypeSpec extensionType, string name, int arity, ref Compiler.NamespaceEntry scope)
 		{
 			// No extension method lookup in this context
 			return null;

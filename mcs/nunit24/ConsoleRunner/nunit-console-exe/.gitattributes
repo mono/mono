@@ -1,0 +1,7 @@
+/App.config -crlf
+/Class1.cs -crlf
+/assemblyinfo.cs -crlf
+/nunit-console.exe.build -crlf
+/nunit-console.exe.config -crlf
+/nunit-console.exe.config.net_2_0 -crlf
+/nunit-console.exe.config.net_3_5 -crlf

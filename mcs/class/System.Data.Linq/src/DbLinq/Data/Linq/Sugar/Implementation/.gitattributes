@@ -1,0 +1,16 @@
+/DataMapper.cs -crlf
+/DataRecordReader.cs -crlf
+/ExpressionDispatcher.Analyzer.cs -crlf
+/ExpressionDispatcher.Registrar.cs -crlf
+/ExpressionDispatcher.cs -crlf
+/ExpressionLanguageParser.cs -crlf
+/ExpressionOptimizer.cs -crlf
+/ExpressionQualifier.cs -crlf
+/LineGrouping.cs -crlf
+/PrequelAnalyzer.cs -crlf
+/QueryBuilder.Upsert.cs -crlf
+/QueryBuilder.cs -crlf
+/QueryCache.cs -crlf
+/QueryRunner.cs -crlf
+/SpecialExpressionTranslator.cs -crlf
+/SqlBuilder.cs -crlf

@@ -73,6 +73,19 @@ namespace System.ServiceModel.Security
 			if (requirement.TokenType == SecurityTokenTypes.Rsa)
 				return new RsaSecurityTokenAuthenticator ();
 			if (requirement.TokenType == ServiceModelSecurityTokenTypes.SecureConversation) {
+				SecurityBindingElement binding;
+				if (!requirement.TryGetProperty<SecurityBindingElement> (ReqType.SecurityBindingElementProperty, out binding))
+					throw new ArgumentException ("SecurityBindingElement is required in the security token requirement");
+				SecureConversationSecurityTokenParameters issuedParams;
+				if (!requirement.TryGetProperty<SecureConversationSecurityTokenParameters> (ReqType.IssuedSecurityTokenParametersProperty, out issuedParams))
+					throw new ArgumentException ("IssuedSecurityTokenParameters are required in the security token requirement");
+				BindingContext issuerBC;
+				if (!requirement.TryGetProperty<BindingContext> (ReqType.IssuerBindingContextProperty, out issuerBC))
+					throw new ArgumentException ("IssuerBindingContext is required in the security token requirement");
+				SecurityTokenVersion secVer;
+				if (!requirement.TryGetProperty<SecurityTokenVersion> (ReqType.MessageSecurityVersionProperty, out secVer))
+					throw new ArgumentException ("MessageSecurityVersion property (of type SecurityTokenVersion) is required in the security token requirement");
+
 				// FIXME: get parameters from somewhere
 				SecurityContextSecurityTokenResolver resolver =
 					new SecurityContextSecurityTokenResolver (0x1000, true);

@@ -1,0 +1,17 @@
+/ComposablePart.cs -crlf
+/ComposablePartCatalog.cs -crlf
+/ComposablePartCatalogDebuggerProxy.cs -crlf
+/ComposablePartDefinition.cs -crlf
+/ComposablePartException.cs -crlf
+/CompositionElement.cs -crlf
+/CompositionElementDebuggerProxy.cs -crlf
+/CompositionElementExtensions.cs -crlf
+/ContractBasedImportDefinition.cs -crlf
+/Export.cs -crlf
+/ExportDefinition.cs -crlf
+/ExportedDelegate.cs -crlf
+/ICompositionElement.cs -crlf
+/IPartCreatorImportDefinition.cs -crlf
+/ImportCardinality.cs -crlf
+/ImportDefinition.cs -crlf
+/SerializableCompositionElement.cs -crlf

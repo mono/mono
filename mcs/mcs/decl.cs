@@ -475,7 +475,9 @@ namespace Mono.CSharp {
 		}
 
 		public virtual bool IsUsed {
-			get { return (caching_flags & Flags.IsUsed) != 0; }
+			get {
+				return (caching_flags & Flags.IsUsed) != 0;
+			}
 		}
 
 		protected Report Report {
@@ -676,9 +678,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+		public virtual IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 		{
-			return Parent.LookupExtensionMethod (extensionType, name, arity, loc);
+			return Parent.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
 
 		public virtual FullNamedExpression LookupNamespaceAlias (string name)
@@ -1050,6 +1052,38 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// Is this member accessible from invocationType
+		//
+		public bool IsAccessible (TypeSpec invocationType)
+		{
+			var ma = Modifiers & Modifiers.AccessibilityMask;
+			if (ma == Modifiers.PUBLIC)
+				return true;
+
+			var parentType = /* this as TypeSpec ?? */ DeclaringType;
+		
+			//
+			// If only accessible to the current class or children
+			//
+			if (ma == Modifiers.PRIVATE)
+				return invocationType.MemberDefinition == parentType.MemberDefinition ||
+					TypeManager.IsNestedChildOf (invocationType, parentType);
+
+			if ((ma & Modifiers.INTERNAL) != 0) {
+				var b = TypeManager.IsThisOrFriendAssembly (invocationType == InternalType.FakeInternalType ?
+					 CodeGen.Assembly.Builder : invocationType.Assembly, parentType.Assembly);
+				if (b || ma == Modifiers.INTERNAL)
+					return b;
+			}
+
+			// PROTECTED
+			if (!TypeManager.IsNestedFamilyAccessible (invocationType, parentType))
+				return false;
+
+			return true;
+		}
+
+		//
 		// Returns member CLS compliance based on full member hierarchy
 		//
 		public bool IsCLSCompliant ()
@@ -1290,6 +1324,9 @@ namespace Mono.CSharp {
 		
 		public bool CheckAccessLevel (TypeSpec check_type)
 		{
+// TODO: Use this instead
+//			return PartialContainer.Definition.IsAccessible (check_type);
+
 			TypeSpec tb = PartialContainer.Definition;
 			check_type = check_type.GetDefinition ();
 
@@ -1344,7 +1381,7 @@ namespace Mono.CSharp {
 				return null;
 
 			// FIXME: Breaks error reporting
-			if (!CheckAccessLevel (t))
+			if (!t.IsAccessible (CurrentType))
 				return null;
 
 			return t;

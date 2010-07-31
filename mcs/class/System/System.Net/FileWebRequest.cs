@@ -262,8 +262,10 @@ namespace System.Net
 				asyncResult.AsyncWaitHandle.WaitOne ();
 			AsyncResult async = (AsyncResult) asyncResult;
 			GetResponseCallback cb = (GetResponseCallback) async.AsyncDelegate;
-			WebResponse webResponse = cb.EndInvoke(asyncResult);
+			FileWebResponse webResponse = (FileWebResponse) cb.EndInvoke(asyncResult);
 			asyncResponding = false;
+			if (webResponse.HasError)
+				throw webResponse.Error;
 			return webResponse;
 		}
 		
@@ -290,13 +292,12 @@ namespace System.Net
 			}
 			FileStream fileStream = null;
 			try {
-				fileStream = new FileWebStream (this, FileMode.Open,
-				 FileAccess.Read, FileShare.Read);
+				fileStream = new FileWebStream (this, FileMode.Open, FileAccess.Read, FileShare.Read);
+				this.webResponse = new FileWebResponse (this.uri, fileStream);
 			} catch (Exception ex) {
-				throw new WebException (ex.Message, ex);
+				this.webResponse = new FileWebResponse (this.uri, new WebException (ex.Message, ex));
 			}
-			this.webResponse = new FileWebResponse (this.uri, fileStream);
-			return (WebResponse) this.webResponse;
+			return this.webResponse;
 		}
 		
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)

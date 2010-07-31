@@ -85,13 +85,15 @@ namespace System.Collections.Concurrent
 
 		void Add (T item, Func<bool> cancellationFunc)
 		{
+			SpinWait sw = new SpinWait ();
+
 			while (true) {
 				long cachedAddId = addId;
 				long cachedRemoveId = removeId;
 
 				if (upperBound != -1) {
 					if (cachedAddId - cachedRemoveId > upperBound) {
-						Block ();
+						sw.SpinOnce ();
 						continue;
 					}
 				}
@@ -125,6 +127,8 @@ namespace System.Collections.Concurrent
 
 		T Take (Func<bool> cancellationFunc)
 		{
+			SpinWait sw = new SpinWait ();
+
 			while (true) {
 				long cachedRemoveId = removeId;
 				long cachedAddId = addId;
@@ -135,7 +139,7 @@ namespace System.Collections.Concurrent
 						throw new OperationCanceledException ("The BlockingCollection<T> has"
 						                                      + " been marked as complete with regards to additions.");
 
-					Block ();
+					sw.SpinOnce ();
 					continue;
 				}
 
@@ -508,15 +512,6 @@ namespace System.Collections.Concurrent
 		public T[] ToArray ()
 		{
 			return underlyingColl.ToArray ();
-		}
-		
-		[ThreadStatic]
-		SpinWait sw;
-
-		// Method used to stall the thread for a limited period of time before retrying an operation
-		void Block ()
-		{
-			sw.SpinOnce ();
 		}
 
 		public int BoundedCapacity {

@@ -1,0 +1,8 @@
+/AbstractFixtureBuilder.cs -crlf
+/AbstractTestCaseBuilder.cs -crlf
+/LegacySuiteBuilder.cs -crlf
+/MultiCultureDecorator.cs -crlf
+/NUnitTestCaseBuilder.cs -crlf
+/NUnitTestFixtureBuilder.cs -crlf
+/SetUpFixtureBuilder.cs -crlf
+/TestAssemblyBuilder.cs -crlf

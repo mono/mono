@@ -1,4 +1,4 @@
-// CS0154: The property or indexer `A.this[int]' cannot be used in this context because it lacks a `get' accessor
+// CS0154: The property or indexer `A.this[int]' cannot be used in this context because it lacks the `get' accessor
 // Line: 18
 
 public class A

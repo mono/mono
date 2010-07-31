@@ -97,7 +97,7 @@ namespace Monodoc.Lucene.Net.Analysis.Standard
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
+					ulong l = ((ulong) 1L) << curChar;
 					do 
 					{
 						switch (jjstateSet[--ii])
@@ -439,7 +439,7 @@ namespace Monodoc.Lucene.Net.Analysis.Standard
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
+					ulong l = ((ulong) 1L) << (curChar & 63);
 					do 
 					{
 						switch (jjstateSet[--ii])
@@ -789,7 +789,7 @@ namespace Monodoc.Lucene.Net.Analysis.Standard
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
 					do 
 					{
 						switch (jjstateSet[--ii])

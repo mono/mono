@@ -1,3 +1,20 @@
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceCredentialsSecurityTokenManager.cs : implement some
+	  requirement check for WS-SecureConversation.
+
+2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509CertificateRecipientClientCredential.cs,
+	  X509CertificateRecipientServiceCredential.cs :
+	  implement x509 store support.
+
+2010-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509CertificateInitiatorClientCredential.cs,
+	  X509CertificateInitiatorServiceCredential.cs :
+	  implement x509 store support.
+
 2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpDigestClientCredential.cs

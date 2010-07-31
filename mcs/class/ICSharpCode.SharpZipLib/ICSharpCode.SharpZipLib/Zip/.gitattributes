@@ -1,0 +1,8 @@
+/FastZip.cs -crlf
+/ZipConstants.cs -crlf
+/ZipEntry.cs -crlf
+/ZipException.cs -crlf
+/ZipFile.cs -crlf
+/ZipInputStream.cs -crlf
+/ZipNameTransform.cs -crlf
+/ZipOutputStream.cs -crlf

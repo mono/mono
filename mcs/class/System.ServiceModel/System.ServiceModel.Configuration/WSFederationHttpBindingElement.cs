@@ -54,20 +54,24 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public partial class WSFederationHttpBindingElement
 		 : WSHttpBindingBaseElement,  IBindingConfigurationElement
 	{
 		// Static Fields
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty binding_element_type;
 		static ConfigurationProperty privacy_notice_at;
 		static ConfigurationProperty privacy_notice_version;
 		static ConfigurationProperty security;
 
 		static WSFederationHttpBindingElement ()
 		{
+		}
+
+		static void FillProperties (ConfigurationPropertyCollection baseProps)
+		{
 			properties = new ConfigurationPropertyCollection ();
+			foreach (ConfigurationProperty item in baseProps)
+				properties.Add (item);
 
 			privacy_notice_at = new ConfigurationProperty ("privacyNoticeAt",
 				typeof (Uri), null, new UriTypeConverter (), null,
@@ -81,7 +85,6 @@ namespace System.ServiceModel.Configuration
 				typeof (WSFederationHttpSecurityElement), null, null/* FIXME: get converter for WSFederationHttpSecurityElement*/, null,
 				ConfigurationPropertyOptions.None);
 
-			properties.Add (binding_element_type);
 			properties.Add (privacy_notice_at);
 			properties.Add (privacy_notice_version);
 			properties.Add (security);
@@ -95,7 +98,7 @@ namespace System.ServiceModel.Configuration
 		// Properties
 
 		protected override Type BindingElementType {
-			get { return (Type) base [binding_element_type]; }
+			get { return typeof (WSFederationHttpBinding); }
 		}
 
 		[ConfigurationProperty ("privacyNoticeAt",
@@ -118,7 +121,14 @@ namespace System.ServiceModel.Configuration
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+			get {
+				if (properties == null) {
+					var baseProps = base.Properties;
+					lock (baseProps)
+						FillProperties (baseProps);
+				}
+				return properties;
+			}
 		}
 
 		[ConfigurationProperty ("security",
@@ -127,10 +137,13 @@ namespace System.ServiceModel.Configuration
 			get { return (WSFederationHttpSecurityElement) base [security]; }
 		}
 
-
-
-		protected override void OnApplyConfiguration (Binding binding) {
-			throw new NotImplementedException ();
+		protected override void OnApplyConfiguration (Binding binding)
+		{
+			base.OnApplyConfiguration (binding);
+			var b = (WSFederationHttpBinding) binding;
+			b.PrivacyNoticeAt = PrivacyNoticeAt;
+			b.PrivacyNoticeVersion = PrivacyNoticeVersion;
+			Security.ApplyConfiguration (b.Security);
 		}
 	}
 

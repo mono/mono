@@ -252,6 +252,10 @@ namespace Mono.CSharp
 						}
 					} else if (parameters.IsEmpty && name == Destructor.MetadataName) {
 						kind = MemberKind.Destructor;
+						if (declaringType == TypeManager.object_type) {
+							mod &= ~Modifiers.OVERRIDE;
+							mod |= Modifiers.VIRTUAL;
+						}
 					}
 				}
 

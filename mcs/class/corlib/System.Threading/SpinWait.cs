@@ -27,27 +27,28 @@ using System;
 
 namespace System.Threading
 {
-
 	public struct SpinWait
 	{
 		// The number of step until SpinOnce yield on multicore machine
 		const           int  step = 5;
+		const           int  maxSpin = 10000;
 		static readonly bool isSingleCpu = (Environment.ProcessorCount == 1);
 
 		int ntime;
 
 		public void SpinOnce ()
 		{
-			// On a single-CPU system, spinning does no good
-			if (isSingleCpu) {
-				Yield ();
+			if (ntime > 2 * maxSpin) {
+				Thread.Sleep (1);
+			} else if (isSingleCpu) {
+				// On a single-CPU system, spinning does no good
+				Thread.Yield ();
 			} else {
-				if (Interlocked.Increment (ref ntime) % step == 0) {
-					Yield ();
-				} else {
+				if (++ntime % step == 0)
+					Thread.Yield ();
+				else
 					// Multi-CPU system might be hyper-threaded, let other thread run
-					Thread.SpinWait (2 * (ntime + 1));
-				}
+					Thread.SpinWait (Math.Min (ntime << 1, maxSpin));
 			}
 		}
 
@@ -75,13 +76,6 @@ namespace System.Threading
 			}
 
 			return true;
-		}
-
-		void Yield ()
-		{
-			// Replace sched_yield by Thread.Sleep(0) which does almost the same thing
-			// (going back in kernel mode and yielding) but avoid the branching and unmanaged bridge
-			Thread.Sleep (0);
 		}
 
 		public void Reset ()

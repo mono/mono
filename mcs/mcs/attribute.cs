@@ -424,19 +424,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			MethodGroupExpr mg = MemberLookupFinal (ec, ec.CurrentType,
-				Type, ConstructorInfo.ConstructorName, 0, MemberKind.Constructor,
-				BindingRestriction.AccessibleOnly | BindingRestriction.DeclaredOnly,
-				Location) as MethodGroupExpr;
-
-			if (mg == null)
-				throw new NotImplementedException ();
-
-			mg = mg.OverloadResolve (ec, ref PosArguments, false, Location);
-			if (mg == null)
-				return null;
-			
-			return mg.BestCandidate;
+			return ConstructorLookup (ec, Type, ref PosArguments, loc);
 		}
 
 		protected virtual bool ResolveNamedArguments (ResolveContext ec)
@@ -457,20 +445,14 @@ namespace Mono.CSharp {
 
 				a.Resolve (ec);
 
-				Expression member = Expression.MemberLookup (ec.Compiler,
-					ec.CurrentType, Type, name, 0,
-					MemberKind.All,
-					BindingRestriction.AccessibleOnly | BindingRestriction.DefaultMemberLookup,
-					Location);
+				Expression member = Expression.MemberLookup (ec, ec.CurrentType, Type, name, 0, false, loc);
 
 				if (member == null) {
-					member = Expression.MemberLookup (ec.Compiler, ec.CurrentType, Type, name, 0,
-						MemberKind.All, BindingRestriction.None,
-						Location);
+					member = Expression.MemberLookup (null, ec.CurrentType, Type, name, 0, false, loc);
 
 					if (member != null) {
-						ec.Report.SymbolRelatedToPreviousError (member.Type);
-						Expression.ErrorIsInaccesible (Location, member.GetSignatureForError (), ec.Report);
+						// TODO: ec.Report.SymbolRelatedToPreviousError (member);
+						Expression.ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
 						return false;
 					}
 				}

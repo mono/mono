@@ -135,7 +135,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
+		public SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
 			return obj.Expression;
 		}
@@ -190,9 +190,7 @@ namespace Mono.CSharp
 	//
 	interface IDynamicAssign : IAssignMethod
 	{
-#if NET_4_0
-		SLE.Expression MakeAssignExpression (BuilderContext ctx);
-#endif
+		SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source);
 	}
 
 	//

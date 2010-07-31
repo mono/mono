@@ -8,7 +8,6 @@
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2003-2008 Novell, Inc.
 //
-#define USE_OLD
 
 namespace Mono.CSharp {
 	using System;
@@ -686,17 +685,17 @@ namespace Mono.CSharp {
 			if (methods == null)
 				return null;
 
-			var user_op = new MethodGroupExpr (methods, expr.Type, loc);
-
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (expr));
-			user_op = user_op.OverloadResolve (ec, ref args, false, expr.Location);
 
-			if (user_op == null)
+			var res = new OverloadResolver (methods, OverloadResolver.Restrictions.NoBaseMembers, loc);
+			var oper = res.ResolveOperator (ec, ref args);
+
+			if (oper == null)
 				return null;
 
 			Expr = args [0].Expr;
-			return new UserOperatorCall (user_op.BestCandidate, args, CreateExpressionTree, expr.Location);
+			return new UserOperatorCall (oper, args, CreateExpressionTree, expr.Location);
 		}
 
 		//
@@ -730,7 +729,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				int result = MethodGroupExpr.BetterTypeConversion (ec, best_expr.Type, t);
+				int result = OverloadResolver.BetterTypeConversion (ec, best_expr.Type, t);
 				if (result == 0) {
 					ec.Report.Error (35, loc, "Operator `{0}' is ambiguous on an operand of type `{1}'",
 						OperName (Oper), TypeManager.CSharpName (expr.Type));
@@ -1135,13 +1134,13 @@ namespace Mono.CSharp {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
 
-				var mg = new MethodGroupExpr (methods, type, loc);
-				mg = mg.OverloadResolve (ec, ref args, false, loc);
-				if (mg == null)
+				var res = new OverloadResolver (methods, OverloadResolver.Restrictions.NoBaseMembers, loc);
+				var op = res.ResolveOperator (ec, ref args);
+				if (op == null)
 					return null;
 
 				args[0].Expr = operation;
-				operation = new UserOperatorCall (mg.BestCandidate, args, null, loc);
+				operation = new UserOperatorCall (op, args, null, loc);
 				operation = Convert.ImplicitConversionRequired (ec, operation, type, loc);
 				return this;
 			}
@@ -1733,14 +1732,14 @@ namespace Mono.CSharp {
 			{
 				int result = 0;
 				if (left != null && best_operator.left != null) {
-					result = MethodGroupExpr.BetterTypeConversion (ec, best_operator.left, left);
+					result = OverloadResolver.BetterTypeConversion (ec, best_operator.left, left);
 				}
 
 				//
 				// When second argument is same as the first one, the result is same
 				//
 				if (right != null && (left != right || best_operator.left != best_operator.right)) {
-					result |= MethodGroupExpr.BetterTypeConversion (ec, best_operator.right, right);
+					result |= OverloadResolver.BetterTypeConversion (ec, best_operator.right, right);
 				}
 
 				if (result == 0 || result > 2)
@@ -2790,7 +2789,7 @@ namespace Mono.CSharp {
 		{
 			if (!TypeManager.IsEqual (l, r) && !TypeSpecComparer.Variant.IsEqual (r, l)) {
 				Expression tmp;
-				if (right.eclass == ExprClass.MethodGroup || (r == InternalType.AnonymousMethod)) {
+				if (right.eclass == ExprClass.MethodGroup || r == InternalType.AnonymousMethod || r == InternalType.Null) {
 					tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
 					if (tmp == null)
 						return null;
@@ -3267,19 +3266,20 @@ namespace Mono.CSharp {
 				left_operators = right_operators;
 			}
 
-			var mg = new MethodGroupExpr (left_operators, l, loc);
-			mg = mg.OverloadResolve (ec, ref args, true, loc);
-			if (mg == null)
+			var res = new OverloadResolver (left_operators, OverloadResolver.Restrictions.ProbingOnly, loc);
+
+			var oper_method = res.ResolveOperator (ec, ref args);
+			if (oper_method == null)
 				return null;
 
 			Expression oper_expr;
 
 			// TODO: CreateExpressionTree is allocated every time
 			if ((oper & Operator.LogicalMask) != 0) {
-				oper_expr = new ConditionalLogicalOperator (mg.BestCandidate, args, CreateExpressionTree,
+				oper_expr = new ConditionalLogicalOperator (oper_method, args, CreateExpressionTree,
 					oper == Operator.LogicalAnd, loc).Resolve (ec);
 			} else {
-				oper_expr = new UserOperatorCall (mg.BestCandidate, args, CreateExpressionTree, loc);
+				oper_expr = new UserOperatorCall (oper_method, args, CreateExpressionTree, loc);
 			}
 
 			left = larg.Expr;
@@ -3808,21 +3808,22 @@ namespace Mono.CSharp {
 			concat_args.Add (arguments [pos]);
 			add_args.Add (new Argument (arguments [pos].CreateExpressionTree (ec)));
 
-			MethodGroupExpr method = CreateConcatMethodGroup ();
+			var methods = CreateConcatMethodCandidates ();
+			if (methods == null)
+				return null;
+
+			var res = new OverloadResolver (methods, OverloadResolver.Restrictions.NoBaseMembers, loc);
+			var method = res.ResolveMember<MethodSpec> (ec, ref concat_args);
 			if (method == null)
 				return null;
 
-			method = method.OverloadResolve (ec, ref concat_args, false, loc);
-			if (method == null)
-				return null;
-
-			add_args.Add (new Argument (method.CreateExpressionTree (ec)));
+			add_args.Add (new Argument (new TypeOfMethod (method, loc)));
 
 			Expression expr = CreateExpressionFactoryCall (ec, "Add", add_args);
 			if (++pos == arguments.Count)
 				return expr;
 
-			left = new Argument (new EmptyExpression (method.BestCandidate.ReturnType));
+			left = new Argument (new EmptyExpression (method.ReturnType));
 			return CreateExpressionAddCall (ec, left, expr, pos);
 		}
 
@@ -3861,22 +3862,22 @@ namespace Mono.CSharp {
 			arguments.Add (new Argument (operand));
 		}
 
-		MethodGroupExpr CreateConcatMethodGroup ()
+		IList<MemberSpec> CreateConcatMethodCandidates ()
 		{
 			if (concat_members == null) {
-				concat_members = MemberCache.FindMembers (type,
-					MemberFilter.Method ("Concat", -1, null, type), BindingRestriction.DeclaredOnly);
+				concat_members = MemberCache.FindMembers (type, "Concat", true);
 			}
 
-			return new MethodGroupExpr (concat_members, type, loc);
+			return concat_members;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			var mg = CreateConcatMethodGroup ();
-			mg = mg.OverloadResolve (new ResolveContext (ec.MemberContext), ref arguments, false, loc);
-			if (mg != null)
-				mg.EmitCall (ec, arguments);
+			var members = CreateConcatMethodCandidates ();
+			var res = new OverloadResolver (members, OverloadResolver.Restrictions.NoBaseMembers, loc);
+			var method = res.ResolveMember<MethodSpec> (new ResolveContext (ec.MemberContext), ref arguments);
+			if (method != null)
+				Invocation.EmitCall (ec, null, method, arguments, loc);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
@@ -4887,7 +4888,16 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			Expression member_expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+			Expression member_expr;
+			var atn = expr as ATypeNameExpression;
+			if (atn != null) {
+				member_expr = atn.LookupNameExpression (ec, true, true);
+				if (member_expr != null)
+					member_expr = member_expr.Resolve (ec);
+			} else {
+				member_expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+			}
+
 			if (member_expr == null)
 				return null;
 
@@ -4919,14 +4929,9 @@ namespace Mono.CSharp {
 							return null;
 						}
 
-						mg = ec.LookupExtensionMethod (me.Type, me.Name, -1, loc);
-						if (mg == null) {
-							ec.Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
+						ec.Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
 								member_expr.GetSignatureForError ());
-							return null;
-						}
-
-						((ExtensionMethodGroupExpr) mg).ExtensionExpression = me.InstanceExpression;
+						return null;
 					}
 				}
 
@@ -4945,14 +4950,6 @@ namespace Mono.CSharp {
 				type = method.ReturnType;
 			}
 		
-			//
-			// Only base will allow this invocation to happen.
-			//
-			if (mg.IsBase && method.IsAbstract){
-				Error_CannotCallAbstractBase (ec, TypeManager.CSharpSignature (method));
-				return null;
-			}
-
 			if (arguments == null && method.DeclaringType == TypeManager.object_type && method.Name == Destructor.MetadataName) {
 				if (mg.IsBase)
 					ec.Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
@@ -5001,11 +4998,11 @@ namespace Mono.CSharp {
 
 				MemberAccess ma = expr as MemberAccess;
 				if (ma != null) {
-					var left_type = ma.Left as TypeExpr;
+					var left_type = ma.LeftExpression as TypeExpr;
 					if (left_type != null) {
 						args.Insert (0, new Argument (new TypeOf (left_type, loc).Resolve (ec), Argument.AType.DynamicTypeName));
 					} else {
-						args.Insert (0, new Argument (ma.Left));
+						args.Insert (0, new Argument (ma.LeftExpression.Resolve (ec)));
 					}
 				} else {	// is SimpleName
 					if (ec.IsStatic) {
@@ -5021,7 +5018,25 @@ namespace Mono.CSharp {
 
 		protected virtual MethodGroupExpr DoResolveOverload (ResolveContext ec)
 		{
-			return mg.OverloadResolve (ec, ref arguments, false, loc);
+			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.None);
+		}
+
+		//
+		// If a member is a method or event, or if it is a constant, field or property of either a delegate type
+		// or the type dynamic, then the member is invocable
+		//
+		public static bool IsMemberInvocable (MemberSpec member)
+		{
+			switch (member.Kind) {
+			case MemberKind.Event:
+				return true;
+			case MemberKind.Field:
+			case MemberKind.Property:
+				var m = member as IInterfaceMemberSpec;
+				return m.MemberType.IsDelegate || m.MemberType == InternalType.Dynamic;
+			default:
+				return false;
+			}
 		}
 
 		public static bool IsSpecialMethodInvocation (ResolveContext ec, MethodSpec method, Location loc)
@@ -5029,7 +5044,7 @@ namespace Mono.CSharp {
 			if (!method.IsReservedMethod)
 				return false;
 
-			if (ec.HasSet (ResolveContext.Options.InvokeSpecialName))
+			if (ec.HasSet (ResolveContext.Options.InvokeSpecialName) || ec.CurrentMemberDefinition.IsCompilerGenerated)
 				return false;
 
 			ec.Report.SymbolRelatedToPreviousError (method);
@@ -5225,7 +5240,7 @@ namespace Mono.CSharp {
 		//
 		protected Expression RequestedType;
 
-		protected MethodGroupExpr method;
+		protected MethodSpec method;
 
 		public New (Expression requested_type, Arguments arguments, Location l)
 		{
@@ -5304,8 +5319,7 @@ namespace Mono.CSharp {
 				args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			} else {
 				args = Arguments.CreateForExpressionTree (ec,
-					Arguments,
-					method.CreateExpressionTree (ec));
+					Arguments, new TypeOfMethod (method, loc));
 			}
 
 			return CreateExpressionFactoryCall (ec, "New", args);
@@ -5318,6 +5332,7 @@ namespace Mono.CSharp {
 				return null;
 
 			type = texpr.Type;
+			eclass = ExprClass.Value;
 
 			if (type.IsPointer) {
 				ec.Report.Error (1919, loc, "Unsafe type `{0}' cannot be used in an object creation expression",
@@ -5357,7 +5372,6 @@ namespace Mono.CSharp {
 					}
 				}
 
-				eclass = ExprClass.Value;
 				return this;
 			}
 
@@ -5379,19 +5393,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			bool is_struct = TypeManager.IsStruct (type);
-			eclass = ExprClass.Value;
-
 			//
-			// SRE returns a match for .ctor () on structs (the object constructor), 
-			// so we have to manually ignore it.
+			// Any struct always defines parameterless constructor
 			//
-			if (is_struct && Arguments == null)
+			if (type.IsStruct && Arguments == null)
 				return this;
-
-			// For member-lookup, treat 'new Foo (bar)' as call to 'foo.ctor (bar)', where 'foo' is of type 'Foo'.
-			Expression ml = MemberLookupFinal (ec, type, type, ConstructorInfo.ConstructorName, 0,
-				MemberKind.Constructor, BindingRestriction.AccessibleOnly | BindingRestriction.DeclaredOnly, loc);
 
 			bool dynamic;
 			if (Arguments != null) {
@@ -5400,18 +5406,7 @@ namespace Mono.CSharp {
 				dynamic = false;
 			}
 
-			if (ml == null)
-				return null;
-
-			method = ml as MethodGroupExpr;
-			if (method == null) {
-				ml.Error_UnexpectedKind (ec, ResolveFlags.MethodGroup, loc);
-				return null;
-			}
-
-			method = method.OverloadResolve (ec, ref Arguments, false, loc);
-			if (method == null)
-				return null;
+			method = ConstructorLookup (ec, type, ref Arguments, loc);
 
 			if (dynamic) {
 				Arguments.Insert (0, new Argument (new TypeOf (texpr, loc).Resolve (ec), Argument.AType.DynamicTypeName));
@@ -5506,7 +5501,7 @@ namespace Mono.CSharp {
 				}
 
 				if (vr != null) {
-					ec.Emit (OpCodes.Call, method.BestCandidate);
+					ec.Emit (OpCodes.Call, method);
 					return false;
 				}
 			}
@@ -5514,7 +5509,7 @@ namespace Mono.CSharp {
 			if (type is TypeParameterSpec)
 				return DoEmitTypeParameter (ec);			
 
-			ec.Emit (OpCodes.Newobj, method.BestCandidate);
+			ec.Emit (OpCodes.Newobj, method);
 			return true;
 		}
 
@@ -5582,7 +5577,7 @@ namespace Mono.CSharp {
 				if (Arguments != null)
 					Arguments.Emit (ec);
 
-				ec.Emit (OpCodes.Call, method.BestCandidate);
+				ec.Emit (OpCodes.Call, method);
 			}
 			
 			value_target.AddressOf (ec, mode);
@@ -5601,7 +5596,7 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.New ((ConstructorInfo) method.BestCandidate.GetMetaInfo (), Arguments.MakeExpression (Arguments, ctx));
+			return SLE.Expression.New ((ConstructorInfo) method.GetMetaInfo (), Arguments.MakeExpression (Arguments, ctx));
 		}
 	}
 
@@ -7168,6 +7163,11 @@ namespace Mono.CSharp {
 			return alias + "::" + name;
 		}
 
+		public override Expression LookupNameExpression (ResolveContext rc, bool readMode, bool invocableOnly)
+		{
+			return DoResolve (rc);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			// Nothing 
@@ -7177,7 +7177,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements the member access expression
 	/// </summary>
-	public class MemberAccess : ATypeNameExpression {
+	public class MemberAccess : ATypeNameExpression
+	{
 		protected Expression expr;
 
 		public MemberAccess (Expression expr, string id)
@@ -7204,10 +7205,40 @@ namespace Mono.CSharp {
 			this.expr = expr;
 		}
 
-		Expression DoResolve (ResolveContext ec, Expression right_side)
+		public Expression LeftExpression {
+			get {
+				return expr;
+			}
+		}
+
+		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (type != null)
-				throw new Exception ();
+			return DoResolveName (ec, null);
+		}
+
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
+		{
+			return DoResolveName (ec, right_side);
+		}
+
+		Expression DoResolveName (ResolveContext rc, Expression right_side)
+		{
+			Expression e = LookupNameExpression (rc, right_side == null, false);
+			if (e == null)
+				return null;
+
+			if (right_side != null)
+				e = e.ResolveLValue (rc, right_side);
+			else
+				e = e.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.Type);
+
+			return e;
+		}
+
+		public override Expression LookupNameExpression (ResolveContext rc, bool readMode, bool invocableOnly)
+		{
+			var sn = expr as SimpleName;
+			const ResolveFlags flags = ResolveFlags.VariableOrValue | ResolveFlags.Type;
 
 			//
 			// Resolve the expression with flow analysis turned off, we'll do the definite
@@ -7215,171 +7246,163 @@ namespace Mono.CSharp {
 			// will resolve to - it may resolve to a FieldExpr and in this case we must do the
 			// definite assignment check on the actual field and not on the whole struct.
 			//
+			using (rc.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
+				if (sn != null) {
+					expr = sn.LookupNameExpression (rc, true, false);
 
-			SimpleName original = expr as SimpleName;
-			Expression expr_resolved;
-			const ResolveFlags flags = ResolveFlags.VariableOrValue | ResolveFlags.Type;
-
-			using (ec.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
-				if (original != null) {
-					expr_resolved = original.DoResolve (ec, true);
-					if (expr_resolved != null) {
-						// Ugly, simulate skipped Resolve
-						if (expr_resolved is ConstantExpr) {
-							expr_resolved = expr_resolved.Resolve (ec);
-						} else if (expr_resolved is FieldExpr || expr_resolved is PropertyExpr) {
-							// nothing yet
-						} else if ((flags & expr_resolved.ExprClassToResolveFlags) == 0) {
-							expr_resolved.Error_UnexpectedKind (ec, flags, expr.Location);
-							expr_resolved = null;
+					// Call resolve on expression which does have type set as we need expression type
+					// TODO: I should probably ensure that the type is always set and leave resolve for the final
+					if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess) {
+						using (rc.With (ResolveContext.Options.DoFlowAnalysis, false)) {
+							expr = expr.Resolve (rc);
 						}
+					} else if (expr is TypeParameterExpr) {
+						expr.Error_UnexpectedKind (rc, flags, expr.Location);
+						expr = null;
 					}
 				} else {
-					expr_resolved = expr.Resolve (ec, flags);
+					expr = expr.Resolve (rc, flags);
 				}
 			}
 
-			if (expr_resolved == null)
+			if (expr == null)
 				return null;
 
-			Namespace ns = expr_resolved as Namespace;
+			Namespace ns = expr as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.Lookup (ec.Compiler, Name, Arity, loc);
+				FullNamedExpression retval = ns.Lookup (rc.Compiler, Name, Arity, loc);
 
-				if (retval == null)
-					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, ec);
-				else if (HasTypeArguments)
-					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsTypeStep (ec, false);
+				if (retval == null) {
+					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
+					return null;
+				}
 
-				expr = expr_resolved;
+				if (HasTypeArguments)
+					return new GenericTypeExpr (retval.Type, targs, loc);
+
 				return retval;
 			}
 
-			TypeSpec expr_type = expr_resolved.Type;
+			TypeSpec expr_type = expr.Type;
 			if (expr_type == InternalType.Dynamic) {
 				Arguments args = new Arguments (1);
-				args.Add (new Argument (expr_resolved.Resolve (ec)));
-				expr = new DynamicMemberBinder (Name, args, loc);
-				if (right_side != null)
-					return expr.DoResolveLValue (ec, right_side);
-
-				return expr.Resolve (ec);
+				args.Add (new Argument (expr));
+				return new DynamicMemberBinder (Name, args, loc);
 			}
-
 
 			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum |
 				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
 
 			if ((expr_type.Kind & dot_kinds) == 0 || expr_type == TypeManager.void_type) {
-				Unary.Error_OperatorCannotBeApplied (ec, loc, ".", expr_type);
+				Unary.Error_OperatorCannotBeApplied (rc, loc, ".", expr_type);
 				return null;
 			}
 
-			var arity = HasTypeArguments ? targs.Count : -1;
+			var current_type = rc.CurrentType;
+			var lookup_arity = Arity;
+			bool errorMode = false;
+			Expression member_lookup;
+			while (true) {
+				member_lookup = MemberLookup (errorMode ? null : rc, current_type, expr_type, Name, lookup_arity, invocableOnly, loc);
+				if (member_lookup == null) {
+					//
+					// Try to look for extension method when member lookup failed
+					//
+					if (MethodGroupExpr.IsExtensionMethodArgument (expr)) {
+						NamespaceEntry scope = null;
+						var methods = rc.LookupExtensionMethod (expr_type, Name, lookup_arity, ref scope);
+						if (methods != null) {
+							var emg = new ExtensionMethodGroupExpr (methods, scope, expr, loc);
+							if (HasTypeArguments) {
+								if (!targs.Resolve (rc))
+									return null;
 
-			var member_lookup = MemberLookup (ec.Compiler,
-				ec.CurrentType, expr_type, expr_type, Name, arity, BindingRestriction.DefaultMemberLookup, loc);
+								emg.SetTypeArguments (rc, targs);
+							}
 
-			if (member_lookup == null) {
-				expr = expr_resolved.Resolve (ec);
-
-				ExprClass expr_eclass = expr.eclass;
-
-				//
-				// Extension methods are not allowed on all expression types
-				//
-				if (expr_eclass == ExprClass.Value || expr_eclass == ExprClass.Variable ||
-					expr_eclass == ExprClass.IndexerAccess || expr_eclass == ExprClass.PropertyAccess ||
-					expr_eclass == ExprClass.EventAccess) {
-					ExtensionMethodGroupExpr ex_method_lookup = ec.LookupExtensionMethod (expr_type, Name, arity, loc);
-					if (ex_method_lookup != null) {
-						ex_method_lookup.ExtensionExpression = expr;
-
-						if (HasTypeArguments) {
-							if (!targs.Resolve (ec))
-								return null;
-
-							ex_method_lookup.SetTypeArguments (ec, targs);
+							// TODO: Should it really skip the checks bellow
+							return emg.Resolve (rc);
 						}
-
-						return ex_method_lookup.Resolve (ec);
 					}
 				}
 
-				member_lookup = Error_MemberLookupFailed (ec,
-					ec.CurrentType, expr_type, expr_type, Name, arity, null,
-					MemberKind.All, BindingRestriction.AccessibleOnly);
-				if (member_lookup == null)
-					return null;
-			}
+				if (errorMode) {
+					if (member_lookup == null) {
+						if (expr is TypeExpr)
+							base.Error_TypeDoesNotContainDefinition (rc, expr_type, Name);
+						else
+							Error_TypeDoesNotContainDefinition (rc, expr_type, Name);
 
-			expr = expr_resolved;
+						return null;
+					}
+
+					if (member_lookup is MethodGroupExpr) {
+						// Leave it to overload resolution to report correct error
+					} else {
+						// TODO: rc.SymbolRelatedToPreviousError
+						ErrorIsInaccesible (rc, member_lookup.GetSignatureForError (), loc);
+					}
+					break;
+				}
+
+				if (member_lookup != null)
+					break;
+
+				current_type = null;
+				lookup_arity = 0;
+				invocableOnly = false;
+				errorMode = true;
+			}
 
 			MemberExpr me;
 			TypeExpr texpr = member_lookup as TypeExpr;
+
 			if (texpr != null) {
-				if (!(expr_resolved is TypeExpr)) {
-					me = expr_resolved as MemberExpr;
-					if (me == null || me.ProbeIdenticalTypeName (ec, expr_resolved, original) == expr_resolved) {
-						ec.Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
+				if (!(expr is TypeExpr)) {
+					me = expr as MemberExpr;
+					if (me == null || me.ProbeIdenticalTypeName (rc, expr, sn) == expr) {
+						rc.Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
 							Name, member_lookup.GetSignatureForError ());
 						return null;
 					}
 				}
 
-				if (!texpr.CheckAccessLevel (ec.MemberContext)) {
-					ec.Report.SymbolRelatedToPreviousError (member_lookup.Type);
-					ErrorIsInaccesible (loc, TypeManager.CSharpName (member_lookup.Type), ec.Report);
+				if (!texpr.Type.IsAccessible (rc.CurrentType)) {
+					rc.Report.SymbolRelatedToPreviousError (member_lookup.Type);
+					ErrorIsInaccesible (rc, member_lookup.Type.GetSignatureForError (), loc);
 					return null;
 				}
 
 				if (HasTypeArguments) {
-					var ct = new GenericTypeExpr (member_lookup.Type, targs, loc);
-					return ct.ResolveAsTypeStep (ec, false);
+					return new GenericTypeExpr (member_lookup.Type, targs, loc);
 				}
 
 				return member_lookup;
 			}
 
-			me = (MemberExpr) member_lookup;
+			me = member_lookup as MemberExpr;
 
-			if (original != null && me.IsStatic)
-				expr_resolved = me.ProbeIdenticalTypeName (ec, expr_resolved, original);
+			if (sn != null && me.IsStatic)
+				expr = me.ProbeIdenticalTypeName (rc, expr, sn);
 
-			me = me.ResolveMemberAccess (ec, expr_resolved, original);
+			me = me.ResolveMemberAccess (rc, expr, sn);
 
-			if (HasTypeArguments) {
-				if (!targs.Resolve (ec))
+			if (Arity > 0) {
+				if (!targs.Resolve (rc))
 					return null;
 
-				me.SetTypeArguments (ec, targs);
+				me.SetTypeArguments (rc, targs);
 			}
 
-			if (original != null && (!TypeManager.IsValueType (expr_type) || me is PropertyExpr)) {
+			if (sn != null && (!TypeManager.IsValueType (expr_type) || me is PropertyExpr)) {
 				if (me.IsInstance) {
-					LocalVariableReference var = expr_resolved as LocalVariableReference;
-					if (var != null && !var.VerifyAssigned (ec))
+					LocalVariableReference var = expr as LocalVariableReference;
+					if (var != null && !var.VerifyAssigned (rc))
 						return null;
 				}
 			}
 
-			// The following DoResolve/DoResolveLValue will do the definite assignment
-			// check.
-
-			if (right_side != null)
-				return me.DoResolveLValue (ec, right_side);
-			else
-				return me.Resolve (ec);
-		}
-
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			return DoResolve (ec, null);
-		}
-
-		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
-		{
-			return DoResolve (ec, right_side);
+			return me;
 		}
 
 		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
@@ -7428,9 +7451,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			bool extra_check;
-			if (!IsMemberAccessible (rc.CurrentType ?? InternalType.FakeInternalType, nested, out extra_check)) {
-				ErrorIsInaccesible (loc, nested.GetSignatureForError (), rc.Compiler.Report);
+			if (!nested.IsAccessible (rc.CurrentType ?? InternalType.FakeInternalType)) {
+				ErrorIsInaccesible (rc, nested.GetSignatureForError (), loc);
 			}
 			
 			TypeExpr texpr;
@@ -7452,27 +7474,22 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			var member_lookup = MemberLookup (rc.Compiler,
-				rc.CurrentType, expr_type, expr_type, identifier, -1,
-					MemberKind.All, BindingRestriction.None, loc);
-
-			if (member_lookup == null) {
-				rc.Compiler.Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
-						  Name, expr_type.GetSignatureForError ());
-			} else {
-				// TODO: Report.SymbolRelatedToPreviousError
-				member_lookup.Error_UnexpectedKind (rc.Compiler.Report, null, "type", loc);
+			var any_other_member = MemberLookup (null, rc.CurrentType, expr_type, Name, 0, false, loc);
+			if (any_other_member != null) {
+				any_other_member.Error_UnexpectedKind (rc.Compiler.Report, null, "type", loc);
+				return;
 			}
+
+			rc.Compiler.Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
+				Name, expr_type.GetSignatureForError ());
 		}
 
 		protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
 		{
-			if (RootContext.Version > LanguageVersion.ISO_2 && !ec.Compiler.IsRuntimeBinder && !(expr is BaseThis) &&
-				((expr.eclass & (ExprClass.Value | ExprClass.Variable)) != 0)) {
-				ec.Report.Error (1061, loc, "Type `{0}' does not contain a definition for `{1}' and no " +
-					"extension method `{1}' of type `{0}' could be found " +
-					"(are you missing a using directive or an assembly reference?)",
-					TypeManager.CSharpName (type), name);
+			if (RootContext.Version > LanguageVersion.ISO_2 && !ec.Compiler.IsRuntimeBinder && MethodGroupExpr.IsExtensionMethodArgument (expr)) {
+				ec.Report.Error (1061, loc,
+					"Type `{0}' does not contain a definition for `{1}' and no extension method `{1}' of type `{0}' could be found (are you missing a using directive or an assembly reference?)",
+					type.GetSignatureForError (), name);
 				return;
 			}
 
@@ -7482,12 +7499,6 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return expr.GetSignatureForError () + "." + base.GetSignatureForError ();
-		}
-
-		public Expression Left {
-			get {
-				return expr;
-			}
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -7632,6 +7643,36 @@ namespace Mono.CSharp {
 			this.Arguments = args;
 		}
 
+		//
+		// We perform some simple tests, and then to "split" the emit and store
+		// code we create an instance of a different class, and return that.
+		//
+		Expression CreateAccessExpression (ResolveContext ec)
+		{
+			if (type.IsArray)
+				return (new ArrayAccess (this, loc));
+
+			if (type.IsPointer)
+				return MakePointerAccess (ec, type);
+
+			FieldExpr fe = Expr as FieldExpr;
+			if (fe != null) {
+				var ff = fe.Spec as FixedFieldSpec;
+				if (ff != null) {
+					return MakePointerAccess (ec, ff.ElementType);
+				}
+			}
+
+			var indexers = MemberCache.FindMembers (type, MemberCache.IndexerNameAlias, false);
+			if (indexers != null || type == InternalType.Dynamic) {
+				return new IndexerExpr (indexers, this);
+			}
+
+			ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
+				type.GetSignatureForError ());
+			return null;
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, Arguments,
@@ -7640,7 +7681,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "ArrayIndex", args);
 		}
 
-		Expression MakePointerAccess (ResolveContext ec, TypeSpec t)
+		Expression MakePointerAccess (ResolveContext ec, TypeSpec type)
 		{
 			if (Arguments.Count != 1){
 				ec.Report.Error (196, loc, "A pointer must be indexed by only one value");
@@ -7650,8 +7691,8 @@ namespace Mono.CSharp {
 			if (Arguments [0] is NamedArgument)
 				Error_NamedArgument ((NamedArgument) Arguments[0], ec.Report);
 
-			Expression p = new PointerArithmetic (Binary.Operator.Addition, Expr, Arguments [0].Expr.Resolve (ec), t, loc);
-			return new Indirection (p, loc).Resolve (ec);
+			Expression p = new PointerArithmetic (Binary.Operator.Addition, Expr, Arguments [0].Expr.Resolve (ec), type, loc);
+			return new Indirection (p, loc);
 		}
 		
 		protected override Expression DoResolve (ResolveContext ec)
@@ -7660,25 +7701,14 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			//
-			// We perform some simple tests, and then to "split" the emit and store
-			// code we create an instance of a different class, and return that.
-			//
-			TypeSpec t = Expr.Type;
+			type = Expr.Type;
 
-			if (t.IsArray)
-				return (new ArrayAccess (this, loc)).Resolve (ec);
-			if (t.IsPointer)
-				return MakePointerAccess (ec, t);
+			// TODO: Create 1 result for Resolve and ResolveLValue ?
+			var res = CreateAccessExpression (ec);
+			if (res == null)
+				return null;
 
-			FieldExpr fe = Expr as FieldExpr;
-			if (fe != null) {
-				var ff = fe.Spec as FixedFieldSpec;
-				if (ff != null) {
-					return MakePointerAccess (ec, ff.ElementType);
-				}
-			}
-			return (new IndexerAccess (this, loc)).Resolve (ec);
+			return res.Resolve (ec);
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
@@ -7688,16 +7718,12 @@ namespace Mono.CSharp {
 				return null;
 
 			type = Expr.Type;
-			if (type.IsArray)
-				return (new ArrayAccess (this, loc)).DoResolveLValue (ec, right_side);
 
-			if (type.IsPointer)
-				return MakePointerAccess (ec, type);
+			var res = CreateAccessExpression (ec);
+			if (res == null)
+				return null;
 
-			if (Expr.eclass != ExprClass.Variable && TypeManager.IsStruct (type))
-				Error_CannotModifyIntermediateExpressionValue (ec);
-
-			return (new IndexerAccess (this, loc)).DoResolveLValue (ec, right_side);
+			return res.ResolveLValue (ec, right_side);
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -7892,14 +7918,16 @@ namespace Mono.CSharp {
 			ec.EmitArrayAddress (ac);
 		}
 
-#if NET_4_0
-		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
+		public SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
+#if NET_4_0
 			return SLE.Expression.ArrayAccess (
 				ea.Expr.MakeExpression (ctx),
 				Arguments.MakeExpression (ea.Arguments, ctx));
-		}
+#else
+			throw new NotImplementedException ();
 #endif
+		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
@@ -7909,246 +7937,65 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	///   Expressions that represent an indexer call.
-	/// </summary>
-	class IndexerAccess : Expression, IDynamicAssign
+	//
+	// Indexer access expression
+	//
+	class IndexerExpr : PropertyOrIndexerExpr<IndexerSpec>, OverloadResolver.IBaseMembersProvider
 	{
-		class IndexerMethodGroupExpr : MethodGroupExpr
-		{
-			IEnumerable<IndexerSpec> candidates;
-
-			public IndexerMethodGroupExpr (IEnumerable<IndexerSpec> indexers, Location loc)
-				: base (FilterAccessors (indexers).ToList (), null, loc)
-			{
-				candidates = indexers;
-			}
-
-			public IndexerSpec BestIndexer ()
-			{
-				return MemberCache.FindIndexers (BestCandidate.DeclaringType, BindingRestriction.None).
-					Where (l => 
-						(l.HasGet && l.Get.MemberDefinition == BestCandidate.MemberDefinition) ||
-						(l.HasSet && l.Set.MemberDefinition == BestCandidate.MemberDefinition)).First ();
-			}
-
-			static IEnumerable<MemberSpec> FilterAccessors (IEnumerable<IndexerSpec> indexers)
-			{
-				foreach (IndexerSpec i in indexers) {
-					if (i.HasGet)
-						yield return i.Get;
-					else
-						yield return i.Set;
-				}
-			}
-
-			protected override IList<MemberSpec> GetBaseTypeMethods (ResolveContext rc, TypeSpec type)
-			{
-				candidates = GetIndexersForType (type);
-				if (candidates == null)
-					return null;
-
-				return FilterAccessors (candidates).ToList ();
-			}
-
-			public override string Name {
-				get {
-					return "this";
-				}
-			}
-
-			protected override int GetApplicableParametersCount (MethodSpec method, AParametersCollection parameters)
-			{
-				//
-				// Here is the trick, decrease number of arguments by 1 when only
-				// available property method is setter. This makes overload resolution
-				// work correctly for indexers.
-				//
-				
-				if (method.Name [0] == 'g')
-					return parameters.Count;
-
-				return parameters.Count - 1;
-			}
-		}
-
-		//
-		// Points to our "data" repository
-		//
-		IndexerSpec spec;
-		bool prepared;
-		LocalTemporary temp;
 		LocalTemporary prepared_value;
-		Expression set_expr;
-
-		protected TypeSpec indexer_type;
-		protected Expression instance_expr;
-		protected Arguments arguments;
+		IList<MemberSpec> indexers;
+		Arguments arguments;
 		
-		public IndexerAccess (ElementAccess ea, Location loc)
+		public IndexerExpr (IList<MemberSpec> indexers, ElementAccess ea)
+			: base (ea.Location)
 		{
-			this.instance_expr = ea.Expr;
+			this.indexers = indexers;
+			this.InstanceExpression = ea.Expr;
 			this.arguments = ea.Arguments;
-			this.loc = loc;
 		}
 
-		static string GetAccessorName (bool isSet)
-		{
-			return isSet ? "set" : "get";
+		#region Properties
+		protected override TypeSpec DeclaringType {
+			get {
+				return best_candidate.DeclaringType;
+			}
 		}
+
+		public override bool IsInstance {
+			get {
+				return true;
+			}
+		}
+
+		public override bool IsStatic {
+			get {
+				return false;
+			}
+		}
+
+		public override string Name {
+			get {
+				return "this";
+			}
+		}
+
+		#endregion
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, arguments,
-				instance_expr.CreateExpressionTree (ec),
-				new TypeOfMethod (spec.Get, loc));
+				InstanceExpression.CreateExpressionTree (ec),
+				new TypeOfMethod (Getter, loc));
 
 			return CreateExpressionFactoryCall (ec, "Call", args);
 		}
 
-		static IEnumerable<IndexerSpec> GetIndexersForType (TypeSpec lookup_type)
-		{
-			return MemberCache.FindIndexers (lookup_type, BindingRestriction.AccessibleOnly | BindingRestriction.DefaultMemberLookup);
-		}
-
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			return ResolveAccessor (ec, null);
-		}
-
-		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
-		{
-			if (right_side == EmptyExpression.OutAccess.Instance) {
-				right_side.DoResolveLValue (ec, this);
-				return null;
-			}
-
-			// if the indexer returns a value type, and we try to set a field in it
-			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess) {
-				Error_CannotModifyIntermediateExpressionValue (ec);
-			}
-
-			return ResolveAccessor (ec, right_side);
-		}
-
-		Expression ResolveAccessor (ResolveContext ec, Expression right_side)
-		{
-			indexer_type = instance_expr.Type;
-
-			bool dynamic;
-			arguments.Resolve (ec, out dynamic);
-
-			if (indexer_type == InternalType.Dynamic) {
-				dynamic = true;
-			} else {
-				var ilist = GetIndexersForType (indexer_type);
-				if (ilist == null) {
-					ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
-							  TypeManager.CSharpName (indexer_type));
-					return null;
-				}
-
-				var mg = new IndexerMethodGroupExpr (ilist, loc) {
-					InstanceExpression = instance_expr
-				};
-
-				mg = mg.OverloadResolve (ec, ref arguments, false, loc) as IndexerMethodGroupExpr;
-				if (mg == null)
-					return null;
-
-				if (!dynamic)
-					spec = mg.BestIndexer ();
-			}
-
-			if (dynamic) {
-				Arguments args = new Arguments (arguments.Count + 1);
-				if (instance_expr is BaseThis) {
-					ec.Report.Error (1972, loc, "The indexer base access cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access");
-				} else {
-					args.Add (new Argument (instance_expr));
-				}
-				args.AddRange (arguments);
-
-				var expr = new DynamicIndexBinder (args, loc);
-				if (right_side != null)
-					return expr.ResolveLValue (ec, right_side);
-
-				return expr.Resolve (ec);
-			}
-
-			type = spec.MemberType;
-			if (type.IsPointer && !ec.IsUnsafe)
-				UnsafeError (ec, loc);
-
-			MethodSpec accessor;
-			if (right_side == null) {
-				accessor = spec.Get;
-			} else {
-				accessor = spec.Set;
-				if (!spec.HasSet && spec.HasGet) {
-					ec.Report.SymbolRelatedToPreviousError (spec);
-					ec.Report.Error (200, loc, "The read only property or indexer `{0}' cannot be assigned to",
-						spec.GetSignatureForError ());
-					return null;
-				}
-
-				set_expr = Convert.ImplicitConversion (ec, right_side, type, loc);
-			}
-
-			if (accessor == null) {
-				ec.Report.SymbolRelatedToPreviousError (spec);
-				ec.Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks a `{1}' accessor",
-					spec.GetSignatureForError (), GetAccessorName (right_side != null));
-				return null;
-			}
-
-			//
-			// Only base will allow this invocation to happen.
-			//
-			if (spec.IsAbstract && instance_expr is BaseThis) {
-				Error_CannotCallAbstractBase (ec, spec.GetSignatureForError ());
-			}
-
-			bool must_do_cs1540_check;
-			if (!IsMemberAccessible (ec.CurrentType, accessor, out must_do_cs1540_check)) {
-				if (spec.HasDifferentAccessibility) {
-					ec.Report.SymbolRelatedToPreviousError (accessor);
-					ec.Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because a `{1}' accessor is inaccessible",
-						TypeManager.GetFullNameSignature (spec), GetAccessorName (right_side != null));
-				} else {
-					ec.Report.SymbolRelatedToPreviousError (spec);
-					ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (spec), ec.Report);
-				}
-			}
-
-			instance_expr.CheckMarshalByRefAccess (ec);
-
-			if (must_do_cs1540_check && (instance_expr != EmptyExpression.Null) &&
-				!(instance_expr is BaseThis) &&
-			    !TypeManager.IsInstantiationOfSameGenericType (instance_expr.Type, ec.CurrentType) &&
-			    !TypeManager.IsNestedChildOf (ec.CurrentType, instance_expr.Type) &&
-			    !TypeManager.IsSubclassOf (instance_expr.Type, ec.CurrentType)) {
-				ec.Report.SymbolRelatedToPreviousError (accessor);
-				Error_CannotAccessProtected (ec, loc, spec, instance_expr.Type, ec.CurrentType);
-				return null;
-			}
-
-			eclass = ExprClass.IndexerAccess;
-			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			Emit (ec, false);
-		}
-		
-		public void Emit (EmitContext ec, bool leave_copy)
+		public override void Emit (EmitContext ec, bool leave_copy)
 		{
 			if (prepared) {
 				prepared_value.Emit (ec);
 			} else {
-				Invocation.EmitCall (ec, instance_expr, spec.Get,
-					arguments, loc, false, false);
+				Invocation.EmitCall (ec, InstanceExpression, Getter, arguments, loc, false, false);
 			}
 
 			if (leave_copy) {
@@ -8158,18 +8005,13 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		//
-		// source is ignored, because we already have a copy of it from the
-		// LValue resolution and we have already constructed a pre-cached
-		// version of the arguments (ea.set_arguments);
-		//
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		public override void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
 			prepared = prepare_for_load;
-			Expression value = set_expr;
+			Expression value = source;
 
 			if (prepared) {
-				Invocation.EmitCall (ec, instance_expr, spec.Get,
+				Invocation.EmitCall (ec, InstanceExpression, Getter,
 					arguments, loc, true, false);
 
 				prepared_value = new LocalTemporary (type);
@@ -8192,47 +8034,107 @@ namespace Mono.CSharp {
 			if (!prepared)
 				arguments.Add (new Argument (value));
 
-			Invocation.EmitCall (ec, instance_expr, spec.Set, arguments, loc, false, prepared);
+			Invocation.EmitCall (ec, InstanceExpression, Setter, arguments, loc, false, prepared);
 			
 			if (temp != null) {
 				temp.Emit (ec);
 				temp.Release (ec);
 			}
 		}
-		
+
 		public override string GetSignatureForError ()
 		{
-			return spec.GetSignatureForError ();
+			return best_candidate.GetSignatureForError ();
 		}
-
-#if NET_4_0
-		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
+		
+		public override SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
-			var value = new[] { set_expr.MakeExpression (ctx) };
+			var value = new[] { source.MakeExpression (ctx) };
 			var args = Arguments.MakeExpression (arguments, ctx).Concat (value);
-
+#if NET_4_0
 			return SLE.Expression.Block (
-					SLE.Expression.Call (instance_expr.MakeExpression (ctx), (MethodInfo) spec.Set.GetMetaInfo (), args),
+					SLE.Expression.Call (InstanceExpression.MakeExpression (ctx), (MethodInfo) Setter.GetMetaInfo (), args),
 					value [0]);
-		}
+#else
+			return args.First ();
 #endif
+		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			var args = Arguments.MakeExpression (arguments, ctx);
-			return SLE.Expression.Call (instance_expr.MakeExpression (ctx), (MethodInfo) spec.Get.GetMetaInfo (), args);
+			return SLE.Expression.Call (InstanceExpression.MakeExpression (ctx), (MethodInfo) Getter.GetMetaInfo (), args);
+		}
+
+		protected override Expression OverloadResolve (ResolveContext rc, Expression right_side)
+		{
+			if (best_candidate != null)
+				return this;
+
+			eclass = ExprClass.IndexerAccess;
+
+			bool dynamic;
+			arguments.Resolve (rc, out dynamic);
+
+			if (indexers == null && InstanceExpression.Type == InternalType.Dynamic) {
+				dynamic = true;
+			} else {
+				var res = new OverloadResolver (indexers, OverloadResolver.Restrictions.None, loc);
+				res.BaseMembersProvider = this;
+
+				// TODO: Do I need 2 argument sets?
+				best_candidate = res.ResolveMember<IndexerSpec> (rc, ref arguments);
+				if (best_candidate != null)
+					type = best_candidate.MemberType;
+				else if (!res.BestCandidateIsDynamic)
+					return null;
+			}
+
+			if (dynamic || type == InternalType.Dynamic) {
+				Arguments args = new Arguments (arguments.Count + 1);
+				if (IsBase) {
+					rc.Report.Error (1972, loc,
+						"The indexer base access cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access");
+				} else {
+					args.Add (new Argument (InstanceExpression));
+				}
+				args.AddRange (arguments);
+
+				best_candidate = null;
+				return new DynamicIndexBinder (args, loc);
+			}
+
+			ResolveInstanceExpression (rc);
+			CheckProtectedMemberAccess (rc, best_candidate);
+			return this;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			IndexerAccess target = (IndexerAccess) t;
+			IndexerExpr target = (IndexerExpr) t;
 
 			if (arguments != null)
 				target.arguments = arguments.Clone (clonectx);
-
-			if (instance_expr != null)
-				target.instance_expr = instance_expr.Clone (clonectx);
 		}
+
+		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
+		{
+			Error_TypeArgumentsCannotBeUsed (ec.Report, "indexer", GetSignatureForError (), loc);
+		}
+
+		#region IBaseMembersProvider Members
+
+		IList<MemberSpec> OverloadResolver.IBaseMembersProvider.GetBaseMembers (TypeSpec baseType)
+		{
+			return baseType == null ? null : MemberCache.FindMembers (baseType, MemberCache.IndexerNameAlias, false);
+		}
+
+		MethodGroupExpr OverloadResolver.IBaseMembersProvider.LookupExtensionMethod (ResolveContext rc)
+		{
+			return null;
+		}
+
+		#endregion
 	}
 
 	//
@@ -8252,16 +8154,20 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 		}
 
+		#region Properties
+
+		public override string Name {
+			get {
+				return "base";
+			}
+		}
+
+		#endregion
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			ec.Report.Error (831, loc, "An expression tree may not contain a base access");
 			return base.CreateExpressionTree (ec);
-		}
-
-		public override void ResolveBase (ResolveContext ec)
-		{
-			base.ResolveBase (ec);
-			type = ec.CurrentType.BaseType;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -8281,6 +8187,12 @@ namespace Mono.CSharp {
 			} else {
 				ec.Report.Error (1512, loc, "Keyword `base' is not available in the current context");
 			}
+		}
+
+		public override void ResolveBase (ResolveContext ec)
+		{
+			base.ResolveBase (ec);
+			type = ec.CurrentType.BaseType;
 		}
 	}
 
@@ -8313,6 +8225,8 @@ namespace Mono.CSharp {
 		public static readonly EmptyExpression LValueMemberAccess = new EmptyExpression ();
 		public static readonly EmptyExpression LValueMemberOutAccess = new EmptyExpression ();
 		public static readonly EmptyExpression UnaryAddress = new EmptyExpression ();
+		public static readonly EmptyExpression EventAddition = new EmptyExpression ();
+		public static readonly EmptyExpression EventSubtraction = new EmptyExpression ();
 
 		static EmptyExpression temp = new EmptyExpression ();
 		public static EmptyExpression Grab ()
@@ -8808,12 +8722,39 @@ namespace Mono.CSharp {
 		{
 			if (source == null)
 				return EmptyExpressionStatement.Instance;
-			
-			MemberExpr me = MemberLookupFinal (ec, ec.CurrentInitializerVariable.Type, ec.CurrentInitializerVariable.Type,
-				Name, 0, MemberKind.Field | MemberKind.Property, BindingRestriction.AccessibleOnly | BindingRestriction.InstanceOnly | BindingRestriction.DefaultMemberLookup, loc) as MemberExpr;
 
-			if (me == null)
+			var t = ec.CurrentInitializerVariable.Type;
+			
+			var member = MemberLookup (ec, ec.CurrentType, t, Name, 0, false, loc);
+			if (member == null) {
+				member = Expression.MemberLookup (null, ec.CurrentType, t, Name, 0, false, loc);
+
+				if (member != null) {
+					// TODO: ec.Report.SymbolRelatedToPreviousError (member);
+					ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
+					return null;
+				}
+			}
+
+			if (member == null) {
+				Error_TypeDoesNotContainDefinition (ec, loc, t, Name);
 				return null;
+			}
+
+			if (!(member is PropertyExpr || member is FieldExpr)) {
+				ec.Report.Error (1913, loc,
+					"Member `{0}' cannot be initialized. An object initializer may only be used for fields, or properties",
+					member.GetSignatureForError ());
+
+				return null;
+			}
+
+			var me = member as MemberExpr;
+			if (me.IsStatic) {
+				ec.Report.Error (1914, loc,
+					"Static field or property `{0}' cannot be assigned in an object initializer",
+					me.GetSignatureForError ());
+			}
 
 			target = me;
 			me.InstanceExpression = ec.CurrentInitializerVariable;
@@ -8833,20 +8774,7 @@ namespace Mono.CSharp {
 
 			return base.DoResolve (ec);
 		}
-
-		protected override MemberExpr Error_MemberLookupFailed (ResolveContext ec, TypeSpec type, IList<MemberSpec> members)
-		{
-			var member = members.First ();
-			if (member.Kind != MemberKind.Property && member.Kind != MemberKind.Field)
-				ec.Report.Error (1913, loc, "Member `{0}' cannot be initialized. An object " +
-					"initializer may only be used for fields, or properties", TypeManager.GetFullNameSignature (member));
-			else
-				ec.Report.Error (1914, loc, " Static field or property `{0}' cannot be assigned in an object initializer",
-					TypeManager.GetFullNameSignature (member));
-
-			return null;
-		}
-		
+	
 		public override void EmitStatement (EmitContext ec)
 		{
 			if (source is CollectionOrObjectInitializers)
@@ -9266,7 +9194,7 @@ namespace Mono.CSharp {
 				ctor_args.Add (a.CreateExpressionTree (ec));
 
 			Arguments args = new Arguments (3);
-			args.Add (new Argument (method.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOfMethod (method, loc)));
 			args.Add (new Argument (new ArrayCreation (TypeManager.expression_type_expr, ctor_args, loc)));
 			args.Add (new Argument (new ImplicitlyTypedArrayCreation (init, loc)));
 

@@ -1,3 +1,10 @@
+2010-07-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* UnixRegistryApi.cs: From the static ctor of KeyHandler remove the
+	volatile keys directory if the last registered boot time has changed.
+	This way we *actually* have our volatile keys removed if the system as
+	rebooted.
+
 2010-07-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* UnixRegistryApi.cs: Remove the in-memmory approach to volatile keys,

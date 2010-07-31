@@ -1,6 +1,5 @@
 // CS1746: The delegate `C.IntDelegate' does not contain a parameter named `b'
 // Line: 18
-// Compiler options: -langversion:future
 
 using System;
 

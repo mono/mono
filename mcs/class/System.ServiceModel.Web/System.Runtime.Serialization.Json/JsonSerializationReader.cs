@@ -86,6 +86,11 @@ namespace System.Runtime.Serialization.Json
 				}
 				else
 					return reader.ReadElementContentAsString ();
+			case TypeCode.Char:
+				var c = reader.ReadElementContentAsString ();
+				if (c.Length > 1)
+					throw new XmlException ("Invalid JSON char");
+				return Char.Parse(c);
 			case TypeCode.Single:
 				return reader.ReadElementContentAsFloat ();
 			case TypeCode.Double:
@@ -286,6 +291,23 @@ namespace System.Runtime.Serialization.Json
 #else
 				ret = collectionType.IsArray ? ((ArrayList) c).ToArray (elementType) : c;
 #endif
+			} else if (typeof (IDictionary).IsAssignableFrom(collectionType)) {
+				IDictionary id = (IDictionary)Activator.CreateInstance (collectionType);
+
+				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
+					if (!reader.IsStartElement ("item"))
+						throw SerializationError (String.Format ("Expected element 'item', but found '{0}' in namespace '{1}'", reader.LocalName, reader.NamespaceURI));
+
+					// reading a KeyValuePair in the form of <Key .../><Value .../>
+					reader.Read ();
+					reader.MoveToContent ();
+					object key = ReadObject (elementType.GetGenericArguments ()[0]);
+					reader.MoveToContent ();
+					object val = ReadObject (elementType.GetGenericArguments ()[1]);
+					reader.Read ();
+					id[key] = val;
+				}
+				ret = id;
 			} else {
 				object c = Activator.CreateInstance (collectionType);
 				MethodInfo add = collectionType.GetMethod ("Add", new Type [] {elementType});

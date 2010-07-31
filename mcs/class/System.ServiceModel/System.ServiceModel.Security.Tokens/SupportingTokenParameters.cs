@@ -31,6 +31,7 @@ using System.Net.Security;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
+using System.Text;
 
 using ParamList = System.Collections.ObjectModel.Collection<System.ServiceModel.Security.Tokens.SecurityTokenParameters>;
 
@@ -88,10 +89,23 @@ namespace System.ServiceModel.Security.Tokens
 				p.RequireDerivedKeys = requireDerivedKeys;
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			return base.ToString ();
+			var sb = new StringBuilder ();
+			AppendCollection (sb, Endorsing, "endorsing", "Endorsing");
+			AppendCollection (sb, Signed, "signed", "Signed");
+			AppendCollection (sb, SignedEncrypted, "signed encrypted", "SignedEncrypted");
+			AppendCollection (sb, SignedEndorsing, "signed endorsing", "SignedEndorsing");
+			sb.Length--; // chop trailing EOL.
+			return sb.ToString ();
+		}
+
+		void AppendCollection (StringBuilder sb, Collection<SecurityTokenParameters> col, string emptyLabel, string label)
+		{
+			if (col.Count == 0)
+				sb.AppendFormat ("No {0} tokens.\n", emptyLabel);
+			for (int i = 0; i < col.Count; i++)
+				sb.AppendFormat ("{0}[{1}]\n  {2}\n", label, i, String.Join ("\n  ", col [i].ToString ().Split ('\n')));
 		}
 	}
 }

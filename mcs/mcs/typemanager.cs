@@ -251,10 +251,9 @@ namespace Mono.CSharp {
 
 	static MemberSpec GetPredefinedMember (TypeSpec t, MemberFilter filter, Location loc)
 	{
-		const BindingRestriction restrictions = BindingRestriction.AccessibleOnly | BindingRestriction.DeclaredOnly;
-		var member = MemberCache.FindMember (t, filter, restrictions);
+		var member = MemberCache.FindMember (t, filter, BindingRestriction.DeclaredOnly);
 
-		if (member != null)
+		if (member != null && member.IsAccessible (InternalType.FakeInternalType))
 			return member;
 
 		string method_args = null;
@@ -879,62 +878,6 @@ namespace Mono.CSharp {
 		return generic_nullable_type == t.GetDefinition ();
 	}
 #endregion
-
-	//
-	// Looks up a member called `name' in the `queried_type'.  This lookup
-	// is done by code that is contained in the definition for `invocation_type'
-	// through a qualifier of type `qualifier_type' (or null if there is no qualifier).
-	//
-	// `invocation_type' is used to check whether we're allowed to access the requested
-	// member wrt its protection level.
-	//
-	// When called from MemberAccess, `qualifier_type' is the type which is used to access
-	// the requested member (`class B { A a = new A (); a.foo = 5; }'; here invocation_type
-	// is B and qualifier_type is A).  This is used to do the CS1540 check.
-	//
-	// When resolving a SimpleName, `qualifier_type' is null.
-	//
-	// The `qualifier_type' is used for the CS1540 check; it's normally either null or
-	// the same than `queried_type' - except when we're being called from BaseAccess;
-	// in this case, `invocation_type' is the current type and `queried_type' the base
-	// type, so this'd normally trigger a CS1540.
-	//
-	// The binding flags are `bf' and the kind of members being looked up are `mt'
-	//
-	// The return value always includes private members which code in `invocation_type'
-	// is allowed to access (using the specified `qualifier_type' if given); only use
-	// BindingFlags.NonPublic to bypass the permission check.
-	//
-	// The 'almost_match' argument is used for reporting error CS1540.
-	//
-	// Returns an array of a single element for everything but Methods/Constructors
-	// that might return multiple matches.
-	//
-	public static IList<MemberSpec> MemberLookup (TypeSpec invocation_type, TypeSpec qualifier_type,
-						  TypeSpec queried_type, MemberKind mt,
-						  BindingRestriction opt, string name, int arity, IList<MemberSpec> almost_match)
-	{
-		Timer.StartTimer (TimerType.MemberLookup);
-
-		var retval = RealMemberLookup (invocation_type, qualifier_type,
-							queried_type, mt, opt, name, arity, almost_match);
-
-		Timer.StopTimer (TimerType.MemberLookup);
-
-		return retval;
-	}
-
-	static IList<MemberSpec> RealMemberLookup (TypeSpec invocation_type, TypeSpec qualifier_type,
-						   TypeSpec queried_type, MemberKind mt,
-						   BindingRestriction bf, string name, int arity, IList<MemberSpec> almost_match)
-	{
-		MemberFilter filter = new MemberFilter (name, arity, mt, null, null);
-		if ((bf & BindingRestriction.AccessibleOnly) != 0) {
-			filter.InvocationType = invocation_type ?? InternalType.FakeInternalType;
-		}
-
-		return MemberCache.FindMembers (queried_type, filter, bf);
-	}	
 }
 
 }

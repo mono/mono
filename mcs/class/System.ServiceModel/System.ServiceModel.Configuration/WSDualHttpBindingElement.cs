@@ -60,7 +60,6 @@ namespace System.ServiceModel.Configuration
 	{
 		// Static Fields
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty binding_element_type;
 		static ConfigurationProperty bypass_proxy_on_local;
 		static ConfigurationProperty client_base_address;
 		static ConfigurationProperty host_name_comparison_mode;
@@ -77,10 +76,13 @@ namespace System.ServiceModel.Configuration
 
 		static WSDualHttpBindingElement ()
 		{
+		}
+		
+		static void FillProperties (ConfigurationPropertyCollection baseProps)
+		{
 			properties = new ConfigurationPropertyCollection ();
-			binding_element_type = new ConfigurationProperty ("",
-				typeof (Type), null, new TypeConverter (), null,
-				ConfigurationPropertyOptions.None);
+			foreach (ConfigurationProperty prop in baseProps)
+				properties.Add (prop);
 
 			bypass_proxy_on_local = new ConfigurationProperty ("bypassProxyOnLocal",
 				typeof (bool), "false", new BooleanConverter (), null,
@@ -134,7 +136,6 @@ namespace System.ServiceModel.Configuration
 				typeof (bool), "true", new BooleanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
-			properties.Add (binding_element_type);
 			properties.Add (bypass_proxy_on_local);
 			properties.Add (client_base_address);
 			properties.Add (host_name_comparison_mode);
@@ -158,7 +159,7 @@ namespace System.ServiceModel.Configuration
 		// Properties
 
 		protected override Type BindingElementType {
-			get { return (Type) base [binding_element_type]; }
+			get { return typeof (WSDualHttpBindingElement); }
 		}
 
 		[ConfigurationProperty ("bypassProxyOnLocal",
@@ -216,7 +217,14 @@ namespace System.ServiceModel.Configuration
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+			get {
+				if (properties == null) {
+					var baseProps = base.Properties;
+					lock (baseProps)
+						FillProperties (baseProps);
+				}
+				return properties;
+			}
 		}
 
 		[ConfigurationProperty ("proxyAddress",

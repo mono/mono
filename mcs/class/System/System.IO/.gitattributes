@@ -1,0 +1,12 @@
+/ErrorEventArgs.cs -crlf
+/ErrorEventHandler.cs -crlf
+/FileSystemEventArgs.cs -crlf
+/FileSystemEventHandler.cs -crlf
+/IODescriptionAttribute.cs -crlf
+/InternalBufferOverflowException.cs -crlf
+/MonoIOError.cs -crlf
+/NotifyFilters.cs -crlf
+/RenamedEventArgs.cs -crlf
+/RenamedEventHandler.cs -crlf
+/WaitForChangedResult.cs -crlf
+/WatcherChangeTypes.cs -crlf

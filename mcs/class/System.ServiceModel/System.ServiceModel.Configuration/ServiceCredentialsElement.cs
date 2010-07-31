@@ -56,8 +56,7 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	public sealed class ServiceCredentialsElement
-		 : BehaviorExtensionElement
+	public class ServiceCredentialsElement : BehaviorExtensionElement
 	{
 		public ServiceCredentialsElement () {
 		}
@@ -126,11 +125,15 @@ namespace System.ServiceModel.Configuration
 			get { return (WindowsServiceElement) base ["windowsAuthentication"]; }
 		}
 
-		[MonoTODO]
 		protected internal override object CreateBehavior ()
 		{
 			var sb = new ServiceCredentials ();
+			ApplyConfiguration (sb);
+			return sb;
+		}
 
+		protected internal void ApplyConfiguration (ServiceCredentials sb)
+		{
 			// IssuedToken
 			foreach (AllowedAudienceUriElement ae in IssuedTokenAuthentication.AllowedAudienceUris)
 				sb.IssuedTokenAuthentication.AllowedAudienceUris.Add (ae.AllowedAudienceUri);
@@ -180,13 +183,11 @@ namespace System.ServiceModel.Configuration
 			// Windows
 			sb.WindowsAuthentication.AllowAnonymousLogons = WindowsAuthentication.AllowAnonymousLogons;
 			sb.WindowsAuthentication.IncludeWindowsGroups = WindowsAuthentication.IncludeWindowsGroups;
-
-			return sb;
 		}
 
 		X509Certificate2 GetCertificate (StoreLocation storeLocation, StoreName storeName, X509FindType findType, object findValue)
 		{
-			throw new NotImplementedException ();
+			return ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
 		}
 
 		object CreateInstance (string typeName)

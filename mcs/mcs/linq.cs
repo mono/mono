@@ -64,17 +64,15 @@ namespace Mono.CSharp.Linq
 			{
 			}
 
-			protected override Expression Error_MemberLookupFailed (ResolveContext ec, TypeSpec container_type, TypeSpec qualifier_type,
-				TypeSpec queried_type, string name, int arity, string class_name, MemberKind mt, BindingRestriction bf)
+			protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
 			{
 				ec.Report.Error (1935, loc, "An implementation of `{0}' query expression pattern could not be found. " +
 					"Are you missing `System.Linq' using directive or `System.Core.dll' assembly reference?",
 					name);
-				return null;
 			}
 		}
 
-		protected class QueryExpressionInvocation : Invocation, MethodGroupExpr.IErrorHandler
+		protected class QueryExpressionInvocation : Invocation, OverloadResolver.IErrorHandler
 		{
 			public QueryExpressionInvocation (QueryExpressionAccess expr, Arguments arguments)
 				: base (expr, arguments)
@@ -83,57 +81,67 @@ namespace Mono.CSharp.Linq
 
 			protected override MethodGroupExpr DoResolveOverload (ResolveContext ec)
 			{
-				mg.CustomErrorHandler = this;
-				MethodGroupExpr rmg = mg.OverloadResolve (ec, ref arguments, false, loc);
+				MethodGroupExpr rmg = mg.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.None);
 				return rmg;
 			}
 
-			public bool AmbiguousCall (ResolveContext ec, MethodGroupExpr mg, MethodSpec ambiguous)
+			#region IErrorHandler Members
+
+			bool OverloadResolver.IErrorHandler.AmbiguousCandidates (ResolveContext ec, MemberSpec best, MemberSpec ambiguous)
 			{
-				ec.Report.SymbolRelatedToPreviousError (mg.BestCandidate);
+				ec.Report.SymbolRelatedToPreviousError (best);
 				ec.Report.SymbolRelatedToPreviousError (ambiguous);
 				ec.Report.Error (1940, loc, "Ambiguous implementation of the query pattern `{0}' for source type `{1}'",
-					mg.Name, mg.InstanceExpression.GetSignatureForError ());
+					best.Name, mg.InstanceExpression.GetSignatureForError ());
 				return true;
 			}
 
-			public bool NoExactMatch (ResolveContext ec, MethodSpec method)
+			bool OverloadResolver.IErrorHandler.ArgumentMismatch (ResolveContext rc, MemberSpec best, Argument arg, int index)
 			{
-				var pd = method.Parameters;
-				TypeSpec source_type = pd.ExtensionMethodType;
+				return false;
+			}
+
+			bool OverloadResolver.IErrorHandler.NoArgumentMatch (ResolveContext rc, MemberSpec best)
+			{
+				return false;
+			}
+
+			bool OverloadResolver.IErrorHandler.TypeInferenceFailed (ResolveContext rc, MemberSpec best)
+			{
+				var ms = (MethodSpec) best;
+				TypeSpec source_type = ms.Parameters.ExtensionMethodType;
 				if (source_type != null) {
-					Argument a = arguments [0];
+					Argument a = arguments[0];
 
 					if (TypeManager.IsGenericType (source_type) && TypeManager.ContainsGenericParameters (source_type)) {
 						TypeInferenceContext tic = new TypeInferenceContext (source_type.TypeArguments);
-						tic.OutputTypeInference (ec, a.Expr, source_type);
-						if (tic.FixAllTypes (ec)) {
+						tic.OutputTypeInference (rc, a.Expr, source_type);
+						if (tic.FixAllTypes (rc)) {
 							source_type = source_type.GetDefinition ().MakeGenericType (tic.InferredTypeArguments);
 						}
 					}
 
-					if (!Convert.ImplicitConversionExists (ec, a.Expr, source_type)) {
-						ec.Report.Error (1936, loc, "An implementation of `{0}' query expression pattern for source type `{1}' could not be found",
-							mg.Name, TypeManager.CSharpName (a.Type));
+					if (!Convert.ImplicitConversionExists (rc, a.Expr, source_type)) {
+						rc.Report.Error (1936, loc, "An implementation of `{0}' query expression pattern for source type `{1}' could not be found",
+							best.Name, TypeManager.CSharpName (a.Type));
 						return true;
 					}
 				}
 
-				if (!method.IsGeneric)
-					return false;
-
-				if (mg.Name == "SelectMany") {
-					ec.Report.Error (1943, loc,
+				if (best.Name == "SelectMany") {
+					rc.Report.Error (1943, loc,
 						"An expression type is incorrect in a subsequent `from' clause in a query expression with source type `{0}'",
-						arguments [0].GetSignatureForError ());
+						arguments[0].GetSignatureForError ());
 				} else {
-					ec.Report.Error (1942, loc,
+					rc.Report.Error (1942, loc,
 						"An expression type in `{0}' clause is incorrect. Type inference failed in the call to `{1}'",
-						mg.Name.ToLower (), mg.Name);
+						best.Name.ToLowerInvariant (), best.Name);
 				}
 
 				return true;
 			}
+
+			#endregion
 		}
 
 		public AQueryClause next;
@@ -681,10 +689,10 @@ namespace Mono.CSharp.Linq
 				TransparentParameter tp_cursor = (TransparentParameter) parameters[0];
 				while (tp_cursor != tp) {
 					tp_cursor = (TransparentParameter) tp_cursor.Parent;
-					expr = new MemberAccess (expr, tp_cursor.Name);
+					expr = new TransparentMemberAccess (expr, tp_cursor.Name);
 				}
 
-				return new MemberAccess (expr, name);
+				return new TransparentMemberAccess (expr, name);
 			}
 
 			return null;
@@ -728,6 +736,14 @@ namespace Mono.CSharp.Linq
 				new ToplevelParameterInfo (this, 0),
 				new ToplevelParameterInfo (this, 1)
 			};
+		}
+	}
+
+	sealed class TransparentMemberAccess : MemberAccess
+	{
+		public TransparentMemberAccess (Expression expr, string name)
+			: base (expr, name)
+		{
 		}
 	}
 }

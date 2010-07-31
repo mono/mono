@@ -38,8 +38,15 @@ namespace System.ServiceModel
 		bool enabled;
 		ReliableSessionBindingElement binding;
 
-		public OptionalReliableSession (ReliableSessionBindingElement binding)
+		public OptionalReliableSession ()
 		{
+		}
+
+		public OptionalReliableSession (ReliableSessionBindingElement binding)
+			: base (binding)
+		{
+			if (binding == null)
+				throw new ArgumentNullException ("binding");
 		}
 
 		public bool Enabled {

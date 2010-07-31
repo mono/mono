@@ -1,0 +1,61 @@
+#*.c	crlf
+#*.h	crlf
+#*.cs	crlf
+#*.sh	crlf
+
+#ChangeLog	crlf
+#*akefile*	crlf
+#*.sources	crlf
+
+# don't do anything to line-endings.  Let CRLFs go into the repo
+*.bat	  	-crlf
+*.sln		-crlf
+*.*proj* 	-crlf
+
+# CRLF Handling
+# -------------
+#
+# The ideal situation would be to do no EOL normalization.  Each file
+# would have a default EOL, and tools on Windows and Linux would handle
+# both EOL formats.
+#
+# We're not in the ideal world.  A popular editor on Windows (possibly
+# Visual Studio) silently introduces EOL corruption -- it displays an
+# LF-file normally, but any newly added lines have CRLF.  On Linux,
+# Emacs and versions of VI handle LF-files and CRLF-files properly.
+# However, emacs doesn't like files with both LF and CRLF EOLs.  Editing
+# the file without additional action will increase the EOL corruption
+# in the file.
+#
+# Another vector for mixed EOLs is scripts.  We mostly don't have scripts
+# that add new lines -- so we rarely see this.  However, one major event
+# in the tree was the addition of copyright headers using a script.  That
+# script introduced EOL corruption.
+#
+# Any automated EOL normalization of files already in the repository will
+# cause difficulties in traversing histories, assigning blame, etc.  So, we
+# don't want to change what's in the repository significantly, even if it
+# causes trouble.
+#
+# What we do now:
+#
+# a) we ensure that there's no further corruption of LF-files.  So, we use
+#    git's 'crlf' attribute on those files to ensure that things are fine
+#    when we work on Windows.  We could use 'crlf=input', but it doesn't buy
+#    us much -- we might as well be working with consistent EOLs for files in
+#    working directories as well as in the repository
+#
+# b) if the file already of CRLFs, we don't do any normalization.  We use '-crlf'
+#    so that git doesn't do any EOL-conversion of the file.  As I said, this
+#    is mostly harmless on Linux.  We can't mark these files as 'crlf' or use
+#    the new (git 1.7.2) 'eol=crlf' attribute, since it changes the contents
+#    _inside_ the repository [1], and hence makes history traversal annoying.
+#    So, we live with occasional EOL corruption.
+#
+# c) We can handle mixed-EOL files on a case-by-case basis, converting them to
+#    LF- or CRLF-files based on which causes fewer lines to change
+#
+# d) We try to ensure no further headaches, by declaring EOL normalization on
+#    code files, and Unix-flavoured files, like shell-scripts, makefiles, etc.
+#
+# [1] GIT use LFs as the normalized internal representation.

@@ -1,0 +1,7 @@
+/XQueryArithmeticOperator.cs -crlf
+/XQueryCliFunction.cs -crlf
+/XQueryComparisonOperator.cs -crlf
+/XQueryDefaultFunctionCall.cs -crlf
+/XQueryFunctionTable.cs -crlf
+/XmlQueryCompileException.cs -crlf
+/XmlQueryException.cs -crlf

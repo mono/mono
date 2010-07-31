@@ -83,13 +83,13 @@ namespace System.ServiceModel
 			Type implementedContract, Binding binding, Uri address)
 		{
 			return AddServiceEndpoint (implementedContract,
-				binding, address, address);
+				binding, address, null);
 		}
 
 		public ServiceEndpoint AddServiceEndpoint (
 			Type implementedContract, Binding binding, Uri address, Uri listenUri)
 		{
-			EndpointAddress ea = BuildEndpointAddress (address, binding);
+			EndpointAddress ea = new EndpointAddress (BuildAbsoluteUri (address, binding));
 
 			ContractDescription cd = GetExistingContract (implementedContract);
 			if (cd == null) {

@@ -1,3 +1,7 @@
+2010-07-28  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.CSharp.targets: Use '*mcs.bat' on windows.
+
 2010-07-22  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Silverlight.Common.targets(GenerateMoonlightManifest):

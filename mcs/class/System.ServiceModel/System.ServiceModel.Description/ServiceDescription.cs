@@ -28,12 +28,23 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
 namespace System.ServiceModel.Description
 {
+	internal static class Extensions
+	{
+		public static T GetCustomAttribute<T> (this MemberInfo mi, bool inherit) where T : Attribute
+		{
+			foreach (T att in mi.GetCustomAttributes (typeof (T), inherit))
+				return att;
+			return null;
+		}
+	}
+	
 	public class ServiceDescription
 	{
 		ServiceEndpointCollection endpoints = new ServiceEndpointCollection ();
@@ -85,6 +96,17 @@ namespace System.ServiceModel.Description
 			// null Type is not rejected
 			ServiceDescription sd = new ServiceDescription ();
 			sd.ServiceType = type;
+			if (type != null) {
+				var att = type.GetCustomAttribute<ServiceBehaviorAttribute> (true);
+				if (att != null) {
+					sd.Name = att.Name;
+					sd.Namespace = att.Namespace;
+				}
+				if (sd.Name == null)
+					sd.Name = type.Name;
+				if (sd.Namespace == null)
+					sd.Namespace = "http://tempuri.org/";
+			}
 			return sd;
 		}
 
@@ -95,40 +117,5 @@ namespace System.ServiceModel.Description
 			sd.ServiceType = wellKnown != null ? wellKnown.GetType () : null;
 			return sd;
 		}
-
-/*
-		internal ServiceEndpoint AddServiceEndpoint (Type contractType,
-			Binding binding)
-		{
-			return AddServiceEndpoint (contractType, binding, null);
-		}
-
-		internal ServiceEndpoint AddServiceEndpoint (
-			Type contractType, Binding binding,
-			EndpointAddress address)
-		{
-			foreach (ServiceEndpoint i in Endpoints)
-				if (i.Address.Equals (address) &&
-				    i.Binding.Equals (binding) &&
-				    i.Contract.ContractType == contractType)
-					return i;
-
-			ContractDescription cd;
-			if (!contracts.Contains (contractType)) {
-				cd = ContractDescription.GetContract (contractType);
-				contracts.Add (contractType,
-					cd);
-			}
-			else
-				cd = contracts [contractType];
-
-			ServiceEndpoint se = new ServiceEndpoint (
-				cd, binding, address);
-
-			Endpoints.Add (se);
-
-			return se;
-		}
-*/
 	}
 }

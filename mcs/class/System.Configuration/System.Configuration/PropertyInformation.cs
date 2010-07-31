@@ -44,6 +44,10 @@ namespace System.Configuration
 		
 		internal PropertyInformation (ConfigurationElement owner, ConfigurationProperty property)
 		{
+			if (owner == null)
+				throw new ArgumentNullException ("owner");
+			if (property == null)
+				throw new ArgumentNullException ("property");
 			this.owner = owner;
 			this.property = property;
 		}

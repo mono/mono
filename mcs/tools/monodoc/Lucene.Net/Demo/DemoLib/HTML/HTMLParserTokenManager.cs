@@ -349,7 +349,7 @@ namespace Lucene.Net.Demo.Html
                     ReInitRounds();
                 if (curChar < 64)
                 {
-                    ulong l = ((ulong) 1L) << curChar;
+                    ulong l = ((ulong) 1L) << curChar;
 MatchLoop: 
                     do 
                     {
@@ -519,7 +519,7 @@ MatchLoop:
                 }
                 else if (curChar < 128)
                 {
-                    ulong l = ((ulong) 1L) << (curChar & 63);
+                    ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
                     do 
                     {
@@ -591,7 +591,7 @@ MatchLoop1:
                 else
                 {
                     int i2 = (curChar & 0xff) >> 6;
-                    ulong l2 = ((ulong) 1L) << (curChar & 63);
+                    ulong l2 = ((ulong) 1L) << (curChar & 63);
                 MatchLoop1: 
                     do 
                     {
@@ -659,7 +659,7 @@ MatchLoop1:
                     ReInitRounds();
                 if (curChar < 64)
                 {
-                    ulong l = ((ulong) 1L) << curChar;
+                    ulong l = ((ulong) 1L) << curChar;
 MatchLoop1: 
                     do 
                     {
@@ -695,7 +695,7 @@ MatchLoop1:
                 }
                 else if (curChar < 128)
                 {
-                    ulong l = ((ulong) 1L) << (curChar & 63);
+                    ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
                     do 
                     {
@@ -717,7 +717,7 @@ MatchLoop1:
                 else
                 {
                     int i2 = (curChar & 0xff) >> 6;
-                    ulong l2 = ((ulong) 1L) << (curChar & 63);
+                    ulong l2 = ((ulong) 1L) << (curChar & 63);
                 MatchLoop1: 
                     do 
                     {
@@ -813,7 +813,7 @@ MatchLoop1:
                     ReInitRounds();
                 if (curChar < 64)
                 {
-                    ulong l = ((ulong) 1L) << curChar;
+                    ulong l = ((ulong) 1L) << curChar;
 MatchLoop1: 
                     do 
                     {
@@ -835,7 +835,7 @@ MatchLoop1:
                 }
                 else if (curChar < 128)
                 {
-                    ulong l = ((ulong) 1L) << (curChar & 63);
+                    ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
                     do 
                     {
@@ -856,7 +856,7 @@ MatchLoop1:
                 else
                 {
                     int i2 = (curChar & 0xff) >> 6;
-                    ulong l2 = ((ulong) 1L) << (curChar & 63);
+                    ulong l2 = ((ulong) 1L) << (curChar & 63);
                 MatchLoop1: 
                     do 
                     {
@@ -914,7 +914,7 @@ MatchLoop1:
                     ReInitRounds();
                 if (curChar < 64)
                 {
-                    ulong l = ((ulong) 1L) << curChar;
+                    ulong l = ((ulong) 1L) << curChar;
 MatchLoop1: 
                     do 
                     {
@@ -950,7 +950,7 @@ MatchLoop1:
                 }
                 else if (curChar < 128)
                 {
-                    ulong l = ((ulong) 1L) << (curChar & 63);
+                    ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
                     do 
                     {
@@ -972,7 +972,7 @@ MatchLoop1:
                 else
                 {
                     int i2 = (curChar & 0xff) >> 6;
-                    ulong l2 = ((ulong) 1L) << (curChar & 63);
+                    ulong l2 = ((ulong) 1L) << (curChar & 63);
                 MatchLoop1: 
                     do 
                     {
@@ -1071,7 +1071,7 @@ MatchLoop1:
                     ReInitRounds();
                 if (curChar < 64)
                 {
-                    ulong l = ((ulong) 1L) << (int) curChar;
+                    ulong l = ((ulong) 1L) << (int) curChar;
 MatchLoop1: 
                     do 
                     {
@@ -1116,7 +1116,7 @@ MatchLoop1:
                 }
                 else if (curChar < 128)
                 {
-                    ulong l = ((ulong) 1L) << (curChar & 63);
+                    ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
                     do 
                     {
@@ -1139,7 +1139,7 @@ MatchLoop1:
                 else
                 {
                     int i2 = (curChar & 0xff) >> 6;
-                    ulong l2 = ((ulong) 1L) << (curChar & 63);
+                    ulong l2 = ((ulong) 1L) << (curChar & 63);
                 MatchLoop1: 
                     do 
                     {
@@ -1305,7 +1305,7 @@ MatchLoop1:
                     ReInitRounds();
                 if (curChar < 64)
                 {
-                    ulong l = ((ulong) 1L) << curChar;
+                    ulong l = ((ulong) 1L) << curChar;
 MatchLoop1: 
                     do 
                     {
@@ -1341,7 +1341,7 @@ MatchLoop1:
                 }
                 else if (curChar < 128)
                 {
-                    ulong l = ((ulong) 1L) << (curChar & 63);
+                    ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
                     do 
                     {
@@ -1363,7 +1363,7 @@ MatchLoop1:
                 else
                 {
                     int i2 = (curChar & 0xff) >> 6;
-                    ulong l2 = ((ulong) 1L) << (curChar & 63);
+                    ulong l2 = ((ulong) 1L) << (curChar & 63);
                 MatchLoop1: 
                     do 
                     {
@@ -1422,7 +1422,7 @@ MatchLoop1:
                     ReInitRounds();
                 if (curChar < 64)
                 {
-                    ulong l = ((ulong) 1L) << curChar;
+                    ulong l = ((ulong) 1L) << curChar;
 MatchLoop1: 
                     do 
                     {
@@ -1481,7 +1481,7 @@ MatchLoop1:
                 }
                 else if (curChar < 128)
                 {
-                    ulong l = ((ulong) 1L) << (curChar & 63);
+                    ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
                     do 
                     {
@@ -1538,7 +1538,7 @@ MatchLoop1:
                 else
                 {
                     int i2 = (curChar & 0xff) >> 6;
-                    ulong l2 = ((ulong) 1L) << (curChar & 63);
+                    ulong l2 = ((ulong) 1L) << (curChar & 63);
                 MatchLoop1: 
                     do 
                     {
@@ -1645,7 +1645,7 @@ MatchLoop1:
                     ReInitRounds();
                 if (curChar < 64)
                 {
-                    ulong l = ((ulong) 1L) << curChar;
+                    ulong l = ((ulong) 1L) << curChar;
 MatchLoop1: 
                     do 
                     {
@@ -1708,7 +1708,7 @@ MatchLoop1:
                 }
                 else if (curChar < 128)
                 {
-                    ulong l = ((ulong) 1L) << (curChar & 63);
+                    ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
                     do 
                     {
@@ -1731,7 +1731,7 @@ MatchLoop1:
                 else
                 {
                     int i2 = (curChar & 0xff) >> 6;
-                    ulong l2 = ((ulong) 1L) << (curChar & 63);
+                    ulong l2 = ((ulong) 1L) << (curChar & 63);
                 MatchLoop1: 
                     do 
                     {

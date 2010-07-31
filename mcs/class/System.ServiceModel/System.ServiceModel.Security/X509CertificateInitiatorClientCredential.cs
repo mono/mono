@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security.Tokens;
 
@@ -52,20 +53,18 @@ namespace System.ServiceModel.Security
 			set { certificate = value; }
 		}
 
-		[MonoTODO]
 		public void SetCertificate (StoreLocation storeLocation,
 			StoreName storeName, X509FindType findType,
 			object findValue)
 		{
-			throw new NotImplementedException ();
+			certificate = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
 		}
 
-		[MonoTODO]
 		public void SetCertificate (
 			string subjectName, StoreLocation storeLocation,
 			StoreName storeName)
 		{
-			throw new NotImplementedException ();
+			certificate = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, X509FindType.FindBySubjectName, subjectName);
 		}
 	}
 }

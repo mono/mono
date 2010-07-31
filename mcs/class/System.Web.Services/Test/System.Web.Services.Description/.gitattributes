@@ -1,0 +1,3 @@
+/check-import.wsdl -crlf
+/check-import2.wsdl -crlf
+/test2.wsdl -crlf

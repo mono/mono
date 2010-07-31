@@ -132,6 +132,7 @@ namespace System.ServiceModel.Channels.Security
 
 			// FIXME: use proper max buffer
 			buf = source.CreateBufferedCopy (int.MaxValue);
+Console.WriteLine ("####### " + buf.CreateMessage ());
 
 			doc = new XmlDocument ();
 			doc.PreserveWhitespace = true;

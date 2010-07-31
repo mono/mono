@@ -66,6 +66,8 @@ namespace System.Configuration
 
 		public void Add (ConfigurationProperty property)
 		{
+			if (property == null)
+				throw new ArgumentNullException ("property");
 			collection.Add (property);
 		}
 

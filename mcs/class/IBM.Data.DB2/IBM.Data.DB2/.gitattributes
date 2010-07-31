@@ -1,0 +1,17 @@
+/DB2ClientUtils.cs -crlf
+/DB2Command.cs -crlf
+/DB2Connection.cs -crlf
+/DB2ConnectionPool.cs -crlf
+/DB2ConnectionSettings.cs -crlf
+/DB2Constants.cs -crlf
+/DB2DataReader.cs -crlf
+/DB2Environment.cs -crlf
+/DB2Error.cs -crlf
+/DB2ErrorCollection.cs -crlf
+/DB2Exception.cs -crlf
+/DB2InfoMessageEventHandler.cs -crlf
+/DB2OpenConnection.cs -crlf
+/DB2Parameter.cs -crlf
+/DB2ParameterCollection.cs -crlf
+/DB2Transaction.cs -crlf
+/DB2Type.cs -crlf

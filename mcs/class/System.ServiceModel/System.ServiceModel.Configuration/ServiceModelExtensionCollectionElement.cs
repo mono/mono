@@ -33,14 +33,16 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
-	public class ServiceModelExtensionCollectionElement<TServiceModelExtensionElement> 
-		: ConfigurationElement,
+	public abstract class ServiceModelExtensionCollectionElement<TServiceModelExtensionElement> : ConfigurationElement,
 		ICollection<TServiceModelExtensionElement>,
-		IEnumerable<TServiceModelExtensionElement>, 
+		IEnumerable<TServiceModelExtensionElement>,
 		IEnumerable
 		where TServiceModelExtensionElement : ServiceModelExtensionElement
 	{
+		internal ServiceModelExtensionCollectionElement ()
+		{
+		}
+
 		ConfigurationPropertyCollection properties;
 
 		KeyedByTypeCollection<TServiceModelExtensionElement> _list = new KeyedByTypeCollection<TServiceModelExtensionElement> ();

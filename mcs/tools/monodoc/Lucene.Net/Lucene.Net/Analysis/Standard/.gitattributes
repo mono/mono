@@ -1,0 +1,11 @@
+/CharStream.cs -crlf
+/FastCharStream.cs -crlf
+/Package.html -crlf
+/ParseException.cs -crlf
+/StandardAnalyzer.cs -crlf
+/StandardFilter.cs -crlf
+/StandardTokenizer.cs -crlf
+/StandardTokenizerConstants.cs -crlf
+/StandardTokenizerTokenManager.cs -crlf
+/Token.cs -crlf
+/TokenMgrError.cs -crlf

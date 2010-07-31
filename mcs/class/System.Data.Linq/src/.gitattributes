@@ -1,0 +1,9 @@
+/Build?Northwind?parameters.txt -crlf
+/DbLinq.ProductInfo.cs -crlf
+/DbLinq.fxcop -crlf
+/DbLinq.vsmdi -crlf
+/DbLinq1.vsmdi -crlf
+/DbLinq2.vsmdi -crlf
+/DbLinq3.vsmdi -crlf
+/LocalTestRun.testrunconfig -crlf
+/readme.txt -crlf

@@ -1,4 +1,4 @@
-// CS0200: Property or indexer `A.Counter' cannot be assigned to (it is read only)
+// CS0200: Property or indexer `A.Counter' cannot be assigned to (it is read-only)
 // Line: 9
 
 class Program

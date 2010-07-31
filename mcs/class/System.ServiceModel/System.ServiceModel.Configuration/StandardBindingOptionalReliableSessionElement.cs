@@ -54,7 +54,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public sealed partial class StandardBindingOptionalReliableSessionElement
 		 : StandardBindingReliableSessionElement
 	{
@@ -91,7 +90,13 @@ namespace System.ServiceModel.Configuration
 			get { return properties; }
 		}
 
+		// Methods
 
+		public void ApplyConfiguration (OptionalReliableSession s)
+		{
+			base.ApplyConfiguration (s);
+			s.Enabled = this.Enabled;
+		}
 	}
 
 }

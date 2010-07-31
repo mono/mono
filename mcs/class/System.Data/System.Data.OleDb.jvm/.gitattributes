@@ -1,0 +1,16 @@
+/OleDbCommand.cs -crlf
+/OleDbConvert.cs -crlf
+/OleDbDataAdapter.cs -crlf
+/OleDbException.cs -crlf
+/OleDbInfoMessageEventArgs.cs -crlf
+/OleDbInfoMessageEventHandler.cs -crlf
+/OleDbLiteral.cs -crlf
+/OleDbPermission.cs -crlf
+/OleDbPermissionAttribute.cs -crlf
+/OleDbRowUpdatedEventArgs.cs -crlf
+/OleDbRowUpdatedEventHandler.cs -crlf
+/OleDbRowUpdatingEventArgs.cs -crlf
+/OleDbRowUpdatingEventHandler.cs -crlf
+/OleDbSchemaGuid.cs -crlf
+/OleDbTransaction.cs -crlf
+/OleDbType.cs -crlf

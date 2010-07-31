@@ -1,3 +1,161 @@
+2010-07-30  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-archdep.h (ARCH_COPY_SIGCTX_REGS): Add casts to fix
+	compiler warnings on AMD64.
+
+2010-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Add support for calling vararg methods from SRE code.
+	This requires storing per-memberref signatures so
+	the JIT can know how many varargs parameters are
+	been passed.
+
+	* loader.c (mono_method_get_signature_full): If the
+	image is dynamic call mono_reflection_lookup_signature
+	to lookup the signature.
+
+	* reflection.c (mono_image_create_method_token): Save
+	the method object into the MonoDynamicImage::tokens.
+	Create a signature struct for MethodBuilders.
+	Save the signature into vararg_aux_hash so it can be
+	retrieved later.
+
+	* reflection.c (mono_reflection_lookup_signature): New
+	function. Check vararg_aux_hash for a signature before
+	returning method's own signature.
+
+	* metadata-internals.h (MonoDynamicImage): Add new
+	vararg_aux_hash hashtable.
+
+	* object-internals.h: Add mono_reflection_lookup_signature.
+
+	Fixes #626441
+
+2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Don't move forward
+	with verification if a stack overflow is detected for
+	the ARGLIST opcode.
+
+	Fixes #601953
+
+2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_bounded_array_class_get): Fail arrays
+	of void or typedbyref. Those two types are not allowed
+	to be used with arrays. Failing them is easier and less
+	error prone than returning NULL.
+
+	Fixes #603279
+
+2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_get_delegate_invoke): Don't assert if
+	the Invoke method is not found. This can happen with
+	broken types and it's the caller resposibility to deal
+	with a null return.
+
+	Fixes #553403
+
+2010-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_assembly_name_from_token): Handle
+	images with null assembly. This can happen with resource
+	or broken assemblies.
+
+	Fixes #623586.
+
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (concat_two_strings_with_zero): Guard against
+	null strings.
+
+	Modified version of patch by Sebastien Pouliot.
+
+	Fixes #623653.
+
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* image.c (mono_image_load_module): Handle the case of
+	module index equal or smaller than zero. It is possible
+	to embed a valid zero index into metadata so this case
+	must be explicitly handled.
+
+	Patch by Sebastien Pouliot.
+
+	Fixes #623581.
+
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (INVALID_IMPLMAP_FLAGS_BITS): Add non standard
+	bits for best fit on/off (4,5) and throw on unmappable on/off (12/13).
+
+	Fixes #622221.
+
+2010-07-27  Geoff Norton  <gnorton@novell.com>
+
+	* sgen-archdep.h: Ensure we store the registers we actually
+	need to scan.
+
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): Improve error message.
+
+2010-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_generic_param_is_constraint_compatible): Don't
+	fail a contraint check even if the candidate has no constraints.
+	All constraints might resolve to the candidate itself so it can
+	have none.
+
+	Fixes #622225.
+
+2010-07-25  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-internal.c: Only compile this if HAVE_SGEN_GC is defined.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-internal.c, sgen-gc.h, sgen-major-copying.c: Make the
+	internal allocator fast by keeping free-lists of chunks, not only
+	within chunks.  Align the chunks, so that on freeing we can get
+	the chunk without searching.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-internal.c, sgen-gc.c, sgen-gc.h, sgen-gray.c,
+	sgen-major-copying.c, sgen-marksweep.c, sgen-pinning-stats.c,
+	sgen-pinning.c: Allocate fixed-size structs without specifying the
+	size, instead registering it once with its type.
+	Dynamically-sized need their size specified when being freed.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-major-copying.c, sgen-internal.c, sgen-gc.c, sgen-gc.h,
+	sgen-pinning.c: Copying major collector doesn't mess around with
+	internals of the internal allocator anymore, instead using public
+	functions.
+
+2010-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-internal.c: Internal allocator in its own module.
+
+	* sgen-gc.c, sgen-gc.h, sgen-gray.c, sgen-los.c,
+	sgen-major-copying.c, sgen-marksweep.c, sgen-pinning.c,
+	sgen-pinning-stats.c: Remove internal allocator and call the
+	public functions now.
+
+	* Makefile.am: Added new file.
+
+2010-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-archdep.h (ARCH_COPY_SIGCTX_REGS): Fix warnings on amd64.
+
+2010-07-24  Sanjoy Das <sanjoy@playingwithpointers.com>
+
+	* sgen-gc.h: Removed 'foo defined but not used' warnings for the
+	  *_signal_num variables.
+
 2010-07-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_Read): Add a null check.

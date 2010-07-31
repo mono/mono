@@ -1,3 +1,9 @@
+2010-07-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.Discovery.dll.soures : add config types. NOTE:
+	  this somehow breaks compilation. To get working build, remove those
+	  config types.
+
 2010-03-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* : initial checkin (mostly stubs).

@@ -1,0 +1,4 @@
+/GHSocket.jvm.cs -crlf
+/GHSocketFactory.jvm.cs -crlf
+/GHStreamSocket.jvm.cs -crlf
+/GHStreamSocketSSL.jvm.cs -crlf

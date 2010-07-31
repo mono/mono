@@ -1,3 +1,55 @@
+2010-07-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	*  EndpointCollectionElement.cs,
+	  StandardEndpointCollectionElement.cs,
+	  StandardEndpointElement.cs,
+	  StandardEndpointElementCollection.cs : new 4.0 types.
+
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CallbackTimeoutsElement.cs
+	  ChannelPoolSettingsElement.cs
+	  ClaimTypeElement.cs
+	  ClientCredentialsElement.cs
+	  ServiceCredentialsElement.cs
+	  ServiceModelExtensionCollectionElement.cs
+	  StandardBindingOptionalReliableSessionElement.cs
+	  StandardBindingReliableSessionElement.cs : couple of API fixes.
+	* LocalClientSecuritySettingsElement.cs : fixed Properties.
+
+2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClaimTypeElement.cs
+	  ClaimTypeElementCollection.cs
+	  FederatedMessageSecurityOverHttpElement.cs
+	  StandardBindingOptionalReliableSessionElement.cs
+	  StandardBindingReliableSessionElement.cs
+	  WSFederationHttpBindingElement.cs
+	  WSFederationHttpSecurityElement.cs
+	  WSHttpBindingBaseElement.cs : implemented ApplyConfiguration and
+	  add/fix descendants' members.
+
+2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FederatedMessageSecurityOverHttpElement.cs : use correct converter.
+	* WSFederationHttpBindingCollectionElement.cs : remove extra members.
+	* WSDualHttpBindingElement.cs, WSFederationHttpBindingElement.cs :
+	  fill base properties expectedly.
+
+2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WSDualHttpBindingElement.cs, WSFederationHttpBindingElement.cs :
+	  BindingElementType is not a configuration property.
+
+2010-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigUtil.cs : the error message can be less ambiguous.
+
+2010-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigUtil.cs, ServiceCredentialsElement.cs :
+	  implement x509 store support.
+
 2010-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientCredentialsElement.cs : warning cleanup.

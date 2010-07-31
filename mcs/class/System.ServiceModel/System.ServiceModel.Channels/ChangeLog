@@ -1,3 +1,7 @@
+2010-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityBindingElement.cs : implement ToString().
+
 2010-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MtomMessageEncodingBindingElement.cs, MtomMessageEncoder.cs :

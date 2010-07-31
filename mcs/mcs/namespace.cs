@@ -1034,7 +1034,7 @@ namespace Mono.CSharp {
 		/// Does extension methods look up to find a method which matches name and extensionType.
 		/// Search starts from this namespace and continues hierarchically up to top level.
 		///
-		public ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 		{
 			List<MethodSpec> candidates = null;
 			foreach (Namespace n in GetUsingTable ()) {
@@ -1048,8 +1048,9 @@ namespace Mono.CSharp {
 					candidates.AddRange (a);
 			}
 
+			scope = parent;
 			if (candidates != null)
-				return new ExtensionMethodGroupExpr (candidates, parent, extensionType, loc);
+				return candidates;
 
 			if (parent == null)
 				return null;
@@ -1061,7 +1062,7 @@ namespace Mono.CSharp {
 			do {
 				candidates = parent_ns.LookupExtensionMethod (extensionType, null, name, arity);
 				if (candidates != null)
-					return new ExtensionMethodGroupExpr (candidates, parent, extensionType, loc);
+					return candidates;
 
 				parent_ns = parent_ns.Parent;
 			} while (parent_ns != null);
@@ -1069,7 +1070,7 @@ namespace Mono.CSharp {
 			//
 			// Continue in parent scope
 			//
-			return parent.LookupExtensionMethod (extensionType, name, arity, loc);
+			return parent.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)

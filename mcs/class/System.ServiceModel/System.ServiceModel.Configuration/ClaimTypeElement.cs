@@ -48,13 +48,13 @@ using System.ServiceModel.Dispatcher;
 using System.ServiceModel.MsmqIntegration;
 using System.ServiceModel.PeerResolvers;
 using System.ServiceModel.Security;
+using System.ServiceModel.Security.Tokens;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public sealed partial class ClaimTypeElement
 		 : ConfigurationElement
 	{
@@ -82,6 +82,11 @@ namespace System.ServiceModel.Configuration
 		{
 		}
 
+		public ClaimTypeElement (string claimType, bool isOptional)
+		{
+			ClaimType = claimType;
+			IsOptional = isOptional;
+		}
 
 		// Properties
 
@@ -110,7 +115,10 @@ namespace System.ServiceModel.Configuration
 			get { return properties; }
 		}
 
-
+		internal ClaimTypeRequirement Create ()
+		{
+			return new ClaimTypeRequirement (ClaimType, IsOptional);
+		}
 	}
 
 }

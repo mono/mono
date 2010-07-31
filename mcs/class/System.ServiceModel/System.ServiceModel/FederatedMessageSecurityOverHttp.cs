@@ -46,7 +46,7 @@ namespace System.ServiceModel
 		string issued_token_type;
 		EndpointAddress issuer_address, metadata_address;
 		Binding issuer_binding;
-		bool negotiate = true;
+		bool establish_sec_ctx = true, negotiate = true;
 		Collection<ClaimTypeRequirement> claim_type_reqs =
 			new Collection<ClaimTypeRequirement> ();
 		Collection<XmlElement> request_params = new Collection<XmlElement> ();
@@ -58,6 +58,11 @@ namespace System.ServiceModel
 		public SecurityAlgorithmSuite AlgorithmSuite {
 			get { return algorithm; }
 			set { algorithm = value; }
+		}
+
+		public bool EstablishSecurityContext {
+			get { return establish_sec_ctx; }
+			set { establish_sec_ctx = value; }
 		}
 
 		public SecurityKeyType IssuedKeyType {

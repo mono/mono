@@ -1,0 +1,3 @@
+/makefile.build -crlf
+/run-tests.cmd -crlf
+/run-tests.selenium.cmd -crlf

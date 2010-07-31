@@ -73,6 +73,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("transactionTimeout",
 			 DefaultValue = "00:00:00",
 			 Options = ConfigurationPropertyOptions.None)]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan TransactionTimeout {
 			get { return (TimeSpan) base ["transactionTimeout"]; }
 			set { base ["transactionTimeout"] = value; }

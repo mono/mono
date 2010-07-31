@@ -1,5 +1,9 @@
 2010-07-24  Ankit Jain  <jankit@novell.com>
 
+	* ConsoleLogger.cs: Collect and dump timing information.
+
+2010-07-24  Ankit Jain  <jankit@novell.com>
+
 	* ConsoleLogger.cs: Honor LoggerVerbosity.Quiet .
 
 2010-07-22  Ankit Jain  <jankit@novell.com>

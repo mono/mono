@@ -179,7 +179,21 @@ namespace System.ServiceModel.Configuration
 			set { this ["useDefaultWebProxy"] = value; }
 		}
 
-
+		protected override void OnApplyConfiguration (Binding binding)
+		{
+			var b = (WSHttpBindingBase) binding;
+			b.BypassProxyOnLocal = BypassProxyOnLocal;
+			b.HostNameComparisonMode = HostNameComparisonMode;
+			b.MaxBufferPoolSize = MaxBufferPoolSize;
+			b.MaxReceivedMessageSize = MaxReceivedMessageSize;
+			b.MessageEncoding = MessageEncoding;
+			b.ProxyAddress = ProxyAddress;
+			b.ReaderQuotas = ReaderQuotas.Create ();
+			ReliableSession.ApplyConfiguration (b.ReliableSession);
+			b.TextEncoding = TextEncoding;
+			b.TransactionFlow = TransactionFlow;
+			b.UseDefaultWebProxy = UseDefaultWebProxy;
+		}
 	}
 
 }

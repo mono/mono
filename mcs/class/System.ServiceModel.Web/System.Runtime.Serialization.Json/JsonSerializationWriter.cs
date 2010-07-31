@@ -113,6 +113,21 @@ namespace System.Runtime.Serialization.Json
 					writer.WriteString (qn.Name);
 					writer.WriteString (":");
 					writer.WriteString (qn.Namespace);
+				} else if (graph is IDictionary) {
+					writer.WriteAttributeString ("type", "array");
+					IDictionary dic = (IDictionary) graph;
+					foreach (object o in dic.Keys) {
+						writer.WriteStartElement ("item");
+						writer.WriteAttributeString ("type", "object");
+						// outputting a KeyValuePair as <Key .. /><Value ... />
+						writer.WriteStartElement ("Key");
+						WriteObjectContent (o, false, !(graph is Array && graph.GetType ().GetElementType () != typeof (object)));
+						writer.WriteEndElement ();
+						writer.WriteStartElement ("Value");
+						WriteObjectContent (dic[o], false, !(graph is Array && graph.GetType ().GetElementType () != typeof (object)));
+						writer.WriteEndElement ();
+						writer.WriteEndElement ();
+					}
 				} else if (graph is ICollection) { // array
 					writer.WriteAttributeString ("type", "array");
 					foreach (object o in (ICollection) graph) {

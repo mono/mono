@@ -708,7 +708,7 @@ namespace Mono.CSharp {
 			// Store common messages if any
 			//
 			for (int i = 0; i < common_messages.Count; ++i) {
-				AbstractMessage cmsg = (AbstractMessage) common_messages[i];
+				AbstractMessage cmsg = common_messages[i];
 				bool common_msg_found = false;
 				foreach (AbstractMessage msg in session_messages) {
 					if (cmsg.Equals (msg)) {
@@ -725,7 +725,7 @@ namespace Mono.CSharp {
 			// Merge session and previous messages
 			//
 			for (int i = 0; i < session_messages.Count; ++i) {
-				AbstractMessage msg = (AbstractMessage) session_messages[i];
+				AbstractMessage msg = session_messages[i];
 				bool msg_found = false;
 				for (int ii = 0; ii < merged_messages.Count; ++ii) {
 					if (msg.Equals (merged_messages[ii])) {

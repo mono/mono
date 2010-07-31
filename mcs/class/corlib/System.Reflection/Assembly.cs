@@ -802,6 +802,11 @@ namespace System.Reflection {
 		public PermissionSet PermissionSet {
 			get { return this.GrantedPermissionSet; }
 		}
+
+		[MonoTODO]
+		public bool IsFullyTrusted {
+			get { return true; }
+		}
 #endif
 
 #if !MOONLIGHT

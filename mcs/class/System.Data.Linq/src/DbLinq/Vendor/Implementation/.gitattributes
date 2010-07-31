@@ -1,0 +1,12 @@
+/SchemaLoader.Columns.cs -crlf
+/SchemaLoader.DataName.cs -crlf
+/SchemaLoader.DataTableColumn.cs -crlf
+/SchemaLoader.ForeignKey.cs -crlf
+/SchemaLoader.Name.cs -crlf
+/SchemaLoader.StoredProcedures.cs -crlf
+/SchemaLoader.Tables.cs -crlf
+/SchemaLoader.TypeMapping.cs -crlf
+/SchemaLoader.cs -crlf
+/SqlProvider.cs -crlf
+/Vendor.ProcedureResult.cs -crlf
+/Vendor.cs -crlf

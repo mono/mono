@@ -35,19 +35,20 @@ namespace System.ServiceModel
 {
 	public class ReliableSession
 	{
-		bool ordered;
-		TimeSpan inactivity_timeout;
-
 		public ReliableSession ()
 		{
 		}
 
-		public TimeSpan InactivityTimeout {
-			get { return inactivity_timeout; }
+		public ReliableSession (ReliableSessionBindingElement binding)
+		{
+			if (binding == null)
+				throw new ArgumentNullException ("binding");
+			InactivityTimeout = binding.InactivityTimeout;
+			Ordered = binding.Ordered;
 		}
 
-		public bool Ordered {
-			get { return ordered; }
-		}
+		public TimeSpan InactivityTimeout { get; set; }
+
+		public bool Ordered { get; set; }
 	}
 }

@@ -84,7 +84,6 @@ namespace System.ServiceModel.Security.Tokens
 		Collection<XmlElement> additional_reqs =
 			new Collection<XmlElement> ();
 
-		[MonoTODO]
 		public override string ToString ()
 		{
 			return base.ToString ();
