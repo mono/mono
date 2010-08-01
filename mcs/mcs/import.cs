@@ -683,11 +683,15 @@ namespace Mono.CSharp
 
 			if ((ma & MethodAttributes.Static) != 0) {
 				mod |= Modifiers.STATIC;
-			} else if ((ma & MethodAttributes.Final) != 0) {
-				mod |= Modifiers.SEALED;
-			} else if ((ma & MethodAttributes.Abstract) != 0 && declaringType.IsClass) {
-				mod |= Modifiers.ABSTRACT;
+				return mod;
 			}
+			if ((ma & MethodAttributes.Abstract) != 0 && declaringType.IsClass) {
+				mod |= Modifiers.ABSTRACT;
+				return mod;
+			}
+
+			if ((ma & MethodAttributes.Final) != 0)
+				mod |= Modifiers.SEALED;
 
 			// It can be sealed and override
 			if ((ma & MethodAttributes.Virtual) != 0) {
