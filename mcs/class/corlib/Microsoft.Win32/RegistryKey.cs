@@ -375,6 +375,14 @@ namespace Microsoft.Win32
 		/// </summary>
 		public void DeleteSubKeyTree(string subkey)
 		{
+			DeleteSubKeyTree (subkey, true);
+		}
+
+#if NET_4_0
+		public
+#endif
+		void DeleteSubKeyTree (string subkey, bool throwOnMissingSubKey)
+		{
 			// Note: this is done by deleting sub-nodes recursively.
 			// The preformance is not very good. There may be a 
 			// better way to implement this.
@@ -384,9 +392,13 @@ namespace Microsoft.Win32
 			AssertKeyNameLength (subkey);
 			
 			RegistryKey child = OpenSubKey (subkey, true);
-			if (child == null)
+			if (child == null) {
+				if (!throwOnMissingSubKey)
+					return;
+
 				throw new ArgumentException ("Cannot delete a subkey tree"
 					+ " because the subkey does not exist.");
+			}
 
 			child.DeleteChildKeysAndValues ();
 			child.Close ();
