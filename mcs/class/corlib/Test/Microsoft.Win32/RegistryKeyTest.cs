@@ -1107,6 +1107,27 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
+#if NET_4_0
+		[Test]
+		public void DeleteSubKeyTree_Key_DoesNotExist_Overload ()
+		{
+			// Cannot delete a subkey tree because the subkey does not exist
+			string subKeyName = Guid.NewGuid ().ToString ();
+			try {
+				Registry.CurrentUser.DeleteSubKeyTree (subKeyName, true);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+
+			// It's enough to know this line is not throwing an exception.
+			Registry.CurrentUser.DeleteSubKey (subKeyName, false);
+		}
+#endif
+
 		[Test]
 		public void DeleteSubKeyTree_Key_ReadOnly ()
 		{
