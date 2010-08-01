@@ -46,3 +46,7 @@
 /gtest-525.cs -crlf
 /gtest-linq-24.cs -crlf
 /test-788.cs -crlf
+/gtest-anon-63.cs -crlf
+/gtest-exmethod-37.cs -crlf
+/gtest-iter-14.cs -crlf
+/test-anon-95.cs -crlf
