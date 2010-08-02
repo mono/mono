@@ -4391,8 +4391,11 @@ namespace Mono.CSharp {
 			New n_source = source as New;
 			if (n_source != null) {
 				if (!n_source.Emit (ec, this)) {
-					if (leave_copy)
+					if (leave_copy) {
 						EmitLoad (ec);
+						if (IsRef)
+							ec.EmitLoadFromPtr (type);
+					}
 					return;
 				}
 			} else {
