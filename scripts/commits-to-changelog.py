@@ -144,7 +144,7 @@ def debug_print_commit (commit, raw_message, prefix, file_entries, changed_files
 def process_commit (commit):
     changed_files = map (lambda l: l.split () [2], git ("diff-tree", "--numstat", commit).splitlines () [1:])
     if len (filter (lambda f: re.search ("(^|/)Change[Ll]og$", f), changed_files)):
-        return
+        return None
     raw_message = git ("log", "-n1", "--format=%B", commit)
     # filter SVN migration message
     message = re.sub ("(^|\n)svn path=[^\n]+revision=\d+(?=$|\n)", "", raw_message)
@@ -251,6 +251,8 @@ def main ():
     touched_changelogs = {}
     for commit in commits:
         entries = process_commit (commit)
+        if entries == None:
+            continue
         for (changelog, lines) in entries.items ():
             if changelog not in touched_changelogs:
                 touched_changelogs [changelog] = start_changelog (changelog)
