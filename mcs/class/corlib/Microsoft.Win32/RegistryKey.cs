@@ -39,6 +39,8 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Security.AccessControl;
+using System.Security.Permissions;
+using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Win32
 {
@@ -461,6 +463,19 @@ namespace Microsoft.Win32
 			AssertKeyStillValid ();
 			return RegistryApi.GetValueNames (this);
 		}
+
+#if NET_4_0
+		[ComVisible (false)]
+		[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+		[MonoTODO ("Not implemented on unix")]
+		public static RegistryKey FromHandle (SafeRegistryHandle handle)
+		{
+			if (handle == null)
+				throw new ArgumentNullException ("handle");
+
+			return RegistryApi.FromHandle (handle);
+		}
+#endif
 		
 		
 		[MonoTODO ("Not implemented on unix")]

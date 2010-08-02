@@ -41,6 +41,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Win32
 {
@@ -427,6 +428,16 @@ namespace Microsoft.Win32
 			RegCloseKey (handle);
 		}
 
+#if NET_4_0
+		public RegistryKey FromHandle (SafeRegistryHandle handle)
+		{
+			// At this point we can't tell whether the key is writable
+			// or not (nor the name), so we let the error check code handle it later, as
+			// .Net seems to do.
+			return new RegistryKey (handle.DangerousGetHandle (), String.Empty, true);
+		}
+#endif
+
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyName)
 		{
 			IntPtr handle = GetHandle (rkey);
@@ -570,6 +581,8 @@ namespace Microsoft.Win32
 					throw new SecurityException ();
 				case Win32ResultCode.NetworkPathNotFound:
 					throw new IOException ("The network path was not found.");
+				case Win32ResultCode.InvalidHandle:
+					throw new IOException ("Invalid handle.");
 				default:
 					// unidentified system exception
 					throw new SystemException ();
