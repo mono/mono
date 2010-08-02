@@ -182,6 +182,16 @@ namespace Microsoft.Win32
 			}
 		}
 
+#if NET_4_0
+		[ComVisible (false)]
+		[MonoLimitation ("View is ignored in Mono.")]
+		public RegistryView View {
+			get {
+				return RegistryView.Default;
+			}
+		}
+#endif
+
 		
 		/// <summary>
 		///	Set a registry value.
@@ -475,6 +485,14 @@ namespace Microsoft.Win32
 
 			return RegistryApi.FromHandle (handle);
 		}
+
+		[ComVisible (false)]
+		[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+		[MonoTODO ("Not implemented on unix")]
+		public static RegistryKey FromHandle (SafeRegistryHandle handle, RegistryKey view)
+		{
+			return FromHandle (handle);
+		}
 #endif
 		
 		
@@ -485,6 +503,41 @@ namespace Microsoft.Win32
 				throw new ArgumentNullException ("machineName");
 			return RegistryApi.OpenRemoteBaseKey (hKey, machineName);
 		}
+
+#if NET_4_0
+		[ComVisible (false)]
+		[MonoTODO ("Not implemented on unix")]
+		public static RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName, RegistryView view)
+		{
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+			return RegistryApi.OpenRemoteBaseKey (hKey, machineName);
+		}
+
+		[ComVisible (false)]
+		[MonoLimitation ("View is ignored in Mono")]
+		public static RegistryKey OpenBaseKey (RegistryHive hKey, RegistryView view)
+		{
+			switch (hKey) {
+				case RegistryHive.ClassesRoot:
+					return Registry.ClassesRoot;
+				case RegistryHive.CurrentConfig:
+					return Registry.CurrentConfig;
+				case RegistryHive.CurrentUser:
+					return Registry.CurrentUser;
+				case RegistryHive.DynData:
+					return Registry.DynData;
+				case RegistryHive.LocalMachine:
+					return Registry.LocalMachine;
+				case RegistryHive.PerformanceData:
+					return Registry.PerformanceData;
+				case RegistryHive.Users:
+					return Registry.Users;
+			}
+
+			throw new ArgumentException ("hKey");
+		}
+#endif
 
 		[ComVisible (false)]
 		[MonoLimitation ("permissionCheck is ignored in Mono")]
