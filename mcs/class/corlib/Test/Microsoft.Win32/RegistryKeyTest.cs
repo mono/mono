@@ -1726,6 +1726,36 @@ namespace MonoTests.Microsoft.Win32
 				}
 			}
 		}
+
+		[Test]
+		public void Handle ()
+		{
+			if (RunningOnUnix)
+				return;
+
+			string subKeyName = Guid.NewGuid ().ToString ();
+			RegistryKey subkey = null;
+			try {
+				subkey = Registry.CurrentUser.CreateSubKey (subKeyName);
+				Assert.AreEqual (true, subkey.Handle != null, "#A0");
+				Assert.AreEqual (false, subkey.Handle.IsClosed, "#A1");
+				Assert.AreEqual (false, subkey.Handle.IsInvalid, "#A2");
+
+				subkey.Close ();
+				try {
+					if (subkey.Handle != null)
+						Console.WriteLine (); // Avoids a warning at compile time
+					Assert.Fail ("#Disposed");
+				} catch (ObjectDisposedException) {
+				}
+
+			} finally {
+				if (subkey != null) {
+					subkey.Close ();
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName, false);
+				}
+			}
+		}
 #endif
 
 		[Test]
