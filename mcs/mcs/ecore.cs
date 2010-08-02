@@ -2747,17 +2747,23 @@ namespace Mono.CSharp {
 
 		protected void EmitInstance (EmitContext ec, bool prepare_for_load)
 		{
-			if (TypeManager.IsValueType (InstanceExpression.Type)) {
+			TypeSpec instance_type = InstanceExpression.Type;
+			if (TypeManager.IsValueType (instance_type)) {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
 				} else {
-					LocalTemporary t = new LocalTemporary (InstanceExpression.Type);
+					LocalTemporary t = new LocalTemporary (instance_type);
 					InstanceExpression.Emit (ec);
 					t.Store (ec);
 					t.AddressOf (ec, AddressOp.Store);
 				}
-			} else
+			} else {
 				InstanceExpression.Emit (ec);
+
+				// Only to make verifier happy
+				if (instance_type.Kind == MemberKind.TypeParameter && !(InstanceExpression is This) && TypeManager.IsReferenceType (instance_type))
+					ec.Emit (OpCodes.Box, instance_type);
+			}
 
 			if (prepare_for_load)
 				ec.Emit (OpCodes.Dup);
