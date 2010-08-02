@@ -110,7 +110,11 @@ namespace Microsoft.Win32
 		///	Dispose of registry key object. Close the 
 		///	key if it's still open.
 		/// </summary>
+#if NET_4_0
+		public void Dispose ()
+#else
 		void IDisposable.Dispose ()
+#endif
 		{
 			GC.SuppressFinalize (this);
 			Close ();
