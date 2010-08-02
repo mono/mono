@@ -7,7 +7,6 @@
 test-xml-027.cs
 
 gtest-230.cs
-gtest-316.cs verifier
 gtest-437.cs
 
 test-416.cs bug #504085

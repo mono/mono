@@ -1042,8 +1042,12 @@ namespace Mono.CSharp.Nullable
 			}
 
 			left.Emit (ec);
-
 			ec.Emit (OpCodes.Dup);
+
+			// Only to make verifier happy
+			if (left.Type.IsGenericParameter)
+				ec.Emit (OpCodes.Box, left.Type);
+
 			ec.Emit (OpCodes.Brtrue, end_label);
 
 			ec.Emit (OpCodes.Pop);

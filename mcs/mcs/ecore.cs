@@ -2761,7 +2761,7 @@ namespace Mono.CSharp {
 				InstanceExpression.Emit (ec);
 
 				// Only to make verifier happy
-				if (instance_type.Kind == MemberKind.TypeParameter && !(InstanceExpression is This) && TypeManager.IsReferenceType (instance_type))
+				if (instance_type.IsGenericParameter && !(InstanceExpression is This) && TypeManager.IsReferenceType (instance_type))
 					ec.Emit (OpCodes.Box, instance_type);
 			}
 

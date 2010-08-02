@@ -13279,6 +13279,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-527.cs">
+    <type name="CoalescingWithGenericsBug">
+      <method name="T Provide[T]()">
+        <size>23</size>
+      </method>
+      <method name="T FindExisting[T]()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="CoalescingWithGenericsBug+Service">
+      <method name="Void Foo()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
