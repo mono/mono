@@ -55,6 +55,9 @@ namespace Microsoft.Win32
 		// RegistryKey object
 		//
 		object handle;
+#if NET_4_0
+		SafeRegistryHandle safe_handle;
+#endif
 
 		object hive; // the RegistryHive if the key represents a base key
 		readonly string qname;	// the fully qualified registry key name
@@ -156,6 +159,12 @@ namespace Microsoft.Win32
 			
 			RegistryApi.Close (this);
 			handle = null;
+#if NET_4_0
+			if (safe_handle != null) {
+				safe_handle.Close ();
+				safe_handle = null;
+			}
+#endif
 		}
 		
 		
@@ -183,6 +192,21 @@ namespace Microsoft.Win32
 		}
 
 #if NET_4_0
+		[ComVisible (false)]
+		[MonoTODO ("Not implemented in Unix")]
+		public SafeRegistryHandle Handle {
+			get {
+				AssertKeyStillValid ();
+
+				if (safe_handle == null) {
+					IntPtr h = RegistryApi.GetHandle (this);
+					safe_handle = new SafeRegistryHandle (h, true);
+				}
+
+				return safe_handle;
+			}
+		}
+
 		[ComVisible (false)]
 		[MonoLimitation ("View is ignored in Mono.")]
 		public RegistryView View {
@@ -591,7 +615,7 @@ namespace Microsoft.Win32
 
 		// returns the key handle for the win32 implementation and the
 		// KeyHandler for the unix implementation
-		internal object Handle {
+		internal object InternalHandle {
 			get { return handle; }
 		}
 

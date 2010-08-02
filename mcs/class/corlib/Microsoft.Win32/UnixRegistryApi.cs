@@ -996,6 +996,13 @@ namespace Microsoft.Win32 {
 			// key was removed since it was opened or it does not exist.
 			return RegistryValueKind.Unknown;
 		}
+
+#if NET_4_0
+		public IntPtr GetHandle (RegistryKey key)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 	}
 }

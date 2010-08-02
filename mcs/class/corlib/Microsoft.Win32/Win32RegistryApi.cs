@@ -135,14 +135,14 @@ namespace Microsoft.Win32
 				ref int data, ref int dataSize);
 
 		// Returns our handle from the RegistryKey
-		static IntPtr GetHandle (RegistryKey key)
+		public IntPtr GetHandle (RegistryKey key)
 		{
-			return (IntPtr) key.Handle;
+			return (IntPtr) key.InternalHandle;
 		}
 
 		static bool IsHandleValid (RegistryKey key)
 		{
-			return key.Handle != null;
+			return key.InternalHandle != null;
 		}
 
 		public RegistryValueKind GetValueKind (RegistryKey rkey, string name)
