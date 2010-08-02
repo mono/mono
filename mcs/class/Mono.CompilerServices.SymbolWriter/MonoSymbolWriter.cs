@@ -47,7 +47,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		string filename;
 		
 		private SourceMethodBuilder current_method;
-#if MOONLIGHT
+#if NET_2_1
 		System.Collections.Stack current_method_stack = new System.Collections.Stack ();
 #else
 		Stack<SourceMethodBuilder> current_method_stack = new Stack<SourceMethodBuilder> ();
@@ -245,7 +245,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		List<LocalVariableEntry> _locals;
 		List<CodeBlockEntry> _blocks;
 		List<ScopeVariable> _scope_vars;
-#if MOONLIGHT
+#if NET_2_1
 		System.Collections.Stack _block_stack;
 #else		
 		Stack<CodeBlockEntry> _block_stack;
@@ -285,7 +285,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void StartBlock (CodeBlockEntry.Type type, int start_offset)
 		{
 			if (_block_stack == null) {
-#if MOONLIGHT
+#if NET_2_1
 				_block_stack = new System.Collections.Stack ();
 #else				
 				_block_stack = new Stack<CodeBlockEntry> ();
