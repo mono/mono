@@ -11,6 +11,11 @@ namespace System.ServiceModel.Discovery.Configuration
 		public ContractTypeNameElementCollection ()
 		{
 		}
+		
+		protected override object GetElementKey (ConfigurationElement element)
+		{
+			return ((ContractTypeNameElement) element).Name;
+		}
 	}
 }
 

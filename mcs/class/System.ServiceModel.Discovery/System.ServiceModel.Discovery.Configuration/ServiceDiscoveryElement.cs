@@ -24,10 +24,15 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		[ConfigurationProperty ("announcementEndpoints")]
 		public AnnouncementChannelEndpointElementCollection AnnouncementEndpoints {
-			get { return Properties [announcement_endpoints]; }
+			get { return (AnnouncementChannelEndpointElementCollection) base [announcement_endpoints]; }
 		}
 		public override Type BehaviorType {
 			get { return typeof (ServiceDiscoveryBehavior); }
+		}
+		
+		protected override object CreateBehavior ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

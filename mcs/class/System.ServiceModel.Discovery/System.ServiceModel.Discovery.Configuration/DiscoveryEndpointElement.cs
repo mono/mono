@@ -11,6 +11,10 @@ namespace System.ServiceModel.Discovery.Configuration
 		public DiscoveryEndpointElement ()
 		{
 		}
+		
+		protected override Type EndpointType {
+			get { return typeof (DiscoveryEndpoint); }
+		}
 
 		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{

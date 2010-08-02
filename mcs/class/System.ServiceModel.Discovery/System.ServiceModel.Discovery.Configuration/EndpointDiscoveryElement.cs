@@ -33,23 +33,28 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		[ConfigurationProperty ("types")]
 		public ContractTypeNameElementCollection ContractTypeNames {
-			get { return (ContractTypeNameElementCollection) Properties [types]; }
+			get { return (ContractTypeNameElementCollection) base [types]; }
 		}
 		
 		[ConfigurationPropertyAttribute("enabled", DefaultValue = true)]
 		public bool Enabled {
-			get { return (bool) Properties [enabled]; }
-			set { Properties [enabled] = value; }
+			get { return (bool) base [enabled]; }
+			set { base [enabled] = value; }
 		}
 		
 		[ConfigurationPropertyAttribute("extensions")]
 		public XmlElementElementCollection Extensions {
-			get { return (XmlElementElementCollection) Properties [extensions]; }
+			get { return (XmlElementElementCollection) base [extensions]; }
 		}
 		
 		[ConfigurationPropertyAttribute("scopes")]
 		public ScopeElementCollection Scopes {
-			get { return (ScopeElementCollection) Properties [scopes]; }
+			get { return (ScopeElementCollection) base [scopes]; }
+		}
+		
+		protected override object CreateBehavior ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

@@ -32,14 +32,14 @@ namespace System.ServiceModel.Discovery.Configuration
 		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		[StringValidator (MinLength = 0)]
 		public string Name {
-			get { return (string) Properties [name]; }
-			set { Properties [name] = value; }
+			get { return (string) base [name]; }
+			set { base [name] = value; }
 		}
 
 		[ConfigurationProperty ("namespace", DefaultValue = "http://tempuri.org/", Options = ConfigurationPropertyOptions.IsKey)]
 		public string Namespace {
-			get { return (string) Properties [@namespace]; }
-			set { Properties [@namespace] = value; }
+			get { return (string) base [@namespace]; }
+			set { base [@namespace] = value; }
 		}
 		
 		protected override ConfigurationPropertyCollection Properties {

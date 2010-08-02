@@ -30,8 +30,8 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		[ConfigurationProperty ("discoveryMode", DefaultValue = ServiceDiscoveryMode.Adhoc)]
 		public ServiceDiscoveryMode DiscoveryMode {
-			get { return (ServiceDiscoveryMode) Propperties [discovery_mode]; }
-			set { Properties [discovery_mode] = value; }
+			get { return (ServiceDiscoveryMode) base [discovery_mode]; }
+			set { base [discovery_mode] = value; }
 		}
 
 		protected override Type EndpointType {
@@ -40,19 +40,19 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		[ConfigurationProperty ("maxResponseDelay", DefaultValue = "00:00:00.500")]
 		public TimeSpan MaxResponseDelay {
-			get { return (TimeSpan) Propperties [max_response_delay]; }
-			set { Properties [max_response_delay] = value; }
+			get { return (TimeSpan) base [max_response_delay]; }
+			set { base [max_response_delay] = value; }
 		}
 
 		[ConfigurationProperty ("multicastAddress", DefaultValue = "soap.udp://239.255.255.250:3702")]
 		public Uri MulticastAddress {
-			get { return (Uri) Propperties [multicast_address]; }
-			set { Properties [multicast_address] = value; }
+			get { return (Uri) base [multicast_address]; }
+			set { base [multicast_address] = value; }
 		}
 
 		[ConfigurationProperty ("transportSettings")]
 		public UdpTransportSettingsElement TransportSettings {
-			get { return (UdpTransportSettingsElement) Propperties [transport_settings]; }
+			get { return (UdpTransportSettingsElement) base [transport_settings]; }
 		}
 			
 		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 
 namespace System.ServiceModel.Discovery.Configuration
@@ -29,12 +30,17 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		[ConfigurationProperty ("endpoint")]
 		public ChannelEndpointElement DiscoveryEndpoint {
-			get { return (ChannelEndpointElement) Properties [endpoint]; }
+			get { return (ChannelEndpointElement) base [endpoint]; }
 		}
 
 		[ConfigurationProperty ("findCriteria")]
 		public FindCriteriaElement FindCriteria {
-			get { return (FindCriteriaElement) Properties [find_criteria]; }
+			get { return (FindCriteriaElement) base [find_criteria]; }
+		}
+		
+		protected override BindingElement CreateBindingElement ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

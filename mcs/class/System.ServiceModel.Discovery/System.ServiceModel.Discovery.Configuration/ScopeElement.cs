@@ -13,7 +13,7 @@ namespace System.ServiceModel.Discovery.Configuration
 		
 		static ScopeElement ()
 		{
-			scope = new ConfigurationProperty ("scopes", typeof (Uri), null, new CallbackValidator (typeof (ScopeElement), null/*FIXME: fill it*/), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			scope = new ConfigurationProperty ("scopes", typeof (Uri), null, null, new CallbackValidator (typeof (ScopeElement), null/*FIXME: fill it*/), ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (scope);
 		}
@@ -26,8 +26,8 @@ namespace System.ServiceModel.Discovery.Configuration
 		[ConfigurationProperty ("scope", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		[CallbackValidator (CallbackMethodName = "ScopeValidatorCallback", Type = typeof (ScopeElement))]
 		public Uri Scope {
-			get { return (Uri) Properties [scope]; }
-			set { Properties [scope] = value; }
+			get { return (Uri) base [scope]; }
+			set { base [scope] = value; }
 		}
 	}
 }

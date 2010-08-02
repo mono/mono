@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Configuration;
 using System.ServiceModel.Configuration;
+using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Discovery.Configuration
 {
@@ -23,7 +24,41 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		[ConfigurationProperty ("discoveryClientSettings")]
 		public DiscoveryClientSettingsElement DiscoveryClientSettings {
-			get { return (DiscoveryClientSettingsElement) Prperties [discovery_client_settings]; }
+			get { return (DiscoveryClientSettingsElement) base [discovery_client_settings]; }
+		}
+		
+		protected override Type EndpointType {
+			get { return typeof (DynamicEndpoint); }
+		}
+		
+		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override void InitializeFrom (ServiceEndpoint endpoint)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ChannelEndpointElement serviceEndpointElement)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ServiceEndpointElement serviceEndpointElement)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override void OnInitializeAndValidate (ChannelEndpointElement channelEndpointElement)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override void OnInitializeAndValidate (ServiceEndpointElement serviceEndpointElement)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

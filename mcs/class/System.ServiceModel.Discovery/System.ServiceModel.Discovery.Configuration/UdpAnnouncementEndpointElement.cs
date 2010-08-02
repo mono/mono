@@ -33,20 +33,20 @@ namespace System.ServiceModel.Discovery.Configuration
 		[TypeConverter (typeof (TimeSpanConverter))]
 		[ConfigurationPropertyAttribute("maxAnnouncementDelay", DefaultValue = "00:00:00.500")]
 		public TimeSpan MaxAnnouncementDelay {
-			get { return Properties [max_announcement_delay]; }
-			set { Properties [max_announcement_delay] = value; }
+			get { return (TimeSpan) base [max_announcement_delay]; }
+			set { base [max_announcement_delay] = value; }
 		}
 		
 		[TypeConverter (typeof (UriTypeConverter))]
 		[ConfigurationPropertyAttribute("multicastAddress", DefaultValue = "soap.udp://239.255.255.250:3702")]
 		public Uri MulticastAddress {
-			get { return Properties [multicast_address]; }
-			set { Properties [multicast_address] = value; }
+			get { return (Uri) base [multicast_address]; }
+			set { base [multicast_address] = value; }
 		}
 		
 		[ConfigurationPropertyAttribute("transportSettings")]
 		public UdpTransportSettingsElement TransportSettings {
-			get { return Properties [transport_settings]; }
+			get { return (UdpTransportSettingsElement) base [transport_settings]; }
 		}
 	}
 }

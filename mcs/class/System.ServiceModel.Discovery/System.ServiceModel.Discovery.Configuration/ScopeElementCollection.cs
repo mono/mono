@@ -11,6 +11,11 @@ namespace System.ServiceModel.Discovery.Configuration
 		public ScopeElementCollection ()
 		{
 		}
+		
+		protected override object GetElementKey (ConfigurationElement element)
+		{
+			return ((ScopeElement) element).Scope;
+		}
 	}
 }
 

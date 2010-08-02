@@ -11,6 +11,11 @@ namespace System.ServiceModel.Discovery.Configuration
 		public AnnouncementChannelEndpointElementCollection ()
 		{
 		}
+		
+		protected override object GetElementKey (ConfigurationElement element)
+		{
+			return ((ChannelEndpointElement) element).Name;
+		}
 	}
 }
 
