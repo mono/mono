@@ -47,14 +47,17 @@ namespace Mono.CompilerServices.SymbolWriter
 		string filename;
 		
 		private SourceMethodBuilder current_method;
-		private Stack<SourceMethodBuilder> current_method_stack;
+#if MOONLIGHT
+		System.Collections.Stack current_method_stack = new System.Collections.Stack ();
+#else
+		Stack<SourceMethodBuilder> current_method_stack = new Stack<SourceMethodBuilder> ();
+#endif
 
 		public MonoSymbolWriter (string filename)
 		{
 			this.methods = new List<SourceMethodBuilder> ();
 			this.sources = new List<SourceFileEntry> ();
 			this.comp_units = new List<CompileUnitEntry> ();
-			this.current_method_stack = new Stack<SourceMethodBuilder> ();
 			this.file = new MonoSymbolFile ();
 
 			this.filename = filename + ".mdb";
@@ -242,7 +245,11 @@ namespace Mono.CompilerServices.SymbolWriter
 		List<LocalVariableEntry> _locals;
 		List<CodeBlockEntry> _blocks;
 		List<ScopeVariable> _scope_vars;
+#if MOONLIGHT
+		System.Collections.Stack _block_stack;
+#else		
 		Stack<CodeBlockEntry> _block_stack;
+#endif
 		string _real_name;
 		IMethodDef _method;
 		ICompileUnit _comp_unit;
@@ -277,8 +284,14 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void StartBlock (CodeBlockEntry.Type type, int start_offset)
 		{
-			if (_block_stack == null)
+			if (_block_stack == null) {
+#if MOONLIGHT
+				_block_stack = new System.Collections.Stack ();
+#else				
 				_block_stack = new Stack<CodeBlockEntry> ();
+#endif
+			}
+			
 			if (_blocks == null)
 				_blocks = new List<CodeBlockEntry> ();
 
