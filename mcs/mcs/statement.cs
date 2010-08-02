@@ -1444,7 +1444,7 @@ namespace Mono.CSharp {
 		//
 		// If this is a switch section, the enclosing switch block.
 		//
-		Block switch_block;
+		protected ExplicitBlock switch_block;
 
 		protected List<Statement> scope_initializers;
 
@@ -1521,11 +1521,11 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public Block CreateSwitchBlock (Location start)
+		public ExplicitBlock CreateSwitchBlock (Location start)
 		{
-			// FIXME: should this be implicit?
-			Block new_block = new ExplicitBlock (this, start, start);
-			new_block.switch_block = this;
+			// FIXME: Only explicit block should be created
+			var new_block = new ExplicitBlock (this, start, start);
+			new_block.switch_block = Explicit;
 			return new_block;
 		}
 
@@ -2334,6 +2334,15 @@ namespace Mono.CSharp {
 			//
 			if (ec.CurrentIterator != null)
 			    return ec.CurrentIterator.Storey;
+
+			//
+			// Switch block does not follow sequential flow and we cannot emit
+			// storey initialization inside the block because it can be jumped over
+			// for all non-first cases. Instead we push it to the parent block to be
+			// always initialized
+			//
+			if (switch_block != null)
+				return switch_block.CreateAnonymousMethodStorey (ec);
 
 			if (am_storey == null) {
 				MemberBase mc = ec.MemberContext as MemberBase;
