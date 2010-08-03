@@ -30,25 +30,23 @@ namespace System.Threading
 	public struct SpinWait
 	{
 		// The number of step until SpinOnce yield on multicore machine
-		const           int  step = 10;
-		const           int  maxSpin = 1000;
+		const           int  step = 5;
+		const           int  maxTime = 50;
 		static readonly bool isSingleCpu = (Environment.ProcessorCount == 1);
 
 		int ntime;
 
 		public void SpinOnce ()
 		{
-			if (ntime > maxSpin) {
-				Thread.Sleep (1);
-			} else if (isSingleCpu) {
+			if (isSingleCpu) {
 				// On a single-CPU system, spinning does no good
 				Thread.Yield ();
 			} else {
-				if (++ntime % step == 0)
+				if ((ntime = ntime == maxTime ? maxTime : ntime + 1) % step == 0)
 					Thread.Yield ();
 				else
 					// Multi-CPU system might be hyper-threaded, let other thread run
-					Thread.SpinWait (Math.Min (ntime << 1, maxSpin));
+					Thread.SpinWait (ntime << 1);
 			}
 		}
 
