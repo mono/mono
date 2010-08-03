@@ -75,19 +75,16 @@ namespace System.Collections.Concurrent
 		#region Add & Remove (+ Try)
 		public void Add (T item)
 		{
-			Add (item, null);
+			Add (item, CancellationToken.None);
 		}
 
 		public void Add (T item, CancellationToken token)
 		{
-			Add (item, () => token.IsCancellationRequested);
-		}
-
-		void Add (T item, Func<bool> cancellationFunc)
-		{
 			SpinWait sw = new SpinWait ();
 
 			while (true) {
+				token.ThrowIfCancellationRequested ();
+
 				long cachedAddId = addId;
 				long cachedRemoveId = removeId;
 
@@ -105,9 +102,6 @@ namespace System.Collections.Concurrent
 
 				if (Interlocked.CompareExchange (ref addId, cachedAddId + 1, cachedAddId) == cachedAddId)
 					break;
-
-				if (cancellationFunc != null && cancellationFunc ())
-					throw new OperationCanceledException ("CancellationToken triggered");
 			}
 
 
@@ -117,19 +111,16 @@ namespace System.Collections.Concurrent
 
 		public T Take ()
 		{
-			return Take (null);
+			return Take (CancellationToken.None);
 		}
 
 		public T Take (CancellationToken token)
 		{
-			return Take (() => token.IsCancellationRequested);
-		}
-
-		T Take (Func<bool> cancellationFunc)
-		{
 			SpinWait sw = new SpinWait ();
 
 			while (true) {
+				token.ThrowIfCancellationRequested ();
+
 				long cachedRemoveId = removeId;
 				long cachedAddId = addId;
 
@@ -145,9 +136,6 @@ namespace System.Collections.Concurrent
 
 				if (Interlocked.CompareExchange (ref removeId, cachedRemoveId + 1, cachedRemoveId) == cachedRemoveId)
 					break;
-
-				if (cancellationFunc != null && cancellationFunc ())
-					throw new OperationCanceledException ("The CancellationToken has had cancellation requested.");
 			}
 
 			T item;
@@ -158,14 +146,13 @@ namespace System.Collections.Concurrent
 
 		public bool TryAdd (T item)
 		{
-			return TryAdd (item, null, null);
+			return TryAdd (item, null, CancellationToken.None);
 		}
 
-		bool TryAdd (T item, Func<bool> contFunc, CancellationToken? token)
+		bool TryAdd (T item, Func<bool> contFunc, CancellationToken token)
 		{
 			do {
-				if (token.HasValue && token.Value.IsCancellationRequested)
-					throw new OperationCanceledException ("The CancellationToken has had cancellation requested.");
+				token.ThrowIfCancellationRequested ();
 
 				long cachedAddId = addId;
 				long cachedRemoveId = removeId;
@@ -201,7 +188,7 @@ namespace System.Collections.Concurrent
 		public bool TryAdd (T item, int millisecondsTimeout)
 		{
 			Stopwatch sw = Stopwatch.StartNew ();
-			return TryAdd (item, () => sw.ElapsedMilliseconds < millisecondsTimeout, null);
+			return TryAdd (item, () => sw.ElapsedMilliseconds < millisecondsTimeout, CancellationToken.None);
 		}
 
 		public bool TryAdd (T item, int millisecondsTimeout, CancellationToken token)
@@ -212,16 +199,15 @@ namespace System.Collections.Concurrent
 
 		public bool TryTake (out T item)
 		{
-			return TryTake (out item, null, null);
+			return TryTake (out item, null, CancellationToken.None);
 		}
 
-		bool TryTake (out T item, Func<bool> contFunc, CancellationToken? token)
+		bool TryTake (out T item, Func<bool> contFunc, CancellationToken token)
 		{
 			item = default (T);
 
 			do {
-				if (token.HasValue && token.Value.IsCancellationRequested)
-					throw new OperationCanceledException ("The CancellationToken has had cancellation requested.");
+				token.ThrowIfCancellationRequested ();
 
 				long cachedRemoveId = removeId;
 				long cachedAddId = addId;
@@ -253,7 +239,7 @@ namespace System.Collections.Concurrent
 			item = default (T);
 			Stopwatch sw = Stopwatch.StartNew ();
 
-			return TryTake (out item, () => sw.ElapsedMilliseconds < millisecondsTimeout, null);
+			return TryTake (out item, () => sw.ElapsedMilliseconds < millisecondsTimeout, CancellationToken.None);
 		}
 
 		public bool TryTake (out T item, int millisecondsTimeout, CancellationToken token)
