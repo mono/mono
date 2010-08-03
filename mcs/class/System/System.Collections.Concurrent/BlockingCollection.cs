@@ -140,7 +140,7 @@ namespace System.Collections.Concurrent
 				// Empty case
 				if (cachedRemoveId == cachedAddId) {
 					if (IsCompleted)
-						throw new OperationCanceledException ("The BlockingCollection<T> has"
+						throw new InvalidOperationException ("The BlockingCollection<T> has"
 						                                      + " been marked as complete with regards to additions.");
 					if (sw.Count <= spinCount)
 						sw.SpinOnce ();
@@ -191,7 +191,7 @@ namespace System.Collections.Concurrent
 					continue;
 
 				if (!underlyingColl.TryAdd (item))
-					throw new InvalidOperationException ("The underlying collection didn't accept the item.");
+					continue;
 
 				if (!mreAdd.IsSet)
 					mreAdd.Set ();
