@@ -1449,7 +1449,6 @@ namespace Mono.CSharp {
 			Expression e = Convert.ImplicitConversion (ec, expr, type, loc);
 			if (e != null){
 				expr = e;
-				do_isinst = false;
 				return this;
 			}
 
@@ -1464,6 +1463,12 @@ namespace Mono.CSharp {
 			if (TypeManager.ContainsGenericParameters (etype) ||
 			    TypeManager.ContainsGenericParameters (type)) {
 				expr = new BoxedCast (expr, etype);
+				do_isinst = true;
+				return this;
+			}
+
+			// If the compile-time type of E is dynamic, unlike the cast operator the as operator is not dynamically bound
+			if (etype == InternalType.Dynamic) {
 				do_isinst = true;
 				return this;
 			}
