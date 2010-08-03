@@ -136,14 +136,14 @@ namespace System.Threading
 
 			Watch sw = Watch.StartNew ();
 
-			Func<bool> stopCondition =
-				() => token.IsCancellationRequested || (millisecondsTimeout >= 0 && sw.ElapsedMilliseconds > millisecondsTimeout);
+			Func<bool> stopCondition = () => millisecondsTimeout >= 0 && sw.ElapsedMilliseconds > millisecondsTimeout;
 
 			do {
 				bool shouldWait;
 				int result;
 
 				do {
+					token.ThrowIfCancellationRequested ();
 					if (stopCondition ())
 						return false;
 
@@ -165,6 +165,7 @@ namespace System.Threading
 				SpinWait wait = new SpinWait ();
 
 				while (Thread.VolatileRead (ref currCount) <= 0) {
+					token.ThrowIfCancellationRequested ();
 					if (stopCondition ())
 						return false;
 
