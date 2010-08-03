@@ -30,6 +30,9 @@ namespace System.Threading
 {
 	public class SemaphoreSlim : IDisposable
 	{
+		const int spinCount = 10;
+		const int deepSleepTime = 20;
+
 		readonly int max;
 		int currCount;
 		bool isDisposed;
@@ -169,7 +172,10 @@ namespace System.Threading
 					if (stopCondition ())
 						return false;
 
-					wait.SpinOnce ();
+					if (wait.Count > spinCount)
+						handle.WaitOne (Math.Min (Math.Max (millisecondsTimeout - (int)sw.ElapsedMilliseconds, 1), deepSleepTime));
+					else
+						wait.SpinOnce ();
 				}
 			} while (true);
 
