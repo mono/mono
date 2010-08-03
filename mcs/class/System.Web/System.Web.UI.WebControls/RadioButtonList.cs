@@ -67,9 +67,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif		
 		[DefaultValue (-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -86,9 +83,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif		
 		[DefaultValue (0)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -105,9 +99,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif		
 		[DefaultValue (RepeatDirection.Vertical)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -124,9 +115,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif		
 		[DefaultValue (RepeatLayout.Table)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
