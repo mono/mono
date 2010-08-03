@@ -889,13 +889,13 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if (ReturnType != TypeManager.void_type) {
-					Report.Error (578, Location, "Conditional not valid on `{0}' because its return type is not void", GetSignatureForError ());
+				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+					Report.Error (243, Location, "Conditional not valid on `{0}' because it is an override method", GetSignatureForError ());
 					return;
 				}
 
-				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
-					Report.Error (243, Location, "Conditional not valid on `{0}' because it is an override method", GetSignatureForError ());
+				if (ReturnType != TypeManager.void_type) {
+					Report.Error (578, Location, "Conditional not valid on `{0}' because its return type is not void", GetSignatureForError ());
 					return;
 				}
 
