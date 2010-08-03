@@ -2125,14 +2125,14 @@ namespace Mono.CSharp {
 
 		protected override bool AddToContainer (MemberCore symbol, string name)
 		{
-			if (name == MemberName.Name) {
+			if (!(symbol is Constructor) && symbol.MemberName.Name == MemberName.Name) {
 				if (symbol is TypeParameter) {
 					Report.Error (694, symbol.Location,
 						"Type parameter `{0}' has same name as containing type, or method",
 						symbol.GetSignatureForError ());
 					return false;
 				}
-
+			
 				InterfaceMemberBase imb = symbol as InterfaceMemberBase;
 				if (imb == null || !imb.IsExplicitImpl) {
 					Report.SymbolRelatedToPreviousError (this);
