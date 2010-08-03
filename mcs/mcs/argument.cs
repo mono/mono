@@ -393,7 +393,7 @@ namespace Mono.CSharp
 		public bool HasDynamic {
 			get {
 				foreach (Argument a in args) {
-					if (a.Type == InternalType.Dynamic)
+					if (a.Type == InternalType.Dynamic && !a.IsByRef)
 						return true;
 				}
 				
@@ -442,7 +442,8 @@ namespace Mono.CSharp
 			dynamic = false;
 			foreach (Argument a in args) {
 				a.Resolve (ec);
-				dynamic |= a.Type == InternalType.Dynamic;
+				if (a.Type == InternalType.Dynamic && !a.IsByRef)
+					dynamic = true;
 			}
 		}
 

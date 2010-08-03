@@ -3698,7 +3698,8 @@ namespace Mono.CSharp {
 			//
 			if ((arg_mod | param_mod) != 0) {
 				if (argument.Type != parameter) {
-					if (argument.Type == InternalType.Dynamic)
+					if ((argument.Type == InternalType.Dynamic && parameter == TypeManager.object_type) ||
+						(parameter == InternalType.Dynamic && argument.Type == TypeManager.object_type))
 						return 0;
 
 					return 2;
@@ -4120,10 +4121,14 @@ namespace Mono.CSharp {
 					if ((p_mod & ~Parameter.Modifier.PARAMS) != a.Modifier)
 						break;
 
-					if (!TypeManager.IsEqual (a.Expr.Type, pt))
-						break;
+					if (a.Expr.Type == pt)
+						continue;
 
-					continue;
+					if (((a.Expr.Type == InternalType.Dynamic && pt == TypeManager.object_type) ||
+						(pt == InternalType.Dynamic && a.Expr.Type == TypeManager.object_type)))
+						continue;
+
+					break;
 				}
 
 				NamedArgument na = a as NamedArgument;
