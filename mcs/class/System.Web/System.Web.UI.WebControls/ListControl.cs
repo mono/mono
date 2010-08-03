@@ -38,41 +38,23 @@ namespace System.Web.UI.WebControls {
 
 	[DataBindingHandler("System.Web.UI.Design.WebControls.ListControlDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultEventAttribute ("SelectedIndexChanged")]
-#if !NET_2_0
-	[DefaultPropertyAttribute ("DataSource")]
-#endif
 	[Designer("System.Web.UI.Design.WebControls.ListControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildrenAttribute (true, "Items")]
-#if NET_2_0
 	[ControlValueProperty ("SelectedValue", null)]
-#endif	
-	public abstract class ListControl :
-#if NET_2_0
-	DataBoundControl, IEditableTextControl, ITextControl
-#else		
-	WebControl
-#endif
+	public abstract class ListControl : DataBoundControl, IEditableTextControl, ITextControl
 	{
 
 		static readonly object SelectedIndexChangedEvent = new object ();
-#if NET_2_0
 		static readonly object TextChangedEvent = new object ();
-#endif
 
 		ListItemCollection items;
-#if NET_2_0
 		int _selectedIndex = -2;
 		string _selectedValue;
-#else		
-		int saved_selected_index = -2;
-		string saved_selected_value;
-#endif
 
 		public ListControl () : base (HtmlTextWriterTag.Select)
 		{
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		[Themeable (false)]
 		[WebSysDescription ("")]
@@ -88,11 +70,8 @@ namespace System.Web.UI.WebControls {
 					RequiresDataBinding = true;
 			}
 		}
-#endif		
 		
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[DefaultValue(false)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -101,37 +80,7 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["AutoPostBack"] = value; }
 		}
 
-#if ONLY_1_1
-		[DefaultValue("")]
-		[WebSysDescription ("")]
-		[WebCategory ("Data")]
-		public virtual string DataMember {
-			get { return ViewState.GetString ("DataMember", String.Empty); }
-			set { ViewState ["DataMember"] = value; }
-		}
-
-		object data_source;
-
-		[Bindable(true)]
-		[DefaultValue(null)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[WebSysDescription ("")]
-		[WebCategory ("Data")]
-		public virtual object DataSource {
-			get { return data_source; }
-			set { 
-				if(value == null || value is IListSource || value is IEnumerable) { 
-					data_source = value;
-					return;
-				}
-				throw new ArgumentException("Invalid DataSource Type");
-			}
-		}
-#endif		
-
-#if NET_2_0
 		[Themeable (false)]
-#endif		
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Data")]
@@ -139,16 +88,12 @@ namespace System.Web.UI.WebControls {
 			get { return ViewState.GetString ("DataTextField", String.Empty); }
 			set { 
 				ViewState ["DataTextField"] = value;
-#if NET_2_0
 				if (Initialized)
 					RequiresDataBinding = true;
-#endif
 			}
 		}
 
-#if NET_2_0
 		[Themeable (false)]
-#endif		
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Data")]
@@ -156,16 +101,12 @@ namespace System.Web.UI.WebControls {
 			get { return ViewState.GetString ("DataTextFormatString", String.Empty); }
 			set { 
 				ViewState ["DataTextFormatString"] = value;
-#if NET_2_0
 				if (Initialized)
 					RequiresDataBinding = true;
-#endif
 			}
 		}
 
-#if NET_2_0
 		[Themeable (false)]
-#endif		
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Data")]
@@ -173,16 +114,12 @@ namespace System.Web.UI.WebControls {
 			get { return ViewState.GetString ("DataValueField", String.Empty); }
 			set { 
 				ViewState ["DataValueField"] = value;
-#if NET_2_0
 				if (Initialized)
 					RequiresDataBinding = true;
-#endif
 			}
 		}
 
-#if NET_2_0
 		[Editor ("System.Web.UI.Design.WebControls.ListItemsCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#endif		
 		[DefaultValue(null)]
 		[MergableProperty(false)]
 		[PersistenceMode(PersistenceMode.InnerDefaultProperty)]
@@ -205,9 +142,7 @@ namespace System.Web.UI.WebControls {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[Themeable (false)]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Misc")]
 		public virtual int SelectedIndex {
@@ -221,7 +156,6 @@ namespace System.Web.UI.WebControls {
 				return -1;
 			}
 			set {
-#if NET_2_0
 				_selectedIndex = value;
 
 				if (value < -1)
@@ -238,26 +172,6 @@ namespace System.Web.UI.WebControls {
 
 				/* you'd think this would be called, but noooo */
 				//OnSelectedIndexChanged (EventArgs.Empty);
-#else
-				if (items == null || items.Count == 0) {
-					// This will happen when assigning this property
-					// before DataBind () is called on the control.
-					saved_selected_index = value;
-					return;
-				}
-
-				if (value < -1 || value >= Items.Count)
-					throw new ArgumentOutOfRangeException ("value");
-
-				ClearSelection ();
-				if (value == -1)
-					return;
-
-				items [value].Selected = true;
-
-				/* you'd think this would be called, but noooo */
-				//OnSelectedIndexChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -275,12 +189,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[Bindable(true, BindingDirection.TwoWay)]
 		[Themeable (false)]
-#else		
-		[Bindable(true)]
-#endif		
 		[Browsable(false)]
 		[DefaultValue("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -294,37 +204,11 @@ namespace System.Web.UI.WebControls {
 				return Items [si].Value;
 			}
 			set {
-#if NET_2_0
 				_selectedValue = value;
 				SetSelectedValue (value);
-#else
-				ClearSelection ();
-				if (items == null || items.Count == 0) {
-					// This will happen when assigning this property
-					// before DataBind () is called on the control.
-					saved_selected_value = value;
-					return;
-				}
-
-				int count = Items.Count;
-				ListItemCollection coll = Items;
-				bool thr = true;
-				for (int i = 0; i < count; i++) {
-					if (coll [i].Value == value) {
-						coll [i].Selected = true;
-						thr = false;
-					}
-				}
-
-				if (thr) {
-					string msg = String.Format ("Argument value is out of range: {0}", value);
-					throw new ArgumentOutOfRangeException (msg);
-				}
-#endif
 			}
 		}
 
-#if NET_2_0
 		bool SetSelectedValue (string value)
 		{
 			if (items != null && items.Count > 0) {
@@ -374,8 +258,6 @@ namespace System.Web.UI.WebControls {
 		{
 			base.AddAttributesToRender (w);
 		}
-		
-#endif		
 
 		public virtual void ClearSelection ()
 		{
@@ -390,53 +272,30 @@ namespace System.Web.UI.WebControls {
 		protected override void OnDataBinding (EventArgs e)
 		{
 			base.OnDataBinding (e);
-#if !NET_2_0
-			IEnumerable list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
-			PerformDataBinding (list);
-#else
 			IEnumerable list = GetData ().ExecuteSelect (DataSourceSelectArguments.Empty);
 			InternalPerformDataBinding (list);
-#endif
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-#if NET_2_0
 			Page page = Page;
 			if (page != null && IsEnabled)
 				page.RegisterEnabledControl (this);
-#endif
 		}
 
-#if NET_2_0
 		protected virtual void OnTextChanged (EventArgs e)
 		{
 			EventHandler handler = (EventHandler) Events [TextChangedEvent];
 			if (handler != null)
 				handler (this, e);
 		}
-#endif		
 
-#if NET_2_0
-		protected internal override
-#endif
-		void PerformDataBinding (IEnumerable dataSource)
+		protected internal override void PerformDataBinding (IEnumerable dataSource)
 		{
 			if (dataSource == null)
-#if NET_2_0
 				goto setselected;
-#else
-				return;
-#endif
-#if NET_2_0
 			if (!AppendDataBoundItems)
-#endif
 				Items.Clear ();
 
 			string format = DataTextFormatString;
@@ -475,7 +334,6 @@ namespace System.Web.UI.WebControls {
 				coll.Add (new ListItem (text, val));
 			}
 
-#if NET_2_0
 		setselected:
 			if (!String.IsNullOrEmpty (_selectedValue)) {
 				if (!SetSelectedValue (_selectedValue))
@@ -486,20 +344,8 @@ namespace System.Web.UI.WebControls {
 			else if (_selectedIndex >= 0) {
 				SelectedIndex = _selectedIndex;
 			}
-#else
-			if (saved_selected_value != null) {
-				SelectedValue = saved_selected_value;
-				if (saved_selected_index != -2 && saved_selected_index != SelectedIndex)
-					throw new ArgumentException ("SelectedIndex and SelectedValue are mutually exclusive.");
-			}
-			else if (saved_selected_index != -2) {
-				SelectedIndex = saved_selected_index;
-				// No need to check saved_selected_value here, as it's done before.
-			}
-#endif
 		}
 
-#if NET_2_0
 		[MonoTODO ("why override?")]
 		protected override void PerformSelect ()
 		{
@@ -537,8 +383,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#endif		
-
 		internal ArrayList GetSelectedIndicesInternal ()
 		{
 			ArrayList selected = null;
@@ -568,10 +412,6 @@ namespace System.Web.UI.WebControls {
 			// .NET 2.0+ never returns null. It returns a Triplet with the Third member
 			// set to an instance of ArrayList. Since we don't have a use (at least atm)
 			// for this, we will just return a pair with both members null.
-#if !NET_2_0
-			if (baseState == null && itemsState == null)
-				return null;
-#endif
 			return new Pair (baseState, itemsState);
 		}
 
@@ -593,13 +433,12 @@ namespace System.Web.UI.WebControls {
 				manager.LoadViewState (itemsState);
 			}
 		}
-#if NET_2_0
+
 		[MonoTODO ("Not implemented")]
 		protected void SetPostDataSelection (int selectedIndex)
 		{
 			throw new NotImplementedException ();
 		}
-#endif		
 
 		protected override void TrackViewState ()
 		{
@@ -616,7 +455,6 @@ namespace System.Web.UI.WebControls {
 				handler (this, e);
 		}
 
-#if NET_2_0		
 		protected internal virtual void VerifyMultiSelect ()
 		{
 			if (!MultiSelectOk ())
@@ -627,7 +465,6 @@ namespace System.Web.UI.WebControls {
 		{
 			return false;
 		}
-#endif		
 
 		[WebSysDescription ("")]
 		[WebCategory ("Action")]
@@ -636,7 +473,6 @@ namespace System.Web.UI.WebControls {
 			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
 		}
 
-#if NET_2_0
 		/* sealed in the docs */
 		public event EventHandler TextChanged {
 			add {
@@ -674,9 +510,6 @@ namespace System.Web.UI.WebControls {
 				ViewState ["ValidationGroup"] = value;
 			}
 		}
-
-	
-#endif
 	}
 }
 

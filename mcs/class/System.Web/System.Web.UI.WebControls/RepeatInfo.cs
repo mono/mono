@@ -51,13 +51,7 @@ namespace System.Web.UI.WebControls {
 
 		void RenderBr (HtmlTextWriter w)
 		{
-#if NET_2_0
 			w.Write ("<br />");
-#else
-			// grrr, not xhtml...
-			w.Write ("<br>");
-#endif
-
 		}
 
 		void RenderVert (HtmlTextWriter w, IRepeatInfoUser user, Style controlStyle, WebControl baseControl) 
@@ -70,16 +64,9 @@ namespace System.Web.UI.WebControls {
 			bool sep = user.HasSeparators;
 			bool oti = OuterTableImplied;
 			int hdr_span = cols * ((sep && cols != 1) ? 2 : 1);
-
 			bool table = RepeatLayout == RepeatLayout.Table && !oti;
-
-#if NET_2_0
 			bool show_empty_trailing_items = true;
 			bool show_empty_trailing_sep = true;
-#else
-			bool show_empty_trailing_items = false;
-			bool show_empty_trailing_sep = false;
-#endif
 			
 			if (! oti)
 				RenderBeginTag (w, controlStyle, baseControl);
@@ -189,11 +176,6 @@ namespace System.Web.UI.WebControls {
 							s.AddAttributesToRender (w);
 					
 						w.RenderBeginTag (HtmlTextWriterTag.Td);
-					} else if (oti) {
-#if !NET_2_0
-						/* 2.0 doesn't render this <br /> */
-						RenderBr (w);
-#endif
 					}
 					
 					user.RenderItem (ListItemType.Separator, r, this, w);
@@ -248,14 +230,8 @@ namespace System.Web.UI.WebControls {
 			int hdr_span = cols * (sep ? 2 : 1);
 
 			bool table = RepeatLayout == RepeatLayout.Table;
-
-#if NET_2_0
 			bool show_empty_trailing_items = true;
 			bool show_empty_trailing_sep = true;
-#else
-			bool show_empty_trailing_items = false;
-			bool show_empty_trailing_sep = false;
-#endif
 
 			RenderBeginTag (w, controlStyle, baseControl);
 

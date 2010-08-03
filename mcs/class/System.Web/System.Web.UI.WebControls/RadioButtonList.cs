@@ -41,14 +41,9 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ValidationProperty ("SelectedItem")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
-	public class RadioButtonList : ListControl, IRepeatInfoUser,
-		INamingContainer, IPostBackDataHandler {
-#if !NET_2_0
-		bool need_raise;
-#endif
+	public class RadioButtonList : ListControl, IRepeatInfoUser, INamingContainer, IPostBackDataHandler
+	{
 		short tabIndex = 0;
 
 		public RadioButtonList ()
@@ -56,9 +51,6 @@ namespace System.Web.UI.WebControls {
 
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif		
 		[DefaultValue (-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -151,9 +143,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif		
 		[DefaultValue (TextAlign.Right)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -172,31 +161,19 @@ namespace System.Web.UI.WebControls {
 
 		// Interface properties
 
-#if NET_2_0
-		protected virtual
-#endif
-		bool HasFooter {
+		protected virtual bool HasFooter {
 			get { return false; }
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		bool HasHeader {
+		protected virtual bool HasHeader {
 			get { return false; }
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		bool HasSeparators {
+		protected virtual bool HasSeparators {
 			get { return false; }
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		int RepeatedItemCount {
+		protected virtual int RepeatedItemCount {
 			get { return Items.Count; }
 		}
 		
@@ -221,7 +198,6 @@ namespace System.Web.UI.WebControls {
 			return new TableStyle (ViewState);
 		}
 
-#if NET_2_0
 		// MSDN: Searches the current naming container for a server control 
 		// with the specified ID and path offset. The FindControl method 
 		// always returns the RadioButtonList object. 
@@ -229,20 +205,13 @@ namespace System.Web.UI.WebControls {
 		{
 			return this;
 		}
-#endif
 
-#if NET_2_0
-		protected virtual
-#endif
-		Style GetItemStyle (ListItemType itemType, int repeatIndex)
+		protected virtual Style GetItemStyle (ListItemType itemType, int repeatIndex)
 		{
 			return null;
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		void RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+		protected virtual void RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
 		{
 			ListItem item = Items [repeatIndex];
 
@@ -257,24 +226,19 @@ namespace System.Web.UI.WebControls {
 			radio.AutoPostBack = AutoPostBack;
 			radio.Enabled = IsEnabled;
 			radio.TabIndex = tabIndex;
-#if NET_2_0
 			radio.ValidationGroup = ValidationGroup;
 			radio.CausesValidation = CausesValidation;
 			if (radio.HasAttributes)
 				radio.Attributes.Clear ();
 			if (item.HasAttributes)
 				radio.Attributes.CopyFrom (item.Attributes);
-#endif
+
 			radio.RenderControl (writer);
 		}
-#if NET_2_0
-		protected virtual
-#endif
-		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-#if NET_2_0
 			EnsureDataBound ();
-#endif
 			string val = postCollection [postDataKey];
 			ListItemCollection items = Items;
 			int end = items.Count;
@@ -286,35 +250,21 @@ namespace System.Web.UI.WebControls {
 
 				if (i != selected) {
 					SelectedIndex = i;
-#if NET_2_0
 					return true;
-#else
-					need_raise = true;
-#endif
 				}
-#if !NET_2_0
-				return true;
-#endif
 			}
 
 			return false;
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		void RaisePostDataChangedEvent ()
+		protected virtual void RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
 			ValidateEvent (UniqueID, String.Empty);
-			if (CausesValidation)
-				Page.Validate (ValidationGroup);
-#endif
+			Page page = Page;
+			if (CausesValidation && page != null)
+				page.Validate (ValidationGroup);
 
-#if !NET_2_0
-			if (need_raise)
-#endif
-				OnSelectedIndexChanged (EventArgs.Empty);
+			OnSelectedIndexChanged (EventArgs.Empty);
 		}
 
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
@@ -337,20 +287,15 @@ namespace System.Web.UI.WebControls {
 			RenderItem (itemType, repeatIndex, repeatInfo, writer);
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
-#if NET_2_0
-			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (UniqueID);
+			Page page = Page;
+			if (page != null)
+				page.ClientScript.RegisterForEventValidation (UniqueID);
 
 			if (Items.Count == 0)
 				return;
-#endif
+
 			RepeatInfo repeat = new RepeatInfo ();
 			repeat.RepeatColumns = RepeatColumns;
 			repeat.RepeatDirection = RepeatDirection;
