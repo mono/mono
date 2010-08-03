@@ -297,7 +297,8 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			EnvironmentOverride ["MONO_IOMAP"] = "drive";
+			if (String.IsNullOrEmpty (Environment.GetEnvironmentVariable ("MONO_IOMAP")))
+				EnvironmentOverride ["MONO_IOMAP"] = "drive";
 			return base.Execute ();
 		}
 

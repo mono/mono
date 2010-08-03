@@ -12,8 +12,10 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 using Microsoft.Win32;
+using Microsoft.Win32.SafeHandles;
 
 using NUnit.Framework;
 
@@ -1659,6 +1661,102 @@ namespace MonoTests.Microsoft.Win32
 				}
 			}
 		}
+
+#if NET_4_0
+		[DllImport ("advapi32.dll", CharSet = CharSet.Unicode)]
+		static extern int RegOpenKeyEx (IntPtr keyBase, string keyName, IntPtr reserved, int access, out IntPtr keyHandle);
+        
+		const int RegCurrentUserHive = -2147483647;
+		const int RegAccessRead = 0x00020019;
+
+		// FromHandle is specially designed to retrieve a RegistryKey instance based on a IntPtr
+		// retrieved using any unmanaged registry function, so we use directly RegOpenKeyEx to load
+		// our handle and then pass it to the new 4.0 method.
+		[Test]
+		public void FromHandle ()
+		{
+			// Not supported on Unix
+			if (RunningOnUnix)
+				return;
+
+			string subKeyName = Guid.NewGuid ().ToString ();
+			try {
+				using (RegistryKey key = Registry.CurrentUser.CreateSubKey (subKeyName))
+					key.SetValue ("Name", "Mono001");
+
+				IntPtr handle;
+				int res = RegOpenKeyEx (new IntPtr (RegCurrentUserHive), subKeyName, IntPtr.Zero, RegAccessRead, out handle);
+
+				using (RegistryKey key = RegistryKey.FromHandle (new SafeRegistryHandle (handle, true))) {
+					Assert.AreEqual (String.Empty, key.Name, "#A0");
+					Assert.AreEqual ("Mono001", key.GetValue ("Name"), "#A1");
+				}
+			} finally {
+				RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+				if (createdKey != null) {
+					createdKey.Close ();
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+				}
+			}
+		}
+
+		[Test]
+		public void FromHandle_InvalidHandle ()
+		{
+			// Not supported on Unix
+			if (RunningOnUnix)
+				return;
+
+			string subKeyName = Guid.NewGuid ().ToString ();
+			try {
+				using (RegistryKey key = RegistryKey.FromHandle (new SafeRegistryHandle (IntPtr.Zero, true))) {
+					Assert.AreEqual (String.Empty, key.Name, "#A0");
+
+					// Any operation should throw a IOException, since even if we have a RegistryKey instance,
+					// the handle is not valid.
+					key.CreateSubKey ("ChildSubKey");
+					Assert.Fail ("#Exc0");
+				}
+			} catch (IOException) {
+			} finally {
+				RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+				if (createdKey != null) {
+					createdKey.Close ();
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+				}
+			}
+		}
+
+		[Test]
+		public void Handle ()
+		{
+			if (RunningOnUnix)
+				return;
+
+			string subKeyName = Guid.NewGuid ().ToString ();
+			RegistryKey subkey = null;
+			try {
+				subkey = Registry.CurrentUser.CreateSubKey (subKeyName);
+				Assert.AreEqual (true, subkey.Handle != null, "#A0");
+				Assert.AreEqual (false, subkey.Handle.IsClosed, "#A1");
+				Assert.AreEqual (false, subkey.Handle.IsInvalid, "#A2");
+
+				subkey.Close ();
+				try {
+					if (subkey.Handle != null)
+						Console.WriteLine (); // Avoids a warning at compile time
+					Assert.Fail ("#Disposed");
+				} catch (ObjectDisposedException) {
+				}
+
+			} finally {
+				if (subkey != null) {
+					subkey.Close ();
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName, false);
+				}
+			}
+		}
+#endif
 
 		[Test]
 		public void GetValue ()

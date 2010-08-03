@@ -35,6 +35,7 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Win32 {
 
@@ -62,6 +63,8 @@ namespace Microsoft.Win32 {
 
 #if NET_4_0
 		RegistryKey CreateSubKey (RegistryKey rkey, string keyname, RegistryOptions options);
+		RegistryKey FromHandle (SafeRegistryHandle handle);
+		IntPtr GetHandle (RegistryKey key);
 #endif
 	}
 }

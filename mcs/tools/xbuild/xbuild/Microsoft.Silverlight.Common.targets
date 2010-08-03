@@ -49,7 +49,7 @@
 	<Target Name="GetFrameworkPaths">
 		<GetMoonlightFrameworkPath
 			SilverlightVersion="$(SilverlightVersion)">
-			<Output TaskParameter="FrameworkPath" ItemName="TargetFrameworkDirectories"/>
+			<Output TaskParameter="FrameworkPath" PropertyName="TargetFrameworkDirectory"/>
 			<Output TaskParameter="FrameworkPath" ItemName="_FrameworkPath"/>
 		</GetMoonlightFrameworkPath>
 

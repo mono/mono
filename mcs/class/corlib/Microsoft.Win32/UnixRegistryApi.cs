@@ -49,6 +49,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Security;
 using System.Threading;
+using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Win32 {
 
@@ -852,6 +853,13 @@ namespace Microsoft.Win32 {
 
 			return result;
 		}
+
+#if NET_4_0
+		public RegistryKey FromHandle (SafeRegistryHandle handle)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		public void Flush (RegistryKey rkey)
 		{
@@ -988,6 +996,13 @@ namespace Microsoft.Win32 {
 			// key was removed since it was opened or it does not exist.
 			return RegistryValueKind.Unknown;
 		}
+
+#if NET_4_0
+		public IntPtr GetHandle (RegistryKey key)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 	}
 }
