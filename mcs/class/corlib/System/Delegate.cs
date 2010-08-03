@@ -184,13 +184,17 @@ namespace System
 					// target is passed as the first argument to the static method
 					argLengthMatch = (args.Length == delargs.Length + 1);
 			} else {
-				if (!method.IsStatic)
+				if (!method.IsStatic) {
 					//
 					// Net 2.0 feature. The first argument of the delegate is passed
 					// as the 'this' argument to the method.
 					//
 					argLengthMatch = (args.Length + 1 == delargs.Length);
-				else {
+
+					if (!argLengthMatch)
+						// closed over a null reference
+						argLengthMatch = (args.Length == delargs.Length);
+				} else {
 					argLengthMatch = (args.Length == delargs.Length);
 
 					if (!argLengthMatch)
@@ -217,10 +221,17 @@ namespace System
 				}
 			} else {
 				if (!method.IsStatic) {
-					// The first argument should match this
-					argsMatch = arg_type_match (delargs [0].ParameterType, method.DeclaringType);
-					for (int i = 0; i < args.Length; i++)
-						argsMatch &= arg_type_match (delargs [i + 1].ParameterType, args [i].ParameterType);
+					if (args.Length + 1 == delargs.Length) {
+						// The first argument should match this
+						argsMatch = arg_type_match (delargs [0].ParameterType, method.DeclaringType);
+						for (int i = 0; i < args.Length; i++)
+							argsMatch &= arg_type_match (delargs [i + 1].ParameterType, args [i].ParameterType);
+					} else {
+						// closed over a null reference
+						argsMatch = true;
+						for (int i = 0; i < args.Length; i++)
+							argsMatch &= arg_type_match (delargs [i].ParameterType, args [i].ParameterType);
+					}
 				} else {
 					if (delargs.Length + 1 == args.Length) {
 						// closed over a null reference
