@@ -96,14 +96,18 @@
 		<GetFrameworkPath>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.5'"
 				TaskParameter="FrameworkVersion35Path"
-				ItemName="TargetFrameworkDirectories"/>
+				ItemName="_TargetFrameworkDirectories"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
 				TaskParameter="FrameworkVersion30Path"
-				ItemName="TargetFrameworkDirectories"/>
+				ItemName="_TargetFrameworkDirectories"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
 				TaskParameter="FrameworkVersion20Path"
-				ItemName="TargetFrameworkDirectories"/>
+				ItemName="_TargetFrameworkDirectories"/>
 		</GetFrameworkPath>
+		<CreateProperty Value="@(_TargetFrameworkDirectories)">
+			<Output TaskParameter="Value" PropertyName="TargetFrameworkDirectory"/>
+		</CreateProperty>
+
 		<Warning Text="TargetFrameworkVersion '$(TargetFrameworkVersion)' not supported by this toolset (ToolsVersion: $(MSBuildToolsVersion))."
 			Condition="'$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v3.0' and '$(TargetFrameworkVersion)' != 'v2.0'"/>
 	</Target>
@@ -148,7 +152,7 @@
 			AssemblyFiles="@(ChildProjectReferences)"
 			SearchPaths="$(AssemblySearchPaths)"
 			CandidateAssemblyFiles="@(Content);@(None)"
-			TargetFrameworkDirectories="@(TargetFrameworkDirectories)"
+			TargetFrameworkDirectories="$(TargetFrameworkDirectory)"
 			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"
 			AllowedRelatedFileExtensions="$(AllowedReferenceRelatedFileExtensions)"
 			FindDependencies="true"
