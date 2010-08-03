@@ -34,7 +34,7 @@ namespace System.Threading
 		int currCount;
 		bool isDisposed;
 
-		ManualResetEvent handle;
+		EventWaitHandle handle;
 
 		public SemaphoreSlim (int initial) : this (initial, int.MaxValue)
 		{
@@ -96,7 +96,7 @@ namespace System.Threading
 				newValue = newValue > max ? max : newValue;
 			} while (Interlocked.CompareExchange (ref currCount, newValue, oldValue) != oldValue);
 
-			handle.Reset ();
+			handle.Set ();
 
 			return oldValue;
 		}
@@ -158,7 +158,7 @@ namespace System.Threading
 
 				if (!shouldWait) {
 					if (result == 1)
-						handle.Set ();
+						handle.Reset ();
 					break;
 				}
 
