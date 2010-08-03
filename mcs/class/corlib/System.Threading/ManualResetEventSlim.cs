@@ -110,8 +110,7 @@ namespace System.Threading
 			int count = 0;
 
 			while (state == isNotSet) {
-				if (token.IsCancellationRequested)
-					return false;
+				token.ThrowIfCancellationRequested ();
 
 				if (millisecondsTimeout > -1 && s.ElapsedMilliseconds > millisecondsTimeout)
 					return false;
