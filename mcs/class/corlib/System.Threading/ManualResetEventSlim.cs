@@ -32,14 +32,15 @@ namespace System.Threading
 	{
 		const int isSet    = 1;
 		const int isNotSet = 0;
-		const int defaultSpinCount = 20;
+		const int defaultSpinCount = 10;
+		const int deepSleepTime = 20;
 
 		int state;
 		readonly int spinCount;
 
 		ManualResetEvent handle;
 
-		public ManualResetEventSlim () : this(false, defaultSpinCount)
+		public ManualResetEventSlim () : this (false, defaultSpinCount)
 		{
 		}
 
@@ -72,11 +73,13 @@ namespace System.Threading
 		public void Reset ()
 		{
 			Interlocked.Exchange (ref state, isNotSet);
+			handle.Reset ();
 		}
 
 		public void Set ()
 		{
 			Interlocked.Exchange (ref state, isSet);
+			handle.Set ();
 		}
 
 		public void Wait ()
@@ -107,7 +110,6 @@ namespace System.Threading
 
 			Watch s = Watch.StartNew ();
 			SpinWait sw = new SpinWait ();
-			int count = 0;
 
 			while (state == isNotSet) {
 				token.ThrowIfCancellationRequested ();
@@ -115,12 +117,11 @@ namespace System.Threading
 				if (millisecondsTimeout > -1 && s.ElapsedMilliseconds > millisecondsTimeout)
 					return false;
 
-				if (count < spinCount) {
-				    sw.SpinOnce ();
-					count++;
-				} else {
-					Thread.Sleep (0);
-				}
+				if (sw.Count < spinCount)
+					sw.SpinOnce ();
+				else
+					if (handle.WaitOne (Math.Min (Math.Max (millisecondsTimeout - (int)s.ElapsedMilliseconds, 1), deepSleepTime)))
+						return true;
 			}
 
 			return true;
