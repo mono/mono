@@ -35,11 +35,11 @@ namespace System.Threading.Tasks
 		
 		Thread workerThread;
 		
-		readonly          ThreadWorker[]        others;
-		internal readonly IDequeOperations<Task>    dDeque;
+		readonly          ThreadWorker[]         others;
+		internal readonly IDequeOperations<Task> dDeque;
+		readonly          Action<Task>           childWorkAdder;
+		readonly          EventWaitHandle        waitHandle;
 		readonly          IProducerConsumerCollection<Task> sharedWorkQueue;
-		readonly          Action<Task>          childWorkAdder;
-		
 		// Flag to tell if workerThread is running
 		int started = 0; 
 		
@@ -48,18 +48,19 @@ namespace System.Threading.Tasks
 		readonly int  stealingStart;
 		const    int  maxRetry = 5;
 		
-		const int sleepThreshold = 100000;
+		const int sleepThreshold = 100;
+		const int deepSleepTime = 10;
 		
 		Action threadInitializer;
 		
 		public ThreadWorker (IScheduler sched, ThreadWorker[] others, IProducerConsumerCollection<Task> sharedWorkQueue,
-		                     int maxStackSize, ThreadPriority priority)
-			: this (sched, others, sharedWorkQueue, true, maxStackSize, priority)
+		                     int maxStackSize, ThreadPriority priority, EventWaitHandle handle)
+		: this (sched, others, sharedWorkQueue, true, maxStackSize, priority, handle)
 		{
 		}
 		
 		public ThreadWorker (IScheduler sched, ThreadWorker[] others, IProducerConsumerCollection<Task> sharedWorkQueue,
-		                     bool createThread, int maxStackSize, ThreadPriority priority)
+		                     bool createThread, int maxStackSize, ThreadPriority priority, EventWaitHandle handle)
 		{
 			this.others          = others;
 
@@ -68,6 +69,7 @@ namespace System.Threading.Tasks
 			this.sharedWorkQueue = sharedWorkQueue;
 			this.workerLength    = others.Length;
 			this.isLocal         = !createThread;
+			this.waitHandle      = handle;
 			
 			this.childWorkAdder = delegate (Task t) { 
 				dDeque.PushBottom (t);
@@ -142,12 +144,17 @@ namespace System.Threading.Tasks
 
 				result = WorkerMethod ();
 				
+				if (result) {
+					sleepTime = 0;
+					wait = new SpinWait ();
+				}
+
 				// Wait a little and if the Thread has been more sleeping than working shut it down
 				wait.SpinOnce ();
-				if (result)
-					sleepTime = 0;
-				if (sleepTime++ > sleepThreshold) 
-					break;
+
+				// If we are spinning too much, have a deeper sleep
+				if (sleepTime++ > sleepThreshold)
+					while (!waitHandle.WaitOne (deepSleepTime) && sharedWorkQueue.Count == 0);
 			}
 
 			started = 0;

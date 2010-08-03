@@ -32,7 +32,7 @@ namespace System.Threading.Tasks
 	{
 		IProducerConsumerCollection<Task> workQueue;
 		ThreadWorker[]        workers;
-		bool                  isPulsable = true;
+		EventWaitHandle       pulseHandle = new AutoResetEvent (false);
 
 		public Scheduler ()
 			: this (Environment.ProcessorCount, 0, ThreadPriority.Normal)
@@ -46,7 +46,8 @@ namespace System.Threading.Tasks
 			workers = new ThreadWorker [maxWorker];
 			
 			for (int i = 0; i < maxWorker; i++) {
-				workers [i] = new ThreadWorker (this, workers, workQueue, maxStackSize, priority);
+				workers [i] = new ThreadWorker (this, workers, workQueue, maxStackSize, priority, pulseHandle);
+				workers [i].Pulse ();
 			}
 		}
 		
@@ -95,24 +96,9 @@ namespace System.Threading.Tasks
 		
 		public void PulseAll ()
 		{
-			if (isPulsable) {
-				foreach (ThreadWorker worker in workers) {
-					if (worker != null)
-						worker.Pulse ();	
-				}
-			}
+			pulseHandle.Set ();
 		}
 		
-		public void InhibitPulse ()
-		{
-			isPulsable = false;
-		}
-		
-		public void UnInhibitPulse () 
-		{
-			isPulsable = true;
-		}
-
 		public void Dispose ()
 		{
 			foreach (ThreadWorker w in workers) {
