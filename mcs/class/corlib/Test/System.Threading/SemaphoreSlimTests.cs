@@ -68,18 +68,25 @@ namespace MonoTests.System.Threading
 		{
 			int count = -1;
 			bool[] array = new bool[7];
-			ParallelTestHelper.ParallelStressTest(sem, delegate (SemaphoreSlim s) {
-				int index = Interlocked.Increment(ref count);
-				s.Wait();
-				Thread.Sleep(40);
-				s.Release();
+			int worker = 0;
+			bool coherent = true;
+
+			ParallelTestHelper.ParallelStressTest (sem, delegate (SemaphoreSlim s) {
+				int index = Interlocked.Increment (ref count);
+				s.Wait ();
+				if (Interlocked.Increment (ref worker) > 5)
+					coherent = false;
+				Thread.Sleep (40);
+				Interlocked.Decrement (ref worker);
+				s.Release ();
 				array[index] = true;
 			}, 7);
 			
-			bool result = array.Aggregate((acc, e) => acc && e);
+			bool result = array.Aggregate ((acc, e) => acc && e);
 			
-			Assert.IsTrue(result, "#1");
-			Assert.AreEqual(5, sem.CurrentCount, "#2");
+			Assert.IsTrue (result, "#1");
+			Assert.AreEqual (5, sem.CurrentCount, "#2");
+			Assert.IsTrue (coherent, "#3");
 		}
 	}
 }
