@@ -61,7 +61,6 @@ namespace Mono.CSharp {
 	static public PredefinedTypeSpec exception_type;
 
 
-	static public TypeSpec null_type;
 	static public TypeSpec typed_reference_type;
 	static public TypeSpec arg_iterator_type;
 	static public TypeSpec mbr_type;
@@ -376,11 +375,6 @@ namespace Mono.CSharp {
 	//
 	public static void InitOptionalCoreTypes (CompilerContext ctx)
 	{
-		//
-		// These are only used for compare purposes
-		//
-		null_type = InternalType.Null;
-
 		void_ptr_type = PointerContainer.MakeType (void_type);
 
 		//
@@ -627,12 +621,12 @@ namespace Mono.CSharp {
 		type = type.GetDefinition (); // DropGenericTypeArguments (type);
 		parent = parent.GetDefinition (); // DropGenericTypeArguments (parent);
 
-		if (IsEqual (type, parent))
+		if (type == parent)
 			return false;
 
 		type = type.DeclaringType;
 		while (type != null) {
-			if (IsEqual (type.GetDefinition (), parent))
+			if (type.GetDefinition () == parent)
 				return true;
 
 			type = type.DeclaringType;
@@ -851,11 +845,6 @@ namespace Mono.CSharp {
 	public static bool ContainsGenericParameters (TypeSpec type)
 	{
 		return type.GetMetaInfo ().ContainsGenericParameters;
-	}
-
-	public static bool IsEqual (TypeSpec a, TypeSpec b)
-	{
-		return a == b && !(a is InternalType);
 	}
 
 	public static TypeSpec[] GetTypeArguments (TypeSpec t)

@@ -4085,13 +4085,7 @@ namespace Mono.CSharp {
 
 			ok &= base.Resolve (ec);
 
-			// Avoid creating libraries that reference the internal
-			// mcs NullType:
-			TypeSpec t = expr.Type;
-			if (t == TypeManager.null_type)
-				t = TypeManager.object_type;
-			
-			temp = new TemporaryVariable (t, loc);
+			temp = new TemporaryVariable (expr.Type, loc);
 			temp.Resolve (ec);
 
 			if (TypeManager.void_monitor_enter_object == null || TypeManager.void_monitor_exit_object == null) {

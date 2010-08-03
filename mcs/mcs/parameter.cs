@@ -412,7 +412,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeManager.IsEqual (default_expr.Type, parameter_type))
+			if (default_expr.Type == parameter_type)
 				return default_expr;
 
 			if (TypeManager.IsNullableType (parameter_type)) {

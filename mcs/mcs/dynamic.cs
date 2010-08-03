@@ -402,17 +402,11 @@ namespace Mono.CSharp
 			FullNamedExpression[] targs = new FullNamedExpression[dyn_args_count + default_args];
 			targs [0] = new TypeExpression (TypeManager.call_site_type, loc);
 			for (int i = 0; i < dyn_args_count; ++i) {
-				TypeSpec arg_type;
 				Argument a = arguments [i];
-				if (a.Type == TypeManager.null_type)
-					arg_type = TypeManager.object_type;
-				else
-					arg_type = a.Type;
-
 				if (a.ArgType == Argument.AType.Out || a.ArgType == Argument.AType.Ref)
 					has_ref_out_argument = true;
 
-				targs [i + 1] = new TypeExpression (arg_type, loc);
+				targs [i + 1] = new TypeExpression (a.Type, loc);
 			}
 
 			TypeExpr del_type = null;

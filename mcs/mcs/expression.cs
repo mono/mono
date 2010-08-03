@@ -1725,8 +1725,8 @@ namespace Mono.CSharp {
 
 			public virtual bool IsApplicable (ResolveContext ec, Expression lexpr, Expression rexpr)
 			{
-				if (TypeManager.IsEqual (left, lexpr.Type) &&
-					TypeManager.IsEqual (right, rexpr.Type))
+				// Quick path
+				if (left == lexpr.Type && right == rexpr.Type)
 					return true;
 
 				return Convert.ImplicitConversionExists (ec, lexpr, left) &&
@@ -2792,7 +2792,7 @@ namespace Mono.CSharp {
 		//
 		Expression ResolveOperatorDelegate (ResolveContext ec, TypeSpec l, TypeSpec r)
 		{
-			if (!TypeManager.IsEqual (l, r) && !TypeSpecComparer.Variant.IsEqual (r, l)) {
+			if (l != r && !TypeSpecComparer.Variant.IsEqual (r, l)) {
 				Expression tmp;
 				if (right.eclass == ExprClass.MethodGroup || r == InternalType.AnonymousMethod || r == InternalType.Null) {
 					tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
@@ -2888,7 +2888,7 @@ namespace Mono.CSharp {
 				}
 			}			
 
-			if (TypeManager.IsEqual (ltype, rtype)) {
+			if (ltype == rtype) {
 				underlying_type = EnumSpec.GetUnderlyingType (ltype);
 
 				if (left is Constant)
@@ -3917,7 +3917,7 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			AParametersCollection pd = oper.Parameters;
-			if (!TypeManager.IsEqual (type, type) || !TypeManager.IsEqual (type, pd.Types [0]) || !TypeManager.IsEqual (type, pd.Types [1])) {
+			if (!TypeSpecComparer.Default.IsEqual (type, pd.Types[0]) || !TypeSpecComparer.Default.IsEqual (type, pd.Types[1])) {
 				ec.Report.Error (217, loc,
 					"A user-defined operator `{0}' must have parameters and return values of the same type in order to be applicable as a short circuit operator",
 					oper.GetSignatureForError ());
@@ -4215,7 +4215,7 @@ namespace Mono.CSharp {
 			// First, if an implicit conversion exists from true_expr
 			// to false_expr, then the result type is of type false_expr.Type
 			//
-			if (!TypeManager.IsEqual (true_type, false_type)) {
+			if (!TypeSpecComparer.Default.IsEqual (true_type, false_type)) {
 				Expression conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
 				if (conv != null) {
 					//
@@ -6342,7 +6342,7 @@ namespace Mono.CSharp {
 			if (!ResolveInitializers (ec))
 				return null;
 
-			if (array_element_type == null || array_element_type == TypeManager.null_type ||
+			if (array_element_type == null || array_element_type == InternalType.Null ||
 				array_element_type == TypeManager.void_type || array_element_type == InternalType.AnonymousMethod ||
 				array_element_type == InternalType.MethodGroup ||
 				arguments.Count != rank.Dimension) {
@@ -6387,7 +6387,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (array_element_type == null) {
-				if (element.Type != TypeManager.null_type)
+				if (element.Type != InternalType.Null)
 					array_element_type = element.Type;
 
 				return element;
@@ -9289,7 +9289,7 @@ namespace Mono.CSharp {
 			}
 
 			type = e.Type;
-			if (type == TypeManager.void_type || type == TypeManager.null_type ||
+			if (type == TypeManager.void_type || type == InternalType.Null ||
 				type == InternalType.AnonymousMethod || type.IsPointer) {
 				Error_InvalidInitializer (ec, e.GetSignatureForError ());
 				return null;

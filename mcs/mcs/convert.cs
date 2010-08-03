@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 			TypeSpec expr_type = expr.Type;
 
 			// from the null type to any reference-type.
-			if (expr_type == TypeManager.null_type)
+			if (expr_type == InternalType.Null)
 				return target_type != InternalType.AnonymousMethod;
 
 			if (TypeManager.IsGenericParameter (expr_type))
@@ -263,7 +263,7 @@ namespace Mono.CSharp {
 					return true; // expr_type.MetaInfo.Module != typeof (Convert).Module;
 				}
 
-				// From anything to dynamic
+				// From anything to dynamic, including dynamic -> dynamic
 				if (target_type == InternalType.Dynamic)
 					return true;
 
@@ -340,9 +340,6 @@ namespace Mono.CSharp {
 			// from any delegate type to System.Delegate
 			if (target_type == TypeManager.delegate_type &&
 				(expr_type == TypeManager.delegate_type || expr_type.IsDelegate))
-				return true;
-
-			if (TypeManager.IsEqual (expr_type, target_type))
 				return true;
 
 			return false;
@@ -435,7 +432,7 @@ namespace Mono.CSharp {
 			//
 			// From null to any nullable type
 			//
-			if (expr_type == TypeManager.null_type)
+			if (expr_type == InternalType.Null)
 				return ec == null ? EmptyExpression.Null : Nullable.LiftedNull.Create (target_type, expr.Location);
 
 			// S -> T?
@@ -673,22 +670,19 @@ namespace Mono.CSharp {
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
 		///
-		///  ec should point to a real EmitContext if expr.Type is TypeManager.anonymous_method_type.
 		/// </summary>
 		public static bool ImplicitStandardConversionExists (Expression expr, TypeSpec target_type)
 		{
 			TypeSpec expr_type = expr.Type;
 
-			if (expr_type == TypeManager.null_type) {
-				NullLiteral nl = expr as NullLiteral;
-				if (nl != null)
-					return nl.ConvertImplicitly (null, target_type) != null;
-			}
+			NullLiteral nl = expr as NullLiteral;
+			if (nl != null)
+				return nl.ConvertImplicitly (null, target_type) != null;
 
 			if (expr_type == TypeManager.void_type)
 				return false;
 
-			if (TypeManager.IsEqual (expr_type, target_type))
+			if (expr_type == target_type)
 				return true;
 
 			if (TypeManager.IsNullableType (target_type)) {
@@ -1221,8 +1215,8 @@ namespace Mono.CSharp {
 			TypeSpec expr_type = expr.Type;
 			Expression e;
 
-			if (expr_type.Equals (target_type)) {
-				if (expr_type != TypeManager.null_type && expr_type != InternalType.AnonymousMethod)
+			if (expr_type == target_type) {
+				if (expr_type != InternalType.Null && expr_type != InternalType.AnonymousMethod)
 					return expr;
 				return null;
 			}
@@ -1289,7 +1283,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (expr_type == TypeManager.null_type && target_type.IsPointer)
+				if (expr_type == InternalType.Null && target_type.IsPointer)
 					return EmptyCast.Create (new NullPointer (loc), target_type);
 			}
 
@@ -1818,7 +1812,7 @@ namespace Mono.CSharp {
 			// from Null to a ValueType, and ExplicitReference wont check against
 			// null literal explicitly
 			//
-			if (expr_type != TypeManager.null_type){
+			if (expr_type != InternalType.Null) {
 				ne = ExplicitReferenceConversion (expr, expr_type, target_type);
 				if (ne != null)
 					return ne;

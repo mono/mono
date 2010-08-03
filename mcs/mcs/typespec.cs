@@ -382,6 +382,8 @@ namespace Mono.CSharp
 			this.ns = ns;
 		}
 
+		#region Properties
+
 		public override int Arity {
 			get {
 				return 0;
@@ -399,6 +401,8 @@ namespace Mono.CSharp
 				return ns;
 			}
 		}
+
+		#endregion
 
 		public override string GetSignatureForError ()
 		{
@@ -442,7 +446,8 @@ namespace Mono.CSharp
 	static class TypeSpecComparer
 	{
 		//
-		// Default reference comparison
+		// Default reference comparison, it has to be used when comparing
+		// two possible dynamic/internal types
 		//
 		public static readonly DefaultImpl Default = new DefaultImpl ();
 
@@ -452,14 +457,14 @@ namespace Mono.CSharp
 
 			public bool Equals (TypeSpec[] x, TypeSpec[] y)
 			{
-				if (x.Length != y.Length)
-					return false;
-
 				if (x == y)
 					return true;
 
+				if (x.Length != y.Length)
+					return false;
+
 				for (int i = 0; i < x.Length; ++i)
-					if (x[i] != y[i])
+					if (!IsEqual (x[i], y[i]))
 						return false;
 
 				return true;
@@ -489,6 +494,31 @@ namespace Mono.CSharp
 			}
 
 			#endregion
+
+			//
+			// Identity type conversion
+			//
+			public bool IsEqual (TypeSpec a, TypeSpec b)
+			{
+				if (a == b)
+					return a.Kind != MemberKind.InternalCompilerType;
+
+				//
+				// object and dynamic are considered equivalent there is an identity conversion
+				// between object and dynamic, and between constructed types that are the same
+				// when replacing all occurences of dynamic with object.
+				//
+				if (a == InternalType.Dynamic || b == InternalType.Dynamic)
+					return b == TypeManager.object_type || a == TypeManager.object_type;
+
+				if (a == null || !a.IsGeneric || b == null || !b.IsGeneric)
+					return false;
+
+				if (a.MemberDefinition != b.MemberDefinition)
+					return false;
+
+				return Equals (a.TypeArguments, b.TypeArguments);
+			}
 		}
 
 		//
@@ -622,16 +652,7 @@ namespace Mono.CSharp
 				var targs_definition = target_type_def.TypeParameters;
 
 				if (!type1.IsInterface && !type1.IsDelegate) {
-					//
-					// Internal compiler variance between G<object> and G<dynamic>
-					//
-					for (int i = 0; i < targs_definition.Length; ++i) {
-						if ((t1_targs[i] != TypeManager.object_type && t1_targs[i] != InternalType.Dynamic) ||
-							(t2_targs[i] != TypeManager.object_type && t2_targs[i] != InternalType.Dynamic))
-							return false;
-					}
-
-					return true;
+					return Default.Equals (t1_targs, t2_targs);
 				}
 
 				for (int i = 0; i < targs_definition.Length; ++i) {
@@ -779,29 +800,22 @@ namespace Mono.CSharp
 
 	class InternalType : TypeSpec
 	{
-		private class DynamicType : InternalType
-		{
-			public DynamicType ()
-				: base ("dynamic")
-			{
-			}
-
-			public override Type GetMetaInfo ()
-			{
-				return typeof (object);
-			}
-		}
-
-		public static readonly TypeSpec AnonymousMethod = new InternalType ("anonymous method");
-		public static readonly TypeSpec Arglist = new InternalType ("__arglist");
-		public static readonly TypeSpec Dynamic = new DynamicType ();
-		public static readonly TypeSpec MethodGroup = new InternalType ("method group");
-		public static readonly TypeSpec Null = new InternalType ("null");
-		public static readonly TypeSpec FakeInternalType = new InternalType ("<fake$type>");
+		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
+		public static readonly InternalType Arglist = new InternalType ("__arglist");
+		public static readonly InternalType Dynamic = new InternalType ("dynamic", typeof (object));
+		public static readonly InternalType MethodGroup = new InternalType ("method group");
+		public static readonly InternalType Null = new InternalType ("null", typeof (object));
+		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
 
 		readonly string name;
 
-		protected InternalType (string name)
+		InternalType (string name, Type metaInfo)
+			: this (name)
+		{
+			info = metaInfo;
+		}
+
+		InternalType (string name)
 			: base (MemberKind.InternalCompilerType, null, null, null, Modifiers.PUBLIC)
 		{
 			this.name = name;
@@ -810,6 +824,8 @@ namespace Mono.CSharp
 			// Make all internal types CLS-compliant, non-obsolete
 			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected)) | StateFlags.CLSCompliant;
 		}
+
+		#region Properties
 
 		public override int Arity {
 			get {
@@ -822,6 +838,8 @@ namespace Mono.CSharp
 				return name;
 			}
 		}
+
+		#endregion
 
 		public override string GetSignatureForError ()
 		{

@@ -2313,9 +2313,9 @@ namespace Mono.CSharp {
 				}
 
 				TypeSpec conv_type;
-				if (TypeManager.IsEqual (declaring_type, return_type) || declaring_type == return_type_unwrap) {
+				if (declaring_type == return_type || declaring_type == return_type_unwrap) {
 					conv_type = first_arg_type;
-				} else if (TypeManager.IsEqual (declaring_type, first_arg_type) || declaring_type == first_arg_type_unwrap) {
+				} else if (declaring_type == first_arg_type || declaring_type == first_arg_type_unwrap) {
 					conv_type = return_type;
 				} else {
 					Report.Error (556, Location,
@@ -2371,7 +2371,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!TypeManager.IsEqual (first_arg_type_unwrap, declaring_type)) {
+				if (first_arg_type_unwrap != declaring_type) {
 					Report.Error (562, Location,
 						"The parameter type of a unary operator must be the containing type");
 					return false;
@@ -2387,14 +2387,14 @@ namespace Mono.CSharp {
 					}
 				}
 
-			} else if (!TypeManager.IsEqual (first_arg_type_unwrap, declaring_type)) {
+			} else if (first_arg_type_unwrap != declaring_type) {
 				// Checks for Binary operators
 
 				var second_arg_type = ParameterTypes[1];
 				if (TypeManager.IsNullableType (second_arg_type))
 					second_arg_type = TypeManager.GetTypeArguments (second_arg_type)[0];
 
-				if (!TypeManager.IsEqual (second_arg_type, declaring_type)) {
+				if (second_arg_type != declaring_type) {
 					Report.Error (563, Location,
 						"One of the parameters of a binary operator must be the containing type");
 					return false;

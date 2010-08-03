@@ -330,7 +330,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!TypeManager.IsEqual (target_type, source_type)) {
+			if (target_type != source_type) {
 				Expression resolved = ResolveConversions (ec);
 
 				if (resolved != this)

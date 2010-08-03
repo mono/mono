@@ -1892,7 +1892,7 @@ namespace Mono.CSharp {
 			// Use string.Empty for both literals and constants even if
 			// it's not allowed at language level
 			//
-			if (Value.Length == 0 && RootContext.Optimize && !TypeManager.IsEqual (ec.CurrentType, TypeManager.string_type)) {
+			if (Value.Length == 0 && RootContext.Optimize && ec.CurrentType != TypeManager.string_type) {
 				if (TypeManager.string_empty == null)
 					TypeManager.string_empty = TypeManager.GetPredefinedField (TypeManager.string_type, "Empty", loc, TypeManager.string_type);
 
@@ -1975,7 +1975,7 @@ namespace Mono.CSharp {
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Type it as string cast
-			if (targetType == TypeManager.object_type || targetType == TypeManager.null_type)
+			if (targetType == TypeManager.object_type || targetType == InternalType.Null)
 				enc.Encode (TypeManager.string_type);
 
 			var ac = targetType as ArrayContainer;

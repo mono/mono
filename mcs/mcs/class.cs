@@ -850,7 +850,7 @@ namespace Mono.CSharp {
 
 				if (fne_resolved.Type.IsInterface) {
 					for (int ii = 0; ii < j; ++ii) {
-						if (TypeManager.IsEqual (fne_resolved.Type, ifaces [ii].Type)) {
+						if (fne_resolved.Type == ifaces [ii].Type) {
 							Report.Error (528, Location, "`{0}' is already listed in interface list",
 								fne_resolved.GetSignatureForError ());
 							break;
@@ -954,7 +954,7 @@ namespace Mono.CSharp {
 					if (o_b == null || o_b.OperatorType != matching_type)
 						continue;
 
-					if (!TypeManager.IsEqual (o_a.ReturnType, o_b.ReturnType))
+					if (!TypeSpecComparer.Default.IsEqual (o_a.ReturnType, o_b.ReturnType))
 						continue;
 
 					if (!TypeSpecComparer.Default.Equals (o_a.ParameterTypes, o_b.ParameterTypes))
@@ -2022,7 +2022,7 @@ namespace Mono.CSharp {
 			var ifaces = spec.Interfaces;
 			if (ifaces != null) {
 				foreach (TypeSpec t in ifaces){
-					if (TypeManager.IsEqual (t, mb.InterfaceType))
+					if (t == mb.InterfaceType)
 						return true;
 				}
 			}
