@@ -39,6 +39,9 @@ namespace System.Collections.Concurrent
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class BlockingCollection<T> : IEnumerable<T>, ICollection, IEnumerable, IDisposable
 	{
+		const int sleepTime = 50;
+		const int spinCount = 5;
+
 		readonly IProducerConsumerCollection<T> underlyingColl;
 		readonly int upperBound;
 
@@ -47,6 +50,9 @@ namespace System.Collections.Concurrent
 
 		long addId = long.MinValue;
 		long removeId = long.MinValue;
+
+		ManualResetEventSlim mreAdd = new ManualResetEventSlim (true);
+		ManualResetEventSlim mreRemove = new ManualResetEventSlim (true);
 
 		#region ctors
 		public BlockingCollection ()
@@ -90,7 +96,11 @@ namespace System.Collections.Concurrent
 
 				if (upperBound != -1) {
 					if (cachedAddId - cachedRemoveId > upperBound) {
-						sw.SpinOnce ();
+						if (sw.Count <= spinCount)
+							sw.SpinOnce ();
+						else if (mreRemove.Wait (sleepTime))
+							mreRemove.Reset ();
+
 						continue;
 					}
 				}
@@ -107,6 +117,9 @@ namespace System.Collections.Concurrent
 
 			if (!underlyingColl.TryAdd (item))
 				throw new InvalidOperationException ("The underlying collection didn't accept the item.");
+
+			if (!mreAdd.IsSet)
+				mreAdd.Set ();
 		}
 
 		public T Take ()
@@ -129,8 +142,11 @@ namespace System.Collections.Concurrent
 					if (IsCompleted)
 						throw new OperationCanceledException ("The BlockingCollection<T> has"
 						                                      + " been marked as complete with regards to additions.");
+					if (sw.Count <= spinCount)
+						sw.SpinOnce ();
+					else if (mreAdd.Wait (sleepTime))
+						mreAdd.Reset ();
 
-					sw.SpinOnce ();
 					continue;
 				}
 
@@ -140,6 +156,9 @@ namespace System.Collections.Concurrent
 
 			T item;
 			while (!underlyingColl.TryTake (out item));
+
+			if (!mreRemove.IsSet)
+				mreRemove.Set ();
 
 			return item;
 		}
@@ -173,6 +192,9 @@ namespace System.Collections.Concurrent
 
 				if (!underlyingColl.TryAdd (item))
 					throw new InvalidOperationException ("The underlying collection didn't accept the item.");
+
+				if (!mreAdd.IsSet)
+					mreAdd.Set ();
 
 				return true;
 			} while (contFunc != null && contFunc ());
