@@ -87,10 +87,14 @@ run-test-lib: test-local
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(test_assemblies) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	$(TEST_HARNESS_POSTPROC) ; $$ok
 
+## Instructs compiler to compile to target .net execution, it can be usefull in rare cases when runtime detection is not possible
+run-test-ondotnet-lib: LOCAL_TEST_COMPILER_ONDOTNET_FLAGS:=-d:RUN_ONDOTNET
 run-test-ondotnet-lib: test-local
 	ok=:; \
 	$(TEST_HARNESS) $(test_assemblies) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(TEST_HARNESS_OUTPUT_ONDOTNET) -xml=TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
 	$(TEST_HARNESS_POSTPROC_ONDOTNET) ; $$ok
+	
+
 endif # test_assemblies
 
 TEST_FILES =
@@ -102,7 +106,7 @@ endif
 ifdef HAVE_CS_TESTS
 
 $(test_lib): $(the_assembly) $(test_response) $(test_nunit_dep)
-	$(TEST_COMPILE) -target:library -out:$@ $(test_flags) @$(test_response)
+	$(TEST_COMPILE) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 $(test_response): $(test_sourcefile)
 	@echo Creating $@ ...

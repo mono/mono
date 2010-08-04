@@ -58,10 +58,9 @@ namespace MonoCasTests.System.Diagnostics {
 			int ln = sf.GetFileLineNumber ();
 			int il = sf.GetILOffset ();
 			int no = sf.GetNativeOffset ();
-#if NET_2_0
-			// this throws in 1.x
+
 			Assert.IsNotNull (sf.GetMethod (), "GetMethod");
-#endif
+
 			if (checkFile) {
 				string fn = sf.GetFileName ();
 			}
@@ -74,16 +73,11 @@ namespace MonoCasTests.System.Diagnostics {
 			StackFrame sf = new StackFrame ();
 			Check (sf, true);
 		}
-
+		
+#if !RUN_ONDOTNET || NET_4_0 // Disabled because .net 2 fails to load dll with "Failure decoding embedded permission set object" due to "/" path
 		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
-#else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
-#endif
-#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void StackFrame_TrueConstructor_Fail ()
 		{
 			StackFrame sf = null;
@@ -101,17 +95,98 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "C:\\")]
-#else
 		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "/")]
-#endif
 		public void StackFrame_TrueConstructor_Pass ()
 		{
 			// ask file info
 			StackFrame sf = new StackFrame (true);
 			Check (sf, true);
 		}
+		
+		[Test]
+		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
+		[ExpectedException (typeof (SecurityException))]
+		public void StackFrame_IntTrueConstructor_Fail ()
+		{
+			StackFrame sf = null;
+			try {
+				// ask for file informations
+				sf = new StackFrame (0, true);
+				Check (sf, false);
+			}
+			catch {
+				Assert.Fail ("Didn't ask for file information");
+			}
+			// now look at the file informations...
+			// note: only fails under 2.0
+			Check (sf, true);
+		}
+
+		[Test]
+		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "/")]
+		public void StackFrame_IntTrueConstructor_Pass ()
+		{
+			// ask file info
+			StackFrame sf = new StackFrame (0, true);
+			Check (sf, true);
+		}
+		
+		[Test]
+		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
+		[ExpectedException (typeof (SecurityException))]
+		public void StackFrame_StringIntConstructor_Fail ()
+		{
+			StackFrame sf = null;
+			try {
+				// ask for file informations
+				sf = new StackFrame ("mono.cs", 1);
+				Check (sf, false);
+			}
+			catch {
+				Assert.Fail ("Didn't ask for file information");
+			}
+			// now look at the file informations...
+			// note: only fails under 2.0
+			Check (sf, true);
+		}
+
+		[Test]
+		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "/")]
+		public void StackFrame_StringIntConstructor_Pass ()
+		{
+			// supply file info
+			StackFrame sf = new StackFrame ("mono.cs", 1);
+			Check (sf, true);
+		}
+
+		[Test]
+		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
+		[ExpectedException (typeof (SecurityException))]
+		public void StackFrame_StringIntIntConstructor_Fail ()
+		{
+			StackFrame sf = null;
+			try {
+				// supply file info
+				sf = new StackFrame ("mono.cs", 1, 1);
+				Check (sf, false);
+			}
+			catch {
+				Assert.Fail ("Didn't ask for file information");
+			}
+			// now look at the file informations...
+			// note: only fails under 2.0
+			Check (sf, true);
+		}
+
+		[Test]
+		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "/")]
+		public void StackFrame_StringIntIntConstructor_Pass ()
+		{
+			// supply file info
+			StackFrame sf = new StackFrame ("mono.cs", 1, 1);
+			Check (sf, true);
+		}		
+#endif		
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
@@ -131,125 +206,11 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
-#else
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
-#endif
-#if NET_2_0
-		[ExpectedException (typeof (SecurityException))]
-#endif
-		public void StackFrame_IntTrueConstructor_Fail ()
-		{
-			StackFrame sf = null;
-			try {
-				// ask for file informations
-				sf = new StackFrame (0, true);
-				Check (sf, false);
-			}
-			catch {
-				Assert.Fail ("Didn't ask for file information");
-			}
-			// now look at the file informations...
-			// note: only fails under 2.0
-			Check (sf, true);
-		}
-
-		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "C:\\")]
-#else
-		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "/")]
-#endif
-		public void StackFrame_IntTrueConstructor_Pass ()
-		{
-			// ask file info
-			StackFrame sf = new StackFrame (0, true);
-			Check (sf, true);
-		}
-
-		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void StackFrame_IntFalseConstructor ()
 		{
 			// DO NOT ask for file informations
 			StackFrame sf = new StackFrame (1, false);
-			Check (sf, true);
-		}
-
-		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
-#else
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
-#endif
-#if NET_2_0
-		[ExpectedException (typeof (SecurityException))]
-#endif
-		public void StackFrame_StringIntConstructor_Fail ()
-		{
-			StackFrame sf = null;
-			try {
-				// ask for file informations
-				sf = new StackFrame ("mono.cs", 1);
-				Check (sf, false);
-			}
-			catch {
-				Assert.Fail ("Didn't ask for file information");
-			}
-			// now look at the file informations...
-			// note: only fails under 2.0
-			Check (sf, true);
-		}
-
-		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "C:\\")]
-#else
-		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "/")]
-#endif
-		public void StackFrame_StringIntConstructor_Pass ()
-		{
-			// supply file info
-			StackFrame sf = new StackFrame ("mono.cs", 1);
-			Check (sf, true);
-		}
-
-		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
-#else
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
-#endif
-#if NET_2_0
-		[ExpectedException (typeof (SecurityException))]
-#endif
-		public void StackFrame_StringIntIntConstructor_Fail ()
-		{
-			StackFrame sf = null;
-			try {
-				// supply file info
-				sf = new StackFrame ("mono.cs", 1, 1);
-				Check (sf, false);
-			}
-			catch {
-				Assert.Fail ("Didn't ask for file information");
-			}
-			// now look at the file informations...
-			// note: only fails under 2.0
-			Check (sf, true);
-		}
-
-		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "C:\\")]
-#else
-		[FileIOPermission (SecurityAction.PermitOnly, PathDiscovery = "/")]
-#endif
-		public void StackFrame_StringIntIntConstructor_Pass ()
-		{
-			// supply file info
-			StackFrame sf = new StackFrame ("mono.cs", 1, 1);
 			Check (sf, true);
 		}
 	}
