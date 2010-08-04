@@ -53,12 +53,12 @@ namespace System.Web
 			Exception ex = null;
 			
 			try {
-				HttpRuntimeSection config;
-
-				config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
-				minFree = config.MinFreeThreads;
-				minLocalFree = config.MinLocalRequestFreeThreads;
-				queueLimit = config.AppRequestQueueLimit;
+				HttpRuntimeSection config = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
+				if (config != null) {
+					minFree = config.MinFreeThreads;
+					minLocalFree = config.MinLocalRequestFreeThreads;
+					queueLimit = config.AppRequestQueueLimit;
+				}
 			} catch (Exception e) {
 				ex = e;
 			}
