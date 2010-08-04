@@ -42,18 +42,64 @@ namespace System.Web.UI.WebControls {
 		public void RenderRepeater (HtmlTextWriter w, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
 		{
 			PrintValues (user);
+#if NET_4_0
+			RepeatLayout layout = RepeatLayout;
+			bool listLayout = layout == RepeatLayout.OrderedList || layout == RepeatLayout.UnorderedList;
 
-			if (RepeatDirection == RepeatDirection.Vertical)
-				RenderVert (w, user, controlStyle, baseControl);
-			else
+			if (listLayout) {
+				if (user != null) {
+					if ((user.HasHeader || user.HasFooter || user.HasSeparators))
+						throw new InvalidOperationException ("The UnorderedList and OrderedList layouts do not support headers, footers or separators.");
+				}
+
+				if (OuterTableImplied)
+					throw new InvalidOperationException ("The UnorderedList and OrderedList layouts do not support implied outer tables.");
+
+				int cols = RepeatColumns;
+				if (cols > 1)
+					throw new InvalidOperationException ("The UnorderedList and OrderedList layouts do not support multi-column layouts.");
+			}
+#endif
+			if (RepeatDirection == RepeatDirection.Vertical) {
+#if NET_4_0
+				if (listLayout)
+					RenderList (w, user, controlStyle, baseControl);
+				else
+#endif
+					RenderVert (w, user, controlStyle, baseControl);
+			} else {
+#if NET_4_0
+				if (listLayout)
+						throw new InvalidOperationException ("The UnorderedList and OrderedList layouts only support vertical layout.");
+#endif
 				RenderHoriz (w, user, controlStyle, baseControl);
+			}
 		}
 
 		void RenderBr (HtmlTextWriter w)
 		{
 			w.Write ("<br />");
 		}
+#if NET_4_0
+		void RenderList (HtmlTextWriter w, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
+		{
+			int items = user.RepeatedItemCount;
+			RenderBeginTag (w, controlStyle, baseControl);
 
+			for (int i = 0; i < items; i++) {
+				// Style s = null;
+				// s = user.GetItemStyle (ListItemType.Item, i);
+				// if (s != null)
+				// 	s.AddAttributesToRender (w);
+				w.RenderBeginTag (HtmlTextWriterTag.Li);
+				user.RenderItem (ListItemType.Item, i, this, w);
+				w.RenderEndTag (); // </li>
+				w.WriteLine ();
+			}
+			
+			w.RenderEndTag ();
+		}
+#endif
 		void RenderVert (HtmlTextWriter w, IRepeatInfoUser user, Style controlStyle, WebControl baseControl) 
 		{
 			int itms = user.RepeatedItemCount;
@@ -382,10 +428,26 @@ namespace System.Web.UI.WebControls {
 		void RenderBeginTag (HtmlTextWriter w, Style s, WebControl wc)
 		{
 			WebControl c;
-			if (RepeatLayout == RepeatLayout.Table)
-				c = new Table ();
-			else
-				c = new Label ();
+			switch (RepeatLayout) {	
+				case RepeatLayout.Table:
+					c = new Table ();
+					break;
+					
+				case RepeatLayout.Flow:
+					c = new Label ();
+					break;
+#if NET_4_0
+				case RepeatLayout.OrderedList:
+					c = new WebControl (HtmlTextWriterTag.Ol);
+					break;
+
+				case RepeatLayout.UnorderedList:
+					c = new WebControl (HtmlTextWriterTag.Ul);
+					break;
+#endif
+				default:
+					throw new InvalidOperationException (String.Format ("Unsupported RepeatLayout value '{0}'.", RepeatLayout));
+			}
 
 			c.ID = wc.ClientID;
 			c.CopyBaseAttributes (wc);
@@ -435,8 +497,13 @@ namespace System.Web.UI.WebControls {
 				return layout;
 			}
 			set {
-				if (value != RepeatLayout.Flow &&
-				    value != RepeatLayout.Table)
+				bool outOfRange;
+#if NET_4_0
+				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.OrderedList;
+#else
+				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.Flow;
+#endif
+				if (outOfRange)
 					throw new ArgumentOutOfRangeException ();	
 				layout = value;
 			}
