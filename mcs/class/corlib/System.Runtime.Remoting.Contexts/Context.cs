@@ -67,7 +67,11 @@ namespace System.Runtime.Remoting.Contexts {
 		bool frozen;
 		
 		static int global_count;
-		static Hashtable namedSlots = new Hashtable ();
+
+		/* Wrap this in a nested class so its not constructed during shutdown */
+		class NamedSlots {
+			public static Hashtable namedSlots = new Hashtable ();
+		}
 
 		static DynamicPropertyCollection global_dynamic_properties;
 		DynamicPropertyCollection context_dynamic_properties;
@@ -354,19 +358,19 @@ namespace System.Runtime.Remoting.Contexts {
 		
 		public static LocalDataStoreSlot AllocateNamedDataSlot (string name)
 		{
-			lock (namedSlots.SyncRoot)
+			lock (NamedSlots.namedSlots.SyncRoot)
 			{
 				LocalDataStoreSlot slot = AllocateDataSlot ();
-				namedSlots.Add (name, slot);
+				NamedSlots.namedSlots.Add (name, slot);
 				return slot;
 			}
 		}
 		
 		public static void FreeNamedDataSlot (string name)
 		{
-			lock (namedSlots.SyncRoot)
+			lock (NamedSlots.namedSlots.SyncRoot)
 			{
-				namedSlots.Remove (name);
+				NamedSlots.namedSlots.Remove (name);
 			}
 		}
 		
@@ -384,9 +388,9 @@ namespace System.Runtime.Remoting.Contexts {
 		
 		public static LocalDataStoreSlot GetNamedDataSlot (string name)
 		{
-			lock (namedSlots.SyncRoot)
+			lock (NamedSlots.namedSlots.SyncRoot)
 			{
-				LocalDataStoreSlot slot = namedSlots [name] as LocalDataStoreSlot;
+				LocalDataStoreSlot slot = NamedSlots.namedSlots [name] as LocalDataStoreSlot;
 				if (slot == null) return AllocateNamedDataSlot (name);
 				else return slot;
 			}
