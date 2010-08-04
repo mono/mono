@@ -516,8 +516,8 @@ namespace Mono.CSharp
 			flags |= ec.HasSet (ResolveContext.Options.CheckedScope) ? CSharpBinderFlags.CheckedContext : 0;
 
 			binder_args.Add (new Argument (new BinderFlags (flags, this)));
-			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));						
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			return new Invocation (GetBinder ("Convert", loc), binder_args);
 		}
 	}
