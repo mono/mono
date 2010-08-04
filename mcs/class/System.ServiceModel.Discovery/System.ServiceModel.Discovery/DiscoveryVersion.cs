@@ -36,9 +36,9 @@ namespace System.ServiceModel.Discovery
 	{
 		static DiscoveryVersion ()
 		{
-			v11 = new DiscoveryVersion ("WSDiscovery11");
-			april2005 = new DiscoveryVersion ("WSDiscoveryApril2005");
-			cd1 = new DiscoveryVersion ("WSDiscoveryCD1");
+			v11 = new DiscoveryVersion ("WSDiscovery11", "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01", "urn:docs-oasis-open-org:ws-dd:ns:discovery:2009:01", MessageVersion.Soap12WSAddressing10);
+			april2005 = new DiscoveryVersion ("WSDiscoveryApril2005", "http://schemas.xmlsoap.org/ws/2005/04/discovery", "urn:schemas-xmlsoap-org:ws:2005:04:discovery", MessageVersion.Soap12WSAddressingAugust2004);
+			cd1 = new DiscoveryVersion ("WSDiscoveryCD1", "http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09", "urn:docs-oasis-open-org:ws-dd:discovery:2008:09", MessageVersion.Soap12WSAddressingAugust2004);
 		}
 
 		static readonly DiscoveryVersion v11, april2005, cd1;
@@ -71,9 +71,12 @@ namespace System.ServiceModel.Discovery
 			}
 		}
 
-		internal DiscoveryVersion (string name)
+		internal DiscoveryVersion (string name, string ns, string adhoc, MessageVersion version)
 		{
 			this.Name = name;
+			this.Namespace = ns;
+			AdhocAddress = new Uri (adhoc);
+			MessageVersion = version;
 		}
 
 		public Uri AdhocAddress { get; private set; }

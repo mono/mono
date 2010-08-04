@@ -33,21 +33,16 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace System.ServiceModel.Discovery.VersionCD1
+namespace System.ServiceModel.Discovery.Version11
 {
-	public class DiscoveryMessageSequence11 : IXmlSerializable
+	public class EndpointDiscoveryMetadata11 : IXmlSerializable
 	{
-		public static DiscoveryMessageSequence11 FromDiscoveryMessageSequence (DiscoveryMessageSequence discoveryMessageSequence)
+		public static EndpointDiscoveryMetadata11 FromEndpointDiscoveryMetadata (EndpointDiscoveryMetadata endpointDiscoveryMetadata)
 		{
 			throw new NotImplementedException ();
 		}
 
 		public static XmlQualifiedName GetSchema (XmlSchemaSet schemaSet)
-		{
-			throw new NotImplementedException ();
-		}
-
-		internal DiscoveryMessageSequence11 ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -62,7 +57,7 @@ namespace System.ServiceModel.Discovery.VersionCD1
 			throw new NotImplementedException ();
 		}
 
-		public DiscoveryMessageSequence ToDiscoveryMessageSequence ()
+		public EndpointDiscoveryMetadata ToEndpointDiscoveryMetadata ()
 		{
 			throw new NotImplementedException ();
 		}

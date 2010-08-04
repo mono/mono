@@ -35,9 +35,9 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Discovery.VersionCD1
 {
-	public class EndpointDiscoveryMetadata11 : IXmlSerializable
+	public class EndpointDiscoveryMetadataCD1 : IXmlSerializable
 	{
-		public static EndpointDiscoveryMetadata11 FromEndpointDiscoveryMetadata (EndpointDiscoveryMetadata endpointDiscoveryMetadata)
+		public static EndpointDiscoveryMetadataCD1 FromEndpointDiscoveryMetadata (EndpointDiscoveryMetadata endpointDiscoveryMetadata)
 		{
 			throw new NotImplementedException ();
 		}

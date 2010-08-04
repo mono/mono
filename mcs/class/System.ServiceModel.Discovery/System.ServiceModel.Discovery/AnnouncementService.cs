@@ -8,11 +8,11 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Discovery
 {
-	[MonoTODO]
 	[ServiceBehavior (InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
 	public class AnnouncementService
 	{
 		public AnnouncementService ()
+			: this (0)
 		{
 		}
 

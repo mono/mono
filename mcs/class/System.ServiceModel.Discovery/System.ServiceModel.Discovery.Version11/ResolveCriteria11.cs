@@ -33,11 +33,11 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace System.ServiceModel.Discovery.VersionCD1
+namespace System.ServiceModel.Discovery.Version11
 {
-	public class FindCriteria11 : IXmlSerializable
+	public class ResolveCriteria11 : IXmlSerializable
 	{
-		public static FindCriteria11 FromFindCriteria (FindCriteria findCriteria)
+		public static ResolveCriteria11 FromResolveCriteria (ResolveCriteria resolveCriteria)
 		{
 			throw new NotImplementedException ();
 		}
@@ -57,7 +57,7 @@ namespace System.ServiceModel.Discovery.VersionCD1
 			throw new NotImplementedException ();
 		}
 
-		public FindCriteria ToFindCriteria ()
+		public ResolveCriteria ToResolveCriteria ()
 		{
 			throw new NotImplementedException ();
 		}
