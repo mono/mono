@@ -6,6 +6,7 @@ import re
 import os.path
 import fnmatch
 import os
+import sys
 
 # subtract 8 for the leading tabstop
 fill_column = 74 - 8
@@ -15,7 +16,12 @@ path_to_root = None
 all_changelogs = {}
 
 def git (command, *args):
-    return subprocess.Popen (["git", command] + list (args), stdout = subprocess.PIPE).communicate () [0]
+    popen = subprocess.Popen (["git", command] + list (args), stdout = subprocess.PIPE)
+    output = popen.communicate () [0]
+    if popen.returncode != 0:
+        print >> sys.stderr, "Error: git failed"
+        exit (1)
+    return output
 
 def changelog_path (changelog):
     global path_to_root
