@@ -101,10 +101,10 @@ namespace System.Web.Configuration
 			return prov.Extension;
 		}
 
-		internal global::System.Web.Compilation.BuildProvider GetProviderInstanceForExtension (string extension)
+		internal Type GetProviderTypeForExtension (string extension)
 		{
 #if NET_4_0
-			return global::System.Web.Compilation.BuildProvider.GetProviderInstanceForExtension (extension);
+			return global::System.Web.Compilation.BuildProvider.GetProviderTypeForExtension (extension);
 #else
 			if (String.IsNullOrEmpty (extension))
 				return null;
@@ -116,7 +116,20 @@ namespace System.Web.Configuration
 			Type type = HttpApplication.LoadType (provider.Type);
 			if (type == null)
 				return null;
-				
+
+			return type;
+#endif
+		}
+		
+		internal global::System.Web.Compilation.BuildProvider GetProviderInstanceForExtension (string extension)
+		{
+#if NET_4_0
+			return global::System.Web.Compilation.BuildProvider.GetProviderInstanceForExtension (extension);
+#else
+			Type type = GetProviderTypeForExtension (extension);
+			if (type == null)
+				return null;
+			
 			return Activator.CreateInstance (type, null) as global::System.Web.Compilation.BuildProvider;
 #endif
 		}
