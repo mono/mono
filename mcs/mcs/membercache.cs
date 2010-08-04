@@ -242,6 +242,12 @@ namespace Mono.CSharp {
 						member_hash[entry.Key] = list;
 				}
 			}
+
+			// Add also all base interfaces
+			if (iface.Interfaces != null) {
+				foreach (var base_iface in iface.Interfaces)
+					AddInterface (base_iface);
+			}
 		}
 
 		public void AddMember (InterfaceMemberBase imb, string exlicitName, MemberSpec ms)

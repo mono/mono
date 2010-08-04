@@ -40907,6 +40907,22 @@
       </method>
     </type>
   </test>
+  <test name="test-791.cs">
+    <type name="testApp.TestApp">
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>12</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>68</size>
+      </method>
+      <method name="Boolean GetEnumerator()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-8.cs">
     <type name="X">
       <method name="Void .ctor()">

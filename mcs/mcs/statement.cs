@@ -5282,6 +5282,7 @@ namespace Mono.CSharp {
 			Statement statement;
 			Expression var_type;
 			ExpressionStatement init;
+			bool ambiguous_getenumerator_name;
 
 			public CollectionForeach (Expression var_type, Expression var,
 						  Expression expr, Statement stmt, Location l)
@@ -5306,14 +5307,6 @@ namespace Mono.CSharp {
 						enumerator.ReturnType.GetSignatureForError (), enumerator.GetSignatureForError ());
 			}
 
-			void Error_AmbiguousIEnumerable (ResolveContext rc, TypeSpec type)
-			{
-				rc.Report.SymbolRelatedToPreviousError (type);
-				rc.Report.Error (1640, loc,
-					"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
-					type.GetSignatureForError (), TypeManager.generic_ienumerable_type.GetSignatureForError ());
-			}
-
 			MethodGroupExpr ResolveGetEnumerator (ResolveContext rc)
 			{
 				//
@@ -5326,6 +5319,10 @@ namespace Mono.CSharp {
 					mg.InstanceExpression = expr;
 					Arguments args = new Arguments (0);
 					mg = mg.OverloadResolve (rc, ref args, this, OverloadResolver.Restrictions.None);
+
+					// For ambiguous GetEnumerator name warning CS0278 was reported, but Option 2 could still apply
+					if (ambiguous_getenumerator_name)
+						mg = null;
 
 					if (mg != null && args.Count == 0 && !mg.BestCandidate.IsStatic && mg.BestCandidate.IsPublic) {
 						return mg;
@@ -5342,7 +5339,11 @@ namespace Mono.CSharp {
 						foreach (var iface in ifaces) {
 							if (TypeManager.generic_ienumerable_type != null && iface.MemberDefinition == TypeManager.generic_ienumerable_type.MemberDefinition) {
 								if (iface_candidate != null && iface_candidate != TypeManager.ienumerable_type) {
-									Error_AmbiguousIEnumerable (rc, expr.Type);
+									rc.Report.SymbolRelatedToPreviousError (expr.Type);
+									rc.Report.Error (1640, loc,
+										"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
+										expr.Type.GetSignatureForError (), TypeManager.generic_ienumerable_type.GetSignatureForError ());
+
 									return null;
 								}
 
@@ -5500,7 +5501,7 @@ namespace Mono.CSharp {
 					expr.Type.GetSignatureForError (), "enumerable",
 					best.GetSignatureForError (), ambiguous.GetSignatureForError ());
 
-				Error_AmbiguousIEnumerable (ec, expr.Type);
+				ambiguous_getenumerator_name = true;
 				return true;
 			}
 
