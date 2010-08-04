@@ -62,7 +62,50 @@ namespace MonoTests.System.Threading
 			t.Start ();
 			t.Join ();
 		}
-		
+
+		[Test]
+		public void InitializeThrowingTest ()
+		{
+			int callTime = 0;
+			threadLocal = new ThreadLocal<int> (() => {
+					Interlocked.Increment (ref callTime);
+					throw new ApplicationException ("foo");
+					return 43;
+				});
+
+			Exception exception = null;
+
+			try {
+				var foo = threadLocal.Value;
+			} catch (Exception e) {
+				exception = e;
+			}
+
+			Assert.IsNotNull (exception, "#1");
+			Assert.IsInstanceOfType (typeof (ApplicationException), exception, "#2");
+			Assert.AreEqual (1, callTime, "#3");
+
+			exception = null;
+
+			try {
+				var foo = threadLocal.Value;
+			} catch (Exception e) {
+				exception = e;
+			}
+
+			Assert.IsNotNull (exception, "#4");
+			Assert.IsInstanceOfType (typeof (ApplicationException), exception, "#5");
+			Assert.AreEqual (1, callTime, "#6");
+		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void MultipleReferenceToValueTest ()
+		{
+			threadLocal = new ThreadLocal<int> (() => threadLocal.Value + 1);
+
+			var value = threadLocal.Value;
+		}
+
 		void AssertThreadLocal ()
 		{
 			Assert.IsFalse (threadLocal.IsValueCreated, "#1");
