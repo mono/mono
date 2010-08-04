@@ -42,7 +42,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return new CSharpBinaryOperationBinder (operation, flags, context, argumentInfo);
 		}
 		
-		public static CallSiteBinder Convert (CSharpBinderFlags flags, Type context, Type type)
+		public static CallSiteBinder Convert (CSharpBinderFlags flags, Type type, Type context)
 		{
 			return new CSharpConvertBinder (type, context, flags);
 		}
