@@ -371,6 +371,25 @@ namespace MonoTests.System.Net.Mail
 			Assert.AreEqual ("<foo@example.com>", server.mail_from);
 			Assert.AreEqual ("<bar@example.com>", server.rcpt_to);
 		}
+
+		[Test]
+		public void Deliver_Envelope ()
+		{
+			var server = new SmtpServer ();
+			var client = new SmtpClient ("localhost", server.EndPoint.Port);
+			var msg = new MailMessage ("foo@example.com", "bar@example.com", "hello", "howdydoo\r\n");
+
+			msg.Sender = new MailAddress ("baz@example.com");
+
+			Thread t = new Thread (server.Run);
+			t.Start ();
+			client.Send (msg);
+			t.Join ();
+
+			Assert.AreEqual ("<baz@example.com>", server.mail_from);
+			Assert.AreEqual ("<bar@example.com>", server.rcpt_to);
+		}
+
 	}
 }
 #endif
