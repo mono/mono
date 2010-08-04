@@ -720,7 +720,73 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					"(TargetB) foo: foofoo1 A:  External: ",
 					"second"});
 		}
+
+		// Check for global properties in case of Import
+
 		[Test]
+		public void TestGlobalPropertiesImport1 ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Target Name=""main"">
+					<MSBuild Projects=""first.proj"" Targets = ""1"" Properties='Prop=test'/>
+				</Target>
+			</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Target Name = ""1"">
+					<Message Text='Prop: $(Prop)'/>
+				</Target>
+				<Import Project='$(Prop).proj'/>
+			</Project>";
+
+			CreateAndCheckGlobalPropertiesImportTest (mainProject, firstProject);
+		}
+
+		[Test]
+		public void TestGlobalPropertiesImport2 ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Target Name=""main"">
+					<MSBuild Projects=""first.proj"" Targets = ""1"" Properties='Prop=test'/>
+				</Target>
+			</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<PropertyGroup>
+					<Prop>invalid</Prop>
+				</PropertyGroup>
+				<Target Name = ""1"">
+					<Message Text='Prop: $(Prop)'/>
+				</Target>
+				<Import Project='$(Prop).proj'/>
+			</Project>";
+
+			CreateAndCheckGlobalPropertiesImportTest (mainProject, firstProject);
+		}
+
+		[Test]
+		public void TestGlobalPropertiesImport3()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Target Name=""main"">
+					<MSBuild Projects=""first.proj"" Targets = ""1""/>
+				</Target>
+			</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<PropertyGroup>
+					<Prop>test</Prop>
+				</PropertyGroup>
+				<Target Name = ""1"">
+					<Message Text='Prop: $(Prop)'/>
+				</Target>
+				<Import Project='$(Prop).proj'/>
+			</Project>";
+
+			CreateAndCheckGlobalPropertiesImportTest (mainProject, firstProject);
+		}
+
+	        [Test]
 		public void TestMSBuildOutputs ()
 		{
 			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">"
@@ -815,6 +881,41 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			Project project = Engine.GlobalEngine.GetLoadedProject("foo.proj");
 			Assert.IsNull(project);
+		}
+
+		void CreateAndCheckGlobalPropertiesImportTest (string main, string first)
+		{
+			string basePath = Path.Combine ("Test", "resources");
+
+			string testProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+</Project>";
+
+			File.WriteAllText (Path.Combine (basePath, "main.proj"), main);
+			File.WriteAllText (Path.Combine (basePath, "first.proj"), first);
+			File.WriteAllText (Path.Combine (basePath, "test.proj"), testProject);
+
+			try {
+				Engine engine = new Engine ();
+				MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+					new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+				engine.RegisterLogger (logger);
+
+				Project project = engine.CreateNewProject ();
+				project.Load (Path.Combine (basePath, "main.proj"));
+
+				bool result = project.Build ();
+				if (!result) {
+					logger.DumpMessages ();
+					Assert.Fail ("Build failed");
+				}
+
+				logger.CheckAny ("Prop: test", MessageImportance.Normal);
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+			} finally {
+				File.Delete (Path.Combine (basePath, "main.proj"));
+				File.Delete (Path.Combine (basePath, "first.proj"));
+				File.Delete (Path.Combine (basePath, "test.proj"));
+			}
 		}
 
 		// Helper Methods for TestGlobalProperties*

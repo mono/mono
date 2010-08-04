@@ -46,7 +46,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public sealed partial class WebMessageEncodingElement
 		 : BindingElementExtensionElement
 	{
@@ -152,10 +151,53 @@ namespace System.ServiceModel.Configuration
 			set { base [web_content_type_mapper_type] = value; }
 		}
 
-		[MonoTODO]
 		protected internal override BindingElement CreateBindingElement ()
 		{
-			throw new NotImplementedException ();
+			var be = new WebMessageEncodingBindingElement ();
+			ApplyConfiguration (be);
+			return be;
+		}
+		
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			base.ApplyConfiguration (bindingElement);
+			var b = (WebMessageEncodingBindingElement) bindingElement;
+			b.ContentTypeMapper = (WebContentTypeMapper) Activator.CreateInstance (Type.GetType (WebContentTypeMapperType), true);
+			b.MaxReadPoolSize = MaxReadPoolSize;
+			b.MaxWritePoolSize = MaxWritePoolSize;
+			b.WriteEncoding = WriteEncoding;
+			ReaderQuotas.ApplyConfiguration (b.ReaderQuotas);
+		}
+
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			base.CopyFrom (from);
+			var c = (WebMessageEncodingElement) from;
+			MaxReadPoolSize = c.MaxReadPoolSize;
+			MaxWritePoolSize = c.MaxWritePoolSize;
+			ReaderQuotas.CopyFrom (c.ReaderQuotas);
+			WriteEncoding = c.WriteEncoding;
+		}
+	}
+	
+	static class Extensions
+	{
+		public static void ApplyConfiguration (this XmlDictionaryReaderQuotasElement e, XmlDictionaryReaderQuotas q)
+		{
+			q.MaxArrayLength = e.MaxArrayLength;
+			q.MaxBytesPerRead = e.MaxBytesPerRead;
+			q.MaxDepth = e.MaxDepth;
+			q.MaxNameTableCharCount = e.MaxNameTableCharCount;
+			q.MaxStringContentLength = e.MaxStringContentLength;
+		}
+
+		public static void CopyFrom (this XmlDictionaryReaderQuotasElement e, XmlDictionaryReaderQuotasElement o)
+		{
+			e.MaxArrayLength = o.MaxArrayLength;
+			e.MaxBytesPerRead = o.MaxBytesPerRead;
+			e.MaxDepth = o.MaxDepth;
+			e.MaxNameTableCharCount = o.MaxNameTableCharCount;
+			e.MaxStringContentLength = o.MaxStringContentLength;
 		}
 	}
 }

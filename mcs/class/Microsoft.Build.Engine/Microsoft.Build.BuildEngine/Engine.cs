@@ -226,11 +226,10 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			Project project;
 
-			if (projects.ContainsKey (projectFile)) {
-				project = (Project) projects [projectFile];
-			} else {
+			bool newProject = false;
+			if (!projects.TryGetValue (projectFile, out project)) {
 				project = CreateNewProject ();
-				project.Load (projectFile);
+				newProject = true;
 			}
 
 			BuildPropertyGroup engine_old_grp = null;
@@ -243,8 +242,13 @@ namespace Microsoft.Build.BuildEngine {
 				// ones explicitlcur_y specified here
 				foreach (BuildProperty bp in globalProperties)
 					project.GlobalProperties.AddProperty (bp);
-				project.NeedToReevaluate ();
+
+				if (!newProject)
+					project.NeedToReevaluate ();
 			}
+
+			if (newProject)
+				project.Load (projectFile);
 
 			try {
 				string oldProjectToolsVersion = project.ToolsVersion;

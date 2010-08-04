@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net.NetworkInformation;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -34,22 +35,23 @@ namespace System.ServiceModel.Discovery
 {
 	public class UdpDiscoveryEndpoint : DiscoveryEndpoint
 	{
-		[MonoTODO]
-		public static readonly Uri DefaultIPv4MulticastAddress;
-		[MonoTODO]
-		public static readonly Uri DefaultIPv6MulticastAddress;
+		public static readonly Uri DefaultIPv4MulticastAddress = new Uri ("soap.udp://239.255.255.250:3702/");
+		public static readonly Uri DefaultIPv6MulticastAddress = new Uri ("soap.udp://[FF02:0000:0000:0000:0000:0000:0000:000C]:3702/");
 
+		internal static Uri DefaultAddress {
+			get { return IPGlobalProperties.GetIPGlobalProperties ().GetIPv4GlobalStatistics ().NumberOfInterfaces == 0 ? DefaultIPv6MulticastAddress : DefaultIPv4MulticastAddress; }
+		}
+		
 		// (1)->(2)
 		public UdpDiscoveryEndpoint ()
 			: this (DiscoveryVersion.WSDiscovery11)
 		{
 		}
 
-		// (2), everything falls to here.
+		// (2)->(6)
 		public UdpDiscoveryEndpoint (DiscoveryVersion discoveryVersion)
-			: base (discoveryVersion, ServiceDiscoveryMode.Adhoc)
+			: this (discoveryVersion, DefaultIPv4MulticastAddress)
 		{
-			TransportSettings = new UdpTransportSettings ();
 		}
 
 		// (3)->(4)
@@ -70,10 +72,11 @@ namespace System.ServiceModel.Discovery
 		{
 		}
 
-		// (6)->(2)
+		// (6), everything falls to here.
 		public UdpDiscoveryEndpoint (DiscoveryVersion discoveryVersion, Uri multicastAddress)
 			: this (discoveryVersion)
 		{
+			TransportSettings = new UdpTransportSettings ();
 			MulticastAddress = multicastAddress;
 		}
 

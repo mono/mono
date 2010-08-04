@@ -46,7 +46,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public partial class WebHttpBindingElement
 		 : StandardBindingElement,  IBindingConfigurationElement
 	{
@@ -135,6 +134,10 @@ namespace System.ServiceModel.Configuration
 		{
 		}
 
+		public WebHttpBindingElement (string name)
+		{
+			this.Name = name;
+		}
 
 		// Properties
 
@@ -273,7 +276,26 @@ namespace System.ServiceModel.Configuration
 			webBinding.UseDefaultWebProxy = UseDefaultWebProxy;
 			webBinding.WriteEncoding = WriteEncoding;
 
-			Security.ApplyConfiguration(webBinding.Security);
+			Security.ApplyConfiguration (webBinding.Security);
+		}
+
+		protected override void InitializeFrom (Binding binding)
+		{
+			WebHttpBinding b = (WebHttpBinding)binding;
+			
+			AllowCookies = b.AllowCookies;
+			BypassProxyOnLocal = b.BypassProxyOnLocal;
+			HostNameComparisonMode = b.HostNameComparisonMode;
+			MaxBufferPoolSize = b.MaxBufferPoolSize;
+			MaxBufferSize = b.MaxBufferSize;
+			MaxReceivedMessageSize = b.MaxReceivedMessageSize;
+			if(ProxyAddress != null)
+				 ProxyAddress = b.ProxyAddress;
+			TransferMode = b.TransferMode;
+			UseDefaultWebProxy = b.UseDefaultWebProxy;
+			WriteEncoding = b.WriteEncoding;
+
+			Security.InitializeFrom (b.Security);
 		}
 	}
 

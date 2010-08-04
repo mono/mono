@@ -45,18 +45,14 @@ namespace System.ServiceModel.Discovery
 		public long MessageNumber { get; private set; }
 		public Uri SequenceId { get; private set; }
 
-		[MonoTODO]
 		public bool CanCompareTo (DiscoveryMessageSequence other)
 		{
-			if (other == null)
-				return false;
-			return InstanceId == other.InstanceId && SequenceId.Equals (other.SequenceId);
+			return other != null; // I cannot find any other conditions that return false.
 		}
 
-		[MonoTODO]
 		public int CompareTo (DiscoveryMessageSequence other)
 		{
-			throw new NotImplementedException ();
+			return CanCompareTo (other) ? GetHashCode () - other.GetHashCode () : -1;
 		}
 
 		public bool Equals (DiscoveryMessageSequence other)
@@ -64,7 +60,7 @@ namespace System.ServiceModel.Discovery
 			if (other == null)
 				return false;
 			return  InstanceId == other.InstanceId &&
-				SequenceId.Equals (other.SequenceId) &&
+				(SequenceId == null && other.SequenceId == null || SequenceId.Equals (other.SequenceId)) &&
 				MessageNumber == other.MessageNumber;
 		}
 
@@ -74,16 +70,14 @@ namespace System.ServiceModel.Discovery
 			return s != null && Equals (s);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return (int) ((InstanceId * (SequenceId != null ? SequenceId.GetHashCode () : 1) << 17) + MessageNumber);
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return String.Format ("InstanceId={0}, SequenceId={1}, MessageNumber={2}", InstanceId, SequenceId, MessageNumber);
 		}
 
 		public static bool operator == (DiscoveryMessageSequence messageSequence1, DiscoveryMessageSequence messageSequence2)

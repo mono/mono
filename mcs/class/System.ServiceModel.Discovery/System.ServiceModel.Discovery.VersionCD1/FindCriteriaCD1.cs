@@ -29,30 +29,42 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-namespace System.ServiceModel.Discovery
+namespace System.ServiceModel.Discovery.VersionCD1
 {
-	public class DiscoveryMessageSequenceGenerator
+	public class FindCriteriaCD1 : IXmlSerializable
 	{
-		static readonly Random rnd = new Random ();
-
-		public DiscoveryMessageSequenceGenerator ()
-			: this (AppDomain.CurrentDomain.Id, null) // not sure what should be used for instanceId; multiple instances share the same Id
+		public static FindCriteriaCD1 FromFindCriteria (FindCriteria findCriteria)
 		{
+			throw new NotImplementedException ();
 		}
 
-		public DiscoveryMessageSequenceGenerator (long instanceId, Uri sequenceId)
+		public static XmlQualifiedName GetSchema (XmlSchemaSet schemaSet)
 		{
-			instance_id = instanceId;
-			sequence_id = sequenceId;
+			throw new NotImplementedException ();
 		}
 
-		long instance_id, message_count;
-		Uri sequence_id;
-
-		public DiscoveryMessageSequence Next ()
+		public XmlSchema GetSchema ()
 		{
-			return new DiscoveryMessageSequence (instance_id, sequence_id, ++message_count);
+			throw new NotImplementedException ();
+		}
+
+		public void ReadXml (XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public FindCriteria ToFindCriteria ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void WriteXml (XmlWriter writer)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

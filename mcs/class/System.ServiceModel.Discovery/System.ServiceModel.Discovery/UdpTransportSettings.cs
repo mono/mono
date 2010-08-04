@@ -36,6 +36,14 @@ namespace System.ServiceModel.Discovery
 	{
 		internal UdpTransportSettings ()
 		{
+			DuplicateMessageHistoryLength = 4112;
+			MaxBufferPoolSize = 0x80000;
+			MaxMulticastRetransmitCount = 2;
+			MaxPendingMessageCount = 32;
+			MaxReceivedMessageSize = 0xFFE7;
+			MaxUnicastRetransmitCount = 1;
+			SocketReceiveBufferSize = 0x10000;
+			TimeToLive = 1;
 		}
 
 		public int DuplicateMessageHistoryLength { get; set; }

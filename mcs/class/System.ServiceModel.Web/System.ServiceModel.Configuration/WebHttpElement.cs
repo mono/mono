@@ -46,7 +46,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public sealed partial class WebHttpElement
 		 : BehaviorExtensionElement
 	{
