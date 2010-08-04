@@ -247,6 +247,12 @@ def main ():
         global path_to_root
         path_to_root = options.root + "/"
 
+    #see if git supports %B in --format
+    output = git ("log", "-n1", "--format=%B", "HEAD")
+    if output.startswith ("%B"):
+        print >> sys.stderr, "Error: git doesn't support %B in --format - install version 1.7.2 or newer"
+        exit (1)
+
     for filename in git ("ls-tree", "-r", "--name-only", "HEAD").splitlines ():
         if re.search ("(^|/)Change[Ll]og$", filename):
             (path, name) = os.path.split (filename)
