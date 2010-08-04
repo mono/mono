@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Threading
 {
 	[TestFixtureAttribute]
-	public class ThreadLazyTests
+	public class ThreadLocalTests
 	{
 		ThreadLocal<int> threadLocal;
 		int nTimes;

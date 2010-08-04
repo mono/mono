@@ -449,6 +449,6 @@ System.Threading/ManualResetEventSlimTests.cs
 System.Threading/SemaphoreSlimTests.cs
 System.Threading/CountdownEventTests.cs
 System/AggregateExceptionTests.cs
-System.Threading/ThreadLazyTests.cs
+System.Threading/ThreadLocalTests.cs
 System.Threading/SpinLockTests.cs
 
