@@ -203,6 +203,18 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (Base), parm.Member.DeclaringType);
 		}
 
+		[Test]
+		public void ArrayMethodParameters ()
+		{
+			var matrix_int_get = typeof (int[,,]).GetMethod ("Get");
+			var parameters = matrix_int_get.GetParameters ();
+
+			Assert.AreEqual (3, parameters.Length);
+			Assert.AreEqual (0, parameters [0].GetCustomAttributes (false).Length);
+			Assert.AreEqual (0, parameters [1].GetCustomAttributes (false).Length);
+			Assert.AreEqual (0, parameters [2].GetCustomAttributes (false).Length);
+		}
+
 		class Base
 		{
 			public void SomeMethod( int x )
