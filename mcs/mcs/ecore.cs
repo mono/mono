@@ -3697,11 +3697,7 @@ namespace Mono.CSharp {
 			// Types have to be identical when ref or out modifer is used 
 			//
 			if ((arg_mod | param_mod) != 0) {
-				if (argument.Type != parameter) {
-					if ((argument.Type == InternalType.Dynamic && parameter == TypeManager.object_type) ||
-						(parameter == InternalType.Dynamic && argument.Type == TypeManager.object_type))
-						return 0;
-
+				if (argument.Type != parameter && !TypeSpecComparer.Default.IsEqual (argument.Type, parameter)) {
 					return 2;
 				}
 			} else {
@@ -4121,11 +4117,7 @@ namespace Mono.CSharp {
 					if ((p_mod & ~Parameter.Modifier.PARAMS) != a.Modifier)
 						break;
 
-					if (a.Expr.Type == pt)
-						continue;
-
-					if (((a.Expr.Type == InternalType.Dynamic && pt == TypeManager.object_type) ||
-						(pt == InternalType.Dynamic && a.Expr.Type == TypeManager.object_type)))
+					if (a.Expr.Type == pt || TypeSpecComparer.Default.IsEqual (a.Expr.Type, pt))
 						continue;
 
 					break;
