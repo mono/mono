@@ -173,6 +173,7 @@ net_4_0_dirs := \
 	System.ComponentModel.Composition \
 	System.Xaml \
 	System.ServiceModel.Routing \
+	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
 	System.Runtime.DurableInstancing
 
