@@ -124,7 +124,13 @@ namespace System.Web.UI.WebControls {
 			}
 
 			set {
-				if (value != RepeatLayout.Flow && value != RepeatLayout.Table)
+				bool outOfRange;
+#if NET_4_0
+				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.OrderedList;
+#else
+				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.Flow;
+#endif
+				if (outOfRange)
 					throw new ArgumentOutOfRangeException ("The radio buttons layout is not one of the RepeatLayout values.");
 
 				ViewState ["RepeatLayout"] = value;
