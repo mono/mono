@@ -203,7 +203,7 @@ namespace Mono.XBuild.CommandLine {
 
 				Project currentProject = p.ParentEngine.CreateNewProject ();
 				try {
-					currentProject.Load (filename);
+					currentProject.Load (filename, ProjectLoadSettings.IgnoreMissingImports);
 				} catch (InvalidProjectFileException e) {
 					RaiseWarning (0, e.Message);
 					continue;
