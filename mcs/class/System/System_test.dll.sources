@@ -250,6 +250,7 @@ System.Net.Mail/SmtpClientTest.cs
 System.Net.Mail/SmtpExceptionTest.cs
 System.Net.Mail/SmtpPermissionTest.cs
 System.Net.Mail/SmtpPermissionAttributeTest.cs
+System.Net.Mail/SmtpServer.cs
 System.Net.Mime/ContentDispositionTest.cs
 System.Net.Mime/ContentTypeTest.cs
 System.Net.NetworkInformation/PhysicalAddressTest.cs
