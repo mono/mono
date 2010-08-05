@@ -31,6 +31,7 @@ using System.Runtime.InteropServices;
 
 [Serializable]
 [MonoLimitation ("Serialization format not compatible with .NET")]
+[MonoLimitation ("EncoderFallback is not handled")]
 [ComVisible (true)]
 public class UTF8Encoding : Encoding
 {
@@ -50,9 +51,9 @@ public class UTF8Encoding : Encoding
 	{
 		emitIdentifier = encoderShouldEmitUTF8Identifier;
 		if (throwOnInvalidBytes)
-			SetFallbackInternal (EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
+			SetFallbackInternal (null, DecoderFallback.ExceptionFallback);
 		else
-			SetFallbackInternal (EncoderFallback.StandardSafeFallback, DecoderFallback.StandardSafeFallback);
+			SetFallbackInternal (null, DecoderFallback.StandardSafeFallback);
 
 		web_name = body_name = header_name = "utf-8";
 		encoding_name = "Unicode (UTF-8)";
@@ -67,7 +68,7 @@ public class UTF8Encoding : Encoding
 
 	// Internal version of "GetByteCount" which can handle a rolling
 	// state between multiple calls to this method.
-	private static int InternalGetByteCount (char[] chars, int index, int count, EncoderFallback fallback, ref char leftOver, bool flush)
+	private static int InternalGetByteCount (char[] chars, int index, int count, ref char leftOver, bool flush)
 	{
 		// Validate the parameters.
 		if (chars == null) {
@@ -91,17 +92,15 @@ public class UTF8Encoding : Encoding
 
 		unsafe {
 			fixed (char* cptr = chars) {
-				return InternalGetByteCount (cptr + index, count, fallback, ref leftOver, flush);
+				return InternalGetByteCount (cptr + index, count, ref leftOver, flush);
 			}
 		}
 	}
 
-	private unsafe static int InternalGetByteCount (char* chars, int count, EncoderFallback fallback, ref char leftOver, bool flush)
+	private unsafe static int InternalGetByteCount (char* chars, int count, ref char leftOver, bool flush)
 	{
 		int length = 0;
 		char* end = chars + count;
-		char* start = chars;
-		EncoderFallbackBuffer buffer = null;
 		while (chars < end) {
 			if (leftOver == 0) {
 				for (; chars < end; chars++) {
@@ -127,12 +126,7 @@ public class UTF8Encoding : Encoding
 						// leading surrogate. In NET_2_0 it
 						// uses fallback. In NET_1_1 we output
 						// wrong surrogate.
-						char [] fallback_chars = GetFallbackChars (chars, start, fallback, ref buffer);
-						fixed (char *fb_chars = fallback_chars) {
-							char dummy = '\0';
-							length += InternalGetByteCount (fb_chars, fallback_chars.Length, fallback, ref dummy, true);
-						}
-
+						length += 3;
 						leftOver = '\0';
 					}
 				}
@@ -147,11 +141,7 @@ public class UTF8Encoding : Encoding
 					// invalid, but we have to do something.
 					// We write out the surrogate start and then
 					// re-visit the current character again.
-					char [] fallback_chars = GetFallbackChars (chars, start, fallback, ref buffer);
-					fixed (char *fb_chars = fallback_chars) {
-						char dummy = '\0';
-						length += InternalGetByteCount (fb_chars, fallback_chars.Length, fallback, ref dummy, true);
-					}
+					length += 3;
 				}
 				leftOver = '\0';
 			}
@@ -166,27 +156,11 @@ public class UTF8Encoding : Encoding
 		return length;
 	}
 
-	unsafe static char [] GetFallbackChars (char *chars, char *start, EncoderFallback fallback, ref EncoderFallbackBuffer buffer)
-	{
-		if (buffer == null)
-			buffer = fallback.CreateFallbackBuffer ();
-
-		buffer.Fallback (*chars, (int) (chars - start));
-
-		char [] fallback_chars = new char [buffer.Remaining];
-		for (int i = 0; i < fallback_chars.Length; i++)
-			fallback_chars [i] = buffer.GetNextChar ();
-
-		buffer.Reset ();
-
-		return fallback_chars;
-	}
-
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)
 	{
 		char dummy = '\0';
-		return InternalGetByteCount (chars, index, count, EncoderFallback, ref dummy, true);
+		return InternalGetByteCount (chars, index, count, ref dummy, true);
 	}
 
 
@@ -199,7 +173,7 @@ public class UTF8Encoding : Encoding
 		if (count == 0)
 			return 0;
 		char dummy = '\0';
-		return InternalGetByteCount (chars, count, EncoderFallback, ref dummy, true);
+		return InternalGetByteCount (chars, count, ref dummy, true);
 	}
 
 	#endregion
@@ -210,9 +184,8 @@ public class UTF8Encoding : Encoding
 	// state between multiple calls to this method.
 	private static int InternalGetBytes (char[] chars, int charIndex,
 					     int charCount, byte[] bytes,
-					     int byteIndex,
-						 EncoderFallback fallback, ref EncoderFallbackBuffer buffer,
-						 ref char leftOver, bool flush)
+					     int byteIndex, ref char leftOver,
+					     bool flush)
 	{
 		// Validate the parameters.
 		if (chars == null) {
@@ -246,22 +219,20 @@ public class UTF8Encoding : Encoding
 				if (bytes.Length == byteIndex)
 					return InternalGetBytes (
 						cptr + charIndex, charCount, 
-						null, 0, fallback, ref buffer, ref leftOver, flush);
+						null, 0, ref leftOver, flush);
 				fixed (byte *bptr = bytes) {
 					return InternalGetBytes (
 						cptr + charIndex, charCount,
 						bptr + byteIndex, bytes.Length - byteIndex,
-						fallback, ref buffer,
 						ref leftOver, flush);
 				}
 			}
 		}
 	}
 
-	private unsafe static int InternalGetBytes (char* chars, int count, byte* bytes, int bcount, EncoderFallback fallback, ref EncoderFallbackBuffer buffer, ref char leftOver, bool flush)
+	private unsafe static int InternalGetBytes (char* chars, int count, byte* bytes, int bcount, ref char leftOver, bool flush)
 	{
 		char* end = chars + count;
-		char* start = chars;
 		byte* end_bytes = bytes + bcount;
 		while (chars < end) {
 			if (leftOver == 0) {
@@ -294,14 +265,12 @@ public class UTF8Encoding : Encoding
 						// leading surrogate. In NET_2_0 it
 						// uses fallback. In NET_1_1 we output
 						// wrong surrogate.
-						char [] fallback_chars = GetFallbackChars (chars, start, fallback, ref buffer); 
-						char dummy = '\0';
-						if (bytes + InternalGetByteCount (fallback_chars, 0, fallback_chars.Length, fallback, ref dummy, true) >= end_bytes)
+						if (bytes + 2 >= end_bytes)
 							goto fail_no_space;
-						fixed (char *fb_chars = fallback_chars) {
-							InternalGetBytes (fb_chars, fallback_chars.Length, bytes, bcount, fallback, ref buffer, ref dummy, true);
-						}
-
+						bytes [0] = (byte) (0xE0 | (ch >> 12));
+						bytes [1] = (byte) (0x80 | ((ch >> 6) & 0x3F));
+						bytes [2] = (byte) (0x80 | (ch & 0x3F));
+						bytes += 3;
 						leftOver = '\0';
 					}
 				}
@@ -323,15 +292,13 @@ public class UTF8Encoding : Encoding
 					// invalid, but we have to do something.
 					// We write out the surrogate start and then
 					// re-visit the current character again.
-					char [] fallback_chars = GetFallbackChars (chars, start, fallback, ref buffer); 
-					char dummy = '\0';
-					if (bytes + InternalGetByteCount (fallback_chars, 0, fallback_chars.Length, fallback, ref dummy, true) >= end_bytes)
+					int ch = leftOver;
+					if (bytes + 2 >= end_bytes)
 						goto fail_no_space;
-					fixed (char *fb_chars = fallback_chars) {
-						InternalGetBytes (fb_chars, fallback_chars.Length, bytes, bcount, fallback, ref buffer, ref dummy, true);
-					}
-
-					leftOver = '\0';
+					bytes [0] = (byte) (0xE0 | (ch >> 12));
+					bytes [1] = (byte) (0x80 | ((ch >> 6) & 0x3F));
+					bytes [2] = (byte) (0x80 | (ch & 0x3F));
+					bytes += 3;
 				}
 				leftOver = '\0';
 			}
@@ -361,8 +328,7 @@ fail_no_space:
 								 byte[] bytes, int byteIndex)
 	{
 		char leftOver = '\0';
-		EncoderFallbackBuffer buffer = null;
-		return InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, EncoderFallback, ref buffer, ref leftOver, true);
+		return InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, ref leftOver, true);
 	}
 
 	// Convenience wrappers for "GetBytes".
@@ -392,16 +358,14 @@ fail_no_space:
 		unsafe {
 			fixed (char* cptr = s) {
 				char dummy = '\0';
-				EncoderFallbackBuffer buffer = null;
 				if (bytes.Length == byteIndex)
 					return InternalGetBytes (
 						cptr + charIndex, charCount,
-						null, 0, EncoderFallback, ref buffer, ref dummy, true);
+						null, 0, ref dummy, true);
 				fixed (byte *bptr = bytes) {
 					return InternalGetBytes (
 						cptr + charIndex, charCount,
 						bptr + byteIndex, bytes.Length - byteIndex,
-						EncoderFallback, ref buffer,
 						ref dummy, true);
 				}
 			}
@@ -425,11 +389,10 @@ fail_no_space:
 			return 0;
 
 		char dummy = '\0';
-		EncoderFallbackBuffer buffer = null;
 		if (byteCount == 0)
-			return InternalGetBytes (chars, charCount, null, 0, EncoderFallback, ref buffer, ref dummy, true);
+			return InternalGetBytes (chars, charCount, null, 0, ref dummy, true);
 		else
-			return InternalGetBytes (chars, charCount, bytes, byteCount, EncoderFallback, ref buffer, ref dummy, true);
+			return InternalGetBytes (chars, charCount, bytes, byteCount, ref dummy, true);
 	}
 
 	#endregion
@@ -873,7 +836,7 @@ fail_no_space:
 	// Get a UTF8-specific encoder that is attached to this instance.
 	public override Encoder GetEncoder ()
 	{
-		return new UTF8Encoder (EncoderFallback, emitIdentifier);
+		return new UTF8Encoder (emitIdentifier);
 	}
 
 	// Get the UTF8 preamble.
@@ -961,9 +924,8 @@ fail_no_space:
 		private char leftOverForConv;
 
 		// Constructor.
-		public UTF8Encoder (EncoderFallback fallback, bool emitIdentifier)
+		public UTF8Encoder (bool emitIdentifier)
 		{
-			Fallback = fallback;
 //			this.emitIdentifier = emitIdentifier;
 			leftOverForCount = '\0';
 			leftOverForConv = '\0';
@@ -973,29 +935,27 @@ fail_no_space:
 		public override int GetByteCount (char[] chars, int index,
 					 int count, bool flush)
 		{
-			return InternalGetByteCount (chars, index, count, Fallback, ref leftOverForCount, flush);
+			return InternalGetByteCount (chars, index, count, ref leftOverForCount, flush);
 		}
 		public override int GetBytes (char[] chars, int charIndex,
 					 int charCount, byte[] bytes, int byteIndex, bool flush)
 		{
 			int result;
-			EncoderFallbackBuffer buffer = null;
-			result = InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, Fallback, ref buffer, ref leftOverForConv, flush);
+			result = InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, ref leftOverForConv, flush);
 //			emitIdentifier = false;
 			return result;
 		}
 
 		public unsafe override int GetByteCount (char* chars, int count, bool flush)
 		{
-			return InternalGetByteCount (chars, count, Fallback, ref leftOverForCount, flush);
+			return InternalGetByteCount (chars, count, ref leftOverForCount, flush);
 		}
 
 		public unsafe override int GetBytes (char* chars, int charCount,
 			byte* bytes, int byteCount, bool flush)
 		{
 			int result;
-			EncoderFallbackBuffer buffer = null;
-			result = InternalGetBytes (chars, charCount, bytes, byteCount, Fallback, ref buffer, ref leftOverForConv, flush);
+			result = InternalGetBytes (chars, charCount, bytes, byteCount, ref leftOverForConv, flush);
 //			emitIdentifier = false;
 			return result;
 		}

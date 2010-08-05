@@ -1134,26 +1134,6 @@ namespace MonoTests.System.Text
 				Encoding.UTF8.GetString(buf);
 			}
 		}
-		
-		[Test]
-		[ExpectedException (typeof (EncoderFallbackException))]
-		public void EncoderFallback () // bug #565129
-		{
-			// with GetByteCount()
-			var s = new char[] { '\udf45', '\ud808' };
-			new UTF8Encoding (false, true).GetBytes (s, 0, 2);
-		}
-
-		[Test]
-		[ExpectedException (typeof (EncoderFallbackException))]
-		public void EncoderFallback2 () // bug #565129
-		{
-			// with GetByteCount()
-			var s = new char[] { '\udf45', '\ud808' };
-			// without GetByteCount()
-			byte [] bytes = new byte [6];
-			new UTF8Encoding (false, true).GetBytes (s, 0, 2, bytes, 0);
-		}
 #endif
 	}
 }
