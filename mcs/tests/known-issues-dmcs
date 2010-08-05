@@ -4,11 +4,14 @@
 # csXXXX.cs		: test case causes error
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
+dtest-007.cs bug #628665
+
 test-xml-027.cs
 
 gtest-230.cs
 gtest-437.cs
 
+test-106.cs bug #628662
 test-416.cs bug #504085
 test-418.cs bug #504085
 test-454.cs bug #593342
