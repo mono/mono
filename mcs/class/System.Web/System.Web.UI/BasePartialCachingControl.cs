@@ -55,6 +55,8 @@ namespace System.Web.UI
 		
 		Control control;
 		ControlCachePolicy cachePolicy;
+		string cacheKey;
+		string cachedData;
 		
 		protected BasePartialCachingControl()
 		{
@@ -99,7 +101,11 @@ namespace System.Web.UI
 			get { return slidingExpiration; }
 			set { slidingExpiration = value; }
 		}
-		
+#if NET_4_0
+		internal string ProviderName {
+			get; set;
+		}
+#endif
 		internal abstract Control CreateControl ();
 
 		public override void Dispose ()
@@ -110,23 +116,73 @@ namespace System.Web.UI
 			}
 		}
 
+		void RetrieveCachedContents ()
+		{
+			cacheKey = CreateKey ();
+#if NET_4_0
+			OutputCacheProvider provider = GetProvider ();
+			cachedData = provider.Get (cacheKey) as string;
+#else
+			Cache cache = HttpRuntime.InternalCache;
+			cachedData = cache [cacheKey] as string;
+#endif
+		}
+#if NET_4_0
+		OutputCacheProvider GetProvider ()
+		{
+			string providerName = ProviderName;
+			OutputCacheProvider provider;
+
+			if (String.IsNullOrEmpty (providerName))
+				provider = OutputCache.DefaultProvider;
+			else {
+				provider = OutputCache.GetProvider (providerName);
+				if (provider == null)
+					provider = OutputCache.DefaultProvider;
+			}
+
+			return provider;
+		}
+		
+		void OnDependencyChanged (string key, object value, CacheItemRemovedReason reason)
+		{
+			Console.WriteLine ("{0}.OnDependencyChanged (\"{0}\", {1}, {2})", this, key, value, reason);
+			GetProvider ().Remove (key);
+		}
+		
+		internal override void InitRecursive (Control namingContainer)
+		{
+			RetrieveCachedContents ();
+			if (cachedData == null) {
+				control = CreateControl ();
+				Controls.Add (control);
+			} else
+				control = null;
+			
+			base.InitRecursive (namingContainer);
+		}
+#else
 		protected internal override void OnInit (EventArgs e)
 		{
 			control = CreateControl ();
 			Controls.Add (control);
 		}
-
+#endif
 		protected internal override void Render (HtmlTextWriter output)
 		{
-			Cache cache = HttpRuntime.InternalCache;
-			string key = CreateKey ();
-			string data = cache [key] as string;
-
-			if (data != null) {
-				output.Write (data);
+#if !NET_4_0
+			RetrieveCachedContents ();
+#endif
+			if (cachedData != null) {
+				output.Write (cachedData);
 				return;
 			}
 
+			if (control == null) {
+				base.Render (output);
+				return;
+			}
+			
 			HttpContext context = HttpContext.Current;
 			StringWriter writer = new StringWriter ();
 			TextWriter prev = context.Response.SetTextWriter (writer);
@@ -139,11 +195,19 @@ namespace System.Web.UI
 				context.Response.SetTextWriter (prev);
 				output.Write (text);
 			}
-
-			context.InternalCache.Insert (key, text, dependency,
+#if NET_4_0
+			OutputCacheProvider provider = GetProvider ();
+			DateTime utcExpire = DateTime.UtcNow.AddSeconds (duration);
+			provider.Set (cacheKey, text, utcExpire);;
+			context.InternalCache.Insert (cacheKey, text, dependency, utcExpire.ToLocalTime (),
+						      Cache.NoSlidingExpiration, CacheItemPriority.Normal,
+						      null);
+#else
+			context.InternalCache.Insert (cacheKey, text, dependency,
 						      DateTime.Now.AddSeconds (duration),
 						      Cache.NoSlidingExpiration,
 						      CacheItemPriority.Normal, null);
+#endif
 		}
 
 		public ControlCachePolicy CachePolicy 
