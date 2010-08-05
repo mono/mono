@@ -41,6 +41,7 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -1166,23 +1167,31 @@ namespace System.Web.Compilation
 				PartialCachingAttribute pca = (PartialCachingAttribute) atts [0];
 				CodeTypeReferenceExpression cc = new CodeTypeReferenceExpression("System.Web.UI.StaticPartialCachingControl");
 				CodeMethodInvokeExpression build = new CodeMethodInvokeExpression (cc, "BuildCachedControl");
-				build.Parameters.Add (new CodeArgumentReferenceExpression("__ctrl"));
-				build.Parameters.Add (new CodePrimitiveExpression (child.ID));
-#if NET_1_1
+				CodeExpressionCollection parms = build.Parameters;
+				
+				parms.Add (new CodeArgumentReferenceExpression("__ctrl"));
+				parms.Add (new CodePrimitiveExpression (child.ID));
+
 				if (pca.Shared)
-					build.Parameters.Add (new CodePrimitiveExpression (child.ControlType.GetHashCode ().ToString ()));
+					parms.Add (new CodePrimitiveExpression (child.ControlType.GetHashCode ().ToString ()));
 				else
-#endif
-					build.Parameters.Add (new CodePrimitiveExpression (Guid.NewGuid ().ToString ()));
+					parms.Add (new CodePrimitiveExpression (Guid.NewGuid ().ToString ()));
 					
-				build.Parameters.Add (new CodePrimitiveExpression (pca.Duration));
-				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByParams));
-				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByControls));
-				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByCustom));
-				build.Parameters.Add (new CodeDelegateCreateExpression (
+				parms.Add (new CodePrimitiveExpression (pca.Duration));
+				parms.Add (new CodePrimitiveExpression (pca.VaryByParams));
+				parms.Add (new CodePrimitiveExpression (pca.VaryByControls));
+				parms.Add (new CodePrimitiveExpression (pca.VaryByCustom));
+				parms.Add (new CodePrimitiveExpression (pca.SqlDependency));
+				parms.Add (new CodeDelegateCreateExpression (
 							      new CodeTypeReference (typeof (System.Web.UI.BuildMethod)),
 							      thisRef, child.Method.Name));
-
+#if NET_4_0
+				string value = pca.ProviderName;
+				if (!String.IsNullOrEmpty (value) && String.Compare (OutputCache.DEFAULT_PROVIDER_NAME, value, StringComparison.Ordinal) != 0)
+					parms.Add (new CodePrimitiveExpression (value));
+				else
+					parms.Add (new CodePrimitiveExpression (null));
+#endif
 				parent.MethodStatements.Add (AddLinePragma (build, parent));
 				if (parent.HasAspCode)
 					AddRenderControl (parent);

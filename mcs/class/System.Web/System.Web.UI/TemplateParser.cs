@@ -329,107 +329,110 @@ namespace System.Web.UI {
 					response.Cache.SetValidUntilExpires (true);
 				
 				output_cache = true;
-				
-				if (atts ["Duration"] == null)
-					ThrowParseException ("The directive is missing a 'duration' attribute.");
-				if (atts ["VaryByParam"] == null && atts ["VaryByControl"] == null)
-					ThrowParseException ("This directive is missing 'VaryByParam' " +
-							"or 'VaryByControl' attribute, which should be set to \"none\", \"*\", " +
-							"or a list of name/value pairs.");
-
-				foreach (DictionaryEntry entry in atts) {
-					string key = (string) entry.Key;
-					if (key == null)
-						continue;
-					
-					switch (key.ToLower (Helpers.InvariantCulture)) {
-						case "duration":
-							oc_duration = Int32.Parse ((string) entry.Value);
-							if (oc_duration < 1)
-								ThrowParseException ("The 'duration' attribute must be set " +
-										     "to a positive integer value");
-							break;
-
-						case "sqldependency":
-							oc_sqldependency = (string) entry.Value;
-							break;
-							
-						case "nostore":
-							try {
-								oc_nostore = Boolean.Parse ((string) entry.Value);
-								oc_parsed_params |= OutputCacheParsedParams.NoStore;
-							} catch {
-								ThrowParseException ("The 'NoStore' attribute is case sensitive" +
-										     " and must be set to 'true' or 'false'.");
-							}
-							break;
-
-						case "cacheprofile":
-							oc_cacheprofile = (string) entry.Value;
-							oc_parsed_params |= OutputCacheParsedParams.CacheProfile;
-							break;
-							
-						case "varybycontentencodings":
-							oc_content_encodings = (string) entry.Value;
-							oc_parsed_params |= OutputCacheParsedParams.VaryByContentEncodings;
-							break;
-
-						case "varybyparam":
-							oc_param = (string) entry.Value;
-							if (String.Compare (oc_param, "none", true, Helpers.InvariantCulture) == 0)
-								oc_param = null;
-							break;
-						case "varybyheader":
-							oc_header = (string) entry.Value;
-							oc_parsed_params |= OutputCacheParsedParams.VaryByHeader;
-							break;
-						case "varybycustom":
-							oc_custom = (string) entry.Value;
-							oc_parsed_params |= OutputCacheParsedParams.VaryByCustom;
-							break;
-						case "location":
-							if (!(this is PageParser))
-								goto default;
-						
-							try {
-								oc_location = (OutputCacheLocation) Enum.Parse (
-									typeof (OutputCacheLocation), (string) entry.Value, true);
-								oc_parsed_params |= OutputCacheParsedParams.Location;
-							} catch {
-								ThrowParseException ("The 'location' attribute is case sensitive and " +
-										     "must be one of the following values: Any, Client, " +
-										     "Downstream, Server, None, ServerAndClient.");
-							}
-							break;
-						case "varybycontrol":
-							oc_controls = (string) entry.Value;
-							oc_parsed_params |= OutputCacheParsedParams.VaryByControl;
-							break;
-						case "shared":
-							if (this is PageParser)
-								goto default;
-
-							try {
-								oc_shared = Boolean.Parse ((string) entry.Value);
-							} catch {
-								ThrowParseException ("The 'shared' attribute is case sensitive" +
-										     " and must be set to 'true' or 'false'.");
-							}
-							break;
-						default:
-							ThrowParseException ("The '" + key + "' attribute is not " +
-									     "supported by the 'Outputcache' directive.");
-							break;
-					}
-					
-				}
-				
+				ProcessOutputCacheAttributes (atts);
 				return;
 			}
 
 			ThrowParseException ("Unknown directive: " + directive);
 		}
 
+		internal virtual void ProcessOutputCacheAttributes (IDictionary atts)
+		{
+			if (atts ["Duration"] == null)
+				ThrowParseException ("The directive is missing a 'duration' attribute.");
+			if (atts ["VaryByParam"] == null && atts ["VaryByControl"] == null)
+				ThrowParseException ("This directive is missing 'VaryByParam' " +
+						     "or 'VaryByControl' attribute, which should be set to \"none\", \"*\", " +
+						     "or a list of name/value pairs.");
+
+			foreach (DictionaryEntry entry in atts) {
+				string key = (string) entry.Key;
+				if (key == null)
+					continue;
+					
+				switch (key.ToLower (Helpers.InvariantCulture)) {
+					case "duration":
+						oc_duration = Int32.Parse ((string) entry.Value);
+						if (oc_duration < 1)
+							ThrowParseException ("The 'duration' attribute must be set " +
+									     "to a positive integer value");
+						break;
+
+					case "sqldependency":
+						oc_sqldependency = (string) entry.Value;
+						break;
+							
+					case "nostore":
+						try {
+							oc_nostore = Boolean.Parse ((string) entry.Value);
+							oc_parsed_params |= OutputCacheParsedParams.NoStore;
+						} catch {
+							ThrowParseException ("The 'NoStore' attribute is case sensitive" +
+									     " and must be set to 'true' or 'false'.");
+						}
+						break;
+
+					case "cacheprofile":
+						oc_cacheprofile = (string) entry.Value;
+						oc_parsed_params |= OutputCacheParsedParams.CacheProfile;
+						break;
+							
+					case "varybycontentencodings":
+						oc_content_encodings = (string) entry.Value;
+						oc_parsed_params |= OutputCacheParsedParams.VaryByContentEncodings;
+						break;
+
+					case "varybyparam":
+						oc_param = (string) entry.Value;
+						if (String.Compare (oc_param, "none", true, Helpers.InvariantCulture) == 0)
+							oc_param = null;
+						break;
+					case "varybyheader":
+						oc_header = (string) entry.Value;
+						oc_parsed_params |= OutputCacheParsedParams.VaryByHeader;
+						break;
+					case "varybycustom":
+						oc_custom = (string) entry.Value;
+						oc_parsed_params |= OutputCacheParsedParams.VaryByCustom;
+						break;
+					case "location":
+						if (!(this is PageParser))
+							goto default;
+						
+						try {
+							oc_location = (OutputCacheLocation) Enum.Parse (
+								typeof (OutputCacheLocation), (string) entry.Value, true);
+							oc_parsed_params |= OutputCacheParsedParams.Location;
+						} catch {
+							ThrowParseException ("The 'location' attribute is case sensitive and " +
+									     "must be one of the following values: Any, Client, " +
+									     "Downstream, Server, None, ServerAndClient.");
+						}
+						break;
+					case "varybycontrol":
+						oc_controls = (string) entry.Value;
+						oc_parsed_params |= OutputCacheParsedParams.VaryByControl;
+						break;
+					case "shared":
+						if (this is PageParser)
+							goto default;
+
+						try {
+							oc_shared = Boolean.Parse ((string) entry.Value);
+						} catch {
+							ThrowParseException ("The 'shared' attribute is case sensitive" +
+									     " and must be set to 'true' or 'false'.");
+						}
+						break;
+					default:
+						ThrowParseException ("The '" + key + "' attribute is not " +
+								     "supported by the 'Outputcache' directive.");
+						break;
+				}
+					
+			}
+		}
+		
 		internal Type LoadType (string typeName)
 		{
 			Type type = HttpApplication.LoadType (typeName);

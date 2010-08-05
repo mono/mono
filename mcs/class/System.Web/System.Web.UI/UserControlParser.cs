@@ -39,8 +39,9 @@ namespace System.Web.UI
 	internal class UserControlParser : TemplateControlParser
 	{
 		string masterPage;
-
-
+#if NET_4_0
+		string providerName;
+#endif
 		internal UserControlParser (VirtualPath virtualPath, string inputFile, HttpContext context)
 			: this (virtualPath, inputFile, context, null)
 		{
@@ -137,7 +138,13 @@ namespace System.Web.UI
 
 			base.ProcessMainAttributes (atts);
 		}
-
+#if NET_4_0
+		internal override void ProcessOutputCacheAttributes (IDictionary atts)
+		{
+			providerName = GetString (atts, "ProviderName", null);
+			base.ProcessOutputCacheAttributes (atts);
+		}
+#endif
 		internal override string DefaultBaseTypeName {
 			get { return PagesConfig.UserControlBaseType; }
 		}
@@ -149,6 +156,11 @@ namespace System.Web.UI
 		internal string MasterPageFile {
 			get { return masterPage; }
 		}
+#if NET_4_0
+		internal string ProviderName {
+			get { return providerName; }
+		}
+#endif
 	}
 }
 

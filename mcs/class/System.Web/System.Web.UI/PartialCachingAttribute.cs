@@ -81,7 +81,11 @@ namespace System.Web.UI {
 		public int Duration {
 			get { return duration; }
 		}
-
+#if NET_4_0
+		public string ProviderName {
+			get; set;
+		}
+#endif
 		public string VaryByParams {
 			get { return varyByParams; }
 		}
