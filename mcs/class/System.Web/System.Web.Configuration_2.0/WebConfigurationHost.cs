@@ -416,7 +416,7 @@ namespace System.Web.Configuration
 					}
 				}
 #endif
-				throw new ConfigurationException ("File '" + streamName + "' not found");
+				return null;
 			}
 				
 			return new FileStream (streamName, FileMode.Open, FileAccess.Read);

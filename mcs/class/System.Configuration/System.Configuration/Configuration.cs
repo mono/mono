@@ -470,7 +470,9 @@ namespace System.Configuration {
 
 			Stream stream = null;
 			try {
-				stream = stream = system.Host.OpenStreamForRead (streamName);
+				stream = system.Host.OpenStreamForRead (streamName);
+				if (stream == null)
+					return false;
 			} catch {
 				return false;
 			}

@@ -181,7 +181,7 @@ namespace System.Configuration
 			}
 
 			if (!File.Exists (streamName))
-				throw new ConfigurationException ("File '" + streamName + "' not found");
+				return null;
 				
 			return new FileStream (streamName, FileMode.Open, FileAccess.Read);
 		}
