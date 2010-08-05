@@ -1,2 +1,7 @@
 /y.output
 /cs-parser.cs
+/?mcs.user
+/?mcs.csproj.user
+/?mcs.pdb
+/?mcs.suo
+/?mcs.vshost*
