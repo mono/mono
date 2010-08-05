@@ -3448,7 +3448,7 @@ namespace Mono.CSharp {
 			//
 			// Prefer non-optional version
 			//
-			// LAMESPEC: Specification claims this should be done at last but the oposite is true
+			// LAMESPEC: Specification claims this should be done at last but the opposite is true
 			if (candidate_params == best_params && candidate_pd.Count != best_pd.Count) {
 				if (candidate_pd.Count >= best_pd.Count)
 					return false;

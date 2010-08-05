@@ -1221,10 +1221,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeSpecComparer.Variant.IsEqual (expr_type, target_type)) {
-				return expr;
-			}
-
 			if (TypeManager.IsNullableType (target_type))
 				return ImplicitNulableConversion (ec, expr, target_type);
 
