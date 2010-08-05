@@ -3383,12 +3383,13 @@ namespace Mono.CSharp {
 			bool better_at_least_one = false;
 			bool same = true;
 			int args_count = args == null ? 0 : args.Count;
-			for (int j = 0, c_idx = 0, b_idx = 0; j < args_count; ++j, ++c_idx, ++b_idx) {
+			int j = 0;
+			for (int c_idx = 0, b_idx = 0; j < args_count; ++j, ++c_idx, ++b_idx) {
 				Argument a = args[j];
 
-				// Provided default argument value is never better
-				if (a.IsDefaultArgument && candidate_params == best_params)
-					return false;
+				// Default arguments are ignored for better decision
+				if (a.IsDefaultArgument)
+					break;
 
 				TypeSpec ct = candidate_pd.Types[c_idx];
 				TypeSpec bt = best_pd.Types[b_idx];
@@ -3436,14 +3437,33 @@ namespace Mono.CSharp {
 				return false;
 
 			//
-			// The two methods have equal parameter types.  Now apply tie-breaking rules
+			// The two methods have equal non-optional parameter types, apply tie-breaking rules
 			//
-			if (best.IsGeneric) {
-				if (!candidate.IsGeneric)
-					return true;
-			} else if (candidate.IsGeneric) {
-				return false;
+
+			//
+			// This handles the following cases:
+			//
+			//  Foo (int i) is better than Foo (int i, long l = 0)
+			//  Foo (params int[] args) is better than Foo (int i = 0, params int[] args)
+			//
+			// Prefer non-optional version
+			//
+			// LAMESPEC: Specification claims this should be done at last but the oposite is true
+			if (candidate_params == best_params && candidate_pd.Count != best_pd.Count) {
+				if (candidate_pd.Count >= best_pd.Count)
+					return false;
+
+				if (j < candidate_pd.Count && candidate_pd.FixedParameters[j].HasDefaultValue)
+					return false;
+
+				return true;
 			}
+
+			//
+			// One is a non-generic method and second is a generic method, then non-generic is better
+			//
+			if (best.IsGeneric != candidate.IsGeneric)
+				return best.IsGeneric;
 
 			//
 			// This handles the following cases:
@@ -3453,10 +3473,10 @@ namespace Mono.CSharp {
 			//     Concat (string s1, params string [] srest)
 			//   Foo (int, params int [] rest) is better than Foo (params int [] rest)
 			//
-			if (!candidate_params && best_params)
-				return true;
-			if (candidate_params && !best_params)
-				return false;
+			// Prefer non-expanded version
+			//
+			if (candidate_params != best_params)
+				return best_params;
 
 			int candidate_param_count = candidate_pd.Count;
 			int best_param_count = best_pd.Count;
@@ -3473,7 +3493,7 @@ namespace Mono.CSharp {
 			var best_def_pd = ((IParametersMember) best.MemberDefinition).Parameters;
 
 			bool specific_at_least_once = false;
-			for (int j = 0; j < candidate_param_count; ++j) {
+			for (j = 0; j < candidate_param_count; ++j) {
 				var ct = candidate_def_pd.Types[j];
 				var bt = best_def_pd.Types[j];
 				if (ct == bt)
@@ -3685,7 +3705,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (arg_count != param_count)
+			if (arg_count != pd.Count)
 				params_expanded_form = true;
 
 			return 0;
@@ -3795,68 +3815,70 @@ namespace Mono.CSharp {
 				best_candidate_rate = int.MaxValue;
 
 				var type_members = members;
+				try {
 
-				do {
-					for (int i = 0; i < type_members.Count; ++i) {
-						var member = type_members [i];
+					do {
+						for (int i = 0; i < type_members.Count; ++i) {
+							var member = type_members[i];
 
-						//
-						// Methods in a base class are not candidates if any method in a derived
-						// class is applicable
-						//
-						if ((member.Modifiers & Modifiers.OVERRIDE) != 0)
-							continue;
-
-						if (!member.IsAccessible (current_type) && !error_mode)
-							continue;
-
-						if (!(member is IParametersMember)) {
 							//
-							// Will use it later to report ambiguity between best method and invocable member
+							// Methods in a base class are not candidates if any method in a derived
+							// class is applicable
 							//
-							if (Invocation.IsMemberInvocable (member))
-								invocable_member = member;
+							if ((member.Modifiers & Modifiers.OVERRIDE) != 0)
+								continue;
 
-							continue;
-						}
+							if (!member.IsAccessible (current_type) && !error_mode)
+								continue;
 
-						//
-						// Check if candidate is applicable
-						//
-						bool params_expanded_form = false;
-						int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, ref params_expanded_form);
+							if (!(member is IParametersMember)) {
+								//
+								// Will use it later to report ambiguity between best method and invocable member
+								//
+								if (Invocation.IsMemberInvocable (member))
+									invocable_member = member;
 
-						//
-						// How does it score compare to others
-						//
-						if (candidate_rate < best_candidate_rate) {
-							best_candidate_rate = candidate_rate;
-							best_candidate = member;
-							best_candidate_args = candidate_args;
-							best_candidate_params = params_expanded_form;
-						} else if (candidate_rate == 0) {
-							// Is new candidate better
-							if (BetterFunction (rc, candidate_args, member, params_expanded_form, best_candidate, best_candidate_params)) {
+								continue;
+							}
+
+							//
+							// Check if candidate is applicable
+							//
+							bool params_expanded_form = false;
+							int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, ref params_expanded_form);
+
+							//
+							// How does it score compare to others
+							//
+							if (candidate_rate < best_candidate_rate) {
+								best_candidate_rate = candidate_rate;
 								best_candidate = member;
 								best_candidate_args = candidate_args;
 								best_candidate_params = params_expanded_form;
-							} else {
-								// It's not better but any other found later could be but we are not sure yet
-								if (ambiguous_candidates == null)
-									ambiguous_candidates = new List<AmbiguousCandidate> ();
+							} else if (candidate_rate == 0) {
+								// Is new candidate better
+								if (BetterFunction (rc, candidate_args, member, params_expanded_form, best_candidate, best_candidate_params)) {
+									best_candidate = member;
+									best_candidate_args = candidate_args;
+									best_candidate_params = params_expanded_form;
+								} else {
+									// It's not better but any other found later could be but we are not sure yet
+									if (ambiguous_candidates == null)
+										ambiguous_candidates = new List<AmbiguousCandidate> ();
 
-								ambiguous_candidates.Add (new AmbiguousCandidate (member, params_expanded_form));
+									ambiguous_candidates.Add (new AmbiguousCandidate (member, params_expanded_form));
+								}
 							}
+
+							// Restore expanded arguments
+							if (candidate_args != args)
+								candidate_args = args;
 						}
-
-						// Restore expanded arguments
-						if (candidate_args != args)
-							candidate_args = args;
-					}
-				} while (best_candidate_rate != 0 && (type_members = base_provider.GetBaseMembers (type_members[0].DeclaringType.BaseType)) != null);
-
-				if (prev_recorder != null)
-					rc.Report.SetPrinter (prev_recorder);
+					} while (best_candidate_rate != 0 && (type_members = base_provider.GetBaseMembers (type_members[0].DeclaringType.BaseType)) != null);
+				} finally {
+					if (prev_recorder != null)
+						rc.Report.SetPrinter (prev_recorder);
+				}
 
 				//
 				// We've found exact match
