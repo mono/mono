@@ -33,12 +33,8 @@ using System.Web.Compilation;
 
 namespace System.Web.UI
 {
-	public class BoundPropertyEntry : PropertyEntry	{
-		string expression;
-		string expressionPrefix;
-		bool generated;
-		bool useSetAttribute;
-
+	public class BoundPropertyEntry : PropertyEntry
+	{
 		internal BoundPropertyEntry ()
 		{
 		}
@@ -52,8 +48,7 @@ namespace System.Web.UI
 		}
 		
 		public string Expression {
-			get { return expression; }
-			set { expression = value; }
+			get; set;
 		}
 
 		public ExpressionBuilder ExpressionBuilder {
@@ -61,8 +56,7 @@ namespace System.Web.UI
 		}
 		
 		public string ExpressionPrefix {
-			get { return expressionPrefix; }
-			set { expressionPrefix = value; }
+			get; set;
 		}
 		
 		public string FieldName {
@@ -74,8 +68,7 @@ namespace System.Web.UI
 		}
 		
 		public bool Generated {
-			get { return generated; }
-			set { generated = value; }
+			get; set;
 		}
 		
 		public object ParsedExpressionData {
@@ -91,8 +84,7 @@ namespace System.Web.UI
 		}
 		
 		public bool UseSetAttribute {
-			get { return useSetAttribute; }
-			set { useSetAttribute = value; }
+			get; set;
 		}
 	}
 }
