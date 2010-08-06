@@ -71,7 +71,7 @@ namespace System.Web.UI
 			LoadConfigDefaults ();
 		}
 		
-		protected override Type CompileIntoType ()
+		internal override Type CompileIntoType ()
 		{
 			return GlobalAsaxCompiler.CompileApplicationType (this);
 		}

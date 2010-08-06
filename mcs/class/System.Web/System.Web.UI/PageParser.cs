@@ -459,15 +459,13 @@ namespace System.Web.UI
 			}
 			return retval;
 		}
-#if !NET_4_0
-		public static
-#endif
-		Type GetCompiledPageType (string virtualPath, string inputFile, HttpContext context)
+
+		internal Type GetCompiledPageType (string virtualPath, string inputFile, HttpContext context)
 		{
 			return BuildManager.GetCompiledType (virtualPath);
 		}
 		
-		protected override Type CompileIntoType ()
+		internal override Type CompileIntoType ()
 		{
 			AspGenerator generator = new AspGenerator (this);
 			return generator.GetCompiledType ();

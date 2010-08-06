@@ -124,7 +124,7 @@ namespace System.Web.UI
 			return ucp.CompileIntoType ();
 		}
 
-		protected override Type CompileIntoType ()
+		internal override Type CompileIntoType ()
 		{
 			AspGenerator generator = new AspGenerator (this);
 			return generator.GetCompiledType ();

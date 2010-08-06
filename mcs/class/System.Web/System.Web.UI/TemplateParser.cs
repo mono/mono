@@ -159,7 +159,7 @@ namespace System.Web.UI {
 			}
 		}
 
-		protected abstract Type CompileIntoType ();
+		internal abstract Type CompileIntoType ();
 
 		internal void AddControl (Type type, IDictionary attributes)
 		{
