@@ -1914,7 +1914,6 @@ namespace Mono.CSharp {
 		public bool MethodModifiersValid (MemberCore mc)
 		{
 			const Modifiers vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
-			const Modifiers va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
 			const Modifiers nv = (Modifiers.NEW | Modifiers.VIRTUAL);
 			bool ok = true;
 			var flags = mc.ModFlags;
@@ -1926,13 +1925,6 @@ namespace Mono.CSharp {
 				if ((flags & vao) != 0){
 					Report.Error (112, mc.Location, "A static member `{0}' cannot be marked as override, virtual or abstract",
 						mc.GetSignatureForError ());
-					ok = false;
-				}
-			}
-
-			if (Kind == MemberKind.Struct){
-				if ((flags & va) != 0){
-					ModifiersExtensions.Error_InvalidModifier (mc.Location, "virtual or abstract", Report);
 					ok = false;
 				}
 			}
@@ -2763,7 +2755,46 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class InterfaceMemberBase : MemberBase {
+	public abstract class InterfaceMemberBase : MemberBase
+	{
+		//
+		// Common modifiers allowed in a class declaration
+		//
+		protected const Modifiers AllowedModifiersClass =
+			Modifiers.NEW |
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.STATIC |
+			Modifiers.VIRTUAL |
+			Modifiers.SEALED |
+			Modifiers.OVERRIDE |
+			Modifiers.ABSTRACT |
+			Modifiers.UNSAFE |
+			Modifiers.EXTERN;
+
+		//
+		// Common modifiers allowed in a struct declaration
+		//
+		protected const Modifiers AllowedModifiersStruct =
+			Modifiers.NEW |
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.STATIC |
+			Modifiers.OVERRIDE |
+			Modifiers.UNSAFE |
+			Modifiers.EXTERN;
+
+		//
+		// Common modifiers allowed in a interface declaration
+		//
+		protected const Modifiers AllowedModifiersInterface =
+			Modifiers.NEW |
+			Modifiers.UNSAFE;
+
 		//
 		// Whether this is an interface member.
 		//

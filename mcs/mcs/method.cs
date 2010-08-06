@@ -759,33 +759,15 @@ namespace Mono.CSharp {
 
 	public class Method : MethodOrOperator, IGenericMethodDefinition
 	{
-		/// <summary>
-		///   Modifiers allowed in a class declaration
-		/// </summary>
-		const Modifiers AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
-			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
-			Modifiers.PRIVATE |
-			Modifiers.STATIC |
-			Modifiers.VIRTUAL |
-			Modifiers.SEALED |
-			Modifiers.OVERRIDE |
-			Modifiers.ABSTRACT |
-			Modifiers.UNSAFE |
-			Modifiers.EXTERN;
-
-		const Modifiers AllowedInterfaceModifiers = 
-			Modifiers.NEW | Modifiers.UNSAFE;
-
 		Method partialMethodImplementation;
 
 		public Method (DeclSpace parent, GenericMethod generic,
 			       FullNamedExpression return_type, Modifiers mod,
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
-				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersClass :
+				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
+				AllowedModifiersClass,
 				name, attrs, parameters)
 		{
 		}
