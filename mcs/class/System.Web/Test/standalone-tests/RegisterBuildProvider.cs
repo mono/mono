@@ -76,12 +76,11 @@ namespace StandAloneTests.RegisterBuildProvider
 			Assert.IsNotNull (messages, "#A1");
 
 			int len = messages.Count;
-			int i = 0;
-			for (; i < len; i++)
+			if (expectedMessages.Length != len)
+				Assert.Fail ("Expected {0} messages, found {1}", expectedMessages.Length, len);
+			
+			for (int i = 0; i < len; i++)
 				Assert.AreEqual (expectedMessages [i], messages [i], "#A2-" + i.ToString ());
-
-			if (i != len)
-				Assert.Fail ("Expected {0} messages, found {1}", i, len);
 		}
 	}
 }

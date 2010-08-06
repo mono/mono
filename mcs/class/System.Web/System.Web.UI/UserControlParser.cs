@@ -144,6 +144,16 @@ namespace System.Web.UI
 			providerName = GetString (atts, "ProviderName", null);
 			base.ProcessOutputCacheAttributes (atts);
 		}
+
+		internal override Type DefaultBaseType {
+			get {
+				Type ret = PageParser.DefaultUserControlBaseType;
+				if (ret == null)
+					return base.DefaultBaseType;
+
+				return ret;
+			}
+		}
 #endif
 		internal override string DefaultBaseTypeName {
 			get { return PagesConfig.UserControlBaseType; }

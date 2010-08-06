@@ -148,8 +148,7 @@ namespace System.Web.Compilation
 			if (!typeof (BuildProvider).IsAssignableFrom (providerType))
 				throw new ArgumentException ("The parameter 'providerType' is invalid", "providerType");
 
-			if (!BuildManager.PreStartMethodsRunning)
-				throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
+			BuildManager.AssertPreStartMethodsRunning ();
 
 			if (registeredBuildProviderTypes == null)
 				registeredBuildProviderTypes = new Dictionary <string, Type> (StringComparer.OrdinalIgnoreCase);

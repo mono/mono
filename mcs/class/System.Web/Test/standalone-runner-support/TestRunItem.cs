@@ -73,7 +73,15 @@ namespace StandAloneRunnerSupport
 		public bool Redirected {
 			get; set;
 		}
-		
+#if BUG_IN_THE_RUNTIME_IS_FIXED
+		public SerializedDictionary <string, object> AppDomainData {
+			get; set;
+		}
+#else
+		public object[] AppDomainData {
+			get; set;
+		}
+#endif		
 		public TestRunItem ()
 		: this (null, null, null)
 		{}

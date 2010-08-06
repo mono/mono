@@ -155,7 +155,8 @@ namespace StandAloneRunnerSupport
 							formValues = ExtractFormAndHiddenControls (previousResponse);
 						else
 							formValues = null;
-						
+
+						SetRunnerDomainData (tri.AppDomainData, runner.Domain);
 						response = runner.Run (tri.Url, tri.PathInfo, tri.PostValues, formValues);
 						if (tri.Callback == null)
 							continue;
@@ -195,6 +196,25 @@ namespace StandAloneRunnerSupport
 			}
 		}
 
+		void SetRunnerDomainData (object[] data, AppDomain domain)
+		{
+			int len = data != null ? data.Length : 0;
+			if (len == 0)
+				return;
+
+			if (len % 2 != 0)
+				throw new ArgumentException ("Must have an even number of elements.", "data");
+
+			string name;
+			for (int i = 0; i < len; i += 2) {
+				name = data [i] as string;
+				if (String.IsNullOrEmpty (name))
+					throw new InvalidOperationException (String.Format ("Name at index {0} must not be null or empty.", i));
+
+				domain.SetData (name, data [i + 1]);
+			}
+		}
+		
 		string[] ExtractFormAndHiddenControls (Response response)
                 {
                         HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument ();

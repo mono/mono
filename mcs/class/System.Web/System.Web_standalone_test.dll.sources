@@ -19,3 +19,4 @@ Test/standalone-tests/DisabledAttributeRendering.cs
 Test/standalone-tests/GridViewShowHeaderWhenEmpty.cs
 Test/standalone-tests/GridViewSortingStyles.cs
 Test/standalone-tests/SiteMapPathRendering.cs
+Test/standalone-tests/PageParserDefaultTypeProperties.cs

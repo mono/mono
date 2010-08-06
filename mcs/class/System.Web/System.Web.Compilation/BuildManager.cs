@@ -202,7 +202,13 @@ namespace System.Web.Compilation
 			if (is_precompiled)
 				is_precompiled = LoadPrecompilationInfo (precomp_name);
 		}
-
+#if NET_4_0
+		internal static void AssertPreStartMethodsRunning ()
+		{
+			if (!BuildManager.PreStartMethodsRunning)
+				throw new InvalidOperationException ("This method must be called during the application's pre-start initialization stage.");
+		}
+#endif
 		// Deal with precompiled sites deployed in a different virtual path
 		static void FixVirtualPaths ()
 		{

@@ -945,6 +945,11 @@ namespace System.Web.UI {
 		internal Type PageParserFilterType {
 			get {
 				if (pageParserFilterType == null) {
+#if NET_4_0
+					pageParserFilterType = PageParser.DefaultPageParserFilterType;
+					if (pageParserFilterType != null)
+						return pageParserFilterType;
+#endif
 					string typeName = PagesConfig.PageParserFilterType;
 					if (String.IsNullOrEmpty (typeName))
 						return null;
@@ -955,8 +960,12 @@ namespace System.Web.UI {
 				return pageParserFilterType;
 			}
 		}
-		
-		internal Type DefaultBaseType {
+#if NET_4_0
+		internal virtual
+#else
+		internal
+#endif
+		Type DefaultBaseType {
 			get {
 				Type type = Type.GetType (DefaultBaseTypeName, true);
 
