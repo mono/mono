@@ -23189,6 +23189,61 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-09.cs">
+    <type name="Program">
+      <method name="Int32 Test_1(Int32, SByte)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_1[T](T)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_1(Int32, Int64)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_2(Int16)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_2(Int32, SByte)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_3(System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_3(System.String, SByte)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_4(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_4(System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_5()">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_5(Int32, System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_6(System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_6(Int32, System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_7(Boolean, System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test_7(Boolean, Int32, System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>118</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()">
@@ -47792,6 +47847,13 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-29.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>1</size>
       </method>
     </type>
   </test>

@@ -1067,16 +1067,18 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			try {
-				Report.Debug (64, "METHOD EMIT", this, MethodBuilder, Location, Block, MethodData);
 				if (IsPartialDefinition) {
 					//
 					// Use partial method implementation builder for partial method declaration attributes
 					//
 					if (partialMethodImplementation != null) {
 						MethodBuilder = partialMethodImplementation.MethodBuilder;
-						return;
 					}
-				} else if ((ModFlags & Modifiers.PARTIAL) != 0 && (caching_flags & Flags.PartialDefinitionExists) == 0) {
+
+					return;
+				}
+				
+				if ((ModFlags & Modifiers.PARTIAL) != 0 && (caching_flags & Flags.PartialDefinitionExists) == 0) {
 					Report.Error (759, Location, "A partial method `{0}' implementation is missing a partial method declaration",
 						GetSignatureForError ());
 				}
