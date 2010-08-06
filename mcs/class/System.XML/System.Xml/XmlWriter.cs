@@ -676,6 +676,8 @@ namespace System.Xml
 				WriteValue ((float) value);
 			else if (value is TimeSpan) // undocumented
 				WriteString (XmlConvert.ToString ((TimeSpan) value));
+			else if (value is Uri)
+				WriteString (((Uri) value).ToString ());
 			else if (value is XmlQualifiedName) {
 				XmlQualifiedName qname = (XmlQualifiedName) value;
 				if (!qname.Equals (XmlQualifiedName.Empty)) {
