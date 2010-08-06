@@ -67,7 +67,7 @@ namespace System.ServiceModel.Discovery
 			case "WSDiscoveryCD1":
 				return cd1;
 			default:
-				throw new ArgumentNullException (String.Format ("Invalid version name: {0}", name));
+				throw new ArgumentOutOfRangeException (String.Format ("Invalid version name: {0}", name));
 			}
 		}
 
