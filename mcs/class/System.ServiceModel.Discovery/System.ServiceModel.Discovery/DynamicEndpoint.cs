@@ -12,8 +12,11 @@ namespace System.ServiceModel.Discovery
 	public class DynamicEndpoint : ServiceEndpoint
 	{
 		public DynamicEndpoint (ContractDescription contract, Binding binding)
-			: base (contract, binding, null)
+			: base (contract, binding, new EndpointAddress ("http://schemas.microsoft.com/discovery/dynamic"))
 		{
+			if (binding == null)
+				throw new ArgumentNullException ("binding");
+			DiscoveryEndpointProvider = new UdpDiscoveryEndpointProvider ();
 		}
 
 		public DiscoveryEndpointProvider DiscoveryEndpointProvider { get; set; }

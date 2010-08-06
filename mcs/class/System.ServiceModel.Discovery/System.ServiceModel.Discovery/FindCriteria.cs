@@ -36,11 +36,11 @@ namespace System.ServiceModel.Discovery
 {
 	public class FindCriteria
 	{
-		public static readonly Uri ScopeMatchByExact = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/strcmp0");
-		public static readonly Uri ScopeMatchByLdap = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ldap");
-		public static readonly Uri ScopeMatchByNone = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/none");
-		public static readonly Uri ScopeMatchByPrefix = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/rfc3986");
-		public static readonly Uri ScopeMatchByUuid = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/uuid");
+		public static readonly Uri ScopeMatchByExact = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/strcmp0");
+		public static readonly Uri ScopeMatchByLdap = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/ldap");
+		public static readonly Uri ScopeMatchByNone = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/none");
+		public static readonly Uri ScopeMatchByPrefix = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/rfc3986");
+		public static readonly Uri ScopeMatchByUuid = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/uuid");
 
 		public static FindCriteria CreateMetadataExchangeEndpointCriteria ()
 		{
@@ -65,19 +65,19 @@ namespace System.ServiceModel.Discovery
 			ContractTypeNames = new Collection<XmlQualifiedName> ();
 			Extensions = new Collection<XElement> ();
 			Scopes = new Collection<Uri> ();
+			MaxResults = int.MaxValue;
 		}
 
-		[MonoTODO]
 		public FindCriteria (Type contractType)
 			: this ()
 		{
-			throw new NotImplementedException ();
+			var cd = ContractDescription.GetContract (contractType);
+			ContractTypeNames.Add (new XmlQualifiedName (cd.Name, cd.Namespace));
 		}
 
 		public Collection<XmlQualifiedName> ContractTypeNames { get; private set; }
 		public TimeSpan Duration { get; set; }
 		public Collection<XElement> Extensions { get; private set; }
-		[MonoTODO]
 		public int MaxResults { get; set; }
 		public Uri ScopeMatchBy { get; set; }
 		public Collection<Uri> Scopes { get; private set; }

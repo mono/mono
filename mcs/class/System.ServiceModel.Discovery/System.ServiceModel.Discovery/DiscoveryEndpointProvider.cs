@@ -36,4 +36,12 @@ namespace System.ServiceModel.Discovery
 	{
 		public abstract DiscoveryEndpoint GetDiscoveryEndpoint ();
 	}
+
+	internal class UdpDiscoveryEndpointProvider : DiscoveryEndpointProvider
+	{
+		public override DiscoveryEndpoint GetDiscoveryEndpoint ()
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }

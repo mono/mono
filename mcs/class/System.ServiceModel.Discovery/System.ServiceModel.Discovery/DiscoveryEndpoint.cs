@@ -40,7 +40,7 @@ namespace System.ServiceModel.Discovery
 		}
 
 		public DiscoveryEndpoint (Binding binding, EndpointAddress endpointAddress)
-			: this (DiscoveryVersion.WSDiscoveryApril2005, ServiceDiscoveryMode.Managed, binding, endpointAddress)
+			: this (DiscoveryVersion.WSDiscovery11, ServiceDiscoveryMode.Managed, binding, endpointAddress)
 		{
 		}
 
@@ -60,7 +60,6 @@ namespace System.ServiceModel.Discovery
 
 		public ServiceDiscoveryMode DiscoveryMode { get; private set; }
 		public DiscoveryVersion DiscoveryVersion { get; private set; }
-		[MonoTODO]
 		public TimeSpan MaxResponseDelay { get; set; }
 	}
 }
