@@ -269,6 +269,8 @@ namespace Mono.CSharp
 
 			if (IsNested) {
 				s = DeclaringType.GetSignatureForError ();
+			} else if (MemberDefinition is AnonymousTypeClass) {
+				return ((AnonymousTypeClass) MemberDefinition).GetSignatureForError ();
 			} else {
 				s = MemberDefinition.Namespace;
 			}

@@ -8758,40 +8758,46 @@ namespace Mono.CSharp {
 				return EmptyExpressionStatement.Instance;
 
 			var t = ec.CurrentInitializerVariable.Type;
-			
-			var member = MemberLookup (ec, ec.CurrentType, t, Name, 0, false, loc);
-			if (member == null) {
-				member = Expression.MemberLookup (null, ec.CurrentType, t, Name, 0, false, loc);
+			if (t == InternalType.Dynamic) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (ec.CurrentInitializerVariable));
+				target = new DynamicMemberBinder (Name, args, loc);
+			} else {
 
-				if (member != null) {
-					// TODO: ec.Report.SymbolRelatedToPreviousError (member);
-					ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
+				var member = MemberLookup (ec, ec.CurrentType, t, Name, 0, false, loc);
+				if (member == null) {
+					member = Expression.MemberLookup (null, ec.CurrentType, t, Name, 0, false, loc);
+
+					if (member != null) {
+						// TODO: ec.Report.SymbolRelatedToPreviousError (member);
+						ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
+						return null;
+					}
+				}
+
+				if (member == null) {
+					Error_TypeDoesNotContainDefinition (ec, loc, t, Name);
 					return null;
 				}
+
+				if (!(member is PropertyExpr || member is FieldExpr)) {
+					ec.Report.Error (1913, loc,
+						"Member `{0}' cannot be initialized. An object initializer may only be used for fields, or properties",
+						member.GetSignatureForError ());
+
+					return null;
+				}
+
+				var me = member as MemberExpr;
+				if (me.IsStatic) {
+					ec.Report.Error (1914, loc,
+						"Static field or property `{0}' cannot be assigned in an object initializer",
+						me.GetSignatureForError ());
+				}
+
+				target = me;
+				me.InstanceExpression = ec.CurrentInitializerVariable;
 			}
-
-			if (member == null) {
-				Error_TypeDoesNotContainDefinition (ec, loc, t, Name);
-				return null;
-			}
-
-			if (!(member is PropertyExpr || member is FieldExpr)) {
-				ec.Report.Error (1913, loc,
-					"Member `{0}' cannot be initialized. An object initializer may only be used for fields, or properties",
-					member.GetSignatureForError ());
-
-				return null;
-			}
-
-			var me = member as MemberExpr;
-			if (me.IsStatic) {
-				ec.Report.Error (1914, loc,
-					"Static field or property `{0}' cannot be assigned in an object initializer",
-					me.GetSignatureForError ());
-			}
-
-			target = me;
-			me.InstanceExpression = ec.CurrentInitializerVariable;
 
 			if (source is CollectionOrObjectInitializers) {
 				Expression previous = ec.CurrentInitializerVariable;

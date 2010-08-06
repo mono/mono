@@ -1368,9 +1368,6 @@ namespace Mono.CSharp {
 			if (TypeManager.IsNullableType (open_type))
 				return targs[0].GetSignatureForError () + "?";
 
-			if (MemberDefinition is AnonymousTypeClass)
-				return ((AnonymousTypeClass) MemberDefinition).GetSignatureForError ();
-
 			return base.GetSignatureForError ();
 		}
 

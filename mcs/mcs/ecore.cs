@@ -2820,7 +2820,7 @@ namespace Mono.CSharp {
 			if (arguments == null)
 				arguments = new Arguments (1);
 
-			arguments.Insert (0, new Argument (ExtensionExpression));
+			arguments.Insert (0, new Argument (ExtensionExpression, Argument.AType.ExtensionType));
 			var res = base.OverloadResolve (ec, ref arguments, ehandler ?? this, restr);
 
 			// Store resolved argument and restore original arguments
@@ -3922,6 +3922,12 @@ namespace Mono.CSharp {
 
 			// TODO: quite slow
 			if (args_count != 0 && args.HasDynamic) {
+				if (args [0].ArgType == Argument.AType.ExtensionType) {
+					rc.Report.Error (1973, loc,
+						"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' cannot be dynamically dispatched. Consider calling the method without the extension method syntax",
+						args [0].Type.GetSignatureForError (), best_candidate.Name, best_candidate.GetSignatureForError());
+				}
+
 				BestCandidateIsDynamic = true;
 				return null;
 			}
