@@ -1092,5 +1092,29 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual (re_foo_open.GetGenericArguments ()[0], re_foo_open.GetParameters () [0].ParameterType, "#1");
 		}
+
+		[Test] // #628660
+		public void CanCallGetMethodBodyOnDynamicImageMethod ()
+		{
+			var type = module.DefineType (
+				"CanCallGetMethodBodyOnDynamicImageMethod",
+				TypeAttributes.Public,
+				typeof (object));
+
+			var baz = type.DefineMethod ("Foo", MethodAttributes.Public | MethodAttributes.Static, typeof (object), Type.EmptyTypes);
+
+			var il = baz.GetILGenerator ();
+			var temp = il.DeclareLocal (typeof (object));
+			il.Emit (OpCodes.Ldnull);
+			il.Emit (OpCodes.Stloc, temp);
+			il.Emit (OpCodes.Ldloc, temp);
+			il.Emit (OpCodes.Ret);
+
+			var body = type.CreateType ().GetMethod ("Foo").GetMethodBody ();
+
+			Assert.IsNotNull (body);
+			Assert.AreEqual (1, body.LocalVariables.Count);
+			Assert.AreEqual (typeof (object), body.LocalVariables [0].LocalType);
+		}
 	}
 }
