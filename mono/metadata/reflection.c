@@ -6721,6 +6721,7 @@ mono_method_body_get_object (MonoDomain *domain, MonoMethod *method)
 	MonoReflectionMethodBody *ret;
 	MonoMethodNormal *mn;
 	MonoMethodHeader *header;
+	MonoImage *image;
 	guint32 method_rva, local_var_sig_token;
     char *ptr;
 	unsigned char format, flags;
@@ -6740,27 +6741,32 @@ mono_method_body_get_object (MonoDomain *domain, MonoMethod *method)
 	    (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
 	    (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME))
 		return NULL;
+
 	mn = (MonoMethodNormal *)method;
+	image = method->klass->image;
 	header = mono_method_get_header (method);
-	
-	/* Obtain local vars signature token */
-	method_rva = mono_metadata_decode_row_col (&method->klass->image->tables [MONO_TABLE_METHOD], mono_metadata_token_index (method->token) - 1, MONO_METHOD_RVA);
-	ptr = mono_image_rva_map (method->klass->image, method_rva);
-	flags = *(const unsigned char *) ptr;
-	format = flags & METHOD_HEADER_FORMAT_MASK;
-	switch (format){
-	case METHOD_HEADER_TINY_FORMAT:
-		local_var_sig_token = 0;
-		break;
-	case METHOD_HEADER_FAT_FORMAT:
-		ptr += 2;
-		ptr += 2;
-		ptr += 4;
-		local_var_sig_token = read32 (ptr);
-		break;
-	default:
-		g_assert_not_reached ();
-	}
+
+	if (!image->dynamic) {
+		/* Obtain local vars signature token */
+		method_rva = mono_metadata_decode_row_col (&image->tables [MONO_TABLE_METHOD], mono_metadata_token_index (method->token) - 1, MONO_METHOD_RVA);
+		ptr = mono_image_rva_map (image, method_rva);
+		flags = *(const unsigned char *) ptr;
+		format = flags & METHOD_HEADER_FORMAT_MASK;
+		switch (format){
+		case METHOD_HEADER_TINY_FORMAT:
+			local_var_sig_token = 0;
+			break;
+		case METHOD_HEADER_FAT_FORMAT:
+			ptr += 2;
+			ptr += 2;
+			ptr += 4;
+			local_var_sig_token = read32 (ptr);
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+	} else
+		local_var_sig_token = 0; //FIXME
 
 	ret = (MonoReflectionMethodBody*)mono_object_new (domain, System_Reflection_MethodBody);
 
