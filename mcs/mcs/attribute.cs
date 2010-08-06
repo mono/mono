@@ -178,11 +178,9 @@ namespace Mono.CSharp {
 				name.Name);
 		}
 
-		public static void Error_AttributeArgumentNotValid (IMemberContext rc, Location loc)
+		public static void Error_AttributeArgumentIsDynamic (IMemberContext context, Location loc)
 		{
-			rc.Compiler.Report.Error (182, loc,
-				      "An attribute argument must be a constant expression, typeof " +
-				      "expression or array creation expression");
+			context.Compiler.Report.Error (1982, loc, "An attribute argument cannot be dynamic expression");
 		}
 		
 		public void Error_MissingGuidAttribute ()
@@ -419,7 +417,7 @@ namespace Mono.CSharp {
 				bool dynamic;
 				PosArguments.Resolve (ec, out dynamic);
 				if (dynamic) {
-					Error_AttributeArgumentNotValid (ec, loc);
+					Error_AttributeArgumentIsDynamic (ec.MemberContext, loc);
 					return null;
 				}
 			}
@@ -472,7 +470,7 @@ namespace Mono.CSharp {
 				if (member is PropertyExpr) {
 					var pi = ((PropertyExpr) member).PropertyInfo;
 
-					if (!pi.HasSet || !pi.HasGet || pi.IsStatic) {
+					if (!pi.HasSet || !pi.HasGet || pi.IsStatic || !pi.Get.IsPublic || !pi.Set.IsPublic) {
 						ec.Report.SymbolRelatedToPreviousError (pi);
 						Error_InvalidNamedArgument (ec, a);
 						return false;
@@ -488,7 +486,7 @@ namespace Mono.CSharp {
 				} else {
 					var fi = ((FieldExpr) member).Spec;
 
-					if (fi.IsReadOnly || fi.IsStatic) {
+					if (fi.IsReadOnly || fi.IsStatic || !fi.IsPublic) {
 						Error_InvalidNamedArgument (ec, a);
 						return false;
 					}
@@ -1064,11 +1062,6 @@ namespace Mono.CSharp {
 				var param_types = ctor.Parameters.Types;
 				for (int j = 0; j < PosArguments.Count; ++j) {
 					var pt = param_types[j];
-					if (!IsValidArgumentType (pt)) {
-						Error_AttributeArgumentNotValid (context, loc);
-						return;
-					}
-
 					var arg_expr = PosArguments[j].Expr;
 					if (j == 0) {
 						if (Type == predefined.IndexerName || Type == predefined.Conditional) {
@@ -1401,6 +1394,14 @@ namespace Mono.CSharp {
 
 	public struct AttributeEncoder
 	{
+		[Flags]
+		public enum EncodedTypeProperties
+		{
+			None = 0,
+			DynamicType = 1,
+			TypeParameter = 1 << 1
+		}
+
 		public readonly BinaryWriter Stream;
 
 		public AttributeEncoder (bool empty)
@@ -1425,7 +1426,7 @@ namespace Mono.CSharp {
 			Stream.Write (buf);
 		}
 
-		public void Encode (TypeSpec type)
+		public EncodedTypeProperties Encode (TypeSpec type)
 		{
 			if (type == TypeManager.bool_type) {
 				Stream.Write ((byte) 0x02);
@@ -1462,10 +1463,13 @@ namespace Mono.CSharp {
 				EncodeTypeName (type);
 			} else if (type.IsArray) {
 				Stream.Write ((byte) 0x1D);
-				Encode (TypeManager.GetElementType (type));
-			} else {
-				throw new NotImplementedException (type.ToString ());
+				return Encode (TypeManager.GetElementType (type));
+			} else if (type == InternalType.Dynamic) {
+				Stream.Write ((byte) 0x51);
+				return EncodedTypeProperties.DynamicType;
 			}
+
+			return EncodedTypeProperties.None;
 		}
 
 		public void EncodeTypeName (TypeSpec type)

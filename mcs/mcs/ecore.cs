@@ -497,7 +497,8 @@ namespace Mono.CSharp {
 
 		public virtual void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
-			Attribute.Error_AttributeArgumentNotValid (rc, loc);
+			rc.Compiler.Report.Error (182, loc,
+				"An attribute argument must be a constant expression, typeof expression or array creation expression");
 		}
 
 		/// <summary>

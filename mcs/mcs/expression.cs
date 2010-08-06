@@ -6278,7 +6278,10 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				enc.Encode (type);
+				if (enc.Encode (type) == AttributeEncoder.EncodedTypeProperties.DynamicType) {
+					Attribute.Error_AttributeArgumentIsDynamic (rc, loc);
+					return;
+				}
 			}
 
 			// Single dimensional array of 0 size
@@ -6806,6 +6809,24 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		static bool ContainsDynamicType (TypeSpec type)
+		{
+			if (type == InternalType.Dynamic)
+				return true;
+
+			var element_container = type as ElementTypeSpec;
+			if (element_container != null)
+				return ContainsDynamicType (element_container.Element);
+
+			foreach (var t in type.TypeArguments) {
+				if (ContainsDynamicType (t)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		static bool ContainsTypeParameter (TypeSpec type)
 		{
 			if (type.Kind == MemberKind.TypeParameter)
@@ -6833,7 +6854,12 @@ namespace Mono.CSharp {
 
 			if (ContainsTypeParameter (typearg)) {
 				rc.Compiler.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
-					TypeManager.CSharpName (typearg));
+					typearg.GetSignatureForError ());
+				return;
+			}
+
+			if (ContainsDynamicType (typearg)) {
+				Attribute.Error_AttributeArgumentIsDynamic (rc, loc);
 				return;
 			}
 

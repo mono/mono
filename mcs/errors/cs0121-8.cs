@@ -1,6 +1,5 @@
 // CS0121: The call is ambiguous between the following methods or properties: `C.Foo(byte)' and `C.Foo(int)'
 // Line: 18
-// Compiler options: -langversion:future
 
 class C
 {

@@ -1980,7 +1980,7 @@ namespace Mono.CSharp {
 
 			var ac = targetType as ArrayContainer;
 			if (ac != null) {
-				if (ac.Rank != 1)
+				if (ac.Rank != 1 || ac.Element.IsArray)
 					base.EncodeAttributeValue (rc, enc, targetType);
 				else
 					enc.Stream.Write (uint.MaxValue);
