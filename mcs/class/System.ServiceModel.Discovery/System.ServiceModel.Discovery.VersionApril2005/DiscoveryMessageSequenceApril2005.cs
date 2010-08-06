@@ -1,7 +1,7 @@
 //
 // Author: Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009,2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,41 +35,58 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Discovery.VersionApril2005
 {
+	[XmlSchemaProvider ("GetSchema")]
 	public class DiscoveryMessageSequenceApril2005 : IXmlSerializable
 	{
 		public static DiscoveryMessageSequenceApril2005 FromDiscoveryMessageSequence (DiscoveryMessageSequence discoveryMessageSequence)
 		{
-			throw new NotImplementedException ();
+			return new DiscoveryMessageSequenceApril2005 (discoveryMessageSequence);
+		}
+
+		static readonly DiscoveryVersion version = DiscoveryVersion.WSDiscoveryApril2005;
+		static XmlSchema schema;
+		
+		static XmlSchema Schema {
+			get {
+				if (schema == null)
+					schema = DiscoveryMessageSequence.BuildSchema (version);
+				return schema;
+			}
 		}
 
 		public static XmlQualifiedName GetSchema (XmlSchemaSet schemaSet)
 		{
-			throw new NotImplementedException ();
+			schemaSet.Add (Schema);
+			return new XmlQualifiedName ("AppSequenceType", version.Namespace);
 		}
 
-		internal DiscoveryMessageSequenceApril2005 ()
+		internal DiscoveryMessageSequenceApril2005 (DiscoveryMessageSequence source)
 		{
-			throw new NotImplementedException ();
+			this.source = source;
 		}
+
+		DiscoveryMessageSequence source;
 
 		public XmlSchema GetSchema ()
 		{
-			throw new NotImplementedException ();
+			return Schema;
 		}
 
 		public void ReadXml (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			source = DiscoveryMessageSequence.ReadXml (reader, version);
 		}
 
 		public DiscoveryMessageSequence ToDiscoveryMessageSequence ()
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new InvalidOperationException ("Call ReadXml method first to fill its contents");
+			return source;
 		}
 
 		public void WriteXml (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			source.WriteXml (writer);
 		}
 	}
 }
