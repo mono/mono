@@ -954,10 +954,10 @@ namespace Mono.CSharp {
 					if (o_b == null || o_b.OperatorType != matching_type)
 						continue;
 
-					if (!TypeSpecComparer.Default.IsEqual (o_a.ReturnType, o_b.ReturnType))
+					if (!TypeSpecComparer.IsEqual (o_a.ReturnType, o_b.ReturnType))
 						continue;
 
-					if (!TypeSpecComparer.Default.Equals (o_a.ParameterTypes, o_b.ParameterTypes))
+					if (!TypeSpecComparer.Equals (o_a.ParameterTypes, o_b.ParameterTypes))
 						continue;
 
 					operators[i] = null;

@@ -311,7 +311,7 @@ namespace Mono.CSharp {
 		public bool HasSecurityAttribute {
 			get {
 				PredefinedAttribute pa = PredefinedAttributes.Get.Security;
-				return pa.IsDefined && TypeManager.IsSubclassOf (type, pa.Type);
+				return pa.IsDefined && TypeSpec.IsBaseClass (type, pa.Type, false);
 			}
 		}
 

@@ -114,7 +114,7 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// LAMESPEC: From T to dynamic type
+			// LAMESPEC: From T to dynamic type because it's like T to object
 			//
 			if (target_type == InternalType.Dynamic) {
 				if (expr_type.IsReferenceType)
@@ -125,11 +125,11 @@ namespace Mono.CSharp {
 
 			//
 			// From T to its effective base class C
-			// From T to any base class of C
+			// From T to any base class of C (it cannot contain dynamic of be of dynamic type)
 			// From T to any interface implemented by C
 			//
 			var base_type = expr_type.GetEffectiveBase ();
-			if (base_type == target_type || TypeManager.IsSubclassOf (base_type, target_type) || base_type.ImplementsInterface (target_type)) {
+			if (base_type == target_type || TypeSpec.IsBaseClass (base_type, target_type, false) || base_type.ImplementsInterface (target_type)) {
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -158,7 +158,7 @@ namespace Mono.CSharp {
 						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 					}
 				}
-
+/*
 				if (target_tp.Interfaces != null) {
 					foreach (TypeSpec iface in target_tp.Interfaces) {
 						if (!TypeManager.IsGenericParameter (iface))
@@ -168,7 +168,7 @@ namespace Mono.CSharp {
 							return source == null ? EmptyExpression.Null : new ClassCast (source, target_type, true);
 					}
 				}
-
+*/
 				return null;
 			}
 
@@ -274,7 +274,7 @@ namespace Mono.CSharp {
 				return false;
 			} else if (target_type == TypeManager.value_type) {
 				return expr_type == TypeManager.enum_type;
-			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) {
+			} else if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
 				//
 				// Special case: enumeration to System.Enum.
 				// System.Enum is not a value type, it is a class, so we need
@@ -399,7 +399,7 @@ namespace Mono.CSharp {
 				return res;
 			}
 
-			if (TypeManager.IsSubclassOf (expr_type, target_type)) {
+			if (TypeSpec.IsBaseClass (expr_type, target_type, false)) {
 				//
 				// Don't box same type arguments
 				//
@@ -1642,7 +1642,7 @@ namespace Mono.CSharp {
 			//
 			// From any class S to any class-type T, provided S is a base class of T
 			//
-			if (source_type.Kind == MemberKind.Class && TypeManager.IsSubclassOf (target_type, source_type))
+			if (source_type.Kind == MemberKind.Class && TypeSpec.IsBaseClass (target_type, source_type, true))
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 			//

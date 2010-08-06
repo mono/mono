@@ -2338,13 +2338,13 @@ namespace Mono.CSharp {
 				}
 
 				if (conv_type.IsClass) {
-					if (TypeManager.IsSubclassOf (declaring_type, conv_type)) {
+					if (TypeSpec.IsBaseClass (declaring_type, conv_type, true)) {
 						Report.Error (553, Location, "User-defined conversion `{0}' cannot convert to or from a base class",
 							GetSignatureForError ());
 						return false;
 					}
 
-					if (TypeManager.IsSubclassOf (conv_type, declaring_type)) {
+					if (TypeSpec.IsBaseClass (conv_type, declaring_type, false)) {
 						Report.Error (554, Location, "User-defined conversion `{0}' cannot convert to or from a derived class",
 							GetSignatureForError ());
 						return false;
@@ -2359,7 +2359,7 @@ namespace Mono.CSharp {
 				// Checks for Unary operators
 
 				if (OperatorType == OpType.Increment || OperatorType == OpType.Decrement) {
-					if (return_type != declaring_type && !TypeManager.IsSubclassOf (return_type, declaring_type)) {
+					if (return_type != declaring_type && !TypeSpec.IsBaseClass (return_type, declaring_type, false)) {
 						Report.Error (448, Location,
 							"The return type for ++ or -- operator must be the containing type or derived from the containing type");
 						return false;

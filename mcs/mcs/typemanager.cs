@@ -559,18 +559,6 @@ namespace Mono.CSharp {
 		return t.IsStruct;
 	}
 
-	public static bool IsSubclassOf (TypeSpec type, TypeSpec base_type)
-	{
-		do {
-			if (type == base_type)
-				return true;
-
-			type = type.BaseType;
-		} while (type != null);
-
-		return false;
-	}
-
 	public static bool IsFamilyAccessible (TypeSpec type, TypeSpec parent)
 	{
 //		TypeParameter tparam = LookupTypeParameter (type);

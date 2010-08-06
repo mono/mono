@@ -293,7 +293,7 @@ namespace Mono.CSharp
 			do {
 				if (t.Interfaces != null) {	// TODO: Try t.iface
 					foreach (TypeSpec i in t.Interfaces) {
-						if (i == iface || TypeSpecComparer.Variant.IsEqual (i, iface))
+						if (i == iface || TypeSpecComparer.Variant.IsEqual (i, iface) || TypeSpecComparer.IsEqual (i, iface))
 							return true;
 					}
 				}
@@ -314,6 +314,37 @@ namespace Mono.CSharp
 			} else {
 				cache = MemberDefinition.LoadMembers (this);
 			}
+		}
+
+		//
+		// Is @baseClass base implementation of @type. With enabled @dynamicIsEqual the slower
+		// comparison is used to hide differences between `object' and `dynamic' for generic
+		// types. Should not be used for comparisons where G<object> != G<dynamic>
+		//
+		public static bool IsBaseClass (TypeSpec type, TypeSpec baseClass, bool dynamicIsObject)
+		{
+			if (dynamicIsObject && baseClass.IsGeneric) {
+				//
+				// Returns true for a hierarchies like this when passing baseClass of A<dynamic>
+				//
+				// class B : A<object> {}
+				//
+				while (type != null) {
+					type = type.BaseType;
+					if (TypeSpecComparer.IsEqual (type, baseClass))
+						return true;
+				}
+
+				return false;
+			}
+
+			while (type != null) {
+				type = type.BaseType;
+				if (type == baseClass)
+					return true;
+			}
+
+			return false;
 		}
 
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
@@ -446,16 +477,15 @@ namespace Mono.CSharp
 	static class TypeSpecComparer
 	{
 		//
-		// Default reference comparison, it has to be used when comparing
-		// two possible dynamic/internal types
+		// Does strict reference comparion only
 		//
 		public static readonly DefaultImpl Default = new DefaultImpl ();
 
-		public class DefaultImpl : IEqualityComparer<TypeSpec[]>, IEqualityComparer<Tuple<TypeSpec, TypeSpec[]>>
+		public class DefaultImpl : IEqualityComparer<TypeSpec[]>
 		{
 			#region IEqualityComparer<TypeSpec[]> Members
 
-			public bool Equals (TypeSpec[] x, TypeSpec[] y)
+			bool IEqualityComparer<TypeSpec[]>.Equals (TypeSpec[] x, TypeSpec[] y)
 			{
 				if (x == y)
 					return true;
@@ -464,13 +494,13 @@ namespace Mono.CSharp
 					return false;
 
 				for (int i = 0; i < x.Length; ++i)
-					if (!IsEqual (x[i], y[i]))
+					if (x[i] != y[i])
 						return false;
 
 				return true;
 			}
 
-			public int GetHashCode (TypeSpec[] obj)
+			int IEqualityComparer<TypeSpec[]>.GetHashCode (TypeSpec[] obj)
 			{
 				int hash = 0;
 				for (int i = 0; i < obj.Length; ++i)
@@ -480,45 +510,6 @@ namespace Mono.CSharp
 			}
 
 			#endregion
-
-			#region IEqualityComparer<Tuple<TypeSpec,TypeSpec[]>> Members
-
-			bool IEqualityComparer<Tuple<TypeSpec, TypeSpec[]>>.Equals (Tuple<TypeSpec, TypeSpec[]> x, Tuple<TypeSpec, TypeSpec[]> y)
-			{
-				return Equals (x.Item2, y.Item2) && x.Item1 == y.Item1;
-			}
-
-			int IEqualityComparer<Tuple<TypeSpec, TypeSpec[]>>.GetHashCode (Tuple<TypeSpec, TypeSpec[]> obj)
-			{
-				return GetHashCode (obj.Item2) ^ obj.Item1.GetHashCode ();
-			}
-
-			#endregion
-
-			//
-			// Identity type conversion
-			//
-			public bool IsEqual (TypeSpec a, TypeSpec b)
-			{
-				if (a == b)
-					return a.Kind != MemberKind.InternalCompilerType;
-
-				//
-				// object and dynamic are considered equivalent there is an identity conversion
-				// between object and dynamic, and between constructed types that are the same
-				// when replacing all occurences of dynamic with object.
-				//
-				if (a == InternalType.Dynamic || b == InternalType.Dynamic)
-					return b == TypeManager.object_type || a == TypeManager.object_type;
-
-				if (a == null || !a.IsGeneric || b == null || !b.IsGeneric)
-					return false;
-
-				if (a.MemberDefinition != b.MemberDefinition)
-					return false;
-
-				return Equals (a.TypeArguments, b.TypeArguments);
-			}
 		}
 
 		//
@@ -652,7 +643,7 @@ namespace Mono.CSharp
 				var targs_definition = target_type_def.TypeParameters;
 
 				if (!type1.IsInterface && !type1.IsDelegate) {
-					return Default.Equals (t1_targs, t2_targs);
+					return TypeSpecComparer.Equals (t1_targs, t2_targs);
 				}
 
 				for (int i = 0; i < targs_definition.Length; ++i) {
@@ -783,6 +774,51 @@ namespace Mono.CSharp
 				//
 				return false;
 			}
+		}
+
+		public static bool Equals (TypeSpec[] x, TypeSpec[] y)
+		{
+			if (x == y)
+				return true;
+
+			if (x.Length != y.Length)
+				return false;
+
+			for (int i = 0; i < x.Length; ++i)
+				if (!IsEqual (x[i], y[i]))
+					return false;
+
+			return true;
+		}
+
+		//
+		// Identity type conversion
+		//
+		// Default reference comparison, it has to be used when comparing
+		// two possible dynamic/internal types
+		//
+		public static bool IsEqual (TypeSpec a, TypeSpec b)
+		{
+			if (a == b) {
+				// This also rejects dynamic == dynamic
+				return a.Kind != MemberKind.InternalCompilerType;
+			}
+
+			//
+			// object and dynamic are considered equivalent there is an identity conversion
+			// between object and dynamic, and between constructed types that are the same
+			// when replacing all occurences of dynamic with object.
+			//
+			if (a == InternalType.Dynamic || b == InternalType.Dynamic)
+				return b == TypeManager.object_type || a == TypeManager.object_type;
+
+			if (a == null || !a.IsGeneric || b == null || !b.IsGeneric)
+				return false;
+
+			if (a.MemberDefinition != b.MemberDefinition)
+				return false;
+
+			return Equals (a.TypeArguments, b.TypeArguments);
 		}
 	}
 

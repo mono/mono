@@ -3917,7 +3917,7 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			AParametersCollection pd = oper.Parameters;
-			if (!TypeSpecComparer.Default.IsEqual (type, pd.Types[0]) || !TypeSpecComparer.Default.IsEqual (type, pd.Types[1])) {
+			if (!TypeSpecComparer.IsEqual (type, pd.Types[0]) || !TypeSpecComparer.IsEqual (type, pd.Types[1])) {
 				ec.Report.Error (217, loc,
 					"A user-defined operator `{0}' must have parameters and return values of the same type in order to be applicable as a short circuit operator",
 					oper.GetSignatureForError ());
@@ -4215,7 +4215,7 @@ namespace Mono.CSharp {
 			// First, if an implicit conversion exists from true_expr
 			// to false_expr, then the result type is of type false_expr.Type
 			//
-			if (!TypeSpecComparer.Default.IsEqual (true_type, false_type)) {
+			if (!TypeSpecComparer.IsEqual (true_type, false_type)) {
 				Expression conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
 				if (conv != null) {
 					//
