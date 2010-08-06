@@ -1045,7 +1045,6 @@ namespace MonoTests.System
 		}
 
 		[Test] // #475962
-		[Category ("NotWorking")]
 		public void ClosedOverNullReferenceInstanceMethod ()
 		{
 			var action = (Action) Delegate.CreateDelegate (
