@@ -444,6 +444,7 @@ namespace MonoTests.System
 			Assert.IsTrue (double.IsNaN (Math.Log (double.NegativeInfinity, y)));
 			Assert.IsTrue (double.IsNaN (Math.Log (x, double.NegativeInfinity)));
 			Assert.IsTrue (double.IsNaN (Math.Log (double.PositiveInfinity, double.PositiveInfinity)));
+			Assert.IsTrue (double.IsNaN (Math.Log (2, 1)));
 
 			// MS docs say this should be PositiveInfinity
 			Assert.IsTrue (Math.Log (0, y) == double.NegativeInfinity);
