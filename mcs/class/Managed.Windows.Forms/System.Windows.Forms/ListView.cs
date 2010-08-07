@@ -3529,9 +3529,6 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing) {
-				h_scroll.Dispose ();
-				v_scroll.Dispose ();
-				
 				large_image_list = null;
 				small_image_list = null;
 				state_image_list = null;
