@@ -3917,7 +3917,7 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			AParametersCollection pd = oper.Parameters;
-			if (!TypeSpecComparer.Default.IsEqual (type, pd.Types[0]) || !TypeSpecComparer.Default.IsEqual (type, pd.Types[1])) {
+			if (!TypeSpecComparer.IsEqual (type, pd.Types[0]) || !TypeSpecComparer.IsEqual (type, pd.Types[1])) {
 				ec.Report.Error (217, loc,
 					"A user-defined operator `{0}' must have parameters and return values of the same type in order to be applicable as a short circuit operator",
 					oper.GetSignatureForError ());
@@ -4215,7 +4215,7 @@ namespace Mono.CSharp {
 			// First, if an implicit conversion exists from true_expr
 			// to false_expr, then the result type is of type false_expr.Type
 			//
-			if (!TypeSpecComparer.Default.IsEqual (true_type, false_type)) {
+			if (!TypeSpecComparer.IsEqual (true_type, false_type)) {
 				Expression conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
 				if (conv != null) {
 					//
@@ -6278,7 +6278,10 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				enc.Encode (type);
+				if (enc.Encode (type) == AttributeEncoder.EncodedTypeProperties.DynamicType) {
+					Attribute.Error_AttributeArgumentIsDynamic (rc, loc);
+					return;
+				}
 			}
 
 			// Single dimensional array of 0 size
@@ -6806,6 +6809,24 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		static bool ContainsDynamicType (TypeSpec type)
+		{
+			if (type == InternalType.Dynamic)
+				return true;
+
+			var element_container = type as ElementTypeSpec;
+			if (element_container != null)
+				return ContainsDynamicType (element_container.Element);
+
+			foreach (var t in type.TypeArguments) {
+				if (ContainsDynamicType (t)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		static bool ContainsTypeParameter (TypeSpec type)
 		{
 			if (type.Kind == MemberKind.TypeParameter)
@@ -6833,7 +6854,12 @@ namespace Mono.CSharp {
 
 			if (ContainsTypeParameter (typearg)) {
 				rc.Compiler.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
-					TypeManager.CSharpName (typearg));
+					typearg.GetSignatureForError ());
+				return;
+			}
+
+			if (ContainsDynamicType (typearg)) {
+				Attribute.Error_AttributeArgumentIsDynamic (rc, loc);
 				return;
 			}
 
@@ -8732,40 +8758,46 @@ namespace Mono.CSharp {
 				return EmptyExpressionStatement.Instance;
 
 			var t = ec.CurrentInitializerVariable.Type;
-			
-			var member = MemberLookup (ec, ec.CurrentType, t, Name, 0, false, loc);
-			if (member == null) {
-				member = Expression.MemberLookup (null, ec.CurrentType, t, Name, 0, false, loc);
+			if (t == InternalType.Dynamic) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (ec.CurrentInitializerVariable));
+				target = new DynamicMemberBinder (Name, args, loc);
+			} else {
 
-				if (member != null) {
-					// TODO: ec.Report.SymbolRelatedToPreviousError (member);
-					ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
+				var member = MemberLookup (ec, ec.CurrentType, t, Name, 0, false, loc);
+				if (member == null) {
+					member = Expression.MemberLookup (null, ec.CurrentType, t, Name, 0, false, loc);
+
+					if (member != null) {
+						// TODO: ec.Report.SymbolRelatedToPreviousError (member);
+						ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
+						return null;
+					}
+				}
+
+				if (member == null) {
+					Error_TypeDoesNotContainDefinition (ec, loc, t, Name);
 					return null;
 				}
+
+				if (!(member is PropertyExpr || member is FieldExpr)) {
+					ec.Report.Error (1913, loc,
+						"Member `{0}' cannot be initialized. An object initializer may only be used for fields, or properties",
+						member.GetSignatureForError ());
+
+					return null;
+				}
+
+				var me = member as MemberExpr;
+				if (me.IsStatic) {
+					ec.Report.Error (1914, loc,
+						"Static field or property `{0}' cannot be assigned in an object initializer",
+						me.GetSignatureForError ());
+				}
+
+				target = me;
+				me.InstanceExpression = ec.CurrentInitializerVariable;
 			}
-
-			if (member == null) {
-				Error_TypeDoesNotContainDefinition (ec, loc, t, Name);
-				return null;
-			}
-
-			if (!(member is PropertyExpr || member is FieldExpr)) {
-				ec.Report.Error (1913, loc,
-					"Member `{0}' cannot be initialized. An object initializer may only be used for fields, or properties",
-					member.GetSignatureForError ());
-
-				return null;
-			}
-
-			var me = member as MemberExpr;
-			if (me.IsStatic) {
-				ec.Report.Error (1914, loc,
-					"Static field or property `{0}' cannot be assigned in an object initializer",
-					me.GetSignatureForError ());
-			}
-
-			target = me;
-			me.InstanceExpression = ec.CurrentInitializerVariable;
 
 			if (source is CollectionOrObjectInitializers) {
 				Expression previous = ec.CurrentInitializerVariable;

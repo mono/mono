@@ -566,6 +566,22 @@ namespace System.Runtime.Serialization
 
 		static QName GetSerializableQName (Type type)
 		{
+#if !NET_2_1
+			// First, check XmlSchemaProviderAttribute and try GetSchema() to see if it returns a schema in the expected format.
+			var xpa = type.GetCustomAttribute<XmlSchemaProviderAttribute> (true);
+			if (xpa != null) {
+				var mi = type.GetMethod (xpa.MethodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+				if (mi != null) {
+					try {
+						var xss = new XmlSchemaSet ();
+						return (XmlQualifiedName) mi.Invoke (null, new object [] {xss});
+					} catch {
+						// ignore.
+					}
+				}
+			}
+#endif
+
 			string xmlName = type.Name;
 			if (type.IsGenericType) {
 				xmlName = xmlName.Substring (0, xmlName.IndexOf ('`')) + "Of";

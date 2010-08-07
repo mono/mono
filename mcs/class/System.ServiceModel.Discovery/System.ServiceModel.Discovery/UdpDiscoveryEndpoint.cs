@@ -38,7 +38,7 @@ namespace System.ServiceModel.Discovery
 		public static readonly Uri DefaultIPv4MulticastAddress = new Uri ("soap.udp://239.255.255.250:3702/");
 		public static readonly Uri DefaultIPv6MulticastAddress = new Uri ("soap.udp://[FF02:0000:0000:0000:0000:0000:0000:000C]:3702/");
 
-		internal static Uri DefaultAddress {
+		internal static Uri DefaultMulticastAddress {
 			get { return IPGlobalProperties.GetIPGlobalProperties ().GetIPv4GlobalStatistics ().NumberOfInterfaces == 0 ? DefaultIPv6MulticastAddress : DefaultIPv4MulticastAddress; }
 		}
 		
@@ -50,7 +50,7 @@ namespace System.ServiceModel.Discovery
 
 		// (2)->(6)
 		public UdpDiscoveryEndpoint (DiscoveryVersion discoveryVersion)
-			: this (discoveryVersion, DefaultIPv4MulticastAddress)
+			: this (discoveryVersion, DefaultMulticastAddress)
 		{
 		}
 

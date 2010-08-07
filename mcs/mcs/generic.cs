@@ -90,7 +90,7 @@ namespace Mono.CSharp {
 
 		bool CheckConflictingInheritedConstraint (TypeSpec ba, TypeSpec bb, IMemberContext context, Location loc)
 		{
-			if (!TypeManager.IsSubclassOf (ba, bb) && !TypeManager.IsSubclassOf (bb, ba)) {
+			if (!TypeSpec.IsBaseClass (ba, bb, false) && !TypeSpec.IsBaseClass (bb, ba, false)) {
 				context.Compiler.Report.Error (455, loc,
 					"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
 					tparam.Value,
@@ -1367,9 +1367,6 @@ namespace Mono.CSharp {
 		{
 			if (TypeManager.IsNullableType (open_type))
 				return targs[0].GetSignatureForError () + "?";
-
-			if (MemberDefinition is AnonymousTypeClass)
-				return ((AnonymousTypeClass) MemberDefinition).GetSignatureForError ();
 
 			return base.GetSignatureForError ();
 		}
@@ -2816,7 +2813,7 @@ namespace Mono.CSharp {
 					//
 					if (unique_candidate_targs != null) {
 						TypeSpec[] second_unique_candidate_targs = TypeManager.GetTypeArguments (u_candidate);
-						if (TypeSpecComparer.Default.Equals (unique_candidate_targs, second_unique_candidate_targs)) {
+						if (TypeSpecComparer.Equals (unique_candidate_targs, second_unique_candidate_targs)) {
 							unique_candidate_targs = second_unique_candidate_targs;
 							continue;
 						}

@@ -65,17 +65,23 @@ namespace System.Web.Compilation
 		{
 			CodeAttributeDeclaration cad;
 			cad = new CodeAttributeDeclaration ("System.Web.UI.PartialCachingAttribute");
-			AddPrimitiveAttribute (cad, parser.OutputCacheDuration);
-			AddPrimitiveAttribute (cad, parser.OutputCacheVaryByParam);
-			AddPrimitiveAttribute (cad, parser.OutputCacheVaryByControls);
-			AddPrimitiveAttribute (cad, parser.OutputCacheVaryByCustom);
-			AddPrimitiveAttribute (cad, parser.OutputCacheShared);
+			CodeAttributeArgumentCollection arguments = cad.Arguments;
+			
+			AddPrimitiveArgument (arguments, parser.OutputCacheDuration);
+			AddPrimitiveArgument (arguments, parser.OutputCacheVaryByParam);
+			AddPrimitiveArgument (arguments, parser.OutputCacheVaryByControls);
+			AddPrimitiveArgument (arguments, parser.OutputCacheVaryByCustom);
+			AddPrimitiveArgument (arguments, parser.OutputCacheSqlDependency);
+			AddPrimitiveArgument (arguments, parser.OutputCacheShared);
+#if NET_4_0
+			arguments.Add (new CodeAttributeArgument ("ProviderName", new CodePrimitiveExpression (parser.ProviderName)));
+#endif
 			mainClass.CustomAttributes.Add (cad);
 		}
 
-		void AddPrimitiveAttribute (CodeAttributeDeclaration cad, object obj)
+		void AddPrimitiveArgument (CodeAttributeArgumentCollection arguments, object obj)
 		{
-			cad.Arguments.Add (new CodeAttributeArgument (new CodePrimitiveExpression (obj)));
+			arguments.Add (new CodeAttributeArgument (new CodePrimitiveExpression (obj)));
 		}
 
 		protected override void AddStatementsToInitMethodTop (ControlBuilder builder, CodeMemberMethod method)

@@ -497,7 +497,8 @@ namespace Mono.CSharp {
 
 		public virtual void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
-			Attribute.Error_AttributeArgumentNotValid (rc, loc);
+			rc.Compiler.Report.Error (182, loc,
+				"An attribute argument must be a constant expression, typeof expression or array creation expression");
 		}
 
 		/// <summary>
@@ -2595,7 +2596,7 @@ namespace Mono.CSharp {
 			if ((member.Modifiers & Modifiers.AccessibilityMask) == Modifiers.PROTECTED && !(InstanceExpression is This)) {
 				var ct = rc.CurrentType;
 				var expr_type = InstanceExpression.Type;
-				if (ct != expr_type && !TypeManager.IsSubclassOf (expr_type, ct)) {
+				if (ct != expr_type) {
 					expr_type = expr_type.GetDefinition ();
 					if (ct != expr_type && !IsSameOrBaseQualifier (ct, expr_type)) {
 						rc.Report.SymbolRelatedToPreviousError (member);
@@ -2819,7 +2820,7 @@ namespace Mono.CSharp {
 			if (arguments == null)
 				arguments = new Arguments (1);
 
-			arguments.Insert (0, new Argument (ExtensionExpression));
+			arguments.Insert (0, new Argument (ExtensionExpression, Argument.AType.ExtensionType));
 			var res = base.OverloadResolve (ec, ref arguments, ehandler ?? this, restr);
 
 			// Store resolved argument and restore original arguments
@@ -3448,7 +3449,7 @@ namespace Mono.CSharp {
 			//
 			// Prefer non-optional version
 			//
-			// LAMESPEC: Specification claims this should be done at last but the oposite is true
+			// LAMESPEC: Specification claims this should be done at last but the opposite is true
 			if (candidate_params == best_params && candidate_pd.Count != best_pd.Count) {
 				if (candidate_pd.Count >= best_pd.Count)
 					return false;
@@ -3717,7 +3718,7 @@ namespace Mono.CSharp {
 			// Types have to be identical when ref or out modifer is used 
 			//
 			if ((arg_mod | param_mod) != 0) {
-				if (argument.Type != parameter && !TypeSpecComparer.Default.IsEqual (argument.Type, parameter)) {
+				if (argument.Type != parameter && !TypeSpecComparer.IsEqual (argument.Type, parameter)) {
 					return 2;
 				}
 			} else {
@@ -3921,6 +3922,12 @@ namespace Mono.CSharp {
 
 			// TODO: quite slow
 			if (args_count != 0 && args.HasDynamic) {
+				if (args [0].ArgType == Argument.AType.ExtensionType) {
+					rc.Report.Error (1973, loc,
+						"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' cannot be dynamically dispatched. Consider calling the method without the extension method syntax",
+						args [0].Type.GetSignatureForError (), best_candidate.Name, best_candidate.GetSignatureForError());
+				}
+
 				BestCandidateIsDynamic = true;
 				return null;
 			}
@@ -4139,7 +4146,7 @@ namespace Mono.CSharp {
 					if ((p_mod & ~Parameter.Modifier.PARAMS) != a.Modifier)
 						break;
 
-					if (a.Expr.Type == pt || TypeSpecComparer.Default.IsEqual (a.Expr.Type, pt))
+					if (a.Expr.Type == pt || TypeSpecComparer.IsEqual (a.Expr.Type, pt))
 						continue;
 
 					break;
@@ -4377,7 +4384,7 @@ namespace Mono.CSharp {
 		{
 			// Checks possible ldflda of field access expression
 			return !spec.IsStatic && TypeManager.IsValueType (spec.MemberType) &&
-				TypeManager.IsSubclassOf (spec.DeclaringType, TypeManager.mbr_type) &&
+				TypeSpec.IsBaseClass (spec.DeclaringType, TypeManager.mbr_type, false) &&
 				!(InstanceExpression is This);
 		}
 
@@ -4558,7 +4565,7 @@ namespace Mono.CSharp {
 			}
 
 			if (right_side == EmptyExpression.OutAccess.Instance &&
-			    !IsStatic && !(InstanceExpression is This) && TypeManager.mbr_type != null && TypeManager.IsSubclassOf (spec.DeclaringType, TypeManager.mbr_type)) {
+				!IsStatic && !(InstanceExpression is This) && TypeManager.mbr_type != null && TypeSpec.IsBaseClass (spec.DeclaringType, TypeManager.mbr_type, false)) {
 				ec.Report.SymbolRelatedToPreviousError (spec.DeclaringType);
 				ec.Report.Warning (197, 1, loc,
 						"Passing `{0}' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class",

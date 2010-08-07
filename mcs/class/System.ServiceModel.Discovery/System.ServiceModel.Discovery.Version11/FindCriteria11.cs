@@ -1,7 +1,7 @@
 //
 // Author: Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009,2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,21 +35,41 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Discovery.Version11
 {
+	[XmlSchemaProvider ("GetSchema")]
 	public class FindCriteria11 : IXmlSerializable
 	{
 		public static FindCriteria11 FromFindCriteria (FindCriteria findCriteria)
 		{
-			throw new NotImplementedException ();
+			return new FindCriteria11 (findCriteria);
+		}
+
+		static readonly DiscoveryVersion version = DiscoveryVersion.WSDiscovery11;
+		static XmlSchema schema;
+		
+		static XmlSchema Schema {
+			get {
+				if (schema == null)
+					schema = FindCriteria.BuildSchema (version);
+				return schema;
+			}
 		}
 
 		public static XmlQualifiedName GetSchema (XmlSchemaSet schemaSet)
 		{
-			throw new NotImplementedException ();
+			schemaSet.Add (Schema);
+			return new XmlQualifiedName ("ProbeType", version.Namespace);
 		}
+		
+		public FindCriteria11 (FindCriteria source)
+		{
+			this.source = source;
+		}
+
+		FindCriteria source;
 
 		public XmlSchema GetSchema ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		public void ReadXml (XmlReader reader)
@@ -59,12 +79,14 @@ namespace System.ServiceModel.Discovery.Version11
 
 		public FindCriteria ToFindCriteria ()
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new InvalidOperationException ("Call ReadXml method before calling this method.");
+			return source;
 		}
 
 		public void WriteXml (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			source.WriteXml (writer, version);
 		}
 	}
 }

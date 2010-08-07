@@ -1,4 +1,4 @@
-// CS0182: An attribute argument must be a constant expression, typeof expression or array creation expression
+// CS1982: An attribute argument cannot be dynamic expression
 // Line: 13
 
 using System;

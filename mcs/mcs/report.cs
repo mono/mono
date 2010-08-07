@@ -192,7 +192,7 @@ namespace Mono.CSharp {
 
 			if (mc != null) {
 				SymbolRelatedToPreviousError (mc);
-			} else {
+			} else if (ms.MemberDefinition != null) {
 				SymbolRelatedToPreviousError (ms.MemberDefinition.Assembly.Location, "");
 			}
 		}

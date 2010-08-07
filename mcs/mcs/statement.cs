@@ -4571,7 +4571,7 @@ namespace Mono.CSharp {
 
 					type = te.Type;
 
-					if (type != TypeManager.exception_type && !TypeManager.IsSubclassOf (type, TypeManager.exception_type)){
+					if (type != TypeManager.exception_type && !TypeSpec.IsBaseClass (type, TypeManager.exception_type, false)){
 						ec.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
 						return false;
 					}
@@ -4710,7 +4710,7 @@ namespace Mono.CSharp {
 
 				TypeSpec resolved_type = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
-					if (resolved_type == prev_catches [ii] || TypeManager.IsSubclassOf (resolved_type, prev_catches [ii])) {
+					if (resolved_type == prev_catches[ii] || TypeSpec.IsBaseClass (resolved_type, prev_catches[ii], true)) {
 						ec.Report.Error (160, c.loc,
 							"A previous catch clause already catches all exceptions of this or a super type `{0}'",
 							TypeManager.CSharpName (prev_catches [ii]));

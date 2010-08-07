@@ -249,15 +249,16 @@ namespace Mono.CSharp
 				if ((i & invalid_flags) == 0)
 					continue;
 
-				Error_InvalidModifier (l, Name ((Modifiers) i), Report);
+				Error_InvalidModifier ((Modifiers)i, l, Report);
 			}
 
 			return allowed & mod;
 		}
 
-		public static void Error_InvalidModifier (Location l, string name, Report Report)
+		static void Error_InvalidModifier (Modifiers mod, Location l, Report Report)
 		{
-			Report.Error (106, l, "The modifier `{0}' is not valid for this item", name);
+			Report.Error (106, l, "The modifier `{0}' is not valid for this item",
+				Name (mod));
 		}
 	}
 }

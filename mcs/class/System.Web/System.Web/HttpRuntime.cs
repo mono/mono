@@ -595,8 +595,7 @@ namespace System.Web
 			ThreadPool.QueueUserWorkItem (delegate {
 				try {
 					DoUnload ();
-				} catch (Exception e){
-					Console.Error.WriteLine (e);
+				} catch {
 				}});
 		}
 

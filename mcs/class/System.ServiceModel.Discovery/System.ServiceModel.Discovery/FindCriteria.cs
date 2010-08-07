@@ -30,17 +30,21 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Linq;
 
 namespace System.ServiceModel.Discovery
 {
 	public class FindCriteria
 	{
-		public static readonly Uri ScopeMatchByExact = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/strcmp0");
-		public static readonly Uri ScopeMatchByLdap = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ldap");
-		public static readonly Uri ScopeMatchByNone = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/none");
-		public static readonly Uri ScopeMatchByPrefix = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/rfc3986");
-		public static readonly Uri ScopeMatchByUuid = new Uri ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/uuid");
+		const string SerializationNS = "http://schemas.microsoft.com/ws/2008/06/discovery";
+		const int default_max_results = int.MaxValue;
+
+		public static readonly Uri ScopeMatchByExact = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/strcmp0");
+		public static readonly Uri ScopeMatchByLdap = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/ldap");
+		public static readonly Uri ScopeMatchByNone = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/none");
+		public static readonly Uri ScopeMatchByPrefix = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/rfc3986");
+		public static readonly Uri ScopeMatchByUuid = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/uuid");
 
 		public static FindCriteria CreateMetadataExchangeEndpointCriteria ()
 		{
@@ -65,19 +69,19 @@ namespace System.ServiceModel.Discovery
 			ContractTypeNames = new Collection<XmlQualifiedName> ();
 			Extensions = new Collection<XElement> ();
 			Scopes = new Collection<Uri> ();
+			MaxResults = default_max_results;
 		}
 
-		[MonoTODO]
 		public FindCriteria (Type contractType)
 			: this ()
 		{
-			throw new NotImplementedException ();
+			var cd = ContractDescription.GetContract (contractType);
+			ContractTypeNames.Add (new XmlQualifiedName (cd.Name, cd.Namespace));
 		}
 
 		public Collection<XmlQualifiedName> ContractTypeNames { get; private set; }
 		public TimeSpan Duration { get; set; }
 		public Collection<XElement> Extensions { get; private set; }
-		[MonoTODO]
 		public int MaxResults { get; set; }
 		public Uri ScopeMatchBy { get; set; }
 		public Collection<Uri> Scopes { get; private set; }
@@ -86,6 +90,74 @@ namespace System.ServiceModel.Discovery
 		public bool IsMatch (EndpointDiscoveryMetadata endpointDiscoveryMetadata)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal void WriteXml (XmlWriter writer, DiscoveryVersion version)
+		{
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
+
+			writer.WriteStartElement ("ProbeType", version.Namespace);
+
+			// standard members
+			writer.WriteStartElement ("d", "Types", version.Namespace);
+			int p = 0;
+			foreach (var qname in ContractTypeNames)
+				if (writer.LookupPrefix (qname.Namespace) == null)
+					writer.WriteAttributeString ("xmlns", "p" + p++, "http://www.w3.org/2000/xmlns/", qname.Namespace);
+			writer.WriteValue (ContractTypeNames);
+			writer.WriteEndElement ();
+
+			writer.WriteStartElement ("Scopes", version.Namespace);
+			if (ScopeMatchBy != null) {
+				writer.WriteStartAttribute ("MatchBy");
+				writer.WriteValue (ScopeMatchBy);
+				writer.WriteEndAttribute ();
+			}
+			writer.WriteValue (Scopes);
+			writer.WriteEndElement ();
+
+			// non-standard members
+			if (MaxResults != default_max_results) {
+				writer.WriteStartElement ("MaxResults", SerializationNS);
+				writer.WriteValue (Duration);
+				writer.WriteEndElement ();
+			}
+			writer.WriteStartElement ("Duration", SerializationNS);
+			writer.WriteValue (Duration);
+			writer.WriteEndElement ();
+			
+			foreach (var ext in Extensions)
+				ext.WriteTo (writer);
+
+			writer.WriteEndElement ();
+		}
+
+		internal static XmlSchema BuildSchema (DiscoveryVersion version)
+		{
+			var schema = new XmlSchema () { TargetNamespace = version.Namespace };
+
+			var anyAttr = new XmlSchemaAnyAttribute () { Namespace = "##other", ProcessContents = XmlSchemaContentProcessing.Lax };
+
+			var probePart = new XmlSchemaSequence ();
+			probePart.Items.Add (new XmlSchemaElement () { RefName = new XmlQualifiedName ("Types", version.Namespace), MinOccurs = 0 });
+			probePart.Items.Add (new XmlSchemaElement () { RefName = new XmlQualifiedName ("Scopes", version.Namespace), MinOccurs = 0 });
+			probePart.Items.Add (new XmlSchemaAny () { MinOccurs = 0, MaxOccursString = "unbounded", Namespace = "##other", ProcessContents = XmlSchemaContentProcessing.Lax });
+			var ct = new XmlSchemaComplexType () { Name = "ProbeType", Particle = probePart, AnyAttribute = anyAttr };
+			schema.Items.Add (ct);
+
+			schema.Items.Add (new XmlSchemaSimpleType () { Name = "QNameListType", Content = new XmlSchemaSimpleTypeList () { ItemTypeName = new XmlQualifiedName ("QName", XmlSchema.Namespace) } });
+
+			var scr = new XmlSchemaSimpleContentRestriction () { BaseTypeName = new XmlQualifiedName ("UriListType", version.Namespace), AnyAttribute = anyAttr };
+			scr.Attributes.Add (new XmlSchemaAttribute () { Name = "matchBy", SchemaTypeName = new XmlQualifiedName ("anyURI", XmlSchema.Namespace) });
+			schema.Items.Add (new XmlSchemaComplexType () { Name = "ScopesType", ContentModel = new XmlSchemaSimpleContent () { Content = scr } });
+
+			schema.Items.Add (new XmlSchemaSimpleType () { Name = "UriListType", Content = new XmlSchemaSimpleTypeList () { ItemTypeName = new XmlQualifiedName ("anyURI", XmlSchema.Namespace) } });
+
+			schema.Items.Add (new XmlSchemaElement () { Name = "Types", SchemaTypeName = new XmlQualifiedName ("QNameListType", version.Namespace) });
+			schema.Items.Add (new XmlSchemaElement () { Name = "Scopes", SchemaTypeName = new XmlQualifiedName ("ScopesType", version.Namespace) });
+
+			return schema;
 		}
 	}
 }

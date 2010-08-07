@@ -366,7 +366,8 @@ STANDALONE_TEST_COMPILABLE_TESTS = \
 	ApplicationPreStartMethods/test_06 \
 	ApplicationPreStartMethods/test_07 \
 	ApplicationPreStartMethods/test_08 \
-	RegisterBuildProvider
+	RegisterBuildProvider \
+	PageParserDefaultTypeProperties
 endif
 
 STANDALONE_TEST_RUNNER = Test/tools/standalone-runner.exe

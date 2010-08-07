@@ -164,10 +164,7 @@ namespace Microsoft.Win32
 			RegistryApi.Close (this);
 			handle = null;
 #if NET_4_0
-			if (safe_handle != null) {
-				safe_handle.Close ();
-				safe_handle = null;
-			}
+			safe_handle = null;
 #endif
 		}
 		

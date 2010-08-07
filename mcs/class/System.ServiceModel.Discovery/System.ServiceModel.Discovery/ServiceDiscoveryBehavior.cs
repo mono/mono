@@ -21,6 +21,13 @@ namespace System.ServiceModel.Discovery
 
 		void IServiceBehavior.Validate (ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
 		{
+			if (serviceHostBase == null)
+				throw new ArgumentNullException ("serviceHostBase");
+			var dse = serviceHostBase.Extensions.Find<DiscoveryServiceExtension> ();
+			if (dse == null) {
+				dse = new DiscoveryServiceExtension.DefaultDiscoveryServiceExtension ();
+				serviceHostBase.Extensions.Add (dse);
+			}
 		}
 	}
 }
