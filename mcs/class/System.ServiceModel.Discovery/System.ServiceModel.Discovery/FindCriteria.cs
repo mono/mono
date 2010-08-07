@@ -30,12 +30,16 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Linq;
 
 namespace System.ServiceModel.Discovery
 {
 	public class FindCriteria
 	{
+		const string SerializationNS = "http://schemas.microsoft.com/ws/2008/06/discovery";
+		const int default_max_results = int.MaxValue;
+
 		public static readonly Uri ScopeMatchByExact = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/strcmp0");
 		public static readonly Uri ScopeMatchByLdap = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/ldap");
 		public static readonly Uri ScopeMatchByNone = new Uri ("http://schemas.microsoft.com/ws/2008/06/discovery/none");
@@ -65,7 +69,7 @@ namespace System.ServiceModel.Discovery
 			ContractTypeNames = new Collection<XmlQualifiedName> ();
 			Extensions = new Collection<XElement> ();
 			Scopes = new Collection<Uri> ();
-			MaxResults = int.MaxValue;
+			MaxResults = default_max_results;
 		}
 
 		public FindCriteria (Type contractType)
@@ -86,6 +90,74 @@ namespace System.ServiceModel.Discovery
 		public bool IsMatch (EndpointDiscoveryMetadata endpointDiscoveryMetadata)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal void WriteXml (XmlWriter writer, DiscoveryVersion version)
+		{
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
+
+			writer.WriteStartElement ("ProbeType", version.Namespace);
+
+			// standard members
+			writer.WriteStartElement ("d", "Types", version.Namespace);
+			int p = 0;
+			foreach (var qname in ContractTypeNames)
+				if (writer.LookupPrefix (qname.Namespace) == null)
+					writer.WriteAttributeString ("xmlns", "p" + p++, "http://www.w3.org/2000/xmlns/", qname.Namespace);
+			writer.WriteValue (ContractTypeNames);
+			writer.WriteEndElement ();
+
+			writer.WriteStartElement ("Scopes", version.Namespace);
+			if (ScopeMatchBy != null) {
+				writer.WriteStartAttribute ("MatchBy");
+				writer.WriteValue (ScopeMatchBy);
+				writer.WriteEndAttribute ();
+			}
+			writer.WriteValue (Scopes);
+			writer.WriteEndElement ();
+
+			// non-standard members
+			if (MaxResults != default_max_results) {
+				writer.WriteStartElement ("MaxResults", SerializationNS);
+				writer.WriteValue (Duration);
+				writer.WriteEndElement ();
+			}
+			writer.WriteStartElement ("Duration", SerializationNS);
+			writer.WriteValue (Duration);
+			writer.WriteEndElement ();
+			
+			foreach (var ext in Extensions)
+				ext.WriteTo (writer);
+
+			writer.WriteEndElement ();
+		}
+
+		internal static XmlSchema BuildSchema (DiscoveryVersion version)
+		{
+			var schema = new XmlSchema () { TargetNamespace = version.Namespace };
+
+			var anyAttr = new XmlSchemaAnyAttribute () { Namespace = "##other", ProcessContents = XmlSchemaContentProcessing.Lax };
+
+			var probePart = new XmlSchemaSequence ();
+			probePart.Items.Add (new XmlSchemaElement () { RefName = new XmlQualifiedName ("Types", version.Namespace), MinOccurs = 0 });
+			probePart.Items.Add (new XmlSchemaElement () { RefName = new XmlQualifiedName ("Scopes", version.Namespace), MinOccurs = 0 });
+			probePart.Items.Add (new XmlSchemaAny () { MinOccurs = 0, MaxOccursString = "unbounded", Namespace = "##other", ProcessContents = XmlSchemaContentProcessing.Lax });
+			var ct = new XmlSchemaComplexType () { Name = "ProbeType", Particle = probePart, AnyAttribute = anyAttr };
+			schema.Items.Add (ct);
+
+			schema.Items.Add (new XmlSchemaSimpleType () { Name = "QNameListType", Content = new XmlSchemaSimpleTypeList () { ItemTypeName = new XmlQualifiedName ("QName", XmlSchema.Namespace) } });
+
+			var scr = new XmlSchemaSimpleContentRestriction () { BaseTypeName = new XmlQualifiedName ("UriListType", version.Namespace), AnyAttribute = anyAttr };
+			scr.Attributes.Add (new XmlSchemaAttribute () { Name = "matchBy", SchemaTypeName = new XmlQualifiedName ("anyURI", XmlSchema.Namespace) });
+			schema.Items.Add (new XmlSchemaComplexType () { Name = "ScopesType", ContentModel = new XmlSchemaSimpleContent () { Content = scr } });
+
+			schema.Items.Add (new XmlSchemaSimpleType () { Name = "UriListType", Content = new XmlSchemaSimpleTypeList () { ItemTypeName = new XmlQualifiedName ("anyURI", XmlSchema.Namespace) } });
+
+			schema.Items.Add (new XmlSchemaElement () { Name = "Types", SchemaTypeName = new XmlQualifiedName ("QNameListType", version.Namespace) });
+			schema.Items.Add (new XmlSchemaElement () { Name = "Scopes", SchemaTypeName = new XmlQualifiedName ("ScopesType", version.Namespace) });
+
+			return schema;
 		}
 	}
 }
