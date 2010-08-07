@@ -424,6 +424,14 @@ namespace Microsoft.Win32
 		{
 			if (!IsHandleValid (rkey))
 				return;
+#if NET_4_0
+			SafeRegistryHandle safe_handle = rkey.Handle;
+			if (safe_handle != null) {
+				// closes the unmanaged pointer for us.
+				safe_handle.Close ();
+				return;
+			}
+#endif
 			IntPtr handle = GetHandle (rkey);
 			RegCloseKey (handle);
 		}

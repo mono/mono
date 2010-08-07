@@ -28,6 +28,7 @@
 
 #if NET_4_0
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 
@@ -41,8 +42,15 @@ namespace Microsoft.Win32.SafeHandles {
 
 		protected override bool ReleaseHandle ()
 		{
-			throw new NotImplementedException ();
+			// Need to release an unmanaged pointer *only* in Windows.
+			if (Path.DirectorySeparatorChar == '\\')
+				return RegCloseKey (handle) == 0;
+
+			return true;
 		}
+
+		[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint="RegCloseKey")]
+		static extern int RegCloseKey (IntPtr keyHandle);
 	}
 }
 #endif
