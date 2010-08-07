@@ -195,6 +195,29 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull(lv.StateImageList, "#B3");
 		}
 
+		string dispose_log;
+
+		[Test]
+		public void DisposeLayoutTest ()
+		{
+			Form f = new Form ();
+			ListView lv = new ListView ();
+			f.Controls.Add (lv);
+			f.Show ();
+
+			dispose_log = String.Empty;
+			lv.Layout += DisposeOnLayout;
+			lv.Dispose (); // just to be sure.
+			f.Dispose ();
+
+			Assert.AreEqual (0, dispose_log.Length, "#A0");
+		}
+
+		void DisposeOnLayout (object o, LayoutEventArgs args)
+		{
+			dispose_log = "OnLayout";
+		}
+
 		// Hey
 		//[Test]
 		public void EnsureVisibleTest ()
