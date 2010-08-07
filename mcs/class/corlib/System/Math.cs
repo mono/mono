@@ -140,6 +140,8 @@ namespace System
 
 		public static double Log (double a, double newBase)
 		{
+			if (newBase == 1.0)
+				return Double.NaN;
 			double result = Log(a) / Log(newBase);
 			return (result == -0)? 0: result;
 		}
