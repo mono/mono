@@ -2041,6 +2041,7 @@ namespace System.Windows.Forms
 			item_control.Visible = true;
 			item_control.Location = Point.Empty;
 			item_control.Width = ClientRectangle.Width;
+			AdjustChildrenZOrder ();
 
 			int item_height = GetDetailsItemHeight ();
 			ItemSize = new Size (0, item_height); // We only cache Height for details view
@@ -2095,6 +2096,17 @@ namespace System.Windows.Forms
 				item.SetPosition (new Point (0, item_y));
 #endif					
 			}
+		}
+
+		// Need to make sure HeaderControl is on top, and we can't simply use BringToFront since
+		// these controls are implicit, so we need to re-populate our collection.
+		void AdjustChildrenZOrder ()
+		{
+			SuspendLayout ();
+			Controls.ClearImplicit ();
+			Controls.AddImplicit (header_control);
+			Controls.AddImplicit (item_control);
+			ResumeLayout ();
 		}
 
 		private void AdjustItemsPositionArray (int count)
