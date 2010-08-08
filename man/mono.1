@@ -1361,9 +1361,18 @@ specify kilo-, mega- and gigabytes, respectively.
 .TP
 \fBmajor=\fIcollector\fR
 Specifies which major collector to use.  Options are `marksweep' for
-the Mark&Sweep collector, `marksweep-par' for parallel Mark&Sweep and
+the Mark&Sweep collector, `marksweep-par' for parallel Mark&Sweep,
+`marksweep-fixed' for Mark&Sweep with a fixed heap,
+`marksweep-fixed-par' for parallel Mark&Sweep with a fixed heap and
 `copying' for the copying collector. The Mark&Sweep collector is the
 default.
+.TP
+\fBmajor-heap-size=\fIsize\fR
+Sets the size of the major heap (not including the large object space)
+for the fixed-heap Mark&Sweep collector (i.e. `marksweep-fixed' and
+`marksweep-fixed-par').  The size is in bytes, with optional suffixes
+`k', `m' and `g' to specify kilo-, mega- and gigabytes, respectively.
+The default is 512 megabytes.
 .ne
 .RE
 .TP
