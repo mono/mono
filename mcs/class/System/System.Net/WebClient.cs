@@ -637,8 +637,12 @@ namespace System.Net
 				fStream = File.OpenRead (fileName);
 				request = SetupRequest (address, method, true);
 				reqStream = request.GetRequestStream ();
-				byte [] realBoundary = Encoding.ASCII.GetBytes ("--" + boundary + "\r\n");
-				reqStream.Write (realBoundary, 0, realBoundary.Length);
+				byte [] bytes_boundary = Encoding.ASCII.GetBytes (boundary);
+				reqStream.WriteByte ((byte) '-');
+				reqStream.WriteByte ((byte) '-');
+				reqStream.Write (bytes_boundary, 0, bytes_boundary.Length);
+				reqStream.WriteByte ((byte) '\r');
+				reqStream.WriteByte ((byte) '\n');
 				string partHeaders = String.Format ("Content-Disposition: form-data; " +
 								    "name=\"file\"; filename=\"{0}\"\r\n" +
 								    "Content-Type: {1}\r\n\r\n",
@@ -653,7 +657,13 @@ namespace System.Net
 
 				reqStream.WriteByte ((byte) '\r');
 				reqStream.WriteByte ((byte) '\n');
-				reqStream.Write (realBoundary, 0, realBoundary.Length);
+				reqStream.WriteByte ((byte) '-');
+				reqStream.WriteByte ((byte) '-');
+				reqStream.Write (bytes_boundary, 0, bytes_boundary.Length);
+				reqStream.WriteByte ((byte) '-');
+				reqStream.WriteByte ((byte) '-');
+				reqStream.WriteByte ((byte) '\r');
+				reqStream.WriteByte ((byte) '\n');
 				reqStream.Close ();
 				reqStream = null;
 				resultBytes = ReadAll (request, userToken);
