@@ -144,8 +144,6 @@ namespace System.ServiceModel.Discovery
 			if (writer == null)
 				throw new ArgumentNullException ("writer");
 
-			writer.WriteStartElement ("ProbeType", version.Namespace);
-
 			// standard members
 			writer.WriteStartElement ("d", "Types", version.Namespace);
 			int p = 0;
@@ -176,8 +174,6 @@ namespace System.ServiceModel.Discovery
 			
 			foreach (var ext in Extensions)
 				ext.WriteTo (writer);
-
-			writer.WriteEndElement ();
 		}
 
 		internal static XmlSchema BuildSchema (DiscoveryVersion version)

@@ -96,8 +96,6 @@ namespace System.ServiceModel.Discovery
 			if (writer == null)
 				throw new ArgumentNullException ("writer");
 
-			writer.WriteStartElement ("ResolveType", version.Namespace);
-
 			// standard members
 			Address.WriteTo (AddressingVersion.WSAddressing10, writer);
 
@@ -108,8 +106,6 @@ namespace System.ServiceModel.Discovery
 			
 			foreach (var ext in Extensions)
 				ext.WriteTo (writer);
-
-			writer.WriteEndElement ();
 		}
 
 		internal static XmlSchema BuildSchema (DiscoveryVersion version)
