@@ -65,7 +65,7 @@ namespace System.Web.UI
 
 		protected internal override bool HasTriggered ()
 		{
-			Control ctrl = Owner.FindControl (ControlID);
+			Control ctrl = FindTargetControl (true);
 			string ctrlUniqueID = ctrl != null ? ctrl.UniqueID : null;
 			if (ctrlUniqueID == null)
 				return false;
