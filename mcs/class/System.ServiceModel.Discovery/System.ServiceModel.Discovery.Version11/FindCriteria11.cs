@@ -44,19 +44,11 @@ namespace System.ServiceModel.Discovery.Version11
 		}
 
 		static readonly DiscoveryVersion version = DiscoveryVersion.WSDiscovery11;
-		static XmlSchema schema;
-		
-		static XmlSchema Schema {
-			get {
-				if (schema == null)
-					schema = FindCriteria.BuildSchema (version);
-				return schema;
-			}
-		}
+		static XmlSchema schema = FindCriteria.BuildSchema (version);
 
 		public static XmlQualifiedName GetSchema (XmlSchemaSet schemaSet)
 		{
-			schemaSet.Add (Schema);
+			schemaSet.Add (schema);
 			return new XmlQualifiedName ("ProbeType", version.Namespace);
 		}
 		
@@ -74,7 +66,7 @@ namespace System.ServiceModel.Discovery.Version11
 
 		public void ReadXml (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			source = FindCriteria.ReadXml (reader, version);
 		}
 
 		public FindCriteria ToFindCriteria ()

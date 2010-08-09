@@ -92,6 +92,53 @@ namespace System.ServiceModel.Discovery
 			throw new NotImplementedException ();
 		}
 
+		internal static FindCriteria ReadXml (XmlReader reader, DiscoveryVersion version)
+		{
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
+			var ret = new FindCriteria ();
+
+			reader.MoveToContent ();
+			if (!reader.IsStartElement ("ProbeType", version.Namespace) || reader.IsEmptyElement)
+				throw new XmlException ("Non-empty ProbeType element is expected");
+			reader.ReadStartElement ("ProbeType", version.Namespace);
+
+			// standard members
+			reader.MoveToContent ();
+			bool isEmpty = reader.IsEmptyElement;
+			ret.ContractTypeNames = new Collection<XmlQualifiedName> ((XmlQualifiedName []) reader.ReadElementContentAs (typeof (XmlQualifiedName []), null, "Types", version.Namespace));
+
+			reader.MoveToContent ();
+			if (!reader.IsStartElement ("Scopes", version.Namespace))
+				throw new XmlException ("Scopes element is expected");
+			if (reader.MoveToAttribute ("MatchBy")) {
+				ret.ScopeMatchBy = new Uri (reader.Value, UriKind.RelativeOrAbsolute);
+				reader.MoveToElement ();
+			}
+			ret.Scopes = new Collection<Uri> ((Uri []) reader.ReadElementContentAs (typeof (Uri []), null, "Scopes", version.Namespace));
+
+			// non-standard members
+			for (reader.MoveToContent (); !reader.EOF && reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
+				if (reader.NamespaceURI == SerializationNS) {
+					switch (reader.LocalName) {
+					case "MaxResults":
+						ret.MaxResults = reader.ReadElementContentAsInt ();
+						break;
+					case "Duration":
+						ret.Duration = (TimeSpan) reader.ReadElementContentAs (typeof (TimeSpan), null);
+						break;
+					}
+				}
+				else
+					ret.Extensions.Add (XElement.Load (reader));
+			}
+
+			reader.ReadEndElement ();
+
+			return ret;
+		}
+
 		internal void WriteXml (XmlWriter writer, DiscoveryVersion version)
 		{
 			if (writer == null)
@@ -120,7 +167,7 @@ namespace System.ServiceModel.Discovery
 			// non-standard members
 			if (MaxResults != default_max_results) {
 				writer.WriteStartElement ("MaxResults", SerializationNS);
-				writer.WriteValue (Duration);
+				writer.WriteValue (MaxResults);
 				writer.WriteEndElement ();
 			}
 			writer.WriteStartElement ("Duration", SerializationNS);
