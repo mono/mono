@@ -89,7 +89,7 @@ namespace System.Threading
 
 			int slot = Interlocked.Increment (ref ticket.Users) - 1;
 
-			SpinWait wait;
+			SpinWait wait = new SpinWait ();
 			while (slot != ticket.Value)
 				wait.SpinOnce ();
 			
