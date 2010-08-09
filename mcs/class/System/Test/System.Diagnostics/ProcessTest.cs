@@ -804,6 +804,8 @@ namespace MonoTests.System.Diagnostics
 			p.StartInfo.RedirectStandardOutput = true;
 			p.StartInfo.RedirectStandardError = true;
 			p.Start ();
+			p.BeginErrorReadLine();
+			p.BeginOutputReadLine();
 			p.WaitForExit ();
 			String.IsNullOrEmpty (p.ExitCode + "");
 			
