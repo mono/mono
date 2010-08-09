@@ -101,8 +101,11 @@ namespace System.Web.UI
 			sm.RegisterAsyncPostBackControl (c);
 		}
 
-		public void OnEvent (object sender, EventArgs e) {
-			Owner.Update ();
+		public void OnEvent (object sender, EventArgs e)
+		{
+			UpdatePanel owner = Owner;
+			if (owner != null && owner.UpdateMode != UpdatePanelUpdateMode.Always)
+				owner.Update ();
 		}
 
 		public override string ToString () {
