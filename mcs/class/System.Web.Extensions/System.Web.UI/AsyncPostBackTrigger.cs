@@ -76,8 +76,9 @@ namespace System.Web.UI
 		}
 
 		// LAME SPEC: it seems DefaultEventAttribute is never queried for the event name.
-		protected internal override void Initialize () {
-			Control c = FindTargetControl (false);
+		protected internal override void Initialize ()
+		{
+			Control c = FindTargetControl (true);
 			ScriptManager sm = Owner.ScriptManager;
 			string eventName = EventName;
 
