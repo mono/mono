@@ -40,32 +40,51 @@ namespace System.ServiceModel.Discovery.Version11
 	{
 		public static EndpointDiscoveryMetadata11 FromEndpointDiscoveryMetadata (EndpointDiscoveryMetadata endpointDiscoveryMetadata)
 		{
-			throw new NotImplementedException ();
+			return new EndpointDiscoveryMetadata11 (endpointDiscoveryMetadata);
 		}
 
 		public static XmlQualifiedName GetSchema (XmlSchemaSet schemaSet)
 		{
-			throw new NotImplementedException ();
+			EndpointAddress10.GetSchema (schemaSet);
+			schemaSet.Add (schema);
+			return new XmlQualifiedName ("ProbeMatchType", version.Namespace);
 		}
+
+		static readonly DiscoveryVersion version = DiscoveryVersion.WSDiscovery11;
+		static readonly XmlSchema schema = EndpointDiscoveryMetadata.BuildSchema (version);
+
+		// for deserialization use
+		EndpointDiscoveryMetadata11 ()
+		{
+		}
+
+		internal EndpointDiscoveryMetadata11 (EndpointDiscoveryMetadata source)
+		{
+			this.source = source;
+		}
+		
+		EndpointDiscoveryMetadata source;
 
 		public XmlSchema GetSchema ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		public void ReadXml (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			source = EndpointDiscoveryMetadata.ReadXml (reader, version);
 		}
 
 		public EndpointDiscoveryMetadata ToEndpointDiscoveryMetadata ()
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new InvalidOperationException ("Call ReadXml method first before calling this method");
+			return source;
 		}
 
 		public void WriteXml (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			source.WriteXml (writer, version);
 		}
 	}
 }

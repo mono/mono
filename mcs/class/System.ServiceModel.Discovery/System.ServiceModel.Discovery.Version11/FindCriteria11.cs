@@ -52,7 +52,12 @@ namespace System.ServiceModel.Discovery.Version11
 			return new XmlQualifiedName ("ProbeType", version.Namespace);
 		}
 		
-		public FindCriteria11 (FindCriteria source)
+		// for deserialization
+		FindCriteria11 ()
+		{
+		}
+
+		internal FindCriteria11 (FindCriteria source)
 		{
 			this.source = source;
 		}

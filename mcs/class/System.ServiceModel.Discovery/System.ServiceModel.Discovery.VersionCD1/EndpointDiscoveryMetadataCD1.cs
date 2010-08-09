@@ -1,7 +1,7 @@
 //
 // Author: Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009,2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,36 +35,56 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Discovery.VersionCD1
 {
+	[XmlSchemaProvider ("GetSchema")]
 	public class EndpointDiscoveryMetadataCD1 : IXmlSerializable
 	{
 		public static EndpointDiscoveryMetadataCD1 FromEndpointDiscoveryMetadata (EndpointDiscoveryMetadata endpointDiscoveryMetadata)
 		{
-			throw new NotImplementedException ();
+			return new EndpointDiscoveryMetadataCD1 (endpointDiscoveryMetadata);
 		}
 
 		public static XmlQualifiedName GetSchema (XmlSchemaSet schemaSet)
 		{
-			throw new NotImplementedException ();
+			EndpointAddress10.GetSchema (schemaSet);
+			schemaSet.Add (schema);
+			return new XmlQualifiedName ("ProbeMatchType", version.Namespace);
 		}
+
+		static readonly DiscoveryVersion version = DiscoveryVersion.WSDiscoveryCD1;
+		static readonly XmlSchema schema = EndpointDiscoveryMetadata.BuildSchema (version);
+
+		// for deserialization use
+		EndpointDiscoveryMetadataCD1 ()
+		{
+		}
+
+		internal EndpointDiscoveryMetadataCD1 (EndpointDiscoveryMetadata source)
+		{
+			this.source = source;
+		}
+		
+		EndpointDiscoveryMetadata source;
 
 		public XmlSchema GetSchema ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		public void ReadXml (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			source = EndpointDiscoveryMetadata.ReadXml (reader, version);
 		}
 
 		public EndpointDiscoveryMetadata ToEndpointDiscoveryMetadata ()
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new InvalidOperationException ("Call ReadXml method first before calling this method");
+			return source;
 		}
 
 		public void WriteXml (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			source.WriteXml (writer, version);
 		}
 	}
 }
