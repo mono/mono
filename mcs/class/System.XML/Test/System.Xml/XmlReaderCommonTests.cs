@@ -2218,6 +2218,24 @@ namespace MonoTests.System.Xml
 			var q = (XmlQualifiedName) xr.ReadElementContentAs (typeof (XmlQualifiedName), xr as IXmlNamespaceResolver);
 			Assert.AreEqual ("urn:foo", q.Namespace, "#1");
 		}
+
+		[Test]
+		public void ReadElementContentAsArray ()
+		{
+			var sw = new StringWriter ();
+			var xw = XmlWriter.Create (sw);
+			xw.WriteStartElement ("root");
+			xw.WriteAttributeString ("xmlns", "b", "http://www.w3.org/2000/xmlns/", "urn:bar");
+			var arr = new XmlQualifiedName [] { new XmlQualifiedName ("foo"), new XmlQualifiedName ("bar", "urn:bar") };
+			xw.WriteValue (arr);
+			xw.Close ();
+			var xr = XmlReader.Create (new StringReader (sw.ToString ()));
+			xr.MoveToContent ();
+			var ret = xr.ReadElementContentAs (typeof (XmlQualifiedName []), null) as XmlQualifiedName [];
+			Assert.IsNotNull (ret, "#1");
+			Assert.AreEqual (arr [0], ret [0], "#2");
+			Assert.AreEqual (arr [1], ret [1], "#3");
+		}
 #endif
 	}
 }
