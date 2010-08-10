@@ -1096,6 +1096,34 @@ namespace MonoTests.System.Text
 			} catch (ArgumentException) {
 			}
 		}
+		
+		[Test] // bug #565129
+		public void SufficientByteArray2 ()
+		{
+			var u = Encoding.UTF8;
+			Assert.AreEqual (3, u.GetByteCount ("\uFFFD"), "#1-1");
+			Assert.AreEqual (3, u.GetByteCount ("\uD800"), "#1-2");
+			Assert.AreEqual (3, u.GetByteCount ("\uDC00"), "#1-3");
+			Assert.AreEqual (4, u.GetByteCount ("\uD800\uDC00"), "#1-4");
+			byte [] bytes = new byte [10];
+			Assert.AreEqual (3, u.GetBytes ("\uDC00", 0, 1, bytes, 0), "#1-5"); // was bogus
+
+			Assert.AreEqual (3, u.GetBytes ("\uFFFD").Length, "#2-1");
+			Assert.AreEqual (3, u.GetBytes ("\uD800").Length, "#2-2");
+			Assert.AreEqual (3, u.GetBytes ("\uDC00").Length, "#2-3");
+			Assert.AreEqual (4, u.GetBytes ("\uD800\uDC00").Length, "#2-4");
+
+			for (char c = char.MinValue; c < char.MaxValue; c++) {
+				byte [] bIn;
+				bIn = u.GetBytes (c.ToString ());
+			}
+
+			try {
+				new UTF8Encoding (false, true).GetBytes (new char [] {'\uDF45', '\uD808'}, 0, 2);
+				Assert.Fail ("EncoderFallbackException is expected");
+			} catch (EncoderFallbackException) {
+			}
+		}
 
 #if NET_2_0
 		[Test] // bug #77550
