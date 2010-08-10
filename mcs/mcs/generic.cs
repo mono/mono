@@ -1784,12 +1784,23 @@ namespace Mono.CSharp {
 
 		static bool HasDynamicArguments (TypeSpec[] args)
 		{
-			foreach (var item in args) {
+			for (int i = 0; i < args.Length; ++i) {
+				var item = args[i];
+
 				if (item == InternalType.Dynamic)
 					return true;
 
 				if (TypeManager.IsGenericType (item))
 					return HasDynamicArguments (TypeManager.GetTypeArguments (item));
+
+				if (item.IsArray) {
+					while (item.IsArray) {
+						item = ((ArrayContainer) item).Element;
+					}
+
+					if (item == InternalType.Dynamic)
+						return true;
+				}
 			}
 
 			return false;
