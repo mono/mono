@@ -167,6 +167,14 @@ namespace System.ServiceModel.Channels
 			BuildChannelListenerCore<TChannel> (BindingContext context)
 			where TChannel : class, IChannel;
 
+		public override T GetProperty<T> (BindingContext context)
+		{
+			// It is documented that ISecurityCapabilities and IdentityVerifier can be returned.
+			// Though, this class is not inheritable, and they are returned by the derived types.
+			// So I don't care about them here.
+			return context.GetInnerProperty<T> ();
+		}
+
 		public virtual void SetKeyDerivation (bool requireDerivedKeys)
 		{
 			endpoint.SetKeyDerivation (requireDerivedKeys);
