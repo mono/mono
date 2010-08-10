@@ -241,7 +241,7 @@ namespace Mono.Xml.Xsl
 			if (o is XPathNodeIterator)
 				return GetDocument ((iter.NamespaceManager as XsltCompiledContext), (XPathNodeIterator)o, baseUri);
 			else
-				return GetDocument ((iter.NamespaceManager as XsltCompiledContext), o is IFormattable ? ((IFormattable) o).ToString (null, CultureInfo.InvariantCulture) : o.ToString (), baseUri);
+				return GetDocument ((iter.NamespaceManager as XsltCompiledContext), o is IFormattable ? ((IFormattable) o).ToString (null, CultureInfo.InvariantCulture) : (o != null ? o.ToString () : null), baseUri);
 		}
 		
 		static string VoidBaseUriFlag = "&^)(*&%*^$&$VOID!BASE!URI!";
