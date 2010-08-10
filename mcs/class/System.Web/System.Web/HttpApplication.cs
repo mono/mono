@@ -1347,7 +1347,8 @@ namespace System.Web
 						doProcessHandler = extHandler != null && !extHandler.IsCompleted;
 #endif
 					}
-				}
+				} else
+					throw new InvalidOperationException ("No handler for the current request.");
 				if (context.Error != null)
 					throw new TargetInvocationException(context.Error);
 			} finally {

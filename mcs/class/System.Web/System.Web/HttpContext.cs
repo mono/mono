@@ -618,6 +618,7 @@ namespace System.Web
 			if (!VirtualPathUtility.IsValidVirtualPath (filePath))
 				throw new HttpException ("'" + HttpUtility.HtmlEncode (filePath) + "' is not a valid virtual path.");
 
+			filePath = VirtualPathUtility.Canonize (filePath);
 			bool pathRelative = VirtualPathUtility.IsAppRelative (filePath);
 			bool pathAbsolute = pathRelative ? false : VirtualPathUtility.IsAbsolute (filePath);
 			HttpRequest req = Request;
