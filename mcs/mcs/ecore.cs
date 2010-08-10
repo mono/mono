@@ -3015,7 +3015,7 @@ namespace Mono.CSharp {
 			//
 			// LAMESPEC: No details about which expressions are not allowed
 			//
-			return !(expr is BaseThis);
+			return !(expr is TypeExpr) && !(expr is BaseThis);
 		}
 
 		/// <summary>
