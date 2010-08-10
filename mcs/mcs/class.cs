@@ -1220,7 +1220,7 @@ namespace Mono.CSharp {
 			if (methods != null) {
 				foreach (MethodCore m in methods) {
 					var p = m.ParameterInfo;
-					if (!p.IsEmpty && p[p.Count - 1].HasDefaultValue) {
+					if (!p.IsEmpty && (p[p.Count - 1].HasDefaultValue || (p.HasParams && p.Count > 1 && p[p.Count - 2].HasDefaultValue))) {
 						var rc = new ResolveContext (m);
 						p.ResolveDefaultValues (rc);
 					}

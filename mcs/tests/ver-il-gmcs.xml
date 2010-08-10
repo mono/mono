@@ -19114,6 +19114,29 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-38.cs">
+    <type name="Repro2.Color">
+      <method name="Void .ctor(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>38</size>
+      </method>
+    </type>
+    <type name="Repro2.ExtensionMethods">
+      <method name="Color Transparent(Color)">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="Repro2.MainClass">
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -23239,6 +23262,26 @@
       <method name="Int32 Main()">
         <size>118</size>
       </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-optional-10.cs">
+    <type name="Program">
+      <method name="Void Main()">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program`1[T]">
+      <method name="Void .ctor(Generic`1)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Generic`1[T]">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
