@@ -1357,7 +1357,10 @@ separated list of words.
 \fBnursery-size=\fIsize\fR
 Sets the size of the nursery.  The size is specified in bytes and must
 be a power of two.  The suffixes `k', `m' and `g' can be used to
-specify kilo-, mega- and gigabytes, respectively.
+specify kilo-, mega- and gigabytes, respectively.  The nursery is the
+first generation (of two).  A larger nursery will usually speed up the
+program but will obviously use more memory.  The default nursery size
+4 MB.
 .TP
 \fBmajor=\fIcollector\fR
 Specifies which major collector to use.  Options are `marksweep' for
