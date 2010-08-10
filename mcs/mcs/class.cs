@@ -1479,7 +1479,7 @@ namespace Mono.CSharp {
 
 						ct.CheckConstraints (this);
 
-						if (ct.HasDynamicArguments ()) {
+						if (ct.HasDynamicArguments () && !IsCompilerGenerated) {
 							Report.Error (1966, iface.Location,
 								"`{0}': cannot implement a dynamic interface `{1}'",
 								GetSignatureForError (), iface.GetSignatureForError ());
