@@ -1083,6 +1083,7 @@ System.Runtime.Versioning/ResourceConsumptionAttribute.cs
 System.Runtime.Versioning/ResourceExposureAttribute.cs
 System.Runtime.Versioning/ResourceScope.cs
 System.Runtime.Versioning/VersioningHelper.cs
+System.Runtime.Versioning/TargetFrameworkAttribute.cs
 System.Security/AllowPartiallyTrustedCallersAttribute.cs
 System.Security/CodeAccessPermission.cs
 System.Security/HostProtectionException.cs
