@@ -95,7 +95,7 @@ namespace System.Collections.Concurrent
 		Node head;
 		Node tail;
 		
-		Node[][] buckets = new Node[1000][];
+		Node[][] buckets = new Node[10][];
 		int count;
 		int size = 1;
 
@@ -105,8 +105,9 @@ namespace System.Collections.Concurrent
 		public SplitOrderedList ()
 		{
 			head = new Node (0, default (T));
-			tail = new Node (0, default (T));
+			tail = new Node (uint.MaxValue, default (T));
 			head.Next = tail;
+			SetBucket (0, head);
 		}
 		
 		public bool Insert (uint key, T data)
@@ -127,12 +128,12 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 		
-		public bool Find (uint key)
+		public bool Find (uint key, out T data)
 		{
 			uint b = key % (uint)size;
 			if (GetBucket (b) == null)
 				InitializeBucket (b);
-			return ListFind (ComputeRegularKey (key), GetBucket (b));
+			return ListFind (ComputeRegularKey (key), GetBucket (b), out data);
 		}
 
 		public bool Delete (uint key)
@@ -151,7 +152,7 @@ namespace System.Collections.Concurrent
 		{
 			Node current;
 			uint parent = GetParent (b);
-			if (buckets[parent] == null)
+			if (GetBucket (parent) == null)
 				InitializeBucket ((uint)parent);
 
 			Node dummy = new Node (ComputeDummyKey (b), default (T));
@@ -224,7 +225,7 @@ namespace System.Collections.Concurrent
 				}
 
 				if (shouldResize) {
-					Array.Resize (ref buckets, size / SegmentSize);
+					Array.Resize (ref buckets, buckets.Length * 2);
 					mres.Set ();
 				} else {
 					mres.Wait ();
@@ -309,11 +310,13 @@ namespace System.Collections.Concurrent
 			} while (true);
 		}
 		
-		bool ListFind (uint key, Node startPoint)
+		bool ListFind (uint key, Node startPoint, out T data)
 		{
 			Node rightNode = null, leftNode = null;
+			data = default (T);
 			
 			rightNode = ListSearch (key, ref leftNode, startPoint);
+			data = rightNode.Data;
 			
 			return rightNode != tail && rightNode.Key == key;
 		}
