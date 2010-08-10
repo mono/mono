@@ -2,7 +2,7 @@ thisdir = tools/corcompare
 SUBDIRS =
 include ../../build/rules.make
 
-ALL_PROGRAMS = mono-api-info.exe
+ALL_PROGRAMS = mono-api-info.exe mono-abi-info.exe
 
 CECIL = ../../class/lib/net_2_0/Mono.Cecil.dll
 
@@ -43,3 +43,6 @@ dist-local: dist-default
 
 mono-api-info.exe: $(APIINFO_SOURCES)
 	$(CSCOMPILE) -r:$(CECIL) -out:$@ $^
+
+mono-abi-info.exe: $(APIINFO_SOURCES)
+	$(CSCOMPILE) -r:$(CECIL) -d:ABI -out:$@ $^

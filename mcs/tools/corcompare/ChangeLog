@@ -1,3 +1,8 @@
+2010-08-05  Andrés G. Aragoneses  <andres@lindenlab.com>
+
+	* mono-api-info.cs: Implemented new mode to show ABI.
+	* Makefile: added mono-abi-info autofoo.
+
 2010-04-16  C.J. Adams-Collier	<cjac@colliertech.org>
 
 	* mono-api-diff.cs: revived from the mono-2-2 branch and applied
