@@ -175,7 +175,8 @@ net_4_0_dirs := \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
-	System.Runtime.DurableInstancing
+	System.Runtime.DurableInstancing \
+	Mono.CodeContracts
 
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
