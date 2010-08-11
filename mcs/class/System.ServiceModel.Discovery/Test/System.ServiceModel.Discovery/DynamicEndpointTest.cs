@@ -1,7 +1,7 @@
 //
 // Author: Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,20 +28,28 @@ using System.Collections.ObjectModel;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.ServiceModel.Discovery;
 using System.ServiceModel.Dispatcher;
+using NUnit.Framework;
 
-namespace System.ServiceModel.Discovery
+namespace MonoTests.System.ServiceModel.Discovery
 {
-	public abstract class DiscoveryEndpointProvider
+	[TestFixture]
+	public class DynamicEndpointTest
 	{
-		public abstract DiscoveryEndpoint GetDiscoveryEndpoint ();
-	}
-
-	internal class UdpDiscoveryEndpointProvider : DiscoveryEndpointProvider
-	{
-		public override DiscoveryEndpoint GetDiscoveryEndpoint ()
+		[Test]
+		public void DefaultValues ()
 		{
-			return new UdpDiscoveryEndpoint ();
+			var cd = ContractDescription.GetContract (typeof (ITestService));
+			var binding = new BasicHttpBinding ();
+			var de = new DynamicEndpoint (cd, binding);
+			Assert.AreEqual (DiscoveryClientBindingElement.DiscoveryEndpointAddress, de.Address, "#1");
+			var fc = de.FindCriteria;
+			Assert.IsNotNull (fc, "#2");
+			Assert.AreEqual (1, fc.ContractTypeNames.Count, "#2-2");
+			Assert.AreEqual (0, fc.Scopes.Count, "#2-3");
+			Assert.AreEqual (0, fc.Extensions.Count, "#2-4");
+			Assert.IsNotNull (de.DiscoveryEndpointProvider, "#3");
 		}
 	}
 }

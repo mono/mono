@@ -1,7 +1,7 @@
 //
 // Author: Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,20 +28,15 @@ using System.Collections.ObjectModel;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.ServiceModel.Discovery;
 using System.ServiceModel.Dispatcher;
 
-namespace System.ServiceModel.Discovery
+namespace MonoTests.System.ServiceModel.Discovery
 {
-	public abstract class DiscoveryEndpointProvider
+	[ServiceContract]
+	public interface ITestService
 	{
-		public abstract DiscoveryEndpoint GetDiscoveryEndpoint ();
-	}
-
-	internal class UdpDiscoveryEndpointProvider : DiscoveryEndpointProvider
-	{
-		public override DiscoveryEndpoint GetDiscoveryEndpoint ()
-		{
-			return new UdpDiscoveryEndpoint ();
-		}
+		[OperationContract]
+		string Echo (string input);
 	}
 }

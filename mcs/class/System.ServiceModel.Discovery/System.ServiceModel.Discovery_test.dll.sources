@@ -1,2 +1,6 @@
+System.ServiceModel.Discovery/ContractTypes.cs
+System.ServiceModel.Discovery/DiscoveryClientBindingElementTest.cs
+System.ServiceModel.Discovery/DiscoveryEndpointTest.cs
 System.ServiceModel.Discovery/DiscoveryVersionTest.cs
+System.ServiceModel.Discovery/DynamicEndpointTest.cs
 System.ServiceModel.Discovery/FindCriteriaTest.cs
