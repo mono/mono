@@ -36,7 +36,9 @@ namespace TestMonoWeb
 			// Just for testing..
 			Thread.Sleep(100);
 			_completed = true;
-			_callback(this);
+			try {
+				_callback(this);
+			} catch {}
 		}
 	}
 }

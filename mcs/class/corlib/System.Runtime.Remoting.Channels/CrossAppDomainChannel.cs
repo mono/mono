@@ -267,7 +267,12 @@ namespace System.Runtime.Remoting.Channels
 		public virtual IMessageCtrl AsyncProcessMessage (IMessage reqMsg, IMessageSink replySink) 
 		{
 			AsyncRequest req = new AsyncRequest (reqMsg, replySink);
-			ThreadPool.QueueUserWorkItem (new WaitCallback (SendAsyncMessage), req);
+			ThreadPool.QueueUserWorkItem (new WaitCallback ((data) => {
+				try {
+					SendAsyncMessage (data);
+				} catch {}
+				}
+				), req);
 			return null;
 		}
 		

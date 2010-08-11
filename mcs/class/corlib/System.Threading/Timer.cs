@@ -288,7 +288,11 @@ namespace System.Threading
 							list.RemoveAt (i);
 							count--;
 							i--;
-							ThreadPool.QueueUserWorkItem (new WaitCallback (timer.callback), timer.state);
+							ThreadPool.QueueUserWorkItem (new WaitCallback (data => {
+								try {
+									timer.callback (data);
+								} catch {}
+								}), timer.state);
 							long period = timer.period_ms;
 							long due_time = timer.due_time_ms;
 							bool no_more = (period == -1 || ((period == 0 || period == Timeout.Infinite) && due_time != Timeout.Infinite));

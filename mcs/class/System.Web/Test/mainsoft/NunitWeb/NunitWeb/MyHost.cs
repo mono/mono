@@ -35,7 +35,11 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			_done = new AutoResetEvent (false);
 			_doNext = new AutoResetEvent (false);
-			ThreadPool.QueueUserWorkItem (new WaitCallback (AsyncRun), null);
+			ThreadPool.QueueUserWorkItem (new WaitCallback (param => {
+				try {
+					AsyncRun (param);
+				} catch {}
+				}), null);
 		}
 
 		public AppDomain AppDomain

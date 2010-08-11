@@ -87,7 +87,11 @@ namespace Mono.Remoting.Channels.Unix
 				if (!isOneWay) 
 				{
 					sinkStack.Push (this, connection);
-					ThreadPool.QueueUserWorkItem (new WaitCallback(ReadAsyncUnixMessage), sinkStack);
+					ThreadPool.QueueUserWorkItem (new WaitCallback(data => {
+						try {
+							ReadAsyncUnixMessage (data);
+						} catch {}
+						}), sinkStack);
 				}
 				else
 					connection.Release();
