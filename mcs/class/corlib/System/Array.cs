@@ -1920,11 +1920,6 @@ namespace System
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void Resize<T> (ref T [] array, int newSize)
 		{
-			Resize<T> (ref array, array == null ? 0 : array.Length, newSize);
-		}
-
-		internal static void Resize<T> (ref T[] array, int length, int newSize)
-		{
 			if (newSize < 0)
 				throw new ArgumentOutOfRangeException ();
 			
@@ -1932,12 +1927,14 @@ namespace System
 				array = new T [newSize];
 				return;
 			}
-			
-			if (array.Length == newSize)
+
+			int length = array.Length;
+			if (length == newSize)
 				return;
 			
 			T [] a = new T [newSize];
-			Array.Copy (array, a, Math.Min (newSize, length));
+			if (length != 0)
+				FastCopy (array, 0, a, 0, Math.Min (newSize, length));
 			array = a;
 		}
 		
