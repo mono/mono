@@ -24,6 +24,10 @@ System.ServiceModel.Discovery.Configuration/UdpAnnouncementEndpointElement.cs
 System.ServiceModel.Discovery.Configuration/UdpDiscoveryEndpointCollectionElement.cs
 System.ServiceModel.Discovery.Configuration/UdpDiscoveryEndpointElement.cs
 System.ServiceModel.Discovery.Configuration/UdpTransportSettingsElement.cs
+System.ServiceModel.Discovery.Udp/UdpTransportBindingElement.cs
+System.ServiceModel.Discovery.Udp/UdpChannelFactory.cs
+System.ServiceModel.Discovery.Udp/UdpChannelListener.cs
+System.ServiceModel.Discovery.Udp/UdpDuplexChannel.cs
 System.ServiceModel.Discovery.Version11/DiscoveryMessageSequence11.cs
 System.ServiceModel.Discovery.Version11/EndpointDiscoveryMetadata11.cs
 System.ServiceModel.Discovery.Version11/FindCriteria11.cs

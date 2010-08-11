@@ -64,7 +64,6 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.IsNotNull (die.Contract, "#6");
 			Assert.AreEqual ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01", die.Contract.Namespace, "#6-2");
 			Assert.AreEqual ("TargetService", die.Contract.Name, "#6-3");
-foreach (var bbe in die.Binding.CreateBindingElements ()) Console.Error.WriteLine (bbe);
 			// could be either IPv4 or IPv6
 			Assert.AreEqual (new UdpDiscoveryEndpoint ().MulticastAddress, die.ListenUri, "#7");
 			Assert.AreEqual (ListenUriMode.Explicit, die.ListenUriMode, "#8");
