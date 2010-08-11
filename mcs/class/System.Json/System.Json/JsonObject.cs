@@ -8,76 +8,46 @@ using System.Text;
 using JsonPair = System.Collections.Generic.KeyValuePair<string, System.Json.JsonValue>;
 using JsonPairEnumerable = System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Json.JsonValue>>;
 
-
 namespace System.Json
 {
-	public class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<KeyValuePair<string, JsonValue>>
+	public class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<JsonPair>
 	{
-		int known_count = -1;
 		Dictionary<string, JsonValue> map;
-		JsonPairEnumerable source;
 
-		public JsonObject (params KeyValuePair<string, JsonValue> [] items)
-			: this ((JsonPairEnumerable) items)
+		public JsonObject (params JsonPair [] items)
 		{
+			map = new Dictionary<string, JsonValue> ();
+
+			if (items != null)
+				AddRange (items);
 		}
 
 		public JsonObject (JsonPairEnumerable items)
 		{
 			if (items == null)
 				throw new ArgumentNullException ("items");
-			this.source = items;
+
+			map = new Dictionary<string, JsonValue> ();
+			AddRange (items);
 		}
 
 		public override int Count {
-			get {
-				if (known_count < 0) {
-					if (map != null)
-						known_count = map.Count;
-					else {
-						known_count = 0;
-						foreach (JsonPair p in source)
-							known_count++;
-					}
-				}
-				return known_count;
-			}
+			get { return map.Count; }
 		}
 
 		public IEnumerator<JsonPair> GetEnumerator ()
 		{
-			return AsEnumerable ().GetEnumerator ();
+			return map.GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return AsEnumerable ().GetEnumerator ();
-		}
-			
-		JsonPairEnumerable AsEnumerable ()
-		{
-			return map ?? source;
-		}
-
-		public bool IsReadOnly {
-			get { return false; }
-		}
-
-		bool ICollection<JsonPair>.IsReadOnly {
-			get { return ((ICollection<JsonPair>) map).IsReadOnly; }
+			return map.GetEnumerator ();
 		}
 
 		public override sealed JsonValue this [string key] {
-			get {
-				foreach (JsonPair pair in AsEnumerable ())
-					if (pair.Key == key)
-						return pair.Value;
-				throw new KeyNotFoundException (String.Format ("key '{0}' was not found.", key));
-			}
-			set {
-				PopulateMap ();
-				map [key] = value;
-			}
+			get { return map [key]; }
+			set { map [key] = value; }
 		}
 
 		public override JsonType JsonType {
@@ -85,17 +55,11 @@ namespace System.Json
 		}
 
 		public ICollection<string> Keys {
-			get {
-				PopulateMap ();
-				return map.Keys;
-			}
+			get { return map.Keys; }
 		}
 
 		public ICollection<JsonValue> Values {
-			get {
-				PopulateMap ();
-				return map.Values;
-			}
+			get { return map.Values; }
 		}
 
 		public void Add (string key, JsonValue value)
@@ -104,8 +68,8 @@ namespace System.Json
 				throw new ArgumentNullException ("key");
 			if (value == null)
 				throw new ArgumentNullException ("value");
-			PopulateMap ();
-			map [key] = value;
+
+			map.Add (key, value);
 		}
 
 		public void Add (JsonPair pair)
@@ -117,55 +81,54 @@ namespace System.Json
 		{
 			if (items == null)
 				throw new ArgumentNullException ("items");
-			source = new MergedEnumerable<JsonPair> (source, items);
-			map = null;
+
+			foreach (var pair in items)
+				map.Add (pair.Key, pair.Value);
 		}
 
-		public void AddRange (JsonPair [] items)
+		public void AddRange (params JsonPair [] items)
 		{
 			AddRange ((JsonPairEnumerable) items);
 		}
 
-		static readonly JsonPair [] empty = new JsonPair [0];
-
 		public void Clear ()
 		{
-			if (map != null)
-				map.Clear ();
-			else
-				source = empty;
+			map.Clear ();
 		}
 
 		bool ICollection<JsonPair>.Contains (JsonPair item)
 		{
-			return ContainsKey (item.Key);
+			return (map as ICollection<JsonPair>).Contains (item);
+		}
+
+		bool ICollection<JsonPair>.Remove (JsonPair item)
+		{
+			return (map as ICollection<JsonPair>).Remove (item);
 		}
 
 		public override bool ContainsKey (string key)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
-			foreach (JsonPair p in AsEnumerable ())
-				if (p.Key == key)
-					return true;
-			return false;
+
+			return map.ContainsKey (key);
 		}
 
 		public void CopyTo (JsonPair [] array, int arrayIndex)
 		{
-			foreach (JsonPair p in AsEnumerable ())
-				array [arrayIndex++] = p;
+			(map as ICollection<JsonPair>).CopyTo (array, arrayIndex);
 		}
 
 		public bool Remove (string key)
 		{
-			PopulateMap ();
+			if (key == null)
+				throw new ArgumentNullException ("key");
+
 			return map.Remove (key);
 		}
 
-		bool ICollection<JsonPair>.Remove (JsonPair item)
-		{
-			return ((ICollection<JsonPair>) map).Remove (item);
+		bool ICollection<JsonPair>.IsReadOnly {
+			get { return false; }
 		}
 
 		public override void Save (Stream stream)
@@ -173,7 +136,7 @@ namespace System.Json
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
 			stream.WriteByte ((byte) '{');
-			foreach (JsonPair pair in this) {
+			foreach (JsonPair pair in map) {
 				stream.WriteByte ((byte) '"');
 				byte [] bytes = Encoding.UTF8.GetBytes (EscapeString (pair.Key));
 				stream.Write (bytes, 0, bytes.Length);
@@ -187,22 +150,7 @@ namespace System.Json
 
 		public bool TryGetValue (string key, out JsonValue value)
 		{
-			foreach (JsonPair p in AsEnumerable ())
-				if (p.Key == key) {
-					value = p.Value;
-					return true;
-				}
-			value = null;
-			return false;
-		}
-
-		void PopulateMap ()
-		{
-			if (map == null) {
-				map = new Dictionary<string, JsonValue> ();
-				foreach (JsonPair pair in source)
-					map.Add (pair.Key, pair.Value);
-			}
+			return map.TryGetValue (key, out value);
 		}
 	}
 }
