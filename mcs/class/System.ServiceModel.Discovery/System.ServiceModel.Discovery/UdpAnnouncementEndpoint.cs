@@ -74,10 +74,15 @@ namespace System.ServiceModel.Discovery
 
 		// (6), everything falls to here
 		public UdpAnnouncementEndpoint (DiscoveryVersion discoveryVersion, Uri multicastAddress)
-			: base (discoveryVersion)
+			: base (discoveryVersion, CreateBinding (), new EndpointAddress (multicastAddress))
 		{
 			TransportSettings = new UdpTransportSettings ();
 			MulticastAddress = multicastAddress;
+		}
+
+		static Binding CreateBinding ()
+		{
+			return new CustomBinding (new TextMessageEncodingBindingElement (), new UdpTransportBindingElement ());
 		}
 
 		public Uri MulticastAddress { get; set; }

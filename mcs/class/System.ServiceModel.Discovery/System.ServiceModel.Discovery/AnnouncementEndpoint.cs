@@ -53,11 +53,16 @@ namespace System.ServiceModel.Discovery
 		}
 
 		public AnnouncementEndpoint (DiscoveryVersion discoveryVersion, Binding binding, EndpointAddress address)
-			: base (null, binding, address)
+			: base (GetContract (discoveryVersion), binding, address)
+		{
+			DiscoveryVersion = discoveryVersion;
+		}
+
+		static ContractDescription GetContract (DiscoveryVersion discoveryVersion)
 		{
 			if (discoveryVersion == null)
 				throw new ArgumentNullException ("discoveryVersion");
-			DiscoveryVersion = discoveryVersion;
+			return ContractDescription.GetContract (discoveryVersion.AnnouncementContractType);
 		}
 
 		public DiscoveryVersion DiscoveryVersion { get; private set; }

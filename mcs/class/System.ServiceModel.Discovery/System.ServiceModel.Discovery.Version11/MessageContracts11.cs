@@ -31,19 +31,28 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Discovery;
 
-namespace System.ServiceModel.Discovery.VersionCD1
+namespace System.ServiceModel.Discovery.Version11
 {
-	[ServiceContract (Name = "Client", Namespace = MessageContractsCD1.NS)]
-	internal interface IAnnouncementContractCD1
+	internal class MessageContracts11
 	{
-		[OperationContract (Name = "Hello", IsOneWay = true, AsyncPattern = true)]
-		IAsyncResult BeginOnlineAnnouncement (MessageContractsCD1.OnlineAnnouncement message, AsyncCallback callback, object state);
+		public const string NS = "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01";
 
-		void EndOnlineAnnouncement (IAsyncResult result);
+		[MessageContract (IsWrapped = false)]
+		public class OnlineAnnouncement
+		{
+			[MessageHeader (Name = "AppSequence", Namespace = NS)]
+			public DiscoveryMessageSequence11 MessageSequence { get; set; }
+			[MessageBodyMember (Name = "Hello", Namespace = NS)]
+			public EndpointDiscoveryMetadata11 EndpointDiscoveryMetadata { get; set; }
+		}
 
-		[OperationContract (Name = "Bye", IsOneWay = true, AsyncPattern = true)]
-		IAsyncResult BeginOfflineAnnouncement (MessageContractsCD1.OfflineAnnouncement message, AsyncCallback callback, object state);
-
-		void EndOfflineAnnouncement (IAsyncResult result);
+		[MessageContract (IsWrapped = false)]
+		public class OfflineAnnouncement
+		{
+			[MessageHeader (Name = "AppSequence", Namespace = NS)]
+			public DiscoveryMessageSequence11 MessageSequence { get; set; }
+			[MessageBodyMember (Name = "Bye", Namespace = NS)]
+			public EndpointDiscoveryMetadata11 EndpointDiscoveryMetadata { get; set; }
+		}
 	}
 }

@@ -74,19 +74,19 @@ namespace System.ServiceModel.Discovery
 
 		// BeginOnlineAnnouncement
 
-		IAsyncResult IAnnouncementContract11.BeginOnlineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
+		IAsyncResult IAnnouncementContract11.BeginOnlineAnnouncement (MessageContracts11.OnlineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOnlineAnnouncement (messageSequence, endpointDiscoveryMetadata, callback, state);
+			return OnBeginOnlineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
 		}
 
-		IAsyncResult IAnnouncementContractApril2005.BeginOnlineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
+		IAsyncResult IAnnouncementContractApril2005.BeginOnlineAnnouncement (MessageContractsApril2005.OnlineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOnlineAnnouncement (messageSequence, endpointDiscoveryMetadata, callback, state);
+			return OnBeginOnlineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
 		}
 
-		IAsyncResult IAnnouncementContractCD1.BeginOnlineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
+		IAsyncResult IAnnouncementContractCD1.BeginOnlineAnnouncement (MessageContractsCD1.OnlineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOnlineAnnouncement (messageSequence, endpointDiscoveryMetadata, callback, state);
+			return OnBeginOnlineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
 		}
 
 		// EndOnlineAnnouncement
@@ -108,19 +108,19 @@ namespace System.ServiceModel.Discovery
 
 		// BeginOfflineAnnouncement
 
-		IAsyncResult IAnnouncementContract11.BeginOfflineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
+		IAsyncResult IAnnouncementContract11.BeginOfflineAnnouncement (MessageContracts11.OfflineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOfflineAnnouncement (messageSequence, endpointDiscoveryMetadata, callback, state);
+			return OnBeginOfflineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
 		}
 
-		IAsyncResult IAnnouncementContractApril2005.BeginOfflineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
+		IAsyncResult IAnnouncementContractApril2005.BeginOfflineAnnouncement (MessageContractsApril2005.OfflineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOfflineAnnouncement (messageSequence, endpointDiscoveryMetadata, callback, state);
+			return OnBeginOfflineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
 		}
 
-		IAsyncResult IAnnouncementContractCD1.BeginOfflineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
+		IAsyncResult IAnnouncementContractCD1.BeginOfflineAnnouncement (MessageContractsCD1.OfflineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOfflineAnnouncement (messageSequence, endpointDiscoveryMetadata, callback, state);
+			return OnBeginOfflineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
 		}
 
 		// EndOfflineAnnouncement

@@ -33,16 +33,16 @@ using System.ServiceModel.Discovery;
 
 namespace System.ServiceModel.Discovery.Version11
 {
-	[ServiceContract (Name = "Client", Namespace = "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01")]
+	[ServiceContract (Name = "Client", Namespace = MessageContracts11.NS)]
 	internal interface IAnnouncementContract11
 	{
 		[OperationContract (Name = "Hello", IsOneWay = true, AsyncPattern = true)]
-		IAsyncResult BeginOnlineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state);
+		IAsyncResult BeginOnlineAnnouncement (MessageContracts11.OnlineAnnouncement message, AsyncCallback callback, object state);
 
 		void EndOnlineAnnouncement (IAsyncResult result);
 
 		[OperationContract (Name = "Bye", IsOneWay = true, AsyncPattern = true)]
-		IAsyncResult BeginOfflineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state);
+		IAsyncResult BeginOfflineAnnouncement (MessageContracts11.OfflineAnnouncement message, AsyncCallback callback, object state);
 
 		void EndOfflineAnnouncement (IAsyncResult result);
 	}
