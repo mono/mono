@@ -1334,14 +1334,15 @@ namespace System.Web
 				throw HttpException.NewWithCode (String.Format ("'{0}' is not a valid virtual path.", virtualPath), WebEventCodes.RuntimeErrorRequestAbort);
 
 			string appVirtualPath = HttpRuntime.AppDomainAppVirtualPath;
-
 			if (!VirtualPathUtility.IsRooted (virtualPath)) {
 				if (StrUtils.IsNullOrEmpty (baseVirtualDir))
 					baseVirtualDir = appVirtualPath;
 				virtualPath = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (baseVirtualDir), virtualPath);
-			}
-			virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
-			
+				if (!VirtualPathUtility.IsAbsolute (virtualPath))
+					virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
+			} else if (!VirtualPathUtility.IsAbsolute (virtualPath))
+				virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
+
 			if (!allowCrossAppMapping){
 				if (!StrUtils.StartsWith (virtualPath, appVirtualPath, true))
 					throw HttpException.NewWithCode ("MapPath: Mapping across applications not allowed", WebEventCodes.RuntimeErrorRequestAbort);
