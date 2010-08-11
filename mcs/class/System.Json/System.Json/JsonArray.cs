@@ -103,7 +103,7 @@ namespace System.Json
 			if (item == null)
 				throw new ArgumentNullException ("item");
 			foreach (JsonValue v in this)
-				if (item == v)
+				if (object.Equals (item, v))
 					return true;
 			return false;
 		}
@@ -123,7 +123,7 @@ namespace System.Json
 				throw new ArgumentNullException ("item");
 			int idx = 0;
 			foreach (JsonValue v in this) {
-				if (item == v)
+				if (object.Equals (item, v))
 					return idx;
 				idx++;
 			}
