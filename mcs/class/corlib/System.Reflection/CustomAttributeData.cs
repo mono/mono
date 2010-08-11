@@ -43,9 +43,17 @@ namespace System.Reflection {
 	public sealed
 #endif
 	class CustomAttributeData {
+		class LazyCAttrData {
+			internal Assembly assembly;
+			internal IntPtr data;
+			internal uint data_length;
+		}
+
 		ConstructorInfo ctorInfo;
 		IList<CustomAttributeTypedArgument> ctorArgs;
 		IList<CustomAttributeNamedArgument> namedArgs;
+		LazyCAttrData lazyData;
+
 
 #if NET_4_0
 		protected CustomAttributeData ()
@@ -53,17 +61,34 @@ namespace System.Reflection {
 		}
 #endif
 
-		internal CustomAttributeData (ConstructorInfo ctorInfo, object [] ctorArgs, object [] namedArgs)
+		internal CustomAttributeData (ConstructorInfo ctorInfo, Assembly assembly, IntPtr data, uint data_length)
 		{
 			this.ctorInfo = ctorInfo;
-			
-			this.ctorArgs = Array.AsReadOnly<CustomAttributeTypedArgument> 
-				(ctorArgs != null ? UnboxValues<CustomAttributeTypedArgument> (ctorArgs) : new CustomAttributeTypedArgument [0]);
-			
-			this.namedArgs = Array.AsReadOnly<CustomAttributeNamedArgument> 
-				(namedArgs != null ? UnboxValues<CustomAttributeNamedArgument> (namedArgs) : new CustomAttributeNamedArgument [0]);
+			this.lazyData = new LazyCAttrData ();
+			this.lazyData.assembly = assembly;
+			this.lazyData.data = data;
+			this.lazyData.data_length = data_length;
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void ResolveArgumentsInternal (ConstructorInfo ctor, Assembly assembly, IntPtr data, uint data_length, out object[] ctorArgs, out object[] namedArgs); 
+
+		void ResolveArguments ()
+		{
+			object[] ctor_args, named_args;
+			if (lazyData == null)
+				return;
+
+			ResolveArgumentsInternal (ctorInfo, lazyData.assembly, lazyData.data, lazyData.data_length, out ctor_args, out named_args);
+
+			this.ctorArgs = Array.AsReadOnly<CustomAttributeTypedArgument>
+				(ctor_args != null ? UnboxValues<CustomAttributeTypedArgument> (ctor_args) : new CustomAttributeTypedArgument [0]);
+			this.namedArgs = Array.AsReadOnly<CustomAttributeNamedArgument> 
+				(named_args != null ? UnboxValues<CustomAttributeNamedArgument> (named_args) : new CustomAttributeNamedArgument [0]);
+			
+			lazyData = null;
+		}
+		
 		[ComVisible (true)]
 		public
 #if NET_4_0
@@ -82,6 +107,7 @@ namespace System.Reflection {
 #endif
 		IList<CustomAttributeTypedArgument> ConstructorArguments {
 			get {
+				ResolveArguments ();
 				return ctorArgs;
 			}
 		}
@@ -92,6 +118,7 @@ namespace System.Reflection {
 #endif
 		IList<CustomAttributeNamedArgument> NamedArguments {
 			get {
+				ResolveArguments ();
 				return namedArgs;
 			}
 		}
