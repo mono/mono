@@ -43,17 +43,17 @@ namespace System.ServiceModel.Discovery
 
 		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.CanBuildInnerChannelFactory<TChannel> ();
 		}
 
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.CanBuildInnerChannelListener<TChannel> ();
 		}
 
 		public override BindingElement Clone ()
 		{
-			throw new NotImplementedException ();
+			return new DiscoveryClientBindingElement (DiscoveryEndpointProvider, FindCriteria);
 		}
 
 		public override T GetProperty<T> (BindingContext context)

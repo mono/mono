@@ -73,6 +73,16 @@ namespace MonoTests.System.ServiceModel.Discovery
 		[Test]
 		public void CanBuildChannels ()
 		{
+			var de = CreateDynamicEndpoint ();
+			// it is channel dependent - i.e. this binding element does not affect.
+			var be = new DiscoveryClientBindingElement (de.DiscoveryEndpointProvider, de.FindCriteria);
+			var bc = new BindingContext (new CustomBinding (new TcpTransportBindingElement ()), new BindingParameterCollection ());
+			Assert.IsTrue (be.CanBuildChannelFactory<IDuplexSessionChannel> (bc), "#0");
+			Assert.IsFalse (be.CanBuildChannelFactory<IDuplexChannel> (bc), "#1");
+
+			bc = new BindingContext (new CustomBinding (new HttpTransportBindingElement ()), new BindingParameterCollection ());
+			Assert.IsTrue (be.CanBuildChannelFactory<IRequestChannel> (bc), "#2");
+			Assert.IsFalse (be.CanBuildChannelFactory<IDuplexSessionChannel> (bc), "#3");
 		}
 	}
 }

@@ -1,3 +1,4 @@
+System.ServiceModel.Discovery/AnnouncementServiceTest.cs
 System.ServiceModel.Discovery/ContractTypes.cs
 System.ServiceModel.Discovery/DiscoveryClientBindingElementTest.cs
 System.ServiceModel.Discovery/DiscoveryEndpointTest.cs

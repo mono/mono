@@ -1,7 +1,7 @@
 //
 // Author: Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,39 +29,21 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.ServiceModel.Discovery;
 
-namespace System.ServiceModel.Discovery
+namespace System.ServiceModel.Discovery.VersionApril2005
 {
-	public class AnnouncementEndpoint : ServiceEndpoint
+	[ServiceContract (Name = "Client", Namespace = "http://schemas.xmlsoap.org/ws/2005/04/discovery")]
+	internal interface IAnnouncementContractApril2005
 	{
-		public AnnouncementEndpoint ()
-			: this (DiscoveryVersion.WSDiscovery11)
-		{
-		}
+		[OperationContract (Name = "Hello", IsOneWay = true, AsyncPattern = true)]
+		IAsyncResult BeginOnlineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state);
 
-		public AnnouncementEndpoint (DiscoveryVersion discoveryVersion)
-			: this (discoveryVersion, null, null)
-		{
-			if (discoveryVersion == null)
-				throw new ArgumentNullException ("discoveryVersion");
-			DiscoveryVersion = discoveryVersion;
-		}
+		void EndOnlineAnnouncement (IAsyncResult result);
 
-		public AnnouncementEndpoint (Binding binding, EndpointAddress address)
-			: this (DiscoveryVersion.WSDiscoveryApril2005, binding, address)
-		{
-		}
+		[OperationContract (Name = "Bye", IsOneWay = true, AsyncPattern = true)]
+		IAsyncResult BeginOfflineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state);
 
-		public AnnouncementEndpoint (DiscoveryVersion discoveryVersion, Binding binding, EndpointAddress address)
-			: base (null, binding, address)
-		{
-			if (discoveryVersion == null)
-				throw new ArgumentNullException ("discoveryVersion");
-			DiscoveryVersion = discoveryVersion;
-		}
-
-		public DiscoveryVersion DiscoveryVersion { get; private set; }
-
-		public TimeSpan MaxAnnouncementDelay { get; set; }
+		void EndOfflineAnnouncement (IAsyncResult result);
 	}
 }
