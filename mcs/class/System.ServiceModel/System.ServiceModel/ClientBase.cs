@@ -65,7 +65,6 @@ namespace System.ServiceModel
 
 		ChannelFactory<TChannel> factory;
 		IClientChannel inner_channel;
-		CommunicationState state;
 
 		protected delegate IAsyncResult BeginOperationDelegate (object[] inValues, AsyncCallback asyncCallback, object state);
 		protected delegate object[] EndOperationDelegate (IAsyncResult result);
@@ -215,7 +214,7 @@ namespace System.ServiceModel
 		}
 
 		public CommunicationState State {
-			get { return InnerChannel.State; }
+			get { return inner_channel != null ? inner_channel.State : CommunicationState.Created; }
 		}
 
 		public void Abort ()
