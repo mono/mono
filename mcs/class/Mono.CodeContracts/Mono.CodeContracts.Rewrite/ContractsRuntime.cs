@@ -62,6 +62,12 @@ namespace Mono.CodeContracts.Rewrite {
 		private void EnsureTypeContractRuntime ()
 		{
 			if (this.typeContractsRuntime == null) {
+				// namespace System.Diagnostics.Contracts {
+				//     [CompilerGenerated]
+				//     private static class __ContractsRuntime {
+				//     }
+				// }
+				
 				// Create type
 				TypeReference typeObject = this.module.Import (typeof (object));
 				TypeDefinition type = new TypeDefinition (Namespace, "__ContractsRuntime",
@@ -80,6 +86,15 @@ namespace Mono.CodeContracts.Rewrite {
 		private void EnsureTypeContractException ()
 		{
 			if (this.options.ThrowOnFailure && this.typeContractException == null) {
+				// [CompilerGenerated]
+				// private class ContractException : Exception {
+				//     internal ContractException(ContractFailureKind kind, string usermsg, string condition, Exception inner)
+				//         : base(failure, inner)
+				//     {
+				//     }
+				// }
+				
+				// Prepare type references
 				TypeReference typeVoid = this.module.Import (typeof (void));
 				TypeReference typeContractFailureKind = this.module.Import (typeof (ContractFailureKind));
 				TypeReference typeString = this.module.Import (typeof (string));
@@ -117,6 +132,19 @@ namespace Mono.CodeContracts.Rewrite {
 		private void EnsureMethodTriggerFailure ()
 		{
 			if (this.methodTriggerFailure == null) {
+				// if the ThrowOnFailure option is true, then:
+				// internal static void TriggerFailure(ContractFailureKind kind, string message, string userMessage, string conditionText, Exception inner)
+				// {
+				//     throw new ContractException(kind, message, userMessage, conditionText, inner);
+				// }
+				
+				// if the ThrowOnFailure option is false, then:
+				// internal static void TriggerFailure(ContractFailureKind kind, string message, string userMessage, string conditionText, Exception inner)
+				// {
+				//     Debug.Fail(message, userMessage);
+				// }
+				
+				// Prepare type references
 				TypeReference typeVoid = this.module.Import (typeof (void));
 				TypeReference typeContractFailureKind = this.module.Import (typeof (ContractFailureKind));
 				TypeReference typeString = this.module.Import (typeof (string));
@@ -154,6 +182,15 @@ namespace Mono.CodeContracts.Rewrite {
 		private void EnsureMethodReportFailure ()
 		{
 			if (this.methodReportFailure == null) {
+				// internal static void ReportFailure(ContractFailureKind kind, string message, string conditionText, Exception inner)
+				// {
+				//     string s = ContractHelper.RaiseContractFailedEvent(kind, message, conditionText, inner);
+				//     if (s != null) {
+				//         TriggerFailure(kind, s, message, conditionText, inner);
+				//     }
+				// }
+				
+				// Prepare type references
 				TypeReference typeVoid = this.module.Import (typeof (void));
 				TypeReference typeContractFailureKind = this.module.Import (typeof (ContractFailureKind));
 				TypeReference typeString = this.module.Import (typeof (string));
@@ -202,6 +239,16 @@ namespace Mono.CodeContracts.Rewrite {
 		{
 			this.EnsureGlobal ();
 			if (this.methodRequires == null) {
+				// [DebuggerNonUserCode]
+				// [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+				// internal static void Requires(bool condition, string message, string conditionText)
+				// {
+				//     if (!condition) {
+				//         ReportFailure(ContractFailureKind.Precondition, message, conditionText, null);
+				//     }
+				// }
+				
+				// Prepare type references
 				TypeReference typeVoid = this.module.Import (typeof (void));
 				TypeReference typeBoolean = this.module.Import (typeof (bool));
 				TypeReference typeString = this.module.Import (typeof (string));

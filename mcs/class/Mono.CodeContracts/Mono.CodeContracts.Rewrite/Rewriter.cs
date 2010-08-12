@@ -35,66 +35,102 @@ using Mono.Cecil;
 using System.IO;
 
 namespace Mono.CodeContracts.Rewrite {
-	public static class Rewriter {
+	public class Rewriter {
 
 		public static RewriterResults Rewrite (RewriterOptions options)
 		{
-			if (!options.Rewrite) {
-				return RewriterResults.Warning("Not asked to rewrite");
-			}
-
-			if (!options.Assembly.IsSet) {
-				return RewriterResults.Error ("No assembly given to rewrite");
-			}
-			AssemblyDefinition assembly = options.Assembly.IsFilename ?
-				AssemblyDefinition.ReadAssembly (options.Assembly.Filename) :
-				AssemblyDefinition.ReadAssembly (options.Assembly.Streams.Assembly);
-			
-			if (options.ForceAssemblyRename != null) {
-				assembly.Name = new AssemblyNameDefinition (options.ForceAssemblyRename, new Version (0, 0, 0, 0));
-			}
-
-			List<string> errors = new List<string> ();
-			List<string> warnings = new List<string> ();
-
-			bool usingMdb = false;
-			bool usingPdb = false;
-			List<ISymbolReader> symReaders = new List<ISymbolReader> ();
-			if (options.Debug) {
-				if (options.Assembly.IsStream && options.Assembly.Streams.Symbols == null) {
-					warnings.Add ("-debug specified, but no symbol stream provided.");
-				} else {
-					try {
-						ISymbolReaderProvider symProv = new Mono.Cecil.Mdb.MdbReaderProvider ();
-						foreach (var module in assembly.Modules) {
-							ISymbolReader sym = options.Assembly.IsFilename ?
-								symProv.GetSymbolReader (module, options.Assembly.Filename) :
-								symProv.GetSymbolReader (module, options.Assembly.Streams.Symbols);
-							module.ReadSymbols (sym);
-							symReaders.Add(sym);
-						}
-						usingMdb = true;
-					} catch {
-						try {
-							ISymbolReaderProvider symProv = new Mono.Cecil.Pdb.PdbReaderProvider ();
-							foreach (var module in assembly.Modules) {
-								ISymbolReader sym = options.Assembly.IsFilename ?
-									symProv.GetSymbolReader (module, options.Assembly.Filename) :
-									symProv.GetSymbolReader (module, options.Assembly.Streams.Symbols);
-								module.ReadSymbols (sym);
-								symReaders.Add(sym);
-							}
-							usingPdb = true;
-						} catch {
-						}
+			Rewriter rewriter = new Rewriter(options);
+			return rewriter.RewriteImpl();
+		}
+		
+		private Rewriter(RewriterOptions options)
+		{
+			this.options = options;
+		}
+		
+		private RewriterOptions options;
+		private List<string> warnings = new List<string> ();
+		private List<string> errors = new List<string> ();
+		private bool usingMdb = false;
+		private bool usingPdb = false;
+		private List<ISymbolReader> symReaders = new List<ISymbolReader> ();
+		
+		private void LoadSymbolReader (AssemblyDefinition assembly) {
+			if (this.options.Assembly.IsStream && this.options.Assembly.Streams.Symbols == null) {
+				this.warnings.Add ("-debug specified, but no symbol stream provided.");
+			} else {
+				try {
+					ISymbolReaderProvider symProv = new Mono.Cecil.Mdb.MdbReaderProvider ();
+					foreach (var module in assembly.Modules) {
+						ISymbolReader sym = this.options.Assembly.IsFilename ?
+							symProv.GetSymbolReader (module, this.options.Assembly.Filename) :
+							symProv.GetSymbolReader (module, this.options.Assembly.Streams.Symbols);
+						module.ReadSymbols (sym);
+						this.symReaders.Add (sym);
 					}
-					if (!usingMdb && !usingPdb) {
-						warnings.Add ("-debug specified, but no MDB or PDB symbol file found.");
+					this.usingMdb = true;
+				} catch {
+					try {
+						ISymbolReaderProvider symProv = new Mono.Cecil.Pdb.PdbReaderProvider ();
+						foreach (var module in assembly.Modules) {
+							ISymbolReader sym = this.options.Assembly.IsFilename ?
+								symProv.GetSymbolReader (module, this.options.Assembly.Filename) :
+								symProv.GetSymbolReader (module, this.options.Assembly.Streams.Symbols);
+							module.ReadSymbols (sym);
+							this.symReaders.Add (sym);
+						}
+						this.usingPdb = true;
+					} catch {
 					}
 				}
+				if (!this.usingMdb && !this.usingPdb) {
+					this.warnings.Add ("-debug specified, but no MDB or PDB symbol file found.");
+				}
+			}
+		}
+		
+		private ISymbolWriter LoadSymbolWriter(AssemblyDefinition assembly, AssemblyRef output)
+		{
+			// TODO: Get symbol writing to work.
+			ISymbolWriterProvider symProv = null;
+			if (this.usingMdb) {
+				symProv = new Mono.Cecil.Mdb.MdbWriterProvider ();
+			} else if (this.usingPdb) {
+				symProv = new Mono.Cecil.Pdb.PdbWriterProvider ();
+			} else {
+				this.warnings.Add ("-writePDBFile specified, but no symbol file found, cannot write symbols.");
+			}
+			if (symProv != null) {
+				return output.IsFilename ?
+					symProv.GetSymbolWriter (assembly.MainModule, output.Filename) :
+					symProv.GetSymbolWriter (assembly.MainModule, output.Streams.Symbols);
+			}
+			return null;
+		}
+
+
+		private RewriterResults RewriteImpl ()
+		{
+			if (!this.options.Rewrite) {
+				return RewriterResults.Warning ("Not asked to rewrite");
 			}
 
-			var output = options.OutputFile.IsSet ? options.OutputFile : options.Assembly;
+			if (!this.options.Assembly.IsSet) {
+				return RewriterResults.Error ("No assembly given to rewrite");
+			}
+			AssemblyDefinition assembly = this.options.Assembly.IsFilename ?
+				AssemblyDefinition.ReadAssembly (this.options.Assembly.Filename) :
+				AssemblyDefinition.ReadAssembly (this.options.Assembly.Streams.Assembly);
+			
+			if (this.options.ForceAssemblyRename != null) {
+				assembly.Name = new AssemblyNameDefinition (this.options.ForceAssemblyRename, new Version (0, 0, 0, 0));
+			}
+
+			if (options.Debug) {
+				this.LoadSymbolReader (assembly);
+			}
+
+			var output = this.options.OutputFile.IsSet ? this.options.OutputFile : this.options.Assembly;
 			ISymbolWriter symWriter = null;
 			if (options.WritePdbFile) {
 				if (!options.Debug) {
@@ -103,23 +139,11 @@ namespace Mono.CodeContracts.Rewrite {
 				if (output.IsStream && output.Streams.Symbols==null){
 					return RewriterResults.Error ("-writePDFFile specified, but no output symbol stream provided.");
 				}
-				// TODO: Get symbol writing to work.
-				ISymbolWriterProvider symProv = null;
-				if (usingMdb) {
-					symProv = new Mono.Cecil.Mdb.MdbWriterProvider ();
-				} else if (usingPdb) {
-					symProv = new Mono.Cecil.Pdb.PdbWriterProvider ();
-				} else {
-					warnings.Add ("-writePDBFile specified, but no symbol file found, cannot write symbols.");
-				}
-				if (symProv != null) {
-					symWriter = output.IsFilename ?
-						symProv.GetSymbolWriter (assembly.MainModule, output.Filename) :
-						symProv.GetSymbolWriter (assembly.MainModule, output.Streams.Symbols);
-				}
+				symWriter = this.LoadSymbolWriter (assembly, output);
 			}
+			
 			try {
-				PerformRewrite rewriter = new PerformRewrite (symWriter, options);
+				PerformRewrite rewriter = new PerformRewrite (symWriter, this.options);
 				rewriter.Rewrite (assembly);
 
 				if (output.IsFilename) {
@@ -132,7 +156,7 @@ namespace Mono.CodeContracts.Rewrite {
 				if (symWriter != null) {
 					symWriter.Dispose ();
 				}
-				foreach (var symReader in symReaders) {
+				foreach (var symReader in this.symReaders) {
 					try {
 						if (symReader != null) {
 							symReader.Dispose ();
@@ -144,6 +168,6 @@ namespace Mono.CodeContracts.Rewrite {
 
 			return new RewriterResults (warnings, errors);
 		}
-
+		
 	}
 }
