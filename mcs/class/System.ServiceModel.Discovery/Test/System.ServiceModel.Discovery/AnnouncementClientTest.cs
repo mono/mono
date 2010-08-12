@@ -48,5 +48,84 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.IsNull (ac.Endpoint.Binding, "#3");
 			Assert.IsNull (ac.Endpoint.Address, "#4");
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void AnnonceOnlineOfflineNoEndpointAddress ()
+		{
+			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = new BasicHttpBinding () });
+			var edm = new EndpointDiscoveryMetadata ();
+			try {
+				ac.AnnounceOnline (edm);
+			} finally {
+				ac.Close ();
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void AnnonceOnlineOfflineNoBinding ()
+		{
+			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Address = new EndpointAddress ("http://localhost:37564")});
+			var edm = new EndpointDiscoveryMetadata ();
+			ac.AnnounceOnline (edm);
+			// attempt to close the client causes another CommunicationObjectFaultedException - looks like it fails to allow Close() at faulted state unlike other objects.
+		}
+
+		[Test]
+		// looks like EndpointAddress is *ignored*
+		public void AnnonceOnlineOfflineAddressSchemeMismatch ()
+		{
+			var ac = new AnnouncementClient (new UdpAnnouncementEndpoint () { Address = new EndpointAddress ("http://localhost:37564")});
+			var edm = new EndpointDiscoveryMetadata ();
+			try {
+				ac.AnnounceOnline (edm);
+				ac.AnnounceOffline (edm);
+			} finally {
+				ac.Close ();
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AnnonceOnlineOfflineAddressSchemeMismatch2 ()
+		{
+			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = new BasicHttpBinding (), Address = new EndpointAddress ("soap.udp://localhost:37564")});
+			var edm = new EndpointDiscoveryMetadata ();
+			try {
+				ac.AnnounceOnline (edm);
+			} finally {
+				ac.Close ();
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void AnnonceOnlineOfflineHttpMessageVersionMismatch ()
+		{
+			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = new BasicHttpBinding (), Address = http_address });
+			var edm = new EndpointDiscoveryMetadata ();
+			try {
+				ac.AnnounceOnline (edm);
+			} finally {
+				ac.Close ();
+			}
+		}
+
+		EndpointAddress http_address = new EndpointAddress ("http://localhost:37564");
+
+		[Test]
+		[ExpectedException (typeof (EndpointNotFoundException))]
+		public void AnnonceOnlineOfflineHttpWSA10 ()
+		{
+			var binding = new CustomBinding (new HttpTransportBindingElement ());
+			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = binding, Address = http_address });
+			var edm = new EndpointDiscoveryMetadata ();
+			try {
+				ac.AnnounceOnline (edm);
+			} finally {
+				ac.Close ();
+			}
+		}
 	}
 }
