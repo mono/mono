@@ -36,9 +36,9 @@ namespace System.ServiceModel.Discovery
 	{
 		static DiscoveryVersion ()
 		{
-			v11 = new DiscoveryVersion ("WSDiscovery11", Version11.MessageContracts11.NS, "urn:docs-oasis-open-org:ws-dd:ns:discovery:2009:01", MessageVersion.Soap12WSAddressing10, typeof (Version11.IAnnouncementContract11));
-			april2005 = new DiscoveryVersion ("WSDiscoveryApril2005", VersionApril2005.MessageContractsApril2005.NS, "urn:schemas-xmlsoap-org:ws:2005:04:discovery", MessageVersion.Soap12WSAddressingAugust2004, typeof (VersionApril2005.IAnnouncementContractApril2005));
-			cd1 = new DiscoveryVersion ("WSDiscoveryCD1", VersionCD1.MessageContractsCD1.NS, "urn:docs-oasis-open-org:ws-dd:discovery:2008:09", MessageVersion.Soap12WSAddressingAugust2004, typeof (VersionCD1.IAnnouncementContractCD1));
+			v11 = new DiscoveryVersion ("WSDiscovery11", Version11.MessageContracts11.NS, "urn:docs-oasis-open-org:ws-dd:ns:discovery:2009:01", MessageVersion.Soap12WSAddressing10, typeof (Version11.IAnnouncementContract11), typeof (Version11.AnnouncementClient11));
+			april2005 = new DiscoveryVersion ("WSDiscoveryApril2005", VersionApril2005.MessageContractsApril2005.NS, "urn:schemas-xmlsoap-org:ws:2005:04:discovery", MessageVersion.Soap12WSAddressingAugust2004, typeof (VersionApril2005.IAnnouncementContractApril2005), typeof (VersionApril2005.AnnouncementClientApril2005));
+			cd1 = new DiscoveryVersion ("WSDiscoveryCD1", VersionCD1.MessageContractsCD1.NS, "urn:docs-oasis-open-org:ws-dd:discovery:2008:09", MessageVersion.Soap12WSAddressingAugust2004, typeof (VersionCD1.IAnnouncementContractCD1), typeof (VersionCD1.AnnouncementClientCD1));
 		}
 
 		static readonly DiscoveryVersion v11, april2005, cd1;
@@ -71,13 +71,14 @@ namespace System.ServiceModel.Discovery
 			}
 		}
 
-		internal DiscoveryVersion (string name, string ns, string adhoc, MessageVersion version, Type announcementContractType)
+		internal DiscoveryVersion (string name, string ns, string adhoc, MessageVersion version, Type announcementContractType, Type announcementClientType)
 		{
 			this.Name = name;
 			this.Namespace = ns;
 			AdhocAddress = new Uri (adhoc);
 			MessageVersion = version;
 			AnnouncementContractType = announcementContractType;
+			AnnouncementClientType = announcementClientType;
 		}
 
 		public Uri AdhocAddress { get; private set; }
@@ -86,6 +87,7 @@ namespace System.ServiceModel.Discovery
 		public string Namespace { get; private set; }
 		
 		internal Type AnnouncementContractType { get; private set; }
+		internal Type AnnouncementClientType { get; private set; }
 
 		public override string ToString ()
 		{
