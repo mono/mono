@@ -2409,23 +2409,15 @@ namespace Mono.CSharp {
 
 			var a = bounds [index];
 			if (a == null) {
-				a = new List<BoundInfo> ();
+				a = new List<BoundInfo> (2);
+				a.Add (bound);
 				bounds [index] = a;
-			} else {
-				if (a.Contains (bound))
-					return;
+				return;
 			}
 
-			//
-			// SPEC: does not cover type inference using constraints
-			//
-			//if (TypeManager.IsGenericParameter (t)) {
-			//    GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
-			//    if (constraints != null) {
-			//        //if (constraints.EffectiveBaseClass != null)
-			//        //	t = constraints.EffectiveBaseClass;
-			//    }
-			//}
+			if (a.Contains (bound))
+				return;
+
 			a.Add (bound);
 		}
 		

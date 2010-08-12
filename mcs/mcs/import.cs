@@ -723,7 +723,9 @@ namespace Mono.CSharp
 				AttributesBag bag = null;
 				List<string> conditionals = null;
 
-				var attrs = CustomAttributeData.GetCustomAttributes (mi);
+				// It should not throw any loading exception
+				IList<CustomAttributeData> attrs = CustomAttributeData.GetCustomAttributes (mi);
+
 				foreach (var a in attrs) {
 					var type = a.Constructor.DeclaringType;
 					if (type == typeof (ObsoleteAttribute)) {

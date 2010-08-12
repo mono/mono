@@ -457,7 +457,7 @@ namespace Mono.CSharp
 		public bool IsObsolete {
 			get {
 				// Disables obsolete checks when probing is on
-				return IsInProbingMode || MemberContext.IsObsolete;
+				return MemberContext.IsObsolete;
 			}
 		}
 
@@ -502,9 +502,7 @@ namespace Mono.CSharp
 
 		public void AddBlockMap (Block from, Block to)
 		{
-			if (block_map.ContainsKey (from))
-				return;
-			block_map[from] = to;
+			block_map.Add (from, to);
 		}
 
 		public Block LookupBlock (Block from)
@@ -512,7 +510,6 @@ namespace Mono.CSharp
 			Block result;
 			if (!block_map.TryGetValue (from, out result)) {
 				result = (Block) from.Clone (this);
-				block_map [from] = result;
 			}
 
 			return result;
