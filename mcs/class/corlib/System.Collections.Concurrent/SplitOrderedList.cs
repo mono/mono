@@ -377,7 +377,7 @@ namespace System.Collections.Concurrent
 			} while (true);
 			
 			if (Interlocked.CompareExchange (ref leftNode.Next, rightNode, rightNodeNext) != rightNodeNext)
-				rightNode = ListSearch (rightNode.Key, ref leftNode, head);
+				rightNode = ListSearch (rightNode.Key, ref leftNode, startPoint);
 			
 			return true;
 		}
