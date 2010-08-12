@@ -241,15 +241,15 @@ namespace System.Collections.Concurrent
 			if (!ListInsert (dummy, GetBucket (parent), out current))
 				dummy = current;
 
-			//buckets[b] = dummy;
 			SetBucket (b, dummy);
 		}
 		
-		// Find log2 of the integer
+		// Turn v's MSB off
 		uint GetParent (uint v)
 		{
 			uint t, tt;
 			
+			// Find MSB position in v
 			var pos = (tt = v >> 16) > 0 ?
 				(t = tt >> 8) > 0 ? 24 + logTable[t] : 16 + logTable[tt] :
 				(t = v >> 8) > 0 ? 8 + logTable[t] : logTable[v];
@@ -257,6 +257,7 @@ namespace System.Collections.Concurrent
 			return (uint)(v & ~(1 << pos));
 		}
 
+		// Reverse integer bits and make sure LSB is set
 		uint ComputeRegularKey (uint key)
 		{
 			return ComputeDummyKey (key | 0x80000000);
@@ -271,6 +272,7 @@ namespace System.Collections.Concurrent
 				((uint)reverseTable[(key >> 24) & 0xff]);
 		}
 
+		// Bucket storage is abstracted in a simple two-layer tree to avoid too much memory resize
 		Node GetBucket (uint index)
 		{
 			int segment = (int)(index / SegmentSize);
@@ -293,6 +295,7 @@ namespace System.Collections.Concurrent
 			buckets[segment][index % SegmentSize] = node;
 		}
 
+		// When we run out of space for bucket storage, we use a lock-based array resize
 		void CheckSegment (int segment)
 		{
 			while (segment >= buckets.Length) {
