@@ -149,6 +149,18 @@ namespace System.ServiceModel
 			Initialize (instance, binding, remoteAddress);
 		}
 
+#if NET_4_0
+		protected ClientBase (ServiceEndpoint endpoint)
+			: this (endpoint.Binding, endpoint.Address)
+		{
+		}
+
+		protected ClientBase (InstanceContext instance, ServiceEndpoint endpoint)
+			: this (instance, endpoint.Binding, endpoint.Address)
+		{
+		}
+#endif
+
 		internal ClientBase (ChannelFactory<TChannel> factory)
 		{
 			ChannelFactory = factory;
