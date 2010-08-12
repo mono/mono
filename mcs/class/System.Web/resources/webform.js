@@ -146,7 +146,7 @@ webForm.WebForm_DoPostBackWithOptions = function  (options) {
 
 webForm.WebForm_DoCallback = function (id, arg, callback, ctx, errorCallback, useAsync)
 {
-	var qs = webForm.__theFormPostData + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
+	var qs = webForm.__theFormPostData + "__CALLBACKID=" + id + "&__CALLBACKPARAM=" + encodeURIComponent(arg);
 
 	if (webForm._form["__EVENTVALIDATION"])
 		qs += "&__EVENTVALIDATION=" + encodeURIComponent(webForm._form["__EVENTVALIDATION"].value);
