@@ -473,5 +473,32 @@ namespace MonoTests.System.ServiceModel
 				throw new NotImplementedException ();
 			}
 		}
+
+#if NET_4_0
+		[Test]
+		public void ConstructorServiceEndpoint ()
+		{
+			// It is okay to pass ServiceEndpoint that does not have Binding or EndpointAddress.
+			new MyClient (new ServiceEndpoint (ContractDescription.GetContract (typeof (IMetadataExchange)), null, null));
+			try {
+				new MyClient ((Binding) null, (EndpointAddress) null);
+				Assert.Fail ("ArgumentNullException is expected");
+			} catch (ArgumentNullException) {
+			}
+		}
+
+		class MyClient : ClientBase<IMetadataExchange>
+		{
+			public MyClient (ServiceEndpoint endpoint)
+				: base (endpoint)
+			{
+			}
+			
+			public MyClient (Binding binding, EndpointAddress address)
+				: base (binding, address)
+			{
+			}
+		}
+#endif
 	}
 }
