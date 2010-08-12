@@ -49,7 +49,7 @@ namespace Mono.CodeContracts.Rewrite {
 			this.typeString = new Lazy<TypeReference> (() => this.Module.Import (typeof (string)));
 		}
 
-		public MethodDefinition Method{get;private set;}
+		public MethodDefinition Method { get; private set; }
 		public ModuleDefinition Module { get; private set; }
 
 		private Lazy<TypeReference> typeVoid;
