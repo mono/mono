@@ -35,4 +35,4 @@ Mono.CodeContracts.Rewrite.AstVisitors/CompileVisitor.cs
 Mono.CodeContracts.Rewrite.AstVisitors/ExprVisitor.cs
 Mono.CodeContracts.Rewrite.AstVisitors/InstructionExtentVisitor.cs
 Mono.CodeContracts.Rewrite.AstVisitors/SourcePositionVisitor.cs
-Mono.CodeContracts.Rewrite.Extensions/EnumerableExtensions.cs
+

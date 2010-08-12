@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Mono.CodeContracts.Rewrite.Ast;
-using Mono.CodeContracts.Rewrite.Extensions;
 
 namespace Mono.CodeContracts.Rewrite.AstVisitors {
 	abstract class ExprVisitor {
@@ -118,27 +117,27 @@ namespace Mono.CodeContracts.Rewrite.AstVisitors {
 
 		protected virtual Expr VisitCompareLessThan (ExprCompareLessThan e)
 		{
-			return this.VisitCollection (e, exprs => new ExprCompareLessThan (e.MethodInfo, exprs.First (), exprs.Second (), e.Signage), e.Left, e.Right);
+			return this.VisitCollection (e, exprs => new ExprCompareLessThan (e.MethodInfo, exprs.First (), exprs.ElementAt (1), e.Signage), e.Left, e.Right);
 		}
 
 		protected virtual Expr VisitCompareGreaterThan (ExprCompareGreaterThan e)
 		{
-			return this.VisitCollection (e, exprs => new ExprCompareGreaterThan (e.MethodInfo, exprs.First (), exprs.Second (), e.Signage), e.Left, e.Right);
+			return this.VisitCollection (e, exprs => new ExprCompareGreaterThan (e.MethodInfo, exprs.First (), exprs.ElementAt (1), e.Signage), e.Left, e.Right);
 		}
 
 		protected virtual Expr VisitCompareEqual (ExprCompareEqual e)
 		{
-			return this.VisitCollection (e, exprs => new ExprCompareEqual (e.MethodInfo, exprs.First (), exprs.Second ()), e.Left, e.Right);
+			return this.VisitCollection (e, exprs => new ExprCompareEqual (e.MethodInfo, exprs.First (), exprs.ElementAt (1)), e.Left, e.Right);
 		}
 
 		protected virtual Expr VisitAdd (ExprAdd e)
 		{
-			return this.VisitCollection (e, exprs => new ExprAdd (e.MethodInfo, exprs.First (), exprs.Second (), e.Signage, e.Overflow), e.Left, e.Right);
+			return this.VisitCollection (e, exprs => new ExprAdd (e.MethodInfo, exprs.First (), exprs.ElementAt (1), e.Signage, e.Overflow), e.Left, e.Right);
 		}
 
 		protected virtual Expr VisitSub (ExprSub e)
 		{
-			return this.VisitCollection (e, exprs => new ExprSub (e.MethodInfo, exprs.First (), exprs.Second (), e.Signage, e.Overflow), e.Left, e.Right);
+			return this.VisitCollection (e, exprs => new ExprSub (e.MethodInfo, exprs.First (), exprs.ElementAt (1), e.Signage, e.Overflow), e.Left, e.Right);
 		}
 
 		protected virtual Expr VisitCall (ExprCall e)
