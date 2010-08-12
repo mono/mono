@@ -58,8 +58,12 @@ namespace System.ServiceModel.Discovery
 			get { return (IClientChannel) client.GetType ().GetProperty ("InnerChannel").GetValue (client, null); }
 		}
 
+		CommunicationState State {
+			get { return ((ICommunicationObject) this).State; }
+		}
+
 		CommunicationState ICommunicationObject.State {
-			get { return InnerChannel.State; }
+			get { return ((ICommunicationObject) client).State; }
 		}
 
 		public event EventHandler<AsyncCompletedEventArgs> AnnounceOfflineCompleted;
@@ -90,12 +94,12 @@ namespace System.ServiceModel.Discovery
 
 		public void Open ()
 		{
-			InnerChannel.Open ();
+			((ICommunicationObject) this).Open ();
 		}
 
 		public void Close ()
 		{
-			InnerChannel.Close ();
+			((ICommunicationObject) this).Close ();
 		}
 
 		// sync
@@ -200,12 +204,14 @@ namespace System.ServiceModel.Discovery
 
 		void ICommunicationObject.Close ()
 		{
-			InnerChannel.Close ();
+			if (State == CommunicationState.Opened)
+				InnerChannel.Close ();
 		}
 
 		void ICommunicationObject.Close (TimeSpan timeout)
 		{
-			InnerChannel.Close (timeout);
+			if (State == CommunicationState.Opened)
+				InnerChannel.Close (timeout);
 		}
 
 		IAsyncResult ICommunicationObject.BeginOpen (AsyncCallback callback, object state)
@@ -240,8 +246,10 @@ namespace System.ServiceModel.Discovery
 
 		void ICommunicationObject.Abort ()
 		{
-			InnerChannel.Abort ();
-			ChannelFactory.Abort ();
+			if (State != CommunicationState.Closed) {
+				InnerChannel.Abort ();
+				ChannelFactory.Abort ();
+			}
 		}
 
 		void IDisposable.Dispose ()

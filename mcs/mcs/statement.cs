@@ -2249,8 +2249,9 @@ namespace Mono.CSharp {
 
 			clonectx.AddBlockMap (this, target);
 
-			target.Toplevel = (ToplevelBlock) clonectx.LookupBlock (Toplevel);
-			target.Explicit = (ExplicitBlock) clonectx.LookupBlock (Explicit);
+			target.Toplevel = (ToplevelBlock) (Toplevel == this ? target : clonectx.LookupBlock (Toplevel));
+			target.Explicit = (ExplicitBlock) (Explicit == this ? target : clonectx.LookupBlock (Explicit));
+
 			if (Parent != null)
 				target.Parent = clonectx.RemapBlockCopy (Parent);
 
@@ -2608,10 +2609,11 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
-			ToplevelBlock target = (ToplevelBlock) t;
 			base.CloneTo (clonectx, t);
 
 			if (parameters.Count != 0) {
+				ToplevelBlock target = (ToplevelBlock) t;
+
 				target.parameter_info = new ToplevelParameterInfo[parameters.Count];
 				for (int i = 0; i < parameters.Count; ++i)
 					target.parameter_info[i] = new ToplevelParameterInfo (target, i);

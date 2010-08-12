@@ -894,7 +894,7 @@ namespace Mono.CSharp {
 		// compile the same code using different type values for the same
 		// arguments to find the correct overload
 		//
-		public Expression Clone (CloneContext clonectx)
+		public virtual Expression Clone (CloneContext clonectx)
 		{
 			Expression cloned = (Expression) MemberwiseClone ();
 			CloneTo (clonectx, cloned);

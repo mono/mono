@@ -808,6 +808,7 @@ namespace Mono.CSharp {
 
 		public TypeParameterSpec[] TypeParameters {
 			get {
+				// TODO: Cache this
 				return CurrentTypeParameters.Select (l => l.Type).ToArray ();
 			}
 		}

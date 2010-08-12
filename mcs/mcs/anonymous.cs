@@ -958,16 +958,24 @@ namespace Mono.CSharp {
 
 		public TypeSpec InferReturnType (ResolveContext ec, TypeInferenceContext tic, TypeSpec delegate_type)
 		{
+			Expression expr;
 			AnonymousExpression am;
+
+			if (compatibles.TryGetValue (delegate_type, out expr)) {
+				am = expr as AnonymousExpression;
+				return am == null ? null : am.ReturnType;
+			}
+
 			using (ec.Set (ResolveContext.Options.ProbingMode | ResolveContext.Options.InferReturnType)) {
 				am = CompatibleMethodBody (ec, tic, InternalType.Arglist, delegate_type);
 				if (am != null)
 					am = am.Compatible (ec);
 			}
-			
+
 			if (am == null)
 				return null;
 
+//			compatibles.Add (delegate_type, am);
 			return am.ReturnType;
 		}
 
@@ -1042,9 +1050,10 @@ namespace Mono.CSharp {
 			} catch (Exception e) {
 				throw new InternalErrorException (e, loc);
 			}
-			
-			if (!ec.IsInProbingMode)
-				compatibles.Add (type, am == null ? EmptyExpression.Null : am);
+
+			if (!ec.IsInProbingMode) {
+				compatibles.Add (type, am ?? EmptyExpression.Null);
+			}
 
 			return am;
 		}
@@ -1116,7 +1125,7 @@ namespace Mono.CSharp {
 			// 
 			type = InternalType.AnonymousMethod;
 
-			if ((Parameters != null) && !Parameters.Resolve (ec))
+			if (!DoResolveParameters (ec))
 				return null;
 
 			// FIXME: The emitted code isn't very careful about reachability
@@ -1126,6 +1135,11 @@ namespace Mono.CSharp {
 				bc.NeedReturnLabel ();
 
 			return this;
+		}
+
+		protected virtual bool DoResolveParameters (ResolveContext rc)
+		{
+			return Parameters.Resolve (rc);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1270,11 +1284,14 @@ namespace Mono.CSharp {
 
 		public AnonymousExpression Compatible (ResolveContext ec, AnonymousExpression ae)
 		{
+			if (block.Resolved)
+				return this;
+
 			// TODO: Implement clone
 			BlockContext aec = new BlockContext (ec.MemberContext, Block, ReturnType);
 			aec.CurrentAnonymousMethod = ae;
 
-			IDisposable aec_dispose = null;
+			ResolveContext.FlagsHandle? aec_dispose = null;
 			ResolveContext.Options flags = 0;
 			if (ec.HasSet (ResolveContext.Options.InferReturnType)) {
 				flags |= ResolveContext.Options.InferReturnType;
@@ -1313,7 +1330,7 @@ namespace Mono.CSharp {
 			}
 
 			if (aec_dispose != null) {
-				aec_dispose.Dispose ();
+				aec_dispose.Value.Dispose ();
 			}
 
 			if (res && errors != ec.Report.Errors)
