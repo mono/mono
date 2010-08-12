@@ -40,15 +40,15 @@ using Mono.Cecil.Cil;
 namespace Mono.CodeContracts.Rewrite {
 	class TransformContractsVisitor : ExprVisitor {
 
-		public TransformContractsVisitor (MethodDefinition method, Dictionary<Expr, Instruction> instructionLookup, ContractsRuntime contractsRuntime)
+		public TransformContractsVisitor (ModuleDefinition module, MethodDefinition method, Dictionary<Expr, Instruction> instructionLookup, ContractsRuntime contractsRuntime)
 		{
-			this.module = method.Module;
+			//this.module = method.Module;
 			this.instructionLookup = instructionLookup;
 			this.contractsRuntime = contractsRuntime;
-			this.methodInfo = new MethodInfo (method);
+			this.methodInfo = new MethodInfo (module, method);
 		}
 
-		private ModuleDefinition module;
+		//private ModuleDefinition module;
 		private Dictionary<Expr, Instruction> instructionLookup;
 		private ContractsRuntime contractsRuntime;
 		private MethodInfo methodInfo;

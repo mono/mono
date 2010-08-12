@@ -50,28 +50,28 @@ namespace Mono.CodeContracts.Rewrite {
 
 		public void Rewrite (AssemblyDefinition assembly)
 		{
-			foreach (var module in assembly.Modules) {
+			foreach (ModuleDefinition module in assembly.Modules) {
 				ContractsRuntime contractsRuntime = new ContractsRuntime(module, this.options);
 
 				var allMethods =
-					from type in module.Types
-					from method in type.Methods
+					from type in module.Types.Cast<TypeDefinition> ()
+					from method in type.Methods.Cast<MethodDefinition> ()
 					select method;
 
-				foreach (var method in allMethods.ToArray ()) {
-					this.RewriteMethod (method, contractsRuntime);
+				foreach (MethodDefinition method in allMethods.ToArray ()) {
+					this.RewriteMethod (module, method, contractsRuntime);
 				}
 			}
 		}
 
-		private void RewriteMethod (MethodDefinition method, ContractsRuntime contractsRuntime)
+		private void RewriteMethod (ModuleDefinition module, MethodDefinition method, ContractsRuntime contractsRuntime)
 		{
 			if (this.rewrittenMethods.ContainsKey (method)) {
 				return;
 			}
 			var overridden = this.GetOverriddenMethod (method);
 			if (overridden != null) {
-				this.RewriteMethod (overridden, contractsRuntime);
+				this.RewriteMethod (module, overridden, contractsRuntime);
 			}
 			bool anyRewrites = false;
 			var baseMethod = this.GetBaseOverriddenMethod (method);
@@ -92,7 +92,7 @@ namespace Mono.CodeContracts.Rewrite {
 
 			TransformContractsVisitor vTransform = null;
 			if (method.HasBody) {
-				vTransform = this.TransformContracts (method, contractsRuntime);
+				vTransform = this.TransformContracts (module, method, contractsRuntime);
 				if (this.sym != null) {
 					this.sym.Write (method.Body);
 				}
@@ -103,17 +103,17 @@ namespace Mono.CodeContracts.Rewrite {
 			this.rewrittenMethods.Add (method, vTransform);
 
 			if (anyRewrites) {
-				Console.WriteLine (method.FullName);
+				Console.WriteLine (method);
 			}
 		}
 
-		private TransformContractsVisitor TransformContracts (MethodDefinition method, ContractsRuntime contractsRuntime)
+		private TransformContractsVisitor TransformContracts (ModuleDefinition module, MethodDefinition method, ContractsRuntime contractsRuntime)
 		{
 			var body = method.Body;
-			Decompile decompile = new Decompile (method);
+			Decompile decompile = new Decompile (module, method);
 			var decomp = decompile.Go ();
 
-			TransformContractsVisitor vTransform = new TransformContractsVisitor (method, decompile.Instructions, contractsRuntime);
+			TransformContractsVisitor vTransform = new TransformContractsVisitor (module, method, decompile.Instructions, contractsRuntime);
 			vTransform.Visit (decomp);
 
 			foreach (var replacement in vTransform.ContractRequiresInfo) {
@@ -127,7 +127,7 @@ namespace Mono.CodeContracts.Rewrite {
 
 		private void RewriteIL (MethodBody body, Dictionary<Expr,Instruction> instructionLookup, Expr remove, Expr insert)
 		{
-			var il = body.GetILProcessor ();
+			var il = body.CilWorker;
 			Instruction instInsertBefore;
 			if (remove != null) {
 				var vInstExtent = new InstructionExtentVisitor (instructionLookup);
@@ -154,7 +154,7 @@ namespace Mono.CodeContracts.Rewrite {
 			if (baseType == null) {
 				return null;
 			}
-			var overridden = baseType.Resolve ().Methods.FirstOrDefault (x => x.Name == method.Name);
+			var overridden = baseType.Resolve ().Methods.Cast<MethodDefinition> ().FirstOrDefault (x => x.Name == method.Name);
 			return overridden;
 		}
 

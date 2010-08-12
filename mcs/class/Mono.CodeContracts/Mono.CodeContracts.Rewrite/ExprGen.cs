@@ -70,7 +70,7 @@ namespace Mono.CodeContracts.Rewrite {
 
 		public ExprLoadArg LoadArg (ParameterDefinition parameterDefinition)
 		{
-			return this.LoadArg (parameterDefinition.Index);
+			return this.LoadArg (parameterDefinition.Sequence);
 		}
 
 		public ExprLoadConstant LoadConstant (object value)

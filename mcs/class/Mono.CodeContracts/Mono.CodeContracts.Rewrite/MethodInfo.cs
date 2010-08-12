@@ -35,10 +35,10 @@ using Mono.Cecil;
 namespace Mono.CodeContracts.Rewrite {
 	class MethodInfo {
 
-		public MethodInfo (MethodDefinition method)
+		public MethodInfo (ModuleDefinition module, MethodDefinition method)
 		{
 			this.Method = method;
-			this.Module = method.Module;
+			this.Module = module;
 
 			this.typeVoid = new Lazy<TypeReference> (() => this.Module.Import (typeof (void)));
 			this.typeObject = new Lazy<TypeReference> (() => this.Module.Import (typeof (object)));

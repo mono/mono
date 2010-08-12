@@ -50,7 +50,7 @@ namespace Mono.CodeContracts.Rewrite.Ast {
 		}
 
 		public override TypeReference ReturnType {
-			get { return this.Method.ReturnType; }
+			get { return this.Method.ReturnType.ReturnType; }
 		}
 
 	}

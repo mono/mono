@@ -38,12 +38,12 @@ namespace Mono.CodeContracts.Rewrite {
 
 	class Decompile {
 
-		public Decompile (MethodDefinition method)
+		public Decompile (ModuleDefinition module, MethodDefinition method)
 		{
 			this.method = method;
 			this.exprs = new Stack<Expr> ();
 			this.Instructions = new Dictionary<Expr, Instruction> ();
-			this.methodInfo = new MethodInfo (method);
+			this.methodInfo = new MethodInfo (module, method);
 			this.gen = new ExprGen (this.methodInfo);
 		}
 
@@ -58,7 +58,7 @@ namespace Mono.CodeContracts.Rewrite {
 		{
 			Instruction unknownInst = null;
 			var insts = this.method.Body.Instructions;
-			foreach (var inst in insts) {
+			foreach (Instruction inst in insts) {
 				if (failQuietly) {
 					if (unknownInst == null) {
 						try {
