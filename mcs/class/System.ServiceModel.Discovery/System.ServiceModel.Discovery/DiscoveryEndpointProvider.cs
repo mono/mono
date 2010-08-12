@@ -41,7 +41,8 @@ namespace System.ServiceModel.Discovery
 	{
 		public override DiscoveryEndpoint GetDiscoveryEndpoint ()
 		{
-			throw new NotImplementedException ();
+			var binding = new CustomBinding (new TextMessageEncodingBindingElement (), new UdpTransportBindingElement ());
+			return new UdpDiscoveryEndpoint () { Binding = binding };
 		}
 	}
 }

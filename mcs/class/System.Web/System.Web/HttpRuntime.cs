@@ -154,7 +154,11 @@ namespace System.Web
 			internalCache = new Cache ();
 			internalCache.DependencyCache = internalCache;
 #endif
-			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
+			do_RealProcessRequest = new WaitCallback (state => {
+				try {
+					RealProcessRequest (state);
+				} catch {}
+				});
 		}
 		
 #region AppDomain handling

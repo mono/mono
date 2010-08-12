@@ -1545,6 +1545,7 @@ System.Collections.Concurrent/Partitioners/ListPartitioner.cs
 System.Collections.Concurrent/Partitioners/EnumerablePartitioner.cs
 System.Collections.Concurrent/IProducerConsumerCollection.cs
 System.Collections.Concurrent/ConcurrentStack.cs
+System.Collections.Concurrent/SplitOrderedList.cs
 System.Threading/LazyInitializer.cs
 System.Threading/CountdownEvent.cs
 System.Threading/CancellationTokenSource.cs

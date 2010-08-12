@@ -203,6 +203,25 @@ namespace System.ServiceModel
 			return AddServiceEndpointCore (cd, binding, ea, listenUri);
 		}
 
+#if NET_4_0
+		public virtual void AddServiceEndpoint (ServiceEndpoint endpoint)
+		{
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+
+			ThrowIfDisposedOrImmutable ();
+
+			if (endpoint.Address == null)
+				throw new ArgumentException ("Address on the argument endpoint is null");
+			if (endpoint.Contract == null)
+				throw new ArgumentException ("Contract on the argument endpoint is null");
+			if (endpoint.Binding == null)
+				throw new ArgumentException ("Binding on the argument endpoint is null");
+
+			Description.Endpoints.Add (endpoint);
+		}
+#endif
+
 		Type PopulateType (string typeName)
 		{
 			Type type = Type.GetType (typeName);

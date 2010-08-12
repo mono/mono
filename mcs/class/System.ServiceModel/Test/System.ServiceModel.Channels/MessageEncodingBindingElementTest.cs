@@ -47,18 +47,13 @@ namespace MonoTests.System.ServiceModel.Channels
 				throw new Exception ();
 			}
 
-			public override T GetProperty<T> (BindingContext ctx)
-			{
-				throw new Exception ();
-			}
-
 			public override MessageEncoderFactory CreateMessageEncoderFactory ()
 			{
 				throw new Exception ();
 			}
 
 			public override MessageVersion MessageVersion {
-				get { throw new Exception (); }
+				get { return MessageVersion.None; }
 				set { throw new Exception (); }
 			}
 		}
@@ -116,6 +111,13 @@ namespace MonoTests.System.ServiceModel.Channels
 					new TextMessageEncodingBindingElement ()),
 				new BindingParameterCollection ());
 			be.BuildChannelFactory<IRequestChannel> (ctx);
+		}
+
+		[Test]
+		public void GetProperty ()
+		{
+			var ctx = new BindingContext (new CustomBinding (new HttpTransportBindingElement ()), new BindingParameterCollection ());
+			Assert.AreEqual (MessageVersion.None, new MyEncodingBindingElement ().GetProperty<MessageVersion> (ctx), "#1");
 		}
 	}
 }

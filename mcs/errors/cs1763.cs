@@ -1,6 +1,5 @@
 // CS1763: Optional parameter `o' of type `object' can only be initialized with `null'
 // Line: 6
-// Compiler options: -langversion:future
 
 class C
 {

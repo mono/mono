@@ -99,7 +99,11 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				if (!isOneWay) 
 				{
 					sinkStack.Push (this, connection);
-					ThreadPool.QueueUserWorkItem (new WaitCallback(ReadAsyncTcpMessage), sinkStack);
+					ThreadPool.QueueUserWorkItem (new WaitCallback(data => {
+						try {
+							ReadAsyncTcpMessage (data);
+						} catch {}
+						}), sinkStack);
 				}
 				else
 					connection.Release();

@@ -3015,7 +3015,7 @@ namespace Mono.CSharp {
 			//
 			// LAMESPEC: No details about which expressions are not allowed
 			//
-			return !(expr is BaseThis);
+			return !(expr is TypeExpr) && !(expr is BaseThis);
 		}
 
 		/// <summary>
@@ -3671,7 +3671,7 @@ namespace Mono.CSharp {
 						throw new InternalErrorException ();
 
 					Expression e = pd.FixedParameters[i].DefaultValue as Constant;
-					if (e == null)
+					if (e == null || e.Type.IsGenericOrParentIsGeneric)
 						e = new DefaultValueExpression (new TypeExpression (pd.Types[i], loc), loc).Resolve (ec);
 
 					arguments[i] = new Argument (e, Argument.AType.Default);

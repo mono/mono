@@ -158,7 +158,7 @@ namespace System.ServiceModel.Channels
 				return (T) (object) GetCapabilities ();
 			if (typeof (T) == typeof (IdentityVerifier))
 				throw new NotImplementedException ();
-			return context.GetInnerProperty<T> ();
+			return base.GetProperty<T> (context);
 		}
 
 		SymmetricSecurityCapabilities GetCapabilities ()

@@ -55,12 +55,11 @@ namespace System.Runtime.Remoting.Channels.Ipc.Unix
                         Hashtable h = new Hashtable ();
 
                         foreach (DictionaryEntry e in props) {
+                                h [e.Key] = e.Value;
+				
                                 switch (e.Key as string) {
                                 case "portName":
                                         h ["path"] = BuildPathFromPortName ((string)e.Value);
-                                        break;
-                                default:
-                                        h [e.Key] = e.Value;
                                         break;
                                 }
                         }
@@ -86,7 +85,8 @@ namespace System.Runtime.Remoting.Channels.Ipc.Unix
         
                 public IpcServerChannel (string name, string portName)
                 {
-                        _portName = portName = BuildPathFromPortName (portName);
+                        _portName = portName;
+                        _path = portName = BuildPathFromPortName (portName);
 
                         _innerChannel = Activator.CreateInstance(UnixChannelLoader.LoadServerChannel (), new object [] {name, portName});
                 }

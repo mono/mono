@@ -58,31 +58,30 @@ namespace System.Net.Mime {
 		{
 			if (contentType == null)
 				throw new ArgumentNullException ("contentType");
-			if (contentType.Length < 1)
+			if (contentType.Length == 0)
 				throw new ArgumentException ("contentType");
 
-			int index = contentType.IndexOf (';');
-			if (index > 0) {
-				string[] split = contentType.Split (';');
-				this.MediaType = split[0].Trim ();
-				for (int i = 1; i < split.Length; i++)
-					Parse (split[i]);
-			}
-			else {
-				this.MediaType = contentType.Trim ();
-			}
+			string[] split = contentType.Split (';');
+			this.MediaType = split[0].Trim ();
+			for (int i = 1; i < split.Length; i++)
+				Parse (split[i].Trim ());
 		}
 
 		// parse key=value pairs like:
 		// "charset=us-ascii"
+		static char [] eq = new char [] { '=' };
 		void Parse (string pair)
 		{
-			if (pair == null || pair.Length < 1)
+			if (String.IsNullOrEmpty (pair))
 				return;
 
-			string[] split = pair.Split ('=');
-			if (split.Length == 2)
-				parameters.Add (split[0].Trim (), split[1].Trim ());
+			string [] split = pair.Split (eq, 2);
+			string key = split [0].Trim ();
+			string val =  (split.Length > 1) ? split [1].Trim () : "";
+			int l = val.Length;
+			if (l >= 2 && val [0] == '"' && val [l - 1] == '"')
+				val = val.Substring (1, l - 2);
+			parameters.Add (key, val);
 		}
 
 		#endregion // Constructors

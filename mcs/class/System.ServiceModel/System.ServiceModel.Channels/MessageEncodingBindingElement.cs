@@ -50,6 +50,13 @@ namespace System.ServiceModel.Channels
 
 		public abstract MessageVersion MessageVersion { get; set; }
 
+		public override T GetProperty<T> (BindingContext ctx)
+		{
+			if (typeof (T) == typeof (MessageVersion))
+				return (T) (object) MessageVersion;
+			return ctx.GetInnerProperty<T> ();
+		}
+
 #if !NET_2_1
 		[MonoTODO]
 		protected virtual void OnImportPolicy (XmlElement assertion,

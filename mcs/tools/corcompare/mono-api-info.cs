@@ -29,6 +29,9 @@ namespace CorCompare
 			if (args.Length == 0)
 				return 1;
 
+			AbiMode = false;
+			SetAbiMode ();
+
 			AssemblyCollection acoll = new AssemblyCollection ();
 
 			foreach (string fullName in args) {
@@ -45,6 +48,14 @@ namespace CorCompare
 			doc.WriteTo (writer);
 			return 0;
 		}
+
+		[System.Diagnostics.Conditional ("ABI")]
+		private static void SetAbiMode ()
+		{
+			AbiMode = true;
+		}
+
+		internal static bool AbiMode { get; private set; }
 	}
 
 	public class Utils {
@@ -211,7 +222,7 @@ namespace CorCompare
 				if (string.IsNullOrEmpty (t.Namespace))
 					continue;
 
-				if ((t.Attributes & TypeAttributes.VisibilityMask) != TypeAttributes.Public)
+				if (!Driver.AbiMode && ((t.Attributes & TypeAttributes.VisibilityMask) != TypeAttributes.Public))
 					continue;
 
 				if (t.DeclaringType != null)
@@ -409,28 +420,31 @@ namespace CorCompare
 				AddAttribute (nclass, "enumtype", Utils.CleanupTypeName (value_type.FieldType));
 			}
 
-			MethodDefinition [] ctors = GetConstructors (type);
-			if (ctors.Length > 0) {
-				Array.Sort (ctors, MemberReferenceComparer.Default);
-				members.Add (new ConstructorData (document, nclass, ctors));
-			}
+			if (!Driver.AbiMode) {
 
-			PropertyDefinition[] properties = GetProperties (type);
-			if (properties.Length > 0) {
-				Array.Sort (properties, MemberReferenceComparer.Default);
-				members.Add (new PropertyData (document, nclass, properties));
-			}
+				MethodDefinition [] ctors = GetConstructors (type);
+				if (ctors.Length > 0) {
+					Array.Sort (ctors, MemberReferenceComparer.Default);
+					members.Add (new ConstructorData (document, nclass, ctors));
+				}
 
-			EventDefinition [] events = GetEvents (type);
-			if (events.Length > 0) {
-				Array.Sort (events, MemberReferenceComparer.Default);
-				members.Add (new EventData (document, nclass, events));
-			}
+				PropertyDefinition[] properties = GetProperties (type);
+				if (properties.Length > 0) {
+					Array.Sort (properties, MemberReferenceComparer.Default);
+					members.Add (new PropertyData (document, nclass, properties));
+				}
 
-			MethodDefinition [] methods = GetMethods (type);
-			if (methods.Length > 0) {
-				Array.Sort (methods, MemberReferenceComparer.Default);
-				members.Add (new MethodData (document, nclass, methods));
+				EventDefinition [] events = GetEvents (type);
+				if (events.Length > 0) {
+					Array.Sort (events, MemberReferenceComparer.Default);
+					members.Add (new EventData (document, nclass, events));
+				}
+
+				MethodDefinition [] methods = GetMethods (type);
+				if (methods.Length > 0) {
+					Array.Sort (methods, MemberReferenceComparer.Default);
+					members.Add (new MethodData (document, nclass, methods));
+				}
 			}
 
 			foreach (MemberData md in members)
@@ -542,12 +556,19 @@ namespace CorCompare
 				if (field.IsSpecialName)
 					continue;
 
+				if (Driver.AbiMode && field.IsStatic)
+					continue;
+
 				// we're only interested in public or protected members
 				FieldAttributes maskedVisibility = (field.Attributes & FieldAttributes.FieldAccessMask);
-				if (maskedVisibility == FieldAttributes.Public
-					|| maskedVisibility == FieldAttributes.Family
-					|| maskedVisibility == FieldAttributes.FamORAssem) {
+				if (Driver.AbiMode && !field.IsNotSerialized) {
 					list.Add (field);
+				} else {
+					if (maskedVisibility == FieldAttributes.Public
+						|| maskedVisibility == FieldAttributes.Family
+						|| maskedVisibility == FieldAttributes.FamORAssem) {
+						list.Add (field);
+					}
 				}
 			}
 

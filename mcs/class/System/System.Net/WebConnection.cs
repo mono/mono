@@ -100,7 +100,11 @@ namespace System.Net
 			buffer = new byte [4096];
 			readState = ReadState.None;
 			Data = new WebConnectionData ();
-			initConn = new WaitCallback (InitConnection);
+			initConn = new WaitCallback (state => {
+				try {
+					InitConnection (state);
+				} catch {}
+				});
 			queue = group.Queue;
 			abortHelper = new AbortHelper ();
 			abortHelper.Connection = this;

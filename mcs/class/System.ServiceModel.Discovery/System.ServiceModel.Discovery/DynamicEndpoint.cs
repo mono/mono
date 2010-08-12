@@ -17,6 +17,7 @@ namespace System.ServiceModel.Discovery
 			if (binding == null)
 				throw new ArgumentNullException ("binding");
 			DiscoveryEndpointProvider = new UdpDiscoveryEndpointProvider ();
+			FindCriteria = new FindCriteria (contract.ContractType);
 		}
 
 		public DiscoveryEndpointProvider DiscoveryEndpointProvider { get; set; }

@@ -70,6 +70,8 @@ namespace System.Web.SessionState
 	internal class SessionInProcHandler : SessionStateStoreProviderBase
 	{
 		const string CachePrefix = "@@@InProc@";
+		const int CachePrefixLength = 10;
+		
 		const Int32 lockAcquireTimeout = 30000;
 		
 		CacheItemRemovedCallback removedCB;
@@ -356,6 +358,9 @@ namespace System.Web.SessionState
 		void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)
                 {
 			if (expireCallback != null) {
+				if (key.StartsWith (CachePrefix, StringComparison.OrdinalIgnoreCase))
+					key = key.Substring (CachePrefixLength);
+				
 				if (value is SessionStateStoreData)
 					expireCallback (key, (SessionStateStoreData)value);
 				else if (value is InProcSessionItem) {
