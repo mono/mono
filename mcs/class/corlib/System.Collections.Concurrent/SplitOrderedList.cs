@@ -246,9 +246,11 @@ namespace System.Collections.Concurrent
 		{
 			uint t, tt;
 			
-			return (tt = v >> 16) > 0 ? 
-				(t = tt >> 8) > 0 ? 24 + (uint)logTable[t] : 16 + (uint)logTable[tt] :
-				(t = v >> 8) > 0 ? 8 + (uint)logTable[t] : (uint)logTable[v];
+			var pos = (tt = v >> 16) > 0 ?
+				(t = tt >> 8) > 0 ? 24 + logTable[t] : 16 + logTable[tt] :
+				(t = v >> 8) > 0 ? 8 + logTable[t] : logTable[v];
+
+			return (uint)(v & ~(1 << pos));
 		}
 
 		uint ComputeRegularKey (uint key)
