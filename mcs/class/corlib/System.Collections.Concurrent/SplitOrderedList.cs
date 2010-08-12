@@ -92,7 +92,7 @@ namespace System.Collections.Concurrent
 			}
 		}
 
-		const int MaxLoad = 10;
+		const int MaxLoad = 5;
 		const int SegmentSize = 50;		
 
 		Node head;
@@ -204,6 +204,7 @@ namespace System.Collections.Concurrent
 			uint b = key % (uint)size;
 			if (GetBucket (b) == null)
 				InitializeBucket (b);
+
 			if (!ListDelete (GetBucket (b), ComputeRegularKey (key), out data))
 				return false;
 
