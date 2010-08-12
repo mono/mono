@@ -1,3 +1,31 @@
+//
+// TestCCRewrite.cs
+//
+// Authors:
+//	Chris Bacon (chrisbacon76@gmail.com)
+//
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 #define CONTRACTS_FULL
 
 using System;
@@ -300,7 +328,7 @@ namespace MonoTests.Mono.CodeContracts {
 		}
 
 		[Test]
-		public void TestTrivial ()
+		public void TestTrivial_Equals ()
 		{
 			const string CondEquals = "value == 0";
 
@@ -314,7 +342,11 @@ namespace MonoTests.Mono.CodeContracts {
 			this.CheckTwice (() => TestEqualsLong (0), () => TestEqualsLong (1), CondEquals);
 			this.CheckTwice (() => TestEqualsDouble (0), () => TestEqualsDouble (1), CondEquals);
 			this.CheckTwice (() => TestEqualsFloat (0), () => TestEqualsFloat (1), CondEquals);
+		}
 
+		[Test]
+		public void TestTrivial_NotEquals()
+		{
 			const string CondNotEquals = "value != 0";
 
 			this.CheckTwice (() => TestNotEqualsByte (1), () => TestNotEqualsByte (0), CondNotEquals);
@@ -327,7 +359,11 @@ namespace MonoTests.Mono.CodeContracts {
 			this.CheckTwice (() => TestNotEqualsLong (1), () => TestNotEqualsLong (0), CondNotEquals);
 			this.CheckTwice (() => TestNotEqualsDouble (1), () => TestNotEqualsDouble (0), CondNotEquals);
 			this.CheckTwice (() => TestNotEqualsFloat (1), () => TestNotEqualsFloat (0), CondNotEquals);
+		}
 
+		[Test]
+		public void TestTrivial_LessThan()
+		{
 			const string CondLessThan = "value < 10";
 
 			this.CheckTwice (() => TestLessThanInt (9), () => TestLessThanInt (10), CondLessThan);
@@ -336,7 +372,11 @@ namespace MonoTests.Mono.CodeContracts {
 			this.CheckTwice (() => TestLessThanULong (9), () => TestLessThanULong (10), CondLessThan);
 			this.CheckTwice (() => TestLessThanFloat (9.9f), () => TestLessThanFloat (10), CondLessThan);
 			this.CheckTwice (() => TestLessThanDouble (9.9), () => TestLessThanDouble (10), CondLessThan);
+		}
 
+		[Test]
+		public void TestTrivial_LessThanOrEqual()
+		{
 			const string CondLessThanOrEqual = "value <= 10";
 
 			this.CheckTwice (() => TestLessThanOrEqualInt (10), () => TestLessThanOrEqualInt (11), CondLessThanOrEqual);
@@ -345,7 +385,11 @@ namespace MonoTests.Mono.CodeContracts {
 			this.CheckTwice (() => TestLessThanOrEqualULong (10), () => TestLessThanOrEqualULong (11), CondLessThanOrEqual);
 			this.CheckTwice (() => TestLessThanOrEqualFloat (10.0f), () => TestLessThanOrEqualFloat (10.1f), CondLessThanOrEqual);
 			this.CheckTwice (() => TestLessThanOrEqualDouble (10.0), () => TestLessThanOrEqualDouble (10.1), CondLessThanOrEqual);
+		}
 
+		[Test]
+		public void TestTrivial_GreaterThan()
+		{
 			const string CondGreaterThan = "value > 10";
 
 			this.CheckTwice (() => TestGreaterThanInt (11), () => TestGreaterThanInt (10), CondGreaterThan);
@@ -354,7 +398,11 @@ namespace MonoTests.Mono.CodeContracts {
 			this.CheckTwice (() => TestGreaterThanULong (11), () => TestGreaterThanULong (10), CondGreaterThan);
 			this.CheckTwice (() => TestGreaterThanFloat (10.1f), () => TestGreaterThanFloat (10), CondGreaterThan);
 			this.CheckTwice (() => TestGreaterThanDouble (10.1), () => TestGreaterThanDouble (10), CondGreaterThan);
+		}
 
+		[Test]
+		public void TestTrivial_GreaterThanOrEqual()
+		{
 			const string CondGreaterThanOrEqual = "value >= 10";
 
 			this.CheckTwice (() => TestGreaterThanOrEqualInt (10), () => TestGreaterThanOrEqualInt (9), CondGreaterThanOrEqual);
@@ -363,7 +411,11 @@ namespace MonoTests.Mono.CodeContracts {
 			this.CheckTwice (() => TestGreaterThanOrEqualULong (10), () => TestGreaterThanOrEqualULong (9), CondGreaterThanOrEqual);
 			this.CheckTwice (() => TestGreaterThanOrEqualFloat (10.0f), () => TestGreaterThanOrEqualFloat (9.9f), CondGreaterThanOrEqual);
 			this.CheckTwice (() => TestGreaterThanOrEqualDouble (10.0), () => TestGreaterThanOrEqualDouble (9.9), CondGreaterThanOrEqual);
+		}
 
+		[Test]
+		public void TestTrivial_ObjectEquality()
+		{
 			object o = new object ();
 			this.CheckTwice (() => TestObjectEquals (null), () => TestObjectEquals (o), "value == null");
 			this.CheckTwice (() => TestObjectNotEquals (o), () => TestObjectNotEquals (null), "value != null");
