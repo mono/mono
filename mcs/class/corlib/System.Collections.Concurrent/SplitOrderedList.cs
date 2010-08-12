@@ -93,7 +93,10 @@ namespace System.Collections.Concurrent
 		}
 
 		const int MaxLoad = 5;
-		const int SegmentSize = 50;		
+		const int SegmentSize = 50;
+
+		[ThreadStatic]
+		Node[] segmentCache;
 
 		Node head;
 		Node tail;
@@ -283,8 +286,9 @@ namespace System.Collections.Concurrent
 			int segment = (int)(index / SegmentSize);
 			CheckSegment (segment);
 			if (buckets[segment] == null) {
-				Node[] newSegment = new Node[SegmentSize];
-				Interlocked.CompareExchange (ref buckets[segment], newSegment, null);
+				// Cache segment creation in case CAS fails
+				Node[] newSegment = segmentCache == null ? new Node[SegmentSize] : segmentCache;
+				segmentCache = Interlocked.CompareExchange (ref buckets[segment], newSegment, null) == null ? null : newSegment;
 			}
 			buckets[segment][index % SegmentSize] = node;
 		}
