@@ -188,8 +188,13 @@ namespace System.Threading
 		
 		void PostPhaseAction (ManualResetEventSlim evt)
 		{
-			if (postPhaseAction != null)
-				postPhaseAction (this);
+			if (postPhaseAction != null) {
+				try {
+					postPhaseAction (this);
+				} catch (Exception e) {
+					throw new BarrierPostPhaseException (e);
+				}
+			}
 			
 			InitCountdownEvent ();
 			evt.Set ();

@@ -967,6 +967,7 @@ System.Threading/SemaphoreFullException.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
 System.Threading/Barrier.cs
+System.Threading/BarrierPostPhaseException.cs
 System.Timers/ElapsedEventArgs.cs
 System.Timers/ElapsedEventHandler.cs
 System.Timers/Timer.cs
