@@ -246,7 +246,7 @@ namespace Mono.XBuild.CommandLine {
 							else
 								RaiseWarning (0, String.Format (
 										"{0}: ProjectReference '{1}' not found, neither by guid '{2}' nor by project file name '{3}'.",
-										filename, bi.Include, projectReferenceGuid, fullpath));
+										filename, bi.Include, projectReferenceGuid.Replace ("{", "").Replace ("}", ""), fullpath));
 						}
 
 					}
