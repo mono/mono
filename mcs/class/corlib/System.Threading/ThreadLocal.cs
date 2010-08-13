@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // ThreadLocal.cs
 //  
@@ -25,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0
 using System;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;

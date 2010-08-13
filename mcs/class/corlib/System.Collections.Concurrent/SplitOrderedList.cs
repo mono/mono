@@ -22,13 +22,13 @@
 //
 //
 
+#if NET_4_0 || BOOTSTRAP_NET_4_0
+
 using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
-#if NET_4_0 || BOOTSTRAP_NET_4_0
 
 namespace System.Collections.Concurrent
 {

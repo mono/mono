@@ -1,4 +1,3 @@
-#if NET_4_0
 // Parallel.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -23,6 +22,7 @@
 //
 //
 
+#if NET_4_0
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
