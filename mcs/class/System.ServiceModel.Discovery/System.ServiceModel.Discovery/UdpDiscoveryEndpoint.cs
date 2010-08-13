@@ -74,10 +74,17 @@ namespace System.ServiceModel.Discovery
 
 		// (6), everything falls to here.
 		public UdpDiscoveryEndpoint (DiscoveryVersion discoveryVersion, Uri multicastAddress)
-			: base (discoveryVersion, ServiceDiscoveryMode.Adhoc)
+			: base (discoveryVersion, ServiceDiscoveryMode.Adhoc, CreateBinding (), new EndpointAddress (discoveryVersion.AdhocAddress))
 		{
+			ListenUri = multicastAddress;
 			TransportSettings = new UdpTransportSettings ();
 			MulticastAddress = multicastAddress;
+			MaxResponseDelay = TimeSpan.FromMilliseconds (500);
+		}
+
+		static Binding CreateBinding ()
+		{
+			return new CustomBinding (new TextMessageEncodingBindingElement (), new UdpTransportBindingElement ());
 		}
 
 		public Uri MulticastAddress { get; set; }

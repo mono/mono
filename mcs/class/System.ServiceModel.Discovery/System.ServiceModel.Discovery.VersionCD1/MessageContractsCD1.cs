@@ -35,9 +35,13 @@ namespace System.ServiceModel.Discovery.VersionCD1
 {
 	internal class MessageContractsCD1
 	{
-		public const string NS = "http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09";
+		public const string NS = DiscoveryVersion.NamespaceCD1;
 		public const string HelloAction = NS + "/Hello";
 		public const string ByeAction = NS + "/Bye";
+		public const string ProbeAction = NS + "/Probe";
+		public const string ProbeMatchAction = NS + "/ProbeMatches";
+		public const string ResolveAction = NS + "/Resolve";
+		public const string ResolveMatchAction = NS + "/ResolveMatches";
 
 		[MessageContract (IsWrapped = false)]
 		public class OnlineAnnouncement
@@ -55,6 +59,26 @@ namespace System.ServiceModel.Discovery.VersionCD1
 			public DiscoveryMessageSequenceCD1 MessageSequence { get; set; }
 			[MessageBodyMember (Name = "Bye", Namespace = NS)]
 			public EndpointDiscoveryMetadataCD1 EndpointDiscoveryMetadata { get; set; }
+		}
+
+		[MessageContract (IsWrapped = false)]
+		public class FindRequest
+		{
+		}
+
+		[MessageContract (IsWrapped = false)]
+		public class FindResponse
+		{
+		}
+
+		[MessageContract (IsWrapped = false)]
+		public class ResolveRequest
+		{
+		}
+
+		[MessageContract (IsWrapped = false)]
+		public class ResolveResponse
+		{
 		}
 	}
 }

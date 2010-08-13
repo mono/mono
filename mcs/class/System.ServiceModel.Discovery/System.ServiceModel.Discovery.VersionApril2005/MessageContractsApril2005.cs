@@ -35,9 +35,13 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 {
 	internal class MessageContractsApril2005
 	{
-		public const string NS = "http://schemas.xmlsoap.org/ws/2005/04/discovery";
+		public const string NS = DiscoveryVersion.NamespaceApril2005;
 		public const string HelloAction = NS + "/Hello";
 		public const string ByeAction = NS + "/Bye";
+		public const string ProbeAction = NS + "/Probe";
+		public const string ProbeMatchAction = NS + "/ProbeMatches";
+		public const string ResolveAction = NS + "/Resolve";
+		public const string ResolveMatchAction = NS + "/ResolveMatches";
 
 		[MessageContract (IsWrapped = false)]
 		public class OnlineAnnouncement
@@ -55,6 +59,26 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
 			[MessageBodyMember (Name = "Bye", Namespace = NS)]
 			public EndpointDiscoveryMetadataApril2005 EndpointDiscoveryMetadata { get; set; }
+		}
+
+		[MessageContract (IsWrapped = false)]
+		public class FindRequest
+		{
+		}
+
+		[MessageContract (IsWrapped = false)]
+		public class FindResponse
+		{
+		}
+
+		[MessageContract (IsWrapped = false)]
+		public class ResolveRequest
+		{
+		}
+
+		[MessageContract (IsWrapped = false)]
+		public class ResolveResponse
+		{
 		}
 	}
 }

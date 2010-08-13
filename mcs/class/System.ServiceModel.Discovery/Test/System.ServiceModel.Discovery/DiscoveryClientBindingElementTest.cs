@@ -59,6 +59,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.IsNotNull (be.DiscoveryEndpointProvider, "#2");
 			var die = be.DiscoveryEndpointProvider.GetDiscoveryEndpoint ();
 			Assert.AreEqual (DiscoveryVersion.WSDiscovery11, die.DiscoveryVersion, "#3");
+			Assert.IsTrue (die is UdpDiscoveryEndpoint, "#3-2");
 			Assert.AreEqual (ServiceDiscoveryMode.Adhoc, die.DiscoveryMode, "#4");
 			Assert.AreEqual ("urn:docs-oasis-open-org:ws-dd:ns:discovery:2009:01", die.Address.Uri.ToString (), "#5");
 			Assert.IsNotNull (die.Contract, "#6");

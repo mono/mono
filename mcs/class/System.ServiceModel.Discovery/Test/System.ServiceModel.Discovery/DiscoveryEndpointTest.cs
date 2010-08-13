@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -44,9 +45,37 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.AreEqual (DiscoveryVersion.WSDiscovery11, de.DiscoveryVersion, "#1");
 			Assert.AreEqual (ServiceDiscoveryMode.Managed, de.DiscoveryMode, "#2");
 			Assert.AreEqual (TimeSpan.Zero, de.MaxResponseDelay, "#3");
-			Assert.IsNotNull (de.Contract, "#11"); // some version-dependent internal type.
-			Assert.AreEqual ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01", de.Contract.Namespace, "#11-2");
-			Assert.AreEqual ("DiscoveryProxy", de.Contract.Name, "#11-3");
+			var cd = de.Contract;
+			Assert.IsNotNull (cd, "#11"); // some version-dependent internal type.
+			Assert.AreEqual ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01", cd.Namespace, "#11-2");
+			Assert.AreEqual ("DiscoveryProxy", cd.Name, "#11-3");
+			Assert.AreEqual (2, cd.Operations.Count, "#11-4");
+			Assert.IsTrue (cd.Operations.Any (od => !od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Probe")), "#11-5");
+			Assert.IsTrue (cd.Operations.Any (od => !od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Resolve")), "#11-6");
+			Assert.IsNull (de.Binding, "#12");
+			Assert.IsNull (de.Address, "#13");
+			Assert.IsNull (de.ListenUri, "#14");
+		}
+
+		// Adhoc mode gives *different* ServiceContract than Managed mode.
+		// Adhoc one is one-way based, while Managed one is bidirectional.
+		[Test]
+		public void AdhocDefaultValues ()
+		{
+			var de = new DiscoveryEndpoint (DiscoveryVersion.WSDiscoveryCD1, ServiceDiscoveryMode.Adhoc);
+			Assert.AreEqual (DiscoveryVersion.WSDiscoveryCD1, de.DiscoveryVersion, "#1");
+			Assert.AreEqual (ServiceDiscoveryMode.Adhoc, de.DiscoveryMode, "#2");
+			Assert.AreEqual (TimeSpan.Zero, de.MaxResponseDelay, "#3");
+			var cd = de.Contract;
+			Assert.IsNotNull (cd, "#11"); // some version-dependent internal type.
+			Assert.AreEqual ("http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09", cd.Namespace, "#11-2");
+			Assert.AreEqual ("TargetService", cd.Name, "#11-3");
+			Assert.AreEqual (5, cd.Operations.Count, "#11-4");
+			Assert.IsTrue (cd.Operations.Any (od => od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09/Probe")), "#11-5");
+			Assert.IsTrue (cd.Operations.Any (od => od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09/Resolve")), "#11-6");
+			Assert.IsTrue (cd.Operations.Any (od => od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09/ProbeMatches")), "#11-7");
+			Assert.IsTrue (cd.Operations.Any (od => od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09/ResolveMatches")), "#11-8");
+			Assert.IsTrue (cd.Operations.Any (od => od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09/Hello")), "#11-9");
 			Assert.IsNull (de.Binding, "#12");
 			Assert.IsNull (de.Address, "#13");
 			Assert.IsNull (de.ListenUri, "#14");

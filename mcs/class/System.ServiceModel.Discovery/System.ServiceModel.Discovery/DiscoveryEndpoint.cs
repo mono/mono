@@ -50,12 +50,18 @@ namespace System.ServiceModel.Discovery
 		}
 
 		public DiscoveryEndpoint (DiscoveryVersion discoveryVersion, ServiceDiscoveryMode discoveryMode, Binding binding, EndpointAddress endpointAddress)
-			: base (null, binding, endpointAddress)
+			: base (GetContract (discoveryVersion, discoveryMode), binding, endpointAddress)
+		{
+			DiscoveryVersion = discoveryVersion;
+			DiscoveryMode = discoveryMode;
+		}
+
+		// FIXME: provide different contract type for Adhoc mode. Current one should be only for Managed mode.
+		static ContractDescription GetContract (DiscoveryVersion discoveryVersion, ServiceDiscoveryMode mode)
 		{
 			if (discoveryVersion == null)
 				throw new ArgumentNullException ("discoveryVersion");
-			DiscoveryVersion = discoveryVersion;
-			DiscoveryMode = discoveryMode;
+			return ContractDescription.GetContract (discoveryVersion.DiscoveryProxyContractType);
 		}
 
 		public ServiceDiscoveryMode DiscoveryMode { get; private set; }
