@@ -3732,10 +3732,12 @@ unbound_type_name
 	  }
 	| namespace_or_type_name DOT IDENTIFIER generic_dimension
 	  {
-		var lt = (Tokenizer.LocatedToken) $3;
-		MemberName name = (MemberName) $1;
+		var te = ((MemberName) $1).GetTypeExpression ();
+		if (te.HasTypeArguments)
+			Error_TypeExpected (GetLocation ($4));
 
-		$$ = new MemberAccess (name.GetTypeExpression (), lt.Value, (int) $4, lt.Location);		
+		var lt = (Tokenizer.LocatedToken) $3;
+		$$ = new MemberAccess (te, lt.Value, (int) $4, lt.Location);		
 	  }
 	;
 

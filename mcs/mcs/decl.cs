@@ -1071,7 +1071,7 @@ namespace Mono.CSharp {
 
 			if ((ma & Modifiers.INTERNAL) != 0) {
 				var b = TypeManager.IsThisOrFriendAssembly (invocationType == InternalType.FakeInternalType ?
-					 CodeGen.Assembly.Builder : invocationType.Assembly, parentType.Assembly);
+					 CodeGen.Assembly.Builder : invocationType.Assembly, Assembly);
 				if (b || ma == Modifiers.INTERNAL)
 					return b;
 			}

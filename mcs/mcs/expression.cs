@@ -6796,6 +6796,7 @@ namespace Mono.CSharp {
 			}
 
 			type = TypeManager.type_type;
+			QueriedType = texpr;
 
 			return DoResolveBase ();
 		}
@@ -6856,15 +6857,22 @@ namespace Mono.CSharp {
 			if (targetType != type)
 				enc.Encode (type);
 
-			if (ContainsTypeParameter (typearg)) {
-				rc.Compiler.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
-					typearg.GetSignatureForError ());
-				return;
-			}
+			if (!(QueriedType is GenericOpenTypeExpr)) {
+				var gt = typearg;
+				while (gt != null) {
+					if (ContainsTypeParameter (gt)) {
+						rc.Compiler.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
+							typearg.GetSignatureForError ());
+						return;
+					}
 
-			if (ContainsDynamicType (typearg)) {
-				Attribute.Error_AttributeArgumentIsDynamic (rc, loc);
-				return;
+					gt = gt.DeclaringType;
+				}
+
+				if (ContainsDynamicType (typearg)) {
+					Attribute.Error_AttributeArgumentIsDynamic (rc, loc);
+					return;
+				}
 			}
 
 			enc.EncodeTypeName (typearg);
@@ -7494,8 +7502,12 @@ namespace Mono.CSharp {
 			}
 			
 			TypeExpr texpr;
-			if (HasTypeArguments) {
-				texpr = new GenericTypeExpr (nested, targs, loc);
+			if (Arity > 0) {
+				if (HasTypeArguments) {
+					texpr = new GenericTypeExpr (nested, targs, loc);
+				} else {
+					texpr = new GenericOpenTypeExpr (nested, loc);
+				}
 			} else {
 				texpr = new TypeExpression (nested, loc);
 			}
