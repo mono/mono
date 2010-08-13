@@ -54,36 +54,17 @@ namespace Mono.CodeContracts.Rewrite {
 		private List<string> errors = new List<string> ();
 		private bool usingMdb = false;
 		private bool usingPdb = false;
-		private List<ISymbolReader> symReaders = new List<ISymbolReader> ();
 		
 		private void LoadSymbolReader (AssemblyDefinition assembly) {
 			if (this.options.Assembly.IsStream && this.options.Assembly.Streams.Symbols == null) {
 				this.warnings.Add ("-debug specified, but no symbol stream provided.");
 			} else {
 				try {
-					//ISymbolReaderProvider symProv = new Mono.Cecil.Mdb.MdbReaderProvider ();
 					foreach (ModuleDefinition module in assembly.Modules) {
-						//ISymbolReader sym = this.options.Assembly.IsFilename ?
-						//	symProv.GetSymbolReader (module, this.options.Assembly.Filename) :
-						//	symProv.GetSymbolReader (module, this.options.Assembly.Streams.Symbols);
-						//module.ReadSymbols (sym);
-						//this.symReaders.Add (sym);
 						module.LoadSymbols ();
 					}
 					this.usingMdb = true;
 				} catch {
-//					try {
-//						ISymbolReaderProvider symProv = new Mono.Cecil.Pdb.PdbReaderProvider ();
-//						foreach (var module in assembly.Modules) {
-//							ISymbolReader sym = this.options.Assembly.IsFilename ?
-//								symProv.GetSymbolReader (module, this.options.Assembly.Filename) :
-//								symProv.GetSymbolReader (module, this.options.Assembly.Streams.Symbols);
-//							module.ReadSymbols (sym);
-//							this.symReaders.Add (sym);
-//						}
-//						this.usingPdb = true;
-//					} catch {
-//					}
 				}
 				if (!this.usingMdb && !this.usingPdb) {
 					this.warnings.Add ("-debug specified, but no MDB or PDB symbol file found.");
@@ -158,14 +139,6 @@ namespace Mono.CodeContracts.Rewrite {
 			} finally {
 				if (symWriter != null) {
 					symWriter.Dispose ();
-				}
-				foreach (var symReader in this.symReaders) {
-					try {
-						if (symReader != null) {
-							symReader.Dispose ();
-						}
-					} catch {
-					}
 				}
 			}
 
