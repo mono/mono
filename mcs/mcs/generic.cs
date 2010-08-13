@@ -1751,7 +1751,7 @@ namespace Mono.CSharp {
 
 		//
 		// Checks the constraints of open generic type against type
-		// arguments. Has to be called onafter all members are defined
+		// arguments. Has to be called after all members have been defined
 		//
 		public bool CheckConstraints (IMemberContext ec)
 		{

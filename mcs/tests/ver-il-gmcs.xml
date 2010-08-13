@@ -13300,6 +13300,63 @@
       </method>
     </type>
   </test>
+  <test name="gtest-528.cs">
+    <type name="GenericType`1[U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Base">
+      <method name="T Test[T](GenericType`1[T])">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Override">
+      <method name="T Test[T](GenericType`1[T])">
+        <size>8</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-529.cs">
+    <type name="GenericType`2[U,V]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Base`1[V]">
+      <method name="T Test[T](GenericType`2[T,V])">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Override`1[W]">
+      <method name="T Test[T](GenericType`2[T,W])">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Int32 Main()">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">

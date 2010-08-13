@@ -920,9 +920,20 @@ namespace Mono.CSharp {
 			if (((ModFlags & Modifiers.OVERRIDE) != 0 || IsExplicitImpl)) {
 				if (base_method != null) {
 					base_tparams = base_method.GenericDefinition.TypeParameters;
+				
 					if (base_method.DeclaringType.IsGeneric) {
 						base_decl_tparams = base_method.DeclaringType.MemberDefinition.TypeParameters;
 						base_targs = Parent.BaseType.TypeArguments;
+					}
+
+					if (base_method.IsGeneric) {
+						if (base_decl_tparams.Length != 0) {
+							base_decl_tparams = base_decl_tparams.Concat (base_tparams).ToArray ();
+							base_targs = base_targs.Concat (tparams.Select<TypeParameter, TypeSpec> (l => l.Type)).ToArray ();
+						} else {
+							base_decl_tparams = base_tparams;
+							base_targs = tparams.Select (l => l.Type).ToArray ();
+						}
 					}
 				} else if (MethodData.implementing != null) {
 					base_tparams = MethodData.implementing.GenericDefinition.TypeParameters;
