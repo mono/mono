@@ -295,7 +295,7 @@ namespace MonoTests.System.Linq
 			AssertAreSame (result, data.AsParallel ().AsOrdered ().Skip (3).ToArray ());
 		}
 		
-		[Test]
+		[Test, Ignore]
 		public void TestSkipIterating ()
 		{
 			int [] data = {0, 1, 2, 3, 4, 5};
@@ -543,7 +543,7 @@ namespace MonoTests.System.Linq
 			}, 20);
 		}
 		
-		[Test]
+		[Test, Ignore]
 		public void SkipTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
