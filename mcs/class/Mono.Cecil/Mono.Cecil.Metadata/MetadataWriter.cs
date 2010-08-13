@@ -367,7 +367,7 @@ namespace Mono.Cecil.Metadata {
 				m_root.Header.Version = "v2.0.50727";
 				break;
 			case TargetRuntime.NET_4_0 :
-				m_root.Header.Version = "v4.0.21006";
+				m_root.Header.Version = "v4.0.30319";
 				break;
 			}
 
