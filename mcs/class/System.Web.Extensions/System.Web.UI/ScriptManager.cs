@@ -395,9 +395,17 @@ namespace System.Web.UI
 		public static ScriptManager GetCurrent (Page page) {
 			if (page == null)
 				throw new ArgumentNullException ("page");
-			return (ScriptManager) page.Items [ScriptManagerKey];
+			return GetCurrentInternal (page);
 		}
 
+		static ScriptManager GetCurrentInternal (Page page)
+		{
+			if (page == null)
+				return null;
+
+			return (ScriptManager) page.Items [ScriptManagerKey];
+		}
+		
 		static void SetCurrent (Page page, ScriptManager instance) {
 			page.Items [ScriptManagerKey] = instance;
 			page.ClientScript.RegisterWebFormClientScript ();
@@ -446,7 +454,7 @@ namespace System.Web.UI
 		protected override void OnInit (EventArgs e) {
 			base.OnInit (e);
 
-			if (GetCurrent (Page) != null)
+			if (GetCurrentInternal (Page) != null)
 				throw new InvalidOperationException ("Only one instance of a ScriptManager can be added to the page.");
 
 			SetCurrent (Page, this);
@@ -754,8 +762,11 @@ namespace System.Web.UI
 
 		public static void RegisterArrayDeclaration (Control control, string arrayName, string arrayValue) {
 			Page page = control.Page;
-			ScriptManager sm = GetCurrent (page);
+			ScriptManager sm = GetCurrentInternal (page);
 
+			if (sm == null)
+				return;
+			
 			if (sm._arrayDeclarations == null)
 				sm._arrayDeclarations = new List<RegisteredArrayDeclaration> ();
 
@@ -784,8 +795,11 @@ namespace System.Web.UI
 
 		public static void RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags) {
 			Page page = control.Page;
-			ScriptManager sm = GetCurrent (page);
+			ScriptManager sm = GetCurrentInternal (page);
 
+			if (sm == null)
+				return;
+			
 			RegisterScript (ref sm._clientScriptBlocks, control, type, key, script, null, addScriptTags, RegisteredScriptType.ClientScriptBlock);
 
 			if (!sm.IsInAsyncPostBack)
@@ -798,8 +812,11 @@ namespace System.Web.UI
 
 		public static void RegisterClientScriptInclude (Control control, Type type, string key, string url) {
 			Page page = control.Page;
-			ScriptManager sm = GetCurrent (page);
+			ScriptManager sm = GetCurrentInternal (page);
 
+			if (sm == null)
+				return;
+			
 			RegisterScript (ref sm._clientScriptBlocks, control, type, key, null, url, false, RegisteredScriptType.ClientScriptInclude);
 
 			if (!sm.IsInAsyncPostBack)
@@ -901,8 +918,11 @@ namespace System.Web.UI
 
 		public static void RegisterExpandoAttribute (Control control, string controlId, string attributeName, string attributeValue, bool encode) {
 			Page page = control.Page;
-			ScriptManager sm = GetCurrent (page);
+			ScriptManager sm = GetCurrentInternal (page);
 
+			if (sm == null)
+				return;
+			
 			if (sm._expandoAttributes == null)
 				sm._expandoAttributes = new List<RegisteredExpandoAttribute> ();
 
@@ -918,8 +938,11 @@ namespace System.Web.UI
 
 		public static void RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue) {
 			Page page = control.Page;
-			ScriptManager sm = GetCurrent (page);
+			ScriptManager sm = GetCurrentInternal (page);
 
+			if (sm == null)
+				return;
+			
 			if (sm._hiddenFields == null)
 				sm._hiddenFields = new List<RegisteredHiddenField> ();
 
@@ -935,8 +958,11 @@ namespace System.Web.UI
 
 		public static void RegisterOnSubmitStatement (Control control, Type type, string key, string script) {
 			Page page = control.Page;
-			ScriptManager sm = GetCurrent (page);
+			ScriptManager sm = GetCurrentInternal (page);
 
+			if (sm == null)
+				return;
+			
 			RegisterScript (ref sm._onSubmitStatements, control, type, key, script, null, false, RegisteredScriptType.OnSubmitStatement);
 
 			if (!sm.IsInAsyncPostBack)
@@ -1014,8 +1040,11 @@ namespace System.Web.UI
 
 		public static void RegisterStartupScript (Control control, Type type, string key, string script, bool addScriptTags) {
 			Page page = control.Page;
-			ScriptManager sm = GetCurrent (page);
+			ScriptManager sm = GetCurrentInternal (page);
 
+			if (sm == null)
+				return;
+			
 			RegisterScript (ref sm._startupScriptBlocks, control, type, key, script, null, addScriptTags, RegisteredScriptType.ClientStartupScript);
 
 			if (!sm.IsInAsyncPostBack)
