@@ -14,12 +14,24 @@ namespace System.ServiceModel.Discovery
 	// See http://msdn.microsoft.com/en-us/library/system.servicemodel.discovery.discoveryserviceextension.aspx
 	public abstract class DiscoveryServiceExtension : IExtension<ServiceHostBase>
 	{
+		protected DiscoveryServiceExtension ()
+		{
+			endpoints = new Collection<EndpointDiscoveryMetadata> ();
+			PublishedEndpoints = new ReadOnlyCollection<EndpointDiscoveryMetadata> (endpoints);
+		}
+
+		Collection<EndpointDiscoveryMetadata> endpoints;
+		
+		internal DiscoveryService Service { get; private set; }
+
+		public ReadOnlyCollection<EndpointDiscoveryMetadata> PublishedEndpoints { get; private set; }
+
 		protected abstract DiscoveryService GetDiscoveryService ();
 
 		void IExtension<ServiceHostBase>.Attach (ServiceHostBase owner)
 		{
 			// FIXME: use it somewhere
-			GetDiscoveryService ();
+			Service = GetDiscoveryService ();
 		}
 
 		void IExtension<ServiceHostBase>.Detach (ServiceHostBase owner)

@@ -28,33 +28,14 @@ using System.Collections.ObjectModel;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
-using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Discovery;
+using System.ServiceModel.Dispatcher;
+using NUnit.Framework;
 
-namespace System.ServiceModel.Discovery.VersionApril2005
+namespace MonoTests.System.ServiceModel.Discovery
 {
-	internal class MessageContractsApril2005
+	[TestFixture]
+	public class EndpointDiscoveryBehaviorTest
 	{
-		public const string NS = "http://schemas.xmlsoap.org/ws/2005/04/discovery";
-		public const string HelloAction = NS + "/Hello";
-		public const string ByeAction = NS + "/Bye";
-
-		[MessageContract (IsWrapped = false)]
-		public class OnlineAnnouncement
-		{
-			[MessageHeader (Name = "AppSequence", Namespace = NS)]
-			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
-			[MessageBodyMember (Name = "Hello", Namespace = NS)]
-			public EndpointDiscoveryMetadataApril2005 EndpointDiscoveryMetadata { get; set; }
-		}
-
-		[MessageContract (IsWrapped = false)]
-		public class OfflineAnnouncement
-		{
-			[MessageHeader (Name = "AppSequence", Namespace = NS)]
-			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
-			[MessageBodyMember (Name = "Bye", Namespace = NS)]
-			public EndpointDiscoveryMetadataApril2005 EndpointDiscoveryMetadata { get; set; }
-		}
 	}
 }

@@ -45,6 +45,9 @@ namespace MonoTests.System.ServiceModel.Discovery
 			var ac = new AnnouncementClient (new AnnouncementEndpoint ());
 			Assert.AreEqual (ac.ChannelFactory.Endpoint, ac.Endpoint, "#1");
 			Assert.AreEqual ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01", ac.Endpoint.Contract.Namespace, "#2");
+			Assert.AreEqual (2, ac.Endpoint.Contract.Operations.Count, "#2-2");
+			Assert.IsTrue (ac.Endpoint.Contract.Operations.Any (od => od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Hello")), "#2-3");
+			Assert.IsTrue (ac.Endpoint.Contract.Operations.Any (od => od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Bye")), "#2-4");
 			Assert.IsNull (ac.Endpoint.Binding, "#3");
 			Assert.IsNull (ac.Endpoint.Address, "#4");
 		}

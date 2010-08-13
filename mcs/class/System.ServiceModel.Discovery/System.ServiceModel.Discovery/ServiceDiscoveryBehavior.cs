@@ -11,6 +11,13 @@ namespace System.ServiceModel.Discovery
 	[MonoTODO]
 	public class ServiceDiscoveryBehavior : IServiceBehavior
 	{
+		public ServiceDiscoveryBehavior ()
+		{
+			AnnouncementEndpoints = new Collection<AnnouncementEndpoint> ();
+		}
+		
+		public Collection<AnnouncementEndpoint> AnnouncementEndpoints { get; private set; }
+
 		void IServiceBehavior.AddBindingParameters (ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
 		{
 		}

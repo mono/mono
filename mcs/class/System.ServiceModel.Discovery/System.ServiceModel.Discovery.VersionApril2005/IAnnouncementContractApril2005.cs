@@ -36,12 +36,12 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 	[ServiceContract (Name = "Client", Namespace = MessageContractsApril2005.NS)]
 	internal interface IAnnouncementContractApril2005
 	{
-		[OperationContract (Name = "Hello", IsOneWay = true, AsyncPattern = true)]
+		[OperationContract (Name = "Hello", Action = MessageContractsApril2005.HelloAction, IsOneWay = true, AsyncPattern = true)]
 		IAsyncResult BeginOnlineAnnouncement (MessageContractsApril2005.OnlineAnnouncement message, AsyncCallback callback, object state);
 
 		void EndOnlineAnnouncement (IAsyncResult result);
 
-		[OperationContract (Name = "Bye", IsOneWay = true, AsyncPattern = true)]
+		[OperationContract (Name = "Bye", Action = MessageContractsApril2005.HelloAction, IsOneWay = true, AsyncPattern = true)]
 		IAsyncResult BeginOfflineAnnouncement (MessageContractsApril2005.OfflineAnnouncement message, AsyncCallback callback, object state);
 
 		void EndOfflineAnnouncement (IAsyncResult result);

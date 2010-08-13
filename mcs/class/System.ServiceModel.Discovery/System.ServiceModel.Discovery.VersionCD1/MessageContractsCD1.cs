@@ -36,6 +36,8 @@ namespace System.ServiceModel.Discovery.VersionCD1
 	internal class MessageContractsCD1
 	{
 		public const string NS = "http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09";
+		public const string HelloAction = NS + "/Hello";
+		public const string ByeAction = NS + "/Bye";
 
 		[MessageContract (IsWrapped = false)]
 		public class OnlineAnnouncement
