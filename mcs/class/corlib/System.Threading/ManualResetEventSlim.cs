@@ -55,7 +55,6 @@ namespace System.Threading
 
 			this.state = initState ? isSet : isNotSet;
 			this.spinCount = spinCount;
-			this.handle = new ManualResetEvent (initState);
 		}
 
 		public bool IsSet {
@@ -73,13 +72,15 @@ namespace System.Threading
 		public void Reset ()
 		{
 			Interlocked.Exchange (ref state, isNotSet);
-			handle.Reset ();
+			if (handle != null)
+				handle.Reset ();
 		}
 
 		public void Set ()
 		{
 			Interlocked.Exchange (ref state, isSet);
-			handle.Set ();
+			if (handle != null)
+				handle.Set ();
 		}
 
 		public void Wait ()
@@ -120,7 +121,7 @@ namespace System.Threading
 				if (sw.Count < spinCount)
 					sw.SpinOnce ();
 				else
-					if (handle.WaitOne (Math.Min (Math.Max (millisecondsTimeout - (int)s.ElapsedMilliseconds, 1), deepSleepTime)))
+					if (WaitHandle.WaitOne (Math.Min (Math.Max (millisecondsTimeout - (int)s.ElapsedMilliseconds, 1), deepSleepTime)))
 						return true;
 			}
 
@@ -134,7 +135,10 @@ namespace System.Threading
 
 		public WaitHandle WaitHandle {
 			get {
-				return handle;
+				if (handle != null)
+					return handle;
+				return LazyInitializer.EnsureInitialized (ref handle,
+				                                          () => new ManualResetEvent (state == isSet ? true : false));
 			}
 		}
 
