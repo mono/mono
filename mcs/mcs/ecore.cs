@@ -3740,9 +3740,6 @@ namespace Mono.CSharp {
 						lambda_conv_msgs.EndSession ();
 					}
 
-					if (argument.Type == InternalType.Dynamic)
-						return 0;
-
 					return 2;
 				}
 			}

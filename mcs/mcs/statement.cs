@@ -4821,14 +4821,15 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (!expr.Type.ImplementsInterface (TypeManager.idisposable_type) &&
-				Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
-				if (expr.Type != InternalType.Dynamic) {
+			if (expr.Type != TypeManager.idisposable_type && !expr.Type.ImplementsInterface (TypeManager.idisposable_type)) {
+				if (TypeManager.IsNullableType (expr.Type)) {
+					// Will handle it a custom code
+				} else if (expr.Type == InternalType.Dynamic) {
+					expr = Convert.ImplicitConversionStandard (ec, expr, TypeManager.idisposable_type, loc);
+				} else {
 					Using.Error_IsNotConvertibleToIDisposable (ec, expr);
 					return false;
 				}
-
-				expr = Convert.ImplicitConversionRequired (ec, expr, TypeManager.idisposable_type, loc);
 			}
 
 			var expr_type = expr.Type;
@@ -4978,20 +4979,16 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			Expression e = Convert.ImplicitConversionStandard (ec, assign, TypeManager.idisposable_type, var.Location);
-			if (e == null) {
-				if (assign.Type == InternalType.Dynamic) {
-					e = Convert.ImplicitConversionRequired (ec, assign, TypeManager.idisposable_type, loc);
-					var = new TemporaryVariable (e.Type, loc);
-					assign = new SimpleAssign (var, e, loc).ResolveStatement (ec);
-					return true;
-				}
-
-				Error_IsNotConvertibleToIDisposable (ec, var);
-				return false;
+			Expression e;
+			if (assign.Type == InternalType.Dynamic) {
+				e = Convert.ImplicitConversionStandard (ec, assign, TypeManager.idisposable_type, loc);
+			    var = new TemporaryVariable (e.Type, loc);
+			    assign = new SimpleAssign (var, e, loc).ResolveStatement (ec);
+			    return true;
 			}
 
-			throw new NotImplementedException ("covariance?");
+			Error_IsNotConvertibleToIDisposable (ec, var);
+			return false;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)

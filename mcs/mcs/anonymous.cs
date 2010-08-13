@@ -832,7 +832,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected TypeSpec CompatibleChecks (ResolveContext ec, TypeSpec delegate_type)
+		TypeSpec CompatibleChecks (ResolveContext ec, TypeSpec delegate_type)
 		{
 			if (delegate_type.IsDelegate)
 				return delegate_type;

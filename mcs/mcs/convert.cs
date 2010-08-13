@@ -245,34 +245,21 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// notice that it is possible to write "ValueType v = 1", the ValueType here
-			// is an abstract class, and not really a value type, so we apply the same rules.
+			// Implicit reference conversions (no-boxing) to object or dynamic
 			//
 			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
-				//
-				// A pointer type cannot be converted to object
-				//
-				if (expr_type.IsPointer)
-					return false;
-
-				if (TypeManager.IsValueType (expr_type))
-					return false;
-
-				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type || expr_type.IsDelegate || expr_type.Kind == MemberKind.ArrayType) {
-					// No mcs internal types are convertible
-					return true; // expr_type.MetaInfo.Module != typeof (Convert).Module;
+				switch (expr_type.Kind) {
+				case MemberKind.Class:
+				case MemberKind.Interface:
+				case MemberKind.Delegate:
+				case MemberKind.ArrayType:
+					return true;
 				}
 
-				// From anything to dynamic, including dynamic -> dynamic
-				if (target_type == InternalType.Dynamic)
-					return true;
+				return expr_type == InternalType.Dynamic;
+			}
 
-				// From dynamic to object
-				if (expr_type == InternalType.Dynamic)
-					return true;
-
-				return false;
-			} else if (target_type == TypeManager.value_type) {
+			if (target_type == TypeManager.value_type) {
 				return expr_type == TypeManager.enum_type;
 			} else if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
 				//
@@ -685,6 +672,22 @@ namespace Mono.CSharp {
 			if (expr_type == target_type)
 				return true;
 
+			// Implicit dynamic conversion
+			if (expr_type == InternalType.Dynamic) {
+				switch (target_type.Kind) {
+				case MemberKind.ArrayType:
+				case MemberKind.Class:
+				case MemberKind.Struct:
+				case MemberKind.Delegate:
+				case MemberKind.Enum:
+				case MemberKind.Interface:
+				case MemberKind.TypeParameter:
+					return true;
+				}
+
+				return false;
+			}
+
 			if (TypeManager.IsNullableType (target_type)) {
 				return ImplicitNulableConversion (null, expr, target_type) != null;
 			}
@@ -698,7 +701,7 @@ namespace Mono.CSharp {
 
 			if (ImplicitBoxingConversion (null, expr_type, target_type) != null)
 				return true;
-
+			
 			//
 			// Implicit Constant Expression Conversions
 			//
@@ -1221,6 +1224,27 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (expr_type == InternalType.Dynamic) {
+				switch (target_type.Kind) {
+				case MemberKind.ArrayType:
+				case MemberKind.Class:
+					if (target_type == TypeManager.object_type)
+						return EmptyCast.Create (expr, target_type);
+
+					goto case MemberKind.Struct;
+				case MemberKind.Struct:
+				case MemberKind.Delegate:
+				case MemberKind.Enum:
+				case MemberKind.Interface:
+				case MemberKind.TypeParameter:
+					Arguments args = new Arguments (1);
+					args.Add (new Argument (expr));
+					return new DynamicConversion (target_type, 0, args, loc).Resolve (ec);
+				}
+
+				return null;
+			}
+
 			if (TypeManager.IsNullableType (target_type))
 				return ImplicitNulableConversion (ec, expr, target_type);
 
@@ -1307,12 +1331,6 @@ namespace Mono.CSharp {
 			Expression e = ImplicitConversion (ec, source, target_type, loc);
 			if (e != null)
 				return e;
-
-			if (source.Type == InternalType.Dynamic) {
-				Arguments args = new Arguments (1);
-				args.Add (new Argument (source));
-				return new DynamicConversion (target_type, 0, args, loc).Resolve (ec);
-			}
 
 			source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
 			return null;

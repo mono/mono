@@ -1445,6 +1445,12 @@ namespace Mono.CSharp {
 			if (expr.IsNull && TypeManager.IsNullableType (type)) {
 				return Nullable.LiftedNull.CreateFromExpression (ec, this);
 			}
+
+			// If the compile-time type of E is dynamic, unlike the cast operator the as operator is not dynamically bound
+			if (etype == InternalType.Dynamic) {
+				do_isinst = true;
+				return this;
+			}
 			
 			Expression e = Convert.ImplicitConversion (ec, expr, type, loc);
 			if (e != null){
@@ -1463,12 +1469,6 @@ namespace Mono.CSharp {
 			if (TypeManager.ContainsGenericParameters (etype) ||
 			    TypeManager.ContainsGenericParameters (type)) {
 				expr = new BoxedCast (expr, etype);
-				do_isinst = true;
-				return this;
-			}
-
-			// If the compile-time type of E is dynamic, unlike the cast operator the as operator is not dynamically bound
-			if (etype == InternalType.Dynamic) {
 				do_isinst = true;
 				return this;
 			}
@@ -4221,13 +4221,17 @@ namespace Mono.CSharp {
 					//
 					// Check if both can convert implicitly to each other's type
 					//
-					if (Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
-						ec.Report.Error (172, true_expr.Location,
-							"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
-							TypeManager.CSharpName (true_type), TypeManager.CSharpName (false_type));
-						return null;
+					if (true_type != InternalType.Dynamic) {
+						type = false_type;
+
+						if (false_type != InternalType.Dynamic && Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
+							ec.Report.Error (172, true_expr.Location,
+								"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
+								TypeManager.CSharpName (true_type), TypeManager.CSharpName (false_type));
+							return null;
+						}
 					}
-					type = false_type;
+
 					true_expr = conv;
 				} else if ((conv = Convert.ImplicitConversion (ec, false_expr, true_type, loc)) != null) {
 					false_expr = conv;

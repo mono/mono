@@ -2335,6 +2335,10 @@ namespace Mono.CSharp {
 
 			public BoundInfo (TypeSpec type, BoundKind kind)
 			{
+				// Unify dynamic and object to simplify best candidate resolution
+				if (type == InternalType.Dynamic)
+					type = TypeManager.object_type;
+
 				this.Type = type;
 				this.Kind = kind;
 			}
