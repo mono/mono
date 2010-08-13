@@ -474,13 +474,13 @@ namespace System {
 		{
 			int eventsRead;
 			InputRecord record = new InputRecord ();
-                        for (; ;) {
+			for (;;) {
 				if (!ReadConsoleInput (inputHandle, out record, 1, out eventsRead))
 					throw new InvalidOperationException ("Error in ReadConsoleInput " +
 									Marshal.GetLastWin32Error ());
-                                if (record.KeyDown && record.EventType == 1)
-                                        break;
-                        }
+				if (record.KeyDown && record.EventType == 1)
+					break;
+			}
 
 			// RIGHT_ALT_PRESSED 1
 			// LEFT_ALT_PRESSED 2
