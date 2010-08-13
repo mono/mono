@@ -4235,6 +4235,20 @@ namespace Mono.CSharp {
 				Expression.UnsafeError (ec, loc);
 			}
 
+			//
+			// We could infer inaccesible type arguments
+			//
+			if (type_arguments == null && member.IsGeneric) {
+				var ms = (MethodSpec) member;
+				foreach (var ta in ms.TypeArguments) {
+					if (!ta.IsAccessible (ec.CurrentType)) {
+						ec.Report.SymbolRelatedToPreviousError (ta);
+						Expression.ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
+						break;
+					}
+				}
+			}
+
 			return true;
 		}
 	}
