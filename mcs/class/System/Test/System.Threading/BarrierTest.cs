@@ -33,7 +33,7 @@ using System.Threading;
 namespace MonoTests.System.Threading {
 
 	[TestFixture]
-	public class BarrierTest {
+	public class BarrierTests {
 		Barrier barrier;
 		const int participants = 10;
 		bool triggered;
