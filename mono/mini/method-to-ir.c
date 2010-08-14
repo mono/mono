@@ -8301,8 +8301,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				} else {
 					MonoInst *load;
 
-					MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg);
-
 					EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, field->type, sp [0]->dreg, foffset);
 					load->flags |= ins_flag;
 					*sp++ = load;
