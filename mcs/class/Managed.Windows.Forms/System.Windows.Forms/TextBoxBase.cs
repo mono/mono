@@ -666,6 +666,8 @@ namespace System.Windows.Forms
 					ScrollToCaret ();
 				} else {
 					document.Empty();
+
+					document.SetSelectionToCaret (true);
 					if (IsHandleCreated)
 						CalculateDocument ();
 				}
