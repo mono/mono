@@ -46,14 +46,12 @@ namespace System.Windows.Forms
 		private object tag;
 		private bool use_item_style = true;
 		int display_index = -1;			// actual position in ListView
-#if NET_2_0
 		private ListViewGroup group = null;
 		private string name = String.Empty;
 		private string image_key = String.Empty;
 		string tooltip_text = String.Empty;
 		int indent_count;
 		Point position = new Point (-1, -1);		// cached to mimic .Net behaviour	
-#endif
 		Rectangle bounds = Rectangle.Empty;
 		Rectangle checkbox_rect;	// calculated by CalcListViewItem method
 		Rectangle icon_rect;
@@ -61,15 +59,12 @@ namespace System.Windows.Forms
 		Rectangle label_rect;
 		ListView owner;
 		Font font;
-#if NET_2_0
 		Font hot_font;			// cached font for hot tracking
-#endif
 		bool selected;
 
 		internal int row;
 		internal int col;
 
-#if NET_2_0
 	
 		#region UIA Framework: Methods, Properties and Events
 
@@ -96,7 +91,6 @@ namespace System.Windows.Forms
 
 		#endregion // UIA Framework: Methods, Properties and Events
 
-#endif
 
 		#endregion Instance Variables
 
@@ -145,7 +139,6 @@ namespace System.Windows.Forms
 			this.font = font;
 		}
 
-#if NET_2_0
 		public ListViewItem(string[] items, string imageKey) : this(items)
 		{
 			this.ImageKey = imageKey;
@@ -236,15 +229,12 @@ namespace System.Windows.Forms
 		{
 			Group = group;
 		}
-#endif
 		#endregion	// Public Constructors
 
-#if NET_2_0
 		protected ListViewItem (SerializationInfo info, StreamingContext context)
 		{
 			Deserialize (info, context);
 		}
-#endif
 
 		#region Public Instance Properties
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -290,10 +280,8 @@ namespace System.Windows.Forms
 						is_checked = new_value == CheckState.Checked;
 						Invalidate ();
 
-#if NET_2_0
 						ItemCheckedEventArgs args = new ItemCheckedEventArgs (this);
 						owner.OnItemChecked (args);
-#endif
 					}
 				} else
 					is_checked = value;
@@ -307,11 +295,9 @@ namespace System.Windows.Forms
 				if (owner == null)
 					return false;
 
-#if NET_2_0
 				// In virtual mode the checks are always done using indexes
 				if (owner.VirtualMode)
 					return Index == owner.focused_item_index;
-#endif
 
 				// Light check
 				return owner.FocusedItem == this;
@@ -329,10 +315,8 @@ namespace System.Windows.Forms
 					prev_focused_item.UpdateFocusedState ();
 					
 				owner.focused_item_index = value ? Index : -1;
-#if NET_2_0
 				if (value)
 					owner.OnUIAFocusedItemChanged ();
-#endif
 
 				UpdateFocusedState ();
 			}
@@ -354,9 +338,7 @@ namespace System.Windows.Forms
 					return;
 
 				font = value; 
-#if NET_2_0
 				hot_font = null;
-#endif
 
 				if (owner != null)
 					Layout ();
@@ -383,12 +365,8 @@ namespace System.Windows.Forms
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
-#else
-		[TypeConverter (typeof (ImageIndexConverter))]
-#endif
 		public int ImageIndex {
 			get { return image_index; }
 			set {
@@ -396,9 +374,7 @@ namespace System.Windows.Forms
 					throw new ArgumentException ("Invalid ImageIndex. It must be greater than or equal to -1.");
 				
 				image_index = value;
-#if NET_2_0
 				image_key = String.Empty;
-#endif
 
 				if (owner != null)
 					Layout ();
@@ -406,7 +382,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("")]
 		[LocalizableAttribute (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -427,7 +402,6 @@ namespace System.Windows.Forms
 				Invalidate ();
 			}
 		}
-#endif
 
 		[Browsable (false)]
 		public ImageList ImageList {
@@ -441,7 +415,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (0)]
 		public int IndentCount {
 			get {
@@ -458,17 +431,14 @@ namespace System.Windows.Forms
 				Invalidate ();
 			}
 		}
-#endif
 
 		[Browsable (false)]
 		public int Index {
 			get {
 				if (owner == null)
 					return -1;
-#if NET_2_0
 				if (owner.VirtualMode)
 					return display_index;
-#endif
 
 				if (display_index == -1)
 					return owner.Items.IndexOf (this);
@@ -482,7 +452,6 @@ namespace System.Windows.Forms
 			get { return owner; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[Localizable (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -517,7 +486,6 @@ namespace System.Windows.Forms
 				owner.ChangeItemLocation (display_index, value);
 			}
 		}
-#endif
 
 		// When ListView uses VirtualMode, selection state info
 		// lives in the ListView, not in the item
@@ -526,40 +494,30 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Selected {
 			get { 
-#if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					return owner.SelectedIndices.Contains (Index);
-#endif
 
 				return selected; 
 			}
 			set {
-#if NET_2_0
 				if (selected == value && owner != null && !owner.VirtualMode)
-#else
-				if (selected == value)
-#endif
 					return;
 
 				if (owner != null) {
 					if (value && !owner.MultiSelect)
 						owner.SelectedIndices.Clear ();
-#if NET_2_0
 					if (owner.VirtualMode)
 						if (value)
 							owner.SelectedIndices.InsertIndex (Index);
 						else
 							owner.SelectedIndices.RemoveIndex (Index);
 					else 
-#endif
 					{
 						selected = value;
 						owner.SelectedIndices.Reset (); // force re-population of list
 					}
 
-#if NET_2_0
 					owner.OnItemSelectionChanged (new ListViewItemSelectionChangedEventArgs (this, Index, value));
-#endif
 					owner.OnSelectedIndexChanged ();
 				} else {
 					selected = value;
@@ -572,13 +530,9 @@ namespace System.Windows.Forms
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[RelatedImageListAttribute ("ListView.StateImageList")]
 		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
-#else
-		[TypeConverter (typeof (ImageIndexConverter))]
-#endif
 		public int StateImageIndex {
 			get { return state_image_index; }
 			set {
@@ -590,10 +544,8 @@ namespace System.Windows.Forms
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[Editor ("System.Windows.Forms.Design.ListViewSubItemCollectionEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]
-#endif
 		public ListViewSubItemCollection SubItems {
 			get {
 				if (sub_items.Count == 0)
@@ -630,11 +582,9 @@ namespace System.Windows.Forms
 					Layout ();
 				Invalidate ();
 
-#if NET_2_0
 				//UIA Framework: Generates Text changed
 				OnUIATextChanged ();
 
-#endif 
 			}
 		}
 
@@ -644,7 +594,6 @@ namespace System.Windows.Forms
 			set { use_item_style = value; }
 		}
 
-#if NET_2_0
 		[LocalizableAttribute(true)]
 		[DefaultValue (null)]
 		public ListViewGroup Group {
@@ -673,7 +622,6 @@ namespace System.Windows.Forms
 				tooltip_text = value;
 			}
 		}
-#endif
 
 		#endregion	// Public Instance Properties
 
@@ -707,10 +655,8 @@ namespace System.Windows.Forms
 			clone.tag = this.tag;
 			clone.use_item_style = this.use_item_style;
 			clone.owner = null;
-#if NET_2_0
 			clone.name = name;
 			clone.tooltip_text = tooltip_text;
-#endif
 
 			return clone;
 		}
@@ -722,7 +668,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public ListViewItem FindNearestItem (SearchDirectionHint searchDirection)
 		{
 			if (owner == null)
@@ -731,7 +676,6 @@ namespace System.Windows.Forms
 			Point loc = owner.GetItemLocation (display_index);
 			return owner.FindNearestItem (searchDirection, loc);
 		}
-#endif
 
 		public Rectangle GetBounds (ItemBoundsPortion portion)
 		{
@@ -772,7 +716,6 @@ namespace System.Windows.Forms
 			Serialize (info, context);
 		}
 
-#if NET_2_0
 		public ListViewSubItem GetSubItemAt (int x, int y)
 		{
 			if (owner != null && owner.View != View.Details)
@@ -784,7 +727,6 @@ namespace System.Windows.Forms
 
 			return null;
 		}
-#endif
 
 		public virtual void Remove ()
 		{
@@ -831,7 +773,6 @@ namespace System.Windows.Forms
 					case "SubItemCount":
 						sub_items_count = (int)entry.Value;
 						break;
-#if NET_2_0
 					case "Group":
 						group = (ListViewGroup)entry.Value;
 						break;
@@ -839,7 +780,6 @@ namespace System.Windows.Forms
 						if (image_index == -1)
 							image_key = (string)entry.Value;
 						break;
-#endif
 				}
 			}
 
@@ -866,10 +806,8 @@ namespace System.Windows.Forms
 			info.AddValue ("UseItemStyleForSubItems", use_item_style);
 			info.AddValue ("BackColor", BackColor);
 			info.AddValue ("ForeColor", ForeColor);
-#if NET_2_0
 			info.AddValue ("ImageKey", image_key);
 			info.AddValue ("Group", group);
-#endif
 			if (sub_items.Count > 1) {
 				info.AddValue ("SubItemCount", sub_items.Count);
 				for (int i = 1; i < sub_items.Count; i++) {
@@ -893,11 +831,9 @@ namespace System.Windows.Forms
 		Rectangle text_bounds;
 		internal Rectangle TextBounds {
 			get {
-#if NET_2_0
 				// Call Layout() if it hasn't been called before.
 				if (owner.VirtualMode && bounds == new Rectangle (-1, -1, -1, -1))
 					Layout ();
-#endif
 				Rectangle result = text_bounds;
 				Point loc = owner.GetItemLocation (DisplayIndex);
 				result.X += loc.X;
@@ -920,7 +856,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		internal bool Hot {
 			get {
 				return Index == owner.HotItemIndex;
@@ -935,7 +870,6 @@ namespace System.Windows.Forms
 				return hot_font;
 			}
 		}
-#endif
 
 		internal ListView Owner {
 			set {
@@ -946,7 +880,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		internal void SetGroup (ListViewGroup group)
 		{
 			this.group = group;
@@ -956,7 +889,6 @@ namespace System.Windows.Forms
 		{
 			this.position = position;
 		}
-#endif	
 
 		// When focus changed, we need to invalidate area
 		// with previous layout and with the new one
@@ -1000,10 +932,8 @@ namespace System.Windows.Forms
 				// values in the case of Details view.
 
 				int x_offset = 0;
-#if NET_2_0
 				if (owner.SmallImageList != null)
 					x_offset = indent_count * owner.SmallImageList.ImageSize.Width;
-#endif
 
 				// Handle reordered column
 				if (owner.Columns.Count > 0)
@@ -1113,7 +1043,6 @@ namespace System.Windows.Forms
 				total = Rectangle.Union (item_rect, checkbox_rect);
 				bounds.Size = total.Size;
 				break;
-#if NET_2_0
 			case View.Tile:
 				if (!Application.VisualStylesEnabled)
 					goto case View.LargeIcon;
@@ -1176,7 +1105,6 @@ namespace System.Windows.Forms
 				item_rect = Rectangle.Union (icon_rect, label_rect);
 				bounds.Size = item_rect.Size;
 				break;
-#endif
 			}
 			
 		}
@@ -1194,15 +1122,12 @@ namespace System.Windows.Forms
 			[NonSerialized]
 			internal ListViewItem owner;
 			private string text = string.Empty;
-#if NET_2_0
 			private string name;
 			private object userData;
-#endif
 			private SubItemStyle style;
 			[NonSerialized]
 			internal Rectangle bounds;
 
-#if NET_2_0
 		
 			#region UIA Framework: Methods, Properties and Events
 		
@@ -1217,7 +1142,6 @@ namespace System.Windows.Forms
 
 			#endregion // UIA Framework: Methods, Properties and Events
 
-#endif
 			
 			#region Public Constructors
 			public ListViewSubItem ()
@@ -1257,14 +1181,8 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			[Browsable (false)]
-			public 
-#else
-				
-			internal
-#endif
-			Rectangle Bounds {
+			public Rectangle Bounds {
 				get {
 					Rectangle retval = bounds;
 					if (owner != null) {
@@ -1307,7 +1225,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			[Localizable (true)]
 			public string Name {
 				get {
@@ -1332,7 +1249,6 @@ namespace System.Windows.Forms
 					userData = value;
 				}
 			}
-#endif
 
 			[Localizable (true)]
 			public string Text {
@@ -1348,10 +1264,8 @@ namespace System.Windows.Forms
 
 					Invalidate ();
 
-#if NET_2_0
 					// UIA Framework: Generates SubItem TextChanged
 					OnUIATextChanged ();
-#endif
 				    }
 			}
 			#endregion // Public Instance Properties
@@ -1378,14 +1292,12 @@ namespace System.Windows.Forms
 				owner.Invalidate ();
 			}
 
-#if NET_2_0
 			[OnDeserialized]
 			void OnDeserialized (StreamingContext context)
 			{
 				name = null;
 				userData = null;
 			}
-#endif
 
 			internal int Height {
 				get {
@@ -1465,7 +1377,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			public virtual ListViewSubItem this [string key] {
 				get {
 					int idx = IndexOfKey (key);
@@ -1475,7 +1386,6 @@ namespace System.Windows.Forms
 					return (ListViewSubItem) list [idx];
 				}
 			}
-#endif
 
 			bool ICollection.IsSynchronized {
 				get { return list.IsSynchronized; }
@@ -1571,10 +1481,8 @@ namespace System.Windows.Forms
 				subItem.owner = owner;
 				list.Add (subItem);
 
-#if NET_2_0
 				//UIA Framework
 				subItem.UIATextChanged += OnUIASubItemTextChanged;
-#endif
 			}
 
 			public void Clear ()
@@ -1587,12 +1495,10 @@ namespace System.Windows.Forms
 				return list.Contains (subItem);
 			}
 
-#if NET_2_0
 			public virtual bool ContainsKey (string key)
 			{
 				return IndexOfKey (key) != -1;
 			}
-#endif
 
 			public IEnumerator GetEnumerator ()
 			{
@@ -1612,10 +1518,8 @@ namespace System.Windows.Forms
 
 				ListViewSubItem sub_item = (ListViewSubItem) item;
 				sub_item.owner = this.owner;
-#if NET_2_0
 				//UIA Framework
 				sub_item.UIATextChanged += OnUIASubItemTextChanged;
-#endif
 				return list.Add (sub_item);
 			}
 
@@ -1660,7 +1564,6 @@ namespace System.Windows.Forms
 				return list.IndexOf (subItem);
 			}
 
-#if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
 				if (key == null || key.Length == 0)
@@ -1674,7 +1577,6 @@ namespace System.Windows.Forms
 
 				return -1;
 			}
-#endif
 
 			public void Insert (int index, ListViewSubItem item)
 			{
@@ -1683,10 +1585,8 @@ namespace System.Windows.Forms
 				owner.Layout ();
 				owner.Invalidate ();
 
-#if NET_2_0
 				//UIA Framework
 				item.UIATextChanged += OnUIASubItemTextChanged;
-#endif
 			}
 
 			public void Remove (ListViewSubItem item)
@@ -1695,34 +1595,27 @@ namespace System.Windows.Forms
 				owner.Layout ();
 				owner.Invalidate ();
 
-#if NET_2_0
 				//UIA Framework
 				item.UIATextChanged -= OnUIASubItemTextChanged;
-#endif
 			}
 
-#if NET_2_0
 			public virtual void RemoveByKey (string key)
 			{
 				int idx = IndexOfKey (key);
 				if (idx != -1)
 					RemoveAt (idx);
 			}
-#endif
 
 			public void RemoveAt (int index)
 			{
-#if NET_2_0
 				//UIA Framework
 				if (index >= 0 && index < list.Count)
 					((ListViewSubItem) list [index]).UIATextChanged -= OnUIASubItemTextChanged;
-#endif
 
 				list.RemoveAt (index);
 
 			}
 			#endregion // Public Methods
-#if NET_2_0
 			#region UIA Event Handler
 			
 			private void OnUIASubItemTextChanged (object sender, EventArgs args)
@@ -1732,7 +1625,6 @@ namespace System.Windows.Forms
 
 			#endregion
 
-#endif
 
 		}
 		#endregion // Subclasses
