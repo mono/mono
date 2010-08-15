@@ -4841,15 +4841,6 @@ namespace System.Windows.Forms {
 				if (verticalScrollBar.Visible && (gridWidth + verticalScrollBar.Width) > Size.Width) 
 					horizontalVisible = true;
 
-				if (scrollBars != ScrollBars.Vertical && scrollBars != ScrollBars.Both)
-					verticalVisible = false;
-				if (scrollBars != ScrollBars.Horizontal && scrollBars != ScrollBars.Both)
-					horizontalVisible = false;
-
-				// MSNET compatibility here
-				if (RowCount <= 1)
-					verticalVisible = false;
-
 				if (horizontalVisible) {
 					horizontalScrollBar.Minimum = 0;
 					horizontalScrollBar.Maximum = gridWidth;
@@ -4870,6 +4861,19 @@ namespace System.Windows.Forms {
 						largeChange = ClientSize.Height;
 					verticalScrollBar.LargeChange = largeChange;
 				}
+
+				// Force the visibility of the scrollbars *after* computing the scrolling values,
+				// as we need them *always* for navigation purposes.
+				if (scrollBars != ScrollBars.Vertical && scrollBars != ScrollBars.Both)
+					verticalVisible = false;
+				if (scrollBars != ScrollBars.Horizontal && scrollBars != ScrollBars.Both)
+					horizontalVisible = false;
+
+				// MSNET compatibility here
+				if (RowCount <= 1)
+					verticalVisible = false;
+
+
 			}
 
 			horizontalScrollBar.Visible = horizontalVisible;
