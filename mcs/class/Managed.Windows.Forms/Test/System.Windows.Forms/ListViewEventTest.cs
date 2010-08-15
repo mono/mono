@@ -325,5 +325,25 @@ namespace MonoTests.System.Windows.Forms
 			
 			form.Close ();
 		}
+
+		[Test]
+		public void InsertSelectedItem ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+
+			ListView lvw = new ListView ();
+			lvw.SelectedIndexChanged += new EventHandler (ListView_SelectedIndexChanged);
+			form.Controls.Add (lvw);
+			form.Show ();
+
+			ListViewItem item = new ListViewItem ();
+			item.Selected = true;
+			Assert.AreEqual (0, selectedIndexChanged, "#A1");
+			lvw.Items.Insert (0, item);
+			Assert.AreEqual (1, selectedIndexChanged, "#A1");
+
+			form.Close ();
+		}
 	}
 }
