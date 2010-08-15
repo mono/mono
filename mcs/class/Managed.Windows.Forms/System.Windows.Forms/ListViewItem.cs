@@ -503,27 +503,31 @@ namespace System.Windows.Forms
 				if (selected == value && owner != null && !owner.VirtualMode)
 					return;
 
-				if (owner != null) {
-					if (value && !owner.MultiSelect)
-						owner.SelectedIndices.Clear ();
-					if (owner.VirtualMode)
-						if (value)
-							owner.SelectedIndices.InsertIndex (Index);
-						else
-							owner.SelectedIndices.RemoveIndex (Index);
-					else 
-					{
-						selected = value;
-						owner.SelectedIndices.Reset (); // force re-population of list
-					}
+				SetSelectedCore (value);
+			}
+		}
 
-					owner.OnItemSelectionChanged (new ListViewItemSelectionChangedEventArgs (this, Index, value));
-					owner.OnSelectedIndexChanged ();
+		// Expose this method as internal so we can force an update in the selection.
+		internal void SetSelectedCore (bool value)
+		{
+			if (owner != null) {
+				if (value && !owner.MultiSelect)
+					owner.SelectedIndices.Clear ();
+				if (owner.VirtualMode) {
+					if (value)
+						owner.SelectedIndices.InsertIndex (Index);
+					else
+						owner.SelectedIndices.RemoveIndex (Index);
 				} else {
 					selected = value;
+					owner.SelectedIndices.Reset (); // force re-population of list
 				}
+
+				owner.OnItemSelectionChanged (new ListViewItemSelectionChangedEventArgs (this, Index, value));
+				owner.OnSelectedIndexChanged ();
 				Invalidate ();
-			}
+			} else
+				selected = value;
 		}
 
 		[DefaultValue (-1)]

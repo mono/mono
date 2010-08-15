@@ -5707,6 +5707,9 @@ namespace System.Windows.Forms
 				if (is_main_collection || item.ListView != null)
 					CollectionChanged (true);
 
+				// force an update of the selected info if the new item is selected.
+				if (item.Selected)
+					item.SetSelectedCore (true);
 #if NET_2_0
 				//UIA Framework event: Item Added
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
@@ -5857,6 +5860,9 @@ namespace System.Windows.Forms
 
 				list.Add (value);
 
+				// force an update of the selected info if the new item is selected.
+				if (value.Selected)
+					value.SetSelectedCore (true);
 			}
 
 			void CollectionChanged (bool sort)
