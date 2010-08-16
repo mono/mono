@@ -695,8 +695,10 @@ namespace Mono.CSharp
 
 			// It can be sealed and override
 			if ((ma & MethodAttributes.Virtual) != 0) {
-				if ((ma & MethodAttributes.NewSlot) != 0 || !declaringType.IsClass || mod == Modifiers.PRIVATE) {
-					mod |= Modifiers.VIRTUAL;
+				if ((ma & MethodAttributes.NewSlot) != 0 || !declaringType.IsClass) {
+					// No private virtual or sealed virtual
+					if ((mod & (Modifiers.PRIVATE | Modifiers.SEALED)) == 0)
+						mod |= Modifiers.VIRTUAL;
 				} else {
 					mod |= Modifiers.OVERRIDE;
 				}

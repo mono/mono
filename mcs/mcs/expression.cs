@@ -4885,6 +4885,17 @@ namespace Mono.CSharp {
 		}
 		#endregion
 
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			Invocation target = (Invocation) t;
+
+			if (arguments != null)
+				target.arguments = arguments.Clone (clonectx);
+
+			target.expr = expr.Clone (clonectx);
+		}
+
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Expression instance = mg.IsInstance ?
@@ -5033,6 +5044,16 @@ namespace Mono.CSharp {
 			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.None);
 		}
 
+		static Type[] GetVarargsTypes (MethodSpec mb, Arguments arguments)
+		{
+			AParametersCollection pd = mb.Parameters;
+
+			Argument a = arguments[pd.Count - 1];
+			Arglist list = (Arglist) a.Expr;
+
+			return list.ArgumentTypes;
+		}
+
 		//
 		// If a member is a method or event, or if it is a constant, field or property of either a delegate type
 		// or the type dynamic, then the member is invocable
@@ -5066,14 +5087,32 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static Type[] GetVarargsTypes (MethodSpec mb, Arguments arguments)
+		//
+		// Used to decide whether call or callvirt is needed
+		//
+		static bool IsVirtualCallRequired (Expression instance, MethodSpec method)
 		{
-			AParametersCollection pd = mb.Parameters;
-			
-			Argument a = arguments [pd.Count - 1];
-			Arglist list = (Arglist) a.Expr;
+			//
+			// There are 2 scenarious where we emit callvirt
+			//
+			// Case 1: A method is virtual and it's not used to call base
+			// Case 2: A method instance expression can be null. In this casen callvirt ensures
+			// correct NRE exception when the method is called
+			//
+			var decl_type = method.DeclaringType;
+			if (decl_type.IsStruct || decl_type.IsEnum)
+				return false;
 
-			return list.ArgumentTypes;
+			if (instance is BaseThis)
+				return false;
+
+			//
+			// It's non-virtual and will never be null
+			//
+			if (!method.IsVirtual && (instance is This || instance is New || instance is ArrayCreation || instance is DelegateCreation || instance is TypeOf))
+				return false;
+
+			return true;
 		}
 
 		/// <remarks>
@@ -5109,8 +5148,6 @@ namespace Mono.CSharp {
 		{
 			LocalTemporary this_arg = null;
 
-			TypeSpec decl_type = method.DeclaringType;
-
 			// Speed up the check by not doing it on not allowed targets
 			if (method.ReturnType == TypeManager.void_type && method.IsConditionallyExcluded (loc))
 				return;
@@ -5124,10 +5161,10 @@ namespace Mono.CSharp {
 			} else {
 				iexpr_type = instance_expr.Type;
 
-				if (decl_type.IsStruct || decl_type.IsEnum || (instance_expr is This && !method.IsVirtual) || (instance_expr is BaseThis)) {
-					call_op = OpCodes.Call;
-				} else {
+				if (IsVirtualCallRequired (instance_expr, method)) {
 					call_op = OpCodes.Callvirt;
+				} else {
+					call_op = OpCodes.Call;
 				}
 
 				//
@@ -5139,8 +5176,8 @@ namespace Mono.CSharp {
 					//
 					// Push the instance expression
 					//
-					if ((iexpr_type.IsStruct && (call_op == OpCodes.Callvirt || (call_op == OpCodes.Call && decl_type == iexpr_type))) ||
-						iexpr_type.IsGenericParameter || TypeManager.IsNullableType (decl_type)) {
+					if ((iexpr_type.IsStruct && (call_op == OpCodes.Callvirt || (call_op == OpCodes.Call && method.DeclaringType == iexpr_type))) ||
+						iexpr_type.IsGenericParameter || TypeManager.IsNullableType (method.DeclaringType)) {
 						//
 						// If the expression implements IMemoryLocation, then
 						// we can optimize and use AddressOf on the
@@ -5215,16 +5252,6 @@ namespace Mono.CSharp {
 			//
 			if (type != TypeManager.void_type)
 				ec.Emit (OpCodes.Pop);
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Expression t)
-		{
-			Invocation target = (Invocation) t;
-
-			if (arguments != null)
-				target.arguments = arguments.Clone (clonectx);
-
-			target.expr = expr.Clone (clonectx);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
