@@ -1053,6 +1053,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		void Error_ObsoleteSecurityAttribute (Attribute a, string option)
+		{
+			Report.Warning (1699, 1, a.Location,
+				"Use compiler option `{0}' or appropriate project settings instead of `{1}' attribute",
+				option, a.Name);
+		}
+
 		// TODO: rewrite this code (to kill N bugs and make it faster) and use standard ApplyAttribute way.
 		public AssemblyName GetAssemblyName (string name, string output) 
 		{
@@ -1076,8 +1083,10 @@ namespace Mono.CSharp {
 									"keyfile", "System.Reflection.AssemblyKeyFileAttribute");
 						} else {
 							string value = a.GetString ();
-							if (value != null && value.Length != 0)
+							if (!string.IsNullOrEmpty (value)) {
+								Error_ObsoleteSecurityAttribute (a, "keyfile");
 								RootContext.StrongNameKeyFile = value;
+							}
 						}
 						break;
 					case "AssemblyKeyName":
@@ -1089,14 +1098,21 @@ namespace Mono.CSharp {
 									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
 						} else {
 							string value = a.GetString ();
-							if (value != null && value.Length != 0)
+							if (!string.IsNullOrEmpty (value)) {
+								Error_ObsoleteSecurityAttribute (a, "keycontainer");
 								RootContext.StrongNameKeyContainer = value;
+							}
 						}
 						break;
 					case "AssemblyDelaySign":
 					case "AssemblyDelaySignAttribute":
 					case "System.Reflection.AssemblyDelaySignAttribute":
-						RootContext.StrongNameDelaySign = a.GetBoolean ();
+						bool b = a.GetBoolean ();
+						if (b) {
+							Error_ObsoleteSecurityAttribute (a, "delaysign");
+						}
+
+						RootContext.StrongNameDelaySign = b;
 						break;
 					}
 				}
