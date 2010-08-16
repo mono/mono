@@ -60,8 +60,13 @@ namespace System.Reflection {
 			}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern Type ResolveType ();
+
 		public override Type FieldType { 
 			get {
+				if (type == null)
+					type = ResolveType ();
 				return type;
 			}
 		}
