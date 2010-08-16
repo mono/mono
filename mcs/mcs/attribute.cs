@@ -483,6 +483,7 @@ namespace Mono.CSharp {
 					}
 
 					obsolete_attr = pi.GetAttributeObsolete ();
+					pi.MemberDefinition.SetIsAssigned ();
 				} else {
 					var fi = ((FieldExpr) member).Spec;
 
@@ -498,6 +499,7 @@ namespace Mono.CSharp {
 					}
 
 					obsolete_attr = fi.GetAttributeObsolete ();
+					fi.MemberDefinition.SetIsAssigned ();
 				}
 
 				if (obsolete_attr != null && !context.IsObsolete)
