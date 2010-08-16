@@ -110,23 +110,27 @@ namespace System.Linq
 		                                                        KeyValuePair<long, TSecond>[] store2,
 		                                                        Barrier barrier)
 		{
-			IEnumerator<KeyValuePair<long, TFirst>> eFirst = first.GetEnumerator ();
-			IEnumerator<KeyValuePair<long, TSecond>> eSecond = second.GetEnumerator ();
+			var eFirst = first.GetEnumerator ();
+			var eSecond = second.GetEnumerator ();
 
-			while (eFirst.MoveNext ()) {
-				if (!eSecond.MoveNext ())
-					break;
+			try {
+				while (eFirst.MoveNext ()) {
+					if (!eSecond.MoveNext ())
+						break;
 
-				store1[index] = eFirst.Current;
-				store2[index] = eSecond.Current;
+					store1[index] = eFirst.Current;
+					store2[index] = eSecond.Current;
 
-				barrier.SignalAndWait ();
+					barrier.SignalAndWait ();
 
-				yield return new KeyValuePair<long, TResult> (store1[index].Key,
-				                                                 resultSelector (store1[index].Value, store2[index].Value));
+					yield return new KeyValuePair<long, TResult> (store1[index].Key,
+					                                              resultSelector (store1[index].Value, store2[index].Value));
+				}
+			} finally {
+				barrier.RemoveParticipant ();
+				eFirst.Dispose ();
+				eSecond.Dispose ();
 			}
-
-			barrier.RemoveParticipant ();
 		}
 	}
 }

@@ -120,29 +120,30 @@ namespace System.Linq
 		{
 			IEnumerator<KeyValuePair<long, TSource>> current = source.GetEnumerator ();
 			bool result;
+			Tuple<TSource, long, bool> reset = Tuple.Create (default (TSource), long.MaxValue, false);
 
-			while (current.MoveNext ()) {
-				KeyValuePair<long, TSource> curr = current.Current;
+			try {
+				while (current.MoveNext ()) {
+					KeyValuePair<long, TSource> curr = current.Current;
 
-				if (IsIndexed)
-					result = indexedPredicate (curr.Value, (int)curr.Key);
-				else
-					result = predicate (curr.Value);
+					result = IsIndexed ? indexedPredicate (curr.Value, (int)curr.Key) : predicate (curr.Value);
+					store[index] = Tuple.Create (curr.Value, curr.Key, result);
 
-				store[index] = Tuple.Create (curr.Value, curr.Key, result);
-				barrier.SignalAndWait ();
+					barrier.SignalAndWait ();
 
-				Tuple<TSource, long, bool> value = store [index];
+					Tuple<TSource, long, bool> value = store [index];
 
-				if (value.Item3)
-					yield return new KeyValuePair<long, TSource> (value.Item2, value.Item1);
+					if (value.Item3)
+						yield return new KeyValuePair<long, TSource> (value.Item2, value.Item1);
 
-				// Reset
-				store[index] = Tuple.Create (default (TSource), long.MaxValue, false);
+					// Reset
+					store[index] = reset;
+				}
+			} finally {
+				// Remove our participation
+				barrier.RemoveParticipant ();
+				current.Dispose ();
 			}
-
-			// Remove our participation
-			barrier.RemoveParticipant ();
 		}
 	}
 }

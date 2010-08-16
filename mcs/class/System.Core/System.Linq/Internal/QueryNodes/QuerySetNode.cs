@@ -117,20 +117,25 @@ namespace System.Linq
 			bool preload = (setInclusion & SetInclusion.Preload) > 0;
 			bool relaxed = (setInclusion & SetInclusion.Relaxed) > 0;
 
-			while (current != null) {
-				while (current.MoveNext ()) {
-					bool result = relaxed ?
-						checker.Contains (extractor (current.Current)) : checker.TryAdd (extractor (current.Current));
+			try {
+				while (current != null) {
+					while (current.MoveNext ()) {
+						bool result = relaxed ?
+							checker.Contains (extractor (current.Current)) : checker.TryAdd (extractor (current.Current));
 
-					if ((result && outInclusion)
-					    || (!result && !outInclusion))
-						yield return current.Current;
+						if ((result && outInclusion)
+						    || (!result && !outInclusion))
+							yield return current.Current;
+					}
+
+					if (current == eFirst && !preload)
+						current = eSecond;
+					else
+						break;
 				}
-
-				if (current == eFirst && !preload)
-					current = eSecond;
-				else
-					break;
+			} finally {
+				eFirst.Dispose ();
+				eSecond.Dispose ();
 			}
 		}
 	}
