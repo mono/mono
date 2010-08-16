@@ -184,6 +184,7 @@ System.Runtime.Remoting.Contexts/SynchronizationAttributeTest.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapHexBinaryTest.cs
 System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
+System.Runtime.Serialization/SerializationBinderTest.cs
 System.Runtime.Serialization/SerializationInfoTest.cs
 System.Runtime.Serialization/SerializationTest.cs
 System.Runtime.Serialization/SerializationTest2.cs
