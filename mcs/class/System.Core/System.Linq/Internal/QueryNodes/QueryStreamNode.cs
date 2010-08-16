@@ -42,6 +42,24 @@ namespace System.Linq
 			this.isIndexed = isIndexed;
 		}
 
+		internal override IList<IEnumerable<T>> GetEnumerables (QueryOptions options)
+		{
+			if (IsIndexed)
+				return GetEnumerablesIndexed (options);
+			else
+				return GetEnumerablesNonIndexed (options);
+		}
+
+		internal virtual IList<IEnumerable<T>> GetEnumerablesIndexed (QueryOptions options)
+		{
+			return null;
+		}
+
+		internal virtual IList<IEnumerable<T>> GetEnumerablesNonIndexed (QueryOptions options)
+		{
+			return null;
+		}
+
 		public override void Visit (INodeVisitor visitor)
 		{
 			visitor.Visit<T, TParent> (this);

@@ -41,28 +41,20 @@ namespace System.Linq
 
 		internal override IList<IEnumerable<TSource>> GetEnumerables (QueryOptions options)
 		{
-			IList<IEnumerable<TSource>> first = Parent.GetEnumerables (options);
-			IList<IEnumerable<TSource>> second = Second.GetEnumerables (options);
+			var second = Second.GetEnumerables (options);
 
-			IEnumerable<TSource>[] result = new IEnumerable<TSource>[first.Count];
-
-			for (int i = 0; i < result.Length; i++)
-				result[i] = CombineEnumerables (first[i], second[i]);
-
-			return result;
+			return Parent.GetEnumerables (options)
+				.Select ((f, i) => CombineEnumerables (f, second[i]))
+				.ToArray ();
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
 		{
-			IList<IEnumerable<KeyValuePair<long, TSource>>> first = Parent.GetOrderedEnumerables (options);
-			IList<IEnumerable<KeyValuePair<long, TSource>>> second = Second.GetOrderedEnumerables (options);
+			var second = Second.GetOrderedEnumerables (options);
 
-			IEnumerable<KeyValuePair<long, TSource>>[] result = new IEnumerable<KeyValuePair<long, TSource>>[first.Count];
-
-			for (int i = 0; i < result.Length; i++)
-				result[i] = CombineEnumerables (first[i], second[i]);
-
-			return result;
+			return Parent.GetOrderedEnumerables (options)
+				.Select ((f, i) => CombineEnumerables (f, second[i]))
+				.ToArray ();
 		}
 
 		internal override IEnumerable<TSource> GetSequential ()

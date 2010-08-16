@@ -60,35 +60,27 @@ namespace System.Linq
 		{
 			IEnumerable<TSource> source = Parent.GetSequential ();
 			
-			if (IsIndexed)
-				return source.SelectMany (collectionSelectorIndexed, resultSelector);
-			else
-				return source.SelectMany (collectionSelector, resultSelector);
+			return IsIndexed ?
+				source.SelectMany (collectionSelectorIndexed, resultSelector) :
+				source.SelectMany (collectionSelector, resultSelector);
 		}
 		
-		internal override IList<IEnumerable<TResult>> GetEnumerables (QueryOptions options)
+		internal override IList<IEnumerable<TResult>> GetEnumerablesIndexed (QueryOptions options)
 		{
-			IEnumerable<TResult>[] result = null;
-			
-			if (IsIndexed) {
-				IList<IEnumerable<KeyValuePair<long, TSource>>> enumerables = Parent.GetOrderedEnumerables (options);
-				result = new IEnumerable<TResult>[enumerables.Count];
-				
-				for (int i = 0; i < enumerables.Count; i++)
-					result[i] = GetEnumerableInternal<KeyValuePair<long, TSource>> (enumerables[i],
-					                                                                (kv) => collectionSelectorIndexed (kv.Value, (int)kv.Key),
-					                                                                (e, c) => resultSelector (e.Value, c));
-			} else {
-				IList<IEnumerable<TSource>> enumerables = Parent.GetEnumerables (options);
-				result = new IEnumerable<TResult>[enumerables.Count];
-				
-				for (int i = 0; i < enumerables.Count; i++)
-					result[i] = GetEnumerableInternal<TSource> (enumerables[i],
-					                                            collectionSelector,
-					                                            (e, c) => resultSelector (e, c));
-			}
-			
-			return result;
+			return Parent.GetOrderedEnumerables (options)
+				.Select ((i) => GetEnumerableInternal (i,
+				                                       (kv) => collectionSelectorIndexed (kv.Value, (int)kv.Key),
+				                                       (e, c) => resultSelector (e.Value, c)))
+				.ToArray ();
+		}
+
+		internal override IList<IEnumerable<TResult>> GetEnumerablesNonIndexed (QueryOptions options)
+		{
+			return Parent.GetEnumerables (options)
+				.Select ((i) => GetEnumerableInternal (i,
+				                                       collectionSelector,
+				                                       (e, c) => resultSelector (e, c)))
+				.ToArray ();
 		}
 		
 		// This one is gonna be tricky

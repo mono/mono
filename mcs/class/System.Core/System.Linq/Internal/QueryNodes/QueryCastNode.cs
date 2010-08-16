@@ -47,24 +47,16 @@ namespace System.Linq
 		
 		internal override IList<IEnumerable<KeyValuePair<long, object>>> GetOrderedEnumerables (QueryOptions options)
 		{
-			IList<IEnumerable<KeyValuePair<long, T>>> src = Parent.GetOrderedEnumerables (options);
-			IEnumerable<KeyValuePair<long, object>>[] result = new IEnumerable<KeyValuePair<long, object>> [src.Count];
-			
-			for (int i = 0; i < src.Count; i++)
-				result[i] = src[i].Select ((e) => new KeyValuePair<long, object> (e.Key, (object)e.Value));
-			
-			return result;
+			return Parent.GetOrderedEnumerables (options)
+				.Select ((i) => i.Select ((e) => new KeyValuePair<long, object> (e.Key, (object)e.Value)))
+				.ToArray ();
 		}
 		
 		internal override IList<IEnumerable<object>> GetEnumerables (QueryOptions options)
 		{
-			IList<IEnumerable<T>> src = Parent.GetEnumerables (options);
-			IEnumerable<object>[] result = new IEnumerable<object> [src.Count];
-			
-			for (int i = 0; i < src.Count; i++)
-				result[i] = src[i].Cast<object> ();
-			
-			return result;
+			return Parent.GetEnumerables (options)
+				.Select ((i) => i.Cast<object> ())
+				.ToArray ();
 		}
 	}
 }

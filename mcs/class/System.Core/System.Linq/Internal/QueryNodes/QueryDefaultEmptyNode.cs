@@ -51,26 +51,24 @@ namespace System.Linq
 		{
 			IList<IEnumerable<TSource>> enumerables = Parent.GetEnumerables (options);
 			CountdownEvent evt = new CountdownEvent (enumerables.Count);
-			IEnumerable<TSource>[] result = new IEnumerable<TSource>[enumerables.Count];
-			
-			for (int i = 0; i < enumerables.Count; i++)
-				result[i] = GetEnumerableInternal<TSource> (enumerables[i], evt, 
-				                                            (s) => s);
-			
-			return result;
+
+			return enumerables
+				.Select ((e) => GetEnumerableInternal<TSource> (e,
+				                                                evt,
+				                                                (s) => s))
+				.ToArray ();
 		}
 		
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
 		{
 			IList<IEnumerable<KeyValuePair<long, TSource>>> enumerables = Parent.GetOrderedEnumerables (options);
 			CountdownEvent evt = new CountdownEvent (enumerables.Count);
-			IEnumerable<KeyValuePair<long, TSource>>[] result = new IEnumerable<KeyValuePair<long, TSource>>[enumerables.Count];
-			
-			for (int i = 0; i < enumerables.Count; i++)
-				result[i] = GetEnumerableInternal<KeyValuePair<long, TSource>> (enumerables[i], evt, 
-				                                                                (s) => new KeyValuePair<long, TSource> (0, s));
-			
-			return result;
+
+			return enumerables
+				.Select ((e) => GetEnumerableInternal<KeyValuePair<long, TSource>> (e,
+				                                                                    evt,
+				                                                                    (s) => new KeyValuePair<long, TSource> (0, s)))
+				.ToArray ();
 		}
 		
 		IEnumerable<TSecond> GetEnumerableInternal<TSecond> (IEnumerable<TSecond> source, 

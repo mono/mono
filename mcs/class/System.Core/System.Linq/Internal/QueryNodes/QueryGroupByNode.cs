@@ -58,11 +58,7 @@ namespace System.Linq
 		}
 		
 		internal override IList<IEnumerable<KeyValuePair<long, IGrouping<TKey, TElement>>>> GetOrderedEnumerables (QueryOptions options)
-		{
-			//ConcurrentLookup<TKey, TElement> lookup = new ConcurrentLookup<TKey, TElement> ();
-			
-			//ParallelExecuter.ProcessAndBlock (Parent, (e) => lookup.Add (keySelector (e), elementSelector (e)));
-			
+		{			
 			throw new System.NotImplementedException();
 		}
 		

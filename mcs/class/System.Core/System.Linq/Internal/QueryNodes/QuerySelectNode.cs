@@ -51,46 +51,33 @@ namespace System.Linq
 
 		internal override IEnumerable<TResult> GetSequential ()
 		{
-			if (IsIndexed)
-				return Parent.GetSequential ().Select (indexedSelector);
-			else
-				return Parent.GetSequential ().Select (selector);
+			return IsIndexed ?
+				Parent.GetSequential ().Select (indexedSelector) :
+				Parent.GetSequential ().Select (selector);
 		}
 
-		internal override IList<IEnumerable<TResult>> GetEnumerables (QueryOptions options)
+		internal override IList<IEnumerable<TResult>> GetEnumerablesIndexed (QueryOptions options)
 		{
-			if (IsIndexed) {
-				IList<IEnumerable<KeyValuePair<long, TSource>>> sources = Parent.GetOrderedEnumerables (options);
-				IEnumerable<TResult>[] results = new IEnumerable<TResult>[sources.Count];
-				for (int i = 0; i < results.Length; i++)
-					results[i] = sources[i].Select ((e) => indexedSelector (e.Value, (int)e.Key));
-				return results;
-			} else {
-				IList<IEnumerable<TSource>> sources = Parent.GetEnumerables (options);
-				IEnumerable<TResult>[] results = new IEnumerable<TResult>[sources.Count];
+			return Parent.GetOrderedEnumerables (options)
+				.Select ((i) => i.Select ((e) => indexedSelector (e.Value, (int)e.Key)))
+				.ToArray ();
+		}
 
-				for (int i = 0; i < results.Length; i++)
-					results[i] = sources[i].Select (selector);
-				return results;
-			}
+		internal override IList<IEnumerable<TResult>> GetEnumerablesNonIndexed (QueryOptions options)
+		{
+			return Parent.GetEnumerables (options)
+				.Select ((i) => i.Select (selector))
+				.ToArray ();
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TResult>>> GetOrderedEnumerables (QueryOptions options)
 		{
-			IList<IEnumerable<KeyValuePair<long, TSource>>> sources = Parent.GetOrderedEnumerables (options);
-			IEnumerable<KeyValuePair<long, TResult>>[] results = new IEnumerable<KeyValuePair<long, TResult>>[sources.Count];
-
-			if (IsIndexed) {
-				for (int i = 0; i < results.Length; i++)
-					results[i] = sources[i].
-						Select ((e) => new KeyValuePair<long, TResult> (e.Key, indexedSelector (e.Value, (int)e.Key)));
-			} else {
-				for (int i = 0; i < results.Length; i++)
-					results[i] = sources[i].
-						Select ((e) => new KeyValuePair<long, TResult> (e.Key, selector (e.Value)));
-			}
-
-			return results;
+			return Parent.GetOrderedEnumerables (options)
+				.Select ((i) => 
+				         IsIndexed ? 
+				         i.Select ((e) => new KeyValuePair<long, TResult> (e.Key, indexedSelector (e.Value, (int)e.Key))) :
+				         i.Select ((e) => new KeyValuePair<long, TResult> (e.Key, selector (e.Value))))
+				.ToArray ();
 		}
 	}
 }

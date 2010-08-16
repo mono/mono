@@ -47,8 +47,8 @@ namespace System.Linq
 
 		internal override IEnumerable<TSource> GetSequential ()
 		{
-			IEnumerable<TSource> first = Parent.GetSequential ();
-			IEnumerable<TSource> second = Second == null ? null : Second.GetSequential ();
+			var first = Parent.GetSequential ();
+			var second = Second == null ? null : Second.GetSequential ();
 
 			// We try to do some guessing based on the default
 			switch (setInclusion) {
@@ -68,34 +68,28 @@ namespace System.Linq
 
 		internal override IList<IEnumerable<TSource>> GetEnumerables (QueryOptions options)
 		{
-			IList<IEnumerable<TSource>> first = Parent.GetEnumerables (options);
-			IList<IEnumerable<TSource>> second = Second.GetEnumerables (options);
+			var first = Parent.GetEnumerables (options);
+			var second = Second.GetEnumerables (options);
 			
-			IEnumerable<TSource>[] result = new IEnumerable<TSource>[first.Count];
-			ConcurrentSkipList<TSource> checker = new ConcurrentSkipList<TSource> (comparer);
-			
+			var checker = new ConcurrentSkipList<TSource> (comparer);
 			InitConcurrentSkipList (checker, second, (e) => e);
 
-			for (int i = 0; i < result.Length; i++)
-				result[i] = GetEnumerable<TSource> (first[i], second[i], checker, (e) => e);
-
-			return result;
+			return first
+				.Select ((f, i) => GetEnumerable<TSource> (f, second[i], checker, (e) => e))
+				.ToArray ();
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
 		{
-			IList<IEnumerable<KeyValuePair<long, TSource>>> first = Parent.GetOrderedEnumerables (options);
-			IList<IEnumerable<KeyValuePair<long, TSource>>> second = Second.GetOrderedEnumerables (options);
+			var first = Parent.GetOrderedEnumerables (options);
+			var second = Second.GetOrderedEnumerables (options);
 
-			IEnumerable<KeyValuePair<long, TSource>>[] result = new IEnumerable<KeyValuePair<long, TSource>>[first.Count];
-			ConcurrentSkipList<TSource> checker = new ConcurrentSkipList<TSource> (comparer);
-			
+			var checker = new ConcurrentSkipList<TSource> (comparer);			
 			InitConcurrentSkipList (checker, second, (e) => e.Value);
 
-			for (int i = 0; i < result.Length; i++)
-				result[i] = GetEnumerable<KeyValuePair<long, TSource>> (first[i], second[i], checker, (e) => e.Value);
-
-			return result;
+			return first
+				.Select ((f, i) => GetEnumerable<KeyValuePair<long, TSource>> (f, second[i], checker, (e) => e.Value))
+				.ToArray ();
 		}
 				
 		void InitConcurrentSkipList<TExtract> (ConcurrentSkipList<TSource> checker,

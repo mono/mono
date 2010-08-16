@@ -53,18 +53,15 @@ namespace System.Linq
 
 		internal override IList<IEnumerable<TResult>> GetEnumerables (QueryOptions options)
 		{
-			IList<IEnumerable<TFirst>> first = Parent.GetEnumerables (options);
-			IList<IEnumerable<TSecond>> second = Second.GetEnumerables (options);
+			var first = Parent.GetEnumerables (options);
+			var second = Second.GetEnumerables (options);
 
 			if (first.Count != second.Count)
 				throw new InvalidOperationException ("Internal size mismatch");
 
-			IEnumerable<TResult>[] result = new IEnumerable<TResult>[first.Count];
-
-			for (int i = 0; i < result.Length; i++)
-				result[i] = GetEnumerable (first[i], second[i]);
-
-			return result;
+			return first
+				.Select ((f, i) => GetEnumerable (f, second[i]))
+				.ToArray ();
 		}
 
 		IEnumerable<TResult> GetEnumerable (IEnumerable<TFirst> first, IEnumerable<TSecond> second)
@@ -72,36 +69,38 @@ namespace System.Linq
 			IEnumerator<TFirst> eFirst = first.GetEnumerator ();
 			IEnumerator<TSecond> eSecond = second.GetEnumerator ();
 
-			while (eFirst.MoveNext ()) {
-				if (!eSecond.MoveNext ())
-					yield break;
+			try {
+				while (eFirst.MoveNext ()) {
+					if (!eSecond.MoveNext ())
+						yield break;
 
-				yield return resultSelector (eFirst.Current, eSecond.Current);
+					yield return resultSelector (eFirst.Current, eSecond.Current);
+				}
+			} finally {
+				eFirst.Dispose ();
+				eSecond.Dispose ();
 			}
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TResult>>> GetOrderedEnumerables (QueryOptions options)
 		{
-			IList<IEnumerable<KeyValuePair<long, TFirst>>> first = Parent.GetOrderedEnumerables (options);
-			IList<IEnumerable<KeyValuePair<long, TSecond>>> second = Second.GetOrderedEnumerables (options);
+			var first = Parent.GetOrderedEnumerables (options);
+			var second = Second.GetOrderedEnumerables (options);
 
 			if (first.Count != second.Count)
 				throw new InvalidOperationException ("Internal size mismatch");
 
-			IEnumerable<KeyValuePair<long, TResult>>[] result = new IEnumerable<KeyValuePair<long, TResult>>[first.Count];
+			var store1 = new KeyValuePair<long, TFirst>[first.Count];
+			var store2 = new KeyValuePair<long, TSecond>[second.Count];
 
-			KeyValuePair<long, TFirst>[] store1 = new KeyValuePair<long, TFirst>[result.Length];
-			KeyValuePair<long, TSecond>[] store2 = new KeyValuePair<long, TSecond>[result.Length];
-
-			Barrier barrier = new Barrier (result.Length, delegate {
+			var barrier = new Barrier (first.Count, delegate {
 				Array.Sort (store1, (e1, e2) => e1.Key.CompareTo (e2.Key));
 				Array.Sort (store2, (e1, e2) => e1.Key.CompareTo (e2.Key));
 			});
 
-			for (int i = 0; i < result.Length; i++)
-				result[i] = GetEnumerable (first[i], second[i], i, store1, store2, barrier);
-
-			return result;
+			return first
+				.Select ((f, i) => GetEnumerable (f, second[i], i , store1, store2, barrier))
+				.ToArray ();
 		}
 
 		IEnumerable<KeyValuePair<long, TResult>> GetEnumerable (IEnumerable<KeyValuePair<long, TFirst>> first,

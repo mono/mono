@@ -60,35 +60,28 @@ namespace System.Linq
 				return parent.Where (predicate);
 		}
 
-		internal override IList<IEnumerable<TSource>> GetEnumerables (QueryOptions options)
+		internal override IList<IEnumerable<TSource>> GetEnumerablesIndexed (QueryOptions options)
 		{
-			if (IsIndexed) {
-				IList<IEnumerable<KeyValuePair<long, TSource>>> sources = Parent.GetOrderedEnumerables (options);
-				IEnumerable<TSource>[] results = new IEnumerable<TSource>[sources.Count];
+			return Parent.GetOrderedEnumerables (options)
+				.Select ((i) => i.Where ((e) => indexedPredicate (e.Value, (int)e.Key)).Select ((e) => e.Value))
+				.ToArray ();
+		}
 
-				for (int i = 0; i < results.Length; i++)
-					results[i] =
-						sources[i].Where ((e) => indexedPredicate (e.Value, (int)e.Key)).Select ((e) => e.Value);
-				return results;
-			} else {
-				IList<IEnumerable<TSource>> sources = Parent.GetEnumerables (options);
-				IEnumerable<TSource>[] results = new IEnumerable<TSource>[sources.Count];
-
-				for (int i = 0; i < results.Length; i++)
-					results[i] = sources[i].Where (predicate);
-				return results;
-			}
+		internal override IList<IEnumerable<TSource>> GetEnumerablesNonIndexed (QueryOptions options)
+		{
+			return Parent.GetEnumerables (options)
+				.Select ((i) => i.Where (predicate))
+				.ToArray ();
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
 		{
 			IList<IEnumerable<KeyValuePair<long, TSource>>> sources = Parent.GetOrderedEnumerables (options);
-			IEnumerable<KeyValuePair<long, TSource>>[] results = new IEnumerable<KeyValuePair<long, TSource>>[sources.Count];
 
-			Tuple<TSource, long, bool>[] store = new Tuple<TSource, long, bool>[results.Length];
+			Tuple<TSource, long, bool>[] store = new Tuple<TSource, long, bool>[sources.Count];
 			long lastIndex = 0;
 
-			Barrier barrier = new Barrier (results.Length, delegate (Barrier b) {
+			Barrier barrier = new Barrier (sources.Count, delegate (Barrier b) {
 				// Sort the store
 				Array.Sort (store, ArraySortMethod);
 
@@ -104,10 +97,9 @@ namespace System.Linq
 				lastIndex += i;
 			});
 
-			for (int j = 0; j < results.Length; j++)
-				results[j] = GetEnumerator (sources[j], barrier, store, j);
-
-			return results;
+			return sources
+				.Select ((s, i) => GetEnumerator (s, barrier, store, i))
+				.ToArray ();
 		}
 
 		static int ArraySortMethod (Tuple<TSource, long, bool> lhs, Tuple<TSource, long, bool> rhs)
