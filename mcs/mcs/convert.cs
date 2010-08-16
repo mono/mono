@@ -978,6 +978,10 @@ namespace Mono.CSharp {
 					target = TypeManager.uint64_type;
 			}
 
+			// Neither A nor B are interface-types
+			if (source.Type.IsInterface)
+				return;
+
 			// For a conversion operator to be applicable, it must be possible
 			// to perform a standard conversion from the source type to
 			// the operand type of the operator, and it must be possible
@@ -1005,6 +1009,9 @@ namespace Mono.CSharp {
 
 				// LAMESPEC: Exclude UIntPtr -> int conversion
 				if (t == TypeManager.uint32_type && source.Type == TypeManager.uintptr_type)
+					continue;
+
+				if (t.IsInterface)
 					continue;
 
 				if (target != t && !ImplicitStandardConversionExists (new EmptyExpression (t), target)) {
