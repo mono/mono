@@ -56,12 +56,15 @@ namespace System.ServiceModel.Discovery
 			DiscoveryMode = discoveryMode;
 		}
 
-		// FIXME: provide different contract type for Adhoc mode. Current one should be only for Managed mode.
 		static ContractDescription GetContract (DiscoveryVersion discoveryVersion, ServiceDiscoveryMode mode)
 		{
 			if (discoveryVersion == null)
 				throw new ArgumentNullException ("discoveryVersion");
-			return ContractDescription.GetContract (discoveryVersion.DiscoveryProxyContractType);
+			// Provide different contract type for Adhoc mode and Managed mode, respectively.
+			if (mode == ServiceDiscoveryMode.Managed)
+				return ContractDescription.GetContract (discoveryVersion.DiscoveryProxyContractType);
+			else
+				return ContractDescription.GetContract (discoveryVersion.DiscoveryTargetContractType);
 		}
 
 		public ServiceDiscoveryMode DiscoveryMode { get; private set; }

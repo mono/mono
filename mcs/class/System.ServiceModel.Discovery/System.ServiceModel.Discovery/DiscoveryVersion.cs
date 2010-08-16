@@ -49,7 +49,8 @@ namespace System.ServiceModel.Discovery
 				MessageVersion.Soap12WSAddressing10,
 				typeof (Version11.IAnnouncementContract11),
 				typeof (AnnouncementClient11),
-				typeof (IDiscoveryProxyContract11));
+				typeof (IDiscoveryProxyContract11),
+				typeof (IDiscoveryTargetContract11));
 
 			april2005 = new DiscoveryVersion ("WSDiscoveryApril2005",
 				NamespaceApril2005,
@@ -57,7 +58,8 @@ namespace System.ServiceModel.Discovery
 				MessageVersion.Soap12WSAddressingAugust2004,
 				typeof (IAnnouncementContractApril2005),
 				typeof (AnnouncementClientApril2005),
-				typeof (IDiscoveryProxyContractApril2005));
+				typeof (IDiscoveryProxyContractApril2005),
+				typeof (IDiscoveryTargetContractApril2005));
 
 			cd1 = new DiscoveryVersion ("WSDiscoveryCD1",
 				NamespaceCD1,
@@ -65,7 +67,8 @@ namespace System.ServiceModel.Discovery
 				MessageVersion.Soap12WSAddressingAugust2004,
 				typeof (IAnnouncementContractCD1),
 				typeof (AnnouncementClientCD1),
-				typeof (IDiscoveryProxyContractCD1));
+				typeof (IDiscoveryProxyContractCD1),
+				typeof (IDiscoveryTargetContractCD1));
 		}
 
 		static readonly DiscoveryVersion v11, april2005, cd1;
@@ -98,7 +101,7 @@ namespace System.ServiceModel.Discovery
 			}
 		}
 
-		internal DiscoveryVersion (string name, string ns, string adhoc, MessageVersion version, Type announcementContractType, Type announcementClientType, Type discoveryProxyContractType)
+		internal DiscoveryVersion (string name, string ns, string adhoc, MessageVersion version, Type announcementContractType, Type announcementClientType, Type discoveryProxyContractType, Type discoveryTargetContractType)
 		{
 			this.Name = name;
 			this.Namespace = ns;
@@ -107,6 +110,7 @@ namespace System.ServiceModel.Discovery
 			AnnouncementContractType = announcementContractType;
 			AnnouncementClientType = announcementClientType;
 			DiscoveryProxyContractType = discoveryProxyContractType;
+			DiscoveryTargetContractType = discoveryTargetContractType;
 		}
 
 		public Uri AdhocAddress { get; private set; }
@@ -118,6 +122,8 @@ namespace System.ServiceModel.Discovery
 		internal Type AnnouncementClientType { get; private set; }
 		internal Type DiscoveryProxyContractType { get; private set; }
 		internal Type DiscoveryProxyClientType { get; private set; }
+		internal Type DiscoveryTargetContractType { get; private set; }
+		internal Type DiscoveryTargetClientType { get; private set; }
 
 		public override string ToString ()
 		{

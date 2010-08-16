@@ -34,6 +34,7 @@ System.ServiceModel.Discovery.Version11/EndpointDiscoveryMetadata11.cs
 System.ServiceModel.Discovery.Version11/FindCriteria11.cs
 System.ServiceModel.Discovery.Version11/IAnnouncementContract11.cs
 System.ServiceModel.Discovery.Version11/IDiscoveryProxyContract11.cs
+System.ServiceModel.Discovery.Version11/IDiscoveryTargetContract11.cs
 System.ServiceModel.Discovery.Version11/MessageContracts11.cs
 System.ServiceModel.Discovery.Version11/ResolveCriteria11.cs
 System.ServiceModel.Discovery.VersionApril2005/AnnouncementClientApril2005.cs
@@ -42,6 +43,7 @@ System.ServiceModel.Discovery.VersionApril2005/EndpointDiscoveryMetadataApril200
 System.ServiceModel.Discovery.VersionApril2005/FindCriteriaApril2005.cs
 System.ServiceModel.Discovery.VersionApril2005/IAnnouncementContractApril2005.cs
 System.ServiceModel.Discovery.VersionApril2005/IDiscoveryProxyContractApril2005.cs
+System.ServiceModel.Discovery.VersionApril2005/IDiscoveryTargetContractApril2005.cs
 System.ServiceModel.Discovery.VersionApril2005/MessageContractsApril2005.cs
 System.ServiceModel.Discovery.VersionApril2005/ResolveCriteriaApril2005.cs
 System.ServiceModel.Discovery.VersionCD1/AnnouncementClientCD1.cs
@@ -50,6 +52,7 @@ System.ServiceModel.Discovery.VersionCD1/EndpointDiscoveryMetadataCD1.cs
 System.ServiceModel.Discovery.VersionCD1/FindCriteriaCD1.cs
 System.ServiceModel.Discovery.VersionCD1/IAnnouncementContractCD1.cs
 System.ServiceModel.Discovery.VersionCD1/IDiscoveryProxyContractCD1.cs
+System.ServiceModel.Discovery.VersionCD1/IDiscoveryTargetContractCD1.cs
 System.ServiceModel.Discovery.VersionCD1/MessageContractsCD1.cs
 System.ServiceModel.Discovery.VersionCD1/ResolveCriteriaCD1.cs
 System.ServiceModel.Discovery/AnnouncementClient.cs
