@@ -50,7 +50,9 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.AreEqual ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01", cd.Namespace, "#11-2");
 			Assert.AreEqual ("DiscoveryProxy", cd.Name, "#11-3");
 			Assert.AreEqual (2, cd.Operations.Count, "#11-4");
-			Assert.IsTrue (cd.Operations.Any (od => !od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Probe")), "#11-5");
+			var oper = cd.Operations.FirstOrDefault (od => !od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Probe"));
+			Assert.IsNotNull (oper, "#11-5");
+			Assert.IsNotNull (oper.Messages.Any (md => md.Body.ReturnValue != null && md.Body.ReturnValue.Type == typeof (void)), "#11-5-2"); // return type is void
 			Assert.IsTrue (cd.Operations.Any (od => !od.IsOneWay && od.Messages.Any (md => md.Action == "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Resolve")), "#11-6");
 			Assert.IsNull (de.Binding, "#12");
 			Assert.IsNull (de.Address, "#13");

@@ -55,4 +55,13 @@ namespace System.ServiceModel.Discovery
 			throw new NotImplementedException ();
 		}
 	}
+	
+	// Not sure why it must be derived yet.
+	internal class DefaultFindRequestContext : FindRequestContext
+	{
+		public DefaultFindRequestContext (FindCriteria criteria)
+			: base (criteria)
+		{
+		}
+	}
 }

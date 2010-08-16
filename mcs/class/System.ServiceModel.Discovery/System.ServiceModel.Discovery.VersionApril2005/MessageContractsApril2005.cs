@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -64,21 +65,38 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 		[MessageContract (IsWrapped = false)]
 		public class FindRequest
 		{
+			[MessageBodyMember (Name = "Probe", Namespace = NS)]
+			public FindCriteriaApril2005 Body { get; set; }
 		}
 
 		[MessageContract (IsWrapped = false)]
 		public class FindResponse
+		{
+			[MessageHeader (Name = "AppSequence", Namespace = NS)]
+			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
+			[MessageBodyMember (Name = "ProbeMatches", Namespace = NS)]
+			public FindResponseApril2005 Body { get; set; }
+		}
+
+		[CollectionDataContract (Name = "ProbeMatches", ItemName = "ProbeMatch", Namespace = NS)]
+		public class FindResponseApril2005 : List<EndpointDiscoveryMetadata>
 		{
 		}
 
 		[MessageContract (IsWrapped = false)]
 		public class ResolveRequest
 		{
+			[MessageBodyMember (Name = "Resolve", Namespace = NS)]
+			public ResolveCriteriaApril2005 Body { get; set; }
 		}
 
 		[MessageContract (IsWrapped = false)]
 		public class ResolveResponse
 		{
+			[MessageHeader (Name = "AppSequence", Namespace = NS)]
+			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
+			[MessageBodyMember (Name = "ResolveMatches", Namespace = NS)]
+			public EndpointDiscoveryMetadataApril2005 Body { get; set; }
 		}
 	}
 }
