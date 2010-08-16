@@ -218,7 +218,7 @@ namespace System.ServiceModel
 			if (endpoint.Binding == null)
 				throw new ArgumentException ("Binding on the argument endpoint is null");
 
-			if (!ImplementedContracts.Values.Contains (endpoint.Contract))
+			if (!ImplementedContracts.Values.Any (cd => cd.ContractType == endpoint.Contract.ContractType))
 				throw new InvalidOperationException (String.Format ("Contract '{0}' is not implemented in this service '{1}'", endpoint.Contract.Name, Description.Name));
 
 			Description.Endpoints.Add (endpoint);

@@ -363,6 +363,16 @@ namespace MonoTests.System.ServiceModel
 
 #if NET_4_0
 		[Test]
+		public void AddServiceEndpoint_Directly ()
+		{
+			var host = new ServiceHost (typeof (DummyService));
+			var address = new EndpointAddress ("http://localhost:8080");
+			var binding = new BasicHttpBinding ();
+			var contract = ContractDescription.GetContract (typeof (IDummyService));
+			host.AddServiceEndpoint (new ServiceEndpoint (contract, binding, address));
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void AddServiceEndpoint_Directly_ContractMismatch ()
 		{
