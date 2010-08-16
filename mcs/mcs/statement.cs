@@ -730,25 +730,34 @@ namespace Mono.CSharp {
 			if (Expr == null) {
 				if (ec.ReturnType == TypeManager.void_type)
 					return true;
-				
-				ec.Report.Error (126, loc,
-					"An object of a type convertible to `{0}' is required for the return statement",
-					TypeManager.CSharpName (ec.ReturnType));
+
+				if (ec.CurrentIterator != null) {
+					Error_ReturnFromIterator (ec);
+				} else {
+					ec.Report.Error (126, loc,
+						"An object of a type convertible to `{0}' is required for the return statement",
+						ec.ReturnType.GetSignatureForError ());
+				}
+
 				return false;
 			}
 
-			if (ec.CurrentBlock.Toplevel.IsIterator) {
-				ec.Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
-						  "statement to return a value, or yield break to end the iteration");
-			}
+			Expr = Expr.Resolve (ec);
 
 			AnonymousExpression am = ec.CurrentAnonymousMethod;
-			if (am == null && ec.ReturnType == TypeManager.void_type) {
-				ec.Report.Error (127, loc, "`{0}': A return keyword must not be followed by any expression when method returns void",
-					ec.GetSignatureForError ());
+			if (am == null) {
+				if (ec.ReturnType == TypeManager.void_type) {
+					ec.Report.Error (127, loc,
+						"`{0}': A return keyword must not be followed by any expression when method returns void",
+						ec.GetSignatureForError ());
+				}
+			} else if (am.IsIterator) {
+				Error_ReturnFromIterator (ec);
+
+				// Hide possible further errors
+				Expr = null;
 			}
 
-			Expr = Expr.Resolve (ec);
 			if (Expr == null)
 				return false;
 
@@ -786,6 +795,12 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Leave, ec.ReturnLabel);
 			else
 				ec.Emit (OpCodes.Ret);
+		}
+
+		void Error_ReturnFromIterator (ResolveContext rc)
+		{
+			rc.Report.Error (1622, loc,
+				"Cannot return a value from iterators. Use the yield return statement to return a value, or yield break to end the iteration");
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
