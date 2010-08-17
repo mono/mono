@@ -942,7 +942,10 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return source.Where ((e, i) => i >= count);
+			return source.Node.IsOrdered () ?
+				source.Where ((e, i) => i >= count) :
+				source.Where ((e) => count < 0 || Interlocked.Decrement (ref count) < 0);
+
 		}
 
 		public static ParallelQuery<TSource> SkipWhile<TSource> (this ParallelQuery<TSource> source,
