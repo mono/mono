@@ -34,8 +34,6 @@ using System.Collections.Concurrent;
 
 namespace System.Linq
 {
-	// TODO: Refactory each of the Process method into one big entity
-	// Check CancellationToken.Canceled parameter in the Task's action body too
 	internal static class ParallelExecuter
 	{
 		internal static QueryOptions CheckQuery<T> (QueryBaseNode<T> startingNode)
@@ -137,12 +135,6 @@ namespace System.Linq
 				Task.Factory.ContinueWhenAll (tasks,  (_) => callback ());
 
 			return () => Task.WaitAll (tasks, options.Token);
-		}
-
-		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<KeyValuePair<long, T>, int> call,
-		                                              Action callback, QueryOptions options)
-		{
-			return ProcessAndCallback<T> (node, call, null, callback, options);
 		}
 
 		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<KeyValuePair<long, T>, int> call,
