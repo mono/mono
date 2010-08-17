@@ -6356,6 +6356,8 @@ namespace Mono.CSharp {
 	//
 	class ImplicitlyTypedArrayCreation : ArrayCreation
 	{
+		TypeInferenceContext best_type_inference;
+
 		public ImplicitlyTypedArrayCreation (ComposedTypeSpecifier rank, ArrayInitializer initializers, Location loc)
 			: base (null, rank, initializers, loc)
 		{			
@@ -6373,14 +6375,19 @@ namespace Mono.CSharp {
 
 			dimensions = rank.Dimension;
 
+			best_type_inference = new TypeInferenceContext ();
+
 			if (!ResolveInitializers (ec))
 				return null;
 
-			if (array_element_type == null || array_element_type == InternalType.Null ||
-				array_element_type == TypeManager.void_type || array_element_type == InternalType.AnonymousMethod ||
-				array_element_type == InternalType.MethodGroup ||
+			best_type_inference.FixAllTypes (ec);
+			array_element_type = best_type_inference.InferredTypeArguments[0];
+			best_type_inference = null;
+
+			if (array_element_type == null || array_element_type == InternalType.MethodGroup || array_element_type == InternalType.AnonymousMethod ||
 				arguments.Count != rank.Dimension) {
-				Error_NoBestType (ec);
+				ec.Report.Error (826, loc,
+					"The type of an implicitly typed array cannot be inferred from the initializer. Try specifying array type explicitly");
 				return null;
 			}
 
@@ -6394,12 +6401,6 @@ namespace Mono.CSharp {
 			type = ArrayContainer.MakeType (array_element_type, dimensions);
 			eclass = ExprClass.Value;
 			return this;
-		}
-
-		void Error_NoBestType (ResolveContext ec)
-		{
-			ec.Report.Error (826, loc,
-				"The type of an implicitly typed array cannot be inferred from the initializer. Try specifying array type explicitly");
 		}
 
 		//
@@ -6417,27 +6418,10 @@ namespace Mono.CSharp {
 		protected override Expression ResolveArrayElement (ResolveContext ec, Expression element)
 		{
 			element = element.Resolve (ec);
-			if (element == null)
-				return null;
-			
-			if (array_element_type == null) {
-				if (element.Type != InternalType.Null)
-					array_element_type = element.Type;
+			if (element != null)
+				best_type_inference.AddCommonTypeBound (element.Type);
 
-				return element;
-			}
-
-			if (Convert.ImplicitConversionExists (ec, element, array_element_type)) {
-				return element;
-			}
-
-			if (Convert.ImplicitConversionExists (ec, new TypeExpression (array_element_type, loc), element.Type)) {
-				array_element_type = element.Type;
-				return element;
-			}
-
-			Error_NoBestType (ec);
-			return null;
+			return element;
 		}
 	}	
 	
