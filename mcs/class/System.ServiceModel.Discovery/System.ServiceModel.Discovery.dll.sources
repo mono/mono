@@ -59,10 +59,12 @@ System.ServiceModel.Discovery/AnnouncementClient.cs
 System.ServiceModel.Discovery/AnnouncementEndpoint.cs
 System.ServiceModel.Discovery/AnnouncementEventArgs.cs
 System.ServiceModel.Discovery/AnnouncementService.cs
+System.ServiceModel.Discovery/DiscoveryChannelDispatcher.cs
 System.ServiceModel.Discovery/DiscoveryClient.cs
 System.ServiceModel.Discovery/DiscoveryClientBindingElement.cs
 System.ServiceModel.Discovery/DiscoveryEndpoint.cs
 System.ServiceModel.Discovery/DiscoveryEndpointProvider.cs
+System.ServiceModel.Discovery/DiscoveryEndpointPublisherBehavior.cs
 System.ServiceModel.Discovery/DiscoveryMessageSequence.cs
 System.ServiceModel.Discovery/DiscoveryMessageSequenceGenerator.cs
 System.ServiceModel.Discovery/DiscoveryOperationContextExtension.cs

@@ -21,6 +21,14 @@ namespace System.ServiceModel.Discovery
 			if (endpoint.Address != null)
 				ret.ListenUris.Add (endpoint.Address.Uri);
 
+			var edb = endpoint.Behaviors.Find<EndpointDiscoveryBehavior> ();
+			if (edb != null) {
+				foreach (var ctn in edb.ContractTypeNames)
+					ret.ContractTypeNames.Add (ctn);
+				foreach (var ext in edb.Extensions)
+					ret.Extensions.Add (ext);
+			}
+
 			return ret;
 		}
 

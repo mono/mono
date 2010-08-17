@@ -39,4 +39,12 @@ namespace MonoTests.System.ServiceModel.Discovery
 		[OperationContract]
 		string Echo (string input);
 	}
+
+	public class TestService : ITestService
+	{
+		public string Echo (string input)
+		{
+			return input;
+		}
+	}
 }

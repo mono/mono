@@ -29,40 +29,53 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace System.ServiceModel.Discovery
 {
-	public class EndpointDiscoveryBehavior : IEndpointBehavior
+	internal class DiscoveryEndpointPublisherBehavior : IEndpointBehavior
 	{
-		public EndpointDiscoveryBehavior ()
+		DiscoveryServiceExtension extension;
+
+		internal DiscoveryEndpointPublisherBehavior (DiscoveryServiceExtension extension)
 		{
-			Enabled = true;
-			ContractTypeNames = new Collection<XmlQualifiedName> ();
-			Extensions = new Collection<XElement> ();
+			this.extension = extension;
 		}
-
-		public Collection<XmlQualifiedName> ContractTypeNames { get; private set; }
-
-		public bool Enabled { get; set; }
-
-		public Collection<XElement> Extensions { get; private set; }
 
 		void IEndpointBehavior.AddBindingParameters (ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
 		{
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			if (bindingParameters == null)
+				throw new ArgumentNullException ("bindingParameters");
 		}
 
 		void IEndpointBehavior.ApplyClientBehavior (ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			if (clientRuntime == null)
+				throw new ArgumentNullException ("clientRuntime");
 		}
 
 		void IEndpointBehavior.ApplyDispatchBehavior (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			if (endpointDispatcher == null)
+				throw new ArgumentNullException ("endpointDispatcher");
+
+			var edb = endpoint.Behaviors.Find<EndpointDiscoveryBehavior> ();
+			if (edb != null && !edb.Enabled)
+				return;
+
+			var edm = EndpointDiscoveryMetadata.FromServiceEndpoint (endpoint);
+			extension.PublishedInternalEndpoints.Add (edm);
 		}
 
 		void IEndpointBehavior.Validate (ServiceEndpoint endpoint)
 		{
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
 		}
 	}
 }
