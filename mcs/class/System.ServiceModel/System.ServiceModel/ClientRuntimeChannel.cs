@@ -548,7 +548,10 @@ namespace System.ServiceModel.MonoInternal
 
 		internal void Send (Message msg, TimeSpan timeout)
 		{
-			OutputChannel.Send (msg, timeout);
+			if (OutputChannel != null)
+				OutputChannel.Send (msg, timeout);
+			else
+				RequestChannel.Request (msg, timeout); // and ignore returned message.
 		}
 
 		internal IAsyncResult BeginSend (Message msg, TimeSpan timeout, AsyncCallback callback, object state)
