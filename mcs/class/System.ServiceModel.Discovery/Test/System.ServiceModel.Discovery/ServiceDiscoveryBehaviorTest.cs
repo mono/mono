@@ -117,5 +117,48 @@ namespace MonoTests.System.ServiceModel.Discovery
 				host.Close ();
 			}
 		}
+
+		[Test]
+		public void UseHttpBinding ()
+		{
+			var ahost = new ServiceHost (typeof (AnnouncementService));
+			var aendpoint = new AnnouncementEndpoint (new CustomBinding (new HttpTransportBindingElement ()), new EndpointAddress ("http://localhost:4989"));
+			var ib = new InspectionBehavior ();
+			object state = new object ();
+			ib.RequestReceived += delegate {
+				InspectionBehavior.State = state;
+				return null;
+			};
+			aendpoint.Behaviors.Add (ib);
+			ahost.AddServiceEndpoint (aendpoint);
+			ahost.Open ();
+			try {
+				Assert.IsTrue (ib.DispatchBehaviorApplied, "#1");
+				var b = new ServiceDiscoveryBehavior ();
+				b.AnnouncementEndpoints.Add (new AnnouncementEndpoint (new CustomBinding (new HttpTransportBindingElement ()), new EndpointAddress ("http://localhost:4989")));
+				IServiceBehavior sb = b;
+				var host = new ServiceHost (typeof (TestService));
+				var se = host.AddServiceEndpoint (typeof (ITestService), new BasicHttpBinding (), new Uri ("http://localhost:37564"));
+
+				var bc = new BindingParameterCollection ();
+				sb.AddBindingParameters (host.Description, host, host.Description.Endpoints, bc);
+				sb.Validate (host.Description, host);
+				// ... should "validate" not "apply dispatch behavior" do "add host extension" job? I doubt that.
+				var dse = host.Extensions.Find<DiscoveryServiceExtension> ();
+				sb.ApplyDispatchBehavior (host.Description, host);
+
+				// The IEndpointBehavior from ServiceDiscoveryBehavior, when ApplyDispatchBehavior() is invoked, publishes an endpoint.
+				se.Behaviors [0].ApplyDispatchBehavior (se, new EndpointDispatcher (new EndpointAddress ("http://localhost:37564"), "ITestService", "http://tempuri.org/"));
+
+				host.Open ();
+				try {
+					Assert.AreEqual (state, InspectionBehavior.State, "#2");
+				} finally {
+					host.Close ();
+				}
+			} finally {
+				ahost.Close ();
+			}
+		}
 	}
 }

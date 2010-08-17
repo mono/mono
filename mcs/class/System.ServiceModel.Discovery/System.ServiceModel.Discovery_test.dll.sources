@@ -9,7 +9,9 @@ System.ServiceModel.Discovery/DiscoveryServiceTest.cs
 System.ServiceModel.Discovery/DiscoveryVersionTest.cs
 System.ServiceModel.Discovery/DynamicEndpointTest.cs
 System.ServiceModel.Discovery/EndpointDiscoveryBehaviorTest.cs
+System.ServiceModel.Discovery/EndpointDiscoveryMetadataTest.cs
 System.ServiceModel.Discovery/FindCriteriaTest.cs
+System.ServiceModel.Discovery/InspectionBehaviors.cs
 System.ServiceModel.Discovery/ServiceDiscoveryBehaviorTest.cs
 System.ServiceModel.Discovery/UdpAnnouncementEndpointTest.cs
 System.ServiceModel.Discovery/UdpDiscoveryEndpointTest.cs

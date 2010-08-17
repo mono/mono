@@ -39,6 +39,7 @@ namespace System.ServiceModel.Discovery
 		
 		public EndpointDiscoveryMetadata ()
 		{
+			Address = new EndpointAddress (EndpointAddress.AnonymousUri);
 			ContractTypeNames = new Collection<XmlQualifiedName> ();
 			ListenUris = new Collection<Uri> ();
 			Scopes = new Collection<Uri> ();
@@ -97,7 +98,8 @@ namespace System.ServiceModel.Discovery
 				throw new ArgumentNullException ("writer");
 
 			// standard members
-			Address.WriteTo (AddressingVersion.WSAddressing10, writer);
+			if (Address != null)
+				Address.WriteTo (AddressingVersion.WSAddressing10, writer);
 
 			writer.WriteStartElement ("d", "Types", version.Namespace);
 			int p = 0;
