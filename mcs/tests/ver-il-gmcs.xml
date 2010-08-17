@@ -19351,7 +19351,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>280</size>
+        <size>296</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
@@ -41073,6 +41073,70 @@
       <method name="Boolean GetEnumerator()">
         <size>6</size>
       </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-792.cs">
+    <type name="Program">
+      <method name="Void Test()">
+        <size>24</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-793.cs">
+    <type name="MonoPointerBugTest.Program">
+      <method name="Int32 Main()">
+        <size>43</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-794.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>11</size>
+      </method>
+      <method name="Void TestCallOnly()">
+        <size>65</size>
+      </method>
+      <method name="Void SomeMethod()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-795.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>112</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>25</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-796.cs">
+    <type name="Program">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="FooAttribute">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
