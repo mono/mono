@@ -132,15 +132,19 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Expression target)
-		{
-			// TODO: nothing ??
-		}
+		#region Properties
 
 		public override string ContainerType {
 			get {
 				return "lambda expression";
 			}
+		}
+
+		#endregion
+
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			// TODO: nothing ??
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)

@@ -1293,9 +1293,11 @@ namespace Mono.CSharp {
 
 			ResolveContext.FlagsHandle? aec_dispose = null;
 			ResolveContext.Options flags = 0;
-			if (ec.HasSet (ResolveContext.Options.InferReturnType)) {
-				flags |= ResolveContext.Options.InferReturnType;
-				aec.ReturnTypeInference = new TypeInferenceContext ();
+
+			var am = this as AnonymousMethodBody;
+
+			if (ec.HasSet (ResolveContext.Options.InferReturnType) && am != null) {
+				am.ReturnTypeInference = new TypeInferenceContext ();
 			}
 
 			if (ec.IsInProbingMode)
@@ -1324,9 +1326,10 @@ namespace Mono.CSharp {
 			if (aec.HasReturnLabel)
 				return_label = aec.ReturnLabel;
 
-			if (ec.HasSet (ResolveContext.Options.InferReturnType)) {
-				aec.ReturnTypeInference.FixAllTypes (ec);
-				ReturnType = aec.ReturnTypeInference.InferredTypeArguments [0];
+			if (am != null && am.ReturnTypeInference != null) {
+				am.ReturnTypeInference.FixAllTypes (ec);
+				ReturnType = am.ReturnTypeInference.InferredTypeArguments [0];
+				am.ReturnTypeInference = null;
 			}
 
 			if (aec_dispose != null) {
@@ -1372,6 +1375,7 @@ namespace Mono.CSharp {
 		AnonymousMethodMethod method;
 		Field am_cache;
 		string block_name;
+		TypeInferenceContext return_inference;
 
 		static int unique_id;
 
@@ -1384,17 +1388,30 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 		}
 
+		#region Properties
+
 		public override string ContainerType {
 			get { return "anonymous method"; }
+		}
+
+		public override bool IsIterator {
+			get { return false; }
+		}
+
+		public TypeInferenceContext ReturnTypeInference {
+			get {
+				return return_inference;
+			}
+			set {
+				return_inference = value;
+			}
 		}
 
 		public override AnonymousMethodStorey Storey {
 			get { return storey; }
 		}
 
-		public override bool IsIterator {
-			get { return false; }
-		}
+		#endregion
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{

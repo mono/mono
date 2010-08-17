@@ -751,20 +751,21 @@ namespace Mono.CSharp {
 						"`{0}': A return keyword must not be followed by any expression when method returns void",
 						ec.GetSignatureForError ());
 				}
-			} else if (am.IsIterator) {
-				Error_ReturnFromIterator (ec);
+			} else {
+				if (am.IsIterator) {
+					Error_ReturnFromIterator (ec);
+					return false;
+				}
 
-				// Hide possible further errors
-				Expr = null;
+				var l = am as AnonymousMethodBody;
+				if (l != null && l.ReturnTypeInference != null && Expr != null) {
+					l.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
+					return true;
+				}
 			}
 
 			if (Expr == null)
 				return false;
-
-			if (ec.HasSet (ResolveContext.Options.InferReturnType)) {
-				ec.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
-				return true;
-			}
 
 			if (Expr.Type != ec.ReturnType) {
 				Expr = Convert.ImplicitConversionRequired (ec, Expr, ec.ReturnType, loc);

@@ -58,8 +58,6 @@ namespace Mono.CSharp
 	{
 		FlowBranching current_flow_branching;
 
-		public TypeInferenceContext ReturnTypeInference;
-
 		TypeSpec return_type;
 
 		/// <summary>
