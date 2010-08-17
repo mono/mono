@@ -91,8 +91,8 @@ namespace System.Linq
 						continue;
 					
 					stagingArea [index % count] = new KeyValuePair<long, T> (index, temp);
-					//Console.WriteLine ("staged from Skim ({0}, {1})", index, temp);
-					stagingCount.Signal ();
+					if (stagingCount.Signal ())
+						break;
 				}
 			}
 			
