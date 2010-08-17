@@ -503,7 +503,8 @@ namespace System.ServiceModel
 					var cd2 = ChannelDispatchers [j];
 					if (cd1.IsMex || cd2.IsMex)
 						continue;
-					if (cd1.Listener.Uri.Equals (cd2.Listener.Uri))
+					// surprisingly, some ChannelDispatcherBase implementations have null Listener property.
+					if (cd1.Listener != null && cd2.Listener != null && cd1.Listener.Uri.Equals (cd2.Listener.Uri))
 						throw new InvalidOperationException ("Two or more service endpoints with different Binding instance are bound to the same listen URI.");
 				}
 			}
