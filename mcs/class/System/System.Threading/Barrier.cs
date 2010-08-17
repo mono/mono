@@ -198,9 +198,9 @@ namespace System.Threading
 			}
 			
 			InitCountdownEvent ();
-			evt.Set ();
-			
 			phase++;
+
+			evt.Set ();
 		}
 		
 		public long CurrentPhaseNumber {
