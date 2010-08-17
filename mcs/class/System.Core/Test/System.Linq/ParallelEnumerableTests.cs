@@ -369,7 +369,7 @@ namespace MonoTests.System.Linq
 			int [] data = {0, 1, 2, 3, 4};
 			int [] result = {4, 3, 2, 1, 0};
 
-			AssertAreSame (result, data.AsParallel ().AsOrdered ().Reverse ());
+			AssertAreSame (result, ((IEnumerable<int>)data).Select ((i) => i).AsParallel ().AsOrdered ().Reverse ());
 			AssertAreSame (result, ParallelEnumerable.Range (0, 5).AsOrdered ().Reverse ());
 		}
 		
@@ -654,6 +654,15 @@ namespace MonoTests.System.Linq
 			AssertIsOrdered (array, result.Length);
 
 			Assert.AreEqual (typeof (int []), array.GetType ());
+
+			array = Enumerable.Range (1, 100).Select ((i) => i).AsParallel().AsOrdered().ToArray ();
+			result = Enumerable.Range (1, 100).ToArray ();
+
+			AssertAreSame (result, array);
+			AssertIsOrdered (array, result.Length);
+
+			Assert.AreEqual (typeof (int []), array.GetType ());
+
 		}
 
 		[Test]
