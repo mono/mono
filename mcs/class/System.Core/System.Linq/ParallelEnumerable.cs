@@ -95,7 +95,7 @@ namespace System.Linq
 			return source.AsSequential ();
 		}
 
-		public static IEnumerable<TSource> AsSequential<TSource> (	this ParallelQuery<TSource> source)
+		public static IEnumerable<TSource> AsSequential<TSource> (this ParallelQuery<TSource> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -564,13 +564,13 @@ namespace System.Linq
 		#endregion
 		
 		#region GroupBy
-		public static ParallelQuery<IGrouping<TKey, TSource>> GroupBy<TSource, TKey> (	this ParallelQuery<TSource> source,
+		public static ParallelQuery<IGrouping<TKey, TSource>> GroupBy<TSource, TKey> (this ParallelQuery<TSource> source,
 		                                                                              Func<TSource, TKey> keySelector)
 		{
 			return source.GroupBy (keySelector, EqualityComparer<TKey>.Default);
 		}
 		
-		public static ParallelQuery<IGrouping<TKey, TSource>> GroupBy<TSource, TKey> (	this ParallelQuery<TSource> source,
+		public static ParallelQuery<IGrouping<TKey, TSource>> GroupBy<TSource, TKey> (this ParallelQuery<TSource> source,
 		                                                                              Func<TSource, TKey> keySelector,
 		                                                                              IEqualityComparer<TKey> comparer)
 		{
@@ -609,7 +609,7 @@ namespace System.Linq
 				.Select ((g) => resultSelector (g.Key, (IEnumerable<TElement>)g));
 		}
 		
-		public static ParallelQuery<TResult> GroupBy<TSource, TKey, TResult> (	this ParallelQuery<TSource> source,
+		public static ParallelQuery<TResult> GroupBy<TSource, TKey, TResult> (this ParallelQuery<TSource> source,
 		                                                                      Func<TSource, TKey> keySelector,
 		                                                                      Func<TKey, IEnumerable<TSource>, TResult> resultSelector,
 		                                                                      IEqualityComparer<TKey> comparer)
@@ -676,7 +676,7 @@ namespace System.Linq
 		#endregion
 
 		#region ElementAt
-		public static TSource ElementAt<TSource> (	this ParallelQuery<TSource> source, int index)
+		public static TSource ElementAt<TSource> (this ParallelQuery<TSource> source, int index)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -757,7 +757,7 @@ namespace System.Linq
 		#endregion
 
 		#region Join
-		public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult> (	this ParallelQuery<TOuter> outer,
+		public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult> (this ParallelQuery<TOuter> outer,
 		                                                                          ParallelQuery<TInner> inner,
 		                                                                          Func<TOuter, TKey> outerKeySelector,
 		                                                                          Func<TInner, TKey> innerKeySelector,
@@ -766,7 +766,7 @@ namespace System.Linq
 			return outer.Join (inner, outerKeySelector, innerKeySelector, resultSelector, EqualityComparer<TKey>.Default);
 		}
 		
-		public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult> (	this ParallelQuery<TOuter> outer,
+		public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult> (this ParallelQuery<TOuter> outer,
 		                                                                          ParallelQuery<TInner> inner,
 		                                                                          Func<TOuter, TKey> outerKeySelector,
 		                                                                          Func<TInner, TKey> innerKeySelector,
@@ -779,7 +779,7 @@ namespace System.Linq
 		[ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather "
 		                   + "than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() "
 		                   + "extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-		public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult> (	this ParallelQuery<TOuter> outer,
+		public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult> (this ParallelQuery<TOuter> outer,
 		                                                                          IEnumerable<TInner> inner,
 		                                                                          Func<TOuter, TKey> outerKeySelector,
 		                                                                          Func<TInner, TKey> innerKeySelector,
@@ -803,13 +803,13 @@ namespace System.Linq
 		#endregion
 
 		#region Except
-		public static ParallelQuery<TSource> Except<TSource> (	this ParallelQuery<TSource> first,
+		public static ParallelQuery<TSource> Except<TSource> (this ParallelQuery<TSource> first,
 		                                                      ParallelQuery<TSource> second)
 		{
 			return Except<TSource> (first, second, EqualityComparer<TSource>.Default);
 		}
 
-		public static ParallelQuery<TSource> Except<TSource> (	this ParallelQuery<TSource> first,
+		public static ParallelQuery<TSource> Except<TSource> (this ParallelQuery<TSource> first,
 		                                                      ParallelQuery<TSource> second,
 		                                                      IEqualityComparer<TSource> comparer)
 		{
@@ -836,7 +836,7 @@ namespace System.Linq
 		[ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather "
 		                   + "than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() "
 		                   + "extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-		public static ParallelQuery<TSource> Except<TSource> (	this ParallelQuery<TSource> first,
+		public static ParallelQuery<TSource> Except<TSource> (this ParallelQuery<TSource> first,
 		                                                      IEnumerable<TSource> second,
 		                                                      IEqualityComparer<TSource> comparer)
 		{
@@ -1961,13 +1961,13 @@ namespace System.Linq
 			                          (d) => d);
 		}
 
-		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (	this ParallelQuery<TSource> source,
+		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this ParallelQuery<TSource> source,
 		                                                              Func<TSource, TKey> keySelector)
 		{
 			return ToLookup<TSource, TKey, TSource> (source, keySelector, (e) => e, EqualityComparer<TKey>.Default);
 		}
 
-		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (	this ParallelQuery<TSource> source,
+		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this ParallelQuery<TSource> source,
 		                                                              Func<TSource, TKey> keySelector,
 		                                                              IEqualityComparer<TKey> comparer)
 		{
@@ -2012,26 +2012,26 @@ namespace System.Linq
 			throw new NotSupportedException ();
 		}
 
-		public static ParallelQuery<TSource> Concat<TSource> (	this ParallelQuery<TSource> first, ParallelQuery<TSource> second)
+		public static ParallelQuery<TSource> Concat<TSource> (this ParallelQuery<TSource> first, ParallelQuery<TSource> second)
 		{
 			return new ParallelQuery<TSource> (new QueryConcatNode<TSource> (first.Node, second.Node));
 		}
 		#endregion
 		
 		#region DefaultIfEmpty
-		public static ParallelQuery<TSource> DefaultIfEmpty<TSource> (	this ParallelQuery<TSource> source)
+		public static ParallelQuery<TSource> DefaultIfEmpty<TSource> (this ParallelQuery<TSource> source)
 		{
 			return source.DefaultIfEmpty (default (TSource));
 		}
 		
-		public static ParallelQuery<TSource> DefaultIfEmpty<TSource> (	this ParallelQuery<TSource> source, TSource defaultValue)
+		public static ParallelQuery<TSource> DefaultIfEmpty<TSource> (this ParallelQuery<TSource> source, TSource defaultValue)
 		{
 			return new ParallelQuery<TSource> (new QueryDefaultEmptyNode<TSource> (source.Node, defaultValue));
 		}
 		#endregion
 		
 		#region First
-		public static TSource First<TSource> (	this ParallelQuery<TSource> source)
+		public static TSource First<TSource> (this ParallelQuery<TSource> source)
 		{
 			CancellationTokenSource src = new CancellationTokenSource ();
 			IEnumerator<TSource> enumerator = source.WithImplementerToken (src).GetEnumerator ();
@@ -2045,7 +2045,7 @@ namespace System.Linq
 			return result;
 		}
 		
-		public static TSource First<TSource> (	this ParallelQuery<TSource> source, Func<TSource, bool> predicate)
+		public static TSource First<TSource> (this ParallelQuery<TSource> source, Func<TSource, bool> predicate)
 		{
 			return source.Where (predicate).First ();
 		}
@@ -2067,7 +2067,7 @@ namespace System.Linq
 			return source.Reverse ().First ();
 		}
 		
-		public static TSource Last<TSource> (	this ParallelQuery<TSource> source, Func<TSource, bool> predicate)
+		public static TSource Last<TSource> (this ParallelQuery<TSource> source, Func<TSource, bool> predicate)
 		{
 			return source.Reverse ().First (predicate);
 		}
