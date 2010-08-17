@@ -38,7 +38,7 @@ namespace System.Linq
 		ParallelQuery<TSource> source;
 
 		public QueryReverseNode (ParallelQuery<TSource> source)
-			: base (source.Node, true)
+			: base (source.Node, false)
 		{
 			this.source = source;
 		}
@@ -56,7 +56,7 @@ namespace System.Linq
 
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
 		{
-			ReverseList<TSource> reversed = new ReverseList<TSource> (source.ToArray ());
+			ReverseList<TSource> reversed = new ReverseList<TSource> (source.ToListOrdered ());
 			OrderablePartitioner<TSource> partitioner = ParallelPartitioner.CreateForStrips (reversed, 1);
 
 			return WrapHelper.Wrap (partitioner.GetOrderablePartitions (options.PartitionCount));
