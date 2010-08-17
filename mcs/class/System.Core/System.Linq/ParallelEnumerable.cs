@@ -1867,9 +1867,8 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			OrderedParallelQuery<TSource> ordered = null;
-			if ((ordered = source as OrderedParallelQuery<TSource>) != null)
-				return ToListOrdered (ordered);
+			if (source.Node.IsOrdered ())
+				return ToListOrdered (source);
 
 			List<TSource> temp = source.Aggregate (() => new List<TSource>(50),
 			                                       (list, e) => { list.Add (e); return list; },
@@ -1878,7 +1877,7 @@ namespace System.Linq
 			return temp;
 		}
 
-		static List<TSource> ToListOrdered<TSource> (this OrderedParallelQuery<TSource> source)
+		internal static List<TSource> ToListOrdered<TSource> (this ParallelQuery<TSource> source)
 		{
 			List<TSource> result = new List<TSource> ();
 
@@ -1892,6 +1891,9 @@ namespace System.Linq
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
+
+			if (source.Node.IsOrdered ())
+				return ToListOrdered (source).ToArray ();
 
 			TSource[] result = null;
 
