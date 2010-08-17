@@ -54,11 +54,17 @@ namespace System.Linq
 			return visitor.Options;
 		}
 
-		// QueryOptions.ImplementerToken = QueryOptions.ImplementerToken.Chain (myOperatorSource);
 		internal static CancellationToken Chain (this CancellationToken self, CancellationTokenSource other)
 		{
 			CancellationTokenSource linked = CancellationTokenSource.CreateLinkedTokenSource (self, other.Token);
 			return linked.Token;
+		}
+
+		// TODO: replace the CheckQuery call with a custom visitor that stops after the
+		// first encountered order guard
+		internal static bool IsOrdered<TSource> (this QueryBaseNode<TSource> source)
+		{
+			return CheckQuery (source).BehindOrderGuard.Value;
 		}
 
 		internal static int GetBestWorkerNumber ()
