@@ -4,7 +4,7 @@
 // Authors:
 //	Marek Safar (marek.safar@gmail.com)
 //
-// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2010 Chris Bacon
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
