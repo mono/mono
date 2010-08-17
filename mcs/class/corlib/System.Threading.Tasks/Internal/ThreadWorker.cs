@@ -154,7 +154,7 @@ namespace System.Threading.Tasks
 
 				// If we are spinning too much, have a deeper sleep
 				if (sleepTime++ > sleepThreshold)
-					while (!waitHandle.WaitOne (deepSleepTime) && sharedWorkQueue.Count == 0);
+					waitHandle.WaitOne (deepSleepTime);
 			}
 
 			started = 0;
