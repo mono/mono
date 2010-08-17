@@ -1524,11 +1524,11 @@ System.Collections.Generic/Comparer.cs
 System.Threading.Tasks/TaskFactory.cs
 System.Threading.Tasks/TaskStatus.cs
 System.Threading.Tasks/TaskCreationOptions.cs
-System.Threading.Tasks/Internal/ThreadWorker.cs
-System.Threading.Tasks/Internal/SchedulerProxy.cs
-System.Threading.Tasks/Internal/Scheduler.cs
-System.Threading.Tasks/Internal/IScheduler.cs
-System.Threading.Tasks/Internal/CyclicDeque.cs
+System.Threading.Tasks/ThreadWorker.cs
+System.Threading.Tasks/SchedulerProxy.cs
+System.Threading.Tasks/Scheduler.cs
+System.Threading.Tasks/IScheduler.cs
+System.Threading.Tasks/CyclicDeque.cs
 System.Threading.Tasks/TaskScheduler.cs
 System.Threading.Tasks/TaskContinuationOptions.cs
 System.Threading.Tasks/TaskCanceledException.cs
