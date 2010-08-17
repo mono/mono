@@ -13357,6 +13357,55 @@
       </method>
     </type>
   </test>
+  <test name="gtest-530.cs">
+    <type name="B">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="G`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-531.cs">
+    <type name="ATop`1[T]">
+      <method name="T[] IB&lt;T&gt;.ToArray(T[])">
+        <size>2</size>
+      </method>
+      <method name="Void IC.ToArray()">
+        <size>1</size>
+      </method>
+      <method name="Void Test()">
+        <size>37</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
