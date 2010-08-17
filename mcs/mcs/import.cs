@@ -94,17 +94,27 @@ namespace Mono.CSharp
 				return null;
 
 			var definition = new ImportedMemberDefinition (fi);
+			TypeSpec field_type;
+
+			try {
+				field_type = ImportType (fi.FieldType);
+			} catch (Exception e) {
+				// TODO: I should construct fake TypeSpec based on TypeRef signature
+				// but there is no way to do it with System.Reflection
+				throw new InternalErrorException (e, "Cannot import field `{0}.{1}' in assembly `{2}'",
+					declaringType.GetSignatureForError (), fi.Name, declaringType.Assembly);
+			}
 
 			if ((fa & FieldAttributes.Literal) != 0) {
-				var	c = Constant.CreateConstantFromValue (ImportType (fi.FieldType), fi.GetValue (fi), Location.Null);
-				return new ConstSpec (declaringType, definition, ImportType (fi.FieldType), fi, mod, c);
+				var c = Constant.CreateConstantFromValue (field_type, fi.GetValue (fi), Location.Null);
+				return new ConstSpec (declaringType, definition, field_type, fi, mod, c);
 			}
 
 			if ((fa & FieldAttributes.InitOnly) != 0) {
-				if (fi.FieldType == typeof (decimal)) {
+				if (field_type == TypeManager.decimal_type) {
 					var dc = ReadDecimalConstant (fi);
 					if (dc != null)
-						return new ConstSpec (declaringType, definition, ImportType (fi.FieldType), fi, mod, dc);
+						return new ConstSpec (declaringType, definition, field_type, fi, mod, dc);
 				}
 
 				mod |= Modifiers.READONLY;
@@ -123,14 +133,14 @@ namespace Mono.CSharp
 			if ((fa & FieldAttributes.Static) != 0)
 				mod |= Modifiers.STATIC;
 
-			if (fi.FieldType.IsValueType) {
+			if (field_type.IsStruct) {
 				 if (fi.IsDefined (typeof (FixedBufferAttribute), false)) {
 					var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
 					return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
 				}
 			}
 
-			return new FieldSpec (declaringType, definition, ImportType (fi.FieldType), fi, mod);
+			return new FieldSpec (declaringType, definition, field_type, fi, mod);
 		}
 
 		public static EventSpec CreateEvent (EventInfo ei, TypeSpec declaringType, MethodSpec add, MethodSpec remove)
