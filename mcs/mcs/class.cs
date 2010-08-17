@@ -1518,25 +1518,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!IsTopLevel) {
-				MemberSpec candidate;
-				var conflict_symbol = MemberCache.FindBaseMember (this, out candidate);
-				if (conflict_symbol == null && candidate == null) {
-					if ((ModFlags & Modifiers.NEW) != 0)
-						Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required",
-							GetSignatureForError ());
-				} else {
-					if ((ModFlags & Modifiers.NEW) == 0) {
-						if (candidate == null)
-							candidate = conflict_symbol;
-
-						Report.SymbolRelatedToPreviousError (candidate);
-						Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
-							GetSignatureForError (), candidate.GetSignatureForError ());
-					}
-				}
-			}
-
 			DefineContainerMembers (constants);
 			DefineContainerMembers (fields);
 
@@ -1735,6 +1716,25 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
+			if (!IsTopLevel) {
+				MemberSpec candidate;
+				var conflict_symbol = MemberCache.FindBaseMember (this, out candidate);
+				if (conflict_symbol == null && candidate == null) {
+					if ((ModFlags & Modifiers.NEW) != 0)
+						Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required",
+							GetSignatureForError ());
+				} else {
+					if ((ModFlags & Modifiers.NEW) == 0) {
+						if (candidate == null)
+							candidate = conflict_symbol;
+
+						Report.SymbolRelatedToPreviousError (candidate);
+						Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+							GetSignatureForError (), candidate.GetSignatureForError ());
+					}
+				}
+			}
+
 			if (all_tp_builders != null) {
 				int current_starts_index = CurrentTypeParametersStartIndex;
 				for (int i = 0; i < all_tp_builders.Length; i++) {
