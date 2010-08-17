@@ -155,9 +155,9 @@ namespace System.Linq
 		}
 
 		internal static void ProcessAndAggregate<T, U> (QueryBaseNode<T> node,
-		                                    Func<U> seedFunc,
-		                                    Func<U, T, U> localCall,
-		                                    Action<IList<U>> call)
+		                                                Func<U> seedFunc,
+		                                                Func<U, T, U> localCall,
+		                                                Action<IList<U>> call)
 		{
 			QueryOptions options = CheckQuery (node, true);
 
@@ -165,15 +165,15 @@ namespace System.Linq
 			U[] locals = new U[enumerables.Count];
 			Task[] tasks = new Task[enumerables.Count];
 
-			bool init = false;
 			if (seedFunc != null) {
 				for (int i = 0; i < locals.Length; i++)
 					locals[i] = seedFunc ();
-				init = true;
 			}
 
 			for (int i = 0; i < tasks.Length; i++) {
 				int index = i;
+				bool firstRun = true;
+
 				tasks[i] = Task.Factory.StartNew (() => {
 					foreach (T item in enumerables[index]) {
 						// This is from specific operators
@@ -182,9 +182,9 @@ namespace System.Linq
 						if (options.Token.IsCancellationRequested)
 							throw new OperationCanceledException (options.Token);
 
-						if (!init) {
-							init = true;
-							// HACK: TODO: omfwtfitsomuchsucks
+						if (firstRun && seedFunc == null) {
+							firstRun = false;
+							// HACK: TODO: omgwtfitsuckssomuch
 							locals[index] = (U)(object)item;
 							continue;
 						}
