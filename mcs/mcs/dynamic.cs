@@ -9,7 +9,6 @@
 //
 
 using System;
-using System.Reflection.Emit;
 using SLE = System.Linq.Expressions;
 
 #if NET_4_0

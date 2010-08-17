@@ -6408,7 +6408,7 @@ namespace Mono.CSharp {
 		void UnifyInitializerElement (ResolveContext ec)
 		{
 			for (int i = 0; i < array_data.Count; ++i) {
-				Expression e = (Expression)array_data[i];
+				Expression e = array_data[i];
 				if (e != null)
 					array_data [i] = Convert.ImplicitConversion (ec, e, array_element_type, Location.Null);
 			}
