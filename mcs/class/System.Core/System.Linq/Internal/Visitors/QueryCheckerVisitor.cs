@@ -87,15 +87,23 @@ namespace System.Linq
 
 		public void Visit<T> (QueryOrderGuardNode<T> node)
 		{
-			if (node.EnsureOrder && behindOrderGuard == null)
-				behindOrderGuard = true;
+			if (behindOrderGuard == null) {
+				if (node.EnsureOrder) {
+					behindOrderGuard = true;
+					//useStrip = true;
+				} else {
+					behindOrderGuard = false;
+				}
+			}
+
+			Visit<T, T> ((QueryStreamNode<T, T>)node);
 		}
 
 		public void Visit<TFirst, TSecond, TResult> (QueryMuxNode<TFirst, TSecond, TResult> node)
 		{
-
 			Visit<TResult, TFirst> ((QueryChildNode<TResult, TFirst>)node);
 		}
+
 		#endregion
 
 		internal QueryOptions Options {
