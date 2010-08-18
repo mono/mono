@@ -42,6 +42,21 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void Serialization ()
 		{
+#if NET_4_0
+			string result1 = "<IPermission class=\"System.Net.WebPermission, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\"\n" + 
+"version=\"1\">\n" + 
+"<ConnectAccess>\n" + 
+"<URI uri=\"Hello\"/>\n" + 
+"</ConnectAccess>\n" + 
+"</IPermission>\n";
+
+			string result2 = "<IPermission class=\"System.Net.WebPermission, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\"\n" + 
+"version=\"1\">\n" + 
+"<AcceptAccess>\n" + 
+"<URI uri=\"Hello\"/>\n" + 
+"</AcceptAccess>\n" + 
+"</IPermission>\n";
+#else
 			string result1 = "<IPermission class=\"System.Net.WebPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\"\n" + 
 "version=\"1\">\n" + 
 "<ConnectAccess>\n" + 
@@ -55,7 +70,7 @@ namespace MonoTests.System.Net {
 "<URI uri=\"Hello\"/>\n" + 
 "</AcceptAccess>\n" + 
 "</IPermission>\n";
-	    
+#endif   
 			WebPermission pp = new WebPermission (NetworkAccess.Connect, "Hello");
 			Assert.AreEqual (result1, pp.ToXml ().ToString ().Replace ("\r", ""));
 			
