@@ -87,42 +87,57 @@ namespace Microsoft.Build.BuildEngine {
 
 		string EvaluateProjectPath (string file)
 		{
-			if (file.IndexOf ("$(MSBuildExtensionsPath)") >= 0) {
-				// This is a *HACK* to support multiple paths for
-				// MSBuildExtensionsPath property. Normally it would
-				// get resolved to a single value, but here we special
-				// case it and try ~/.config/xbuild/tasks and any
-				// paths specified in the env var $MSBuildExtensionsPath .
-				//
-				// The property itself will resolve to the default
-				// location though, so you get in any other part of the
-				// project.
-
-				string envvar = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath");
-				envvar = (envvar ?? String.Empty) + ":" + DotConfigExtensionsPath;
-
-				string [] paths = envvar.Split (new char [] {':'}, StringSplitOptions.RemoveEmptyEntries);
-				foreach (string path in paths) {
-					if (!Directory.Exists (path)) {
-						project.ParentEngine.LogMessage (MessageImportance.Low, "Extension path '{0}' not found, ignoring.", path);
-						continue;
-					}
-
-					string pfile = Path.GetFullPath (file.Replace ("\\", "/").Replace (
-								"$(MSBuildExtensionsPath)", path + Path.DirectorySeparatorChar));
-
-					var evaluated_path = EvaluatePath (pfile);
-					if (File.Exists (evaluated_path)) {
-						project.ParentEngine.LogMessage (MessageImportance.Low,
-							"{0}: Importing project {1} from extension path {2}", project.FullFileName, evaluated_path, path);
-						return pfile;
-					}
-					project.ParentEngine.LogMessage (MessageImportance.Low,
-							"{0}: Couldn't find project {1} for extension path {2}", project.FullFileName, evaluated_path, path);
-				}
-			}
+			string ret;
+			if (EvaluateAsMSBuildExtensionsPath (file, "MSBuildExtensionsPath", out ret) ||
+				EvaluateAsMSBuildExtensionsPath (file, "MSBuildExtensionsPath32", out ret) ||
+				EvaluateAsMSBuildExtensionsPath (file, "MSBuildExtensionsPath64", out ret))
+				return ret;
 
 			return EvaluatePath (file);
+		}
+
+		bool EvaluateAsMSBuildExtensionsPath (string file, string property_name, out string epath)
+		{
+			epath = null;
+			string property_ref = String.Format ("$({0})", property_name);
+			if (file.IndexOf (property_ref) < 0)
+				return false;
+
+			// This is a *HACK* to support multiple paths for
+			// MSBuildExtensionsPath property. Normally it would
+			// get resolved to a single value, but here we special
+			// case it and try ~/.config/xbuild/tasks and any
+			// paths specified in the env var $MSBuildExtensionsPath .
+			//
+			// The property itself will resolve to the default
+			// location though, so you get in any other part of the
+			// project.
+
+			string envvar = Environment.GetEnvironmentVariable (property_name);
+			envvar = (envvar ?? String.Empty) + ":" + DotConfigExtensionsPath;
+
+			string [] paths = envvar.Split (new char [] {':'}, StringSplitOptions.RemoveEmptyEntries);
+			foreach (string path in paths) {
+				if (!Directory.Exists (path)) {
+					project.ParentEngine.LogMessage (MessageImportance.Low, "Extension path '{0}' not found, ignoring.", path);
+					continue;
+				}
+
+				string pfile = Path.GetFullPath (file.Replace ("\\", "/").Replace (
+							property_ref, path + Path.DirectorySeparatorChar));
+
+				var evaluated_path = EvaluatePath (pfile);
+				if (File.Exists (evaluated_path)) {
+					project.ParentEngine.LogMessage (MessageImportance.Low,
+						"{0}: Importing project {1} from extension path {2}", project.FullFileName, evaluated_path, path);
+					epath = pfile;
+					return true;
+				}
+				project.ParentEngine.LogMessage (MessageImportance.Low,
+						"{0}: Couldn't find project {1} for extension path {2}", project.FullFileName, evaluated_path, path);
+			}
+
+			return false;
 		}
 
 		string EvaluatePath (string path)
