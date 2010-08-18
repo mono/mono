@@ -330,7 +330,7 @@ namespace System {
 		public bool TreatControlCAsInput {
 			get {
 				int mode;
-				if (!GetConsoleMode (outputHandle, out mode))
+				if (!GetConsoleMode (inputHandle, out mode))
 					throw new Exception ("Failed in GetConsoleMode: " + Marshal.GetLastWin32Error ());
 
 				// ENABLE_PROCESSED_INPUT
@@ -339,7 +339,7 @@ namespace System {
 
 			set {
 				int mode;
-				if (!GetConsoleMode (outputHandle, out mode))
+				if (!GetConsoleMode (inputHandle, out mode))
 					throw new Exception ("Failed in GetConsoleMode: " + Marshal.GetLastWin32Error ());
 
 				bool cAsInput = ((mode & 1) == 0);
@@ -349,9 +349,9 @@ namespace System {
 				if (value)
 					mode &= ~1;
 				else
-					mode++;
+					mode |= 1;
 
-				if (!SetConsoleMode (outputHandle, mode))
+				if (!SetConsoleMode (inputHandle, mode))
 					throw new Exception ("Failed in SetConsoleMode: " + Marshal.GetLastWin32Error ());
 			}
 		}
