@@ -233,6 +233,7 @@ namespace Mono.CSharp
 		bool any_token_seen = false;
 
 		static readonly char[] simple_whitespaces = new char[] { ' ', '\t' };
+		static readonly char[] pragma_value_separator = new char[] { ',' };
 
 		public bool PropertyParsing {
 			get { return handle_get_set; }
@@ -1964,32 +1965,32 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (arg.StartsWith (w_disable)) {
+			if (arg.StartsWith (w_disable, StringComparison.Ordinal)) {
 				int[] codes = ParseNumbers (arg.Substring (w_disable.Length));
+				var loc = Location;
 				foreach (int code in codes) {
 					if (code != 0)
-						Report.RegisterWarningRegion (Location).WarningDisable (Location, code, Report);
+						Report.RegisterWarningRegion (loc).WarningDisable (loc, code, Report);
 				}
 				return;
 			}
 
-			if (arg.StartsWith (w_restore)) {
+			if (arg.StartsWith (w_restore, StringComparison.Ordinal)) {
 				int[] codes = ParseNumbers (arg.Substring (w_restore.Length));
-				var w_table = Report.warning_ignore_table;
+				var loc = Location;
 				foreach (int code in codes) {
-					if (w_table != null && w_table.ContainsKey (code))
-						Report.Warning (1635, 1, Location, "Cannot restore warning `CS{0:0000}' because it was disabled globally", code);
-					Report.RegisterWarningRegion (Location).WarningEnable (Location, code, Report);
+					if (code != 0)
+						Report.RegisterWarningRegion (loc).WarningEnable (loc, code, Report);
 				}
 				return;
 			}
 
-			if (arg.StartsWith (warning)) {
+			if (arg.StartsWith (warning, StringComparison.Ordinal)) {
 				Report.Warning (1634, 1, Location, "Expected disable or restore");
 				return;
 			}
 
-			if (arg.StartsWith (checksum)) {
+			if (arg.StartsWith (checksum, StringComparison.Ordinal)) {
 				if (!PreProcessPragmaChecksum (arg.Substring (checksum.Length)))
 					Warning_InvalidPragmaChecksum ();
 				return;
@@ -2000,7 +2001,7 @@ namespace Mono.CSharp
 
 		int[] ParseNumbers (string text)
 		{
-			string[] string_array = text.Split (',');
+			string[] string_array = text.Split (pragma_value_separator);
 			int[] values = new int [string_array.Length];
 			int index = 0;
 			foreach (string string_code in string_array) {
