@@ -757,10 +757,13 @@ namespace Mono.CSharp {
 			if (messages_to_print == null)
 				return false;
 
-			foreach (AbstractMessage msg in messages_to_print)
+			bool error_msg = false;
+			foreach (AbstractMessage msg in messages_to_print) {
 				dest.Print (msg);
+				error_msg |= !msg.IsWarning;
+			}
 
-			return true;
+			return error_msg;
 		}
 	}
 
