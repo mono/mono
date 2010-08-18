@@ -349,11 +349,13 @@ namespace System.Threading.Tasks
 				
 				try {
 					InnerInvoke ();
+				} catch (OperationCanceledException oce) {
+					if (oce.CancellationToken == token)
+						CancelReal ();
+					else
+						HandleGenericException (oce);
 				} catch (Exception e) {
-					exception = new AggregateException (e);
-					status = TaskStatus.Faulted;
-					if (taskScheduler.FireUnobservedEvent (exception).Observed)
-						exceptionObserved = true;
+					HandleGenericException (e);
 				}
 			} else {
 				CancelReal ();
@@ -433,8 +435,15 @@ namespace System.Threading.Tasks
 		
 		internal void CancelReal ()
 		{
-			exception = new AggregateException (new TaskCanceledException (this));
 			status = TaskStatus.Canceled;
+		}
+
+		internal void HandleGenericException (Exception e)
+		{
+			exception = new AggregateException (e);
+			status = TaskStatus.Faulted;
+			if (taskScheduler.FireUnobservedEvent (exception).Observed)
+				exceptionObserved = true;
 		}
 		
 		public void Wait ()
@@ -445,6 +454,8 @@ namespace System.Threading.Tasks
 			scheduler.ParticipateUntil (this);
 			if (exception != null)
 				throw exception;
+			if (IsCanceled)
+				throw new AggregateException (new TaskCanceledException (this));
 		}
 
 		public void Wait (CancellationToken token)
@@ -482,6 +493,8 @@ namespace System.Threading.Tasks
 
 			if (exception != null)
 				throw exception;
+			if (IsCanceled)
+				throw new AggregateException (new TaskCanceledException (this));
 			
 			return !result;
 		}
