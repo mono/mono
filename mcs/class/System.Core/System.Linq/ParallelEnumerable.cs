@@ -958,7 +958,9 @@ namespace System.Linq
 			if (predicate == null)
 				throw new ArgumentNullException ("predicate");
 
-			return source.Where ((e) => !predicate (e));
+			return source.Node.IsOrdered () ?
+				source.SkipWhile ((e, i) => predicate (e)) :
+				source.Where ((e) => !predicate (e));
 		}
 
 		public static ParallelQuery<TSource> SkipWhile<TSource> (this ParallelQuery<TSource> source,
@@ -969,7 +971,9 @@ namespace System.Linq
 			if (predicate == null)
 				throw new ArgumentNullException ("predicate");
 
-			return source.Where ((e, i) => !predicate (e, i));
+			int indexCache = int.MaxValue;
+
+			return source.Where ((e, i) => i >= indexCache || (!predicate (e, i) && (indexCache = i) == i));
 		}
 		#endregion
 
