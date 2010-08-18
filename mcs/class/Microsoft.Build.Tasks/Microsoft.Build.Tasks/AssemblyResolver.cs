@@ -385,10 +385,10 @@ namespace Microsoft.Build.Tasks {
 			search_log.Add (String.Format (msg, args));
 		}
 
-		public void LogSearchLoggerMessages ()
+		public void LogSearchLoggerMessages (MessageImportance importance)
 		{
 			foreach (string msg in search_log)
-				log.LogMessage (msg);
+				log.LogMessage (importance, msg);
 		}
 
 		public TaskLoggingHelper Log {

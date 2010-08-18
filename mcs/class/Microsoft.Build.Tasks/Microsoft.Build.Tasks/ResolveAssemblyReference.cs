@@ -154,12 +154,15 @@ namespace Microsoft.Build.Tasks {
 					continue;
 				}
 
-				Log.LogMessage (MessageImportance.Low, "Primary Reference {0}", item.ItemSpec);
+				LogWithPrecedingNewLine (MessageImportance.Low, "Primary Reference {0}", item.ItemSpec);
 				ResolvedReference resolved_ref = ResolveReference (item, searchPaths, true);
 				if (resolved_ref == null) {
 					Log.LogWarning ("Reference '{0}' not resolved", item.ItemSpec);
-					assembly_resolver.LogSearchLoggerMessages ();
+					assembly_resolver.LogSearchLoggerMessages (MessageImportance.Normal);
 				} else {
+					if (Environment.GetEnvironmentVariable ("XBUILD_LOG_REFERENCE_RESOLVER") != null)
+						assembly_resolver.LogSearchLoggerMessages (MessageImportance.Low);
+
 					Log.LogMessage (MessageImportance.Low,
 							"\tReference {0} resolved to {1}. CopyLocal = {2}",
 							item.ItemSpec, resolved_ref.TaskItem,
@@ -268,21 +271,24 @@ namespace Microsoft.Build.Tasks {
 				assembly_resolver.ResetSearchLogger ();
 
 				if (!File.Exists (item.ItemSpec)) {
-					Log.LogMessage (MessageImportance.Low,
+					LogWithPrecedingNewLine (MessageImportance.Low,
 							"Primary Reference from AssemblyFiles {0}, file not found. Ignoring",
 							item.ItemSpec);
 					continue;
 				}
 
-				Log.LogMessage (MessageImportance.Low, "Primary Reference from AssemblyFiles {0}", item.ItemSpec);
+				LogWithPrecedingNewLine (MessageImportance.Low, "Primary Reference from AssemblyFiles {0}", item.ItemSpec);
 				string copy_local;
 
 				AssemblyName aname = assembly_resolver.GetAssemblyNameFromFile (item.ItemSpec);
 				if (aname == null) {
 					Log.LogWarning ("Reference '{0}' not resolved", item.ItemSpec);
-					assembly_resolver.LogSearchLoggerMessages ();
+					assembly_resolver.LogSearchLoggerMessages (MessageImportance.Normal);
 					continue;
 				}
+
+				if (Environment.GetEnvironmentVariable ("XBUILD_LOG_REFERENCE_RESOLVER") != null)
+					assembly_resolver.LogSearchLoggerMessages (MessageImportance.Low);
 
 				ResolvedReference rr = assembly_resolver.GetResolvedReference (item, item.ItemSpec, aname, true,
 						SearchPath.RawFileName);
@@ -347,7 +353,7 @@ namespace Microsoft.Build.Tasks {
 			if (TryGetResolvedReferenceByAssemblyName (aname, false, out resolved_ref))
 				return resolved_ref;
 
-			Log.LogMessage (MessageImportance.Low, "Dependency {0}", aname);
+			LogWithPrecedingNewLine (MessageImportance.Low, "Dependency {0}", aname);
 			Log.LogMessage (MessageImportance.Low, "\tRequired by {0}", parent_asm_name);
 
 			ITaskItem item = new TaskItem (aname.FullName);
@@ -355,6 +361,9 @@ namespace Microsoft.Build.Tasks {
 			resolved_ref = ResolveReference (item, dependency_search_paths, false);
 
 			if (resolved_ref != null) {
+				if (Environment.GetEnvironmentVariable ("XBUILD_LOG_REFERENCE_RESOLVER") != null)
+						assembly_resolver.LogSearchLoggerMessages (MessageImportance.Low);
+
 				Log.LogMessage (MessageImportance.Low, "\tReference {0} resolved to {1}.",
 					aname, resolved_ref.TaskItem.ItemSpec);
 
@@ -384,7 +393,7 @@ namespace Microsoft.Build.Tasks {
 				}
 			} else {
 				Log.LogWarning ("Reference '{0}' not resolved", aname);
-				assembly_resolver.LogSearchLoggerMessages ();
+				assembly_resolver.LogSearchLoggerMessages (MessageImportance.Normal);
 			}
 
 			return resolved_ref;
@@ -489,6 +498,12 @@ namespace Microsoft.Build.Tasks {
 			LogConflictWarning (found_ref.AssemblyName.FullName, key_aname.FullName);
 
 			return true;
+		}
+
+		void LogWithPrecedingNewLine (MessageImportance importance, string format, params object [] args)
+		{
+			Log.LogMessage (importance, String.Empty);
+			Log.LogMessage (importance, format, args);
 		}
 
 		// conflict b/w @main and @conflicting, picking @main
