@@ -33,7 +33,7 @@ Validate the project file against the schema
 Validate the project file against the specified schema
 .TP
 .B \//consoleloggerparameters:<params>
-Parameters for the console logger
+Parameters for the console logger : PerfomanceSummary, NoSummary, NoItemAndPropertyList
 .TP
 .B \//nologo
 Don't show the initial xbuild banner
@@ -55,6 +55,21 @@ If xbuild is unable to resolve a reference, then it logs details of why the vari
 search paths failed. If this variable is set, then it logs the same even for references
 that were resolved successfully. These logs show up if the verbosity is set to detailed
 or higher.
+.TP
+.I "MSBuildExtensionsPath"
+MSBuild extensions are usually installed in $(MSBuildExtensionsPath), which xbuild resolves
+to $prefix/lib/mono/xbuild . When used in Import, like:
+
+  <Import Project="$(MSBuildExtensionsPath)\TestTargets.targets"/>
+
+xbuild tries various values for the msbuild property $(MSBuildExtensionsPath), in order:
+
+  1. Paths specified in the environment variable $MSBuildExtensionsPath.
+  2. $XDG_CONFIG_HOME/xbuild/tasks (or Environment.SpecialFolder.ApplicationData)
+  3. $prefix/lib/mono/xbuild (default location)
+
+Anywhere else in the project files, $(MSBuildExtensionsPath) will always resolve to the default
+location. This is a xbuild-only feature.
 .TP
 .I "XBUILD_COLORS"
 If this variable is set, it contains a string of the form
