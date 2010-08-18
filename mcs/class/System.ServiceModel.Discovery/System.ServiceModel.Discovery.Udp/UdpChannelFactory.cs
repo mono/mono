@@ -74,7 +74,8 @@ namespace System.ServiceModel.Discovery
 		
 		protected override IDuplexChannel OnCreateChannel (EndpointAddress address, Uri via)
 		{
-			if (address.Uri.Scheme != "soap.udp")
+			var uri = via ?? address.Uri;
+			if (uri.Scheme != "soap.udp")
 				throw new ArgumentException (String.Format ("Unexpected endpoint address URI scheme: expected 'soap.udp' but got '{0}'", address.Uri.Scheme));
 			return new UdpDuplexChannel (this, Context, address, via);
 		}

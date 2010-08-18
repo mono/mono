@@ -54,6 +54,10 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.IsNotNull (de.Address, "#13");
 			Assert.AreEqual (DiscoveryVersion.WSDiscovery11.AdhocAddress, de.Address.Uri, "#13-2");
 			Assert.AreEqual (Socket.SupportsIPv4 ? UdpAnnouncementEndpoint.DefaultIPv4MulticastAddress : UdpAnnouncementEndpoint.DefaultIPv6MulticastAddress, de.ListenUri, "#14");
+
+			// .NET has two endpoint behaviors: DiscoveryViaBehavior and UdpContractFilterBehavior. Not worthy of testing that though.
+			// Assert.AreEqual (2, de.Behaviors.Count, "#15");
+			// foreach (var eb in de.Behaviors) Console.Error.WriteLine (eb);
 		}
 	}
 }

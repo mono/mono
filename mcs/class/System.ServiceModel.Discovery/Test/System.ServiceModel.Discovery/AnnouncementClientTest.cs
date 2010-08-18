@@ -106,7 +106,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void AnnonceOnlineOfflineHttpMessageVersionMismatch ()
 		{
-			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = new BasicHttpBinding (), Address = http_address });
+			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = new BasicHttpBinding () { SendTimeout = TimeSpan.FromSeconds (10), ReceiveTimeout = TimeSpan.FromSeconds (10) }, Address = http_address });
 			var edm = new EndpointDiscoveryMetadata ();
 			try {
 				ac.AnnounceOnline (edm);
@@ -121,7 +121,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 		[ExpectedException (typeof (EndpointNotFoundException))]
 		public void AnnonceOnlineOfflineHttpWSA10 ()
 		{
-			var binding = new CustomBinding (new HttpTransportBindingElement ());
+			var binding = new CustomBinding (new HttpTransportBindingElement ()) { SendTimeout = TimeSpan.FromSeconds (10), ReceiveTimeout = TimeSpan.FromSeconds (10) };
 			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = binding, Address = http_address });
 			var edm = new EndpointDiscoveryMetadata ();
 			try {
