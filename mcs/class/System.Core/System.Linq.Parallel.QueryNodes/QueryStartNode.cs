@@ -32,7 +32,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 	internal class QueryStartNode<T> : QueryBaseNode<T>
 	{

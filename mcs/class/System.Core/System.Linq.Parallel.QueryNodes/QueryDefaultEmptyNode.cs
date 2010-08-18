@@ -30,7 +30,7 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 	internal class QueryDefaultEmptyNode<TSource> : QueryStreamNode<TSource, TSource>
 	{

@@ -30,6 +30,8 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Linq.Parallel;
+using System.Linq.Parallel.QueryNodes;
 
 namespace System.Linq
 {

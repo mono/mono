@@ -29,7 +29,7 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 	// The first four elements correspond to the public operator With*
 	// Last CancellationToken parameter is used internally for ImplementerToken

@@ -24,15 +24,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0
 using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Linq.Parallel.QueryNodes;
 
-#if NET_4_0
-
-namespace System.Linq
+namespace System.Linq.Parallel
 {
 	internal class ParallelQueryEnumerator<T> : IEnumerator<T>
 	{

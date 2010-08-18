@@ -29,7 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace System.Linq
+namespace System.Linq.Parallel
 {
 	internal class RepeatList<T> : IList<T>
 	{

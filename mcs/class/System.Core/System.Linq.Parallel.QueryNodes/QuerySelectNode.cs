@@ -30,7 +30,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 	internal class QuerySelectNode<TResult, TSource> : QueryStreamNode<TResult, TSource>
 	{

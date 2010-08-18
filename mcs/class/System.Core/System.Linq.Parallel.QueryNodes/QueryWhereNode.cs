@@ -30,7 +30,7 @@ using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 
 	internal class QueryWhereNode<TSource> : QueryStreamNode<TSource, TSource>

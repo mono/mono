@@ -28,7 +28,7 @@
 using System;
 using System.Threading;
 
-namespace System.Linq
+namespace System.Linq.Parallel
 {
 	internal class QueryOptions
 	{

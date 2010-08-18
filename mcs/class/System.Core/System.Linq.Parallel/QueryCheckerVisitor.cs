@@ -27,8 +27,9 @@
 #if NET_4_0
 using System;
 using System.Threading;
+using System.Linq.Parallel.QueryNodes;
 
-namespace System.Linq
+namespace System.Linq.Parallel
 {
 	using OptionsList = Tuple<ParallelMergeOptions?, ParallelExecutionMode?, CancellationToken?, int, CancellationTokenSource>;
 

@@ -30,7 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 	internal class QueryCastNode<T> : QueryStreamNode<object, T>
 	{

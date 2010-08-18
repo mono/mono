@@ -31,7 +31,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 	internal class QueryReverseNode<TSource> : QueryStreamNode<TSource, TSource>
 	{

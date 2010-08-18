@@ -31,7 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 	internal class QueryGroupByNode<TSource, TKey, TElement> : QueryStreamNode<IGrouping<TKey, TElement>, TSource>
 	{

@@ -27,7 +27,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 	internal abstract class QueryOrderGuardNode<T> : QueryStreamNode<T, T>
 	{

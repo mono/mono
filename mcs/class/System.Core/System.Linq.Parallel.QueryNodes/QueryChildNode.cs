@@ -27,7 +27,7 @@
 #if NET_4_0
 using System;
 
-namespace System.Linq
+namespace System.Linq.Parallel.QueryNodes
 {
 	internal abstract class QueryChildNode<T, TParent> : QueryBaseNode<T>
 	{

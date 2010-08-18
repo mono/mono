@@ -31,7 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Linq
+namespace System.Linq.Parallel
 {
 	internal class OrderingEnumerator<T> : IEnumerator<T>
 	{

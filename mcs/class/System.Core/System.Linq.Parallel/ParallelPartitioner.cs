@@ -30,7 +30,7 @@ using System.Collections.Concurrent;
 
 #if NET_4_0
 
-namespace System.Linq
+namespace System.Linq.Parallel
 {
 	internal static class ParallelPartitioner
 	{

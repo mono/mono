@@ -32,7 +32,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace System.Linq
+namespace System.Linq.Parallel
 {
 	// HACK: ATM: parallelization of the sort is disabled as task
 	// add more overhead than gain
