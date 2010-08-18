@@ -27,6 +27,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.Threading;
 
 namespace System.ServiceModel.Discovery
 {
@@ -42,6 +43,8 @@ namespace System.ServiceModel.Discovery
 		}
 		
 		Uri listen_uri;
+		UdpDuplexChannel channel;
+		ManualResetEvent accept_wait_handle = new ManualResetEvent (true);
 		
 		public override Uri Uri {
 			get { return listen_uri; }
@@ -49,17 +52,18 @@ namespace System.ServiceModel.Discovery
 		
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
 		}
 		
 		protected override void OnClose (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			if (channel != null)
+				channel.Close (timeout);
 		}
 		
 		protected override void OnAbort ()
 		{
-			throw new NotImplementedException ();
+			if (channel != null)
+				channel.Abort ();
 		}
 		
 		Action<TimeSpan> open_delegate, close_delegate;
@@ -90,7 +94,14 @@ namespace System.ServiceModel.Discovery
 
 		protected override IDuplexChannel OnAcceptChannel (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			if (!accept_wait_handle.WaitOne (timeout))
+				throw new TimeoutException ();
+			accept_wait_handle.Reset ();
+			channel = new UdpDuplexChannel (this);
+			channel.Closed += delegate {
+				accept_wait_handle.Set ();
+			};
+			return channel;
 		}
 		
 		protected override bool OnWaitForChannel (TimeSpan timeout)

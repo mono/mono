@@ -40,12 +40,10 @@ namespace System.ServiceModel.Discovery
 		
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
 		}
 		
 		protected override void OnClose (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
 		}
 		
 		Action<TimeSpan> open_delegate, close_delegate;

@@ -24,6 +24,9 @@
 //
 using System;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -33,24 +36,32 @@ namespace System.ServiceModel.Discovery
 	internal class UdpDuplexChannel : ChannelBase, IDuplexChannel
 	{
 		// channel factory
-		public UdpDuplexChannel (UdpChannelFactory factory, BindingContext ctx, EndpointAddress address, Uri via)
+		public UdpDuplexChannel (UdpChannelFactory factory, BindingContext context, EndpointAddress address, Uri via)
 			: base (factory)
 		{
+			if (factory == null)
+				throw new ArgumentNullException ("factory");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
 			binding_element = factory.Source;
 			RemoteAddress = address;
 			Via = via;
+			FillMessageEncoder (context);
 		}
 		
-		public UdpDuplexChannel (UdpChannelListener listener, Uri listenUri)
+		public UdpDuplexChannel (UdpChannelListener listener)
 			: base (listener)
 		{
 			binding_element = listener.Source;
-			LocalAddress = new EndpointAddress (listenUri);
+			LocalAddress = new EndpointAddress (listener.Uri);
+			FillMessageEncoder (listener.Context);
 		}
 		
 		MessageEncoder message_encoder; // FIXME: fill it
 		UdpClient client;
-		UdpTransportSettings settings;
 		UdpTransportBindingElement binding_element;
 		
 		// for servers
@@ -59,6 +70,14 @@ namespace System.ServiceModel.Discovery
 		public EndpointAddress RemoteAddress { get; private set; }
 		
 		public Uri Via { get; private set; }
+
+		void FillMessageEncoder (BindingContext ctx)
+		{
+			var mbe = (MessageEncodingBindingElement) ctx.RemainingBindingElements.FirstOrDefault (be => be is MessageEncodingBindingElement);
+			if (mbe == null)
+				mbe = new TextMessageEncodingBindingElement ();
+			message_encoder = mbe.CreateMessageEncoderFactory ().Encoder;
+		}
 		
 		public void Send (Message message)
 		{
@@ -95,7 +114,23 @@ namespace System.ServiceModel.Discovery
 
 		public bool TryReceive (TimeSpan timeout, out Message msg)
 		{
-			throw new NotImplementedException ();
+			ThrowIfDisposedOrNotOpen ();
+			msg = null;
+
+			byte [] bytes = null;
+			IPEndPoint ip = new IPEndPoint (IPAddress.Any, 0);
+			var ar = client.BeginReceive (delegate (IAsyncResult result) {
+				bytes = client.EndReceive (result, ref ip);
+			}, null);
+
+			if (!ar.IsCompleted && !ar.AsyncWaitHandle.WaitOne (timeout))
+				return false;
+			if (bytes.Length == 0)
+				return false;
+
+			// FIXME: give maxSizeOfHeaders
+			msg = message_encoder.ReadMessage (new MemoryStream (bytes), int.MaxValue);
+			return true;
 		}
 
 		protected override void OnAbort ()
@@ -144,8 +179,18 @@ namespace System.ServiceModel.Discovery
 				client = new UdpClient ();
 				client.Connect (RemoteAddress.Uri.Host, RemoteAddress.Uri.Port);
 			} else {
-				client = new UdpClient (LocalAddress.Uri.Host, LocalAddress.Uri.Port);
+				var ip = IPAddress.Parse (LocalAddress.Uri.Host);
+				bool isMulticast = NetworkInterface.GetAllNetworkInterfaces ().Any (nic => nic.SupportsMulticast && nic.GetIPProperties ().MulticastAddresses.Any (mca => mca.Address.Equals (ip)));
+				int port = LocalAddress.Uri.Port;
+				if (isMulticast) {
+					client = new UdpClient (new IPEndPoint (IPAddress.Any, port));
+					client.JoinMulticastGroup (ip, binding_element.TransportSettings.TimeToLive);
+				}
+				else
+					client = new UdpClient (new IPEndPoint (ip, port));
 			}
+
+			client.EnableBroadcast = true;
 
 			// FIXME: apply UdpTransportSetting here.
 		}

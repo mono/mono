@@ -33,17 +33,30 @@ namespace System.ServiceModel.Discovery
 	internal class UdpTransportBindingElement : TransportBindingElement
 	{
 		public UdpTransportBindingElement ()
+			: this (new UdpTransportSettings ())
 		{
+		}
+		
+		public UdpTransportBindingElement (UdpTransportSettings settings)
+		{
+			this.settings = settings ?? new UdpTransportSettings ();
 		}
 		
 		private UdpTransportBindingElement (UdpTransportBindingElement other)
 		{
+			settings = new UdpTransportSettings (other.settings);
 		}
 		
 		public override string Scheme {
 			get { return "soap.udp"; }
 		}
 		
+		UdpTransportSettings settings;
+
+		public UdpTransportSettings TransportSettings {
+			get { return settings; }
+		}
+
 		public override BindingElement Clone ()
 		{
 			return new UdpTransportBindingElement (this);

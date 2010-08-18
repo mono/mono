@@ -46,6 +46,18 @@ namespace System.ServiceModel.Discovery
 			TimeToLive = 1;
 		}
 
+		internal UdpTransportSettings (UdpTransportSettings source)
+		{
+			DuplicateMessageHistoryLength = source.DuplicateMessageHistoryLength;
+			MaxBufferPoolSize = source.MaxBufferPoolSize;
+			MaxMulticastRetransmitCount = source.MaxMulticastRetransmitCount;
+			MaxPendingMessageCount = source.MaxPendingMessageCount;
+			MaxReceivedMessageSize = source.MaxReceivedMessageSize;
+			MaxUnicastRetransmitCount = source.MaxUnicastRetransmitCount;
+			SocketReceiveBufferSize = source.SocketReceiveBufferSize;
+			TimeToLive = source.TimeToLive;
+		}
+
 		public int DuplicateMessageHistoryLength { get; set; }
 		public long MaxBufferPoolSize { get; set; }
 		public int MaxMulticastRetransmitCount { get; set; }
