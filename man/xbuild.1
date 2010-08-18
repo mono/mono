@@ -60,7 +60,7 @@ or higher.
 MSBuild extensions are usually installed in $(MSBuildExtensionsPath), which xbuild resolves
 to $prefix/lib/mono/xbuild . When used in Import, like:
 
-  <Import Project="$(MSBuildExtensionsPath)\TestTargets.targets"/>
+  <Import Project="$(MSBuildExtensionsPath)\\TestTargets.targets"/>
 
 xbuild tries various values for the msbuild property $(MSBuildExtensionsPath), in order:
 
@@ -70,6 +70,8 @@ xbuild tries various values for the msbuild property $(MSBuildExtensionsPath), i
 
 Anywhere else in the project files, $(MSBuildExtensionsPath) will always resolve to the default
 location. This is a xbuild-only feature.
+This is also applicable for the properties $(MSBuildExtensionsPath32) and $(MSBuildExtensionsPath64),
+and the environment variables have the corresponding names - MSBuildExtensionsPath32/64 .
 .TP
 .I "XBUILD_COLORS"
 If this variable is set, it contains a string of the form
