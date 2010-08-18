@@ -74,7 +74,8 @@ namespace System.ServiceModel.MonoInternal
 		{
 			this.runtime = runtime;
 			this.remote_address = remoteAddress;
-			runtime.Via = via ?? remote_address.Uri;
+			if (runtime.Via == null)
+				runtime.Via = via ?? remote_address.Uri;
 			this.contract = contract;
 			this.message_version = messageVersion;
 			default_open_timeout = openTimeout;
