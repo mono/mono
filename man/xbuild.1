@@ -49,6 +49,13 @@ Display xbuild version
 If this variable is set, then the project file generated from a solution
 file is emitted.
 .TP
+.I "XBUILD_LOG_REFERENCE_RESOLVER"
+References are resolved by trying a list of assembly search paths ($(AssemblySearchPaths)).
+If xbuild is unable to resolve a reference, then it logs details of why the various
+search paths failed. If this variable is set, then it logs the same even for references
+that were resolved successfully. These logs show up if the verbosity is set to detailed
+or higher.
+.TP
 .I "XBUILD_COLORS"
 If this variable is set, it contains a string of the form
 "type=foreground,type=.." that specifies which color to use to display
