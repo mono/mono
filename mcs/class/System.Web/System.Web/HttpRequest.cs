@@ -1474,24 +1474,30 @@ namespace System.Web
 		{
 			file_path = path;
 			physical_path = null;
+			original_path = null;
 		}
 
 		internal void SetCurrentExePath (string path)
 		{
 			cached_url = null;
 			current_exe_path = path;
-			UrlComponents.Path = path;
+			UrlComponents.Path = path + PathInfo;
 			// recreated on demand
 			root_virtual_dir = null;
 			base_virtual_dir = null;
 			physical_path = null;
 			unescaped_path = null;
+			original_path = null;
 		}
 
 		internal void SetPathInfo (string pi)
 		{
 			cached_url = null;
 			path_info = pi;
+			original_path = null;
+
+			string path = UrlComponents.Path;
+			UrlComponents.Path = path + PathInfo;
 		}
 
 		// Headers is ReadOnly, so we need this hack for cookie-less sessions.
