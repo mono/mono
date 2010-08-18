@@ -177,7 +177,8 @@ namespace System.ServiceModel.Discovery
 		{
 			if (RemoteAddress != null) {
 				client = new UdpClient ();
-				client.Connect (RemoteAddress.Uri.Host, RemoteAddress.Uri.Port);
+				var uri = Via ?? RemoteAddress.Uri;
+				client.Connect (uri.Host, uri.Port);
 			} else {
 				var ip = IPAddress.Parse (LocalAddress.Uri.Host);
 				bool isMulticast = NetworkInterface.GetAllNetworkInterfaces ().Any (nic => nic.SupportsMulticast && nic.GetIPProperties ().MulticastAddresses.Any (mca => mca.Address.Equals (ip)));
