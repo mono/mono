@@ -56,10 +56,13 @@ namespace Microsoft.Build.BuildEngine {
 
 			if (ProjectPath == String.Empty)
 				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
-			evaluatedProjectPath = EvaluateProjectPath (ProjectPath);
-			evaluatedProjectPath = GetFullPath ();
-			if (EvaluatedProjectPath == String.Empty)
-				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
+
+			if (ConditionParser.ParseAndEvaluate (Condition, project)) {
+				evaluatedProjectPath = EvaluateProjectPath (ProjectPath);
+				evaluatedProjectPath = GetFullPath ();
+				if (EvaluatedProjectPath == String.Empty)
+					throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
+			}
 		}
 
 		// FIXME: condition
