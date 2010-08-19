@@ -110,8 +110,8 @@ namespace MonoTests.System.Threading.Tasks
 			}
 			
 			Assert.IsNotNull (ex, "#1");
-			Assert.IsInstanceOfType (typeof(AggregateException), t.Exception, "#2");
-			Assert.AreEqual (t.Exception, ex, "#3");
+			Assert.IsInstanceOfType (typeof(AggregateException), ex, "#2");
+			Assert.IsNull (t.Exception, "#3");
 			
 			AggregateException aggr = (AggregateException)ex;
 			Assert.AreEqual (1, aggr.InnerExceptions.Count, "#4");
