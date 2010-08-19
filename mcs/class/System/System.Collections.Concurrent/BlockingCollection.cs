@@ -39,7 +39,6 @@ namespace System.Collections.Concurrent
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class BlockingCollection<T> : IEnumerable<T>, ICollection, IEnumerable, IDisposable
 	{
-		const int sleepTime = 50;
 		const int spinCount = 5;
 
 		readonly IProducerConsumerCollection<T> underlyingColl;
@@ -97,19 +96,27 @@ namespace System.Collections.Concurrent
 		public void Add (T item, CancellationToken token)
 		{
 			SpinWait sw = new SpinWait ();
+			long cachedAddId;
 
 			while (true) {
 				token.ThrowIfCancellationRequested ();
 
-				long cachedAddId = addId;
+				cachedAddId = addId;
 				long cachedRemoveId = removeId;
 
 				if (upperBound != -1) {
 					if (cachedAddId - cachedRemoveId > upperBound) {
-						if (sw.Count <= spinCount)
+						if (sw.Count <= spinCount) {
 							sw.SpinOnce ();
-						else if (mreRemove.Wait (sleepTime))
+						} else {
+							if (mreRemove.IsSet)
+								continue;
+							if (cachedRemoveId != removeId)
+								continue;
+
+							mreRemove.Wait (token);
 							mreRemove.Reset ();
+						}
 
 						continue;
 					}
@@ -117,16 +124,15 @@ namespace System.Collections.Concurrent
 
 				// Check our transaction id against completed stored one
 				if (isComplete.Value && cachedAddId >= completeId)
-					throw new InvalidOperationException ("The BlockingCollection<T> has"
-					                                     + " been marked as complete with regards to additions.");
-
+					ThrowCompleteException ();
 				if (Interlocked.CompareExchange (ref addId, cachedAddId + 1, cachedAddId) == cachedAddId)
 					break;
 			}
 
+			if (isComplete.Value && cachedAddId >= completeId)
+				ThrowCompleteException ();
 
-			if (!underlyingColl.TryAdd (item))
-				throw new InvalidOperationException ("The underlying collection didn't accept the item.");
+			while (!underlyingColl.TryAdd (item));
 
 			if (!mreAdd.IsSet)
 				mreAdd.Set ();
@@ -150,12 +156,19 @@ namespace System.Collections.Concurrent
 				// Empty case
 				if (cachedRemoveId == cachedAddId) {
 					if (IsCompleted)
-						throw new InvalidOperationException ("The BlockingCollection<T> has"
-						                                      + " been marked as complete with regards to additions.");
-					if (sw.Count <= spinCount)
+						ThrowCompleteException ();
+
+					if (sw.Count <= spinCount) {
 						sw.SpinOnce ();
-					else if (mreAdd.Wait (sleepTime))
+					} else {
+						if (cachedAddId != addId)
+							continue;
+						if (IsCompleted)
+							ThrowCompleteException ();
+
+						mreAdd.Wait (token);
 						mreAdd.Reset ();
+					}
 
 					continue;
 				}
@@ -175,7 +188,7 @@ namespace System.Collections.Concurrent
 
 		public bool TryAdd (T item)
 		{
-			return TryAdd (item, null, CancellationToken.None);
+			return TryAdd (item, () => false, CancellationToken.None);
 		}
 
 		bool TryAdd (T item, Func<bool> contFunc, CancellationToken token)
@@ -186,11 +199,9 @@ namespace System.Collections.Concurrent
 				long cachedAddId = addId;
 				long cachedRemoveId = removeId;
 
-				if (upperBound != -1) {
-					if (cachedAddId - cachedRemoveId > upperBound) {
+				if (upperBound != -1)
+					if (cachedAddId - cachedRemoveId > upperBound)
 						continue;
-					}
-				}
 
 				// Check our transaction id against completed stored one
 				if (isComplete.Value && cachedAddId >= completeId)
@@ -200,14 +211,13 @@ namespace System.Collections.Concurrent
 				if (Interlocked.CompareExchange (ref addId, cachedAddId + 1, cachedAddId) != cachedAddId)
 					continue;
 
-				if (!underlyingColl.TryAdd (item))
-					continue;
+				while (!underlyingColl.TryAdd (item));
 
 				if (!mreAdd.IsSet)
 					mreAdd.Set ();
 
 				return true;
-			} while (contFunc != null && contFunc ());
+			} while (contFunc ());
 
 			return false;
 		}
@@ -231,7 +241,7 @@ namespace System.Collections.Concurrent
 
 		public bool TryTake (out T item)
 		{
-			return TryTake (out item, null, CancellationToken.None);
+			return TryTake (out item, () => false, CancellationToken.None);
 		}
 
 		bool TryTake (out T item, Func<bool> contFunc, CancellationToken token)
@@ -255,8 +265,11 @@ namespace System.Collections.Concurrent
 				if (Interlocked.CompareExchange (ref removeId, cachedRemoveId + 1, cachedRemoveId) != cachedRemoveId)
 					continue;
 
-				return underlyingColl.TryTake (out item);
-			} while (contFunc != null && contFunc ());
+				while (!underlyingColl.TryTake (out item));
+
+				if (!mreRemove.IsSet)
+					mreRemove.Set ();
+			} while (contFunc ());
 
 			return false;
 		}
@@ -467,9 +480,18 @@ namespace System.Collections.Concurrent
 
 		public void CompleteAdding ()
 		{
-		  // No further add beside that point
-		  completeId = addId;
-		  isComplete.Value = true;
+			// No further add beside that point
+			completeId = addId;
+			isComplete.Value = true;
+			// Wakeup some operation in case this has an impact
+			mreAdd.Set ();
+			mreRemove.Set ();
+		}
+
+		void ThrowCompleteException ()
+		{
+			throw new InvalidOperationException ("The BlockingCollection<T> has"
+			                                     + " been marked as complete with regards to additions.");
 		}
 
 		void ICollection.CopyTo (Array array, int index)
