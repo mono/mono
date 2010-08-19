@@ -1066,6 +1066,8 @@ namespace System.Runtime.InteropServices
 				throw new ArgumentNullException ("t");
 			if (!t.IsSubclassOf (typeof (MulticastDelegate)) || (t == typeof (MulticastDelegate)))
 				throw new ArgumentException ("Type is not a delegate", "t");
+			if (t.IsGenericType)
+				throw new ArgumentException ("The specified Type must not be a generic type definition.");
 			if (ptr == IntPtr.Zero)
 				throw new ArgumentNullException ("ptr");
 
