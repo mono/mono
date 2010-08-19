@@ -61,13 +61,6 @@ namespace System.Collections.Concurrent
 				Add (item);
 		}
 		
-		public bool TryAdd (T item)
-		{
-			Add (item);
-			
-			return true;
-		}
-		
 		public void Add (T item)
 		{
 			int index;
@@ -79,6 +72,12 @@ namespace System.Collections.Concurrent
 				addHints.Enqueue (index);
 
 			Interlocked.Increment (ref count);
+		}
+
+		bool IProducerConsumerCollection<T>.TryAdd (T element)
+		{
+			Add (element);
+			return true;
 		}
 		
 		public bool TryTake (out T item)
@@ -144,7 +143,7 @@ namespace System.Collections.Concurrent
 			return GetEnumeratorInternal ();
 		}
 		
-		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
+		public IEnumerator<T> GetEnumerator ()
 		{
 			return GetEnumeratorInternal ();
 		}

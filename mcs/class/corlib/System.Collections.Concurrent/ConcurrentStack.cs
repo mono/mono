@@ -173,16 +173,11 @@ namespace System.Collections.Concurrent
 			return (IEnumerator)InternalGetEnumerator ();
 		}
 		
-		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
-		{
-			return InternalGetEnumerator ();
-		}
-		
 		public IEnumerator<T> GetEnumerator ()
 		{
 			return InternalGetEnumerator ();
 		}
-		
+
 		IEnumerator<T> InternalGetEnumerator ()
 		{
 			Node my_head = head;
