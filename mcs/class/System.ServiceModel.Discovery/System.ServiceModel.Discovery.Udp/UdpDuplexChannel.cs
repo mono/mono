@@ -30,6 +30,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.Threading;
 
 namespace System.ServiceModel.Discovery
 {
@@ -60,8 +61,9 @@ namespace System.ServiceModel.Discovery
 			FillMessageEncoder (listener.Context);
 		}
 		
-		MessageEncoder message_encoder; // FIXME: fill it
+		MessageEncoder message_encoder;
 		UdpClient client;
+		IPAddress multicast_address;
 		UdpTransportBindingElement binding_element;
 		
 		// for servers
@@ -84,6 +86,8 @@ namespace System.ServiceModel.Discovery
 			Send (message, DefaultSendTimeout);
 		}
 
+		static readonly Random rnd = new Random ();
+
 		public void Send (Message message, TimeSpan timeout)
 		{
 			if (State != CommunicationState.Opened)
@@ -92,6 +96,8 @@ namespace System.ServiceModel.Discovery
 			var ms = new MemoryStream ();
 			message_encoder.WriteMessage (message, ms);
 			client.Send (ms.GetBuffer (), (int) ms.Length);
+			// FIXME: use MaxAnnouncementDelay. It is fixed now.
+			Thread.Sleep (rnd.Next (500, 500));
 		}
 
 		public bool WaitForMessage (TimeSpan timeout)
@@ -168,8 +174,13 @@ namespace System.ServiceModel.Discovery
 		
 		protected override void OnClose (TimeSpan timeout)
 		{
-			if (client != null)
+			if (client != null) {
+				if (multicast_address != null) {
+					client.DropMulticastGroup (multicast_address, LocalAddress.Uri.Port);
+					multicast_address = null;
+				}
 				client.Close ();
+			}
 			client = null;
 		}
 		
@@ -184,6 +195,7 @@ namespace System.ServiceModel.Discovery
 				bool isMulticast = NetworkInterface.GetAllNetworkInterfaces ().Any (nic => nic.SupportsMulticast && nic.GetIPProperties ().MulticastAddresses.Any (mca => mca.Address.Equals (ip)));
 				int port = LocalAddress.Uri.Port;
 				if (isMulticast) {
+					multicast_address = ip;
 					client = new UdpClient (new IPEndPoint (IPAddress.Any, port));
 					client.JoinMulticastGroup (ip, binding_element.TransportSettings.TimeToLive);
 				}
