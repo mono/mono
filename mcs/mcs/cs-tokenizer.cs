@@ -1459,7 +1459,7 @@ namespace Mono.CSharp
 				else
 					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
 			} catch (OverflowException){
-				Error_TokensSeen ();
+				Error_NumericConstantTooLong ();
 				val = new IntLiteral (0, Location);
 				return Token.LITERAL;
 			}
@@ -2375,7 +2375,7 @@ namespace Mono.CSharp
 
 		void Error_NumericConstantTooLong ()
 		{
-			Report.Error (1021, Location, "Integral constant too long");			
+			Report.Error (1021, Location, "Integral constant is too large");			
 		}
 		
 		void Error_InvalidDirective ()
@@ -2567,6 +2567,10 @@ namespace Mono.CSharp
 				}
 				PreProcessDefinition (false, arg, caller_is_taking);
 				return caller_is_taking;
+
+			case PreprocessorDirective.Invalid:
+				Report.Error (1024, Location, "Wrong preprocessor directive");
+				return true;
 			}
 
 			//
@@ -2600,8 +2604,7 @@ namespace Mono.CSharp
 				return caller_is_taking;
 			}
 
-			Report.Error (1024, Location, "Wrong preprocessor directive");
-			return true;
+			throw new NotImplementedException (directive.ToString ());
 		}
 
 		private int consume_string (bool quoted)
