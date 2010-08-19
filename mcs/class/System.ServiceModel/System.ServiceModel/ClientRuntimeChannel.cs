@@ -92,8 +92,15 @@ namespace System.ServiceModel.MonoInternal
 				channel = contextChannel;
 			else {
 				var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-				channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
-				this.factory = factory;
+				try {
+					channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
+					this.factory = factory;
+				} catch (TargetInvocationException ex) {
+					if (ex.InnerException != null)
+						throw ex.InnerException;
+					else
+						throw;
+				}
 			}
 		}
 

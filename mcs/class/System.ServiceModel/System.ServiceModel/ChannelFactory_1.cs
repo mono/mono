@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.ObjectModel;
+using System.Reflection;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
@@ -147,7 +148,11 @@ namespace System.ServiceModel
 			// that should work either.
 			object proxy = Activator.CreateInstance (type, new object [] {Endpoint, this, address ?? Endpoint.Address, via});
 			return (TChannel) proxy;
-
+			} catch (TargetInvocationException ex) {
+				if (ex.InnerException != null)
+					throw ex.InnerException;
+				else
+					throw;
 			} finally {
 				Endpoint.Address = existing;
 			}
