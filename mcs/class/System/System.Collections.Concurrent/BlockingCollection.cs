@@ -48,9 +48,19 @@ namespace System.Collections.Concurrent
 		AtomicBoolean isComplete;
 		long completeId;
 
+		/* The whole idea of the collection is to use these two long values in a transactional
+		 * to track and manage the actual data inside the underlying lock-free collection
+		 * instead of directly working with it or using external locking.
+		 *
+		 * They are manipulated with CAS and are guaranteed to increase over time and use
+		 * of the instance thus preventing ABA problems.
+		 */
 		long addId = long.MinValue;
 		long removeId = long.MinValue;
 
+		/* These events are used solely for the purpose of having an optimized sleep cycle when
+		 * the BlockingCollection have to wait on an external event (Add or Remove for instance)
+		 */
 		ManualResetEventSlim mreAdd = new ManualResetEventSlim (true);
 		ManualResetEventSlim mreRemove = new ManualResetEventSlim (true);
 
