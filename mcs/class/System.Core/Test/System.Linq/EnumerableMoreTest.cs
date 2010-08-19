@@ -2314,5 +2314,14 @@ namespace MonoTests.System.Linq {
 			AssertException<ArgumentOutOfRangeException> (delegate () { Enumerable.Range (int.MaxValue - 5, 7); });
 			Enumerable.Range (int.MaxValue - 5, 6);
 		}
+
+		[Test]
+		public void ExceptMultipleItems ()
+		{
+			var data = new [] { 1, 2, 2, 2, 3, 4, 5, 5, 6, 7, 8, 8, 9, 10 };
+			var expected = new [] { 2, 4, 6, 8, 10 };
+
+			AssertAreSame (expected, data.Except (new [] { 1, 3, 5, 7, 9 }));
+		}
 	}
 }
