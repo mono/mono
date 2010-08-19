@@ -303,15 +303,9 @@ namespace Mono.CSharp
 			escaped_identifiers.Add (loc);
 		}
 
-		public bool IsEscapedIdentifier (Location loc)
+		public bool IsEscapedIdentifier (MemberName name)
 		{
-			if (escaped_identifiers != null) {
-				foreach (Location lt in escaped_identifiers)
-					if (lt.Equals (loc))
-						return true;
-			}
-
-			return false;
+			return escaped_identifiers != null && escaped_identifiers.Contains (name.Location);
 		}
 
 		//
@@ -2612,24 +2606,23 @@ namespace Mono.CSharp
 			int c;
 			string_builder.Length = 0;
 
-			while ((c = get_char ()) != -1){
-				if (c == '"'){
-					if (quoted && peek_char () == '"'){
+			while (true){
+				c = get_char ();
+				if (c == '"') {
+					if (quoted && peek_char () == '"') {
 						string_builder.Append ((char) c);
 						get_char ();
 						continue;
-					} else {
-						val = new StringLiteral (string_builder.ToString (), Location);
-						return Token.LITERAL;
 					}
+
+					val = new StringLiteral (string_builder.ToString (), Location);
+					return Token.LITERAL;
 				}
 
-				if (c == '\n'){
+				if (c == '\n') {
 					if (!quoted)
 						Report.Error (1010, Location, "Newline in constant");
-				}
-
-				if (!quoted){
+				} else if (c == '\\' && !quoted) {
 					int surrogate;
 					c = escape (c, out surrogate);
 					if (c == -1)
@@ -2638,12 +2631,13 @@ namespace Mono.CSharp
 						string_builder.Append ((char) c);
 						c = surrogate;
 					}
+				} else if (c == -1) {
+					Report.Error (1039, Location, "Unterminated string literal");
+					return Token.EOF;
 				}
+
 				string_builder.Append ((char) c);
 			}
-
-			Report.Error (1039, Location, "Unterminated string literal");
-			return Token.EOF;
 		}
 
 		private int consume_identifier (int s)

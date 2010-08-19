@@ -784,9 +784,9 @@ attribute
 		else if (global_attrs_enabled && (current_attr_target == "assembly" || current_attr_target == "module"))
 			// FIXME: supply "nameEscaped" parameter here.
 			$$ = new GlobalAttribute (current_namespace, current_attr_target,
-						  expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
+						  expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 		else
-			$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
+			$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 	  }
 	;
 

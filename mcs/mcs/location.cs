@@ -167,7 +167,8 @@ namespace Mono.CSharp {
 	///
 	///   http://lists.ximian.com/pipermail/mono-devel-list/2004-December/009508.html
 	/// </remarks>
-	public struct Location {
+	public struct Location : IEquatable<Location>
+	{
 		int token; 
 
 		struct Checkpoint {
@@ -464,6 +465,15 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 				return (CompilationUnit) source_list [index - 1];
 			}
 		}
+
+		#region IEquatable<Location> Members
+
+		public bool Equals (Location other)
+		{
+			return this.token == other.token;
+		}
+
+		#endregion
 	}
 
 	//
