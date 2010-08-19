@@ -49,14 +49,14 @@ namespace System.Linq.Parallel.QueryNodes
 		{
 			return Parent.GetOrderedEnumerables (options)
 				.Select ((i) => i.Select ((e) => new KeyValuePair<long, object> (e.Key, (object)e.Value)))
-				.ToArray ();
+				.ToList ();
 		}
 		
 		internal override IList<IEnumerable<object>> GetEnumerables (QueryOptions options)
 		{
 			return Parent.GetEnumerables (options)
 				.Select ((i) => i.Cast<object> ())
-				.ToArray ();
+				.ToList ();
 		}
 	}
 }

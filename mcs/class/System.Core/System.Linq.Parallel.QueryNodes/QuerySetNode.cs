@@ -76,7 +76,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 			return first
 				.Select ((f, i) => GetEnumerable<TSource> (f, second[i], checker, (e) => e))
-				.ToArray ();
+				.ToList ();
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
@@ -89,7 +89,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 			return first
 				.Select ((f, i) => GetEnumerable<KeyValuePair<long, TSource>> (f, second[i], checker, (e) => e.Value))
-				.ToArray ();
+				.ToList ();
 		}
 				
 		void InitConcurrentSkipList<TExtract> (ConcurrentSkipList<TSource> checker,

@@ -71,7 +71,7 @@ namespace System.Linq.Parallel.QueryNodes
 				.Select ((i) => GetEnumerableInternal (i,
 				                                       (kv) => collectionSelectorIndexed (kv.Value, (int)kv.Key),
 				                                       (e, c) => resultSelector (e.Value, c)))
-				.ToArray ();
+				.ToList ();
 		}
 
 		internal override IList<IEnumerable<TResult>> GetEnumerablesNonIndexed (QueryOptions options)
@@ -80,7 +80,7 @@ namespace System.Linq.Parallel.QueryNodes
 				.Select ((i) => GetEnumerableInternal (i,
 				                                       collectionSelector,
 				                                       (e, c) => resultSelector (e, c)))
-				.ToArray ();
+				.ToList ();
 		}
 		
 		// This one is gonna be tricky

@@ -64,14 +64,14 @@ namespace System.Linq.Parallel.QueryNodes
 		{
 			return Parent.GetOrderedEnumerables (options)
 				.Select ((i) => i.Where ((e) => indexedPredicate (e.Value, (int)e.Key)).Select ((e) => e.Value))
-				.ToArray ();
+				.ToList ();
 		}
 
 		internal override IList<IEnumerable<TSource>> GetEnumerablesNonIndexed (QueryOptions options)
 		{
 			return Parent.GetEnumerables (options)
 				.Select ((i) => i.Where (predicate))
-				.ToArray ();
+				.ToList ();
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
@@ -99,7 +99,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 			return sources
 				.Select ((s, i) => GetEnumerator (s, barrier, store, i))
-				.ToArray ();
+				.ToList ();
 		}
 
 		static int ArraySortMethod (Tuple<TSource, long, bool> lhs, Tuple<TSource, long, bool> rhs)

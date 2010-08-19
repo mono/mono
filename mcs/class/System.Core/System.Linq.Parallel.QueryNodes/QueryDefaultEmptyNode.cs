@@ -56,7 +56,7 @@ namespace System.Linq.Parallel.QueryNodes
 				.Select ((e) => GetEnumerableInternal<TSource> (e,
 				                                                evt,
 				                                                (s) => s))
-				.ToArray ();
+				.ToList ();
 		}
 		
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
@@ -68,7 +68,7 @@ namespace System.Linq.Parallel.QueryNodes
 				.Select ((e) => GetEnumerableInternal<KeyValuePair<long, TSource>> (e,
 				                                                                    evt,
 				                                                                    (s) => new KeyValuePair<long, TSource> (0, s)))
-				.ToArray ();
+				.ToList ();
 		}
 		
 		IEnumerable<TSecond> GetEnumerableInternal<TSecond> (IEnumerable<TSecond> source, 

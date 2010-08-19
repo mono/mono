@@ -60,14 +60,14 @@ namespace System.Linq.Parallel.QueryNodes
 		{
 			return Parent.GetOrderedEnumerables (options)
 				.Select ((i) => i.Select ((e) => indexedSelector (e.Value, (int)e.Key)))
-				.ToArray ();
+				.ToList ();
 		}
 
 		internal override IList<IEnumerable<TResult>> GetEnumerablesNonIndexed (QueryOptions options)
 		{
 			return Parent.GetEnumerables (options)
 				.Select ((i) => i.Select (selector))
-				.ToArray ();
+				.ToList ();
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TResult>>> GetOrderedEnumerables (QueryOptions options)
@@ -77,7 +77,7 @@ namespace System.Linq.Parallel.QueryNodes
 				         IsIndexed ? 
 				         i.Select ((e) => new KeyValuePair<long, TResult> (e.Key, indexedSelector (e.Value, (int)e.Key))) :
 				         i.Select ((e) => new KeyValuePair<long, TResult> (e.Key, selector (e.Value))))
-				.ToArray ();
+				.ToList ();
 		}
 	}
 }

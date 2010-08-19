@@ -45,7 +45,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 			return Parent.GetEnumerables (options)
 				.Select ((f, i) => CombineEnumerables (f, second[i]))
-				.ToArray ();
+				.ToList ();
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
@@ -54,7 +54,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 			return Parent.GetOrderedEnumerables (options)
 				.Select ((f, i) => CombineEnumerables (f, second[i]))
-				.ToArray ();
+				.ToList ();
 		}
 
 		internal override IEnumerable<TSource> GetSequential ()

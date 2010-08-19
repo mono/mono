@@ -61,7 +61,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 			return first
 				.Select ((f, i) => GetEnumerable (f, second[i]))
-				.ToArray ();
+				.ToList ();
 		}
 
 		IEnumerable<TResult> GetEnumerable (IEnumerable<TFirst> first, IEnumerable<TSecond> second)
@@ -100,7 +100,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 			return first
 				.Select ((f, i) => GetEnumerable (f, second[i], i , store1, store2, barrier))
-				.ToArray ();
+				.ToList ();
 		}
 
 		IEnumerable<KeyValuePair<long, TResult>> GetEnumerable (IEnumerable<KeyValuePair<long, TFirst>> first,
