@@ -125,7 +125,7 @@ namespace System.ServiceModel.Discovery
 
 			if (!ar.IsCompleted && !ar.AsyncWaitHandle.WaitOne (timeout))
 				return false;
-			if (bytes.Length == 0)
+			if (bytes == null || bytes.Length == 0)
 				return false;
 
 			// FIXME: give maxSizeOfHeaders
