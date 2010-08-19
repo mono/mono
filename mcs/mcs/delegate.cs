@@ -440,7 +440,7 @@ namespace Mono.CSharp {
 			var invoke_method = Delegate.GetInvokeMethod (ec.Compiler, type);
 
 			Arguments arguments = CreateDelegateMethodArguments (invoke_method.Parameters, invoke_method.Parameters.Types, loc);
-			method_group = method_group.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.Covariant);
+			method_group = method_group.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.CovariantDelegate);
 			if (method_group == null)
 				return null;
 
@@ -545,7 +545,7 @@ namespace Mono.CSharp {
 			var invoke = Delegate.GetInvokeMethod (ec.Compiler, target_type);
 
 			Arguments arguments = CreateDelegateMethodArguments (invoke.Parameters, invoke.Parameters.Types, mg.Location);
-			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.Covariant | OverloadResolver.Restrictions.ProbingOnly) != null;
+			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.CovariantDelegate | OverloadResolver.Restrictions.ProbingOnly) != null;
 		}
 
 		#region IErrorHandler Members

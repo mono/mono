@@ -3136,7 +3136,7 @@ namespace Mono.CSharp {
 			None = 0,
 			DelegateInvoke = 1,
 			ProbingOnly	= 1 << 1,
-			Covariant = 1 << 2,
+			CovariantDelegate = 1 << 2,
 			NoBaseMembers = 1 << 3
 		}
 
@@ -3693,7 +3693,7 @@ namespace Mono.CSharp {
 				//
 				// It can be applicable in expanded form (when not doing exact match like for delegates)
 				//
-				if (score != 0 && (p_mod & Parameter.Modifier.PARAMS) != 0 && (restrictions & Restrictions.Covariant) == 0) {
+				if (score != 0 && (p_mod & Parameter.Modifier.PARAMS) != 0 && (restrictions & Restrictions.CovariantDelegate) == 0) {
 					score = IsArgumentCompatible (ec, a_mod, a, 0, TypeManager.GetElementType (pt));
 					if (score == 0)
 						params_expanded_form = true;
@@ -3928,8 +3928,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			// TODO: quite slow
-			if (args_count != 0 && args.HasDynamic) {
+			// TODO: HasDynamic is quite slow
+			if (args_count != 0 && (restrictions & Restrictions.CovariantDelegate) == 0 && args.HasDynamic) {
 				if (args [0].ArgType == Argument.AType.ExtensionType) {
 					rc.Report.Error (1973, loc,
 						"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' cannot be dynamically dispatched. Consider calling the method without the extension method syntax",
@@ -4190,7 +4190,7 @@ namespace Mono.CSharp {
 				if (a.Expr.Type == InternalType.Dynamic)
 					continue;
 
-				if ((restrictions & Restrictions.Covariant) != 0 && !Delegate.IsTypeCovariant (a.Expr, pt)) {
+				if ((restrictions & Restrictions.CovariantDelegate) != 0 && !Delegate.IsTypeCovariant (a.Expr, pt)) {
 					custom_errors.NoArgumentMatch (ec, member);
 					return false;
 				}

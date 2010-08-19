@@ -2915,7 +2915,7 @@ namespace Mono.CSharp {
 
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 				Arguments args = DelegateCreation.CreateDelegateMethodArguments (invoke.Parameters, param_types, e.Location);
-				mg = mg.OverloadResolve (ec, ref args, null, OverloadResolver.Restrictions.Covariant | OverloadResolver.Restrictions.ProbingOnly);
+				mg = mg.OverloadResolve (ec, ref args, null, OverloadResolver.Restrictions.CovariantDelegate | OverloadResolver.Restrictions.ProbingOnly);
 				if (mg == null)
 					return 0;
 
