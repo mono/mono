@@ -34,7 +34,6 @@ namespace System.Threading
 		const int isSet    = 1;
 		const int isNotSet = 0;
 		const int defaultSpinCount = 10;
-		const int deepSleepTime = 20;
 
 		int state;
 		readonly int spinCount;
@@ -104,9 +103,9 @@ namespace System.Threading
 			Wait (-1, token);
 		}
 
-		public bool Wait (int millisecondsTimeout, CancellationToken token)
+		public bool Wait (int ms, CancellationToken token)
 		{
-			if (millisecondsTimeout < -1)
+			if (ms < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout",
 				                                       "millisecondsTimeout is a negative number other than -1");
 
@@ -116,14 +115,19 @@ namespace System.Threading
 			while (state == isNotSet) {
 				token.ThrowIfCancellationRequested ();
 
-				if (millisecondsTimeout > -1 && s.ElapsedMilliseconds > millisecondsTimeout)
+				if (ms > -1 && s.ElapsedMilliseconds > ms)
 					return false;
 
-				if (sw.Count < spinCount)
+				if (sw.Count < spinCount) {
 					sw.SpinOnce ();
-				else
-					if (WaitHandle.WaitOne (Math.Min (Math.Max (millisecondsTimeout - (int)s.ElapsedMilliseconds, 1), deepSleepTime)))
+				} else {
+					int waitTime = ms == -1 ? -1 : Math.Max (ms - (int)s.ElapsedMilliseconds, 1);
+					WaitHandle handle = WaitHandle;
+					if (state == isSet)
 						return true;
+					if (WaitHandle.WaitAny (new[] { handle, token.WaitHandle }, waitTime, false) == 0)
+						return true;
+				}
 			}
 
 			return true;
