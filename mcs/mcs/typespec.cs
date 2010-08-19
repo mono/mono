@@ -803,7 +803,7 @@ namespace Mono.CSharp
 		{
 			if (a == b) {
 				// This also rejects dynamic == dynamic
-				return a.Kind != MemberKind.InternalCompilerType;
+				return a.Kind != MemberKind.InternalCompilerType || a == InternalType.Dynamic;
 			}
 
 			//

@@ -906,7 +906,7 @@ namespace Mono.CSharp {
 				if (TypeManager.HasElementType (type) && TypeManager.IsGenericParameter (TypeManager.GetElementType (type)))
 					continue;
 				
-				if (invoke_pd.Types [i] != Parameters.Types [i]) {
+				if (!TypeSpecComparer.IsEqual (invoke_pd.Types [i], Parameters.Types [i])) {
 					if (ignore_errors)
 						return false;
 					

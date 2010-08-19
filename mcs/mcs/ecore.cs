@@ -3715,11 +3715,22 @@ namespace Mono.CSharp {
 		int IsArgumentCompatible (ResolveContext ec, Parameter.Modifier arg_mod, Argument argument, Parameter.Modifier param_mod, TypeSpec parameter)
 		{
 			//
-			// Types have to be identical when ref or out modifer is used 
+			// Types have to be identical when ref or out modifer
+			// is used and argument is not of dynamic type
 			//
 			if ((arg_mod | param_mod) != 0) {
-				if (argument.Type != parameter && !TypeSpecComparer.IsEqual (argument.Type, parameter)) {
-					return 2;
+				//
+				// Defer to dynamic binder
+				//
+				if (argument.Type == InternalType.Dynamic)
+					return 0;
+
+				if (argument.Type != parameter) {
+					//
+					// Do full equality check after quick path
+					//
+					if (!TypeSpecComparer.IsEqual (argument.Type, parameter))
+						return 2;
 				}
 			} else {
 				//

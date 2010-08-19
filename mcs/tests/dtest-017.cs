@@ -16,6 +16,8 @@ interface IA<U>
 {
 }
 
+delegate dynamic D (dynamic d);
+
 class DynamicAssignments
 {
 	static int Main ()
@@ -45,6 +47,10 @@ class DynamicAssignments
 
 		I<object> io = null;
 		IA<dynamic> id = io;
+		
+		D del = delegate (object del_arg) {
+			 return (object) null;
+		};
 
 		return 0;
 	}

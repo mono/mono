@@ -1,3 +1,16 @@
+class A
+{
+	public static int operator != (A a, dynamic b)
+	{
+		return -1;
+	}
+	
+	public static int operator == (A a, dynamic b)
+	{
+		return +1;
+	}
+}
+
 public class C
 {
 	public static bool operator == (C a, object b)
