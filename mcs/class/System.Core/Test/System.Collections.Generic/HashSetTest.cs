@@ -202,7 +202,7 @@ namespace MonoTests.System.Collections.Generic {
 		public void TestSymmetricExceptWith ()
 		{
 			var data = new [] {1, 2, 3, 4, 5};
-			var other = new [] {4, 5, 6, 7, 8, 9};
+			var other = new [] {4, 5, 6, 7, 8, 9, 9};
 			var result = new [] {1, 2, 3, 6, 7, 8, 9};
 
 			var set = new HashSet<int> (data);
