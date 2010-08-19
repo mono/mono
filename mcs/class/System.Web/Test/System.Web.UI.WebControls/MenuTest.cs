@@ -52,9 +52,17 @@ using MonoTests.Common;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
+	class MenuTable : Menu
+	{
+		public MenuTable ()
+		{
+#if NET_4_0
+			RenderingMode = MenuRenderingMode.Table;
+#endif
+		}
+	}
 	
-	
-	class PokerMenu:Menu
+	class PokerMenu : Menu
 	{
 		public PokerMenu ()
 		{
@@ -420,7 +428,29 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 			HtmlDiff.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderBeginTag");
 		}
+#if NET_4_0
+		[Test]
+		[Category ("NunitWeb")]
+		public void Menu_RenderBeginTag_List ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (_BeginTagRender_List)).Run ();
+		}
 
+		public static void _BeginTagRender_List (Page p)
+		{
+			PokerMenu pm = new PokerMenu ();
+			pm.RenderingCompatibility = new Version (4, 0);
+			pm.RenderingMode = MenuRenderingMode.List;
+
+			p.Form.Controls.Add (pm);
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+			pm.RenderBeginTag (tw);
+			string RenderedControlHtml = sw.ToString ();
+			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"ctl01\">\r\n";
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderBeginTag_List");
+		}
+#endif
 		[Test]
 		[Category ("NunitWeb")]
 		public void Menu_RenderEndTag ()
@@ -446,7 +476,29 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 			HtmlDiff.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"RenderEndTag");	
 		}
+#if NET_4_0
+		[Test]
+		[Category ("NunitWeb")]
+		public void Menu_RenderEndTag_List ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (_EndTagRender_List)).Run ();
+		}
+		public static void _EndTagRender_List (Page p)
+		{
+			PokerMenu pm = new PokerMenu ();
+			pm.RenderingCompatibility = new Version (4, 0);
+			pm.RenderingMode = MenuRenderingMode.List;
 
+			p.Form.Controls.Add (pm);
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+			pm.RenderBeginTag (tw);
+			pm.RenderEndTag (tw);
+			string RenderedControlHtml = sw.ToString ();
+			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"ctl01\">\r\n\r\n</div><a id=\"ctl01_SkipLink\"></a>";
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderEndTag");
+		}
+#endif
 		[Test]
 		public void Menu_DataBind () {
 			Page p = new Page ();
@@ -477,7 +529,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		static Menu CreateMenu () {
-			Menu m = new Menu ();
+			Menu m = new MenuTable ();
 			MenuItem rootItem = new MenuItem ("RootItem-Text", "RootItem-Value");
 			m.Items.Add (rootItem);
 			rootItem.ChildItems.Add (new MenuItem ("Node1-Text", "Node1-Value"));
@@ -504,6 +556,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Form.Controls.Add (xmlDs);
 
 			Menu m = CreateMenu ();
+#if NET_4_0
+			m.RenderingMode = MenuRenderingMode.Table;
+#endif
 			m.DataSourceID = "XmlDataSource";
 			m.MenuItemDataBound += new MenuEventHandler (m_MenuItemDataBound);
 			p.Form.Controls.Add (m);
@@ -859,7 +914,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		public void Menu_DataBindings () {
-			Menu m = new Menu ();
+			Menu m = new MenuTable ();
 			SetDataBindings (m);
 			m.DataSource = CreateXmlDataSource ();
 			m.DataBind ();
@@ -886,7 +941,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
 			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
-			Menu menu = new Menu ();
+			Menu menu = new MenuTable ();
 			p.Form.Controls.Add (lcb);
 			p.Form.Controls.Add (menu);
 			p.Form.Controls.Add (lce);
@@ -1025,9 +1080,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			#endregion
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Vertical)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-			Console.WriteLine (OriginControlHtml);
-			Console.WriteLine ("----------------");
-			Console.WriteLine (RenderedControlHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItems_Vertical");
 #if !NET_4_0 || (NET_4_0 && !DOT_NET)
 			// Throws NREX on .NET 4.0, most probably because the adapter's Control is null
@@ -1143,7 +1195,38 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItemsWithBaseAdapter_Horizontal");
 #endif
 		}
-
+#if NET_4_0
+		[Test]
+		[Category ("NunitWeb")]
+		[Ignore ("Disabled temporarily")]
+		public void Menu_RenderStaticItems_List ()
+		{
+			string RenderedPageHtml, RenderedControlHtml, OriginControlHtml;
+			#region OriginControlHtml
+			OriginControlHtml = "<a href=\"#Menu_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"Menu\">\r\n\t<ul class=\"level1\">\r\n\t\t<li><a class=\"level1\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value&#39;)\">one-black</a></li><li><a class=\"level2\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value&#39;)\">two-black-1</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value&#39;)\">three-black-1</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-1-value&#39;)\">four-black-1</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-2-value&#39;)\">four-black-2</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value&#39;)\">three-black-2</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-3-value&#39;)\">four-black-3</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-4-value&#39;)\">four-black-4</a></li><li><a class=\"level2\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value&#39;)\">two-black-2</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value&#39;)\">three-black-3</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-5-value&#39;)\">four-black-5</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-6-value&#39;)\">four-black-6</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value&#39;)\">three-black-4</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-7-value&#39;)\">four-black-7</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-8-value&#39;)\">four-black-8</a></li>\r\n\t</ul>\r\n</div><a id=\"Menu_SkipLink\"></a>";
+			#endregion
+			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Vertical_List)).Run ();
+			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItems_Vertical");
+#if !DOT_NET
+			// Throws NREX on .NET 4.0, most probably because the adapter's Control is null
+			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItemsWithBaseAdapter_Vertical)).Run ();
+			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItemsWithDefaultAdapter_Vertical");
+#endif
+			#region OriginControlHtml
+			OriginControlHtml = "<a href=\"#Menu_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"Menu\">\r\n\t<ul class=\"level1\">\r\n\t\t<li><a class=\"level1\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value&#39;)\">one-black</a></li><li><a class=\"level2\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value&#39;)\">two-black-1</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value&#39;)\">three-black-1</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-1-value&#39;)\">four-black-1</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-2-value&#39;)\">four-black-2</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value&#39;)\">three-black-2</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-3-value&#39;)\">four-black-3</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-4-value&#39;)\">four-black-4</a></li><li><a class=\"level2\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value&#39;)\">two-black-2</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value&#39;)\">three-black-3</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-5-value&#39;)\">four-black-5</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-6-value&#39;)\">four-black-6</a></li><li><a class=\"level3\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value&#39;)\">three-black-4</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-7-value&#39;)\">four-black-7</a></li><li><a class=\"level4\" href=\"#\" onclick=\"__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-8-value&#39;)\">four-black-8</a></li>\r\n\t</ul>\r\n</div><a id=\"Menu_SkipLink\"></a>";
+			#endregion
+			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Horizontal_List)).Run ();
+			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItems_Horizontal");
+#if !DOT_NET
+			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItemsWithBaseAdapter_Horizontal)).Run ();
+			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItemsWithBaseAdapter_Horizontal");
+#endif
+		}
+#endif
 		class MyMenuAdapter : global::System.Web.UI.WebControls.Adapters.MenuAdapter
 		{
 			protected override void RenderItem (HtmlTextWriter writer, 
@@ -1402,7 +1485,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.StaticDisplayLevels = 4;
 			AddMenuToPage (p, m);
 		}
+#if NET_4_0
+		public static void Menu_RenderStaticItems_Vertical_List (Page p)
+		{
+			Menu m = CreateMenuForRenderTests (null, false);
+			m.RenderingCompatibility = new Version (4, 0);
+			m.RenderingMode = MenuRenderingMode.List;
+			m.StaticDisplayLevels = 4;
+			AddMenuToPage (p, m);
+		}
 
+		public static void Menu_RenderStaticItems_Horizontal_List (Page p)
+		{
+			Menu m = CreateMenuForRenderTests (null, false);
+			m.Orientation = Orientation.Horizontal;
+			m.StaticDisplayLevels = 4;
+			m.RenderingCompatibility = new Version (4, 0);
+			m.RenderingMode = MenuRenderingMode.List;
+			AddMenuToPage (p, m);
+		}
+#endif
 		public static void Menu_RenderStaticItemsWithBaseAdapter_Vertical (Page p) {
 			Menu m = CreateMenuForRenderTests (new MyWebControl.Adapters.MenuAdapter());
 			m.StaticDisplayLevels = 4;
@@ -1651,7 +1753,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotDotNet")] // implementation specific
 		public void Menu_PostBack ()
 		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = Menu_SetTableMode;
 			WebTest t = new WebTest ("PostBackMenuTest.aspx");
+			t.Invoker = new PageInvoker (pd);
+
 			string str = t.Run ();
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
@@ -1659,12 +1765,20 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["__EVENTTARGET"].Value = "Menu1";
 			fr.Controls ["__EVENTARGUMENT"].Value = "0_1";
 			t.Request = fr;
-			PageDelegates pd = new PageDelegates ();
 			pd.PreRender = _MenuItemsPost;
 			t.Invoker = new PageInvoker (pd);
 			t.Run ();
 		}
 
+		public static void Menu_SetTableMode (Page p)
+		{
+#if NET_4_0
+			Menu m = p.Form.FindControl ("Menu1") as Menu;
+			Assert.IsNotNull (m, "Menu present");
+			m.RenderingMode = MenuRenderingMode.Table;
+#endif
+		}
+		
 		public static void _MenuItemsPost (Page p)
 		{
 			foreach (Control c in p.Form.Controls) {
@@ -1679,7 +1793,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Menu_PostBackFireEvents_1 ()
 		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = Menu_SetTableMode;
 			WebTest t = new WebTest ("PostBackMenuTest.aspx");
+			t.Invoker = new PageInvoker (pd);
+			
 			string str = t.Run ();
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
@@ -1709,7 +1827,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public static void PostBackFireEvents_Init (Page p)
 		{
-			Menu m = new Menu ();
+			Menu_SetTableMode (p);
+			Menu m = new MenuTable ();
 			m.MenuItemDataBound += new MenuEventHandler (MenuItemDataBound_Event);
 			m.DataSource = LoadXml ();
 			p.Controls.Add (m);
@@ -1737,7 +1856,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void MenuItemCollection1 ()
 		{
-			Menu m = new Menu ();
+			Menu m = new MenuTable ();
 			fillMenu (m);
 
 			((IStateManager) m.Items).TrackViewState ();
@@ -1746,7 +1865,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.Items [0].ChildItems [0].ChildItems [0].Text = "subnode";
 			object state = ((IStateManager) m.Items).SaveViewState ();
 
-			Menu copy = new Menu ();
+			Menu copy = new MenuTable ();
 			fillMenu (copy);
 			((IStateManager) copy.Items).TrackViewState ();
 			((IStateManager) copy.Items).LoadViewState (state);
@@ -1763,7 +1882,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void MenuItemCollection2 ()
 		{
-			Menu m = new Menu ();
+			Menu m = new MenuTable ();
 			fillMenu (m);
 
 			((IStateManager) m.Items).TrackViewState ();
@@ -1773,7 +1892,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.Items.Add (new MenuItem ("root 2"));
 			object state = ((IStateManager) m.Items).SaveViewState ();
 
-			Menu copy = new Menu ();
+			Menu copy = new MenuTable ();
 			fillMenu (copy);
 			((IStateManager) copy.Items).TrackViewState ();
 			((IStateManager) copy.Items).LoadViewState (state);
@@ -1791,7 +1910,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void MenuItemCollection3 ()
 		{
-			Menu m = new Menu ();
+			Menu m = new MenuTable ();
 			fillMenu (m);
 			m.Items.Add (new MenuItem ("root 2"));
 
@@ -1802,7 +1921,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.Items.RemoveAt (1);
 			object state = ((IStateManager) m.Items).SaveViewState ();
 
-			Menu copy = new Menu ();
+			Menu copy = new MenuTable ();
 			fillMenu (copy);
 			copy.Items.Add (new MenuItem ("root 2"));
 			((IStateManager) copy.Items).TrackViewState ();
@@ -1820,7 +1939,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void MenuItemCollection4 ()
 		{
-			Menu m = new Menu ();
+			Menu m = new MenuTable ();
 			fillMenu (m);
 			m.Items.Add (new MenuItem ("root 2"));
 			m.Items [0].ChildItems.RemoveAt (1);
@@ -1831,7 +1950,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.Items [0].ChildItems [0].ChildItems [0].Text = "subnode";
 			object state = ((IStateManager) m.Items).SaveViewState ();
 
-			Menu copy = new Menu ();
+			Menu copy = new MenuTable ();
 			fillMenu (copy);
 			copy.Items.Add (new MenuItem ("root 2"));
 			copy.Items [0].ChildItems.RemoveAt (1);
@@ -1850,13 +1969,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void MenuItemCollection5 ()
 		{
-			Menu m = new Menu ();
+			Menu m = new MenuTable ();
 			((IStateManager) m.Items).TrackViewState ();
 			fillMenu (m);
 
 			object state = ((IStateManager) m.Items).SaveViewState ();
 
-			Menu copy = new Menu ();
+			Menu copy = new MenuTable ();
 			((IStateManager) copy.Items).TrackViewState ();
 			((IStateManager) copy.Items).LoadViewState (state);
 

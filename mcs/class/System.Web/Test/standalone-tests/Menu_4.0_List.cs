@@ -38,7 +38,7 @@ using NUnit.Framework;
 
 namespace StandAloneTests.Menu_40_List
 {
-	[TestCase ("Menu_40_List", "Menu control List rendering mode for 4.0")]
+	[TestCase ("Menu_40_List", "Menu control List rendering mode for 4.0", Disabled=true)]
 	public sealed class Test_01 : ITestCase
 	{
 		public string PhysicalPath {
