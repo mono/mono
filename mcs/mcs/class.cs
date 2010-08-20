@@ -223,7 +223,7 @@ namespace Mono.CSharp {
 		protected TypeSpec spec;
 		TypeSpec current_type;
 
-		DynamicSiteClass dynamic_site_container;
+		CompilerGeneratedClass dynamic_site_container;
 
 		List<TypeContainer> partial_parts;
 
