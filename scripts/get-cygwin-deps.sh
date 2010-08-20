@@ -35,7 +35,7 @@ if [ ! -f $dir/gettext-runtime-0.17-1.zip ]; then
 	wget -P $dir http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-runtime-0.17-1.zip
 fi
 if [ ! -f $dir/libiconv-1.13-mingw32-dev.tar.gz ]; then
-	wget -P $dir http://sourceforge.net/projects/mingw/files/MinGW%20libiconv/release%201.13/libiconv-1.13-mingw32-dev.tar.gz/download
+	wget -P $dir http://sourceforge.net/projects/mingw/files/MinGW/libiconv/release%201.13/libiconv-1.13-mingw32-dev.tar.gz/download
 fi
 echo "done."
 
