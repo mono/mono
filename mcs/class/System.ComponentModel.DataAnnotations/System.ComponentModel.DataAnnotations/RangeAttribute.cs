@@ -35,39 +35,145 @@ namespace System.ComponentModel.DataAnnotations
 	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
 	public class RangeAttribute : ValidationAttribute
 	{
-		public RangeAttribute (double minimum, double maximum)
+		Func <object, bool> comparer;
+		TypeConverter cvt;
+
+		public object Maximum { get; private set; }
+		public object Minimum { get; private set; }
+		public Type OperandType { get; private set; }
+
+		IComparable MaximumComparable {
+			get { return Maximum as IComparable; }
+		}
+
+		IComparable MinimumComparable {
+			get { return Minimum as IComparable; }
+		}
+		
+		RangeAttribute ()
+			: base (GetDefaultErrorMessage)
+		{
+		}
+		
+		public RangeAttribute (double minimum, double maximum) : this ()
 		{
 			Minimum = minimum;
 			Maximum = maximum;
+			OperandType = typeof (double);
 		}
 
-		public RangeAttribute (int minimum, int maximum)
+		public RangeAttribute (int minimum, int maximum) : this ()
 		{
 			Minimum = minimum;
 			Maximum = maximum;
+			OperandType = typeof (int);
 		}
 
-		public RangeAttribute (Type type, string minimum, string maximum)
+		public RangeAttribute (Type type, string minimum, string maximum) : this ()
 		{
 			OperandType = type;
 			Minimum = minimum;
 			Maximum = maximum;
 		}
 
-		public object Maximum { get; private set; }
-		public object Minimum { get; private set; }
-		public Type OperandType { get; private set; }
-
-		[MonoTODO]
+		string GetDefaultErrorMessage ()
+		{
+			return "The field {0} must be between {1} and {2}.";
+		}
+		
 		public override string FormatErrorMessage (string name)
 		{
-			throw new NotImplementedException ();
+			if (comparer == null)
+				comparer = SetupComparer ();
+
+			return String.Format (ErrorMessageString, name, Minimum, Maximum);
 		}
 
-		[MonoTODO]
+		// LAMESPEC: does not throw ValidationException when value is out of range
 		public override bool IsValid (object value)
 		{
-			throw new NotImplementedException ();
+			if (comparer == null)
+				comparer = SetupComparer ();
+			
+			if (value == null)
+				return true;
+
+			string s = value as string;
+			if (s != null && s.Length == 0)
+				return true;
+			
+			try {
+				if (comparer != null)
+					return comparer (value);
+
+				return false;
+			} catch (FormatException) {
+				return false;
+			} catch (InvalidCastException) {
+				return false;
+			}
+		}
+
+		Func <object, bool> SetupComparer ()
+		{
+			Type ot = OperandType;
+
+			object min = Minimum, max = Maximum;
+			
+			if (min == null || max == null)
+				throw new InvalidOperationException ("The minimum and maximum values must be set.");
+			
+			if (min is int)
+				return new Func <object, bool> (CompareInt);
+
+			if (min is double)
+				return new Func <object, bool> (CompareDouble);
+			
+			if (ot == null)
+				throw new InvalidOperationException ("The OperandType must be set when strings are used for minimum and maximum values.");
+			
+			
+			if (!typeof(IComparable).IsAssignableFrom (ot))
+				throw new InvalidOperationException (
+					String.Format ("The type {0} must implement System.IComparable", ot.FullName));
+
+			string smin = min as string, smax = max as string;
+			cvt = TypeDescriptor.GetConverter (ot);
+			Minimum = cvt.ConvertFromString (smin);
+			Maximum = cvt.ConvertFromString (smax);
+
+			return new Func <object, bool> (CompareArbitrary);
+		}
+
+		bool CompareInt (object value)
+		{
+			Console.WriteLine ("{0}.CompareInt ({1})", this, value);
+			int cv = Convert.ToInt32 (value);
+
+			Console.WriteLine ("\tcv == {0}", cv);
+			Console.WriteLine ("\tMinimumComparable.CompareTo ({0}) == {1}", cv, MinimumComparable.CompareTo (cv));
+			Console.WriteLine ("\tMaximumComparable.CompareTo ({0}) == {1}", cv, MaximumComparable.CompareTo (cv));
+			return MinimumComparable.CompareTo (cv) <= 0 && MaximumComparable.CompareTo (cv) >= 0;
+		}
+
+		bool CompareDouble (object value)
+		{
+			double cv = Convert.ToDouble (value);
+			
+			return MinimumComparable.CompareTo (cv) <= 0 && MaximumComparable.CompareTo (cv) >= 0;
+		}
+
+		bool CompareArbitrary (object value)
+		{
+			object cv;
+			if (value != null && value.GetType () == OperandType)
+				cv = value;
+			else if (cvt != null)
+				cv = cvt.ConvertFrom (value);
+			else
+				cv = null;
+			
+			return MinimumComparable.CompareTo (cv) <= 0 && MaximumComparable.CompareTo (cv) >= 0;
 		}
 	}
 }

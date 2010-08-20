@@ -38,11 +38,11 @@ namespace System.ComponentModel.DataAnnotations
 	{
 		const string DEFAULT_ERROR_MESSAGE = "The field {0} is invalid.";
 #if !NET_4_0
-		string errorMessage;
 		string errorMessageResourceName;
 		string errorMessageString;
 		Type errorMessageResourceType;
 #endif
+		string errorMessage;
 		string fallbackErrorMessage;
 		Func <string> errorMessageAccessor;
 		
@@ -69,7 +69,14 @@ namespace System.ComponentModel.DataAnnotations
 			return String.Format (ErrorMessageString, name);
 		}
 #if NET_4_0
-		public string ErrorMessage { get; set; }
+		public string ErrorMessage {
+			get { return errorMessage; }
+			set {
+				errorMessage = value;
+				if (errorMessage != null)
+					errorMessageAccessor = null;
+			}
+		}
 		public string ErrorMessageResourceName { get; set; }
 		public Type ErrorMessageResourceType { get; set; }
 #else
@@ -77,9 +84,10 @@ namespace System.ComponentModel.DataAnnotations
 			get { return errorMessage; }
 
 			set {
+#if !NET_4_0
 				if (errorMessage != null)
 					throw new InvalidOperationException ("This property can be set only once.");
-
+#endif
 				if (String.IsNullOrEmpty (value))
 					throw new ArgumentException ("Value cannot be null or empty.", "value");
 
@@ -120,6 +128,14 @@ namespace System.ComponentModel.DataAnnotations
 #if NET_4_0
 				return GetStringFromResourceAccessor ();
 #else
+				if (errorMessageString == null) {
+					string errorMessage = ErrorMessage;
+					if (errorMessage != null)
+						return errorMessage;
+					if (errorMessageAccessor != null)
+						return errorMessageAccessor ();
+				}
+				
 				return errorMessageString;
 #endif
 			}
@@ -171,7 +187,7 @@ namespace System.ComponentModel.DataAnnotations
 			
 			if (resourceType == null ^ resourceName == null)
 				throw new InvalidOperationException ("Both ErrorMessageResourceType and ErrorMessageResourceName must be set on this attribute.");
-
+			
 			if (errorMessageAccessor != null)
 				return errorMessageAccessor ();
 			
