@@ -4,6 +4,7 @@ System.ComponentModel.DataAnnotations/AssociationAttributeTest.cs
 System.ComponentModel.DataAnnotations/EnumDataTypeAttributeTest.cs
 System.ComponentModel.DataAnnotations/RangeAttributeTest.cs
 System.ComponentModel.DataAnnotations/RequiredAttributeTest.cs
+System.ComponentModel.DataAnnotations/StringLengthAttributeTest.cs
 System.ComponentModel.DataAnnotations/ValidationAttributeTest.cs
 System.ComponentModel.DataAnnotations/ValidationContextTest.cs
 System.ComponentModel.DataAnnotations/ValidationResultTest.cs
