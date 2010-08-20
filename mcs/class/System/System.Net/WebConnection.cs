@@ -90,7 +90,8 @@ namespace System.Net
                 static WebConnection ()
                 {
                         Type type = Type.GetType ("MonoTouch.ObjCRuntime.Runtime, monotouch");
-                        start_wwan = type.GetMethod ("StartWWAN");
+			if (type != null)
+	                        start_wwan = type.GetMethod ("StartWWAN");
                 }
 #endif
 
