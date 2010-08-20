@@ -1376,6 +1376,12 @@ for the fixed-heap Mark&Sweep collector (i.e. `marksweep-fixed' and
 `marksweep-fixed-par').  The size is in bytes, with optional suffixes
 `k', `m' and `g' to specify kilo-, mega- and gigabytes, respectively.
 The default is 512 megabytes.
+.TP
+\fBwbarrier=\fIwbarrier\fR
+Specifies which write barrier to use.  Options are `cardtable' and
+`remset'.  The card table barrier is faster but less precise, and only
+supported for the Mark&Sweep major collector on 32 bit platforms.  The
+default is `cardtable' if it is supported, otherwise `remset'.
 .ne
 .RE
 .TP
