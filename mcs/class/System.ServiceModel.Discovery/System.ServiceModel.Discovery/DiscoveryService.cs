@@ -73,9 +73,10 @@ namespace System.ServiceModel.Discovery
 			return OnBeginFind (new DefaultFindRequestContext (message.Body.ToFindCriteria ()), callback, state);
 		}
 
-		void IDiscoveryProxyContract11.EndFind (IAsyncResult result)
+		MessageContracts11.FindResponse IDiscoveryProxyContract11.EndFind (IAsyncResult result)
 		{
 			OnEndFind (result);
+			throw new NotImplementedException ();
 		}
 
 		IAsyncResult IDiscoveryProxyContract11.BeginResolve (MessageContracts11.ResolveRequest message, AsyncCallback callback, object state)
@@ -95,9 +96,10 @@ namespace System.ServiceModel.Discovery
 			return OnBeginFind (new DefaultFindRequestContext (message.Body.ToFindCriteria ()), callback, state);
 		}
 
-		void IDiscoveryProxyContractApril2005.EndFind (IAsyncResult result)
+		MessageContractsApril2005.FindResponse IDiscoveryProxyContractApril2005.EndFind (IAsyncResult result)
 		{
 			OnEndFind (result);
+			throw new NotImplementedException ();
 		}
 
 		IAsyncResult IDiscoveryProxyContractApril2005.BeginResolve (MessageContractsApril2005.ResolveRequest message, AsyncCallback callback, object state)
@@ -117,9 +119,10 @@ namespace System.ServiceModel.Discovery
 			return OnBeginFind (new DefaultFindRequestContext (message.Body.ToFindCriteria ()), callback, state);
 		}
 
-		void IDiscoveryProxyContractCD1.EndFind (IAsyncResult result)
+		MessageContractsCD1.FindResponse IDiscoveryProxyContractCD1.EndFind (IAsyncResult result)
 		{
 			OnEndFind (result);
+			throw new NotImplementedException ();
 		}
 
 		IAsyncResult IDiscoveryProxyContractCD1.BeginResolve (MessageContractsCD1.ResolveRequest message, AsyncCallback callback, object state)
@@ -142,6 +145,7 @@ namespace System.ServiceModel.Discovery
 		void IDiscoveryTargetContract11.EndFind (IAsyncResult result)
 		{
 			OnEndFind (result);
+			throw new NotImplementedException ();
 		}
 
 		IAsyncResult IDiscoveryTargetContract11.BeginReplyFind (MessageContracts11.FindResponse message, AsyncCallback callback, object state)

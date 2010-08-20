@@ -1,7 +1,7 @@
 //
 // Author: Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009,2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,25 +25,43 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
-using System.ServiceModel.Discovery;
 
 namespace System.ServiceModel.Discovery.VersionApril2005
 {
-	[ServiceContract (Name = "DiscoveryProxy", Namespace = MessageContractsApril2005.NS)]
-	internal interface IDiscoveryProxyContractApril2005
+	internal class DiscoveryProxyClientApril2005 : ClientBase<IDiscoveryProxyContractApril2005>, DiscoveryClient.IDiscoveryCommon
 	{
-		[OperationContract (Name = "Probe", Action = MessageContractsApril2005.ProbeAction, AsyncPattern = true, ReplyAction = MessageContractsApril2005.ProbeMatchAction)]
-		IAsyncResult BeginFind (MessageContractsApril2005.FindRequest message, AsyncCallback callback, object state);
+		public IAsyncResult BeginFind (FindCriteria criteria, AsyncCallback callback, object state)
+		{
+			var req = new MessageContractsApril2005.FindRequest () { Body = new FindCriteriaApril2005 (criteria) };
+			return Channel.BeginFind (req, callback, state);
+		}
+		
+		public FindResponse EndFind (IAsyncResult result)
+		{
+			var ir = Channel.EndFind (result);
+			var ret = new FindResponse ();
+			foreach (var fr in ir.Body)
+				ret.Endpoints.Add (fr.ToEndpointDiscoveryMetadata ());
+			return ret;
+		}
 
-		MessageContractsApril2005.FindResponse EndFind (IAsyncResult result);
+		public IAsyncResult BeginResolve (ResolveCriteria criteria, AsyncCallback callback, object state)
+		{
+			var req = new MessageContractsApril2005.ResolveRequest () { Body = new ResolveCriteriaApril2005 (criteria) };
+			return Channel.BeginResolve (req, callback, state);
+		}
 
-		[OperationContract (Name = "Resolve", Action = MessageContractsApril2005.ResolveAction, AsyncPattern = true, ReplyAction = MessageContractsApril2005.ResolveMatchAction)]
-		IAsyncResult BeginResolve (MessageContractsApril2005.ResolveRequest message, AsyncCallback callback, object state);
-
-		MessageContractsApril2005.ResolveResponse EndResolve (IAsyncResult result);
+		public ResolveResponse EndResolve (IAsyncResult result)
+		{
+			var ir = Channel.EndResolve (result);
+			var metadata = ir.Body.ToEndpointDiscoveryMetadata ();
+			var sequence = ir.MessageSequence.ToDiscoveryMessageSequence ();
+			return new ResolveResponse (metadata, sequence);
+		}
 	}
 }

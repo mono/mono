@@ -39,7 +39,7 @@ namespace System.ServiceModel.Discovery.VersionCD1
 		[OperationContract (Name = "Probe", Action = MessageContractsCD1.ProbeAction, AsyncPattern = true, ReplyAction = MessageContractsCD1.ProbeMatchAction)]
 		IAsyncResult BeginFind (MessageContractsCD1.FindRequest message, AsyncCallback callback, object state);
 
-		void EndFind (IAsyncResult result);
+		MessageContractsCD1.FindResponse EndFind (IAsyncResult result);
 
 		[OperationContract (Name = "Resolve", Action = MessageContractsCD1.ResolveAction, AsyncPattern = true, ReplyAction = MessageContractsCD1.ResolveMatchAction)]
 		IAsyncResult BeginResolve (MessageContractsCD1.ResolveRequest message, AsyncCallback callback, object state);

@@ -131,18 +131,12 @@ namespace System.ServiceModel.Discovery
 
 		public void AnnounceOffline (EndpointDiscoveryMetadata discoveryMetadata)
 		{
-			using (var ocs = new OperationContextScope (InnerChannel)) {
-				OperationContext.Current.OutgoingMessageHeaders.MessageId = new UniqueId ();
-				EndAnnounceOffline (BeginAnnounceOffline (discoveryMetadata, null, null));
-			}
+			EndAnnounceOffline (BeginAnnounceOffline (discoveryMetadata, null, null));
 		}
 
 		public void AnnounceOnline (EndpointDiscoveryMetadata discoveryMetadata)
 		{
-			using (var ocs = new OperationContextScope (InnerChannel)) {
-				OperationContext.Current.OutgoingMessageHeaders.MessageId = new UniqueId ();
-				EndAnnounceOnline (BeginAnnounceOnline (discoveryMetadata, null, null));
-			}
+			EndAnnounceOnline (BeginAnnounceOnline (discoveryMetadata, null, null));
 		}
 
 		// async
@@ -155,7 +149,6 @@ namespace System.ServiceModel.Discovery
 		public void AnnounceOfflineAsync (EndpointDiscoveryMetadata discoveryMetadata, object userState)
 		{
 			AsyncCallback cb = delegate (IAsyncResult result) {
-				var st = (AnnouncementEventArgs) result.AsyncState;
 				try {
 					EndAnnounceOffline (result);
 				} catch (Exception ex) {
@@ -181,7 +174,6 @@ namespace System.ServiceModel.Discovery
 		public void AnnounceOnlineAsync (EndpointDiscoveryMetadata discoveryMetadata, object userState)
 		{
 			AsyncCallback cb = delegate (IAsyncResult result) {
-				var st = (AnnouncementEventArgs) result.AsyncState;
 				try {
 					EndAnnounceOnline (result);
 				} catch (Exception ex) {
@@ -203,12 +195,18 @@ namespace System.ServiceModel.Discovery
 
 		public IAsyncResult BeginAnnounceOffline (EndpointDiscoveryMetadata discoveryMetadata, AsyncCallback callback, object state)
 		{
-			return ((IAnnouncementCommon) client).BeginAnnounceOffline (discoveryMetadata, MessageSequenceGenerator.Next (), callback, state);
+			using (var ocs = new OperationContextScope (InnerChannel)) {
+				OperationContext.Current.OutgoingMessageHeaders.MessageId = new UniqueId ();
+				return ((IAnnouncementCommon) client).BeginAnnounceOffline (discoveryMetadata, MessageSequenceGenerator.Next (), callback, state);
+			}
 		}
 
 		public IAsyncResult BeginAnnounceOnline (EndpointDiscoveryMetadata discoveryMetadata, AsyncCallback callback, object state)
 		{
-			return ((IAnnouncementCommon) client).BeginAnnounceOnline (discoveryMetadata, MessageSequenceGenerator.Next (), callback, state);
+			using (var ocs = new OperationContextScope (InnerChannel)) {
+				OperationContext.Current.OutgoingMessageHeaders.MessageId = new UniqueId ();
+				return ((IAnnouncementCommon) client).BeginAnnounceOnline (discoveryMetadata, MessageSequenceGenerator.Next (), callback, state);
+			}
 		}
 
 		public void EndAnnounceOffline (IAsyncResult result)

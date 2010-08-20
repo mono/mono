@@ -79,7 +79,7 @@ namespace System.ServiceModel.Discovery.Version11
 		}
 
 		[CollectionDataContract (Name = "ProbeMatches", ItemName = "ProbeMatch", Namespace = NS)]
-		public class FindResponse11 : List<EndpointDiscoveryMetadata>
+		public class FindResponse11 : List<EndpointDiscoveryMetadata11>
 		{
 		}
 

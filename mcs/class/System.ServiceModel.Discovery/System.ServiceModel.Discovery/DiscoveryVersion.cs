@@ -50,6 +50,7 @@ namespace System.ServiceModel.Discovery
 				typeof (Version11.IAnnouncementContract11),
 				typeof (AnnouncementClient11),
 				typeof (IDiscoveryProxyContract11),
+				typeof (DiscoveryProxyClient11),
 				typeof (IDiscoveryTargetContract11));
 
 			april2005 = new DiscoveryVersion ("WSDiscoveryApril2005",
@@ -59,6 +60,7 @@ namespace System.ServiceModel.Discovery
 				typeof (IAnnouncementContractApril2005),
 				typeof (AnnouncementClientApril2005),
 				typeof (IDiscoveryProxyContractApril2005),
+				typeof (DiscoveryProxyClientApril2005),
 				typeof (IDiscoveryTargetContractApril2005));
 
 			cd1 = new DiscoveryVersion ("WSDiscoveryCD1",
@@ -68,6 +70,7 @@ namespace System.ServiceModel.Discovery
 				typeof (IAnnouncementContractCD1),
 				typeof (AnnouncementClientCD1),
 				typeof (IDiscoveryProxyContractCD1),
+				typeof (DiscoveryProxyClientCD1),
 				typeof (IDiscoveryTargetContractCD1));
 		}
 
@@ -101,7 +104,7 @@ namespace System.ServiceModel.Discovery
 			}
 		}
 
-		internal DiscoveryVersion (string name, string ns, string adhoc, MessageVersion version, Type announcementContractType, Type announcementClientType, Type discoveryProxyContractType, Type discoveryTargetContractType)
+		internal DiscoveryVersion (string name, string ns, string adhoc, MessageVersion version, Type announcementContractType, Type announcementClientType, Type discoveryProxyContractType, Type discoveryProxyClientType, Type discoveryTargetContractType)
 		{
 			this.Name = name;
 			this.Namespace = ns;
@@ -110,6 +113,7 @@ namespace System.ServiceModel.Discovery
 			AnnouncementContractType = announcementContractType;
 			AnnouncementClientType = announcementClientType;
 			DiscoveryProxyContractType = discoveryProxyContractType;
+			DiscoveryProxyClientType = discoveryProxyClientType;
 			DiscoveryTargetContractType = discoveryTargetContractType;
 		}
 

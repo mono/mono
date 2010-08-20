@@ -79,7 +79,7 @@ namespace System.ServiceModel.Discovery.VersionCD1
 		}
 
 		[CollectionDataContract (Name = "ProbeMatches", ItemName = "ProbeMatch", Namespace = NS)]
-		public class FindResponseCD1 : List<EndpointDiscoveryMetadata>
+		public class FindResponseCD1 : List<EndpointDiscoveryMetadataCD1>
 		{
 		}
 
