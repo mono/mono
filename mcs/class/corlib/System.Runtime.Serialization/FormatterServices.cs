@@ -176,7 +176,6 @@ namespace System.Runtime.Serialization
 			return obj;
 		}
 		
-#if NET_1_1
 
 		public static void CheckTypeSecurity (Type t, TypeFilterLevel securityLevel)
 		{
@@ -207,6 +206,5 @@ namespace System.Runtime.Serialization
 			
 			return GetUninitializedObject (type);
 		}
-#endif
 	}
 }
