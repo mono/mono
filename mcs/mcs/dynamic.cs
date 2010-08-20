@@ -197,16 +197,6 @@ namespace Mono.CSharp
 	//
 	class DynamicExpressionStatement : ExpressionStatement
 	{
-		class StaticDataClass : CompilerGeneratedClass
-		{
-			public StaticDataClass ()
-				: base (new RootDeclSpace (new NamespaceEntry (null, null, null)),
-					new MemberName (CompilerGeneratedClass.MakeName (null, "c", "DynamicSites", 0)),
-					Modifiers.INTERNAL | Modifiers.STATIC)
-			{
-			}
-		}
-
 		//
 		// Binder flag dynamic constant, the value is combination of
 		// flags known at resolve stage and flags known only at emit
@@ -234,10 +224,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		static StaticDataClass global_site_container;
-		static int field_counter;
-		static int container_counter;
-
 		readonly Arguments arguments;
 		protected IDynamicBinder binder;
 		protected Expression binder_expr;
@@ -258,24 +244,14 @@ namespace Mono.CSharp
 			}
 		}
 
-		static TypeContainer CreateSiteContainer ()
+		Field CreateSiteField (EmitContext ec, FullNamedExpression type)
 		{
-			if (global_site_container == null) {
-				global_site_container = new StaticDataClass ();
-				RootContext.ToplevelTypes.AddCompilerGeneratedClass (global_site_container);
-				global_site_container.CreateType ();
-				global_site_container.DefineType ();
-				global_site_container.Define ();
-			}
+			var tc = ec.CurrentTypeDefinition.Parent.PartialContainer;
+			TypeContainer site_container = tc.CreateDynamicSite ();
 
-			return global_site_container;
-		}
-
-		static Field CreateSiteField (FullNamedExpression type)
-		{
-			TypeContainer site_container = CreateSiteContainer ();
+			int index = site_container.Fields == null ? 0 : site_container.Fields.Count;
 			Field f = new Field (site_container, type, Modifiers.PUBLIC | Modifiers.STATIC,
-				new MemberName ("Site" +  field_counter++), null);
+				new MemberName ("Site" + index.ToString ("X"), loc), null);
 			f.Define ();
 
 			site_container.AddField (f);
@@ -346,8 +322,8 @@ namespace Mono.CSharp
 		protected void EmitCall (EmitContext ec, Expression binder, Arguments arguments, bool isStatement)
 		{
 			int dyn_args_count = arguments == null ? 0 : arguments.Count;
-			TypeExpr site_type = CreateSiteType (RootContext.ToplevelTypes.Compiler, arguments, dyn_args_count, isStatement);
-			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (site_type), loc);
+			TypeExpr site_type = CreateSiteType (ec, arguments, dyn_args_count, isStatement);
+			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (ec, site_type), loc);
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec);
 
@@ -393,7 +369,7 @@ namespace Mono.CSharp
 			return new MemberAccess (TypeManager.binder_type, name, loc);
 		}
 
-		TypeExpr CreateSiteType (CompilerContext ctx, Arguments arguments, int dyn_args_count, bool is_statement)
+		TypeExpr CreateSiteType (EmitContext ec, Arguments arguments, int dyn_args_count, bool is_statement)
 		{
 			int default_args = is_statement ? 1 : 2;
 
@@ -412,7 +388,7 @@ namespace Mono.CSharp
 			if (!has_ref_out_argument) {
 				string d_name = is_statement ? "Action" : "Func";
 
-				TypeSpec t = TypeManager.CoreLookupType (ctx, "System", d_name, dyn_args_count + default_args, MemberKind.Delegate, false);
+				TypeSpec t = TypeManager.CoreLookupType (ec.MemberContext.Compiler, "System", d_name, dyn_args_count + default_args, MemberKind.Delegate, false);
 				if (t != null) {
 					if (!is_statement)
 						targs [targs.Length - 1] = new TypeExpression (type, loc);
@@ -432,29 +408,25 @@ namespace Mono.CSharp
 				for (int i = 1; i < dyn_args_count + 1; ++i)
 					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
 
-				TypeContainer parent = CreateSiteContainer ();
-				Delegate d = new Delegate (parent.NamespaceEntry, parent, new TypeExpression (rt, loc),
+				TypeContainer site = ec.CurrentTypeDefinition.Parent.PartialContainer.CreateDynamicSite ();
+				int index = site.Types == null ? 0 : site.Types.Count;
+
+				Delegate d = new Delegate (site.NamespaceEntry, site, new TypeExpression (rt, loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
-					new MemberName ("Container" + container_counter++.ToString ("X")),
-					new ParametersCompiled (ctx, p), null);
+					new MemberName ("Container" + index.ToString ("X")),
+					new ParametersCompiled (null, p), null);
 
 				d.CreateType ();
 				d.DefineType ();
 				d.Define ();
 				d.Emit ();
 
-				parent.AddDelegate (d);
+				site.AddDelegate (d);
 				del_type = new TypeExpression (d.Definition, loc);
 			}
 
 			TypeExpr site_type = new GenericTypeExpr (TypeManager.generic_call_site_type, new TypeArguments (del_type), loc);
 			return site_type;
-		}
-
-		public static void Reset ()
-		{
-			global_site_container = null;
-			field_counter = container_counter = 0;
 		}
 	}
 

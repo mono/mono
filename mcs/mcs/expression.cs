@@ -1530,9 +1530,13 @@ namespace Mono.CSharp {
 			if (type.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (ec, loc);
 			} else if (expr.Type == InternalType.Dynamic) {
-				Arguments arg = new Arguments (1);
-				arg.Add (new Argument (expr));
-				return new DynamicConversion (type, CSharpBinderFlags.ConvertExplicit, arg, loc).Resolve (ec);
+				if (type != InternalType.Dynamic) {
+					Arguments arg = new Arguments (1);
+					arg.Add (new Argument (expr));
+					return new DynamicConversion (type, CSharpBinderFlags.ConvertExplicit, arg, loc).Resolve (ec);
+				}
+
+				return expr;
 			}
 
 			var res = Convert.ExplicitConversion (ec, expr, type, loc);
@@ -8154,7 +8158,10 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (dynamic || type == InternalType.Dynamic) {
+			//
+			// It has dynamic arguments
+			//
+			if (dynamic) {
 				Arguments args = new Arguments (arguments.Count + 1);
 				if (IsBase) {
 					rc.Report.Error (1972, loc,

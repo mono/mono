@@ -117,6 +117,15 @@ namespace Mono.CSharp {
 			#endregion
 		}
 
+		sealed class DynamicSiteClass : CompilerGeneratedClass
+		{
+			public DynamicSiteClass (DeclSpace parent)
+				: base (parent, new MemberName (CompilerGeneratedClass.MakeName (null, "c", "DynamicSite", 0)),
+					Modifiers.INTERNAL | Modifiers.STATIC)
+			{
+			}
+		}
+
 		[Flags]
 		enum CachedMethods
 		{
@@ -213,6 +222,8 @@ namespace Mono.CSharp {
 
 		protected TypeSpec spec;
 		TypeSpec current_type;
+
+		DynamicSiteClass dynamic_site_container;
 
 		List<TypeContainer> partial_parts;
 
@@ -1032,6 +1043,22 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		//
+		// Creates a nested container for all compiler generated dynamic stuff
+		//
+		public TypeContainer CreateDynamicSite ()
+		{
+			if (dynamic_site_container == null) {
+				dynamic_site_container = new DynamicSiteClass (this);
+				RootContext.ToplevelTypes.AddCompilerGeneratedClass (dynamic_site_container);
+				dynamic_site_container.CreateType ();
+				dynamic_site_container.DefineType ();
+				dynamic_site_container.Define ();
+			}
+
+			return dynamic_site_container;
 		}
 
 		//

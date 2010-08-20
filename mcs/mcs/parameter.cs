@@ -1048,15 +1048,17 @@ namespace Mono.CSharp {
 			}
 
 			for (int i = 0; i < count; i++){
-				string base_name = parameters [i].Name;
 				has_params |= (parameters [i].ModFlags & Parameter.Modifier.PARAMS) != 0;
+				if (ctx != null) {
+					string base_name = parameters[i].Name;
 
-				for (int j = i + 1; j < count; j++){
-					if (base_name != parameters [j].Name)
-						continue;
+					for (int j = i + 1; j < count; j++) {
+						if (base_name != parameters[j].Name)
+							continue;
 
-					ErrorDuplicateName (parameters[i], ctx.Report);
-					i = j;
+						ErrorDuplicateName (parameters[i], ctx.Report);
+						i = j;
+					}
 				}
 			}
 		}
