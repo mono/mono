@@ -121,7 +121,7 @@ namespace Mono.CSharp {
 		{
 			public DynamicSiteClass (DeclSpace parent)
 				: base (parent, new MemberName (CompilerGeneratedClass.MakeName (null, "c", "DynamicSite", 0)),
-					Modifiers.INTERNAL | Modifiers.STATIC)
+					Modifiers.PRIVATE | Modifiers.STATIC)
 			{
 			}
 		}

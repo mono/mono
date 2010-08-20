@@ -902,7 +902,7 @@
         <size>1</size>
       </method>
       <method name="Void ConvertImplicitTest()">
-        <size>1017</size>
+        <size>1331</size>
       </method>
       <method name="Int32 ConvertImplicitReturnTest()">
         <size>75</size>
@@ -1304,10 +1304,13 @@
         <size>862</size>
       </method>
       <method name="Int32 Main()">
-        <size>44</size>
+        <size>57</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Boolean ForEachTest_2()">
+        <size>300</size>
       </method>
     </type>
   </test>
@@ -1689,6 +1692,19 @@
     <type name="Tester+&lt;Unsafe_1&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()">
         <size>110</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-implicitarray-01.cs">
+    <type name="C">
+      <method name="Void Method()">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>104</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

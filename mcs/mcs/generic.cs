@@ -2328,17 +2328,13 @@ namespace Mono.CSharp {
 			Upper	= 2
 		}
 
-		class BoundInfo
+		class BoundInfo : IEquatable<BoundInfo>
 		{
 			public readonly TypeSpec Type;
 			public readonly BoundKind Kind;
 
 			public BoundInfo (TypeSpec type, BoundKind kind)
 			{
-				// Unify dynamic and object to simplify best candidate resolution
-				if (type == InternalType.Dynamic)
-					type = TypeManager.object_type;
-
 				this.Type = type;
 				this.Kind = kind;
 			}
@@ -2348,11 +2344,14 @@ namespace Mono.CSharp {
 				return Type.GetHashCode ();
 			}
 
-			public override bool Equals (object obj)
+			#region IEquatable<BoundInfo> Members
+
+			public bool Equals (BoundInfo other)
 			{
-				BoundInfo a = (BoundInfo) obj;
-				return Type == a.Type && Kind == a.Kind;
+				return Type == other.Type && Kind == other.Kind;
 			}
+
+			#endregion
 		}
 
 		readonly TypeSpec[] unfixed_types;
@@ -2643,8 +2642,19 @@ namespace Mono.CSharp {
 				if (cii != candidates_count)
 					continue;
 
-				if (best_candidate != null && best_candidate != bound.Type)
-					return false;
+				//
+				// We already have the best candidate, break if thet are different
+				//
+				// Dynamic is never ambiguous as we prefer dynamic over other best candidate types
+				//
+				if (best_candidate != null) {
+
+					if (best_candidate == InternalType.Dynamic)
+						continue;
+
+					if (bound.Type != InternalType.Dynamic && best_candidate != bound.Type)
+						return false;
+				}
 
 				best_candidate = bound.Type;
 			}

@@ -5455,8 +5455,13 @@ namespace Mono.CSharp {
 
 				VarExpr ve = var_type as VarExpr;
 				if (ve != null) {
-					// Infer implicitly typed local variable from foreach enumerable type
-					var_type = new TypeExpression (current_pe.Type, var_type.Location);
+					if (is_dynamic) {
+						// Source type is dynamic, set element type to dynamic too
+						var_type = new TypeExpression (InternalType.Dynamic, var_type.Location);
+					} else {
+						// Infer implicitly typed local variable from foreach enumerable type
+						var_type = new TypeExpression (current_pe.Type, var_type.Location);
+					}
 				}
 
 				var_type = var_type.ResolveAsTypeTerminal (ec, false);
