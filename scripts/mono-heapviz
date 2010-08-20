@@ -8,7 +8,7 @@
 from __future__ import print_function
 import sys, os
 import Image, ImageDraw
-from xml.sax import ContentHandler, saxutils, make_parser
+from xml.sax import ContentHandler, make_parser
 from xml.sax.handler import feature_namespaces
 from optparse import OptionParser
 
@@ -127,7 +127,7 @@ class LargeSectionHandler (SectionHandler):
     def header (self):
         return self.kind + ' section'
 
-class DocHandler (saxutils.DefaultHandler):
+class DocHandler (ContentHandler):
     def start (self):
         self.collection_index = 0
         self.index_file = open ('index.html', 'w')
