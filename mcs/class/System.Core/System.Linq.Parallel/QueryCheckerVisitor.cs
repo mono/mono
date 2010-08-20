@@ -40,7 +40,6 @@ namespace System.Linq.Parallel
 		ParallelExecutionMode? mode = null;
 		CancellationToken? token = null;
 		int? degreeOfParallelism = null;
-		bool useStrip;
 		CancellationToken implementerToken = CancellationToken.None;
 
 		int partitionCount;
@@ -55,7 +54,7 @@ namespace System.Linq.Parallel
 		public void Visit<T> (QueryBaseNode<T> node)
 		{
 			// Nothing to do atm. Later we can check if the node is a
-			// Take or a Skip and set accordingly useStrip
+			// Take or a Skip and set accordingly UseStrip
 		}
 
 		public void Visit<U, V> (QueryChildNode<U, V> node)
@@ -81,7 +80,7 @@ namespace System.Linq.Parallel
 		public void Visit<T, TParent> (QueryStreamNode<T, TParent> node)
 		{
 			if (node.IsIndexed)
-				useStrip = true;
+				UseStrip = true;
 
 			Visit<T, TParent> ((QueryChildNode<T, TParent>)node);
 		}
@@ -91,7 +90,7 @@ namespace System.Linq.Parallel
 			if (behindOrderGuard == null) {
 				if (node.EnsureOrder) {
 					behindOrderGuard = true;
-					//useStrip = true;
+					//UseStrip = true;
 				} else {
 					behindOrderGuard = false;
 				}
@@ -105,25 +104,37 @@ namespace System.Linq.Parallel
 			Visit<TResult, TFirst> ((QueryChildNode<TResult, TFirst>)node);
 		}
 
+		public void Visit<T> (QueryHeadWorkerNode<T> node)
+		{
+			// Wouldn't it be better with standard Linq?
+			if (node.Count.HasValue && node.Count < partitionCount)
+				ShouldBeSequential = true;
+
+			Visit<T, T> ((QueryStreamNode<T, T>)node);
+		}
 		#endregion
 
 		internal QueryOptions Options {
 			get {
 				return new QueryOptions (options, mode, token == null ? CancellationToken.None : token.Value,
-				                         useStrip, behindOrderGuard, partitionCount, implementerToken);
+				                         UseStrip, behindOrderGuard, partitionCount, implementerToken);
 			}
 		}
 
 		internal bool UseStrip {
-			get {
-				return useStrip;
-			}
+			get;
+			private set;
 		}
 
 		internal bool BehindOrderGuard {
 			get {
 				return behindOrderGuard.Value;
 			}
+		}
+
+		internal bool ShouldBeSequential {
+			get;
+			private set;
 		}
 
 		void MergeOptions (OptionsList list)

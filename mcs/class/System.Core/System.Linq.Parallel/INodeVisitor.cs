@@ -39,6 +39,7 @@ namespace System.Linq.Parallel
 		void Visit<T, TParent> (QueryStreamNode<T, TParent> node);
 		void Visit<T> (QueryOrderGuardNode<T> node);
 		void Visit<TFirst, TSecond, TResult> (QueryMuxNode<TFirst, TSecond, TResult> node);
+		void Visit<T> (QueryHeadWorkerNode<T> node);
 	}
 }
 #endif
