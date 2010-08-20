@@ -313,7 +313,7 @@ namespace MonoTests.System.Linq
 			AssertAreSame (result, data.AsParallel ().AsOrdered ().SkipWhile (i => i < 3));
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void TestTake ()
 		{
 			int [] data = {0, 1, 2, 3, 4, 5};
@@ -322,7 +322,7 @@ namespace MonoTests.System.Linq
 			AssertAreSame (result, data.AsParallel ().AsOrdered ().Take (3));
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void TestTakeWhile ()
 		{
 			int [] data = {0, 1, 2, 3, 4, 5};
@@ -527,20 +527,36 @@ namespace MonoTests.System.Linq
 			});
 		}
 		
-		[TestAttribute, Ignore]
+		[TestAttribute]
 		public void TakeTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
-				ParallelQuery<int> async = baseEnumerable.AsParallel().Take(2000);
-				IEnumerable<int> sync = baseEnumerable.Take(2000);
-				
-				AreEquivalent(sync, async, 1);
-				
-				async = baseEnumerable.AsParallel().Take(100);
-				sync = baseEnumerable.Take(100);
-			
-				AreEquivalent(sync, async, 2);
-			}, 20);
+					ParallelQuery<int> async = baseEnumerable.AsParallel().AsOrdered ().Take(2000);
+					IEnumerable<int> sync = baseEnumerable.Take(2000);
+
+					AreEquivalent(sync, async, 1);
+
+					async = baseEnumerable.AsParallel().AsOrdered ().Take(100);
+					sync = baseEnumerable.Take(100);
+
+					AreEquivalent(sync, async, 2);
+				}, 20);
+		}
+
+		[TestAttribute]
+		public void UnorderedTakeTestCase()
+		{
+			ParallelTestHelper.Repeat (() => {
+					ParallelQuery<int> async = baseEnumerable.AsParallel().Take(2000);
+					IEnumerable<int> sync = baseEnumerable.Take (2000);
+
+					Assert.AreEqual (sync.Count (), async.Count (), "#1");
+
+					async = baseEnumerable.AsParallel().Take(100);
+					sync = baseEnumerable.Take(100);
+
+					Assert.AreEqual (sync.Count (), async.Count (), "#2");
+				}, 20);
 		}
 		
 		[Test]

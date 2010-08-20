@@ -247,6 +247,7 @@ System.Linq.Parallel.QueryNodes/QuerySetNode.cs
 System.Linq.Parallel.QueryNodes/QueryReverseNode.cs
 System.Linq.Parallel.QueryNodes/SetInclusion.cs
 System.Linq.Parallel.QueryNodes/WrapHelper.cs
+System.Linq.Parallel.QueryNodes/QueryHeadWorkerNode.cs
 System.Linq.Parallel/INodeVisitor.cs
 System.Linq.Parallel/IVisitableNode.cs
 System.Linq.Parallel/QueryCheckerVisitor.cs

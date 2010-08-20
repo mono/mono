@@ -906,13 +906,12 @@ namespace System.Linq
 		#endregion
 
 		#region Take
-		// TODO : introduce some early break up here, use ImplementerToken
 		public static ParallelQuery<TSource> Take<TSource> (this ParallelQuery<TSource> source, int count)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return source.Where ((e, i) => i < count);
+			return new ParallelQuery<TSource> (new QueryHeadWorkerNode<TSource> (source.Node, count));
 		}
 
 		public static ParallelQuery<TSource> TakeWhile<TSource> (this ParallelQuery<TSource> source,
@@ -923,7 +922,7 @@ namespace System.Linq
 			if (predicate == null)
 				throw new ArgumentNullException ("predicate");
 
-			return source.Where ((e) => predicate (e));
+			return new ParallelQuery<TSource> (new QueryHeadWorkerNode<TSource> (source.Node, (e, _) => predicate (e), false));
 		}
 
 		public static ParallelQuery<TSource> TakeWhile<TSource> (this ParallelQuery<TSource> source,
@@ -934,7 +933,7 @@ namespace System.Linq
 			if (predicate == null)
 				throw new ArgumentNullException ("predicate");
 
-			return source.Where ((e, i) => predicate (e, i));
+			return new ParallelQuery<TSource> (new QueryHeadWorkerNode<TSource> (source.Node, predicate, true));
 		}
 		#endregion
 
