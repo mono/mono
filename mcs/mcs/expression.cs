@@ -7340,8 +7340,13 @@ namespace Mono.CSharp {
 				return retval;
 			}
 
+			MemberExpr me;
 			TypeSpec expr_type = expr.Type;
 			if (expr_type == InternalType.Dynamic) {
+				me = expr as MemberExpr;
+				if (me != null)
+					me.ResolveInstanceExpression (rc);
+
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
 				return new DynamicMemberBinder (Name, args, loc);
@@ -7411,9 +7416,7 @@ namespace Mono.CSharp {
 				errorMode = true;
 			}
 
-			MemberExpr me;
 			TypeExpr texpr = member_lookup as TypeExpr;
-
 			if (texpr != null) {
 				if (!(expr is TypeExpr)) {
 					me = expr as MemberExpr;
