@@ -23393,6 +23393,25 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-11.cs">
+    <type name="C">
+      <method name="Int32 TestA(Int32)">
+        <size>2</size>
+      </method>
+      <method name="T TestB[T](T, T)">
+        <size>2</size>
+      </method>
+      <method name="System.Object TestC(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>76</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()">
@@ -41186,6 +41205,16 @@
       </method>
     </type>
     <type name="FooAttribute">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-797.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>

@@ -245,9 +245,8 @@ namespace Mono.CSharp {
 
 		public override void DefineConstants ()
 		{
-			if (!Parameters.IsEmpty && Parameters[Parameters.Count - 1].HasDefaultValue) {
-				var rc = new ResolveContext (this);
-				Parameters.ResolveDefaultValues (rc);
+			if (!Parameters.IsEmpty) {
+				Parameters.ResolveDefaultValues (this);
 			}
 		}
 

@@ -265,6 +265,15 @@ namespace Mono.CSharp {
 		}
 
 #region Properties
+		public Expression DefaultValue {
+			get {
+				return default_expr;
+			}
+			set {
+				default_expr = value;
+			}
+		}
+
 		public FullNamedExpression TypeExpression  {
 			get {
 				return texpr;
@@ -388,8 +397,43 @@ namespace Mono.CSharp {
 
 		public void ResolveDefaultValue (ResolveContext rc)
 		{
-			if (default_expr != null)
+			//
+			// Default value was specified using an expression
+			//
+			if (default_expr != null) {
 				default_expr = ResolveDefaultExpression (rc);
+				return;
+			}
+
+			if (attributes == null)
+				return;
+			
+			var pa = attributes.Search (PredefinedAttributes.Get.OptionalParameter);
+			if (pa == null)
+				return;
+
+			//
+			// Default value was specified using an attribute
+			//
+			attributes.Attrs.Remove (pa);
+
+			TypeSpec expr_type = null;
+			pa = attributes.Search (PredefinedAttributes.Get.DefaultParameterValue);
+			if (pa != null) {
+				attributes.Attrs.Remove (pa);
+				default_expr = pa.GetParameterDefaultValue (out expr_type);
+			} else {
+				default_expr = EmptyExpression.MissingValue;
+			}
+
+			if (default_expr == null) {
+				if (expr_type == null)
+					expr_type = parameter_type;
+
+				default_expr = new DefaultValueExpression (new TypeExpression (expr_type, Location), Location);
+			}
+
+			default_expr = default_expr.Resolve (rc);
 		}
 
 		Expression ResolveDefaultExpression (ResolveContext rc)
@@ -588,11 +632,6 @@ namespace Mono.CSharp {
 			arguments.Add (new Argument (new StringConstant (Name, Location)));
 			return new SimpleAssign (ExpressionTreeVariableReference (),
 				Expression.CreateExpressionFactoryCall (ec, "Parameter", null, arguments, Location));
-		}
-
-		public Expression DefaultValue {
-			get { return default_expr; }
-			set { default_expr = value; }
 		}
 
 		public void Emit (EmitContext ec)
@@ -1211,10 +1250,19 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		public void ResolveDefaultValues (ResolveContext rc)
+		public void ResolveDefaultValues (MemberCore m)
 		{
-			for (int i = 0; i < FixedParameters.Length; ++i) {
-				this [i].ResolveDefaultValue (rc);
+			var count = parameters.Length;
+
+			//
+			// Try not to enter default values resolution if there are not any
+			//
+			if (parameters[count - 1].HasDefaultValue || (HasParams && count > 1 && parameters[count - 2].HasDefaultValue) ||
+				((Parameter) parameters[count - 1]).OptAttributes != null) {
+				var rc = new ResolveContext (m);
+				for (int i = 0; i < count; ++i) {
+					this [i].ResolveDefaultValue (rc);
+				}
 			}
 		}
 

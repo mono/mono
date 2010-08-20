@@ -1237,9 +1237,8 @@ namespace Mono.CSharp {
 			if (instance_constructors != null) {
 				foreach (MethodCore m in instance_constructors) {
 					var p = m.ParameterInfo;
-					if (!p.IsEmpty && p[p.Count - 1].HasDefaultValue) {
-						var rc = new ResolveContext (m);
-						p.ResolveDefaultValues (rc);
+					if (!p.IsEmpty) {
+						p.ResolveDefaultValues (m);
 					}
 				}
 			}
@@ -1247,20 +1246,15 @@ namespace Mono.CSharp {
 			if (methods != null) {
 				foreach (MethodCore m in methods) {
 					var p = m.ParameterInfo;
-					if (!p.IsEmpty && (p[p.Count - 1].HasDefaultValue || (p.HasParams && p.Count > 1 && p[p.Count - 2].HasDefaultValue))) {
-						var rc = new ResolveContext (m);
-						p.ResolveDefaultValues (rc);
+					if (!p.IsEmpty) {
+						p.ResolveDefaultValues (m);
 					}
 				}
 			}
 
 			if (indexers != null) {
 				foreach (Indexer i in indexers) {
-					var p = i.ParameterInfo;
-					if (p[p.Count - 1].HasDefaultValue) {
-					    var rc = new ResolveContext (i);
-						p.ResolveDefaultValues (rc);
-					}
+					i.ParameterInfo.ResolveDefaultValues (i);
 				}
 			}
 

@@ -3670,9 +3670,24 @@ namespace Mono.CSharp {
 					if (!pd.FixedParameters[i].HasDefaultValue)
 						throw new InternalErrorException ();
 
-					Expression e = pd.FixedParameters[i].DefaultValue as Constant;
-					if (e == null || e.Type.IsGenericOrParentIsGeneric)
-						e = new DefaultValueExpression (new TypeExpression (pd.Types[i], loc), loc).Resolve (ec);
+					//
+					// Get the default value expression, we can use the same expression
+					// if the type matches
+					//
+					Expression e = pd.FixedParameters[i].DefaultValue;
+					if (!(e is Constant) || e.Type.IsGenericOrParentIsGeneric) {
+						//
+						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
+						//
+						if (e == EmptyExpression.MissingValue && pd.Types[i] == TypeManager.object_type) {
+							e = new MemberAccess (new MemberAccess (new MemberAccess (
+								new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
+						} else {
+							e = new DefaultValueExpression (new TypeExpression (pd.Types[i], loc), loc);
+						}
+
+						e = e.Resolve (ec);
+					}
 
 					arguments[i] = new Argument (e, Argument.AType.Default);
 					continue;

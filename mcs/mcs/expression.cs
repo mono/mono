@@ -8298,6 +8298,7 @@ namespace Mono.CSharp {
 		public static readonly EmptyExpression UnaryAddress = new EmptyExpression ();
 		public static readonly EmptyExpression EventAddition = new EmptyExpression ();
 		public static readonly EmptyExpression EventSubtraction = new EmptyExpression ();
+		public static readonly EmptyExpression MissingValue = new EmptyExpression (InternalType.FakeInternalType);
 
 		static EmptyExpression temp = new EmptyExpression ();
 		public static EmptyExpression Grab ()
