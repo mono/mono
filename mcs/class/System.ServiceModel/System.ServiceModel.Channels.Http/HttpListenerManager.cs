@@ -90,7 +90,9 @@ namespace System.ServiceModel.Channels.Http
 			DateTime start = DateTime.Now;
 
 			context = null;
-			var ce = Entries.First (e => e.ChannelDispatcher == channel);
+			var ce = Entries.FirstOrDefault (e => e.ChannelDispatcher == channel);
+			if (ce == null)
+				return false;
 			lock (ce.RetrieverLock) {
 				var q = ce.ContextQueue;
 				if (q.Count == 0) {
