@@ -71,9 +71,16 @@ namespace System.ComponentModel.DataAnnotations
 
 		public RangeAttribute (Type type, string minimum, string maximum) : this ()
 		{
+#if !NET_4_0
+			if (type == null)
+				throw new ArgumentNullException ("type");
+#endif
 			OperandType = type;
 			Minimum = minimum;
 			Maximum = maximum;
+#if !NET_4_0
+			comparer = SetupComparer ();
+#endif
 		}
 
 		string GetDefaultErrorMessage ()
@@ -119,10 +126,10 @@ namespace System.ComponentModel.DataAnnotations
 			Type ot = OperandType;
 
 			object min = Minimum, max = Maximum;
-			
+#if NET_4_0
 			if (min == null || max == null)
 				throw new InvalidOperationException ("The minimum and maximum values must be set.");
-			
+#endif
 			if (min is int)
 				return new Func <object, bool> (CompareInt);
 
@@ -132,11 +139,15 @@ namespace System.ComponentModel.DataAnnotations
 			if (ot == null)
 				throw new InvalidOperationException ("The OperandType must be set when strings are used for minimum and maximum values.");
 			
+			if (!typeof(IComparable).IsAssignableFrom (ot)) {
+				string message = String.Format ("The type {0} must implement System.IComparable", ot.FullName);
+#if NET_4_0
+				throw new InvalidOperationException (message);
+#else
+				throw new ArgumentException ("object");
+#endif
+			}
 			
-			if (!typeof(IComparable).IsAssignableFrom (ot))
-				throw new InvalidOperationException (
-					String.Format ("The type {0} must implement System.IComparable", ot.FullName));
-
 			string smin = min as string, smax = max as string;
 			cvt = TypeDescriptor.GetConverter (ot);
 			Minimum = cvt.ConvertFromString (smin);
@@ -147,12 +158,8 @@ namespace System.ComponentModel.DataAnnotations
 
 		bool CompareInt (object value)
 		{
-			Console.WriteLine ("{0}.CompareInt ({1})", this, value);
 			int cv = Convert.ToInt32 (value);
 
-			Console.WriteLine ("\tcv == {0}", cv);
-			Console.WriteLine ("\tMinimumComparable.CompareTo ({0}) == {1}", cv, MinimumComparable.CompareTo (cv));
-			Console.WriteLine ("\tMaximumComparable.CompareTo ({0}) == {1}", cv, MaximumComparable.CompareTo (cv));
 			return MinimumComparable.CompareTo (cv) <= 0 && MaximumComparable.CompareTo (cv) >= 0;
 		}
 

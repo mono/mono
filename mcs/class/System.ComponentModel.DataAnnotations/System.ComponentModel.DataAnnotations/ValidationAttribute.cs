@@ -124,21 +124,7 @@ namespace System.ComponentModel.DataAnnotations
 		}
 #endif		
 		protected string ErrorMessageString {
-			get {
-#if NET_4_0
-				return GetStringFromResourceAccessor ();
-#else
-				if (errorMessageString == null) {
-					string errorMessage = ErrorMessage;
-					if (errorMessage != null)
-						return errorMessage;
-					if (errorMessageAccessor != null)
-						return errorMessageAccessor ();
-				}
-				
-				return errorMessageString;
-#endif
-			}
+			get { return GetStringFromResourceAccessor (); }
 		}
 #if NET_4_0
 		public virtual bool IsValid (object value)
@@ -187,9 +173,8 @@ namespace System.ComponentModel.DataAnnotations
 			
 			if (resourceType == null ^ resourceName == null)
 				throw new InvalidOperationException ("Both ErrorMessageResourceType and ErrorMessageResourceName must be set on this attribute.");
+
 			
-			if (errorMessageAccessor != null)
-				return errorMessageAccessor ();
 			
 			if (resourceType != null) {
 				PropertyInfo pi = resourceType.GetProperty (resourceName, BindingFlags.Public | BindingFlags.Static);
@@ -208,12 +193,16 @@ namespace System.ComponentModel.DataAnnotations
 				return pi.GetValue (null, null) as string;
 			}
 			
-			if (errorMessage == null)
+			if (errorMessage == null) {
+				if (errorMessageAccessor != null)
+					return errorMessageAccessor ();
+				
 				if (fallbackErrorMessage != null)
 					return fallbackErrorMessage;
 				else
 					return DEFAULT_ERROR_MESSAGE;
-
+			}
+			
 			return errorMessage;
 		}
 #if NET_4_0
