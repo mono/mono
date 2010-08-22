@@ -235,13 +235,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 		}
 		
-		public ObjectWriter (ISurrogateSelector surrogateSelector, StreamingContext context, FormatterAssemblyStyle assemblyFormat, FormatterTypeStyle typeFormat)
+		public ObjectWriter (BinaryFormatter formatter)
 		{
-			_surrogateSelector = surrogateSelector;
-			_context = context;
-			_assemblyFormat = assemblyFormat;
-			_typeFormat = typeFormat;
-			_manager = new SerializationObjectManager (context);
+			_surrogateSelector = formatter.SurrogateSelector;
+			_context = formatter.Context;
+			_assemblyFormat = formatter.AssemblyFormat;
+			_typeFormat = formatter.TypeFormat;
+			_manager = new SerializationObjectManager (formatter.Context);
 		}
 
 		public void WriteObjectGraph (BinaryWriter writer, object obj, Header[] headers)
