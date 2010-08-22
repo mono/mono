@@ -272,11 +272,24 @@ namespace System.Configuration {
 
 				try {
 					if (properties == null) {
-						LocalFileSettingsProvider local_provider = null;
+						SettingsProvider local_provider = null;
 
 						properties = new SettingsPropertyCollection ();
 
-						foreach (PropertyInfo prop in GetType ().GetProperties ()) { // only public properties
+						Type this_type = GetType();
+						SettingsProviderAttribute[] provider_attrs = (SettingsProviderAttribute[])this_type.GetCustomAttributes (typeof (SettingsProviderAttribute), false);;
+						if (provider_attrs != null && provider_attrs.Length != 0) {
+							Type provider_type = Type.GetType (provider_attrs[0].ProviderTypeName);
+							SettingsProvider provider = (SettingsProvider) Activator.CreateInstance (provider_type);
+							provider.Initialize (null, null);
+							if (provider != null && Providers [provider.Name] == null) {
+								Providers.Add (provider);
+								local_provider = provider;
+							}
+						}
+
+						PropertyInfo[] type_props = this_type.GetProperties ();
+						foreach (PropertyInfo prop in type_props) { // only public properties
 							SettingAttribute[] setting_attrs = (SettingAttribute[])prop.GetCustomAttributes (typeof (SettingAttribute), false);
 							if (setting_attrs == null || setting_attrs.Length == 0)
 								continue;
@@ -292,7 +305,7 @@ namespace System.Configuration {
 			}
 		}
 
-		void CreateSettingsProperty (PropertyInfo prop, SettingsPropertyCollection properties, ref LocalFileSettingsProvider local_provider)
+		void CreateSettingsProperty (PropertyInfo prop, SettingsPropertyCollection properties, ref SettingsProvider local_provider)
 		{
 			SettingsAttributeDictionary dict = new SettingsAttributeDictionary ();
 			SettingsProvider provider = null;
@@ -346,7 +359,7 @@ namespace System.Configuration {
 
 			if (provider == null) {
 				if (local_provider == null) {
-					local_provider = new LocalFileSettingsProvider ();
+					local_provider = new LocalFileSettingsProvider () as SettingsProvider;
 					local_provider.Initialize (null, null);
 				}
 				setting.Provider = local_provider;
