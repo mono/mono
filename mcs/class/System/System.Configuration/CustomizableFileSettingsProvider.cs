@@ -299,8 +299,10 @@ namespace System.Configuration
 #endif
 		}
 
-		// FIXME: it seems that something else is used
-		// here, to convert hash bytes to string.
+		// Note: Changed from base64() to hex output to avoid unexpected chars like '\' or '/' with filesystem meaning.
+		//       Otherwise eventually filenames, which are invalid on linux or windows, might be created.
+		// Signed-off-by:  Carsten Schlote <schlote@vahanus.net>
+		// TODO: Compare with .NET. It might be also, that their way isn't suitable for Unix OS derivates (slahes in output)
 		private static string GetEvidenceHash ()
 		{
 			Assembly assembly = Assembly.GetEntryAssembly ();
@@ -308,9 +310,11 @@ namespace System.Configuration
 				assembly = Assembly.GetCallingAssembly ();
 
 			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
-			byte [] hash = SHA1.Create ().ComputeHash (pkt != null ? pkt : Encoding.UTF8.GetBytes (assembly.EscapedCodeBase));
-
-			return Convert.ToBase64String (hash);
+			byte [] hash = SHA1.Create ().ComputeHash (pkt != null && pkt.Length >0 ? pkt : Encoding.UTF8.GetBytes (assembly.EscapedCodeBase));
+			System.Text.StringBuilder evidence_string = new System.Text.StringBuilder();
+			foreach (byte b in hash)
+				evidence_string.AppendFormat("{0:x2}",b);
+			return evidence_string.ToString ();
 		}
 
 		private static string GetProductVersion ()
