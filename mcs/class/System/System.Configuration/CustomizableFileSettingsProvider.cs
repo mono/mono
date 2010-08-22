@@ -282,13 +282,11 @@ namespace System.Configuration
 				assembly = Assembly.GetCallingAssembly ();
 
 #if !TARGET_JVM
-
 			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
 			return String.Format ("{0}_{1}_{2}",
 				AppDomain.CurrentDomain.FriendlyName,
-				pkt != null ? "StrongName" : "Url",
+				pkt != null && pkt.Length > 0 ? "StrongName" : "Url",
 				GetEvidenceHash());
-
 #else // AssemblyProductAttribute-based code
 			AssemblyProductAttribute [] attrs = (AssemblyProductAttribute[]) assembly.GetCustomAttributes (typeof (AssemblyProductAttribute), true);
 		
