@@ -30,12 +30,14 @@ namespace CorCompare
 				return 1;
 
 			AbiMode = false;
-			SetAbiMode ();
 
 			AssemblyCollection acoll = new AssemblyCollection ();
 
-			foreach (string fullName in args) {
-				acoll.Add (fullName);
+			foreach (string arg in args) {
+				if (arg == "--abi")
+					AbiMode = true;
+				else
+					acoll.Add (arg);
 			}
 
 			XmlDocument doc = new XmlDocument ();
@@ -47,12 +49,6 @@ namespace CorCompare
 			doc.InsertBefore (decl, doc.DocumentElement);
 			doc.WriteTo (writer);
 			return 0;
-		}
-
-		[System.Diagnostics.Conditional ("ABI")]
-		private static void SetAbiMode ()
-		{
-			AbiMode = true;
 		}
 
 		internal static bool AbiMode { get; private set; }

@@ -82,7 +82,6 @@ scripts_4_0 = \
 	mconfig$(SCRIPT_SUFFIX)			\
 	mod$(SCRIPT_SUFFIX)			\
 	monolinker$(SCRIPT_SUFFIX)		\
-	mono-abi-info$(SCRIPT_SUFFIX) 		\
 	mono-api-info$(SCRIPT_SUFFIX) 		\
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	mozroots$(SCRIPT_SUFFIX)		\

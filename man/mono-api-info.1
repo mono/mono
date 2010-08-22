@@ -1,0 +1,36 @@
+.\" 
+.\" mono-api-info manual page.
+.\" Copyright (C) 2010 Linden Lab, Inc (http://www.lindenlab.com)
+.\" Author:
+.\"   Andrés G. Aragoneses <andres@lindenlab.com>
+.\"
+.TH Mono "mono-api-info"
+.SH NAME
+mono-api-info \- Expose IL structure of CLR assemblies as XML.
+.
+.SH SYNOPSIS
+.PP
+.B mono-api-info [--abi] assembly1.dll assembly2.exe ...
+.SH DESCRIPTION
+Expose the structure of your CLR assemblies by examining their IL and
+giving XML output.
+.PP
+By default this tool gives information about just the public API of the
+assemblies to scan. So it's good for comparing API compatibility between
+versions of libraries.
+.SH OPTIONS
+.TP
+.I "--abi"
+Show the ABI instead of the API, that is, non-static fields (even the
+non-public ones) that are not marked as [NonSerialized()].
+.SH AUTHOR
+Written by Andrés G. Aragoneses
+.SH COPYRIGHT
+Copyright (C) 2010 LindenLab. 
+Released under BSD license.
+.SH MAILING LISTS
+Visit http://lists.ximian.com/mailman/listinfo/mono-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com for details
+.SH SEE ALSO
+.BR mono(1)

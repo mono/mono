@@ -33,6 +33,7 @@ man_MANS = \
 	monodocs2html.1       \
 	monolinker.1          \
 	monop.1               \
+	mono-api-info.1       \
 	mono-service.1        \
 	mono-shlib-cop.1      \
 	mono-xmltool.1        \
