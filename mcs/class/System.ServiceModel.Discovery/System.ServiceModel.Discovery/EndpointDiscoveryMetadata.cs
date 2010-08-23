@@ -61,17 +61,20 @@ namespace System.ServiceModel.Discovery
 			var ret = new EndpointDiscoveryMetadata ();
 
 			reader.MoveToContent ();
-			if (!reader.IsStartElement ("ProbeMatchType", version.Namespace) || reader.IsEmptyElement)
-				throw new XmlException (String.Format ("Non-empty ProbeMatchType element is expected. Got {2} {0} in {1} namespace instead.", reader.LocalName, reader.NamespaceURI, reader.IsEmptyElement ? "empty" : "non-empty"));
-			reader.ReadStartElement ("ProbeType", version.Namespace);
+			if (reader.IsStartElement ("ProbeMatchType", version.Namespace) || reader.IsEmptyElement) {
+				reader.ReadStartElement ("ProbeType", version.Namespace);
 
-			// standard members
-			reader.MoveToContent ();
-			ret.Address = EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, reader);
+				// standard members
+				reader.MoveToContent ();
+				ret.Address = EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, reader);
 
-			reader.MoveToContent ();
-			bool isEmpty = reader.IsEmptyElement;
-			ret.ContractTypeNames = new Collection<XmlQualifiedName> ((XmlQualifiedName []) reader.ReadElementContentAs (typeof (XmlQualifiedName []), null, "Types", version.Namespace));
+				reader.MoveToContent ();
+				bool isEmpty = reader.IsEmptyElement;
+				ret.ContractTypeNames = new Collection<XmlQualifiedName> ((XmlQualifiedName []) reader.ReadElementContentAs (typeof (XmlQualifiedName []), null, "Types", version.Namespace));
+
+				reader.MoveToContent ();
+				reader.ReadEndElement ();
+			}
 
 			reader.MoveToContent ();
 			if (reader.IsStartElement ("Scopes", version.Namespace))
