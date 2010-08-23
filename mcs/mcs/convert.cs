@@ -1756,6 +1756,46 @@ namespace Mono.CSharp {
 			if (source_type == TypeManager.delegate_type && TypeManager.IsDelegateType (target_type))
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
+			//
+			// From variant generic delegate to same variant generic delegate type
+			//
+			if (source_type.IsDelegate && target_type.IsDelegate && source_type.MemberDefinition == target_type.MemberDefinition) {
+				var tparams = source_type.MemberDefinition.TypeParameters;
+				var targs_src = source_type.TypeArguments;
+				var targs_dst = target_type.TypeArguments;
+				int i;
+				for (i = 0; i < tparams.Length; ++i) {
+					//
+					// If TP is invariant, types have to be identical
+					//
+					if (TypeSpecComparer.IsEqual (targs_src[i], targs_dst[i]))
+						continue;
+
+					if (tparams[i].Variance == Variance.Covariant) {
+						//
+						//If TP is covariant, an implicit or explicit identity or reference conversion is required
+						//
+						if (ImplicitReferenceConversionExists (new EmptyExpression (targs_src[i]), targs_dst[i]))
+							continue;
+
+						if (ExplicitReferenceConversionExists (targs_src[i], targs_dst[i]))
+							continue;
+
+					} else if (tparams[i].Variance == Variance.Contravariant) {
+						//
+						//If TP is contravariant, both are either identical or reference types
+						//
+						if (TypeManager.IsReferenceType (targs_src[i]) && TypeManager.IsReferenceType (targs_dst[i]))
+							continue;
+					}
+
+					break;
+				}
+
+				if (i == tparams.Length)
+					return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
+			}
+
 			return null;
 		}
 
