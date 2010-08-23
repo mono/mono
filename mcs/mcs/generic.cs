@@ -2608,8 +2608,15 @@ namespace Mono.CSharp {
 					}
 
 					if (bound.Kind == BoundKind.Exact || cbound.Kind == BoundKind.Exact) {
-						if (cbound.Kind != BoundKind.Exact) {
+						if (cbound.Kind == BoundKind.Lower) {
 							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+								break;
+							}
+
+							continue;
+						}
+						if (cbound.Kind == BoundKind.Upper) {
+							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
 								break;
 							}
 
@@ -2629,13 +2636,25 @@ namespace Mono.CSharp {
 					}
 
 					if (bound.Kind == BoundKind.Lower) {
-						if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
-							break;
+						if (cbound.Kind == BoundKind.Lower) {
+							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+								break;
+							}
+						} else {
+							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+								break;
+							}
 						}
-					} else {
+
+						continue;
+					}
+
+					if (bound.Kind == BoundKind.Upper) {
 						if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
 							break;
 						}
+					} else {
+						throw new NotImplementedException ("variance conversion");
 					}
 				}
 
