@@ -6209,7 +6209,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			/* FIXME: check the signature matches */
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 
-			if (!cmethod)
+			if (!cmethod || mono_loader_get_last_error ())
 				goto load_error;
  
 			if (cfg->generic_sharing_context && mono_method_check_context_used (cmethod))
@@ -6323,7 +6323,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					cil_method = cmethod;
 				}
 
-				if (!cmethod)
+				if (!cmethod || mono_loader_get_last_error ())
 					goto load_error;
 				if (!dont_verify && !cfg->skip_visibility) {
 					MonoMethod *target_method = cil_method;
@@ -7630,7 +7630,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
-			if (!cmethod)
+			if (!cmethod || mono_loader_get_last_error ())
 				goto load_error;
 			fsig = mono_method_get_signature (cmethod, image, token);
 			if (!fsig)
@@ -9578,7 +9578,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (6);
 				n = read32 (ip + 2);
 				cmethod = mini_get_method (cfg, method, n, NULL, generic_context);
-				if (!cmethod)
+				if (!cmethod || mono_loader_get_last_error ())
 					goto load_error;
 				mono_class_init (cmethod->klass);
 
@@ -9651,7 +9651,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (6);
 				n = read32 (ip + 2);
 				cmethod = mini_get_method (cfg, method, n, NULL, generic_context);
-				if (!cmethod)
+				if (!cmethod || mono_loader_get_last_error ())
 					goto load_error;
 				mono_class_init (cmethod->klass);
  
