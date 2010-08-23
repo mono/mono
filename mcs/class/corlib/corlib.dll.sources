@@ -796,6 +796,7 @@ System.Runtime.InteropServices/TYPEDESC.cs
 System.Runtime.InteropServices/TYPEFLAGS.cs
 System.Runtime.InteropServices/TYPEKIND.cs
 System.Runtime.InteropServices/TYPELIBATTR.cs
+System.Runtime.InteropServices/TypeIdentifierAttribute.cs
 System.Runtime.InteropServices/TypeLibConverter.cs
 System.Runtime.InteropServices/TypeLibExporterFlags.cs
 System.Runtime.InteropServices/TypeLibFuncAttribute.cs
