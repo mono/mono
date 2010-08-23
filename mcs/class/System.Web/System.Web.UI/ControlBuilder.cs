@@ -79,9 +79,17 @@ namespace System.Web.UI {
 		CodeMemberMethod renderMethod;
 		int renderIndex;
 		bool isProperty;
+		bool isPropertyWritable;
 		ILocation location;
 		ArrayList otherTags;
-		
+
+		int localVariableCount = 0;
+#if NET_2_0
+		bool? isTemplate;
+#else
+		bool isTemplate;
+		bool isTemplateSet;
+#endif		
 		public ControlBuilder ()
 		{
 		}
@@ -170,6 +178,10 @@ namespace System.Web.UI {
 			get { return isProperty; }
 		}
 
+		internal bool IsPropertyWritable {
+			get { return isPropertyWritable; }
+		}
+
 		internal ILocation Location {
 			get { return location; }
 			set { location = new _Location (value); }
@@ -236,7 +248,26 @@ namespace System.Web.UI {
 				return typeof (INamingContainer).IsAssignableFrom (type);
 			}
 		}
+
+		internal bool IsTemplate {
+			get {
+#if NET_2_0
+				if (isTemplate == null)
+					isTemplate = (typeof (TemplateBuilder).IsAssignableFrom (GetType ()));
+				
+				return isTemplate.Value;
+#else
+				if (!isTemplateSet)
+					isTemplate = (typeof (TemplateBuilder).IsAssignableFrom (GetType ()));
+				return isTemplate;
+#endif
+			}
+		}
 		
+		internal bool PropertyBuilderShouldReturnValue {
+			get { return isProperty && isPropertyWritable && RenderMethod == null && !IsTemplate && !(this is CollectionBuilder) && !(this is RootBuilder); }
+		}
+
 		ControlBuilder MyNamingContainer {
 			get {
 				if (myNamingContainer == null) {
@@ -614,6 +645,7 @@ namespace System.Web.UI {
 				builder = CreateBuilderFromType (parser, parentBuilder, propType, prop.Name,
 								 null, atts, line, fileName);
 				builder.isProperty = true;
+				builder.isPropertyWritable = prop.CanWrite;
 				if (idx >= 0)
 					builder.originalTagName = propName;
 				return builder;
@@ -623,6 +655,7 @@ namespace System.Web.UI {
 			builder.fileName = fileName;
 			builder.line = line;
 			builder.isProperty = true;
+			builder.isPropertyWritable = prop.CanWrite;
 			if (idx >= 0)
 				builder.originalTagName = propName;
 			return builder;
@@ -694,6 +727,12 @@ namespace System.Web.UI {
 				return proposedID;
 
 			return "_bctrl_" + nextID++;
+		}
+
+		internal string GetNextLocalVariableName (string baseName)
+		{
+			localVariableCount++;
+			return baseName + localVariableCount.ToString ();
 		}
 
 		internal virtual ControlBuilder CreateSubBuilder (string tagid,
