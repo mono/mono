@@ -320,7 +320,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		bool uiaHasFocus = false;
 		internal bool UIAHasFocus {
-			get { return UIAHasFocus; }
+			get { return uiaHasFocus; }
 			set {
 				uiaHasFocus = value;
 				EventHandler eh = 
