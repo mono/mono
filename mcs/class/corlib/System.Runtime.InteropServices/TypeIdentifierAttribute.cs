@@ -32,7 +32,7 @@ namespace System.Runtime.InteropServices {
 	[AttributeUsageAttribute (AttributeTargets.Struct | AttributeTargets.Enum |
 		 AttributeTargets.Interface | AttributeTargets.Delegate,
 		Inherited = false)]
-	public class TypeIdentifierAttribute : Attribute {
+	public sealed class TypeIdentifierAttribute : Attribute {
 		string scope;
 		string identifier;
 
