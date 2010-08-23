@@ -3533,6 +3533,7 @@ namespace Mono.CSharp {
 			AParametersCollection pd = ((IParametersMember) candidate).Parameters;
 			int param_count = pd.Count;
 			int optional_count = 0;
+			int score;
 
 			if (arg_count != param_count) {
 				for (int i = 0; i < pd.Count; ++i) {
@@ -3562,22 +3563,19 @@ namespace Mono.CSharp {
 						return int.MaxValue - 10000 + args_gap;
 				}
 
-				// Initialize expanded form of a method with 1 params parameter
-				params_expanded_form = param_count == 1 && pd.HasParams;
-
 				// Resize to fit optional arguments
 				if (optional_count != 0) {
-					Arguments resized;
 					if (arguments == null) {
-						resized = new Arguments (optional_count);
+						arguments = new Arguments (optional_count);
 					} else {
-						resized = new Arguments (param_count);
+						// Have to create a new container, so the next run can do same
+						var resized = new Arguments (param_count);
 						resized.AddRange (arguments);
+						arguments = resized;
 					}
 
 					for (int i = arg_count; i < param_count; ++i)
-						resized.Add (null);
-					arguments = resized;
+						arguments.Add (null);
 				}
 			}
 
@@ -3598,19 +3596,31 @@ namespace Mono.CSharp {
 							int index = pd.GetParameterIndexByName (na.Name);
 
 							// Named parameter not found or already reordered
-							if (index <= i)
+							if (index == i || index < 0)
 								break;
 
-							// When using parameters which should not be available to the user
-							if (index >= param_count)
-								break;
+							Argument temp;
+							if (index >= param_count) {
+								// When using parameters which should not be available to the user
+								if ((pd.FixedParameters[index].ModFlags & Parameter.Modifier.PARAMS) == 0)
+									break;
+
+								arguments.Add (null);
+								++arg_count;
+								temp = null;
+							} else {
+								temp = arguments[index];
+
+								// The slot has been taken by positional argument
+								if (temp != null && !(temp is NamedArgument))
+									break;
+							}
 
 							if (!arg_moved) {
 								arguments.MarkReorderedArgument (na);
 								arg_moved = true;
 							}
 
-							Argument temp = arguments[index];
 							arguments[index] = arguments[i];
 							arguments[i] = temp;
 
@@ -3645,7 +3655,7 @@ namespace Mono.CSharp {
 						prev_recorder = ec.Report.SetPrinter (lambda_conv_msgs);
 					}
 
-					int score = TypeManager.InferTypeArguments (ec, arguments, ref ms);
+					score = TypeManager.InferTypeArguments (ec, arguments, ref ms);
 					lambda_conv_msgs.EndSession ();
 
 					if (score != 0)
@@ -3696,12 +3706,15 @@ namespace Mono.CSharp {
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.FixedParameters[i].ModFlags & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
 					pt = pd.Types[i];
-				} else {
+				} else if (!params_expanded_form) {
 					params_expanded_form = true;
+					pt = ((ElementTypeSpec) pt).Element;
+					i -= 2;
+					continue;
 				}
 
 				Parameter.Modifier a_mod = a.Modifier & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
-				int score = 1;
+				score = 1;
 				if (!params_expanded_form)
 					score = IsArgumentCompatible (ec, a_mod, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
 
@@ -3709,7 +3722,10 @@ namespace Mono.CSharp {
 				// It can be applicable in expanded form (when not doing exact match like for delegates)
 				//
 				if (score != 0 && (p_mod & Parameter.Modifier.PARAMS) != 0 && (restrictions & Restrictions.CovariantDelegate) == 0) {
-					score = IsArgumentCompatible (ec, a_mod, a, 0, TypeManager.GetElementType (pt));
+					if (!params_expanded_form)
+						pt = ((ElementTypeSpec) pt).Element;
+
+					score = IsArgumentCompatible (ec, a_mod, a, 0, pt);
 					if (score == 0)
 						params_expanded_form = true;
 				}
@@ -3721,7 +3737,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (arg_count != pd.Count)
+			//
+			// When params parameter has notargument, will be provided later if the method is the best candidate
+			//
+			if (arg_count + 1 == pd.Count && (pd.FixedParameters [arg_count].ModFlags & Parameter.Modifier.PARAMS) != 0)
 				params_expanded_form = true;
 
 			return 0;

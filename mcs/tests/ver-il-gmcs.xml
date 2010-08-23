@@ -23159,6 +23159,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-named-03.cs">
+    <type name="C">
+      <method name="Int32 Foo(Int32, Int32, Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-optional-01.cs">
     <type name="C">
       <method name="Void TestA(Int32)">
@@ -23407,6 +23420,24 @@
       <method name="Int32 Main()">
         <size>76</size>
       </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-optional-12.cs">
+    <type name="C">
+      <method name="Int32 M(System.String, Int32, System.Int32[])">
+        <size>4</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
