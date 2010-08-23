@@ -145,6 +145,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 				sb.Validate (host.Description, host);
 				// ... should "validate" not "apply dispatch behavior" do "add host extension" job? I doubt that.
 				var dse = host.Extensions.Find<DiscoveryServiceExtension> ();
+				Assert.IsNotNull (dse, "#2");
 				sb.ApplyDispatchBehavior (host.Description, host);
 
 				// The IEndpointBehavior from ServiceDiscoveryBehavior, when ApplyDispatchBehavior() is invoked, publishes an endpoint.
@@ -152,7 +153,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 
 				host.Open ();
 				try {
-					Assert.AreEqual (state, InspectionBehavior.State, "#2");
+					Assert.AreEqual (state, InspectionBehavior.State, "#3");
 				} finally {
 					host.Close ();
 				}

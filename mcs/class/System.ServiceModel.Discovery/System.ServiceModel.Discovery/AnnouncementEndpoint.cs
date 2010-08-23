@@ -48,7 +48,7 @@ namespace System.ServiceModel.Discovery
 		}
 
 		public AnnouncementEndpoint (Binding binding, EndpointAddress address)
-			: this (DiscoveryVersion.WSDiscoveryApril2005, binding, address)
+			: this (DiscoveryVersion.WSDiscovery11, binding, address)
 		{
 		}
 

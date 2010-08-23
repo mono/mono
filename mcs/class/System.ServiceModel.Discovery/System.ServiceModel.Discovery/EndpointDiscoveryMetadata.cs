@@ -62,7 +62,7 @@ namespace System.ServiceModel.Discovery
 
 			reader.MoveToContent ();
 			if (!reader.IsStartElement ("ProbeMatchType", version.Namespace) || reader.IsEmptyElement)
-				throw new XmlException ("Non-empty ProbeMatchType element is expected");
+				throw new XmlException (String.Format ("Non-empty ProbeMatchType element is expected. Got {2} {0} in {1} namespace instead.", reader.LocalName, reader.NamespaceURI, reader.IsEmptyElement ? "empty" : "non-empty"));
 			reader.ReadStartElement ("ProbeType", version.Namespace);
 
 			// standard members

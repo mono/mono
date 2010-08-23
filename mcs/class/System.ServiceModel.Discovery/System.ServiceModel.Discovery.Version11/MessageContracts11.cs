@@ -44,58 +44,57 @@ namespace System.ServiceModel.Discovery.Version11
 		public const string ResolveAction = NS + "/Resolve";
 		public const string ResolveMatchAction = NS + "/ResolveMatches";
 
-		[MessageContract (IsWrapped = false)]
+		[MessageContract (WrapperName = "Hello", WrapperNamespace = NS)]
 		public class OnlineAnnouncement
 		{
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequence11 MessageSequence { get; set; }
-			[MessageBodyMember (Name = "Hello", Namespace = NS)]
+			[MessageBodyMember]
 			public EndpointDiscoveryMetadata11 EndpointDiscoveryMetadata { get; set; }
 		}
 
-		[MessageContract (IsWrapped = false)]
+		[MessageContract (WrapperName = "Bye", WrapperNamespace = NS)]
 		public class OfflineAnnouncement
 		{
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequence11 MessageSequence { get; set; }
-			[MessageBodyMember (Name = "Bye", Namespace = NS)]
+			[MessageBodyMember]
 			public EndpointDiscoveryMetadata11 EndpointDiscoveryMetadata { get; set; }
 		}
 
-		[MessageContract (IsWrapped = false)]
+		[MessageContract (WrapperName = "Probe", WrapperNamespace = NS)]
 		public class FindRequest
 		{
-			[MessageBodyMember (Name = "Probe", Namespace = NS)]
+			[MessageBodyMember]
 			public FindCriteria11 Body { get; set; }
 		}
 
-		[MessageContract (IsWrapped = false)]
+		[MessageContract (WrapperName = "ProbeMatches", WrapperNamespace = NS)]
 		public class FindResponse
 		{
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequence11 MessageSequence { get; set; }
-			[MessageBodyMember (Name = "ProbeMatches", Namespace = NS)]
+			[MessageBodyMember]
 			public FindResponse11 Body { get; set; }
 		}
 
-		[CollectionDataContract (Name = "ProbeMatches", ItemName = "ProbeMatch", Namespace = NS)]
 		public class FindResponse11 : List<EndpointDiscoveryMetadata11>
 		{
 		}
 
-		[MessageContract (IsWrapped = false)]
+		[MessageContract (WrapperName = "Resolve", WrapperNamespace = NS)]
 		public class ResolveRequest
 		{
-			[MessageBodyMember (Name = "Resolve", Namespace = NS)]
+			[MessageBodyMember]
 			public ResolveCriteria11 Body { get; set; }
 		}
 
-		[MessageContract (IsWrapped = false)]
+		[MessageContract (WrapperName = "ResolveMatches", WrapperNamespace = NS)]
 		public class ResolveResponse
 		{
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequence11 MessageSequence { get; set; }
-			[MessageBodyMember (Name = "ResolveMatches", Namespace = NS)]
+			[MessageBodyMember]
 			public EndpointDiscoveryMetadata11 Body { get; set; }
 		}
 	}

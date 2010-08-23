@@ -36,13 +36,15 @@ namespace System.ServiceModel.Discovery
 	{
 		ServiceHostBase host;
 		AnnouncementClient client;
-		bool online;
+		bool handle_announce_online;
 
-		// FIXME: use online flag (to differentiate Hello and Bye dispatchers)
-		public DiscoveryChannelDispatcher (AnnouncementEndpoint endpoint, bool online)
+		public DiscoveryChannelDispatcher (AnnouncementEndpoint endpoint, bool handleAnnounceOnline)
 		{
+			// The argument endpoint is to indicate "destination".
+			// It is different from the destination indicated in 
+			// "EndpointDiscoveryMetadata" argument in announcement messages sent by the "client".
 			this.client = new AnnouncementClient (endpoint);
-			this.online = online;
+			this.handle_announce_online = handleAnnounceOnline;
 		}
 
 		public ICommunicationObject Communication {
@@ -59,12 +61,12 @@ namespace System.ServiceModel.Discovery
 
 		// might be different value
 		protected override TimeSpan DefaultOpenTimeout {
-			get { return TimeSpan.FromMinutes (1); }
+			get { return client.Endpoint.Binding.OpenTimeout; }
 		}
 
 		// might be different value
 		protected override TimeSpan DefaultCloseTimeout {
-			get { return TimeSpan.FromMinutes (1); }
+			get { return client.Endpoint.Binding.CloseTimeout; }
 		}
 
 		protected override void Attach (ServiceHostBase host)
@@ -81,7 +83,21 @@ namespace System.ServiceModel.Discovery
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
+			if (!handle_announce_online)
+				return; // Offline announcement is done by another DiscoveryChannelDispatcher
+
+			DateTime start = DateTime.Now;
 			Communication.Open (timeout);
+
+			// and call AnnouncementOnline().
+			var dx = host.Extensions.Find<DiscoveryServiceExtension> ();
+			// Published endpoints are added by DicoveryEndpointPublisherBehavior, which is added to each ServiceEndpoint in the primary (non-announcement) service.
+			if (dx != null) {
+				foreach (var edm in dx.PublishedEndpoints) {
+					client.InnerChannel.OperationTimeout = timeout - (DateTime.Now - start);
+					client.AnnounceOnline (edm);
+				}
+			}
 		}
 
 		protected override IAsyncResult OnBeginOpen (TimeSpan timeout, AsyncCallback callback, object state)
@@ -96,7 +112,22 @@ namespace System.ServiceModel.Discovery
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			Communication.Close (timeout);
+			if (handle_announce_online)
+				return; // Offline announcement is done by another DiscoveryChannelDispatcher
+
+			DateTime start = DateTime.Now;
+			// and call AnnouncementOnline().
+			var dx = host.Extensions.Find<DiscoveryServiceExtension> ();
+			// Published endpoints are added by DicoveryEndpointPublisherBehavior, which is added to each ServiceEndpoint in the primary (non-announcement) service.
+			if (dx != null) {
+				foreach (var edm in dx.PublishedEndpoints) {
+					client.InnerChannel.OperationTimeout = timeout - (DateTime.Now - start);
+					client.AnnounceOffline (edm);
+				}
+			}
+
+			// Then close the client.
+			Communication.Close (timeout - (DateTime.Now - start));
 		}
 
 		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
