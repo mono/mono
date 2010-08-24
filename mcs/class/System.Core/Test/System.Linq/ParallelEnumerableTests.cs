@@ -526,6 +526,22 @@ namespace MonoTests.System.Linq
 				Assert.AreEqual(489, baseEnumerable.ElementAt(488), "#3");
 			});
 		}
+
+		[Test]
+		public void TestJoin ()
+		{
+			int num = 100;
+			Tuple<int, int>[] outer = Enumerable.Range (1, 50).Select ((i) => Tuple.Create (i, num - 2 * i)).ToArray ();
+			Tuple<int, int>[] inner = Enumerable.Range (1, 50).Reverse ().Select ((i) => Tuple.Create (i, 2 * i)).ToArray ();
+
+			IEnumerable<int> expected = outer.Join (inner, (e) => e.Item1, (e) => e.Item1, (e1, e2) => e1.Item2 + e2.Item2, EqualityComparer<int>.Default);
+
+			ParallelTestHelper.Repeat (() => {
+					ParallelQuery<int> actual = outer.AsParallel ().Join (inner.AsParallel (), (e) => e.Item1, (e) => e.Item1, (e1, e2) => e1.Item2 + e2.Item2, EqualityComparer<int>.Default);
+
+					AreEquivalent (expected, actual, 1);
+				});
+		}
 		
 		[TestAttribute]
 		public void TakeTestCase()
