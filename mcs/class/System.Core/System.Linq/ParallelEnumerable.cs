@@ -775,7 +775,7 @@ namespace System.Linq
 		                                                                          Func<TOuter, TInner, TResult> resultSelector,
 		                                                                          IEqualityComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			return new ParallelQuery<TResult> (new QueryJoinNode<TOuter, TInner, TKey, TResult> (outer.Node, inner.Node, outerKeySelector, innerKeySelector, resultSelector, comparer));
 		}
 		
 		[ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather "
