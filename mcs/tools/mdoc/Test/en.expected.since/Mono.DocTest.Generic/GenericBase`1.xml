@@ -105,7 +105,7 @@
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
         <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
       </Docs>
     </Member>

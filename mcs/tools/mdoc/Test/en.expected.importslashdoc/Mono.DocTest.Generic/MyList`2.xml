@@ -73,10 +73,11 @@
         <Parameter Name="arrayIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="arrayIndex">To be added.</param>
+        <param name="array">Where to copy elements to</param>
+        <param name="arrayIndex">Where to start copyingto</param>
         <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <c>M:Mono.DocTest.MyList`2.CopyTo(`0[],System.Int32)</c>.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Count">
