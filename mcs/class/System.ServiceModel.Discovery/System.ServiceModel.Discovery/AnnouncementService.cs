@@ -52,24 +52,30 @@ namespace System.ServiceModel.Discovery
 		public event EventHandler<AnnouncementEventArgs> OfflineAnnouncementReceived;
 		public event EventHandler<AnnouncementEventArgs> OnlineAnnouncementReceived;
 
+		Action<object,AnnouncementEventArgs> online, offline;
+
 		protected virtual IAsyncResult OnBeginOfflineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (offline == null)
+				offline = new Action<object,AnnouncementEventArgs> (OfflineAnnouncementReceived ?? delegate {});
+			return offline.BeginInvoke (this, new AnnouncementEventArgs (endpointDiscoveryMetadata, messageSequence), callback, state);
 		}
 
 		protected virtual IAsyncResult OnBeginOnlineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (online == null)
+				online = new Action<object,AnnouncementEventArgs> (OnlineAnnouncementReceived ?? delegate {});
+			return offline.BeginInvoke (this, new AnnouncementEventArgs (endpointDiscoveryMetadata, messageSequence), callback, state);
 		}
 
 		protected virtual void OnEndOfflineAnnouncement (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			offline.EndInvoke (result);
 		}
 
 		protected virtual void OnEndOnlineAnnouncement (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			online.EndInvoke (result);
 		}
 
 		// BeginOnlineAnnouncement
