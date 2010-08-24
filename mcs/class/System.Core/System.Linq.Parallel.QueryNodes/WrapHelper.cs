@@ -32,7 +32,7 @@ using System.Collections.Generic;
 
 namespace System.Linq.Parallel.QueryNodes
 {
-	internal class WrapHelper
+	internal static class WrapHelper
 	{
 		class EnumeratorWrapper<TEnum> : IEnumerable<TEnum>
 		{
@@ -54,7 +54,7 @@ namespace System.Linq.Parallel.QueryNodes
 			}
 		}
 
-		internal static IList<IEnumerable<TEnum>> Wrap<TEnum> (IList<IEnumerator<TEnum>> src)
+		internal static IList<IEnumerable<TEnum>> Wrap<TEnum> (this IList<IEnumerator<TEnum>> src)
 		{
 			return src.Select ((e) => (IEnumerable<TEnum>)new EnumeratorWrapper<TEnum> (e)).ToArray ();
 		}
