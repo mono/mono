@@ -69,6 +69,11 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.AreEqual (new UdpDiscoveryEndpoint ().MulticastAddress, die.ListenUri, "#7");
 			Assert.AreEqual (ListenUriMode.Explicit, die.ListenUriMode, "#8");
 			Assert.AreEqual (5, die.Behaviors.Count, "#9");
+
+			// default constructor
+			be = new DiscoveryClientBindingElement ();
+			Assert.IsNotNull (be.FindCriteria, "#11");
+			Assert.IsNotNull (be.DiscoveryEndpointProvider, "#12");
 		}
 
 		[Test]
@@ -84,6 +89,20 @@ namespace MonoTests.System.ServiceModel.Discovery
 			bc = new BindingContext (new CustomBinding (new HttpTransportBindingElement ()), new BindingParameterCollection ());
 			Assert.IsTrue (be.CanBuildChannelFactory<IRequestChannel> (bc), "#2");
 			Assert.IsFalse (be.CanBuildChannelFactory<IDuplexSessionChannel> (bc), "#3");
+		}
+
+		[Test]
+		public void GetProperty ()
+		{
+			var de = CreateDynamicEndpoint ();
+			// it is channel dependent - i.e. this binding element does not affect.
+			var be = new DiscoveryClientBindingElement ();
+			var bc = new BindingContext (new CustomBinding (new HttpTransportBindingElement ()), new BindingParameterCollection ());
+			// so, they are not part of GetProperty<T>() return values.
+			Assert.IsNull (be.GetProperty<FindCriteria> (bc), "#1");
+			Assert.IsNull (be.GetProperty<DiscoveryEndpointProvider> (bc), "#2");
+
+			Assert.IsNull (be.GetProperty<DiscoveryEndpoint> (bc), "#3");
 		}
 	}
 }

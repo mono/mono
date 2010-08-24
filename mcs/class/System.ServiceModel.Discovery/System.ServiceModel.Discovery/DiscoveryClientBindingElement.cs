@@ -15,6 +15,8 @@ namespace System.ServiceModel.Discovery
 
 		public DiscoveryClientBindingElement ()
 		{
+			DiscoveryEndpointProvider = DiscoveryEndpointProvider.CreateDefault ();
+			FindCriteria = new FindCriteria (); // empty
 		}
 
 		public DiscoveryClientBindingElement (DiscoveryEndpointProvider discoveryEndpointProvider, FindCriteria findCriteria)
@@ -58,7 +60,7 @@ namespace System.ServiceModel.Discovery
 
 		public override T GetProperty<T> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.GetInnerProperty<T> ();
 		}
 	}
 }

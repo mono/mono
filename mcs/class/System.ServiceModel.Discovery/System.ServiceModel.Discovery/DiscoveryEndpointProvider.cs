@@ -34,6 +34,11 @@ namespace System.ServiceModel.Discovery
 {
 	public abstract class DiscoveryEndpointProvider
 	{
+		internal static DiscoveryEndpointProvider CreateDefault ()
+		{
+			return new UdpDiscoveryEndpointProvider ();
+		}
+
 		public abstract DiscoveryEndpoint GetDiscoveryEndpoint ();
 	}
 

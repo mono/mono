@@ -25,6 +25,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -49,7 +51,38 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.AreEqual (1, fc.ContractTypeNames.Count, "#2-2");
 			Assert.AreEqual (0, fc.Scopes.Count, "#2-3");
 			Assert.AreEqual (0, fc.Extensions.Count, "#2-4");
-			Assert.IsNotNull (de.DiscoveryEndpointProvider, "#3");
+
+			var dep = de.DiscoveryEndpointProvider;
+			Assert.IsNotNull (dep, "#3");
+			var dise = dep.GetDiscoveryEndpoint ();
+			TestDiscoveryEndpoint (dise);
+
+			Assert.IsNotNull (de.Contract, "#11"); // for ITestService
+			Assert.AreEqual ("http://tempuri.org/", de.Contract.Namespace, "#11-2");
+			Assert.AreEqual ("ITestService", de.Contract.Name, "#11-3");
+			Assert.IsNotNull (de.Binding, "#12"); // Custom{DiscoveryClient|BasicHttpBinding-elements}
+			Assert.IsNotNull (de.Binding.CreateBindingElements ().FirstOrDefault (be => be is DiscoveryClientBindingElement), "#12-2");
+			Assert.IsNotNull (de.Binding.CreateBindingElements ().FirstOrDefault (be => be is HttpTransportBindingElement), "#12-3");
+			Assert.IsNotNull (de.Address, "#13");
+			Assert.AreEqual (DiscoveryClientBindingElement.DiscoveryEndpointAddress, de.Address, "#13-2");
+			Assert.AreEqual (DiscoveryClientBindingElement.DiscoveryEndpointAddress.Uri, de.ListenUri, "#14");
+			Assert.AreEqual (0, de.Behaviors.Count, "#15");
+		}
+
+		// copied from UdpDiscoveryEndpointTest.
+		public void TestDiscoveryEndpoint (DiscoveryEndpoint de)
+		{
+			Assert.AreEqual (DiscoveryVersion.WSDiscovery11, de.DiscoveryVersion, "#1");
+			Assert.AreEqual (ServiceDiscoveryMode.Adhoc, de.DiscoveryMode, "#2");
+			Assert.AreEqual (TimeSpan.FromMilliseconds (500), de.MaxResponseDelay, "#3");
+			var cd = de.Contract;
+			Assert.IsNotNull (cd, "#11");
+			Assert.IsNotNull (de.Binding, "#12");
+			TransportBindingElement tbe;
+			Assert.IsTrue (de.Binding.CreateBindingElements ().Any (be => (tbe = be as TransportBindingElement) != null && tbe.Scheme == "soap.udp"), "#12-2");
+			Assert.IsNotNull (de.Address, "#13");
+			Assert.AreEqual (DiscoveryVersion.WSDiscovery11.AdhocAddress, de.Address.Uri, "#13-2");
+			Assert.AreEqual (Socket.SupportsIPv4 ? UdpDiscoveryEndpoint.DefaultIPv4MulticastAddress : UdpDiscoveryEndpoint.DefaultIPv6MulticastAddress, de.ListenUri, "#14");
 		}
 	}
 }
