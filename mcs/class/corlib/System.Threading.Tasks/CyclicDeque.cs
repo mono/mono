@@ -31,7 +31,7 @@ using System.Threading;
 
 namespace System.Threading.Tasks
 {
-  internal enum PopResult	{
+	internal enum PopResult	{
 		Succeed,
 		Empty,
 		Abort
@@ -43,41 +43,10 @@ namespace System.Threading.Tasks
 		PopResult PopBottom (out T obj);
 		PopResult PopTop (out T obj);
 	}
-	
-	internal interface IValueReader
-	{
-		long Read (ref long value);
-	}
-	
+
 	internal class CyclicDeque<T> : IDequeOperations<T>
 	{
-		readonly IValueReader reader;
 		const int BaseSize = 11;
-		
-		class Reader32 : IValueReader
-		{
-			public long Read (ref long value)
-			{
-				return Interlocked.Read (ref value);
-			}
-		}
-		
-		class Reader64 : IValueReader
-		{
-			public long Read (ref long value)
-			{
-				return value;
-			}
-		}
-		
-		public CyclicDeque ()
-		{
-			// We do the distinction between 32bits and 64bits
-			if (IntPtr.Size == 4)
-				reader = new Reader32 ();
-			else
-				reader = new Reader64 ();
-		}
 		
 		long bottom;
 		long top;
@@ -86,12 +55,15 @@ namespace System.Threading.Tasks
 		
 		public void PushBottom (T obj)
 		{
-			long b = reader.Read (ref bottom);
+			/* Read is implemented as a simple load operation on 64bits
+			 * so no need to make the distinction ourselves
+			 */
+			long b = Interlocked.Read (ref bottom);
 			var a = array;
 			
 			// Take care of growing
 			if (b - upperBound >= a.Size - 1) {
-				upperBound = reader.Read (ref top);
+				upperBound = Interlocked.Read (ref top);
 				a = a.Grow (b, upperBound);
 				Interlocked.Exchange (ref array, a);
 			}
@@ -107,7 +79,7 @@ namespace System.Threading.Tasks
 			
 			long b = Interlocked.Decrement (ref bottom);
 			var a = array;
-			long t = reader.Read (ref top);
+			long t = Interlocked.Read (ref top);
 			long size = b - t;
 			
 			if (size < 0) {
@@ -131,8 +103,8 @@ namespace System.Threading.Tasks
 		{
 			obj = default (T);
 			
-			long t = reader.Read (ref top);
-			long b = reader.Read (ref bottom);
+			long t = Interlocked.Read (ref top);
+			long b = Interlocked.Read (ref bottom);
 			
 			if (b - t <= 0)
 				return PopResult.Empty;
