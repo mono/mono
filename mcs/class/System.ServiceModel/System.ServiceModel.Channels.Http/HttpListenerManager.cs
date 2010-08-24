@@ -134,7 +134,7 @@ namespace System.ServiceModel.Channels.Http
 
 			// Start here. It is shared between channel listeners
 			// that share the same listen Uri. So there is no other appropriate place.
-#if true
+#if USE_SEPARATE_LOOP // this cannot be enabled because it causes infinite loop when ChannelDispatcher is not involved.
 			loop = new Thread (new ThreadStart (delegate {
 				listener.Start ();
 				try {
@@ -147,6 +147,7 @@ namespace System.ServiceModel.Channels.Http
 			}));
 			loop.Start ();
 #else
+			listener.Start ();
 			listener.BeginGetContext (GetContextCompleted, null);
 #endif
 		}
@@ -160,7 +161,7 @@ namespace System.ServiceModel.Channels.Http
 			if (Entries.Count > 0)
 				return;
 
-#if true
+#if USE_SEPARATE_LOOP
 			loop.Abort ();
 #else
 			this.listener.Stop ();
