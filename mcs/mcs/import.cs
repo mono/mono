@@ -221,10 +221,6 @@ namespace Mono.CSharp
 		public static MethodSpec CreateMethod (MethodBase mb, TypeSpec declaringType)
 		{
 			Modifiers mod = ReadMethodModifiers (mb, declaringType);
-			//if (declaringType.IsInterface) {
-			//    mod = (mod & ~Modifiers.ABSTRACT) | Modifiers.VIRTUAL;
-			//}
-
 			TypeParameterSpec[] tparams;
 			ImportedMethodDefinition definition;
 
@@ -605,9 +601,13 @@ namespace Mono.CSharp
 			import_cache.Add (type, spec);
 
 			var constraints = type.GetGenericParameterConstraints ();
+			List<TypeSpec> tparams = null;
 			foreach (var ct in constraints) {
-				// TODO MemberCache: What to do ??
 				if (ct.IsGenericParameter) {
+					if (tparams == null)
+						tparams = new List<TypeSpec> ();
+
+					tparams.Add (CreateType (ct));
 					continue;
 				}
 
@@ -626,6 +626,9 @@ namespace Mono.CSharp
 
 			if (spec.BaseType == null)
 				spec.BaseType = TypeManager.object_type;
+
+			if (tparams != null)
+				spec.TypeArguments = tparams.ToArray ();
 
 			return spec;
 		}
