@@ -741,9 +741,24 @@ namespace Mono.CSharp {
 		{
 			var tp = type as TypeParameterSpec;
 			if (tp != null) {
+				int c = 0;
+				type = type.DeclaringType;
+				while (type != null && type.DeclaringType != null) {
+					type = type.DeclaringType;
+					c += type.MemberDefinition.TypeParametersCount;
+				}
 				var prefix = tp.IsMethodOwned ? "``" : "`";
-				return prefix + tp.DeclaredPosition;
+				return prefix + (c + tp.DeclaredPosition);
 			}
+
+			var pp = type as PointerContainer;
+			if (pp != null)
+				return GetSignatureForDoc (pp.Element) + "*";
+
+			ArrayContainer ap = type as ArrayContainer;
+			if (ap != null)
+				return GetSignatureForDoc (ap.Element) +
+					ArrayContainer.GetPostfixSignature (ap.Rank);
 
 			if (TypeManager.IsGenericType (type)) {
 				string g = type.MemberDefinition.Namespace;
