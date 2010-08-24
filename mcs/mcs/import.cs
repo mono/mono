@@ -484,6 +484,7 @@ namespace Mono.CSharp
 			} else if (type.IsClass || type.IsAbstract) {  				// SRE: System.Enum returns false for IsClass
 				if ((ma & TypeAttributes.Sealed) != 0 && type.IsSubclassOf (typeof (MulticastDelegate))) {
 					kind = MemberKind.Delegate;
+					mod |= Modifiers.SEALED;
 				} else {
 					kind = MemberKind.Class;
 
