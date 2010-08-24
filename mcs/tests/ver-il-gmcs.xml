@@ -23635,6 +23635,90 @@
       </method>
     </type>
   </test>
+  <test name="gtest-variance-14.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+D`1[T]">
+      <method name="Void Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+D`2[T,U]">
+      <method name="T Invoke(U)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(U, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="T EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-variance-15.cs">
+    <type name="C">
+      <method name="Void M[T](T ByRef, C+D`1[T])">
+        <size>13</size>
+      </method>
+      <method name="Void M2[T](T, C+D`1[T])">
+        <size>8</size>
+      </method>
+      <method name="Void MethodArg(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>53</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0(System.Object)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+D`1[T]">
+      <method name="Void Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-variance-2.cs">
     <type name="Foo">
       <method name="System.String Bar(System.Object)">
@@ -45734,7 +45818,7 @@
   <test name="test-anon-94.cs">
     <type name="Program">
       <method name="Int32 Main()">
-        <size>29</size>
+        <size>57</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -45759,6 +45843,20 @@
         <size>7</size>
       </method>
       <method name="Void &lt;Print&gt;__BaseCallProxy0()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+DerivedLibrary">
+      <method name="Void Print(Int32)">
+        <size>20</size>
+      </method>
+      <method name="Void &lt;Print&gt;__BaseCallProxy0(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;Print&gt;m__1()">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()">
         <size>7</size>
       </method>
     </type>

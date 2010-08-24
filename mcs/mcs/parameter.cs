@@ -1064,7 +1064,7 @@ namespace Mono.CSharp {
 			types = TypeSpec.EmptyTypes;
 		}
 
-		private ParametersCompiled (IParameterData [] parameters, TypeSpec [] types)
+		private ParametersCompiled (IParameterData[] parameters, TypeSpec[] types)
 		{
 			this.parameters = parameters;
 		    this.types = types;
@@ -1113,11 +1113,15 @@ namespace Mono.CSharp {
 			return new ParametersCompiled (new Parameter [] { p }, new TypeSpec [] { type });
 		}
 		
-		public static ParametersCompiled CreateFullyResolved (IParameterData[] parameters, TypeSpec[] types)
+		public static ParametersCompiled CreateFullyResolved (Parameter[] parameters, TypeSpec[] types)
 		{
 			return new ParametersCompiled (parameters, types);
 		}
 
+		//
+		// TODO: This does not fit here, it should go to different version of AParametersCollection
+		// as the underlying type is not Parameter and some methods will fail to cast
+		//
 		public static AParametersCollection CreateFullyResolved (TypeSpec[] types)
 		{
 			var pd = new ParameterData [types.Length];

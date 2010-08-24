@@ -2661,7 +2661,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < n; ++i) {
 				parameter_info [i] = new ToplevelParameterInfo (this, i);
 
-				Parameter p = parameters [i];
+				var p = parameters.FixedParameters [i];
 				if (p == null)
 					continue;
 
@@ -2727,7 +2727,7 @@ namespace Mono.CSharp {
 			int count = parameters.Count;
 			Arguments args = new Arguments (count);
 			for (int i = 0; i < count; ++i) {
-				var arg_expr = new ParameterReference (parameter_info[i], parameters[i].Location);
+				var arg_expr = new ParameterReference (parameter_info[i], parameter_info[i].Location);
 				args.Add (new Argument (arg_expr));
 			}
 

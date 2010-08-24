@@ -1080,7 +1080,17 @@ namespace Mono.CSharp {
 
 			if (proxy_method == null) {
 				string name = CompilerGeneratedClass.MakeName (method.Name, null, "BaseCallProxy", hoisted_base_call_proxies.Count);
-				var cloned_params = ParametersCompiled.CreateFullyResolved (method.Parameters.FixedParameters, method.Parameters.Types);
+				var base_parameters = method.Parameters.FixedParameters as Parameter[];
+				if (base_parameters == null) {
+					base_parameters = new Parameter[method.Parameters.Count];
+					for (int i = 0; i < base_parameters.Length; ++i) {
+						var base_param = method.Parameters.FixedParameters[i];
+						base_parameters[i] = new Parameter (new TypeExpression (method.Parameters.Types[i], Location),
+							base_param.Name, base_param.ModFlags, null, Location);
+					}
+				}
+
+				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, method.Parameters.Types);
 				if (method.Parameters.HasArglist) {
 					cloned_params.FixedParameters[0] = new Parameter (null, "__arglist", Parameter.Modifier.NONE, null, Location);
 					cloned_params.Types[0] = TypeManager.runtime_argument_handle_type;
