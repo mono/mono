@@ -1169,6 +1169,19 @@ namespace Mono.CSharp {
 			this.var = var;
 		}
 
+		public static TypeSpec GetMemberDeclaringType (TypeSpec type)
+		{
+			if (type is InflatedTypeSpec) {
+				if (type.DeclaringType == null)
+					return type.GetDefinition ();
+
+				var parent = GetMemberDeclaringType (type.DeclaringType);
+				type = MemberCache.GetMember<TypeSpec> (parent, type);
+			}
+
+			return type;
+		}
+
 		public TypeSpec Mutate (TypeSpec ts)
 		{
 			TypeSpec value;

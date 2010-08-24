@@ -13406,6 +13406,25 @@
       </method>
     </type>
   </test>
+  <test name="gtest-532.cs">
+    <type name="DictionaryServicesContainer">
+      <method name="Void Register[I,T]()">
+        <size>6</size>
+      </method>
+      <method name="Void Register[I](System.Object)">
+        <size>6</size>
+      </method>
+      <method name="I Resolve[I]()">
+        <size>6</size>
+      </method>
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -20408,6 +20427,55 @@
       </method>
       <method name="Void Dispose()">
         <size>8</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-iter-15.cs">
+    <type name="C`1[TFirst]">
+      <method name="IEnumerable`1 GetEnumerable[V](IEnumerable`1)">
+        <size>30</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C`1+VSlot`1[TFirst,T]">
+      <method name="Void .ctor(T)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>111</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C`1+&lt;GetEnumerable&gt;c__Iterator0`1[TFirst,V]">
+      <method name="V System.Collections.Generic.IEnumerator&lt;V&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;V&gt;.GetEnumerator()">
+        <size>40</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>181</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>62</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>

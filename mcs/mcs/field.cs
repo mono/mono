@@ -327,7 +327,7 @@ namespace Mono.CSharp
 			fs.state |= StateFlags.PendingMetaInflate;
 
 			// Gets back FieldInfo in case of metaInfo was inflated
-			fs.metaInfo = MemberCache.GetMember (DeclaringType.GetDefinition (), this).metaInfo;
+			fs.metaInfo = MemberCache.GetMember (TypeParameterMutator.GetMemberDeclaringType (DeclaringType), this).metaInfo;
 			return fs;
 		}
 	}

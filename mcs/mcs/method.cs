@@ -411,7 +411,7 @@ namespace Mono.CSharp {
 			var ms = (MethodSpec) MemberwiseClone ();
 			if (decl != DeclaringType) {
 				// Gets back MethodInfo in case of metaInfo was inflated
-				ms.metaInfo = MemberCache.GetMember (DeclaringType.GetDefinition (), this).metaInfo;
+				ms.metaInfo = MemberCache.GetMember (TypeParameterMutator.GetMemberDeclaringType (DeclaringType), this).metaInfo;
 
 				ms.declaringType = decl;
 				ms.state |= StateFlags.PendingMetaInflate;
