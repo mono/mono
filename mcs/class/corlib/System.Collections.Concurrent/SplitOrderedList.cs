@@ -44,43 +44,22 @@ namespace System.Collections.Concurrent
 
 		class Node 
 		{
-			bool marked;
-			uint key;
-			T data;
+			public readonly bool Marked;
+			public readonly uint Key;
+			public T Data;
 			
 			public Node Next;
 			
 			public Node (uint key, T data)
 				: this (false)
 			{
-				this.key = key;
-				this.data = data;
+				this.Key = key;
+				this.Data = data;
 			}
 			
 			protected Node (bool marked)
 			{
-				this.marked = marked;
-			}
-			
-			public bool Marked {
-				get {
-					return marked;
-				}
-			}
-			
-			public uint Key {
-				get {
-					return key;
-				}
-			}
-			
-			public T Data {
-				get {
-					return data;
-				}
-				set {
-					data = value;
-				}
+				this.Marked = marked;
 			}
 		}
 		
@@ -125,43 +104,43 @@ namespace System.Collections.Concurrent
 		public T InsertOrUpdate (uint key, Func<T> addGetter, Func<T, T> updateGetter)
 		{
 			Node current;
-			T data = addGetter ();
-			bool result = InsertInternal (key, data, out current);
+			bool result = InsertInternal (key, default (T), addGetter, out current);
 
 			if (result)
-				return data;
+				return current.Data;
 
+			// FIXME: this should have a CAS-like behavior
 			return current.Data = updateGetter (current.Data);
 		}
 		
 		public bool Insert (uint key, T data)
 		{
 			Node current;
-			return InsertInternal (key, data, out current);
+			return InsertInternal (key, data, null, out current);
 		}
 
-		public T InsertOrGet (uint key, T data)
+		public T InsertOrGet (uint key, T data, Func<T> dataCreator)
 		{
 			Node current;
-			if (!InsertInternal (key, data, out current))
-				return current.Data;
-
-			return data;
+			InsertInternal (key, data, dataCreator, out current);
+			return current.Data;
 		}
 
-		bool InsertInternal (uint key, T data, out Node current)
+		bool InsertInternal (uint key, T data, Func<T> dataCreator, out Node current)
 		{
 			Node node = new Node (ComputeRegularKey (key), data);
 			uint b = key % (uint)size;
 			
 			if (GetBucket (b) == null)
 				InitializeBucket (b);
-			if (!ListInsert (node, GetBucket (b), out current))
+			if (!ListInsert (node, GetBucket (b), out current, dataCreator))
 				return false;
 
 			int csize = size;
 			if (Interlocked.Increment (ref count) / csize > MaxLoad)
 				Interlocked.CompareExchange (ref size, 2 * csize, csize);
+
+			current = node;
 
 			return true;
 		}
@@ -238,7 +217,7 @@ namespace System.Collections.Concurrent
 				InitializeBucket ((uint)parent);
 
 			Node dummy = new Node (ComputeDummyKey (b), default (T));
-			if (!ListInsert (dummy, GetBucket (parent), out current))
+			if (!ListInsert (dummy, GetBucket (parent), out current, null))
 				dummy = current;
 
 			SetBucket (b, dummy);
@@ -385,7 +364,7 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 		
-		bool ListInsert (Node newNode, Node startPoint, out Node current)
+		bool ListInsert (Node newNode, Node startPoint, out Node current, Func<T> dataCreator)
 		{
 			uint key = newNode.Key;
 			Node rightNode = null, leftNode = null;
@@ -396,6 +375,8 @@ namespace System.Collections.Concurrent
 					return false;
 				
 				newNode.Next = rightNode;
+				if (dataCreator != null)
+					newNode.Data = dataCreator ();
 				if (Interlocked.CompareExchange (ref leftNode.Next, newNode, rightNode) == rightNode)
 					return true;
 			} while (true);

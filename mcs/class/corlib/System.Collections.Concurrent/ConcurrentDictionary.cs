@@ -151,12 +151,12 @@ namespace System.Collections.Concurrent
 
 		public TValue GetOrAdd (TKey key, Func<TKey, TValue> valueFactory)
 		{
-			return internalDictionary.InsertOrGet (Hash (key), Make (key, valueFactory (key))).Value;
+			return internalDictionary.InsertOrGet (Hash (key), Make (key, default(TValue)), () => Make (key, valueFactory (key))).Value;
 		}
 
 		public TValue GetOrAdd (TKey key, TValue value)
 		{
-			return GetOrAdd (key, (_) => value);
+			return internalDictionary.InsertOrGet (Hash (key), Make (key, value), null).Value;
 		}
 
 		public bool TryRemove (TKey key, out TValue value)
