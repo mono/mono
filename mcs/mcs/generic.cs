@@ -2657,6 +2657,8 @@ namespace Mono.CSharp {
 							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
 								break;
 							}
+
+							bound = cbound;
 						}
 
 						continue;
