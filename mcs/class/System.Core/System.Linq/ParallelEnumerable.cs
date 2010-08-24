@@ -599,7 +599,16 @@ namespace System.Linq
 		                                                                                         Func<TSource, TElement> elementSelector,
 		                                                                                         IEqualityComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (keySelector == null)
+				throw new ArgumentNullException ("keySelector");
+			if (elementSelector == null)
+				throw new ArgumentNullException ("elementSelector");
+			if (comparer == null)
+				throw new ArgumentNullException ("comparer");
+
+			return new ParallelQuery<IGrouping<TKey, TElement>> (new QueryGroupByNode<TSource, TKey, TElement> (source.Node, keySelector, elementSelector, comparer));
 		}
 		
 		public static ParallelQuery<TResult> GroupBy<TSource, TKey, TElement, TResult> (this ParallelQuery<TSource> source,

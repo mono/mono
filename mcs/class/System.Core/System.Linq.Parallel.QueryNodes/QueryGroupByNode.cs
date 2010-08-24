@@ -56,15 +56,32 @@ namespace System.Linq.Parallel.QueryNodes
 			
 			return src.GroupBy (keySelector, elementSelector, comparer);
 		}
-		
-		internal override IList<IEnumerable<KeyValuePair<long, IGrouping<TKey, TElement>>>> GetOrderedEnumerables (QueryOptions options)
+
+		internal override IList<IEnumerable<IGrouping<TKey, TElement>>> GetEnumerables (QueryOptions options)
 		{			
-			throw new System.NotImplementedException();
+			return ParallelPartitioner.CreateForChunks (GetGroupedElements ()).GetPartitions (options.PartitionCount).Wrap ();
 		}
 		
-		internal override IList<IEnumerable<IGrouping<TKey, TElement>>> GetEnumerables (QueryOptions options)
+		internal override IList<IEnumerable<KeyValuePair<long, IGrouping<TKey, TElement>>>> GetOrderedEnumerables (QueryOptions options)
 		{
-			throw new System.NotImplementedException();
+			return ParallelPartitioner.CreateForChunks (GetGroupedElements ()).GetOrderablePartitions (options.PartitionCount).Wrap ();
+		}
+
+		internal IEnumerable<IGrouping<TKey, TElement>> GetGroupedElements ()
+		{
+			return GetStore ().Select ((e) => new ConcurrentGrouping<TKey, TElement> (e.Key, e.Value));
+		}
+
+		internal ConcurrentDictionary<TKey, ConcurrentQueue<TElement>> GetStore ()
+		{
+			var store = new ConcurrentDictionary<TKey, ConcurrentQueue<TElement>> ();
+
+			ParallelExecuter.ProcessAndBlock (Parent, (e) => {
+					ConcurrentQueue<TElement> queue = store.GetOrAdd (keySelector (e), (_) => new ConcurrentQueue<TElement> ());
+					queue.Enqueue (elementSelector (e));
+				});
+
+			return store;
 		}
 	}
 }
