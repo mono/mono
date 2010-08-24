@@ -1655,9 +1655,9 @@ namespace Mono.CSharp {
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
-			// From object to any reference type or value type (unboxing)
+			// From object or dynamic to any reference type or value type (unboxing)
 			//
-			if (source_type == TypeManager.object_type)
+			if (source_type == TypeManager.object_type || source_type == InternalType.Dynamic)
 				return
 					source == null ? EmptyExpression.Null :
 					target_is_value_type ? new UnboxCast (source, target_type) :

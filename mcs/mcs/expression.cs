@@ -1342,6 +1342,12 @@ namespace Mono.CSharp {
 				if (TypeManager.IsGenericParameter (t))
 					return ResolveGenericParameter (ec, d, (TypeParameterSpec) t);
 
+				if (t == InternalType.Dynamic) {
+					ec.Report.Warning (1981, 3, loc,
+						"Using `{0}' to test compatibility with `{1}' is identical to testing compatibility with `object'",
+						OperatorName, t.GetSignatureForError ());
+				}
+
 				if (TypeManager.IsStruct (d)) {
 					if (Convert.ImplicitBoxingConversion (null, d, t) != null)
 						return CreateConstantResult (ec, true);

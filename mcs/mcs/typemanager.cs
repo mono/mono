@@ -370,7 +370,7 @@ namespace Mono.CSharp {
 		if (InternalType.Dynamic.GetMetaInfo () == null) {
 			InternalType.Dynamic.SetMetaInfo (object_type.GetMetaInfo ());
 
-			if (RootContext.StdLib)
+			if (object_type.MemberDefinition.IsImported)
 				InternalType.Dynamic.MemberCache = object_type.MemberCache;
 
 			InternalType.Null.SetMetaInfo (object_type.GetMetaInfo ());
