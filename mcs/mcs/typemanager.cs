@@ -369,7 +369,9 @@ namespace Mono.CSharp {
 
 		if (InternalType.Dynamic.GetMetaInfo () == null) {
 			InternalType.Dynamic.SetMetaInfo (object_type.GetMetaInfo ());
-			InternalType.Dynamic.MemberCache = object_type.MemberCache;
+
+			if (RootContext.StdLib)
+				InternalType.Dynamic.MemberCache = object_type.MemberCache;
 
 			InternalType.Null.SetMetaInfo (object_type.GetMetaInfo ());
 		}
