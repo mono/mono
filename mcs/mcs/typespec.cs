@@ -840,17 +840,17 @@ namespace Mono.CSharp
 	{
 		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
 		public static readonly InternalType Arglist = new InternalType ("__arglist");
-		public static readonly InternalType Dynamic = new InternalType ("dynamic", typeof (object));
+		public static readonly InternalType Dynamic = new InternalType ("dynamic", null);
 		public static readonly InternalType MethodGroup = new InternalType ("method group");
-		public static readonly InternalType Null = new InternalType ("null", typeof (object));
+		public static readonly InternalType Null = new InternalType ("null");
 		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
 
 		readonly string name;
 
-		InternalType (string name, Type metaInfo)
+		InternalType (string name, MemberCache cache)
 			: this (name)
 		{
-			info = metaInfo;
+			this.cache = cache;
 		}
 
 		InternalType (string name)
