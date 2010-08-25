@@ -92,6 +92,53 @@ namespace MonoTests.System.ServiceModel.Discovery
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void BuildChannelFactory_OnlyTransport ()
+		{
+			var be = new DiscoveryClientBindingElement ();
+			var bc = new BindingContext (new CustomBinding (new HttpTransportBindingElement ()), new BindingParameterCollection ());
+			be.BuildChannelFactory<IRequestChannel> (bc);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BuildChannelFactory_CreateNonDynamicUriChannel ()
+		{
+			var be = new DiscoveryClientBindingElement ();
+			var bc = new BindingContext (new CustomBinding (be, new HttpTransportBindingElement ()), new BindingParameterCollection ());
+			var cf = be.BuildChannelFactory<IRequestChannel> (bc);
+			cf.Open ();
+			var uri = new Uri ("http://localhost:37564");
+			cf.CreateChannel (new EndpointAddress (uri));
+		}
+
+		[Test]
+		public void BuildChannelFactory ()
+		{
+			var be = new DiscoveryClientBindingElement ();
+			var bc = new BindingContext (new CustomBinding (be, new HttpTransportBindingElement ()), new BindingParameterCollection ());
+			var cf = be.BuildChannelFactory<IRequestChannel> (bc);
+			cf.Open ();
+			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
+			Assert.AreEqual (DiscoveryClientBindingElement.DiscoveryEndpointAddress, ch.RemoteAddress, "#1");
+		}
+
+		// This test takes a while, so I in face don't want to enable it ...
+		[Test]
+		[ExpectedException (typeof (EndpointNotFoundException))]
+		public void RequestChannelOpenFails ()
+		{
+			var de = CreateDynamicEndpoint ();
+			// it is channel dependent - i.e. this binding element does not affect.
+			var be = new DiscoveryClientBindingElement ();
+			var bc = new BindingContext (new CustomBinding (be, new HttpTransportBindingElement ()), new BindingParameterCollection ());
+			var cf = be.BuildChannelFactory<IRequestChannel> (bc);
+			cf.Open ();
+			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
+			ch.Open ();
+		}
+
+		[Test]
 		public void GetProperty ()
 		{
 			var de = CreateDynamicEndpoint ();

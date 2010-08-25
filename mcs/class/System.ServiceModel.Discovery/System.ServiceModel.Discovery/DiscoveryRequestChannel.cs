@@ -25,48 +25,63 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 
-namespace System.ServiceModel.Discovery.Version11
+namespace System.ServiceModel.Discovery
 {
-	internal class DiscoveryProxyClient11 : ClientBase<IDiscoveryProxyContract11>, DiscoveryClient.IDiscoveryCommon
+	internal class DiscoveryRequestChannel : RequestChannelBase
 	{
-		public DiscoveryProxyClient11 (ServiceEndpoint endpoint)
-			: base (endpoint)
+		public DiscoveryRequestChannel (DiscoveryChannelFactory<IRequestChannel> factory, EndpointAddress address, Uri via)
+			: base (factory, address, via)
 		{
-		}
-
-		public IAsyncResult BeginFind (FindCriteria criteria, AsyncCallback callback, object state)
-		{
-			var req = new MessageContracts11.FindRequest () { Body = new FindCriteria11 (criteria) };
-			return Channel.BeginFind (req, callback, state);
+			this.factory = factory;
 		}
 		
-		public FindResponse EndFind (IAsyncResult result)
+		DiscoveryChannelFactory<IRequestChannel> factory;
+		IRequestChannel inner;
+		DiscoveryClient client;
+
+		protected override void OnOpen (TimeSpan timeout)
 		{
-			var ir = Channel.EndFind (result);
-			var ret = new FindResponse ();
-			foreach (var fr in ir.Body)
-				ret.Endpoints.Add (fr.ToEndpointDiscoveryMetadata ());
-			return ret;
+			// FIXME: use timeout
+			client = new DiscoveryClient (factory.Source.DiscoveryEndpointProvider.GetDiscoveryEndpoint ());
+			var res = client.Find (factory.Source.FindCriteria);
+
+			foreach (var edm in res.Endpoints) {
+				try {
+					// FIXME: find scheme-matching ListenUri
+					inner = factory.InnerFactory.CreateChannel (edm.Address, edm.ListenUris.FirstOrDefault (u => true) ?? edm.Address.Uri);
+					return;
+				} catch (Exception) {
+				}
+			}
+			throw new EndpointNotFoundException (String.Format ("Could not find usable endpoint in {0} endpoints returned by the discovery service.", res.Endpoints.Count));
 		}
 
-		public IAsyncResult BeginResolve (ResolveCriteria criteria, AsyncCallback callback, object state)
+		protected override void OnClose (TimeSpan timeout)
 		{
-			var req = new MessageContracts11.ResolveRequest () { Body = new ResolveCriteria11 (criteria) };
-			return Channel.BeginResolve (req, callback, state);
+			if (inner != null) {
+				inner.Close (timeout);
+				inner = null;
+			}
 		}
 
-		public ResolveResponse EndResolve (IAsyncResult result)
+		protected override void OnAbort ()
 		{
-			var ir = Channel.EndResolve (result);
-			var metadata = ir.Body.ToEndpointDiscoveryMetadata ();
-			var sequence = ir.MessageSequence.ToDiscoveryMessageSequence ();
-			return new ResolveResponse (metadata, sequence);
+			if (inner != null) {
+				inner.Abort ();
+				inner = null;
+			}
+		}
+
+		public override Message Request (Message input, TimeSpan timeout)
+		{
+			ThrowIfDisposedOrNotOpen ();
+			return inner.Request (input, timeout);
 		}
 	}
 }

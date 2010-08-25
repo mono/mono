@@ -35,6 +35,11 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 {
 	internal class DiscoveryProxyClientApril2005 : ClientBase<IDiscoveryProxyContractApril2005>, DiscoveryClient.IDiscoveryCommon
 	{
+		public DiscoveryProxyClientApril2005 (ServiceEndpoint endpoint)
+			: base (endpoint)
+		{
+		}
+
 		public IAsyncResult BeginFind (FindCriteria criteria, AsyncCallback callback, object state)
 		{
 			var req = new MessageContractsApril2005.FindRequest () { Body = new FindCriteriaApril2005 (criteria) };

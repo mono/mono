@@ -2,6 +2,7 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
+System.ServiceModel.Channels/RequestChannelBase.cs
 System.ServiceModel.Discovery.Configuration/AnnouncementChannelEndpointElementCollection.cs
 System.ServiceModel.Discovery.Configuration/AnnouncementEndpointCollectionElement.cs
 System.ServiceModel.Discovery.Configuration/AnnouncementEndpointElement.cs
@@ -63,6 +64,7 @@ System.ServiceModel.Discovery/AnnouncementEndpoint.cs
 System.ServiceModel.Discovery/AnnouncementEventArgs.cs
 System.ServiceModel.Discovery/AnnouncementService.cs
 System.ServiceModel.Discovery/DiscoveryChannelDispatcher.cs
+System.ServiceModel.Discovery/DiscoveryChannelFactory.cs
 System.ServiceModel.Discovery/DiscoveryClient.cs
 System.ServiceModel.Discovery/DiscoveryClientBindingElement.cs
 System.ServiceModel.Discovery/DiscoveryEndpoint.cs
@@ -72,6 +74,7 @@ System.ServiceModel.Discovery/DiscoveryMessageSequence.cs
 System.ServiceModel.Discovery/DiscoveryMessageSequenceGenerator.cs
 System.ServiceModel.Discovery/DiscoveryOperationContextExtension.cs
 System.ServiceModel.Discovery/DiscoveryProxy.cs
+System.ServiceModel.Discovery/DiscoveryRequestChannel.cs
 System.ServiceModel.Discovery/DiscoveryService.cs
 System.ServiceModel.Discovery/DiscoveryServiceExtension.cs
 System.ServiceModel.Discovery/DiscoveryVersion.cs
