@@ -90,8 +90,13 @@ namespace System.ServiceModel.Description
 
 		public string Name {
 			get {
-				if (name == null)
-					name = Binding.Name + "_" + Contract.Name;
+				if (name == null) {
+					// do not create cache when either of Binding or Contract is null.
+					if (Binding == null)
+						return Contract != null ? Contract.Name : null;
+					else if (Contract != null)
+						name = Binding.Name + "_" + Contract.Name;
+				}
 				return name;
 			}
 			set { name = value; }
