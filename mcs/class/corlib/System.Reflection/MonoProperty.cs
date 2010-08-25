@@ -40,6 +40,7 @@ namespace System.Reflection {
 	
 	internal struct MonoPropertyInfo {
 		public Type parent;
+		public Type declaring_type;
 		public String name;
 		public MethodInfo get_method;
 		public MethodInfo set_method;
@@ -134,7 +135,7 @@ namespace System.Reflection {
 		public override Type DeclaringType {
 			get {
 				CachePropertyInfo (PInfo.DeclaringType);
-				return info.parent;
+				return info.declaring_type;
 			}
 		}
 		
