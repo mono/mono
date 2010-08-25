@@ -86,14 +86,13 @@ namespace System.Net {
 			set {
 				// note: this is not a field assignment but a copy (see unit tests)
 				// make sure everything we're supplied is valid...
-				string[] keys = value.AllKeys;
-				foreach (string header in keys) {
+				foreach (string header in value) {
 					// anything bad will throw
 					WebHeaderCollection.ValidateHeader (header);
 				}
 				// ... before making those values our own
 				Headers.Clear ();
-				foreach (string header in keys) {
+				foreach (string header in value) {
 					headers [header] = value [header];
 				}
 			}

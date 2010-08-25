@@ -4,8 +4,12 @@
 // Authors:
 //	Jb Evain  <jbevain@novell.com>
 //	Sebastien Pouliot  <sebastien@ximian.com>
+// 	Lawrence Pit (loz@cable.a2000.nl)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Miguel de Icaza (miguel@novell.com)
 //
-// (c) 2007, 2009 Novell, Inc. (http://www.novell.com)
+// Copyright 2003 Ximian, Inc. (http://www.ximian.com)
+// (c) 2007, 2009-2010 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -77,11 +81,18 @@ namespace System.Net {
 			set {
 				if (header == null)
 					throw new ArgumentNullException ("header");
-				if (header.Length == 0)
+				if (!IsHeaderName (header))
 					throw new ArgumentException ("header");
 
 				if (validate)
 					ValidateHeader (header);
+
+				// null value are ignored (see moon-unit)
+				if (value == null)
+					return;
+				if (!IsHeaderValue (value))
+					throw new ArgumentException ("value");
+
 				headers [header] = value;
 			}
 		}
@@ -221,12 +232,12 @@ namespace System.Net {
 			case "via":
 			case "warning":
 			case "allow":
-			case "content-length":
-			case "content-type":
+			case "content-length":		// accepted by WebClient, copied to WebRequest.ContentLength (not headers)
+			case "content-type":		// accepted by WebClient, copied to WebRequest.ContentType
 			case "content-location":
 			case "content-range":
 			case "last-modified":
-			case "accept":
+			case "accept":			// accepted by WebClient, copied to HttpWebRequest.Accept
 			case "accept-charset":
 			case "accept-encoding":
 			case "accept-language":
@@ -266,11 +277,68 @@ namespace System.Net {
 			case "vary":
 			case "www-authenticate":
 			case "x-flash-version":
-				throw new ArgumentException ("header");
+				string msg = String.Format ("'{0}' cannot be modified", header);
+				throw new ArgumentException (msg, "header");
 			default:
 				return;
 			}
 		}
+
+		internal static bool IsHeaderValue (string value)
+		{
+			// TEXT any 8 bit value except CTL's (0-31 and 127)
+			//      but including \r\n space and \t
+			//      after a newline at least one space or \t must follow
+			//      certain header fields allow comments ()
+				
+			int len = value.Length;
+			for (int i = 0; i < len; i++) {			
+				char c = value [i];
+				if (c == 127)
+					return false;
+				if (c < 0x20 && (c != '\r' && c != '\n' && c != '\t'))
+					return false;
+				if (c == '\r' && ++i < len) {
+					c = value [i];
+					if (c != '\n')
+						return false;
+				}
+				if (c == '\n' && ++i < len) {
+					c = value [i];
+					if (c != ' ' && c != '\t')
+						return false;
+				}
+			}
+			
+			return true;
+		}
+		
+		internal static bool IsHeaderName (string name)
+		{
+			if (name == null || name.Length == 0)
+				return false;
+
+			int len = name.Length;
+			for (int i = 0; i < len; i++) {			
+				char c = name [i];
+				if (c > 126 || !allowed_chars [(int) c])
+					return false;
+			}
+			
+			return true;
+		}
+
+		static bool [] allowed_chars = new bool [126] {
+			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, true, false, true, true, true, true, false, false, false, true,
+			true, false, true, true, false, true, true, true, true, true, true, true, true, true, true, false,
+			false, false, false, false, false, false, true, true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			false, true, false
+			};
 	}
 }
 

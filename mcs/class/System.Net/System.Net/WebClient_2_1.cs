@@ -33,6 +33,7 @@
 //
 
 using System.IO;
+using System.Security;
 using System.Text;
 using System.Threading;
 
@@ -133,7 +134,7 @@ namespace System.Net {
 		void CheckBusy ()
 		{
 			if (IsBusy)
-				throw new NotSupportedException ("WebClient does not support conccurent I/O operations.");
+				throw new NotSupportedException ("WebClient does not support concurrent I/O operations.");
 		}
 
 		void SetBusy ()
@@ -167,8 +168,26 @@ namespace System.Net {
 			callback_data = callbackData;
 			WebRequest request = GetWebRequest (uri);
 			request.Method = DetermineMethod (uri, method);
-			foreach (string header in Headers.AllKeys)
-				request.Headers.SetHeader (header, Headers [header]);
+			// copy headers to the request - some needs special treatments
+			foreach (string header in Headers) {
+				switch (header.ToLowerInvariant ()) {
+				case "content-length":
+					long cl = 0;
+					if (Int64.TryParse (Headers [header], out cl) && (cl >= 0))
+						request.ContentLength = cl;
+					break;
+				case "accept":
+				case "content-type":
+					// this skip the normal/user validation on headers
+					request.Headers.SetHeader (header, Headers [header]);
+					break;
+				default:
+					request.Headers [header] = Headers [header];
+					break;
+				}
+			}
+			// original headers are removed after calls
+			Headers.Clear ();
 			return request;
 		}
 
@@ -207,7 +226,7 @@ namespace System.Net {
 			is_busy = false;
 		}
 
-		class CallbackData {
+		internal class CallbackData {
 			public object user_token;
 			public SynchronizationContext sync_context;
 			public byte [] data;
@@ -266,8 +285,12 @@ namespace System.Net {
 				cancel = (web.Status == WebExceptionStatus.RequestCanceled);
 				ex = web;
 			}
+			catch (SecurityException se) {
+				// SecurityException inside a SecurityException (not a WebException) for SL compatibility
+				ex = new SecurityException (String.Empty, se);
+			}
 			catch (Exception e) {
-				ex = e;
+				ex = new WebException ("Could not complete operation.", e, WebExceptionStatus.UnknownError, null);
 			}
 			finally {
 				callback_data.sync_context.Post (delegate (object sender) {
@@ -316,8 +339,12 @@ namespace System.Net {
 				cancel = (web.Status == WebExceptionStatus.RequestCanceled);
 				ex = web;
 			}
+			catch (SecurityException se) {
+				// SecurityException inside a SecurityException (not a WebException) for SL compatibility
+				ex = new SecurityException (String.Empty, se);
+			}
 			catch (Exception e) {
-				ex = e;
+				ex = new WebException ("Could not complete operation.", e, WebExceptionStatus.UnknownError, null);
 			}
 			finally {
 				callback_data.sync_context.Post (delegate (object sender) {
@@ -376,7 +403,7 @@ namespace System.Net {
 				ex = web;
 			}
 			catch (Exception e) {
-				ex = e;
+				ex = new WebException ("Could not complete operation.", e, WebExceptionStatus.UnknownError, null);
 			}
 			finally {
 				callback_data.sync_context.Post (delegate (object sender) {
@@ -433,8 +460,9 @@ namespace System.Net {
 				SetBusy ();
 
 				try {
-					request = SetupRequest (address, method, new CallbackData (userToken, encoding.GetBytes (data)));
-					request.BeginGetRequestStream (new AsyncCallback (UploadStringRequestAsyncCallback), null);
+					CallbackData cbd = new CallbackData (userToken, encoding.GetBytes (data));
+					request = SetupRequest (address, method, cbd);
+					request.BeginGetRequestStream (new AsyncCallback (UploadStringRequestAsyncCallback), cbd);
 				}
 				catch (Exception e) {
 					WebException wex = new WebException ("Could not start operation.", e);
@@ -474,11 +502,12 @@ namespace System.Net {
 				cancel = (web.Status == WebExceptionStatus.RequestCanceled);
 				ex = web;
 			}
-			catch (InvalidOperationException ioe) {
-				ex = new WebException ("An exception occurred during a WebClient request", ioe);
+			catch (SecurityException se) {
+				// SecurityException inside a SecurityException (not a WebException) for SL compatibility
+				ex = new SecurityException (String.Empty, se);
 			}
 			catch (Exception e) {
-				ex = e;
+				ex = new WebException ("Could not complete operation.", e, WebExceptionStatus.UnknownError, null);
 			}
 			finally {
 				callback_data.sync_context.Post (delegate (object sender) {
