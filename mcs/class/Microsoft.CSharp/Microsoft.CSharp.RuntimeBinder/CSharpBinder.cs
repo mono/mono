@@ -65,19 +65,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 			restrictions = restrictions.Merge (CreateRestrictionsOnTarget (args));
 		}
 
-		public DynamicMetaObject Bind (DynamicContext ctx, Type callingType, DynamicMetaObject target)
-		{
-			if (target.Value == null) {
-				if (errorSuggestion != null)
-					return errorSuggestion;
-
-				var ex = CreateBinderException ("Cannot perform member binding on `null' value");
-				return new DynamicMetaObject (ex, restrictions);
-			}
-
-			return Bind (ctx, callingType);
-		}
-
 		public DynamicMetaObject Bind (DynamicContext ctx, Type callingType)
 		{
 			Expression res;

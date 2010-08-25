@@ -95,7 +95,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if ((flags & CSharpBinderFlags.InvokeSpecialName) != 0)
 				binder.ResolveOptions |= Compiler.ResolveContext.Options.InvokeSpecialName;
 
-			return binder.Bind (ctx, callingContext, target);
+			return binder.Bind (ctx, callingContext);
 		}
 	}
 }

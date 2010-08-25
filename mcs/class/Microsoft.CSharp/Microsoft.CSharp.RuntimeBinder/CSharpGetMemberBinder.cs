@@ -57,7 +57,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
 
-			return binder.Bind (ctx, callingContext, target);
+			return binder.Bind (ctx, callingContext);
 		}
 	}
 }

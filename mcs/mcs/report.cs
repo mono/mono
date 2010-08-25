@@ -30,6 +30,8 @@ namespace Mono.CSharp {
 
 		public static int DebugFlags = 0;
 
+		public const int RuntimeErrorId = 10000;
+
 		//
 		// Keeps track of the warnings that we are ignoring
 		//

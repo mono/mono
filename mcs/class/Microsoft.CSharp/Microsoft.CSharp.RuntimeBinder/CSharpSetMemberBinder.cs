@@ -61,7 +61,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			binder.AddRestrictions (target);
 			binder.AddRestrictions (value);
 
-			return binder.Bind (ctx, callingContext, target);
+			return binder.Bind (ctx, callingContext);
 		}
 	}
 }

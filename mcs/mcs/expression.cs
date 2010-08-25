@@ -7372,7 +7372,10 @@ namespace Mono.CSharp {
 				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
 
 			if ((expr_type.Kind & dot_kinds) == 0 || expr_type == TypeManager.void_type) {
-				Unary.Error_OperatorCannotBeApplied (rc, loc, ".", expr_type);
+				if (expr_type == InternalType.Null && rc.Compiler.IsRuntimeBinder)
+					rc.Report.Error (Report.RuntimeErrorId, loc, "Cannot perform member binding on `null' value");
+				else
+					Unary.Error_OperatorCannotBeApplied (rc, loc, ".", expr_type);
 				return null;
 			}
 

@@ -57,7 +57,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				this, new Compiler.BoolConstant (expr is Compiler.EventExpr, Compiler.Location.Null), null);
 
 			binder.AddRestrictions (target);
-			return binder.Bind (ctx, callingContext, target);
+			return binder.Bind (ctx, callingContext);
 		}
 
 		public override Type ReturnType {
