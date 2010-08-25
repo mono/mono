@@ -799,6 +799,11 @@ namespace Mono.CSharp
 
 			base.Emit ();
 		}
+
+		public override string GetDocCommentName (DeclSpace ds)
+		{
+			return String.Concat (DocCommentHeader, ds.Name, ".", GetFullName (ShortName).Replace ('.', '#'));
+		}
 	}
 
 	/// <summary>

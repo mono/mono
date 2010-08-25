@@ -720,8 +720,16 @@ namespace Mono.CSharp {
 			if (paramSpec.Length > 0)
 				paramSpec += ")";
 
-			string name = mc is Constructor ? "#ctor" : mc.Name;
-			if (mc.MemberName.IsGeneric)
+			string name = mc.Name;
+			if (mc is Constructor)
+				name = "#ctor";
+			else if (mc is InterfaceMemberBase) {
+				var imb = (InterfaceMemberBase) mc;
+				name = imb.GetFullName (imb.ShortName);
+			}
+			name = name.Replace ('.', '#');
+
+			if (mc.MemberName.TypeArguments != null && mc.MemberName.TypeArguments.Count > 0)
 				name += "``" + mc.MemberName.CountTypeArguments;
 
 			string suffix = String.Empty;
