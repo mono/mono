@@ -702,7 +702,8 @@ class Example {
         <member name="M:Mono.DocTest.Generic.MyList`1.System#Collections#IEnumerable#GetEnumerator">
             <summary>To be added.</summary>
             <returns>To be added.</returns>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`1.System#Collections#GetEnumerator</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`1.Test(T)">
             <param name="t">tko</param>
@@ -842,7 +843,8 @@ class Example {
         <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#IEnumerable#GetEnumerator">
             <summary>To be added.</summary>
             <returns>To be added.</returns>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.System#Collections#GetEnumerator</c>.</remarks>
         </member>
         <member name="P:Mono.DocTest.Generic.MyList`2.System#Collections#IEnumerator#Current">
             <summary>To be added.</summary>

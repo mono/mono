@@ -146,7 +146,8 @@
       <Docs>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <c>M:Mono.DocTest.MyList`1.System#Collections#GetEnumerator</c>.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Test">
