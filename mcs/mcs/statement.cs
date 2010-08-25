@@ -5462,6 +5462,9 @@ namespace Mono.CSharp {
 						// Infer implicitly typed local variable from foreach enumerable type
 						var_type = new TypeExpression (current_pe.Type, var_type.Location);
 					}
+				} else if (is_dynamic) {
+					// Explicit cast of dynamic collection elements has to be done at runtime
+					current_pe = EmptyCast.Create (current_pe, InternalType.Dynamic);
 				}
 
 				var_type = var_type.ResolveAsTypeTerminal (ec, false);

@@ -1535,14 +1535,6 @@ namespace Mono.CSharp {
 
 			if (type.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (ec, loc);
-			} else if (expr.Type == InternalType.Dynamic) {
-				if (type != InternalType.Dynamic) {
-					Arguments arg = new Arguments (1);
-					arg.Add (new Argument (expr));
-					return new DynamicConversion (type, CSharpBinderFlags.ConvertExplicit, arg, loc).Resolve (ec);
-				}
-
-				return expr;
 			}
 
 			var res = Convert.ExplicitConversion (ec, expr, type, loc);

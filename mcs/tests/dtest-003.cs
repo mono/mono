@@ -25,11 +25,10 @@ class AssertDynamicObject : DynamicMetaObject
 	DynamicMetaObject GetFakeMetaObject (object value)
 	{
 		Type t = value == null ? typeof (object) : value.GetType ();
-		var v = Expression.Variable (t);
-		Expression e = Expression.Block (new[] { v }, Expression.Default (t));
+		Expression<Func<object>> et = () => value;
 
 		Expression restr = Expression.Constant (true);
-		return new DynamicMetaObject (e, BindingRestrictions.GetExpressionRestriction (restr));
+		return new DynamicMetaObject (Expression.Convert (et.Body, t), BindingRestrictions.GetExpressionRestriction (restr));
 	}
 
 	public override DynamicMetaObject BindBinaryOperation (BinaryOperationBinder binder, DynamicMetaObject arg)
@@ -217,8 +216,7 @@ class Tester : DynamicObjectMock
 		if (values.Count != expected.Length)
 			throw new ApplicationException (name + ": Array length does not match " + values.Count + " != " + expected.Length);
 
-		for (int i = 0; i < expected.Length; i++)
-		{
+		for (int i = 0; i < expected.Length; i++) {
 			Assert (flags.GetValue (expected[i]), flags.GetValue (values[i]), "flags");
 		}
 	}
@@ -300,7 +298,7 @@ class Tester : DynamicObjectMock
 
 		d = checked (d + 3);
 	}
-	
+
 	void BinaryAddChecked_2 (dynamic d, DynamicObjectMock mock)
 	{
 		mock.BinaryOperation = (binder, arg) => {
@@ -317,7 +315,7 @@ class Tester : DynamicObjectMock
 		checked {
 			r = () => d + 3;
 		}
-		
+
 		r ();
 	}
 
@@ -729,10 +727,10 @@ class Tester : DynamicObjectMock
 		mock.ConvertOperation = (binder) => {
 			Assert (binder.Explicit, false, "Explicit");
 			Assert (binder.Type, typeof (int), "Type");
-			return 2;
+			return 1;
 		};
 
-		object[] o = new object [2];
+		object[] o = new object[2];
 		d = o[d];
 	}
 
@@ -745,7 +743,7 @@ class Tester : DynamicObjectMock
 			return (byte) 2;
 		};
 
-		object b = checked((byte) d);
+		object b = checked ((byte) d);
 	}
 
 	void Convert_4 (dynamic d, DynamicObjectMock mock)
@@ -759,6 +757,20 @@ class Tester : DynamicObjectMock
 		var g = new int[d];
 	}
 
+	void Convert_5 (dynamic d, DynamicObjectMock mock)
+	{
+		int counter = 0;
+		mock.ConvertOperation = (binder) => {
+			Assert (binder.Explicit, false, "Explicit");
+			Assert (binder.Type, typeof (System.Collections.IEnumerable), "Type");
+			return new object[] { 1 };
+		};
+
+		foreach (int v in d) {
+//			Console.WriteLine (v);
+		}
+	}
+
 	void GetIndex_1 (dynamic d, DynamicObjectMock mock)
 	{
 		mock.GetIndexOperation = (binder, args) => {
@@ -769,10 +781,10 @@ class Tester : DynamicObjectMock
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.Constant | CSharpArgumentInfoFlags.UseCompileTimeType, null) },
 				"ArgumentInfo");
 
-			Assert ((IList<object>)args, new object[] { 0 }, "args");
+			Assert ((IList<object>) args, new object[] { 0 }, "args");
 		};
 
-		var o = d [0];
+		var o = d[0];
 	}
 
 	void GetIndex_2 (dynamic d, DynamicObjectMock mock)
@@ -832,7 +844,7 @@ class Tester : DynamicObjectMock
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.Constant | CSharpArgumentInfoFlags.UseCompileTimeType, null),
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.Constant | CSharpArgumentInfoFlags.UseCompileTimeType, null)
-			}, 	"ArgumentInfo");
+			}, "ArgumentInfo");
 
 			Assert ((IList<object>) args, new object[] { "foo", null }, "args");
 		};
@@ -878,9 +890,9 @@ class Tester : DynamicObjectMock
 			Assert ((IList<object>) args, new object[] { typeof (bool), -1 }, "args");
 		};
 
-		d (typeof (bool), name:-1);
+		d (typeof (bool), name: -1);
 	}
-	
+
 	void Invoke_5 (dynamic d, DynamicObjectMock mock)
 	{
 		mock.InvokeOperation = (binder, args) => {
@@ -894,10 +906,10 @@ class Tester : DynamicObjectMock
 			Assert ((IList<object>) args, new object[] { typeof (bool), -1 }, "args");
 		};
 
-		Action<object> a = (i) => {};
+		Action<object> a = (i) => { };
 		a (d);
 	}
-	
+
 	void InvokeMember_1 (dynamic d, DynamicObjectMock mock)
 	{
 		mock.InvokeMemberOperation = (binder, args) => {
@@ -1090,7 +1102,7 @@ class Tester : DynamicObjectMock
 			AssertArgument (binder, new[] {
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType | CSharpArgumentInfoFlags.Constant, null)	// CSC bug?
-			}, 	"ArgumentInfo");
+			}, "ArgumentInfo");
 
 			Assert (value, d_const, "value");
 		};
@@ -1293,7 +1305,7 @@ class Tester : DynamicObjectMock
 			return true;
 		};
 
-		object g = d ? 1 :4;
+		object g = d ? 1 : 4;
 	}
 
 	void UnaryIsTrue_2 (dynamic d, DynamicObjectMock mock)
@@ -1319,7 +1331,7 @@ class Tester : DynamicObjectMock
 
 		object x = d || null;
 	}
-	
+
 #pragma warning restore 168, 169, 219
 
 	static bool RunTest (MethodInfo test)
@@ -1327,7 +1339,7 @@ class Tester : DynamicObjectMock
 		Console.Write ("Running test {0, -25}", test.Name);
 		try {
 			var d = new DynamicObjectMock ();
-			test.Invoke (new Tester (), new [] { d, d });
+			test.Invoke (new Tester (), new[] { d, d });
 			if (d.HitCounter < 1)
 				Assert (true, false, "HitCounter");
 
