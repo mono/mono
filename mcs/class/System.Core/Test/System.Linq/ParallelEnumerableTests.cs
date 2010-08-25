@@ -542,6 +542,31 @@ namespace MonoTests.System.Linq
 					AreEquivalent (expected, actual, 1);
 				});
 		}
+
+		[Test]
+		public void TestGroupBy ()
+		{
+			int num = 100;
+			Tuple<int, int>[] source = Enumerable.Range (0, num).Select ((i) => Tuple.Create (i / 10, i)).ToArray ();
+
+			ParallelTestHelper.Repeat (() => {
+					ParallelQuery<IGrouping<int, int>> actual = source.AsParallel ().GroupBy ((e) => e.Item1, (e) => e.Item2, EqualityComparer<int>.Default);
+
+					foreach (var group in actual) {
+						Assert.GreaterOrEqual (group.Key, 0);
+						Assert.Less (group.Key, num / 10);
+
+						int count = 0;
+						foreach (var e in group) {
+							count++;
+							Assert.GreaterOrEqual (e, group.Key * 10);
+							Assert.Less (e, (group.Key + 1) * 10);
+						}
+
+						Assert.AreEqual (10, count, "count");
+					}
+				});
+		}
 		
 		[TestAttribute]
 		public void TakeTestCase()
