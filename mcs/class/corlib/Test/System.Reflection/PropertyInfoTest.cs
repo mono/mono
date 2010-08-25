@@ -480,5 +480,29 @@ namespace MonoTests.System.Reflection
 			}
 #endif
 		}
+
+		[Test] // bug #633671
+		public void DeclaringTypeOfPropertyFromInheritedTypePointsToBase ()
+		{
+			var inherit1 = typeof(InheritsFromClassWithNullableDateTime);
+			var siblingProperty = inherit1.GetProperty("Property1");
+
+			Assert.AreEqual (typeof (ClassWithNullableDateTime), siblingProperty.DeclaringType, "#1");
+			Assert.AreEqual (typeof (InheritsFromClassWithNullableDateTime), siblingProperty.ReflectedType, "#2");
+
+			//The check is done twice since the bug is related to getting those 2 properties multiple times.
+			Assert.AreEqual (typeof (ClassWithNullableDateTime), siblingProperty.DeclaringType, "#3");
+			Assert.AreEqual (typeof (InheritsFromClassWithNullableDateTime), siblingProperty.ReflectedType, "#4");
+		}
+		
+	
+		public class ClassWithNullableDateTime
+		{
+			public DateTime? Property1 { get; set; }
+		}
+	
+		public class InheritsFromClassWithNullableDateTime : ClassWithNullableDateTime
+		{
+		}
 	}
 }
