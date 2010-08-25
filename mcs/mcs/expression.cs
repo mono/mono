@@ -7294,10 +7294,16 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			if (right_side != null)
+			if (right_side != null) {
+				if (e is TypeExpr) {
+					e.Error_UnexpectedKind (rc, ResolveFlags.VariableOrValue, loc);
+					return null;
+				}
+
 				e = e.ResolveLValue (rc, right_side);
-			else
+			} else {
 				e = e.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.Type);
+			}
 
 			return e;
 		}

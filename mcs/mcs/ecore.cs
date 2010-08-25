@@ -2365,7 +2365,7 @@ namespace Mono.CSharp {
 				errorMode = true;
 			}
 		}
-
+		
 		Expression SimpleNameResolve (ResolveContext ec, Expression right_side, bool intermediate)
 		{
 			Expression e = LookupNameExpression (ec, right_side == null, false);
@@ -2373,10 +2373,16 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			if (right_side != null)
+			if (right_side != null) {
+				if (e is TypeExpr) {
+				    e.Error_UnexpectedKind (ec, ResolveFlags.VariableOrValue, loc);
+				    return null;
+				}
+
 				e = e.ResolveLValue (ec, right_side);
-			else
+			} else {
 				e = e.Resolve (ec);
+			}
 
 			//if (ec.CurrentBlock == null || ec.CurrentBlock.CheckInvariantMeaningInBlock (Name, e, Location))
 			return e;
