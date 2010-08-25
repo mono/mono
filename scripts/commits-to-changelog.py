@@ -266,6 +266,8 @@ def main ():
         if entries == None:
             continue
         for (changelog, lines) in entries.items ():
+            if not os.path.exists (changelog_path (changelog)):
+                continue
             if changelog not in touched_changelogs:
                 touched_changelogs [changelog] = start_changelog (changelog)
             append_lines (touched_changelogs [changelog], lines)
