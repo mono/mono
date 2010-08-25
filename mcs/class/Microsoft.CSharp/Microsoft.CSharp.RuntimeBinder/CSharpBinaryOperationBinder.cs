@@ -130,21 +130,22 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override DynamicMetaObject FallbackBinaryOperation (DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
 		{
-			var left = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
-			var right = CSharpBinder.CreateCompilerExpression (argumentInfo [1], arg);
+			var ctx = DynamicContext.Create ();
+			var left = ctx.CreateCompilerExpression (argumentInfo [0], target);
+			var right = ctx.CreateCompilerExpression (argumentInfo [1], arg);
 			
 			bool is_compound;
 			var oper = GetOperator (out is_compound);
 			Compiler.Expression expr;
 
 			if (is_compound) {
-				var target_expr = CSharpBinder.CreateCompilerExpression (argumentInfo[0], target);
+				var target_expr = ctx.CreateCompilerExpression (argumentInfo[0], target);
 				expr = new Compiler.CompoundAssign (oper, target_expr, right, left, Compiler.Location.Null);
 			} else {
 				expr = new Compiler.Binary (oper, left, right, Compiler.Location.Null);
 			}
 
-			expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
+			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 			
 			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
@@ -153,7 +154,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			binder.AddRestrictions (target);
 			binder.AddRestrictions (arg);
 
-			return binder.Bind (context);
+			return binder.Bind (ctx, context);
 		}
 	}
 }

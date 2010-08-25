@@ -271,7 +271,7 @@ namespace Mono.CSharp {
 			}
 			TypeSpec t = FindDocumentedTypeNonArray (mc, identifier, ds, cref, r);
 			if (t != null && is_array)
-				t = Import.ImportType (Array.CreateInstance (t.GetMetaInfo (), 0).GetType ());
+				t = ArrayContainer.MakeType (t);
 			return t;
 		}
 

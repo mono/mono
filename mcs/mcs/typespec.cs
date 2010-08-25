@@ -308,14 +308,7 @@ namespace Mono.CSharp
 
 		protected virtual void InitializeMemberCache (bool onlyTypes)
 		{
-			//
-			// Not interested in members of nested private types
-			//
-			if (IsPrivate) {
-				cache = new MemberCache (0);
-			} else {
-				cache = MemberDefinition.LoadMembers (this);
-			}
+			cache = MemberDefinition.LoadMembers (this);
 		}
 
 		//

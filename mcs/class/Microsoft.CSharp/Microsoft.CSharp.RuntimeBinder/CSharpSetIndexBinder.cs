@@ -55,20 +55,21 @@ namespace Microsoft.CSharp.RuntimeBinder
 				return errorSuggestion;
 			}
 
-			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
-			var args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), indexes);
+			var ctx = DynamicContext.Create ();
+			var expr = ctx.CreateCompilerExpression (argumentInfo [0], target);
+			var args = ctx.CreateCompilerArguments (argumentInfo.Skip (1), indexes);
 			expr = new Compiler.ElementAccess (expr, args, Compiler.Location.Null);
 
-			var source = CSharpBinder.CreateCompilerExpression (argumentInfo [indexes.Length + 1], value);
+			var source = ctx.CreateCompilerExpression (argumentInfo [indexes.Length + 1], value);
 			expr = new Compiler.SimpleAssign (expr, source);
-			expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
+			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
 			binder.AddRestrictions (value);
 			binder.AddRestrictions (indexes);
 
-			return binder.Bind (callingContext, target);
+			return binder.Bind (ctx, callingContext, target);
 		}
 	}
 }

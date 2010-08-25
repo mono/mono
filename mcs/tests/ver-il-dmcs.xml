@@ -1674,6 +1674,33 @@
       </method>
     </type>
   </test>
+  <test name="dtest-024.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>524</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="Test+D">
+      <method name="Int32 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-error-01.cs">
     <type name="Helper">
       <method name="Int32* Foo(Int32)">
@@ -15217,6 +15244,34 @@
       </method>
       <method name="Void Main()">
         <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-533.cs">
+    <type name="List`1[X]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="List`1+Comp`1[X,Y]">
+      <method name="List`1+Comp`1[Y,X] flip(Y, X)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="List`1+Flip`1[X,Z]">
+      <method name="Void .ctor(Comp`1)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>15</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

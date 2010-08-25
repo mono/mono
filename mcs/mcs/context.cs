@@ -551,16 +551,26 @@ namespace Mono.CSharp
 	public class CompilerContext
 	{
 		readonly Report report;
+		readonly ReflectionMetaImporter meta_importer;
 
-		public CompilerContext (Report report)
+		public CompilerContext (ReflectionMetaImporter metaImporter, Report report)
 		{
+			this.meta_importer = metaImporter;
 			this.report = report;
 		}
 
 		public bool IsRuntimeBinder { get; set; }
 
+		public ReflectionMetaImporter MetaImporter {
+			get {
+				return meta_importer;
+			}
+		}
+
 		public Report Report {
-			get { return report; }
+			get {
+				return report;
+			}
 		}
 
 		//public PredefinedAttributes PredefinedAttributes {

@@ -50,7 +50,7 @@ namespace Mono.CSharp {
 		{
 			foreach (Assembly a in referenced_assemblies) {
 				try {
-					ImportAssembly (a);
+					ctx.MetaImporter.ImportAssembly (a, this);
 				} catch (TypeLoadException e) {
 					ctx.Report.Error (11, Location.Null, e.Message);
 				} catch (System.IO.FileNotFoundException) {
@@ -76,57 +76,6 @@ namespace Mono.CSharp {
 			if (dotted_name != null && dotted_name.Length != 0 && ! IsNamespace (dotted_name))
 				GetNamespace (dotted_name, true);
 		}
-
-  		public void ImportAssembly (Assembly assembly)
-  		{
-			Type extension_type = null;
-			var all_attributes = CustomAttributeData.GetCustomAttributes (assembly);
-			foreach (var attr in all_attributes) {
-				var dt = attr.Constructor.DeclaringType;
-				if (dt.Name == "ExtensionAttribute" && dt.Namespace == "System.Runtime.CompilerServices") {
-					extension_type = dt;
-					break;
-				}
-			}
-
-			//
-			// This part tries to simulate loading of top-level
-			// types only, any missing dependencies are ignores here.
-			// Full error report is reported later when the type is
-			// actually used
-			//
-			Type[] all_types;
-			try {
-				all_types = assembly.GetTypes ();
-			} catch (ReflectionTypeLoadException e) {
-				all_types = e.Types;
-			}
-
-			Namespace ns = this;
-			string prev_namespace = null;
-			foreach (var t in all_types) {
-				if (t == null || t.IsNested)
-					continue;
-
-				if (t.Name[0] == '<')
-					continue;
-
-				var it = Import.CreateType (t, null);
-				if (it == null)
-					continue;
-
-				if (prev_namespace != t.Namespace) {
-					ns = t.Namespace == null ? this : GetNamespace (t.Namespace, true);
-					prev_namespace = t.Namespace;
-				}
-
-				ns.AddType (it);
-
-				if (it.IsStatic && extension_type != null && t.IsDefined (extension_type, false)) {
-					it.SetExtensionMethodContainer ();
-				}
-			}
-  		}
 
 		public override string GetSignatureForError ()
 		{

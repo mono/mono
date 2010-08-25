@@ -939,15 +939,7 @@ namespace Mono.CSharp {
 	//
 	public class ParametersImported : AParametersCollection
 	{
-		ParametersImported (AParametersCollection param, TypeSpec[] types)
-		{
-			this.parameters = param.FixedParameters;
-			this.types = types;
-			has_arglist = param.HasArglist;
-			has_params = param.HasParams;
-		}
-
-		ParametersImported (IParameterData [] parameters, TypeSpec [] types, bool hasArglist, bool hasParams)
+		public ParametersImported (IParameterData [] parameters, TypeSpec [] types, bool hasArglist, bool hasParams)
 		{
 			this.parameters = parameters;
 			this.types = types;
@@ -960,91 +952,6 @@ namespace Mono.CSharp {
 			this.parameters = param;
 			this.types = types;
 			this.has_params = hasParams;
-		}
-
-		public static AParametersCollection Create (TypeSpec parent, MethodBase method)
-		{
-			return Create (parent, method.GetParameters (), method);
-		}
-
-		//
-		// Imports System.Reflection parameters
-		//
-		public static AParametersCollection Create (TypeSpec parent, ParameterInfo [] pi, MethodBase method)
-		{
-			int varargs = method != null && (method.CallingConvention & CallingConventions.VarArgs) != 0 ? 1 : 0;
-
-			if (pi.Length == 0 && varargs == 0)
-				return ParametersCompiled.EmptyReadOnlyParameters;
-
-			TypeSpec [] types = new TypeSpec [pi.Length + varargs];
-			IParameterData [] par = new IParameterData [pi.Length + varargs];
-			bool is_params = false;
-			for (int i = 0; i < pi.Length; i++) {
-				ParameterInfo p = pi [i];
-				Parameter.Modifier mod = 0;
-				Expression default_value = null;
-				if (p.ParameterType.IsByRef) {
-					if ((p.Attributes & (ParameterAttributes.Out | ParameterAttributes.In)) == ParameterAttributes.Out)
-						mod = Parameter.Modifier.OUT;
-					else
-						mod = Parameter.Modifier.REF;
-
-					//
-					// Strip reference wrapping
-					//
-					types [i] = Import.ImportType (p.ParameterType.GetElementType ());
-				} else if (i == 0 && method.IsStatic && parent.IsStatic && // TODO: parent.Assembly.IsExtension &&
-					HasExtensionAttribute (method)) {
-					mod = Parameter.Modifier.This;
-					types[i] = Import.ImportType (p.ParameterType);
-				} else {
-					types[i] = Import.ImportType (p.ParameterType);
-
-					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
-						var cattrs = CustomAttributeData.GetCustomAttributes (p);
-						if (cattrs != null && cattrs.Any (l => l.Constructor.DeclaringType == typeof (ParamArrayAttribute))) {
-							mod = Parameter.Modifier.PARAMS;
-							is_params = true;
-						}
-					}
-
-					if (!is_params && p.IsOptional) {
-						object value = p.DefaultValue;
-						if (value == Missing.Value) {
-							default_value = EmptyExpression.Null;
-						} else if (value == null) {
-							default_value = new NullLiteral (Location.Null);
-						} else {
-							default_value = Constant.CreateConstant (null, Import.ImportType (value.GetType ()), value, Location.Null);
-						}
-					}
-				}
-
-				par [i] = new ParameterData (p.Name, mod, default_value);
-			}
-
-			if (varargs != 0) {
-				par [par.Length - 1] = new ArglistParameter (Location.Null);
-				types [types.Length - 1] = InternalType.Arglist;
-			}
-
-			return method != null ?
-				new ParametersImported (par, types, varargs != 0, is_params) :
-				new ParametersImported (par, types, is_params);
-		}
-
-		static bool HasExtensionAttribute (MethodBase mb)
-		{
-			var all_attributes = CustomAttributeData.GetCustomAttributes (mb);
-			foreach (var attr in all_attributes) {
-				var dt = attr.Constructor.DeclaringType;
-				if (dt.Name == "ExtensionAttribute" && dt.Namespace == "System.Runtime.CompilerServices") {
-					return true;
-				}
-			}
-
-			return false;
 		}
 	}
 

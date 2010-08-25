@@ -353,7 +353,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			var char_set = Import.ImportType (typeof (CharSet));
+			var char_set = rc.Compiler.MetaImporter.ImportType (typeof (CharSet));	// TODO: typeof
 			NamedArguments.Add (new NamedArgument (CharSetEnumMember, loc,
 				Constant.CreateConstant (rc, char_set, RootContext.ToplevelTypes.DefaultCharSet, Location)));
  		}

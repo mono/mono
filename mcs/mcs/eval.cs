@@ -117,6 +117,8 @@ namespace Mono.CSharp {
 				if (driver == null)
 					throw new Exception ("Failed to create compiler driver with the given arguments");
 
+				ctx = driver.ctx;
+
 				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 				
 				driver.ProcessDefaultConfig ();
@@ -129,7 +131,7 @@ namespace Mono.CSharp {
 				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 				/*var ctypes = */TypeManager.InitCoreTypes ();
 
-				Import.Initialize ();
+				ctx.MetaImporter.Initialize ();
 				driver.LoadReferences ();
 				TypeManager.InitOptionalCoreTypes (ctx);
 
@@ -159,8 +161,10 @@ namespace Mono.CSharp {
 			} else
 				printer = new StreamReportPrinter (MessageOutput);
 
-			ctx = new CompilerContext (new Report (printer));
+			ctx = new CompilerContext (new ReflectionMetaImporter (), new Report (printer));
 			RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
+
+			ctx.MetaImporter.Initialize ();
 
 			//
 			// PartialReset should not reset the core types, this is very redundant.
@@ -198,7 +202,7 @@ namespace Mono.CSharp {
 				if (interactive_base_class != null)
 					return interactive_base_class;
 
-				return Import.ImportType (typeof (InteractiveBase));
+				return ctx.MetaImporter.ImportType (typeof (InteractiveBase));
 			}
 		}
 
@@ -208,7 +212,7 @@ namespace Mono.CSharp {
 				throw new ArgumentNullException ();
 
 			lock (evaluator_lock)
-				interactive_base_class = Import.ImportType (type);
+				interactive_base_class = ctx.MetaImporter.ImportType (type);
 		}
 
 		/// <summary>
@@ -905,7 +909,7 @@ namespace Mono.CSharp {
 			lock (evaluator_lock){
 //				GlobalRootNamespace.Instance.AddAssemblyReference (a);
 //				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
-				GlobalRootNamespace.Instance.ImportAssembly (a);
+				ctx.MetaImporter.ImportAssembly (a, GlobalRootNamespace.Instance);
 			}
 		}
 

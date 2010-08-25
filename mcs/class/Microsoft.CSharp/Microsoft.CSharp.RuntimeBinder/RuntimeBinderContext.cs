@@ -37,9 +37,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 		readonly Compiler.CompilerContext ctx;
 		readonly Compiler.TypeSpec currentType;
 
-		public RuntimeBinderContext (Compiler.CompilerContext ctx, Compiler.TypeSpec currentType)
+		public RuntimeBinderContext (DynamicContext ctx, Compiler.TypeSpec currentType)
 		{
-			this.ctx = ctx;
+			this.ctx = ctx.CompilerContext;
 			this.currentType = currentType;
 		}
 

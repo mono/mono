@@ -48,12 +48,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public override DynamicMetaObject FallbackConvert (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
-			var expr = CSharpBinder.CreateCompilerExpression (null, target);
+			var ctx = DynamicContext.Create ();
+			var expr = ctx.CreateCompilerExpression (null, target);
 
 			if (Explicit)
-				expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (Type), Compiler.Location.Null), expr, Compiler.Location.Null);
+				expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (Type), Compiler.Location.Null), expr, Compiler.Location.Null);
 			else
-				expr = new Compiler.ImplicitCast (expr, TypeImporter.Import (Type), (flags & CSharpBinderFlags.ConvertArrayIndex) != 0);
+				expr = new Compiler.ImplicitCast (expr, ctx.ImportType (Type), (flags & CSharpBinderFlags.ConvertArrayIndex) != 0);
 
 			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
@@ -61,7 +62,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
 
-			return binder.Bind (context);
+			return binder.Bind (ctx, context);
 		}
 	}
 }

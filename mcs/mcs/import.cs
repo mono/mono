@@ -18,15 +18,25 @@ using System.Runtime.InteropServices;
 
 namespace Mono.CSharp
 {
-	public static class Import
+	public class ReflectionMetaImporter
 	{
-		static Dictionary<Type, TypeSpec> import_cache;
-		static Dictionary<Type, PredefinedTypeSpec> type_2_predefined;
+		Dictionary<Type, TypeSpec> import_cache;
+		Dictionary<Type, PredefinedTypeSpec> type_2_predefined;
 
-		public static void Initialize ()
+		public ReflectionMetaImporter ()
 		{
 			import_cache = new Dictionary<Type, TypeSpec> (1024, ReferenceEquality<Type>.Default);
+			IgnorePrivateMembers = true;
+		}
 
+		#region Properties
+
+		public bool IgnorePrivateMembers { get; set; }
+
+		#endregion
+
+		public void Initialize ()
+		{
 			// Setup mapping for predefined types
 			type_2_predefined = new Dictionary<Type, PredefinedTypeSpec> () {
 				{ typeof (object), TypeManager.object_type },
@@ -67,7 +77,7 @@ namespace Mono.CSharp
 			};
 		}
 
-		public static FieldSpec CreateField (FieldInfo fi, TypeSpec declaringType)
+		public FieldSpec CreateField (FieldInfo fi, TypeSpec declaringType)
 		{
 			Modifiers mod = 0;
 			var fa = fi.Attributes;
@@ -90,7 +100,7 @@ namespace Mono.CSharp
 			}
 
 			// Ignore private fields (even for error reporting) to not require extra dependencies
-			if (mod == Modifiers.PRIVATE)
+			if (mod == Modifiers.PRIVATE && IgnorePrivateMembers)
 				return null;
 
 			var definition = new ImportedMemberDefinition (fi);
@@ -101,7 +111,7 @@ namespace Mono.CSharp
 			} catch (Exception e) {
 				// TODO: I should construct fake TypeSpec based on TypeRef signature
 				// but there is no way to do it with System.Reflection
-				throw new InternalErrorException (e, "Cannot import field `{0}.{1}' in assembly `{2}'",
+				throw new InternalErrorException (e, "Cannot import field `{0}.{1}' referenced in assembly `{2}'",
 					declaringType.GetSignatureForError (), fi.Name, declaringType.Assembly);
 			}
 
@@ -143,7 +153,7 @@ namespace Mono.CSharp
 			return new FieldSpec (declaringType, definition, field_type, fi, mod);
 		}
 
-		public static EventSpec CreateEvent (EventInfo ei, TypeSpec declaringType, MethodSpec add, MethodSpec remove)
+		public EventSpec CreateEvent (EventInfo ei, TypeSpec declaringType, MethodSpec add, MethodSpec remove)
 		{
 			add.IsAccessor = true;
 			remove.IsAccessor = true;
@@ -155,7 +165,7 @@ namespace Mono.CSharp
 			return new EventSpec (declaringType, definition, ImportType (ei.EventHandlerType), add.Modifiers, add, remove);
 		}
 
-		static T[] CreateGenericParameters<T> (Type type, TypeSpec declaringType) where T : TypeSpec
+		T[] CreateGenericParameters<T> (Type type, TypeSpec declaringType) where T : TypeSpec
 		{
 			Type[] tparams = type.GetGenericArguments ();
 
@@ -195,7 +205,7 @@ namespace Mono.CSharp
 			return CreateGenericParameters<T> (parent_owned_count, tparams);
 		}
 
-		static T[] CreateGenericParameters<T> (int first, Type[] tparams) where T : TypeSpec
+		T[] CreateGenericParameters<T> (int first, Type[] tparams) where T : TypeSpec
 		{
 			var tspec = new T [tparams.Length - first];
 			for (int pos = first; pos < tparams.Length; ++pos) {
@@ -218,13 +228,13 @@ namespace Mono.CSharp
 			return tspec;
 		}
 
-		public static MethodSpec CreateMethod (MethodBase mb, TypeSpec declaringType)
+		public MethodSpec CreateMethod (MethodBase mb, TypeSpec declaringType)
 		{
 			Modifiers mod = ReadMethodModifiers (mb, declaringType);
 			TypeParameterSpec[] tparams;
 			ImportedMethodDefinition definition;
 
-			var parameters = ParametersImported.Create (declaringType, mb);
+			var parameters = CreateParameters (declaringType, mb.GetParameters (), mb);
 
 			if (mb.IsGenericMethod) {
 				if (!mb.IsGenericMethodDefinition)
@@ -295,9 +305,77 @@ namespace Mono.CSharp
 		}
 
 		//
+		// Imports System.Reflection parameters
+		//
+		AParametersCollection CreateParameters (TypeSpec parent, ParameterInfo[] pi, MethodBase method)
+		{
+			int varargs = method != null && (method.CallingConvention & CallingConventions.VarArgs) != 0 ? 1 : 0;
+
+			if (pi.Length == 0 && varargs == 0)
+				return ParametersCompiled.EmptyReadOnlyParameters;
+
+			TypeSpec[] types = new TypeSpec[pi.Length + varargs];
+			IParameterData[] par = new IParameterData[pi.Length + varargs];
+			bool is_params = false;
+			for (int i = 0; i < pi.Length; i++) {
+				ParameterInfo p = pi[i];
+				Parameter.Modifier mod = 0;
+				Expression default_value = null;
+				if (p.ParameterType.IsByRef) {
+					if ((p.Attributes & (ParameterAttributes.Out | ParameterAttributes.In)) == ParameterAttributes.Out)
+						mod = Parameter.Modifier.OUT;
+					else
+						mod = Parameter.Modifier.REF;
+
+					//
+					// Strip reference wrapping
+					//
+					types[i] = ImportType (p.ParameterType.GetElementType ());
+				} else if (i == 0 && method.IsStatic && parent.IsStatic && // TODO: parent.Assembly.IsExtension &&
+					HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (method)) != null) {
+					mod = Parameter.Modifier.This;
+					types[i] = ImportType (p.ParameterType);
+				} else {
+					types[i] = ImportType (p.ParameterType);
+
+					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
+						var cattrs = CustomAttributeData.GetCustomAttributes (p);
+						if (cattrs != null && cattrs.Any (l => l.Constructor.DeclaringType == typeof (ParamArrayAttribute))) {
+							mod = Parameter.Modifier.PARAMS;
+							is_params = true;
+						}
+					}
+
+					if (!is_params && p.IsOptional) {
+						object value = p.DefaultValue;
+						if (value == Missing.Value) {
+							default_value = EmptyExpression.Null;
+						} else if (value == null) {
+							default_value = new NullLiteral (Location.Null);
+						} else {
+							default_value = Constant.CreateConstant (null, ImportType (value.GetType ()), value, Location.Null);
+						}
+					}
+				}
+
+				par[i] = new ParameterData (p.Name, mod, default_value);
+			}
+
+			if (varargs != 0) {
+				par[par.Length - 1] = new ArglistParameter (Location.Null);
+				types[types.Length - 1] = InternalType.Arglist;
+			}
+
+			return method != null ?
+				new ParametersImported (par, types, varargs != 0, is_params) :
+				new ParametersImported (par, types, is_params);
+		}
+
+
+		//
 		// Returns null when the property is not valid C# property
 		//
-		public static PropertySpec CreateProperty (PropertyInfo pi, TypeSpec declaringType, MethodSpec get, MethodSpec set)
+		public PropertySpec CreateProperty (PropertyInfo pi, TypeSpec declaringType, MethodSpec get, MethodSpec set)
 		{
 			var definition = new ImportedMemberDefinition (pi);
 
@@ -413,7 +491,7 @@ namespace Mono.CSharp
 			return spec;
 		}
 
-		public static TypeSpec CreateType (Type type)
+		public TypeSpec CreateType (Type type)
 		{
 			TypeSpec declaring_type;
 			if (type.IsNested && !type.IsGenericParameter)
@@ -424,7 +502,7 @@ namespace Mono.CSharp
 			return CreateType (type, declaring_type);
 		}
 
-		public static TypeSpec CreateType (Type type, TypeSpec declaringType)
+		public TypeSpec CreateType (Type type, TypeSpec declaringType)
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec))
@@ -511,7 +589,7 @@ namespace Mono.CSharp
 				mod |= Modifiers.SEALED;
 			}
 
-			var definition = new ImportedTypeDefinition (type);
+			var definition = new ImportedTypeDefinition (this, type);
 			PredefinedTypeSpec pt;
 
 			if (kind == MemberKind.Enum) {
@@ -521,7 +599,7 @@ namespace Mono.CSharp
 
 				var type_members = type.GetFields (underlying_member);
 				foreach (var type_member in type_members) {
-					spec = new EnumSpec (declaringType, definition, Import.CreateType (type_member.FieldType), type, mod);
+					spec = new EnumSpec (declaringType, definition, CreateType (type_member.FieldType), type, mod);
 					break;
 				}
 
@@ -556,14 +634,14 @@ namespace Mono.CSharp
 			var ifaces = type.GetInterfaces ();
 			if (ifaces.Length > 0) {
 				foreach (Type iface in ifaces) {
-					spec.AddInterface (Import.CreateType (iface));
+					spec.AddInterface (CreateType (iface));
 				}
 			}
 
 			return spec;
 		}
 
-		static TypeParameterSpec CreateTypeParameter (Type type, TypeSpec declaringType)
+		TypeParameterSpec CreateTypeParameter (Type type, TypeSpec declaringType)
 		{
 			Variance variance;
 			switch (type.GenericParameterAttributes & GenericParameterAttributes.VarianceMask) {
@@ -634,7 +712,62 @@ namespace Mono.CSharp
 			return spec;
 		}
 
-		public static TypeSpec ImportType (Type type)
+		static Type HasExtensionAttribute (IList<CustomAttributeData> attributes)
+		{
+			foreach (var attr in attributes) {
+				var dt = attr.Constructor.DeclaringType;
+				if (dt.Name == "ExtensionAttribute" && dt.Namespace == "System.Runtime.CompilerServices") {
+					return dt;
+				}
+			}
+
+			return null;
+		}
+
+		public void ImportAssembly (Assembly assembly, Namespace targetNamespace)
+		{
+			Type extension_type = HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (assembly));
+
+			//
+			// This part tries to simulate loading of top-level
+			// types only, any missing dependencies are ignores here.
+			// Full error report is reported later when the type is
+			// actually used
+			//
+			Type[] all_types;
+			try {
+				all_types = assembly.GetTypes ();
+			} catch (ReflectionTypeLoadException e) {
+				all_types = e.Types;
+			}
+
+			Namespace ns = targetNamespace;
+			string prev_namespace = null;
+			foreach (var t in all_types) {
+				if (t == null || t.IsNested)
+					continue;
+
+				if (t.Name[0] == '<')
+					continue;
+
+				var it = CreateType (t, null);
+				if (it == null)
+					continue;
+
+				if (prev_namespace != t.Namespace) {
+					ns = t.Namespace == null ? targetNamespace : targetNamespace.GetNamespace (t.Namespace, true);
+					prev_namespace = t.Namespace;
+				}
+
+				ns.AddType (it);
+
+				if (it.IsStatic && extension_type != null && t.IsDefined (extension_type, false)) {
+					it.SetExtensionMethodContainer ();
+				}
+			}
+		}
+
+		public TypeSpec ImportType (Type type)
 		{
 			if (type.HasElementType) {
 				var element = type.GetElementType ();
@@ -942,10 +1075,12 @@ namespace Mono.CSharp
 	{
 		TypeParameterSpec[] tparams;
 		string name;
+		ReflectionMetaImporter meta_import;
 
-		public ImportedTypeDefinition (Type type)
+		public ImportedTypeDefinition (ReflectionMetaImporter metaImport, Type type)
 			: base (type)
 		{
+			this.meta_import = metaImport;
 		}
 
 		#region Properties
@@ -992,7 +1127,7 @@ namespace Mono.CSharp
 			if (attr.Length < 1)
 				return null;
 
-			return Import.CreateType (((CoClassAttribute) attr[0]).CoClass);
+			return meta_import.CreateType (((CoClassAttribute) attr[0]).CoClass);
 		}
 
 		public string GetAttributeDefaultMember ()
@@ -1013,6 +1148,12 @@ namespace Mono.CSharp
 
 		public MemberCache LoadMembers (TypeSpec declaringType)
 		{
+			//
+			// Not interested in members of nested private types unless the importer needs them
+			//
+			if (declaringType.IsPrivate && meta_import.IgnorePrivateMembers)
+				return MemberCache.Empty;
+
 			var loading_type = (Type) provider;
 			const BindingFlags all_members = BindingFlags.DeclaredOnly |
 				BindingFlags.Static | BindingFlags.Instance |
@@ -1052,7 +1193,7 @@ namespace Mono.CSharp
 					if (mb.IsPrivate && mb.IsDefined (typeof (CompilerGeneratedAttribute), false))
 						continue;
 
-					imported = Import.CreateMethod (mb, declaringType);
+					imported = meta_import.CreateMethod (mb, declaringType);
 					if (imported.Kind == MemberKind.Method && !imported.IsGeneric) {
 						if (possible_accessors == null)
 							possible_accessors = new Dictionary<MethodBase, MethodSpec> (ReferenceEquality<MethodBase>.Default);
@@ -1083,7 +1224,7 @@ namespace Mono.CSharp
 					if (get == null && set == null)
 						continue;
 
-					imported = Import.CreateProperty (p, declaringType, get, set);
+					imported = meta_import.CreateProperty (p, declaringType, get, set);
 					if (imported == null)
 						continue;
 
@@ -1109,7 +1250,7 @@ namespace Mono.CSharp
 					if (add == null || remove == null)
 						continue;
 
-					imported = Import.CreateEvent (e, declaringType, add, remove);
+					imported = meta_import.CreateEvent (e, declaringType, add, remove);
 					break;
 				case MemberTypes.Field:
 					var fi = (FieldInfo) member;
@@ -1118,7 +1259,7 @@ namespace Mono.CSharp
 					if (fi.IsPrivate && fi.IsDefined (typeof (CompilerGeneratedAttribute), false))
 						continue;
 
-					imported = Import.CreateField (fi, declaringType);
+					imported = meta_import.CreateField (fi, declaringType);
 					if (imported == null)
 						continue;
 
@@ -1130,7 +1271,7 @@ namespace Mono.CSharp
 					if (t.IsNotPublic && t.IsDefined (typeof (CompilerGeneratedAttribute), false))
 						continue;
 
-					imported = Import.CreateType (t, declaringType);
+					imported = meta_import.CreateType (t, declaringType);
 					break;
 				default:
 					throw new NotImplementedException (member.ToString ());

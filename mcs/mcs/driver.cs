@@ -97,7 +97,7 @@ namespace Mono.CSharp
 		//
 		Encoding encoding;
 
-		readonly CompilerContext ctx;
+		internal readonly CompilerContext ctx;
 
 		static readonly char[] argument_value_separator = new char [] { ';', ',' };
 
@@ -114,7 +114,7 @@ namespace Mono.CSharp
 
 		public static Driver Create (string[] args, bool require_files, ReportPrinter printer)
 		{
-			Driver d = new Driver (new CompilerContext (new Report (printer)));
+			Driver d = new Driver (new CompilerContext (new ReflectionMetaImporter (), new Report (printer)));
 
 			if (!d.ParseArguments (args, require_files))
 				return null;
@@ -1703,7 +1703,7 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("Loading references");
 
-			Import.Initialize ();
+			ctx.MetaImporter.Initialize ();
 			LoadReferences ();
 			
 			if (modules.Count > 0) {

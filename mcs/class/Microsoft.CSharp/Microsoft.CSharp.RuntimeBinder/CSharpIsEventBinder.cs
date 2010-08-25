@@ -47,9 +47,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject[] args)
 		{
-			var ctx = CSharpBinder.CreateDefaultCompilerContext ();
-			CSharpBinder.InitializeCompiler (ctx);
-			var context_type = TypeImporter.Import (callingContext);
+			var ctx = DynamicContext.Create ();
+			var context_type = ctx.ImportType (callingContext);
 			var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, context_type), 0);
 
 			var expr = Compiler.Expression.MemberLookup (rc, context_type, context_type, name, 0, false, Compiler.Location.Null);
@@ -58,7 +57,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				this, new Compiler.BoolConstant (expr is Compiler.EventExpr, Compiler.Location.Null), null);
 
 			binder.AddRestrictions (target);
-			return binder.Bind (callingContext, target);
+			return binder.Bind (ctx, callingContext, target);
 		}
 
 		public override Type ReturnType {
