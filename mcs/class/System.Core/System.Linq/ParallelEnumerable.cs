@@ -369,7 +369,7 @@ namespace System.Linq
 			if (keySelector == null)
 				throw new ArgumentNullException ("keySelector");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = Comparer<TKey>.Default;
 
 			Comparison<TSource> comparison = (e1, e2) => -comparer.Compare (keySelector (e1), keySelector (e2));
 
@@ -397,7 +397,7 @@ namespace System.Linq
 			if (keySelector == null)
 				throw new ArgumentNullException ("keySelector");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = Comparer<TKey>.Default;
 
 			Comparison<TSource> comparison = (e1, e2) => comparer.Compare (keySelector (e1), keySelector (e2));
 
@@ -421,7 +421,7 @@ namespace System.Linq
 			if (keySelector == null)
 				throw new ArgumentNullException ("keySelector");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = Comparer<TKey>.Default;
 
 			Comparison<TSource> comparison = (e1, e2) => comparer.Compare (keySelector (e1), keySelector (e2));
 
@@ -443,7 +443,7 @@ namespace System.Linq
 			if (keySelector == null)
 				throw new ArgumentNullException ("keySelector");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = Comparer<TKey>.Default;
 
 			Comparison<TSource> comparison = (e1, e2) => -comparer.Compare (keySelector (e1), keySelector (e2));
 
@@ -502,7 +502,7 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ("source");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = EqualityComparer<TSource>.Default;
 
 			return Any<TSource> (source, (e) => comparer.Equals (value));
 		}
@@ -529,7 +529,7 @@ namespace System.Linq
 			if (second == null)
 				throw new ArgumentNullException ("second");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = EqualityComparer<TSource>.Default;
 
 			CancellationTokenSource source = new CancellationTokenSource ();
 			ParallelQuery<bool> innerQuery
@@ -606,7 +606,7 @@ namespace System.Linq
 			if (elementSelector == null)
 				throw new ArgumentNullException ("elementSelector");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = EqualityComparer<TKey>.Default;
 
 			return new ParallelQuery<IGrouping<TKey, TElement>> (new QueryGroupByNode<TSource, TKey, TElement> (source.Node, keySelector, elementSelector, comparer));
 		}
@@ -657,7 +657,7 @@ namespace System.Linq
 		                                                                               Func<TOuter, IEnumerable<TInner>, TResult> resultSelector,
 		                                                                               IEqualityComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			return outer.Join (inner.GroupBy (innerKeySelector, (e) => e), outerKeySelector, (e) => e.Key, (e1, e2) => resultSelector (e1, e2), comparer);
 		}
 		
 		[ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather "
@@ -682,7 +682,7 @@ namespace System.Linq
 		                                                                               Func<TOuter, IEnumerable<TInner>, TResult> resultSelector,
 		                                                                               IEqualityComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 		#endregion
 
@@ -743,7 +743,7 @@ namespace System.Linq
 			if (second == null)
 				throw new ArgumentNullException ("second");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = EqualityComparer<TSource>.Default;
 
 			return new ParallelQuery<TSource> (new QuerySetNode<TSource> (SetInclusionDefaults.Intersect, comparer, first.Node, second.Node));
 		}
@@ -829,7 +829,7 @@ namespace System.Linq
 			if (second == null)
 				throw new ArgumentNullException ("second");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = EqualityComparer<TSource>.Default;
 
 			return new ParallelQuery<TSource> (new QuerySetNode<TSource> (SetInclusionDefaults.Except,
 			                                                              comparer, first.Node, second.Node));
@@ -866,7 +866,7 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ("source");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = EqualityComparer<TSource>.Default;
 
 			return new ParallelQuery<TSource> (new QuerySetNode<TSource> (SetInclusionDefaults.Distinct, comparer,
 			                                                              source.Node, null));
@@ -908,7 +908,7 @@ namespace System.Linq
 			if (second == null)
 				throw new ArgumentNullException ("second");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = EqualityComparer<TSource>.Default;
 
 			return new ParallelQuery<TSource> (new QuerySetNode<TSource> (SetInclusionDefaults.Union, comparer, first.Node, second.Node));
 		}
@@ -1970,7 +1970,7 @@ namespace System.Linq
 			if (keySelector == null)
 				throw new ArgumentNullException ("keySelector");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = EqualityComparer<TKey>.Default;
 			if (elementSelector == null)
 				throw new ArgumentNullException ("elementSelector");
 
@@ -2010,7 +2010,7 @@ namespace System.Linq
 			if (keySelector == null)
 				throw new ArgumentNullException ("keySelector");
 			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
+				comparer = EqualityComparer<TKey>.Default;
 			if (elementSelector == null)
 				throw new ArgumentNullException ("elementSelector");
 
