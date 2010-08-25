@@ -36,7 +36,7 @@ using System.ServiceModel.Security;
 
 namespace System.ServiceModel.Channels
 {
-	internal abstract class RequestChannelBase : ChannelBase, IRequestChannel
+	internal abstract class RequestChannelBase : DiscoveryChannelBase, IRequestChannel
 	{
 		ChannelFactoryBase channel_factory;
 		EndpointAddress address;

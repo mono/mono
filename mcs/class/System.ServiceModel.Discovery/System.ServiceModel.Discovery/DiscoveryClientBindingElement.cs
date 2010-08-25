@@ -67,7 +67,7 @@ namespace System.ServiceModel.Discovery
 
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
@@ -77,7 +77,7 @@ namespace System.ServiceModel.Discovery
 
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
-			return context.CanBuildInnerChannelListener<TChannel> ();
+			return false;
 		}
 
 		public override BindingElement Clone ()

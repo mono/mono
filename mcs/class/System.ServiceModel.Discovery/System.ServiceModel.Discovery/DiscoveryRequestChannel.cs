@@ -33,6 +33,198 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Discovery
 {
+/* Strange, but this causes compiler error at DiscoveryClientBindingElement.
+
+	internal class DiscoveryChannel<TChannel> : DiscoveryChannelBase, IRequestSessionChannel, IDuplexSessionChannel
+		where TChannel : IChannel
+	{
+		DiscoveryChannelFactory<TChannel> factory;
+		TChannel inner;
+
+		public DiscoveryChannel (DiscoveryChannelFactory<TChannel> factory, EndpointAddress address, Uri via)
+			: base (factory)
+		{
+			this.factory = factory;
+			EndpointAddress = address;
+			Via = via;
+		}
+
+		public EndpointAddress RemoteAddress { get; private set; }
+		public Uri Via { get; private set; }
+		public EndpointAddress LocalAddress {
+			get { return ((IDuplexSessionChannel) inner).LocalAddress; }
+		}
+
+		IDuplexSession ISessionChannel<IDuplexSession>.Session {
+			get { return ((IDuplexSessionChannel) inner).Session; }
+		}
+
+		IOutputSession ISessionChannel<IOutputSession>.Session {
+			get { return ((IOutputSessionChannel) inner).Session; }
+		}
+
+		Action<TimeSpan> open_delegate, close_delegate;
+
+		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (close_delegate == null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override void OnEndClose (IAsyncResult result)
+		{
+			close_delegate.EndInvoke (result);
+		}
+
+		protected override void OnAbort ()
+		{
+			if (inner != null) {
+				inner.Abort ();
+				inner = default (TChannel);
+			}
+		}
+
+		protected override void OnClose (TimeSpan timeout)
+		{
+			if (inner != null) {
+				inner.Close (timeout);
+				inner = default (TChannel);
+			}
+		}
+
+		protected override IAsyncResult OnBeginOpen (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (open_delegate == null)
+				open_delegate = new Action<TimeSpan> (OnOpen);
+			return open_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override void OnEndOpen (IAsyncResult result)
+		{
+			open_delegate.EndInvoke (result);
+		}
+
+		protected override void OnOpen (TimeSpan timeout)
+		{
+			// FIXME: use timeout
+			DateTime start = DateTime.Now;
+			inner = CreateDiscoveryInnerChannel<TChannel> (factory);
+			inner.Open (timeout - (DateTime.Now - start));
+		}
+
+		public Message Request (Message msg)
+		{
+			return Request (msg, DefaultSendTimeout + DefaultReceiveTimeout);
+		}
+
+		public Message Request (Message msg, TimeSpan timeout)
+		{
+			return ((IRequestChannel) inner).Request (msg, timeout);
+		}
+
+		public IAsyncResult BeginRequest (Message msg, AsyncCallback callback, object state)
+		{
+			return BeginRequest (msg, DefaultSendTimeout + DefaultReceiveTimeout, callback, state);
+		}
+
+		public IAsyncResult BeginRequest (Message msg, TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			return ((IRequestChannel) inner).BeginRequest (msg, timeout, callback, state);
+		}
+
+		public Message EndRequest (IAsyncResult result)
+		{
+			return ((IRequestChannel) inner).EndRequest (result);
+		}
+
+		public Message Receive ()
+		{
+			return Receive (DefaultReceiveTimeout);
+		}
+
+		public Message Receive (TimeSpan timeout)
+		{
+			return ((IInputChannel) inner).Receive (timeout);
+		}
+
+		public IAsyncResult BeginReceive (AsyncCallback callback, object state)
+		{
+			return BeginReceive (DefaultReceiveTimeout, callback, state);
+		}
+
+		public IAsyncResult BeginReceive (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			return ((IInputChannel) inner).BeginReceive (timeout, callback, state);
+		}
+
+		public Message EndReceive (IAsyncResult result)
+		{
+			return ((IInputChannel) inner).EndReceive (result);
+		}
+
+		public bool TryReceive (out Message msg)
+		{
+			return TryReceive (DefaultReceiveTimeout, out msg);
+		}
+
+		public bool TryReceive (TimeSpan timeout, out Message msg)
+		{
+			return ((IInputChannel) inner).TryReceive (timeout, out msg);
+		}
+
+		public IAsyncResult BeginTryReceive (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			return ((IInputChannel) inner).BeginTryReceive (timeout, callback, state);
+		}
+
+		public bool EndTryReceive (IAsyncResult result, out Message msg)
+		{
+			return ((IInputChannel) inner).EndTryReceive (result, out msg);
+		}
+
+		public bool WaitForMessage (TimeSpan timeout)
+		{
+			return ((IInputChannel) inner).WaitForMessage (timeout);
+		}
+
+		public IAsyncResult BeginWaitForMessage (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			return ((IInputChannel) inner).BeginWaitForMessage (timeout, callback, state);
+		}
+
+		public bool EndWaitForMessage (IAsyncResult result)
+		{
+			return ((IInputChannel) inner).EndWaitForMessage (result);
+		}
+
+		public void Send (Message msg)
+		{
+			Send (msg, DefaultSendTimeout);
+		}
+
+		public void Send (Message msg, TimeSpan timeout)
+		{
+			((IOutputChannel) inner).Send (msg, timeout);
+		}
+
+		public IAsyncResult BeginSend (Message msg, AsyncCallback callback, object state)
+		{
+			return BeginSend (msg, DefaultSendTimeout, callback, state);
+		}
+
+		public IAsyncResult BeginSend (Message msg, TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			return ((IOutputChannel) inner).BeginSend (msg, timeout, callback, state);
+		}
+		
+		public void EndSend (IAsyncResult result)
+		{
+			((IOutputChannel) inner).EndSend (result);
+		}
+	}
+*/
+
 	internal class DiscoveryRequestChannel : RequestChannelBase
 	{
 		public DiscoveryRequestChannel (DiscoveryChannelFactory<IRequestChannel> factory, EndpointAddress address, Uri via)
@@ -47,19 +239,7 @@ namespace System.ServiceModel.Discovery
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			// FIXME: use timeout
-			client = new DiscoveryClient (factory.Source.DiscoveryEndpointProvider.GetDiscoveryEndpoint ());
-			var res = client.Find (factory.Source.FindCriteria);
-
-			foreach (var edm in res.Endpoints) {
-				try {
-					// FIXME: find scheme-matching ListenUri
-					inner = factory.InnerFactory.CreateChannel (edm.Address, edm.ListenUris.FirstOrDefault (u => true) ?? edm.Address.Uri);
-					return;
-				} catch (Exception) {
-				}
-			}
-			throw new EndpointNotFoundException (String.Format ("Could not find usable endpoint in {0} endpoints returned by the discovery service.", res.Endpoints.Count));
+			inner = CreateDiscoveryInnerChannel<IRequestChannel> (factory);
 		}
 
 		protected override void OnClose (TimeSpan timeout)

@@ -3,6 +3,7 @@ System.ServiceModel.Discovery/AnnouncementEndpointTest.cs
 System.ServiceModel.Discovery/AnnouncementServiceTest.cs
 System.ServiceModel.Discovery/ContractTypes.cs
 System.ServiceModel.Discovery/DiscoveryClientBindingElementTest.cs
+System.ServiceModel.Discovery/DiscoveryClientTest.cs
 System.ServiceModel.Discovery/DiscoveryEndpointTest.cs
 System.ServiceModel.Discovery/DiscoveryProxyTest.cs
 System.ServiceModel.Discovery/DiscoveryServiceTest.cs

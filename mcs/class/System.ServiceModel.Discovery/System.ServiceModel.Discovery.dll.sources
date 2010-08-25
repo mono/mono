@@ -2,6 +2,7 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
+System.ServiceModel.Channels/DiscoveryChannelBase.cs
 System.ServiceModel.Channels/RequestChannelBase.cs
 System.ServiceModel.Discovery.Configuration/AnnouncementChannelEndpointElementCollection.cs
 System.ServiceModel.Discovery.Configuration/AnnouncementEndpointCollectionElement.cs

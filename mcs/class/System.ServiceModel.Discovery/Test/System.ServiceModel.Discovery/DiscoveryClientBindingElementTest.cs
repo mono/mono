@@ -74,6 +74,9 @@ namespace MonoTests.System.ServiceModel.Discovery
 			be = new DiscoveryClientBindingElement ();
 			Assert.IsNotNull (be.FindCriteria, "#11");
 			Assert.IsNotNull (be.DiscoveryEndpointProvider, "#12");
+			die = be.DiscoveryEndpointProvider.GetDiscoveryEndpoint ();
+			Assert.AreEqual (DiscoveryVersion.WSDiscovery11, die.DiscoveryVersion, "#13");
+			Assert.IsTrue (die is UdpDiscoveryEndpoint, "#13-2");
 		}
 
 		[Test]
@@ -85,10 +88,26 @@ namespace MonoTests.System.ServiceModel.Discovery
 			var bc = new BindingContext (new CustomBinding (new TcpTransportBindingElement ()), new BindingParameterCollection ());
 			Assert.IsTrue (be.CanBuildChannelFactory<IDuplexSessionChannel> (bc), "#0");
 			Assert.IsFalse (be.CanBuildChannelFactory<IDuplexChannel> (bc), "#1");
+			Assert.IsFalse (be.CanBuildChannelFactory<IOutputChannel> (bc), "#2");
+			Assert.IsFalse (be.CanBuildChannelFactory<IRequestChannel> (bc), "#3");
+
+			// It always return false.
+			Assert.IsFalse (be.CanBuildChannelListener<IDuplexSessionChannel> (bc), "#4"); // false!
+			Assert.IsFalse (be.CanBuildChannelListener<IDuplexChannel> (bc), "#5");
+			Assert.IsFalse (be.CanBuildChannelListener<IRequestChannel> (bc), "#6");
+			Assert.IsFalse (be.CanBuildChannelListener<IReplyChannel> (bc), "#7");
 
 			bc = new BindingContext (new CustomBinding (new HttpTransportBindingElement ()), new BindingParameterCollection ());
-			Assert.IsTrue (be.CanBuildChannelFactory<IRequestChannel> (bc), "#2");
-			Assert.IsFalse (be.CanBuildChannelFactory<IDuplexSessionChannel> (bc), "#3");
+			Assert.IsFalse (be.CanBuildChannelFactory<IDuplexSessionChannel> (bc), "#10");
+			Assert.IsFalse (be.CanBuildChannelFactory<IDuplexChannel> (bc), "#11");
+			Assert.IsFalse (be.CanBuildChannelFactory<IOutputChannel> (bc), "#12");
+			Assert.IsTrue (be.CanBuildChannelFactory<IRequestChannel> (bc), "#13");
+
+			// It always return false.
+			Assert.IsFalse (be.CanBuildChannelListener<IDuplexSessionChannel> (bc), "#14");
+			Assert.IsFalse (be.CanBuildChannelListener<IDuplexChannel> (bc), "#15");
+			Assert.IsFalse (be.CanBuildChannelListener<IRequestChannel> (bc), "#16");
+			Assert.IsFalse (be.CanBuildChannelListener<IReplyChannel> (bc), "#17");
 		}
 
 		[Test]
@@ -128,21 +147,59 @@ namespace MonoTests.System.ServiceModel.Discovery
 		[ExpectedException (typeof (EndpointNotFoundException))]
 		public void RequestChannelOpenFails ()
 		{
-			var de = CreateDynamicEndpoint ();
-			// it is channel dependent - i.e. this binding element does not affect.
 			var be = new DiscoveryClientBindingElement ();
 			var bc = new BindingContext (new CustomBinding (be, new HttpTransportBindingElement ()), new BindingParameterCollection ());
 			var cf = be.BuildChannelFactory<IRequestChannel> (bc);
+			cf.Open ();
+			Assert.IsNull (cf.GetProperty<DiscoveryEndpoint> (), "#1");
+			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
+			Assert.IsNull (ch.GetProperty<DiscoveryEndpoint> (), "#2");
+			ch.Open ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (EndpointNotFoundException))]
+		public void RequestChannelOpenFails2 ()
+		{
+			var be = new DiscoveryClientBindingElement ();
+			var bc = new BindingContext (new CustomBinding (be, new TcpTransportBindingElement ()), new BindingParameterCollection ());
+			var cf = be.BuildChannelFactory<IDuplexSessionChannel> (bc);
 			cf.Open ();
 			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
 			ch.Open ();
 		}
 
 		[Test]
+		public void CustomDiscoveryEndpointProvider ()
+		{
+			var be = new DiscoveryClientBindingElement () { DiscoveryEndpointProvider = new MyDiscoveryEndpointProvider () };
+			var bc = new BindingContext (new CustomBinding (be, new HttpTransportBindingElement ()), new BindingParameterCollection ());
+			var cf = be.BuildChannelFactory<IRequestChannel> (bc);
+			cf.Open ();
+			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
+			try {
+				ch.Open ();
+				Assert.Fail ("Should try to use failing endpoint provider.");
+			} catch (MyException) {
+			}
+		}
+
+		class MyDiscoveryEndpointProvider : DiscoveryEndpointProvider
+		{
+			public override DiscoveryEndpoint GetDiscoveryEndpoint ()
+			{
+				throw new MyException ();
+			}
+			
+		}
+
+		class MyException : Exception
+		{
+		}
+
+		[Test]
 		public void GetProperty ()
 		{
-			var de = CreateDynamicEndpoint ();
-			// it is channel dependent - i.e. this binding element does not affect.
 			var be = new DiscoveryClientBindingElement ();
 			var bc = new BindingContext (new CustomBinding (new HttpTransportBindingElement ()), new BindingParameterCollection ());
 			// so, they are not part of GetProperty<T>() return values.
