@@ -49,9 +49,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			var ctx = DynamicContext.Create ();
 			var context_type = ctx.ImportType (callingContext);
+			var queried_type = ctx.ImportType (target.LimitType);
 			var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, context_type), 0);
 
-			var expr = Compiler.Expression.MemberLookup (rc, context_type, context_type, name, 0, false, Compiler.Location.Null);
+			var expr = Compiler.Expression.MemberLookup (rc, context_type, queried_type, name, 0, false, Compiler.Location.Null);
 
 			var binder = new CSharpBinder (
 				this, new Compiler.BoolConstant (expr is Compiler.EventExpr, Compiler.Location.Null), null);

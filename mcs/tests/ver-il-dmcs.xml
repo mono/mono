@@ -1399,7 +1399,7 @@
         <size>231</size>
       </method>
       <method name="Void IsEvent()">
-        <size>1310</size>
+        <size>1999</size>
       </method>
       <method name="Void MemberGetTest()">
         <size>810</size>
@@ -1434,18 +1434,6 @@
       <method name="Int32 &lt;IsEvent&gt;m__3()">
         <size>2</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__7(System.Reflection.MethodInfo)">
-        <size>12</size>
-      </method>
-      <method name="System.String &lt;Main&gt;m__8(System.Reflection.MethodInfo)">
-        <size>7</size>
-      </method>
-      <method name="Boolean &lt;Main&gt;m__9(System.Reflection.MethodInfo)">
-        <size>7</size>
-      </method>
-      <method name="Boolean &lt;Main&gt;m__A(Boolean)">
-        <size>5</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -1472,27 +1460,64 @@
       </method>
     </type>
     <type name="Tester+&lt;MemberGetError_Null&gt;c__AnonStorey1">
-      <method name="Void &lt;&gt;m__4()">
-        <size>85</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;MemberSetError_Null&gt;c__AnonStorey2">
-      <method name="Void &lt;&gt;m__5()">
-        <size>95</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;SetIndexError_Null&gt;c__AnonStorey3">
-      <method name="Void &lt;&gt;m__6()">
-        <size>101</size>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="EventClass">
+      <method name="Void add_OutEvent(System.Func`1[System.Int32])">
+        <size>24</size>
+      </method>
+      <method name="Void remove_OutEvent(System.Func`1[System.Int32])">
+        <size>24</size>
+      </method>
+      <method name="Int32 CallEvent()">
+        <size>12</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Int32 &lt;IsEvent&gt;m__4()">
+        <size>3</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__8(System.Reflection.MethodInfo)">
+        <size>12</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__9(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__A(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__B(Boolean)">
+        <size>5</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberGetError_Null&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__5()">
+        <size>85</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberSetError_Null&gt;c__AnonStorey2">
+      <method name="Void &lt;&gt;m__6()">
+        <size>95</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;SetIndexError_Null&gt;c__AnonStorey3">
+      <method name="Void &lt;&gt;m__7()">
+        <size>101</size>
       </method>
     </type>
   </test>

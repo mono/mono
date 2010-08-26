@@ -4,8 +4,6 @@
 # csXXXX.cs		: test case causes error
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
-dtest-007.cs bug #628665
-
 test-xml-027.cs
 
 gtest-230.cs

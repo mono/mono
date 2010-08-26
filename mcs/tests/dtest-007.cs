@@ -77,6 +77,16 @@ class Class
 	}
 }
 
+class EventClass
+{
+	internal event Func<int> OutEvent;
+	
+	public int CallEvent ()
+	{
+		return OutEvent ();
+	}
+}
+
 class Tester
 {
 	static void Assert<T> (T expected, T value, string name)
@@ -96,6 +106,10 @@ class Tester
 			// passed
 		}
 	}
+	
+	event Func<int> e;
+	int field;
+
 
 #pragma warning disable 169
 
@@ -161,8 +175,6 @@ class Tester
 		var r2 = new D2 (d);
 	}
 
-	event Func<int> e;
-	int field;
 	void IsEvent ()
 	{
 		dynamic d = this;
@@ -171,6 +183,10 @@ class Tester
 		
 		d.field += 5;
 		Assert (5, d.field, "#2");
+		
+		d = new EventClass ();
+		d.OutEvent += new Func<int> (() => 100);
+		Assert (100, d.CallEvent (), "#3");
 	}
 
 	void MemberGetTest ()
