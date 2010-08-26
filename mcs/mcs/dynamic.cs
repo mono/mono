@@ -141,8 +141,10 @@ namespace Mono.CSharp
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if NET_4_0		
 			if (type.IsStruct && !obj.Expression.Type.IsValueType)
 				return SLE.Expression.Unbox (obj.Expression, type.GetMetaInfo ());
+#endif
 
 			return SLE.Expression.Convert (obj.Expression, type.GetMetaInfo ());
 		}

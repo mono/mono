@@ -5233,9 +5233,6 @@ namespace Mono.CSharp {
 			if (spec.DeclaringType == ec.CurrentType ||
 			    TypeManager.IsNestedChildOf(ec.CurrentType, spec.DeclaringType)) {
 					
-				// TODO: Breaks dynamic binder as currect context fields are imported and not compiled
-				// EventField mi = spec.MemberDefinition as EventField;
-
 				if (spec.BackingField != null) {
 					spec.MemberDefinition.SetIsUsed ();
 

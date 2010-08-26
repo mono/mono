@@ -95,13 +95,13 @@ namespace Mono.CSharp
 					mod = Modifiers.PROTECTED | Modifiers.INTERNAL;
 					break;
 				default:
+					// Ignore private fields (even for error reporting) to not require extra dependencies
+					if (IgnorePrivateMembers || fi.IsDefined (typeof (CompilerGeneratedAttribute), false))
+						return null;
+
 					mod = Modifiers.PRIVATE;
 					break;
 			}
-
-			// Ignore private fields (even for error reporting) to not require extra dependencies
-			if (mod == Modifiers.PRIVATE && IgnorePrivateMembers)
-				return null;
 
 			var definition = new ImportedMemberDefinition (fi);
 			TypeSpec field_type;
@@ -1164,12 +1164,10 @@ namespace Mono.CSharp
 					MethodAttributes.Final;
 
 			Dictionary<MethodBase, MethodSpec> possible_accessors = null;
+			List<EventSpec> imported_events = null;
+			EventSpec event_spec;
 			MemberSpec imported;
 			MethodInfo m;
-
-			//
-			// This requires methods to be returned first which seems to work for both Mono and .NET
-			//
 			MemberInfo[] all;
 			try {
 				all = loading_type.GetMembers (all_members);
@@ -1178,6 +1176,9 @@ namespace Mono.CSharp
 					declaringType.GetSignatureForError (), declaringType.Assembly.Location);
 			}
 
+			//
+			// The logic here requires methods to be returned first which seems to work for both Mono and .NET
+			//
 			var cache = new MemberCache (all.Length);
 			foreach (var member in all) {
 				switch (member.MemberType) {
@@ -1250,18 +1251,37 @@ namespace Mono.CSharp
 					if (add == null || remove == null)
 						continue;
 
-					imported = meta_import.CreateEvent (e, declaringType, add, remove);
+					event_spec = meta_import.CreateEvent (e, declaringType, add, remove);
+					if (!meta_import.IgnorePrivateMembers) {
+						if (imported_events == null)
+							imported_events = new List<EventSpec> ();
+
+						imported_events.Add (event_spec);
+					}
+
+					imported = event_spec;
 					break;
 				case MemberTypes.Field:
 					var fi = (FieldInfo) member;
 
-					// Ignore compiler generated fields
-					if (fi.IsPrivate && fi.IsDefined (typeof (CompilerGeneratedAttribute), false))
-						continue;
-
 					imported = meta_import.CreateField (fi, declaringType);
 					if (imported == null)
 						continue;
+
+					//
+					// For dynamic binder event has to be fully restored to allow operations
+					// within the type container to work correctly
+					//
+					if (imported_events != null) {
+						// The backing event field should be private but it may not
+						int index = imported_events.FindIndex (l => l.Name == fi.Name);
+						if (index >= 0) {
+							event_spec = imported_events[index];
+							event_spec.BackingField = (FieldSpec) imported;
+							imported_events.RemoveAt (index);
+							continue;
+						}
+					}
 
 					break;
 				case MemberTypes.NestedType:

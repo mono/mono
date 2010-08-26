@@ -167,9 +167,7 @@ class Tester
 	{
 		dynamic d = this;
 		d.e += new Func<int> (() => 3);
-		
-		// FIXME:
-		//Assert (3, d.e (), "#1");
+		Assert (3, d.e (), "#1");
 		
 		d.field += 5;
 		Assert (5, d.field, "#2");

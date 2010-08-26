@@ -1297,6 +1297,205 @@
       </method>
     </type>
   </test>
+  <test name="dtest-007.cs">
+    <type name="D">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="D2">
+      <method name="Void Invoke(Decimal)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Decimal, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Class">
+      <method name="UInt32 get_Item(Byte)">
+        <size>9</size>
+      </method>
+      <method name="Void set_Item(Byte, UInt32)">
+        <size>8</size>
+      </method>
+      <method name="Byte get_Prop()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Prop(Byte)">
+        <size>8</size>
+      </method>
+      <method name="Void set_FixedValue(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Int32 get_FixedValue()">
+        <size>6</size>
+      </method>
+      <method name="System.String Method(System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Method(Int32, Byte)">
+        <size>4</size>
+      </method>
+      <method name="Void MethodInOut(Int32 ByRef, System.String ByRef)">
+        <size>11</size>
+      </method>
+      <method name="Void GenericVoid[T](T)">
+        <size>1</size>
+      </method>
+      <method name="Int32 StaticMethod(System.Int32[])">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>44</size>
+      </method>
+      <method name="Void .ctor(SByte)">
+        <size>52</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>16</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void add_e(System.Func`1[System.Int32])">
+        <size>24</size>
+      </method>
+      <method name="Void remove_e(System.Func`1[System.Int32])">
+        <size>24</size>
+      </method>
+      <method name="Void Assert[T](T, T, System.String)">
+        <size>78</size>
+      </method>
+      <method name="Void AssertError(System.Action, System.String)">
+        <size>35</size>
+      </method>
+      <method name="Void GetIndexTest()">
+        <size>915</size>
+      </method>
+      <method name="Void GetIndexError_Null()">
+        <size>36</size>
+      </method>
+      <method name="Void InvokeTest()">
+        <size>458</size>
+      </method>
+      <method name="Void InvokeMember()">
+        <size>906</size>
+      </method>
+      <method name="Void InvokeConstructor()">
+        <size>231</size>
+      </method>
+      <method name="Void IsEvent()">
+        <size>1310</size>
+      </method>
+      <method name="Void MemberGetTest()">
+        <size>810</size>
+      </method>
+      <method name="Void MemberGetError_Null()">
+        <size>36</size>
+      </method>
+      <method name="Void MemberSetTest()">
+        <size>2971</size>
+      </method>
+      <method name="Void MemberSetError_Null()">
+        <size>36</size>
+      </method>
+      <method name="Void SetIndexTest()">
+        <size>2900</size>
+      </method>
+      <method name="Void SetIndexError_Null()">
+        <size>36</size>
+      </method>
+      <method name="Boolean RunTest(System.Reflection.MethodInfo)">
+        <size>87</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>179</size>
+      </method>
+      <method name="Int32 &lt;InvokeTest&gt;m__1(System.String)">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;InvokeConstructor&gt;m__2(Decimal)">
+        <size>1</size>
+      </method>
+      <method name="Int32 &lt;IsEvent&gt;m__3()">
+        <size>2</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__7(System.Reflection.MethodInfo)">
+        <size>12</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__8(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__9(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__A(Boolean)">
+        <size>5</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;GetIndexError_Null&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0()">
+        <size>91</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef, System.String ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberGetError_Null&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__4()">
+        <size>85</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberSetError_Null&gt;c__AnonStorey2">
+      <method name="Void &lt;&gt;m__5()">
+        <size>95</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;SetIndexError_Null&gt;c__AnonStorey3">
+      <method name="Void &lt;&gt;m__6()">
+        <size>101</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-008.cs">
     <type name="Disposable">
       <method name="Void Dispose()">
@@ -1718,6 +1917,16 @@
     <type name="C">
       <method name="Int32 Main()">
         <size>187</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-026.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>362</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
