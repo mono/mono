@@ -372,20 +372,20 @@ namespace MonoTests.System.Linq
 			Assert.AreEqual (default (int), data.AsParallel ().AsOrdered ().LastOrDefault ());
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void TestFirst ()
 		{
 			int [] data = {1, 2, 3};
 
-			Assert.AreEqual (1, data.AsParallel ().First ());
+			Assert.AreEqual (1, data.AsParallel ().AsOrdered ().First ());
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void TestFirstOrDefault ()
 		{
 			int [] data = {};
 
-			Assert.AreEqual (default (int), data.AsParallel ().FirstOrDefault ());
+			Assert.AreEqual (default (int), data.AsParallel ().AsOrdered ().FirstOrDefault ());
 		}
 		
 		[Test]
