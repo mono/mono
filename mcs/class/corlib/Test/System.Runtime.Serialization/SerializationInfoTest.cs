@@ -34,6 +34,34 @@ namespace MonoTests.System.Runtime.Serialization
 	[TestFixture]
 	public class SerializationInfoTest
 	{
+        
+		[Test]
+		public void SetType ()
+		{
+			SerializationInfo sinfo = new SerializationInfo (typeof (DateTime), new FormatterConverter ());
+
+			Type point_type = typeof (Point);
+			sinfo.SetType (point_type);
+			Assert.AreEqual (point_type.FullName, sinfo.FullTypeName, "#A0");
+			Assert.AreEqual (point_type.Assembly.FullName, sinfo.AssemblyName, "#A1");
+#if NET_4_0
+			Assert.AreEqual (point_type, sinfo.ObjectType, "#A2");
+			Assert.AreEqual (false, sinfo.IsAssemblyNameSetExplicit, "#A3");
+			Assert.AreEqual (false, sinfo.IsFullTypeNameSetExplicit, "#A4");
+
+			sinfo.FullTypeName = "Point2";
+			sinfo.AssemblyName = "NewAssembly";
+			Type datetime_type = typeof (DateTime);
+			sinfo.SetType (datetime_type);
+
+			Assert.AreEqual (datetime_type.FullName, sinfo.FullTypeName, "#B0");
+			Assert.AreEqual (datetime_type.Assembly.FullName, sinfo.AssemblyName, "#B1");
+			Assert.AreEqual (datetime_type, sinfo.ObjectType, "#B2");
+			Assert.AreEqual (false, sinfo.IsAssemblyNameSetExplicit, "#B3");
+			Assert.AreEqual (false, sinfo.IsFullTypeNameSetExplicit, "#B4");
+#endif
+		}
+
 #if NET_4_0
 		[Test]
 		public void ObjectType ()
