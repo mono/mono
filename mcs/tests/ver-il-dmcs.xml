@@ -1428,12 +1428,6 @@
       <method name="Int32 &lt;InvokeTest&gt;m__1(System.String)">
         <size>2</size>
       </method>
-      <method name="Void &lt;InvokeConstructor&gt;m__2(Decimal)">
-        <size>1</size>
-      </method>
-      <method name="Int32 &lt;IsEvent&gt;m__3()">
-        <size>2</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -1490,33 +1484,52 @@
     </type>
     <type name="Tester">
       <method name="Int32 &lt;IsEvent&gt;m__4()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Class">
+      <method name="Void ArglistMethod(...)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void InvokeMember_Error()">
+        <size>40</size>
+      </method>
+      <method name="Void &lt;InvokeMember_Error&gt;m__2()">
+        <size>111</size>
+      </method>
+      <method name="Void &lt;InvokeConstructor&gt;m__3(Decimal)">
+        <size>1</size>
+      </method>
+      <method name="Int32 &lt;IsEvent&gt;m__5()">
         <size>3</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__8(System.Reflection.MethodInfo)">
+      <method name="Boolean &lt;Main&gt;m__9(System.Reflection.MethodInfo)">
         <size>12</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__9(System.Reflection.MethodInfo)">
+      <method name="System.String &lt;Main&gt;m__A(System.Reflection.MethodInfo)">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__A(System.Reflection.MethodInfo)">
+      <method name="Boolean &lt;Main&gt;m__B(System.Reflection.MethodInfo)">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__B(Boolean)">
+      <method name="Boolean &lt;Main&gt;m__C(Boolean)">
         <size>5</size>
       </method>
     </type>
     <type name="Tester+&lt;MemberGetError_Null&gt;c__AnonStorey1">
-      <method name="Void &lt;&gt;m__5()">
+      <method name="Void &lt;&gt;m__6()">
         <size>85</size>
       </method>
     </type>
     <type name="Tester+&lt;MemberSetError_Null&gt;c__AnonStorey2">
-      <method name="Void &lt;&gt;m__6()">
+      <method name="Void &lt;&gt;m__7()">
         <size>95</size>
       </method>
     </type>
     <type name="Tester+&lt;SetIndexError_Null&gt;c__AnonStorey3">
-      <method name="Void &lt;&gt;m__7()">
+      <method name="Void &lt;&gt;m__8()">
         <size>101</size>
       </method>
     </type>
@@ -1952,6 +1965,30 @@
     <type name="C">
       <method name="Int32 Main()">
         <size>362</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-027.cs">
+    <type name="C">
+      <method name="Int32 M(System.Object, Int64)">
+        <size>2</size>
+      </method>
+      <method name="Int32 M(Int64, System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 M(System.Object, System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>194</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -15529,6 +15566,19 @@
     <type name="C">
       <method name="Int32 Main()">
         <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-534.cs">
+    <type name="A">
+      <method name="Void Method(IG`1)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>13</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

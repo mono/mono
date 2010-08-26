@@ -75,6 +75,10 @@ class Class
 	{
 		return i [0] * i.Length;
 	}
+	
+	public static void ArglistMethod (__arglist)
+	{
+	}
 }
 
 class EventClass
@@ -162,6 +166,14 @@ class Tester
 		d = 2;
 		Assert (2, Class.StaticMethod (d), "#2");
 		Class.StaticMethod (d);	
+	}
+	
+	void InvokeMember_Error ()
+	{
+		AssertError (() => {
+				dynamic d_arg = "a";
+				Class.ArglistMethod (d_arg);
+			}, "#1");
 	}
 
 	void InvokeConstructor ()

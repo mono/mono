@@ -685,6 +685,10 @@ namespace Mono.CSharp {
 					return true;
 				}
 
+				// dynamic to __arglist
+				if (target_type == InternalType.Arglist)
+					return true;
+
 				return false;
 			}
 

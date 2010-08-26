@@ -190,7 +190,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		}
 
 		//
-		// Creates mcs expression from dynamic method object
+		// Creates mcs expression from dynamic object
 		//
 		public Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
 		{
@@ -201,22 +201,28 @@ namespace Microsoft.CSharp.RuntimeBinder
 				return Compiler.Constant.CreateConstantFromValue (ImportType (value.LimitType), null, Compiler.Location.Null);
 			}
 
-			bool is_compile_time;
+			//
+			// No type details provider, go with runtime type
+			//
+			if (info == null)
+				return new Compiler.RuntimeValueExpression (value, ImportType (value.RuntimeType));
 
-			if (info != null) {
-				if ((info.Flags & CSharpArgumentInfoFlags.Constant) != 0) {
-					return Compiler.Constant.CreateConstantFromValue (ImportType (value.LimitType), value.Value, Compiler.Location.Null);
-				}
+			//
+			// Value is known to be a type
+			//
+			if ((info.Flags & CSharpArgumentInfoFlags.IsStaticType) != 0)
+				return new Compiler.TypeExpression (ImportType ((Type) value.Value), Compiler.Location.Null);
 
-				if ((info.Flags & CSharpArgumentInfoFlags.IsStaticType) != 0)
-					return new Compiler.TypeExpression (ImportType ((Type) value.Value), Compiler.Location.Null);
+			//
+			// Use compilation time type when type was known not to be dynamic during compilation
+			//
+			Type value_type = (info.Flags & CSharpArgumentInfoFlags.UseCompileTimeType) != 0 ? value.Expression.Type : value.LimitType;
+			var type = ImportType (value_type);
 
-				is_compile_time = (info.Flags & CSharpArgumentInfoFlags.UseCompileTimeType) != 0;
-			} else {
-				is_compile_time = false;
-			}
+			if ((info.Flags & CSharpArgumentInfoFlags.Constant) != 0)
+				return Compiler.Constant.CreateConstantFromValue (type, value.Value, Compiler.Location.Null);
 
-			return new Compiler.RuntimeValueExpression (value, ImportType (is_compile_time ? value.LimitType : value.RuntimeType));
+			return new Compiler.RuntimeValueExpression (value, type);
 		}
 
 		//
