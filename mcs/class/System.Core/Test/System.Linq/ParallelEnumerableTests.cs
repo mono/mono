@@ -356,20 +356,20 @@ namespace MonoTests.System.Linq
 				});
 		}
 		
-		[Test, Ignore]
+		[Test]
 		public void TestLast ()
 		{
 			int [] data = {1, 2, 3};
 
-			Assert.AreEqual (3, data.AsParallel ().Last ());
+			Assert.AreEqual (3, data.AsParallel ().AsOrdered ().Last ());
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void TestLastOrDefault ()
 		{
 			int [] data = {};
 
-			Assert.AreEqual (default (int), data.AsParallel ().LastOrDefault ());
+			Assert.AreEqual (default (int), data.AsParallel ().AsOrdered ().LastOrDefault ());
 		}
 
 		[Test, Ignore]
@@ -542,13 +542,13 @@ namespace MonoTests.System.Linq
 		}
 		
 		
-		[TestAttribute, Ignore]
+		[TestAttribute]
 		public void ElementAtTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
-				Assert.AreEqual(1, baseEnumerable.ElementAt(0), "#1");
-				Assert.AreEqual(51, baseEnumerable.ElementAt(50), "#2");
-				Assert.AreEqual(489, baseEnumerable.ElementAt(488), "#3");
+					Assert.AreEqual(1, baseEnumerable.AsParallel ().ElementAt(0), "#1");
+					Assert.AreEqual(51, baseEnumerable.AsParallel ().ElementAt(50), "#2");
+					Assert.AreEqual(489, baseEnumerable.AsParallel ().ElementAt(488), "#3");
 			});
 		}
 
