@@ -61,11 +61,12 @@ namespace System.Linq.Parallel
 			return linked.Token;
 		}
 
-		// TODO: replace the CheckQuery call with a custom visitor that stops after the
-		// first encountered order guard
 		internal static bool IsOrdered<TSource> (this QueryBaseNode<TSource> source)
 		{
-			return CheckQuery (source).BehindOrderGuard.Value;
+			QueryIsOrderedVisitor visitor = new QueryIsOrderedVisitor ();
+			source.Visit (visitor);
+
+			return visitor.BehindOrderGuard;
 		}
 
 		internal static int GetBestWorkerNumber ()

@@ -252,6 +252,7 @@ System.Linq.Parallel.QueryNodes/QueryJoinNode.cs
 System.Linq.Parallel/INodeVisitor.cs
 System.Linq.Parallel/IVisitableNode.cs
 System.Linq.Parallel/QueryCheckerVisitor.cs
+System.Linq.Parallel/QueryIsOrderedVisitor.cs
 System.Linq.Parallel/QueryOptions.cs
 ../corlib/System.Collections.Concurrent/Partitioners/EnumerablePartitioner.cs
 ../corlib/System.Collections.Concurrent/ConcurrentSkipList.cs
