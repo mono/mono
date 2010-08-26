@@ -76,13 +76,14 @@ namespace MonoTests.System.Linq
 			}
 
 			Assert.IsNotNull (actual);
+			int index = -1;
 
 			IEnumerator<T> ee = expected.GetEnumerator ();
 			IEnumerator<T> ea = actual.GetEnumerator ();
 
 			while (ee.MoveNext ()) {
-				Assert.IsTrue (ea.MoveNext (), "'" + ee.Current + "' expected.");
-				Assert.AreEqual (ee.Current, ea.Current);
+				Assert.IsTrue (ea.MoveNext (), "'" + ee.Current + "' expected at index '"+ ++index + "'.");
+				Assert.AreEqual (ee.Current, ea.Current, "at index '" + index + "'");
 			}
 
 			if (ea.MoveNext ())
@@ -329,6 +330,30 @@ namespace MonoTests.System.Linq
 			int [] result = {0, 1, 2};
 
 			AssertAreSame (result, data.AsParallel ().AsOrdered ().TakeWhile (i => i < 3));
+		}
+
+		[Test]
+		public void SelectManyTest ()
+		{
+			IEnumerable<int> initial = Enumerable.Range (1, 50);
+			IEnumerable<int> expected = initial.SelectMany ((i) => Enumerable.Range (1, i));
+
+			ParallelTestHelper.Repeat (() => {
+					var actual = initial.AsParallel ().SelectMany ((i) => Enumerable.Range (1, i));
+					AreEquivalent (expected, actual, 1);
+				});
+		}
+
+		[Test]
+		public void SelectManyOrderedTest ()
+		{
+			IEnumerable<int> initial = Enumerable.Range (1, 50);
+			IEnumerable<int> expected = initial.SelectMany ((i) => Enumerable.Range (1, i));
+
+			ParallelTestHelper.Repeat (() => {
+					var actual = initial.AsParallel ().AsOrdered ().SelectMany ((i) => Enumerable.Range (1, i));
+					AssertAreSame (expected, actual);
+				});
 		}
 		
 		[Test, Ignore]
