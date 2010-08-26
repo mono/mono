@@ -80,7 +80,8 @@ namespace System.ServiceModel.Discovery.Version11
 				Channel.EndFind (result);
 			}, null);
 			
-			reply_find_handle.WaitOne ();
+			if (!reply_find_handle.WaitOne (InnerChannel.OperationTimeout))
+				throw new TimeoutException ();
 			try {
 				var ir = find_completed ();
 				var ret = new FindResponse ();
@@ -117,7 +118,8 @@ namespace System.ServiceModel.Discovery.Version11
 				Channel.EndResolve (result);
 			}, null);
 
-			reply_resolve_handle.WaitOne ();
+			if (!reply_resolve_handle.WaitOne (InnerChannel.OperationTimeout))
+				throw new TimeoutException ();
 			try {
 				var ir = resolve_completed ();
 				var metadata = ir.Body.ToEndpointDiscoveryMetadata ();

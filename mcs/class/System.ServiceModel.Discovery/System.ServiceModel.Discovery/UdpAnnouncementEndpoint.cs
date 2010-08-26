@@ -85,7 +85,7 @@ namespace System.ServiceModel.Discovery
 
 		static Binding CreateBinding ()
 		{
-			return new CustomBinding (new TextMessageEncodingBindingElement (), new UdpTransportBindingElement ());
+			return new CustomBinding (new TextMessageEncodingBindingElement (), new UdpTransportBindingElement ()) { SendTimeout = TimeSpan.FromMinutes (1), ReceiveTimeout = TimeSpan.FromMinutes (10) };
 		}
 
 		public Uri MulticastAddress { get; set; }
