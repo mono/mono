@@ -165,14 +165,14 @@ namespace System.Linq.Parallel
 
 		public bool MoveNext ()
 		{
-			while (currEnum == null || !currEnum.MoveNext ())
-				if ((currEnum = slotBucket.Wait ()) == null)
-					return false;
-			
-			while (!currEnum.Current.HasValue)
-				if (!currEnum.MoveNext ())
+			do {
+				while (currEnum == null || !currEnum.MoveNext ()) {
+					if (currEnum != null)
+						currEnum.Dispose ();
 					if ((currEnum = slotBucket.Wait ()) == null)
 						return false;
+				}
+			} while (!currEnum.Current.HasValue);
 
 			curr = currEnum.Current.Value;
 
