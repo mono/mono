@@ -212,7 +212,7 @@ namespace Mono.CSharp
 				var type = tparams[pos];
 				if (type.HasElementType) {
 					var element = type.GetElementType ();
-					var spec = CreateType (element);
+					var spec = ImportType (element);
 
 					if (type.IsArray) {
 						tspec[pos - first] = (T) (TypeSpec) ArrayContainer.MakeType (spec, type.GetArrayRank ());
