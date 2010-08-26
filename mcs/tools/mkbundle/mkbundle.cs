@@ -554,6 +554,7 @@ class MakeBundle {
 		IntPtr buf = UnixMarshal.AllocHeap(8192);
 		if (uname (buf) != 0){
 			Console.WriteLine ("Warning: Unable to detect OS");
+			UnixMarshal.FreeHeap(buf);
 			return;
 		}
 		string os = Marshal.PtrToStringAnsi (buf);
