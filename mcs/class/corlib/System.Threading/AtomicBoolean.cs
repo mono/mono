@@ -53,6 +53,11 @@ namespace System.Threading
 		{
 			return !Exchange (true);
 		}
+
+		public bool TryRelaxedSet ()
+		{
+			return !flag && !Exchange (true);
+		}
 		
 		public bool Exchange (bool newVal)
 		{
