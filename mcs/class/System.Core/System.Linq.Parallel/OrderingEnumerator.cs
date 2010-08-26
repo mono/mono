@@ -191,7 +191,7 @@ namespace System.Linq.Parallel
 			}
 		}
 		
-		public void Add (KeyValuePair<long, T> value)
+		public void Add (KeyValuePair<long, T> value, CancellationToken token)
 		{
 			slotBucket.Add (value);
 		}
