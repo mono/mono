@@ -33,10 +33,9 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Discovery
 {
-/* Strange, but this causes compiler error at DiscoveryClientBindingElement.
+//* Strange, but this causes compiler error at DiscoveryClientBindingElement.
 
 	internal class DiscoveryChannel<TChannel> : DiscoveryChannelBase, IRequestSessionChannel, IDuplexSessionChannel
-		where TChannel : IChannel
 	{
 		DiscoveryChannelFactory<TChannel> factory;
 		TChannel inner;
@@ -45,7 +44,7 @@ namespace System.ServiceModel.Discovery
 			: base (factory)
 		{
 			this.factory = factory;
-			EndpointAddress = address;
+			RemoteAddress = address;
 			Via = via;
 		}
 
@@ -80,7 +79,7 @@ namespace System.ServiceModel.Discovery
 		protected override void OnAbort ()
 		{
 			if (inner != null) {
-				inner.Abort ();
+				((IChannel) inner).Abort ();
 				inner = default (TChannel);
 			}
 		}
@@ -88,7 +87,7 @@ namespace System.ServiceModel.Discovery
 		protected override void OnClose (TimeSpan timeout)
 		{
 			if (inner != null) {
-				inner.Close (timeout);
+				((IChannel) inner).Close (timeout);
 				inner = default (TChannel);
 			}
 		}
@@ -110,7 +109,7 @@ namespace System.ServiceModel.Discovery
 			// FIXME: use timeout
 			DateTime start = DateTime.Now;
 			inner = CreateDiscoveryInnerChannel<TChannel> (factory);
-			inner.Open (timeout - (DateTime.Now - start));
+			((IChannel) inner).Open (timeout - (DateTime.Now - start));
 		}
 
 		public Message Request (Message msg)
@@ -223,7 +222,7 @@ namespace System.ServiceModel.Discovery
 			((IOutputChannel) inner).EndSend (result);
 		}
 	}
-*/
+//*/
 
 	internal class DiscoveryRequestChannel : RequestChannelBase
 	{

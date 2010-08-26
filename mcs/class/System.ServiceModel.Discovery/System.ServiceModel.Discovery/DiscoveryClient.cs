@@ -53,7 +53,13 @@ namespace System.ServiceModel.Discovery
 			if (discoveryEndpoint == null)
 				throw new ArgumentNullException ("discoveryEndpoint");
 
-			client = Activator.CreateInstance (discoveryEndpoint.DiscoveryVersion.DiscoveryProxyClientType, new object [] {discoveryEndpoint});
+			// create DiscoveryTargetClientXX for each version:
+			// Managed -> DiscoveryTargetClientType (request-reply)
+			// Adhoc   -> DiscoveryProxyClientType (duplex)
+			if (discoveryEndpoint.DiscoveryMode == ServiceDiscoveryMode.Managed)
+				client = Activator.CreateInstance (discoveryEndpoint.DiscoveryVersion.DiscoveryProxyClientType, new object [] {discoveryEndpoint});
+			else
+				client = Activator.CreateInstance (discoveryEndpoint.DiscoveryVersion.DiscoveryTargetClientType, new object [] {discoveryEndpoint});
 		}
 
 		public DiscoveryClient (string endpointConfigurationName)

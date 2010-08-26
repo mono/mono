@@ -76,22 +76,14 @@ namespace System.ServiceModel.Discovery
 			inner.EndClose (result);
 		}
 
-		protected override TChannel OnCreateChannel (EndpointAddress address, Uri uri)
+		protected override TChannel OnCreateChannel (EndpointAddress address, Uri via)
 		{
 			if (address == null)
 				throw new ArgumentNullException ("address");
 			if (address != DiscoveryClientBindingElement.DiscoveryEndpointAddress)
 				throw new ArgumentException ("Only DiscoveryEndpointAddress is expected as the argument EndpointAddress");
 
-			if (typeof (TChannel) == typeof (IRequestChannel))
-				return (TChannel) (object) new DiscoveryRequestChannel (AsFactory<IRequestChannel> (), address, uri);
-			
-			throw new NotSupportedException ();
-		}
-
-		DiscoveryChannelFactory<T> AsFactory<T> ()
-		{
-			return (DiscoveryChannelFactory<T>) (object) this;
+			return (TChannel) (object) new DiscoveryChannel<TChannel> (this, address, via);
 		}
 	}
 }

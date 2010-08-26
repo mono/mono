@@ -33,7 +33,7 @@ using System.ServiceModel.Discovery;
 
 namespace System.ServiceModel.Discovery.VersionCD1
 {
-	[ServiceContract (Name = "TargetService", Namespace = MessageContractsCD1.NS)]
+	[ServiceContract (Name = "TargetService", Namespace = MessageContractsCD1.NS, CallbackContract = typeof (IDiscoveryTargetCallbackContractCD1))]
 	internal interface IDiscoveryTargetContractCD1
 	{
 		[OperationContract (Name = "Probe", Action = MessageContractsCD1.ProbeAction, AsyncPattern = true, IsOneWay = true)]
@@ -60,5 +60,14 @@ namespace System.ServiceModel.Discovery.VersionCD1
 		IAsyncResult BeginOnlineAnnouncement (MessageContractsCD1.OnlineAnnouncement message, AsyncCallback callback, object state);
 
 		void EndOnlineAnnouncement (IAsyncResult result);
+	}
+
+	internal interface IDiscoveryTargetCallbackContractCD1
+	{
+		[OperationContract (Name = "ProbeMatches", Action = MessageContractsCD1.ProbeMatchAction, IsOneWay = true)]
+		void ReplyFind (MessageContractsCD1.FindResponse message);
+
+		[OperationContract (Name = "ResolveMatches", Action = MessageContractsCD1.ResolveMatchAction, IsOneWay = true)]
+		void ReplyResolve (MessageContractsCD1.ResolveResponse message);
 	}
 }
