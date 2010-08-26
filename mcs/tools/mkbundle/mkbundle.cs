@@ -535,7 +535,7 @@ class MakeBundle {
 				   "    --machine-config F  Use the given file as the machine.config for the application.\n" +
 				   "    --static            Statically link to mono libs\n" +
 				   "    --nomain            Don't include a main() function, for libraries\n" +
-				   "    -z                  Compress the assemblies before embedding.\n");
+				   "    -z                  Compress the assemblies before embedding.\n" +
 				   "                        You need zlib development headers and libraries.\n");
 	}
 
