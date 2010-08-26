@@ -545,11 +545,11 @@ namespace MonoTests.System.Linq
 		[TestAttribute]
 		public void ElementAtTestCase()
 		{
-			ParallelTestHelper.Repeat (() => {
-					Assert.AreEqual(1, baseEnumerable.AsParallel ().ElementAt(0), "#1");
-					Assert.AreEqual(51, baseEnumerable.AsParallel ().ElementAt(50), "#2");
-					Assert.AreEqual(489, baseEnumerable.AsParallel ().ElementAt(488), "#3");
-			});
+			//ParallelTestHelper.Repeat (() => {
+					Assert.AreEqual(1, baseEnumerable.AsParallel ().AsOrdered ().ElementAt(0), "#1");
+					Assert.AreEqual(51, baseEnumerable.AsParallel ().AsOrdered ().ElementAt(50), "#2");
+					Assert.AreEqual(489, baseEnumerable.AsParallel ().AsOrdered ().ElementAt(488), "#3");
+			//});
 		}
 
 		[Test]

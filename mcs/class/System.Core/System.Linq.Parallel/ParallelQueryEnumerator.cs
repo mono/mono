@@ -80,11 +80,10 @@ namespace System.Linq.Parallel
 					buffer = new BlockingCollection<T> (DefaultBufferSize);
 				}
 
-				var src = CancellationTokenSource.CreateLinkedTokenSource (options.Token, options.ImplementerToken);
-				IEnumerable<T> source = buffer.GetConsumingEnumerable (src.Token);
+				IEnumerable<T> source = buffer.GetConsumingEnumerable (options.MergedToken);
 				loader = source.GetEnumerator ();
 			} else {
-				loader = ordEnumerator = new OrderingEnumerator<T> (options.PartitionCount);
+				loader = ordEnumerator = new OrderingEnumerator<T> (options.PartitionCount, options.MergedToken);
 			}
 		}
 

@@ -65,6 +65,27 @@ namespace System.Linq.Parallel
 			PartitionCount = partitionCount;
 			PartitionerSettings = null;
 			ImplementerToken = implementerToken;
+
+			MergeTokens (token, implementerToken);
+		}
+
+		void MergeTokens (CancellationToken token, CancellationToken implementerToken)
+		{
+			bool implementedNone = implementerToken == CancellationToken.None;
+			bool tokenNone = token == CancellationToken.None;
+			if (!implementedNone && !tokenNone)
+				MergedToken = CancellationTokenSource.CreateLinkedTokenSource (implementerToken, token).Token;
+			else if (implementedNone && !tokenNone)
+				MergedToken = token;
+			else if (!implementedNone && tokenNone)
+				MergedToken = implementerToken;
+			else
+				MergedToken = CancellationToken.None;
+		}
+
+		public CancellationToken MergedToken {
+			get;
+			private set;
 		}
 	}
 }

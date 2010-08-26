@@ -45,14 +45,16 @@ namespace System.Linq.Parallel
 			CountdownEvent stagingCount;
 			CountdownEvent participantCount;
 			CancellationTokenSource src = new CancellationTokenSource ();
+			CancellationToken mergedToken;
 
-			public SlotBucket (int count)
+			public SlotBucket (int count, CancellationToken token)
 			{
 				this.count = count;
 				stagingCount = new CountdownEvent (count);
 				participantCount = new CountdownEvent (count);
 				stagingArea = new KeyValuePair<long, T>?[count];
 				currentIndex = -count;
+				mergedToken = CancellationTokenSource.CreateLinkedTokenSource (src.Token, token).Token;
 			}
 
 			public void Add (KeyValuePair<long, T> value)
@@ -84,7 +86,7 @@ namespace System.Linq.Parallel
 			// Called at the end with ContinueAll
 			public void Stop ()
 			{
-				
+				src.Cancel ();
 			}
 
 			void Skim ()
@@ -123,7 +125,7 @@ namespace System.Linq.Parallel
 				while (!stagingCount.IsSet) {
 					if (!participantCount.IsSet)
 						try {
-							stagingCount.Wait (src.Token);
+							stagingCount.Wait (mergedToken);
 						} catch {
 							Skim ();
 						}
@@ -147,15 +149,15 @@ namespace System.Linq.Parallel
 		IEnumerator<KeyValuePair<long, T>?> currEnum;
 		KeyValuePair<long, T> curr;
 
-		internal OrderingEnumerator (int num)
+		internal OrderingEnumerator (int num, CancellationToken token)
 		{
 			this.num = num;
-			slotBucket = new SlotBucket (num);
+			slotBucket = new SlotBucket (num, token);
 		}
 
 		public void Dispose ()
 		{
-
+			slotBucket.Stop ();
 		}
 
 		public void Reset ()

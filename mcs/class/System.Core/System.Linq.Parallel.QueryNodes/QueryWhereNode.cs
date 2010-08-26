@@ -98,7 +98,7 @@ namespace System.Linq.Parallel.QueryNodes
 			});
 
 			return sources
-				.Select ((s, i) => GetEnumerator (s, barrier, store, i))
+				.Select ((s, i) => GetEnumerator (s, barrier, options.MergedToken, store, i))
 				.ToList ();
 		}
 
@@ -116,6 +116,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 		IEnumerable<KeyValuePair<long, TSource>> GetEnumerator (IEnumerable<KeyValuePair<long, TSource>> source,
 		                                                        Barrier barrier,
+		                                                        CancellationToken token,
 		                                                        Tuple<TSource, long, bool>[] store, int index)
 		{
 			IEnumerator<KeyValuePair<long, TSource>> current = source.GetEnumerator ();
@@ -129,7 +130,7 @@ namespace System.Linq.Parallel.QueryNodes
 					result = IsIndexed ? indexedPredicate (curr.Value, (int)curr.Key) : predicate (curr.Value);
 					store[index] = Tuple.Create (curr.Value, curr.Key, result);
 
-					barrier.SignalAndWait ();
+					barrier.SignalAndWait (token);
 
 					Tuple<TSource, long, bool> value = store [index];
 
