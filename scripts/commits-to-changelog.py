@@ -247,18 +247,24 @@ def main ():
         global path_to_root
         path_to_root = options.root + "/"
 
+    # MonkeyWrench uses a shared git repo but sets BUILD_REVISION,
+    # if present we use it instead of HEAD
+    HEAD = "HEAD"
+    if 'BUILD_REVISION' in os.environ:
+        HEAD = os.environ['BUILD_REVISION']
+
     #see if git supports %B in --format
-    output = git ("log", "-n1", "--format=%B", "HEAD")
+    output = git ("log", "-n1", "--format=%B", HEAD)
     if output.startswith ("%B"):
         print >> sys.stderr, "Error: git doesn't support %B in --format - install version 1.7.2 or newer"
         exit (1)
 
-    for filename in git ("ls-tree", "-r", "--name-only", "HEAD").splitlines ():
+    for filename in git ("ls-tree", "-r", "--name-only", HEAD).splitlines ():
         if re.search ("(^|/)Change[Ll]og$", filename):
             (path, name) = os.path.split (filename)
             all_changelogs [path] = name
 
-    commits = git ("rev-list", "--no-merges", "HEAD", "^%s" % start_commit).splitlines ()
+    commits = git ("rev-list", "--no-merges", HEAD, "^%s" % start_commit).splitlines ()
 
     touched_changelogs = {}
     for commit in commits:
