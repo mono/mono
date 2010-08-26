@@ -1856,10 +1856,10 @@ namespace Mono.CSharp {
 
 	static class ConstraintChecker
 	{
-		/// <summary>
-		///   Check the constraints; we're called from ResolveAsTypeTerminal()
-		///   after fully resolving the constructed type.
-		/// </summary>
+		//
+		// Checks all type arguments againts type parameters constraints
+		// NOTE: It can run in probing mode when `mc' is null
+		//
 		public static bool CheckAll (IMemberContext mc, MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
 			for (int i = 0; i < tparams.Length; i++) {
@@ -1876,24 +1876,37 @@ namespace Mono.CSharp {
 			// First, check the `class' and `struct' constraints.
 			//
 			if (tparam.HasSpecialClass && !TypeManager.IsReferenceType (atype)) {
-				mc.Compiler.Report.Error (452, loc,
-					"The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
-					TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				if (mc != null) {
+					mc.Compiler.Report.Error (452, loc,
+						"The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
+						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				}
+
 				return false;
 			}
 
 			if (tparam.HasSpecialStruct && (!TypeManager.IsValueType (atype) || TypeManager.IsNullableType (atype))) {
-				mc.Compiler.Report.Error (453, loc,
-					"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
-					TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				if (mc != null) {
+					mc.Compiler.Report.Error (453, loc,
+						"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
+						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				}
+
 				return false;
 			}
+
+			bool ok = true;
 
 			//
 			// The class constraint comes next.
 			//
 			if (tparam.HasTypeConstraint) {
-				CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc);
+				if (!CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc)) {
+					if (mc == null)
+						return false;
+
+					ok = false;
+				}
 			}
 
 			//
@@ -1901,12 +1914,21 @@ namespace Mono.CSharp {
 			//
 			if (tparam.Interfaces != null) {
 				if (TypeManager.IsNullableType (atype)) {
+					if (mc == null)
+						return false;
+
 					mc.Compiler.Report.Error (313, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' never satisfies interface constraint",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
+					ok = false;
 				} else {
 					foreach (TypeSpec iface in tparam.Interfaces) {
-						CheckConversion (mc, context, atype, tparam, iface, loc);
+						if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
+							if (mc == null)
+								return false;
+
+							ok = false;
+						}
 					}
 				}
 			}
@@ -1915,23 +1937,28 @@ namespace Mono.CSharp {
 			// Finally, check the constructor constraint.
 			//
 			if (!tparam.HasSpecialConstructor)
-				return true;
+				return ok;
 
 			if (!HasDefaultConstructor (atype)) {
-				mc.Compiler.Report.SymbolRelatedToPreviousError (atype);
-				mc.Compiler.Report.Error (310, loc,
-					"The type `{0}' must have a public parameterless constructor in order to use it as parameter `{1}' in the generic type or method `{2}'",
-					TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				if (mc != null) {
+					mc.Compiler.Report.SymbolRelatedToPreviousError (atype);
+					mc.Compiler.Report.Error (310, loc,
+						"The type `{0}' must have a public parameterless constructor in order to use it as parameter `{1}' in the generic type or method `{2}'",
+						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				}
 				return false;
 			}
 
-			return true;
+			return ok;
 		}
 
-		static void CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
+		static bool CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
 		{
 			var expr = new EmptyExpression (atype);
-			if (!Convert.ImplicitStandardConversionExists (expr, ttype)) {
+			if (Convert.ImplicitStandardConversionExists (expr, ttype))
+				return true;
+
+			if (mc != null) {
 				mc.Compiler.Report.SymbolRelatedToPreviousError (tparam);
 				if (TypeManager.IsValueType (atype)) {
 					mc.Compiler.Report.Error (315, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
@@ -1944,6 +1971,8 @@ namespace Mono.CSharp {
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				}
 			}
+
+			return false;
 		}
 
 		static bool HasDefaultConstructor (TypeSpec atype)

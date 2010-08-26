@@ -3079,11 +3079,6 @@ namespace Mono.CSharp {
 				ResolveInstanceExpression (ec);
 				if (InstanceExpression != null)
 					CheckProtectedMemberAccess (ec, best_candidate);
-
-				if (best_candidate.IsGeneric) {
-					ConstraintChecker.CheckAll (ec.MemberContext, best_candidate.GetGenericMethodDefinition (), best_candidate.TypeArguments,
-						best_candidate.Constraints, loc);
-				}
 			}
 
 			best_candidate = CandidateToBaseOverride (ec, best_candidate);
@@ -3670,6 +3665,13 @@ namespace Mono.CSharp {
 					candidate = ms;
 					pd = ms.Parameters;
 				}
+
+				//
+				// Type arguments constraints have to match
+				//
+				if (!ConstraintChecker.CheckAll (null, ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc))
+					return int.MaxValue - 25000;
+
 			} else {
 				if (type_arguments != null)
 					return int.MaxValue - 15000;
@@ -4123,14 +4125,23 @@ namespace Mono.CSharp {
 					}
 
 					var ms = best_candidate as MethodSpec;
-					if (ms != null && ms.IsGeneric && ta_count == 0) {
-						if (custom_errors != null && custom_errors.TypeInferenceFailed (rc, best_candidate))
-							return;
+					if (ms != null && ms.IsGeneric) {
+						bool constr_ok = true;
+						if (ms.TypeArguments != null)
+							constr_ok = ConstraintChecker.CheckAll (rc.MemberContext, ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc);
 
-						rc.Report.Error (411, loc,
-							"The type arguments for method `{0}' cannot be inferred from the usage. Try specifying the type arguments explicitly",
-							ms.GetGenericMethodDefinition ().GetSignatureForError ());
-						return;
+						if (ta_count == 0) {
+							if (custom_errors != null && custom_errors.TypeInferenceFailed (rc, best_candidate))
+								return;
+
+							if (constr_ok) {
+								rc.Report.Error (411, loc,
+									"The type arguments for method `{0}' cannot be inferred from the usage. Try specifying the type arguments explicitly",
+									ms.GetGenericMethodDefinition ().GetSignatureForError ());
+							}
+
+							return;
+						}
 					}
 
 					VerifyArguments (rc, ref args, best_candidate, params_expanded);

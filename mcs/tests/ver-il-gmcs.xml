@@ -13466,6 +13466,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-535.cs">
+    <type name="G`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Int32 Foo[T](T, G`1[T])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo[T](T, System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>34</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
