@@ -390,12 +390,16 @@ namespace System.Xml
 				ns = String.Empty;
 
 #if NET_2_0
-			switch (Settings.ConformanceLevel) {
-			case ConformanceLevel.Document:
-			case ConformanceLevel.Fragment:
-				XmlConvert.VerifyNCName (localName);
-				break;
+			if (Settings != null) {
+				switch (Settings.ConformanceLevel) {
+				case ConformanceLevel.Document:
+				case ConformanceLevel.Fragment:
+					XmlConvert.VerifyNCName (localName);
+					break;
+				}
 			}
+			else
+				XmlConvert.VerifyNCName (localName);
 #else
 			XmlConvert.VerifyNCName (localName);
 #endif
