@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -36,29 +37,38 @@ using NUnit.Framework;
 namespace MonoTests.System.ServiceModel.Discovery
 {
 	[TestFixture]
-	public class DiscoveryClientTest
+	public class UdpTransportTest
 	{
 		[Test]
-		public void ContractInterfaceManaged ()
+		public void DefaultSettings ()
 		{
-			var client = new DiscoveryClient (new DiscoveryEndpoint ());
-			var v11 = client.ChannelFactory.Endpoint;
-			Assert.IsNotNull (v11, "v11");
-			Assert.AreEqual ("DiscoveryProxy", v11.Name, "v11.Name");
-			Assert.AreEqual (2, v11.Contract.Operations.Count, "v11.Operations.Count");
-			Assert.IsNull (v11.Contract.CallbackContractType, "v11.CallbackContractType");
+			var binding = new UdpDiscoveryEndpoint ().Binding;
+			Assert.AreEqual (TimeSpan.FromMinutes (1), binding.SendTimeout, "#1");
+			Assert.AreEqual (TimeSpan.FromMinutes (10), binding.ReceiveTimeout, "#2");
 		}
 
 		[Test]
-		public void ContractInterfaceAdhoc ()
+		public void CanBuildChannelFactory ()
 		{
-			var client = new DiscoveryClient (new UdpDiscoveryEndpoint ());
-			var v11 = client.ChannelFactory.Endpoint;
-var cd = ContractDescription.GetContract (v11.Contract.ContractType);
-			Assert.IsNotNull (v11, "v11");
-			Assert.AreEqual ("CustomBinding_TargetService", v11.Name, "v11.Name");
-			Assert.AreEqual (5, v11.Contract.Operations.Count, "v11.Operations.Count");
-			Assert.IsNotNull (v11.Contract.CallbackContractType, "v11.CallbackContractType");
+			var binding = new UdpDiscoveryEndpoint ().Binding;
+			Assert.IsFalse (binding.CanBuildChannelFactory<IRequestChannel> (), "#1");
+			Assert.IsFalse (binding.CanBuildChannelFactory<IRequestSessionChannel> (), "#2");
+			Assert.IsTrue (binding.CanBuildChannelFactory<IDuplexChannel> (), "#3");
+			Assert.IsFalse (binding.CanBuildChannelFactory<IDuplexSessionChannel> (), "#4");
+			Assert.IsFalse (binding.CanBuildChannelFactory<IOutputChannel> (), "#5");
+			Assert.IsFalse (binding.CanBuildChannelFactory<IOutputSessionChannel> (), "#6");
+		}
+
+		[Test]
+		public void CanBuildChannelListener ()
+		{
+			var binding = new UdpDiscoveryEndpoint ().Binding;
+			Assert.IsFalse (binding.CanBuildChannelListener<IRequestChannel> (), "#1");
+			Assert.IsFalse (binding.CanBuildChannelListener<IRequestSessionChannel> (), "#2");
+			Assert.IsTrue (binding.CanBuildChannelListener<IDuplexChannel> (), "#3");
+			Assert.IsFalse (binding.CanBuildChannelListener<IDuplexSessionChannel> (), "#4");
+			Assert.IsFalse (binding.CanBuildChannelListener<IOutputChannel> (), "#5");
+			Assert.IsFalse (binding.CanBuildChannelListener<IOutputSessionChannel> (), "#6");
 		}
 	}
 }

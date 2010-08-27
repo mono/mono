@@ -439,8 +439,8 @@ namespace System.ServiceModel
 			foreach (ServiceEndpoint endPoint in Description.Endpoints)
 				endPoint.Validate ();
 
-			if (Description.Endpoints.FirstOrDefault (e => e.Contract != mex_contract) == null)
-				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange contract) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
+			if (Description.Endpoints.FirstOrDefault (e => e.Contract != mex_contract && !e.IsSystemEndpoint) == null)
+				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange endpoint) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
 		}
 
 		[MonoTODO]

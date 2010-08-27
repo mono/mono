@@ -80,11 +80,12 @@ namespace System.ServiceModel.Discovery
 			TransportSettings = new UdpTransportSettings ();
 			MulticastAddress = multicastAddress;
 			MaxResponseDelay = TimeSpan.FromMilliseconds (500);
+			Behaviors.Add (new DiscoveryViaUriBehavior (multicastAddress));
 		}
 
 		static Binding CreateBinding ()
 		{
-			return new CustomBinding (new TextMessageEncodingBindingElement (), new UdpTransportBindingElement ());
+			return new CustomBinding (new TextMessageEncodingBindingElement (), new UdpTransportBindingElement ()) { SendTimeout = TimeSpan.FromMinutes (1), ReceiveTimeout = TimeSpan.FromMinutes (10) };
 		}
 
 		public Uri MulticastAddress { get; set; }

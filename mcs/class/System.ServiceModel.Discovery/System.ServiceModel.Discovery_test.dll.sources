@@ -17,3 +17,4 @@ System.ServiceModel.Discovery/MyDiscoveryServiceTypes.cs
 System.ServiceModel.Discovery/ServiceDiscoveryBehaviorTest.cs
 System.ServiceModel.Discovery/UdpAnnouncementEndpointTest.cs
 System.ServiceModel.Discovery/UdpDiscoveryEndpointTest.cs
+System.ServiceModel.Discovery/UdpTransportTest.cs

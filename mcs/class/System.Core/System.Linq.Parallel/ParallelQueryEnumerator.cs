@@ -55,8 +55,8 @@ namespace System.Linq.Parallel
 			// Launch adding to the buffer asynchronously via Tasks
 			if (options.BehindOrderGuard.Value) {
 				waitAction = ParallelExecuter.ProcessAndCallback (node,
-				                                                  (e, i) => ordEnumerator.Add (e),
-				                                                  (i) => ordEnumerator.EndParticipation (),
+				                                                  ordEnumerator.Add,
+				                                                  ordEnumerator.EndParticipation,
 				                                                  ordEnumerator.Stop,
 				                                                  options);
 			} else {
@@ -80,11 +80,10 @@ namespace System.Linq.Parallel
 					buffer = new BlockingCollection<T> (DefaultBufferSize);
 				}
 
-				IEnumerable<T> source = buffer.GetConsumingEnumerable (options.Token);
-
+				IEnumerable<T> source = buffer.GetConsumingEnumerable (options.MergedToken);
 				loader = source.GetEnumerator ();
 			} else {
-				loader = ordEnumerator = new OrderingEnumerator<T> (options.PartitionCount);
+				loader = ordEnumerator = new OrderingEnumerator<T> (options.PartitionCount, options.MergedToken);
 			}
 		}
 

@@ -76,7 +76,7 @@ namespace System.Linq.Parallel.QueryNodes
 		{
 			var store = new ConcurrentDictionary<TKey, ConcurrentQueue<TElement>> ();
 
-			ParallelExecuter.ProcessAndBlock (Parent, (e) => {
+			ParallelExecuter.ProcessAndBlock (Parent, (e, c) => {
 					ConcurrentQueue<TElement> queue = store.GetOrAdd (keySelector (e), (_) => new ConcurrentQueue<TElement> ());
 					queue.Enqueue (elementSelector (e));
 				});

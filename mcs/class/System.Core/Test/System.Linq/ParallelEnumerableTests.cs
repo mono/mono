@@ -372,20 +372,20 @@ namespace MonoTests.System.Linq
 			Assert.AreEqual (default (int), data.AsParallel ().AsOrdered ().LastOrDefault ());
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void TestFirst ()
 		{
 			int [] data = {1, 2, 3};
 
-			Assert.AreEqual (1, data.AsParallel ().First ());
+			Assert.AreEqual (1, data.AsParallel ().AsOrdered ().First ());
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void TestFirstOrDefault ()
 		{
 			int [] data = {};
 
-			Assert.AreEqual (default (int), data.AsParallel ().FirstOrDefault ());
+			Assert.AreEqual (default (int), data.AsParallel ().AsOrdered ().FirstOrDefault ());
 		}
 		
 		[Test]
@@ -545,11 +545,11 @@ namespace MonoTests.System.Linq
 		[TestAttribute]
 		public void ElementAtTestCase()
 		{
-			ParallelTestHelper.Repeat (() => {
-					Assert.AreEqual(1, baseEnumerable.AsParallel ().ElementAt(0), "#1");
-					Assert.AreEqual(51, baseEnumerable.AsParallel ().ElementAt(50), "#2");
-					Assert.AreEqual(489, baseEnumerable.AsParallel ().ElementAt(488), "#3");
-			});
+			//ParallelTestHelper.Repeat (() => {
+					Assert.AreEqual(1, baseEnumerable.AsParallel ().AsOrdered ().ElementAt(0), "#1");
+					Assert.AreEqual(51, baseEnumerable.AsParallel ().AsOrdered ().ElementAt(50), "#2");
+					Assert.AreEqual(489, baseEnumerable.AsParallel ().AsOrdered ().ElementAt(488), "#3");
+			//});
 		}
 
 		[Test]

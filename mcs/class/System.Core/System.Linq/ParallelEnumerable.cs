@@ -355,7 +355,7 @@ namespace System.Linq
 			if (action == null)
 				throw new ArgumentNullException ("action");
 
-			ParallelExecuter.ProcessAndBlock (source.Node, action);
+			ParallelExecuter.ProcessAndBlock (source.Node, (e, c) => action (e));
 		}
 		#endregion
 
@@ -463,12 +463,17 @@ namespace System.Linq
 			ParallelQuery<TSource> innerQuery = source.WithImplementerToken (src);
 
 			bool result = true;
-			innerQuery.ForAll ((e) => {
-				if (!predicate (e)) {
-					result = false;
-					src.Cancel ();
-				}
-			});
+			try {
+				innerQuery.ForAll ((e) => {
+						if (!predicate (e)) {
+							result = false;
+							src.Cancel ();
+						}
+					});
+			} catch (OperationCanceledException e) {
+				if (e.CancellationToken != src.Token)
+					throw e;
+			}
 
 			return result;
 		}
@@ -537,10 +542,15 @@ namespace System.Linq
 
 			bool result = true;
 
-			innerQuery.ForAll ((value) => {
-				result = false;
-				source.Cancel ();
-			});
+			try {
+				innerQuery.ForAll ((value) => {
+						result = false;
+						source.Cancel ();
+					});
+			} catch (OperationCanceledException e) {
+				if (e.CancellationToken != source.Token)
+					throw e;
+			}
 
 			return result;
 		}
@@ -2060,6 +2070,7 @@ namespace System.Linq
 			
 			TSource result = enumerator.Current;
 			src.Cancel ();
+			enumerator.Dispose ();
 			
 			return result;
 		}

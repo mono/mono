@@ -133,13 +133,20 @@ namespace System.Threading
 			SignalAndWait ((c) => { c.Wait (); return true; });
 		}
 		
+		public void SignalAndWait (CancellationToken token)
+		{
+			if (cleaned)
+				throw GetDisposed ();
+			SignalAndWait ((c) => { c.Wait (token); return true; });
+		}
+
 		public bool SignalAndWait (int millisecondTimeout)
 		{
 			if (cleaned)
 				throw GetDisposed ();
 			return SignalAndWait ((c) => c.Wait (millisecondTimeout));
 		}
-		
+
 		public bool SignalAndWait (TimeSpan ts)
 		{
 			if (cleaned)

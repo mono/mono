@@ -79,34 +79,26 @@ namespace System.Linq.Parallel
 			return blocking ? Environment.ProcessorCount + 1 : Environment.ProcessorCount;
 		}
 
-		internal static Task[] Process<TSource, TElement> (QueryBaseNode<TSource> node, Action<TElement> call,
+		internal static Task[] Process<TSource, TElement> (QueryBaseNode<TSource> node,
+		                                                   Action<TElement, CancellationToken> call,
 		                                                   Func<QueryBaseNode<TSource>, QueryOptions, IList<IEnumerable<TElement>>> acquisitionFunc,
 		                                                   QueryOptions options)
 		{
 			return Process<TSource, TElement> (node, call, acquisitionFunc, null, options);
 		}
-		
-		internal static Task[] Process<TSource, TElement> (QueryBaseNode<TSource> node, Action<TElement> call,
+
+		internal static Task[] Process<TSource, TElement> (QueryBaseNode<TSource> node,
+		                                                   Action<TElement, CancellationToken> call,
 		                                                   Func<QueryBaseNode<TSource>, QueryOptions, IList<IEnumerable<TElement>>> acquisitionFunc,
 		                                                   Action endAction,
-		                                                   QueryOptions options)
-		{
-			return Process<TSource, TElement> (node,
-			                                   (e, i) => call (e),
-			                                   acquisitionFunc,
-			                                   endAction == null ? ((Action<int>)null) : (i) => endAction (),
-			                                   options);
-		}
-
-		internal static Task[] Process<TSource, TElement> (QueryBaseNode<TSource> node, Action<TElement, int> call,
-		                                                   Func<QueryBaseNode<TSource>, QueryOptions, IList<IEnumerable<TElement>>> acquisitionFunc,
-		                                                   Action<int> endAction,
 		                                                   QueryOptions options)
 		{
 			IList<IEnumerable<TElement>> enumerables = acquisitionFunc (node, options);
 
 			Task[] tasks = new Task[enumerables.Count];
-			
+			CancellationTokenSource src
+				= CancellationTokenSource.CreateLinkedTokenSource (options.ImplementerToken, options.Token);
+
 			for (int i = 0; i < tasks.Length; i++) {
 				int index = i;
 				tasks[i] = Task.Factory.StartNew (() => {
@@ -117,17 +109,17 @@ namespace System.Linq.Parallel
 						if (options.Token.IsCancellationRequested)
 							throw new OperationCanceledException (options.Token);
 
-						call (item, index);
+						call (item, src.Token);
 					}
 					if (endAction != null)
-						endAction (index);
+						endAction ();
 				  }, options.Token);
 			}
 
 			return tasks;
 		}
 
-		internal static void ProcessAndBlock<T> (QueryBaseNode<T> node, Action<T> call)
+		internal static void ProcessAndBlock<T> (QueryBaseNode<T> node, Action<T, CancellationToken> call)
 		{
 			QueryOptions options = CheckQuery (node, true);
 
@@ -135,7 +127,7 @@ namespace System.Linq.Parallel
 			Task.WaitAll (tasks, options.Token);
 		}
 
-		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<T> call,
+		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<T, CancellationToken> call,
 		                                              Action callback, QueryOptions options)
 		{
 			Task[] tasks = Process (node, call, (n, o) => n.GetEnumerables (o), options);
@@ -145,8 +137,8 @@ namespace System.Linq.Parallel
 			return () => Task.WaitAll (tasks, options.Token);
 		}
 
-		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<KeyValuePair<long, T>, int> call,
-		                                              Action<int> endAction,
+		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<KeyValuePair<long, T>, CancellationToken> call,
+		                                              Action endAction,
 		                                              Action callback, QueryOptions options)
 		{
 			Task[] tasks = Process (node, call, (n, o) => n.GetOrderedEnumerables (o), endAction, options);

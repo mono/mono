@@ -201,6 +201,11 @@ namespace System.Runtime.Serialization
 
 			fullTypeName = type.FullName;
 			assemblyName = type.Assembly.FullName;
+#if NET_4_0
+			objectType = type;
+			isAssemblyNameSetExplicit = false;
+			isFullTypeNameSetExplicit = false;
+#endif
 		}
 
 		public SerializationInfoEnumerator GetEnumerator ()

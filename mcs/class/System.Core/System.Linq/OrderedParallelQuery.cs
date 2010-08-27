@@ -50,6 +50,11 @@ namespace System.Linq
 				return node;
 			}
 		}
+
+		public override IEnumerator<TSource> GetEnumerator ()
+		{
+			return base.GetEnumerator ();
+		}
 	}
 }
 #endif
