@@ -194,11 +194,15 @@ namespace Mono.Documentation
 		// Try ~all permutations. :-)
 		static IEnumerable<KeyValuePair<string, string>> GetTypeDirectoryFilePermutations (string type)
 		{
-			int end = type.Length-1;
+			int end = type.Length;
 			int dot;
-			while ((dot = type.LastIndexOf ('.', end)) >= 0) {
-				yield return new KeyValuePair<string, string> (type.Substring (0, dot), type.Substring (dot+1));
+			while ((dot = type.LastIndexOf ('.', end-1)) >= 0) {
+				yield return new KeyValuePair<string, string> (
+						type.Substring (0, dot), 
+						type.Substring (dot+1).Replace ('.', '+'));
+				end = dot;
 			}
+			yield return new KeyValuePair<string, string> ("", type.Replace ('.', '+'));
 		}
 	}
 }
