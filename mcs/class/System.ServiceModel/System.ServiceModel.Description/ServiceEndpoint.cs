@@ -78,6 +78,13 @@ namespace System.ServiceModel.Description
 			set { binding = value; }
 		}
 
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		bool IsSystemEndpoint { get; set; }
+
 		public Uri ListenUri {
 			get { return listen_uri ?? (Address != null ? Address.Uri : null); }
 			set { listen_uri = value; }
