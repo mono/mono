@@ -238,9 +238,10 @@ namespace System.Threading.Tasks
 			
 			AtomicBoolean launched = new AtomicBoolean ();
 			EventHandler action = delegate (object sender, EventArgs e) {
-				if (!predicate ()) return;
-				
 				if (!launched.Value && launched.TrySet ()) {
+					if (!predicate ())
+						return;
+
 					if (!ContinuationStatusCheck (kind)) {
 						continuation.CancelReal ();
 						continuation.Dispose ();
