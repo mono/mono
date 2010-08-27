@@ -1193,7 +1193,7 @@ namespace System.Runtime.Serialization
 			Order = dma.Order;
 			Member = member;
 			IsRequired = dma.IsRequired;
-			XmlName = dma.Name != null ? dma.Name : member.Name;
+			XmlName = XmlConvert.EncodeLocalName (dma.Name != null ? dma.Name : member.Name);
 			XmlNamespace = ns;
 			XmlRootNamespace = rootNamespce;
 			if (Member is FieldInfo)
