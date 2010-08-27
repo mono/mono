@@ -43,6 +43,7 @@ namespace Mono.Documentation {
 				{ "export-msxdoc",    new MDocToMSXDocConverter () },
 				{ "help",             new MDocHelpCommand (this) },
 				{ "update",           new MDocUpdater () },
+				{ "update-ecma-xml",  new MDocUpdateEcmaXml () },
 				{ "validate",         new MDocValidator () },
 			};
 
