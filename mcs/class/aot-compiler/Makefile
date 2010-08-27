@@ -18,6 +18,8 @@ endif
 
 mcs_aot_image = $(mcs_exe)$(PLATFORM_AOT_SUFFIX)
 
+PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
+
 ifdef PLATFORM_AOT_SUFFIX
 Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
 $(mcs_aot_image): $(mcs_exe)
@@ -33,5 +35,9 @@ endif
 
 clean-local:
 	-rm -f $(mcs_aot_image)
+
+install-local:
+	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
+	$(INSTALL_LIB) $(mcs_aot_image) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 
 endif
