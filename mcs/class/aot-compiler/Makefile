@@ -31,4 +31,7 @@ ifeq (net_4_0, $(PROFILE))
 all-local: $(mcs_aot_image)
 endif
 
+clean-local:
+	-rm -f $(mcs_aot_image)
+
 endif
