@@ -146,6 +146,11 @@ namespace Mono.CSharp
 				return SLE.Expression.Unbox (obj.Expression, type.GetMetaInfo ());
 #endif
 
+			if (obj.Expression.NodeType == SLE.ExpressionType.Parameter) {
+				if (((SLE.ParameterExpression) obj.Expression).IsByRef)
+					return obj.Expression;
+			}
+
 			return SLE.Expression.Convert (obj.Expression, type.GetMetaInfo ());
 		}
 	}
