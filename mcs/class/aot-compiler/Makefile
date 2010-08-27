@@ -10,9 +10,8 @@ include ../../build/rules.make
 
 the_libdir = $(topdir)/class/lib/$(PROFILE)/
 
-# The 2.0 profile uses mcs/gmcs.exe instead of lib/net_2_0/gmcs.exe
 ifeq (net_2_0, $(PROFILE))
-mcs_exe = $(topdir)/mcs/gmcs.exe
+mcs_exe = $(topdir)/class/lib/$(PROFILE)/gmcs.exe
 else ifeq (net_4_0, $(PROFILE))
 mcs_exe = $(topdir)/class/lib/$(PROFILE)/dmcs.exe
 endif
