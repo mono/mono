@@ -37,6 +37,7 @@ common_dirs := \
 	System.Configuration		\
 	System				\
 	System.XML			\
+	aot-compiler		\
 	I18N				\
 	System.Drawing			\
 	System.Transactions		\
