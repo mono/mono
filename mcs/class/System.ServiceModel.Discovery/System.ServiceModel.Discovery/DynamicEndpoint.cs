@@ -17,6 +17,8 @@ namespace System.ServiceModel.Discovery
 				throw new ArgumentNullException ("binding");
 			DiscoveryEndpointProvider = DiscoveryEndpointProvider.CreateDefault ();
 			FindCriteria = new FindCriteria (contract.ContractType);
+			
+			IsSystemEndpoint = true;
 		}
 
 		static CustomBinding CreateBinding (Binding source)

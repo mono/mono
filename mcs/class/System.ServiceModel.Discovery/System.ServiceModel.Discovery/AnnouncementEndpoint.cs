@@ -45,6 +45,8 @@ namespace System.ServiceModel.Discovery
 			if (discoveryVersion == null)
 				throw new ArgumentNullException ("discoveryVersion");
 			DiscoveryVersion = discoveryVersion;
+			
+			IsSystemEndpoint = true;
 		}
 
 		public AnnouncementEndpoint (Binding binding, EndpointAddress address)

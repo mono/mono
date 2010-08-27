@@ -54,6 +54,8 @@ namespace System.ServiceModel.Discovery
 		{
 			DiscoveryVersion = discoveryVersion;
 			DiscoveryMode = discoveryMode;
+
+			IsSystemEndpoint = true;
 		}
 
 		static ContractDescription GetContract (DiscoveryVersion discoveryVersion, ServiceDiscoveryMode mode)
