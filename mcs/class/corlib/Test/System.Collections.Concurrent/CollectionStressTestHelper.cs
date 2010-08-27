@@ -81,7 +81,7 @@ namespace MonoTests.System.Collections.Concurrent
 				const int delta = 5;
 				
 				for (int i = 0; i < (count + delta) * threads; i++)
-					coll.TryAdd (i);
+					while (!coll.TryAdd (i));
 				
 				bool state = true;
 				
@@ -91,8 +91,12 @@ namespace MonoTests.System.Collections.Concurrent
 					bool s = true;
 					int t;
 					
-					for (int i = 0; i < count; i++)
+					for (int i = 0; i < count; i++) {
 						s &= coll.TryTake (out t);
+						// try again in case it was a transient failure
+						if (!s && coll.TryTake (out t))
+							s = true;
+					}
 					
 					if (!s)
 						state = false;
