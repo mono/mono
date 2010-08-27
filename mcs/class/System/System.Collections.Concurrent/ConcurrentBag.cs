@@ -97,7 +97,7 @@ namespace System.Collections.Concurrent
 					bool result = hintEnabled && addHints.TryDequeue (out hintIndex) && container[hintIndex].PopTop (out item) == PopResult.Succeed;
 
 					// We fall back to testing our slot
-					if (!result)
+					if (!result && other.Value != bag)
 						result = other.Value.PopTop (out item) == PopResult.Succeed;
 					
 					// If we found something, stop
