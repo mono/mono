@@ -1604,6 +1604,13 @@ interpreter.  The possible values are `no' to disable the use of a
 custom serializer or a number to indicate when the XmlSerializer
 should start serializing.   The default value is 50, which means that
 the a custom serializer will be produced on the 50th use.
+.TP
+\fBMONO_X509_REVOCATION_MODE\fR
+Sets the revocation mode used when validating a X509 certificate chain (https,
+ftps, smtps...).  The default is 'nocheck', which performs no revocation check
+at all. The other possible values are 'offline', which performs CRL check (not
+implemented yet) and 'online' which uses OCSP and CRL to verify the revocation
+status (not implemented yet).
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 \fBMONO_ASPNET_NODELETE\fR
