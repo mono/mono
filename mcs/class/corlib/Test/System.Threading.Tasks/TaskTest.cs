@@ -126,9 +126,8 @@ namespace MonoTests.System.Threading.Tasks
 				
 				Task t = Task.Factory.StartNew(delegate { });
 				Task cont = t.ContinueWith(delegate { result = true; }, TaskContinuationOptions.None);
-				t.Wait();
-				cont.Wait();
-				
+				Assert.IsTrue (t.Wait (2000), "First wait, (status, {0})", t.Status);
+				Assert.IsTrue (cont.Wait(2000), "Cont wait, (result, {0}) (parent status, {2}) (status, {1})", result, cont.Status, t.Status);
 				Assert.IsNull(cont.Exception, "#1");
 				Assert.IsNotNull(cont, "#2");
 				Assert.IsTrue(result, "#3");

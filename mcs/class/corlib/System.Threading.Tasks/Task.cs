@@ -58,8 +58,9 @@ namespace System.Threading.Tasks
 		
 		Action<object> action;
 		object         state;
-		EventHandler   completed;
-		
+
+		ConcurrentQueue<EventHandler> completed = new ConcurrentQueue<EventHandler> ();
+
 		CancellationToken token;			
 		
 		public Task (Action action) : this (action, TaskCreationOptions.None)
@@ -256,12 +257,13 @@ namespace System.Threading.Tasks
 				return;
 			}
 			
-			completed += action;
+			completed.Enqueue (action);
 			
 			// Retry in case completion was achieved but event adding was too late
 			if (IsCompleted)
 				action (null, EventArgs.Empty);
 		}
+
 		
 		bool ContinuationStatusCheck (TaskContinuationOptions kind)
 		{
@@ -381,10 +383,7 @@ namespace System.Threading.Tasks
 			if (childTasks.IsSet && status == TaskStatus.WaitingForChildrenToComplete) {
 				status = TaskStatus.RanToCompletion;
 				
-				// Let continuation creation process
-				EventHandler tempCompleted = completed;
-				if (tempCompleted != null) 
-					tempCompleted (this, EventArgs.Empty);
+				ProcessCompleteDelegates ();
 			}
 		}
 
@@ -411,12 +410,8 @@ namespace System.Threading.Tasks
 					status = TaskStatus.WaitingForChildrenToComplete;
 			}
 		
-			if (status != TaskStatus.WaitingForChildrenToComplete) {
-				// Let continuation creation process
-				EventHandler tempCompleted = completed;
-				if (tempCompleted != null)
-					tempCompleted (this, EventArgs.Empty);
-			}
+			if (status != TaskStatus.WaitingForChildrenToComplete)
+				ProcessCompleteDelegates ();
 			
 			// Reset the current thingies
 			current = null;
@@ -428,6 +423,13 @@ namespace System.Threading.Tasks
 			}
 			
 			Dispose ();
+		}
+
+		void ProcessCompleteDelegates ()
+		{
+			EventHandler handler;
+			while (completed.TryDequeue (out handler))
+				handler (this, EventArgs.Empty);
 		}
 		#endregion
 		
@@ -652,7 +654,7 @@ namespace System.Threading.Tasks
 			// any big object references that the user might have captured in a anonymous method
 			if (disposeManagedRes) {
 				action = null;
-				completed = null;
+				completed.Clear ();
 				state = null;
 			}
 		}
