@@ -46,7 +46,7 @@ namespace Mono.Documentation
 	{
 		string file = "CLILibraryTypes.xml";
 		List<string> directories;
-		Dictionary<string, List<string>> libraries = new Dictionary<string, List<string>>();
+		Dictionary<string, HashSet<string>> libraries = new Dictionary<string, HashSet<string>>();
 
 		public override void Run (IEnumerable<string> args)
 		{
@@ -63,7 +63,7 @@ namespace Mono.Documentation
 					v => current_library = v },
 				{ "type=",
 					"The full {TYPE} name of a type to copy into the output file.",
-					v => Add (libraries, current_library, v) },
+					v => AddTypeToLibrary (current_library, v) },
 			};
 			directories = Parse (options, args, "export-ecma-xml", 
 					"[OPTIONS]+ DIRECTORIES",
@@ -75,33 +75,37 @@ namespace Mono.Documentation
 			Update ();
 		}
 
-		static void Add (Dictionary<string, List<string>> libraries, string library, string type)
+		void AddTypeToLibrary (string library, string type)
 		{
-			List<string> types;
+			HashSet<string> types;
 			if (!libraries.TryGetValue (library, out types))
-				libraries.Add (library, types = new List<string> ());
+				libraries.Add (library, types = new HashSet<string> ());
 			types.Add (type.Replace ('/', '.').Replace ('+', '.'));
 		}
 
 		void Update ()
 		{
-			XDocument input = LoadFile (file);
+			XDocument input = LoadFile (this.file);
 
 			var seenLibraries = new HashSet<string> ();
-			using (var output = CreateWriter (file)) {
-				// spit out header comments, DTD, etc.
-				foreach (var node in input.Nodes ()) {
-					if (node.NodeType == XmlNodeType.Element)
-						continue;
-					node.WriteTo (output);
-				}
 
-				using (var librariesElement = new Element (output, o => o.WriteStartElement ("Libraries"))) {
-					UpdateExistingLibraries (input, output, seenLibraries);
-					GenerateMissingLibraries (input, output, seenLibraries);
+			Action<string> creator = file => {
+				using (var output = CreateWriter (file)) {
+					// spit out header comments, DTD, etc.
+					foreach (var node in input.Nodes ()) {
+						if (node.NodeType == XmlNodeType.Element || node.NodeType == XmlNodeType.Text)
+							continue;
+						node.WriteTo (output);
+					}
+
+					using (var librariesElement = new Element (output, o => o.WriteStartElement ("Libraries"))) {
+						UpdateExistingLibraries (input, output, seenLibraries);
+						GenerateMissingLibraries (input, output, seenLibraries);
+					}
+					output.WriteWhitespace ("\r\n");
 				}
-				output.WriteWhitespace ("\r\n");
-			}
+			};
+			MdocFile.UpdateFile (this.file, creator);
 		}
 
 		static XDocument LoadFile (string file)
@@ -113,7 +117,7 @@ namespace Mono.Documentation
 				ProhibitDtd = false,
 			};
 			using (var reader = XmlReader.Create (file, settings))
-				return XDocument.Load (reader);
+				return XDocument.Load (reader, LoadOptions.PreserveWhitespace);
 		}
 
 		static XDocument CreateDefaultDocument ()
@@ -130,15 +134,17 @@ namespace Mono.Documentation
 		static XmlWriter CreateWriter (string file)
 		{
 			var settings = new XmlWriterSettings {
-				Encoding            = Encoding.UTF8,
 				Indent              = true,
 				IndentChars         = "\t",
 				NewLineChars        = "\r\n",
 				OmitXmlDeclaration  = true,
 			};
-			return file == "-"
-				? XmlWriter.Create (Console.Out, settings)
-				: XmlWriter.Create (Path.GetTempFileName (), settings);
+
+			if (file == "-")
+				return XmlWriter.Create (Console.Out, settings);
+
+			settings.Encoding = new UTF8Encoding (false);
+			return XmlWriter.Create (file, settings);
 		}
 
 		struct Element : IDisposable {
@@ -158,17 +164,49 @@ namespace Mono.Documentation
 
 		void UpdateExistingLibraries (XDocument input, XmlWriter output, HashSet<string> seenLibraries)
 		{
+			foreach (XElement types in input.Root.Elements ()) {
+				XAttribute library = types.Attribute ("Library");
+				HashSet<string> libraryTypes;
+				if (library == null || !libraries.TryGetValue (library.Value, out libraryTypes)) {
+					types.WriteTo (output);
+					continue;
+				}
+				seenLibraries.Add (library.Value);
+				var seenTypes = new HashSet<string> ();
+				using (Element typesElement = CreateTypesElement (output, library.Value)) {
+					foreach (XElement type in types.Elements ()) {
+						XAttribute fullName = type.Attribute ("FullName");
+						string typeName = fullName == null
+							? null
+							: XmlDocUtils.ToEscapedTypeName (fullName.Value);
+						if (typeName == null || !libraryTypes.Contains (typeName)) {
+							type.WriteTo (output);
+							continue;
+						}
+						LoadType (typeName).WriteTo (output);
+					}
+					foreach (string type in libraryTypes.Except (seenTypes))
+						LoadType (type).WriteTo (output);
+				}
+			}
+		}
+
+		static Element CreateTypesElement (XmlWriter output, string library)
+		{
+			return new Element (
+					output, 
+					o => 
+						{o.WriteStartElement ("Types"); 
+						o.WriteAttributeString ("Library", library);});
 		}
 
 		void GenerateMissingLibraries (XDocument input, XmlWriter output, HashSet<string> seenLibraries)
 		{
-			foreach (KeyValuePair<string, List<string>> lib in libraries) {
+			foreach (KeyValuePair<string, HashSet<string>> lib in libraries) {
 				if (seenLibraries.Contains (lib.Key))
 					continue;
 				seenLibraries.Add (lib.Key);
-				using (var typesElement = new Element (output, o => {
-							o.WriteStartElement ("Types"); 
-							o.WriteAttributeString ("Library", lib.Key);})) {
+				using (var typesElement = CreateTypesElement (output, lib.Key)) {
 					foreach (string type in lib.Value) {
 						LoadType (type).WriteTo (output);
 					}

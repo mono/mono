@@ -5,6 +5,7 @@ Mono.Documentation/dump.cs
 Mono.Documentation/ecmadoc.cs
 Mono.Documentation/exceptions.cs
 Mono.Documentation/mdoc.cs
+Mono.Documentation/MdocFile.cs
 Mono.Documentation/monodocer.cs
 Mono.Documentation/monodocs2html.cs
 Mono.Documentation/monodocs2slashdoc.cs

@@ -212,52 +212,12 @@ class MDocUpdater : MDocCommand
 
 	private static void WriteFile (string filename, FileMode mode, Action<TextWriter> action)
 	{
-		if (!File.Exists (filename)) {
-			using (var writer = OpenWrite (filename, mode))
+		Action<string> creator = file => {
+			using (var writer = OpenWrite (file, mode))
 				action (writer);
-			return;
-		}
+		};
 
-		string tmpFile = filename + ".tmp";
-		bool move = true;
-
-		try {
-			using (var writer = OpenWrite (tmpFile, mode))
-				action (writer);
-
-			using (var a = File.OpenRead (filename))
-			using (var b = File.OpenRead (tmpFile)) {
-				if (a.Length == b.Length)
-					move = !FileContentsIdentical (a, b);
-			}
-
-			if (move) {
-				File.Delete (filename);
-				File.Move (tmpFile, filename);
-			}
-		}
-		finally {
-			if (!move && File.Exists (tmpFile))
-				File.Delete (tmpFile);
-		}
-	}
-
-	static bool FileContentsIdentical (Stream a, Stream b)
-	{
-		byte[] ba = new byte[4096];
-		byte[] bb = new byte[4096];
-		int ra, rb;
-
-		while ((ra = a.Read (ba, 0, ba.Length)) > 0 &&
-				(rb = b.Read (bb, 0, bb.Length)) > 0) {
-			if (ra != rb)
-				return false;
-			for (int i = 0; i < ra; ++i) {
-				if (ba [i] != bb [i])
-					return false;
-			}
-		}
-		return true;
+		MdocFile.UpdateFile (filename, creator);
 	}
 
 	private static void OrderTypeAttributes (XmlElement e)
