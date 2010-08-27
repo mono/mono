@@ -2363,12 +2363,11 @@ namespace Mono.CSharp {
 
 			if (am_storey == null) {
 				MemberBase mc = ec.MemberContext as MemberBase;
-				GenericMethod gm = mc == null ? null : mc.GenericMethod;
 
 				//
 				// Creates anonymous method storey for this block
 				//
-				am_storey = new AnonymousMethodStorey (this, ec.CurrentMemberDefinition.Parent.PartialContainer, mc, gm, "AnonStorey");
+				am_storey = new AnonymousMethodStorey (this, ec.CurrentMemberDefinition.Parent.PartialContainer, mc, ec.CurrentTypeParameters, "AnonStorey");
 			}
 
 			return am_storey;

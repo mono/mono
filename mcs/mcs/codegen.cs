@@ -294,6 +294,8 @@ namespace Mono.CSharp {
 		
 		public readonly IMemberContext MemberContext;
 
+		DynamicSiteClass dynamic_site_container;
+
 		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type)
 		{
 			this.MemberContext = rc;
@@ -387,6 +389,25 @@ namespace Mono.CSharp {
 		{
 			ig.EndScope();
 			SymbolWriter.CloseScope(ig);
+		}
+
+		//
+		// Creates a nested container in this context for all dynamic compiler generated stuff
+		//
+		public DynamicSiteClass CreateDynamicSite ()
+		{
+			if (dynamic_site_container == null) {
+				var mc = MemberContext.CurrentMemberDefinition as MemberBase;
+				dynamic_site_container = new DynamicSiteClass (CurrentTypeDefinition.Parent.PartialContainer, mc, CurrentTypeParameters);
+
+				RootContext.ToplevelTypes.AddCompilerGeneratedClass (dynamic_site_container);
+				dynamic_site_container.CreateType ();
+				dynamic_site_container.DefineType ();
+				dynamic_site_container.ResolveTypeParameters ();
+				dynamic_site_container.Define ();
+			}
+
+			return dynamic_site_container;
 		}
 
 		public LocalBuilder DeclareLocal (TypeSpec type, bool pinned)

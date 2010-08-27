@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Linq;
 using SLE = System.Linq.Expressions;
 
 #if NET_4_0
@@ -254,18 +255,10 @@ namespace Mono.CSharp
 			}
 		}
 
-		Field CreateSiteField (EmitContext ec, FullNamedExpression type)
+		FieldSpec CreateSiteField (EmitContext ec, FullNamedExpression type)
 		{
-			var tc = ec.CurrentTypeDefinition.Parent.PartialContainer;
-			TypeContainer site_container = tc.CreateDynamicSite ();
-
-			int index = site_container.Fields == null ? 0 : site_container.Fields.Count;
-			Field f = new Field (site_container, type, Modifiers.PUBLIC | Modifiers.STATIC,
-				new MemberName ("Site" + index.ToString ("X"), loc), null);
-			f.Define ();
-
-			site_container.AddField (f);
-			return f;
+			var site_container = ec.CreateDynamicSite ();
+			return site_container.CreateCallSiteField (type, loc);
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -333,6 +326,7 @@ namespace Mono.CSharp
 		{
 			int dyn_args_count = arguments == null ? 0 : arguments.Count;
 			TypeExpr site_type = CreateSiteType (ec, arguments, dyn_args_count, isStatement);
+
 			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (ec, site_type), loc);
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec);
@@ -418,7 +412,7 @@ namespace Mono.CSharp
 				for (int i = 1; i < dyn_args_count + 1; ++i)
 					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
 
-				TypeContainer site = ec.CurrentTypeDefinition.Parent.PartialContainer.CreateDynamicSite ();
+				TypeContainer site = ec.CreateDynamicSite ();
 				int index = site.Types == null ? 0 : site.Types.Count;
 
 				Delegate d = new Delegate (site.NamespaceEntry, site, new TypeExpression (rt, loc),
@@ -751,6 +745,52 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder ("UnaryOperation", loc), binder_args);
+		}
+	}
+
+	public class DynamicSiteClass : HoistedStoreyClass
+	{
+		//
+		// Holds the type to access the site. It gets inflated
+		// by MVARs for generic call sites
+		//
+		TypeSpec instance_type;
+
+		public DynamicSiteClass (TypeContainer parent, MemberBase host, TypeParameter[] tparams)
+			: base (parent, MakeMemberName (host, "DynamicSite", 0, tparams, Location.Null), tparams, Modifiers.STATIC)
+		{
+			if (tparams != null) {
+				mutator = new TypeParameterMutator (tparams, CurrentTypeParameters);
+			}
+		}
+
+		public FieldSpec CreateCallSiteField (FullNamedExpression type, Location loc)
+		{
+			int index = fields == null ? 0 : fields.Count;
+			Field f = new HoistedField (this, type, Modifiers.PUBLIC | Modifiers.STATIC, "Site" + index.ToString ("X"), null, loc);
+			f.Define ();
+
+			AddField (f);
+
+			var fs = f.Spec;
+			if (mutator != null) {
+				//
+				// Inflate the field, no need to keep it in MemberCache as it's accessed only once
+				//
+				var inflator = new TypeParameterInflator (instance_type, spec.MemberDefinition.TypeParameters, instance_type.TypeArguments);
+				fs = (FieldSpec) fs.InflateMember (inflator);
+			}
+
+			return fs;
+		}
+
+		protected override bool DoResolveTypeParameters ()
+		{
+			instance_type = spec;
+			if (mutator != null)
+				instance_type = instance_type.MakeGenericType (mutator.MethodTypeParameters.Select (l => l.Type).ToArray ());
+
+			return true;
 		}
 	}
 }

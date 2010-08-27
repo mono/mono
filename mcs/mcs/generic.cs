@@ -1169,6 +1169,16 @@ namespace Mono.CSharp {
 			this.var = var;
 		}
 
+		#region Properties
+
+		public TypeParameter[] MethodTypeParameters {
+			get {
+				return mvar;
+			}
+		}
+
+		#endregion
+
 		public static TypeSpec GetMemberDeclaringType (TypeSpec type)
 		{
 			if (type is InflatedTypeSpec) {
@@ -1191,12 +1201,6 @@ namespace Mono.CSharp {
 			value = ts.Mutate (this);
 			mutated_typespec.Add (ts, value);
 			return value;
-		}
-
-		public FieldInfo Mutate (FieldSpec fs)
-		{
-			// TODO:
-			return fs.GetMetaInfo ();
 		}
 
 		public TypeParameterSpec Mutate (TypeParameterSpec tp)

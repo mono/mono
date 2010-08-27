@@ -387,7 +387,7 @@ namespace Mono.CSharp {
 
 		public IteratorStorey (Iterator iterator)
 			: base (iterator.Container.Toplevel, iterator.Host,
-			  iterator.OriginalMethod as MemberBase, iterator.GenericMethod, "Iterator")
+			  iterator.OriginalMethod as MemberBase, iterator.GenericMethod == null ? null : iterator.GenericMethod.CurrentTypeParameters, "Iterator")
 		{
 			this.Iterator = iterator;
 		}

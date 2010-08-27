@@ -491,24 +491,6 @@
       <method name="Void .cctor()">
         <size>34</size>
       </method>
-    </type>
-    <type name="Tester+&lt;&gt;c__DynamicSite0+Container0">
-      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;&gt;c__DynamicSite0+Container1">
-      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Tester">
       <method name="Void Convert_5(System.Object, DynamicObjectMock)">
         <size>226</size>
       </method>
@@ -667,6 +649,22 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;InvokeMember_3&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;InvokeMember_4&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
       </method>
     </type>
   </test>
@@ -1445,14 +1443,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Tester+&lt;&gt;c__DynamicSite0+Container0">
-      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef, System.String ByRef)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-    </type>
     <type name="Tester+&lt;MemberGetError_Null&gt;c__AnonStorey1">
       <method name="Void .ctor()">
         <size>7</size>
@@ -1531,6 +1521,14 @@
     <type name="Tester+&lt;SetIndexError_Null&gt;c__AnonStorey3">
       <method name="Void &lt;&gt;m__8()">
         <size>101</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;InvokeMember&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef, System.String ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
       </method>
     </type>
   </test>
@@ -1992,6 +1990,59 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-028.cs">
+    <type name="C">
+      <method name="Void MethodRef(Int32 ByRef)">
+        <size>8</size>
+      </method>
+      <method name="Void MethodOut(UInt16 ByRef)">
+        <size>5</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>225</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Main&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Main&gt;c__DynamicSite0+Container1">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, UInt16 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-029.cs">
+    <type name="C">
+      <method name="Boolean Test[T,U](T, U)">
+        <size>335</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>82</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Test2(Int32)">
+        <size>160</size>
       </method>
     </type>
   </test>
@@ -15579,6 +15630,27 @@
       </method>
       <method name="Int32 Main()">
         <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-535.cs">
+    <type name="G`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Int32 Foo[T](T, G`1[T])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo[T](T, System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>34</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -43575,6 +43647,32 @@
     <type name="C">
       <method name="Void Main()">
         <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-798.cs">
+    <type name="A">
+      <method name="Void Foo(Int32 ByRef)">
+        <size>5</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Foo(Int32 ByRef)">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>24</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

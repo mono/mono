@@ -19,11 +19,6 @@ namespace Mono.CSharp {
 
 	public abstract class CompilerGeneratedClass : Class
 	{
-		public static string MakeName (string host, string typePrefix, string name, int id)
-		{
-			return "<" + host + ">" + typePrefix + "__" + name + id.ToString ("X");
-		}
-		
 		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, Modifiers mod)
 			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED, null)
 		{
@@ -34,30 +29,32 @@ namespace Mono.CSharp {
 			if (HasMembersDefined)
 				throw new InternalErrorException ("Helper class already defined!");
 		}
-	}
 
-	//
-	// Anonymous method storey is created when an anonymous method uses
-	// variable or parameter from outer scope. They are then hoisted to
-	// anonymous method storey (captured)
-	//
-	public class AnonymousMethodStorey : CompilerGeneratedClass
-	{
-		struct StoreyFieldPair
+		protected static MemberName MakeMemberName (MemberBase host, string name, int unique_id, TypeParameter[] tparams, Location loc)
 		{
-			public readonly AnonymousMethodStorey Storey;
-			public readonly Field Field;
-
-			public StoreyFieldPair (AnonymousMethodStorey storey, Field field)
-			{
-				this.Storey = storey;
-				this.Field = field;
+			string host_name = host == null ? null : host.Name;
+			string tname = MakeName (host_name, "c", name, unique_id);
+			TypeArguments args = null;
+			if (tparams != null) {
+				args = new TypeArguments ();
+				foreach (TypeParameter tparam in tparams)
+					args.Add (new TypeParameterName (tparam.Name, null, loc));
 			}
+
+			return new MemberName (tname, args, loc);
 		}
 
-		sealed class HoistedGenericField : Field
+		public static string MakeName (string host, string typePrefix, string name, int id)
 		{
-			public HoistedGenericField (DeclSpace parent, FullNamedExpression type, Modifiers mod, string name,
+			return "<" + host + ">" + typePrefix + "__" + name + id.ToString ("X");
+		}
+	}
+
+	public class HoistedStoreyClass : CompilerGeneratedClass
+	{
+		public sealed class HoistedField : Field
+		{
+			public HoistedField (HoistedStoreyClass parent, FullNamedExpression type, Modifiers mod, string name,
 				  Attributes attrs, Location loc)
 				: base (parent, type, mod, new MemberName (name, loc), attrs)
 			{
@@ -68,11 +65,67 @@ namespace Mono.CSharp {
 				if (!base.ResolveMemberType ())
 					return false;
 
-				AnonymousMethodStorey parent = ((AnonymousMethodStorey) Parent).GetGenericStorey ();
+				HoistedStoreyClass parent = ((HoistedStoreyClass) Parent).GetGenericStorey ();
 				if (parent != null && parent.Mutator != null)
 					member_type = parent.Mutator.Mutate (MemberType);
 
 				return true;
+			}
+		}
+
+		protected TypeParameterMutator mutator;
+
+		public HoistedStoreyClass (DeclSpace parent, MemberName name, TypeParameter[] tparams, Modifiers mod)
+			: base (parent, name, mod | Modifiers.PRIVATE)
+		{
+			if (tparams != null) {
+				type_params = new TypeParameter[tparams.Length];
+				for (int i = 0; i < type_params.Length; ++i) {
+					type_params[i] = tparams[i].CreateHoistedCopy (this, spec);
+				}
+			}
+		}
+
+		#region Properties
+
+		public TypeParameterMutator Mutator {
+			get {
+				return mutator;
+			}
+			set {
+				mutator = value;
+			}
+		}
+
+		#endregion
+
+		public HoistedStoreyClass GetGenericStorey ()
+		{
+			DeclSpace storey = this;
+			while (storey != null && storey.CurrentTypeParameters == null)
+				storey = storey.Parent;
+
+			return storey as HoistedStoreyClass;
+		}
+	}
+
+
+	//
+	// Anonymous method storey is created when an anonymous method uses
+	// variable or parameter from outer scope. They are then hoisted to
+	// anonymous method storey (captured)
+	//
+	public class AnonymousMethodStorey : HoistedStoreyClass
+	{
+		struct StoreyFieldPair
+		{
+			public readonly AnonymousMethodStorey Storey;
+			public readonly Field Field;
+
+			public StoreyFieldPair (AnonymousMethodStorey storey, Field field)
+			{
+				this.Storey = storey;
+				this.Field = field;
 			}
 		}
 
@@ -122,36 +175,13 @@ namespace Mono.CSharp {
 		// Local variable which holds this storey instance
 		public LocalTemporary Instance;
 
-		TypeParameterMutator mutator;
-
-		public AnonymousMethodStorey (Block block, TypeContainer parent, MemberBase host, GenericMethod generic, string name)
-			: base (parent, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE | Modifiers.SEALED)
+		public AnonymousMethodStorey (Block block, TypeContainer parent, MemberBase host, TypeParameter[] tparams, string name)
+			: base (parent, MakeMemberName (host, name, unique_id, tparams, block.StartLocation),
+				tparams, Modifiers.SEALED)
 		{
 			Parent = parent;
 			OriginalSourceBlock = block;
 			ID = unique_id++;
-
-			if (generic != null) {
-				var hoisted_tparams = generic.CurrentTypeParameters;
-				type_params = new TypeParameter [hoisted_tparams.Length];
-				for (int i = 0; i < type_params.Length; ++i) {
-					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (this, spec);
-				}
-			}
-		}
-
-		static MemberName MakeMemberName (MemberBase host, string name, GenericMethod generic, Location loc)
-		{
-			string host_name = host == null ? null : host.Name;
-			string tname = MakeName (host_name, "c", name, unique_id);
-			TypeArguments args = null;
-			if (generic != null) {
-				args = new TypeArguments ();
-				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
-					args.Add (new TypeParameterName (tparam.Name, null, loc));
-			}
-
-			return new MemberName (tname, args, loc);
 		}
 
 		public void AddCapturedThisField (EmitContext ec)
@@ -180,7 +210,7 @@ namespace Mono.CSharp {
 				return AddCompilerGeneratedField (name, field_type);
 
 			const Modifiers mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
-			Field f = new HoistedGenericField (this, field_type, mod, name, null, Location);
+			Field f = new HoistedField (this, field_type, mod, name, null, Location);
 			AddField (f);
 			return f;
 		}
@@ -433,15 +463,6 @@ namespace Mono.CSharp {
 			base.EmitType ();
 		}
 
-		public AnonymousMethodStorey GetGenericStorey ()
-		{
-			DeclSpace storey = this;
-			while (storey != null && storey.CurrentTypeParameters == null)
-				storey = storey.Parent;
-
-			return storey as AnonymousMethodStorey;
-		}
-
 		//
 		// Returns a field which holds referenced storey instance
 		//
@@ -510,15 +531,6 @@ namespace Mono.CSharp {
 
 		public HoistedThis HoistedThis {
 			get { return hoisted_this; }
-		}
-
-		public TypeParameterMutator Mutator {
-			get {
-				return mutator;
-			}
-			set {
-				mutator = value;
-			}
 		}
 
 		public IList<ExplicitBlock> ReferencesFromChildrenBlock {
