@@ -3712,7 +3712,7 @@ namespace Mono.CSharp {
 				}
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
-					p_mod = pd.FixedParameters[i].ModFlags & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
+					p_mod = pd.FixedParameters[i].ModFlags;
 					pt = pd.Types[i];
 				} else if (!params_expanded_form) {
 					params_expanded_form = true;
@@ -3721,10 +3721,9 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				Parameter.Modifier a_mod = a.Modifier & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
 				score = 1;
 				if (!params_expanded_form)
-					score = IsArgumentCompatible (ec, a_mod, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
+					score = IsArgumentCompatible (ec, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
 
 				//
 				// It can be applicable in expanded form (when not doing exact match like for delegates)
@@ -3733,7 +3732,7 @@ namespace Mono.CSharp {
 					if (!params_expanded_form)
 						pt = ((ElementTypeSpec) pt).Element;
 
-					score = IsArgumentCompatible (ec, a_mod, a, 0, pt);
+					score = IsArgumentCompatible (ec, a, Parameter.Modifier.NONE, pt);
 					if (score == 0)
 						params_expanded_form = true;
 				}
@@ -3754,13 +3753,13 @@ namespace Mono.CSharp {
 			return 0;
 		}
 
-		int IsArgumentCompatible (ResolveContext ec, Parameter.Modifier arg_mod, Argument argument, Parameter.Modifier param_mod, TypeSpec parameter)
+		int IsArgumentCompatible (ResolveContext ec, Argument argument, Parameter.Modifier param_mod, TypeSpec parameter)
 		{
 			//
 			// Types have to be identical when ref or out modifer
 			// is used and argument is not of dynamic type
 			//
-			if ((arg_mod | param_mod) != 0) {
+			if ((argument.Modifier | param_mod) != 0) {
 				//
 				// Defer to dynamic binder
 				//
@@ -3797,7 +3796,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (arg_mod != param_mod)
+			if (argument.Modifier != param_mod)
 				return 1;
 
 			return 0;
