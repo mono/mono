@@ -144,12 +144,12 @@ namespace Mono.CSharp
 #if NET_4_0		
 			if (type.IsStruct && !obj.Expression.Type.IsValueType)
 				return SLE.Expression.Unbox (obj.Expression, type.GetMetaInfo ());
-#endif
 
 			if (obj.Expression.NodeType == SLE.ExpressionType.Parameter) {
 				if (((SLE.ParameterExpression) obj.Expression).IsByRef)
 					return obj.Expression;
 			}
+#endif
 
 			return SLE.Expression.Convert (obj.Expression, type.GetMetaInfo ());
 		}
