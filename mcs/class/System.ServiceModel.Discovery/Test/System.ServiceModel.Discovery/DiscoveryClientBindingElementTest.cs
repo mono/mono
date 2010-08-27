@@ -25,11 +25,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
 using System.ServiceModel.Dispatcher;
+using System.Threading;
 using NUnit.Framework;
 
 namespace MonoTests.System.ServiceModel.Discovery

@@ -1,3 +1,4 @@
+System.ServiceModel.Discovery/AnnouncementBoundDiscoveryService.cs
 System.ServiceModel.Discovery/AnnouncementClientTest.cs
 System.ServiceModel.Discovery/AnnouncementEndpointTest.cs
 System.ServiceModel.Discovery/AnnouncementServiceTest.cs
@@ -13,6 +14,7 @@ System.ServiceModel.Discovery/EndpointDiscoveryBehaviorTest.cs
 System.ServiceModel.Discovery/EndpointDiscoveryMetadataTest.cs
 System.ServiceModel.Discovery/FindCriteriaTest.cs
 System.ServiceModel.Discovery/InspectionBehaviors.cs
+System.ServiceModel.Discovery/IntegratedDiscoveryTest.cs
 System.ServiceModel.Discovery/MyDiscoveryServiceTypes.cs
 System.ServiceModel.Discovery/ServiceDiscoveryBehaviorTest.cs
 System.ServiceModel.Discovery/UdpAnnouncementEndpointTest.cs
