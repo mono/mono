@@ -183,6 +183,7 @@ namespace Mono.Documentation
 							type.WriteTo (output);
 							continue;
 						}
+						seenTypes.Add (typeName);
 						LoadType (typeName).WriteTo (output);
 					}
 					foreach (string type in libraryTypes.Except (seenTypes))
