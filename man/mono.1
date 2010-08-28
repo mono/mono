@@ -1418,6 +1418,31 @@ custom serializer or a number to indicate when the XmlSerializer
 should start serializing.   The default value is 50, which means that
 the a custom serializer will be produced on the 50th use.
 .TP
+\fBMONO_XMLSERIALIZER_DEBUG\fR
+Set this value to 1 to prevent the serializer from removing the
+temporary files that are created for fast serialization;  This might
+be useful when debugging.
+.TP
+\fBMONO_ASPNET_INHIBIT_SETTINGSMAP\fR
+Mono contains a feature which allows modifying settings in the .config files shipped
+with Mono by using config section mappers. The mappers and the mapping rules are
+defined in the $prefix/etc/mono/2.0/settings.map file and, optionally, in the
+settings.map file found in the top-level directory of your ASP.NET application.
+Both files are read by System.Web on application startup, if they are found at the
+above locations. If you don't want the mapping to be performed you can set this
+variable in your environment before starting the application and no action will
+be taken.
+.TP
+\fBMONO_MESSAGING_PROVIDER\fR
+Mono supports a plugin model for its implementation of System.Messaging making
+it possible to support a variety of messaging implementations (e.g. AMQP, ActiveMQ).
+To specify which messaging implementation is to be used the evironement variable
+needs to be set to the full class name for the provider.  E.g. to use the RabbitMQ based
+AMQP implementation the variable should be set to:
+.nf
+Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider,Mono.Messaging.RabbitMQ
+.fi
+.TP
 \fBMONO_X509_REVOCATION_MODE\fR
 Sets the revocation mode used when validating a X509 certificate chain (https,
 ftps, smtps...).  The default is 'nocheck', which performs no revocation check
