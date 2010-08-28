@@ -1447,11 +1447,11 @@
 		</xsl:call-template>
 	</xsl:template>
 
-	<xsl:template match="onequarter">
-		1/4
-	</xsl:template>
-	<xsl:template match="pi">pi</xsl:template>
-	<xsl:template match="theta">theta</xsl:template>
+	<xsl:template match="onequarter">¼</xsl:template>
+	<xsl:template match="pi">π</xsl:template>
+	<xsl:template match="theta">θ</xsl:template>
+	<xsl:template match="leq">≤</xsl:template>
+	<xsl:template match="geq">≥</xsl:template>
 	<xsl:template match="subscript">
 		<sub><xsl:value-of select="@term"/></sub>
 	</xsl:template>

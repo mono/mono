@@ -60,7 +60,11 @@ add masterdoc support?
   <xs:element name="MemberOfLibrary" type="xs:string" />
   <xs:element name="MemberType" type="xs:string" />
   <xs:element name="MemberValue" type="xs:string" />
-  <xs:element name="onequarter" type="xs:string" />
+  <xs:element name="onequarter" />
+  <xs:element name="PRE" />
+  <xs:element name="permille" />
+  <xs:element name="pi" />
+  <xs:element name="pre" />
   <xs:element name="ReturnType" type="xs:string" />
   <xs:element name="TypeExcluded" type="xs:string" />
 
@@ -150,6 +154,7 @@ add masterdoc support?
         <xs:element ref="see" />
         <xs:element ref="subscript" />
         <xs:element ref="sup" />
+        <xs:element ref="pi" />
         <xs:element ref="typeparamref" />
       </xs:choice>
       <xs:attribute ref="subset" />
@@ -227,8 +232,12 @@ add masterdoc support?
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="c" />
         <xs:element ref="block" />
+        <xs:element ref="geq" />
+        <xs:element ref="leq" />
         <xs:element ref="paramref" />
         <xs:element ref="para" />
+        <xs:element ref="permille" />
+        <xs:element ref="plusminus" />
         <xs:element ref="SPAN" />
         <xs:element ref="see" />
         <xs:element ref="sub" />
@@ -281,6 +290,7 @@ add masterdoc support?
         <xs:element ref="format" />
         <xs:element ref="para" />
         <xs:element ref="code" />
+        <xs:element ref="codelink" />
         <xs:element ref="c" />
         <xs:element ref="list" />
         <xs:element ref="see" />
@@ -356,14 +366,6 @@ add masterdoc support?
           <xs:element ref="term" minOccurs="1" maxOccurs="1" />
           <xs:element ref="description" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="Libraries">
-    <xs:complexType>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element ref="Type" minOccurs = "1" maxOccurs="unbounded" />
-      </xs:choice>
     </xs:complexType>
   </xs:element>
 
@@ -486,6 +488,8 @@ add masterdoc support?
         <xs:element ref="block" />
         <xs:element ref="format" />
         <xs:element ref="see" />
+        <xs:element ref="geq" />
+        <xs:element ref="leq" />
         <xs:element ref="list" />
         <xs:element ref="link" />
         <xs:element ref="ul" />
@@ -493,9 +497,15 @@ add masterdoc support?
         <xs:element ref="c" />
         <xs:element ref="onequarter" />
         <xs:element ref="sub" />
+        <xs:element ref="superscript" />
         <xs:element ref="sup" />
+        <xs:element ref="permille" />
+        <xs:element ref="plusminus" />
         <xs:element ref="SPAN" />
+        <xs:element ref="pi" />
+        <xs:element ref="theta" />
         <xs:element ref="typeparamref" />
+        <xs:element ref="whitespace" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
@@ -507,10 +517,14 @@ add masterdoc support?
         <xs:element ref="format" />
         <xs:element ref="see" />
         <xs:element ref="block" />
+        <xs:element ref="geq" />
+        <xs:element ref="leq" />
         <xs:element ref="paramref" />
+        <xs:element ref="plusminus" />
         <xs:element ref="para" />
         <xs:element ref="SPAN" />
         <xs:element ref="typeparamref" />
+        <xs:element ref="whitespace" />
       </xs:choice>
       <xs:attribute ref="name" use="required" />
     </xs:complexType>
@@ -572,6 +586,8 @@ add masterdoc support?
         <xs:element ref="format" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
+        <xs:element ref="PRE" />
+        <xs:element ref="pre" />
         <xs:element ref="see" />
         <xs:element ref="ul" />
         <xs:element ref="example" />
@@ -586,12 +602,17 @@ add masterdoc support?
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="format" />
+        <xs:element ref="geq" />
+        <xs:element ref="leq" />
         <xs:element ref="list" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
+        <xs:element ref="pi" />
         <xs:element ref="see" />
+        <xs:element ref="theta" />
         <xs:element ref="typeparamref" />
         <xs:element ref="ul" />
+        <xs:element ref="whitespace" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
@@ -660,7 +681,7 @@ add masterdoc support?
   </xs:element>
 
   <xs:element name="subscript">
-    <xs:complexType mixed="true">
+    <xs:complexType>
       <xs:attribute name="term" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
@@ -684,9 +705,16 @@ add masterdoc support?
   <xs:element name="sup">
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="i" />
         <xs:element ref="paramref" />
         <xs:element ref="typeparamref" />
       </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="superscript">
+    <xs:complexType>
+      <xs:attribute name="term" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
@@ -696,14 +724,22 @@ add masterdoc support?
           <xs:element ref="block" />
           <xs:element ref="c" />
           <xs:element ref="format" />
+          <xs:element ref="geq" />
+          <xs:element ref="leq" />
           <xs:element ref="see" />
           <xs:element ref="para"  />
           <xs:element ref="paramref" />
+          <xs:element ref="pi" />
+          <xs:element ref="plusminus" />
           <xs:element ref="sup" />
+          <xs:element ref="theta" />
           <xs:element ref="typeparamref" />
+          <xs:element ref="whitespace" />
         </xs:choice>
     </xs:complexType>
   </xs:element>
+
+  <xs:element name="theta" />
 
   <xs:element name="threadsafe">
     <xs:complexType>
@@ -965,6 +1001,30 @@ add masterdoc support?
       </xs:choice>
     </xs:complexType>
   </xs:element>
+
+  <!--
+    ECMA 335 CLILibraryTypes.xml support
+    -->
+
+  <xs:element name="Libraries">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="Types" minOccurs = "1" maxOccurs="unbounded" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+	<xs:element name="codelink">
+    <xs:complexType>
+      <xs:attribute name="SampleID" type="xs:string" />
+      <xs:attribute name="SnippedID" type="xs:string" />
+    </xs:complexType>
+	</xs:element>
+
+  <xs:element name="geq" />
+  <xs:element name="leq" />
+  <xs:element name="plusminus" />
+  <xs:element name="whitespace" />
 
 </xs:schema>
 
