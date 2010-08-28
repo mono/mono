@@ -184,10 +184,10 @@ namespace Mono.Documentation
 							continue;
 						}
 						seenTypes.Add (typeName);
-						LoadType (typeName).WriteTo (output);
+						WriteType (output, typeName);
 					}
 					foreach (string type in libraryTypes.Except (seenTypes))
-						LoadType (type).WriteTo (output);
+						WriteType (output, type);
 				}
 			}
 		}
@@ -199,6 +199,19 @@ namespace Mono.Documentation
 					o => 
 						{o.WriteStartElement ("Types"); 
 						o.WriteAttributeString ("Library", library);});
+		}
+
+		void WriteType (XmlWriter output, string typeName)
+		{
+			XElement type = LoadType (typeName);
+
+			XAttribute fullName   = type.Attribute ("FullName");
+			XAttribute fullNameSp = type.Attribute ("FullNameSP");
+			if (fullNameSp == null && fullName != null) {
+				type.Add (new XAttribute ("FullNameSP", fullName.Value.Replace ('.', '_')));
+			}
+
+			type.WriteTo (output);
 		}
 
 		void GenerateMissingLibraries (XDocument input, XmlWriter output, HashSet<string> seenLibraries)
