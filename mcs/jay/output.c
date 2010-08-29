@@ -103,10 +103,21 @@ output_rule_data()
     register int i;
     register int j;
 
+	printf("/*\n All more than 3 lines long rules are wrapped into a method\n*/\n");
+
+    for (i = 0; i < nmethods; ++i)
+	{
+		printf("%s", methods[i]);
+		FREE(methods[i]);
+		printf("\n\n");
+	}
+	FREE(methods);
+
+	printf(default_line_format, ++outline + 1);
 
     printf("  %s static %s short [] yyLhs  = {%16d,",
 	   csharp ? "" : " protected",
-	   csharp ? "" : " final",
+	   csharp ? "readonly" : "final",
 	    symbol_value[start_symbol]);
 
     j = 10;
@@ -128,7 +139,7 @@ output_rule_data()
 
     printf("  %s static %s short [] yyLen = {%12d,",
 	   csharp ? "" : "protected",
-	   csharp ? "" : "final",
+	   csharp ? "readonly" : "final",
 	   2);
 
     j = 10;
@@ -156,7 +167,7 @@ output_yydefred()
 
     printf("  %s static %s short [] yyDefRed = {%13d,",
 	   csharp ? "" : "protected",
-	   csharp ? "" : "final",	   
+	   csharp ? "readonly" : "final",	   
 	    (defred[0] ? defred[0] - 2 : 0));
 
     j = 10;
@@ -298,7 +309,7 @@ goto_actions()
     state_count = NEW2(nstates, short);
 
     k = default_goto(start_symbol + 1);
-    printf("  protected static %s short [] yyDgoto  = {%14d,", csharp ? "" : "final", k);
+    printf("  protected static %s short [] yyDgoto  = {%14d,", csharp ? "readonly" : "final", k);
     save_column(start_symbol + 1, k);
 
     j = 10;
@@ -622,7 +633,7 @@ output_base()
 {
     register int i, j;
 
-    printf("  protected static %s short [] yySindex = {%13d,", csharp?"":"final", base[0]);
+    printf("  protected static %s short [] yySindex = {%13d,", csharp? "readonly":"final", base[0]);
 
     j = 10;
     for (i = 1; i < nstates; i++)
@@ -641,7 +652,7 @@ output_base()
 
     outline += 2;
     printf("\n  };\n  protected static %s short [] yyRindex = {%13d,",
-	   csharp ? "" : "final",
+	   csharp ? "readonly" : "final",
 	    base[nstates]);
 
     j = 10;
@@ -661,7 +672,7 @@ output_base()
 
     outline += 2;
     printf("\n  };\n  protected static %s short [] yyGindex = {%13d,",
-	   csharp ? "" : "final",
+	   csharp ? "readonly" : "final",
 	    base[2*nstates]);
 
     j = 10;
@@ -691,7 +702,7 @@ output_table()
     register int i;
     register int j;
 
-    printf("  protected static %s short [] yyTable = {%14d,", csharp ? "" : "final", table[0]);
+    printf("  protected static %s short [] yyTable = {%14d,", csharp ? "readonly" : "final", table[0]);
 
     j = 10;
     for (i = 1; i <= high; i++)
@@ -721,7 +732,7 @@ output_check()
     register int j;
 
     printf("  protected static %s short [] yyCheck = {%14d,",
-	   csharp ? "" : "final",
+	   csharp ? "readonly" : "final",
 	    check[0]);
 
     j = 10;
@@ -851,13 +862,13 @@ output_debug()
     char * prefix = tflag ? "" : "//t";
 
     ++outline;
-    printf("  protected static %s int yyFinal = %d;\n", csharp ? "" : "final", final_state);
+    printf("  protected %s int yyFinal = %d;\n", csharp ? "const" : "static final", final_state);
 
       ++outline;
 	  printf ("%s // Put this array into a separate class so it is only initialized if debugging is actually used\n", prefix);
 	  printf ("%s // Use MarshalByRefObject to disable inlining\n", prefix);
 	  printf("%s class YYRules %s {\n", prefix, csharp ? ": MarshalByRefObject" : "");
-      printf("%s  public static %s string [] yyRule = {\n", prefix, csharp ? "" : "final");
+      printf("%s  public static %s string [] yyRule = {\n", prefix, csharp ? "readonly" : "final");
       for (i = 2; i < nrules; ++i)
       {
 	  printf("%s    \"%s :", prefix, symbol_name[rlhs[i]]);
@@ -920,7 +931,7 @@ output_debug()
 
 	/* need yyNames for yyExpecting() */
 
-      printf("  protected static %s string [] yyNames = {", csharp ? "" : "final");
+      printf("  protected static %s string [] yyNames = {", csharp ? "readonly" : "final");
       symnam = (char **) MALLOC((max+1)*sizeof(char *));
       if (symnam == 0) no_space();
   

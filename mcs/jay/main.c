@@ -76,12 +76,14 @@ int nrules;
 int nsyms;
 int ntokens;
 int nvars;
+int nmethods;
 
 int   start_symbol;
 char  **symbol_name;
 short *symbol_value;
 short *symbol_prec;
 char  *symbol_assoc;
+char  **methods;
 
 short *ritem;
 short *rlhs;
