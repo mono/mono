@@ -6280,9 +6280,10 @@ namespace Mono.CSharp {
 				return;
 
 			// Emit static initializer for arrays which have contain more than 2 items and
-			// the static initializer will initialize at least 25% of array values.
+			// the static initializer will initialize at least 25% of array values or there
+			// is more than 10 items to be initialized
 			// NOTE: const_initializers_count does not contain default constant values.
-			if (const_initializers_count > 2 && const_initializers_count * 4 > (array_data.Count) &&
+			if (const_initializers_count > 2 && (array_data.Count > 10 || const_initializers_count * 4 > (array_data.Count)) &&
 				(TypeManager.IsPrimitiveType (array_element_type) || TypeManager.IsEnumType (array_element_type))) {
 				EmitStaticInitializers (ec);
 
