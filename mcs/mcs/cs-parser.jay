@@ -2026,24 +2026,24 @@ operator_declaration
 	  }
 	  operator_body
 	  {
-		if ($3 == null)
-			break;
-
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
-		Operator op = new Operator (
-			current_class, decl.optype, decl.ret_type, (Modifiers) $2, 
-			current_local_parameters,
-			(ToplevelBlock) $5, (Attributes) $1, decl.location);
+		if (decl != null) {
+			Operator op = new Operator (
+				current_class, decl.optype, decl.ret_type, (Modifiers) $2, 
+				current_local_parameters,
+				(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
-		if (RootContext.Documentation != null) {
-			op.DocComment = tmpComment;
-			Lexer.doc_state = XmlCommentState.Allowed;
+			if (RootContext.Documentation != null) {
+				op.DocComment = tmpComment;
+				Lexer.doc_state = XmlCommentState.Allowed;
+			}
+
+			// Note again, checking is done in semantic analysis
+			current_container.AddOperator (op);
+
+			lbag.AddMember (op, mod_locations, lbag.GetLocations (decl));
 		}
-
-		// Note again, checking is done in semantic analysis
-		current_container.AddOperator (op);
-
-		lbag.AddMember (op, mod_locations, lbag.GetLocations (decl));
+		
 		current_local_parameters = null;
 	  }
 	;
@@ -2982,11 +2982,11 @@ type_expression
 	  }
 	| type_expression STAR
 	  {
-		//
-		// Note that here only unmanaged types are allowed but we
-		// can't perform checks during this phase - we do it during
-		// semantic analysis.
-		//
+		/*
+			Note that here only unmanaged types are allowed but we
+			can't perform checks during this phase - we do it during
+			semantic analysis.
+		*/
 		$$ = new ComposedCast ((FullNamedExpression) $1, ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
 	  }
 	| VOID STAR
@@ -6094,7 +6094,7 @@ class VariableDeclaration {
 // <summary>
 //  A class used to hold info about an operator declarator
 // </summary>
-struct OperatorDeclaration {
+class OperatorDeclaration {
 	public readonly Operator.OpType optype;
 	public readonly FullNamedExpression ret_type;
 	public readonly Location location;
