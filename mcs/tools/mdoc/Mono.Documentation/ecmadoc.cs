@@ -184,10 +184,10 @@ namespace Mono.Documentation
 							continue;
 						}
 						seenTypes.Add (typeName);
-						WriteType (output, typeName);
+						WriteType (output, typeName, library.Value);
 					}
 					foreach (string type in libraryTypes.Except (seenTypes))
-						WriteType (output, type);
+						WriteType (output, type, library.Value);
 				}
 			}
 		}
@@ -201,7 +201,7 @@ namespace Mono.Documentation
 						o.WriteAttributeString ("Library", library);});
 		}
 
-		void WriteType (XmlWriter output, string typeName)
+		void WriteType (XmlWriter output, string typeName, string library)
 		{
 			XElement type = LoadType (typeName);
 
@@ -209,6 +209,16 @@ namespace Mono.Documentation
 			XAttribute fullNameSp = type.Attribute ("FullNameSP");
 			if (fullNameSp == null && fullName != null) {
 				type.Add (new XAttribute ("FullNameSP", fullName.Value.Replace ('.', '_')));
+			}
+			if (type.Element ("TypeExcluded") == null)
+				type.Add (new XElement ("TypeExcluded", "0"));
+			if (type.Element ("MemberOfLibrary") == null) {
+				XElement member = new XElement ("MemberOfLibrary", library);
+				XElement assemblyInfo = type.Element ("AssemblyInfo");
+				if (assemblyInfo != null)
+					assemblyInfo.AddBeforeSelf (member);
+				else
+					type.Add (member);
 			}
 
 			type.WriteTo (output);
@@ -222,7 +232,7 @@ namespace Mono.Documentation
 				seenLibraries.Add (lib.Key);
 				using (var typesElement = CreateTypesElement (output, lib.Key)) {
 					foreach (string type in lib.Value) {
-						LoadType (type).WriteTo (output);
+						WriteType (output, type, lib.Key);
 					}
 				}
 			}
