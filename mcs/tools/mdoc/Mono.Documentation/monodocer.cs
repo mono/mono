@@ -469,9 +469,11 @@ class MDocUpdater : MDocCommand
 			index_assembly.AppendChild (pubkey);
 		}
 
-		XmlElement culture = parent.OwnerDocument.CreateElement ("AssemblyCulture");
-		culture.InnerText = string.IsNullOrEmpty (name.Culture) ? "neutral" : name.Culture;
-		index_assembly.AppendChild (culture);
+		if (!string.IsNullOrEmpty (name.Culture)) {
+			XmlElement culture = parent.OwnerDocument.CreateElement ("AssemblyCulture");
+			culture.InnerText = name.Culture;
+			index_assembly.AppendChild (culture);
+		}
 
 		MakeAttributes (index_assembly, assembly.CustomAttributes, 0);
 		parent.AppendChild(index_assembly);
