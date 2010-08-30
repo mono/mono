@@ -1002,6 +1002,8 @@ namespace System.Xml
 					else
 						return XmlQualifiedName.Parse (text, this, true);
 				}
+				if (type == typeof (Uri))
+					return XmlConvert.ToUri (text);
 				if (type == typeof (TimeSpan))
 					return XmlConvert.ToTimeSpan (text);
 				if (type == typeof (DateTimeOffset))
