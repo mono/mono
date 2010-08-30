@@ -392,6 +392,10 @@ namespace System {
 						path = path.Remove (pos + 1, path.Length - pos - 1);
 			}
 			
+			// 6 g)
+			while (path.StartsWith ("/../"))
+				path = path.Substring (3);
+			
 			if (!userEscaped)
 				path = EscapeString (path);
 		}		

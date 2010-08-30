@@ -156,6 +156,7 @@ namespace MonoTests.System
 			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "../../../foo/bar/Hello World.htm?x=0:8", false);
 #if NET_2_0
 			Assert.AreEqual ("http://www.contoso.com/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri, "#rel9");
+			Assert.AreEqual ("/foo/bar/Hello%20World.htm", uri.AbsolutePath, "#rel9-path");
 #else
 			Assert.AreEqual ("http://www.contoso.com/../foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri, "#rel9");
 #endif
