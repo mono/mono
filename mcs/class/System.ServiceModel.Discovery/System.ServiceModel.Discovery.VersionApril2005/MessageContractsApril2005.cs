@@ -62,19 +62,19 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 			public EndpointDiscoveryMetadataApril2005 EndpointDiscoveryMetadata { get; set; }
 		}
 
-		[MessageContract (WrapperName = "Probe", WrapperNamespace = NS)]
+		[MessageContract (IsWrapped = false)]
 		public class FindRequest
 		{
-			[MessageBodyMember]
+			[MessageBodyMember (Name = "Probe", Namespace = NS)]
 			public FindCriteriaApril2005 Body { get; set; }
 		}
 
-		[MessageContract (WrapperName = "ProbeMatches", WrapperNamespace = NS)]
+		[MessageContract (IsWrapped = false)]
 		public class FindResponse
 		{
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
-			[MessageBodyMember]
+			[MessageBodyMember (Name = "ProbeMatches", Namespace = NS)]
 			public FindResponseApril2005 Body { get; set; }
 		}
 
@@ -82,19 +82,19 @@ namespace System.ServiceModel.Discovery.VersionApril2005
 		{
 		}
 
-		[MessageContract (WrapperName = "Resolve", WrapperNamespace = NS)]
+		[MessageContract (IsWrapped = false)]
 		public class ResolveRequest
 		{
-			[MessageBodyMember]
+			[MessageBodyMember (Name = "Resolve", Namespace = NS)]
 			public ResolveCriteriaApril2005 Body { get; set; }
 		}
 
-		[MessageContract (WrapperName = "ResolveMatches", WrapperNamespace = NS)]
+		[MessageContract (IsWrapped = false)]
 		public class ResolveResponse
 		{
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceApril2005 MessageSequence { get; set; }
-			[MessageBodyMember]
+			[MessageBodyMember (Name = "ResolveMatches", Namespace = NS)]
 			public EndpointDiscoveryMetadataApril2005 Body { get; set; }
 		}
 	}
