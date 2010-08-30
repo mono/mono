@@ -44,21 +44,21 @@ namespace System.ServiceModel.Discovery.VersionCD1
 		public const string ResolveAction = NS + "/Resolve";
 		public const string ResolveMatchAction = NS + "/ResolveMatches";
 
-		[MessageContract (WrapperName = "Hello", WrapperNamespace = NS)]
+		[MessageContract (IsWrapped = false)]
 		public class OnlineAnnouncement
 		{
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceCD1 MessageSequence { get; set; }
-			[MessageBodyMember]
+			[MessageBodyMember (Name = "Hello", Namespace = NS)]
 			public EndpointDiscoveryMetadataCD1 EndpointDiscoveryMetadata { get; set; }
 		}
 
-		[MessageContract (WrapperName = "Bye", WrapperNamespace = NS)]
+		[MessageContract (IsWrapped = false)]
 		public class OfflineAnnouncement
 		{
 			[MessageHeader (Name = "AppSequence", Namespace = NS)]
 			public DiscoveryMessageSequenceCD1 MessageSequence { get; set; }
-			[MessageBodyMember]
+			[MessageBodyMember (Name = "Bye", Namespace = NS)]
 			public EndpointDiscoveryMetadataCD1 EndpointDiscoveryMetadata { get; set; }
 		}
 

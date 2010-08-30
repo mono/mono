@@ -53,6 +53,8 @@ namespace System.ServiceModel.Discovery
 		public Collection<Uri> Scopes { get; private set; }
 		public int Version { get; set; }
 
+		const string addrNS = "http://www.w3.org/2005/08/addressing";
+
 		internal static EndpointDiscoveryMetadata ReadXml (XmlReader reader, DiscoveryVersion version)
 		{
 			if (reader == null)
@@ -61,20 +63,17 @@ namespace System.ServiceModel.Discovery
 			var ret = new EndpointDiscoveryMetadata ();
 
 			reader.MoveToContent ();
-			if (reader.IsStartElement ("ProbeMatchType", version.Namespace) || reader.IsEmptyElement) {
-				reader.ReadStartElement ("ProbeType", version.Namespace);
 
-				// standard members
-				reader.MoveToContent ();
-				ret.Address = EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, reader);
+			reader.ReadStartElement ();
+			reader.MoveToContent ();
 
-				reader.MoveToContent ();
-				bool isEmpty = reader.IsEmptyElement;
+			// standard members
+			reader.MoveToContent ();
+			ret.Address = EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, reader, "EndpointReference", addrNS);
+
+			reader.MoveToContent ();
+			if (reader.IsStartElement ("Types", version.Namespace))
 				ret.ContractTypeNames = new Collection<XmlQualifiedName> ((XmlQualifiedName []) reader.ReadElementContentAs (typeof (XmlQualifiedName []), null, "Types", version.Namespace));
-
-				reader.MoveToContent ();
-				reader.ReadEndElement ();
-			}
 
 			reader.MoveToContent ();
 			if (reader.IsStartElement ("Scopes", version.Namespace))

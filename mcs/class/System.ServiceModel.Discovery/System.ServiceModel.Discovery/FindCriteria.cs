@@ -100,23 +100,23 @@ namespace System.ServiceModel.Discovery
 			var ret = new FindCriteria ();
 
 			reader.MoveToContent ();
-			if (!reader.IsStartElement ("ProbeType", version.Namespace) || reader.IsEmptyElement)
-				throw new XmlException ("Non-empty ProbeType element is expected");
-			reader.ReadStartElement ("ProbeType", version.Namespace);
+			if (!reader.IsStartElement ("Probe", version.Namespace) || reader.IsEmptyElement)
+				throw new XmlException (String.Format ("Non-empty ProbeType element is expected. Got '{0}' {1} node in namespace '{2}' instead.", reader.LocalName, reader.NodeType, reader.NamespaceURI));
+			reader.ReadStartElement ("Probe", version.Namespace);
 
 			// standard members
 			reader.MoveToContent ();
-			bool isEmpty = reader.IsEmptyElement;
-			ret.ContractTypeNames = new Collection<XmlQualifiedName> ((XmlQualifiedName []) reader.ReadElementContentAs (typeof (XmlQualifiedName []), null, "Types", version.Namespace));
+			if (reader.IsStartElement ("Types", version.Namespace))
+				ret.ContractTypeNames = new Collection<XmlQualifiedName> ((XmlQualifiedName []) reader.ReadElementContentAs (typeof (XmlQualifiedName []), null, "Types", version.Namespace));
 
 			reader.MoveToContent ();
-			if (!reader.IsStartElement ("Scopes", version.Namespace))
-				throw new XmlException ("Scopes element is expected");
-			if (reader.MoveToAttribute ("MatchBy")) {
-				ret.ScopeMatchBy = new Uri (reader.Value, UriKind.RelativeOrAbsolute);
-				reader.MoveToElement ();
+			if (reader.IsStartElement ("Types", version.Namespace)) {
+				if (reader.MoveToAttribute ("MatchBy")) {
+					ret.ScopeMatchBy = new Uri (reader.Value, UriKind.RelativeOrAbsolute);
+					reader.MoveToElement ();
+				}
+				ret.Scopes = new Collection<Uri> ((Uri []) reader.ReadElementContentAs (typeof (Uri []), null, "Scopes", version.Namespace));
 			}
-			ret.Scopes = new Collection<Uri> ((Uri []) reader.ReadElementContentAs (typeof (Uri []), null, "Scopes", version.Namespace));
 
 			// non-standard members
 			for (reader.MoveToContent (); !reader.EOF && reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
