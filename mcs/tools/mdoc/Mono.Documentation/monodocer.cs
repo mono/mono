@@ -1863,10 +1863,10 @@ class MDocUpdater : MDocCommand
 					ClearElement(e, "summary");
 				if (elem.SelectSingleNode("remarks") != null)
 					ClearElement(e, "remarks");
-				if (elem.SelectSingleNode("value") != null)
+				if (elem.SelectSingleNode ("value") != null || elem.SelectSingleNode ("returns") != null) {
 					ClearElement(e, "value");
-				if (retnodename != null && elem.SelectSingleNode(retnodename) != null)
-					ClearElement(e, retnodename);
+					ClearElement(e, "returns");
+				}
 
 				foreach (XmlNode child in elem.ChildNodes) {
 					switch (child.Name) {
@@ -1878,6 +1878,15 @@ class MDocUpdater : MDocCommand
 							XmlElement p2 = (XmlElement) e.SelectSingleNode (child.Name + "[@name='" + name.Value + "']");
 							if (p2 != null)
 								p2.InnerXml = child.InnerXml;
+							break;
+						}
+						// Occasionally XML documentation will use <returns/> on
+						// properties, so let's try to normalize things.
+						case "value":
+						case "returns": {
+							XmlElement v = e.OwnerDocument.CreateElement (retnodename);
+							v.InnerXml = child.InnerXml;
+							e.AppendChild (v);
 							break;
 						}
 						case "altmember":
