@@ -1940,7 +1940,7 @@ class MDocUpdater : MDocCommand
 						// properties, so let's try to normalize things.
 						case "value":
 						case "returns": {
-							XmlElement v = e.OwnerDocument.CreateElement (retnodename);
+							XmlElement v = e.OwnerDocument.CreateElement (retnodename ?? child.Name);
 							v.InnerXml = child.InnerXml;
 							e.AppendChild (v);
 							break;
