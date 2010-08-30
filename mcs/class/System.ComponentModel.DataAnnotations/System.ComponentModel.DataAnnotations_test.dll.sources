@@ -1,6 +1,7 @@
 ../../System.Web.DynamicData/Test/Common/AssertExtensions.cs
 System.ComponentModel.DataAnnotations/AssociatedMetadataTypeTypeDescriptionProviderTests.cs
 System.ComponentModel.DataAnnotations/AssociationAttributeTest.cs
+System.ComponentModel.DataAnnotations/DisplayAttributeTest.cs
 System.ComponentModel.DataAnnotations/EnumDataTypeAttributeTest.cs
 System.ComponentModel.DataAnnotations/RangeAttributeTest.cs
 System.ComponentModel.DataAnnotations/RequiredAttributeTest.cs

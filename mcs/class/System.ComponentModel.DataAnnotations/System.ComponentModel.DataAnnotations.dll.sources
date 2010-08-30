@@ -10,6 +10,7 @@ System.ComponentModel.DataAnnotations/ConcurrencyCheckAttribute.cs
 System.ComponentModel.DataAnnotations/CustomValidationAttribute.cs
 System.ComponentModel.DataAnnotations/DataType.cs
 System.ComponentModel.DataAnnotations/DataTypeAttribute.cs
+System.ComponentModel.DataAnnotations/DisplayAttribute.cs
 System.ComponentModel.DataAnnotations/DisplayColumnAttribute.cs
 System.ComponentModel.DataAnnotations/DisplayFormatAttribute.cs
 System.ComponentModel.DataAnnotations/EditableAttribute.cs

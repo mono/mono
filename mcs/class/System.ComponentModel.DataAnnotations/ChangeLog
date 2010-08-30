@@ -1,4 +1,7 @@
-2009-06-23  Marek Habersack  <mhabersack@novell.com>
+2010-08-29  David Stone      <david@gixug.com>
+	* Added DisplayAttribute
+
+2009-06-23  Marek Habersack  <mhabersack@novell.com
 
 	* System.ComponentModel.DataAnnotations.dll.sources: added
 	System.ComponentModel.DataAnnotations/AssociatedMetadataTypePropertyDescriptor.cs
