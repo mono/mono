@@ -257,11 +257,13 @@ add masterdoc support?
         <xs:element ref="example" />
         <xs:element ref="value" />
         <xs:element ref="permission" />
+        <xs:element ref="PermissionSet" />
         <xs:element ref="altmember" />
         <xs:element ref="altcompliant" />
         <xs:element ref="since" />
         <xs:element ref="threadsafe" />
         <xs:element ref="typeparam" />
+        <xs:element ref="filterpriority" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
@@ -1023,10 +1025,32 @@ add masterdoc support?
     </xs:complexType>
 	</xs:element>
 
+  <xs:element name="filterpriority" type="xs:string" />
+
   <xs:element name="geq" />
   <xs:element name="leq" />
   <xs:element name="plusminus" />
   <xs:element name="whitespace" />
+
+  <xs:element name="PermissionSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="IPermission">
+          <xs:complexType>
+            <xs:attribute name="class" type="xs:string" />
+            <xs:attribute name="Flags" type="xs:string" />
+            <xs:attribute name="Name" type="xs:string" />
+            <xs:attribute name="PathDiscovery" type="xs:string" />
+            <xs:attribute name="PublicKeyBlob" type="xs:string" />
+            <xs:attribute name="Read" type="xs:string" />
+            <xs:attribute name="Unrestricted" type="xs:string" />
+            <xs:attribute name="version" type="xs:string" />
+            <xs:attribute name="Window" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
 
 </xs:schema>
 
