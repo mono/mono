@@ -475,7 +475,7 @@ class MDocUpdater : MDocCommand
 			index_assembly.AppendChild (culture);
 		}
 
-		MakeAttributes (index_assembly, assembly.CustomAttributes, 0);
+		MakeAttributes (index_assembly, GetCustomAttributes (assembly.CustomAttributes, ""));
 		parent.AppendChild(index_assembly);
 	}
 
@@ -1463,7 +1463,7 @@ class MDocUpdater : MDocCommand
 			ClearElement(root, "Interfaces");
 		}
 
-		MakeAttributes (root, type.CustomAttributes, 0);
+		MakeAttributes (root, GetCustomAttributes (type));
 		
 		if (DocUtils.IsDelegate (type)) {
 			MakeTypeParameters (root, type.GenericParameters);
@@ -1515,26 +1515,7 @@ class MDocUpdater : MDocCommand
 			ClearElement (me, "AssemblyInfo");
 		}
 
-		ICustomAttributeProvider p = mi as ICustomAttributeProvider;
-		if (p != null)
-			MakeAttributes (me, p.CustomAttributes, 0);
-
-		PropertyReference pr = mi as PropertyReference;
-		if (pr != null) {
-			PropertyDefinition pd = pr.Resolve ();
-			if (pd.GetMethod != null)
-				MakeAttributes (me, pd.GetMethod.CustomAttributes, AttributeFlags.KeepExistingAttributes, "get: ");
-			if (pd.SetMethod != null)
-				MakeAttributes (me, pd.SetMethod.CustomAttributes, AttributeFlags.KeepExistingAttributes, "set: ");
-		}
-		EventReference er = mi as EventReference;
-		if (er != null) {
-			EventDefinition ed = er.Resolve ();
-			if (ed.AddMethod != null)
-				MakeAttributes (me, ed.AddMethod.CustomAttributes, AttributeFlags.KeepExistingAttributes, "add: ");
-			if (ed.RemoveMethod != null)
-				MakeAttributes (me, ed.RemoveMethod.CustomAttributes, AttributeFlags.KeepExistingAttributes, "remove: ");
-		}
+		MakeAttributes (me, GetCustomAttributes (mi));
 
 		MakeReturnValue(me, mi);
 		if (mi is MethodReference) {
@@ -1551,6 +1532,81 @@ class MDocUpdater : MDocCommand
 		info.Node = WriteElement (me, "Docs");
 		MakeDocNode (info);
 		UpdateExtensionMethods (me, info);
+	}
+
+	IEnumerable<string> GetCustomAttributes (IMemberReference mi)
+	{
+		IEnumerable<string> attrs = Enumerable.Empty<string>();
+
+		ICustomAttributeProvider p = mi as ICustomAttributeProvider;
+		if (p != null)
+			attrs = attrs.Concat (GetCustomAttributes (p.CustomAttributes, ""));
+
+		PropertyReference pr = mi as PropertyReference;
+		if (pr != null) {
+			PropertyDefinition pd = pr.Resolve ();
+			if (pd.GetMethod != null)
+				attrs = attrs.Concat (GetCustomAttributes (pd.GetMethod.CustomAttributes, "get: "));
+			if (pd.SetMethod != null)
+				attrs = attrs.Concat (GetCustomAttributes (pd.SetMethod.CustomAttributes, "set: "));
+		}
+
+		EventReference er = mi as EventReference;
+		if (er != null) {
+			EventDefinition ed = er.Resolve ();
+			if (ed.AddMethod != null)
+				attrs = attrs.Concat (GetCustomAttributes (ed.AddMethod.CustomAttributes, "add: "));
+			if (ed.RemoveMethod != null)
+				attrs = attrs.Concat (GetCustomAttributes (ed.RemoveMethod.CustomAttributes, "remove: "));
+		}
+
+		return attrs;
+	}
+
+	IEnumerable<string> GetCustomAttributes (CustomAttributeCollection attributes, string prefix)
+	{
+		foreach (CustomAttribute attribute in attributes.Cast<CustomAttribute> ()
+				.OrderBy (ca => ca.Constructor.DeclaringType.FullName)) {
+			if (!attribute.Resolve ()) {
+				// skip?
+				Warning ("warning: could not resolve type {0}.",
+						attribute.Constructor.DeclaringType.FullName);
+			}
+			TypeDefinition attrType = attribute.Constructor.DeclaringType as TypeDefinition;
+			if (attrType != null && !IsPublic (attrType))
+				continue;
+			if (slashdocFormatter.GetName (attribute.Constructor.DeclaringType) == null)
+				continue;
+			
+			if (Array.IndexOf (IgnorableAttributes, attribute.Constructor.DeclaringType.FullName) >= 0)
+				continue;
+			
+			StringList fields = new StringList ();
+
+			ParameterDefinitionCollection parameters = attribute.Constructor.Parameters;
+			for (int i = 0; i < attribute.ConstructorParameters.Count; ++i) {
+				fields.Add (MakeAttributesValueString (
+						attribute.ConstructorParameters [i],
+						parameters [i].ParameterType));
+			}
+			var namedArgs =
+				(from de in attribute.Fields.Cast<DictionaryEntry> ()
+				 select new { Type=attribute.GetFieldType (de.Key.ToString ()), Name=de.Key, Value=de.Value })
+				.Concat (
+						(from de in attribute.Properties.Cast<DictionaryEntry> ()
+						 select new { Type=attribute.GetPropertyType (de.Key.ToString ()), Name=de.Key, Value=de.Value }))
+				.OrderBy (v => v.Name);
+			foreach (var d in namedArgs)
+				fields.Add (string.Format ("{0}={1}", d.Name, 
+						MakeAttributesValueString (d.Value, d.Type)));
+
+			string a2 = String.Join(", ", fields.ToArray ());
+			if (a2 != "") a2 = "(" + a2 + ")";
+
+			string name = attribute.Constructor.DeclaringType.FullName;
+			if (name.EndsWith("Attribute")) name = name.Substring(0, name.Length-"Attribute".Length);
+			yield return prefix + name + a2;
+		}
 	}
 
 	static readonly string[] ValidExtensionMembers = {
@@ -2186,86 +2242,29 @@ class MDocUpdater : MDocCommand
 		"System.Runtime.CompilerServices.ExtensionAttribute",
 	};
 
-	[Flags]
-	enum AttributeFlags {
-		None,
-		KeepExistingAttributes = 0x1,
-	}
-
-	private void MakeAttributes (XmlElement root, CustomAttributeCollection attributes, AttributeFlags flags)
+	private void MakeAttributes (XmlElement root, IEnumerable<string> attributes)
 	{
-		MakeAttributes (root, attributes, flags, null);
-	}
-
-	private void MakeAttributes (XmlElement root, CustomAttributeCollection attributes, AttributeFlags flags, string prefix)
-	{
-		bool keepExisting = (flags & AttributeFlags.KeepExistingAttributes) != 0;
-		if (attributes.Count == 0) {
-			if (!keepExisting)
-				ClearElement(root, "Attributes");
+		if (!attributes.Any ()) {
+			ClearElement (root, "Attributes");
 			return;
 		}
 
-		bool b = false;
 		XmlElement e = (XmlElement)root.SelectSingleNode("Attributes");
-		if (e != null && !keepExisting)
+		if (e != null)
 			e.RemoveAll();
 		else if (e == null)
 			e = root.OwnerDocument.CreateElement("Attributes");
 		
-		foreach (CustomAttribute attribute in attributes.Cast<CustomAttribute> ()
-				.OrderBy (ca => ca.Constructor.DeclaringType.FullName)) {
-			if (!attribute.Resolve ()) {
-				// skip?
-				Warning ("warning: could not resolve type {0}.",
-						attribute.Constructor.DeclaringType.FullName);
-			}
-			TypeDefinition attrType = attribute.Constructor.DeclaringType as TypeDefinition;
-			if (attrType != null && !IsPublic (attrType))
-				continue;
-			if (slashdocFormatter.GetName (attribute.Constructor.DeclaringType) == null)
-				continue;
-			
-			if (Array.IndexOf (IgnorableAttributes, attribute.Constructor.DeclaringType.FullName) >= 0)
-				continue;
-			
-			b = true;
-			
-			StringList fields = new StringList ();
-
-			ParameterDefinitionCollection parameters = attribute.Constructor.Parameters;
-			for (int i = 0; i < attribute.ConstructorParameters.Count; ++i) {
-				fields.Add (MakeAttributesValueString (
-						attribute.ConstructorParameters [i],
-						parameters [i].ParameterType));
-			}
-			var namedArgs =
-				(from de in attribute.Fields.Cast<DictionaryEntry> ()
-				 select new { Type=attribute.GetFieldType (de.Key.ToString ()), Name=de.Key, Value=de.Value })
-				.Concat (
-						(from de in attribute.Properties.Cast<DictionaryEntry> ()
-						 select new { Type=attribute.GetPropertyType (de.Key.ToString ()), Name=de.Key, Value=de.Value }))
-				.OrderBy (v => v.Name);
-			foreach (var d in namedArgs)
-				fields.Add (string.Format ("{0}={1}", d.Name, 
-						MakeAttributesValueString (d.Value, d.Type)));
-
-			string a2 = String.Join(", ", fields.ToArray ());
-			if (a2 != "") a2 = "(" + a2 + ")";
-			
+		foreach (string attribute in attributes) {
 			XmlElement ae = root.OwnerDocument.CreateElement("Attribute");
 			e.AppendChild(ae);
 			
-			string name = attribute.Constructor.DeclaringType.FullName;
-			if (name.EndsWith("Attribute")) name = name.Substring(0, name.Length-"Attribute".Length);
-			WriteElementText(ae, "AttributeName", prefix + name + a2);
+			WriteElementText(ae, "AttributeName", attribute);
 		}
 		
-		if (b && e.ParentNode == null)
+		if (e.ParentNode == null)
 			root.AppendChild(e);
-		else if (!b)
-			ClearElement(root, "Attributes");
-		
+
 		NormalizeWhitespace(e);
 	}
 
@@ -2330,7 +2329,7 @@ class MDocUpdater : MDocCommand
 				if (p.IsOut) pe.SetAttribute("RefType", "out");
 				else pe.SetAttribute("RefType", "ref");
 			}
-			MakeAttributes (pe, p.CustomAttributes, 0);
+			MakeAttributes (pe, GetCustomAttributes (p.CustomAttributes, ""));
 		}
 	}
 	
@@ -2348,7 +2347,7 @@ class MDocUpdater : MDocCommand
 			XmlElement pe = root.OwnerDocument.CreateElement("TypeParameter");
 			e.AppendChild(pe);
 			pe.SetAttribute("Name", t.Name);
-			MakeAttributes (pe, t.CustomAttributes, 0);
+			MakeAttributes (pe, GetCustomAttributes (t.CustomAttributes, ""));
 			XmlElement ce = (XmlElement) e.SelectSingleNode ("Constraints");
 			ConstraintCollection constraints = t.Constraints;
 			GenericParameterAttributes attrs = t.Attributes;
@@ -2418,7 +2417,7 @@ class MDocUpdater : MDocCommand
 		e.RemoveAll();
 		WriteElementText(e, "ReturnType", GetDocTypeFullName (type));
 		if (attributes != null)
-			MakeAttributes(e, attributes, 0);
+			MakeAttributes(e, GetCustomAttributes (attributes, ""));
 	}
 	
 	private void MakeReturnValue (XmlElement root, IMemberReference mi)
