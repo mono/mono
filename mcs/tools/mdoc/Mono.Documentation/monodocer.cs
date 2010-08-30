@@ -1907,9 +1907,18 @@ class MDocUpdater : MDocCommand
 							}
 							break;
 						}
-						default:
-							CopyNode (child, e);
+						default: {
+							bool dup = false;
+							foreach (XmlElement n in e.SelectNodes (child.Name))
+								if (n.OuterXml == child.OuterXml) {
+									dup = true;
+									break;
+								}
+							if (!dup) {
+								CopyNode (child, e);
+							}
 							break;
+						}
 					}
 				}
 			}
