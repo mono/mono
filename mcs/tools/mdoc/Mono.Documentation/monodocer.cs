@@ -456,6 +456,23 @@ class MDocUpdater : MDocCommand
 		XmlElement index_assembly = parent.OwnerDocument.CreateElement("Assembly");
 		index_assembly.SetAttribute ("Name", assembly.Name.Name);
 		index_assembly.SetAttribute ("Version", assembly.Name.Version.ToString());
+
+		AssemblyNameDefinition name = assembly.Name;
+		if (name.HasPublicKey) {
+			XmlElement pubkey = parent.OwnerDocument.CreateElement ("AssemblyPublicKey");
+			var key = new StringBuilder (name.PublicKey.Length*3 + 2);
+			key.Append ("[");
+			foreach (byte b in name.PublicKey)
+				key.AppendFormat ("{0,2:x2} ", b);
+			key.Append ("]");
+			pubkey.InnerText = key.ToString ();
+			index_assembly.AppendChild (pubkey);
+		}
+
+		XmlElement culture = parent.OwnerDocument.CreateElement ("AssemblyCulture");
+		culture.InnerText = string.IsNullOrEmpty (name.Culture) ? "neutral" : name.Culture;
+		index_assembly.AppendChild (culture);
+
 		MakeAttributes (index_assembly, assembly.CustomAttributes, 0);
 		parent.AppendChild(index_assembly);
 	}

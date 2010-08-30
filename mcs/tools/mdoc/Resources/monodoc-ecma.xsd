@@ -904,6 +904,8 @@ add masterdoc support?
   <xs:element name="Assembly">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="AssemblyPublicKey" />
+        <xs:element ref="AssemblyCulture" />
         <xs:element ref="Attributes" />
       </xs:choice>
       <xs:attribute ref="Name" />
