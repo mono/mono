@@ -41,3 +41,5 @@ install-local:
 	$(INSTALL_LIB) $(mcs_aot_image) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 
 endif
+
+dist-local:
