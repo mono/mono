@@ -178,9 +178,10 @@ namespace System.ServiceModel.Discovery
 			throw new NotImplementedException ();
 		}
 
-		IAsyncResult IDiscoveryTargetContract11.BeginOnlineAnnouncement (MessageContracts11.OnlineAnnouncement message, AsyncCallback callback, object state)
+		IAsyncResult IDiscoveryTargetContract11.BeginOnlineAnnouncement (MessageContracts11.OnlineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOnlineAnnouncement (DiscoveryMessageSequenceGenerator.Next (), message.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
+			var edm = msg.EndpointDiscoveryMetadata != null ? msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata () : null;
+			return OnBeginOnlineAnnouncement (DiscoveryMessageSequenceGenerator.Next (), edm, callback, state);
 		}
 
 		void IDiscoveryTargetContract11.EndOnlineAnnouncement (IAsyncResult result)
@@ -233,9 +234,10 @@ namespace System.ServiceModel.Discovery
 			throw new NotImplementedException ();
 		}
 
-		IAsyncResult IDiscoveryTargetContractApril2005.BeginOnlineAnnouncement (MessageContractsApril2005.OnlineAnnouncement message, AsyncCallback callback, object state)
+		IAsyncResult IDiscoveryTargetContractApril2005.BeginOnlineAnnouncement (MessageContractsApril2005.OnlineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOnlineAnnouncement (DiscoveryMessageSequenceGenerator.Next (), message.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
+			var edm = msg.EndpointDiscoveryMetadata != null ? msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata () : null;
+			return OnBeginOnlineAnnouncement (DiscoveryMessageSequenceGenerator.Next (), edm, callback, state);
 		}
 
 		void IDiscoveryTargetContractApril2005.EndOnlineAnnouncement (IAsyncResult result)
@@ -288,9 +290,10 @@ namespace System.ServiceModel.Discovery
 			throw new NotImplementedException ();
 		}
 
-		IAsyncResult IDiscoveryTargetContractCD1.BeginOnlineAnnouncement (MessageContractsCD1.OnlineAnnouncement message, AsyncCallback callback, object state)
+		IAsyncResult IDiscoveryTargetContractCD1.BeginOnlineAnnouncement (MessageContractsCD1.OnlineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOnlineAnnouncement (DiscoveryMessageSequenceGenerator.Next (), message.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
+			var edm = msg.EndpointDiscoveryMetadata != null ? msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata () : null;
+			return OnBeginOnlineAnnouncement (DiscoveryMessageSequenceGenerator.Next (), edm, callback, state);
 		}
 
 		void IDiscoveryTargetContractCD1.EndOnlineAnnouncement (IAsyncResult result)
