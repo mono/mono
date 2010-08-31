@@ -70,7 +70,7 @@ namespace System {
 			if ((format < UriFormat.UriEscaped) || (format > UriFormat.SafeUnescaped))
 				throw new ArgumentOutOfRangeException ("format");
 
-			Match m = uri_regex.Match (uri.OriginalString);
+			Match m = uri_regex.Match (uri.OriginalString.Trim ());
 
 			string scheme = scheme_name;
 			int dp = default_port;
