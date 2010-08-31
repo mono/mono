@@ -145,21 +145,6 @@ namespace Mono.Documentation
 			return XmlWriter.Create (file, settings);
 		}
 
-		struct Element : IDisposable {
-			XmlWriter output;
-
-			public Element (XmlWriter output, Action<XmlWriter> action)
-			{
-				this.output = output;
-				action (output);
-			}
-
-			public void Dispose ()
-			{
-				output.WriteEndElement ();
-			}
-		}
-
 		void UpdateExistingLibraries (XDocument docs, HashSet<string> seenLibraries)
 		{
 			foreach (XElement types in docs.Root.Elements ("Types")) {
