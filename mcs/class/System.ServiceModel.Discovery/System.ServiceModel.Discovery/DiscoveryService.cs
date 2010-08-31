@@ -68,15 +68,25 @@ namespace System.ServiceModel.Discovery
 		#region service contract implementation
 		
 		// IDiscoveryProxyContract11
+		
+		FindRequestContext find_context;
+		
 		IAsyncResult IDiscoveryProxyContract11.BeginFind (MessageContracts11.FindRequest message, AsyncCallback callback, object state)
 		{
-			return OnBeginFind (new DefaultFindRequestContext (message.Body.ToFindCriteria ()), callback, state);
+			if (find_context != null)
+				throw new InvalidOperationException ("Another async Find operation is ongoing");
+			find_context = new DefaultFindRequestContext (message.Body.ToFindCriteria ());
+			return OnBeginFind (find_context, callback, state);
 		}
 
 		MessageContracts11.FindResponse IDiscoveryProxyContract11.EndFind (IAsyncResult result)
 		{
 			OnEndFind (result);
-			throw new NotImplementedException ();
+			var l = new MessageContracts11.FindResponse11 ();
+			foreach (var edm in find_context.Endpoints)
+				l.Add (new EndpointDiscoveryMetadata11 (edm));
+			find_context = null;
+			return new MessageContracts11.FindResponse () { Body = l };
 		}
 
 		IAsyncResult IDiscoveryProxyContract11.BeginResolve (MessageContracts11.ResolveRequest message, AsyncCallback callback, object state)
@@ -93,13 +103,20 @@ namespace System.ServiceModel.Discovery
 		// IDiscoveryProxyContractApril2005
 		IAsyncResult IDiscoveryProxyContractApril2005.BeginFind (MessageContractsApril2005.FindRequest message, AsyncCallback callback, object state)
 		{
-			return OnBeginFind (new DefaultFindRequestContext (message.Body.ToFindCriteria ()), callback, state);
+			if (find_context != null)
+				throw new InvalidOperationException ("Another async Find operation is ongoing");
+			find_context = new DefaultFindRequestContext (message.Body.ToFindCriteria ());
+			return OnBeginFind (find_context, callback, state);
 		}
 
 		MessageContractsApril2005.FindResponse IDiscoveryProxyContractApril2005.EndFind (IAsyncResult result)
 		{
 			OnEndFind (result);
-			throw new NotImplementedException ();
+			var l = new MessageContractsApril2005.FindResponseApril2005 ();
+			foreach (var edm in find_context.Endpoints)
+				l.Add (new EndpointDiscoveryMetadataApril2005 (edm));
+			find_context = null;
+			return new MessageContractsApril2005.FindResponse () { Body = l };
 		}
 
 		IAsyncResult IDiscoveryProxyContractApril2005.BeginResolve (MessageContractsApril2005.ResolveRequest message, AsyncCallback callback, object state)
@@ -116,13 +133,20 @@ namespace System.ServiceModel.Discovery
 		// IDiscoveryProxyContractCD1
 		IAsyncResult IDiscoveryProxyContractCD1.BeginFind (MessageContractsCD1.FindRequest message, AsyncCallback callback, object state)
 		{
-			return OnBeginFind (new DefaultFindRequestContext (message.Body.ToFindCriteria ()), callback, state);
+			if (find_context != null)
+				throw new InvalidOperationException ("Another async Find operation is ongoing");
+			find_context = new DefaultFindRequestContext (message.Body.ToFindCriteria ());
+			return OnBeginFind (find_context, callback, state);
 		}
 
 		MessageContractsCD1.FindResponse IDiscoveryProxyContractCD1.EndFind (IAsyncResult result)
 		{
 			OnEndFind (result);
-			throw new NotImplementedException ();
+			var l = new MessageContractsCD1.FindResponseCD1 ();
+			foreach (var edm in find_context.Endpoints)
+				l.Add (new EndpointDiscoveryMetadataCD1 (edm));
+			find_context = null;
+			return new MessageContractsCD1.FindResponse () { Body = l };
 		}
 
 		IAsyncResult IDiscoveryProxyContractCD1.BeginResolve (MessageContractsCD1.ResolveRequest message, AsyncCallback callback, object state)
