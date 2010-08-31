@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
 using System;
 
 namespace System.Threading
@@ -100,4 +99,3 @@ namespace System.Threading
 		}
 	}
 }
-#endif

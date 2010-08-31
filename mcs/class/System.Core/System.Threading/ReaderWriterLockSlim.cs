@@ -46,13 +46,31 @@ namespace System.Threading {
 		UpgradedWrite = 6
 	}
 
-	internal static class ThreadLockStateExtensions
+	internal static class ReaderWriterLockSlimExtensions
 	{
 		internal static bool Has (this ThreadLockState state, ThreadLockState value)
 		{
 			return (state & value) > 0;
 		}
+
+#if !NET_4_0 && !NET_4_0_BOOTSTRAP
+		internal static bool Wait (this ManualResetEvent self, int timeout)
+		{
+			return self.WaitOne (timeout);
+		}
+
+		internal static bool IsSet (this ManualResetEvent self)
+		{
+			return self.WaitOne (0);
+		}
+#else
+		internal static bool IsSet (this ManualResetEventSlim self)
+		{
+			return self.IsSet;
+		}
+#endif
 	}
+
 
 	[HostProtectionAttribute(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
 	[HostProtectionAttribute(SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
@@ -73,9 +91,15 @@ namespace System.Threading {
 		readonly LockRecursionPolicy recursionPolicy;
 
 		AtomicBoolean upgradableTaken = new AtomicBoolean ();
+#if NET_4_0
 		ManualResetEventSlim upgradableEvent = new ManualResetEventSlim (true);
 		ManualResetEventSlim writerDoneEvent = new ManualResetEventSlim (true);
 		ManualResetEventSlim readerDoneEvent = new ManualResetEventSlim (true);
+#else
+		ManualResetEvent upgradableEvent = new ManualResetEvent (true);
+		ManualResetEvent writerDoneEvent = new ManualResetEvent (true);
+		ManualResetEvent readerDoneEvent = new ManualResetEvent (true);
+#endif
 
 		int numReadWaiters, numUpgradeWaiters, numWriteWaiters;
 		bool disposed;
@@ -126,7 +150,7 @@ namespace System.Threading {
 				if ((Interlocked.Add (ref rwlock, RwRead) & 0x7) == 0) {
 					CurrentThreadState = CurrentThreadState ^ ThreadLockState.Read;
 					Interlocked.Decrement (ref numReadWaiters);
-					if (readerDoneEvent.IsSet)
+					if (readerDoneEvent.IsSet ())
 						readerDoneEvent.Reset ();
 					return true;
 				}
@@ -183,7 +207,7 @@ namespace System.Threading {
 					if (Interlocked.CompareExchange (ref rwlock, RwWrite, state) == state) {
 						CurrentThreadState = isUpgradable ? ThreadLockState.UpgradedWrite : ThreadLockState.Write;
 						Interlocked.Decrement (ref numWriteWaiters);
-						if (writerDoneEvent.IsSet)
+						if (writerDoneEvent.IsSet ())
 							writerDoneEvent.Reset ();
 						return true;
 					}
@@ -236,7 +260,7 @@ namespace System.Threading {
 			Stopwatch sw = Stopwatch.StartNew ();
 			Interlocked.Increment (ref numUpgradeWaiters);
 
-			while (!upgradableEvent.IsSet || !upgradableTaken.TryRelaxedSet ()) {
+			while (!upgradableEvent.IsSet () || !upgradableTaken.TryRelaxedSet ()) {
 				if (millisecondsTimeout != -1 && sw.ElapsedMilliseconds > millisecondsTimeout) {
 					Interlocked.Decrement (ref numUpgradeWaiters);
 					return false;

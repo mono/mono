@@ -84,6 +84,7 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 System.Threading/LockRecursionException.cs
 System.Threading/LockRecursionPolicy.cs
 System.Threading/ReaderWriterLockSlim.cs
+../corlib/System.Threading/AtomicBoolean.cs
 Microsoft.Win32.SafeHandles/SafePipeHandle.cs
 System.IO.Pipes/AnonymousPipeClientStream.cs
 System.IO.Pipes/AnonymousPipeServerStream.cs
