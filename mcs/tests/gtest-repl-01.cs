@@ -39,6 +39,7 @@ public class MyTest {
 		
 		Evaluate ("CompareString", "\"foo\" == \"bar\";", false);
 		Evaluate ("CompareInt", "var a = 1; a+2;", 3);
+		Evaluate ("Multiply", "2 * 4;", 8);
 
 		Evaluator.Run ("using System; using System.Linq;");
 		Run ("LINQ-1", "var a = new int[]{1,2,3};\nfrom x in a select x;");

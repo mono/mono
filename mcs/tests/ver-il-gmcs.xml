@@ -23626,7 +23626,7 @@
         <size>80</size>
       </method>
       <method name="Void Main()">
-        <size>540</size>
+        <size>561</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -41483,6 +41483,52 @@
       </method>
     </type>
   </test>
+  <test name="test-798.cs">
+    <type name="A">
+      <method name="Void Foo(Int32 ByRef)">
+        <size>5</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Foo(Int32 ByRef)">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-799.cs">
+    <type name="Test2">
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test2+Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test2+Bar">
+      <method name="Void .ctor(Foo)">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-8.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -41511,6 +41557,16 @@
       </method>
       <method name="Int32 A.Add(Int32, Int32)">
         <size>9</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-800.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>

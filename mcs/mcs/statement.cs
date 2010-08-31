@@ -1154,7 +1154,8 @@ namespace Mono.CSharp {
 	//
 	// The information about a user-perceived local variable
 	//
-	public class LocalInfo : IKnownVariable, ILocalVariable {
+	public class LocalInfo : IKnownVariable, ILocalVariable
+	{
 		public readonly FullNamedExpression Type;
 
 		public TypeSpec VariableType;
@@ -1955,7 +1956,7 @@ namespace Mono.CSharp {
 				constants.Remove (name);
 
 				if (!variable_type.IsConstantCompatible) {
-					Const.Error_InvalidConstantType (variable_type, loc, ec.Report);
+					Const.Error_InvalidConstantType (variable_type, vi.Location, ec.Report);
 					continue;
 				}
 

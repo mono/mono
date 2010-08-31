@@ -8560,8 +8560,10 @@ namespace Mono.CSharp {
 					UnsafeError (ec.Compiler.Report, loc);
 				}
 
-				type = PointerContainer.MakeType (type);
-				single_spec = single_spec.Next;
+				do {
+					type = PointerContainer.MakeType (type);
+					single_spec = single_spec.Next;
+				} while (single_spec != null && single_spec.IsPointer);
 			}
 
 			if (single_spec != null && single_spec.Dimension > 0) {
