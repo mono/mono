@@ -54,4 +54,4 @@ endif
 
 endif
 
-dist-local:
+dist-local: dist-default
