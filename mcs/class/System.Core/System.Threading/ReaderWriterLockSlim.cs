@@ -74,6 +74,8 @@ namespace System.Threading {
 
 		AtomicBoolean upgradableTaken = new AtomicBoolean ();
 		ManualResetEventSlim upgradableEvent = new ManualResetEventSlim (true);
+		ManualResetEventSlim writerDoneEvent = new ManualResetEventSlim (true);
+		ManualResetEventSlim readerDoneEvent = new ManualResetEventSlim (true);
 
 		int numReadWaiters, numUpgradeWaiters, numWriteWaiters;
 		bool disposed;
@@ -116,19 +118,21 @@ namespace System.Threading {
 
 			while (millisecondsTimeout == -1 || sw.ElapsedMilliseconds < millisecondsTimeout) {
 				if ((rwlock & 0x7) > 0) {
-					Thread.Sleep (1);
+					writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
 					continue;
 				}
 
 				if ((Interlocked.Add (ref rwlock, RwRead) & 0x7) == 0) {
 					CurrentThreadState = CurrentThreadState ^ ThreadLockState.Read;
 					Interlocked.Decrement (ref numReadWaiters);
+					if (readerDoneEvent.IsSet)
+						readerDoneEvent.Reset ();
 					return true;
 				}
 
 				Interlocked.Add (ref rwlock, -RwRead);
 
-				Thread.Sleep (1);
+				writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
 			}
 
 			Interlocked.Decrement (ref numReadWaiters);
@@ -146,7 +150,8 @@ namespace System.Threading {
 				throw new SynchronizationLockException ("The current thread has not entered the lock in read mode");
 
 			CurrentThreadState = ThreadLockState.None;
-			Interlocked.Add (ref rwlock, -RwRead);
+			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
+				readerDoneEvent.Set ();
 		}
 
 		public void EnterWriteLock ()
@@ -177,6 +182,8 @@ namespace System.Threading {
 					if (Interlocked.CompareExchange (ref rwlock, RwWrite, state) == state) {
 						CurrentThreadState = isUpgradable ? ThreadLockState.UpgradedWrite : ThreadLockState.Write;
 						Interlocked.Decrement (ref numWriteWaiters);
+						if (writerDoneEvent.IsSet)
+							writerDoneEvent.Reset ();
 						return true;
 					}
 					state = rwlock;
@@ -186,7 +193,7 @@ namespace System.Threading {
 					state = rwlock;
 
 				while (rwlock > stateCheck && (millisecondsTimeout < 0 || sw.ElapsedMilliseconds < millisecondsTimeout))
-					Thread.Sleep (1);
+					readerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
 			}
 
 			Interlocked.Decrement (ref numWriteWaiters);
@@ -205,6 +212,7 @@ namespace System.Threading {
 			
 			CurrentThreadState = CurrentThreadState ^ ThreadLockState.Write;
 			Interlocked.Add (ref rwlock, -RwWrite);
+			writerDoneEvent.Set ();
 		}
 
 		public void EnterUpgradeableReadLock ()
