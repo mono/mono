@@ -363,7 +363,7 @@ namespace MonoTests.System.Threading
 			var v = new ReaderWriterLockSlim ();
 			int local = 10;
 
-			var r = from i in Enumerable.Range (1, 30) select new Thread (() => {
+			var r = from i in Enumerable.Range (1, 10) select new Thread (() => {
 				v.EnterReadLock ();
 
 				Assert.AreEqual (11, local);
@@ -380,9 +380,8 @@ namespace MonoTests.System.Threading
 			local = 11;
 
 			// FIXME: Don't rely on Thread.Sleep (200)
-			Assert.AreEqual (30, v.WaitingReadCount, "in waiting read");
-
 			Assert.AreEqual (0, v.WaitingWriteCount, "in waiting write");
+			Assert.AreEqual (10, v.WaitingReadCount, "in waiting read");
 			Assert.AreEqual (0, v.WaitingUpgradeCount, "in waiting upgrade");
 			v.ExitWriteLock ();
 
