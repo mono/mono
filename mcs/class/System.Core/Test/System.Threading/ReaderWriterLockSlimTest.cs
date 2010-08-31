@@ -415,6 +415,34 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void RecursiveReadPlusWriteLockTest ()
+		{
+			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+
+			try {
+				v.EnterReadLock ();
+				v.EnterWriteLock ();
+				Assert.Fail ("1");
+			} catch (LockRecursionException ex) {
+				Assert.IsNotNull (ex, "#1");
+			}
+		}
+
+		[Test]
+		public void RecursiveReadPlusUpgradeableLockTest ()
+		{
+			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+
+			try {
+				v.EnterReadLock ();
+				v.EnterUpgradeableReadLock ();
+				Assert.Fail ("1");
+			} catch (LockRecursionException ex) {
+				Assert.IsNotNull (ex, "#1");
+			}
+		}
+
+		[Test]
 		public void RecursiveWriteLockTest ()
 		{
 			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
