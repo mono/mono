@@ -85,23 +85,24 @@ namespace Mono.Documentation
 
 		void Update ()
 		{
-			XDocument input = LoadFile (this.file);
-
-			var seenLibraries = new HashSet<string> ();
-
 			Action<string> creator = file => {
+				XDocument docs = LoadFile (this.file);
+
+				var seenLibraries = new HashSet<string> ();
+
+				UpdateExistingLibraries (docs, seenLibraries);
+				GenerateMissingLibraries (docs, seenLibraries);
+
+				SortLibraries (docs.Root);
+				SortTypes (docs.Root);
+
 				using (var output = CreateWriter (file)) {
-					// spit out header comments, DTD, etc.
-					foreach (var node in input.Nodes ()) {
+					foreach (var node in docs.Nodes ()) {
 						if (node.NodeType == XmlNodeType.Element || node.NodeType == XmlNodeType.Text)
 							continue;
 						node.WriteTo (output);
 					}
-
-					using (var librariesElement = new Element (output, o => o.WriteStartElement ("Libraries"))) {
-						UpdateExistingLibraries (input, output, seenLibraries);
-						GenerateMissingLibraries (input, output, seenLibraries);
-					}
+					docs.Root.WriteTo (output);
 					output.WriteWhitespace ("\r\n");
 				}
 			};
@@ -117,7 +118,7 @@ namespace Mono.Documentation
 				ProhibitDtd = false,
 			};
 			using (var reader = XmlReader.Create (file, settings))
-				return XDocument.Load (reader, LoadOptions.PreserveWhitespace);
+				return XDocument.Load (reader);
 		}
 
 		static XDocument CreateDefaultDocument ()
@@ -147,81 +148,51 @@ namespace Mono.Documentation
 			return XmlWriter.Create (file, settings);
 		}
 
-		struct Element : IDisposable {
-			XmlWriter output;
-
-			public Element (XmlWriter output, Action<XmlWriter> action)
-			{
-				this.output = output;
-				action (output);
-			}
-
-			public void Dispose ()
-			{
-				output.WriteEndElement ();
-			}
-		}
-
-		void UpdateExistingLibraries (XDocument input, XmlWriter output, HashSet<string> seenLibraries)
+		void UpdateExistingLibraries (XDocument docs, HashSet<string> seenLibraries)
 		{
-			foreach (XElement types in input.Root.Elements ()) {
+			foreach (XElement types in docs.Root.Elements ("Types")) {
 				XAttribute library = types.Attribute ("Library");
 				HashSet<string> libraryTypes;
 				if (library == null || !libraries.TryGetValue (library.Value, out libraryTypes)) {
-					types.WriteTo (output);
 					continue;
 				}
 				seenLibraries.Add (library.Value);
 				var seenTypes = new HashSet<string> ();
-				using (Element typesElement = CreateTypesElement (output, library.Value)) {
-					foreach (XElement type in types.Elements ()) {
-						XAttribute fullName = type.Attribute ("FullName");
-						string typeName = fullName == null
-							? null
-							: XmlDocUtils.ToEscapedTypeName (fullName.Value);
-						if (typeName == null || !libraryTypes.Contains (typeName)) {
-							type.WriteTo (output);
-							continue;
-						}
-						seenTypes.Add (typeName);
-						LoadType (typeName).WriteTo (output);
+				foreach (XElement type in types.Elements ("Type").ToList ()) {
+					XAttribute fullName = type.Attribute ("FullName");
+					string typeName = fullName == null
+						? null
+						: XmlDocUtils.ToEscapedTypeName (fullName.Value);
+					if (typeName == null || !libraryTypes.Contains (typeName)) {
+						continue;
 					}
-					foreach (string type in libraryTypes.Except (seenTypes))
-						LoadType (type).WriteTo (output);
+					type.Remove ();
+					seenTypes.Add (typeName);
+					types.Add (LoadType (typeName, library.Value));
 				}
+				foreach (string typeName in libraryTypes.Except (seenTypes))
+					types.Add (LoadType (typeName, library.Value));
 			}
 		}
 
-		static Element CreateTypesElement (XmlWriter output, string library)
-		{
-			return new Element (
-					output, 
-					o => 
-						{o.WriteStartElement ("Types"); 
-						o.WriteAttributeString ("Library", library);});
-		}
-
-		void GenerateMissingLibraries (XDocument input, XmlWriter output, HashSet<string> seenLibraries)
+		void GenerateMissingLibraries (XDocument docs, HashSet<string> seenLibraries)
 		{
 			foreach (KeyValuePair<string, HashSet<string>> lib in libraries) {
 				if (seenLibraries.Contains (lib.Key))
 					continue;
 				seenLibraries.Add (lib.Key);
-				using (var typesElement = CreateTypesElement (output, lib.Key)) {
-					foreach (string type in lib.Value) {
-						LoadType (type).WriteTo (output);
-					}
-				}
+				docs.Root.Add (new XElement ("Types", new XAttribute ("Library", lib.Key),
+							lib.Value.Select (type => LoadType (type, lib.Key))));
 			}
 		}
 
-		XElement LoadType (string type)
+		XElement LoadType (string type, string library)
 		{
 			foreach (KeyValuePair<string, string> permutation in GetTypeDirectoryFilePermutations (type)) {
 				foreach (string root in directories) {
 					string path = Path.Combine (root, Path.Combine (permutation.Key, permutation.Value + ".xml"));
 					if (File.Exists (path))
-						return XElement.Load (path);
+						return FixupType (path, library);
 				}
 			}
 			throw new FileNotFoundException ("Unable to find documentation file for type: " + type + ".");
@@ -242,6 +213,109 @@ namespace Mono.Documentation
 				end = dot;
 			}
 			yield return new KeyValuePair<string, string> ("", type.Replace ('.', '+'));
+		}
+
+		static XElement FixupType (string path, string library)
+		{
+			var type = XElement.Load (path);
+
+			XAttribute fullName   = type.Attribute ("FullName");
+			XAttribute fullNameSp = type.Attribute ("FullNameSP");
+			if (fullNameSp == null && fullName != null) {
+				type.Add (new XAttribute ("FullNameSP", fullName.Value.Replace ('.', '_')));
+			}
+			if (type.Element ("TypeExcluded") == null)
+				type.Add (new XElement ("TypeExcluded", "0"));
+			if (type.Element ("MemberOfLibrary") == null) {
+				XElement member = new XElement ("MemberOfLibrary", library);
+				XElement assemblyInfo = type.Element ("AssemblyInfo");
+				if (assemblyInfo != null)
+					assemblyInfo.AddBeforeSelf (member);
+				else
+					type.Add (member);
+			}
+
+			XElement ai = type.Element ("AssemblyInfo");
+
+			XElement assembly = 
+				XElement.Load (
+						Path.Combine (
+							Path.Combine (Path.GetDirectoryName (path), ".."), 
+							"index.xml"))
+				.Element ("Assemblies")
+				.Elements ("Assembly")
+				.FirstOrDefault (a => a.Attribute ("Name").Value == ai.Element ("AssemblyName").Value &&
+						a.Attribute ("Version").Value == ai.Element ("AssemblyVersion").Value);
+			if (assembly == null)
+				return type;
+
+			if (assembly.Element ("AssemblyPublicKey") != null)
+				ai.Add (assembly.Element ("AssemblyPublicKey"));
+
+			if (assembly.Element ("AssemblyCulture") != null)
+				ai.Add (assembly.Element ("AssemblyCulture"));
+			else
+				ai.Add (new XElement ("AssemblyCulture", "neutral"));
+
+			// TODO: assembly attributes?
+			// The problem is that .NET mscorlib.dll v4.0 has ~26 attributes, and
+			// importing these for every time seems like some serious bloat...
+
+			return type;
+		}
+
+		static void SortLibraries (XContainer libraries)
+		{
+			SortElements (libraries, (x, y) => x.Attribute ("Library").Value.CompareTo (y.Attribute ("Library").Value));
+		}
+
+		static void SortElements (XContainer container, Comparison<XElement> comparison)
+		{
+			var items = new List<XElement> ();
+			foreach (var e in container.Elements ())
+				items.Add (e);
+			items.Sort (comparison);
+			for (int i = items.Count - 1; i > 0; --i) {
+				items [i-1].Remove ();
+				items [i].AddBeforeSelf (items [i-1]);
+			}
+		}
+
+		static void SortTypes (XContainer libraries)
+		{
+			foreach (var types in libraries.Elements ("Types")) {
+				SortElements (types, (x, y) => {
+						string xName, yName;
+						int xCount, yCount;
+
+						GetTypeSortName (x, out xName, out xCount);
+						GetTypeSortName (y, out yName, out yCount);
+
+						int c = xName.CompareTo (yName);
+						if (c != 0)
+							return c;
+						if (xCount < yCount)
+							return -1;
+						if (yCount < xCount)
+							return 1;
+						return 0;
+				});
+			}
+		}
+
+		static void GetTypeSortName (XElement element, out string name, out int typeParamCount)
+		{
+			typeParamCount = 0;
+			name = element.Attribute ("Name").Value;
+
+			int lt = name.IndexOf ('<');
+			if (lt >= 0) {
+				int gt = name.IndexOf ('>', lt);
+				if (gt >= 0) {
+					typeParamCount = name.Substring (lt, gt-lt).Count (c => c == ',') + 1;
+				}
+				name = name.Substring (0, lt);
+			}
 		}
 	}
 }

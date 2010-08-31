@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -86,10 +87,46 @@ namespace System.ServiceModel.Discovery
 		public Uri ScopeMatchBy { get; set; }
 		public Collection<Uri> Scopes { get; private set; }
 
-		[MonoTODO]
+		[MonoTODO ("find out conformant behavior, and implement remaining bits")]
 		public bool IsMatch (EndpointDiscoveryMetadata endpointDiscoveryMetadata)
 		{
-			throw new NotImplementedException ();
+			var edm = endpointDiscoveryMetadata;
+			if (edm == null)
+				throw new ArgumentNullException ("endpointDiscoveryMetadata");
+			if (edm.ContractTypeNames.Count > 0) {
+				bool match = false;
+				foreach (var qn in edm.ContractTypeNames)
+					if (ContractTypeNames.Contains (qn))
+						match = true;
+				if (!match)
+					return false;
+			}
+			if (edm.Scopes.Count > 0) {
+				bool match = false;
+				foreach (var scope in edm.Scopes) {
+					if (ScopeMatchBy == null || ScopeMatchBy.Equals (ScopeMatchByPrefix)) {
+						if (Scopes.Contains (scope))
+							match = true;
+					} else if (ScopeMatchBy.Equals (ScopeMatchByExact)) {
+						if (Scopes.Any (s => s.AbsoluteUri == scope.AbsoluteUri))
+							match = true;
+					}
+					else if (ScopeMatchBy.Equals (ScopeMatchByUuid))
+						throw new NotImplementedException ();
+					else if (ScopeMatchBy.Equals (ScopeMatchByNone))
+						throw new NotImplementedException ();
+					else if (ScopeMatchBy.Equals (ScopeMatchByLdap))
+						throw new NotImplementedException ();
+					else
+						throw new InvalidOperationException (String.Format ("Unexpected ScopeMatchBy value: {0}", ScopeMatchBy));
+				}
+				if (!match)
+					return false;
+			}
+			if (Extensions.Count > 0)
+				throw new NotImplementedException ();
+
+			return true;
 		}
 
 		internal static FindCriteria ReadXml (XmlReader reader, DiscoveryVersion version)

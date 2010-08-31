@@ -32,6 +32,8 @@ $(mcs_aot_image): $(mcs_exe)
 $(mscorlib_aot_image): $(mscorlib_dll)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version --debug $(mscorlib_dll)
 
+ifdef ENABLE_AOT
+
 ifeq (net_2_0, $(PROFILE))
 all-local: $(mscorlib_aot_image) $(mcs_aot_image)
 endif
@@ -47,6 +49,8 @@ install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
 	$(INSTALL_LIB) $(mscorlib_aot_image) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
 	$(INSTALL_LIB) $(mcs_aot_image) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+
+endif
 
 endif
 
