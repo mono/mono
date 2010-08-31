@@ -56,7 +56,7 @@ namespace System.Threading
 
 		public bool TryRelaxedSet ()
 		{
-			return !flag && !Exchange (true);
+			return flag == UnSet && !Exchange (true);
 		}
 		
 		public bool Exchange (bool newVal)
