@@ -52,10 +52,11 @@ namespace Microsoft.Build.BuildEngine {
 				 type == typeof (uint) ||
 				 type == typeof (float) ||
 				 type == typeof (double) ||
-				 type == typeof (DateTime)) {
+				 type == typeof (DateTime) ||
+				 type.IsEnum)
 				output = o.ToString ();
-
-			}
+			else
+				throw new Exception (String.Format ("Unsupported type : {0}", type));
 			return output;
 		}
 
