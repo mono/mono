@@ -203,23 +203,7 @@ namespace Mono.Documentation
 
 		void WriteType (XmlWriter output, string typeName, string library)
 		{
-			XElement type = LoadType (typeName);
-
-			XAttribute fullName   = type.Attribute ("FullName");
-			XAttribute fullNameSp = type.Attribute ("FullNameSP");
-			if (fullNameSp == null && fullName != null) {
-				type.Add (new XAttribute ("FullNameSP", fullName.Value.Replace ('.', '_')));
-			}
-			if (type.Element ("TypeExcluded") == null)
-				type.Add (new XElement ("TypeExcluded", "0"));
-			if (type.Element ("MemberOfLibrary") == null) {
-				XElement member = new XElement ("MemberOfLibrary", library);
-				XElement assemblyInfo = type.Element ("AssemblyInfo");
-				if (assemblyInfo != null)
-					assemblyInfo.AddBeforeSelf (member);
-				else
-					type.Add (member);
-			}
+			XElement type = LoadType (typeName, library);
 
 			type.WriteTo (output);
 		}
@@ -238,13 +222,13 @@ namespace Mono.Documentation
 			}
 		}
 
-		XElement LoadType (string type)
+		XElement LoadType (string type, string library)
 		{
 			foreach (KeyValuePair<string, string> permutation in GetTypeDirectoryFilePermutations (type)) {
 				foreach (string root in directories) {
 					string path = Path.Combine (root, Path.Combine (permutation.Key, permutation.Value + ".xml"));
 					if (File.Exists (path))
-						return XElement.Load (path);
+						return FixupType (path, library);
 				}
 			}
 			throw new FileNotFoundException ("Unable to find documentation file for type: " + type + ".");
@@ -265,6 +249,55 @@ namespace Mono.Documentation
 				end = dot;
 			}
 			yield return new KeyValuePair<string, string> ("", type.Replace ('.', '+'));
+		}
+
+		static XElement FixupType (string path, string library)
+		{
+			var type = XElement.Load (path);
+
+			XAttribute fullName   = type.Attribute ("FullName");
+			XAttribute fullNameSp = type.Attribute ("FullNameSP");
+			if (fullNameSp == null && fullName != null) {
+				type.Add (new XAttribute ("FullNameSP", fullName.Value.Replace ('.', '_')));
+			}
+			if (type.Element ("TypeExcluded") == null)
+				type.Add (new XElement ("TypeExcluded", "0"));
+			if (type.Element ("MemberOfLibrary") == null) {
+				XElement member = new XElement ("MemberOfLibrary", library);
+				XElement assemblyInfo = type.Element ("AssemblyInfo");
+				if (assemblyInfo != null)
+					assemblyInfo.AddBeforeSelf (member);
+				else
+					type.Add (member);
+			}
+
+			XElement ai = type.Element ("AssemblyInfo");
+
+			XElement assembly = 
+				XElement.Load (
+						Path.Combine (
+							Path.Combine (Path.GetDirectoryName (path), ".."), 
+							"index.xml"))
+				.Element ("Assemblies")
+				.Elements ("Assembly")
+				.FirstOrDefault (a => a.Attribute ("Name").Value == ai.Element ("AssemblyName").Value &&
+						a.Attribute ("Version").Value == ai.Element ("AssemblyVersion").Value);
+			if (assembly == null)
+				return type;
+
+			if (assembly.Element ("AssemblyPublicKey") != null)
+				ai.Add (assembly.Element ("AssemblyPublicKey"));
+
+			if (assembly.Element ("AssemblyCulture") != null)
+				ai.Add (assembly.Element ("AssemblyCulture"));
+			else
+				ai.Add (new XElement ("AssemblyCulture", "neutral"));
+
+			// TODO: assembly attributes?
+			// The problem is that .NET mscorlib.dll v4.0 has ~26 attributes, and
+			// importing these for every time seems like some serious bloat...
+
+			return type;
 		}
 	}
 }
