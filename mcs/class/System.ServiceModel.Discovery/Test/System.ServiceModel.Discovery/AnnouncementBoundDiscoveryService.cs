@@ -64,9 +64,20 @@ namespace MonoTests.System.ServiceModel.Discovery
 
 		protected override IAsyncResult OnBeginFind (FindRequestContext findRequestContext, AsyncCallback callback, object state)
 		{
-			if (find_delegate == null)
-				find_delegate = new Action<FindRequestContext> (Find);
-			return find_delegate.BeginInvoke (findRequestContext, callback, state);
+			// FIXME: this is a workaround for (similar to) bug #633945.
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				if (find_delegate == null)
+					find_delegate = new Action<FindRequestContext> (Find);
+				return find_delegate.BeginInvoke (findRequestContext, callback, state);
+			default:
+				Find (findRequestContext);
+				var result = new TempAsyncResult (null, state);
+				if (callback != null)
+					callback (result);
+				return result;
+			}
 		}
 		
 		Queue<DiscoveryMessageSequence> sequences = new Queue<DiscoveryMessageSequence> ();
@@ -98,19 +109,45 @@ namespace MonoTests.System.ServiceModel.Discovery
 
 		protected override void OnEndFind (IAsyncResult result)
 		{
-			find_delegate.EndInvoke (result);
+			// FIXME: this is a workaround for (similar to) bug #633945.
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				find_delegate.EndInvoke (result);
+				break;
+			default:
+				break;
+			}
 		}
 
 		protected override IAsyncResult OnBeginResolve (ResolveCriteria resolveCriteria, AsyncCallback callback, object state)
 		{
-			if (resolve_delegate == null)
-				resolve_delegate = new Func<ResolveCriteria,EndpointDiscoveryMetadata> (Resolve);
-			return resolve_delegate.BeginInvoke (resolveCriteria, callback, state);
+			// FIXME: this is a workaround for (similar to) bug #633945.
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				if (resolve_delegate == null)
+					resolve_delegate = new Func<ResolveCriteria,EndpointDiscoveryMetadata> (Resolve);
+				return resolve_delegate.BeginInvoke (resolveCriteria, callback, state);
+			default:
+				var ret = Resolve (resolveCriteria);
+				var result = new TempAsyncResult (ret, state);
+				if (callback != null)
+					callback (result);
+				return result;
+			}
 		}
 
 		protected override EndpointDiscoveryMetadata OnEndResolve (IAsyncResult result)
 		{
-			return resolve_delegate.EndInvoke (result);
+			// FIXME: this is a workaround for (similar to) bug #633945.
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				return resolve_delegate.EndInvoke (result);
+			default:
+				return (EndpointDiscoveryMetadata) ((TempAsyncResult) result).ReturnValue;
+			}
 		}
 
 		void Find (FindRequestContext context)
@@ -126,5 +163,24 @@ namespace MonoTests.System.ServiceModel.Discovery
 			TextWriter.Null.WriteLine ("Resolve operation: " + criteria);
 			throw new NotImplementedException ();
 		}
+	}
+
+	// FIXME: It is introduced for a workaround for (similar to) bug #633945. Remove this class and all of its usage once that bug gets fixed.
+	class TempAsyncResult : IAsyncResult
+	{
+		public TempAsyncResult (object returnValue, object state)
+		{
+			ReturnValue = returnValue;
+			AsyncState = state;
+			CompletedSynchronously = true;
+			IsCompleted = true;
+			AsyncWaitHandle = new ManualResetEvent (true);
+		}
+		
+		public object ReturnValue { get; set; }
+		public object AsyncState { get; set; }
+		public bool CompletedSynchronously { get; set; }
+		public bool IsCompleted { get; set; }
+		public WaitHandle AsyncWaitHandle { get; set; }
 	}
 }

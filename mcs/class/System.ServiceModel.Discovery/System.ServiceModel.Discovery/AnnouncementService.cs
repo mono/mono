@@ -32,6 +32,7 @@ using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Discovery.Version11;
 using System.ServiceModel.Discovery.VersionApril2005;
 using System.ServiceModel.Discovery.VersionCD1;
+using System.Threading;
 
 namespace System.ServiceModel.Discovery
 {
@@ -56,43 +57,91 @@ namespace System.ServiceModel.Discovery
 
 		protected virtual IAsyncResult OnBeginOfflineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
 		{
-			if (offline == null)
-				offline = new Action<object,AnnouncementEventArgs> (OfflineAnnouncementReceived ?? delegate {});
-			return offline.BeginInvoke (this, new AnnouncementEventArgs (endpointDiscoveryMetadata, messageSequence), callback, state);
+			// FIXME: this is a workaround for (similar to) bug #633945.
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				if (offline == null)
+					offline = new Action<object,AnnouncementEventArgs> (OfflineAnnouncementReceived ?? delegate {});
+				return offline.BeginInvoke (this, new AnnouncementEventArgs (endpointDiscoveryMetadata, messageSequence), callback, state);
+			default:
+				if (OfflineAnnouncementReceived != null)
+					OfflineAnnouncementReceived (this, new AnnouncementEventArgs (endpointDiscoveryMetadata, messageSequence));
+				var result = new TempAsyncResult (null, state);
+				if (callback != null)
+					callback (result);
+				return result;
+			}
 		}
 
 		protected virtual IAsyncResult OnBeginOnlineAnnouncement (DiscoveryMessageSequence messageSequence, EndpointDiscoveryMetadata endpointDiscoveryMetadata, AsyncCallback callback, object state)
 		{
-			if (online == null)
-				online = new Action<object,AnnouncementEventArgs> (OnlineAnnouncementReceived ?? delegate {});
-			return offline.BeginInvoke (this, new AnnouncementEventArgs (endpointDiscoveryMetadata, messageSequence), callback, state);
+			// FIXME: this is a workaround for (similar to) bug #633945.
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				if (online == null)
+					online = new Action<object,AnnouncementEventArgs> (OnlineAnnouncementReceived ?? delegate {});
+				return online.BeginInvoke (this, new AnnouncementEventArgs (endpointDiscoveryMetadata, messageSequence), callback, state);
+			default:
+				if (OnlineAnnouncementReceived != null)
+					OnlineAnnouncementReceived (this, new AnnouncementEventArgs (endpointDiscoveryMetadata, messageSequence));
+				var result = new TempAsyncResult (null, state);
+				if (callback != null)
+					callback (result);
+				return result;
+			}
 		}
 
 		protected virtual void OnEndOfflineAnnouncement (IAsyncResult result)
 		{
-			offline.EndInvoke (result);
+			// FIXME: this is a workaround for (similar to) bug #633945.
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				offline.EndInvoke (result);
+				break;
+			default:
+				// do nothing
+				break;
+			}
 		}
 
 		protected virtual void OnEndOnlineAnnouncement (IAsyncResult result)
 		{
-			online.EndInvoke (result);
+			// FIXME: this is a workaround for (similar to) bug #633945.
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				online.EndInvoke (result);
+				break;
+			default:
+				// do nothing
+				break;
+			}
 		}
 
 		// BeginOnlineAnnouncement
 
 		IAsyncResult IAnnouncementContract11.BeginOnlineAnnouncement (MessageContracts11.OnlineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOnlineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
+			var msq = msg.MessageSequence != null ? msg.MessageSequence.ToDiscoveryMessageSequence () : null;
+			var edm = msg.EndpointDiscoveryMetadata != null ? msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata () : null;
+			return OnBeginOnlineAnnouncement (msq, edm, callback, state);
 		}
 
 		IAsyncResult IAnnouncementContractApril2005.BeginOnlineAnnouncement (MessageContractsApril2005.OnlineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOnlineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
+			var msq = msg.MessageSequence != null ? msg.MessageSequence.ToDiscoveryMessageSequence () : null;
+			var edm = msg.EndpointDiscoveryMetadata != null ? msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata () : null;
+			return OnBeginOnlineAnnouncement (msq, edm, callback, state);
 		}
 
 		IAsyncResult IAnnouncementContractCD1.BeginOnlineAnnouncement (MessageContractsCD1.OnlineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOnlineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
+			var msq = msg.MessageSequence != null ? msg.MessageSequence.ToDiscoveryMessageSequence () : null;
+			var edm = msg.EndpointDiscoveryMetadata != null ? msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata () : null;
+			return OnBeginOnlineAnnouncement (msq, edm, callback, state);
 		}
 
 		// EndOnlineAnnouncement
@@ -116,17 +165,23 @@ namespace System.ServiceModel.Discovery
 
 		IAsyncResult IAnnouncementContract11.BeginOfflineAnnouncement (MessageContracts11.OfflineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOfflineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
+			var msq = msg.MessageSequence != null ? msg.MessageSequence.ToDiscoveryMessageSequence () : null;
+			var edm = msg.EndpointDiscoveryMetadata != null ? msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata () : null;
+			return OnBeginOfflineAnnouncement (msq, edm, callback, state);
 		}
 
 		IAsyncResult IAnnouncementContractApril2005.BeginOfflineAnnouncement (MessageContractsApril2005.OfflineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOfflineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
+			var msq = msg.MessageSequence != null ? msg.MessageSequence.ToDiscoveryMessageSequence () : null;
+			var edm = msg.EndpointDiscoveryMetadata != null ? msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata () : null;
+			return OnBeginOfflineAnnouncement (msq, edm, callback, state);
 		}
 
 		IAsyncResult IAnnouncementContractCD1.BeginOfflineAnnouncement (MessageContractsCD1.OfflineAnnouncement msg, AsyncCallback callback, object state)
 		{
-			return OnBeginOfflineAnnouncement (msg.MessageSequence.ToDiscoveryMessageSequence (), msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata (), callback, state);
+			var msq = msg.MessageSequence != null ? msg.MessageSequence.ToDiscoveryMessageSequence () : null;
+			var edm = msg.EndpointDiscoveryMetadata != null ? msg.EndpointDiscoveryMetadata.ToEndpointDiscoveryMetadata () : null;
+			return OnBeginOfflineAnnouncement (msq, edm, callback, state);
 		}
 
 		// EndOfflineAnnouncement
@@ -145,5 +200,24 @@ namespace System.ServiceModel.Discovery
 		{
 			OnEndOfflineAnnouncement (result);
 		}
+	}
+
+	// FIXME: It is introduced for a workaround for (similar to) bug #633945. Remove this class and all of its usage once that bug gets fixed.
+	class TempAsyncResult : IAsyncResult
+	{
+		public TempAsyncResult (object returnValue, object state)
+		{
+			ReturnValue = returnValue;
+			AsyncState = state;
+			CompletedSynchronously = true;
+			IsCompleted = true;
+			AsyncWaitHandle = new ManualResetEvent (true);
+		}
+		
+		public object ReturnValue { get; set; }
+		public object AsyncState { get; set; }
+		public bool CompletedSynchronously { get; set; }
+		public bool IsCompleted { get; set; }
+		public WaitHandle AsyncWaitHandle { get; set; }
 	}
 }
