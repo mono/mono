@@ -292,16 +292,17 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (0, v.WaitingWriteCount, "B6");
 
 			v.EnterReadLock ();
+			v.ExitUpgradeableReadLock ();
+
 			Assert.IsTrue (v.IsReadLockHeld, "C");
 			Assert.AreEqual (0, v.RecursiveWriteCount, "C1");
 			Assert.AreEqual (1, v.RecursiveReadCount, "C2");
-			Assert.AreEqual (1, v.RecursiveUpgradeCount, "C3");
+			Assert.AreEqual (0, v.RecursiveUpgradeCount, "C3");
 			Assert.AreEqual (0, v.WaitingReadCount, "C4");
 			Assert.AreEqual (0, v.WaitingUpgradeCount, "C5");
 			Assert.AreEqual (0, v.WaitingWriteCount, "C6");
-			v.ExitReadLock ();
 
-			v.ExitUpgradeableReadLock ();
+			v.ExitReadLock ();
 		}
 
 		[Test]
