@@ -72,8 +72,10 @@ namespace System.Net {
 			}
 			finally {
 				// if used from WebClient then notify that the stream was closed
-				if (WebClient != null)
-					WebClient.WriteStreamClosedCallback (WebClientData);
+				if (WebClient != null) {
+					WebClient.WriteStreamClosedCallback (WebClientData, data.Length);
+					WebClient = null; // notify only once
+				}
 			}
 		}
 
