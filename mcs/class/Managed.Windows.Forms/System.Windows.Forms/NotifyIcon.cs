@@ -197,7 +197,9 @@ namespace System.Windows.Forms {
 
 			internal override void OnPaintInternal (PaintEventArgs e) {
 				if (owner.icon != null) {
-					e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(SystemColors.Window), rect);
+					// At least in Gnome, the background of the panel is the same as the Menu, so we go for it
+					// instead of (most of the time) plain white.
+					e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(SystemColors.Menu), rect);
 					e.Graphics.DrawImage(owner.icon_bitmap,
 							     rect,
 							     new Rectangle (0, 0, owner.icon_bitmap.Width, owner.icon_bitmap.Height),
