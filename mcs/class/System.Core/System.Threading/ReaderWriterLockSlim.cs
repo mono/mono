@@ -89,8 +89,6 @@ namespace System.Threading {
 
 		public ReaderWriterLockSlim (LockRecursionPolicy recursionPolicy)
 		{
-			if (recursionPolicy != LockRecursionPolicy.NoRecursion)
-				throw new NotSupportedException ("Creating a recursion-aware reader-writer lock is not yet supported");
 			this.recursionPolicy = recursionPolicy;
 		}
 
@@ -106,8 +104,11 @@ namespace System.Threading {
 
 			// This is downgrading from upgradable, no need for check since
 			// we already have a sort-of read lock that's going to disappear
-			// after user calls ExitUpgradeableReadLock
-			if (CurrentThreadState.Has (ThreadLockState.Upgradable)) {
+			// after user calls ExitUpgradeableReadLock.
+			// Same idea when recursion is allowed and a write thread wants to
+			// go for a Read too.
+			if (CurrentThreadState.Has (ThreadLockState.Upgradable)
+			    || recursionPolicy == LockRecursionPolicy.SupportsRecursion) {
 				Interlocked.Add (ref rwlock, RwRead);
 				CurrentThreadState = CurrentThreadState ^ ThreadLockState.Read;
 				return true;
@@ -146,7 +147,7 @@ namespace System.Threading {
 
 		public void ExitReadLock ()
 		{
-			if (CurrentThreadState != ThreadLockState.Read)
+			if (!CurrentThreadState.Has (ThreadLockState.Read))
 				throw new SynchronizationLockException ("The current thread has not entered the lock in read mode");
 
 			CurrentThreadState = ThreadLockState.None;
@@ -384,11 +385,20 @@ namespace System.Threading {
 				    || (ctstate == ThreadLockState.Upgradable && validState == ThreadLockState.Upgradable))
 					throw new LockRecursionException ("The current thread has already a lock and recursion isn't supported");
 
-			// If we already had lock, just return
-			if (CurrentThreadState == validState)
+			// If we already had right lock state, just return
+			if (ctstate == validState)
 				return true;
 
+			CheckRecursionAuthorization (ctstate, validState);
+
 			return false;
+		}
+
+		static void CheckRecursionAuthorization (ThreadLockState ctstate, ThreadLockState desiredState)
+		{
+			// In read mode you can just enter Read recursively
+			if (ctstate == ThreadLockState.Read)
+				throw new LockRecursionException ();				
 		}
 
 		static int CheckTimeout (TimeSpan timeout)
