@@ -61,9 +61,6 @@ namespace System.Threading {
 		/* Position of each bit isn't really important 
 		 * but their relative order is
 		 */
-		const int RwWaitBit = 0;
-		const int RwWaitUpgradeBit = 1;
-		const int RwWriteBit = 2;
 		const int RwReadBit = 3;
 
 		const int RwWait = 1;
