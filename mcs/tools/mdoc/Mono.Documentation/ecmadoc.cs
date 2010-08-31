@@ -85,23 +85,21 @@ namespace Mono.Documentation
 
 		void Update ()
 		{
-			XDocument input = LoadFile (this.file);
-
-			var seenLibraries = new HashSet<string> ();
-
 			Action<string> creator = file => {
+				XDocument docs = LoadFile (this.file);
+
+				var seenLibraries = new HashSet<string> ();
+
+				UpdateExistingLibraries (docs, seenLibraries);
+				GenerateMissingLibraries (docs, seenLibraries);
+
 				using (var output = CreateWriter (file)) {
-					// spit out header comments, DTD, etc.
-					foreach (var node in input.Nodes ()) {
+					foreach (var node in docs.Nodes ()) {
 						if (node.NodeType == XmlNodeType.Element || node.NodeType == XmlNodeType.Text)
 							continue;
 						node.WriteTo (output);
 					}
-
-					using (var librariesElement = new Element (output, o => o.WriteStartElement ("Libraries"))) {
-						UpdateExistingLibraries (input, output, seenLibraries);
-						GenerateMissingLibraries (input, output, seenLibraries);
-					}
+					docs.Root.WriteTo (output);
 					output.WriteWhitespace ("\r\n");
 				}
 			};
@@ -117,7 +115,7 @@ namespace Mono.Documentation
 				ProhibitDtd = false,
 			};
 			using (var reader = XmlReader.Create (file, settings))
-				return XDocument.Load (reader, LoadOptions.PreserveWhitespace);
+				return XDocument.Load (reader);
 		}
 
 		static XDocument CreateDefaultDocument ()
@@ -162,63 +160,41 @@ namespace Mono.Documentation
 			}
 		}
 
-		void UpdateExistingLibraries (XDocument input, XmlWriter output, HashSet<string> seenLibraries)
+		void UpdateExistingLibraries (XDocument docs, HashSet<string> seenLibraries)
 		{
-			foreach (XElement types in input.Root.Elements ()) {
+			foreach (XElement types in docs.Root.Elements ("Types")) {
 				XAttribute library = types.Attribute ("Library");
 				HashSet<string> libraryTypes;
 				if (library == null || !libraries.TryGetValue (library.Value, out libraryTypes)) {
-					types.WriteTo (output);
 					continue;
 				}
 				seenLibraries.Add (library.Value);
 				var seenTypes = new HashSet<string> ();
-				using (Element typesElement = CreateTypesElement (output, library.Value)) {
-					foreach (XElement type in types.Elements ()) {
-						XAttribute fullName = type.Attribute ("FullName");
-						string typeName = fullName == null
-							? null
-							: XmlDocUtils.ToEscapedTypeName (fullName.Value);
-						if (typeName == null || !libraryTypes.Contains (typeName)) {
-							type.WriteTo (output);
-							continue;
-						}
-						seenTypes.Add (typeName);
-						WriteType (output, typeName, library.Value);
+				foreach (XElement type in types.Elements ("Type").ToList ()) {
+					XAttribute fullName = type.Attribute ("FullName");
+					string typeName = fullName == null
+						? null
+						: XmlDocUtils.ToEscapedTypeName (fullName.Value);
+					if (typeName == null || !libraryTypes.Contains (typeName)) {
+						continue;
 					}
-					foreach (string type in libraryTypes.Except (seenTypes))
-						WriteType (output, type, library.Value);
+					type.Remove ();
+					seenTypes.Add (typeName);
+					types.Add (LoadType (typeName, library.Value));
 				}
+				foreach (string typeName in libraryTypes.Except (seenTypes))
+					types.Add (LoadType (typeName, library.Value));
 			}
 		}
 
-		static Element CreateTypesElement (XmlWriter output, string library)
-		{
-			return new Element (
-					output, 
-					o => 
-						{o.WriteStartElement ("Types"); 
-						o.WriteAttributeString ("Library", library);});
-		}
-
-		void WriteType (XmlWriter output, string typeName, string library)
-		{
-			XElement type = LoadType (typeName, library);
-
-			type.WriteTo (output);
-		}
-
-		void GenerateMissingLibraries (XDocument input, XmlWriter output, HashSet<string> seenLibraries)
+		void GenerateMissingLibraries (XDocument docs, HashSet<string> seenLibraries)
 		{
 			foreach (KeyValuePair<string, HashSet<string>> lib in libraries) {
 				if (seenLibraries.Contains (lib.Key))
 					continue;
 				seenLibraries.Add (lib.Key);
-				using (var typesElement = CreateTypesElement (output, lib.Key)) {
-					foreach (string type in lib.Value) {
-						WriteType (output, type, lib.Key);
-					}
-				}
+				docs.Root.Add (new XElement ("Types", new XAttribute ("Library", lib.Key),
+							lib.Value.Select (type => LoadType (type, lib.Key))));
 			}
 		}
 
