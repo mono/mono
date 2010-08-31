@@ -93,6 +93,9 @@ namespace Mono.Documentation
 				UpdateExistingLibraries (docs, seenLibraries);
 				GenerateMissingLibraries (docs, seenLibraries);
 
+				SortLibraries (docs.Root);
+				SortTypes (docs.Root);
+
 				using (var output = CreateWriter (file)) {
 					foreach (var node in docs.Nodes ()) {
 						if (node.NodeType == XmlNodeType.Element || node.NodeType == XmlNodeType.Text)
@@ -259,6 +262,60 @@ namespace Mono.Documentation
 			// importing these for every time seems like some serious bloat...
 
 			return type;
+		}
+
+		static void SortLibraries (XContainer libraries)
+		{
+			SortElements (libraries, (x, y) => x.Attribute ("Library").Value.CompareTo (y.Attribute ("Library").Value));
+		}
+
+		static void SortElements (XContainer container, Comparison<XElement> comparison)
+		{
+			var items = new List<XElement> ();
+			foreach (var e in container.Elements ())
+				items.Add (e);
+			items.Sort (comparison);
+			for (int i = items.Count - 1; i > 0; --i) {
+				items [i-1].Remove ();
+				items [i].AddBeforeSelf (items [i-1]);
+			}
+		}
+
+		static void SortTypes (XContainer libraries)
+		{
+			foreach (var types in libraries.Elements ("Types")) {
+				SortElements (types, (x, y) => {
+						string xName, yName;
+						int xCount, yCount;
+
+						GetTypeSortName (x, out xName, out xCount);
+						GetTypeSortName (y, out yName, out yCount);
+
+						int c = xName.CompareTo (yName);
+						if (c != 0)
+							return c;
+						if (xCount < yCount)
+							return -1;
+						if (yCount < xCount)
+							return 1;
+						return 0;
+				});
+			}
+		}
+
+		static void GetTypeSortName (XElement element, out string name, out int typeParamCount)
+		{
+			typeParamCount = 0;
+			name = element.Attribute ("Name").Value;
+
+			int lt = name.IndexOf ('<');
+			if (lt >= 0) {
+				int gt = name.IndexOf ('>', lt);
+				if (gt >= 0) {
+					typeParamCount = name.Substring (lt, gt-lt).Count (c => c == ',') + 1;
+				}
+				name = name.Substring (0, lt);
+			}
 		}
 	}
 }
