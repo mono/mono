@@ -2158,9 +2158,7 @@ method_decl		: D_EMITBYTE int32
 
                                 if (param == null) {
                                         Report.Warning (tokenizer.Location, String.Format ("invalid param index ({0}) with .param", index));
-                                        break;
-                                }
-                                if ($5 != null)
+                                } else if ($5 != null)
                                         param.AddDefaultValue ((Constant) $5);
                           }
 			| param_type_decl
