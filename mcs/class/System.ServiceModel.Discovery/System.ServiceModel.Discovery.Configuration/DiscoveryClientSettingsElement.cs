@@ -57,6 +57,10 @@ namespace System.ServiceModel.Discovery.Configuration
 		public FindCriteriaElement FindCriteria {
 			get { return (FindCriteriaElement) base [find_criteria]; }
 		}
+		
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
 	}
 }
 

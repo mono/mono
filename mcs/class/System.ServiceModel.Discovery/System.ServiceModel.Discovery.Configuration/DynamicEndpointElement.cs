@@ -56,12 +56,11 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return typeof (DynamicEndpoint); }
 		}
 		
-		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
-		{
-			throw new NotImplementedException ();
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 		
-		protected override void InitializeFrom (ServiceEndpoint endpoint)
+		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{
 			throw new NotImplementedException ();
 		}

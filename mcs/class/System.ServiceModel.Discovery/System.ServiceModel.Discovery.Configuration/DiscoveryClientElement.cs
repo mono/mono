@@ -63,7 +63,41 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return (FindCriteriaElement) base [find_criteria]; }
 		}
 		
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+		
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			if (bindingElement == null)
+				throw new ArgumentNullException ("bindingElement");
+			if (DiscoveryEndpoint == null)
+				throw new ArgumentNullException ("'endpoint' configuration element is missing.");
+			var be = (DiscoveryClientBindingElement) bindingElement;
+
+			base.ApplyConfiguration (bindingElement);
+
+			if (FindCriteria != null)
+				be.FindCriteria = FindCriteria.CreateInstance ();
+
+			// FIXME: apply DiscoveryEndpoint
+			throw new NotImplementedException ();
+		}
+
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			if (from == null)
+				throw new ArgumentNullException ("from");
+			var ce = (DiscoveryClientElement) from;
+			FindCriteria.CopyFrom (ce.FindCriteria);
+		}
+
 		protected override BindingElement CreateBindingElement ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void InitializeFrom (BindingElement bindingElement)
 		{
 			throw new NotImplementedException ();
 		}

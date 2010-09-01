@@ -54,6 +54,10 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return (Uri) base [scope]; }
 			set { base [scope] = value; }
 		}
+		
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
 	}
 }
 

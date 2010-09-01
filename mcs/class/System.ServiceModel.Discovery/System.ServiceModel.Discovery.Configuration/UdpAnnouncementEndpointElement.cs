@@ -62,7 +62,6 @@ namespace System.ServiceModel.Discovery.Configuration
 			set { base [max_announcement_delay] = value; }
 		}
 		
-		[TypeConverter (typeof (UriTypeConverter))]
 		[ConfigurationPropertyAttribute("multicastAddress", DefaultValue = "soap.udp://239.255.255.250:3702")]
 		public Uri MulticastAddress {
 			get { return (Uri) base [multicast_address]; }
@@ -72,6 +71,40 @@ namespace System.ServiceModel.Discovery.Configuration
 		[ConfigurationPropertyAttribute("transportSettings")]
 		public UdpTransportSettingsElement TransportSettings {
 			get { return (UdpTransportSettingsElement) base [transport_settings]; }
+		}
+		
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+
+		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void InitializeFrom (ServiceEndpoint endpoint)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ChannelEndpointElement serviceEndpointElement)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ServiceEndpointElement serviceEndpointElement)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override void OnInitializeAndValidate (ChannelEndpointElement channelEndpointElement)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override void OnInitializeAndValidate (ServiceEndpointElement channelEndpointElement)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

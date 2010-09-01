@@ -77,6 +77,10 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return (ScopeElementCollection) base [scopes]; }
 		}
 		
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+		
 		protected override object CreateBehavior ()
 		{
 			throw new NotImplementedException ();

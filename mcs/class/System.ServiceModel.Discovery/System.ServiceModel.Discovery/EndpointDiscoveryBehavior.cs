@@ -41,6 +41,7 @@ namespace System.ServiceModel.Discovery
 			Enabled = true;
 			ContractTypeNames = new Collection<XmlQualifiedName> ();
 			Extensions = new Collection<XElement> ();
+			Scopes = new Collection<Uri> ();
 		}
 
 		public Collection<XmlQualifiedName> ContractTypeNames { get; private set; }
@@ -48,6 +49,8 @@ namespace System.ServiceModel.Discovery
 		public bool Enabled { get; set; }
 
 		public Collection<XElement> Extensions { get; private set; }
+
+		public Collection<Uri> Scopes { get; private set; }
 
 		void IEndpointBehavior.AddBindingParameters (ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
 		{

@@ -63,6 +63,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return typeof (UdpDiscoveryEndpoint); }
 		}
 
+		[TypeConverter (typeof (TimeSpanConverter))]
 		[ConfigurationProperty ("maxResponseDelay", DefaultValue = "00:00:00.500")]
 		public TimeSpan MaxResponseDelay {
 			get { return (TimeSpan) base [max_response_delay]; }
@@ -79,7 +80,11 @@ namespace System.ServiceModel.Discovery.Configuration
 		public UdpTransportSettingsElement TransportSettings {
 			get { return (UdpTransportSettingsElement) base [transport_settings]; }
 		}
-			
+		
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+		
 		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{
 			throw new NotImplementedException ();

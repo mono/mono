@@ -42,6 +42,21 @@ namespace System.ServiceModel.Discovery
 		public abstract DiscoveryEndpoint GetDiscoveryEndpoint ();
 	}
 
+	internal class SimpleDiscoveryEndpointProvider : DiscoveryEndpointProvider
+	{
+		public SimpleDiscoveryEndpointProvider (DiscoveryEndpoint value)
+		{
+			this.value = value;
+		}
+		
+		DiscoveryEndpoint value;
+		
+		public override DiscoveryEndpoint GetDiscoveryEndpoint ()
+		{
+			return value;
+		}
+	}
+
 	internal class UdpDiscoveryEndpointProvider : DiscoveryEndpointProvider
 	{
 		public override DiscoveryEndpoint GetDiscoveryEndpoint ()

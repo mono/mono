@@ -27,6 +27,8 @@ using System;
 using System.ComponentModel;
 using System.Configuration;
 using System.ServiceModel.Configuration;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace System.ServiceModel.Discovery.Configuration
 {
@@ -81,7 +83,6 @@ namespace System.ServiceModel.Discovery.Configuration
 		}
 		
 		[ConfigurationProperty ("scopeMatchBy")]
-		[TypeConverter (typeof (UriTypeConverter))]
 		public Uri ScopeMatchBy {
 			get { return (Uri) base [scope_match_by]; }
 			set { base [scope_match_by] = value; }
@@ -90,6 +91,38 @@ namespace System.ServiceModel.Discovery.Configuration
 		[ConfigurationProperty ("scopes")]
 		public ScopeElementCollection Scopes {
 			get { return (ScopeElementCollection) base [scopes]; }
+		}
+		
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+
+		internal FindCriteria CreateInstance ()
+		{
+			var fc = new FindCriteria ();
+			foreach (ContractTypeNameElement ctn in ContractTypeNames)
+				fc.ContractTypeNames.Add (new XmlQualifiedName (ctn.Name, ctn.Namespace));
+			fc.Duration = Duration;
+			foreach (XmlElementElement ext in Extensions)
+				fc.Extensions.Add (XElement.Load (new XmlNodeReader (ext.XmlElement)));
+			fc.MaxResults = MaxResults;
+			fc.ScopeMatchBy = ScopeMatchBy;
+			foreach (ScopeElement scope in Scopes)
+				fc.Scopes.Add (scope.Scope);
+			return fc;
+		}
+
+		internal void CopyFrom (FindCriteriaElement other)
+		{
+			foreach (ContractTypeNameElement ctn in other.ContractTypeNames)
+				ContractTypeNames.Add (new ContractTypeNameElement () { Name = ctn.Name, Namespace = ctn.Namespace });
+			Duration = other.Duration;
+			foreach (XmlElementElement ext in other.Extensions)
+				Extensions.Add (new XmlElementElement () { XmlElement = (XmlElement) ext.XmlElement.CloneNode (true) });
+			MaxResults = other.MaxResults;
+			ScopeMatchBy = other.ScopeMatchBy;
+			foreach (ScopeElement scope in other.Scopes)
+				Scopes.Add (new ScopeElement () { Scope = scope.Scope });
 		}
 	}
 }
