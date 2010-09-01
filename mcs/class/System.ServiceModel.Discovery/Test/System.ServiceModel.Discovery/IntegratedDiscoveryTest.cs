@@ -103,8 +103,8 @@ namespace MonoTests.System.ServiceModel.Discovery
 			// it internally hosts an AnnouncementService
 			var host = new ServiceHost (new AnnouncementBoundDiscoveryService (aEndpoint));
 			host.AddServiceEndpoint (dEndpoint);
-			host.Open ();
 			try {
+				host.Open ();
 				action (serviceUri, aEndpoint, dEndpoint);
 			} finally {
 				host.Close ();

@@ -23,5 +23,15 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.AreEqual ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/rfc3986", FindCriteria.ScopeMatchByPrefix.ToString (), "#4");
 			Assert.AreEqual ("http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/uuid", FindCriteria.ScopeMatchByUuid.ToString (), "#5");
 		}
+
+		[Test]
+		public void DefaultValues ()
+		{
+			var fc = new FindCriteria ();
+			Assert.AreEqual (int.MaxValue, fc.MaxResults, "#1");
+			Assert.IsNotNull (fc.ContractTypeNames, "#2");
+			Assert.IsNotNull (fc.Scopes, "#3");
+			Assert.AreEqual (FindCriteria.ScopeMatchByPrefix, fc.ScopeMatchBy, "#4");
+		}
 	}
 }

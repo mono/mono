@@ -70,6 +70,7 @@ namespace System.ServiceModel.Discovery
 			ContractTypeNames = new Collection<XmlQualifiedName> ();
 			Extensions = new Collection<XElement> ();
 			Scopes = new Collection<Uri> ();
+			ScopeMatchBy = ScopeMatchByPrefix;
 			MaxResults = default_max_results;
 		}
 
@@ -93,22 +94,22 @@ namespace System.ServiceModel.Discovery
 			var edm = endpointDiscoveryMetadata;
 			if (edm == null)
 				throw new ArgumentNullException ("endpointDiscoveryMetadata");
-			if (edm.ContractTypeNames.Count > 0) {
+			if (ContractTypeNames.Count > 0) {
 				bool match = false;
-				foreach (var qn in edm.ContractTypeNames)
-					if (ContractTypeNames.Contains (qn))
+				foreach (var qn in ContractTypeNames)
+					if (edm.ContractTypeNames.Contains (qn))
 						match = true;
 				if (!match)
 					return false;
 			}
-			if (edm.Scopes.Count > 0) {
+			if (Scopes.Count > 0) {
 				bool match = false;
-				foreach (var scope in edm.Scopes) {
+				foreach (var scope in Scopes) {
 					if (ScopeMatchBy == null || ScopeMatchBy.Equals (ScopeMatchByPrefix)) {
-						if (Scopes.Contains (scope))
+						if (edm.Scopes.Contains (scope))
 							match = true;
 					} else if (ScopeMatchBy.Equals (ScopeMatchByExact)) {
-						if (Scopes.Any (s => s.AbsoluteUri == scope.AbsoluteUri))
+						if (edm.Scopes.Any (s => s.AbsoluteUri == scope.AbsoluteUri))
 							match = true;
 					}
 					else if (ScopeMatchBy.Equals (ScopeMatchByUuid))
@@ -124,7 +125,7 @@ namespace System.ServiceModel.Discovery
 					return false;
 			}
 			if (Extensions.Count > 0)
-				throw new NotImplementedException ();
+				throw new NotImplementedException (String.Format ("{0} extensions are found", Extensions.Count));
 
 			return true;
 		}
@@ -152,8 +153,9 @@ namespace System.ServiceModel.Discovery
 					ret.ScopeMatchBy = new Uri (reader.Value, UriKind.RelativeOrAbsolute);
 					reader.MoveToElement ();
 				}
-				ret.Scopes = new Collection<Uri> ((Uri []) reader.ReadElementContentAs (typeof (Uri []), null, "Scopes", version.Namespace));
 			}
+			if (reader.IsStartElement ("Scopes", version.Namespace))
+				ret.Scopes = new Collection<Uri> ((Uri []) reader.ReadElementContentAs (typeof (Uri []), null, "Scopes", version.Namespace));
 
 			// non-standard members
 			for (reader.MoveToContent (); !reader.EOF && reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
