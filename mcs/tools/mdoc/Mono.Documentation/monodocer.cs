@@ -36,9 +36,6 @@ class MDocUpdater : MDocCommand
 	
 	internal int additions = 0, deletions = 0;
 
-	internal static XmlDocument slashdocs;
-	XmlReader ecmadocs;
-
 	List<DocumentationImporter> importers = new List<DocumentationImporter> ();
 
 	DocumentationEnumerator docEnum;
@@ -88,7 +85,7 @@ class MDocUpdater : MDocCommand
 				v => no_assembly_versions = v != null },
 			{ "i|import=", 
 				"Import documentation from {FILE}.",
-				v => import = v },
+				v => AddImporter (v) },
 			{ "L|lib=",
 				"Check for assembly references in {DIRECTORY}.",
 				v => assemblyResolver.AddSearchDirectory (v) },
@@ -126,36 +123,6 @@ class MDocUpdater : MDocCommand
 		
 		this.assemblies = assemblies.Select (a => LoadAssembly (a)).ToList ();
 
-		if (import != null && ecmadocs == null && slashdocs == null) {
-			try {
-				XmlReader r = new XmlTextReader (import);
-				if (r.Read ()) {
-					while (r.NodeType != XmlNodeType.Element) {
-						if (!r.Read ())
-							Error ("Unable to read XML file: {0}.", import);
-					}
-					if (r.LocalName == "doc") {
-						var xml = File.ReadAllText (import);
-						// Ensure Unix line endings
-						xml = xml.Replace ("\r", "");
-						slashdocs = new XmlDocument();
-						slashdocs.LoadXml (xml);
-					}
-					else if (r.LocalName == "Libraries") {
-						ecmadocs = new XmlTextReader (import);
-						docEnum = new EcmaDocumentationEnumerator (this, ecmadocs);
-						importers.Add (new EcmaDocumentationImporter (ecmadocs));
-					}
-					else
-						Error ("Unsupported XML format within {0}.", import);
-				}
-				r.Close ();
-			} catch (Exception e) {
-				Environment.ExitCode = 1;
-				Error ("Could not load XML file: {0}.", e.Message);
-			}
-		}
-
 		docEnum = docEnum ?? new DocumentationEnumerator ();
 		
 		// PERFORM THE UPDATES
@@ -173,6 +140,33 @@ class MDocUpdater : MDocCommand
 			DoUpdateAssemblies (srcPath, srcPath);
 
 		Console.WriteLine("Members Added: {0}, Members Deleted: {1}", additions, deletions);
+	}
+
+	void AddImporter (string path)
+	{
+		try {
+			XmlReader r = new XmlTextReader (path);
+			if (r.Read ()) {
+				while (r.NodeType != XmlNodeType.Element) {
+					if (!r.Read ())
+						Error ("Unable to read XML file: {0}.", path);
+				}
+				if (r.LocalName == "doc") {
+					importers.Add (new MsxdocDocumentationImporter (path));
+				}
+				else if (r.LocalName == "Libraries") {
+					var ecmadocs = new XmlTextReader (path);
+					docEnum = new EcmaDocumentationEnumerator (this, ecmadocs);
+					importers.Add (new EcmaDocumentationImporter (ecmadocs));
+				}
+				else
+					Error ("Unsupported XML format within {0}.", path);
+			}
+			r.Close ();
+		} catch (Exception e) {
+			Environment.ExitCode = 1;
+			Error ("Could not load XML file: {0}.", e.Message);
+		}
 	}
 
 	static ExceptionLocations ParseExceptionLocations (string s)
@@ -1422,7 +1416,7 @@ class MDocUpdater : MDocCommand
 		return n;
 	}
 
-	private static XmlNode CopyNode (XmlNode source, XmlNode dest)
+	internal static XmlNode CopyNode (XmlNode source, XmlNode dest)
 	{
 		XmlNode copy = dest.OwnerDocument.ImportNode (source, true);
 		dest.AppendChild (copy);
@@ -1441,7 +1435,7 @@ class MDocUpdater : MDocCommand
 		if (node.GetAttribute(attribute) == value) return;
 		node.SetAttribute(attribute, value);
 	}
-	private static void ClearElement(XmlElement parent, string name) {
+	internal static void ClearElement(XmlElement parent, string name) {
 		XmlElement node = (XmlElement)parent.SelectSingleNode(name);
 		if (node != null)
 			parent.RemoveChild(node);
@@ -1476,7 +1470,7 @@ class MDocUpdater : MDocCommand
 
 		string retnodename = null;
 		if (returntype != null && returntype.FullName != "System.Void") { // FIXME
-			retnodename = returnisreturn ? "returns" : "value";
+			info.ReturnNodeName = retnodename = returnisreturn ? "returns" : "value";
 			string retnodename_other = !returnisreturn ? "returns" : "value";
 			
 			// If it has a returns node instead of a value node, change its name.
@@ -1504,79 +1498,6 @@ class MDocUpdater : MDocCommand
 
 		foreach (DocumentationImporter importer in importers)
 			importer.ImportDocumentation (info);
-		if (info.SlashDocs != null) {
-			XmlNode elem = info.SlashDocs;
-			if (elem != null) {
-				if (elem.SelectSingleNode("summary") != null)
-					ClearElement(e, "summary");
-				if (elem.SelectSingleNode("remarks") != null)
-					ClearElement(e, "remarks");
-				if (elem.SelectSingleNode ("value") != null || elem.SelectSingleNode ("returns") != null) {
-					ClearElement(e, "value");
-					ClearElement(e, "returns");
-				}
-
-				foreach (XmlNode child in elem.ChildNodes) {
-					switch (child.Name) {
-						case "param":
-						case "typeparam": {
-							XmlAttribute name = child.Attributes ["name"];
-							if (name == null)
-								break;
-							XmlElement p2 = (XmlElement) e.SelectSingleNode (child.Name + "[@name='" + name.Value + "']");
-							if (p2 != null)
-								p2.InnerXml = child.InnerXml;
-							break;
-						}
-						// Occasionally XML documentation will use <returns/> on
-						// properties, so let's try to normalize things.
-						case "value":
-						case "returns": {
-							XmlElement v = e.OwnerDocument.CreateElement (retnodename ?? child.Name);
-							v.InnerXml = child.InnerXml;
-							e.AppendChild (v);
-							break;
-						}
-						case "altmember":
-						case "exception":
-						case "permission": {
-							XmlAttribute cref = child.Attributes ["cref"] ?? child.Attributes ["name"];
-							if (cref == null)
-								break;
-							XmlElement a = (XmlElement) e.SelectSingleNode (child.Name + "[@cref='" + cref.Value + "']");
-							if (a == null) {
-								a = e.OwnerDocument.CreateElement (child.Name);
-								a.SetAttribute ("cref", child.Attributes ["cref"].Value);
-								e.AppendChild (a);
-							}
-							a.InnerXml = child.InnerXml;
-							break;
-						}
-						case "seealso": {
-							XmlAttribute cref = child.Attributes ["cref"];
-							if (cref == null)
-								break;
-							XmlElement a = (XmlElement) e.SelectSingleNode ("altmember[@cref='" + cref.Value + "']");
-							if (a == null) {
-								a = e.OwnerDocument.CreateElement ("altmember");
-								a.SetAttribute ("cref", child.Attributes ["cref"].Value);
-								e.AppendChild (a);
-							}
-							break;
-						}
-						default: {
-							bool add = true;
-							if (child.NodeType == XmlNodeType.Element && 
-									e.SelectNodes (child.Name).Cast<XmlElement>().Any (n => n.OuterXml == child.OuterXml))
-								add = false;
-							if (add)
-								CopyNode (child, e);
-							break;
-						}
-					}
-				}
-			}
-		}
 		
 		OrderDocsNodes (e, e.ChildNodes);
 		NormalizeWhitespace(e);
@@ -2486,6 +2407,7 @@ class DocsNodeInfo {
 	{
 		if (type == null)
 			throw new ArgumentNullException ("type");
+		Type = type;
 		GenericParameters = new List<GenericParameter> (type.GenericParameters.Cast<GenericParameter> ());
 		List<TypeReference> declTypes = DocUtils.GetDeclaringTypes (type);
 		int maxGenArgs = DocUtils.GetGenericArgumentCount (type);
@@ -2500,7 +2422,6 @@ class DocsNodeInfo {
 			Parameters = type.GetMethod("Invoke").Parameters;
 			ReturnType = type.GetMethod("Invoke").ReturnType.ReturnType;
 		}
-		SetSlashDocs (type);
 	}
 
 	void SetMemberInfo (IMemberReference member)
@@ -2532,17 +2453,6 @@ class DocsNodeInfo {
 		// no remarks section for enum members
 		if (member.DeclaringType != null && ((TypeDefinition) member.DeclaringType).IsEnum)
 			AddRemarks = false;
-		SetSlashDocs (member);
-	}
-
-	private void SetSlashDocs (IMemberReference member)
-	{
-		if (MDocUpdater.slashdocs == null)
-			return;
-
-		string slashdocsig = MDocUpdater.slashdocFormatter.GetDeclaration (member);
-		if (slashdocsig != null)
-			SlashDocs = MDocUpdater.slashdocs.SelectSingleNode ("doc/members/member[@name='" + slashdocsig + "']");
 	}
 
 	public TypeReference ReturnType;
@@ -2551,8 +2461,9 @@ class DocsNodeInfo {
 	public bool ReturnIsReturn;
 	public XmlElement Node;
 	public bool AddRemarks = true;
-	public XmlNode SlashDocs;
 	public IMemberReference Member;
+	public TypeDefinition Type;
+	public string ReturnNodeName;
 }
 
 class DocumentationEnumerator {
@@ -2924,6 +2835,109 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 abstract class DocumentationImporter {
 
 	public abstract void ImportDocumentation (DocsNodeInfo info);
+}
+
+class MsxdocDocumentationImporter : DocumentationImporter {
+
+	XmlDocument slashdocs;
+
+	public MsxdocDocumentationImporter (string file)
+	{
+		var xml = File.ReadAllText (file);
+
+		// Ensure Unix line endings
+		xml = xml.Replace ("\r", "");
+
+		slashdocs = new XmlDocument();
+		slashdocs.LoadXml (xml);
+	}
+
+	public override void ImportDocumentation (DocsNodeInfo info)
+	{
+		XmlNode elem = GetDocs (info.Member ?? info.Type);
+
+		if (elem == null)
+			return;
+
+		XmlElement e = info.Node;
+
+		if (elem.SelectSingleNode("summary") != null)
+			MDocUpdater.ClearElement(e, "summary");
+		if (elem.SelectSingleNode("remarks") != null)
+			MDocUpdater.ClearElement(e, "remarks");
+		if (elem.SelectSingleNode ("value") != null || elem.SelectSingleNode ("returns") != null) {
+			MDocUpdater.ClearElement(e, "value");
+			MDocUpdater.ClearElement(e, "returns");
+		}
+
+		foreach (XmlNode child in elem.ChildNodes) {
+			switch (child.Name) {
+				case "param":
+				case "typeparam": {
+					XmlAttribute name = child.Attributes ["name"];
+					if (name == null)
+						break;
+					XmlElement p2 = (XmlElement) e.SelectSingleNode (child.Name + "[@name='" + name.Value + "']");
+					if (p2 != null)
+						p2.InnerXml = child.InnerXml;
+					break;
+				}
+				// Occasionally XML documentation will use <returns/> on
+				// properties, so let's try to normalize things.
+				case "value":
+				case "returns": {
+					XmlElement v = e.OwnerDocument.CreateElement (info.ReturnNodeName ?? child.Name);
+					v.InnerXml = child.InnerXml;
+					e.AppendChild (v);
+					break;
+				}
+				case "altmember":
+				case "exception":
+				case "permission": {
+					XmlAttribute cref = child.Attributes ["cref"] ?? child.Attributes ["name"];
+					if (cref == null)
+						break;
+					XmlElement a = (XmlElement) e.SelectSingleNode (child.Name + "[@cref='" + cref.Value + "']");
+					if (a == null) {
+						a = e.OwnerDocument.CreateElement (child.Name);
+						a.SetAttribute ("cref", child.Attributes ["cref"].Value);
+						e.AppendChild (a);
+					}
+					a.InnerXml = child.InnerXml;
+					break;
+				}
+				case "seealso": {
+					XmlAttribute cref = child.Attributes ["cref"];
+					if (cref == null)
+						break;
+					XmlElement a = (XmlElement) e.SelectSingleNode ("altmember[@cref='" + cref.Value + "']");
+					if (a == null) {
+						a = e.OwnerDocument.CreateElement ("altmember");
+						a.SetAttribute ("cref", child.Attributes ["cref"].Value);
+						e.AppendChild (a);
+					}
+					break;
+				}
+				default: {
+					bool add = true;
+					if (child.NodeType == XmlNodeType.Element && 
+							e.SelectNodes (child.Name).Cast<XmlElement>().Any (n => n.OuterXml == child.OuterXml))
+						add = false;
+					if (add)
+						MDocUpdater.CopyNode (child, e);
+					break;
+				}
+			}
+		}
+	}
+
+	private XmlNode GetDocs (IMemberReference member)
+	{
+		string slashdocsig = MDocUpdater.slashdocFormatter.GetDeclaration (member);
+		if (slashdocsig != null)
+			return slashdocs.SelectSingleNode ("doc/members/member[@name='" + slashdocsig + "']");
+		return null;
+	}
 }
 
 class EcmaDocumentationImporter : DocumentationImporter {
