@@ -1522,6 +1522,7 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_ha
 	guint32 i;
 	MonoObject *waitHandle;
 	MonoThread *thread = mono_thread_current ();
+	guint32 start;
 		
 	MONO_ARCH_SAVE_REGS;
 
