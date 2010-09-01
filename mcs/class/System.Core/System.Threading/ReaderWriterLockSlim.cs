@@ -104,7 +104,7 @@ namespace System.Threading {
 			if (CurrentLockState.Has (LockState.Upgradable)
 			    || recursionPolicy == LockRecursionPolicy.SupportsRecursion) {
 				Interlocked.Add (ref rwlock, RwRead);
-				ctstate.LockState = ctstate.LockState ^ LockState.Read;
+				ctstate.LockState ^= LockState.Read;
 				ctstate.ReaderRecursiveCount++;
 
 				return true;
@@ -149,7 +149,7 @@ namespace System.Threading {
 			if (!ctstate.LockState.Has (LockState.Read))
 				throw new SynchronizationLockException ("The current thread has not entered the lock in read mode");
 
-			ctstate.LockState = LockState.None;
+			ctstate.LockState ^= LockState.Read;
 			ctstate.ReaderRecursiveCount--;
 			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
 				readerDoneEvent.Set ();
@@ -163,15 +163,15 @@ namespace System.Threading {
 		public bool TryEnterWriteLock (int millisecondsTimeout)
 		{
 			ThreadLockState ctstate = CurrentThreadState;
-			bool isUpgradable = ctstate.LockState.Has (LockState.Upgradable);
 
-			if (CheckState (millisecondsTimeout, isUpgradable ? LockState.UpgradedWrite : LockState.Write)) {
+			if (CheckState (millisecondsTimeout, LockState.Write)) {
 				ctstate.WriterRecursiveCount++;
 				return true;
 			}
 
 			Stopwatch sw = Stopwatch.StartNew ();
 			Interlocked.Increment (ref numWriteWaiters);
+			bool isUpgradable = ctstate.LockState.Has (LockState.Upgradable);
 
 			// If the code goes there that means we had a read lock beforehand
 			if (isUpgradable && rwlock >= RwRead)
@@ -185,7 +185,7 @@ namespace System.Threading {
 
 				if (state <= stateCheck) {
 					if (Interlocked.CompareExchange (ref rwlock, RwWrite, state) == state) {
-						ctstate.LockState = isUpgradable ? LockState.UpgradedWrite : LockState.Write;
+						ctstate.LockState ^= LockState.Write;
 						ctstate.WriterRecursiveCount++;
 						Interlocked.Decrement (ref numWriteWaiters);
 						if (writerDoneEvent.IsSet ())
@@ -405,7 +405,7 @@ namespace System.Threading {
 					throw new LockRecursionException ("The current thread has already a lock and recursion isn't supported");
 
 			// If we already had right lock state, just return
-			if (ctstate == validState)
+			if (ctstate.Has (validState))
 				return true;
 
 			CheckRecursionAuthorization (ctstate, validState);

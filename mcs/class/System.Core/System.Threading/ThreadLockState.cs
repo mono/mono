@@ -37,8 +37,8 @@ namespace System.Threading
 		Read = 1,
 		Write = 2,
 		Upgradable = 4,
-		UpgradedRead = 5,
-		UpgradedWrite = 6
+		UpgradedRead = Upgradable | Read,
+		UpgradedWrite = Upgradable | Write
 	}
 
 	internal class ThreadLockState

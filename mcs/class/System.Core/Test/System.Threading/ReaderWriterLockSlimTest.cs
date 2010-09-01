@@ -457,6 +457,28 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void RecursiveWritePlusReadLockTest ()
+		{
+			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+
+			Assert.IsTrue (v.TryEnterWriteLock (100), "#1");
+			Assert.AreEqual (1, v.RecursiveWriteCount, "1b");
+			Assert.AreEqual (0, v.RecursiveReadCount, "1c");
+
+			Assert.IsTrue (v.TryEnterReadLock (100), "#2");
+			Assert.AreEqual (1, v.RecursiveWriteCount, "2b");
+			Assert.AreEqual (1, v.RecursiveReadCount, "2c");
+
+			Assert.IsTrue (v.TryEnterReadLock (100), "#3");
+			Assert.AreEqual (1, v.RecursiveWriteCount, "3b");
+			Assert.AreEqual (2, v.RecursiveReadCount, "3c");
+
+			v.ExitReadLock ();
+			Assert.AreEqual (1, v.RecursiveWriteCount, "4b");
+			Assert.AreEqual (1, v.RecursiveReadCount, "4c");
+		}
+
+		[Test]
 		public void RecursiveUpgradeableReadLockTest ()
 		{
 			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
