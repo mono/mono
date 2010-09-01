@@ -88,7 +88,23 @@ namespace MonoTests.System.ServiceModel.Description
 			Message msg = c.ToMessage (t1);
 			Test1 t2 = (Test1) c.FromMessage (msg);
 			Assert.AreEqual ("test", t2.echo.msg, "#01");
-			Assert.AreEqual ("testtest", t2.body2, "#01");
+			Assert.AreEqual ("testtest", t2.body2, "#02");
+		}
+
+		[Test]
+		public void StandardRoundtrip2 ()
+		{
+			TypedMessageConverter c = TypedMessageConverter.Create (
+				typeof (Test2), "http://tempuri.org/MyTest");
+			var t1 = new Test2 ();
+			t1.Body = new Echo () { msg = "test" };
+			var uid = Guid.NewGuid ();
+			t1.Id = uid;
+			Message msg = c.ToMessage (t1);
+			var t2 = (Test2) c.FromMessage (msg);
+			Assert.AreEqual ("test", t2.Body.msg, "#01");
+			// FIXME: enable it (not working yet)
+			//Assert.AreEqual (uid, t2.Id, "#02");
 		}
 
 		[Test]
@@ -102,7 +118,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Message msg = c.ToMessage (t1);
 			Test1 t2 = (Test1) c.FromMessage (msg);
 			Assert.AreEqual ("test", t2.echo.msg, "#01");
-			Assert.AreEqual ("testtest", t2.body2, "#01");
+			Assert.AreEqual ("testtest", t2.body2, "#02");
 		}
 	}
 
@@ -121,5 +137,14 @@ namespace MonoTests.System.ServiceModel.Description
 	{
 		[DataMember]
 		public string msg = "default";
+	}
+
+	[MessageContract (IsWrapped = false)]
+	public class Test2
+	{
+		[MessageHeader (Name = "head", Namespace = "urn:foo")]
+		public Guid Id { get; set; }
+		[MessageBodyMember (Name = "body", Namespace = "urn:foo")]
+		public Echo Body { get; set; }
 	}
 }
