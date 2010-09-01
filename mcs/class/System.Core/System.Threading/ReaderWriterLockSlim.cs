@@ -67,8 +67,11 @@ namespace System.Threading {
 		int numReadWaiters, numUpgradeWaiters, numWriteWaiters;
 		bool disposed;
 
+		static int idPool = int.MinValue;
+		readonly int id = Interlocked.Increment (ref idPool);
+
 		[ThreadStatic]
-		static IDictionary<ReaderWriterLockSlim, ThreadLockState> currentThreadState;
+		static IDictionary<int, ThreadLockState> currentThreadState;
 
 		public ReaderWriterLockSlim () : this (LockRecursionPolicy.NoRecursion)
 		{
@@ -335,24 +338,23 @@ namespace System.Threading {
 				return recursionPolicy;
 			}
 		}
-		
+
 		ThreadLockState CurrentThreadState {
 			get {
-				// TODO: provide a IEqualityComparer thingie to have better hashes
 				if (currentThreadState == null)
-					currentThreadState = new Dictionary<ReaderWriterLockSlim, ThreadLockState> ();
+					currentThreadState = new Dictionary<int, ThreadLockState> ();
 
 				ThreadLockState state;
-				if (!currentThreadState.TryGetValue (this, out state))
-					currentThreadState[this] = state = ThreadLockState.None;
+				if (!currentThreadState.TryGetValue (id, out state))
+					currentThreadState[id] = state = ThreadLockState.None;
 
 				return state;
 			}
 			set {
 				if (currentThreadState == null)
-					currentThreadState = new Dictionary<ReaderWriterLockSlim, ThreadLockState> ();
+					currentThreadState = new Dictionary<int, ThreadLockState> ();
 
-				currentThreadState[this] = value;
+				currentThreadState[id] = value;
 			}
 		}
 
