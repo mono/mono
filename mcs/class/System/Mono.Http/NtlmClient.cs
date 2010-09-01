@@ -134,10 +134,10 @@ namespace Mono.Http
 				return null;
 
 			lock (cache) {
-				NtlmSession ds = (NtlmSession) cache [request.RequestUri];
+				NtlmSession ds = (NtlmSession) cache [request];
 				if (ds == null) {
 					ds = new NtlmSession ();
-					cache.Add (request.RequestUri, ds);
+					cache.Add (request, ds);
 				}
 
 				return ds.Authenticate (header, webRequest, credentials);
