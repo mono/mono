@@ -30,10 +30,7 @@ public class MyTest {
 	static void Main ()
 	{
 		Evaluator.Init (new string [0]); //new string [] { "-v", "-v" });
-		//
-		// This fails because of the grammar issue with the pointer type
-		// Evaluate ("multiply", "1*2;", 2);
-		//
+
 		Run ("1",      "System.Console.WriteLine (100);");
 		Run ("Length", "var a = new int [] {1,2,3}; var b = a.Length;");
 		

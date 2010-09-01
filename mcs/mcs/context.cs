@@ -348,6 +348,12 @@ namespace Mono.CSharp
 			get { return MemberContext.Compiler; }
 		}
 
+		public virtual ExplicitBlock ConstructorBlock {
+			get {
+				return CurrentBlock.Explicit;
+			}
+		}
+
 		public virtual FlowBranching CurrentBranching {
 			get { return null; }
 		}
