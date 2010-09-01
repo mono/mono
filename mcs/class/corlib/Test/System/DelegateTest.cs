@@ -1065,6 +1065,25 @@ namespace MonoTests.System
 
 			action_int (42);
 		}
+
+		class Foo {
+
+			public void Bar ()
+			{
+			}
+		}
+
+		Foo foo;
+		event Action bar_handler;
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))] // #635349, #605936
+		public void NewDelegateClosedOverNullReferenceInstanceMethod ()
+		{
+			bar_handler += foo.Bar;
+		}
+
 #endif
 
 		[Test]
