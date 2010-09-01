@@ -1653,15 +1653,12 @@ class MDocUpdater : MDocCommand
 							break;
 						}
 						default: {
-							bool dup = false;
-							foreach (XmlElement n in e.SelectNodes (child.Name))
-								if (n.OuterXml == child.OuterXml) {
-									dup = true;
-									break;
-								}
-							if (!dup) {
+							bool add = true;
+							if (child.NodeType == XmlNodeType.Element && 
+									e.SelectNodes (child.Name).Cast<XmlElement>().Any (n => n.OuterXml == child.OuterXml))
+								add = false;
+							if (add)
 								CopyNode (child, e);
-							}
 							break;
 						}
 					}
