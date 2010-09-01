@@ -971,7 +971,10 @@ namespace System.Xml
 
 		public virtual object ReadElementContentAs (Type type, IXmlNamespaceResolver resolver, string localName, string namespaceURI)
 		{
+			bool isEmpty = IsEmptyElement;
 			ReadStartElement (localName, namespaceURI);
+			if (isEmpty)
+				return ValueAs (String.Empty, type, resolver, false);
 			object obj = ReadContentAs (type, resolver);
 			ReadEndElement ();
 			return obj;
