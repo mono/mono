@@ -32,7 +32,7 @@ namespace System.Threading
 {
 	internal static class ReaderWriterLockSlimExtensions
 	{
-		internal static bool Has (this ThreadLockState state, ThreadLockState value)
+		internal static bool Has (this LockState state, LockState value)
 		{
 			return (state & value) > 0;
 		}
