@@ -35,43 +35,6 @@ using System.Threading;
 
 namespace System.Threading {
 
-	[Flags]
-	internal enum ThreadLockState
-	{
-		None = 0,
-		Read = 1,
-		Write = 2,
-		Upgradable = 4,
-		UpgradedRead = 5,
-		UpgradedWrite = 6
-	}
-
-	internal static class ReaderWriterLockSlimExtensions
-	{
-		internal static bool Has (this ThreadLockState state, ThreadLockState value)
-		{
-			return (state & value) > 0;
-		}
-
-#if !NET_4_0 && !NET_4_0_BOOTSTRAP
-		internal static bool Wait (this ManualResetEvent self, int timeout)
-		{
-			return self.WaitOne (timeout);
-		}
-
-		internal static bool IsSet (this ManualResetEvent self)
-		{
-			return self.WaitOne (0);
-		}
-#else
-		internal static bool IsSet (this ManualResetEventSlim self)
-		{
-			return self.IsSet;
-		}
-#endif
-	}
-
-
 	[HostProtectionAttribute(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
 	[HostProtectionAttribute(SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
 	public class ReaderWriterLockSlim : IDisposable

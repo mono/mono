@@ -66,6 +66,8 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 System.Threading/LockRecursionException.cs
 System.Threading/LockRecursionPolicy.cs
 System.Threading/ReaderWriterLockSlim.cs
+System.Threading/ThreadLockState.cs
+System.Threading/ReaderWriterLockSlimExtensions.cs
 
 System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/ExpressionTransformer.cs
