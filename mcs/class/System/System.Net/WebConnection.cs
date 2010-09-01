@@ -1046,6 +1046,8 @@ namespace System.Net
 					socket = null;
 				}
 
+				if (ntlm_authenticated)
+					ResetNtlm ();
 				busy = false;
 				Data = new WebConnectionData ();
 				if (sendNext)
