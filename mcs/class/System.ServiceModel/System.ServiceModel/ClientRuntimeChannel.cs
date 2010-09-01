@@ -444,7 +444,7 @@ namespace System.ServiceModel.MonoInternal
 				return _processDelegate.BeginInvoke (method, operationName, parameters, callback, asyncState);
 			default:
 				var result = Process (method, operationName, parameters);
-				var ret = new TempAsyncResult (asyncState, result);
+				var ret = new TempAsyncResult (result, asyncState);
 				if (callback != null)
 					callback (ret);
 				return ret;
