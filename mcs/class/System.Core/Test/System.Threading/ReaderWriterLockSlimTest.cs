@@ -412,6 +412,8 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (v.TryEnterReadLock (100), "#1");
 			Assert.IsTrue (v.TryEnterReadLock (100), "#2");
 			Assert.IsTrue (v.TryEnterReadLock (100), "#3");
+
+			Assert.AreEqual (3, v.RecursiveReadCount);
 		}
 
 		[Test]
@@ -450,6 +452,8 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (v.TryEnterWriteLock (100), "#1");
 			Assert.IsTrue (v.TryEnterWriteLock (100), "#2");
 			Assert.IsTrue (v.TryEnterWriteLock (100), "#3");
+
+			Assert.AreEqual (3, v.RecursiveWriteCount);
 		}
 
 		[Test]
@@ -460,6 +464,8 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (v.TryEnterUpgradeableReadLock (100), "#1");
 			Assert.IsTrue (v.TryEnterUpgradeableReadLock (100), "#2");
 			Assert.IsTrue (v.TryEnterUpgradeableReadLock (100), "#3");
+
+			Assert.AreEqual (3, v.RecursiveUpgradeCount);
 		}
 	}
 }
