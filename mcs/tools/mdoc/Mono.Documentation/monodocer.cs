@@ -39,6 +39,8 @@ class MDocUpdater : MDocCommand
 	internal static XmlDocument slashdocs;
 	XmlReader ecmadocs;
 
+	List<DocumentationImporter> importers = new List<DocumentationImporter> ();
+
 	DocumentationEnumerator docEnum;
 
 	string since;
@@ -142,6 +144,7 @@ class MDocUpdater : MDocCommand
 					else if (r.LocalName == "Libraries") {
 						ecmadocs = new XmlTextReader (import);
 						docEnum = new EcmaDocumentationEnumerator (this, ecmadocs);
+						importers.Add (new EcmaDocumentationImporter (ecmadocs));
 					}
 					else
 						Error ("Unsupported XML format within {0}.", import);
@@ -323,10 +326,10 @@ class MDocUpdater : MDocCommand
 	{
 		var found = new HashSet<string> ();
 		foreach (AssemblyDefinition assembly in assemblies) {
-			foreach (DocsTypeInfo docsTypeInfo in docEnum.GetDocumentationTypes (assembly, typenames)) {
-				string relpath = DoUpdateType (docsTypeInfo.Type, basepath, dest, docsTypeInfo.EcmaDocs);
+			foreach (TypeDefinition type in docEnum.GetDocumentationTypes (assembly, typenames)) {
+				string relpath = DoUpdateType (type, basepath, dest);
 				if (relpath != null)
-					found.Add (docsTypeInfo.Type.FullName);
+					found.Add (type.FullName);
 			}
 		}
 		var notFound = from n in typenames where !found.Contains (n) select n;
@@ -334,7 +337,7 @@ class MDocUpdater : MDocCommand
 			throw new InvalidOperationException("Type(s) not found: " + string.Join (", ", notFound.ToArray ()));
 	}
 
-	public string DoUpdateType (TypeDefinition type, string basepath, string dest, XmlReader ecmaDocsType)
+	public string DoUpdateType (TypeDefinition type, string basepath, string dest)
 	{
 		if (type.Namespace == null)
 			Warning ("warning: The type `{0}' is in the root namespace.  This may cause problems with display within monodoc.",
@@ -367,10 +370,10 @@ class MDocUpdater : MDocCommand
 				throw new InvalidOperationException("Error loading " + typefile + ": " + e.Message, e);
 			}
 			
-			DoUpdateType2("Updating", basefile, type, output, false, ecmaDocsType);
+			DoUpdateType2("Updating", basefile, type, output, false);
 		} else {
 			// Stub
-			XmlElement td = StubType(type, output, ecmaDocsType);
+			XmlElement td = StubType(type, output);
 			if (td == null)
 				return null;
 			
@@ -406,16 +409,15 @@ class MDocUpdater : MDocCommand
 			}			
 
 			seenTypes[type] = seenTypes;
-			DoUpdateType2("Updating", basefile, type, Path.Combine(outpath, file.Name), false, null);
+			DoUpdateType2("Updating", basefile, type, Path.Combine(outpath, file.Name), false);
 		}
 		
 		// Stub types not in the directory
-		foreach (DocsTypeInfo docsTypeInfo in docEnum.GetDocumentationTypes (assembly, null)) {
-			TypeDefinition type = docsTypeInfo.Type;
+		foreach (TypeDefinition type in docEnum.GetDocumentationTypes (assembly, null)) {
 			if (type.Namespace != ns || seenTypes.ContainsKey(type))
 				continue;
 
-			XmlElement td = StubType(type, Path.Combine(outpath, GetTypeFileName(type) + ".xml"), docsTypeInfo.EcmaDocs);
+			XmlElement td = StubType(type, Path.Combine(outpath, GetTypeFileName(type) + ".xml"));
 			if (td == null) continue;
 		}
 	}
@@ -533,13 +535,12 @@ class MDocUpdater : MDocCommand
 
 	private void DoUpdateAssembly (AssemblyDefinition assembly, XmlElement index_types, string source, string dest, HashSet<string> goodfiles) 
 	{
-		foreach (DocsTypeInfo docTypeInfo in docEnum.GetDocumentationTypes (assembly, null)) {
-			TypeDefinition type = docTypeInfo.Type;
+		foreach (TypeDefinition type in docEnum.GetDocumentationTypes (assembly, null)) {
 			string typename = GetTypeFileName(type);
 			if (!IsPublic (type) || typename.IndexOfAny (InvalidFilenameChars) >= 0)
 				continue;
 
-			string reltypepath = DoUpdateType (type, source, dest, docTypeInfo.EcmaDocs);
+			string reltypepath = DoUpdateType (type, source, dest);
 			if (reltypepath == null)
 				continue;
 			
@@ -770,14 +771,14 @@ class MDocUpdater : MDocCommand
 
 	static readonly XmlNodeComparer DefaultExtensionMethodComparer = new ExtensionMethodComparer ();
 		
-	public void DoUpdateType2 (string message, XmlDocument basefile, TypeDefinition type, string output, bool insertSince, XmlReader ecmaDocsType)
+	public void DoUpdateType2 (string message, XmlDocument basefile, TypeDefinition type, string output, bool insertSince)
 	{
 		Console.WriteLine(message + ": " + type.FullName);
 		
 		StringToXmlNodeMap seenmembers = new StringToXmlNodeMap ();
 
 		// Update type metadata
-		UpdateType(basefile.DocumentElement, type, ecmaDocsType);
+		UpdateType(basefile.DocumentElement, type);
 
 		// Update existing members.  Delete member nodes that no longer should be there,
 		// and remember what members are already documented so we don't add them again.
@@ -1032,7 +1033,7 @@ class MDocUpdater : MDocCommand
 	
 	// CREATE A STUB DOCUMENTATION FILE	
 
-	public XmlElement StubType (TypeDefinition type, string output, XmlReader ecmaDocsType)
+	public XmlElement StubType (TypeDefinition type, string output)
 	{
 		string typesig = MakeTypeSignature(type);
 		if (typesig == null) return null; // not publicly visible
@@ -1041,7 +1042,7 @@ class MDocUpdater : MDocCommand
 		XmlElement root = doc.CreateElement("Type");
 		doc.AppendChild (root);
 
-		DoUpdateType2 ("New Type", doc, type, output, true, ecmaDocsType);
+		DoUpdateType2 ("New Type", doc, type, output, true);
 		
 		return root;
 	}
@@ -1055,7 +1056,7 @@ class MDocUpdater : MDocCommand
 	
 	// STUBBING/UPDATING FUNCTIONS
 	
-	public void UpdateType (XmlElement root, TypeDefinition type, XmlReader ecmaDocsType)
+	public void UpdateType (XmlElement root, TypeDefinition type)
 	{
 		root.SetAttribute("Name", GetDocTypeName (type));
 		root.SetAttribute("FullName", GetDocTypeFullName (type));
@@ -1152,18 +1153,6 @@ class MDocUpdater : MDocCommand
 		}
 		
 		DocsNodeInfo typeInfo = new DocsNodeInfo (WriteElement(root, "Docs"), type);
-		if (ecmaDocsType != null) {
-			if (ecmaDocsType.Name != "Docs") {
-				int depth = ecmaDocsType.Depth;
-				while (ecmaDocsType.Read ()) {
-					if (ecmaDocsType.Name == "Docs" && ecmaDocsType.Depth == depth + 1)
-						break;
-				}
-			}
-			if (!ecmaDocsType.IsStartElement ("Docs"))
-				throw new InvalidOperationException ("Found " + ecmaDocsType.Name + "; expecting <Docs/>!");
-			typeInfo.EcmaDocs = ecmaDocsType;
-		}
 		MakeDocNode (typeInfo);
 		
 		if (!DocUtils.IsDelegate (type))
@@ -1513,85 +1502,8 @@ class MDocUpdater : MDocCommand
 			UpdateExceptions (e, info.Member);
 		}
 
-		if (info.EcmaDocs != null) {
-			XmlReader r = info.EcmaDocs;
-			int depth = r.Depth;
-			r.ReadStartElement ("Docs");
-			while (r.Read ()) {
-				if (r.Name == "Docs") {
-					if (r.Depth == depth && r.NodeType == XmlNodeType.EndElement)
-						break;
-					else
-						throw new InvalidOperationException ("Skipped past current <Docs/> element!");
-				}
-				if (!r.IsStartElement ())
-					continue;
-				switch (r.Name) {
-					case "param":
-					case "typeparam": {
-						string name = r.GetAttribute ("name");
-						if (name == null)
-							break;
-						XmlNode doc = e.SelectSingleNode (
-								r.Name + "[@name='" + name + "']");
-						string value = r.ReadInnerXml ();
-						if (doc != null)
-							doc.InnerXml = value.Replace ("\r", "");
-						break;
-					}
-					case "altmember":
-					case "exception":
-					case "permission":
-					case "seealso": {
-						string name = r.Name;
-						string cref = r.GetAttribute ("cref");
-						if (cref == null)
-							break;
-						XmlNode doc = e.SelectSingleNode (
-								r.Name + "[@cref='" + cref + "']");
-						string value = r.ReadInnerXml ().Replace ("\r", "");
-						if (doc != null)
-							doc.InnerXml = value;
-						else {
-							XmlElement n = e.OwnerDocument.CreateElement (name);
-							n.SetAttribute ("cref", cref);
-							n.InnerXml = value;
-							e.AppendChild (n);
-						}
-						break;
-					}
-					default: {
-						string name = r.Name;
-						string xpath = r.Name;
-						StringList attributes = new StringList (r.AttributeCount);
-						if (r.MoveToFirstAttribute ()) {
-							do {
-								attributes.Add ("@" + r.Name + "=\"" + r.Value + "\"");
-							} while (r.MoveToNextAttribute ());
-							r.MoveToContent ();
-						}
-						if (attributes.Count > 0) {
-							xpath += "[" + string.Join (" and ", attributes.ToArray ()) + "]";
-						}
-						XmlNode doc = e.SelectSingleNode (xpath);
-						string value = r.ReadInnerXml ().Replace ("\r", "");
-						if (doc != null) {
-							doc.InnerXml = value;
-						}
-						else {
-							XmlElement n = e.OwnerDocument.CreateElement (name);
-							n.InnerXml = value;
-							foreach (string a in attributes) {
-								int eq = a.IndexOf ('=');
-								n.SetAttribute (a.Substring (1, eq-1), a.Substring (eq+2, a.Length-eq-3));
-							}
-							e.AppendChild (n);
-						}
-						break;
-					}
-				}
-			}
-		}
+		foreach (DocumentationImporter importer in importers)
+			importer.ImportDocumentation (info);
 		if (info.SlashDocs != null) {
 			XmlNode elem = info.SlashDocs;
 			if (elem != null) {
@@ -2552,17 +2464,6 @@ static class DocUtils {
 	}
 }
 
-class DocsTypeInfo {
-	public TypeDefinition Type;
-	public XmlReader EcmaDocs;
-
-	public DocsTypeInfo (TypeDefinition type, XmlReader docs)
-	{
-		this.Type = type;
-		this.EcmaDocs = docs;
-	}
-}
-
 class DocsNodeInfo {
 	public DocsNodeInfo (XmlElement node)
 	{
@@ -2651,27 +2552,26 @@ class DocsNodeInfo {
 	public XmlElement Node;
 	public bool AddRemarks = true;
 	public XmlNode SlashDocs;
-	public XmlReader EcmaDocs;
 	public IMemberReference Member;
 }
 
 class DocumentationEnumerator {
 
-	public virtual IEnumerable<DocsTypeInfo> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes)
+	public virtual IEnumerable<TypeDefinition> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes)
 	{
 		return GetDocumentationTypes (assembly, forTypes, null);
 	}
 
-	protected IEnumerable<DocsTypeInfo> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes, HashSet<string> seen)
+	protected IEnumerable<TypeDefinition> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes, HashSet<string> seen)
 	{
 		foreach (TypeDefinition type in assembly.GetTypes()) {
 			if (forTypes != null && forTypes.BinarySearch (type.FullName) < 0)
 				continue;
 			if (seen != null && seen.Contains (type.FullName))
 				continue;
-			yield return new DocsTypeInfo (type, null);
+			yield return type;
 			foreach (TypeDefinition nested in type.NestedTypes)
-				yield return new DocsTypeInfo (nested, null);
+				yield return nested;
 		}
 	}
 
@@ -2892,14 +2792,14 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 		this.ecmadocs = ecmaDocs;
 	}
 
-	public override IEnumerable<DocsTypeInfo> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes)
+	public override IEnumerable<TypeDefinition> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes)
 	{
 		HashSet<string> seen = new HashSet<string> ();
 		return GetDocumentationTypes (assembly, forTypes, seen)
 			.Concat (base.GetDocumentationTypes (assembly, forTypes, seen));
 	}
 
-	IEnumerable<DocsTypeInfo> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes, HashSet<string> seen)
+	IEnumerable<TypeDefinition> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes, HashSet<string> seen)
 	{
 		int typeDepth = -1;
 		while (ecmadocs.Read ()) {
@@ -2926,7 +2826,16 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 					if (typename != typename2)
 						seen.Add (typename2);
 					Console.WriteLine ("  Import: {0}", t.FullName);
-					yield return new DocsTypeInfo (t, ecmadocs);
+					if (ecmadocs.Name != "Docs") {
+						int depth = ecmadocs.Depth;
+						while (ecmadocs.Read ()) {
+							if (ecmadocs.Name == "Docs" && ecmadocs.Depth == depth + 1)
+								break;
+						}
+					}
+					if (!ecmadocs.IsStartElement ("Docs"))
+						throw new InvalidOperationException ("Found " + ecmadocs.Name + "; expecting <Docs/>!");
+					yield return t;
 					break;
 				}
 				default:
@@ -2999,7 +2908,6 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 					DocsNodeInfo node = new DocsNodeInfo (oldmember, m);
 					if (ecmadocs.Name != "Docs")
 						throw new InvalidOperationException ("Found " + ecmadocs.Name + "; expected <Docs/>!");
-					node.EcmaDocs = ecmadocs;
 					yield return node;
 					break;
 				}
@@ -3015,8 +2923,103 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 
 abstract class DocumentationImporter {
 
-	public abstract void FillType (XmlElement type);
-	public abstract void FillMember (XmlElement member);
+	public abstract void ImportDocumentation (DocsNodeInfo info);
+}
+
+class EcmaDocumentationImporter : DocumentationImporter {
+
+	XmlReader ecmadocs;
+
+	public EcmaDocumentationImporter (XmlReader ecmaDocs)
+	{
+		this.ecmadocs = ecmaDocs;
+	}
+
+	public override void ImportDocumentation (DocsNodeInfo info)
+	{
+		if (!ecmadocs.IsStartElement ("Docs")) {
+			return;
+		}
+
+		XmlElement e = info.Node;
+
+		int depth = ecmadocs.Depth;
+		ecmadocs.ReadStartElement ("Docs");
+		while (ecmadocs.Read ()) {
+			if (ecmadocs.Name == "Docs") {
+				if (ecmadocs.Depth == depth && ecmadocs.NodeType == XmlNodeType.EndElement)
+					break;
+				else
+					throw new InvalidOperationException ("Skipped past current <Docs/> element!");
+			}
+			if (!ecmadocs.IsStartElement ())
+				continue;
+			switch (ecmadocs.Name) {
+				case "param":
+				case "typeparam": {
+					string name = ecmadocs.GetAttribute ("name");
+					if (name == null)
+						break;
+					XmlNode doc = e.SelectSingleNode (
+							ecmadocs.Name + "[@name='" + name + "']");
+					string value = ecmadocs.ReadInnerXml ();
+					if (doc != null)
+						doc.InnerXml = value.Replace ("\r", "");
+					break;
+				}
+				case "altmember":
+				case "exception":
+				case "permission":
+				case "seealso": {
+					string name = ecmadocs.Name;
+					string cref = ecmadocs.GetAttribute ("cref");
+					if (cref == null)
+						break;
+					XmlNode doc = e.SelectSingleNode (
+							ecmadocs.Name + "[@cref='" + cref + "']");
+					string value = ecmadocs.ReadInnerXml ().Replace ("\r", "");
+					if (doc != null)
+						doc.InnerXml = value;
+					else {
+						XmlElement n = e.OwnerDocument.CreateElement (name);
+						n.SetAttribute ("cref", cref);
+						n.InnerXml = value;
+						e.AppendChild (n);
+					}
+					break;
+				}
+				default: {
+					string name = ecmadocs.Name;
+					string xpath = ecmadocs.Name;
+					StringList attributes = new StringList (ecmadocs.AttributeCount);
+					if (ecmadocs.MoveToFirstAttribute ()) {
+						do {
+							attributes.Add ("@" + ecmadocs.Name + "=\"" + ecmadocs.Value + "\"");
+						} while (ecmadocs.MoveToNextAttribute ());
+						ecmadocs.MoveToContent ();
+					}
+					if (attributes.Count > 0) {
+						xpath += "[" + string.Join (" and ", attributes.ToArray ()) + "]";
+					}
+					XmlNode doc = e.SelectSingleNode (xpath);
+					string value = ecmadocs.ReadInnerXml ().Replace ("\r", "");
+					if (doc != null) {
+						doc.InnerXml = value;
+					}
+					else {
+						XmlElement n = e.OwnerDocument.CreateElement (name);
+						n.InnerXml = value;
+						foreach (string a in attributes) {
+							int eq = a.IndexOf ('=');
+							n.SetAttribute (a.Substring (1, eq-1), a.Substring (eq+2, a.Length-eq-3));
+						}
+						e.AppendChild (n);
+					}
+					break;
+				}
+			}
+		}
+	}
 }
 
 class DocumentationMember {
