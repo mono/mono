@@ -31,7 +31,7 @@ using System;
 namespace System.Threading
 {
 	[Flags]
-	internal enum ThreadLockState
+	internal enum LockState
 	{
 		None = 0,
 		Read = 1,
@@ -39,5 +39,13 @@ namespace System.Threading
 		Upgradable = 4,
 		UpgradedRead = 5,
 		UpgradedWrite = 6
+	}
+
+	internal class ThreadLockState
+	{
+		public LockState LockState;
+		public int ReaderRecursiveCount;
+		public int WriterRecursiveCount;
+		public int UpgradeableRecursiveCount;
 	}
 }
