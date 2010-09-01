@@ -32,6 +32,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.IsNotNull (fc.ContractTypeNames, "#2");
 			Assert.IsNotNull (fc.Scopes, "#3");
 			Assert.AreEqual (FindCriteria.ScopeMatchByPrefix, fc.ScopeMatchBy, "#4");
+			Assert.AreEqual (TimeSpan.FromSeconds (20), fc.Duration, "#5");
 		}
 	}
 }

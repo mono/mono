@@ -72,6 +72,7 @@ namespace System.ServiceModel.Discovery
 			Scopes = new Collection<Uri> ();
 			ScopeMatchBy = ScopeMatchByPrefix;
 			MaxResults = default_max_results;
+			Duration = TimeSpan.FromSeconds (20);
 		}
 
 		public FindCriteria (Type contractType)
