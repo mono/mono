@@ -55,6 +55,7 @@ namespace Microsoft.Build.BuildEngine {
 		ConsoleColor errorColor, warningColor, eventColor, messageColor, highMessageColor;
 		ColorSetter colorSet;
 		ColorResetter colorReset;
+		IEventSource eventSource;
 		bool no_message_color, use_colors;
 		bool noItemAndPropertyList;
 
@@ -202,6 +203,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		public virtual void Initialize (IEventSource eventSource)
 		{
+			this.eventSource = eventSource;
+
                         eventSource.BuildStarted +=  new BuildStartedEventHandler (BuildStartedHandler);
                         eventSource.BuildFinished += new BuildFinishedEventHandler (BuildFinishedHandler);
                         eventSource.ProjectStarted += new ProjectStartedEventHandler (ProjectStartedHandler);
@@ -574,6 +577,20 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public virtual void Shutdown ()
 		{
+			if (eventSource == null)
+				return;
+
+			eventSource.BuildStarted -=  BuildStartedHandler;
+			eventSource.BuildFinished -= BuildFinishedHandler;
+			eventSource.ProjectStarted -= ProjectStartedHandler;
+			eventSource.ProjectFinished -= ProjectFinishedHandler;
+			eventSource.TargetStarted -= TargetStartedHandler;
+			eventSource.TargetFinished -= TargetFinishedHandler;
+			eventSource.TaskStarted -= TaskStartedHandler;
+			eventSource.TaskFinished -= TaskFinishedHandler;
+			eventSource.MessageRaised -= MessageHandler;
+			eventSource.WarningRaised -= WarningHandler;
+			eventSource.ErrorRaised -= ErrorHandler;
 		}
 
 		static bool InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
