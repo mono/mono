@@ -971,6 +971,8 @@ namespace System.Net
 					webHeaders.SetInternal ("Content-Length", "0");
 				}
 				webHeaders.RemoveInternal ("Transfer-Encoding");
+			} else {
+				webHeaders.RemoveInternal ("Content-Length");
 			}
 
 			if (actualVersion == HttpVersion.Version11 && continue100 &&
