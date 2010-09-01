@@ -23,6 +23,15 @@ Set or override project properties
 .B \//logger:<logger>
 Custom logger to log build events
 .TP
+.B \//toolsversion:version , /tv:version
+Specify the toolset version to use.
+
+Eg. /tv:4.0
+    This would cause 4.0 version of the Microsoft.Common.targets (among others) to be used. This overrides
+    the value specified in a project file.
+
+Valid values: 2.0, 3.0, 3.5 and 4.0
+.TP
 .B \//verbosity:<level>
 Logger verbosity level : quiet, minimal, normal, detailed, diagnostic
 .TP
