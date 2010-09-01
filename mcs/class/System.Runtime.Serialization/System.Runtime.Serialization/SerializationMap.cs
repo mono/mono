@@ -602,7 +602,7 @@ namespace System.Runtime.Serialization
 		}
 	}
 
-	// FIXME: it still needs to consider ItemName/KeyName/ValueName
+	// FIXME: it still needs to consider KeyName/ValueName
 	// (especially Dictionary collection is not likely considered yet.)
 	internal partial class CollectionContractTypeMap : CollectionTypeMap
 	{
@@ -615,6 +615,8 @@ namespace System.Runtime.Serialization
 		{
 			this.a = a;
 			IsReference = a.IsReference;
+			if (!String.IsNullOrEmpty (a.ItemName))
+				element_qname = new XmlQualifiedName (a.ItemName, a.Namespace ?? CurrentNamespace);
 		}
 
 		internal override string CurrentNamespace {
