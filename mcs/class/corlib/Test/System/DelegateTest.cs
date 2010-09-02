@@ -1084,6 +1084,19 @@ namespace MonoTests.System
 			bar_handler += foo.Bar;
 		}
 
+		public void Banga ()
+		{
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CreateDelegateOpenOnly ()
+		{
+			Delegate.CreateDelegate (
+				typeof (Action),
+				this.GetType ().GetMethod ("Banga"));
+		}
+
 #endif
 
 		[Test]
