@@ -430,8 +430,10 @@ namespace System.Net {
 			finally {
 				// kind of dummy, 0% progress, that is always emitted
 				upload_length = length;
-				OnUploadProgressChanged (
-					new UploadProgressChangedEventArgs (0, -1, length, -1, 0, callback_data.user_token));
+				callback_data.sync_context.Post (delegate (object sender) {
+					OnUploadProgressChanged (
+						new UploadProgressChangedEventArgs (0, -1, length, -1, 0, callback_data.user_token));
+				}, null);
 			}
 		}
 
@@ -505,8 +507,10 @@ namespace System.Net {
 			finally {
 				// kind of dummy, 0% progress, that is always emitted
 				upload_length = callback_data.data.Length;
-				OnUploadProgressChanged (
-					new UploadProgressChangedEventArgs (0, -1, upload_length, -1, 0, callback_data.user_token));
+				callback_data.sync_context.Post (delegate (object sender) {
+					OnUploadProgressChanged (
+						new UploadProgressChangedEventArgs (0, -1, upload_length, -1, 0, callback_data.user_token));
+				}, "null");		
 			}
 		}
 
