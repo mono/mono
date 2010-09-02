@@ -28,11 +28,12 @@
 
   <xsl:template match="assembly" />
   <xsl:template match="authoring:changeHistory" />
-  <xsl:template match="authoring:relatedTopics" />
   <xsl:template match="authoring:clsCompliantAlternative" />
-  <xsl:template match="authoring:notesForImplementers" />
-  <xsl:template match="authoring:notesForCallers" />
   <xsl:template match="authoring:internalOnly" />
+  <xsl:template match="authoring:notesForCallers" />
+  <xsl:template match="authoring:notesForImplementers" />
+  <xsl:template match="authoring:overload" />
+  <xsl:template match="authoring:relatedTopics" />
 
   <xsl:template match="member">
     <!-- skip Overload: members, as these have no msxdoc equivalent. -->
@@ -132,8 +133,6 @@
       <xsl:apply-templates select="authoring:content" />
     </exception>
   </xsl:template>
-
-  <xsl:template match="authoring:overload" />
 
   <xsl:template match="authoring:codeExample">
     <xsl:choose>
