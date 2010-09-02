@@ -37,6 +37,14 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Linq
 {
+	internal static class AsParallelHelper
+	{
+		internal static ParallelQuery<T> AsReallyParallel<T> (this IEnumerable<T> source)
+		{
+			return source.AsParallel ().WithExecutionMode (ParallelExecutionMode.ForceParallelism);
+		}
+	}
+
 	[TestFixtureAttribute]
 	public class ParallelEnumerableTests
 	{
@@ -243,7 +251,7 @@ namespace MonoTests.System.Linq
 				int [] second = {2, 4, 6};
 				int [] result = {0, 1, 3, 5};
 	
-				AreEquivalent (result, first.AsParallel ().Except (second.AsParallel ()), 1);
+				AreEquivalent (result, first.AsReallyParallel ().Except (second.AsParallel ()), 1);
 			});
 		}
 
@@ -255,7 +263,7 @@ namespace MonoTests.System.Linq
 				int [] second = {2, 4, 6};
 				int [] result = {2, 4};
 	
-				AreEquivalent (result, first.AsParallel ().Intersect (second.AsParallel ()), 1);
+				AreEquivalent (result, first.AsReallyParallel ().Intersect (second.AsParallel ()), 1);
 			});
 		}
 
@@ -267,7 +275,7 @@ namespace MonoTests.System.Linq
 				int [] second = {2, 4, 6};
 				int [] result = {0, 1, 2, 3, 4, 5, 6};
 				
-				AreEquivalent (result, first.AsParallel ().Union (second.AsParallel ()), 1);
+				AreEquivalent (result, first.AsReallyParallel ().Union (second.AsParallel ()), 1);
 			});
 		}
 		
@@ -284,7 +292,7 @@ namespace MonoTests.System.Linq
 			Foo [] foos = new Foo [] {a, b, c};
 			Bar [] result = new Bar [] {a, b, c};
 
-			AreEquivalent (result, foos.AsParallel ().Cast<Bar> (), 1);
+			AreEquivalent (result, foos.AsReallyParallel ().Cast<Bar> (), 1);
 		}
 		
 		[Test]
@@ -293,7 +301,7 @@ namespace MonoTests.System.Linq
 			int [] data = {0, 1, 2, 3, 4, 5};
 			int [] result = {3, 4, 5};
 
-			AssertAreSame (result, data.AsParallel ().AsOrdered ().Skip (3).ToArray ());
+			AssertAreSame (result, data.AsReallyParallel ().AsOrdered ().Skip (3).ToArray ());
 		}
 		
 		[Test]
@@ -302,7 +310,7 @@ namespace MonoTests.System.Linq
 			int [] data = {0, 1, 2, 3, 4, 5};
 			int [] result = {3, 4, 5};
 
-			AssertAreSame (result, data.AsParallel ().AsOrdered ().Skip (3));
+			AssertAreSame (result, data.AsReallyParallel ().AsOrdered ().Skip (3));
 		}
 
 		[Test]
@@ -311,7 +319,7 @@ namespace MonoTests.System.Linq
 			int [] data = {0, 1, 2, 3, 4, 5};
 			int [] result = {3, 4, 5};
 
-			AssertAreSame (result, data.AsParallel ().AsOrdered ().SkipWhile (i => i < 3));
+			AssertAreSame (result, data.AsReallyParallel ().AsOrdered ().SkipWhile (i => i < 3));
 		}
 
 		[Test]
@@ -320,7 +328,7 @@ namespace MonoTests.System.Linq
 			int [] data = {0, 1, 2, 3, 4, 5};
 			int [] result = {0, 1, 2};
 
-			AssertAreSame (result, data.AsParallel ().AsOrdered ().Take (3));
+			AssertAreSame (result, data.AsReallyParallel ().AsOrdered ().Take (3));
 		}
 
 		[Test]
@@ -329,7 +337,7 @@ namespace MonoTests.System.Linq
 			int [] data = {0, 1, 2, 3, 4, 5};
 			int [] result = {0, 1, 2};
 
-			AssertAreSame (result, data.AsParallel ().AsOrdered ().TakeWhile (i => i < 3));
+			AssertAreSame (result, data.AsReallyParallel ().AsOrdered ().TakeWhile (i => i < 3));
 		}
 
 		[Test]
@@ -339,7 +347,7 @@ namespace MonoTests.System.Linq
 			IEnumerable<int> expected = initial.SelectMany ((i) => Enumerable.Range (1, i));
 
 			ParallelTestHelper.Repeat (() => {
-					var actual = initial.AsParallel ().SelectMany ((i) => Enumerable.Range (1, i));
+					var actual = initial.AsReallyParallel ().SelectMany ((i) => Enumerable.Range (1, i));
 					AreEquivalent (expected, actual, 1);
 				});
 		}
@@ -351,7 +359,7 @@ namespace MonoTests.System.Linq
 			IEnumerable<int> expected = initial.SelectMany ((i) => Enumerable.Range (1, i));
 
 			ParallelTestHelper.Repeat (() => {
-					var actual = initial.AsParallel ().AsOrdered ().SelectMany ((i) => Enumerable.Range (1, i));
+					var actual = initial.AsReallyParallel ().AsOrdered ().SelectMany ((i) => Enumerable.Range (1, i));
 					AssertAreSame (expected, actual);
 				});
 		}
@@ -361,7 +369,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = {1, 2, 3};
 
-			Assert.AreEqual (3, data.AsParallel ().AsOrdered ().Last ());
+			Assert.AreEqual (3, data.AsReallyParallel ().AsOrdered ().Last ());
 		}
 
 		[Test]
@@ -369,7 +377,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = {};
 
-			Assert.AreEqual (default (int), data.AsParallel ().AsOrdered ().LastOrDefault ());
+			Assert.AreEqual (default (int), data.AsReallyParallel ().AsOrdered ().LastOrDefault ());
 		}
 
 		[Test]
@@ -377,7 +385,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = {1, 2, 3};
 
-			Assert.AreEqual (1, data.AsParallel ().AsOrdered ().First ());
+			Assert.AreEqual (1, data.AsReallyParallel ().AsOrdered ().First ());
 		}
 
 		[Test]
@@ -385,7 +393,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = {};
 
-			Assert.AreEqual (default (int), data.AsParallel ().AsOrdered ().FirstOrDefault ());
+			Assert.AreEqual (default (int), data.AsReallyParallel ().AsOrdered ().FirstOrDefault ());
 		}
 		
 		[Test]
@@ -394,8 +402,8 @@ namespace MonoTests.System.Linq
 			int [] data = {0, 1, 2, 3, 4};
 			int [] result = {4, 3, 2, 1, 0};
 
-			AssertAreSame (result, ((IEnumerable<int>)data).Select ((i) => i).AsParallel ().AsOrdered ().Reverse ());
-			AssertAreSame (result, ParallelEnumerable.Range (0, 5).AsOrdered ().Reverse ());
+			AssertAreSame (result, ((IEnumerable<int>)data).Select ((i) => i).AsReallyParallel ().AsOrdered ().Reverse ());
+			AssertAreSame (result, ParallelEnumerable.Range (0, 5).WithExecutionMode (ParallelExecutionMode.ForceParallelism).AsOrdered ().Reverse ());
 		}
 		
 		[Test]
@@ -404,7 +412,7 @@ namespace MonoTests.System.Linq
 			ParallelTestHelper.Repeat (() => {
 				int [] array = { 14, 53, 3, 9, 11, 14, 5, 32, 2 };
 				
-				var q = array.AsParallel ().OrderBy ((i) => i);
+				var q = array.AsReallyParallel ().OrderBy ((i) => i);
 				AssertIsOrdered (q, array.Length);
 			});
 		}
@@ -469,7 +477,7 @@ namespace MonoTests.System.Linq
 		public void TestOrderByAgeAscendingTheByNameDescending ()
 		{
 			ParallelTestHelper.Repeat (() => {
-				var q = from b in CreateBazCollection ().AsParallel()
+				var q = from b in CreateBazCollection ().AsReallyParallel ()
 						orderby b.Age ascending, b.Name descending
 						select b;
 	
@@ -509,7 +517,7 @@ namespace MonoTests.System.Linq
 		public void TestOrderByIdDescendingThenByNameAscending ()
 		{
 			ParallelTestHelper.Repeat (() => {
-				var q = from d in CreateData ().AsParallel()
+				var q = from d in CreateData ().AsReallyParallel ()
 					orderby d.ID descending, d.Name ascending
 						select d;
 				
@@ -541,9 +549,9 @@ namespace MonoTests.System.Linq
 		public void ElementAtTestCase()
 		{
 			//ParallelTestHelper.Repeat (() => {
-					Assert.AreEqual(1, baseEnumerable.AsParallel ().AsOrdered ().ElementAt(0), "#1");
-					Assert.AreEqual(51, baseEnumerable.AsParallel ().AsOrdered ().ElementAt(50), "#2");
-					Assert.AreEqual(489, baseEnumerable.AsParallel ().AsOrdered ().ElementAt(488), "#3");
+					Assert.AreEqual(1, baseEnumerable.AsReallyParallel ().AsOrdered ().ElementAt(0), "#1");
+					Assert.AreEqual(51, baseEnumerable.AsReallyParallel ().AsOrdered ().ElementAt(50), "#2");
+					Assert.AreEqual(489, baseEnumerable.AsReallyParallel ().AsOrdered ().ElementAt(488), "#3");
 			//});
 		}
 
@@ -557,7 +565,7 @@ namespace MonoTests.System.Linq
 			IEnumerable<int> expected = outer.Join (inner, (e) => e.Item1, (e) => e.Item1, (e1, e2) => e1.Item2 + e2.Item2, EqualityComparer<int>.Default);
 
 			ParallelTestHelper.Repeat (() => {
-					ParallelQuery<int> actual = outer.AsParallel ().Join (inner.AsParallel (), (e) => e.Item1, (e) => e.Item1, (e1, e2) => e1.Item2 + e2.Item2, EqualityComparer<int>.Default);
+					ParallelQuery<int> actual = outer.AsReallyParallel ().Join (inner.AsParallel (), (e) => e.Item1, (e) => e.Item1, (e1, e2) => e1.Item2 + e2.Item2, EqualityComparer<int>.Default);
 
 					AreEquivalent (expected, actual, 1);
 				});
@@ -570,7 +578,7 @@ namespace MonoTests.System.Linq
 			Tuple<int, int>[] source = Enumerable.Range (0, num).Select ((i) => Tuple.Create (i / 10, i)).ToArray ();
 
 			ParallelTestHelper.Repeat (() => {
-					ParallelQuery<IGrouping<int, int>> actual = source.AsParallel ().GroupBy ((e) => e.Item1, (e) => e.Item2, EqualityComparer<int>.Default);
+					ParallelQuery<IGrouping<int, int>> actual = source.AsReallyParallel ().GroupBy ((e) => e.Item1, (e) => e.Item2, EqualityComparer<int>.Default);
 
 					foreach (var group in actual) {
 						Assert.GreaterOrEqual (group.Key, 0);
@@ -592,12 +600,12 @@ namespace MonoTests.System.Linq
 		public void TakeTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
-					ParallelQuery<int> async = baseEnumerable.AsParallel().AsOrdered ().Take(2000);
+					ParallelQuery<int> async = baseEnumerable.AsReallyParallel ().AsOrdered ().Take(2000);
 					IEnumerable<int> sync = baseEnumerable.Take(2000);
 
 					AreEquivalent(sync, async, 1);
 
-					async = baseEnumerable.AsParallel().AsOrdered ().Take(100);
+					async = baseEnumerable.AsReallyParallel ().AsOrdered ().Take(100);
 					sync = baseEnumerable.Take(100);
 
 					AreEquivalent(sync, async, 2);
@@ -608,12 +616,12 @@ namespace MonoTests.System.Linq
 		public void UnorderedTakeTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
-					ParallelQuery<int> async = baseEnumerable.AsParallel().Take(2000);
+					ParallelQuery<int> async = baseEnumerable.AsReallyParallel ().Take(2000);
 					IEnumerable<int> sync = baseEnumerable.Take (2000);
 
 					Assert.AreEqual (sync.Count (), async.Count (), "#1");
 
-					async = baseEnumerable.AsParallel().Take(100);
+					async = baseEnumerable.AsReallyParallel ().Take(100);
 					sync = baseEnumerable.Take(100);
 
 					Assert.AreEqual (sync.Count (), async.Count (), "#2");
@@ -624,12 +632,12 @@ namespace MonoTests.System.Linq
 		public void SkipTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
-				ParallelQuery<int> async = baseEnumerable.AsParallel().AsOrdered().Skip(2000);
+				ParallelQuery<int> async = baseEnumerable.AsReallyParallel ().AsOrdered().Skip(2000);
 				IEnumerable<int> sync = baseEnumerable.Skip(2000);
 				
 				AreEquivalent(sync, async, 1);
 				
-				async = baseEnumerable.AsParallel().Skip(100);
+				async = baseEnumerable.AsReallyParallel ().Skip(100);
 				sync = baseEnumerable.Skip(100);
 				
 				Assert.AreEqual(sync.Count(), async.Count(), "#2");
@@ -675,7 +683,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = {1, 2, 3, 4};
 
-			Assert.AreEqual (10, data.AsParallel().Sum ());
+			Assert.AreEqual (10, data.AsReallyParallel ().Sum ());
 		}
 
 		[Test]
@@ -683,7 +691,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = {};
 
-			Assert.AreEqual (0, data.AsParallel().Sum ());
+			Assert.AreEqual (0, data.AsReallyParallel ().Sum ());
 		}
 
 		[Test]
@@ -691,7 +699,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = {1, 3, 5, 2};
 
-			Assert.AreEqual (5, data.AsParallel().Max ());
+			Assert.AreEqual (5, data.AsReallyParallel ().Max ());
 		}
 
 		[Test]
@@ -699,7 +707,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = {3, 5, 2, 6, 1, 7};
 
-			Assert.AreEqual (1, data.AsParallel().Min ());
+			Assert.AreEqual (1, data.AsReallyParallel ().Min ());
 		}
 		
 		[Test]
@@ -707,7 +715,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = { 2, 3, 5 };
 
-			var list = data.AsParallel().AsOrdered().ToList ();
+			var list = data.AsParallel().AsOrdered().WithExecutionMode (ParallelExecutionMode.ForceParallelism).ToList ();
 
 			AssertAreSame (data, list);
 			AssertIsOrdered (list, data.Length);
@@ -725,14 +733,14 @@ namespace MonoTests.System.Linq
 
 			int [] result = {0, 1, 2};
 
-			var array = coll.AsParallel().AsOrdered().ToArray ();
+			var array = coll.AsReallyParallel ().AsOrdered().ToArray ();
 
 			AssertAreSame (result, array);
 			AssertIsOrdered (array, result.Length);
 
 			Assert.AreEqual (typeof (int []), array.GetType ());
 
-			array = Enumerable.Range (1, 100).Select ((i) => i).AsParallel().AsOrdered().ToArray ();
+			array = Enumerable.Range (1, 100).Select ((i) => i).AsReallyParallel ().AsOrdered().ToArray ();
 			result = Enumerable.Range (1, 100).ToArray ();
 
 			AssertAreSame (result, array);
@@ -747,7 +755,7 @@ namespace MonoTests.System.Linq
 		{
 			int [] data = {3, 5, 2};
 
-			var list = data.AsParallel().ToList ();
+			var list = data.AsReallyParallel ().ToList ();
 
 			CollectionAssert.AreEquivalent (data, list);
 
@@ -764,7 +772,7 @@ namespace MonoTests.System.Linq
 
 			int [] result = {0, 1, 2};
 
-			var array = coll.AsParallel().ToArray ();
+			var array = coll.AsReallyParallel ().ToArray ();
 
 			CollectionAssert.AreEquivalent (result, array);
 
@@ -792,11 +800,11 @@ namespace MonoTests.System.Linq
 
 
 			// Any<TSource> ()
-			AssertException<ArgumentNullException> (delegate () { ((IEnumerable<string>) null).AsParallel ().Any (); });
+			AssertException<ArgumentNullException> (delegate () { ((IEnumerable<string>) null).AsReallyParallel ().Any (); });
 
 			// Any<TSource> (Func<TSource, bool>)
-			AssertException<ArgumentNullException> (delegate () { ((IEnumerable<string>) null).AsParallel ().Any (x => true); });
-			AssertException<ArgumentNullException> (delegate () { data.AsParallel ().Any ((Func<string, bool>) null); });
+			AssertException<ArgumentNullException> (delegate () { ((IEnumerable<string>) null).AsReallyParallel ().Any (x => true); });
+			AssertException<ArgumentNullException> (delegate () { data.AsReallyParallel ().Any ((Func<string, bool>) null); });
 		}
 
 		[Test]
@@ -807,13 +815,13 @@ namespace MonoTests.System.Linq
 
 
 			// Any<TSource> ()
-			Assert.IsTrue (data.AsParallel ().Any ());
-			Assert.IsFalse (empty.AsParallel ().Any ());
+			Assert.IsTrue (data.AsReallyParallel ().Any ());
+			Assert.IsFalse (empty.AsReallyParallel ().Any ());
 
 			// Any<TSource> (Func<TSource, bool>)
-			Assert.IsTrue (data.AsParallel ().Any (x => x == 5));
-			Assert.IsFalse (data.AsParallel ().Any (x => x == 9));
-			Assert.IsFalse (empty.AsParallel ().Any (x => true));
+			Assert.IsTrue (data.AsReallyParallel ().Any (x => x == 5));
+			Assert.IsFalse (data.AsReallyParallel ().Any (x => x == 9));
+			Assert.IsFalse (empty.AsReallyParallel ().Any (x => true));
 		}
 
 		
@@ -822,8 +830,8 @@ namespace MonoTests.System.Linq
 		{
 			string [] data = { "2", "1", "5", "3", "4" };
 
-			AssertException<ArgumentNullException> (delegate () { ((IEnumerable<string>) null).AsParallel ().All (x => true); });
-			AssertException<ArgumentNullException> (delegate () { data.AsParallel ().All ((Func<string, bool>) null); });
+			AssertException<ArgumentNullException> (delegate () { ((IEnumerable<string>) null).AsReallyParallel ().All (x => true); });
+			AssertException<ArgumentNullException> (delegate () { data.AsReallyParallel ().All ((Func<string, bool>) null); });
 		}
 
 		[Test]
@@ -832,9 +840,9 @@ namespace MonoTests.System.Linq
 			int [] data = { 5, 2, 3, 1, 6 };
 			int [] empty = { };
 
-			Assert.IsTrue (data.AsParallel ().All (x => true));
-			Assert.IsFalse (data.AsParallel ().All (x => x != 1));
-			Assert.IsTrue (empty.AsParallel ().All (x => false));
+			Assert.IsTrue (data.AsReallyParallel ().All (x => true));
+			Assert.IsFalse (data.AsReallyParallel ().All (x => x != 1));
+			Assert.IsTrue (empty.AsReallyParallel ().All (x => false));
 		}
 	}
 }
