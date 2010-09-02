@@ -163,6 +163,16 @@ namespace System.ServiceModel.Channels
 						using (Stream s = web_request.EndGetRequestStream (r))
 							s.Write (buffer.GetBuffer (), 0, (int) buffer.Length);
 						web_request.BeginGetResponse (GotResponse, result);
+					} catch (WebException ex) {
+						switch (ex.Status) {
+						case WebExceptionStatus.NameResolutionFailure:
+						case WebExceptionStatus.ConnectFailure:
+							result.Complete (new EndpointNotFoundException (new EndpointNotFoundException ().Message, ex));
+							break;
+						default:
+							result.Complete (ex);
+							break;
+						}
 					} catch (Exception ex) {
 						result.Complete (ex);
 					}
