@@ -23,6 +23,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -31,6 +32,7 @@ using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading;
+using System.Xml;
 
 namespace System.ServiceModel.Discovery
 {
@@ -95,9 +97,12 @@ namespace System.ServiceModel.Discovery
 
 			var ms = new MemoryStream ();
 			message_encoder.WriteMessage (message, ms);
-			client.Send (ms.GetBuffer (), (int) ms.Length);
-			// FIXME: use MaxAnnouncementDelay. It is fixed now.
-			Thread.Sleep (rnd.Next (500, 500));
+			// It seems .NET sends the same Message a couple of times so that the receivers don't miss it. So, do the same hack.
+			for (int i = 0; i < 6; i++) {
+				// FIXME: use MaxAnnouncementDelay. It is fixed now.
+				Thread.Sleep (rnd.Next (50, 500));
+				client.Send (ms.GetBuffer (), (int) ms.Length);
+			}
 		}
 
 		public bool WaitForMessage (TimeSpan timeout)
@@ -120,6 +125,7 @@ namespace System.ServiceModel.Discovery
 
 		public bool TryReceive (TimeSpan timeout, out Message msg)
 		{
+			DateTime start = DateTime.Now;
 			ThrowIfDisposedOrNotOpen ();
 			msg = null;
 
@@ -134,10 +140,22 @@ namespace System.ServiceModel.Discovery
 			if (bytes == null || bytes.Length == 0)
 				return false;
 
+			// Clients will send the same message many times, and this receiver has to 
+
 			// FIXME: give maxSizeOfHeaders
 			msg = message_encoder.ReadMessage (new MemoryStream (bytes), int.MaxValue);
+			var id = msg.Headers.MessageId;
+			if (message_ids.Contains (id))
+				return TryReceive (timeout - (DateTime.Now - start), out msg);
+			if (id != null) {
+				message_ids.Enqueue (id);
+				if (message_ids.Count >= binding_element.TransportSettings.DuplicateMessageHistoryLength)
+					message_ids.Dequeue ();
+			}
 			return true;
 		}
+
+		Queue<UniqueId> message_ids = new Queue<UniqueId> ();
 
 		protected override void OnAbort ()
 		{
