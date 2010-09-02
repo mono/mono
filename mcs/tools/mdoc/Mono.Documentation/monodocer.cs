@@ -66,6 +66,8 @@ class MDocUpdater : MDocCommand
 				"  asm      Method calls in same assembly\n" +
 				"  depasm   Method calls in dependent assemblies\n" +
 				"  all      Record all possible exceptions\n" +
+				"  added    Modifier; only create <exception/>s\n" +
+				"             for NEW types/members\n" +
 				"If nothing is specified, then only exceptions from the member will " +
 				"be listed.",
 				v => exceptions = ParseExceptionLocations (v) },
