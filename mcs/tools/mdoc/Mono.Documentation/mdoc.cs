@@ -78,7 +78,14 @@ namespace Mono.Documentation {
 			if (showHelp) {
 				extra.Add ("--help");
 			}
-			GetCommand (extra [0]).Run (extra);
+			switch (extra [0]) {
+				case "x-msitomsx":
+					new MsidocToMsxdocConverter ().Run (extra);
+					break;
+				default: 
+					GetCommand (extra [0]).Run (extra);
+					break;
+			}
 		}
 
 		// Cribbed from mcs/driver.cs:LoadArgs(string)

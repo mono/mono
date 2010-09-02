@@ -9,6 +9,7 @@ Mono.Documentation/MdocFile.cs
 Mono.Documentation/monodocer.cs
 Mono.Documentation/monodocs2html.cs
 Mono.Documentation/monodocs2slashdoc.cs
+Mono.Documentation/msitomsx.cs
 Mono.Documentation/normalize.cs
 Mono.Documentation/validate.cs
 Mono.Documentation/webdoc.cs

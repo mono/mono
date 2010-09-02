@@ -9,6 +9,7 @@ MDOC_COMMON_FLAGS = \
 	/resource:../monodoc/Resources/mono-ecma-css.xsl,mono-ecma-css.xsl          \
 	/resource:Resources/defaulttemplate.xsl,defaulttemplate.xsl                 \
 	/resource:Resources/monodoc-ecma.xsd,monodoc-ecma.xsd                       \
+	/resource:Resources/msitomsx.xsl,msitomsx.xsl                               \
 	/resource:Resources/overview.xsl,overview.xsl                               \
 	/resource:Resources/stylesheet.xsl,stylesheet.xsl                           \
 	/r:System.Web.dll                                                           \
