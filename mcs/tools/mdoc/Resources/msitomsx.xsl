@@ -185,6 +185,16 @@
     </block>
   </xsl:template>
 
+  <xsl:template match="authoring:permissions">
+    <xsl:apply-templates />
+  </xsl:template>
+
+  <xsl:template match="authoring:permission">
+    <permission cref="{authoring:codeEntityReference}">
+      <xsl:apply-templates select="authoring:content" />
+    </permission>
+  </xsl:template>
+
   <!-- cute trick to remove the xmlns attributes on copied nodes. -->
   <xsl:template match="*">
     <xsl:element name="{local-name()}">
