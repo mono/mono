@@ -260,6 +260,14 @@ namespace Mono.Documentation
 			// TODO: assembly attributes?
 			// The problem is that .NET mscorlib.dll v4.0 has ~26 attributes, and
 			// importing these for every time seems like some serious bloat...
+			var clsAttr = assembly.Elements ("Attributes").Elements ("Attribute")
+				.FirstOrDefault (a => a.Element ("AttributeName").Value.StartsWith ("System.CLSCompliant"));
+			if (clsAttr != null) {
+				var dest = ai.Element ("Attributes");
+				if (dest == null)
+					ai.Add (dest = new XElement ("Attributes"));
+				dest.Add (clsAttr);
+			}
 
 			return type;
 		}
