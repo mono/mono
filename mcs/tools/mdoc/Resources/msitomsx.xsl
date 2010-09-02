@@ -239,6 +239,13 @@
     </threadsafe>
   </xsl:template>
 
+  <xsl:template match="authoring:embeddedLabel">
+    <i>
+      <xsl:value-of select="*" />
+      <xsl:text>:</xsl:text>
+    </i>
+  </xsl:template>
+
   <xsl:template match="authoring:token">
     <xsl:choose>
       <xsl:when test=". = 'compact_v20_long'">
@@ -247,8 +254,16 @@
       <xsl:when test=". = 'compact_v35_long'">
         <xsl:text>.NET Compact Framework version 3.5</xsl:text>
       </xsl:when>
+      <xsl:when test=". = 'vbprvbext'">
+        <xsl:text>Microsoft Visual Basic 2005</xsl:text>
+      </xsl:when>
+      <xsl:when test=". = 'vbprvblong'">
+        <xsl:text>Visual Basic 2005</xsl:text>
+      </xsl:when>
       <xsl:otherwise>
-        <xsl:text>Unknown .NET Framework <xsl:value-of select="." /></xsl:text>
+        <xsl:text>UNKNOWN_TOKEN(</xsl:text>
+        <xsl:value-of select="." />
+        <xsl:text>)</xsl:text>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
