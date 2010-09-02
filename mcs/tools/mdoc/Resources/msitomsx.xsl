@@ -30,6 +30,8 @@
   <xsl:template match="authoring:changeHistory" />
   <xsl:template match="authoring:relatedTopics" />
   <xsl:template match="authoring:clsCompliantAlternative" />
+  <xsl:template match="authoring:notesForImplementers" />
+  <xsl:template match="authoring:notesForCallers" />
 
   <xsl:template match="member">
     <!-- skip Overload: members, as these have no msxdoc equivalent. -->
@@ -38,6 +40,22 @@
         <xsl:apply-templates />
       </member>
     </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="authoring:remarks">
+    <remarks>
+      <xsl:apply-templates />
+      <xsl:for-each select="../authoring:notesForImplementers">
+        <block subset="none" type="overrides">
+          <xsl:apply-templates />
+        </block>
+      </xsl:for-each>
+      <xsl:for-each select="../authoring:notesForCallers">
+        <block subset="none" type="usage">
+          <xsl:apply-templates />
+        </block>
+      </xsl:for-each>
+    </remarks>
   </xsl:template>
 
   <xsl:template match="authoring:dduexml" >
