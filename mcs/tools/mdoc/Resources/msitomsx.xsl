@@ -198,6 +198,18 @@
     </item>
   </xsl:template>
 
+  <xsl:template match="authoring:list">
+    <list type="{@class}">
+      <xsl:apply-templates />
+    </list>
+  </xsl:template>
+
+  <xsl:template match="authoring:listItem">
+    <item><term>
+      <xsl:apply-templates />
+    </term></item>
+  </xsl:template>
+
   <xsl:template match="authoring:alert">
     <block subset="none" type="note">
       <xsl:apply-templates />
