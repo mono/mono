@@ -150,6 +150,11 @@ namespace System
 
 		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure)
 		{
+			return CreateDelegate (type, firstArgument, method, throwOnBindFailure, true);
+		}
+
+		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure, bool allowClosed)
+		{
 			// The name of the parameter changed in 2.0
 			object target = firstArgument;
 
@@ -228,7 +233,7 @@ namespace System
 							argsMatch &= arg_type_match (delargs [i + 1].ParameterType, args [i].ParameterType);
 					} else {
 						// closed over a null reference
-						argsMatch = true;
+						argsMatch = allowClosed;
 						for (int i = 0; i < args.Length; i++)
 							argsMatch &= arg_type_match (delargs [i].ParameterType, args [i].ParameterType);
 					}
@@ -258,22 +263,24 @@ namespace System
 			return d;
 		}
 
-		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method) {
-			return CreateDelegate (type, firstArgument, method, true);
+		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method)
+		{
+			return CreateDelegate (type, firstArgument, method, true, true);
 		}
 
 		public static Delegate CreateDelegate (Type type, MethodInfo method, bool throwOnBindFailure)
 		{
-			return CreateDelegate (type, null, method, throwOnBindFailure);
+			return CreateDelegate (type, null, method, throwOnBindFailure, false);
 		}
 
-		public static Delegate CreateDelegate (Type type, MethodInfo method) {
+		public static Delegate CreateDelegate (Type type, MethodInfo method)
+		{
 			return CreateDelegate (type, method, true);
 		}
 
 		public static Delegate CreateDelegate (Type type, object target, string method)
 		{
-			return CreateDelegate(type, target, method, false);
+			return CreateDelegate (type, target, method, false);
 		}
 
 		static MethodInfo GetCandidateMethod (Type type, Type target, string method, BindingFlags bflags, bool ignoreCase, bool throwOnBindFailure)
