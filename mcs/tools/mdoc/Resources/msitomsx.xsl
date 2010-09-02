@@ -195,6 +195,20 @@
     </permission>
   </xsl:template>
 
+  <xsl:template match="authoring:token">
+    <xsl:choose>
+      <xsl:when test=". = 'compact_v20_long'">
+        <xsl:text>.NET Compact Framework version 2.0</xsl:text>
+      </xsl:when>
+      <xsl:when test=". = 'compact_v35_long'">
+        <xsl:text>.NET Compact Framework version 3.5</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>Unknown .NET Framework <xsl:value-of select="." /></xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <!-- cute trick to remove the xmlns attributes on copied nodes. -->
   <xsl:template match="*">
     <xsl:element name="{local-name()}">
