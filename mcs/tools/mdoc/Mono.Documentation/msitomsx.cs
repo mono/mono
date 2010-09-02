@@ -75,8 +75,30 @@ namespace Mono.Documentation {
 			};
 			var sources = Parse (options, args, "export-ecma-xml", 
 					"[OPTIONS]+ DIRECTORIES",
-					"Convert Microsoft internal XML documentation within DIRECTORIES " +
-					"into Microsoft XML documentation.\n\n");
+					"Convert Microsoft internal XML documentation within DIRECTORIES into\n" +
+					"Microsoft XML documentation.\n" +
+					"\n" +
+					"Microsoft internal XML documentation is a custom XML dialect (yay) with\n" +
+					"a specific directory structure:\n" +
+					"\n" +
+					"\tROOT/dotted.namespace/asset.xml\n" +
+					"\n" +
+					"where ROOT is a directory that can be passed as one of the DIRECTORIES\n" +
+					"arguments to x-msitomsx, dotted.namespace is the lowercased namespace\n" +
+					"in dotted form, e.g. 'system.threading', and asset.xml is the name of \n" +
+					"the \"asset\" being documented.  The asset.xml basename is a GUID, and\n" +
+					"the file contains type/namespace/etc. documentation, one file per asset.\n" +
+					"\n" +
+					"There is no separation of assemblies in this format, only namespaces.\n" +
+					"Types from all assemblies are intermixed with each other.\n" +
+					"\n" +
+					"The output of x-msitomsx will be a set of files in the --out directory,\n" +
+					"one file per assembly (normal 'csc /doc' convention).  For example,\n" +
+					"\n" +
+					"\tmdoc x-msitomsx -o docs import-root --type System.String\n" +
+					"\n" +
+					"will create the file 'docs/mscorlib.dll' which will contain the converted\n" +
+					"documentation for the System.String type.");
 			if (sources == null)
 				return;
 			if (sources.Count == 0)
