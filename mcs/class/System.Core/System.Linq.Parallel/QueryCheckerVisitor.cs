@@ -35,6 +35,8 @@ namespace System.Linq.Parallel
 
 	internal class QueryCheckerVisitor : INodeVisitor
 	{
+		const int minSequentialThreshold = 20;
+
 		// Information gathering
 		ParallelMergeOptions? options = null;
 		ParallelExecutionMode? mode = null;
@@ -75,6 +77,10 @@ namespace System.Linq.Parallel
 				behindOrderGuard = false;
 			if (degreeOfParallelism != null)
 				partitionCount = degreeOfParallelism.Value;
+
+			int count;
+			if ((count = node.Count) != -1 && count < minSequentialThreshold)
+				ShouldBeSequential = true;
 		}
 
 		public void Visit<T, TParent> (QueryStreamNode<T, TParent> node)
