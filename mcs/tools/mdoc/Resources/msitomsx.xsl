@@ -179,6 +179,12 @@
     </item>
   </xsl:template>
 
+  <xsl:template match="authoring:alert">
+    <block subset="none" type="note">
+      <xsl:apply-templates />
+    </block>
+  </xsl:template>
+
   <!-- cute trick to remove the xmlns attributes on copied nodes. -->
   <xsl:template match="*">
     <xsl:element name="{local-name()}">
