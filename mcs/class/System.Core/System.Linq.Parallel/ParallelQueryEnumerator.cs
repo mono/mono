@@ -51,7 +51,7 @@ namespace System.Linq.Parallel
 		{
 			this.options = ParallelExecuter.CheckQuery (node);
 
-			if (options.ShouldBeSequential) {
+			if (options.ShouldBeSequential && options.Mode != ParallelExecutionMode.ForceParallelism) {
 				IEnumerable<T> buffer = node.GetSequential ();
 				loader = buffer.GetEnumerator ();
 			} else {
