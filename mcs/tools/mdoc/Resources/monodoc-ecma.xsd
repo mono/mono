@@ -488,6 +488,7 @@ add masterdoc support?
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
+        <xs:element ref="i" />
         <xs:element ref="format" />
         <xs:element ref="see" />
         <xs:element ref="geq" />

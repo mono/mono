@@ -241,7 +241,7 @@
 
   <xsl:template match="authoring:embeddedLabel">
     <i>
-      <xsl:value-of select="*" />
+      <xsl:value-of select="." />
       <xsl:text>:</xsl:text>
     </i>
   </xsl:template>
