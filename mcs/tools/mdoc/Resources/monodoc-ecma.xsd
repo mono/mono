@@ -1052,5 +1052,57 @@ add masterdoc support?
     </xs:complexType>
   </xs:element>
 
+  <!--
+    ECMA 334 Annex E Documentation Comments support.
+    -->
+
+  <xs:element name="seealso">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="cref" />
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="doc">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="assembly">
+          <xs:complexType>
+            <xs:choice>
+              <xs:element name="name" type="xs:string" />
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="members">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">>
+              <xs:element name="member">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="seealso" />
+                    <xs:element ref="example" />
+                    <xs:element ref="exception" />
+                    <xs:element ref="param" />
+                    <xs:element ref="permission" />
+                    <xs:element ref="PermissionSet" />
+                    <xs:element ref="remarks" />
+                    <xs:element ref="returns" />
+                    <xs:element ref="summary" />
+                    <xs:element ref="threadsafe" />
+                    <xs:element ref="typeparam" />
+                    <xs:element ref="value" />
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:type" />
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>
 
