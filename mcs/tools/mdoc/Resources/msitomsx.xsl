@@ -34,7 +34,9 @@
   <xsl:template match="authoring:notesForImplementers" />
   <xsl:template match="authoring:notesForInheritors" />
   <xsl:template match="authoring:overload" />
+  <xsl:template match="authoring:platformNotes" />
   <xsl:template match="authoring:relatedTopics" />
+  <xsl:template match="authoring:sections" />
 
   <xsl:template match="member">
     <!-- skip Overload: members, as these have no msxdoc equivalent. -->
@@ -255,6 +257,12 @@
   </xsl:template>
 
   <xsl:template match="authoring:legacyLink">
+    <i>
+      <xsl:value-of select="." />
+    </i>
+  </xsl:template>
+
+  <xsl:template match="authoring:legacyItalic">
     <i>
       <xsl:value-of select="." />
     </i>
