@@ -75,6 +75,20 @@
     </param>
   </xsl:template>
 
+  <xsl:template match="authoring:genericParameters">
+    <xsl:apply-templates />
+  </xsl:template>
+
+  <xsl:template match="authoring:genericParameter">
+    <typeparam name="{authoring:parameterReference}">
+      <xsl:for-each select="*">
+        <xsl:if test="not (position () = 1)">
+          <xsl:apply-templates />
+        </xsl:if>
+      </xsl:for-each>
+    </typeparam>
+  </xsl:template>
+
   <xsl:template match="authoring:parameterReference">
     <paramref name="{.}" />
   </xsl:template>
