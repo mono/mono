@@ -246,6 +246,20 @@
     </i>
   </xsl:template>
 
+  <xsl:template match="authoring:externalLink">
+    <format type="text/html">
+      <a href="{authoring:linkUri}">
+        <xsl:value-of select="authoring:linkText" />
+      </a>
+    </format>
+  </xsl:template>
+
+  <xsl:template match="authoring:legacyLink">
+    <i>
+      <xsl:value-of select="." />
+    </i>
+  </xsl:template>
+
   <xsl:template match="authoring:token">
     <xsl:choose>
       <xsl:when test=". = 'compact_v20_long'">
