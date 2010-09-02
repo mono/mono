@@ -254,6 +254,9 @@
       <xsl:when test=". = 'compact_v35_long'">
         <xsl:text>.NET Compact Framework version 3.5</xsl:text>
       </xsl:when>
+      <xsl:when test=". = 'dnprdnext'">
+        <xsl:text>.NET Framework version 2.0</xsl:text>
+      </xsl:when>
       <xsl:when test=". = 'vbprvbext'">
         <xsl:text>Microsoft Visual Basic 2005</xsl:text>
       </xsl:when>
