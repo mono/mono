@@ -1,0 +1,21 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="DocTest" Version="0.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System">
+      <Type Name="Action`1" DisplayName="Action&lt;T&gt;" Kind="Delegate" />
+      <Type Name="Array" Kind="Class" />
+      <Type Name="AsyncCallback" Kind="Delegate" />
+      <Type Name="Environment" Kind="Class" />
+    </Namespace>
+  </Types>
+</Overview>

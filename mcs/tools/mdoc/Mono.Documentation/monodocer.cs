@@ -329,21 +329,82 @@ class MDocUpdater : MDocCommand
 
 	public void DoUpdateTypes (string basepath, List<string> typenames, string dest)
 	{
+		var index = CreateIndexForTypes (dest);
+
 		var found = new HashSet<string> ();
 		foreach (AssemblyDefinition assembly in assemblies) {
 			foreach (TypeDefinition type in docEnum.GetDocumentationTypes (assembly, typenames)) {
 				string relpath = DoUpdateType (type, basepath, dest);
-				if (relpath != null)
-					found.Add (type.FullName);
+				if (relpath == null)
+					continue;
+
+				found.Add (type.FullName);
+
+				if (index == null)
+					continue;
+
+				index.Add (assembly);
+				index.Add (type);
 			}
 		}
 
+		if (index != null)
+			index.Write ();
+		
 		if (ignore_missing_types)
 			return;
 
 		var notFound = from n in typenames where !found.Contains (n) select n;
 		if (notFound.Any ())
 			throw new InvalidOperationException("Type(s) not found: " + string.Join (", ", notFound.ToArray ()));
+	}
+
+	class IndexForTypes {
+
+		MDocUpdater app;
+		string indexFile;
+
+		XmlDocument index;
+		XmlElement index_types;
+		XmlElement index_assemblies;
+
+		public IndexForTypes (MDocUpdater app, string indexFile, XmlDocument index)
+		{
+			this.app        = app;
+			this.indexFile  = indexFile;
+			this.index      = index;
+
+			index_types = WriteElement (index.DocumentElement, "Types");
+			index_assemblies = WriteElement (index.DocumentElement, "Assemblies");
+		}
+
+		public void Add (AssemblyDefinition assembly)
+		{
+			if (index_assemblies.SelectSingleNode ("Assembly[@Name='" + assembly.Name.Name + "']") != null)
+				return;
+
+			app.AddIndexAssembly (assembly, index_assemblies);
+		}
+
+		public void Add (TypeDefinition type)
+		{
+			app.AddIndexType (type, index_types);
+		}
+
+		public void Write ()
+		{
+			SortIndexEntries (index_types);
+			WriteFile (indexFile, FileMode.Create, 
+					writer => WriteXml (index.DocumentElement, writer));
+		}
+	}
+
+	IndexForTypes CreateIndexForTypes (string dest)
+	{
+		string indexFile = Path.Combine (dest, "index.xml");
+		if (File.Exists (indexFile))
+			return null;
+		return new IndexForTypes (this, indexFile, CreateIndexStub ());
 	}
 
 	public string DoUpdateType (TypeDefinition type, string basepath, string dest)
@@ -498,6 +559,33 @@ class MDocUpdater : MDocCommand
 		parent.AppendChild(index_assembly);
 	}
 
+	private void AddIndexType (TypeDefinition type, XmlElement index_types)
+	{
+		string typename = GetTypeFileName(type);
+
+		// Add namespace and type nodes into the index file as needed
+		string ns = DocUtils.GetNamespace (type);
+		XmlElement nsnode = (XmlElement) index_types.SelectSingleNode ("Namespace[@Name='" + ns + "']");
+		if (nsnode == null) {
+			nsnode = index_types.OwnerDocument.CreateElement("Namespace");
+			nsnode.SetAttribute ("Name", ns);
+			index_types.AppendChild (nsnode);
+		}
+		string doc_typename = GetDocTypeName (type);
+		XmlElement typenode = (XmlElement) nsnode.SelectSingleNode ("Type[@Name='" + typename + "']");
+		if (typenode == null) {
+			typenode = index_types.OwnerDocument.CreateElement ("Type");
+			typenode.SetAttribute ("Name", typename);
+			nsnode.AppendChild (typenode);
+		}
+		if (typename != doc_typename)
+			typenode.SetAttribute("DisplayName", doc_typename);
+		else
+			typenode.RemoveAttribute("DisplayName");
+
+		typenode.SetAttribute ("Kind", GetTypeKind (type));
+	}
+
 	private void DoUpdateAssemblies (string source, string dest) 
 	{
 		string indexfile = dest + "/index.xml";
@@ -554,25 +642,7 @@ class MDocUpdater : MDocCommand
 				continue;
 			
 			// Add namespace and type nodes into the index file as needed
-			string ns = DocUtils.GetNamespace (type);
-			XmlElement nsnode = (XmlElement) index_types.SelectSingleNode("Namespace[@Name='" + ns + "']");
-			if (nsnode == null) {
-				nsnode = index_types.OwnerDocument.CreateElement("Namespace");
-				nsnode.SetAttribute ("Name", ns);
-				index_types.AppendChild(nsnode);
-			}
-			string doc_typename = GetDocTypeName (type);
-			XmlElement typenode = (XmlElement)nsnode.SelectSingleNode("Type[@Name='" + typename + "']");
-			if (typenode == null) {
-				typenode = index_types.OwnerDocument.CreateElement("Type");
-				typenode.SetAttribute("Name", typename);
-				nsnode.AppendChild(typenode);
-			}
-			if (typename != doc_typename)
-				typenode.SetAttribute("DisplayName", doc_typename);
-			else
-				typenode.RemoveAttribute("DisplayName");
-			typenode.SetAttribute ("Kind", GetTypeKind (type));
+			AddIndexType (type, index_types);
 				
 			// Ensure the namespace index file exists
 			string onsdoc = DocUtils.PathCombine (dest, type.Namespace + ".xml");
