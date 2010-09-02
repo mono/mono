@@ -117,7 +117,7 @@ namespace System.Linq.Parallel
 		internal QueryOptions Options {
 			get {
 				return new QueryOptions (options, mode, token == null ? CancellationToken.None : token.Value,
-				                         UseStrip, behindOrderGuard, partitionCount, implementerToken);
+				                         UseStrip, behindOrderGuard, partitionCount, implementerToken, ShouldBeSequential);
 			}
 		}
 
