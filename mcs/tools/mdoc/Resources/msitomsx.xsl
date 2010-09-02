@@ -32,6 +32,7 @@
   <xsl:template match="authoring:clsCompliantAlternative" />
   <xsl:template match="authoring:notesForImplementers" />
   <xsl:template match="authoring:notesForCallers" />
+  <xsl:template match="authoring:internalOnly" />
 
   <xsl:template match="member">
     <!-- skip Overload: members, as these have no msxdoc equivalent. -->
