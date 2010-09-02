@@ -120,10 +120,6 @@
     </returns>
   </xsl:template>
 
-  <xsl:template match="authoring:codeExamples">
-    <xsl:apply-templates />
-  </xsl:template>
-
   <xsl:template match="authoring:exceptions">
     <xsl:apply-templates />
   </xsl:template>
@@ -134,13 +130,18 @@
     </exception>
   </xsl:template>
 
+  <xsl:template match="authoring:codeExamples">
+    <xsl:apply-templates />
+  </xsl:template>
+
   <xsl:template match="authoring:codeExample">
     <xsl:choose>
       <xsl:when test="count(authoring:legacy) &gt; 0">
       </xsl:when>
       <xsl:otherwise>
         <example>
-          <xsl:apply-templates />
+          <xsl:apply-templates select="authoring:description/authoring:content" />
+          <xsl:apply-templates select="authoring:codeReference" />
         </example>
       </xsl:otherwise>
     </xsl:choose>
