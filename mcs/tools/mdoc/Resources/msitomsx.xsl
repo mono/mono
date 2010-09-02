@@ -226,6 +226,12 @@
     </permission>
   </xsl:template>
 
+  <xsl:template match="authoring:threadSafety">
+    <threadsafe>
+      <xsl:apply-templates />
+    </threadsafe>
+  </xsl:template>
+
   <xsl:template match="authoring:token">
     <xsl:choose>
       <xsl:when test=". = 'compact_v20_long'">

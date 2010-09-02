@@ -746,7 +746,7 @@ add masterdoc support?
   <xs:element name="threadsafe">
     <xs:complexType>
      <xs:sequence>
-       <xs:element ref="para" minOccurs="1" />
+       <xs:element ref="para" minOccurs="1" maxOccurs="unbounded" />
      </xs:sequence>
     </xs:complexType>
   </xs:element>
