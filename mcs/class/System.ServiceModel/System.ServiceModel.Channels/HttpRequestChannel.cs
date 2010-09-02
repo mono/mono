@@ -164,6 +164,7 @@ namespace System.ServiceModel.Channels
 							s.Write (buffer.GetBuffer (), 0, (int) buffer.Length);
 						web_request.BeginGetResponse (GotResponse, result);
 					} catch (WebException ex) {
+#if !NET_2_1 || SMCS_OR_TUNER_BUG_FIXED
 						switch (ex.Status) {
 						case WebExceptionStatus.NameResolutionFailure:
 						case WebExceptionStatus.ConnectFailure:
@@ -173,6 +174,9 @@ namespace System.ServiceModel.Channels
 							result.Complete (ex);
 							break;
 						}
+#else
+						result.Complete (ex);
+#endif
 					} catch (Exception ex) {
 						result.Complete (ex);
 					}
