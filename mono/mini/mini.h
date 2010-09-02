@@ -1473,7 +1473,7 @@ MonoJitICallInfo *mono_find_jit_opcode_emulation (int opcode) MONO_INTERNAL;
 void	  mono_print_ins_index (int i, MonoInst *ins) MONO_INTERNAL;
 void	  mono_print_ins (MonoInst *ins) MONO_INTERNAL;
 gboolean  mini_assembly_can_skip_verification (MonoDomain *domain, MonoMethod *method) MONO_INTERNAL;
-gboolean  mini_method_verify (MonoCompile *cfg, MonoMethod *method) MONO_INTERNAL;
+gboolean mono_compile_is_broken (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile) MONO_INTERNAL;
 MonoInst *mono_get_got_var (MonoCompile *cfg) MONO_INTERNAL;
 
 gboolean  mini_class_is_system_array (MonoClass *klass) MONO_INTERNAL;

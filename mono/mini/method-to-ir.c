@@ -4369,6 +4369,11 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		mono_jit_stats.inlineable_methods++;
 		cmethod->inline_info = 1;
 	}
+
+	/*Must verify before creating locals as it can cause the JIT to assert.*/
+	if (mono_compile_is_broken (cfg, cmethod, FALSE))
+		return 0;
+
 	/* allocate space to store the return value */
 	if (!MONO_TYPE_IS_VOID (fsig->ret)) {
 		rvar = mono_compile_create_var (cfg, fsig->ret, OP_LOCAL);
@@ -5462,9 +5467,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		dont_verify = TRUE;
 		dont_verify_stloc = TRUE;
 	}
-
-	if (!dont_verify && mini_method_verify (cfg, method_definition))
-		goto exception_exit;
 
 	if (mono_debug_using_mono_debugger ())
 		cfg->keep_cil_nops = TRUE;
