@@ -42,6 +42,7 @@ MONODOC_RESOURCES = \
 MDOC_RESOURCES = \
 	Resources/defaulttemplate.xsl     \
 	Resources/monodoc-ecma.xsd        \
+	Resources/msitomsx.xsl            \
 	Resources/overview.xsl            \
 	Resources/stylesheet.xsl
 
