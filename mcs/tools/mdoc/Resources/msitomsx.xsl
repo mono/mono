@@ -105,6 +105,50 @@
     <see langword="{.}" />
   </xsl:template>
 
+  <xsl:template match="authoring:table">
+    <list type="table">
+      <xsl:apply-templates />
+    </list>
+  </xsl:template>
+
+  <xsl:template match="authoring:tableHeader">
+    <listheader>
+      <xsl:for-each select="authoring:row/authoring:entry">
+        <xsl:choose>
+          <xsl:when test="position() = 1">
+            <term>
+              <xsl:apply-templates />
+            </term>
+          </xsl:when>
+          <xsl:otherwise>
+            <description>
+              <xsl:apply-templates />
+            </description>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
+    </listheader>
+  </xsl:template>
+
+  <xsl:template match="authoring:row">
+    <item>
+      <xsl:for-each select="authoring:entry">
+        <xsl:choose>
+          <xsl:when test="position() = 1">
+            <term>
+              <xsl:apply-templates />
+            </term>
+          </xsl:when>
+          <xsl:otherwise>
+            <description>
+              <xsl:apply-templates />
+            </description>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
+    </item>
+  </xsl:template>
+
   <!-- cute trick to remove the xmlns attributes on copied nodes. -->
   <xsl:template match="*">
     <xsl:element name="{local-name()}">
