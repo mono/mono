@@ -31,7 +31,7 @@ class MDocUpdater : MDocCommand
 	
 	bool delete;
 	bool show_exceptions;
-	bool no_assembly_versions;
+	bool no_assembly_versions, ignore_missing_types;
 	ExceptionLocations? exceptions;
 	
 	internal int additions = 0, deletions = 0;
@@ -75,6 +75,9 @@ class MDocUpdater : MDocCommand
 				"Specify a {FLAG} to alter behavior.  See later -f* options for available flags.",
 				v => {
 					switch (v) {
+						case "ignore-missing-types":
+							ignore_missing_types = true;
+							break;
 						case "no-assembly-versions":
 							no_assembly_versions = true;
 							break;
@@ -82,6 +85,9 @@ class MDocUpdater : MDocCommand
 							throw new Exception ("Unsupported flag `" + v + "'.");
 					}
 				} },
+			{ "fignore-missing-types",
+				"Do not report an error if a --type=TYPE type\nwas not found.",
+				v => ignore_missing_types = v != null },
 			{ "fno-assembly-versions",
 				"Do not generate //AssemblyVersion elements.",
 				v => no_assembly_versions = v != null },
@@ -331,6 +337,10 @@ class MDocUpdater : MDocCommand
 					found.Add (type.FullName);
 			}
 		}
+
+		if (ignore_missing_types)
+			return;
+
 		var notFound = from n in typenames where !found.Contains (n) select n;
 		if (notFound.Any ())
 			throw new InvalidOperationException("Type(s) not found: " + string.Join (", ", notFound.ToArray ()));
