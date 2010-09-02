@@ -49,6 +49,16 @@
     <seealso cref="{authoring:codeEntityReference}" />
   </xsl:template>
 
+  <xsl:template match="authoring:codeInline">
+    <c>
+      <xsl:apply-templates />
+    </c>
+  </xsl:template>
+
+  <xsl:template match="authoring:codeReference">
+    <code src="{.}" />
+  </xsl:template>
+
   <xsl:template match="authoring:parameters">
     <xsl:apply-templates />
   </xsl:template>
