@@ -151,6 +151,8 @@ namespace Mono.Documentation {
 				docs.Add (assembly, 
 						asmdocs = new XDocument (
 							new XElement ("doc", 
+								new XElement ("assembly",
+									new XElement ("name", assembly)),
 								new XElement ("members"))));
 			}
 
