@@ -128,7 +128,6 @@ namespace System.Net.Policy {
 					// is the application (XAP) URI allowed by the policy ?
 					// check headers
 					if (!af.HttpRequestHeaders.IsAllowed (headerKeys)) {
-						Exception = new NotSupportedException ();
 						return false;
 					}
 
