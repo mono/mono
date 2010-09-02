@@ -27,6 +27,8 @@
   <xsl:output omit-xml-declaration="yes" />
 
   <xsl:template match="assembly" />
+  <xsl:template match="authoring:changeHistory" />
+  <xsl:template match="authoring:relatedTopics" />
 
   <xsl:template match="member">
     <!-- skip Overload: members, as these have no msxdoc equivalent. -->
