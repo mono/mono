@@ -32,6 +32,7 @@
   <xsl:template match="authoring:internalOnly" />
   <xsl:template match="authoring:notesForCallers" />
   <xsl:template match="authoring:notesForImplementers" />
+  <xsl:template match="authoring:notesForInheritors" />
   <xsl:template match="authoring:overload" />
   <xsl:template match="authoring:relatedTopics" />
 
@@ -47,8 +48,13 @@
   <xsl:template match="authoring:remarks">
     <remarks>
       <xsl:apply-templates />
-      <xsl:for-each select="../authoring:notesForImplementers">
+      <xsl:for-each select="../authoring:notesForInheritors">
         <block subset="none" type="overrides">
+          <xsl:apply-templates />
+        </block>
+      </xsl:for-each>
+      <xsl:for-each select="../authoring:notesForImplementers">
+        <block subset="none" type="behaviors">
           <xsl:apply-templates />
         </block>
       </xsl:for-each>
