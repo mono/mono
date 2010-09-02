@@ -50,24 +50,30 @@ namespace System.Linq.Parallel
 		internal ParallelQueryEnumerator (QueryBaseNode<T> node)
 		{
 			this.options = ParallelExecuter.CheckQuery (node);
-			Setup ();
 
-			// Launch adding to the buffer asynchronously via Tasks
-			if (options.BehindOrderGuard.Value) {
-				waitAction = ParallelExecuter.ProcessAndCallback (node,
-				                                                  ordEnumerator.Add,
-				                                                  ordEnumerator.EndParticipation,
-				                                                  ordEnumerator.Stop,
-				                                                  options);
+			if (options.ShouldBeSequential) {
+				IEnumerable<T> buffer = node.GetSequential ();
+				loader = buffer.GetEnumerator ();
 			} else {
-				waitAction = ParallelExecuter.ProcessAndCallback (node,
-				                                                  buffer.Add,
-				                                                  buffer.CompleteAdding,
-				                                                  options);
-			}
+				Setup ();
 
-			if (options.Options.HasValue && options.Options.Value == ParallelMergeOptions.FullyBuffered)
-				waitAction ();
+				// Launch adding to the buffer asynchronously via Tasks
+				if (options.BehindOrderGuard.Value) {
+					waitAction = ParallelExecuter.ProcessAndCallback (node,
+					                                                  ordEnumerator.Add,
+					                                                  ordEnumerator.EndParticipation,
+					                                                  ordEnumerator.Stop,
+					                                                  options);
+				} else {
+					waitAction = ParallelExecuter.ProcessAndCallback (node,
+					                                                  buffer.Add,
+					                                                  buffer.CompleteAdding,
+					                                                  options);
+				}
+
+				if (options.Options.HasValue && options.Options.Value == ParallelMergeOptions.FullyBuffered)
+					waitAction ();
+			}
 		}
 
 		void Setup ()

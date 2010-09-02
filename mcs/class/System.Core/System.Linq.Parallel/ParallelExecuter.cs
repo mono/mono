@@ -93,11 +93,12 @@ namespace System.Linq.Parallel
 		                                                   Action endAction,
 		                                                   QueryOptions options)
 		{
+			CancellationTokenSource src
+				= CancellationTokenSource.CreateLinkedTokenSource (options.ImplementerToken, options.Token);
+
 			IList<IEnumerable<TElement>> enumerables = acquisitionFunc (node, options);
 
 			Task[] tasks = new Task[enumerables.Count];
-			CancellationTokenSource src
-				= CancellationTokenSource.CreateLinkedTokenSource (options.ImplementerToken, options.Token);
 
 			for (int i = 0; i < tasks.Length; i++) {
 				int index = i;
