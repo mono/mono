@@ -90,18 +90,43 @@ namespace System.ServiceModel.Discovery
 
 		static readonly Random rnd = new Random ();
 
+		UdpClient GetSenderClient (Message message)
+		{
+			if (RemoteAddress != null)
+				return client;
+				
+			var rmp = message.Properties [RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+			if (rmp == null)
+				throw new ArgumentException ("This duplex channel from the channel listener cannot send messages without RemoteEndpointMessageProperty");
+			var cli = new UdpClient ();
+Console.Error.WriteLine ("Target: " + rmp.Address + ":" + rmp.Port);
+			cli.Connect (IPAddress.Parse (rmp.Address), rmp.Port);
+			return cli;
+		}
+
 		public void Send (Message message, TimeSpan timeout)
 		{
 			if (State != CommunicationState.Opened)
 				throw new InvalidOperationException ("The UDP channel must be opened before sending a message.");
 
+			var cli = GetSenderClient (message);
+			try {
+				SendCore (cli, message, timeout);
+			} finally {
+				if (cli != client)
+					cli.Close ();
+			}
+		}
+
+		void SendCore (UdpClient cli, Message message, TimeSpan timeout)
+		{
 			var ms = new MemoryStream ();
 			message_encoder.WriteMessage (message, ms);
 			// It seems .NET sends the same Message a couple of times so that the receivers don't miss it. So, do the same hack.
 			for (int i = 0; i < 6; i++) {
 				// FIXME: use MaxAnnouncementDelay. It is fixed now.
 				Thread.Sleep (rnd.Next (50, 500));
-				client.Send (ms.GetBuffer (), (int) ms.Length);
+				cli.Send (ms.GetBuffer (), (int) ms.Length);
 			}
 		}
 
@@ -129,6 +154,9 @@ namespace System.ServiceModel.Discovery
 			ThrowIfDisposedOrNotOpen ();
 			msg = null;
 
+			if (client == null) // could be invoked while being closed.
+				return false;
+
 			byte [] bytes = null;
 			IPEndPoint ip = new IPEndPoint (IPAddress.Any, 0);
 			var ar = client.BeginReceive (delegate (IAsyncResult result) {
@@ -152,6 +180,9 @@ namespace System.ServiceModel.Discovery
 				if (message_ids.Count >= binding_element.TransportSettings.DuplicateMessageHistoryLength)
 					message_ids.Dequeue ();
 			}
+			msg.Properties.Add ("Via", LocalAddress.Uri);
+			msg.Properties.Add ("Encoder", message_encoder);
+			msg.Properties.Add (RemoteEndpointMessageProperty.Name, new RemoteEndpointMessageProperty (ip.Address.ToString (), ip.Port));
 			return true;
 		}
 
@@ -159,9 +190,7 @@ namespace System.ServiceModel.Discovery
 
 		protected override void OnAbort ()
 		{
-			if (client != null)
-				client.Close ();
-			client = null;
+			OnClose (TimeSpan.Zero);
 		}
 		
 		Action<TimeSpan> open_delegate, close_delegate;

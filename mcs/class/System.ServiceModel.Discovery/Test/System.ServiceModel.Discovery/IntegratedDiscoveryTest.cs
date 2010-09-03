@@ -71,8 +71,6 @@ namespace MonoTests.System.ServiceModel.Discovery
 			host.Open ();
 			// It does not start announcement very soon, so wait for a while.
 			Thread.Sleep (1000);
-			foreach (var edm in host.Extensions.Find<DiscoveryServiceExtension> ().PublishedEndpoints)
-				TextWriter.Null.WriteLine ("Published Endpoint: " + edm.Address);
 			try {
 				// actual client, with DiscoveryClientBindingElement
 				var be = new DiscoveryClientBindingElement () { DiscoveryEndpointProvider = new SimpleDiscoveryEndpointProvider (dEndpoint) };
@@ -133,8 +131,6 @@ namespace MonoTests.System.ServiceModel.Discovery
 			host.Open ();
 			// It does not start announcement very soon, so wait for a while.
 			Thread.Sleep (1000);
-			foreach (var edm in host.Extensions.Find<DiscoveryServiceExtension> ().PublishedEndpoints)
-				TextWriter.Null.WriteLine ("Published Endpoint: " + edm.Address);
 			try {
 				// actual client, with DiscoveryClientBindingElement
 				var be = new DiscoveryClientBindingElement () { DiscoveryEndpointProvider = new SimpleDiscoveryEndpointProvider (dEndpoint) };
@@ -157,6 +153,64 @@ namespace MonoTests.System.ServiceModel.Discovery
 			var dbinding = new CustomBinding (new HttpTransportBindingElement ());
 			var dAddress = new EndpointAddress (dHostUri);
 			var dEndpoint = new DiscoveryEndpoint (dbinding, dAddress);
+			// Without this, .NET rejects the host as if it had no service.
+			dEndpoint.IsSystemEndpoint = false;
+
+			// it internally hosts an AnnouncementService
+			using (var inst = new AnnouncementBoundDiscoveryService (aEndpoint)) {
+				var host = new ServiceHost (inst);
+				host.AddServiceEndpoint (dEndpoint);
+				try {
+					host.Open ();
+					action (serviceUri, aEndpoint, dEndpoint);
+				} finally {
+					host.Close ();
+				}
+			}
+		}
+
+		[Test]
+		public void UseCase3 ()
+		{
+			RunCodeUnderDiscoveryHost3 (new Uri ("http://localhost:37564"), new Uri ("http://localhost:4989"), UseCase3Core);
+			AssertTcpPortOpen (4989);
+			AssertTcpPortOpen (37564);
+		}
+
+		void UseCase3Core (Uri serviceUri, AnnouncementEndpoint aEndpoint, DiscoveryEndpoint dEndpoint)
+		{
+			// actual service, announcing to 4989
+			var host = new ServiceHost (typeof (TestService));
+			var sdb = new ServiceDiscoveryBehavior ();
+			sdb.AnnouncementEndpoints.Add (aEndpoint);
+			host.Description.Behaviors.Add (sdb);
+			host.AddServiceEndpoint (typeof (ITestService), new BasicHttpBinding (), serviceUri);
+			host.Open ();
+			// It does not start announcement very soon, so wait for a while.
+			Thread.Sleep (1000);
+			try {
+				// actual client, with DiscoveryClientBindingElement
+				var be = new DiscoveryClientBindingElement () { DiscoveryEndpointProvider = new SimpleDiscoveryEndpointProvider (dEndpoint) };
+				var clientBinding = new CustomBinding (new BasicHttpBinding ());
+				clientBinding.Elements.Insert (0, be);
+				var cf = new ChannelFactory<ITestService> (clientBinding, DiscoveryClientBindingElement.DiscoveryEndpointAddress);
+				var ch = cf.CreateChannel ();
+				Assert.AreEqual ("TEST", ch.Echo ("TEST"), "#1");
+				cf.Close ();
+			} finally {
+				host.Close ();
+			}
+		}
+
+		void RunCodeUnderDiscoveryHost3 (Uri serviceUri, Uri aHostUri, Action<Uri,AnnouncementEndpoint,DiscoveryEndpoint> action)
+		{
+			// announcement service
+			var abinding = new CustomBinding (new HttpTransportBindingElement ());
+			var aAddress = new EndpointAddress (aHostUri);
+			var aEndpoint = new AnnouncementEndpoint (abinding, aAddress);
+			
+			// discovery service
+			var dEndpoint = new UdpDiscoveryEndpoint (DiscoveryVersion.WSDiscovery11, new Uri ("soap.udp://239.255.255.250:3802/"));
 			// Without this, .NET rejects the host as if it had no service.
 			dEndpoint.IsSystemEndpoint = false;
 
