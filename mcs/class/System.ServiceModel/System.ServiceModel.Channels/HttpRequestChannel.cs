@@ -164,9 +164,10 @@ namespace System.ServiceModel.Channels
 							s.Write (buffer.GetBuffer (), 0, (int) buffer.Length);
 						web_request.BeginGetResponse (GotResponse, result);
 					} catch (WebException ex) {
-#if !NET_2_1 || SMCS_OR_TUNER_BUG_FIXED
 						switch (ex.Status) {
+#if !NET_2_1
 						case WebExceptionStatus.NameResolutionFailure:
+#endif
 						case WebExceptionStatus.ConnectFailure:
 							result.Complete (new EndpointNotFoundException (new EndpointNotFoundException ().Message, ex));
 							break;
@@ -174,9 +175,6 @@ namespace System.ServiceModel.Channels
 							result.Complete (ex);
 							break;
 						}
-#else
-						result.Complete (ex);
-#endif
 					} catch (Exception ex) {
 						result.Complete (ex);
 					}
