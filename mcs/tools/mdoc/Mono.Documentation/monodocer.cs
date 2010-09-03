@@ -42,10 +42,16 @@ class MDocUpdater : MDocCommand
 
 	string since;
 
-	static readonly MemberFormatter csharpFullFormatter  = new CSharpFullMemberFormatter ();
-	static readonly MemberFormatter csharpFormatter      = new CSharpMemberFormatter ();
 	static readonly MemberFormatter docTypeFormatter     = new DocTypeMemberFormatter ();
 	static readonly MemberFormatter filenameFormatter    = new FileNameMemberFormatter ();
+
+	static MemberFormatter[] typeFormatters = new MemberFormatter[]{
+		new CSharpMemberFormatter (),
+	};
+
+	static MemberFormatter[] memberFormatters = new MemberFormatter[]{
+		new CSharpFullMemberFormatter (),
+	};
 
 	internal static readonly MemberFormatter slashdocFormatter    = new SlashDocMemberFormatter ();
 
@@ -866,7 +872,7 @@ class MDocUpdater : MDocCommand
 			foreach (DocsNodeInfo info in docEnum.GetDocumentationMembers (basefile, type)) {
 				XmlElement oldmember  = info.Node;
 				IMemberReference oldmember2 = info.Member;
-	 			string sig = oldmember2 != null ? MakeMemberSignature(oldmember2) : null;
+				string sig = oldmember2 != null ? memberFormatters [0].GetDeclaration (oldmember2) : null;
 
 				// Interface implementations and overrides are deleted from the docs
 				// unless the overrides option is given.
@@ -907,7 +913,7 @@ class MDocUpdater : MDocCommand
 			foreach (IMemberReference m in type.GetMembers()) {
 				if (m is TypeDefinition) continue;
 				
-				string sig = MakeMemberSignature(m);
+				string sig = memberFormatters [0].GetDeclaration (m);
 				if (sig == null) continue;
 				if (seenmembers.ContainsKey(sig)) continue;
 				
@@ -1114,7 +1120,7 @@ class MDocUpdater : MDocCommand
 
 	public XmlElement StubType (TypeDefinition type, string output)
 	{
-		string typesig = MakeTypeSignature(type);
+		string typesig = typeFormatters [0].GetDeclaration (type);
 		if (typesig == null) return null; // not publicly visible
 		
 		XmlDocument doc = new XmlDocument();
@@ -1140,8 +1146,11 @@ class MDocUpdater : MDocCommand
 		root.SetAttribute("Name", GetDocTypeName (type));
 		root.SetAttribute("FullName", GetDocTypeFullName (type));
 
-		WriteElementAttribute(root, "TypeSignature[@Language='C#']", "Language", "C#");
-		WriteElementAttribute(root, "TypeSignature[@Language='C#']", "Value", MakeTypeSignature(type));
+		foreach (MemberFormatter f in typeFormatters) {
+			string element = "TypeSignature[@Language='" + f.Language + "']";
+			WriteElementAttribute (root, element, "Language", f.Language);
+			WriteElementAttribute (root, element, "Value", f.GetDeclaration (type));
+		}
 		
 		XmlElement ass = WriteElement(root, "AssemblyInfo");
 		WriteElementText(ass, "AssemblyName", type.Module.Assembly.Name.Name);
@@ -1251,8 +1260,12 @@ class MDocUpdater : MDocCommand
 	{
 		XmlElement me = (XmlElement) info.Node;
 		IMemberReference mi = info.Member;
-		WriteElementAttribute(me, "MemberSignature[@Language='C#']", "Language", "C#");
-		WriteElementAttribute(me, "MemberSignature[@Language='C#']", "Value", MakeMemberSignature(mi));
+
+		foreach (MemberFormatter f in memberFormatters) {
+			string element = "MemberSignature[@Language='" + f.Language + "']";
+			WriteElementAttribute (me, element, "Language", f.Language);
+			WriteElementAttribute (me, element, "Value", f.GetDeclaration (mi));
+		}
 
 		WriteElementText(me, "MemberType", GetMemberType(mi));
 		
@@ -2036,7 +2049,7 @@ class MDocUpdater : MDocCommand
 		IMemberReference mi = info.Member;
 		if (mi is TypeDefinition) return null;
 
-		string sigs = MakeMemberSignature(mi);
+		string sigs = memberFormatters [0].GetDeclaration (mi);
 		if (sigs == null) return null; // not publicly visible
 		
 		// no documentation for property/event accessors.  Is there a better way of doing this?
@@ -2097,15 +2110,9 @@ class MDocUpdater : MDocCommand
 	}
 	
 	/// SIGNATURE GENERATION FUNCTIONS
-	
-	static string MakeTypeSignature (TypeReference type)
+	internal static bool IsPrivate (IMemberReference mi)
 	{
-		return csharpFormatter.GetDeclaration (type);
-	}
-
-	internal static string MakeMemberSignature (IMemberReference mi)
-	{
-		return csharpFullFormatter.GetDeclaration (mi);
+		return memberFormatters [0].GetDeclaration (mi) == null;
 	}
 
 	internal static string GetMemberType (IMemberReference mi)
@@ -2602,8 +2609,8 @@ class DocumentationEnumerator {
 			if (mi is TypeDefinition) continue;
 			if (MDocUpdater.GetMemberType(mi) != membertype) continue;
 
-			string sig = MDocUpdater.MakeMemberSignature(mi);
-			if (sig == null) continue; // not publicly visible
+			if (MDocUpdater.IsPrivate (mi))
+				continue;
 
 			ParameterDefinitionCollection pis = null;
 			string[] typeParams = null;
@@ -2888,7 +2895,7 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 								oldmember.AppendChild (ms);
 							}
 							oldmember.SetAttribute ("__monodocer-seen__", "true");
-							Console.WriteLine ("Member Added: {0}", MDocUpdater.MakeMemberSignature (m));
+							Console.WriteLine ("Member Added: {0}", oldmember.SelectSingleNode("MemberSignature[@Language='C#']/@Value").InnerText);
 							app.additions++;
 						}
 					}
@@ -3192,6 +3199,11 @@ public enum MemberFormatterState {
 }
 
 public abstract class MemberFormatter {
+
+	public virtual string Language {
+		get {return "";}
+	}
+
 	public virtual string GetName (IMemberReference member)
 	{
 		TypeReference type = member as TypeReference;
@@ -3509,6 +3521,10 @@ public abstract class MemberFormatter {
 }
 
 class CSharpFullMemberFormatter : MemberFormatter {
+
+	public override string Language {
+		get {return "C#";}
+	}
 
 	protected override StringBuilder AppendNamespace (StringBuilder buf, TypeReference type)
 	{
