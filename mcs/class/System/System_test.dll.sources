@@ -110,6 +110,7 @@ System.Collections.Specialized/StringCollectionTest.cs
 System.Collections.Specialized/StringDictionaryTest.cs
 System.ComponentModel/ArrayConverterTests.cs
 System.ComponentModel/AsyncOperationManagerTest.cs
+System.ComponentModel/AttributeCollectionTest.cs
 System.ComponentModel/AttributeProviderAttributeTest.cs
 System.ComponentModel/BackgroundWorkerTest.cs
 System.ComponentModel/BindingListTest.cs
