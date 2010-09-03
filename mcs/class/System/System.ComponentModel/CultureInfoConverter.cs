@@ -88,11 +88,7 @@ namespace System.ComponentModel
 		{
 			string culture_string = value as string;
 			if (culture_string != null) {
-#if NET_2_0
 				if (String.Compare (culture_string, "(Default)", false) == 0)
-#else
-				if (String.Compare (culture_string, "(Default)", true) == 0)
-#endif
 					return CultureInfo.InvariantCulture;
 
 				try {
