@@ -48,18 +48,13 @@ namespace System.ComponentModel
 				attrList = attributes;
 		}
 		
-#if NET_2_0
 		public AttributeCollection (params Attribute[] attributes)
-#else
-		public AttributeCollection (Attribute[] attributes)
-#endif
 		{
 			if (attributes != null)
 				for (int i = 0; i < attributes.Length; i++)
 					attrList.Add (attributes[i]);
 		}
 
-#if NET_2_0
 		public static AttributeCollection FromExisting (AttributeCollection existing, params Attribute [] newAttributes)
 		{
 			if (existing == null)
@@ -70,7 +65,6 @@ namespace System.ComponentModel
 				ret.attrList.AddRange (newAttributes);
 			return ret;
 		}
-#endif
 
 		public bool Contains (Attribute attr)
 		{
