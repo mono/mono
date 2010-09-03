@@ -652,7 +652,7 @@ namespace System.ServiceModel.MonoInternal
 					msg.Headers.MessageId = new UniqueId ();
 				if (msg.Headers.ReplyTo == null)
 					msg.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
-				if (msg.Headers.To == null)
+				if (msg.Headers.To == null && RemoteAddress != null)
 					msg.Headers.To = RemoteAddress.Uri;
 			}
 
