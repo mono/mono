@@ -156,7 +156,7 @@ namespace System.IO {
 		static StreamReader TryOpen (string name)
 		{
 			if (File.Exists (name))
-				return new StreamReader (name, Encoding.ASCII);
+				return new StreamReader (name);
 			return null;
 		}
 
