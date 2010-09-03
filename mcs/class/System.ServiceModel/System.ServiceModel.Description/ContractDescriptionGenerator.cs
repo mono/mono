@@ -228,13 +228,7 @@ namespace System.ServiceModel.Description
 		{
 			string name = oca.Name ?? (oca.AsyncPattern ? mi.Name.Substring (5) : mi.Name);
 
-			OperationDescription od = null;
-			foreach (OperationDescription iter in cd.Operations) {
-				if (iter.Name == name) {
-					od = iter;
-					break;
-				}
-			}
+			OperationDescription od = cd.Operations.FirstOrDefault (o => o.Name == name);
 			if (od == null) {
 				od = new OperationDescription (name, cd);
 				od.IsOneWay = oca.IsOneWay;
@@ -263,7 +257,7 @@ namespace System.ServiceModel.Description
 			}
 			else if (oca.AsyncPattern && od.BeginMethod != null ||
 				 !oca.AsyncPattern && od.SyncMethod != null)
-				throw new InvalidOperationException ("A contract cannot have two operations that have the identical names and different set of parameters.");
+				throw new InvalidOperationException (String.Format ("contract '{1}' cannot have two operations for '{0}' that have the identical names and different set of parameters.", name, cd.Name));
 
 			if (oca.AsyncPattern)
 				od.BeginMethod = mi;

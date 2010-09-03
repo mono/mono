@@ -72,10 +72,12 @@ namespace System.ServiceModel.MonoInternal
 
 		public ClientRuntimeChannel (ClientRuntime runtime, ContractDescription contract, TimeSpan openTimeout, TimeSpan closeTimeout, IChannel contextChannel, IChannelFactory factory, MessageVersion messageVersion, EndpointAddress remoteAddress, Uri via)
 		{
+			if (runtime == null)
+				throw new ArgumentNullException ("runtime");
 			this.runtime = runtime;
 			this.remote_address = remoteAddress;
 			if (runtime.Via == null)
-				runtime.Via = via ?? remote_address.Uri;
+				runtime.Via = via ?? (remote_address != null ?remote_address.Uri : null);
 			this.contract = contract;
 			this.message_version = messageVersion;
 			default_open_timeout = openTimeout;
