@@ -81,7 +81,7 @@ namespace System.ServiceModel.Discovery.Version11
 			}, null);
 			
 			if (!reply_find_handle.WaitOne (InnerChannel.OperationTimeout))
-				throw new TimeoutException ();
+				throw new EndpointNotFoundException ("The discovery client could not receive Find operation response within the operation timeout.");
 			try {
 				var ir = find_completed ();
 				var ret = new FindResponse ();
