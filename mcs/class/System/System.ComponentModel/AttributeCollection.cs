@@ -55,6 +55,12 @@ namespace System.ComponentModel
 					attrList.Add (attributes[i]);
 		}
 
+#if NET_4_0
+		protected AttributeCollection ()
+		{
+		}
+#endif
+
 		public static AttributeCollection FromExisting (AttributeCollection existing, params Attribute [] newAttributes)
 		{
 			if (existing == null)
@@ -184,5 +190,22 @@ namespace System.ComponentModel
 				return (Attribute) attrList [index];
 			}
 		}
+
+#if NET_4_0
+		Attribute [] attributes_arr;
+
+		// MSDN doesn't mention it, but this property is returning the same instance always.
+		protected virtual Attribute [] Attributes {
+			get {
+				if (attrList == null || attrList.Count == 0)
+					return null;
+
+				if (attributes_arr == null)
+					attributes_arr = (Attribute[]) attrList.ToArray (typeof (Attribute));
+
+				return attributes_arr;
+			}
+		}
+#endif
 	}
 }
