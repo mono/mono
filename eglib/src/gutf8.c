@@ -76,6 +76,8 @@ g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_wr
 	if (error)
 		*error = NULL;
 
+	if (items_read)
+		*items_read = 0;
 	if (items_written)
 		*items_written = 0;
 	utf16_len = utf8_to_utf16_len (str, len, items_read, error);
@@ -288,6 +290,8 @@ g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong *item
 	out_pos = 0;
 	surrogate = FALSE;
 
+	if (items_read)
+		*items_read = 0;
 	if (items_written)
 		*items_written = 0;
 	utf8_len = utf16_to_utf8_len (str, len, items_read, error);
