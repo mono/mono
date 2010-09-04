@@ -1,4 +1,4 @@
-mdoc: XmlSchema error: Invalid start element: :extra XML URI: Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 20, Position 6.
-mdoc: XmlSchema error: Element declaration for extra is missing. XML URI: Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 20, Position 6.
-mdoc: XmlSchema error: Invalid end element. There are still required content items. XML URI: Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 21, Position 5.
+mdoc: XmlSchema error: Invalid start element: :extra XML URI: Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 21, Position 6.
+mdoc: XmlSchema error: Element declaration for extra is missing. XML URI: Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 21, Position 6.
+mdoc: XmlSchema error: Invalid end element. There are still required content items. XML URI: Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml . Line 22, Position 5.
 Total validation errors: 3

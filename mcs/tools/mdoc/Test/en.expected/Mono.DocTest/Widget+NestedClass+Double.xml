@@ -1,5 +1,6 @@
 <Type Name="Widget+NestedClass+Double" FullName="Mono.DocTest.Widget+NestedClass+Double">
   <TypeSignature Language="C#" Value="public class Widget.NestedClass.Double" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit Widget/NestedClass/Double extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Double ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

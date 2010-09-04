@@ -1,5 +1,6 @@
 <Type Name="GenericBase&lt;U&gt;" FullName="Mono.DocTest.Generic.GenericBase&lt;U&gt;">
   <TypeSignature Language="C#" Value="public class GenericBase&lt;U&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit GenericBase`1&lt;U&gt; extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -20,6 +21,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public GenericBase ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -32,6 +34,7 @@
     </Member>
     <Member MemberName="BaseMethod&lt;S&gt;">
       <MemberSignature Language="C#" Value="public U BaseMethod&lt;S&gt; (S genericParameter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !U BaseMethod&lt;S&gt;(!!S genericParameter) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -62,6 +65,7 @@
     </Member>
     <Member MemberName="ConstField1">
       <MemberSignature Language="C#" Value="public const int ConstField1;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 ConstField1" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -78,6 +82,7 @@
     </Member>
     <Member MemberName="MyEvent">
       <MemberSignature Language="C#" Value="public event EventHandler&lt;Mono.DocTest.Generic.GenericBase&lt;U&gt;.FooEventArgs&gt; MyEvent;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class Mono.DocTest.Generic.GenericBase`1/FooEventArgs&lt;!U&gt;&gt; MyEvent" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -94,6 +99,7 @@
     </Member>
     <Member MemberName="op_Explicit">
       <MemberSignature Language="C#" Value="public static U op_Explicit (Mono.DocTest.Generic.GenericBase&lt;U&gt; list);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname !U op_Explicit(class Mono.DocTest.Generic.GenericBase`1&lt;!U&gt; list) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -115,6 +121,7 @@
     </Member>
     <Member MemberName="StaticField1">
       <MemberSignature Language="C#" Value="public static readonly Mono.DocTest.Generic.GenericBase&lt;U&gt; StaticField1;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class Mono.DocTest.Generic.GenericBase`1&lt;!U&gt; StaticField1" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

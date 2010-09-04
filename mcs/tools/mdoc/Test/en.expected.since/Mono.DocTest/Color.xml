@@ -1,5 +1,6 @@
 <Type Name="Color" FullName="Mono.DocTest.Color">
   <TypeSignature Language="C#" Value="public enum Color" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Color extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="AnotherGreen">
       <MemberSignature Language="C#" Value="AnotherGreen" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Color AnotherGreen = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -29,6 +31,7 @@
     </Member>
     <Member MemberName="Blue">
       <MemberSignature Language="C#" Value="Blue" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Color Blue = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -43,6 +46,7 @@
     </Member>
     <Member MemberName="Green">
       <MemberSignature Language="C#" Value="Green" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Color Green = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -57,6 +61,7 @@
     </Member>
     <Member MemberName="Red">
       <MemberSignature Language="C#" Value="Red" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Color Red = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
