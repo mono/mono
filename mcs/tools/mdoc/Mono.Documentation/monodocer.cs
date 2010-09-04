@@ -3570,10 +3570,12 @@ class ILFullMemberFormatter : MemberFormatter {
 		case "System.Int16":   return "int16";
 		case "System.Int32":   return "int32";
 		case "System.Int64":   return "int64";
+		case "System.IntPtr":  return "native int";
 
 		case "System.UInt16":  return "unsigned int16";
 		case "System.UInt32":  return "unsigned int32";
 		case "System.UInt64":  return "unsigned int64";
+		case "System.UIntPtr": return "native unsigned int";
 
 		case "System.Single":  return "float32";
 		case "System.Double":  return "float64";
