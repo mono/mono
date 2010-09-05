@@ -152,5 +152,13 @@ namespace System.ComponentModel
 			return true;
 		}
 
+#if NET_4_0
+		protected virtual string GetCultureName (CultureInfo culture)
+		{
+			// .Net doesn't throw ArgumentNullException here, ugh.
+			return culture.Name;
+		}
+#endif
+
 	}
 }
