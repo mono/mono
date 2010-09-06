@@ -3541,22 +3541,16 @@ class ILFullMemberFormatter : MemberFormatter {
 		}
 	}
 
-	private bool WithinExtends;
-
 	protected override StringBuilder AppendNamespace (StringBuilder buf, TypeReference type)
 	{
 		if (GetBuiltinType (type.FullName) != null)
 			return buf;
-		if (type.FullName == "System.Object")
-			return buf;
 		string ns = DocUtils.GetNamespace (type);
 		if (ns != null && ns.Length > 0) {
-			if (!WithinExtends) {
-				if (type.IsValueType)
-					buf.Append ("valuetype ");
-				else
-					buf.Append ("class ");
-			}
+			if (type.IsValueType)
+				buf.Append ("valuetype ");
+			else
+				buf.Append ("class ");
 			buf.Append (ns).Append ('.');
 		}
 		return buf;
@@ -3583,7 +3577,7 @@ class ILFullMemberFormatter : MemberFormatter {
 		case "System.Char":    return "char";
 		case "System.Void":    return "void";
 		case "System.String":  return "string";
-		// case "System.Object":  return "object";
+		case "System.Object":  return "object";
 		}
 		return null;
 	}
@@ -3602,14 +3596,7 @@ class ILFullMemberFormatter : MemberFormatter {
 		string s = GetBuiltinType (type.FullName);
 		if (s != null)
 			return buf.Append (s);
-		if (type.FullName == "System.Object") {
-			if (WithinExtends) {
-				WithinExtends = false;
-				return buf.Append ("System.Object");
-			}
-			return buf.Append ("object");
-		}
-		return AppendTypeName (buf, type.Name);
+		return base.AppendTypeName (buf, type);
 	}
 
 	private StringBuilder AppendGenericParameterConstraints (StringBuilder buf, GenericParameter type)
@@ -3677,14 +3664,16 @@ class ILFullMemberFormatter : MemberFormatter {
 		MemberFormatterState = state;
 		var full = new ILFullMemberFormatter ();
 		if (type.BaseType != null) {
-			full.WithinExtends = true;
-			buf.Append (" extends ").Append (full.GetName (type.BaseType));
-			full.WithinExtends = false;
+			buf.Append (" extends ");
+			if (type.BaseType.FullName == "System.Object")
+				buf.Append ("System.Object");
+			else
+				buf.Append (full.GetName (type.BaseType).Substring ("class ".Length));
 		}
 		bool first = true;
-		foreach (var info in type.Interfaces.Cast<TypeReference>()
-				.Select (i => new {Interface = i, Name = full.GetName (i)})
-				.OrderBy (i => i.Name)) {
+		foreach (var name in type.Interfaces.Cast<TypeReference>()
+				.Select (i => full.GetName (i))
+				.OrderBy (n => n)) {
 			if (first) {
 				buf.Append (" implements ");
 				first = false;
@@ -3692,9 +3681,7 @@ class ILFullMemberFormatter : MemberFormatter {
 			else {
 				buf.Append (", ");
 			}
-			if (info.Interface.IsGenericType ())
-				buf.Append ("class ");
-			buf.Append (info.Name);
+			buf.Append (name);
 		}
 
 		return buf.ToString ();
