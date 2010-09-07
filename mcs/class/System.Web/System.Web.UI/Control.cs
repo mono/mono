@@ -821,6 +821,8 @@ namespace System.Web.UI
 			uniqueID = null;
 #if NET_4_0
 			ClearCachedClientID ();
+#else
+			clientID = null;
 #endif
 			if (!HasControls ())
 				return;
