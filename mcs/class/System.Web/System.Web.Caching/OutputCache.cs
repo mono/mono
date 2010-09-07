@@ -41,9 +41,12 @@ namespace System.Web.Caching
 		internal const string DEFAULT_PROVIDER_NAME = "AspNetInternalProvider";
 		
 		static readonly object initLock = new object ();
+		static readonly object defaultProviderInitLock = new object();
+		
 		static bool initialized;
 		static string defaultProviderName;
 		static OutputCacheProviderCollection providers;
+		static OutputCacheProvider defaultProvider;
 		
 		public static string DefaultProviderName {
 			get {
@@ -55,6 +58,20 @@ namespace System.Web.Caching
 			}
 		}
 
+		internal static OutputCacheProvider DefaultProvider {
+			get {
+				if (defaultProvider == null) {
+					string providerName = DefaultProviderName;
+					lock (defaultProviderInitLock) {
+						if (defaultProvider == null)
+							defaultProvider = new InMemoryOutputCacheProvider ();
+					}
+				}
+
+				return defaultProvider;
+			}
+		}
+		
 		public static OutputCacheProviderCollection Providers {
 			get {
 				Init ();
@@ -88,6 +105,18 @@ namespace System.Web.Caching
 			new BinaryFormatter ().Serialize (stream, data);
 		}
 
+		internal static OutputCacheProvider GetProvider (string providerName)
+		{
+			if (String.IsNullOrEmpty (providerName))
+				return null;
+
+			if (String.Compare (providerName, DEFAULT_PROVIDER_NAME, StringComparison.Ordinal) == 0)
+				return DefaultProvider;
+
+			OutputCacheProviderCollection providers = OutputCache.Providers;
+			return (providers != null ? providers [providerName] : null);
+		}
+		
 		static bool IsInvalidType (object data)
 		{
 			return !(data is MemoryResponseElement) &&

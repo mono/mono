@@ -29,16 +29,52 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.ServiceModel.Discovery.Version11;
+using System.ServiceModel.Discovery.VersionApril2005;
+using System.ServiceModel.Discovery.VersionCD1;
 
 namespace System.ServiceModel.Discovery
 {
 	public sealed class DiscoveryVersion
 	{
+		internal const string Namespace11 = "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01";
+		internal const string NamespaceApril2005 = "http://schemas.xmlsoap.org/ws/2005/04/discovery";
+		internal const string NamespaceCD1 = "http://docs.oasis-open.org/ws-dd/ns/discovery/2008/09";
+
 		static DiscoveryVersion ()
 		{
-			v11 = new DiscoveryVersion ("WSDiscovery11");
-			april2005 = new DiscoveryVersion ("WSDiscoveryApril2005");
-			cd1 = new DiscoveryVersion ("WSDiscoveryCD1");
+			v11 = new DiscoveryVersion ("WSDiscovery11",
+				Namespace11,
+				"urn:docs-oasis-open-org:ws-dd:ns:discovery:2009:01",
+				MessageVersion.Soap12WSAddressing10,
+				typeof (Version11.IAnnouncementContract11),
+				typeof (AnnouncementClient11),
+				typeof (IDiscoveryProxyContract11),
+				typeof (DiscoveryProxyClient11),
+				typeof (IDiscoveryTargetContract11),
+				typeof (DiscoveryTargetClient11));
+
+			april2005 = new DiscoveryVersion ("WSDiscoveryApril2005",
+				NamespaceApril2005,
+				"urn:schemas-xmlsoap-org:ws:2005:04:discovery",
+				MessageVersion.Soap12WSAddressingAugust2004,
+				typeof (IAnnouncementContractApril2005),
+				typeof (AnnouncementClientApril2005),
+				typeof (IDiscoveryProxyContractApril2005),
+				typeof (DiscoveryProxyClientApril2005),
+				typeof (IDiscoveryTargetContractApril2005),
+				typeof (DiscoveryTargetClientApril2005));
+
+			cd1 = new DiscoveryVersion ("WSDiscoveryCD1",
+				NamespaceCD1,
+				"urn:docs-oasis-open-org:ws-dd:discovery:2008:09",
+				MessageVersion.Soap12WSAddressingAugust2004,
+				typeof (IAnnouncementContractCD1),
+				typeof (AnnouncementClientCD1),
+				typeof (IDiscoveryProxyContractCD1),
+				typeof (DiscoveryProxyClientCD1),
+				typeof (IDiscoveryTargetContractCD1),
+				typeof (DiscoveryTargetClientCD1));
 		}
 
 		static readonly DiscoveryVersion v11, april2005, cd1;
@@ -67,19 +103,35 @@ namespace System.ServiceModel.Discovery
 			case "WSDiscoveryCD1":
 				return cd1;
 			default:
-				throw new ArgumentNullException (String.Format ("Invalid version name: {0}", name));
+				throw new ArgumentOutOfRangeException (String.Format ("Invalid version name: {0}", name));
 			}
 		}
 
-		internal DiscoveryVersion (string name)
+		internal DiscoveryVersion (string name, string ns, string adhoc, MessageVersion version, Type announcementContractType, Type announcementClientType, Type discoveryProxyContractType, Type discoveryProxyClientType, Type discoveryTargetContractType, Type discoveryTargetClientType)
 		{
 			this.Name = name;
+			this.Namespace = ns;
+			AdhocAddress = new Uri (adhoc);
+			MessageVersion = version;
+			AnnouncementContractType = announcementContractType;
+			AnnouncementClientType = announcementClientType;
+			DiscoveryProxyContractType = discoveryProxyContractType;
+			DiscoveryProxyClientType = discoveryProxyClientType;
+			DiscoveryTargetContractType = discoveryTargetContractType;
+			DiscoveryTargetClientType = discoveryTargetClientType;
 		}
 
 		public Uri AdhocAddress { get; private set; }
 		public MessageVersion MessageVersion { get; private set; }
 		public string Name { get; private set; }
 		public string Namespace { get; private set; }
+		
+		internal Type AnnouncementContractType { get; private set; }
+		internal Type AnnouncementClientType { get; private set; }
+		internal Type DiscoveryProxyContractType { get; private set; }
+		internal Type DiscoveryProxyClientType { get; private set; }
+		internal Type DiscoveryTargetContractType { get; private set; }
+		internal Type DiscoveryTargetClientType { get; private set; }
 
 		public override string ToString ()
 		{

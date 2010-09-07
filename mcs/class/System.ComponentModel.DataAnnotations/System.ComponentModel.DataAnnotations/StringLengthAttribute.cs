@@ -3,8 +3,9 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Marek Habersack <grendel@twistedcode.net>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2010 Novell Inc. http://novell.com
 //
 
 //
@@ -35,23 +36,55 @@ namespace System.ComponentModel.DataAnnotations
 	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
 	public class StringLengthAttribute : ValidationAttribute
 	{
+		public int MaximumLength { get; private set; }
+#if NET_4_0
+		public int MinimumLength { get; set; }
+#endif
 		public StringLengthAttribute (int maximumLength)
+			: base (GetDefaultErrorMessage)
 		{
+#if !NET_4_0
+			if (maximumLength < 0)
+				throw new ArgumentOutOfRangeException ("maximumLength", String.Format ("Actual value was {0}", maximumLength));
+#endif
 			MaximumLength = maximumLength;
 		}
 
-		public int MaximumLength { get; private set; }
-
-		[MonoTODO]
-		public override string FormatErrorMessage (string name)
+		string GetDefaultErrorMessage ()
 		{
-			throw new NotImplementedException ();
+			return "The field {0} must be a string with a maximum length of {1}.";
 		}
 
-		[MonoTODO]
+		public override string FormatErrorMessage (string name)
+		{
+			return String.Format (ErrorMessageString, name, MaximumLength);
+		}
+
 		public override bool IsValid (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return true;
+
+			string str = (string)value;
+			int max = MaximumLength;
+#if NET_4_0
+			int min = MinimumLength;
+
+			// LAMESPEC: documented to throw ArgumentOutOfRangeException
+			if (max < 0)
+				throw new InvalidOperationException ("The maximum length must be a nonnegative integer.");
+
+			if (min > max)
+				throw new InvalidOperationException (
+					String.Format ("The maximum value '{0}' must be greater than or equal to the minimum value '{1}'.",
+						       max, min)
+				);
+
+			int len = str.Length;
+			return len <= max && len >= min;
+#else			
+			return str.Length <= max;
+#endif
 		}
 	}
 }

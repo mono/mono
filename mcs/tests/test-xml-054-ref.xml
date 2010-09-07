@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-054</name>
+    </assembly>
+    <members>
+        <member name="T:Container`2">
+            <summary>T:Container`2</summary>
+        </member>
+        <member name="M:Container`2.#ctor">
+            <summary>M:Container`2.#ctor</summary>
+        </member>
+        <member name="T:Container`2.Element">
+            <summary>T:Container`2.Element</summary>
+        </member>
+        <member name="M:Container`2.Element.System#ICloneable#Clone">
+            <summary>M:Container`2.Element.System#ICloneable#Clone</summary>
+        </member>
+        <member name="M:Container`2.Element.Clone">
+            <summary>M:Container`2.Element.Clone</summary>
+        </member>
+        <member name="P:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#Item(System.Int32)">
+            <summary>P:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#Item(System.Int32)</summary>
+        </member>
+        <member name="P:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#IsReadOnly">
+            <summary>P:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#IsReadOnly</summary>
+        </member>
+        <member name="P:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Count">
+            <summary>P:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Count</summary>
+        </member>
+        <member name="M:Container`2.A#I#Bar``1(``0)">
+            <summary>T:Container`2.A#I#Bar``1(``0)</summary>
+        </member>
+        <member name="M:Container`2.A#I#Foo">
+            <summary>T:Container`2.A#I#Foo</summary>
+        </member>
+        <member name="M:Container`2.System#Collections#IEnumerable#GetEnumerator">
+            <summary>M:Container`2.System#Collections#IEnumerable#GetEnumerator</summary>
+        </member>
+        <member name="M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#RemoveAt(System.Int32)">
+            <summary>M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#RemoveAt(System.Int32)</summary>
+        </member>
+        <member name="M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#Insert(System.Int32,`1)">
+            <summary>M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#IndexOf(System.Int32,`1)</summary>
+        </member>
+        <member name="M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#IndexOf(`1)">
+            <summary>M:Container`2.System#Collections#Generic#IList&lt;TValue&gt;#IndexOf(`1)</summary>
+        </member>
+        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#CopyTo(`1[],System.Int32)">
+            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#CopyTo(`1[],System.Int32)</summary>
+        </member>
+        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Contains(`1)">
+            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Contains(`1)</summary>
+        </member>
+        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Clear">
+            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Clear</summary>
+        </member>
+        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Remove(`1)">
+            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Remove(`1)</summary>
+        </member>
+        <member name="M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Add(`1)">
+            <summary>M:Container`2.System#Collections#Generic#ICollection&lt;TValue&gt;#Add(`1)</summary>
+        </member>
+        <member name="M:Container`2.GetEnumerator">
+            <summary>M:Container`2.GetEnumerator</summary>
+        </member>
+    </members>
+</doc>

@@ -276,10 +276,10 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Addition:
-				if (lt == TypeManager.null_type)
+				if (lt == InternalType.Null)
 					return right;
 
-				if (rt == TypeManager.null_type)
+				if (rt == InternalType.Null)
 					return left;
 
 				//

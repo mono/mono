@@ -179,7 +179,8 @@ namespace System.Configuration
 				SectionInformation.ConfigSource = config_source;
 			
 			SectionInformation.SetRawXml (RawXml);
-			DeserializeElement (reader, false);
+			if (SectionHandler == null)
+				DeserializeElement (reader, false);
 		}
 		
 		[MonoInternalNote ("find the proper location for the decryption stuff")]

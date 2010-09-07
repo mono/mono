@@ -67,9 +67,7 @@ namespace MonoCasTests.System {
 			Assert.AreEqual ("message", e.Message, "Message");
 			Assert.IsNotNull (e.InnerException, "InnerException");
 			Assert.IsNotNull (e.ToString (), "ToString");
-#if NET_2_0
 			Assert.IsNotNull (e.Data, "Data");
-#endif
 			Assert.IsNull (e.HelpLink, "HelpLink");
 			Assert.IsNull (e.Source, "Source");
 			Assert.IsNull (e.StackTrace, "StackTrace");
@@ -86,9 +84,7 @@ namespace MonoCasTests.System {
 				Assert.AreEqual ("message", e.Message, "Message");
 				Assert.IsNotNull (e.InnerException, "InnerException");
 				Assert.IsNotNull (e.ToString (), "ToString");
-#if NET_2_0
 				Assert.IsNotNull (e.Data, "Data");
-#endif
 				Assert.IsNull (e.HelpLink, "HelpLink");
 				Assert.IsNotNull (e.Source, "Source");
 				Assert.IsNotNull (e.StackTrace, "StackTrace");
@@ -108,24 +104,10 @@ namespace MonoCasTests.System {
 			Assert.IsNull (e.HelpLink, "HelpLink");
 			Assert.IsNull (e.Source, "Source");
 			Assert.IsNull (e.StackTrace, "StackTrace");
-#if NET_2_0
 			Assert.IsNotNull (e.Data, "Data");
 			// throws under 1.x
 			Assert.IsNull (e.TargetSite, "TargetSite");
-#endif
 		}
-
-#if !NET_2_0
-		// note: TypeInformation is obsolete in 2.0
-		[Test]
-		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
-		[ExpectedException (typeof (SecurityException))]
-		public void ReflectionTypeInformationRestriction_TargetSite ()
-		{
-			Exception e = new Exception ("message", new Exception ("inner message"));
-			Assert.IsNull (e.TargetSite, "TargetSite");
-		}
-#endif
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
@@ -139,23 +121,17 @@ namespace MonoCasTests.System {
 				Assert.IsNotNull (e.InnerException, "InnerException");
 				Assert.IsNull (e.HelpLink, "HelpLink");
 				Assert.IsNotNull (e.Source, "Source");
-#if NET_2_0
 				Assert.IsNotNull (e.Data, "Data");
 				// throws under 1.x
 				Assert.IsNotNull (e.TargetSite, "TargetSite");
-#endif
 			}
 		}
 
+#if !RUN_ONDOTNET || NET_4_0 // Disabled because .net 2 fails to load dll with "Failure decoding embedded permission set object" due to "/" path
+
 		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
-#else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
-#endif
-#if NET_2_0
 		[ExpectedException (typeof (Exception))]
-#endif
 		public void Throw_FullRestriction_Fail_StackTrace ()
 		{
 			try {
@@ -168,14 +144,8 @@ namespace MonoCasTests.System {
 		}
 
 		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
-#else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
-#endif
-#if NET_2_0
 		[ExpectedException (typeof (Exception))]
-#endif
 		public void Throw_FullRestriction_Fail_ToString ()
 		{
 			try {
@@ -186,5 +156,7 @@ namespace MonoCasTests.System {
 				string s = e.ToString ();
 			}
 		}
+		
+#endif
 	}
 }

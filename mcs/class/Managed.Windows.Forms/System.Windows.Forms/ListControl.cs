@@ -334,7 +334,7 @@ namespace System.Windows.Forms
 			
 #if NET_2_0
 			if (FormattingEnabled) {
-				ListControlConvertEventArgs e = new ListControlConvertEventArgs (retval, typeof (string), item);
+				ListControlConvertEventArgs e = new ListControlConvertEventArgs (o, typeof (string), item);
 				OnFormat (e);
 				
 				// The user provided their own value

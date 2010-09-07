@@ -1,5 +1,6 @@
 <Type Name="GenericBase&lt;U&gt;+NestedCollection" FullName="Mono.DocTest.Generic.GenericBase&lt;U&gt;+NestedCollection">
   <TypeSignature Language="C#" Value="public class GenericBase&lt;U&gt;.NestedCollection" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit GenericBase`1/NestedCollection&lt;U&gt; extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -18,6 +19,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public NestedCollection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

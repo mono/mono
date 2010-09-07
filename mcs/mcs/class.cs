@@ -90,7 +90,7 @@ namespace Mono.CSharp {
 				return tc.GetSignatureForError ();
 			}
 
-			public ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+			public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 			{
 				return null;
 			}
@@ -850,7 +850,7 @@ namespace Mono.CSharp {
 
 				if (fne_resolved.Type.IsInterface) {
 					for (int ii = 0; ii < j; ++ii) {
-						if (TypeManager.IsEqual (fne_resolved.Type, ifaces [ii].Type)) {
+						if (fne_resolved.Type == ifaces [ii].Type) {
 							Report.Error (528, Location, "`{0}' is already listed in interface list",
 								fne_resolved.GetSignatureForError ());
 							break;
@@ -954,10 +954,10 @@ namespace Mono.CSharp {
 					if (o_b == null || o_b.OperatorType != matching_type)
 						continue;
 
-					if (!TypeManager.IsEqual (o_a.ReturnType, o_b.ReturnType))
+					if (!TypeSpecComparer.IsEqual (o_a.ReturnType, o_b.ReturnType))
 						continue;
 
-					if (!TypeSpecComparer.Default.Equals (o_a.ParameterTypes, o_b.ParameterTypes))
+					if (!TypeSpecComparer.Equals (o_a.ParameterTypes, o_b.ParameterTypes))
 						continue;
 
 					operators[i] = null;
@@ -1053,7 +1053,17 @@ namespace Mono.CSharp {
 
 			if (proxy_method == null) {
 				string name = CompilerGeneratedClass.MakeName (method.Name, null, "BaseCallProxy", hoisted_base_call_proxies.Count);
-				var cloned_params = ParametersCompiled.CreateFullyResolved (method.Parameters.FixedParameters, method.Parameters.Types);
+				var base_parameters = method.Parameters.FixedParameters as Parameter[];
+				if (base_parameters == null) {
+					base_parameters = new Parameter[method.Parameters.Count];
+					for (int i = 0; i < base_parameters.Length; ++i) {
+						var base_param = method.Parameters.FixedParameters[i];
+						base_parameters[i] = new Parameter (new TypeExpression (method.Parameters.Types[i], Location),
+							base_param.Name, base_param.ModFlags, null, Location);
+					}
+				}
+
+				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, method.Parameters.Types);
 				if (method.Parameters.HasArglist) {
 					cloned_params.FixedParameters[0] = new Parameter (null, "__arglist", Parameter.Modifier.NONE, null, Location);
 					cloned_params.Types[0] = TypeManager.runtime_argument_handle_type;
@@ -1210,9 +1220,8 @@ namespace Mono.CSharp {
 			if (instance_constructors != null) {
 				foreach (MethodCore m in instance_constructors) {
 					var p = m.ParameterInfo;
-					if (!p.IsEmpty && p[p.Count - 1].HasDefaultValue) {
-						var rc = new ResolveContext (m);
-						p.ResolveDefaultValues (rc);
+					if (!p.IsEmpty) {
+						p.ResolveDefaultValues (m);
 					}
 				}
 			}
@@ -1220,20 +1229,15 @@ namespace Mono.CSharp {
 			if (methods != null) {
 				foreach (MethodCore m in methods) {
 					var p = m.ParameterInfo;
-					if (!p.IsEmpty && p[p.Count - 1].HasDefaultValue) {
-						var rc = new ResolveContext (m);
-						p.ResolveDefaultValues (rc);
+					if (!p.IsEmpty) {
+						p.ResolveDefaultValues (m);
 					}
 				}
 			}
 
 			if (indexers != null) {
 				foreach (Indexer i in indexers) {
-					var p = i.ParameterInfo;
-					if (p[p.Count - 1].HasDefaultValue) {
-					    var rc = new ResolveContext (i);
-						p.ResolveDefaultValues (rc);
-					}
+					i.ParameterInfo.ResolveDefaultValues (i);
 				}
 			}
 
@@ -1479,7 +1483,7 @@ namespace Mono.CSharp {
 
 						ct.CheckConstraints (this);
 
-						if (ct.HasDynamicArguments ()) {
+						if (ct.HasDynamicArguments () && !IsCompilerGenerated) {
 							Report.Error (1966, iface.Location,
 								"`{0}': cannot implement a dynamic interface `{1}'",
 								GetSignatureForError (), iface.GetSignatureForError ());
@@ -1515,25 +1519,6 @@ namespace Mono.CSharp {
 			if (type_params != null) {
 				foreach (var tp in type_params) {
 					tp.CheckGenericConstraints ();
-				}
-			}
-
-			if (!IsTopLevel) {
-				MemberSpec candidate;
-				var conflict_symbol = MemberCache.FindBaseMember (this, out candidate);
-				if (conflict_symbol == null && candidate == null) {
-					if ((ModFlags & Modifiers.NEW) != 0)
-						Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required",
-							GetSignatureForError ());
-				} else {
-					if ((ModFlags & Modifiers.NEW) == 0) {
-						if (candidate == null)
-							candidate = conflict_symbol;
-
-						Report.SymbolRelatedToPreviousError (candidate);
-						Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
-							GetSignatureForError (), candidate.GetSignatureForError ());
-					}
 				}
 			}
 
@@ -1735,6 +1720,25 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
+			if (!IsTopLevel) {
+				MemberSpec candidate;
+				var conflict_symbol = MemberCache.FindBaseMember (this, out candidate);
+				if (conflict_symbol == null && candidate == null) {
+					if ((ModFlags & Modifiers.NEW) != 0)
+						Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required",
+							GetSignatureForError ());
+				} else {
+					if ((ModFlags & Modifiers.NEW) == 0) {
+						if (candidate == null)
+							candidate = conflict_symbol;
+
+						Report.SymbolRelatedToPreviousError (candidate);
+						Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+							GetSignatureForError (), candidate.GetSignatureForError ());
+					}
+				}
+			}
+
 			if (all_tp_builders != null) {
 				int current_starts_index = CurrentTypeParametersStartIndex;
 				for (int i = 0; i < all_tp_builders.Length; i++) {
@@ -1914,7 +1918,6 @@ namespace Mono.CSharp {
 		public bool MethodModifiersValid (MemberCore mc)
 		{
 			const Modifiers vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
-			const Modifiers va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
 			const Modifiers nv = (Modifiers.NEW | Modifiers.VIRTUAL);
 			bool ok = true;
 			var flags = mc.ModFlags;
@@ -1926,13 +1929,6 @@ namespace Mono.CSharp {
 				if ((flags & vao) != 0){
 					Report.Error (112, mc.Location, "A static member `{0}' cannot be marked as override, virtual or abstract",
 						mc.GetSignatureForError ());
-					ok = false;
-				}
-			}
-
-			if (Kind == MemberKind.Struct){
-				if ((flags & va) != 0){
-					ModifiersExtensions.Error_InvalidModifier (mc.Location, "virtual or abstract", Report);
 					ok = false;
 				}
 			}
@@ -2022,7 +2018,7 @@ namespace Mono.CSharp {
 			var ifaces = spec.Interfaces;
 			if (ifaces != null) {
 				foreach (TypeSpec t in ifaces){
-					if (TypeManager.IsEqual (t, mb.InterfaceType))
+					if (t == mb.InterfaceType)
 						return true;
 				}
 			}
@@ -2125,14 +2121,14 @@ namespace Mono.CSharp {
 
 		protected override bool AddToContainer (MemberCore symbol, string name)
 		{
-			if (name == MemberName.Name) {
+			if (!(symbol is Constructor) && symbol.MemberName.Name == MemberName.Name) {
 				if (symbol is TypeParameter) {
 					Report.Error (694, symbol.Location,
 						"Type parameter `{0}' has same name as containing type, or method",
 						symbol.GetSignatureForError ());
 					return false;
 				}
-
+			
 				InterfaceMemberBase imb = symbol as InterfaceMemberBase;
 				if (imb == null || !imb.IsExplicitImpl) {
 					Report.SymbolRelatedToPreviousError (this);
@@ -2237,7 +2233,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+		public override IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 		{
 			DeclSpace top_level = Parent;
 			if (top_level != null) {
@@ -2245,11 +2241,13 @@ namespace Mono.CSharp {
 					top_level = top_level.Parent;
 
 				var candidates = NamespaceEntry.NS.LookupExtensionMethod (extensionType, this, name, arity);
-				if (candidates != null)
-					return new ExtensionMethodGroupExpr (candidates, NamespaceEntry, extensionType, loc);
+				if (candidates != null) {
+					scope = NamespaceEntry;
+					return candidates;
+				}
 			}
 
-			return NamespaceEntry.LookupExtensionMethod (extensionType, name, arity, loc);
+			return NamespaceEntry.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
 
 		protected override TypeAttributes TypeAttr {
@@ -2761,7 +2759,46 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class InterfaceMemberBase : MemberBase {
+	public abstract class InterfaceMemberBase : MemberBase
+	{
+		//
+		// Common modifiers allowed in a class declaration
+		//
+		protected const Modifiers AllowedModifiersClass =
+			Modifiers.NEW |
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.STATIC |
+			Modifiers.VIRTUAL |
+			Modifiers.SEALED |
+			Modifiers.OVERRIDE |
+			Modifiers.ABSTRACT |
+			Modifiers.UNSAFE |
+			Modifiers.EXTERN;
+
+		//
+		// Common modifiers allowed in a struct declaration
+		//
+		protected const Modifiers AllowedModifiersStruct =
+			Modifiers.NEW |
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.STATIC |
+			Modifiers.OVERRIDE |
+			Modifiers.UNSAFE |
+			Modifiers.EXTERN;
+
+		//
+		// Common modifiers allowed in a interface declaration
+		//
+		protected const Modifiers AllowedModifiersInterface =
+			Modifiers.NEW |
+			Modifiers.UNSAFE;
+
 		//
 		// Whether this is an interface member.
 		//

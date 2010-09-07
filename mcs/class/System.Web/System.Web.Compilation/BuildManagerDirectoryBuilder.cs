@@ -63,7 +63,7 @@ namespace System.Web.Compilation
 		CompilationSection CompilationSection {
 			get {
 				if (compilationSection == null)
-					compilationSection = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
+					compilationSection = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
 				return compilationSection;
 			}
 		}

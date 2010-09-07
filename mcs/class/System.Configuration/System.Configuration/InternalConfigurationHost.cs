@@ -166,6 +166,9 @@ namespace System.Configuration
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern private static string get_bundled_machine_config ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern private static string get_bundled_app_config ();
 #endif
 		
 		public virtual Stream OpenStreamForRead (string streamName)
@@ -180,8 +183,18 @@ namespace System.Configuration
 #endif
 			}
 
+			if (String.CompareOrdinal (streamName, AppDomain.CurrentDomain.SetupInformation.ConfigurationFile) == 0) {
+#if TARGET_JVM
+				throw new NotImplementedException();
+#else
+				string bundle = get_bundled_app_config ();
+				if (bundle != null)
+					return new MemoryStream (System.Text.Encoding.UTF8.GetBytes (bundle));
+#endif
+			}
+
 			if (!File.Exists (streamName))
-				throw new ConfigurationException ("File '" + streamName + "' not found");
+				return null;
 				
 			return new FileStream (streamName, FileMode.Open, FileAccess.Read);
 		}

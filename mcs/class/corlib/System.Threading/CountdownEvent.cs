@@ -22,9 +22,9 @@
 //
 //
 
-using System;
-
 #if NET_4_0 || BOOTSTRAP_NET_4_0
+
+using System;
 
 namespace System.Threading
 {	
@@ -32,7 +32,7 @@ namespace System.Threading
 	{
 		int count;
 		readonly int initial;
-		ManualResetEvent evt = new ManualResetEvent (false);
+		ManualResetEventSlim evt = new ManualResetEventSlim (false);
 		
 		public CountdownEvent (int count)
 		{
@@ -122,72 +122,34 @@ namespace System.Threading
 		
 		public void Wait ()
 		{
-			SpinWait wait = new SpinWait ();
-			while (!IsSet) {
-				wait.SpinOnce ();
-			}
+			evt.Wait ();
 		}
 		
 		public void Wait (CancellationToken token)
 		{
-			Wait (() => token.IsCancellationRequested);
+			evt.Wait (token);
 		}
 		
 		public bool Wait (int timeoutMilli)
 		{
-			if (timeoutMilli == -1) {
-				Wait ();
-				return true;
-			}
-			
-			Watch sw = Watch.StartNew ();
-			long timeout = (long)timeoutMilli;
-			
-			bool result = Wait (() => sw.ElapsedMilliseconds > timeout);
-			sw.Stop ();
-			
-			return result;
+			return evt.Wait (timeoutMilli);
 		}
 		
 		public bool Wait(TimeSpan span)
 		{
-			return Wait ((int)span.TotalMilliseconds);
+			return evt.Wait (span);
 		}
 		
 		public bool Wait (int timeoutMilli, CancellationToken token)
 		{
-			if (timeoutMilli == -1) {
-				Wait ();
-				return true;
-			}
-			
-			Watch sw = Watch.StartNew ();
-			long timeout = (long)timeoutMilli;
-			
-			bool result = Wait (() => sw.ElapsedMilliseconds > timeout || token.IsCancellationRequested);
-			sw.Stop ();
-			
-			return result;
+			return evt.Wait (timeoutMilli, token);
 		}
 		
 		public bool Wait(TimeSpan span, CancellationToken token)
 		{
-			return Wait ((int)span.TotalMilliseconds, token);
+			return evt.Wait (span, token);
 		}
-		
-		bool Wait (Func<bool> waitPredicate)
-		{
-			SpinWait wait = new SpinWait ();
-			
-			while (!IsSet) {
-				if (waitPredicate ())
-					return false;
-				wait.SpinOnce ();
-			}
-			
-			return true;
-		}
-		
+
 		public void Reset ()
 		{
 			Reset (initial);
@@ -219,7 +181,7 @@ namespace System.Threading
 		
 		public WaitHandle WaitHandle {
 			get {
-				return evt;
+				return evt.WaitHandle;
 			}
 		}
 

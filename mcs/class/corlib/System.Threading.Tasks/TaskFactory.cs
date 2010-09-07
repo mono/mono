@@ -1,4 +1,3 @@
-#if NET_4_0 || BOOTSTRAP_NET_4_0
 // 
 // TaskFactory.cs
 //  
@@ -25,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 using System;
 using System.Threading;
 
@@ -108,7 +108,7 @@ namespace System.Threading.Tasks
 		public Task StartNew (Action<object> action, object state, CancellationToken token, TaskCreationOptions options,
 		                      TaskScheduler scheduler)
 		{
-			Task t = new Task (action, state, options);
+			Task t = new Task (action, state, token, options);
 			t.Start (scheduler);
 			
 			return t;

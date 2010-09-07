@@ -58,8 +58,9 @@ namespace System.Threading.Tasks
 		
 		Action<object> action;
 		object         state;
-		EventHandler   completed;
-		
+
+		ConcurrentQueue<EventHandler> completed = new ConcurrentQueue<EventHandler> ();
+
 		CancellationToken token;			
 		
 		public Task (Action action) : this (action, TaskCreationOptions.None)
@@ -237,9 +238,10 @@ namespace System.Threading.Tasks
 			
 			AtomicBoolean launched = new AtomicBoolean ();
 			EventHandler action = delegate (object sender, EventArgs e) {
-				if (!predicate ()) return;
-				
 				if (!launched.Value && launched.TrySet ()) {
+					if (!predicate ())
+						return;
+
 					if (!ContinuationStatusCheck (kind)) {
 						continuation.CancelReal ();
 						continuation.Dispose ();
@@ -256,12 +258,13 @@ namespace System.Threading.Tasks
 				return;
 			}
 			
-			completed += action;
+			completed.Enqueue (action);
 			
 			// Retry in case completion was achieved but event adding was too late
 			if (IsCompleted)
 				action (null, EventArgs.Empty);
 		}
+
 		
 		bool ContinuationStatusCheck (TaskContinuationOptions kind)
 		{
@@ -349,11 +352,13 @@ namespace System.Threading.Tasks
 				
 				try {
 					InnerInvoke ();
+				} catch (OperationCanceledException oce) {
+					if (oce.CancellationToken == token)
+						CancelReal ();
+					else
+						HandleGenericException (oce);
 				} catch (Exception e) {
-					exception = new AggregateException (e);
-					status = TaskStatus.Faulted;
-					if (taskScheduler.FireUnobservedEvent (exception).Observed)
-						exceptionObserved = true;
+					HandleGenericException (e);
 				}
 			} else {
 				CancelReal ();
@@ -379,10 +384,7 @@ namespace System.Threading.Tasks
 			if (childTasks.IsSet && status == TaskStatus.WaitingForChildrenToComplete) {
 				status = TaskStatus.RanToCompletion;
 				
-				// Let continuation creation process
-				EventHandler tempCompleted = completed;
-				if (tempCompleted != null) 
-					tempCompleted (this, EventArgs.Empty);
+				ProcessCompleteDelegates ();
 			}
 		}
 
@@ -409,12 +411,8 @@ namespace System.Threading.Tasks
 					status = TaskStatus.WaitingForChildrenToComplete;
 			}
 		
-			if (status != TaskStatus.WaitingForChildrenToComplete) {
-				// Let continuation creation process
-				EventHandler tempCompleted = completed;
-				if (tempCompleted != null)
-					tempCompleted (this, EventArgs.Empty);
-			}
+			if (status != TaskStatus.WaitingForChildrenToComplete)
+				ProcessCompleteDelegates ();
 			
 			// Reset the current thingies
 			current = null;
@@ -427,14 +425,28 @@ namespace System.Threading.Tasks
 			
 			Dispose ();
 		}
+
+		void ProcessCompleteDelegates ()
+		{
+			EventHandler handler;
+			while (completed.TryDequeue (out handler))
+				handler (this, EventArgs.Empty);
+		}
 		#endregion
 		
 		#region Cancel and Wait related method
 		
 		internal void CancelReal ()
 		{
-			exception = new AggregateException (new TaskCanceledException (this));
 			status = TaskStatus.Canceled;
+		}
+
+		internal void HandleGenericException (Exception e)
+		{
+			exception = new AggregateException (e);
+			status = TaskStatus.Faulted;
+			if (taskScheduler.FireUnobservedEvent (exception).Observed)
+				exceptionObserved = true;
 		}
 		
 		public void Wait ()
@@ -445,6 +457,8 @@ namespace System.Threading.Tasks
 			scheduler.ParticipateUntil (this);
 			if (exception != null)
 				throw exception;
+			if (IsCanceled)
+				throw new AggregateException (new TaskCanceledException (this));
 		}
 
 		public void Wait (CancellationToken token)
@@ -482,6 +496,8 @@ namespace System.Threading.Tasks
 
 			if (exception != null)
 				throw exception;
+			if (IsCanceled)
+				throw new AggregateException (new TaskCanceledException (this));
 			
 			return !result;
 		}
@@ -639,7 +655,7 @@ namespace System.Threading.Tasks
 			// any big object references that the user might have captured in a anonymous method
 			if (disposeManagedRes) {
 				action = null;
-				completed = null;
+				completed.Clear ();
 				state = null;
 			}
 		}

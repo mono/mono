@@ -1,5 +1,6 @@
 <Type Name="AsyncCallback" FullName="System.AsyncCallback">
   <TypeSignature Language="C#" Value="public delegate void AsyncCallback(IAsyncResult ar);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AsyncCallback extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

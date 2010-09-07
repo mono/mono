@@ -6,6 +6,7 @@
 *.o
 TestResult-*.log
 TestResult-*.xml
+TestResult*.xml
 errors/?mcs.log
 errors/dummy.xml
 tests/?mcs.log

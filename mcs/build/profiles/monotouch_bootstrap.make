@@ -1,6 +1,7 @@
 #! -*- makefile -*-
 
 INTERNAL_SMCS = $(RUNTIME) $(RUNTIME_FLAGS) --security=temporary-smcs-hack $(topdir)/class/lib/$(PROFILE)/smcs.exe
+INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/basic/gmcs.exe
 
 BOOTSTRAP_PROFILE = net_2_0
 BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)

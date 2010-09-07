@@ -1,5 +1,6 @@
 <Type Name="Widget+Del" FullName="Mono.DocTest.Widget+Del">
   <TypeSignature Language="C#" Value="public delegate void Widget.Del(int i);" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed Widget/Del extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

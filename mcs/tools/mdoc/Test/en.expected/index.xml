@@ -58,6 +58,7 @@
       </Targets>
       <Member MemberName="Bar&lt;T&gt;">
         <MemberSignature Language="C#" Value="public static void Bar&lt;T&gt; (this Mono.DocTest.Generic.IFoo&lt;T&gt; self, string s);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Bar&lt;T&gt;(class Mono.DocTest.Generic.IFoo`1&lt;!!T&gt; self, string s) cil managed" />
         <MemberType>ExtensionMethod</MemberType>
         <ReturnValue>
           <ReturnType>System.Void</ReturnType>
@@ -84,6 +85,7 @@
       </Targets>
       <Member MemberName="ForEach&lt;T&gt;">
         <MemberSignature Language="C#" Value="public static void ForEach&lt;T&gt; (this System.Collections.Generic.IEnumerable&lt;T&gt; self, Action&lt;T&gt; a);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ForEach&lt;T&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; self, class System.Action`1&lt;!!T&gt; a) cil managed" />
         <MemberType>ExtensionMethod</MemberType>
         <ReturnValue>
           <ReturnType>System.Void</ReturnType>
@@ -110,6 +112,7 @@
       </Targets>
       <Member MemberName="ToDouble">
         <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;double&gt; ToDouble (this System.Collections.Generic.IEnumerable&lt;int&gt; list);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;float64&gt; ToDouble(class System.Collections.Generic.IEnumerable`1&lt;int32&gt; list) cil managed" />
         <MemberType>ExtensionMethod</MemberType>
         <ReturnValue>
           <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Double&gt;</ReturnType>
@@ -130,6 +133,7 @@
       </Targets>
       <Member MemberName="ToDouble&lt;T&gt;">
         <MemberSignature Language="C#" Value="public static double ToDouble&lt;T&gt; (this T val) where T : Mono.DocTest.Generic.IFoo&lt;T&gt;;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 ToDouble&lt;(class Mono.DocTest.Generic.IFoo`1&lt;!!T&gt;) T&gt;(!!T val) cil managed" />
         <MemberType>ExtensionMethod</MemberType>
         <ReturnValue>
           <ReturnType>System.Double</ReturnType>
@@ -158,6 +162,7 @@
       </Targets>
       <Member MemberName="ToEnumerable&lt;T&gt;">
         <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; ToEnumerable&lt;T&gt; (this T self);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; ToEnumerable&lt;T&gt;(!!T self) cil managed" />
         <MemberType>ExtensionMethod</MemberType>
         <ReturnValue>
           <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>

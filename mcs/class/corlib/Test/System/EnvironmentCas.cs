@@ -109,18 +109,26 @@ namespace MonoCasTests.System {
 			Environment.CurrentDirectory = cd;
 		}
 
+#if !RUN_ONDOTNET || NET_4_0 // Disabled because .net 2 fails to load dll with "Failure decoding embedded permission set object" due to "/" path
+
 		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
-#else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
-#endif
 		[ExpectedException (typeof (SecurityException))]
 		public void CurrentDirectory_Get_FileIOPermission ()
 		{
 			// now that the stack is set, call the method
 			string cd = Environment.CurrentDirectory;
 		}
+		
+		[Test]
+		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
+		[ExpectedException (typeof (SecurityException))]
+		public void GetFolderPath ()
+		{
+			// now that the stack is set, call the method
+			string s = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+		}		
+#endif
 
 		[Test]
 		public void CurrentDirectory_Set_FileIOPermission ()
@@ -141,7 +149,7 @@ namespace MonoCasTests.System {
 		private void CurrentDirectory_Set_FileIOPermission_Restricted ()
 		{
 			// now that the stack is set, call the method
-#if WINDOWS
+#if RUN_ONDOTNET
 			Environment.CurrentDirectory = "C:\\";
 #else
 			Environment.CurrentDirectory = "/";
@@ -175,7 +183,7 @@ namespace MonoCasTests.System {
 			// now that the stack is set, call the method
 			string s = Environment.ExpandEnvironmentVariables ("%PATH%");
 		}
-#if NET_2_0
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		[Ignore ("Protected by a LinkDemand, will throw an ExecutionEngineException to stop process")]
@@ -184,7 +192,7 @@ namespace MonoCasTests.System {
 			// now that the stack is set, call the method
 			Environment.FailFast ("bye bye");
 		}
-#endif
+
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "PATH")]
 		[ExpectedException (typeof (SecurityException))]
@@ -202,7 +210,7 @@ namespace MonoCasTests.System {
 			// now that the stack is set, call the method
 			string s = Environment.GetEnvironmentVariable ("PATH");
 		}
-#if NET_2_0
+
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "MONO")]
 		public void GetEnvironmentVariable_Target_Process ()
@@ -238,7 +246,7 @@ namespace MonoCasTests.System {
 			// it takes Unrestricted access to read from Machine
 			// and User environment variables
 		}
-#endif
+
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "PATH")]
 		[ExpectedException (typeof (SecurityException))]
@@ -251,17 +259,15 @@ namespace MonoCasTests.System {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "PLEASE_NEVER_DEFINE_THIS_VARIABLE")]
-#if !NET_2_0
 		// Before 2.0 this required Unrestricted EnvironmentPermission
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void GetEnvironmentVariables_Pass ()
 		{
 			// this will work as long as PLEASE_NEVER_DEFINE_THIS_VARIABLE
 			// isn't an environment variable
 			IDictionary d = Environment.GetEnvironmentVariables ();
 		}
-#if NET_2_0
+
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "PATH")]
 		[ExpectedException (typeof (SecurityException))]
@@ -286,20 +292,6 @@ namespace MonoCasTests.System {
 			// it takes Unrestricted access to read from Machine
 			// and User environment variables
 		}
-#endif
-
-		[Test]
-#if WINDOWS
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
-#else
-		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
-#endif
-		[ExpectedException (typeof (SecurityException))]
-		public void GetFolderPath ()
-		{
-			// now that the stack is set, call the method
-			string s = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
-		}
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Unrestricted = true)]
@@ -307,13 +299,9 @@ namespace MonoCasTests.System {
 		{
 			// we can get all folders without any EnvironmentPermission
 			// note: Mono use some environment variable to create the paths
-#if NET_2_0
 			Assert.IsNotNull (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments), "MyDocuments");
-#endif
-#if NET_1_1
 			Assert.IsNotNull (Environment.GetFolderPath (Environment.SpecialFolder.Desktop), "Desktop");
 			Assert.IsNotNull (Environment.GetFolderPath (Environment.SpecialFolder.MyComputer), "MyComputer");
-#endif
 			Assert.IsNotNull (Environment.GetFolderPath (Environment.SpecialFolder.Personal), "Personal");
 			Assert.IsNotNull (Environment.GetFolderPath (Environment.SpecialFolder.Favorites), "Favorites");
 			Assert.IsNotNull (Environment.GetFolderPath (Environment.SpecialFolder.Startup), "Startup");
@@ -387,7 +375,7 @@ namespace MonoCasTests.System {
 			// now that the stack is set, call the methods
 			OperatingSystem os = Environment.OSVersion;
 		}
-#if NET_2_0
+
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "NUMBER_OF_PROCESSORS")]
 		[ExpectedException (typeof (SecurityException))]
@@ -442,7 +430,7 @@ namespace MonoCasTests.System {
 			// it takes Unrestricted access to read from Machine
 			// and User environment variables
 		}
-#endif
+
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Write = "MONO")]
 		[ExpectedException (typeof (SecurityException))]
@@ -455,12 +443,8 @@ namespace MonoCasTests.System {
 		}
 
 		[Test]
-#if WINDOWS
-#if NET_2_0
+#if false && RUN_ONDOTNET
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
-#else
-		[FileIOPermission (SecurityAction.Deny, Read = "C:\\")]
-#endif
 		[ExpectedException (typeof (SecurityException))]
 #endif
 		public void SystemDirectory ()

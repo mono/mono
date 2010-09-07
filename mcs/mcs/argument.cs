@@ -27,7 +27,8 @@ namespace Mono.CSharp
 			Ref = 1,			// ref modifier used
 			Out = 2,			// out modifier used
 			Default = 3,		// argument created from default parameter value
-			DynamicTypeName = 4	// System.Type argument for dynamic binding
+			DynamicTypeName = 4,	// System.Type argument for dynamic binding
+			ExtensionType = 5,	// Instance expression inserted as the first argument
 		}
 
 		public readonly AType ArgType;
@@ -393,7 +394,7 @@ namespace Mono.CSharp
 		public bool HasDynamic {
 			get {
 				foreach (Argument a in args) {
-					if (a.Type == InternalType.Dynamic)
+					if (a.Type == InternalType.Dynamic && !a.IsByRef)
 						return true;
 				}
 				
@@ -442,7 +443,8 @@ namespace Mono.CSharp
 			dynamic = false;
 			foreach (Argument a in args) {
 				a.Resolve (ec);
-				dynamic |= a.Type == InternalType.Dynamic;
+				if (a.Type == InternalType.Dynamic && !a.IsByRef)
+					dynamic = true;
 			}
 		}
 

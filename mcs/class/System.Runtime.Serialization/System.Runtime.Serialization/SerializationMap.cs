@@ -602,7 +602,7 @@ namespace System.Runtime.Serialization
 		}
 	}
 
-	// FIXME: it still needs to consider ItemName/KeyName/ValueName
+	// FIXME: it still needs to consider KeyName/ValueName
 	// (especially Dictionary collection is not likely considered yet.)
 	internal partial class CollectionContractTypeMap : CollectionTypeMap
 	{
@@ -615,6 +615,8 @@ namespace System.Runtime.Serialization
 		{
 			this.a = a;
 			IsReference = a.IsReference;
+			if (!String.IsNullOrEmpty (a.ItemName))
+				element_qname = new XmlQualifiedName (a.ItemName, a.Namespace ?? CurrentNamespace);
 		}
 
 		internal override string CurrentNamespace {
@@ -1019,20 +1021,20 @@ namespace System.Runtime.Serialization
 		List<DataMemberInfo> GetMembers (Type type, QName qname, bool declared_only)
 		{
 			List<DataMemberInfo> data_members = new List<DataMemberInfo> ();
-			BindingFlags flags = AllInstanceFlags;
-			if (declared_only)
-				flags |= BindingFlags.DeclaredOnly;
+			BindingFlags flags = AllInstanceFlags | BindingFlags.DeclaredOnly;
 			
-			foreach (FieldInfo fi in type.GetFields (flags)) {
-				if (fi.GetCustomAttributes (
-					typeof (NonSerializedAttribute),
-					false).Length > 0)
-					continue;
+			for (Type t = type; t != null; t = t.BaseType) {
+				foreach (FieldInfo fi in t.GetFields (flags)) {
+					if (fi.GetCustomAttributes (
+						typeof (NonSerializedAttribute),
+						false).Length > 0)
+						continue;
 
-				if (fi.IsInitOnly)
-					throw new InvalidDataContractException (String.Format ("DataMember field {0} must not be read-only.", fi));
-				DataMemberAttribute dma = new DataMemberAttribute ();
-				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType));
+					if (fi.IsInitOnly)
+						throw new InvalidDataContractException (String.Format ("DataMember field {0} must not be read-only.", fi));
+					DataMemberAttribute dma = new DataMemberAttribute ();
+					data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType));
+				}
 			}
 
 			data_members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance); // alphabetic order.
@@ -1193,7 +1195,7 @@ namespace System.Runtime.Serialization
 			Order = dma.Order;
 			Member = member;
 			IsRequired = dma.IsRequired;
-			XmlName = dma.Name != null ? dma.Name : member.Name;
+			XmlName = XmlConvert.EncodeLocalName (dma.Name != null ? dma.Name : member.Name);
 			XmlNamespace = ns;
 			XmlRootNamespace = rootNamespce;
 			if (Member is FieldInfo)

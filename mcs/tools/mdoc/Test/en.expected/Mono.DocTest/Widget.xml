@@ -1,5 +1,6 @@
 <Type Name="Widget" FullName="Mono.DocTest.Widget">
   <TypeSignature Language="C#" Value="public class Widget : Mono.DocTest.IProcess" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Widget extends System.Object implements class Mono.DocTest.IProcess" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -19,6 +20,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Widget ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -31,6 +33,7 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Widget (Converter&lt;string,string&gt; c);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Converter`2&lt;string, string&gt; c) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -46,6 +49,7 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Widget (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string s) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -61,6 +65,7 @@
     </Member>
     <Member MemberName="AnEvent">
       <MemberSignature Language="C#" Value="public event Mono.DocTest.Widget.Del AnEvent;" />
+      <MemberSignature Language="ILAsm" Value=".event class Mono.DocTest.Widget/Del AnEvent" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -86,6 +91,7 @@
     </Member>
     <Member MemberName="AnotherEvent">
       <MemberSignature Language="C#" Value="protected event Mono.DocTest.Widget.Del AnotherEvent;" />
+      <MemberSignature Language="ILAsm" Value=".event class Mono.DocTest.Widget/Del AnotherEvent" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -96,12 +102,13 @@
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
         <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="array1">
       <MemberSignature Language="C#" Value="public long[] array1;" />
+      <MemberSignature Language="ILAsm" Value=".field public int64[] array1" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -116,6 +123,7 @@
     </Member>
     <Member MemberName="array2">
       <MemberSignature Language="C#" Value="public Mono.DocTest.Widget[,] array2;" />
+      <MemberSignature Language="ILAsm" Value=".field public class Mono.DocTest.Widget[,] array2" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -130,6 +138,7 @@
     </Member>
     <Member MemberName="classCtorError">
       <MemberSignature Language="C#" Value="public static readonly string[] classCtorError;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly string[] classCtorError" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -144,6 +153,7 @@
     </Member>
     <Member MemberName="defaultColor">
       <MemberSignature Language="C#" Value="protected static Mono.DocTest.Color defaultColor;" />
+      <MemberSignature Language="ILAsm" Value=".field family static valuetype Mono.DocTest.Color defaultColor" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -158,6 +168,7 @@
     </Member>
     <Member MemberName="Height">
       <MemberSignature Language="C#" Value="protected long Height { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Height" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -178,6 +189,7 @@
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public int this[int i] { set; get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Item(int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -205,6 +217,7 @@
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public int this[string s, int i] { set; get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Item(string, int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -226,6 +239,7 @@
     </Member>
     <Member MemberName="M0">
       <MemberSignature Language="C#" Value="public static void M0 ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void M0() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -241,6 +255,7 @@
     </Member>
     <Member MemberName="M1">
       <MemberSignature Language="C#" Value="public void M1 (char c, out float f, ref Mono.DocTest.DocValueType v);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void M1(char c, float32 f, valuetype Mono.DocTest.DocValueType v) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -291,6 +306,7 @@
     </Member>
     <Member MemberName="M2">
       <MemberSignature Language="C#" Value="public void M2 (short[] x1, int[,] x2, long[][] x3);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void M2(int16[] x1, int32[,] x2, int64[][] x3) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -313,6 +329,7 @@
     </Member>
     <Member MemberName="M3">
       <MemberSignature Language="C#" Value="protected void M3 (long[][] x3, Mono.DocTest.Widget[,,][] x4);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void M3(int64[][] x3, class Mono.DocTest.Widget[,,][] x4) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -333,6 +350,7 @@
     </Member>
     <Member MemberName="M4">
       <MemberSignature Language="C#" Value="protected void M4 (char* pc, Mono.DocTest.Color** ppf);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void M4(char* pc, valuetype Mono.DocTest.Color** ppf) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -353,6 +371,7 @@
     </Member>
     <Member MemberName="M5">
       <MemberSignature Language="C#" Value="protected void M5 (void* pv, double*[,][] pd);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void M5(void* pv, float64*[,][] pd) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -373,6 +392,7 @@
     </Member>
     <Member MemberName="M6">
       <MemberSignature Language="C#" Value="protected void M6 (int i, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void M6(int32 i, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -399,6 +419,7 @@
     </Member>
     <Member MemberName="M7">
       <MemberSignature Language="C#" Value="public void M7 (Mono.DocTest.Widget.NestedClass.Double.Triple.Quadruple a);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void M7(class Mono.DocTest.Widget/NestedClass/Double/Triple/Quadruple a) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -417,6 +438,7 @@
     </Member>
     <Member MemberName="message">
       <MemberSignature Language="C#" Value="public string message;" />
+      <MemberSignature Language="ILAsm" Value=".field public string message" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -431,6 +453,7 @@
     </Member>
     <Member MemberName="monthlyAverage">
       <MemberSignature Language="C#" Value="protected readonly double monthlyAverage;" />
+      <MemberSignature Language="ILAsm" Value=".field familyorassembly initonly float64 monthlyAverage" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -445,6 +468,7 @@
     </Member>
     <Member MemberName="op_Addition">
       <MemberSignature Language="C#" Value="public static Mono.DocTest.Widget op_Addition (Mono.DocTest.Widget x1, Mono.DocTest.Widget x2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname class Mono.DocTest.Widget op_Addition(class Mono.DocTest.Widget x1, class Mono.DocTest.Widget x2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -466,6 +490,7 @@
     </Member>
     <Member MemberName="op_Explicit">
       <MemberSignature Language="C#" Value="public static int op_Explicit (Mono.DocTest.Widget x);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname int32 op_Explicit(class Mono.DocTest.Widget x) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -485,6 +510,7 @@
     </Member>
     <Member MemberName="op_Implicit">
       <MemberSignature Language="C#" Value="public static long op_Implicit (Mono.DocTest.Widget x);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname int64 op_Implicit(class Mono.DocTest.Widget x) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -504,6 +530,7 @@
     </Member>
     <Member MemberName="op_UnaryPlus">
       <MemberSignature Language="C#" Value="public static Mono.DocTest.Widget op_UnaryPlus (Mono.DocTest.Widget x);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname class Mono.DocTest.Widget op_UnaryPlus(class Mono.DocTest.Widget x) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -523,6 +550,7 @@
     </Member>
     <Member MemberName="pCount">
       <MemberSignature Language="C#" Value="public int* pCount;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32* pCount" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -537,6 +565,7 @@
     </Member>
     <Member MemberName="PI">
       <MemberSignature Language="C#" Value="protected const double PI = 3.14159;" />
+      <MemberSignature Language="ILAsm" Value=".field familyorassembly static literal float64 PI = (3.14159)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -552,6 +581,7 @@
     </Member>
     <Member MemberName="ppValues">
       <MemberSignature Language="C#" Value="public float** ppValues;" />
+      <MemberSignature Language="ILAsm" Value=".field public float32** ppValues" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -566,6 +596,7 @@
     </Member>
     <Member MemberName="Width">
       <MemberSignature Language="C#" Value="public int Width { protected set; get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Width" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -592,6 +623,7 @@
     </Member>
     <Member MemberName="X">
       <MemberSignature Language="C#" Value="protected short X { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int16 X" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -607,6 +639,7 @@
     </Member>
     <Member MemberName="Y">
       <MemberSignature Language="C#" Value="protected double Y { set; get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 Y" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

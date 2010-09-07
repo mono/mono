@@ -14,8 +14,6 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Reflection.Emit;
 using System.Reflection;
 using System.Linq;
 
@@ -232,15 +230,18 @@ namespace Mono.CSharp {
 				}
 
 				foreach (var ce in entry.Value) {
-					if (ce.DeclaringType != iface)
-						break;
-
 					if (list.Contains (ce))
 						continue;
 
 					if (AddInterfaceMember (ce, ref list))
 						member_hash[entry.Key] = list;
 				}
+			}
+
+			// Add also all base interfaces
+			if (iface.Interfaces != null) {
+				foreach (var base_iface in iface.Interfaces)
+					AddInterface (base_iface);
 			}
 		}
 
@@ -613,6 +614,10 @@ namespace Mono.CSharp {
 				return MemberKind.Interface;
 			if (member is EventProperty)
 				return MemberKind.Event;
+			if (member is Delegate)
+				return MemberKind.Delegate;
+			if (member is Enum)
+				return MemberKind.Enum;
 
 			throw new NotImplementedException (member.GetType ().ToString ());
 		}

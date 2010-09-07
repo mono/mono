@@ -96,17 +96,21 @@
 		<GetFrameworkPath>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v4.0'"
 				TaskParameter="FrameworkVersion40Path"
-				ItemName="TargetFrameworkDirectories"/>
+				ItemName="_TargetFrameworkDirectories"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.5'"
 				TaskParameter="FrameworkVersion35Path"
-				ItemName="TargetFrameworkDirectories"/>
+				ItemName="_TargetFrameworkDirectories"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
 				TaskParameter="FrameworkVersion30Path"
-				ItemName="TargetFrameworkDirectories"/>
+				ItemName="_TargetFrameworkDirectories"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
 				TaskParameter="FrameworkVersion20Path"
-				ItemName="TargetFrameworkDirectories"/>
+				ItemName="_TargetFrameworkDirectories"/>
 		</GetFrameworkPath>
+		<CreateProperty Value="@(_TargetFrameworkDirectories)">
+			<Output TaskParameter="Value" PropertyName="TargetFrameworkDirectory"/>
+		</CreateProperty>
+
 		<Warning Text="TargetFrameworkVersion '$(TargetFrameworkVersion)' not supported by this toolset (ToolsVersion: $(MSBuildToolsVersion))."
 			Condition="'$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v3.0' and '$(TargetFrameworkVersion)' != 'v2.0'"/>
 	</Target>
@@ -151,7 +155,7 @@
 			AssemblyFiles="@(ChildProjectReferences)"
 			SearchPaths="$(AssemblySearchPaths)"
 			CandidateAssemblyFiles="@(Content);@(None)"
-			TargetFrameworkDirectories="@(TargetFrameworkDirectories)"
+			TargetFrameworkDirectories="$(TargetFrameworkDirectory)"
 			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"
 			AllowedRelatedFileExtensions="$(AllowedReferenceRelatedFileExtensions)"
 			FindDependencies="true"
@@ -236,7 +240,7 @@
 			SourceFiles="@(ReferenceCopyLocalPaths)"
 			DestinationFiles="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')"
 			SkipUnchangedFiles="true">
-			<Output TaskParameter = "DestinationFiles" ItemName = "FileWrites"/>
+			<Output TaskParameter = "DestinationFiles" ItemName = "FileWritesShareable"/>
 		</Copy>
 	</Target>
 
@@ -672,6 +676,14 @@
 		<RemoveDuplicates Inputs="@(PreviousFileWrites);@(FileWrites->'%(FullPath)')">
 			<Output TaskParameter="Filtered" ItemName="CombinedFileWrites"/>
 		</RemoveDuplicates>
+
+		<!-- CopyLocal files: In case all the projects build to common output
+		     directory, then other projects might depend on some of these
+		     CopyLocal files, so delete only the ones under *this* project
+		     directory -->
+		<FindUnderPath Path="$(MSBuildProjectDirectory)" Files="@(FileWritesShareable)">
+			<Output TaskParameter="InPath" ItemName="FileWrites"/>
+		</FindUnderPath>
 
 		<WriteLinesToFile
 			File="$(IntermediateOutputPath)$(CleanFile)"

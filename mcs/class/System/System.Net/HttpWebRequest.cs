@@ -96,14 +96,20 @@ namespace System.Net
 		bool getResponseCalled;
 		Exception saved_exc;
 		object locker = new object ();
-		bool is_ntlm_auth;
 		bool finished_reading;
 		internal WebConnection WebConnection;
 		DecompressionMethods auto_decomp;
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
 		int readWriteTimeout = 300000; // ms
-		
+
+		enum NtlmAuthState {
+			None,
+			Challenge,
+			Response
+		}
+		NtlmAuthState ntlm_auth_state;
+
 		// Constructors
 		static HttpWebRequest ()
 		{
@@ -159,10 +165,6 @@ namespace System.Net
 		}
 		
 		// Properties
-
-		internal bool UsesNtlmAuthentication {
-			get { return is_ntlm_auth; }
-		}
 
 		public string Accept {
 			get { return webHeaders ["Accept"]; }
@@ -960,10 +962,17 @@ namespace System.Net
 				webHeaders.RemoveAndAdd ("Transfer-Encoding", "chunked");
 				webHeaders.RemoveInternal ("Content-Length");
 			} else if (contentLength != -1) {
-				if (contentLength > 0)
-					continue100 = true;
-				webHeaders.SetInternal ("Content-Length", contentLength.ToString ());
+				if (ntlm_auth_state != NtlmAuthState.Challenge) {
+					if (contentLength > 0)
+						continue100 = true;
+
+					webHeaders.SetInternal ("Content-Length", contentLength.ToString ());
+				} else {
+					webHeaders.SetInternal ("Content-Length", "0");
+				}
 				webHeaders.RemoveInternal ("Transfer-Encoding");
+			} else {
+				webHeaders.RemoveInternal ("Content-Length");
 			}
 
 			if (actualVersion == HttpVersion.Version11 && continue100 &&
@@ -1107,9 +1116,11 @@ namespace System.Net
 			if (bodyBuffer != null) {
 				// The body has been written and buffered. The request "user"
 				// won't write it again, so we must do it.
-				writeStream.Write (bodyBuffer, 0, bodyBufferLength);
-				bodyBuffer = null;
-				writeStream.Close ();
+				if (ntlm_auth_state != NtlmAuthState.Challenge) {
+					writeStream.Write (bodyBuffer, 0, bodyBufferLength);
+					bodyBuffer = null;
+					writeStream.Close ();
+				}
 			} else if (method != "HEAD" && method != "GET" && method != "MKCOL" && method != "CONNECT" &&
 					method != "TRACE") {
 				if (getResponseCalled && !writeStream.RequestWritten)
@@ -1185,6 +1196,7 @@ namespace System.Net
 				}
 			}
 			r.Reset ();
+			finished_reading = false;
 			haveResponse = false;
 			webResponse.ReadAll ();
 			webResponse = null;
@@ -1237,7 +1249,7 @@ namespace System.Net
 				try {
 					redirected = CheckFinalStatus (r);
 					if (!redirected) {
-						if (is_ntlm_auth && authCompleted && webResponse != null
+						if (ntlm_auth_state != NtlmAuthState.None && authCompleted && webResponse != null
 							&& (int)webResponse.StatusCode < 400) {
 							WebConnectionStream wce = webResponse.GetResponseStream () as WebConnectionStream;
 							if (wce != null) {
@@ -1256,7 +1268,7 @@ namespace System.Net
 						r.DoCallback ();
 					} else {
 						if (webResponse != null) {
-							if (is_ntlm_auth) {
+							if (ntlm_auth_state != NtlmAuthState.None) {
 								HandleNtlmAuth (r);
 								return;
 							}
@@ -1316,18 +1328,21 @@ namespace System.Net
 				return false;
 			webHeaders [(isProxy) ? "Proxy-Authorization" : "Authorization"] = auth.Message;
 			authCompleted = auth.Complete;
-			is_ntlm_auth = (auth.Module.AuthenticationType == "NTLM");
+			bool is_ntlm = (auth.Module.AuthenticationType == "NTLM");
+			if (is_ntlm)
+				ntlm_auth_state = (NtlmAuthState)((int) ntlm_auth_state + 1);
 			return true;
 		}
 
 		// Returns true if redirected
 		bool CheckFinalStatus (WebAsyncResult result)
 		{
-			if (result.GotException)
+			if (result.GotException) {
+				bodyBuffer = null;
 				throw result.Exception;
+			}
 
 			Exception throwMe = result.Exception;
-			bodyBuffer = null;
 
 			HttpWebResponse resp = result.Response;
 			WebExceptionStatus protoError = WebExceptionStatus.ProtocolError;
@@ -1339,10 +1354,17 @@ namespace System.Net
 					if (!usedPreAuth && CheckAuthorization (webResponse, code)) {
 						// Keep the written body, so it can be rewritten in the retry
 						if (InternalAllowBuffering) {
-							bodyBuffer = writeStream.WriteBuffer;
-							bodyBufferLength = writeStream.WriteBufferLength;
+							// NTLM: This is to avoid sending data in the 'challenge' request
+							// We save it in the first request (first 401), don't send anything
+							// in the challenge request and send it in the response request along
+							// with the buffers kept form the first request.
+							if (ntlm_auth_state != NtlmAuthState.Response) {
+								bodyBuffer = writeStream.WriteBuffer;
+								bodyBufferLength = writeStream.WriteBufferLength;
+							}
 							return true;
 						} else if (method != "PUT" && method != "POST") {
+							bodyBuffer = null;
 							return true;
 						}
 						
@@ -1350,6 +1372,7 @@ namespace System.Net
 						writeStream = null;
 						webResponse.Close ();
 						webResponse = null;
+						bodyBuffer = null;
 
 						throw new WebException ("This request requires buffering " +
 									"of data for authentication or " +
@@ -1357,6 +1380,7 @@ namespace System.Net
 					}
 				}
 
+				bodyBuffer = null;
 				if ((int) code >= 400) {
 					string err = String.Format ("The remote server returned an error: ({0}) {1}.",
 								    (int) code, webResponse.StatusDescription);
@@ -1373,6 +1397,7 @@ namespace System.Net
 				}
 			}
 
+			bodyBuffer = null;
 			if (throwMe == null) {
 				bool b = false;
 				int c = (int) code;

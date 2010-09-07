@@ -448,6 +448,24 @@ namespace MonoTests.System.Windows.Forms
 			dataSourceChanged++;
 		}
 
+		[Test]
+		public void FormatEventValueType ()
+		{
+		       	string event_log = null;
+			ComboBox comboBox = new ComboBox ();
+			comboBox.FormattingEnabled = true;
+			comboBox.Format += delegate(object sender, ListControlConvertEventArgs e)
+			{
+				event_log = e.Value.GetType ().Name;
+			};
+			
+			int [] objects = new int [] { 1, 2, 3 };
+			comboBox.DataSource = objects;
+			comboBox.GetItemText (1);
+
+			Assert.AreEqual (typeof (int).Name, event_log, "#A0");
+		}
+
 		public class ListControlChild : ListControl
 		{
 			int selected_index = -1;

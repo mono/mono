@@ -69,6 +69,7 @@ namespace MonoTests.System
 
 			uri = new Uri("  \r  \n http://test.com\r\n \r\r  ");
 			Assert.AreEqual ("http://test.com/", uri.ToString(), "#k0");
+			Assert.AreEqual ("http", uri.GetComponents (UriComponents.Scheme, UriFormat.UriEscaped), "#k0-gc");
 
 			uri = new Uri ("http://contoso.com?subject=uri");
 			Assert.AreEqual ("/", uri.AbsolutePath, "#k1");
@@ -156,6 +157,7 @@ namespace MonoTests.System
 			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "../../../foo/bar/Hello World.htm?x=0:8", false);
 #if NET_2_0
 			Assert.AreEqual ("http://www.contoso.com/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri, "#rel9");
+			Assert.AreEqual ("/foo/bar/Hello%20World.htm", uri.AbsolutePath, "#rel9-path");
 #else
 			Assert.AreEqual ("http://www.contoso.com/../foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri, "#rel9");
 #endif

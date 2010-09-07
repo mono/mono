@@ -51,20 +51,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 
 [assembly: NeutralResourcesLanguage ("en-US")]
-#if !NET_2_1
-[assembly: CLSCompliant (true)]
-#endif
 [assembly: AssemblyDelaySign (true)]
-#if NET_2_1
-	[assembly: AssemblyKeyFile ("../silverlight.pub")]
-#else
-	[assembly: AssemblyKeyFile ("../silverlight.pub")] // easing InternalVisibleTo use.
-#endif
+[assembly: AssemblyKeyFile ("../winfx.pub")]
 
 [assembly: ComVisible (false)]
-#if !NET_2_1
-[assembly: AllowPartiallyTrustedCallers]
-#endif
 
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]

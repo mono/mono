@@ -10,35 +10,24 @@ namespace System.Json
 {
 	public class JsonArray : JsonValue, IList<JsonValue>
 	{
-		int known_count = -1;
 		List<JsonValue> list;
-		IEnumerable<JsonValue> source;
 
 		public JsonArray (params JsonValue [] items)
-			: this ((IEnumerable<JsonValue>) items)
 		{
+			list = new List<JsonValue> ();
+			AddRange (items);
 		}
 
 		public JsonArray (IEnumerable<JsonValue> items)
 		{
 			if (items == null)
 				throw new ArgumentNullException ("items");
-			this.source = items;
+
+			list = new List<JsonValue> (items);
 		}
 
 		public override int Count {
-			get {
-				if (known_count < 0) {
-					if (list != null)
-						known_count = list.Count;
-					else {
-						known_count = 0;
-						foreach (JsonValue v in source)
-							known_count++;
-					}
-				}
-				return known_count;
-			}
+			get { return list.Count; }
 		}
 
 		public bool IsReadOnly {
@@ -46,19 +35,8 @@ namespace System.Json
 		}
 
 		public override sealed JsonValue this [int index] {
-			get {
-				if (list != null)
-					return list [index];
-				int i = -1;
-				foreach (JsonValue v in source)
-					if (++i == index)
-						return v;
-				throw new ArgumentOutOfRangeException ("index");
-			}
-			set {
-				PopulateList ();
-				list [index] = value;
-			}
+			get { return list [index]; }
+			set { list [index] = value; }
 		}
 
 		public override JsonType JsonType {
@@ -69,7 +47,7 @@ namespace System.Json
 		{
 			if (item == null)
 				throw new ArgumentNullException ("item");
-			PopulateList ();
+
 			list.Add (item);
 		}
 
@@ -77,74 +55,50 @@ namespace System.Json
 		{
 			if (items == null)
 				throw new ArgumentNullException ("items");
-			if (list != null)
-				list.AddRange (items);
-			else
-				source = new MergedEnumerable<JsonValue> (source, items);
+
+			list.AddRange (items);
 		}
 
-		public void AddRange (JsonValue [] items)
+		public void AddRange (params JsonValue [] items)
 		{
-			AddRange ((IEnumerable<JsonValue>) items);
-		}
+			if (items == null)
+				return;
 
-		static readonly JsonValue [] empty = new JsonValue [0];
+			list.AddRange (items);
+		}
 
 		public void Clear ()
 		{
-			if (list != null)
-				list.Clear ();
-			else
-				source = empty;
+			list.Clear ();
 		}
 
 		public bool Contains (JsonValue item)
 		{
-			if (item == null)
-				throw new ArgumentNullException ("item");
-			foreach (JsonValue v in this)
-				if (item == v)
-					return true;
-			return false;
+			return list.Contains (item);
 		}
 
 		public void CopyTo (JsonValue [] array, int arrayIndex)
 		{
-			if (list != null)
-				list.CopyTo (array, arrayIndex);
-			else
-				foreach (JsonValue v in source)
-					array [arrayIndex++] = v;
+			list.CopyTo (array, arrayIndex);
 		}
 
 		public int IndexOf (JsonValue item)
 		{
-			if (item == null)
-				throw new ArgumentNullException ("item");
-			int idx = 0;
-			foreach (JsonValue v in this) {
-				if (item == v)
-					return idx;
-				idx++;
-			}
-			return -1;
+			return list.IndexOf (item);
 		}
 
 		public void Insert (int index, JsonValue item)
 		{
-			PopulateList ();
 			list.Insert (index, item);
 		}
 
 		public bool Remove (JsonValue item)
 		{
-			PopulateList ();
 			return list.Remove (item);
 		}
 
 		public void RemoveAt (int index)
 		{
-			PopulateList ();
 			list.RemoveAt (index);
 		}
 
@@ -153,8 +107,8 @@ namespace System.Json
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
 			stream.WriteByte ((byte) '[');
-			for (int i = 0; i < Count; i++) {
-				this [i].Save (stream);
+			for (int i = 0; i < list.Count; i++) {
+				list [i].Save (stream);
 				if (i < Count - 1) {
 					stream.WriteByte ((byte) ',');
 					stream.WriteByte ((byte) ' ');
@@ -163,22 +117,14 @@ namespace System.Json
 			stream.WriteByte ((byte) ']');
 		}
 
-		void PopulateList ()
-		{
-			if (list == null) {
-				list = new List<JsonValue> (source);
-				source = list;
-			}
-		}
-
 		IEnumerator<JsonValue> IEnumerable<JsonValue>.GetEnumerator ()
 		{
-			return source.GetEnumerator ();
+			return list.GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return source.GetEnumerator ();
+			return list.GetEnumerator ();
 		}
 	}
 }

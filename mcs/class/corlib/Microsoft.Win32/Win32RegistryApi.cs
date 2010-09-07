@@ -41,6 +41,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Win32
 {
@@ -134,14 +135,14 @@ namespace Microsoft.Win32
 				ref int data, ref int dataSize);
 
 		// Returns our handle from the RegistryKey
-		static IntPtr GetHandle (RegistryKey key)
+		public IntPtr GetHandle (RegistryKey key)
 		{
-			return (IntPtr) key.Handle;
+			return (IntPtr) key.InternalHandle;
 		}
 
 		static bool IsHandleValid (RegistryKey key)
 		{
-			return key.Handle != null;
+			return key.InternalHandle != null;
 		}
 
 		public RegistryValueKind GetValueKind (RegistryKey rkey, string name)
@@ -423,9 +424,27 @@ namespace Microsoft.Win32
 		{
 			if (!IsHandleValid (rkey))
 				return;
+#if NET_4_0
+			SafeRegistryHandle safe_handle = rkey.Handle;
+			if (safe_handle != null) {
+				// closes the unmanaged pointer for us.
+				safe_handle.Close ();
+				return;
+			}
+#endif
 			IntPtr handle = GetHandle (rkey);
 			RegCloseKey (handle);
 		}
+
+#if NET_4_0
+		public RegistryKey FromHandle (SafeRegistryHandle handle)
+		{
+			// At this point we can't tell whether the key is writable
+			// or not (nor the name), so we let the error check code handle it later, as
+			// .Net seems to do.
+			return new RegistryKey (handle.DangerousGetHandle (), String.Empty, true);
+		}
+#endif
 
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyName)
 		{
@@ -570,6 +589,8 @@ namespace Microsoft.Win32
 					throw new SecurityException ();
 				case Win32ResultCode.NetworkPathNotFound:
 					throw new IOException ("The network path was not found.");
+				case Win32ResultCode.InvalidHandle:
+					throw new IOException ("Invalid handle.");
 				default:
 					// unidentified system exception
 					throw new SystemException ();

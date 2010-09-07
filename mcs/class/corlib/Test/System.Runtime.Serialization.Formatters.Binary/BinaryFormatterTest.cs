@@ -32,6 +32,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection;
 
 using NUnit.Framework;
 
@@ -328,5 +329,141 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			ms.Position = 0;
 			return ms;
 		}
+
+#if NET_4_0
+		[Test]
+		public void SerializationBindToName ()
+		{
+			BinaryFormatter bf = new BinaryFormatter ();
+			bf.AssemblyFormat = FormatterAssemblyStyle.Full;
+			bf.Binder = new SimpleSerializationBinder ();
+			MemoryStream ms = new MemoryStream ();
+
+			SimpleSerializableObject o = new SimpleSerializableObject ();
+			o.Name = "MonoObject";
+			o.Id = 666;
+
+			bf.Serialize (ms, o);
+			ms.Position = 0;
+
+			o = (SimpleSerializableObject)bf.Deserialize (ms);
+			Assert.AreEqual ("MonoObject", o.Name);
+			Assert.AreEqual (666, o.Id);
+		}
+
+		class SimpleSerializationBinder : SerializationBinder
+		{
+			public override Type BindToType (string assemblyName, string typeName)
+			{
+				// We *should* be getting a SimpleSerializableObject2 instance
+				// Otherwise it means we are not getting called our BindToName method.
+				if (!typeName.EndsWith ("SimpleSerializableObject2"))
+					Assert.Fail ("#BindToType-TypeName");
+
+				// We are also supposed to be getting a 9.9.9.9 version here,
+				// and if we get a different version, it likely means BindToName was called.
+				AssemblyName aname = Assembly.GetExecutingAssembly ().GetName ();
+				aname.Version = new Version (9, 9, 9, 9);
+				if (aname.ToString () != assemblyName)
+					Assert.Fail ("#BindToType-AssemblyName");
+
+				// No need to call Type.GetType
+				return typeof (SimpleSerializableObject);
+			}
+
+			public override void BindToName (Type serializedType, out string assemblyName, out string typeName)
+			{
+				AssemblyName aname = Assembly.GetExecutingAssembly ().GetName ();
+				aname.Version = new Version (9, 9, 9, 9);
+
+				// Serialize mapping to this same assembly with 9.9.9.9 version
+				// and a different type name.
+				assemblyName = aname.ToString ();
+				typeName = serializedType.FullName.Replace ("SimpleSerializableObject", "SimpleSerializableObject2");
+			}
+		}
+
+		[Serializable]
+		class SimpleSerializableObject
+		{
+			public string Name { get; set; }
+			public int Id { get; set; }
+		}
+
+		[Test]
+		public void SerializationBindToName2 ()
+		{
+			BinaryFormatter bf = new BinaryFormatter ();
+			bf.AssemblyFormat = FormatterAssemblyStyle.Full;
+			bf.Binder = new SimpleSerializationBinder2 ();
+			MemoryStream ms = new MemoryStream ();
+
+			SimpleISerializableObject o = new SimpleISerializableObject ();
+			o.Name = "MonoObject";
+			o.Id = 666;
+
+			bf.Serialize (ms, o);
+			ms.Position = 0;
+
+			o = (SimpleISerializableObject)bf.Deserialize (ms);
+			Assert.AreEqual ("MonoObject", o.Name);
+			Assert.AreEqual (666, o.Id);
+
+			ms.Close ();
+		}
+
+		class SimpleSerializationBinder2 : SerializationBinder
+		{
+			public override void BindToName (Type serializedType, out string assemblyName, out string typeName)
+			{
+				AssemblyName aname = Assembly.GetExecutingAssembly ().GetName ();
+				aname.Version = new Version (9, 9, 9, 9);
+
+				// Serialize mapping to this same assembly with 9.9.9.9 version
+				// and a different type name.
+				assemblyName = aname.ToString ();
+				typeName = serializedType.FullName.Replace ("SimpleISerializableObject", "SimpleISerializableObject2");
+			}
+
+			public override Type BindToType (string assemblyName, string typeName)
+			{
+				// We *should* be getting a SimpleISerializableObject2 instance
+				if (!typeName.EndsWith ("SimpleISerializableObject2"))
+					Assert.Fail ("#BindToType-TypeName");
+
+				// We are also supposed to be getting a 9.9.9.9 version here,
+				// and if we get a different version, it likely means BindToName was called.
+				AssemblyName aname = Assembly.GetExecutingAssembly ().GetName ();
+				aname.Version = new Version (9, 9, 9, 9);
+				if (aname.ToString () != assemblyName)
+					Assert.Fail ("#BindToType-AssemblyName");
+
+				return typeof (SimpleISerializableObject);
+			}
+		}
+
+		[Serializable]
+		class SimpleISerializableObject : ISerializable
+		{
+			public string Name { get; set; }
+			public int Id { get; set; }
+
+			public SimpleISerializableObject ()
+			{
+			}
+
+			protected SimpleISerializableObject (SerializationInfo info, StreamingContext context)
+			{
+				Name = info.GetString ("Name");
+				Id = info.GetInt32 ("Id");
+			}
+
+			public void GetObjectData (SerializationInfo info, StreamingContext context)
+			{
+				info.AddValue ("Name", Name);
+				info.AddValue ("Id", Id);
+			}
+		}
+#endif
 	}
 }

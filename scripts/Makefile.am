@@ -96,7 +96,8 @@ scripts_4_0 = \
 	sqlmetal$(SCRIPT_SUFFIX)		\
 	sqlsharp$(SCRIPT_SUFFIX)		\
 	svcutil$(SCRIPT_SUFFIX)			\
-	xbuild$(SCRIPT_SUFFIX)
+	xbuild$(SCRIPT_SUFFIX)			\
+	ccrewrite$(SCRIPT_SUFFIX)
 
 MDOC_SUBCOMMANDS = \
 	mdoc-assemble \

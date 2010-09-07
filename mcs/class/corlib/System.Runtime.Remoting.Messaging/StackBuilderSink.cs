@@ -62,7 +62,12 @@ namespace System.Runtime.Remoting.Messaging
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
 			object[] parms = new object[] {msg, replySink};
-			ThreadPool.QueueUserWorkItem (new WaitCallback (ExecuteAsyncMessage), parms);
+			ThreadPool.QueueUserWorkItem (new WaitCallback ((data) => {
+				try {
+					ExecuteAsyncMessage (data);
+				} catch {}
+				}
+				), parms);
 			return null;
 		}
 		

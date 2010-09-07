@@ -796,6 +796,7 @@ System.Runtime.InteropServices/TYPEDESC.cs
 System.Runtime.InteropServices/TYPEFLAGS.cs
 System.Runtime.InteropServices/TYPEKIND.cs
 System.Runtime.InteropServices/TYPELIBATTR.cs
+System.Runtime.InteropServices/TypeIdentifierAttribute.cs
 System.Runtime.InteropServices/TypeLibConverter.cs
 System.Runtime.InteropServices/TypeLibExporterFlags.cs
 System.Runtime.InteropServices/TypeLibFuncAttribute.cs
@@ -1524,11 +1525,11 @@ System.Collections.Generic/Comparer.cs
 System.Threading.Tasks/TaskFactory.cs
 System.Threading.Tasks/TaskStatus.cs
 System.Threading.Tasks/TaskCreationOptions.cs
-System.Threading.Tasks/Internal/ThreadWorker.cs
-System.Threading.Tasks/Internal/SchedulerProxy.cs
-System.Threading.Tasks/Internal/Scheduler.cs
-System.Threading.Tasks/Internal/IScheduler.cs
-System.Threading.Tasks/Internal/CyclicDeque.cs
+System.Threading.Tasks/ThreadWorker.cs
+System.Threading.Tasks/SchedulerProxy.cs
+System.Threading.Tasks/Scheduler.cs
+System.Threading.Tasks/IScheduler.cs
+System.Threading.Tasks/CyclicDeque.cs
 System.Threading.Tasks/TaskScheduler.cs
 System.Threading.Tasks/TaskContinuationOptions.cs
 System.Threading.Tasks/TaskCanceledException.cs
@@ -1545,6 +1546,7 @@ System.Collections.Concurrent/Partitioners/ListPartitioner.cs
 System.Collections.Concurrent/Partitioners/EnumerablePartitioner.cs
 System.Collections.Concurrent/IProducerConsumerCollection.cs
 System.Collections.Concurrent/ConcurrentStack.cs
+System.Collections.Concurrent/SplitOrderedList.cs
 System.Threading/LazyInitializer.cs
 System.Threading/CountdownEvent.cs
 System.Threading/CancellationTokenSource.cs

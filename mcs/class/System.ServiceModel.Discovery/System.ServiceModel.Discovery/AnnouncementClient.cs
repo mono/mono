@@ -1,3 +1,27 @@
+//
+// Author: Atsushi Enomoto <atsushi@ximian.com>
+//
+// Copyright (C) 2009,2010 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,32 +30,65 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.Xml;
 
 namespace System.ServiceModel.Discovery
 {
-	[MonoTODO]
 	public sealed class AnnouncementClient : ICommunicationObject, IDisposable
 	{
+		internal interface IAnnouncementCommon
+		{
+			IAsyncResult BeginAnnounceOnline (EndpointDiscoveryMetadata metadata, DiscoveryMessageSequence sequence, AsyncCallback callback, object state);
+			void EndAnnounceOnline (IAsyncResult result);
+			IAsyncResult BeginAnnounceOffline (EndpointDiscoveryMetadata metadata, DiscoveryMessageSequence sequence, AsyncCallback callback, object state);
+			void EndAnnounceOffline (IAsyncResult result);
+		}
+
 		public AnnouncementClient ()
+			: this (String.Empty)
 		{
 		}
 
 		public AnnouncementClient (AnnouncementEndpoint announcementEndpoint)
 		{
+			if (announcementEndpoint == null)
+				throw new ArgumentNullException ("announcementEndpoint");
+			MessageSequenceGenerator = new DiscoveryMessageSequenceGenerator ();
+			client = Activator.CreateInstance (announcementEndpoint.DiscoveryVersion.AnnouncementClientType, new object [] {announcementEndpoint});
 		}
 
 		public AnnouncementClient (string endpointConfigurationName)
 		{
+			throw new NotImplementedException ();
 		}
 
-		public ChannelFactory ChannelFactory { get; private set; }
-		public ClientCredentials ClientCredentials { get; private set; }
-		public ServiceEndpoint Endpoint { get; private set; }
-		public IClientChannel InnerChannel { get; private set; }
 		public DiscoveryMessageSequenceGenerator MessageSequenceGenerator { get; set; }
 
+		// FIXME: make it dynamic (dmcs crashes for now)
+		object client;
+
+		public ChannelFactory ChannelFactory {
+			get { return (ChannelFactory) client.GetType ().GetProperty ("ChannelFactory").GetValue (client, null); }
+		}
+
+		public ClientCredentials ClientCredentials {
+			get { return ChannelFactory.Credentials; }
+		}
+
+		public ServiceEndpoint Endpoint {
+			get { return ChannelFactory.Endpoint; }
+		}
+
+		public IClientChannel InnerChannel {
+			get { return (IClientChannel) client.GetType ().GetProperty ("InnerChannel").GetValue (client, null); }
+		}
+
+		CommunicationState State {
+			get { return ((ICommunicationObject) this).State; }
+		}
+
 		CommunicationState ICommunicationObject.State {
-			get { return InnerChannel.State; }
+			get { return ((ICommunicationObject) client).State; }
 		}
 
 		public event EventHandler<AsyncCompletedEventArgs> AnnounceOfflineCompleted;
@@ -58,64 +115,108 @@ namespace System.ServiceModel.Discovery
 			remove { InnerChannel.Opening -= value; }
 		}
 
-		public void AnnounceOffline (EndpointDiscoveryMetadata discoveryMetadata)
-		{
-			throw new NotImplementedException ();
-		}
+		// open/close
 
-		public void AnnounceOfflineAsync (EndpointDiscoveryMetadata discoveryMetadata)
+		public void Open ()
 		{
-			throw new NotImplementedException ();
-		}
-
-		public void AnnounceOfflineAsync (EndpointDiscoveryMetadata discoveryMetadata, object userState)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void AnnounceOnline (EndpointDiscoveryMetadata discoveryMetadata)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void AnnounceOnlineAsync (EndpointDiscoveryMetadata discoveryMetadata)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void AnnounceOnlineAsync (EndpointDiscoveryMetadata discoveryMetadata, object userState)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public IAsyncResult BeginAnnounceOffline (EndpointDiscoveryMetadata discoveryMetadata, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public IAsyncResult BeginAnnounceOnline (EndpointDiscoveryMetadata discoveryMetadata, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void EndAnnounceOffline (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void EndAnnounceOnline (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
+			((ICommunicationObject) this).Open ();
 		}
 
 		public void Close ()
 		{
-			throw new NotImplementedException ();
+			((ICommunicationObject) this).Close ();
 		}
 
-		public void Open ()
+		// sync
+
+		public void AnnounceOffline (EndpointDiscoveryMetadata discoveryMetadata)
 		{
-			throw new NotImplementedException ();
+			EndAnnounceOffline (BeginAnnounceOffline (discoveryMetadata, null, null));
+		}
+
+		public void AnnounceOnline (EndpointDiscoveryMetadata discoveryMetadata)
+		{
+			EndAnnounceOnline (BeginAnnounceOnline (discoveryMetadata, null, null));
+		}
+
+		// async
+
+		public void AnnounceOfflineAsync (EndpointDiscoveryMetadata discoveryMetadata)
+		{
+			AnnounceOfflineAsync (discoveryMetadata, null);
+		}
+
+		public void AnnounceOfflineAsync (EndpointDiscoveryMetadata discoveryMetadata, object userState)
+		{
+			AsyncCallback cb = delegate (IAsyncResult result) {
+				try {
+					EndAnnounceOffline (result);
+				} catch (Exception ex) {
+					OnAnnounceOfflineCompleted (new AsyncCompletedEventArgs (ex, false, result.AsyncState));
+				} finally {
+					OnAnnounceOfflineCompleted (new AsyncCompletedEventArgs (null, false, result.AsyncState));
+				}
+			};
+			BeginAnnounceOffline (discoveryMetadata, cb, userState);
+		}
+
+		void OnAnnounceOfflineCompleted (AsyncCompletedEventArgs args)
+		{
+			if (AnnounceOfflineCompleted != null)
+				AnnounceOfflineCompleted (this, args);
+		}
+
+		public void AnnounceOnlineAsync (EndpointDiscoveryMetadata discoveryMetadata)
+		{
+			AnnounceOnlineAsync (discoveryMetadata, null);
+		}
+
+		public void AnnounceOnlineAsync (EndpointDiscoveryMetadata discoveryMetadata, object userState)
+		{
+			AsyncCallback cb = delegate (IAsyncResult result) {
+				try {
+					EndAnnounceOnline (result);
+				} catch (Exception ex) {
+					OnAnnounceOnlineCompleted (new AsyncCompletedEventArgs (ex, false, result.AsyncState));
+				} finally {
+					OnAnnounceOnlineCompleted (new AsyncCompletedEventArgs (null, false, result.AsyncState));
+				}
+			};
+			BeginAnnounceOnline (discoveryMetadata, cb, userState);
+		}
+
+		void OnAnnounceOnlineCompleted (AsyncCompletedEventArgs args)
+		{
+			if (AnnounceOnlineCompleted != null)
+				AnnounceOnlineCompleted (this, args);
+		}
+
+		// begin/end
+
+		public IAsyncResult BeginAnnounceOffline (EndpointDiscoveryMetadata discoveryMetadata, AsyncCallback callback, object state)
+		{
+			using (var ocs = new OperationContextScope (InnerChannel)) {
+				OperationContext.Current.OutgoingMessageHeaders.MessageId = new UniqueId ();
+				return ((IAnnouncementCommon) client).BeginAnnounceOffline (discoveryMetadata, MessageSequenceGenerator.Next (), callback, state);
+			}
+		}
+
+		public IAsyncResult BeginAnnounceOnline (EndpointDiscoveryMetadata discoveryMetadata, AsyncCallback callback, object state)
+		{
+			using (var ocs = new OperationContextScope (InnerChannel)) {
+				OperationContext.Current.OutgoingMessageHeaders.MessageId = new UniqueId ();
+				return ((IAnnouncementCommon) client).BeginAnnounceOnline (discoveryMetadata, MessageSequenceGenerator.Next (), callback, state);
+			}
+		}
+
+		public void EndAnnounceOffline (IAsyncResult result)
+		{
+			((IAnnouncementCommon) client).EndAnnounceOffline (result);
+		}
+
+		public void EndAnnounceOnline (IAsyncResult result)
+		{
+			((IAnnouncementCommon) client).EndAnnounceOnline (result);
 		}
 
 		// explicit interface impl.
@@ -132,12 +233,14 @@ namespace System.ServiceModel.Discovery
 
 		void ICommunicationObject.Close ()
 		{
-			InnerChannel.Close ();
+			if (State == CommunicationState.Opened)
+				InnerChannel.Close ();
 		}
 
 		void ICommunicationObject.Close (TimeSpan timeout)
 		{
-			InnerChannel.Close (timeout);
+			if (State == CommunicationState.Opened)
+				InnerChannel.Close (timeout);
 		}
 
 		IAsyncResult ICommunicationObject.BeginOpen (AsyncCallback callback, object state)
@@ -172,12 +275,15 @@ namespace System.ServiceModel.Discovery
 
 		void ICommunicationObject.Abort ()
 		{
-			InnerChannel.Abort ();
+			if (State != CommunicationState.Closed) {
+				InnerChannel.Abort ();
+				ChannelFactory.Abort ();
+			}
 		}
 
 		void IDisposable.Dispose ()
 		{
-			InnerChannel.Dispose ();
+			Close ();
 		}
 	}
 }

@@ -23,6 +23,8 @@ public class Test
 		const byte b = 100;
 		var a7 = new[] { b, 10, b, 999, b };
 		
+		var a8 = new[] { new Test (), 22,  new object(), string.Empty, null };
+		
 		return 0;
 	}
 }

@@ -1,5 +1,6 @@
 <Type Name="Environment+SpecialFolder" FullName="System.Environment+SpecialFolder">
   <TypeSignature Language="C#" Value="public enum Environment.SpecialFolder" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed Environment/SpecialFolder extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

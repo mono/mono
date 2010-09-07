@@ -265,6 +265,15 @@ namespace Mono.CSharp {
 		}
 
 #region Properties
+		public Expression DefaultValue {
+			get {
+				return default_expr;
+			}
+			set {
+				default_expr = value;
+			}
+		}
+
 		public FullNamedExpression TypeExpression  {
 			get {
 				return texpr;
@@ -331,7 +340,7 @@ namespace Mono.CSharp {
 		
 		public virtual bool CheckAccessibility (InterfaceMemberBase member)
 		{
-			if (parameter_type == null || TypeManager.IsGenericParameter (parameter_type))
+			if (parameter_type == null)
 				return true;
 
 			return member.IsAccessibleAs (parameter_type);
@@ -388,8 +397,43 @@ namespace Mono.CSharp {
 
 		public void ResolveDefaultValue (ResolveContext rc)
 		{
-			if (default_expr != null)
+			//
+			// Default value was specified using an expression
+			//
+			if (default_expr != null) {
 				default_expr = ResolveDefaultExpression (rc);
+				return;
+			}
+
+			if (attributes == null)
+				return;
+			
+			var pa = attributes.Search (PredefinedAttributes.Get.OptionalParameter);
+			if (pa == null)
+				return;
+
+			//
+			// Default value was specified using an attribute
+			//
+			attributes.Attrs.Remove (pa);
+
+			TypeSpec expr_type = null;
+			pa = attributes.Search (PredefinedAttributes.Get.DefaultParameterValue);
+			if (pa != null) {
+				attributes.Attrs.Remove (pa);
+				default_expr = pa.GetParameterDefaultValue (out expr_type);
+			} else {
+				default_expr = EmptyExpression.MissingValue;
+			}
+
+			if (default_expr == null) {
+				if (expr_type == null)
+					expr_type = parameter_type;
+
+				default_expr = new DefaultValueExpression (new TypeExpression (expr_type, Location), Location);
+			}
+
+			default_expr = default_expr.Resolve (rc);
 		}
 
 		Expression ResolveDefaultExpression (ResolveContext rc)
@@ -412,7 +456,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeManager.IsEqual (default_expr.Type, parameter_type))
+			if (default_expr.Type == parameter_type)
 				return default_expr;
 
 			if (TypeManager.IsNullableType (parameter_type)) {
@@ -588,11 +632,6 @@ namespace Mono.CSharp {
 			arguments.Add (new Argument (new StringConstant (Name, Location)));
 			return new SimpleAssign (ExpressionTreeVariableReference (),
 				Expression.CreateExpressionFactoryCall (ec, "Parameter", null, arguments, Location));
-		}
-
-		public Expression DefaultValue {
-			get { return default_expr; }
-			set { default_expr = value; }
 		}
 
 		public void Emit (EmitContext ec)
@@ -900,15 +939,7 @@ namespace Mono.CSharp {
 	//
 	public class ParametersImported : AParametersCollection
 	{
-		ParametersImported (AParametersCollection param, TypeSpec[] types)
-		{
-			this.parameters = param.FixedParameters;
-			this.types = types;
-			has_arglist = param.HasArglist;
-			has_params = param.HasParams;
-		}
-
-		ParametersImported (IParameterData [] parameters, TypeSpec [] types, bool hasArglist, bool hasParams)
+		public ParametersImported (IParameterData [] parameters, TypeSpec [] types, bool hasArglist, bool hasParams)
 		{
 			this.parameters = parameters;
 			this.types = types;
@@ -921,91 +952,6 @@ namespace Mono.CSharp {
 			this.parameters = param;
 			this.types = types;
 			this.has_params = hasParams;
-		}
-
-		public static AParametersCollection Create (TypeSpec parent, MethodBase method)
-		{
-			return Create (parent, method.GetParameters (), method);
-		}
-
-		//
-		// Imports System.Reflection parameters
-		//
-		public static AParametersCollection Create (TypeSpec parent, ParameterInfo [] pi, MethodBase method)
-		{
-			int varargs = method != null && (method.CallingConvention & CallingConventions.VarArgs) != 0 ? 1 : 0;
-
-			if (pi.Length == 0 && varargs == 0)
-				return ParametersCompiled.EmptyReadOnlyParameters;
-
-			TypeSpec [] types = new TypeSpec [pi.Length + varargs];
-			IParameterData [] par = new IParameterData [pi.Length + varargs];
-			bool is_params = false;
-			for (int i = 0; i < pi.Length; i++) {
-				ParameterInfo p = pi [i];
-				Parameter.Modifier mod = 0;
-				Expression default_value = null;
-				if (p.ParameterType.IsByRef) {
-					if ((p.Attributes & (ParameterAttributes.Out | ParameterAttributes.In)) == ParameterAttributes.Out)
-						mod = Parameter.Modifier.OUT;
-					else
-						mod = Parameter.Modifier.REF;
-
-					//
-					// Strip reference wrapping
-					//
-					types [i] = Import.ImportType (p.ParameterType.GetElementType ());
-				} else if (i == 0 && method.IsStatic && parent.IsStatic && // TODO: parent.Assembly.IsExtension &&
-					HasExtensionAttribute (method)) {
-					mod = Parameter.Modifier.This;
-					types[i] = Import.ImportType (p.ParameterType);
-				} else {
-					types[i] = Import.ImportType (p.ParameterType);
-
-					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
-						var cattrs = CustomAttributeData.GetCustomAttributes (p);
-						if (cattrs != null && cattrs.Any (l => l.Constructor.DeclaringType == typeof (ParamArrayAttribute))) {
-							mod = Parameter.Modifier.PARAMS;
-							is_params = true;
-						}
-					}
-
-					if (!is_params && p.IsOptional) {
-						object value = p.DefaultValue;
-						if (value == Missing.Value) {
-							default_value = EmptyExpression.Null;
-						} else if (value == null) {
-							default_value = new NullLiteral (Location.Null);
-						} else {
-							default_value = Constant.CreateConstant (null, Import.ImportType (value.GetType ()), value, Location.Null);
-						}
-					}
-				}
-
-				par [i] = new ParameterData (p.Name, mod, default_value);
-			}
-
-			if (varargs != 0) {
-				par [par.Length - 1] = new ArglistParameter (Location.Null);
-				types [types.Length - 1] = InternalType.Arglist;
-			}
-
-			return method != null ?
-				new ParametersImported (par, types, varargs != 0, is_params) :
-				new ParametersImported (par, types, is_params);
-		}
-
-		static bool HasExtensionAttribute (MethodBase mb)
-		{
-			var all_attributes = CustomAttributeData.GetCustomAttributes (mb);
-			foreach (var attr in all_attributes) {
-				var dt = attr.Constructor.DeclaringType;
-				if (dt.Name == "ExtensionAttribute" && dt.Namespace == "System.Runtime.CompilerServices") {
-					return true;
-				}
-			}
-
-			return false;
 		}
 	}
 
@@ -1025,7 +971,7 @@ namespace Mono.CSharp {
 			types = TypeSpec.EmptyTypes;
 		}
 
-		private ParametersCompiled (IParameterData [] parameters, TypeSpec [] types)
+		private ParametersCompiled (IParameterData[] parameters, TypeSpec[] types)
 		{
 			this.parameters = parameters;
 		    this.types = types;
@@ -1048,15 +994,17 @@ namespace Mono.CSharp {
 			}
 
 			for (int i = 0; i < count; i++){
-				string base_name = parameters [i].Name;
 				has_params |= (parameters [i].ModFlags & Parameter.Modifier.PARAMS) != 0;
+				if (ctx != null) {
+					string base_name = parameters[i].Name;
 
-				for (int j = i + 1; j < count; j++){
-					if (base_name != parameters [j].Name)
-						continue;
+					for (int j = i + 1; j < count; j++) {
+						if (base_name != parameters[j].Name)
+							continue;
 
-					ErrorDuplicateName (parameters[i], ctx.Report);
-					i = j;
+						ErrorDuplicateName (parameters[i], ctx.Report);
+						i = j;
+					}
 				}
 			}
 		}
@@ -1072,11 +1020,15 @@ namespace Mono.CSharp {
 			return new ParametersCompiled (new Parameter [] { p }, new TypeSpec [] { type });
 		}
 		
-		public static ParametersCompiled CreateFullyResolved (IParameterData[] parameters, TypeSpec[] types)
+		public static ParametersCompiled CreateFullyResolved (Parameter[] parameters, TypeSpec[] types)
 		{
 			return new ParametersCompiled (parameters, types);
 		}
 
+		//
+		// TODO: This does not fit here, it should go to different version of AParametersCollection
+		// as the underlying type is not Parameter and some methods will fail to cast
+		//
 		public static AParametersCollection CreateFullyResolved (TypeSpec[] types)
 		{
 			var pd = new ParameterData [types.Length];
@@ -1209,10 +1161,19 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		public void ResolveDefaultValues (ResolveContext rc)
+		public void ResolveDefaultValues (MemberCore m)
 		{
-			for (int i = 0; i < FixedParameters.Length; ++i) {
-				this [i].ResolveDefaultValue (rc);
+			var count = parameters.Length;
+
+			//
+			// Try not to enter default values resolution if there are not any
+			//
+			if (parameters[count - 1].HasDefaultValue || (HasParams && count > 1 && parameters[count - 2].HasDefaultValue) ||
+				((Parameter) parameters[count - 1]).OptAttributes != null) {
+				var rc = new ResolveContext (m);
+				for (int i = 0; i < count; ++i) {
+					this [i].ResolveDefaultValue (rc);
+				}
 			}
 		}
 

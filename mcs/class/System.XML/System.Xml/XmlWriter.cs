@@ -390,12 +390,16 @@ namespace System.Xml
 				ns = String.Empty;
 
 #if NET_2_0
-			switch (Settings.ConformanceLevel) {
-			case ConformanceLevel.Document:
-			case ConformanceLevel.Fragment:
-				XmlConvert.VerifyNCName (localName);
-				break;
+			if (Settings != null) {
+				switch (Settings.ConformanceLevel) {
+				case ConformanceLevel.Document:
+				case ConformanceLevel.Fragment:
+					XmlConvert.VerifyNCName (localName);
+					break;
+				}
 			}
+			else
+				XmlConvert.VerifyNCName (localName);
 #else
 			XmlConvert.VerifyNCName (localName);
 #endif
@@ -676,6 +680,8 @@ namespace System.Xml
 				WriteValue ((float) value);
 			else if (value is TimeSpan) // undocumented
 				WriteString (XmlConvert.ToString ((TimeSpan) value));
+			else if (value is Uri)
+				WriteString (((Uri) value).ToString ());
 			else if (value is XmlQualifiedName) {
 				XmlQualifiedName qname = (XmlQualifiedName) value;
 				if (!qname.Equals (XmlQualifiedName.Empty)) {

@@ -39,6 +39,8 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Security.AccessControl;
+using System.Security.Permissions;
+using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Win32
 {
@@ -53,6 +55,9 @@ namespace Microsoft.Win32
 		// RegistryKey object
 		//
 		object handle;
+#if NET_4_0
+		SafeRegistryHandle safe_handle;
+#endif
 
 		object hive; // the RegistryHive if the key represents a base key
 		readonly string qname;	// the fully qualified registry key name
@@ -105,7 +110,11 @@ namespace Microsoft.Win32
 		///	Dispose of registry key object. Close the 
 		///	key if it's still open.
 		/// </summary>
+#if NET_4_0
+		public void Dispose ()
+#else
 		void IDisposable.Dispose ()
+#endif
 		{
 			GC.SuppressFinalize (this);
 			Close ();
@@ -154,6 +163,9 @@ namespace Microsoft.Win32
 			
 			RegistryApi.Close (this);
 			handle = null;
+#if NET_4_0
+			safe_handle = null;
+#endif
 		}
 		
 		
@@ -179,6 +191,31 @@ namespace Microsoft.Win32
 				return RegistryApi.ValueCount (this);
 			}
 		}
+
+#if NET_4_0
+		[ComVisible (false)]
+		[MonoTODO ("Not implemented in Unix")]
+		public SafeRegistryHandle Handle {
+			get {
+				AssertKeyStillValid ();
+
+				if (safe_handle == null) {
+					IntPtr h = RegistryApi.GetHandle (this);
+					safe_handle = new SafeRegistryHandle (h, true);
+				}
+
+				return safe_handle;
+			}
+		}
+
+		[ComVisible (false)]
+		[MonoLimitation ("View is ignored in Mono.")]
+		public RegistryView View {
+			get {
+				return RegistryView.Default;
+			}
+		}
+#endif
 
 		
 		/// <summary>
@@ -375,6 +412,14 @@ namespace Microsoft.Win32
 		/// </summary>
 		public void DeleteSubKeyTree(string subkey)
 		{
+			DeleteSubKeyTree (subkey, true);
+		}
+
+#if NET_4_0
+		public
+#endif
+		void DeleteSubKeyTree (string subkey, bool throwOnMissingSubKey)
+		{
 			// Note: this is done by deleting sub-nodes recursively.
 			// The preformance is not very good. There may be a 
 			// better way to implement this.
@@ -384,9 +429,13 @@ namespace Microsoft.Win32
 			AssertKeyNameLength (subkey);
 			
 			RegistryKey child = OpenSubKey (subkey, true);
-			if (child == null)
+			if (child == null) {
+				if (!throwOnMissingSubKey)
+					return;
+
 				throw new ArgumentException ("Cannot delete a subkey tree"
 					+ " because the subkey does not exist.");
+			}
 
 			child.DeleteChildKeysAndValues ();
 			child.Close ();
@@ -449,6 +498,27 @@ namespace Microsoft.Win32
 			AssertKeyStillValid ();
 			return RegistryApi.GetValueNames (this);
 		}
+
+#if NET_4_0
+		[ComVisible (false)]
+		[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+		[MonoTODO ("Not implemented on unix")]
+		public static RegistryKey FromHandle (SafeRegistryHandle handle)
+		{
+			if (handle == null)
+				throw new ArgumentNullException ("handle");
+
+			return RegistryApi.FromHandle (handle);
+		}
+
+		[ComVisible (false)]
+		[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+		[MonoTODO ("Not implemented on unix")]
+		public static RegistryKey FromHandle (SafeRegistryHandle handle, RegistryKey view)
+		{
+			return FromHandle (handle);
+		}
+#endif
 		
 		
 		[MonoTODO ("Not implemented on unix")]
@@ -458,6 +528,41 @@ namespace Microsoft.Win32
 				throw new ArgumentNullException ("machineName");
 			return RegistryApi.OpenRemoteBaseKey (hKey, machineName);
 		}
+
+#if NET_4_0
+		[ComVisible (false)]
+		[MonoTODO ("Not implemented on unix")]
+		public static RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName, RegistryView view)
+		{
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+			return RegistryApi.OpenRemoteBaseKey (hKey, machineName);
+		}
+
+		[ComVisible (false)]
+		[MonoLimitation ("View is ignored in Mono")]
+		public static RegistryKey OpenBaseKey (RegistryHive hKey, RegistryView view)
+		{
+			switch (hKey) {
+				case RegistryHive.ClassesRoot:
+					return Registry.ClassesRoot;
+				case RegistryHive.CurrentConfig:
+					return Registry.CurrentConfig;
+				case RegistryHive.CurrentUser:
+					return Registry.CurrentUser;
+				case RegistryHive.DynData:
+					return Registry.DynData;
+				case RegistryHive.LocalMachine:
+					return Registry.LocalMachine;
+				case RegistryHive.PerformanceData:
+					return Registry.PerformanceData;
+				case RegistryHive.Users:
+					return Registry.Users;
+			}
+
+			throw new ArgumentException ("hKey");
+		}
+#endif
 
 		[ComVisible (false)]
 		[MonoLimitation ("permissionCheck is ignored in Mono")]
@@ -511,7 +616,7 @@ namespace Microsoft.Win32
 
 		// returns the key handle for the win32 implementation and the
 		// KeyHandler for the unix implementation
-		internal object Handle {
+		internal object InternalHandle {
 			get { return handle; }
 		}
 

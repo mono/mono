@@ -294,6 +294,8 @@ namespace Mono.CSharp {
 		
 		public readonly IMemberContext MemberContext;
 
+		DynamicSiteClass dynamic_site_container;
+
 		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type)
 		{
 			this.MemberContext = rc;
@@ -387,6 +389,25 @@ namespace Mono.CSharp {
 		{
 			ig.EndScope();
 			SymbolWriter.CloseScope(ig);
+		}
+
+		//
+		// Creates a nested container in this context for all dynamic compiler generated stuff
+		//
+		public DynamicSiteClass CreateDynamicSite ()
+		{
+			if (dynamic_site_container == null) {
+				var mc = MemberContext.CurrentMemberDefinition as MemberBase;
+				dynamic_site_container = new DynamicSiteClass (CurrentTypeDefinition.Parent.PartialContainer, mc, CurrentTypeParameters);
+
+				RootContext.ToplevelTypes.AddCompilerGeneratedClass (dynamic_site_container);
+				dynamic_site_container.CreateType ();
+				dynamic_site_container.DefineType ();
+				dynamic_site_container.ResolveTypeParameters ();
+				dynamic_site_container.Define ();
+			}
+
+			return dynamic_site_container;
 		}
 
 		public LocalBuilder DeclareLocal (TypeSpec type, bool pinned)
@@ -899,7 +920,7 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 		{
 			throw new NotImplementedException ();
 		}
@@ -1053,6 +1074,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		void Error_ObsoleteSecurityAttribute (Attribute a, string option)
+		{
+			Report.Warning (1699, 1, a.Location,
+				"Use compiler option `{0}' or appropriate project settings instead of `{1}' attribute",
+				option, a.Name);
+		}
+
 		// TODO: rewrite this code (to kill N bugs and make it faster) and use standard ApplyAttribute way.
 		public AssemblyName GetAssemblyName (string name, string output) 
 		{
@@ -1076,8 +1104,10 @@ namespace Mono.CSharp {
 									"keyfile", "System.Reflection.AssemblyKeyFileAttribute");
 						} else {
 							string value = a.GetString ();
-							if (value != null && value.Length != 0)
+							if (!string.IsNullOrEmpty (value)) {
+								Error_ObsoleteSecurityAttribute (a, "keyfile");
 								RootContext.StrongNameKeyFile = value;
+							}
 						}
 						break;
 					case "AssemblyKeyName":
@@ -1089,14 +1119,21 @@ namespace Mono.CSharp {
 									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
 						} else {
 							string value = a.GetString ();
-							if (value != null && value.Length != 0)
+							if (!string.IsNullOrEmpty (value)) {
+								Error_ObsoleteSecurityAttribute (a, "keycontainer");
 								RootContext.StrongNameKeyContainer = value;
+							}
 						}
 						break;
 					case "AssemblyDelaySign":
 					case "AssemblyDelaySignAttribute":
 					case "System.Reflection.AssemblyDelaySignAttribute":
-						RootContext.StrongNameDelaySign = a.GetBoolean ();
+						bool b = a.GetBoolean ();
+						if (b) {
+							Error_ObsoleteSecurityAttribute (a, "delaysign");
+						}
+
+						RootContext.StrongNameDelaySign = b;
 						break;
 					}
 				}

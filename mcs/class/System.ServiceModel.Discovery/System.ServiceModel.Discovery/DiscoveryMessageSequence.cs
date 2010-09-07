@@ -29,6 +29,8 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.Xml;
+using System.Xml.Schema;
 
 namespace System.ServiceModel.Discovery
 {
@@ -45,18 +47,14 @@ namespace System.ServiceModel.Discovery
 		public long MessageNumber { get; private set; }
 		public Uri SequenceId { get; private set; }
 
-		[MonoTODO]
 		public bool CanCompareTo (DiscoveryMessageSequence other)
 		{
-			if (other == null)
-				return false;
-			return InstanceId == other.InstanceId && SequenceId.Equals (other.SequenceId);
+			return other != null; // I cannot find any other conditions that return false.
 		}
 
-		[MonoTODO]
 		public int CompareTo (DiscoveryMessageSequence other)
 		{
-			throw new NotImplementedException ();
+			return CanCompareTo (other) ? GetHashCode () - other.GetHashCode () : -1;
 		}
 
 		public bool Equals (DiscoveryMessageSequence other)
@@ -64,7 +62,7 @@ namespace System.ServiceModel.Discovery
 			if (other == null)
 				return false;
 			return  InstanceId == other.InstanceId &&
-				SequenceId.Equals (other.SequenceId) &&
+				(SequenceId == null && other.SequenceId == null || SequenceId.Equals (other.SequenceId)) &&
 				MessageNumber == other.MessageNumber;
 		}
 
@@ -74,16 +72,14 @@ namespace System.ServiceModel.Discovery
 			return s != null && Equals (s);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return (int) ((InstanceId * (SequenceId != null ? SequenceId.GetHashCode () : 1) << 17) + MessageNumber);
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return String.Format ("InstanceId={0}, SequenceId={1}, MessageNumber={2}", InstanceId, SequenceId, MessageNumber);
 		}
 
 		public static bool operator == (DiscoveryMessageSequence messageSequence1, DiscoveryMessageSequence messageSequence2)
@@ -94,6 +90,43 @@ namespace System.ServiceModel.Discovery
 		public static bool operator != (DiscoveryMessageSequence messageSequence1, DiscoveryMessageSequence messageSequence2)
 		{
 			return messageSequence1 == null ? messageSequence2 != null : !messageSequence1.Equals (messageSequence2);
+		}
+
+		internal static DiscoveryMessageSequence ReadXml (XmlReader reader, DiscoveryVersion version)
+		{
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+			if (reader.LocalName != "AppSequenceType" || reader.NamespaceURI != version.Namespace)
+				throw new ArgumentException (String.Format ("AppSequenceType element in namespace '{0}' was expected. Got '{1}' element in '{2}' namespace", version.Namespace, reader.LocalName, reader.NamespaceURI));
+
+			var instId = reader.GetAttribute ("InstanceId");
+			var seqId = reader.GetAttribute ("SequenceId");
+			var msgno = reader.GetAttribute ("MessageNumber");
+			var source = new DiscoveryMessageSequence (instId != null ? XmlConvert.ToInt64 (instId) : 0, seqId != null ? new Uri (seqId, UriKind.RelativeOrAbsolute) : null, msgno != null ? XmlConvert.ToInt64 (msgno) : 0);
+			
+			reader.Skip ();
+			return source;
+		}
+
+		internal void WriteXml (XmlWriter writer)
+		{
+			writer.WriteAttributeString ("InstanceId", XmlConvert.ToString (InstanceId));
+			if (SequenceId != null)
+				writer.WriteAttributeString ("SequenceId", SequenceId.ToString ());
+			writer.WriteAttributeString ("MessageNumber", XmlConvert.ToString (MessageNumber));
+		}
+
+		internal static XmlSchema BuildSchema (DiscoveryVersion version)
+		{
+			var schema = new XmlSchema () { TargetNamespace = version.Namespace };
+			var ccr = new XmlSchemaComplexContentRestriction ();
+			ccr.Attributes.Add (new XmlSchemaAttribute () { Name = "InstanceId", SchemaTypeName = new XmlQualifiedName ("unsignedInt", XmlSchema.Namespace), Use = XmlSchemaUse.Required });
+			ccr.Attributes.Add (new XmlSchemaAttribute () { Name = "SequenceId", SchemaTypeName = new XmlQualifiedName ("anyURI", XmlSchema.Namespace), Use = XmlSchemaUse.Optional });
+			ccr.Attributes.Add (new XmlSchemaAttribute () { Name = "MessageNumber", SchemaTypeName = new XmlQualifiedName ("unsignedInt", XmlSchema.Namespace), Use = XmlSchemaUse.Required });
+			var ct = new XmlSchemaComplexType () { Name = "AppSequenceType", ContentModel = new XmlSchemaComplexContent () { Content = ccr } };
+			schema.Items.Add (ct);
+
+			return schema;
 		}
 	}
 }

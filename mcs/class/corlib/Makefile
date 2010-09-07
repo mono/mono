@@ -11,8 +11,6 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
-AOT_IN_PROFILES = net_2_0 net_4_0
-
 RESOURCE_FILES = \
 	resources/collation.core.bin \
 	resources/collation.tailoring.bin \

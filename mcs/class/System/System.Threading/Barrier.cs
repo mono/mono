@@ -1,4 +1,3 @@
-#if NET_4_0 || BOOTSTRAP_NET_4_0
 // 
 // Barrier.cs
 //  
@@ -25,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0 || BOOTSTRAP_NET_4_0
+
 using System;
 
 namespace System.Threading
@@ -35,8 +36,9 @@ namespace System.Threading
 		Action<Barrier> postPhaseAction;
 		
 		int participants;
+		bool cleaned;
 		CountdownEvent cntd;
-		AtomicBoolean cleaned = new AtomicBoolean ();
+		ManualResetEventSlim postPhaseEvt = new ManualResetEventSlim ();
 		long phase;
 		
 		public Barrier (int participants) : this (participants, null)
@@ -66,14 +68,14 @@ namespace System.Threading
 					cntd.Dispose ();
 					cntd = null;
 				}
-				cleaned = null;
 				postPhaseAction = null;
+				cleaned = true;
 			}
 		}
 			
 		void InitCountdownEvent ()
 		{
-			cleaned = new AtomicBoolean ();
+			postPhaseEvt = new ManualResetEventSlim (false);
 			cntd = new CountdownEvent (participants);
 		}
 		
@@ -89,7 +91,7 @@ namespace System.Threading
 		
 		public long AddParticipants (int participantCount)
 		{
-			if (cleaned == null)
+			if (cleaned)
 				throw GetDisposed ();
 			
 			if (participantCount < 0)
@@ -113,48 +115,55 @@ namespace System.Threading
 		
 		public void RemoveParticipants (int participantCount)
 		{
-			if (cleaned == null)
+			if (cleaned)
 				throw GetDisposed ();
 			if (participantCount < 0)
 				throw new ArgumentOutOfRangeException ("participantCount");
 			
 			if (cntd.Signal (participantCount))
-				PostPhaseAction (cleaned);
+				PostPhaseAction (postPhaseEvt);
 
 			Interlocked.Add (ref participants, -participantCount);
 		}
 		
 		public void SignalAndWait ()
 		{
-			if (cleaned == null)
+			if (cleaned)
 				throw GetDisposed ();
 			SignalAndWait ((c) => { c.Wait (); return true; });
 		}
 		
+		public void SignalAndWait (CancellationToken token)
+		{
+			if (cleaned)
+				throw GetDisposed ();
+			SignalAndWait ((c) => { c.Wait (token); return true; });
+		}
+
 		public bool SignalAndWait (int millisecondTimeout)
 		{
-			if (cleaned == null)
+			if (cleaned)
 				throw GetDisposed ();
 			return SignalAndWait ((c) => c.Wait (millisecondTimeout));
 		}
-		
+
 		public bool SignalAndWait (TimeSpan ts)
 		{
-			if (cleaned == null)
+			if (cleaned)
 				throw GetDisposed ();
 			return SignalAndWait ((c) => c.Wait (ts));
 		}
 		
 		public bool SignalAndWait (int millisecondTimeout, CancellationToken token)
 		{
-			if (cleaned == null)
+			if (cleaned)
 				throw GetDisposed ();
 			return SignalAndWait ((c) => c.Wait (millisecondTimeout, token));
 		}
 		
 		public bool SignalAndWait (TimeSpan ts, CancellationToken token)
 		{
-			if (cleaned == null)
+			if (cleaned)
 				throw GetDisposed ();
 			return SignalAndWait ((c) => c.Wait (ts, token));
 		}
@@ -162,40 +171,43 @@ namespace System.Threading
 		bool SignalAndWait (Func<CountdownEvent, bool> associate)
 		{
 			bool result;
-			AtomicBoolean cl = cleaned;
 			CountdownEvent temp = cntd;
+			ManualResetEventSlim evt = postPhaseEvt;
 			
 			if (!temp.Signal ()) {
-				result = Wait (associate, temp, cl);
+				result = Wait (associate, temp, evt);
 			} else {
 				result = true;
-				PostPhaseAction (cl);
+				PostPhaseAction (evt);
 			}
 			
 			return result;
 		}
 		
-		bool Wait (Func<CountdownEvent, bool> associate, CountdownEvent temp, AtomicBoolean cl)
+		bool Wait (Func<CountdownEvent, bool> associate, CountdownEvent temp, ManualResetEventSlim evt)
 		{
 			if (!associate (temp))
 				return false;
 			
-			SpinWait sw = new SpinWait ();
-			while (!cl.Value)
-				sw.SpinOnce ();
+			evt.Wait ();
 			
 			return true;
 		}
 		
-		void PostPhaseAction (AtomicBoolean cl)
+		void PostPhaseAction (ManualResetEventSlim evt)
 		{
-			if (postPhaseAction != null)
-				postPhaseAction (this);
+			if (postPhaseAction != null) {
+				try {
+					postPhaseAction (this);
+				} catch (Exception e) {
+					throw new BarrierPostPhaseException (e);
+				}
+			}
 			
 			InitCountdownEvent ();
-			
-			cl.Value = true;
 			phase++;
+
+			evt.Set ();
 		}
 		
 		public long CurrentPhaseNumber {

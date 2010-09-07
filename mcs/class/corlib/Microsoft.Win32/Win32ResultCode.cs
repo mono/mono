@@ -52,6 +52,7 @@ namespace Microsoft.Win32
 		public const int Success = 0;
 		public const int FileNotFound = 2;
 		public const int AccessDenied = 5;
+		public const int InvalidHandle = 6;
 		public const int InvalidParameter = 87;
 		public const int MoreData = 234;
 		public const int NetworkPathNotFound = 53;

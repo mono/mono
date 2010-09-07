@@ -1,3 +1,28 @@
+//
+// Author: Atsushi Enomoto <atsushi@ximian.com>
+//
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+#if NET_4_0
 using System;
 using System.ComponentModel;
 using System.Configuration;
@@ -30,31 +55,36 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		[ConfigurationProperty ("discoveryMode", DefaultValue = ServiceDiscoveryMode.Adhoc)]
 		public ServiceDiscoveryMode DiscoveryMode {
-			get { return (ServiceDiscoveryMode) Propperties [discovery_mode]; }
-			set { Properties [discovery_mode] = value; }
+			get { return (ServiceDiscoveryMode) base [discovery_mode]; }
+			set { base [discovery_mode] = value; }
 		}
 
 		protected override Type EndpointType {
 			get { return typeof (UdpDiscoveryEndpoint); }
 		}
 
+		[TypeConverter (typeof (TimeSpanConverter))]
 		[ConfigurationProperty ("maxResponseDelay", DefaultValue = "00:00:00.500")]
 		public TimeSpan MaxResponseDelay {
-			get { return (TimeSpan) Propperties [max_response_delay]; }
-			set { Properties [max_response_delay] = value; }
+			get { return (TimeSpan) base [max_response_delay]; }
+			set { base [max_response_delay] = value; }
 		}
 
 		[ConfigurationProperty ("multicastAddress", DefaultValue = "soap.udp://239.255.255.250:3702")]
 		public Uri MulticastAddress {
-			get { return (Uri) Propperties [multicast_address]; }
-			set { Properties [multicast_address] = value; }
+			get { return (Uri) base [multicast_address]; }
+			set { base [multicast_address] = value; }
 		}
 
 		[ConfigurationProperty ("transportSettings")]
 		public UdpTransportSettingsElement TransportSettings {
-			get { return (UdpTransportSettingsElement) Propperties [transport_settings]; }
+			get { return (UdpTransportSettingsElement) base [transport_settings]; }
 		}
-			
+		
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+		
 		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{
 			throw new NotImplementedException ();
@@ -82,3 +112,4 @@ namespace System.ServiceModel.Discovery.Configuration
 	}
 }
 
+#endif

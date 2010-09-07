@@ -985,7 +985,11 @@ namespace System.Windows.Forms
 					break;
 				}
 
-				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
+				// If our Form doesn't have a handle anymore, it means it was destroyed and we need to *wait* for WM_QUIT.
+				if ((context.MainForm != null) && (!context.MainForm.IsHandleCreated))
+					continue;
+
+				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response.
 				if ((context.MainForm != null) && (context.MainForm.closing || (Modal && !context.MainForm.Visible))) {
 					if (!Modal) {
 						XplatUI.PostQuitMessage (0);

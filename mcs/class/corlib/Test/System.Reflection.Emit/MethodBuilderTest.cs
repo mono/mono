@@ -1055,5 +1055,66 @@ namespace MonoTests.System.Reflection.Emit
 			Type type = tb.CreateType ();
 			type.GetMethod ("CallVarargMethod").Invoke (null, null);
 		}
+
+		public static string GenericMethodWithOneArg<T> (T t)
+		{
+			return t.ToString ();
+		}
+
+		[Test]
+		public void ParamerersOfGenericArgumentsAreProperlyEncoded ()
+		{
+			var type = module.DefineType (
+				"Bar",
+				TypeAttributes.Public
+				| TypeAttributes.Abstract
+				| TypeAttributes.Sealed,
+				typeof (object));
+
+			var foo_method = typeof (MethodBuilderTest).GetMethod ("GenericMethodWithOneArg");
+
+			var method = type.DefineMethod (
+				"ReFoo",
+				MethodAttributes.Static | MethodAttributes.Public,
+				typeof (string),
+				new [] { foo_method.GetGenericArguments () [0] });
+			method.DefineGenericParameters ("K");
+
+			var il = method.GetILGenerator ();
+			il.Emit (OpCodes.Ldarga, 0);
+			il.Emit (OpCodes.Constrained, method.GetGenericArguments () [0]);
+			il.Emit (OpCodes.Callvirt, typeof (object).GetMethod ("ToString"));
+			il.Emit (OpCodes.Ret);
+
+			type.CreateType ();
+
+			var re_foo_open = module.GetType ("Bar").GetMethod ("ReFoo");
+
+			Assert.AreEqual (re_foo_open.GetGenericArguments ()[0], re_foo_open.GetParameters () [0].ParameterType, "#1");
+		}
+
+		[Test] // #628660
+		public void CanCallGetMethodBodyOnDynamicImageMethod ()
+		{
+			var type = module.DefineType (
+				"CanCallGetMethodBodyOnDynamicImageMethod",
+				TypeAttributes.Public,
+				typeof (object));
+
+			var baz = type.DefineMethod ("Foo", MethodAttributes.Public | MethodAttributes.Static, typeof (object), Type.EmptyTypes);
+
+			var il = baz.GetILGenerator ();
+			var temp = il.DeclareLocal (typeof (object));
+			il.Emit (OpCodes.Ldnull);
+			il.Emit (OpCodes.Stloc, temp);
+			il.Emit (OpCodes.Ldloc, temp);
+			il.Emit (OpCodes.Ret);
+
+			var body = type.CreateType ().GetMethod ("Foo").GetMethodBody ();
+
+			Assert.IsNotNull (body);
+			Assert.AreEqual (1, body.LocalVariables.Count);
+			Assert.AreEqual (typeof (object), body.LocalVariables [0].LocalType);
+		}
 	}
 }

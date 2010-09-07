@@ -20,3 +20,27 @@ cs0457-2.cs
 cs0457.cs
 
 cs1540-6.cs NO ERROR Is it real error
+
+# all the following are from bug #628673
+gcs0122-2.cs
+gcs0307-6.cs
+gcs0308-7.cs
+cs0023-11.cs
+cs0111-3.cs
+cs0122-19.cs
+cs0122-28.cs
+cs0122-8.cs
+cs0177-8.cs NO ERROR
+cs0419.cs
+cs0520.cs
+cs0844-2.cs
+cs0844.cs
+cs1574-2.cs
+cs1574-3.cs NO ERROR
+cs1574-6.cs NO ERROR
+cs1574-8.cs NO ERROR
+cs1581-2.cs
+cs1581.cs
+cs1584.cs
+cs1612-6.cs NO ERROR
+cs3006-7.cs NO ERROR

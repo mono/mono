@@ -286,7 +286,7 @@ namespace Mono.CSharp.Nullable
 			// Avoid unwraping and wraping of the same type
 			//
 			Unwrap unwrap = expr as Unwrap;
-			if (unwrap != null && TypeManager.IsEqual (expr.Type, NullableInfo.GetUnderlyingType (type)))
+			if (unwrap != null && expr.Type == NullableInfo.GetUnderlyingType (type))
 				return unwrap.Original;
 		
 			return new Wrap (expr, type);
@@ -803,7 +803,7 @@ namespace Mono.CSharp.Nullable
 			//
 			// Avoid double conversion
 			//
-			if (left_unwrap == null || left_null_lifted || !TypeManager.IsEqual (left_unwrap.Type, left.Type) || (left_unwrap != null && right_null_lifted)) {
+			if (left_unwrap == null || left_null_lifted || left_unwrap.Type != left.Type || (left_unwrap != null && right_null_lifted)) {
 				lifted_type = new NullableType (left.Type, loc);
 				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
 				if (lifted_type == null)
@@ -815,7 +815,7 @@ namespace Mono.CSharp.Nullable
 					left = EmptyCast.Create (left, lifted_type.Type);
 			}
 
-			if (left != right && (right_unwrap == null || right_null_lifted || !TypeManager.IsEqual (right_unwrap.Type, right.Type) || (right_unwrap != null && left_null_lifted))) {
+			if (left != right && (right_unwrap == null || right_null_lifted || right_unwrap.Type != right.Type || (right_unwrap != null && left_null_lifted))) {
 				lifted_type = new NullableType (right.Type, loc);
 				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
 				if (lifted_type == null)
@@ -918,7 +918,7 @@ namespace Mono.CSharp.Nullable
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			if (left.Type == TypeManager.null_type)
+			if (left is NullLiteral)
 				ec.Report.Error (845, loc, "An expression tree cannot contain a coalescing operator with null left side");
 
 			UserCast uc = left as UserCast;
@@ -1042,8 +1042,12 @@ namespace Mono.CSharp.Nullable
 			}
 
 			left.Emit (ec);
-
 			ec.Emit (OpCodes.Dup);
+
+			// Only to make verifier happy
+			if (left.Type.IsGenericParameter)
+				ec.Emit (OpCodes.Box, left.Type);
+
 			ec.Emit (OpCodes.Brtrue, end_label);
 
 			ec.Emit (OpCodes.Pop);

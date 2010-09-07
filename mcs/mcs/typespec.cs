@@ -269,6 +269,8 @@ namespace Mono.CSharp
 
 			if (IsNested) {
 				s = DeclaringType.GetSignatureForError ();
+			} else if (MemberDefinition is AnonymousTypeClass) {
+				return ((AnonymousTypeClass) MemberDefinition).GetSignatureForError ();
 			} else {
 				s = MemberDefinition.Namespace;
 			}
@@ -293,7 +295,7 @@ namespace Mono.CSharp
 			do {
 				if (t.Interfaces != null) {	// TODO: Try t.iface
 					foreach (TypeSpec i in t.Interfaces) {
-						if (i == iface || TypeSpecComparer.Variant.IsEqual (i, iface))
+						if (i == iface || TypeSpecComparer.Variant.IsEqual (i, iface) || TypeSpecComparer.IsEqual (i, iface))
 							return true;
 					}
 				}
@@ -306,14 +308,38 @@ namespace Mono.CSharp
 
 		protected virtual void InitializeMemberCache (bool onlyTypes)
 		{
-			//
-			// Not interested in members of nested private types
-			//
-			if (IsPrivate) {
-				cache = new MemberCache (0);
-			} else {
-				cache = MemberDefinition.LoadMembers (this);
+			cache = MemberDefinition.LoadMembers (this);
+		}
+
+		//
+		// Is @baseClass base implementation of @type. With enabled @dynamicIsEqual the slower
+		// comparison is used to hide differences between `object' and `dynamic' for generic
+		// types. Should not be used for comparisons where G<object> != G<dynamic>
+		//
+		public static bool IsBaseClass (TypeSpec type, TypeSpec baseClass, bool dynamicIsObject)
+		{
+			if (dynamicIsObject && baseClass.IsGeneric) {
+				//
+				// Returns true for a hierarchies like this when passing baseClass of A<dynamic>
+				//
+				// class B : A<object> {}
+				//
+				while (type != null) {
+					type = type.BaseType;
+					if (TypeSpecComparer.IsEqual (type, baseClass))
+						return true;
+				}
+
+				return false;
 			}
+
+			while (type != null) {
+				type = type.BaseType;
+				if (type == baseClass)
+					return true;
+			}
+
+			return false;
 		}
 
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
@@ -382,6 +408,8 @@ namespace Mono.CSharp
 			this.ns = ns;
 		}
 
+		#region Properties
+
 		public override int Arity {
 			get {
 				return 0;
@@ -399,6 +427,8 @@ namespace Mono.CSharp
 				return ns;
 			}
 		}
+
+		#endregion
 
 		public override string GetSignatureForError ()
 		{
@@ -442,21 +472,21 @@ namespace Mono.CSharp
 	static class TypeSpecComparer
 	{
 		//
-		// Default reference comparison
+		// Does strict reference comparion only
 		//
 		public static readonly DefaultImpl Default = new DefaultImpl ();
 
-		public class DefaultImpl : IEqualityComparer<TypeSpec[]>, IEqualityComparer<Tuple<TypeSpec, TypeSpec[]>>
+		public class DefaultImpl : IEqualityComparer<TypeSpec[]>
 		{
 			#region IEqualityComparer<TypeSpec[]> Members
 
-			public bool Equals (TypeSpec[] x, TypeSpec[] y)
+			bool IEqualityComparer<TypeSpec[]>.Equals (TypeSpec[] x, TypeSpec[] y)
 			{
-				if (x.Length != y.Length)
-					return false;
-
 				if (x == y)
 					return true;
+
+				if (x.Length != y.Length)
+					return false;
 
 				for (int i = 0; i < x.Length; ++i)
 					if (x[i] != y[i])
@@ -465,27 +495,13 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			public int GetHashCode (TypeSpec[] obj)
+			int IEqualityComparer<TypeSpec[]>.GetHashCode (TypeSpec[] obj)
 			{
 				int hash = 0;
 				for (int i = 0; i < obj.Length; ++i)
 					hash = (hash << 5) - hash + obj[i].GetHashCode ();
 
 				return hash;
-			}
-
-			#endregion
-
-			#region IEqualityComparer<Tuple<TypeSpec,TypeSpec[]>> Members
-
-			bool IEqualityComparer<Tuple<TypeSpec, TypeSpec[]>>.Equals (Tuple<TypeSpec, TypeSpec[]> x, Tuple<TypeSpec, TypeSpec[]> y)
-			{
-				return Equals (x.Item2, y.Item2) && x.Item1 == y.Item1;
-			}
-
-			int IEqualityComparer<Tuple<TypeSpec, TypeSpec[]>>.GetHashCode (Tuple<TypeSpec, TypeSpec[]> obj)
-			{
-				return GetHashCode (obj.Item2) ^ obj.Item1.GetHashCode ();
 			}
 
 			#endregion
@@ -622,16 +638,7 @@ namespace Mono.CSharp
 				var targs_definition = target_type_def.TypeParameters;
 
 				if (!type1.IsInterface && !type1.IsDelegate) {
-					//
-					// Internal compiler variance between G<object> and G<dynamic>
-					//
-					for (int i = 0; i < targs_definition.Length; ++i) {
-						if ((t1_targs[i] != TypeManager.object_type && t1_targs[i] != InternalType.Dynamic) ||
-							(t2_targs[i] != TypeManager.object_type && t2_targs[i] != InternalType.Dynamic))
-							return false;
-					}
-
-					return true;
+					return TypeSpecComparer.Equals (t1_targs, t2_targs);
 				}
 
 				for (int i = 0; i < targs_definition.Length; ++i) {
@@ -763,6 +770,51 @@ namespace Mono.CSharp
 				return false;
 			}
 		}
+
+		public static bool Equals (TypeSpec[] x, TypeSpec[] y)
+		{
+			if (x == y)
+				return true;
+
+			if (x.Length != y.Length)
+				return false;
+
+			for (int i = 0; i < x.Length; ++i)
+				if (!IsEqual (x[i], y[i]))
+					return false;
+
+			return true;
+		}
+
+		//
+		// Identity type conversion
+		//
+		// Default reference comparison, it has to be used when comparing
+		// two possible dynamic/internal types
+		//
+		public static bool IsEqual (TypeSpec a, TypeSpec b)
+		{
+			if (a == b) {
+				// This also rejects dynamic == dynamic
+				return a.Kind != MemberKind.InternalCompilerType || a == InternalType.Dynamic;
+			}
+
+			//
+			// object and dynamic are considered equivalent there is an identity conversion
+			// between object and dynamic, and between constructed types that are the same
+			// when replacing all occurences of dynamic with object.
+			//
+			if (a == InternalType.Dynamic || b == InternalType.Dynamic)
+				return b == TypeManager.object_type || a == TypeManager.object_type;
+
+			if (a == null || !a.IsGeneric || b == null || !b.IsGeneric)
+				return false;
+
+			if (a.MemberDefinition != b.MemberDefinition)
+				return false;
+
+			return Equals (a.TypeArguments, b.TypeArguments);
+		}
 	}
 
 	public interface ITypeDefinition : IMemberDefinition
@@ -779,29 +831,22 @@ namespace Mono.CSharp
 
 	class InternalType : TypeSpec
 	{
-		private class DynamicType : InternalType
-		{
-			public DynamicType ()
-				: base ("dynamic")
-			{
-			}
-
-			public override Type GetMetaInfo ()
-			{
-				return typeof (object);
-			}
-		}
-
-		public static readonly TypeSpec AnonymousMethod = new InternalType ("anonymous method");
-		public static readonly TypeSpec Arglist = new InternalType ("__arglist");
-		public static readonly TypeSpec Dynamic = new DynamicType ();
-		public static readonly TypeSpec MethodGroup = new InternalType ("method group");
-		public static readonly TypeSpec Null = new InternalType ("null");
-		public static readonly TypeSpec FakeInternalType = new InternalType ("<fake$type>");
+		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
+		public static readonly InternalType Arglist = new InternalType ("__arglist");
+		public static readonly InternalType Dynamic = new InternalType ("dynamic", null);
+		public static readonly InternalType MethodGroup = new InternalType ("method group");
+		public static readonly InternalType Null = new InternalType ("null");
+		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
 
 		readonly string name;
 
-		protected InternalType (string name)
+		InternalType (string name, MemberCache cache)
+			: this (name)
+		{
+			this.cache = cache;
+		}
+
+		InternalType (string name)
 			: base (MemberKind.InternalCompilerType, null, null, null, Modifiers.PUBLIC)
 		{
 			this.name = name;
@@ -810,6 +855,8 @@ namespace Mono.CSharp
 			// Make all internal types CLS-compliant, non-obsolete
 			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected)) | StateFlags.CLSCompliant;
 		}
+
+		#region Properties
 
 		public override int Arity {
 			get {
@@ -822,6 +869,8 @@ namespace Mono.CSharp
 				return name;
 			}
 		}
+
+		#endregion
 
 		public override string GetSignatureForError ()
 		{

@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 
 namespace System.ServiceModel
 {
@@ -56,6 +57,12 @@ namespace System.ServiceModel
 		{
 		}
 
+		protected DuplexClientBase (object instance,
+			string endpointConfigurationName, string remoteAddress)
+			: this (new InstanceContext (instance), endpointConfigurationName, remoteAddress)
+		{
+		}
+
 		protected DuplexClientBase (InstanceContext instance)
 			: base (instance)
 		{
@@ -74,10 +81,28 @@ namespace System.ServiceModel
 		}
 
 		protected DuplexClientBase (InstanceContext instance,
+			string endpointConfigurationName, string remoteAddress)
+			: base (instance, endpointConfigurationName, remoteAddress)
+		{
+		}
+
+		protected DuplexClientBase (InstanceContext instance,
 			string configurationName, EndpointAddress address)
 			: base (instance, configurationName, address)
 		{
 		}
+
+#if NET_4_0
+		protected DuplexClientBase (object instance, ServiceEndpoint endpoint)
+			: this (new InstanceContext (instance), endpoint)
+		{
+		}
+
+		protected DuplexClientBase (InstanceContext instance, ServiceEndpoint endpoint)
+			: base (instance, endpoint)
+		{
+		}
+#endif
 
 		public IDuplexContextChannel InnerDuplexChannel {
 			get { return (IDuplexContextChannel) base.InnerChannel; }

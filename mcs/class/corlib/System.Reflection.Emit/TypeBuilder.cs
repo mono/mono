@@ -473,14 +473,19 @@ namespace System.Reflection.Emit
 		[ComVisible (true)]
 		public ConstructorBuilder DefineDefaultConstructor (MethodAttributes attributes)
 		{
-			Type parent_type;
+			Type parent_type, old_parent_type;
 
 			if (parent != null)
 				parent_type = parent;
 			else
 				parent_type = pmodule.assemblyb.corlib_object_type;
 
+			old_parent_type = parent_type;
 			parent_type = parent_type.InternalResolve ();
+			/*This avoids corlib to have self references.*/
+			if (parent_type == typeof (object) || parent_type == typeof (ValueType))
+				parent_type = old_parent_type;
+
 			ConstructorInfo parent_constructor =
 				parent_type.GetConstructor (
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,

@@ -886,9 +886,6 @@ namespace System.Web.Compilation
 
 			if (text.Length != 0) {
 				bool ignoreEmptyString = lastTag == TagType.CodeRender;
-#if NET_4_0
-				ignoreEmptyString |= lastTag == TagType.CodeRenderEncode;
-#endif
 				FlushText (ignoreEmptyString);
 			}
 			

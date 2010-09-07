@@ -39,20 +39,34 @@ namespace System.ServiceModel.Discovery
 			if (criteria == null)
 				throw new ArgumentNullException ("criteria");
 			Criteria = criteria;
+			Endpoints = new Collection<EndpointDiscoveryMetadata> ();
 		}
 
 		public FindCriteria Criteria { get; private set; }
 
-		[MonoTODO]
+		internal Collection<EndpointDiscoveryMetadata> Endpoints { get; private set; }
+
 		public void AddMatchingEndpoint (EndpointDiscoveryMetadata matchingEndpoint)
 		{
+			if (matchingEndpoint == null)
+				throw new ArgumentNullException ("matchingEndpoint");
 			OnAddMatchingEndpoint (matchingEndpoint);
 		}
 
-		[MonoTODO]
 		protected virtual void OnAddMatchingEndpoint (EndpointDiscoveryMetadata matchingEndpoint)
 		{
-			throw new NotImplementedException ();
+			if (matchingEndpoint == null)
+				throw new ArgumentNullException ("matchingEndpoint");
+			Endpoints.Add (matchingEndpoint);
+		}
+	}
+	
+	// Not sure why it must be derived yet.
+	internal class DefaultFindRequestContext : FindRequestContext
+	{
+		public DefaultFindRequestContext (FindCriteria criteria)
+			: base (criteria)
+		{
 		}
 	}
 }

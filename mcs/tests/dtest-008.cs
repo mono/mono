@@ -30,6 +30,18 @@ public class Test
 		Console.WriteLine (res);
 		return res == 31;
 	}
+	
+	bool ForEachTest_2()
+	{
+		dynamic c = new int [2] { 5, 7 };
+		int total = 0;
+		foreach (var v in c)
+		{
+			total += v;
+		}
+		
+		return total == 12;
+	}
 
 	bool UsingTest ()
 	{
@@ -61,8 +73,11 @@ public class Test
 		if (!t.ForEachTest ())
 			return 1;
 
-		if (!t.UsingTest ())
+		if (!t.ForEachTest_2 ())
 			return 2;
+		
+		if (!t.UsingTest ())
+			return 3;
 
 		Console.WriteLine ("ok");
 		return 0;

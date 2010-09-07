@@ -41,6 +41,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -48,6 +49,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Security;
 using System.Threading;
+using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Win32 {
 
@@ -547,6 +549,46 @@ namespace Microsoft.Win32 {
 			return vals;
 		}
 
+		public int GetSubKeyCount ()
+		{
+			return GetSubKeyNames ().Length;
+		}
+
+		public string [] GetSubKeyNames ()
+		{
+			DirectoryInfo selfDir = new DirectoryInfo (ActualDir);
+			DirectoryInfo[] subDirs = selfDir.GetDirectories ();
+			string[] subKeyNames;
+
+			// for volatile keys (cannot contain non-volatile subkeys) or keys
+			// without *any* presence in the volatile key section, we can do it simple.
+			if (IsVolatile || !Directory.Exists (GetVolatileDir (Dir))) {
+				subKeyNames = new string[subDirs.Length];
+				for (int i = 0; i < subDirs.Length; i++) {
+					DirectoryInfo subDir = subDirs[i];
+					subKeyNames[i] = subDir.Name;
+				}
+				return subKeyNames;
+			}
+
+			// We may have the entries repeated, so keep just one of each one.
+			DirectoryInfo volatileDir = new DirectoryInfo (GetVolatileDir (Dir));
+			DirectoryInfo [] volatileSubDirs = volatileDir.GetDirectories ();
+			Dictionary<string,string> dirs = new Dictionary<string,string> ();
+
+			foreach (DirectoryInfo dir in subDirs)
+				dirs [dir.Name] = dir.Name;
+			foreach (DirectoryInfo volDir in volatileSubDirs)
+				dirs [volDir.Name] = volDir.Name;
+
+			subKeyNames = new string [dirs.Count];
+			int j = 0;
+			foreach (KeyValuePair<string,string> entry in dirs)
+				subKeyNames[j++] = entry.Value;
+
+			return subKeyNames;
+		}
+
 		//
 		// This version has to do argument validation based on the valueKind
 		//
@@ -811,6 +853,13 @@ namespace Microsoft.Win32 {
 
 			return result;
 		}
+
+#if NET_4_0
+		public RegistryKey FromHandle (SafeRegistryHandle handle)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		public void Flush (RegistryKey rkey)
 		{
@@ -861,7 +910,7 @@ namespace Microsoft.Win32 {
 			KeyHandler self = KeyHandler.Lookup (rkey, true);
 			if (self == null)
 				throw RegistryKey.CreateMarkedForDeletionException ();
-			return Directory.GetDirectories (self.Dir).Length;
+			return self.GetSubKeyCount ();
 		}
 		
 		public int ValueCount (RegistryKey rkey)
@@ -906,14 +955,7 @@ namespace Microsoft.Win32 {
 		public string [] GetSubKeyNames (RegistryKey rkey)
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey, true);
-			DirectoryInfo selfDir = new DirectoryInfo (self.Dir);
-			DirectoryInfo[] subDirs = selfDir.GetDirectories ();
-			string[] subKeyNames = new string[subDirs.Length];
-			for (int i = 0; i < subDirs.Length; i++) {
-				DirectoryInfo subDir = subDirs[i];
-				subKeyNames[i] = subDir.Name;
-			}
-			return subKeyNames;
+			return self.GetSubKeyNames ();
 		}
 		
 		public string [] GetValueNames (RegistryKey rkey)
@@ -954,6 +996,13 @@ namespace Microsoft.Win32 {
 			// key was removed since it was opened or it does not exist.
 			return RegistryValueKind.Unknown;
 		}
+
+#if NET_4_0
+		public IntPtr GetHandle (RegistryKey key)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 	}
 }

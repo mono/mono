@@ -203,6 +203,28 @@ namespace System.ServiceModel
 			return AddServiceEndpointCore (cd, binding, ea, listenUri);
 		}
 
+#if NET_4_0
+		public virtual void AddServiceEndpoint (ServiceEndpoint endpoint)
+		{
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+
+			ThrowIfDisposedOrImmutable ();
+
+			if (endpoint.Address == null)
+				throw new ArgumentException ("Address on the argument endpoint is null");
+			if (endpoint.Contract == null)
+				throw new ArgumentException ("Contract on the argument endpoint is null");
+			if (endpoint.Binding == null)
+				throw new ArgumentException ("Binding on the argument endpoint is null");
+
+			if (!ImplementedContracts.Values.Any (cd => cd.ContractType == endpoint.Contract.ContractType))
+				throw new InvalidOperationException (String.Format ("Contract '{0}' is not implemented in this service '{1}'", endpoint.Contract.Name, Description.Name));
+
+			Description.Endpoints.Add (endpoint);
+		}
+#endif
+
 		Type PopulateType (string typeName)
 		{
 			Type type = Type.GetType (typeName);
@@ -417,8 +439,8 @@ namespace System.ServiceModel
 			foreach (ServiceEndpoint endPoint in Description.Endpoints)
 				endPoint.Validate ();
 
-			if (Description.Endpoints.FirstOrDefault (e => e.Contract != mex_contract) == null)
-				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange contract) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
+			if (Description.Endpoints.FirstOrDefault (e => e.Contract != mex_contract && !e.IsSystemEndpoint) == null)
+				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange endpoint) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
 		}
 
 		[MonoTODO]
@@ -481,7 +503,8 @@ namespace System.ServiceModel
 					var cd2 = ChannelDispatchers [j];
 					if (cd1.IsMex || cd2.IsMex)
 						continue;
-					if (cd1.Listener.Uri.Equals (cd2.Listener.Uri))
+					// surprisingly, some ChannelDispatcherBase implementations have null Listener property.
+					if (cd1.Listener != null && cd2.Listener != null && cd1.Listener.Uri.Equals (cd2.Listener.Uri))
 						throw new InvalidOperationException ("Two or more service endpoints with different Binding instance are bound to the same listen URI.");
 				}
 			}

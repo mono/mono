@@ -114,7 +114,7 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// LAMESPEC: From T to dynamic type
+			// LAMESPEC: From T to dynamic type because it's like T to object
 			//
 			if (target_type == InternalType.Dynamic) {
 				if (expr_type.IsReferenceType)
@@ -125,11 +125,11 @@ namespace Mono.CSharp {
 
 			//
 			// From T to its effective base class C
-			// From T to any base class of C
+			// From T to any base class of C (it cannot contain dynamic of be of dynamic type)
 			// From T to any interface implemented by C
 			//
 			var base_type = expr_type.GetEffectiveBase ();
-			if (base_type == target_type || TypeManager.IsSubclassOf (base_type, target_type) || base_type.ImplementsInterface (target_type)) {
+			if (base_type == target_type || TypeSpec.IsBaseClass (base_type, target_type, false) || base_type.ImplementsInterface (target_type)) {
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -158,7 +158,7 @@ namespace Mono.CSharp {
 						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 					}
 				}
-
+/*
 				if (target_tp.Interfaces != null) {
 					foreach (TypeSpec iface in target_tp.Interfaces) {
 						if (!TypeManager.IsGenericParameter (iface))
@@ -168,7 +168,7 @@ namespace Mono.CSharp {
 							return source == null ? EmptyExpression.Null : new ClassCast (source, target_type, true);
 					}
 				}
-
+*/
 				return null;
 			}
 
@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 			TypeSpec expr_type = expr.Type;
 
 			// from the null type to any reference-type.
-			if (expr_type == TypeManager.null_type)
+			if (expr_type == InternalType.Null)
 				return target_type != InternalType.AnonymousMethod;
 
 			if (TypeManager.IsGenericParameter (expr_type))
@@ -245,36 +245,23 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// notice that it is possible to write "ValueType v = 1", the ValueType here
-			// is an abstract class, and not really a value type, so we apply the same rules.
+			// Implicit reference conversions (no-boxing) to object or dynamic
 			//
 			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
-				//
-				// A pointer type cannot be converted to object
-				//
-				if (expr_type.IsPointer)
-					return false;
-
-				if (TypeManager.IsValueType (expr_type))
-					return false;
-
-				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type || expr_type.IsDelegate || expr_type.Kind == MemberKind.ArrayType) {
-					// No mcs internal types are convertible
-					return true; // expr_type.MetaInfo.Module != typeof (Convert).Module;
+				switch (expr_type.Kind) {
+				case MemberKind.Class:
+				case MemberKind.Interface:
+				case MemberKind.Delegate:
+				case MemberKind.ArrayType:
+					return true;
 				}
 
-				// From anything to dynamic
-				if (target_type == InternalType.Dynamic)
-					return true;
+				return expr_type == InternalType.Dynamic;
+			}
 
-				// From dynamic to object
-				if (expr_type == InternalType.Dynamic)
-					return true;
-
-				return false;
-			} else if (target_type == TypeManager.value_type) {
+			if (target_type == TypeManager.value_type) {
 				return expr_type == TypeManager.enum_type;
-			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) {
+			} else if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
 				//
 				// Special case: enumeration to System.Enum.
 				// System.Enum is not a value type, it is a class, so we need
@@ -342,9 +329,6 @@ namespace Mono.CSharp {
 				(expr_type == TypeManager.delegate_type || expr_type.IsDelegate))
 				return true;
 
-			if (TypeManager.IsEqual (expr_type, target_type))
-				return true;
-
 			return false;
 		}
 
@@ -402,7 +386,7 @@ namespace Mono.CSharp {
 				return res;
 			}
 
-			if (TypeManager.IsSubclassOf (expr_type, target_type)) {
+			if (TypeSpec.IsBaseClass (expr_type, target_type, false)) {
 				//
 				// Don't box same type arguments
 				//
@@ -435,7 +419,7 @@ namespace Mono.CSharp {
 			//
 			// From null to any nullable type
 			//
-			if (expr_type == TypeManager.null_type)
+			if (expr_type == InternalType.Null)
 				return ec == null ? EmptyExpression.Null : Nullable.LiftedNull.Create (target_type, expr.Location);
 
 			// S -> T?
@@ -673,23 +657,40 @@ namespace Mono.CSharp {
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
 		///
-		///  ec should point to a real EmitContext if expr.Type is TypeManager.anonymous_method_type.
 		/// </summary>
 		public static bool ImplicitStandardConversionExists (Expression expr, TypeSpec target_type)
 		{
 			TypeSpec expr_type = expr.Type;
 
-			if (expr_type == TypeManager.null_type) {
-				NullLiteral nl = expr as NullLiteral;
-				if (nl != null)
-					return nl.ConvertImplicitly (null, target_type) != null;
-			}
+			NullLiteral nl = expr as NullLiteral;
+			if (nl != null)
+				return nl.ConvertImplicitly (null, target_type) != null;
 
 			if (expr_type == TypeManager.void_type)
 				return false;
 
-			if (TypeManager.IsEqual (expr_type, target_type))
+			if (expr_type == target_type)
 				return true;
+
+			// Implicit dynamic conversion
+			if (expr_type == InternalType.Dynamic) {
+				switch (target_type.Kind) {
+				case MemberKind.ArrayType:
+				case MemberKind.Class:
+				case MemberKind.Struct:
+				case MemberKind.Delegate:
+				case MemberKind.Enum:
+				case MemberKind.Interface:
+				case MemberKind.TypeParameter:
+					return true;
+				}
+
+				// dynamic to __arglist
+				if (target_type == InternalType.Arglist)
+					return true;
+
+				return false;
+			}
 
 			if (TypeManager.IsNullableType (target_type)) {
 				return ImplicitNulableConversion (null, expr, target_type) != null;
@@ -704,7 +705,7 @@ namespace Mono.CSharp {
 
 			if (ImplicitBoxingConversion (null, expr_type, target_type) != null)
 				return true;
-
+			
 			//
 			// Implicit Constant Expression Conversions
 			//
@@ -981,6 +982,10 @@ namespace Mono.CSharp {
 					target = TypeManager.uint64_type;
 			}
 
+			// Neither A nor B are interface-types
+			if (source.Type.IsInterface)
+				return;
+
 			// For a conversion operator to be applicable, it must be possible
 			// to perform a standard conversion from the source type to
 			// the operand type of the operator, and it must be possible
@@ -1008,6 +1013,9 @@ namespace Mono.CSharp {
 
 				// LAMESPEC: Exclude UIntPtr -> int conversion
 				if (t == TypeManager.uint32_type && source.Type == TypeManager.uintptr_type)
+					continue;
+
+				if (t.IsInterface)
 					continue;
 
 				if (target != t && !ImplicitStandardConversionExists (new EmptyExpression (t), target)) {
@@ -1221,14 +1229,31 @@ namespace Mono.CSharp {
 			TypeSpec expr_type = expr.Type;
 			Expression e;
 
-			if (expr_type.Equals (target_type)) {
-				if (expr_type != TypeManager.null_type && expr_type != InternalType.AnonymousMethod)
+			if (expr_type == target_type) {
+				if (expr_type != InternalType.Null && expr_type != InternalType.AnonymousMethod)
 					return expr;
 				return null;
 			}
 
-			if (TypeSpecComparer.Variant.IsEqual (expr_type, target_type)) {
-				return expr;
+			if (expr_type == InternalType.Dynamic) {
+				switch (target_type.Kind) {
+				case MemberKind.ArrayType:
+				case MemberKind.Class:
+					if (target_type == TypeManager.object_type)
+						return EmptyCast.Create (expr, target_type);
+
+					goto case MemberKind.Struct;
+				case MemberKind.Struct:
+				case MemberKind.Delegate:
+				case MemberKind.Enum:
+				case MemberKind.Interface:
+				case MemberKind.TypeParameter:
+					Arguments args = new Arguments (1);
+					args.Add (new Argument (expr));
+					return new DynamicConversion (target_type, explicit_cast ? CSharpBinderFlags.ConvertExplicit : 0, args, loc).Resolve (ec);
+				}
+
+				return null;
 			}
 
 			if (TypeManager.IsNullableType (target_type))
@@ -1289,7 +1314,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (expr_type == TypeManager.null_type && target_type.IsPointer)
+				if (expr_type == InternalType.Null && target_type.IsPointer)
 					return EmptyCast.Create (new NullPointer (loc), target_type);
 			}
 
@@ -1317,12 +1342,6 @@ namespace Mono.CSharp {
 			Expression e = ImplicitConversion (ec, source, target_type, loc);
 			if (e != null)
 				return e;
-
-			if (source.Type == InternalType.Dynamic) {
-				Arguments args = new Arguments (1);
-				args.Add (new Argument (source));
-				return new DynamicConversion (target_type, 0, args, loc).Resolve (ec);
-			}
 
 			source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
 			return null;
@@ -1640,9 +1659,9 @@ namespace Mono.CSharp {
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
-			// From object to any reference type or value type (unboxing)
+			// From object or dynamic to any reference type or value type (unboxing)
 			//
-			if (source_type == TypeManager.object_type)
+			if (source_type == TypeManager.object_type || source_type == InternalType.Dynamic)
 				return
 					source == null ? EmptyExpression.Null :
 					target_is_value_type ? new UnboxCast (source, target_type) :
@@ -1652,7 +1671,7 @@ namespace Mono.CSharp {
 			//
 			// From any class S to any class-type T, provided S is a base class of T
 			//
-			if (source_type.Kind == MemberKind.Class && TypeManager.IsSubclassOf (target_type, source_type))
+			if (source_type.Kind == MemberKind.Class && TypeSpec.IsBaseClass (target_type, source_type, true))
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 			//
@@ -1741,6 +1760,46 @@ namespace Mono.CSharp {
 			if (source_type == TypeManager.delegate_type && TypeManager.IsDelegateType (target_type))
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
+			//
+			// From variant generic delegate to same variant generic delegate type
+			//
+			if (source_type.IsDelegate && target_type.IsDelegate && source_type.MemberDefinition == target_type.MemberDefinition) {
+				var tparams = source_type.MemberDefinition.TypeParameters;
+				var targs_src = source_type.TypeArguments;
+				var targs_dst = target_type.TypeArguments;
+				int i;
+				for (i = 0; i < tparams.Length; ++i) {
+					//
+					// If TP is invariant, types have to be identical
+					//
+					if (TypeSpecComparer.IsEqual (targs_src[i], targs_dst[i]))
+						continue;
+
+					if (tparams[i].Variance == Variance.Covariant) {
+						//
+						//If TP is covariant, an implicit or explicit identity or reference conversion is required
+						//
+						if (ImplicitReferenceConversionExists (new EmptyExpression (targs_src[i]), targs_dst[i]))
+							continue;
+
+						if (ExplicitReferenceConversionExists (targs_src[i], targs_dst[i]))
+							continue;
+
+					} else if (tparams[i].Variance == Variance.Contravariant) {
+						//
+						//If TP is contravariant, both are either identical or reference types
+						//
+						if (TypeManager.IsReferenceType (targs_src[i]) && TypeManager.IsReferenceType (targs_dst[i]))
+							continue;
+					}
+
+					break;
+				}
+
+				if (i == tparams.Length)
+					return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
+			}
+
 			return null;
 		}
 
@@ -1818,7 +1877,7 @@ namespace Mono.CSharp {
 			// from Null to a ValueType, and ExplicitReference wont check against
 			// null literal explicitly
 			//
-			if (expr_type != TypeManager.null_type){
+			if (expr_type != InternalType.Null) {
 				ne = ExplicitReferenceConversion (expr, expr_type, target_type);
 				if (ne != null)
 					return ne;

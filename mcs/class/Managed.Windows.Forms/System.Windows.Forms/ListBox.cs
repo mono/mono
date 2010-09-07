@@ -1386,8 +1386,14 @@ namespace System.Windows.Forms
 				if (hbar_offset < 0)
 					hbar_offset = 0;
 
-				if (IsHandleCreated)
+				if (IsHandleCreated) {
 					XplatUI.ScrollWindow (Handle, items_area, old_offset - hbar_offset, 0, false);
+
+					// Invalidate the previous selection border, to keep it properly updated.
+					Rectangle selection_border_area = new Rectangle (items_area.Width - (hbar_offset - old_offset) - 3, 0, 
+							3, items_area.Height);
+					Invalidate (selection_border_area);
+				}
 			}
 		}
 

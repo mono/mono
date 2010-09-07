@@ -307,7 +307,11 @@ namespace Mono.CSharp {
 			}
 
 			if ((state & StateFlags.PendingMakeMethod) != 0) {
-				metaInfo = ((MethodInfo) metaInfo).MakeGenericMethod (targs.Select (l => l.GetMetaInfo ()).ToArray ());
+				var sre_targs = new Type[targs.Length];
+				for (int i = 0; i < sre_targs.Length; ++i)
+					sre_targs[i] = targs[i].GetMetaInfo ();
+
+				metaInfo = ((MethodInfo) metaInfo).MakeGenericMethod (sre_targs);
 				state &= ~StateFlags.PendingMakeMethod;
 			}
 
@@ -407,7 +411,7 @@ namespace Mono.CSharp {
 			var ms = (MethodSpec) MemberwiseClone ();
 			if (decl != DeclaringType) {
 				// Gets back MethodInfo in case of metaInfo was inflated
-				ms.metaInfo = MemberCache.GetMember (DeclaringType.GetDefinition (), this).metaInfo;
+				ms.metaInfo = MemberCache.GetMember (TypeParameterMutator.GetMemberDeclaringType (DeclaringType), this).metaInfo;
 
 				ms.declaringType = decl;
 				ms.state |= StateFlags.PendingMetaInflate;
@@ -759,33 +763,15 @@ namespace Mono.CSharp {
 
 	public class Method : MethodOrOperator, IGenericMethodDefinition
 	{
-		/// <summary>
-		///   Modifiers allowed in a class declaration
-		/// </summary>
-		const Modifiers AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
-			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
-			Modifiers.PRIVATE |
-			Modifiers.STATIC |
-			Modifiers.VIRTUAL |
-			Modifiers.SEALED |
-			Modifiers.OVERRIDE |
-			Modifiers.ABSTRACT |
-			Modifiers.UNSAFE |
-			Modifiers.EXTERN;
-
-		const Modifiers AllowedInterfaceModifiers = 
-			Modifiers.NEW | Modifiers.UNSAFE;
-
 		Method partialMethodImplementation;
 
 		public Method (DeclSpace parent, GenericMethod generic,
 			       FullNamedExpression return_type, Modifiers mod,
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
-				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersClass :
+				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
+				AllowedModifiersClass,
 				name, attrs, parameters)
 		{
 		}
@@ -826,6 +812,7 @@ namespace Mono.CSharp {
 
 		public TypeParameterSpec[] TypeParameters {
 			get {
+				// TODO: Cache this
 				return CurrentTypeParameters.Select (l => l.Type).ToArray ();
 			}
 		}
@@ -889,13 +876,13 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if (ReturnType != TypeManager.void_type) {
-					Report.Error (578, Location, "Conditional not valid on `{0}' because its return type is not void", GetSignatureForError ());
+				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+					Report.Error (243, Location, "Conditional not valid on `{0}' because it is an override method", GetSignatureForError ());
 					return;
 				}
 
-				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
-					Report.Error (243, Location, "Conditional not valid on `{0}' because it is an override method", GetSignatureForError ());
+				if (ReturnType != TypeManager.void_type) {
+					Report.Error (578, Location, "Conditional not valid on `{0}' because its return type is not void", GetSignatureForError ());
 					return;
 				}
 
@@ -937,9 +924,20 @@ namespace Mono.CSharp {
 			if (((ModFlags & Modifiers.OVERRIDE) != 0 || IsExplicitImpl)) {
 				if (base_method != null) {
 					base_tparams = base_method.GenericDefinition.TypeParameters;
+				
 					if (base_method.DeclaringType.IsGeneric) {
 						base_decl_tparams = base_method.DeclaringType.MemberDefinition.TypeParameters;
 						base_targs = Parent.BaseType.TypeArguments;
+					}
+
+					if (base_method.IsGeneric) {
+						if (base_decl_tparams.Length != 0) {
+							base_decl_tparams = base_decl_tparams.Concat (base_tparams).ToArray ();
+							base_targs = base_targs.Concat (tparams.Select<TypeParameter, TypeSpec> (l => l.Type)).ToArray ();
+						} else {
+							base_decl_tparams = base_tparams;
+							base_targs = tparams.Select (l => l.Type).ToArray ();
+						}
 					}
 				} else if (MethodData.implementing != null) {
 					base_tparams = MethodData.implementing.GenericDefinition.TypeParameters;
@@ -1085,16 +1083,18 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			try {
-				Report.Debug (64, "METHOD EMIT", this, MethodBuilder, Location, Block, MethodData);
 				if (IsPartialDefinition) {
 					//
 					// Use partial method implementation builder for partial method declaration attributes
 					//
 					if (partialMethodImplementation != null) {
 						MethodBuilder = partialMethodImplementation.MethodBuilder;
-						return;
 					}
-				} else if ((ModFlags & Modifiers.PARTIAL) != 0 && (caching_flags & Flags.PartialDefinitionExists) == 0) {
+
+					return;
+				}
+				
+				if ((ModFlags & Modifiers.PARTIAL) != 0 && (caching_flags & Flags.PartialDefinitionExists) == 0) {
 					Report.Error (759, Location, "A partial method `{0}' implementation is missing a partial method declaration",
 						GetSignatureForError ());
 				}
@@ -2313,9 +2313,9 @@ namespace Mono.CSharp {
 				}
 
 				TypeSpec conv_type;
-				if (TypeManager.IsEqual (declaring_type, return_type) || declaring_type == return_type_unwrap) {
+				if (declaring_type == return_type || declaring_type == return_type_unwrap) {
 					conv_type = first_arg_type;
-				} else if (TypeManager.IsEqual (declaring_type, first_arg_type) || declaring_type == first_arg_type_unwrap) {
+				} else if (declaring_type == first_arg_type || declaring_type == first_arg_type_unwrap) {
 					conv_type = return_type;
 				} else {
 					Report.Error (556, Location,
@@ -2338,13 +2338,13 @@ namespace Mono.CSharp {
 				}
 
 				if (conv_type.IsClass) {
-					if (TypeManager.IsSubclassOf (declaring_type, conv_type)) {
+					if (TypeSpec.IsBaseClass (declaring_type, conv_type, true)) {
 						Report.Error (553, Location, "User-defined conversion `{0}' cannot convert to or from a base class",
 							GetSignatureForError ());
 						return false;
 					}
 
-					if (TypeManager.IsSubclassOf (conv_type, declaring_type)) {
+					if (TypeSpec.IsBaseClass (conv_type, declaring_type, false)) {
 						Report.Error (554, Location, "User-defined conversion `{0}' cannot convert to or from a derived class",
 							GetSignatureForError ());
 						return false;
@@ -2359,7 +2359,7 @@ namespace Mono.CSharp {
 				// Checks for Unary operators
 
 				if (OperatorType == OpType.Increment || OperatorType == OpType.Decrement) {
-					if (return_type != declaring_type && !TypeManager.IsSubclassOf (return_type, declaring_type)) {
+					if (return_type != declaring_type && !TypeSpec.IsBaseClass (return_type, declaring_type, false)) {
 						Report.Error (448, Location,
 							"The return type for ++ or -- operator must be the containing type or derived from the containing type");
 						return false;
@@ -2371,7 +2371,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!TypeManager.IsEqual (first_arg_type_unwrap, declaring_type)) {
+				if (first_arg_type_unwrap != declaring_type) {
 					Report.Error (562, Location,
 						"The parameter type of a unary operator must be the containing type");
 					return false;
@@ -2387,14 +2387,14 @@ namespace Mono.CSharp {
 					}
 				}
 
-			} else if (!TypeManager.IsEqual (first_arg_type_unwrap, declaring_type)) {
+			} else if (first_arg_type_unwrap != declaring_type) {
 				// Checks for Binary operators
 
 				var second_arg_type = ParameterTypes[1];
 				if (TypeManager.IsNullableType (second_arg_type))
 					second_arg_type = TypeManager.GetTypeArguments (second_arg_type)[0];
 
-				if (!TypeManager.IsEqual (second_arg_type, declaring_type)) {
+				if (second_arg_type != declaring_type) {
 					Report.Error (563, Location,
 						"One of the parameters of a binary operator must be the containing type");
 					return false;

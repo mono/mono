@@ -1,4 +1,3 @@
-#if NET_4_0
 //
 // ParallelQuery.cs
 //
@@ -25,11 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0
 using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Linq.Parallel.QueryNodes;
 
 namespace System.Linq
 {
@@ -48,6 +49,11 @@ namespace System.Linq
 			get {
 				return node;
 			}
+		}
+
+		public override IEnumerator<TSource> GetEnumerator ()
+		{
+			return base.GetEnumerator ();
 		}
 	}
 }

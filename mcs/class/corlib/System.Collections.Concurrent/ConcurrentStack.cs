@@ -1,4 +1,3 @@
-#if NET_4_0
 // ConcurrentStack.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -22,6 +21,8 @@
 // THE SOFTWARE.
 //
 //
+
+#if NET_4_0
 
 using System;
 using System.Threading;
@@ -172,16 +173,11 @@ namespace System.Collections.Concurrent
 			return (IEnumerator)InternalGetEnumerator ();
 		}
 		
-		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
-		{
-			return InternalGetEnumerator ();
-		}
-		
 		public IEnumerator<T> GetEnumerator ()
 		{
 			return InternalGetEnumerator ();
 		}
-		
+
 		IEnumerator<T> InternalGetEnumerator ()
 		{
 			Node my_head = head;

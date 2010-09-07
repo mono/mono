@@ -1,5 +1,6 @@
 <Type Name="UseLists" FullName="Mono.DocTest.UseLists">
   <TypeSignature Language="C#" Value="public class UseLists" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UseLists extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UseLists ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -28,6 +30,7 @@
     </Member>
     <Member MemberName="GetValues&lt;T&gt;">
       <MemberSignature Language="C#" Value="public Mono.DocTest.Generic.MyList&lt;T&gt; GetValues&lt;T&gt; (T value) where T : struct;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.DocTest.Generic.MyList`1&lt;!!T&gt; GetValues&lt;struct .ctor (class System.ValueType) T&gt;(!!T value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -58,6 +61,7 @@
     </Member>
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="public void Process (Mono.DocTest.Generic.MyList&lt;int&gt; list);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Process(class Mono.DocTest.Generic.MyList`1&lt;int32&gt; list) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -77,6 +81,7 @@
     </Member>
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="public void Process (System.Collections.Generic.List&lt;int&gt; list);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Process(class System.Collections.Generic.List`1&lt;int32&gt; list) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -102,6 +107,7 @@
     </Member>
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="public void Process (System.Collections.Generic.List&lt;Predicate&lt;int&gt;&gt; list);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Process(class System.Collections.Generic.List`1&lt;class System.Predicate`1&lt;int32&gt;&gt; list) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -123,6 +129,7 @@
     </Member>
     <Member MemberName="Process&lt;T&gt;">
       <MemberSignature Language="C#" Value="public void Process&lt;T&gt; (System.Collections.Generic.List&lt;Predicate&lt;T&gt;&gt; list);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Process&lt;T&gt;(class System.Collections.Generic.List`1&lt;class System.Predicate`1&lt;!!T&gt;&gt; list) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -148,6 +155,7 @@
     </Member>
     <Member MemberName="UseHelper&lt;T,U,V&gt;">
       <MemberSignature Language="C#" Value="public void UseHelper&lt;T,U,V&gt; (Mono.DocTest.Generic.MyList&lt;T&gt;.Helper&lt;U,V&gt; helper);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void UseHelper&lt;T, U, V&gt;(class Mono.DocTest.Generic.MyList`1/Helper`2&lt;!!T, !!U, !!V&gt; helper) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

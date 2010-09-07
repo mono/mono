@@ -52,7 +52,7 @@ namespace Microsoft.Build.Tasks {
 			if (files.Length == 0)
 				return true;
 
-			bool returnBoolean = false;
+			bool returnBoolean = true;
 			List <ITaskItem> successfulFiles = new List <ITaskItem> ();
 			Stream stream = null;
 			
@@ -77,15 +77,15 @@ namespace Microsoft.Build.Tasks {
 						File.SetLastAccessTime (fullname, time);
 						File.SetLastWriteTime (fullname, time);
 						successfulFiles.Add (file);
-						returnBoolean = true;
 					} else {
-						;
+						continue;
 					}
 
 					touchedFiles = successfulFiles.ToArray ();
 				}
 				catch (Exception ex) {
 					Log.LogErrorFromException (ex);
+					returnBoolean = false;
 				}
 			}
 			return returnBoolean;

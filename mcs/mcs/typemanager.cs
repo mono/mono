@@ -61,7 +61,6 @@ namespace Mono.CSharp {
 	static public PredefinedTypeSpec exception_type;
 
 
-	static public TypeSpec null_type;
 	static public TypeSpec typed_reference_type;
 	static public TypeSpec arg_iterator_type;
 	static public TypeSpec mbr_type;
@@ -368,6 +367,15 @@ namespace Mono.CSharp {
 		PredefinedAttributes.Get.ParamArray.Initialize (ctx, false);
 		PredefinedAttributes.Get.Out.Initialize (ctx, false);
 
+		if (InternalType.Dynamic.GetMetaInfo () == null) {
+			InternalType.Dynamic.SetMetaInfo (object_type.GetMetaInfo ());
+
+			if (object_type.MemberDefinition.IsImported)
+				InternalType.Dynamic.MemberCache = object_type.MemberCache;
+
+			InternalType.Null.SetMetaInfo (object_type.GetMetaInfo ());
+		}
+
 		return ctx.Report.Errors == 0;
 	}
 
@@ -376,11 +384,6 @@ namespace Mono.CSharp {
 	//
 	public static void InitOptionalCoreTypes (CompilerContext ctx)
 	{
-		//
-		// These are only used for compare purposes
-		//
-		null_type = InternalType.Null;
-
 		void_ptr_type = PointerContainer.MakeType (void_type);
 
 		//
@@ -565,18 +568,6 @@ namespace Mono.CSharp {
 		return t.IsStruct;
 	}
 
-	public static bool IsSubclassOf (TypeSpec type, TypeSpec base_type)
-	{
-		do {
-			if (type == base_type)
-				return true;
-
-			type = type.BaseType;
-		} while (type != null);
-
-		return false;
-	}
-
 	public static bool IsFamilyAccessible (TypeSpec type, TypeSpec parent)
 	{
 //		TypeParameter tparam = LookupTypeParameter (type);
@@ -627,12 +618,12 @@ namespace Mono.CSharp {
 		type = type.GetDefinition (); // DropGenericTypeArguments (type);
 		parent = parent.GetDefinition (); // DropGenericTypeArguments (parent);
 
-		if (IsEqual (type, parent))
+		if (type == parent)
 			return false;
 
 		type = type.DeclaringType;
 		while (type != null) {
-			if (IsEqual (type.GetDefinition (), parent))
+			if (type.GetDefinition () == parent)
 				return true;
 
 			type = type.DeclaringType;
@@ -851,11 +842,6 @@ namespace Mono.CSharp {
 	public static bool ContainsGenericParameters (TypeSpec type)
 	{
 		return type.GetMetaInfo ().ContainsGenericParameters;
-	}
-
-	public static bool IsEqual (TypeSpec a, TypeSpec b)
-	{
-		return a == b && !(a is InternalType);
 	}
 
 	public static TypeSpec[] GetTypeArguments (TypeSpec t)

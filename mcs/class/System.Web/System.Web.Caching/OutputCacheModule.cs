@@ -73,16 +73,8 @@ namespace System.Web.Caching
 			string providerName = app.GetOutputCacheProviderName (ctx);
 			if (String.IsNullOrEmpty (providerName))
 				throw new ProviderException ("Invalid OutputCacheProvider name. Name must not be null or an empty string.");
-			
-			if (String.Compare (providerName, OutputCache.DEFAULT_PROVIDER_NAME, StringComparison.Ordinal) == 0) {
-				if (provider == null)
-					provider = new InMemoryOutputCacheProvider ();
-				return provider;
-			}
 
-			OutputCacheProviderCollection providers = OutputCache.Providers;
-			OutputCacheProvider ret = providers != null ? providers [providerName] : null;
-
+			OutputCacheProvider ret = OutputCache.GetProvider (providerName);
 			if (ret == null)
 				throw new ProviderException (String.Format ("OutputCacheProvider named '{0}' cannot be found.", providerName));
 

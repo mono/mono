@@ -75,6 +75,20 @@ class Class
 	{
 		return i [0] * i.Length;
 	}
+	
+	public static void ArglistMethod (__arglist)
+	{
+	}
+}
+
+class EventClass
+{
+	internal event Func<int> OutEvent;
+	
+	public int CallEvent ()
+	{
+		return OutEvent ();
+	}
 }
 
 class Tester
@@ -96,6 +110,10 @@ class Tester
 			// passed
 		}
 	}
+	
+	event Func<int> e;
+	int field;
+
 
 #pragma warning disable 169
 
@@ -149,6 +167,14 @@ class Tester
 		Assert (2, Class.StaticMethod (d), "#2");
 		Class.StaticMethod (d);	
 	}
+	
+	void InvokeMember_Error ()
+	{
+		AssertError (() => {
+				dynamic d_arg = "a";
+				Class.ArglistMethod (d_arg);
+			}, "#1");
+	}
 
 	void InvokeConstructor ()
 	{
@@ -161,18 +187,18 @@ class Tester
 		var r2 = new D2 (d);
 	}
 
-	event Func<int> e;
-	int field;
 	void IsEvent ()
 	{
 		dynamic d = this;
 		d.e += new Func<int> (() => 3);
-		
-		// FIXME:
-		//Assert (3, d.e (), "#1");
+		Assert (3, d.e (), "#1");
 		
 		d.field += 5;
 		Assert (5, d.field, "#2");
+		
+		d = new EventClass ();
+		d.OutEvent += new Func<int> (() => 100);
+		Assert (100, d.CallEvent (), "#3");
 	}
 
 	void MemberGetTest ()

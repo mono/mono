@@ -16,7 +16,7 @@ endif
 
 MCS = $(with_mono_path) $(INTERNAL_GMCS)
 
-PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:BOOTSTRAP_BASIC
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:BOOTSTRAP_BASIC -nowarn:1699
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 NO_INSTALL = yes

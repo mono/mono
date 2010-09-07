@@ -90,7 +90,7 @@ namespace Mono.CSharp {
 
 		bool CheckConflictingInheritedConstraint (TypeSpec ba, TypeSpec bb, IMemberContext context, Location loc)
 		{
-			if (!TypeManager.IsSubclassOf (ba, bb) && !TypeManager.IsSubclassOf (bb, ba)) {
+			if (!TypeSpec.IsBaseClass (ba, bb, false) && !TypeSpec.IsBaseClass (bb, ba, false)) {
 				context.Compiler.Report.Error (455, loc,
 					"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
 					tparam.Value,
@@ -1169,6 +1169,29 @@ namespace Mono.CSharp {
 			this.var = var;
 		}
 
+		#region Properties
+
+		public TypeParameter[] MethodTypeParameters {
+			get {
+				return mvar;
+			}
+		}
+
+		#endregion
+
+		public static TypeSpec GetMemberDeclaringType (TypeSpec type)
+		{
+			if (type is InflatedTypeSpec) {
+				if (type.DeclaringType == null)
+					return type.GetDefinition ();
+
+				var parent = GetMemberDeclaringType (type.DeclaringType);
+				type = MemberCache.GetMember<TypeSpec> (parent, type);
+			}
+
+			return type;
+		}
+
 		public TypeSpec Mutate (TypeSpec ts)
 		{
 			TypeSpec value;
@@ -1178,12 +1201,6 @@ namespace Mono.CSharp {
 			value = ts.Mutate (this);
 			mutated_typespec.Add (ts, value);
 			return value;
-		}
-
-		public FieldInfo Mutate (FieldSpec fs)
-		{
-			// TODO:
-			return fs.GetMetaInfo ();
 		}
 
 		public TypeParameterSpec Mutate (TypeParameterSpec tp)
@@ -1367,9 +1384,6 @@ namespace Mono.CSharp {
 		{
 			if (TypeManager.IsNullableType (open_type))
 				return targs[0].GetSignatureForError () + "?";
-
-			if (MemberDefinition is AnonymousTypeClass)
-				return ((AnonymousTypeClass) MemberDefinition).GetSignatureForError ();
 
 			return base.GetSignatureForError ();
 		}
@@ -1754,7 +1768,7 @@ namespace Mono.CSharp {
 
 		//
 		// Checks the constraints of open generic type against type
-		// arguments. Has to be called onafter all members are defined
+		// arguments. Has to be called after all members have been defined
 		//
 		public bool CheckConstraints (IMemberContext ec)
 		{
@@ -1787,12 +1801,23 @@ namespace Mono.CSharp {
 
 		static bool HasDynamicArguments (TypeSpec[] args)
 		{
-			foreach (var item in args) {
+			for (int i = 0; i < args.Length; ++i) {
+				var item = args[i];
+
 				if (item == InternalType.Dynamic)
 					return true;
 
 				if (TypeManager.IsGenericType (item))
 					return HasDynamicArguments (TypeManager.GetTypeArguments (item));
+
+				if (item.IsArray) {
+					while (item.IsArray) {
+						item = ((ArrayContainer) item).Element;
+					}
+
+					if (item == InternalType.Dynamic)
+						return true;
+				}
 			}
 
 			return false;
@@ -1835,10 +1860,10 @@ namespace Mono.CSharp {
 
 	static class ConstraintChecker
 	{
-		/// <summary>
-		///   Check the constraints; we're called from ResolveAsTypeTerminal()
-		///   after fully resolving the constructed type.
-		/// </summary>
+		//
+		// Checks all type arguments againts type parameters constraints
+		// NOTE: It can run in probing mode when `mc' is null
+		//
 		public static bool CheckAll (IMemberContext mc, MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
 			for (int i = 0; i < tparams.Length; i++) {
@@ -1855,24 +1880,37 @@ namespace Mono.CSharp {
 			// First, check the `class' and `struct' constraints.
 			//
 			if (tparam.HasSpecialClass && !TypeManager.IsReferenceType (atype)) {
-				mc.Compiler.Report.Error (452, loc,
-					"The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
-					TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				if (mc != null) {
+					mc.Compiler.Report.Error (452, loc,
+						"The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
+						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				}
+
 				return false;
 			}
 
 			if (tparam.HasSpecialStruct && (!TypeManager.IsValueType (atype) || TypeManager.IsNullableType (atype))) {
-				mc.Compiler.Report.Error (453, loc,
-					"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
-					TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				if (mc != null) {
+					mc.Compiler.Report.Error (453, loc,
+						"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
+						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				}
+
 				return false;
 			}
+
+			bool ok = true;
 
 			//
 			// The class constraint comes next.
 			//
 			if (tparam.HasTypeConstraint) {
-				CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc);
+				if (!CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc)) {
+					if (mc == null)
+						return false;
+
+					ok = false;
+				}
 			}
 
 			//
@@ -1880,12 +1918,21 @@ namespace Mono.CSharp {
 			//
 			if (tparam.Interfaces != null) {
 				if (TypeManager.IsNullableType (atype)) {
+					if (mc == null)
+						return false;
+
 					mc.Compiler.Report.Error (313, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' never satisfies interface constraint",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
+					ok = false;
 				} else {
 					foreach (TypeSpec iface in tparam.Interfaces) {
-						CheckConversion (mc, context, atype, tparam, iface, loc);
+						if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
+							if (mc == null)
+								return false;
+
+							ok = false;
+						}
 					}
 				}
 			}
@@ -1894,23 +1941,28 @@ namespace Mono.CSharp {
 			// Finally, check the constructor constraint.
 			//
 			if (!tparam.HasSpecialConstructor)
-				return true;
+				return ok;
 
 			if (!HasDefaultConstructor (atype)) {
-				mc.Compiler.Report.SymbolRelatedToPreviousError (atype);
-				mc.Compiler.Report.Error (310, loc,
-					"The type `{0}' must have a public parameterless constructor in order to use it as parameter `{1}' in the generic type or method `{2}'",
-					TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				if (mc != null) {
+					mc.Compiler.Report.SymbolRelatedToPreviousError (atype);
+					mc.Compiler.Report.Error (310, loc,
+						"The type `{0}' must have a public parameterless constructor in order to use it as parameter `{1}' in the generic type or method `{2}'",
+						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+				}
 				return false;
 			}
 
-			return true;
+			return ok;
 		}
 
-		static void CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
+		static bool CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
 		{
 			var expr = new EmptyExpression (atype);
-			if (!Convert.ImplicitStandardConversionExists (expr, ttype)) {
+			if (Convert.ImplicitStandardConversionExists (expr, ttype))
+				return true;
+
+			if (mc != null) {
 				mc.Compiler.Report.SymbolRelatedToPreviousError (tparam);
 				if (TypeManager.IsValueType (atype)) {
 					mc.Compiler.Report.Error (315, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
@@ -1923,6 +1975,8 @@ namespace Mono.CSharp {
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				}
 			}
+
+			return false;
 		}
 
 		static bool HasDefaultConstructor (TypeSpec atype)
@@ -2320,7 +2374,7 @@ namespace Mono.CSharp {
 			Upper	= 2
 		}
 
-		class BoundInfo
+		class BoundInfo : IEquatable<BoundInfo>
 		{
 			public readonly TypeSpec Type;
 			public readonly BoundKind Kind;
@@ -2336,11 +2390,14 @@ namespace Mono.CSharp {
 				return Type.GetHashCode ();
 			}
 
-			public override bool Equals (object obj)
+			#region IEquatable<BoundInfo> Members
+
+			public bool Equals (BoundInfo other)
 			{
-				BoundInfo a = (BoundInfo) obj;
-				return Type == a.Type && Kind == a.Kind;
+				return Type == other.Type && Kind == other.Kind;
 			}
+
+			#endregion
 		}
 
 		readonly TypeSpec[] unfixed_types;
@@ -2401,23 +2458,15 @@ namespace Mono.CSharp {
 
 			var a = bounds [index];
 			if (a == null) {
-				a = new List<BoundInfo> ();
+				a = new List<BoundInfo> (2);
+				a.Add (bound);
 				bounds [index] = a;
-			} else {
-				if (a.Contains (bound))
-					return;
+				return;
 			}
 
-			//
-			// SPEC: does not cover type inference using constraints
-			//
-			//if (TypeManager.IsGenericParameter (t)) {
-			//    GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
-			//    if (constraints != null) {
-			//        //if (constraints.EffectiveBaseClass != null)
-			//        //	t = constraints.EffectiveBaseClass;
-			//    }
-			//}
+			if (a.Contains (bound))
+				return;
+
 			a.Add (bound);
 		}
 		
@@ -2605,8 +2654,15 @@ namespace Mono.CSharp {
 					}
 
 					if (bound.Kind == BoundKind.Exact || cbound.Kind == BoundKind.Exact) {
-						if (cbound.Kind != BoundKind.Exact) {
+						if (cbound.Kind == BoundKind.Lower) {
 							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+								break;
+							}
+
+							continue;
+						}
+						if (cbound.Kind == BoundKind.Upper) {
+							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
 								break;
 							}
 
@@ -2626,21 +2682,46 @@ namespace Mono.CSharp {
 					}
 
 					if (bound.Kind == BoundKind.Lower) {
-						if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
-							break;
+						if (cbound.Kind == BoundKind.Lower) {
+							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+								break;
+							}
+						} else {
+							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+								break;
+							}
+
+							bound = cbound;
 						}
-					} else {
+
+						continue;
+					}
+
+					if (bound.Kind == BoundKind.Upper) {
 						if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
 							break;
 						}
+					} else {
+						throw new NotImplementedException ("variance conversion");
 					}
 				}
 
 				if (cii != candidates_count)
 					continue;
 
-				if (best_candidate != null && best_candidate != bound.Type)
-					return false;
+				//
+				// We already have the best candidate, break if thet are different
+				//
+				// Dynamic is never ambiguous as we prefer dynamic over other best candidate types
+				//
+				if (best_candidate != null) {
+
+					if (best_candidate == InternalType.Dynamic)
+						continue;
+
+					if (bound.Type != InternalType.Dynamic && best_candidate != bound.Type)
+						return false;
+				}
 
 				best_candidate = bound.Type;
 			}
@@ -2816,7 +2897,7 @@ namespace Mono.CSharp {
 					//
 					if (unique_candidate_targs != null) {
 						TypeSpec[] second_unique_candidate_targs = TypeManager.GetTypeArguments (u_candidate);
-						if (TypeSpecComparer.Default.Equals (unique_candidate_targs, second_unique_candidate_targs)) {
+						if (TypeSpecComparer.Equals (unique_candidate_targs, second_unique_candidate_targs)) {
 							unique_candidate_targs = second_unique_candidate_targs;
 							continue;
 						}
@@ -2911,7 +2992,7 @@ namespace Mono.CSharp {
 
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 				Arguments args = DelegateCreation.CreateDelegateMethodArguments (invoke.Parameters, param_types, e.Location);
-				mg = mg.OverloadResolve (ec, ref args, null, OverloadResolver.Restrictions.Covariant | OverloadResolver.Restrictions.ProbingOnly);
+				mg = mg.OverloadResolve (ec, ref args, null, OverloadResolver.Restrictions.CovariantDelegate | OverloadResolver.Restrictions.ProbingOnly);
 				if (mg == null)
 					return 0;
 

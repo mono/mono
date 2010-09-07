@@ -110,6 +110,7 @@ System.Collections.Specialized/StringCollectionTest.cs
 System.Collections.Specialized/StringDictionaryTest.cs
 System.ComponentModel/ArrayConverterTests.cs
 System.ComponentModel/AsyncOperationManagerTest.cs
+System.ComponentModel/AttributeCollectionTest.cs
 System.ComponentModel/AttributeProviderAttributeTest.cs
 System.ComponentModel/BackgroundWorkerTest.cs
 System.ComponentModel/BindingListTest.cs
@@ -250,6 +251,7 @@ System.Net.Mail/SmtpClientTest.cs
 System.Net.Mail/SmtpExceptionTest.cs
 System.Net.Mail/SmtpPermissionTest.cs
 System.Net.Mail/SmtpPermissionAttributeTest.cs
+System.Net.Mail/SmtpServer.cs
 System.Net.Mime/ContentDispositionTest.cs
 System.Net.Mime/ContentTypeTest.cs
 System.Net.NetworkInformation/PhysicalAddressTest.cs

@@ -198,7 +198,9 @@ namespace System.ServiceModel
 						return Endpoint.Binding.BuildChannelFactory<IOutputChannel> (pl);
 					break;
 				}
-			} else {
+			}
+			// both OneWay and non-OneWay contracts fall into here.
+			{
 				switch (Endpoint.Contract.SessionMode) {
 				case SessionMode.Required:
 					if (Endpoint.Binding.CanBuildChannelFactory<IRequestSessionChannel> (pl))
@@ -216,7 +218,7 @@ namespace System.ServiceModel
 					break;
 				}
 			}
-			throw new InvalidOperationException ("The binding does not support any of the channel types that the contract allows.");
+			throw new InvalidOperationException (String.Format ("The binding does not support any of the channel types that the contract '{0}' allows.", Endpoint.Contract.Name));
 		}
 
 		BindingParameterCollection CreateBindingParameters ()

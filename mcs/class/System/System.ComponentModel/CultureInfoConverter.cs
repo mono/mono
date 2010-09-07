@@ -88,11 +88,7 @@ namespace System.ComponentModel
 		{
 			string culture_string = value as string;
 			if (culture_string != null) {
-#if NET_2_0
 				if (String.Compare (culture_string, "(Default)", false) == 0)
-#else
-				if (String.Compare (culture_string, "(Default)", true) == 0)
-#endif
 					return CultureInfo.InvariantCulture;
 
 				try {
@@ -155,6 +151,14 @@ namespace System.ComponentModel
 		{
 			return true;
 		}
+
+#if NET_4_0
+		protected virtual string GetCultureName (CultureInfo culture)
+		{
+			// .Net doesn't throw ArgumentNullException here, ugh.
+			return culture.Name;
+		}
+#endif
 
 	}
 }

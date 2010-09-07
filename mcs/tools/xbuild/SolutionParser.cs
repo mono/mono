@@ -133,6 +133,7 @@ namespace Mono.XBuild.CommandLine {
 			Dictionary<Guid, ProjectInfo> projectInfos = new Dictionary<Guid, ProjectInfo> ();
 			Dictionary<Guid, ProjectInfo> websiteProjectInfos = new Dictionary<Guid, ProjectInfo> ();
 			List<ProjectInfo>[] infosByLevel = null;
+			Dictionary<Guid, ProjectInfo> unsupportedProjectInfos = new Dictionary<Guid, ProjectInfo> ();
 
 			Match m = projectRegex.Match (line);
 			while (m.Success) {
@@ -146,10 +147,14 @@ namespace Mono.XBuild.CommandLine {
 					continue;
 				}
 
+				projectInfo.Guid = new Guid (m.Groups [4].Value);
+
 				if (String.Compare (m.Groups [1].Value, vcprojGuid,
 						StringComparison.InvariantCultureIgnoreCase) == 0) {
 					// Ignore vcproj 
 					RaiseWarning (0, string.Format("Ignoring vcproj '{0}'.", projectInfo.Name));
+
+					unsupportedProjectInfos [projectInfo.Guid] = projectInfo;
 					m = m.NextMatch ();
 					continue;
 				}
@@ -158,9 +163,7 @@ namespace Mono.XBuild.CommandLine {
 						StringComparison.InvariantCultureIgnoreCase) == 0)
 					websiteProjectInfos.Add (new Guid (m.Groups[4].Value), projectInfo);
 				else
-					projectInfos.Add (new Guid (m.Groups[4].Value), projectInfo);
-
-				projectInfo.Guid = new Guid (m.Groups [4].Value);
+					projectInfos.Add (projectInfo.Guid, projectInfo);
 
 				Match projectSectionMatch = projectDependenciesRegex.Match (m.Groups[6].Value);
 				while (projectSectionMatch.Success) {
@@ -203,7 +206,7 @@ namespace Mono.XBuild.CommandLine {
 
 				Project currentProject = p.ParentEngine.CreateNewProject ();
 				try {
-					currentProject.Load (filename);
+					currentProject.Load (filename, ProjectLoadSettings.IgnoreMissingImports);
 				} catch (InvalidProjectFileException e) {
 					RaiseWarning (0, e.Message);
 					continue;
@@ -220,6 +223,12 @@ namespace Mono.XBuild.CommandLine {
 					if (hasGuid) {
 						Guid guid = new Guid (projectReferenceGuid);
 						projectInfos.TryGetValue (guid, out info);
+						if (info == null && unsupportedProjectInfos.TryGetValue (guid, out info)) {
+							RaiseWarning (0, String.Format (
+									"{0}: ProjectReference '{1}' is of an unsupported type. Ignoring.",
+									filename, bi.Include));
+							continue;
+						}
 					}
 
 					if (info == null || !hasGuid) {
@@ -229,10 +238,16 @@ namespace Mono.XBuild.CommandLine {
 						string fullpath = Path.GetFullPath (Path.Combine (projectDir, bi.Include.Replace ('\\', Path.DirectorySeparatorChar)));
 						info = projectInfos.Values.FirstOrDefault (pi => pi.FileName == fullpath);
 
-						if (info == null)
-							RaiseWarning (0, String.Format (
-									"{0}: ProjectReference '{1}' not found, neither by guid '{2}' nor by project file name '{3}'.",
-									filename, bi.Include, projectReferenceGuid, fullpath));
+						if (info == null) {
+							if (unsupportedProjectInfos.Values.Any (pi => pi.FileName == fullpath))
+								RaiseWarning (0, String.Format (
+										"{0}: ProjectReference '{1}' is of an unsupported type. Ignoring.",
+										filename, bi.Include));
+							else
+								RaiseWarning (0, String.Format (
+										"{0}: ProjectReference '{1}' not found, neither by guid '{2}' nor by project file name '{3}'.",
+										filename, bi.Include, projectReferenceGuid.Replace ("{", "").Replace ("}", ""), fullpath));
+						}
 
 					}
 

@@ -2041,6 +2041,7 @@ namespace System.Windows.Forms
 			item_control.Visible = true;
 			item_control.Location = Point.Empty;
 			item_control.Width = ClientRectangle.Width;
+			AdjustChildrenZOrder ();
 
 			int item_height = GetDetailsItemHeight ();
 			ItemSize = new Size (0, item_height); // We only cache Height for details view
@@ -2095,6 +2096,17 @@ namespace System.Windows.Forms
 				item.SetPosition (new Point (0, item_y));
 #endif					
 			}
+		}
+
+		// Need to make sure HeaderControl is on top, and we can't simply use BringToFront since
+		// these controls are implicit, so we need to re-populate our collection.
+		void AdjustChildrenZOrder ()
+		{
+			SuspendLayout ();
+			Controls.ClearImplicit ();
+			Controls.AddImplicit (header_control);
+			Controls.AddImplicit (item_control);
+			ResumeLayout ();
 		}
 
 		private void AdjustItemsPositionArray (int count)
@@ -3529,9 +3541,6 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing) {
-				h_scroll.Dispose ();
-				v_scroll.Dispose ();
-				
 				large_image_list = null;
 				small_image_list = null;
 				state_image_list = null;
@@ -5698,6 +5707,9 @@ namespace System.Windows.Forms
 				if (is_main_collection || item.ListView != null)
 					CollectionChanged (true);
 
+				// force an update of the selected info if the new item is selected.
+				if (item.Selected)
+					item.SetSelectedCore (true);
 #if NET_2_0
 				//UIA Framework event: Item Added
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
@@ -5848,6 +5860,9 @@ namespace System.Windows.Forms
 
 				list.Add (value);
 
+				// force an update of the selected info if the new item is selected.
+				if (value.Selected)
+					value.SetSelectedCore (true);
 			}
 
 			void CollectionChanged (bool sort)

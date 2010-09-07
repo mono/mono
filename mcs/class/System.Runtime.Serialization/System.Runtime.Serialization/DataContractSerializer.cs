@@ -49,7 +49,7 @@ namespace System.Runtime.Serialization
 
 		// This is only for compatible mode.
 		StreamingContext context;
-		ReadOnlyCollection<Type> known_runtime_types;
+		ReadOnlyCollection<Type> returned_known_types;
 		KnownTypeCollection known_types;
 		IDataContractSurrogate surrogate;
 
@@ -222,7 +222,11 @@ namespace System.Runtime.Serialization
 		}
 
 		public ReadOnlyCollection<Type> KnownTypes {
-			get { return known_runtime_types; }
+			get {
+				if (returned_known_types == null)
+					returned_known_types = new ReadOnlyCollection<Type> (known_types);
+				return returned_known_types;
+			}
 		}
 
 		public IDataContractSurrogate DataContractSurrogate {

@@ -141,7 +141,7 @@ namespace System.Xml
 			if (index < 0 && !considerDefaultNamespace)
 				return new XmlQualifiedName (name);
 			string ns = reader.LookupNamespace (index < 0 ? String.Empty : name.Substring (0, index));
-			if (ns == null)
+			if (ns == null && index > 0)
 				throw new ArgumentException ("Invalid qualified name.");
 			return new XmlQualifiedName (index < 0 ? name : name.Substring (index + 1), ns);
 		}

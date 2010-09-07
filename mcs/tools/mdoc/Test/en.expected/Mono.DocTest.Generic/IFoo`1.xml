@@ -1,5 +1,6 @@
 <Type Name="IFoo&lt;T&gt;" FullName="Mono.DocTest.Generic.IFoo&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface IFoo&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IFoo`1&lt;T&gt;" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="Method&lt;U&gt;">
       <MemberSignature Language="C#" Value="public T Method&lt;U&gt; (T t, U u);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !T Method&lt;U&gt;(!T t, !!U u) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

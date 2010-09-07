@@ -65,7 +65,6 @@ namespace System.ServiceModel
 
 		ChannelFactory<TChannel> factory;
 		IClientChannel inner_channel;
-		CommunicationState state;
 
 		protected delegate IAsyncResult BeginOperationDelegate (object[] inValues, AsyncCallback asyncCallback, object state);
 		protected delegate object[] EndOperationDelegate (IAsyncResult result);
@@ -149,20 +148,40 @@ namespace System.ServiceModel
 			Initialize (instance, binding, remoteAddress);
 		}
 
-		internal ClientBase (ChannelFactory<TChannel> factory)
+#if NET_4_0
+		protected ClientBase (ServiceEndpoint endpoint)
+			: this (null, endpoint)
 		{
+		}
+
+		protected ClientBase (InstanceContext instance, ServiceEndpoint endpoint)
+			: this (instance, new ChannelFactory<TChannel> (endpoint))
+		{
+		}
+#endif
+
+		internal ClientBase (ChannelFactory<TChannel> factory)
+			: this (null, factory)
+		{
+		}
+
+		internal ClientBase (InstanceContext instance, ChannelFactory<TChannel> factory)
+		{
+			// FIXME: use instance
 			ChannelFactory = factory;
 		}
 
 		internal virtual void Initialize (InstanceContext instance,
 			string endpointConfigurationName, EndpointAddress remoteAddress)
 		{
+			// FIXME: use instance
 			ChannelFactory = new ChannelFactory<TChannel> (endpointConfigurationName, remoteAddress);
 		}
 
 		internal virtual void Initialize (InstanceContext instance,
 			Binding binding, EndpointAddress remoteAddress)
 		{
+			// FIXME: use instance
 			ChannelFactory = new ChannelFactory<TChannel> (binding, remoteAddress);
 		}
 
@@ -195,7 +214,7 @@ namespace System.ServiceModel
 		}
 
 		public CommunicationState State {
-			get { return InnerChannel.State; }
+			get { return inner_channel != null ? inner_channel.State : CommunicationState.Created; }
 		}
 
 		public void Abort ()

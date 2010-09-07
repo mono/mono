@@ -784,9 +784,9 @@ attribute
 		else if (global_attrs_enabled && (current_attr_target == "assembly" || current_attr_target == "module"))
 			// FIXME: supply "nameEscaped" parameter here.
 			$$ = new GlobalAttribute (current_namespace, current_attr_target,
-						  expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
+						  expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 		else
-			$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
+			$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 	  }
 	;
 
@@ -1231,7 +1231,6 @@ fixed_field_size
 		$$ = null;
 	  }	  
 	;
-	
 	
 local_variable_declarators	
 	: local_variable_declarator 
@@ -2026,24 +2025,24 @@ operator_declaration
 	  }
 	  operator_body
 	  {
-		if ($3 == null)
-			break;
-
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
-		Operator op = new Operator (
-			current_class, decl.optype, decl.ret_type, (Modifiers) $2, 
-			current_local_parameters,
-			(ToplevelBlock) $5, (Attributes) $1, decl.location);
+		if (decl != null) {
+			Operator op = new Operator (
+				current_class, decl.optype, decl.ret_type, (Modifiers) $2, 
+				current_local_parameters,
+				(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
-		if (RootContext.Documentation != null) {
-			op.DocComment = tmpComment;
-			Lexer.doc_state = XmlCommentState.Allowed;
+			if (RootContext.Documentation != null) {
+				op.DocComment = tmpComment;
+				Lexer.doc_state = XmlCommentState.Allowed;
+			}
+
+			// Note again, checking is done in semantic analysis
+			current_container.AddOperator (op);
+
+			lbag.AddMember (op, mod_locations, lbag.GetLocations (decl));
 		}
-
-		// Note again, checking is done in semantic analysis
-		current_container.AddOperator (op);
-
-		lbag.AddMember (op, mod_locations, lbag.GetLocations (decl));
+		
 		current_local_parameters = null;
 	  }
 	;
@@ -2707,9 +2706,6 @@ delegate_declaration
 
 opt_nullable
 	: /* empty */
-	  {
-		$$ = null;
-	  }
 	| INTERR_NULLABLE
 	  {
 		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
@@ -2754,7 +2750,7 @@ type_name
 // Generics arguments  (any type, without attributes)
 //
 opt_type_argument_list
-	: /* empty */ 		     { $$ = null; } 
+	: /* empty */
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
 		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
@@ -2859,7 +2855,7 @@ explicit_interface
 	;
 	
 opt_type_parameter_list
-	: /* empty */ 		     { $$ = null; } 
+	: /* empty */
 	| OP_GENERICS_LT_DECL type_parameters OP_GENERICS_GT
 	  {
 		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
@@ -2975,23 +2971,22 @@ type_expression
 				$$ = name.GetTypeExpression ();
 		}
 	  }
+	| namespace_or_type_name pointer_stars
+	  {
+		$$ = new ComposedCast (((MemberName) $1).GetTypeExpression (), (ComposedTypeSpecifier) $2);
+	  }
 	| builtin_types opt_nullable
 	  {
 		if ($2 != null)
 			$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
-	| type_expression STAR
+	| builtin_types pointer_stars
 	  {
-		//
-		// Note that here only unmanaged types are allowed but we
-		// can't perform checks during this phase - we do it during
-		// semantic analysis.
-		//
-		$$ = new ComposedCast ((FullNamedExpression) $1, ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
+		$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
-	| VOID STAR
+	| VOID pointer_stars
 	  {
-		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
+		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), (ComposedTypeSpecifier) $2);
 	  }	
 	;
 
@@ -3057,24 +3052,11 @@ integral_type
 
 
 primary_expression
-	: primary_expression_no_array_creation
+	: primary_expression_or_type
+	| literal
 	| array_creation_expression
-	;
-
-primary_expression_no_array_creation
-	: literal
-	| IDENTIFIER opt_type_argument_list
-	  {
-		var lt = (Tokenizer.LocatedToken) $1;
-		$$ = new SimpleName (lt.Value, (TypeArguments)$2, lt.Location);	  
-	  }
-	| IDENTIFIER GENERATE_COMPLETION {
-		var lt = (Tokenizer.LocatedToken) $1;
-	       $$ = new CompletionSimpleName (MemberName.MakeName (lt.Value, null), lt.Location);
-	  }
 	| parenthesized_expression
 	| default_value_expression
-	| member_access
 	| invocation_expression
 	| element_access
 	| this_access
@@ -3088,7 +3070,20 @@ primary_expression_no_array_creation
 	| checked_expression
 	| unchecked_expression
 	| pointer_member_access
-	| anonymous_method_expression
+	| anonymous_method_expression	
+	;
+
+primary_expression_or_type
+	: IDENTIFIER opt_type_argument_list
+	  {
+		var lt = (Tokenizer.LocatedToken) $1;
+		$$ = new SimpleName (lt.Value, (TypeArguments)$2, lt.Location);	  
+	  }
+	| IDENTIFIER GENERATE_COMPLETION {
+		var lt = (Tokenizer.LocatedToken) $1;
+	       $$ = new CompletionSimpleName (MemberName.MakeName (lt.Value, null), lt.Location);
+	  }
+	| member_access
 	;
 
 literal
@@ -3587,23 +3582,7 @@ anonymous_type_parameter
 
 opt_rank_specifier
 	: /* empty */
-	  {
-		$$ = null;
-	  }
 	| rank_specifiers
-	;
-
-opt_rank_specifier_or_nullable
-	: opt_nullable
-	| opt_nullable rank_specifiers
-	  {
-		if ($1 != null) {
-			((ComposedTypeSpecifier) $1).Next = (ComposedTypeSpecifier) $2;
-			$$ = $1;
-		} else {
-			$$ = $2;
-		}
-	  }
 	;
 
 rank_specifiers
@@ -3732,10 +3711,12 @@ unbound_type_name
 	  }
 	| namespace_or_type_name DOT IDENTIFIER generic_dimension
 	  {
-		var lt = (Tokenizer.LocatedToken) $3;
-		MemberName name = (MemberName) $1;
+		var te = ((MemberName) $1).GetTypeExpression ();
+		if (te.HasTypeArguments)
+			Error_TypeExpected (GetLocation ($4));
 
-		$$ = new MemberAccess (name.GetTypeExpression (), lt.Value, (int) $4, lt.Location);		
+		var lt = (Tokenizer.LocatedToken) $3;
+		$$ = new MemberAccess (te, lt.Value, (int) $4, lt.Location);		
 	  }
 	;
 
@@ -4704,14 +4685,25 @@ declaration_statement
 	  }
 	;
 
+variable_type
+	: variable_type_simple
+	| variable_type_simple rank_specifiers
+	  {
+		if ($1 is VarExpr)
+			$1 = new SimpleName ("var", ((VarExpr) $1).Location);
+	  
+		$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
+	  }
+	;
+
 /* 
  * The following is from Rhys' grammar:
  * > Types in local variable declarations must be recognized as 
  * > expressions to prevent reduce/reduce errors in the grammar.
  * > The expressions are converted into types during semantic analysis.
  */
-variable_type
-	: primary_expression_no_array_creation opt_rank_specifier_or_nullable
+variable_type_simple
+	: primary_expression_or_type opt_nullable
 	  { 
 		// Ok, the above "primary_expression" is there to get rid of
 		// both reduce/reduce and shift/reduces in the grammar, it should
@@ -4741,63 +4733,57 @@ variable_type
 			$$ = null;
 		}
 	  }
-	| builtin_types opt_rank_specifier_or_nullable
+	| primary_expression_or_type pointer_stars
+	  {
+		ATypeNameExpression expr = $1 as ATypeNameExpression;
+
+		if (expr != null) {
+			$$ = new ComposedCast (expr, (ComposedTypeSpecifier) $2);
+		} else {
+			Error_ExpectingTypeName ((Expression)$1);
+			$$ = expr;
+		}
+	  }
+	| builtin_types opt_nullable
 	  {
 		if ($2 == null)
 			$$ = $1;
 		else
 			$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
-	| VOID opt_rank_specifier
+	| builtin_types pointer_stars
+	  {
+		$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
+	  }
+	| VOID pointer_stars
+	  {
+		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), (ComposedTypeSpecifier) $2);
+	  }	  
+	| VOID
 	  {
 		Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
 		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
 	  }
 	;
-
-local_variable_pointer_type
-	: primary_expression_no_array_creation STAR
+	
+pointer_stars
+	: pointer_star
+	| pointer_star pointer_stars
 	  {
-		ATypeNameExpression expr = $1 as ATypeNameExpression;
-
-		if (expr != null) {
-			$$ = new ComposedCast (expr, ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
-		} else {
-			Error_ExpectingTypeName ((Expression)$1);
-			$$ = expr;
-		}
-	  }
-	| builtin_types STAR
-	  {
-		$$ = new ComposedCast ((FullNamedExpression) $1, ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
-	  }
-	| VOID STAR
-	  {
-		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
-	  }
-	| local_variable_pointer_type STAR
-	  {
-		$$ = new ComposedCast ((FullNamedExpression) $1, ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
-	  }
+	  	((ComposedTypeSpecifier) $1).Next = (ComposedTypeSpecifier) $2;
+	  	$$ = $1;
+	  }	  
 	;
 
-local_variable_type
-	: variable_type
-	| local_variable_pointer_type opt_rank_specifier
+pointer_star
+	: STAR
 	  {
-		if ($1 != null){
-			if ($2 == null)
-				$$ = $1;
-			else
-				$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
-		} else {
-			$$ = null;
-		}
+		$$ = ComposedTypeSpecifier.CreatePointer (GetLocation ($1));
 	  }
 	;
 
 local_variable_declaration
-	: local_variable_type local_variable_declarators
+	: variable_type local_variable_declarators
 	  {
 		if ($1 != null) {
 			VarExpr ve = $1 as VarExpr;
@@ -6092,7 +6078,7 @@ class VariableDeclaration {
 // <summary>
 //  A class used to hold info about an operator declarator
 // </summary>
-struct OperatorDeclaration {
+class OperatorDeclaration {
 	public readonly Operator.OpType optype;
 	public readonly FullNamedExpression ret_type;
 	public readonly Location location;

@@ -1,0 +1,67 @@
+.\" 
+.\" ccrewrite manual page.
+.\" Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+.\" Author:
+.\"   Chris Bacon <chrisbacon76@gmail.com>
+.\"
+.TH Mono "ccrewrite"
+.SH NAME
+ccrewrite \- Rewrite CLR assemblies for runtime code contract verification.
+.SH SYNOPSIS
+.PP
+.B ccrewrite --assembly=<assembly> [options]
+.SH DESCRIPTION
+Rewrite CLR assemblies to convert calls into the System.Diagnostics.Contracts
+namespace to perform runtime contract verification. This includes
+contract inheritance for virtual methods.
+.PP
+The assembly must have been built with the symbol CONTRACTS_FULL defined,
+otherwise the calls to the contract methods will have been removed
+by the compiler.
+.PP
+Currently only pre-conditions are supported, using the Contract.Requires()
+method. Contract inheritance for virtual methods is supported. Only a
+limited range of operations and types can be used within a pre-condition, 
+an error message will be shown if ccrewrite is unable to process the
+specified assembly.
+.SH CONFIGURATION OPTIONS
+.TP
+.I "--assembly <assembly-name>"
+The assembly to rewrite. If no --output option is specified, then this file
+overwritten with the rewritten version.
+.TP
+.I "--debug"
+Use debug information if available to improve the usefulness of contract
+failure messages.
+.TP
+.I "--help"
+Show help for ccrewrite, listing configuration options.
+.TP
+.I "--level <level> (default=4)"
+Set the which contract types are present in rewritten assembly:
+0 = No contracts;
+1 = Release requires;
+2 = Requires;
+3 = Ensures;
+4 = Invariants;
+(Each level includes all previous levels)
+.TP
+.I "--output <file-name>"
+Write the rewritten assembly to the specified file. If this is not present
+then the input assembly file is overwritten with the rewritten version.
+.TP
+.I "--rewrite (default=true)"
+Rewrite the assembly. If false, then nothing is done.
+.TP
+.I "--throwOnFailure (default=false)"
+Throw a ContractException on unhandled contract failure. The default
+behaviour is to Assert.
+
+
+.SH AUTHOR
+Written by Chris Bacon
+.SH COPYRIGHT
+Copyright (C) 2010 Chris Bacon.
+Released under MIT license.
+.SH WEB SITE
+Visit http://www.mono-project.com for details

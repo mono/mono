@@ -107,7 +107,7 @@ namespace System.Net {
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 			if (!uri.IsAbsoluteUri)
-				throw new InvalidOperationException ("Uri is not absolute.");
+				throw new InvalidOperationException ("This operation is not supported for a relative URI.");
 
 			IWebRequestCreate creator = null;
 

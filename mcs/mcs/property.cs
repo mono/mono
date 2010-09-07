@@ -728,27 +728,12 @@ namespace Mono.CSharp
 			}
 		}
 
-		const Modifiers AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
-			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
-			Modifiers.PRIVATE |
-			Modifiers.STATIC |
-			Modifiers.SEALED |
-			Modifiers.OVERRIDE |
-			Modifiers.ABSTRACT |
-			Modifiers.UNSAFE |
-			Modifiers.EXTERN |
-			Modifiers.VIRTUAL;
-
-		const Modifiers AllowedInterfaceModifiers =
-			Modifiers.NEW;
-
 		public Property (DeclSpace parent, FullNamedExpression type, Modifiers mod,
 				 MemberName name, Attributes attrs)
 			: base (parent, type, mod,
-				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
+				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
+				AllowedModifiersClass,
 				name, attrs)
 		{
 		}
@@ -813,6 +798,11 @@ namespace Mono.CSharp
 			}
 
 			base.Emit ();
+		}
+
+		public override string GetDocCommentName (DeclSpace ds)
+		{
+			return String.Concat (DocCommentHeader, ds.Name, ".", GetFullName (ShortName).Replace ('.', '#'));
 		}
 	}
 
@@ -1153,31 +1143,15 @@ namespace Mono.CSharp
 			}
 		}
 
-
-		const Modifiers AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
-			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
-			Modifiers.PRIVATE |
-			Modifiers.STATIC |
-			Modifiers.VIRTUAL |
-			Modifiers.SEALED |
-			Modifiers.OVERRIDE |
-			Modifiers.UNSAFE |
-			Modifiers.ABSTRACT |
-			Modifiers.EXTERN;
-
-		const Modifiers AllowedInterfaceModifiers =
-			Modifiers.NEW;
-
 		AEventAccessor add, remove;
 		EventBuilder EventBuilder;
 		protected EventSpec spec;
 
 		protected Event (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod_flags,
-				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
+				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
+				AllowedModifiersClass,
 				name, attrs)
 		{
 		}

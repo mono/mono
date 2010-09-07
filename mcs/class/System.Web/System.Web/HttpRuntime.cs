@@ -114,6 +114,7 @@ namespace System.Web
 		static Cache cache;
 		static Cache internalCache;
 		static WaitCallback do_RealProcessRequest;
+		static HttpWorkerRequest.EndOfSendNotification end_of_send_cb;
 		static Exception initialException;
 		static bool firstRun;
 		static bool assemblyMappingEnabled;
@@ -154,7 +155,12 @@ namespace System.Web
 			internalCache = new Cache ();
 			internalCache.DependencyCache = internalCache;
 #endif
-			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
+			do_RealProcessRequest = new WaitCallback (state => {
+				try {
+					RealProcessRequest (state);
+				} catch {}
+				});
+			end_of_send_cb = new HttpWorkerRequest.EndOfSendNotification (EndOfSend);
 		}
 		
 #region AppDomain handling
@@ -489,6 +495,7 @@ namespace System.Web
 				HttpContext.Current = null;
 			} else {
 				context.ApplicationInstance = app;
+				req.SetEndOfSendNotification (end_of_send_cb, context);
 
 				//
 				// Ask application to service the request
@@ -518,7 +525,11 @@ namespace System.Web
 				HttpApplicationFactory.Recycle (app);
 			}
 		}
-		
+
+		static void EndOfSend (HttpWorkerRequest ignored1, object ignored2)
+		{
+		}
+
 		//
 		// ProcessRequest method is executed in the AppDomain of the application
 		//
@@ -595,8 +606,7 @@ namespace System.Web
 			ThreadPool.QueueUserWorkItem (delegate {
 				try {
 					DoUnload ();
-				} catch (Exception e){
-					Console.Error.WriteLine (e);
+				} catch {
 				}});
 		}
 

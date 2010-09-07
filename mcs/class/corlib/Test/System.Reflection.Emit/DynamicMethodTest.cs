@@ -10,6 +10,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -382,6 +383,21 @@ namespace MonoTests.System.Reflection.Emit
 			int[,] arr = new int [10, 10];
 			arr [1, 1] = 5;
 			Assert.AreEqual (5, del (arr));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void InvalidUnicodeName ()
+		{
+			var name = new StringBuilder ().Append ('\udf45').Append ('\ud808');
+			var method = new DynamicMethod (name.ToString (), typeof (bool), new Type [0]);
+			var il = method.GetILGenerator ();
+			il.Emit (OpCodes.Ldc_I4_1);
+			il.Emit (OpCodes.Ret);
+
+			var function = (Func<bool>) method.CreateDelegate (typeof (Func<bool>));
+
+			Assert.IsTrue (function ());
 		}
 	}
 }

@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Mono.Options;
 
 namespace Mono.Documentation {
@@ -43,19 +45,27 @@ namespace Mono.Documentation {
 				{ "export-msxdoc",    new MDocToMSXDocConverter () },
 				{ "help",             new MDocHelpCommand (this) },
 				{ "update",           new MDocUpdater () },
+				{ "update-ecma-xml",  new MDocUpdateEcmaXml () },
 				{ "validate",         new MDocValidator () },
 			};
 
 			bool showVersion = false;
 			bool showHelp    = false;
+			var extra = new List<string> ();
 			var p = new OptionSet () {
 				{ "version",  v => showVersion = v != null },
 				{ "v:",       (int? v) => verbosity = v.HasValue ? v.Value : verbosity+1 },
 				{ "debug",    v => debug = v != null },
 				{ "h|?|help", v => showHelp = v != null },
+				{ "<>",       v => { 
+						if (v.Length > 0 && v [0] == '@')
+							extra.AddRange (ReadResponseFile (v.Substring (1)));
+						else
+							extra.Add (v);
+				} },
 			};
 
-			List<string> extra = p.Parse (args);
+			p.Parse (args);
 
 			if (showVersion) {
 				Console.WriteLine ("mdoc {0}", Consts.MonoVersion);
@@ -68,7 +78,60 @@ namespace Mono.Documentation {
 			if (showHelp) {
 				extra.Add ("--help");
 			}
-			GetCommand (extra [0]).Run (extra);
+			switch (extra [0]) {
+				case "x-msitomsx":
+					new MsidocToMsxdocConverter ().Run (extra);
+					break;
+				default: 
+					GetCommand (extra [0]).Run (extra);
+					break;
+			}
+		}
+
+		// Cribbed from mcs/driver.cs:LoadArgs(string)
+		static IEnumerable<string> ReadResponseFile (string file)
+		{
+			StreamReader response;
+			try {
+				response = File.OpenText (file);
+			} catch {
+				yield break;
+			}
+
+			using (response) {
+				StringBuilder arg = new StringBuilder ();
+
+				string line;
+				while ((line = response.ReadLine ()) != null) {
+					int t = line.Length;
+
+					for (int i = 0; i < t; i++) {
+						char c = line [i];
+						
+						if (c == '"' || c == '\'') {
+							char end = c;
+							
+							for (i++; i < t; i++){
+								c = line [i];
+
+								if (c == end)
+									break;
+								arg.Append (c);
+							}
+						} else if (c == ' ') {
+							if (arg.Length > 0) {
+								yield return arg.ToString ();
+								arg.Length = 0;
+							}
+						} else
+							arg.Append (c);
+					}
+					if (arg.Length > 0) {
+						yield return arg.ToString ();
+						arg.Length = 0;
+					}
+				}
+			}
 		}
 
 		internal MDocCommand GetCommand (string command)

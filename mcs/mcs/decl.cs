@@ -598,11 +598,12 @@ namespace Mono.CSharp {
 					case Modifiers.PROTECTED | Modifiers.INTERNAL:
 						if (al == Modifiers.INTERNAL)
 							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
-						else if (al == Modifiers.PROTECTED)
-							same_access_restrictions = mc.Parent.IsBaseTypeDefinition (p_parent);
 						else if (al == (Modifiers.PROTECTED | Modifiers.INTERNAL))
 							same_access_restrictions = mc.Parent.IsBaseTypeDefinition (p_parent) &&
 								TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
+						else
+							goto case Modifiers.PROTECTED;
+
 						break;
 
 					case Modifiers.PRIVATE:
@@ -678,9 +679,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+		public virtual IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 		{
-			return Parent.LookupExtensionMethod (extensionType, name, arity, loc);
+			return Parent.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
 
 		public virtual FullNamedExpression LookupNamespaceAlias (string name)
@@ -1071,7 +1072,7 @@ namespace Mono.CSharp {
 
 			if ((ma & Modifiers.INTERNAL) != 0) {
 				var b = TypeManager.IsThisOrFriendAssembly (invocationType == InternalType.FakeInternalType ?
-					 CodeGen.Assembly.Builder : invocationType.Assembly, parentType.Assembly);
+					 CodeGen.Assembly.Builder : invocationType.Assembly, Assembly);
 				if (b || ma == Modifiers.INTERNAL)
 					return b;
 			}

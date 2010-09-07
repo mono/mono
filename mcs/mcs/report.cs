@@ -13,7 +13,6 @@ using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
@@ -31,12 +30,14 @@ namespace Mono.CSharp {
 
 		public static int DebugFlags = 0;
 
+		public const int RuntimeErrorId = 10000;
+
 		//
 		// Keeps track of the warnings that we are ignoring
 		//
-		public Dictionary<int, bool> warning_ignore_table;
+		HashSet<int> warning_ignore_table;
 
-		Dictionary<string, WarningRegions> warning_regions_table;
+		Dictionary<int, WarningRegions> warning_regions_table;
 
 		int warning_level;
 
@@ -61,20 +62,16 @@ namespace Mono.CSharp {
 			809,
 			1030, 1058, 1066,
 			1522, 1570, 1571, 1572, 1573, 1574, 1580, 1581, 1584, 1587, 1589, 1590, 1591, 1592,
-			1616, 1633, 1634, 1635, 1685, 1690, 1691, 1692,
-			1700, 1717, 1718, 1720,
-			1901,
+			1616, 1633, 1634, 1635, 1685, 1690, 1691, 1692, 1695, 1696, 1699,
+			1700, 1709, 1717, 1718, 1720,
+			1901, 1981,
 			2002, 2023, 2029,
 			3000, 3001, 3002, 3003, 3005, 3006, 3007, 3008, 3009,
 			3010, 3011, 3012, 3013, 3014, 3015, 3016, 3017, 3018, 3019,
 			3021, 3022, 3023, 3024, 3026, 3027
 		};
 
-		static Report ()
-		{
-			// Just to be sure that binary search is working
-			Array.Sort (AllWarnings);
-		}
+		static HashSet<int> AllWarningsHashSet;
 
 		public Report (ReportPrinter printer)
 		{
@@ -124,30 +121,27 @@ namespace Mono.CSharp {
 				feature);
 		}
 		
-		static bool IsValidWarning (int code)
-		{	
-			return Array.BinarySearch (AllWarnings, code) >= 0;
-		}
-
 		bool IsWarningEnabled (int code, int level, Location loc)
 		{
 			if (WarningLevel < level)
 				return false;
 
-			if (warning_ignore_table != null) {
-				if (warning_ignore_table.ContainsKey (code)) {
-					return false;
-				}
-			}
+			if (IsWarningDisabledGlobally (code))
+				return false;
 
 			if (warning_regions_table == null || loc.IsNull)
 				return true;
 
 			WarningRegions regions;
-			if (!warning_regions_table.TryGetValue (loc.Name, out regions))
+			if (!warning_regions_table.TryGetValue (loc.File, out regions))
 				return true;
 
 			return regions.IsWarningEnabled (code, loc.Row);
+		}
+
+		public bool IsWarningDisabledGlobally (int code)
+		{
+			return warning_ignore_table != null && warning_ignore_table.Contains (code);
 		}
 
 		bool IsWarningAsError (int code)
@@ -192,7 +186,7 @@ namespace Mono.CSharp {
 
 			if (mc != null) {
 				SymbolRelatedToPreviousError (mc);
-			} else {
+			} else if (ms.MemberDefinition != null) {
 				SymbolRelatedToPreviousError (ms.MemberDefinition.Assembly.Location, "");
 			}
 		}
@@ -217,10 +211,11 @@ namespace Mono.CSharp {
 			try {
 				id = int.Parse (warningId);
 			} catch {
-				id = -1;
+				CheckWarningCode (warningId, Location.Null);
+				return;
 			}
 
-			if (!CheckWarningCode (id, warningId, Location.Null))
+			if (!CheckWarningCode (id, Location.Null))
 				return;
 
 			if (warnings_as_error == null)
@@ -235,10 +230,11 @@ namespace Mono.CSharp {
 			try {
 				id = int.Parse (warningId);
 			} catch {
-				id = -1;
+				CheckWarningCode (warningId, Location.Null);
+				return;
 			}
 
-			if (!CheckWarningCode (id, warningId, Location.Null))
+			if (!CheckWarningCode (id, Location.Null))
 				return;
 
 			if (warnings_only == null)
@@ -247,18 +243,21 @@ namespace Mono.CSharp {
 			warnings_only.Add (id);
 		}
 
-		public bool CheckWarningCode (int code, Location loc)
+		public bool CheckWarningCode (string code, Location loc)
 		{
-			return CheckWarningCode (code, code.ToString (), loc);
+			Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
+			return false;
 		}
 
-		public bool CheckWarningCode (int code, string scode, Location loc)
+		public bool CheckWarningCode (int code, Location loc)
 		{
-			if (IsValidWarning (code))
+			if (AllWarningsHashSet == null)
+				AllWarningsHashSet = new HashSet<int> (AllWarnings);
+
+			if (AllWarningsHashSet.Contains (code))
 				return true;
 
-			Warning (1691, 1, loc, "`{0}' is not a valid warning number", scode);
-			return false;
+			return CheckWarningCode (code.ToString (), loc);
 		}
 
 		public void ExtraInformation (Location loc, string msg)
@@ -271,14 +270,14 @@ namespace Mono.CSharp {
 			WarningRegions regions;
 			if (warning_regions_table == null) {
 				regions = null;
-				warning_regions_table = new Dictionary<string, WarningRegions> ();
+				warning_regions_table = new Dictionary<int, WarningRegions> ();
 			} else {
-				warning_regions_table.TryGetValue (location.Name, out regions);
+				warning_regions_table.TryGetValue (location.File, out regions);
 			}
 
 			if (regions == null) {
 				regions = new WarningRegions ();
-				warning_regions_table.Add (location.Name, regions);
+				warning_regions_table.Add (location.File, regions);
 			}
 
 			return regions;
@@ -410,9 +409,9 @@ namespace Mono.CSharp {
 		public void SetIgnoreWarning (int code)
 		{
 			if (warning_ignore_table == null)
-				warning_ignore_table = new Dictionary<int, bool> ();
+				warning_ignore_table = new HashSet<int> ();
 
-			warning_ignore_table [code] = true;
+			warning_ignore_table.Add (code);
 		}
 
 		public ReportPrinter SetPrinter (ReportPrinter printer)
@@ -758,10 +757,13 @@ namespace Mono.CSharp {
 			if (messages_to_print == null)
 				return false;
 
-			foreach (AbstractMessage msg in messages_to_print)
+			bool error_msg = false;
+			foreach (AbstractMessage msg in messages_to_print) {
 				dest.Print (msg);
+				error_msg |= !msg.IsWarning;
+			}
 
-			return true;
+			return error_msg;
 		}
 	}
 
@@ -1163,8 +1165,13 @@ namespace Mono.CSharp {
 
 		public void WarningEnable (Location location, int code, Report Report)
 		{
-			if (Report.CheckWarningCode (code, location))
-				regions.Add (new Enable (location.Row, code));
+			if (!Report.CheckWarningCode (code, location))
+				return;
+
+			if (Report.IsWarningDisabledGlobally (code))
+				Report.Warning (1635, 1, location, "Cannot restore warning `CS{0:0000}' because it was disabled globally", code);
+
+			regions.Add (new Enable (location.Row, code));
 		}
 
 		public bool IsWarningEnabled (int code, int src_line)

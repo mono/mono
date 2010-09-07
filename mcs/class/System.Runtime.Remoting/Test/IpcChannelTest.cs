@@ -67,6 +67,51 @@ namespace MonoTests.Remoting
 				return payload;
 			}
 		}
+
+                [Test]
+		public void TestCtor2 ()
+		{
+			string channelName = Guid.NewGuid ().ToString ("N");
+			string portName = "ipc" + Guid.NewGuid ().ToString ("N");
+			string url = String.Format ("ipc://{0}/server.rem", portName);
+
+			IpcServerChannel chan = new IpcServerChannel (channelName, portName);
+			string[] uris = chan.GetUrlsForUri ("server.rem");
+			Assert.IsNotNull (uris);
+			Assert.Greater (uris.Length, 0);
+
+			bool found = false;
+			foreach (string s in uris) {
+				if (s == url) {
+					found = true;
+					break;
+				}
+			}
+			Assert.IsTrue (found);
+		}
+
+		[Test]
+		public void TestCtor3 ()
+		{
+			string portName = "ipc" + Guid.NewGuid ().ToString ("N");
+			string url = String.Format ("ipc://{0}/server.rem", portName);
+
+			Hashtable props = new Hashtable ();
+			props ["portName"] = portName;
+			IpcChannel chan = new IpcChannel (props, null, null);
+			string[] uris = chan.GetUrlsForUri ("server.rem");
+			Assert.IsNotNull (uris);
+			Assert.Greater (uris.Length, 0);
+
+			bool found = false;
+			foreach (string s in uris) {
+				if (s == url) {
+					found = true;
+					break;
+				}
+			}
+			Assert.IsTrue (found);
+		}
 	}
 }
 

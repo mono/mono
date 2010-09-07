@@ -40,7 +40,7 @@ namespace System.ServiceModel.Discovery
 		}
 
 		public DiscoveryEndpoint (Binding binding, EndpointAddress endpointAddress)
-			: this (DiscoveryVersion.WSDiscoveryApril2005, ServiceDiscoveryMode.Managed, binding, endpointAddress)
+			: this (DiscoveryVersion.WSDiscovery11, ServiceDiscoveryMode.Managed, binding, endpointAddress)
 		{
 		}
 
@@ -50,17 +50,27 @@ namespace System.ServiceModel.Discovery
 		}
 
 		public DiscoveryEndpoint (DiscoveryVersion discoveryVersion, ServiceDiscoveryMode discoveryMode, Binding binding, EndpointAddress endpointAddress)
-			: base (null, binding, endpointAddress)
+			: base (GetContract (discoveryVersion, discoveryMode), binding, endpointAddress)
+		{
+			DiscoveryVersion = discoveryVersion;
+			DiscoveryMode = discoveryMode;
+
+			IsSystemEndpoint = true;
+		}
+
+		static ContractDescription GetContract (DiscoveryVersion discoveryVersion, ServiceDiscoveryMode mode)
 		{
 			if (discoveryVersion == null)
 				throw new ArgumentNullException ("discoveryVersion");
-			DiscoveryVersion = discoveryVersion;
-			DiscoveryMode = discoveryMode;
+			// Provide different contract type for Adhoc mode and Managed mode, respectively.
+			if (mode == ServiceDiscoveryMode.Managed)
+				return ContractDescription.GetContract (discoveryVersion.DiscoveryProxyContractType);
+			else
+				return ContractDescription.GetContract (discoveryVersion.DiscoveryTargetContractType);
 		}
 
 		public ServiceDiscoveryMode DiscoveryMode { get; private set; }
 		public DiscoveryVersion DiscoveryVersion { get; private set; }
-		[MonoTODO]
 		public TimeSpan MaxResponseDelay { get; set; }
 	}
 }

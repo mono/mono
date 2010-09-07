@@ -68,6 +68,8 @@ bucket **pitem;
 int maxrules;
 bucket **plhs;
 
+int maxmethods;
+
 int name_pool_size;
 char *name_pool;
 
@@ -846,6 +848,7 @@ initialize_grammar()
     pitem[2] = 0;
     pitem[3] = 0;
 
+	nmethods = 0;
     nrules = 3;
     maxrules = 100;
     plhs = (bucket **) MALLOC(maxrules*sizeof(bucket *));
@@ -1037,21 +1040,25 @@ copy_action()
     int depth;
     int quote;
     char *tag;
-    register FILE *f = action_file;
+    FILE *f = action_file;
     int a_lineno = lineno;
     char *a_line = dup_line();
     char *a_cptr = a_line + (cptr - line);
+	char buffer [10000];
+	int len = 0;
+	int comment_lines = 0;
+	char *mbody;
+	memset (buffer, 0, 10000);
 
     if (last_was_action)
 	insert_empty_rule();
     last_was_action = 1;
 
     fprintf(f, "case %d:\n", nrules - 2);
-    fprintf(f, line_format, lineno, input_file_name);
-    putc(' ', f); putc(' ', f);
     if (*cptr == '=') ++cptr;
 
     n = 0;
+
     for (i = nitems - 1; pitem[i]; --i) ++n;
 
     depth = 0;
@@ -1069,9 +1076,13 @@ loop:
 	    tag = get_tag(1);
 	    c = *cptr;
 	    if (c == '$')
-	    {   if (tag && strcmp(tag, "Object"))
-					fprintf(f, "((%s)yyVal)", tag);
-		else fprintf(f, "yyVal");
+	    {   
+			if (tag && strcmp(tag, "Object")) {
+				len += sprintf(buffer + len, "((%s)yyVal)", tag);
+			} else {
+				strcat (buffer + len, "yyVal");
+				len += 5;
+			}
 		++cptr;
 		FREE(d_line);
 		goto loop;
@@ -1081,8 +1092,9 @@ loop:
 		i = get_number();
 		if (i > n) dollar_warning(d_lineno, i);
 		if (tag && strcmp(tag, "Object"))
-			fprintf(f, "((%s)yyVals[%d+yyTop])", tag, i - n);
-		else fprintf(f, "yyVals[%d+yyTop]", i - n);
+			len += sprintf(buffer + len, "((%s)yyVals[%d+yyTop])", tag, i - n);
+		else
+			len += sprintf(buffer + len, "yyVals[%d+yyTop]", i - n);
 		FREE(d_line);
 		goto loop;
 	    }
@@ -1091,8 +1103,9 @@ loop:
 		++cptr;
 		i = -get_number() - n;
 		if (tag && strcmp(tag, "Object"))
-			fprintf(f, "((%s)yyVals[%d+yyTop])", tag, i);
-		else fprintf(f, "yyVals[%d+yyTop]", i);
+			len += sprintf(buffer + len, "((%s)yyVals[%d+yyTop])", tag, i);
+		else
+			len += sprintf(buffer + len, "yyVals[%d+yyTop]", i);
 		FREE(d_line);
 		goto loop;
 	    }
@@ -1103,7 +1116,8 @@ loop:
 	{
 	    if (ntags && plhs[nrules]->tag == 0)
 		untyped_lhs();
-	    fprintf(f, "yyVal");
+		strcat (buffer, "yyVal");
+		len += 5;
 	    cptr += 2;
 	    goto loop;
 	}
@@ -1118,17 +1132,18 @@ loop:
 		tag = pitem[nitems + i - n - 1]->tag;
 		if (tag == 0)
 		    untyped_rhs(i, pitem[nitems + i - n - 1]->name),
-		    fprintf(f, "yyVals[%d+yyTop]", i - n);
+		    len += sprintf(buffer + len, "yyVals[%d+yyTop]", i - n);
 		else if (strcmp(tag, "Object"))
-		    fprintf(f, "((%s)yyVals[%d+yyTop])", tag, i - n);
+		    len += sprintf(buffer + len, "((%s)yyVals[%d+yyTop])", tag, i - n);
 		else
-		    fprintf(f, "yyVals[%d+yyTop]", i - n);
+		    len += sprintf(buffer + len, "yyVals[%d+yyTop]", i - n);
 	    }
 	    else
 	    {
 		if (i > n)
 		    dollar_warning(lineno, i);
-		fprintf(f, "yyVals[%d+yyTop]", i - n);
+
+		len += sprintf(buffer + len,"yyVals[%d+yyTop]", i - n);
 	    }
 	    goto loop;
 	}
@@ -1138,7 +1153,7 @@ loop:
 	    i = get_number();
 	    if (ntags)
 		unknown_rhs(-i);
-	    fprintf(f, "yyVals[%d+yyTop]", -i - n);
+	    len += sprintf(buffer + len, "yyVals[%d+yyTop]", -i - n);
 	    goto loop;
 	}
     }
@@ -1146,12 +1161,12 @@ loop:
     {
 	do
 	{
-	    putc(c, f);
+	    buffer[len++] = c;
 	    c = *++cptr;
 	} while (isalnum(c) || c == '_' || c == '$');
 	goto loop;
     }
-    putc(c, f);
+	buffer[len++] = c;
     ++cptr;
     switch (c)
     {
@@ -1163,8 +1178,7 @@ loop:
 
     case ';':
 	if (depth > 0) goto loop;
-	fprintf(f, "\nbreak;\n");
-	return;
+	break;
 
     case '{':
 	++depth;
@@ -1172,8 +1186,7 @@ loop:
 
     case '}':
 	if (--depth > 0) goto loop;
-	fprintf(f, "\n  break;\n");
-	return;
+	break;
 
     case '\'':
     case '"':
@@ -1186,7 +1199,7 @@ loop:
 	    for (;;)
 	    {
 		c = *cptr++;
-		putc(c, f);
+		buffer[len++] = c;
 		if (c == quote)
 		{
 		    FREE(s_line);
@@ -1197,7 +1210,7 @@ loop:
 		if (c == '\\')
 		{
 		    c = *cptr++;
-		    putc(c, f);
+		    buffer[len++] = c;
 		    if (c == '\n')
 		    {
 			get_line();
@@ -1212,15 +1225,19 @@ loop:
 	c = *cptr;
 	if (c == '/')
 	{
-	    putc('*', f);
+	    buffer[len++] = '*';
 	    while ((c = *++cptr) != '\n')
 	    {
-		if (c == '*' && cptr[1] == '/')
-		    fprintf(f, "* ");
-		else
-		    putc(c, f);
-	    }
-	    fprintf(f, "*/\n");
+			if (c == '*' && cptr[1] == '/'){
+				buffer[len++] = '*';
+				buffer[len++] = ' ';
+			} else {
+				buffer[len++] = c;
+			}
+		}
+	    buffer[len++] = '*';
+		buffer[len++] = '/';
+		buffer[len++] = '\n';
 	    goto next_line;
 	}
 	if (c == '*')
@@ -1229,21 +1246,22 @@ loop:
 	    char *c_line = dup_line();
 	    char *c_cptr = c_line + (cptr - line - 1);
 
-	    putc('*', f);
+	    buffer[len++] = '*';
 	    ++cptr;
 	    for (;;)
 	    {
 		c = *cptr++;
-		putc(c, f);
+		buffer[len++] = c;
 		if (c == '*' && *cptr == '/')
 		{
-		    putc('/', f);
+		    buffer[len++] = '/';
 		    ++cptr;
 		    FREE(c_line);
 		    goto loop;
 		}
 		if (c == '\n')
 		{
+			++comment_lines;
 		    get_line();
 		    if (line == 0)
 			unterminated_comment(c_lineno, c_line, c_cptr);
@@ -1255,6 +1273,49 @@ loop:
     default:
 	goto loop;
     }
+
+	if (comment_lines > 0)
+		comment_lines++;
+
+	if ((lineno - (a_lineno + comment_lines)) > 2)
+	{
+		char mname[20];
+		char line_define[256];
+
+		sprintf(mname, "case_%d()", nrules - 2);
+
+		putc(' ', f); putc(' ', f);
+		fputs(mname, f);
+		fprintf(f, ";");
+		if (nmethods == 0)
+		{
+			maxmethods = 100;
+			methods = NEW2(maxmethods, char *);
+		}
+		else if (nmethods == maxmethods)
+		{
+			maxmethods += 500;
+			methods = REALLOC (methods, maxmethods*sizeof(char *));
+		}
+
+		sprintf(line_define, line_format, a_lineno, input_file_name);
+
+		mbody = NEW2(5+strlen(line_define)+1+strlen(mname)+strlen(buffer)+1, char);
+		strcpy(mbody, "void ");
+		strcat(mbody, mname);
+		strcat(mbody, "\n");
+		strcat(mbody, line_define);
+		strcat(mbody, buffer);
+		methods[nmethods++] = mbody;
+	}
+	else
+	{
+	    fprintf(f, line_format, lineno, input_file_name);
+		putc(' ', f); putc(' ', f);
+		fwrite(buffer, 1, len, f);
+	}
+
+	fprintf(f, "\n  break;\n");
 }
 
 

@@ -73,7 +73,7 @@ namespace MonoTests.System.Threading
 					m.Wait();
 					s = true;
 				}
-			});	
+			}, 2);	
 			
 			Assert.IsTrue(s, "#1");
 			Assert.IsTrue(mre.IsSet, "#2");

@@ -263,6 +263,7 @@ namespace System.ServiceModel.Description
 				throw new InvalidOperationException ("ManualAddressing in the transport binding element in the binding must be true for WebHttpBehavior");
 		}
 
+#if !NET_2_1
 		internal class WebHttpErrorHandler : IErrorHandler
 		{
 			public void ProvideFault (Exception error, MessageVersion version, ref Message fault)
@@ -307,5 +308,6 @@ namespace System.ServiceModel.Description
 				throw new InvalidOperationException ();
 			}
 		}
+#endif
 	}
 }

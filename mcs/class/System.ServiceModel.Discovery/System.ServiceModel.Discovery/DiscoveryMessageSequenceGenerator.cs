@@ -34,8 +34,10 @@ namespace System.ServiceModel.Discovery
 {
 	public class DiscoveryMessageSequenceGenerator
 	{
-		[MonoTODO ("default values?")]
+		static readonly Random rnd = new Random ();
+
 		public DiscoveryMessageSequenceGenerator ()
+			: this (AppDomain.CurrentDomain.Id, null) // not sure what should be used for instanceId; multiple instances share the same Id
 		{
 		}
 
@@ -48,10 +50,9 @@ namespace System.ServiceModel.Discovery
 		long instance_id, message_count;
 		Uri sequence_id;
 
-		[MonoTODO ("default number?")]
 		public DiscoveryMessageSequence Next ()
 		{
-			return new DiscoveryMessageSequence (instance_id, sequence_id, message_count++);
+			return new DiscoveryMessageSequence (instance_id, sequence_id, ++message_count);
 		}
 	}
 }

@@ -1347,10 +1347,52 @@ the right file name it is not necessarily possible to open the file.
 In general if you have problems with encodings in your filenames you
 should use the "convmv" program.
 .TP
+\fBMONO_GC_PARAMS\fR
+When using Mono with the SGen garbage collector this variable controls
+several parameters of the collector.  The variable's value is a comma
+separated list of words.
+.RS
+.ne 8
+.TP
+\fBnursery-size=\fIsize\fR
+Sets the size of the nursery.  The size is specified in bytes and must
+be a power of two.  The suffixes `k', `m' and `g' can be used to
+specify kilo-, mega- and gigabytes, respectively.  The nursery is the
+first generation (of two).  A larger nursery will usually speed up the
+program but will obviously use more memory.  The default nursery size
+4 MB.
+.TP
+\fBmajor=\fIcollector\fR
+Specifies which major collector to use.  Options are `marksweep' for
+the Mark&Sweep collector, `marksweep-par' for parallel Mark&Sweep,
+`marksweep-fixed' for Mark&Sweep with a fixed heap,
+`marksweep-fixed-par' for parallel Mark&Sweep with a fixed heap and
+`copying' for the copying collector. The Mark&Sweep collector is the
+default.
+.TP
+\fBmajor-heap-size=\fIsize\fR
+Sets the size of the major heap (not including the large object space)
+for the fixed-heap Mark&Sweep collector (i.e. `marksweep-fixed' and
+`marksweep-fixed-par').  The size is in bytes, with optional suffixes
+`k', `m' and `g' to specify kilo-, mega- and gigabytes, respectively.
+The default is 512 megabytes.
+.TP
+\fBwbarrier=\fIwbarrier\fR
+Specifies which write barrier to use.  Options are `cardtable' and
+`remset'.  The card table barrier is faster but less precise, and only
+supported for the Mark&Sweep major collector on 32 bit platforms.  The
+default is `cardtable' if it is supported, otherwise `remset'. The cardtable
+write barrier is faster and has a more stable and usually smaller
+memory footprint. If the program causes too much pinning during
+thread scan, it might be faster to enable remset.
+.ne
+.RE
+.TP
 \fBMONO_GC_DEBUG\fR
 When using Mono with the SGen garbage collector this environment
-variable can be used to control different aspects of the GC processs.
-The value of this variable is a comma separated list of words.   
+variable can be used to turn on various debugging features of the
+collector.  The value of this variable is a comma separated list of
+words.
 .RS
 .ne 8
 .TP
@@ -1565,6 +1607,13 @@ interpreter.  The possible values are `no' to disable the use of a
 custom serializer or a number to indicate when the XmlSerializer
 should start serializing.   The default value is 50, which means that
 the a custom serializer will be produced on the 50th use.
+.TP
+\fBMONO_X509_REVOCATION_MODE\fR
+Sets the revocation mode used when validating a X509 certificate chain (https,
+ftps, smtps...).  The default is 'nocheck', which performs no revocation check
+at all. The other possible values are 'offline', which performs CRL check (not
+implemented yet) and 'online' which uses OCSP and CRL to verify the revocation
+status (not implemented yet).
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 \fBMONO_ASPNET_NODELETE\fR

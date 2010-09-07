@@ -31,7 +31,7 @@
 using System;
 using System.Reflection;
 using SRE = System.Reflection.Emit;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.IO;
@@ -163,11 +163,11 @@ namespace Mono.CompilerServices.SymbolWriter
 
 	public class MonoSymbolFile : IDisposable
 	{
-		ArrayList methods = new ArrayList ();
-		ArrayList sources = new ArrayList ();
-		ArrayList comp_units = new ArrayList ();
-		Hashtable type_hash = new Hashtable ();
-		Hashtable anonymous_scopes;
+		List<MethodEntry> methods = new List<MethodEntry> ();
+		List<SourceFileEntry> sources = new List<SourceFileEntry> ();
+		List<CompileUnitEntry> comp_units = new List<CompileUnitEntry> ();
+		Dictionary<Type, int> type_hash = new Dictionary<Type, int> ();
+		Dictionary<int, AnonymousScopeEntry> anonymous_scopes;
 
 		OffsetTable ot;
 		int last_type_index;
@@ -199,10 +199,11 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		internal int DefineType (Type type)
 		{
-			if (type_hash.Contains (type))
-				return (int) type_hash [type];
+			int index;
+			if (type_hash.TryGetValue (type, out index))
+				return index;
 
-			int index = ++last_type_index;
+			index = ++last_type_index;
 			type_hash.Add (type, index);
 			return index;
 		}
@@ -234,7 +235,7 @@ namespace Mono.CompilerServices.SymbolWriter
 				throw new InvalidOperationException ();
 
 			if (anonymous_scopes == null)
-				anonymous_scopes = new Hashtable ();
+				anonymous_scopes = new Dictionary<int, AnonymousScopeEntry>  ();
 
 			anonymous_scopes.Add (id, new AnonymousScopeEntry (id));
 		}
@@ -245,7 +246,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			if (reader != null)
 				throw new InvalidOperationException ();
 
-			AnonymousScopeEntry scope = (AnonymousScopeEntry) anonymous_scopes [scope_id];
+			AnonymousScopeEntry scope = anonymous_scopes [scope_id];
 			scope.AddCapturedVariable (name, captured_name, kind);
 		}
 
@@ -254,7 +255,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			if (reader != null)
 				throw new InvalidOperationException ();
 
-			AnonymousScopeEntry scope = (AnonymousScopeEntry) anonymous_scopes [scope_id];
+			AnonymousScopeEntry scope = anonymous_scopes [scope_id];
 			scope.AddCapturedScope (id, captured_name);
 		}
 
@@ -381,12 +382,12 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 
 		MyBinaryReader reader;
-		Hashtable source_file_hash;
-		Hashtable compile_unit_hash;
+		Dictionary<int, SourceFileEntry> source_file_hash;
+		Dictionary<int, CompileUnitEntry> compile_unit_hash;
 
-		ArrayList method_list;
-		Hashtable method_token_hash;
-		Hashtable source_name_hash;
+		List<MethodEntry> method_list;
+		Dictionary<int, MethodEntry> method_token_hash;
+		Dictionary<string, int> source_name_hash;
 
 		Guid guid;
 
@@ -427,8 +428,8 @@ namespace Mono.CompilerServices.SymbolWriter
 					"Cannot read symbol file `{0}'", filename);
 			}
 
-			source_file_hash = new Hashtable ();
-			compile_unit_hash = new Hashtable ();
+			source_file_hash = new Dictionary<int, SourceFileEntry> ();
+			compile_unit_hash = new Dictionary<int, CompileUnitEntry> ();
 		}
 
 		void CheckGuidMatch (Guid other, string filename, string assembly)
@@ -530,8 +531,8 @@ namespace Mono.CompilerServices.SymbolWriter
 				throw new InvalidOperationException ();
 
 			lock (this) {
-				SourceFileEntry source = (SourceFileEntry) source_file_hash [index];
-				if (source != null)
+				SourceFileEntry source;
+				if (source_file_hash.TryGetValue (index, out source))
 					return source;
 
 				long old_pos = reader.BaseStream.Position;
@@ -566,8 +567,8 @@ namespace Mono.CompilerServices.SymbolWriter
 				throw new InvalidOperationException ();
 
 			lock (this) {
-				CompileUnitEntry unit = (CompileUnitEntry) compile_unit_hash [index];
-				if (unit != null)
+				CompileUnitEntry unit;
+				if (compile_unit_hash.TryGetValue (index, out unit))
 					return unit;
 
 				long old_pos = reader.BaseStream.Position;
@@ -600,8 +601,8 @@ namespace Mono.CompilerServices.SymbolWriter
 				if (method_token_hash != null)
 					return;
 
-				method_token_hash = new Hashtable ();
-				method_list = new ArrayList ();
+				method_token_hash = new Dictionary<int, MethodEntry> ();
+				method_list = new List<MethodEntry> ();
 
 				long old_pos = reader.BaseStream.Position;
 				reader.BaseStream.Position = ot.MethodTableOffset;
@@ -623,7 +624,9 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			lock (this) {
 				read_methods ();
-				return (MethodEntry) method_token_hash [token];
+				MethodEntry me;
+				method_token_hash.TryGetValue (token, out me);
+				return me;
 			}
 		}
 
@@ -661,7 +664,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			lock (this) {
 				if (source_name_hash == null) {
-					source_name_hash = new Hashtable ();
+					source_name_hash = new Dictionary<string, int> ();
 
 					for (int i = 0; i < ot.SourceCount; i++) {
 						SourceFileEntry source = GetSourceFile (i + 1);
@@ -669,10 +672,10 @@ namespace Mono.CompilerServices.SymbolWriter
 					}
 				}
 
-				object value = source_name_hash [file_name];
-				if (value == null)
+				int value;
+				if (!source_name_hash.TryGetValue (file_name, out value))
 					return -1;
-				return (int) value;
+				return value;
 			}
 		}
 
@@ -681,18 +684,21 @@ namespace Mono.CompilerServices.SymbolWriter
 			if (reader == null)
 				throw new InvalidOperationException ();
 
+			AnonymousScopeEntry scope;
 			lock (this) {
-				if (anonymous_scopes != null)
-					return (AnonymousScopeEntry) anonymous_scopes [id];
+				if (anonymous_scopes != null) {
+					anonymous_scopes.TryGetValue (id, out scope);
+					return scope;
+				}
 
-				anonymous_scopes = new Hashtable ();
+				anonymous_scopes = new Dictionary<int, AnonymousScopeEntry> ();
 				reader.BaseStream.Position = ot.AnonymousScopeTableOffset;
 				for (int i = 0; i < ot.AnonymousScopeCount; i++) {
-					AnonymousScopeEntry scope = new AnonymousScopeEntry (reader);
+					scope = new AnonymousScopeEntry (reader);
 					anonymous_scopes.Add (scope.ID, scope);
 				}
 
-				return (AnonymousScopeEntry) anonymous_scopes [id];
+				return anonymous_scopes [id];
 			}
 		}
 

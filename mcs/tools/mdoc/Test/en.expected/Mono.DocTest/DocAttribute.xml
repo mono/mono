@@ -1,5 +1,6 @@
 <Type Name="DocAttribute" FullName="Mono.DocTest.DocAttribute">
   <TypeSignature Language="C#" Value="public class DocAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DocAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -20,6 +21,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DocAttribute (string docs);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string docs) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -36,6 +38,7 @@
     </Member>
     <Member MemberName="Field">
       <MemberSignature Language="C#" Value="public bool Field;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool Field" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -50,6 +53,7 @@
     </Member>
     <Member MemberName="FlagsEnum">
       <MemberSignature Language="C#" Value="public ConsoleModifiers FlagsEnum;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.ConsoleModifiers FlagsEnum" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -64,6 +68,7 @@
     </Member>
     <Member MemberName="NonFlagsEnum">
       <MemberSignature Language="C#" Value="public Mono.DocTest.Color NonFlagsEnum;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype Mono.DocTest.Color NonFlagsEnum" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -78,6 +83,7 @@
     </Member>
     <Member MemberName="Property">
       <MemberSignature Language="C#" Value="public Type Property { set; get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Property" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

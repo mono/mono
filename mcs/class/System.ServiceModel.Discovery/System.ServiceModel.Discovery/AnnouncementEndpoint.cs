@@ -45,25 +45,30 @@ namespace System.ServiceModel.Discovery
 			if (discoveryVersion == null)
 				throw new ArgumentNullException ("discoveryVersion");
 			DiscoveryVersion = discoveryVersion;
+			
+			IsSystemEndpoint = true;
 		}
 
 		public AnnouncementEndpoint (Binding binding, EndpointAddress address)
-			: this (DiscoveryVersion.WSDiscoveryApril2005, binding, address)
+			: this (DiscoveryVersion.WSDiscovery11, binding, address)
 		{
 		}
 
-		[MonoTODO]
 		public AnnouncementEndpoint (DiscoveryVersion discoveryVersion, Binding binding, EndpointAddress address)
-			: base (null, binding, address)
+			: base (GetContract (discoveryVersion), binding, address)
+		{
+			DiscoveryVersion = discoveryVersion;
+		}
+
+		static ContractDescription GetContract (DiscoveryVersion discoveryVersion)
 		{
 			if (discoveryVersion == null)
 				throw new ArgumentNullException ("discoveryVersion");
-			DiscoveryVersion = discoveryVersion;
+			return ContractDescription.GetContract (discoveryVersion.AnnouncementContractType);
 		}
 
 		public DiscoveryVersion DiscoveryVersion { get; private set; }
 
-		[MonoTODO]
 		public TimeSpan MaxAnnouncementDelay { get; set; }
 	}
 }

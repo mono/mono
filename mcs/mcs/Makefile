@@ -39,8 +39,9 @@ PROGRAM_COMPILE = $(BOOT_COMPILE)
 
 CLEAN_FILES += y.output
 
+# Use -cvt for parser debug version
 %-parser.cs: %-parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -cvt < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
+	$(topdir)/jay/jay -cv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 
 KEEP_OUTPUT_FILE_COPY = yes

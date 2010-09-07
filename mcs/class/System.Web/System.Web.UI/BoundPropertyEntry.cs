@@ -27,36 +27,64 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Web;
+using System.Web.Compilation;
+
 namespace System.Web.UI
 {
-	public class BoundPropertyEntry : PropertyEntry {
-		string expression;
-		string expressionPrefix;
-		bool generated;
-		bool useSetAttribute;
-
+	public class BoundPropertyEntry : PropertyEntry
+	{
 		internal BoundPropertyEntry ()
 		{
 		}
+		
+		public string ControlID {
+			get; set;
+		}
 
+		public Type ControlType {
+			get; set;
+		}
+		
 		public string Expression {
-			get { return expression; }
-			set { expression = value; }
+			get; set;
 		}
 
+		public ExpressionBuilder ExpressionBuilder {
+			get; set;
+		}
+		
 		public string ExpressionPrefix {
-			get { return expressionPrefix; }
-			set { expressionPrefix = value; }
+			get; set;
 		}
-
+		
+		public string FieldName {
+			get; set;
+		}
+		
+		public string FormatString {
+			get; set;
+		}
+		
 		public bool Generated {
-			get { return generated; }
-			set { generated = value; }
+			get; set;
+		}
+		
+		public object ParsedExpressionData {
+			get; set;
 		}
 
+		public bool ReadOnlyProperty {
+			get; set;
+		}
+		
+		public bool TwoWayBound {
+			get; set;
+		}
+		
 		public bool UseSetAttribute {
-			get { return useSetAttribute; }
-			set { useSetAttribute = value; }
+			get; set;
 		}
 	}
 }

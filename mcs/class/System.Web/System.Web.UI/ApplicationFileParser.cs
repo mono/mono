@@ -71,7 +71,7 @@ namespace System.Web.UI
 			LoadConfigDefaults ();
 		}
 		
-		protected override Type CompileIntoType ()
+		internal override Type CompileIntoType ()
 		{
 			return GlobalAsaxCompiler.CompileApplicationType (this);
 		}
@@ -98,7 +98,17 @@ namespace System.Web.UI
 		internal static ArrayList FileDependencies {
 			get { return dependencies; }
 		}		
+#if NET_4_0
+		internal override Type DefaultBaseType {
+			get {
+				Type ret = PageParser.DefaultApplicationBaseType;
+				if (ret == null)
+					return base.DefaultBaseType;
 
+				return ret;
+			}
+		}
+#endif
 		internal override string DefaultBaseTypeName {
 			get { return "System.Web.HttpApplication"; }
 		}

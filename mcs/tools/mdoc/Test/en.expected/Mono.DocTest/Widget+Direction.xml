@@ -1,5 +1,6 @@
 <Type Name="Widget+Direction" FullName="Mono.DocTest.Widget+Direction">
   <TypeSignature Language="C#" Value="public enum Widget.Direction" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed Widget/Direction extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -19,6 +20,7 @@
   <Members>
     <Member MemberName="East">
       <MemberSignature Language="C#" Value="East" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Widget/Direction East = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -32,6 +34,7 @@
     </Member>
     <Member MemberName="North">
       <MemberSignature Language="C#" Value="North" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Widget/Direction North = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -45,6 +48,7 @@
     </Member>
     <Member MemberName="South">
       <MemberSignature Language="C#" Value="South" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Widget/Direction South = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -58,6 +62,7 @@
     </Member>
     <Member MemberName="West">
       <MemberSignature Language="C#" Value="West" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Widget/Direction West = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

@@ -1,3 +1,8 @@
+2010-08-03  Andrés G. Aragoneses  <andres@lindenlab.com>
+
+	* monolinker.1: Add the name="..." notation to the field examples too
+	(besides the signature="..." one).
+
 2010-07-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* mono.1: Document MONO_DEBUG's new reverse-pinvoke-exceptions option.

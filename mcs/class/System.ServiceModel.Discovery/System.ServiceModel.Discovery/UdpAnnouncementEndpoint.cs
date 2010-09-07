@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -34,10 +35,12 @@ namespace System.ServiceModel.Discovery
 {
 	public class UdpAnnouncementEndpoint : AnnouncementEndpoint
 	{
-		[MonoTODO]
-		public static readonly Uri DefaultIPv4MulticastAddress;
-		[MonoTODO]
-		public static readonly Uri DefaultIPv6MulticastAddress;
+		public static readonly Uri DefaultIPv4MulticastAddress = new Uri ("soap.udp://239.255.255.250:3702/");
+		public static readonly Uri DefaultIPv6MulticastAddress = new Uri ("soap.udp://[FF02:0000:0000:0000:0000:0000:0000:000C]:3702/");
+
+		internal static Uri DefaultMulticastAddress {
+			get { return Socket.SupportsIPv4 ? DefaultIPv4MulticastAddress : DefaultIPv6MulticastAddress; }
+		}
 
 		// (1)->(2)
 		public UdpAnnouncementEndpoint ()
@@ -45,11 +48,10 @@ namespace System.ServiceModel.Discovery
 		{
 		}
 
-		// (2), everything falls to here.
+		// (2)->(6)
 		public UdpAnnouncementEndpoint (DiscoveryVersion discoveryVersion)
-			: base (discoveryVersion)
+			: this (discoveryVersion, DefaultMulticastAddress)
 		{
-			TransportSettings = new UdpTransportSettings ();
 		}
 
 		// (3)->(4)
@@ -70,11 +72,20 @@ namespace System.ServiceModel.Discovery
 		{
 		}
 
-		// (6)->(2)
+		// (6), everything falls to here
 		public UdpAnnouncementEndpoint (DiscoveryVersion discoveryVersion, Uri multicastAddress)
-			: this (discoveryVersion)
+			: base (discoveryVersion, CreateBinding (), new EndpointAddress (discoveryVersion.AdhocAddress))
 		{
+			ListenUri = multicastAddress;
+			TransportSettings = new UdpTransportSettings ();
 			MulticastAddress = multicastAddress;
+			MaxAnnouncementDelay = TimeSpan.FromMilliseconds (500);
+			Behaviors.Add (new DiscoveryViaUriBehavior (multicastAddress));
+		}
+
+		static Binding CreateBinding ()
+		{
+			return new CustomBinding (new TextMessageEncodingBindingElement (), new UdpTransportBindingElement ()) { SendTimeout = TimeSpan.FromMinutes (1), ReceiveTimeout = TimeSpan.FromMinutes (10) };
 		}
 
 		public Uri MulticastAddress { get; set; }

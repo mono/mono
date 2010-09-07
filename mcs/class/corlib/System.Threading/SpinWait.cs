@@ -1,4 +1,3 @@
-#if NET_4_0 || BOOTSTRAP_NET_4_0
 // SpinWait.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -23,6 +22,7 @@
 //
 //
 
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 using System;
 
 namespace System.Threading
@@ -31,24 +31,22 @@ namespace System.Threading
 	{
 		// The number of step until SpinOnce yield on multicore machine
 		const           int  step = 5;
-		const           int  maxSpin = 10000;
+		const           int  maxTime = 50;
 		static readonly bool isSingleCpu = (Environment.ProcessorCount == 1);
 
 		int ntime;
 
 		public void SpinOnce ()
 		{
-			if (ntime > 2 * maxSpin) {
-				Thread.Sleep (1);
-			} else if (isSingleCpu) {
+			if (isSingleCpu) {
 				// On a single-CPU system, spinning does no good
 				Thread.Yield ();
 			} else {
-				if (++ntime % step == 0)
+				if ((ntime = ntime == maxTime ? maxTime : ntime + 1) % step == 0)
 					Thread.Yield ();
 				else
 					// Multi-CPU system might be hyper-threaded, let other thread run
-					Thread.SpinWait (Math.Min (ntime << 1, maxSpin));
+					Thread.SpinWait (ntime << 1);
 			}
 		}
 

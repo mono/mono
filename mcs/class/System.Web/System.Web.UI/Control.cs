@@ -1699,8 +1699,12 @@ namespace System.Web.UI
 			
 			stateMask |= PRERENDERED;
 		}
-
-		internal void InitRecursive (Control namingContainer)
+#if NET_4_0
+		internal virtual
+#else
+		internal
+#endif
+		void InitRecursive (Control namingContainer)
 		{
 #if MONO_TRACE
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;

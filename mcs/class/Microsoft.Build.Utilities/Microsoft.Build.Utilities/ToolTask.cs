@@ -194,12 +194,14 @@ namespace Microsoft.Build.Utilities
 
 		void ProcessLine (string line, MessageImportance importance)
 		{
-			toolOutput.AppendLine (line);
+			foreach (string singleLine in line.Split (new string [] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)) {
+				toolOutput.AppendLine (singleLine);
 
-			// in case of typeLoadException, collect all the output
-			// and then handle in ProcessTypeLoadException
-			if (!typeLoadException)
-				LogEventsFromTextOutput (line, importance);
+				// in case of typeLoadException, collect all the output
+				// and then handle in ProcessTypeLoadException
+				if (!typeLoadException)
+					LogEventsFromTextOutput (singleLine, importance);
+			}
 		}
 
 		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)

@@ -55,7 +55,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 91;
+		private const int mono_corlib_version = 93;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -129,9 +129,26 @@ namespace System {
 		public static string CommandLine {
 			// note: security demand inherited from calling GetCommandLineArgs
 			get {
-				// FIXME: we may need to quote, but any sane person
-				// should use GetCommandLineArgs () instead.
-				return String.Join (" ", GetCommandLineArgs ());
+				StringBuilder sb = new StringBuilder ();
+				foreach (string str in GetCommandLineArgs ()) {
+					bool escape = false;
+					string quote = "";
+					string s = str;
+					for (int i = 0; i < s.Length; i++) {
+						if (quote.Length == 0 && Char.IsWhiteSpace (s [i])) {
+							quote = "\"";
+						} else if (s [i] == '"') {
+							escape = true;
+						}
+					}
+					if (escape && quote.Length != 0) {
+						s = s.Replace ("\"", "\\\"");
+					}
+					sb.AppendFormat ("{0}{1}{0} ", quote, s);
+				}
+				if (sb.Length > 0)
+					sb.Length--;
+				return sb.ToString ();
 			}
 		}
 

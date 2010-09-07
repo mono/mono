@@ -53,6 +53,8 @@ namespace System.Web.UI.WebControls
 	[Designer ("System.Web.UI.Design.WebControls.TreeViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class TreeView: HierarchicalDataBoundControl, IPostBackEventHandler, IPostBackDataHandler, ICallbackEventHandler
 	{
+		static readonly char[] postDataSplitChars = {'|'};
+		
 		string activeSiteMapPath;
 		bool stylesPrepared;
 		Style hoverNodeStyle;
@@ -1025,12 +1027,15 @@ namespace System.Web.UI.WebControls
 			if (EnableClientScript && PopulateNodesFromClient) {
 				string states = postCollection [ClientID + "_PopulatedStates"];
 				if (states != null) {
-					foreach (string id in states.Split ('|')) {
-						if (String.IsNullOrEmpty(id))
-							continue;
+					foreach (string id in states.Split (postDataSplitChars, StringSplitOptions.RemoveEmptyEntries)) {
 						TreeNode node = FindNodeByPos (id);
-						if (node != null && node.PopulateOnDemand && !node.Populated)
-							node.Populated = true;
+						if (node != null && node.PopulateOnDemand && !node.Populated) {
+							Page page = Page;
+							if (page != null && page.IsCallback)
+								node.Populated = true; // Bug #492307
+							else
+								node.Populate (); // Bug #626829
+						}
 					}
 				}
 				res = true;
@@ -1042,7 +1047,7 @@ namespace System.Web.UI.WebControls
 			if (EnableClientScript) {
 				string states = postCollection [ClientID + "_ExpandStates"];
 				if (states != null) {
-					string[] ids = states.Split ('|');
+					string[] ids = states.Split (postDataSplitChars, StringSplitOptions.RemoveEmptyEntries);
 					UnsetExpandStates (Nodes, ids);
 					SetExpandStates (ids);
 				} else
@@ -1359,8 +1364,9 @@ namespace System.Web.UI.WebControls
 		
  		void RenderNode (HtmlTextWriter writer, TreeNode node, int level, ArrayList levelLines, bool hasPrevious, bool hasNext)
 		{
-			if (node.PopulateOnDemand && node.HadChildrenBeforePopulating)
-				throw new InvalidOperationException ("PopulateOnDemand cannot be set to true on a node that already has children.");
+			// FIXME: disabled for now - needs closer investigation
+			//if (node.PopulateOnDemand && node.HadChildrenBeforePopulating)
+			// 	throw new InvalidOperationException ("PopulateOnDemand cannot be set to true on a node that already has children.");
 			
 			DecorateNode(node);
 			

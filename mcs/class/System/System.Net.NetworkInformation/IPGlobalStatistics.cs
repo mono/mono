@@ -29,6 +29,7 @@
 #if NET_2_0
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
 	public abstract class IPGlobalStatistics {
@@ -219,6 +220,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+	[StructLayout (LayoutKind.Sequential)]
 	struct Win32_MIB_IPSTATS
 	{
 		public int Forwarding;

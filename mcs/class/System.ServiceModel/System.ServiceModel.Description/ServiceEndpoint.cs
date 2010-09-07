@@ -78,6 +78,13 @@ namespace System.ServiceModel.Description
 			set { binding = value; }
 		}
 
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		bool IsSystemEndpoint { get; set; }
+
 		public Uri ListenUri {
 			get { return listen_uri ?? (Address != null ? Address.Uri : null); }
 			set { listen_uri = value; }
@@ -90,8 +97,13 @@ namespace System.ServiceModel.Description
 
 		public string Name {
 			get {
-				if (name == null)
-					name = Binding.Name + "_" + Contract.Name;
+				if (name == null) {
+					// do not create cache when either of Binding or Contract is null.
+					if (Binding == null)
+						return Contract != null ? Contract.Name : null;
+					else if (Contract != null)
+						name = Binding.Name + "_" + Contract.Name;
+				}
 				return name;
 			}
 			set { name = value; }

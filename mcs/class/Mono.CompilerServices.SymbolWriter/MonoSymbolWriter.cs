@@ -33,28 +33,31 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 	
 namespace Mono.CompilerServices.SymbolWriter
 {
 	public class MonoSymbolWriter
 	{
-		ArrayList methods = null;
-		ArrayList sources = null;
-		ArrayList comp_units = null;
+		List<SourceMethodBuilder> methods;
+		List<SourceFileEntry> sources;
+		List<CompileUnitEntry> comp_units;
 		protected readonly MonoSymbolFile file;
-		string filename = null;
+		string filename;
 		
-		private SourceMethodBuilder current_method = null;
-		private Stack current_method_stack;
+		private SourceMethodBuilder current_method;
+#if NET_2_1
+		System.Collections.Stack current_method_stack = new System.Collections.Stack ();
+#else
+		Stack<SourceMethodBuilder> current_method_stack = new Stack<SourceMethodBuilder> ();
+#endif
 
 		public MonoSymbolWriter (string filename)
 		{
-			this.methods = new ArrayList ();
-			this.sources = new ArrayList ();
-			this.comp_units = new ArrayList ();
-			this.current_method_stack = new Stack ();
+			this.methods = new List<SourceMethodBuilder> ();
+			this.sources = new List<SourceFileEntry> ();
+			this.comp_units = new List<CompileUnitEntry> ();
 			this.file = new MonoSymbolFile ();
 
 			this.filename = filename + ".mdb";
@@ -239,10 +242,14 @@ namespace Mono.CompilerServices.SymbolWriter
 
 	public class SourceMethodBuilder
 	{
-		ArrayList _locals;
-		ArrayList _blocks;
-		ArrayList _scope_vars;
-		Stack _block_stack;
+		List<LocalVariableEntry> _locals;
+		List<CodeBlockEntry> _blocks;
+		List<ScopeVariable> _scope_vars;
+#if NET_2_1
+		System.Collections.Stack _block_stack;
+#else		
+		Stack<CodeBlockEntry> _block_stack;
+#endif
 		string _real_name;
 		IMethodDef _method;
 		ICompileUnit _comp_unit;
@@ -277,10 +284,16 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void StartBlock (CodeBlockEntry.Type type, int start_offset)
 		{
-			if (_block_stack == null)
-				_block_stack = new Stack ();
+			if (_block_stack == null) {
+#if NET_2_1
+				_block_stack = new System.Collections.Stack ();
+#else				
+				_block_stack = new Stack<CodeBlockEntry> ();
+#endif
+			}
+			
 			if (_blocks == null)
-				_blocks = new ArrayList ();
+				_blocks = new List<CodeBlockEntry> ();
 
 			int parent = CurrentBlock != null ? CurrentBlock.Index : -1;
 
@@ -333,7 +346,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void AddLocal (int index, string name)
 		{
 			if (_locals == null)
-				_locals = new ArrayList ();
+				_locals = new List<LocalVariableEntry> ();
 			int block_idx = CurrentBlock != null ? CurrentBlock.Index : 0;
 			_locals.Add (new LocalVariableEntry (index, name, block_idx));
 		}
@@ -352,7 +365,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void AddScopeVariable (int scope, int index)
 		{
 			if (_scope_vars == null)
-				_scope_vars = new ArrayList ();
+				_scope_vars = new List<ScopeVariable> ();
 			_scope_vars.Add (
 				new ScopeVariable (scope, index));
 		}

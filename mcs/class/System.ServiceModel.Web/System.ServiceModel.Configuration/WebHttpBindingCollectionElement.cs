@@ -46,7 +46,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public partial class WebHttpBindingCollectionElement
 		 : StandardBindingCollectionElement<WebHttpBinding, WebHttpBindingElement>
 	{
@@ -62,9 +61,12 @@ namespace System.ServiceModel.Configuration
 		{
 		}
 
+		// Methods
 
-		// Properties
-
+		protected override Binding GetDefault ()
+		{
+			return new WebHttpBinding ();
+		}
 
 	}
 

@@ -49,7 +49,7 @@ COMPILER_NAME = dmcs
 TEST_PATTERN = 'v4'
 LOCAL_RUNTIME_FLAGS = --verify-all
 DEFINES = -compiler-options:"-d:NET_4_0"
-#TOPTIONS += '-il:ver-il-dmcs.xml'
+TOPTIONS += '-il:ver-il-dmcs.xml'
 endif
 ifeq (moonlight, $(PROFILE))
 COMPILER_NAME = smcs

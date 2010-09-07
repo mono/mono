@@ -1,8 +1,3 @@
-/gtest-504-lib.cs -crlf
-/gtest-523.cs -crlf
-/gtest-xml-2-ref.xml -crlf
-/gtest-xml-3-ref.xml -crlf
-/test-746.cs -crlf
 /test-xml-001-ref.xml -crlf
 /test-xml-002-ref.xml -crlf
 /test-xml-003-ref.xml -crlf
@@ -42,7 +37,3 @@
 /test-xml-037-ref.xml -crlf
 /test-xml-038-ref.xml -crlf
 /test-xml-050-ref.xml -crlf
-/gtest-522.cs -crlf
-/gtest-525.cs -crlf
-/gtest-linq-24.cs -crlf
-/test-788.cs -crlf

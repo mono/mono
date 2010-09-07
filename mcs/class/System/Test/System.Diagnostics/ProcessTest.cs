@@ -800,7 +800,12 @@ namespace MonoTests.System.Diagnostics
 		{
 			Process p = new Process ();
 			p.StartInfo = GetCrossPlatformStartInfo ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.RedirectStandardError = true;
 			p.Start ();
+			p.BeginErrorReadLine();
+			p.BeginOutputReadLine();
 			p.WaitForExit ();
 			String.IsNullOrEmpty (p.ExitCode + "");
 			

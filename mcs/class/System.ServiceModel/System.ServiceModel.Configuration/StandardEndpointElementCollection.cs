@@ -58,6 +58,10 @@ namespace System.ServiceModel.Configuration
 	public sealed class StandardEndpointElementCollection<TEndpointConfiguration> : ServiceModelEnhancedConfigurationElementCollection<TEndpointConfiguration>
 		where TEndpointConfiguration : StandardEndpointElement, new()
 	{
+		protected override object GetElementKey (ConfigurationElement element)
+		{
+			return ((StandardEndpointElement) element).Name;
+		}
 	}
 }
 #endif

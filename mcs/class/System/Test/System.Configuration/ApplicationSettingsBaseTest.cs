@@ -291,7 +291,11 @@ namespace MonoTests.System.Configuration {
 #if TARGET_JVM
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System.Test, Version=0.0.0.0";
 #else
+#if NET_4_0
+			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_0, Version=0.0.0.0";
+#else
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_2_0, Version=0.0.0.0";
+#endif
 #endif
 			Assert.AreEqual (expected, new SettingsProviderAttribute (typeof (ProviderPoker)).ProviderTypeName.Substring (0, expected.Length), "#1");
 			TestSettings2 settings = new TestSettings2 ();

@@ -65,7 +65,7 @@ namespace System.Web.UI
 
 		protected internal override bool HasTriggered ()
 		{
-			Control ctrl = Owner.FindControl (ControlID);
+			Control ctrl = FindTargetControl (true);
 			string ctrlUniqueID = ctrl != null ? ctrl.UniqueID : null;
 			if (ctrlUniqueID == null)
 				return false;
@@ -76,8 +76,9 @@ namespace System.Web.UI
 		}
 
 		// LAME SPEC: it seems DefaultEventAttribute is never queried for the event name.
-		protected internal override void Initialize () {
-			Control c = FindTargetControl (false);
+		protected internal override void Initialize ()
+		{
+			Control c = FindTargetControl (true);
 			ScriptManager sm = Owner.ScriptManager;
 			string eventName = EventName;
 
@@ -100,8 +101,11 @@ namespace System.Web.UI
 			sm.RegisterAsyncPostBackControl (c);
 		}
 
-		public void OnEvent (object sender, EventArgs e) {
-			Owner.Update ();
+		public void OnEvent (object sender, EventArgs e)
+		{
+			UpdatePanel owner = Owner;
+			if (owner != null && owner.UpdateMode != UpdatePanelUpdateMode.Always)
+				owner.Update ();
 		}
 
 		public override string ToString () {

@@ -72,9 +72,12 @@ namespace System.ServiceModel.MonoInternal
 
 		public ClientRuntimeChannel (ClientRuntime runtime, ContractDescription contract, TimeSpan openTimeout, TimeSpan closeTimeout, IChannel contextChannel, IChannelFactory factory, MessageVersion messageVersion, EndpointAddress remoteAddress, Uri via)
 		{
+			if (runtime == null)
+				throw new ArgumentNullException ("runtime");
 			this.runtime = runtime;
 			this.remote_address = remoteAddress;
-			runtime.Via = via ?? remote_address.Uri;
+			if (runtime.Via == null)
+				runtime.Via = via ?? (remote_address != null ?remote_address.Uri : null);
 			this.contract = contract;
 			this.message_version = messageVersion;
 			default_open_timeout = openTimeout;
@@ -91,8 +94,15 @@ namespace System.ServiceModel.MonoInternal
 				channel = contextChannel;
 			else {
 				var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-				channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
-				this.factory = factory;
+				try {
+					channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
+					this.factory = factory;
+				} catch (TargetInvocationException ex) {
+					if (ex.InnerException != null)
+						throw ex.InnerException;
+					else
+						throw;
+				}
 			}
 		}
 
@@ -405,12 +415,42 @@ namespace System.ServiceModel.MonoInternal
 
 		#region Request/Output processing
 
+		class TempAsyncResult : IAsyncResult
+		{
+			public TempAsyncResult (object returnValue, object state)
+			{
+				ReturnValue = returnValue;
+				AsyncState = state;
+				CompletedSynchronously = true;
+				IsCompleted = true;
+				AsyncWaitHandle = new ManualResetEvent (true);
+			}
+			
+			public object ReturnValue { get; set; }
+			public object AsyncState { get; set; }
+			public bool CompletedSynchronously { get; set; }
+			public bool IsCompleted { get; set; }
+			public WaitHandle AsyncWaitHandle { get; set; }
+		}
+
 		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState)
 		{
 			if (context != null)
 				throw new InvalidOperationException ("another operation is in progress");
 			context = OperationContext.Current;
-			return _processDelegate.BeginInvoke (method, operationName, parameters, callback, asyncState);
+
+			// FIXME: this is a workaround for bug #633945
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				return _processDelegate.BeginInvoke (method, operationName, parameters, callback, asyncState);
+			default:
+				var result = Process (method, operationName, parameters);
+				var ret = new TempAsyncResult (result, asyncState);
+				if (callback != null)
+					callback (ret);
+				return ret;
+			}
 		}
 
 		public object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result)
@@ -422,7 +462,14 @@ namespace System.ServiceModel.MonoInternal
 				throw new ArgumentNullException ("parameters");
 			// FIXME: the method arguments should be verified to be 
 			// identical to the arguments in the corresponding begin method.
-			return _processDelegate.EndInvoke (result);
+			// FIXME: this is a workaround for bug #633945
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				return _processDelegate.EndInvoke (result);
+			default:
+				return ((TempAsyncResult) result).ReturnValue;
+			}
 		}
 
 		public object Process (MethodBase method, string operationName, object [] parameters)
@@ -548,7 +595,10 @@ namespace System.ServiceModel.MonoInternal
 
 		internal void Send (Message msg, TimeSpan timeout)
 		{
-			OutputChannel.Send (msg, timeout);
+			if (OutputChannel != null)
+				OutputChannel.Send (msg, timeout);
+			else
+				RequestChannel.Request (msg, timeout); // and ignore returned message.
 		}
 
 		internal IAsyncResult BeginSend (Message msg, TimeSpan timeout, AsyncCallback callback, object state)
@@ -602,7 +652,7 @@ namespace System.ServiceModel.MonoInternal
 					msg.Headers.MessageId = new UniqueId ();
 				if (msg.Headers.ReplyTo == null)
 					msg.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
-				if (msg.Headers.To == null)
+				if (msg.Headers.To == null && RemoteAddress != null)
 					msg.Headers.To = RemoteAddress.Uri;
 			}
 

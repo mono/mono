@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Reflection;
@@ -99,24 +100,29 @@ namespace System.ServiceModel.Configuration
 			get { return (UserPrincipalNameElement) base ["userPrincipalName"]; }
 		}
 
-
+		// it was extraneous...
 		internal EndpointIdentity Create ()
 		{
-			if (Certificate != null && !String.IsNullOrEmpty (Certificate.EncodedValue))
-				return new X509CertificateEndpointIdentity (new X509Certificate2 (Convert.FromBase64String (Certificate.EncodedValue)));
-			if (CertificateReference != null && !String.IsNullOrEmpty (CertificateReference.FindValue))
-				// FIXME: imeplement
-				throw new NotImplementedException ();
-			if (Dns != null && !String.IsNullOrEmpty (Dns.Value))
-				return new DnsEndpointIdentity (Dns.Value);
-			if (Rsa != null && !String.IsNullOrEmpty (Rsa.Value))
-				return new RsaEndpointIdentity (Rsa.Value);
-			if (ServicePrincipalName != null && !String.IsNullOrEmpty (ServicePrincipalName.Value))
-				return new SpnEndpointIdentity (ServicePrincipalName.Value);
-			if (UserPrincipalName != null && !String.IsNullOrEmpty (UserPrincipalName.Value))
-				return new UpnEndpointIdentity (UserPrincipalName.Value);
+			return ConfigUtil.CreateInstance (this);
+		}
 
-			return null;
+		public void InitializeFrom (EndpointIdentity identity)
+		{
+			if (identity == null)
+				throw new ArgumentNullException ("identity");
+
+			if (identity is X509CertificateEndpointIdentity)
+				Certificate.EncodedValue = Convert.ToBase64String (((X509CertificateEndpointIdentity) identity).Certificates [0].RawData);
+			else if (identity is DnsEndpointIdentity)
+				Dns.Value = (string) ((DnsEndpointIdentity) identity).IdentityClaim.Resource;
+			else if (identity is RsaEndpointIdentity)
+				Rsa.Value = (string) ((RsaEndpointIdentity) identity).IdentityClaim.Resource;
+			else if (identity is SpnEndpointIdentity)
+				ServicePrincipalName.Value = (string) ((SpnEndpointIdentity) identity).IdentityClaim.Resource;
+			else if (identity is UpnEndpointIdentity)
+				UserPrincipalName.Value = (string) ((UpnEndpointIdentity) identity).IdentityClaim.Resource;
+			else
+				throw new ArgumentException (String.Format ("Unexpected EndpointIdentity of type '{0}'", identity.GetType ()));
 		}
 	}
 

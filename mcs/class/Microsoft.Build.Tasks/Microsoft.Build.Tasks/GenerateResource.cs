@@ -291,13 +291,14 @@ namespace Microsoft.Build.Tasks {
 			if (UseSourcePath)
 				commandLine.AppendSwitch ("/useSourcePath");
 
-			commandLine.AppendSwitch (String.Format ("/compile {0}{1}", SourceFile,
+			commandLine.AppendSwitch (String.Format ("/compile \"{0}{1}\"", SourceFile,
 						OutputFile != null ? "," + OutputFile : ""));
 		}
 
 		public override bool Execute ()
 		{
-			EnvironmentOverride ["MONO_IOMAP"] = "drive";
+			if (String.IsNullOrEmpty (Environment.GetEnvironmentVariable ("MONO_IOMAP")))
+				EnvironmentOverride ["MONO_IOMAP"] = "drive";
 			return base.Execute ();
 		}
 

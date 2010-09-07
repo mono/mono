@@ -148,8 +148,7 @@ namespace System.Web.Compilation
 			if (!typeof (BuildProvider).IsAssignableFrom (providerType))
 				throw new ArgumentException ("The parameter 'providerType' is invalid", "providerType");
 
-			if (!BuildManager.PreStartMethodsRunning)
-				throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
+			BuildManager.AssertPreStartMethodsRunning ();
 
 			if (registeredBuildProviderTypes == null)
 				registeredBuildProviderTypes = new Dictionary <string, Type> (StringComparer.OrdinalIgnoreCase);
@@ -157,21 +156,29 @@ namespace System.Web.Compilation
 			registeredBuildProviderTypes [extension] = providerType;
 		}
 
-		internal static BuildProvider GetProviderInstanceForExtension (string extension)
+		internal static Type GetProviderTypeForExtension (string extension)
 		{
-			Type type = null;
+			if (String.IsNullOrEmpty (extension))
+				return null;
 
+			Type type = null;
 			if (registeredBuildProviderTypes == null || !registeredBuildProviderTypes.TryGetValue (extension, out type) || type == null) {
 				var cs = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
 				BuildProviderCollection bpcoll = cs != null ? cs.BuildProviders : null;
 				global::System.Web.Configuration.BuildProvider bpcfg = bpcoll != null ? bpcoll [extension] : null;
 				if (bpcfg != null)
 					type = HttpApplication.LoadType (bpcfg.Type);
-			}	
-			
+			}
+
+			return type;
+		}
+		
+		internal static BuildProvider GetProviderInstanceForExtension (string extension)
+		{
+			Type type = GetProviderTypeForExtension (extension);
 			if (type == null)
 				return null;
-				
+			
 			return Activator.CreateInstance (type, null) as global::System.Web.Compilation.BuildProvider;
 		}
 #endif

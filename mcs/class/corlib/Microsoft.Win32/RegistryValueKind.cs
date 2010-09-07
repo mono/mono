@@ -40,6 +40,9 @@ namespace Microsoft.Win32
 		DWord,
 		MultiString = 7,
 		QWord = 11,
+#if NET_4_0
+		None = 12
+#endif
 	}
 }
 

@@ -124,7 +124,7 @@ namespace System.ServiceModel
 		public MessageHeaders OutgoingMessageHeaders {
 			get {
 				if (outgoing_headers == null)
-					outgoing_headers = new MessageHeaders (MessageVersion.Default);
+					outgoing_headers = new MessageHeaders (channel.GetProperty<MessageVersion> () ?? MessageVersion.Default);
 				return outgoing_headers;
 			}
 		}

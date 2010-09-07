@@ -225,7 +225,7 @@ class Example {
             <summary>To be added.</summary>
             <remarks>
                 <c>E:Mono.DocTest.Widget.AnotherEvent</c>.</remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
             <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
         </member>
         <member name="F:Mono.DocTest.Widget.array1">
@@ -607,7 +607,7 @@ class Example {
         <member name="E:Mono.DocTest.Generic.GenericBase`1.MyEvent">
             <summary>To be added.</summary>
             <remarks>E:Mono.DocTest.Generic.GenericBase`1.MyEvent</remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
             <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
         </member>
         <member name="M:Mono.DocTest.Generic.GenericBase`1.op_Explicit(`0Mono`0.`0DocTest`0.`0Generic`0.`0GenericBase`0{`0U`0})~`0U`0">
@@ -702,7 +702,8 @@ class Example {
         <member name="M:Mono.DocTest.Generic.MyList`1.System#Collections#IEnumerable#GetEnumerator">
             <summary>To be added.</summary>
             <returns>To be added.</returns>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`1.System#Collections#GetEnumerator</c>.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`1.Test(T)">
             <param name="t">tko</param>
@@ -748,10 +749,11 @@ class Example {
             <remarks>To be added.</remarks>
         </member>
         <member name="M:Mono.DocTest.Generic.MyList`2.CopyTo(A[],System.Int32)">
-            <param name="array">To be added.</param>
-            <param name="arrayIndex">To be added.</param>
+            <param name="array">Where to copy elements to</param>
+            <param name="arrayIndex">Where to start copyingto</param>
             <summary>To be added.</summary>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.CopyTo(`0[],System.Int32)</c>.</remarks>
         </member>
         <member name="P:Mono.DocTest.Generic.MyList`2.Count">
             <summary>To be added.</summary>
@@ -841,7 +843,8 @@ class Example {
         <member name="M:Mono.DocTest.Generic.MyList`2.System#Collections#IEnumerable#GetEnumerator">
             <summary>To be added.</summary>
             <returns>To be added.</returns>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>M:Mono.DocTest.MyList`2.System#Collections#GetEnumerator</c>.</remarks>
         </member>
         <member name="P:Mono.DocTest.Generic.MyList`2.System#Collections#IEnumerator#Current">
             <summary>To be added.</summary>

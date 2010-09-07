@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
@@ -36,9 +37,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 		readonly Compiler.CompilerContext ctx;
 		readonly Compiler.TypeSpec currentType;
 
-		public RuntimeBinderContext (Compiler.CompilerContext ctx, Compiler.TypeSpec currentType)
+		public RuntimeBinderContext (DynamicContext ctx, Compiler.TypeSpec currentType)
 		{
-			this.ctx = ctx;
+			this.ctx = ctx.CompilerContext;
 			this.currentType = currentType;
 		}
 
@@ -88,7 +89,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			throw new NotImplementedException ();
 		}
 
-		public Compiler.ExtensionMethodGroupExpr LookupExtensionMethod (Compiler.TypeSpec extensionType, string name, int arity, Mono.CSharp.Location loc)
+		public IList<Compiler.MethodSpec> LookupExtensionMethod (Compiler.TypeSpec extensionType, string name, int arity, ref Compiler.NamespaceEntry scope)
 		{
 			// No extension method lookup in this context
 			return null;

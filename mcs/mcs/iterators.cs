@@ -241,7 +241,7 @@ namespace Mono.CSharp {
 					if (TypeManager.int_interlocked_compare_exchange == null) {
 						TypeSpec t = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Interlocked", MemberKind.Class, true);
 						if (t != null) {
-							var p = ParametersCompiled.CreateFullyResolved (
+							var p = new ParametersImported (
 								new[] {
 									new ParameterData (null, Parameter.Modifier.REF),
 									new ParameterData (null, Parameter.Modifier.NONE),
@@ -249,8 +249,8 @@ namespace Mono.CSharp {
 								},
 								new[] {
 									TypeManager.int32_type, TypeManager.int32_type, TypeManager.int32_type
-								}
-								);
+								},
+								false);
 							var f = new MemberFilter ("CompareExchange", 0, MemberKind.Method, p, TypeManager.int32_type);
 							TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, f, loc);
 						}
@@ -387,7 +387,7 @@ namespace Mono.CSharp {
 
 		public IteratorStorey (Iterator iterator)
 			: base (iterator.Container.Toplevel, iterator.Host,
-			  iterator.OriginalMethod as MemberBase, iterator.GenericMethod, "Iterator")
+			  iterator.OriginalMethod as MemberBase, iterator.GenericMethod == null ? null : iterator.GenericMethod.CurrentTypeParameters, "Iterator")
 		{
 			this.Iterator = iterator;
 		}

@@ -207,5 +207,27 @@ namespace MonoTests.System.ComponentModel
 				get { return "english"; }
 			}
 		}
+
+#if NET_4_0
+		[Test]
+		public void GetCultureName ()
+		{
+			CustomCultureInfoConverter custom_converter = new CustomCultureInfoConverter ();
+
+			CultureInfo fr_culture = CultureInfo.GetCultureInfo ("fr-FR");
+			Assert.AreEqual (fr_culture.Name, custom_converter.GetCultureName (fr_culture), "#A1");
+
+			CultureInfo es_culture = CultureInfo.GetCultureInfo ("es-MX");
+			Assert.AreEqual (es_culture.Name, custom_converter.GetCultureName (es_culture), "#A2");
+		}
+
+		class CustomCultureInfoConverter : CultureInfoConverter
+		{
+			public new string GetCultureName (CultureInfo culture)
+			{
+				return base.GetCultureName (culture);
+			}
+		}
+#endif
 	}
 }

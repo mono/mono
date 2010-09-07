@@ -879,6 +879,14 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		public void RemoveDelegateTypeMismatch ()
+		{
+			Delegate boxer = new Boxer (() => new object ());
+			Delegate.Remove (boxer, new WrongDelegate (() => 42));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void WrongReturnTypeContravariance ()
 		{
 			Delegate.CreateDelegate (
@@ -1007,6 +1015,88 @@ namespace MonoTests.System
 
 			Assert.AreEqual (10, d (5));
 		}
+
+		public static long? StaticMethodToBeClosedOverNull (object o, long? bar)
+		{
+			Console.WriteLine ("o: {0}", o);
+			return 5;
+		}
+
+		[Test] // #617161
+		[Category ("NotWorking")]
+		public void ClosedOverNullReferenceStaticMethod ()
+		{
+			var del = (Func<long?,long?>) Delegate.CreateDelegate (
+				typeof (Func<long?,long?>),
+				null as object,
+				this.GetType ().GetMethod ("StaticMethodToBeClosedOverNull"));
+
+			Assert.IsNull (del.Target);
+
+			Assert.AreEqual ((long?) 5, del (5));
+		}
+
+		public void InstanceMethodToBeClosedOverNull ()
+		{
+		}
+
+		public void InstanceMethodIntToBeClosedOverNull (int i)
+		{
+		}
+
+		[Test] // #475962
+		public void ClosedOverNullReferenceInstanceMethod ()
+		{
+			var action = (Action) Delegate.CreateDelegate (
+				typeof (Action),
+				null as object,
+				this.GetType ().GetMethod ("InstanceMethodToBeClosedOverNull"));
+
+			Assert.IsNull (action.Target);
+
+			action ();
+
+			var action_int = (Action<int>) Delegate.CreateDelegate (
+				typeof (Action<int>),
+				null as object,
+				this.GetType ().GetMethod ("InstanceMethodIntToBeClosedOverNull"));
+
+			Assert.IsNull (action.Target);
+
+			action_int (42);
+		}
+
+		class Foo {
+
+			public void Bar ()
+			{
+			}
+		}
+
+		Foo foo;
+		event Action bar_handler;
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))] // #635349, #605936
+		public void NewDelegateClosedOverNullReferenceInstanceMethod ()
+		{
+			bar_handler += foo.Bar;
+		}
+
+		public void Banga ()
+		{
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CreateDelegateOpenOnly ()
+		{
+			Delegate.CreateDelegate (
+				typeof (Action),
+				this.GetType ().GetMethod ("Banga"));
+		}
+
 #endif
 
 		[Test]

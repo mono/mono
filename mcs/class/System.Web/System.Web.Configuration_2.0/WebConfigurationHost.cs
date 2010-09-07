@@ -56,6 +56,8 @@ namespace System.Web.Configuration
 		WebConfigurationFileMap map;
 		const string MachinePath = ":machine:";
 		const string MachineWebPath = ":web:";
+
+		string appVirtualPath;
 		
 		public virtual object CreateConfigurationContext (string configPath, string locationSubPath)
 		{
@@ -189,7 +191,13 @@ namespace System.Web.Configuration
 		{
 			string fullPath = (string) hostInitConfigurationParams [1];
 			map = (WebConfigurationFileMap) hostInitConfigurationParams [0];
+			bool inAnotherApp = (bool) hostInitConfigurationParams [7];
 
+			if (inAnotherApp)
+				appVirtualPath = fullPath;
+			else
+				appVirtualPath = HttpRuntime.AppDomainAppVirtualPath;
+			
 			if (locationSubPath == MachineWebPath) {
 				locationSubPath = MachinePath;
 				configPath = MachineWebPath;
@@ -385,7 +393,7 @@ namespace System.Web.Configuration
 						(String.Compare (normalized, MachineWebPath, StringComparison.Ordinal) == 0) ||
 						(String.Compare (normalized, "/", StringComparison.Ordinal) == 0) ||
 						(String.Compare (normalized, "~", StringComparison.Ordinal) == 0) ||
-						(String.Compare (normalized, HttpRuntime.AppDomainAppVirtualPath) == 0);
+						(String.Compare (normalized, appVirtualPath) == 0);
 				default:
 					return true;
 			}
@@ -416,7 +424,7 @@ namespace System.Web.Configuration
 					}
 				}
 #endif
-				throw new ConfigurationException ("File '" + streamName + "' not found");
+				return null;
 			}
 				
 			return new FileStream (streamName, FileMode.Open, FileAccess.Read);

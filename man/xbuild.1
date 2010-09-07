@@ -23,6 +23,15 @@ Set or override project properties
 .B \//logger:<logger>
 Custom logger to log build events
 .TP
+.B \//toolsversion:version , /tv:version
+Specify the toolset version to use.
+
+Eg. /tv:4.0
+    This would cause 4.0 version of the Microsoft.Common.targets (among others) to be used. This overrides
+    the value specified in a project file.
+
+Valid values: 2.0, 3.0, 3.5 and 4.0
+.TP
 .B \//verbosity:<level>
 Logger verbosity level : quiet, minimal, normal, detailed, diagnostic
 .TP
@@ -33,7 +42,7 @@ Validate the project file against the schema
 Validate the project file against the specified schema
 .TP
 .B \//consoleloggerparameters:<params>
-Parameters for the console logger
+Parameters for the console logger : PerfomanceSummary, NoSummary, NoItemAndPropertyList
 .TP
 .B \//nologo
 Don't show the initial xbuild banner
@@ -48,6 +57,30 @@ Display xbuild version
 .I "XBUILD_EMIT_SOLUTION"
 If this variable is set, then the project file generated from a solution
 file is emitted.
+.TP
+.I "XBUILD_LOG_REFERENCE_RESOLVER"
+References are resolved by trying a list of assembly search paths ($(AssemblySearchPaths)).
+If xbuild is unable to resolve a reference, then it logs details of why the various
+search paths failed. If this variable is set, then it logs the same even for references
+that were resolved successfully. These logs show up if the verbosity is set to detailed
+or higher.
+.TP
+.I "MSBuildExtensionsPath"
+MSBuild extensions are usually installed in $(MSBuildExtensionsPath), which xbuild resolves
+to $prefix/lib/mono/xbuild . When used in Import, like:
+
+  <Import Project="$(MSBuildExtensionsPath)\\TestTargets.targets"/>
+
+xbuild tries various values for the msbuild property $(MSBuildExtensionsPath), in order:
+
+  1. Paths specified in the environment variable $MSBuildExtensionsPath.
+  2. $XDG_CONFIG_HOME/xbuild/tasks (or Environment.SpecialFolder.ApplicationData)
+  3. $prefix/lib/mono/xbuild (default location)
+
+Anywhere else in the project files, $(MSBuildExtensionsPath) will always resolve to the default
+location. This is a xbuild-only feature.
+This is also applicable for the properties $(MSBuildExtensionsPath32) and $(MSBuildExtensionsPath64),
+and the environment variables have the corresponding names - MSBuildExtensionsPath32/64 .
 .TP
 .I "XBUILD_COLORS"
 If this variable is set, it contains a string of the form

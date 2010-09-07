@@ -184,6 +184,8 @@ System.Runtime.Remoting.Contexts/SynchronizationAttributeTest.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapHexBinaryTest.cs
 System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
+System.Runtime.Serialization/SerializationBinderTest.cs
+System.Runtime.Serialization/SerializationInfoTest.cs
 System.Runtime.Serialization/SerializationTest.cs
 System.Runtime.Serialization/SerializationTest2.cs
 System.Runtime.Serialization/SerializationCallbackTest.cs
@@ -449,6 +451,6 @@ System.Threading/ManualResetEventSlimTests.cs
 System.Threading/SemaphoreSlimTests.cs
 System.Threading/CountdownEventTests.cs
 System/AggregateExceptionTests.cs
-System.Threading/ThreadLazyTests.cs
+System.Threading/ThreadLocalTests.cs
 System.Threading/SpinLockTests.cs
 

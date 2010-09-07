@@ -33,6 +33,7 @@
 //
 
 using System.IO;
+using System.Security;
 using System.Text;
 using System.Threading;
 
@@ -44,6 +45,7 @@ namespace System.Net {
 		WebHeaderCollection headers;
 		WebHeaderCollection responseHeaders;
 		string baseAddress;
+		Uri base_address_uri;
 		bool is_busy;
 		Encoding encoding = Encoding.UTF8;
 		bool allow_read_buffering = true;
@@ -51,6 +53,7 @@ namespace System.Net {
 		WebRequest request;
 		object locker;
 		CallbackData callback_data;
+		long upload_length;
 
 		public WebClient ()
 		{
@@ -58,7 +61,7 @@ namespace System.Net {
 			// but without adding dependency on System.Windows.dll. GetData is [SecurityCritical]
 			// this makes the default .ctor [SecuritySafeCritical] which would be a problem (inheritance)
 			// but it happens that MS SL2 also has this default .ctor as SSC :-)
-			baseAddress = (AppDomain.CurrentDomain.GetData ("xap_uri") as string);
+			BaseAddress = (AppDomain.CurrentDomain.GetData ("xap_uri") as string);
 			locker = new object ();
 			UseDefaultCredentials = true;
 		}
@@ -70,12 +73,12 @@ namespace System.Net {
 			set {
 				if (String.IsNullOrEmpty (value)) {
 					baseAddress = String.Empty;
+					base_address_uri = null;
 				} else {
-					Uri uri = null;
-					if (!Uri.TryCreate (value, UriKind.Absolute, out uri))
+					if (!Uri.TryCreate (value, UriKind.Absolute, out base_address_uri))
 						throw new ArgumentException ("Invalid URI");
 
-					baseAddress = Uri.UnescapeDataString (uri.AbsoluteUri);
+					baseAddress = Uri.UnescapeDataString (base_address_uri.AbsoluteUri);
 				}
 			}
 		}
@@ -133,7 +136,7 @@ namespace System.Net {
 		void CheckBusy ()
 		{
 			if (IsBusy)
-				throw new NotSupportedException ("WebClient does not support conccurent I/O operations.");
+				throw new NotSupportedException ("WebClient does not support concurrent I/O operations.");
 		}
 
 		void SetBusy ()
@@ -166,9 +169,28 @@ namespace System.Net {
 		{
 			callback_data = callbackData;
 			WebRequest request = GetWebRequest (uri);
-			request.Method = DetermineMethod (uri, method);
-			foreach (string header in Headers.AllKeys)
-				request.Headers.SetHeader (header, Headers [header]);
+			// do not send a relative URI to Determine method
+			request.Method = DetermineMethod (request.RequestUri, method);
+			// copy headers to the request - some needs special treatments
+			foreach (string header in Headers) {
+				switch (header.ToLowerInvariant ()) {
+				case "content-length":
+					long cl = 0;
+					if (Int64.TryParse (Headers [header], out cl) && (cl >= 0))
+						request.ContentLength = cl;
+					break;
+				case "accept":
+				case "content-type":
+					// this skip the normal/user validation on headers
+					request.Headers.SetHeader (header, Headers [header]);
+					break;
+				default:
+					request.Headers [header] = Headers [header];
+					break;
+				}
+			}
+			// original headers are removed after calls
+			Headers.Clear ();
 			return request;
 		}
 
@@ -200,14 +222,16 @@ namespace System.Net {
 		{
 			if (request != null)
 				request.Abort ();
+			upload_length = 0;
 		}
 
 		void CompleteAsync ()
 		{
 			is_busy = false;
+			upload_length = 0;
 		}
 
-		class CallbackData {
+		internal class CallbackData {
 			public object user_token;
 			public SynchronizationContext sync_context;
 			public byte [] data;
@@ -266,8 +290,12 @@ namespace System.Net {
 				cancel = (web.Status == WebExceptionStatus.RequestCanceled);
 				ex = web;
 			}
+			catch (SecurityException se) {
+				// SecurityException inside a SecurityException (not a WebException) for SL compatibility
+				ex = new SecurityException (String.Empty, se);
+			}
 			catch (Exception e) {
-				ex = e;
+				ex = new WebException ("Could not complete operation.", e, WebExceptionStatus.UnknownError, null);
 			}
 			finally {
 				callback_data.sync_context.Post (delegate (object sender) {
@@ -316,8 +344,12 @@ namespace System.Net {
 				cancel = (web.Status == WebExceptionStatus.RequestCanceled);
 				ex = web;
 			}
+			catch (SecurityException se) {
+				// SecurityException inside a SecurityException (not a WebException) for SL compatibility
+				ex = new SecurityException (String.Empty, se);
+			}
 			catch (Exception e) {
-				ex = e;
+				ex = new WebException ("Could not complete operation.", e, WebExceptionStatus.UnknownError, null);
 			}
 			finally {
 				callback_data.sync_context.Post (delegate (object sender) {
@@ -376,7 +408,7 @@ namespace System.Net {
 				ex = web;
 			}
 			catch (Exception e) {
-				ex = e;
+				ex = new WebException ("Could not complete operation.", e, WebExceptionStatus.UnknownError, null);
 			}
 			finally {
 				callback_data.sync_context.Post (delegate (object sender) {
@@ -385,7 +417,7 @@ namespace System.Net {
 			}
 		}
 
-		internal void WriteStreamClosedCallback (object WebClientData)
+		internal void WriteStreamClosedCallback (object WebClientData, long length)
 		{
 			try {
 				request.BeginGetResponse (OpenWriteAsyncResponseCallback, WebClientData);
@@ -395,17 +427,33 @@ namespace System.Net {
 					OnWriteStreamClosed (new WriteStreamClosedEventArgs (e));
 				}, null);
 			}
+			finally {
+				// kind of dummy, 0% progress, that is always emitted
+				upload_length = length;
+				callback_data.sync_context.Post (delegate (object sender) {
+					OnUploadProgressChanged (
+						new UploadProgressChangedEventArgs (0, -1, length, -1, 0, callback_data.user_token));
+				}, null);
+			}
 		}
 
 		private void OpenWriteAsyncResponseCallback (IAsyncResult result)
 		{
+			Exception ex = null;
 			try {
 				WebResponse response = request.EndGetResponse (result);
 				ProcessResponse (response);
 			}
+			catch (SecurityException se) {
+				// SecurityException inside a SecurityException (not a WebException) for SL compatibility
+				ex = new SecurityException (String.Empty, se);
+			}
 			catch (Exception e) {
+				ex = new WebException ("Could not complete operation.", e, WebExceptionStatus.UnknownError, null);
+			}
+			finally {
 				callback_data.sync_context.Post (delegate (object sender) {
-					OnWriteStreamClosed (new WriteStreamClosedEventArgs (e));
+					OnWriteStreamClosed (new WriteStreamClosedEventArgs (ex));
 				}, null);
 			}
 		}
@@ -433,8 +481,9 @@ namespace System.Net {
 				SetBusy ();
 
 				try {
-					request = SetupRequest (address, method, new CallbackData (userToken, encoding.GetBytes (data)));
-					request.BeginGetRequestStream (new AsyncCallback (UploadStringRequestAsyncCallback), null);
+					CallbackData cbd = new CallbackData (userToken, encoding.GetBytes (data));
+					request = SetupRequest (address, method, cbd);
+					request.BeginGetRequestStream (new AsyncCallback (UploadStringRequestAsyncCallback), cbd);
 				}
 				catch (Exception e) {
 					WebException wex = new WebException ("Could not start operation.", e);
@@ -455,6 +504,14 @@ namespace System.Net {
 				request.Abort ();
 				throw;
 			}
+			finally {
+				// kind of dummy, 0% progress, that is always emitted
+				upload_length = callback_data.data.Length;
+				callback_data.sync_context.Post (delegate (object sender) {
+					OnUploadProgressChanged (
+						new UploadProgressChangedEventArgs (0, -1, upload_length, -1, 0, callback_data.user_token));
+				}, "null");		
+			}
 		}
 
 		private void UploadStringResponseAsyncCallback (IAsyncResult result)
@@ -474,11 +531,12 @@ namespace System.Net {
 				cancel = (web.Status == WebExceptionStatus.RequestCanceled);
 				ex = web;
 			}
-			catch (InvalidOperationException ioe) {
-				ex = new WebException ("An exception occurred during a WebClient request", ioe);
+			catch (SecurityException se) {
+				// SecurityException inside a SecurityException (not a WebException) for SL compatibility
+				ex = new SecurityException (String.Empty, se);
 			}
 			catch (Exception e) {
-				ex = e;
+				ex = new WebException ("Could not complete operation.", e, WebExceptionStatus.UnknownError, null);
 			}
 			finally {
 				callback_data.sync_context.Post (delegate (object sender) {
@@ -547,7 +605,7 @@ namespace System.Net {
 				throw new ArgumentNullException ("address");
 
 			// if the URI is relative then we use our base address URI to make an absolute one
-			Uri uri = address.IsAbsoluteUri ? address : new Uri (new Uri (baseAddress), address);
+			Uri uri = address.IsAbsoluteUri || base_address_uri == null ? address : new Uri (base_address_uri, address);
 
 			HttpWebRequest request = (HttpWebRequest) WebRequest.Create (uri);
 			request.AllowReadStreamBuffering = AllowReadStreamBuffering;
@@ -556,9 +614,15 @@ namespace System.Net {
 
 			request.progress = delegate (long read, long length) {
 				callback_data.sync_context.Post (delegate (object sender) {
-					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (read, length, callback_data.user_token));
+					if (upload_length > 0) {
+						// always emitted as 50% with an unknown (-1) TotalBytesToSend
+						OnUploadProgressChanged (new UploadProgressChangedEventArgs (read, length, 
+							upload_length, -1, 50, callback_data.user_token));
+					} else {
+						OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (read, length, 
+							callback_data.user_token));
+					}
 				}, null);
-
 			};
 			return request;
 		}

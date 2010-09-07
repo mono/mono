@@ -2436,6 +2436,16 @@ namespace MonoTests.System
 					       DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out dt);
 			Assert.AreEqual(default(DateTime), dt);
 		}
+
+		[Test]
+		public void MSAndZ ()
+		{
+			CultureInfo cultureInfo = CultureInfo.GetCultureInfo ("en-US");
+			DateTime dt;
+			if (!DateTime.TryParse ("2009.02.24T13:57:07.000 -0800", cultureInfo.DateTimeFormat,
+						DateTimeStyles.None, out dt))
+				Assert.Fail ("Failed");
+		}
 #endif
 	}
 }

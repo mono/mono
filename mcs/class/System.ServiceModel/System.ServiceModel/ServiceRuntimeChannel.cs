@@ -41,8 +41,12 @@ namespace System.ServiceModel.MonoInternal
 		public DuplexServiceRuntimeChannel (IChannel channel, DispatchRuntime runtime)
 			: base (channel, runtime)
 		{
+			if (channel == null)
+				throw new ArgumentNullException ("channel");
 			// setup callback ClientRuntimeChannel.
 			var crt = runtime.CallbackClientRuntime;
+			if (crt == null)
+				throw new InvalidOperationException ("The DispatchRuntime does not have CallbackClientRuntime");
 			var cd = ContractDescriptionGenerator.GetCallbackContract (runtime.Type, crt.CallbackClientType);
 			client = new ClientRuntimeChannel (crt, cd, this.DefaultOpenTimeout, this.DefaultCloseTimeout, channel, null,
 							   runtime.ChannelDispatcher.MessageVersion, this.RemoteAddress, null);

@@ -100,6 +100,30 @@ namespace System.ServiceModel.Configuration
 			return new EndpointAddress (el.Address, el.Identity.CreateInstance (), el.Headers.Headers);
 		}
 
+		public static void CopyFrom (this ChannelEndpointElement to, ChannelEndpointElement from)
+		{
+			to.Address = from.Address;
+			to.BehaviorConfiguration = from.BehaviorConfiguration;
+			to.Binding = from.Binding;
+			to.BindingConfiguration = from.BindingConfiguration;
+			to.Contract = from.Contract;
+			if (from.Headers != null)
+				to.Headers.Headers = from.Headers.Headers;
+			if (from.Identity != null)
+				to.Identity.InitializeFrom (from.Identity.CreateInstance ());
+			to.Name = from.Name;
+		}
+
+		public static EndpointAddress CreateEndpointAddress (this ChannelEndpointElement el)
+		{
+			return new EndpointAddress (el.Address, el.Identity != null ? el.Identity.CreateInstance () : null, el.Headers.Headers);
+		}
+
+		public static EndpointAddress CreateEndpointAddress (this ServiceEndpointElement el)
+		{
+			return new EndpointAddress (el.Address, el.Identity != null ? el.Identity.CreateInstance () : null, el.Headers.Headers);
+		}
+
 		public static EndpointIdentity CreateInstance (this IdentityElement el)
 		{
 			if (el.Certificate != null)

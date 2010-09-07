@@ -1,3 +1,5 @@
+// Compiler options: -r:test-anon-94-lib.dll
+
 using System;
 
 class Program
@@ -16,6 +18,15 @@ class Program
 			a ();
 		}
 	}
+	
+	public class DerivedLibrary : BaseClassLibrary
+	{
+		public override void Print (int arg)
+		{
+			Action a = () => base.Print (30);
+			a ();
+		}
+	}
 
 	public static int Main ()
 	{
@@ -24,6 +35,12 @@ class Program
 
 		if (d.i != 90)
 			return 1;
+
+		var d2 = new DerivedLibrary ();
+		d2.Print (0);
+
+		if (d2.i != 30)
+			return 2;
 
 		return 0;
 	}

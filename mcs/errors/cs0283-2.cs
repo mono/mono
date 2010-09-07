@@ -1,4 +1,4 @@
-// cs0283-2.cs: The type `S' cannot be declared const
+// CS0283: The type `S' cannot be declared const
 // Line: 12
 
 struct S

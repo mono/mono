@@ -81,7 +81,19 @@ namespace System.Web.UI
 				bpcc.Duration = value.Minutes;
 			}
 		}
-
+#if NET_4_0
+		public string ProviderName {
+			get {
+				AssertBasePartialCachingControl ();
+				return bpcc.ProviderName;
+			}
+			
+			set {
+				AssertBasePartialCachingControl ();
+				bpcc.ProviderName = value;
+			}
+		}
+#endif
 		public bool SupportsCaching 
 		{
 			get {

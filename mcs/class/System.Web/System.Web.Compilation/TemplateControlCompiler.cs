@@ -41,6 +41,7 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -160,12 +161,35 @@ namespace System.Web.Compilation
 			invoke.Parameters.Add (expr);
 			builder.MethodStatements.Add (AddLinePragma (invoke, builder));
 		}
+
+		CodeStatement CreateControlVariable (Type type, ControlBuilder builder, CodeMemberMethod method, CodeTypeReference ctrlTypeRef)
+		{
+			CodeObjectCreateExpression newExpr = new CodeObjectCreateExpression (ctrlTypeRef);
+
+			object [] atts = type != null ? type.GetCustomAttributes (typeof (ConstructorNeedsTagAttribute), true) : null;
+			if (atts != null && atts.Length > 0) {
+				ConstructorNeedsTagAttribute att = (ConstructorNeedsTagAttribute) atts [0];
+				if (att.NeedsTag)
+					newExpr.Parameters.Add (new CodePrimitiveExpression (builder.TagName));
+			} else if (builder is DataBindingBuilder) {
+				newExpr.Parameters.Add (new CodePrimitiveExpression (0));
+				newExpr.Parameters.Add (new CodePrimitiveExpression (1));
+			}
+
+			method.Statements.Add (new CodeVariableDeclarationStatement (ctrlTypeRef, "__ctrl"));
+			CodeAssignStatement assign = new CodeAssignStatement ();
+			assign.Left = ctrlVar;
+			assign.Right = newExpr;
+
+			return assign;
+		}
 		
 		void InitMethod (ControlBuilder builder, bool isTemplate, bool childrenAsProperties)
 		{
 			currentLocation = builder.Location;
 			bool inBuildControlTree = builder is RootBuilder;
 			string tailname = (inBuildControlTree ? "Tree" : ("_" + builder.ID));
+			bool isProperty = builder.IsProperty;
 			CodeMemberMethod method = new CodeMemberMethod ();
 			builder.Method = method;
 			builder.MethodStatements = method.Statements;
@@ -173,7 +197,7 @@ namespace System.Web.Compilation
 			method.Name = "__BuildControl" + tailname;
 			method.Attributes = MemberAttributes.Private | MemberAttributes.Final;
 			Type type = builder.ControlType;
-
+			
 			/* in the case this is the __BuildControlTree
 			 * method, allow subclasses to insert control
 			 * specific code. */
@@ -198,51 +222,54 @@ namespace System.Web.Compilation
 				mainClass.Members.Add (renderMethod);
 			}
 			
-			if (childrenAsProperties || builder.ControlType == null) {
+			if (childrenAsProperties || type == null) {
 				string typeString;
-				if (builder is RootBuilder)
+				bool isGlobal = true;
+				bool returnsControl;
+
+				if (builder is RootBuilder) {
 					typeString = parser.ClassName;
-				else {
-					if (builder.ControlType != null && builder.IsProperty &&
-					    !typeof (ITemplate).IsAssignableFrom (builder.ControlType))
-						typeString = builder.ControlType.FullName;
-					else 
+					isGlobal = false;
+					returnsControl = false;
+				} else {
+					returnsControl = builder.PropertyBuilderShouldReturnValue;
+					if (type != null && builder.IsProperty && !typeof (ITemplate).IsAssignableFrom (type)) {
+						typeString = type.FullName;
+						isGlobal = !type.IsPrimitive;
+					} else 
 						typeString = "System.Web.UI.Control";
 					ProcessTemplateChildren (builder);
 				}
+				CodeTypeReference ctrlTypeRef = new CodeTypeReference (typeString);
+				if (isGlobal)
+					ctrlTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
+				
+				if (returnsControl) {
+					method.ReturnType = ctrlTypeRef;
 
-				method.Parameters.Add (new CodeParameterDeclarationExpression (typeString, "__ctrl"));
+					// $controlType _ctrl = new $controlType ($parameters);
+					//
+					method.Statements.Add (CreateControlVariable (type, builder, method, ctrlTypeRef));
+				} else
+					method.Parameters.Add (new CodeParameterDeclarationExpression (typeString, "__ctrl"));
 			} else {
+				CodeTypeReference ctrlTypeRef = new CodeTypeReference (type.FullName);
+				if (!type.IsPrimitive)
+					ctrlTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
 				
 				if (typeof (Control).IsAssignableFrom (type))
-					method.ReturnType = new CodeTypeReference (typeof (Control));
+					method.ReturnType = ctrlTypeRef;
 
-				// _ctrl = new $controlType ($parameters);
+				// $controlType _ctrl = new $controlType ($parameters);
 				//
-				CodeObjectCreateExpression newExpr = new CodeObjectCreateExpression (type);
-
-				object [] atts = type.GetCustomAttributes (typeof (ConstructorNeedsTagAttribute), true);
-				if (atts != null && atts.Length > 0) {
-					ConstructorNeedsTagAttribute att = (ConstructorNeedsTagAttribute) atts [0];
-					if (att.NeedsTag)
-						newExpr.Parameters.Add (new CodePrimitiveExpression (builder.TagName));
-				} else if (builder is DataBindingBuilder) {
-					newExpr.Parameters.Add (new CodePrimitiveExpression (0));
-					newExpr.Parameters.Add (new CodePrimitiveExpression (1));
-				}
-
-				method.Statements.Add (new CodeVariableDeclarationStatement (builder.ControlType, "__ctrl"));
-				CodeAssignStatement assign = new CodeAssignStatement ();
-				assign.Left = ctrlVar;
-				assign.Right = newExpr;
-				method.Statements.Add (AddLinePragma (assign, builder));
+				method.Statements.Add (AddLinePragma (CreateControlVariable (type, builder, method, ctrlTypeRef), builder));
 								
 				// this.$builderID = _ctrl;
 				//
 				CodeFieldReferenceExpression builderID = new CodeFieldReferenceExpression ();
 				builderID.TargetObject = thisRef;
 				builderID.FieldName = builder.ID;
-				assign = new CodeAssignStatement ();
+				CodeAssignStatement assign = new CodeAssignStatement ();
 				assign.Left = builderID;
 				assign.Right = ctrlVar;
 				method.Statements.Add (AddLinePragma (assign, builder));
@@ -1153,7 +1180,8 @@ namespace System.Web.Compilation
 		{
 			if (parent == null || child == null)
 				return;
-			
+
+			CodeStatementCollection methodStatements = parent.MethodStatements;
 			CodeMethodReferenceExpression m = new CodeMethodReferenceExpression (thisRef, child.Method.Name);
 			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (m);
 
@@ -1166,43 +1194,67 @@ namespace System.Web.Compilation
 				PartialCachingAttribute pca = (PartialCachingAttribute) atts [0];
 				CodeTypeReferenceExpression cc = new CodeTypeReferenceExpression("System.Web.UI.StaticPartialCachingControl");
 				CodeMethodInvokeExpression build = new CodeMethodInvokeExpression (cc, "BuildCachedControl");
-				build.Parameters.Add (new CodeArgumentReferenceExpression("__ctrl"));
-				build.Parameters.Add (new CodePrimitiveExpression (child.ID));
-#if NET_1_1
+				CodeExpressionCollection parms = build.Parameters;
+				
+				parms.Add (new CodeArgumentReferenceExpression("__ctrl"));
+				parms.Add (new CodePrimitiveExpression (child.ID));
+
 				if (pca.Shared)
-					build.Parameters.Add (new CodePrimitiveExpression (child.ControlType.GetHashCode ().ToString ()));
+					parms.Add (new CodePrimitiveExpression (child.ControlType.GetHashCode ().ToString ()));
 				else
-#endif
-					build.Parameters.Add (new CodePrimitiveExpression (Guid.NewGuid ().ToString ()));
+					parms.Add (new CodePrimitiveExpression (Guid.NewGuid ().ToString ()));
 					
-				build.Parameters.Add (new CodePrimitiveExpression (pca.Duration));
-				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByParams));
-				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByControls));
-				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByCustom));
-				build.Parameters.Add (new CodeDelegateCreateExpression (
+				parms.Add (new CodePrimitiveExpression (pca.Duration));
+				parms.Add (new CodePrimitiveExpression (pca.VaryByParams));
+				parms.Add (new CodePrimitiveExpression (pca.VaryByControls));
+				parms.Add (new CodePrimitiveExpression (pca.VaryByCustom));
+				parms.Add (new CodePrimitiveExpression (pca.SqlDependency));
+				parms.Add (new CodeDelegateCreateExpression (
 							      new CodeTypeReference (typeof (System.Web.UI.BuildMethod)),
 							      thisRef, child.Method.Name));
-
-				parent.MethodStatements.Add (AddLinePragma (build, parent));
+#if NET_4_0
+				string value = pca.ProviderName;
+				if (!String.IsNullOrEmpty (value) && String.Compare (OutputCache.DEFAULT_PROVIDER_NAME, value, StringComparison.Ordinal) != 0)
+					parms.Add (new CodePrimitiveExpression (value));
+				else
+					parms.Add (new CodePrimitiveExpression (null));
+#endif
+				methodStatements.Add (AddLinePragma (build, parent));
 				if (parent.HasAspCode)
 					AddRenderControl (parent);
 				return;
 			}
                                 
 			if (child.IsProperty || parent.ChildrenAsProperties) {
-				expr.Parameters.Add (new CodeFieldReferenceExpression (ctrlVar, child.TagName));
-				parent.MethodStatements.Add (AddLinePragma (expr, parent));
+				if (!child.PropertyBuilderShouldReturnValue) {
+					expr.Parameters.Add (new CodeFieldReferenceExpression (ctrlVar, child.TagName));
+					parent.MethodStatements.Add (AddLinePragma (expr, parent));
+				} else {
+					string localVarName = parent.GetNextLocalVariableName ("__ctrl");
+					methodStatements.Add (new CodeVariableDeclarationStatement (child.Method.ReturnType, localVarName));
+					CodeVariableReferenceExpression localVarRef = new CodeVariableReferenceExpression (localVarName);
+					CodeAssignStatement assign = new CodeAssignStatement ();
+					assign.Left = localVarRef;
+					assign.Right = expr;
+					methodStatements.Add (AddLinePragma (assign, parent));
+
+					assign = new CodeAssignStatement ();
+					assign.Left = new CodeFieldReferenceExpression (ctrlVar, child.TagName);
+					assign.Right = localVarRef;
+					methodStatements.Add (AddLinePragma (assign, parent));
+				}
+				
 				return;
 			}
 
-			parent.MethodStatements.Add (AddLinePragma (expr, parent));
+			methodStatements.Add (AddLinePragma (expr, parent));
 			CodeFieldReferenceExpression field = new CodeFieldReferenceExpression (thisRef, child.ID);
 			if (parent.ControlType == null || typeof (IParserAccessor).IsAssignableFrom (parent.ControlType))
 				AddParsedSubObjectStmt (parent, field);
 			else {
 				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (ctrlVar, "Add");
 				invoke.Parameters.Add (field);
-				parent.MethodStatements.Add (AddLinePragma (invoke, parent));
+				methodStatements.Add (AddLinePragma (invoke, parent));
 			}
 				
 			if (parent.HasAspCode)
@@ -1437,7 +1489,7 @@ namespace System.Web.Compilation
 		protected void CreateControlTree (ControlBuilder builder, bool inTemplate, bool childrenAsProperties)
 		{
 			EnsureID (builder);
-			bool isTemplate = (typeof (TemplateBuilder).IsAssignableFrom (builder.GetType ()));
+			bool isTemplate = builder.IsTemplate;
 			
 			if (!isTemplate && !inTemplate) {
 				CreateField (builder, true);
@@ -1551,8 +1603,8 @@ namespace System.Web.Compilation
 			
 			if ((!isTemplate || builder is RootBuilder) && !String.IsNullOrEmpty (builder.GetAttribute ("meta:resourcekey")))
 				CreateAssignStatementFromAttribute (builder, "meta:resourcekey");
-
-			if (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType))
+			
+			if ((childrenAsProperties && builder.PropertyBuilderShouldReturnValue) || (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType)))
 				builder.Method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 
 			builder.ProcessGeneratedCode (CompileUnit, BaseType, DerivedType, builder.Method, builder.DataBindingMethod);

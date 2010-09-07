@@ -48,18 +48,19 @@ namespace System.ComponentModel
 				attrList = attributes;
 		}
 		
-#if NET_2_0
 		public AttributeCollection (params Attribute[] attributes)
-#else
-		public AttributeCollection (Attribute[] attributes)
-#endif
 		{
 			if (attributes != null)
 				for (int i = 0; i < attributes.Length; i++)
 					attrList.Add (attributes[i]);
 		}
 
-#if NET_2_0
+#if NET_4_0
+		protected AttributeCollection ()
+		{
+		}
+#endif
+
 		public static AttributeCollection FromExisting (AttributeCollection existing, params Attribute [] newAttributes)
 		{
 			if (existing == null)
@@ -70,7 +71,6 @@ namespace System.ComponentModel
 				ret.attrList.AddRange (newAttributes);
 			return ret;
 		}
-#endif
 
 		public bool Contains (Attribute attr)
 		{
@@ -190,5 +190,22 @@ namespace System.ComponentModel
 				return (Attribute) attrList [index];
 			}
 		}
+
+#if NET_4_0
+		Attribute [] attributes_arr;
+
+		// MSDN doesn't mention it, but this property is returning the same instance always.
+		protected virtual Attribute [] Attributes {
+			get {
+				if (attrList == null || attrList.Count == 0)
+					return null;
+
+				if (attributes_arr == null)
+					attributes_arr = (Attribute[]) attrList.ToArray (typeof (Attribute));
+
+				return attributes_arr;
+			}
+		}
+#endif
 	}
 }

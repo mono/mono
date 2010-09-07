@@ -31,7 +31,7 @@ namespace MonoTests.System.Threading.Tasks
 {
 	static class ParallelTestHelper
 	{
-		const int NumRun = 100;
+		const int NumRun = 500;
 		
 		public static void Repeat (Action action)
 		{

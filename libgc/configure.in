@@ -489,12 +489,18 @@ if test "${enable_gc_assertions}" = yes; then
     AC_DEFINE(GC_ASSERTIONS)
 fi
 
+AC_ARG_ENABLE(quiet-build, [  --enable-quiet-build  Enable quiet libgc build (on by default)], enable_quiet_build=$enableval, enable_quiet_build=yes)
 AM_CONDITIONAL(USE_LIBDIR, test -z "$with_cross_host")
 
 if test "${multilib}" = "yes"; then
   multilib_arg="--enable-multilib"
 else
   multilib_arg=
+fi
+
+if test x$enable_quiet_build = xyes; then
+   AC_CONFIG_COMMANDS([quiet], [for i in `find . -name Makefile.in | sed -e 's/Makefile.in/Makefile/g'`; do if test -f $i; then $srcdir/../scripts/patch-quiet.sh $i; fi; done], [shell=$SHELL])
+   AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/$echo "copying selected/$show "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool; sed -e 's/$ECHO "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 fi
 
 AC_OUTPUT(Makefile

@@ -1,5 +1,6 @@
 <Type Name="DocValueType" FullName="Mono.DocTest.DocValueType">
   <TypeSignature Language="C#" Value="public struct DocValueType : Mono.DocTest.IProcess" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit DocValueType extends System.ValueType implements class Mono.DocTest.IProcess" />
   <AssemblyInfo>
     <AssemblyName>DocTest</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -20,6 +21,7 @@
   <Members>
     <Member MemberName="M">
       <MemberSignature Language="C#" Value="public void M (int i);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void M(int32 i) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -41,6 +43,7 @@
     </Member>
     <Member MemberName="total">
       <MemberSignature Language="C#" Value="public int total;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 total" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

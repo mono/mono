@@ -241,6 +241,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Ignore ("Pending more investigation (see FIXME at the top of TreeView.RenderNode)")]
 		public void PopulateOnDemand_With_ChildNodes ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (PopulateOnDemand_With_ChildNodes_OnLoad));

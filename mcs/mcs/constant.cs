@@ -249,9 +249,15 @@ namespace Mono.CSharp {
 			// do nothing
 		}
 
+		public sealed override Expression Clone (CloneContext clonectx)
+		{
+			// No cloning is not needed for constants
+			return this;
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
-			// CloneTo: Nothing, we do not keep any state on this expression
+			throw new NotSupportedException ("should not be reached");
 		}
 
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
@@ -281,7 +287,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class IntegralConstant : Constant {
+	public abstract class IntegralConstant : Constant
+	{
 		protected IntegralConstant (Location loc) :
 			base (loc)
 		{
@@ -1892,7 +1899,7 @@ namespace Mono.CSharp {
 			// Use string.Empty for both literals and constants even if
 			// it's not allowed at language level
 			//
-			if (Value.Length == 0 && RootContext.Optimize && !TypeManager.IsEqual (ec.CurrentType, TypeManager.string_type)) {
+			if (Value.Length == 0 && RootContext.Optimize && ec.CurrentType != TypeManager.string_type) {
 				if (TypeManager.string_empty == null)
 					TypeManager.string_empty = TypeManager.GetPredefinedField (TypeManager.string_type, "Empty", loc, TypeManager.string_type);
 
@@ -1975,12 +1982,12 @@ namespace Mono.CSharp {
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Type it as string cast
-			if (targetType == TypeManager.object_type || targetType == TypeManager.null_type)
+			if (targetType == TypeManager.object_type || targetType == InternalType.Null)
 				enc.Encode (TypeManager.string_type);
 
 			var ac = targetType as ArrayContainer;
 			if (ac != null) {
-				if (ac.Rank != 1)
+				if (ac.Rank != 1 || ac.Element.IsArray)
 					base.EncodeAttributeValue (rc, enc, targetType);
 				else
 					enc.Stream.Write (uint.MaxValue);
@@ -2019,7 +2026,7 @@ namespace Mono.CSharp {
 			}
 
 			// Exlude internal compiler types
-			if (targetType == InternalType.AnonymousMethod)
+			if (targetType.Kind == MemberKind.InternalCompilerType && targetType != InternalType.Dynamic && targetType != InternalType.Null)
 				return null;
 
 			if (!IsLiteral && !Convert.ImplicitStandardConversionExists (this, targetType))

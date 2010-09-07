@@ -963,7 +963,7 @@ namespace System.Xml
 		{
 			bool isEmpty = IsEmptyElement;
 			ReadStartElement ();
-			object obj = ValueAs (isEmpty ? String.Empty : ReadContentString (false), type, resolver);
+			object obj = ValueAs (isEmpty ? String.Empty : ReadContentString (false), type, resolver, false);
 			if (!isEmpty)
 				ReadEndElement ();
 			return obj;
@@ -971,7 +971,10 @@ namespace System.Xml
 
 		public virtual object ReadElementContentAs (Type type, IXmlNamespaceResolver resolver, string localName, string namespaceURI)
 		{
+			bool isEmpty = IsEmptyElement;
 			ReadStartElement (localName, namespaceURI);
+			if (isEmpty)
+				return ValueAs (String.Empty, type, resolver, false);
 			object obj = ReadContentAs (type, resolver);
 			ReadEndElement ();
 			return obj;
@@ -979,20 +982,33 @@ namespace System.Xml
 
 		public virtual object ReadContentAs (Type type, IXmlNamespaceResolver resolver)
 		{
-			return ValueAs (ReadContentString (), type, resolver);
+			return ValueAs (ReadContentString (), type, resolver, false);
 		}
 
-		private object ValueAs (string text, Type type, IXmlNamespaceResolver resolver)
+		private object ValueAs (string text, Type type, IXmlNamespaceResolver resolver, bool isArrayItem)
 		{
 			try {
 				if (type == typeof (object))
 					return text;
+				if (type.IsArray && !isArrayItem) {
+					var elemType = type.GetElementType ();
+					var sarr = text.Split ((string []) null, StringSplitOptions.RemoveEmptyEntries);
+					var ret = Array.CreateInstance (elemType, sarr.Length);
+					for (int i = 0; i < ret.Length; i++)
+						ret.SetValue (ValueAs (sarr [i], elemType, resolver, true), i);
+					return ret;
+				}
+
 				if (type == typeof (XmlQualifiedName)) {
 					if (resolver != null)
 						return XmlQualifiedName.Parse (text, resolver, true);
 					else
 						return XmlQualifiedName.Parse (text, this, true);
 				}
+				if (type == typeof (Uri))
+					return XmlConvert.ToUri (text);
+				if (type == typeof (TimeSpan))
+					return XmlConvert.ToTimeSpan (text);
 				if (type == typeof (DateTimeOffset))
 					return XmlConvert.ToDateTimeOffset (text);
 

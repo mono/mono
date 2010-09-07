@@ -518,8 +518,10 @@ namespace System.Net.Mail {
 			try {
 				writer = new StreamWriter(filename);
 
+				// FIXME: See how Microsoft fixed the bug about envelope senders, and how it actually represents the info in .eml file headers
+				// 	  For all we know, defaultFrom may be the envelope sender
+				// For now, we are no worse than some versions of .NET
 				MailAddress from = message.From;
-
 				if (from == null)
 					from = defaultFrom;
 				
@@ -596,14 +598,16 @@ namespace System.Net.Mail {
 			
 			if (authMechs != AuthMechs.None)
 				Authenticate ();
-			
-			MailAddress from = message.From;
 
-			if (from == null)
-				from = defaultFrom;
+			// The envelope sender: use 'Sender:' in preference of 'From:'
+			MailAddress sender = message.Sender;
+			if (sender == null)
+				sender = message.From;
+			if (sender == null)
+				sender = defaultFrom;
 			
 			// MAIL FROM:
-			status = SendCommand ("MAIL FROM:<" + from.Address + '>');
+			status = SendCommand ("MAIL FROM:<" + sender.Address + '>');
 			if (IsError (status)) {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
@@ -648,6 +652,10 @@ namespace System.Net.Mail {
 			// remove ':' from time zone offset (e.g. from "+01:00")
 			dt = dt.Remove (dt.Length - 3, 1);
 			SendHeader (HeaderName.Date, dt);
+
+			MailAddress from = message.From;
+			if (from == null)
+				from = defaultFrom;
 
 			SendHeader (HeaderName.From, EncodeAddress (from));
 			SendHeader (HeaderName.To, EncodeAddresses (message.To));

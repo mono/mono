@@ -48,14 +48,16 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override DynamicMetaObject FallbackGetMember (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
-			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
+			var ctx = DynamicContext.Create ();
+
+			var expr = ctx.CreateCompilerExpression (argumentInfo [0], target);
 			expr = new Compiler.MemberAccess (expr, Name);
-			expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
+			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
 
-			return binder.Bind (callingContext, target);
+			return binder.Bind (ctx, callingContext);
 		}
 	}
 }

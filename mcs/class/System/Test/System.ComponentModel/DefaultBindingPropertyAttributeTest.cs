@@ -65,9 +65,6 @@ namespace MonoTests.System.ComponentModel {
 
 			a = new DefaultBindingPropertyAttribute ("test");
 			Assert.IsFalse (0 == a.GetHashCode (), "1");
-
-			a = new DefaultBindingPropertyAttribute ();
-			Assert.IsFalse (0 == a.GetHashCode (), "2");
 		}
 
 		[Test]

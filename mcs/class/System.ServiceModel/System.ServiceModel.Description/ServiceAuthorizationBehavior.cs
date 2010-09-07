@@ -85,7 +85,10 @@ namespace System.ServiceModel.Description
 			ServiceDescription description,
 			ServiceHostBase serviceHostBase)
 		{
-			foreach (ChannelDispatcher cd in serviceHostBase.ChannelDispatchers)
+			foreach (var cdb in serviceHostBase.ChannelDispatchers) {
+				var cd = cdb as ChannelDispatcher;
+				if (cd == null) // non-ChannelDispatcher ChannelDispatcherBase instance.
+					continue;
 				foreach (var ed in cd.Endpoints) {
 					var dr = ed.DispatchRuntime;
 					dr.ExternalAuthorizationPolicies = ExternalAuthorizationPolicies;
@@ -94,6 +97,7 @@ namespace System.ServiceModel.Description
 					dr.RoleProvider = RoleProvider;
 					dr.ServiceAuthorizationManager = ServiceAuthorizationManager;
 				}
+			}
 		}
 
 		[MonoTODO]

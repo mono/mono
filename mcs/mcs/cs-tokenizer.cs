@@ -28,13 +28,13 @@ namespace Mono.CSharp
 
 	public class Tokenizer : yyParser.yyInput
 	{
-		class KeywordEntry
+		class KeywordEntry<T>
 		{
-			public readonly int Token;
-			public KeywordEntry Next;
+			public readonly T Token;
+			public KeywordEntry<T> Next;
 			public readonly char[] Value;
 
-			public KeywordEntry (string value, int token)
+			public KeywordEntry (string value, T token)
 			{
 				this.Value = value.ToCharArray ();
 				this.Token = token;
@@ -141,6 +141,27 @@ namespace Mono.CSharp
 			public string Value {
 				get { return value; }
 			}
+		}
+
+		enum PreprocessorDirective
+		{
+			Invalid = 0,
+
+			Region = 1,
+			Endregion = 2,
+			If = 3 | RequiresArgument,
+			Endif = 4,
+			Elif = 5 | RequiresArgument,
+			Else = 6,
+			Define = 7 | RequiresArgument,
+			Undef = 8 | RequiresArgument,
+			Error = 9,
+			Warning = 10,
+			Pragma = 11 | CustomArgumentsParsing,
+			Line = 12,
+
+			CustomArgumentsParsing = 1 << 10,
+			RequiresArgument = 1 << 11
 		}
 
 		SeekableStreamReader reader;
@@ -282,24 +303,25 @@ namespace Mono.CSharp
 			escaped_identifiers.Add (loc);
 		}
 
-		public bool IsEscapedIdentifier (Location loc)
+		public bool IsEscapedIdentifier (MemberName name)
 		{
-			if (escaped_identifiers != null) {
-				foreach (Location lt in escaped_identifiers)
-					if (lt.Equals (loc))
-						return true;
-			}
-
-			return false;
+			return escaped_identifiers != null && escaped_identifiers.Contains (name.Location);
 		}
 
 		//
 		// Class variables
 		// 
-		static KeywordEntry[][] keywords;
+		static KeywordEntry<int>[][] keywords;
+		static KeywordEntry<PreprocessorDirective>[][] keywords_preprocessor;
 		static Dictionary<string, object> keyword_strings; 		// TODO: HashSet
 		static NumberStyles styles;
 		static NumberFormatInfo csharp_format_info;
+
+		// Pragma arguments
+		static readonly char[] pragma_warning = "warning".ToCharArray ();
+		static readonly char[] pragma_warning_disable = "disable".ToCharArray ();
+		static readonly char[] pragma_warning_restore = "restore".ToCharArray ();
+		static readonly char[] pragma_checksum = "checksum".ToCharArray ();
 		
 		//
 		// Values for the associated token returned
@@ -425,15 +447,25 @@ namespace Mono.CSharp
 		{
 			keyword_strings.Add (kw, null);
 
+			AddKeyword (keywords, kw, token);
+		}
+
+		static void AddPreprocessorKeyword (string kw, PreprocessorDirective directive)
+		{
+			AddKeyword (keywords_preprocessor, kw, directive);
+		}
+
+		static void AddKeyword<T> (KeywordEntry<T>[][] keywords, string kw, T token)
+		{
 			int length = kw.Length;
-			if (keywords [length] == null) {
-				keywords [length] = new KeywordEntry ['z' - '_' + 1];
+			if (keywords[length] == null) {
+				keywords[length] = new KeywordEntry<T>['z' - '_' + 1];
 			}
 
-			int char_index = kw [0] - '_';
-			KeywordEntry kwe = keywords [length] [char_index];
+			int char_index = kw[0] - '_';
+			var kwe = keywords[length][char_index];
 			if (kwe == null) {
-				keywords [length] [char_index] = new KeywordEntry (kw, token);
+				keywords[length][char_index] = new KeywordEntry<T> (kw, token);
 				return;
 			}
 
@@ -441,7 +473,7 @@ namespace Mono.CSharp
 				kwe = kwe.Next;
 			}
 
-			kwe.Next = new KeywordEntry (kw, token);
+			kwe.Next = new KeywordEntry<T> (kw, token);
 		}
 
 		static void InitTokens ()
@@ -449,7 +481,7 @@ namespace Mono.CSharp
 			keyword_strings = new Dictionary<string, object> ();
 
 			// 11 is the length of the longest keyword for now
-			keywords = new KeywordEntry [11] [];
+			keywords = new KeywordEntry<int> [11] [];
 
 			AddKeyword ("__arglist", Token.ARGLIST);
 			AddKeyword ("abstract", Token.ABSTRACT);
@@ -549,6 +581,21 @@ namespace Mono.CSharp
 			AddKeyword ("ascending", Token.ASCENDING);
 			AddKeyword ("descending", Token.DESCENDING);
 			AddKeyword ("into", Token.INTO);
+
+			keywords_preprocessor = new KeywordEntry<PreprocessorDirective>[10][];
+
+			AddPreprocessorKeyword ("region", PreprocessorDirective.Region);
+			AddPreprocessorKeyword ("endregion", PreprocessorDirective.Endregion);
+			AddPreprocessorKeyword ("if", PreprocessorDirective.If);
+			AddPreprocessorKeyword ("endif", PreprocessorDirective.Endif);
+			AddPreprocessorKeyword ("elif", PreprocessorDirective.Elif);
+			AddPreprocessorKeyword ("else", PreprocessorDirective.Else);
+			AddPreprocessorKeyword ("define", PreprocessorDirective.Define);
+			AddPreprocessorKeyword ("undef", PreprocessorDirective.Undef);
+			AddPreprocessorKeyword ("error", PreprocessorDirective.Error);
+			AddPreprocessorKeyword ("warning", PreprocessorDirective.Warning);
+			AddPreprocessorKeyword ("pragma", PreprocessorDirective.Pragma);
+			AddPreprocessorKeyword ("line", PreprocessorDirective.Line);
 		}
 
 		//
@@ -576,7 +623,7 @@ namespace Mono.CSharp
 			if (first_index > 'z' - '_')
 				return -1;
 
-			KeywordEntry kwe = keywords [id_len] [first_index];
+			var kwe = keywords [id_len] [first_index];
 			if (kwe == null)
 				return -1;
 
@@ -729,6 +776,38 @@ namespace Mono.CSharp
 				res = -1;
 				break;
 			}
+
+			return res;
+		}
+
+		static PreprocessorDirective GetPreprocessorDirective (char[] id, int id_len)
+		{
+			//
+			// Keywords are stored in an array of arrays grouped by their
+			// length and then by the first character
+			//
+			if (id_len >= keywords_preprocessor.Length || keywords_preprocessor[id_len] == null)
+				return PreprocessorDirective.Invalid;
+
+			int first_index = id[0] - '_';
+			if (first_index > 'z' - '_')
+				return PreprocessorDirective.Invalid;
+
+			var kwe = keywords_preprocessor[id_len][first_index];
+			if (kwe == null)
+				return PreprocessorDirective.Invalid;
+
+			PreprocessorDirective res = PreprocessorDirective.Invalid;
+			do {
+				res = kwe.Token;
+				for (int i = 1; i < id_len; ++i) {
+					if (id[i] != kwe.Value[i]) {
+						res = 0;
+						kwe = kwe.Next;
+						break;
+					}
+				}
+			} while (res == PreprocessorDirective.Invalid && kwe != null);
 
 			return res;
 		}
@@ -1307,8 +1386,7 @@ namespace Mono.CSharp
 					return integer_type_suffix (ui, c);
 				}
 			} catch (OverflowException) {
-				error_details = "Integral constant is too large";
-				Report.Error (1021, Location, error_details);
+				Error_NumericConstantTooLong ();
 				val = new IntLiteral (0, Location);
 				return Token.LITERAL;
 			}
@@ -1375,8 +1453,7 @@ namespace Mono.CSharp
 				else
 					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
 			} catch (OverflowException){
-				error_details = "Integral constant is too large";
-				Report.Error (1021, Location, error_details);
+				Error_NumericConstantTooLong ();
 				val = new IntLiteral (0, Location);
 				return Token.LITERAL;
 			}
@@ -1670,21 +1747,17 @@ namespace Mono.CSharp
 			return current_token;
 		}
 
-		void get_cmd_arg (out string cmd, out string arg)
+		int TokenizePreprocessorIdentifier (out int c)
 		{
-			int c;
-			
-			tokens_seen = false;
-			arg = "";
-
 			// skip over white space
 			do {
 				c = get_char ();
 			} while (c == '\r' || c == ' ' || c == '\t');
 
-			static_cmd_arg.Length = 0;
-			while (c != -1 && is_identifier_part_character ((char)c)) {
-				static_cmd_arg.Append ((char)c);
+
+			int pos = 0;
+			while (c != -1 && c >= 'a' && c <= 'z') {
+				id_builder[pos++] = (char) c;
 				c = get_char ();
 				if (c == '\\') {
 					int peek = peek_char ();
@@ -1692,26 +1765,40 @@ namespace Mono.CSharp
 						int surrogate;
 						c = EscapeUnicode (c, out surrogate);
 						if (surrogate != 0) {
-							if (is_identifier_part_character ((char) c))
-								static_cmd_arg.Append ((char) c);
+							if (is_identifier_part_character ((char) c)) {
+								id_builder[pos++] = (char) c;
+							}
 							c = surrogate;
 						}
 					}
 				}
 			}
 
-			cmd = static_cmd_arg.ToString ();
+			return pos;
+		}
+
+		PreprocessorDirective get_cmd_arg (out string arg)
+		{
+			int c;		
+
+			tokens_seen = false;
+			arg = "";
+
+			var cmd = GetPreprocessorDirective (id_builder, TokenizePreprocessorIdentifier (out c));
+
+			if ((cmd & PreprocessorDirective.CustomArgumentsParsing) != 0)
+				return cmd;
 
 			// skip over white space
 			while (c == '\r' || c == ' ' || c == '\t')
 				c = get_char ();
 
 			static_cmd_arg.Length = 0;
-			int has_identifier_argument = 0;
+			int has_identifier_argument = (int)(cmd & PreprocessorDirective.RequiresArgument);
 
 			while (c != -1 && c != '\n' && c != '\r') {
 				if (c == '\\' && has_identifier_argument >= 0) {
-					if (has_identifier_argument != 0 || (cmd == "define" || cmd == "if" || cmd == "elif" || cmd == "undef")) {
+					if (has_identifier_argument != 0) {
 						has_identifier_argument = 1;
 
 						int peek = peek_char ();
@@ -1732,8 +1819,18 @@ namespace Mono.CSharp
 				c = get_char ();
 			}
 
-			if (static_cmd_arg.Length != 0)
+			if (static_cmd_arg.Length != 0) {
 				arg = static_cmd_arg.ToString ();
+
+				// Eat any trailing whitespaces and single-line comments
+				if (arg.IndexOf ("//") != -1) {
+					arg = arg.Substring (0, arg.IndexOf ("//"));
+				}
+
+				arg = arg.Trim (simple_whitespaces);
+			}
+
+			return cmd;
 		}
 
 		//
@@ -1824,12 +1921,10 @@ namespace Mono.CSharp
 			}
 		}
 
-		static byte read_hex (string arg, int pos, out bool error)
+		byte read_hex (out bool error)
 		{
-			error = false;
-
 			int total;
-			char c = arg [pos];
+			int c = get_char ();
 
 			if ((c >= '0') && (c <= '9'))
 				total = (int) c - (int) '0';
@@ -1843,7 +1938,7 @@ namespace Mono.CSharp
 			}
 
 			total *= 16;
-			c = arg [pos+1];
+			c = get_char ();
 
 			if ((c >= '0') && (c <= '9'))
 				total += (int) c - (int) '0';
@@ -1856,162 +1951,260 @@ namespace Mono.CSharp
 				return 0;
 			}
 
+			error = false;
 			return (byte) total;
 		}
 
-		/// <summary>
-		/// Handles #pragma checksum
-		/// </summary>
-		bool PreProcessPragmaChecksum (string arg)
+		//
+		// Parses #pragma checksum
+		//
+		bool ParsePragmaChecksum ()
 		{
-			if ((arg [0] != ' ') && (arg [0] != '\t'))
+			//
+			// The syntax is ` "foo.txt" "{guid}" "hash"'
+			//
+			int c = get_char ();
+
+			if (c != '"')
 				return false;
 
-			arg = arg.Trim (simple_whitespaces);
-			if ((arg.Length < 2) || (arg [0] != '"'))
-				return false;
-
-			StringBuilder file_sb = new StringBuilder ();
-
-			int pos = 1;
-			char ch;
-			while ((ch = arg [pos++]) != '"') {
-				if (pos >= arg.Length)
-					return false;
-
-				if (ch == '\\') {
-					if (pos+1 >= arg.Length)
-						return false;
-					ch = arg [pos++];
+			string_builder.Length = 0;
+			while (c != -1 && c != '\n') {
+				c = get_char ();
+				if (c == '"') {
+					c = get_char ();
+					break;
 				}
 
-				file_sb.Append (ch);
+				string_builder.Append ((char) c);
 			}
 
-			if ((pos+2 >= arg.Length) || ((arg [pos] != ' ') && (arg [pos] != '\t')))
+			if (string_builder.Length == 0) {
+				Report.Warning (1709, 1, Location, "Filename specified for preprocessor directive is empty");
+			}
+
+			// TODO: Any white-spaces count
+			if (c != ' ')
 				return false;
 
-			arg = arg.Substring (pos).Trim (simple_whitespaces);
-			if ((arg.Length < 42) || (arg [0] != '"') || (arg [1] != '{') ||
-			    (arg [10] != '-') || (arg [15] != '-') || (arg [20] != '-') ||
-			    (arg [25] != '-') || (arg [38] != '}') || (arg [39] != '"'))
+			SourceFile file = Location.LookupFile (file_name, string_builder.ToString ());
+
+			if (get_char () != '"' || get_char () != '{')
 				return false;
 
 			bool error;
 			byte[] guid_bytes = new byte [16];
+			int i = 0;
 
-			for (int i = 0; i < 4; i++) {
-				guid_bytes [i] = read_hex (arg, 2+2*i, out error);
-				if (error)
-					return false;
-			}
-			for (int i = 0; i < 2; i++) {
-				guid_bytes [i+4] = read_hex (arg, 11+2*i, out error);
-				if (error)
-					return false;
-				guid_bytes [i+6] = read_hex (arg, 16+2*i, out error);
-				if (error)
-					return false;
-				guid_bytes [i+8] = read_hex (arg, 21+2*i, out error);
+			for (; i < 4; i++) {
+				guid_bytes [i] = read_hex (out error);
 				if (error)
 					return false;
 			}
 
-			for (int i = 0; i < 6; i++) {
-				guid_bytes [i+10] = read_hex (arg, 26+2*i, out error);
-				if (error)
-					return false;
-			}
-
-			arg = arg.Substring (40).Trim (simple_whitespaces);
-			if ((arg.Length < 34) || (arg [0] != '"') || (arg [33] != '"'))
+			if (get_char () != '-')
 				return false;
 
-			byte[] checksum_bytes = new byte [16];
-			for (int i = 0; i < 16; i++) {
-				checksum_bytes [i] = read_hex (arg, 1+2*i, out error);
+			for (; i < 10; i++) {
+				guid_bytes [i] = read_hex (out error);
+				if (error)
+					return false;
+
+				guid_bytes [i++] = read_hex (out error);
+				if (error)
+					return false;
+
+				if (get_char () != '-')
+					return false;
+			}
+
+			for (; i < 16; i++) {
+				guid_bytes [i] = read_hex (out error);
 				if (error)
 					return false;
 			}
 
-			arg = arg.Substring (34).Trim (simple_whitespaces);
-			if (arg.Length > 0)
+			if (get_char () != '}' || get_char () != '"')
 				return false;
 
-			SourceFile file = Location.LookupFile (file_name, file_sb.ToString ());
-			file.SetChecksum (guid_bytes, checksum_bytes);
+			// TODO: Any white-spaces count
+			c = get_char ();
+			if (c != ' ')
+				return false;
+
+			if (get_char () != '"')
+				return false;
+
+			// Any length of checksum
+			List<byte> checksum_bytes = new List<byte> (16);
+
+			c = peek_char ();
+			while (c != '"' && c != -1) {
+				checksum_bytes.Add (read_hex (out error));
+				if (error)
+					return false;
+
+				c = peek_char ();
+			}
+
+			if (c == '/') {
+				ReadSingleLineComment ();
+			} else if (get_char () != '"') {
+				return false;
+			}
+
+			file.SetChecksum (guid_bytes, checksum_bytes.ToArray ());
 			ref_name.AutoGenerated = true;
 			return true;
+		}
+
+		bool IsTokenIdentifierEqual (char[] identifier)
+		{
+			for (int i = 0; i < identifier.Length; ++i) {
+				if (identifier[i] != id_builder[i])
+					return false;
+			}
+
+			return true;
+		}
+
+		int TokenizePragmaNumber (ref int c)
+		{
+			number_pos = 0;
+
+			int number;
+
+			if (c >= '0' && c <= '9') {
+				decimal_digits (c);
+				uint ui = (uint) (number_builder[0] - '0');
+
+				try {
+					for (int i = 1; i < number_pos; i++) {
+						ui = checked ((ui * 10) + ((uint) (number_builder[i] - '0')));
+					}
+
+					number = (int) ui;
+				} catch (OverflowException) {
+					Error_NumericConstantTooLong ();
+					number = -1;
+				}
+
+
+				c = get_char ();
+
+				// skip over white space
+				while (c == '\r' || c == ' ' || c == '\t')
+					c = get_char ();
+
+				if (c == ',') {
+					c = get_char ();
+				}
+
+				// skip over white space
+				while (c == '\r' || c == ' ' || c == '\t')
+					c = get_char ();
+			} else {
+				number = -1;
+				if (c == '/') {
+					ReadSingleLineComment ();
+				} else {
+					Report.Warning (1692, 1, Location, "Invalid number");
+
+					// Read everything till the end of the line or file
+					do {
+						c = get_char ();
+					} while (c != -1 && c != '\n');
+				}
+			}
+
+			return number;
+		}
+
+		void ReadSingleLineComment ()
+		{
+			if (peek_char () != '/')
+				Report.Warning (1696, 1, Location, "Single-line comment or end-of-line expected");
+
+			// Read everything till the end of the line or file
+			int c;
+			do {
+				c = get_char ();
+			} while (c != -1 && c != '\n');
 		}
 
 		/// <summary>
 		/// Handles #pragma directive
 		/// </summary>
-		void PreProcessPragma (string arg)
+		void ParsePragmaDirective (string arg)
 		{
-			const string warning = "warning";
-			const string w_disable = "warning disable";
-			const string w_restore = "warning restore";
-			const string checksum = "checksum";
+			int c;
+			int length = TokenizePreprocessorIdentifier (out c);
+			if (length == pragma_warning.Length && IsTokenIdentifierEqual (pragma_warning)) {
+				length = TokenizePreprocessorIdentifier (out c);
 
-			if (arg == w_disable) {
-				Report.RegisterWarningRegion (Location).WarningDisable (Location.Row);
-				return;
-			}
+				//
+				// #pragma warning disable
+				// #pragma warning restore
+				//
+				if (length == pragma_warning_disable.Length) {
+					bool disable = IsTokenIdentifierEqual (pragma_warning_disable);
+					if (disable || IsTokenIdentifierEqual (pragma_warning_restore)) {
+						// skip over white space
+						while (c == '\r' || c == ' ' || c == '\t')
+							c = get_char ();
 
-			if (arg == w_restore) {
-				Report.RegisterWarningRegion (Location).WarningEnable (Location.Row);
-				return;
-			}
+						var loc = Location;
 
-			if (arg.StartsWith (w_disable)) {
-				int[] codes = ParseNumbers (arg.Substring (w_disable.Length));
-				foreach (int code in codes) {
-					if (code != 0)
-						Report.RegisterWarningRegion (Location).WarningDisable (Location, code, Report);
+						if (c == '\n' || c == '/') {
+							if (c == '/')
+								ReadSingleLineComment ();
+
+							//
+							// Disable/Restore all warnings
+							//
+							if (disable) {
+								Report.RegisterWarningRegion (loc).WarningDisable (loc.Row);
+							} else {
+								Report.RegisterWarningRegion (loc).WarningEnable (loc.Row);
+							}
+						} else {
+							//
+							// Disable/Restore a warning or group of warnings
+							//
+							int code;
+							do {
+								code = TokenizePragmaNumber (ref c);
+								if (code > 0) {
+									if (disable) {
+										Report.RegisterWarningRegion (loc).WarningDisable (loc, code, Report);
+									} else {
+										Report.RegisterWarningRegion (loc).WarningEnable (loc, code, Report);
+									}
+								}
+							} while (code >= 0 && c != '\n');
+						}
+
+						return;
+					}
 				}
-				return;
-			}
 
-			if (arg.StartsWith (w_restore)) {
-				int[] codes = ParseNumbers (arg.Substring (w_restore.Length));
-				var w_table = Report.warning_ignore_table;
-				foreach (int code in codes) {
-					if (w_table != null && w_table.ContainsKey (code))
-						Report.Warning (1635, 1, Location, "Cannot restore warning `CS{0:0000}' because it was disabled globally", code);
-					Report.RegisterWarningRegion (Location).WarningEnable (Location, code, Report);
-				}
-				return;
-			}
-
-			if (arg.StartsWith (warning)) {
 				Report.Warning (1634, 1, Location, "Expected disable or restore");
 				return;
 			}
 
-			if (arg.StartsWith (checksum)) {
-				if (!PreProcessPragmaChecksum (arg.Substring (checksum.Length)))
-					Warning_InvalidPragmaChecksum ();
+			//
+			// #pragma checksum
+			//
+			if (length == pragma_checksum.Length && IsTokenIdentifierEqual (pragma_checksum)) {
+				if (c != ' ' || !ParsePragmaChecksum ()) {
+					Report.Warning (1695, 1, Location,
+						"Invalid #pragma checksum syntax. Expected \"filename\" \"{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\" \"XXXX...\"");
+				}
+
 				return;
 			}
 
 			Report.Warning (1633, 1, Location, "Unrecognized #pragma directive");
-		}
-
-		int[] ParseNumbers (string text)
-		{
-			string[] string_array = text.Split (',');
-			int[] values = new int [string_array.Length];
-			int index = 0;
-			foreach (string string_code in string_array) {
-				try {
-					values[index++] = int.Parse (string_code, System.Globalization.CultureInfo.InvariantCulture);
-				}
-				catch (FormatException) {
-					Report.Warning (1692, 1, Location, "Invalid number");
-				}
-			}
-			return values;
 		}
 
 		bool eval_val (string s)
@@ -2176,7 +2369,7 @@ namespace Mono.CSharp
 
 		void Error_NumericConstantTooLong ()
 		{
-			Report.Error (1021, Location, "Numeric constant too long");			
+			Report.Error (1021, Location, "Integral constant is too large");			
 		}
 		
 		void Error_InvalidDirective ()
@@ -2208,41 +2401,29 @@ namespace Mono.CSharp
 			Report.Error (1025, Location, "Single-line comment or end-of-line expected");
 		}
 		
-		void Warning_InvalidPragmaChecksum ()
-		{
-			Report.Warning (1695, 1, Location,
-					"Invalid #pragma checksum syntax; should be " +
-					"#pragma checksum \"filename\" " +
-					"\"{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\" \"XXXX...\"");
-		}
 		//
 		// if true, then the code continues processing the code
 		// if false, the code stays in a loop until another directive is
 		// reached.
 		// When caller_is_taking is false we ignore all directives except the ones
 		// which can help us to identify where the #if block ends
-		bool handle_preprocessing_directive (bool caller_is_taking)
+		bool ParsePreprocessingDirective (bool caller_is_taking)
 		{
-			string cmd, arg;
+			string arg;
 			bool region_directive = false;
 
-			get_cmd_arg (out cmd, out arg);
-
-			// Eat any trailing whitespaces and single-line comments
-			if (arg.IndexOf ("//") != -1)
-				arg = arg.Substring (0, arg.IndexOf ("//"));
-			arg = arg.Trim (simple_whitespaces);
+			var directive = get_cmd_arg (out arg);
 
 			//
 			// The first group of pre-processing instructions is always processed
 			//
-			switch (cmd){
-			case "region":
+			switch (directive) {
+			case PreprocessorDirective.Region:
 				region_directive = true;
 				arg = "true";
-				goto case "if";
+				goto case PreprocessorDirective.If;
 
-			case "endregion":
+			case PreprocessorDirective.Endregion:
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #region for this #endregion");
 					return true;
@@ -2254,7 +2435,7 @@ namespace Mono.CSharp
 					
 				return caller_is_taking;
 				
-			case "if":
+			case PreprocessorDirective.If:
 				if (ifstack == null)
 					ifstack = new Stack<int> (2);
 
@@ -2274,8 +2455,8 @@ namespace Mono.CSharp
 				}
 				ifstack.Push (flags);
 				return false;
-				
-			case "endif":
+
+			case PreprocessorDirective.Endif:
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #if for this #endif");
 					return true;
@@ -2296,7 +2477,7 @@ namespace Mono.CSharp
 					return (state & TAKING) != 0;
 				}
 
-			case "elif":
+			case PreprocessorDirective.Elif:
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #if for this #elif");
 					return true;
@@ -2327,7 +2508,7 @@ namespace Mono.CSharp
 					return false;
 				}
 
-			case "else":
+			case PreprocessorDirective.Else:
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #if for this #else");
 					return true;
@@ -2365,7 +2546,7 @@ namespace Mono.CSharp
 					
 					return ret;
 				}
-			case "define":
+			case PreprocessorDirective.Define:
 				if (any_token_seen){
 					Error_TokensSeen ();
 					return caller_is_taking;
@@ -2373,13 +2554,17 @@ namespace Mono.CSharp
 				PreProcessDefinition (true, arg, caller_is_taking);
 				return caller_is_taking;
 
-			case "undef":
+			case PreprocessorDirective.Undef:
 				if (any_token_seen){
 					Error_TokensSeen ();
 					return caller_is_taking;
 				}
 				PreProcessDefinition (false, arg, caller_is_taking);
 				return caller_is_taking;
+
+			case PreprocessorDirective.Invalid:
+				Report.Error (1024, Location, "Wrong preprocessor directive");
+				return true;
 			}
 
 			//
@@ -2388,25 +2573,24 @@ namespace Mono.CSharp
 			if (!caller_is_taking)
 				return false;
 					
-			switch (cmd){
-			case "error":
+			switch (directive){
+			case PreprocessorDirective.Error:
 				Report.Error (1029, Location, "#error: '{0}'", arg);
 				return true;
 
-			case "warning":
+			case PreprocessorDirective.Warning:
 				Report.Warning (1030, 1, Location, "#warning: `{0}'", arg);
 				return true;
 
-			case "pragma":
+			case PreprocessorDirective.Pragma:
 				if (RootContext.Version == LanguageVersion.ISO_1) {
 					Report.FeatureIsNotAvailable (Location, "#pragma");
-					return true;
 				}
 
-				PreProcessPragma (arg);
+				ParsePragmaDirective (arg);
 				return true;
 
-			case "line":
+			case PreprocessorDirective.Line:
 				if (!PreProcessLine (arg))
 					Report.Error (
 						1576, Location,
@@ -2414,9 +2598,7 @@ namespace Mono.CSharp
 				return caller_is_taking;
 			}
 
-			Report.Error (1024, Location, "Wrong preprocessor directive");
-			return true;
-
+			throw new NotImplementedException (directive.ToString ());
 		}
 
 		private int consume_string (bool quoted)
@@ -2424,24 +2606,23 @@ namespace Mono.CSharp
 			int c;
 			string_builder.Length = 0;
 
-			while ((c = get_char ()) != -1){
-				if (c == '"'){
-					if (quoted && peek_char () == '"'){
+			while (true){
+				c = get_char ();
+				if (c == '"') {
+					if (quoted && peek_char () == '"') {
 						string_builder.Append ((char) c);
 						get_char ();
 						continue;
-					} else {
-						val = new StringLiteral (string_builder.ToString (), Location);
-						return Token.LITERAL;
 					}
+
+					val = new StringLiteral (string_builder.ToString (), Location);
+					return Token.LITERAL;
 				}
 
-				if (c == '\n'){
+				if (c == '\n') {
 					if (!quoted)
 						Report.Error (1010, Location, "Newline in constant");
-				}
-
-				if (!quoted){
+				} else if (c == '\\' && !quoted) {
 					int surrogate;
 					c = escape (c, out surrogate);
 					if (c == -1)
@@ -2450,12 +2631,13 @@ namespace Mono.CSharp
 						string_builder.Append ((char) c);
 						c = surrogate;
 					}
+				} else if (c == -1) {
+					Report.Error (1039, Location, "Unterminated string literal");
+					return Token.EOF;
 				}
+
 				string_builder.Append ((char) c);
 			}
-
-			Report.Error (1039, Location, "Unterminated string literal");
-			return Token.EOF;
 		}
 
 		private int consume_identifier (int s)
@@ -2965,7 +3147,7 @@ namespace Mono.CSharp
 						return Token.ERROR;
 					}
 					
-					if (handle_preprocessing_directive (true))
+					if (ParsePreprocessingDirective (true))
 						continue;
 
 					bool directive_expected = false;
@@ -2985,7 +3167,7 @@ namespace Mono.CSharp
 							continue;
 
 						if (c == '#') {
-							if (handle_preprocessing_directive (false))
+							if (ParsePreprocessingDirective (false))
 								break;
 						}
 						directive_expected = false;

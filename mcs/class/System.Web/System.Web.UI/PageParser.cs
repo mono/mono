@@ -44,6 +44,13 @@ namespace System.Web.UI
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class PageParser : TemplateControlParser
 	{
+#if NET_4_0
+		static Type defaultPageBaseType;
+		static Type defaultApplicationBaseType;
+		static Type defaultPageParserFilterType;
+		static Type defaultUserControlBaseType;
+		static bool enableLongStringsAsResources = true;
+#endif
 		PagesEnableSessionState enableSessionState = PagesEnableSessionState.True;
 		bool enableViewStateMac;
 		bool enableViewStateMacSet;
@@ -78,7 +85,56 @@ namespace System.Web.UI
 		int maxPageStateFieldLength = -1;
 		Type previousPageType;
 		string previousPageVirtualPath;
+#if NET_4_0
+		public static bool EnableLongStringsAsResources {
+			get { return enableLongStringsAsResources; }
+			set {
+				BuildManager.AssertPreStartMethodsRunning ();
+				enableLongStringsAsResources = value;
+			}
+		}
+		
+		public static Type DefaultPageBaseType {
+			get { return defaultPageBaseType; }
+			set {
+				BuildManager.AssertPreStartMethodsRunning ();
+				if (value != null && !typeof (Page).IsAssignableFrom (value))
+					throw new ArgumentException (String.Format ("The value assigned to property '{0}' is invalid.", "DefaultPageBaseType"));
+				
+				defaultPageBaseType = value;
+			}
+		}
 
+		public static Type DefaultApplicationBaseType {
+			get { return defaultApplicationBaseType; }
+			set {
+				BuildManager.AssertPreStartMethodsRunning ();
+				if (value != null && !typeof (HttpApplication).IsAssignableFrom (value))
+					throw new ArgumentException (String.Format ("The value assigned to property '{0}' is invalid.", "DefaultApplicationBaseType"));
+				defaultApplicationBaseType = value;
+			}
+		}
+
+		public static Type DefaultPageParserFilterType {
+			get { return defaultPageParserFilterType; }
+			set {
+				BuildManager.AssertPreStartMethodsRunning ();
+				if (value != null && !typeof (PageParserFilter).IsAssignableFrom (value))
+					throw new ArgumentException (String.Format ("The value assigned to property '{0}' is invalid.", "DefaultPageParserFilterType"));
+				defaultPageParserFilterType = value;
+			}
+		}
+
+		public static Type DefaultUserControlBaseType {
+			get { return defaultUserControlBaseType; }
+			set {
+				if (value != null && !typeof (UserControl).IsAssignableFrom (value))
+					throw new ArgumentException (String.Format ("The value assigned to property '{0}' is invalid.", "DefaultUserControlBaseType"));
+				BuildManager.AssertPreStartMethodsRunning ();
+				defaultUserControlBaseType = value;
+			}
+		}
+#endif
 		public PageParser ()
 		{
 			LoadConfigDefaults ();
@@ -459,15 +515,13 @@ namespace System.Web.UI
 			}
 			return retval;
 		}
-#if !NET_4_0
-		public static
-#endif
-		Type GetCompiledPageType (string virtualPath, string inputFile, HttpContext context)
+
+		internal Type GetCompiledPageType (string virtualPath, string inputFile, HttpContext context)
 		{
 			return BuildManager.GetCompiledType (virtualPath);
 		}
 		
-		protected override Type CompileIntoType ()
+		internal override Type CompileIntoType ()
 		{
 			AspGenerator generator = new AspGenerator (this);
 			return generator.GetCompiledType ();
@@ -509,7 +563,17 @@ namespace System.Web.UI
 		internal TraceMode TraceMode {
 			get { return tracemode; }
 		}		
+#if NET_4_0
+		internal override Type DefaultBaseType {
+			get {
+				Type ret = DefaultPageBaseType;
+				if (ret == null)
+					return base.DefaultBaseType;
 
+				return ret;
+			}
+		}
+#endif
 		internal override string DefaultBaseTypeName {
 			get { return PagesConfig.PageBaseType; }
 		}

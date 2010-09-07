@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-053</name>
+    </assembly>
+    <members>
+        <member name="T:Outer`2">
+            <summary>T:Outer`2</summary>
+        </member>
+        <member name="T:Outer`2.Inner`1">
+            <summary>T:Outer`2:Inner`1</summary>
+        </member>
+        <member name="M:Outer`2.Inner`1.Bar(`0@,`1,`2)">
+            <summary>M:Outer`2.Inner`1.Bar(`0@,`1,`2)</summary>
+        </member>
+        <member name="M:Outer`2.CopyTo(`0[],System.Int32)">
+            <summary>M:Outer`2.CopyTo(`0[],System.Int32)</summary>
+        </member>
+        <member name="M:Outer`2.CopyTo(`0[,,],System.Int32)">
+            <summary>M:Outer`2.CopyTo(`0[,,],System.Int32)</summary>
+        </member>
+        <member name="M:Outer`2.CopyTo(`0[,,][,][])">
+            <summary>M:Outer`2.CopyTo(`0[,,][,][])</summary>
+        </member>
+        <member name="M:Outer`2.CopyTo(System.Collections.Generic.KeyValuePair{`0,System.Collections.Generic.List{`1}}[],System.Int32)">
+            <summary>M:Outer`2.CopyTo(System.Collections.Generic.KeyValuePair{`0,System.Collections.Generic.List{`1}}[],System.Int32)</summary>
+        </member>
+        <member name="M:Outer`2.CopyTo``2(System.Collections.Generic.KeyValuePair{``0,System.Collections.Generic.List{``1}}[],System.Int32)">
+            <summary>M:Outer`2.CopyTo``2(System.Collections.Generic.KeyValuePair{``0,System.Collections.Generic.List{``1}}[],System.Int32)</summary>
+        </member>
+        <member name="M:Outer`2.CopyTo``1(System.Collections.Generic.KeyValuePair{`1,System.Collections.Generic.List{``0}}[],System.Int32)">
+            <summary>M:Outer`2.CopyTo``1(System.Collections.Generic.KeyValuePair{`1,System.Collections.Generic.List{``0}}[],System.Int32)</summary>
+        </member>
+        <member name="M:Outer`2.Foo``1(``0[])">
+            <summary>M:Outer`2.Foo``1(``0[])</summary>
+        </member>
+        <member name="M:Outer`2.Foo``1(``0[],`0)">
+            <summary>M:Outer`2.Foo``1(``0[],`0)</summary>
+        </member>
+        <member name="T:Util">
+            <summary>T:Util</summary>
+        </member>
+        <member name="M:Util.Convert``2(``1[])">
+            <summary>M:Util.Convert``2(``1[])</summary>
+        </member>
+    </members>
+</doc>

@@ -1,1 +1,4 @@
 /*.log
+/foo.txt
+/foo2.txt
+/test.resources

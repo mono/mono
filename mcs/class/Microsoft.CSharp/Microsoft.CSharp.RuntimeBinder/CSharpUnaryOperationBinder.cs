@@ -71,7 +71,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override DynamicMetaObject FallbackUnaryOperation (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
-			Compiler.Expression expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
+			var ctx = DynamicContext.Create ();
+			var expr = ctx.CreateCompilerExpression (argumentInfo [0], target);
 
 			if (Operation == ExpressionType.IsTrue) {
 				expr = new Compiler.BooleanExpression (expr);
@@ -83,7 +84,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				else
 					expr = new Compiler.Unary (GetOperator (), expr, Compiler.Location.Null);
 
-				expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
+				expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 
 				if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 					expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
@@ -92,7 +93,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
 
-			return binder.Bind (context);
+			return binder.Bind (ctx, context);
 		}
 	}
 }

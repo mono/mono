@@ -31,7 +31,7 @@ namespace Mono.CSharp {
 			if (ec.IsInProbingMode)
 				return this;
 
-			BlockContext bc = new BlockContext (ec.MemberContext, ec.CurrentBlock.Explicit, TypeManager.void_type) {
+			BlockContext bc = new BlockContext (ec.MemberContext, ec.ConstructorBlock, TypeManager.void_type) {
 				CurrentAnonymousMethod = ec.CurrentAnonymousMethod
 			};
 
@@ -100,24 +100,21 @@ namespace Mono.CSharp {
 			return Parameters;
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override AnonymousMethodBody CompatibleMethodFactory (TypeSpec returnType, TypeSpec delegateType, ParametersCompiled p, ToplevelBlock b)
+		{
+			return new LambdaMethod (p, b, returnType, delegateType, loc);
+		}
+
+		protected override bool DoResolveParameters (ResolveContext rc)
 		{
 			//
 			// Only explicit parameters can be resolved at this point
 			//
 			if (HasExplicitParameters) {
-				if (!Parameters.Resolve (ec))
-					return null;
+				return Parameters.Resolve (rc);
 			}
 
-			eclass = ExprClass.Value;
-			type = InternalType.AnonymousMethod;
-			return this;
-		}
-
-		protected override AnonymousMethodBody CompatibleMethodFactory (TypeSpec returnType, TypeSpec delegateType, ParametersCompiled p, ToplevelBlock b)
-		{
-			return new LambdaMethod (p, b, returnType, delegateType, loc);
+			return true;
 		}
 
 		public override string GetSignatureForError ()
@@ -126,7 +123,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class LambdaMethod : AnonymousMethodBody
+	class LambdaMethod : AnonymousMethodBody
 	{
 		public LambdaMethod (ParametersCompiled parameters,
 					ToplevelBlock block, TypeSpec return_type, TypeSpec delegate_type,
@@ -135,15 +132,19 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Expression target)
-		{
-			// TODO: nothing ??
-		}
+		#region Properties
 
 		public override string ContainerType {
 			get {
 				return "lambda expression";
 			}
+		}
+
+		#endregion
+
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			// TODO: nothing ??
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)

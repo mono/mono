@@ -69,9 +69,13 @@ namespace System.ServiceModel.Description
 		{
 			ServiceMetadataExtension sme = ServiceMetadataExtension.EnsureServiceMetadataExtension (serviceHostBase);
 
-			foreach (ChannelDispatcher dispatcher in serviceHostBase.ChannelDispatchers)
+			foreach (var dispatcherBase in serviceHostBase.ChannelDispatchers) {
+				var dispatcher = dispatcherBase as ChannelDispatcher;
+				if (dispatcher == null) // non-ChannelDispatcher ChannelDispatcherBase instance.
+					continue;
 				if (IncludeExceptionDetailInFaults) // may be set also in ServiceBehaviorAttribute
 					dispatcher.IncludeExceptionDetailInFaults = true;
+			}
 
 			if (HttpHelpPageEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("http", HttpHelpPageUrl);

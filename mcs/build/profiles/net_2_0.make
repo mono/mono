@@ -10,5 +10,5 @@ MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_
 profile-check:
 	@:
 
-PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -nowarn:1699
 FRAMEWORK_VERSION = 2.0

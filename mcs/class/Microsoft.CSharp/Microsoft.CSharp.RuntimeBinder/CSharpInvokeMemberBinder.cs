@@ -60,12 +60,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override DynamicMetaObject FallbackInvokeMember (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
 		{
-			var c_args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), args);
+			var ctx = DynamicContext.Create ();
+			var c_args = ctx.CreateCompilerArguments (argumentInfo.Skip (1), args);
 			var t_args = typeArguments == null ?
 				null :
-				new Compiler.TypeArguments (typeArguments.Select (l => new Compiler.TypeExpression (TypeImporter.Import (l), Compiler.Location.Null)).ToArray ());
+				new Compiler.TypeArguments (typeArguments.Select (l => new Compiler.TypeExpression (ctx.ImportType (l), Compiler.Location.Null)).ToArray ());
 
-			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo[0], target);
+			var expr = ctx.CreateCompilerExpression (argumentInfo[0], target);
 
 			//
 			// Simple name invocation is actually member access invocation
@@ -83,9 +84,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 			expr = new Compiler.Invocation (expr, c_args);
 
 			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)
-				expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
+				expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 			else
-				expr = new Compiler.DynamicResultCast (TypeImporter.Import (ReturnType), expr);
+				expr = new Compiler.DynamicResultCast (ctx.ImportType (ReturnType), expr);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
@@ -94,7 +95,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if ((flags & CSharpBinderFlags.InvokeSpecialName) != 0)
 				binder.ResolveOptions |= Compiler.ResolveContext.Options.InvokeSpecialName;
 
-			return binder.Bind (callingContext, target);
+			return binder.Bind (ctx, callingContext);
 		}
 	}
 }

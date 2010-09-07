@@ -157,6 +157,7 @@ namespace System.ServiceModel.Channels.Http
 
 	abstract class HttpRequestInfo
 	{
+		public abstract long ContentLength64 { get; }
 		public abstract NameValueCollection QueryString { get; }
 		public abstract NameValueCollection Headers { get; }
 		public abstract Uri Url { get; }
@@ -174,6 +175,9 @@ namespace System.ServiceModel.Channels.Http
 		
 		HttpListenerRequest req;
 
+		public override long ContentLength64 {
+			get { return req.ContentLength64; }
+		}
 		public override NameValueCollection QueryString {
 			get { return req.QueryString; }
 		}
@@ -203,6 +207,9 @@ namespace System.ServiceModel.Channels.Http
 		
 		HttpRequest req;
 
+		public override long ContentLength64 {
+			get { return req.ContentLength; }
+		}
 		public override NameValueCollection QueryString {
 			get { return req.QueryString; }
 		}

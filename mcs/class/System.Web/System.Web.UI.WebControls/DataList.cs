@@ -306,7 +306,13 @@ namespace System.Web.UI.WebControls
 				object o = ViewState ["RepeatLayout"];
 				return (o == null) ? RepeatLayout.Table : (RepeatLayout) o;
 			}
-			set { ViewState ["RepeatLayout"] = value; }
+			set {
+#if NET_4_0
+				if (value == RepeatLayout.OrderedList || value == RepeatLayout.UnorderedList)
+					throw new ArgumentOutOfRangeException (String.Format ("DataList does not support the '{0}' layout.", value));
+#endif
+				ViewState ["RepeatLayout"] = value;
+			}
 		}
 
 		[Bindable (true)]

@@ -44,7 +44,7 @@ namespace Mono.CSharp
 
 		string GetSignatureForError ();
 
-		ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc);
+		IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope);
 		FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
 
@@ -57,8 +57,6 @@ namespace Mono.CSharp
 	public class BlockContext : ResolveContext
 	{
 		FlowBranching current_flow_branching;
-
-		public TypeInferenceContext ReturnTypeInference;
 
 		TypeSpec return_type;
 
@@ -350,6 +348,12 @@ namespace Mono.CSharp
 			get { return MemberContext.Compiler; }
 		}
 
+		public virtual ExplicitBlock ConstructorBlock {
+			get {
+				return CurrentBlock.Explicit;
+			}
+		}
+
 		public virtual FlowBranching CurrentBranching {
 			get { return null; }
 		}
@@ -457,7 +461,7 @@ namespace Mono.CSharp
 		public bool IsObsolete {
 			get {
 				// Disables obsolete checks when probing is on
-				return IsInProbingMode || MemberContext.IsObsolete;
+				return MemberContext.IsObsolete;
 			}
 		}
 
@@ -469,9 +473,9 @@ namespace Mono.CSharp
 			get { return HasSet (Options.UnsafeScope) || MemberContext.IsUnsafe; }
 		}
 
-		public ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
+		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
 		{
-			return MemberContext.LookupExtensionMethod (extensionType, name, arity, loc);
+			return MemberContext.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
@@ -502,9 +506,7 @@ namespace Mono.CSharp
 
 		public void AddBlockMap (Block from, Block to)
 		{
-			if (block_map.ContainsKey (from))
-				return;
-			block_map[from] = to;
+			block_map.Add (from, to);
 		}
 
 		public Block LookupBlock (Block from)
@@ -512,7 +514,6 @@ namespace Mono.CSharp
 			Block result;
 			if (!block_map.TryGetValue (from, out result)) {
 				result = (Block) from.Clone (this);
-				block_map [from] = result;
 			}
 
 			return result;
@@ -556,16 +557,26 @@ namespace Mono.CSharp
 	public class CompilerContext
 	{
 		readonly Report report;
+		readonly ReflectionMetaImporter meta_importer;
 
-		public CompilerContext (Report report)
+		public CompilerContext (ReflectionMetaImporter metaImporter, Report report)
 		{
+			this.meta_importer = metaImporter;
 			this.report = report;
 		}
 
 		public bool IsRuntimeBinder { get; set; }
 
+		public ReflectionMetaImporter MetaImporter {
+			get {
+				return meta_importer;
+			}
+		}
+
 		public Report Report {
-			get { return report; }
+			get {
+				return report;
+			}
 		}
 
 		//public PredefinedAttributes PredefinedAttributes {

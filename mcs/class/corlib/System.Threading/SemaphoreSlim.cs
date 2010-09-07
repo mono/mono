@@ -30,11 +30,14 @@ namespace System.Threading
 {
 	public class SemaphoreSlim : IDisposable
 	{
+		const int spinCount = 10;
+		const int deepSleepTime = 20;
+
 		readonly int max;
 		int currCount;
 		bool isDisposed;
 
-		ManualResetEvent handle;
+		EventWaitHandle handle;
 
 		public SemaphoreSlim (int initial) : this (initial, int.MaxValue)
 		{
@@ -96,7 +99,7 @@ namespace System.Threading
 				newValue = newValue > max ? max : newValue;
 			} while (Interlocked.CompareExchange (ref currCount, newValue, oldValue) != oldValue);
 
-			handle.Reset ();
+			handle.Set ();
 
 			return oldValue;
 		}
@@ -136,14 +139,14 @@ namespace System.Threading
 
 			Watch sw = Watch.StartNew ();
 
-			Func<bool> stopCondition =
-				() => token.IsCancellationRequested || (millisecondsTimeout >= 0 && sw.ElapsedMilliseconds > millisecondsTimeout);
+			Func<bool> stopCondition = () => millisecondsTimeout >= 0 && sw.ElapsedMilliseconds > millisecondsTimeout;
 
 			do {
 				bool shouldWait;
 				int result;
 
 				do {
+					token.ThrowIfCancellationRequested ();
 					if (stopCondition ())
 						return false;
 
@@ -158,17 +161,21 @@ namespace System.Threading
 
 				if (!shouldWait) {
 					if (result == 1)
-						handle.Set ();
+						handle.Reset ();
 					break;
 				}
 
 				SpinWait wait = new SpinWait ();
 
 				while (Thread.VolatileRead (ref currCount) <= 0) {
+					token.ThrowIfCancellationRequested ();
 					if (stopCondition ())
 						return false;
 
-					wait.SpinOnce ();
+					if (wait.Count > spinCount)
+						handle.WaitOne (Math.Min (Math.Max (millisecondsTimeout - (int)sw.ElapsedMilliseconds, 1), deepSleepTime));
+					else
+						wait.SpinOnce ();
 				}
 			} while (true);
 
