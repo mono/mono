@@ -415,6 +415,10 @@ Turns on profiling.  For more information about profiling applications
 and code coverage see the sections "PROFILING" and "CODE COVERAGE"
 below. 
 .TP
+This option can be used multiple times, each time will load an
+additional profiler.   This allows developers to use modules that
+extend the JIT through the Mono profiling interface.
+.TP
 \fB--trace[=expression]\fR
 Shows method names as they are invoked.  By default all methods are
 traced. 
