@@ -124,6 +124,7 @@ System.ComponentModel/ContainerTest.cs
 System.ComponentModel/CultureInfoConverterTest.cs
 System.ComponentModel/DataObjectMethodAttributeTests.cs
 System.ComponentModel/DateTimeConverterTests.cs
+System.ComponentModel/DateTimeOffsetConverterTests.cs
 System.ComponentModel/DefaultBindingPropertyAttributeTest.cs
 System.ComponentModel/DefaultValueAttributeTest.cs
 System.ComponentModel/DecimalConverterTests.cs
