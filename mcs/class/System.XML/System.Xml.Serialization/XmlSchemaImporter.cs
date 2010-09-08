@@ -30,7 +30,7 @@
 //
 
 using System.Xml;
-#if !TARGET_JVM && !MONOTOUCH
+#if !TARGET_JVM && !MOBILE
 using System.CodeDom.Compiler;
 #endif
 using System.Xml.Schema;
@@ -43,7 +43,7 @@ using System.Xml.Serialization.Configuration;
 namespace System.Xml.Serialization 
 {
 	public class XmlSchemaImporter
-#if NET_2_0 && !MONOTOUCH
+#if NET_2_0 && !MOBILE
 		: SchemaImporter
 #endif
 	{
@@ -100,7 +100,7 @@ namespace System.Xml.Serialization
 		}
 		
 #if NET_2_0
-#if !TARGET_JVM && !MONOTOUCH
+#if !TARGET_JVM && !MOBILE
 		[MonoTODO]
 		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, CodeDomProvider codeProvider, ImportContext context)
 		{

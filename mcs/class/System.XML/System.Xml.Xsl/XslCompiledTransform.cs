@@ -49,7 +49,7 @@ namespace System.Xml.Xsl
 		bool enable_debug;
 		object debugger;
 		CompiledStylesheet s;
-#if !TARGET_JVM && !MONOTOUCH
+#if !TARGET_JVM && !MOBILE
 //		TempFileCollection temporary_files;
 #endif
 		XmlWriterSettings output_settings = new XmlWriterSettings ();
@@ -72,7 +72,7 @@ namespace System.Xml.Xsl
 			get { return output_settings; }
 		}
 
-#if !TARGET_JVM && !MONOTOUCH
+#if !TARGET_JVM && !MOBILE
 		[MonoTODO]
 		public TempFileCollection TemporaryFiles {
 			get { return null; /*temporary_files;*/ }

@@ -31,7 +31,7 @@
 using System.IO;
 using System.Reflection;
 
-#if !MONOTOUCH
+#if !MOBILE
 namespace System.Xml
 {
 	public class XmlXapResolver : XmlResolver
