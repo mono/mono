@@ -1570,7 +1570,7 @@ class MDocUpdater : MDocCommand
 
 		string retnodename = null;
 		if (returntype != null && returntype.FullName != "System.Void") { // FIXME
-			info.ReturnNodeName = retnodename = returnisreturn ? "returns" : "value";
+			retnodename = returnisreturn ? "returns" : "value";
 			string retnodename_other = !returnisreturn ? "returns" : "value";
 			
 			// If it has a returns node instead of a value node, change its name.
@@ -2522,6 +2522,7 @@ class DocsNodeInfo {
 		if (DocUtils.IsDelegate (type)) {
 			Parameters = type.GetMethod("Invoke").Parameters;
 			ReturnType = type.GetMethod("Invoke").ReturnType.ReturnType;
+			ReturnIsReturn = true;
 		}
 	}
 
@@ -2564,7 +2565,6 @@ class DocsNodeInfo {
 	public bool AddRemarks = true;
 	public IMemberReference Member;
 	public TypeDefinition Type;
-	public string ReturnNodeName;
 }
 
 class DocumentationEnumerator {
@@ -2987,7 +2987,7 @@ class MsxdocDocumentationImporter : DocumentationImporter {
 				// properties, so let's try to normalize things.
 				case "value":
 				case "returns": {
-					XmlElement v = e.OwnerDocument.CreateElement (info.ReturnNodeName ?? child.Name);
+					XmlElement v = e.OwnerDocument.CreateElement (info.ReturnIsReturn ? "returns" : "value");
 					v.InnerXml = child.InnerXml;
 					e.AppendChild (v);
 					break;

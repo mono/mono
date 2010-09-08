@@ -576,7 +576,7 @@ class Example {
             <typeparam name="TRet">return type, with attributes!</typeparam>
             <param name="a">To be added.</param>
             <summary>To be added.</summary>
-            <value>To be added.</value>
+            <returns>To be added.</returns>
             <remarks>
                 <c>T:Mono.DocTest.Generic.Func`2</c>.</remarks>
         </member>
