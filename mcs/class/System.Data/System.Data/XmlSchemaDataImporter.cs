@@ -1265,14 +1265,14 @@ namespace System.Data
 				if (e == null)
 					continue;
 				
-#if !MONOTOUCH
+#if !MOBILE
 				if (e.LocalName == "Connections" && (firstChild = e.FirstChild as XmlElement) != null) {
 					providerName = firstChild.GetAttribute ("Provider");
 					connString = firstChild.GetAttribute ("AppSettingsPropertyName");
 					provider = DbProviderFactories.GetFactory (providerName);
 					continue;
 				}
-#endif // !MONOTOUCH
+#endif
 				// #325464 debugging
 				//Console.WriteLine ("ProviderName: " + providerName + "Connstr: " + connString);
 				

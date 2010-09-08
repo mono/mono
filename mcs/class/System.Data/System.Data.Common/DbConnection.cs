@@ -718,11 +718,11 @@ namespace System.Data.Common {
 		}
 
 		protected virtual DbProviderFactory DbProviderFactory {
-#if MONOTOUCH
+#if MOBILE
 			get {throw new NotImplementedException();}
-#else   // MONOTOUCH
+#else
 			get { return DbProviderFactories.GetFactory (this.GetType (). ToString ()); }
-#endif  // MONOTOUCH
+#endif
 		}
 #endif
 
