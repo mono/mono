@@ -42,7 +42,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
 
-#if !MONOTOUCH
+#if !MOBILE
 using Microsoft.CSharp;
 #endif
 
@@ -56,7 +56,7 @@ namespace System.Web.Services.Description {
 		ServiceDescriptionCollection serviceDescriptions;
 		ServiceDescriptionImportStyle style;
 		
-#if NET_2_0 && !MONOTOUCH
+#if NET_2_0 && !MOBILE
 		CodeGenerationOptions options;
 		CodeDomProvider codeGenerator = new CSharpCodeProvider ();
 		ImportContext context;

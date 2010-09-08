@@ -221,7 +221,7 @@ namespace System.Web.Services.Protocols
 						soap12Protocol.Initialize ();
 					}
 					return soap12Protocol;
-#if !MONOTOUCH
+#if !MOBILE
 				case "HttpGet":
 					if (httpGetProtocol == null){
 						httpGetProtocol = new HttpGetTypeStubInfo (this);

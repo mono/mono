@@ -36,7 +36,7 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
-#if !MONOTOUCH
+#if !MOBILE
 using System.Web.Services.Description;
 #endif
 

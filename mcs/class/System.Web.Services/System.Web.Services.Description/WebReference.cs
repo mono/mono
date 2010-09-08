@@ -42,7 +42,7 @@ namespace System.Web.Services.Description
 	sealed class WebReference
 	{
 		DiscoveryClientDocumentCollection _documents;
-#if !TARGET_J2EE && !MONOTOUCH
+#if !TARGET_J2EE && !MOBILE
 		CodeNamespace _proxyCode;
 		ServiceDescriptionImportWarnings _warnings;
 #endif
@@ -51,7 +51,7 @@ namespace System.Web.Services.Description
 		string _appSettingBaseUrl;
 		StringCollection _validationWarnings;
 		
-#if !TARGET_J2EE && !MONOTOUCH
+#if !TARGET_J2EE && !MOBILE
 		public WebReference (DiscoveryClientDocumentCollection documents, CodeNamespace proxyCode)
 		{
 			if (documents == null) throw new ArgumentNullException ("documents");

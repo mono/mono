@@ -37,7 +37,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Net;
 using System.Text.RegularExpressions;
-#if !MONOTOUCH
+#if !MOBILE
 using System.Web.Services.Description;
 #endif
 
@@ -150,7 +150,7 @@ namespace System.Web.Services.Discovery {
 					refe = new DiscoveryDocumentReference ();
 					AddDiscoReferences (doc);
 				}
-#if !MONOTOUCH
+#if !MOBILE
 				else if (ServiceDescription.CanRead (reader))
 				{
 					ServiceDescription wsdl = ServiceDescription.Read (reader);

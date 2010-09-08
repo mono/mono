@@ -28,13 +28,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !TARGET_J2EE && !MONOTOUCH
+#if !TARGET_J2EE && !MOBILE
 using System.EnterpriseServices;
 #endif
 
 namespace System.Web.Services {
 
-#if TARGET_J2EE || MONOTOUCH
+#if TARGET_J2EE || MOBILE
 	public enum TransactionOption {Disabled , NotSupported , Required , RequiresNew , Supported }
 #endif
 
