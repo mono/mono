@@ -123,6 +123,12 @@ net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
 	System.Web.Extensions.Design_1.0
 
+net_2_1_bootstrap_dirs := \
+	corlib		\
+	System		\
+	Mono.CompilerServices.SymbolWriter	\
+	System.Core
+
 moonlight_dirs := \
 	corlib			\
 	Mono.CompilerServices.SymbolWriter \
@@ -136,7 +142,7 @@ moonlight_dirs := \
 	System.ServiceModel	\
 	System.ServiceModel.Web
 
-monotouch_dirs := \
+mobile_dirs := \
 	corlib	\
 	Mono.CompilerServices.SymbolWriter	\
 	System.Core	\
@@ -181,17 +187,19 @@ net_4_0_dirs := \
 
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
-moonlight_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter System.Core
+moonlight_bootstrap_SUBDIRS := $(net_2_1_bootstrap_dirs)
 moonlight_raw_SUBDIRS := $(moonlight_dirs)
-monotouch_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter System.Core
-monotouch_SUBDIRS := $(monotouch_dirs)
+monodroid_bootstrap_SUBDIRS := $(net_2_1_bootstrap_dirs)
+monodroid_SUBDIRS := $(mobile_dirs)
+monotouch_bootstrap_SUBDIRS := $(net_2_1_bootstrap_dirs)
+monotouch_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_dirs)
 net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) Mono.Posix System.Core
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(moonlight_dirs) $(monotouch_dirs) $(net_3_5_dirs) $(net_4_0_dirs)
+SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(moonlight_dirs) $(mobile_dirs) $(net_3_5_dirs) $(net_4_0_dirs)
 
 DIST_ONLY_SUBDIRS = dlr
 
