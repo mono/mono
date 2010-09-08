@@ -619,7 +619,7 @@ namespace System.Xml.Serialization
 			return new XmlSerializationReaderInterpreter (typeMapping);
 		}
 		
-#if TARGET_JVM || MONOTOUCH
+#if TARGET_JVM || MOBILE
  		void CheckGeneratedTypes (XmlMapping typeMapping)
  		{
 			throw new NotImplementedException();

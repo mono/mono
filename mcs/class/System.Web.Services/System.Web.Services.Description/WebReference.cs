@@ -94,7 +94,7 @@ namespace System.Web.Services.Description
 			get { return _protocolName; }
 			set { _protocolName = value; }
 		}
-#if !TARGET_J2EE && !MONOTOUCH
+#if !TARGET_J2EE && !MOBILE
 		public CodeNamespace ProxyCode {
 			get { return _proxyCode; }
 		}
