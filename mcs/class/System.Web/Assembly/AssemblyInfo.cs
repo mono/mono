@@ -144,6 +144,9 @@ using System.Web.UI;
 [assembly: WebResource ("computer.gif", "image/gif")]
 [assembly: WebResource ("TreeView.js", "text/javascript")]
 [assembly: WebResource ("Menu.js", "text/javascript")]
+#if NET_4_0
+[assembly: WebResource ("MenuModern.js", "text/javascript")]
+#endif
 [assembly: WebResource ("GridView.js", "text/javascript")]
 [assembly: WebResource ("webform.js", "text/javascript")]
 [assembly: WebResource ("WebUIValidation_2.0.js", "text/javascript")]
