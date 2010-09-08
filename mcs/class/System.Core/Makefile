@@ -18,7 +18,7 @@ ifeq (4.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:CODEPLEX_40
 endif
 
-FULL_PROFILE := $(filter net_2_0 net_4_0 moonlight_raw monotouch, $(PROFILE))
+FULL_PROFILE := $(filter net_2_0 net_4_0 moonlight_raw monotouch monodroid, $(PROFILE))
 ifdef FULL_PROFILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif

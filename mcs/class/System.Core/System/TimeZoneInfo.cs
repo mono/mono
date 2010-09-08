@@ -31,7 +31,7 @@ using System.Runtime.CompilerServices;
 
 [assembly:TypeForwardedTo (typeof(TimeZoneInfo))]
 
-#elif NET_3_5 || (MONOTOUCH && !INSIDE_CORLIB) || (MOONLIGHT && INSIDE_CORLIB)
+#elif NET_3_5 || (MOBILE && !INSIDE_CORLIB) || (MOONLIGHT && INSIDE_CORLIB)
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
