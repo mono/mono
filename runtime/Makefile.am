@@ -42,6 +42,10 @@ build_profiles += net_4_0
 #test_profiles += net_4_0
 endif
 
+if INSTALL_MONODROID
+build_profiles += monodroid
+endif
+
 if INSTALL_MONOTOUCH
 build_profiles += monotouch
 endif
