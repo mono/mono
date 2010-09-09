@@ -1,7 +1,5 @@
-// cs0136-6.cs: A local variable named `top' cannot be declared in this scope because it would give a different meaning to `top', which is already used in a `parent or current' scope to denote something else
-// Line: 19
-
-using System.Collections;
+// CS0844: A local variable `top' cannot be used before it is declared. Consider renaming the local variable when it hides the member `X.top'
+// Line: 17
 
 class Symbol
 {
@@ -9,16 +7,14 @@ class Symbol
 
 class X
 {
-		Symbol top;
-	
-		internal int Enter (Symbol key, object value)
-		{
- 			if (key != null) {
-				top = key;					
-			}
-			Hashtable top = new Hashtable ();
-			return top.Count;
+	Symbol top;
+
+	internal int Enter (Symbol key, object value)
+	{
+		if (key != null) {
+			top = key;
 		}
-		
-		public static void Main () {}
+		object top = null;
+		return top.Count;
+	}
 }

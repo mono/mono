@@ -1,4 +1,4 @@
-// CS0844: A local variable `y' cannot be used before it is declared. Consider renaming the local variable when it hides the field `X.y'
+// CS0844: A local variable `y' cannot be used before it is declared. Consider renaming the local variable when it hides the member `X.y'
 // Line: 8
 
 class X

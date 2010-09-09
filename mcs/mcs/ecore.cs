@@ -320,11 +320,6 @@ namespace Mono.CSharp {
 				type.GetSignatureForError (), target.GetSignatureForError ());
 		}
 
-		public virtual void Error_VariableIsUsedBeforeItIsDeclared (Report Report, string name)
-		{
-			Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", name);
-		}
-
 		public void Error_TypeArgumentsCannotBeUsed (Report report, Location loc, MemberSpec member, int arity)
 		{
 			// Better message for possible generic expressions
@@ -2241,6 +2236,7 @@ namespace Mono.CSharp {
 			Expression e;
 			Block current_block = rc.CurrentBlock;
 			INamedBlockVariable variable = null;
+			bool variable_found = false;
 
 			while (true) {
 				//
@@ -2250,18 +2246,19 @@ namespace Mono.CSharp {
 				//
 				if (current_block != null && lookup_arity == 0) {
 					if (current_block.ParametersBlock.TopBlock.GetLocalName (Name, current_block.Original, ref variable)) {
-						// TODO: Could I just relly on factory method
 						if (!variable.IsDeclared) {
-							rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
-							return null;
-						}
+							// We found local name in accessible block but it's not
+							// initialized yet, maybe the user wanted to bind to something else
+							errorMode = true;
+							variable_found = true;
+						} else {
+							e = variable.CreateReferenceExpression (rc, loc);
+							if (e != null) {
+								if (Arity > 0)
+									Error_TypeArgumentsCannotBeUsed (rc.Report, "variable", Name, loc);
 
-						e = variable.CreateReferenceExpression (rc, loc);
-						if (e != null) {
-							if (Arity > 0)
-								Error_TypeArgumentsCannotBeUsed (rc.Report, "variable", Name, loc);
-
-							return e;
+								return e;
+							}
 						}
 					}
 				}
@@ -2277,7 +2274,15 @@ namespace Mono.CSharp {
 						continue;
 
 					if (errorMode) {
-						if (me is MethodGroupExpr) {
+						if (variable != null) {
+							if (me is FieldExpr || me is ConstantExpr || me is EventExpr || me is PropertyExpr) {
+								rc.Report.Error (844, loc,
+									"A local variable `{0}' cannot be used before it is declared. Consider renaming the local variable when it hides the member `{1}'",
+									Name, me.GetSignatureForError ());
+							} else {
+								break;
+							}
+						} else if (me is MethodGroupExpr) {
 							// Leave it to overload resolution to report correct error
 						} else {
 							// TODO: rc.Report.SymbolRelatedToPreviousError ()
@@ -2325,14 +2330,19 @@ namespace Mono.CSharp {
 				//
 				// Stage 3: Lookup nested types, namespaces and type parameters in the context
 				//
-				if (!invocableOnly) {
+				if (!invocableOnly && !variable_found) {
 					e = ResolveAsTypeStep (rc, lookup_arity == 0 || !errorMode);
 					if (e != null)
 						return e;
 				}
 
 				if (errorMode) {
-					rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
+					if (variable_found) {
+						rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
+					} else {
+						rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
+					}
+
 					return null;
 				}
 
@@ -4751,13 +4761,6 @@ namespace Mono.CSharp {
 
 			if (is_volatile) // || is_marshal_by_ref ())
 				base.EmitSideEffect (ec);
-		}
-
-		public override void Error_VariableIsUsedBeforeItIsDeclared (Report r, string name)
-		{
-			r.Error (844, loc,
-				"A local variable `{0}' cannot be used before it is declared. Consider renaming the local variable when it hides the field `{1}'",
-				name, GetSignatureForError ());
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)

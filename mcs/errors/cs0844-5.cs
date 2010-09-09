@@ -3,7 +3,9 @@
 
 class C
 {
-	string s;
+	string s {
+		set {}
+	}
 
 	public void Test ()
 	{
