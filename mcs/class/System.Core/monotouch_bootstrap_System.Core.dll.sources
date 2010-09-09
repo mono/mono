@@ -1,1 +1,6 @@
 #include mobile_System.Core.dll.sources
+System.Linq.jvm/Conversion.cs
+System.Linq.jvm/ExpressionInterpreter.cs
+System.Linq.jvm/ExpressionValidator.cs
+System.Linq.jvm/Interpreter.cs
+System.Linq.jvm/Math.cs
