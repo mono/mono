@@ -485,7 +485,7 @@ namespace System.Net.Sockets {
 				throw new ArgumentNullException ("remoteEP");
 
 			IPEndPoint ep = remoteEP as IPEndPoint;
-			if (ep != null)
+			if (ep != null && socket_type != SocketType.Dgram) /* Dgram uses Any to 'disconnect' */
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
 
@@ -516,7 +516,8 @@ namespace System.Net.Sockets {
 			if (error != 0)
 				throw new SocketException (error);
 
-			connected=true;
+			if (socket_type != SocketType.Dgram)
+				connected=true;
 
 #if NET_2_0
 			isbound = true;
