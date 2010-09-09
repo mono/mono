@@ -3213,8 +3213,7 @@ namespace Mono.CSharp
 					return consume_identifier (c);
 				}
 
-				error_details = ((char)c).ToString ();
-				return Token.ERROR;
+				Report.Error (1056, Location, "Unexpected character `{0}'", ((char) c).ToString ());
 			}
 
 			if (CompleteOnEOF){

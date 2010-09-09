@@ -3015,7 +3015,7 @@ primary_expression
 	| checked_expression
 	| unchecked_expression
 	| pointer_member_access
-	| anonymous_method_expression	
+	| anonymous_method_expression
 	;
 
 primary_expression_or_type
@@ -4520,6 +4520,11 @@ statement
 		current_block.AddStatement ((Statement) $1);
 	  }
 	| labeled_statement
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = null;
+	  }
 	;
 
 //
@@ -4860,11 +4865,6 @@ statement_expression
 		}
 
 		$$ = new StatementExpression (s);
-	  }
-	| error
-	  {
-		Error_SyntaxError (yyToken);
-		$$ = null;
 	  }
 	;
 
