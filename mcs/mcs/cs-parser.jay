@@ -4894,7 +4894,7 @@ if_statement
 	  embedded_statement
 	  { 
 		if ($5 is EmptyStatement)
-			Report.Warning (642, 3, GetLocation ($5), "Possible mistaken empty statement");
+			Warning_EmptyStatement (GetLocation ($5));
 		
 		$$ = new If ((BooleanExpression) $3, (Statement) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
@@ -4906,9 +4906,9 @@ if_statement
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4), GetLocation ($6));
 		
 		if ($5 is EmptyStatement)
-			Report.Warning (642, 3, GetLocation ($5), "Possible mistaken empty statement");
+			Warning_EmptyStatement (GetLocation ($5));
 		if ($7 is EmptyStatement)
-			Report.Warning (642, 3, GetLocation ($7), "Possible mistaken empty statement");
+			Warning_EmptyStatement (GetLocation ($7));
 	  }
 	;
 
@@ -5005,6 +5005,9 @@ iteration_statement
 while_statement
 	: WHILE open_parens_any boolean_expression CLOSE_PARENS embedded_statement
 	  {
+		if ($5 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($5));
+	  
 		$$ = new While ((BooleanExpression) $3, (Statement) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
 	  }
@@ -5030,6 +5033,9 @@ for_statement
 	  opt_for_iterator CLOSE_PARENS 
 	  embedded_statement
 	  {
+		if ($10 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($10));
+	  
 		For f = new For ((Statement) $4, (BooleanExpression) $6, (Statement) $8, (Statement) $10, GetLocation ($1));
 		current_block.AddStatement (f);
 		
@@ -5107,6 +5113,9 @@ foreach_statement
 	  } 
 	  embedded_statement
 	  {
+		if ($9 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($9));
+	  
 		Foreach f = new Foreach ((Expression) $3, (LocalVariable) $8, (Expression) $6, (Statement) $9, GetLocation ($1));
 		current_block.AddStatement (f);
 		
@@ -5330,6 +5339,9 @@ unsafe_statement
 lock_statement
 	: LOCK open_parens_any expression CLOSE_PARENS embedded_statement
 	  {
+		if ($5 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($5));
+	  
 		$$ = new Lock ((Expression) $3, (Statement) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
 	  }
@@ -5352,6 +5364,9 @@ fixed_statement
 	  }
 	  embedded_statement
 	  {
+		if ($10 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($10));
+	  
 		Fixed f = new Fixed ((Fixed.VariableDeclaration) $9, (Statement) $10, GetLocation ($1));
 		current_block.AddStatement (f);
 		$$ = end_block (GetLocation ($8));
@@ -5375,6 +5390,9 @@ using_statement
 	  }
 	  embedded_statement
 	  {
+		if ($10 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($10));
+	  
 		Using u = new Using ((Using.VariableDeclaration) $9, (Statement) $10, GetLocation ($1));
 		current_block.AddStatement (u);
 		$$ = end_block (GetLocation ($8));
@@ -5385,6 +5403,9 @@ using_statement
 	  }
 	  embedded_statement
 	  {
+		if ($6 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($6));
+	  
 		UsingTemporary usingTemporary = new UsingTemporary ((Expression) $3, (Statement) $6, GetLocation ($1));
 		lbag.AddStatement (usingTemporary, GetLocation ($2), GetLocation ($4));
 		current_block.AddStatement (usingTemporary);
@@ -6004,6 +6025,11 @@ void Error_TypeExpected (Location loc)
 void Error_UnsafeCodeNotAllowed (Location loc)
 {
 	Report.Error (227, loc, "Unsafe code requires the `unsafe' command line option to be specified");
+}
+
+void Warning_EmptyStatement (Location loc)
+{
+	Report.Warning (642, 3, loc, "Possible mistaken empty statement");
 }
 
 void Error_NamedArgumentExpected (NamedArgument a)

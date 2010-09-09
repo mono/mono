@@ -2015,38 +2015,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static void CheckPossibleMistakenEmptyStatement (BlockContext ec, Statement s)
-		{
-			Statement body;
-
-			// Some statements are wrapped by a Block. Since
-			// others' internal could be changed, here I treat
-			// them as possibly wrapped by Block equally.
-			Block b = s as Block;
-			if (b != null && b.statements.Count == 1)
-				s = b.statements [0];
-
-			if (s is Lock)
-				body = ((Lock) s).Statement;
-			else if (s is For)
-				body = ((For) s).Statement;
-			else if (s is Foreach)
-				body = ((Foreach) s).Statement;
-			else if (s is While)
-				body = ((While) s).Statement;
-			else if (s is Fixed)
-				body = ((Fixed) s).Statement;
-			else if (s is Using)
-				body = ((Using) s).Statement;
-			else if (s is UsingTemporary)
-				body = ((UsingTemporary) s).Statement;
-			else
-				return;
-
-			if (body == null || body is EmptyStatement)
-				ec.Report.Warning (642, 3, s.loc, "Possible mistaken empty statement");
-		}
-
 		public override bool Resolve (BlockContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
@@ -2077,10 +2045,6 @@ namespace Mono.CSharp {
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
 				Statement s = statements [ix];
-				// Check possible empty statement (CS0642)
-				if (ix + 1 < statement_count && ec.Report.WarningLevel >= 3 &&
-					statements [ix + 1] is ExplicitBlock)
-					CheckPossibleMistakenEmptyStatement (ec, s);
 
 				//
 				// Warn if we detect unreachable code.
@@ -2380,7 +2344,6 @@ namespace Mono.CSharp {
 			am_storey.Define ();
 			am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
 		}
-
 
 		public void WrapIntoDestructor (TryFinally tf, ExplicitBlock tryBlock)
 		{
