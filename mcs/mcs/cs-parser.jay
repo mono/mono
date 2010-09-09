@@ -3294,10 +3294,6 @@ non_simple_argument
 		$$ = new Argument (new Arglist (GetLocation ($1)));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($3));
 	  }	  
-	| ARGLIST
-	  {
-		$$ = new Argument (new ArglistAccess (GetLocation ($1)));
-	  }
 	;
 
 variable_reference
@@ -4141,13 +4137,17 @@ lambda_expression
 
 expression
 	: assignment_expression 
-	| non_assignment_expression 
+	| non_assignment_expression
 	;
 	
 non_assignment_expression
 	: conditional_expression
 	| lambda_expression
-	| query_expression 
+	| query_expression
+	| ARGLIST
+	  {
+		$$ = new ArglistAccess (GetLocation ($1));
+	  }	
 	;
 
 constant_expression
@@ -4824,10 +4824,6 @@ block_variable_initializer
 	  {
 		$$ = new StackAlloc ((Expression) $2, (Expression) $4, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
-	  }
-	| ARGLIST
-	  {
-		$$ = new ArglistAccess (GetLocation ($1));
 	  }
 	| STACKALLOC simple_type
 	  {
