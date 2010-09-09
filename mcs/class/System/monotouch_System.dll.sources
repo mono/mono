@@ -1,2 +1,1 @@
-#include mobile_System.dll.sources
-MonoTouch/MonoPInvokeCallbackAttribute.cs
+#include monotouch_bootstrap_System.dll.sources
