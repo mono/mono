@@ -1219,7 +1219,7 @@ namespace Mono.CSharp {
 				this.RealName = real_name;
 
 				Parent.PartialContainer.AddMethod (this);
-				Block = new ToplevelBlock (am, parameters);
+				Block = new ToplevelBlock (am.block, parameters);
 			}
 
 			public override EmitContext CreateEmitContext (ILGenerator ig)

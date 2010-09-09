@@ -3,7 +3,8 @@ using System;
 class X {
 	~X ()
 	{
-		Console.WriteLine ("DESTRUCTOR!");
+		int id = 1;
+		Console.WriteLine ("DESTRUCTOR!" + id);
 	}
 
         public static int Test1()

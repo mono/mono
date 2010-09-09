@@ -1770,19 +1770,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		//
-		// Useful when TopLevel block is downgraded to normal block
-		//
-		// TODO: REMOVE
-		//
-		public Block (ToplevelBlock parent, ToplevelBlock source)
-			: this (parent, source.flags, source.StartLocation, source.EndLocation)
-		{
-			statements = source.statements;
-			labels = source.labels;
-			switch_block = source.switch_block;
-		}
-
 		public Block (Block parent, Flags flags, Location start, Location end)
 		{
 			if (parent != null) {
@@ -2393,6 +2380,14 @@ namespace Mono.CSharp {
 			am_storey.Define ();
 			am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
 		}
+
+
+		public void WrapIntoDestructor (TryFinally tf, ExplicitBlock tryBlock)
+		{
+			tryBlock.statements = statements;
+			statements = new List<Statement> (1);
+			statements.Add (tf);
+		}
 	}
 
 	//
@@ -2522,17 +2517,17 @@ namespace Mono.CSharp {
 			ParametersBlock = this;
 		}
 
-		protected ParametersBlock (AnonymousExpression ae, ParametersCompiled parameters)
-			: base (null, 0, ae.Block.StartLocation, ae.Block.EndLocation)
+		protected ParametersBlock (ParametersBlock source, ParametersCompiled parameters)
+			: base (null, 0, source.StartLocation, source.EndLocation)
 		{
 			this.parameters = parameters;
-			this.statements = ae.Block.statements;
-			this.scope_initializers = ae.Block.scope_initializers;
-			this.switch_block = ae.Block.switch_block;
+			this.statements = source.statements;
+			this.scope_initializers = source.scope_initializers;
+			this.switch_block = source.switch_block;
 
 			this.resolved = true;
-			this.unreachable = ae.Block.unreachable;
-			this.am_storey = ae.Block.am_storey;
+			this.unreachable = source.unreachable;
+			this.am_storey = source.am_storey;
 
 			ParametersBlock = this;
 		}
@@ -2753,10 +2748,16 @@ namespace Mono.CSharp {
 			ProcessParameters ();
 		}
 
-		public ToplevelBlock (AnonymousExpression ae, ParametersCompiled parameters)
-			: base (ae, parameters)
+		//
+		// Recreates a top level block from parameters block. Used for
+		// compiler generated methods where the original block comes from
+		// explicit child block. This works for already resolved blocks
+		// only to ensure we resolve them in the correct flow order
+		//
+		public ToplevelBlock (ParametersBlock source, ParametersCompiled parameters)
+			: base (source, parameters)
 		{
-			this.compiler = ae.Block.TopBlock.compiler;
+			this.compiler = source.TopBlock.compiler;
 			top_block = this;
 		}
 

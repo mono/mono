@@ -33061,6 +33061,16 @@
       </method>
     </type>
   </test>
+  <test name="test-424.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>35</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-425.cs">
     <type name="A">
       <method name="Void .ctor()">
@@ -34158,6 +34168,44 @@
       </method>
     </type>
   </test>
+  <test name="test-480.cs">
+    <type name="A">
+      <method name="Void Dispose()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Test(System.Object)">
+        <size>271</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+      <method name="Void &lt;Test&gt;m__0(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+D">
+      <method name="Void Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-481.cs">
     <type name="TestClass">
       <method name="Int32 Main()">
@@ -35065,7 +35113,7 @@
         <size>7</size>
       </method>
       <method name="Void Finalize()">
-        <size>23</size>
+        <size>36</size>
       </method>
       <method name="Int32 Test1()">
         <size>33</size>
