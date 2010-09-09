@@ -389,7 +389,7 @@ namespace System.ServiceModel.Description
 			// [OperationContract (Action = "...", ReplyAction = "..")]
 			var ad = new CodeAttributeDeclaration (new CodeTypeReference (typeof (OperationContractAttribute)));
 			foreach (MessageDescription md in od.Messages) {
-				if (md.IsRequest)
+				if (md.Direction == MessageDirection.Input)
 					ad.Arguments.Add (new CodeAttributeArgument ("Action", new CodePrimitiveExpression (md.Action)));
 				else
 					ad.Arguments.Add (new CodeAttributeArgument ("ReplyAction", new CodePrimitiveExpression (md.Action)));
@@ -725,7 +725,7 @@ namespace System.ServiceModel.Description
 		{
 			CodeExpression [] args = null;
 			foreach (MessageDescription md in messages) {
-				if (!md.IsRequest) {
+				if (md.Direction == MessageDirection.Output) {
 					if (md.Body.ReturnValue != null) {
 						ExportDataContract (md.Body.ReturnValue);
 #if USE_DATA_CONTRACT_IMPORTER
