@@ -622,7 +622,7 @@ namespace Mono.CSharp {
 				VariableInfo vi = vr.VariableInfo;
 				if (vi != null) {
 					if (vi.LocalInfo != null)
-						vi.LocalInfo.Used = true;
+						vi.LocalInfo.SetIsUsed ();
 
 					//
 					// A variable is considered definitely assigned if you take its address.
@@ -4440,32 +4440,17 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	///   Local variables
-	/// </summary>
-	public class LocalVariableReference : VariableReference {
-		readonly string name;
-		public Block Block;
-		public LocalInfo local_info;
-		bool is_readonly;
+	//
+	// Resolved reference to a local variable
+	//
+	public class LocalVariableReference : VariableReference
+	{
+		public LocalVariable local_info;
 
-		public LocalVariableReference (Block block, string name, Location l)
+		public LocalVariableReference (LocalVariable li, Location l)
 		{
-			Block = block;
-			this.name = name;
+			this.local_info = li;
 			loc = l;
-		}
-
-		//
-		// Setting `is_readonly' to false will allow you to create a writable
-		// reference to a read-only variable.  This is used by foreach and using.
-		//
-		public LocalVariableReference (Block block, string name, Location l,
-					       LocalInfo local_info, bool is_readonly)
-			: this (block, name, l)
-		{
-			this.local_info = local_info;
-			this.is_readonly = is_readonly;
 		}
 
 		public override VariableInfo VariableInfo {
@@ -4488,27 +4473,14 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public bool IsReadOnly {
-			get { return is_readonly; }
-		}
-
 		public override string Name {
-			get { return name; }
+			get { return local_info.Name; }
 		}
 
 		public bool VerifyAssigned (ResolveContext ec)
 		{
 			VariableInfo variable_info = local_info.VariableInfo;
 			return variable_info == null || variable_info.IsAssigned (ec, loc);
-		}
-
-		void ResolveLocalInfo ()
-		{
-			if (local_info == null) {
-				local_info = Block.GetLocalInfo (Name);
-				type = local_info.VariableType;
-				is_readonly = local_info.ReadOnly;
-			}
 		}
 
 		public override void SetHasAddressTaken ()
@@ -4529,10 +4501,6 @@ namespace Mono.CSharp {
 
 		Expression DoResolveBase (ResolveContext ec)
 		{
-			Expression e = Block.GetConstantExpression (Name);
-			if (e != null)
-				return e.Resolve (ec);
-
 			VerifyAssigned (ec);
 
 			//
@@ -4550,43 +4518,24 @@ namespace Mono.CSharp {
 			}
 
 			eclass = ExprClass.Variable;
-			type = local_info.VariableType;
+			type = local_info.Type;
 			return this;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			ResolveLocalInfo ();
-			local_info.Used = true;
+			local_info.SetIsUsed ();
 
-			if (type == null && local_info.Type is VarExpr) {
-			    local_info.VariableType = TypeManager.object_type;
-				Error_VariableIsUsedBeforeItIsDeclared (ec.Report, Name);
-			    return null;
-			}
-			
 			return DoResolveBase (ec);
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			ResolveLocalInfo ();
-
 			// is out param
 			if (right_side == EmptyExpression.OutAccess.Instance)
-				local_info.Used = true;
+				local_info.SetIsUsed ();
 
-			// Infer implicitly typed local variable
-			if (type == null) {
-				VarExpr ve = local_info.Type as VarExpr;
-				if (ve != null) {
-					if (!ve.InferType (ec, right_side))
-						return null;
-					type = local_info.VariableType = ve.Type;
-				}
-			}
-						
-			if (is_readonly) {
+			if (local_info.IsReadonly && !ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.UsingInitializerScope)) {
 				int code;
 				string msg;
 				if (right_side == EmptyExpression.OutAccess.Instance) {
@@ -4610,7 +4559,7 @@ namespace Mono.CSharp {
 
 		public override int GetHashCode ()
 		{
-			return Name.GetHashCode ();
+			return local_info.GetHashCode ();
 		}
 
 		public override bool Equals (object obj)
@@ -4619,7 +4568,7 @@ namespace Mono.CSharp {
 			if (lvr == null)
 				return false;
 
-			return Name == lvr.Name && Block == lvr.Block;
+			return local_info == lvr.local_info;
 		}
 
 		protected override ILocalVariable Variable {
@@ -4633,11 +4582,7 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			LocalVariableReference target = (LocalVariableReference) t;
-			
-			target.Block = clonectx.LookupBlock (Block);
-			if (local_info != null)
-				target.local_info = clonectx.LookupVariable (local_info);
+			// Nothing
 		}
 	}
 
@@ -4645,14 +4590,17 @@ namespace Mono.CSharp {
 	///   This represents a reference to a parameter in the intermediate
 	///   representation.
 	/// </summary>
-	public class ParameterReference : VariableReference {
-		readonly ToplevelParameterInfo pi;
+	public class ParameterReference : VariableReference
+	{
+		protected ParametersBlock.ParameterInfo pi;
 
-		public ParameterReference (ToplevelParameterInfo pi, Location loc)
+		public ParameterReference (ParametersBlock.ParameterInfo pi, Location loc)
 		{
 			this.pi = pi;
 			this.loc = loc;
 		}
+
+		#region Properties
 
 		public override bool IsRef {
 			get { return (pi.Parameter.ModFlags & Parameter.Modifier.ISBYREF) != 0; }
@@ -4691,6 +4639,8 @@ namespace Mono.CSharp {
 			get { return Parameter; }
 		}
 
+		#endregion
+
 		public bool IsAssigned (ResolveContext ec, Location loc)
 		{
 			// HACK: Variables are not captured in probing mode
@@ -4720,42 +4670,24 @@ namespace Mono.CSharp {
 			type = pi.ParameterType;
 			eclass = ExprClass.Variable;
 
-			AnonymousExpression am = ec.CurrentAnonymousMethod;
-			if (am == null)
-				return true;
+			//
+			// If we are referencing a parameter from the external block
+			// flag it for capturing
+			//
+			if (ec.MustCaptureVariable (pi)) {
+				if (Parameter.HasAddressTaken)
+					AnonymousMethodExpression.Error_AddressOfCapturedVar (ec, this, loc);
 
-			Block b = ec.CurrentBlock;
-			while (b != null) {
-				b = b.Toplevel;
-				IParameterData[] p = b.Toplevel.Parameters.FixedParameters;
-				for (int i = 0; i < p.Length; ++i) {
-					if (p [i] != Parameter)
-						continue;
-
-					//
-					// Don't capture local parameters
-					//
-					if (b == ec.CurrentBlock.Toplevel && !am.IsIterator)
-						return true;
-
-					if (IsRef) {
-						ec.Report.Error (1628, loc,
-							"Parameter `{0}' cannot be used inside `{1}' when using `ref' or `out' modifier",
-							Name, am.ContainerType);
-					}
-
-					if (pi.Parameter.HasAddressTaken)
-						AnonymousMethodExpression.Error_AddressOfCapturedVar (ec, this, loc);
-
-					if (ec.IsVariableCapturingRequired && !b.Toplevel.IsExpressionTree) {
-						AnonymousMethodStorey storey = pi.Block.CreateAnonymousMethodStorey (ec);
-						storey.CaptureParameter (ec, this);
-					}
-
-					return true;
+				if (IsRef) {
+					ec.Report.Error (1628, loc,
+						"Parameter `{0}' cannot be used inside `{1}' when using `ref' or `out' modifier",
+						Name, ec.CurrentAnonymousMethod.ContainerType);
 				}
 
-				b = b.Parent;
+				if (ec.IsVariableCapturingRequired && !pi.Block.ParametersBlock.IsExpressionTree) {
+					AnonymousMethodStorey storey = pi.Block.Explicit.CreateAnonymousMethodStorey (ec);
+					storey.CaptureParameter (ec, this);
+				}
 			}
 
 			return true;
@@ -4791,6 +4723,7 @@ namespace Mono.CSharp {
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			// Nothing to clone
+			return;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -5641,9 +5574,16 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// Array initializer expression, the expression is allowed in
+	// variable or field initialization only which makes it tricky as
+	// the type has to be infered based on the context either from field
+	// type or variable type (think of multiple declarators)
+	//
 	public class ArrayInitializer : Expression
 	{
 		List<Expression> elements;
+		BlockVariableDeclaration variable;
 
 		public ArrayInitializer (List<Expression> init, Location loc)
 		{
@@ -5652,15 +5592,37 @@ namespace Mono.CSharp {
 		}
 
 		public ArrayInitializer (int count, Location loc)
+			: this (new List<Expression> (count), loc)
 		{
-			elements = new List<Expression> (count);
-			this.loc = loc;
 		}
 
 		public ArrayInitializer (Location loc)
 			: this (4, loc)
 		{
 		}
+
+		#region Properties
+
+		public int Count {
+			get { return elements.Count; }
+		}
+
+		public Expression this [int index] {
+			get {
+				return elements [index];
+			}
+		}
+
+		public BlockVariableDeclaration VariableDeclaration {
+			get {
+				return variable;
+			}
+			set {
+				variable = value;
+			}
+		}
+
+		#endregion
 
 		public void Add (Expression expr)
 		{
@@ -5681,23 +5643,29 @@ namespace Mono.CSharp {
 				target.elements.Add (element.Clone (clonectx));
 		}
 
-		public int Count {
-			get { return elements.Count; }
-		}
-
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			var current_field = rc.CurrentMemberDefinition as FieldBase;
-			return new ArrayCreation (new TypeExpression (current_field.MemberType, current_field.Location), this).Resolve (rc);
+			TypeExpression type;
+			if (current_field != null) {
+				type = new TypeExpression (current_field.MemberType, current_field.Location);
+			} else if (variable != null) {
+				if (variable.TypeExpression is VarExpr) {
+					rc.Report.Error (820, loc, "An implicitly typed local variable declarator cannot use an array initializer");
+					return EmptyExpression.Null;
+				}
+
+				type = new TypeExpression (variable.Variable.Type, variable.Variable.Location);
+			} else {
+				throw new NotImplementedException ("Unexpected array initializer context");
+			}
+
+			return new ArrayCreation (type, this).Resolve (rc);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
 			throw new InternalErrorException ("Missing Resolve call");
-		}
-
-		public Expression this [int index] {
-			get { return elements [index]; }
 		}
 	}
 
@@ -5967,11 +5935,6 @@ namespace Mono.CSharp {
 		//
 		bool ResolveArrayType (ResolveContext ec)
 		{
-			if (requested_base_type is VarExpr) {
-				ec.Report.Error (820, loc, "An implicitly typed local variable declarator cannot use an array initializer");
-				return false;
-			}
-			
 			//
 			// Lookup the type
 			//
@@ -6567,8 +6530,8 @@ namespace Mono.CSharp {
 
 			var block = ec.CurrentBlock;
 			if (block != null) {
-				if (block.Toplevel.ThisVariable != null)
-					variable_info = block.Toplevel.ThisVariable.VariableInfo;
+				if (block.ParametersBlock.TopBlock.ThisVariable != null)
+					variable_info = block.ParametersBlock.TopBlock.ThisVariable.VariableInfo;
 
 				AnonymousExpression am = ec.CurrentAnonymousMethod;
 				if (am != null && ec.IsVariableCapturingRequired) {
@@ -6673,7 +6636,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			type = TypeManager.runtime_argument_handle_type;
 
-			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope) || !ec.CurrentBlock.Toplevel.Parameters.HasArglist) {
+			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope) || !ec.CurrentBlock.ParametersBlock.Parameters.HasArglist) {
 				ec.Report.Error (190, loc,
 					"The __arglist construct is valid only within a variable argument method");
 			}

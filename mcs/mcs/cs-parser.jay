@@ -57,6 +57,8 @@ namespace Mono.CSharp
 		///   them.  
 		/// </summary>
 		Block      current_block;
+		
+		BlockVariableDeclaration current_variable;
 
 		Delegate   current_delegate;
 		
@@ -138,7 +140,6 @@ namespace Mono.CSharp
 		// be recursive
 		//
 		static List<Parameter> parameters_bucket = new List<Parameter> (6);
-		static List<object> variables_bucket = new List<object> (6);
 		
 		//
 		// Full AST support members
@@ -1145,11 +1146,15 @@ opt_field_initializer
 	| ASSIGN
 	  {
 	  	++lexer.parsing_block;
+		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+	  	start_block (GetLocation ($1));
 	  }
 	  variable_initializer
 	  {
 	  	--lexer.parsing_block;
 		current_field.Initializer = (Expression) $3;
+		end_block (lexer.Location);
+		current_local_parameters = null;
 	  }
 	;
 	
@@ -1230,66 +1235,6 @@ fixed_field_size
 		Report.Error (443, lexer.Location, "Value or constant expected");
 		$$ = null;
 	  }	  
-	;
-	
-local_variable_declarators	
-	: local_variable_declarator 
-	  {
-		variables_bucket.Clear ();
-		if ($1 != null)
-			variables_bucket.Add ($1);
-		$$ = variables_bucket;
-	  }
-	| local_variable_declarators COMMA local_variable_declarator
-	  {
-		var decls = (List<object>) $1;
-		decls.Add ($3);
-		lbag.AppendTo ($3, GetLocation ($2));
-		$$ = $1;
-	  }
-	;
-	
-local_variable_declarator
-	: IDENTIFIER ASSIGN local_variable_initializer
-	  {
-		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, (Expression) $3);
-		lbag.AddLocation ($$, GetLocation ($2));
-	  }
-	| IDENTIFIER
-	  {
-		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, null);
-	  }
-	| IDENTIFIER variable_bad_array
-	  {
-		$$ = null;
-	  }
-	;
-
-local_variable_initializer
-	: expression
-	| array_initializer
-	| STACKALLOC simple_type OPEN_BRACKET_EXPR expression CLOSE_BRACKET
-	  {
-		$$ = new StackAlloc ((Expression) $2, (Expression) $4, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
-	  }
-	| ARGLIST
-	  {
-		$$ = new ArglistAccess (GetLocation ($1));
-	  }
-	| STACKALLOC simple_type
-	  {
-		Report.Error (1575, GetLocation ($1), "A stackalloc expression requires [] after type");
-		$$ = new StackAlloc ((Expression) $2, null, GetLocation ($1));		
-	  }
-	;
-
-variable_bad_array
-	: OPEN_BRACKET_EXPR opt_expression CLOSE_BRACKET
-	  {
-		Report.Error (650, GetLocation ($1), "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
-			"To declare a fixed size buffer field, use the fixed keyword before the field type");
-	  }
 	;
 
 variable_initializer
@@ -1463,27 +1408,27 @@ formal_parameter_list
 	: fixed_parameters
 	  { 
 		var pars_list = (List<Parameter>) $1;
-	  	$$ = new ParametersCompiled (compiler, pars_list.ToArray ());
+	  	$$ = new ParametersCompiled (pars_list.ToArray ());
 	  } 
 	| fixed_parameters COMMA parameter_array
 	  {
 		var pars_list = (List<Parameter>) $1;
 		pars_list.Add ((Parameter) $3);
 
-		$$ = new ParametersCompiled (compiler, pars_list.ToArray ()); 
+		$$ = new ParametersCompiled (pars_list.ToArray ()); 
 	  }
 	| fixed_parameters COMMA arglist_modifier
 	  {
 		var pars_list = (List<Parameter>) $1;
 		pars_list.Add (new ArglistParameter (GetLocation ($3)));
-		$$ = new ParametersCompiled (compiler, pars_list.ToArray (), true);
+		$$ = new ParametersCompiled (pars_list.ToArray (), true);
 	  }
 	| parameter_array COMMA error
 	  {
 		if ($1 != null)
 			Report.Error (231, ((Parameter) $1).Location, "A params parameter must be the last parameter in a formal parameter list");
 
-		$$ = new ParametersCompiled (compiler, new Parameter[] { (Parameter) $1 } );			
+		$$ = new ParametersCompiled (new Parameter[] { (Parameter) $1 } );			
 	  }
 	| fixed_parameters COMMA parameter_array COMMA error
 	  {
@@ -1493,13 +1438,13 @@ formal_parameter_list
 		var pars_list = (List<Parameter>) $1;
 		pars_list.Add (new ArglistParameter (GetLocation ($3)));
 
-		$$ = new ParametersCompiled (compiler, pars_list.ToArray (), true);
+		$$ = new ParametersCompiled (pars_list.ToArray (), true);
 	  }
 	| arglist_modifier COMMA error
 	  {
 		Report.Error (257, GetLocation ($1), "An __arglist parameter must be the last parameter in a formal parameter list");
 
-		$$ = new ParametersCompiled (compiler, new Parameter [] { new ArglistParameter (GetLocation ($1)) }, true);
+		$$ = new ParametersCompiled (new Parameter [] { new ArglistParameter (GetLocation ($1)) }, true);
 	  }
 	| fixed_parameters COMMA ARGLIST COMMA error 
 	  {
@@ -1508,15 +1453,15 @@ formal_parameter_list
 		var pars_list = (List<Parameter>) $1;
 		pars_list.Add (new ArglistParameter (GetLocation ($3)));
 
-		$$ = new ParametersCompiled (compiler, pars_list.ToArray (), true);
+		$$ = new ParametersCompiled (pars_list.ToArray (), true);
 	  }
 	| parameter_array 
 	  {
-		$$ = new ParametersCompiled (compiler, new Parameter[] { (Parameter) $1 } );
+		$$ = new ParametersCompiled (new Parameter[] { (Parameter) $1 } );
 	  }
 	| arglist_modifier
 	  {
-		$$ = new ParametersCompiled (compiler, new Parameter [] { new ArglistParameter (GetLocation ($1)) }, true);
+		$$ = new ParametersCompiled (new Parameter [] { new ArglistParameter (GetLocation ($1)) }, true);
 	  }
 	;
 
@@ -2987,7 +2932,7 @@ type_expression
 	| VOID pointer_stars
 	  {
 		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), (ComposedTypeSpecifier) $2);
-	  }	
+	  }
 	;
 
 type_list
@@ -3630,13 +3575,17 @@ opt_array_initializer
 array_initializer
 	: OPEN_BRACE CLOSE_BRACE
 	  {
-		$$ = new ArrayInitializer (0, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($2));
+		var ai = new ArrayInitializer (0, GetLocation ($1));
+		ai.VariableDeclaration = current_variable;
+		lbag.AddLocation (ai, GetLocation ($2));
+		$$ = ai;
 	  }
 	| OPEN_BRACE variable_initializer_list opt_comma CLOSE_BRACE
 	  {
-		$$ = new ArrayInitializer ((List<Expression>) $2, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($3));
+		var ai = new ArrayInitializer ((List<Expression>) $2, GetLocation ($1));
+		ai.VariableDeclaration = current_variable;
+		lbag.AddLocation (ai, GetLocation ($3));
+		$$ = ai;
 	  }
 	;
 
@@ -3782,8 +3731,8 @@ anonymous_method_expression
 	  }
 	  block
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $4);
-	}
+		$$ = end_anonymous ((ParametersBlock) $4);
+	  }
 	;
 
 opt_anonymous_method_signature
@@ -4139,7 +4088,7 @@ opt_lambda_parameter_list
 	: /* empty */			{ $$ = ParametersCompiled.EmptyReadOnlyParameters; }
 	| lambda_parameter_list		{ 
 		var pars_list = (List<Parameter>) $1;
-		$$ = new ParametersCompiled (compiler, pars_list.ToArray ());
+		$$ = new ParametersCompiled (pars_list.ToArray ());
 	  }
 	;
 
@@ -4153,7 +4102,8 @@ lambda_expression_body
 		b.AddStatement (new ContextualReturn ((Expression) $2));
 		$$ = b;
 	  } 
-	| block { 
+	| block
+	  { 
 	  	$$ = $1; 
 	  } 
 	;
@@ -4163,11 +4113,11 @@ lambda_expression
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
 		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
-		start_anonymous (true, new ParametersCompiled (compiler, p), GetLocation ($1));
+		start_anonymous (true, new ParametersCompiled (p), GetLocation ($1));
 	  }
 	  lambda_expression_body
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $4);
+		$$ = end_anonymous ((ParametersBlock) $4);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| OPEN_PARENS_LAMBDA
@@ -4184,7 +4134,7 @@ lambda_expression
 	  }
 	  lambda_expression_body 
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $7);
+		$$ = end_anonymous ((ParametersBlock) $7);
 		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($4));
 	  }
 	;
@@ -4376,7 +4326,7 @@ opt_class_base
 	;
 
 opt_type_parameter_constraints_clauses
-	: /* empty */		{ $$ = null; }
+	: /* empty */
 	| type_parameter_constraints_clauses 
 	  {
 		$$ = $1;
@@ -4561,12 +4511,9 @@ statement_list
 	;
 
 statement
-	: declaration_statement
+	: block_variable_declaration
 	  {
-		if ($1 != null && (Block) $1 != current_block){
-			current_block.AddStatement ((Statement) $1);
-			current_block = (Block) $1;
-		}
+		current_block.AddStatement ((Statement) $1);
 	  }
 	| valid_declaration_statement
 	  {
@@ -4587,12 +4534,9 @@ interactive_statement_list
 	;
 
 interactive_statement
-	: declaration_statement
+	: block_variable_declaration
 	  {
-		if ($1 != null && (Block) $1 != current_block){
-			current_block.AddStatement ((Statement) $1);
-			current_block = (Block) $1;
-		}
+		current_block.AddStatement ((Statement) $1);
 	  }
 	| interactive_valid_declaration_statement
 	  {
@@ -4635,7 +4579,7 @@ interactive_valid_declaration_statement
 
 embedded_statement
 	: valid_declaration_statement
-	| declaration_statement
+	| block_variable_declaration
 	  {
 		  Report.Error (1023, GetLocation ($1), "An embedded statement may not be a declaration or labeled statement");
 		  $$ = null;
@@ -4664,25 +4608,6 @@ labeled_statement
 			current_block.AddStatement (labeled);
 	  }
 	  statement
-	;
-
-declaration_statement
-	: local_variable_declaration SEMICOLON
-	  {
-		if ($1 != null){
-			var de = (Tuple<FullNamedExpression, List<object>>) $1;
-			$$ = declare_local_variables (de.Item1, de.Item2, de.Item1.Location);
-		}
-	  }
-
-	| local_constant_declaration SEMICOLON
-	  {
-		if ($1 != null){
-			var de = (Tuple<FullNamedExpression, List<object>>) $1;
-
-			$$ = declare_local_constants (de.Item1, de.Item2);
-		}
-	  }
 	;
 
 variable_type
@@ -4782,60 +4707,132 @@ pointer_star
 	  }
 	;
 
-local_variable_declaration
-	: variable_type local_variable_declarators
+block_variable_declaration
+	: variable_type IDENTIFIER
 	  {
-		if ($1 != null) {
-			VarExpr ve = $1 as VarExpr;
-			if (ve != null) {
-				if (!((VariableDeclaration) ((List<object>)$2) [0]).HasInitializer)
-					ve.VariableInitializersCount = 0;
-				else
-					ve.VariableInitializersCount = ((List<object>)$2).Count;
-			}
-				
-			$$ = new Tuple<FullNamedExpression, List<object>> ((FullNamedExpression) $1, (List<object>) $2);
-		} else
-			$$ = null;
+		var lt = (Tokenizer.LocatedToken) $2;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (li);
+		current_variable = new BlockVariableDeclaration ((FullNamedExpression) $1, li);
 	  }
- 	;
-
-local_constant_declaration
-	: CONST variable_type local_constant_declarators
+	  opt_local_variable_initializer opt_variable_declarators SEMICOLON
 	  {
-		if ($2 != null)
-			$$ = new Tuple<FullNamedExpression, List<object>> ((FullNamedExpression) $2, (List<object>) $3);
-		else
-			$$ = null;
+		$$ = current_variable;
+		current_variable = null;
+		lbag.AddLocation ($$, GetLocation ($6));
+	  }
+	| CONST variable_type IDENTIFIER
+	  {
+		var lt = (Tokenizer.LocatedToken) $3;
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.Constant, lt.Location);
+		current_block.AddLocalName (li);
+		current_variable = new BlockConstantDeclaration ((FullNamedExpression) $2, li);
+	  }
+	  const_variable_initializer opt_const_declarators SEMICOLON
+	  {
+		$$ = current_variable;
+		current_variable = null;
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($7));
 	  }
 	;
-	
-local_constant_declarators
-	: local_constant_declarator 
+
+opt_local_variable_initializer
+	: /* empty */
+	| ASSIGN block_variable_initializer
 	  {
-  	  	variables_bucket.Clear ();
-		if ($1 != null)
-			variables_bucket.Add ($1);
-		$$ = variables_bucket;
+		current_variable.Initializer = (Expression) $2;
+		// TODO: lbag
 	  }
-	| local_constant_declarators COMMA local_constant_declarator
+	| error
 	  {
-		if ($3 != null) {
-			var constants = (List<object>) $1;
-			constants.Add ($3);
+	  	if (yyToken == Token.OPEN_BRACKET_EXPR) {
+			Report.Error (650, lexer.Location,
+				"Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. To declare a fixed size buffer field, use the fixed keyword before the field type");
+		} else {
+			Error_SyntaxError (yyToken);
 		}
 	  }
 	;
 
-local_constant_declarator
-	: IDENTIFIER ASSIGN constant_initializer_expr
+opt_variable_declarators
+	: /* empty */
+	| variable_declarators
+	;
+	
+variable_declarators
+	: variable_declarator
+	| variable_declarators variable_declarator
+	;
+	
+variable_declarator
+	: COMMA IDENTIFIER
 	  {
-		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, (Expression) $3);
+		var lt = (Tokenizer.LocatedToken) $2;	  
+		var li = new LocalVariable (current_variable.Variable, lt.Value, lt.Location);
+		var d = new BlockVariableDeclaration.Declarator (li, null);
+		current_variable.AddDeclarator (d);
+		current_block.AddLocalName (li);
+	  	lbag.AddLocation (d, GetLocation ($1));
 	  }
-	| IDENTIFIER error
+	| COMMA IDENTIFIER ASSIGN block_variable_initializer
 	  {
-		Report.Error (145, GetLocation ($1), "A const field requires a value to be provided");
-		$$ = null;
+		var lt = (Tokenizer.LocatedToken) $2;	  
+		var li = new LocalVariable (current_variable.Variable, lt.Value, lt.Location);
+		var d = new BlockVariableDeclaration.Declarator (li, (Expression) $4);
+		current_variable.AddDeclarator (d);
+		current_block.AddLocalName (li);
+	  	lbag.AddLocation (d, GetLocation ($1), GetLocation ($3));
+	  }
+	;
+	
+const_variable_initializer
+	: /* empty */
+	  {
+		Report.Error (145, lexer.Location, "A const field requires a value to be provided");
+	  }
+	| ASSIGN constant_initializer_expr 
+	  {
+		current_variable.Initializer = (Expression) $2;
+	  }
+	;
+	
+opt_const_declarators
+	: /* empty */
+	| const_declarators
+	;
+	
+const_declarators
+	: const_declarator
+	| const_declarators const_declarator
+	;
+	
+const_declarator
+	: COMMA IDENTIFIER ASSIGN constant_initializer_expr
+	  {
+		var lt = (Tokenizer.LocatedToken) $2;	  
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.Constant, lt.Location);
+		var d = new BlockVariableDeclaration.Declarator (li, (Expression) $4);
+		current_variable.AddDeclarator (d);
+		current_block.AddLocalName (li);
+	  	lbag.AddLocation (d, GetLocation ($1), GetLocation ($3));
+	  }
+	;
+	
+block_variable_initializer
+	: variable_initializer
+	| STACKALLOC simple_type OPEN_BRACKET_EXPR expression CLOSE_BRACKET
+	  {
+		$$ = new StackAlloc ((Expression) $2, (Expression) $4, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
+	  }
+	| ARGLIST
+	  {
+		$$ = new ArglistAccess (GetLocation ($1));
+	  }
+	| STACKALLOC simple_type
+	  {
+		Report.Error (1575, GetLocation ($1), "A stackalloc expression requires [] after type");
+		$$ = new StackAlloc ((Expression) $2, null, GetLocation ($1));		
 	  }
 	;
 
@@ -5027,54 +5024,22 @@ do_statement
 	;
 
 for_statement
-	: FOR open_parens_any opt_for_initializer SEMICOLON
+	: FOR open_parens_any
 	  {
-		Location l = lexer.Location;
-		start_block (l);  
-		Block assign_block = current_block;
-
-		if ($3 is Tuple<FullNamedExpression, List<object>>){
-			var de = (Tuple<FullNamedExpression, List<object>>) $3;
-			
-			var type = de.Item1;
-
-			foreach (VariableDeclaration decl in de.Item2){
-
-				LocalInfo vi;
-
-				vi = current_block.AddVariable (type, decl.identifier, decl.Location);
-				if (vi == null)
-					continue;
-
-				Expression expr = decl.GetInitializer (type);
-					
-				LocalVariableReference var;
-				var = new LocalVariableReference (assign_block, decl.identifier, l);
-
-				if (expr != null) {
-					Assign a = new SimpleAssign (var, expr, decl.Location);
-					
-					assign_block.AddStatement (new StatementExpression (a));
-				}
-			}
-			
-			// Note: the $$ below refers to the value of this code block, not of the LHS non-terminal.
-			// This can be referred to as $5 below.
-			$$ = null;
-		} else {
-			$$ = $3;
-		}
-	  } 
+		start_block (GetLocation ($2));
+		current_block.IsCompilerGenerated = true;
+	  }
+	  opt_for_initializer SEMICOLON
 	  opt_for_condition SEMICOLON
 	  opt_for_iterator CLOSE_PARENS 
 	  embedded_statement
 	  {
-		For f = new For ((Statement) $5, (BooleanExpression) $6, (Statement) $8, (Statement) $10, GetLocation ($1));
+		For f = new For ((Statement) $4, (BooleanExpression) $6, (Statement) $8, (Statement) $10, GetLocation ($1));
 		current_block.AddStatement (f);
 		
-		lbag.AddStatement (f, GetLocation ($2), GetLocation ($4), GetLocation ($7), GetLocation ($9));
+		lbag.AddStatement (f, GetLocation ($2), GetLocation ($5), GetLocation ($7), GetLocation ($9));
 
-		$$ = end_block (lexer.Location);
+		$$ = end_block (GetLocation ($5));
 	  }
 	;
 
@@ -5084,7 +5049,18 @@ opt_for_initializer
 	;
 
 for_initializer
-	: local_variable_declaration
+	: variable_type IDENTIFIER
+	  {
+		var lt = (Tokenizer.LocatedToken) $2;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (li);
+		current_variable = new BlockVariableDeclaration ((FullNamedExpression) $1, li);
+	  }
+	  opt_local_variable_initializer opt_variable_declarators
+	  {
+		$$ = current_variable;
+		current_variable = null;
+	  }
 	| statement_expression_list
 	;
 
@@ -5123,37 +5099,23 @@ foreach_statement
 		Report.Error (230, GetLocation ($1), "Type and identifier are both required in a foreach statement");
 		$$ = null;
 	  }
-	| FOREACH open_parens_any type IDENTIFIER IN
-	  expression CLOSE_PARENS 
+	| FOREACH open_parens_any type IDENTIFIER IN expression CLOSE_PARENS 
 	  {
-		start_block (lexer.Location);
-		Block foreach_block = current_block;
-
+		start_block (GetLocation ($2));
+		current_block.IsCompilerGenerated = true;
+		
 		var lt = (Tokenizer.LocatedToken) $4;
-		Location l = lt.Location;
-		LocalInfo vi = foreach_block.AddVariable ((Expression) $3, lt.Value, l);
-		if (vi != null) {
-			vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Foreach);
-
-			// Get a writable reference to this read-only variable.
-			//
-			// Note that the $$ here refers to the value of _this_ code block,
-			// not the value of the LHS non-terminal.  This can be referred to as $8 below.
-			$$ = new LocalVariableReference (foreach_block, lt.Value, l, vi, false);
-		} else {
-			$$ = null;
-		}
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ForeachVariable | LocalVariable.Flags.Used, lt.Location);
+		current_block.AddLocalName (li);
+		$$ = li;
 	  } 
-	  embedded_statement 
+	  embedded_statement
 	  {
-		if ($8 != null) {
-			Foreach f = new Foreach ((Expression) $3, (LocalVariableReference) $8, (Expression) $6, (Statement) $9, GetLocation ($1));
-			lbag.AddStatement (f, GetLocation ($2), GetLocation ($5), GetLocation ($7));
-			
-			current_block.AddStatement (f);
-		}
-
-		$$ = end_block (lexer.Location);
+		Foreach f = new Foreach ((Expression) $3, (LocalVariable) $8, (Expression) $6, (Statement) $9, GetLocation ($1));
+		current_block.AddStatement (f);
+		
+		lbag.AddStatement (f, GetLocation ($2), GetLocation ($5), GetLocation ($7));
+		$$ = end_block (GetLocation ($7));
 	  }
 	;
 
@@ -5230,7 +5192,7 @@ yield_statement
 			Report.FeatureIsNotAvailable (lt.Location, "iterators");
 		}
 		
-		current_block.Toplevel.IsIterator = true;
+		current_block.ParametersBlock.TopBlock.IsIterator = true;
 		$$ = new Yield ((Expression) $3, lt.Location);
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
 	  }
@@ -5244,7 +5206,7 @@ yield_statement
 			Report.FeatureIsNotAvailable (lt.Location, "iterators");
 		}
 		
-		current_block.Toplevel.IsIterator = true;
+		current_block.ParametersBlock.TopBlock.IsIterator = true;
 		$$ = new YieldBreak (lt.Location);
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($3));
 	  }
@@ -5304,63 +5266,44 @@ catch_clauses
 	;
 
 opt_identifier
-	: /* empty */	{ $$ = null; }
+	: /* empty */
 	| IDENTIFIER
 	;
 
 catch_clause 
-	: CATCH opt_catch_args 
+	: CATCH block
 	  {
-		if ($2 != null) {
-			var cc = (Tuple<FullNamedExpression, Tokenizer.LocatedToken>) $2;
-			var lt = cc.Item2;
-
-			if (lt != null){
-				List<object> one = new List<object> (1);
-
-				one.Add (new VariableDeclaration (lt, null));
-
-				start_block (lexer.Location);
-				current_block = declare_local_variables (cc.Item1, one, lt.Location);
-			}
-		}
-	  } block {
-		Expression type = null;
-		string id = null;
-		Block var_block = null;
-
-		if ($2 != null){
-			var cc = (Tuple<FullNamedExpression, Tokenizer.LocatedToken>) $2;
-			type = cc.Item1;
-			var lt = cc.Item2;
-
-			if (lt != null){
-				id = lt.Value;
-				var_block = end_block (lexer.Location);
-			}
-		}
-
-		$$ = new Catch (type, id, (Block) $4, var_block, ((Block) $4).loc);
-		lbag.AddLocation ($$, GetLocation ($1));
-		lbag.AppendTo ($$, lbag.GetLocations ($2));
+		$$ = new Catch ((Block) $2, GetLocation ($1));
 	  }
-        ;
-
-opt_catch_args
-	: /* empty */ { $$ = null; }
-	| catch_args
-	;	  
-
-catch_args 
-	: open_parens_any type opt_identifier CLOSE_PARENS 
+	| CATCH open_parens_any type opt_identifier CLOSE_PARENS
 	  {
-		$$ = new Tuple<FullNamedExpression, Tokenizer.LocatedToken> ((FullNamedExpression)$2, (Tokenizer.LocatedToken) $3);
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($4));
+		start_block (GetLocation ($2));
+		var c = new Catch (current_block, GetLocation ($1));
+		c.TypeExpression = (FullNamedExpression) $3;
+
+		if ($4 != null) {
+			var lt = (Tokenizer.LocatedToken) $4;
+			c.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
+			current_block.AddLocalName (c.Variable);
+		}
+		
+		lbag.AddLocation (c, GetLocation ($2), GetLocation ($5));
+		$$ = c;
 	  }
-	| open_parens_any CLOSE_PARENS 
+	  block_prepared
 	  {
-		Report.Error (1015, GetLocation ($1), "A type that derives from `System.Exception', `object', or `string' expected");
-		$$ = null;
+		$$ = $6;
+	  }
+	| CATCH open_parens_any error
+	  {
+	  	if (yyToken == Token.CLOSE_PARENS) {
+			Report.Error (1015, lexer.Location,
+				"A type that derives from `System.Exception', `object', or `string' expected");
+		} else {
+			Error_SyntaxError (yyToken);
+		}
+		
+		$$ = new Catch (null, GetLocation ($1));
 	  }
 	;
 
@@ -5388,64 +5331,6 @@ unsafe_statement
 	  }
 	;
 
-fixed_statement
-	: FIXED open_parens_any 
-	  type_and_void fixed_pointer_declarators 
-	  CLOSE_PARENS
-	  {
-		start_block (lexer.Location);
-	  }
-	  embedded_statement 
-	  {
-		Expression type = (Expression) $3;
-	  	var list = (List<KeyValuePair<Tokenizer.LocatedToken, Expression>>) $4;
-		Fixed f = new Fixed (type,
-			list.ConvertAll (i => {
-				var v = new KeyValuePair<LocalInfo, Expression> (current_block.AddVariable (type, i.Key.Value, i.Key.Location), i.Value);
-				if (v.Key != null) {
-					v.Key.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
-					v.Key.Pinned = true;
-				}
-				return v;
-			}), (Statement) $7, GetLocation ($1));
-
-		lbag.AddStatement (f, GetLocation ($2), GetLocation ($5));
-
-		current_block.AddStatement (f);
-
-		$$ = end_block (lexer.Location);
-	  }
-	;
-
-fixed_pointer_declarators
-	: fixed_pointer_declarator	{ 
-	   	var declarators = new List<KeyValuePair<Tokenizer.LocatedToken, Expression>> (2);
-	   	if ($1 != null)
-			declarators.Add ((KeyValuePair<Tokenizer.LocatedToken, Expression>)$1);
-		$$ = declarators;
-	  }
-	| fixed_pointer_declarators COMMA fixed_pointer_declarator
-	  {
-		var declarators = (List<KeyValuePair<Tokenizer.LocatedToken, Expression>>) $1;
-		if ($3 != null)
-			declarators.Add ((KeyValuePair<Tokenizer.LocatedToken, Expression>)$3);
-		$$ = declarators;
-	  }
-	;
-
-fixed_pointer_declarator
-	: IDENTIFIER ASSIGN expression
-	  {
-		var lt = (Tokenizer.LocatedToken) $1;
-		$$ = new KeyValuePair<Tokenizer.LocatedToken, Expression> (lt, (Expression) $3);
-	  }
-	| IDENTIFIER
-	  {
-		Report.Error (210, ((Tokenizer.LocatedToken) $1).Location, "You must provide an initializer in a fixed or using statement declaration");
-		$$ = null;
-	  }
-	;
-
 lock_statement
 	: LOCK open_parens_any expression CLOSE_PARENS embedded_statement
 	  {
@@ -5454,60 +5339,49 @@ lock_statement
 	  }
 	;
 
-using_statement
-	: USING open_parens_any local_variable_declaration CLOSE_PARENS
+fixed_statement
+	: FIXED open_parens_any variable_type IDENTIFIER
 	  {
-		start_block (lexer.Location);
-		Block assign_block = current_block;
-
-		var de = (Tuple<FullNamedExpression, List<object>>) $3;
-		Location l = GetLocation ($1);
-
-		var vars = new Stack<Tuple<LocalVariableReference, Expression>> ();
-
-		lbag.AddStatement (assign_block, GetLocation ($1), GetLocation ($2), GetLocation ($4));
-
-		foreach (VariableDeclaration decl in de.Item2) {
-			LocalInfo vi = current_block.AddVariable (de.Item1, decl.identifier, decl.Location);
-			if (vi == null)
-				continue;
-			vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Using);
-
-			Expression expr = decl.GetInitializer (de.Item1);
-			if (expr == null) {
-				Report.Error (210, l, "You must provide an initializer in a fixed or using statement declaration");
-				continue;
-			}
-			LocalVariableReference var;
-
-			// Get a writable reference to this read-only variable.
-			var = new LocalVariableReference (assign_block, decl.identifier, l, vi, false);
-
-			// This is so that it is not a warning on using variables
-			vi.Used = true;
-
-			vars.Push (new Tuple<LocalVariableReference, Expression> (var, expr));
-
-			// Assign a = new SimpleAssign (var, expr, decl.Location);
-			// assign_block.AddStatement (new StatementExpression (a));
-		}
-
-		// Note: the $$ here refers to the value of this code block and not of the LHS non-terminal.
-		// It can be referred to as $5 below.
-		$$ = vars;
+	    start_block (GetLocation ($2));
+	    
+		var lt = (Tokenizer.LocatedToken) $4;
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.FixedVariable | LocalVariable.Flags.Used, lt.Location);
+		current_block.AddLocalName (li);
+		current_variable = new Fixed.VariableDeclaration ((FullNamedExpression) $3, li);
+	  }
+	  using_or_fixed_variable_initializer opt_variable_declarators CLOSE_PARENS
+	  {
+		$$ = current_variable;
+		current_variable = null;
 	  }
 	  embedded_statement
 	  {
-		Statement stmt = (Statement) $6;
-		var vars = (Stack<Tuple<LocalVariableReference, Expression>>) $5;
-		Location l = GetLocation ($1);
+		Fixed f = new Fixed ((Fixed.VariableDeclaration) $9, (Statement) $10, GetLocation ($1));
+		current_block.AddStatement (f);
+		$$ = end_block (GetLocation ($8));
+	  }
+	;
 
-		while (vars.Count > 0) {
-			  var de = vars.Pop ();
-			  stmt = new Using (de.Item1, de.Item2, stmt, l);
-		}
-		current_block.AddStatement (stmt);
-		$$ = end_block (lexer.Location);
+using_statement
+	: USING open_parens_any variable_type IDENTIFIER
+	  {
+	    start_block (GetLocation ($2));
+	    
+		var lt = (Tokenizer.LocatedToken) $4;
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.UsingVariable | LocalVariable.Flags.Used, lt.Location);
+		current_block.AddLocalName (li);
+		current_variable = new Using.VariableDeclaration ((FullNamedExpression) $3, li);
+	  }
+	  using_or_fixed_variable_initializer opt_variable_declarators CLOSE_PARENS
+	  {
+		$$ = current_variable;	  
+		current_variable = null;
+	  }
+	  embedded_statement
+	  {
+		Using u = new Using ((Using.VariableDeclaration) $9, (Statement) $10, GetLocation ($1));
+		current_block.AddStatement (u);
+		$$ = end_block (GetLocation ($8));
 	  }
 	| USING open_parens_any expression CLOSE_PARENS
 	  {
@@ -5520,7 +5394,19 @@ using_statement
 		current_block.AddStatement (usingTemporary);
 		$$ = end_block (lexer.Location);
 	  }
-	; 
+	;
+	
+using_or_fixed_variable_initializer
+	: /* empty */
+	  {
+		Report.Error (210, lexer.Location, "You must provide an initializer in a fixed or using statement declaration");
+	  }
+	| ASSIGN variable_initializer
+	  {
+		current_variable.Initializer = (Expression) $2;
+		$$ = current_variable;
+	  }
+	;
 
 
 // LINQ
@@ -5569,16 +5455,18 @@ first_from_clause
 	  {
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  
-		var lt = (Tokenizer.LocatedToken) $2;	  
-		$$ = new Linq.QueryExpression (new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, new SimpleMemberName (lt.Value, lt.Location), GetLocation ($1)));
+		var lt = (Tokenizer.LocatedToken) $2;
+		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
+		$$ = new Linq.QueryExpression (new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1)));
 	  }
 	| FROM_FIRST type IDENTIFIER IN expression
 	  {
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $3;
+		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
 		$$ = new Linq.QueryExpression (
-			new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, new SimpleMemberName (lt.Value, lt.Location), GetLocation ($1)) {
+			new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
 				IdentifierType = (FullNamedExpression)$2
 			}
 		);
@@ -5590,16 +5478,18 @@ nested_from_clause
 	  {
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  
-		var lt = (Tokenizer.LocatedToken) $2;	  
-		$$ = new Linq.QueryExpression (new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, new SimpleMemberName (lt.Value, lt.Location), GetLocation ($1)));
+		var lt = (Tokenizer.LocatedToken) $2;
+		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
+		$$ = new Linq.QueryExpression (new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1)));
 	  }
 	| FROM type IDENTIFIER IN expression
 	  {
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $3;
+		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
 		$$ = new Linq.QueryExpression (
-			new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, new SimpleMemberName (lt.Value, lt.Location), GetLocation ($1)) {
+			new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
 				IdentifierType = (FullNamedExpression)$2
 			}
 		);
@@ -5614,7 +5504,7 @@ from_clause
 	  expression
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
-		var sn = new SimpleMemberName (lt.Value, lt.Location);
+		var sn = new Linq.RangeVariable (lt.Value, lt.Location);
 		$$ = new Linq.SelectMany ((Linq.QueryBlock)current_block, sn, (Expression)$5, GetLocation ($1));
 		
 		current_block.SetEndLocation (lexer.Location);
@@ -5629,7 +5519,7 @@ from_clause
 	  expression
 	  {
 		var lt = (Tokenizer.LocatedToken) $3;
-		var sn = new SimpleMemberName (lt.Value, lt.Location);
+		var sn = new Linq.RangeVariable (lt.Value, lt.Location);
 
 		$$ = new Linq.SelectMany ((Linq.QueryBlock)current_block, sn, (Expression)$6, GetLocation ($1)) {
 			IdentifierType = (FullNamedExpression)$2
@@ -5727,7 +5617,7 @@ let_clause
 	  expression
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
-		var sn = new SimpleMemberName (lt.Value, lt.Location);
+		var sn = new Linq.RangeVariable (lt.Value, lt.Location);
 	  	$$ = new Linq.Let ((Linq.QueryBlock) current_block, sn, (Expression)$5, GetLocation ($1));
 	  	
 		current_block.SetEndLocation (lexer.Location);
@@ -5778,27 +5668,39 @@ join_clause
 	  }
 	  expression opt_join_into
 	  {
-		var lt = (Tokenizer.LocatedToken) $2;
-		var sn = new SimpleMemberName (lt.Value, lt.Location);
-		SimpleMemberName sn2 = null;
-		
+		current_block.AddStatement (new ContextualReturn ((Expression) $11));
+		current_block.SetEndLocation (lexer.Location);
+	  
 		var outer_selector = linq_clause_blocks.Pop ();
 		var block = linq_clause_blocks.Pop ();
 
+		var lt = (Tokenizer.LocatedToken) $2;	
+		var sn = new Linq.RangeVariable (lt.Value, lt.Location);
+		Linq.RangeVariable into;
+		
 		if ($12 == null) {
+			into = sn;
 	  		$$ = new Linq.Join (block, sn, (Expression)$5, outer_selector, (Linq.QueryBlock) current_block, GetLocation ($1));
 		} else {
-			var lt2 = (Tokenizer.LocatedToken) $12;
-			sn2 = new SimpleMemberName (lt2.Value, lt2.Location);
-			$$ = new Linq.GroupJoin (block, sn, (Expression)$5, outer_selector, (Linq.QueryBlock) current_block,
-				sn2, GetLocation ($1));
+			//
+			// Set equals right side parent to beginning of linq query, it is not accessible therefore cannot cause name collisions
+			//
+			var parent = block.Parent;
+			while (parent is Linq.QueryBlock) {
+				parent = parent.Parent;
+			}
+			current_block.Parent = parent;
+			
+			((Linq.QueryBlock)current_block).AddRangeVariable (sn);
+		
+			lt = (Tokenizer.LocatedToken) $12;
+			into = new Linq.RangeVariable (lt.Value, lt.Location);
+
+			$$ = new Linq.GroupJoin (block, sn, (Expression)$5, outer_selector, (Linq.QueryBlock) current_block, into, GetLocation ($1));	
 		}
 
-		current_block.AddStatement (new ContextualReturn ((Expression) $11));
-		current_block.SetEndLocation (lexer.Location);
-		current_block = current_block.Parent;
-			
-		((Linq.QueryBlock)current_block).AddRangeVariable (sn2 ?? sn);
+		current_block = block.Parent;
+		((Linq.QueryBlock)current_block).AddRangeVariable (into);
 	  }
 	| JOIN type IDENTIFIER IN
 	  {
@@ -5826,29 +5728,43 @@ join_clause
 	  }
 	  expression opt_join_into
 	  {
-		var lt = (Tokenizer.LocatedToken) $3;
-		var sn = new SimpleMemberName (lt.Value, lt.Location);
-		SimpleMemberName sn2 = null;
+		current_block.AddStatement (new ContextualReturn ((Expression) $12));
+		current_block.SetEndLocation (lexer.Location);
+	  
 		var outer_selector = linq_clause_blocks.Pop ();
 		var block = linq_clause_blocks.Pop ();
 		
+		var lt = (Tokenizer.LocatedToken) $3;
+		var sn = new Linq.RangeVariable (lt.Value, lt.Location);
+		Linq.RangeVariable into;
+		
 		if ($13 == null) {
+			into = sn;		
 	  		$$ = new Linq.Join (block, sn, (Expression)$6, outer_selector, (Linq.QueryBlock) current_block, GetLocation ($1)) {
 	  			IdentifierType = (FullNamedExpression)$2
 	  		};
 		} else {
-			var lt2 = (Tokenizer.LocatedToken) $13;
-			sn2 = new SimpleMemberName (lt2.Value, lt2.Location);
-			$$ = new Linq.GroupJoin (block, sn, (Expression)$6, outer_selector, (Linq.QueryBlock) current_block, sn2, GetLocation ($1)) {
+			//
+			// Set equals right side parent to beginning of linq query, it is not accessible therefore cannot cause name collisions
+			//
+			var parent = block.Parent;
+			while (parent is Linq.QueryBlock) {
+				parent = parent.Parent;
+			}
+			current_block.Parent = parent;
+		
+			((Linq.QueryBlock)current_block).AddRangeVariable (sn);
+		
+			lt = (Tokenizer.LocatedToken) $13;
+			into = new Linq.RangeVariable (lt.Value, lt.Location); // TODO:
+			
+			$$ = new Linq.GroupJoin (block, sn, (Expression)$6, outer_selector, (Linq.QueryBlock) current_block, into, GetLocation ($1)) {
 	  			IdentifierType = (FullNamedExpression)$2
 	  		};			
 		}
 		
-		current_block.AddStatement (new ContextualReturn ((Expression) $12));
-		current_block.SetEndLocation (lexer.Location);
-		current_block = current_block.Parent;
-			
-		((Linq.QueryBlock)current_block).AddRangeVariable (sn2 ?? sn);
+		current_block = block.Parent;
+		((Linq.QueryBlock)current_block).AddRangeVariable (into);		
 	  }
 	;
 	
@@ -5959,7 +5875,8 @@ opt_query_continuation
 	  {
 		var current_block = linq_clause_blocks.Pop ();	  
 		var lt = (Tokenizer.LocatedToken) $2;
-  		$$ = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, null, new SimpleMemberName (lt.Value, lt.Location), GetLocation ($1)) {
+		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
+  		$$ = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, null, rv, GetLocation ($1)) {
   			next = (Linq.AQueryClause)$4
   		};
 	  }
@@ -5995,7 +5912,7 @@ interactive_parsing
 		Parameter [] mpar = new Parameter [1];
 		mpar [0] = new Parameter (new TypeExpression (TypeManager.object_type, Location.Null), "$retval", Parameter.Modifier.REF, null, Location.Null);
 
-		ParametersCompiled pars = new ParametersCompiled (compiler, mpar);
+		ParametersCompiled pars = new ParametersCompiled (mpar);
 		current_local_parameters = pars;
 		Method method = new Method (
 			current_class,
@@ -6045,35 +5962,6 @@ close_brace_or_complete_completion
 	| COMPLETE_COMPLETION
 	;
 %%
-
-// <summary>
-//   A class used to pass around variable declarations and constants
-// </summary>
-class VariableDeclaration {
-	public string identifier;
-	Expression initializer;
-	public Location Location;
-
-	public VariableDeclaration (Tokenizer.LocatedToken lt, Expression initializer)
-	{
-		this.identifier = lt.Value;
-		this.initializer = initializer;
-		this.Location = lt.Location;
-	}
-
-	public Expression GetInitializer (FullNamedExpression type)
-	{
-		if (initializer is ArrayInitializer)
-			return new ArrayCreation (type, (ArrayInitializer)initializer);
-
-		return initializer;
-	}
-
-	public bool HasInitializer {
-		get { return initializer != null; }
-	}
-}
-
 
 // <summary>
 //  A class used to hold info about an operator declarator
@@ -6182,114 +6070,6 @@ void StoreModifierLocation (object token, Location loc)
   		mod_locations = new List<Tuple<Modifiers, Location>> ();
 
 	mod_locations.Add (Tuple.Create ((Modifiers) token, loc));
-}
-
-Block declare_local_variables (FullNamedExpression type, List<object> variable_declarators, Location loc)
-{
-	Block implicit_block;
-
-	//
-	// If we are doing interactive editing, we want variable declarations
-	// that are in the top block to be added instead to the class as 
-	// static variables
-	//
-	if (RootContext.StatementMode){
-		bool hoist = true;
-
-		for (Block b = current_block; b != null; b = b.Parent){
-			if (b is ExplicitBlock && !(b is ToplevelBlock)){
-				// There has been an explicit block, we cant add to the class
-				hoist = false;
-				break;
-			}
-		}		
-		if (hoist){
-			//
-			// We can use "current_block" since we know there are no explicit blocks
-			//
-			foreach (VariableDeclaration decl in variable_declarators){
-				// We can not use the super-handy f.Initializer, because
-				// multiple lines would force code to be executed out of sync
-				var init = decl.GetInitializer (type);
-				if (init != null){
-				        string id = "$" + decl.identifier;
-					LocalInfo vi = current_block.AddVariable (type, id, decl.Location);					
-
-					// Avoid warning about this variable not being used.
-					vi.Used = true;
-
-					LocalVariableReference var;
-					var = new LocalVariableReferenceWithClassSideEffect (current_container, decl.identifier, current_block, id, vi, decl.Location);
-					Assign assign = new SimpleAssign (var, init, decl.Location);
-					current_block.AddStatement (new StatementExpression (assign));
-					assign = new SimpleAssign (new SimpleName (decl.identifier, decl.Location), var);
-					current_block.AddStatement (new StatementExpression (assign));
-				} else {
-					Field f = new Field (current_container, (FullNamedExpression) type, Modifiers.PUBLIC | Modifiers.STATIC,
-						new MemberName (decl.identifier, loc), null);
-					current_container.AddField (f);
-
-					// Register the field to be visible later as a global variable
-					Evaluator.QueueField (f);
-				}
-			}
-
-			return current_block;
-		}
-	}
-
-	//
-	// We use the `Used' property to check whether statements
-	// have been added to the current block.  If so, we need
-	// to create another block to contain the new declaration
-	// otherwise, as an optimization, we use the same block to
-	// add the declaration.
-	//
-	// FIXME: A further optimization is to check if the statements
-	// that were added were added as part of the initialization
-	// below.  In which case, no other statements have been executed
-	// and we might be able to reduce the number of blocks for
-	// situations like this:
-	//
-	// int j = 1;  int k = j + 1;
-	//
-	if (current_block.Used)
-		implicit_block = new Block (current_block, loc, lexer.Location);
-	else
-		implicit_block = current_block;
-
-	foreach (VariableDeclaration decl in variable_declarators){
-
-		if (implicit_block.AddVariable (type, decl.identifier, decl.Location) != null) {
-			if (decl.HasInitializer){
-				Assign assign;
-				
-				var lvr = new LocalVariableReference (implicit_block, decl.identifier, loc);
-
-				assign = new SimpleAssign (lvr, decl.GetInitializer (type), decl.Location);
-
-				implicit_block.AddStatement (new StatementExpression (assign));
-			}
-		}
-	}
-	
-	return implicit_block;
-}
-
-Block declare_local_constants (FullNamedExpression type, List<object> declarators)
-{
-	Block implicit_block;
-
-	if (current_block.Used)
-		implicit_block = new Block (current_block);
-	else
-		implicit_block = current_block;
-
-	foreach (VariableDeclaration decl in declarators){
-		implicit_block.AddConstant (type, decl.identifier, decl.GetInitializer (type), decl.Location);
-	}
-	
-	return implicit_block;
 }
 
 string CheckAttributeTarget (string a, Location l)
@@ -6433,8 +6213,10 @@ public LocationsBag LocationsBag {
 
 void start_block (Location loc)
 {
-	if (current_block == null || parsing_anonymous_method) {
-		current_block = new ToplevelBlock (compiler, current_block, current_local_parameters, loc);
+	if (current_block == null) {
+		current_block = new ToplevelBlock (compiler, current_local_parameters, loc);
+	} else if (parsing_anonymous_method) {
+		current_block = new ParametersBlock (current_block, current_local_parameters, loc);
 		parsing_anonymous_method = false;
 	} else {
 		current_block = new ExplicitBlock (current_block, loc, Location.Null);
@@ -6450,8 +6232,7 @@ end_block (Location loc)
 	return retval;
 }
 
-void
-start_anonymous (bool lambda, ParametersCompiled parameters, Location loc)
+void start_anonymous (bool lambda, ParametersCompiled parameters, Location loc)
 {
 	if (RootContext.Version == LanguageVersion.ISO_1){
 		Report.FeatureIsNotAvailable (loc, "anonymous methods");
@@ -6459,6 +6240,7 @@ start_anonymous (bool lambda, ParametersCompiled parameters, Location loc)
 
 	oob_stack.Push (current_anonymous_method);
 	oob_stack.Push (current_local_parameters);
+	oob_stack.Push (current_variable);
 
 	current_local_parameters = parameters;
 
@@ -6474,13 +6256,14 @@ start_anonymous (bool lambda, ParametersCompiled parameters, Location loc)
  * Completes the anonymous method processing, if lambda_expr is null, this
  * means that we have a Statement instead of an Expression embedded 
  */
-AnonymousMethodExpression end_anonymous (ToplevelBlock anon_block)
+AnonymousMethodExpression end_anonymous (ParametersBlock anon_block)
 {
 	AnonymousMethodExpression retval;
 
 	current_anonymous_method.Block = anon_block;
 	retval = current_anonymous_method;
 
+	current_variable = (BlockVariableDeclaration) oob_stack.Pop ();
 	current_local_parameters = (ParametersCompiled) oob_stack.Pop ();
 	current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();
 

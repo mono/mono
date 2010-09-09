@@ -1012,7 +1012,7 @@ namespace Mono.CSharp {
 				DefineTypeParameters ();
 			}
 
-			if (block != null && block.IsIterator && !(Parent is IteratorStorey)) {
+			if (block != null && block.IsIterator) {
 				//
 				// Current method is turned into automatically generated
 				// wrapper which creates an instance of iterator
@@ -1476,7 +1476,7 @@ namespace Mono.CSharp {
 				// initializer, it must initialize all of the struct's fields.
 				if ((Parent.PartialContainer.Kind == MemberKind.Struct) &&
 					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
-					block.AddThisVariable (Parent, Location);
+					block.AddThisVariable (bc, Parent, Location);
 
 				if (block != null && (ModFlags & Modifiers.STATIC) == 0){
 					if (Parent.PartialContainer.Kind == MemberKind.Class && Initializer == null)
@@ -1493,7 +1493,7 @@ namespace Mono.CSharp {
 			SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder, block);
 
 			if (block != null) {
-				if (block.Resolve (null, bc, parameters, this)) {
+				if (block.Resolve (null, bc, this)) {
 					EmitContext ec = new EmitContext (this, ConstructorBuilder.GetILGenerator (), bc.ReturnType);
 					ec.With (EmitContext.Options.ConstructorScope, true);
 
@@ -1868,7 +1868,7 @@ namespace Mono.CSharp {
 			ToplevelBlock block = method.Block;
 			if (block != null) {
 				BlockContext bc = new BlockContext ((IMemberContext) method, block, method.ReturnType);
-				if (block.Resolve (null, bc, method.ParameterInfo, method)) {
+				if (block.Resolve (null, bc, method)) {
 					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator ());
 					if (!ec.HasReturnLabel && bc.HasReturnLabel) {
 						ec.ReturnLabel = bc.ReturnLabel;
@@ -2275,7 +2275,7 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (block != null && block.IsIterator && !(Parent is IteratorStorey)) {
+			if (block != null && block.IsIterator) {
 				//
 				// Current method is turned into automatically generated
 				// wrapper which creates an instance of iterator

@@ -301,7 +301,9 @@ namespace Mono.CSharp {
 		}
 
 		public Expression Source {
-			get { return source; }
+			get {
+				return source;
+			}
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -429,6 +431,22 @@ namespace Mono.CSharp {
 				ec.Report.Warning (1717, 3, loc, "Assignment made to same variable; did you mean to assign something else?");
 
 			return this;
+		}
+	}
+
+	//
+	// Compiler generated assign
+	//
+	class CompilerAssign : Assign
+	{
+		public CompilerAssign (Expression target, Expression source, Location loc)
+			: base (target, source, loc)
+		{
+		}
+
+		public void UpdateSource (Expression source)
+		{
+			base.source = source;
 		}
 	}
 

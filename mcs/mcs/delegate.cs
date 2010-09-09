@@ -170,14 +170,19 @@ namespace Mono.CSharp {
 			//
 			// BeginInvoke
 			//
-			Parameter[] compiled = new Parameter[Parameters.Count];
-			for (int i = 0; i < compiled.Length; ++i)
-				compiled[i] = new Parameter (new TypeExpression (Parameters.Types[i], Location),
-					Parameters.FixedParameters[i].Name,
-					Parameters.FixedParameters[i].ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT),
-					null, Location);
+			ParametersCompiled async_parameters;
+			if (Parameters.Count == 0) {
+				async_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+			} else {
+				var compiled = new Parameter[Parameters.Count];
+				for (int i = 0; i < compiled.Length; ++i)
+					compiled[i] = new Parameter (new TypeExpression (Parameters.Types[i], Location),
+						Parameters.FixedParameters[i].Name,
+						Parameters.FixedParameters[i].ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT),
+						null, Location);
 
-			ParametersCompiled async_parameters = new ParametersCompiled (Compiler, compiled);
+				async_parameters = new ParametersCompiled (compiled);
+			}
 
 			async_parameters = ParametersCompiled.MergeGenerated (Compiler, async_parameters, false,
 				new Parameter[] {

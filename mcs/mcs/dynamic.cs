@@ -418,7 +418,7 @@ namespace Mono.CSharp
 				Delegate d = new Delegate (site.NamespaceEntry, site, new TypeExpression (rt, loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
 					new MemberName ("Container" + index.ToString ("X")),
-					new ParametersCompiled (null, p), null);
+					new ParametersCompiled (p), null);
 
 				d.CreateType ();
 				d.DefineType ();

@@ -155,8 +155,9 @@ namespace Mono.CSharp {
 			return parameter_type;
 		}
 
-		public TypeSpec Type {
-			set { parameter_type = value; }
+		public void SetParameterType (TypeSpec type)
+		{
+			parameter_type = type;
 		}
 	}
 
@@ -223,7 +224,8 @@ namespace Mono.CSharp {
 	//
 	// Parameter information created by parser
 	//
-	public class Parameter : ParameterBase, IParameterData, ILocalVariable {
+	public class Parameter : ParameterBase, IParameterData, ILocalVariable // TODO: INamedBlockVariable
+	{
 		[Flags]
 		public enum Modifier : byte {
 			NONE    = 0,
@@ -244,11 +246,11 @@ namespace Mono.CSharp {
 		string name;
 		Expression default_expr;
 		protected TypeSpec parameter_type;
-		public readonly Location Location;
+		readonly Location loc;
 		protected int idx;
 		public bool HasAddressTaken;
 
-		Expression expr_tree_variable;
+		TemporaryVariableReference expr_tree_variable;
 		static TypeExpr parameter_expr_tree_type;
 
 		HoistedVariable hoisted_variant;
@@ -257,14 +259,15 @@ namespace Mono.CSharp {
 		{
 			this.name = name;
 			modFlags = mod;
-			Location = loc;
+			this.loc = loc;
 			texpr = type;
 
 			// Only assign, attributes will be attached during resolve
 			base.attributes = attrs;
 		}
 
-#region Properties
+		#region Properties
+
 		public Expression DefaultValue {
 			get {
 				return default_expr;
@@ -274,12 +277,31 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public Location Location {
+			get {
+				return loc;
+			}
+		}
+
+		public TypeSpec Type {
+			get {
+				return parameter_type;
+			}
+		}
+
 		public FullNamedExpression TypeExpression  {
 			get {
 				return texpr;
 			}
 		}
-#endregion
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
+
+		#endregion
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
@@ -603,12 +625,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override string[] ValidAttributeTargets {
-			get {
-				return attribute_targets;
-			}
-		}
-
 		public Parameter Clone ()
 		{
 			Parameter p = (Parameter) MemberwiseClone ();
@@ -623,8 +639,8 @@ namespace Mono.CSharp {
 			if ((modFlags & Modifier.ISBYREF) != 0)
 				ec.Report.Error (1951, Location, "An expression tree parameter cannot use `ref' or `out' modifier");
 
-			expr_tree_variable = new TemporaryVariable (ResolveParameterExpressionType (ec, Location).Type, Location);
-			expr_tree_variable = expr_tree_variable.Resolve (ec);
+			expr_tree_variable = TemporaryVariableReference.Create (ResolveParameterExpressionType (ec, Location).Type, ec.CurrentBlock.ParametersBlock, Location);
+			expr_tree_variable = (TemporaryVariableReference) expr_tree_variable.Resolve (ec);
 
 			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (new TypeOf (
@@ -673,7 +689,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Expression ExpressionTreeVariableReference ()
+		public TemporaryVariableReference ExpressionTreeVariableReference ()
 		{
 			return expr_tree_variable;
 		}
@@ -977,40 +993,21 @@ namespace Mono.CSharp {
 		    this.types = types;
 		}
 		
-		public ParametersCompiled (CompilerContext ctx, params Parameter[] parameters)
+		public ParametersCompiled (params Parameter[] parameters)
 		{
-			if (parameters == null)
+			if (parameters == null || parameters.Length == 0)
 				throw new ArgumentException ("Use EmptyReadOnlyParameters");
 
 			this.parameters = parameters;
 			int count = parameters.Length;
 
-			if (count == 0)
-				return;
-
-			if (count == 1) {
-				has_params = (parameters [0].ModFlags & Parameter.Modifier.PARAMS) != 0;
-				return;
-			}
-
 			for (int i = 0; i < count; i++){
 				has_params |= (parameters [i].ModFlags & Parameter.Modifier.PARAMS) != 0;
-				if (ctx != null) {
-					string base_name = parameters[i].Name;
-
-					for (int j = i + 1; j < count; j++) {
-						if (base_name != parameters[j].Name)
-							continue;
-
-						ErrorDuplicateName (parameters[i], ctx.Report);
-						i = j;
-					}
-				}
 			}
 		}
 
-		public ParametersCompiled (CompilerContext ctx, Parameter [] parameters, bool has_arglist) :
-			this (ctx, parameters)
+		public ParametersCompiled (Parameter [] parameters, bool has_arglist) :
+			this (parameters)
 		{
 			this.has_arglist = has_arglist;
 		}
@@ -1133,11 +1130,6 @@ namespace Mono.CSharp {
 			return parameters;
 		}
 
-		protected virtual void ErrorDuplicateName (Parameter p, Report Report)
-		{
-			Report.Error (100, p.Location, "The parameter name `{0}' is a duplicate", p.Name);
-		}
-
 		public bool Resolve (IMemberContext ec)
 		{
 			if (types != null)
@@ -1211,8 +1203,10 @@ namespace Mono.CSharp {
 				// to save some memory when referenced later.
 				//
 				StatementExpression se = new StatementExpression (p.CreateExpressionTreeVariable (ec));
-				if (se.Resolve (ec))
+				if (se.Resolve (ec)) {
+					ec.CurrentBlock.AddScopeStatement (new TemporaryVariableReference.Declarator (p.ExpressionTreeVariableReference ()));
 					ec.CurrentBlock.AddScopeStatement (se);
+				}
 				
 				initializers.Add (p.ExpressionTreeVariableReference ());
 			}

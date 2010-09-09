@@ -896,7 +896,7 @@ namespace Mono.CSharp
 					block.AddStatement (new StatementExpression (
 						new CompoundAssign (Operation,
 							f_expr,
-							block.GetParameterReference (ParameterInfo[0].Name, Location),
+							block.GetParameterReference (0, Location),
 							Location)));
 				}
 

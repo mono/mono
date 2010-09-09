@@ -1101,7 +1101,7 @@ class Tester : DynamicObjectMock
 //			Assert (binder.CallingContext, typeof (Tester), "CallingContext");
 			AssertArgument (binder, new[] {
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
-				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType | CSharpArgumentInfoFlags.Constant, null)	// CSC bug?
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType, null)	// Not a literal because we got the type
 			}, "ArgumentInfo");
 
 			Assert (value, d_const, "value");

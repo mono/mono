@@ -196,15 +196,6 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// C# 3.0 introduced contextual keywords (var) which behaves like a type if type with
-		// same name exists or as a keyword when no type was found
-		// 
-		public virtual TypeExpr ResolveAsContextualType (IMemberContext rc, bool silent)
-		{
-			return ResolveAsTypeTerminal (rc, silent);
-		}		
-		
-		//
 		// This is used to resolve the expression as a type, a null
 		// value will be returned if the expression is not a type
 		// reference
@@ -440,7 +431,7 @@ namespace Mono.CSharp {
 					throw;
 
 				ec.Report.Error (584, loc, "Internal compiler error: {0}", ex.Message);
-				return EmptyExpression.Null;
+				return EmptyExpression.Null;	// TODO: Add location
 			}
 		}
 
@@ -2249,44 +2240,30 @@ namespace Mono.CSharp {
 			bool errorMode = false;
 			Expression e;
 			Block current_block = rc.CurrentBlock;
+			INamedBlockVariable variable = null;
 
 			while (true) {
 				//
 				// Stage 1: binding to local variables or parameters
 				//
+				// LAMESPEC: It should take invocableOnly into account but that would break csc compatibility
+				//
 				if (current_block != null && lookup_arity == 0) {
-					LocalInfo vi = current_block.GetLocalInfo (Name);
-					if (vi != null) {
-						// TODO: pass vi in to speed things up
-						e = new LocalVariableReference (rc.CurrentBlock, Name, loc);
-					} else {
-						e = current_block.Toplevel.GetParameterReference (Name, loc);
-					}
-
-					if (e != null) {
-						if (Arity > 0)
-							Error_TypeArgumentsCannotBeUsed (rc.Report, "variable", Name, loc);
-
-						return e;
-					}
-
-					if (!errorMode)
-						current_block.CheckInvariantMeaningInBlock (Name, this, loc);
-
-/*
-					//if (errorMode) {
-						IKnownVariable ikv = current_block.Explicit.GetKnownVariable (Name);
-						if (ikv != null) {
-							LocalInfo li = ikv as LocalInfo;
-							// Supress CS0219 warning
-							if (li != null)
-								li.Used = true;
-
-							Error_VariableIsUsedBeforeItIsDeclared (rc.Report, Name);
+					if (current_block.ParametersBlock.TopBlock.GetLocalName (Name, current_block.Original, ref variable)) {
+						// TODO: Could I just relly on factory method
+						if (!variable.IsDeclared) {
+							rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
 							return null;
 						}
-					//}
-*/ 
+
+						e = variable.CreateReferenceExpression (rc, loc);
+						if (e != null) {
+							if (Arity > 0)
+								Error_TypeArgumentsCannotBeUsed (rc.Report, "variable", Name, loc);
+
+							return e;
+						}
+					}
 				}
 
 				//
@@ -2307,6 +2284,11 @@ namespace Mono.CSharp {
 							ErrorIsInaccesible (rc, me.GetSignatureForError (), loc);
 						}
 					} else {
+						if (variable != null && !invocableOnly) {
+							rc.Report.SymbolRelatedToPreviousError (variable.Location, Name);
+							rc.Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", Name);
+						}
+
 						//
 						// MemberLookup does not check accessors availability, this is actually needed for properties only
 						//
@@ -5082,7 +5064,8 @@ namespace Mono.CSharp {
 		{
 			if (right_side == EmptyExpression.OutAccess.Instance) {
 				// TODO: best_candidate can be null at this point
-				if (best_candidate != null && ec.CurrentBlock.Toplevel.GetParameterReference (best_candidate.Name, loc) is MemberAccess) {
+				INamedBlockVariable variable = null;
+				if (best_candidate != null && ec.CurrentBlock.ParametersBlock.TopBlock.GetLocalName (best_candidate.Name, ec.CurrentBlock, ref variable) && variable is Linq.RangeVariable) {
 					ec.Report.Error (1939, loc, "A range variable `{0}' may not be passes as `ref' or `out' parameter",
 						best_candidate.Name);
 				} else {
@@ -5157,13 +5140,8 @@ namespace Mono.CSharp {
 		bool ResolveSetter (ResolveContext rc)
 		{
 			if (!best_candidate.HasSet) {
-				if (rc.CurrentBlock.Toplevel.GetParameterReference (best_candidate.Name, loc) is MemberAccess) {
-					rc.Report.Error (1947, loc, "A range variable `{0}' cannot be assigned to. Consider using `let' clause to store the value",
-						best_candidate.Name);
-				} else {
-					rc.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read-only)",
-						GetSignatureForError ());
-				}
+				rc.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read-only)",
+					GetSignatureForError ());
 				return false;
 			}
 
@@ -5361,14 +5339,48 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class TemporaryVariable : VariableReference
+	public class TemporaryVariableReference : VariableReference
 	{
-		LocalInfo li;
-
-		public TemporaryVariable (TypeSpec type, Location loc)
+		public class Declarator : Statement
 		{
-			this.type = type;
+			TemporaryVariableReference variable;
+
+			public Declarator (TemporaryVariableReference variable)
+			{
+				this.variable = variable;
+				loc = variable.loc;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				variable.li.CreateBuilder (ec);
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				// Nothing
+			}
+		}
+
+		LocalVariable li;
+
+		public TemporaryVariableReference (LocalVariable li, Location loc)
+		{
+			this.li = li;
+			this.type = li.Type;
 			this.loc = loc;
+		}
+
+		public LocalVariable LocalInfo {
+		    get {
+		        return li;
+		    }
+		}
+
+		public static TemporaryVariableReference Create (TypeSpec type, Block block, Location loc)
+		{
+			var li = LocalVariable.CreateCompilerGenerated (type, block, loc);
+			return new TemporaryVariableReference (li, loc);
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -5379,11 +5391,6 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
-
-			TypeExpr te = new TypeExpression (type, loc);
-			li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
-			if (!li.Resolve (ec))
-				return null;
 
 			//
 			// Don't capture temporary variables except when using
@@ -5404,11 +5411,15 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
+			li.CreateBuilder (ec);
+
 			Emit (ec, false);
 		}
 
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
+			li.CreateBuilder (ec);
+
 			EmitAssign (ec, source, false, false);
 		}
 
@@ -5449,19 +5460,9 @@ namespace Mono.CSharp {
 	/// 
 	class VarExpr : SimpleName
 	{
-		// Used for error reporting only
-		int initializers_count;
-
 		public VarExpr (Location loc)
 			: base ("var", loc)
 		{
-			initializers_count = 1;
-		}
-
-		public int VariableInitializersCount {
-			set {
-				this.initializers_count = value;
-			}
 		}
 
 		public bool InferType (ResolveContext ec, Expression right_side)
@@ -5487,33 +5488,6 @@ namespace Mono.CSharp {
 				base.Error_TypeOrNamespaceNotFound (ec);
 			else
 				ec.Compiler.Report.Error (825, loc, "The contextual keyword `var' may only appear within a local variable declaration");
-		}
-
-		public override TypeExpr ResolveAsContextualType (IMemberContext rc, bool silent)
-		{
-			TypeExpr te = base.ResolveAsContextualType (rc, true);
-			if (te != null)
-				return te;
-
-			if (RootContext.Version < LanguageVersion.V_3)
-				rc.Compiler.Report.FeatureIsNotAvailable (loc, "implicitly typed local variable");
-
-			if (initializers_count == 1)
-				return null;
-
-			if (initializers_count > 1) {
-				rc.Compiler.Report.Error (819, loc, "An implicitly typed local variable declaration cannot include multiple declarators");
-				initializers_count = 1;
-				return null;
-			}
-
-			if (initializers_count == 0) {
-				initializers_count = 1;
-				rc.Compiler.Report.Error (818, loc, "An implicitly typed local variable declarator must include an initializer");
-				return null;
-			}
-
-			return null;
 		}
 	}
 }	

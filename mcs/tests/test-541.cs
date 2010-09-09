@@ -1,20 +1,23 @@
-delegate void TestFunc (int val);
+using System;
 
-class A
+class ClassMain
 {
-	public A(TestFunc func)
+	delegate void D (int i);
+	
+	public static void Main ()
 	{
-		func (0);
+		if (true) {
+			const bool test = false;
+		} else {
+			test = false;
+		}
+		
+		D d = delegate (int test) { };
+	}
+	
+	static bool test { 
+		set {
+		}
 	}
 }
 
-class TestClass
-{
-	static int i = 1;
-	static readonly A a = new A(delegate(int a) { i = a; });
-
-	static int Main ()
-	{
-		return i;
-	}
-}

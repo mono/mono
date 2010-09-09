@@ -2076,25 +2076,26 @@ namespace Mono.CSharp {
 		{
 			TypeParameterName[] names = MemberName.TypeArguments.GetDeclarations ();
 			string[] snames = new string [names.Length];
+			var block = m.Block;
 			for (int i = 0; i < names.Length; i++) {
 				string type_argument_name = names[i].Name;
-				int idx = parameters.GetParameterIndexByName (type_argument_name);
 
-				if (idx >= 0) {
-					var b = m.Block;
-					if (b == null)
-						b = new ToplevelBlock (Compiler, Location);
+				if (block == null) {
+					int idx = parameters.GetParameterIndexByName (type_argument_name);
+					if (idx >= 0) {
+						var b = m.Block;
+						if (b == null)
+							b = new ToplevelBlock (Compiler, Location);
 
-					b.Error_AlreadyDeclaredTypeParameter (parameters [i].Location,
-						type_argument_name, "method parameter");
+						b.Error_AlreadyDeclaredTypeParameter (type_argument_name, parameters[i].Location);
+					}
+				} else {
+					INamedBlockVariable variable = null;
+					block.GetLocalName (type_argument_name, m.Block, ref variable);
+					if (variable != null)
+						variable.Block.Error_AlreadyDeclaredTypeParameter (type_argument_name, variable.Location);
 				}
 
-				if (m.Block != null) {
-					var ikv = m.Block.GetKnownVariable (type_argument_name);
-					if (ikv != null)
-						ikv.Block.Error_AlreadyDeclaredTypeParameter (ikv.Location, type_argument_name, "local variable");
-				}
-				
 				snames[i] = type_argument_name;
 			}
 

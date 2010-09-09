@@ -1,17 +1,20 @@
-using System;
-using System.Collections;
+delegate void TestFunc (int val);
 
-public class Test
+class A
 {
-        public static void Main ()
-        {
-                foreach (object o in new Test ())
-                        Console.WriteLine (o);
-        }
+	public A(TestFunc func)
+	{
+		func (0);
+	}
+}
 
-        public IEnumerator GetEnumerator ()
-        {
-		int i = 2;
-		yield return 3;
-        }
+class TestClass
+{
+	static int i = 1;
+	static readonly A a = new A(delegate(int a) { i = a; });
+
+	static int Main ()
+	{
+		return i;
+	}
 }

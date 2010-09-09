@@ -1060,6 +1060,7 @@ namespace Mono.CSharp {
 						var base_param = method.Parameters.FixedParameters[i];
 						base_parameters[i] = new Parameter (new TypeExpression (method.Parameters.Types[i], Location),
 							base_param.Name, base_param.ModFlags, null, Location);
+						base_parameters[i].Resolve (this, i);
 					}
 				}
 

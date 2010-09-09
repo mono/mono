@@ -194,7 +194,8 @@ namespace Mono.CSharp.Linq
 
 		protected virtual Parameter CreateChildrenParameters (Parameter parameter)
 		{
-			return parameter;
+			// Have to clone the parameter for any children use, it carries block sensitive data
+			return parameter.Clone ();
 		}
 
 		protected virtual void CreateArguments (ResolveContext ec, Parameter parameter, ref Arguments args)
@@ -203,7 +204,7 @@ namespace Mono.CSharp.Linq
 
 			LambdaExpression selector = new LambdaExpression (loc);
 
-			block.SetParameter (parameter.Clone ());
+			block.SetParameter (parameter);
 			selector.Block = block;
 			selector.Block.AddStatement (new ContextualReturn (expr));
 
@@ -238,8 +239,8 @@ namespace Mono.CSharp.Linq
 	{
 		sealed class RangeAnonymousTypeParameter : AnonymousTypeParameter
 		{
-			public RangeAnonymousTypeParameter (Expression initializer, SimpleMemberName parameter)
-				: base (initializer, parameter.Value, parameter.Location)
+			public RangeAnonymousTypeParameter (Expression initializer, RangeVariable parameter)
+				: base (initializer, parameter.Name, parameter.Location)
 			{
 			}
 
@@ -250,12 +251,29 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		protected SimpleMemberName range_variable;
+		class RangeParameterReference : ParameterReference
+		{
+			Parameter parameter;
 
-		protected ARangeVariableQueryClause (QueryBlock block, SimpleMemberName identifier, Expression expr, Location loc)
+			public RangeParameterReference (Parameter p)
+				: base (null, p.Location)
+			{
+				this.parameter = p;
+			}
+
+			protected override Expression DoResolve (ResolveContext ec)
+			{
+				pi = ec.CurrentBlock.ParametersBlock.GetParameterInfo (parameter);
+				return base.DoResolve (ec);
+			}
+		}
+
+		protected RangeVariable identifier;
+
+		protected ARangeVariableQueryClause (QueryBlock block, RangeVariable identifier, Expression expr, Location loc)
 			: base (block, expr, loc)
 		{
-			range_variable = identifier;
+			this.identifier = identifier;
 		}
 
 		public FullNamedExpression IdentifierType { get; set; }
@@ -268,26 +286,115 @@ namespace Mono.CSharp.Linq
 
 		protected override Parameter CreateChildrenParameters (Parameter parameter)
 		{
-			return new QueryBlock.TransparentParameter (parameter, GetIntoVariable ());
+			return new QueryBlock.TransparentParameter (parameter.Clone (), GetIntoVariable ());
 		}
 
-		protected static Expression CreateRangeVariableType (ResolveContext rc, Parameter parameter, SimpleMemberName name, Expression init)
+		protected static Expression CreateRangeVariableType (ResolveContext rc, Parameter parameter, RangeVariable name, Expression init)
 		{
 			var args = new List<AnonymousTypeParameter> (2);
-			args.Add (new AnonymousTypeParameter (parameter));
+
+			//
+			// The first argument is the reference to the parameter
+			//
+			args.Add (new AnonymousTypeParameter (new RangeParameterReference (parameter), parameter.Name, parameter.Location));
+
+			//
+			// The second argument is the linq expression
+			//
 			args.Add (new RangeAnonymousTypeParameter (init, name));
+
+			//
+			// Create unique anonymous type
+			//
 			return new NewAnonymousType (args, rc.MemberContext.CurrentMemberDefinition.Parent, name.Location);
 		}
 
-		protected virtual SimpleMemberName GetIntoVariable ()
+		protected virtual RangeVariable GetIntoVariable ()
 		{
-			return range_variable;
+			return identifier;
+		}
+	}
+
+	public sealed class RangeVariable : INamedBlockVariable
+	{
+		Block block;
+
+		public RangeVariable (string name, Location loc)
+		{
+			Name = name;
+			Location = loc;
+		}
+
+		#region Properties
+
+		public Block Block {
+			get {
+				return block;
+			}
+			set {
+				block = value;
+			}
+		}
+
+		public bool IsDeclared {
+			get {
+				return true;
+			}
+		}
+
+		public Location Location { get; private set; }
+
+		public string Name { get; private set; }
+
+		#endregion
+
+		public Expression CreateReferenceExpression (ResolveContext rc, Location loc)
+		{
+			Expression expr = null;
+
+			// 
+			// We know the variable name is somewhere in the scope. This generates
+			// an access expression from current block
+			//
+			var pb = rc.CurrentBlock.ParametersBlock;
+			while (true) {
+				if (pb is QueryBlock) {
+					for (int i = pb.Parameters.Count - 1; i >= 0; --i) {
+						var p = pb.Parameters[i];
+						if (p.Name == Name)
+							return pb.GetParameterReference (i, loc);
+
+						var tp = p as QueryBlock.TransparentParameter;
+						while (tp != null) {
+							if (expr == null)
+								expr = pb.GetParameterReference (i, loc);
+							else
+								expr = new TransparentMemberAccess (expr, tp.Name);
+
+							if (tp.Identifier == Name)
+								return new TransparentMemberAccess (expr, Name);
+
+							if (tp.Parent.Name == Name)
+								return new TransparentMemberAccess (expr, Name);
+
+							tp = tp.Parent as QueryBlock.TransparentParameter;
+						}
+					}
+
+					expr = null;
+				}
+
+				if (pb == block)
+					return null;
+
+				pb = pb.Parent.ParametersBlock;
+			}
 		}
 	}
 
 	class QueryStartClause : ARangeVariableQueryClause
 	{
-		public QueryStartClause (QueryBlock block, Expression expr, SimpleMemberName identifier, Location loc)
+		public QueryStartClause (QueryBlock block, Expression expr, RangeVariable identifier, Location loc)
 			: base (block, identifier, expr, loc)
 		{
 			block.AddRangeVariable (identifier);
@@ -314,7 +421,7 @@ namespace Mono.CSharp.Linq
 			if (parameter == null)
 				lSide = expr;
 
-			return next.BuildQueryClause (ec, lSide, new ImplicitLambdaParameter (range_variable.Value, range_variable.Location));
+			return next.BuildQueryClause (ec, lSide, new ImplicitLambdaParameter (identifier.Name, identifier.Location));
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -379,7 +486,7 @@ namespace Mono.CSharp.Linq
 	{
 		QueryBlock inner_selector, outer_selector;
 
-		public Join (QueryBlock block, SimpleMemberName lt, Expression inner, QueryBlock outerSelector, QueryBlock innerSelector, Location loc)
+		public Join (QueryBlock block, RangeVariable lt, Expression inner, QueryBlock outerSelector, QueryBlock innerSelector, Location loc)
 			: base (block, lt, inner, loc)
 		{
 			this.outer_selector = outerSelector;
@@ -400,7 +507,7 @@ namespace Mono.CSharp.Linq
 			lambda.Block = outer_selector;
 			args.Add (new Argument (lambda));
 
-			inner_selector.SetParameter (new ImplicitLambdaParameter (range_variable.Value, range_variable.Location));
+			inner_selector.SetParameter (new ImplicitLambdaParameter (identifier.Name, identifier.Location));
 			lambda = new LambdaExpression (inner_selector.StartLocation);
 			lambda.Block = inner_selector;
 			args.Add (new Argument (lambda));
@@ -423,16 +530,16 @@ namespace Mono.CSharp.Linq
 
 	public class GroupJoin : Join
 	{
-		readonly SimpleMemberName into;
+		readonly RangeVariable into;
 
-		public GroupJoin (QueryBlock block, SimpleMemberName lt, Expression inner,
-			QueryBlock outerSelector, QueryBlock innerSelector, SimpleMemberName into, Location loc)
+		public GroupJoin (QueryBlock block, RangeVariable lt, Expression inner,
+			QueryBlock outerSelector, QueryBlock innerSelector, RangeVariable into, Location loc)
 			: base (block, lt, inner, outerSelector, innerSelector, loc)
 		{
 			this.into = into;
 		}
 
-		protected override SimpleMemberName GetIntoVariable ()
+		protected override RangeVariable GetIntoVariable ()
 		{
 			return into;
 		}
@@ -444,14 +551,14 @@ namespace Mono.CSharp.Linq
 
 	public class Let : ARangeVariableQueryClause
 	{
-		public Let (QueryBlock block, SimpleMemberName identifier, Expression expr, Location loc)
+		public Let (QueryBlock block, RangeVariable identifier, Expression expr, Location loc)
 			: base (block, identifier, expr, loc)
 		{
 		}
 
 		protected override void CreateArguments (ResolveContext ec, Parameter parameter, ref Arguments args)
 		{
-			expr = CreateRangeVariableType (ec, parameter, range_variable, expr);
+			expr = CreateRangeVariableType (ec, parameter, identifier, expr);
 			base.CreateArguments (ec, parameter, ref args);
 		}
 
@@ -487,7 +594,7 @@ namespace Mono.CSharp.Linq
 
 	public class SelectMany : ARangeVariableQueryClause
 	{
-		public SelectMany (QueryBlock block, SimpleMemberName identifier, Expression expr, Location loc)
+		public SelectMany (QueryBlock block, RangeVariable identifier, Expression expr, Location loc)
 			: base (block, identifier, expr, loc)
 		{
 		}
@@ -505,7 +612,7 @@ namespace Mono.CSharp.Linq
 			QueryBlock result_block;
 
 			var target = GetIntoVariable ();
-			var target_param = new ImplicitLambdaParameter (target.Value, target.Location);
+			var target_param = new ImplicitLambdaParameter (target.Name, target.Location);
 
 			//
 			// When select follows use it as a result selector
@@ -518,7 +625,7 @@ namespace Mono.CSharp.Linq
 
 				next = next.next;
 			} else {
-				result_selector_expr = CreateRangeVariableType (ec, parameter, target, new SimpleName (target.Value, target.Location));
+				result_selector_expr = CreateRangeVariableType (ec, parameter, target, new SimpleName (target.Name, target.Location));
 
 				result_block = new QueryBlock (ec.Compiler, block.Parent, block.StartLocation);
 				result_block.SetParameters (parameter, target_param);
@@ -545,11 +652,6 @@ namespace Mono.CSharp.Linq
 
 		protected override string MethodName {
 			get { return "Where"; }
-		}
-
-		protected override void CreateArguments (ResolveContext ec, Parameter parameter, ref Arguments args)
-		{
-			base.CreateArguments (ec, parameter, ref args);
 		}
 	}
 
@@ -604,7 +706,7 @@ namespace Mono.CSharp.Linq
 	//
 	// Implicit query block
 	//
-	public class QueryBlock : ToplevelBlock
+	public class QueryBlock : ParametersBlock
 	{
 		//
 		// Transparent parameters are used to package up the intermediate results
@@ -618,11 +720,11 @@ namespace Mono.CSharp.Linq
 			public readonly Parameter Parent;
 			public readonly string Identifier;
 
-			public TransparentParameter (Parameter parent, SimpleMemberName identifier)
+			public TransparentParameter (Parameter parent, RangeVariable identifier)
 				: base (ParameterNamePrefix + Counter++, identifier.Location)
 			{
 				Parent = parent;
-				Identifier = identifier.Value;
+				Identifier = identifier.Name;
 			}
 
 			public new static void Reset ()
@@ -631,110 +733,53 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		sealed class RangeVariable : IKnownVariable
-		{
-			public RangeVariable (QueryBlock block, Location loc)
-			{
-				Block = block;
-				Location = loc;
-			}
-
-			public Block Block { get; private set; }
-
-			public Location Location { get; private set; }
-		}
-
-		List<SimpleMemberName> range_variables;
-
 		public QueryBlock (CompilerContext ctx, Block parent, Location start)
-			: base (ctx, parent, ParametersCompiled.EmptyReadOnlyParameters, start)
+			: base (parent, ParametersCompiled.EmptyReadOnlyParameters, start)
 		{
+			flags |= Flags.CompilerGenerated;
 		}
 
-		public void AddRangeVariable (SimpleMemberName name)
+		public void AddRangeVariable (RangeVariable variable)
 		{
-			if (!CheckParentConflictName (this, name.Value, name.Location))
-				return;
-
-			if (range_variables == null)
-				range_variables = new List<SimpleMemberName> ();
-
-			range_variables.Add (name);
-			AddKnownVariable (name.Value, new RangeVariable (this, name.Location));
+			variable.Block = this;
+			AddLocalName (variable.Name, variable);
 		}
 
-		// 
-		// Query parameter reference can include transparent parameters
-		//
-		protected override Expression GetParameterReferenceExpression (string name, Location loc)
+		public override void Error_AlreadyDeclared (string name, INamedBlockVariable variable, string reason)
 		{
-			Expression expr = base.GetParameterReferenceExpression (name, loc);
-			if (expr != null)
-				return expr;
-
-			TransparentParameter tp = parameters [0] as TransparentParameter;
-			while (tp != null) {
-				if (tp.Identifier == name)
-					break;
-
-				TransparentParameter tp_next = tp.Parent as TransparentParameter;
-				if (tp_next == null && tp.Parent.Name == name)
-					break;
-
-				tp = tp_next;
-			}
-
-			if (tp != null) {
-				expr = new SimpleName (parameters[0].Name, loc);
-				TransparentParameter tp_cursor = (TransparentParameter) parameters[0];
-				while (tp_cursor != tp) {
-					tp_cursor = (TransparentParameter) tp_cursor.Parent;
-					expr = new TransparentMemberAccess (expr, tp_cursor.Name);
-				}
-
-				return new TransparentMemberAccess (expr, name);
-			}
-
-			return null;
+			TopBlock.Report.Error (1931, variable.Location,
+				"A range variable `{0}' conflicts with a previous declaration of `{0}'",
+				name);
 		}
 
-		protected override bool HasParameterWithName (string name)
+		public override void Error_AlreadyDeclared (string name, INamedBlockVariable variable)
 		{
-			return range_variables != null && range_variables.Exists (l => l.Value == name);
+			TopBlock.Report.Error (1930, variable.Location,
+				"A range variable `{0}' has already been declared in this scope",
+				name);		
 		}
 
-		protected override void Error_AlreadyDeclared (Location loc, string var, string reason)
+		public override void Error_AlreadyDeclaredTypeParameter (string name, Location loc)
 		{
-			Report.Error (1931, loc, "A range variable `{0}' conflicts with a previous declaration of `{0}'",
-				var);
-		}
-		
-		protected override void Error_AlreadyDeclared (Location loc, string var)
-		{
-			Report.Error (1930, loc, "A range variable `{0}' has already been declared in this scope",
-				var);		
-		}
-		
-		public override void Error_AlreadyDeclaredTypeParameter (Location loc, string name, string conflict)
-		{
-			Report.Error (1948, loc, "A range variable `{0}' conflicts with a method type parameter",
+			TopBlock.Report.Error (1948, loc,
+				"A range variable `{0}' conflicts with a method type parameter",
 				name);
 		}
 
 		public void SetParameter (Parameter parameter)
 		{
-			base.parameters = new ParametersCompiled (null, parameter);
-			base.parameter_info = new ToplevelParameterInfo [] {
-				new ToplevelParameterInfo (this, 0)
+			base.parameters = new ParametersCompiled (parameter);
+			base.parameter_info = new ParameterInfo[] {
+				new ParameterInfo (this, 0)
 			};
 		}
 
 		public void SetParameters (Parameter first, Parameter second)
 		{
-			base.parameters = new ParametersCompiled (null, first, second);
-			base.parameter_info = new ToplevelParameterInfo[] {
-				new ToplevelParameterInfo (this, 0),
-				new ToplevelParameterInfo (this, 1)
+			base.parameters = new ParametersCompiled (first, second);
+			base.parameter_info = new ParameterInfo[] {
+				new ParameterInfo (this, 0),
+				new ParameterInfo (this, 1)
 			};
 		}
 	}
@@ -744,6 +789,15 @@ namespace Mono.CSharp.Linq
 		public TransparentMemberAccess (Expression expr, string name)
 			: base (expr, name)
 		{
+		}
+
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			rc.Report.Error (1947, loc,
+				"A range variable `{0}' cannot be assigned to. Consider using `let' clause to store the value",
+				Name);
+
+			return null;
 		}
 	}
 }

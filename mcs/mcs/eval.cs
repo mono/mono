@@ -445,7 +445,7 @@ namespace Mono.CSharp {
 					BlockContext bc = new BlockContext (method, method.Block, method.ReturnType);
 
 					try {
-						method.Block.Resolve (null, bc, method.ParameterInfo, method);
+						method.Block.Resolve (null, bc, method);
 					} catch (CompletionResult cr){
 						prefix = cr.BaseText;
 						return cr.Result;
@@ -1105,56 +1105,20 @@ namespace Mono.CSharp {
 #endif
 	}
 
-	//
-	// A local variable reference that will create a Field in a
-	// Class with the resolved type.  This is necessary so we can
-	// support "var" as a field type in a class declaration.
-	//
-	// We allow LocalVariableReferece to do the heavy lifting, and
-	// then we insert the field with the resolved type
-	//
-	public class LocalVariableReferenceWithClassSideEffect : LocalVariableReference {
-		TypeContainer container;
-		string name;
-		
-		public LocalVariableReferenceWithClassSideEffect (TypeContainer container, string name, Block current_block, string local_variable_id, LocalInfo li, Location loc)
-			: base (current_block, local_variable_id, loc, li, false)
+	class HoistedEvaluatorVariable : HoistedVariable
+	{
+		public HoistedEvaluatorVariable (Field field)
+			: base (null, field)
 		{
-			this.container = container;
-			this.name = name;
 		}
 
-		public override bool Equals (object obj)
+		public override void EmitSymbolInfo ()
 		{
-			LocalVariableReferenceWithClassSideEffect lvr = obj as LocalVariableReferenceWithClassSideEffect;
-			if (lvr == null)
-				return false;
-
-			if (lvr.name != name || lvr.container != container)
-				return false;
-
-			return base.Equals (obj);
 		}
 
-		public override int GetHashCode ()
+		protected override FieldExpr GetFieldExpression (EmitContext ec)
 		{
-			return name.GetHashCode ();
-		}
-		
-		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
-		{
-			Expression ret = base.DoResolveLValue (ec, right_side);
-			if (ret == null)
-				return null;
-
-			Field f = new Field (container, new TypeExpression (ret.Type, Location),
-					     Modifiers.PUBLIC | Modifiers.STATIC,
-					     new MemberName (name, Location), null);
-			container.AddField (f);
-			if (f.Define ())
-				Evaluator.QueueField (f);
-			
-			return ret;
+			return new FieldExpr (field, field.Location);
 		}
 	}
 
