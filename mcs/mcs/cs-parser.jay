@@ -1406,7 +1406,7 @@ opt_formal_parameter_list
 	
 formal_parameter_list
 	: fixed_parameters
-	  { 
+	  {
 		var pars_list = (List<Parameter>) $1;
 	  	$$ = new ParametersCompiled (pars_list.ToArray ());
 	  } 
@@ -1462,6 +1462,11 @@ formal_parameter_list
 	| arglist_modifier
 	  {
 		$$ = new ParametersCompiled (new Parameter [] { new ArglistParameter (GetLocation ($1)) }, true);
+	  }
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = ParametersCompiled.EmptyReadOnlyParameters;
 	  }
 	;
 
