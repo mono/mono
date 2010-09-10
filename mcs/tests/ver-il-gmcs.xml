@@ -13426,6 +13426,29 @@
       </method>
     </type>
   </test>
+  <test name="gtest-536.cs">
+    <type name="Test">
+      <method name="Void Main()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+Expression`1[TDelegate]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+Expression">
+      <method name="Void Test()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -36301,6 +36324,16 @@
       </method>
     </type>
   </test>
+  <test name="test-579.cs">
+    <type name="TestCase">
+      <method name="Int32 Main()">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-58.cs">
     <type name="Blah">
       <method name="Void .ctor()">
@@ -45836,7 +45869,7 @@
         <size>3</size>
       </method>
       <method name="Program+D Get(Int32)">
-        <size>115</size>
+        <size>128</size>
       </method>
       <method name="Int32 Run(Int32)">
         <size>12</size>
@@ -45860,14 +45893,19 @@
       </method>
     </type>
     <type name="Program+&lt;Get&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Get&gt;c__AnonStorey1">
       <method name="Int32 &lt;&gt;m__0()">
-        <size>19</size>
+        <size>24</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()">
-        <size>19</size>
+        <size>24</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()">
-        <size>14</size>
+        <size>19</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

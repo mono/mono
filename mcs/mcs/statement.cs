@@ -860,12 +860,14 @@ namespace Mono.CSharp {
 		bool defined;
 		bool referenced;
 		Label label;
+		Block block;
 
 		FlowBranching.UsageVector vectors;
 		
-		public LabeledStatement (string name, Location l)
+		public LabeledStatement (string name, Block block, Location l)
 		{
 			this.name = name;
+			this.block = block;
 			this.loc = l;
 		}
 
@@ -877,6 +879,12 @@ namespace Mono.CSharp {
 			label = ec.DefineLabel ();
 			defined = true;
 			return label;
+		}
+
+		public Block Block {
+			get {
+				return block;
+			}
 		}
 
 		public string Name {
@@ -916,6 +924,9 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			if (!HasBeenReferenced)
+				ec.Report.Warning (164, 2, loc, "This label has not been referenced");
+
 			LabelTarget (ec);
 			ec.MarkLabel (label);
 		}
@@ -1737,16 +1748,6 @@ namespace Mono.CSharp {
 		//
 		protected List<Statement> statements;
 
-		//
-		// Labels.  (label, block) pairs.
-		//
-		protected Dictionary<string, LabeledStatement> labels;
-
-		//
-		// If this is a switch section, the enclosing switch block.
-		//
-		protected ExplicitBlock switch_block;
-
 		protected List<Statement> scope_initializers;
 
 		int? resolving_init_idx;
@@ -1817,11 +1818,11 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public ExplicitBlock CreateSwitchBlock (Location start)
+		public Block CreateSwitchBlock (Location start)
 		{
 			// FIXME: Only explicit block should be created
-			var new_block = new ExplicitBlock (this, start, start);
-			new_block.switch_block = Explicit;
+			var new_block = new Block (this, start, start);
+			new_block.IsCompilerGenerated = true;
 			return new_block;
 		}
 
@@ -1830,104 +1831,9 @@ namespace Mono.CSharp {
 			EndLocation = loc;
 		}
 
-		protected void Error_158 (string name, Location loc)
+		public void AddLabel (LabeledStatement target)
 		{
-			ParametersBlock.TopBlock.Report.Error (158, loc, "The label `{0}' shadows another label " +
-				      "by the same name in a contained scope", name);
-		}
-
-		/// <summary>
-		///   Adds a label to the current block. 
-		/// </summary>
-		///
-		/// <returns>
-		///   false if the name already exists in this block. true
-		///   otherwise.
-		/// </returns>
-		///
-		public bool AddLabel (LabeledStatement target)
-		{
-			if (switch_block != null)
-				return switch_block.AddLabel (target);
-
-			string name = target.Name;
-
-			Block cur = this;
-			while (cur != null) {
-				LabeledStatement s = cur.DoLookupLabel (name);
-				if (s != null) {
-					ParametersBlock.TopBlock.Report.SymbolRelatedToPreviousError (s.loc, s.Name);
-					ParametersBlock.TopBlock.Report.Error (140, target.loc, "The label `{0}' is a duplicate", name);
-					return false;
-				}
-
-				if (this == Explicit)
-					break;
-
-				cur = cur.Parent;
-			}
-
-			while (cur != null) {
-				if (cur.DoLookupLabel (name) != null) {
-					Error_158 (name, target.loc);
-					return false;
-				}
-/*
-				if (children != null) {
-					foreach (Block b in children) {
-						LabeledStatement s = b.DoLookupLabel (name);
-						if (s == null)
-							continue;
-
-						Toplevel.Report.SymbolRelatedToPreviousError (s.loc, s.Name);
-						Error_158 (name, target.loc);
-						return false;
-					}
-				}
-*/
-				cur = cur.Parent;
-			}
-
-			ParametersBlock.TopBlock.CheckError158 (name, target.loc);
-
-			if (labels == null)
-				labels = new Dictionary<string, LabeledStatement> ();
-
-			labels.Add (name, target);
-			return true;
-		}
-
-		public LabeledStatement LookupLabel (string name)
-		{
-			LabeledStatement s = DoLookupLabel (name);
-			if (s != null)
-				return s;
-/*
-			if (children == null)
-				return null;
-
-			foreach (Block child in children) {
-				if (Explicit != child.Explicit)
-					continue;
-
-				s = child.LookupLabel (name);
-				if (s != null)
-					return s;
-			}
-*/
-			return null;
-		}
-
-		LabeledStatement DoLookupLabel (string name)
-		{
-			if (switch_block != null)
-				return switch_block.LookupLabel (name);
-
-			if (labels != null)
-				if (labels.ContainsKey (name))
-					return labels [name];
-
-			return null;
+			ParametersBlock.TopBlock.AddLabel (target.Name, target);
 		}
 
 		public void AddLocalName (LocalVariable li)
@@ -2013,6 +1919,11 @@ namespace Mono.CSharp {
 				return 4096;
 //				return assignable_slots;
 			}
+		}
+
+		public LabeledStatement LookupLabel (string name)
+		{
+			return ParametersBlock.TopBlock.GetLabel (name, this);
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -2105,12 +2016,6 @@ namespace Mono.CSharp {
 			// initializer, then we must initialize all of the struct's fields.
 			if (this == ParametersBlock.TopBlock && !ParametersBlock.TopBlock.IsThisAssigned (ec) && !flow_unreachable)
 				ok = false;
-
-			if ((labels != null) && (ec.Report.WarningLevel >= 2)) {
-				foreach (LabeledStatement label in labels.Values)
-					if (!label.HasBeenReferenced)
-						ec.Report.Warning (164, 2, label.loc, "This label has not been referenced");
-			}
 
 			return ok;
 		}
@@ -2249,15 +2154,6 @@ namespace Mono.CSharp {
 			if (ParametersBlock.am_storey is IteratorStorey) {
 				return ParametersBlock.am_storey;
 			}
-
-			//
-			// Switch block does not follow sequential flow and we cannot emit
-			// storey initialization inside the block because it can be jumped over
-			// for all non-first cases. Instead we push it up to the parent block to be
-			// always initialized
-			//
-			if (switch_block != null)
-				return switch_block.CreateAnonymousMethodStorey (ec);
 
 			if (am_storey == null) {
 				MemberBase mc = ec.MemberContext as MemberBase;
@@ -2486,7 +2382,6 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 			this.statements = source.statements;
 			this.scope_initializers = source.scope_initializers;
-			this.switch_block = source.switch_block;
 
 			this.resolved = true;
 			this.unreachable = source.unreachable;
@@ -2690,6 +2585,7 @@ namespace Mono.CSharp {
 		LocalVariable this_variable;
 		CompilerContext compiler;
 		Dictionary<string, object> names;
+		Dictionary<string, object> labels;
 
 		public HoistedVariable HoistedThisVariable;
 
@@ -2782,34 +2678,65 @@ namespace Mono.CSharp {
 			existing_list.Add (li);
 		}
 
-		public bool CheckError158 (string name, Location loc)
+		public void AddLabel (string name, LabeledStatement label)
 		{
-/*
-			if (AnonymousChildren != null) {
-				foreach (ToplevelBlock child in AnonymousChildren) {
-					if (!child.CheckError158 (name, loc))
-						return false;
+			if (labels == null)
+				labels = new Dictionary<string, object> ();
+
+			object value;
+			if (!labels.TryGetValue (name, out value)) {
+				labels.Add (name, label);
+				return;
+			}
+
+			LabeledStatement existing = value as LabeledStatement;
+			List<LabeledStatement> existing_list;
+			if (existing != null) {
+				existing_list = new List<LabeledStatement> ();
+				existing_list.Add (existing);
+				labels[name] = existing_list;
+			} else {
+				existing_list = (List<LabeledStatement>) value;
+			}
+
+			//
+			// A collision checking between labels
+			//
+			for (int i = 0; i < existing_list.Count; ++i) {
+				existing = existing_list[i];
+				Block b = existing.Block;
+
+				// Collision at same level
+				if (label.Block == b) {
+					Report.SymbolRelatedToPreviousError (existing.loc, name);
+					Report.Error (140, label.loc, "The label `{0}' is a duplicate", name);
+					break;
+				}
+
+				// Collision with parent
+				b = label.Block;
+				while ((b = b.Parent) != null) {
+					if (existing.Block == b) {
+						Report.Error (158, label.loc,
+							"The label `{0}' shadows another label by the same name in a contained scope", name);
+						i = existing_list.Count;
+						break;
+					}
+				}
+
+				// Collision with with children
+				b = existing.Block;
+				while ((b = b.Parent) != null) {
+					if (label.Block == b) {
+						Report.Error (158, label.loc,
+							"The label `{0}' shadows another label by the same name in a contained scope", name);
+						i = existing_list.Count;
+						break;
+					}
 				}
 			}
 
-			for (ToplevelBlock c = Container; c != null; c = c.Container) {
-				if (!c.DoCheckError158 (name, loc))
-					return false;
-			}
-*/
-			return true;
-		}
-
-		bool DoCheckError158 (string name, Location loc)
-		{
-			LabeledStatement s = LookupLabel (name);
-			if (s != null) {
-				Report.SymbolRelatedToPreviousError (s.loc, s.Name);
-				Error_158 (name, loc);
-				return false;
-			}
-
-			return true;
+			existing_list.Add (label);
 		}
 
 		//
@@ -2885,6 +2812,39 @@ namespace Mono.CSharp {
 
 			variable = null;
 			return false;
+		}
+
+		public LabeledStatement GetLabel (string name, Block block)
+		{
+			if (labels == null)
+				return null;
+
+			object value;
+			if (!labels.TryGetValue (name, out value)) {
+				return null;
+			}
+
+			var label = value as LabeledStatement;
+			Block b = block;
+			if (label != null) {
+				if (label.Block == b)
+					return label;
+
+				if (label.Block.IsCompilerGenerated && label.Block.Parent == b)
+					return label;
+			} else {
+				List<LabeledStatement> list = (List<LabeledStatement>) value;
+				for (int i = 0; i < list.Count; ++i) {
+					label = list[i];
+					if (label.Block == b)
+						return label;
+
+					if (label.Block.IsCompilerGenerated && label.Block.Parent == b)
+						return label;
+				}
+			}
+				
+			return null;
 		}
 
 		// <summary>
@@ -3097,7 +3057,6 @@ namespace Mono.CSharp {
 	}
 
 	public class SwitchSection {
-		// An array of SwitchLabels.
 		public readonly List<SwitchLabel> Labels;
 		public readonly Block Block;
 		
@@ -3146,6 +3105,7 @@ namespace Mono.CSharp {
 		ExpressionStatement string_dictionary;
 		FieldExpr switch_cache_field;
 		static int unique_counter;
+		ExplicitBlock block;
 
 		//
 		// Nullable Types support
@@ -3162,11 +3122,18 @@ namespace Mono.CSharp {
 		//
 		static TypeSpec [] allowed_types;
 
-		public Switch (Expression e, List<SwitchSection> sects, Location l)
+		public Switch (Expression e, ExplicitBlock block, List<SwitchSection> sects, Location l)
 		{
 			Expr = e;
+			this.block = block;
 			Sections = sects;
 			loc = l;
+		}
+
+		public ExplicitBlock Block {
+			get {
+				return block;
+			}
 		}
 
 		public bool GotDefault {
@@ -3818,6 +3785,12 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
+			//
+			// Needed to emit anonymous storey initialization
+			// Otherwise it does not contain any statements for now
+			//
+			block.Emit (ec);
+
 			default_target = ec.DefineLabel ();
 			null_target = ec.DefineLabel ();
 

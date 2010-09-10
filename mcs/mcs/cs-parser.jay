@@ -81,11 +81,6 @@ namespace Mono.CSharp
 		static Stack<object> oob_stack;
 
 		///
-		/// Switch stack.
-		///
-		Stack<Block> switch_stack;
-
-		///
 		/// Controls the verbosity of the errors produced by the parser
 		///
 		static public int yacc_verbose_flag;
@@ -4612,10 +4607,10 @@ labeled_statement
 	: IDENTIFIER COLON 
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
-		LabeledStatement labeled = new LabeledStatement (lt.Value, lt.Location);
+		LabeledStatement labeled = new LabeledStatement (lt.Value, current_block, lt.Location);
 
-		if (current_block.AddLabel (labeled))
-			current_block.AddStatement (labeled);
+		current_block.AddLabel (labeled);
+		current_block.AddStatement (labeled);
 	  }
 	  statement
 	;
@@ -4918,26 +4913,22 @@ if_statement
 	;
 
 switch_statement
-	: SWITCH open_parens_any
-	  { 
-		if (switch_stack == null)
-			switch_stack = new Stack<Block> (2);
-		switch_stack.Push (current_block);
-	  }
-	  expression CLOSE_PARENS 
-	  OPEN_BRACE opt_switch_sections CLOSE_BRACE
+	: SWITCH open_parens_any expression CLOSE_PARENS OPEN_BRACE
 	  {
-		$$ = new Switch ((Expression) $4, (List<SwitchSection>) $7, GetLocation ($1));
-		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($5), GetLocation ($6), GetLocation ($8));
-		
-		current_block = (Block) switch_stack.Pop ();
+		start_block (GetLocation ($5));
+	  }
+	  opt_switch_sections CLOSE_BRACE
+	  {
+		$$ = new Switch ((Expression) $3, (ExplicitBlock) current_block.Explicit, (List<SwitchSection>) $7, GetLocation ($1));	
+		end_block (GetLocation ($8));
+		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
 	  }
 	;
 
 opt_switch_sections
 	: /* empty */ 		
       {
-		Report.Warning (1522, 1, lexer.Location, "Empty switch block"); 
+		Report.Warning (1522, 1, current_block.StartLocation, "Empty switch block"); 
 		$$ = new List<SwitchSection> ();
 	  }
 	| switch_sections
@@ -4958,6 +4949,11 @@ switch_sections
 		sections.Add ((SwitchSection) $2);
 		$$ = sections;
 	  }
+	| error
+	  {
+		Error_SyntaxError (yyToken);	  
+		$$ = new List<SwitchSection> ();
+	  } 
 	;
 
 switch_section
@@ -4967,7 +4963,7 @@ switch_section
 	  }
  	  statement_list 
 	  {
-		$$ = new SwitchSection ((List<SwitchLabel>) $1, current_block.Explicit);
+		$$ = new SwitchSection ((List<SwitchLabel>) $1, current_block);
 	  }
 	;
 
@@ -6180,11 +6176,13 @@ public void parse ()
 	} catch (Exception e){
 	  	if (e is yyParser.yyUnexpectedEof)
 			UnexpectedEOF = true;
+			
+		// Used by compiler-tester to test internal errors
+//		if (yacc_verbose_flag > 0)
+//			throw;
 
 		if (e is yyParser.yyException)
 			Report.Error (-25, lexer.Location, "Parsing error");
-		else if (yacc_verbose_flag > 0)
-			throw;	// Used by compiler-tester to test internal errors
 		else 
 			Report.Error (589, lexer.Location, "Internal compiler error during parsing");
 	}
