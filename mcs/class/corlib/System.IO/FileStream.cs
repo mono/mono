@@ -848,7 +848,7 @@ namespace System.IO
 			FlushBuffer ();
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public virtual void Flush (bool flushToDisk)
 		{
 			FlushBuffer ();
