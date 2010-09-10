@@ -2774,7 +2774,7 @@ namespace Mono.CSharp {
 			Block b = block;
 			if (variable != null) {
 				do {
-					if (variable.Block == b)
+					if (variable.Block == b.Original)
 						return true;
 
 					b = b.Parent;
@@ -2792,7 +2792,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < list.Count; ++i) {
 					variable = list[i];
 					do {
-						if (variable.Block == b)
+						if (variable.Block == b.Original)
 							return true;
 
 						b = b.Parent;
