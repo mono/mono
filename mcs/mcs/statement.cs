@@ -2830,6 +2830,7 @@ namespace Mono.CSharp {
 				if (label.Block == b)
 					return label;
 
+				// TODO: Temporary workaround for the switch block implicit label block
 				if (label.Block.IsCompilerGenerated && label.Block.Parent == b)
 					return label;
 			} else {
@@ -2839,6 +2840,7 @@ namespace Mono.CSharp {
 					if (label.Block == b)
 						return label;
 
+					// TODO: Temporary workaround for the switch block implicit label block
 					if (label.Block.IsCompilerGenerated && label.Block.Parent == b)
 						return label;
 				}
