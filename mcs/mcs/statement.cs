@@ -5377,7 +5377,8 @@ namespace Mono.CSharp {
 				//
 				// Option 1: Try to match by name GetEnumerator first
 				//
-				var mexpr = Expression.MemberLookup (rc, rc.CurrentType, expr.Type, "GetEnumerator", 0, true, loc);		// TODO: What if CS0229 ?
+				var mexpr = Expression.MemberLookup (rc, rc.CurrentType, expr.Type,
+					"GetEnumerator", 0, Expression.MemberLookupRestrictions.ExactArity, loc);		// TODO: What if CS0229 ?
 
 				var mg = mexpr as MethodGroupExpr;
 				if (mg != null) {
