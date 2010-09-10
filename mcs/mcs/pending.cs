@@ -360,7 +360,14 @@ namespace Mono.CSharp {
 		bool BaseImplements (TypeSpec iface_type, MethodSpec mi, out MethodSpec base_method)
 		{
 			var base_type = container.BaseType;
-			base_method = (MethodSpec) MemberCache.FindMember (base_type, new MemberFilter (mi), BindingRestriction.None);
+
+			//
+			// Setup filter with no return type to give better error message
+			// about mismatch at return type when the check bellow rejects them
+			//
+			var filter = new MemberFilter (mi.Name, mi.Arity, MemberKind.Method, mi.Parameters, null);
+
+			base_method = (MethodSpec) MemberCache.FindMember (base_type, filter, BindingRestriction.None);
 
 			if (base_method == null || (base_method.Modifiers & Modifiers.PUBLIC) == 0)
 				return false;
@@ -368,10 +375,8 @@ namespace Mono.CSharp {
 			if (base_method.DeclaringType.IsInterface)
 				return false;
 
-			// Why was it here ????
-			//if (TypeManager.ImplementsInterface (base_type, iface_type)) {
-			//	return true;
-			//}
+			if (!TypeSpecComparer.Override.IsEqual (mi.ReturnType, base_method.ReturnType))
+				return false;
 
 			if (!base_method.IsAbstract && !base_method.IsVirtual)
 				// FIXME: We can avoid creating a proxy if base_method can be marked 'final virtual' instead.
@@ -396,7 +401,7 @@ namespace Mono.CSharp {
 
 				bool base_implements_type = type.IsInterface &&
 					container.BaseType != null &&
-					container.BaseType.ImplementsInterface (type);
+					container.BaseType.ImplementsInterface (type, false);
 
 				for (int j = 0; j < pending_implementations [i].methods.Count; ++j) {
 					var mi = pending_implementations[i].methods[j];

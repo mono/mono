@@ -289,13 +289,16 @@ namespace Mono.CSharp
 			return "<" + TypeManager.CSharpName (MemberDefinition.TypeParameters) + ">";
 		}
 
-		public bool ImplementsInterface (TypeSpec iface)
+		public bool ImplementsInterface (TypeSpec iface, bool variantly)
 		{
 			var t = this;
 			do {
 				if (t.Interfaces != null) {	// TODO: Try t.iface
 					foreach (TypeSpec i in t.Interfaces) {
-						if (i == iface || TypeSpecComparer.Variant.IsEqual (i, iface) || TypeSpecComparer.IsEqual (i, iface))
+						if (i == iface || TypeSpecComparer.IsEqual (i, iface))
+							return true;
+
+						if (variantly && TypeSpecComparer.Variant.IsEqual (i, iface))
 							return true;
 					}
 				}

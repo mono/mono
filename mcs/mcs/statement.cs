@@ -4849,7 +4849,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (expr.Type != TypeManager.idisposable_type && !expr.Type.ImplementsInterface (TypeManager.idisposable_type)) {
+			if (expr.Type != TypeManager.idisposable_type && !expr.Type.ImplementsInterface (TypeManager.idisposable_type, false)) {
 				if (TypeManager.IsNullableType (expr.Type)) {
 					// it's handled it a custom code bellow
 				} else if (expr.Type == InternalType.Dynamic) {
@@ -4967,7 +4967,7 @@ namespace Mono.CSharp {
 				}
 
 				if (li == Variable) {
-					if (li.Type != TypeManager.idisposable_type && !li.Type.ImplementsInterface (TypeManager.idisposable_type)) {
+					if (li.Type != TypeManager.idisposable_type && !li.Type.ImplementsInterface (TypeManager.idisposable_type, false)) {
 						Using.Error_IsNotConvertibleToIDisposable (bc, li.Type, type_expr.Location);
 						return null;
 					}
@@ -5534,7 +5534,7 @@ namespace Mono.CSharp {
 				//
 				// Add Dispose method call when enumerator can be IDisposable
 				//
-				if (!enum_type.ImplementsInterface (TypeManager.idisposable_type)) {
+				if (!enum_type.ImplementsInterface (TypeManager.idisposable_type, false)) {
 					if (!enum_type.IsSealed && !TypeManager.IsValueType (enum_type)) {
 						//
 						// Runtime Dispose check
