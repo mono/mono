@@ -81,11 +81,36 @@ namespace System.ServiceModel.Configuration
 			get { return properties; }
 		}
 
+		public void ApplyConfiguration (ServiceEndpoint endpoint, ChannelEndpointElement channelEndpointElement)
+		{
+			OnApplyConfiguration (endpoint, channelEndpointElement);
+		}
+
+		public void ApplyConfiguration (ServiceEndpoint endpoint, ServiceEndpointElement serviceEndpointElement)
+		{
+			OnApplyConfiguration (endpoint, serviceEndpointElement);
+		}
+
 		protected internal abstract ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription);
+
+		public void InitializeAndValidate (ChannelEndpointElement channelEndpointElement)
+		{
+			OnInitializeAndValidate (channelEndpointElement);
+		}
+
+		public void InitializeAndValidate (ServiceEndpointElement serviceEndpointElement)
+		{
+			OnInitializeAndValidate (serviceEndpointElement);
+		}
 
 		protected internal virtual void InitializeFrom (ServiceEndpoint endpoint)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			if (!EndpointType.IsAssignableFrom (endpoint.GetType ()))
+				throw new ArgumentNullException (String.Format ("Argument endpoint type is not of expected type '{0}'", EndpointType));
+
+			// not sure if that's all, but that's what is documented.
 		}
 
 		protected abstract void OnApplyConfiguration (ServiceEndpoint endpoint, ChannelEndpointElement channelEndpointElement);
