@@ -112,12 +112,28 @@ namespace System.ComponentModel
 				}
 
 				if (destinationType == typeof (InstanceDescriptor)) {
-					ConstructorInfo ctor = typeof (DateTimeOffset).GetConstructor (new Type [] { typeof (long), typeof (TimeSpan) });
-					return new InstanceDescriptor (ctor, new object [] { dt_offset.Ticks, dt_offset.Offset });
+					ConstructorInfo ctor = typeof (DateTimeOffset).GetConstructor ( GetDateTimeOffsetArgumentTypes ());
+					object [] ctor_args = new object [] { dt_offset.Year, dt_offset.Month, dt_offset.Day, 
+						dt_offset.Hour, dt_offset.Minute, dt_offset.Second, dt_offset.Millisecond,
+						dt_offset.Offset };
+					return new InstanceDescriptor (ctor, ctor_args);
 				}
 			}
 
 			return base.ConvertTo (context, culture, value, destinationType);
+		}
+
+		static Type [] ctor_argument_types;
+
+		static Type [] GetDateTimeOffsetArgumentTypes ()
+		{
+			if (ctor_argument_types == null) {
+				Type int_type = typeof (int);
+				ctor_argument_types = new Type [] { int_type, int_type, int_type, int_type, int_type, int_type, int_type,
+					typeof (TimeSpan) };
+			}
+
+			return ctor_argument_types;
 		}
 	}
 }
