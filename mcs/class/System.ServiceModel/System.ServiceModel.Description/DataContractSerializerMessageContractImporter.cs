@@ -72,7 +72,6 @@ namespace System.ServiceModel.Description
 			if (this.importer != null || this.context != null)
 				throw new SystemException ("INTERNAL ERROR: unexpected recursion of ImportContract method call");
 
-#if USE_DATA_CONTRACT_IMPORTER
 			dc_importer = new XsdDataContractImporter ();
 			schema_set_in_use = new XmlSchemaSet ();
 			schema_set_in_use.Add (importer.XmlSchemas);
@@ -80,7 +79,6 @@ namespace System.ServiceModel.Description
 				foreach (XmlSchema xs in wsdl.Types.Schemas)
 					schema_set_in_use.Add (xs);
 			dc_importer.Import (schema_set_in_use);
-#endif
 
 			this.importer = importer;
 			this.context = context;
@@ -97,39 +95,7 @@ namespace System.ServiceModel.Description
 
 		XsdDataContractImporter dc_importer;
 
-#if USE_DATA_CONTRACT_IMPORTER
 		XmlSchemaSet schema_set_in_use;
-#else
-		XmlSchemaImporter schema_importer_;
-		XmlSchemaImporter schema_importer {
-			get {
-				if (schema_importer_ != null)
-					return schema_importer_;
-				schema_importer_ = new XmlSchemaImporter (xml_schemas);
-				return schema_importer_;
-			}
-		}
-
-		XmlSchemas xml_schemas_;
-		XmlSchemas xml_schemas {
-			get {
-				if (xml_schemas_ != null)
-					return xml_schemas_;
-				xml_schemas_ = new XmlSchemas ();
-
-				foreach (WSDL wsdl in importer.WsdlDocuments)
-					foreach (XmlSchema schema in wsdl.Types.Schemas)
-						xml_schemas_.Add (schema);
-
-				foreach (XmlSchema schema in importer.XmlSchemas.Schemas ())
-					xml_schemas_.Add (schema);
-
-				xml_schemas_.Compile (null, true);
-
-				return xml_schemas_;
-			}
-		}
-#endif
 
 		void DoImportContract ()
 		{
@@ -197,7 +163,6 @@ namespace System.ServiceModel.Description
 			}
 		}
 		
-#if USE_DATA_CONTRACT_IMPORTER
 		void resolveElement (QName qname, List<MessagePartDescription> parts, string ns)
 		{
 			XmlSchemaElement element = (XmlSchemaElement) schema_set_in_use.GlobalElements [qname];
@@ -207,16 +172,6 @@ namespace System.ServiceModel.Description
 
 			resolveParticle (element, parts, ns, 2);
 		}
-#else
-		void resolveElement (QName qname, List<MessagePartDescription> parts, string ns)
-		{
-			XmlSchemaElement element = (XmlSchemaElement) xml_schemas.Find (qname, typeof (XmlSchemaElement));
-			if (element == null)
-				//FIXME: What to do here?
-				throw new Exception ("Could not resolve : " + qname.ToString ());
-			resolveParticle (element, parts, ns, 2);
-		}
-#endif
 
 		void resolveType (QName qname, List<MessagePartDescription> parts, string ns)
 		{
@@ -318,22 +273,10 @@ namespace System.ServiceModel.Description
 			XmlSchemaComplexType ct = elem.ElementSchemaType as XmlSchemaComplexType;
 			if (ct == null) {
 				//Not a complex type
-				XmlSchemaSimpleType simple = elem.ElementSchemaType as XmlSchemaSimpleType;
-#if USE_DATA_CONTRACT_IMPORTER
 				msg_part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
 				msg_part.Importer = dc_importer;
 				msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (schema_set_in_use, elem));
 				parts.Add (msg_part);
-#else
-				msg_part = new MessagePartDescription (
-						elem.Name, ns);
-				if (elem.SchemaType != null)
-					msg_part.XmlTypeMapping = schema_importer.ImportTypeMapping (elem.QualifiedName);
-				else
-					msg_part.XmlTypeMapping = schema_importer.ImportSchemaType (elem.SchemaTypeName);
-				msg_part.TypeName = new QName (GetCLRTypeName (elem.SchemaTypeName), "");
-				parts.Add (msg_part);
-#endif
 
 				return;
 			}
@@ -344,21 +287,10 @@ namespace System.ServiceModel.Description
 			}
 
 			//depth <= 0
-#if USE_DATA_CONTRACT_IMPORTER
 			msg_part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
 			msg_part.Importer = dc_importer;
 			msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (schema_set_in_use, elem));
 			parts.Add (msg_part);
-#else
-			msg_part = new MessagePartDescription (elem.Name, ns);
-			if (elem.SchemaType != null)
-				msg_part.XmlTypeMapping = schema_importer.ImportTypeMapping (elem.QualifiedName);
-			else
-				msg_part.XmlTypeMapping = schema_importer.ImportSchemaType (elem.SchemaTypeName);
-			msg_part.TypeName = elem.SchemaTypeName;
-
-			parts.Add (msg_part);
-#endif
 		}
 
 		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
