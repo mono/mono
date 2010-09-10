@@ -58,7 +58,7 @@ namespace System.ServiceModel.Discovery.Configuration
 		
 		[TypeConverter (typeof (TimeSpanConverter))]
 		[ConfigurationPropertyAttribute("maxAnnouncementDelay", DefaultValue = "00:00:00.500")]
-		public TimeSpan MaxAnnouncementDelay {
+		public new TimeSpan MaxAnnouncementDelay {
 			get { return (TimeSpan) base [max_announcement_delay]; }
 			set { base [max_announcement_delay] = value; }
 		}
