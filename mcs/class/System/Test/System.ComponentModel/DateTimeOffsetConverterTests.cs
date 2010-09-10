@@ -221,6 +221,18 @@ namespace MonoTests.System.ComponentModel
 		{
 			converter.ConvertFromString (null, CultureInfo.InvariantCulture, "*1");
 		}
+
+		[Test]
+		public void ConvertTo_InstanceDescriptor ()
+		{
+			DateTimeOffset dto = new DateTimeOffset (new DateTime (2010, 10, 11), new TimeSpan (3, 6, 0));
+			InstanceDescriptor descriptor = (InstanceDescriptor) converter.ConvertTo (dto, typeof (InstanceDescriptor));
+
+			Assert.AreEqual (".ctor", descriptor.MemberInfo.Name, "#A0");
+			Assert.AreEqual (8, descriptor.Arguments.Count, "#A1");
+			DateTimeOffset dto2 = (DateTimeOffset) descriptor.Invoke ();
+			Assert.AreEqual (dto, dto2, "#A2");
+		}
 	}
 }
 
