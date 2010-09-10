@@ -1406,7 +1406,7 @@ opt_formal_parameter_list
 	
 formal_parameter_list
 	: fixed_parameters
-	  { 
+	  {
 		var pars_list = (List<Parameter>) $1;
 	  	$$ = new ParametersCompiled (pars_list.ToArray ());
 	  } 
@@ -1462,6 +1462,11 @@ formal_parameter_list
 	| arglist_modifier
 	  {
 		$$ = new ParametersCompiled (new Parameter [] { new ArglistParameter (GetLocation ($1)) }, true);
+	  }
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = ParametersCompiled.EmptyReadOnlyParameters;
 	  }
 	;
 
@@ -5085,12 +5090,14 @@ statement_expression_list
 	| statement_expression_list COMMA statement_expression
 	  {
 	  	var sl = $1 as StatementList;
-	  	if (sl == null)
+	  	if (sl == null) {
 	  		sl = new StatementList ((Statement) $1, (Statement) $3);
-	  	else
+			lbag.AddStatement (sl, GetLocation ($2));
+	  	} else {
 	  		sl.Add ((Statement) $3);
+	  		lbag.AppendTo (sl, GetLocation ($2));
+	  	}
 	  		
-		lbag.AddStatement (sl, GetLocation ($2));
 		$$ = sl;
 	  }
 	;
@@ -6209,13 +6216,17 @@ string ConsumeStoredComment ()
 
 Location GetLocation (object obj)
 {
-	if (obj is Tokenizer.LocatedToken)
-		return ((Tokenizer.LocatedToken) obj).Location;
-	if (obj is MemberName)
-		return ((MemberName) obj).Location;
-
-	if (obj is Expression)
-		return ((Expression) obj).Location;
+	var lt = obj as Tokenizer.LocatedToken;
+	if (lt != null)
+		return lt.Location;
+		
+	var mn = obj as MemberName;
+	if (mn != null)
+		return mn.Location;
+		
+	var expr = obj as Expression;
+	if (expr != null)
+		return expr.Location;
 
 	return lexer.Location;
 }

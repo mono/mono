@@ -3,7 +3,7 @@
 
 class C
 {
-	string s;
+	const string s = "s";
 
 	public void Test ()
 	{

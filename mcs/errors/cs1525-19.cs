@@ -1,4 +1,4 @@
-// cs1041.cs: Identifier expected: `int' is a keyword
+// CS1525: Unexpected symbol `int'
 // Line: 5
 
 public class Test {

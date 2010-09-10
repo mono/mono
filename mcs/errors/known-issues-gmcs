@@ -13,7 +13,6 @@
 
 cs0158-5.cs
 cs0162-7.cs NO ERROR
-cs1041.cs # new in GMCS; grammar issue
 
 # Operators
 cs0457-2.cs
@@ -34,9 +33,6 @@ cs0168-2.cs
 cs0177-8.cs NO ERROR
 cs0419.cs
 cs0520.cs
-cs0844-3.cs
-cs0844-2.cs
-cs0844.cs
 cs1574-2.cs
 cs1574-3.cs NO ERROR
 cs1574-6.cs NO ERROR
