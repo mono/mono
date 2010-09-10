@@ -295,6 +295,7 @@ TEST_MCS_FLAGS += -r:System.Web.Extensions.dll
 endif
 
 EXTRA_DISTFILES = \
+	$(RESOURCE_FILES_4) \
 	$(RESOURCE_FILES_2) \
 	$(RESOURCE_FILES_1) \
 	$(TEST_RESOURCE_FILES) \
