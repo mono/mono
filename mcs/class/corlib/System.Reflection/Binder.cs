@@ -452,9 +452,9 @@ namespace System.Reflection
 						continue;
 					elementType = args [args.Length - 1].ParameterType.GetElementType ();
 					for (j = 0; j < types.Length; ++j) {
-						if (j < (args.Length - 1) && types [j] != args [j].ParameterType)
+						if (j < (args.Length - 1) && !check_type (types [j], args [j].ParameterType))
 							break;
-						else if (j >= (args.Length - 1) && types [j] != elementType) 
+						else if (j >= (args.Length - 1) && !check_type (types [j], elementType))
 							break;
 					}
 					if (j == types.Length)
