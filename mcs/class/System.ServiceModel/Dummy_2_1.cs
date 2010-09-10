@@ -1,6 +1,17 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 
+namespace System.Runtime.CompilerServices
+{
+	// introduced for silverlight sdk compatibility
+	internal class FriendAccessAllowedAttribute : Attribute
+	{
+		public FriendAccessAllowedAttribute ()
+		{
+		}
+	}
+}
+
 namespace System.ServiceModel
 {
 	public class EndpointIdentity {}
