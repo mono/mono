@@ -251,11 +251,6 @@ namespace Mono.CSharp
 %token INTERR_NULLABLE
 %token EXTERN_ALIAS
 
-/* Generics <,> tokens */
-%token OP_GENERICS_LT
-%token OP_GENERICS_LT_DECL
-%token OP_GENERICS_GT
-
 /* C# keywords which are not really keywords */
 %token GET
 %token SET
@@ -314,6 +309,11 @@ namespace Mono.CSharp
 %token OP_OR_ASSIGN
 %token OP_PTR
 %token OP_COALESCING
+
+/* Generics <,> tokens */
+%token OP_GENERICS_LT
+%token OP_GENERICS_LT_DECL
+%token OP_GENERICS_GT
 
 %token LITERAL
 
@@ -541,7 +541,6 @@ namespace_body_body
 	  {
 		Report.Error (1518, lexer.Location, "Expected `class', `delegate', `enum', `interface', or `struct'");
 	  }
-	  CLOSE_BRACE
 	| opt_extern_alias_directives
 	  opt_using_directives
 	  opt_namespace_member_declarations
@@ -2739,7 +2738,7 @@ type_declaration_name
 	  {
 		lexer.parsing_generic_declaration = false;
 		var lt = (Tokenizer.LocatedToken) $1;
-		$$ = new MemberName (lt.Value, (TypeArguments)$3, lt.Location);	  
+		$$ = new MemberName (lt.Value, (TypeArguments)$3, lt.Location);
 	  }
 	;
 
@@ -6174,17 +6173,21 @@ public void parse ()
 		Tokenizer tokenizer = lexer as Tokenizer;
 		tokenizer.cleanup ();		
 	} catch (Exception e){
-	  	if (e is yyParser.yyUnexpectedEof)
+	  	if (e is yyParser.yyUnexpectedEof) {
+			Error_SyntaxError (yyToken);
 			UnexpectedEOF = true;
+			return;
+		}
 			
-		// Used by compiler-tester to test internal errors
-//		if (yacc_verbose_flag > 0)
-//			throw;
-
-		if (e is yyParser.yyException)
+		if (e is yyParser.yyException) {
 			Report.Error (-25, lexer.Location, "Parsing error");
-		else 
+		} else {
+			// Used by compiler-tester to test internal errors
+			if (yacc_verbose_flag > 0)
+				throw;
+		
 			Report.Error (589, lexer.Location, "Internal compiler error during parsing");
+		}
 	}
 
 	if (RootContext.ToplevelTypes.NamespaceEntry != null)
@@ -6757,11 +6760,13 @@ static string GetTokenName (int token)
 	case Token.IDENTIFIER:
 		return "identifier";
 
+	case Token.EOF:
+		return "end-of-file";
+
 		// All of these are internal.
 	case Token.NONE:
 	case Token.ERROR:
 	case Token.FIRST_KEYWORD:
-	case Token.EOF:
 	case Token.EVAL_COMPILATION_UNIT_PARSER:
 	case Token.EVAL_USING_DECLARATIONS_UNIT_PARSER:
 	case Token.EVAL_STATEMENT_PARSER:

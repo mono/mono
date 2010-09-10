@@ -2702,8 +2702,8 @@ namespace Mono.CSharp
 				}
 			} catch (IndexOutOfRangeException) {
 				Report.Error (645, Location, "Identifier too long (limit is 512 chars)");
-				col += pos - 1;
-				return Token.ERROR;
+				--pos;
+				col += pos;
 			}
 
 			col += pos - 1;
