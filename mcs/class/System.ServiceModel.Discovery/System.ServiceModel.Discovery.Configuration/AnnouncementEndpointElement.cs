@@ -116,12 +116,12 @@ namespace System.ServiceModel.Discovery.Configuration
 		
 		protected override void OnInitializeAndValidate (ChannelEndpointElement channelEndpointElement)
 		{
-			throw new NotImplementedException ();
+			// It seems to do nothing.
 		}
 		
 		protected override void OnInitializeAndValidate (ServiceEndpointElement serviceEndpointElement)
 		{
-			throw new NotImplementedException ();
+			// It seems to do nothing.
 		}
 	}
 }

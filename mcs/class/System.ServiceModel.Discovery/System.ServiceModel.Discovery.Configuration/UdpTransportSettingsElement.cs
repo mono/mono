@@ -116,6 +116,36 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return (int) base [ttl]; }
 			set { base [ttl] = value; }
 		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+
+		internal void ApplyConfiguration (UdpTransportSettings t)
+		{
+			t.DuplicateMessageHistoryLength = DuplicateMessageHistoryLength;
+			t.MaxBufferPoolSize = MaxBufferPoolSize;
+			t.MaxMulticastRetransmitCount = MaxMulticastRetransmitCount;
+			t.MaxPendingMessageCount = MaxPendingMessageCount;
+			t.MaxReceivedMessageSize = MaxReceivedMessageSize;
+			t.MaxUnicastRetransmitCount = MaxUnicastRetransmitCount;
+			t.MulticastInterfaceId = MulticastInterfaceId;
+			t.SocketReceiveBufferSize = SocketReceiveBufferSize;
+			t.TimeToLive = TimeToLive;
+		}
+
+		internal void InitializeFrom (UdpTransportSettings t)
+		{
+			DuplicateMessageHistoryLength = t.DuplicateMessageHistoryLength;
+			MaxBufferPoolSize = t.MaxBufferPoolSize;
+			MaxMulticastRetransmitCount = t.MaxMulticastRetransmitCount;
+			MaxPendingMessageCount = t.MaxPendingMessageCount;
+			MaxReceivedMessageSize = t.MaxReceivedMessageSize;
+			MaxUnicastRetransmitCount = t.MaxUnicastRetransmitCount;
+			MulticastInterfaceId = t.MulticastInterfaceId;
+			SocketReceiveBufferSize = t.SocketReceiveBufferSize;
+			TimeToLive = t.TimeToLive;
+		}
 	}
 }
 
