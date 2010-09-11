@@ -304,7 +304,6 @@ namespace Microsoft.Build.BuildEngine {
 				WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile,
 							String.IsNullOrEmpty (args.TargetNames) ? "default" : args.TargetNames));
 				ResetColor ();
-				WriteLine (String.Empty);
 				DumpProperties (args.Properties);
 				DumpItems (args.Items);
 			}
@@ -331,6 +330,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
 				indent++;
 				SetColor (eventColor);
+				WriteLine (String.Empty);
 				WriteLine (String.Format ("Target {0}:",args.TargetName));
 				ResetColor ();
 			}
@@ -352,7 +352,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void TaskStartedHandler (object sender, TaskStartedEventArgs args)
 		{
-			if (this.verbosity == LoggerVerbosity.Detailed) {
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed)) {
 				SetColor (eventColor);
 				WriteLine (String.Format ("Task \"{0}\"",args.TaskName));
 				ResetColor ();
@@ -705,7 +705,7 @@ namespace Microsoft.Build.BuildEngine {
 				return;
 
 			SetColor (eventColor);
-			WriteLine ("\n");
+			WriteLine (String.Empty);
 			WriteLine ("Initial Properties:");
 			ResetColor ();
 
@@ -718,7 +718,6 @@ namespace Microsoft.Build.BuildEngine {
 
 			foreach (KeyValuePair<string, string> pair in dict)
 				WriteLine (String.Format ("{0} = {1}", pair.Key, pair.Value));
-			WriteLine ("\n");
 		}
 
 		void DumpItems (IEnumerable items)
@@ -727,7 +726,7 @@ namespace Microsoft.Build.BuildEngine {
 				return;
 
 			SetColor (eventColor);
-			WriteLine ("\n");
+			WriteLine (String.Empty);
 			WriteLine ("Initial Items:");
 			ResetColor ();
 			if (items == null)
@@ -749,7 +748,6 @@ namespace Microsoft.Build.BuildEngine {
 					WriteLine (item.ItemSpec);
 				indent--;
 			}
-			WriteLine ("\n");
 		}
 
 		public string Parameters {
