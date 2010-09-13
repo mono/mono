@@ -247,11 +247,6 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		public virtual object Visit (UsingTemporary usingTemporaryStatement)
-		{
-			return null;
-		}
-
 		public virtual object Visit (Foreach foreachStatement)
 		{
 			return null;

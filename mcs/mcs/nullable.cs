@@ -198,7 +198,7 @@ namespace Mono.CSharp.Nullable
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			IMemoryLocation ml = expr as VariableReference;
-			if (ml != null) 
+			if (ml != null)
 				ml.AddressOf (ec, mode);
 			else
 				LocalVariable.AddressOf (ec, mode);

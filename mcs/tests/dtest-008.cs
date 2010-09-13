@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 class Disposable : IDisposable
 {
-	public int Counter;
+	public static int Counter;
 
 	public void Dispose ()
 	{
@@ -52,7 +52,8 @@ public class Test
 			}
 		} catch { }
 
-		if (d.Counter != 1)
+		Console.WriteLine (Disposable.Counter);
+		if (Disposable.Counter != 1)
 			return false;
 
 		try {
@@ -61,7 +62,8 @@ public class Test
 			}
 		} catch { }
 
-		if (d.Counter != 1)
+		Console.WriteLine (Disposable.Counter);
+		if (Disposable.Counter != 2)
 			return false;
 
 		return true;

@@ -1203,7 +1203,7 @@ namespace Mono.CSharp {
 
 		Expression initializer;
 		protected FullNamedExpression type_expr;
-		LocalVariable li;
+		protected LocalVariable li;
 		protected List<Declarator> declarators;
 
 		public BlockVariableDeclaration (FullNamedExpression type, LocalVariable li)
@@ -1274,64 +1274,66 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (BlockContext bc)
 		{
-			TypeSpec type = null;
-			if (type_expr is VarExpr) {
-				//
-				// C# 3.0 introduced contextual keywords (var) which behaves like a type if type with
-				// same name exists or as a keyword when no type was found
-				// 
-				var texpr = type_expr.ResolveAsTypeTerminal (bc, true);
-				if (texpr == null) {
-					if (RootContext.Version < LanguageVersion.V_3)
-						bc.Report.FeatureIsNotAvailable (loc, "implicitly typed local variable");
+			if (li.Type == null) {
+				TypeSpec type = null;
+				if (type_expr is VarExpr) {
+					//
+					// C# 3.0 introduced contextual keywords (var) which behaves like a type if type with
+					// same name exists or as a keyword when no type was found
+					// 
+					var texpr = type_expr.ResolveAsTypeTerminal (bc, true);
+					if (texpr == null) {
+						if (RootContext.Version < LanguageVersion.V_3)
+							bc.Report.FeatureIsNotAvailable (loc, "implicitly typed local variable");
 
-					if (li.IsFixed) {
-						bc.Report.Error (821, loc, "A fixed statement cannot use an implicitly typed local variable");
-						return false;
-					}
+						if (li.IsFixed) {
+							bc.Report.Error (821, loc, "A fixed statement cannot use an implicitly typed local variable");
+							return false;
+						}
 
-					if (li.IsConstant) {
-						bc.Report.Error (822, loc, "An implicitly typed local variable cannot be a constant");
-						return false;
-					}
+						if (li.IsConstant) {
+							bc.Report.Error (822, loc, "An implicitly typed local variable cannot be a constant");
+							return false;
+						}
 
-					if (Initializer == null) {
-						bc.Report.Error (818, loc, "An implicitly typed local variable declarator must include an initializer");
-						return false;
-					}
+						if (Initializer == null) {
+							bc.Report.Error (818, loc, "An implicitly typed local variable declarator must include an initializer");
+							return false;
+						}
 
-					if (declarators != null) {
-						bc.Report.Error (819, loc, "An implicitly typed local variable declaration cannot include multiple declarators");
-						declarators = null;
-					}
+						if (declarators != null) {
+							bc.Report.Error (819, loc, "An implicitly typed local variable declaration cannot include multiple declarators");
+							declarators = null;
+						}
 
-					Initializer = Initializer.Resolve (bc);
-					if (Initializer != null) {
-						((VarExpr) type_expr).InferType (bc, Initializer);
-						type = type_expr.Type;
+						Initializer = Initializer.Resolve (bc);
+						if (Initializer != null) {
+							((VarExpr) type_expr).InferType (bc, Initializer);
+							type = type_expr.Type;
+						}
 					}
 				}
-			}
 
-			if (type == null) {
-				var texpr = type_expr.ResolveAsTypeTerminal (bc, false);
-				if (texpr == null)
-					return false;
+				if (type == null) {
+					var texpr = type_expr.ResolveAsTypeTerminal (bc, false);
+					if (texpr == null)
+						return false;
 
-				type = texpr.Type;
+					type = texpr.Type;
 
-				if (li.IsConstant && !type.IsConstantCompatible) {
-					Const.Error_InvalidConstantType (type, loc, bc.Report);
+					if (li.IsConstant && !type.IsConstantCompatible) {
+						Const.Error_InvalidConstantType (type, loc, bc.Report);
+					}
 				}
+
+				if (type.IsStatic)
+					FieldBase.Error_VariableOfStaticClass (loc, li.Name, type, bc.Report);
+
+				if (type.IsPointer && !bc.IsUnsafe)
+					Expression.UnsafeError (bc, loc);
+
+				li.Type = type;
 			}
-
-			if (type.IsStatic)
-				FieldBase.Error_VariableOfStaticClass (loc, li.Name, type, bc.Report);
-
-			if (type.IsPointer && !bc.IsUnsafe)
-				Expression.UnsafeError (bc, loc);
-
-			li.Type = type;
 
 			bool eval_global = RootContext.StatementMode && bc.CurrentBlock is ToplevelBlock;
 			if (eval_global) {
@@ -1347,7 +1349,7 @@ namespace Mono.CSharp {
 
 			if (declarators != null) {
 				foreach (var d in declarators) {
-					d.Variable.Type = type;
+					d.Variable.Type = li.Type;
 					if (eval_global) {
 						CreateEvaluatorVariable (bc, d.Variable);
 					} else {
@@ -1393,7 +1395,9 @@ namespace Mono.CSharp {
 		{
 			BlockVariableDeclaration t = (BlockVariableDeclaration) target;
 
-			t.type_expr = (FullNamedExpression) type_expr.Clone (clonectx);
+			if (type_expr != null)
+				t.type_expr = (FullNamedExpression) type_expr.Clone (clonectx);
+
 			if (initializer != null)
 				t.initializer = initializer.Clone (clonectx);
 
@@ -1625,6 +1629,10 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
+			// TODO: Need something better for temporary variables
+			if ((flags & Flags.CompilerGenerated) != 0)
+				CreateBuilder (ec);
+
 			ec.Emit (OpCodes.Ldloc, builder);
 		}
 
@@ -4796,136 +4804,62 @@ namespace Mono.CSharp {
 		}
 	}
 
-	// FIXME: Why is it almost exact copy of Using ??
-	public class UsingTemporary : ExceptionStatement
-	{
-		protected TemporaryVariableReference local_copy;
-		Expression expr;
-		protected Statement dispose_call;
-
-		public UsingTemporary (Expression expr, Statement stmt, Location loc)
-			: base (stmt, loc)
-		{
-			this.expr = expr;
-		}
-
-		#region Properties
-		public Expression Expression {
-			get {
-				return expr;
-			}
-		}
-
-		#endregion
-
-		protected virtual bool DoResolve (BlockContext ec)
-		{
-			expr = expr.Resolve (ec);
-			if (expr == null)
-				return false;
-
-			if (expr.Type != TypeManager.idisposable_type && !expr.Type.ImplementsInterface (TypeManager.idisposable_type, false)) {
-				if (TypeManager.IsNullableType (expr.Type)) {
-					// it's handled it a custom code bellow
-				} else if (expr.Type == InternalType.Dynamic) {
-					expr = Convert.ImplicitConversionStandard (ec, expr, TypeManager.idisposable_type, loc);
-				} else {
-					Using.Error_IsNotConvertibleToIDisposable (ec, expr.Type, expr.Location);
-					return false;
-				}
-			}
-
-			var expr_type = expr.Type;
-
-			local_copy = TemporaryVariableReference.Create (expr_type, ec.CurrentBlock.Parent, loc);
-			local_copy.Resolve (ec);
-
-			if (TypeManager.void_dispose_void == null) {
-				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-					TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
-			}
-
-			var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc);
-			dispose_mg.InstanceExpression = TypeManager.IsNullableType (expr_type) ?
-				new Cast (new TypeExpression (TypeManager.idisposable_type, loc), local_copy, loc).Resolve (ec) :
-				local_copy;
-
-			dispose_call = new StatementExpression (new Invocation (dispose_mg, null));
-
-			// Add conditional call when disposing possible null variable
-			if (!expr_type.IsStruct || TypeManager.IsNullableType (expr_type))
-				dispose_call = new If (new Binary (Binary.Operator.Inequality, local_copy, new NullLiteral (loc), loc), dispose_call, loc);
-
-			return dispose_call.Resolve (ec);
-		}
-
-		public override bool Resolve (BlockContext ec)
-		{
-			bool ok = DoResolve (ec);
-
-			ec.StartFlowBranching (this);
-
-			ok &= stmt.Resolve (ec);
-
-			ec.EndFlowBranching ();
-
-			ok &= base.Resolve (ec);
-
-			return ok;
-		}
-
-		protected override void EmitPreTryBody (EmitContext ec)
-		{
-			//local_copy.Variable.
-			local_copy.EmitAssign (ec, expr);
-		}
-
-		protected override void EmitTryBody (EmitContext ec)
-		{
-			stmt.Emit (ec);
-		}
-
-		protected override void EmitFinallyBody (EmitContext ec)
-		{
-			dispose_call.Emit (ec);
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Statement t)
-		{
-			UsingTemporary target = (UsingTemporary) t;
-
-			target.expr = expr.Clone (clonectx);
-			target.stmt = stmt.Clone (clonectx);
-		}
-	}
-
 	public class Using : ExceptionStatement
 	{
 		public class VariableDeclaration : BlockVariableDeclaration
 		{
+			Statement dispose_call;
+
 			public VariableDeclaration (FullNamedExpression type, LocalVariable li)
 				: base (type, li)
 			{
 			}
 
-			private VariableDeclaration (LocalVariable li, Location loc)
+			public VariableDeclaration (LocalVariable li, Location loc)
 				: base (li)
 			{
 				this.loc = loc;
 			}
 
+			public VariableDeclaration (Expression expr)
+				: base (null)
+			{
+				loc = expr.Location;
+				Initializer = expr;
+			}
+
+			#region Properties
+
+			public bool IsNested { get; private set; }
+
+			#endregion
+
+			public void EmitDispose (EmitContext ec)
+			{
+				dispose_call.Emit (ec);
+			}
+
 			public override bool Resolve (BlockContext bc)
 			{
-				if (type_expr == null)
+				if (IsNested)
 					return true;
 
 				return base.Resolve (bc);
 			}
 
+			public void ResolveExpression (BlockContext bc)
+			{
+				var e = Initializer.Resolve (bc);
+				if (e == null)
+					return;
+
+				li = LocalVariable.CreateCompilerGenerated (e.Type, bc.CurrentBlock, loc);
+				Initializer = ResolveInitializer (bc, Variable, e);
+			}
+
 			protected override Expression ResolveInitializer (BlockContext bc, LocalVariable li, Expression initializer)
 			{
 				Assign assign;
-
 				if (li.Type == InternalType.Dynamic) {
 					initializer = initializer.Resolve (bc);
 					if (initializer == null)
@@ -4935,20 +4869,67 @@ namespace Mono.CSharp {
 					if (initializer == null)
 						return null;
 
-					var var = TemporaryVariableReference.Create (TypeManager.idisposable_type, bc.CurrentBlock, loc);
-					assign = new SimpleAssign (var, initializer, loc);
+					var var = LocalVariable.CreateCompilerGenerated (TypeManager.idisposable_type, bc.CurrentBlock, loc);
+					assign = new SimpleAssign (var.CreateReferenceExpression (bc, loc), initializer, loc);
 					assign.ResolveStatement (bc);
+
+					dispose_call = CreateDisposeCall (bc, var);
+					dispose_call.Resolve (bc);
+
 					return assign;
 				}
 
 				if (li == Variable) {
-					if (li.Type != TypeManager.idisposable_type && !li.Type.ImplementsInterface (TypeManager.idisposable_type, false)) {
-						Using.Error_IsNotConvertibleToIDisposable (bc, li.Type, type_expr.Location);
-						return null;
-					}
+					CheckIDiposableConversion (bc, li, initializer);
+					dispose_call = CreateDisposeCall (bc, li);
+					dispose_call.Resolve (bc);
 				}
 
 				return base.ResolveInitializer (bc, li, initializer);
+			}
+
+			protected virtual void CheckIDiposableConversion (BlockContext bc, LocalVariable li, Expression initializer)
+			{
+				var type = li.Type;
+
+				if (type != TypeManager.idisposable_type && !type.ImplementsInterface (TypeManager.idisposable_type, false)) {
+					if (TypeManager.IsNullableType (type)) {
+						// it's handled in CreateDisposeCall
+						return;
+					}
+
+					bc.Report.SymbolRelatedToPreviousError (type);
+					var loc = type_expr == null ? initializer.Location : type_expr.Location;
+					bc.Report.Error (1674, loc, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
+						type.GetSignatureForError ());
+
+					return;
+				}
+			}
+
+			protected virtual Statement CreateDisposeCall (BlockContext bc, LocalVariable lv)
+			{
+				var lvr = lv.CreateReferenceExpression (bc, lv.Location);
+				var type = lv.Type;
+				var loc = lv.Location;
+
+				if (TypeManager.void_dispose_void == null) {
+					TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
+						TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
+				}
+
+				var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc);
+				dispose_mg.InstanceExpression = TypeManager.IsNullableType (type) ?
+					new Cast (new TypeExpression (TypeManager.idisposable_type, loc), lvr, loc).Resolve (bc) :
+					lvr;
+
+				Statement dispose = new StatementExpression (new Invocation (dispose_mg, null));
+
+				// Add conditional call when disposing possible null variable
+				if (!type.IsStruct || TypeManager.IsNullableType (type))
+					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, loc);
+
+				return dispose;
 			}
 
 			public Statement RewriteForDeclarators (BlockContext bc, Statement stmt)
@@ -4957,6 +4938,10 @@ namespace Mono.CSharp {
 					var d = declarators [i];
 					var vd = new VariableDeclaration (d.Variable, type_expr.Location);
 					vd.Initializer = d.Initializer;
+					vd.IsNested = true;
+					vd.dispose_call = CreateDisposeCall (bc, d.Variable);
+					vd.dispose_call.Resolve (bc);
+
 					stmt = new Using (vd, stmt, d.Variable.Location);
 				}
 
@@ -4973,7 +4958,19 @@ namespace Mono.CSharp {
 			this.decl = decl;
 		}
 
+		public Using (Expression expr, Statement stmt, Location loc)
+			: base (stmt, loc)
+		{
+			this.decl = new VariableDeclaration (expr);
+		}
+
 		#region Properties
+
+		public Expression Expression {
+			get {
+				return decl.Variable == null ? decl.Initializer : null;
+			}
+		}
 
 		public BlockVariableDeclaration Variables {
 			get {
@@ -4982,13 +4979,6 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
-
-		static public void Error_IsNotConvertibleToIDisposable (BlockContext ec, TypeSpec type, Location loc)
-		{
-			ec.Report.SymbolRelatedToPreviousError (type);
-			ec.Report.Error (1674, loc, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
-				type.GetSignatureForError ());
-		}
 
 		protected override void EmitPreTryBody (EmitContext ec)
 		{
@@ -5002,29 +4992,21 @@ namespace Mono.CSharp {
 
 		protected override void EmitFinallyBody (EmitContext ec)
 		{
-			Label skip = ec.DefineLabel ();
-
-			var var = ((Assign) decl.Initializer).Target;
-			bool emit_null_check = !TypeManager.IsValueType (var.Type);
-			if (emit_null_check) {
-				var.Emit (ec);
-				ec.Emit (OpCodes.Brfalse, skip);
-			}
-
-			Invocation.EmitCall (ec, var, TypeManager.void_dispose_void, null, loc);
-
-			if (emit_null_check)
-				ec.MarkLabel (skip);
+			decl.EmitDispose (ec);
 		}
 
 		public override bool Resolve (BlockContext ec)
 		{
 			using (ec.Set (ResolveContext.Options.UsingInitializerScope)) {
-				if (!decl.Resolve (ec))
-					return false;
+				if (decl.Variable == null) {
+					decl.ResolveExpression (ec);
+				} else {
+					if (!decl.Resolve (ec))
+						return false;
 
-				if (decl.Declarators != null) {
-					stmt = decl.RewriteForDeclarators (ec, stmt);
+					if (decl.Declarators != null) {
+						stmt = decl.RewriteForDeclarators (ec, stmt);
+					}
 				}
 			}
 
@@ -5035,11 +5017,6 @@ namespace Mono.CSharp {
 			ec.EndFlowBranching ();
 
 			ok &= base.Resolve (ec);
-
-			if (TypeManager.void_dispose_void == null) {
-				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-					TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
-			}
 
 			return ok;
 		}
@@ -5268,52 +5245,43 @@ namespace Mono.CSharp {
 				}
 			}
 
-			class Dispose : UsingTemporary
+			class RuntimeDispose : Using.VariableDeclaration
 			{
-				LocalTemporary dispose;
-
-				public Dispose (TemporaryVariableReference variable, LocalTemporary dispose, Expression expr, Statement statement, Location loc)
-					: base (expr, statement, loc)
+				public RuntimeDispose (LocalVariable lv, Location loc)
+					: base (lv, loc)
 				{
-					base.local_copy = variable;
-					this.dispose = dispose;
 				}
 
-				protected override bool DoResolve (BlockContext ec)
+				protected override void CheckIDiposableConversion (BlockContext bc, LocalVariable li, Expression initializer)
+				{
+					// Defered to runtime check
+				}
+
+				protected override Statement CreateDisposeCall (BlockContext bc, LocalVariable lv)
 				{
 					if (TypeManager.void_dispose_void == null) {
 						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
 							TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
 					}
 
-					Expression dispose_var = (Expression) dispose ?? local_copy;
+					//
+					// Fabricates code like
+					//
+					// if ((temp = vr as IDisposable) != null) temp.Dispose ();
+					//
+
+					var dispose_variable = LocalVariable.CreateCompilerGenerated (TypeManager.idisposable_type, bc.CurrentBlock, loc);
+
+					var idisaposable_test = new Binary (Binary.Operator.Inequality, new CompilerAssign (
+						dispose_variable.CreateReferenceExpression (bc, loc),
+						new As (lv.CreateReferenceExpression (bc, loc), new TypeExpression (dispose_variable.Type, loc), loc),
+						loc), new NullLiteral (loc), loc);
 
 					var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc);
-					dispose_mg.InstanceExpression = dispose_var;
+					dispose_mg.InstanceExpression = dispose_variable.CreateReferenceExpression (bc, loc);
 
-					dispose_call = new StatementExpression (new Invocation (dispose_mg, null));
-
-					if (!dispose_var.Type.IsStruct)
-						dispose_call = new If (new Binary (Binary.Operator.Inequality, dispose_var, new NullLiteral (loc), loc), dispose_call, loc);
-
-					return dispose_call.Resolve (ec);
-				}
-
-				protected override void EmitFinallyBody (EmitContext ec)
-				{
-					Label call_dispose = ec.DefineLabel ();
-					if (dispose != null) {
-						local_copy.Emit (ec, false);
-						ec.Emit (OpCodes.Isinst, dispose.Type);
-						dispose.Store (ec);
-					}
-
-					base.EmitFinallyBody (ec);
-
-					if (dispose != null) {
-						ec.MarkLabel (call_dispose);
-						dispose.Release (ec);
-					}
+					Statement dispose = new StatementExpression (new Invocation (dispose_mg, null));
+					return new If (idisaposable_test, dispose, loc);
 				}
 			}
 
@@ -5449,8 +5417,11 @@ namespace Mono.CSharp {
 			public override bool Resolve (BlockContext ec)
 			{
 				bool is_dynamic = expr.Type == InternalType.Dynamic;
-				if (is_dynamic)
+				if (is_dynamic) {
 					expr = Convert.ImplicitConversionRequired (ec, expr, TypeManager.ienumerable_type, loc);
+				} else if (TypeManager.IsNullableType (expr.Type)) {
+					expr = Nullable.Unwrap.Create (expr);
+				}
 
 				var get_enumerator_mg = ResolveGetEnumerator (ec);
 				if (get_enumerator_mg == null) {
@@ -5500,7 +5471,6 @@ namespace Mono.CSharp {
 				variable.Type = var_type.Type;
 
 				var init = new Invocation (get_enumerator_mg, null);
-				init.Resolve (ec);
 
 				statement = new While (new BooleanExpression (new Invocation (move_next_mg, null)),
 					new Body (var_type.Type, variable, current_pe, statement, loc), loc);
@@ -5515,8 +5485,9 @@ namespace Mono.CSharp {
 						//
 						// Runtime Dispose check
 						//
-						var tv = new LocalTemporary (TypeManager.idisposable_type);
-						statement = new Dispose (enumerator_variable, tv, init, statement, loc);
+						var vd = new RuntimeDispose (enumerator_variable.LocalInfo, loc);
+						vd.Initializer = init;
+						statement = new Using (vd, statement, loc);
 					} else {
 						//
 						// No Dispose call needed
@@ -5528,7 +5499,9 @@ namespace Mono.CSharp {
 					//
 					// Static Dispose check
 					//
-					statement = new Dispose (enumerator_variable, null, init, statement, loc);
+					var vd = new Using.VariableDeclaration (enumerator_variable.LocalInfo, loc);
+					vd.Initializer = init;
+					statement = new Using (vd, statement, loc);
 				}
 
 				return statement.Resolve (ec);

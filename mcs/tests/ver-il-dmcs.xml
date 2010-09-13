@@ -1535,7 +1535,7 @@
   <test name="dtest-008.cs">
     <type name="Disposable">
       <method name="Void Dispose()">
-        <size>15</size>
+        <size>13</size>
       </method>
       <method name="Void Test()">
         <size>1</size>
@@ -1546,10 +1546,10 @@
     </type>
     <type name="Test">
       <method name="Boolean ForEachTest()">
-        <size>509</size>
+        <size>508</size>
       </method>
       <method name="Boolean UsingTest()">
-        <size>794</size>
+        <size>355</size>
       </method>
       <method name="Int32 Main()">
         <size>57</size>
@@ -1558,7 +1558,7 @@
         <size>7</size>
       </method>
       <method name="Boolean ForEachTest_2()">
-        <size>300</size>
+        <size>299</size>
       </method>
     </type>
   </test>
@@ -4225,31 +4225,32 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>66</size>
+    </type>
+    <type name="S">
+      <method name="Void System.IDisposable.Dispose()">
+        <size>13</size>
       </method>
-      <method name="IEnumerator GetEnumerator()">
-        <size>8</size>
+      <method name="Void Dispose()">
+        <size>6</size>
       </method>
     </type>
-    <type name="Test+&lt;GetEnumerator&gt;c__Iterator0">
+    <type name="C">
+      <method name="Void System.IDisposable.Dispose()">
+        <size>1</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>6</size>
+      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>7</size>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>209</size>
       </method>
-      <method name="Boolean MoveNext()">
-        <size>185</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>64</size>
-      </method>
-      <method name="Void Reset()">
-        <size>6</size>
-      </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
-        <size>7</size>
+      <method name="Void GenMethod[T](T)">
+        <size>33</size>
       </method>
     </type>
   </test>
@@ -6897,7 +6898,7 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>185</size>
+        <size>184</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__Iterator0">
@@ -9922,7 +9923,7 @@
         <size>136</size>
       </method>
       <method name="Int32 Test(System.Type, System.Type[])">
-        <size>426</size>
+        <size>425</size>
       </method>
       <method name="Int32 Test()">
         <size>532</size>
@@ -22516,10 +22517,10 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>203</size>
+        <size>215</size>
       </method>
       <method name="Void Dispose()">
-        <size>64</size>
+        <size>76</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -25378,6 +25379,90 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-linq-25.cs">
+    <type name="A">
+      <method name="System.String get_Header()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.String get_Name()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>36</size>
+      </method>
+      <method name="Void Test(System.Action)">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0()">
+        <size>159</size>
+      </method>
+      <method name="IEnumerable`1 &lt;Main&gt;m__1(A)">
+        <size>7</size>
+      </method>
+      <method name="&lt;&gt;__AnonType0`2[A,B] &lt;Main&gt;m__2(A, B)">
+        <size>8</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__3(&lt;&gt;__AnonType0`2[A,B])">
+        <size>67</size>
+      </method>
+      <method name="&lt;&gt;__AnonType1`2[A,B] &lt;Main&gt;m__4(&lt;&gt;__AnonType0`2[A,B])">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;c&gt;__T,&lt;p&gt;__T]">
+      <method name="&lt;c&gt;__T get_c()">
+        <size>7</size>
+      </method>
+      <method name="&lt;p&gt;__T get_p()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>142</size>
+      </method>
+      <method name="Void .ctor(&lt;c&gt;__T, &lt;p&gt;__T)">
+        <size>21</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType1`2[&lt;C&gt;__T,&lt;P&gt;__T]">
+      <method name="&lt;C&gt;__T get_C()">
+        <size>7</size>
+      </method>
+      <method name="&lt;P&gt;__T get_P()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>142</size>
+      </method>
+      <method name="Void .ctor(&lt;C&gt;__T, &lt;P&gt;__T)">
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -30163,7 +30248,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main(System.String[])">
-        <size>137</size>
+        <size>136</size>
       </method>
     </type>
     <type name="MonoBUG.Foo">
@@ -32284,7 +32369,7 @@
     </type>
     <type name="A+B">
       <method name="Void .ctor()">
-        <size>500</size>
+        <size>499</size>
       </method>
     </type>
     <type name="A+B+C">
@@ -32380,7 +32465,7 @@
     </type>
     <type name="A+B">
       <method name="Void .ctor()">
-        <size>500</size>
+        <size>499</size>
       </method>
     </type>
     <type name="A+B+C">
@@ -33762,7 +33847,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>279</size>
+        <size>276</size>
       </method>
     </type>
     <type name="X">
@@ -36508,7 +36593,7 @@
         <size>2</size>
       </method>
       <method name="Void Main()">
-        <size>164</size>
+        <size>166</size>
       </method>
     </type>
     <type name="Q">
@@ -37206,7 +37291,7 @@
         <size>6</size>
       </method>
       <method name="Int32 Main()">
-        <size>504</size>
+        <size>501</size>
       </method>
     </type>
   </test>
@@ -38532,7 +38617,7 @@
         <size>76</size>
       </method>
       <method name="System.String BuildNode_D()">
-        <size>157</size>
+        <size>156</size>
       </method>
       <method name="Void BuildNode_E(System.String[,] ByRef)">
         <size>68</size>
@@ -44319,7 +44404,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>257</size>
+        <size>256</size>
       </method>
       <method name="System.Collections.ArrayList Find(predicate, System.Collections.ArrayList)">
         <size>83</size>
@@ -45907,10 +45992,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>185</size>
+        <size>197</size>
       </method>
       <method name="Void Dispose()">
-        <size>64</size>
+        <size>76</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -48815,7 +48900,7 @@
         <size>16</size>
       </method>
       <method name="Int32 Main()">
-        <size>173</size>
+        <size>172</size>
       </method>
     </type>
     <type name="X+&lt;GetIt&gt;c__Iterator0">
@@ -48914,7 +48999,7 @@
         <size>30</size>
       </method>
       <method name="Int32 Main()">
-        <size>245</size>
+        <size>247</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
@@ -49099,7 +49184,7 @@
         <size>30</size>
       </method>
       <method name="Int32 Main()">
-        <size>407</size>
+        <size>403</size>
       </method>
     </type>
     <type name="S+&lt;Get&gt;c__Iterator0">
@@ -49237,7 +49322,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>374</size>
+        <size>373</size>
       </method>
     </type>
     <type name="Test+&lt;Foo&gt;c__Iterator0">
@@ -49328,7 +49413,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>269</size>
+        <size>268</size>
       </method>
     </type>
     <type name="Tester+&lt;GetEnumerator&gt;c__Iterator0">
@@ -49339,10 +49424,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>623</size>
+        <size>635</size>
       </method>
       <method name="Void Dispose()">
-        <size>84</size>
+        <size>96</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -49370,7 +49455,7 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>185</size>
+        <size>184</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__Iterator0">
@@ -49606,7 +49691,7 @@
         <size>11</size>
       </method>
       <method name="Void Run()">
-        <size>175</size>
+        <size>177</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -49882,6 +49967,39 @@
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-iter-22.cs">
+    <type name="Test">
+      <method name="Void Main()">
+        <size>66</size>
+      </method>
+      <method name="IEnumerator GetEnumerator()">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;GetEnumerator&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>197</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>76</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
