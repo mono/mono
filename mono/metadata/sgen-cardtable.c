@@ -187,7 +187,7 @@ card_table_clear (void)
 {
 	/*XXX we could do this in 2 ways. using mincore or iterating over all sections/los objects */
 	if (use_cardtable) {
-		major.iterate_live_block_ranges (clear_cards);
+		major_collector.iterate_live_block_ranges (clear_cards);
 		los_iterate_live_block_ranges (clear_cards);
 	}
 }
@@ -197,13 +197,13 @@ scan_from_card_tables (void *start_nursery, void *end_nursery, GrayQueue *queue)
 	if (use_cardtable) {
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
 	/*First we copy*/
-	major.iterate_live_block_ranges (move_cards_to_shadow_table);
+	major_collector.iterate_live_block_ranges (move_cards_to_shadow_table);
 	los_iterate_live_block_ranges (move_cards_to_shadow_table);
 
 	/*Then we clear*/
 	card_table_clear ();
 #endif
-		major.scan_card_table (queue);
+		major_collector.scan_card_table (queue);
 		los_scan_card_table (queue);
 	}
 }
