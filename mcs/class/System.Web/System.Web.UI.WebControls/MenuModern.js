@@ -90,7 +90,7 @@ Sys.WebForms.Menu = function (options)
 		this.parentMenu = null;
 		this.path = "0";
 		this.mainElement.setAttribute ("tabindex", this.tabIndex);
-		this.mainElement.setAttribute ("role", "menu");
+		this.mainElement.setAttribute ("role", this.orientation == "vertical" ? "menu" : "menubar");
 		with (this.mainElement.style) {
 			width = "auto";
 			position = "relative";
@@ -110,14 +110,14 @@ Sys.WebForms.Menu = function (options)
 Sys.WebForms.Menu.Helpers = {
 	__subMenuCounter: 0,
 	__menuItems: [],
-	__currentlyShownItem: null,
+	__popupToClose: null,
 
-	setCurrentItem: function (element) {
-		this.__currentlyShownItem = element;
+	setPopupToClose: function (element) {
+		this.__popupToClose = element;
 	},
 
-	getCurrentItem: function () {
-		return this.__currentlyShownItem;
+	getPopupToClose: function () {
+		return this.__popupToClose;
 	},
 
 	setFloat: function (element, side) {
@@ -262,15 +262,13 @@ Sys.WebForms.MenuItem = function (options)
 						left = leftValue;
 					}
 				}
+
+				Sys.WebForms.Menu.Helpers.appendCssClass (this.element, "has-popup");
+				this.element.setAttribute ("aria-haspopup", this.subMenu.mainElement.id);
+				Sys.WebForms.Menu.Helpers.addEventHandler (this.element, "mouseover", this.mouseOverHandler);
+				Sys.WebForms.Menu.Helpers.addEventHandler (this.element, "mouseout", this.mouseOutHandler);
 				break;
 		}
-	}
-
-	if (this.subMenu != null) {
-		Sys.WebForms.Menu.Helpers.appendCssClass (this.element, "has-popup");
-		this.element.setAttribute ("aria-haspopup", this.subMenu.mainElement.id);
-		Sys.WebForms.Menu.Helpers.addEventHandler (this.element, "mouseover", this.mouseOverHandler);
-		Sys.WebForms.Menu.Helpers.addEventHandler (this.element, "mouseout", this.mouseOutHandler);
 	}
 
 	Sys.WebForms.Menu.Helpers.appendCssClass (this.element, this.menuType);
@@ -303,16 +301,25 @@ Sys.WebForms.MenuItem.prototype.hide = function (popup, leaveParentOpen)
 		if (current.mainElement != null)
 			current.mainElement.style.display = "none";
 
+		if (current.hideTimerId != null) {
+			window.clearTimeout (current.hideTimerId);
+			current.hideTimerId = null;
+		}
+
 		current = current.parentMenu;
 	}
 }
 
 Sys.WebForms.MenuItem.prototype.onMouseOver = function (popupId)
 {
-	var cur = Sys.WebForms.Menu.Helpers.getCurrentItem ();
-	if (cur != null && cur.hideTimerId != null) {
-		window.clearTimeout (cur.hideTimerId);
-		cur.hideTimerId = null;
+	var cur = Sys.WebForms.Menu.Helpers.getPopupToClose ();
+	if (cur != null) {
+		if (cur.hideTimerId != null) {
+			window.clearTimeout (cur.hideTimerId);
+			cur.hideTimerId = null;
+		}
+		this.hide (cur, true);
+		Sys.WebForms.Menu.Helpers.setPopupToClose (null);
 	}
 	if (popupId == null || popupId == "")
 		return;
@@ -323,16 +330,10 @@ Sys.WebForms.MenuItem.prototype.onMouseOver = function (popupId)
 
 	this.hide (cur, true);
 	popup.style.display = "block";
-	Sys.WebForms.Menu.Helpers.setCurrentItem (this.subMenu);
 }
 
 Sys.WebForms.MenuItem.prototype.onMouseOut = function (popupId)
 {
-	if (this.subMenu.hideTimerId != null) {
-		window.clearTimeout (this.subMenu.hideTimerId);
-		this.subMenu.hideTimerId = null;
-	}
-
 	if (popupId == null || popupId == "")
 		return;
 
@@ -340,7 +341,7 @@ Sys.WebForms.MenuItem.prototype.onMouseOut = function (popupId)
 	if (popup == null)
 		throw "Popup with id '" + popupId + "' could not be found.";
 
-	var cur = Sys.WebForms.Menu.Helpers.getCurrentItem ();
+	var cur = this.subMenu;
 	if (cur != null) {
 		var myself = this;
 		cur.hideTimerId = window.setTimeout (function () {
@@ -349,12 +350,12 @@ Sys.WebForms.MenuItem.prototype.onMouseOut = function (popupId)
 						     this.subMenu.disappearAfter);
 
 	}
+	Sys.WebForms.Menu.Helpers.setPopupToClose (cur);
 }
 
 Sys.WebForms.MenuItem.prototype.mouseOverHandler = function (e)
 {
 	var menuItem = Sys.WebForms.Menu.Helpers.getMenuItem (this);
-
 	if (menuItem == null || !(menuItem instanceof Sys.WebForms.MenuItem)) {
 		e.returnResult = false;
 		e.cancelBuble = false;
@@ -380,16 +381,20 @@ Sys.WebForms.MenuItem.prototype.mouseOutHandler = function (e)
 
 Sys.WebForms.MenuItem.prototype.finalizeEvent = function (e)
 {
-	if (e == null)
-		return;
+	/* For standards-compliant browsers */
+	if (e != null) {
+		if (e.preventDefault)
+			e.preventDefault();
+		else
+			e.returnResult = false;
 
-	if (e.preventDefault)
-		e.preventDefault();
-	else
-		e.returnResult = false;
+		if (e.stopPropagation)
+			e.stopPropagation();
+		else
+			e.cancelBubble = true;
+	}
 
-	if (e.stopPropagation)
-		e.stopPropagation();
-	else
-		e.cancelBubble = true;
+	/* For IE */
+	if (window.event != null)
+		window.event.cancelBubble = true;
 }
