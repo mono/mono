@@ -9,6 +9,7 @@ LIB_MCS_FLAGS = \
 	        /r:System.Xml.dll \
 	        /r:System.Data.dll \
 	        /r:System.Runtime.Serialization.dll \
+	        /resource:./src/DbLinq/Schema/Dbml/DbmlSchema.xsd,DbLinq.Schema.Dbml.DbmlSchema.xsd \
 		/d:MONO_STRICT /d:MONO_DEPLOY
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
