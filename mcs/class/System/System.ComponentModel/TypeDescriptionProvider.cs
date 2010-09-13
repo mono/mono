@@ -142,6 +142,41 @@ namespace System.ComponentModel
 			return _emptyCustomTypeDescriptor;
 		}
 
+#if NET_4_0
+		public virtual bool IsSupportedType (Type type)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			if (_parent != null)
+				return _parent.IsSupportedType (type);
+
+			return true;
+		}
+
+		public virtual Type GetRuntimeType (Type reflectionType)
+		{
+			if (reflectionType == null)
+				throw new ArgumentNullException ("reflectionType");
+
+			if (_parent != null)
+				return _parent.GetRuntimeType (reflectionType);
+
+			return reflectionType;
+		}
+
+		protected internal virtual IExtenderProvider[] GetExtenderProviders (object instance)
+		{
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+
+			if (_parent != null)
+				return _parent.GetExtenderProviders (instance);
+
+			return new IExtenderProvider [] { };
+		}
+#endif
+
 	}
 
 }
