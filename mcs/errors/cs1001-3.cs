@@ -1,4 +1,4 @@
-// CS1525: Unexpected symbol `)', expecting `identifier'
+// CS1001: Unexpected symbol `)', expecting identifier
 // Line: 8
 
 class C

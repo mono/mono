@@ -1,4 +1,4 @@
-// cs1001: Identifier expected
+// CS1001: Unexpected symbol `)', expecting identifier
 // Line: 6
 
 class T {

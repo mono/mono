@@ -443,8 +443,9 @@ using_alias_directive
 		var lt = (Tokenizer.LocatedToken) $2;
 		current_namespace.AddUsingAlias (lt.Value, (MemberName) $4, GetLocation ($1));
 	  }
-	| USING error {
-		CheckIdentifierToken (yyToken, GetLocation ($2));
+	| USING error
+	 {
+		Error_SyntaxError (yyToken);
 		$$ = null;
 	  }
 	;
@@ -951,8 +952,9 @@ struct_declaration
 		lbag.AppendToMember (current_class, GetLocation ($13));
 		$$ = pop_current_class ();
 	  }
-	| opt_attributes opt_modifiers opt_partial STRUCT error {
-		CheckIdentifierToken (yyToken, GetLocation ($5));
+	| opt_attributes opt_modifiers opt_partial STRUCT error
+	  {
+		Error_SyntaxError (yyToken);
 	  }
 	;
 
@@ -1517,8 +1519,8 @@ fixed_parameter
 	  parameter_type
 	  error
 	  {
+		Error_SyntaxError (yyToken);	  
 	  	Location l = GetLocation ($4);
-		CheckIdentifierToken (yyToken, l);
 		$$ = new Parameter ((FullNamedExpression) $3, "NeedSomeGeneratorHere", (Parameter.Modifier) $2, (Attributes) $1, l);
 	  }
 	| opt_attributes
@@ -1643,7 +1645,7 @@ parameter_array
 	  }
 	| opt_attributes params_modifier type error
 	  {
-		CheckIdentifierToken (yyToken, GetLocation ($4));
+		Error_SyntaxError (yyToken);
 		$$ = null;
 	  }
 	;
@@ -1921,8 +1923,9 @@ interface_declaration
 	    lbag.AppendToMember (current_class, GetLocation ($11), GetLocation ($13));
 		$$ = pop_current_class ();
 	  }
-	| opt_attributes opt_modifiers opt_partial INTERFACE error {
-		CheckIdentifierToken (yyToken, GetLocation ($5));
+	| opt_attributes opt_modifiers opt_partial INTERFACE error
+	  {
+		Error_SyntaxError (yyToken);	  
 	  }
 	;
 
@@ -6202,11 +6205,6 @@ void CheckToken (int error, int yyToken, string msg, Location loc)
 		Report.Error (error, loc, msg);
 }
 
-void CheckIdentifierToken (int yyToken, Location loc)
-{
-	CheckToken (1041, yyToken, "Identifier expected", loc);
-}
-
 string ConsumeStoredComment ()
 {
 	string s = tmpComment;
@@ -6310,7 +6308,6 @@ public NamespaceEntry CurrentNamespace {
        }
 }
 
-
 void Error_SyntaxError (int token)
 {
 	Error_SyntaxError (0, token, "Unexpected symbol");
@@ -6320,18 +6317,28 @@ void Error_SyntaxError (int error_code, int token, string msg)
 {
 	string symbol = GetSymbolName (token);
 	string expecting = GetExpecting ();
+	var loc = lexer.Location - symbol.Length;
 	
 	if (error_code == 0) {
-		if (expecting == "`)'")
+		if (expecting == "`identifier'") {
+			if (token > Token.FIRST_KEYWORD && token < Token.LAST_KEYWORD) {
+				Report.Error (1041, loc, "Identifier expected, `{0}' is a keyword", symbol);
+				return;
+			}
+			
+			error_code = 1001;
+			expecting = "identifier";
+		} else if (expecting == "`)'") {
 			error_code = 1026;
-		else
+		} else {
 			error_code = 1525;
+		}
 	}
 	
 	if (string.IsNullOrEmpty (expecting))
-		Report.Error (error_code, lexer.Location, "{1} `{0}'", symbol, msg);
+		Report.Error (error_code, loc, "{1} `{0}'", symbol, msg);
 	else
-		Report.Error (error_code, lexer.Location, "{2} `{0}', expecting {1}", symbol, expecting, msg);	  
+		Report.Error (error_code, loc, "{2} `{0}', expecting {1}", symbol, expecting, msg);	  
 }
 
 string GetExpecting ()
