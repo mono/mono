@@ -292,8 +292,16 @@ namespace MonoTests.System
 			Uri baseUri = new Uri (absolute);
 			try {
 				Uri.TryCreate (baseUri, (Uri) null, out uri);
-				Assert.Fail ();
-			} catch (NullReferenceException) {
+#if NET_4_0
+				Assert.IsNull (uri);
+#else
+				Assert.Fail ("throw NRE under FX 2.0");
+#endif
+			}
+			catch (NullReferenceException) {
+#if NET_4_0
+				Assert.Fail ("does not throw NRE under FX 4.0");
+#endif
 			}
 		}
 
@@ -410,8 +418,14 @@ namespace MonoTests.System
 			try {
 				http.IsBaseOf (null);
 				Assert.Fail ();
-			} catch (NullReferenceException) {
 			}
+#if NET_4_0
+			catch (ArgumentNullException) {
+			}
+#else
+			catch (NullReferenceException) {
+			}
+#endif
 		}
 
 		[Test] 
@@ -487,8 +501,14 @@ namespace MonoTests.System
 			try {
 				uri.MakeRelativeUri ((Uri) null);
 				Assert.Fail ("#1");
-			} catch (NullReferenceException) {
 			}
+#if NET_4_0
+			catch (ArgumentNullException) {
+			}
+#else
+			catch (NullReferenceException) {
+			}
+#endif
 		}
 
 		[Test] // LAMESPEC: see bug #321113

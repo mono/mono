@@ -285,13 +285,13 @@ namespace System {
 			this.isUnixFilePath = baseUri.isUnixFilePath;
 			this.isOpaquePart = baseUri.isOpaquePart;
 
-			if (relativeUri == String.Empty) {
+			if (relativeUri.Length == 0) {
 				this.path = baseUri.path;
 				this.query = baseUri.query;
 				this.fragment = baseUri.fragment;
 				return;
 			}
-			
+
 			// 8 fragment
 			// Note that in relative constructor, file URI cannot handle '#' as a filename character, but just regarded as a fragment identifier.
 			pos = relativeUri.IndexOf ('#');
@@ -300,8 +300,10 @@ namespace System {
 					fragment = relativeUri.Substring (pos);
 				else
 					fragment = "#" + EscapeString (relativeUri.Substring (pos+1));
-				relativeUri = relativeUri.Substring (0, pos);
+				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
 			}
+
+			bool consider_query = false;
 
 			// 6 query
 			pos = relativeUri.IndexOf ('?');
@@ -309,7 +311,13 @@ namespace System {
 				query = relativeUri.Substring (pos);
 				if (!userEscaped)
 					query = EscapeString (query);
-				relativeUri = relativeUri.Substring (0, pos);
+#if !NET_4_0 && !MOONLIGHT
+				consider_query = query.Length > 0;
+#endif
+				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
+			} else if (relativeUri.Length == 0) {
+				// if there is no relative path then we keep the Query and Fragment from the absolute
+				query = baseUri.query;
 			}
 
 			if (relativeUri.Length > 0 && relativeUri [0] == '/') {
@@ -327,11 +335,7 @@ namespace System {
 			
 			// par 5.2 step 6 a)
 			path = baseUri.path;
-#if NET_4_0
-			if (relativeUri.Length > 0) {
-#else
-			if (relativeUri.Length > 0 || query.Length > 0) {
-#endif
+			if ((relativeUri.Length > 0) || consider_query) {
 				pos = path.LastIndexOf ('/');
 				if (pos >= 0) 
 					path = path.Substring (0, pos + 1);
@@ -1019,7 +1023,7 @@ namespace System {
 		void AppendQueryAndFragment (ref string result)
 		{
 			if (query.Length > 0) {
-				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), false) : Unescape (query, false);
+				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true) : Unescape (query, false);
 				result += q;
 			}
 			if (fragment.Length > 0)
@@ -1878,6 +1882,10 @@ namespace System {
 
 		public bool IsBaseOf (Uri uri)
 		{
+#if NET_4_0
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+#endif
 			return Parser.IsBaseOf (this, uri);
 		}
 
@@ -2033,6 +2041,12 @@ namespace System {
 		//[MonoTODO ("rework code to avoid exception catching")]
 		public static bool TryCreate (Uri baseUri, Uri relativeUri, out Uri result)
 		{
+#if NET_4_0
+			if (relativeUri == null) {
+				result = null;
+				return false;
+			}
+#endif
 			try {
 				// FIXME: this should call UriParser.Resolve
 				result = new Uri (baseUri, relativeUri.OriginalString);

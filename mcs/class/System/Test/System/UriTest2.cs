@@ -549,5 +549,110 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual (uri.UserInfo, uri.GetComponents (UriComponents.UserInfo, UriFormat.Unescaped), "UserInfo");
 		}
 #endif
+
+		[Test]
+		public void Merge_Query_Fragment ()
+		{
+			Uri absolute = new Uri ("http://host/dir/subdir/weird;name?moonlight");
+			Assert.AreEqual ("?moonlight", absolute.Query, "absolute.Query");
+
+			Uri merged = new Uri (absolute, "#mono");
+			Assert.AreEqual ("#mono", merged.Fragment, "merged.Fragment");
+			Assert.AreEqual ("?moonlight", merged.Query, "merged.Query");
+			Assert.AreEqual ("http://host/dir/subdir/weird;name?moonlight#mono", merged.ToString (), "merged.ToString");
+		}
+
+		[Test]
+		public void Merge_Query_Query ()
+		{
+			Uri absolute = new Uri ("http://host/dir/subdir/weird;name?moonlight");
+			Assert.AreEqual ("?moonlight", absolute.Query, "absolute.Query");
+
+			Uri merged = new Uri (absolute, "?moon");
+			Assert.AreEqual ("?moon", merged.Query, "merged.Query");
+#if NET_4_0
+			Assert.AreEqual ("http://host/dir/subdir/weird;name?moon", merged.ToString (), "merged.ToString");
+#else
+			Assert.AreEqual ("http://host/dir/subdir/?moon", merged.ToString (), "merged.ToString");
+#endif
+		}
+
+		[Test]
+		public void Merge_Query_RelativePath ()
+		{
+			Uri absolute = new Uri ("http://host/dir/subdir/weird;name?moonlight");
+			Assert.AreEqual ("?moonlight", absolute.Query, "absolute.Query");
+
+			Uri merged = new Uri (absolute, "../");
+			Assert.AreEqual (String.Empty, merged.Query, "../Query");
+			Assert.AreEqual ("http://host/dir/", merged.ToString (), "../ToString");
+
+			merged = new Uri (absolute, "..");
+			Assert.AreEqual (String.Empty, merged.Query, "..Query");
+			Assert.AreEqual ("http://host/dir/", merged.ToString (), "..ToString");
+
+			merged = new Uri (absolute, "./");
+			Assert.AreEqual (String.Empty, merged.Query, "./Query");
+			Assert.AreEqual ("http://host/dir/subdir/", merged.ToString (), "./ToString");
+
+			merged = new Uri (absolute, ".");
+			Assert.AreEqual (String.Empty, merged.Query, ".Query");
+			Assert.AreEqual ("http://host/dir/subdir/", merged.ToString (), ".ToString");
+
+			merged = new Uri (absolute, "/");
+			Assert.AreEqual (String.Empty, merged.Query, "/Query");
+			Assert.AreEqual ("http://host/", merged.ToString (), "/ToString");
+
+			merged = new Uri (absolute, "index.html");
+			Assert.AreEqual (String.Empty, merged.Query, "index.html Query");
+			Assert.AreEqual ("http://host/dir/subdir/index.html", merged.ToString (), "index.html ToString");
+
+			merged = new Uri (absolute, "i");
+			Assert.AreEqual (String.Empty, merged.Query, "i Query");
+			Assert.AreEqual ("http://host/dir/subdir/i", merged.ToString (), "i ToString");
+
+			merged = new Uri (absolute, String.Empty);
+			Assert.AreEqual ("?moonlight", merged.Query, "Query");
+			Assert.AreEqual ("http://host/dir/subdir/weird;name?moonlight", merged.ToString (), "ToString");
+		}
+
+		[Test]
+		public void Merge_Fragment_RelativePath ()
+		{
+			Uri absolute = new Uri ("http://host/dir/subdir/weird;name#mono");
+			Assert.AreEqual ("#mono", absolute.Fragment, "absolute.Fragment");
+
+			Uri merged = new Uri (absolute, "../");
+			Assert.AreEqual (String.Empty, merged.Fragment, "../Fragment");
+			Assert.AreEqual ("http://host/dir/", merged.ToString (), "../ToString");
+
+			merged = new Uri (absolute, "..");
+			Assert.AreEqual (String.Empty, merged.Fragment, "..Fragment");
+			Assert.AreEqual ("http://host/dir/", merged.ToString (), "..ToString");
+
+			merged = new Uri (absolute, "./");
+			Assert.AreEqual (String.Empty, merged.Fragment, "./Fragment");
+			Assert.AreEqual ("http://host/dir/subdir/", merged.ToString (), "./ToString");
+
+			merged = new Uri (absolute, ".");
+			Assert.AreEqual (String.Empty, merged.Fragment, ".Fragment");
+			Assert.AreEqual ("http://host/dir/subdir/", merged.ToString (), ".ToString");
+
+			merged = new Uri (absolute, "/");
+			Assert.AreEqual (String.Empty, merged.Fragment, "/Fragment");
+			Assert.AreEqual ("http://host/", merged.ToString (), "/ToString");
+
+			merged = new Uri (absolute, "index.html");
+			Assert.AreEqual (String.Empty, merged.Fragment, "index.html Fragment");
+			Assert.AreEqual ("http://host/dir/subdir/index.html", merged.ToString (), "index.html ToString");
+
+			merged = new Uri (absolute, "i");
+			Assert.AreEqual (String.Empty, merged.Fragment, "i Fragment");
+			Assert.AreEqual ("http://host/dir/subdir/i", merged.ToString (), "i ToString");
+
+			merged = new Uri (absolute, String.Empty);
+			Assert.AreEqual ("#mono", merged.Fragment, "Fragment");
+			Assert.AreEqual ("http://host/dir/subdir/weird;name#mono", merged.ToString (), "ToString");
+		}
 	}
 }
