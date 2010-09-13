@@ -573,34 +573,29 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			try {
-				Type[] required_modifier = null;
-				if ((ModFlags & Modifiers.VOLATILE) != 0) {
-					if (TypeManager.isvolatile_type == null)
-						TypeManager.isvolatile_type = TypeManager.CoreLookupType (Compiler,
-							"System.Runtime.CompilerServices", "IsVolatile", MemberKind.Class, true);
+			Type[] required_modifier = null;
+			if ((ModFlags & Modifiers.VOLATILE) != 0) {
+				if (TypeManager.isvolatile_type == null)
+					TypeManager.isvolatile_type = TypeManager.CoreLookupType (Compiler,
+						"System.Runtime.CompilerServices", "IsVolatile", MemberKind.Class, true);
 
-					if (TypeManager.isvolatile_type != null)
-						required_modifier = new Type[] { TypeManager.isvolatile_type.GetMetaInfo () };
-				}
+				if (TypeManager.isvolatile_type != null)
+					required_modifier = new Type[] { TypeManager.isvolatile_type.GetMetaInfo () };
+			}
 
-				FieldBuilder = Parent.TypeBuilder.DefineField (
-					Name, member_type.GetMetaInfo (), required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
+			FieldBuilder = Parent.TypeBuilder.DefineField (
+				Name, member_type.GetMetaInfo (), required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
 
-				spec = new FieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
+			spec = new FieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
 
-				// Don't cache inaccessible fields
-				if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
-					Parent.MemberCache.AddMember (spec);
-				}
+			// Don't cache inaccessible fields
+			if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
+				Parent.MemberCache.AddMember (spec);
+			}
 
-				if (initializer != null) {
-					((TypeContainer) Parent).RegisterFieldForInitialization (this,
-						new FieldInitializer (spec, initializer, this));
-				}
-			} catch (ArgumentException) {
-				Report.RuntimeMissingSupport (Location, "`void' or `void*' field type");
-				return false;
+			if (initializer != null) {
+				((TypeContainer) Parent).RegisterFieldForInitialization (this,
+					new FieldInitializer (spec, initializer, this));
 			}
 
 			if (declarators != null) {
