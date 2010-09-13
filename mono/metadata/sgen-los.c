@@ -506,14 +506,14 @@ los_scan_card_table (GrayQueue *queue)
 				elem = (char*)mono_array_addr_with_size ((MonoArray*)obj->data, size, index);
 				if (klass->element_class->valuetype) {
 					while (elem < card_end) {
-						major.minor_scan_vtype (elem, desc, nursery_start, nursery_next, queue);
+						major_collection.minor_scan_vtype (elem, desc, nursery_start, nursery_next, queue);
 						elem += size;
 					}
 				} else {
 					while (elem < card_end) {
 						gpointer new, old = *(gpointer*)elem;
 						if (old) {
-							major.copy_object ((void**)elem, queue);
+							major_collection.copy_object ((void**)elem, queue);
 							new = *(gpointer*)elem;
 							if (G_UNLIKELY (ptr_in_nursery (new)))
 								mono_sgen_add_to_global_remset (elem);
@@ -524,7 +524,7 @@ los_scan_card_table (GrayQueue *queue)
 			}
 		} else {
 			if (sgen_card_table_region_begin_scanning ((mword)obj->data, (mword)obj->size))
-				major.minor_scan_object (obj->data, queue);
+				major_collection.minor_scan_object (obj->data, queue);
 		}
 	}
 }
