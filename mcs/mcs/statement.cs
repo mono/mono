@@ -5417,10 +5417,11 @@ namespace Mono.CSharp {
 			public override bool Resolve (BlockContext ec)
 			{
 				bool is_dynamic = expr.Type == InternalType.Dynamic;
+
 				if (is_dynamic) {
 					expr = Convert.ImplicitConversionRequired (ec, expr, TypeManager.ienumerable_type, loc);
 				} else if (TypeManager.IsNullableType (expr.Type)) {
-					expr = Nullable.Unwrap.Create (expr);
+					expr = new Nullable.UnwrapCall (expr).Resolve (ec);
 				}
 
 				var get_enumerator_mg = ResolveGetEnumerator (ec);

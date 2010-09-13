@@ -261,6 +261,32 @@ namespace Mono.CSharp.Nullable
 		}
 	}
 
+	//
+	// Calls get_Value method on nullable expression
+	//
+	public class UnwrapCall : CompositeExpression
+	{
+		public UnwrapCall (Expression expr)
+			: base (expr)
+		{
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			base.DoResolve (rc);
+
+			if (type != null)
+				type = NullableInfo.GetUnderlyingType (type);
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Invocation.EmitCall (ec, Child, NullableInfo.GetValue (Child.Type), null, loc);
+		}
+	}
+
 	public class Wrap : TypeCast
 	{
 		private Wrap (Expression expr, TypeSpec type)
