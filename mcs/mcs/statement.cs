@@ -5126,7 +5126,6 @@ namespace Mono.CSharp {
 				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 				ec.CurrentBranching.CreateSibling ();
 
-				// TODO: dynamic
 				variable.local_info.Type = conv.Type;
 				variable.Resolve (ec);
 

@@ -27,13 +27,12 @@ public class Test
 			res += v;
 		}
 
-		Console.WriteLine (res);
 		return res == 31;
 	}
 	
 	bool ForEachTest_2()
 	{
-		dynamic c = new int [2] { 5, 7 };
+		dynamic c = new int [] { 5, 7 };
 		int total = 0;
 		foreach (var v in c)
 		{
@@ -41,6 +40,19 @@ public class Test
 		}
 		
 		return total == 12;
+	}
+	
+	bool ForEachTest_3()
+	{
+		dynamic[] c = new dynamic [] { (byte) 1, 7 };
+		int total = 0;
+		foreach (var v in c)
+		{
+			total += v;
+		}
+
+		Console.WriteLine (total);
+		return total == 8;
 	}
 
 	bool UsingTest ()
@@ -52,7 +64,6 @@ public class Test
 			}
 		} catch { }
 
-		Console.WriteLine (Disposable.Counter);
 		if (Disposable.Counter != 1)
 			return false;
 
@@ -62,7 +73,6 @@ public class Test
 			}
 		} catch { }
 
-		Console.WriteLine (Disposable.Counter);
 		if (Disposable.Counter != 2)
 			return false;
 
@@ -78,8 +88,11 @@ public class Test
 		if (!t.ForEachTest_2 ())
 			return 2;
 		
-		if (!t.UsingTest ())
+		if (!t.ForEachTest_3 ())
 			return 3;
+		
+		if (!t.UsingTest ())
+			return 10;
 
 		Console.WriteLine ("ok");
 		return 0;
