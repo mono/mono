@@ -468,6 +468,8 @@ System.ServiceModel.Configuration/ServiceElementCollection.cs
 System.ServiceModel.Configuration/ServiceEndpointElement.cs
 System.ServiceModel.Configuration/ServiceEndpointElementCollection.cs
 System.ServiceModel.Configuration/ServiceHostingEnvironmentSection.cs
+System.ServiceModel.Configuration/ServiceMetadataEndpointCollectionElement.cs
+System.ServiceModel.Configuration/ServiceMetadataEndpointElement.cs
 System.ServiceModel.Configuration/ServiceMetadataPublishingElement.cs
 System.ServiceModel.Configuration/ServiceModelConfigurationElementCollection.cs
 System.ServiceModel.Configuration/ServiceModelEnhancedConfigurationElementCollection.cs
@@ -488,6 +490,7 @@ System.ServiceModel.Configuration/StandardBindingReliableSessionElement.cs
 System.ServiceModel.Configuration/StandardEndpointCollectionElement.cs
 System.ServiceModel.Configuration/StandardEndpointElement.cs
 System.ServiceModel.Configuration/StandardEndpointElementCollection.cs
+System.ServiceModel.Configuration/StandardEndpointsSection.cs
 System.ServiceModel.Configuration/SynchronousReceiveElement.cs
 System.ServiceModel.Configuration/TcpConnectionPoolSettingsElement.cs
 System.ServiceModel.Configuration/TcpTransportElement.cs
@@ -601,6 +604,7 @@ System.ServiceModel.Description/ServiceDescription.cs
 System.ServiceModel.Description/ServiceEndpoint.cs
 System.ServiceModel.Description/ServiceEndpointCollection.cs
 System.ServiceModel.Description/ServiceMetadataBehavior.cs
+System.ServiceModel.Description/ServiceMetadataEndpoint.cs
 System.ServiceModel.Description/ServiceMetadataExtension.cs
 System.ServiceModel.Description/ServiceSecurityAuditBehavior.cs
 System.ServiceModel.Description/ServiceThrottlingBehavior.cs

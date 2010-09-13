@@ -164,7 +164,7 @@ namespace MonoTests.System.ServiceModel.Security
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("This hangs on .NET")]
 		// not sure how "good" this test is ... if it fails at
 		// service side, it just results in timeout error.
 		// The assertion makes sure that it passes all the tests, but

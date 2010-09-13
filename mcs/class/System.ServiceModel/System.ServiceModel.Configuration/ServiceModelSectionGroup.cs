@@ -78,5 +78,11 @@ namespace System.ServiceModel.Configuration
 		public ServicesSection Services {
 			get { return (ServicesSection) Sections ["services"]; }
 		}
+
+#if NET_4_0
+		public StandardEndpointsSection StandardEndpoints {
+			get { return (StandardEndpointsSection) Sections ["standardEndpoints"]; }
+		}
+#endif
 	}
 }

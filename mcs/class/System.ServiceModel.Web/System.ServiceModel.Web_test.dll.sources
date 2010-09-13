@@ -6,6 +6,7 @@ System.ServiceModel.Channels/WebBodyFormatMessagePropertyTest.cs
 System.ServiceModel.Channels/WebMessageEncodingBindingElementTest.cs
 System.ServiceModel.Configuration/WebHttpBindingElementTest.cs
 System.ServiceModel.Description/WebHttpBehaviorTest.cs
+System.ServiceModel.Description/WebHttpEndpointTest.cs
 System.ServiceModel.Description/WebScriptEnablingBehaviorTest.cs
 System.ServiceModel.Dispatcher/JsonQueryStringConverterTest.cs
 System.ServiceModel.Dispatcher/QueryStringConverterTest.cs
