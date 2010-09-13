@@ -152,6 +152,7 @@ System.ComponentModel/SByteConverterTests.cs
 System.ComponentModel/SingleConverterTests.cs
 System.ComponentModel/ToolboxItemAttributeTests.cs
 System.ComponentModel/TypeConverterTests.cs
+System.ComponentModel/TypeDescriptionProviderTest.cs
 System.ComponentModel/TypeDescriptorTests.cs
 System.ComponentModel/UInt16ConverterTests.cs
 System.ComponentModel/UInt32ConverterTests.cs
