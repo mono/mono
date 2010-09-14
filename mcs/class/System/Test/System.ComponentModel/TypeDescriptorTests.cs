@@ -17,6 +17,7 @@ using System.Globalization;
 using System.Collections.Generic;
 
 using NUnit.Framework;
+using System.Reflection;
 
 namespace MonoTests.System.ComponentModel
 {
@@ -1511,5 +1512,19 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (1, pc.Count, "#1");
 			Assert.AreEqual ("Length", pc [0].Name, "#2");
 		}
+
+#if NET_4_0
+		[Test]
+		public void InterfaceType ()
+		{
+			Type interface_type = TypeDescriptor.InterfaceType;
+			Assert.AreEqual ("TypeDescriptorInterface", interface_type.Name, "#A0");
+			Assert.IsTrue (interface_type.IsClass, "#A1");
+			Assert.IsTrue (interface_type.IsSealed, "#A2");
+			Assert.AreEqual (typeof (object), interface_type.BaseType, "#A3");
+			Assert.IsFalse (interface_type.IsInterface, "#A4");
+			Assert.IsFalse (interface_type.IsPublic, "#A5");
+		}
+#endif
 	}
 }
