@@ -87,7 +87,6 @@ namespace System {
 #endif
 			}
 
-			Console.WriteLine ("Converting: '{0}' of type '{1}'", value, value.GetType ().Name);
 			if (!CanConvertFrom (context, value.GetType ()))
 				throw new NotSupportedException (Locale.GetText ("Cannot convert from value."));
 
