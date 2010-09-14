@@ -54,6 +54,7 @@ namespace Microsoft.Build.Utilities
 		MessageImportance	standardErrorLoggingImportance;
 		MessageImportance	standardOutputLoggingImportance;
 		StringBuilder toolOutput;
+		StringBuilder pendingLineFragmentError, pendingLineFragmentOutput;
 		bool typeLoadException;
 
 		protected ToolTask ()
@@ -141,12 +142,20 @@ namespace Microsoft.Build.Utilities
 				pinfo.RedirectStandardOutput = true;
 				pinfo.RedirectStandardError = true;
 
+				pendingLineFragmentOutput = new StringBuilder ();
+				pendingLineFragmentError = new StringBuilder ();
+
 				try {
 					ProcessWrapper pw = ProcessService.StartProcess (pinfo, outwr, errwr, null, environmentOverride);
-					pw.OutputStreamChanged += delegate (object o, string msg) { ProcessLine (msg, StandardOutputLoggingImportance); };
-					pw.ErrorStreamChanged += delegate (object o, string msg) { ProcessLine (msg, StandardErrorLoggingImportance); };
+					pw.OutputStreamChanged += (_, msg) => ProcessLine (pendingLineFragmentOutput, msg, StandardOutputLoggingImportance);
+					pw.ErrorStreamChanged += (_, msg) => ProcessLine (pendingLineFragmentError, msg, StandardErrorLoggingImportance);
 
 					pw.WaitForOutput (timeout == Int32.MaxValue ? -1 : timeout);
+
+					// Process any remaining line
+					ProcessLine (pendingLineFragmentOutput, StandardOutputLoggingImportance, true);
+					ProcessLine (pendingLineFragmentError, StandardErrorLoggingImportance, true);
+
 					exitCode = pw.ExitCode;
 					outwr.Close();
 					errwr.Close();
@@ -158,6 +167,9 @@ namespace Microsoft.Build.Utilities
 
 				if (typeLoadException)
 					ProcessTypeLoadException ();
+
+				pendingLineFragmentOutput.Length = 0;
+				pendingLineFragmentError.Length = 0;
 
 				Log.LogMessage (MessageImportance.Low, "Tool {0} execution finished.", pathToTool);
 				return exitCode;
@@ -192,9 +204,39 @@ namespace Microsoft.Build.Utilities
 			Log.LogError (output_str);
 		}
 
-		void ProcessLine (string line, MessageImportance importance)
+		void ProcessLine (StringBuilder outputBuilder, MessageImportance importance, bool isLastLine)
 		{
-			foreach (string singleLine in line.Split (new string [] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)) {
+			if (outputBuilder.Length == 0)
+				return;
+
+			if (isLastLine && !outputBuilder.ToString ().EndsWith (Environment.NewLine))
+				// last line, but w/o an trailing newline, so add that
+				outputBuilder.Append (Environment.NewLine);
+
+			ProcessLine (outputBuilder, null, importance);
+		}
+
+		void ProcessLine (StringBuilder outputBuilder, string line, MessageImportance importance)
+		{
+			// Add to any line fragment from previous call
+			if (line != null)
+				outputBuilder.Append (line);
+
+			// Don't remove empty lines!
+			var lines = outputBuilder.ToString ().Split (new string [] {Environment.NewLine}, StringSplitOptions.None);
+
+			// Clear the builder. If any incomplete line is found,
+			// then it will get added back
+			outputBuilder.Length = 0;
+			for (int i = 0; i < lines.Length; i ++) {
+				string singleLine = lines [i];
+				if (i == lines.Length - 1 && !singleLine.EndsWith (Environment.NewLine)) {
+					// Last line doesn't end in newline, could be part of
+					// a bigger line. Save for later processing
+					outputBuilder.Append (singleLine);
+					continue;
+				}
+
 				toolOutput.AppendLine (singleLine);
 
 				// in case of typeLoadException, collect all the output
@@ -206,9 +248,10 @@ namespace Microsoft.Build.Utilities
 
 		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
 		{
-			singleLine = singleLine.Trim ();
-			if (singleLine.Length == 0)
+			if (singleLine.Length == 0) {
+				Log.LogMessage (singleLine, importance);
 				return;
+			}
 
 			if (singleLine.StartsWith ("Unhandled Exception: System.TypeLoadException") ||
 			    singleLine.StartsWith ("Unhandled Exception: System.IO.FileNotFoundException")) {
