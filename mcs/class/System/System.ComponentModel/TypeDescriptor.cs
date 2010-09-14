@@ -75,6 +75,15 @@ public sealed class TypeDescriptor
 		get { throw new NotImplementedException (); }
 	}
 
+#if NET_4_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static Type InterfaceType {
+		get {
+			return typeof (TypeDescriptorInterface);
+		}
+	}
+#endif
+
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static TypeDescriptionProvider AddAttributes (object instance, params Attribute [] attributes)
 	{
@@ -1450,4 +1459,13 @@ public sealed class TypeDescriptor
 			return _properties;
 		}
 	}
+
+#if NET_4_0
+	// In .net this class seems to be a dummy and empty class
+	// used to represent internally any extender provider associated with
+	// all the interfaces.
+	sealed class TypeDescriptorInterface
+	{
+	}
+#endif
 }
