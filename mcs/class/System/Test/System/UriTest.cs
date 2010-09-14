@@ -1491,21 +1491,17 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void Segments4 ()
 		{
 			Uri uri = new Uri ("file:///c:/hello");
+
+			Assert.AreEqual ("c:/hello", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("c:\\hello", uri.LocalPath, "LocalPath");
+
 			string [] segments = uri.Segments;
 			Assert.AreEqual (3, segments.Length, "#01");
-#if NET_2_0
 			Assert.AreEqual ("/", segments [0], "#02");
 			Assert.AreEqual ("c:/", segments[1], "#03");
-#else
-			Assert.AreEqual ("c:", segments [0], "#02");
-			Assert.AreEqual ("/", segments [1], "#03");
-#endif
 			Assert.AreEqual ("hello", segments [2], "#04");
 		}
 
@@ -1656,8 +1652,12 @@ namespace MonoTests.System
 				"file:///tmp/x (%232).jpg",
 				"file:///tmp/ü (%232).jpg" };
 
-			foreach (string test in tests)
-				Assert.AreEqual (test, new Uri (test).ToString ());
+			foreach (string test in tests) {
+				Uri uri = new Uri (test);
+				Assert.IsFalse (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString/" + test);
+				Assert.AreEqual (test, uri.OriginalString, "OriginalString/" + test);
+				Assert.AreEqual (test, uri.ToString (), "ToString/" + test);
+			}
 		}
 
 		// This test doesn't work on Linux, and arguably shouldn't work.
@@ -1827,7 +1827,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")] // MS.NET seems not to like userinfo in a file:// uri...
 		[ExpectedException (typeof (UriFormatException))]
 		public void LocalPath_FileNameWithAtSign6 ()
 		{

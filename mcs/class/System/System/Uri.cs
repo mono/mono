@@ -533,7 +533,7 @@ namespace System {
 				EnsureAbsoluteUri ();
 				if (cachedLocalPath != null)
 					return cachedLocalPath;
-				if (!IsFile)
+				if (!IsFile && IsWellFormedOriginalString ())
 					return AbsolutePath;
 
 				bool windows = (path.Length > 3 && path [1] == ':' &&
@@ -628,9 +628,9 @@ namespace System {
 					string [] newParts = new string [parts.Length + 1];
 					Array.Copy (parts, 1, newParts, 2, parts.Length - 1);
 					parts = newParts;
-					parts [0] = path.Substring (0, 2);
-					parts [1] = String.Empty;
-					i++;
+					parts [0] = "/";
+					parts [1] = path.Substring (0, 3);
+					i = 2;
 				}
 				
 				int end = parts.Length;
@@ -1439,11 +1439,7 @@ namespace System {
 			}
 
 			if (pos == -1) {
-				if ((scheme != Uri.UriSchemeMailto) &&
-#if ONLY_1_1
-				    (scheme != Uri.UriSchemeFile) &&
-#endif
-				    (scheme != Uri.UriSchemeNews))
+				if ((scheme != Uri.UriSchemeMailto) && (scheme != Uri.UriSchemeNews))
 					path = "/";
 			} else {
 				path = uriString.Substring (pos, endpos-pos);
@@ -1456,6 +1452,9 @@ namespace System {
 			else
 				pos = uriString.IndexOf ('@', startpos, endpos-startpos);
 			if (pos != -1) {
+				// supplying username / password on a file URI is not supported
+				if (scheme == UriSchemeFile)
+					return "Invalid host";
 				userinfo = uriString.Substring (startpos, pos-startpos);
 				startpos = pos + 1;
 			}
