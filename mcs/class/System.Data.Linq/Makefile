@@ -19,7 +19,7 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-EXTRA_DISTFILES =
+EXTRA_DISTFILES = src/DbLinq/Schema/Dbml/DbmlSchema.xsd
 
 # This is a .NET 3.5+ assembly
 VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
