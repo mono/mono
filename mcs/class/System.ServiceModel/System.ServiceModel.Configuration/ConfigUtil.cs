@@ -69,6 +69,12 @@ namespace System.ServiceModel.Configuration
 			get { return (ExtensionsSection) GetSection ("system.serviceModel/extensions"); }
 		}
 
+		public static StandardEndpointsSection StandardEndpointsSection {
+			get {
+				return (StandardEndpointsSection) GetSection ("system.serviceModel/standardEndpoints");
+			}
+		}
+
 		public static Binding CreateBinding (string binding, string bindingConfiguration)
 		{
 			BindingCollectionElement section = ConfigUtil.BindingsSection [binding];
@@ -82,6 +88,30 @@ namespace System.ServiceModel.Configuration
 					el.ApplyConfiguration (b);
 
 			return b;
+		}
+
+		public static ServiceEndpoint ConfigureStandardEndpoint (ContractDescription cd, ServiceEndpointElement element)
+		{
+			string kind = element.Kind;
+			string endpointConfiguration = element.EndpointConfiguration;
+
+			EndpointCollectionElement section = ConfigUtil.StandardEndpointsSection [kind];
+			if (section == null)
+				throw new ArgumentException (String.Format ("standard endpoint section for '{0}' was not found.", kind));
+
+			StandardEndpointElement e = section.GetDefaultStandardEndpointElement ();
+
+			ServiceEndpoint inst = e.CreateServiceEndpoint (cd);
+
+			foreach (StandardEndpointElement el in section.ConfiguredEndpoints) {
+				if (el.Name == endpointConfiguration) {
+					el.InitializeAndValidate (element);
+					el.ApplyConfiguration (inst, element);
+					break;
+				}
+			}
+			
+			return inst;
 		}
 
 		public static KeyedByTypeCollection<IEndpointBehavior>  CreateEndpointBehaviors (string bindingConfiguration)

@@ -68,6 +68,10 @@ namespace System.ServiceModel.Configuration
 		static ConfigurationProperty headers;
 		static ConfigurationProperty identity;
 		static ConfigurationProperty name;
+#if NET_4_0
+		static ConfigurationProperty endpoint_configuration;
+		static ConfigurationProperty kind;
+#endif
 
 		static ChannelEndpointElement ()
 		{
@@ -104,6 +108,11 @@ namespace System.ServiceModel.Configuration
 				typeof (string), "", new StringConverter (), null,
 				ConfigurationPropertyOptions.IsKey);
 
+#if NET_4_0
+			endpoint_configuration = new ConfigurationProperty ("endpointConfiguration", typeof (string), "", null, new StringValidator (0), ConfigurationPropertyOptions.IsKey);
+			kind = new ConfigurationProperty ("kind", typeof (string), "", null, new StringValidator (0), ConfigurationPropertyOptions.IsKey);
+#endif
+
 			properties.Add (address);
 			properties.Add (behavior_configuration);
 			properties.Add (binding);
@@ -112,6 +121,11 @@ namespace System.ServiceModel.Configuration
 			properties.Add (headers);
 			properties.Add (identity);
 			properties.Add (name);
+
+#if NET_4_0
+			properties.Add (endpoint_configuration);
+			properties.Add (kind);
+#endif
 		}
 
 		public ChannelEndpointElement ()
@@ -196,6 +210,22 @@ namespace System.ServiceModel.Configuration
 			get { return (string) base [name]; }
 			set { base [name] = value; }
 		}
+
+#if NET_4_0
+		[StringValidator (MinLength = 0)]
+		[ConfigurationProperty ("endpointConfiguration", DefaultValue = "", Options = ConfigurationPropertyOptions.IsKey)]
+		public string EndpointConfiguration {
+			get { return (string) base [endpoint_configuration]; }
+			set { base [endpoint_configuration] = value; }
+		}
+
+		[ConfigurationProperty ("kind", DefaultValue = "", Options = ConfigurationPropertyOptions.IsKey)]
+		[StringValidator (MinLength = 0)]
+		public string Kind {
+			get { return (string) base [kind]; }
+			set { base [kind] = value; }
+		}
+#endif
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }

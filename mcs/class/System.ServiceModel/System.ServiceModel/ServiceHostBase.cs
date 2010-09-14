@@ -319,40 +319,10 @@ namespace System.ServiceModel
 				throw new InvalidOperationException ("ApplyConfiguration requires that the Description property be initialized. Either provide a valid ServiceDescription in the CreateDescription method or override the ApplyConfiguration method to provide an alternative implementation");
 
 			ServiceElement service = GetServiceElement ();
-			if (service != null) {
-				
-				//base addresses
-				HostElement host = service.Host;
-				foreach (BaseAddressElement baseAddress in host.BaseAddresses) {
-					AddBaseAddress (new Uri (baseAddress.BaseAddress));
-				}
+			
+			if (service != null)
+				ApplyServiceElement (service);
 
-				// behaviors
-				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors [service.BehaviorConfiguration];
-				if (behavior != null) {
-					foreach (var bxe in behavior) {
-						IServiceBehavior b = (IServiceBehavior) bxe.CreateBehavior ();
-						Description.Behaviors.Add (b);
-					}
-				}
-				else
-					throw new ArgumentException (String.Format ("Service behavior {0} is specified, but was not found", service.BehaviorConfiguration));
-
-				// services
-				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
-					ServiceEndpoint se = AddServiceEndpoint (
-						endpoint.Contract,
-						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
-						endpoint.Address);
-					// endpoint behaviors
-					EndpointBehaviorElement epbehavior = ConfigUtil.BehaviorsSection.EndpointBehaviors [endpoint.BehaviorConfiguration];
-					if (epbehavior != null)
-						foreach (var bxe in epbehavior) {
-							IEndpointBehavior b = (IEndpointBehavior) bxe.CreateBehavior ();
-							se.Behaviors.Add (b);
-					}
-				}
-			}
 			// TODO: consider commonBehaviors here
 
 			// ensure ServiceAuthorizationBehavior
@@ -367,6 +337,50 @@ namespace System.ServiceModel
 			if (debugBehavior == null) {
 				debugBehavior = new ServiceDebugBehavior ();
 				Description.Behaviors.Add (debugBehavior);
+			}
+		}
+		
+		void ApplyServiceElement (ServiceElement service)
+		{
+			//base addresses
+			HostElement host = service.Host;
+			foreach (BaseAddressElement baseAddress in host.BaseAddresses) {
+				AddBaseAddress (new Uri (baseAddress.BaseAddress));
+			}
+
+			// behaviors
+			ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors [service.BehaviorConfiguration];
+			if (behavior != null) {
+				foreach (var bxe in behavior) {
+					IServiceBehavior b = (IServiceBehavior) bxe.CreateBehavior ();
+					Description.Behaviors.Add (b);
+				}
+			}
+			else if (!String.IsNullOrEmpty (service.BehaviorConfiguration))
+				throw new ArgumentException (String.Format ("Service behavior configuration '{0}' was not found", service.BehaviorConfiguration));
+
+			// services
+			foreach (ServiceEndpointElement endpoint in service.Endpoints) {
+				var binding = endpoint.Kind != null ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
+
+				ServiceEndpoint se;
+
+				if (endpoint.Kind != null) {
+					var contract = GetContract (endpoint.Contract, false);
+					se = ConfigUtil.ConfigureStandardEndpoint (contract, endpoint);
+					if (se.Binding == null)
+						se.Binding = binding;
+				}
+				else
+					se = AddServiceEndpoint (endpoint.Contract, binding, endpoint.Address);
+
+				// endpoint behaviors
+				EndpointBehaviorElement epbehavior = ConfigUtil.BehaviorsSection.EndpointBehaviors [endpoint.BehaviorConfiguration];
+				if (epbehavior != null)
+					foreach (var bxe in epbehavior) {
+						IEndpointBehavior b = (IEndpointBehavior) bxe.CreateBehavior ();
+						se.Behaviors.Add (b);
+				}
 			}
 		}
 
