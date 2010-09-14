@@ -69,11 +69,13 @@ namespace System.ServiceModel.Configuration
 			get { return (ExtensionsSection) GetSection ("system.serviceModel/extensions"); }
 		}
 
+#if NET_4_0
 		public static StandardEndpointsSection StandardEndpointsSection {
 			get {
 				return (StandardEndpointsSection) GetSection ("system.serviceModel/standardEndpoints");
 			}
 		}
+#endif
 
 		public static Binding CreateBinding (string binding, string bindingConfiguration)
 		{
