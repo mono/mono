@@ -1492,9 +1492,13 @@ namespace System {
 				path = Reduce ('/' + uriString, true);
 				host = String.Empty;
 			} else if (host.Length == 2 && host [1] == ':') {
-				// windows filepath
-				path = host + path;
-				host = String.Empty;
+				if (scheme != UriSchemeFile) {
+					host = host [0].ToString ();
+				} else {
+					// windows filepath
+					path = host + path;
+					host = String.Empty;
+				}
 			} else if (isUnixFilePath) {
 				uriString = "//" + uriString;
 				host = String.Empty;

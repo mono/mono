@@ -654,5 +654,47 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("#mono", merged.Fragment, "Fragment");
 			Assert.AreEqual ("http://host/dir/subdir/weird;name#mono", merged.ToString (), "ToString");
 		}
+
+		[Test]
+		public void Host_Drive ()
+		{
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("c:"), "c:");
+			Assert.AreEqual (UriHostNameType.Dns, Uri.CheckHostName ("c"), "c");
+
+			Uri uri = new Uri ("http://c:/dir/subdir/file");
+			Assert.AreEqual ("c", uri.Authority, "http.Authority");
+			Assert.AreEqual ("c", uri.DnsSafeHost, "http.DnsSafeHost");
+			Assert.AreEqual ("c", uri.Host, "http.Host");
+			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "http.HostNameType");
+			Assert.AreEqual ("http://c/dir/subdir/file", uri.ToString (), "http.ToString");
+
+			uri = new Uri ("https://c:/dir/subdir/file");
+			Assert.AreEqual ("c", uri.Authority, "https.Authority");
+			Assert.AreEqual ("c", uri.DnsSafeHost, "https.DnsSafeHost");
+			Assert.AreEqual ("c", uri.Host, "https.Host");
+			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "https.HostNameType");
+			Assert.AreEqual ("https://c/dir/subdir/file", uri.ToString (), "https.ToString");
+
+			uri = new Uri ("ftp://c:/dir/subdir/file");
+			Assert.AreEqual ("c", uri.Authority, "ftp.Authority");
+			Assert.AreEqual ("c", uri.DnsSafeHost, "ftp.DnsSafeHost");
+			Assert.AreEqual ("c", uri.Host, "ftp.Host");
+			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "ftp.HostNameType");
+			Assert.AreEqual ("ftp://c/dir/subdir/file", uri.ToString (), "ftp.ToString");
+
+			uri = new Uri ("nntp://c:/123456@c");
+			Assert.AreEqual ("c", uri.Authority, "nntp.Authority");
+			Assert.AreEqual ("c", uri.DnsSafeHost, "nntp.DnsSafeHost");
+			Assert.AreEqual ("c", uri.Host, "nntp.Host");
+			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "nntp.HostNameType");
+			Assert.AreEqual ("nntp://c/123456@c", uri.ToString (), "nntp.ToString");
+
+			uri = new Uri ("file://c:/dir/subdir/file");
+			Assert.AreEqual (String.Empty, uri.Authority, "file.Authority");
+			Assert.AreEqual (String.Empty, uri.DnsSafeHost, "file.DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Host, "file.Host");
+			Assert.AreEqual (UriHostNameType.Basic, uri.HostNameType, "file.HostNameType");
+			Assert.AreEqual ("file:///c:/dir/subdir/file", uri.ToString (), "file.ToString");
+		}
 	}
 }
