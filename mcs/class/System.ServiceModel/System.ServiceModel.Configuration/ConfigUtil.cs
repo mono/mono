@@ -92,6 +92,7 @@ namespace System.ServiceModel.Configuration
 			return b;
 		}
 
+#if NET_4_0
 		public static ServiceEndpoint ConfigureStandardEndpoint (ContractDescription cd, ServiceEndpointElement element)
 		{
 			string kind = element.Kind;
@@ -115,6 +116,7 @@ namespace System.ServiceModel.Configuration
 			
 			return inst;
 		}
+#endif
 
 		public static KeyedByTypeCollection<IEndpointBehavior>  CreateEndpointBehaviors (string bindingConfiguration)
 		{

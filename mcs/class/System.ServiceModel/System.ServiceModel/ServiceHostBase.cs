@@ -361,9 +361,10 @@ namespace System.ServiceModel
 
 			// services
 			foreach (ServiceEndpointElement endpoint in service.Endpoints) {
-				var binding = endpoint.Kind != null ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
-
 				ServiceEndpoint se;
+
+#if NET_4_0
+				var binding = endpoint.Kind != null ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
 
 				if (endpoint.Kind != null) {
 					var contract = GetContract (endpoint.Contract, false);
@@ -373,6 +374,10 @@ namespace System.ServiceModel
 				}
 				else
 					se = AddServiceEndpoint (endpoint.Contract, binding, endpoint.Address);
+#else
+				var binding = ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
+				se = AddServiceEndpoint (endpoint.Contract, binding, endpoint.Address);
+#endif
 
 				// endpoint behaviors
 				EndpointBehaviorElement epbehavior = ConfigUtil.BehaviorsSection.EndpointBehaviors [endpoint.BehaviorConfiguration];
