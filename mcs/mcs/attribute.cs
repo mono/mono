@@ -308,7 +308,7 @@ namespace Mono.CSharp {
 
 		public bool HasSecurityAttribute {
 			get {
-				PredefinedAttribute pa = PredefinedAttributes.Get.Security;
+				PredefinedAttribute pa = context.Compiler.PredefinedAttributes.Security;
 				return pa.IsDefined && TypeSpec.IsBaseClass (type, pa.Type, false);
 			}
 		}
@@ -337,7 +337,7 @@ namespace Mono.CSharp {
 
 		void ApplyModuleCharSet (ResolveContext rc)
 		{
-			if (Type != PredefinedAttributes.Get.DllImport)
+			if (Type != context.Compiler.PredefinedAttributes.DllImport)
 				return;
 
 			if (!RootContext.ToplevelTypes.HasDefaultCharSet)
@@ -522,7 +522,7 @@ namespace Mono.CSharp {
 		public string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = Type.GetAttributeUsage (PredefinedAttributes.Get.AttributeUsage).ValidOn;
+			AttributeTargets targets = Type.GetAttributeUsage (context.Compiler.PredefinedAttributes.AttributeUsage).ValidOn;
 
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("assembly, ");
@@ -993,7 +993,7 @@ namespace Mono.CSharp {
 
 		public bool IsInternalMethodImplAttribute {
 			get {
-				if (Type != PredefinedAttributes.Get.MethodImpl)
+				if (Type != context.Compiler.PredefinedAttributes.MethodImpl)
 					return false;
 
 				MethodImplOptions options;
@@ -1048,15 +1048,15 @@ namespace Mono.CSharp {
 			if (ctor == null)
 				return;
 
-			AttributeUsageAttribute usage_attr = Type.GetAttributeUsage (PredefinedAttributes.Get.AttributeUsage);
+			var predefined = context.Compiler.PredefinedAttributes;
+
+			AttributeUsageAttribute usage_attr = Type.GetAttributeUsage (predefined.AttributeUsage);
 			if ((usage_attr.ValidOn & Target) == 0) {
 				Report.Error (592, Location, "The attribute `{0}' is not valid on this declaration type. " +
 					      "It is valid on `{1}' declarations only",
 					GetSignatureForError (), GetValidTargets ());
 				return;
 			}
-
-			var predefined = PredefinedAttributes.Get;
 
 			AttributeEncoder encoder = new AttributeEncoder (false);
 
@@ -1659,9 +1659,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute StructLayout;
 		public readonly PredefinedAttribute FieldOffset;
 
-		public static PredefinedAttributes Get = new PredefinedAttributes ();
-
-		private PredefinedAttributes ()
+		public PredefinedAttributes ()
 		{
 			ParamArray = new PredefinedAttribute ("System", "ParamArrayAttribute");
 			Out = new PredefinedAttribute ("System.Runtime.InteropServices", "OutAttribute");
@@ -1712,11 +1710,6 @@ namespace Mono.CSharp {
 			foreach (FieldInfo fi in GetType ().GetFields (BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)) {
 				((PredefinedAttribute) fi.GetValue (this)).Initialize (ctx, true);
 			}
-		}
-
-		public static void Reset ()
-		{
-			Get = new PredefinedAttributes ();
 		}
 	}
 

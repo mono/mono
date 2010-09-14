@@ -272,7 +272,7 @@ namespace Mono.CSharp {
 		//   methods, fields, etc) we need to "Define" them before we
 		//   can save the Assembly
 		// </remarks>
-		static public void CloseTypes ()
+		static public void CloseTypes (CompilerContext ctx)
 		{
 			HackCorlibEnums ();
 
@@ -288,8 +288,9 @@ namespace Mono.CSharp {
 			// If we have a <PrivateImplementationDetails> class, close it
 			//
 			if (helper_classes != null){
+				var cg = ctx.PredefinedAttributes.CompilerGenerated;
 				foreach (TypeBuilder type_builder in helper_classes) {
-					PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (type_builder);
+					cg.EmitAttribute (type_builder);
 					type_builder.CreateType ();
 				}
 			}

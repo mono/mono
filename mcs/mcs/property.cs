@@ -655,11 +655,11 @@ namespace Mono.CSharp
 				OptAttributes.Emit ();
 
 			if (member_type == InternalType.Dynamic) {
-				PredefinedAttributes.Get.Dynamic.EmitAttribute (PropertyBuilder);
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder);
 			} else {
 				var trans_flags = TypeManager.HasDynamicTypeUsed (member_type);
 				if (trans_flags != null) {
-					var pa = PredefinedAttributes.Get.DynamicTransform;
+					var pa = Compiler.PredefinedAttributes.DynamicTransform;
 					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
 						PropertyBuilder.SetCustomAttribute (
 							new CustomAttributeBuilder (pa.Constructor, new object[] { trans_flags }));
@@ -1112,7 +1112,7 @@ namespace Mono.CSharp
 					return null;
 
 				MethodBuilder mb = method_data.MethodBuilder;
-				ParameterInfo.ApplyAttributes (mb);
+				ParameterInfo.ApplyAttributes (this, mb);
 				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, mb, ParameterInfo, method.ModFlags);
 				Spec.IsAccessor = true;
 
@@ -1442,7 +1442,7 @@ namespace Mono.CSharp
 				return false;
 
 			if (OptAttributes != null) {
-				Attribute indexer_attr = OptAttributes.Search (PredefinedAttributes.Get.IndexerName);
+				Attribute indexer_attr = OptAttributes.Search (Compiler.PredefinedAttributes.IndexerName);
 				if (indexer_attr != null) {
 					var compiling = indexer_attr.Type.MemberDefinition as TypeContainer;
 					if (compiling != null)

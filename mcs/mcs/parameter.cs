@@ -181,10 +181,10 @@ namespace Mono.CSharp {
 			return parameter_type;
 		}
 
-		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
+		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index, PredefinedAttributes pa)
 		{
-			base.ApplyAttributes (mb, cb, index);
-			PredefinedAttributes.Get.ParamArray.EmitAttribute (builder);
+			base.ApplyAttributes (mb, cb, index, pa);
+			pa.ParamArray.EmitAttribute (builder);
 		}
 	}
 
@@ -196,7 +196,7 @@ namespace Mono.CSharp {
 			parameter_type = InternalType.Arglist;
 		}
 
-		public override void  ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
+		public override void  ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index, PredefinedAttributes pa)
 		{
 			// Nothing to do
 		}
@@ -315,7 +315,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == PredefinedAttributes.Get.Out && (ModFlags & Modifier.REF) == Modifier.REF &&
+			if (a.Type == pa.Out && (ModFlags & Modifier.REF) == Modifier.REF &&
 			    !OptAttributes.Contains (pa.In)) {
 				a.Report.Error (662, a.Location,
 					"Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither");
@@ -430,7 +430,7 @@ namespace Mono.CSharp {
 			if (attributes == null)
 				return;
 			
-			var pa = attributes.Search (PredefinedAttributes.Get.OptionalParameter);
+			var pa = attributes.Search (rc.Compiler.PredefinedAttributes.OptionalParameter);
 			if (pa == null)
 				return;
 
@@ -440,7 +440,7 @@ namespace Mono.CSharp {
 			attributes.Attrs.Remove (pa);
 
 			TypeSpec expr_type = null;
-			pa = attributes.Search (PredefinedAttributes.Get.DefaultParameterValue);
+			pa = attributes.Search (rc.Compiler.PredefinedAttributes.DefaultParameterValue);
 			if (pa != null) {
 				attributes.Attrs.Remove (pa);
 				default_expr = pa.GetParameterDefaultValue (out expr_type);
@@ -586,7 +586,7 @@ namespace Mono.CSharp {
 				"Argument type `{0}' is not CLS-compliant", GetSignatureForError ());
 		}
 
-		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
+		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index, PredefinedAttributes pa)
 		{
 			if (mb == null)
 				builder = cb.DefineParameter (index, Attributes, Name);
@@ -604,7 +604,7 @@ namespace Mono.CSharp {
 				Constant c = default_expr as Constant;
 				if (c != null) {
 					if (default_expr.Type == TypeManager.decimal_type) {
-						builder.SetCustomAttribute (Const.CreateDecimalConstantAttribute (c));
+						builder.SetCustomAttribute (Const.CreateDecimalConstantAttribute (c, pa));
 					} else {
 						builder.SetConstant (c.GetTypedValue ());
 					}
@@ -612,14 +612,14 @@ namespace Mono.CSharp {
 			}
 
 			if (parameter_type == InternalType.Dynamic) {
-				PredefinedAttributes.Get.Dynamic.EmitAttribute (builder);
+				pa.Dynamic.EmitAttribute (builder);
 			} else {
 				var trans_flags = TypeManager.HasDynamicTypeUsed (parameter_type);
 				if (trans_flags != null) {
-					var pa = PredefinedAttributes.Get.DynamicTransform;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
+					var dt = pa.DynamicTransform;
+					if (dt.Constructor != null || dt.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
 						builder.SetCustomAttribute (
-							new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
+							new CustomAttributeBuilder (dt.Constructor, new object [] { trans_flags }));
 					}
 				}
 			}
@@ -1171,16 +1171,17 @@ namespace Mono.CSharp {
 
 		// Define each type attribute (in/out/ref) and
 		// the argument names.
-		public void ApplyAttributes (MethodBase builder)
+		public void ApplyAttributes (IMemberContext mc, MethodBase builder)
 		{
 			if (Count == 0)
 				return;
 
 			MethodBuilder mb = builder as MethodBuilder;
 			ConstructorBuilder cb = builder as ConstructorBuilder;
+			var pa = mc.Compiler.PredefinedAttributes;
 
 			for (int i = 0; i < Count; i++) {
-				this [i].ApplyAttributes (mb, cb, i + 1);
+				this [i].ApplyAttributes (mb, cb, i + 1, pa);
 			}
 		}
 
