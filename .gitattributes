@@ -6,6 +6,7 @@ configure.in crlf=input
 *.h	crlf
 *.cs	crlf
 *.sh	crlf
+*.il	crlf
 
 .gitattributes	crlf
 ChangeLog	crlf
