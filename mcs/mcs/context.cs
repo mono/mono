@@ -552,10 +552,12 @@ namespace Mono.CSharp
 	{
 		readonly Report report;
 		readonly ReflectionMetaImporter meta_importer;
+		readonly PredefinedAttributes attributes;
 
 		public CompilerContext (ReflectionMetaImporter metaImporter, Report report)
 		{
 			this.meta_importer = metaImporter;
+			this.attributes = new PredefinedAttributes ();
 			this.report = report;
 		}
 
@@ -567,15 +569,17 @@ namespace Mono.CSharp
 			}
 		}
 
+		public PredefinedAttributes PredefinedAttributes {
+			get {
+				return attributes;
+			}
+		}
+
 		public Report Report {
 			get {
 				return report;
 			}
 		}
-
-		//public PredefinedAttributes PredefinedAttributes {
-		//    get { throw new NotImplementedException (); }
-		//}
 	}
 
 	//

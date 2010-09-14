@@ -217,7 +217,7 @@ namespace Mono.CSharp
 			if (!OptAttributes.CheckTargets ())
 				return;
 
-			Attribute a = ResolveAttribute (PredefinedAttributes.Get.DefaultCharset);
+			Attribute a = ResolveAttribute (Compiler.PredefinedAttributes.DefaultCharset);
 			if (a != null) {
 				has_default_charset = true;
 				DefaultCharSet = a.GetCharSetValue ();

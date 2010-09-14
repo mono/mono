@@ -254,11 +254,11 @@ namespace Mono.CSharp {
 		{
 			if (ReturnType.Type == InternalType.Dynamic) {
 				return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
-				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else {
 				var trans_flags = TypeManager.HasDynamicTypeUsed (ReturnType.Type);
 				if (trans_flags != null) {
-					var pa = PredefinedAttributes.Get.DynamicTransform;
+					var pa = Compiler.PredefinedAttributes.DynamicTransform;
 					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
 						return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
 						return_attributes.Builder.SetCustomAttribute (
@@ -267,13 +267,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Parameters.ApplyAttributes (InvokeBuilder.MethodBuilder);
+			Parameters.ApplyAttributes (this, InvokeBuilder.MethodBuilder);
 			
 			Constructor.ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 			InvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			if (BeginInvokeBuilder != null) {
-				BeginInvokeBuilder.ParameterInfo.ApplyAttributes (BeginInvokeBuilder.MethodBuilder);
+				BeginInvokeBuilder.ParameterInfo.ApplyAttributes (this, BeginInvokeBuilder.MethodBuilder);
 
 				BeginInvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 				EndInvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
