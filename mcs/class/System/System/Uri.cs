@@ -1605,8 +1605,10 @@ namespace System {
 				if (endpos == -1) endpos = path.Length;
 				string current = path.Substring (startpos, endpos-startpos);
 				startpos = endpos + 1;
-				if ((begin && current.Length == 0) || current == "." )
+				if ((begin && current.Length == 0) || current == "." ) {
+					begin = false;
 					continue;
+				}
 
 				begin = false;
 				if (current == "..") {

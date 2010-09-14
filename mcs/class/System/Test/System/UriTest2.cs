@@ -696,5 +696,32 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual (UriHostNameType.Basic, uri.HostNameType, "file.HostNameType");
 			Assert.AreEqual ("file:///c:/dir/subdir/file", uri.ToString (), "file.ToString");
 		}
+
+		[Test]
+		public void UnknownScheme ()
+		{
+			Uri uri = new Uri ("mono:c:\\dir\\subdir\\file");
+			Assert.IsFalse (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString");
+			Assert.AreEqual (String.Empty, uri.Host, "Host");
+			Assert.AreEqual ("c:\\dir\\subdir\\file", uri.LocalPath, "LocalPath");
+
+			uri = new Uri ("mono://host/dir/subdir/file");
+			Assert.IsTrue (uri.IsWellFormedOriginalString (), "2/IsWellFormedOriginalString");
+			Assert.AreEqual ("host", uri.Host, "2/Host");
+			Assert.AreEqual ("/dir/subdir/file", uri.AbsolutePath, "2/AbsolutePath");
+			Assert.AreEqual ("/dir/subdir/file", uri.LocalPath, "2/LocalPath");
+
+			uri = new Uri ("mono:///host/dir/subdir/file");
+			Assert.IsTrue (uri.IsWellFormedOriginalString (), "3/IsWellFormedOriginalString");
+			Assert.AreEqual (String.Empty, uri.Host, "3/Host");
+			Assert.AreEqual ("/host/dir/subdir/file", uri.AbsolutePath, "3/AbsolutePath");
+			Assert.AreEqual ("/host/dir/subdir/file", uri.LocalPath, "3/LocalPath");
+
+			uri = new Uri ("mono:////host/dir/subdir/file");
+			Assert.IsTrue (uri.IsWellFormedOriginalString (), "4/IsWellFormedOriginalString");
+			Assert.AreEqual (String.Empty, uri.Host, "4/Host");
+			Assert.AreEqual ("//host/dir/subdir/file", uri.AbsolutePath, "4/AbsolutePath");
+			Assert.AreEqual ("//host/dir/subdir/file", uri.LocalPath, "4/LocalPath");
+		}
 	}
 }
