@@ -1711,9 +1711,10 @@ gpointer OpenProcess (guint32 req_access G_GNUC_UNUSED, gboolean inherit G_GNUC_
 	g_message ("%s: looking for process %d", __func__, pid);
 #endif
 
-	handle = _wapi_search_handle (WAPI_HANDLE_PROCESS,
-				      process_open_compare,
-				      GUINT_TO_POINTER (pid), NULL, TRUE);
+	if (_wapi_shm_enabled ())
+		handle = _wapi_search_handle (WAPI_HANDLE_PROCESS,
+					      process_open_compare,
+					      GUINT_TO_POINTER (pid), NULL, TRUE);
 	if (handle == 0) {
 #if defined(PLATFORM_MACOSX) || defined(__OpenBSD__)
 		if ((kill(pid, 0) == 0) || (errno == EPERM)) {
