@@ -321,14 +321,24 @@ namespace System.ComponentModel
 			private Type componentType;
 			private Type propertyType;
 
-			public SimplePropertyDescriptor (Type componentType,
+#if NET_4_0
+			protected
+#else
+			public
+#endif
+			SimplePropertyDescriptor (Type componentType,
 							 string name,
 							 Type propertyType) :
 				this (componentType, name, propertyType, null)
 			{
 			}
 
-			public SimplePropertyDescriptor (Type componentType,
+#if NET_4_0
+			protected
+#else
+			public
+#endif
+			SimplePropertyDescriptor (Type componentType,
 							 string name,
 							 Type propertyType,
 							 Attribute [] attributes) : base (name, attributes)
