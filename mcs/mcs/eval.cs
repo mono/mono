@@ -129,10 +129,11 @@ namespace Mono.CSharp {
 				
 				CompilerCallableEntryPoint.Reset ();
 				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
-				/*var ctypes = */TypeManager.InitCoreTypes ();
+				var ctypes = TypeManager.InitCoreTypes ();
 
 				ctx.MetaImporter.Initialize ();
 				driver.LoadReferences ();
+				TypeManager.InitCoreTypes (ctx, ctypes);
 				TypeManager.InitOptionalCoreTypes (ctx);
 
 				RootContext.EvalMode = true;
