@@ -238,8 +238,7 @@ namespace Mono.CSharp
 				const string info_flags_enum = "CSharpArgumentInfoFlags";
 				Expression info_flags = new IntLiteral (0, loc);
 
-				var constant = a.Expr as Constant;
-				if (constant != null && constant.IsLiteral) {
+				if (a.Expr is Constant) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "Constant", loc), loc);
 				} else if (a.ArgType == Argument.AType.Ref) {
@@ -255,7 +254,7 @@ namespace Mono.CSharp
 
 				var arg_type = a.Expr.Type;
 
-				if (arg_type != InternalType.Dynamic) {
+				if (arg_type != InternalType.Dynamic && arg_type != InternalType.Null) {
 					MethodGroupExpr mg = a.Expr as MethodGroupExpr;
 					if (mg != null) {
 						rc.Report.Error (1976, a.Expr.Location,
