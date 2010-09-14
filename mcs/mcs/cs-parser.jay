@@ -1236,6 +1236,12 @@ fixed_field_size
 variable_initializer
 	: expression
 	| array_initializer
+	| error
+	  {
+		// It has to be here for the parent to safely restore artificial block
+	  	Error_SyntaxError (yyToken);
+	  	$$ = null;
+	  }
 	;
 
 method_declaration
@@ -3599,11 +3605,6 @@ variable_initializer_list
 		var list = (List<Expression>) $1;
 		list.Add ((Expression) $3);
 		$$ = list;
-	  }
-	| error
-	  {
-	  	Error_SyntaxError (yyToken);
-	  	$$ = new List<Expression> ();
 	  }
 	;
 
