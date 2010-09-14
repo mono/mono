@@ -580,17 +580,17 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (MethodBuilder);
+				Compiler.PredefinedAttributes.CompilerGenerated.EmitAttribute (MethodBuilder);
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
-				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (MethodBuilder);
+				Compiler.PredefinedAttributes.DebuggerHidden.EmitAttribute (MethodBuilder);
 
 			if (ReturnType == InternalType.Dynamic) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
-				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else {
 				var trans_flags = TypeManager.HasDynamicTypeUsed (ReturnType);
 				if (trans_flags != null) {
-					var pa = PredefinedAttributes.Get.DynamicTransform;
+					var pa = Compiler.PredefinedAttributes.DynamicTransform;
 					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
 						return_attributes = new ReturnParameter (this, MethodBuilder, Location);
 						return_attributes.Builder.SetCustomAttribute (
@@ -674,7 +674,7 @@ namespace Mono.CSharp {
 				if (OptAttributes == null)
 					return null;
 
-				Attribute[] attrs = OptAttributes.SearchMulti (PredefinedAttributes.Get.Conditional);
+				Attribute[] attrs = OptAttributes.SearchMulti (Compiler.PredefinedAttributes.Conditional);
 				if (attrs == null)
 					return null;
 
@@ -1030,7 +1030,7 @@ namespace Mono.CSharp {
 						Report.Error (1109, Location, "`{0}': Extension methods cannot be defined in a nested class",
 							GetSignatureForError ());
 
-					PredefinedAttribute pa = PredefinedAttributes.Get.Extension;
+					PredefinedAttribute pa = Compiler.PredefinedAttributes.Extension;
 					if (!pa.IsDefined) {
 						Report.Error (1110, Location,
 							"`{0}': Extension methods cannot be declared without a reference to System.Core.dll assembly. Add the assembly reference or remove `this' modifer from the first parameter",
@@ -1120,7 +1120,7 @@ namespace Mono.CSharp {
 				base.Emit ();
 				
 				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
-					PredefinedAttributes.Get.Extension.EmitAttribute (MethodBuilder);
+					Compiler.PredefinedAttributes.Extension.EmitAttribute (MethodBuilder);
 			} catch {
 				Console.WriteLine ("Internal compiler error at {0}: exception caught while emitting {1}",
 						   Location, MethodBuilder);
@@ -1451,7 +1451,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
-				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (ConstructorBuilder);
+				Compiler.PredefinedAttributes.DebuggerHidden.EmitAttribute (ConstructorBuilder);
 
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
@@ -1488,7 +1488,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			parameters.ApplyAttributes (ConstructorBuilder);
+			parameters.ApplyAttributes (this, ConstructorBuilder);
 
 			SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder, block);
 
@@ -1861,13 +1861,15 @@ namespace Mono.CSharp {
 			if (GenericMethod != null)
 				GenericMethod.EmitAttributes ();
 
-			method.ParameterInfo.ApplyAttributes (MethodBuilder);
+			var mc = (IMemberContext) method;
+
+			method.ParameterInfo.ApplyAttributes (mc, MethodBuilder);
 
 			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
 
 			ToplevelBlock block = method.Block;
 			if (block != null) {
-				BlockContext bc = new BlockContext ((IMemberContext) method, block, method.ReturnType);
+				BlockContext bc = new BlockContext (mc, block, method.ReturnType);
 				if (block.Resolve (null, bc, method)) {
 					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator ());
 					if (!ec.HasReturnLabel && bc.HasReturnLabel) {
@@ -2094,17 +2096,17 @@ namespace Mono.CSharp {
 			method_data.Emit (parent);
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (method_data.MethodBuilder);
+				Compiler.PredefinedAttributes.CompilerGenerated.EmitAttribute (method_data.MethodBuilder);
 			if (((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0))
-				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
+				Compiler.PredefinedAttributes.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
 
 			if (ReturnType == InternalType.Dynamic) {
 				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
-				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else {
 				var trans_flags = TypeManager.HasDynamicTypeUsed (ReturnType);
 				if (trans_flags != null) {
-					var pa = PredefinedAttributes.Get.DynamicTransform;
+					var pa = Compiler.PredefinedAttributes.DynamicTransform;
 					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
 						return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
 						return_attributes.Builder.SetCustomAttribute (

@@ -87,6 +87,7 @@ namespace Mono.CSharp {
 		Module [] modules;
 		Dictionary<string, RootNamespace> root_namespaces;
 
+		// TODO: Breaks dynamic/eval
 		public static GlobalRootNamespace Instance = new GlobalRootNamespace ();
 
 		GlobalRootNamespace ()

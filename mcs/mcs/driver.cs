@@ -1778,7 +1778,7 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("Closing types");
 
-			RootContext.CloseTypes ();
+			RootContext.CloseTypes (ctx);
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
 
@@ -2031,7 +2031,6 @@ namespace Mono.CSharp
 
 			RootContext.Reset (full_flag);
 			TypeManager.Reset ();
-			PredefinedAttributes.Reset ();
 			ArrayContainer.Reset ();
 			ReferenceContainer.Reset ();
 			PointerContainer.Reset ();

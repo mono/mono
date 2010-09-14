@@ -1030,13 +1030,13 @@ namespace Mono.CSharp {
 			if (!OptAttributes.CheckTargets())
 				return;
 
-			ClsCompliantAttribute = ResolveAttribute (PredefinedAttributes.Get.CLSCompliant);
+			ClsCompliantAttribute = ResolveAttribute (Compiler.PredefinedAttributes.CLSCompliant);
 
 			if (ClsCompliantAttribute != null) {
 				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
 			}
 
-			Attribute a = ResolveAttribute (PredefinedAttributes.Get.RuntimeCompatibility);
+			Attribute a = ResolveAttribute (Compiler.PredefinedAttributes.RuntimeCompatibility);
 			if (a != null) {
 				var val = a.GetPropertyValue ("WrapNonExceptionThrows") as BoolConstant;
 				if (val != null)
@@ -1409,13 +1409,13 @@ namespace Mono.CSharp {
 			base.Emit (tc);
 
 			if (has_extension_method)
-				PredefinedAttributes.Get.Extension.EmitAttribute (Builder);
+				Compiler.PredefinedAttributes.Extension.EmitAttribute (Builder);
 
-			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
-			PredefinedAttribute pa = PredefinedAttributes.Get.RuntimeCompatibility;
+			PredefinedAttribute pa = Compiler.PredefinedAttributes.RuntimeCompatibility;
 			if (pa.IsDefined && (OptAttributes == null || !OptAttributes.Contains (pa))) {
 				var ci = TypeManager.GetPredefinedConstructor (pa.Type, Location.Null, TypeSpec.EmptyTypes);
 				PropertyInfo [] pis = new PropertyInfo [1];
+
 				pis [0] = TypeManager.GetPredefinedProperty (pa.Type,
 					"WrapNonExceptionThrows", Location.Null, TypeManager.bool_type).MetaInfo;
 				object [] pargs = new object [1];

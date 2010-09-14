@@ -4745,8 +4745,9 @@ namespace Mono.CSharp {
 			if (General != null) {
 				if (CodeGen.Assembly.WrapNonExceptionThrows) {
 					foreach (Catch c in Specific){
-						if (c.CatchType == TypeManager.exception_type && PredefinedAttributes.Get.RuntimeCompatibility.IsDefined) {
-							ec.Report.Warning (1058, 1, c.loc, "A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
+						if (c.CatchType == TypeManager.exception_type && ec.Compiler.PredefinedAttributes.RuntimeCompatibility.IsDefined) {
+							ec.Report.Warning (1058, 1, c.loc,
+								"A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
 						}
 					}
 				}
@@ -5126,7 +5127,6 @@ namespace Mono.CSharp {
 				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 				ec.CurrentBranching.CreateSibling ();
 
-				// TODO: dynamic
 				variable.local_info.Type = conv.Type;
 				variable.Resolve (ec);
 
@@ -5417,10 +5417,11 @@ namespace Mono.CSharp {
 			public override bool Resolve (BlockContext ec)
 			{
 				bool is_dynamic = expr.Type == InternalType.Dynamic;
+
 				if (is_dynamic) {
 					expr = Convert.ImplicitConversionRequired (ec, expr, TypeManager.ienumerable_type, loc);
 				} else if (TypeManager.IsNullableType (expr.Type)) {
-					expr = Nullable.Unwrap.Create (expr);
+					expr = new Nullable.UnwrapCall (expr).Resolve (ec);
 				}
 
 				var get_enumerator_mg = ResolveGetEnumerator (ec);

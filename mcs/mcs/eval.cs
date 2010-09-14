@@ -129,10 +129,11 @@ namespace Mono.CSharp {
 				
 				CompilerCallableEntryPoint.Reset ();
 				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
-				/*var ctypes = */TypeManager.InitCoreTypes ();
+				var ctypes = TypeManager.InitCoreTypes ();
 
 				ctx.MetaImporter.Initialize ();
 				driver.LoadReferences ();
+				TypeManager.InitCoreTypes (ctx, ctypes);
 				TypeManager.InitOptionalCoreTypes (ctx);
 
 				RootContext.EvalMode = true;
@@ -152,27 +153,8 @@ namespace Mono.CSharp {
 			CompilerCallableEntryPoint.PartialReset ();
 			RootContext.PartialReset ();
 			
-			// Workaround for API limitation where full message printer cannot be passed
-			ReportPrinter printer;
-			if (MessageOutput == Console.Out || MessageOutput == Console.Error){
-				var console_reporter = new ConsoleReportPrinter (MessageOutput);
-				console_reporter.Fatal = driver.fatal_errors;
-				printer = console_reporter;
-			} else
-				printer = new StreamReportPrinter (MessageOutput);
-
-			ctx = new CompilerContext (new ReflectionMetaImporter (), new Report (printer));
 			RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 
-			ctx.MetaImporter.Initialize ();
-
-			//
-			// PartialReset should not reset the core types, this is very redundant.
-			//
-//			if (!TypeManager.InitCoreTypes (ctx, null))
-//				throw new Exception ("Failed to InitCoreTypes");
-//			TypeManager.InitOptionalCoreTypes (ctx);
-			
 			Location.AddFile (null, "{interactive}");
 			Location.Initialize ();
 
@@ -744,7 +726,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			RootContext.CloseTypes ();
+			RootContext.CloseTypes (ctx);
 
 			if (Environment.GetEnvironmentVariable ("SAVE") != null)
 				CodeGen.Save (current_debug_name, false, Report);

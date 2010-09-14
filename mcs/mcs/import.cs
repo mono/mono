@@ -566,13 +566,11 @@ namespace Mono.CSharp
 				} else {
 					kind = MemberKind.Class;
 
-					if (type == typeof (object)) {
 #if NET_4_0
-						var pa = PredefinedAttributes.Get.Dynamic.Type;
-						if (pa != null && type.IsDefined (typeof (DynamicAttribute), false))
-							return InternalType.Dynamic;
-#endif
+					if (type == typeof (object) && type.IsDefined (typeof (DynamicAttribute), false)) {
+						return InternalType.Dynamic;
 					}
+#endif
 
 					if ((ma & TypeAttributes.Sealed) != 0) {
 						mod |= Modifiers.SEALED;
