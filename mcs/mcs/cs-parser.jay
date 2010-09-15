@@ -5915,7 +5915,7 @@ opt_query_continuation
 
 interactive_parsing
 	: EVAL_STATEMENT_PARSER EOF 
-	| EVAL_USING_DECLARATIONS_UNIT_PARSER using_directives 
+	| EVAL_USING_DECLARATIONS_UNIT_PARSER using_directives opt_COMPLETE_COMPLETION
 	| EVAL_STATEMENT_PARSER { 
 	        Evaluator.LoadAliases (current_namespace);
 
