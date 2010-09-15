@@ -738,5 +738,39 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("subdir/", segments [2].Replace ("%5C", "/"), "s[2]");
 			Assert.AreEqual ("file", segments [3], "s[3]");
 		}
+
+		[Test]
+		public void NewsScheme ()
+		{
+			Uri uri = new Uri ("news:novell.mono.moonlight/uri?query");
+
+			Assert.AreEqual ("novell.mono.moonlight/uri%3Fquery", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("news:novell.mono.moonlight/uri%3Fquery", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual (String.Empty, uri.Authority, "Authority");
+			Assert.AreEqual (String.Empty, uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
+			Assert.AreEqual (String.Empty, uri.Host, "Host");
+			Assert.AreEqual (UriHostNameType.Unknown, uri.HostNameType, "HostNameType");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsTrue (uri.IsDefaultPort, "IsDefaultPort");
+			Assert.IsFalse (uri.IsFile, "IsFile");
+			Assert.IsFalse (uri.IsLoopback, "IsLoopback");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("novell.mono.moonlight/uri?query", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("news:novell.mono.moonlight/uri?query", uri.OriginalString, "OriginalString");
+			Assert.AreEqual ("novell.mono.moonlight/uri%3Fquery", uri.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual (-1, uri.Port, "Port");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("news", uri.Scheme, "Scheme");
+			Assert.AreEqual ("novell.mono.moonlight/", uri.Segments [0], "Segments [0]");
+			Assert.AreEqual ("uri%3Fquery", uri.Segments [1], "Segments [1]");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+
+			// special escaped characters - they differs a bit from other URI
+			uri = new Uri ("news:novell.mono.moonlight/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
+			Assert.AreEqual ("novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
+			Assert.AreEqual ("#abc", uri.Fragment, "Special/Fragment");
+		}
 	}
 }

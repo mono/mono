@@ -536,19 +536,15 @@ namespace System {
 				EnsureAbsoluteUri ();
 				if (cachedLocalPath != null)
 					return cachedLocalPath;
-				if (!IsFile && IsWellFormedOriginalString ())
+				if (!IsFile && (scheme != Uri.UriSchemeNews) && IsWellFormedOriginalString ())
 					return AbsolutePath;
-
-				bool windows = (path.Length > 3 && path [1] == ':' &&
-						(path [2] == '\\' || path [2] == '/'));
 
 				if (!IsUnc) {
 					string p = Unescape (path);
-					bool replace = windows;
-#if ONLY_1_1
-					replace |= (System.IO.Path.DirectorySeparatorChar == '\\');
-#endif
-					if (replace)
+					bool windows = (path.Length > 3 && path [1] == ':' &&
+						(path [2] == '\\' || path [2] == '/'));
+
+					if (windows)
 						cachedLocalPath = p.Replace ('/', '\\');
 					else
 						cachedLocalPath = p;
@@ -1091,12 +1087,22 @@ namespace System {
 		protected static string EscapeString (string str) 
 #endif
 		{
-			return EscapeString (str, false, true, true);
+			return EscapeString (str, Uri.EscapeCommonHexBrackets);
 		}
-		
-		internal static string EscapeString (string str, bool escapeReserved, bool escapeHex, bool escapeBrackets) 
+
+		private const string EscapeCommon = "<>%\"{}|\\^`";
+		private const string EscapeReserved = ";/?:@&=+$,";
+		private const string EscapeHex = "#";
+		private const string EscapeBrackets = "[]";
+
+		private const string EscapeNews = EscapeCommon + EscapeBrackets + "?";
+		private const string EscapeCommonHex = EscapeCommon + EscapeHex;
+		private const string EscapeCommonBrackets = EscapeCommon + EscapeBrackets;
+		internal const string EscapeCommonHexBrackets = EscapeCommon + EscapeHex + EscapeBrackets;
+
+		internal static string EscapeString (string str, string escape) 
 		{
-			if (str == null)
+			if (String.IsNullOrEmpty (str))
 				return String.Empty;
 			
 			StringBuilder s = new StringBuilder ();
@@ -1124,15 +1130,10 @@ namespace System {
 				int length = data.Length;
 				for (int j = 0; j < length; j++) {
 					char c = (char) data [j];
-					if ((c <= 0x20) || (c >= 0x7f) || 
-					    ("<>%\"{}|\\^`".IndexOf (c) != -1) ||
-					    (escapeHex && (c == '#')) ||
-					    (escapeBrackets && (c == '[' || c == ']')) ||
-					    (escapeReserved && (";/?:@&=+$,".IndexOf (c) != -1))) {
+					if ((c <= 0x20) || (c >= 0x7f) || (escape.IndexOf (c) != -1))
 						s.Append (HexEscape (c));
-						continue;
-					}	
-					s.Append (c);
+					else
+						s.Append (c);
 				}
 			}
 			
@@ -1154,7 +1155,7 @@ namespace System {
 			if (userEscaped)
 				return;
 
-			host = EscapeString (host, false, true, false);
+			host = EscapeString (host, EscapeCommonHex);
 			if (host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
 				// host name present (but not an IPv6 address)
 				host = host.ToLower (CultureInfo.InvariantCulture);
@@ -1177,8 +1178,9 @@ namespace System {
 		
 		internal static string Unescape (string str, bool excludeSpecial) 
 		{
-			if (str == null)
+			if (String.IsNullOrEmpty (str))
 				return String.Empty;
+
 			StringBuilder s = new StringBuilder ();
 			int len = str.Length;
 			for (int i = 0; i < len; i++) {
@@ -1389,6 +1391,13 @@ namespace System {
 					fragment = "#" + EscapeString (uriString.Substring (pos+1));
 
 				endpos = pos;
+			}
+
+			// special case: there is no query part for 'news'
+			if (scheme == Uri.UriSchemeNews) {
+				pos = scheme.Length + 1;
+				path = EscapeString (uriString.Substring (pos, endpos - pos), EscapeNews);
+				return null;
 			}
 
 			// 6 query
@@ -1914,7 +1923,7 @@ namespace System {
 		{
 			// funny, but it does not use the Parser's IsWellFormedOriginalString().
 			// Also, it seems we need to *not* escape hex.
-			return EscapeString (OriginalString, false, false, true) == OriginalString;
+			return EscapeString (OriginalString, EscapeCommonBrackets) == OriginalString;
 		}
 
 		// static methods

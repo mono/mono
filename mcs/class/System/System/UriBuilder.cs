@@ -164,7 +164,7 @@ namespace System
 				if (value == null || value.Length == 0) {
 					path = "/";
 				} else {
-					path = Uri.EscapeString (value.Replace ('\\', '/'), false, true, true);
+					path = Uri.EscapeString (value.Replace ('\\', '/'), Uri.EscapeCommonHexBrackets);
 				}
 				modified = true;
 			}
