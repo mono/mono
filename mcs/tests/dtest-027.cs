@@ -14,6 +14,16 @@ class C
 	{
 		return 3;
 	}
+	
+	public int M2 (object d)
+	{
+		return 1;
+	}
+	
+	public int M2 (byte s)
+	{
+		return 2;
+	}
 }
 
 public class Test
@@ -27,6 +37,10 @@ public class Test
 		
 		if (v != 2)
 			return 1;
+		
+		v = d.M2 (1 + 3);
+		if (v != 2)
+			return 2;
 
 		return 0;
 	}

@@ -13450,6 +13450,49 @@
       </method>
     </type>
   </test>
+  <test name="gtest-538.cs">
+    <type name="S">
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>6</size>
+      </method>
+      <method name="IEnumerator`1 GetEnumerator()">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="S2">
+      <method name="IEnumerator`1 GetEnumerator()">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="Enumerator`1[T]">
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>6</size>
+      </method>
+      <method name="T get_Current()">
+        <size>6</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>2</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="MySystem">
+      <method name="Int32 Main()">
+        <size>182</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
