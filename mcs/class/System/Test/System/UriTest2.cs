@@ -723,5 +723,18 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("//host/dir/subdir/file", uri.AbsolutePath, "4/AbsolutePath");
 			Assert.AreEqual ("//host/dir/subdir/file", uri.LocalPath, "4/LocalPath");
 		}
+
+		[Test]
+		public void DriveAndForwardSlashes_Segments ()
+		{
+			Uri uri = new Uri ("mono:c:\\dir\\subdir\\file");
+			string [] segments = uri.Segments;
+			Assert.AreEqual (4, segments.Length, "segments");
+			// make the tests work on both Windows and Mac (wrt Silverlight)
+			Assert.AreEqual ("c:/", segments [0].Replace ("%5C", "/"), "s[0]");
+			Assert.AreEqual ("dir/", segments [1].Replace ("%5C", "/"), "s[1]");
+			Assert.AreEqual ("subdir/", segments [2].Replace ("%5C", "/"), "s[2]");
+			Assert.AreEqual ("file", segments [3], "s[3]");
+		}
 	}
 }

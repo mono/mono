@@ -45,6 +45,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 
 //
@@ -614,31 +615,42 @@ namespace System {
 					return segments;
 				}
 
-				string [] parts = path.Split ('/');
-				segments = parts;
-				bool endSlash = path.EndsWith ("/");
-				if (parts.Length > 0 && endSlash) {
-					string [] newParts = new string [parts.Length - 1];
-					Array.Copy (parts, 0, newParts, 0, parts.Length - 1);
-					parts = newParts;
+				List<string> list = new List<string> ();
+				StringBuilder current = new StringBuilder ();
+				for (int i = 0; i < path.Length; i++) {
+					switch (path [i]) {
+					case '/':
+					case '\\':
+						current.Append (path [i]);
+						list.Add (current.ToString ());
+						current.Length = 0;
+						break;
+					case '%':
+						if ((i < path.Length - 2) && (path [i + 1] == '5' && path [i + 2] == 'C')) {
+							current.Append ("%5C");
+							list.Add (current.ToString ());
+							current.Length = 0;
+							i += 2;
+						} else {
+							current.Append ('%');
+						}
+						break;
+					default:
+						current.Append (path [i]);
+						break;
+					}
 				}
 
-				int i = 0;
-				if (IsFile && path.Length > 1 && path [1] == ':') {
-					string [] newParts = new string [parts.Length + 1];
-					Array.Copy (parts, 1, newParts, 2, parts.Length - 1);
-					parts = newParts;
-					parts [0] = "/";
-					parts [1] = path.Substring (0, 3);
-					i = 2;
-				}
-				
-				int end = parts.Length;
-				for (; i < end; i++) 
-					if (i != end - 1 || endSlash)
-						parts [i] += '/';
+				if (current.Length > 0)
+					list.Add (current.ToString ());
 
-				segments = parts;
+				if (IsFile && (list.Count > 0)) {
+					string first = list [0];
+					if ((first.Length > 1) && (first [1] == ':')) {
+						list.Insert (0, "/");
+					}
+				}
+				segments = list.ToArray ();
 				return segments;
 			} 
 		}
