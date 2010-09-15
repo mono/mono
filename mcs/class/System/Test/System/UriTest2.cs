@@ -772,5 +772,40 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 			Assert.AreEqual ("#abc", uri.Fragment, "Special/Fragment");
 		}
+
+		[Test]
+		public void NntpScheme ()
+		{
+			Uri uri = new Uri ("nntp://news.mono-project.com/novell.mono.moonlight/uri?query");
+
+			Assert.AreEqual ("/novell.mono.moonlight/uri%3Fquery", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("nntp://news.mono-project.com/novell.mono.moonlight/uri%3Fquery", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("news.mono-project.com", uri.Authority, "Authority");
+			Assert.AreEqual ("news.mono-project.com", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
+			Assert.AreEqual ("news.mono-project.com", uri.Host, "Host");
+			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "HostNameType");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsTrue (uri.IsDefaultPort, "IsDefaultPort");
+			Assert.IsFalse (uri.IsFile, "IsFile");
+			Assert.IsFalse (uri.IsLoopback, "IsLoopback");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("/novell.mono.moonlight/uri?query", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("nntp://news.mono-project.com/novell.mono.moonlight/uri?query", uri.OriginalString, "OriginalString");
+			Assert.AreEqual ("/novell.mono.moonlight/uri%3Fquery", uri.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual (119, uri.Port, "Port");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("nntp", uri.Scheme, "Scheme");
+			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
+			Assert.AreEqual ("novell.mono.moonlight/", uri.Segments [1], "Segments [1]");
+			Assert.AreEqual ("uri%3Fquery", uri.Segments [2], "Segments [2]");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+
+			// special escaped characters - they differs a bit from other URI
+			uri = new Uri ("nntp://news.mono-project.com/novell.mono.moonlight/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
+			Assert.AreEqual ("/novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
+			Assert.AreEqual ("#abc", uri.Fragment, "Special/Fragment");
+		}
 	}
 }

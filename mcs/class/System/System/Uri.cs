@@ -536,7 +536,7 @@ namespace System {
 				EnsureAbsoluteUri ();
 				if (cachedLocalPath != null)
 					return cachedLocalPath;
-				if (!IsFile && (scheme != Uri.UriSchemeNews) && IsWellFormedOriginalString ())
+				if (!IsFile && (scheme != Uri.UriSchemeNews) && (scheme != Uri.UriSchemeNntp) && IsWellFormedOriginalString ())
 					return AbsolutePath;
 
 				if (!IsUnc) {
@@ -1400,13 +1400,16 @@ namespace System {
 				return null;
 			}
 
-			// 6 query
-			pos = uriString.IndexOf ('?', startpos, endpos-startpos);
-			if (pos != -1) {
-				query = uriString.Substring (pos, endpos-pos);
-				endpos = pos;
-				if (!userEscaped)
-					query = EscapeString (query);
+			// special case: there is no query part for 'nnyp' but there is an host, port, user...
+			if (scheme != Uri.UriSchemeNntp) {
+				// 6 query
+				pos = uriString.IndexOf ('?', startpos, endpos-startpos);
+				if (pos != -1) {
+					query = uriString.Substring (pos, endpos-pos);
+					endpos = pos;
+					if (!userEscaped)
+						query = EscapeString (query);
+				}
 			}
 
 			// 3
@@ -1455,20 +1458,28 @@ namespace System {
 			}
 
 			// 5 path
-			if (unixAbsPath) {
-				pos = -1;
+			if (scheme == Uri.UriSchemeNntp) {
+				pos = uriString.IndexOf ('/', startpos, endpos - startpos);
+				if (pos != -1) {
+					path = EscapeString (uriString.Substring (pos, endpos - pos), EscapeNews);
+					endpos = pos;
+				}
 			} else {
-				pos = uriString.IndexOf ('/', startpos, endpos-startpos);
-				if (pos == -1 && windowsFilePath)
-					pos = uriString.IndexOf ('\\', startpos, endpos-startpos);
-			}
+				if (unixAbsPath) {
+					pos = -1;
+				} else {
+					pos = uriString.IndexOf ('/', startpos, endpos - startpos);
+					if (pos == -1 && windowsFilePath)
+						pos = uriString.IndexOf ('\\', startpos, endpos - startpos);
+				}
 
-			if (pos == -1) {
-				if (scheme != Uri.UriSchemeMailto)
-					path = "/";
-			} else {
-				path = uriString.Substring (pos, endpos-pos);
-				endpos = pos;
+				if (pos == -1) {
+					if (scheme != Uri.UriSchemeMailto)
+						path = "/";
+				} else {
+					path = uriString.Substring (pos, endpos - pos);
+					endpos = pos;
+				}
 			}
 
 			// 4.a user info
