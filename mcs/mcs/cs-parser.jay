@@ -4597,6 +4597,11 @@ embedded_statement
 		  Report.Error (1023, GetLocation ($1), "An embedded statement may not be a declaration or labeled statement");
 		  $$ = null;
 	  }
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new EmptyStatement (GetLocation ($1));
+	  }
 	;
 
 empty_statement
