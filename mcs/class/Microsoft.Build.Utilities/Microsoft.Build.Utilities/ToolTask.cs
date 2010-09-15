@@ -112,11 +112,8 @@ namespace Microsoft.Build.Utilities
 			if (pathToTool == null)
 				throw new ArgumentNullException ("pathToTool");
 
-			string output, error, responseFileName;
-			StreamWriter outwr, errwr;
-
-			outwr = errwr = null;
-			responseFileName = output = error = null;
+			string responseFileName;
+			responseFileName = null;
 			toolOutput = new StringBuilder ();
 
 			try {
@@ -130,11 +127,6 @@ namespace Microsoft.Build.Utilities
 				LogToolCommand (String.Format ("Tool {0} execution started with arguments: {1} {2}",
 						pathToTool, commandLineCommands, responseFileCommands));
 
-				output = Path.GetTempFileName ();
-				error = Path.GetTempFileName ();
-				outwr = new StreamWriter (output);
-				errwr = new StreamWriter (error);
-
 				ProcessStartInfo pinfo = new ProcessStartInfo (pathToTool, arguments);
 				pinfo.WorkingDirectory = GetWorkingDirectory () ?? Environment.CurrentDirectory;
 
@@ -146,19 +138,23 @@ namespace Microsoft.Build.Utilities
 				pendingLineFragmentError = new StringBuilder ();
 
 				try {
-					ProcessWrapper pw = ProcessService.StartProcess (pinfo, outwr, errwr, null, environmentOverride);
-					pw.OutputStreamChanged += (_, msg) => ProcessLine (pendingLineFragmentOutput, msg, StandardOutputLoggingImportance);
-					pw.ErrorStreamChanged += (_, msg) => ProcessLine (pendingLineFragmentError, msg, StandardErrorLoggingImportance);
+					// When StartProcess returns, the process has already .Start()'ed
+					// If we subscribe to the events after that, then for processes that
+					// finish executing before we can subscribe, we won't get the output/err
+					// events at all!
+					ProcessWrapper pw = ProcessService.StartProcess (pinfo,
+							(_, msg) => ProcessLine (pendingLineFragmentOutput, msg, StandardOutputLoggingImportance),
+							(_, msg) => ProcessLine (pendingLineFragmentError, msg, StandardErrorLoggingImportance),
+							null,
+							environmentOverride);
 
-					pw.WaitForOutput (timeout == Int32.MaxValue ? -1 : timeout);
+					pw.WaitForOutput (timeout == Int32.MaxValue ? Int32.MaxValue : timeout);
 
 					// Process any remaining line
 					ProcessLine (pendingLineFragmentOutput, StandardOutputLoggingImportance, true);
 					ProcessLine (pendingLineFragmentError, StandardErrorLoggingImportance, true);
 
 					exitCode = pw.ExitCode;
-					outwr.Close();
-					errwr.Close();
 					pw.Dispose ();
 				} catch (System.ComponentModel.Win32Exception e) {
 					Log.LogError ("Error executing tool '{0}': {1}", pathToTool, e.Message);
@@ -175,13 +171,6 @@ namespace Microsoft.Build.Utilities
 				return exitCode;
 			} finally {
 				DeleteTempFile (responseFileName);
-				if (outwr != null)
-					outwr.Dispose ();
-				if (errwr != null)
-					errwr.Dispose ();
-
-				DeleteTempFile (output);
-				DeleteTempFile (error);
 			}
 		}
 
