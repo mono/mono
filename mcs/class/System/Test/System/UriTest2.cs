@@ -704,6 +704,8 @@ TextWriter sw = Console.Out;
 			Assert.IsFalse (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString");
 			Assert.AreEqual (String.Empty, uri.Host, "Host");
 			Assert.AreEqual ("c:\\dir\\subdir\\file", uri.LocalPath, "LocalPath");
+			// make the next assert work on both Windows and Mac (wrt Silverlight)
+			Assert.AreEqual ("mono:c:/dir/subdir/file", uri.ToString ().Replace ("%5C", "/"), "ToString");
 
 			uri = new Uri ("mono://host/dir/subdir/file");
 			Assert.IsTrue (uri.IsWellFormedOriginalString (), "2/IsWellFormedOriginalString");

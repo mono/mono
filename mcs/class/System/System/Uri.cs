@@ -1190,6 +1190,8 @@ namespace System {
 						s.Append ("%25");
 					else if (excludeSpecial && x == '?')
 						s.Append ("%3F");
+					else if (excludeSpecial && x == '\\')
+						s.Append ("%5C");
 					else {
 						s.Append (x);
 						if (surrogate != char.MinValue)
