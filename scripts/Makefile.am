@@ -244,7 +244,7 @@ $(scripts_4_0): $(SCRIPT_IN) Makefile
 	mv -f $@.tmp $@
 
 $(scripts_mono_configuration_crypto): mono-configuration-crypto.in
-	$(REWRITE2)  -e "s,@exe_name@,mono-configuration-crypto,g" $(srcdir)/mono-configuration-crypto.in > $@.tmp
+	$(REWRITE4)  -e "s,@exe_name@,mono-configuration-crypto,g" $(srcdir)/mono-configuration-crypto.in > $@.tmp
 	mv -f $@.tmp $@
 
 $(MDOC_SUBCOMMANDS): Makefile
