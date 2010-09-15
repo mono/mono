@@ -370,7 +370,7 @@ namespace Microsoft.Build.Utilities
 			if (EnvironmentVariables == null || EnvironmentVariables.Length == 0)
 				return EnvironmentOverride;
 
-			var env_vars = new SCS.StringDictionary ();
+			var env_vars = new SCS.ProcessStringDictionary ();
 			foreach (string pair in EnvironmentVariables) {
 				string [] key_value = pair.Split ('=');
 				if (!String.IsNullOrEmpty (key_value [0]))
