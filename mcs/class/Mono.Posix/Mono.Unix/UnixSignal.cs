@@ -202,7 +202,11 @@ namespace Mono.Unix {
 				if (infos [i] == IntPtr.Zero)
 					throw new InvalidOperationException ("Disposed UnixSignal");
 			}
-			return WaitAny (infos, infos.Length, millisecondsTimeout, () => Environment.HasShutdownStarted ? 1 : 0);
+			Mono_Posix_RuntimeIsShuttingDown shutting_down = () =>
+				Environment.HasShutdownStarted ? 1 : 0;
+			int r = WaitAny (infos, infos.Length, millisecondsTimeout, shutting_down);
+			GC.KeepAlive (shutting_down);
+			return r;
 		}
 	}
 }
