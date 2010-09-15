@@ -1410,7 +1410,7 @@ namespace System {
 			}
 
 			// 3
-			if (IsPredefinedScheme (scheme) && scheme != UriSchemeMailto && scheme != UriSchemeNews && (
+			if (IsPredefinedScheme (scheme) && scheme != UriSchemeMailto && (
 				(endpos-startpos < 2) ||
 				(endpos-startpos >= 2 && uriString [startpos] == '/' && uriString [startpos+1] != '/')))				
 				return "Invalid URI: The Authority/Host could not be parsed.";
@@ -1423,7 +1423,7 @@ namespace System {
 				if (kind == UriKind.Relative)
 					return "Absolute URI when we expected a relative one";
 				
-				if (scheme != UriSchemeMailto && scheme != UriSchemeNews)
+				if (scheme != UriSchemeMailto)
 					startpos += 2;
 
 				if (scheme == UriSchemeFile) {
@@ -1464,7 +1464,7 @@ namespace System {
 			}
 
 			if (pos == -1) {
-				if ((scheme != Uri.UriSchemeMailto) && (scheme != Uri.UriSchemeNews))
+				if (scheme != Uri.UriSchemeMailto)
 					path = "/";
 			} else {
 				path = uriString.Substring (pos, endpos-pos);
@@ -1528,12 +1528,6 @@ namespace System {
 				host = String.Empty;
 			} else if (scheme == UriSchemeFile) {
 				isUnc = true;
-			} else if (scheme == UriSchemeNews) {
-				// no host for 'news', misinterpreted path
-				if (host.Length > 0) {
-					path = host;
-					host = String.Empty;
-				}
 			} else if (host.Length == 0 &&
 				   (scheme == UriSchemeHttp || scheme == UriSchemeGopher || scheme == UriSchemeNntp ||
 				    scheme == UriSchemeHttps || scheme == UriSchemeFtp)) {
@@ -1558,9 +1552,7 @@ namespace System {
 			if (ex != null)
 				return ex.Message;
 
-			if ((scheme != Uri.UriSchemeMailto) &&
-					(scheme != Uri.UriSchemeNews) &&
-					(scheme != Uri.UriSchemeFile)) {
+			if ((scheme != Uri.UriSchemeMailto) && (scheme != Uri.UriSchemeFile)) {
 				path = Reduce (path, CompactEscaped (scheme));
 			}
 
