@@ -12,7 +12,7 @@ monodroid_bootstrap_SUBDIRS := build mcs class
 monodroid_SUBDIRS := build mcs class
 monotouch_bootstrap_SUBDIRS := build mcs class
 monotouch_SUBDIRS := build mcs class
-net_3_5_SUBDIRS := build tools/xbuild
+net_3_5_SUBDIRS := build class tools/xbuild
 net_4_0_bootstrap_SUBDIRS := build mcs class tools 
 net_4_0_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
 

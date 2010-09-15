@@ -164,6 +164,12 @@ mobile_dirs := \
 	System.Data	\
 	Mono.Cairo	\
 	Mono.Data.Sqlite
+	
+net_3_5_only_dirs := \
+	Microsoft.Build.Framework	\
+	Microsoft.Build.Utilities	\
+	Microsoft.Build.Engine		\
+	Microsoft.Build.Tasks
 
 net_4_0_dirs := \
 	System.Dynamic		\
@@ -186,6 +192,7 @@ monodroid_bootstrap_SUBDIRS := $(net_2_1_bootstrap_dirs)
 monodroid_SUBDIRS := $(mobile_dirs)
 monotouch_bootstrap_SUBDIRS := $(net_2_1_bootstrap_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
+net_3_5_SUBDIRS := $(net_3_5_only_dirs)
 net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) Mono.Posix System.Core
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
 
