@@ -5,8 +5,11 @@
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 //   Paolo Molaro (lupus@ximian.com)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Lluis Sanchez Gual <lluis@novell.com>
+//   Ankit Jain <jankit@novell.com>
 //
 // (C) 2005 Marek Sieradzki
+// Copyright 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,6 +39,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Resources;
 using System.Reflection;
+using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Mono.XBuild.Tasks.GenerateResourceInternal;
@@ -73,7 +77,8 @@ namespace Microsoft.Build.Tasks {
 					string sourceFile = source.ItemSpec;
 					string outputFile = Path.ChangeExtension (sourceFile, "resources");
 
-					result &= CompileResourceFile (sourceFile, outputFile);
+					if (IsResgenRequired (sourceFile, outputFile))
+						result &= CompileResourceFile (sourceFile, outputFile);
 
 					ITaskItem newItem = new TaskItem (source);
 					source.ItemSpec = outputFile;
@@ -93,7 +98,8 @@ namespace Microsoft.Build.Tasks {
 						continue;
 					}
 
-					result &= CompileResourceFile (sources [i].ItemSpec, outputResources [i].ItemSpec);
+					if (IsResgenRequired (sources [i].ItemSpec, outputResources [i].ItemSpec))
+						result &= CompileResourceFile (sources [i].ItemSpec, outputResources [i].ItemSpec);
 					temporaryFilesWritten.Add (outputResources [i]);
 				}
 			}
@@ -103,6 +109,78 @@ namespace Microsoft.Build.Tasks {
 			return result;
 		}
 		
+		// true if the resx file or any file referenced
+		// by the resx is newer than the .resources file
+		//
+		// Code taken from monodevelop
+		// main/src/core/MonoDevelop.Core/MonoDevelop.Projects.Formats.MD1/MD1DotNetProjectHandler.cs
+		bool IsResgenRequired (string resx_filename, string resources_filename)
+		{
+			if (IsFileNewerThan (resx_filename, resources_filename)) {
+				Log.LogMessage (MessageImportance.Low,
+						"Resource file '{0}' is newer than the source file '{1}', skipping.",
+						resources_filename, resx_filename);
+				return true;
+			}
+
+			if (String.Compare (Path.GetExtension (resx_filename), ".resx", true) != 0)
+				return true;
+
+			// resx file, check for files referenced from there
+			XmlTextReader xr = null;
+			try {
+				// look for
+				// <data type="System.Resources.ResXFileRef, System.Windows.Forms" ..>
+				//   <value>... filename;.. </value>
+				// </data>
+				xr = new XmlTextReader (resx_filename);
+				string basepath = Path.GetDirectoryName (resx_filename);
+				while (xr.Read ()) {
+					if (xr.NodeType != XmlNodeType.Element ||
+						String.Compare (xr.LocalName, "data") != 0)
+						continue;
+
+					string type = xr.GetAttribute ("type");
+					if (String.IsNullOrEmpty (type))
+						continue;
+
+					if (String.Compare (type, "System.Resources.ResXFileRef, System.Windows.Forms") != 0)
+						continue;
+
+					xr.ReadToDescendant ("value");
+					if (xr.NodeType != XmlNodeType.Element)
+						continue;
+
+					string value = xr.ReadElementContentAsString ();
+
+					string [] parts = value.Split (';');
+					if (parts.Length > 0) {
+						string referenced_filename = Utilities.FromMSBuildPath (
+								Path.Combine (basepath, parts [0]).Trim ());
+						if (File.Exists (referenced_filename) &&
+							IsFileNewerThan (referenced_filename, resources_filename))
+							return true;
+					}
+				}
+			} catch (XmlException) {
+				// Ignore xml errors, let resgen handle it
+				return true;
+			} finally {
+				if (xr != null)
+					xr.Close ();
+			}
+
+			return false;
+		}
+
+		// true if first is newer than second
+		static bool IsFileNewerThan (string first, string second)
+		{
+			FileInfo finfo_first = new FileInfo (first);
+			FileInfo finfo_second = new FileInfo (second);
+			return finfo_first.LastWriteTime > finfo_second.LastWriteTime;
+		}
+
 #if false
 		private IResourceReader GetReader (Stream stream, string name)
 		{
@@ -152,13 +230,6 @@ namespace Microsoft.Build.Tasks {
 			if (!File.Exists (sname)) {
 				Log.LogError ("Resource file '{0}' not found.", sname);
 				return false;
-			}
-
-			if (File.GetLastWriteTime (sname) <= File.GetLastWriteTime (dname)) {
-				Log.LogMessage (MessageImportance.Low,
-						"Resource file '{0}' is newer than the source file '{1}', skipping.",
-						dname, sname);
-				return true;
 			}
 
 			Resgen resgen = new Resgen ();
