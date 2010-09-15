@@ -46,7 +46,6 @@ namespace Microsoft.Build.Utilities
 {
 	public abstract class ToolTask : Task
 	{
-		SCS.ProcessStringDictionary	environmentOverride;
 		int			exitCode;
 		int			timeout;
 		string			toolPath, toolExe;
@@ -54,7 +53,6 @@ namespace Microsoft.Build.Utilities
 		MessageImportance	standardErrorLoggingImportance;
 		MessageImportance	standardOutputLoggingImportance;
 		StringBuilder toolOutput;
-		StringBuilder pendingLineFragmentError, pendingLineFragmentOutput;
 		bool typeLoadException;
 
 		protected ToolTask ()
@@ -77,7 +75,6 @@ namespace Microsoft.Build.Utilities
 			this.toolPath = MonoLocationHelper.GetBinDir ();
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
-			this.environmentOverride = new SCS.ProcessStringDictionary ();
 		}
 
 		[MonoTODO]
@@ -134,9 +131,9 @@ namespace Microsoft.Build.Utilities
 				pinfo.RedirectStandardOutput = true;
 				pinfo.RedirectStandardError = true;
 
-				pendingLineFragmentOutput = new StringBuilder ();
-				pendingLineFragmentError = new StringBuilder ();
-
+				var pendingLineFragmentOutput = new StringBuilder ();
+				var pendingLineFragmentError = new StringBuilder ();
+				var environmentOverride = GetAndLogEnvironmentVariables ();
 				try {
 					// When StartProcess returns, the process has already .Start()'ed
 					// If we subscribe to the events after that, then for processes that
@@ -351,11 +348,50 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
+		// If EnvironmentVariables is defined, then merge EnvironmentOverride
+		// EnvironmentOverride is Obsolete'd in 4.0
+		//
+		// Returns the final set of environment variables and logs them
+		SCS.StringDictionary GetAndLogEnvironmentVariables ()
+		{
+			var env_vars = GetEnvironmentVariables ();
+			if (env_vars == null)
+				return env_vars;
+
+			Log.LogMessage (MessageImportance.Low, "Environment variables being passed to the tool:");
+			foreach (DictionaryEntry entry in env_vars)
+				Log.LogMessage (MessageImportance.Low, "\t{0}={1}", (string)entry.Key, (string)entry.Value);
+
+			return env_vars;
+		}
+
+		SCS.StringDictionary GetEnvironmentVariables ()
+		{
+			if (EnvironmentVariables == null || EnvironmentVariables.Length == 0)
+				return EnvironmentOverride;
+
+			var env_vars = new SCS.StringDictionary ();
+			foreach (string pair in EnvironmentVariables) {
+				string [] key_value = pair.Split ('=');
+				if (!String.IsNullOrEmpty (key_value [0]))
+					env_vars [key_value [0]] = key_value.Length > 1 ? key_value [1] : String.Empty;
+			}
+
+			if (EnvironmentOverride != null)
+				foreach (DictionaryEntry entry in EnvironmentOverride)
+					env_vars [(string)entry.Key] = (string)entry.Value;
+
+			return env_vars;
+		}
+
 		protected virtual StringDictionary EnvironmentOverride
 		{
-			get { return environmentOverride; }
+			get { return null; }
 		}
-		
+
+		// Ignore EnvironmentOverride if this is set
+		public string[] EnvironmentVariables { get; set; }
+
 		[Output]
 		public int ExitCode {
 			get { return exitCode; }
