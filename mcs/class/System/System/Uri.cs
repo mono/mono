@@ -531,12 +531,24 @@ namespace System {
 			} 
 		}
 
+		private bool IsLocalIdenticalToAbsolutePath ()
+		{
+			if (IsFile)
+				return false;
+
+			if ((scheme == Uri.UriSchemeNews) || (scheme == Uri.UriSchemeNntp) || (scheme == Uri.UriSchemeFtp))
+				return false;
+
+			return IsWellFormedOriginalString ();
+		}
+
 		public string LocalPath { 
 			get {
 				EnsureAbsoluteUri ();
 				if (cachedLocalPath != null)
 					return cachedLocalPath;
-				if (!IsFile && (scheme != Uri.UriSchemeNews) && (scheme != Uri.UriSchemeNntp) && IsWellFormedOriginalString ())
+
+				if (IsLocalIdenticalToAbsolutePath ())
 					return AbsolutePath;
 
 				if (!IsUnc) {
@@ -1400,8 +1412,8 @@ namespace System {
 				return null;
 			}
 
-			// special case: there is no query part for 'nnyp' but there is an host, port, user...
-			if (scheme != Uri.UriSchemeNntp) {
+			// special case: there is no query part for 'nntp' and 'ftp' but there is an host, port, user...
+			if ((scheme != Uri.UriSchemeNntp) && (scheme != Uri.UriSchemeFtp)) {
 				// 6 query
 				pos = uriString.IndexOf ('?', startpos, endpos-startpos);
 				if (pos != -1) {
@@ -1458,10 +1470,13 @@ namespace System {
 			}
 
 			// 5 path
-			if (scheme == Uri.UriSchemeNntp) {
+			if ((scheme == Uri.UriSchemeNntp) || (scheme == Uri.UriSchemeFtp)) {
 				pos = uriString.IndexOf ('/', startpos, endpos - startpos);
 				if (pos != -1) {
-					path = EscapeString (uriString.Substring (pos, endpos - pos), EscapeNews);
+					path = uriString.Substring (pos, endpos - pos);
+					if (scheme == Uri.UriSchemeFtp)
+						path = path.Replace ('\\', '/');
+					path = EscapeString (path, EscapeNews);
 					endpos = pos;
 				}
 			} else {
