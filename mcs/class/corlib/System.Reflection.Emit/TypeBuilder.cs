@@ -1897,6 +1897,20 @@ namespace System.Reflection.Emit
 				return res;
 		}
 
+		internal TypeCode GetTypeCodeInternal () {
+			if (parent == pmodule.assemblyb.corlib_enum_type) {
+				for (int i = 0; i < num_fields; ++i) {
+					FieldBuilder f = fields [i];
+					if (!f.IsStatic)
+						return Type.GetTypeCode (f.FieldType);
+				}
+				throw new InvalidOperationException ("Enum basetype field not defined");
+			} else {
+				return Type.GetTypeCodeInternal (this);
+			}
+		}
+
+
 		void _TypeBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();

@@ -686,6 +686,8 @@ namespace System {
 			Type type = this;
 			if (type is MonoType)
 				return GetTypeCodeInternal (type);
+			if (type is TypeBuilder)
+				return ((TypeBuilder)type).GetTypeCodeInternal ();
 
 			type = type.UnderlyingSystemType;
 
