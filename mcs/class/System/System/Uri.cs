@@ -82,7 +82,7 @@ namespace System {
 		private bool isOpaquePart;
 		private bool isAbsoluteUri = true;
 
-		private string [] segments;
+		private List<string> segments;
 		
 		private bool userEscaped;
 		private string cachedAbsoluteUri;
@@ -91,6 +91,8 @@ namespace System {
 		private int cachedHashCode;
 
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
+		private static string [] Empty = new string [0];
+
 	
 		// Fields
 		
@@ -607,13 +609,13 @@ namespace System {
 		public string [] Segments { 
 			get { 
 				EnsureAbsoluteUri ();
-				if (segments != null)
-					return segments;
 
-				if (path.Length == 0) {
-					segments = new string [0];
-					return segments;
-				}
+				// return a (pre-allocated) empty array
+				if (path.Length == 0)
+					return Empty;
+				// do not return the original array (since items can be changed)
+				if (segments != null)
+					return segments.ToArray ();
 
 				List<string> list = new List<string> ();
 				StringBuilder current = new StringBuilder ();
@@ -650,8 +652,8 @@ namespace System {
 						list.Insert (0, "/");
 					}
 				}
-				segments = list.ToArray ();
-				return segments;
+				segments = list;
+				return segments.ToArray ();
 			} 
 		}
 

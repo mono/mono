@@ -1480,6 +1480,18 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void CachingSegments ()
+		{
+			Uri uri = new Uri ("http://localhost/dir/dummypage.html");
+			uri.Segments [0] = uri.Segments [1] = uri.Segments [2] = "*";
+			string [] segments = uri.Segments;
+			Assert.AreEqual (3, segments.Length, "#01");
+			Assert.AreEqual ("/", segments [0], "#02");
+			Assert.AreEqual ("dir/", segments [1], "#03");
+			Assert.AreEqual ("dummypage.html", segments [2], "#04");
+		}
+
+		[Test]
 		public void Segments3 ()
 		{
 			Uri uri = new Uri ("http://localhost/dir/dummypage/");
