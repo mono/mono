@@ -3,9 +3,14 @@ SUBDIRS =
 include ../../build/rules.make
 HAS_NUNIT_TEST = yes
 
+BUILD_FRAMEWORK = Microsoft.Build.Framework.dll
+BUILD_ENGINE = Microsoft.Build.Engine.dll
+
 ifeq (3.5, $(FRAMEWORK_VERSION))
 NAME_SUFFIX = .v3.5
 ASSEMBLY_VERSION = 3.5.0.0
+BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
+BUILD_ENGINE := $(topdir)/class/lib/$(PROFILE)/$(BUILD_ENGINE)
 else
 ifeq (4.0, $(FRAMEWORK_VERSION))
 NAME_SUFFIX = .v4.0
@@ -13,7 +18,7 @@ ASSEMBLY_VERSION = 4.0.0.0
 endif
 endif
 
-LOCAL_MCS_FLAGS = -r:Microsoft.Build.Framework.dll -r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll -r:Microsoft.Build.Engine.dll
+LOCAL_MCS_FLAGS = -r:$(BUILD_FRAMEWORK) -r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll -r:$(BUILD_ENGINE)
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/xbuild.exe
 
 include ../../build/executable.make
