@@ -65,7 +65,7 @@ namespace System.Diagnostics {
 			 */
 			public IntPtr thread_handle;
 			public int pid; // Contains -GetLastError () on failure.
-			public int tid;
+			public IntPtr tid;
 			public string [] envKeys;
 			public string [] envValues;
 			public string UserName;
