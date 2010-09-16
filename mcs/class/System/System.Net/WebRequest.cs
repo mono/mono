@@ -286,7 +286,7 @@ namespace System.Net
 		{
 			if (requestUri == null)
 				throw new ArgumentNullException ("requestUri");
-			return GetCreator (requestUri.AbsoluteUri).Create (requestUri);
+			return GetCreator (requestUri.Scheme).Create (requestUri);
 		}
 		
 		public static WebRequest CreateDefault (Uri requestUri)
