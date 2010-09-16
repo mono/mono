@@ -986,9 +986,10 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
+#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-
+#endif
 			if (Host != uri.Host || Scheme != uri.Scheme)
 				return uri;
 
@@ -2074,12 +2075,21 @@ namespace System {
 		// [MonoTODO ("rework code to avoid exception catching")]
 		public static bool TryCreate (Uri baseUri, string relativeUri, out Uri result)
 		{
+			result = null;
+			if (relativeUri == null)
+				return false;
+
 			try {
-				// FIXME: this should call UriParser.Resolve
-				result = new Uri (baseUri, relativeUri);
-				return true;
+				Uri relative = new Uri (relativeUri, UriKind.RelativeOrAbsolute);
+				if ((baseUri != null) && baseUri.IsAbsoluteUri) {
+					// FIXME: this should call UriParser.Resolve
+					result = new Uri (baseUri, relative);
+				} else if (relative.IsAbsoluteUri) {
+					// special case - see unit tests
+					result = relative;
+				}
+				return (result != null);
 			} catch (UriFormatException) {
-				result = null;
 				return false;
 			}
 		}
@@ -2087,18 +2097,18 @@ namespace System {
 		//[MonoTODO ("rework code to avoid exception catching")]
 		public static bool TryCreate (Uri baseUri, Uri relativeUri, out Uri result)
 		{
-#if NET_4_0
-			if (relativeUri == null) {
-				result = null;
+			result = null;
+			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-			}
+#if NET_4_0
+			if (relativeUri == null)
+				return false;
 #endif
 			try {
 				// FIXME: this should call UriParser.Resolve
 				result = new Uri (baseUri, relativeUri.OriginalString);
 				return true;
 			} catch (UriFormatException) {
-				result = null;
 				return false;
 			}
 		}

@@ -10,7 +10,6 @@ using NUnit.Framework;
 
 namespace MonoTests.System
 {
-#if NET_2_0
 	// help bring Moonlight tests back to mono/mcs nunit
 
 	public delegate void TestCode ();
@@ -43,7 +42,7 @@ namespace MonoTests.System
 				throw new AssertionException (string.Format ("Expected '{0}', but got no exception. {1}", expected_exception.FullName, message));
 		}
 	}
-#endif
+
 	[TestFixture]
 	public class UriTest2
 	{
@@ -97,9 +96,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("Tests needs to be updated for 2.0")]
-#endif
 		public void AbsoluteUriFromFile ()
 		{
 			FromResource ("test-uri-props.txt", null);
@@ -107,9 +104,7 @@ namespace MonoTests.System
 		
 		[Test]
 		[Category("NotDotNet")]
-#if NET_2_0
 		[Ignore ("Tests needs to be updated for 2.0")]
-#endif
 		public void AbsoluteUriFromFileManual ()
 		{
 			if (Path.DirectorySeparatorChar == '\\')
@@ -118,9 +113,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if NET_2_0
 		[Ignore ("Tests needs to be updated for 2.0")]
-#endif
 		public void RelativeUriFromFile ()
 		{
 			FromResource ("test-uri-relative-props.txt", new Uri ("http://www.go-mono.com"));
@@ -209,10 +202,8 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("mailto", Uri.UriSchemeMailto, "mailto");
 			Assert.AreEqual ("news", Uri.UriSchemeNews, "news");
 			Assert.AreEqual ("nntp", Uri.UriSchemeNntp, "file");
-#if NET_2_0
 			Assert.AreEqual ("net.pipe", Uri.UriSchemeNetPipe, "net.pipe");
 			Assert.AreEqual ("net.tcp", Uri.UriSchemeNetTcp, "net.tcp");
-#endif
 		}
 
 		[Test] // bug #71049
@@ -223,9 +214,6 @@ TextWriter sw = Console.Out;
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // 1.x throws an UriFormatException
-#endif
 		public void NoHostName1_Bug76146 ()
 		{
 			Uri u = new Uri ("foo:///?bar");
@@ -248,9 +236,6 @@ TextWriter sw = Console.Out;
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // 1.x throws an UriFormatException
-#endif
 		public void NoHostName2_Bug76146 ()
 		{
 			Uri u = new Uri ("foo:///bar");
@@ -278,7 +263,7 @@ TextWriter sw = Console.Out;
 		{
 			new Uri ("http://127.0.0.1::::/");
 		}
-#if NET_2_0
+
 		[Test]
 		public void File ()
 		{
@@ -548,7 +533,6 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual (uri.Port.ToString (), uri.GetComponents (UriComponents.StrongPort, UriFormat.Unescaped), "StrongPort");
 			Assert.AreEqual (uri.UserInfo, uri.GetComponents (UriComponents.UserInfo, UriFormat.Unescaped), "UserInfo");
 		}
-#endif
 
 		[Test]
 		public void Merge_Query_Fragment ()
