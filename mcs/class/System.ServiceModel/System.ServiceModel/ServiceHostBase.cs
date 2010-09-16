@@ -218,7 +218,8 @@ namespace System.ServiceModel
 			if (endpoint.Binding == null)
 				throw new ArgumentException ("Binding on the argument endpoint is null");
 
-			if (!ImplementedContracts.Values.Any (cd => cd.ContractType == endpoint.Contract.ContractType))
+			if (!ImplementedContracts.Values.Any (cd => cd.ContractType == endpoint.Contract.ContractType) &&
+			    endpoint.Binding.Namespace != "http://schemas.microsoft.com/ws/2005/02/mex/bindings") // special case
 				throw new InvalidOperationException (String.Format ("Contract '{0}' is not implemented in this service '{1}'", endpoint.Contract.Name, Description.Name));
 
 			Description.Endpoints.Add (endpoint);
@@ -364,13 +365,17 @@ namespace System.ServiceModel
 				ServiceEndpoint se;
 
 #if NET_4_0
-				var binding = endpoint.Kind != null ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
+				var binding = String.IsNullOrEmpty (endpoint.Binding) ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
 
 				if (endpoint.Kind != null) {
-					var contract = GetContract (endpoint.Contract, false);
+					var contract = String.IsNullOrEmpty (endpoint.Contract) ? null : GetContract (endpoint.Contract, false);
 					se = ConfigUtil.ConfigureStandardEndpoint (contract, endpoint);
 					if (se.Binding == null)
 						se.Binding = binding;
+					if (se.Address == null && se.Binding != null)
+						se.Address = new EndpointAddress (CreateUri (se.Binding.Scheme, endpoint.Address));
+
+					AddServiceEndpoint (se);
 				}
 				else
 					se = AddServiceEndpoint (endpoint.Contract, binding, endpoint.Address);
