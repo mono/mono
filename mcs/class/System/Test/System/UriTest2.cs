@@ -869,5 +869,15 @@ TextWriter sw = Console.Out;
 			uri = new Uri ("file://host/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
 			Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 		}
+
+		[Test]
+		public void PathReduction_2e ()
+		{
+			Uri uri = new Uri ("http://host/dir/%2e%2E/file");
+			Assert.AreEqual ("/file", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("http://host/file", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
+			Assert.AreEqual ("file", uri.Segments [1], "Segments [1]");
+		}
 	}
 }

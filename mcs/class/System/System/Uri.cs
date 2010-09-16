@@ -1597,6 +1597,36 @@ namespace System {
 			return false;
 		}
 
+		// replace '\', %5C ('\') and %2f ('/') into '/'
+		// replace %2e ('.') into '.'
+		private static string NormalizePath (string path)
+		{
+			StringBuilder res = new StringBuilder ();
+			for (int i = 0; i < path.Length; i++) {
+				char c = path [i];
+				switch (c) {
+				case '\\':
+					c = '/';
+					break;
+				case '%':
+					if (i < path.Length - 2) {
+						char c1 = path [i + 1];
+						char c2 = Char.ToUpper (path [i + 2]);
+						if ((c1 == '2') && (c2 == 'E')) {
+							c = '.';
+							i += 2;
+						} else if (((c1 == '2') && (c2 == 'F')) || ((c1 == '5') && (c2 == 'C'))) {
+							c = '/';
+							i += 2;
+						}
+					}
+					break;
+				}
+				res.Append (c);
+			}
+			return res.ToString ();
+		}
+
 		// This is called "compacting" in the MSDN documentation
 		private static string Reduce (string path, bool compact_escaped)
 		{
@@ -1604,47 +1634,22 @@ namespace System {
 			if (path == "/")
 				return path;
 
-			StringBuilder res = new StringBuilder();
-
-			if (compact_escaped) {
-				// replace '\', %5C ('\') and %2f ('/') into '/'
+			if (compact_escaped && (path.IndexOf ('%') != -1)) {
+				// replace '\', %2f, %5c with '/' and replace %2e with '.'
 				// other escaped values seems to survive this step
-				for (int i=0; i < path.Length; i++) {
-					char c = path [i];
-					switch (c) {
-					case '\\':
-						res.Append ('/');
-						break;
-					case '%':
-						if (i < path.Length - 2) {
-							char c1 = path [i + 1];
-							char c2 = Char.ToUpper (path [i + 2]);
-							if (((c1 == '2') && (c2 == 'F')) || ((c1 == '5') && (c2 == 'C'))) {
-								res.Append ('/');
-								i += 2;
-							} else {
-								res.Append (c);
-							}
-						} else {
-							res.Append (c);
-						}
-						break;
-					default:
-						res.Append (c);
-						break;
-					}
-				}
-				path = res.ToString ();
+				path = NormalizePath (path);
 			} else {
+				// (always) replace '\' with '/'
 				path = path.Replace ('\\', '/');
 			}
 
-			ArrayList result = new ArrayList ();
+			List<string> result = new List<string> ();
 
 			bool begin = true;
 			for (int startpos = 0; startpos < path.Length; ) {
-				int endpos = path.IndexOf('/', startpos);
-				if (endpos == -1) endpos = path.Length;
+				int endpos = path.IndexOf ('/', startpos);
+				if (endpos == -1)
+					endpos = path.Length;
 				string current = path.Substring (startpos, endpos-startpos);
 				startpos = endpos + 1;
 				if ((begin && current.Length == 0) || current == "." ) {
@@ -1670,7 +1675,8 @@ namespace System {
 			if (result.Count == 0)
 				return "/";
 
-			res.Length = 0;
+			StringBuilder res = new StringBuilder ();
+
 			if (path [0] == '/')
 				res.Append ('/');
 
