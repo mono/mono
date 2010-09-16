@@ -1112,6 +1112,7 @@ namespace System {
 		private const string EscapeCommonHex = EscapeCommon + EscapeHex;
 		private const string EscapeCommonBrackets = EscapeCommon + EscapeBrackets;
 		internal const string EscapeCommonHexBrackets = EscapeCommon + EscapeHex + EscapeBrackets;
+		internal const string EscapeCommonHexBracketsQuery = EscapeCommonHexBrackets + "?";
 
 		internal static string EscapeString (string str, string escape) 
 		{

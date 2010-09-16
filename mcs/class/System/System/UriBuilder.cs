@@ -4,7 +4,7 @@
 // Author:
 //   Lawrence Pit (loz@cable.a2000.nl)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -53,11 +53,7 @@ namespace System
 		// Constructors
 		
 		public UriBuilder ()
-#if NET_2_0
 			: this (Uri.UriSchemeHttp, "localhost")
-#else
-			: this (Uri.UriSchemeHttp, "loopback")
-#endif
 		{
 		}
 
@@ -67,6 +63,10 @@ namespace System
 		
 		public UriBuilder (Uri uri)
 		{
+#if NET_4_0
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+#endif
 			scheme = uri.Scheme;
 			host = uri.Host;
 			port = uri.Port;
@@ -133,11 +133,7 @@ namespace System
 				if (fragment == null)
 					fragment = String.Empty;
 				else if (fragment.Length > 0)
-//					fragment = "#" + EncodeUtf8 (value.Replace ("%23", "#"));
 					fragment = "#" + value.Replace ("%23", "#");
-#if !NET_2_0
-				query = String.Empty;
-#endif
 				modified = true;
 			}
 		}
@@ -145,7 +141,7 @@ namespace System
 		public string Host {
 			get { return host; }
 			set {
-				host = (value == null) ? String.Empty : value;;
+				host = (value == null) ? String.Empty : value;
 				modified = true;
 			}
 		}
@@ -153,8 +149,7 @@ namespace System
 		public string Password {
 			get { return password; }
 			set {
-				password = (value == null) ? String.Empty : value;;
-				modified = true;
+				password = (value == null) ? String.Empty : value;
 			}
 		}
 		
@@ -164,7 +159,7 @@ namespace System
 				if (value == null || value.Length == 0) {
 					path = "/";
 				} else {
-					path = Uri.EscapeString (value.Replace ('\\', '/'), Uri.EscapeCommonHexBrackets);
+					path = Uri.EscapeString (value.Replace ('\\', '/'), Uri.EscapeCommonHexBracketsQuery);
 				}
 				modified = true;
 			}
@@ -173,13 +168,8 @@ namespace System
 		public int Port {
 			get { return port; }
 			set {
-#if NET_2_0
 				if (value < -1)
 					throw new ArgumentOutOfRangeException ("value");
-#else
-				if (value < 0)
-					throw new ArgumentOutOfRangeException ("value");
-#endif
 				// apparently it is
 				port = value;
 				modified = true;
@@ -195,11 +185,7 @@ namespace System
 				if (value == null || value.Length == 0)
 					query = String.Empty;
 				else
-//					query = "?" + EncodeUtf8 (value);
 					query = "?" + value;
-#if !NET_2_0
-				fragment = String.Empty;
-#endif
 				modified = true;
 			}
 		}
@@ -230,7 +216,7 @@ namespace System
 		public string UserName {
 			get { return username; }
 			set {
-				username = (value == null) ? String.Empty : value;;
+				username = (value == null) ? String.Empty : value;
 				modified = true;
 			}
 		}
@@ -252,7 +238,8 @@ namespace System
 			StringBuilder builder = new StringBuilder ();
 
 			builder.Append (scheme);
-			builder.Append ("://");
+			// note: mailto and news use ':', not "://", as their delimiter
+			builder.Append (Uri.GetSchemeDelimiter (scheme));
 
 			if (username != String.Empty) {
 				builder.Append (username);
@@ -261,9 +248,11 @@ namespace System
 				builder.Append ('@');
 			}
 
-			builder.Append (host);
-			if (port > 0)
-				builder.Append (":" + port);
+			if (host.Length > 0) {
+				builder.Append (host);
+				if (port > 0)
+					builder.Append (":" + port);
+			}
 
 			if (path != String.Empty &&
 			    builder [builder.Length - 1] != '/' &&
