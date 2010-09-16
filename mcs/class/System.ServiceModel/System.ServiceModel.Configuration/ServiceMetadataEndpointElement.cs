@@ -73,7 +73,7 @@ namespace System.ServiceModel.Configuration
 
 		protected internal override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{
-			throw new NotImplementedException ();
+			return new ServiceMetadataEndpoint ();
 		}
 
 		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ChannelEndpointElement serviceEndpointElement)
