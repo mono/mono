@@ -83,23 +83,16 @@ namespace Mono.CSharp {
 		}
 	}
 
+	// TODO: It should go to AssemblyClass or AssemblySpec
 	public class GlobalRootNamespace : RootNamespace {
 		Module [] modules;
 		Dictionary<string, RootNamespace> root_namespaces;
 
-		// TODO: Breaks dynamic/eval
-		public static GlobalRootNamespace Instance = new GlobalRootNamespace ();
-
-		GlobalRootNamespace ()
+		public GlobalRootNamespace ()
 			: base ("global")
 		{
 			root_namespaces = new Dictionary<string, RootNamespace> ();
 			root_namespaces.Add (alias_name, this);
-		}
-
-		public static void Reset ()
-		{
-			Instance = new GlobalRootNamespace ();
 		}
 
 		public Assembly [] Assemblies {
@@ -695,9 +688,9 @@ namespace Mono.CSharp {
 				this.Location = loc;
 			}
 
-			public virtual FullNamedExpression Resolve (IMemberContext rc)
+			public virtual FullNamedExpression Resolve (IMemberContext rc, bool local)
 			{
-				FullNamedExpression fne = GlobalRootNamespace.Instance.GetRootNamespace (Alias);
+				FullNamedExpression fne = rc.Compiler.GlobalRootNamespace.GetRootNamespace (Alias);
 				if (fne == null) {
 					rc.Compiler.Report.Error (430, Location,
 						"The extern alias `{0}' was not specified in -reference option",
@@ -724,12 +717,12 @@ namespace Mono.CSharp {
 				this.value = name;
 			}
 
-			public override FullNamedExpression Resolve (IMemberContext rc)
+			public override FullNamedExpression Resolve (IMemberContext rc, bool local)
 			{
 				if (resolved != null || value == null)
 					return resolved;
 
-				if (rc == null)
+				if (local)
 					return null;
 
 				resolved = value.GetTypeExpression ().ResolveAsTypeStep (rc, false);
@@ -765,6 +758,7 @@ namespace Mono.CSharp {
 		public readonly DeclSpace SlaveDeclSpace;
 		static readonly Namespace [] empty_namespaces = new Namespace [0];
 		Namespace [] namespace_using_table;
+		CompilerContext ctx;
 
 		static List<NamespaceEntry> entries = new List<NamespaceEntry> ();
 
@@ -773,8 +767,10 @@ namespace Mono.CSharp {
 			entries = new List<NamespaceEntry> ();
 		}
 
-		public NamespaceEntry (NamespaceEntry parent, CompilationUnit file, string name)
+		// TODO: ctx should be a module
+		public NamespaceEntry (CompilerContext ctx, NamespaceEntry parent, CompilationUnit file, string name)
 		{
+			this.ctx = ctx;
 			this.parent = parent;
 			this.file = file;
 			entries.Add (this);
@@ -782,14 +778,15 @@ namespace Mono.CSharp {
 			if (parent != null)
 				ns = parent.NS.GetNamespace (name, true);
 			else if (name != null)
-				ns = GlobalRootNamespace.Instance.GetNamespace (name, true);
+				ns = Compiler.GlobalRootNamespace.GetNamespace (name, true);
 			else
-				ns = GlobalRootNamespace.Instance;
+				ns = Compiler.GlobalRootNamespace;
 			SlaveDeclSpace = new RootDeclSpace (this);
 		}
 
-		private NamespaceEntry (NamespaceEntry parent, CompilationUnit file, Namespace ns, bool slave)
+		private NamespaceEntry (CompilerContext ctx, NamespaceEntry parent, CompilationUnit file, Namespace ns, bool slave)
 		{
+			this.ctx = ctx;
 			this.parent = parent;
 			this.file = file;
 			this.IsImplicit = true;
@@ -872,7 +869,7 @@ namespace Mono.CSharp {
 		NamespaceEntry Doppelganger {
 			get {
 				if (!IsImplicit && doppelganger == null) {
-					doppelganger = new NamespaceEntry (ImplicitParent, file, ns, true);
+					doppelganger = new NamespaceEntry (ctx, ImplicitParent, file, ns, true);
 					doppelganger.using_aliases = using_aliases;
 				}
 				return doppelganger;
@@ -894,7 +891,7 @@ namespace Mono.CSharp {
 				if (implicit_parent == null) {
 					implicit_parent = (parent.NS == ns.Parent)
 						? parent
-						: new NamespaceEntry (parent, file, ns.Parent, false);
+						: new NamespaceEntry (ctx, parent, file, ns.Parent, false);
 				}
 				return implicit_parent;
 			}
@@ -1065,7 +1062,7 @@ namespace Mono.CSharp {
 
 				foreach (UsingAliasEntry ue in n.using_aliases) {
 					if (ue.Alias == name)
-						return ue.Resolve (Doppelganger);
+						return ue.Resolve (Doppelganger ?? this, Doppelganger == null);
 				}
 			}
 
@@ -1098,7 +1095,7 @@ namespace Mono.CSharp {
 							}
 						}
 
-						return ue.Resolve (Doppelganger);
+						return ue.Resolve (Doppelganger ?? this, Doppelganger == null);
 					}
 				}
 			}
@@ -1252,7 +1249,7 @@ namespace Mono.CSharp {
 		{
 			if (using_aliases != null) {
 				foreach (UsingAliasEntry ue in using_aliases)
-					ue.Resolve (Doppelganger);
+					ue.Resolve (Doppelganger, Doppelganger == null);
 			}
 
 			if (using_clauses != null) {
@@ -1284,7 +1281,7 @@ namespace Mono.CSharp {
 		#region IMemberContext Members
 
 		public CompilerContext Compiler {
-			get { return RootContext.ToplevelTypes.Compiler; }
+			get { return ctx; }
 		}
 
 		public TypeSpec CurrentType {
