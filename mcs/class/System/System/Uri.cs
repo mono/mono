@@ -1302,6 +1302,11 @@ namespace System {
 				throw new UriFormatException (s);
 		}
 
+		private bool SupportsQuery ()
+		{
+			return ((scheme != Uri.UriSchemeNntp) && (scheme != Uri.UriSchemeFtp) && (scheme != Uri.UriSchemeFile));
+		}
+
 		//
 		// This parse method will not throw exceptions on failure
 		//
@@ -1412,8 +1417,8 @@ namespace System {
 				return null;
 			}
 
-			// special case: there is no query part for 'nntp' and 'ftp' but there is an host, port, user...
-			if ((scheme != Uri.UriSchemeNntp) && (scheme != Uri.UriSchemeFtp)) {
+			// special case: there is no query part for 'nntp', 'file' and 'ftp' but there is an host, port, user...
+			if (SupportsQuery ()) {
 				// 6 query
 				pos = uriString.IndexOf ('?', startpos, endpos-startpos);
 				if (pos != -1) {
@@ -1470,31 +1475,24 @@ namespace System {
 			}
 
 			// 5 path
-			if ((scheme == Uri.UriSchemeNntp) || (scheme == Uri.UriSchemeFtp)) {
+			if (unixAbsPath) {
+				pos = -1;
+			} else {
 				pos = uriString.IndexOf ('/', startpos, endpos - startpos);
-				if (pos != -1) {
-					path = uriString.Substring (pos, endpos - pos);
-					if (scheme == Uri.UriSchemeFtp)
+				if (pos == -1 && windowsFilePath)
+					pos = uriString.IndexOf ('\\', startpos, endpos - startpos);
+			}
+			if (pos != -1) {
+				path = uriString.Substring (pos, endpos - pos);
+				if (!SupportsQuery ()) {
+					if (scheme != Uri.UriSchemeNntp)
 						path = path.Replace ('\\', '/');
 					path = EscapeString (path, EscapeNews);
-					endpos = pos;
 				}
+				endpos = pos;
 			} else {
-				if (unixAbsPath) {
-					pos = -1;
-				} else {
-					pos = uriString.IndexOf ('/', startpos, endpos - startpos);
-					if (pos == -1 && windowsFilePath)
-						pos = uriString.IndexOf ('\\', startpos, endpos - startpos);
-				}
-
-				if (pos == -1) {
-					if (scheme != Uri.UriSchemeMailto)
-						path = "/";
-				} else {
-					path = uriString.Substring (pos, endpos - pos);
-					endpos = pos;
-				}
+				if (scheme != Uri.UriSchemeMailto)
+					path = "/";
 			}
 
 			// 4.a user info

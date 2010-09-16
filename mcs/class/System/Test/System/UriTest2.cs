@@ -724,6 +724,16 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual (String.Empty, uri.Host, "4/Host");
 			Assert.AreEqual ("//host/dir/subdir/file", uri.AbsolutePath, "4/AbsolutePath");
 			Assert.AreEqual ("//host/dir/subdir/file", uri.LocalPath, "4/LocalPath");
+
+			// query and fragment
+			uri = new Uri ("mono://host/dir/subdir/file?query#fragment");
+			Assert.AreEqual ("/dir/subdir/file", uri.AbsolutePath, "qf.AbsolutePath");
+			Assert.AreEqual ("?query", uri.Query, "qf.Query");
+			Assert.AreEqual ("#fragment", uri.Fragment, "qf.Fragment");
+
+			// special characters
+			uri = new Uri ("mono://host/<>%\"{}|\\^`;/:@&=+$,[]#abc");
+			Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 		}
 
 		[Test]
@@ -840,6 +850,40 @@ TextWriter sw = Console.Out;
 			uri = new Uri ("ftp://ftp.mono-project.com/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
 			Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 			Assert.AreEqual ("#abc", uri.Fragment, "Special/Fragment");
+		}
+
+		[Test]
+		public void FileScheme ()
+		{
+			Uri uri = new Uri ("file://host/dir/subdir/file?this-is-not-a-query#but-this-is-a-fragment");
+			Assert.AreEqual ("/dir/subdir/file%3Fthis-is-not-a-query", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("file://host/dir/subdir/file%3Fthis-is-not-a-query#but-this-is-a-fragment", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("host", uri.Authority, "Authority");
+			Assert.AreEqual ("host", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual ("#but-this-is-a-fragment", uri.Fragment, "Fragment");
+			Assert.AreEqual ("host", uri.Host, "Host");
+			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "HostNameType");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsTrue (uri.IsDefaultPort, "IsDefaultPort");
+			Assert.IsTrue (uri.IsFile, "IsFile");
+			Assert.IsFalse (uri.IsLoopback, "IsLoopback");
+			Assert.IsTrue (uri.IsUnc, "IsUnc");
+			Assert.AreEqual (isWin32 ? "\\\\host\\dir\\subdir\\file?this-is-not-a-query" : "/dir/subdir/file?this-is-not-a-query", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("file://host/dir/subdir/file?this-is-not-a-query#but-this-is-a-fragment", uri.OriginalString, "OriginalString");
+			Assert.AreEqual ("/dir/subdir/file%3Fthis-is-not-a-query", uri.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual (-1, uri.Port, "Port");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("file", uri.Scheme, "Scheme");
+			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
+			Assert.AreEqual ("dir/", uri.Segments [1], "Segments [1]");
+			Assert.AreEqual ("subdir/", uri.Segments [2], "Segments [2]");
+			Assert.AreEqual ("file%3Fthis-is-not-a-query", uri.Segments [3], "Segments [3]");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+
+			// special characters
+			uri = new Uri ("file://host/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
+			Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 		}
 	}
 }
