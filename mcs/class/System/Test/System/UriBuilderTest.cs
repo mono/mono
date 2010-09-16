@@ -265,6 +265,16 @@ namespace MonoTests.System
 			Assert.AreEqual ("#Features", uri.Fragment, "#1");
 			Assert.AreEqual ("http://www.mono-project.com/Main_Page#Features", uri.Uri.ToString (), "#2");
 		}
+
+		[Test]
+		public void IPv6_Host ()
+		{
+			UriBuilder ub = new UriBuilder ("http", "[1:2:3:4:5:6:7:8]", 8080, "/dir/subdir/file");
+			Assert.AreEqual ("[1:2:3:4:5:6:7:8]", ub.Host, "Host.1");
+			Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", ub.Uri.Host, "Uri.Host");
+			// once the Uri is created then some builder properties may change
+			Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", ub.Host, "Host.2");
+		}
 	}
 }
 

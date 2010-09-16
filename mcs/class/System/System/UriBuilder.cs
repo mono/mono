@@ -208,6 +208,8 @@ namespace System
 				if (!modified) 
 					return uri;
 				uri = new Uri (ToString (), true);
+				// some properties are updated once the Uri is created - see unit tests
+				host = uri.Host;
 				modified = false;
 				return uri;
 			}
