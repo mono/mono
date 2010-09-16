@@ -20,7 +20,6 @@ net_4_0_dirs := \
 	$(per_profile_dirs) \
 	corcompare	\
 	mono-xmltool	\
-	mdoc		\
 	mono-shlib-cop	\
 	sgen		\
 	mconfig		\
@@ -46,6 +45,7 @@ net_4_0_dirs := \
 
 net_2_0_dirs := \
 	$(per_profile_dirs) \
+	mdoc		\
 	monodoc		\
 	compiler-tester
 

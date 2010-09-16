@@ -15,7 +15,7 @@ MDOC_COMMON_FLAGS = \
 	/r:System.Web.dll                                                           \
 	/r:System.Xml.Linq.dll                                                      \
 	/r:ICSharpCode.SharpZipLib.dll                                              \
-	/r:$(topdir)/class/lib/net_4_0/Mono.Cecil.dll
+	/r:Mono.Cecil.dll
 
 LOCAL_MCS_FLAGS = $(MDOC_COMMON_FLAGS) \
 	/r:$(topdir)/class/lib/net_2_0/monodoc.dll
