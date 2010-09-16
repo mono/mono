@@ -1,5 +1,5 @@
 //
-// StandardEndpointElementCollection.cs
+// ProtocolMappingElement.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -55,23 +55,54 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	// LAMESPEC: there should be ConfigurationPropertyAttribute whose AddElementName is "standardEndpoint" (see ServiceBehaviorElementCollection for reference).
-	public sealed class StandardEndpointElementCollection<TEndpointConfiguration> : ServiceModelEnhancedConfigurationElementCollection<TEndpointConfiguration>
-		where TEndpointConfiguration : StandardEndpointElement, new()
+	public sealed class ProtocolMappingElement : ConfigurationElement
 	{
-		public StandardEndpointElementCollection ()
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty binding, binding_configuration, scheme;
+
+		static ProtocolMappingElement ()
 		{
-			AddElementName = "standardEndpoint";
+			properties = new ConfigurationPropertyCollection ();
+			binding = new ConfigurationProperty ("binding", typeof (string), null, null, new StringValidator (0), ConfigurationPropertyOptions.IsRequired);
+			binding_configuration = new ConfigurationProperty ("bindingConfiguration", typeof (string), null, null, new StringValidator (0), ConfigurationPropertyOptions.None);
+			scheme = new ConfigurationProperty ("scheme", typeof (string), null, null, new StringValidator (0), ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+
+			foreach (var item in new ConfigurationProperty [] {binding, binding_configuration, scheme})
+				properties.Add (item);
+		}
+		
+		public ProtocolMappingElement ()
+		{
+		}
+		
+		public ProtocolMappingElement (string schemeType, string binding, string bindingConfiguration)
+		{
+			Binding = binding;
+			BindingConfiguration = bindingConfiguration;
+			Scheme = schemeType;
 		}
 
-		protected override bool ThrowOnDuplicate {
-			get { return false; }
+		[ConfigurationProperty ("binding", Options = ConfigurationPropertyOptions.IsRequired)]
+		[StringValidator (MinLength = 0)]
+		public string Binding {
+			get { return (string) base [binding]; }
+			set { base [binding] = value; }
 		}
 
-		protected override object GetElementKey (ConfigurationElement element)
-		{
-			return ((StandardEndpointElement) element).Name;
+		[StringValidator (MinLength = 0)]
+		[ConfigurationProperty ("bindingConfiguration", Options = ConfigurationPropertyOptions.None)]
+		public string BindingConfiguration {
+			get { return (string) base [binding_configuration]; }
+			set { base [binding_configuration] = value; }
+		}
+
+		[StringValidator (MinLength = 0)]
+		[ConfigurationProperty ("scheme", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		public string Scheme {
+			get { return (string) base [scheme]; }
+			set { base [scheme] = value; }
 		}
 	}
 }
+
 #endif

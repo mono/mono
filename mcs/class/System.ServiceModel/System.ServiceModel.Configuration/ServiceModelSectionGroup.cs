@@ -80,6 +80,10 @@ namespace System.ServiceModel.Configuration
 		}
 
 #if NET_4_0
+		public ProtocolMappingSection ProtocolMapping {
+			get { return (ProtocolMappingSection) Sections ["protocolMapping"]; }
+		}
+
 		public StandardEndpointsSection StandardEndpoints {
 			get { return (StandardEndpointsSection) Sections ["standardEndpoints"]; }
 		}

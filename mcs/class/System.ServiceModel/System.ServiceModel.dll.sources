@@ -451,6 +451,9 @@ System.ServiceModel.Configuration/PolicyImporterElement.cs
 System.ServiceModel.Configuration/PolicyImporterElementCollection.cs
 System.ServiceModel.Configuration/PolicyVersionConverter.cs
 System.ServiceModel.Configuration/PrivacyNoticeElement.cs
+System.ServiceModel.Configuration/ProtocolMappingElement.cs
+System.ServiceModel.Configuration/ProtocolMappingElementCollection.cs
+System.ServiceModel.Configuration/ProtocolMappingSection.cs
 System.ServiceModel.Configuration/ReliableMessagingVersionConverter.cs
 System.ServiceModel.Configuration/ReliableSessionElement.cs
 System.ServiceModel.Configuration/RsaElement.cs

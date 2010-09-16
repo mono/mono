@@ -372,13 +372,18 @@ namespace System.ServiceModel
 					se = ConfigUtil.ConfigureStandardEndpoint (contract, endpoint);
 					if (se.Binding == null)
 						se.Binding = binding;
-					if (se.Address == null && se.Binding != null)
+					if (se.Address == null && se.Binding != null) // standard endpoint might have empty address
 						se.Address = new EndpointAddress (CreateUri (se.Binding.Scheme, endpoint.Address));
+					if (se.Binding == null && se.Address != null) // look for protocol mapping
+						se.Binding = GetBindingByProtocolMapping (se.Address.Uri);
 
 					AddServiceEndpoint (se);
 				}
-				else
+				else {
+					if (binding == null && endpoint.Address != null) // look for protocol mapping
+						binding = GetBindingByProtocolMapping (endpoint.Address);
 					se = AddServiceEndpoint (endpoint.Contract, binding, endpoint.Address);
+				}
 #else
 				var binding = ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
 				se = AddServiceEndpoint (endpoint.Contract, binding, endpoint.Address);
@@ -393,6 +398,16 @@ namespace System.ServiceModel
 				}
 			}
 		}
+
+#if NET_4_0
+		Binding GetBindingByProtocolMapping (Uri address)
+		{
+			ProtocolMappingElement el = ConfigUtil.ProtocolMappingSection.ProtocolMappingCollection [address.Scheme];
+			if (el == null)
+				return null;
+			return ConfigUtil.CreateBinding (el.Binding, el.BindingConfiguration);
+		}
+#endif
 
 		private ServiceElement GetServiceElement() {
 			Type serviceType = Description.ServiceType;

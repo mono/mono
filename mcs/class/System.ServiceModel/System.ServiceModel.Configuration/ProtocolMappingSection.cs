@@ -1,5 +1,5 @@
 //
-// StandardEndpointElementCollection.cs
+// ProtocolMappingSection.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -25,8 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 #if NET_4_0
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -55,23 +55,21 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	// LAMESPEC: there should be ConfigurationPropertyAttribute whose AddElementName is "standardEndpoint" (see ServiceBehaviorElementCollection for reference).
-	public sealed class StandardEndpointElementCollection<TEndpointConfiguration> : ServiceModelEnhancedConfigurationElementCollection<TEndpointConfiguration>
-		where TEndpointConfiguration : StandardEndpointElement, new()
+	public sealed class ProtocolMappingSection : ConfigurationSection
 	{
-		public StandardEndpointElementCollection ()
-		{
-			AddElementName = "standardEndpoint";
+		ConfigurationPropertyCollection _properties;
+		
+		// Properties
+
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		public ProtocolMappingElementCollection ProtocolMappingCollection {
+			get { return (ProtocolMappingElementCollection) base [""]; }
 		}
 
-		protected override bool ThrowOnDuplicate {
-			get { return false; }
-		}
-
-		protected override object GetElementKey (ConfigurationElement element)
-		{
-			return ((StandardEndpointElement) element).Name;
+		protected override ConfigurationPropertyCollection Properties {
+			get { return base.Properties; }
 		}
 	}
+
 }
 #endif

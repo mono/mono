@@ -70,6 +70,12 @@ namespace System.ServiceModel.Configuration
 		}
 
 #if NET_4_0
+		public static ProtocolMappingSection ProtocolMappingSection {
+			get {
+				return (ProtocolMappingSection) GetSection ("system.serviceModel/protocolMapping");
+			}
+		}
+
 		public static StandardEndpointsSection StandardEndpointsSection {
 			get {
 				return (StandardEndpointsSection) GetSection ("system.serviceModel/standardEndpoints");
