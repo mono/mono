@@ -45,8 +45,8 @@ net_4_0_dirs := \
 
 net_2_0_dirs := \
 	$(per_profile_dirs) \
-	mdoc		\
 	monodoc		\
+	mdoc		\
 	compiler-tester
 
 moonlight_dirs := \
