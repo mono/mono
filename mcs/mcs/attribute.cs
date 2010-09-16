@@ -1560,7 +1560,7 @@ namespace Mono.CSharp {
 
 		public static void VerifyModulesClsCompliance (CompilerContext ctx)
 		{
-			Module[] modules = GlobalRootNamespace.Instance.Modules;
+			Module[] modules = ctx.GlobalRootNamespace.Modules;
 			if (modules == null)
 				return;
 

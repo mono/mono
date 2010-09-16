@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 
 	public static TypeSpec CoreLookupType (CompilerContext ctx, string ns_name, string name, int arity, MemberKind kind, bool required)
 	{
-		Namespace ns = GlobalRootNamespace.Instance.GetNamespace (ns_name, true);
+		Namespace ns = ctx.GlobalRootNamespace.GetNamespace (ns_name, true);
 		var te = ns.LookupType (ctx, name, arity, !required, Location.Null);
 		var ts = te == null ? null : te.Type;
 
@@ -355,7 +355,7 @@ namespace Mono.CSharp {
 				continue;
 
 			if (!RootContext.StdLib) {
-				var ns = GlobalRootNamespace.Instance.GetNamespace (p.Namespace, false);
+				var ns = ctx.GlobalRootNamespace.GetNamespace (p.Namespace, false);
 				ns.ReplaceTypeWithPredefined (found, p);
 
 				var tc = found.MemberDefinition as TypeContainer;

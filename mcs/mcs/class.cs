@@ -998,7 +998,7 @@ namespace Mono.CSharp {
 			int type_size = Kind == MemberKind.Struct && first_nonstatic_field == null ? 1 : 0;
 
 			if (IsTopLevel) {
-				if (GlobalRootNamespace.Instance.IsNamespace (Name)) {
+				if (Compiler.GlobalRootNamespace.IsNamespace (Name)) {
 					Report.Error (519, Location, "`{0}' clashes with a predefined namespace", Name);
 					return false;
 				}

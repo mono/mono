@@ -471,7 +471,7 @@ namespace_declaration
 			Report.Error(1671, name.Location, "A namespace declaration cannot have modifiers or attributes");
 		}
 
-		current_namespace = new NamespaceEntry (
+		current_namespace = new NamespaceEntry (compiler,
 			current_namespace, file, name.GetName ());
 		current_class = current_namespace.SlaveDeclSpace;
 		current_container = current_class.PartialContainer;
@@ -6154,7 +6154,7 @@ public CSharpParser (SeekableStreamReader reader, CompilationUnit file, Compiler
 
 	this.file = file;
 	this.compiler = ctx;
-	current_namespace = new NamespaceEntry (null, file, null);
+	current_namespace = new NamespaceEntry (ctx, null, file, null);
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();

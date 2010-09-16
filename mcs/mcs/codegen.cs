@@ -38,6 +38,7 @@ namespace Mono.CSharp {
 	public class CodeGen {
 		static AppDomain current_domain;
 
+		// Breaks dynamic and repl
 		public static AssemblyClass Assembly;
 
 		static CodeGen ()
@@ -107,7 +108,7 @@ namespace Mono.CSharp {
 			if (an.KeyPair != null) {
 				// If we are going to strong name our assembly make
 				// sure all its refs are strong named
-				foreach (Assembly a in GlobalRootNamespace.Instance.Assemblies) {
+				foreach (Assembly a in ctx.GlobalRootNamespace.Assemblies) {
 					AssemblyName ref_name = a.GetName ();
 					byte [] b = ref_name.GetPublicKeyToken ();
 					if (b == null || b.Length == 0) {
@@ -1012,7 +1013,7 @@ namespace Mono.CSharp {
 				Arguments named = new Arguments (1);
 				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (true, loc)));
 
-				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (null, null, null), "assembly",
+				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (Compiler, null, null, null), "assembly",
 					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
 					new Arguments[] { pos, named }, loc, false);
 				g.AttachTo (this, this);
@@ -1281,7 +1282,7 @@ namespace Mono.CSharp {
 
 				try {
 					var fi = typeof (AssemblyBuilder).GetField ("culture", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-					fi.SetValue (CodeGen.Assembly.Builder, value == "neutral" ? "" : value);
+					fi.SetValue (Builder, value == "neutral" ? "" : value);
 				} catch {
 					Report.RuntimeMissingSupport (a.Location, "AssemblyCultureAttribute setting");
 				}
@@ -1302,7 +1303,7 @@ namespace Mono.CSharp {
 
 				try {
 					var fi = typeof (AssemblyBuilder).GetField ("version", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-					fi.SetValue (CodeGen.Assembly.Builder, vinfo);
+					fi.SetValue (Builder, vinfo);
 				} catch {
 					Report.RuntimeMissingSupport (a.Location, "AssemblyVersionAttribute setting");
 				}
@@ -1319,7 +1320,7 @@ namespace Mono.CSharp {
 
 				try {
 					var fi = typeof (AssemblyBuilder).GetField ("algid", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-					fi.SetValue (CodeGen.Assembly.Builder, alg);
+					fi.SetValue (Builder, alg);
 				} catch {
 					Report.RuntimeMissingSupport (a.Location, "AssemblyAlgorithmIdAttribute setting");
 				}
@@ -1335,12 +1336,12 @@ namespace Mono.CSharp {
 				flags |= ((uint) cdata[pos + 3]) << 24;
 
 				// Ignore set PublicKey flag if assembly is not strongnamed
-				if ((flags & (uint) AssemblyNameFlags.PublicKey) != 0 && (CodeGen.Assembly.Builder.GetName ().KeyPair == null))
+				if ((flags & (uint) AssemblyNameFlags.PublicKey) != 0 && (Builder.GetName ().KeyPair == null))
 					flags &= ~(uint)AssemblyNameFlags.PublicKey;
 
 				try {
 					var fi = typeof (AssemblyBuilder).GetField ("flags", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-					fi.SetValue (CodeGen.Assembly.Builder, flags);
+					fi.SetValue (Builder, flags);
 				} catch {
 					Report.RuntimeMissingSupport (a.Location, "AssemblyFlagsAttribute setting");
 				}
@@ -1411,7 +1412,7 @@ namespace Mono.CSharp {
 			if (has_extension_method)
 				Compiler.PredefinedAttributes.Extension.EmitAttribute (Builder);
 
-			PredefinedAttribute pa = Compiler.PredefinedAttributes.RuntimeCompatibility;
+			PredefinedAttribute pa = tc.Compiler.PredefinedAttributes.RuntimeCompatibility;
 			if (pa.IsDefined && (OptAttributes == null || !OptAttributes.Contains (pa))) {
 				var ci = TypeManager.GetPredefinedConstructor (pa.Type, Location.Null, TypeSpec.EmptyTypes);
 				PropertyInfo [] pis = new PropertyInfo [1];

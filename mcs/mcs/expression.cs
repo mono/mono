@@ -7137,7 +7137,7 @@ namespace Mono.CSharp {
 		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
 		{
 			if (alias == GlobalAlias) {
-				expr = GlobalRootNamespace.Instance;
+				expr = ec.Compiler.GlobalRootNamespace;
 				return base.ResolveAsTypeStep (ec, silent);
 			}
 
