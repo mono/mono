@@ -6316,6 +6316,10 @@ void Error_SyntaxError (int token)
 
 void Error_SyntaxError (int error_code, int token, string msg)
 {
+	// An error message has been reported by tokenizer
+	if (token == Token.ERROR)
+		return;
+
 	string symbol = GetSymbolName (token);
 	string expecting = GetExpecting ();
 	var loc = lexer.Location - symbol.Length;

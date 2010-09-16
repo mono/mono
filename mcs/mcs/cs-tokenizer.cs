@@ -355,17 +355,6 @@ namespace Mono.CSharp
 
 		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
 		
-		//
-		// Details about the error encoutered by the tokenizer
-		//
-		string error_details;
-		
-		public string error {
-			get {
-				return error_details;
-			}
-		}
-		
 		public int Line {
 			get {
 				return ref_line;
@@ -3233,10 +3222,11 @@ namespace Mono.CSharp
 			int c = get_char ();
 			tokens_seen = true;
 			if (c == '\'') {
-				error_details = "Empty character literal";
-				Report.Error (1011, Location, error_details);
-				return Token.ERROR;
+				val = new CharLiteral ((char) c, Location);
+				Report.Error (1011, Location, "Empty character literal");
+				return Token.LITERAL;
 			}
+
 			if (c == '\r' || c == '\n') {
 				Report.Error (1010, Location, "Newline in constant");
 				return Token.ERROR;
@@ -3260,7 +3250,6 @@ namespace Mono.CSharp
 					if (c == '\n' || c == '\'')
 						break;
 				}
-				return Token.ERROR;
 			}
 
 			return Token.LITERAL;
