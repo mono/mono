@@ -50,7 +50,11 @@ namespace System.Windows.Forms.CarbonInternal {
 		private static DragTrackingDelegate DragTrackingHandler = new DragTrackingDelegate (TrackingCallback);
 
 		static Dnd () {
-			InstallTrackingHandler (DragTrackingHandler, IntPtr.Zero, IntPtr.Zero);
+			try {
+				InstallTrackingHandler (DragTrackingHandler, IntPtr.Zero, IntPtr.Zero);
+			} catch (EntryPointNotFoundException) {
+				// it is deprecated in 10.6 and does not exist anymore.
+			}
 		}
 
 		internal Dnd () {
