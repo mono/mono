@@ -562,7 +562,6 @@ namespace Mono.CSharp.Nullable
 	public class LiftedBinaryOperator : Binary
 	{
 		Unwrap left_unwrap, right_unwrap;
-		bool left_null_lifted, right_null_lifted;
 		Expression left_orig, right_orig;
 		Expression user_operator;
 		MethodSpec wrap_ctor;
@@ -570,6 +569,25 @@ namespace Mono.CSharp.Nullable
 		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right, Location loc)
 			: base (op, left, right, loc)
 		{
+		}
+
+		bool IsBitwiseBoolean {
+			get {
+				return (Oper & Operator.BitwiseMask) != 0 && left_unwrap != null && right_unwrap != null &&
+				left_unwrap.Type == TypeManager.bool_type && right_unwrap.Type == TypeManager.bool_type;
+			}
+		}
+
+		bool IsLeftNullLifted {
+			get {
+				return (state & State.LeftNullLifted) != 0;
+			}
+		}
+
+		bool IsRightNullLifted {
+			get {
+				return (state & State.RightNullLifted) != 0;
+			}
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -630,13 +648,13 @@ namespace Mono.CSharp.Nullable
 			//	
 			if (left_orig.IsNull) {
 				left = right;
-				left_null_lifted = true;
+				state |= State.LeftNullLifted;
 				type = TypeManager.bool_type;
 			}
 
 			if (right_orig.IsNull) {
 				right = left;
-				right_null_lifted = true;
+				state |= State.RightNullLifted;
 				type = TypeManager.bool_type;
 			}
 
@@ -685,7 +703,7 @@ namespace Mono.CSharp.Nullable
 			//
 			// Either left or right is null
 			//
-			if (left_unwrap != null && (right_null_lifted || right.IsNull)) {
+			if (left_unwrap != null && (IsRightNullLifted || right.IsNull)) {
 				left_unwrap.EmitCheck (ec);
 				if (Oper == Binary.Operator.Equality) {
 					ec.Emit (OpCodes.Ldc_I4_0);
@@ -694,7 +712,7 @@ namespace Mono.CSharp.Nullable
 				return;
 			}
 
-			if (right_unwrap != null && (left_null_lifted || left.IsNull)) {
+			if (right_unwrap != null && (IsLeftNullLifted || left.IsNull)) {
 				right_unwrap.EmitCheck (ec);
 				if (Oper == Binary.Operator.Equality) {
 					ec.Emit (OpCodes.Ldc_I4_0);
@@ -815,13 +833,6 @@ namespace Mono.CSharp.Nullable
 			base.EmitOperator (ec, l);
 		}
 
-		bool IsBitwiseBoolean {
-			get {
-				return (Oper & Operator.BitwiseMask) != 0 && left_unwrap != null && right_unwrap != null &&
-				left_unwrap.Type == TypeManager.bool_type && right_unwrap.Type == TypeManager.bool_type;
-			}
-		}
-
 		Expression LiftResult (ResolveContext ec, Expression res_expr)
 		{
 			TypeExpr lifted_type;
@@ -829,7 +840,7 @@ namespace Mono.CSharp.Nullable
 			//
 			// Avoid double conversion
 			//
-			if (left_unwrap == null || left_null_lifted || left_unwrap.Type != left.Type || (left_unwrap != null && right_null_lifted)) {
+			if (left_unwrap == null || IsLeftNullLifted || left_unwrap.Type != left.Type || (left_unwrap != null && IsRightNullLifted)) {
 				lifted_type = new NullableType (left.Type, loc);
 				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
 				if (lifted_type == null)
@@ -841,7 +852,7 @@ namespace Mono.CSharp.Nullable
 					left = EmptyCast.Create (left, lifted_type.Type);
 			}
 
-			if (left != right && (right_unwrap == null || right_null_lifted || right_unwrap.Type != right.Type || (right_unwrap != null && left_null_lifted))) {
+			if (left != right && (right_unwrap == null || IsRightNullLifted || right_unwrap.Type != right.Type || (right_unwrap != null && IsLeftNullLifted))) {
 				lifted_type = new NullableType (right.Type, loc);
 				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
 				if (lifted_type == null)
@@ -863,7 +874,7 @@ namespace Mono.CSharp.Nullable
 				type = res_expr.Type = lifted_type.Type;
 			}
 
-			if (left_null_lifted) {
+			if (IsLeftNullLifted) {
 				left = LiftedNull.Create (right.Type, left.Location);
 
 				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask | Operator.BitwiseMask)) != 0)
@@ -876,7 +887,7 @@ namespace Mono.CSharp.Nullable
 					return CreateNullConstant (ec, right_orig).Resolve (ec);
 			}
 
-			if (right_null_lifted) {
+			if (IsRightNullLifted) {
 				right = LiftedNull.Create (left.Type, right.Location);
 
 				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask | Operator.BitwiseMask)) != 0)
@@ -907,7 +918,7 @@ namespace Mono.CSharp.Nullable
 			// (in unlifted or lifted form) exists for the operation.
 			//
 			if (e == null && (Oper & Operator.EqualityMask) != 0) {
-				if ((left_null_lifted && right_unwrap != null) || (right_null_lifted && left_unwrap != null))
+				if ((IsLeftNullLifted && right_unwrap != null) || (IsRightNullLifted && left_unwrap != null))
 					return LiftResult (ec, this);
 			}
 

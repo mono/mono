@@ -1977,9 +1977,17 @@ namespace Mono.CSharp {
 			RelationalMask	= 1 << 13
 		}
 
+		protected enum State
+		{
+			None = 0,
+			Compound = 1 << 1,
+			LeftNullLifted = 1 << 2,
+			RightNullLifted = 1 << 3
+		}
+
 		readonly Operator oper;
 		protected Expression left, right;
-		readonly bool is_compound;
+		protected State state;
 		Expression enum_conversion;
 
 		static PredefinedOperator[] standard_operators;
@@ -1989,7 +1997,8 @@ namespace Mono.CSharp {
 		public Binary (Operator oper, Expression left, Expression right, bool isCompound, Location loc)
 			: this (oper, left, right, loc)
 		{
-			this.is_compound = isCompound;
+			if (isCompound)
+				state |= State.Compound;
 		}
 
 		public Binary (Operator oper, Expression left, Expression right, Location loc)
@@ -2000,12 +2009,22 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+		#region Properties
+
+		public bool IsCompound {
+			get {
+				return (state & State.Compound) != 0;
+			}
+		}
+
 		public Operator Oper {
 			get {
 				return oper;
 			}
 		}
-		
+
+		#endregion
+
 		/// <summary>
 		///   Returns a stringified representation of the Operator
 		/// </summary>
@@ -2072,7 +2091,7 @@ namespace Mono.CSharp {
 				break;
 			}
 
-			if (is_compound)
+			if (IsCompound)
 				return s + "=";
 
 			return s;
@@ -2105,15 +2124,15 @@ namespace Mono.CSharp {
 		{
 			switch (oper) {
 			case Operator.Addition:
-				return is_compound ? "AddAssign" : "Add";
+				return IsCompound ? "AddAssign" : "Add";
 			case Operator.BitwiseAnd:
-				return is_compound ? "AndAssign" : "And";
+				return IsCompound ? "AndAssign" : "And";
 			case Operator.BitwiseOr:
-				return is_compound ? "OrAssign" : "Or";
+				return IsCompound ? "OrAssign" : "Or";
 			case Operator.Division:
-				return is_compound ? "DivideAssign" : "Divide";
+				return IsCompound ? "DivideAssign" : "Divide";
 			case Operator.ExclusiveOr:
-				return is_compound ? "ExclusiveOrAssign" : "ExclusiveOr";
+				return IsCompound ? "ExclusiveOrAssign" : "ExclusiveOr";
 			case Operator.Equality:
 				return "Equal";
 			case Operator.GreaterThan:
@@ -2123,7 +2142,7 @@ namespace Mono.CSharp {
 			case Operator.Inequality:
 				return "NotEqual";
 			case Operator.LeftShift:
-				return is_compound ? "LeftShiftAssign" : "LeftShift";
+				return IsCompound ? "LeftShiftAssign" : "LeftShift";
 			case Operator.LessThan:
 				return "LessThan";
 			case Operator.LessThanOrEqual:
@@ -2133,13 +2152,13 @@ namespace Mono.CSharp {
 			case Operator.LogicalOr:
 				return "Or";
 			case Operator.Modulus:
-				return is_compound ? "ModuloAssign" : "Modulo";
+				return IsCompound ? "ModuloAssign" : "Modulo";
 			case Operator.Multiply:
-				return is_compound ? "MultiplyAssign" : "Multiply";
+				return IsCompound ? "MultiplyAssign" : "Multiply";
 			case Operator.RightShift:
-				return is_compound ? "RightShiftAssign" : "RightShift";
+				return IsCompound ? "RightShiftAssign" : "RightShift";
 			case Operator.Subtraction:
-				return is_compound ? "SubtractAssign" : "Subtract";
+				return IsCompound ? "SubtractAssign" : "Subtract";
 			default:
 				throw new NotImplementedException ("Unknown expression type operator " + oper.ToString ());
 			}
@@ -2364,12 +2383,11 @@ namespace Mono.CSharp {
 					return ResolveOperatorPointer (ec, l, r);
 
 				// Enums
-				bool lenum = TypeManager.IsEnumType (l);
-				bool renum = TypeManager.IsEnumType (r);
+				bool lenum = l.IsEnum;
+				bool renum = r.IsEnum;
 				if (lenum || renum) {
 					expr = ResolveOperatorEnum (ec, lenum, renum, l, r);
 
-					// TODO: Can this be ambiguous
 					if (expr != null)
 						return expr;
 				}
@@ -2860,88 +2878,133 @@ namespace Mono.CSharp {
 			//
 			// U operator - (E e, E f)
 			// E operator - (E e, U x)
+			// E operator - (U x, E e)	// LAMESPEC: Not covered by the specification
 			//
-			// E operator + (U x, E e)
 			// E operator + (E e, U x)
+			// E operator + (U x, E e)
 			//
-			if (!((oper & (Operator.ComparisonMask | Operator.BitwiseMask)) != 0 ||
-				(oper == Operator.Subtraction && lenum) ||
-				(oper == Operator.Addition && (lenum != renum || type != null))))	// type != null for lifted null
-				return null;
-
 			Expression ltemp = left;
 			Expression rtemp = right;
 			TypeSpec underlying_type;
+			TypeSpec underlying_type_result;
+			TypeSpec res_type;
 			Expression expr;
 			
+			//
+			// LAMESPEC: There is never ambiguous conversion between enum operators
+			// the one which contains more enum parameters always wins even if there
+			// is an implicit conversion involved
+			//
 			if ((oper & (Operator.ComparisonMask | Operator.BitwiseMask)) != 0) {
 				if (renum) {
+					underlying_type = EnumSpec.GetUnderlyingType (rtype);
 					expr = Convert.ImplicitConversion (ec, left, rtype, loc);
-					if (expr != null) {
-						left = expr;
-						ltype = expr.Type;
-					}
+					if (expr == null)
+						return null;
+
+					left = expr;
+					ltype = expr.Type;
 				} else if (lenum) {
+					underlying_type = EnumSpec.GetUnderlyingType (ltype);
 					expr = Convert.ImplicitConversion (ec, right, ltype, loc);
-					if (expr != null) {
+					if (expr == null)
+						return null;
+
+					right = expr;
+					rtype = expr.Type;
+				} else {
+					return null;
+				}
+
+				if ((oper & Operator.BitwiseMask) != 0) {
+					res_type = ltype;
+					underlying_type_result = underlying_type;
+				} else {
+					res_type = null;
+					underlying_type_result = null;
+				}
+			} else if (oper == Operator.Subtraction) {
+				if (renum) {
+					underlying_type = EnumSpec.GetUnderlyingType (rtype);
+					if (ltype != rtype) {
+						expr = Convert.ImplicitConversion (ec, left, rtype, left.Location);
+						if (expr == null) {
+							expr = Convert.ImplicitConversion (ec, left, underlying_type, left.Location);
+							if (expr == null)
+								return null;
+
+							res_type = rtype;
+						} else {
+							res_type = underlying_type;
+						}
+
+						left = expr;
+					} else {
+						res_type = underlying_type;
+					}
+
+					underlying_type_result = underlying_type;
+				} else if (lenum) {
+					underlying_type = EnumSpec.GetUnderlyingType (ltype);
+					expr = Convert.ImplicitConversion (ec, right, ltype, right.Location);
+					if (expr == null) {
+						expr = Convert.ImplicitConversion (ec, right, underlying_type, right.Location);
+						if (expr == null)
+							return null;
+
+						res_type = ltype;
+					} else {
+						res_type = underlying_type;
+					}
+
+					right = expr;
+					underlying_type_result = underlying_type;
+				} else {
+					return null;
+				}
+			} else if (oper == Operator.Addition) {
+				if (lenum) {
+					underlying_type = EnumSpec.GetUnderlyingType (ltype);
+					res_type = ltype;
+
+					if (rtype != underlying_type && (state & (State.RightNullLifted | State.LeftNullLifted)) == 0) {
+						expr = Convert.ImplicitConversion (ec, right, underlying_type, right.Location);
+						if (expr == null)
+							return null;
+
 						right = expr;
-						rtype = expr.Type;
+					}
+				} else {
+					underlying_type = EnumSpec.GetUnderlyingType (rtype);
+					res_type = rtype;
+					if (ltype != underlying_type) {
+						expr = Convert.ImplicitConversion (ec, left, underlying_type, left.Location);
+						if (expr == null)
+							return null;
+
+						left = expr;
 					}
 				}
-			}			
 
-			if (ltype == rtype) {
-				underlying_type = EnumSpec.GetUnderlyingType (ltype);
-
-				if (left is Constant)
-					left = ((Constant) left).ConvertExplicitly (false, underlying_type).Resolve (ec);
-				else
-					left = EmptyCast.Create (left, underlying_type);
-
-				if (right is Constant)
-					right = ((Constant) right).ConvertExplicitly (false, underlying_type).Resolve (ec);
-				else
-					right = EmptyCast.Create (right, underlying_type);
-			} else if (lenum) {
-				underlying_type = EnumSpec.GetUnderlyingType (ltype);
-
-				if (oper != Operator.Subtraction && oper != Operator.Addition) {
-					Constant c = right as Constant;
-					if (c == null || !c.IsDefaultValue)
-						return null;
-				} else {
-					if (!Convert.ImplicitStandardConversionExists (right, underlying_type))
-						return null;
-
-					right = Convert.ImplicitConversionStandard (ec, right, underlying_type, right.Location);
-				}
-
-				if (left is Constant)
-					left = ((Constant) left).ConvertExplicitly (false, underlying_type).Resolve (ec);
-				else
-					left = EmptyCast.Create (left, underlying_type);
-
-			} else if (renum) {
-				underlying_type = EnumSpec.GetUnderlyingType (rtype);
-
-				if (oper != Operator.Addition) {
-					Constant c = left as Constant;
-					if (c == null || !c.IsDefaultValue)
-						return null;
-				} else {
-					if (!Convert.ImplicitStandardConversionExists (left, underlying_type))
-						return null;
-
-					left = Convert.ImplicitConversionStandard (ec, left, underlying_type, left.Location);
-				}
-
-				if (right is Constant)
-					right = ((Constant) right).ConvertExplicitly (false, underlying_type).Resolve (ec);
-				else
-					right = EmptyCast.Create (right, underlying_type);
-
+				underlying_type_result = underlying_type;
 			} else {
 				return null;
+			}
+
+			// Unwrap the constant correctly, so DoBinaryOperatorPromotion can do the magic
+			// with constants and expressions
+			if (left.Type != underlying_type) {
+				if (left is Constant)
+					left = ((Constant) left).ConvertExplicitly (false, underlying_type).Resolve (ec);
+				else
+					left = EmptyCast.Create (left, underlying_type);
+			}
+
+			if (right.Type != underlying_type) {
+				if (right is Constant)
+					right = ((Constant) right).ConvertExplicitly (false, underlying_type).Resolve (ec);
+				else
+					right = EmptyCast.Create (right, underlying_type);
 			}
 
 			//
@@ -2954,22 +3017,15 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeSpec res_type = null;
-			if ((oper & Operator.BitwiseMask) != 0 || oper == Operator.Subtraction || oper == Operator.Addition) {
-				TypeSpec promoted_type = lenum ? left.Type : right.Type;
-				enum_conversion = Convert.ExplicitNumericConversion (
-					new EmptyExpression (promoted_type), underlying_type);
-
-				if (oper == Operator.Subtraction && renum && lenum)
-					res_type = underlying_type;
-				else if (oper == Operator.Addition && renum)
-					res_type = rtype;
-				else
-					res_type = ltype;
+			if (underlying_type_result != null && left.Type != underlying_type_result) {
+				enum_conversion = Convert.ExplicitNumericConversion (new EmptyExpression (left.Type), underlying_type_result);
 			}
-			
+
 			expr = ResolveOperatorPredefined (ec, standard_operators, true, res_type);
-			if (!is_compound || expr == null)
+			if (expr == null)
+				return null;
+
+			if (!IsCompound)
 				return expr;
 
 			//

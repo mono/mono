@@ -41440,6 +41440,22 @@
       </method>
     </type>
   </test>
+  <test name="test-801.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>154</size>
+      </method>
+      <method name="E op_Implicit(C)">
+        <size>3</size>
+      </method>
+      <method name="Int32 op_Implicit(C)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-81.cs">
     <type name="N1.A">
       <method name="Void .ctor()">
