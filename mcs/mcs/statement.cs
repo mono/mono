@@ -1181,6 +1181,12 @@ namespace Mono.CSharp {
 				this.initializer = initializer;
 			}
 
+			public Declarator (Declarator clone, Expression initializer)
+			{
+				this.li = clone.li;
+				this.initializer = initializer;
+			}
+
 			#region Properties
 
 			public LocalVariable Variable {
@@ -1404,7 +1410,7 @@ namespace Mono.CSharp {
 			if (declarators != null) {
 				t.declarators = null;
 				foreach (var d in declarators)
-					t.AddDeclarator (new Declarator (d.Variable, d.Initializer == null ? null : d.Initializer.Clone (clonectx)));
+					t.AddDeclarator (new Declarator (d, d.Initializer == null ? null : d.Initializer.Clone (clonectx)));
 			}
 		}
 	}

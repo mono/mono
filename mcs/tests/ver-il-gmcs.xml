@@ -21537,6 +21537,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-lambda-26.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>35</size>
+      </method>
+      <method name="Void Execute(System.Action)">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.C">
       <method name="Void .ctor()">
