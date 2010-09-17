@@ -88,7 +88,7 @@ namespace System
 
 		public UriBuilder (string scheme, string hostName, int portNumber) 
 		{
-			Initialize (scheme, host, portNumber, String.Empty, String.Empty);
+			Initialize (scheme, hostName, portNumber, String.Empty, String.Empty);
 		}
 		
 		public UriBuilder (string scheme, string host, int port, string pathValue)

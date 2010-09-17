@@ -103,6 +103,13 @@ namespace MonoTests.System
 		}
 		
 		[Test]
+		public void Constructor_StringStringInt ()
+		{
+			UriBuilder ub = new UriBuilder ("http", "www.mono-project.com", 80);
+			Assert.AreEqual ("http://www.mono-project.com/", ub.Uri.AbsoluteUri, "Uri.AbsoluteUri");
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void Constructor_RelativeUri ()
 		{
