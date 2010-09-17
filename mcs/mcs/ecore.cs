@@ -679,7 +679,7 @@ namespace Mono.CSharp {
 			Arguments arguments = new Arguments (1);
 			arguments.Add (new Argument (e));
 
-			var res = new OverloadResolver (methods, OverloadResolver.Restrictions.NoBaseMembers, loc);
+			var res = new OverloadResolver (methods, OverloadResolver.Restrictions.BaseMembersIncluded | OverloadResolver.Restrictions.NoBaseMembers, loc);
 			var oper = res.ResolveOperator (ec, ref arguments);
 
 			if (oper == null)
@@ -3139,7 +3139,8 @@ namespace Mono.CSharp {
 			DelegateInvoke = 1,
 			ProbingOnly	= 1 << 1,
 			CovariantDelegate = 1 << 2,
-			NoBaseMembers = 1 << 3
+			NoBaseMembers = 1 << 3,
+			BaseMembersIncluded = 1 << 4
 		}
 
 		public interface IBaseMembersProvider
@@ -3907,6 +3908,16 @@ namespace Mono.CSharp {
 								best_candidate_args = candidate_args;
 								best_candidate_params = params_expanded_form;
 							} else if (candidate_rate == 0) {
+								//
+								// The member look is done per type for most operations but sometimes
+								// it's not possible like for binary operators overload because they
+								// are unioned between 2 sides
+								//
+								if ((restrictions & Restrictions.BaseMembersIncluded) != 0) {
+									if (TypeSpec.IsBaseClass (best_candidate.DeclaringType, member.DeclaringType, true))
+										continue;
+								}
+
 								// Is new candidate better
 								if (BetterFunction (rc, candidate_args, member, params_expanded_form, best_candidate, best_candidate_params)) {
 									best_candidate = member;

@@ -558,22 +558,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Tester+&lt;InvokeMember_3&gt;c__DynamicSite0+Container0">
-      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;InvokeMember_4&gt;c__DynamicSite0+Container0">
-      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-    </type>
     <type name="Tester">
       <method name="Void Invoke_6(System.Object, DynamicObjectMock)">
         <size>124</size>
@@ -679,6 +663,22 @@
     <type name="Tester+&lt;SetIndex_3&gt;c__AnonStorey5">
       <method name="Void &lt;&gt;m__3C(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
         <size>119</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;InvokeMember_3&gt;c__DynamicSite30+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;InvokeMember_4&gt;c__DynamicSite31+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
       </method>
     </type>
   </test>
@@ -1537,7 +1537,7 @@
         <size>101</size>
       </method>
     </type>
-    <type name="Tester+&lt;InvokeMember&gt;c__DynamicSite0+Container0">
+    <type name="Tester+&lt;InvokeMember&gt;c__DynamicSite2+Container0">
       <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef, System.String ByRef)">
         <size>0</size>
       </method>
@@ -2003,10 +2003,18 @@
     </type>
     <type name="Test">
       <method name="Int32 Main()">
-        <size>194</size>
+        <size>360</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 M2(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 M2(Byte)">
+        <size>2</size>
       </method>
     </type>
   </test>
@@ -15680,6 +15688,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-539.cs">
+    <type name="S">
+      <method name="Int32 get_ID()">
+        <size>7</size>
+      </method>
+      <method name="Void set_ID(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="C op_Explicit(S)">
+        <size>11</size>
+      </method>
+      <method name="C op_Explicit(Nullable`1)">
+        <size>39</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>79</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -23721,6 +23758,22 @@
       </method>
       <method name="Void &lt;Main&gt;m__0(Foo`1)">
         <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-lambda-26.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>35</size>
+      </method>
+      <method name="Void Execute(System.Action)">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -32343,6 +32396,43 @@
     <type name="My">
       <method name="Void .ctor(Object)">
         <size>14</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-298.cs">
+    <type name="A">
+      <method name="Int32 op_Addition(Int16, A)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_UnaryNegation(A)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 op_Addition(Int32, B)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_UnaryNegation(B)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>47</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -43621,6 +43711,22 @@
     <type name="C">
       <method name="Void Main()">
         <size>5</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-801.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>154</size>
+      </method>
+      <method name="E op_Implicit(C)">
+        <size>3</size>
+      </method>
+      <method name="Int32 op_Implicit(C)">
+        <size>2</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

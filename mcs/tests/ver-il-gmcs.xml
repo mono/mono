@@ -30204,6 +30204,43 @@
       </method>
     </type>
   </test>
+  <test name="test-298.cs">
+    <type name="A">
+      <method name="Int32 op_Addition(Int16, A)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_UnaryNegation(A)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 op_Addition(Int32, B)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_UnaryNegation(B)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>47</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-299.cs">
     <type name="SampleClass">
       <method name="Void .ctor()">

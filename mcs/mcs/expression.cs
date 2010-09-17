@@ -688,7 +688,7 @@ namespace Mono.CSharp {
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (expr));
 
-			var res = new OverloadResolver (methods, OverloadResolver.Restrictions.NoBaseMembers, loc);
+			var res = new OverloadResolver (methods, OverloadResolver.Restrictions.BaseMembersIncluded | OverloadResolver.Restrictions.NoBaseMembers, loc);
 			var oper = res.ResolveOperator (ec, ref args);
 
 			if (oper == null)
@@ -1125,7 +1125,7 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Step 2: Perform Operator Overload location
+			// Step 2: Perform Operator overload resolution
 			//
 			var user_op = IsDecrement ? Operator.OpType.Decrement : Operator.OpType.Increment;
 			var methods = MemberCache.GetUserOperator (type, user_op, false);
@@ -1134,7 +1134,7 @@ namespace Mono.CSharp {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
 
-				var res = new OverloadResolver (methods, OverloadResolver.Restrictions.NoBaseMembers, loc);
+				var res = new OverloadResolver (methods, OverloadResolver.Restrictions.BaseMembersIncluded | OverloadResolver.Restrictions.NoBaseMembers, loc);
 				var op = res.ResolveOperator (ec, ref args);
 				if (op == null)
 					return null;
@@ -3329,7 +3329,8 @@ namespace Mono.CSharp {
 				left_operators = right_operators;
 			}
 
-			var res = new OverloadResolver (left_operators, OverloadResolver.Restrictions.ProbingOnly, loc);
+			var res = new OverloadResolver (left_operators, OverloadResolver.Restrictions.ProbingOnly | 
+				OverloadResolver.Restrictions.NoBaseMembers | OverloadResolver.Restrictions.BaseMembersIncluded, loc);
 
 			var oper_method = res.ResolveOperator (ec, ref args);
 			if (oper_method == null)
