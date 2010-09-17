@@ -216,6 +216,8 @@ namespace Mono.CSharp {
 
 		List<TypeContainer> partial_parts;
 
+		public int DynamicSitesCounter;
+
 		/// <remarks>
 		///  The pending methods that need to be implemented
 		//   (interfaces or abstract methods)

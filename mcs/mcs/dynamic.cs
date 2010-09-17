@@ -757,11 +757,13 @@ namespace Mono.CSharp
 		TypeSpec instance_type;
 
 		public DynamicSiteClass (TypeContainer parent, MemberBase host, TypeParameter[] tparams)
-			: base (parent, MakeMemberName (host, "DynamicSite", 0, tparams, Location.Null), tparams, Modifiers.STATIC)
+			: base (parent, MakeMemberName (host, "DynamicSite", parent.DynamicSitesCounter, tparams, Location.Null), tparams, Modifiers.STATIC)
 		{
 			if (tparams != null) {
 				mutator = new TypeParameterMutator (tparams, CurrentTypeParameters);
 			}
+
+			parent.DynamicSitesCounter++;
 		}
 
 		public FieldSpec CreateCallSiteField (FullNamedExpression type, Location loc)
