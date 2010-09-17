@@ -911,5 +911,12 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("FE80:0000:0000:0000:0200:39FF:FE36:1A2D%4", uri.DnsSafeHost, "2.DnsSafeHost");
 			Assert.AreEqual ("[FE80:0000:0000:0000:0200:39FF:FE36:1A2D]", uri.Host, "2.Host");
 		}
+
+		[Test]
+		public void RelativeEscapes ()
+		{
+			Uri uri = new Uri ("%2e%2e/dir/%2e%2e/subdir/file?query#fragment", UriKind.Relative);
+			Assert.AreEqual ("%2e%2e/dir/%2e%2e/subdir/file?query#fragment", uri.ToString (), "1.ToString");
+		}
 	}
 }

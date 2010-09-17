@@ -1064,14 +1064,14 @@ namespace System {
 			if (cachedToString != null) 
 				return cachedToString;
 
-			if (isAbsoluteUri)
+			if (isAbsoluteUri) {
 				cachedToString = Unescape (GetLeftPart (UriPartial.Path), true);
-			else {
+				AppendQueryAndFragment (ref cachedToString);
+			} else {
 				// Everything is contained in path in this case. 
-				cachedToString = Unescape (path);
+				cachedToString = path;
 			}
 
-			AppendQueryAndFragment (ref cachedToString);
 			return cachedToString;
 		}
 
@@ -1181,9 +1181,8 @@ namespace System {
 				host = host.ToLower (CultureInfo.InvariantCulture);
 			}
 
-			if (path.Length > 0) {
+			if (isAbsoluteUri && (path.Length > 0))
 				path = EscapeString (path);
-			}
 		}
 
 #if MOONLIGHT
