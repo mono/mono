@@ -53,12 +53,23 @@ namespace System
 		// Constructors
 		
 		public UriBuilder ()
-			: this (Uri.UriSchemeHttp, "localhost")
 		{
+			Initialize (Uri.UriSchemeHttp, "localhost", -1, String.Empty, String.Empty);
 		}
 
-		public UriBuilder (string uri) : this (new Uri (uri))
+		public UriBuilder (string uri)
 		{
+			if (uri == null)
+				throw new ArgumentNullException ("uriString");
+
+			Uri u = null;
+			if (Uri.TryCreate (uri, UriKind.Absolute, out u)) {
+				Initialize (u);
+			} else if (!uri.Contains (Uri.SchemeDelimiter)) {
+				// second chance, UriBuilder parsing is more forgiving than Uri
+				Initialize (new Uri (Uri.UriSchemeHttp + Uri.SchemeDelimiter + uri));
+			} else
+				throw new UriFormatException ();
 		}
 		
 		public UriBuilder (Uri uri)
@@ -67,12 +78,34 @@ namespace System
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
-			scheme = uri.Scheme;
-			host = uri.Host;
-			port = uri.Port;
-			path = uri.AbsolutePath;
-			query = uri.Query;
+			Initialize (uri);
+		}
+		
+		public UriBuilder (string schemeName, string hostName) 
+		{
+			Initialize (schemeName, hostName, -1, String.Empty, String.Empty);
+		}
+
+		public UriBuilder (string scheme, string hostName, int portNumber) 
+		{
+			Initialize (scheme, host, portNumber, String.Empty, String.Empty);
+		}
+		
+		public UriBuilder (string scheme, string host, int port, string pathValue)
+		{
+			Initialize (scheme, host, port, pathValue, String.Empty);
+		}
+
+		public UriBuilder (string scheme, string host, int port, string pathValue, string extraValue)
+		{
+			Initialize (scheme, host, port, pathValue, extraValue);
+		}
+
+		private void Initialize (Uri uri)
+		{
+			Initialize (uri.Scheme, uri.Host, uri.Port, uri.AbsolutePath, String.Empty);
 			fragment = uri.Fragment;
+			query = uri.Query;
 			username = uri.UserInfo;
 			int pos = username.IndexOf (':');
 			if (pos != -1) {
@@ -81,48 +114,32 @@ namespace System
 			} else {
 				password = String.Empty;
 			}
-			modified = true;
 		}
-		
-		public UriBuilder (string schemeName, string hostName) 
+
+		private void Initialize (string scheme, string host, int port, string pathValue, string extraValue)
 		{
-			Scheme = schemeName;
-			Host = hostName;
-			port = -1;
-			Path = String.Empty;   // dependent on scheme it may set path to "/"
+			modified = true;
+
+			Scheme = scheme;
+			Host = host;
+			Port = port;
+			Path = pathValue;
 			query = String.Empty;
 			fragment = String.Empty;
+			Path = pathValue;
 			username = String.Empty;
 			password = String.Empty;
-			modified = true;
-		}
-		
-		public UriBuilder (string scheme, string host, int portNumber) 
-			: this (scheme, host)
-		{
-			Port = portNumber;
-		}
-		
-		public UriBuilder (string scheme, string host, int port, string pathValue)
-			: this (scheme, host, port)
-		{
-			Path = pathValue;
-		}
 
-		public UriBuilder (string scheme, string host, int port, string pathValue, string extraValue)
-			: this (scheme, host, port, pathValue)
-		{
-			if (extraValue == null || extraValue.Length == 0)
+			if (String.IsNullOrEmpty (extraValue))
 				return;
-				
-			if (extraValue [0] == '#') 
+
+			if (extraValue [0] == '#')
 				Fragment = extraValue.Remove (0, 1);
-			else if (extraValue [0] == '?') 
+			else if (extraValue [0] == '?')
 				Query = extraValue.Remove (0, 1);
-			else 
+			else
 				throw new ArgumentException ("extraValue");
 		}
-
 		
 		// Properties
 		

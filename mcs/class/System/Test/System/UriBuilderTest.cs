@@ -313,6 +313,29 @@ namespace MonoTests.System
 			// once the Uri is created then some builder properties may change
 			Assert.AreEqual ("/dir/subdir/file", ub.Path, "Path.2");
 		}
+
+		[Test]
+		public void UnparsableUri ()
+		{
+			// some URI can't be parsed by System.Uri but are accepted by UriBuilder
+			Uri u = null;
+			string uri = "www.mono-project.com";
+			Assert.IsFalse (Uri.TryCreate (uri, UriKind.Absolute, out u), "1.Uri.TryCreate");
+			UriBuilder ub = new UriBuilder (uri);
+			Assert.AreEqual ("www.mono-project.com", ub.Host, "1.Host");
+			Assert.AreEqual ("http", ub.Scheme, "1.Scheme");
+			Assert.AreEqual (80, ub.Port, "1.Port");
+			Assert.AreEqual ("/", ub.Path, "1.Path");
+
+			// always assume http, port 80
+			uri = "ftp.novell.com/dir/subdir/file";
+			ub = new UriBuilder (uri);
+			Assert.IsFalse (Uri.TryCreate (uri, UriKind.Absolute, out u), "2.Uri.TryCreate");
+			Assert.AreEqual ("ftp.novell.com", ub.Host, "2.Host");
+			Assert.AreEqual ("http", ub.Scheme, "2.Scheme");
+			Assert.AreEqual (80, ub.Port, "2.Port");
+			Assert.AreEqual ("/dir/subdir/file", ub.Path, "2.Path");
+		}
 	}
 }
 
