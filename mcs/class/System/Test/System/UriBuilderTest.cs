@@ -275,6 +275,16 @@ namespace MonoTests.System
 			// once the Uri is created then some builder properties may change
 			Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", ub.Host, "Host.2");
 		}
+
+		[Test]
+		public void Path_UriAbsolutePath_Path ()
+		{
+			UriBuilder ub = new UriBuilder ("http", "127.0.0.1", 80, "dir/subdir/file");
+			Assert.AreEqual ("dir/subdir/file", ub.Path, "Path.1");
+			Assert.AreEqual ("/dir/subdir/file", ub.Uri.AbsolutePath, "Uri.AbsolutePath");
+			// once the Uri is created then some builder properties may change
+			Assert.AreEqual ("/dir/subdir/file", ub.Path, "Path.2");
+		}
 	}
 }
 
