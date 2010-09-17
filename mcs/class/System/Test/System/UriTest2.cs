@@ -879,5 +879,21 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
 			Assert.AreEqual ("file", uri.Segments [1], "Segments [1]");
 		}
+
+		[Test]
+		public void ColonButNoPort ()
+		{
+			Uri uri = new Uri ("http://host:");
+			Assert.AreEqual ("http", uri.Scheme, "1.Scheme");
+			Assert.AreEqual ("host", uri.Host, "1.Host");
+			Assert.AreEqual (80, uri.Port, "1.Port");
+			Assert.IsTrue (uri.IsDefaultPort, "1.IsDefaultPort");
+
+			uri = new Uri ("ftp://host:/dir/file");
+			Assert.AreEqual ("ftp", uri.Scheme, "2.Scheme");
+			Assert.AreEqual ("host", uri.Host, "2.Host");
+			Assert.AreEqual (21, uri.Port, "2.Port");
+			Assert.IsTrue (uri.IsDefaultPort, "2.IsDefaultPort");
+		}
 	}
 }

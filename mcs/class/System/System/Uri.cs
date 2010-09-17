@@ -1528,10 +1528,14 @@ namespace System {
 						port = GetDefaultPort (scheme);
 					}
 				}
-			} else {
-				if (port == -1) {
+			} else if (!IsFile) {
+				// if no port is specified by a colon ':' is present then we must ignore it
+				// since it would be part of the host name and, as such, would be invalid
+				if (pos == endpos - 1)
+					endpos--;
+
+				if (port == -1)
 					port = GetDefaultPort (scheme);
-				}
 			}
 			
 			// 4 authority
