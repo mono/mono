@@ -141,7 +141,13 @@ namespace System
 		public string Host {
 			get { return host; }
 			set {
-				host = (value == null) ? String.Empty : value;
+				if (String.IsNullOrEmpty (value))
+					host = String.Empty;
+				else if ((value.IndexOf (':') != -1) && (value [0] != '[')) {
+					host = "[" + value + "]";
+				} else {
+					host = value;
+				}
 				modified = true;
 			}
 		}

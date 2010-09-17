@@ -103,6 +103,14 @@ namespace MonoTests.System
 		}
 		
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void Constructor_RelativeUri ()
+		{
+			Uri relative = new Uri ("../dir/subdir/file", UriKind.RelativeOrAbsolute);
+			UriBuilder ub = new UriBuilder (relative);
+		}
+
+		[Test]
 		public void UserInfo ()
 		{
 			string s = "mailto://myname:mypwd@contoso.com?subject=hello";
@@ -274,6 +282,26 @@ namespace MonoTests.System
 			Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", ub.Uri.Host, "Uri.Host");
 			// once the Uri is created then some builder properties may change
 			Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", ub.Host, "Host.2");
+		}
+
+		[Test]
+		public void IPv6_Host_IncompleteAddress ()
+		{
+			UriBuilder ub = new UriBuilder ("http", "1:2:3:4:5:6:7:8", 8080, "/dir/subdir/file");
+			Assert.AreEqual ("[1:2:3:4:5:6:7:8]", ub.Host, "1.Host");
+			Assert.AreEqual ("http://[1:2:3:4:5:6:7:8]:8080/dir/subdir/file", ub.ToString (), "1.ToString ()");
+
+			ub = new UriBuilder ("http", "1:", 8080, "/dir/subdir/file");
+			Assert.AreEqual ("[1:]", ub.Host, "2.Host");
+			Assert.AreEqual ("http://[1:]:8080/dir/subdir/file", ub.ToString (), "2.ToString ()");
+
+			ub = new UriBuilder ("http", "[1:", 8080, "/dir/subdir/file");
+			Assert.AreEqual ("[1:", ub.Host, "3.Host");
+			Assert.AreEqual ("http://[1::8080/dir/subdir/file", ub.ToString (), "3.ToString ()");
+
+			ub = new UriBuilder ("http", "1:2]", 8080, "/dir/subdir/file");
+			Assert.AreEqual ("[1:2]]", ub.Host, "4.Host");
+			Assert.AreEqual ("http://[1:2]]:8080/dir/subdir/file", ub.ToString (), "4.ToString ()");
 		}
 
 		[Test]
