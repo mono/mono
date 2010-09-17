@@ -367,7 +367,7 @@ namespace System.ServiceModel
 #if NET_4_0
 				var binding = String.IsNullOrEmpty (endpoint.Binding) ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
 
-				if (endpoint.Kind != null) {
+				if (!String.IsNullOrEmpty (endpoint.Kind)) {
 					var contract = String.IsNullOrEmpty (endpoint.Contract) ? null : GetContract (endpoint.Contract, false);
 					se = ConfigUtil.ConfigureStandardEndpoint (contract, endpoint);
 					if (se.Binding == null)
