@@ -81,6 +81,7 @@ namespace System {
 		private bool isUnc;
 		private bool isOpaquePart;
 		private bool isAbsoluteUri = true;
+		private long scope_id;
 
 		private List<string> segments;
 		
@@ -676,11 +677,16 @@ namespace System {
 			}
 		}
 		
-		[MonoTODO ("add support for IPv6 address")]
 		public string DnsSafeHost {
 			get {
 				EnsureAbsoluteUri ();
-				return Unescape (Host);
+				string host = Host;
+				if (HostNameType == UriHostNameType.IPv6) {
+					host = Host.Substring (1, Host.Length - 2);
+					if (scope_id != 0)
+						host += "%" + scope_id.ToString ();
+				}
+				return Unescape (host);
 			}
 		}
 
@@ -1568,9 +1574,10 @@ namespace System {
 			if (!badhost && (host.Length > 1) && (host[0] == '[') && (host[host.Length - 1] == ']')) {
 				IPv6Address ipv6addr;
 				
-				if (IPv6Address.TryParse (host, out ipv6addr))
+				if (IPv6Address.TryParse (host, out ipv6addr)) {
 					host = "[" + ipv6addr.ToString (true) + "]";
-				else
+					scope_id = ipv6addr.ScopeId;
+				} else
 					badhost = true;
 			}
 			if (badhost && (Parser is DefaultUriParser || Parser == null))

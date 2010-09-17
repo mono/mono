@@ -895,5 +895,21 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual (21, uri.Port, "2.Port");
 			Assert.IsTrue (uri.IsDefaultPort, "2.IsDefaultPort");
 		}
+
+		[Test]
+		public void IPv6SafeDnsName ()
+		{
+			Uri uri = new Uri ("http://[1:2:3:4:5:6:7:8]");
+			Assert.AreEqual (UriHostNameType.IPv6, uri.HostNameType, "1.HostNameType");
+			Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", uri.Authority, "1.Authority");
+			Assert.AreEqual ("0001:0002:0003:0004:0005:0006:0007:0008", uri.DnsSafeHost, "1.DnsSafeHost");
+			Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", uri.Host, "1.Host");
+
+			uri = new Uri ("http://[fe80::200:39ff:fe36:1a2d%4]/temp/example.htm");
+			Assert.AreEqual (UriHostNameType.IPv6, uri.HostNameType, "1.HostNameType");
+			Assert.AreEqual ("[FE80:0000:0000:0000:0200:39FF:FE36:1A2D]", uri.Authority, "2.Authority");
+			Assert.AreEqual ("FE80:0000:0000:0000:0200:39FF:FE36:1A2D%4", uri.DnsSafeHost, "2.DnsSafeHost");
+			Assert.AreEqual ("[FE80:0000:0000:0000:0200:39FF:FE36:1A2D]", uri.Host, "2.Host");
+		}
 	}
 }
