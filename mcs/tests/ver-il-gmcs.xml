@@ -13493,6 +13493,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-539.cs">
+    <type name="S">
+      <method name="Int32 get_ID()">
+        <size>7</size>
+      </method>
+      <method name="Void set_ID(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="C op_Explicit(S)">
+        <size>11</size>
+      </method>
+      <method name="C op_Explicit(Nullable`1)">
+        <size>39</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>79</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
