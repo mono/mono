@@ -986,9 +986,10 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
+#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-
+#endif
 			if (Host != uri.Host || Scheme != uri.Scheme)
 				return uri;
 
@@ -1111,6 +1112,7 @@ namespace System {
 		private const string EscapeCommonHex = EscapeCommon + EscapeHex;
 		private const string EscapeCommonBrackets = EscapeCommon + EscapeBrackets;
 		internal const string EscapeCommonHexBrackets = EscapeCommon + EscapeHex + EscapeBrackets;
+		internal const string EscapeCommonHexBracketsQuery = EscapeCommonHexBrackets + "?";
 
 		internal static string EscapeString (string str, string escape) 
 		{
@@ -1302,6 +1304,11 @@ namespace System {
 				throw new UriFormatException (s);
 		}
 
+		private bool SupportsQuery ()
+		{
+			return ((scheme != Uri.UriSchemeNntp) && (scheme != Uri.UriSchemeFtp) && (scheme != Uri.UriSchemeFile));
+		}
+
 		//
 		// This parse method will not throw exceptions on failure
 		//
@@ -1412,8 +1419,8 @@ namespace System {
 				return null;
 			}
 
-			// special case: there is no query part for 'nntp' and 'ftp' but there is an host, port, user...
-			if ((scheme != Uri.UriSchemeNntp) && (scheme != Uri.UriSchemeFtp)) {
+			// special case: there is no query part for 'nntp', 'file' and 'ftp' but there is an host, port, user...
+			if (SupportsQuery ()) {
 				// 6 query
 				pos = uriString.IndexOf ('?', startpos, endpos-startpos);
 				if (pos != -1) {
@@ -1470,31 +1477,24 @@ namespace System {
 			}
 
 			// 5 path
-			if ((scheme == Uri.UriSchemeNntp) || (scheme == Uri.UriSchemeFtp)) {
+			if (unixAbsPath) {
+				pos = -1;
+			} else {
 				pos = uriString.IndexOf ('/', startpos, endpos - startpos);
-				if (pos != -1) {
-					path = uriString.Substring (pos, endpos - pos);
-					if (scheme == Uri.UriSchemeFtp)
+				if (pos == -1 && windowsFilePath)
+					pos = uriString.IndexOf ('\\', startpos, endpos - startpos);
+			}
+			if (pos != -1) {
+				path = uriString.Substring (pos, endpos - pos);
+				if (!SupportsQuery ()) {
+					if (scheme != Uri.UriSchemeNntp)
 						path = path.Replace ('\\', '/');
 					path = EscapeString (path, EscapeNews);
-					endpos = pos;
 				}
+				endpos = pos;
 			} else {
-				if (unixAbsPath) {
-					pos = -1;
-				} else {
-					pos = uriString.IndexOf ('/', startpos, endpos - startpos);
-					if (pos == -1 && windowsFilePath)
-						pos = uriString.IndexOf ('\\', startpos, endpos - startpos);
-				}
-
-				if (pos == -1) {
-					if (scheme != Uri.UriSchemeMailto)
-						path = "/";
-				} else {
-					path = uriString.Substring (pos, endpos - pos);
-					endpos = pos;
-				}
+				if (scheme != Uri.UriSchemeMailto)
+					path = "/";
 			}
 
 			// 4.a user info
@@ -1598,6 +1598,36 @@ namespace System {
 			return false;
 		}
 
+		// replace '\', %5C ('\') and %2f ('/') into '/'
+		// replace %2e ('.') into '.'
+		private static string NormalizePath (string path)
+		{
+			StringBuilder res = new StringBuilder ();
+			for (int i = 0; i < path.Length; i++) {
+				char c = path [i];
+				switch (c) {
+				case '\\':
+					c = '/';
+					break;
+				case '%':
+					if (i < path.Length - 2) {
+						char c1 = path [i + 1];
+						char c2 = Char.ToUpper (path [i + 2]);
+						if ((c1 == '2') && (c2 == 'E')) {
+							c = '.';
+							i += 2;
+						} else if (((c1 == '2') && (c2 == 'F')) || ((c1 == '5') && (c2 == 'C'))) {
+							c = '/';
+							i += 2;
+						}
+					}
+					break;
+				}
+				res.Append (c);
+			}
+			return res.ToString ();
+		}
+
 		// This is called "compacting" in the MSDN documentation
 		private static string Reduce (string path, bool compact_escaped)
 		{
@@ -1605,47 +1635,22 @@ namespace System {
 			if (path == "/")
 				return path;
 
-			StringBuilder res = new StringBuilder();
-
-			if (compact_escaped) {
-				// replace '\', %5C ('\') and %2f ('/') into '/'
+			if (compact_escaped && (path.IndexOf ('%') != -1)) {
+				// replace '\', %2f, %5c with '/' and replace %2e with '.'
 				// other escaped values seems to survive this step
-				for (int i=0; i < path.Length; i++) {
-					char c = path [i];
-					switch (c) {
-					case '\\':
-						res.Append ('/');
-						break;
-					case '%':
-						if (i < path.Length - 2) {
-							char c1 = path [i + 1];
-							char c2 = Char.ToUpper (path [i + 2]);
-							if (((c1 == '2') && (c2 == 'F')) || ((c1 == '5') && (c2 == 'C'))) {
-								res.Append ('/');
-								i += 2;
-							} else {
-								res.Append (c);
-							}
-						} else {
-							res.Append (c);
-						}
-						break;
-					default:
-						res.Append (c);
-						break;
-					}
-				}
-				path = res.ToString ();
+				path = NormalizePath (path);
 			} else {
+				// (always) replace '\' with '/'
 				path = path.Replace ('\\', '/');
 			}
 
-			ArrayList result = new ArrayList ();
+			List<string> result = new List<string> ();
 
 			bool begin = true;
 			for (int startpos = 0; startpos < path.Length; ) {
-				int endpos = path.IndexOf('/', startpos);
-				if (endpos == -1) endpos = path.Length;
+				int endpos = path.IndexOf ('/', startpos);
+				if (endpos == -1)
+					endpos = path.Length;
 				string current = path.Substring (startpos, endpos-startpos);
 				startpos = endpos + 1;
 				if ((begin && current.Length == 0) || current == "." ) {
@@ -1671,7 +1676,8 @@ namespace System {
 			if (result.Count == 0)
 				return "/";
 
-			res.Length = 0;
+			StringBuilder res = new StringBuilder ();
+
 			if (path [0] == '/')
 				res.Append ('/');
 
@@ -2076,12 +2082,21 @@ namespace System {
 		// [MonoTODO ("rework code to avoid exception catching")]
 		public static bool TryCreate (Uri baseUri, string relativeUri, out Uri result)
 		{
+			result = null;
+			if (relativeUri == null)
+				return false;
+
 			try {
-				// FIXME: this should call UriParser.Resolve
-				result = new Uri (baseUri, relativeUri);
-				return true;
+				Uri relative = new Uri (relativeUri, UriKind.RelativeOrAbsolute);
+				if ((baseUri != null) && baseUri.IsAbsoluteUri) {
+					// FIXME: this should call UriParser.Resolve
+					result = new Uri (baseUri, relative);
+				} else if (relative.IsAbsoluteUri) {
+					// special case - see unit tests
+					result = relative;
+				}
+				return (result != null);
 			} catch (UriFormatException) {
-				result = null;
 				return false;
 			}
 		}
@@ -2089,18 +2104,18 @@ namespace System {
 		//[MonoTODO ("rework code to avoid exception catching")]
 		public static bool TryCreate (Uri baseUri, Uri relativeUri, out Uri result)
 		{
-#if NET_4_0
-			if (relativeUri == null) {
-				result = null;
+			result = null;
+			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-			}
+#if NET_4_0
+			if (relativeUri == null)
+				return false;
 #endif
 			try {
 				// FIXME: this should call UriParser.Resolve
 				result = new Uri (baseUri, relativeUri.OriginalString);
 				return true;
 			} catch (UriFormatException) {
-				result = null;
 				return false;
 			}
 		}
