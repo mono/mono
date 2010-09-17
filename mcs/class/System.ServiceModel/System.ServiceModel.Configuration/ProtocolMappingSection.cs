@@ -57,17 +57,35 @@ namespace System.ServiceModel.Configuration
 {
 	public sealed class ProtocolMappingSection : ConfigurationSection
 	{
-		ConfigurationPropertyCollection _properties;
-		
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty collection;
+
+		static ProtocolMappingSection ()
+		{
+			collection = new ConfigurationProperty ("", typeof (ProtocolMappingElementCollection), null, null, null, ConfigurationPropertyOptions.IsDefaultCollection);
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (collection);
+		}
+
 		// Properties
 
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public ProtocolMappingElementCollection ProtocolMappingCollection {
-			get { return (ProtocolMappingElementCollection) base [""]; }
+			get { return (ProtocolMappingElementCollection) base [collection]; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return base.Properties; }
+			get { return properties; }
+		}
+
+		protected override void InitializeDefault ()
+		{
+			base.InitializeDefault ();
+			// LAMESPEC: no https?
+			ProtocolMappingCollection.Add (new ProtocolMappingElement ("http", "basicHttpBinding", null));
+			ProtocolMappingCollection.Add (new ProtocolMappingElement ("net.tcp", "netTcpBinding", null));
+			ProtocolMappingCollection.Add (new ProtocolMappingElement ("net.msmq", "netMsmqBinding", null));
+			ProtocolMappingCollection.Add (new ProtocolMappingElement ("net.pipe", "netNamedPipeBinding", null));
 		}
 	}
 

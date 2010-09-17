@@ -478,6 +478,22 @@ namespace System.ServiceModel
 			foreach (ServiceEndpoint endPoint in Description.Endpoints)
 				endPoint.Validate ();
 
+#if NET_4_0
+			// In 4.0, it seems that if there is no configured ServiceEndpoint, infer them from the service type.
+			if (Description.Endpoints.Count == 0) {
+				foreach (Type iface in Description.ServiceType.GetInterfaces ())
+					if (iface.GetCustomAttributes (typeof (ServiceContractAttribute), true).Length > 0)
+						foreach (var baddr in BaseAddresses) {
+							if (!baddr.IsAbsoluteUri)
+								continue;
+							var binding = GetBindingByProtocolMapping (baddr);
+							if (binding == null)
+								continue;
+							AddServiceEndpoint (iface.FullName, binding, baddr);
+						}
+			}
+#endif
+
 			if (Description.Endpoints.FirstOrDefault (e => e.Contract != mex_contract && !e.IsSystemEndpoint) == null)
 				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange endpoint) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
 		}
