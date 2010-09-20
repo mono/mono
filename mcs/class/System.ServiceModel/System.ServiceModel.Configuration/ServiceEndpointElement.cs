@@ -71,6 +71,11 @@ namespace System.ServiceModel.Configuration
 		static ConfigurationProperty listen_uri;
 		static ConfigurationProperty listen_uri_mode;
 		static ConfigurationProperty name;
+#if NET_4_0
+		static ConfigurationProperty endpoint_configuration;
+		static ConfigurationProperty is_system_endpoint;
+		static ConfigurationProperty kind;
+#endif
 
 		static ServiceEndpointElement ()
 		{
@@ -123,6 +128,12 @@ namespace System.ServiceModel.Configuration
 				typeof (string), "", new StringConverter (), new StringValidator (0, int.MaxValue, null),
 				ConfigurationPropertyOptions.None);
 
+#if NET_4_0
+			endpoint_configuration = new ConfigurationProperty ("endpointConfiguration", typeof (string), "", null, new StringValidator (0), ConfigurationPropertyOptions.IsKey);
+			is_system_endpoint = new ConfigurationProperty ("isSystemEndpoint", typeof (bool), false, null, null, ConfigurationPropertyOptions.None);
+			kind = new ConfigurationProperty ("kind", typeof (string), "", null, new StringValidator (0), ConfigurationPropertyOptions.IsKey);
+#endif
+
 			properties.Add (address);
 			properties.Add (behavior_configuration);
 			properties.Add (binding);
@@ -135,6 +146,12 @@ namespace System.ServiceModel.Configuration
 			properties.Add (listen_uri);
 			properties.Add (listen_uri_mode);
 			properties.Add (name);
+
+#if NET_4_0
+			properties.Add (endpoint_configuration);
+			properties.Add (is_system_endpoint);
+			properties.Add (kind);
+#endif
 		}
 
 		public ServiceEndpointElement ()
@@ -235,6 +252,28 @@ namespace System.ServiceModel.Configuration
 		public IdentityElement Identity {
 			get { return (IdentityElement) base [identity]; }
 		}
+
+#if NET_4_0
+		[StringValidator (MinLength = 0)]
+		[ConfigurationProperty ("endpointConfiguration", DefaultValue = "", Options = ConfigurationPropertyOptions.IsKey)]
+		public string EndpointConfiguration {
+			get { return (string) base [endpoint_configuration]; }
+			set { base [endpoint_configuration] = value; }
+		}
+
+		[ConfigurationProperty ("isSystemEndpoint", DefaultValue = false)]
+		public bool IsSystemEndpoint {
+			get { return (bool) base [is_system_endpoint]; }
+			set { base [is_system_endpoint] = value; }
+		}
+
+		[ConfigurationProperty ("kind", DefaultValue = "", Options = ConfigurationPropertyOptions.IsKey)]
+		[StringValidator (MinLength = 0)]
+		public string Kind {
+			get { return (string) base [kind]; }
+			set { base [kind] = value; }
+		}
+#endif
 
 		[ConfigurationProperty ("listenUri",
 			 Options = ConfigurationPropertyOptions.None,

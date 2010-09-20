@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<MenuRoot url="~/" title="Root" description="Root description">
+	<MenuNode url="http://mono-project.com/" title="Mono" description="Mono Project Home Page">
+		<MenuNode url="http://mono-project.com/Bugs" title="Mono Bugs" description="How to report Mono bugs">
+			<MenuNode url="http://bugzilla.novell.com" title="Novell Bugzilla" description="Includes Mono bugs interface"/>
+		</MenuNode>
+	</MenuNode>
+	<MenuNode url="http://google.com" title="Google" description="Main page of the Google search engine">
+		<MenuNode url="http://translate.google.com" title="Translator" description="Google language translation interface"/>
+		<MenuNode url="http://google.com/codesearch" title="Code Search" description="Google code search engine"/>
+	</MenuNode>
+</MenuRoot>

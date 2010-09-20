@@ -66,6 +66,13 @@ namespace System.ServiceModel.Description
 
 		public ContractDescription Contract {
 			get { return contract; }
+#if NET_4_0
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				contract = value;
+			}
+#endif
 		}
 
 		public EndpointAddress Address {

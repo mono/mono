@@ -14,6 +14,7 @@ class SomeGenericClass<SomeType>
 
 	void Invoke (SomeHandlerType h)
 	{
+		h ();
 	}
 
 	public void FailsToCompile ()

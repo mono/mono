@@ -42,7 +42,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
 
-#if !MONOTOUCH
+#if !MOBILE
 using Microsoft.CSharp;
 #endif
 
@@ -56,7 +56,7 @@ namespace System.Web.Services.Description {
 		ServiceDescriptionCollection serviceDescriptions;
 		ServiceDescriptionImportStyle style;
 		
-#if NET_2_0 && !MONOTOUCH
+#if NET_2_0 && !MOBILE
 		CodeGenerationOptions options;
 		CodeDomProvider codeGenerator = new CSharpCodeProvider ();
 		ImportContext context;
@@ -100,7 +100,7 @@ namespace System.Web.Services.Description {
 			set { style = value; }
 		}
 		
-#if NET_2_0 && !MONOTOUCH
+#if NET_2_0 && !MOBILE
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public CodeGenerationOptions CodeGenerationOptions {
 			get { return options; }
@@ -142,7 +142,7 @@ namespace System.Web.Services.Description {
 				schemas.Add (serviceDescription.Types.Schemas);
 		}
 
-#if !MONOTOUCH
+#if !MOBILE
 		public ServiceDescriptionImportWarnings Import (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
 			foreach (ProtocolImporter importer in GetSupportedImporters ()) {
@@ -167,7 +167,7 @@ namespace System.Web.Services.Description {
 		}
 #endif
 		
-#if NET_2_0 && !MONOTOUCH
+#if NET_2_0 && !MOBILE
 
 		[MonoTODO] // where to use Verbose and Extensions in options?
 		public static StringCollection GenerateWebReferences (

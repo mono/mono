@@ -27,6 +27,8 @@ using System;
 using System.ComponentModel;
 using System.Configuration;
 using System.ServiceModel.Configuration;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace System.ServiceModel.Discovery.Configuration
 {
@@ -83,7 +85,14 @@ namespace System.ServiceModel.Discovery.Configuration
 		
 		protected override object CreateBehavior ()
 		{
-			throw new NotImplementedException ();
+			var ret = new EndpointDiscoveryBehavior () { Enabled = this.Enabled };
+			foreach (ContractTypeNameElement ctn in ContractTypeNames)
+				ret.ContractTypeNames.Add (new XmlQualifiedName (ctn.Name, ctn.Namespace));
+			foreach (XmlElementElement xee in Extensions)
+				ret.Extensions.Add (XElement.Load (new XmlNodeReader (xee.XmlElement)));
+			foreach (ScopeElement se in Scopes)
+				ret.Scopes.Add (se.Scope);
+			return ret;
 		}
 	}
 }

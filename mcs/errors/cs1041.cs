@@ -1,6 +1,15 @@
-// cs1041.cs: Identifier expected: `int' is a keyword
-// Line: 5
+// CS1041: Identifier expected, `foreach' is a keyword
+// Line: 11
 
-public class Test {
-    void T (int int) {}
+public partial class Log
+{
+	void Update (object[] h)
+	{
+		if (h == null)
+			return;
+		
+		logstore.
+		foreach (var rev in h) {
+		}
+	}
 }

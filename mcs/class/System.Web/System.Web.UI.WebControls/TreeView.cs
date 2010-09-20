@@ -1621,7 +1621,7 @@ namespace System.Web.UI.WebControls
 				return;
 
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
-			writer.AddAttribute (HtmlTextWriterAttribute.Height, ((int) value).ToString () + "dupa1", false);
+			writer.AddAttribute (HtmlTextWriterAttribute.Height, ((int) value).ToString (), false);
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);
 			writer.RenderEndTag (); // td

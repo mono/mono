@@ -34,8 +34,6 @@ namespace System.ServiceModel.Discovery
 {
 	public class DiscoveryMessageSequenceGenerator
 	{
-		static readonly Random rnd = new Random ();
-
 		public DiscoveryMessageSequenceGenerator ()
 			: this (AppDomain.CurrentDomain.Id, null) // not sure what should be used for instanceId; multiple instances share the same Id
 		{

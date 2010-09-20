@@ -73,9 +73,9 @@ namespace System.Web.Services.Description
 			RegisterExtensionType (typeof (Soap12OperationBinding));
 #endif
 
-#if !MONOTOUCH
+#if !MOBILE
 			/*
-			 * Currently, the MonoTouch build has not support for
+			 * Currently, the mobile profile has not support for
 			 * System.Configuration, so there are no external modules
 			 * defined
 			 */
@@ -169,9 +169,9 @@ namespace System.Web.Services.Description
 		}
 
 		/*
-		 * MonoTouch lacks support for configuration
+		 * The mobile profile lacks support for configuration
 		 */
-#if MONOTOUCH
+#if MOBILE
 		public static ArrayList BuildExtensionImporters ()
 		{
 			return new ArrayList (0);

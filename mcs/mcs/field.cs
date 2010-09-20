@@ -208,11 +208,11 @@ namespace Mono.CSharp
 		public override void Emit ()
 		{
 			if (member_type == InternalType.Dynamic) {
-				PredefinedAttributes.Get.Dynamic.EmitAttribute (FieldBuilder);
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder);
 			} else {
 				var trans_flags = TypeManager.HasDynamicTypeUsed (member_type);
 				if (trans_flags != null) {
-					var pa = PredefinedAttributes.Get.DynamicTransform;
+					var pa = Compiler.PredefinedAttributes.DynamicTransform;
 					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type, 1))) {
 						FieldBuilder.SetCustomAttribute (new CustomAttributeBuilder (pa.Constructor, new object[] { trans_flags }));
 					}
@@ -220,7 +220,7 @@ namespace Mono.CSharp
 			}
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (FieldBuilder);
+				Compiler.PredefinedAttributes.CompilerGenerated.EmitAttribute (FieldBuilder);
 
 			if (OptAttributes != null) {
 				OptAttributes.Emit ();
@@ -436,7 +436,7 @@ namespace Mono.CSharp
 			buffer_size *= type_size;
 			EmitFieldSize (buffer_size);
 
-			PredefinedAttributes.Get.UnsafeValueType.EmitAttribute (fixed_buffer_type);
+			Compiler.PredefinedAttributes.UnsafeValueType.EmitAttribute (fixed_buffer_type);
 
 			base.Emit ();
 		}
@@ -446,7 +446,7 @@ namespace Mono.CSharp
 			CustomAttributeBuilder cab;
 			PredefinedAttribute pa;
 
-			pa = PredefinedAttributes.Get.StructLayout;
+			pa = Compiler.PredefinedAttributes.StructLayout;
 			if (pa.Constructor == null &&
 				!pa.ResolveConstructor (Location, TypeManager.short_type))
 					return;
@@ -468,7 +468,7 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.PRIVATE) != 0)
 				return;
 
-			pa = PredefinedAttributes.Get.FixedBuffer;
+			pa = Compiler.PredefinedAttributes.FixedBuffer;
 			if (pa.Constructor == null &&
 				!pa.ResolveConstructor (Location, TypeManager.type_type, TypeManager.int32_type))
 				return;
@@ -573,34 +573,29 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			try {
-				Type[] required_modifier = null;
-				if ((ModFlags & Modifiers.VOLATILE) != 0) {
-					if (TypeManager.isvolatile_type == null)
-						TypeManager.isvolatile_type = TypeManager.CoreLookupType (Compiler,
-							"System.Runtime.CompilerServices", "IsVolatile", MemberKind.Class, true);
+			Type[] required_modifier = null;
+			if ((ModFlags & Modifiers.VOLATILE) != 0) {
+				if (TypeManager.isvolatile_type == null)
+					TypeManager.isvolatile_type = TypeManager.CoreLookupType (Compiler,
+						"System.Runtime.CompilerServices", "IsVolatile", MemberKind.Class, true);
 
-					if (TypeManager.isvolatile_type != null)
-						required_modifier = new Type[] { TypeManager.isvolatile_type.GetMetaInfo () };
-				}
+				if (TypeManager.isvolatile_type != null)
+					required_modifier = new Type[] { TypeManager.isvolatile_type.GetMetaInfo () };
+			}
 
-				FieldBuilder = Parent.TypeBuilder.DefineField (
-					Name, member_type.GetMetaInfo (), required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
+			FieldBuilder = Parent.TypeBuilder.DefineField (
+				Name, member_type.GetMetaInfo (), required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
 
-				spec = new FieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
+			spec = new FieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
 
-				// Don't cache inaccessible fields
-				if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
-					Parent.MemberCache.AddMember (spec);
-				}
+			// Don't cache inaccessible fields
+			if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
+				Parent.MemberCache.AddMember (spec);
+			}
 
-				if (initializer != null) {
-					((TypeContainer) Parent).RegisterFieldForInitialization (this,
-						new FieldInitializer (spec, initializer, this));
-				}
-			} catch (ArgumentException) {
-				Report.RuntimeMissingSupport (Location, "`void' or `void*' field type");
-				return false;
+			if (initializer != null) {
+				((TypeContainer) Parent).RegisterFieldForInitialization (this,
+					new FieldInitializer (spec, initializer, this));
 			}
 
 			if (declarators != null) {

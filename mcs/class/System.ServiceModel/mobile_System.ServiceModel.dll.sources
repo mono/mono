@@ -1,0 +1,3 @@
+../../build/common/Consts.cs
+../../build/common/MonoTODOAttribute.cs
+#include moonlight_raw_System.ServiceModel.dll.sources

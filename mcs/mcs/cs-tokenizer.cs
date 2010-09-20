@@ -355,17 +355,6 @@ namespace Mono.CSharp
 
 		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
 		
-		//
-		// Details about the error encoutered by the tokenizer
-		//
-		string error_details;
-		
-		public string error {
-			get {
-				return error_details;
-			}
-		}
-		
 		public int Line {
 			get {
 				return ref_line;
@@ -956,6 +945,12 @@ namespace Mono.CSharp
 				case Token.IDENTIFIER:
 					switch (ptoken) {
 					case Token.DOT:
+						if (bracket_level == 0) {
+							is_type = false;
+							can_be_type = true;
+						}
+
+						continue;
 					case Token.OP_GENERICS_LT:
 					case Token.COMMA:
 					case Token.DOUBLE_COLON:
@@ -2702,8 +2697,8 @@ namespace Mono.CSharp
 				}
 			} catch (IndexOutOfRangeException) {
 				Report.Error (645, Location, "Identifier too long (limit is 512 chars)");
-				col += pos - 1;
-				return Token.ERROR;
+				--pos;
+				col += pos;
 			}
 
 			col += pos - 1;
@@ -3213,8 +3208,7 @@ namespace Mono.CSharp
 					return consume_identifier (c);
 				}
 
-				error_details = ((char)c).ToString ();
-				return Token.ERROR;
+				Report.Error (1056, Location, "Unexpected character `{0}'", ((char) c).ToString ());
 			}
 
 			if (CompleteOnEOF){
@@ -3234,10 +3228,11 @@ namespace Mono.CSharp
 			int c = get_char ();
 			tokens_seen = true;
 			if (c == '\'') {
-				error_details = "Empty character literal";
-				Report.Error (1011, Location, error_details);
-				return Token.ERROR;
+				val = new CharLiteral ((char) c, Location);
+				Report.Error (1011, Location, "Empty character literal");
+				return Token.LITERAL;
 			}
+
 			if (c == '\r' || c == '\n') {
 				Report.Error (1010, Location, "Newline in constant");
 				return Token.ERROR;
@@ -3261,7 +3256,6 @@ namespace Mono.CSharp
 					if (c == '\n' || c == '\'')
 						break;
 				}
-				return Token.ERROR;
 			}
 
 			return Token.LITERAL;

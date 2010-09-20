@@ -16,6 +16,10 @@ interface IA<U>
 {
 }
 
+struct S<T>
+{
+}
+
 delegate dynamic D (dynamic d);
 
 class DynamicAssignments
@@ -47,6 +51,13 @@ class DynamicAssignments
 
 		I<object> io = null;
 		IA<dynamic> id = io;
+		
+		IA<object> ia_o = null;
+		IA<dynamic> ia_d = ia_o;
+		
+		S<dynamic> s_d = new S<dynamic> ();
+		S<object> s_o = s_d;
+		S<object>? s_o_n = s_d;
 		
 		D del = delegate (object del_arg) {
 			 return (object) null;

@@ -267,7 +267,7 @@ namespace System.Diagnostics
 				if (ext == null)
 					return empty;
 
-#if MONOTOUCH
+#if MOBILE
 				return empty;
 #else
 

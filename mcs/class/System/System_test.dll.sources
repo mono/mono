@@ -124,6 +124,7 @@ System.ComponentModel/ContainerTest.cs
 System.ComponentModel/CultureInfoConverterTest.cs
 System.ComponentModel/DataObjectMethodAttributeTests.cs
 System.ComponentModel/DateTimeConverterTests.cs
+System.ComponentModel/DateTimeOffsetConverterTests.cs
 System.ComponentModel/DefaultBindingPropertyAttributeTest.cs
 System.ComponentModel/DefaultValueAttributeTest.cs
 System.ComponentModel/DecimalConverterTests.cs
@@ -151,6 +152,7 @@ System.ComponentModel/SByteConverterTests.cs
 System.ComponentModel/SingleConverterTests.cs
 System.ComponentModel/ToolboxItemAttributeTests.cs
 System.ComponentModel/TypeConverterTests.cs
+System.ComponentModel/TypeDescriptionProviderTest.cs
 System.ComponentModel/TypeDescriptorTests.cs
 System.ComponentModel/UInt16ConverterTests.cs
 System.ComponentModel/UInt32ConverterTests.cs

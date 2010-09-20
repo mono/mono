@@ -143,7 +143,7 @@ namespace System.Web.UI.WebControls
 			int r = new Random ().Next (total_imp);
 
 			foreach (Hashtable a in ads) {
-				if (keywordFilterEmpty && KeywordFilter != (string) a ["Keyword"])
+				if (!keywordFilterEmpty && KeywordFilter != (string) a ["Keyword"])
 					continue;
 				cur_imp += a ["Impressions"] != null ? int.Parse ((string) a ["Impressions"]) : 1;
 				

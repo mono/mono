@@ -233,7 +233,7 @@ namespace System {
 
 			switch (format) {
 			case UriFormat.UriEscaped:
-				return Uri.EscapeString (s, false, true, true);
+				return Uri.EscapeString (s, Uri.EscapeCommonHexBrackets);
 			case UriFormat.SafeUnescaped:
 				// TODO subset of escape rules
 				s = Uri.Unescape (s, false);
@@ -259,11 +259,9 @@ namespace System {
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeHttp, 80);
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeHttps, 443);
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeMailto, 25);
-#if NET_2_0
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNetPipe, -1);
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNetTcp, -1);
-#endif
-			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNews, 119);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNews, -1);
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNntp, 119);
 			// not defined in Uri.UriScheme* but a parser class exists
 			InternalRegister (newtable, new DefaultUriParser (), "ldap", 389);

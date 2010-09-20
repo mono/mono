@@ -124,6 +124,23 @@ namespace System.ServiceModel.Discovery.Configuration
 			foreach (ScopeElement scope in other.Scopes)
 				Scopes.Add (new ScopeElement () { Scope = scope.Scope });
 		}
+
+		internal void InitializeFrom (FindCriteria fc)
+		{
+			foreach (var ctn in fc.ContractTypeNames)
+				ContractTypeNames.Add (new ContractTypeNameElement () { Name = ctn.Name, Namespace = ctn.Namespace});
+			Duration = fc.Duration;
+			var doc = new XmlDocument ();
+			foreach (var ext in fc.Extensions) {
+				var xr = ext.CreateReader ();
+				xr.MoveToContent ();
+				Extensions.Add (new XmlElementElement () { XmlElement = (XmlElement) doc.ReadNode (xr) });
+			}
+			MaxResults = fc.MaxResults;
+			ScopeMatchBy = fc.ScopeMatchBy;
+			foreach (var scope in fc.Scopes)
+				Scopes.Add (new ScopeElement () { Scope = scope});
+		}
 	}
 }
 

@@ -1,32 +1,15 @@
-//
-// Sample for bug 75674
-//
 using System;
-using System.Collections;
 
-class XX {
-	static void Metodo (Exception e)
+class C
+{
+	public static int Main ()
 	{
-		if (e is NotImplementedException){
-			Console.WriteLine ("OK");
-		} else {
-			Console.WriteLine ("Fail");
+		const string s = "oups";
+		if (s.Length != 4) {
+			Console.WriteLine (s.Length);
+			return 2;
 		}
-	}
-	
-	static IEnumerable X ()
-	{
-		try {
-			throw new NotImplementedException ();
-		} catch (Exception e){
-			Metodo (e);
-		}
-		yield return 0;
-	}
-	
-	static void Main ()
-	{
-		foreach (int a in X ()){
-		}
+		
+		return 0;
 	}
 }

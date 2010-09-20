@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Linq;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 
@@ -54,7 +55,7 @@ namespace System.ServiceModel.Discovery.Configuration
 		}
 
 		[ConfigurationProperty ("discoveryMode", DefaultValue = ServiceDiscoveryMode.Adhoc)]
-		public ServiceDiscoveryMode DiscoveryMode {
+		public new ServiceDiscoveryMode DiscoveryMode {
 			get { return (ServiceDiscoveryMode) base [discovery_mode]; }
 			set { base [discovery_mode] = value; }
 		}
@@ -65,7 +66,7 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		[TypeConverter (typeof (TimeSpanConverter))]
 		[ConfigurationProperty ("maxResponseDelay", DefaultValue = "00:00:00.500")]
-		public TimeSpan MaxResponseDelay {
+		public new TimeSpan MaxResponseDelay {
 			get { return (TimeSpan) base [max_response_delay]; }
 			set { base [max_response_delay] = value; }
 		}
@@ -87,27 +88,72 @@ namespace System.ServiceModel.Discovery.Configuration
 		
 		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{
-			throw new NotImplementedException ();
+			if (contractDescription == null)
+				throw new ArgumentNullException ("contractDescription");
+			DiscoveryVersion ver = null;
+			switch (contractDescription.ContractType.Namespace) {
+			case DiscoveryVersion.Namespace11:
+				ver = DiscoveryVersion.WSDiscovery11;
+				break;
+			case DiscoveryVersion.NamespaceApril2005:
+				ver = DiscoveryVersion.WSDiscoveryApril2005;
+				break;
+			case DiscoveryVersion.NamespaceCD1:
+				ver = DiscoveryVersion.WSDiscoveryCD1;
+				break;
+			}
+			var ret = new UdpDiscoveryEndpoint (ver, MulticastAddress);
+			ret.MaxResponseDelay = MaxResponseDelay;
+			TransportSettings.ApplyConfiguration (ret.TransportSettings);
+			return ret;
 		}
+
 		protected override void InitializeFrom (ServiceEndpoint endpoint)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			var e = (UdpDiscoveryEndpoint) endpoint;
+			MaxResponseDelay = e.MaxResponseDelay;
+			MulticastAddress = e.MulticastAddress;
+			TransportSettings.InitializeFrom (e.TransportSettings);
 		}
+
 		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ChannelEndpointElement serviceEndpointElement)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			var de = (DiscoveryEndpoint) endpoint;
+			if (!de.DiscoveryVersion.Equals (DiscoveryVersion))
+				throw new ArgumentException ("Argument AnnouncementEndpoint is initialized with different DiscoveryVersion");
+			de.MaxResponseDelay = MaxResponseDelay;
+			de.Address = serviceEndpointElement.CreateEndpointAddress (); // it depends on InternalVisibleTo(System.ServiceModel)
+			var be = (UdpTransportBindingElement) de.Binding.CreateBindingElements ().First (b => b is UdpTransportBindingElement);
+			TransportSettings.ApplyConfiguration (be.TransportSettings);
 		}
+
 		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ServiceEndpointElement serviceEndpointElement)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			var de = (DiscoveryEndpoint) endpoint;
+			if (!de.DiscoveryVersion.Equals (DiscoveryVersion))
+				throw new ArgumentException ("Argument AnnouncementEndpoint is initialized with different DiscoveryVersion");
+			de.MaxResponseDelay = MaxResponseDelay;
+			de.Address = serviceEndpointElement.CreateEndpointAddress (); // it depends on InternalVisibleTo(System.ServiceModel)
+			var be = (UdpTransportBindingElement) de.Binding.CreateBindingElements ().First (b => b is UdpTransportBindingElement);
+			TransportSettings.ApplyConfiguration (be.TransportSettings);
 		}
+
 		protected override void OnInitializeAndValidate (ChannelEndpointElement channelEndpointElement)
 		{
-			throw new NotImplementedException ();
+			// It seems to do nothing.
+			base.OnInitializeAndValidate (channelEndpointElement);
 		}
+
 		protected override void OnInitializeAndValidate (ServiceEndpointElement channelEndpointElement)
 		{
-			throw new NotImplementedException ();
+			// It seems to do nothing.
+			base.OnInitializeAndValidate (channelEndpointElement);
 		}
 	}
 }

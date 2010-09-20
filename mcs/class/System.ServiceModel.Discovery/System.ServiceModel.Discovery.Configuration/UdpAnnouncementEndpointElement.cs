@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Linq;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 
@@ -57,7 +58,7 @@ namespace System.ServiceModel.Discovery.Configuration
 		
 		[TypeConverter (typeof (TimeSpanConverter))]
 		[ConfigurationPropertyAttribute("maxAnnouncementDelay", DefaultValue = "00:00:00.500")]
-		public TimeSpan MaxAnnouncementDelay {
+		public new TimeSpan MaxAnnouncementDelay {
 			get { return (TimeSpan) base [max_announcement_delay]; }
 			set { base [max_announcement_delay] = value; }
 		}
@@ -79,32 +80,72 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{
-			throw new NotImplementedException ();
+			if (contractDescription == null)
+				throw new ArgumentNullException ("contractDescription");
+			DiscoveryVersion ver = null;
+			switch (contractDescription.ContractType.Namespace) {
+			case DiscoveryVersion.Namespace11:
+				ver = DiscoveryVersion.WSDiscovery11;
+				break;
+			case DiscoveryVersion.NamespaceApril2005:
+				ver = DiscoveryVersion.WSDiscoveryApril2005;
+				break;
+			case DiscoveryVersion.NamespaceCD1:
+				ver = DiscoveryVersion.WSDiscoveryCD1;
+				break;
+			}
+			var ret = new UdpAnnouncementEndpoint (ver, MulticastAddress);
+			ret.MaxAnnouncementDelay = MaxAnnouncementDelay;
+			TransportSettings.ApplyConfiguration (ret.TransportSettings);
+			return ret;
 		}
 
 		protected override void InitializeFrom (ServiceEndpoint endpoint)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			var e = (UdpAnnouncementEndpoint) endpoint;
+			MaxAnnouncementDelay = e.MaxAnnouncementDelay;
+			MulticastAddress = e.MulticastAddress;
+			TransportSettings.InitializeFrom (e.TransportSettings);
 		}
-		
+
 		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ChannelEndpointElement serviceEndpointElement)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			var de = (AnnouncementEndpoint) endpoint;
+			if (!de.DiscoveryVersion.Equals (DiscoveryVersion))
+				throw new ArgumentException ("Argument AnnouncementEndpoint is initialized with different DiscoveryVersion");
+			de.MaxAnnouncementDelay = MaxAnnouncementDelay;
+			de.Address = serviceEndpointElement.CreateEndpointAddress (); // it depends on InternalVisibleTo(System.ServiceModel)
+			var be = (UdpTransportBindingElement) de.Binding.CreateBindingElements ().First (b => b is UdpTransportBindingElement);
+			TransportSettings.ApplyConfiguration (be.TransportSettings);
 		}
-		
+
 		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ServiceEndpointElement serviceEndpointElement)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			var de = (AnnouncementEndpoint) endpoint;
+			if (!de.DiscoveryVersion.Equals (DiscoveryVersion))
+				throw new ArgumentException ("Argument AnnouncementEndpoint is initialized with different DiscoveryVersion");
+			de.MaxAnnouncementDelay = MaxAnnouncementDelay;
+			de.Address = serviceEndpointElement.CreateEndpointAddress (); // it depends on InternalVisibleTo(System.ServiceModel)
+			var be = (UdpTransportBindingElement) de.Binding.CreateBindingElements ().First (b => b is UdpTransportBindingElement);
+			TransportSettings.ApplyConfiguration (be.TransportSettings);
 		}
-		
+
 		protected override void OnInitializeAndValidate (ChannelEndpointElement channelEndpointElement)
 		{
-			throw new NotImplementedException ();
+			// It seems to do nothing.
+			base.OnInitializeAndValidate (channelEndpointElement);
 		}
-		
+
 		protected override void OnInitializeAndValidate (ServiceEndpointElement channelEndpointElement)
 		{
-			throw new NotImplementedException ();
+			// It seems to do nothing.
+			base.OnInitializeAndValidate (channelEndpointElement);
 		}
 	}
 }

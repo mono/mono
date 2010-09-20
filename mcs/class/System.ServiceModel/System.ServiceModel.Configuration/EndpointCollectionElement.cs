@@ -62,7 +62,12 @@ namespace System.ServiceModel.Configuration
 		public abstract ReadOnlyCollection<StandardEndpointElement> ConfiguredEndpoints { get; }
 
 		public string EndpointName {
-			get { throw new NotImplementedException (); }
+			get {
+				foreach (ExtensionElement el in ConfigUtil.StandardEndpointsSection.Properties)
+					if (EndpointType.FullName == el.Type)
+						return el.Name;
+				throw new InvalidOperationException (String.Format ("This EndpointCollectionElement '{0}' is not found in the configuration", GetType ()));
+			}
 		}
 
 		public abstract Type EndpointType { get; }

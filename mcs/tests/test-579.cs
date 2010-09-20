@@ -1,17 +1,24 @@
-using System;
-using System.Reflection;
+// Compiler options: -warnaserror
 
-class X {
-	delegate object test (MethodInfo x);
+public class TestCase
+{
+	static int Main ()
+	{
+		int i = 0;
+		{
+			goto A;
+			A:
+				i += 3;
+		}
+		{
+			goto A;
+			A:
+				i *= 4;
+		}
 		
-	static void Main ()
-	{
-		DoCall (delegate(MethodInfo from) {
-                    return from.Invoke (null, new object[] { from });
-                });
-	}
-
-	static void DoCall (test t)
-	{
+		if (i != 12)
+			return 1;
+			
+		return 0;
 	}
 }

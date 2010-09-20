@@ -62,7 +62,7 @@ namespace System.ServiceModel.Configuration
 		where TEndpointConfiguration : StandardEndpointElement, new()
 	{
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty endpoints = new ConfigurationProperty ("endpoints",
+		static ConfigurationProperty endpoints = new ConfigurationProperty ("",
 				typeof (StandardEndpointElementCollection<TEndpointConfiguration>), null, null, null,
 				ConfigurationPropertyOptions.IsDefaultCollection);
 
@@ -74,11 +74,18 @@ namespace System.ServiceModel.Configuration
 		void FillProperties (ConfigurationPropertyCollection baseProps)
 		{
 			properties = new ConfigurationPropertyCollection ();
+			foreach (ConfigurationProperty prop in baseProps)
+				properties.Add (prop);
 			properties.Add (endpoints);
 		}
 		
 		public override ReadOnlyCollection<StandardEndpointElement> ConfiguredEndpoints {
-			get { throw new NotImplementedException (); }
+			get {
+				var l = new List<StandardEndpointElement> ();
+				foreach (StandardEndpointElement e in Endpoints)
+					l.Add (e);
+				return new ReadOnlyCollection<StandardEndpointElement> (l);
+			}
 		}
 
 		[ConfigurationPropertyAttribute("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
@@ -102,12 +109,15 @@ namespace System.ServiceModel.Configuration
 
 		public override bool ContainsKey (string name)
 		{
-			throw new NotImplementedException ();
+			foreach (StandardEndpointElement e in Endpoints)
+				if (e.Name == name)
+					return true;
+			return false;
 		}
 		
 		protected internal override StandardEndpointElement GetDefaultStandardEndpointElement ()
 		{
-			throw new NotImplementedException ();
+			return (StandardEndpointElement) Activator.CreateInstance (typeof (TEndpointConfiguration));
 		}
 		
 		protected internal override bool TryAdd (string name, ServiceEndpoint endpoint, ConfigurationType config)

@@ -71,6 +71,8 @@ namespace Mono.CSharp
 		/// </summary>
 		public bool HasReturnLabel;
 
+		public int FlowOffset;
+
 		public BlockContext (IMemberContext mc, ExplicitBlock block, TypeSpec returnType)
 			: base (mc)
 		{
@@ -81,6 +83,16 @@ namespace Mono.CSharp
 
 			// TODO: check for null value
 			CurrentBlock = block;
+		}
+
+		public BlockContext (ResolveContext rc, ExplicitBlock block, TypeSpec returnType)
+			: this (rc.MemberContext, block, returnType)
+		{
+			if (rc.IsUnsafe)
+				flags |= ResolveContext.Options.UnsafeScope;
+
+			if (rc.HasSet (ResolveContext.Options.CheckedScope))
+				flags |= ResolveContext.Options.CheckedScope;
 		}
 
 		public override FlowBranching CurrentBranching {
@@ -130,14 +142,14 @@ namespace Mono.CSharp
 			return branching;
 		}
 
-		public FlowBranchingIterator StartFlowBranching (Iterator iterator)
+		public FlowBranchingIterator StartFlowBranching (Iterator iterator, FlowBranching parent)
 		{
-			FlowBranchingIterator branching = new FlowBranchingIterator (CurrentBranching, iterator);
+			FlowBranchingIterator branching = new FlowBranchingIterator (parent, iterator);
 			current_flow_branching = branching;
 			return branching;
 		}
 
-		public FlowBranchingToplevel StartFlowBranching (ToplevelBlock stmt, FlowBranching parent)
+		public FlowBranchingToplevel StartFlowBranching (ParametersBlock stmt, FlowBranching parent)
 		{
 			FlowBranchingToplevel branching = new FlowBranchingToplevel (parent, stmt);
 			current_flow_branching = branching;
@@ -236,6 +248,8 @@ namespace Mono.CSharp
 
 			ConstructorScope = 1 << 11,
 
+			UsingInitializerScope = 1 << 12,
+
 			/// <summary>
 			///   Whether control flow analysis is enabled
 			/// </summary>
@@ -298,7 +312,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		Options flags;
+		protected Options flags;
 
 		//
 		// Whether we are inside an anonymous method.
@@ -411,7 +425,7 @@ namespace Mono.CSharp
 			return my_this;
 		}
 
-		public bool MustCaptureVariable (LocalInfo local)
+		public bool MustCaptureVariable (INamedBlockVariable local)
 		{
 			if (CurrentAnonymousMethod == null)
 				return false;
@@ -421,7 +435,7 @@ namespace Mono.CSharp
 			if (CurrentAnonymousMethod.IsIterator)
 				return true;
 
-			return local.Block.Toplevel != CurrentBlock.Toplevel;
+			return local.Block.ParametersBlock != CurrentBlock.ParametersBlock.Original;
 		}
 
 		public bool HasSet (Options options)
@@ -502,7 +516,6 @@ namespace Mono.CSharp
 	public class CloneContext
 	{
 		Dictionary<Block, Block> block_map = new Dictionary<Block, Block> ();
-		Dictionary<LocalInfo, LocalInfo> variable_map;
 
 		public void AddBlockMap (Block from, Block to)
 		{
@@ -530,25 +543,6 @@ namespace Mono.CSharp
 
 			return mapped_to;
 		}
-
-		public void AddVariableMap (LocalInfo from, LocalInfo to)
-		{
-			if (variable_map == null)
-				variable_map = new Dictionary<LocalInfo, LocalInfo> ();
-			else if (variable_map.ContainsKey (from))
-				return;
-
-			variable_map[from] = to;
-		}
-
-		public LocalInfo LookupVariable (LocalInfo from)
-		{
-			try {
-				return variable_map[from];
-			} catch (KeyNotFoundException) {
-				throw new Exception ("LookupVariable: looking up a variable that has not been registered yet");
-			}
-		}
 	}
 
 	//
@@ -558,11 +552,22 @@ namespace Mono.CSharp
 	{
 		readonly Report report;
 		readonly ReflectionMetaImporter meta_importer;
+		readonly PredefinedAttributes attributes;
+		readonly GlobalRootNamespace root;
 
 		public CompilerContext (ReflectionMetaImporter metaImporter, Report report)
 		{
 			this.meta_importer = metaImporter;
 			this.report = report;
+
+			this.attributes = new PredefinedAttributes ();
+			this.root = new GlobalRootNamespace ();
+		}
+
+		public GlobalRootNamespace GlobalRootNamespace {
+			get {
+				return root;
+			}
 		}
 
 		public bool IsRuntimeBinder { get; set; }
@@ -573,15 +578,17 @@ namespace Mono.CSharp
 			}
 		}
 
+		public PredefinedAttributes PredefinedAttributes {
+			get {
+				return attributes;
+			}
+		}
+
 		public Report Report {
 			get {
 				return report;
 			}
 		}
-
-		//public PredefinedAttributes PredefinedAttributes {
-		//    get { throw new NotImplementedException (); }
-		//}
 	}
 
 	//

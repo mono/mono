@@ -45,9 +45,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-#if !MONOTOUCH
+#if !MOBILE
 using System.EnterpriseServices;
-#endif // !MONOTOUCH
+#endif
 using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
@@ -482,13 +482,13 @@ namespace System.Data.SqlClient
 			}
 		}
 
-#if !MONOTOUCH
+#if !MOBILE
 		[MonoTODO ("Not sure what this means at present.")]
 		public void EnlistDistributedTransaction (ITransaction transaction)
 		{
 			throw new NotImplementedException ();
 		}
-#endif // !MONOTOUCH
+#endif
 
 		object ICloneable.Clone ()
 		{

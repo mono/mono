@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using NUnit.Framework;
 
 using System;
@@ -213,7 +211,6 @@ namespace MonoTests.System
 		}
 
 		[Test] // TryCreate (Uri, String, Uri)
-		[Category ("NotWorking")]
 		public void TryCreate2 ()
 		{
 			Uri baseUri = new Uri (absolute);
@@ -253,7 +250,6 @@ namespace MonoTests.System
 		}
 
 		[Test] // TryCreate (Uri, Uri, Uri)
-		[Category ("NotWorking")]
 		public void TryCreate3 ()
 		{
 			Uri baseUri = new Uri (absolute);
@@ -292,8 +288,16 @@ namespace MonoTests.System
 			Uri baseUri = new Uri (absolute);
 			try {
 				Uri.TryCreate (baseUri, (Uri) null, out uri);
-				Assert.Fail ();
-			} catch (NullReferenceException) {
+#if NET_4_0
+				Assert.IsNull (uri);
+#else
+				Assert.Fail ("throw NRE under FX 2.0");
+#endif
+			}
+			catch (NullReferenceException) {
+#if NET_4_0
+				Assert.Fail ("does not throw NRE under FX 4.0");
+#endif
 			}
 		}
 
@@ -410,8 +414,14 @@ namespace MonoTests.System
 			try {
 				http.IsBaseOf (null);
 				Assert.Fail ();
-			} catch (NullReferenceException) {
 			}
+#if NET_4_0
+			catch (ArgumentNullException) {
+			}
+#else
+			catch (NullReferenceException) {
+			}
+#endif
 		}
 
 		[Test] 
@@ -463,32 +473,26 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=299942
-		public void MakeRelativeUri_Uri_Null_Mono ()
+		public void MakeRelativeUri_Uri_Null ()
 		{
 			Uri uri = new Uri ("http://test.com");
 			try {
 				uri.MakeRelativeUri ((Uri) null);
 				Assert.Fail ("#1");
-			} catch (ArgumentNullException ex) {
+			}
+#if NET_4_0
+			catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("uri", ex.ParamName, "#6");
 			}
-		}
-
-		[Test]
-		[Category ("NotWorking")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=299942
-		public void MakeRelativeUri_Uri_Null_MS ()
-		{
-			Uri uri = new Uri ("http://test.com");
-			try {
-				uri.MakeRelativeUri ((Uri) null);
-				Assert.Fail ("#1");
-			} catch (NullReferenceException) {
+#else
+			catch (NullReferenceException) {
+				// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=299942
 			}
+#endif
 		}
 
 		[Test] // LAMESPEC: see bug #321113
@@ -623,4 +627,3 @@ namespace MonoTests.System
 	}
 }
 
-#endif

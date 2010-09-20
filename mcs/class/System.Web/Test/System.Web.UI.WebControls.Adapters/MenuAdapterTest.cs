@@ -58,6 +58,9 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 		{
 			p = new Page ();
 			c = new MyMenu ();
+#if NET_4_0
+			c.RenderingMode = MenuRenderingMode.Table;
+#endif
 			a = new MyMenuAdapter (c);
 			p.Controls.Add(c);
 			sw = new StringWriter ();

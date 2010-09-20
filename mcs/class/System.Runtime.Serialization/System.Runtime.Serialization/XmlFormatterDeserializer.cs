@@ -195,7 +195,21 @@ namespace System.Runtime.Serialization
 			string clrns = ns.StartsWith (dnsb, StringComparison.Ordinal) ?  ns.Substring (dnsb.Length) : ns;
 
 			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
-				foreach (var t in ass.GetTypes ()) {
+				Type [] types;
+
+#if MOONLIGHT
+				try  {
+					types = ass.GetTypes ();
+				} catch (System.Reflection.ReflectionTypeLoadException rtle) {
+					types = rtle.Types;
+				}
+#else
+				types = ass.GetTypes ();
+#endif
+				if (types == null)
+					continue;
+
+				foreach (var t in types) {
 					// there can be null entries or exception throw to access the attribute - 
 					// at least when some referenced assemblies could not be loaded (affects moonlight)
 					if (t == null)

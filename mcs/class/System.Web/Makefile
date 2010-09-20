@@ -73,6 +73,9 @@ RESOURCE_FILES_2 = \
 	System.Web.UI.WebControls/TreeView.js \
 	System.Web.UI.WebControls/Menu.js
 
+RESOURCE_FILES_4 = \
+	System.Web.UI.WebControls/MenuModern.js
+
 OTHER_RES = $(RESOURCE_FILES_1)
 TEST_APP_CODE_FILES = \
 	Test/mainsoft/NunitWebResources/App_Code/EnumConverterControl.cs \
@@ -247,6 +250,7 @@ endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
+OTHER_RES += $(RESOURCE_FILES_4)
 endif
 
 LIB_MCS_FLAGS = \
@@ -291,6 +295,7 @@ TEST_MCS_FLAGS += -r:System.Web.Extensions.dll
 endif
 
 EXTRA_DISTFILES = \
+	$(RESOURCE_FILES_4) \
 	$(RESOURCE_FILES_2) \
 	$(RESOURCE_FILES_1) \
 	$(TEST_RESOURCE_FILES) \

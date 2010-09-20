@@ -158,20 +158,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 					IgnorePrivateMembers = false
 				};
 
-				var core_types = Compiler.TypeManager.InitCoreTypes ();
-				importer.Initialize ();
-
-				// I don't think dynamically loaded assemblies can be used as dynamic
-				// expression without static type to be loaded first
-				// AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => { throw new NotImplementedException (); };
-
-				// Import all currently loaded assemblies
-				var ns = Compiler.GlobalRootNamespace.Instance;
-				foreach (System.Reflection.Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) {
-					ns.AddAssemblyReference (a);
-					importer.ImportAssembly (a, ns);
-				}
-
 				var reporter = new Compiler.Report (ErrorPrinter.Instance) {
 					WarningLevel = 0
 				};
@@ -180,8 +166,29 @@ namespace Microsoft.CSharp.RuntimeBinder
 					IsRuntimeBinder = true
 				};
 
-				Compiler.TypeManager.InitCoreTypes (cc, core_types);
-				Compiler.TypeManager.InitOptionalCoreTypes (cc);
+				IList<Compiler.PredefinedTypeSpec> core_types = null;
+				// HACK: To avoid re-initializing static TypeManager types, like string_type
+				if (!Compiler.RootContext.EvalMode) {
+					core_types = Compiler.TypeManager.InitCoreTypes ();
+				}
+
+				importer.Initialize ();
+
+				// I don't think dynamically loaded assemblies can be used as dynamic
+				// expression without static type to be loaded first
+				// AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => { throw new NotImplementedException (); };
+
+				// Import all currently loaded assemblies
+				var ns = cc.GlobalRootNamespace;
+				foreach (System.Reflection.Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) {
+					ns.AddAssemblyReference (a);
+					importer.ImportAssembly (a, ns);
+				}
+
+				if (!Compiler.RootContext.EvalMode) {
+					Compiler.TypeManager.InitCoreTypes (cc, core_types);
+					Compiler.TypeManager.InitOptionalCoreTypes (cc);
+				}
 
 				dc = new DynamicContext (cc);
 			}

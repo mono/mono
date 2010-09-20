@@ -98,6 +98,7 @@ System.ServiceModel.Configuration/ServiceModelSectionGroupTest.cs
 System.ServiceModel.Configuration/StandardBindingCollectionElementTest.cs
 System.ServiceModel.Configuration/StandardBindingElementCollectionTest.cs
 System.ServiceModel.Configuration/StandardBindingElementTest.cs
+System.ServiceModel.Configuration/StandardEndpointsSectionTest.cs
 System.ServiceModel.Configuration/UserBinding.cs
 System.ServiceModel.Description/ClientCredentialsTest.cs
 System.ServiceModel.Description/ContractDescriptionTest.cs
@@ -111,6 +112,7 @@ System.ServiceModel.Description/ServiceCredentialsTest.cs
 System.ServiceModel.Description/ServiceDebugBehaviorTest.cs
 System.ServiceModel.Description/ServiceEndpointTest.cs
 System.ServiceModel.Description/ServiceMetadataBehaviorTest.cs
+System.ServiceModel.Description/ServiceMetadataEndpointTest.cs
 System.ServiceModel.Description/ServiceThrottlingBehaviorTest.cs
 System.ServiceModel.Description/TypedMessageConverterTest.cs
 System.ServiceModel.Description/WsdlExporterTest.cs

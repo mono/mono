@@ -79,6 +79,14 @@ namespace System.ServiceModel.Configuration
 			get { return (ExtensionElementCollection) base ["bindingExtensions"]; }
 		}
 
+#if NET_4_0
+		[ConfigurationProperty ("endpointExtensions",
+			 Options = ConfigurationPropertyOptions.None)]
+		public ExtensionElementCollection EndpointExtensions {
+			get { return (ExtensionElementCollection) base ["endpointExtensions"]; }
+		}
+#endif
+
 		protected override ConfigurationPropertyCollection Properties {
 			get {
 				if (_properties == null) {
@@ -86,6 +94,9 @@ namespace System.ServiceModel.Configuration
 					_properties.Add (new ConfigurationProperty ("behaviorExtensions", typeof (ExtensionElementCollection), null, null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("bindingElementExtensions", typeof (ExtensionElementCollection), null, null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("bindingExtensions", typeof (ExtensionElementCollection), null, null, null, ConfigurationPropertyOptions.None));
+#if NET_4_0
+					_properties.Add (new ConfigurationProperty ("endpointExtensions", typeof (ExtensionElementCollection), null, null, null, ConfigurationPropertyOptions.None));
+#endif
 				}
 				return _properties;
 			}
@@ -95,6 +106,9 @@ namespace System.ServiceModel.Configuration
 			InitializeBehaviorExtensionsDefault ();
 			InitializeBindingElementExtensionsDefault ();
 			InitializeBindingExtensionsDefault ();
+#if NET_4_0
+			InitializeEndpointExtensionsDefault ();
+#endif
 		}
 
 		void InitializeBindingExtensionsDefault () {
@@ -157,6 +171,11 @@ namespace System.ServiceModel.Configuration
 			BehaviorExtensions.Add (new ExtensionElement ("transactedBatching", typeof (TransactedBatchingElement).AssemblyQualifiedName));
 		}
 
+#if NET_4_0
+		void InitializeEndpointExtensionsDefault () {
+			EndpointExtensions.Add (new ExtensionElement ("mexEndpoint", typeof (ServiceMetadataEndpointCollectionElement).AssemblyQualifiedName));
+		}
+#endif
 	}
 
 }

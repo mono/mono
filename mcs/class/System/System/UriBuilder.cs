@@ -4,7 +4,7 @@
 // Author:
 //   Lawrence Pit (loz@cable.a2000.nl)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -53,26 +53,59 @@ namespace System
 		// Constructors
 		
 		public UriBuilder ()
-#if NET_2_0
-			: this (Uri.UriSchemeHttp, "localhost")
-#else
-			: this (Uri.UriSchemeHttp, "loopback")
-#endif
 		{
+			Initialize (Uri.UriSchemeHttp, "localhost", -1, String.Empty, String.Empty);
 		}
 
-		public UriBuilder (string uri) : this (new Uri (uri))
+		public UriBuilder (string uri)
 		{
+			if (uri == null)
+				throw new ArgumentNullException ("uriString");
+
+			Uri u = null;
+			if (Uri.TryCreate (uri, UriKind.Absolute, out u)) {
+				Initialize (u);
+			} else if (!uri.Contains (Uri.SchemeDelimiter)) {
+				// second chance, UriBuilder parsing is more forgiving than Uri
+				Initialize (new Uri (Uri.UriSchemeHttp + Uri.SchemeDelimiter + uri));
+			} else
+				throw new UriFormatException ();
 		}
 		
 		public UriBuilder (Uri uri)
 		{
-			scheme = uri.Scheme;
-			host = uri.Host;
-			port = uri.Port;
-			path = uri.AbsolutePath;
-			query = uri.Query;
+#if NET_4_0
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+#endif
+			Initialize (uri);
+		}
+		
+		public UriBuilder (string schemeName, string hostName) 
+		{
+			Initialize (schemeName, hostName, -1, String.Empty, String.Empty);
+		}
+
+		public UriBuilder (string scheme, string hostName, int portNumber) 
+		{
+			Initialize (scheme, hostName, portNumber, String.Empty, String.Empty);
+		}
+		
+		public UriBuilder (string scheme, string host, int port, string pathValue)
+		{
+			Initialize (scheme, host, port, pathValue, String.Empty);
+		}
+
+		public UriBuilder (string scheme, string host, int port, string pathValue, string extraValue)
+		{
+			Initialize (scheme, host, port, pathValue, extraValue);
+		}
+
+		private void Initialize (Uri uri)
+		{
+			Initialize (uri.Scheme, uri.Host, uri.Port, uri.AbsolutePath, String.Empty);
 			fragment = uri.Fragment;
+			query = uri.Query;
 			username = uri.UserInfo;
 			int pos = username.IndexOf (':');
 			if (pos != -1) {
@@ -81,48 +114,32 @@ namespace System
 			} else {
 				password = String.Empty;
 			}
-			modified = true;
 		}
-		
-		public UriBuilder (string schemeName, string hostName) 
+
+		private void Initialize (string scheme, string host, int port, string pathValue, string extraValue)
 		{
-			Scheme = schemeName;
-			Host = hostName;
-			port = -1;
-			Path = String.Empty;   // dependent on scheme it may set path to "/"
+			modified = true;
+
+			Scheme = scheme;
+			Host = host;
+			Port = port;
+			Path = pathValue;
 			query = String.Empty;
 			fragment = String.Empty;
+			Path = pathValue;
 			username = String.Empty;
 			password = String.Empty;
-			modified = true;
-		}
-		
-		public UriBuilder (string scheme, string host, int portNumber) 
-			: this (scheme, host)
-		{
-			Port = portNumber;
-		}
-		
-		public UriBuilder (string scheme, string host, int port, string pathValue)
-			: this (scheme, host, port)
-		{
-			Path = pathValue;
-		}
 
-		public UriBuilder (string scheme, string host, int port, string pathValue, string extraValue)
-			: this (scheme, host, port, pathValue)
-		{
-			if (extraValue == null || extraValue.Length == 0)
+			if (String.IsNullOrEmpty (extraValue))
 				return;
-				
-			if (extraValue [0] == '#') 
+
+			if (extraValue [0] == '#')
 				Fragment = extraValue.Remove (0, 1);
-			else if (extraValue [0] == '?') 
+			else if (extraValue [0] == '?')
 				Query = extraValue.Remove (0, 1);
-			else 
+			else
 				throw new ArgumentException ("extraValue");
 		}
-
 		
 		// Properties
 		
@@ -133,11 +150,7 @@ namespace System
 				if (fragment == null)
 					fragment = String.Empty;
 				else if (fragment.Length > 0)
-//					fragment = "#" + EncodeUtf8 (value.Replace ("%23", "#"));
 					fragment = "#" + value.Replace ("%23", "#");
-#if !NET_2_0
-				query = String.Empty;
-#endif
 				modified = true;
 			}
 		}
@@ -145,7 +158,13 @@ namespace System
 		public string Host {
 			get { return host; }
 			set {
-				host = (value == null) ? String.Empty : value;;
+				if (String.IsNullOrEmpty (value))
+					host = String.Empty;
+				else if ((value.IndexOf (':') != -1) && (value [0] != '[')) {
+					host = "[" + value + "]";
+				} else {
+					host = value;
+				}
 				modified = true;
 			}
 		}
@@ -153,8 +172,7 @@ namespace System
 		public string Password {
 			get { return password; }
 			set {
-				password = (value == null) ? String.Empty : value;;
-				modified = true;
+				password = (value == null) ? String.Empty : value;
 			}
 		}
 		
@@ -164,7 +182,7 @@ namespace System
 				if (value == null || value.Length == 0) {
 					path = "/";
 				} else {
-					path = Uri.EscapeString (value.Replace ('\\', '/'), false, true, true);
+					path = Uri.EscapeString (value.Replace ('\\', '/'), Uri.EscapeCommonHexBracketsQuery);
 				}
 				modified = true;
 			}
@@ -173,13 +191,8 @@ namespace System
 		public int Port {
 			get { return port; }
 			set {
-#if NET_2_0
 				if (value < -1)
 					throw new ArgumentOutOfRangeException ("value");
-#else
-				if (value < 0)
-					throw new ArgumentOutOfRangeException ("value");
-#endif
 				// apparently it is
 				port = value;
 				modified = true;
@@ -195,11 +208,7 @@ namespace System
 				if (value == null || value.Length == 0)
 					query = String.Empty;
 				else
-//					query = "?" + EncodeUtf8 (value);
 					query = "?" + value;
-#if !NET_2_0
-				fragment = String.Empty;
-#endif
 				modified = true;
 			}
 		}
@@ -222,6 +231,9 @@ namespace System
 				if (!modified) 
 					return uri;
 				uri = new Uri (ToString (), true);
+				// some properties are updated once the Uri is created - see unit tests
+				host = uri.Host;
+				path = uri.AbsolutePath;
 				modified = false;
 				return uri;
 			}
@@ -230,7 +242,7 @@ namespace System
 		public string UserName {
 			get { return username; }
 			set {
-				username = (value == null) ? String.Empty : value;;
+				username = (value == null) ? String.Empty : value;
 				modified = true;
 			}
 		}
@@ -252,7 +264,8 @@ namespace System
 			StringBuilder builder = new StringBuilder ();
 
 			builder.Append (scheme);
-			builder.Append ("://");
+			// note: mailto and news use ':', not "://", as their delimiter
+			builder.Append (Uri.GetSchemeDelimiter (scheme));
 
 			if (username != String.Empty) {
 				builder.Append (username);
@@ -261,9 +274,11 @@ namespace System
 				builder.Append ('@');
 			}
 
-			builder.Append (host);
-			if (port > 0)
-				builder.Append (":" + port);
+			if (host.Length > 0) {
+				builder.Append (host);
+				if (port > 0)
+					builder.Append (":" + port);
+			}
 
 			if (path != String.Empty &&
 			    builder [builder.Length - 1] != '/' &&

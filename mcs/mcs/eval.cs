@@ -129,10 +129,11 @@ namespace Mono.CSharp {
 				
 				CompilerCallableEntryPoint.Reset ();
 				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
-				/*var ctypes = */TypeManager.InitCoreTypes ();
+				var ctypes = TypeManager.InitCoreTypes ();
 
 				ctx.MetaImporter.Initialize ();
 				driver.LoadReferences ();
+				TypeManager.InitCoreTypes (ctx, ctypes);
 				TypeManager.InitOptionalCoreTypes (ctx);
 
 				RootContext.EvalMode = true;
@@ -152,27 +153,8 @@ namespace Mono.CSharp {
 			CompilerCallableEntryPoint.PartialReset ();
 			RootContext.PartialReset ();
 			
-			// Workaround for API limitation where full message printer cannot be passed
-			ReportPrinter printer;
-			if (MessageOutput == Console.Out || MessageOutput == Console.Error){
-				var console_reporter = new ConsoleReportPrinter (MessageOutput);
-				console_reporter.Fatal = driver.fatal_errors;
-				printer = console_reporter;
-			} else
-				printer = new StreamReportPrinter (MessageOutput);
-
-			ctx = new CompilerContext (new ReflectionMetaImporter (), new Report (printer));
 			RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 
-			ctx.MetaImporter.Initialize ();
-
-			//
-			// PartialReset should not reset the core types, this is very redundant.
-			//
-//			if (!TypeManager.InitCoreTypes (ctx, null))
-//				throw new Exception ("Failed to InitCoreTypes");
-//			TypeManager.InitOptionalCoreTypes (ctx);
-			
 			Location.AddFile (null, "{interactive}");
 			Location.Initialize ();
 
@@ -445,7 +427,7 @@ namespace Mono.CSharp {
 					BlockContext bc = new BlockContext (method, method.Block, method.ReturnType);
 
 					try {
-						method.Block.Resolve (null, bc, method.ParameterInfo, method);
+						method.Block.Resolve (null, bc, method);
 					} catch (CompletionResult cr){
 						prefix = cr.BaseText;
 						return cr.Result;
@@ -744,7 +726,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			RootContext.CloseTypes ();
+			RootContext.CloseTypes (ctx);
 
 			if (Environment.GetEnvironmentVariable ("SAVE") != null)
 				CodeGen.Save (current_debug_name, false, Report);
@@ -897,7 +879,7 @@ namespace Mono.CSharp {
 		{
 			lock (evaluator_lock){
 				driver.LoadAssembly (file, false);
-				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
+				ctx.GlobalRootNamespace.ComputeNamespaces (ctx);
 			}
 		}
 
@@ -909,7 +891,7 @@ namespace Mono.CSharp {
 			lock (evaluator_lock){
 //				GlobalRootNamespace.Instance.AddAssemblyReference (a);
 //				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
-				ctx.MetaImporter.ImportAssembly (a, GlobalRootNamespace.Instance);
+				ctx.MetaImporter.ImportAssembly (a, ctx.GlobalRootNamespace);
 			}
 		}
 
@@ -1105,56 +1087,20 @@ namespace Mono.CSharp {
 #endif
 	}
 
-	//
-	// A local variable reference that will create a Field in a
-	// Class with the resolved type.  This is necessary so we can
-	// support "var" as a field type in a class declaration.
-	//
-	// We allow LocalVariableReferece to do the heavy lifting, and
-	// then we insert the field with the resolved type
-	//
-	public class LocalVariableReferenceWithClassSideEffect : LocalVariableReference {
-		TypeContainer container;
-		string name;
-		
-		public LocalVariableReferenceWithClassSideEffect (TypeContainer container, string name, Block current_block, string local_variable_id, LocalInfo li, Location loc)
-			: base (current_block, local_variable_id, loc, li, false)
+	class HoistedEvaluatorVariable : HoistedVariable
+	{
+		public HoistedEvaluatorVariable (Field field)
+			: base (null, field)
 		{
-			this.container = container;
-			this.name = name;
 		}
 
-		public override bool Equals (object obj)
+		public override void EmitSymbolInfo ()
 		{
-			LocalVariableReferenceWithClassSideEffect lvr = obj as LocalVariableReferenceWithClassSideEffect;
-			if (lvr == null)
-				return false;
-
-			if (lvr.name != name || lvr.container != container)
-				return false;
-
-			return base.Equals (obj);
 		}
 
-		public override int GetHashCode ()
+		protected override FieldExpr GetFieldExpression (EmitContext ec)
 		{
-			return name.GetHashCode ();
-		}
-		
-		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
-		{
-			Expression ret = base.DoResolveLValue (ec, right_side);
-			if (ret == null)
-				return null;
-
-			Field f = new Field (container, new TypeExpression (ret.Type, Location),
-					     Modifiers.PUBLIC | Modifiers.STATIC,
-					     new MemberName (name, Location), null);
-			container.AddField (f);
-			if (f.Define ())
-				Evaluator.QueueField (f);
-			
-			return ret;
+			return new FieldExpr (field, field.Location);
 		}
 	}
 
@@ -1204,31 +1150,11 @@ namespace Mono.CSharp {
 			}
 	
 			// This means its really a statement.
-			if (clone.Type == TypeManager.void_type){
-				source = source.Resolve (ec);
-				target = null;
-				type = TypeManager.void_type;
-				eclass = ExprClass.Value;
-				return this;
+			if (clone.Type == TypeManager.void_type || clone is DynamicInvocation || clone is Assign) {
+				return clone;
 			}
 
 			return base.DoResolve (ec);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			if (target == null)
-				source.Emit (ec);
-			else
-				base.Emit (ec);
-		}
-
-		public override void EmitStatement (EmitContext ec)
-		{
-			if (target == null)
-				source.Emit (ec);
-			else
-				base.EmitStatement (ec);
 		}
 	}
 

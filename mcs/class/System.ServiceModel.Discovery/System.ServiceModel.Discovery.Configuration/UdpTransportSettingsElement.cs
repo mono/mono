@@ -44,6 +44,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			max_received_message_size = new ConfigurationProperty ("maxReceivedMessageSize", typeof (long), 0xFFE7, null, new LongValidator (0, long.MaxValue), ConfigurationPropertyOptions.None);
 			max_unicast_retransmit_count = new ConfigurationProperty ("maxUnicastRetransmitCount", typeof (long), 1, null, new IntegerValidator (0, int.MaxValue), ConfigurationPropertyOptions.None);
 			multicast_interface_id = new ConfigurationProperty ("multicastInterfaceId", typeof (string), null, null, null, ConfigurationPropertyOptions.None);
+			socket_receive_buffer_size = new ConfigurationProperty ("socketReceiveBufferSize", typeof (int), 0x10000, null, new IntegerValidator (0, int.MaxValue), ConfigurationPropertyOptions.None);
 			ttl = new ConfigurationProperty ("timeToLive", typeof (int), 1, null, new IntegerValidator (0, int.MaxValue), ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 			ConfigurationProperty [] props = {duplicate_message_history_length, max_buffer_pool_size, max_multicast_retransmit_count, max_pending_message_count, max_received_message_size, max_unicast_retransmit_count, multicast_interface_id, ttl};
@@ -115,6 +116,36 @@ namespace System.ServiceModel.Discovery.Configuration
 		public int TimeToLive {
 			get { return (int) base [ttl]; }
 			set { base [ttl] = value; }
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+
+		internal void ApplyConfiguration (UdpTransportSettings t)
+		{
+			t.DuplicateMessageHistoryLength = DuplicateMessageHistoryLength;
+			t.MaxBufferPoolSize = MaxBufferPoolSize;
+			t.MaxMulticastRetransmitCount = MaxMulticastRetransmitCount;
+			t.MaxPendingMessageCount = MaxPendingMessageCount;
+			t.MaxReceivedMessageSize = MaxReceivedMessageSize;
+			t.MaxUnicastRetransmitCount = MaxUnicastRetransmitCount;
+			t.MulticastInterfaceId = MulticastInterfaceId;
+			t.SocketReceiveBufferSize = SocketReceiveBufferSize;
+			t.TimeToLive = TimeToLive;
+		}
+
+		internal void InitializeFrom (UdpTransportSettings t)
+		{
+			DuplicateMessageHistoryLength = t.DuplicateMessageHistoryLength;
+			MaxBufferPoolSize = t.MaxBufferPoolSize;
+			MaxMulticastRetransmitCount = t.MaxMulticastRetransmitCount;
+			MaxPendingMessageCount = t.MaxPendingMessageCount;
+			MaxReceivedMessageSize = t.MaxReceivedMessageSize;
+			MaxUnicastRetransmitCount = t.MaxUnicastRetransmitCount;
+			MulticastInterfaceId = t.MulticastInterfaceId;
+			SocketReceiveBufferSize = t.SocketReceiveBufferSize;
+			TimeToLive = t.TimeToLive;
 		}
 	}
 }

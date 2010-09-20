@@ -1,7 +1,8 @@
-// cs0575.cs: Only class types can contain destructor
-// Line: 5
-struct X  {
+// CS0575: Only class types can contain destructor
+// Line: 10
 
+struct X
+{
 	~X ()
 	{
 	}
@@ -9,6 +10,4 @@ struct X  {
 	static void Main ()
 	{
 	}
-}
-
 }

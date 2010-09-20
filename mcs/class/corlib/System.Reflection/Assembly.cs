@@ -51,7 +51,7 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
-#if MONOTOUCH
+#if MOBILE
 	public partial class Assembly : ICustomAttributeProvider, _Assembly {
 #elif MOONLIGHT
 	public abstract class Assembly : ICustomAttributeProvider, _Assembly {

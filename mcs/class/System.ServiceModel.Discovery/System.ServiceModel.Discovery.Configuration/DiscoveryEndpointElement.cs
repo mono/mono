@@ -78,35 +78,58 @@ namespace System.ServiceModel.Discovery.Configuration
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-
+		
 		protected override ServiceEndpoint CreateServiceEndpoint (ContractDescription contractDescription)
 		{
-			throw new NotImplementedException ();
+			if (contractDescription == null)
+				throw new ArgumentNullException ("contractDescription");
+			var ret = new DiscoveryEndpoint (DiscoveryVersion, DiscoveryMode) { MaxResponseDelay = this.MaxResponseDelay };
+			if (ret.Contract.ContractType != contractDescription.ContractType)
+				throw new ArgumentException ("The argument contractDescription does not represent the expected Discovery contract");
+			return ret;
 		}
-
+		
 		protected override void InitializeFrom (ServiceEndpoint endpoint)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			var de = (DiscoveryEndpoint) endpoint;
+			DiscoveryVersion = de.DiscoveryVersion;
+			MaxResponseDelay = de.MaxResponseDelay;
 		}
 		
 		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ChannelEndpointElement serviceEndpointElement)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			var de = (DiscoveryEndpoint) endpoint;
+			if (!de.DiscoveryVersion.Equals (DiscoveryVersion))
+				throw new ArgumentException ("Argument DiscoveryEndpoint is initialized with different DiscoveryVersion");
+			de.MaxResponseDelay = MaxResponseDelay;
+			de.Address = serviceEndpointElement.CreateEndpointAddress (); // it depends on InternalVisibleTo(System.ServiceModel)
+			de.Binding = ConfigUtil.CreateBinding (serviceEndpointElement.Binding, serviceEndpointElement.BindingConfiguration); // it depends on InternalVisibleTo(System.ServiceModel)
 		}
-		
+
 		protected override void OnApplyConfiguration (ServiceEndpoint endpoint, ServiceEndpointElement serviceEndpointElement)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			var de = (DiscoveryEndpoint) endpoint;
+			if (!de.DiscoveryVersion.Equals (DiscoveryVersion))
+				throw new ArgumentException ("Argument AnnouncementEndpoint is initialized with different DiscoveryVersion");
+			de.MaxResponseDelay = MaxResponseDelay;
+			de.Address = serviceEndpointElement.CreateEndpointAddress (); // it depends on InternalVisibleTo(System.ServiceModel)
+			de.Binding = ConfigUtil.CreateBinding (serviceEndpointElement.Binding, serviceEndpointElement.BindingConfiguration); // it depends on InternalVisibleTo(System.ServiceModel)
 		}
 		
 		protected override void OnInitializeAndValidate (ChannelEndpointElement channelEndpointElement)
 		{
-			throw new NotImplementedException ();
+			// It seems to do nothing.
 		}
 		
 		protected override void OnInitializeAndValidate (ServiceEndpointElement channelEndpointElement)
 		{
-			throw new NotImplementedException ();
+			// It seems to do nothing.
 		}
 	}
 }

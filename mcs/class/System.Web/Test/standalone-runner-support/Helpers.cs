@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Hosting;
 
@@ -61,24 +62,9 @@ namespace StandAloneRunnerSupport
 		{
 			if (String.IsNullOrEmpty (origHtml))
 				return origHtml;
-			
+
 			// Naive approach, enough for now
-			int idx = origHtml.IndexOf (delimiter + "/WebResource.axd");
-			if (idx == -1)
-				return origHtml;
-
-			var sb = new StringBuilder ();
-			sb.Append (origHtml.Substring (0, idx));
-			sb.Append (delimiter);
-			idx++;
-			int idx2 = origHtml.IndexOf (delimiter, idx);
-			string webRes;
-			sb.Append ("/WebResource.axd");
-			
-			if (idx2 > -1)
-				sb.Append (origHtml.Substring (idx2));
-
-			return sb.ToString ();
+			return new Regex (delimiter + "/WebResource\\.axd.*?" + delimiter).Replace (origHtml, delimiter + "/WebResource.axd" + delimiter);
 		}
 
 		public static bool HasException (string html, Type exceptionType)

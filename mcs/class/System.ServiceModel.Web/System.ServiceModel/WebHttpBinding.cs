@@ -60,12 +60,11 @@ namespace System.ServiceModel
 			throw new NotImplementedException ();
 		}
 
-		XmlDictionaryReaderQuotas quotas;
 		WebHttpSecurity security = new WebHttpSecurity ();
-		Encoding write_encoding = Encoding.UTF8;
 		HttpTransportBindingElement t;
 		// This can be changed only using <synchronousReceive> configuration element.
 		bool receive_synchronously;
+		WebMessageEncodingBindingElement msgenc = new WebMessageEncodingBindingElement ();
 
 		public EnvelopeVersion EnvelopeVersion {
 			get { return EnvelopeVersion.None; }
@@ -81,6 +80,16 @@ namespace System.ServiceModel
 			get { return t.BypassProxyOnLocal; }
 			set { t.BypassProxyOnLocal = value; }
 		}
+
+#if NET_4_0
+		[MonoTODO]
+		public bool CrossDomainScriptAccessEnabled { get; set; }
+
+		public WebContentTypeMapper ContentTypeMapper {
+			get { return msgenc.ContentTypeMapper; }
+			set { msgenc.ContentTypeMapper = value; }
+		}
+#endif
 
 		public HostNameComparisonMode HostNameComparisonMode {
 			get { return t.HostNameComparisonMode; }
@@ -120,8 +129,8 @@ namespace System.ServiceModel
 
 #if !NET_2_1
 		public XmlDictionaryReaderQuotas ReaderQuotas {
-			get { return quotas; }
-			set { quotas = value; }
+			get { return msgenc.ReaderQuotas; }
+			set { msgenc.ReaderQuotas = value; }
 		}
 #endif
 
@@ -134,23 +143,17 @@ namespace System.ServiceModel
 		}
 
 		public Encoding WriteEncoding {
-			get { return write_encoding; }
+			get { return msgenc.WriteEncoding; }
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("value");
-				write_encoding = value; 
+				msgenc.WriteEncoding = value; 
 			}
 		}
 
 		public override BindingElementCollection CreateBindingElements ()
 		{
-			WebMessageEncodingBindingElement m = new WebMessageEncodingBindingElement (WriteEncoding);
-#if !NET_2_1
-			if (ReaderQuotas != null)
-				ReaderQuotas.CopyTo (m.ReaderQuotas);
-#endif
-
-			return new BindingElementCollection (new BindingElement [] { m, t.Clone () });
+			return new BindingElementCollection (new BindingElement [] { msgenc, t.Clone () });
 		}
 
 #if !NET_2_1

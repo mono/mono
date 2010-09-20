@@ -94,11 +94,25 @@ namespace System.ServiceModel.Discovery.Configuration
 
 		protected override BindingElement CreateBindingElement ()
 		{
-			throw new NotImplementedException ();
+			var be = new DiscoveryClientBindingElement ();
+			ApplyConfiguration (be);
+			return be;
 		}
 
 		protected override void InitializeFrom (BindingElement bindingElement)
 		{
+			if (bindingElement == null)
+				throw new ArgumentNullException ("bindingElement");
+			if (DiscoveryEndpoint == null)
+				throw new ArgumentNullException ("'endpoint' configuration element is missing.");
+			var be = (DiscoveryClientBindingElement) bindingElement;
+
+			base.InitializeFrom (be);
+
+			if (be.FindCriteria != null)
+				FindCriteria.InitializeFrom (be.FindCriteria);
+
+			// FIXME: initialize DiscoveryEndpoint
 			throw new NotImplementedException ();
 		}
 	}

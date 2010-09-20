@@ -1116,5 +1116,17 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (1, body.LocalVariables.Count);
 			Assert.AreEqual (typeof (object), body.LocalVariables [0].LocalType);
 		}
+
+
+		[Test] //#384127
+		public void GetGenericArgumentsReturnsNullForNonGenericMethod ()
+		{
+			var tb = module.DefineType ("Base");
+	
+			var mb = tb.DefineMethod ("foo", MethodAttributes.Public, typeof (void), Type.EmptyTypes);
+	
+			Assert.IsNull (mb.GetGenericArguments ());
+
+		}
 	}
 }

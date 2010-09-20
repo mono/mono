@@ -716,8 +716,12 @@ namespace MonoTests.System
 			Uri u1 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx");
 			Uri u2 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx");
 
-			Assert.AreEqual (u1.ToString (), "http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx", "QE1");
-			Assert.AreEqual (u2.ToString (), "http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx", "QE2");
+			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx", u1.ToString (), "QE1");
+#if NET_2_0
+			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx", u2.ToString (), "QE2");
+#else
+			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx", u2.ToString (), "QE2");
+#endif
 		}
 
 		[Test]
@@ -1476,6 +1480,18 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void CachingSegments ()
+		{
+			Uri uri = new Uri ("http://localhost/dir/dummypage.html");
+			uri.Segments [0] = uri.Segments [1] = uri.Segments [2] = "*";
+			string [] segments = uri.Segments;
+			Assert.AreEqual (3, segments.Length, "#01");
+			Assert.AreEqual ("/", segments [0], "#02");
+			Assert.AreEqual ("dir/", segments [1], "#03");
+			Assert.AreEqual ("dummypage.html", segments [2], "#04");
+		}
+
+		[Test]
 		public void Segments3 ()
 		{
 			Uri uri = new Uri ("http://localhost/dir/dummypage/");
@@ -1487,21 +1503,17 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void Segments4 ()
 		{
 			Uri uri = new Uri ("file:///c:/hello");
+
+			Assert.AreEqual ("c:/hello", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("c:\\hello", uri.LocalPath, "LocalPath");
+
 			string [] segments = uri.Segments;
 			Assert.AreEqual (3, segments.Length, "#01");
-#if NET_2_0
 			Assert.AreEqual ("/", segments [0], "#02");
 			Assert.AreEqual ("c:/", segments[1], "#03");
-#else
-			Assert.AreEqual ("c:", segments [0], "#02");
-			Assert.AreEqual ("/", segments [1], "#03");
-#endif
 			Assert.AreEqual ("hello", segments [2], "#04");
 		}
 
@@ -1652,8 +1664,12 @@ namespace MonoTests.System
 				"file:///tmp/x (%232).jpg",
 				"file:///tmp/ü (%232).jpg" };
 
-			foreach (string test in tests)
-				Assert.AreEqual (test, new Uri (test).ToString ());
+			foreach (string test in tests) {
+				Uri uri = new Uri (test);
+				Assert.IsFalse (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString/" + test);
+				Assert.AreEqual (test, uri.OriginalString, "OriginalString/" + test);
+				Assert.AreEqual (test, uri.ToString (), "ToString/" + test);
+			}
 		}
 
 		// This test doesn't work on Linux, and arguably shouldn't work.
@@ -1786,7 +1802,7 @@ namespace MonoTests.System
 			Assert.IsFalse (fileUri.IsUnc, "LocalPath_FileNameWithAtSign IsUnc");
 
 			Assert.AreEqual (fullpath, fileUri.OriginalString, "LocalPath_FileNameWithAtSign OriginalString");
-			Assert.AreEqual (path, new DerivedUri (fullpath).TestUnescape(path), "LocalPath_FileNameWithAtSign ProtectedUnescape");
+			Assert.AreEqual (path, new DerivedUri (fullpath).TestUnescape (path), "LocalPath_FileNameWithAtSign ProtectedUnescape");
 			Assert.AreEqual (path, fileUri.AbsolutePath, "LocalPath_FileNameWithAtSign AbsPath");
 			Assert.AreEqual (path, fileUri.LocalPath, "LocalPath_FileNameWithAtSign LocalPath");
 		}
@@ -1823,7 +1839,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")] // MS.NET seems not to like userinfo in a file:// uri...
 		[ExpectedException (typeof (UriFormatException))]
 		public void LocalPath_FileNameWithAtSign6 ()
 		{
@@ -1833,6 +1848,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void UnixAbsoluteFilePath_WithSpecialChars1 ()
 		{
 			Uri unixuri = new Uri ("/home/user/a@b");
@@ -1840,6 +1856,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void UnixAbsoluteFilePath_WithSpecialChars2 ()
 		{
 			Uri unixuri = new Uri ("/home/user/a:b");
@@ -1862,9 +1879,9 @@ namespace MonoTests.System
 			Assert.AreEqual ("http://media.libsyn.com/bounce/http://cdn4.libsyn.com/nerdist/somestuff.txt", uri.ToString ());
 		}
 
-		public class DerivedUri : Uri
-		{
-			public DerivedUri (string uriString) : base (uriString)
+		public class DerivedUri : Uri {
+			public DerivedUri (string uriString)
+				: base (uriString)
 			{
 			}
 

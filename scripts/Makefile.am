@@ -56,6 +56,7 @@ scripts_2_0 = \
 	csharp2$(SCRIPT_SUFFIX)			\
 	gacutil2$(SCRIPT_SUFFIX)		\
 	gmcs$(SCRIPT_SUFFIX)			\
+	mdoc$(SCRIPT_SUFFIX)                    \
 	monop2$(SCRIPT_SUFFIX) 			\
 	resgen2$(SCRIPT_SUFFIX)			\
 	wsdl2$(SCRIPT_SUFFIX)
@@ -68,7 +69,6 @@ scripts_4_0 = \
 	installvst$(SCRIPT_SUFFIX)		\
 	genxs$(SCRIPT_SUFFIX)			\
 	macpack$(SCRIPT_SUFFIX)			\
-	mdoc$(SCRIPT_SUFFIX)                    \
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
 	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
@@ -244,7 +244,7 @@ $(scripts_4_0): $(SCRIPT_IN) Makefile
 	mv -f $@.tmp $@
 
 $(scripts_mono_configuration_crypto): mono-configuration-crypto.in
-	$(REWRITE2)  -e "s,@exe_name@,mono-configuration-crypto,g" $(srcdir)/mono-configuration-crypto.in > $@.tmp
+	$(REWRITE4)  -e "s,@exe_name@,mono-configuration-crypto,g" $(srcdir)/mono-configuration-crypto.in > $@.tmp
 	mv -f $@.tmp $@
 
 $(MDOC_SUBCOMMANDS): Makefile

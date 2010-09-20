@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 
 	public static TypeSpec CoreLookupType (CompilerContext ctx, string ns_name, string name, int arity, MemberKind kind, bool required)
 	{
-		Namespace ns = GlobalRootNamespace.Instance.GetNamespace (ns_name, true);
+		Namespace ns = ctx.GlobalRootNamespace.GetNamespace (ns_name, true);
 		var te = ns.LookupType (ctx, name, arity, !required, Location.Null);
 		var ts = te == null ? null : te.Type;
 
@@ -355,7 +355,7 @@ namespace Mono.CSharp {
 				continue;
 
 			if (!RootContext.StdLib) {
-				var ns = GlobalRootNamespace.Instance.GetNamespace (p.Namespace, false);
+				var ns = ctx.GlobalRootNamespace.GetNamespace (p.Namespace, false);
 				ns.ReplaceTypeWithPredefined (found, p);
 
 				var tc = found.MemberDefinition as TypeContainer;
@@ -364,8 +364,8 @@ namespace Mono.CSharp {
 			}
 		}
 
-		PredefinedAttributes.Get.ParamArray.Initialize (ctx, false);
-		PredefinedAttributes.Get.Out.Initialize (ctx, false);
+		ctx.PredefinedAttributes.ParamArray.Initialize (ctx, false);
+		ctx.PredefinedAttributes.Out.Initialize (ctx, false);
 
 		if (InternalType.Dynamic.GetMetaInfo () == null) {
 			InternalType.Dynamic.SetMetaInfo (object_type.GetMetaInfo ());
@@ -390,7 +390,7 @@ namespace Mono.CSharp {
 		// Initialize InternalsVisibleTo as the very first optional type. Otherwise we would populate
 		// types cache with incorrect accessiblity when any of optional types is internal.
 		//
-		PredefinedAttributes.Get.Initialize (ctx);
+		ctx.PredefinedAttributes.Initialize (ctx);
 
 		runtime_argument_handle_type = CoreLookupType (ctx, "System", "RuntimeArgumentHandle", MemberKind.Struct, false);
 		asynccallback_type = CoreLookupType (ctx, "System", "AsyncCallback", MemberKind.Delegate, false);

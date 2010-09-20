@@ -325,7 +325,7 @@ namespace Mono.CSharp {
 						continue;
 				}
 
-				if (member.DeclaringType.ImplementsInterface (entry.DeclaringType)) {
+				if (member.DeclaringType.ImplementsInterface (entry.DeclaringType, false)) {
 					if (existing is MemberSpec[]) {
 						existing = new MemberSpec[] { member };
 						return true;
@@ -336,7 +336,7 @@ namespace Mono.CSharp {
 				}
 
 				if ((entry.DeclaringType == member.DeclaringType && entry.IsAccessor == member.IsAccessor) ||
-					entry.DeclaringType.ImplementsInterface (member.DeclaringType))
+					entry.DeclaringType.ImplementsInterface (member.DeclaringType, false))
 					return false;
 			}
 

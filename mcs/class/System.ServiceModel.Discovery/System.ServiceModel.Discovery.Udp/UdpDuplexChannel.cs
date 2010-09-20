@@ -99,7 +99,6 @@ namespace System.ServiceModel.Discovery
 			if (rmp == null)
 				throw new ArgumentException ("This duplex channel from the channel listener cannot send messages without RemoteEndpointMessageProperty");
 			var cli = new UdpClient ();
-Console.Error.WriteLine ("Target: " + rmp.Address + ":" + rmp.Port);
 			cli.Connect (IPAddress.Parse (rmp.Address), rmp.Port);
 			return cli;
 		}

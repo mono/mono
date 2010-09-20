@@ -349,28 +349,28 @@ namespace System.Web.UI.WebControls {
 			return new Unit (n);
 		}
 
-		string GetExtension ()
+		internal static string GetExtension (UnitType type)
 		{
 			switch (type){
-			case UnitType.Pixel: return "px";
-			case UnitType.Point: return "pt";
-			case UnitType.Pica: return "pc";
-			case UnitType.Inch: return "in";
-			case UnitType.Mm: return "mm";
-			case UnitType.Cm: return "cm";
-			case UnitType.Percentage: return "%";
-			case UnitType.Em: return "em";
-			case UnitType.Ex: return "ex";
-			default: return "";
+				case UnitType.Pixel: return "px";
+				case UnitType.Point: return "pt";
+				case UnitType.Pica: return "pc";
+				case UnitType.Inch: return "in";
+				case UnitType.Mm: return "mm";
+				case UnitType.Cm: return "cm";
+				case UnitType.Percentage: return "%";
+				case UnitType.Em: return "em";
+				case UnitType.Ex: return "ex";
+				default: return String.Empty;
 			}
 		}
 
 		public string ToString (CultureInfo culture)
 		{
 			if (type == 0)
-				return "";
+				return String.Empty;
 			
-			string ex = GetExtension ();
+			string ex = GetExtension (type);
 			
 			return value.ToString (culture) + ex;
 		}
@@ -384,9 +384,9 @@ namespace System.Web.UI.WebControls {
 		public string ToString (IFormatProvider provider)
 		{
 			if (type == 0)
-				return "";
+				return String.Empty;
 
-			string ex = GetExtension ();
+			string ex = GetExtension (type);
 
 			return value.ToString (provider) + ex;
 		}

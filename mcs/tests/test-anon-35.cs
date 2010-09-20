@@ -1,30 +1,32 @@
-//
-// This was a bug which was triggered because I removed a routine
-// inadvertently.   The routine was restored, and now the scopes
-// are initialized
-//
 using System;
-using System.Collections;
-using System.Reflection;
 
-public class CustomDict {
-	ArrayList data;
-
-	public CustomDict() { 
-		foreach (object o in this)
-			Console.WriteLine (o);
-	}
-
-	public IEnumerator GetEnumerator() {
-		if (data != null)
-			yield return 1;
-	}
-}
-
-public class Tests
+public class ExceptionWithAnonMethod
 {
+	public delegate void EmptyCallback();
+    	static string res;
+	
+	public static int Main()
+	{
+		try {
+			throw new Exception("e is afraid to enter anonymous land");
+		} catch(Exception e) {
+			AnonHandler(delegate {
+				Console.WriteLine(e.Message); 
+				res = e.Message;
+			});
+		}
+		if (res == "e is afraid to enter anonymous land"){
+		    Console.WriteLine ("Test passed");
+		    return 0;
+		}
+		Console.WriteLine ("Test failed");
+		return 1;
+	}
 
-	public static void Main () {
-		new CustomDict ();
+	public static void AnonHandler(EmptyCallback handler)
+	{
+		if(handler != null) {
+			handler();
+		}
 	}
 }

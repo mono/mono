@@ -1,38 +1,64 @@
-//
-// This is a build test: checks that the compiler does not loop
-// forever endlessly with anonymous methods
-//
 using System;
-using System.Collections;
-using System.Text;
 
-  class Space
-  { public int Value = -1;
+class A : IDisposable
+{
+	public A (int v)
+	{
+	}
+	
+	public void Dispose ()
+	{
+	}
+}
 
-    public delegate void DoCopy();
+class C
+{
+	int b;
+	
+	delegate void D (int i);
+	
+	static void Test (object arg)
+	{
+		const int a2= 9, a3 = a2, a4 = a3, a5 = a4;
+		Console.WriteLine (a5);
+		
+		if (a2 > 0) {
+			bool a = false;
+		} else {
+			const bool a = false;
+		}
 
-    public DoCopy CopyIt;
+		for (int i = 0; i < 10; ++i) {
+			Console.WriteLine (i);
+		}
+		
+		for (int i = 0; i < 10; ++i) {
+			Console.WriteLine (i);
+		}
+		
+		foreach (var i in new int[] { 9, 8 }) {
+			Console.WriteLine (i);
+		}
 
-    public void Leak(bool useArray, int max)
-    { DoCopy one;
+		using (A i = new A (1), i2 = new A (2), i3 = new A (3)) {
+		}
+		
+		using (A i = new A (3)) {
+		}
 
-      { int answer = 0;
-        int[] work;
-        
-        CopyIt = delegate { Value = answer; };
-        one = delegate 
-              { work = new int[max];
-                foreach(int x in work) answer += x;
-              };
-      }
+		try {
+		}
+		catch (Exception o) {
+			o = null;
+		}
 
-      one();
-    }
-  }
+		D action = delegate (int i) {
+		};
+	}
 
-  class Program
-  { 
-    static void Main(string[] args)
-    {
-    }
-  }
+	public static int Main ()
+	{
+		Test (1);
+		return 0;
+	}
+}

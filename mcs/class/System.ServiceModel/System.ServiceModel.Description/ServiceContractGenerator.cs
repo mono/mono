@@ -62,9 +62,7 @@ namespace System.ServiceModel.Description
 		ServiceContractGenerationContext contract_context;
 		List<OPair> operation_contexts = new List<OPair> ();
 
-#if USE_DATA_CONTRACT_IMPORTER
 		XsdDataContractImporter xsd_data_importer;
-#endif
 
 		public ServiceContractGenerator ()
 			: this (null, null)
@@ -154,10 +152,8 @@ namespace System.ServiceModel.Description
 			if ((Options & ServiceContractGenerationOptions.ClientClass) != 0)
 				GenerateProxyClass (contractDescription, cns);
 
-#if USE_DATA_CONTRACT_IMPORTER
 			if (xsd_data_importer != null)
 				MergeCompileUnit (xsd_data_importer.CodeCompileUnit, ccu);
-#endif
 
 			// Process extensions. Class first, then methods.
 			// (built-in ones must present before processing class extensions).
@@ -389,7 +385,7 @@ namespace System.ServiceModel.Description
 			// [OperationContract (Action = "...", ReplyAction = "..")]
 			var ad = new CodeAttributeDeclaration (new CodeTypeReference (typeof (OperationContractAttribute)));
 			foreach (MessageDescription md in od.Messages) {
-				if (md.IsRequest)
+				if (md.Direction == MessageDirection.Input)
 					ad.Arguments.Add (new CodeAttributeArgument ("Action", new CodePrimitiveExpression (md.Action)));
 				else
 					ad.Arguments.Add (new CodeAttributeArgument ("ReplyAction", new CodePrimitiveExpression (md.Action)));
@@ -725,14 +721,10 @@ namespace System.ServiceModel.Description
 		{
 			CodeExpression [] args = null;
 			foreach (MessageDescription md in messages) {
-				if (!md.IsRequest) {
+				if (md.Direction == MessageDirection.Output) {
 					if (md.Body.ReturnValue != null) {
 						ExportDataContract (md.Body.ReturnValue);
-#if USE_DATA_CONTRACT_IMPORTER
 						method.ReturnType = md.Body.ReturnValue.CodeTypeReference;
-#else
-						method.ReturnType = new CodeTypeReference (GetCodeTypeName (md.Body.ReturnValue.TypeName));
-#endif
 					}
 					continue;
 				}
@@ -746,11 +738,7 @@ namespace System.ServiceModel.Description
 
 					method.Parameters.Add (
 						new CodeParameterDeclarationExpression (
-#if USE_DATA_CONTRACT_IMPORTER
 							parts [i].CodeTypeReference,
-#else
-							new CodeTypeReference (GetCodeTypeName (parts [i].TypeName)),
-#endif
 							parts [i].Name));
 
 					if (return_args)
@@ -771,7 +759,6 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
-#if USE_DATA_CONTRACT_IMPORTER
 		void MergeCompileUnit (CodeCompileUnit from, CodeCompileUnit to)
 		{
 			if (from == to)
@@ -804,123 +791,11 @@ namespace System.ServiceModel.Description
 					to.Types.Add (ftd);
 			}
 		}
-#endif
 
 		private void ExportDataContract (MessagePartDescription md)
 		{
-#if USE_DATA_CONTRACT_IMPORTER
 			if (xsd_data_importer == null)
 				xsd_data_importer = md.Importer;
-#else
-			var mapping = md.XmlTypeMapping;
-
-			if (mapping == null)
-				return;
-
-			QName qname = new QName (mapping.TypeName, mapping.Namespace);
-			if (imported_names.ContainsKey (qname))
-				return;
-
-			CodeNamespace cns = new CodeNamespace ();
-
-			XmlCodeExporter xce = new XmlCodeExporter (cns);
-			xce.ExportTypeMapping (mapping);
-
-			List <CodeTypeDeclaration> to_remove = new List <CodeTypeDeclaration> ();
-			
-			//Process the types just generated
-			//FIXME: Iterate and assign the types to correct namespaces
-			//At the end, add all those namespaces to the ccu
-			foreach (CodeTypeDeclaration type in cns.Types) {
-				string ns = GetXmlNamespace (type);
-				if (ns == null)
-					//FIXME: do what here?
-					continue;
-
-				QName type_name = new QName (type.Name, ns);
-				if (imported_names.ContainsKey (type_name)) {
-					//Type got reemitted, so remove it!
-					to_remove.Add (type);
-					continue;
-				}
-				if (ns == ms_arrays_ns) {
-					//Do not emit arrays as an independent type.
-					to_remove.Add (type);
-					continue;
-				}
-
-				imported_names [type_name] = type_name;
-
-				type.Comments.Clear ();
-				//Custom Attributes
-				type.CustomAttributes.Clear ();
-
-				if (type.IsEnum)
-					continue;
-	
-				type.CustomAttributes.Add (
-					new CodeAttributeDeclaration (
-						new CodeTypeReference ("System.CodeDom.Compiler.GeneratedCodeAttribute"),
-						new CodeAttributeArgument (new CodePrimitiveExpression ("System.Runtime.Serialization")),
-						new CodeAttributeArgument (new CodePrimitiveExpression ("3.0.0.0"))));
-			
-				type.CustomAttributes.Add (
-					new CodeAttributeDeclaration (
-						new CodeTypeReference ("System.Runtime.Serialization.DataContractAttribute")));
-
-				//BaseType and interface
-				type.BaseTypes.Add (new CodeTypeReference (typeof (object)));
-				type.BaseTypes.Add (new CodeTypeReference ("System.Runtime.Serialization.IExtensibleDataObject"));
-
-				foreach (CodeTypeMember mbr in type.Members) {
-					CodeMemberProperty p = mbr as CodeMemberProperty;
-					if (p == null)
-						continue;
-
-					if ((p.Attributes & MemberAttributes.Public) == MemberAttributes.Public) {
-						//FIXME: Clear all attributes or only XmlElementAttribute?
-						p.CustomAttributes.Clear ();
-						p.CustomAttributes.Add (new CodeAttributeDeclaration (
-							new CodeTypeReference ("System.Runtime.Serialization.DataMemberAttribute")));
-
-						p.Comments.Clear ();
-					}
-				}
-
-				//Fields
-				CodeMemberField field = new CodeMemberField (
-					new CodeTypeReference ("System.Runtime.Serialization.ExtensionDataObject"),
-					"extensionDataField");
-				field.Attributes = MemberAttributes.Private | MemberAttributes.Final;
-				type.Members.Add (field);
-
-				//Property 
-				CodeMemberProperty prop = new CodeMemberProperty ();
-				prop.Type = new CodeTypeReference ("System.Runtime.Serialization.ExtensionDataObject");
-				prop.Name = "ExtensionData";
-				prop.Attributes = MemberAttributes.Public | MemberAttributes.Final;
-
-				//Get
-				prop.GetStatements.Add (new CodeMethodReturnStatement (
-					new CodeFieldReferenceExpression (
-					new CodeThisReferenceExpression (),
-					"extensionDataField")));
-
-				//Set
-				prop.SetStatements.Add (new CodeAssignStatement (
-					new CodeFieldReferenceExpression (
-					new CodeThisReferenceExpression (),
-					"extensionDataField"),
-					new CodePropertySetValueReferenceExpression ()));
-
-				type.Members.Add (prop);
-			}
-
-			foreach (CodeTypeDeclaration type in to_remove)
-				cns.Types.Remove (type);
-
-			ccu.Namespaces.Add (cns);
-#endif
 		}
 		
 		private string GetXmlNamespace (CodeTypeDeclaration type)

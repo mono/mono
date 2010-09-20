@@ -418,7 +418,7 @@ namespace Mono.CSharp
 				Delegate d = new Delegate (site.NamespaceEntry, site, new TypeExpression (rt, loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
 					new MemberName ("Container" + index.ToString ("X")),
-					new ParametersCompiled (null, p), null);
+					new ParametersCompiled (p), null);
 
 				d.CreateType ();
 				d.DefineType ();
@@ -757,11 +757,13 @@ namespace Mono.CSharp
 		TypeSpec instance_type;
 
 		public DynamicSiteClass (TypeContainer parent, MemberBase host, TypeParameter[] tparams)
-			: base (parent, MakeMemberName (host, "DynamicSite", 0, tparams, Location.Null), tparams, Modifiers.STATIC)
+			: base (parent, MakeMemberName (host, "DynamicSite", parent.DynamicSitesCounter, tparams, Location.Null), tparams, Modifiers.STATIC)
 		{
 			if (tparams != null) {
 				mutator = new TypeParameterMutator (tparams, CurrentTypeParameters);
 			}
+
+			parent.DynamicSitesCounter++;
 		}
 
 		public FieldSpec CreateCallSiteField (FullNamedExpression type, Location loc)

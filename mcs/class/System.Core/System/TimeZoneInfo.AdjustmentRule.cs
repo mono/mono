@@ -24,7 +24,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if (INSIDE_CORLIB && (NET_4_0 || MOONLIGHT)) || (MONOTOUCH && !INSIDE_CORLIB) || (NET_3_5 && !NET_4_0 && !BOOTSTRAP_NET_4_0)
+#if (INSIDE_CORLIB && (NET_4_0 || MOONLIGHT)) || (MOBILE && !INSIDE_CORLIB) || (NET_3_5 && !NET_4_0 && !BOOTSTRAP_NET_4_0)
 
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;

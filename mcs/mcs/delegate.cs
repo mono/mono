@@ -170,14 +170,19 @@ namespace Mono.CSharp {
 			//
 			// BeginInvoke
 			//
-			Parameter[] compiled = new Parameter[Parameters.Count];
-			for (int i = 0; i < compiled.Length; ++i)
-				compiled[i] = new Parameter (new TypeExpression (Parameters.Types[i], Location),
-					Parameters.FixedParameters[i].Name,
-					Parameters.FixedParameters[i].ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT),
-					null, Location);
+			ParametersCompiled async_parameters;
+			if (Parameters.Count == 0) {
+				async_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+			} else {
+				var compiled = new Parameter[Parameters.Count];
+				for (int i = 0; i < compiled.Length; ++i)
+					compiled[i] = new Parameter (new TypeExpression (Parameters.Types[i], Location),
+						Parameters.FixedParameters[i].Name,
+						Parameters.FixedParameters[i].ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT),
+						null, Location);
 
-			ParametersCompiled async_parameters = new ParametersCompiled (Compiler, compiled);
+				async_parameters = new ParametersCompiled (compiled);
+			}
 
 			async_parameters = ParametersCompiled.MergeGenerated (Compiler, async_parameters, false,
 				new Parameter[] {
@@ -254,11 +259,11 @@ namespace Mono.CSharp {
 		{
 			if (ReturnType.Type == InternalType.Dynamic) {
 				return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
-				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else {
 				var trans_flags = TypeManager.HasDynamicTypeUsed (ReturnType.Type);
 				if (trans_flags != null) {
-					var pa = PredefinedAttributes.Get.DynamicTransform;
+					var pa = Compiler.PredefinedAttributes.DynamicTransform;
 					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
 						return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
 						return_attributes.Builder.SetCustomAttribute (
@@ -267,13 +272,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Parameters.ApplyAttributes (InvokeBuilder.MethodBuilder);
+			Parameters.ApplyAttributes (this, InvokeBuilder.MethodBuilder);
 			
 			Constructor.ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 			InvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			if (BeginInvokeBuilder != null) {
-				BeginInvokeBuilder.ParameterInfo.ApplyAttributes (BeginInvokeBuilder.MethodBuilder);
+				BeginInvokeBuilder.ParameterInfo.ApplyAttributes (this, BeginInvokeBuilder.MethodBuilder);
 
 				BeginInvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 				EndInvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);

@@ -40,7 +40,7 @@ using System.Web.Util;
 
 namespace System.Web {
 
-#if !MONOTOUCH
+#if !MOBILE
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #endif

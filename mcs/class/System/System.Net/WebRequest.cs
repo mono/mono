@@ -70,7 +70,7 @@ namespace System.Net
 #if NET_2_1
 			AddPrefix ("http", typeof (HttpRequestCreator));
 			AddPrefix ("https", typeof (HttpRequestCreator));
-	#if MONOTOUCH
+	#if MOBILE
 			AddPrefix ("file", typeof (FileWebRequestCreator));
 			AddPrefix ("ftp", typeof (FtpRequestCreator));
 	#endif

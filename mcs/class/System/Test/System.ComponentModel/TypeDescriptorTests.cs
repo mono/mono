@@ -14,11 +14,10 @@ using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using System.ComponentModel.Design;
 using System.Globalization;
 
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 using NUnit.Framework;
+using System.Reflection;
 
 namespace MonoTests.System.ComponentModel
 {
@@ -460,7 +459,6 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 
-#if NET_2_0
 	class MyCustomTypeDescriptor : CustomTypeDescriptor
 	{
 		public MyTypeDescriptionProvider Provider { get; private set; }
@@ -502,7 +500,6 @@ namespace MonoTests.System.ComponentModel
 			return base.CreateInstance (provider, objectType, argTypes, args);
 		}
 	}
-#endif
 
 	[TestFixture]
 	public class TypeDescriptorTests
@@ -512,7 +509,6 @@ namespace MonoTests.System.ComponentModel
 		MyComponent nfscom = new MyComponent (new NoFilterSite (new MyContainer ()));
 		AnotherComponent anothercom = new AnotherComponent ();
 		
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestAddAttributes_Type_Attributes_1 ()
@@ -1054,7 +1050,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsNotNull (type, "#F1");
 			Assert.AreEqual (typeof (int), type, "#F1-1");
 		}
-#endif
 
 		[Test]
 		public void TestICustomTypeDescriptor ()
@@ -1185,7 +1180,6 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void TestGetComponentName ()
 		{
-#if NET_2_0
 			// in MS.NET 2.0, GetComponentName no longer returns
 			// the type name if there's no custom typedescriptor
 			// and no site
@@ -1195,14 +1189,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsNull (TypeDescriptor.GetComponentName (new Exception (), false), "#4");
 			Assert.IsNull (TypeDescriptor.GetComponentName (typeof (Exception)), "#4");
 			Assert.IsNull (TypeDescriptor.GetComponentName (typeof (Exception), false), "#6");
-#else
-			Assert.AreEqual ("MyComponent", TypeDescriptor.GetComponentName (com), "#1");
-			Assert.AreEqual ("MyComponent", TypeDescriptor.GetComponentName (com, false), "#2");
-			Assert.AreEqual ("Exception", TypeDescriptor.GetComponentName (new Exception ()), "#3");
-			Assert.AreEqual ("Exception", TypeDescriptor.GetComponentName (new Exception (), false), "#4");
-			Assert.IsNotNull (TypeDescriptor.GetComponentName (typeof (Exception)), "#5");
-			Assert.IsNotNull (TypeDescriptor.GetComponentName (typeof (Exception), false), "#6");
-#endif
 			Assert.AreEqual ("TestName", TypeDescriptor.GetComponentName (sitedcom), "#7");
 			Assert.AreEqual ("TestName", TypeDescriptor.GetComponentName (sitedcom), "#8");
 		}
@@ -1248,16 +1234,12 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (typeof (TypeConverter), TypeDescriptor.GetConverter (new TestStruct ()).GetType (), "#26");
 			Assert.AreEqual (typeof (CollectionConverter), TypeDescriptor.GetConverter (new Hashtable ()).GetType (), "#27");
 
-#if NET_2_0
 			// Test from bug #76686
 			Assert.AreEqual  (typeof (Int32Converter), TypeDescriptor.GetConverter ((int?) 1).GetType (), "#28");
-#endif
 			Assert.IsTrue (TypeDescriptor.GetConverter (typeof (Component)) is ComponentConverter, "#29");
 			Assert.IsTrue (TypeDescriptor.GetConverter (new Component()) is ComponentConverter, "#30");
 
-#if NET_2_0
 			Assert.AreEqual (typeof (NullableConverter), TypeDescriptor.GetConverter (typeof (int?)).GetType (), "#31");
-#endif
 		}
 		
 		[Test]
@@ -1278,12 +1260,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual ("AnotherEvent", des.Name, "#D2");
 
 			des = TypeDescriptor.GetDefaultEvent (sitedcom);
-#if NET_2_0
 			Assert.IsNull (des, "#E1");
-#else
-			Assert.IsNotNull (des, "#E1");
-			Assert.AreEqual ("AnotherEvent", des.Name, "#E2");
-#endif
 
 			des = TypeDescriptor.GetDefaultEvent (new MyComponent(new AnotherSite ()));
 			Assert.IsNotNull (des, "#F1");
@@ -1313,11 +1290,6 @@ namespace MonoTests.System.ComponentModel
 		}
 		
 		[Test]
-#if ONLY_1_1
-		// throws NullReferenceException on MS.NET 1.x due to bug
-		// which is fixed in MS.NET 2.0
-		[NUnit.Framework.Category("NotDotNet")]
-#endif
 		public void TestGetDefaultProperty2 ()
 		{
 			PropertyDescriptor des = TypeDescriptor.GetDefaultProperty (sitedcom);
@@ -1474,11 +1446,6 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-#if ONLY_1_1
-		// throws NullReferenceException on MS.NET 1.x due to bug
-		// which is fixed in MS.NET 2.0
-		[NUnit.Framework.Category("NotDotNet")]
-#endif
 		public void TestGetProperties2 ()
 		{
 			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (sitedcom);
@@ -1492,9 +1459,6 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-#if ONLY_1_1
-		[NUnit.Framework.Category ("NotDotNet")] // .NET 1.x (or csc 1.x) does not retain the original order
-#endif
 		public void GetProperties_Order ()
 		{
 			MyComponent com = new MyComponent (new MyContainer ());
@@ -1548,5 +1512,19 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (1, pc.Count, "#1");
 			Assert.AreEqual ("Length", pc [0].Name, "#2");
 		}
+
+#if NET_4_0
+		[Test]
+		public void InterfaceType ()
+		{
+			Type interface_type = TypeDescriptor.InterfaceType;
+			Assert.AreEqual ("TypeDescriptorInterface", interface_type.Name, "#A0");
+			Assert.IsTrue (interface_type.IsClass, "#A1");
+			Assert.IsTrue (interface_type.IsSealed, "#A2");
+			Assert.AreEqual (typeof (object), interface_type.BaseType, "#A3");
+			Assert.IsFalse (interface_type.IsInterface, "#A4");
+			Assert.IsFalse (interface_type.IsPublic, "#A5");
+		}
+#endif
 	}
 }

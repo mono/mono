@@ -13,6 +13,10 @@ class C
 
 public class Test
 {
+	static void M (ref dynamic[] d, ref object[] o)
+	{
+	}
+	
 	public static int Main ()
 	{
 		dynamic d = new C ();
@@ -26,6 +30,9 @@ public class Test
 		d.MethodOut (out u);
 		if (u != 40)
 			return 2;
+		
+		object[] o = null;
+		M (ref o, ref o);
 		
 		return 0;
 	}

@@ -39,9 +39,7 @@ using System.Globalization;
 using System.ComponentModel.Design;
 using System.Security.Permissions;
 
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.ComponentModel
 {
@@ -55,7 +53,6 @@ public sealed class TypeDescriptor
 	private static Hashtable typeTable = new Hashtable ();
 	private static Hashtable editors;
 
-#if NET_2_0
 	static object typeDescriptionProvidersLock = new object ();
 	static Dictionary <Type, LinkedList <TypeDescriptionProvider>> typeDescriptionProviders;
 
@@ -67,17 +64,25 @@ public sealed class TypeDescriptor
 		typeDescriptionProviders = new Dictionary <Type, LinkedList <TypeDescriptionProvider>> ();
 		componentDescriptionProviders = new Dictionary <WeakObjectWrapper, LinkedList <TypeDescriptionProvider>> (new WeakObjectWrapperComparer ());
 	}
-#endif
+
 	private TypeDescriptor ()
 	{
 	}
 
-#if NET_2_0
 	[MonoNotSupported ("Mono does not support COM")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static Type ComObjectType {
 		get { throw new NotImplementedException (); }
 	}
+
+#if NET_4_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static Type InterfaceType {
+		get {
+			return typeof (TypeDescriptorInterface);
+		}
+	}
+#endif
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static TypeDescriptionProvider AddAttributes (object instance, params Attribute [] attributes)
@@ -172,11 +177,8 @@ public sealed class TypeDescriptor
 
 		return instance;
 	}
-#endif
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 #if !NET_2_1
 	public
 #else
@@ -258,9 +260,7 @@ public sealed class TypeDescriptor
 		return GetAttributes (component, false);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static AttributeCollection GetAttributes (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -282,9 +282,7 @@ public sealed class TypeDescriptor
 		return GetClassName (component, false);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static string GetClassName (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -307,9 +305,7 @@ public sealed class TypeDescriptor
 		return GetComponentName (component, false);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static string GetComponentName (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -321,15 +317,10 @@ public sealed class TypeDescriptor
 			IComponent c = component as IComponent;
 			if (c != null && c.Site != null)
 				return c.Site.Name;
-#if NET_2_0
 			return null;
-#else
-			return component.GetType().Name;
-#endif
 		}
 	}
 
-#if NET_2_0
 	[MonoNotSupported("")]
 	public static string GetFullComponentName (object component)
 	{
@@ -341,16 +332,13 @@ public sealed class TypeDescriptor
 	{
 		throw new NotImplementedException ();
 	}
-#endif
 
 	public static TypeConverter GetConverter (object component)
 	{
 		return GetConverter (component, false);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static TypeConverter GetConverter (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -442,10 +430,8 @@ public sealed class TypeDescriptor
 	{
 		Type converterType = null;
 		if (type != null) {
-#if NET_2_0
 			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 				return typeof(NullableConverter);
-#endif
 			// Is there a default converter
 			foreach (DictionaryEntry entry in DefaultConverters) {
 				if ((Type)entry.Key == type)
@@ -486,9 +472,7 @@ public sealed class TypeDescriptor
 		return GetDefaultEvent (component, false);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static EventDescriptor GetDefaultEvent (object component, bool noCustomTypeDesc)
 	{
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
@@ -512,9 +496,7 @@ public sealed class TypeDescriptor
 		return GetDefaultProperty (component, false);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static PropertyDescriptor GetDefaultProperty (object component, bool noCustomTypeDesc)
 	{
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
@@ -620,9 +602,7 @@ public sealed class TypeDescriptor
 		return GetEditor (component, editorBaseType, false);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static object GetEditor (object component, Type editorBaseType, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -663,9 +643,7 @@ public sealed class TypeDescriptor
 		return GetEvents (component, attributes, false);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static EventDescriptorCollection GetEvents (object component, bool noCustomTypeDesc)
 	{
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
@@ -684,9 +662,7 @@ public sealed class TypeDescriptor
 		return GetTypeInfo (componentType).GetEvents (attributes);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static EventDescriptorCollection GetEvents (object component, Attribute [] attributes, bool noCustomTypeDesc)
 	{
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
@@ -731,9 +707,7 @@ public sealed class TypeDescriptor
 		}
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public static PropertyDescriptorCollection GetProperties (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -755,7 +729,6 @@ public sealed class TypeDescriptor
 		return GetTypeInfo (componentType).GetProperties (attributes);
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static TypeDescriptionProvider GetProvider (object instance)
 	{
@@ -921,7 +894,6 @@ public sealed class TypeDescriptor
 					
 		} while (true);
 	}
-#endif
 
 	public static void SortDescriptorArray (IList infos)
 	{
@@ -937,10 +909,8 @@ public sealed class TypeDescriptor
 			infos.Add (ob);
 	}
 
-#if NET_2_0
 	// well, ComObjectType is not implemented, but we don't support COM anyways ...
 	[Obsolete ("Use ComObjectType")]
-#endif
 	public static IComNativeDescriptorHandler ComNativeDescriptorHandler {
 		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 		get { return descriptorHandler; }
@@ -1032,7 +1002,6 @@ public sealed class TypeDescriptor
 		return type;
 	}
 
-#if NET_2_0
 	sealed class AttributeProvider : TypeDescriptionProvider
 	{
 		Attribute[] attributes;
@@ -1226,7 +1195,6 @@ public sealed class TypeDescriptor
 			return new DefaultTypeDescriptor (this, objectType, instance);
 		}
 	}
-#endif
 }
 
 	internal abstract class Info
@@ -1491,4 +1459,13 @@ public sealed class TypeDescriptor
 			return _properties;
 		}
 	}
+
+#if NET_4_0
+	// In .net this class seems to be a dummy and empty class
+	// used to represent internally any extender provider associated with
+	// all the interfaces.
+	sealed class TypeDescriptorInterface
+	{
+	}
+#endif
 }

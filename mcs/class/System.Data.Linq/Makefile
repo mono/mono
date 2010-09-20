@@ -9,6 +9,7 @@ LIB_MCS_FLAGS = \
 	        /r:System.Xml.dll \
 	        /r:System.Data.dll \
 	        /r:System.Runtime.Serialization.dll \
+	        /resource:./src/DbLinq/Schema/Dbml/DbmlSchema.xsd,DbLinq.Schema.Dbml.DbmlSchema.xsd \
 		/d:MONO_STRICT /d:MONO_DEPLOY
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
@@ -18,7 +19,7 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-EXTRA_DISTFILES =
+EXTRA_DISTFILES = src/DbLinq/Schema/Dbml/DbmlSchema.xsd
 
 # This is a .NET 3.5+ assembly
 VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))

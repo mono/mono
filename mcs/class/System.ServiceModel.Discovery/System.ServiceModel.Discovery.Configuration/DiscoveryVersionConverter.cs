@@ -36,24 +36,79 @@ namespace System.ServiceModel.Discovery.Configuration
 		{
 		}
 		
+		private bool CanConvert (Type type)
+		{
+			if (type == typeof (string))
+				return true;
+			if (type == typeof (DiscoveryVersion))
+				return true;
+			return false;
+		}
+		
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			throw new NotImplementedException ();
+			if (sourceType == null)
+				throw new ArgumentNullException ("sourceType");
+
+			return CanConvert (sourceType);
 		}
 		
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			if (destinationType == null)
+				return false;
+
+			return CanConvert (destinationType);
 		}
 		
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			if (!CanConvertFrom (context, value.GetType ()))
+				throw new NotSupportedException ("Cannot convert from value.");
+
+			if (value is DiscoveryVersion)
+				return value;
+
+			string s = (value as string);
+			if (s != null) {
+				switch (s) {
+				case "WSDiscovery11":
+					return DiscoveryVersion.WSDiscovery11;
+				case "WSDiscoveryApril2005":
+					return DiscoveryVersion.WSDiscoveryApril2005;
+				case "WSDiscoveryCD1":
+					return DiscoveryVersion.WSDiscoveryCD1;
+				}
+				throw new NotSupportedException ("Cannot convert from value.");
+			}
+
+			return base.ConvertFrom (context, culture, value);
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			if (!CanConvertTo (context, destinationType))
+				throw new NotSupportedException (Locale.GetText ("Cannot convert to destination type."));
+
+			var ver = (value as DiscoveryVersion);
+			if (ver != null) {
+				if (destinationType == typeof (DiscoveryVersion))
+					return ver;
+
+				if (destinationType == typeof (string)) {
+					if (ver.Equals (DiscoveryVersion.WSDiscovery11))
+						return "WSDiscovery11";
+					if (ver.Equals (DiscoveryVersion.WSDiscoveryApril2005))
+						return "WSDiscoveryApril2005";
+					if (ver.Equals (DiscoveryVersion.WSDiscoveryCD1))
+						return "WSDiscoveryCD1";
+				}
+				throw new NotSupportedException ("Cannot convert to destination type.");
+			}
+			return base.ConvertTo (context, culture, value, destinationType);
 		}
 	}
 }

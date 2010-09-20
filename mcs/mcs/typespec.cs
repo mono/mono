@@ -289,13 +289,16 @@ namespace Mono.CSharp
 			return "<" + TypeManager.CSharpName (MemberDefinition.TypeParameters) + ">";
 		}
 
-		public bool ImplementsInterface (TypeSpec iface)
+		public bool ImplementsInterface (TypeSpec iface, bool variantly)
 		{
 			var t = this;
 			do {
 				if (t.Interfaces != null) {	// TODO: Try t.iface
 					foreach (TypeSpec i in t.Interfaces) {
-						if (i == iface || TypeSpecComparer.Variant.IsEqual (i, iface) || TypeSpecComparer.IsEqual (i, iface))
+						if (i == iface || TypeSpecComparer.IsEqual (i, iface))
+							return true;
+
+						if (variantly && TypeSpecComparer.Variant.IsEqual (i, iface))
 							return true;
 					}
 				}
@@ -638,7 +641,7 @@ namespace Mono.CSharp
 				var targs_definition = target_type_def.TypeParameters;
 
 				if (!type1.IsInterface && !type1.IsDelegate) {
-					return TypeSpecComparer.Equals (t1_targs, t2_targs);
+					return false;
 				}
 
 				for (int i = 0; i < targs_definition.Length; ++i) {
@@ -807,7 +810,19 @@ namespace Mono.CSharp
 			if (a == InternalType.Dynamic || b == InternalType.Dynamic)
 				return b == TypeManager.object_type || a == TypeManager.object_type;
 
-			if (a == null || !a.IsGeneric || b == null || !b.IsGeneric)
+			if (a == null)
+				return false;
+
+			if (a.IsArray) {
+				var a_a = (ArrayContainer) a;
+				var b_a = b as ArrayContainer;
+				if (b_a == null)
+					return false;
+
+				return IsEqual (a_a.Element, b_a.Element) && a_a.Rank == b_a.Rank;
+			}
+
+			if (!a.IsGeneric || b == null || !b.IsGeneric)
 				return false;
 
 			if (a.MemberDefinition != b.MemberDefinition)
