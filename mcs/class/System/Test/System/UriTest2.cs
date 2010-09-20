@@ -918,5 +918,35 @@ TextWriter sw = Console.Out;
 			Uri uri = new Uri ("%2e%2e/dir/%2e%2e/subdir/file?query#fragment", UriKind.Relative);
 			Assert.AreEqual ("%2e%2e/dir/%2e%2e/subdir/file?query#fragment", uri.ToString (), "1.ToString");
 		}
+
+		[Test]
+		public void BadUri ()
+		{
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("a:b", UriKind.Absolute);
+			}, "a:b - Absolute");
+
+			Uri abs = new Uri ("http://novell.com", UriKind.Absolute);
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri (abs, "a:b");
+			}, "a:b - Relative");
+		}
+
+		[Test]
+		public void MergeWithConfusingRelativeUri ()
+		{
+			Uri abs = new Uri ("http://novell.com", UriKind.Absolute);
+
+			// note: invalid scheme
+			string srel = "http@ftp://mono-project.com/dir/file";
+			Uri uri = new Uri (abs, srel);
+			Assert.AreEqual ("http://novell.com/http@ftp://mono-project.com/dir/file", uri.ToString (), "1.ToString");
+
+			Uri rel = new Uri (srel, UriKind.Relative);
+			Assert.AreEqual ("http@ftp://mono-project.com/dir/file", rel.ToString (), "2.ToString");
+
+			uri = new Uri (abs, rel);
+			Assert.AreEqual ("http://novell.com/http@ftp://mono-project.com/dir/file", uri.ToString (), "3.ToString");
+		}
 	}
 }

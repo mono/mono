@@ -270,11 +270,19 @@ namespace System {
 					// 3) the relative URI path is absolute.
 					if (String.CompareOrdinal (baseUri.Scheme, 0, relativeUri, 0, pos) != 0 ||
 					    !IsPredefinedScheme (baseUri.Scheme) ||
-					    relativeUri.Length > pos + 1 &&
-					    relativeUri [pos + 1] == '/') {
-						source = relativeUri;
-						ParseUri (UriKind.Absolute);
-						return;
+					    (relativeUri.Length > pos + 1 && relativeUri [pos + 1] == '/')) {
+						Uri tmp = null;
+						if (Uri.TryCreate (relativeUri, UriKind.Absolute, out tmp)) {
+							source = relativeUri;
+							ParseUri (UriKind.Absolute);
+							return;
+						} else if (pos == 1) {
+							// special case as this looks like a windows path
+							string msg = ParseAsWindowsAbsoluteFilePath (relativeUri);
+							if (msg != null)
+								throw new UriFormatException (msg);
+						}
+						// otherwise continue with 'full' relativeUri
 					}
 					else
 						relativeUri = relativeUri.Substring (pos + 1);
