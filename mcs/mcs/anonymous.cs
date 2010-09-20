@@ -357,7 +357,7 @@ namespace Mono.CSharp {
 		//
 		// Initializes all hoisted variables
 		//
-		public void EmitStoreyInstantiation (EmitContext ec)
+		public void EmitStoreyInstantiation (EmitContext ec, ExplicitBlock block)
 		{
 			// There can be only one instance variable for each storey type
 			if (Instance != null)
@@ -371,26 +371,25 @@ namespace Mono.CSharp {
 			var storey_type_expr = CreateStoreyTypeExpression (ec);
 
 			ResolveContext rc = new ResolveContext (ec.MemberContext);
+			rc.CurrentBlock = block;
 			Expression e = new New (storey_type_expr, null, Location).Resolve (rc);
 			e.Emit (ec);
 
 			Instance = new LocalTemporary (storey_type_expr.Type);
 			Instance.Store (ec);
 
-			EmitHoistedFieldsInitialization (ec);
+			EmitHoistedFieldsInitialization (rc, ec);
 
 			SymbolWriter.DefineScopeVariable (ID, Instance.Builder);
 			SymbolWriter.CloseCompilerGeneratedBlock (ec);
 		}
 
-		void EmitHoistedFieldsInitialization (EmitContext ec)
+		void EmitHoistedFieldsInitialization (ResolveContext rc, EmitContext ec)
 		{
 			//
 			// Initialize all storey reference fields by using local or hoisted variables
 			//
 			if (used_parent_storeys != null) {
-				var rc = new ResolveContext (ec.MemberContext);
-
 				foreach (StoreyFieldPair sf in used_parent_storeys) {
 					//
 					// Get instance expression of storey field
@@ -414,7 +413,7 @@ namespace Mono.CSharp {
 			//
 			if (OriginalSourceBlock.Explicit.HasCapturedThis && !(Parent is AnonymousMethodStorey)) {
 				AddCapturedThisField (ec);
-				OriginalSourceBlock.AddScopeStatement (new ThisInitializer (hoisted_this));
+				rc.CurrentBlock.AddScopeStatement (new ThisInitializer (hoisted_this));
 			}
 
 			//

@@ -2185,7 +2185,7 @@ namespace Mono.CSharp {
 		{
 			if (am_storey != null) {
 				DefineAnonymousStorey (ec);
-				am_storey.EmitStoreyInstantiation (ec);
+				am_storey.EmitStoreyInstantiation (ec, this);
 			}
 
 			bool emit_debug_info = SymbolWriter.HasSymbolWriter && Parent != null && !(am_storey is IteratorStorey);

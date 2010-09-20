@@ -15455,7 +15455,7 @@
         <size>7</size>
       </method>
       <method name="Void Invoke(SomeGenericClass`1+SomeHandlerType[SomeType])">
-        <size>1</size>
+        <size>7</size>
       </method>
       <method name="Void FailsToCompile()">
         <size>19</size>
@@ -15482,7 +15482,7 @@
     </type>
     <type name="SomeGenericClass`1[SomeType]">
       <method name="Void &lt;FailsToCompile&gt;m__0()">
-        <size>37</size>
+        <size>44</size>
       </method>
     </type>
     <type name="SomeGenericClass`1+&lt;FailsToCompile&gt;c__AnonStorey0[SomeType]">
@@ -45385,7 +45385,7 @@
     </type>
     <type name="C">
       <method name="Int32 &lt;Test&gt;m__0()">
-        <size>38</size>
+        <size>45</size>
       </method>
     </type>
     <type name="C+&lt;Test&gt;c__AnonStorey1">
