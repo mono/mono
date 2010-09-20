@@ -948,5 +948,15 @@ TextWriter sw = Console.Out;
 			uri = new Uri (abs, rel);
 			Assert.AreEqual ("http://novell.com/http@ftp://mono-project.com/dir/file", uri.ToString (), "3.ToString");
 		}
+
+		[Test]
+		public void EmptyUserInfo ()
+		{
+			Uri uri = new Uri ("http://@www.mono-project.com");
+			Assert.AreEqual ("http://@www.mono-project.com/", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("http://@www.mono-project.com", uri.GetLeftPart (UriPartial.Authority), "UriPartial.Authority");
+			Assert.AreEqual ("http://@www.mono-project.com/", uri.GetLeftPart (UriPartial.Path), "UriPartial.Path");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+		}
 	}
 }

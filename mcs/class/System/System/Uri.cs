@@ -77,7 +77,7 @@ namespace System {
 		private string path = String.Empty;
 		private string query = String.Empty;
 		private string fragment = String.Empty;
-		private string userinfo = String.Empty;
+		private string userinfo;
 		private bool isUnc;
 		private bool isOpaquePart;
 		private bool isAbsoluteUri = true;
@@ -682,7 +682,7 @@ namespace System {
 		public string UserInfo { 
 			get { 
 				EnsureAbsoluteUri ();
-				return userinfo; 
+				return userinfo == null ? String.Empty : userinfo;
 			}
 		}
 		
@@ -901,7 +901,7 @@ namespace System {
 				s.Append (GetOpaqueWiseSchemeDelimiter ());
 				if (path.Length > 1 && path [1] == ':' && (Uri.UriSchemeFile == scheme)) 
 					s.Append ('/');  // win32 file
-				if (userinfo.Length > 0) 
+				if (userinfo != null) 
 					s.Append (userinfo).Append ('@');
 				s.Append (host);
 				defaultPort = GetDefaultPort (scheme);
@@ -914,7 +914,7 @@ namespace System {
 				sb.Append (GetOpaqueWiseSchemeDelimiter ());
 				if (path.Length > 1 && path [1] == ':' && (Uri.UriSchemeFile == scheme)) 
 					sb.Append ('/');  // win32 file
-				if (userinfo.Length > 0) 
+				if (userinfo != null) 
 					sb.Append (userinfo).Append ('@');
 				sb.Append (host);
 				defaultPort = GetDefaultPort (scheme);
