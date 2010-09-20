@@ -1339,6 +1339,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #636939
+		[Category ("NotWorking")]
 		public void SelectMethodWithParamArrayAndNonEqualTypeArguments ()
 		{
             const BindingFlags flags =
