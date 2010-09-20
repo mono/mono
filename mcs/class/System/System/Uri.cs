@@ -1589,8 +1589,10 @@ namespace System {
 				} else
 					badhost = true;
 			}
-			if (badhost && (Parser is DefaultUriParser || Parser == null))
-				return "Invalid URI: The Authority/Host could not be parsed.";
+			if (badhost && (Parser is DefaultUriParser || Parser == null)) {
+				return IsFile ? "Invalid URI: The Authority/Host could not be parsed." :
+					"Invalid URI: The hostname could not be parsed.";
+			}
 
 			UriFormatException ex = null;
 			if (Parser != null)
