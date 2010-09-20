@@ -1782,7 +1782,7 @@ namespace Mono.CSharp {
 			if (constraints == null)
 				return true;
 
-			return ConstraintChecker.CheckAll (ec, open_type, args.Arguments, constraints, loc);
+			return new ConstraintChecker(ec).CheckAll (open_type, args.Arguments, constraints, loc);
 		}
 	
 		public override bool CheckAccessLevel (IMemberContext mc)
@@ -1858,23 +1858,48 @@ namespace Mono.CSharp {
 		}
 	}
 
-	static class ConstraintChecker
+	struct ConstraintChecker
 	{
+		IMemberContext mc;
+		bool ignore_inferred_dynamic;
+
+		public ConstraintChecker (IMemberContext ctx)
+		{
+			this.mc = ctx;
+			ignore_inferred_dynamic = false;
+		}
+
+		#region Properties
+
+		public bool IgnoreInferredDynamic {
+			get {
+				return ignore_inferred_dynamic;
+			}
+			set {
+				ignore_inferred_dynamic = value;
+			}
+		}
+
+		#endregion
+
 		//
 		// Checks all type arguments againts type parameters constraints
 		// NOTE: It can run in probing mode when `mc' is null
 		//
-		public static bool CheckAll (IMemberContext mc, MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
+		public bool CheckAll (MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
 			for (int i = 0; i < tparams.Length; i++) {
-				if (!CheckConstraint (mc, context, targs [i], tparams [i], loc))
+				if (ignore_inferred_dynamic && targs[i] == InternalType.Dynamic)
+					continue;
+
+				if (!CheckConstraint (context, targs [i], tparams [i], loc))
 					return false;
 			}
 
 			return true;
 		}
 
-		static bool CheckConstraint (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, Location loc)
+		bool CheckConstraint (MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, Location loc)
 		{
 			//
 			// First, check the `class' and `struct' constraints.
@@ -1956,22 +1981,47 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		static bool CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
+		static bool HasDynamicTypeArgument (TypeSpec[] targs)
+		{
+			for (int i = 0; i < targs.Length; ++i) {
+				var targ = targs [i];
+				if (targ == InternalType.Dynamic)
+					return true;
+
+				if (HasDynamicTypeArgument (targ.TypeArguments))
+					return true;
+			}
+
+			return false;
+		}
+
+		bool CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
 		{
 			var expr = new EmptyExpression (atype);
 			if (Convert.ImplicitStandardConversionExists (expr, ttype))
 				return true;
 
+			//
+			// When partial/full type inference finds a dynamic type argument delay
+			// the constraint check to runtime, it can succeed for real underlying
+			// dynamic type
+			//
+			if (ignore_inferred_dynamic && HasDynamicTypeArgument (ttype.TypeArguments))
+				return true;
+
 			if (mc != null) {
 				mc.Compiler.Report.SymbolRelatedToPreviousError (tparam);
 				if (TypeManager.IsValueType (atype)) {
-					mc.Compiler.Report.Error (315, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
+					mc.Compiler.Report.Error (315, loc,
+						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else if (atype.IsGenericParameter) {
-					mc.Compiler.Report.Error (314, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
+					mc.Compiler.Report.Error (314, loc,
+						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else {
-					mc.Compiler.Report.Error (311, loc, "The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no implicit reference conversion from `{0}' to `{3}'",
+					mc.Compiler.Report.Error (311, loc,
+						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no implicit reference conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				}
 			}
@@ -1979,7 +2029,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		static bool HasDefaultConstructor (TypeSpec atype)
+		bool HasDefaultConstructor (TypeSpec atype)
 		{
 			var tp = atype as TypeParameterSpec;
 			if (tp != null) {
@@ -2167,76 +2217,34 @@ namespace Mono.CSharp {
 
 			return Variance.None;
 		}
-
-		/// <summary>
-		///   Type inference.  Try to infer the type arguments from `method',
-		///   which is invoked with the arguments `arguments'.  This is used
-		///   when resolving an Invocation or a DelegateInvocation and the user
-		///   did not explicitly specify type arguments.
-		/// </summary>
-		public static int InferTypeArguments (ResolveContext ec, Arguments arguments, ref MethodSpec method)
-		{
-			ATypeInference ti = ATypeInference.CreateInstance (arguments);
-			TypeSpec[] i_args = ti.InferMethodArguments (ec, method);
-			if (i_args == null)
-				return ti.InferenceScore;
-
-			if (i_args.Length == 0)
-				return 0;
-
-			method = method.MakeGenericMethod (i_args);
-			return 0;
-		}
 	}
 
-	abstract class ATypeInference
+	//
+	// Implements C# type inference
+	//
+	class TypeInference
 	{
-		protected readonly Arguments arguments;
-		protected readonly int arg_count;
+		//
+		// Tracks successful rate of type inference
+		//
+		int score = int.MaxValue;
+		readonly Arguments arguments;
+		readonly int arg_count;
 
-		protected ATypeInference (Arguments arguments)
+		public TypeInference (Arguments arguments)
 		{
 			this.arguments = arguments;
 			if (arguments != null)
 				arg_count = arguments.Count;
 		}
 
-		public static ATypeInference CreateInstance (Arguments arguments)
-		{
-			return new TypeInference (arguments);
-		}
-
-		public virtual int InferenceScore {
-			get {
-				return int.MaxValue;
-			}
-		}
-
-		public abstract TypeSpec[] InferMethodArguments (ResolveContext ec, MethodSpec method);
-	}
-
-	//
-	// Implements C# type inference
-	//
-	class TypeInference : ATypeInference
-	{
-		//
-		// Tracks successful rate of type inference
-		//
-		int score = int.MaxValue;
-
-		public TypeInference (Arguments arguments)
-			: base (arguments)
-		{
-		}
-
-		public override int InferenceScore {
+		public int InferenceScore {
 			get {
 				return score;
 			}
 		}
 
-		public override TypeSpec[] InferMethodArguments (ResolveContext ec, MethodSpec method)
+		public TypeSpec[] InferMethodArguments (ResolveContext ec, MethodSpec method)
 		{
 			var method_generic_args = method.GenericDefinition.TypeParameters;
 			TypeInferenceContext context = new TypeInferenceContext (method_generic_args);

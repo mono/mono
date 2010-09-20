@@ -3643,6 +3643,9 @@ namespace Mono.CSharp {
 			//
 			var ms = candidate as MethodSpec;
 			if (ms != null && ms.IsGeneric) {
+				// Setup constraint checker for probing only
+				ConstraintChecker cc = new ConstraintChecker (null);
+
 				if (type_arguments != null) {
 					var g_args_count = ms.Arity;
 					if (g_args_count != type_arguments.Count)
@@ -3658,20 +3661,25 @@ namespace Mono.CSharp {
 						prev_recorder = ec.Report.SetPrinter (lambda_conv_msgs);
 					}
 
-					score = TypeManager.InferTypeArguments (ec, arguments, ref ms);
+					var ti = new TypeInference (arguments);
+					TypeSpec[] i_args = ti.InferMethodArguments (ec, ms);
 					lambda_conv_msgs.EndSession ();
 
-					if (score != 0)
-						return score - 20000;
+					if (i_args == null)
+						return ti.InferenceScore - 20000;
 
-					candidate = ms;
-					pd = ms.Parameters;
+					if (i_args.Length != 0) {
+						candidate = ms = ms.MakeGenericMethod (i_args);
+						pd = ms.Parameters;
+					}
+
+					cc.IgnoreInferredDynamic = true;
 				}
 
 				//
-				// Type arguments constraints have to match
+				// Type arguments constraints have to match for the method to be applicable
 				//
-				if (!ConstraintChecker.CheckAll (null, ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc))
+				if (!cc.CheckAll (ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc))
 					return int.MaxValue - 25000;
 
 			} else {
@@ -4139,7 +4147,7 @@ namespace Mono.CSharp {
 					if (ms != null && ms.IsGeneric) {
 						bool constr_ok = true;
 						if (ms.TypeArguments != null)
-							constr_ok = ConstraintChecker.CheckAll (rc.MemberContext, ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc);
+							constr_ok = new ConstraintChecker (rc.MemberContext).CheckAll (ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc);
 
 						if (ta_count == 0) {
 							if (custom_errors != null && custom_errors.TypeInferenceFailed (rc, best_candidate))

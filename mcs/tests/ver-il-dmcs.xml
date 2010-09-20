@@ -1778,7 +1778,7 @@
     </type>
     <type name="DynamicAssignments">
       <method name="Int32 Main()">
-        <size>102</size>
+        <size>130</size>
       </method>
       <method name="System.Object &lt;Main&gt;m__0(System.Object)">
         <size>2</size>
@@ -2032,7 +2032,7 @@
     </type>
     <type name="Test">
       <method name="Int32 Main()">
-        <size>225</size>
+        <size>236</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -2054,6 +2054,11 @@
         <size>0</size>
       </method>
     </type>
+    <type name="Test">
+      <method name="Void M(System.Object[] ByRef, System.Object[] ByRef)">
+        <size>1</size>
+      </method>
+    </type>
   </test>
   <test name="dtest-029.cs">
     <type name="C">
@@ -2068,6 +2073,51 @@
       </method>
       <method name="Boolean Test2(Int32)">
         <size>160</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-030.cs">
+    <type name="A`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void M1[T](T)">
+        <size>1</size>
+      </method>
+      <method name="Void M2[T,U](T, U)">
+        <size>1</size>
+      </method>
+      <method name="Void M3[T,U](T, A`1[U])">
+        <size>1</size>
+      </method>
+      <method name="Void M4[T,U](T, IEquatable`1)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>576</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-collectioninit-01.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>475</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+Wrap">
+      <method name="System.Object get_Numbers()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>18</size>
       </method>
     </type>
   </test>
@@ -2112,6 +2162,22 @@
     <type name="Tester+&lt;Unsafe_1&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()">
         <size>110</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-etree-01.cs">
+    <type name="C">
+      <method name="Void Conv1(System.Linq.Expressions.Expression`1[System.Func`2[System.Object,System.Object]])">
+        <size>1</size>
+      </method>
+      <method name="Void Conv2(System.Linq.Expressions.Expression`1[System.Func`2[System.Object,System.Object]])">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>382</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -13004,6 +13070,16 @@
         <size>21</size>
       </method>
     </type>
+    <type name="A`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ConditionalParsing">
+      <method name="Void Test_11()">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-410.cs">
     <type name="Program">
@@ -17640,7 +17716,7 @@
         <size>7</size>
       </method>
       <method name="Void Invoke(SomeGenericClass`1+SomeHandlerType[SomeType])">
-        <size>1</size>
+        <size>7</size>
       </method>
       <method name="Void FailsToCompile()">
         <size>19</size>
@@ -17667,7 +17743,7 @@
     </type>
     <type name="SomeGenericClass`1[SomeType]">
       <method name="Void &lt;FailsToCompile&gt;m__0()">
-        <size>37</size>
+        <size>44</size>
       </method>
     </type>
     <type name="SomeGenericClass`1+&lt;FailsToCompile&gt;c__AnonStorey0[SomeType]">
@@ -47570,7 +47646,7 @@
     </type>
     <type name="C">
       <method name="Int32 &lt;Test&gt;m__0()">
-        <size>38</size>
+        <size>45</size>
       </method>
     </type>
     <type name="C+&lt;Test&gt;c__AnonStorey1">
