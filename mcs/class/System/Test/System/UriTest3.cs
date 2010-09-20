@@ -504,7 +504,7 @@ namespace MonoTests.System
 
 			Uri a = new Uri ("http://www.mono-project.com:808/foo");
 			Uri b = new Uri (a, "../docs?queryyy#% %20%23%25bar");
-			//Assert.AreEqual ("http://www.mono-project.com:808/docs?queryyy#% %20%23%25bar", b.OriginalString, "#2");
+			Assert.AreEqual ("http://www.mono-project.com:808/docs?queryyy#% %20%23%25bar", b.OriginalString, "#2");
 
 			Uri c = new Uri ("http://www.mono-project.com:808/foo");
 			Uri d = new Uri (a, "../docs?queryyy#%20%23%25bar");

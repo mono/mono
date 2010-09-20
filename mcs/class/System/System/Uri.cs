@@ -307,10 +307,12 @@ namespace System {
 
 			// 8 fragment
 			// Note that in relative constructor, file URI cannot handle '#' as a filename character, but just regarded as a fragment identifier.
+			string original_fragment = String.Empty;
 			pos = relativeUri.IndexOf ('#');
 			if (pos != -1) {
+				original_fragment = relativeUri.Substring (pos);
 				if (userEscaped)
-					fragment = relativeUri.Substring (pos);
+					fragment = original_fragment;
 				else
 					fragment = "#" + EscapeString (relativeUri.Substring (pos+1));
 				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
@@ -354,8 +356,11 @@ namespace System {
 					path = path.Substring (0, pos + 1);
 			}
 
-			if(relativeUri.Length == 0)
+			if (relativeUri.Length == 0) {
+				// when merging URI the OriginalString is not quite original
+				source = GetLeftPart (UriPartial.Authority) + query + original_fragment;
 				return;
+			}
 	
 			// 6 b)
 			path += relativeUri;
@@ -415,7 +420,10 @@ namespace System {
 			
 			if (!userEscaped)
 				path = EscapeString (path);
-		}		
+
+			// when merging URI the OriginalString is not quite original
+			source = GetLeftPart (UriPartial.Authority) + path + query + original_fragment;
+		}
 		
 		// Properties
 		
@@ -1061,11 +1069,11 @@ namespace System {
 		void AppendQueryAndFragment (ref string result)
 		{
 			if (query.Length > 0) {
-				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true) : Unescape (query, false);
+				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true, false) : Unescape (query, false);
 				result += q;
 			}
 			if (fragment.Length > 0)
-				result += fragment;
+				result += Unescape (fragment, true, false);
 		}
 		
 		public override string ToString () 
@@ -1201,10 +1209,15 @@ namespace System {
 		protected virtual string Unescape (string str)
 #endif
 		{
-			return Unescape (str, false);
+			return Unescape (str, false, false);
+		}
+
+		internal static string Unescape (string str, bool excludeSpecial)
+		{
+			return Unescape (str, excludeSpecial, excludeSpecial);
 		}
 		
-		internal static string Unescape (string str, bool excludeSpecial) 
+		internal static string Unescape (string str, bool excludeSpecial, bool excludeBackslash) 
 		{
 			if (String.IsNullOrEmpty (str))
 				return String.Empty;
@@ -1222,7 +1235,7 @@ namespace System {
 						s.Append ("%25");
 					else if (excludeSpecial && x == '?')
 						s.Append ("%3F");
-					else if (excludeSpecial && x == '\\')
+					else if (excludeBackslash && x == '\\')
 						s.Append ("%5C");
 					else {
 						s.Append (x);

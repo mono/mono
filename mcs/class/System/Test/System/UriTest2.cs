@@ -958,5 +958,21 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("http://@www.mono-project.com/", uri.GetLeftPart (UriPartial.Path), "UriPartial.Path");
 			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
 		}
+
+		[Test]
+		public void Fragment_SpecialCharacters ()
+		{
+			Uri uri = new Uri ("http://host/dir/file#fragment <>%\"{}|\\^`;/?:@&=+$,[]#second");
+			Assert.AreEqual ("#fragment%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,%5B%5D%23second", uri.Fragment, "Fragment");
+			Assert.AreEqual ("http://host/dir/file#fragment <>%25\"{}|\\^`;/?:@&=+$,[]%23second", uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void Query_SpecialCharacters ()
+		{
+			Uri uri = new Uri ("http://host/dir/file?query <>%\"{}|\\^`;/?:@&=+$,[]");
+			Assert.AreEqual ("?query%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,%5B%5D", uri.Query, "Query");
+			Assert.AreEqual ("http://host/dir/file?query <>%25\"{}|\\^`;/?:@&=+$,[]", uri.ToString (), "ToString");
+		}
 	}
 }
