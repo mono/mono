@@ -2037,6 +2037,7 @@ namespace Mono.CSharp
 			Parameter.Reset ();
 
 			Unary.Reset ();
+			UnaryMutator.Reset ();
 			Binary.Reset ();
 			ConstantFold.Reset ();
 			CastFromDecimal.Reset ();

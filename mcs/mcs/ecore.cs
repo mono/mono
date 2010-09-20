@@ -366,6 +366,11 @@ namespace Mono.CSharp {
 			ec.Report.Error (131, loc, "The left-hand side of an assignment must be a variable, a property or an indexer");
 		}
 
+		protected void Error_VoidPointerOperation (ResolveContext rc)
+		{
+			rc.Report.Error (242, loc, "The operation in question is undefined on void pointers");
+		}
+
 		public ResolveFlags ExprClassToResolveFlags {
 			get {
 				switch (eclass) {

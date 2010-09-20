@@ -33759,6 +33759,22 @@
       </method>
     </type>
   </test>
+  <test name="test-450.cs">
+    <type name="A">
+      <method name="Int32 Main()">
+        <size>53</size>
+      </method>
+      <method name="Byte op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="A op_Implicit(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
   <test name="test-451.cs">
     <type name="Test">
       <method name="Void .ctor()">
