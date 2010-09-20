@@ -945,6 +945,12 @@ namespace Mono.CSharp
 				case Token.IDENTIFIER:
 					switch (ptoken) {
 					case Token.DOT:
+						if (bracket_level == 0) {
+							is_type = false;
+							can_be_type = true;
+						}
+
+						continue;
 					case Token.OP_GENERICS_LT:
 					case Token.COMMA:
 					case Token.DOUBLE_COLON:

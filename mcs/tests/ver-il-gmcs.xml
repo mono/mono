@@ -10809,6 +10809,16 @@
         <size>21</size>
       </method>
     </type>
+    <type name="A`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ConditionalParsing">
+      <method name="Void Test_11()">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-410.cs">
     <type name="Program">
