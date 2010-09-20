@@ -155,12 +155,9 @@ namespace MonoTests.System
 			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "../foo/bar/Hello World.htm?x=0:8", false);
 			Assert.AreEqual ("http://www.contoso.com/xxx/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri, "#rel8");
 			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "../../../foo/bar/Hello World.htm?x=0:8", false);
-#if NET_2_0
 			Assert.AreEqual ("http://www.contoso.com/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri, "#rel9");
 			Assert.AreEqual ("/foo/bar/Hello%20World.htm", uri.AbsolutePath, "#rel9-path");
-#else
-			Assert.AreEqual ("http://www.contoso.com/../foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri, "#rel9");
-#endif
+
 			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "./foo/bar/Hello World.htm?x=0:8", false);
 			Assert.AreEqual ("http://www.contoso.com/xxx/yyy/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri, "#rel10");
 
@@ -175,7 +172,7 @@ namespace MonoTests.System
 #endif
 			uri = new Uri (new Uri("http://www.xxx.com/index.htm"), "#here");
 			Assert.AreEqual ("http://www.xxx.com/index.htm#here", uri.ToString(), "#rel32");
-#if NET_2_0
+
 			uri = new Uri ("relative", UriKind.Relative);
 			uri = new Uri ("relative/abc", UriKind.Relative);
 			uri = new Uri ("relative", UriKind.RelativeOrAbsolute);
@@ -183,7 +180,6 @@ namespace MonoTests.System
 			Assert.IsTrue (!uri.IsAbsoluteUri, "#rel33");
 			Assert.AreEqual (uri.OriginalString, "relative", "#rel34");
 			Assert.IsTrue (!uri.UserEscaped, "#rel35");
-#endif
 		}
 
 		[Test]
@@ -211,30 +207,20 @@ namespace MonoTests.System
 			Assert.IsTrue (!uri.IsLoopback, "IsLoopback");
 			Assert.IsTrue (!uri.IsUnc, "IsUnc");
 			Assert.IsTrue (!uri.UserEscaped, "UserEscaped");
-#if NET_2_0
+
 			Assert.AreEqual (UriHostNameType.Unknown, uri.HostNameType, "HostNameType");
 			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
 			Assert.AreEqual (relative, uri.OriginalString, "OriginalString");
-#else
-			Assert.AreEqual (UriHostNameType.Basic, uri.HostNameType, "HostNameType");
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Constructor_NullStringBool ()
 		{
 			new Uri (null, "http://www.contoso.com/index.htm", false);
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Constructor_UriNullBool ()
 		{
 			new Uri (new Uri ("http://www.contoso.com"), null, false);
@@ -261,7 +247,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("?q=r;.%20a", u.Query, "#6");
 		}
 
-#if NET_2_0
+
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
 		public void RelativeCtor_11_Crasher ()
@@ -270,7 +256,6 @@ namespace MonoTests.System
 			// this causes crash under MS.NET 1.1
 			Assert.AreEqual ("g:h", new Uri (b, "g:h").ToString (), "g:h");
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
@@ -280,9 +265,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")]
-#endif
 		public void LeadingSlashes_ShouldFailOn1x ()
 		{
 			// doesn't (but should) fail under 1.x
@@ -291,108 +273,56 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotWorking")]
-#endif
 		public void LeadingSlashes_BadResultsOn1x ()
 		{
 			// strange behaviours of 1.x - it's probably not worth to fix it
 			// on Mono as 2.0 has been fixed
 			Uri u = new Uri ("file:///foo/bar");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, u.Host, "#3a");
 			Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "#3b");
 			Assert.AreEqual ("file:///foo/bar", u.ToString (), "#3c");
 			Assert.AreEqual (false, u.IsUnc, "#3d");
-#else
-			// 1.x misinterpret the first path element as the host name
-			Assert.AreEqual ("foo", u.Host, "#3a");
-			Assert.AreEqual (UriHostNameType.Dns, u.HostNameType, "#3b");
-			Assert.AreEqual ("file://foo/bar", u.ToString (), "#3c");
-			Assert.AreEqual (true, u.IsUnc, "#3d");
-#endif
+
 			u = new Uri ("mailto:/foo");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, u.Host, "#13a");
 			Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "#13b");
 			Assert.AreEqual ("mailto:/foo", u.ToString (), "#13c");
-#else
-			// 1.x misinterpret the first path element as the host name
-			Assert.AreEqual ("foo", u.Host, "#13a");
-			Assert.AreEqual (UriHostNameType.Dns, u.HostNameType, "#13b");
-			Assert.AreEqual ("mailto:foo", u.ToString (), "#13c");
-#endif
+
 			u = new Uri ("mailto://foo");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, u.Host, "#14a");
 			Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "#14b");
 			Assert.AreEqual ("mailto://foo", u.ToString (), "#14c");
-#else
-			// 1.x misinterpret the first path element as the host name
-			Assert.AreEqual ("foo", u.Host, "#14a");
-			Assert.AreEqual (UriHostNameType.Dns, u.HostNameType, "#14b");
-			Assert.AreEqual ("mailto://foo/", u.ToString (), "#14c");
-#endif
+
 			u = new Uri ("news:/");
 			Assert.AreEqual (String.Empty, u.Host, "#18a");
-#if NET_2_0
 			Assert.AreEqual (UriHostNameType.Unknown, u.HostNameType, "#18b");
 			Assert.AreEqual ("news:/", u.ToString (), "#18c");
 			Assert.AreEqual ("/", u.AbsolutePath, "#18d");
 			Assert.AreEqual ("news:/", u.AbsoluteUri, "#18e");
-#else
-			Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "#18b");
-			Assert.AreEqual ("news:", u.ToString (), "#18c");
-			Assert.AreEqual (String.Empty, u.AbsolutePath, "#18d");
-			Assert.AreEqual ("news:", u.AbsoluteUri, "#18e");
-#endif
+
 			u = new Uri ("news:/foo");
 			Assert.AreEqual (String.Empty, u.Host, "#19a");
-#if NET_2_0
 			Assert.AreEqual (UriHostNameType.Unknown, u.HostNameType, "#19b");
 			Assert.AreEqual ("news:/foo", u.ToString (), "#19c");
 			Assert.AreEqual ("/foo", u.AbsolutePath, "#19d");
 			Assert.AreEqual ("news:/foo", u.AbsoluteUri, "#19e");
-#else
-			Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "#19b");
-			Assert.AreEqual ("news:foo", u.ToString (), "#19c");
-			Assert.AreEqual ("foo", u.AbsolutePath, "#19d");
-			Assert.AreEqual ("news:foo", u.AbsoluteUri, "#19e");
-#endif
+
 			u = new Uri ("news://foo");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, u.Host, "#20a");
 			Assert.AreEqual (UriHostNameType.Unknown, u.HostNameType, "#20b");
 			Assert.AreEqual ("news://foo", u.ToString (), "#20c");
 			Assert.AreEqual ("//foo", u.AbsolutePath, "#20d");
 			Assert.AreEqual ("news://foo", u.AbsoluteUri, "#20e");
-#else
-			Assert.AreEqual ("foo", u.Host, "#20a");
-			Assert.AreEqual (UriHostNameType.Dns, u.HostNameType, "#20b");
-			Assert.AreEqual ("news://foo/", u.ToString (), "#20c");
-			Assert.AreEqual ("/", u.AbsolutePath, "#20d");
-			Assert.AreEqual ("news://foo/", u.AbsoluteUri, "#20e");
-#endif
+
 			u = new Uri ("news://foo/bar");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, u.Host, "#22a");
 			Assert.AreEqual (UriHostNameType.Unknown, u.HostNameType, "#22b");
 			Assert.AreEqual ("news://foo/bar", u.ToString (), "#22c");
 			Assert.AreEqual ("//foo/bar", u.AbsolutePath, "#22d");
 			Assert.AreEqual ("news://foo/bar", u.AbsoluteUri, "#22e");
-#else
-			Assert.AreEqual ("foo", u.Host, "#22a");
-			Assert.AreEqual (UriHostNameType.Dns, u.HostNameType, "#22b");
-			Assert.AreEqual ("news://foo/bar", u.ToString (), "#22c");
-			Assert.AreEqual ("/bar", u.AbsolutePath, "#22d");
-			Assert.AreEqual ("news://foo/bar", u.AbsoluteUri, "#22e");
-#endif
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // does (but shouldn't) fail under 1.x
-#endif
 		public void LeadingSlashes_FailOn1x ()
 		{
 			// 1.x throws an UriFormatException because it can't decode the host name
@@ -416,11 +346,7 @@ namespace MonoTests.System
 			// 1.x throws an UriFormatException because it cannot detect the format
 			u = new Uri ("news:///foo");
 			Assert.AreEqual (String.Empty, u.Host, "#21a");
-#if NET_2_0
 			Assert.AreEqual (UriHostNameType.Unknown, u.HostNameType, "#21b");
-#else
-			Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "#21b");
-#endif
 			Assert.AreEqual ("news:///foo", u.ToString (), "#21c");
 			Assert.AreEqual ("///foo", u.AbsolutePath, "#21d");
 			Assert.AreEqual ("news:///foo", u.AbsoluteUri, "#21e");
@@ -451,20 +377,12 @@ namespace MonoTests.System
 
 			u = new Uri ("news:");
 			Assert.AreEqual (String.Empty, u.Host, "#16a");
-#if NET_2_0
 			Assert.AreEqual (UriHostNameType.Unknown, u.HostNameType, "#16b");
-#else
-			Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "#16b");
-#endif
 			Assert.AreEqual ("news:", u.ToString (), "#16c");
 
 			u = new Uri ("news:foo");
 			Assert.AreEqual (String.Empty, u.Host, "#17a");
-#if NET_2_0
 			Assert.AreEqual (UriHostNameType.Unknown, u.HostNameType, "#17b");
-#else
-			Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "#17b");
-#endif
 			Assert.AreEqual ("news:foo", u.ToString (), "#17c");
 			Assert.AreEqual ("foo", u.AbsolutePath, "#17d");
 			Assert.AreEqual ("news:foo", u.AbsoluteUri, "#17e");
@@ -479,9 +397,6 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // doesn't fail under 1.x
-#endif
 		public void HttpHostname2 ()
 		{
 			new Uri ("http:a");
@@ -496,9 +411,6 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // doesn't fail under 1.x
-#endif
 		public void HttpHostname4 ()
 		{
 			new Uri ("http:/foo");
@@ -627,17 +539,10 @@ namespace MonoTests.System
 		{
 			// Hmm, they should be regarded just as a host name, since all URIs are base on absolute path.
 			Uri uri = new Uri("file://one_file.txt");
-#if NET_2_0
 			Assert.AreEqual ("file://one_file.txt/", uri.ToString(), "#6a");
 			Assert.AreEqual ("/", uri.AbsolutePath, "#6e");
 			Assert.AreEqual ("/", uri.PathAndQuery, "#6f");
 			Assert.AreEqual ("file://one_file.txt/", uri.GetLeftPart (UriPartial.Path), "#6g");
-#else
-			Assert.AreEqual ("file://one_file.txt", uri.ToString(), "#6a");
-			Assert.AreEqual ("", uri.AbsolutePath, "#6e");
-			Assert.AreEqual ("", uri.PathAndQuery, "#6f");
-			Assert.AreEqual ("file://one_file.txt", uri.GetLeftPart (UriPartial.Path), "#6g");
-#endif
 			if (isWin32)
 				Assert.AreEqual ("\\\\one_file.txt", uri.LocalPath, "#6b");
 			else
@@ -668,26 +573,14 @@ namespace MonoTests.System
 			// escape
 			Uri uri = new Uri ("file:///tmp/a%20a");
 			if (isWin32) {
-#if NET_2_0
 				Assert.IsTrue (uri.LocalPath.EndsWith ("/tmp/a a"), "#7a:" + uri.LocalPath);
-#else
-				// actually MS.NET treats /// as \\ thus it fails here.
-				Assert.IsTrue (uri.LocalPath.EndsWith ("\\tmp\\a a"), "#7a:" + uri.LocalPath);
-#endif
 			} else
 				Assert.AreEqual ("/tmp/a a", uri.LocalPath, "#7b");
 
 			uri = new Uri ("file:///tmp/foo%25bar");
 			if (isWin32) {
-#if NET_2_0
 				Assert.IsTrue (uri.LocalPath.EndsWith ("/tmp/foo%bar"), "#8a:" + uri.LocalPath);
 				Assert.IsTrue (uri.ToString ().EndsWith ("//tmp/foo%25bar"), "#8c:" + uri.ToString ());
-#else
-				// actually MS.NET treats /// as \\ thus it fails here.
-				Assert.IsTrue (uri.LocalPath.EndsWith ("\\tmp\\foo%bar"), "#8a:" + uri.LocalPath);
-				// ditto, file://tmp/foo%25bar (bug in 1.x)
-				Assert.IsTrue (uri.ToString ().EndsWith ("//tmp/foo%bar"), "#8c:" + uri.ToString ());
-#endif
 			} else {
 				Assert.AreEqual ("/tmp/foo%bar", uri.LocalPath, "#8b");
 				Assert.AreEqual ("file:///tmp/foo%25bar", uri.ToString (), "#8d");
@@ -695,12 +588,7 @@ namespace MonoTests.System
 			// bug #76643
 			uri = new Uri ("file:///foo%25bar");
 			if (isWin32) {
-#if NET_2_0
 				Assert.IsTrue (uri.LocalPath.EndsWith ("/foo%bar"), "#9a:" + uri.LocalPath);
-#else
-				// actually MS.NET treats /// as \\ thus it fails here.
-				Assert.IsTrue (uri.LocalPath.EndsWith ("\\foo%25bar"), "#9a:" + uri.LocalPath);
-#endif
 				// ditto, file://tmp/foo%25bar (bug in 1.x)
 				Assert.IsTrue (uri.ToString ().EndsWith ("//foo%25bar"), "#9c:" + uri.ToString ());
 			} else {
@@ -717,11 +605,7 @@ namespace MonoTests.System
 			Uri u2 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx");
 
 			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx", u1.ToString (), "QE1");
-#if NET_2_0
 			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx", u2.ToString (), "QE2");
-#else
-			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx", u2.ToString (), "QE2");
-#endif
 		}
 
 		[Test]
@@ -857,11 +741,6 @@ namespace MonoTests.System
 			Assert.AreEqual (4, i, "#12");
 		}
 
-#if !NET_2_0
-		// These won't pass exactly with MS.NET 1.x, due to differences in the
-		// handling of backslashes/forwardslashes
-		[Category ("NotDotNet")]
-#endif
 		[Test]
 		public void HexUnescapeMultiByte ()
 		{
@@ -980,7 +859,6 @@ namespace MonoTests.System
 			Assert.AreEqual (n.Fragment, "#main#start", "#4");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Fragment_RelativeUri ()
 		{
@@ -998,7 +876,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
-#endif
 
 		[Test]
 		[ExpectedException(typeof(UriFormatException))]
@@ -1105,11 +982,7 @@ namespace MonoTests.System
 		public void IsLoopback_File ()
 		{
 			Uri uri = new Uri ("file:///index.html");
-#if NET_2_0
 			Assert.IsTrue (uri.IsLoopback, "file");
-#else
-			Assert.IsTrue (!uri.IsLoopback, "file");
-#endif
 		}
 
 		[Test]
@@ -1139,9 +1012,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category("NotDotNet")]
-#endif
 		public void Equals2 ()
 		{
 			Uri uri1 = new Uri ("http://www.contoso.com/index.htm#main");
@@ -1167,13 +1037,11 @@ namespace MonoTests.System
 
 			a = new Uri ("mailto:user:pwd@go-mono.com?subject=uri");
 			b = new Uri ("MAILTO:USER:PWD@GO-MONO.COM?SUBJECT=URI");
-#if NET_2_0
+
 			Assert.IsTrue (a != b, "#2");
 			Assert.AreEqual ("mailto:user:pwd@go-mono.com?subject=uri", a.ToString (), "#2a");
 			Assert.AreEqual ("mailto:USER:PWD@go-mono.com?SUBJECT=URI", b.ToString (), "#2b");
-#else
-			Assert.AreEqual (a, b, "#2");
-#endif
+
 			a = new Uri ("http://www.go-mono.com/ports/");
 			b = new Uri ("http://www.go-mono.com/PORTS/");
 
@@ -1214,7 +1082,6 @@ namespace MonoTests.System
 			Assert.IsTrue (uri1.GetHashCode () != uri2.GetHashCode (), "#4");
 		}
 
-#if NET_2_0
 		[Test]
 		public void RelativeEqualsTest()
 		{
@@ -1277,7 +1144,6 @@ namespace MonoTests.System
 			Assert.AreEqual (uri1.GetHashCode(), uri2.GetHashCode(), "#1");
 			Assert.IsTrue (uri1.GetHashCode() != uri3.GetHashCode(), "#2");
 		}
-#endif
 
 		[Test]
 		public void MakeRelative ()
@@ -1324,18 +1190,10 @@ namespace MonoTests.System
 		public void RelativeUri ()
 		{
 			Uri u = new Uri("http://localhost/../../../a");
-#if NET_2_0
 			Assert.AreEqual ("http://localhost/a", u.ToString ());
-#else
-			Assert.AreEqual ("http://localhost/../../../a", u.ToString ());
-#endif
 
 			u = new Uri ("http://localhost/../c/b/../a");
-#if NET_2_0
 			Assert.AreEqual ("http://localhost/c/a", u.ToString ());
-#else
-			Assert.AreEqual ("http://localhost/../c/a", u.ToString ());
-#endif
 		}
 
 		[Test]
@@ -1377,11 +1235,7 @@ namespace MonoTests.System
 			Assert.AreEqual (false, Uri.CheckSchemeName ("+http"), "#09");
 			Assert.AreEqual (true, Uri.CheckSchemeName ("htt+p6"), "#10");
 			// 0x00E1 -> &atilde;
-#if NET_2_0
 			Assert.IsTrue (!Uri.CheckSchemeName ("htt\u00E1+p6"), "#11");
-#else
-			Assert.IsTrue (Uri.CheckSchemeName ("htt\u00E1+p6"), "#11");
-#endif
 		}
 
 		[Test]
@@ -1391,12 +1245,8 @@ namespace MonoTests.System
 				string s = String.Format ("#{0}", i);
 				char c = (char) i;
 				bool b = Uri.CheckSchemeName (c.ToString ());
-#if NET_2_0
 				bool valid = (((i >= 0x41) && (i <= 0x5A)) || ((i >= 0x61) && (i <= 0x7A)));
 				Assert.AreEqual (valid, b, s);
-#else
-				Assert.AreEqual (Char.IsLetter (c), b, s);
-#endif
 			}
 		}
 
@@ -1409,12 +1259,8 @@ namespace MonoTests.System
 				string scheme = String.Format ("a+b-c.d{0}", c);
 				bool b = Uri.CheckSchemeName (scheme);
 				bool common = Char.IsDigit (c) || (c == '+') || (c == '-') || (c == '.');
-#if NET_2_0
 				bool valid = (common || ((i >= 0x41) && (i <= 0x5A)) || ((i >= 0x61) && (i <= 0x7A)));
 				Assert.AreEqual (valid, b, s);
-#else
-				Assert.AreEqual ((Char.IsLetter (c) || common), b, s);
-#endif
 			}
 		}
 
@@ -1426,10 +1272,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if !NET_2_0
-		// MS.NET 1.x throws an IndexOutOfRangeException
-		[Category("NotDotNet")]
-#endif
 		public void NoHostname2 ()
 		{
 			// bug 75144
@@ -1446,11 +1288,7 @@ namespace MonoTests.System
 			Assert.AreEqual (UriHostNameType.Basic, uri.HostNameType, "#10");
 			Assert.AreEqual (string.Empty, uri.Fragment, "#11");
 			Assert.AreEqual (true, uri.IsDefaultPort, "#12");
-#if NET_2_0
 			Assert.IsTrue (uri.IsLoopback, "#13");
-#else
-			Assert.IsTrue (!uri.IsLoopback, "#13");
-#endif
 			Assert.AreEqual ("/", uri.PathAndQuery, "#14");
 			Assert.AreEqual (false, uri.UserEscaped, "#15");
 			Assert.AreEqual (string.Empty, uri.UserInfo, "#16");
@@ -1543,10 +1381,8 @@ namespace MonoTests.System
 			new Uri ("hey");
 		}
 
-#if NET_2_0
 		// on .NET 2.0 a port number is limited to UInt16.MaxValue
 		[ExpectedException (typeof (UriFormatException))]
-#endif
 		[Test]
 		public void InvalidPort1 ()
 		{
@@ -1554,9 +1390,7 @@ namespace MonoTests.System
 			Assert.AreEqual (65536, uri.Port);
 		}
 
-#if NET_2_0
 		[ExpectedException (typeof (UriFormatException))]
-#endif
 		[Test]
 		public void InvalidPort2 ()
 		{
@@ -1565,9 +1399,7 @@ namespace MonoTests.System
 			Assert.AreEqual (-1, uri.Port);
 		}
 
-#if NET_2_0
 		[ExpectedException (typeof (UriFormatException))]
-#endif
 		[Test]
 		public void InvalidPort3 ()
 		{
@@ -1576,7 +1408,6 @@ namespace MonoTests.System
 			Assert.AreEqual (-2147483648, uri.Port);
 		}
 
-#if NET_2_0
 		[Test]
 		public void PortMax ()
 		{
@@ -1584,7 +1415,6 @@ namespace MonoTests.System
 			Uri uri = new Uri ("http://www.contoso.com:65535/foo/bar/");
 			Assert.AreEqual (65535, uri.Port);
 		}
-#endif
 
 		class UriEx2 : Uri
 		{
@@ -1597,10 +1427,8 @@ namespace MonoTests.System
 			}
 		}
 
-#if NET_2_0
 		// Parse method is no longer used on .NET 2.0
 		[ExpectedException (typeof (UriFormatException))]
-#endif
 		[Test]
 		public void ParseOverride ()
 		{
@@ -1629,7 +1457,6 @@ namespace MonoTests.System
 			new Uri (@"file:///J:\Wrldwide\MSFin\Flash\FLASH.xls");
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestEscapeDataString ()
 		{
@@ -1654,7 +1481,6 @@ namespace MonoTests.System
 				Uri.EscapeUriString (sb.ToString ()));
 			Assert.AreEqual ("%C3%A1", Uri.EscapeDataString ("á"));
 		}
-#endif
 
 		//bnc #363320
 		[Test]
@@ -1684,19 +1510,12 @@ namespace MonoTests.System
 		// You are surrounded by conditional-compilation code, all alike.
 		// You are likely to be eaten by a Grue...
 		[Test]
-#if !NET_2_0
-		[Category ("NotDotNet")]
-#endif
 		public void UnixLocalPath_WTF ()
 		{
 			// Empty path == localhost, in theory
 			string path = "file:///tmp/foo/bar";
 			Uri fileUri = new Uri( path );
-//#if NET_2_0
 			Assert.AreEqual ("/tmp/foo/bar", fileUri.AbsolutePath, path);
-//#else
-//			Assert.AreEqual ("/foo/bar", fileUri.AbsolutePath, path);
-//#endif
 
 			// bug #76643
 			string path2 = "file:///foo%25bar";
@@ -1749,7 +1568,6 @@ namespace MonoTests.System
 		}
 
 //BNC#533572
-#if NET_2_0
 		[Test]
 		public void LocalPath_FileNameWithAtSign1 ()
 		{
@@ -1890,6 +1708,5 @@ namespace MonoTests.System
 				return base.Unescape (path);
 			}
 		}
-#endif
 	}
 }
