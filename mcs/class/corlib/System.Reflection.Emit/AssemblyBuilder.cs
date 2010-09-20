@@ -825,6 +825,19 @@ namespace System.Reflection.Emit
 				}
 			}
 
+			if (res != null) {
+				ArrayList exceptions = null;
+				foreach (var type in res) {
+					if (type is TypeBuilder) {
+						if (exceptions == null)
+							exceptions = new ArrayList ();
+						exceptions.Add (new TypeLoadException (string.Format ("Type '{0}' is not finished", FullName))); 
+					}
+				}
+				if (exceptions != null)
+					throw new ReflectionTypeLoadException (new Type [exceptions.Count], (Exception[])exceptions.ToArray (typeof (Exception)));
+			}
+			
 			return res == null ? Type.EmptyTypes : res;
 		}
 

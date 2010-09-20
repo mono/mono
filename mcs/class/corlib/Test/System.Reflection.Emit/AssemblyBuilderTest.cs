@@ -1776,6 +1776,32 @@ public class AssemblyBuilderTest
 		ab.GetCustomAttributes (true);
 	}
 
+
+	[Test]
+	public void GetTypesWithUnfinishedTypeBuilder ()
+	{
+		AssemblyBuilder ab = genAssembly ();
+		ModuleBuilder mb = ab.DefineDynamicModule("tester", "tester.dll", false);
+		mb.DefineType ("K").CreateType ();
+		var tb = mb.DefineType ("T");
+
+		try {
+			ab.GetTypes ();
+			Assert.Fail ("#1");
+		} catch (ReflectionTypeLoadException ex) {
+			Assert.AreEqual (1, ex.Types.Length, "#2");
+			Assert.AreEqual (1, ex.LoaderExceptions.Length, "#3");
+			Assert.IsNull (ex.Types [0], "#4");
+			Assert.IsTrue (ex.LoaderExceptions [0] is TypeLoadException, "#5");
+		}
+
+		tb.CreateType ();
+		var types = ab.GetTypes ();
+		Assert.AreEqual (2, types.Length, "#5");
+		foreach (var t in types)
+			Assert.IsFalse (t is TypeBuilder, "#6_" + t.Name);
+	}
+
 	private static void AssertAssemblyName (string tempDir, AssemblyName assemblyName, string abName, string fullName)
 	{
 		AppDomain currentDomain = AppDomain.CurrentDomain;
