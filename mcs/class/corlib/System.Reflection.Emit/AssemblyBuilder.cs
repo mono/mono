@@ -832,7 +832,7 @@ namespace System.Reflection.Emit
 					if (type is TypeBuilder) {
 						if (exceptions == null)
 							exceptions = new List <Exception> ();
-						exceptions.Add (new TypeLoadException (string.Format ("Type '{0}' is not finished", FullName))); 
+						exceptions.Add (new TypeLoadException (string.Format ("Type '{0}' is not finished", type.FullName))); 
 					}
 				}
 				if (exceptions != null)
