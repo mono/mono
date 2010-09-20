@@ -851,7 +851,7 @@ TextWriter sw = Console.Out;
 			Assert.IsTrue (uri.IsDefaultPort, "IsDefaultPort");
 			Assert.IsTrue (uri.IsFile, "IsFile");
 			Assert.IsFalse (uri.IsLoopback, "IsLoopback");
-			Assert.IsTrue (uri.IsUnc, "IsUnc");
+			Assert.AreEqual (isWin32, uri.IsUnc, "IsUnc");
 			Assert.AreEqual (isWin32 ? "\\\\host\\dir\\subdir\\file?this-is-not-a-query" : "/dir/subdir/file?this-is-not-a-query", uri.LocalPath, "LocalPath");
 			Assert.AreEqual ("file://host/dir/subdir/file?this-is-not-a-query#but-this-is-a-fragment", uri.OriginalString, "OriginalString");
 			Assert.AreEqual ("/dir/subdir/file%3Fthis-is-not-a-query", uri.PathAndQuery, "PathAndQuery");

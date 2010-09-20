@@ -360,13 +360,13 @@ namespace MonoTests.System
 			Assert.AreEqual ("foo", u.Host, "#5a");
 			Assert.AreEqual (UriHostNameType.Dns, u.HostNameType, "#5b");
 			Assert.AreEqual ("file://foo/bar", u.ToString (), "#5c");
-			Assert.AreEqual (true, u.IsUnc, "#5d");
+			Assert.AreEqual (isWin32, u.IsUnc, "#5d");
 
 			u = new Uri ("file:////foo/bar");
 			Assert.AreEqual ("foo", u.Host, "#7a");
 			Assert.AreEqual (UriHostNameType.Dns, u.HostNameType, "#7b");
 			Assert.AreEqual ("file://foo/bar", u.ToString (), "#7c");
-			Assert.AreEqual (true, u.IsUnc, "#7d");
+			Assert.AreEqual (isWin32, u.IsUnc, "#7d");
 
 			Assert.AreEqual ("file://foo/bar", new Uri ("file://///foo/bar").ToString(), "#9");
 
@@ -624,7 +624,7 @@ namespace MonoTests.System
 			Assert.IsTrue (!uri.IsUnc, "#2");
 
 			uri = new Uri ("file://server/filename.ext");
-			Assert.IsTrue (uri.IsUnc, "#3");
+			Assert.AreEqual (isWin32, uri.IsUnc, "#3");
 
 			uri = new Uri (@"\\server\share\filename.ext");
 			Assert.IsTrue (uri.IsUnc, "#6");
@@ -1636,7 +1636,7 @@ namespace MonoTests.System
 			Assert.AreEqual (fileUri.Host, "localhost", "LocalPath_FileNameWithAtSign Host");
 			Assert.IsTrue (fileUri.IsFile, "LocalPath_FileNameWithAtSign IsFile");
 			Assert.IsTrue (fileUri.IsAbsoluteUri, "LocalPath_FileNameWithAtSign IsAbsUri");
-			Assert.IsTrue (fileUri.IsUnc, "LocalPath_FileNameWithAtSign IsUnc");
+			Assert.AreEqual (isWin32, fileUri.IsUnc, "LocalPath_FileNameWithAtSign IsUnc");
 
 			Assert.AreEqual (fullpath, fileUri.OriginalString, "LocalPath_FileNameWithAtSign OriginalString");
 			Assert.AreEqual (path, new DerivedUri (fullpath).TestUnescape (path), "LocalPath_FileNameWithAtSign ProtectedUnescape");
@@ -1646,14 +1646,14 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LocalPath_FileNameWithAtSign5 ()
 		{
 			string path = "/some/path/file_with_an_@_sign.mp3";
 			string fullpath = "file://localhost" + path;
 			Uri fileUri = new Uri (fullpath);
 
-			Assert.AreEqual ("\\\\localhost" + path.Replace ("/", "\\"), fileUri.LocalPath, "LocalPath_FileNameWithAtSign LocalPath");
+			string expected = isWin32 ? "\\\\localhost" + path.Replace ("/", "\\") : "/some/path/file_with_an_@_sign.mp3";
+			Assert.AreEqual (expected, fileUri.LocalPath, "LocalPath_FileNameWithAtSign LocalPath");
 		}
 
 		[Test]

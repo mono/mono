@@ -93,6 +93,7 @@ namespace System {
 
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
 		private static string [] Empty = new string [0];
+		private static bool isWin32 = (Path.DirectorySeparatorChar == '\\');
 
 	
 		// Fields
@@ -1570,11 +1571,12 @@ namespace System {
 				uriString = "//" + uriString;
 				host = String.Empty;
 			} else if (scheme == UriSchemeFile) {
-				isUnc = true;
+				// under Windows all file:// URI are considered UNC, which is not the case other MacOS (e.g. Silverlight)
+				isUnc = isWin32;
 			} else if (host.Length == 0 &&
 				   (scheme == UriSchemeHttp || scheme == UriSchemeGopher || scheme == UriSchemeNntp ||
 				    scheme == UriSchemeHttps || scheme == UriSchemeFtp)) {
-				return "Invalid URI: The hostname could not be parsed";
+				return "Invalid URI: The Authority/Host could not be parsed.";
 			}
 
 			bool badhost = ((host.Length > 0) && (CheckHostName (host) == UriHostNameType.Unknown));
@@ -1588,7 +1590,7 @@ namespace System {
 					badhost = true;
 			}
 			if (badhost && (Parser is DefaultUriParser || Parser == null))
-				return Locale.GetText ("Invalid URI: The hostname could not be parsed. (" + host + ")");
+				return "Invalid URI: The Authority/Host could not be parsed.";
 
 			UriFormatException ex = null;
 			if (Parser != null)
