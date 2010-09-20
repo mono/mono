@@ -974,5 +974,15 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("?query%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,%5B%5D", uri.Query, "Query");
 			Assert.AreEqual ("http://host/dir/file?query <>%25\"{}|\\^`;/?:@&=+$,[]", uri.ToString (), "ToString");
 		}
+
+		[Test]
+		public void OriginalPathEscaped ()
+		{
+			Uri uri = new Uri ("http://www.mono-project.com/%41/%42/%43", UriKind.Absolute);
+			Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("/%41/%42/%43", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("/A/B/C", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
+		}
 	}
 }

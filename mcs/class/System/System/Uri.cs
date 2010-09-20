@@ -566,8 +566,10 @@ namespace System {
 				if (cachedLocalPath != null)
 					return cachedLocalPath;
 
-				if (IsLocalIdenticalToAbsolutePath ())
-					return AbsolutePath;
+				if (IsLocalIdenticalToAbsolutePath ()) {
+					cachedLocalPath = Unescape (AbsolutePath);
+					return cachedLocalPath;
+				}
 
 				if (!IsUnc) {
 					string p = Unescape (path);
