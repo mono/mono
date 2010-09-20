@@ -39,6 +39,7 @@ using System.Runtime.Serialization;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
@@ -826,16 +827,16 @@ namespace System.Reflection.Emit
 			}
 
 			if (res != null) {
-				ArrayList exceptions = null;
+				List<Exception> exceptions = null;
 				foreach (var type in res) {
 					if (type is TypeBuilder) {
 						if (exceptions == null)
-							exceptions = new ArrayList ();
+							exceptions = new List <Exception> ();
 						exceptions.Add (new TypeLoadException (string.Format ("Type '{0}' is not finished", FullName))); 
 					}
 				}
 				if (exceptions != null)
-					throw new ReflectionTypeLoadException (new Type [exceptions.Count], (Exception[])exceptions.ToArray (typeof (Exception)));
+					throw new ReflectionTypeLoadException (new Type [exceptions.Count], exceptions.ToArray ());
 			}
 			
 			return res == null ? Type.EmptyTypes : res;
