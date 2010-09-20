@@ -9031,7 +9031,9 @@ namespace Mono.CSharp {
 						initializer.Resolve (ec);
 						throw new InternalErrorException ("This line should never be reached");
 					} else {
-						if (!ec.CurrentInitializerVariable.Type.ImplementsInterface (TypeManager.ienumerable_type, false)) {
+						var t = ec.CurrentInitializerVariable.Type;
+						// LAMESPEC: The collection must implement IEnumerable only, no dynamic support
+						if (!t.ImplementsInterface (TypeManager.ienumerable_type, false) && t != InternalType.Dynamic) {
 							ec.Report.Error (1922, loc, "A field or property `{0}' cannot be initialized with a collection " +
 								"object initializer because type `{1}' does not implement `{2}' interface",
 								ec.CurrentInitializerVariable.GetSignatureForError (),

@@ -316,6 +316,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (TypeSpecComparer.IsEqual (expr_type, target_type))
+				return true;
+
 			if (TypeSpecComparer.Variant.IsEqual (expr_type, target_type))
 				return true;
 
@@ -436,7 +439,7 @@ namespace Mono.CSharp {
 
 			// conversion exists only mode
 			if (ec == null) {
-				if (expr_type == t_el)
+				if (TypeSpecComparer.IsEqual (expr_type, t_el))
 					return EmptyExpression.Null;
 
 				if (expr is Constant)
@@ -452,7 +455,7 @@ namespace Mono.CSharp {
 				unwrap = expr;
 
 			Expression conv = unwrap;
-			if (expr_type != t_el) {
+			if (!TypeSpecComparer.IsEqual (expr_type, t_el)) {
 				if (conv is Constant)
 					conv = ((Constant)conv).ConvertImplicitly (ec, t_el);
 				else
@@ -774,6 +777,9 @@ namespace Mono.CSharp {
 			// Conversion from __arglist to System.ArgIterator
 			if (expr_type == InternalType.Arglist)
 				return target_type == TypeManager.arg_iterator_type;
+
+			if (TypeSpecComparer.IsEqual (expr_type, target_type))
+				return true;
 
 			return false;
 		}
@@ -1332,6 +1338,9 @@ namespace Mono.CSharp {
 			}
 
 			if (expr_type == InternalType.Arglist && target_type == TypeManager.arg_iterator_type)
+				return expr;
+
+			if (TypeSpecComparer.IsEqual (expr_type, target_type))
 				return expr;
 
 			return null;
