@@ -27,31 +27,32 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Runtime.Serialization {
 
 	public sealed class SerializationObjectManager
 	{
 		readonly StreamingContext context;
-		readonly Hashtable seen = new Hashtable ();
+		readonly List<WeakReference> seen;
 
 		event SerializationCallbacks.CallbackHandler callbacks;
 
 		public SerializationObjectManager (StreamingContext context)
 		{
+			this.seen = new List<WeakReference> ();
 			this.context = context;
 		}
 		
 		public void RegisterObject (object obj)
 		{
-			if (seen.Contains (obj))
+			if (SeenObject (obj))
 				return;
 
 			SerializationCallbacks sc = SerializationCallbacks
 				.GetSerializationCallbacks (obj.GetType ());
 
-			seen [obj] = 1;
+			seen.Add (new WeakReference (obj));
 			sc.RaiseOnSerializing (obj, context);
 
 			if (sc.HasSerializedCallbacks) {
@@ -61,6 +62,25 @@ namespace System.Runtime.Serialization {
 					sc.RaiseOnSerialized (obj, ctx);
 				};
 			}
+		}
+
+		bool SeenObject (object obj)
+		{
+			if (obj == null)
+				return true;
+
+			int max = seen.Count;
+			for (int i = 0; i < max; i++) {
+				object o = seen [i].Target;
+				if (o == null) {
+					seen.RemoveAt (i);
+					i--;
+					max--;
+				} else if (o == obj) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public void RaiseOnSerializedEvent ()
