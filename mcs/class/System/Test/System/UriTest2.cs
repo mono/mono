@@ -992,5 +992,31 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www..mono-project.com"), "CheckHostName ..");
 			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www.mono-project.com\\"), "CheckHostName \\");
 		}
+
+		[Test]
+		public void Ports ()
+		{
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("http://host:-1/");
+			}, "negative");
+
+			Uri uri = new Uri ("http://host:0/");
+			Assert.AreEqual (0, uri.Port, "Port = 0");
+
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("http://host:+1/");
+			}, "positive");
+
+			uri = new Uri ("http://host:" + UInt16.MaxValue.ToString ());
+			Assert.AreEqual (65535, uri.Port, "Port = 65535");
+
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("http://host:" + (UInt16.MaxValue + 1).ToString ());
+			}, "too big");
+
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("http://host:3.14");
+			}, "float");
+		}
 	}
 }

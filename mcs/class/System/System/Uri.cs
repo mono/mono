@@ -1552,7 +1552,7 @@ namespace System {
 			if (pos != -1 && pos != endpos - 1) {
 				string portStr = uriString.Substring(pos + 1, endpos - (pos + 1));
 				if (portStr.Length > 0 && portStr[portStr.Length - 1] != ']') {
-					if (!Int32.TryParse (portStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out port) ||
+					if (!Int32.TryParse (portStr, NumberStyles.None, CultureInfo.InvariantCulture, out port) ||
 					    port < 0 || port > UInt16.MaxValue)
 						valid_port = false; // delay reporting
 					else
