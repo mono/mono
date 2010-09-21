@@ -685,6 +685,9 @@ namespace Mono.CSharp {
 			// Otherwise, if the selected operator is a predefined operator
 			//
 			Binary b = source as Binary;
+			if (b == null && source is ReducedExpression)
+				b = ((ReducedExpression) source).OriginalExpression as Binary;
+
 			if (b != null) {
 				//
 				// 2a. the operator is a shift operator
