@@ -510,10 +510,18 @@ namespace Mono.CSharp {
 						}
 
 						//
-						// Is the member of the correct type ?
-						// Destructors are ignored as they cannot be overridden by user
+						// Is the member of same type ?
+						//
 						if ((entry.Kind & ~MemberKind.Destructor & mkind & MemberKind.MaskType) == 0) {
-							if ((entry.Kind & MemberKind.Destructor) == 0 && (member_param == null || !(entry is IParametersMember))) {
+							// Destructors are ignored as they cannot be overridden by user
+							if ((entry.Kind & MemberKind.Destructor) != 0)
+								continue;
+
+							// Only different arity methods hide
+							if (mkind != MemberKind.Method && member.MemberName.Arity != entry.Arity)
+								continue;
+							
+							if ((member_param == null || !(entry is IParametersMember))) {
 								bestCandidate = entry;
 								return null;
 							}
@@ -535,13 +543,21 @@ namespace Mono.CSharp {
 								continue;
 
 							var pm = entry as IParametersMember;
-							if (pm == null)
-								continue;
+							AParametersCollection entry_parameters;
+							if (pm == null) {
+								if (entry.Kind != MemberKind.Delegate)
+									continue;
+
+								// TODO: I don't have DelegateSpec
+								entry_parameters = Delegate.GetParameters (member.Compiler, (TypeSpec) entry);
+							} else {
+								entry_parameters = pm.Parameters;
+							}
 
 							if (entry.IsAccessor != member is AbstractPropertyEventMethod)
 								continue;
 
-							if (!TypeSpecComparer.Override.IsEqual (pm.Parameters, member_param))
+							if (!TypeSpecComparer.Override.IsEqual (entry_parameters, member_param))
 								continue;
 						}
 
