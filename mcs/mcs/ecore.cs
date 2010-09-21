@@ -1873,6 +1873,16 @@ namespace Mono.CSharp {
 			this.loc = orig_expr.Location;
 		}
 
+		#region Properties
+
+		public Expression OriginalExpression {
+			get {
+				return orig_expr;
+			}
+		}
+
+		#endregion
+
 		//
 		// Creates fully resolved expression switcher
 		//
