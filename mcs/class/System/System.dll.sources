@@ -282,6 +282,7 @@ System.ComponentModel.Design.Serialization/ContextStack.cs
 System.ComponentModel.Design.Serialization/DesignerLoader.cs
 System.ComponentModel.Design.Serialization/DesignerSerializerAttribute.cs
 System.ComponentModel.Design.Serialization/IDesignerLoaderHost.cs
+System.ComponentModel.Design.Serialization/IDesignerLoaderHost2.cs
 System.ComponentModel.Design.Serialization/IDesignerLoaderService.cs
 System.ComponentModel.Design.Serialization/IDesignerSerializationManager.cs   
 System.ComponentModel.Design.Serialization/IDesignerSerializationProvider.cs
