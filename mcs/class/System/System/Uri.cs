@@ -779,6 +779,9 @@ namespace System {
 					if (!Char.IsLetterOrDigit (c))
 						return false;
 				} else if (c == '.') {
+					// www..host.com is bad
+					if (i + 1 < len && name [i + 1] == '.')
+						return false;
 					count = 0;
 				} else if (!Char.IsLetterOrDigit (c) && c != '-' && c != '_') {
 					return false;
@@ -1401,7 +1404,7 @@ namespace System {
 			} else if (pos == 1) {
 				if (!IsAlpha (uriString [0])) {
 					if (kind == UriKind.Absolute)
-						return "URI scheme must start with a letter.";
+						return "Invalid URI: The URI scheme is not valid.";
 					isAbsoluteUri = false;
 					path = uriString;
 					return null;
@@ -1420,7 +1423,7 @@ namespace System {
 			// Note: different checks in 1.x and 2.0
 			if (!CheckSchemeName (scheme)) {
 				if (kind == UriKind.Absolute)
-					return Locale.GetText ("URI scheme must start with a letter and must consist of one of alphabet, digits, '+', '-' or '.' character.");
+					return "Invalid URI: The URI scheme is not valid.";
 				isAbsoluteUri = false;
 				path = uriString;
 				return null;
@@ -1540,6 +1543,7 @@ namespace System {
 			}
 
 			// 4.b port
+			bool valid_port = true;
 			port = -1;
 			if (unixAbsPath)
 				pos = -1;
@@ -1550,8 +1554,9 @@ namespace System {
 				if (portStr.Length > 0 && portStr[portStr.Length - 1] != ']') {
 					if (!Int32.TryParse (portStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out port) ||
 					    port < 0 || port > UInt16.MaxValue)
-						return "Invalid URI: Invalid port number";
-					endpos = pos;
+						valid_port = false; // delay reporting
+					else
+						endpos = pos;
 				} else {
 					if (port == -1) {
 						port = GetDefaultPort (scheme);
@@ -1594,20 +1599,28 @@ namespace System {
 				return "Invalid URI: The Authority/Host could not be parsed.";
 			}
 
-			bool badhost = ((host.Length > 0) && (CheckHostName (host) == UriHostNameType.Unknown));
-			if (!badhost && (host.Length > 1) && (host[0] == '[') && (host[host.Length - 1] == ']')) {
-				IPv6Address ipv6addr;
-				
-				if (IPv6Address.TryParse (host, out ipv6addr)) {
-					host = "[" + ipv6addr.ToString (true) + "]";
-					scope_id = ipv6addr.ScopeId;
-				} else
-					badhost = true;
+			if (host.Length > 0) {
+				switch (CheckHostName (host)) {
+				case UriHostNameType.Unknown:
+					if ((host [0] == ':') || (host [0] == '@'))
+						return "Invalid URI: The hostname could not be parsed.";
+					if (host.IndexOf (':') != -1)
+						return "Invalid URI: Invalid port specified.";
+					if (Parser is DefaultUriParser || Parser == null)
+						return "Invalid URI: The hostname could not be parsed.";
+					break;
+				case UriHostNameType.IPv6:
+					IPv6Address ipv6addr;
+					if (IPv6Address.TryParse (host, out ipv6addr)) {
+						host = "[" + ipv6addr.ToString (true) + "]";
+						scope_id = ipv6addr.ScopeId;
+					}
+					break;
+				}
 			}
-			if (badhost && (Parser is DefaultUriParser || Parser == null)) {
-				return IsFile ? "Invalid URI: The Authority/Host could not be parsed." :
-					"Invalid URI: The hostname could not be parsed.";
-			}
+			// delayed reporting (to throw the expected exception in the right order)
+			if (!valid_port)
+				return "Invalid URI: Invalid port number";
 
 			UriFormatException ex = null;
 			if (Parser != null)

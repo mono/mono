@@ -984,5 +984,13 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual ("/A/B/C", uri.LocalPath, "LocalPath");
 			Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
 		}
+
+		[Test]
+		public void CheckHostName ()
+		{
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("host;machine"), "CheckHostName ;");
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www..mono-project.com"), "CheckHostName ..");
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www.mono-project.com\\"), "CheckHostName \\");
+		}
 	}
 }
