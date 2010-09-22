@@ -1018,5 +1018,24 @@ TextWriter sw = Console.Out;
 				new Uri ("http://host:3.14");
 			}, "float");
 		}
+
+		[Test]
+		public void NonAsciiHost ()
+		{
+			Uri uri = new Uri ("ftp://β:2121/", UriKind.Absolute);
+			Assert.AreEqual ("/", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("ftp://β:2121/", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("β:2121", uri.Authority, "Authority");
+			Assert.AreEqual ("β", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual ("β", uri.Host, "Host");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsFalse (uri.IsDefaultPort, "IsDefaultPort");
+			Assert.AreEqual ("/", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("ftp://β:2121/", uri.OriginalString, "OriginalString");
+			Assert.AreEqual ("/", uri.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual (2121, uri.Port, "Port");
+			Assert.AreEqual ("ftp", uri.Scheme, "Scheme");
+			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
+		}
 	}
 }

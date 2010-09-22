@@ -1133,16 +1133,21 @@ namespace System {
 
 		private const string EscapeCommon = "<>%\"{}|\\^`";
 		private const string EscapeReserved = ";/?:@&=+$,";
-		private const string EscapeHex = "#";
+		private const string EscapeFragment = "#";
 		private const string EscapeBrackets = "[]";
 
 		private const string EscapeNews = EscapeCommon + EscapeBrackets + "?";
-		private const string EscapeCommonHex = EscapeCommon + EscapeHex;
+		private const string EscapeCommonHex = EscapeCommon + EscapeFragment;
 		private const string EscapeCommonBrackets = EscapeCommon + EscapeBrackets;
-		internal const string EscapeCommonHexBrackets = EscapeCommon + EscapeHex + EscapeBrackets;
+		internal const string EscapeCommonHexBrackets = EscapeCommon + EscapeFragment + EscapeBrackets;
 		internal const string EscapeCommonHexBracketsQuery = EscapeCommonHexBrackets + "?";
 
-		internal static string EscapeString (string str, string escape) 
+		internal static string EscapeString (string str, string escape)
+		{
+			return EscapeString (str, escape, true);
+		}
+
+		internal static string EscapeString (string str, string escape, bool nonAsciiEscape) 
 		{
 			if (String.IsNullOrEmpty (str))
 				return String.Empty;
@@ -1168,14 +1173,23 @@ namespace System {
 					continue;
 				}
 
-				byte [] data = Encoding.UTF8.GetBytes (new char[] {str[i]});
-				int length = data.Length;
-				for (int j = 0; j < length; j++) {
-					char c = (char) data [j];
-					if ((c <= 0x20) || (c >= 0x7f) || (escape.IndexOf (c) != -1))
-						s.Append (HexEscape (c));
-					else
-						s.Append (c);
+				char c = str [i];
+				bool outside_limited_ascii = ((c <= 0x20) || (c >= 0x7f));
+				bool needs_escape = (escape.IndexOf (c) != -1);
+				if (nonAsciiEscape && outside_limited_ascii) {
+					byte [] data = Encoding.UTF8.GetBytes (new char [] { c });
+					int length = data.Length;
+					for (int j = 0; j < length; j++) {
+						c = (char) data [j];
+						if (needs_escape || nonAsciiEscape)
+							s.Append (HexEscape (c));
+						else
+							s.Append (c);
+					}
+				} else if (needs_escape) {
+					s.Append (HexEscape (c));
+				} else {
+					s.Append (c);
 				}
 			}
 			
@@ -1197,7 +1211,8 @@ namespace System {
 			if (userEscaped)
 				return;
 
-			host = EscapeString (host, EscapeCommonHex);
+			// non-ascii characters are not escaped for the host name
+			host = EscapeString (host, EscapeCommonHex, false);
 			if (host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
 				// host name present (but not an IPv6 address)
 				host = host.ToLower (CultureInfo.InvariantCulture);
