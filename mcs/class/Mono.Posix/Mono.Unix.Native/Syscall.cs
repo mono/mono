@@ -1165,10 +1165,15 @@ namespace Mono.Unix.Native {
 		EPOLL_CTL_MOD = 3,
 	}
 
-	[StructLayout (LayoutKind.Sequential, Pack = 1)]
+	[StructLayout (LayoutKind.Explicit, Pack = 1)]
 	public struct EpollEvent {
+		[FieldOffset (0)]
 		public EpollEvents events;
+		[FieldOffset (4)]
 		public IntPtr fd;
+
+		[FieldOffset (4)]
+		long we_have_to_be_12_bytes_long_on_32_and_64_bits_systems; // No comments
 	}
 	#endregion
 
@@ -2681,7 +2686,7 @@ namespace Mono.Unix.Native {
 		public static int epoll_wait (int epfd, EpollEvent [] events, int max_events, int timeout)
 		{
 			if (events.Length < max_events)
-				throw new ArgumentOutOfRangeException ("events", "Must refer to at least 'max_events' elements.");
+				throw new ArgumentOutOfRangeException ("events", "Must refer to at most 'max_events' elements.");
 
 			return sys_epoll_wait (epfd, events, max_events, timeout);
 		}
