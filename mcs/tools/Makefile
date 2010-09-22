@@ -9,6 +9,7 @@ per_profile_dirs = \
 	culevel		\
 	genxs		\
 	mkbundle	\
+	mdoc		\
 	monop		\
 	mono-service	\
 	mono-xsd	\
@@ -46,7 +47,6 @@ net_4_0_dirs := \
 net_2_0_dirs := \
 	$(per_profile_dirs) \
 	monodoc		\
-	mdoc		\
 	compiler-tester
 
 moonlight_dirs := \
