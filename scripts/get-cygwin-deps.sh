@@ -41,7 +41,6 @@ echo "done."
 
 echo -n "Extracting to cygwin-deps/ ..."
 (cd $dir && for i in *.zip; do unzip -oq $i || exit 1; done) || exit 1
-(cd $dir && for i in *.tar.gz; do tar xzf $i || exit 1; done) || exit 1
 # This is needed because windows can't use dll's without an x flag.
 chmod a+x $dir/bin/*.dll
 echo "done."
