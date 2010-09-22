@@ -194,8 +194,32 @@ namespace System.Net.Sockets {
 		public Socket(AddressFamily family, SocketType type, ProtocolType proto)
 		{
 #if NET_2_1
-			if (family == AddressFamily.Unspecified)
+			switch (family) {
+			case AddressFamily.InterNetwork:	// ok
+			case AddressFamily.InterNetworkV6:	// ok
+			case AddressFamily.Unknown:		// SocketException will be thrown later (with right error #)
+				break;
+			// case AddressFamily.Unspecified:
+			default:
 				throw new ArgumentException ("family");
+			}
+
+			switch (type) {
+			case SocketType.Stream:			// ok
+			case SocketType.Unknown:		// SocketException will be thrown later (with right error #)
+				break;
+			default:
+				throw new ArgumentException ("type");
+			}
+
+			switch (proto) {
+			case ProtocolType.Tcp:			// ok
+			case ProtocolType.Unspecified:		// ok
+			case ProtocolType.Unknown:		// SocketException will be thrown later (with right error #)
+				break;
+			default:
+				throw new ArgumentException ("proto");
+			}
 #endif
 			address_family=family;
 			socket_type=type;
@@ -341,6 +365,9 @@ namespace System.Net.Sockets {
 			set {
 				if (disposed && closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
+				}
+				if (value < 0) {
+					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero");
 				}
 				
 				if (address_family == AddressFamily.InterNetwork) {
@@ -759,6 +786,10 @@ namespace System.Net.Sockets {
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			CheckConnect (e);
+			// if an address family is specified then they must match
+			AddressFamily raf = e.RemoteEndPoint.AddressFamily;
+			if ((raf != AddressFamily.Unspecified) && (raf != AddressFamily))
+				throw new NotSupportedException ("AddressFamily mismatch between socket and endpoint");
 
 			e.DoOperation (SocketAsyncOperation.Connect, this);
 
@@ -771,7 +802,11 @@ namespace System.Net.Sockets {
 			// exception ordering requires to check before creating the socket (good thing resource wise too)
 			CheckConnect (e);
 
-			Socket s = new Socket (AddressFamily.InterNetwork, socketType, protocolType);
+			// create socket based on the endpoint address family (if specified), otherwise default fo IPv4
+			AddressFamily raf = e.RemoteEndPoint.AddressFamily;
+			if (raf == AddressFamily.Unspecified)
+				raf = AddressFamily.InterNetwork;
+			Socket s = new Socket (raf, socketType, protocolType);
 			e.DoOperation (SocketAsyncOperation.Connect, s);
 
 			// We always return true for now
