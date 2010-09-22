@@ -292,7 +292,8 @@ namespace System.Threading {
 
 			ctstate.LockState ^= LockState.Upgradable;
 			ctstate.UpgradeableRecursiveCount--;
-			Interlocked.Add (ref rwlock, -RwRead);
+			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
+				readerDoneEvent.Set ();
 		}
 
 		public void Dispose ()
