@@ -33,6 +33,7 @@ namespace MonoTests.System.Net.Sockets
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
 
+			/* UDP sockets use Any to disconnect
 			try {
 				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
 					s.Connect (ep);
@@ -42,6 +43,7 @@ namespace MonoTests.System.Net.Sockets
 			} catch (SocketException ex) {
 				Assert.AreEqual (10049, ex.ErrorCode, "#2");
 			}
+			*/
 
 			try {
 				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {

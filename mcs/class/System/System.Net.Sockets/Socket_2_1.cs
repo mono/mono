@@ -367,7 +367,7 @@ namespace System.Net.Sockets {
 				 * etc has not yet been called. MS returns null
 				 * in this case.
 				 */
-				if (seed_endpoint == null)
+				if (!connected || seed_endpoint == null)
 					return null;
 				
 				SocketAddress sa;
@@ -517,12 +517,17 @@ namespace System.Net.Sockets {
 				blocking_thread = null;
 			}
 
+			if (error == 0 || error == 10035)
+				seed_endpoint = remoteEP; // Keep the ep around for non-blocking sockets
+
 			if (error != 0)
 				throw new SocketException (error);
 
 #if !MOONLIGHT
-			if (socket_type != SocketType.Dgram)
-				connected=true;
+			if (socket_type == SocketType.Dgram && (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)))
+				connected = false;
+			else
+				connected = true;
 #else
 			connected = true;
 #endif
@@ -530,8 +535,6 @@ namespace System.Net.Sockets {
 #if NET_2_0
 			isbound = true;
 #endif
-
-			seed_endpoint = remoteEP;
 		}
 
 #if NET_2_0
@@ -603,6 +606,7 @@ namespace System.Net.Sockets {
 				 */
 				if (socket_error == 0) {
 					connected = true;
+					isbound = true;
 				}
 			}
 			
@@ -622,10 +626,12 @@ namespace System.Net.Sockets {
 			int nativeError;
 			int ret = Receive_internal (socket, buf, offset, size, flags, out nativeError);
 			error = (SocketError) nativeError;
-			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress)
+			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
 				connected = false;
-			else
+				isbound = false;
+			} else {
 				connected = true;
+			}
 			
 			return ret;
 		}
@@ -655,10 +661,12 @@ namespace System.Net.Sockets {
 
 			error = (SocketError)nativeError;
 
-			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress)
+			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
 				connected = false;
-			else
+				isbound = false;
+			} else {
 				connected = true;
+			}
 
 			return ret;
 		}

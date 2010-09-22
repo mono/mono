@@ -409,6 +409,7 @@ namespace System.Net.Sockets
 							int success;
 							result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
 							if (success == 0) {
+								result.Sock.seed_endpoint = result.EndPoint;
 								result.Sock.connected = true;
 							} else {
 								result.Complete (new SocketException (success));
@@ -1842,6 +1843,7 @@ namespace System.Net.Sockets
 				Connect_internal (socket, serial, out error);
 				if (error == 0) {
 					connected = true;
+					isbound = true;
 					seed_endpoint = iep;
 					return;
 				} else if (error != (int)SocketError.InProgress &&
@@ -1854,6 +1856,7 @@ namespace System.Net.Sockets
 					error = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
 					if (error == 0) {
 						connected = true;
+						isbound = true;
 						seed_endpoint = iep;
 						return;
 					}
