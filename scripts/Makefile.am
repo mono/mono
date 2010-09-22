@@ -56,7 +56,6 @@ scripts_2_0 = \
 	csharp2$(SCRIPT_SUFFIX)			\
 	gacutil2$(SCRIPT_SUFFIX)		\
 	gmcs$(SCRIPT_SUFFIX)			\
-	mdoc$(SCRIPT_SUFFIX)                    \
 	monop2$(SCRIPT_SUFFIX) 			\
 	resgen2$(SCRIPT_SUFFIX)			\
 	wsdl2$(SCRIPT_SUFFIX)
@@ -69,6 +68,7 @@ scripts_4_0 = \
 	installvst$(SCRIPT_SUFFIX)		\
 	genxs$(SCRIPT_SUFFIX)			\
 	macpack$(SCRIPT_SUFFIX)			\
+	mdoc$(SCRIPT_SUFFIX)                    \
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
 	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
