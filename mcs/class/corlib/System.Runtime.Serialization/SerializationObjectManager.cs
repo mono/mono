@@ -27,32 +27,31 @@
 //
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
 
 namespace System.Runtime.Serialization {
 
 	public sealed class SerializationObjectManager
 	{
 		readonly StreamingContext context;
-		readonly List<WeakReference> seen;
+		readonly Hashtable seen = new Hashtable (HashHelper.Instance, HashHelper.Instance);
 
 		event SerializationCallbacks.CallbackHandler callbacks;
 
 		public SerializationObjectManager (StreamingContext context)
 		{
-			this.seen = new List<WeakReference> ();
 			this.context = context;
 		}
 		
 		public void RegisterObject (object obj)
 		{
-			if (SeenObject (obj))
+			if (seen.Contains (obj))
 				return;
 
 			SerializationCallbacks sc = SerializationCallbacks
 				.GetSerializationCallbacks (obj.GetType ());
 
-			seen.Add (new WeakReference (obj));
+			seen [obj] = HashHelper.NonNullObject;
 			sc.RaiseOnSerializing (obj, context);
 
 			if (sc.HasSerializedCallbacks) {
@@ -64,29 +63,31 @@ namespace System.Runtime.Serialization {
 			}
 		}
 
-		bool SeenObject (object obj)
-		{
-			if (obj == null)
-				return true;
-
-			int max = seen.Count;
-			for (int i = 0; i < max; i++) {
-				object o = seen [i].Target;
-				if (o == null) {
-					seen.RemoveAt (i);
-					i--;
-					max--;
-				} else if (o == obj) {
-					return true;
-				}
-			}
-			return false;
-		}
-
 		public void RaiseOnSerializedEvent ()
 		{
 			if (callbacks != null)
 				callbacks (context);
+		}
+
+		class HashHelper : IHashCodeProvider, IComparer {
+			public static object NonNullObject = new object ();
+			public static HashHelper Instance = new HashHelper ();
+
+			private HashHelper ()
+			{
+			}
+
+			public int GetHashCode (object obj)
+			{
+				if (obj == null)
+					return 0;
+				return Object.InternalGetHashCode (obj);
+			}
+
+			public int Compare (object x, object y)
+			{
+				return Object.ReferenceEquals (x, y) ? 0 : 1;
+			}
 		}
 	}
 }
