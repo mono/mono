@@ -110,26 +110,21 @@ namespace System.Net {
 				throw new InvalidOperationException ("This operation is not supported for a relative URI.");
 
 			IWebRequestCreate creator = null;
-
-			// first we look if a domain is registred
-			string scheme = uri.Scheme + Uri.SchemeDelimiter;
-			string domain = scheme + uri.DnsSafeHost;
-			if (!registred_prefixes.TryGetValue (domain, out creator)) {
-				// next we look if the protocol is registred (the delimiter '://' is important)
-				if (!registred_prefixes.TryGetValue (scheme, out creator)) {
-					scheme = uri.Scheme; // without the delimiter
-					// then we default to SL
-					switch (scheme) {
-					case "http":
-					case "https":
-						creator = default_creator;
-						break;
-					default:
-						registred_prefixes.TryGetValue (scheme, out creator);
-						break;
-					}
+			int n = -1;
+			// look for the most promising match in the registred prefixes
+			foreach (KeyValuePair<string, IWebRequestCreate> kvp in registred_prefixes) {
+				string key = kvp.Key;
+				if ((key.Length > n) && uri.AbsoluteUri.StartsWith (key)) {
+					creator = kvp.Value;
+					n = key.Length;
 				}
 			}
+
+			// 'http:/[/]' or 'https:/[/]' needs to be registred otherwise it gets ignored
+			// note that this is unlike other protocols (e.g. 'ftp') - see unit tests
+			string scheme = uri.Scheme;
+			if ((scheme == "http" && n <= 5) || (scheme == "https" && n <= 6))
+				creator = default_creator;
 
 			if (creator == null)
 				throw new NotSupportedException (string.Format ("Scheme {0} not supported", scheme));
@@ -178,6 +173,11 @@ namespace System.Net {
 				// if a valid URI is supplied then only register the scheme + domain
 				prefix = uri.Scheme + Uri.SchemeDelimiter + uri.DnsSafeHost;
 			}
+
+			// registering 'http', 'http://' or even 'http:/' are all ok - but *never* would 'http:' be correct!
+			if ((String.Compare (prefix, "http:", StringComparison.OrdinalIgnoreCase) == 0) ||
+			    (String.Compare (prefix, "https:", StringComparison.OrdinalIgnoreCase) == 0))
+				return false;
 
 			if (registred_prefixes.ContainsKey (prefix))
 				return false;
