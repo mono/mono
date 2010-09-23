@@ -151,7 +151,7 @@ namespace System.Net.Policy {
 				}
 				if (policy != null) {
 					// see DRT# 864 and 865
-					string site_control = response.Headers ["X-Permitted-Cross-Domain-Policies"];
+					string site_control = response.InternalHeaders ["X-Permitted-Cross-Domain-Policies"];
 					if (!String.IsNullOrEmpty (site_control))
 						(policy as FlashCrossDomainPolicy).SiteControl = site_control;
 				}
