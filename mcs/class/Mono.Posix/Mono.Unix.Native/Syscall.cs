@@ -1165,15 +1165,18 @@ namespace Mono.Unix.Native {
 		EPOLL_CTL_MOD = 3,
 	}
 
-	[StructLayout (LayoutKind.Explicit, Pack = 1)]
+	[StructLayout (LayoutKind.Explicit, Size=12)]
 	public struct EpollEvent {
 		[FieldOffset (0)]
 		public EpollEvents events;
 		[FieldOffset (4)]
-		public IntPtr fd;
-
+		public int fd;
 		[FieldOffset (4)]
-		long we_have_to_be_12_bytes_long_on_32_and_64_bits_systems; // No comments
+		public IntPtr ptr;
+		[FieldOffset (4)]
+		public uint u32;
+		[FieldOffset (4)]
+		public ulong u64;
 	}
 	#endregion
 
@@ -2674,7 +2677,7 @@ namespace Mono.Unix.Native {
 			return sys_epoll_create1 (flags);
 		}
 
-		public static int epoll_ctl (int epfd, EpollOp op, IntPtr fd, EpollEvents events)
+		public static int epoll_ctl (int epfd, EpollOp op, int fd, EpollEvents events)
 		{
 			EpollEvent ee = new EpollEvent ();
 			ee.events = events;
@@ -2686,7 +2689,7 @@ namespace Mono.Unix.Native {
 		public static int epoll_wait (int epfd, EpollEvent [] events, int max_events, int timeout)
 		{
 			if (events.Length < max_events)
-				throw new ArgumentOutOfRangeException ("events", "Must refer to at most 'max_events' elements.");
+				throw new ArgumentOutOfRangeException ("events", "Must refer to at least 'max_events' elements.");
 
 			return sys_epoll_wait (epfd, events, max_events, timeout);
 		}
@@ -2698,7 +2701,7 @@ namespace Mono.Unix.Native {
 		private static extern int sys_epoll_create1 (EpollFlags flags);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_ctl")]
-		private static extern int sys_epoll_ctl (int epfd, EpollOp op, IntPtr fd, ref EpollEvent ee);
+		private static extern int sys_epoll_ctl (int epfd, EpollOp op, int fd, ref EpollEvent ee);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_wait")]
 		private static extern int sys_epoll_wait (int epfd, EpollEvent [] ee, int maxevents, int timeout);
