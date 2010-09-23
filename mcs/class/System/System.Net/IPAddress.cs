@@ -365,14 +365,16 @@ namespace System.Net {
 
 		public long ScopeId {
 			get {
-				if(m_Family != AddressFamily.InterNetworkV6)
-					throw new Exception("The attempted operation is not supported for the type of object referenced");
+				if (m_Family != AddressFamily.InterNetworkV6)
+					throw new SocketException ((int) SocketError.OperationNotSupported);
 
 				return m_ScopeId;
 			}
 			set {
-				if(m_Family != AddressFamily.InterNetworkV6)
-					throw new Exception("The attempted operation is not supported for the type of object referenced");
+				if (m_Family != AddressFamily.InterNetworkV6)
+					throw new SocketException ((int) SocketError.OperationNotSupported);
+				if ((value < 0) || (value > UInt32.MaxValue))
+					throw new ArgumentOutOfRangeException ();
 
 				m_ScopeId = value;
 			}
@@ -409,6 +411,11 @@ namespace System.Net {
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress addr)
 		{
+#if MOONLIGHT
+			// even 4.0 throws an NRE
+			if (addr == null)
+				throw new ArgumentNullException ("addr");
+#endif
 			if(addr.m_Family == AddressFamily.InterNetwork)
 				return (addr.m_Address & 0xFF) == 127;
 			else {
