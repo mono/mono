@@ -891,6 +891,21 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category("NotWorking")] // We cannot totally remove buffers (minimum is set to 256
+		public void BuffersCheck_None ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				int original = s.ReceiveBufferSize;
+				s.ReceiveBufferSize = 0;
+				Assert.AreEqual (0, s.ReceiveBufferSize, "ReceiveBufferSize " + original.ToString ());
+
+				original = s.SendBufferSize;
+				s.SendBufferSize = 0;
+				Assert.AreEqual (0, s.SendBufferSize, "SendBufferSize " + original.ToString ());
+			}
+		}
+
+		[Test]
 		[ExpectedException (typeof(ObjectDisposedException))]
 		public void ReceiveBufferSizeClosed ()
 		{
