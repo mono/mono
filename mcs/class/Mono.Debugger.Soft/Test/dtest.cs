@@ -2428,4 +2428,11 @@ public class DebuggerTests
 				vm.CreateEnumMirror (enumType, vm.CreateValue ((long)1));
 			});
 	}
+
+	[Test]
+	public void VirtualMachine_EnableEvents_Breakpoint () {
+		AssertThrows<ArgumentException> (delegate () {
+				vm.EnableEvents (EventType.Breakpoint);
+			});
+	}
 }
