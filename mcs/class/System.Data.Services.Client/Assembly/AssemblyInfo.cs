@@ -40,10 +40,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-[assembly: AssemblyKeyFile ("../msfinal.pub")]
 [assembly: AssemblyDelaySign (true)]
 
 #if NET_4_0
+[assembly: AssemblyKeyFile ("../ecma.pub")]
 [assembly: System.Security.SecurityCritical]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(false)]
@@ -81,4 +81,6 @@ internal static class AssemblyRef
 
     internal const string EcmaPublicKeyToken = "b77a5c561934e089";
 }
+#else
+[assembly: AssemblyKeyFile ("../msfinal.pub")]
 #endif
