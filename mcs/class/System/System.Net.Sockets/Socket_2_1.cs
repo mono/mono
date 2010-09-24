@@ -1046,6 +1046,10 @@ namespace System.Net.Sockets {
 				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
 				
+#if MOONLIGHT
+				if (!connected)
+					return seed_endpoint;
+#else
 				/*
 				 * If the seed EndPoint is null, Connect, Bind,
 				 * etc has not yet been called. MS returns null
@@ -1053,7 +1057,7 @@ namespace System.Net.Sockets {
 				 */
 				if (!connected || seed_endpoint == null)
 					return null;
-				
+#endif			
 				SocketAddress sa;
 				int error;
 				

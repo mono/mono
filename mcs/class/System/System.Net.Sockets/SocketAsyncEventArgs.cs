@@ -363,6 +363,9 @@ namespace System.Net.Sockets
 			
 			switch (operation) {
 				case SocketAsyncOperation.Connect:
+#if MOONLIGHT
+					socket.seed_endpoint = RemoteEndPoint;
+#endif
 					callback = new ThreadStart (ConnectCallback);
 					SocketError = SocketError.Success;
 					LastOperation = operation;
