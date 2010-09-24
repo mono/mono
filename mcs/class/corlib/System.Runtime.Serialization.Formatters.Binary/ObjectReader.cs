@@ -294,13 +294,22 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				
 			info = metadata.NeedsSerializationInfo ? new SerializationInfo(metadata.Type, new FormatterConverter()) : null;
 
-   			if (metadata.MemberNames != null)
+			if (metadata.MemberNames != null) {
 				for (int n=0; n<metadata.FieldCount; n++)
 					ReadValue (reader, objectInstance, objectId, info, metadata.MemberTypes[n], metadata.MemberNames[n], null, null);
-			else
-				for (int n=0; n<metadata.FieldCount; n++)
+			} else
+				for (int n=0; n<metadata.FieldCount; n++) {
 					if (metadata.MemberInfos [n] != null)
-					ReadValue (reader, objectInstance, objectId, info, metadata.MemberTypes[n], metadata.MemberInfos[n].Name, metadata.MemberInfos[n], null);
+						ReadValue (reader, objectInstance, objectId, info, metadata.MemberTypes[n], metadata.MemberInfos[n].Name, metadata.MemberInfos[n], null);
+					else if (BinaryCommon.IsPrimitive(metadata.MemberTypes[n])) {
+						// Since the member info is null, the type in this
+						// domain does not have this type. Even though we
+						// are not going to store the value, we will read
+						// it from the stream so that we can advance to the
+						// next block.
+						ReadPrimitiveTypeValue (reader,	metadata.MemberTypes[n]);
+					}
+				}
 		}
 
 		private void RegisterObject (long objectId, object objectInstance, SerializationInfo info, long parentObjectId, MemberInfo parentObjectMemeber, int[] indices)
