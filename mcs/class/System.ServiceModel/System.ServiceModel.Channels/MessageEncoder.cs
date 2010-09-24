@@ -51,7 +51,12 @@ namespace System.ServiceModel.Channels
 
 		public virtual bool IsContentTypeSupported (string contentType)
 		{
-			return contentType == ContentType;
+			if (contentType == null)
+				throw new ArgumentNullException ("contentType");
+			int idx = contentType.IndexOf (';');
+			if (idx > 0)
+				return contentType == ContentType;
+			return contentType == MediaType;
 		}
 
 		public Message ReadMessage (ArraySegment<byte> buffer,

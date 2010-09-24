@@ -64,6 +64,13 @@ namespace System.ServiceModel.Channels
 			get { return MessageVersion.None; }
 		}
 
+		public override bool IsContentTypeSupported (string contentType)
+		{
+			if (contentType == null)
+				throw new ArgumentNullException ("contentType");
+			return true; // anything is accepted.
+		}
+
 		public override Message ReadMessage (ArraySegment<byte> buffer, BufferManager bufferManager, string contentType)
 		{
 			throw new NotImplementedException ();
