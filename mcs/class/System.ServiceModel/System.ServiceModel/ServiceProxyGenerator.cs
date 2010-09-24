@@ -67,8 +67,8 @@ namespace System.ServiceModel
 			b.Call (
 				ctor.GetThis (),
 				baseCtor,
-				new CodeArgumentReference (typeof (IChannel), 1, "channel"),
-				new CodeArgumentReference (typeof (DispatchRuntime), 2, "runtime"));
+				new CodeArgumentReference (typeof (IChannel), 1, "arg0"),
+				new CodeArgumentReference (typeof (DispatchRuntime), 2, "arg1"));
 
 			return CreateProxyTypeOperations (crtype, c, cd);
 		}
