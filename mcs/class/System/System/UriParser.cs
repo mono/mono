@@ -117,6 +117,7 @@ namespace System {
 			// now we deal with multiple flags...
 
 			StringBuilder sb = new StringBuilder ();
+
 			if ((components & UriComponents.Scheme) != 0) {
 				sb.Append (scheme);
 				sb.Append (Uri.GetSchemeDelimiter (scheme));
@@ -141,8 +142,12 @@ namespace System {
 					sb.Append (am.Groups [4].Value);
 			}
 
-			if ((components & UriComponents.Path) != 0)
+			if ((components & UriComponents.Path) != 0) {
+				if ((components & UriComponents.PathAndQuery) != 0 &&
+					(m.Groups [5].Value == null || !m.Groups [5].Value.StartsWith ("/")))
+					sb.Append ("/");
 				sb.Append (m.Groups [5]);
+			}
 
 			if ((components & UriComponents.Query) != 0)
 				sb.Append (m.Groups [6]);
