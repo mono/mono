@@ -95,6 +95,8 @@ test-vts:
 		$(vtsdir)/$(vts)TestLib/4.0/Address.cs
 	$(MCS) -target:library \
 		$(vtsdir)/$(vts)TestLib/5.0/Address.cs
+	$(MCS) -target:library \
+		$(vtsdir)/$(vts)TestLib/6.0/Address.cs
 run-test-vts: test-vts
 	$(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \
 		$(vtsdir)/BinarySerializationOverVersions.exe 

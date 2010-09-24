@@ -124,6 +124,18 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			Deserialize ("4.0", Serialize ("5.0"));
 		}
 
+		[Test]
+		public void TestDroppedPrimitiveTypeField() //eliminate Id (int)
+		{
+			Deserialize ("5.0", Serialize ("6.0"));
+		}
+
+		[Test]
+		public void TestAddedPrimitiveTypeField () //add Id (int)
+		{
+			Deserialize ("6.0", Serialize ("5.0"));
+		}
+
 		private static string Serialize (string assemblyVersion)
 		{
 			return SerializeOOP (SetEnvironment (assemblyVersion)); ;
