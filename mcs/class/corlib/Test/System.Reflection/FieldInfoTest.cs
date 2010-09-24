@@ -74,7 +74,7 @@ namespace MonoTests.System.Reflection
 	}
 
 	[TestFixture]
-	public class FieldInfoTest
+	public unsafe class FieldInfoTest
 	{
 		[NonSerialized]
 		public int i;
@@ -477,6 +477,20 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (10, typeof(Foo<>).GetField ("constant").GetValue (null), "#1");
 			Assert.AreEqual ("waa", typeof(Foo<>).GetField ("sconstant").GetValue (null), "#2");
 			Assert.AreEqual (IntEnum.Third, typeof(Foo<>).GetField ("econstant").GetValue (null), "#3");
+		}
+
+		public static unsafe void* ip;
+
+		[Test]
+		public unsafe void GetSetValuePointers ()
+		{
+			int i = 5;
+			void *p = &i;
+			typeof (FieldInfoTest).GetField ("ip").SetValue (null, (IntPtr)p);
+			Pointer p2 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
+
+			int *pi = (int*)Pointer.Unbox (p2);
+			Assert.AreEqual (5, *pi);
 		}
 
 		public class Foo<T>
