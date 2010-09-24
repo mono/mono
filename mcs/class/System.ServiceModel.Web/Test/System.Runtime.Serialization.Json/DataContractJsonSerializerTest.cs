@@ -1387,6 +1387,24 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			Assert.IsTrue (GSPlayerListErg.B, "B");
 			Assert.IsTrue (GSPlayerListErg.C, "C");
 		}
+		
+		[Test]
+		public void WriteChar ()
+		{
+			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof (CharTest));
+			using (MemoryStream ms = new MemoryStream()) {
+				serializer.WriteObject(ms, new CharTest ());
+				ms.Position = 0L;
+				using (StreamReader reader = new StreamReader(ms)) {
+					reader.ReadToEnd();
+				}
+			}
+		}
+	}
+	
+	public class CharTest
+	{
+		public char Foo;
 	}
 
 	public class TestData
