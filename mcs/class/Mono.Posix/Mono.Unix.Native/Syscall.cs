@@ -1165,7 +1165,7 @@ namespace Mono.Unix.Native {
 		EPOLL_CTL_MOD = 3,
 	}
 
-	[StructLayout (LayoutKind.Explicit, Size=12)]
+	[StructLayout (LayoutKind.Explicit, Size=12, Pack=1)]
 	public struct EpollEvent {
 		[FieldOffset (0)]
 		public EpollEvents events;
