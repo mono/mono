@@ -578,10 +578,22 @@ namespace System.Net.Sockets {
 			// We do not support recv into multiple buffers yet
 			if (e.BufferList != null)
 				throw new NotSupportedException ("Mono doesn't support using BufferList at this point.");
-			
-			e.DoOperation (SocketAsyncOperation.Receive, this);
 
-			// We always return true for now
+			e.curSocket = this;
+			e.Worker.Init (this, null, e.ReceiveCallback, SocketOperation.Receive);
+			SocketAsyncResult res = e.Worker.result;
+			res.Buffer = e.Buffer;
+			res.Offset = e.Offset;
+			res.Size = e.Count;
+			res.SockFlags = e.SocketFlags;
+			Worker worker = new Worker (e);
+			lock (readQ) {
+				readQ.Enqueue (worker);
+				if (readQ.Count == 1) {
+					SocketAsyncCall sac = new SocketAsyncCall (e.Worker.Receive);
+					sac.BeginInvoke (null, res);
+				}
+			}
 			return true;
 		}
 
@@ -594,9 +606,21 @@ namespace System.Net.Sockets {
 			if (e.Buffer == null && e.BufferList == null)
 				throw new ArgumentException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
-			e.DoOperation (SocketAsyncOperation.Send, this);
-
-			// We always return true for now
+			e.curSocket = this;
+			e.Worker.Init (this, null, e.SendCallback, SocketOperation.Send);
+			SocketAsyncResult res = e.Worker.result;
+			res.Buffer = e.Buffer;
+			res.Offset = e.Offset;
+			res.Size = e.Count;
+			res.SockFlags = e.SocketFlags;
+			Worker worker = new Worker (e);
+			lock (writeQ) {
+				writeQ.Enqueue (worker);
+				if (writeQ.Count == 1) {
+					SocketAsyncCall sac = new SocketAsyncCall (e.Worker.Send);
+					sac.BeginInvoke (null, res);
+				}
+			}
 			return true;
 		}
 #endif
