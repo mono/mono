@@ -497,7 +497,7 @@ qualified_identifier
 	  }
 	| error
 	  {
-		syntax_error (lexer.Location, "`.' expected");
+		Error_SyntaxError (yyToken);
 		$$ = new MemberName ("<invalid>", lexer.Location);
 	  }
 	;
