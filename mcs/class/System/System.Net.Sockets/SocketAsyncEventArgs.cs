@@ -239,24 +239,45 @@ namespace System.Net.Sockets
 				DnsEndPoint dep = (RemoteEndPoint as DnsEndPoint);
 				if (dep != null) {
 					IPAddress[] addresses = Dns.GetHostAddresses (dep.Host);
+					IPEndPoint endpoint;
+#if MOONLIGHT && !INSIDE_SYSTEM
+					List<IPAddress> valid = new List<IPAddress> ();
+					foreach (IPAddress a in addresses) {
+						// if we're not downloading a socket policy then check the policy
+						// and if we're not running with elevated permissions (SL4 OoB option)
+						if (!PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
+							endpoint = new IPEndPoint (a, dep.Port);
+							if (!CrossDomainPolicyManager.CheckEndPoint (endpoint, policy_protocol))
+								continue;
+						}
+						valid.Add (a);
+					}
+					addresses = valid.ToArray ();
+#endif
 					foreach (IPAddress addr in addresses) {
 						try {
 							if (curSocket.AddressFamily == addr.AddressFamily) {
-								error = TryConnect (new IPEndPoint (addr, dep.Port));
+								endpoint = new IPEndPoint (addr, dep.Port);
+								error = TryConnect (endpoint);
 								if (error == SocketError.Success) {
 									ConnectByNameError = null;
 									break;
 								}
 							}
-						}
-						catch (SocketException se) {
+						} catch (SocketException se) {
 							ConnectByNameError = se;
 							error = SocketError.AccessDenied;
 						}
 					}
 				} else {
 					ConnectByNameError = null;
-					error = TryConnect (RemoteEndPoint);
+#if MOONLIGHT && !INSIDE_SYSTEM
+					if (!PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
+						if (CrossDomainPolicyManager.CheckEndPoint (RemoteEndPoint, policy_protocol))
+							error = TryConnect (RemoteEndPoint);
+					} else
+#endif
+						error = TryConnect (RemoteEndPoint);
 				}
 #else
 				error = TryConnect (RemoteEndPoint);
@@ -269,40 +290,12 @@ namespace System.Net.Sockets
 
 		SocketError TryConnect (EndPoint endpoint)
 		{
-			curSocket.Connected = false;
-			SocketError error = SocketError.Success;
-#if MOONLIGHT && !INSIDE_SYSTEM
-			// if we're not downloading a socket policy then check the policy
-			// and if we're not running with elevated permissions (SL4 OoB option)
-			if (!PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
-				error = SocketError.AccessDenied;
-				if (!CrossDomainPolicyManager.CheckEndPoint (endpoint, policy_protocol)) {
-					return error;
-				}
-				error = SocketError.Success;
-			}
-#endif
 			try {
-#if !NET_2_1
-				if (!curSocket.Blocking) {
-					int success;
-					curSocket.Poll (-1, SelectMode.SelectWrite, out success);
-					error = (SocketError)success;
-					if (success == 0)
-						curSocket.Connected = true;
-					else
-						return error;
-				} else
-#endif
-				{
-					curSocket.seed_endpoint = endpoint;
-					curSocket.Connect (endpoint);
-					curSocket.Connected = true;
-				}
+				curSocket.Connect (endpoint);
+				return (curSocket.Connected ? 0 : SocketError);
 			} catch (SocketException se){
-				error = se.SocketErrorCode;
+				return se.SocketErrorCode;
 			}
-			return error;
 		}
 
 		internal void SendCallback (IAsyncResult ares)
