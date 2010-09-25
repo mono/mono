@@ -58,6 +58,593 @@ namespace System.Net.Sockets {
 
 	public partial class Socket : IDisposable {
 
+		internal enum SocketOperation {
+			Accept,
+			Connect,
+			Receive,
+			ReceiveFrom,
+			Send,
+			SendTo,
+			UsedInManaged1,
+			UsedInManaged2,
+			UsedInProcess,
+			UsedInConsole2,
+			Disconnect,
+			AcceptReceive,
+			ReceiveGeneric,
+			SendGeneric
+		}
+
+		[StructLayout (LayoutKind.Sequential)]
+		internal sealed class SocketAsyncResult: IAsyncResult
+		{
+			/* Same structure in the runtime */
+			/*
+			  Keep this in sync with MonoSocketAsyncResult in
+			  metadata/socket-io.h and ProcessAsyncReader
+			  in System.Diagnostics/Process.cs.
+			*/
+
+			public Socket Sock;
+			public IntPtr handle;
+			object state;
+			AsyncCallback callback;
+			WaitHandle waithandle;
+
+			Exception delayedException;
+
+			public EndPoint EndPoint;	// Connect,ReceiveFrom,SendTo
+			public byte [] Buffer;		// Receive,ReceiveFrom,Send,SendTo
+			public int Offset;		// Receive,ReceiveFrom,Send,SendTo
+			public int Size;		// Receive,ReceiveFrom,Send,SendTo
+			public SocketFlags SockFlags;	// Receive,ReceiveFrom,Send,SendTo
+			public Socket AcceptSocket;	// AcceptReceive
+			public IPAddress[] Addresses;	// Connect
+			public int Port;		// Connect
+			public IList<ArraySegment<byte>> Buffers;	// Receive, Send
+			public bool ReuseSocket;	// Disconnect
+
+			// Return values
+			Socket acc_socket;
+			int total;
+
+			bool completed_sync;
+			bool completed;
+			public bool blocking;
+			internal int error;
+			SocketOperation operation;
+			public object ares;
+			public int EndCalled;
+
+			public SocketAsyncResult ()
+			{
+			}
+
+			public void Init (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
+			{
+				this.Sock = sock;
+				this.blocking = sock.blocking;
+				this.handle = sock.socket;
+				this.state = state;
+				this.callback = callback;
+				this.operation = operation;
+				SockFlags = SocketFlags.None;
+				if (waithandle != null)
+					((ManualResetEvent) waithandle).Reset ();
+
+				delayedException = null;
+
+				EndPoint = null;
+				Buffer = null;
+				Offset = 0;
+				Size = 0;
+				SockFlags = 0;
+				AcceptSocket = null;
+				Addresses = null;
+				Port = 0;
+				Buffers = null;
+				ReuseSocket = false;
+				acc_socket = null;
+				total = 0;
+
+				completed_sync = false;
+				completed = false;
+				blocking = false;
+				error = 0;
+				ares = null;
+				EndCalled = 0;
+			}
+
+			public void Dispose ()
+			{
+				Init (null, null, null, 0);
+				if (waithandle != null) {
+					waithandle.Close ();
+					waithandle = null;
+				}
+			}
+
+			public SocketAsyncResult (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
+			{
+				this.Sock = sock;
+				this.blocking = sock.blocking;
+				this.handle = sock.socket;
+				this.state = state;
+				this.callback = callback;
+				this.operation = operation;
+				SockFlags = SocketFlags.None;
+			}
+
+			public void CheckIfThrowDelayedException ()
+			{
+				if (delayedException != null) {
+					Sock.connected = false;
+					throw delayedException;
+				}
+
+				if (error != 0) {
+					Sock.connected = false;
+					throw new SocketException (error);
+				}
+			}
+
+			void CompleteAllOnDispose (Queue queue)
+			{
+				object [] pending = queue.ToArray ();
+				queue.Clear ();
+
+				WaitCallback cb;
+				for (int i = 0; i < pending.Length; i++) {
+					SocketAsyncResult ares = (SocketAsyncResult) pending [i];
+					cb = new WaitCallback (ares.CompleteDisposed);
+					ThreadPool.QueueUserWorkItem (cb, null);
+				}
+			}
+
+			void CompleteDisposed (object unused)
+			{
+				Complete ();
+			}
+
+			public void Complete ()
+			{
+				if (operation != SocketOperation.Receive && Sock.disposed)
+					delayedException = new ObjectDisposedException (Sock.GetType ().ToString ());
+
+				IsCompleted = true;
+
+				Queue queue = null;
+				if (operation == SocketOperation.Receive || operation == SocketOperation.ReceiveFrom) {
+					queue = Sock.readQ;
+				} else if (operation == SocketOperation.Send || operation == SocketOperation.SendTo) {
+					queue = Sock.writeQ;
+				}
+
+				if (queue != null) {
+					Worker worker = null;
+					SocketAsyncCall sac = null;
+					SocketAsyncResult req = null;
+					lock (queue) {
+						queue.Dequeue (); // remove ourselves
+						if (queue.Count > 0) {
+							worker = (Worker) queue.Peek ();
+							if (!Sock.disposed) {
+								sac = GetDelegate (worker, worker.result.operation);
+							} else {
+								CompleteAllOnDispose (queue);
+							}
+						}
+					}
+
+					if (sac != null)
+						sac.BeginInvoke (null, worker.result);
+				}
+
+				if (callback != null)
+					callback (this);
+			}
+
+			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)
+			{
+				switch (op) {
+				case SocketOperation.Receive:
+					return new SocketAsyncCall (worker.Receive);
+				case SocketOperation.ReceiveFrom:
+					return new SocketAsyncCall (worker.ReceiveFrom);
+				case SocketOperation.Send:
+					return new SocketAsyncCall (worker.Send);
+				case SocketOperation.SendTo:
+					return new SocketAsyncCall (worker.SendTo);
+				default:
+					return null; // never happens
+				}
+			}
+
+			public void Complete (bool synch)
+			{
+				completed_sync = synch;
+				Complete ();
+			}
+
+			public void Complete (int total)
+			{
+				this.total = total;
+				Complete ();
+			}
+
+			public void Complete (Exception e, bool synch)
+			{
+				completed_sync = synch;
+				delayedException = e;
+				Complete ();
+			}
+
+			public void Complete (Exception e)
+			{
+				delayedException = e;
+				Complete ();
+			}
+
+			public void Complete (Socket s)
+			{
+				acc_socket = s;
+				Complete ();
+			}
+
+			public void Complete (Socket s, int total)
+			{
+				acc_socket = s;
+				this.total = total;
+				Complete ();
+			}
+
+			public object AsyncState {
+				get {
+					return state;
+				}
+			}
+
+			public WaitHandle AsyncWaitHandle {
+				get {
+					lock (this) {
+						if (waithandle == null)
+							waithandle = new ManualResetEvent (completed);
+					}
+
+					return waithandle;
+				}
+				set {
+					waithandle=value;
+				}
+			}
+
+			public bool CompletedSynchronously {
+				get {
+					return(completed_sync);
+				}
+			}
+
+			public bool IsCompleted {
+				get {
+					return(completed);
+				}
+				set {
+					completed=value;
+					lock (this) {
+						if (waithandle != null && value) {
+							((ManualResetEvent) waithandle).Set ();
+						}
+					}
+				}
+			}
+
+			public Socket Socket {
+				get {
+					return acc_socket;
+				}
+			}
+
+			public int Total {
+				get { return total; }
+				set { total = value; }
+			}
+
+			public SocketError ErrorCode
+			{
+				get {
+					SocketException ex = delayedException as SocketException;
+					if (ex != null)
+						return(ex.SocketErrorCode);
+
+					if (error != 0)
+						return((SocketError)error);
+
+					return(SocketError.Success);
+				}
+			}
+		}
+
+		internal sealed class Worker
+		{
+			public SocketAsyncResult result;
+			SocketAsyncEventArgs args;
+
+			public Worker (SocketAsyncEventArgs args)
+			{
+				this.args = args;
+				result = new SocketAsyncResult ();
+			}
+
+			public Worker (SocketAsyncResult ares)
+			{
+				this.result = ares;
+			}
+
+			public void Dispose ()
+			{
+				if (result != null) {
+					result.Dispose ();
+					result = null;
+					args = null;
+				}
+			}
+
+			public void Init (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
+			{
+				result.Init (sock, state, callback, operation);
+			}
+
+			public void Accept ()
+			{
+				Socket acc_socket = null;
+				try {
+					if (args.AcceptSocket != null) {
+						result.Sock.Accept (args.AcceptSocket);
+						acc_socket = args.AcceptSocket;
+					} else {
+						acc_socket = result.Sock.Accept ();
+					}
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
+				}
+
+				result.Complete (acc_socket);
+			}
+
+			/* only used in 2.0 profile and newer, but
+			 * leave in older profiles to keep interface
+			 * to runtime consistent
+			 */
+			public void AcceptReceive ()
+			{
+				Socket acc_socket = null;
+				try {
+					if (result.AcceptSocket == null) {
+						acc_socket = result.Sock.Accept ();
+					} else {
+						acc_socket = result.AcceptSocket;
+						result.Sock.Accept (acc_socket);
+					}
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
+				}
+
+				/* It seems the MS runtime
+				 * special-cases 0-length requested
+				 * receive data.  See bug 464201.
+				 */
+				int total = 0;
+				if (result.Size > 0) {
+					try {
+						SocketError error;
+						total = acc_socket.Receive_nochecks (result.Buffer,
+										     result.Offset,
+										     result.Size,
+										     result.SockFlags,
+										     out error);
+					} catch (Exception e) {
+						result.Complete (e);
+						return;
+					}
+				}
+
+				result.Complete (acc_socket, total);
+			}
+
+			public void Connect ()
+			{
+				/* If result.EndPoint is non-null,
+				 * this is the standard one-address
+				 * connect attempt.  Otherwise
+				 * Addresses must be non-null and
+				 * contain a list of addresses to try
+				 * to connect to; the first one to
+				 * succeed causes the rest of the list
+				 * to be ignored.
+				 */
+				if (result.EndPoint != null) {
+					try {
+						if (!result.Sock.Blocking) {
+							int success;
+							result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
+							if (success == 0) {
+								result.Sock.seed_endpoint = result.EndPoint;
+								result.Sock.connected = true;
+							} else {
+								result.Complete (new SocketException (success));
+								return;
+							}
+						} else {
+							result.Sock.seed_endpoint = result.EndPoint;
+							result.Sock.Connect (result.EndPoint);
+							result.Sock.connected = true;
+						}
+					} catch (Exception e) {
+						result.Complete (e);
+						return;
+					}
+
+					result.Complete ();
+				} else if (result.Addresses != null) {
+					int error = (int) SocketError.InProgress; // why?
+					foreach(IPAddress address in result.Addresses) {
+						IPEndPoint iep = new IPEndPoint (address, result.Port);
+						SocketAddress serial = iep.Serialize ();
+						Socket.Connect_internal (result.Sock.socket, serial, out error);
+						if (error == 0) {
+							result.Sock.connected = true;
+							result.Sock.seed_endpoint = iep;
+							result.Complete ();
+							return;
+						} else if (error != (int)SocketError.InProgress &&
+							   error != (int)SocketError.WouldBlock) {
+							continue;
+						}
+
+						if (!result.Sock.Blocking) {
+							int success;
+							result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
+							if (success == 0) {
+								result.Sock.connected = true;
+								result.Sock.seed_endpoint = iep;
+								result.Complete ();
+								return;
+							}
+						}
+					}
+					result.Complete (new SocketException (error));
+				} else {
+					result.Complete (new SocketException ((int)SocketError.AddressNotAvailable));
+				}
+			}
+
+			/* Also only used in 2.0 profile and newer */
+			public void Disconnect ()
+			{
+				try {
+					if (args != null)
+						result.ReuseSocket = args.DisconnectReuseSocket;
+					result.Sock.Disconnect (result.ReuseSocket);
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
+				}
+				result.Complete ();
+			}
+
+			public void Receive ()
+			{
+				// Actual recv() done in the runtime
+				result.Complete ();
+			}
+
+			public void ReceiveFrom ()
+			{
+				int total = 0;
+				try {
+					total = result.Sock.ReceiveFrom_nochecks (result.Buffer,
+									 result.Offset,
+									 result.Size,
+									 result.SockFlags,
+									 ref result.EndPoint);
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
+				}
+
+				result.Complete (total);
+			}
+
+			public void ReceiveGeneric ()
+			{
+				int total = 0;
+				try {
+					SocketError error;
+					total = result.Sock.Receive (result.Buffers, result.SockFlags, out error);
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
+				}
+				result.Complete (total);
+			}
+
+			int send_so_far;
+
+			void UpdateSendValues (int last_sent)
+			{
+				if (result.error == 0) {
+					send_so_far += last_sent;
+					result.Offset += last_sent;
+					result.Size -= last_sent;
+				}
+			}
+
+			public void Send ()
+			{
+				// Actual send() done in the runtime
+				if (result.error == 0) {
+					UpdateSendValues (result.Total);
+					if (result.Sock.disposed) {
+						result.Complete ();
+						return;
+					}
+
+					if (result.Size > 0) {
+						SocketAsyncCall sac = new SocketAsyncCall (this.Send);
+						sac.BeginInvoke (null, result);
+						return; // Have to finish writing everything. See bug #74475.
+					}
+					result.Total = send_so_far;
+				}
+				result.Complete ();
+			}
+
+			public void SendTo ()
+			{
+				int total = 0;
+				try {
+					total = result.Sock.SendTo_nochecks (result.Buffer,
+								    result.Offset,
+								    result.Size,
+								    result.SockFlags,
+								    result.EndPoint);
+
+					UpdateSendValues (total);
+					if (result.Size > 0) {
+						SocketAsyncCall sac = new SocketAsyncCall (this.SendTo);
+						sac.BeginInvoke (null, result);
+						return; // Have to finish writing everything. See bug #74475.
+					}
+					result.Total = send_so_far;
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
+				}
+
+				result.Complete ();
+			}
+
+			public void SendGeneric ()
+			{
+				int total = 0;
+				try {
+					SocketError error;
+					total = result.Sock.Send (result.Buffers, result.SockFlags, out error);
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
+				}
+				result.Complete (total);
+			}
+		}
+
+		private Queue readQ = new Queue (2);
+		private Queue writeQ = new Queue (2);
+
+		delegate void SocketAsyncCall ();
+
 		/*
 		 *	These two fields are looked up by name by the runtime, don't change
 		 *  their name without also updating the runtime code.
