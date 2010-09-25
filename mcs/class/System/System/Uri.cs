@@ -415,7 +415,7 @@ namespace System {
 			}
 			
 			// 6 g)
-			while (path.StartsWith ("/../"))
+			while (path.StartsWith ("/../", StringComparison.Ordinal))
 				path = path.Substring (3);
 			
 			if (!userEscaped)
@@ -430,21 +430,18 @@ namespace System {
 		public string AbsolutePath { 
 			get {
 				EnsureAbsoluteUri ();
-				switch (Scheme) {
-				case "mailto":
-				case "file":
+				if (scheme == "mailto" || scheme == "file")
 					// faster (mailto) and special (file) cases
 					return path;
-				default:
-					if (path.Length == 0) {
-						string start = Scheme + SchemeDelimiter;
-						if (path.StartsWith (start))
-							return "/";
-						else
-							return String.Empty;
-					}
-					return path;
+				
+				if (path.Length == 0) {
+					string start = scheme + SchemeDelimiter;
+					if (path.StartsWith (start, StringComparison.Ordinal))
+						return "/";
+					else
+						return String.Empty;
 				}
+				return path;
 			}
 		}
 
@@ -490,12 +487,10 @@ namespace System {
 				UriHostNameType ret = CheckHostName (Host);
 				if (ret != UriHostNameType.Unknown)
 					return ret;
-				switch (Scheme) {
-				case "mailto":
+
+				if (scheme == "mailto")
 					return UriHostNameType.Basic;
-				default:
-					return (IsFile) ? UriHostNameType.Basic : ret;
-				}
+				return (IsFile) ? UriHostNameType.Basic : ret;
 			} 
 		}
 
@@ -935,15 +930,10 @@ namespace System {
 					sb.Append (':').Append (port);
 
 				if (path.Length > 0) {
-					switch (Scheme) {
-					case "mailto":
-					case "news":
+					if (scheme == "mailto" || scheme == "news")
 						sb.Append (path);
-						break;
-					default:
-						sb.Append (Reduce (path, CompactEscaped (Scheme)));
-						break;
-					}
+					else 
+						sb.Append (Reduce (path, CompactEscaped (scheme)));
 				}
 				return sb.ToString ();
 			}
@@ -1652,14 +1642,17 @@ namespace System {
 
 		private static bool CompactEscaped (string scheme)
 		{
-			switch (scheme) {
-			case "file":
-			case "http":
-			case "https":
-			case "net.pipe":
-			case "net.tcp":
+			if (scheme == null || scheme.Length < 4)
+				return false;
+
+			char first = scheme [0];
+			if (first == 'h'){
+				return scheme == "http" || scheme == "https";
+			} else if (first == 'f' && scheme == "file"){
 				return true;
-			}
+			} else if (first == 'n')
+				return scheme == "net.pipe" || scheme == "net.tcp";
+
 			return false;
 		}
 
@@ -1949,23 +1942,40 @@ namespace System {
 			return IsPredefinedScheme (s.Substring (0, p));
 		}
 		
+		//
+		// Using a simple block of if's is twice as slow as the compiler generated
+		// switch statement.   But using this tuned code is faster than the
+		// compiler generated code, with a million loops on x86-64:
+		//
+		// With "http": .10 vs .51 (first check)
+		// with "https": .16 vs .51 (second check)
+		// with "foo": .22 vs .31 (never found)
+		// with "mailto": .12 vs .51  (last check)
+		//
+		//
 		private static bool IsPredefinedScheme (string scheme)
 		{
-			switch (scheme) {
-			case "http":
-			case "https":
-			case "file":
-			case "ftp":
-			case "nntp":
-			case "gopher":
-			case "mailto":
-			case "news":
-			case "net.pipe":
-			case "net.tcp":
-				return true;
-			default:
+			if (scheme == null && scheme.Length < 3)
+				return false;
+			
+			char c = scheme [0];
+			if (c == 'h')
+				return (scheme == "http" || scheme == "https");
+			if (c == 'f')
+				return (scheme == "file" || scheme == "ftp");
+				
+			if (c == 'n'){
+				c = scheme [1];
+				if (c == 'e')
+					return (scheme == "news" || scheme == "net.pipe" || scheme == "net.tcp");
+				if (scheme == "nntp")
+					return true;
 				return false;
 			}
+			if ((c == 'g' && scheme == "gopher") || (c == 'm' && scheme == "mailto"))
+				return true;
+
+			return false;
 		}
 
 		[Obsolete]
