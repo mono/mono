@@ -53,7 +53,6 @@ namespace System.Net.Sockets
 		public Socket AcceptSocket { get; set; }
 		public byte[] Buffer { get; private set; }
 
-		[MonoTODO ("not supported in all cases")]
 		public IList<ArraySegment<byte>> BufferList {
 			get { return _bufferList; }
 			set {

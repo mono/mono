@@ -53,12 +53,6 @@ namespace System.Net.Sockets
 {
 	public partial class Socket : IDisposable
 	{
-		[StructLayout (LayoutKind.Sequential)]
-		struct WSABUF {
-			public int len;
-			public IntPtr buf;
-		}
-
 		private bool islistening;
 		private bool useoverlappedIO;
 
@@ -1721,89 +1715,6 @@ namespace System.Net.Sockets
 			return Receive_nochecks (buffer, offset, size, flags, out error);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static int Receive_internal (IntPtr sock,
-							    WSABUF[] bufarray,
-							    SocketFlags flags,
-							    out int error);
-		
-		public int Receive (IList<ArraySegment<byte>> buffers)
-		{
-			int ret;
-			SocketError error;
-			
-			ret = Receive (buffers, SocketFlags.None, out error);
-			if (error != SocketError.Success) {
-				throw new SocketException ((int)error);
-			}
-			
-			return(ret);
-		}
-		
-		[CLSCompliant (false)]
-		public int Receive (IList<ArraySegment<byte>> buffers,
-				    SocketFlags socketFlags)
-		{
-			int ret;
-			SocketError error;
-			
-			ret = Receive (buffers, socketFlags, out error);
-			if (error != SocketError.Success) {
-				throw new SocketException ((int)error);
-			}
-			
-			return(ret);
-		}
-
-		[CLSCompliant (false)]
-		public int Receive (IList<ArraySegment<byte>> buffers,
-				    SocketFlags socketFlags,
-				    out SocketError errorCode)
-		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffers == null ||
-			    buffers.Count == 0) {
-				throw new ArgumentNullException ("buffers");
-			}
-
-			int numsegments = buffers.Count;
-			int nativeError;
-			int ret;
-
-			/* Only example I can find of sending a byte
-			 * array reference directly into an internal
-			 * call is in
-			 * System.Runtime.Remoting/System.Runtime.Remoting.Channels.Ipc.Win32/NamedPipeSocket.cs,
-			 * so taking a lead from that...
-			 */
-			WSABUF[] bufarray = new WSABUF[numsegments];
-			GCHandle[] gch = new GCHandle[numsegments];
-
-			for(int i = 0; i < numsegments; i++) {
-				ArraySegment<byte> segment = buffers[i];
-				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
-				bufarray[i].len = segment.Count;
-				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
-			}
-			
-			try {
-				ret = Receive_internal (socket, bufarray,
-							socketFlags,
-							out nativeError);
-			} finally {
-				for(int i = 0; i < numsegments; i++) {
-					if (gch[i].IsAllocated) {
-						gch[i].Free ();
-					}
-				}
-			}
-
-			errorCode = (SocketError)nativeError;
-			return(ret);
-		}
-
 #if !MOONLIGHT
 		public bool ReceiveFromAsync (SocketAsyncEventArgs e)
 		{
@@ -2104,86 +2015,6 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("size");
 
 			return Send_nochecks (buf, offset, size, flags, out error);
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static int Send_internal (IntPtr sock,
-							 WSABUF[] bufarray,
-							 SocketFlags flags,
-							 out int error);
-
-		public int Send (IList<ArraySegment<byte>> buffers)
-		{
-			int ret;
-			SocketError error;
-			
-			ret = Send (buffers, SocketFlags.None, out error);
-			if (error != SocketError.Success) {
-				throw new SocketException ((int)error);
-			}
-			
-			return(ret);
-		}
-
-		public int Send (IList<ArraySegment<byte>> buffers,
-				 SocketFlags socketFlags)
-		{
-			int ret;
-			SocketError error;
-			
-			ret = Send (buffers, socketFlags, out error);
-			if (error != SocketError.Success) {
-				throw new SocketException ((int)error);
-			}
-			
-			return(ret);
-		}
-
-		[CLSCompliant (false)]
-		public int Send (IList<ArraySegment<byte>> buffers,
-				 SocketFlags socketFlags,
-				 out SocketError errorCode)
-		{
-			if (disposed && closed) {
-				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
-			if (buffers == null) {
-				throw new ArgumentNullException ("buffers");
-			}
-			
-			if (buffers.Count == 0) {
-				throw new ArgumentException ("Buffer is empty", "buffers");
-			}
-			
-			int numsegments = buffers.Count;
-			int nativeError;
-			int ret;
-			
-			WSABUF[] bufarray = new WSABUF[numsegments];
-			GCHandle[] gch = new GCHandle[numsegments];
-			
-			for(int i = 0; i < numsegments; i++) {
-				ArraySegment<byte> segment = buffers[i];
-				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
-				bufarray[i].len = segment.Count;
-				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
-			}
-			
-			try {
-				ret = Send_internal (socket, bufarray,
-						     socketFlags,
-						     out nativeError);
-			} finally {
-				for(int i = 0; i < numsegments; i++) {
-					if (gch[i].IsAllocated) {
-						gch[i].Free ();
-					}
-				}
-			}
-			
-			errorCode = (SocketError)nativeError;
-			return(ret);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

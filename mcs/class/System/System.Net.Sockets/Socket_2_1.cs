@@ -36,6 +36,7 @@
 using System;
 using System.Net;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -45,18 +46,17 @@ using System.Text;
 
 #if !NET_2_1
 using System.Net.Configuration;
-#endif
-
-#if NET_2_0
-using System.Collections.Generic;
-#if !NET_2_1
 using System.Net.NetworkInformation;
-#endif
 #endif
 
 namespace System.Net.Sockets {
 
 	public partial class Socket : IDisposable {
+		[StructLayout (LayoutKind.Sequential)]
+		struct WSABUF {
+			public int len;
+			public IntPtr buf;
+		}
 
 		internal enum SocketOperation {
 			Accept,
@@ -112,7 +112,7 @@ namespace System.Net.Sockets {
 			bool completed;
 			public bool blocking;
 			internal int error;
-			SocketOperation operation;
+			public SocketOperation operation;
 			public object ares;
 			public int EndCalled;
 
@@ -214,9 +214,14 @@ namespace System.Net.Sockets {
 				IsCompleted = true;
 
 				Queue queue = null;
-				if (operation == SocketOperation.Receive || operation == SocketOperation.ReceiveFrom) {
+				if (operation == SocketOperation.Receive ||
+				    operation == SocketOperation.ReceiveFrom ||
+				    operation == SocketOperation.ReceiveGeneric) {
 					queue = Sock.readQ;
-				} else if (operation == SocketOperation.Send || operation == SocketOperation.SendTo) {
+				} else if (operation == SocketOperation.Send ||
+					   operation == SocketOperation.SendTo ||
+					   operation == SocketOperation.SendGeneric) {
+
 					queue = Sock.writeQ;
 				}
 
@@ -247,10 +252,14 @@ namespace System.Net.Sockets {
 			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)
 			{
 				switch (op) {
+				case SocketOperation.ReceiveGeneric:
+					goto case SocketOperation.Receive;
 				case SocketOperation.Receive:
 					return new SocketAsyncCall (worker.Receive);
 				case SocketOperation.ReceiveFrom:
 					return new SocketAsyncCall (worker.ReceiveFrom);
+				case SocketOperation.SendGeneric:
+					goto case SocketOperation.Send;
 				case SocketOperation.Send:
 					return new SocketAsyncCall (worker.Send);
 				case SocketOperation.SendTo:
@@ -399,11 +408,13 @@ namespace System.Net.Sockets {
 #if !MOONLIGHT
 				Socket acc_socket = null;
 				try {
-					if (args.AcceptSocket != null) {
+					if (args != null && args.AcceptSocket != null) {
 						result.Sock.Accept (args.AcceptSocket);
 						acc_socket = args.AcceptSocket;
 					} else {
 						acc_socket = result.Sock.Accept ();
+						if (args != null)
+							args.AcceptSocket = acc_socket;
 					}
 				} catch (Exception e) {
 					result.Complete (e);
@@ -542,6 +553,10 @@ namespace System.Net.Sockets {
 
 			public void Receive ()
 			{
+				if (result.operation == SocketOperation.ReceiveGeneric) {
+					ReceiveGeneric ();
+					return;
+				}
 				// Actual recv() done in the runtime
 				result.Complete ();
 			}
@@ -567,17 +582,14 @@ namespace System.Net.Sockets {
 
 			public void ReceiveGeneric ()
 			{
-#if !MOONLIGHT //TODO
 				int total = 0;
 				try {
-					SocketError error;
-					total = result.Sock.Receive (result.Buffers, result.SockFlags, out error);
+					total = result.Sock.Receive (result.Buffers, result.SockFlags);
 				} catch (Exception e) {
 					result.Complete (e);
 					return;
 				}
 				result.Complete (total);
-#endif
 			}
 
 			int send_so_far;
@@ -593,6 +605,10 @@ namespace System.Net.Sockets {
 
 			public void Send ()
 			{
+				if (result.operation == SocketOperation.SendGeneric) {
+					SendGeneric ();
+					return;
+				}
 				// Actual send() done in the runtime
 				if (result.error == 0) {
 					UpdateSendValues (result.Total);
@@ -640,17 +656,14 @@ namespace System.Net.Sockets {
 
 			public void SendGeneric ()
 			{
-#if !MOONLIGHT //TODO
 				int total = 0;
 				try {
-					SocketError error;
-					total = result.Sock.Send (result.Buffers, result.SockFlags, out error);
+					total = result.Sock.Send (result.Buffers, result.SockFlags);
 				} catch (Exception e) {
 					result.Complete (e);
 					return;
 				}
 				result.Complete (total);
-#endif
 			}
 		}
 
@@ -687,7 +700,7 @@ namespace System.Net.Sockets {
 
 			if (ipv6Supported == -1) {
 #if !NET_2_1
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 				SettingsSection config;
 				config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
 				if (config != null)
@@ -718,9 +731,7 @@ namespace System.Net.Sockets {
 			}
 		}
 
-#if NET_2_0
 		[ObsoleteAttribute ("Use OSSupportsIPv6 instead")]
-#endif
 		public static bool SupportsIPv6 {
 			get {
 				CheckProtocolSupport();
@@ -742,7 +753,7 @@ namespace System.Net.Sockets {
 				return ipv6Supported == 1;
 			}
 		}
-#elif NET_2_0
+#else
 		public static bool OSSupportsIPv6 {
 			get {
 				NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
@@ -763,9 +774,7 @@ namespace System.Net.Sockets {
 		private ProtocolType protocol_type;
 		internal bool blocking=true;
 		Thread blocking_thread;
-#if NET_2_0
 		private bool isbound;
-#endif
 		/* When true, the socket was connected at the time of
 		 * the last IO operation
 		 */
@@ -880,7 +889,7 @@ namespace System.Net.Sockets {
 		public ProtocolType ProtocolType {
 			get { return protocol_type; }
 		}
-#if NET_2_0
+
 		public bool NoDelay {
 			get {
 				if (disposed && closed)
@@ -980,7 +989,7 @@ namespace System.Net.Sockets {
 				}
 			}
 		}
-#endif
+
 		// Returns the remote endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static SocketAddress RemoteEndPoint_internal(IntPtr socket, out int error);
@@ -1088,13 +1097,11 @@ namespace System.Net.Sockets {
 			((IDisposable) this).Dispose ();
 		}
 
-#if NET_2_0
 		public void Close (int timeout) 
 		{
 			linger_timeout = timeout;
 			((IDisposable) this).Dispose ();
 		}
-#endif
 
 		// Connects to the remote address
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1124,8 +1131,7 @@ namespace System.Net.Sockets {
 #if MOONLIGHT
 			if (protocol_type != ProtocolType.Tcp)
 				throw new SocketException ((int) SocketError.AccessDenied);
-#elif NET_2_0
-			/* TODO: check this for the 1.1 profile too */
+#else
 			if (islistening)
 				throw new InvalidOperationException ();
 #endif
@@ -1159,13 +1165,9 @@ namespace System.Net.Sockets {
 #else
 			connected = true;
 #endif
-
-#if NET_2_0
 			isbound = true;
-#endif
 		}
 
-#if NET_2_0
 		public bool ReceiveAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -1176,16 +1178,17 @@ namespace System.Net.Sockets {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			// We do not support recv into multiple buffers yet
-			if (e.BufferList != null)
-				throw new NotSupportedException ("Mono doesn't support using BufferList at this point.");
-
 			e.curSocket = this;
-			e.Worker.Init (this, null, e.ReceiveCallback, SocketOperation.Receive);
+			SocketOperation op = (e.Buffer != null) ? SocketOperation.Receive : SocketOperation.ReceiveGeneric;
+			e.Worker.Init (this, null, e.ReceiveCallback, op);
 			SocketAsyncResult res = e.Worker.result;
-			res.Buffer = e.Buffer;
-			res.Offset = e.Offset;
-			res.Size = e.Count;
+			if (e.Buffer != null) {
+				res.Buffer = e.Buffer;
+				res.Offset = e.Offset;
+				res.Size = e.Count;
+			} else {
+				res.Buffers = e.BufferList;
+			}
 			res.SockFlags = e.SocketFlags;
 			Worker worker = new Worker (e);
 			lock (readQ) {
@@ -1201,18 +1204,22 @@ namespace System.Net.Sockets {
 		public bool SendAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 			if (e.Buffer == null && e.BufferList == null)
 				throw new ArgumentException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
 			e.curSocket = this;
-			e.Worker.Init (this, null, e.SendCallback, SocketOperation.Send);
+			SocketOperation op = (e.Buffer != null) ? SocketOperation.Send : SocketOperation.SendGeneric;
+			e.Worker.Init (this, null, e.SendCallback, op);
 			SocketAsyncResult res = e.Worker.result;
-			res.Buffer = e.Buffer;
-			res.Offset = e.Offset;
-			res.Size = e.Count;
+			if (e.Buffer != null) {
+				res.Buffer = e.Buffer;
+				res.Offset = e.Offset;
+				res.Size = e.Count;
+			} else {
+				res.Buffers = e.BufferList;
+			}
 			res.SockFlags = e.SocketFlags;
 			Worker worker = new Worker (e);
 			lock (writeQ) {
@@ -1224,7 +1231,6 @@ namespace System.Net.Sockets {
 			}
 			return true;
 		}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
@@ -1448,6 +1454,167 @@ namespace System.Net.Sockets {
 				s.blocking_thread.Abort ();
 		}
 #endif
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static int Receive_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int Receive (IList<ArraySegment<byte>> buffers)
+		{
+			int ret;
+			SocketError error;
+			ret = Receive (buffers, SocketFlags.None, out error);
+			if (error != SocketError.Success) {
+				throw new SocketException ((int)error);
+			}
+			return(ret);
+		}
+
+		[CLSCompliant (false)]
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags)
+		{
+			int ret;
+			SocketError error;
+			ret = Receive (buffers, socketFlags, out error);
+			if (error != SocketError.Success) {
+				throw new SocketException ((int)error);
+			}
+			return(ret);
+		}
+
+		[CLSCompliant (false)]
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (buffers == null ||
+			    buffers.Count == 0) {
+				throw new ArgumentNullException ("buffers");
+			}
+
+			int numsegments = buffers.Count;
+			int nativeError;
+			int ret;
+
+			/* Only example I can find of sending a byte
+			 * array reference directly into an internal
+			 * call is in
+			 * System.Runtime.Remoting/System.Runtime.Remoting.Channels.Ipc.Win32/NamedPipeSocket.cs,
+			 * so taking a lead from that...
+			 */
+			WSABUF[] bufarray = new WSABUF[numsegments];
+			GCHandle[] gch = new GCHandle[numsegments];
+
+			for(int i = 0; i < numsegments; i++) {
+				ArraySegment<byte> segment = buffers[i];
+				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
+				bufarray[i].len = segment.Count;
+				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
+			}
+
+			try {
+				ret = Receive_internal (socket, bufarray,
+							socketFlags,
+							out nativeError);
+			} finally {
+				for(int i = 0; i < numsegments; i++) {
+					if (gch[i].IsAllocated) {
+						gch[i].Free ();
+					}
+				}
+			}
+
+			errorCode = (SocketError)nativeError;
+			return(ret);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static int Send_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int Send (IList<ArraySegment<byte>> buffers)
+		{
+			int ret;
+			SocketError error;
+			ret = Send (buffers, SocketFlags.None, out error);
+			if (error != SocketError.Success) {
+				throw new SocketException ((int)error);
+			}
+			return(ret);
+		}
+
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags)
+		{
+			int ret;
+			SocketError error;
+			ret = Send (buffers, socketFlags, out error);
+			if (error != SocketError.Success) {
+				throw new SocketException ((int)error);
+			}
+			return(ret);
+		}
+
+		[CLSCompliant (false)]
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+			if (buffers == null)
+				throw new ArgumentNullException ("buffers");
+			if (buffers.Count == 0)
+				throw new ArgumentException ("Buffer is empty", "buffers");
+			int numsegments = buffers.Count;
+			int nativeError;
+			int ret;
+
+			WSABUF[] bufarray = new WSABUF[numsegments];
+			GCHandle[] gch = new GCHandle[numsegments];
+			for(int i = 0; i < numsegments; i++) {
+				ArraySegment<byte> segment = buffers[i];
+				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
+				bufarray[i].len = segment.Count;
+				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
+			}
+
+			try {
+				ret = Send_internal (socket, bufarray, socketFlags, out nativeError);
+			} finally {
+				for(int i = 0; i < numsegments; i++) {
+					if (gch[i].IsAllocated) {
+						gch[i].Free ();
+					}
+				}
+			}
+			errorCode = (SocketError)nativeError;
+			return(ret);
+		}
+
 		Exception InvalidAsyncOp (string method)
 		{
 			return new InvalidOperationException (method + " can only be called once per asynchronous operation");
