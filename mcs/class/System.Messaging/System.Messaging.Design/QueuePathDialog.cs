@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !NO_WINFORMS_DEPENDENCY
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms;
@@ -76,3 +76,4 @@ namespace System.Messaging.Design
 		}
 	}
 }
+#endif

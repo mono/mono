@@ -15,4 +15,8 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 \
 
 EXTRA_DISTFILES = System.Messaging/MessageQueue.resx
 
+ifdef MESSAGING_NO_WINFORMS
+LIB_MCS_FLAGS += -d:NO_WINFORMS_DEPENDENCY
+endif
+
 include ../../build/library.make
