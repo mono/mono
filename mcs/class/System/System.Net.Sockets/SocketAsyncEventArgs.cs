@@ -319,7 +319,8 @@ namespace System.Net.Sockets
 				OnCompleted (this);
 			}
 		}
-#if !NET_2_1
+
+#if !MOONLIGHT
 		internal void AcceptCallback (IAsyncResult ares)
 		{
 			SocketError = SocketError.Success;
@@ -374,6 +375,7 @@ namespace System.Net.Sockets
 				OnCompleted (this);
 			}
 		}
+
 #endif
 		internal void DoOperation (SocketAsyncOperation operation, Socket socket)
 		{

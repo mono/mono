@@ -396,6 +396,7 @@ namespace System.Net.Sockets {
 
 			public void Accept ()
 			{
+#if !MOONLIGHT
 				Socket acc_socket = null;
 				try {
 					if (args.AcceptSocket != null) {
@@ -410,6 +411,7 @@ namespace System.Net.Sockets {
 				}
 
 				result.Complete (acc_socket);
+#endif
 			}
 
 			/* only used in 2.0 profile and newer, but
@@ -418,6 +420,7 @@ namespace System.Net.Sockets {
 			 */
 			public void AcceptReceive ()
 			{
+#if !MOONLIGHT
 				Socket acc_socket = null;
 				try {
 					if (result.AcceptSocket == null) {
@@ -451,6 +454,7 @@ namespace System.Net.Sockets {
 				}
 
 				result.Complete (acc_socket, total);
+#endif
 			}
 
 			public void Connect ()
@@ -523,6 +527,7 @@ namespace System.Net.Sockets {
 			/* Also only used in 2.0 profile and newer */
 			public void Disconnect ()
 			{
+#if !MOONLIGHT
 				try {
 					if (args != null)
 						result.ReuseSocket = args.DisconnectReuseSocket;
@@ -532,6 +537,7 @@ namespace System.Net.Sockets {
 					return;
 				}
 				result.Complete ();
+#endif
 			}
 
 			public void Receive ()
@@ -542,6 +548,7 @@ namespace System.Net.Sockets {
 
 			public void ReceiveFrom ()
 			{
+#if !MOONLIGHT
 				int total = 0;
 				try {
 					total = result.Sock.ReceiveFrom_nochecks (result.Buffer,
@@ -555,10 +562,12 @@ namespace System.Net.Sockets {
 				}
 
 				result.Complete (total);
+#endif
 			}
 
 			public void ReceiveGeneric ()
 			{
+#if !MOONLIGHT //TODO
 				int total = 0;
 				try {
 					SocketError error;
@@ -568,6 +577,7 @@ namespace System.Net.Sockets {
 					return;
 				}
 				result.Complete (total);
+#endif
 			}
 
 			int send_so_far;
@@ -603,6 +613,7 @@ namespace System.Net.Sockets {
 
 			public void SendTo ()
 			{
+#if !MOONLIGHT
 				int total = 0;
 				try {
 					total = result.Sock.SendTo_nochecks (result.Buffer,
@@ -624,10 +635,12 @@ namespace System.Net.Sockets {
 				}
 
 				result.Complete ();
+#endif
 			}
 
 			public void SendGeneric ()
 			{
+#if !MOONLIGHT //TODO
 				int total = 0;
 				try {
 					SocketError error;
@@ -637,6 +650,7 @@ namespace System.Net.Sockets {
 					return;
 				}
 				result.Complete (total);
+#endif
 			}
 		}
 
@@ -1434,6 +1448,113 @@ namespace System.Net.Sockets {
 				s.blocking_thread.Abort ();
 		}
 #endif
+		Exception InvalidAsyncOp (string method)
+		{
+			return new InvalidOperationException (method + " can only be called once per asynchronous operation");
+		}
+
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int EndReceive (IAsyncResult result)
+		{
+			SocketError error;
+			return (EndReceive (result, out error));
+		}
+
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int EndReceive (IAsyncResult asyncResult, out SocketError errorCode)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+
+			SocketAsyncResult req = asyncResult as SocketAsyncResult;
+			if (req == null)
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
+
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndReceive");
+			if (!asyncResult.IsCompleted)
+				asyncResult.AsyncWaitHandle.WaitOne ();
+
+			errorCode = req.ErrorCode;
+			req.CheckIfThrowDelayedException ();
+			return(req.Total);
+		}
+
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int EndSend (IAsyncResult result)
+		{
+			SocketError error;
+			return(EndSend (result, out error));
+		}
+
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int EndSend (IAsyncResult asyncResult, out SocketError errorCode)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+
+			SocketAsyncResult req = asyncResult as SocketAsyncResult;
+			if (req == null)
+				throw new ArgumentException ("Invalid IAsyncResult", "result");
+
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndSend");
+			if (!asyncResult.IsCompleted)
+				asyncResult.AsyncWaitHandle.WaitOne ();
+
+			errorCode = req.ErrorCode;
+			req.CheckIfThrowDelayedException ();
+			return(req.Total);
+		}
+
+		// Used by Udpclient
+#if !MOONLIGHT
+		public
+#else
+		internal
+#endif
+		int EndReceiveFrom(IAsyncResult result, ref EndPoint end_point)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (result == null)
+				throw new ArgumentNullException ("result");
+
+			SocketAsyncResult req = result as SocketAsyncResult;
+			if (req == null)
+				throw new ArgumentException ("Invalid IAsyncResult", "result");
+
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndReceiveFrom");
+			if (!result.IsCompleted)
+				result.AsyncWaitHandle.WaitOne();
+
+ 			req.CheckIfThrowDelayedException();
+			end_point = req.EndPoint;
+			return req.Total;
+		}
 	}
 }
 

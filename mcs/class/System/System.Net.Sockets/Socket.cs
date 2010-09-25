@@ -508,6 +508,7 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if !MOONLIGHT
 		public bool AcceptAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -535,7 +536,8 @@ namespace System.Net.Sockets
 			sac.BeginInvoke (null, e.Worker.result);
 			return true;
 		}
-		
+#endif
+
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr Accept_internal(IntPtr sock, out int error, bool blocking);
@@ -1289,6 +1291,7 @@ namespace System.Net.Sockets
 			Connect (addresses, port);
 		}
 
+#if !MOONLIGHT
 		public bool DisconnectAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -1301,6 +1304,7 @@ namespace System.Net.Sockets
 			sac.BeginInvoke (null, e.Worker.result);
 			return true;
 		}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void Disconnect_internal(IntPtr sock, bool reuse, out int error);
@@ -1404,6 +1408,7 @@ namespace System.Net.Sockets
 			req.CheckIfThrowDelayedException();
 		}
 
+#if !MOONLIGHT
 		public void EndDisconnect (IAsyncResult asyncResult)
 		{
 			if (disposed && closed)
@@ -1423,58 +1428,7 @@ namespace System.Net.Sockets
 
 			req.CheckIfThrowDelayedException ();
 		}
-
-		public int EndReceive (IAsyncResult result)
-		{
-			SocketError error;
-			
-			return (EndReceive (result, out error));
-		}
-
-		public int EndReceive (IAsyncResult asyncResult, out SocketError errorCode)
-		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-
-			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndReceive");
-			if (!asyncResult.IsCompleted)
-				asyncResult.AsyncWaitHandle.WaitOne ();
-
-			errorCode = req.ErrorCode;
-			req.CheckIfThrowDelayedException ();
-			
-			return(req.Total);
-		}
-
-		public int EndReceiveFrom(IAsyncResult result, ref EndPoint end_point)
-		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (result == null)
-				throw new ArgumentNullException ("result");
-
-			SocketAsyncResult req = result as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "result");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndReceiveFrom");
-			if (!result.IsCompleted)
-				result.AsyncWaitHandle.WaitOne();
-
- 			req.CheckIfThrowDelayedException();
-			end_point = req.EndPoint;
-			return req.Total;
-		}
+#endif
 
 		[MonoTODO]
 		public int EndReceiveMessageFrom (IAsyncResult asyncResult,
@@ -1500,36 +1454,6 @@ namespace System.Net.Sockets
 			throw new NotImplementedException ();
 		}
 
-		public int EndSend (IAsyncResult result)
-		{
-			SocketError error;
-			
-			return(EndSend (result, out error));
-		}
-
-		public int EndSend (IAsyncResult asyncResult, out SocketError errorCode)
-		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-			
-			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "result");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndSend");
-			if (!asyncResult.IsCompleted)
-				asyncResult.AsyncWaitHandle.WaitOne ();
-
-			errorCode = req.ErrorCode;
-			req.CheckIfThrowDelayedException ();
-			
-			return(req.Total);
-		}
-
 		public void EndSendFile (IAsyncResult asyncResult)
 		{
 			if (disposed && closed)
@@ -1545,11 +1469,7 @@ namespace System.Net.Sockets
 			ares.Delegate.EndInvoke (ares.Original);
 		}
 
-		Exception InvalidAsyncOp (string method)
-		{
-			return new InvalidOperationException (method + " can only be called once per asynchronous operation");
-		}
-
+#if !MOONLIGHT
 		public int EndSendTo (IAsyncResult result)
 		{
 			if (disposed && closed)
@@ -1570,6 +1490,7 @@ namespace System.Net.Sockets
 			req.CheckIfThrowDelayedException();
 			return req.Total;
 		}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void GetSocketOption_arr_internal(IntPtr socket,
@@ -1883,6 +1804,7 @@ namespace System.Net.Sockets
 			return(ret);
 		}
 
+#if !MOONLIGHT
 		public bool ReceiveFromAsync (SocketAsyncEventArgs e)
 		{
 			if (disposed && closed)
@@ -1912,6 +1834,7 @@ namespace System.Net.Sockets
 			}
 			return true;
 		}
+#endif
 
 		public int ReceiveFrom (byte [] buffer, ref EndPoint remoteEP)
 		{
@@ -2299,6 +2222,7 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if !MOONLIGHT
 		public bool SendToAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -2329,6 +2253,7 @@ namespace System.Net.Sockets
 			// We always return true for now
 			return true;
 		}
+#endif
 		
 		public int SendTo (byte [] buffer, EndPoint remote_end)
 		{
