@@ -7886,7 +7886,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>94</size>
+        <size>74</size>
       </method>
     </type>
     <type name="D">
@@ -10050,7 +10050,7 @@
         <size>26</size>
       </method>
       <method name="Void Main()">
-        <size>98</size>
+        <size>88</size>
       </method>
     </type>
   </test>
@@ -13526,6 +13526,16 @@
     <type name="Test">
       <method name="Int32 Main()">
         <size>79</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-540.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>809</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -37616,7 +37626,7 @@
         <size>7</size>
       </method>
       <method name="Void ZeroBasedReductions()">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void Main()">
         <size>11</size>

@@ -1,4 +1,4 @@
-// CS1003: Syntax error, `.' expected
+// CS1525: Unexpected symbol `::', expecting `.' or `{'
 // Line: 4
 
 namespace a::b

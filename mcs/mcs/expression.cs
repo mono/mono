@@ -1750,7 +1750,7 @@ namespace Mono.CSharp {
 
 				var c = b.right as Constant;
 				if (c != null) {
-					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.BitwiseOr || b.oper == Operator.Subtraction))
+					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.Subtraction || (b.oper == Operator.BitwiseOr && !(b is Nullable.LiftedBinaryOperator))))
 						return ReducedExpression.Create (b.left, b).Resolve (ec);
 					if ((b.oper == Operator.Multiply || b.oper == Operator.Division) && c.IsOneInteger)
 						return ReducedExpression.Create (b.left, b).Resolve (ec);
@@ -1759,7 +1759,7 @@ namespace Mono.CSharp {
 
 				c = b.left as Constant;
 				if (c != null) {
-					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.BitwiseOr))
+					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.Subtraction || (b.oper == Operator.BitwiseOr && !(b is Nullable.LiftedBinaryOperator))))
 						return ReducedExpression.Create (b.right, b).Resolve (ec);
 					if (b.oper == Operator.Multiply && c.IsOneInteger)
 						return ReducedExpression.Create (b.right, b).Resolve (ec);
@@ -3326,7 +3326,7 @@ namespace Mono.CSharp {
 			if (oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) {
 				Constant rc = right as Constant;
 				Constant lc = left as Constant;
-				if ((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue)) {
+				if (((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue)) && !(this is Nullable.LiftedBinaryOperator)) {
 					//
 					// The result is a constant with side-effect
 					//
