@@ -36,7 +36,7 @@ namespace System.Collections.Generic {
 		static EqualityComparer ()
 		{
 			if (typeof (T) == typeof (string)){
-				_default = (EqualityComparer<T>) (object) new StringComparer ();
+				_default = (EqualityComparer<T>) (object) new InternalStringComparer ();
 				return;
 			}
 			if (typeof (IEquatable <T>).IsAssignableFrom (typeof (T)))
@@ -92,7 +92,7 @@ namespace System.Collections.Generic {
 	}
 	
 	[Serializable]
-	sealed class StringComparer : EqualityComparer<string> {
+	sealed class InternalStringComparer : EqualityComparer<string> {
 	
 		public override int GetHashCode (string obj)
 		{
