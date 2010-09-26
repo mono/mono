@@ -123,8 +123,13 @@ namespace System.Net.Sockets {
 			public void Init (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
 			{
 				this.Sock = sock;
-				this.blocking = sock.blocking;
-				this.handle = sock.socket;
+				if (sock != null) {
+					this.blocking = sock.blocking;
+					this.handle = sock.socket;
+				} else {
+					this.blocking = true;
+					this.handle = IntPtr.Zero;
+				}
 				this.state = state;
 				this.callback = callback;
 				this.operation = operation;
@@ -242,7 +247,7 @@ namespace System.Net.Sockets {
 					}
 
 					if (sac != null)
-						sac.BeginInvoke (null, worker.result);
+						Socket.socket_pool_queue (sac, worker.result);
 				}
 
 				if (callback != null)
@@ -618,8 +623,7 @@ namespace System.Net.Sockets {
 					}
 
 					if (result.Size > 0) {
-						SocketAsyncCall sac = new SocketAsyncCall (this.Send);
-						sac.BeginInvoke (null, result);
+						Socket.socket_pool_queue (this.Send, result);
 						return; // Have to finish writing everything. See bug #74475.
 					}
 					result.Total = send_so_far;
@@ -640,8 +644,7 @@ namespace System.Net.Sockets {
 
 					UpdateSendValues (total);
 					if (result.Size > 0) {
-						SocketAsyncCall sac = new SocketAsyncCall (this.SendTo);
-						sac.BeginInvoke (null, result);
+						Socket.socket_pool_queue (this.SendTo, result);
 						return; // Have to finish writing everything. See bug #74475.
 					}
 					result.Total = send_so_far;
@@ -1191,13 +1194,16 @@ namespace System.Net.Sockets {
 			}
 			res.SockFlags = e.SocketFlags;
 			Worker worker = new Worker (e);
+			int count;
 			lock (readQ) {
 				readQ.Enqueue (worker);
-				if (readQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (e.Worker.Receive);
-					sac.BeginInvoke (null, res);
-				}
+				count = readQ.Count;
 			}
+			if (count == 1) {
+				// Receive takes care of ReceiveGeneric
+				socket_pool_queue (e.Worker.Receive, res);
+			}
+
 			return true;
 		}
 
@@ -1222,12 +1228,14 @@ namespace System.Net.Sockets {
 			}
 			res.SockFlags = e.SocketFlags;
 			Worker worker = new Worker (e);
+			int count;
 			lock (writeQ) {
 				writeQ.Enqueue (worker);
-				if (writeQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (e.Worker.Send);
-					sac.BeginInvoke (null, res);
-				}
+				count = writeQ.Count;
+			}
+			if (count == 1) {
+				// Send takes care of SendGeneric
+				socket_pool_queue (e.Worker.Send, res);
 			}
 			return true;
 		}
@@ -1722,6 +1730,9 @@ namespace System.Net.Sockets {
 			end_point = req.EndPoint;
 			return req.Total;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void socket_pool_queue (SocketAsyncCall d, SocketAsyncResult r);
 	}
 }
 

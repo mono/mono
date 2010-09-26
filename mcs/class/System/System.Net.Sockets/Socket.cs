@@ -525,13 +525,12 @@ namespace System.Net.Sockets
 			}
 
 			e.curSocket = this;
-			e.Worker.Init (this, null, e.AcceptCallback, SocketOperation.Accept);
-			SocketAsyncCall sac = new SocketAsyncCall (e.Worker.Accept);
-			sac.BeginInvoke (null, e.Worker.result);
+			Worker w = e.Worker;
+			w.Init (this, null, e.AcceptCallback, SocketOperation.Accept);
+			socket_pool_queue (w.Accept, w.result);
 			return true;
 		}
 #endif
-
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr Accept_internal(IntPtr sock, out int error, bool blocking);
@@ -611,9 +610,8 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
 			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.Accept);
-			sac.BeginInvoke (null, req);
-			return(req);
+			socket_pool_queue (worker.Accept, req);
+			return req;
 		}
 
 		public IAsyncResult BeginAccept (int receiveSize,
@@ -628,15 +626,12 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive);
 			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.AcceptReceive);
-			
 			req.Buffer = new byte[receiveSize];
 			req.Offset = 0;
 			req.Size = receiveSize;
 			req.SockFlags = SocketFlags.None;
-
-			sac.BeginInvoke (null, req);
-			return(req);
+			socket_pool_queue (worker.AcceptReceive, req);
+			return req;
 		}
 
 		public IAsyncResult BeginAccept (Socket acceptSocket,
@@ -668,15 +663,12 @@ namespace System.Net.Sockets
 			
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive);
 			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.AcceptReceive);
-			
 			req.Buffer = new byte[receiveSize];
 			req.Offset = 0;
 			req.Size = receiveSize;
 			req.SockFlags = SocketFlags.None;
 			req.AcceptSocket = acceptSocket;
-
-			sac.BeginInvoke (null, req);
+			socket_pool_queue (worker.AcceptReceive, req);
 			return(req);
 		}
 
@@ -721,8 +713,7 @@ namespace System.Net.Sockets
 				// continue asynch
 				connected = false;
 				Worker worker = new Worker (req);
-				SocketAsyncCall sac = new SocketAsyncCall (worker.Connect);
-				sac.BeginInvoke (null, req);
+				socket_pool_queue (worker.Connect, req);
 			}
 
 			return(req);
@@ -772,8 +763,7 @@ namespace System.Net.Sockets
 			
 			connected = false;
 			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.Connect);
-			sac.BeginInvoke (null, req);
+			socket_pool_queue (worker.Connect, req);
 			
 			return(req);
 		}
@@ -810,8 +800,7 @@ namespace System.Net.Sockets
 			req.ReuseSocket = reuseSocket;
 			
 			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.Disconnect);
-			sac.BeginInvoke (null, req);
+			socket_pool_queue (worker.Disconnect, req);
 			
 			return(req);
 		}
@@ -840,14 +829,13 @@ namespace System.Net.Sockets
 			req.Size = size;
 			req.SockFlags = socket_flags;
 			Worker worker = new Worker (req);
+			int count;
 			lock (readQ) {
 				readQ.Enqueue (worker);
-				if (readQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
-					sac.BeginInvoke (null, req);
-				}
+				count = readQ.Count;
 			}
-
+			if (count == 1)
+				socket_pool_queue (worker.Receive, req);
 			return req;
 		}
 
@@ -884,15 +872,14 @@ namespace System.Net.Sockets
 			req.Buffers = buffers;
 			req.SockFlags = socketFlags;
 			Worker worker = new Worker (req);
+			int count;
 			lock(readQ) {
 				readQ.Enqueue (worker);
-				if (readQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (worker.ReceiveGeneric);
-					sac.BeginInvoke (null, req);
-				}
+				count = readQ.Count;
 			}
-			
-			return(req);
+			if (count == 1)
+				socket_pool_queue (worker.ReceiveGeneric, req);
+			return req;
 		}
 		
 		[CLSCompliant (false)]
@@ -937,13 +924,13 @@ namespace System.Net.Sockets
 			req.SockFlags = socket_flags;
 			req.EndPoint = remote_end;
 			Worker worker = new Worker (req);
+			int count;
 			lock (readQ) {
 				readQ.Enqueue (worker);
-				if (readQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (worker.ReceiveFrom);
-					sac.BeginInvoke (null, req);
-				}
+				count = readQ.Count;
 			}
+			if (count == 1)
+				socket_pool_queue (worker.ReceiveFrom, req);
 			return req;
 		}
 
@@ -998,13 +985,13 @@ namespace System.Net.Sockets
 			req.Size = size;
 			req.SockFlags = socket_flags;
 			Worker worker = new Worker (req);
+			int count;
 			lock (writeQ) {
 				writeQ.Enqueue (worker);
-				if (writeQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
-					sac.BeginInvoke (null, req);
-				}
+				count = writeQ.Count;
 			}
+			if (count == 1)
+				socket_pool_queue (worker.Send, req);
 			return req;
 		}
 
@@ -1044,15 +1031,14 @@ namespace System.Net.Sockets
 			req.Buffers = buffers;
 			req.SockFlags = socketFlags;
 			Worker worker = new Worker (req);
+			int count;
 			lock (writeQ) {
 				writeQ.Enqueue (worker);
-				if (writeQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (worker.SendGeneric);
-					sac.BeginInvoke (null, req);
-				}
+				count = writeQ.Count;
 			}
-			
-			return(req);
+			if (count == 1)
+				socket_pool_queue (worker.SendGeneric, req);
+			return req;
 		}
 
 		[CLSCompliant (false)]
@@ -1172,13 +1158,13 @@ namespace System.Net.Sockets
 			req.SockFlags = socket_flags;
 			req.EndPoint = remote_end;
 			Worker worker = new Worker (req);
+			int count;
 			lock (writeQ) {
 				writeQ.Enqueue (worker);
-				if (writeQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (worker.SendTo);
-					sac.BeginInvoke (null, req);
-				}
+				count = writeQ.Count;
 			}
+			if (count == 1)
+				socket_pool_queue (worker.SendTo, req);
 			return req;
 		}
 
@@ -1294,8 +1280,7 @@ namespace System.Net.Sockets
 
 			e.curSocket = this;
 			e.Worker.Init (this, null, e.DisconnectCallback, SocketOperation.Disconnect);
-			SocketAsyncCall sac = new SocketAsyncCall (e.Worker.Disconnect);
-			sac.BeginInvoke (null, e.Worker.result);
+			socket_pool_queue (e.Worker.Disconnect, e.Worker.result);
 			return true;
 		}
 #endif
@@ -1736,13 +1721,13 @@ namespace System.Net.Sockets
 			res.EndPoint = e.RemoteEndPoint;
 			res.SockFlags = e.SocketFlags;
 			Worker worker = new Worker (e);
+			int count;
 			lock (readQ) {
 				readQ.Enqueue (worker);
-				if (readQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (e.Worker.ReceiveFrom);
-					sac.BeginInvoke (null, res);
-				}
+				count = readQ.Count;
 			}
+			if (count == 1)
+				socket_pool_queue (e.Worker.ReceiveFrom, res);
 			return true;
 		}
 #endif
@@ -2074,14 +2059,13 @@ namespace System.Net.Sockets
 			res.SockFlags = e.SocketFlags;
 			res.EndPoint = e.RemoteEndPoint;
 			Worker worker = new Worker (e);
+			int count;
 			lock (writeQ) {
 				writeQ.Enqueue (worker);
-				if (writeQ.Count == 1) {
-					SocketAsyncCall sac = new SocketAsyncCall (e.Worker.SendTo);
-					sac.BeginInvoke (null, res);
-				}
+				count = writeQ.Count;
 			}
-			// We always return true for now
+			if (count == 1)
+				socket_pool_queue (e.Worker.SendTo, res);
 			return true;
 		}
 #endif
