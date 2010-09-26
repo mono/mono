@@ -36,7 +36,7 @@ namespace System.Collections.Generic {
 		static EqualityComparer ()
 		{
 			if (typeof (T) == typeof (string)){
-				_default = new StringComparer ();
+				_default = (EqualityComparer<T>) (object) new StringComparer ();
 				return;
 			}
 			if (typeof (IEquatable <T>).IsAssignableFrom (typeof (T)))
@@ -72,28 +72,6 @@ namespace System.Collections.Generic {
 		}
 		
 		[Serializable]
-		sealed class StringComparer : EqualityComparer<T> {
-	
-			public override int GetHashCode (T obj)
-			{
-				if (obj == null)
-					return 0;
-				return obj.GetHashCode ();
-			}
-	
-			public override bool Equals (T x, T y)
-			{
-				if (x == null)
-					return y == null;
-
-				if ((object) x == (object) y)
-					return true;
-				
-				return x.Equals (y);
-			}
-		}
-
-		[Serializable]
 		sealed class DefaultComparer : EqualityComparer<T> {
 	
 			public override int GetHashCode (T obj)
@@ -113,6 +91,28 @@ namespace System.Collections.Generic {
 		}
 	}
 	
+	[Serializable]
+	sealed class StringComparer : EqualityComparer<string> {
+	
+		public override int GetHashCode (string obj)
+		{
+			if (obj == null)
+				return 0;
+			return obj.GetHashCode ();
+		}
+	
+		public override bool Equals (string x, string y)
+		{
+			if (x == null)
+				return y == null;
+
+			if ((object) x == (object) y)
+				return true;
+				
+			return x.Equals (y);
+		}
+	}
+
 	[Serializable]
 	sealed class GenericEqualityComparer <T> : EqualityComparer <T> where T : IEquatable <T> {
 
