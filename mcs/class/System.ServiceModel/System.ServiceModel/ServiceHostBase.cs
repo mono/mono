@@ -323,7 +323,10 @@ namespace System.ServiceModel
 			
 			if (service != null)
 				ApplyServiceElement (service);
-
+#if NET_4_0
+			// simplified configuration
+			AddServiceBehaviors (String.Empty, false);
+#endif
 			// TODO: consider commonBehaviors here
 
 			// ensure ServiceAuthorizationBehavior
@@ -340,6 +343,31 @@ namespace System.ServiceModel
 				Description.Behaviors.Add (debugBehavior);
 			}
 		}
+
+		void AddServiceBehaviors (string configurationName, bool throwIfNotFound)
+		{
+#if NET_4_0
+			if (configurationName == null)
+				return;
+#else
+			if (String.IsNullOrEmpty (configurationName))
+				return;
+#endif
+			ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors [configurationName];
+			if (behavior == null) {
+				if (throwIfNotFound)
+					throw new ArgumentException (String.Format ("Service behavior configuration '{0}' was not found", configurationName));
+				return;
+			}
+
+			KeyedByTypeCollection<IServiceBehavior> behaviors = Description.Behaviors;
+			foreach (var bxe in behavior) {
+				IServiceBehavior b = (IServiceBehavior) bxe.CreateBehavior ();
+				if (behaviors.Contains (b.GetType ()))
+					continue;
+				behaviors.Add (b);
+			}
+		}
 		
 		void ApplyServiceElement (ServiceElement service)
 		{
@@ -350,15 +378,7 @@ namespace System.ServiceModel
 			}
 
 			// behaviors
-			ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors [service.BehaviorConfiguration];
-			if (behavior != null) {
-				foreach (var bxe in behavior) {
-					IServiceBehavior b = (IServiceBehavior) bxe.CreateBehavior ();
-					Description.Behaviors.Add (b);
-				}
-			}
-			else if (!String.IsNullOrEmpty (service.BehaviorConfiguration))
-				throw new ArgumentException (String.Format ("Service behavior configuration '{0}' was not found", service.BehaviorConfiguration));
+			AddServiceBehaviors (service.BehaviorConfiguration, true);
 
 			// services
 			foreach (ServiceEndpointElement endpoint in service.Endpoints) {

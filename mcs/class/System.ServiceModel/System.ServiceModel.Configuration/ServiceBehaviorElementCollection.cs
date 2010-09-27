@@ -82,8 +82,16 @@ namespace System.ServiceModel.Configuration
 			XmlReader reader, bool serializeCollectionKey) {
 			base.DeserializeElement (reader, serializeCollectionKey);
 		}
+#if NET_4_0
+		protected override void BaseAdd (ConfigurationElement element)
+		{
+			var sbe = element as ServiceBehaviorElement;
+			if (sbe != null)
+				sbe.Name = String.Empty;
 
-
+			base.BaseAdd (sbe);
+		}
+#endif
 	}
 
 }
