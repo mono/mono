@@ -24,11 +24,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class ElementPosition : ChartElement
 	{
-		public override string Name { get; set; }
+		#region Constructors
+		public ElementPosition ()
+		{
+		}
+
+		public ElementPosition (float x, float y, float width, float height)
+		{
+			X = x;
+			Y = y;
+			Width = width;
+			Height = height;
+		}
+		#endregion
+
+		#region Public Properties
+		public bool Auto { get; set; }
+		public float Bottom { get { return Y + Height; }  }
+		public float Height { get; set; }
+		public float Right { get { return X + Width; } }
+		public SizeF Size { get { return new SizeF (Width, Height); } }
+		public float Width { get; set; }
+		public float X { get; set; }
+		public float Y { get; set; }
+		#endregion
+
+		#region Public Methods
+		public void FromRectangleF (RectangleF rect)
+		{
+			X = rect.X;
+			Y = rect.Y;
+			Width = rect.Width;
+			Height = rect.Height;
+		}
+
+		public RectangleF ToRectangleF ()
+		{
+			return new RectangleF (X, Y, Width, Height);
+		}
+		#endregion
+
+		public override string ToString ()
+		{
+			return string.Format ("{0}, {1}, {2}, {3}", X, Y, Width, Height);
+		}
 	}
 }

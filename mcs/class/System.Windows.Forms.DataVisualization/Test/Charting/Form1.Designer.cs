@@ -33,7 +33,7 @@
 			System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint2 = new System.Windows.Forms.DataVisualization.Charting.DataPoint (0D, 9D);
 			System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint3 = new System.Windows.Forms.DataVisualization.Charting.DataPoint (0D, 3D);
 			System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint4 = new System.Windows.Forms.DataVisualization.Charting.DataPoint (0D, 5D);
-			this.chart1 = new MyChart ();
+			this.chart1 = new WindowsFormsApplication1.Form1.MyChart ();
 			this.SuspendLayout ();
 			// 
 			// chart1
@@ -68,7 +68,8 @@
 
 		#endregion
 
-		private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+		private Form1.MyChart chart1;
+
 	}
 }
 

@@ -27,8 +27,19 @@ using System;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class TickMark : Grid
 	{
-		public override string Name { get; set; }
+		#region Constructors
+		public TickMark ()
+		{
+			Size = 1f;
+			TickMarkStyle = TickMarkStyle.OutsideArea;
+		}
+		#endregion
+
+		#region Public Properties
+		public float Size { get; set; }
+		public TickMarkStyle TickMarkStyle { get; set; }
+		#endregion
 	}
 }

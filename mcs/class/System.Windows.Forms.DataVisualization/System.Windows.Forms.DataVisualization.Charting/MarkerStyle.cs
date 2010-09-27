@@ -27,8 +27,17 @@ using System;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public enum MarkerStyle
 	{
-		public override string Name { get; set; }
+		None = 0,
+		Square = 1,
+		Circle = 2,
+		Diamond = 3,
+		Triangle = 4,
+		Cross = 5,
+		Star4 = 6,
+		Star5 = 7,
+		Star6 = 8,
+		Star10 = 9
 	}
 }

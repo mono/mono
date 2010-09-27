@@ -34,22 +34,50 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public Chart ()
 		{
 			BackColor = Color.White;
-			ChartAreas = new List<ChartArea> ();
-			Series = new List<Series> ();
+			ChartAreas = new ChartAreaCollection ();
+			Series = new SeriesCollection ();
 		}
 
-		public List<ChartArea> ChartAreas { get; private set; }
-		public List<Series> Series { get; private set; }
+		public ChartAreaCollection ChartAreas { get; private set; }
+		public SeriesCollection Series { get; private set; }
 
 		#region Protected Properties
 		protected override void OnPaint (PaintEventArgs e)
 		{
 			base.OnPaint (e);
+
+			ChartGraphics g = new ChartGraphics (e.Graphics);
+
+			PaintElement (g, this, new ElementPosition (0, 0, 100, 100));
+
+			foreach (var area in ChartAreas)
+				PaintElement (g, area, new ElementPosition (9.299009f, 6.15f, 86.12599f, 81.1875f));
+
+			foreach (var series in Series)
+				PaintElement (g, series, new ElementPosition (9.299009f, 6.15f, 86.12599f, 81.1875f));
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
 			base.OnPaintBackground (pevent);
+		}
+
+		protected virtual void OnPostPaint (ChartPaintEventArgs e)
+		{
+		}
+
+		protected virtual void OnPrePaint (ChartPaintEventArgs e)
+		{
+		}
+		#endregion
+
+		#region Private Methods
+		private void PaintElement (ChartGraphics g, object element, ElementPosition position)
+		{
+			ChartPaintEventArgs e = new ChartPaintEventArgs (this, element, g, position);
+
+			OnPrePaint (e);
+			OnPostPaint (e);
 		}
 		#endregion
 	}

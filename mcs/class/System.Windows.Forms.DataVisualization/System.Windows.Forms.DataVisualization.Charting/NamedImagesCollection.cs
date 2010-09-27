@@ -27,8 +27,7 @@ using System;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class NamedImagesCollection : ChartNamedElementCollection<NamedImage>
 	{
-		public override string Name { get; set; }
 	}
 }

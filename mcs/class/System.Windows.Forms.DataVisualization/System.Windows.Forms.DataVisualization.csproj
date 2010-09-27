@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -26,12 +26,16 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -42,8 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="common\MonoTODOAttribute.cs" />
-    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AnchorStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\Axis.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AxisScaleView.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartArea3DStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartGraphics.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartPaintEventArgs.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ElementPosition.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\FormatNumberEventArgs.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\Margins.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\MarkerStyle.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\AnnotationPathPoint.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\AnnotationPathPointCollection.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\AnovaResult.cs" />
@@ -62,11 +75,11 @@
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\Chart.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartArea.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\AntiAliasingStyles.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartAreaCollection.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartColorPalette.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartDashStyle.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartElement.cs" />
@@ -88,6 +101,7 @@
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\Docking.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\FinancialFormula.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\GradientStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\Grid.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\GridTickTypes.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\IDataPointFilter.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\IntervalAutoMode.cs" />
@@ -106,6 +120,9 @@
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\LegendTableStyle.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\LightStyle.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\LineAnchorCapStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\NamedImage.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\NamedImagesCollection.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\Point3D.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\PointSortOrder.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ScrollBarButtonStyles.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ScrollBarButtonType.cs" />
@@ -121,7 +138,15 @@
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\TextAntiAliasingQuality.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\TextOrientation.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\TextStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\TickMark.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\TickMarkStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ToolTipEventArgs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="common\Consts.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -24,11 +24,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class AxisScaleView
 	{
-		public override string Name { get; set; }
 	}
 }

@@ -1,7 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
-System.Windows.Forms.DataVisualization.Charting/AnchorStyle.cs
 System.Windows.Forms.DataVisualization.Charting/AnnotationPathPoint.cs
 System.Windows.Forms.DataVisualization.Charting/AnnotationPathPointCollection.cs
 System.Windows.Forms.DataVisualization.Charting/AnovaResult.cs
@@ -40,6 +39,7 @@ System.Windows.Forms.DataVisualization.Charting/DateRangeType.cs
 System.Windows.Forms.DataVisualization.Charting/DateTimeIntervalType.cs
 System.Windows.Forms.DataVisualization.Charting/Docking.cs
 System.Windows.Forms.DataVisualization.Charting/FinancialFormula.cs
+System.Windows.Forms.DataVisualization.Charting/FormatNumberEventArgs.cs
 System.Windows.Forms.DataVisualization.Charting/GradientStyle.cs
 System.Windows.Forms.DataVisualization.Charting/GridTickTypes.cs
 System.Windows.Forms.DataVisualization.Charting/IDataPointFilter.cs
@@ -59,7 +59,12 @@ System.Windows.Forms.DataVisualization.Charting/LegendStyle.cs
 System.Windows.Forms.DataVisualization.Charting/LegendTableStyle.cs
 System.Windows.Forms.DataVisualization.Charting/LightStyle.cs
 System.Windows.Forms.DataVisualization.Charting/LineAnchorCapStyle.cs
+System.Windows.Forms.DataVisualization.Charting/Margins.cs
+System.Windows.Forms.DataVisualization.Charting/MarkerStyle.cs
+System.Windows.Forms.DataVisualization.Charting/NamedImage.cs
+System.Windows.Forms.DataVisualization.Charting/NamedImagesCollection.cs
 System.Windows.Forms.DataVisualization.Charting/PointSortOrder.cs
+System.Windows.Forms.DataVisualization.Charting/Point3D.cs
 System.Windows.Forms.DataVisualization.Charting/ScrollBarButtonStyles.cs
 System.Windows.Forms.DataVisualization.Charting/ScrollBarButtonType.cs
 System.Windows.Forms.DataVisualization.Charting/ScrollType.cs

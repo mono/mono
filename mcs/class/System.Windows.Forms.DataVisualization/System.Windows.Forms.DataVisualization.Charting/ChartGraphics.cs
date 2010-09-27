@@ -24,11 +24,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class ChartGraphics : ChartElement, IDisposable
 	{
-		public override string Name { get; set; }
+		#region Constructors
+		internal ChartGraphics (Graphics graphics)
+		{
+			Graphics = graphics;
+		}
+		#endregion
+
+		#region Public Properties
+		public Graphics Graphics { get; set; }
+		#endregion
 	}
 }

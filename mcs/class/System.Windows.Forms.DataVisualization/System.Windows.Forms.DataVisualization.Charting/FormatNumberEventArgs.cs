@@ -24,11 +24,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.ComponentModel;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class FormatNumberEventArgs : EventArgs
 	{
-		public override string Name { get; set; }
+		#region Constructors
+		internal FormatNumberEventArgs ()
+		{
+		}
+		#endregion
+
+		#region Public Properties
+		public ChartElementType ElementType { get; private set; }
+		public string Format { get; private set; }
+		public string LocalizedValue { get; set; }
+		public object SenderTag { get; private set; }
+		public double Value { get; private set; }
+		public ChartValueType ValueType { get; private set; }
+		#endregion
 	}
 }

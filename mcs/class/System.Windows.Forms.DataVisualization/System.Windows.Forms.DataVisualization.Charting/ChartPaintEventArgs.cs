@@ -24,11 +24,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class ChartPaintEventArgs : EventArgs
 	{
-		public override string Name { get; set; }
+		#region Constructors
+		internal ChartPaintEventArgs (Chart chart, object chartElement, ChartGraphics chartGraphics, ElementPosition position)
+		{
+			Chart = chart;
+			ChartElement = chartElement;
+			ChartGraphics = chartGraphics;
+			Position = position;
+		}
+		#endregion
+
+		#region Public Properties
+		public Chart Chart { get; private set; }
+		public object ChartElement { get; private set; }
+		public ChartGraphics ChartGraphics { get; private set; }
+		public ElementPosition Position { get; private set; }
+		#endregion
 	}
 }

@@ -24,10 +24,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.ComponentModel;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public abstract class ChartElement
+	public abstract class ChartElement : IDisposable
 	{
 		#region Constructors
 		protected ChartElement ()
@@ -36,6 +37,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		#endregion
 
 		#region Public Properties
+		[DefaultValue (null)]
 		public object Tag { get; set; }
 		#endregion
 
@@ -56,6 +58,9 @@ namespace System.Windows.Forms.DataVisualization.Charting
 
 		public override string ToString ()
 		{
+			if (this is ChartNamedElement)
+				return string.Format ("{0}-{1}", GetType ().Name, (this as ChartNamedElement).Name);
+
 			return GetType ().Name;
 		}
 		#endregion

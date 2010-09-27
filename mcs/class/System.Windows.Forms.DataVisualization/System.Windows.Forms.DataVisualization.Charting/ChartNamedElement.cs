@@ -24,6 +24,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.ComponentModel;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
@@ -41,6 +42,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		#endregion
 
 		#region Public Properties
+		[DefaultValue ("")]
 		public virtual string Name { get; set; }
 		#endregion
 	}

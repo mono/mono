@@ -27,8 +27,29 @@ using System;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class ChartArea3DStyle
 	{
-		public override string Name { get; set; }
+		#region Constructors
+		public ChartArea3DStyle (ChartArea chartArea)
+		{
+		}
+
+		public ChartArea3DStyle ()
+		{
+		}
+		#endregion
+
+		#region Public Properties
+		public bool Enable3D { get; set; }
+		public int Inclination { get; set; }
+		public bool IsClustered { get; set; }
+		public bool IsRightAngleAxes { get; set; }
+		public LightStyle LightStyle { get; set; }
+		public int Perspective { get; set; }
+		public int PointDepth { get; set; }
+		public int PointGapDepth { get; set; }
+		public int Rotation { get; set; }
+		public int WallWidth { get; set; }
+		#endregion
 	}
 }

@@ -24,11 +24,69 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.ComponentModel;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class Margins
 	{
-		public override string Name { get; set; }
+		#region Constructors
+		public Margins ()
+		{
+		}
+
+		public Margins (int top, int bottom, int left, int right)
+		{
+			Bottom = bottom;
+			Left = left;
+			Right = right;
+			Top = top;
+		}
+		#endregion
+
+		#region Public Properties
+		[DefaultValue (0)]
+		public int Bottom { get; set; }
+
+		[DefaultValue (0)]
+		public int Left { get; set; }
+
+		[DefaultValue (0)]
+		public int Right { get; set; }
+
+		[DefaultValue (0)]
+		public int Top { get; set; }
+		#endregion
+
+		#region Public Methods
+		public override bool Equals (object obj)
+		{
+			Margins a = (Margins)obj;
+			return a.Bottom == Bottom && a.Left == Left && a.Right == Right && a.Top == Top;
+		}
+
+		[MonoTODO ()]
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public bool IsEmpty ()
+		{
+			return Bottom == 0 && Left == 0 && Right == 0 && Top == 0;
+		}
+
+		public RectangleF ToRectangleF ()
+		{
+			return new RectangleF (Left, Top, Right, Bottom);
+		}
+
+		[MonoTODO ()]
+		public override string ToString ()
+		{
+			return base.ToString ();
+		}
+		#endregion
 	}
 }

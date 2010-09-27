@@ -29,5 +29,16 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class SeriesCollection : ChartNamedElementCollection<Series>
 	{
+		#region Public Methods
+		public Series Add (string name)
+		{
+			Series s = new Series ();
+			s.Name = name;
+
+			this.Add (s);
+
+			return s;
+		}
+		#endregion
 	}
 }

@@ -24,11 +24,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.ComponentModel;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	[DefaultProperty ("Name")]
+	public class NamedImage : ChartNamedElement, IDisposable
 	{
-		public override string Name { get; set; }
+		private string name;
+
+		#region Constructors
+		public NamedImage ()
+		{
+		}
+
+		public NamedImage (string name, Image image)
+		{
+		}
+		#endregion
+
+		#region Public Properties
+		[Bindable (false)]
+		public Image Image { get; set; }
+
+		[Bindable (false)]
+		public override string Name {
+			get { return name; }
+			set { name = value; }
+		}
+		#endregion
+
+		#region Protected Methods
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+
+			if (Image != null)
+				Image.Dispose ();
+		}
+		#endregion
 	}
 }

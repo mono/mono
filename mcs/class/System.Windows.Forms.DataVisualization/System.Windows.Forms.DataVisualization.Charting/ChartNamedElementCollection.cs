@@ -27,7 +27,7 @@ using System;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartNamedElementCollection<T> where T : ChartNamedElement
+	public class ChartNamedElementCollection<T> : ChartElementCollection<T> where T : ChartNamedElement
 	{
 	}
 }

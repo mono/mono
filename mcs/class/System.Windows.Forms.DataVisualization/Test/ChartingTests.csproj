@@ -51,8 +51,12 @@
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\AnovaResultTest.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ArrowAnnotationTest.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\AxisScaleBreakStyleTest.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartElementCollectionTest.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartElementTest.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartNamedElementCollectionTest.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\DataPointTest.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\GridTest.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\TickMarkTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
