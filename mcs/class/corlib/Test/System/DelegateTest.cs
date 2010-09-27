@@ -1077,7 +1077,6 @@ namespace MonoTests.System
 		event Action bar_handler;
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))] // #635349, #605936
 		public void NewDelegateClosedOverNullReferenceInstanceMethod ()
 		{
