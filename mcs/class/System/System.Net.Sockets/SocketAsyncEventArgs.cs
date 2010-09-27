@@ -173,6 +173,11 @@ namespace System.Net.Sockets
 			GC.SuppressFinalize (this);
 		}
 
+		internal void SetLastOperation (SocketAsyncOperation op)
+		{
+			LastOperation = op;
+		}
+
 		protected virtual void OnCompleted (SocketAsyncEventArgs e)
 		{
 			if (e == null)
@@ -215,9 +220,6 @@ namespace System.Net.Sockets
 #region Internals
 		internal void ReceiveCallback (IAsyncResult ares)
 		{
-			SocketError = SocketError.Success;
-			LastOperation = SocketAsyncOperation.Receive;
-
 			try {
 				BytesTransferred = curSocket.EndReceive (ares);
 			} catch (SocketException se){
@@ -229,7 +231,6 @@ namespace System.Net.Sockets
 
 		void ConnectCallback ()
 		{
-			LastOperation = SocketAsyncOperation.Connect;
 			SocketError error = SocketError.AccessDenied;
 			try {
 #if MOONLIGHT || NET_4_0
@@ -300,9 +301,6 @@ namespace System.Net.Sockets
 
 		internal void SendCallback (IAsyncResult ares)
 		{
-			SocketError = SocketError.Success;
-			LastOperation = SocketAsyncOperation.Send;
-
 			try {
 				BytesTransferred = curSocket.EndSend (ares);
 			} catch (SocketException se){
@@ -315,8 +313,6 @@ namespace System.Net.Sockets
 #if !MOONLIGHT
 		internal void AcceptCallback (IAsyncResult ares)
 		{
-			SocketError = SocketError.Success;
-			LastOperation = SocketAsyncOperation.Accept;
 			try {
 				AcceptSocket = curSocket.EndAccept (ares);
 			} catch (SocketException ex) {
@@ -328,9 +324,6 @@ namespace System.Net.Sockets
 
 		internal void DisconnectCallback (IAsyncResult ares)
 		{
-			SocketError = SocketError.Success;
-			LastOperation = SocketAsyncOperation.Disconnect;
-
 			try {
 				curSocket.EndDisconnect (ares);
 			} catch (SocketException ex) {
@@ -342,9 +335,6 @@ namespace System.Net.Sockets
 
 		internal void ReceiveFromCallback (IAsyncResult ares)
 		{
-			SocketError = SocketError.Success;
-			LastOperation = SocketAsyncOperation.ReceiveFrom;
-
 			try {
 				BytesTransferred = curSocket.EndReceiveFrom (ares, ref remote_ep);
 			} catch (SocketException ex) {
@@ -356,9 +346,6 @@ namespace System.Net.Sockets
 
 		internal void SendToCallback (IAsyncResult ares)
 		{
-			SocketError = SocketError.Success;
-			LastOperation = SocketAsyncOperation.SendTo;
-			
 			try {
 				BytesTransferred = curSocket.EndSendTo (ares);
 			} catch (SocketException ex) {
@@ -377,6 +364,8 @@ namespace System.Net.Sockets
 			switch (operation) {
 				case SocketAsyncOperation.Connect:
 					callback = new ThreadStart (ConnectCallback);
+					SocketError = SocketError.Success;
+					LastOperation = operation;
 					break;
 
 				default:

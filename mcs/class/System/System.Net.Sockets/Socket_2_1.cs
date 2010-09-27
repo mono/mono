@@ -58,6 +58,7 @@ namespace System.Net.Sockets {
 			public IntPtr buf;
 		}
 
+		// Used by the runtime
 		internal enum SocketOperation {
 			Accept,
 			Connect,
@@ -403,9 +404,42 @@ namespace System.Net.Sockets {
 				}
 			}
 
-			public void Init (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
+			/* This is called when reusing a SocketAsyncEventArgs */
+			public void Init (Socket sock, object state, AsyncCallback callback, SocketOperation op)
 			{
-				result.Init (sock, state, callback, operation);
+				result.Init (sock, state, callback, op);
+				SocketAsyncOperation async_op;
+
+				// Notes;
+				// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
+				//	-SendPackets and ReceiveMessageFrom are not implemented yet
+				if (op == Socket.SocketOperation.Accept)
+					async_op = SocketAsyncOperation.Accept;
+				else if (op == Socket.SocketOperation.Connect)
+					async_op = SocketAsyncOperation.Connect;
+				else if (op == Socket.SocketOperation.Disconnect)
+					async_op = SocketAsyncOperation.Disconnect;
+				else if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric)
+					async_op = SocketAsyncOperation.Receive;
+				else if (op == Socket.SocketOperation.ReceiveFrom)
+					async_op = SocketAsyncOperation.ReceiveFrom;
+				/*
+				else if (op == Socket.SocketOperation.ReceiveMessageFrom)
+					async_op = SocketAsyncOperation.ReceiveMessageFrom;
+				*/
+				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric)
+					async_op = SocketAsyncOperation.Send;
+				/*
+				else if (op == Socket.SocketOperation.SendPackets)
+					async_op = SocketAsyncOperation.SendPackets;
+				*/
+				else if (op == Socket.SocketOperation.SendTo)
+					async_op = SocketAsyncOperation.SendTo;
+				else
+					throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
+
+				args.SetLastOperation (async_op);
+				args.SocketError = SocketError.Success;
 			}
 
 			public void Accept ()
