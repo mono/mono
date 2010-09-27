@@ -1165,10 +1165,18 @@ namespace Mono.Unix.Native {
 		EPOLL_CTL_MOD = 3,
 	}
 
-	[StructLayout (LayoutKind.Sequential, Pack = 1)]
+	[StructLayout (LayoutKind.Explicit, Size=12, Pack=1)]
 	public struct EpollEvent {
+		[FieldOffset (0)]
 		public EpollEvents events;
-		public IntPtr fd;
+		[FieldOffset (4)]
+		public int fd;
+		[FieldOffset (4)]
+		public IntPtr ptr;
+		[FieldOffset (4)]
+		public uint u32;
+		[FieldOffset (4)]
+		public ulong u64;
 	}
 	#endregion
 
@@ -2669,7 +2677,7 @@ namespace Mono.Unix.Native {
 			return sys_epoll_create1 (flags);
 		}
 
-		public static int epoll_ctl (int epfd, EpollOp op, IntPtr fd, EpollEvents events)
+		public static int epoll_ctl (int epfd, EpollOp op, int fd, EpollEvents events)
 		{
 			EpollEvent ee = new EpollEvent ();
 			ee.events = events;
@@ -2693,7 +2701,7 @@ namespace Mono.Unix.Native {
 		private static extern int sys_epoll_create1 (EpollFlags flags);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_ctl")]
-		private static extern int sys_epoll_ctl (int epfd, EpollOp op, IntPtr fd, ref EpollEvent ee);
+		private static extern int sys_epoll_ctl (int epfd, EpollOp op, int fd, ref EpollEvent ee);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_wait")]
 		private static extern int sys_epoll_wait (int epfd, EpollEvent [] ee, int maxevents, int timeout);

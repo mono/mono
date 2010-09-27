@@ -103,5 +103,14 @@ namespace MonoTests.System.ServiceModel.Channels
 				new Uri ("http://localhost:8080"), String.Empty, ListenUriMode.Unique);
 			new Element ().BuildChannelListener<IReplyChannel> (ctx);
 		}
+
+		[Test]
+		public void MessageEncoderIsContentTypeSupported ()
+		{
+			var enc = new TextMessageEncodingBindingElement ().CreateMessageEncoderFactory ().Encoder;
+			Assert.IsFalse (enc.IsContentTypeSupported ("application/xml"), "#1");
+			Assert.IsFalse (enc.IsContentTypeSupported ("text/xml"), "#2");
+			Assert.IsTrue (enc.IsContentTypeSupported ("application/soap+xml"), "#3");
+		}
 	}
 }

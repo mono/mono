@@ -19,9 +19,19 @@ class C
 		a = a >> 0x40;
 	}
 	
+	public static void ZeroBasedReductionsWithConversion ()
+	{
+		byte b = 0;
+		b |= 0;
+		b += 0;
+		b -= 0;
+		b *= 1;
+	}
+	
 	public static void Main ()
 	{
 		ZeroBasedReductions ();
+		ZeroBasedReductionsWithConversion ();
 	}
 }
 

@@ -72,3 +72,26 @@ $(cmp_makefrag): $(cmp_response)
 
 $(cmp_response) $(cmp_makefrag): Makefile $(depsdir)/.stamp
 endif
+
+vts = VersionTolerantSerialization
+vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/$(vts)
+test-vts:
+	$(MCS) -target:library \
+		$(vtsdir)/$(vts)TestLib/1.0/Address.cs
+	$(MCS) $(test_nunit_ref) \
+		-r:$(vtsdir)/$(vts)TestLib/1.0/Address.dll \
+		$(vtsdir)/BinarySerializationOverVersions.cs
+	cp $(vtsdir)/$(vts)TestLib/1.0/Address.dll $(vtsdir)
+	$(MCS) -target:library \
+		$(vtsdir)/$(vts)TestLib/2.0/Address.cs
+	$(MCS) -target:library \
+		$(vtsdir)/$(vts)TestLib/3.0/Address.cs
+	$(MCS) -target:library \
+		$(vtsdir)/$(vts)TestLib/4.0/Address.cs
+	$(MCS) -target:library \
+		$(vtsdir)/$(vts)TestLib/5.0/Address.cs
+run-test-vts: test-vts
+	$(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \
+		$(vtsdir)/BinarySerializationOverVersions.exe 
+test: test-vts
+run-test: run-test-vts

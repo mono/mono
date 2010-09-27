@@ -29,6 +29,7 @@ using System.Configuration;
 using System.Linq;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
+using System.ServiceModel.Discovery.Udp;
 
 namespace System.ServiceModel.Discovery.Configuration
 {

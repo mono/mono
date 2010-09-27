@@ -36,12 +36,12 @@ namespace System.ServiceModel.Discovery.VersionCD1
 	[ServiceContract (Name = "DiscoveryProxy", Namespace = MessageContractsCD1.NS)]
 	internal interface IDiscoveryProxyContractCD1
 	{
-		[OperationContract (Name = "Probe", Action = MessageContractsCD1.ProbeAction, AsyncPattern = true, ReplyAction = MessageContractsCD1.ProbeMatchAction)]
+		[OperationContract (Name = "ProbeCD1", Action = MessageContractsCD1.ProbeAction, AsyncPattern = true, ReplyAction = MessageContractsCD1.ProbeMatchAction)]
 		IAsyncResult BeginFind (MessageContractsCD1.FindRequest message, AsyncCallback callback, object state);
 
 		MessageContractsCD1.FindResponse EndFind (IAsyncResult result);
 
-		[OperationContract (Name = "Resolve", Action = MessageContractsCD1.ResolveAction, AsyncPattern = true, ReplyAction = MessageContractsCD1.ResolveMatchAction)]
+		[OperationContract (Name = "ResolveCD1", Action = MessageContractsCD1.ResolveAction, AsyncPattern = true, ReplyAction = MessageContractsCD1.ResolveMatchAction)]
 		IAsyncResult BeginResolve (MessageContractsCD1.ResolveRequest message, AsyncCallback callback, object state);
 
 		MessageContractsCD1.ResolveResponse EndResolve (IAsyncResult result);

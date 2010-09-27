@@ -299,6 +299,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					ReadValue (reader, objectInstance, objectId, info, metadata.MemberTypes[n], metadata.MemberNames[n], null, null);
 			else
 				for (int n=0; n<metadata.FieldCount; n++)
+					if (metadata.MemberInfos [n] != null)
 					ReadValue (reader, objectInstance, objectId, info, metadata.MemberTypes[n], metadata.MemberInfos[n].Name, metadata.MemberInfos[n], null);
 		}
 
@@ -689,8 +690,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 						else
 							field = metadata.Type.GetField (memberName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 							
-						if (field == null) throw new SerializationException ("Field \"" + names[n] + "\" not found in class " + metadata.Type.FullName);
-						metadata.MemberInfos [n] = field;
+						if (field != null)
+							metadata.MemberInfos [n] = field;
+#if ONLY_1_1
+						else
+							throw new SerializationException ("Field \"" + names[n] + "\" not found in class " + metadata.Type.FullName);
+#endif
 						
 						if (!hasTypeInfo) {
 							types [n] = field.FieldType;

@@ -77,7 +77,7 @@ namespace System {
 		private string path = String.Empty;
 		private string query = String.Empty;
 		private string fragment = String.Empty;
-		private string userinfo = String.Empty;
+		private string userinfo;
 		private bool isUnc;
 		private bool isOpaquePart;
 		private bool isAbsoluteUri = true;
@@ -93,6 +93,7 @@ namespace System {
 
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
 		private static string [] Empty = new string [0];
+		private static bool isWin32 = (Path.DirectorySeparatorChar == '\\');
 
 	
 		// Fields
@@ -270,11 +271,19 @@ namespace System {
 					// 3) the relative URI path is absolute.
 					if (String.CompareOrdinal (baseUri.Scheme, 0, relativeUri, 0, pos) != 0 ||
 					    !IsPredefinedScheme (baseUri.Scheme) ||
-					    relativeUri.Length > pos + 1 &&
-					    relativeUri [pos + 1] == '/') {
-						source = relativeUri;
-						ParseUri (UriKind.Absolute);
-						return;
+					    (relativeUri.Length > pos + 1 && relativeUri [pos + 1] == '/')) {
+						Uri tmp = null;
+						if (Uri.TryCreate (relativeUri, UriKind.Absolute, out tmp)) {
+							source = relativeUri;
+							ParseUri (UriKind.Absolute);
+							return;
+						} else if (pos == 1) {
+							// special case as this looks like a windows path
+							string msg = ParseAsWindowsAbsoluteFilePath (relativeUri);
+							if (msg != null)
+								throw new UriFormatException (msg);
+						}
+						// otherwise continue with 'full' relativeUri
 					}
 					else
 						relativeUri = relativeUri.Substring (pos + 1);
@@ -298,10 +307,12 @@ namespace System {
 
 			// 8 fragment
 			// Note that in relative constructor, file URI cannot handle '#' as a filename character, but just regarded as a fragment identifier.
+			string original_fragment = String.Empty;
 			pos = relativeUri.IndexOf ('#');
 			if (pos != -1) {
+				original_fragment = relativeUri.Substring (pos);
 				if (userEscaped)
-					fragment = relativeUri.Substring (pos);
+					fragment = original_fragment;
 				else
 					fragment = "#" + EscapeString (relativeUri.Substring (pos+1));
 				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
@@ -345,8 +356,11 @@ namespace System {
 					path = path.Substring (0, pos + 1);
 			}
 
-			if(relativeUri.Length == 0)
+			if (relativeUri.Length == 0) {
+				// when merging URI the OriginalString is not quite original
+				source = GetLeftPart (UriPartial.Authority) + query + original_fragment;
 				return;
+			}
 	
 			// 6 b)
 			path += relativeUri;
@@ -401,33 +415,33 @@ namespace System {
 			}
 			
 			// 6 g)
-			while (path.StartsWith ("/../"))
+			while (path.StartsWith ("/../", StringComparison.Ordinal))
 				path = path.Substring (3);
 			
 			if (!userEscaped)
 				path = EscapeString (path);
-		}		
+
+			// when merging URI the OriginalString is not quite original
+			source = GetLeftPart (UriPartial.Authority) + path + query + original_fragment;
+		}
 		
 		// Properties
 		
 		public string AbsolutePath { 
 			get {
 				EnsureAbsoluteUri ();
-				switch (Scheme) {
-				case "mailto":
-				case "file":
+				if (scheme == "mailto" || scheme == "file")
 					// faster (mailto) and special (file) cases
 					return path;
-				default:
-					if (path.Length == 0) {
-						string start = Scheme + SchemeDelimiter;
-						if (path.StartsWith (start))
-							return "/";
-						else
-							return String.Empty;
-					}
-					return path;
+				
+				if (path.Length == 0) {
+					string start = scheme + SchemeDelimiter;
+					if (path.StartsWith (start, StringComparison.Ordinal))
+						return "/";
+					else
+						return String.Empty;
 				}
+				return path;
 			}
 		}
 
@@ -473,12 +487,10 @@ namespace System {
 				UriHostNameType ret = CheckHostName (Host);
 				if (ret != UriHostNameType.Unknown)
 					return ret;
-				switch (Scheme) {
-				case "mailto":
+
+				if (scheme == "mailto")
 					return UriHostNameType.Basic;
-				default:
-					return (IsFile) ? UriHostNameType.Basic : ret;
-				}
+				return (IsFile) ? UriHostNameType.Basic : ret;
 			} 
 		}
 
@@ -549,8 +561,10 @@ namespace System {
 				if (cachedLocalPath != null)
 					return cachedLocalPath;
 
-				if (IsLocalIdenticalToAbsolutePath ())
-					return AbsolutePath;
+				if (IsLocalIdenticalToAbsolutePath ()) {
+					cachedLocalPath = Unescape (AbsolutePath);
+					return cachedLocalPath;
+				}
 
 				if (!IsUnc) {
 					string p = Unescape (path);
@@ -673,7 +687,7 @@ namespace System {
 		public string UserInfo { 
 			get { 
 				EnsureAbsoluteUri ();
-				return userinfo; 
+				return userinfo == null ? String.Empty : userinfo;
 			}
 		}
 		
@@ -760,6 +774,9 @@ namespace System {
 					if (!Char.IsLetterOrDigit (c))
 						return false;
 				} else if (c == '.') {
+					// www..host.com is bad
+					if (i + 1 < len && name [i + 1] == '.')
+						return false;
 					count = 0;
 				} else if (!Char.IsLetterOrDigit (c) && c != '-' && c != '_') {
 					return false;
@@ -892,7 +909,7 @@ namespace System {
 				s.Append (GetOpaqueWiseSchemeDelimiter ());
 				if (path.Length > 1 && path [1] == ':' && (Uri.UriSchemeFile == scheme)) 
 					s.Append ('/');  // win32 file
-				if (userinfo.Length > 0) 
+				if (userinfo != null) 
 					s.Append (userinfo).Append ('@');
 				s.Append (host);
 				defaultPort = GetDefaultPort (scheme);
@@ -905,7 +922,7 @@ namespace System {
 				sb.Append (GetOpaqueWiseSchemeDelimiter ());
 				if (path.Length > 1 && path [1] == ':' && (Uri.UriSchemeFile == scheme)) 
 					sb.Append ('/');  // win32 file
-				if (userinfo.Length > 0) 
+				if (userinfo != null) 
 					sb.Append (userinfo).Append ('@');
 				sb.Append (host);
 				defaultPort = GetDefaultPort (scheme);
@@ -913,15 +930,10 @@ namespace System {
 					sb.Append (':').Append (port);
 
 				if (path.Length > 0) {
-					switch (Scheme) {
-					case "mailto":
-					case "news":
+					if (scheme == "mailto" || scheme == "news")
 						sb.Append (path);
-						break;
-					default:
-						sb.Append (Reduce (path, CompactEscaped (Scheme)));
-						break;
-					}
+					else 
+						sb.Append (Reduce (path, CompactEscaped (scheme)));
 				}
 				return sb.ToString ();
 			}
@@ -992,7 +1004,7 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -1052,11 +1064,11 @@ namespace System {
 		void AppendQueryAndFragment (ref string result)
 		{
 			if (query.Length > 0) {
-				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true) : Unescape (query, false);
+				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true, false) : Unescape (query, false);
 				result += q;
 			}
 			if (fragment.Length > 0)
-				result += fragment;
+				result += Unescape (fragment, true, false);
 		}
 		
 		public override string ToString () 
@@ -1111,16 +1123,21 @@ namespace System {
 
 		private const string EscapeCommon = "<>%\"{}|\\^`";
 		private const string EscapeReserved = ";/?:@&=+$,";
-		private const string EscapeHex = "#";
+		private const string EscapeFragment = "#";
 		private const string EscapeBrackets = "[]";
 
 		private const string EscapeNews = EscapeCommon + EscapeBrackets + "?";
-		private const string EscapeCommonHex = EscapeCommon + EscapeHex;
+		private const string EscapeCommonHex = EscapeCommon + EscapeFragment;
 		private const string EscapeCommonBrackets = EscapeCommon + EscapeBrackets;
-		internal const string EscapeCommonHexBrackets = EscapeCommon + EscapeHex + EscapeBrackets;
+		internal const string EscapeCommonHexBrackets = EscapeCommon + EscapeFragment + EscapeBrackets;
 		internal const string EscapeCommonHexBracketsQuery = EscapeCommonHexBrackets + "?";
 
-		internal static string EscapeString (string str, string escape) 
+		internal static string EscapeString (string str, string escape)
+		{
+			return EscapeString (str, escape, true);
+		}
+
+		internal static string EscapeString (string str, string escape, bool nonAsciiEscape) 
 		{
 			if (String.IsNullOrEmpty (str))
 				return String.Empty;
@@ -1146,14 +1163,23 @@ namespace System {
 					continue;
 				}
 
-				byte [] data = Encoding.UTF8.GetBytes (new char[] {str[i]});
-				int length = data.Length;
-				for (int j = 0; j < length; j++) {
-					char c = (char) data [j];
-					if ((c <= 0x20) || (c >= 0x7f) || (escape.IndexOf (c) != -1))
-						s.Append (HexEscape (c));
-					else
-						s.Append (c);
+				char c = str [i];
+				bool outside_limited_ascii = ((c <= 0x20) || (c >= 0x7f));
+				bool needs_escape = (escape.IndexOf (c) != -1);
+				if (nonAsciiEscape && outside_limited_ascii) {
+					byte [] data = Encoding.UTF8.GetBytes (new char [] { c });
+					int length = data.Length;
+					for (int j = 0; j < length; j++) {
+						c = (char) data [j];
+						if (needs_escape || nonAsciiEscape)
+							s.Append (HexEscape (c));
+						else
+							s.Append (c);
+					}
+				} else if (needs_escape) {
+					s.Append (HexEscape (c));
+				} else {
+					s.Append (c);
 				}
 			}
 			
@@ -1175,7 +1201,8 @@ namespace System {
 			if (userEscaped)
 				return;
 
-			host = EscapeString (host, EscapeCommonHex);
+			// non-ascii characters are not escaped for the host name
+			host = EscapeString (host, EscapeCommonHex, false);
 			if (host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
 				// host name present (but not an IPv6 address)
 				host = host.ToLower (CultureInfo.InvariantCulture);
@@ -1192,10 +1219,15 @@ namespace System {
 		protected virtual string Unescape (string str)
 #endif
 		{
-			return Unescape (str, false);
+			return Unescape (str, false, false);
+		}
+
+		internal static string Unescape (string str, bool excludeSpecial)
+		{
+			return Unescape (str, excludeSpecial, excludeSpecial);
 		}
 		
-		internal static string Unescape (string str, bool excludeSpecial) 
+		internal static string Unescape (string str, bool excludeSpecial, bool excludeBackslash) 
 		{
 			if (String.IsNullOrEmpty (str))
 				return String.Empty;
@@ -1213,7 +1245,7 @@ namespace System {
 						s.Append ("%25");
 					else if (excludeSpecial && x == '?')
 						s.Append ("%3F");
-					else if (excludeSpecial && x == '\\')
+					else if (excludeBackslash && x == '\\')
 						s.Append ("%5C");
 					else {
 						s.Append (x);
@@ -1377,7 +1409,7 @@ namespace System {
 			} else if (pos == 1) {
 				if (!IsAlpha (uriString [0])) {
 					if (kind == UriKind.Absolute)
-						return "URI scheme must start with a letter.";
+						return "Invalid URI: The URI scheme is not valid.";
 					isAbsoluteUri = false;
 					path = uriString;
 					return null;
@@ -1396,7 +1428,7 @@ namespace System {
 			// Note: different checks in 1.x and 2.0
 			if (!CheckSchemeName (scheme)) {
 				if (kind == UriKind.Absolute)
-					return Locale.GetText ("URI scheme must start with a letter and must consist of one of alphabet, digits, '+', '-' or '.' character.");
+					return "Invalid URI: The URI scheme is not valid.";
 				isAbsoluteUri = false;
 				path = uriString;
 				return null;
@@ -1516,6 +1548,7 @@ namespace System {
 			}
 
 			// 4.b port
+			bool valid_port = true;
 			port = -1;
 			if (unixAbsPath)
 				pos = -1;
@@ -1524,10 +1557,11 @@ namespace System {
 			if (pos != -1 && pos != endpos - 1) {
 				string portStr = uriString.Substring(pos + 1, endpos - (pos + 1));
 				if (portStr.Length > 0 && portStr[portStr.Length - 1] != ']') {
-					if (!Int32.TryParse (portStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out port) ||
+					if (!Int32.TryParse (portStr, NumberStyles.None, CultureInfo.InvariantCulture, out port) ||
 					    port < 0 || port > UInt16.MaxValue)
-						return "Invalid URI: Invalid port number";
-					endpos = pos;
+						valid_port = false; // delay reporting
+					else
+						endpos = pos;
 				} else {
 					if (port == -1) {
 						port = GetDefaultPort (scheme);
@@ -1562,25 +1596,36 @@ namespace System {
 				uriString = "//" + uriString;
 				host = String.Empty;
 			} else if (scheme == UriSchemeFile) {
-				isUnc = true;
+				// under Windows all file:// URI are considered UNC, which is not the case other MacOS (e.g. Silverlight)
+				isUnc = isWin32;
 			} else if (host.Length == 0 &&
 				   (scheme == UriSchemeHttp || scheme == UriSchemeGopher || scheme == UriSchemeNntp ||
 				    scheme == UriSchemeHttps || scheme == UriSchemeFtp)) {
-				return "Invalid URI: The hostname could not be parsed";
+				return "Invalid URI: The Authority/Host could not be parsed.";
 			}
 
-			bool badhost = ((host.Length > 0) && (CheckHostName (host) == UriHostNameType.Unknown));
-			if (!badhost && (host.Length > 1) && (host[0] == '[') && (host[host.Length - 1] == ']')) {
-				IPv6Address ipv6addr;
-				
-				if (IPv6Address.TryParse (host, out ipv6addr)) {
-					host = "[" + ipv6addr.ToString (true) + "]";
-					scope_id = ipv6addr.ScopeId;
-				} else
-					badhost = true;
+			if (host.Length > 0) {
+				switch (CheckHostName (host)) {
+				case UriHostNameType.Unknown:
+					if ((host [0] == ':') || (host [0] == '@'))
+						return "Invalid URI: The hostname could not be parsed.";
+					if (host.IndexOf (':') != -1)
+						return "Invalid URI: Invalid port specified.";
+					if (Parser is DefaultUriParser || Parser == null)
+						return "Invalid URI: The hostname could not be parsed.";
+					break;
+				case UriHostNameType.IPv6:
+					IPv6Address ipv6addr;
+					if (IPv6Address.TryParse (host, out ipv6addr)) {
+						host = "[" + ipv6addr.ToString (true) + "]";
+						scope_id = ipv6addr.ScopeId;
+					}
+					break;
+				}
 			}
-			if (badhost && (Parser is DefaultUriParser || Parser == null))
-				return Locale.GetText ("Invalid URI: The hostname could not be parsed. (" + host + ")");
+			// delayed reporting (to throw the expected exception in the right order)
+			if (!valid_port)
+				return "Invalid URI: Invalid port number";
 
 			UriFormatException ex = null;
 			if (Parser != null)
@@ -1597,14 +1642,17 @@ namespace System {
 
 		private static bool CompactEscaped (string scheme)
 		{
-			switch (scheme) {
-			case "file":
-			case "http":
-			case "https":
-			case "net.pipe":
-			case "net.tcp":
+			if (scheme == null || scheme.Length < 4)
+				return false;
+
+			char first = scheme [0];
+			if (first == 'h'){
+				return scheme == "http" || scheme == "https";
+			} else if (first == 'f' && scheme == "file"){
 				return true;
-			}
+			} else if (first == 'n')
+				return scheme == "net.pipe" || scheme == "net.tcp";
+
 			return false;
 		}
 
@@ -1894,23 +1942,40 @@ namespace System {
 			return IsPredefinedScheme (s.Substring (0, p));
 		}
 		
+		//
+		// Using a simple block of if's is twice as slow as the compiler generated
+		// switch statement.   But using this tuned code is faster than the
+		// compiler generated code, with a million loops on x86-64:
+		//
+		// With "http": .10 vs .51 (first check)
+		// with "https": .16 vs .51 (second check)
+		// with "foo": .22 vs .31 (never found)
+		// with "mailto": .12 vs .51  (last check)
+		//
+		//
 		private static bool IsPredefinedScheme (string scheme)
 		{
-			switch (scheme) {
-			case "http":
-			case "https":
-			case "file":
-			case "ftp":
-			case "nntp":
-			case "gopher":
-			case "mailto":
-			case "news":
-			case "net.pipe":
-			case "net.tcp":
-				return true;
-			default:
+			if (scheme == null && scheme.Length < 3)
+				return false;
+			
+			char c = scheme [0];
+			if (c == 'h')
+				return (scheme == "http" || scheme == "https");
+			if (c == 'f')
+				return (scheme == "file" || scheme == "ftp");
+				
+			if (c == 'n'){
+				c = scheme [1];
+				if (c == 'e')
+					return (scheme == "news" || scheme == "net.pipe" || scheme == "net.tcp");
+				if (scheme == "nntp")
+					return true;
 				return false;
 			}
+			if ((c == 'g' && scheme == "gopher") || (c == 'm' && scheme == "mailto"))
+				return true;
+
+			return false;
 		}
 
 		[Obsolete]
@@ -1946,7 +2011,7 @@ namespace System {
 
 		public bool IsBaseOf (Uri uri)
 		{
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -2117,7 +2182,7 @@ namespace System {
 			result = null;
 			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 			if (relativeUri == null)
 				return false;
 #endif

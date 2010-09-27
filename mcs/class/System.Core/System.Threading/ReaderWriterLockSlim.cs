@@ -44,16 +44,29 @@ namespace System.Threading {
 		 */
 		const int RwReadBit = 3;
 
+		/* These values are used to manipulate the corresponding flags in rwlock field
+		 */
 		const int RwWait = 1;
 		const int RwWaitUpgrade = 2;
 		const int RwWrite = 4;
 		const int RwRead = 8;
 
+		/* Some explanations: this field is the central point of the lock and keep track of all the requests
+		 * that are being made. The 3 lowest bits are used as flag to track "destructive" lock entries
+		 * (i.e attempting to take the write lock with or without having acquired an upgradeable lock beforehand).
+		 * All the remaining bits are intepreted as the actual number of reader currently using the lock
+		 * (which mean the lock is limited to 4294967288 concurrent readers but since it's a high number there
+		 * is no overflow safe guard to remain simple).
+		 */
 		int rwlock;
 		
 		readonly LockRecursionPolicy recursionPolicy;
 
 		AtomicBoolean upgradableTaken = new AtomicBoolean ();
+
+		/* These events are just here for the sake of having a CPU-efficient sleep
+		 * when the wait for acquiring the lock is too long
+		 */
 #if NET_4_0
 		ManualResetEventSlim upgradableEvent = new ManualResetEventSlim (true);
 		ManualResetEventSlim writerDoneEvent = new ManualResetEventSlim (true);
@@ -114,11 +127,18 @@ namespace System.Threading {
 			Interlocked.Increment (ref numReadWaiters);
 
 			while (millisecondsTimeout == -1 || sw.ElapsedMilliseconds < millisecondsTimeout) {
+				/* Check if a writer is present (RwWrite) or if there is someone waiting to
+				 * acquire a writer lock in the queue (RwWait | RwWaitUpgrade).
+				 */
 				if ((rwlock & 0x7) > 0) {
 					writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
 					continue;
 				}
 
+				/* Optimistically try to add ourselves to the reader value
+				 * if the adding was too late and another writer came in between
+				 * we revert the operation.
+				 */
 				if ((Interlocked.Add (ref rwlock, RwRead) & 0x7) == 0) {
 					ctstate.LockState ^= LockState.Read;
 					ctstate.ReaderRecursiveCount++;
@@ -248,6 +268,7 @@ namespace System.Threading {
 			Stopwatch sw = Stopwatch.StartNew ();
 			Interlocked.Increment (ref numUpgradeWaiters);
 
+			// We first try to obtain the upgradeable right
 			while (!upgradableEvent.IsSet () || !upgradableTaken.TryRelaxedSet ()) {
 				if (millisecondsTimeout != -1 && sw.ElapsedMilliseconds > millisecondsTimeout) {
 					Interlocked.Decrement (ref numUpgradeWaiters);
@@ -259,6 +280,7 @@ namespace System.Threading {
 
 			upgradableEvent.Reset ();
 
+			// Then it's a simple reader lock acquiring
 			if (TryEnterReadLock (ComputeTimeout (millisecondsTimeout, sw))) {
 				ctstate.LockState = LockState.Upgradable;
 				Interlocked.Decrement (ref numUpgradeWaiters);
@@ -292,7 +314,8 @@ namespace System.Threading {
 
 			ctstate.LockState ^= LockState.Upgradable;
 			ctstate.UpgradeableRecursiveCount--;
-			Interlocked.Add (ref rwlock, -RwRead);
+			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
+				readerDoneEvent.Set ();
 		}
 
 		public void Dispose ()

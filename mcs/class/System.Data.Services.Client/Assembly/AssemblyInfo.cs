@@ -40,5 +40,47 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-[assembly: AssemblyKeyFile ("../msfinal.pub")]
 [assembly: AssemblyDelaySign (true)]
+
+#if NET_4_0
+[assembly: AssemblyKeyFile ("../ecma.pub")]
+[assembly: System.Security.SecurityCritical]
+[assembly: ComVisible(false)]
+[assembly: CLSCompliant(false)]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: AssemblyTitle("System.Data.Services.Client.dll")]
+[assembly: AssemblyDescription("System.Data.Services.Client.dll")]
+[assembly: AssemblyDefaultAlias("System.Data.Services.Client.dll")]
+[assembly: AssemblyCompany(Consts.MonoCompany)]
+[assembly: AssemblyProduct(Consts.MonoProduct)]
+[assembly: AssemblyCopyright(Consts.MonoCopyright)]
+[assembly: AssemblyVersion(Consts.FxVersion)]
+[assembly: SatelliteContractVersion(Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion(Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion(Consts.FxFileVersion)]
+
+[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: NeutralResourcesLanguage ("en-US")]
+[assembly: AssemblyTargetedPatchBand ("1.0.21-0")]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: SecurityRules (SecurityRuleSet.Level1, SkipVerificationInFullTrust=true)]
+
+internal static class FX35Assembly
+{
+    internal const string Version = "4.0.0.0";
+}
+
+internal static class ThisAssembly
+{
+
+}
+
+internal static class AssemblyRef
+{
+    internal const string MicrosoftPublicKeyToken = "b03f5f7f11d50a3a";
+
+    internal const string EcmaPublicKeyToken = "b77a5c561934e089";
+}
+#else
+[assembly: AssemblyKeyFile ("../msfinal.pub")]
+#endif

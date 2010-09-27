@@ -851,7 +851,7 @@ TextWriter sw = Console.Out;
 			Assert.IsTrue (uri.IsDefaultPort, "IsDefaultPort");
 			Assert.IsTrue (uri.IsFile, "IsFile");
 			Assert.IsFalse (uri.IsLoopback, "IsLoopback");
-			Assert.IsTrue (uri.IsUnc, "IsUnc");
+			Assert.AreEqual (isWin32, uri.IsUnc, "IsUnc");
 			Assert.AreEqual (isWin32 ? "\\\\host\\dir\\subdir\\file?this-is-not-a-query" : "/dir/subdir/file?this-is-not-a-query", uri.LocalPath, "LocalPath");
 			Assert.AreEqual ("file://host/dir/subdir/file?this-is-not-a-query#but-this-is-a-fragment", uri.OriginalString, "OriginalString");
 			Assert.AreEqual ("/dir/subdir/file%3Fthis-is-not-a-query", uri.PathAndQuery, "PathAndQuery");
@@ -917,6 +917,125 @@ TextWriter sw = Console.Out;
 		{
 			Uri uri = new Uri ("%2e%2e/dir/%2e%2e/subdir/file?query#fragment", UriKind.Relative);
 			Assert.AreEqual ("%2e%2e/dir/%2e%2e/subdir/file?query#fragment", uri.ToString (), "1.ToString");
+		}
+
+		[Test]
+		public void BadUri ()
+		{
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("a:b", UriKind.Absolute);
+			}, "a:b - Absolute");
+
+			Uri abs = new Uri ("http://novell.com", UriKind.Absolute);
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri (abs, "a:b");
+			}, "a:b - Relative");
+		}
+
+		[Test]
+		public void MergeWithConfusingRelativeUri ()
+		{
+			Uri abs = new Uri ("http://novell.com", UriKind.Absolute);
+
+			// note: invalid scheme
+			string srel = "http@ftp://mono-project.com/dir/file";
+			Uri uri = new Uri (abs, srel);
+			Assert.AreEqual ("http://novell.com/http@ftp://mono-project.com/dir/file", uri.ToString (), "1.ToString");
+
+			Uri rel = new Uri (srel, UriKind.Relative);
+			Assert.AreEqual ("http@ftp://mono-project.com/dir/file", rel.ToString (), "2.ToString");
+
+			uri = new Uri (abs, rel);
+			Assert.AreEqual ("http://novell.com/http@ftp://mono-project.com/dir/file", uri.ToString (), "3.ToString");
+		}
+
+		[Test]
+		public void EmptyUserInfo ()
+		{
+			Uri uri = new Uri ("http://@www.mono-project.com");
+			Assert.AreEqual ("http://@www.mono-project.com/", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("http://@www.mono-project.com", uri.GetLeftPart (UriPartial.Authority), "UriPartial.Authority");
+			Assert.AreEqual ("http://@www.mono-project.com/", uri.GetLeftPart (UriPartial.Path), "UriPartial.Path");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+		}
+
+		[Test]
+		public void Fragment_SpecialCharacters ()
+		{
+			Uri uri = new Uri ("http://host/dir/file#fragment <>%\"{}|\\^`;/?:@&=+$,[]#second");
+			Assert.AreEqual ("#fragment%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,%5B%5D%23second", uri.Fragment, "Fragment");
+			Assert.AreEqual ("http://host/dir/file#fragment <>%25\"{}|\\^`;/?:@&=+$,[]%23second", uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void Query_SpecialCharacters ()
+		{
+			Uri uri = new Uri ("http://host/dir/file?query <>%\"{}|\\^`;/?:@&=+$,[]");
+			Assert.AreEqual ("?query%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,%5B%5D", uri.Query, "Query");
+			Assert.AreEqual ("http://host/dir/file?query <>%25\"{}|\\^`;/?:@&=+$,[]", uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void OriginalPathEscaped ()
+		{
+			Uri uri = new Uri ("http://www.mono-project.com/%41/%42/%43", UriKind.Absolute);
+			Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("/%41/%42/%43", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("/A/B/C", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
+		}
+
+		[Test]
+		public void CheckHostName ()
+		{
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("host;machine"), "CheckHostName ;");
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www..mono-project.com"), "CheckHostName ..");
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www.mono-project.com\\"), "CheckHostName \\");
+		}
+
+		[Test]
+		public void Ports ()
+		{
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("http://host:-1/");
+			}, "negative");
+
+			Uri uri = new Uri ("http://host:0/");
+			Assert.AreEqual (0, uri.Port, "Port = 0");
+
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("http://host:+1/");
+			}, "positive");
+
+			uri = new Uri ("http://host:" + UInt16.MaxValue.ToString ());
+			Assert.AreEqual (65535, uri.Port, "Port = 65535");
+
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("http://host:" + (UInt16.MaxValue + 1).ToString ());
+			}, "too big");
+
+			Assert2.Throws<UriFormatException> (delegate {
+				new Uri ("http://host:3.14");
+			}, "float");
+		}
+
+		[Test]
+		public void NonAsciiHost ()
+		{
+			Uri uri = new Uri ("ftp://β:2121/", UriKind.Absolute);
+			Assert.AreEqual ("/", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("ftp://β:2121/", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("β:2121", uri.Authority, "Authority");
+			Assert.AreEqual ("β", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual ("β", uri.Host, "Host");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsFalse (uri.IsDefaultPort, "IsDefaultPort");
+			Assert.AreEqual ("/", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("ftp://β:2121/", uri.OriginalString, "OriginalString");
+			Assert.AreEqual ("/", uri.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual (2121, uri.Port, "Port");
+			Assert.AreEqual ("ftp", uri.Scheme, "Scheme");
+			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
 		}
 	}
 }

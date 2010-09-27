@@ -35,6 +35,10 @@ namespace System.Collections.Generic {
 		
 		static EqualityComparer ()
 		{
+			if (typeof (T) == typeof (string)){
+				_default = (EqualityComparer<T>) (object) new InternalStringComparer ();
+				return;
+			}
 			if (typeof (IEquatable <T>).IsAssignableFrom (typeof (T)))
 				_default = (EqualityComparer <T>) Activator.CreateInstance (typeof (GenericEqualityComparer <>).MakeGenericType (typeof (T)));
 			else
@@ -81,12 +85,34 @@ namespace System.Collections.Generic {
 			{
 				if (x == null)
 					return y == null;
-				
+
 				return x.Equals (y);
 			}
 		}
 	}
 	
+	[Serializable]
+	sealed class InternalStringComparer : EqualityComparer<string> {
+	
+		public override int GetHashCode (string obj)
+		{
+			if (obj == null)
+				return 0;
+			return obj.GetHashCode ();
+		}
+	
+		public override bool Equals (string x, string y)
+		{
+			if (x == null)
+				return y == null;
+
+			if ((object) x == (object) y)
+				return true;
+				
+			return x.Equals (y);
+		}
+	}
+
 	[Serializable]
 	sealed class GenericEqualityComparer <T> : EqualityComparer <T> where T : IEquatable <T> {
 

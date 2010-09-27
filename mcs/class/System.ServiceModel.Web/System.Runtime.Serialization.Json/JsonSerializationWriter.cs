@@ -71,6 +71,7 @@ namespace System.Runtime.Serialization.Json
 				throw new SerializationException (String.Format ("The object graph exceeded the maximum object count '{0}' specified in the serializer", serializer.MaxItemsInObjectGraph));
 
 			switch (Type.GetTypeCode (graph.GetType ())) {
+			case TypeCode.Char:
 			case TypeCode.String:
 				writer.WriteString (graph.ToString ());
 				break;

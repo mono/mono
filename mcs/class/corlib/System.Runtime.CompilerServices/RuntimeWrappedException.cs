@@ -41,7 +41,7 @@ namespace System.Runtime.CompilerServices {
 #pragma warning restore 649
 
 		// Called by the runtime
-		private RuntimeWrappedException () 
+		private RuntimeWrappedException () : base ("An object that does not derive from System.Exception has been wrapped in a RuntimeWrappedException.")
 		{
 		}
 

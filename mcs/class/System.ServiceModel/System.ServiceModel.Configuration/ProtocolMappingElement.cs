@@ -102,6 +102,10 @@ namespace System.ServiceModel.Configuration
 			get { return (string) base [scheme]; }
 			set { base [scheme] = value; }
 		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return base.Properties; }
+		}
 	}
 }
 

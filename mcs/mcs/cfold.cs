@@ -193,6 +193,23 @@ namespace Mono.CSharp {
 
 			switch (oper){
 			case Binary.Operator.BitwiseOr:
+				//
+				// bool? operator &(bool? x, bool? y);
+				//
+				if ((lt == TypeManager.bool_type && right is NullLiteral) ||
+					(rt == TypeManager.bool_type && left is NullLiteral)) {
+					var b = new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
+
+					// false | null => null
+					// null | false => null
+					if ((right is NullLiteral && left.IsDefaultValue) || (left is NullLiteral && right.IsDefaultValue))
+						return Nullable.LiftedNull.CreateFromExpression (ec, b);
+
+					// true | null => true
+					// null | true => true
+					return ReducedExpression.Create (new BoolConstant (true, loc).Resolve (ec), b);					
+				}
+
 				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
@@ -220,6 +237,23 @@ namespace Mono.CSharp {
 				break;
 				
 			case Binary.Operator.BitwiseAnd:
+				//
+				// bool? operator &(bool? x, bool? y);
+				//
+				if ((lt == TypeManager.bool_type && right is NullLiteral) ||
+					(rt == TypeManager.bool_type && left is NullLiteral)) {
+					var b = new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
+
+					// false & null => false
+					// null & false => false
+					if ((right is NullLiteral && left.IsDefaultValue) || (left is NullLiteral && right.IsDefaultValue))
+						return ReducedExpression.Create (new BoolConstant (false, loc).Resolve (ec), b);
+
+					// true & null => null
+					// null & true => null
+					return Nullable.LiftedNull.CreateFromExpression (ec, b);
+				}
+
 				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 				
@@ -848,7 +882,9 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Equality:
-				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (lt)) {
+				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (rt) ||
+					(left is Nullable.LiftedNull && right.IsNull) ||
+					(right is Nullable.LiftedNull && left.IsNull)) {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
 							new BoolConstant (left.IsNull == right.IsNull, left.Location).Resolve (ec),
@@ -890,7 +926,9 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.Inequality:
-				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (lt)) {
+				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (rt) ||
+					(left is Nullable.LiftedNull && right.IsNull) ||
+					(right is Nullable.LiftedNull && left.IsNull)) {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
 							new BoolConstant (left.IsNull != right.IsNull, left.Location).Resolve (ec),

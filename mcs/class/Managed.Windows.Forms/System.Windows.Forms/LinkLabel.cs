@@ -336,6 +336,10 @@ namespace System.Windows.Forms
 		protected override void OnGotFocus (EventArgs e)
 		{
 			base.OnGotFocus (e);
+			
+			// And yes it can actually be null..... arghh..
+			if (sorted_links == null)
+				return;
 
 			// Set focus to the first enabled link piece
 			if (focused_index == -1) {

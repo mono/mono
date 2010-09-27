@@ -69,7 +69,7 @@ namespace System.ServiceModel.Channels.Http
 			return p2 - p1;
 		}
 
-		const UriComponents cmpflag = UriComponents.HttpRequestUrl ^ UriComponents.Query;
+		const UriComponents cmpflag = UriComponents.Path;
 		const UriFormat fmtflag = UriFormat.SafeUnescaped;
 
 		internal bool FilterHttpContext (HttpContextInfo ctx)

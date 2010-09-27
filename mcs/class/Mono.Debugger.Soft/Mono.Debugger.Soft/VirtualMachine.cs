@@ -189,8 +189,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		public void EnableEvents (params EventType[] events) {
-			foreach (EventType etype in events)
+			foreach (EventType etype in events) {
+				if (etype == EventType.Breakpoint)
+					throw new ArgumentException ("Breakpoint events cannot be requested using EnableEvents", "events");
 				conn.EnableEvent (etype, SuspendPolicy.All, null);
+			}
 		}
 
 		public BreakpointEventRequest SetBreakpoint (MethodMirror method, long il_offset) {

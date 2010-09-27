@@ -156,6 +156,22 @@ public sealed class TypeDescriptor
 		}
 	}
 
+#if NET_4_0
+	[MonoLimitation ("Security not applied.")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static void AddProviderTransparent (TypeDescriptionProvider provider, object instance)
+	{
+		AddProvider (provider, instance);
+	}
+
+	[MonoLimitation ("Security not applied.")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static void AddProviderTransparent (TypeDescriptionProvider provider, Type type)
+	{
+		AddProvider (provider, type);
+	}
+#endif
+
 	[MonoTODO]
 	public static object CreateInstance (IServiceProvider provider, Type objectType, Type [] argTypes, object [] args)
 	{
@@ -874,6 +890,22 @@ public sealed class TypeDescriptor
 		if (refreshed != null)
 			refreshed (new RefreshEventArgs (type));
 	}
+
+#if NET_4_0
+	[MonoLimitation ("Security not applied.")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static void RemoveProviderTransparent (TypeDescriptionProvider provider, object instance)
+	{
+		RemoveProvider (provider, instance);
+	}
+
+	[MonoLimitation ("Security not applied.")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static void RemoveProviderTransparent (TypeDescriptionProvider provider, Type type)
+	{
+		RemoveProvider (provider, type);
+	}
+#endif
 
 	static void RemoveProvider (TypeDescriptionProvider provider, LinkedList <TypeDescriptionProvider> plist)
 	{

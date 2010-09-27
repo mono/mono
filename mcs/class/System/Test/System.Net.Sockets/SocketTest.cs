@@ -33,6 +33,7 @@ namespace MonoTests.System.Net.Sockets
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
 
+			/* UDP sockets use Any to disconnect
 			try {
 				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
 					s.Connect (ep);
@@ -42,6 +43,7 @@ namespace MonoTests.System.Net.Sockets
 			} catch (SocketException ex) {
 				Assert.AreEqual (10049, ex.ErrorCode, "#2");
 			}
+			*/
 
 			try {
 				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -886,6 +888,21 @@ namespace MonoTests.System.Net.Sockets
 			Assert.AreEqual (16384, sock.ReceiveBufferSize, "ReceiveBufferSizeChange");
 			
 			sock.Close ();
+		}
+
+		[Test]
+		[Category("NotWorking")] // We cannot totally remove buffers (minimum is set to 256
+		public void BuffersCheck_None ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				int original = s.ReceiveBufferSize;
+				s.ReceiveBufferSize = 0;
+				Assert.AreEqual (0, s.ReceiveBufferSize, "ReceiveBufferSize " + original.ToString ());
+
+				original = s.SendBufferSize;
+				s.SendBufferSize = 0;
+				Assert.AreEqual (0, s.SendBufferSize, "SendBufferSize " + original.ToString ());
+			}
 		}
 
 		[Test]

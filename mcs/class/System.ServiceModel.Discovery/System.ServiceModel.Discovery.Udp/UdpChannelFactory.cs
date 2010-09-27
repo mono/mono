@@ -27,8 +27,9 @@ using System.IO;
 using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Discovery;
 
-namespace System.ServiceModel.Discovery
+namespace System.ServiceModel.Discovery.Udp
 {
 	internal class UdpChannelFactory : ChannelFactoryBase<IDuplexChannel>
 	{

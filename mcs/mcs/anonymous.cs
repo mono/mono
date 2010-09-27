@@ -1302,7 +1302,6 @@ namespace Mono.CSharp {
 			BlockContext aec = new BlockContext (ec, block, ReturnType);
 			aec.CurrentAnonymousMethod = ae;
 
-			ResolveContext.FlagsHandle? aec_dispose = null;
 			ResolveContext.Options flags = 0;
 
 			var am = this as AnonymousMethodBody;
@@ -1320,9 +1319,7 @@ namespace Mono.CSharp {
 			if (ec.HasSet (ResolveContext.Options.ExpressionTreeConversion))
 				flags |= ResolveContext.Options.ExpressionTreeConversion;
 
-			// HACK: Flag with 0 cannot be set 
-			if (flags != 0)
-				aec_dispose = aec.Set (flags);
+			aec.Set (flags);
 
 			var errors = ec.Report.Errors;
 
@@ -1335,10 +1332,6 @@ namespace Mono.CSharp {
 				am.ReturnTypeInference.FixAllTypes (ec);
 				ReturnType = am.ReturnTypeInference.InferredTypeArguments [0];
 				am.ReturnTypeInference = null;
-			}
-
-			if (aec_dispose != null) {
-				aec_dispose.Value.Dispose ();
 			}
 
 			if (res && errors != ec.Report.Errors)

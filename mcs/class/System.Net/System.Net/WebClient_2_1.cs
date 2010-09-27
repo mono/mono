@@ -44,6 +44,7 @@ namespace System.Net {
 
 		WebHeaderCollection headers;
 		WebHeaderCollection responseHeaders;
+		bool response_supports_headers = true;	// will be set to false, if needed, when we get a response
 		string baseAddress;
 		Uri base_address_uri;
 		bool is_busy;
@@ -98,7 +99,11 @@ namespace System.Net {
 		}
 
 		public WebHeaderCollection ResponseHeaders {
-			get { return responseHeaders; }
+			get {
+				if (!response_supports_headers)
+					throw new NotImplementedException ();
+				return responseHeaders;
+			}
 		}
 
 		public Encoding Encoding {
@@ -196,7 +201,10 @@ namespace System.Net {
 
 		Stream ProcessResponse (WebResponse response)
 		{
-			responseHeaders = response.Headers;
+			response_supports_headers = response.SupportsHeaders;
+			if (response_supports_headers)
+				responseHeaders =  response.Headers;
+
 			HttpWebResponse hwr = (response as HttpWebResponse);
 			if (hwr == null)
 				throw new NotSupportedException ();

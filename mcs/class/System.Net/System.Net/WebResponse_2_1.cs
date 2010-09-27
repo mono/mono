@@ -36,13 +36,23 @@ namespace System.Net {
 
 	public abstract class WebResponse : IDisposable {
 
+		private WebHeaderCollection headers;
+
 		public abstract long ContentLength { get; }
 		public abstract string ContentType { get; }
 		public abstract Uri ResponseUri { get; }
 
 		public virtual WebHeaderCollection Headers {
-			get { throw NotImplemented (); }
-			internal set { ; }
+			get {
+				if (!SupportsHeaders)
+					throw NotImplemented ();
+				return headers;
+			}
+		}
+
+		internal WebHeaderCollection InternalHeaders {
+			get { return headers; }
+			set { headers = value; }
 		}
 
 		public virtual bool SupportsHeaders {

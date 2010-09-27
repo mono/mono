@@ -240,6 +240,8 @@ System.ComponentModel.Design/DesignerVerbCollection.cs
 System.ComponentModel.Design/DesignerVerb.cs
 System.ComponentModel.Design/DesigntimeLicenseContext.cs
 System.ComponentModel.Design/DesigntimeLicenseContextSerializer.cs
+System.ComponentModel.Design/IDesignerHostTransactionState.cs
+System.ComponentModel.Design/TypeDescriptionProviderService.cs
 System.ComponentModel/DesignerAttribute.cs
 System.ComponentModel/DesignerCategoryAttribute.cs
 System.ComponentModel/DesignerSerializationVisibilityAttribute.cs
@@ -280,6 +282,7 @@ System.ComponentModel.Design.Serialization/ContextStack.cs
 System.ComponentModel.Design.Serialization/DesignerLoader.cs
 System.ComponentModel.Design.Serialization/DesignerSerializerAttribute.cs
 System.ComponentModel.Design.Serialization/IDesignerLoaderHost.cs
+System.ComponentModel.Design.Serialization/IDesignerLoaderHost2.cs
 System.ComponentModel.Design.Serialization/IDesignerLoaderService.cs
 System.ComponentModel.Design.Serialization/IDesignerSerializationManager.cs   
 System.ComponentModel.Design.Serialization/IDesignerSerializationProvider.cs

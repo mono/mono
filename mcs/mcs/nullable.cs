@@ -341,7 +341,7 @@ namespace Mono.CSharp.Nullable
 			return new LiftedNull (nullable, loc);
 		}
 
-		public static Expression CreateFromExpression (ResolveContext ec, Expression e)
+		public static Constant CreateFromExpression (ResolveContext ec, Expression e)
 		{
 			ec.Report.Warning (458, 2, e.Location, "The result of the expression is always `null' of type `{0}'",
 				TypeManager.CSharpName (e.Type));
@@ -573,8 +573,9 @@ namespace Mono.CSharp.Nullable
 
 		bool IsBitwiseBoolean {
 			get {
-				return (Oper & Operator.BitwiseMask) != 0 && left_unwrap != null && right_unwrap != null &&
-				left_unwrap.Type == TypeManager.bool_type && right_unwrap.Type == TypeManager.bool_type;
+				return (Oper & Operator.BitwiseMask) != 0 &&
+				((left_unwrap != null && left_unwrap.Type == TypeManager.bool_type) ||
+				 (right_unwrap != null && right_unwrap.Type == TypeManager.bool_type));
 			}
 		}
 
@@ -603,7 +604,7 @@ namespace Mono.CSharp.Nullable
 		// with the null literal *outside* of a generics context and
 		// inlines that as true or false.
 		//
-		Expression CreateNullConstant (ResolveContext ec, Expression expr)
+		Constant CreateNullConstant (ResolveContext ec, Expression expr)
 		{
 			// FIXME: Handle side effect constants
 			Constant c = new BoolConstant (Oper == Operator.Inequality, loc).Resolve (ec);
@@ -668,11 +669,21 @@ namespace Mono.CSharp.Nullable
 			Label load_right = ec.DefineLabel ();
 			Label end_label = ec.DefineLabel ();
 
+			// null & value, null | value
+			if (left_unwrap == null) {
+				left_unwrap = right_unwrap;
+				right_unwrap = null;
+				right = left;
+			}
+
 			left_unwrap.Emit (ec);
 			ec.Emit (OpCodes.Brtrue_S, load_right);
 
-			right_unwrap.Emit (ec);
-			ec.Emit (OpCodes.Brtrue_S, load_left);
+			// value & null, value | null
+			if (right_unwrap != null) {
+				right_unwrap.Emit (ec);
+				ec.Emit (OpCodes.Brtrue_S, load_left);
+			}
 
 			left_unwrap.EmitCheck (ec);
 			ec.Emit (OpCodes.Brfalse_S, load_right);
@@ -683,14 +694,30 @@ namespace Mono.CSharp.Nullable
 			if (Oper == Operator.BitwiseAnd) {
 				left_unwrap.Load (ec);
 			} else {
-				right_unwrap.Load (ec);
-				right_unwrap = left_unwrap;
+				if (right_unwrap == null) {
+					right.Emit (ec);
+					if (right is EmptyConstantCast)
+						ec.Emit (OpCodes.Newobj, NullableInfo.GetConstructor (type));
+				} else {
+					right_unwrap.Load (ec);
+					right_unwrap = left_unwrap;
+				}
 			}
 			ec.Emit (OpCodes.Br_S, end_label);
 
 			// load right
 			ec.MarkLabel (load_right);
-			right_unwrap.Load (ec);
+			if (right_unwrap == null) {
+				if (Oper == Operator.BitwiseAnd) {
+					right.Emit (ec);
+					if (right is EmptyConstantCast)
+						ec.Emit (OpCodes.Newobj, NullableInfo.GetConstructor (type));
+				} else {
+					left_unwrap.Load (ec);
+				}
+			} else {
+				right_unwrap.Load (ec);
+			}
 
 			ec.MarkLabel (end_label);
 		}
@@ -877,6 +904,13 @@ namespace Mono.CSharp.Nullable
 			if (IsLeftNullLifted) {
 				left = LiftedNull.Create (right.Type, left.Location);
 
+				//
+				// Special case for bool?, the result depends on both null right side and left side value
+				//
+				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type) == TypeManager.bool_type) {
+					return res_expr;
+				}
+
 				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask | Operator.BitwiseMask)) != 0)
 					return LiftedNull.CreateFromExpression (ec, res_expr);
 
@@ -889,6 +923,13 @@ namespace Mono.CSharp.Nullable
 
 			if (IsRightNullLifted) {
 				right = LiftedNull.Create (left.Type, right.Location);
+
+				//
+				// Special case for bool?, the result depends on both null right side and left side value
+				//
+				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type) == TypeManager.bool_type) {
+					return res_expr;
+				}
 
 				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask | Operator.BitwiseMask)) != 0)
 					return LiftedNull.CreateFromExpression (ec, res_expr);

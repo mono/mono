@@ -31,10 +31,11 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Discovery;
 using System.Threading;
 using System.Xml;
 
-namespace System.ServiceModel.Discovery
+namespace System.ServiceModel.Discovery.Udp
 {
 	internal class UdpDuplexChannel : ChannelBase, IDuplexChannel
 	{

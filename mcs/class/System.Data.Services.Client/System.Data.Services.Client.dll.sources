@@ -1,6 +1,5 @@
 ./Assembly/AssemblyInfo.cs
 
-./Client/AssemblyAttributes.cs
 ./Client/Parameterized.System.Data.Services.Client.cs
 ./Client/System/Data/Services/Client/ALinq/DataServiceExpressionVisitor.cs
 ./Client/System/Data/Services/Client/ALinq/DataServiceQueryProvider.cs

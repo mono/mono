@@ -857,7 +857,7 @@ namespace Mono.CSharp {
 			}
 
 			if (expr.Type == TypeManager.void_ptr_type) {
-				ec.Report.Error (242, loc, "The operation in question is undefined on void pointers");
+				Error_VoidPointerOperation (ec);
 				return null;
 			}
 
@@ -974,6 +974,8 @@ namespace Mono.CSharp {
 		// Holds the real operation
 		Expression operation;
 
+		static TypeSpec[] predefined;
+
 		public UnaryMutator (Mode m, Expression e, Location loc)
 		{
 			mode = m;
@@ -984,6 +986,29 @@ namespace Mono.CSharp {
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return new SimpleAssign (this, this).CreateExpressionTree (ec);
+		}
+
+		void CreatePredefinedOperators ()
+		{
+			//
+			// Predefined ++ and -- operators exist for the following types: 
+			// sbyte, byte, short, ushort, int, uint, long, ulong, char, float, double, decimal
+			//
+			predefined = new TypeSpec[] {
+				TypeManager.int32_type,
+
+				TypeManager.sbyte_type,
+				TypeManager.byte_type,
+				TypeManager.short_type,
+				TypeManager.ushort_type,
+				TypeManager.uint32_type,
+				TypeManager.int64_type,
+				TypeManager.uint64_type,
+				TypeManager.char_type,
+				TypeManager.float_type,
+				TypeManager.double_type,
+				TypeManager.decimal_type
+			};
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -1011,7 +1036,108 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Value;
 			type = expr.Type;
-			return ResolveOperator (ec);
+
+			if (expr is RuntimeValueExpression) {
+				operation = expr;
+			} else {
+				// Use itself at the top of the stack
+				operation = new EmptyExpression (type);
+			}
+
+			//
+			// The operand of the prefix/postfix increment decrement operators
+			// should be an expression that is classified as a variable,
+			// a property access or an indexer access
+			//
+			// TODO: Move to parser, expr is ATypeNameExpression
+			if (expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess) {
+				expr = expr.ResolveLValue (ec, expr);
+			} else {
+				ec.Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
+			}
+
+			//
+			// Step 1: Try to find a user operator, it has priority over predefined ones
+			//
+			var user_op = IsDecrement ? Operator.OpType.Decrement : Operator.OpType.Increment;
+			var methods = MemberCache.GetUserOperator (type, user_op, false);
+
+			if (methods != null) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (expr));
+
+				var res = new OverloadResolver (methods, OverloadResolver.Restrictions.BaseMembersIncluded | OverloadResolver.Restrictions.NoBaseMembers, loc);
+				var method = res.ResolveOperator (ec, ref args);
+				if (method == null)
+					return null;
+
+				args[0].Expr = operation;
+				operation = new UserOperatorCall (method, args, null, loc);
+				operation = Convert.ImplicitConversionRequired (ec, operation, type, loc);
+				return this;
+			}
+
+			//
+			// Step 2: Try predefined types
+			//
+			if (predefined == null)
+				CreatePredefinedOperators ();
+
+			// Predefined without user conversion first for speed-up
+			Expression source = null;
+			bool primitive_type = false;
+			foreach (var t in predefined) {
+				if (t == type) {
+					source = operation;
+					primitive_type = true;
+					break;
+				}
+			}
+
+			// ++/-- on pointer variables of all types except void*
+			if (source == null && type.IsPointer) {
+				if (type == TypeManager.void_ptr_type) {
+					Error_VoidPointerOperation (ec);
+					return null;
+				}
+
+				source = operation;
+			}
+
+			if (source == null) {
+				// LAMESPEC: It should error on ambiguous operators but that would make us incompatible
+				foreach (var t in predefined) {
+					source = Convert.ImplicitUserConversion (ec, operation, t, loc);
+					if (source != null) {
+						break;
+					}
+				}
+			}
+
+			// ++/-- on enum types
+			if (source == null && type.IsEnum)
+				source = operation;
+
+			if (source == null) {
+				Unary.Error_OperatorCannotBeApplied (ec, loc, Operator.GetName (user_op), type);
+				return null;
+			}
+
+			var one = new IntConstant (1, loc);
+			var op = IsDecrement ? Binary.Operator.Subtraction : Binary.Operator.Addition;
+			operation = new Binary (op, source, one, loc);
+			operation = operation.Resolve (ec);
+			if (operation == null)
+				throw new NotImplementedException ("should not be reached");
+
+			if (operation.Type != type) {
+				if (primitive_type)
+					operation = Convert.ExplicitNumericConversion (operation, type);
+				else
+					operation = Convert.ImplicitConversionRequired (ec, operation, type, loc);
+			}
+
+			return this;
 		}
 
 		void EmitCode (EmitContext ec, bool is_expr)
@@ -1057,18 +1183,6 @@ namespace Mono.CSharp {
 			get { return (mode & Mode.IsDecrement) != 0; }
 		}
 
-		//
-		//   Returns whether an object of type `t' can be incremented
-		//   or decremented with add/sub (ie, basically whether we can
-		//   use pre-post incr-decr operations on it, but it is not a
-		//   System.Decimal, which we require operator overloading to catch)
-		//
-		static bool IsPredefinedOperator (TypeSpec t)
-		{
-			return (TypeManager.IsPrimitiveType (t) && t != TypeManager.bool_type) ||
-				TypeManager.IsEnumType (t) ||
-				t.IsPointer && t != TypeManager.void_ptr_type;
-		}
 
 #if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
@@ -1079,78 +1193,16 @@ namespace Mono.CSharp {
 		}
 #endif
 
+		public static void Reset ()
+		{
+			predefined = null;
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			UnaryMutator target = (UnaryMutator) t;
 
 			target.expr = expr.Clone (clonectx);
-		}
-
-		Expression ResolveOperator (ResolveContext ec)
-		{
-			if (expr is RuntimeValueExpression) {
-				operation = expr;
-			} else {
-				// Use itself at the top of the stack
-				operation = new EmptyExpression (type);
-			}
-
-			//
-			// The operand of the prefix/postfix increment decrement operators
-			// should be an expression that is classified as a variable,
-			// a property access or an indexer access
-			//
-			if (expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess) {
-				expr = expr.ResolveLValue (ec, expr);
-			} else {
-				ec.Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
-			}
-
-			//
-			// 1. Check predefined types
-			//
-			if (IsPredefinedOperator (type)) {
-				// TODO: Move to IntConstant once I get rid of int32_type
-				var one = new IntConstant (1, loc);
-
-				// TODO: Cache this based on type when using EmptyExpression in
-				// context cache
-				Binary.Operator op = IsDecrement ? Binary.Operator.Subtraction : Binary.Operator.Addition;
-				operation = new Binary (op, operation, one, loc);
-				operation = operation.Resolve (ec);
-				if (operation != null && operation.Type != type)
-					operation = Convert.ExplicitNumericConversion (operation, type);
-
-				return this;
-			}
-
-			//
-			// Step 2: Perform Operator overload resolution
-			//
-			var user_op = IsDecrement ? Operator.OpType.Decrement : Operator.OpType.Increment;
-			var methods = MemberCache.GetUserOperator (type, user_op, false);
-
-			if (methods != null) {
-				Arguments args = new Arguments (1);
-				args.Add (new Argument (expr));
-
-				var res = new OverloadResolver (methods, OverloadResolver.Restrictions.BaseMembersIncluded | OverloadResolver.Restrictions.NoBaseMembers, loc);
-				var op = res.ResolveOperator (ec, ref args);
-				if (op == null)
-					return null;
-
-				args[0].Expr = operation;
-				operation = new UserOperatorCall (op, args, null, loc);
-				operation = Convert.ImplicitConversionRequired (ec, operation, type, loc);
-				return this;
-			}
-
-			string name = IsDecrement ?
-				Operator.GetName (Operator.OpType.Decrement) :
-				Operator.GetName (Operator.OpType.Increment);
-
-			Unary.Error_OperatorCannotBeApplied (ec, loc, name, type);
-			return null;
 		}
 	}
 
@@ -1698,7 +1750,7 @@ namespace Mono.CSharp {
 
 				var c = b.right as Constant;
 				if (c != null) {
-					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.BitwiseOr || b.oper == Operator.Subtraction))
+					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.Subtraction || (b.oper == Operator.BitwiseOr && !(b is Nullable.LiftedBinaryOperator))))
 						return ReducedExpression.Create (b.left, b).Resolve (ec);
 					if ((b.oper == Operator.Multiply || b.oper == Operator.Division) && c.IsOneInteger)
 						return ReducedExpression.Create (b.left, b).Resolve (ec);
@@ -1707,7 +1759,7 @@ namespace Mono.CSharp {
 
 				c = b.left as Constant;
 				if (c != null) {
-					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.BitwiseOr))
+					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.Subtraction || (b.oper == Operator.BitwiseOr && !(b is Nullable.LiftedBinaryOperator))))
 						return ReducedExpression.Create (b.right, b).Resolve (ec);
 					if (b.oper == Operator.Multiply && c.IsOneInteger)
 						return ReducedExpression.Create (b.right, b).Resolve (ec);
@@ -3274,7 +3326,7 @@ namespace Mono.CSharp {
 			if (oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) {
 				Constant rc = right as Constant;
 				Constant lc = left as Constant;
-				if ((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue)) {
+				if (((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue)) && !(this is Nullable.LiftedBinaryOperator)) {
 					//
 					// The result is a constant with side-effect
 					//
@@ -4042,7 +4094,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			
 			if (left.Type == TypeManager.void_ptr_type) {
-				ec.Report.Error (242, loc, "The operation in question is undefined on void pointers");
+				Error_VoidPointerOperation (ec);
 				return null;
 			}
 			
