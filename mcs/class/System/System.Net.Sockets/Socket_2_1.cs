@@ -413,21 +413,30 @@ namespace System.Net.Sockets {
 				// Notes;
 				// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
 				//	-SendPackets and ReceiveMessageFrom are not implemented yet
-				if (op == Socket.SocketOperation.Accept)
-					async_op = SocketAsyncOperation.Accept;
-				else if (op == Socket.SocketOperation.Connect)
+				if (op == Socket.SocketOperation.Connect)
 					async_op = SocketAsyncOperation.Connect;
+#if !MOONLIGHT
+				else if (op == Socket.SocketOperation.Accept)
+					async_op = SocketAsyncOperation.Accept;
 				else if (op == Socket.SocketOperation.Disconnect)
 					async_op = SocketAsyncOperation.Disconnect;
-				else if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric)
+#endif
+				else if (op == Socket.SocketOperation.Receive)
+					async_op = SocketAsyncOperation.Receive;
+#if !MOONLIGHT
+				else if (op == Socket.SocketOperation.ReceiveGeneric)
 					async_op = SocketAsyncOperation.Receive;
 				else if (op == Socket.SocketOperation.ReceiveFrom)
 					async_op = SocketAsyncOperation.ReceiveFrom;
+#endif
 				/*
 				else if (op == Socket.SocketOperation.ReceiveMessageFrom)
 					async_op = SocketAsyncOperation.ReceiveMessageFrom;
 				*/
-				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric)
+				else if (op == Socket.SocketOperation.Send)
+					async_op = SocketAsyncOperation.Send;
+#if !MOONLIGHT
+				else if (op == Socket.SocketOperation.SendGeneric)
 					async_op = SocketAsyncOperation.Send;
 				/*
 				else if (op == Socket.SocketOperation.SendPackets)
@@ -435,6 +444,7 @@ namespace System.Net.Sockets {
 				*/
 				else if (op == Socket.SocketOperation.SendTo)
 					async_op = SocketAsyncOperation.SendTo;
+#endif
 				else
 					throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
 
