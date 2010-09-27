@@ -90,8 +90,9 @@ namespace System.ServiceModel.Configuration
 			throw new NotImplementedException ();
 		}
 
-		protected internal override Binding GetDefault () {
-			throw new NotImplementedException ();
+		protected internal override Binding GetDefault ()
+		{
+			return new CustomBinding ();
 		}
 
 		protected internal override bool TryAdd (string name, Binding binding, System.Configuration.Configuration config) {
