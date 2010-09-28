@@ -244,8 +244,15 @@ namespace System.ServiceModel.Channels
 				}
 
 				var rp = new HttpResponseMessageProperty () { StatusCode = hrr.StatusCode, StatusDescription = hrr.StatusDescription };
+#if MOONLIGHT
+				if (hrr.SupportsHeaders) {
+					foreach (string key in hrr.Headers)
+						rp.Headers [key] = hrr.Headers [key];
+				}
+#else
 				foreach (var key in hrr.Headers.AllKeys)
 					rp.Headers [key] = hrr.Headers [key];
+#endif
 				ret.Properties.Add (HttpResponseMessageProperty.Name, rp);
 
 				channelResult.Response = ret;
