@@ -178,23 +178,12 @@ namespace System.Net.Policy {
 		static byte [] socket_policy_file_request = Encoding.UTF8.GetBytes ("<policy-file-request/>");
 		const int PolicyPort = 943;
 
-		// make sure this work in a IPv6-only environment
-		static AddressFamily GetBestFamily ()
-		{
-			if (Socket.OSSupportsIPv4)
-				return AddressFamily.InterNetwork;
-			else if (Socket.OSSupportsIPv6)
-				return AddressFamily.InterNetworkV6;
-			else
-				return AddressFamily.Unspecified;
-		}
-
 		static Stream GetPolicyStream (IPEndPoint endpoint)
 		{
 			MemoryStream ms = new MemoryStream ();
 			ManualResetEvent mre = new ManualResetEvent (false);
 			// Silverlight only support TCP
-			Socket socket = new Socket (GetBestFamily (), SocketType.Stream, ProtocolType.Tcp);
+			Socket socket = new Socket (endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
 			// Application code can't connect to port 943, so we need a special/internal API/ctor to allow this
 			SocketAsyncEventArgs saea = new SocketAsyncEventArgs (true);
@@ -265,7 +254,7 @@ namespace System.Net.Policy {
 				break;
 			}
 
-			if (s == null)
+			if ((s == null) || (s.Length == 0))
 				return null;
 
 			ClientAccessPolicy policy = null;
