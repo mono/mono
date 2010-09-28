@@ -1671,7 +1671,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsReferenceType (type))
 				return new NullConstant (type, loc);
 
-			Constant c = New.Constantify (type);
+			Constant c = New.Constantify (type, expr.Location);
 			if (c != null)
 				return c.Resolve (ec);
 
@@ -5310,11 +5310,12 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	///    Implements the new expression 
-	/// </summary>
-	public class New : ExpressionStatement, IMemoryLocation {
-		protected Arguments Arguments;
+	//
+	// Implements simple new expression 
+	//
+	public class New : ExpressionStatement, IMemoryLocation
+	{
+		protected Arguments arguments;
 
 		//
 		// During bootstrap, it contains the RequestedType,
@@ -5328,45 +5329,63 @@ namespace Mono.CSharp {
 		public New (Expression requested_type, Arguments arguments, Location l)
 		{
 			RequestedType = requested_type;
-			Arguments = arguments;
+			this.arguments = arguments;
 			loc = l;
 		}
+
+		#region Properties
+		public Arguments Arguments {
+			get {
+				return arguments;
+			}
+		}
+
+		//
+		// Returns true for resolved `new S()'
+		//
+		public bool IsDefaultStruct {
+			get {
+				return arguments == null && type.IsStruct && GetType () == typeof (New);
+			}
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Converts complex core type syntax like 'new int ()' to simple constant
 		/// </summary>
-		public static Constant Constantify (TypeSpec t)
+		public static Constant Constantify (TypeSpec t, Location loc)
 		{
 			if (t == TypeManager.int32_type)
-				return new IntConstant (0, Location.Null);
+				return new IntConstant (0, loc);
 			if (t == TypeManager.uint32_type)
-				return new UIntConstant (0, Location.Null);
+				return new UIntConstant (0, loc);
 			if (t == TypeManager.int64_type)
-				return new LongConstant (0, Location.Null);
+				return new LongConstant (0, loc);
 			if (t == TypeManager.uint64_type)
-				return new ULongConstant (0, Location.Null);
+				return new ULongConstant (0, loc);
 			if (t == TypeManager.float_type)
-				return new FloatConstant (0, Location.Null);
+				return new FloatConstant (0, loc);
 			if (t == TypeManager.double_type)
-				return new DoubleConstant (0, Location.Null);
+				return new DoubleConstant (0, loc);
 			if (t == TypeManager.short_type)
-				return new ShortConstant (0, Location.Null);
+				return new ShortConstant (0, loc);
 			if (t == TypeManager.ushort_type)
-				return new UShortConstant (0, Location.Null);
+				return new UShortConstant (0, loc);
 			if (t == TypeManager.sbyte_type)
-				return new SByteConstant (0, Location.Null);
+				return new SByteConstant (0, loc);
 			if (t == TypeManager.byte_type)
-				return new ByteConstant (0, Location.Null);
+				return new ByteConstant (0, loc);
 			if (t == TypeManager.char_type)
-				return new CharConstant ('\0', Location.Null);
+				return new CharConstant ('\0', loc);
 			if (t == TypeManager.bool_type)
-				return new BoolConstant (false, Location.Null);
+				return new BoolConstant (false, loc);
 			if (t == TypeManager.decimal_type)
-				return new DecimalConstant (0, Location.Null);
+				return new DecimalConstant (0, loc);
 			if (TypeManager.IsEnumType (t))
-				return new EnumConstant (Constantify (EnumSpec.GetUnderlyingType (t)), t);
+				return new EnumConstant (Constantify (EnumSpec.GetUnderlyingType (t), loc), t);
 			if (TypeManager.IsNullableType (t))
-				return Nullable.LiftedNull.Create (t, Location.Null);
+				return Nullable.LiftedNull.Create (t, loc);
 
 			return null;
 		}
@@ -5389,7 +5408,7 @@ namespace Mono.CSharp {
 			if (real_class == null)
 				return null;
 
-			New proxy = new New (new TypeExpression (real_class, loc), Arguments, loc);
+			New proxy = new New (new TypeExpression (real_class, loc), arguments, loc);
 			Cast cast = new Cast (new TypeExpression (type, loc), proxy, loc);
 			return cast.Resolve (ec);
 		}
@@ -5402,7 +5421,7 @@ namespace Mono.CSharp {
 				args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			} else {
 				args = Arguments.CreateForExpressionTree (ec,
-					Arguments, new TypeOfMethod (method, loc));
+					arguments, new TypeOfMethod (method, loc));
 			}
 
 			return CreateExpressionFactoryCall (ec, "New", args);
@@ -5423,14 +5442,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (Arguments == null) {
-				Constant c = Constantify (type);
+			if (arguments == null) {
+				Constant c = Constantify (type, RequestedType.Location);
 				if (c != null)
 					return ReducedExpression.Create (c.Resolve (ec), this);
 			}
 
 			if (TypeManager.IsDelegateType (type)) {
-				return (new NewDelegate (type, Arguments, loc)).Resolve (ec);
+				return (new NewDelegate (type, arguments, loc)).Resolve (ec);
 			}
 
 			var tparam = type as TypeParameterSpec;
@@ -5441,7 +5460,7 @@ namespace Mono.CSharp {
 						TypeManager.CSharpName (type));
 				}
 
-				if ((Arguments != null) && (Arguments.Count != 0)) {
+				if ((arguments != null) && (arguments.Count != 0)) {
 					ec.Report.Error (417, loc,
 						"`{0}': cannot provide arguments when creating an instance of a variable type",
 						TypeManager.CSharpName (type));
@@ -5479,21 +5498,21 @@ namespace Mono.CSharp {
 			//
 			// Any struct always defines parameterless constructor
 			//
-			if (type.IsStruct && Arguments == null)
+			if (type.IsStruct && arguments == null)
 				return this;
 
 			bool dynamic;
-			if (Arguments != null) {
-				Arguments.Resolve (ec, out dynamic);
+			if (arguments != null) {
+				arguments.Resolve (ec, out dynamic);
 			} else {
 				dynamic = false;
 			}
 
-			method = ConstructorLookup (ec, type, ref Arguments, loc);
+			method = ConstructorLookup (ec, type, ref arguments, loc);
 
 			if (dynamic) {
-				Arguments.Insert (0, new Argument (new TypeOf (texpr, loc).Resolve (ec), Argument.AType.DynamicTypeName));
-				return new DynamicConstructorBinder (type, Arguments, loc).Resolve (ec);
+				arguments.Insert (0, new Argument (new TypeOf (texpr, loc).Resolve (ec), Argument.AType.DynamicTypeName));
+				return new DynamicConstructorBinder (type, arguments, loc).Resolve (ec);
 			}
 
 			return this;
@@ -5574,8 +5593,8 @@ namespace Mono.CSharp {
 				vr.EmitLoad (ec);
 			}
 			
-			if (Arguments != null)
-				Arguments.Emit (ec);
+			if (arguments != null)
+				arguments.Emit (ec);
 
 			if (is_value_type) {
 				if (method == null) {
@@ -5620,12 +5639,6 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Pop);
 		}
 
-		public virtual bool HasInitializer {
-			get {
-				return false;
-			}
-		}
-
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			EmitAddressOf (ec, mode);
@@ -5657,8 +5670,8 @@ namespace Mono.CSharp {
 			if (method == null) {
 				ec.Emit (OpCodes.Initobj, type);
 			} else {
-				if (Arguments != null)
-					Arguments.Emit (ec);
+				if (arguments != null)
+					arguments.Emit (ec);
 
 				ec.Emit (OpCodes.Call, method);
 			}
@@ -5672,14 +5685,14 @@ namespace Mono.CSharp {
 			New target = (New) t;
 
 			target.RequestedType = RequestedType.Clone (clonectx);
-			if (Arguments != null){
-				target.Arguments = Arguments.Clone (clonectx);
+			if (arguments != null){
+				target.arguments = arguments.Clone (clonectx);
 			}
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.New ((ConstructorInfo) method.GetMetaInfo (), Arguments.MakeExpression (Arguments, ctx));
+			return SLE.Expression.New ((ConstructorInfo) method.GetMetaInfo (), Arguments.MakeExpression (arguments, ctx));
 		}
 	}
 
@@ -9286,12 +9299,6 @@ namespace Mono.CSharp {
 
 			return left_on_stack;
 		}
-
-		public override bool HasInitializer {
-			get {
-				return !initializers.IsEmpty;
-			}
-		}
 	}
 
 	public class NewAnonymousType : New
@@ -9351,8 +9358,8 @@ namespace Mono.CSharp {
 			foreach (Property p in anonymous_type.Properties)
 				init.Add (new TypeOfMethod (MemberCache.GetMember (type, p.Get.Spec), loc));
 
-			var ctor_args = new ArrayInitializer (Arguments.Count, loc);
-			foreach (Argument a in Arguments)
+			var ctor_args = new ArrayInitializer (arguments.Count, loc);
+			foreach (Argument a in arguments)
 				ctor_args.Add (a.CreateExpressionTree (ec));
 
 			Arguments args = new Arguments (3);
@@ -9377,7 +9384,7 @@ namespace Mono.CSharp {
 			}
 
 			bool error = false;
-			Arguments = new Arguments (parameters.Count);
+			arguments = new Arguments (parameters.Count);
 			TypeExpression [] t_args = new TypeExpression [parameters.Count];
 			for (int i = 0; i < parameters.Count; ++i) {
 				Expression e = ((AnonymousTypeParameter) parameters [i]).Resolve (ec);
@@ -9386,7 +9393,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				Arguments.Add (new Argument (e));
+				arguments.Add (new Argument (e));
 				t_args [i] = new TypeExpression (e.Type, e.Location);
 			}
 

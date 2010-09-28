@@ -23633,7 +23633,7 @@
         <size>1</size>
       </method>
       <method name="Void TestStruct(Nullable`1)">
-        <size>1</size>
+        <size>24</size>
       </method>
       <method name="System.String get_Item(Int32, System.String)">
         <size>2</size>
@@ -23642,10 +23642,13 @@
         <size>4</size>
       </method>
       <method name="Int32 Main()">
-        <size>120</size>
+        <size>134</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Void TestStruct2(Nullable`1)">
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -34179,6 +34182,16 @@
       </method>
       <method name="Int32 Main()">
         <size>85</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-466.cs">
+    <type name="A.X.Test">
+      <method name="Void Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>

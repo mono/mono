@@ -464,16 +464,10 @@ namespace Mono.CSharp {
 			if (default_expr == null)
 				return null;
 
-			if (!(default_expr is Constant || default_expr is DefaultValueExpression)) {
-				if (TypeManager.IsNullableType (parameter_type)) {
-					rc.Compiler.Report.Error (1770, default_expr.Location,
-						"The expression being assigned to nullable optional parameter `{0}' must be default value",
-						Name);
-				} else {
-					rc.Compiler.Report.Error (1736, default_expr.Location,
-						"The expression being assigned to optional parameter `{0}' must be a constant or default value",
-						Name);
-				}
+			if (!(default_expr is Constant || default_expr is DefaultValueExpression || (default_expr is New && ((New)default_expr).IsDefaultStruct))) {
+				rc.Compiler.Report.Error (1736, default_expr.Location,
+					"The expression being assigned to optional parameter `{0}' must be a constant or default value",
+					Name);
 
 				return null;
 			}
@@ -482,8 +476,12 @@ namespace Mono.CSharp {
 				return default_expr;
 
 			if (TypeManager.IsNullableType (parameter_type)) {
-				if (Convert.ImplicitNulableConversion (rc, default_expr, parameter_type) != null)
-					return default_expr;
+				if (default_expr.Type != InternalType.Null && New.Constantify (Nullable.NullableInfo.GetUnderlyingType (parameter_type), Location.Null) == null)
+					rc.Compiler.Report.Error (1770, default_expr.Location,
+						"The expression being assigned to nullable optional parameter `{0}' must be default value",
+						Name);
+
+				return default_expr;
 			} else {
 				var res = Convert.ImplicitConversionStandard (rc, default_expr, parameter_type, default_expr.Location);
 				if (res != null) {

@@ -180,7 +180,7 @@ namespace Mono.CSharp {
 					Error_ValueCannotBeConverted (ec, loc, target_type, false);
 				}
 
-				return New.Constantify (target_type).Resolve (ec);
+				return New.Constantify (target_type, loc).Resolve (ec);
 			}
 		}
 

@@ -1710,7 +1710,7 @@ namespace Mono.CSharp {
 						if (f.OptAttributes != null || PartialContainer.HasStructLayout)
 							continue;
 						
-						Constant c = New.Constantify (f.MemberType);
+						Constant c = New.Constantify (f.MemberType, f.Location);
 						Report.Warning (649, 4, f.Location, "Field `{0}' is never assigned to, and will always have its default value `{1}'",
 							f.GetSignatureForError (), c == null ? "null" : c.AsString ());
 					}
