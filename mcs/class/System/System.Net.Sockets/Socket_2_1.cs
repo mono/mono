@@ -421,11 +421,9 @@ namespace System.Net.Sockets {
 				else if (op == Socket.SocketOperation.Disconnect)
 					async_op = SocketAsyncOperation.Disconnect;
 #endif
-				else if (op == Socket.SocketOperation.Receive)
+				else if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric)
 					async_op = SocketAsyncOperation.Receive;
 #if !MOONLIGHT
-				else if (op == Socket.SocketOperation.ReceiveGeneric)
-					async_op = SocketAsyncOperation.Receive;
 				else if (op == Socket.SocketOperation.ReceiveFrom)
 					async_op = SocketAsyncOperation.ReceiveFrom;
 #endif
@@ -433,11 +431,9 @@ namespace System.Net.Sockets {
 				else if (op == Socket.SocketOperation.ReceiveMessageFrom)
 					async_op = SocketAsyncOperation.ReceiveMessageFrom;
 				*/
-				else if (op == Socket.SocketOperation.Send)
+				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric)
 					async_op = SocketAsyncOperation.Send;
 #if !MOONLIGHT
-				else if (op == Socket.SocketOperation.SendGeneric)
-					async_op = SocketAsyncOperation.Send;
 				/*
 				else if (op == Socket.SocketOperation.SendPackets)
 					async_op = SocketAsyncOperation.SendPackets;
