@@ -325,25 +325,25 @@ namespace System.Threading {
 
 		public bool IsReadLockHeld {
 			get {
-				return rwlock >= RwRead;
+				return rwlock >= RwRead && CurrentThreadState.LockState.Has (LockState.Read);
 			}
 		}
 		
 		public bool IsWriteLockHeld {
 			get {
-				return (rwlock & RwWrite) > 0;
+				return (rwlock & RwWrite) > 0 && CurrentThreadState.LockState.Has (LockState.Write);
 			}
 		}
 		
 		public bool IsUpgradeableReadLockHeld {
 			get {
-				return upgradableTaken.Value;
+				return upgradableTaken.Value && CurrentThreadState.LockState.Has (LockState.Upgradable);
 			}
 		}
 
 		public int CurrentReadCount {
 			get {
-				return (rwlock >> RwReadBit) - (IsUpgradeableReadLockHeld ? 1 : 0);
+				return (rwlock >> RwReadBit) - (upgradableTaken.Value ? 1 : 0);
 			}
 		}
 		

@@ -489,5 +489,92 @@ namespace MonoTests.System.Threading
 
 			Assert.AreEqual (3, v.RecursiveUpgradeCount);
 		}
+
+		[Test]
+		public void RecursiveReadPropertiesTest ()
+		{
+			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+
+			v.EnterReadLock ();
+			v.EnterReadLock ();
+
+			Assert.AreEqual (true, v.IsReadLockHeld, "#1a");
+			Assert.AreEqual (1, v.CurrentReadCount, "#2a");
+			Assert.AreEqual (2, v.RecursiveReadCount, "#3a");
+
+			bool rLock = true;
+			int cReadCount = -1, rReadCount = -1;
+
+			Thread t = new Thread ((_) => {
+					rLock = v.IsReadLockHeld;
+					cReadCount = v.CurrentReadCount;
+					rReadCount = v.RecursiveReadCount;
+				});
+
+			t.Start ();
+			t.Join ();
+
+			Assert.AreEqual (false, rLock, "#1b");
+			Assert.AreEqual (1, cReadCount, "#2b");
+			Assert.AreEqual (0, rReadCount, "#3b");
+		}
+
+		[Test]
+		public void RecursiveUpgradePropertiesTest ()
+		{
+			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+
+			v.EnterUpgradeableReadLock ();
+			v.EnterUpgradeableReadLock ();
+
+			Assert.AreEqual (true, v.IsUpgradeableReadLockHeld, "#1a");
+			Assert.AreEqual (false, v.IsReadLockHeld, "#11a");
+			Assert.AreEqual (0, v.CurrentReadCount, "#2a");
+			Assert.AreEqual (2, v.RecursiveUpgradeCount, "#3a");
+
+			bool upLock = false, rLock = false;
+			int rCount = -1, rUCount = -1;
+
+			Thread t = new Thread ((_) => {
+					upLock = v.IsUpgradeableReadLockHeld;
+					rLock = v.IsReadLockHeld;
+					rCount = v.CurrentReadCount;
+					rUCount = v.RecursiveUpgradeCount;
+				});
+
+			t.Start ();
+			t.Join ();
+
+			Assert.AreEqual (false, upLock, "#1b");
+			Assert.AreEqual (false, rLock, "#11b");
+			Assert.AreEqual (0, rCount, "#2b");
+			Assert.AreEqual (0, rUCount, "#3b");
+		}
+
+		[Test]
+		public void RecursiveWritePropertiesTest ()
+		{
+			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+
+			v.EnterWriteLock ();
+			v.EnterWriteLock ();
+
+			Assert.AreEqual (true, v.IsWriteLockHeld, "#1a");
+			Assert.AreEqual (2, v.RecursiveWriteCount, "#3a");
+
+			bool wLock = false;
+			int rWrite = -1;
+
+			Thread t = new Thread ((_) => {
+					wLock = v.IsWriteLockHeld;
+					rWrite = v.RecursiveWriteCount;
+				});
+
+			t.Start ();
+			t.Join ();
+
+			Assert.AreEqual (false, wLock, "#1b");
+			Assert.AreEqual (0, rWrite, "#3b");
+		}
 	}
 }
