@@ -1749,7 +1749,7 @@ namespace System {
 				res.Append(part);
 			}
 
-			if (path.EndsWith ("/"))
+			if (path [path.Length - 1] == '/')
 				res.Append ('/');
 				
 			return res.ToString();
