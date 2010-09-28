@@ -1014,6 +1014,17 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNotNull (ex.Message, "#B4");
 			}
 
+			// Test Exception is not thrown for GUID - #569543
+			try {
+			cmd.CommandText = "select type_guid from string_family where type_guid=@p1";
+			cmd.Parameters.Clear ();
+			cmd.Parameters.Add ("@p1", DbType.Guid);
+			cmd.Parameters ["@p1"].Value = new Guid ("1C47DD1D-891B-47E8-AAC8-F36608B31BC5");;
+			cmd.Prepare ();
+			} catch (Exception ex) {
+				Assert.Fail ("#B2"+ex.Message);
+			}
+
 			// Test Exception is not thrown for Stored Procs 
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.CommandText = "ABFSDSFSF";

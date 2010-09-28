@@ -1,5 +1,9 @@
 2010-09-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* SqlCommandTest.cs: Add test for bug#569543
+	
+2010-09-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* SqlCommandTest.cs: Add test for bug#584833
 	
 2010-04-21  Veerapuram Varadhan  <vvaradhan@novell.com>
