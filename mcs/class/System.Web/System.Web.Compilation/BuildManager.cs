@@ -94,6 +94,7 @@ namespace System.Web.Compilation
 		// This is here _only_ for the purpose of unit tests!
 		internal static bool suppressDebugModeMessages;
 
+		// See comment for the cacheLock field at top of System.Web.Caching/Cache.cs
 #if SYSTEMCORE_DEP
 		static ReaderWriterLockSlim buildCacheLock;
 #else
@@ -817,14 +818,12 @@ namespace System.Web.Compilation
 			// to the assembly builder and, in effect, no assembly is produced but there are STILL types that need
 			// to be added to the cache.
 			Assembly compiledAssembly = results != null ? results.CompiledAssembly : null;
-			bool locked = false;
 			try {
 #if SYSTEMCORE_DEP
 				buildCacheLock.EnterWriteLock ();
 #else
 				buildCacheLock.AcquireWriterLock (-1);
 #endif
-				locked = true;
 				if (compiledAssembly != null)
 					referencedAssemblies.Add (compiledAssembly);
 				
@@ -835,13 +834,11 @@ namespace System.Web.Compilation
 					StoreInCache (bp, compiledAssembly, results);
 				}
 			} finally {
-				if (locked) {
 #if SYSTEMCORE_DEP
-					buildCacheLock.ExitWriteLock ();
+				buildCacheLock.ExitWriteLock ();
 #else
-					buildCacheLock.ReleaseWriterLock ();
+				buildCacheLock.ReleaseWriterLock ();
 #endif
-				}
 			}
 		}
 		
@@ -883,24 +880,19 @@ namespace System.Web.Compilation
 #endif
 		static BuildManagerCacheItem GetCachedItem (string vp)
 		{
-			bool locked = false;
-			
 			try {
 #if SYSTEMCORE_DEP
 				buildCacheLock.EnterReadLock ();
 #else
 				buildCacheLock.AcquireReaderLock (-1);
 #endif
-				locked = true;
 				return GetCachedItemNoLock (vp);
 			} finally {
-				if (locked) {
 #if SYSTEMCORE_DEP
-					buildCacheLock.ExitReadLock ();
+				buildCacheLock.ExitReadLock ();
 #else
-					buildCacheLock.ReleaseReaderLock ();
+				buildCacheLock.ReleaseReaderLock ();
 #endif
-				}
 			}
 		}
 
@@ -1290,27 +1282,22 @@ namespace System.Web.Compilation
 			else
 				return;
 			
-			bool locked = false;
 			try {
 #if SYSTEMCORE_DEP
 				buildCacheLock.EnterWriteLock ();
 #else
 				buildCacheLock.AcquireWriterLock (-1);
 #endif
-				locked = true;
-
 				if (HasCachedItemNoLock (virtualPath)) {
 					buildCache [virtualPath] = null;
 					OnEntryRemoved (virtualPath);
 				}
 			} finally {
-				if (locked) {
 #if SYSTEMCORE_DEP
-					buildCacheLock.ExitWriteLock ();
+				buildCacheLock.ExitWriteLock ();
 #else
-					buildCacheLock.ReleaseWriterLock ();
+				buildCacheLock.ReleaseWriterLock ();
 #endif
-				}
 			}
 		}
 		

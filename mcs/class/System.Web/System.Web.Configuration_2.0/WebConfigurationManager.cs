@@ -67,6 +67,8 @@ namespace System.Web.Configuration {
 		static readonly char[] pathTrimChars = { '/' };
 		static readonly object suppressAppReloadLock = new object ();
 		static readonly object saveLocationsCacheLock = new object ();
+		
+		// See comment for the cacheLock field at top of System.Web.Caching/Cache.cs
 		static readonly ReaderWriterLockSlim sectionCacheLock;
 		
 #if !TARGET_J2EE
@@ -225,14 +227,11 @@ namespace System.Web.Configuration {
 		
 		static void ConfigurationSaveHandler (_Configuration sender, ConfigurationSaveEventArgs args)
 		{
-			bool locked = false;
 			try {
 				sectionCacheLock.EnterWriteLock ();
-				locked = true;
 				sectionCache.Clear ();
 			} finally {
-				if (locked)
-					sectionCacheLock.ExitWriteLock ();
+				sectionCacheLock.ExitWriteLock ();
 			}
 			
 			lock (suppressAppReloadLock) {
@@ -442,7 +441,6 @@ namespace System.Web.Configuration {
 			int cacheKey;
 			bool pathPresent = !String.IsNullOrEmpty (path);
 			string locationPath = null;
-			bool locked = false;
 
 			if (pathPresent)
 				locationPath = "location_" + path;
@@ -453,7 +451,6 @@ namespace System.Web.Configuration {
 			
 			try {
 				sectionCacheLock.EnterReadLock ();
-				locked = true;
 				
 				object o;
 				if (pathPresent) {
@@ -469,8 +466,7 @@ namespace System.Web.Configuration {
 				if (sectionCache.TryGetValue (baseCacheKey, out o))
 					return o;
 			} finally {
-				if (locked)
-					sectionCacheLock.ExitReadLock ();
+				sectionCacheLock.ExitReadLock ();
 			}
 
 			string cachePath = null;
@@ -687,27 +683,21 @@ namespace System.Web.Configuration {
 		static void AddSectionToCache (int key, object section)
 		{
 			object cachedSection;
-			bool locked = false;
 
 			try {
 				sectionCacheLock.EnterUpgradeableReadLock ();
-				locked = true;
 					
 				if (sectionCache.TryGetValue (key, out cachedSection) && cachedSection != null)
 					return;
 
-				bool innerLocked = false;
 				try {
 					sectionCacheLock.EnterWriteLock ();
-					innerLocked = true;
 					sectionCache.Add (key, section);
 				} finally {
-					if (innerLocked)
-						sectionCacheLock.ExitWriteLock ();
+					sectionCacheLock.ExitWriteLock ();
 				}
 			} finally {
-				if (locked)
-					sectionCacheLock.ExitUpgradeableReadLock ();
+				sectionCacheLock.ExitUpgradeableReadLock ();
 			}
 		}
 		

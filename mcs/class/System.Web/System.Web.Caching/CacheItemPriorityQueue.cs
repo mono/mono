@@ -41,6 +41,8 @@ namespace System.Web.Caching
 		CacheItem[] heap;
 		int heapSize = 0;
 		int heapCount = 0;
+
+		// See comment for the cacheLock field at top of System.Web.Caching/Cache.cs
 		ReaderWriterLockSlim queueLock;
 
 		public int Count {
@@ -94,20 +96,18 @@ namespace System.Web.Caching
 			if (item == null)
 				return;
 
-			bool locked = false;
 			CacheItem[] heap;
 			
 			try {
 				queueLock.EnterWriteLock ();
-				locked = true;
 				heap = GetHeapWithGrow ();
 				heap [heapCount++] = item;
 				BubbleUp (heap);
 				
 				AddSequenceEntry (item, EDSequenceEntryType.Enqueue);
 			} finally {
-				if (locked)
-					queueLock.ExitWriteLock ();
+				// See comment at the top of the file, above queueLock declaration
+				queueLock.ExitWriteLock ();
 			}
 		}
 
@@ -115,12 +115,10 @@ namespace System.Web.Caching
 		{
 			CacheItem ret = null;
 			CacheItem[] heap;
-			bool locked = false;
 			int index;
 			
 			try {
 				queueLock.EnterWriteLock ();
-				locked = true;
 				heap = GetHeapWithShrink ();
 				if (heap == null || heapCount == 0)
 					return null;
@@ -136,19 +134,17 @@ namespace System.Web.Caching
 				AddSequenceEntry (ret, EDSequenceEntryType.Dequeue);
 				return ret;
 			} finally {
-				if (locked)
-					queueLock.ExitWriteLock ();
+				// See comment at the top of the file, above queueLock declaration
+				queueLock.ExitWriteLock ();
 			}
 		}
 
 		public CacheItem Peek ()
 		{
-			bool locked = false;
 			CacheItem ret;
 			
 			try {
 				queueLock.EnterReadLock ();
-				locked = true;
 				if (heap == null || heapCount == 0)
 					return null;
 
@@ -157,8 +153,8 @@ namespace System.Web.Caching
 				
 				return ret;
 			} finally {
-				if (locked)
-					queueLock.ExitReadLock ();
+				// See comment at the top of the file, above queueLock declaration
+				queueLock.ExitReadLock ();
 			}
 		}
 		
