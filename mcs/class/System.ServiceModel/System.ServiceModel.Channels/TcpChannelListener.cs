@@ -46,7 +46,6 @@ namespace System.ServiceModel.Channels
 		BindingContext context;
 		TcpChannelInfo info;
 		TcpListener tcp_listener;
-		Thread tcp_acceptor_thread;
 		
 		public TcpChannelListener (TcpTransportBindingElement source, BindingContext context)
 			: base (context)
@@ -165,11 +164,8 @@ namespace System.ServiceModel.Channels
 		{
 			if (tcp_listener == null)
 				throw new InvalidOperationException ("Current state is " + State);
-			if (tcp_acceptor_thread != null) {
-				tcp_acceptor_thread.Abort ();
-				tcp_acceptor_thread.Join (timeout);
-				tcp_acceptor_thread = null;
-			}
+			//tcp_listener.Client.Close (Math.Max (50, (int) timeout.TotalMilliseconds));
+			tcp_listener.Stop ();
 			var l = new List<ManualResetEvent> (accept_handles);
 			foreach (var wait in l) // those handles will disappear from accepted_handles
 				wait.Set ();
@@ -185,26 +181,26 @@ namespace System.ServiceModel.Channels
 			
 			int explicitPort = Uri.Port;
 			tcp_listener = new TcpListener (entry.AddressList [0], explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
-			tcp_acceptor_thread = new Thread (new ThreadStart (TcpAcceptorLoop));
-			tcp_acceptor_thread.Start ();
+			tcp_listener.Start ();
+			tcp_listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, null);
 		}
 
-		void TcpAcceptorLoop ()
+		void TcpListenerAcceptedClient (IAsyncResult result)
 		{
-			tcp_listener.Start ();
 			try {
-				while (State == CommunicationState.Opened) {
-					// With async operation works with aborting the thread.
-					var cli = tcp_listener.EndAcceptTcpClient (tcp_listener.BeginAcceptTcpClient (null, null));
-					if (cli != null) {
-						accepted_clients.Enqueue (cli);
-						if (accept_handles.Count > 0)
-							accept_handles [0].Set ();
-					}
+				if (tcp_listener == null) // called during Close() or Abort().
+					return;
+				var client = tcp_listener.EndAcceptTcpClient (result);
+				if (client != null) {
+					accepted_clients.Enqueue (client);
+					if (accept_handles.Count > 0)
+						accept_handles [0].Set ();
 				}
 			} finally {
-				tcp_listener.Stop ();
+				if (State == CommunicationState.Opened)
+					tcp_listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, null);
 			}
 		}
 	}
 }
+
