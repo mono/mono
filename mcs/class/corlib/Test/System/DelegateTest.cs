@@ -1023,7 +1023,6 @@ namespace MonoTests.System
 		}
 
 		[Test] // #617161
-		[Category ("NotWorking")]
 		public void ClosedOverNullReferenceStaticMethod ()
 		{
 			var del = (Func<long?,long?>) Delegate.CreateDelegate (
