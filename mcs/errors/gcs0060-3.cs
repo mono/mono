@@ -1,4 +1,4 @@
-// CS0122: `Bar.Baz' is inaccessible due to its protection level
+// CS0060: Inconsistent accessibility: base class `Foo<Bar.Baz>' is less accessible than class `Bar'
 // Line: 7
 
 public class Foo<K> {

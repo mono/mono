@@ -7599,17 +7599,29 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			var nested = MemberCache.FindNestedType (expr_type, Name, Arity);
-			if (nested == null) {
-				if (silent)
-					return null;
+			TypeSpec nested = null;
+			while (expr_type != null) {
+				nested = MemberCache.FindNestedType (expr_type, Name, Arity);
+				if (nested == null) {
+					if (silent)
+						return null;
 
-				Error_IdentifierNotFound (rc, expr_type, Name);
-				return null;
-			}
+					if (expr_type == tnew_expr.Type) {
+						Error_IdentifierNotFound (rc, expr_type, Name);
+						return null;
+					}
 
-			if (!nested.IsAccessible (rc.CurrentType ?? InternalType.FakeInternalType)) {
-				ErrorIsInaccesible (rc, nested.GetSignatureForError (), loc);
+					expr_type = tnew_expr.Type;
+					nested = MemberCache.FindNestedType (expr_type, Name, Arity);
+					ErrorIsInaccesible (rc, nested.GetSignatureForError (), loc);
+					break;
+				}
+
+				if (nested.IsAccessible (rc.CurrentType ?? InternalType.FakeInternalType))
+					break;
+
+				// Keep looking after inaccessible candidate
+				expr_type = nested.DeclaringType.BaseType;
 			}
 			
 			TypeExpr texpr;

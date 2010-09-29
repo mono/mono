@@ -1,4 +1,4 @@
-// CS1763: The expression being assigned to optional parameter `c' must be a constant or default value
+// CS1750: Optional parameter expression of type `S' cannot be converted to parameter type `C'
 // Line: 10
 
 struct S

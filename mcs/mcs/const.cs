@@ -224,7 +224,7 @@ namespace Mono.CSharp {
 			}
 
 			if (expr == null) {
-				expr = New.Constantify (field.MemberType, expr.Location);
+				expr = New.Constantify (field.MemberType, Location);
 				if (expr == null)
 					expr = Constant.CreateConstantFromValue (field.MemberType, null, Location);
 				expr = expr.Resolve (rc);

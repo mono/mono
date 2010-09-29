@@ -476,12 +476,21 @@ namespace Mono.CSharp {
 				return default_expr;
 
 			if (TypeManager.IsNullableType (parameter_type)) {
-				if (default_expr.Type != InternalType.Null && New.Constantify (Nullable.NullableInfo.GetUnderlyingType (parameter_type), Location.Null) == null)
+				if (default_expr.Type == InternalType.Null)
+					return default_expr;
+
+				var underlying = Nullable.NullableInfo.GetUnderlyingType (parameter_type);
+				var c = New.Constantify (underlying, Location.Null);
+				if (c == null) {
 					rc.Compiler.Report.Error (1770, default_expr.Location,
 						"The expression being assigned to nullable optional parameter `{0}' must be default value",
 						Name);
+					return null;
+				}
 
-				return default_expr;
+				c = c.Resolve (rc);
+				if (c.Type == default_expr.Type)
+					return default_expr;
 			} else {
 				var res = Convert.ImplicitConversionStandard (rc, default_expr, parameter_type, default_expr.Location);
 				if (res != null) {
