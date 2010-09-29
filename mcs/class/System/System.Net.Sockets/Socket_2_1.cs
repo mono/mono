@@ -1218,12 +1218,14 @@ namespace System.Net.Sockets {
 		public bool ReceiveAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			//
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			// LAME SPEC: the ArgumentException is never thrown, instead an NRE is
 			// thrown when e.Buffer and e.BufferList are null (works fine when one is
 			// set to a valid object)
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			if (e.Buffer == null && e.BufferList == null)
+				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
 			e.curSocket = this;
 			SocketOperation op = (e.Buffer != null) ? SocketOperation.Receive : SocketOperation.ReceiveGeneric;
@@ -1257,7 +1259,7 @@ namespace System.Net.Sockets {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 			if (e.Buffer == null && e.BufferList == null)
-				throw new ArgumentException ("Either e.Buffer or e.BufferList must be valid buffers.");
+				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
 			e.curSocket = this;
 			SocketOperation op = (e.Buffer != null) ? SocketOperation.Send : SocketOperation.SendGeneric;
