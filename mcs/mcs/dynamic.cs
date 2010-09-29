@@ -378,7 +378,7 @@ namespace Mono.CSharp
 			int default_args = is_statement ? 1 : 2;
 
 			bool has_ref_out_argument = false;
-			FullNamedExpression[] targs = new FullNamedExpression[dyn_args_count + default_args];
+			var targs = new TypeExpression[dyn_args_count + default_args];
 			targs [0] = new TypeExpression (TypeManager.call_site_type, loc);
 			for (int i = 0; i < dyn_args_count; ++i) {
 				Argument a = arguments [i];
@@ -409,11 +409,19 @@ namespace Mono.CSharp
 				Parameter[] p = new Parameter [dyn_args_count + 1];
 				p[0] = new Parameter (targs [0], "p0", Parameter.Modifier.NONE, null, loc);
 
-				for (int i = 1; i < dyn_args_count + 1; ++i)
-					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
-
-				TypeContainer site = ec.CreateDynamicSite ();
+				var site = ec.CreateDynamicSite ();
 				int index = site.Types == null ? 0 : site.Types.Count;
+
+				if (site.Mutator != null)
+					rt = site.Mutator.Mutate (rt);
+
+				for (int i = 1; i < dyn_args_count + 1; ++i) {
+					var t = targs[i];
+					if (site.Mutator != null)
+						t.Type = site.Mutator.Mutate (t.Type);
+
+					p[i] = new Parameter (t, "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
+				}
 
 				Delegate d = new Delegate (site.NamespaceEntry, site, new TypeExpression (rt, loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
@@ -425,8 +433,8 @@ namespace Mono.CSharp
 				d.Define ();
 				d.Emit ();
 
-				site.AddDelegate (d);
-				del_type = new TypeExpression (d.Definition, loc);
+				var inflated = site.AddDelegate (d);
+				del_type = new TypeExpression (inflated, loc);
 			}
 
 			TypeExpr site_type = new GenericTypeExpr (TypeManager.generic_call_site_type, new TypeArguments (del_type), loc);
@@ -764,6 +772,27 @@ namespace Mono.CSharp
 			}
 
 			parent.DynamicSitesCounter++;
+		}
+
+		public override TypeSpec AddDelegate (Delegate d)
+		{
+			TypeSpec inflated;
+
+			base.AddDelegate (d);
+
+			// Inflated type instance has to be updated manually
+			if (instance_type is InflatedTypeSpec) {
+				var inflator = new TypeParameterInflator (instance_type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				inflated = (TypeSpec) d.CurrentType.InflateMember (inflator);
+				instance_type.MemberCache.AddMember (inflated);
+
+				//inflator = new TypeParameterInflator (d.Parent.CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				//d.Parent.CurrentType.MemberCache.AddMember (d.CurrentType.InflateMember (inflator));
+			} else {
+				inflated = d.CurrentType;
+			}
+
+			return inflated;
 		}
 
 		public FieldSpec CreateCallSiteField (FullNamedExpression type, Location loc)

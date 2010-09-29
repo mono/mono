@@ -394,9 +394,10 @@ namespace Mono.CSharp {
 			RemoveMemberType (next_part);
 		}
 		
-		public void AddDelegate (Delegate d)
+		public virtual TypeSpec AddDelegate (Delegate d)
 		{
 			AddTypeContainer (d);
+			return null;
 		}
 
 		private void AddMemberToList (MemberCore mc, List<MemberCore> alist, bool isexplicit)
