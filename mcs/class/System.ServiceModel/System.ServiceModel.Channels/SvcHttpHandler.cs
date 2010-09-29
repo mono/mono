@@ -87,9 +87,13 @@ namespace System.ServiceModel.Channels
 
 		public void EndHttpRequest (HttpContext context)
 		{
-			var wait = wcf_wait_handles [context];
+			ManualResetEvent wait;
+			if (!wcf_wait_handles.TryGetValue (context, out wait))
+				return;
+
 			wcf_wait_handles.Remove (context);
-			wait.Set ();
+			if (wait != null)
+				wait.Set ();
 		}
 
 		// called from SvcHttpHandlerFactory's remove callback (i.e.
