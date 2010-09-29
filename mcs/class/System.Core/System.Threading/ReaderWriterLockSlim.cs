@@ -125,6 +125,7 @@ namespace System.Threading {
 			
 			Stopwatch sw = Stopwatch.StartNew ();
 			Interlocked.Increment (ref numReadWaiters);
+			int val = 0;
 
 			while (millisecondsTimeout == -1 || sw.ElapsedMilliseconds < millisecondsTimeout) {
 				/* Check if a writer is present (RwWrite) or if there is someone waiting to
@@ -139,12 +140,16 @@ namespace System.Threading {
 				 * if the adding was too late and another writer came in between
 				 * we revert the operation.
 				 */
-				if ((Interlocked.Add (ref rwlock, RwRead) & 0x7) == 0) {
+				if (((val = Interlocked.Add (ref rwlock, RwRead)) & 0x7) == 0) {
+					/* If we are the first reader, reset the event to let other threads
+					 * sleep correctly if they try to acquire write lock
+					 */
+					if (val >> RwReadBit == 1)
+						readerDoneEvent.Reset ();
+
 					ctstate.LockState ^= LockState.Read;
 					ctstate.ReaderRecursiveCount++;
 					Interlocked.Decrement (ref numReadWaiters);
-					if (readerDoneEvent.IsSet ())
-						readerDoneEvent.Reset ();
 					return true;
 				}
 
@@ -193,33 +198,43 @@ namespace System.Threading {
 			Interlocked.Increment (ref numWriteWaiters);
 			bool isUpgradable = ctstate.LockState.Has (LockState.Upgradable);
 
-			// If the code goes there that means we had a read lock beforehand
+			/* If the code goes there that means we had a read lock beforehand
+			 * that need to be suppressed, we also take the opportunity to register
+			 * our interest in the write lock to avoid other write wannabe process
+			 * coming in the middle
+			 */
 			if (isUpgradable && rwlock >= RwRead)
-				Interlocked.Add (ref rwlock, -RwRead);
+				if (Interlocked.Add (ref rwlock, RwWaitUpgrade - RwRead) >> RwReadBit == 0)
+					readerDoneEvent.Set ();
 
 			int stateCheck = isUpgradable ? RwWaitUpgrade : RwWait;
-			int appendValue = RwWait | (isUpgradable ? RwWaitUpgrade : 0);
 
 			while (millisecondsTimeout < 0 || sw.ElapsedMilliseconds < millisecondsTimeout) {
 				int state = rwlock;
 
 				if (state <= stateCheck) {
 					if (Interlocked.CompareExchange (ref rwlock, RwWrite, state) == state) {
+						writerDoneEvent.Reset ();
 						ctstate.LockState ^= LockState.Write;
 						ctstate.WriterRecursiveCount++;
 						Interlocked.Decrement (ref numWriteWaiters);
-						if (writerDoneEvent.IsSet ())
-							writerDoneEvent.Reset ();
 						return true;
 					}
 					state = rwlock;
 				}
 
-				while ((state & RwWait) == 0 && Interlocked.CompareExchange (ref rwlock, state | appendValue, state) == state)
-					state = rwlock;
+				// We register our interest in taking the Write lock (if upgradeable it's already done)
+				if (!isUpgradable)
+					while ((state & RwWait) == 0 && Interlocked.CompareExchange (ref rwlock, state | RwWait, state) == state)
+						state = rwlock;
 
-				while (rwlock > stateCheck && (millisecondsTimeout < 0 || sw.ElapsedMilliseconds < millisecondsTimeout))
-					readerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
+				// Before falling to sleep
+				while (rwlock > stateCheck && (millisecondsTimeout < 0 || sw.ElapsedMilliseconds < millisecondsTimeout)) {
+					if ((rwlock & RwWrite) != 0)
+						writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
+					else if ((rwlock >> RwReadBit) > 0)
+						readerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
+				}
 			}
 
 			Interlocked.Decrement (ref numWriteWaiters);
@@ -238,10 +253,14 @@ namespace System.Threading {
 			if (!ctstate.LockState.Has (LockState.Write))
 				throw new SynchronizationLockException ("The current thread has not entered the lock in write mode");
 			
+			bool isUpgradable = ctstate.LockState.Has (LockState.Upgradable);
 			ctstate.LockState ^= LockState.Write;
 			ctstate.WriterRecursiveCount--;
-			Interlocked.Add (ref rwlock, -RwWrite);
+
+			int value = Interlocked.Add (ref rwlock, isUpgradable ? RwRead - RwWrite : -RwWrite);
 			writerDoneEvent.Set ();
+			if (isUpgradable && value >> RwReadBit == 1)
+				readerDoneEvent.Reset ();
 		}
 
 		public void EnterUpgradeableReadLock ()
