@@ -1014,15 +1014,15 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNotNull (ex.Message, "#B4");
 			}
 
-			// Test Exception is not thrown for GUID - #569543
+			// Test Exception is not thrown if DbType is set - #569543
 			try {
 			cmd.CommandText = "select type_guid from string_family where type_guid=@p1";
 			cmd.Parameters.Clear ();
-			cmd.Parameters.Add ("@p1", DbType.Guid);
-			cmd.Parameters ["@p1"].Value = new Guid ("1C47DD1D-891B-47E8-AAC8-F36608B31BC5");;
+			cmd.Parameters.Add ("@p1", SqlDbType.UniqueIdentifier);
+			cmd.Parameters ["@p1"].Value = new Guid ("1C47DD1D-891B-47E8-AAC8-F36608B31BC5");
 			cmd.Prepare ();
 			} catch (Exception ex) {
-				Assert.Fail ("#B2"+ex.Message);
+				Assert.Fail ("#B5 "+ex.Message);
 			}
 
 			// Test Exception is not thrown for Stored Procs 
@@ -2905,6 +2905,7 @@ namespace MonoTests.System.Data.SqlClient
 				ConnectionManager.Singleton.OpenConnection ();
 				
 				cmd = conn.CreateCommand ();
+				cmd.CommandText = create_tbl;
 				cmd.ExecuteNonQuery ();
 				
 				cmd.CommandText = create_sp;
@@ -2916,8 +2917,14 @@ namespace MonoTests.System.Data.SqlClient
 				SqlCommandBuilder.DeriveParameters (cmd);
 				Assert.AreEqual (2, cmd.Parameters.Count, "#DPT - FullSchema - Parameter count mismatch");
 				Assert.AreEqual ("@deccheck", cmd.Parameters[1].ParameterName, "#DPT - FullSchema - Parameter name mismatch");
-				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters[1].DbType, "#DPT - FullSchema - Parameter type mismatch");			
+				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters[1].SqlDbType, "#DPT - FullSchema - Parameter type mismatch");			
 			} finally {
+				cmd.Parameters.Clear ();
+				cmd.CommandText = "drop procedure sp_bug584833";
+				cmd.CommandType = CommandType.Text;
+				cmd.ExecuteNonQuery ();
+				cmd.CommandText = "drop table decimalCheck";
+				cmd.ExecuteNonQuery ();
 				cmd.Dispose ();
 				cmd = null;
 				ConnectionManager.Singleton.CloseConnection ();
@@ -2942,6 +2949,7 @@ namespace MonoTests.System.Data.SqlClient
 				ConnectionManager.Singleton.OpenConnection ();
 				
 				cmd = conn.CreateCommand ();
+				cmd.CommandText = create_tbl;
 				cmd.ExecuteNonQuery ();
 				
 				cmd.CommandText = create_sp;
@@ -2953,8 +2961,14 @@ namespace MonoTests.System.Data.SqlClient
 				SqlCommandBuilder.DeriveParameters (cmd);
 				Assert.AreEqual (2, cmd.Parameters.Count, "#DPT - SPName - Parameter count mismatch");
 				Assert.AreEqual ("@deccheck", cmd.Parameters[1].ParameterName, "#DPT - SPName - Parameter name mismatch");
-				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters[1].DbType, "#DPT - SPName - Parameter type mismatch");			
+				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters[1].SqlDbType, "#DPT - SPName - Parameter type mismatch");			
 			} finally {
+				cmd.Parameters.Clear ();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "drop procedure sp_bug584833";
+				cmd.ExecuteNonQuery ();
+				cmd.CommandText = "drop table decimalCheck";
+				cmd.ExecuteNonQuery ();
 				cmd.Dispose ();
 				cmd = null;
 				ConnectionManager.Singleton.CloseConnection ();
@@ -2978,6 +2992,7 @@ namespace MonoTests.System.Data.SqlClient
 				ConnectionManager.Singleton.OpenConnection ();
 				
 				cmd = conn.CreateCommand ();
+				cmd.CommandText = create_tbl;
 				cmd.ExecuteNonQuery ();
 				
 				cmd.CommandText = create_sp;
@@ -2989,8 +3004,14 @@ namespace MonoTests.System.Data.SqlClient
 				SqlCommandBuilder.DeriveParameters (cmd);
 				Assert.AreEqual (2, cmd.Parameters.Count, "#DPT - user schema - Parameter count mismatch");
 				Assert.AreEqual ("@deccheck", cmd.Parameters[1].ParameterName, "#DPT - user schema - Parameter name mismatch");
-				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters[1].DbType, "#DPT - user schema - Parameter type mismatch");			
+				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters[1].SqlDbType, "#DPT - user schema - Parameter type mismatch");			
 			} finally {
+				cmd.Parameters.Clear ();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "drop procedure dbo.sp_bug584833";
+				cmd.ExecuteNonQuery ();
+				cmd.CommandText = "drop table decimalCheck";
+				cmd.ExecuteNonQuery ();
 				cmd.Dispose ();
 				cmd = null;
 				ConnectionManager.Singleton.CloseConnection ();
