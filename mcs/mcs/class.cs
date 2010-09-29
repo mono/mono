@@ -2635,14 +2635,9 @@ namespace Mono.CSharp {
 				while (mt.IsPointer)
 					mt = TypeManager.GetElementType (mt);
 
-				if (mt.MemberDefinition == this) {
-					for (var p = Parent; p != null; p = p.Parent) {
-						if (p.Kind == MemberKind.Class) {
-							has_unmanaged_check_done = true;
-							return false;
-						}
-					}
-					continue;
+				if (mt.IsGenericOrParentIsGeneric || mt.IsGenericParameter) {
+					has_unmanaged_check_done = true;
+					return false;
 				}
 
 				if (TypeManager.IsUnmanagedType (mt))
