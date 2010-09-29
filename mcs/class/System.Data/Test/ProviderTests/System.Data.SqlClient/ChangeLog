@@ -1,3 +1,7 @@
+2010-09-20  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlDataReaderTest.cs: Add test for bug#613087
+	
 2010-09-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlCommandTest.cs: Add test for bug#569543

@@ -397,6 +397,32 @@ namespace MonoTests.System.Data.SqlClient
 			reader.Close ();
 		}
 
+		//#613087 Test
+		[Test]
+		public void GetDecimalOfInt64Test ()
+		{
+			string crTable = "CREATE TABLE #613087 (decimalint64 decimal(18,0))";
+			//string drTable = "drop table #613087";
+			
+			cmd.CommandText = crTable;
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery ();
+			
+			cmd.CommandText = "INSERT INTO #613087 VALUES (@decimalint64)";
+			SqlParameter param = new SqlParameter ();
+			param.ParameterName = "@decimalint64";
+			param.Value = new SqlDecimal ((long)922337203685477580);
+			cmd.Parameters.Add (param);
+			cmd.ExecuteNonQuery ();
+			
+			cmd.Parameters.Clear ();
+			cmd.CommandText = "Select * from #613087";
+			reader = cmd.ExecuteReader();
+			reader.Read ();
+			GetMethodTests ("SqlDecimal");
+			Assert.AreEqual (param.Value, reader.GetSqlDecimal (0).Value, "SqlDecimalFromInt64 Test failed");
+		}
+		
 		[Test]
 		public void GetSqlMoneyTest ()
 		{
