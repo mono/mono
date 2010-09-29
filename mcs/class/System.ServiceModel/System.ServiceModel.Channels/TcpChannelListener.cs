@@ -182,23 +182,29 @@ namespace System.ServiceModel.Channels
 			int explicitPort = Uri.Port;
 			tcp_listener = new TcpListener (entry.AddressList [0], explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
 			tcp_listener.Start ();
-			tcp_listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, null);
+			tcp_listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, tcp_listener);
 		}
 
 		void TcpListenerAcceptedClient (IAsyncResult result)
 		{
+			var listener = (TcpListener) result.AsyncState;
 			try {
-				if (tcp_listener == null) // called during Close() or Abort().
-					return;
-				var client = tcp_listener.EndAcceptTcpClient (result);
+				var client = listener.EndAcceptTcpClient (result);
 				if (client != null) {
 					accepted_clients.Enqueue (client);
 					if (accept_handles.Count > 0)
 						accept_handles [0].Set ();
 				}
+			} catch {
+				/* If an accept fails, just ignore it. Maybe the remote peer disconnected already */
 			} finally {
-				if (State == CommunicationState.Opened)
-					tcp_listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, null);
+				if (State == CommunicationState.Opened) {
+					try {
+						listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, listener);
+					} catch {
+						/* If this fails, we must have disposed the listener */
+					}
+				}
 			}
 		}
 	}
