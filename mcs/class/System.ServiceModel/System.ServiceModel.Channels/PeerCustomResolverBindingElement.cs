@@ -44,8 +44,7 @@ namespace System.ServiceModel.Channels
 			settings = new PeerCustomResolverSettings ();
 		}
 
-		private PeerCustomResolverBindingElement (
-			PeerCustomResolverBindingElement other)
+		public PeerCustomResolverBindingElement (PeerCustomResolverBindingElement other)
 			: base (other)
 		{
 			ReferralPolicy = other.ReferralPolicy;
@@ -66,8 +65,23 @@ namespace System.ServiceModel.Channels
 		BindingContext context;
 		PeerCustomResolverSettings settings;
 
+		public EndpointAddress Address {
+			get { return settings.Address; }
+			set { settings.Address = value; }
+		}
+
+		public Binding Binding {
+			get { return settings.Binding; }
+			set { settings.Binding = value; }
+		}
+
 		[MonoTODO]
 		public override PeerReferralPolicy ReferralPolicy { get; set; }
+
+		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
+		{
+			return context.CanBuildInnerChannelFactory<TChannel> ();
+		}
 
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
@@ -77,6 +91,11 @@ namespace System.ServiceModel.Channels
 			if (pcf != null)
 				pcf.Resolver = CreatePeerResolver ();
 			return cf;
+		}
+
+		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
+		{
+			return context.CanBuildInnerChannelListener<TChannel> ();
 		}
 
 		public override IChannelListener<TChannel>
