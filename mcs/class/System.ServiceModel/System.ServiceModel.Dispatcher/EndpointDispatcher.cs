@@ -114,8 +114,16 @@ namespace System.ServiceModel.Dispatcher
 			set { filter_priority = value; }
 		}
 
+#if NET_4_0
+		public bool IsSystemEndpoint { get; private set; }
+#endif
+
 		internal void InitializeServiceEndpoint (bool isCallback, Type serviceType, ServiceEndpoint se)
 		{
+#if NET_4_0
+			IsSystemEndpoint = se.IsSystemEndpoint;
+#endif
+
 			this.ContractFilter = GetContractFilter (se.Contract);
 
 			this.DispatchRuntime.Type = serviceType;

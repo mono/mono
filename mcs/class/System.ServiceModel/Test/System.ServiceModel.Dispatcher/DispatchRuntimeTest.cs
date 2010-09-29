@@ -160,6 +160,13 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				ServiceDebugBehavior db = h.Description.Behaviors.Find<ServiceDebugBehavior> ();
 				db.IncludeExceptionDetailInFaults = true;
 				h.Open ();
+				foreach (ChannelDispatcher cd in h.ChannelDispatchers) {
+					foreach (var ed in cd.Endpoints) {
+						if (ed.ContractName == "IHttpGetHelpPageAndMetadataContract")
+							continue;
+						Assert.AreEqual (typeof (AllActions), ed.DispatchRuntime.Type, "Type property: " + ed.ContractName);
+					}
+				}
 				AllActionsProxy p = new AllActionsProxy (new BasicHttpBinding () { SendTimeout = TimeSpan.FromSeconds (5), ReceiveTimeout = TimeSpan.FromSeconds (5) }, new EndpointAddress ("http://localhost:8080/AllActions"));
 
 				for (int i = 0; i < invocations; ++i)
