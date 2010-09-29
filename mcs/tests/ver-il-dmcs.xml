@@ -1411,7 +1411,7 @@
         <size>231</size>
       </method>
       <method name="Void IsEvent()">
-        <size>1999</size>
+        <size>2697</size>
       </method>
       <method name="Void MemberGetTest()">
         <size>810</size>
@@ -1420,7 +1420,7 @@
         <size>36</size>
       </method>
       <method name="Void MemberSetTest()">
-        <size>2971</size>
+        <size>2970</size>
       </method>
       <method name="Void MemberSetError_Null()">
         <size>36</size>
@@ -37271,6 +37271,16 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-496.cs">
+    <type name="Baz">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>

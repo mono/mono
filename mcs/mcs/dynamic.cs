@@ -445,40 +445,68 @@ namespace Mono.CSharp
 	//
 	// Dynamic member access compound assignment for events
 	//
-	class DynamicEventCompoundAssign : DynamicExpressionStatement, IDynamicBinder
+	class DynamicEventCompoundAssign : ExpressionStatement
 	{
-		string name;
-		Statement condition;
-
-		public DynamicEventCompoundAssign (string name, Arguments args, ExpressionStatement assignment, ExpressionStatement invoke, Location loc)
-			: base (null, args, loc)
+		class IsEvent : DynamicExpressionStatement, IDynamicBinder
 		{
-			this.name = name;
-			base.binder = this;
+			string name;
 
-			// Used by += or -= only
-			type = TypeManager.bool_type;
+			public IsEvent (string name, Arguments args, Location loc)
+				: base (null, args, loc)
+			{
+				this.name = name;
+				binder = this;
+			}
 
-			condition = new If (
-				new Binary (Binary.Operator.Equality, this, new BoolLiteral (true, loc), loc),
-				new StatementExpression (invoke), new StatementExpression (assignment),
-				loc);
+			public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
+			{
+				type = TypeManager.bool_type;
+
+				Arguments binder_args = new Arguments (3);
+
+				binder_args.Add (new Argument (new BinderFlags (0, this)));
+				binder_args.Add (new Argument (new StringLiteral (name, loc)));
+				binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
+
+				return new Invocation (GetBinder ("IsEvent", loc), binder_args);
+			}
 		}
 
-		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
+		Expression condition;
+		ExpressionStatement invoke, assign;
+
+		public DynamicEventCompoundAssign (string name, Arguments args, ExpressionStatement assignment, ExpressionStatement invoke, Location loc)
 		{
-			Arguments binder_args = new Arguments (3);
+			condition = new IsEvent (name, args, loc);
+			this.invoke = invoke;
+			this.assign = assignment;
+			this.loc = loc;
+		}
 
-			binder_args.Add (new Argument (new BinderFlags (0, this)));
-			binder_args.Add (new Argument (new StringLiteral (name, loc)));
-			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			return condition.CreateExpressionTree (ec);
+		}
 
-			return new Invocation (GetBinder ("IsEvent", loc), binder_args);
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			type = InternalType.Dynamic;
+			eclass = ExprClass.Value;
+			condition = condition.Resolve (rc);
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			var rc = new ResolveContext (ec.MemberContext);
+			var expr = new Conditional (new BooleanExpression (condition), invoke, assign, loc).Resolve (rc);
+			expr.Emit (ec);
 		}
 
 		public override void EmitStatement (EmitContext ec)
 		{
-			condition.Emit (ec);
+			var stmt = new If (condition, new StatementExpression (invoke), new StatementExpression (assign), loc);
+			stmt.Emit (ec);
 		}
 	}
 

@@ -196,6 +196,10 @@ class Tester
 		d.field += 5;
 		Assert (5, d.field, "#2");
 		
+		int r = d.field += 7;
+		Assert (12, r, "#2a");
+		Assert (12, d.field, "#2b");
+		
 		d = new EventClass ();
 		d.OutEvent += new Func<int> (() => 100);
 		Assert (100, d.CallEvent (), "#3");
