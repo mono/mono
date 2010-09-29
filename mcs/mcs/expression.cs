@@ -3354,6 +3354,11 @@ namespace Mono.CSharp {
 		protected virtual Expression ResolveUserOperator (ResolveContext ec, TypeSpec l, TypeSpec r)
 		{
 			var op = ConvertBinaryToUserOperator (oper);
+			if (TypeManager.IsNullableType (l))
+				l = Nullable.NullableInfo.GetUnderlyingType (l);
+			if (TypeManager.IsNullableType (r))
+				r = Nullable.NullableInfo.GetUnderlyingType (r);
+
 			IList<MemberSpec> left_operators = MemberCache.GetUserOperator (l, op, false);
 			IList<MemberSpec> right_operators = null;
 
