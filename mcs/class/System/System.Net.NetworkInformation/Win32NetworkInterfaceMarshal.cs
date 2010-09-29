@@ -210,6 +210,7 @@ namespace System.Net.NetworkInformation
 		public byte [] Descr;
 	}
 
+	[StructLayout (LayoutKind.Sequential)]
 	struct Win32_IP_ADDR_STRING
 	{
 		public IntPtr Next; // to Win32_IP_ADDR_STRING
@@ -280,6 +281,7 @@ namespace System.Net.NetworkInformation
 
 	}
 
+	[StructLayout (LayoutKind.Sequential)]
 	struct Win32_SOCKADDR
 	{
 		public ushort AddressFamily;
@@ -288,6 +290,7 @@ namespace System.Net.NetworkInformation
 	}
 
 	// FIXME: it somehow fails to marshal.
+	[StructLayout (LayoutKind.Sequential)]
 	struct Win32_SOCKET_ADDRESS
 	{
 		public IntPtr Sockaddr; // to Win32_SOCKADDR
