@@ -252,7 +252,6 @@ if (result == null) throw new ArgumentNullException ("result");
 				if (isMulticast) {
 					multicast_address = ip;
 					client = new UdpClient (new IPEndPoint (IPAddress.Any, port));
-					client.ExclusiveAddressUse = false;
 					client.JoinMulticastGroup (ip, binding_element.TransportSettings.TimeToLive);
 				}
 				else
