@@ -78,7 +78,7 @@ namespace System.ServiceModel.Discovery.Udp
 
 		void FillMessageEncoder (BindingContext ctx)
 		{
-			var mbe = (MessageEncodingBindingElement) ctx.RemainingBindingElements.FirstOrDefault (be => be is MessageEncodingBindingElement);
+			var mbe = (MessageEncodingBindingElement) ctx.Binding.Elements.FirstOrDefault (be => be is MessageEncodingBindingElement);
 			if (mbe == null)
 				mbe = new TextMessageEncodingBindingElement ();
 			message_encoder = mbe.CreateMessageEncoderFactory ().Encoder;
@@ -160,8 +160,16 @@ namespace System.ServiceModel.Discovery.Udp
 			byte [] bytes = null;
 			IPEndPoint ip = new IPEndPoint (IPAddress.Any, 0);
 			var ar = client.BeginReceive (delegate (IAsyncResult result) {
-				bytes = client.EndReceive (result, ref ip);
-			}, null);
+if (result == null) throw new ArgumentNullException ("result");
+				UdpClient cli = (UdpClient) result.AsyncState;
+				try {
+					bytes = cli.EndReceive (result, ref ip);
+				} catch (ObjectDisposedException) {
+					if (State == CommunicationState.Opened)
+						throw;
+					// Otherwise, called during shutdown. Ignore it.
+				}
+			}, client);
 
 			if (!ar.IsCompleted && !ar.AsyncWaitHandle.WaitOne (timeout))
 				return false;
@@ -244,6 +252,7 @@ namespace System.ServiceModel.Discovery.Udp
 				if (isMulticast) {
 					multicast_address = ip;
 					client = new UdpClient (new IPEndPoint (IPAddress.Any, port));
+					client.ExclusiveAddressUse = false;
 					client.JoinMulticastGroup (ip, binding_element.TransportSettings.TimeToLive);
 				}
 				else
