@@ -314,6 +314,22 @@ void GC_push_all_stacks()
 pthread_t GC_stopping_thread;
 int GC_stopping_pid;
 
+#ifdef PLATFORM_ANDROID
+int android_thread_kill(pid_t tid, int sig)
+{
+    int  ret;
+    int  old_errno = errno;
+
+    ret = tkill(tid, sig);
+    if (ret < 0) {
+        ret = errno;
+        errno = old_errno;
+    }
+
+    return ret;
+}
+#endif
+
 /* We hold the allocation lock.  Suspend all threads that might	*/
 /* still be running.  Return the number of suspend signals that	*/
 /* were sent. */
@@ -337,8 +353,12 @@ int GC_suspend_all()
 	    #if DEBUG_THREADS
 	      GC_printf1("Sending suspend signal to 0x%lx\n", p -> id);
 	    #endif
-        
+
+#ifndef PLATFORM_ANDROID
         result = pthread_kill(p -> id, SIG_SUSPEND);
+#else
+        result = android_thread_kill(p -> kernel_id, SIG_SUSPEND);
+#endif
 	    switch(result) {
 #if defined(ANDROID)	/* Android kernel seems to return EINVAL for non-existent threads (and sometimes EPERM) */
 				case EINVAL:
@@ -469,8 +489,12 @@ static void pthread_start_world()
 	    #if DEBUG_THREADS
 	      GC_printf1("Sending restart signal to 0x%lx\n", p -> id);
 	    #endif
-        
+
+#ifndef PLATFORM_ANDROID
         result = pthread_kill(p -> id, SIG_THR_RESTART);
+#else
+        result = android_thread_kill(p -> kernel_id, SIG_THR_RESTART);
+#endif
 	    switch(result) {
                 case ESRCH:
                     /* Not really there anymore.  Possible? */
