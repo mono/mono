@@ -966,11 +966,26 @@ namespace Mono.CSharp.Nullable
 			return e;
 		}
 
-		protected override Expression ResolveUserOperator (ResolveContext ec, TypeSpec l, TypeSpec r)
+		protected override Expression ResolveUserOperator (ResolveContext ec, Expression left, Expression right)
 		{
-			Expression expr = base.ResolveUserOperator (ec, l, r);
+			State orig_state = state;
+
+			// Try original types first
+			Expression expr = base.ResolveUserOperator (ec, left_orig, right_orig);
+			if (expr == null) {
+				if (left_unwrap != null || right_unwrap != null) {
+					// One side is nullable type, try underlying types
+					expr = base.ResolveUserOperator (ec, left, right);
+				} else if ((state & (State.RightNullLifted | State.LeftNullLifted)) != 0) {
+					expr = base.ResolveUserOperator (ec, left, right);
+				}
+			}
+
 			if (expr == null)
 				return null;
+
+			if (state != orig_state)
+				return expr;
 
 			expr = LiftResult (ec, expr);
 			if (expr is Constant)

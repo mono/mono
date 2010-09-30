@@ -1746,7 +1746,7 @@ namespace Mono.CSharp {
 				// and then look for decimal user-operator implementation
 				//
 				if (left == TypeManager.decimal_type)
-					return b.ResolveUserOperator (ec, b.left.Type, b.right.Type);
+					return b.ResolveUserOperator (ec, b.left, b.right);
 
 				var c = b.right as Constant;
 				if (c != null) {
@@ -2455,7 +2455,7 @@ namespace Mono.CSharp {
 				}
 
 				// User operators
-				expr = ResolveUserOperator (ec, l, r);
+				expr = ResolveUserOperator (ec, left, right);
 				if (expr != null)
 					return expr;
 
@@ -3351,11 +3351,13 @@ namespace Mono.CSharp {
 		//
 		// Performs user-operator overloading
 		//
-		protected virtual Expression ResolveUserOperator (ResolveContext ec, TypeSpec l, TypeSpec r)
+		protected virtual Expression ResolveUserOperator (ResolveContext ec, Expression left, Expression right)
 		{
 			var op = ConvertBinaryToUserOperator (oper);
+			var l = left.Type;
 			if (TypeManager.IsNullableType (l))
 				l = Nullable.NullableInfo.GetUnderlyingType (l);
+			var r = right.Type;
 			if (TypeManager.IsNullableType (r))
 				r = Nullable.NullableInfo.GetUnderlyingType (r);
 
@@ -3393,6 +3395,21 @@ namespace Mono.CSharp {
 			if (oper_method == null)
 				return null;
 
+			var llifted = (state & State.LeftNullLifted) != 0;
+			var rlifted = (state & State.RightNullLifted) != 0;
+			if ((Oper & Operator.EqualityMask) != 0) {
+				var parameters = oper_method.Parameters;
+
+				// Binary operation was lifted but we have found a user operator
+				// which requires value-type argument, we downgrade ourself back to
+				// binary operation
+				// LAMESPEC: The user operator is not called (it cannot be we are passing null to struct)
+				// but compilation succeeds
+				if ((llifted && !parameters.Types[0].IsStruct) || (rlifted && !parameters.Types[1].IsStruct)) {
+					state &= ~(State.LeftNullLifted | State.RightNullLifted);
+				}
+			}
+
 			Expression oper_expr;
 
 			// TODO: CreateExpressionTree is allocated every time
@@ -3403,8 +3420,12 @@ namespace Mono.CSharp {
 				oper_expr = new UserOperatorCall (oper_method, args, CreateExpressionTree, loc);
 			}
 
-			left = larg.Expr;
-			right = rarg.Expr;
+			if (!llifted)
+				this.left = larg.Expr;
+
+			if (!rlifted)
+				this.right = rarg.Expr;
+
 			return oper_expr;
 		}
 
@@ -3872,7 +3893,7 @@ namespace Mono.CSharp {
 			args.Add (new Argument (right.CreateExpressionTree (ec)));
 			if (method != null) {
 				if (lift_arg)
-					args.Add (new Argument (new BoolConstant (false, loc)));
+					args.Add (new Argument (new BoolLiteral (false, loc)));
 
 				args.Add (new Argument (method));
 			}

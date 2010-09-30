@@ -3764,6 +3764,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-139.cs">
+    <type name="MyStruct">
+      <method name="Int32 op_Inequality(Nullable`1, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_Equality(Nullable`1, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_Inequality(System.String, Nullable`1)">
+        <size>3</size>
+      </method>
+      <method name="Int32 op_Equality(System.String, Nullable`1)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-140.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -9617,9 +9641,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
     </type>
     <type name="Foo">
       <method name="Boolean op_Equality(Foo, Foo)">
@@ -9627,6 +9648,27 @@
       </method>
       <method name="Boolean op_Inequality(Foo, Foo)">
         <size>6</size>
+      </method>
+    </type>
+    <type name="S2">
+      <method name="Boolean op_Equality(S2, Nullable`1)">
+        <size>6</size>
+      </method>
+      <method name="Boolean op_Inequality(S2, Nullable`1)">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>97</size>
+      </method>
+    </type>
+    <type name="S3">
+      <method name="Decimal op_Inequality(S3, System.Object)">
+        <size>7</size>
+      </method>
+      <method name="Decimal op_Equality(S3, System.Object)">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -34195,6 +34237,57 @@
       </method>
     </type>
   </test>
+  <test name="test-467.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A+D">
+      <method name="Int32 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+D">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Foo()">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>29</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-468.cs">
     <type name="CorMetaDataDispenserExClass">
       <method name="Void .ctor()">
@@ -34930,6 +35023,16 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-496.cs">
+    <type name="Baz">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
