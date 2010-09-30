@@ -43,6 +43,7 @@ namespace System.Runtime.Serialization
 	{
 		KnownTypeCollection types;
 		IDataContractSurrogate surrogate;
+		DataContractResolver resolver; // new in 4.0.
 		// 3.5 SP1 supports deserialization by reference (id->obj).
 		// Though unlike XmlSerializer, it does not support forward-
 		// reference resolution i.e. a referenced object must appear
@@ -50,7 +51,7 @@ namespace System.Runtime.Serialization
 		Hashtable references = new Hashtable ();
 
 		public static object Deserialize (XmlReader reader, Type type,
-			KnownTypeCollection knownTypes, IDataContractSurrogate surrogate,
+			KnownTypeCollection knownTypes, IDataContractSurrogate surrogate, DataContractResolver resolver,
 			string name, string ns, bool verifyObjectName)
 		{
 			reader.MoveToContent ();
@@ -60,7 +61,7 @@ namespace System.Runtime.Serialization
 				    reader.NamespaceURI != ns)
 					throw new SerializationException (String.Format ("Expected element '{0}' in namespace '{1}', but found {2} node '{3}' in namespace '{4}'", name, ns, reader.NodeType, reader.LocalName, reader.NamespaceURI));
 //				Verify (knownTypes, type, name, ns, reader);
-			return new XmlFormatterDeserializer (knownTypes, surrogate).Deserialize (type, reader);
+			return new XmlFormatterDeserializer (knownTypes, surrogate, resolver).Deserialize (type, reader);
 		}
 
 		// Verify the top element name and namespace.
@@ -88,30 +89,20 @@ namespace System.Runtime.Serialization
 
 		private XmlFormatterDeserializer (
 			KnownTypeCollection knownTypes,
-			IDataContractSurrogate surrogate)
+			IDataContractSurrogate surrogate,
+			DataContractResolver resolver)
 		{
 			this.types = knownTypes;
 			this.surrogate = surrogate;
+			this.resolver = resolver;
 		}
 
 		public Hashtable References {
 			get { return references; }
 		}
 
-		// At the beginning phase, we still have to instantiate a new
-		// target object even if fromContent is true.
+		// This method handles z:Ref, xsi:nil and primitive types, and then delegates to DeserializeByMap() for anything else.
 		public object Deserialize (Type type, XmlReader reader)
-		{
-			string label = reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace);
-			object o = DeserializeCore (type, reader);
-
-			if (label != null)
-				references.Add (label, o);
-
-			return o;
-		}
-
-		public object DeserializeCore (Type type, XmlReader reader)
 		{
 			QName graph_qname = types.GetQName (type);
 			string itype = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
@@ -145,6 +136,8 @@ namespace System.Runtime.Serialization
 			}
 
 			if (KnownTypeCollection.GetPrimitiveTypeFromName (graph_qname.Name) != null) {
+				string id = reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace);
+
 				string value;
 				if (reader.IsEmptyElement) {
 					reader.Read (); // advance
@@ -156,7 +149,13 @@ namespace System.Runtime.Serialization
 				}
 				else
 					value = reader.ReadElementContentAsString ();
-				return KnownTypeCollection.PredefinedTypeStringToObject (value, graph_qname.Name, reader);
+				object ret = KnownTypeCollection.PredefinedTypeStringToObject (value, graph_qname.Name, reader);
+				if (id != null) {
+					if (references.ContainsKey (id))
+						throw new InvalidOperationException (String.Format ("Object with Id '{0}' already exists as '{1}'", id, references [id]));
+					references.Add (id, ret);
+				}
+				return ret;
 			}
 
 			return DeserializeByMap (graph_qname, type, reader);

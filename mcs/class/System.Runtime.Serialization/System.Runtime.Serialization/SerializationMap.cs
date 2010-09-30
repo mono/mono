@@ -124,6 +124,17 @@ namespace System.Runtime.Serialization
 
 		public QName XmlName { get; set; }
 
+		protected void HandleId (XmlReader reader, XmlFormatterDeserializer deserializer, object instance)
+		{
+			HandleId (reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace), deserializer, instance);
+		}
+		
+		protected void HandleId (string id, XmlFormatterDeserializer deserializer, object instance)
+		{
+			if (id != null)
+				deserializer.References.Add (id, instance);
+		}
+
 		public CollectionDataContractAttribute GetCollectionDataContractAttribute (Type type)
 		{
 			object [] atts = type.GetCustomAttributes (
@@ -343,15 +354,16 @@ namespace System.Runtime.Serialization
 		public virtual object DeserializeObject (XmlReader reader, XmlFormatterDeserializer deserializer)
 		{
 			bool isEmpty = reader.IsEmptyElement;
+			string id = reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace);
 			reader.ReadStartElement ();
 			reader.MoveToContent ();
 
 			object res;
 
 			if (isEmpty)
-				res = DeserializeEmptyContent (reader, deserializer);
+				res = DeserializeEmptyContent (reader, deserializer, id);
 			else
-				res = DeserializeContent (reader, deserializer);
+				res = DeserializeContent (reader, deserializer, id);
 
 			reader.MoveToContent ();
 			if (!isEmpty && reader.NodeType == XmlNodeType.EndElement)
@@ -371,21 +383,21 @@ namespace System.Runtime.Serialization
 		// This is sort of hack. The argument reader already moved ahead of
 		// the actual empty element.It's just for historical consistency.
 		public virtual object DeserializeEmptyContent (XmlReader reader,
-			XmlFormatterDeserializer deserializer)
+			XmlFormatterDeserializer deserializer, string id)
 		{
-			return DeserializeContent (reader, deserializer, true);
+			return DeserializeContent (reader, deserializer, id, true);
 		}
 
 		public virtual object DeserializeContent (XmlReader reader,
-			XmlFormatterDeserializer deserializer)
+			XmlFormatterDeserializer deserializer, string id)
 		{
-			return DeserializeContent (reader, deserializer, false);
+			return DeserializeContent (reader, deserializer, id, false);
 		}
 
-		object DeserializeContent (XmlReader reader,
-			XmlFormatterDeserializer deserializer, bool empty)
+		object DeserializeContent (XmlReader reader, XmlFormatterDeserializer deserializer, string id, bool empty)
 		{
 			object instance = FormatterServices.GetUninitializedObject (RuntimeType);
+			HandleId (id, deserializer, instance);
 
 			if (OnDeserializing != null)
 				OnDeserializing.Invoke (instance, new object [] {new StreamingContext (StreamingContextStates.All)});
@@ -495,6 +507,9 @@ namespace System.Runtime.Serialization
 #else
 			IXmlSerializable ixs = (IXmlSerializable) Activator.CreateInstance (RuntimeType, true);
 #endif
+
+			HandleId (reader, deserializer, ixs);
+
 			ixs.ReadXml (reader);
 			return ixs;
 		}
@@ -709,9 +724,10 @@ namespace System.Runtime.Serialization
 #endif
 		}
 
-		public override object DeserializeEmptyContent (XmlReader reader, XmlFormatterDeserializer deserializer)
+		public override object DeserializeEmptyContent (XmlReader reader, XmlFormatterDeserializer deserializer, string id)
 		{
 			var instance = CreateInstance ();
+			HandleId (id, deserializer, instance);
 			if (OnDeserializing != null)
 				OnDeserializing.Invoke (instance, new object [] {new StreamingContext (StreamingContextStates.All)});
 			try {
@@ -725,9 +741,10 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-		public override object DeserializeContent (XmlReader reader, XmlFormatterDeserializer deserializer)
+		public override object DeserializeContent (XmlReader reader, XmlFormatterDeserializer deserializer, string id)
 		{
 			object instance = CreateInstance ();
+			HandleId (id, deserializer, instance);
 			if (OnDeserializing != null)
 				OnDeserializing.Invoke (instance, new object [] {new StreamingContext (StreamingContextStates.All)});
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
@@ -961,14 +978,15 @@ namespace System.Runtime.Serialization
 #endif
 		}
 
-		public override object DeserializeEmptyContent (XmlReader reader, XmlFormatterDeserializer deserializer)
+		public override object DeserializeEmptyContent (XmlReader reader, XmlFormatterDeserializer deserializer, string id)
 		{
-			return DeserializeContent (reader, deserializer);
+			return DeserializeContent (reader, deserializer, id);
 		}
 
-		public override object DeserializeContent(XmlReader reader, XmlFormatterDeserializer deserializer)
+		public override object DeserializeContent(XmlReader reader, XmlFormatterDeserializer deserializer, string id)
 		{
 			object instance = CreateInstance ();
+			HandleId (id, deserializer, instance);
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				if (reader.IsEmptyElement)
@@ -1141,18 +1159,19 @@ namespace System.Runtime.Serialization
 				"Enum value '{0}' is invalid for type '{1}' and cannot be serialized.", graph, RuntimeType));
 		}
 
-		public override object DeserializeEmptyContent (XmlReader reader,
-			XmlFormatterDeserializer deserializer)
+		public override object DeserializeEmptyContent (XmlReader reader, XmlFormatterDeserializer deserializer, string id)
 		{
 			if (!flag_attr)
 				throw new SerializationException (String.Format ("Enum value '' is invalid for type '{0}' and cannot be deserialized.", RuntimeType));
-			return Enum.ToObject (RuntimeType, 0);
+			var instance = Enum.ToObject (RuntimeType, 0);
+			HandleId (id, deserializer, instance);
+			return instance;
 		}
 
-		public override object DeserializeContent (XmlReader reader,
-			XmlFormatterDeserializer deserializer)
+		public override object DeserializeContent (XmlReader reader, XmlFormatterDeserializer deserializer, string id)
 		{
 			string value = reader.NodeType != XmlNodeType.Text ? String.Empty : reader.ReadContentAsString ();
+			HandleId (id, deserializer, value);
 
 			if (value != String.Empty) {
 				foreach (EnumMemberInfo emi in enum_members)

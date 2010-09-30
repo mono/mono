@@ -13,6 +13,7 @@ System.Runtime.Serialization.Configuration/TypeElementCollection.cs
 System.Runtime.Serialization/CollectionDataContractAttribute.cs
 System.Runtime.Serialization/ContractNamespaceAttribute.cs
 System.Runtime.Serialization/DataContractAttribute.cs
+System.Runtime.Serialization/DataContractResolver.cs
 System.Runtime.Serialization/DataContractSerializer.cs
 System.Runtime.Serialization/DataMemberAttribute.cs
 System.Runtime.Serialization/EnumMemberAttribute.cs
