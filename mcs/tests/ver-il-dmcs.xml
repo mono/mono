@@ -1563,7 +1563,7 @@
         <size>404</size>
       </method>
       <method name="Boolean UsingTest()">
-        <size>335</size>
+        <size>453</size>
       </method>
       <method name="Int32 Main()">
         <size>71</size>
@@ -2125,6 +2125,32 @@
     </type>
     <type name="Test+&lt;Foo&gt;c__DynamicSite0`1+Container0[Z]">
       <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Z ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-032.cs">
+    <type name="A">
+      <method name="Void .ctor(Int32)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Foo(Int32, A ByRef)">
+        <size>9</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>140</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+&lt;Main&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Type, System.Object, A ByRef)">
         <size>0</size>
       </method>
       <method name="Void .ctor(Object, IntPtr)">
@@ -6051,6 +6077,30 @@
       </method>
       <method name="Void Main()">
         <size>61</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-139.cs">
+    <type name="MyStruct">
+      <method name="Int32 op_Inequality(Nullable`1, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_Equality(Nullable`1, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_Inequality(System.String, Nullable`1)">
+        <size>3</size>
+      </method>
+      <method name="Int32 op_Equality(System.String, Nullable`1)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -11907,9 +11957,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
     </type>
     <type name="Foo">
       <method name="Boolean op_Equality(Foo, Foo)">
@@ -11917,6 +11964,27 @@
       </method>
       <method name="Boolean op_Inequality(Foo, Foo)">
         <size>6</size>
+      </method>
+    </type>
+    <type name="S2">
+      <method name="Boolean op_Equality(S2, Nullable`1)">
+        <size>6</size>
+      </method>
+      <method name="Boolean op_Inequality(S2, Nullable`1)">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="S3">
+      <method name="Decimal op_Inequality(S3, System.Object)">
+        <size>7</size>
+      </method>
+      <method name="Decimal op_Equality(S3, System.Object)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>97</size>
       </method>
     </type>
   </test>
