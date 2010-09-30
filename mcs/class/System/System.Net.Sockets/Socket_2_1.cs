@@ -252,7 +252,12 @@ namespace System.Net.Sockets {
 				}
 
 				if (callback != null)
-					callback (this);
+					ThreadPool.QueueUserWorkItem (CB, null);
+			}
+
+			void CB (object unused)
+			{
+				callback (this);
 			}
 
 			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)
