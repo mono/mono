@@ -1400,7 +1400,7 @@ namespace Mono.CSharp {
 						OperatorName, t.GetSignatureForError ());
 				}
 
-				if (TypeManager.IsStruct (d)) {
+				if (TypeManager.IsStruct (d) && d != TypeManager.void_type) {
 					if (Convert.ImplicitBoxingConversion (null, d, t) != null)
 						return CreateConstantResult (ec, true);
 				} else {
