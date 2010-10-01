@@ -397,11 +397,11 @@ namespace MonoTests.System.Data.SqlClient
 			reader.Close ();
 		}
 
-		//#613087 Test
+		//#613087, #620860 Test
 		[Test]
-		public void GetDecimalOfInt64Test ()
+		public void GetDecimalOfInt64Test_Max ()
 		{
-			string crTable = "CREATE TABLE #613087 (decimalint64 decimal(18,0))";
+			string crTable = "CREATE TABLE #613087 (decimalint64 decimal(20,0))";
 			//string drTable = "drop table #613087";
 			
 			cmd.CommandText = crTable;
@@ -411,7 +411,7 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandText = "INSERT INTO #613087 VALUES (@decimalint64)";
 			SqlParameter param = new SqlParameter ();
 			param.ParameterName = "@decimalint64";
-			param.Value = new SqlDecimal ((long)922337203685477580);
+			param.Value = new SqlDecimal ((long)Int64.MaxValue);
 			cmd.Parameters.Add (param);
 			cmd.ExecuteNonQuery ();
 			
@@ -419,10 +419,60 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandText = "Select * from #613087";
 			reader = cmd.ExecuteReader();
 			reader.Read ();
-			GetMethodTests ("SqlDecimal");
-			Assert.AreEqual (param.Value, reader.GetSqlDecimal (0).Value, "SqlDecimalFromInt64 Test failed");
+			Assert.AreEqual (param.Value, reader.GetSqlDecimal (0), "SqlDecimalFromInt64_Max Test failed");
 		}
 		
+		//#613087, #620860 Test
+		[Test]
+		public void GetDecimalOfInt64Test_Min ()
+		{
+			string crTable = "CREATE TABLE #613087 (decimalint64 decimal(20,0))";
+			//string drTable = "drop table #613087";
+			
+			cmd.CommandText = crTable;
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery ();
+			
+			cmd.CommandText = "INSERT INTO #613087 VALUES (@decimalint64)";
+			SqlParameter param = new SqlParameter ();
+			param.ParameterName = "@decimalint64";
+			param.Value = new SqlDecimal ((long)Int64.MinValue);
+			cmd.Parameters.Add (param);
+			cmd.ExecuteNonQuery ();
+			
+			cmd.Parameters.Clear ();
+			cmd.CommandText = "Select * from #613087";
+			reader = cmd.ExecuteReader();
+			reader.Read ();
+			Assert.AreEqual (param.Value, reader.GetSqlDecimal (0), "SqlDecimalFromInt64_Min Test failed");
+		}
+
+		//#613087, #620860 Test
+		[Test]
+		public void GetDecimalOfInt64Test_Any ()
+		{
+			string crTable = "CREATE TABLE #613087 (decimalint64 decimal(20,0))";
+			//string drTable = "drop table #613087";
+			
+			cmd.CommandText = crTable;
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery ();
+			
+			cmd.CommandText = "INSERT INTO #613087 VALUES (@decimalint64)";
+			SqlParameter param = new SqlParameter ();
+			param.ParameterName = "@decimalint64";
+			param.DbType = DbType.Decimal;
+			param.Value = ulong.MaxValue;
+			cmd.Parameters.Add (param);
+			cmd.ExecuteNonQuery ();
+			
+			cmd.Parameters.Clear ();
+			cmd.CommandText = "Select * from #613087";
+			reader = cmd.ExecuteReader();
+			reader.Read ();
+			Assert.AreEqual (param.Value, (ulong)reader.GetSqlDecimal (0).Value, "SqlDecimalFromInt64_Any Test failed");
+		}
+
 		[Test]
 		public void GetSqlMoneyTest ()
 		{

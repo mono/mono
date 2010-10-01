@@ -645,7 +645,8 @@ namespace Mono.Data.Tds.Protocol
 					break;
 				}
 				case "smallmoney": {
-					Decimal val = (decimal) param.Value;
+					// 4 == SqlMoney::MoneyFormat.NumberDecimalDigits
+					Decimal val = Decimal.Round ((decimal) param.Value, 4);
 					if (val < SMALLMONEY_MIN || val > SMALLMONEY_MAX)
 						throw new OverflowException (string.Format (
 							CultureInfo.InvariantCulture,
