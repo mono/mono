@@ -80,12 +80,12 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public static CallSiteBinder SetIndex (CSharpBinderFlags flags, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
 		{
-			return new CSharpSetIndexBinder (context, argumentInfo);
+			return new CSharpSetIndexBinder (flags, context, argumentInfo);
 		}
 		
 		public static CallSiteBinder SetMember (CSharpBinderFlags flags, string name, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
 		{
-			return new CSharpSetMemberBinder (name, context, argumentInfo);
+			return new CSharpSetMemberBinder (flags, name, context, argumentInfo);
 		}
 		
 		public static CallSiteBinder UnaryOperation (CSharpBinderFlags flags, ExpressionType operation, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)

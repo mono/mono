@@ -66,9 +66,9 @@ class AssertDynamicObject : DynamicMetaObject
 		if (mock.GetMemberOperation == null)
 			throw new ApplicationException ("Unexpected BindGetMember");
 
-		mock.GetMemberOperation (binder);
+		var r = mock.GetMemberOperation (binder);
 
-		return GetFakeMetaObject (new object ());
+		return GetFakeMetaObject (r);
 	}
 
 	public override DynamicMetaObject BindInvoke (InvokeBinder binder, DynamicMetaObject[] args)
@@ -140,7 +140,7 @@ class DynamicObjectMock : DynamicObject
 	public Action<BinaryOperationBinder, object> BinaryOperation;
 	public Func<ConvertBinder, object> ConvertOperation;
 	public Action<GetIndexBinder, object[]> GetIndexOperation;
-	public Action<GetMemberBinder> GetMemberOperation;
+	public Func<GetMemberBinder, object> GetMemberOperation;
 	public Action<InvokeBinder, object[]> InvokeOperation;
 	public Action<InvokeMemberBinder, object[]> InvokeMemberOperation;
 	public Action<SetIndexBinder, object[], object> SetIndexOperation;
@@ -738,7 +738,7 @@ class Tester : DynamicObjectMock
 	{
 		mock.ConvertOperation = (binder) => {
 			Assert (binder.Explicit, true, "Explicit");
-			//			Assert (binder.IsChecked, true, "IsChecked");
+//			Assert (binder.IsChecked, true, "IsChecked");
 			Assert (binder.Type, typeof (byte), "Type");
 			return (byte) 2;
 		};
@@ -767,7 +767,7 @@ class Tester : DynamicObjectMock
 		};
 
 		foreach (int v in d) {
-			//			Console.WriteLine (v);
+//			Console.WriteLine (v);
 		}
 	}
 
@@ -826,6 +826,8 @@ class Tester : DynamicObjectMock
 			AssertArgument (binder, new[] {
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null) },
 				"ArgumentInfo");
+
+			return null;
 		};
 
 		var g = d.Foo;
@@ -860,7 +862,7 @@ class Tester : DynamicObjectMock
 
 		d ();
 	}
-	
+
 	void Invoke_3 (dynamic d, DynamicObjectMock mock)
 	{
 		try {
@@ -926,10 +928,7 @@ class Tester : DynamicObjectMock
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.Constant | CSharpArgumentInfoFlags.UseCompileTimeType, null)},
 				"ArgumentInfo");
 
-//			Assert (binder.Flags, CSharpCallFlags.None, "Flags");
 			Assert (binder.IgnoreCase, false, "IgnoreCase");
-//			Assert (binder.TypeArguments, new Type[0], "TypeArguments");
-
 			Assert ((IList<object>) args, new object[] { 'a' }, "args");
 		};
 
@@ -945,10 +944,7 @@ class Tester : DynamicObjectMock
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null)},
 				"ArgumentInfo");
 
-//			Assert (binder.Flags, CSharpCallFlags.None, "Flags");
 			Assert (binder.IgnoreCase, false, "IgnoreCase");
-//			Assert (binder.TypeArguments, new Type[0], "TypeArguments");
-
 			Assert ((IList<object>) args, new object[] { mock }, "args");
 		};
 
@@ -964,10 +960,7 @@ class Tester : DynamicObjectMock
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.IsRef | CSharpArgumentInfoFlags.UseCompileTimeType, null) },
 				"ArgumentInfo");
 
-			//			Assert (binder.Flags, CSharpCallFlags.None, "Flags");
 			Assert (binder.IgnoreCase, false, "IgnoreCase");
-			//			Assert (binder.TypeArguments, new Type[0], "TypeArguments");
-
 			Assert ((IList<object>) args, new object[] { 9 }, "args");
 		};
 
@@ -984,10 +977,7 @@ class Tester : DynamicObjectMock
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.IsOut | CSharpArgumentInfoFlags.UseCompileTimeType, null)	},
 				"ArgumentInfo");
 
-//			Assert (binder.Flags, CSharpCallFlags.None, "Flags");
 			Assert (binder.IgnoreCase, false, "IgnoreCase");
-//			Assert (binder.TypeArguments, new Type[0], "TypeArguments");
-
 			Assert ((IList<object>) args, new object[] { 0 }, "args");
 		};
 
@@ -1009,10 +999,8 @@ class Tester : DynamicObjectMock
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.Constant, null),
 			}, "ArgumentInfo");
-			//			Assert (binder.Flags, CSharpCallFlags.SimpleNameCall, "Flags");
-			Assert (binder.IgnoreCase, false, "IgnoreCase");
-			//			Assert (binder.TypeArguments, Type.EmptyTypes, "TypeArguments");
 
+			Assert (binder.IgnoreCase, false, "IgnoreCase");
 			Assert ((IList<object>) args, new object[] { d, null }, "args");
 		};
 
@@ -1026,10 +1014,8 @@ class Tester : DynamicObjectMock
 			AssertArgument (binder, new[] {
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null)
 			}, "ArgumentInfo");
-//			Assert (binder.Flags, CSharpCallFlags.None, "Flags");
-			Assert (binder.IgnoreCase, false, "IgnoreCase");
-//			Assert (binder.TypeArguments, new Type[] { typeof (object) }, "TypeArguments");
 
+			Assert (binder.IgnoreCase, false, "IgnoreCase");
 			Assert ((IList<object>) args, new object[0], "args");
 		};
 
@@ -1105,6 +1091,40 @@ class Tester : DynamicObjectMock
 		};
 
 		d.Foo = d_const;
+	}
+
+	void SetMember_2 (dynamic d, DynamicObjectMock mock)
+	{
+		mock.GetMemberOperation = (binder) => {
+			Assert (binder.Name, "Foo", "Name");
+			Assert (binder.IgnoreCase, false, "IgnoreCase");
+			AssertArgument (binder, new[] {
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null) },
+				"ArgumentInfo");
+
+			return mock;
+		};
+
+		mock.BinaryOperation = (binder, arg) => {
+			Assert (binder.Operation, ExpressionType.MultiplyAssign, "Operation");
+			AssertArgument (binder, new[] {
+			    CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
+			    CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.Constant, null) },
+				"ArgumentInfo");
+
+			Assert (arg, null, "arg");
+		};
+
+		mock.SetMemberOperation = (binder, value) => {
+			Assert (binder.Name, "Foo", "Name");
+			Assert (binder.IgnoreCase, false, "IgnoreCase");
+			AssertArgument (binder, new[] {
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null)
+			}, "ArgumentInfo");
+		};
+
+		d.Foo *= null;
 	}
 
 	void UnaryPlus_1 (dynamic d, DynamicObjectMock mock)

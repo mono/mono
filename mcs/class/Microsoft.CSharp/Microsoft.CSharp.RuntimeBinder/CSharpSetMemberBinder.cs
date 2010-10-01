@@ -36,12 +36,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 {
 	class CSharpSetMemberBinder : SetMemberBinder
 	{
+		readonly CSharpBinderFlags flags;
 		IList<CSharpArgumentInfo> argumentInfo;
 		Type callingContext;
-		
-		public CSharpSetMemberBinder (string name, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
+
+		public CSharpSetMemberBinder (CSharpBinderFlags flags, string name, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (name, false)
 		{
+			this.flags = flags;
 			this.callingContext = callingContext;
 			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
@@ -54,7 +56,17 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			// Field assignment
 			expr = new Compiler.MemberAccess (expr, Name);
-			expr = new Compiler.SimpleAssign (expr, source);
+
+			// Compound assignment under dynamic context does not convert result
+			// expression but when setting member type we need to do explicit
+			// conversion to ensure type match between member type and dynamic
+			// expression type
+			if ((flags & CSharpBinderFlags.ValueFromCompoundAssignment) != 0) {
+				expr = new Compiler.RuntimeExplicitAssign (expr, source);
+			} else {
+				expr = new Compiler.SimpleAssign (expr, source);
+			}
+
 			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);

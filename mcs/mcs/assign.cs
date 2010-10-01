@@ -399,7 +399,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class SimpleAssign : Assign {
+	public class SimpleAssign : Assign
+	{
 		public SimpleAssign (Expression target, Expression source)
 			: this (target, source, target.Location)
 		{
@@ -431,6 +432,23 @@ namespace Mono.CSharp {
 				ec.Report.Warning (1717, 3, loc, "Assignment made to same variable; did you mean to assign something else?");
 
 			return this;
+		}
+	}
+
+	public class RuntimeExplicitAssign : Assign
+	{
+		public RuntimeExplicitAssign (Expression target, Expression source)
+			: base (target, source, target.Location)
+		{
+		}
+
+		protected override Expression ResolveConversions (ResolveContext ec)
+		{
+			source = Convert.ExplicitConversion (ec, source, target.Type, loc);
+			if (source != null)
+				return this;
+
+			return base.ResolveConversions (ec);
 		}
 	}
 
@@ -637,30 +655,34 @@ namespace Mono.CSharp {
 
 			source = new Binary (op, left, right, true, loc);
 
-			if (target is DynamicMemberBinder) {
-				Arguments targs = ((DynamicMemberBinder) target).Arguments;
+			if (target is DynamicMemberAssignable) {
+				Arguments targs = ((DynamicMemberAssignable) target).Arguments;
 				source = source.Resolve (ec);
 
-				Arguments args = new Arguments (2);
+				Arguments args = new Arguments (targs.Count + 1);
 				args.AddRange (targs);
 				args.Add (new Argument (source));
-				source = new DynamicMemberBinder (ma.Name, args, loc).ResolveLValue (ec, right);
+				if (target is DynamicMemberBinder) {
+					source = new DynamicMemberBinder (ma.Name, CSharpBinderFlags.ValueFromCompoundAssignment, args, loc).Resolve (ec);
 
-				// Handles possible event addition/subtraction
-				if (op == Binary.Operator.Addition || op == Binary.Operator.Subtraction) {
-					args = new Arguments (2);
-					args.AddRange (targs);
-					args.Add (new Argument (right));
-					string method_prefix = op == Binary.Operator.Addition ?
-						Event.AEventAccessor.AddPrefix : Event.AEventAccessor.RemovePrefix;
+					// Handles possible event addition/subtraction
+					if (op == Binary.Operator.Addition || op == Binary.Operator.Subtraction) {
+						args = new Arguments (2);
+						args.AddRange (targs);
+						args.Add (new Argument (right));
+						string method_prefix = op == Binary.Operator.Addition ?
+							Event.AEventAccessor.AddPrefix : Event.AEventAccessor.RemovePrefix;
 
-					var invoke = DynamicInvocation.CreateSpecialNameInvoke (
-						new MemberAccess (right, method_prefix + ma.Name, loc), args, loc).Resolve (ec);
+						var invoke = DynamicInvocation.CreateSpecialNameInvoke (
+							new MemberAccess (right, method_prefix + ma.Name, loc), args, loc).Resolve (ec);
 
-					args = new Arguments (1);
-					args.AddRange (targs);
-					source = new DynamicEventCompoundAssign (ma.Name, args,
-						(ExpressionStatement) source, (ExpressionStatement) invoke, loc).Resolve (ec);
+						args = new Arguments (1);
+						args.AddRange (targs);
+						source = new DynamicEventCompoundAssign (ma.Name, args,
+							(ExpressionStatement) source, (ExpressionStatement) invoke, loc).Resolve (ec);
+					}
+				} else {
+					source = new DynamicIndexBinder (CSharpBinderFlags.ValueFromCompoundAssignment, args, loc).Resolve (ec);
 				}
 
 				return source;
@@ -671,6 +693,14 @@ namespace Mono.CSharp {
 
 		protected override Expression ResolveConversions (ResolveContext ec)
 		{
+			//
+			// LAMESPEC: Under dynamic context no target conversion is happening
+			// This allows more natual dynamic behaviour but breaks compatibility
+			// with static binding
+			//
+			if (target is RuntimeValueExpression)
+				return this;
+
 			TypeSpec target_type = target.Type;
 
 			//

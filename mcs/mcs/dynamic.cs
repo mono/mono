@@ -561,14 +561,21 @@ namespace Mono.CSharp
 		{
 		}
 
+		public DynamicIndexBinder (CSharpBinderFlags flags, Arguments args, Location loc)
+			: this (args, loc)
+		{
+			base.flags = flags;
+		}
+
 		protected override Expression CreateCallSiteBinder (ResolveContext ec, Arguments args, bool isSet)
 		{
 			Arguments binder_args = new Arguments (3);
 
-			binder_args.Add (new Argument (new BinderFlags (0, this)));
+			binder_args.Add (new Argument (new BinderFlags (flags, this)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
+			isSet |= (flags & CSharpBinderFlags.ValueFromCompoundAssignment) != 0;
 			return new Invocation (GetBinder (isSet ? "SetIndex" : "GetIndex", loc), binder_args);
 		}
 	}
@@ -665,15 +672,22 @@ namespace Mono.CSharp
 			this.name = name;
 		}
 
+		public DynamicMemberBinder (string name, CSharpBinderFlags flags, Arguments args, Location loc)
+			: this (name, args, loc)
+		{
+			base.flags = flags;
+		}
+
 		protected override Expression CreateCallSiteBinder (ResolveContext ec, Arguments args, bool isSet)
 		{
 			Arguments binder_args = new Arguments (4);
 
-			binder_args.Add (new Argument (new BinderFlags (0, this)));
+			binder_args.Add (new Argument (new BinderFlags (flags, this)));
 			binder_args.Add (new Argument (new StringLiteral (name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
+			isSet |= (flags & CSharpBinderFlags.ValueFromCompoundAssignment) != 0;
 			return new Invocation (GetBinder (isSet ? "SetMember" : "GetMember", loc), binder_args);
 		}
 	}
