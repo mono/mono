@@ -501,6 +501,10 @@ namespace System.Net.Sockets {
 										     result.Size,
 										     result.SockFlags,
 										     out error);
+						if (error != 0) {
+							result.Complete (new SocketException ((int) error));
+							return;
+						}
 					} catch (Exception e) {
 						result.Complete (e);
 						return;
