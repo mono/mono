@@ -811,6 +811,7 @@ namespace System.Runtime.Serialization
 		{
 			DefaultTypeMap ret = new DefaultTypeMap (type, this);
 			contracts.Add (ret);
+			ret.Initialize ();
 			return ret;
 		}
 

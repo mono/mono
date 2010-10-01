@@ -471,15 +471,15 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-		protected DataMemberInfo CreateDataMemberInfo (DataMemberAttribute dma, MemberInfo mi, Type type)
+		protected DataMemberInfo CreateDataMemberInfo (DataMemberAttribute dma, MemberInfo mi, Type memberType, string ownerNamespace)
 		{
-			KnownTypes.Add (type);
-			QName qname = KnownTypes.GetQName (type);
-			string rootNamespace = KnownTypes.GetQName (mi.DeclaringType).Namespace;
+			KnownTypes.Add (memberType);
+			QName qname = KnownTypes.GetQName (memberType);
+			
 			if (KnownTypeCollection.GetPrimitiveTypeFromName (qname.Name) != null)
-				return new DataMemberInfo (mi, dma, rootNamespace, null);
+				return new DataMemberInfo (mi, dma, ownerNamespace, null);
 			else
-				return new DataMemberInfo (mi, dma, rootNamespace, qname.Namespace);
+				return new DataMemberInfo (mi, dma, ownerNamespace, qname.Namespace);
 		}
 	}
 
@@ -533,21 +533,21 @@ namespace System.Runtime.Serialization
 
 		internal void Initialize ()
 		{
-			Type baseType = RuntimeType;
+			Type type = RuntimeType;
 			List <DataMemberInfo> members = new List <DataMemberInfo> ();
-			object [] atts = baseType.GetCustomAttributes (
+			object [] atts = type.GetCustomAttributes (
 				typeof (DataContractAttribute), false);
 			IsReference = atts.Length > 0 ? (((DataContractAttribute) atts [0]).IsReference) : false;
 
-			while (baseType != null) {
-				QName bqname = KnownTypes.GetQName (baseType);
+			while (type != null) {
+				QName qname = KnownTypes.GetQName (type);
 					
-				members = GetMembers (baseType, bqname, true);
+				members = GetMembers (type, qname, true);
 				members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 				Members.InsertRange (0, members);
 				members.Clear ();
 
-				baseType = baseType.BaseType;
+				type = type.BaseType;
 			}
 		}
 
@@ -568,7 +568,7 @@ namespace System.Runtime.Serialization
 				if (!pi.CanRead || (!pi.CanWrite && !(map is ICollectionTypeMap)))
 					throw new InvalidDataContractException (String.Format (
 							"DataMember property '{0}' on type '{1}' must have both getter and setter.", pi, pi.DeclaringType));
-				data_members.Add (CreateDataMemberInfo (dma, pi, pi.PropertyType));
+				data_members.Add (CreateDataMemberInfo (dma, pi, pi.PropertyType, qname.Namespace));
 			}
 
 			foreach (FieldInfo fi in type.GetFields (flags)) {
@@ -576,7 +576,7 @@ namespace System.Runtime.Serialization
 					GetDataMemberAttribute (fi);
 				if (dma == null)
 					continue;
-				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType));
+				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, qname.Namespace));
 			}
 
 			return data_members;
@@ -592,6 +592,10 @@ namespace System.Runtime.Serialization
 	{
 		public DefaultTypeMap (Type type, KnownTypeCollection knownTypes)
 			: base (type, KnownTypeCollection.GetStaticQName (type), knownTypes)
+		{
+		}
+
+		internal void Initialize ()
 		{
 			Members.AddRange (GetDefaultMembers ());
 		}
@@ -610,7 +614,7 @@ namespace System.Runtime.Serialization
 					continue;
 				if (mi.GetCustomAttributes (typeof (IgnoreDataMemberAttribute), false).Length != 0)
 					continue;
-				l.Add (new DataMemberInfo (mi, new DataMemberAttribute (), null, null));
+				l.Add (CreateDataMemberInfo (new DataMemberAttribute (), mi, mt, XmlName.Namespace));
 			}
 			l.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 			return l;
@@ -1051,7 +1055,7 @@ namespace System.Runtime.Serialization
 					if (fi.IsInitOnly)
 						throw new InvalidDataContractException (String.Format ("DataMember field {0} must not be read-only.", fi));
 					DataMemberAttribute dma = new DataMemberAttribute ();
-					data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType));
+					data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, qname.Namespace));
 				}
 			}
 

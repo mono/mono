@@ -142,11 +142,11 @@ namespace System.Runtime.Serialization
 			writer.WriteString (KnownTypeCollection.PredefinedTypeObjectToString (graph));
 		}
 
-		public void WriteStartElement (string rootName, string rootNamespace, string currentNamespace)
+		public void WriteStartElement (string memberName, string memberNamespace, string contentNamespace)
 		{
-			writer.WriteStartElement (rootName, rootNamespace);
-			if (!string.IsNullOrEmpty (currentNamespace) && currentNamespace != rootNamespace)
-				writer.WriteXmlnsAttribute (null, currentNamespace);
+			writer.WriteStartElement (memberName, memberNamespace);
+			if (!string.IsNullOrEmpty (contentNamespace) && contentNamespace != memberNamespace)
+				writer.WriteXmlnsAttribute (null, contentNamespace);
 		}
 
 		public void WriteEndElement ()
