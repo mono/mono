@@ -4367,6 +4367,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-165.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-166.cs">
     <type name="C">
       <method name="Void .ctor()">
@@ -41572,7 +41582,7 @@
   <test name="test-789.cs">
     <type name="Program">
       <method name="Void Main()">
-        <size>50</size>
+        <size>76</size>
       </method>
       <method name="Void &lt;Main&gt;m__0()">
         <size>7</size>
