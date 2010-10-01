@@ -24,6 +24,11 @@ public class Test
 
 		if (v != "a-sdfas")
 			return 1;
+		
+		dynamic d2 = null;
+		d2 += "a";
+		if (d2 != "a")
+			return 2;
 
 		byte b = 4;
 		a.Prop *= b;
