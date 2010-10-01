@@ -33,7 +33,7 @@ System.Runtime.Serialization/XmlFormatterDeserializer.cs
 System.Runtime.Serialization/XmlFormatterSerializer.cs
 System.Runtime.Serialization/XmlObjectSerializer.cs
 System.Runtime.Serialization/XmlSerializableServices.cs
-System.Runtime.Serialization/XsdDataContractExporter-new.cs
+System.Runtime.Serialization/XsdDataContractExporter.cs
 System.Runtime.Serialization/XsdDataContractImporter.cs
 System.Xml/IFragmentCapableXmlDictionaryWriter.cs
 System.Xml/IStreamProvider.cs
