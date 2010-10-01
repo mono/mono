@@ -250,14 +250,7 @@ namespace System.Net.Sockets {
 					if (sac != null)
 						Socket.socket_pool_queue (sac, worker.result);
 				}
-
-				if (callback != null)
-					ThreadPool.QueueUserWorkItem (CB, null);
-			}
-
-			void CB (object unused)
-			{
-				callback (this);
+				// IMPORTANT: 'callback', if any is scheduled from unmanaged code
 			}
 
 			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)
