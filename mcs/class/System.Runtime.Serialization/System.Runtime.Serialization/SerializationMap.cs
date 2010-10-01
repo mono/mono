@@ -157,110 +157,6 @@ namespace System.Runtime.Serialization
 			return (Type.GetTypeCode (type) != TypeCode.Object || type == typeof (object));
 		}
 
-#if !NET_2_1
-		/* Returns the XmlSchemaType AND adds it to @schemas */
-		public virtual XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
-		{
-			if (IsPrimitive (RuntimeType))
-				return null;
-
-			if (generated_schema_types.ContainsKey (XmlName)) // Caching  
-				return generated_schema_types [XmlName] as XmlSchemaType;
-
-			XmlSchemaComplexType complex_type = null;
-
-			complex_type = new XmlSchemaComplexType ();
-			complex_type.Name = XmlName.Name;
-			generated_schema_types [XmlName] = complex_type;
-
-			if (RuntimeType.BaseType == typeof (object)) {
-				complex_type.Particle = GetSequence (schemas, generated_schema_types);
-			} else {
-				//Has a non-System.Object base class
-				XmlSchemaComplexContentExtension extension = new XmlSchemaComplexContentExtension ();
-				XmlSchemaComplexContent content = new XmlSchemaComplexContent ();
-
-				complex_type.ContentModel = content;
-				content.Content = extension;
-
-				KnownTypes.Add (RuntimeType.BaseType);
-				SerializationMap map = KnownTypes.FindUserMap (RuntimeType.BaseType);
-				//FIXME: map == null ?
-				map.GetSchemaType (schemas, generated_schema_types);
-
-				extension.Particle = GetSequence (schemas, generated_schema_types);
-				extension.BaseTypeName = GetQualifiedName (RuntimeType.BaseType);
-			}
-			
-			XmlSchemaElement schemaElement = GetSchemaElement (XmlName, complex_type);
-			XmlSchema schema = GetSchema (schemas, XmlName.Namespace);
-			schema.Items.Add (complex_type);
-			schema.Items.Add (schemaElement);
-			schemas.Reprocess (schema);
-
-			return complex_type;
-		}
-
-		/* Returns the <xs:sequence> for the data members */
-		XmlSchemaSequence GetSequence (XmlSchemaSet schemas,
-				Dictionary<QName, XmlSchemaType> generated_schema_types)
-		{
-			List<DataMemberInfo> members = GetMembers ();
-
-			XmlSchema schema = GetSchema (schemas, XmlName.Namespace);
-			XmlSchemaSequence sequence = new XmlSchemaSequence ();
-			foreach (DataMemberInfo dmi in members) {
-				// delegates are not supported.
-				if (!dmi.MemberType.IsAbstract && typeof (System.Delegate).IsAssignableFrom (dmi.MemberType))
-					continue;
-
-				XmlSchemaElement element = new XmlSchemaElement ();
-				element.Name = dmi.XmlName;
-
-				KnownTypes.Add (dmi.MemberType);
-				SerializationMap map = KnownTypes.FindUserMap (dmi.MemberType);
-				if (map != null) {
-					XmlSchemaType schema_type = map.GetSchemaType (schemas, generated_schema_types);
-					if (schema_type is XmlSchemaComplexType)
-						element.IsNillable = true;
-				} else {
-					//Primitive type
-					if (dmi.MemberType == typeof (string))
-						element.IsNillable = true;
-				}
-
-				element.MinOccurs = 0;
-
-				element.SchemaTypeName = GetQualifiedName (dmi.MemberType);
-				AddImport (schema, element.SchemaTypeName.Namespace);
-
-				sequence.Items.Add (element);
-			}
-
-			schemas.Reprocess (schema);
-			return sequence;
-		}
-
-		//FIXME: Replace with a dictionary ?
-		void AddImport (XmlSchema schema, string ns)
-		{
-			if (ns == XmlSchema.Namespace || schema.TargetNamespace == ns)
-				return;
-
-			foreach (XmlSchemaObject o in schema.Includes) {
-				XmlSchemaImport import = o as XmlSchemaImport;
-				if (import == null)
-					continue;
-				if (import.Namespace == ns)
-					return;
-			}
-
-			XmlSchemaImport imp = new XmlSchemaImport ();
-			imp.Namespace = ns;
-			schema.Includes.Add (imp);
-		}
-#endif
-
 		//Returns list of data members for this type ONLY
 		public virtual List<DataMemberInfo> GetMembers ()
 		{
@@ -513,14 +409,6 @@ namespace System.Runtime.Serialization
 			ixs.ReadXml (reader);
 			return ixs;
 		}
-
-#if !NET_2_1
-		// FIXME: verify return value sanity.
-		public override XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
-		{
-			return null;
-		}
-#endif
 	}
 
 	internal partial class SharedContractMap : SerializationMap
@@ -777,50 +665,6 @@ namespace System.Runtime.Serialization
 			//Shouldn't come here at all!
 			throw new NotImplementedException ();
 		}
-		
-#if !NET_2_1
-		public override XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
-		{
-			if (generated_schema_types.ContainsKey (XmlName))
-				return null;
-
-			if (generated_schema_types.ContainsKey (XmlName))
-				return generated_schema_types [XmlName];
-
-			QName element_qname = GetQualifiedName (element_type);
-
-			XmlSchemaComplexType complex_type = new XmlSchemaComplexType ();
-			complex_type.Name = XmlName.Name;
-
-			XmlSchemaSequence sequence = new XmlSchemaSequence ();
-			XmlSchemaElement element = new XmlSchemaElement ();
-
-			element.MinOccurs = 0;
-			element.MaxOccursString = "unbounded";
-			element.Name = element_qname.Name;
-
-			KnownTypes.Add (element_type);
-			SerializationMap map = KnownTypes.FindUserMap (element_type);
-			if (map != null) {// non-primitive type
-				map.GetSchemaType (schemas, generated_schema_types);
-				element.IsNillable = true;
-			}
-
-			element.SchemaTypeName = element_qname;
-
-			sequence.Items.Add (element);
-			complex_type.Particle = sequence;
-
-			XmlSchema schema = GetSchema (schemas, XmlName.Namespace);
-			schema.Items.Add (complex_type);
-			schema.Items.Add (GetSchemaElement (XmlName, complex_type));
-			schemas.Reprocess (schema);
-
-			generated_schema_types [XmlName] = complex_type;
-
-			return complex_type;
-		}
-#endif
 	}
 
 	internal partial class DictionaryTypeMap : SerializationMap, ICollectionTypeMap
@@ -1018,13 +862,6 @@ namespace System.Runtime.Serialization
 			//Shouldn't come here at all!
 			throw new NotImplementedException ();
 		}
-		
-#if !NET_2_1
-		public override XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 	}
 
 	internal partial class SharedTypeMap : SerializationMap
@@ -1116,38 +953,6 @@ namespace System.Runtime.Serialization
 				return null;
 			return (EnumMemberAttribute) atts [0];
 		}
-
-#if !NET_2_1
-		public override XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
-		{
-			if (generated_schema_types.ContainsKey (XmlName))
-				return generated_schema_types [XmlName];
-
-			XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType ();
-			simpleType.Name = XmlName.Name;
-
-			XmlSchemaSimpleTypeRestriction simpleRestriction = new XmlSchemaSimpleTypeRestriction ();
-			simpleType.Content = simpleRestriction;
-			simpleRestriction.BaseTypeName = new XmlQualifiedName ("string", XmlSchema.Namespace);
-
-			foreach (EnumMemberInfo emi in enum_members) {
-				XmlSchemaEnumerationFacet e = new XmlSchemaEnumerationFacet ();
-				e.Value = emi.XmlName;
-				simpleRestriction.Facets.Add (e);
-			}
-
-			generated_schema_types [XmlName] = simpleType;
-			
-			XmlSchema schema = GetSchema (schemas, XmlName.Namespace);
-			XmlSchemaElement element = GetSchemaElement (XmlName, simpleType);
-			element.IsNillable = true;
-
-			schema.Items.Add (simpleType);
-			schema.Items.Add (element);
-
-			return simpleType;
-		}
-#endif
 
 		public override void Serialize (object graph,
 			XmlFormatterSerializer serializer)
