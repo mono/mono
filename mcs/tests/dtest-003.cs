@@ -1021,6 +1021,23 @@ class Tester : DynamicObjectMock
 
 		d.Max<dynamic> ();
 	}
+	
+	void InvokeMember_8 (dynamic d, DynamicObjectMock mock)
+	{
+		mock.InvokeMemberOperation = (binder, args) => {
+			Assert (binder.CallInfo, new CallInfo (1, new string[0]), "CallInfo");
+			AssertArgument (binder, new[] {
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.IsRef | CSharpArgumentInfoFlags.UseCompileTimeType, null) },
+				"ArgumentInfo");
+
+			Assert (binder.IgnoreCase, false, "IgnoreCase");
+			Assert ((IList<object>) args, new object[] { 9 }, "args");
+		};
+
+		dynamic i = 9;
+		d.Max (ref i);
+	}
 
 	void SetIndex_1 (dynamic d, DynamicObjectMock mock)
 	{

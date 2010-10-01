@@ -574,15 +574,6 @@
       <method name="Void &lt;InvokeMember_7&gt;m__39(System.Dynamic.InvokeMemberBinder, System.Object[])">
         <size>90</size>
       </method>
-      <method name="Void &lt;SetIndex_1&gt;m__3A(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
-        <size>124</size>
-      </method>
-      <method name="Void &lt;SetIndex_2&gt;m__3B(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
-        <size>139</size>
-      </method>
-      <method name="Void &lt;SetMember_1&gt;m__3D(System.Dynamic.SetMemberBinder, System.Object)">
-        <size>101</size>
-      </method>
     </type>
     <type name="Tester+&lt;InvokeMember_2&gt;c__AnonStorey3">
       <method name="Void &lt;&gt;m__35(System.Dynamic.InvokeMemberBinder, System.Object[])">
@@ -591,11 +582,6 @@
     </type>
     <type name="Tester+&lt;InvokeMember_6&gt;c__AnonStorey4">
       <method name="Void &lt;&gt;m__38(System.Dynamic.InvokeMemberBinder, System.Object[])">
-        <size>119</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;SetIndex_3&gt;c__AnonStorey5">
-      <method name="Void &lt;&gt;m__3C(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
         <size>119</size>
       </method>
     </type>
@@ -622,82 +608,114 @@
       <method name="System.Object &lt;GetMember_1&gt;m__2D(System.Dynamic.GetMemberBinder)">
         <size>67</size>
       </method>
-      <method name="Void &lt;SetMember_2&gt;m__3F(System.Dynamic.BinaryOperationBinder, System.Object)">
+    </type>
+    <type name="Tester+&lt;SetMember_2&gt;c__AnonStorey6">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void InvokeMember_8(System.Object, DynamicObjectMock)">
+        <size>140</size>
+      </method>
+      <method name="Void &lt;InvokeMember_8&gt;m__3A(System.Dynamic.InvokeMemberBinder, System.Object[])">
+        <size>111</size>
+      </method>
+      <method name="Void &lt;SetIndex_1&gt;m__3B(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
+        <size>124</size>
+      </method>
+      <method name="Void &lt;SetIndex_2&gt;m__3C(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
+        <size>139</size>
+      </method>
+      <method name="Void &lt;SetMember_1&gt;m__3E(System.Dynamic.SetMemberBinder, System.Object)">
+        <size>101</size>
+      </method>
+      <method name="Void &lt;SetMember_2&gt;m__40(System.Dynamic.BinaryOperationBinder, System.Object)">
         <size>68</size>
       </method>
-      <method name="Void &lt;SetMember_2&gt;m__40(System.Dynamic.SetMemberBinder, System.Object)">
+      <method name="Void &lt;SetMember_2&gt;m__41(System.Dynamic.SetMemberBinder, System.Object)">
         <size>76</size>
       </method>
-      <method name="System.Object &lt;UnaryPlus_1&gt;m__41(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryPlus_1&gt;m__42(System.Dynamic.UnaryOperationBinder)">
         <size>47</size>
       </method>
-      <method name="System.Object &lt;UnaryMinus_1&gt;m__42(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryMinus_1&gt;m__43(System.Dynamic.UnaryOperationBinder)">
         <size>47</size>
       </method>
-      <method name="System.Object &lt;UnaryNot_1&gt;m__43(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryNot_1&gt;m__44(System.Dynamic.UnaryOperationBinder)">
         <size>47</size>
       </method>
-      <method name="System.Object &lt;UnaryOnesComplement_1&gt;m__44(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryOnesComplement_1&gt;m__45(System.Dynamic.UnaryOperationBinder)">
         <size>47</size>
       </method>
-      <method name="System.Object &lt;UnaryDecrement_1&gt;m__45(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryDecrement_1&gt;m__46(System.Dynamic.UnaryOperationBinder)">
         <size>47</size>
       </method>
-      <method name="System.Object &lt;UnaryDecrement_2&gt;m__46(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryDecrement_2&gt;m__47(System.Dynamic.UnaryOperationBinder)">
         <size>51</size>
       </method>
-      <method name="System.Object &lt;UnaryIncrement_1&gt;m__47(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryIncrement_1&gt;m__48(System.Dynamic.UnaryOperationBinder)">
         <size>47</size>
       </method>
-      <method name="System.Object &lt;UnaryIncrement_2&gt;m__48(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryIncrement_2&gt;m__49(System.Dynamic.UnaryOperationBinder)">
         <size>51</size>
       </method>
-      <method name="System.Object &lt;UnaryIsFalse_1&gt;m__49(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryIsFalse_1&gt;m__4A(System.Dynamic.UnaryOperationBinder)">
         <size>52</size>
       </method>
-      <method name="Void &lt;UnaryIsFalse_1&gt;m__4A(System.Dynamic.BinaryOperationBinder, System.Object)">
+      <method name="Void &lt;UnaryIsFalse_1&gt;m__4B(System.Dynamic.BinaryOperationBinder, System.Object)">
         <size>68</size>
       </method>
-      <method name="System.Object &lt;UnaryIsFalse_2&gt;m__4B(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryIsFalse_2&gt;m__4C(System.Dynamic.UnaryOperationBinder)">
         <size>52</size>
       </method>
-      <method name="Void &lt;UnaryIsFalse_2&gt;m__4C(System.Dynamic.BinaryOperationBinder, System.Object)">
+      <method name="Void &lt;UnaryIsFalse_2&gt;m__4D(System.Dynamic.BinaryOperationBinder, System.Object)">
         <size>68</size>
       </method>
-      <method name="System.Object &lt;UnaryIsFalse_3&gt;m__4D(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryIsFalse_3&gt;m__4E(System.Dynamic.UnaryOperationBinder)">
         <size>52</size>
       </method>
-      <method name="Void &lt;UnaryIsFalse_3&gt;m__4E(System.Dynamic.BinaryOperationBinder, System.Object)">
+      <method name="Void &lt;UnaryIsFalse_3&gt;m__4F(System.Dynamic.BinaryOperationBinder, System.Object)">
         <size>67</size>
       </method>
-      <method name="System.Object &lt;UnaryIsTrue_1&gt;m__4F(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryIsTrue_1&gt;m__50(System.Dynamic.UnaryOperationBinder)">
         <size>52</size>
       </method>
-      <method name="System.Object &lt;UnaryIsTrue_2&gt;m__50(System.Dynamic.UnaryOperationBinder)">
+      <method name="System.Object &lt;UnaryIsTrue_2&gt;m__51(System.Dynamic.UnaryOperationBinder)">
         <size>52</size>
       </method>
-      <method name="Void &lt;UnaryIsTrue_2&gt;m__51(System.Dynamic.BinaryOperationBinder, System.Object)">
+      <method name="Void &lt;UnaryIsTrue_2&gt;m__52(System.Dynamic.BinaryOperationBinder, System.Object)">
         <size>68</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__52(System.Reflection.MethodInfo)">
+      <method name="Boolean &lt;Main&gt;m__53(System.Reflection.MethodInfo)">
         <size>12</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__53(System.Reflection.MethodInfo)">
+      <method name="System.String &lt;Main&gt;m__54(System.Reflection.MethodInfo)">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__54(System.Reflection.MethodInfo)">
+      <method name="Boolean &lt;Main&gt;m__55(System.Reflection.MethodInfo)">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__55(Boolean)">
+      <method name="Boolean &lt;Main&gt;m__56(Boolean)">
         <size>5</size>
       </method>
     </type>
-    <type name="Tester+&lt;SetMember_2&gt;c__AnonStorey6">
-      <method name="System.Object &lt;&gt;m__3E(System.Dynamic.GetMemberBinder)">
-        <size>72</size>
+    <type name="Tester+&lt;InvokeMember_8&gt;c__DynamicSite35+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, System.Object ByRef)">
+        <size>0</size>
       </method>
-      <method name="Void .ctor()">
-        <size>7</size>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;SetIndex_3&gt;c__AnonStorey5">
+      <method name="Void &lt;&gt;m__3D(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
+        <size>119</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;SetMember_2&gt;c__AnonStorey6">
+      <method name="System.Object &lt;&gt;m__3F(System.Dynamic.GetMemberBinder)">
+        <size>72</size>
       </method>
     </type>
   </test>
@@ -2196,6 +2214,32 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-034.cs">
+    <type name="C">
+      <method name="Void M[U,V](U ByRef, V ByRef)">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>464</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Main&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, System.Object ByRef, System.Object ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
       </method>
     </type>
   </test>
@@ -6720,6 +6764,16 @@
         <size>6</size>
       </method>
       <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-165.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()">
         <size>7</size>
       </method>
     </type>
