@@ -1765,6 +1765,9 @@ namespace System.Net.Sockets {
 			if (result == null)
 				throw new ArgumentNullException ("result");
 
+			if (end_point == null)
+				throw new ArgumentNullException ("remote_end");
+
 			SocketAsyncResult req = result as SocketAsyncResult;
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
