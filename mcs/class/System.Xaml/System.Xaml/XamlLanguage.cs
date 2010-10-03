@@ -254,7 +254,7 @@ namespace System.Xaml
 				return xt.UnderlyingType;
 			}
 			else if (!ns.StartsWith ("clr-namespace:", StringComparison.Ordinal))
-				throw new FormatException (string.Format ("Unexpected XAML namespace '{0}'", ns));
+				return null;
 
 			Type [] genArgs = null;
 			if (typeArguments != null) {

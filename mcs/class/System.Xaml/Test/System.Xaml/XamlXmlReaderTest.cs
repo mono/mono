@@ -121,6 +121,12 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Read_SilverlightApp1 ()
+		{
+			ReadTest ("SilverlightApp1.xaml");
+		}
+
+		[Test]
 		public void Read1 ()
 		{
 			var r = GetReader ("Int32.xml");

@@ -314,13 +314,13 @@ namespace System.Xaml
 			XamlType xt;
 			IList<XamlTypeName> typeArgs = typeArgNames == null ? null : XamlTypeName.ParseList (typeArgNames, xaml_namespace_resolver);
 			Type rtype = XamlLanguage.ResolveXamlTypeName (ns, name, typeArgs, xaml_namespace_resolver);
-			if (rtype == null)
-				throw new XamlParseException (String.Format ("Cannot resolve runtime namespace from XML namespace '{0}', local name '{1}' and type argument '{2}'", ns, name, typeArgNames));
-			xt = sctx.GetXamlType (rtype);
+			if (rtype != null)
+				xt = sctx.GetXamlType (rtype);
+			else
+				xt = sctx.GetXamlType (new XamlTypeName (ns, name, typeArgs));
 			if (xt == null)
-				// FIXME: .NET just treats the node as empty!
-				// we have to sort out what to do here.
-				throw new XamlParseException (String.Format ("Failed to create a XAML type for '{0}' in namespace '{1}'", name, ns));
+				// creates name-only XamlType. Also, it does not seem that it does not store this XamlType to XamlSchemaContext (Try GetXamlType(xtn) after reading such xaml node, it will return null).
+				xt = new XamlType (ns, name, typeArgs == null ? null : typeArgs.Select<XamlTypeName,XamlType> (xtn => sctx.GetXamlType (xtn)).ToArray (), sctx);
 			types.Push (xt);
 			current = xt;
 
