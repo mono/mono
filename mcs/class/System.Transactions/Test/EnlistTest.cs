@@ -258,6 +258,7 @@ namespace MonoTests.System.Transactions {
 		[Ignore ( "Correct this test, it should throw TimeOutException or something" )]
 		public void Vol2_Dur1_Fail2 ()
 		{
+			TransactionAbortedException exception = null;
 			IntResourceManager [] irm = new IntResourceManager [4];
 			irm [0] = new IntResourceManager (1);
 			irm [1] = new IntResourceManager (3);
@@ -282,13 +283,67 @@ namespace MonoTests.System.Transactions {
 					scope.Complete ();
 				}
 			}
-			catch (TransactionAbortedException) {
+			catch (TransactionAbortedException ex) {
 				irm [0].CheckSPC ( "irm [0]" );
 
 				/* Volatile RMs get 2PC Prepare, and then get rolled back */
 				for (int i = 1; i < 4; i++)
 					irm [i].Check ( 0, 1, 0, 1, 0, "irm [" + i + "]" );
+
+				exception = ex;
 			}
+
+			Assert.IsNotNull(exception, "Expected TransactionAbortedException not thrown!");
+			Assert.IsNotNull(exception.InnerException, "TransactionAbortedException has no inner exception!");
+			Assert.AreEqual(typeof(TimeoutException), exception.InnerException.GetType());
+		}
+
+		/* Same as Vol2_Dur1_Fail2, but with a volatile manager timming out */
+		[Test]
+		[Ignore ( "Correct this test, it should throw TimeOutException or something" )]
+		public void Vol2_Dur1_Fail2b()
+		{
+			TransactionAbortedException exception = null;
+			IntResourceManager[] irm = new IntResourceManager[4];
+			irm[0] = new IntResourceManager(1);
+			irm[1] = new IntResourceManager(3);
+			irm[2] = new IntResourceManager(5);
+			irm[3] = new IntResourceManager(7);
+
+			irm[0].IgnoreSPC = true;
+			irm[1].Volatile = false;
+
+			for (int i = 0; i < 4; i++)
+				irm[i].UseSingle = true;
+
+			/* Durable RM irm[2] does on SPC, so
+			 * all volatile RMs get Rollback */
+			try
+			{
+				using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, 5)))
+				{
+					irm[0].Value = 2;
+					irm[1].Value = 6;
+					irm[2].Value = 10;
+					irm[3].Value = 14;
+
+					scope.Complete();
+				}
+			}
+			catch (TransactionAbortedException ex)
+			{
+				irm[0].CheckSPC("irm [0]");
+
+				/* Volatile RMs get 2PC Prepare, and then get rolled back */
+				for (int i = 1; i < 4; i++)
+					irm[i].Check(0, 1, 0, 1, 0, "irm [" + i + "]");
+
+				exception = ex;
+			}
+
+			Assert.IsNotNull(exception, "Expected TransactionAbortedException not thrown!");
+			Assert.IsNotNull(exception.InnerException, "TransactionAbortedException has no inner exception!");
+			Assert.AreEqual(typeof(TimeoutException), exception.InnerException.GetType());
 		}
 
 		/* >1vol + 1 durable

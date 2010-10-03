@@ -23,6 +23,7 @@ namespace System.Transactions
 		Transaction transaction;
 		Transaction oldTransaction;
 		TransactionScope parentScope;
+		TimeSpan timeout;
 
 		/* Num of non-disposed nested scopes */
 		int nested;
@@ -91,6 +92,7 @@ namespace System.Transactions
 			completed = false;
 			isRoot = false;
 			nested = 0;
+			this.timeout = timeout;
 
 			oldTransaction = Transaction.CurrentInternal;
 
@@ -139,6 +141,11 @@ namespace System.Transactions
 
 		internal bool IsComplete {
 			get { return completed; }
+		}
+
+		internal TimeSpan Timeout
+		{
+			get { return timeout; }
 		}
 
 		public void Dispose ()

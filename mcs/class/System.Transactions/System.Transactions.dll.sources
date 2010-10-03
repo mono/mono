@@ -33,3 +33,6 @@ System.Transactions/TransactionPromotionException.cs
 System.Transactions/TransactionScope.cs
 System.Transactions/TransactionScopeOption.cs
 System.Transactions/TransactionStatus.cs
+System.Transactions/Configuration/DefaultSettingsSection.cs
+System.Transactions/Configuration/MachineSettingsSection.cs
+System.Transactions/Configuration/TransactionsSectionGroup.cs
