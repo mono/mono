@@ -556,6 +556,33 @@ namespace MonoTests.System.Transactions {
 			Assert.AreEqual (5, irm.Value);
 		}
 
+		[Test]
+		public void TransactionCompleted_Committed ()
+		{
+			bool called = false;
+			using (var ts = new TransactionScope())
+			{
+				var tr = Transaction.Current;
+				tr.TransactionCompleted += (s, e) => called = true;
+				ts.Complete();
+			}
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+		}
+
+		[Test]
+		public void TransactionCompleted_Rollback ()
+		{
+			bool called = false;
+			using (var ts = new TransactionScope())
+			{
+				var tr = Transaction.Current;
+				tr.TransactionCompleted += (s, e) => called = true;
+				// Not calling ts.Complete() on purpose..
+			}
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+		}
 		#endregion
 
 	}

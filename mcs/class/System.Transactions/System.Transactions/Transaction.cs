@@ -234,7 +234,10 @@ namespace System.Transactions
 		internal void Rollback (Exception ex, IEnlistmentNotification enlisted)
 		{
 			if (aborted)
+			{
+				FireCompleted();
 				return;
+			}
 
 			/* See test ExplicitTransaction7 */
 			if (info.Status == TransactionStatus.Committed)
@@ -250,6 +253,8 @@ namespace System.Transactions
 				durables [0].Rollback (e);
 
 			Aborted = true;
+
+			FireCompleted();
 		}
 
 		bool Aborted {
@@ -342,6 +347,8 @@ namespace System.Transactions
 
 			if (!aborted)
 				info.Status = TransactionStatus.Committed;
+
+			FireCompleted();
 		}
 
 		internal void InitScope (TransactionScope scope)
@@ -417,6 +424,12 @@ namespace System.Transactions
 		{
 			if (aborted)
 				throw new TransactionAbortedException ("Transaction has aborted", innerException);
+		}
+
+		void FireCompleted()
+		{
+			if (TransactionCompleted != null)
+				TransactionCompleted(this, new TransactionEventArgs(this));
 		}
 
 		static void EnsureIncompleteCurrentScope ()
