@@ -579,6 +579,8 @@ namespace System.Xaml
 
 		protected virtual XamlMember LookupMember (string name, bool skipReadOnlyCheck)
 		{
+			if (UnderlyingType == null)
+				return null;
 			var pi = UnderlyingType.GetProperty (name);
 			if (pi != null && (skipReadOnlyCheck || pi.CanWrite))
 				return new XamlMember (pi, SchemaContext);

@@ -175,6 +175,14 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[ExpectedException (typeof (NotSupportedException))] // it is read-only
+		public void AddGetAllXamlTypesToEmpty ()
+		{
+			var ctx = NewStandardContext ();
+			ctx.GetAllXamlTypes ("urn:foo").Add (new XamlType (typeof (int), ctx));
+		}
+
+		[Test]
 		public void GetAllXamlTypesInXaml2006Namespace ()
 		{
 			var ctx = NewStandardContext ();

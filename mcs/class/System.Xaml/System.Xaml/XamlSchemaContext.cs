@@ -81,6 +81,7 @@ namespace System.Xaml
 		Dictionary<string,string> compat_nss;
 		Dictionary<string,List<XamlType>> all_xaml_types;
 		XamlType [] empty_xaml_types = new XamlType [0];
+		List<XamlType> run_time_types = new List<XamlType> ();
 
 		public bool FullyQualifyAssemblyNamesInClrNamespaces { get; private set; }
 
@@ -155,16 +156,18 @@ namespace System.Xaml
 			return t;
 		}
 		
-		Dictionary<Type,XamlType> xaml_types = new Dictionary<Type,XamlType> ();
-		
 		public virtual XamlType GetXamlType (Type type)
 		{
-			XamlType t;
-			if (!xaml_types.TryGetValue (type, out t)) {
-				t = new XamlType (type, this);
-				xaml_types.Add (type, t);
+			XamlType xt = run_time_types.FirstOrDefault (t => t.UnderlyingType == type);
+			if (xt == null)
+				foreach (var ns in GetAllXamlNamespaces ())
+					if ((xt = GetAllXamlTypes (ns).FirstOrDefault (t => t.UnderlyingType == type)) != null)
+						break;
+			if (xt == null) {
+				xt = new XamlType (type, this);
+				run_time_types.Add (xt);
 			}
-			return t;
+			return xt;
 		}
 		
 		public XamlType GetXamlType (XamlTypeName xamlTypeName)
@@ -197,7 +200,16 @@ namespace System.Xaml
 				if (ret != null)
 					return ret;
 			}
-			return GetAllXamlTypes (xamlNamespace).FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
+			ret = run_time_types.FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
+			if (ret == null)
+				ret = GetAllXamlTypes (xamlNamespace).FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
+			// If the type was not found, it just returns null.
+			return ret;
+		}
+		
+		internal void AddInternal (XamlType type)
+		{
+			run_time_types.Add (type);
 		}
 
 		bool TypeMatches (XamlType t, string ns, string name, XamlType [] typeArgs)
