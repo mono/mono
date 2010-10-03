@@ -16,16 +16,16 @@ namespace System.Transactions
 {
 	public static class TransactionManager
 	{
-		static TransactionManager()
+		static TransactionManager ()
 		{
-			defaultSettings = ConfigurationManager.GetSection("system.transactions/defaultSettings") as DefaultSettingsSection;
-			machineSettings = ConfigurationManager.GetSection("system.transactions/machineSettings") as MachineSettingsSection;
+			defaultSettings = ConfigurationManager.GetSection ("system.transactions/defaultSettings") as DefaultSettingsSection;
+			machineSettings = ConfigurationManager.GetSection ("system.transactions/machineSettings") as MachineSettingsSection;
 		}
 
 		static DefaultSettingsSection defaultSettings;
 		static MachineSettingsSection machineSettings;
-		static TimeSpan defaultTimeout = new TimeSpan(0, 1, 0); /* 60 secs */
-		static TimeSpan maxTimeout = new TimeSpan(0, 10, 0); /* 10 mins */
+		static TimeSpan defaultTimeout = new TimeSpan (0, 1, 0); /* 60 secs */
+		static TimeSpan maxTimeout = new TimeSpan (0, 10, 0); /* 10 mins */
 
 		public static TimeSpan DefaultTimeout {
 			get {
