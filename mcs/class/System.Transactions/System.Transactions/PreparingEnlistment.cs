@@ -20,13 +20,13 @@ namespace System.Transactions
 		bool prepared = false;
 		Transaction tx;
 		IEnlistmentNotification enlisted;
-		//WaitHandle waitHandle;
+		WaitHandle waitHandle;
 
 		internal PreparingEnlistment (Transaction tx, IEnlistmentNotification enlisted)
 		{
 			this.tx = tx;
 			this.enlisted = enlisted;
-			//waitHandle = new ManualResetEvent (false);
+			waitHandle = new ManualResetEvent (false);
 		}
 
 		public void ForceRollback ()
@@ -38,16 +38,16 @@ namespace System.Transactions
 		public void ForceRollback (Exception ex)
 		{
 			tx.Rollback (ex, enlisted);
-			/* See test RMFail2 
-			((ManualResetEvent) waitHandle).Set (); */
+			/* See test RMFail2 */
+			((ManualResetEvent) waitHandle).Set ();
 		}
 
 		[MonoTODO]
 		public void Prepared ()
 		{
 			prepared = true;
-			/* See test RMFail2 
-			((ManualResetEvent) waitHandle).Set ();*/
+			/* See test RMFail2 */
+			((ManualResetEvent) waitHandle).Set ();
 		}
 
 		[MonoTODO]
@@ -60,9 +60,14 @@ namespace System.Transactions
 			get { return prepared; }
 		}
 
-		/*internal WaitHandle WaitHandle {
+		internal WaitHandle WaitHandle {
 			get { return waitHandle; }
-		}*/
+		}
+
+		internal IEnlistmentNotification EnlistmentNotification
+		{
+			get { return enlisted; }
+		}
 	}
 }
 

@@ -289,7 +289,17 @@ namespace System.Transactions
 
 			this.committing = true;
 
-			DoCommit ();		
+			try {
+				DoCommit ();	
+			}
+			catch (TransactionException)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				throw new TransactionAbortedException("Transaction failed", ex);
+			}
 		}
 		
 		private void DoCommit ()
@@ -301,26 +311,28 @@ namespace System.Transactions
 				CheckAborted ();
 			}
 
-			if (volatiles.Count == 1 && durables.Count == 0) {
+			if (volatiles.Count == 1 && durables.Count == 0)
+			{
 				/* Special case */
-				ISinglePhaseNotification single = volatiles [0] as ISinglePhaseNotification;
-				if (single != null) {
-					DoSingleCommit (single);
-					Complete ();
+				ISinglePhaseNotification single = volatiles[0] as ISinglePhaseNotification;
+				if (single != null)
+				{
+					DoSingleCommit(single);
+					Complete();
 					return;
 				}
-			} 
+			}
 
 			if (volatiles.Count > 0)
-				DoPreparePhase ();
+				DoPreparePhase();
 
 			if (durables.Count > 0)
-				DoSingleCommit (durables [0]);
+				DoSingleCommit(durables[0]);
 
 			if (volatiles.Count > 0)
-				DoCommitPhase ();
+				DoCommitPhase();
 
-			Complete ();
+			Complete();
 		}
 
 		private void Complete ()
@@ -344,26 +356,38 @@ namespace System.Transactions
 			Scope = scope;	
 		}
 
+		static void PrepareCallbackWrapper(object state)
+		{
+			PreparingEnlistment enlist = state as PreparingEnlistment;
+			enlist.EnlistmentNotification.Prepare(enlist);
+		}
+
 		void DoPreparePhase ()
 		{
-			PreparingEnlistment pe;
-			foreach (IEnlistmentNotification enlisted in volatiles) {
-				pe = new PreparingEnlistment (this, enlisted);
+			// Call prepare on all volatile managers.
+			foreach (IEnlistmentNotification enlist in volatiles)
+			{
+				PreparingEnlistment pe = new PreparingEnlistment(this, enlist);
+				ThreadPool.QueueUserWorkItem(new WaitCallback(PrepareCallbackWrapper), pe);
 
-				enlisted.Prepare (pe);
+				/* Wait (with timeout) for manager to prepare */
+				TimeSpan timeout = Scope != null ? Scope.Timeout : TransactionManager.DefaultTimeout;
 
-				/* FIXME: Where should this timeout value come from? 
-				   current scope?
-				   Wait after all Prepare()'s are sent
-				pe.WaitHandle.WaitOne (new TimeSpan (0,0,5), true); */
+				// FIXME: Should we managers in parallel or on-by-one?
+				if (!pe.WaitHandle.WaitOne(timeout, true))
+				{
+					this.Aborted = true;
+					throw new TimeoutException("Transaction timedout");
+				}
 
-				if (!pe.IsPrepared) {
+				if (!pe.IsPrepared)
+				{
 					/* FIXME: if not prepared & !aborted as yet, then 
-					   this is inDoubt ? . For now, setting aborted = true */
+						this is inDoubt ? . For now, setting aborted = true */
 					Aborted = true;
 					break;
 				}
-			}
+			}			
 			
 			/* Either InDoubt(tmp) or Prepare failed and
 			   Tx has rolledback */
