@@ -235,7 +235,7 @@ namespace System.Transactions
 		{
 			if (aborted)
 			{
-				FireCompleted();
+				FireCompleted ();
 				return;
 			}
 
@@ -254,7 +254,7 @@ namespace System.Transactions
 
 			Aborted = true;
 
-			FireCompleted();
+			FireCompleted ();
 		}
 
 		bool Aborted {
@@ -348,7 +348,7 @@ namespace System.Transactions
 			if (!aborted)
 				info.Status = TransactionStatus.Committed;
 
-			FireCompleted();
+			FireCompleted ();
 		}
 
 		internal void InitScope (TransactionScope scope)
@@ -374,8 +374,8 @@ namespace System.Transactions
 			// Call prepare on all volatile managers.
 			foreach (IEnlistmentNotification enlist in volatiles)
 			{
-				PreparingEnlistment pe = new PreparingEnlistment(this, enlist);
-				ThreadPool.QueueUserWorkItem(new WaitCallback(PrepareCallbackWrapper), pe);
+				PreparingEnlistment pe = new PreparingEnlistment (this, enlist);
+				ThreadPool.QueueUserWorkItem (new WaitCallback(PrepareCallbackWrapper), pe);
 
 				/* Wait (with timeout) for manager to prepare */
 				TimeSpan timeout = Scope != null ? Scope.Timeout : TransactionManager.DefaultTimeout;
@@ -426,10 +426,10 @@ namespace System.Transactions
 				throw new TransactionAbortedException ("Transaction has aborted", innerException);
 		}
 
-		void FireCompleted()
+		void FireCompleted ()
 		{
 			if (TransactionCompleted != null)
-				TransactionCompleted(this, new TransactionEventArgs(this));
+				TransactionCompleted (this, new TransactionEventArgs(this));
 		}
 
 		static void EnsureIncompleteCurrentScope ()

@@ -1,3 +1,14 @@
+//
+// TransactionSectionGroup.cs
+//
+// Author:
+//	Pablo Ruiz <pruiz@netway.org>
+//
+// (C) 2010 Pablo Ruiz.
+//
+
+#if NET_2_0
+
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -29,3 +40,4 @@ namespace System.Transactions.Configuration
 		}
 	}
 }
+#endif
