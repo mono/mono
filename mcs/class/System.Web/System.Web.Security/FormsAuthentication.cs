@@ -230,7 +230,7 @@ namespace System.Web.Security
 				password = HashPasswordForStoringInConfigFile (password, FormsAuthPasswordFormat.MD5);
 				break;
 			case FormsAuthPasswordFormat.SHA1:
-				password = HashPasswordForStoringInConfigFile (password, FormsAuthPasswordFormat.MD5);
+				password = HashPasswordForStoringInConfigFile (password, FormsAuthPasswordFormat.SHA1);
 				break;
 			}
 

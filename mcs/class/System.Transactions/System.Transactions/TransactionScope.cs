@@ -22,7 +22,11 @@ namespace System.Transactions
 
 		Transaction transaction;
 		Transaction oldTransaction;
+<<<<<<< HEAD
 		TransactionScope parentScope;
+=======
+		TransactionScope parentScope;
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 		TimeSpan timeout;
 
 		/* Num of non-disposed nested scopes */
@@ -91,7 +95,11 @@ namespace System.Transactions
 		{
 			completed = false;
 			isRoot = false;
+<<<<<<< HEAD
 			nested = 0;
+=======
+			nested = 0;
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 			this.timeout = timeout;
 
 			oldTransaction = Transaction.CurrentInternal;
@@ -141,6 +149,11 @@ namespace System.Transactions
 
 		internal bool IsComplete {
 			get { return completed; }
+		}
+
+		internal TimeSpan Timeout
+		{
+			get { return timeout; }
 		}
 
 		internal TimeSpan Timeout

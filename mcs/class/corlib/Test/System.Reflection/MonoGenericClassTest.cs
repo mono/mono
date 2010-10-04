@@ -186,6 +186,24 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.Fail ("#13");
 			} catch (NotSupportedException) {  }
 		}
+
+		[Test]
+		public void ClassMustNotBeRegisteredAfterTypeBuilderIsFinished ()
+		{
+			TypeBuilder tb = module.DefineType ("foo.type");
+			tb.DefineGenericParameters ("T");
+
+			var c = tb.CreateType ();
+
+			var sreInst = tb.MakeGenericType (typeof (int));
+			var rtInst = c.MakeGenericType (typeof (int));
+
+			Assert.AreNotSame (sreInst, rtInst, "#1");
+
+			/*This must not throw*/
+			rtInst.IsDefined (typeof (int), true);
+		}
 	}
+
 #endif
 }

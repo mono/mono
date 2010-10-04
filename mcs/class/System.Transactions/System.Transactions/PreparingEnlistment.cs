@@ -62,11 +62,19 @@ namespace System.Transactions
 
 		internal WaitHandle WaitHandle {
 			get { return waitHandle; }
+<<<<<<< HEAD
 		}
 
 		internal IEnlistmentNotification EnlistmentNotification
 		{
 			get { return enlisted; }
+=======
+		}
+
+		internal IEnlistmentNotification EnlistmentNotification
+		{
+			get { return enlisted; }
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 		}
 	}
 }

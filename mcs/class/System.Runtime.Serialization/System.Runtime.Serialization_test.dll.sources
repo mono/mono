@@ -1,3 +1,4 @@
+System.Runtime.Serialization/DataContractResolverTest.cs
 System.Runtime.Serialization/XmlObjectSerializerTest.cs
 System.Runtime.Serialization/XsdDataContractExporterTest.cs
 System.Runtime.Serialization/XsdDataContractImporterTest.cs

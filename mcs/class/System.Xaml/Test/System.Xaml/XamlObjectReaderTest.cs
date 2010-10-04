@@ -701,6 +701,17 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "#9");
 		}
 
+		[Test]
+		public void Read_ArgumentAttributed ()
+		{
+			var obj = new ArgumentAttributed ("foo", "bar");
+			var r = new XamlObjectReader (obj);
+			Read_CommonClrType (r, obj, new KeyValuePair<string,string> ("x", XamlLanguage.Xaml2006Namespace));
+			var args = Read_AttributedArguments_String (r, new string [] {"arg1", "arg2"});
+			Assert.AreEqual ("foo", args [0], "#1");
+			Assert.AreEqual ("bar", args [1], "#2");
+		}
+
 		void SimpleReadStandardType (object instance)
 		{
 			var r = new XamlObjectReader (instance);
@@ -733,6 +744,36 @@ namespace MonoTests.System.Xaml
 			return ret;
 		}
 
+		object [] Read_AttributedArguments_String (XamlObjectReader r, string [] argNames) // valid only for string arguments.
+		{
+			object [] ret = new object [argNames.Length];
+
+			Assert.IsTrue (r.Read (), "attarg.Arguments.Start1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "attarg.Arguments.Start2");
+			Assert.IsNotNull (r.Member, "attarg.Arguments.Start3");
+			Assert.AreEqual (XamlLanguage.Arguments, r.Member, "attarg.Arguments.Start4");
+			for (int i = 0; i < argNames.Length; i++) {
+				string arg = argNames [i];
+				Assert.IsTrue (r.Read (), "attarg.ArgStartObject1." + arg);
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "attarg.ArgStartObject2." + arg);
+				Assert.AreEqual (typeof (string), r.Type.UnderlyingType, "attarg.ArgStartObject3." + arg);
+				Assert.IsTrue (r.Read (), "attarg.ArgStartMember1." + arg);
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "attarg.ArgStartMember2." + arg);
+				Assert.AreEqual (XamlLanguage.Initialization, r.Member, "attarg.ArgStartMember3." + arg); // (as the argument is string here by definition)
+				Assert.IsTrue (r.Read (), "attarg.ArgValue1." + arg);
+				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "attarg.ArgValue2." + arg);
+				Assert.AreEqual (typeof (string), r.Value.GetType (), "attarg.ArgValue3." + arg);
+				ret [i] = r.Value;
+				Assert.IsTrue (r.Read (), "attarg.ArgEndMember1." + arg);
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "attarg.ArgEndMember2." + arg);
+				Assert.IsTrue (r.Read (), "attarg.ArgEndObject1." + arg);
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "attarg.ArgEndObject2." + arg);
+			}
+			Assert.IsTrue (r.Read (), "attarg.Arguments.End1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "attarg.Arguments.End2");
+			return ret;
+		}
+
 		// from initial to StartObject
 		void Read_CommonXamlType (XamlObjectReader r)
 		{
@@ -748,7 +789,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		// from initial to StartObject
-		void Read_CommonClrType (XamlObjectReader r, object obj)
+		void Read_CommonClrType (XamlObjectReader r, object obj, params KeyValuePair<string,string> [] additionalNamespaces)
 		{
 			Assert.IsTrue (r.Read (), "ct#1");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ct#2");
@@ -756,13 +797,13 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ct#3-2");
 			Assert.AreEqual ("clr-namespace:" + obj.GetType ().Namespace + ";assembly=" + obj.GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "ct#3-3");
 
-/*
-			Assert.IsTrue (r.Read (), "ct#4");
-			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ct#5");
-			Assert.IsNotNull (r.Namespace, "ct#6");
-			Assert.AreEqual ("x", r.Namespace.Prefix, "ct#6-2");
-			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ct#6-3");
-*/
+			foreach (var kvp in additionalNamespaces) {
+				Assert.IsTrue (r.Read (), "ct#4." + kvp.Key);
+				Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ct#5." + kvp.Key);
+				Assert.IsNotNull (r.Namespace, "ct#6." + kvp.Key);
+				Assert.AreEqual (kvp.Key, r.Namespace.Prefix, "ct#6-2." + kvp.Key);
+				Assert.AreEqual (kvp.Value, r.Namespace.Namespace, "ct#6-3." + kvp.Key);
+			}
 
 			Assert.IsTrue (r.Read (), "ct#7");
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "ct#8");

@@ -51,7 +51,7 @@ namespace System.Xaml
 		Stack<XamlType> types = new Stack<XamlType> ();
 		Stack<XamlMember> members = new Stack<XamlMember> ();
 
-		List<object> arguments = new List<object> ();
+		List<object> arguments = new List<object> (); // FIXME: so far it has no contents.
 		string factory_method;
 		bool object_instantiated;
 		List<object> contents = new List<object> ();
@@ -120,6 +120,14 @@ namespace System.Xaml
 			return false;
 		}
 
+		void SetValue (XamlMember member, object value)
+		{
+			if (member.IsDirective)
+				return;
+			if (!OnSetValue (this, member, value))
+				member.Invoker.SetValue (objects.Peek (), value);
+		}
+
 		public void SetLineInfo (int lineNumber, int linePosition)
 		{
 			line = lineNumber;
@@ -134,7 +142,11 @@ namespace System.Xaml
 			var xm = members.Pop ();
 			var xt = xm.Type;
 
-			if (xt.IsArray) {
+			if (xm == XamlLanguage.Arguments) {
+				InitializeObjectWithArguments (contents.ToArray ());
+			} else if (xm == XamlLanguage.Initialization) {
+				// ... and no need to do anything. The object value to pop *is* the return value.
+			} else if (xt.IsArray) {
 				throw new NotImplementedException ();
 			} else if (xt.IsCollection) {
 				var obj = objects.Peek ();
@@ -146,10 +158,9 @@ namespace System.Xaml
 				if (contents.Count > 1)
 					throw new XamlDuplicateMemberException (String.Format ("Value for {0} is assigned more than once", xm.Name));
 				if (contents.Count == 1) {
-					var value = GetCorrectlyTypedValue (xm, contents [0]);
+					var value = GetCorrectlyTypedValue (xm.Type, contents [0]);
 					if (!objects_from_getter.Remove (value))
-						if (!OnSetValue (this, xm, value))
-							xm.Invoker.SetValue (objects.Peek (), value);
+						SetValue (xm, value);
 				}
 			}
 
@@ -157,9 +168,8 @@ namespace System.Xaml
 			written_properties_stack.Peek ().Add (xm);
 		}
 
-		object GetCorrectlyTypedValue (XamlMember xm, object value)
+		object GetCorrectlyTypedValue (XamlType xt, object value)
 		{
-			var xt = xm.Type;
 			if (IsAllowedType (xt, value))
 				return value;
 			if (xt.TypeConverter != null && value != null) {
@@ -181,7 +191,7 @@ namespace System.Xaml
 		{
 			manager.EndObject (types.Count > 0);
 
-			InitializeObjectIfRequired (); // this is required for such case that there was no StartMember call.
+			InitializeObjectIfRequired (null); // this is required for such case that there was no StartMember call.
 
 			types.Pop ();
 			written_properties_stack.Pop ();
@@ -233,14 +243,15 @@ namespace System.Xaml
 			wpl.Add (property);
 
 			members.Push (property);
-
-			if (property == XamlLanguage.Initialization)
-				return;
-			else
-				InitializeObjectIfRequired ();
 		}
 
-		void InitializeObjectIfRequired ()
+		void InitializeObjectWithArguments (object [] args)
+		{
+			var obj = types.Peek ().Invoker.CreateInstance (args);
+			ObjectInitialized (obj);
+		}
+
+		void InitializeObjectIfRequired (XamlMember property)
 		{
 			if (object_instantiated)
 				return;
@@ -249,7 +260,7 @@ namespace System.Xaml
 			// http://msdn.microsoft.com/en-us/library/system.xaml.xamllanguage.factorymethod%28VS.100%29.aspx
 			object obj;
 			var args = arguments.ToArray ();
-			if (factory_method != null)
+			if (factory_method != null) // FIXME: it must be verified with tests.
 				obj = types.Peek ().UnderlyingType.GetMethod (factory_method).Invoke (null, args);
 			else
 				obj = types.Peek ().Invoker.CreateInstance (args);
@@ -268,6 +279,9 @@ namespace System.Xaml
 			object_instantiated = false;
 
 			written_properties_stack.Push (new List<XamlMember> ());
+
+			if (!xamlType.IsContentValue ()) // FIXME: there could be more conditions.
+				InitializeObjectIfRequired (null);
 		}
 
 		public override void WriteValue (object value)
@@ -277,9 +291,7 @@ namespace System.Xaml
 			var xm = members.Peek ();
 
 			if (xm == XamlLanguage.Initialization)
-				ObjectInitialized (value);
-			else if (xm == XamlLanguage.Arguments)
-				arguments.Add (value);
+				ObjectInitialized (GetCorrectlyTypedValue (types.Peek (), value));
 			else if (xm == XamlLanguage.FactoryMethod)
 				factory_method = (string) value;
 			else

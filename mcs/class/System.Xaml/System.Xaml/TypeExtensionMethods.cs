@@ -175,11 +175,17 @@ namespace System.Xaml
 				yield break;
 			}
 
+			// Note that unless the XamlType has the default constructor, we don't need "Arguments".
+			var args = type.ConstructionRequiresArguments ? type.GetConstructorArguments () : null;
+			if (args != null && args.Any ())
+				yield return XamlLanguage.Arguments;
+
 			if (type.IsContentValue ())
 				yield return XamlLanguage.Initialization;
 
 			foreach (var m in type.GetAllMembers ())
-				yield return m;
+				if (args == null || !args.Contains (m)) // do not read/write constructor arguments twice (they are written inside Arguments).
+					yield return m;
 		}
 
 		public static bool ListEquals (this IList<XamlType> a1, IList<XamlType> a2)
@@ -194,6 +200,30 @@ namespace System.Xaml
 				if (a1 [i] != a2 [i])
 					return false;
 			return true;
+		}
+
+		public static IEnumerable<XamlMember> GetSortedConstructorArguments (this XamlType type)
+		{
+			var args = type.GetConstructorArguments ().ToArray ();
+			var ci = type.UnderlyingType.GetConstructors ().FirstOrDefault (c => c.GetParameters ().Length == args.Length);
+			if (ci == null)
+				throw new ArgumentException (String.Format ("Type '{0}' is expected to have constructor with {1} arguments, but was not find.", type.Name, args.Length));
+			var pis = ci.GetParameters ();
+			return args.OrderBy (c => pis.FindParameterWithName (c.ConstructorArgumentName ()).Position);
+		}
+
+		static ParameterInfo FindParameterWithName (this IEnumerable<ParameterInfo> pis, string name)
+		{
+			var ret = pis.FirstOrDefault (pi => pi.Name == name);
+			if (ret == null)
+				throw new ArgumentException (String.Format ("Constructor argument '{0}' is expected, but was not found.", name));
+			return ret;
+		}
+
+		public static string ConstructorArgumentName (this XamlMember xm)
+		{
+			var caa = xm.CustomAttributeProvider.GetCustomAttribute<ConstructorArgumentAttribute> (false);
+			return caa.ArgumentName;
 		}
 	}
 }

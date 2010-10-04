@@ -1014,6 +1014,17 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNotNull (ex.Message, "#B4");
 			}
 
+			// Test Exception is not thrown if DbType is set - #569543
+			try {
+			cmd.CommandText = "select type_guid from string_family where type_guid=@p1";
+			cmd.Parameters.Clear ();
+			cmd.Parameters.Add ("@p1", SqlDbType.UniqueIdentifier);
+			cmd.Parameters ["@p1"].Value = new Guid ("1C47DD1D-891B-47E8-AAC8-F36608B31BC5");
+			cmd.Prepare ();
+			} catch (Exception ex) {
+				Assert.Fail ("#B5 "+ex.Message);
+			}
+
 			// Test Exception is not thrown for Stored Procs 
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.CommandText = "ABFSDSFSF";
@@ -2878,6 +2889,167 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (100, param0Val);
 		}
 
+		[Test]
+		public void DeriveParameterTest_FullSchema ()
+		{
+			string create_tbl = "CREATE TABLE decimalCheck (deccheck DECIMAL (19, 5) null)"; 
+			string create_sp = "CREATE PROCEDURE sp_bug584833(@deccheck decimal(19,5) OUT)"
+			            + "AS " + Environment.NewLine
+			            + "BEGIN" + Environment.NewLine
+						+ "INSERT INTO decimalCheck values (@deccheck)" + Environment.NewLine
+			            + "SELECT @deccheck=deccheck from decimalCheck" + Environment.NewLine
+			            + "END";
+
+			try {
+				conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+				ConnectionManager.Singleton.OpenConnection ();
+				
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = create_tbl;
+				cmd.ExecuteNonQuery ();
+				
+				cmd.CommandText = create_sp;
+				cmd.ExecuteNonQuery ();
+				
+				cmd.CommandText = "monotest.dbo.sp_bug584833";
+				cmd.CommandType = CommandType.StoredProcedure;
+				
+				SqlCommandBuilder.DeriveParameters (cmd);
+				Assert.AreEqual (2, cmd.Parameters.Count, "#DPT - FullSchema - Parameter count mismatch");
+				Assert.AreEqual ("@deccheck", cmd.Parameters[1].ParameterName, "#DPT - FullSchema - Parameter name mismatch");
+				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters[1].SqlDbType, "#DPT - FullSchema - Parameter type mismatch");			
+			} finally {
+				cmd.Parameters.Clear ();
+				cmd.CommandText = "drop procedure sp_bug584833";
+				cmd.CommandType = CommandType.Text;
+				cmd.ExecuteNonQuery ();
+				cmd.CommandText = "drop table decimalCheck";
+				cmd.ExecuteNonQuery ();
+				cmd.Dispose ();
+				cmd = null;
+				ConnectionManager.Singleton.CloseConnection ();
+				conn = null;
+			}
+			
+		}
+
+		[Test]
+		public void DeriveParameterTest_SPName ()
+		{
+			string create_tbl = "CREATE TABLE decimalCheck (deccheck DECIMAL (19, 5) null)"; 
+			string create_sp = "CREATE PROCEDURE sp_bug584833(@deccheck decimal(19,5) OUT)"
+			            + "AS " + Environment.NewLine
+			            + "BEGIN" + Environment.NewLine
+						+ "INSERT INTO decimalCheck values (@deccheck)" + Environment.NewLine
+			            + "SELECT @deccheck=deccheck from decimalCheck" + Environment.NewLine
+			            + "END";
+
+			try {
+				conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+				ConnectionManager.Singleton.OpenConnection ();
+				
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = create_tbl;
+				cmd.ExecuteNonQuery ();
+				
+				cmd.CommandText = create_sp;
+				cmd.ExecuteNonQuery ();
+				
+				cmd.CommandText = "sp_bug584833";
+				cmd.CommandType = CommandType.StoredProcedure;
+				
+				SqlCommandBuilder.DeriveParameters (cmd);
+				Assert.AreEqual (2, cmd.Parameters.Count, "#DPT - SPName - Parameter count mismatch");
+				Assert.AreEqual ("@deccheck", cmd.Parameters[1].ParameterName, "#DPT - SPName - Parameter name mismatch");
+				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters[1].SqlDbType, "#DPT - SPName - Parameter type mismatch");			
+			} finally {
+				cmd.Parameters.Clear ();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "drop procedure sp_bug584833";
+				cmd.ExecuteNonQuery ();
+				cmd.CommandText = "drop table decimalCheck";
+				cmd.ExecuteNonQuery ();
+				cmd.Dispose ();
+				cmd = null;
+				ConnectionManager.Singleton.CloseConnection ();
+				conn = null;
+			}			
+		}
+	
+		[Test]
+		public void DeriveParameterTest_UserSchema ()
+		{
+			string create_tbl = "CREATE TABLE decimalCheck (deccheck DECIMAL (19, 5) null)"; 
+			string create_sp = "CREATE PROCEDURE sp_bug584833(@deccheck decimal(19,5) OUT)"
+			            + "AS " + Environment.NewLine
+			            + "BEGIN" + Environment.NewLine
+						+ "INSERT INTO decimalCheck values (@deccheck)" + Environment.NewLine
+			            + "SELECT @deccheck=deccheck from decimalCheck" + Environment.NewLine
+			            + "END";
+
+			try {
+				conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+				ConnectionManager.Singleton.OpenConnection ();
+				
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = create_tbl;
+				cmd.ExecuteNonQuery ();
+				
+				cmd.CommandText = create_sp;
+				cmd.ExecuteNonQuery ();
+				
+				cmd.CommandText = "dbo.sp_bug584833";
+				cmd.CommandType = CommandType.StoredProcedure;
+				
+				SqlCommandBuilder.DeriveParameters (cmd);
+				Assert.AreEqual (2, cmd.Parameters.Count, "#DPT - user schema - Parameter count mismatch");
+				Assert.AreEqual ("@deccheck", cmd.Parameters[1].ParameterName, "#DPT - user schema - Parameter name mismatch");
+				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters[1].SqlDbType, "#DPT - user schema - Parameter type mismatch");			
+			} finally {
+				cmd.Parameters.Clear ();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "drop procedure dbo.sp_bug584833";
+				cmd.ExecuteNonQuery ();
+				cmd.CommandText = "drop table decimalCheck";
+				cmd.ExecuteNonQuery ();
+				cmd.Dispose ();
+				cmd = null;
+				ConnectionManager.Singleton.CloseConnection ();
+				conn = null;
+			}			
+		}
+
+		[Test]  // bug#561667
+		public void CmdDispose_DataReaderReset ()
+		{
+			try {
+				conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+				ConnectionManager.Singleton.OpenConnection ();
+			    string query1 = "SELECT fname FROM employee where lname='kumar'";
+				string query2 = "SELECT type_int FROM numeric_family where type_bit = 1";
+				DataTable t = null;
+	
+				t = GetColumns(conn, query1);
+				Assert.AreEqual ("suresh", t.Rows[0][0], "CmdDD#1: Query1 result mismatch");
+			    t = GetColumns(conn, query2);
+				Assert.AreEqual (int.MaxValue, t.Rows[0][0], "CmdDD#2: Query2 result mismatch");
+			} finally {
+			    ConnectionManager.Singleton.CloseConnection ();
+				conn = null;
+			}
+		}
+	
+		private DataTable GetColumns(DbConnection connection, string query)
+		{
+		    DataTable t = new DataTable("Columns");
+		    using (DbCommand c = connection.CreateCommand())
+		    {
+		        c.CommandText = query;
+		        t.Load(c.ExecuteReader());
+		    }
+		    return t;
+		}
+		
 		// used as workaround for bugs in NUnit 2.2.0
 		static void AreEqual (object x, object y, string msg)
 		{

@@ -232,11 +232,19 @@ namespace System.Transactions
 		}
 
 		internal void Rollback (Exception ex, IEnlistmentNotification enlisted)
+<<<<<<< HEAD
 		{
 			if (aborted)
 			{
 				FireCompleted ();
 				return;
+=======
+		{
+			if (aborted)
+			{
+				FireCompleted ();
+				return;
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 			}
 
 			/* See test ExplicitTransaction7 */
@@ -252,8 +260,13 @@ namespace System.Transactions
 			if (durables.Count > 0 && durables [0] != enlisted)
 				durables [0].Rollback (e);
 
+<<<<<<< HEAD
 			Aborted = true;
 
+=======
+			Aborted = true;
+
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 			FireCompleted ();
 		}
 
@@ -297,6 +310,7 @@ namespace System.Transactions
 			try {
 				DoCommit ();	
 			}
+<<<<<<< HEAD
 			catch (TransactionException)
 			{
 				throw;
@@ -304,6 +318,15 @@ namespace System.Transactions
 			catch (Exception ex)
 			{
 				throw new TransactionAbortedException("Transaction failed", ex);
+=======
+			catch (TransactionException)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				throw new TransactionAbortedException("Transaction failed", ex);
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 			}
 		}
 		
@@ -314,6 +337,7 @@ namespace System.Transactions
 				/* See test ExplicitTransaction8 */
 				Rollback (null, null);
 				CheckAborted ();
+<<<<<<< HEAD
 			}
 
 			if (volatiles.Count == 1 && durables.Count == 0)
@@ -338,6 +362,32 @@ namespace System.Transactions
 				DoCommitPhase();
 
 			Complete();
+=======
+			}
+
+			if (volatiles.Count == 1 && durables.Count == 0)
+			{
+				/* Special case */
+				ISinglePhaseNotification single = volatiles[0] as ISinglePhaseNotification;
+				if (single != null)
+				{
+					DoSingleCommit(single);
+					Complete();
+					return;
+				}
+			}
+
+			if (volatiles.Count > 0)
+				DoPreparePhase();
+
+			if (durables.Count > 0)
+				DoSingleCommit(durables[0]);
+
+			if (volatiles.Count > 0)
+				DoCommitPhase();
+
+			Complete();
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 		}
 
 		private void Complete ()
@@ -346,9 +396,15 @@ namespace System.Transactions
 			committed = true;
 
 			if (!aborted)
+<<<<<<< HEAD
 				info.Status = TransactionStatus.Committed;
 
 			FireCompleted ();
+=======
+				info.Status = TransactionStatus.Committed;
+
+			FireCompleted ();
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 		}
 
 		internal void InitScope (TransactionScope scope)
@@ -363,6 +419,39 @@ namespace System.Transactions
 			Scope = scope;	
 		}
 
+		static void PrepareCallbackWrapper(object state)
+		{
+			PreparingEnlistment enlist = state as PreparingEnlistment;
+			enlist.EnlistmentNotification.Prepare(enlist);
+		}
+
+<<<<<<< HEAD
+		void DoPreparePhase ()
+		{
+			// Call prepare on all volatile managers.
+			foreach (IEnlistmentNotification enlist in volatiles)
+			{
+				PreparingEnlistment pe = new PreparingEnlistment (this, enlist);
+				ThreadPool.QueueUserWorkItem (new WaitCallback(PrepareCallbackWrapper), pe);
+
+				/* Wait (with timeout) for manager to prepare */
+				TimeSpan timeout = Scope != null ? Scope.Timeout : TransactionManager.DefaultTimeout;
+
+				// FIXME: Should we managers in parallel or on-by-one?
+				if (!pe.WaitHandle.WaitOne(timeout, true))
+				{
+					this.Aborted = true;
+					throw new TimeoutException("Transaction timedout");
+				}
+
+				if (!pe.IsPrepared)
+				{
+					/* FIXME: if not prepared & !aborted as yet, then 
+						this is inDoubt ? . For now, setting aborted = true */
+					Aborted = true;
+					break;
+				}
+=======
 		static void PrepareCallbackWrapper(object state)
 		{
 			PreparingEnlistment enlist = state as PreparingEnlistment;
@@ -394,6 +483,7 @@ namespace System.Transactions
 					Aborted = true;
 					break;
 				}
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 			}			
 			
 			/* Either InDoubt(tmp) or Prepare failed and
@@ -424,6 +514,12 @@ namespace System.Transactions
 		{
 			if (aborted)
 				throw new TransactionAbortedException ("Transaction has aborted", innerException);
+		}
+
+		void FireCompleted ()
+		{
+			if (TransactionCompleted != null)
+				TransactionCompleted (this, new TransactionEventArgs(this));
 		}
 
 		void FireCompleted ()

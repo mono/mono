@@ -2,8 +2,18 @@ thisdir = class/System.Transactions
 SUBDIRS = 
 include ../../build/rules.make
 
+MOBILE_PROFILE := $(filter monotouch monodroid, $(PROFILE))
+
 LIBRARY = System.Transactions.dll
+<<<<<<< HEAD
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Configuration.dll
+=======
+ifdef MOBILE_PROFILE
+LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll
+else
+LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Configuration.dll /define:MOBILE
+endif
+>>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 
 TEST_MCS_FLAGS = /nowarn:1595 $(LIB_MCS_FLAGS)
 
