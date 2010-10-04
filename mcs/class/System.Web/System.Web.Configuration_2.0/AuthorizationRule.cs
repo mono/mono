@@ -49,7 +49,8 @@ namespace System.Web.Configuration {
 		static ConfigurationPropertyCollection properties;
 
 		AuthorizationRuleAction action;
-
+		ConfigurationSaveMode saveMode = ConfigurationSaveMode.Full;
+			
 		static AuthorizationRule ()
 		{
 			rolesProp = new ConfigurationProperty ("roles", typeof (StringCollection), null,
@@ -130,7 +131,10 @@ namespace System.Web.Configuration {
 		[MonoTODO ("Not implemented")]
 		protected override bool IsModified ()
 		{
-			throw new NotImplementedException ();
+			if (((CommaDelimitedStringCollection)Roles).IsModified || ((CommaDelimitedStringCollection)Users).IsModified || ((CommaDelimitedStringCollection)Verbs).IsModified)
+				return true;
+
+			return false;
 		}
 
 		void VerifyData ()
@@ -168,6 +172,9 @@ namespace System.Web.Configuration {
 
 		protected override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
+			if (saveMode != ConfigurationSaveMode.Full && !IsModified ())
+				return true;
+			
 			PreSerialize (writer);
 
 			writer.WriteStartElement (action == AuthorizationRuleAction.Allow ? "allow" : "deny");
@@ -191,6 +198,7 @@ namespace System.Web.Configuration {
 		protected override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 		{
 			base.Unmerge (sourceElement, parentElement, saveMode);
+			this.saveMode = saveMode;
 		}
 
 		public AuthorizationRuleAction Action {
