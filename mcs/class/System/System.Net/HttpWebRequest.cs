@@ -1240,6 +1240,7 @@ namespace System.Net
 
 			if (r != null) {
 				if (wexc != null) {
+					haveResponse = true;
 					r.SetCompleted (false, wexc);
 					r.DoCallback ();
 					return;
