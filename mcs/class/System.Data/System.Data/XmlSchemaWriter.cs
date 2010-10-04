@@ -734,11 +734,11 @@ namespace System.Data
 			//                            XmlConstants.MsdataNamespace, 
 			//                            col.Ordinal.ToString ());
 
+			AddExtendedPropertyAttributes (col.ExtendedProperties);
+
 			// Write SimpleType if column have MaxLength
 			if (col.MaxLength > -1)
 				WriteSimpleType (col);
-
-			AddExtendedPropertyAttributes (col.ExtendedProperties);
 
 			w.WriteEndElement (); // sequence
 		}

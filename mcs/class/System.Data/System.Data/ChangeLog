@@ -1,3 +1,11 @@
+2010-10-01  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	** Fixes #582732 - Patch by Jeffrey Alvarez <kuritsu@gmail.com>
+	* DataColumn.cs (Clone): Deep copy the ExtendedProperties collection.
+	* XmlSchemaDataImporter.cs: Support import of extended properties.
+	* XmlSchemaWriter.cs: Fix exception by writing the extended properties 
+	before simpletype element.
+	
 2010-07-23  Veerapuram Varadhan  <v.varadhan@gmail.com>
 
 	** Fixes #623451

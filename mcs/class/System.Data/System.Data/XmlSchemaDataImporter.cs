@@ -535,6 +535,14 @@ namespace System.Data
 						attr.NamespaceURI == XmlConstants.MsdataNamespace)
 						useCurrent = true;
 #endif
+
+					if (attr.NamespaceURI == XmlConstants.MspropNamespace && 
+					    !dataset.ExtendedProperties.ContainsKey(attr.Name))
+					{
+						dataset.ExtendedProperties.Add (attr.Name, attr.Value);
+						continue;
+					}
+					
 					if (attr.LocalName == "Locale" &&
 						attr.NamespaceURI == XmlConstants.MsdataNamespace) {
 						CultureInfo ci = new CultureInfo (attr.Value);
@@ -593,6 +601,13 @@ namespace System.Data
 			// Find Locale
 			if (el.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in el.UnhandledAttributes) {
+
+					if (attr.NamespaceURI == XmlConstants.MspropNamespace)
+					{
+						table.ExtendedProperties.Add (attr.Name, attr.Value);
+						continue;
+					}
+
 					if (attr.LocalName == "Locale" &&
 						attr.NamespaceURI == XmlConstants.MsdataNamespace)
 						table.Locale = new CultureInfo (attr.Value);
@@ -783,6 +798,12 @@ namespace System.Data
 		{
 			if (obj.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in obj.UnhandledAttributes) {
+					if (attr.NamespaceURI == XmlConstants.MspropNamespace)
+					{
+						col.ExtendedProperties.Add (attr.Name, attr.Value);
+						continue;
+					}
+
 					if (attr.NamespaceURI != XmlConstants.MsdataNamespace)
 						continue;
 					switch (attr.LocalName) {

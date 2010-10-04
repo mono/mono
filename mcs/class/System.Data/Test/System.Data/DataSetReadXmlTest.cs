@@ -784,5 +784,45 @@ namespace MonoTests.System.Data
 				XmlReadMode.Auto, XmlReadMode.IgnoreSchema,
 				"NewDataSet", 1);
 		}
+		
+		[Test]
+		public void DataSetExtendedPropertiesTest()
+		{
+			DataSet dataSet1 = new DataSet();
+			dataSet1.ExtendedProperties.Add("DS1", "extended0");
+			DataTable table = new DataTable("TABLE1");
+			table.ExtendedProperties.Add("T1", "extended1");
+			table.Columns.Add("C1", typeof(int));
+			table.Columns[0].MaxLength = 10;
+			table.Columns.Add("C2", typeof(string));
+			table.Columns[0].MaxLength = 20;
+			table.Columns[0].ExtendedProperties.Add("C1Ext1", "extended2");
+			table.Columns[1].ExtendedProperties.Add("C2Ext1", "extended3");
+			dataSet1.Tables.Add(table);
+			table.LoadDataRow(new object[]{1, "One"}, false);
+			table.LoadDataRow(new object[]{2, "Two"}, false);
+			try {
+				dataSet1.WriteXml("Test/System.Data/schemas/test.xml", XmlWriteMode.WriteSchema);
+			}
+			catch (Exception ex) {
+				Assert.Fail ("DSExtPropTest failed: WriteXml failed with : "+ex.Message);
+			} finally {
+				File.Delete ("Test/System.Data/schemas/test.xml");
+			}
+			
+			DataSet dataSet2 = new DataSet();
+			dataSet2.ReadXml("Test/System.Data/schemas/b582732.xml", XmlReadMode.ReadSchema);
+			Assert.AreEqual (dataSet1.ExtendedProperties["DS1"], dataSet2.ExtendedProperties["DS1"],
+			                 "DSExtProp#1: DS extended properties mismatch");
+						
+			Assert.AreEqual (dataSet1.Tables[0].ExtendedProperties["T1"], dataSet2.Tables[0].ExtendedProperties["T1"],
+			                 "DSExtProp#2: DS Table extended properties mismatch");
+			Assert.AreEqual (dataSet1.Tables[0].Columns[0].ExtendedProperties["C1Ext1"], 
+			                 dataSet2.Tables[0].Columns[0].ExtendedProperties["C1Ext1"],
+			                 "DSExtProp#3: DS Table Column 1 extended properties mismatch");
+			Assert.AreEqual (dataSet1.Tables[0].Columns[1].ExtendedProperties["C2Ext1"], 
+			                 dataSet2.Tables[0].Columns[1].ExtendedProperties["C2Ext1"],
+			                 "DSExtProp#4: DS Table Column 2 extended properties mismatch");
+		}
 	}
 }
