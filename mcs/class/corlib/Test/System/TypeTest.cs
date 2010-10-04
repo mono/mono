@@ -2961,13 +2961,11 @@ PublicKeyToken=b77a5c561934e089"));
 		public void MakeGenericType_BadUserType ()
 		{
 			Type ut = new UserType (null);
-			try {
-				Type t = typeof (Foo<>).MakeGenericType (ut);
-				Assert.Fail ("#1");
-			} catch (ArgumentException) {
-			}
+			Type t = typeof (Foo<>).MakeGenericType (ut);
+			var g0 = t.GetGenericArguments () [0];
+			Assert.AreSame (g0, ut, "#1");
 		}
-	
+
 		[Test]
 		public void MakeGenericType_WrongNumOfArguments ()
 		{
