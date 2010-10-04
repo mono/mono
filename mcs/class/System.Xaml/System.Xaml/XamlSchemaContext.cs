@@ -206,11 +206,6 @@ namespace System.Xaml
 			// If the type was not found, it just returns null.
 			return ret;
 		}
-		
-		internal void AddInternal (XamlType type)
-		{
-			run_time_types.Add (type);
-		}
 
 		bool TypeMatches (XamlType t, string ns, string name, XamlType [] typeArgs)
 		{

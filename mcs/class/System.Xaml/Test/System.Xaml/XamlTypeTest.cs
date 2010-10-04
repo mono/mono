@@ -479,6 +479,48 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void DefaultValuesArgumentAttributed ()
+		{
+			var t = new XamlType (typeof (ArgumentAttributed), sctx);
+			Assert.IsNotNull (t.Invoker, "#1");
+			Assert.IsTrue (t.IsNameValid, "#2");
+			Assert.IsFalse (t.IsUnknown, "#3");
+			Assert.AreEqual ("ArgumentAttributed", t.Name, "#4");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, t.PreferredXamlNamespace, "#5");
+			Assert.IsNull (t.TypeArguments, "#6");
+			Assert.AreEqual (typeof (ArgumentAttributed), t.UnderlyingType, "#7");
+			Assert.IsTrue (t.ConstructionRequiresArguments, "#8");
+			Assert.IsFalse (t.IsArray, "#9");
+			Assert.IsFalse (t.IsCollection, "#10");
+			Assert.IsTrue (t.IsConstructible, "#11");
+			Assert.IsFalse (t.IsDictionary, "#12");
+			Assert.IsFalse (t.IsGeneric, "#13");
+			Assert.IsFalse (t.IsMarkupExtension, "#14");
+			Assert.IsFalse (t.IsNameScope, "#15");
+			Assert.IsTrue (t.IsNullable, "#16");
+			Assert.IsTrue (t.IsPublic, "#17");
+			Assert.IsFalse (t.IsUsableDuringInitialization, "#18");
+			Assert.IsFalse (t.IsWhitespaceSignificantCollection, "#19");
+			Assert.IsFalse (t.IsXData, "#20");
+			Assert.IsFalse (t.TrimSurroundingWhitespace, "#21");
+			Assert.IsFalse (t.IsAmbient, "#22");
+			Assert.IsNull (t.AllowedContentTypes, "#23");
+			Assert.IsNull (t.ContentWrappers, "#24");
+			Assert.IsNull (t.TypeConverter, "#25");
+			Assert.IsNull (t.ValueSerializer, "#26");
+			Assert.IsNull (t.ContentProperty, "#27");
+			// Assert.IsNull (t.DeferringLoader, "#28");
+			Assert.IsNull (t.MarkupExtensionReturnType, "#29");
+			Assert.AreEqual (sctx, t.SchemaContext, "#30");
+
+			var members = t.GetAllMembers ();
+			Assert.AreEqual (2, members.Count, "#31");
+			string [] names = {"Arg1", "Arg2"};
+			foreach (var member in members)
+				Assert.IsTrue (Array.IndexOf (names, member.Name) >= 0, "#32");
+		}
+
+		[Test]
 		public void TypeConverter ()
 		{
 			Assert.IsNull (new XamlType (typeof (List<object>), sctx).TypeConverter, "#1");
@@ -607,5 +649,20 @@ namespace MonoTests.System.Xaml
 			: base (fullName, typeArguments, context)
 		{
 		}
+	}
+
+	public class ArgumentAttributed
+	{
+		public ArgumentAttributed (string s1, string s2)
+		{
+			Arg1 = s1;
+			Arg2 = s2;
+		}
+
+		[ConstructorArgument ("s1")]
+		public string Arg1 { get; set; }
+
+		[ConstructorArgument ("s2")]
+		public string Arg2 { get; set; }
 	}
 }

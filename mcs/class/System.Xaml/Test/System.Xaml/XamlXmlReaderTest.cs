@@ -332,5 +332,46 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsFalse (r.Read (), "end");
 		}
+
+		[Test]
+		public void Read5 ()
+		{
+			var r = GetReader ("String.xml");
+
+			Assert.IsTrue (r.Read (), "ns#1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#3");
+
+			Assert.IsTrue (r.Read (), "so#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
+			Assert.AreEqual (XamlLanguage.String, r.Type, "so#3");
+
+			Assert.IsTrue (r.Read (), "sbase#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
+			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
+
+			Assert.IsTrue (r.Read (), "vbase#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
+			Assert.IsTrue (r.Value is string, "vbase#3");
+
+			Assert.IsTrue (r.Read (), "ebase#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+
+			Assert.IsTrue (r.Read (), "sinit#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
+			Assert.AreEqual (XamlLanguage.Initialization, r.Member, "sinit#3");
+
+			Assert.IsTrue (r.Read (), "vinit#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vinit#2");
+			Assert.AreEqual ("foo", r.Value, "vinit#3"); // string
+
+			Assert.IsTrue (r.Read (), "einit#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "einit#2");
+
+			Assert.IsTrue (r.Read (), "eo#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
 	}
 }

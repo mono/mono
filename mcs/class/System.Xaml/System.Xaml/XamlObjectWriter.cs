@@ -120,6 +120,14 @@ namespace System.Xaml
 			return false;
 		}
 
+		void SetValue (XamlMember member, object value)
+		{
+			if (member.IsDirective)
+				return;
+			if (!OnSetValue (this, member, value))
+				member.Invoker.SetValue (objects.Peek (), value);
+		}
+
 		public void SetLineInfo (int lineNumber, int linePosition)
 		{
 			line = lineNumber;
@@ -131,10 +139,14 @@ namespace System.Xaml
 		{
 			manager.EndMember ();
 			
+			InitializeObjectIfRequired (null); // this is required for such case that the member is ConstructionRequiresArguments.
+			
 			var xm = members.Pop ();
 			var xt = xm.Type;
 
-			if (xt.IsArray) {
+			if (xm == XamlLanguage.Initialization) {
+				// ... and no need to do anything. The object value to pop *is* the return value.
+			} else if (xt.IsArray) {
 				throw new NotImplementedException ();
 			} else if (xt.IsCollection) {
 				var obj = objects.Peek ();
@@ -148,8 +160,7 @@ namespace System.Xaml
 				if (contents.Count == 1) {
 					var value = GetCorrectlyTypedValue (xm, contents [0]);
 					if (!objects_from_getter.Remove (value))
-						if (!OnSetValue (this, xm, value))
-							xm.Invoker.SetValue (objects.Peek (), value);
+						SetValue (xm, value);
 				}
 			}
 
@@ -181,7 +192,7 @@ namespace System.Xaml
 		{
 			manager.EndObject (types.Count > 0);
 
-			InitializeObjectIfRequired (); // this is required for such case that there was no StartMember call.
+			InitializeObjectIfRequired (null); // this is required for such case that there was no StartMember call.
 
 			types.Pop ();
 			written_properties_stack.Pop ();
@@ -237,13 +248,16 @@ namespace System.Xaml
 			if (property == XamlLanguage.Initialization)
 				return;
 			else
-				InitializeObjectIfRequired ();
+				InitializeObjectIfRequired (property);
 		}
 
-		void InitializeObjectIfRequired ()
+		void InitializeObjectIfRequired (XamlMember property)
 		{
 			if (object_instantiated)
 				return;
+
+			if (property != null && types.Peek ().ConstructionRequiresArguments)
+				return; // cannot instantiate at this state.
 
 			// FIXME: "The default techniques in absence of a factory method are to attempt to find a default constructor, then attempt to find an identified type converter on type, member, or destination type."
 			// http://msdn.microsoft.com/en-us/library/system.xaml.xamllanguage.factorymethod%28VS.100%29.aspx
