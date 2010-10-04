@@ -3019,6 +3019,37 @@ namespace MonoTests.System.Data.SqlClient
 			}			
 		}
 
+		[Test]  // bug#561667
+		public void CmdDispose_DataReaderReset ()
+		{
+			try {
+				conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+				ConnectionManager.Singleton.OpenConnection ();
+			    string query1 = "SELECT fname FROM employee where lname='kumar'";
+				string query2 = "SELECT type_int FROM numeric_family where type_bit = 1";
+				DataTable t = null;
+	
+				t = GetColumns(conn, query1);
+				Assert.AreEqual ("suresh", t.Rows[0][0], "CmdDD#1: Query1 result mismatch");
+			    t = GetColumns(conn, query2);
+				Assert.AreEqual (int.MaxValue, t.Rows[0][0], "CmdDD#2: Query2 result mismatch");
+			} finally {
+			    ConnectionManager.Singleton.CloseConnection ();
+				conn = null;
+			}
+		}
+	
+		private DataTable GetColumns(DbConnection connection, string query)
+		{
+		    DataTable t = new DataTable("Columns");
+		    using (DbCommand c = connection.CreateCommand())
+		    {
+		        c.CommandText = query;
+		        t.Load(c.ExecuteReader());
+		    }
+		    return t;
+		}
+		
 		// used as workaround for bugs in NUnit 2.2.0
 		static void AreEqual (object x, object y, string msg)
 		{
