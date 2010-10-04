@@ -36,16 +36,13 @@ namespace System.Xml
 	{
 		static readonly Encoding utf8_unmarked = new UTF8Encoding (false);
 
-		int depth;
-
 		protected XmlDictionaryWriter ()
 		{
 		}
 
-		internal int Depth {
-			get { return depth; }
-			set { depth = value; }
-		}
+		internal int Depth { get; set; }
+
+		internal int NSIndex { get; set; }
 
 		public virtual bool CanCanonicalize {
 			get { return false; }
@@ -137,6 +134,8 @@ namespace System.Xml
 			s.OmitXmlDeclaration = true;
 			return CreateDictionaryWriter (XmlWriter.Create (stream, s));
 		}
+
+		
 
 		public virtual void EndCanonicalization ()
 		{
@@ -388,8 +387,10 @@ namespace System.Xml
 			// writer how it is determined in the output. (When
 			// there is a duplicate, then it will be further 
 			// modified.)
-			if (prefix == null)
-				prefix = "d" + Depth + "p1";
+			if (prefix == null && String.IsNullOrEmpty (namespaceUri))
+				prefix = String.Empty;
+			else if (prefix == null)
+				prefix = "d" + Depth + "p" + (++NSIndex);
 
 			if (prefix == String.Empty)
 				WriteAttributeString ("xmlns", namespaceUri);
