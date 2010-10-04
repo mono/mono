@@ -87,7 +87,7 @@ namespace MonoTests.System.Web.Security
 
 			// ä (C3-A4)
 			s = Encoding.UTF8.GetString (new byte [2] { 0xC3, 0xA4 });
-			Assert.AreEqual ("8419B71C87A225A2C70B50486FBEE545", FormsAuthentication.HashPasswordForStoringInConfigFile (s, "MD5"));
+			Assert.AreEqual ("8419B71C87A225A2C70B50486FBEE545", FormsAuthentication.HashPasswordForStoringInConfigFile (s, "md5"));
 		}
 
 		[Test]
@@ -99,7 +99,7 @@ namespace MonoTests.System.Web.Security
 
 			// ä (C3-A4)
 			s = Encoding.UTF8.GetString (new byte [2] { 0xC3, 0xA4 });
-			Assert.AreEqual ("961FA22F61A56E19F3F5F8867901AC8CF5E6D11F", FormsAuthentication.HashPasswordForStoringInConfigFile (s, "SHA1"));
+			Assert.AreEqual ("961FA22F61A56E19F3F5F8867901AC8CF5E6D11F", FormsAuthentication.HashPasswordForStoringInConfigFile (s, "sha1"));
 		}
 
 		[Test]
