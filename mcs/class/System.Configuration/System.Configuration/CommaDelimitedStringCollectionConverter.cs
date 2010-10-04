@@ -48,6 +48,7 @@ namespace System.Configuration
 			foreach (string datum in datums)
 				col.Add (datum.Trim());
 
+			col.UpdateStringHash ();
 			return col;
 		}
 
