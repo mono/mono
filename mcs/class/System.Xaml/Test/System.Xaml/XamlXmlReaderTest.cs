@@ -56,38 +56,43 @@ namespace MonoTests.System.Xaml
 				r.Read ();
 		}
 
-		void LoadTest (string filename, Type type)
+		object LoadTest (string filename, Type type)
 		{
 			var obj = XamlServices.Load (GetReader (filename));
 			Assert.AreEqual (type, obj.GetType (), "type");
+			return obj;
 		}
 
 		[Test]
 		public void Read_String ()
 		{
 			ReadTest ("String.xml");
-			//LoadTest ("String.xml", typeof (string));
+			var ret = LoadTest ("String.xml", typeof (string));
+			Assert.AreEqual ("foo", ret, "ret");
 		}
 
 		[Test]
 		public void Read_Int32 ()
 		{
 			ReadTest ("Int32.xml");
-			//LoadTest ("Int32.xml", typeof (int));
+			var ret = LoadTest ("Int32.xml", typeof (int));
+			Assert.AreEqual (5, ret, "ret");
 		}
 
 		[Test]
 		public void Read_DateTime ()
 		{
 			ReadTest ("DateTime.xml");
-			//LoadTest ("DateTime.xml", typeof (DateTime));
+			var ret = LoadTest ("DateTime.xml", typeof (DateTime));
+			Assert.AreEqual (new DateTime (2010, 4, 14), ret, "ret");
 		}
 
 		[Test]
 		public void Read_TimeSpan ()
 		{
 			ReadTest ("TimeSpan.xml");
-			//LoadTest ("TimeSpan.xml", typeof (TimeSpan));
+			var ret = LoadTest ("TimeSpan.xml", typeof (TimeSpan));
+			Assert.AreEqual (TimeSpan.FromMinutes (7), ret, "ret");
 		}
 
 		[Test]
