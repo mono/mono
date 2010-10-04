@@ -10,7 +10,7 @@
 //
 #if NET_2_0
 using System.Configuration;
-#if MOBILE
+#if !MOBILE
 using System.Transactions.Configuration;
 #endif
 
@@ -20,13 +20,13 @@ namespace System.Transactions
 	{
 		static TransactionManager ()
 		{
-#if MOBILE
+#if !MOBILE
 			defaultSettings = ConfigurationManager.GetSection ("system.transactions/defaultSettings") as DefaultSettingsSection;
 			machineSettings = ConfigurationManager.GetSection ("system.transactions/machineSettings") as MachineSettingsSection;
 #endif
 		}
 
-#if MOBILE
+#if !MOBILE
 		static DefaultSettingsSection defaultSettings;
 		static MachineSettingsSection machineSettings;
 #endif
@@ -41,7 +41,7 @@ namespace System.Transactions
 				//		- http://sankarsan.wordpress.com/2009/02/01/transaction-timeout-in-systemtransactions/
 				//	1. sys.txs/defaultSettings[@timeout]
 				//	2. defaultTimeout
-#if MOBILE
+#if !MOBILE
 				if (defaultSettings != null)
 					return defaultSettings.Timeout;
 #endif
@@ -58,7 +58,7 @@ namespace System.Transactions
 
 		public static TimeSpan MaximumTimeout {
 			get {
-#if MOBILE
+#if !MOBILE
 				if (machineSettings != null)
 					return machineSettings.MaxTimeout;
 #endif
