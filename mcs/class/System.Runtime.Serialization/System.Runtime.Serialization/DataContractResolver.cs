@@ -33,7 +33,6 @@ namespace System.Runtime.Serialization
 {
 	// See http://msdn.microsoft.com/en-us/library/ee358759.aspx
 #if NET_4_0
-	[MonoTODO ("not in use yet")]
 	public
 #else
 	internal
@@ -43,5 +42,41 @@ namespace System.Runtime.Serialization
 		public abstract Type ResolveName (string typeName, string typeNamespace, Type declaredType, DataContractResolver knownTypeResolver);
 
 		public abstract bool TryResolveType (Type type, Type declaredType, DataContractResolver knownTypeResolver, out XmlDictionaryString typeName, out XmlDictionaryString typeNamespace);
+	}
+
+	internal class DefaultDataContractResolver : DataContractResolver
+	{
+		public DefaultDataContractResolver (DataContractSerializer serializer)
+		{
+			this.serializer = serializer;
+		}
+
+		DataContractSerializer serializer;
+		XmlDictionary dictionary;
+
+		public override Type ResolveName (string typeName, string typeNamespace, Type declaredType, DataContractResolver knownTypeResolver)
+		{
+			var map = serializer.InternalKnownTypes.FindUserMap (new XmlQualifiedName (typeName, typeNamespace));
+			if (map == null)
+				serializer.InternalKnownTypes.Add (declaredType);
+			if (map != null)
+				return map.RuntimeType;
+			return null;
+		}
+
+		public override bool TryResolveType (Type type, Type declaredType, DataContractResolver knownTypeResolver, out XmlDictionaryString typeName, out XmlDictionaryString typeNamespace)
+		{
+			var map = serializer.InternalKnownTypes.FindUserMap (type);
+			if (map == null) {
+				typeName = null;
+				typeNamespace = null;
+				return false;
+			} else {
+				dictionary = dictionary ?? new XmlDictionary ();
+				typeName = dictionary.Add (map.XmlName.Name);
+				typeNamespace = dictionary.Add (map.XmlName.Namespace);
+				return true;
+			}
+		}
 	}
 }

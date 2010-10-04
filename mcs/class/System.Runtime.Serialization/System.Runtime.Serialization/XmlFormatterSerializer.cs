@@ -47,28 +47,30 @@ namespace System.Runtime.Serialization
 		bool save_id;
 		bool ignore_unknown;
 		IDataContractSurrogate surrogate;
+		DataContractResolver resolver, default_resolver; // new in 4.0
 		int max_items;
 
 		ArrayList objects = new ArrayList ();
 		Hashtable references = new Hashtable (); // preserve possibly referenced objects to ids. (new in 3.5 SP1)
 
-		public static void Serialize (XmlDictionaryWriter writer, object graph,
-			KnownTypeCollection types,
-			bool ignoreUnknown, int maxItems, string root_ns, bool preserveObjectReferences)
+		public static void Serialize (XmlDictionaryWriter writer, object graph, Type declaredType, KnownTypeCollection types,
+			bool ignoreUnknown, int maxItems, string root_ns, bool preserveObjectReferences, DataContractResolver resolver, DataContractResolver defaultResolver)
 		{
-			new XmlFormatterSerializer (writer, types, ignoreUnknown, maxItems, root_ns, preserveObjectReferences)
-				.Serialize (graph != null ? graph.GetType () : null, graph);
+			new XmlFormatterSerializer (writer, types, ignoreUnknown, maxItems, root_ns, preserveObjectReferences, resolver, defaultResolver)
+				.Serialize (/*graph != null ? graph.GetType () : */declaredType, graph); // FIXME: I believe it should always use declaredType, but such a change brings some test breakages.
 		}
 
-		public XmlFormatterSerializer (XmlDictionaryWriter writer,
-			KnownTypeCollection types,
-			bool ignoreUnknown, int maxItems, string root_ns, bool preserveObjectReferences)
+		public XmlFormatterSerializer (XmlDictionaryWriter writer, KnownTypeCollection types, bool ignoreUnknown,
+					       int maxItems, string root_ns, bool preserveObjectReferences,
+					       DataContractResolver resolver, DataContractResolver defaultResolver)
 		{
 			this.writer = writer;
 			this.types = types;
 			ignore_unknown = ignoreUnknown;
 			max_items = maxItems;
 			PreserveObjectReferences = preserveObjectReferences;
+			this.resolver = resolver;
+			this.default_resolver = defaultResolver;
 		}
 
 		public bool PreserveObjectReferences { get; private set; }
@@ -90,9 +92,17 @@ namespace System.Runtime.Serialization
 			if (graph == null)
 				writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
 			else {
+				QName resolvedQName = null;
+				if (resolver != null) {
+					XmlDictionaryString rname, rns;
+					if (resolver.TryResolveType (graph != null ? graph.GetType () : typeof (object), type, default_resolver, out rname, out rns))
+						resolvedQName = new QName (rname.Value, rns.Value);
+				}
+
 				Type actualType = graph.GetType ();
 
-				SerializationMap map = types.FindUserMap (actualType);
+				SerializationMap map;
+				map = types.FindUserMap (actualType);
 				// For some collection types, the actual type does not matter. So get nominal serialization type instead.
 				// (The code below also covers the lines above, but I don't remove above lines to avoid extra search cost.)
 				if (map == null) {
@@ -106,7 +116,7 @@ namespace System.Runtime.Serialization
 				}
 
 				if (actualType != type && (map == null || map.OutputXsiType)) {
-					QName qname = types.GetXmlName (actualType);
+					QName qname = resolvedQName ?? types.GetXmlName (actualType);
 					string name = qname.Name;
 					string ns = qname.Namespace;
 					if (qname == QName.Empty) {
@@ -116,7 +126,7 @@ namespace System.Runtime.Serialization
 						ns = XmlSchema.Namespace;
 					if (writer.LookupPrefix (ns) == null) // it goes first (extraneous, but it makes att order compatible)
 						writer.WriteXmlnsAttribute (null, ns);
-					writer.WriteStartAttribute ("type", XmlSchema.InstanceNamespace);
+					writer.WriteStartAttribute ("i", "type", XmlSchema.InstanceNamespace);
 					writer.WriteQualifiedName (name, ns);
 					writer.WriteEndAttribute ();
 				}
