@@ -95,7 +95,7 @@
         <size>96</size>
       </method>
       <method name="System.Dynamic.DynamicMetaObject BindGetMember(System.Dynamic.GetMemberBinder)">
-        <size>56</size>
+        <size>53</size>
       </method>
       <method name="System.Dynamic.DynamicMetaObject BindInvoke(System.Dynamic.InvokeBinder, System.Dynamic.DynamicMetaObject[])">
         <size>96</size>
@@ -503,9 +503,6 @@
       <method name="Void &lt;GetIndex_2&gt;m__2B(System.Dynamic.GetIndexBinder, System.Object[])">
         <size>111</size>
       </method>
-      <method name="Void &lt;GetMember_1&gt;m__2D(System.Dynamic.GetMemberBinder)">
-        <size>66</size>
-      </method>
       <method name="Void &lt;Invoke_1&gt;m__2E(System.Dynamic.InvokeBinder, System.Object[])">
         <size>101</size>
       </method>
@@ -577,78 +574,6 @@
       <method name="Void &lt;InvokeMember_7&gt;m__39(System.Dynamic.InvokeMemberBinder, System.Object[])">
         <size>90</size>
       </method>
-      <method name="Void &lt;SetIndex_1&gt;m__3A(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
-        <size>124</size>
-      </method>
-      <method name="Void &lt;SetIndex_2&gt;m__3B(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
-        <size>139</size>
-      </method>
-      <method name="Void &lt;SetMember_1&gt;m__3D(System.Dynamic.SetMemberBinder, System.Object)">
-        <size>101</size>
-      </method>
-      <method name="System.Object &lt;UnaryPlus_1&gt;m__3E(System.Dynamic.UnaryOperationBinder)">
-        <size>47</size>
-      </method>
-      <method name="System.Object &lt;UnaryMinus_1&gt;m__3F(System.Dynamic.UnaryOperationBinder)">
-        <size>47</size>
-      </method>
-      <method name="System.Object &lt;UnaryNot_1&gt;m__40(System.Dynamic.UnaryOperationBinder)">
-        <size>47</size>
-      </method>
-      <method name="System.Object &lt;UnaryOnesComplement_1&gt;m__41(System.Dynamic.UnaryOperationBinder)">
-        <size>47</size>
-      </method>
-      <method name="System.Object &lt;UnaryDecrement_1&gt;m__42(System.Dynamic.UnaryOperationBinder)">
-        <size>47</size>
-      </method>
-      <method name="System.Object &lt;UnaryDecrement_2&gt;m__43(System.Dynamic.UnaryOperationBinder)">
-        <size>51</size>
-      </method>
-      <method name="System.Object &lt;UnaryIncrement_1&gt;m__44(System.Dynamic.UnaryOperationBinder)">
-        <size>47</size>
-      </method>
-      <method name="System.Object &lt;UnaryIncrement_2&gt;m__45(System.Dynamic.UnaryOperationBinder)">
-        <size>51</size>
-      </method>
-      <method name="System.Object &lt;UnaryIsFalse_1&gt;m__46(System.Dynamic.UnaryOperationBinder)">
-        <size>52</size>
-      </method>
-      <method name="Void &lt;UnaryIsFalse_1&gt;m__47(System.Dynamic.BinaryOperationBinder, System.Object)">
-        <size>68</size>
-      </method>
-      <method name="System.Object &lt;UnaryIsFalse_2&gt;m__48(System.Dynamic.UnaryOperationBinder)">
-        <size>52</size>
-      </method>
-      <method name="Void &lt;UnaryIsFalse_2&gt;m__49(System.Dynamic.BinaryOperationBinder, System.Object)">
-        <size>68</size>
-      </method>
-      <method name="System.Object &lt;UnaryIsFalse_3&gt;m__4A(System.Dynamic.UnaryOperationBinder)">
-        <size>52</size>
-      </method>
-      <method name="Void &lt;UnaryIsFalse_3&gt;m__4B(System.Dynamic.BinaryOperationBinder, System.Object)">
-        <size>67</size>
-      </method>
-      <method name="System.Object &lt;UnaryIsTrue_1&gt;m__4C(System.Dynamic.UnaryOperationBinder)">
-        <size>52</size>
-      </method>
-      <method name="System.Object &lt;UnaryIsTrue_2&gt;m__4D(System.Dynamic.UnaryOperationBinder)">
-        <size>52</size>
-      </method>
-      <method name="Void &lt;UnaryIsTrue_2&gt;m__4E(System.Dynamic.BinaryOperationBinder, System.Object)">
-        <size>68</size>
-      </method>
-      <method name="Boolean &lt;Main&gt;m__4F(System.Reflection.MethodInfo)">
-        <size>12</size>
-      </method>
-      <method name="System.String &lt;Main&gt;m__50(System.Reflection.MethodInfo)">
-        <size>7</size>
-      </method>
-      <method name="Boolean &lt;Main&gt;m__51(System.Reflection.MethodInfo)">
-        <size>7</size>
-      </method>
-      <method name="Boolean &lt;Main&gt;m__52(Boolean)">
-        <size>5</size>
-      </method>
     </type>
     <type name="Tester+&lt;InvokeMember_2&gt;c__AnonStorey3">
       <method name="Void &lt;&gt;m__35(System.Dynamic.InvokeMemberBinder, System.Object[])">
@@ -657,11 +582,6 @@
     </type>
     <type name="Tester+&lt;InvokeMember_6&gt;c__AnonStorey4">
       <method name="Void &lt;&gt;m__38(System.Dynamic.InvokeMemberBinder, System.Object[])">
-        <size>119</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;SetIndex_3&gt;c__AnonStorey5">
-      <method name="Void &lt;&gt;m__3C(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
         <size>119</size>
       </method>
     </type>
@@ -679,6 +599,123 @@
       </method>
       <method name="Void .ctor(Object, IntPtr)">
         <size>0</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void SetMember_2(System.Object, DynamicObjectMock)">
+        <size>372</size>
+      </method>
+      <method name="System.Object &lt;GetMember_1&gt;m__2D(System.Dynamic.GetMemberBinder)">
+        <size>67</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;SetMember_2&gt;c__AnonStorey6">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void InvokeMember_8(System.Object, DynamicObjectMock)">
+        <size>140</size>
+      </method>
+      <method name="Void &lt;InvokeMember_8&gt;m__3A(System.Dynamic.InvokeMemberBinder, System.Object[])">
+        <size>111</size>
+      </method>
+      <method name="Void &lt;SetIndex_1&gt;m__3B(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
+        <size>124</size>
+      </method>
+      <method name="Void &lt;SetIndex_2&gt;m__3C(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
+        <size>139</size>
+      </method>
+      <method name="Void &lt;SetMember_1&gt;m__3E(System.Dynamic.SetMemberBinder, System.Object)">
+        <size>101</size>
+      </method>
+      <method name="Void &lt;SetMember_2&gt;m__40(System.Dynamic.BinaryOperationBinder, System.Object)">
+        <size>68</size>
+      </method>
+      <method name="Void &lt;SetMember_2&gt;m__41(System.Dynamic.SetMemberBinder, System.Object)">
+        <size>76</size>
+      </method>
+      <method name="System.Object &lt;UnaryPlus_1&gt;m__42(System.Dynamic.UnaryOperationBinder)">
+        <size>47</size>
+      </method>
+      <method name="System.Object &lt;UnaryMinus_1&gt;m__43(System.Dynamic.UnaryOperationBinder)">
+        <size>47</size>
+      </method>
+      <method name="System.Object &lt;UnaryNot_1&gt;m__44(System.Dynamic.UnaryOperationBinder)">
+        <size>47</size>
+      </method>
+      <method name="System.Object &lt;UnaryOnesComplement_1&gt;m__45(System.Dynamic.UnaryOperationBinder)">
+        <size>47</size>
+      </method>
+      <method name="System.Object &lt;UnaryDecrement_1&gt;m__46(System.Dynamic.UnaryOperationBinder)">
+        <size>47</size>
+      </method>
+      <method name="System.Object &lt;UnaryDecrement_2&gt;m__47(System.Dynamic.UnaryOperationBinder)">
+        <size>51</size>
+      </method>
+      <method name="System.Object &lt;UnaryIncrement_1&gt;m__48(System.Dynamic.UnaryOperationBinder)">
+        <size>47</size>
+      </method>
+      <method name="System.Object &lt;UnaryIncrement_2&gt;m__49(System.Dynamic.UnaryOperationBinder)">
+        <size>51</size>
+      </method>
+      <method name="System.Object &lt;UnaryIsFalse_1&gt;m__4A(System.Dynamic.UnaryOperationBinder)">
+        <size>52</size>
+      </method>
+      <method name="Void &lt;UnaryIsFalse_1&gt;m__4B(System.Dynamic.BinaryOperationBinder, System.Object)">
+        <size>68</size>
+      </method>
+      <method name="System.Object &lt;UnaryIsFalse_2&gt;m__4C(System.Dynamic.UnaryOperationBinder)">
+        <size>52</size>
+      </method>
+      <method name="Void &lt;UnaryIsFalse_2&gt;m__4D(System.Dynamic.BinaryOperationBinder, System.Object)">
+        <size>68</size>
+      </method>
+      <method name="System.Object &lt;UnaryIsFalse_3&gt;m__4E(System.Dynamic.UnaryOperationBinder)">
+        <size>52</size>
+      </method>
+      <method name="Void &lt;UnaryIsFalse_3&gt;m__4F(System.Dynamic.BinaryOperationBinder, System.Object)">
+        <size>67</size>
+      </method>
+      <method name="System.Object &lt;UnaryIsTrue_1&gt;m__50(System.Dynamic.UnaryOperationBinder)">
+        <size>52</size>
+      </method>
+      <method name="System.Object &lt;UnaryIsTrue_2&gt;m__51(System.Dynamic.UnaryOperationBinder)">
+        <size>52</size>
+      </method>
+      <method name="Void &lt;UnaryIsTrue_2&gt;m__52(System.Dynamic.BinaryOperationBinder, System.Object)">
+        <size>68</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__53(System.Reflection.MethodInfo)">
+        <size>12</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__54(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__55(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__56(Boolean)">
+        <size>5</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;InvokeMember_8&gt;c__DynamicSite35+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, System.Object ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;SetIndex_3&gt;c__AnonStorey5">
+      <method name="Void &lt;&gt;m__3D(System.Dynamic.SetIndexBinder, System.Object[], System.Object)">
+        <size>119</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;SetMember_2&gt;c__AnonStorey6">
+      <method name="System.Object &lt;&gt;m__3F(System.Dynamic.GetMemberBinder)">
+        <size>72</size>
       </method>
     </type>
   </test>
@@ -1411,7 +1448,7 @@
         <size>231</size>
       </method>
       <method name="Void IsEvent()">
-        <size>1999</size>
+        <size>2673</size>
       </method>
       <method name="Void MemberGetTest()">
         <size>810</size>
@@ -1420,7 +1457,7 @@
         <size>36</size>
       </method>
       <method name="Void MemberSetTest()">
-        <size>2971</size>
+        <size>2964</size>
       </method>
       <method name="Void MemberSetError_Null()">
         <size>36</size>
@@ -1563,7 +1600,7 @@
         <size>404</size>
       </method>
       <method name="Boolean UsingTest()">
-        <size>335</size>
+        <size>453</size>
       </method>
       <method name="Int32 Main()">
         <size>71</size>
@@ -2100,6 +2137,109 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-031.cs">
+    <type name="A`1[T]">
+      <method name="U CustomDelegate[U](U ByRef)">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo[Z]()">
+        <size>103</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Foo&gt;c__DynamicSite0`1+Container0[Z]">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Z ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-032.cs">
+    <type name="A">
+      <method name="Void .ctor(Int32)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Foo(Int32, A ByRef)">
+        <size>9</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>140</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+&lt;Main&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Type, System.Object, A ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-033.cs">
+    <type name="Test">
+      <method name="Byte get_Prop()">
+        <size>2</size>
+      </method>
+      <method name="Void set_Prop(Byte)">
+        <size>1</size>
+      </method>
+      <method name="Byte get_Item(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void set_Item(Int32, Byte)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>1071</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-034.cs">
+    <type name="C">
+      <method name="Void M[U,V](U ByRef, V ByRef)">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>464</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Main&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, System.Object ByRef, System.Object ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
       </method>
     </type>
   </test>
@@ -6025,6 +6165,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-139.cs">
+    <type name="MyStruct">
+      <method name="Int32 op_Inequality(Nullable`1, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_Equality(Nullable`1, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_Inequality(System.String, Nullable`1)">
+        <size>3</size>
+      </method>
+      <method name="Int32 op_Equality(System.String, Nullable`1)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-140.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -6600,6 +6764,16 @@
         <size>6</size>
       </method>
       <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-165.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()">
         <size>7</size>
       </method>
     </type>
@@ -10147,7 +10321,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>94</size>
+        <size>74</size>
       </method>
     </type>
     <type name="D">
@@ -11878,9 +12052,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
     </type>
     <type name="Foo">
       <method name="Boolean op_Equality(Foo, Foo)">
@@ -11888,6 +12059,27 @@
       </method>
       <method name="Boolean op_Inequality(Foo, Foo)">
         <size>6</size>
+      </method>
+    </type>
+    <type name="S2">
+      <method name="Boolean op_Equality(S2, Nullable`1)">
+        <size>6</size>
+      </method>
+      <method name="Boolean op_Inequality(S2, Nullable`1)">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="S3">
+      <method name="Decimal op_Inequality(S3, System.Object)">
+        <size>7</size>
+      </method>
+      <method name="Decimal op_Equality(S3, System.Object)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>97</size>
       </method>
     </type>
   </test>
@@ -12311,7 +12503,7 @@
         <size>26</size>
       </method>
       <method name="Void Main()">
-        <size>98</size>
+        <size>88</size>
       </method>
     </type>
   </test>
@@ -15787,6 +15979,16 @@
     <type name="Test">
       <method name="Int32 Main()">
         <size>79</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-540.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>809</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -22853,6 +23055,119 @@
       </method>
     </type>
   </test>
+  <test name="gtest-iter-16.cs">
+    <type name="Test.Base">
+      <method name="IEnumerable`1 GetStuff(Int32)">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.Derived">
+      <method name="IEnumerable`1 GetStuff(Int32)">
+        <size>37</size>
+      </method>
+      <method name="IEnumerable`1 &lt;GetStuff&gt;__BaseCallProxy0(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.SpecialDerived">
+      <method name="IEnumerable`1 GetStuff(Int32)">
+        <size>37</size>
+      </method>
+      <method name="Void Main()">
+        <size>61</size>
+      </method>
+      <method name="IEnumerable`1 &lt;GetStuff&gt;__BaseCallProxy0(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.Base+&lt;GetStuff&gt;c__Iterator0">
+      <method name="Test.Base System.Collections.Generic.IEnumerator&lt;Test.Base&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Test.Base&gt;.GetEnumerator()">
+        <size>40</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>68</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>8</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.Derived+&lt;GetStuff&gt;c__Iterator1">
+      <method name="Test.Base System.Collections.Generic.IEnumerator&lt;Test.Base&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Test.Base&gt;.GetEnumerator()">
+        <size>52</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>185</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>62</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.SpecialDerived+&lt;GetStuff&gt;c__Iterator2">
+      <method name="Test.Base System.Collections.Generic.IEnumerator&lt;Test.Base&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Test.Base&gt;.GetEnumerator()">
+        <size>52</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>185</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>62</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-lambda-01.cs">
     <type name="X">
       <method name="Int32 Main()">
@@ -25771,7 +26086,7 @@
         <size>1</size>
       </method>
       <method name="Void TestStruct(Nullable`1)">
-        <size>1</size>
+        <size>24</size>
       </method>
       <method name="System.String get_Item(Int32, System.String)">
         <size>2</size>
@@ -25780,10 +26095,13 @@
         <size>4</size>
       </method>
       <method name="Int32 Main()">
-        <size>120</size>
+        <size>134</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Void TestStruct2(Nullable`1)">
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -36020,6 +36338,22 @@
       </method>
     </type>
   </test>
+  <test name="test-450.cs">
+    <type name="A">
+      <method name="Int32 Main()">
+        <size>53</size>
+      </method>
+      <method name="Byte op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="A op_Implicit(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
   <test name="test-451.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -36301,6 +36635,67 @@
       </method>
       <method name="Int32 Main()">
         <size>85</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-466.cs">
+    <type name="A.X.Test">
+      <method name="Void Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-467.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A+D">
+      <method name="Int32 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+D">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Foo()">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>29</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -37039,6 +37434,16 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-496.cs">
+    <type name="Baz">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -39748,10 +40153,13 @@
         <size>7</size>
       </method>
       <method name="Void ZeroBasedReductions()">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Void Main()">
-        <size>6</size>
+        <size>11</size>
+      </method>
+      <method name="Void ZeroBasedReductionsWithConversion()">
+        <size>15</size>
       </method>
     </type>
   </test>
@@ -43575,7 +43983,7 @@
   <test name="test-789.cs">
     <type name="Program">
       <method name="Void Main()">
-        <size>50</size>
+        <size>76</size>
       </method>
       <method name="Void &lt;Main&gt;m__0()">
         <size>7</size>

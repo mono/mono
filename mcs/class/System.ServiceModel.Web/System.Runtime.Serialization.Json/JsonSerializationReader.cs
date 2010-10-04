@@ -102,12 +102,12 @@ namespace System.Runtime.Serialization.Json
 			case TypeCode.Int16:
 			case TypeCode.Int32:
 			case TypeCode.UInt16:
-			case TypeCode.UInt32:
 				int i = reader.ReadElementContentAsInt ();
 				if (type.IsEnum)
 					return Enum.ToObject (type, (object)i);
 				else
 					return Convert.ChangeType (i, type, null);
+			case TypeCode.UInt32:
 			case TypeCode.Int64:
 			case TypeCode.UInt64:
 				long l = reader.ReadElementContentAsLong ();

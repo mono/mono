@@ -98,6 +98,8 @@ namespace System.ServiceModel.Discovery.Udp
 			if (!accept_wait_handle.WaitOne (timeout))
 				throw new TimeoutException ();
 			accept_wait_handle.Reset ();
+			if (State != CommunicationState.Opened)
+				return null; // happens during Close() or Abort().
 			channel = new UdpDuplexChannel (this);
 			channel.Closed += delegate {
 				accept_wait_handle.Set ();

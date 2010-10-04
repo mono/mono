@@ -99,6 +99,7 @@ namespace System.Web
 		internal bool use_chunked;
 		
 		bool closed;
+		bool completed;
 		internal bool suppress_content;
 
 		//
@@ -801,6 +802,9 @@ namespace System.Web
 
 		internal void Flush (bool final_flush)
 		{
+			if (completed)
+				throw new HttpException ("Server cannot flush a completed response");
+			
 			DoFilter (final_flush);
 			if (!headers_sent){
 				if (final_flush || status_code != 200)
@@ -814,9 +818,11 @@ namespace System.Web
 				output_stream.Clear ();
 				if (WorkerRequest != null)
 					output_stream.Flush (WorkerRequest, true); // ignore final_flush here.
+				completed = true;
 				return;
 			}
-
+			completed = final_flush;
+			
 			if (!headers_sent)
 				WriteHeaders (final_flush);
 
@@ -1321,8 +1327,12 @@ namespace System.Web
 
 		internal void ReleaseResources ()
 		{
+			if (completed)
+				return;
+			
 			output_stream.ReleaseResources (true);
-			output_stream = null;
+			Close ();
+			completed = true;
 		}
 	}
 

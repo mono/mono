@@ -1429,6 +1429,27 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		public void AncestralReference ()
+		{
+			// Reference to Parent comes inside the Parent itself.
+			// In this case, adding reference after complete deserialization won't work (but it should).
+			var ms = new MemoryStream ();
+			Type [] knownTypes = new Type [] { typeof (ParentClass), typeof (Foo), typeof (Bar) };
+
+            		var ds = new DataContractSerializer (typeof (Parent));
+
+			var org = new Parent ();
+			ds.WriteObject (ms, org);
+			string result = Encoding.UTF8.GetString (ms.ToArray ());
+			ms.Position = 0;
+
+			var parent = (Parent) ds.ReadObject (ms);
+
+			Assert.IsNotNull (parent.Child, "#1");
+			Assert.AreEqual (parent, parent.Child.Parent, "#2");
+		}
+
+		[Test]
 		public void IXmlSerializableCallConstructor ()
 		{
 			IXmlSerializableCallConstructor  (false);
@@ -1954,4 +1975,34 @@ public class Dict<T> : Dictionary<string, T> where T : ParentClass
 	}
 	
 }
+
+[DataContract (IsReference = true)]
+public class Parent
+{
+	//constructor
+	public Parent ()
+	{
+		Child = new Child (this);
+	}
+
+	[DataMember]
+	public Child Child;
+}
+
+[DataContract]
+public class Child
+{
+	public Child ()
+	{
+	}
+	
+	public Child (Parent parent)
+	{
+		this.Parent = parent;
+	}
+	
+	[DataMember]
+	public Parent Parent;
+}
+
 #endregion

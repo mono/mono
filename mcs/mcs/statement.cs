@@ -4866,7 +4866,6 @@ namespace Mono.CSharp {
 
 			protected override Expression ResolveInitializer (BlockContext bc, LocalVariable li, Expression initializer)
 			{
-				Assign assign;
 				if (li.Type == InternalType.Dynamic) {
 					initializer = initializer.Resolve (bc);
 					if (initializer == null)
@@ -4877,13 +4876,10 @@ namespace Mono.CSharp {
 						return null;
 
 					var var = LocalVariable.CreateCompilerGenerated (TypeManager.idisposable_type, bc.CurrentBlock, loc);
-					assign = new SimpleAssign (var.CreateReferenceExpression (bc, loc), initializer, loc);
-					assign.ResolveStatement (bc);
-
 					dispose_call = CreateDisposeCall (bc, var);
 					dispose_call.Resolve (bc);
 
-					return assign;
+					return base.ResolveInitializer (bc, li, new SimpleAssign (var.CreateReferenceExpression (bc, loc), initializer, loc));
 				}
 
 				if (li == Variable) {

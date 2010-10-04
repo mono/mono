@@ -325,13 +325,11 @@ namespace System.ServiceModel.Channels.Http
 		
 		public override void Abort ()
 		{
-			res.Flush ();
 			res.Close ();
 		}
 		
 		public override void Close ()
 		{
-			res.Flush ();
 			res.Close ();
 		}
 		

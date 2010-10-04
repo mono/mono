@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Transactions.dll
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll
+LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Configuration.dll
 
 TEST_MCS_FLAGS = /nowarn:1595 $(LIB_MCS_FLAGS)
 

@@ -46,7 +46,6 @@ namespace System.ServiceModel.Channels
 		BindingContext context;
 		TcpChannelInfo info;
 		TcpListener tcp_listener;
-		Thread tcp_acceptor_thread;
 		
 		public TcpChannelListener (TcpTransportBindingElement source, BindingContext context)
 			: base (context)
@@ -165,11 +164,8 @@ namespace System.ServiceModel.Channels
 		{
 			if (tcp_listener == null)
 				throw new InvalidOperationException ("Current state is " + State);
-			if (tcp_acceptor_thread != null) {
-				tcp_acceptor_thread.Abort ();
-				tcp_acceptor_thread.Join (timeout);
-				tcp_acceptor_thread = null;
-			}
+			//tcp_listener.Client.Close (Math.Max (50, (int) timeout.TotalMilliseconds));
+			tcp_listener.Stop ();
 			var l = new List<ManualResetEvent> (accept_handles);
 			foreach (var wait in l) // those handles will disappear from accepted_handles
 				wait.Set ();
@@ -185,26 +181,32 @@ namespace System.ServiceModel.Channels
 			
 			int explicitPort = Uri.Port;
 			tcp_listener = new TcpListener (entry.AddressList [0], explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
-			tcp_acceptor_thread = new Thread (new ThreadStart (TcpAcceptorLoop));
-			tcp_acceptor_thread.Start ();
+			tcp_listener.Start ();
+			tcp_listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, tcp_listener);
 		}
 
-		void TcpAcceptorLoop ()
+		void TcpListenerAcceptedClient (IAsyncResult result)
 		{
-			tcp_listener.Start ();
+			var listener = (TcpListener) result.AsyncState;
 			try {
-				while (State == CommunicationState.Opened) {
-					// With async operation works with aborting the thread.
-					var cli = tcp_listener.EndAcceptTcpClient (tcp_listener.BeginAcceptTcpClient (null, null));
-					if (cli != null) {
-						accepted_clients.Enqueue (cli);
-						if (accept_handles.Count > 0)
-							accept_handles [0].Set ();
+				var client = listener.EndAcceptTcpClient (result);
+				if (client != null) {
+					accepted_clients.Enqueue (client);
+					if (accept_handles.Count > 0)
+						accept_handles [0].Set ();
+				}
+			} catch {
+				/* If an accept fails, just ignore it. Maybe the remote peer disconnected already */
+			} finally {
+				if (State == CommunicationState.Opened) {
+					try {
+						listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, listener);
+					} catch {
+						/* If this fails, we must have disposed the listener */
 					}
 				}
-			} finally {
-				tcp_listener.Stop ();
 			}
 		}
 	}
 }
+

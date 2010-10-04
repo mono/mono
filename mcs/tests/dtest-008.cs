@@ -75,6 +75,10 @@ public class Test
 
 		if (Disposable.Counter != 2)
 			return false;
+		
+		using (dynamic u = new Disposable ()) {
+			u.Test ();
+		}
 
 		return true;
 	}

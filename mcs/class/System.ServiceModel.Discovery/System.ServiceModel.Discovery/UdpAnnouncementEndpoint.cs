@@ -75,7 +75,7 @@ namespace System.ServiceModel.Discovery
 
 		// (6), everything falls to here
 		public UdpAnnouncementEndpoint (DiscoveryVersion discoveryVersion, Uri multicastAddress)
-			: base (discoveryVersion, CreateBinding (), new EndpointAddress (discoveryVersion.AdhocAddress))
+			: base (discoveryVersion, CreateBinding (discoveryVersion), new EndpointAddress (discoveryVersion.AdhocAddress))
 		{
 			ListenUri = multicastAddress;
 			TransportSettings = new UdpTransportSettings ();
@@ -84,9 +84,11 @@ namespace System.ServiceModel.Discovery
 			Behaviors.Add (new DiscoveryViaUriBehavior (multicastAddress));
 		}
 
-		static Binding CreateBinding ()
+		static Binding CreateBinding (DiscoveryVersion discoveryVersion)
 		{
-			return new CustomBinding (new TextMessageEncodingBindingElement (), new UdpTransportBindingElement ()) { SendTimeout = TimeSpan.FromMinutes (1), ReceiveTimeout = TimeSpan.FromMinutes (10) };
+			var mbe = new TextMessageEncodingBindingElement () {MessageVersion = discoveryVersion.MessageVersion};
+			var tbe = new UdpTransportBindingElement ();
+			return new CustomBinding (mbe, tbe) {SendTimeout = TimeSpan.FromMinutes (1), ReceiveTimeout = TimeSpan.FromMinutes (10)};
 		}
 
 		public Uri MulticastAddress { get; set; }

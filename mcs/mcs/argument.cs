@@ -244,9 +244,13 @@ namespace Mono.CSharp
 				} else if (a.ArgType == Argument.AType.Ref) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsRef", loc), loc);
+					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "UseCompileTimeType", loc), loc);
 				} else if (a.ArgType == Argument.AType.Out) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsOut", loc), loc);
+					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "UseCompileTimeType", loc), loc);
 				} else if (a.ArgType == Argument.AType.DynamicTypeName) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsStaticType", loc), loc);

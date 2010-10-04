@@ -242,18 +242,18 @@ namespace System.Net.Sockets
 					IPAddress[] addresses = Dns.GetHostAddresses (dep.Host);
 					IPEndPoint endpoint;
 #if MOONLIGHT && !INSIDE_SYSTEM
-					List<IPAddress> valid = new List<IPAddress> ();
-					foreach (IPAddress a in addresses) {
-						// if we're not downloading a socket policy then check the policy
-						// and if we're not running with elevated permissions (SL4 OoB option)
-						if (!PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
+					if (!PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
+						List<IPAddress> valid = new List<IPAddress> ();
+						foreach (IPAddress a in addresses) {
+							// if we're not downloading a socket policy then check the policy
+							// and if we're not running with elevated permissions (SL4 OoB option)
 							endpoint = new IPEndPoint (a, dep.Port);
 							if (!CrossDomainPolicyManager.CheckEndPoint (endpoint, policy_protocol))
 								continue;
+							valid.Add (a);
 						}
-						valid.Add (a);
+						addresses = valid.ToArray ();
 					}
-					addresses = valid.ToArray ();
 #endif
 					foreach (IPAddress addr in addresses) {
 						try {

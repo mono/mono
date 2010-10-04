@@ -56,38 +56,43 @@ namespace MonoTests.System.Xaml
 				r.Read ();
 		}
 
-		void LoadTest (string filename, Type type)
+		object LoadTest (string filename, Type type)
 		{
 			var obj = XamlServices.Load (GetReader (filename));
 			Assert.AreEqual (type, obj.GetType (), "type");
+			return obj;
 		}
 
 		[Test]
 		public void Read_String ()
 		{
 			ReadTest ("String.xml");
-			//LoadTest ("String.xml", typeof (string));
+			var ret = LoadTest ("String.xml", typeof (string));
+			Assert.AreEqual ("foo", ret, "ret");
 		}
 
 		[Test]
 		public void Read_Int32 ()
 		{
 			ReadTest ("Int32.xml");
-			//LoadTest ("Int32.xml", typeof (int));
+			var ret = LoadTest ("Int32.xml", typeof (int));
+			Assert.AreEqual (5, ret, "ret");
 		}
 
 		[Test]
 		public void Read_DateTime ()
 		{
 			ReadTest ("DateTime.xml");
-			//LoadTest ("DateTime.xml", typeof (DateTime));
+			var ret = LoadTest ("DateTime.xml", typeof (DateTime));
+			Assert.AreEqual (new DateTime (2010, 4, 14), ret, "ret");
 		}
 
 		[Test]
 		public void Read_TimeSpan ()
 		{
 			ReadTest ("TimeSpan.xml");
-			//LoadTest ("TimeSpan.xml", typeof (TimeSpan));
+			var ret = LoadTest ("TimeSpan.xml", typeof (TimeSpan));
+			Assert.AreEqual (TimeSpan.FromMinutes (7), ret, "ret");
 		}
 
 		[Test]
@@ -118,6 +123,12 @@ namespace MonoTests.System.Xaml
 		{
 			ReadTest ("Dictionary_String_Type.xml");
 			//LoadTest ("Dictionary_String_Type.xml", typeof (Dictionary<string,Type>));
+		}
+
+		[Test]
+		public void Read_SilverlightApp1 ()
+		{
+			ReadTest ("SilverlightApp1.xaml");
 		}
 
 		[Test]
@@ -320,6 +331,47 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsTrue (r.Read (), "eItems#1");
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eItems#2");
+
+			Assert.IsTrue (r.Read (), "eo#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		[Test]
+		public void Read5 ()
+		{
+			var r = GetReader ("String.xml");
+
+			Assert.IsTrue (r.Read (), "ns#1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#3");
+
+			Assert.IsTrue (r.Read (), "so#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
+			Assert.AreEqual (XamlLanguage.String, r.Type, "so#3");
+
+			Assert.IsTrue (r.Read (), "sbase#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
+			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
+
+			Assert.IsTrue (r.Read (), "vbase#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
+			Assert.IsTrue (r.Value is string, "vbase#3");
+
+			Assert.IsTrue (r.Read (), "ebase#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+
+			Assert.IsTrue (r.Read (), "sinit#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
+			Assert.AreEqual (XamlLanguage.Initialization, r.Member, "sinit#3");
+
+			Assert.IsTrue (r.Read (), "vinit#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vinit#2");
+			Assert.AreEqual ("foo", r.Value, "vinit#3"); // string
+
+			Assert.IsTrue (r.Read (), "einit#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "einit#2");
 
 			Assert.IsTrue (r.Read (), "eo#1");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");

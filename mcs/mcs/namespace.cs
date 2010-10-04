@@ -378,6 +378,9 @@ namespace Mono.CSharp {
 			if (best == null)
 				return null;
 
+			if ((best.Modifiers & Modifiers.INTERNAL) != 0 && !TypeManager.IsThisOrFriendAssembly (CodeGen.Assembly.Builder, best.MemberDefinition.Assembly))
+				return null;
+
 			te = new TypeExpression (best, Location.Null);
 
 			// TODO MemberCache: Cache more

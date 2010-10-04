@@ -171,6 +171,48 @@ namespace System.Runtime.Serialization
 				dataContractSurrogate);
 		}
 
+#if NET_4_0
+		public DataContractSerializer (Type type,
+			IEnumerable<Type> knownTypes,
+			int maxObjectsInGraph,
+			bool ignoreExtensionDataObject,
+			bool preserveObjectReferences,
+			IDataContractSurrogate dataContractSurrogate,
+			DataContractResolver dataContractResolver)
+			: this (type, knownTypes, maxObjectsInGraph, ignoreExtensionDataObject, preserveObjectReferences, dataContractSurrogate)
+		{
+			DataContractResolver = dataContractResolver;
+		}
+
+		public DataContractSerializer (Type type,
+			string rootName,
+			string rootNamespace,
+			IEnumerable<Type> knownTypes,
+			int maxObjectsInGraph,
+			bool ignoreExtensionDataObject,
+			bool preserveObjectReferences,
+			IDataContractSurrogate dataContractSurrogate,
+			DataContractResolver dataContractResolver)
+			: this (type, rootName, rootNamespace, knownTypes, maxObjectsInGraph, ignoreExtensionDataObject, preserveObjectReferences, dataContractSurrogate)
+		{
+			DataContractResolver = dataContractResolver;
+		}
+
+		public DataContractSerializer (Type type,
+			XmlDictionaryString rootName,
+			XmlDictionaryString rootNamespace,
+			IEnumerable<Type> knownTypes,
+			int maxObjectsInGraph,
+			bool ignoreExtensionDataObject,
+			bool preserveObjectReferences,
+			IDataContractSurrogate dataContractSurrogate,
+			DataContractResolver dataContractResolver)
+			: this (type, rootName, rootNamespace, knownTypes, maxObjectsInGraph, ignoreExtensionDataObject, preserveObjectReferences, dataContractSurrogate)
+		{
+			DataContractResolver = dataContractResolver;
+		}
+#endif
+
 		void PopulateTypes (IEnumerable<Type> knownTypes)
 		{
 			if (known_types == null)
@@ -216,6 +258,13 @@ namespace System.Runtime.Serialization
 
 			PopulateTypes (Type.EmptyTypes);
 		}
+
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		DataContractResolver DataContractResolver { get; private set; }
 
 		public bool IgnoreExtensionDataObject {
 			get { return ignore_ext; }
@@ -266,7 +315,6 @@ namespace System.Runtime.Serialization
 			return ReadObject (XmlDictionaryReader.CreateDictionaryReader (reader), verifyObjectName);
 		}
 
-		[MonoTODO]
 		public override object ReadObject (XmlDictionaryReader reader, bool verifyObjectName)
 		{
 			int startTypeCount = known_types.Count;
@@ -275,7 +323,7 @@ namespace System.Runtime.Serialization
 			bool isEmpty = reader.IsEmptyElement;
 
 			object ret = XmlFormatterDeserializer.Deserialize (reader, type,
-				known_types, surrogate, root_name.Value, root_ns.Value, verifyObjectName);
+				known_types, surrogate, DataContractResolver, root_name.Value, root_ns.Value, verifyObjectName);
 
 			// remove temporarily-added known types for
 			// rootType and object graph type.
@@ -284,6 +332,19 @@ namespace System.Runtime.Serialization
 
 			return ret;
 		}
+
+#if NET_4_0
+		public object ReadObject (XmlDictionaryReader reader, bool verifyObjectName, DataContractResolver resolver)
+		{
+			var bak = DataContractResolver;
+			try {
+				DataContractResolver = resolver;
+				return ReadObject (reader, verifyObjectName);
+			} finally {
+				DataContractResolver = bak;
+			}
+		}
+#endif
 
 		private void ReadRootStartElement (XmlReader reader, Type type)
  		{
@@ -303,6 +364,19 @@ namespace System.Runtime.Serialization
 			XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (writer);
 			WriteObject (w, graph);
 		}
+
+#if NET_4_0
+		public void WriteObject (XmlDictionaryWriter writer, object graph, DataContractResolver resolver)
+		{
+			var bak = DataContractResolver;
+			try {
+				DataContractResolver = resolver;
+				WriteObject (writer, graph);
+			} finally {
+				DataContractResolver = bak;
+			}
+		}
+#endif
 
 		[MonoTODO ("support arrays; support Serializable; support SharedType; use DataContractSurrogate")]
 		/*

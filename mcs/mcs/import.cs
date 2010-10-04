@@ -377,8 +377,6 @@ namespace Mono.CSharp
 		//
 		public PropertySpec CreateProperty (PropertyInfo pi, TypeSpec declaringType, MethodSpec get, MethodSpec set)
 		{
-			var definition = new ImportedMemberDefinition (pi);
-
 			Modifiers mod = 0;
 			AParametersCollection param = null;
 			TypeSpec type = null;
@@ -472,11 +470,11 @@ namespace Mono.CSharp
 				}
 
 				if (is_valid_property)
-					spec = new IndexerSpec (declaringType, definition, type, param, pi, mod);
+					spec = new IndexerSpec (declaringType, new ImportedIndexerDefinition (pi, param), type, param, pi, mod);
 			}
 
 			if (spec == null)
-				spec = new PropertySpec (MemberKind.Property, declaringType, definition, type, pi, mod);
+				spec = new PropertySpec (MemberKind.Property, declaringType, new ImportedMemberDefinition (pi), type, pi, mod);
 
 			if (!is_valid_property) {
 				spec.IsNotRealProperty = true;
@@ -1020,6 +1018,33 @@ namespace Mono.CSharp
 		readonly AParametersCollection parameters;
 
 		public ImportedMethodDefinition (MethodBase provider, AParametersCollection parameters)
+			: base (provider)
+		{
+			this.parameters = parameters;
+		}
+
+		#region Properties
+
+		public AParametersCollection Parameters {
+			get {
+				return parameters;
+			}
+		}
+
+		public TypeSpec MemberType {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		#endregion
+	}
+
+	class ImportedIndexerDefinition : ImportedMemberDefinition, IParametersMember
+	{
+		readonly AParametersCollection parameters;
+
+		public ImportedIndexerDefinition (PropertyInfo provider, AParametersCollection parameters)
 			: base (provider)
 		{
 			this.parameters = parameters;

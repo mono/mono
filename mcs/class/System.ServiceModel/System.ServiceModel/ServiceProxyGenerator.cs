@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -38,9 +39,13 @@ namespace System.ServiceModel
 {
 	internal class ServiceProxyGenerator : ProxyGeneratorBase
 	{
-		public static Type CreateCallbackProxyType (Type serviceType, Type callbackType)
+		public static Type CreateCallbackProxyType (DispatchRuntime dispatchRuntime, Type callbackType)
 		{
-			var cd = ContractDescriptionGenerator.GetCallbackContract (serviceType, callbackType);
+			var ed = dispatchRuntime.EndpointDispatcher;
+			var channelDispatcher = ed.ChannelDispatcher;
+			Type contractType = channelDispatcher != null ? channelDispatcher.Host.ImplementedContracts.Values.First (hcd => hcd.Name == ed.ContractName && hcd.Namespace == ed.ContractNamespace).ContractType : dispatchRuntime.Type;
+
+			var cd = ContractDescriptionGenerator.GetCallbackContract (contractType, callbackType);
 			string modname = "dummy";
 			Type crtype = typeof (DuplexServiceRuntimeChannel);
 

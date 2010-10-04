@@ -126,7 +126,7 @@ namespace System.ServiceModel
 			get { return description; }
 		}
 
-		protected IDictionary<string,ContractDescription> ImplementedContracts {
+		protected internal IDictionary<string,ContractDescription> ImplementedContracts {
 			get { return contracts; }
 		}
 

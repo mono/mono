@@ -55,7 +55,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			ServiceRuntimeChannel contextChannel;
 			if (dispatch_runtime.CallbackClientRuntime.CallbackClientType != null) {
-				var type = ServiceProxyGenerator.CreateCallbackProxyType (dispatch_runtime.Type, dispatch_runtime.CallbackClientRuntime.CallbackClientType);
+				var type = ServiceProxyGenerator.CreateCallbackProxyType (dispatch_runtime, dispatch_runtime.CallbackClientRuntime.CallbackClientType);
 				contextChannel = (ServiceRuntimeChannel) Activator.CreateInstance (type, new object [] {reply_or_input, dispatch_runtime});
 			}
 			else

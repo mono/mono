@@ -606,5 +606,17 @@ namespace MonoTests.System.Xaml
 			w.Close ();
 			Assert.AreEqual ("foo", w.Result, "#1");
 		}
+
+		[Test]
+		public void ConstructorArguments ()
+		{
+			string xml = String.Format (@"<?xml version='1.0' encoding='utf-16'?><ArgumentAttributed xmlns='clr-namespace:MonoTests.System.Xaml;assembly={0}' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'><x:Arguments><x:String>xxx</x:String><x:String>yyy</x:String></x:Arguments></ArgumentAttributed>",  GetType ().Assembly.GetName ().Name);
+			Assert.IsFalse (sctx.FullyQualifyAssemblyNamesInClrNamespaces, "premise0");
+			var r = new XamlObjectReader (new ArgumentAttributed ("xxx", "yyy"), sctx);
+			var sw = new StringWriter ();
+			var w = new XamlXmlWriter (sw, sctx, null);
+			XamlServices.Transform (r, w);
+			Assert.AreEqual (xml, sw.ToString ().Replace ('"', '\''), "#1");
+		}
 	}
 }

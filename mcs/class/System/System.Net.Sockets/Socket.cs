@@ -908,6 +908,9 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
 

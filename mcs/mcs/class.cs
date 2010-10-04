@@ -394,9 +394,10 @@ namespace Mono.CSharp {
 			RemoveMemberType (next_part);
 		}
 		
-		public void AddDelegate (Delegate d)
+		public virtual TypeSpec AddDelegate (Delegate d)
 		{
 			AddTypeContainer (d);
+			return null;
 		}
 
 		private void AddMemberToList (MemberCore mc, List<MemberCore> alist, bool isexplicit)
@@ -1710,7 +1711,7 @@ namespace Mono.CSharp {
 						if (f.OptAttributes != null || PartialContainer.HasStructLayout)
 							continue;
 						
-						Constant c = New.Constantify (f.MemberType);
+						Constant c = New.Constantify (f.MemberType, f.Location);
 						Report.Warning (649, 4, f.Location, "Field `{0}' is never assigned to, and will always have its default value `{1}'",
 							f.GetSignatureForError (), c == null ? "null" : c.AsString ());
 					}
@@ -2634,14 +2635,9 @@ namespace Mono.CSharp {
 				while (mt.IsPointer)
 					mt = TypeManager.GetElementType (mt);
 
-				if (mt.MemberDefinition == this) {
-					for (var p = Parent; p != null; p = p.Parent) {
-						if (p.Kind == MemberKind.Class) {
-							has_unmanaged_check_done = true;
-							return false;
-						}
-					}
-					continue;
+				if (mt.IsGenericOrParentIsGeneric || mt.IsGenericParameter) {
+					has_unmanaged_check_done = true;
+					return false;
 				}
 
 				if (TypeManager.IsUnmanagedType (mt))

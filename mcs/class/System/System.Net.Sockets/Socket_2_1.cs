@@ -250,9 +250,7 @@ namespace System.Net.Sockets {
 					if (sac != null)
 						Socket.socket_pool_queue (sac, worker.result);
 				}
-
-				if (callback != null)
-					callback (this);
+				// IMPORTANT: 'callback', if any is scheduled from unmanaged code
 			}
 
 			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)
@@ -421,11 +419,9 @@ namespace System.Net.Sockets {
 				else if (op == Socket.SocketOperation.Disconnect)
 					async_op = SocketAsyncOperation.Disconnect;
 #endif
-				else if (op == Socket.SocketOperation.Receive)
+				else if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric)
 					async_op = SocketAsyncOperation.Receive;
 #if !MOONLIGHT
-				else if (op == Socket.SocketOperation.ReceiveGeneric)
-					async_op = SocketAsyncOperation.Receive;
 				else if (op == Socket.SocketOperation.ReceiveFrom)
 					async_op = SocketAsyncOperation.ReceiveFrom;
 #endif
@@ -433,11 +429,9 @@ namespace System.Net.Sockets {
 				else if (op == Socket.SocketOperation.ReceiveMessageFrom)
 					async_op = SocketAsyncOperation.ReceiveMessageFrom;
 				*/
-				else if (op == Socket.SocketOperation.Send)
+				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric)
 					async_op = SocketAsyncOperation.Send;
 #if !MOONLIGHT
-				else if (op == Socket.SocketOperation.SendGeneric)
-					async_op = SocketAsyncOperation.Send;
 				/*
 				else if (op == Socket.SocketOperation.SendPackets)
 					async_op = SocketAsyncOperation.SendPackets;
@@ -507,6 +501,10 @@ namespace System.Net.Sockets {
 										     result.Size,
 										     result.SockFlags,
 										     out error);
+						if (error != 0) {
+							result.Complete (new SocketException ((int) error));
+							return;
+						}
 					} catch (Exception e) {
 						result.Complete (e);
 						return;
@@ -1222,12 +1220,14 @@ namespace System.Net.Sockets {
 		public bool ReceiveAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			//
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			// LAME SPEC: the ArgumentException is never thrown, instead an NRE is
 			// thrown when e.Buffer and e.BufferList are null (works fine when one is
 			// set to a valid object)
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			if (e.Buffer == null && e.BufferList == null)
+				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
 			e.curSocket = this;
 			SocketOperation op = (e.Buffer != null) ? SocketOperation.Receive : SocketOperation.ReceiveGeneric;
@@ -1261,7 +1261,7 @@ namespace System.Net.Sockets {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 			if (e.Buffer == null && e.BufferList == null)
-				throw new ArgumentException ("Either e.Buffer or e.BufferList must be valid buffers.");
+				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
 			e.curSocket = this;
 			SocketOperation op = (e.Buffer != null) ? SocketOperation.Send : SocketOperation.SendGeneric;
@@ -1764,6 +1764,9 @@ namespace System.Net.Sockets {
 
 			if (result == null)
 				throw new ArgumentNullException ("result");
+
+			if (end_point == null)
+				throw new ArgumentNullException ("remote_end");
 
 			SocketAsyncResult req = result as SocketAsyncResult;
 			if (req == null)

@@ -1,5 +1,9 @@
 using System;
 
+public struct S
+{
+}
+
 public class C
 {
 	static void Foo<T> (T t, T u = default (T))
@@ -16,6 +20,12 @@ public class C
 	}
 
 	static void TestStruct (int? s = new int ())
+	{
+		if (!s.HasValue)
+			throw new ApplicationException ("TestStruct");
+	}
+	
+	static void TestStruct2 (S? s = new S? ())
 	{
 	}
 	
@@ -35,6 +45,7 @@ public class C
 		TestParams ();
 		
 		TestStruct ();
+		TestStruct2 ();
 		
 		C c = new C ();
 		if (c [1] != "test")
