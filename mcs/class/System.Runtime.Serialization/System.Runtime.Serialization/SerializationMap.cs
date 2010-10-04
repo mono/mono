@@ -451,7 +451,7 @@ namespace System.Runtime.Serialization
 					GetDataMemberAttribute (pi);
 				if (dma == null)
 					continue;
-				KnownTypes.Add (pi.PropertyType);
+				KnownTypes.TryRegister (pi.PropertyType);
 				var map = KnownTypes.FindUserMap (pi.PropertyType);
 				if (!pi.CanRead || (!pi.CanWrite && !(map is ICollectionTypeMap)))
 					throw new InvalidDataContractException (String.Format (

@@ -39,19 +39,9 @@ namespace System.Configuration {
 
 		bool modified;
 		bool readOnly;
-		int originalStringHash = 0;
 
 		public bool IsModified {
-			get { 
-				if (modified)
-					return true;
-
-				string str = ToString ();
-				if (str == null)
-					return false;
-
-				return str.GetHashCode () != originalStringHash;
-			}
+			get { return modified; }
 		}
 
 		public new bool IsReadOnly {
@@ -99,7 +89,6 @@ namespace System.Configuration {
 			CopyTo (contents, 0);
 			
 			col.AddRange (contents);
-			col.originalStringHash = originalStringHash;
 
 			return col;
 		}
@@ -135,15 +124,6 @@ namespace System.Configuration {
 			CopyTo (contents, 0);
 
 			return String.Join (",", contents);
-		}
-
-		internal void UpdateStringHash ()
-		{
-			string str = ToString ();
-			if (str == null)
-				originalStringHash = 0;
-			else
-				originalStringHash = str.GetHashCode ();
 		}
 	}
 

@@ -1995,7 +1995,11 @@ async_invoke_thread (gpointer data)
 						MonoClass *klass;
 
 						klass = exc->vtable->klass;
-						unloaded = is_appdomainunloaded_exception (klass);
+						unloaded = (klass->image == mono_defaults.corlib);
+						if (unloaded) {
+							unloaded = is_appdomainunloaded_exception (klass);
+						}
+
 						if (!unloaded && klass != mono_defaults.threadabortexception_class) {
 							mono_unhandled_exception (exc);
 							exit (255);

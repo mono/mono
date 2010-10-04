@@ -1791,18 +1791,8 @@ void ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal(SOCKET soc
 
 	*error = 0;
 	
-#if !defined(SO_EXCLUSIVEADDRUSE) && defined(SO_REUSEADDR)
-	if (level == SocketOptionLevel_Socket && name == SocketOptionName_ExclusiveAddressUse) {
-		system_level = SOL_SOCKET;
-		system_name = SO_REUSEADDR;
-		ret = 0;
-	} else
-#endif
-	{
-
-		ret = convert_sockopt_level_and_name (level, name, &system_level, &system_name);
-	}
-
+	ret=convert_sockopt_level_and_name(level, name, &system_level,
+					   &system_name);
 	if(ret==-1) {
 		*error = WSAENOPROTOOPT;
 		return;
@@ -1909,12 +1899,9 @@ void ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal(SOCKET soc
 #endif
 
 	default:
-#if !defined(SO_EXCLUSIVEADDRUSE) && defined(SO_REUSEADDR)
-		if (level == SocketOptionLevel_Socket && name == SocketOptionName_ExclusiveAddressUse)
-			val = val ? 0 : 1;
-#endif
 		obj = int_to_object (domain, val);
 	}
+
 	*obj_val=obj;
 }
 
@@ -2029,15 +2016,6 @@ void ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal(SOCKET sock, g
 
 	ret=convert_sockopt_level_and_name(level, name, &system_level,
 					   &system_name);
-
-#if !defined(SO_EXCLUSIVEADDRUSE) && defined(SO_REUSEADDR)
-	if (level == SocketOptionLevel_Socket && name == SocketOptionName_ExclusiveAddressUse) {
-		system_name = SO_REUSEADDR;
-		int_val = int_val ? 0 : 1;
-		ret = 0;
-	}
-#endif
-
 	if(ret==-1) {
 		*error = WSAENOPROTOOPT;
 		return;

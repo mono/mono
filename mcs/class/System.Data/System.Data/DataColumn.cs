@@ -704,13 +704,6 @@ namespace System.Data {
 			// Use the property to set the expression as it updates compiledExpression, if any.
 			copy.Expression = _expression;
 			//Copy.ExtendedProperties
-			if (_extendedProperties.Count > 0) {
-				Array extPropArray = Array.CreateInstance (typeof (object), _extendedProperties.Count);
-				_extendedProperties.CopyTo (extPropArray, 0);
-				for (var i = 0; i < _extendedProperties.Count; i++)
-					copy.ExtendedProperties.Add (extPropArray.GetValue(i), 
-					                             ExtendedProperties[extPropArray.GetValue(i)]);
-			}
 			copy._maxLength = _maxLength;
 			copy._nameSpace = _nameSpace;
 			copy._prefix = _prefix;
@@ -722,6 +715,7 @@ namespace System.Data {
 			if (DataType == typeof (DateTime))
 				copy.DateTimeMode = _datetimeMode;
 #endif
+			copy._extendedProperties = _extendedProperties;
 
 			return copy;
 		}

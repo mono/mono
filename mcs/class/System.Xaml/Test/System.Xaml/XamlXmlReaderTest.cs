@@ -56,43 +56,38 @@ namespace MonoTests.System.Xaml
 				r.Read ();
 		}
 
-		object LoadTest (string filename, Type type)
+		void LoadTest (string filename, Type type)
 		{
 			var obj = XamlServices.Load (GetReader (filename));
 			Assert.AreEqual (type, obj.GetType (), "type");
-			return obj;
 		}
 
 		[Test]
 		public void Read_String ()
 		{
 			ReadTest ("String.xml");
-			var ret = LoadTest ("String.xml", typeof (string));
-			Assert.AreEqual ("foo", ret, "ret");
+			//LoadTest ("String.xml", typeof (string));
 		}
 
 		[Test]
 		public void Read_Int32 ()
 		{
 			ReadTest ("Int32.xml");
-			var ret = LoadTest ("Int32.xml", typeof (int));
-			Assert.AreEqual (5, ret, "ret");
+			//LoadTest ("Int32.xml", typeof (int));
 		}
 
 		[Test]
 		public void Read_DateTime ()
 		{
 			ReadTest ("DateTime.xml");
-			var ret = LoadTest ("DateTime.xml", typeof (DateTime));
-			Assert.AreEqual (new DateTime (2010, 4, 14), ret, "ret");
+			//LoadTest ("DateTime.xml", typeof (DateTime));
 		}
 
 		[Test]
 		public void Read_TimeSpan ()
 		{
 			ReadTest ("TimeSpan.xml");
-			var ret = LoadTest ("TimeSpan.xml", typeof (TimeSpan));
-			Assert.AreEqual (TimeSpan.FromMinutes (7), ret, "ret");
+			//LoadTest ("TimeSpan.xml", typeof (TimeSpan));
 		}
 
 		[Test]
@@ -331,47 +326,6 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsTrue (r.Read (), "eItems#1");
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eItems#2");
-
-			Assert.IsTrue (r.Read (), "eo#1");
-			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");
-
-			Assert.IsFalse (r.Read (), "end");
-		}
-
-		[Test]
-		public void Read5 ()
-		{
-			var r = GetReader ("String.xml");
-
-			Assert.IsTrue (r.Read (), "ns#1");
-			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2");
-			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#3");
-
-			Assert.IsTrue (r.Read (), "so#1");
-			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
-			Assert.AreEqual (XamlLanguage.String, r.Type, "so#3");
-
-			Assert.IsTrue (r.Read (), "sbase#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
-			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
-
-			Assert.IsTrue (r.Read (), "vbase#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
-			Assert.IsTrue (r.Value is string, "vbase#3");
-
-			Assert.IsTrue (r.Read (), "ebase#1");
-			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
-
-			Assert.IsTrue (r.Read (), "sinit#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
-			Assert.AreEqual (XamlLanguage.Initialization, r.Member, "sinit#3");
-
-			Assert.IsTrue (r.Read (), "vinit#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vinit#2");
-			Assert.AreEqual ("foo", r.Value, "vinit#3"); // string
-
-			Assert.IsTrue (r.Read (), "einit#1");
-			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "einit#2");
 
 			Assert.IsTrue (r.Read (), "eo#1");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");

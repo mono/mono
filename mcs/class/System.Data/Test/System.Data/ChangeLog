@@ -1,7 +1,3 @@
-2010-10-01  Veerapuram Varadhan  <v.varadhan@gmail.com>
-	
-	* DataSetReadXmlTest.cs: Added new test for #582732.
-	
 2010-07-23  Veerapuram Varadhan  <v.varadhan@gmail.com>
 
 	* DataColumnTest.cs (B623451_SetOrdinalTest): Added new.

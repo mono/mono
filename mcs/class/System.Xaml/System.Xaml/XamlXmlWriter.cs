@@ -252,8 +252,7 @@ namespace System.Xaml
 		{
 			var xt = GetCurrentType ();
 			string prefix = GetPrefix (xm.PreferredXamlNamespace);
-			string name = xm.IsDirective ? xm.Name : String.Concat (xt.Name, ".", xm.Name);
-			w.WriteStartElement (prefix, name, xm.PreferredXamlNamespace);
+			w.WriteStartElement (prefix, String.Concat (xt.Name, ".", xm.Name), xm.PreferredXamlNamespace);
 			WriteAndClearNamespaces ();
 		}
 		

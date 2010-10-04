@@ -293,7 +293,6 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		//[ExpectedException (typeof (ArgumentException))] // oh? XamlXmlWriter raises this.
-		[Category ("NotWorking")] // so, it's not worthy of passing.
 		public void WriteValueTypeMismatch ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);

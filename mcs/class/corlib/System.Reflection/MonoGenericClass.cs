@@ -71,17 +71,7 @@ namespace System.Reflection
 		{
 			this.generic_type = tb;
 			this.type_arguments = args;
-			/*
-			This is a temporary hack until we can fix the rest of the runtime
-			to properly handle this class to be a complete UT.
-
-			We must not regisrer this with the runtime after the type is created
-			otherwise created_type.MakeGenericType will return an instance of MonoGenericClass,
-			which is very very broken.
-			*/
-			if (tb is TypeBuilder && !(tb as TypeBuilder).is_created)
-				register_with_runtime (this);
-			
+			register_with_runtime (this); /*Temporary hack while*/
 		}
 
 

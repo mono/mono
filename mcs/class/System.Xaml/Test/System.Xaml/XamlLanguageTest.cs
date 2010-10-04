@@ -522,12 +522,6 @@ namespace MonoTests.System.Xaml
 			var t = XamlLanguage.Int32;
 			TestXamlTypePrimitive (t, "Int32", typeof (int), false, false);
 
-			try {
-				t.Invoker.CreateInstance (new object [] {1});
-				Assert.Fail ("Should expect .ctor() and fail");
-			} catch (MissingMethodException) {
-			}
-
 			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
 			var l = t.GetAllAttachableMembers ().ToArray ();
 			Assert.AreEqual (1, l.Length, "#32");
@@ -580,12 +574,6 @@ namespace MonoTests.System.Xaml
 			TestXamlTypePrimitive (t, "String", typeof (string), true, true);
 			Assert.IsNotNull (XamlLanguage.AllTypes.First (tt => tt.Name == "String").ValueSerializer, "#x");
 			Assert.IsNotNull (XamlLanguage.String.ValueSerializer, "#y");
-
-			try {
-				t.Invoker.CreateInstance (new object [] {"foo"});
-				Assert.Fail ("Should expect .ctor() and fail");
-			} catch (MissingMethodException) {
-			}
 
 			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
 			var l = t.GetAllAttachableMembers ().ToArray ();

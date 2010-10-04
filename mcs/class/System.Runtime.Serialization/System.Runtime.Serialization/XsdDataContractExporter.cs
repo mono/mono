@@ -172,7 +172,7 @@ namespace System.Runtime.Serialization
 			if (predefined_types.FirstOrDefault (i => i.ClrType == type) != null)
 				return true;
 
-			known_types.Add (type);
+			known_types.TryRegister (type);
 			return known_types.FindUserMap (type) != null;
 		}
 
@@ -219,7 +219,7 @@ namespace System.Runtime.Serialization
 			if (imported_types.FirstOrDefault (i => i.ClrType == type) != null)
 				return false;
 
-			known_types.Add (type);
+			known_types.TryRegister (type);
 			var map = known_types.FindUserMap (type);
 			if (map == null)
 				return false;

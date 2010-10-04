@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //
 // TransactionSectionGroup.cs
 //
@@ -9,18 +8,6 @@
 //
 
 #if NET_2_0
-=======
-//
-// TransactionSectionGroup.cs
-//
-// Author:
-//	Pablo Ruiz <pruiz@netway.org>
-//
-// (C) 2010 Pablo Ruiz.
-//
-
-#if NET_2_0 && !MOBILE
->>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 
 using System;
 using System.Collections.Generic;
@@ -53,8 +40,4 @@ namespace System.Transactions.Configuration
 		}
 	}
 }
-<<<<<<< HEAD
 #endif
-=======
-#endif
->>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be

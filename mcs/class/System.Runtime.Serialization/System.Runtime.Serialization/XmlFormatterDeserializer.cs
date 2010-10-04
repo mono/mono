@@ -43,15 +43,15 @@ namespace System.Runtime.Serialization
 	{
 		KnownTypeCollection types;
 		IDataContractSurrogate surrogate;
-		DataContractResolver resolver, default_resolver; // new in 4.0.
+		DataContractResolver resolver; // new in 4.0.
 		// 3.5 SP1 supports deserialization by reference (id->obj).
 		// Though unlike XmlSerializer, it does not support forward-
 		// reference resolution i.e. a referenced object must appear
 		// before any references to it.
 		Hashtable references = new Hashtable ();
 
-		public static object Deserialize (XmlReader reader, Type declaredType,
-			KnownTypeCollection knownTypes, IDataContractSurrogate surrogate, DataContractResolver resolver, DataContractResolver defaultResolver,
+		public static object Deserialize (XmlReader reader, Type type,
+			KnownTypeCollection knownTypes, IDataContractSurrogate surrogate, DataContractResolver resolver,
 			string name, string ns, bool verifyObjectName)
 		{
 			reader.MoveToContent ();
@@ -60,14 +60,14 @@ namespace System.Runtime.Serialization
 				    reader.LocalName != name ||
 				    reader.NamespaceURI != ns)
 					throw new SerializationException (String.Format ("Expected element '{0}' in namespace '{1}', but found {2} node '{3}' in namespace '{4}'", name, ns, reader.NodeType, reader.LocalName, reader.NamespaceURI));
-//				Verify (knownTypes, declaredType, name, ns, reader);
-			return new XmlFormatterDeserializer (knownTypes, surrogate, resolver, defaultResolver).Deserialize (declaredType, reader);
+//				Verify (knownTypes, type, name, ns, reader);
+			return new XmlFormatterDeserializer (knownTypes, surrogate, resolver).Deserialize (type, reader);
 		}
 
 		// Verify the top element name and namespace.
 		private static void Verify (KnownTypeCollection knownTypes, Type type, string name, string Namespace, XmlReader reader)
 		{
-			QName graph_qname = new QName (reader.LocalName, reader.NamespaceURI);
+			QName graph_qname = new QName (reader.Name, reader.NamespaceURI);
 			if (graph_qname.Name == name && graph_qname.Namespace == Namespace)
 				return;
 
@@ -90,13 +90,11 @@ namespace System.Runtime.Serialization
 		private XmlFormatterDeserializer (
 			KnownTypeCollection knownTypes,
 			IDataContractSurrogate surrogate,
-			DataContractResolver resolver,
-			DataContractResolver defaultResolver)
+			DataContractResolver resolver)
 		{
 			this.types = knownTypes;
 			this.surrogate = surrogate;
 			this.resolver = resolver;
-			this.default_resolver = defaultResolver;
 		}
 
 		public Hashtable References {
@@ -137,9 +135,6 @@ namespace System.Runtime.Serialization
 					throw new SerializationException (String.Format ("Value type {0} cannot be null.", type));
 			}
 
-			if (resolver != null)
-				type = resolver.ResolveName (graph_qname.Name, graph_qname.Namespace, type, default_resolver) ?? type;
-
 			if (KnownTypeCollection.GetPrimitiveTypeFromName (graph_qname.Name) != null) {
 				string id = reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace);
 
@@ -173,7 +168,7 @@ namespace System.Runtime.Serialization
 			    name.Namespace == KnownTypeCollection.MSArraysNamespace ||
 			    name.Namespace.StartsWith (KnownTypeCollection.DefaultClrNamespaceBase, StringComparison.Ordinal))) {
 				var it = GetTypeFromNamePair (name.Name, name.Namespace);
-				types.Add (it);
+				types.TryRegister (it);
 				map = types.FindUserMap (name);
 			}
 			if (map == null)

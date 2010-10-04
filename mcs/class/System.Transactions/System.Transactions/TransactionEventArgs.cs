@@ -12,7 +12,6 @@
 namespace System.Transactions
 {
 	public class TransactionEventArgs : EventArgs
-<<<<<<< HEAD
 	{
 		private Transaction transaction;
 
@@ -24,19 +23,6 @@ namespace System.Transactions
 			: this()
 		{
 			this.transaction = transaction;
-=======
-	{
-		private Transaction transaction;
-
-		public TransactionEventArgs()
-		{
-		}
-
-		internal TransactionEventArgs(Transaction transaction)
-			: this()
-		{
-			this.transaction = transaction;
->>>>>>> 3d577e4060dccd67d1450b790ef12bc0781198be
 		}
 
 		public Transaction Transaction {
