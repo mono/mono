@@ -520,7 +520,7 @@ namespace Mono.Debugger.Soft
 				if (meta == null) {
 					if (Assembly.Metadata == null || MetadataToken == 0)
 						return null;
-					meta = (C.TypeDefinition)Assembly.Metadata.MainModule.LookupByToken (new MetadataToken (MetadataToken));
+					meta = (C.TypeDefinition)Assembly.Metadata.MainModule.LookupToken (MetadataToken);
 				}
 				return meta;
 			}

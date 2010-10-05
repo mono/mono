@@ -108,7 +108,7 @@ namespace Mono.Debugger.Soft
 					br.ReadByte ();
 					//instr.Operand = GetVariable (body, br.ReadByte ());
 					break;
-				case OperandType.ShortInlineParam :
+				case OperandType.ShortInlineArg :
 					br.ReadByte ();
 					//instr.Operand = GetParameter (body, br.ReadByte ());
 					break;
@@ -124,7 +124,7 @@ namespace Mono.Debugger.Soft
 					br.ReadInt16 ();
 					//instr.Operand = GetVariable (body, br.ReadInt16 ());
 					break;
-				case OperandType.InlineParam :
+				case OperandType.InlineArg :
 					br.ReadInt16 ();
 					//instr.Operand = GetParameter (body, br.ReadInt16 ());
 					break;
