@@ -432,7 +432,7 @@ namespace System.Web.UI
 			enable_event_validation = GetBool (atts, "EnableEventValidation", enable_event_validation);
 			maintainScrollPositionOnPostBack = GetBool (atts, "MaintainScrollPositionOnPostBack", maintainScrollPositionOnPostBack);
 
-			if (atts.Contains ("EnableViewState")) {
+			if (atts.Contains ("EnableViewStateMac")) {
 				enableViewStateMac = GetBool (atts, "EnableViewStateMac", enableViewStateMac);
 				enableViewStateMacSet = true;
 			}
