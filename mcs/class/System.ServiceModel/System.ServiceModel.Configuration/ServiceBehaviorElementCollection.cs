@@ -86,7 +86,7 @@ namespace System.ServiceModel.Configuration
 		protected override void BaseAdd (ConfigurationElement element)
 		{
 			var sbe = element as ServiceBehaviorElement;
-			if (sbe != null)
+			if (sbe != null && sbe.Name == null)
 				sbe.Name = String.Empty;
 
 			base.BaseAdd (sbe);
