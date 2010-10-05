@@ -205,14 +205,24 @@ namespace System.Security.Cryptography.X509Certificates {
 				status = null;
 			if (elements.Count > 0)
 				elements.Clear ();
-			if (roots != null) {
-				roots.Close ();
-				roots = null;
+			if (user_root_store != null) {
+				user_root_store.Close ();
+				user_root_store = null;
 			}
-			if (cas != null) {
-				cas.Close ();
-				cas = null;
+			if (root_store != null) {
+				root_store.Close ();
+				root_store = null;
 			}
+			if (user_ca_store != null) {
+				user_ca_store.Close ();
+				user_ca_store = null;
+			}
+			if (ca_store != null) {
+				ca_store.Close ();
+				ca_store = null;
+			}
+			roots = null;
+			cas = null;
 			collection = null;
 			bce_restriction = null;
 			working_public_key = null;
@@ -227,29 +237,92 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// private stuff
 
-		private X509Store roots;
-		private X509Store cas;
+		private X509Certificate2Collection roots;
+		private X509Certificate2Collection cas;
+		private X509Store root_store;
+		private X509Store ca_store;
+		private X509Store user_root_store;
+		private X509Store user_ca_store;
 
-		private X509Store Roots {
+		private X509Certificate2Collection Roots {
 			get {
 				if (roots == null) {
-					roots = new X509Store (StoreName.Root, location);
-					roots.Open (OpenFlags.ReadOnly);
+					X509Certificate2Collection c = new X509Certificate2Collection ();
+					X509Store store = LMRootStore;
+					if (location == StoreLocation.CurrentUser)
+						c.AddRange (UserRootStore.Certificates);
+					c.AddRange (store.Certificates);
+					roots = c;
 				}
 				return roots;
 			}
 		}
 
-		private X509Store CertificateAuthorities {
+		private X509Certificate2Collection CertificateAuthorities {
 			get {
 				if (cas == null) {
-					cas = new X509Store (StoreName.CertificateAuthority, location);
-					cas.Open (OpenFlags.ReadOnly);
+					X509Certificate2Collection c = new X509Certificate2Collection ();
+					X509Store store = LMCAStore;
+					if (location == StoreLocation.CurrentUser)
+						c.AddRange (UserCAStore.Certificates);
+					c.AddRange (store.Certificates);
+					cas = c;
 				}
 				return cas;
 			}
 		}
 
+		private X509Store LMRootStore {
+			get {
+				if (root_store == null) {
+					root_store = new X509Store (StoreName.Root, StoreLocation.LocalMachine);
+					try {
+						root_store.Open (OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
+					} catch {
+					}
+				}
+				return root_store;
+			}
+		}
+
+		private X509Store UserRootStore {
+			get {
+				if (user_root_store == null) {
+					user_root_store = new X509Store (StoreName.Root, StoreLocation.CurrentUser);
+					try {
+						user_root_store.Open (OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
+					} catch {
+					}
+				}
+				return user_root_store;
+			}
+		}
+
+		private X509Store LMCAStore {
+			get {
+				if (ca_store == null) {
+					ca_store = new X509Store (StoreName.CertificateAuthority, StoreLocation.LocalMachine);
+					try {
+						ca_store.Open (OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
+					} catch {
+					}
+				}
+				return ca_store;
+			}
+		}
+
+		private X509Store UserCAStore {
+			get {
+				if (user_ca_store == null) {
+					user_ca_store = new X509Store (StoreName.CertificateAuthority, StoreLocation.CurrentUser);
+					try {
+						user_ca_store.Open (OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
+					} catch {
+					}
+				}
+				return user_ca_store;
+			}
+		}
 		// *** certificate chain/path building stuff ***
 
 		private X509Certificate2Collection collection;
@@ -260,10 +333,8 @@ namespace System.Security.Cryptography.X509Certificates {
 			get {
 				if (collection == null) {
 					collection = new X509Certificate2Collection (ChainPolicy.ExtraStore);
-					if (Roots.Certificates.Count > 0)
-						collection.AddRange (Roots.Certificates);
-					if (CertificateAuthorities.Certificates.Count > 0)
-						collection.AddRange (CertificateAuthorities.Certificates);
+					collection.AddRange (Roots);
+					collection.AddRange (CertificateAuthorities);
 				}
 				return collection;
 			}
@@ -295,7 +366,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			// roots may be supplied (e.g. in the ExtraStore) so we need to confirm their
 			// trustiness (what a cute word) in the trusted root collection
-			if (!Roots.Certificates.Contains (certificate))
+			if (!Roots.Contains (certificate))
 				elements [elements.Count - 1].StatusFlags |= X509ChainStatusFlags.UntrustedRoot;
 
 			return X509ChainStatusFlags.NoError;
@@ -637,18 +708,18 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		// System.dll v2 doesn't have a class to deal with the AuthorityKeyIdentifier extension
-		private string GetAuthorityKeyIdentifier (X509Certificate2 certificate)
+		static string GetAuthorityKeyIdentifier (X509Certificate2 certificate)
 		{
 			return GetAuthorityKeyIdentifier (certificate.MonoCertificate.Extensions ["2.5.29.35"]);
 		}
 
 		// but anyway System.dll v2 doesn't expose CRL in any way so...
-		private string GetAuthorityKeyIdentifier (MX.X509Crl crl)
+		static string GetAuthorityKeyIdentifier (MX.X509Crl crl)
 		{
 			return GetAuthorityKeyIdentifier (crl.Extensions ["2.5.29.35"]);
 		}
 
-		private string GetAuthorityKeyIdentifier (MX.X509Extension ext)
+		static string GetAuthorityKeyIdentifier (MX.X509Extension ext)
 		{
 			if (ext == null)
 				return String.Empty;
@@ -804,21 +875,34 @@ namespace System.Security.Cryptography.X509Certificates {
 			return X509ChainStatusFlags.NoError;
 		}
 
+		static MX.X509Crl CheckCrls (string subject, string ski, ArrayList crls)
+		{
+			foreach (MX.X509Crl crl in crls) {
+				if (crl.IssuerName == subject && (ski.Length == 0 || ski == GetAuthorityKeyIdentifier (crl)))
+					return crl;
+			}
+			return null; // No CRL found
+		}
+
 		private MX.X509Crl FindCrl (X509Certificate2 caCertificate)
 		{
 			string subject = caCertificate.SubjectName.Decode (X500DistinguishedNameFlags.None);
 			string ski = GetSubjectKeyIdentifier (caCertificate);
-			foreach (MX.X509Crl crl in CertificateAuthorities.Store.Crls) {
-				if (crl.IssuerName == subject) {
-					if ((ski.Length == 0) || (ski == GetAuthorityKeyIdentifier (crl)))
-						return crl;
-				}
+			MX.X509Crl result = CheckCrls (subject, ski, LMCAStore.Store.Crls);
+			if (result != null)
+				return result;
+			if (location == StoreLocation.CurrentUser) {
+				result = CheckCrls (subject, ski, UserCAStore.Store.Crls);
+				if (result != null)
+					return result;
 			}
-			foreach (MX.X509Crl crl in Roots.Store.Crls) {
-				if (crl.IssuerName == subject) {
-					if ((ski.Length == 0) || (ski == GetAuthorityKeyIdentifier (crl)))
-						return crl;
-				}
+			result = CheckCrls (subject, ski, LMRootStore.Store.Crls);
+			if (result != null)
+				return result;
+			if (location == StoreLocation.CurrentUser) {
+				result = CheckCrls (subject, ski, UserRootStore.Store.Crls);
+				if (result != null)
+					return result;
 			}
 			return null;
 		}
