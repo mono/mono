@@ -56,18 +56,19 @@ namespace MonoTests.System.Xaml
 				r.Read ();
 		}
 
-		object LoadTest (string filename, Type type)
+		T LoadTest<T> (string filename)
 		{
+			Type type = typeof (T);
 			var obj = XamlServices.Load (GetReader (filename));
 			Assert.AreEqual (type, obj.GetType (), "type");
-			return obj;
+			return (T) obj;
 		}
 
 		[Test]
 		public void Read_String ()
 		{
 			ReadTest ("String.xml");
-			var ret = LoadTest ("String.xml", typeof (string));
+			var ret = LoadTest<string> ("String.xml");
 			Assert.AreEqual ("foo", ret, "ret");
 		}
 
@@ -75,7 +76,7 @@ namespace MonoTests.System.Xaml
 		public void Read_Int32 ()
 		{
 			ReadTest ("Int32.xml");
-			var ret = LoadTest ("Int32.xml", typeof (int));
+			var ret = LoadTest<int> ("Int32.xml");
 			Assert.AreEqual (5, ret, "ret");
 		}
 
@@ -83,7 +84,7 @@ namespace MonoTests.System.Xaml
 		public void Read_DateTime ()
 		{
 			ReadTest ("DateTime.xml");
-			var ret = LoadTest ("DateTime.xml", typeof (DateTime));
+			var ret = LoadTest<DateTime> ("DateTime.xml");
 			Assert.AreEqual (new DateTime (2010, 4, 14), ret, "ret");
 		}
 
@@ -91,7 +92,7 @@ namespace MonoTests.System.Xaml
 		public void Read_TimeSpan ()
 		{
 			ReadTest ("TimeSpan.xml");
-			var ret = LoadTest ("TimeSpan.xml", typeof (TimeSpan));
+			var ret = LoadTest<TimeSpan> ("TimeSpan.xml");
 			Assert.AreEqual (TimeSpan.FromMinutes (7), ret, "ret");
 		}
 
@@ -99,14 +100,16 @@ namespace MonoTests.System.Xaml
 		public void Read_ArrayInt32 ()
 		{
 			ReadTest ("Array_Int32.xml");
-			//LoadTest ("Array_Int32.xml", typeof (int []));
+			//LoadTest<int[]> ("Array_Int32.xml");
 		}
 
 		[Test]
 		public void Read_ListInt32 ()
 		{
 			ReadTest ("List_Int32.xml");
-			//LoadTest ("List_Int32.xml", typeof (List<int>));
+			var ret = LoadTest<List<int>> ("List_Int32.xml");
+			Assert.AreEqual (5, ret.Count, "#1");
+			Assert.AreEqual (2147483647, ret [4], "#2");
 		}
 
 		[Test]
@@ -114,7 +117,7 @@ namespace MonoTests.System.Xaml
 		public void Read_DictionaryInt32String ()
 		{
 			ReadTest ("Dictionary_Int32_String.xml");
-			//LoadTest ("Dictionary_Int32_String.xml", typeof (Dictionary<int,string>));
+			//LoadTest<Dictionary<int,string>> ("Dictionary_Int32_String.xml");
 		}
 
 		[Test]
@@ -122,7 +125,7 @@ namespace MonoTests.System.Xaml
 		public void Read_DictionaryStringType ()
 		{
 			ReadTest ("Dictionary_String_Type.xml");
-			//LoadTest ("Dictionary_String_Type.xml", typeof (Dictionary<string,Type>));
+			//LoadTest<Dictionary<string,Type>> ("Dictionary_String_Type.xml");
 		}
 
 		[Test]
@@ -260,7 +263,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		//[Category ("NotWorking")]
 		public void Read4 ()
 		{
 			var r = GetReader ("List_Int32.xml");

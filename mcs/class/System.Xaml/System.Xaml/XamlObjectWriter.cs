@@ -54,7 +54,7 @@ namespace System.Xaml
 		List<object> arguments = new List<object> (); // FIXME: so far it has no contents.
 		string factory_method;
 		bool object_instantiated;
-		List<object> contents = new List<object> ();
+		Stack<List<object>> contents_stack = new Stack<List<object>> ();
 		List<object> objects_from_getter = new List<object> ();
 		Stack<List<XamlMember>> written_properties_stack = new Stack<List<XamlMember>> ();
 
@@ -141,6 +141,7 @@ namespace System.Xaml
 			
 			var xm = members.Pop ();
 			var xt = xm.Type;
+			var contents = contents_stack.Peek ();
 
 			if (xm == XamlLanguage.Arguments) {
 				InitializeObjectWithArguments (contents.ToArray ());
@@ -194,10 +195,11 @@ namespace System.Xaml
 			InitializeObjectIfRequired (null); // this is required for such case that there was no StartMember call.
 
 			types.Pop ();
+			contents_stack.Pop ();
 			written_properties_stack.Pop ();
 			var obj = objects.Pop ();
 			if (members.Count > 0)
-				contents.Add (obj);
+				contents_stack.Peek ().Add (obj);
 			if (objects.Count == 0)
 				result = obj;
 		}
@@ -216,6 +218,7 @@ namespace System.Xaml
 				throw new XamlObjectWriterException (String.Format ("The value  for '{0}' property is null", xm.Name));
 
 			types.Push (SchemaContext.GetXamlType (obj.GetType ()));
+			contents_stack.Push (new List<object> ());
 			ObjectInitialized (obj);
 			objects_from_getter.Add (obj);
 		}
@@ -275,6 +278,7 @@ namespace System.Xaml
 			manager.StartObject ();
 
 			types.Push (xamlType);
+			contents_stack.Push (new List<object> ());
 
 			object_instantiated = false;
 
@@ -295,7 +299,7 @@ namespace System.Xaml
 			else if (xm == XamlLanguage.FactoryMethod)
 				factory_method = (string) value;
 			else
-				contents.Add (value);
+				contents_stack.Peek ().Add (value);
 		}
 
 		void ObjectInitialized (object obj)
