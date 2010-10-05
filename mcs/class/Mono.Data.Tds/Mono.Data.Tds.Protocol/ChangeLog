@@ -1,3 +1,8 @@
+2010-09-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes failed test for smallmoney
+	* Tds70.cs (WriteParameterInfo): Round money values to 4 decimals, for smallmoney too.
+	
 2010-07-13  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #613845

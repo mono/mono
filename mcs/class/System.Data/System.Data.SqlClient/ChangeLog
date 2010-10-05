@@ -1,3 +1,9 @@
+2010-10-01  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #561667
+	* SqlCommand.cs (Dispose): While Disposing, set connection's datareader 
+	to null so as the connection can be reused with another datareader.
+	
 2010-07-28  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #584833

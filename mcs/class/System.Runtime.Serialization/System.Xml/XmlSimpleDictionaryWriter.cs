@@ -105,6 +105,7 @@ namespace System.Xml
 		public override void WriteEndElement ()
 		{
 			Depth--;
+			NSIndex = 0;
 			writer.WriteEndElement ();
 		}
 
@@ -171,6 +172,7 @@ namespace System.Xml
 		public override void WriteStartElement (string prefix, string localName, string ns)
 		{
 			Depth++;
+			NSIndex = 0;
 			writer.WriteStartElement (prefix, localName, ns);
 		}
 

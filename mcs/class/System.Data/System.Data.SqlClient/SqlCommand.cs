@@ -706,6 +706,8 @@ namespace System.Data.SqlClient {
 			if (disposed) return;
 			if (disposing) {
 				parameters.Clear();
+				if (Connection != null)
+					Connection.DataReader = null;
 			}
 			base.Dispose (disposing);
 			disposed = true;
