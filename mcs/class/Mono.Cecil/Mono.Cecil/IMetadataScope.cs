@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +28,14 @@
 
 namespace Mono.Cecil {
 
+	public enum MetadataScopeType {
+		AssemblyNameReference,
+		ModuleReference,
+		ModuleDefinition,
+	}
+
 	public interface IMetadataScope : IMetadataTokenProvider {
+		MetadataScopeType MetadataScopeType { get; }
 		string Name { get; set; }
 	}
 }

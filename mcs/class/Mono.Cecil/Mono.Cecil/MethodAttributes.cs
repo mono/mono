@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,17 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
 
-	using System;
+namespace Mono.Cecil {
 
 	[Flags]
 	public enum MethodAttributes : ushort {
 		MemberAccessMask	= 0x0007,
-		Compilercontrolled	= 0x0000,	// Member not referenceable
+		CompilerControlled	= 0x0000,	// Member not referenceable
 		Private				= 0x0001,	// Accessible only by the parent type
 		FamANDAssem			= 0x0002,	// Accessible by sub-types only in this Assembly
-		Assem				= 0x0003,	// Accessibly by anyone in the Assembly
+		Assembly				= 0x0003,	// Accessibly by anyone in the Assembly
 		Family				= 0x0004,	// Accessible only by type and sub-types
 		FamORAssem			= 0x0005,	// Accessibly by sub-types anywhere, plus anyone in assembly
 		Public				= 0x0006,	// Accessibly by anyone who has visibility to this scope
@@ -50,7 +50,7 @@ namespace Mono.Cecil {
 		ReuseSlot			= 0x0000,	// Method reuses existing slot in vtable
 		NewSlot				= 0x0100,	// Method always gets a new slot in the vtable
 
-		Strict 				= 0x0200,   // Method can only be overriden if also accessible
+		CheckAccessOnOverride = 0x0200,   // Method can only be overriden if also accessible
 		Abstract			= 0x0400,	// Method does not provide an implementation
 		SpecialName			= 0x0800,	// Method is special
 

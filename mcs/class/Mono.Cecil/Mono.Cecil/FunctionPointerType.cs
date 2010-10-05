@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 - 2007 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,45 +26,51 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
+using System.Text;
+using Mono.Collections.Generic;
+using MD = Mono.Cecil.Metadata;
 
-	using System;
-	using System.Text;
+namespace Mono.Cecil {
 
 	public sealed class FunctionPointerType : TypeSpecification, IMethodSignature {
 
-		MethodReference m_function;
+		readonly MethodReference function;
 
 		public bool HasThis {
-			get { return m_function.HasThis; }
-			set { m_function.HasThis = value; }
+			get { return function.HasThis; }
+			set { function.HasThis = value; }
 		}
 
 		public bool ExplicitThis {
-			get { return m_function.ExplicitThis; }
-			set { m_function.ExplicitThis = value; }
+			get { return function.ExplicitThis; }
+			set { function.ExplicitThis = value; }
 		}
 
 		public MethodCallingConvention CallingConvention {
-			get { return m_function.CallingConvention; }
-			set { m_function.CallingConvention = value; }
+			get { return function.CallingConvention; }
+			set { function.CallingConvention = value; }
 		}
 
 		public bool HasParameters {
-			get { return m_function.HasParameters; }
+			get { return function.HasParameters; }
 		}
 
-		public ParameterDefinitionCollection Parameters {
-			get { return m_function.Parameters; }
+		public Collection<ParameterDefinition> Parameters {
+			get { return function.Parameters; }
 		}
 
-		public MethodReturnType ReturnType {
-			get { return m_function.ReturnType; }
-			set { m_function.ReturnType = value; }
+		public TypeReference ReturnType {
+			get { return function.MethodReturnType.ReturnType; }
+			set { function.MethodReturnType.ReturnType = value; }
+		}
+
+		public MethodReturnType MethodReturnType {
+			get { return function.MethodReturnType; }
 		}
 
 		public override string Name {
-			get { return m_function.Name; }
+			get { return function.Name; }
 			set { throw new InvalidOperationException (); }
 		}
 
@@ -73,44 +79,40 @@ namespace Mono.Cecil {
 			set { throw new InvalidOperationException (); }
 		}
 
+		public override ModuleDefinition Module {
+			get { return ReturnType.Module; }
+		}
+
 		public override IMetadataScope Scope {
-			get { return m_function.DeclaringType.Scope; }
+			get { return function.ReturnType.Scope; }
+		}
+
+		public override bool IsFunctionPointer {
+			get { return true; }
+		}
+
+		internal override bool ContainsGenericParameter {
+			get { return function.ContainsGenericParameter; }
 		}
 
 		public override string FullName {
 			get {
-				int sentinel = GetSentinel ();
-				StringBuilder sb = new StringBuilder ();
-				sb.Append (m_function.Name);
-				sb.Append (" ");
-				sb.Append (m_function.ReturnType.ReturnType.FullName);
-				sb.Append (" *(");
-				if (m_function.HasParameters) {
-					for (int i = 0; i < m_function.Parameters.Count; i++) {
-						if (i > 0)
-							sb.Append (",");
-
-						if (i == sentinel)
-							sb.Append ("...,");
-
-						sb.Append (m_function.Parameters [i].ParameterType.FullName);
-					}
-				}
-				sb.Append (")");
-				return sb.ToString ();
+				var signature = new StringBuilder ();
+				signature.Append (function.Name);
+				signature.Append (" ");
+				signature.Append (function.ReturnType.FullName);
+				signature.Append (" *");
+				this.MethodSignatureFullName (signature);
+				return signature.ToString ();
 			}
 		}
 
-		public FunctionPointerType (bool hasThis, bool explicitThis, MethodCallingConvention callConv, MethodReturnType retType) :
-			base (retType.ReturnType)
+		public FunctionPointerType ()
+			: base (null)
 		{
-			m_function = new MethodReference ("method", hasThis, explicitThis, callConv);
-			m_function.ReturnType = retType;
-		}
-
-		public int GetSentinel ()
-		{
-			return m_function.GetSentinel ();
+			this.function = new MethodReference ();
+			this.function.Name = "method";
+			this.etype = MD.ElementType.FnPtr;
 		}
 	}
 }

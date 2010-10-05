@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,31 +26,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
 	public abstract class PropertyReference : MemberReference {
 
-		TypeReference m_propertyType;
-		protected ParameterDefinitionCollection m_parameters;
+		TypeReference property_type;
 
 		public TypeReference PropertyType {
-			get { return m_propertyType; }
-			set { m_propertyType = value; }
+			get { return property_type; }
+			set { property_type = value; }
 		}
 
-		public abstract bool HasParameters {
+		public abstract Collection<ParameterDefinition> Parameters {
 			get;
 		}
 
-		public abstract ParameterDefinitionCollection Parameters {
-			get;
-		}
-
-		public PropertyReference (string name, TypeReference propertyType) : base (name)
+		internal PropertyReference (string name, TypeReference propertyType)
+			: base (name)
 		{
-			m_propertyType = propertyType;
-		}
+			if (propertyType == null)
+				throw new ArgumentNullException ("propertyType");
 
-		public abstract PropertyDefinition Resolve ();
+			property_type = propertyType;
+		}
 	}
 }

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,32 +26,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	using System;
-	using System.Collections;
-	using System.IO;
-	using SR = System.Reflection;
-	using System.Text;
+	public delegate AssemblyDefinition AssemblyResolveEventHandler (object sender, AssemblyNameReference reference);
+
+	public sealed class AssemblyResolveEventArgs : EventArgs {
+
+		readonly AssemblyNameReference reference;
+
+		public AssemblyNameReference AssemblyReference {
+			get { return reference; }
+		}
+
+		public AssemblyResolveEventArgs (AssemblyNameReference reference)
+		{
+			this.reference = reference;
+		}
+	}
 
 	public abstract class BaseAssemblyResolver : IAssemblyResolver {
 
-		ArrayList m_directories;
-		string[] m_monoGacPaths;
+		static readonly bool on_mono = Type.GetType ("Mono.Runtime") != null;
+
+		readonly Collection<string> directories;
+
+#if !SILVERLIGHT && !CF
+		Collection<string> gac_paths;
+#endif
 
 		public void AddSearchDirectory (string directory)
 		{
-			m_directories.Add (directory);
+			directories.Add (directory);
 		}
 
 		public void RemoveSearchDirectory (string directory)
 		{
-			m_directories.Remove (directory);
+			directories.Remove (directory);
 		}
 
 		public string [] GetSearchDirectories ()
 		{
-			return (string []) m_directories.ToArray (typeof (string));
+			var directories = new string [this.directories.size];
+			Array.Copy (this.directories.items, directories, directories.Length);
+			return directories;
 		}
 
 		public virtual AssemblyDefinition Resolve (string fullName)
@@ -59,29 +83,33 @@ namespace Mono.Cecil {
 			return Resolve (AssemblyNameReference.Parse (fullName));
 		}
 
-		public BaseAssemblyResolver ()
+		public event AssemblyResolveEventHandler ResolveFailure;
+
+		protected BaseAssemblyResolver ()
 		{
-			m_directories = new ArrayList ();
-			m_directories.Add (".");
-			m_directories.Add ("bin");
+			directories = new Collection<string> (2) { ".", "bin" };
+		}
+
+		AssemblyDefinition GetAssembly (string file)
+		{
+			return ModuleDefinition.ReadModule (file, new ReaderParameters { AssemblyResolver = this}).Assembly;
 		}
 
 		public virtual AssemblyDefinition Resolve (AssemblyNameReference name)
 		{
-			AssemblyDefinition assembly;
-			string frameworkdir = Path.GetDirectoryName (typeof (object).Module.FullyQualifiedName);
-
-			assembly = SearchDirectory (name, m_directories);
+			var assembly = SearchDirectory (name, directories);
 			if (assembly != null)
 				return assembly;
 
+#if !SILVERLIGHT && !CF
+			var framework_dir = Path.GetDirectoryName (typeof (object).Module.FullyQualifiedName);
+
 			if (IsZero (name.Version)) {
-				assembly = SearchDirectory (name, new string [] {frameworkdir});
+				assembly = SearchDirectory (name, new [] { framework_dir });
 				if (assembly != null)
 					return assembly;
 			}
 
-#if !CF_1_0 && !CF_2_0 && !NO_SYSTEM_DLL
 			if (name.Name == "mscorlib") {
 				assembly = GetCorlib (name);
 				if (assembly != null)
@@ -91,24 +119,29 @@ namespace Mono.Cecil {
 			assembly = GetAssemblyInGac (name);
 			if (assembly != null)
 				return assembly;
-#endif
 
-			assembly = SearchDirectory (name, new string [] {frameworkdir});
+			assembly = SearchDirectory (name, new [] { framework_dir });
 			if (assembly != null)
 				return assembly;
+#endif
+
+			if (ResolveFailure != null) {
+				assembly = ResolveFailure (this, name);
+				if (assembly != null)
+					return assembly;
+			}
 
 			throw new FileNotFoundException ("Could not resolve: " + name);
 		}
 
-		static readonly string [] _extentions = new string [] { ".dll", ".exe" };
-
-		static AssemblyDefinition SearchDirectory (AssemblyNameReference name, IEnumerable directories)
+		AssemblyDefinition SearchDirectory (AssemblyNameReference name, IEnumerable<string> directories)
 		{
-			foreach (string dir in directories) {
-				foreach (string ext in _extentions) {
-					string file = Path.Combine (dir, name.Name + ext);
+			var extensions = new [] { ".exe", ".dll" };
+			foreach (var directory in directories) {
+				foreach (var extension in extensions) {
+					string file = Path.Combine (directory, name.Name + extension);
 					if (File.Exists (file))
-						return AssemblyFactory.GetAssembly (file);
+						return GetAssembly (file);
 				}
 			}
 
@@ -120,88 +153,100 @@ namespace Mono.Cecil {
 			return version.Major == 0 && version.Minor == 0 && version.Build == 0 && version.Revision == 0;
 		}
 
-#if !CF_1_0 && !CF_2_0 && !NO_SYSTEM_DLL
-		static AssemblyDefinition GetCorlib (AssemblyNameReference reference)
+#if !SILVERLIGHT && !CF
+		AssemblyDefinition GetCorlib (AssemblyNameReference reference)
 		{
-			SR.AssemblyName corlib = typeof (object).Assembly.GetName ();
-			if (corlib.Version == reference.Version || IsZero (reference.Version))
-				return AssemblyFactory.GetAssembly (typeof (object).Module.FullyQualifiedName);
+			var version = reference.Version;
+			var corlib = typeof (object).Assembly.GetName ();
 
-			string path = Directory.GetParent (
+			if (corlib.Version == version || IsZero (version))
+				return GetAssembly (typeof (object).Module.FullyQualifiedName);
+
+			var path = Directory.GetParent (
 				Directory.GetParent (
 					typeof (object).Module.FullyQualifiedName).FullName
 				).FullName;
 
-			string runtime_path = null;
-			if (OnMono ()) {
-				if (reference.Version.Major == 1)
-					runtime_path = "1.0";
-				else if (reference.Version.Major == 2) {
-					if (reference.Version.Minor == 1)
-						runtime_path = "2.1";
+			if (on_mono) {
+				if (version.Major == 1)
+					path = Path.Combine (path, "1.0");
+				else if (version.Major == 2) {
+					if (version.MajorRevision == 5)
+						path = Path.Combine (path, "2.1");
 					else
-						runtime_path = "2.0";
-				} else if (reference.Version.Major == 4)
-					runtime_path = "4.0";
+						path = Path.Combine (path, "2.0");
+				} else if (version.Major == 4)
+					path = Path.Combine (path, "4.0");
+				else
+					throw new NotSupportedException ("Version not supported: " + version);
 			} else {
-				switch (reference.Version.ToString ()) {
-				case "1.0.3300.0":
-					runtime_path = "v1.0.3705";
+				switch (version.Major) {
+				case 1:
+					if (version.MajorRevision == 3300)
+						path = Path.Combine (path, "v1.0.3705");
+					else
+						path = Path.Combine (path, "v1.0.5000.0");
 					break;
-				case "1.0.5000.0":
-					runtime_path = "v1.1.4322";
+				case 2:
+					path = Path.Combine (path, "v2.0.50727");
 					break;
-				case "2.0.0.0":
-					runtime_path = "v2.0.50727";
+				case 4:
+					path = Path.Combine (path, "v4.0.30319");
 					break;
-				case "4.0.0.0":
-					runtime_path = "v4.0.30319";
-					break;
+				default:
+					throw new NotSupportedException ("Version not supported: " + version);
 				}
 			}
 
-			if (runtime_path == null)
-				throw new NotSupportedException ("Version not supported: " + reference.Version);
-
-			path = Path.Combine (path, runtime_path);
-
-			if (File.Exists (Path.Combine (path, "mscorlib.dll")))
-				return AssemblyFactory.GetAssembly (Path.Combine (path, "mscorlib.dll"));
+			var file = Path.Combine (path, "mscorlib.dll");
+			if (File.Exists (file))
+				return GetAssembly (file);
 
 			return null;
 		}
 
-		public static bool OnMono ()
+		static Collection<string> GetGacPaths ()
 		{
-			return typeof (object).Assembly.GetType ("System.MonoType", false) != null;
+			if (on_mono)
+				return GetDefaultMonoGacPaths ();
+
+			var paths = new Collection<string> (2);
+			var windir = Environment.GetEnvironmentVariable ("WINDIR");
+			if (windir == null)
+				return paths;
+
+			paths.Add (Path.Combine (windir, "assembly"));
+			paths.Add (Path.Combine (windir, Path.Combine ("Microsoft.NET", "assembly")));
+			return paths;
 		}
 
-		string[] MonoGacPaths {
-			get {
-				if (m_monoGacPaths == null)
-					m_monoGacPaths = GetDefaultMonoGacPaths ();
-				return m_monoGacPaths;
+		static Collection<string> GetDefaultMonoGacPaths ()
+		{
+			var paths = new Collection<string> (1);
+			var gac = GetCurrentMonoGac ();
+			if (gac != null)
+				paths.Add (gac);
+
+			var gac_paths_env = Environment.GetEnvironmentVariable ("MONO_GAC_PREFIX");
+			if (string.IsNullOrEmpty (gac_paths_env))
+				return paths;
+
+			var prefixes = gac_paths_env.Split (Path.PathSeparator);
+			foreach (var prefix in prefixes) {
+				if (string.IsNullOrEmpty (prefix))
+					continue;
+
+				var gac_path = Path.Combine (Path.Combine (Path.Combine (prefix, "lib"), "mono"), "gac");
+				if (Directory.Exists (gac_path) && !paths.Contains (gac))
+					paths.Add (gac_path);
 			}
+
+			return paths;
 		}
 
-		static string[] GetDefaultMonoGacPaths ()
+		static string GetCurrentMonoGac ()
 		{
-			ArrayList paths = new ArrayList ();
-			string s = GetCurrentGacPath ();
-			if (s != null)
-				paths.Add (s);
-			string gacPathsEnv = Environment.GetEnvironmentVariable ("MONO_GAC_PREFIX");
-			if (gacPathsEnv != null && gacPathsEnv.Length > 0) {
-				string[] gacPrefixes = gacPathsEnv.Split (Path.PathSeparator);
-				foreach (string gacPrefix in gacPrefixes) {
-					if (gacPrefix != null && gacPrefix.Length > 0) {
-						string gac = Path.Combine (Path.Combine (Path.Combine (gacPrefix, "lib"), "mono"), "gac");
-						if (Directory.Exists (gac) && !paths.Contains (gac))
-							paths.Add (gac);
-					}
-				}
-			}
-			return (string[]) paths.ToArray (typeof (String));
+			return Path.Combine (Directory.GetParent (typeof (object).Module.FullyQualifiedName).FullName, "gac");
 		}
 
 		AssemblyDefinition GetAssemblyInGac (AssemblyNameReference reference)
@@ -209,55 +254,57 @@ namespace Mono.Cecil {
 			if (reference.PublicKeyToken == null || reference.PublicKeyToken.Length == 0)
 				return null;
 
-			if (OnMono ()) {
-				foreach (string gacpath in MonoGacPaths) {
-					string s = GetAssemblyFile (reference, gacpath);
-					if (File.Exists (s))
-						return AssemblyFactory.GetAssembly (s);
-				}
-			} else {
-				string currentGac = GetCurrentGacPath ();
-				if (currentGac == null)
-					return null;
+			if (gac_paths == null)
+				gac_paths = GetGacPaths ();
 
-				string [] gacs = new string [] {"GAC_MSIL", "GAC_32", "GAC"};
-				for (int i = 0; i < gacs.Length; i++) {
-					string gac = Path.Combine (Directory.GetParent (currentGac).FullName, gacs [i]);
-					string asm = GetAssemblyFile (reference, gac);
-					if (Directory.Exists (gac) && File.Exists (asm))
-						return AssemblyFactory.GetAssembly (asm);
+			if (on_mono)
+				return GetAssemblyInMonoGac (reference);
+
+			return GetAssemblyInNetGac (reference);
+		}
+
+		AssemblyDefinition GetAssemblyInMonoGac (AssemblyNameReference reference)
+		{
+			for (int i = 0; i < gac_paths.Count; i++) {
+				var gac_path = gac_paths [i];
+				var file = GetAssemblyFile (reference, string.Empty, gac_path);
+				if (File.Exists (file))
+					return GetAssembly (file);
+			}
+
+			return null;
+		}
+
+		AssemblyDefinition GetAssemblyInNetGac (AssemblyNameReference reference)
+		{
+			var gacs = new [] { "GAC_MSIL", "GAC_32", "GAC" };
+			var prefixes = new [] { string.Empty, "v4.0_" };
+
+			for (int i = 0; i < 2; i++) {
+				for (int j = 0; j < gacs.Length; j++) {
+					var gac = Path.Combine (gac_paths [i], gacs [j]);
+					var file = GetAssemblyFile (reference, prefixes [i], gac);
+					if (Directory.Exists (gac) && File.Exists (file))
+						return GetAssembly (file);
 				}
 			}
 
 			return null;
 		}
 
-		static string GetAssemblyFile (AssemblyNameReference reference, string gac)
+		static string GetAssemblyFile (AssemblyNameReference reference, string prefix, string gac)
 		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append (reference.Version);
-			sb.Append ("__");
+			var gac_folder = new StringBuilder ();
+			gac_folder.Append (prefix);
+			gac_folder.Append (reference.Version);
+			gac_folder.Append ("__");
 			for (int i = 0; i < reference.PublicKeyToken.Length; i++)
-				sb.Append (reference.PublicKeyToken [i].ToString ("x2"));
+				gac_folder.Append (reference.PublicKeyToken [i].ToString ("x2"));
 
 			return Path.Combine (
 				Path.Combine (
-					Path.Combine (gac, reference.Name), sb.ToString ()),
-					string.Concat (reference.Name, ".dll"));
-		}
-
-		static string GetCurrentGacPath ()
-		{
-			string file = typeof (Uri).Module.FullyQualifiedName;
-			if (!File.Exists (file))
-				return null;
-
-			return Directory.GetParent (
-				Directory.GetParent (
-					Path.GetDirectoryName (
-						file)
-					).FullName
-				).FullName;
+					Path.Combine (gac, reference.Name), gac_folder.ToString ()),
+				reference.Name + ".dll");
 		}
 #endif
 	}

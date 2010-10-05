@@ -1,10 +1,10 @@
 //
-// ManigestResourceAttributes.cs
+// ManifestResourceAttributes.cs
 //
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 namespace Mono.Cecil {
 
-	using System;
-
 	[Flags]
-	public enum ManifestResourceAttributes {
+	public enum ManifestResourceAttributes : uint {
 		VisibilityMask	= 0x0007,
 		Public			= 0x0001,	// The resource is exported from the Assembly
 		Private			= 0x0002	 // The resource is private to the Assembly

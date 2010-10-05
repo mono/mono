@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,48 +28,48 @@
 
 namespace Mono.Cecil.Cil {
 
-	public abstract class VariableReference : ICodeVisitable {
+	public abstract class VariableReference {
 
-		string m_name;
-		int m_index;
-		TypeReference m_variableType;
+		string name;
+		internal int index = -1;
+		protected TypeReference variable_type;
 
 		public string Name {
-			get { return m_name; }
-			set { m_name = value; }
-		}
-
-		public int Index {
-			get { return m_index; }
-			set { m_index = value; }
+			get { return name; }
+			set { name = value; }
 		}
 
 		public TypeReference VariableType {
-			get { return m_variableType; }
-			set { m_variableType = value; }
+			get { return variable_type; }
+			set { variable_type = value; }
 		}
 
-		public VariableReference (TypeReference variableType)
-		{
-			m_variableType = variableType;
+		public int Index {
+			get { return index; }
 		}
 
-		public VariableReference (string name, int index, TypeReference variableType) : this (variableType)
+		internal VariableReference (TypeReference variable_type)
+			: this (string.Empty, variable_type)
 		{
-			m_name = name;
-			m_index = index;
+		}
+
+		internal VariableReference (string name, TypeReference variable_type)
+		{
+			this.name = name;
+			this.variable_type = variable_type;
 		}
 
 		public abstract VariableDefinition Resolve ();
 
 		public override string ToString ()
 		{
-			if (m_name != null && m_name.Length > 0)
-				return m_name;
+			if (!string.IsNullOrEmpty (name))
+				return name;
 
-			return string.Concat ("V_", m_index);
+			if (index >= 0)
+				return "V_" + index;
+
+			return string.Empty;
 		}
-
-		public abstract void Accept (ICodeVisitor visitor);
 	}
 }

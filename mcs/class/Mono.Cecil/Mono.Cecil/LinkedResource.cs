@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 - 2007 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,28 +30,31 @@ namespace Mono.Cecil {
 
 	public sealed class LinkedResource : Resource {
 
-		byte [] m_hash;
-		string m_file;
+		internal byte [] hash;
+		string file;
 
 		public byte [] Hash {
-			get { return m_hash; }
-			set { m_hash = value; }
+			get { return hash; }
 		}
 
 		public string File {
-			get { return m_file; }
-			set { m_file = value; }
+			get { return file; }
+			set { file = value; }
 		}
 
-		public LinkedResource (string name, ManifestResourceAttributes flags, string file) :
-			base (name, flags)
-		{
-			m_file = file;
+		public override ResourceType ResourceType {
+			get { return ResourceType.Linked; }
 		}
 
-		public override void Accept (IReflectionStructureVisitor visitor)
+		public LinkedResource (string name, ManifestResourceAttributes flags)
+			: base (name, flags)
 		{
-			visitor.VisitLinkedResource (this);
+		}
+
+		public LinkedResource (string name, ManifestResourceAttributes flags, string file)
+			: base (name, flags)
+		{
+			this.file = file;
 		}
 	}
 }

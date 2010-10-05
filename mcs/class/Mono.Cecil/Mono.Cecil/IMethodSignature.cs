@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 - 2007 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,18 +26,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Text;
+
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	public interface IMethodSignature {
+	public interface IMethodSignature : IMetadataTokenProvider {
 
-		bool HasParameters { get; }
 		bool HasThis { get; set; }
 		bool ExplicitThis { get; set; }
 		MethodCallingConvention CallingConvention { get; set; }
 
-		ParameterDefinitionCollection Parameters { get; }
-		MethodReturnType ReturnType { get; }
+		bool HasParameters { get; }
+		Collection<ParameterDefinition> Parameters { get; }
+		TypeReference ReturnType { get; set; }
+		MethodReturnType MethodReturnType { get; }
+	}
 
-		int GetSentinel ();
+	static partial class Mixin {
+
+		public static void MethodSignatureFullName (this IMethodSignature self, StringBuilder builder)
+		{
+			builder.Append ("(");
+
+			if (self.HasParameters) {
+				var parameters = self.Parameters;
+				for (int i = 0; i < parameters.Count; i++) {
+					var parameter = parameters [i];
+					if (i > 0)
+						builder.Append (",");
+
+					if (parameter.ParameterType.IsSentinel)
+						builder.Append ("...,");
+
+					builder.Append (parameter.ParameterType.FullName);
+				}
+			}
+
+			builder.Append (")");
+		}
 	}
 }

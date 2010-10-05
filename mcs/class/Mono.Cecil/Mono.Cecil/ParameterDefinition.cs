@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 - 2007 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,179 +26,122 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	public sealed class ParameterDefinition : ParameterReference, IHasMarshalSpec,
-		IMetadataTokenProvider, ICustomAttributeProvider, IHasConstant {
+	public sealed class ParameterDefinition : ParameterReference, ICustomAttributeProvider, IConstantProvider, IMarshalInfoProvider {
 
-		ParameterAttributes m_attributes;
+		ushort attributes;
 
-		bool m_hasConstant;
-		object m_const;
+		internal IMethodSignature method;
 
-		MethodReference m_method;
-		CustomAttributeCollection m_customAttrs;
-
-		MarshalSpec m_marshalDesc;
+		object constant = Mixin.NotResolved;
+		Collection<CustomAttribute> custom_attributes;
+		MarshalInfo marshal_info;
 
 		public ParameterAttributes Attributes {
-			get { return m_attributes; }
-			set { m_attributes = value; }
+			get { return (ParameterAttributes) attributes; }
+			set { attributes = (ushort) value; }
+		}
+
+		public IMethodSignature Method {
+			get { return method; }
 		}
 
 		public bool HasConstant {
-			get { return m_hasConstant; }
+			get {
+				ResolveConstant ();
+
+				return constant != Mixin.NoValue;
+			}
+			set { if (!value) constant = Mixin.NoValue; }
 		}
 
 		public object Constant {
-			get { return m_const; }
-			set {
-				m_hasConstant = true;
-				m_const = value;
-			}
+			get { return HasConstant ? constant : null;	}
+			set { constant = value; }
 		}
 
-		public MethodReference Method {
-			get { return m_method; }
-			set { m_method = value; }
+		void ResolveConstant ()
+		{
+			if (constant != Mixin.NotResolved)
+				return;
+
+			this.ResolveConstant (ref constant, parameter_type.Module);
 		}
 
 		public bool HasCustomAttributes {
-			get { return (m_customAttrs == null) ? false : (m_customAttrs.Count > 0); }
-		}
-
-		public CustomAttributeCollection CustomAttributes {
 			get {
-				if (m_customAttrs == null)
-					m_customAttrs = new CustomAttributeCollection (this);
+				if (custom_attributes != null)
+					return custom_attributes.Count > 0;
 
-				return m_customAttrs;
+				return this.GetHasCustomAttributes (parameter_type.Module);
 			}
 		}
 
-		public MarshalSpec MarshalSpec {
-			get { return m_marshalDesc; }
-			set {
-				m_marshalDesc = value;
-				if (value != null)
-					m_attributes |= ParameterAttributes.HasFieldMarshal;
-				else
-					m_attributes &= ~ParameterAttributes.HasFieldMarshal;
+		public Collection<CustomAttribute> CustomAttributes {
+			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (parameter_type.Module)); }
+		}
+
+		public bool HasMarshalInfo {
+			get {
+				if (marshal_info != null)
+					return true;
+
+				return this.GetHasMarshalInfo (parameter_type.Module);
 			}
+		}
+
+		public MarshalInfo MarshalInfo {
+			get { return marshal_info ?? (marshal_info = this.GetMarshalInfo (parameter_type.Module)); }
+			set { marshal_info = value; }
 		}
 
 		#region ParameterAttributes
 
 		public bool IsIn {
-			get { return (m_attributes & ParameterAttributes.In) != 0; }
-			set {
-				if (value)
-					m_attributes |= ParameterAttributes.In;
-				else
-					m_attributes &= ~ParameterAttributes.In;
-			}
+			get { return attributes.GetAttributes ((ushort) ParameterAttributes.In); }
+			set { attributes = attributes.SetAttributes ((ushort) ParameterAttributes.In, value); }
 		}
 
 		public bool IsOut {
-			get { return (m_attributes & ParameterAttributes.Out) != 0; }
-			set {
-				if (value)
-					m_attributes |= ParameterAttributes.Out;
-				else
-					m_attributes &= ~ParameterAttributes.Out;
-			}
-		}
-
-		public bool IsRetval {
-			get { return (m_attributes & ParameterAttributes.Retval) != 0; }
-			set {
-				if (value)
-					m_attributes |= ParameterAttributes.Retval;
-				else
-					m_attributes &= ~ParameterAttributes.Retval;
-			}
-		}
-
-		public bool IsLcid {
-			get { return (m_attributes & ParameterAttributes.Lcid) != 0; }
-			set {
-				if (value)
-					m_attributes |= ParameterAttributes.Lcid;
-				else
-					m_attributes &= ~ParameterAttributes.Lcid;
-			}
+			get { return attributes.GetAttributes ((ushort) ParameterAttributes.Out); }
+			set { attributes = attributes.SetAttributes ((ushort) ParameterAttributes.Out, value); }
 		}
 
 		public bool IsOptional {
-			get { return (m_attributes & ParameterAttributes.Optional) != 0; }
-			set {
-				if (value)
-					m_attributes |= ParameterAttributes.Optional;
-				else
-					m_attributes &= ~ParameterAttributes.Optional;
-			}
+			get { return attributes.GetAttributes ((ushort) ParameterAttributes.Optional); }
+			set { attributes = attributes.SetAttributes ((ushort) ParameterAttributes.Optional, value); }
 		}
 
 		public bool HasDefault {
-			get { return (m_attributes & ParameterAttributes.HasDefault) != 0; }
-			set {
-				if (value)
-					m_attributes |= ParameterAttributes.HasDefault;
-				else
-					m_attributes &= ~ParameterAttributes.HasDefault;
-			}
+			get { return attributes.GetAttributes ((ushort) ParameterAttributes.HasDefault); }
+			set { attributes = attributes.SetAttributes ((ushort) ParameterAttributes.HasDefault, value); }
+		}
+
+		public bool HasFieldMarshal {
+			get { return attributes.GetAttributes ((ushort) ParameterAttributes.HasFieldMarshal); }
+			set { attributes = attributes.SetAttributes ((ushort) ParameterAttributes.HasFieldMarshal, value); }
 		}
 
 		#endregion
 
-		public ParameterDefinition (TypeReference paramType) :
-			this (string.Empty, -1, (ParameterAttributes) 0, paramType)
+		public ParameterDefinition (TypeReference parameterType)
+			: this (string.Empty, ParameterAttributes.None, parameterType)
 		{
+		}
+
+		public ParameterDefinition (string name, ParameterAttributes attributes, TypeReference parameterType)
+			: base (name, parameterType)
+		{
+			this.attributes = (ushort) attributes;
+			this.token = new MetadataToken (TokenType.Param);
 		}
 
 		public override ParameterDefinition Resolve ()
 		{
 			return this;
-		}
-
-		public ParameterDefinition (string name, int seq, ParameterAttributes attrs, TypeReference paramType) : base (name, seq, paramType)
-		{
-			m_attributes = attrs;
-		}
-
-		public ParameterDefinition Clone ()
-		{
-			return Clone (this, new ImportContext (NullReferenceImporter.Instance, m_method));
-		}
-
-		internal static ParameterDefinition Clone (ParameterDefinition param, ImportContext context)
-		{
-			ParameterDefinition np = new ParameterDefinition (
-				param.Name,
-				param.Sequence,
-				param.Attributes,
-				context.Import (param.ParameterType));
-
-			if (param.HasConstant)
-				np.Constant = param.Constant;
-
-			if (param.MarshalSpec != null)
-				np.MarshalSpec = param.MarshalSpec.CloneInto (np);
-
-			foreach (CustomAttribute ca in param.CustomAttributes)
-				np.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
-
-			return np;
-		}
-
-		public override void Accept (IReflectionVisitor visitor)
-		{
-			visitor.VisitParameterDefinition (this);
-
-			if (this.MarshalSpec != null)
-				this.MarshalSpec.Accept (visitor);
-
-			this.CustomAttributes.Accept (visitor);
 		}
 	}
 }

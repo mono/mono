@@ -1,10 +1,10 @@
 //
-// Resource.cs
+// ResourceType.cs
 //
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,64 +28,49 @@
 
 namespace Mono.Cecil {
 
-	using System.Collections;
+	public enum ResourceType {
+		Linked,
+		Embedded,
+		AssemblyLinked,
+	}
 
-	public abstract class Resource : IAnnotationProvider, IReflectionStructureVisitable {
+	public abstract class Resource {
 
-		string m_name;
-		ManifestResourceAttributes m_attributes;
-		IDictionary m_annotations;
+		string name;
+		uint attributes;
 
 		public string Name {
-			get { return m_name; }
-			set { m_name = value; }
+			get { return name; }
+			set { name = value; }
 		}
 
-		public ManifestResourceAttributes Flags {
-			get { return m_attributes; }
-			set { m_attributes = value; }
+		public ManifestResourceAttributes Attributes {
+			get { return (ManifestResourceAttributes) attributes; }
+			set { attributes = (uint) value; }
 		}
 
-		IDictionary IAnnotationProvider.Annotations {
-			get {
-				if (m_annotations == null)
-					m_annotations = new Hashtable ();
-				return m_annotations;
-			}
+		public abstract ResourceType ResourceType {
+			get;
 		}
 
 		#region ManifestResourceAttributes
 
 		public bool IsPublic {
-			get { return (m_attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Public; }
-			set {
-				if (value) {
-					m_attributes &= ~ManifestResourceAttributes.VisibilityMask;
-					m_attributes |= ManifestResourceAttributes.Public;
-				} else
-					m_attributes &= ~(ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Public);
-			}
+			get { return attributes.GetMaskedAttributes ((uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Public); }
+			set { attributes = attributes.SetMaskedAttributes ((uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Public, value); }
 		}
 
 		public bool IsPrivate {
-			get { return (m_attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Private; }
-			set {
-				if (value) {
-					m_attributes &= ~ManifestResourceAttributes.VisibilityMask;
-					m_attributes |= ManifestResourceAttributes.Private;
-				} else
-					m_attributes &= ~(ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Private);
-			}
+			get { return attributes.GetMaskedAttributes ((uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Private); }
+			set { attributes = attributes.SetMaskedAttributes ((uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Private, value); }
 		}
 
 		#endregion
 
 		internal Resource (string name, ManifestResourceAttributes attributes)
 		{
-			m_name = name;
-			m_attributes = attributes;
+			this.name = name;
+			this.attributes = (uint) attributes;
 		}
-
-		public abstract void Accept (IReflectionStructureVisitor visitor);
 	}
 }

@@ -5,7 +5,7 @@ LIBRARY = Mono.Cecil.dll
 LIBRARY_SNK = ../mono.snk
 LIBRARY_PACKAGE = none
 
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll -keyfile:$(LIBRARY_SNK)
+LIB_MCS_FLAGS = /r:$(corlib) -keyfile:$(LIBRARY_SNK) -r:System.Core.dll -d:NET_3_5
 
 NO_TEST = yes
 

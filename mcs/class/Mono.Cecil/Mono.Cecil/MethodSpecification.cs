@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,65 +26,78 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
 
-	using System;
+using Mono.Collections.Generic;
+
+namespace Mono.Cecil {
 
 	public abstract class MethodSpecification : MethodReference {
 
-		MethodReference m_elementMethod;
+		readonly MethodReference method;
 
 		public MethodReference ElementMethod {
-			get { return m_elementMethod; }
-			set { m_elementMethod = value; }
+			get { return method; }
 		}
 
 		public override string Name {
-			get { return m_elementMethod.Name; }
+			get { return method.Name; }
 			set { throw new InvalidOperationException (); }
 		}
 
 		public override MethodCallingConvention CallingConvention {
-			get { return m_elementMethod.CallingConvention; }
+			get { return method.CallingConvention; }
 			set { throw new InvalidOperationException (); }
 		}
 
 		public override bool HasThis {
-			get { return m_elementMethod.HasThis; }
+			get { return method.HasThis; }
 			set { throw new InvalidOperationException (); }
 		}
 
 		public override bool ExplicitThis {
-			get { return m_elementMethod.ExplicitThis; }
+			get { return method.ExplicitThis; }
 			set { throw new InvalidOperationException (); }
 		}
 
-		public override MethodReturnType ReturnType {
-			get { return m_elementMethod.ReturnType; }
+		public override MethodReturnType MethodReturnType {
+			get { return method.MethodReturnType; }
 			set { throw new InvalidOperationException (); }
 		}
 
 		public override TypeReference DeclaringType {
-			get { return m_elementMethod.DeclaringType; }
+			get { return method.DeclaringType; }
 			set { throw new InvalidOperationException (); }
 		}
 
+		public override ModuleDefinition Module {
+			get { return method.Module; }
+		}
+
 		public override bool HasParameters {
-			get { return m_elementMethod.HasParameters; }
+			get { return method.HasParameters; }
 		}
 
-		public override ParameterDefinitionCollection Parameters {
-			get { return m_elementMethod.Parameters; }
+		public override Collection<ParameterDefinition> Parameters {
+			get { return method.Parameters; }
 		}
 
-		internal MethodSpecification (MethodReference elemMethod) : base (string.Empty)
+		internal override bool ContainsGenericParameter {
+			get { return method.ContainsGenericParameter; }
+		}
+
+		internal MethodSpecification (MethodReference method)
 		{
-			m_elementMethod = elemMethod;
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
+			this.method = method;
+			this.token = new MetadataToken (TokenType.MethodSpec);
 		}
 
-		public override MethodReference GetOriginalMethod()
+		public sealed override MethodReference GetElementMethod ()
 		{
-			return m_elementMethod.GetOriginalMethod ();
+			return method.GetElementMethod ();
 		}
 	}
 }

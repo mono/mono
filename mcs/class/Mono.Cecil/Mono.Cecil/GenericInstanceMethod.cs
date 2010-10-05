@@ -1,10 +1,10 @@
 //
-// IGenericInstanceMethod.cs
+// GenericInstanceMethod.cs
 //
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,56 +26,65 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Text;
+
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	using System.Text;
+	public sealed class GenericInstanceMethod : MethodSpecification, IGenericInstance, IGenericContext {
 
-	public sealed class GenericInstanceMethod : MethodSpecification, IGenericInstance {
-
-		private GenericArgumentCollection m_genArgs;
-
-		public GenericArgumentCollection GenericArguments {
-			get {
-				if (m_genArgs == null)
-					m_genArgs = new GenericArgumentCollection (this);
-				return m_genArgs;
-			}
-		}
+		Collection<TypeReference> arguments;
 
 		public bool HasGenericArguments {
-			get { return m_genArgs == null ? false : m_genArgs.Count > 0; }
+			get { return !arguments.IsNullOrEmpty (); }
 		}
 
-		public GenericInstanceMethod (MethodReference elemMethod) : base (elemMethod)
-		{
+		public Collection<TypeReference> GenericArguments {
+			get {
+				if (arguments == null)
+					arguments = new Collection<TypeReference> ();
+
+				return arguments;
+			}
 		}
 
-		public override string ToString ()
+		public override bool IsGenericInstance {
+			get { return true; }
+		}
+
+		IGenericParameterProvider IGenericContext.Method {
+			get { return ElementMethod; }
+		}
+
+		IGenericParameterProvider IGenericContext.Type {
+			get { return ElementMethod.DeclaringType; }
+		}
+
+		internal override bool ContainsGenericParameter {
+			get { return this.ContainsGenericParameter () || base.ContainsGenericParameter; }
+		}
+
+		public override string FullName {
+			get {
+				var signature = new StringBuilder ();
+				var method = this.ElementMethod;
+				signature.Append (method.ReturnType.FullName);
+				signature.Append (" ");
+				signature.Append (method.DeclaringType.FullName);
+				signature.Append ("::");
+				signature.Append (method.Name);
+				this.GenericInstanceFullName (signature);
+				this.MethodSignatureFullName (signature);
+				return signature.ToString ();
+
+			}
+		}
+
+		public GenericInstanceMethod (MethodReference method)
+			: base (method)
 		{
-			StringBuilder sb = new StringBuilder ();
-			MethodReference meth = this.ElementMethod;
-			sb.Append (meth.ReturnType.ReturnType.FullName);
-			sb.Append (" ");
-			sb.Append (meth.DeclaringType.FullName);
-			sb.Append ("::");
-			sb.Append (meth.Name);
-			sb.Append ("<");
-			for (int i = 0; i < this.GenericArguments.Count; i++) {
-				if (i > 0)
-					sb.Append (",");
-				sb.Append (this.GenericArguments [i].FullName);
-			}
-			sb.Append (">");
-			sb.Append ("(");
-			if (meth.HasParameters) {
-				for (int i = 0; i < meth.Parameters.Count; i++) {
-					sb.Append (meth.Parameters [i].ParameterType.FullName);
-					if (i < meth.Parameters.Count - 1)
-						sb.Append (",");
-				}
-			}
-			sb.Append (")");
-			return sb.ToString ();
 		}
 	}
 }

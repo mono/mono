@@ -2,10 +2,9 @@
 // GenericInstanceType.cs
 //
 // Author:
-//	Martin Baulig  <martin@ximian.com>
-//  Jb Evain  <jbevain@gmail.com>
+//   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,49 +26,58 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Text;
+
+using Mono.Collections.Generic;
+
+using MD = Mono.Cecil.Metadata;
+
 namespace Mono.Cecil {
 
-	using System.Text;
+	public sealed class GenericInstanceType : TypeSpecification, IGenericInstance, IGenericContext {
 
-	public sealed class GenericInstanceType : TypeSpecification, IGenericInstance {
-
-		private GenericArgumentCollection m_genArgs;
-
-		public GenericArgumentCollection GenericArguments {
-			get {
-				if (m_genArgs == null)
-					m_genArgs = new GenericArgumentCollection (this);
-				return m_genArgs;
-			}
-		}
+		Collection<TypeReference> arguments;
 
 		public bool HasGenericArguments {
-			get { return m_genArgs == null ? false : m_genArgs.Count > 0; }
+			get { return !arguments.IsNullOrEmpty (); }
 		}
 
-		public override bool IsValueType {
-			get { return m_isValueType; }
-			set { m_isValueType = value; }
+		public Collection<TypeReference> GenericArguments {
+			get {
+				if (arguments == null)
+					arguments = new Collection<TypeReference> ();
+
+				return arguments;
+			}
 		}
 
 		public override string FullName {
 			get {
-				StringBuilder sb = new StringBuilder ();
-				sb.Append (base.FullName);
-				sb.Append ("<");
-				for (int i = 0; i < this.GenericArguments.Count; i++) {
-					if (i > 0)
-						sb.Append (",");
-					sb.Append (this.GenericArguments [i].FullName);
-				}
-				sb.Append (">");
-				return sb.ToString ();
+				var name = new StringBuilder ();
+				name.Append (base.FullName);
+				this.GenericInstanceFullName (name);
+				return name.ToString ();
 			}
 		}
 
-		public GenericInstanceType (TypeReference elementType) : base (elementType)
+		public override bool IsGenericInstance {
+			get { return true; }
+		}
+
+		internal override bool ContainsGenericParameter {
+			get { return this.ContainsGenericParameter () || base.ContainsGenericParameter; }
+		}
+
+		IGenericParameterProvider IGenericContext.Type {
+			get { return ElementType; }
+		}
+
+		public GenericInstanceType (TypeReference type)
+			: base (type)
 		{
-			m_isValueType = elementType.IsValueType;
+			base.IsValueType = type.IsValueType;
+			this.etype = MD.ElementType.GenericInst;
 		}
 	}
 }

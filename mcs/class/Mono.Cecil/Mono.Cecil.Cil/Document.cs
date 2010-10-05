@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2006 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,55 +26,86 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 namespace Mono.Cecil.Cil {
 
-	using System;
+	public enum DocumentType {
+		Other,
+		Text,
+	}
 
-	public class Document {
+	public enum DocumentHashAlgorithm {
+		None,
+		MD5,
+		SHA1,
+	}
 
-		string m_url;
+	public enum DocumentLanguage {
+		Other,
+		C,
+		Cpp,
+		CSharp,
+		Basic,
+		Java,
+		Cobol,
+		Pascal,
+		Cil,
+		JScript,
+		Smc,
+		MCpp,
+	}
 
-		Guid m_type;
-		DocumentHashAlgorithm m_hashAlgorithm;
-		Guid m_language;
-		Guid m_languageVendor;
+	public enum DocumentLanguageVendor {
+		Other,
+		Microsoft,
+	}
 
-		byte [] m_hash;
+	public sealed class Document {
+
+		string url;
+
+		byte type;
+		byte hash_algorithm;
+		byte language;
+		byte language_vendor;
+
+		byte [] hash;
 
 		public string Url {
-			get { return m_url; }
-			set { m_url = value; }
+			get { return url; }
+			set { url = value; }
 		}
 
-		public Guid Type {
-			get { return m_type; }
-			set { m_type = value; }
+		public DocumentType Type {
+			get { return (DocumentType) type; }
+			set { type = (byte) value; }
 		}
 
 		public DocumentHashAlgorithm HashAlgorithm {
-			get { return m_hashAlgorithm; }
-			set { m_hashAlgorithm = value; }
+			get { return (DocumentHashAlgorithm) hash_algorithm; }
+			set { hash_algorithm = (byte) value; }
 		}
 
-		public Guid Language {
-			get { return m_language; }
-			set { m_language = value; }
+		public DocumentLanguage Language {
+			get { return (DocumentLanguage) language; }
+			set { language = (byte) value; }
 		}
 
-		public Guid LanguageVendor {
-			get { return m_languageVendor; }
-			set { m_languageVendor = value; }
+		public DocumentLanguageVendor LanguageVendor {
+			get { return (DocumentLanguageVendor) language_vendor; }
+			set { language_vendor = (byte) value; }
 		}
 
 		public byte [] Hash {
-			get { return m_hash; }
-			set { m_hash = value; }
+			get { return hash; }
+			set { hash = value; }
 		}
 
 		public Document (string url)
 		{
-			m_url = url;
-			m_hash = new byte [0];
+			this.url = url;
+			this.hash = Empty<byte>.Array;
 		}
 	}
 }

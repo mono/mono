@@ -1,11 +1,10 @@
-﻿//
+//
 // MetadataResolver.cs
 //
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2008 Jb Evain (http://evain.net)
-// (C) 2008 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,65 +27,92 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
+
+using Mono.Collections.Generic;
 
 namespace Mono.Cecil {
 
-	class MetadataResolver {
+	public interface IAssemblyResolver {
+		AssemblyDefinition Resolve (AssemblyNameReference name);
+		AssemblyDefinition Resolve (string fullName);
+	}
 
-		AssemblyDefinition assembly;
+	static class MetadataResolver {
 
-		public IAssemblyResolver AssemblyResolver {
-			get { return assembly.Resolver; }
-		}
-
-		public MetadataResolver (AssemblyDefinition assembly)
+		public static TypeDefinition Resolve (IAssemblyResolver resolver, TypeReference type)
 		{
-			this.assembly = assembly;
-		}
+			type = type.GetElementType ();
 
-		public TypeDefinition Resolve (TypeReference type)
-		{
-			type = type.GetOriginalType ();
-
-			if (type is TypeDefinition)
-				return (TypeDefinition) type;
-
-			AssemblyNameReference reference = type.Scope as AssemblyNameReference;
-			if (reference != null) {
-				AssemblyDefinition assembly = AssemblyResolver.Resolve (reference);
+			var scope = type.Scope;
+			switch (scope.MetadataScopeType) {
+			case MetadataScopeType.AssemblyNameReference:
+				var assembly = resolver.Resolve ((AssemblyNameReference) scope);
 				if (assembly == null)
 					return null;
 
-				return assembly.MainModule.Types [type.FullName];
+				return GetType (assembly.MainModule, type);
+			case MetadataScopeType.ModuleDefinition:
+				return GetType ((ModuleDefinition) scope, type);
+			case MetadataScopeType.ModuleReference:
+				var modules = type.Module.Assembly.Modules;
+				var module_ref = (ModuleReference) scope;
+				for (int i = 0; i < modules.Count; i++) {
+					var netmodule = modules [i];
+					if (netmodule.Name == module_ref.Name)
+						return GetType (netmodule, type);
+				}
+				break;
 			}
 
-			ModuleDefinition module = type.Scope as ModuleDefinition;
-			if (module != null)
-				return module.Types [type.FullName];
-
-			ModuleReference mod_reference = type.Scope as ModuleReference;
-			if (mod_reference != null) {
-				foreach (ModuleDefinition netmodule in type.Module.Assembly.Modules)
-					if (netmodule.Name == mod_reference.Name)
-						return netmodule.Types [type.FullName];
-			}
-
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
-		public FieldDefinition Resolve (FieldReference field)
+		static TypeDefinition GetType (ModuleDefinition module, TypeReference type)
 		{
-			TypeDefinition type = Resolve (field.DeclaringType);
+			if (!type.IsNested)
+				return module.GetType (type.Namespace, type.Name);
+
+			var declaring_type = type.DeclaringType.Resolve ();
+			if (declaring_type == null)
+				return null;
+
+			return declaring_type.GetNestedType (type.Name);
+		}
+
+		public static FieldDefinition Resolve (IAssemblyResolver resolver, FieldReference field)
+		{
+			var type = Resolve (resolver, field.DeclaringType);
 			if (type == null)
 				return null;
 
-			return type.HasFields ? GetField (type.Fields, field) : null;
+			if (!type.HasFields)
+				return null;
+
+			return GetField (resolver, type, field);
 		}
 
-		static FieldDefinition GetField (ICollection collection, FieldReference reference)
+		static FieldDefinition GetField (IAssemblyResolver resolver, TypeDefinition type, FieldReference reference)
 		{
-			foreach (FieldDefinition field in collection) {
+			while (type != null) {
+				var field = GetField (type.Fields, reference);
+				if (field != null)
+					return field;
+
+				if (type.BaseType == null)
+					return null;
+
+				type = Resolve (resolver, type.BaseType);
+			}
+
+			return null;
+		}
+
+		static FieldDefinition GetField (IList<FieldDefinition> fields, FieldReference reference)
+		{
+			for (int i = 0; i < fields.Count; i++) {
+				var field = fields [i];
+
 				if (field.Name != reference.Name)
 					continue;
 
@@ -99,103 +125,121 @@ namespace Mono.Cecil {
 			return null;
 		}
 
-		public MethodDefinition Resolve (MethodReference method)
+		public static MethodDefinition Resolve (IAssemblyResolver resolver, MethodReference method)
 		{
-			TypeDefinition type = Resolve (method.DeclaringType);
+			var type = Resolve (resolver, method.DeclaringType);
 			if (type == null)
 				return null;
 
-			method = method.GetOriginalMethod ();
-			if (method.Name == MethodDefinition.Cctor || method.Name == MethodDefinition.Ctor)
-				return type.HasConstructors ? GetMethod (type.Constructors, method) : null;
-			else
-				return type.HasMethods ? GetMethod (type, method) : null;
+			method = method.GetElementMethod ();
+
+			if (!type.HasMethods)
+				return null;
+
+			return GetMethod (resolver, type, method);
 		}
 
-		MethodDefinition GetMethod (TypeDefinition type, MethodReference reference)
+		static MethodDefinition GetMethod (IAssemblyResolver resolver, TypeDefinition type, MethodReference reference)
 		{
 			while (type != null) {
-				MethodDefinition method = GetMethod (type.Methods, reference);
-				if (method == null) {
-					if (type.BaseType == null)
-						return null;
-
-					type = Resolve (type.BaseType);
-				} else
+				var method = GetMethod (type.Methods, reference);
+				if (method != null)
 					return method;
+
+				if (type.BaseType == null)
+					return null;
+
+				type = Resolve (resolver, type.BaseType);
 			}
 
 			return null;
 		}
 
-		static MethodDefinition GetMethod (ICollection collection, MethodReference reference)
+		public static MethodDefinition GetMethod (IList<MethodDefinition> methods, MethodReference reference)
 		{
-			foreach (MethodDefinition meth in collection) {
-				if (meth.Name != reference.Name)
+			for (int i = 0; i < methods.Count; i++) {
+				var method = methods [i];
+
+				if (method.Name != reference.Name)
 					continue;
 
-				if (!AreSame (meth.ReturnType.ReturnType, reference.ReturnType.ReturnType))
+				if (!AreSame (method.ReturnType, reference.ReturnType))
 					continue;
 
-				if (meth.HasParameters != reference.HasParameters)
+				if (method.HasParameters != reference.HasParameters)
 					continue;
 
-				if (!meth.HasParameters && !reference.HasParameters)
-					return meth; //both have no parameters hence meth is the good one
+				if (!method.HasParameters && !reference.HasParameters)
+					return method;
 
-				if (!AreSame (meth.Parameters, reference.Parameters))
+				if (!AreSame (method.Parameters, reference.Parameters))
 					continue;
 
-				return meth;
+				return method;
 			}
 
 			return null;
 		}
 
-		static bool AreSame (ParameterDefinitionCollection a, ParameterDefinitionCollection b)
+		static bool AreSame (Collection<ParameterDefinition> a, Collection<ParameterDefinition> b)
 		{
-			if (a.Count != b.Count)
+			var count = a.Count;
+
+			if (count != b.Count)
 				return false;
 
-			if (a.Count == 0)
+			if (count == 0)
 				return true;
 
-			for (int i = 0; i < a.Count; i++)
+			for (int i = 0; i < count; i++)
 				if (!AreSame (a [i].ParameterType, b [i].ParameterType))
 					return false;
 
 			return true;
 		}
 
-		static bool AreSame (ModType a, ModType b)
-		{
-			if (!AreSame (a.ModifierType, b.ModifierType))
-				return false;
-
-			return AreSame (a.ElementType, b.ElementType);
-		}
-
 		static bool AreSame (TypeSpecification a, TypeSpecification b)
-		{
-			if (a is GenericInstanceType)
-				return AreSame ((GenericInstanceType) a, (GenericInstanceType) b);
-
-			if (a is ModType)
-				return AreSame ((ModType) a, (ModType) b);
-
-			return AreSame (a.ElementType, b.ElementType);
-		}
-
-		static bool AreSame (GenericInstanceType a, GenericInstanceType b)
 		{
 			if (!AreSame (a.ElementType, b.ElementType))
 				return false;
 
-			if (a.GenericArguments.Count != b.GenericArguments.Count)
+			if (a.IsGenericInstance)
+				return AreSame ((GenericInstanceType) a, (GenericInstanceType) b);
+
+			if (a.IsRequiredModifier || a.IsOptionalModifier)
+				return AreSame ((IModifierType) a, (IModifierType) b);
+
+			if (a.IsArray)
+				return AreSame ((ArrayType) a, (ArrayType) b);
+
+			return true;
+		}
+
+		static bool AreSame (ArrayType a, ArrayType b)
+		{
+			if (a.Rank != b.Rank)
 				return false;
 
-			if (a.GenericArguments.Count == 0)
-				return true;
+			// TODO: dimensions
+
+			return true;
+		}
+
+		static bool AreSame (IModifierType a, IModifierType b)
+		{
+			return AreSame (a.ModifierType, b.ModifierType);
+		}
+
+		static bool AreSame (GenericInstanceType a, GenericInstanceType b)
+		{
+			if (!a.HasGenericArguments)
+				return !b.HasGenericArguments;
+
+			if (!b.HasGenericArguments)
+				return false;
+
+			if (a.GenericArguments.Count != b.GenericArguments.Count)
+				return false;
 
 			for (int i = 0; i < a.GenericArguments.Count; i++)
 				if (!AreSame (a.GenericArguments [i], b.GenericArguments [i]))
@@ -211,19 +255,14 @@ namespace Mono.Cecil {
 
 		static bool AreSame (TypeReference a, TypeReference b)
 		{
-			if (a is TypeSpecification || b is TypeSpecification) {
-				if (a.GetType () != b.GetType ())
-					return false;
+			if (a.etype != b.etype)
+				return false;
 
-				return AreSame ((TypeSpecification) a, (TypeSpecification) b);
-			}
-
-			if (a is GenericParameter || b is GenericParameter) {
-				if (a.GetType () != b.GetType ())
-					return false;
-
+			if (a.IsGenericParameter)
 				return AreSame ((GenericParameter) a, (GenericParameter) b);
-			}
+
+			if (a.IsTypeSpecification ())
+				return AreSame ((TypeSpecification) a, (TypeSpecification) b);
 
 			return a.FullName == b.FullName;
 		}

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,62 +26,112 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
+using MD = Mono.Cecil.Metadata;
+
 namespace Mono.Cecil {
 
-	public abstract class ModType : TypeSpecification {
+	public interface IModifierType {
+		TypeReference ModifierType { get; }
+		TypeReference ElementType { get; }
+	}
 
-		TypeReference m_modifierType;
+	public sealed class OptionalModifierType : TypeSpecification, IModifierType {
+
+		TypeReference modifier_type;
 
 		public TypeReference ModifierType {
-			get { return m_modifierType; }
-			set { m_modifierType = value; }
+			get { return modifier_type; }
+			set { modifier_type = value; }
 		}
 
-		public override string Name
+		public override string Name {
+			get { return base.Name + Suffix; }
+		}
+
+		public override string FullName {
+			get { return base.FullName + Suffix; }
+		}
+
+		string Suffix {
+			get { return " modopt(" + modifier_type + ")"; }
+		}
+
+		public override bool IsValueType {
+			get { return false; }
+			set { throw new InvalidOperationException (); }
+		}
+
+		public override bool IsOptionalModifier {
+			get { return true; }
+		}
+
+		internal override bool ContainsGenericParameter {
+			get { return modifier_type.ContainsGenericParameter || base.ContainsGenericParameter; }
+		}
+
+		public OptionalModifierType (TypeReference modifierType, TypeReference type)
+			: base (type)
 		{
-			get { return string.Concat (base.Name, Suffix ()); }
-		}
-
-		public override string FullName
-		{
-			get { return string.Concat (base.FullName, Suffix ()); }
-		}
-
-		string Suffix ()
-		{
-			return string.Concat (" ", ModifierName, "(", this.ModifierType.FullName, ")");
-		}
-
-		protected abstract string ModifierName {
-			get;
-		}
-
-		public ModType (TypeReference elemType, TypeReference modType) : base (elemType)
-		{
-			m_modifierType = modType;
+			Mixin.CheckModifier (modifierType, type);
+			this.modifier_type = modifierType;
+			this.etype = MD.ElementType.CModOpt;
 		}
 	}
 
-	public sealed class ModifierOptional : ModType {
+	public sealed class RequiredModifierType : TypeSpecification, IModifierType {
 
-		protected override string ModifierName {
-			get { return "modopt"; }
+		TypeReference modifier_type;
+
+		public TypeReference ModifierType {
+			get { return modifier_type; }
+			set { modifier_type = value; }
 		}
 
-		public ModifierOptional (TypeReference elemType, TypeReference modType) : base (elemType, modType)
+		public override string Name {
+			get { return base.Name + Suffix; }
+		}
+
+		public override string FullName {
+			get { return base.FullName + Suffix; }
+		}
+
+		string Suffix {
+			get { return " modreq(" + modifier_type + ")"; }
+		}
+
+		public override bool IsValueType {
+			get { return false; }
+			set { throw new InvalidOperationException (); }
+		}
+
+		public override bool IsRequiredModifier {
+			get { return true; }
+		}
+
+		internal override bool ContainsGenericParameter {
+			get { return modifier_type.ContainsGenericParameter || base.ContainsGenericParameter; }
+		}
+
+		public RequiredModifierType (TypeReference modifierType, TypeReference type)
+			: base (type)
 		{
+			Mixin.CheckModifier (modifierType, type);
+			this.modifier_type = modifierType;
+			this.etype = MD.ElementType.CModReqD;
 		}
 
 	}
 
-	public sealed class ModifierRequired : ModType {
+	static partial class Mixin {
 
-		protected override string ModifierName {
-			get { return "modreq"; }
-		}
-
-		public ModifierRequired (TypeReference elemType, TypeReference modType) : base (elemType, modType)
+		public static void CheckModifier (TypeReference modifierType, TypeReference type)
 		{
+			if (modifierType == null)
+				throw new ArgumentNullException ("modifierType");
+			if (type == null)
+				throw new ArgumentNullException ("type");
 		}
 	}
 }

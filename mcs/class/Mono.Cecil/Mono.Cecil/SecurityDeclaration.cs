@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,111 +26,157 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	using System;
-	using System.Collections;
-	using System.Security;
+	public enum SecurityAction : ushort {
+		Request = 1,
+		Demand = 2,
+		Assert = 3,
+		Deny = 4,
+		PermitOnly = 5,
+		LinkDemand = 6,
+		InheritDemand = 7,
+		RequestMinimum = 8,
+		RequestOptional = 9,
+		RequestRefuse = 10,
+		PreJitGrant = 11,
+		PreJitDeny = 12,
+		NonCasDemand = 13,
+		NonCasLinkDemand = 14,
+		NonCasInheritance = 15
+	}
 
-	public sealed class SecurityDeclaration : IRequireResolving, IAnnotationProvider, IReflectionVisitable {
+	public interface ISecurityDeclarationProvider : IMetadataTokenProvider {
 
-		SecurityAction m_action;
-		SecurityDeclarationReader m_reader;
-		IDictionary m_annotations;
+		bool HasSecurityDeclarations { get; }
+		Collection<SecurityDeclaration> SecurityDeclarations { get; }
+	}
 
-#if !CF_1_0 && !CF_2_0
-		PermissionSet m_permSet;
-#endif
+	public sealed class SecurityAttribute : ICustomAttribute {
 
-		bool m_resolved;
-		byte [] m_blob;
+		TypeReference attribute_type;
+
+		internal Collection<CustomAttributeNamedArgument> fields;
+		internal Collection<CustomAttributeNamedArgument> properties;
+
+		public TypeReference AttributeType {
+			get { return attribute_type; }
+			set { attribute_type = value; }
+		}
+
+		public bool HasFields {
+			get { return !fields.IsNullOrEmpty (); }
+		}
+
+		public Collection<CustomAttributeNamedArgument> Fields {
+			get { return fields ?? (fields = new Collection<CustomAttributeNamedArgument> ()); }
+		}
+
+		public bool HasProperties {
+			get { return !properties.IsNullOrEmpty (); }
+		}
+
+		public Collection<CustomAttributeNamedArgument> Properties {
+			get { return properties ?? (properties = new Collection<CustomAttributeNamedArgument> ()); }
+		}
+
+		public SecurityAttribute (TypeReference attributeType)
+		{
+			this.attribute_type = attributeType;
+		}
+	}
+
+	public sealed class SecurityDeclaration {
+
+		readonly internal uint signature;
+		readonly ModuleDefinition module;
+
+		internal bool resolved;
+		SecurityAction action;
+		internal Collection<SecurityAttribute> security_attributes;
 
 		public SecurityAction Action {
-			get { return m_action; }
-			set { m_action = value; }
+			get { return action; }
+			set { action = value; }
 		}
 
-#if !CF_1_0 && !CF_2_0
-		public PermissionSet PermissionSet {
-			get { return m_permSet; }
-			set { m_permSet = value; }
-		}
-#endif
-
-		public bool Resolved {
-			get { return m_resolved; }
-			set { m_resolved = value; }
-		}
-
-		public byte [] Blob {
-			get { return m_blob; }
-			set { m_blob = value; }
-		}
-
-		IDictionary IAnnotationProvider.Annotations {
+		public bool HasSecurityAttributes {
 			get {
-				if (m_annotations == null)
-					m_annotations = new Hashtable ();
-				return m_annotations;
+				Resolve ();
+
+				return !security_attributes.IsNullOrEmpty ();
 			}
+		}
+
+		public Collection<SecurityAttribute> SecurityAttributes {
+			get {
+				Resolve ();
+
+				return security_attributes ?? (security_attributes = new Collection<SecurityAttribute> ());
+			}
+		}
+
+		internal bool HasImage {
+			get { return module != null && module.HasImage; }
+		}
+
+		internal SecurityDeclaration (SecurityAction action, uint signature, ModuleDefinition module)
+		{
+			this.action = action;
+			this.signature = signature;
+			this.module = module;
 		}
 
 		public SecurityDeclaration (SecurityAction action)
 		{
-			m_action = action;
+			this.action = action;
+			this.resolved = true;
 		}
 
-		internal SecurityDeclaration (SecurityAction action, SecurityDeclarationReader reader)
+		public byte [] GetBlob ()
 		{
-			m_action = action;
-			m_reader = reader;
+			if (!HasImage || signature == 0)
+				throw new NotSupportedException ();
+
+			return module.Read (this, (declaration, reader) => reader.ReadSecurityDeclarationBlob (declaration.signature)); ;
 		}
 
-		public SecurityDeclaration Clone ()
+		void Resolve ()
 		{
-			return Clone (this);
+			if (resolved || !HasImage)
+				return;
+
+			module.Read (this, (declaration, reader) => {
+				reader.ReadSecurityDeclarationSignature (declaration);
+				return this;
+			});
+
+			resolved = true;
+		}
+	}
+
+	static partial class Mixin {
+
+		public static bool GetHasSecurityDeclarations (
+			this ISecurityDeclarationProvider self,
+			ModuleDefinition module)
+		{
+			return module.HasImage ()
+				? module.Read (self, (provider, reader) => reader.HasSecurityDeclarations (provider))
+				: false;
 		}
 
-		internal static SecurityDeclaration Clone (SecurityDeclaration sec)
+		public static Collection<SecurityDeclaration> GetSecurityDeclarations (
+			this ISecurityDeclarationProvider self,
+			ModuleDefinition module)
 		{
-			SecurityDeclaration sd = new SecurityDeclaration (sec.Action);
-			if (!sec.Resolved) {
-				sd.Resolved = false;
-				sd.Blob = sec.Blob;
-				return sd;
-			}
-
-#if !CF_1_0 && !CF_2_0
-            sd.PermissionSet = sec.PermissionSet.Copy ();
-#endif
-			return sd;
-		}
-
-		public bool Resolve ()
-		{
-			if (m_resolved)
-				return true;
-
-			if (m_reader == null)
-				return false;
-
-			SecurityDeclaration clone = m_reader.FromByteArray (m_action, m_blob, true);
-			if (!clone.Resolved)
-				return false;
-
-			m_action = clone.Action;
-#if !CF_1_0 && !CF_2_0
-			m_permSet = clone.PermissionSet.Copy ();
-#endif
-			m_resolved = true;
-
-			return true;
-		}
-
-		public void Accept (IReflectionVisitor visitor)
-		{
-			visitor.VisitSecurityDeclaration (this);
+			return module.HasImage ()
+				? module.Read (self, (provider, reader) => reader.ReadSecurityDeclarations (provider))
+				: new Collection<SecurityDeclaration> ();
 		}
 	}
 }
-

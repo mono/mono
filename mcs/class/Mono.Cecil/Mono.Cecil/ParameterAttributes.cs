@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,17 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
 
-	using System;
+namespace Mono.Cecil {
 
 	[Flags]
 	public enum ParameterAttributes : ushort {
 		None				= 0x0000,
 		In					= 0x0001,	// Param is [In]
 		Out					= 0x0002,	// Param is [Out]
-		Lcid				= 0x0004,
-		Retval				= 0x0008,
 		Optional			= 0x0010,	// Param is optional
 		HasDefault			= 0x1000,	// Param has default value
 		HasFieldMarshal		= 0x2000,	// Param has field marshal

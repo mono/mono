@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,26 +26,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 namespace Mono.Cecil {
 
 	public sealed class AssemblyLinkedResource : Resource {
 
-		private AssemblyNameReference m_asmRef;
+		AssemblyNameReference reference;
 
 		public AssemblyNameReference Assembly {
-			get { return m_asmRef; }
-			set { m_asmRef = value; }
+			get { return reference; }
+			set { reference = value; }
 		}
 
-		public AssemblyLinkedResource (string name, ManifestResourceAttributes flags,
-			AssemblyNameReference asmRef) : base (name, flags)
-		{
-			m_asmRef = asmRef;
+		public override ResourceType ResourceType {
+			get { return ResourceType.AssemblyLinked; }
 		}
 
-		public override void Accept (IReflectionStructureVisitor visitor)
+		public AssemblyLinkedResource (string name, ManifestResourceAttributes flags)
+			: base (name, flags)
 		{
-			visitor.VisitAssemblyLinkedResource (this);
+		}
+
+		public AssemblyLinkedResource (string name, ManifestResourceAttributes flags, AssemblyNameReference reference)
+			: base (name, flags)
+		{
+			this.reference = reference;
 		}
 	}
 }

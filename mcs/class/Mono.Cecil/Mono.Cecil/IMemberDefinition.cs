@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,10 +28,73 @@
 
 namespace Mono.Cecil {
 
-	public interface IMemberDefinition : IMemberReference, ICustomAttributeProvider {
+	public interface IMemberDefinition : ICustomAttributeProvider {
 
-		new TypeDefinition DeclaringType { get; set; }
+		string Name { get; set; }
+		string FullName { get; }
+
 		bool IsSpecialName { get; set; }
 		bool IsRuntimeSpecialName { get; set; }
+
+		TypeDefinition DeclaringType { get; set; }
+	}
+
+	static partial class Mixin {
+
+		public static bool GetAttributes (this uint self, uint attributes)
+		{
+			return (self & attributes) != 0;
+		}
+
+		public static uint SetAttributes (this uint self, uint attributes, bool value)
+		{
+			if (value)
+				return self | attributes;
+
+			return self & ~attributes;
+		}
+
+		public static bool GetMaskedAttributes (this uint self, uint mask, uint attributes)
+		{
+			return (self & mask) == attributes;
+		}
+
+		public static uint SetMaskedAttributes (this uint self, uint mask, uint attributes, bool value)
+		{
+			if (value) {
+				self &= ~mask;
+				return self | attributes;
+			}
+
+			return self & ~(mask & attributes);
+		}
+
+		public static bool GetAttributes (this ushort self, ushort attributes)
+		{
+			return (self & attributes) != 0;
+		}
+
+		public static ushort SetAttributes (this ushort self, ushort attributes, bool value)
+		{
+			if (value)
+				return (ushort) (self | attributes);
+
+			return (ushort) (self & ~attributes);
+		}
+
+		public static bool GetMaskedAttributes (this ushort self, ushort mask, uint attributes)
+		{
+			return (self & mask) == attributes;
+		}
+
+		public static ushort SetMaskedAttributes (this ushort self, ushort mask, uint attributes, bool value)
+		{
+			if (value) {
+				self = (ushort) (self & ~mask);
+				return (ushort) (self | attributes);
+			}
+
+			return (ushort) (self & ~(mask & attributes));
+		}
 	}
 }

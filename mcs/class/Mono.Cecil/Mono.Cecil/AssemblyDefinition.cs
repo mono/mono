@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,144 +26,164 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.IO;
+
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	using System;
-	using System.Collections;
+	public sealed class AssemblyDefinition : ICustomAttributeProvider, ISecurityDeclarationProvider {
 
-	using Mono.Cecil.Metadata;
+		AssemblyNameDefinition name;
 
-	public class AssemblyDefinition : ICustomAttributeProvider,
-		IHasSecurity, IAnnotationProvider, IReflectionStructureVisitable {
-
-		MetadataToken m_token;
-		AssemblyNameDefinition m_asmName;
-		ModuleDefinitionCollection m_modules;
-		SecurityDeclarationCollection m_secDecls;
-		CustomAttributeCollection m_customAttrs;
-		MethodDefinition m_ep;
-		TargetRuntime m_runtime;
-		AssemblyKind m_kind;
-
-		ModuleDefinition m_mainModule;
-		StructureReader m_reader;
-
-		IAssemblyResolver m_resolver;
-		IDictionary m_annotations;
-
-		public MetadataToken MetadataToken {
-			get { return m_token; }
-			set { m_token = value; }
-		}
+		internal ModuleDefinition main_module;
+		Collection<ModuleDefinition> modules;
+		Collection<CustomAttribute> custom_attributes;
+		Collection<SecurityDeclaration> security_declarations;
 
 		public AssemblyNameDefinition Name {
-			get { return m_asmName; }
+			get { return name; }
+			set { name = value; }
 		}
 
-		public ModuleDefinitionCollection Modules {
-			get { return m_modules; }
+		public string FullName {
+			get { return name != null ? name.FullName : string.Empty; }
 		}
 
-		public bool HasSecurityDeclarations {
-			get { return (m_secDecls == null) ? false : (m_secDecls.Count > 0); }
+		public MetadataToken MetadataToken {
+			get { return new MetadataToken (TokenType.Assembly, 1); }
+			set { }
 		}
 
-		public SecurityDeclarationCollection SecurityDeclarations {
+		public Collection<ModuleDefinition> Modules {
 			get {
-				if (m_secDecls == null)
-					m_secDecls = new SecurityDeclarationCollection (this);
+				if (modules != null)
+					return modules;
 
-				return m_secDecls;
+				if (main_module.HasImage)
+					return modules = main_module.Read (this, (_, reader) => reader.ReadModules ());
+
+				return modules = new Collection<ModuleDefinition> { main_module };
 			}
-		}
-
-		public bool HasCustomAttributes {
-			get { return (m_customAttrs == null) ? false : (m_customAttrs.Count > 0); }
-		}
-
-		public CustomAttributeCollection CustomAttributes {
-			get {
-				if (m_customAttrs == null)
-					m_customAttrs = new CustomAttributeCollection (this);
-
-				return m_customAttrs;
-			}
-		}
-
-		public MethodDefinition EntryPoint {
-			get { return m_ep; }
-			set { m_ep = value; }
-		}
-
-		public TargetRuntime Runtime {
-			get { return m_runtime; }
-			set { m_runtime = value; }
-		}
-
-		public AssemblyKind Kind {
-			get { return m_kind; }
-			set { m_kind = value; }
 		}
 
 		public ModuleDefinition MainModule {
+			get { return main_module; }
+		}
+
+		public MethodDefinition EntryPoint {
+			get { return main_module.EntryPoint; }
+			set { main_module.EntryPoint = value; }
+		}
+
+		public bool HasCustomAttributes {
 			get {
-				if (m_mainModule == null) {
-					foreach (ModuleDefinition module in m_modules) {
-						if (module.Main) {
-							m_mainModule = module;
-							break;
-						}
-					}
-				}
-				return m_mainModule;
+				if (custom_attributes != null)
+					return custom_attributes.Count > 0;
+
+				return this.GetHasCustomAttributes (main_module);
 			}
 		}
 
-		internal StructureReader Reader {
-			get { return m_reader; }
+		public Collection<CustomAttribute> CustomAttributes {
+			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (main_module)); }
 		}
 
-		public IAssemblyResolver Resolver {
-			get { return m_resolver; }
-			set { m_resolver = value; }
-		}
-
-		IDictionary IAnnotationProvider.Annotations {
+		public bool HasSecurityDeclarations {
 			get {
-				if (m_annotations == null)
-					m_annotations = new Hashtable ();
-				return m_annotations;
+				if (security_declarations != null)
+					return security_declarations.Count > 0;
+
+				return this.GetHasSecurityDeclarations (main_module);
 			}
 		}
 
-		internal AssemblyDefinition (AssemblyNameDefinition name)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			m_asmName = name;
-			m_modules = new ModuleDefinitionCollection (this);
-			m_resolver = new DefaultAssemblyResolver ();
+		public Collection<SecurityDeclaration> SecurityDeclarations {
+			get { return security_declarations ?? (security_declarations = this.GetSecurityDeclarations (main_module)); }
 		}
 
-		internal AssemblyDefinition (AssemblyNameDefinition name, StructureReader reader) : this (name)
+		internal AssemblyDefinition ()
 		{
-			m_reader = reader;
 		}
 
-		public void Accept (IReflectionStructureVisitor visitor)
+#if !READ_ONLY
+		public static AssemblyDefinition CreateAssembly (AssemblyNameDefinition assemblyName, string moduleName, ModuleKind kind)
 		{
-			visitor.VisitAssemblyDefinition (this);
-
-			m_asmName.Accept (visitor);
-			m_modules.Accept (visitor);
-
-			visitor.TerminateAssemblyDefinition (this);
+			return CreateAssembly (assemblyName, moduleName, new ModuleParameters { Kind = kind });
 		}
+
+		public static AssemblyDefinition CreateAssembly (AssemblyNameDefinition assemblyName, string moduleName, ModuleParameters parameters)
+		{
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+			if (moduleName == null)
+				throw new ArgumentNullException ("moduleName");
+			Mixin.CheckParameters (parameters);
+			if (parameters.Kind == ModuleKind.NetModule)
+				throw new ArgumentException ("kind");
+
+			var assembly = ModuleDefinition.CreateModule (moduleName, parameters).Assembly;
+			assembly.Name = assemblyName;
+
+			return assembly;
+		}
+#endif
+
+		public static AssemblyDefinition ReadAssembly (string fileName)
+		{
+			return ReadAssembly (ModuleDefinition.ReadModule (fileName));
+		}
+
+		public static AssemblyDefinition ReadAssembly (string fileName, ReaderParameters parameters)
+		{
+			return ReadAssembly (ModuleDefinition.ReadModule (fileName, parameters));
+		}
+
+		public static AssemblyDefinition ReadAssembly (Stream stream)
+		{
+			return ReadAssembly (ModuleDefinition.ReadModule (stream));
+		}
+
+		public static AssemblyDefinition ReadAssembly (Stream stream, ReaderParameters parameters)
+		{
+			return ReadAssembly (ModuleDefinition.ReadModule (stream, parameters));
+		}
+
+		static AssemblyDefinition ReadAssembly (ModuleDefinition module)
+		{
+			var assembly = module.Assembly;
+			if (assembly == null)
+				throw new ArgumentException ();
+
+			return assembly;
+		}
+
+#if !READ_ONLY
+		public void Write (string fileName)
+		{
+			Write (fileName, new WriterParameters ());
+		}
+
+		public void Write (Stream stream)
+		{
+			Write (stream, new WriterParameters ());
+		}
+
+		public void Write (string fileName, WriterParameters parameters)
+		{
+			main_module.Write (fileName, parameters);
+		}
+
+		public void Write (Stream stream, WriterParameters parameters)
+		{
+			main_module.Write (stream, parameters);
+		}
+#endif
 
 		public override string ToString ()
 		{
-			return m_asmName.FullName;
+			return this.FullName;
 		}
 	}
 }

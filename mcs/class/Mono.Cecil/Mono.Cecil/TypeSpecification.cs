@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,55 +26,69 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
 
-	using System;
+using Mono.Cecil.Metadata;
+
+namespace Mono.Cecil {
 
 	public abstract class TypeSpecification : TypeReference {
 
-		private TypeReference m_elementType;
+		readonly TypeReference element_type;
+
+		public TypeReference ElementType {
+			get { return element_type; }
+		}
 
 		public override string Name {
-			get { return m_elementType.Name; }
+			get { return element_type.Name; }
 			set { throw new NotSupportedException (); }
 		}
 
 		public override string Namespace {
-			get { return m_elementType.Namespace; }
+			get { return element_type.Namespace; }
 			set { throw new NotSupportedException (); }
 		}
 
-		public override bool IsValueType {
-			get { return m_elementType.IsValueType; }
-			set { throw new InvalidOperationException (); }
-		}
-
 		public override IMetadataScope Scope {
-			get { return m_elementType.Scope; }
+			get { return element_type.Scope; }
 		}
 
 		public override ModuleDefinition Module {
-			get { return m_elementType.Module; }
-			set { throw new InvalidOperationException (); }
-		}
-
-		public TypeReference ElementType {
-			get { return m_elementType; }
-			set { m_elementType = value; }
+			get { return element_type.Module; }
 		}
 
 		public override string FullName {
-			get { return m_elementType.FullName; }
+			get { return element_type.FullName; }
 		}
 
-		internal TypeSpecification (TypeReference elementType) : base (string.Empty, string.Empty)
-		{
-			m_elementType = elementType;
+		internal override bool ContainsGenericParameter {
+			get { return element_type.ContainsGenericParameter; }
 		}
 
-		public override TypeReference GetOriginalType ()
+		public override MetadataType MetadataType {
+			get { return (MetadataType) etype; }
+		}
+
+		internal TypeSpecification (TypeReference type)
+			: base (null, null)
 		{
-			return m_elementType.GetOriginalType ();
+			this.element_type = type;
+			this.token = new MetadataToken (TokenType.TypeSpec);
+		}
+
+		public sealed override TypeReference GetElementType ()
+		{
+			return element_type.GetElementType ();
+		}
+	}
+
+	static partial class Mixin {
+
+		public static void CheckType (TypeReference type)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
 		}
 	}
 }

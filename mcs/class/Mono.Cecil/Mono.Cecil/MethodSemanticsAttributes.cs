@@ -1,10 +1,10 @@
 //
-// MethodSemanticsAttributes.cs
+// MethodSemanticsattributes.cs
 //
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
 
-	using System;
+namespace Mono.Cecil {
 
 	[Flags]
 	public enum MethodSemanticsAttributes : ushort {
+		None		= 0x0000,
 		Setter		= 0x0001,	// Setter for property
 		Getter		= 0x0002,	// Getter for property
 		Other		= 0x0004,	// Other method for property or event

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,77 +26,80 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil.Metadata {
+namespace Mono.Cecil {
 
 	public struct MetadataToken {
 
-		uint m_rid;
-		TokenType m_type;
+		readonly uint token;
 
-		public uint RID {
-			get { return m_rid; }
+		public uint RID	{
+			get { return token & 0x00ffffff; }
 		}
 
 		public TokenType TokenType {
-			get { return m_type; }
+			get { return (TokenType) (token & 0xff000000); }
 		}
 
-		public static readonly MetadataToken Zero = new MetadataToken ((TokenType) 0, 0);
+		public static readonly MetadataToken Zero = new MetadataToken ((uint) 0);
 
-		public MetadataToken (int token)
+		public MetadataToken (uint token)
 		{
-			m_type = (TokenType) (token & 0xff000000);
-			m_rid = (uint) token & 0x00ffffff;
+			this.token = token;
 		}
 
-		public MetadataToken (TokenType table, uint rid)
+		public MetadataToken (TokenType type)
+			: this (type, 0)
 		{
-			m_type = table;
-			m_rid = rid;
 		}
 
-		internal static MetadataToken FromMetadataRow (TokenType table, int rowIndex)
+		public MetadataToken (TokenType type, uint rid)
 		{
-			return new MetadataToken (table, (uint) rowIndex + 1);
+			token = (uint) type | rid;
 		}
 
-		public uint ToUInt ()
+		public MetadataToken (TokenType type, int rid)
 		{
-			return (uint) m_type | m_rid;
+			token = (uint) type | (uint) rid;
+		}
+
+		public int ToInt32 ()
+		{
+			return (int) token;
+		}
+
+		public uint ToUInt32 ()
+		{
+			return token;
 		}
 
 		public override int GetHashCode ()
 		{
-			return (int) ToUInt ();
+			return (int) token;
 		}
 
-		public override bool Equals (object other)
+		public override bool Equals (object obj)
 		{
-			if (other is MetadataToken)
-				return Equals ((MetadataToken) other);
+			if (obj is MetadataToken) {
+				var other = (MetadataToken) obj;
+				return other.token == token;
+			}
 
 			return false;
 		}
 
-		private bool Equals (MetadataToken other)
-		{
-			return other.m_rid == m_rid && other.m_type == m_type;
-		}
-
 		public static bool operator == (MetadataToken one, MetadataToken other)
 		{
-			return one.Equals (other);
+			return one.token == other.token;
 		}
 
 		public static bool operator != (MetadataToken one, MetadataToken other)
 		{
-			return !one.Equals (other);
+			return one.token != other.token;
 		}
 
 		public override string ToString ()
 		{
-			return string.Format ("{0} [0x{1}]",
-				m_type, m_rid.ToString ("x4"));
+			return string.Format ("[{0}:0x{1}]", TokenType, RID.ToString ("x4"));
 		}
 	}
 }

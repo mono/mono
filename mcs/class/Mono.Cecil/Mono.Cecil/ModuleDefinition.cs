@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,576 +26,921 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using SR = System.Reflection;
+
+using Mono.Cecil.Cil;
+using Mono.Cecil.Metadata;
+using Mono.Cecil.PE;
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	using System;
-	using SR = System.Reflection;
-	using SS = System.Security;
-	using SSP = System.Security.Permissions;
-	using System.Text;
+	public enum ReadingMode {
+		Immediate = 1,
+		Deferred = 2,
+	}
 
-	using Mono.Cecil.Cil;
-	using Mono.Cecil.Binary;
-	using Mono.Cecil.Metadata;
+	public sealed class ReaderParameters {
 
-	public sealed class ModuleDefinition : ModuleReference, ICustomAttributeProvider, IMetadataScope,
-		IReflectionStructureVisitable, IReflectionVisitable {
+		ReadingMode reading_mode;
+		IAssemblyResolver assembly_resolver;
+		Stream symbol_stream;
+		ISymbolReaderProvider symbol_reader_provider;
+		bool read_symbols;
 
-		Guid m_mvid;
-		bool m_main;
-		bool m_manifestOnly;
+		public ReadingMode ReadingMode {
+			get { return reading_mode; }
+			set { reading_mode = value; }
+		}
 
-		AssemblyNameReferenceCollection m_asmRefs;
-		ModuleReferenceCollection m_modRefs;
-		ResourceCollection m_res;
-		TypeDefinitionCollection m_types;
-		TypeReferenceCollection m_refs;
-		ExternTypeCollection m_externs;
-		MemberReferenceCollection m_members;
-		CustomAttributeCollection m_customAttrs;
+		public IAssemblyResolver AssemblyResolver {
+			get { return assembly_resolver; }
+			set { assembly_resolver = value; }
+		}
 
-		AssemblyDefinition m_asm;
-		Image m_image;
+		public Stream SymbolStream {
+			get { return symbol_stream; }
+			set { symbol_stream = value; }
+		}
 
-		ImageReader m_imgReader;
-		ReflectionController m_controller;
-		MetadataResolver m_resolver;
-		SecurityDeclarationReader m_secReader;
+		public ISymbolReaderProvider SymbolReaderProvider {
+			get { return symbol_reader_provider; }
+			set { symbol_reader_provider = value; }
+		}
+
+		public bool ReadSymbols {
+			get { return read_symbols; }
+			set { read_symbols = value; }
+		}
+
+		public ReaderParameters ()
+			: this (ReadingMode.Deferred)
+		{
+		}
+
+		public ReaderParameters (ReadingMode readingMode)
+		{
+			this.reading_mode = readingMode;
+		}
+	}
+
+#if !READ_ONLY
+
+	public sealed class ModuleParameters {
+
+		ModuleKind kind;
+		TargetRuntime runtime;
+		TargetArchitecture architecture;
+		IAssemblyResolver assembly_resolver;
+
+		public ModuleKind Kind {
+			get { return kind; }
+			set { kind = value; }
+		}
+
+		public TargetRuntime Runtime {
+			get { return runtime; }
+			set { runtime = value; }
+		}
+
+		public TargetArchitecture Architecture {
+			get { return architecture; }
+			set { architecture = value; }
+		}
+
+		public IAssemblyResolver AssemblyResolver {
+			get { return assembly_resolver; }
+			set { assembly_resolver = value; }
+		}
+
+		public ModuleParameters ()
+		{
+			this.kind = ModuleKind.Dll;
+			this.runtime = GetCurrentRuntime ();
+			this.architecture = TargetArchitecture.I386;
+		}
+
+		static TargetRuntime GetCurrentRuntime ()
+		{
+#if !CF
+			return typeof (object).Assembly.ImageRuntimeVersion.ParseRuntime ();
+#else
+			var corlib_version = typeof (object).Assembly.GetName ().Version;
+			switch (corlib_version.Major) {
+			case 1:
+				return corlib_version.Minor == 0
+					? TargetRuntime.Net_1_0
+					: TargetRuntime.Net_1_1;
+			case 2:
+				return TargetRuntime.Net_2_0;
+			case 4:
+				return TargetRuntime.Net_4_0;
+			default:
+				throw new NotSupportedException ();
+			}
+#endif
+		}
+	}
+
+	public sealed class WriterParameters {
+
+		Stream symbol_stream;
+		ISymbolWriterProvider symbol_writer_provider;
+		bool write_symbols;
+#if !SILVERLIGHT && !CF
+		SR.StrongNameKeyPair key_pair;
+#endif
+		public Stream SymbolStream {
+			get { return symbol_stream; }
+			set { symbol_stream = value; }
+		}
+
+		public ISymbolWriterProvider SymbolWriterProvider {
+			get { return symbol_writer_provider; }
+			set { symbol_writer_provider = value; }
+		}
+
+		public bool WriteSymbols {
+			get { return write_symbols; }
+			set { write_symbols = value; }
+		}
+#if !SILVERLIGHT && !CF
+		public SR.StrongNameKeyPair StrongNameKeyPair {
+			get { return key_pair; }
+			set { key_pair = value; }
+		}
+#endif
+	}
+
+#endif
+
+	public sealed class ModuleDefinition : ModuleReference, ICustomAttributeProvider {
+
+		internal Image Image;
+		internal MetadataSystem MetadataSystem;
+		internal ReadingMode ReadingMode;
+		internal IAssemblyResolver AssemblyResolver;
+		internal ISymbolReaderProvider SymbolReaderProvider;
+		internal ISymbolReader SymbolReader;
+
+		TypeSystem type_system;
+
+		readonly MetadataReader reader;
+		readonly string fq_name;
+
+		internal ModuleKind kind;
+		TargetRuntime runtime;
+		TargetArchitecture architecture;
+		ModuleAttributes attributes;
+		Guid mvid;
+
+		internal AssemblyDefinition assembly;
+		MethodDefinition entry_point;
+
+#if !READ_ONLY
+		MetadataImporter importer;
+#endif
+		Collection<CustomAttribute> custom_attributes;
+		Collection<AssemblyNameReference> references;
+		Collection<ModuleReference> modules;
+		Collection<Resource> resources;
+		Collection<ExportedType> exported_types;
+		TypeDefinitionCollection types;
+
+		public bool IsMain {
+			get { return kind != ModuleKind.NetModule; }
+		}
+
+		public ModuleKind Kind {
+			get { return kind; }
+		}
+
+		public TargetRuntime Runtime {
+			get { return runtime; }
+			set { runtime = value; }
+		}
+
+		public TargetArchitecture Architecture {
+			get { return architecture; }
+			set { architecture = value; }
+		}
+
+		public ModuleAttributes Attributes {
+			get { return attributes; }
+			set { attributes = value; }
+		}
+
+		public string FullyQualifiedName {
+			get { return fq_name; }
+		}
 
 		public Guid Mvid {
-			get { return m_mvid; }
-			set { m_mvid = value; }
+			get { return mvid; }
+			set { mvid = value; }
 		}
 
-		public bool Main {
-			get { return m_main; }
-			set { m_main = value; }
+		internal bool HasImage {
+			get { return Image != null; }
 		}
 
-		public AssemblyNameReferenceCollection AssemblyReferences {
-			get { return m_asmRefs; }
+		public bool HasSymbols {
+			get { return SymbolReader != null; }
 		}
 
-		public ModuleReferenceCollection ModuleReferences {
-			get { return m_modRefs; }
+		public override MetadataScopeType MetadataScopeType {
+			get { return MetadataScopeType.ModuleDefinition; }
 		}
 
-		public ResourceCollection Resources {
-			get { return m_res; }
+		public AssemblyDefinition Assembly {
+			get { return assembly; }
 		}
 
-		public TypeDefinitionCollection Types {
-			get { return m_types; }
+#if !READ_ONLY
+		internal MetadataImporter MetadataImporter {
+			get { return importer ?? (importer = new MetadataImporter (this)); }
+		}
+#endif
+
+		public TypeSystem TypeSystem {
+			get { return type_system ?? (type_system = TypeSystem.CreateTypeSystem (this)); }
 		}
 
-		public TypeReferenceCollection TypeReferences {
-			get { return m_refs; }
-		}
-
-		public MemberReferenceCollection MemberReferences {
-			get { return m_members; }
-		}
-
-		public ExternTypeCollection ExternTypes {
+		public bool HasAssemblyReferences {
 			get {
-				if (m_externs == null)
-					m_externs = new ExternTypeCollection (this);
+				if (references != null)
+					return references.Count > 0;
 
-				return m_externs;
+				return HasImage && Image.HasTable (Table.AssemblyRef);
+			}
+		}
+
+		public Collection<AssemblyNameReference> AssemblyReferences {
+			get {
+				if (references != null)
+					return references;
+
+				if (HasImage)
+					return references = Read (this, (_, reader) => reader.ReadAssemblyReferences ());
+
+				return references = new Collection<AssemblyNameReference> ();
+			}
+		}
+
+		public bool HasModuleReferences {
+			get {
+				if (modules != null)
+					return modules.Count > 0;
+
+				return HasImage && Image.HasTable (Table.ModuleRef);
+			}
+		}
+
+		public Collection<ModuleReference> ModuleReferences {
+			get {
+				if (modules != null)
+					return modules;
+
+				if (HasImage)
+					return modules = Read (this, (_, reader) => reader.ReadModuleReferences ());
+
+				return modules = new Collection<ModuleReference> ();
+			}
+		}
+
+		public bool HasResources {
+			get {
+				if (resources != null)
+					return resources.Count > 0;
+
+				if (HasImage)
+					return Image.HasTable (Table.ManifestResource) || Read (this, (_, reader) => reader.HasFileResource ());
+
+				return false;
+			}
+		}
+
+		public Collection<Resource> Resources {
+			get {
+				if (resources != null)
+					return resources;
+
+				if (HasImage)
+					return resources = Read (this, (_, reader) => reader.ReadResources ());
+
+				return resources = new Collection<Resource> ();
 			}
 		}
 
 		public bool HasCustomAttributes {
-			get { return (m_customAttrs == null) ? false : (m_customAttrs.Count > 0); }
-		}
-
-		public CustomAttributeCollection CustomAttributes {
 			get {
-				if (m_customAttrs == null)
-					m_customAttrs = new CustomAttributeCollection (this);
+				if (custom_attributes != null)
+					return custom_attributes.Count > 0;
 
-				return m_customAttrs;
+				return this.GetHasCustomAttributes (this);
 			}
 		}
 
-		public AssemblyDefinition Assembly {
-			get { return m_asm; }
+		public Collection<CustomAttribute> CustomAttributes {
+			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (this)); }
 		}
 
-		internal ReflectionController Controller {
-			get { return m_controller; }
-		}
+		public bool HasTypes {
+			get {
+				if (types != null)
+					return types.Count > 0;
 
-		internal MetadataResolver Resolver {
-			get { return m_resolver; }
-		}
-
-		internal ImageReader ImageReader {
-			get { return m_imgReader; }
-		}
-
-		public Image Image {
-			get { return m_image; }
-			set {
-				m_image = value;
-				m_secReader = null;
+				return HasImage && Image.HasTable (Table.TypeDef);
 			}
 		}
 
-		public ModuleDefinition (string name, AssemblyDefinition asm) :
-			this (name, asm, null, false)
-		{
+		public Collection<TypeDefinition> Types {
+			get {
+				if (types != null)
+					return types;
+
+				if (HasImage)
+					return types = Read (this, (_, reader) => reader.ReadTypes ());
+
+				return types = new TypeDefinitionCollection (this);
+			}
 		}
 
-		public ModuleDefinition (string name, AssemblyDefinition asm, bool main) :
-			this (name, asm, null, main)
-		{
+		public bool HasExportedTypes {
+			get {
+				if (exported_types != null)
+					return exported_types.Count > 0;
+
+				return HasImage && Image.HasTable (Table.ExportedType);
+			}
 		}
 
-		internal ModuleDefinition (string name, AssemblyDefinition asm, StructureReader reader, bool main) : base (name)
-		{
-			if (asm == null)
-				throw new ArgumentNullException ("asm");
-			if (name == null || name.Length == 0)
-				throw new ArgumentNullException ("name");
+		public Collection<ExportedType> ExportedTypes {
+			get {
+				if (exported_types != null)
+					return exported_types;
 
-			m_asm = asm;
-			m_main = main;
-#if !CF_1_0
-			m_mvid = Guid.NewGuid ();
-#endif
-			if (reader != null) {
-				m_image = reader.Image;
-				m_imgReader = reader.ImageReader;
-				m_manifestOnly = reader.ManifestOnly;
-			} else
-				m_image = Image.CreateImage ();
+				if (HasImage)
+					return exported_types = Read (this, (_, reader) => reader.ReadExportedTypes ());
 
-			m_modRefs = new ModuleReferenceCollection (this);
-			m_asmRefs = new AssemblyNameReferenceCollection (this);
-			m_res = new ResourceCollection (this);
-			m_types = new TypeDefinitionCollection (this);
-			m_refs = new TypeReferenceCollection (this);
-			m_members = new MemberReferenceCollection (this);
-
-			m_controller = new ReflectionController (this);
-			m_resolver = new MetadataResolver (asm);
+				return exported_types = new Collection<ExportedType> ();
+			}
 		}
 
-		public IMetadataTokenProvider LookupByToken (MetadataToken token)
-		{
-			return m_controller.Reader.LookupByToken (token);
+		public MethodDefinition EntryPoint {
+			get {
+				if (entry_point != null)
+					return entry_point;
+
+				if (HasImage)
+					return entry_point = Read (this, (_, reader) => reader.ReadEntryPoint ());
+
+				return entry_point = null;
+			}
+			set { entry_point = value; }
 		}
 
-		public IMetadataTokenProvider LookupByToken (TokenType table, int rid)
+		internal ModuleDefinition ()
 		{
-			return LookupByToken (new MetadataToken (table, (uint) rid));
+			this.MetadataSystem = new MetadataSystem ();
+			this.token = new MetadataToken (TokenType.Module, 1);
+			this.AssemblyResolver = GlobalAssemblyResolver.Instance;
 		}
 
-		void CheckContext (TypeDefinition context)
+		internal ModuleDefinition (Image image)
+			: this ()
 		{
-			if (context.Module != this)
-				throw new ArgumentException ("The context parameter does not belongs to this module");
+			this.Image = image;
+			this.kind = image.Kind;
+			this.runtime = image.Runtime;
+			this.architecture = image.Architecture;
+			this.attributes = image.Attributes;
+			this.fq_name = image.FileName;
 
-			CheckGenericParameterProvider (context);
+			this.reader = new MetadataReader (this);
 		}
 
-		void CheckContext (MethodDefinition context)
+		public bool HasTypeReference (string fullName)
 		{
-			CheckGenericParameterProvider (context);
+			return HasTypeReference (string.Empty, fullName);
 		}
 
-		static void CheckGenericParameterProvider (IGenericParameterProvider context)
+		public bool HasTypeReference (string scope, string fullName)
+		{
+			CheckFullName (fullName);
+
+			return Read (this, (_, reader) => reader.GetTypeReference (scope, fullName) != null);
+		}
+
+		public bool TryGetTypeReference (string fullName, out TypeReference type)
+		{
+			return TryGetTypeReference (string.Empty, fullName, out type);
+		}
+
+		public bool TryGetTypeReference (string scope, string fullName, out TypeReference type)
+		{
+			CheckFullName (fullName);
+
+			return (type = Read (this, (_, reader) => reader.GetTypeReference (scope, fullName))) != null;
+		}
+
+		public IEnumerable<TypeReference> GetTypeReferences ()
+		{
+			return Read (this, (_, reader) => reader.GetTypeReferences ());
+		}
+
+		public IEnumerable<MemberReference> GetMemberReferences ()
+		{
+			return Read (this, (_, reader) => reader.GetMemberReferences ());
+		}
+
+		public TypeDefinition GetType (string fullName)
+		{
+			CheckFullName (fullName);
+
+			var position = fullName.IndexOf ('/');
+			if (position > 0)
+				return GetNestedType (fullName);
+
+			return ((TypeDefinitionCollection) this.Types).GetType (fullName);
+		}
+
+		public TypeDefinition GetType (string @namespace, string name)
+		{
+			Mixin.CheckName (name);
+
+			return ((TypeDefinitionCollection) this.Types).GetType (@namespace ?? string.Empty, name);
+		}
+
+		static void CheckFullName (string fullName)
+		{
+			if (fullName == null)
+				throw new ArgumentNullException ("fullName");
+			if (fullName.Length == 0)
+				throw new ArgumentException ();
+		}
+
+		TypeDefinition GetNestedType (string fullname)
+		{
+			var names = fullname.Split ('/');
+			var type = GetType (names [0]);
+
+			if (type == null)
+				return null;
+
+			for (int i = 1; i < names.Length; i++) {
+				var nested_type = type.GetNestedType (names [i]);
+				if (nested_type == null)
+					return null;
+
+				type = nested_type;
+			}
+
+			return type;
+		}
+
+		internal FieldDefinition Resolve (FieldReference field)
+		{
+			return MetadataResolver.Resolve (AssemblyResolver, field);
+		}
+
+		internal MethodDefinition Resolve (MethodReference method)
+		{
+			return MetadataResolver.Resolve (AssemblyResolver, method);
+		}
+
+		internal TypeDefinition Resolve (TypeReference type)
+		{
+			return MetadataResolver.Resolve (AssemblyResolver, type);
+		}
+
+#if !READ_ONLY
+
+		static void CheckType (object type)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+		}
+
+		static void CheckField (object field)
+		{
+			if (field == null)
+				throw new ArgumentNullException ("field");
+		}
+
+		static void CheckMethod (object method)
+		{
+			if (method == null)
+				throw new ArgumentNullException ("method");
+		}
+
+		static void CheckContext (IGenericParameterProvider context, ModuleDefinition module)
 		{
 			if (context == null)
-				throw new ArgumentNullException ("context");
-			if (context.GenericParameters.Count == 0)
-				throw new ArgumentException ("The context parameter is not a generic type");
+				return;
+
+			if (context.Module != module)
+				throw new ArgumentException ();
 		}
 
-		ImportContext GetContext ()
-		{
-			return new ImportContext (m_controller.Importer);
-		}
-
-		static ImportContext GetContext (IImporter importer)
-		{
-			return new ImportContext (importer);
-		}
-
-		ImportContext GetContext (TypeDefinition context)
-		{
-			return new ImportContext (m_controller.Importer, context);
-		}
-
-		ImportContext GetContext (MethodDefinition context)
-		{
-			return new ImportContext (m_controller.Importer, context);
-		}
-
-		static ImportContext GetContext (IImporter importer, TypeDefinition context)
-		{
-			return new ImportContext (importer, context);
-		}
-
+#if !CF
 		public TypeReference Import (Type type)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
+			CheckType (type);
 
-			return m_controller.Helper.ImportSystemType (type, GetContext ());
+			return MetadataImporter.ImportType (type, null, ImportGenericKind.Definition);
 		}
 
-		public TypeReference Import (Type type, TypeDefinition context)
+		public TypeReference Import (Type type, TypeReference context)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			CheckContext (context);
-
-			return m_controller.Helper.ImportSystemType (type, GetContext (context));
+			return Import (type, (IGenericParameterProvider) context);
 		}
 
-		public TypeReference Import (Type type, MethodDefinition context)
+		public TypeReference Import (Type type, MethodReference context)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			CheckContext (context);
-
-			return m_controller.Helper.ImportSystemType (type, GetContext (context));
+			return Import (type, (IGenericParameterProvider) context);
 		}
 
-		public MethodReference Import (SR.MethodBase meth)
+		TypeReference Import (Type type, IGenericParameterProvider context)
 		{
-			if (meth == null)
-				throw new ArgumentNullException ("meth");
+			CheckType (type);
+			CheckContext (context, this);
 
-			if (meth is SR.ConstructorInfo)
-				return m_controller.Helper.ImportConstructorInfo (
-					meth as SR.ConstructorInfo, GetContext ());
-			else
-				return m_controller.Helper.ImportMethodInfo (
-					meth as SR.MethodInfo, GetContext ());
-		}
-
-		public MethodReference Import (SR.MethodBase meth, TypeDefinition context)
-		{
-			if (meth == null)
-				throw new ArgumentNullException ("meth");
-			CheckContext (context);
-
-			ImportContext import_context = GetContext (context);
-
-			if (meth is SR.ConstructorInfo)
-				return m_controller.Helper.ImportConstructorInfo (
-					meth as SR.ConstructorInfo, import_context);
-			else
-				return m_controller.Helper.ImportMethodInfo (
-					meth as SR.MethodInfo, import_context);
+			return MetadataImporter.ImportType (
+				type,
+				(IGenericContext) context,
+				context != null
+					? ImportGenericKind.Open
+					: ImportGenericKind.Definition);
 		}
 
 		public FieldReference Import (SR.FieldInfo field)
 		{
-			if (field == null)
-				throw new ArgumentNullException ("field");
+			CheckField (field);
 
-			return m_controller.Helper.ImportFieldInfo (field, GetContext ());
+			return MetadataImporter.ImportField (field, null);
 		}
 
-		public FieldReference Import (SR.FieldInfo field, TypeDefinition context)
+		public FieldReference Import (SR.FieldInfo field, TypeReference context)
 		{
-			if (field == null)
-				throw new ArgumentNullException ("field");
-			CheckContext (context);
-
-			return m_controller.Helper.ImportFieldInfo (field, GetContext (context));
+			return Import (field, (IGenericParameterProvider) context);
 		}
 
-		public FieldReference Import (SR.FieldInfo field, MethodDefinition context)
+		public FieldReference Import (SR.FieldInfo field, MethodReference context)
 		{
-			if (field == null)
-				throw new ArgumentNullException ("field");
-			CheckContext (context);
-
-			return m_controller.Helper.ImportFieldInfo (field, GetContext (context));
+			return Import (field, (IGenericParameterProvider) context);
 		}
+
+		FieldReference Import (SR.FieldInfo field, IGenericParameterProvider context)
+		{
+			CheckField (field);
+			CheckContext (context, this);
+
+			return MetadataImporter.ImportField (field, (IGenericContext) context);
+		}
+
+		public MethodReference Import (SR.MethodBase method)
+		{
+			CheckMethod (method);
+
+			return MetadataImporter.ImportMethod (method, null, ImportGenericKind.Definition);
+		}
+
+		public MethodReference Import (SR.MethodBase method, TypeReference context)
+		{
+			return Import (method, (IGenericParameterProvider) context);
+		}
+
+		public MethodReference Import (SR.MethodBase method, MethodReference context)
+		{
+			return Import (method, (IGenericParameterProvider) context);
+		}
+
+		MethodReference Import (SR.MethodBase method, IGenericParameterProvider context)
+		{
+			CheckMethod (method);
+			CheckContext (context, this);
+
+			return MetadataImporter.ImportMethod (method,
+				(IGenericContext) context,
+				context != null
+					? ImportGenericKind.Open
+					: ImportGenericKind.Definition);
+		}
+#endif
 
 		public TypeReference Import (TypeReference type)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
+			CheckType (type);
 
-			return m_controller.Importer.ImportTypeReference (type, GetContext ());
+			if (type.Module == this)
+				return type;
+
+			return MetadataImporter.ImportType (type, null);
 		}
 
-		public TypeReference Import (TypeReference type, TypeDefinition context)
+		public TypeReference Import (TypeReference type, TypeReference context)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			CheckContext (context);
-
-			return m_controller.Importer.ImportTypeReference (type, GetContext (context));
+			return Import (type, (IGenericParameterProvider) context);
 		}
 
-		public TypeReference Import (TypeReference type, MethodDefinition context)
+		public TypeReference Import (TypeReference type, MethodReference context)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			CheckContext (context);
-
-			return m_controller.Importer.ImportTypeReference (type, GetContext (context));
+			return Import (type, (IGenericParameterProvider) context);
 		}
 
-		public MethodReference Import (MethodReference meth)
+		TypeReference Import (TypeReference type, IGenericParameterProvider context)
 		{
-			if (meth == null)
-				throw new ArgumentNullException ("meth");
+			CheckType (type);
 
-			return m_controller.Importer.ImportMethodReference (meth, GetContext ());
-		}
+			if (type.Module == this)
+				return type;
 
-		public MethodReference Import (MethodReference meth, TypeDefinition context)
-		{
-			if (meth == null)
-				throw new ArgumentNullException ("meth");
-			CheckContext (context);
+			CheckContext (context, this);
 
-			return m_controller.Importer.ImportMethodReference (meth, GetContext (context));
-		}
-
-		public MethodReference Import (MethodReference meth, MethodDefinition context)
-		{
-			if (meth == null)
-				throw new ArgumentNullException ("meth");
-			CheckContext (context);
-
-			return m_controller.Importer.ImportMethodReference (meth, GetContext (context));
+			return MetadataImporter.ImportType (type, (IGenericContext) context);
 		}
 
 		public FieldReference Import (FieldReference field)
 		{
-			if (field == null)
-				throw new ArgumentNullException ("field");
+			CheckField (field);
 
-			return m_controller.Importer.ImportFieldReference (field, GetContext ());
+			if (field.Module == this)
+				return field;
+
+			return MetadataImporter.ImportField (field, null);
 		}
 
-		public FieldReference Import (FieldReference field, TypeDefinition context)
+		public FieldReference Import (FieldReference field, TypeReference context)
 		{
-			if (field == null)
-				throw new ArgumentNullException ("field");
-			CheckContext (context);
-
-			return m_controller.Importer.ImportFieldReference (field, GetContext (context));
+			return Import (field, (IGenericParameterProvider) context);
 		}
 
-		public FieldReference Import (FieldReference field, MethodDefinition context)
+		public FieldReference Import (FieldReference field, MethodReference context)
 		{
-			if (field == null)
-				throw new ArgumentNullException ("field");
-			CheckContext (context);
-
-			return m_controller.Importer.ImportFieldReference (field, GetContext (context));
+			return Import (field, (IGenericParameterProvider) context);
 		}
 
-		static FieldDefinition ImportFieldDefinition (FieldDefinition field, ImportContext context)
+		FieldReference Import (FieldReference field, IGenericParameterProvider context)
 		{
-			return FieldDefinition.Clone (field, context);
+			CheckField (field);
+
+			if (field.Module == this)
+				return field;
+
+			CheckContext (context, this);
+
+			return MetadataImporter.ImportField (field, (IGenericContext) context);
 		}
 
-		static MethodDefinition ImportMethodDefinition (MethodDefinition meth, ImportContext context)
+		public MethodReference Import (MethodReference method)
 		{
-			return MethodDefinition.Clone (meth, context);
+			CheckMethod (method);
+
+			if (method.Module == this)
+				return method;
+
+			return MetadataImporter.ImportMethod (method, null);
 		}
 
-		static TypeDefinition ImportTypeDefinition (TypeDefinition type, ImportContext context)
+		public MethodReference Import (MethodReference method, TypeReference context)
 		{
-			return TypeDefinition.Clone (type, context);
+			return Import (method, (IGenericParameterProvider) context);
 		}
 
-		public TypeDefinition Inject (TypeDefinition type)
+		public MethodReference Import (MethodReference method, MethodReference context)
 		{
-			return Inject (type, m_controller.Importer);
+			return Import (method, (IGenericParameterProvider) context);
 		}
 
-		public TypeDefinition Inject (TypeDefinition type, IImporter importer)
+		MethodReference Import (MethodReference method, IGenericParameterProvider context)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			if (importer == null)
-				throw new ArgumentNullException ("importer");
+			CheckMethod (method);
 
-			TypeDefinition definition = ImportTypeDefinition (type, GetContext (importer));
-			this.Types.Add (definition);
-			return definition;
+			if (method.Module == this)
+				return method;
+
+			CheckContext (context, this);
+
+			return MetadataImporter.ImportMethod (method, (IGenericContext) context);
 		}
 
-		public TypeDefinition Inject (TypeDefinition type, TypeDefinition context)
-		{
-			return Inject (type, context, m_controller.Importer);
-		}
-
-		public TypeDefinition Inject (TypeDefinition type, TypeDefinition context, IImporter importer)
-		{
-			Check (type, context, importer);
-
-			TypeDefinition definition = ImportTypeDefinition (type, GetContext (importer, context));
-			context.NestedTypes.Add (definition);
-			return definition;
-		}
-
-		public MethodDefinition Inject (MethodDefinition meth, TypeDefinition context)
-		{
-			return Inject (meth, context, m_controller.Importer);
-		}
-
-		void Check (IMemberDefinition definition, TypeDefinition context, IImporter importer)
-		{
-			if (definition == null)
-				throw new ArgumentNullException ("definition");
-			if (context == null)
-				throw new ArgumentNullException ("context");
-			if (importer == null)
-				throw new ArgumentNullException ("importer");
-			if (context.Module != this)
-				throw new ArgumentException ("The context parameter does not belongs to this module");
-		}
-
-		public MethodDefinition Inject (MethodDefinition meth, TypeDefinition context, IImporter importer)
-		{
-			Check (meth, context, importer);
-
-			MethodDefinition definition = ImportMethodDefinition (meth, GetContext (importer, context));
-			context.Methods.Add (definition);
-			return definition;
-		}
-
-		public FieldDefinition Inject (FieldDefinition field, TypeDefinition context)
-		{
-			return Inject (field, context, m_controller.Importer);
-		}
-
-		public FieldDefinition Inject (FieldDefinition field, TypeDefinition context, IImporter importer)
-		{
-			Check (field, context, importer);
-
-			FieldDefinition definition = ImportFieldDefinition (field, GetContext (importer, context));
-			context.Fields.Add (definition);
-			return definition;
-		}
-
-		public void FullLoad ()
-		{
-			if (m_manifestOnly)
-				m_controller.Reader.VisitModuleDefinition (this);
-
-			foreach (TypeDefinition type in this.Types) {
-				foreach (MethodDefinition meth in type.Methods)
-					meth.LoadBody ();
-				foreach (MethodDefinition ctor in type.Constructors)
-					ctor.LoadBody ();
-			}
-
-			if (m_controller.Reader.SymbolReader == null)
-				return;
-
-			m_controller.Reader.SymbolReader.Dispose ();
-			m_controller.Reader.SymbolReader = null;
-		}
-
-		public void LoadSymbols ()
-		{
-			m_controller.Reader.SymbolReader = SymbolStoreHelper.GetReader (this);
-		}
-
-		public void LoadSymbols (ISymbolReader reader)
-		{
-			m_controller.Reader.SymbolReader = reader;
-		}
-
-		public void SaveSymbols ()
-		{
-			m_controller.Writer.SaveSymbols = true;
-		}
-
-		public void SaveSymbols (ISymbolWriter writer)
-		{
-			SaveSymbols ();
-			m_controller.Writer.SymbolWriter = writer;
-		}
-
-		public void SaveSymbols (string outputDirectory)
-		{
-			SaveSymbols ();
-			m_controller.Writer.OutputFile = outputDirectory;
-		}
-
-		public void SaveSymbols (string outputDirectory, ISymbolWriter writer)
-		{
-			SaveSymbols (outputDirectory);
-			m_controller.Writer.SymbolWriter = writer;
-		}
-
-		public byte [] GetAsByteArray (CustomAttribute ca)
-		{
-			CustomAttribute customAttr = ca;
-			if (!ca.Resolved)
-				if (customAttr.Blob != null)
-					return customAttr.Blob;
-				else
-					return new byte [0];
-
-			return m_controller.Writer.SignatureWriter.CompressCustomAttribute (
-				ReflectionWriter.GetCustomAttributeSig (ca), ca.Constructor);
-		}
-
-		public byte [] GetAsByteArray (SecurityDeclaration dec)
-		{
-			// TODO - add support for 2.0 format
-			// note: the 1.x format is still supported in 2.0 so this isn't an immediate problem
-			if (!dec.Resolved)
-				return dec.Blob;
-
-#if !CF_1_0 && !CF_2_0
-			if (dec.PermissionSet != null)
-				return Encoding.Unicode.GetBytes (dec.PermissionSet.ToXml ().ToString ());
 #endif
 
-			return new byte [0];
+		public IMetadataTokenProvider LookupToken (int token)
+		{
+			return LookupToken (new MetadataToken ((uint) token));
 		}
 
-		public CustomAttribute FromByteArray (MethodReference ctor, byte [] data)
+		public IMetadataTokenProvider LookupToken (MetadataToken token)
 		{
-			return m_controller.Reader.GetCustomAttribute (ctor, data);
+			return Read (this, (_, reader) => reader.LookupToken (token));
 		}
 
-		public SecurityDeclaration FromByteArray (SecurityAction action, byte [] declaration)
+		internal TRet Read<TItem, TRet> (TItem item, Func<TItem, MetadataReader, TRet> read)
 		{
-			if (m_secReader == null)
-				m_secReader = new SecurityDeclarationReader (Image.MetadataRoot, m_controller.Reader);
-			return m_secReader.FromByteArray (action, declaration);
+			var position = reader.position;
+			var context = reader.context;
+
+			var ret = read (item, reader);
+
+			reader.position = position;
+			reader.context = context;
+
+			return ret;
 		}
 
-		public override void Accept (IReflectionStructureVisitor visitor)
+		void ProcessDebugHeader ()
 		{
-			visitor.VisitModuleDefinition (this);
+			if (Image == null || Image.Debug.IsZero)
+				return;
 
-			this.AssemblyReferences.Accept (visitor);
-			this.ModuleReferences.Accept (visitor);
-			this.Resources.Accept (visitor);
+			byte [] header;
+			var directory = Image.GetDebugHeader (out header);
+
+			if (!SymbolReader.ProcessDebugHeader (directory, header))
+				throw new InvalidOperationException ();
 		}
 
-		public void Accept (IReflectionVisitor visitor)
-		{
-			visitor.VisitModuleDefinition (this);
+#if !READ_ONLY
 
-			this.Types.Accept (visitor);
-			this.TypeReferences.Accept (visitor);
+		public static ModuleDefinition CreateModule (string name, ModuleKind kind)
+		{
+			return CreateModule (name, new ModuleParameters { Kind = kind });
 		}
 
-		public override string ToString ()
+		public static ModuleDefinition CreateModule (string name, ModuleParameters parameters)
 		{
-			string s = (m_main ? "(main), Mvid=" : "Mvid=");
-			return s + m_mvid;
+			Mixin.CheckName (name);
+			Mixin.CheckParameters (parameters);
+
+			var module = new ModuleDefinition {
+				Name = name,
+				kind = parameters.Kind,
+				runtime = parameters.Runtime,
+				architecture = parameters.Architecture,
+				mvid = Guid.NewGuid (),
+				Attributes = ModuleAttributes.ILOnly,
+			};
+
+			if (parameters.AssemblyResolver != null)
+				module.AssemblyResolver = parameters.AssemblyResolver;
+
+			if (parameters.Kind != ModuleKind.NetModule) {
+				var assembly = new AssemblyDefinition ();
+				module.assembly = assembly;
+				module.assembly.Name = new AssemblyNameDefinition (name, new Version (0, 0));
+				assembly.main_module = module;
+			}
+
+			module.Types.Add (new TypeDefinition (string.Empty, "<Module>", TypeAttributes.NotPublic));
+
+			return module;
+		}
+
+#endif
+
+		public void ReadSymbols ()
+		{
+			if (string.IsNullOrEmpty (fq_name))
+				throw new InvalidOperationException ();
+
+			var provider = SymbolProvider.GetPlatformReaderProvider ();
+
+			SymbolReader = provider.GetSymbolReader (this, fq_name);
+
+			ProcessDebugHeader ();
+		}
+
+		public void ReadSymbols (ISymbolReader reader)
+		{
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
+			SymbolReader = reader;
+
+			ProcessDebugHeader ();
+		}
+
+		public static ModuleDefinition ReadModule (string fileName)
+		{
+			return ReadModule (fileName, new ReaderParameters (ReadingMode.Deferred));
+		}
+
+		public static ModuleDefinition ReadModule (Stream stream)
+		{
+			return ReadModule (stream, new ReaderParameters (ReadingMode.Deferred));
+		}
+
+		public static ModuleDefinition ReadModule (string fileName, ReaderParameters parameters)
+		{
+			using (var stream = GetFileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+				return ReadModule (stream, parameters);
+			}
+		}
+
+		static void CheckStream (object stream)
+		{
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+		}
+
+		public static ModuleDefinition ReadModule (Stream stream, ReaderParameters parameters)
+		{
+			CheckStream (stream);
+			if (!stream.CanRead || !stream.CanSeek)
+				throw new ArgumentException ();
+			Mixin.CheckParameters (parameters);
+
+			return ModuleReader.CreateModuleFrom (
+				ImageReader.ReadImageFrom (stream),
+				parameters);
+		}
+
+		static Stream GetFileStream (string fileName, FileMode mode, FileAccess access, FileShare share)
+		{
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
+			if (fileName.Length == 0)
+				throw new ArgumentException ();
+
+			return new FileStream (fileName, mode, access, share);
+		}
+
+#if !READ_ONLY
+
+		public void Write (string fileName)
+		{
+			Write (fileName, new WriterParameters ());
+		}
+
+		public void Write (Stream stream)
+		{
+			Write (stream, new WriterParameters ());
+		}
+
+		public void Write (string fileName, WriterParameters parameters)
+		{
+			using (var stream = GetFileStream (fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
+				Write (stream, parameters);
+			}
+		}
+
+		public void Write (Stream stream, WriterParameters parameters)
+		{
+			CheckStream (stream);
+			if (!stream.CanWrite || !stream.CanSeek)
+				throw new ArgumentException ();
+			Mixin.CheckParameters (parameters);
+
+			ModuleWriter.WriteModuleTo (this, stream, parameters);
+		}
+
+#endif
+
+	}
+
+	static partial class Mixin {
+
+		public static void CheckParameters (object parameters)
+		{
+			if (parameters == null)
+				throw new ArgumentNullException ("parameters");
+		}
+
+		public static bool HasImage (this ModuleDefinition self)
+		{
+			return self != null && self.HasImage;
+		}
+
+		public static string GetFullyQualifiedName (this Stream self)
+		{
+#if !SILVERLIGHT
+			var file_stream = self as FileStream;
+			if (file_stream == null)
+				return string.Empty;
+
+			return Path.GetFullPath (file_stream.Name);
+#else
+			return string.Empty;
+#endif
+		}
+
+		public static TargetRuntime ParseRuntime (this string self)
+		{
+			switch (self [1]) {
+			case '1':
+				return self [3] == '0'
+					? TargetRuntime.Net_1_0
+					: TargetRuntime.Net_1_1;
+			case '2':
+				return TargetRuntime.Net_2_0;
+			case '4':
+			default:
+				return TargetRuntime.Net_4_0;
+			}
 		}
 	}
 }

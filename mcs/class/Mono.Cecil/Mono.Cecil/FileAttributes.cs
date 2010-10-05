@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public enum FileAttributes : uint {
+	enum FileAttributes : uint {
 		ContainsMetaData	= 0x0000,	// This is not a resource file
 		ContainsNoMetaData  = 0x0001,	// This is a resource file or other non-metadata-containing file
 	}

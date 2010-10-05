@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,37 +26,50 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	using System.Collections;
+	public static class GlobalAssemblyResolver {
+
+		public static readonly IAssemblyResolver Instance = new DefaultAssemblyResolver ();
+	}
 
 	public class DefaultAssemblyResolver : BaseAssemblyResolver {
 
-		IDictionary m_cache;
+		readonly IDictionary<string, AssemblyDefinition> cache;
 
 		public DefaultAssemblyResolver ()
 		{
-			m_cache = new Hashtable ();
+			cache = new Dictionary<string, AssemblyDefinition> ();
 		}
 
 		public override AssemblyDefinition Resolve (AssemblyNameReference name)
 		{
-			AssemblyDefinition asm = (AssemblyDefinition) m_cache [name.FullName];
-			if (asm == null) {
-				asm = base.Resolve (name);
-				m_cache [name.FullName] = asm;
-			}
+			if (name == null)
+				throw new ArgumentNullException ("name");
 
-			return asm;
+			AssemblyDefinition assembly;
+			if (cache.TryGetValue (name.FullName, out assembly))
+				return assembly;
+
+			assembly = base.Resolve (name);
+			cache [name.FullName] = assembly;
+
+			return assembly;
 		}
 
 		protected void RegisterAssembly (AssemblyDefinition assembly)
 		{
-			string key = assembly.Name.FullName;
-			if (m_cache.Contains (key))
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
+
+			var name = assembly.Name.FullName;
+			if (cache.ContainsKey (name))
 				return;
 
-			m_cache [key] = assembly;
+			cache [name] = assembly;
 		}
 	}
 }

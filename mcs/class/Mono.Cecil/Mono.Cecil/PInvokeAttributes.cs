@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,9 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
 
-	using System;
+namespace Mono.Cecil {
 
 	[Flags]
 	public enum PInvokeAttributes : ushort {
@@ -40,6 +40,7 @@ namespace Mono.Cecil {
 		CharSetAnsi			= 0x0002,
 		CharSetUnicode		= 0x0004,
 		CharSetAuto			= 0x0006,
+
 		SupportsLastError	= 0x0040,	// Information about target function. Not relevant for fields
 
 		// Calling convetion
@@ -48,6 +49,14 @@ namespace Mono.Cecil {
 		CallConvCdecl		= 0x0200,
 		CallConvStdCall		= 0x0300,
 		CallConvThiscall	= 0x0400,
-		CallConvFastcall	= 0x0500
+		CallConvFastcall	= 0x0500,
+
+		BestFitMask			= 0x0030,
+		BestFitEnabled		= 0x0010,
+		BestFidDisabled		= 0x0020,
+
+		ThrowOnUnmappableCharMask = 0x3000,
+		ThrowOnUnmappableCharEnabled = 0x1000,
+		ThrowOnUnmappableCharDisabled = 0x2000,
 	}
 }
