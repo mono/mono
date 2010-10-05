@@ -2051,7 +2051,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public MemberCache LoadMembers (TypeSpec declaringType)
+		public void LoadMembers (TypeSpec declaringType, ref MemberCache cache)
 		{
 			throw new NotSupportedException ("Not supported for compiled definition " + GetSignatureForError ());
 		}

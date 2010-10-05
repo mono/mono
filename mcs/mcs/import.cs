@@ -508,26 +508,56 @@ namespace Mono.CSharp
 
 			if (type.IsGenericType && !type.IsGenericTypeDefinition) {	
 				var type_def = type.GetGenericTypeDefinition ();
-				spec = CreateType (type_def, declaringType);
-
-				var targs = CreateGenericParameters<TypeSpec> (type, null);
-
-				InflatedTypeSpec inflated;
-				if (targs == null) {
-					// Inflating nested non-generic type, same in TypeSpec::InflateMember
-					inflated = new InflatedTypeSpec (spec, declaringType, TypeSpec.EmptyTypes);
+				var targs = CreateGenericParameters<TypeSpec> (0, type.GetGenericArguments ());
+				if (declaringType == null) {
+					// Simple case, no nesting
+					spec = CreateType (type_def, null);
+					spec = spec.MakeGenericType (targs);
 				} else {
-					// CreateGenericParameters constraint could inflate type
-					if (import_cache.ContainsKey (type))
-						return import_cache[type];
+					//
+					// Nested type case, converting .NET types like
+					// A`1.B`1.C`1<int, long, string> to typespec like
+					// A<int>.B<long>.C<string>
+					//
+					var nested_hierarchy = new List<TypeSpec> ();
+					while (declaringType.IsNested) {
+						nested_hierarchy.Add (declaringType);
+						declaringType = declaringType.DeclaringType;
+					}
 
-					inflated = spec.MakeGenericType (targs);
+					int targs_pos = 0;
+					if (declaringType.Arity > 0) {
+						spec = declaringType.MakeGenericType (targs.Skip (targs_pos).Take (declaringType.Arity).ToArray ());
+						targs_pos = spec.Arity;
+					} else {
+						spec = declaringType;
+					}
 
-					// Use of reading cache to speed up reading only
-					import_cache.Add (type, inflated);
+					for (int i = nested_hierarchy.Count; i != 0; --i) {
+						var t = nested_hierarchy [i - 1];
+						spec = MemberCache.FindNestedType (spec, t.Name, t.Arity);
+						if (t.Arity > 0) {
+							spec = spec.MakeGenericType (targs.Skip (targs_pos).Take (spec.Arity).ToArray ());
+							targs_pos += t.Arity;
+						}
+					}
+
+					string name = type.Name;
+					int index = name.IndexOf ('`');
+					if (index > 0)
+						name = name.Substring (0, index);
+
+					spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
+					if (spec.Arity > 0) {
+						spec = spec.MakeGenericType (targs.Skip (targs_pos).ToArray ());
+					}
 				}
 
-				return inflated;
+				// Add to reading cache to speed up reading
+				if (!import_cache.ContainsKey (type))
+					import_cache.Add (type, spec);
+
+				return spec;
 			}
 
 			Modifiers mod;
@@ -779,13 +809,7 @@ namespace Mono.CSharp
 				throw new NotImplementedException ("Unknown element type " + type.ToString ());
 			}
 
-			TypeSpec dtype;
-			if (type.IsNested)
-				dtype = ImportType (type.DeclaringType);
-			else
-				dtype = null;
-
-			return CreateType (type, dtype);
+			return CreateType (type);
 		}
 
 		//
@@ -1169,13 +1193,15 @@ namespace Mono.CSharp
 			return cattrs.AttributeUsage;
 		}
 
-		public MemberCache LoadMembers (TypeSpec declaringType)
+		public void LoadMembers (TypeSpec declaringType, ref MemberCache cache)
 		{
 			//
 			// Not interested in members of nested private types unless the importer needs them
 			//
-			if (declaringType.IsPrivate && meta_import.IgnorePrivateMembers)
-				return MemberCache.Empty;
+			if (declaringType.IsPrivate && meta_import.IgnorePrivateMembers) {
+				cache = MemberCache.Empty;
+				return;
+			}
 
 			var loading_type = (Type) provider;
 			const BindingFlags all_members = BindingFlags.DeclaredOnly |
@@ -1199,10 +1225,29 @@ namespace Mono.CSharp
 					declaringType.GetSignatureForError (), declaringType.Assembly.Location);
 			}
 
+			cache = new MemberCache (all.Length);
+
+			//
+			// Do the types first as they can be referenced by the members before
+			// they are found or inflated
+			//
+			foreach (var member in all) {
+				if (member.MemberType != MemberTypes.NestedType)
+					continue;
+
+				Type t = (Type) member;
+
+				// Ignore compiler generated types, mostly lambda containers
+				if (t.IsNotPublic && t.IsDefined (typeof (CompilerGeneratedAttribute), false))
+					continue;
+
+				imported = meta_import.CreateType (t, declaringType);
+				cache.AddMember (imported);
+			}
+
 			//
 			// The logic here requires methods to be returned first which seems to work for both Mono and .NET
 			//
-			var cache = new MemberCache (all.Length);
 			foreach (var member in all) {
 				switch (member.MemberType) {
 				case MemberTypes.Constructor:
@@ -1308,14 +1353,8 @@ namespace Mono.CSharp
 
 					break;
 				case MemberTypes.NestedType:
-					Type t = (Type) member;
-
-					// Ignore compiler generated types, mostly lambda containers
-					if (t.IsNotPublic && t.IsDefined (typeof (CompilerGeneratedAttribute), false))
-						continue;
-
-					imported = meta_import.CreateType (t, declaringType);
-					break;
+					// Already done
+					continue;
 				default:
 					throw new NotImplementedException (member.ToString ());
 				}
@@ -1328,8 +1367,6 @@ namespace Mono.CSharp
 					cache.AddInterface (iface);
 				}
 			}
-
-			return cache;
 		}
 	}
 
@@ -1377,7 +1414,7 @@ namespace Mono.CSharp
 			throw new NotSupportedException ();
 		}
 
-		public MemberCache LoadMembers (TypeSpec declaringType)
+		public void LoadMembers (TypeSpec declaringType, ref MemberCache cache)
 		{
 			throw new NotImplementedException ();
 		}

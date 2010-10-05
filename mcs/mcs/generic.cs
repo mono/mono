@@ -532,7 +532,7 @@ namespace Mono.CSharp {
 			return MemberName.Name;
 		}
 
-		public MemberCache LoadMembers (TypeSpec declaringType)
+		public void LoadMembers (TypeSpec declaringType, ref MemberCache cache)
 		{
 			throw new NotSupportedException ("Not supported for compiled definition");
 		}
@@ -1071,7 +1071,7 @@ namespace Mono.CSharp {
 					// to use same cache for nested types on same generic parent
 					//
 					// TODO: Should use BindingRestriction.DeclaredOnly or GetMember
-					ts = MemberCache.FindNestedType (parent, ts.Name, targs.Length);
+					ts = MemberCache.FindNestedType (parent, ts.Name, ts.Arity);
 
 					//
 					// Handle the tricky case where parent shares local type arguments

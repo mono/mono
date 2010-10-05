@@ -311,7 +311,7 @@ namespace Mono.CSharp
 
 		protected virtual void InitializeMemberCache (bool onlyTypes)
 		{
-			cache = MemberDefinition.LoadMembers (this);
+			MemberDefinition.LoadMembers (this, ref cache);
 		}
 
 		//
@@ -362,7 +362,7 @@ namespace Mono.CSharp
 		public InflatedTypeSpec MakeGenericType (TypeSpec[] targs)
 		{
 			if (targs.Length == 0 && !IsNested)
-				throw new ArgumentException ("Empty type arguments");
+				throw new ArgumentException ("Empty type arguments for type " + GetSignatureForError ());
 
 			InflatedTypeSpec instance;
 
@@ -371,7 +371,8 @@ namespace Mono.CSharp
 
 			if (!inflated_instances.TryGetValue (targs, out instance)) {
 				if (GetDefinition () != this && !IsNested)
-					throw new InternalErrorException ("Only type definition or nested non-inflated types can be used to call MakeGenericType");
+					throw new InternalErrorException ("`{0}' must be type definition or nested non-inflated type to MakeGenericType",
+						GetSignatureForError ());
 
 				instance = new InflatedTypeSpec (this, declaringType, targs);
 				inflated_instances.Add (targs, instance);
@@ -849,7 +850,7 @@ namespace Mono.CSharp
 		TypeSpec GetAttributeCoClass ();
 		string GetAttributeDefaultMember ();
 		AttributeUsageAttribute GetAttributeUsage (PredefinedAttribute pa);
-		MemberCache LoadMembers (TypeSpec declaringType);
+		void LoadMembers (TypeSpec declaringType, ref MemberCache cache);
 	}
 
 	class InternalType : TypeSpec
@@ -988,9 +989,9 @@ namespace Mono.CSharp
 			return Element.MemberDefinition.GetAttributeDefaultMember ();
 		}
 
-		public MemberCache LoadMembers (TypeSpec declaringType)
+		public void LoadMembers (TypeSpec declaringType, ref MemberCache cache)
 		{
-			return Element.MemberDefinition.LoadMembers (declaringType);
+			Element.MemberDefinition.LoadMembers (declaringType, ref cache);
 		}
 
 		public bool IsImported {
