@@ -828,7 +828,15 @@ namespace Mono.CSharp
 			if (a.MemberDefinition != b.MemberDefinition)
 				return false;
 
-			return Equals (a.TypeArguments, b.TypeArguments);
+			do {
+				if (!Equals (a.TypeArguments, b.TypeArguments))
+					return false;
+
+				a = a.DeclaringType;
+				b = b.DeclaringType;
+			} while (a != null);
+
+			return true;
 		}
 	}
 
