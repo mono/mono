@@ -9,10 +9,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Security;
-using System.Security.Permissions;
+using SSP = System.Security.Permissions;
 using System.Text;
 
 using Mono.Cecil;
@@ -21,6 +22,110 @@ using Mono.Cecil;
 [assembly: AssemblyDescription ("Managed Permission Viewer for .NET assemblies")]
 
 namespace Mono.Tools {
+
+	static class SecurityDeclarationRocks {
+
+		public static PermissionSet ToPermissionSet (this SecurityDeclaration self)
+		{
+			if (self == null)
+				throw new ArgumentNullException ("self");
+
+			PermissionSet set;
+			if (TryProcessPermissionSetAttribute (self, out set))
+				return set;
+
+			return CreatePermissionSet (self);
+		}
+
+		static bool TryProcessPermissionSetAttribute (SecurityDeclaration declaration, out PermissionSet set)
+		{
+			set = null;
+
+			if (!declaration.HasSecurityAttributes && declaration.SecurityAttributes.Count != 1)
+				return false;
+
+			var security_attribute = declaration.SecurityAttributes [0];
+			var attribute_type = security_attribute.AttributeType;
+
+			if (attribute_type.Name != "PermissionSetAttribute" || attribute_type.Namespace != "System.Security.Permissions")
+				return false;
+
+			var named_argument = security_attribute.Properties [0];
+			if (named_argument.Name != "XML")
+				throw new NotSupportedException ();
+
+			var attribute = new SSP.PermissionSetAttribute ((SSP.SecurityAction) declaration.Action);
+			attribute.XML = (string) named_argument.Argument.Value;
+
+			set = attribute.CreatePermissionSet ();
+			return true;
+		}
+
+		static PermissionSet CreatePermissionSet (SecurityDeclaration declaration)
+		{
+			var set = new PermissionSet (SSP.PermissionState.None);
+
+			foreach (var attribute in declaration.SecurityAttributes) {
+				var permission = CreatePermission (declaration, attribute);
+				set.AddPermission (permission);
+			}
+
+			return set;
+		}
+
+		static IPermission CreatePermission (SecurityDeclaration declaration, SecurityAttribute attribute)
+		{
+			var attribute_type = Type.GetType (attribute.AttributeType.FullName);
+			if (attribute_type == null)
+				throw new ArgumentException ();
+
+			var security_attribute = CreateSecurityAttribute (attribute_type, declaration);
+			if (security_attribute == null)
+				throw new InvalidOperationException ();
+
+			CompleteSecurityAttribute (security_attribute, attribute);
+
+			return security_attribute.CreatePermission ();
+		}
+
+		static void CompleteSecurityAttribute (SSP.SecurityAttribute security_attribute, SecurityAttribute attribute)
+		{
+			if (attribute.HasFields)
+				CompleteSecurityAttributeFields (security_attribute, attribute);
+
+			if (attribute.HasProperties)
+				CompleteSecurityAttributeProperties (security_attribute, attribute);
+		}
+
+		static void CompleteSecurityAttributeFields (SSP.SecurityAttribute security_attribute, SecurityAttribute attribute)
+		{
+			var type = security_attribute.GetType ();
+
+			foreach (var named_argument in attribute.Fields)
+				type.GetField (named_argument.Name).SetValue (security_attribute, named_argument.Argument.Value);
+		}
+
+		static void CompleteSecurityAttributeProperties (SSP.SecurityAttribute security_attribute, SecurityAttribute attribute)
+		{
+			var type = security_attribute.GetType ();
+
+			foreach (var named_argument in attribute.Properties)
+				type.GetProperty (named_argument.Name).SetValue (security_attribute, named_argument.Argument.Value, null);
+		}
+
+		static SSP.SecurityAttribute CreateSecurityAttribute (Type attribute_type, SecurityDeclaration declaration)
+		{
+			SSP.SecurityAttribute security_attribute;
+			try {
+				security_attribute = (SSP.SecurityAttribute) Activator.CreateInstance (
+					attribute_type, new object [] { (SSP.SecurityAction) declaration.Action });
+			} catch (MissingMethodException) {
+				security_attribute = (SSP.SecurityAttribute) Activator.CreateInstance (attribute_type, new object [0]);
+			}
+
+			return security_attribute;
+		}
+	}
 
 	class SecurityElementComparer : IComparer {
 
@@ -101,17 +206,17 @@ namespace Mono.Tools {
 			foreach (SecurityDeclaration decl in ad.SecurityDeclarations) {
 				switch (decl.Action) {
 				case Mono.Cecil.SecurityAction.RequestMinimum:
-					minimal = decl.PermissionSet.ToString ();
+					minimal = decl.ToPermissionSet ().ToString ();
 					break;
 				case Mono.Cecil.SecurityAction.RequestOptional:
-					optional = decl.PermissionSet.ToString ();
+					optional = decl.ToPermissionSet ().ToString ();
 					break;
 				case Mono.Cecil.SecurityAction.RequestRefuse:
-					refused = decl.PermissionSet.ToString ();
+					refused = decl.ToPermissionSet ().ToString ();
 					break;
 				default:
 					tw.WriteLine ("Invalid assembly level declaration {0}{1}{2}",
-						decl.Action, Environment.NewLine, decl.PermissionSet);
+						decl.Action, Environment.NewLine, decl.ToPermissionSet ());
 					result = false;
 					break;
 				}
@@ -126,11 +231,11 @@ namespace Mono.Tools {
 			return result;
 		}
 
-		static void ShowSecurity (TextWriter tw, string header, SecurityDeclarationCollection declarations)
+		static void ShowSecurity (TextWriter tw, string header, IEnumerable<SecurityDeclaration> declarations)
 		{
 			foreach (SecurityDeclaration declsec in declarations) {
 				tw.WriteLine ("{0} {1} Permission Set:{2}{3}", header,
-					declsec.Action, Environment.NewLine, declsec.PermissionSet);
+					declsec.Action, Environment.NewLine, declsec.ToPermissionSet ());
 			}
 		}
 
@@ -164,13 +269,13 @@ namespace Mono.Tools {
 			se.AddAttribute (attr, value);
 		}
 
-		static SecurityElement AddSecurityXml (SecurityDeclarationCollection declarations)
+		static SecurityElement AddSecurityXml (IEnumerable<SecurityDeclaration> declarations)
 		{
 			ArrayList list = new ArrayList ();
 			foreach (SecurityDeclaration declsec in declarations) {
 				SecurityElement child = new SecurityElement ("Action");
 				AddAttribute (child, "Name", declsec.Action.ToString ());
-				child.AddChild (declsec.PermissionSet.ToXml ());
+				child.AddChild (declsec.ToPermissionSet ().ToXml ());
 				list.Add (child);
 			}
 			// sort actions
@@ -270,7 +375,7 @@ namespace Mono.Tools {
 					return 0;
 
 				string assemblyName = args [args.Length - 1];
-				AssemblyDefinition ad = AssemblyFactory.GetAssembly (assemblyName);
+				AssemblyDefinition ad = AssemblyDefinition.ReadAssembly (assemblyName);
 				if (ad != null) {
 					bool complete = false;
 					
