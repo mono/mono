@@ -6,9 +6,9 @@ MOBILE_PROFILE := $(filter monotouch monodroid, $(PROFILE))
 
 LIBRARY = System.Transactions.dll
 ifdef MOBILE_PROFILE
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll
+LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /define:MOBILE
 else
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Configuration.dll /define:MOBILE
+LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Configuration.dll
 endif
 
 TEST_MCS_FLAGS = /nowarn:1595 $(LIB_MCS_FLAGS)
