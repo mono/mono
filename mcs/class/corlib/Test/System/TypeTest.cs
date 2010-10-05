@@ -168,6 +168,8 @@ namespace MonoTests.System
 		{
 			return a;
 		}
+		
+		public class Nested<K> {}
 	}
 	
 	class Foo<T, U>
@@ -3337,6 +3339,13 @@ PublicKeyToken=b77a5c561934e089"));
 	        Assert.Fail ("#3");
 		} catch (TypeLoadException) { }
 
+		}
+		
+		[Test] //Bug643890
+		public void DeclaringTypeOfGenericNestedTypeInstanceIsOpen ()
+		{
+			var type = typeof (Foo<int>.Nested<string>);
+			Assert.AreSame (typeof (Foo<>), a.DeclaringType, "#1");
 		}
 
 #if NET_4_0
