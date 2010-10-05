@@ -27,7 +27,7 @@
 //
 #if NET_2_0
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -48,7 +48,8 @@ namespace System.Runtime.Serialization
 		// Though unlike XmlSerializer, it does not support forward-
 		// reference resolution i.e. a referenced object must appear
 		// before any references to it.
-		Hashtable references = new Hashtable ();
+		Dictionary<string,object> references = new Dictionary<string,object> ();
+		Dictionary<QName,Type> resolved_qnames = new Dictionary<QName,Type> ();
 
 		public static object Deserialize (XmlReader reader, Type declaredType,
 			KnownTypeCollection knownTypes, IDataContractSurrogate surrogate, DataContractResolver resolver, DataContractResolver defaultResolver,
@@ -99,7 +100,7 @@ namespace System.Runtime.Serialization
 			this.default_resolver = defaultResolver;
 		}
 
-		public Hashtable References {
+		public Dictionary<string,object> References {
 			get { return references; }
 		}
 
@@ -118,8 +119,8 @@ namespace System.Runtime.Serialization
 
 			string label = reader.GetAttribute ("Ref", KnownTypeCollection.MSSimpleNamespace);
 			if (label != null) {
-				object o = references [label];
-				if (o == null)
+				object o;
+				if (!references.TryGetValue (label, out o))
 					throw new SerializationException (String.Format ("Deserialized object with reference Id '{0}' was not found", label));
 				reader.Skip ();
 				return o;
@@ -137,8 +138,16 @@ namespace System.Runtime.Serialization
 					throw new SerializationException (String.Format ("Value type {0} cannot be null.", type));
 			}
 
-			if (resolver != null)
-				type = resolver.ResolveName (graph_qname.Name, graph_qname.Namespace, type, default_resolver) ?? type;
+			if (resolver != null) {
+				Type t;
+				if (resolved_qnames.TryGetValue (graph_qname, out t))
+					type = t;
+				else { // i.e. resolve name only once.
+					type = resolver.ResolveName (graph_qname.Name, graph_qname.Namespace, type, default_resolver) ?? type;
+					resolved_qnames.Add (graph_qname, type);
+					types.Add (type);
+				}
+			}
 
 			if (KnownTypeCollection.GetPrimitiveTypeFromName (graph_qname.Name) != null) {
 				string id = reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace);
@@ -168,7 +177,7 @@ namespace System.Runtime.Serialization
 
 		object DeserializeByMap (QName name, Type type, XmlReader reader)
 		{
-			SerializationMap map = types.FindUserMap (name);
+			SerializationMap map = types.FindUserMap (type); // use type rather than name as the type could be a "resolved" one.
 			if (map == null && (name.Name.StartsWith ("ArrayOf", StringComparison.Ordinal) ||
 			    name.Namespace == KnownTypeCollection.MSArraysNamespace ||
 			    name.Namespace.StartsWith (KnownTypeCollection.DefaultClrNamespaceBase, StringComparison.Ordinal))) {

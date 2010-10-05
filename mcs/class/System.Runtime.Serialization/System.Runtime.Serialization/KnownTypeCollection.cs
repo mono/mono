@@ -386,7 +386,7 @@ namespace System.Runtime.Serialization
 
 		protected override void InsertItem (int index, Type type)
 		{
-			if (TryRegister (type))
+			if (!Contains (type) && TryRegister (type))
 				base.InsertItem (index, type);
 		}
 
@@ -407,21 +407,15 @@ namespace System.Runtime.Serialization
 
 		protected override void SetItem (int index, Type type)
 		{
-			if (index == Count)
-				InsertItem (index, type);
-			else {
+			if (index != Count)
 				RemoveItem (index);
-				if (TryRegister (type))
-					base.InsertItem (index - 1, type);
-			}
+			if (TryRegister (type))
+				base.InsertItem (index - 1, type);
 		}
 
 		internal SerializationMap FindUserMap (QName qname)
 		{
-			for (int i = 0; i < contracts.Count; i++)
-				if (qname == contracts [i].XmlName)
-					return contracts [i];
-			return null;
+			return contracts.FirstOrDefault (c => c.XmlName == qname);
 		}
 
 		internal Type GetSerializedType (Type type)

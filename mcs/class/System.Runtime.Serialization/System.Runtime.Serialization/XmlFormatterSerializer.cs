@@ -27,7 +27,7 @@
 //
 #if NET_2_0
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -50,8 +50,8 @@ namespace System.Runtime.Serialization
 		DataContractResolver resolver, default_resolver; // new in 4.0
 		int max_items;
 
-		ArrayList objects = new ArrayList ();
-		Hashtable references = new Hashtable (); // preserve possibly referenced objects to ids. (new in 3.5 SP1)
+		List<object> objects = new List<object> ();
+		Dictionary<object,string> references = new Dictionary<object,string> (); // preserve possibly referenced objects to ids. (new in 3.5 SP1)
 
 		public static void Serialize (XmlDictionaryWriter writer, object graph, Type declaredType, KnownTypeCollection types,
 			bool ignoreUnknown, int maxItems, string root_ns, bool preserveObjectReferences, DataContractResolver resolver, DataContractResolver defaultResolver)
@@ -75,12 +75,8 @@ namespace System.Runtime.Serialization
 
 		public bool PreserveObjectReferences { get; private set; }
 
-		public ArrayList SerializingObjects {
+		public List<object> SerializingObjects {
 			get { return objects; }
-		}
-
-		public IDictionary References {
-			get { return references; }
 		}
 
 		public XmlDictionaryWriter Writer {
@@ -172,15 +168,14 @@ namespace System.Runtime.Serialization
 			if (!isMapReference && (!PreserveObjectReferences || graph == null || graph.GetType ().IsValueType))
 				return false;
 
-			label = (string) References [graph];
-			if (label != null) {
+			if (references.TryGetValue (graph, out label)) {
 				Writer.WriteAttributeString ("z", "Ref", KnownTypeCollection.MSSimpleNamespace, label);
 				label = null; // do not write label
 				return true;
 			}
 
-			label = "i" + (References.Count + 1);
-			References.Add (graph, label);
+			label = "i" + (references.Count + 1);
+			references.Add (graph, label);
 
 			return false;
 		}
