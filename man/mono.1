@@ -1293,10 +1293,35 @@ trading off the small leaks for the increased performance
 unload the application domains on production systems, it is worth
 using this feature). 
 .TP
+\fBdyn-runtime-invoke\fR
+Instructs the runtime to try to use a generic runtime-invoke wrapper
+instead of creating one invoke wrapper.
+.TP
+\fBgdb\fR 
+Equivalent to setting the \fBMONO_XDEBUG\fR variable, this emits
+symbols into a shared library as the code is JITed that can be loaded
+into GDB to inspect symbols.
+.TP
+\fBgen-seq-points\fR 
+Automatically generates sequence points where the
+IL stack is empty.  These are places where the debugger can set a
+breakpoint.
+.TP
+\fBexplicit-null-checks\fR
+Makes the JIT generate an explicit NULL check on variable dereferences
+instead of depending on the operating system to raise a SIGSEGV or
+another form of trap event when an invalid memory location is
+accessed. 
+.TP
 \fBhandle-sigint\fR
 Captures the interrupt signal (Control-C) and displays a stack trace
 when pressed.  Useful to find out where the program is executing at a
 given point.  This only displays the stack trace of a single thread. 
+.TP
+\fBinit-stacks\FR 
+Instructs the runtime to initialize the stack with
+some known values (0x2a on x86-64) at the start of a method to assist
+in debuggin the JIT engine.
 .TP
 \fBkeep-delegates\fR
 This option will leak delegate trampolines that are no longer
@@ -1321,7 +1346,6 @@ This option will disable the GDB backtrace emitted by the runtime
 after a SIGSEGV or SIGABRT in unmanaged code.
 .TP
 \fBsuspend-on-sigsegv\fR
-
 This option will suspend the program when a native SIGSEGV is received.
 This is useful for debugging crashes which do not happen under gdb,
 since a live process contains more information than a core file.
@@ -1416,7 +1440,7 @@ Mono JIT by default turns this on.
 \fBMONO_XDEBUG\fR
 When the the MONO_XDEBUG env var is set, debugging info for JITted
 code is emitted into a shared library, loadable into gdb. This enables,
-for example, to see managed frame names on gdb backtraces.
+for example, to see managed frame names on gdb backtraces.   
 .TP
 \fBMONO_VERBOSE_METHOD\fR
 Enables the maximum JIT verbosity for the specified method. This is
