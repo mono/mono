@@ -397,7 +397,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadArrayInt32Details ()
 		{
 			var r = GetReader ("Array_Int32.xml");

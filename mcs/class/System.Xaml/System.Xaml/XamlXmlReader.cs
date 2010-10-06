@@ -31,7 +31,6 @@ using Pair = System.Collections.Generic.KeyValuePair<System.Xaml.XamlMember,stri
 
 namespace System.Xaml
 {
-	// FIXME: is GetObject supported by this reader?
 	public class XamlXmlReader : XamlReader, IXamlLineInfo
 	{
 		#region constructors
@@ -147,6 +146,7 @@ namespace System.Xaml
 		object current;
 		bool inside_object_not_member, is_empty_object, is_empty_member;
 		Stack<XamlType> types = new Stack<XamlType> ();
+		Stack<XamlMember> members = new Stack<XamlMember> ();
 		XamlMember current_member;
 
 		IEnumerator<Pair> stored_member_enumerator;
@@ -243,16 +243,28 @@ namespace System.Xaml
 				if (inside_object_not_member) {
 					if (!ReadExtraStartMember ())
 						ReadStartMember ();
+				} else {
+					if (current_member != null && current_member.IsReadOnly) {
+						if (current_member.Type.IsCollection)
+							SetGetObject ();
+						else
+							throw new XamlParseException (String.Format ("Read-only member '{0}' showed up in the source XML, and the xml contains element content that cannot be read.", current_member.Name)) { LineNumber = this.LineNumber, LinePosition = this.LinePosition };
+					}
+					else
+						ReadStartType ();
 				}
-				else
-					ReadStartType ();
 				return true;
 
 			case XmlNodeType.EndElement:
 
 				// could be: EndObject, EndMember
-				if (inside_object_not_member)
-					ReadEndType ();
+				if (inside_object_not_member) {
+					var xm = members.Count > 0 ? members.Peek () : null;
+					if (xm != null && xm.IsReadOnly && xm.Type.IsCollection)
+						SetEndOfObject ();
+					else
+						ReadEndType ();
+				}
 				else {
 					if (!ReadExtraEndMember ())
 						ReadEndMember ();
@@ -283,6 +295,7 @@ namespace System.Xaml
 			if (xm != null) {
 				inside_object_not_member = false;
 				current = current_member = xm;
+				members.Push (xm);
 				node_type = XamlNodeType.StartMember;
 				return true;
 			}
@@ -294,6 +307,7 @@ namespace System.Xaml
 			var xm = GetExtraMember (types.Peek ());
 			if (xm != null) {
 				inside_object_not_member = true;
+				current_member = members.Pop ();
 				node_type = XamlNodeType.EndMember;
 				return true;
 			}
@@ -396,6 +410,7 @@ namespace System.Xaml
 				// create unknown member.
 				xm = new XamlMember (name, xt, false); // FIXME: not sure if isAttachable is always false.
 			current = current_member = xm;
+			members.Push (xm);
 
 			node_type = XamlNodeType.StartMember;
 			inside_object_not_member = false;
@@ -404,7 +419,11 @@ namespace System.Xaml
 		void ReadEndType ()
 		{
 			r.Read ();
-
+			SetEndOfObject ();
+		}
+		
+		void SetEndOfObject ()
+		{
 			types.Pop ();
 			current = null;
 			node_type = XamlNodeType.EndObject;
@@ -415,7 +434,8 @@ namespace System.Xaml
 		{
 			r.Read ();
 
-			current = current_member = null;
+			current_member = members.Pop ();
+			current = null;
 			node_type = XamlNodeType.EndMember;
 			inside_object_not_member = true;
 		}
@@ -428,6 +448,14 @@ namespace System.Xaml
 			r.Read ();
 
 			node_type = XamlNodeType.Value;
+		}
+		
+		void SetGetObject ()
+		{
+			current = null; // do not clear current_member as it is reused in the next Read().
+			node_type = XamlNodeType.GetObject;
+			inside_object_not_member = true;
+			types.Push (current_member.Type);
 		}
 
 		// returns remaining attributes to be processed
@@ -494,11 +522,6 @@ namespace System.Xaml
 			return false;
 		}
 		
-		string GetLineString ()
-		{
-			return HasLineInfo ? String.Format (" Line {0}, at {1}", LineNumber, LinePosition) : String.Empty;
-		}
-
 		class NamespaceResolver : IXamlNamespaceResolver
 		{
 			IXmlNamespaceResolver source;
