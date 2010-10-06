@@ -261,12 +261,13 @@ namespace System.Xaml
 
 			default:
 
-				// could be: Value
+				// could be: normal property Value (Initialization and ContentProperty are handled at ReadStartType()).
 				ReadValue ();
 				return true;
 			}
 		}
 
+		// returns an optional member without xml node.
 		XamlMember GetExtraMember (XamlType xt)
 		{
 			if (xt == XamlLanguage.Array)
@@ -319,28 +320,6 @@ namespace System.Xaml
 			var members = new List<Pair> ();
 			var atts = ProcessAttributes (members);
 
-			if (!r.IsEmptyElement) {
-				r.Read ();
-				do {
-					r.MoveToContent ();
-					switch (r.NodeType) {
-					case XmlNodeType.Element:
-					// FIXME: parse type arguments etc.
-					case XmlNodeType.EndElement:
-						break;
-					default:
-						// this value is for Initialization
-						// FIXME: this could also be a WrappedContents
-						members.Add (new Pair (XamlLanguage.Initialization, r.Value));
-						r.Read ();
-						continue;
-					}
-					break;
-				} while (true);
-			}
-			else
-				is_empty_object = true;
-
 			// check TypeArguments to resolve Type, and remove them from the list. They don't appear as a node.
 			var l = new List<Pair> ();
 			foreach (var p in members) {
@@ -365,6 +344,30 @@ namespace System.Xaml
 				xt = new XamlType (ns, name, typeArgs == null ? null : typeArgs.Select<XamlTypeName,XamlType> (xtn => sctx.GetXamlType (xtn)).ToArray (), sctx);
 			types.Push (xt);
 			current = xt;
+
+			if (!r.IsEmptyElement) {
+				r.Read ();
+				do {
+					r.MoveToContent ();
+					switch (r.NodeType) {
+					case XmlNodeType.Element:
+					// FIXME: parse type arguments etc.
+					case XmlNodeType.EndElement:
+						break;
+					default:
+						// this value is for Initialization, or Content property value
+						if (xt.ContentProperty != null)
+							members.Add (new Pair (xt.ContentProperty, r.Value));
+						else
+							members.Add (new Pair (XamlLanguage.Initialization, r.Value));
+						r.Read ();
+						continue;
+					}
+					break;
+				} while (true);
+			}
+			else
+				is_empty_object = true;
 
 			foreach (var p in atts) {
 				var xm = xt.GetMember (p.Key);
