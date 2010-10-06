@@ -97,6 +97,21 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Read_Null ()
+		{
+			ReadTest ("NullExtension.xml");
+			Assert.IsNull (XamlServices.Load (GetReader ("NullExtension.xml")));
+		}
+
+		[Test]
+		public void Read_Reference ()
+		{
+			ReadTest ("Reference.xml");
+			var ret = XamlServices.Load (GetReader ("Reference.xml"));
+			Assert.IsNotNull (ret, "#1"); // the returned value is however not a Reference (in .NET 4.0 it is MS.Internal.Xaml.Context.NameFixupToken).
+		}
+
+		[Test]
 		public void Read_ArrayInt32 ()
 		{
 			ReadTest ("Array_Int32.xml");

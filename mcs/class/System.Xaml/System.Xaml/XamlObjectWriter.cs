@@ -57,6 +57,7 @@ namespace System.Xaml
 		Stack<List<object>> contents_stack = new Stack<List<object>> ();
 		List<object> objects_from_getter = new List<object> ();
 		Stack<List<XamlMember>> written_properties_stack = new Stack<List<XamlMember>> ();
+		XamlNameResolver name_resolver = new XamlNameResolver ();
 
 		public virtual object Result {
 			get { return result; }
@@ -200,8 +201,10 @@ namespace System.Xaml
 			var obj = objects.Pop ();
 			if (members.Count > 0)
 				contents_stack.Peek ().Add (obj);
-			if (objects.Count == 0)
-				result = obj;
+			if (objects.Count == 0) {
+				var ext = obj as MarkupExtension;
+				result = ext != null ? ext.ProvideValue (name_resolver) : obj;
+			}
 		}
 
 		public override void WriteGetObject ()

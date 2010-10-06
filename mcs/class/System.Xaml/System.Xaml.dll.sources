@@ -86,6 +86,7 @@ System.Xaml/XamlException.cs
 System.Xaml/XamlInternalException.cs
 System.Xaml/XamlLanguage.cs
 System.Xaml/XamlMember.cs
+System.Xaml/XamlNameResolver.cs
 System.Xaml/XamlNodeList.cs
 System.Xaml/XamlNodeQueue.cs
 System.Xaml/XamlNodeType.cs
