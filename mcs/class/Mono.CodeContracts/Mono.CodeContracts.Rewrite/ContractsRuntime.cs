@@ -106,13 +106,13 @@ namespace Mono.CodeContracts.Rewrite {
 				this.module.Types.Add(type);
 				// Create constructor
 				MethodDefinition cons = new MethodDefinition (".ctor",
-					MethodAttributes.Assem | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, typeVoid);
-				cons.Parameters.Add (new ParameterDefinition ("kind", 1, ParameterAttributes.None, typeContractFailureKind));
-				cons.Parameters.Add (new ParameterDefinition ("failure", 2, ParameterAttributes.None, typeString));
-				cons.Parameters.Add (new ParameterDefinition ("usermsg", 3, ParameterAttributes.None, typeString));
-				cons.Parameters.Add (new ParameterDefinition ("condition", 4, ParameterAttributes.None, typeString));
-				cons.Parameters.Add (new ParameterDefinition ("inner", 5, ParameterAttributes.None, typeException));
-				var il = cons.Body.CilWorker;
+					MethodAttributes.Assembly | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, typeVoid);
+				cons.Parameters.Add (new ParameterDefinition ("kind", ParameterAttributes.None, typeContractFailureKind));
+				cons.Parameters.Add (new ParameterDefinition ("failure", ParameterAttributes.None, typeString));
+				cons.Parameters.Add (new ParameterDefinition ("usermsg", ParameterAttributes.None, typeString));
+				cons.Parameters.Add (new ParameterDefinition ("condition", ParameterAttributes.None, typeString));
+				cons.Parameters.Add (new ParameterDefinition ("inner", ParameterAttributes.None, typeException));
+				var il = cons.Body.GetILProcessor ();
 				il.Emit (OpCodes.Ldarg_0);
 				il.Emit (OpCodes.Ldarg_2);
 				il.Emit (OpCodes.Ldarg_S, cons.Parameters [4]);
@@ -152,13 +152,13 @@ namespace Mono.CodeContracts.Rewrite {
 				TypeReference typeException = this.module.Import (typeof (Exception));
 				// Create method
 				MethodDefinition method = new MethodDefinition ("TriggerFailure",
-					MethodAttributes.Assem | MethodAttributes.Static, typeVoid);
-				method.Parameters.Add (new ParameterDefinition ("kind", 1, ParameterAttributes.None, typeContractFailureKind));
-				method.Parameters.Add (new ParameterDefinition ("message", 2, ParameterAttributes.None, typeString));
-				method.Parameters.Add (new ParameterDefinition ("userMessage", 3, ParameterAttributes.None, typeString));
-				method.Parameters.Add (new ParameterDefinition ("conditionText", 4, ParameterAttributes.None, typeString));
-				method.Parameters.Add (new ParameterDefinition ("inner", 5, ParameterAttributes.None, typeException));
-				var il = method.Body.CilWorker;
+					MethodAttributes.Assembly | MethodAttributes.Static, typeVoid);
+				method.Parameters.Add (new ParameterDefinition ("kind", ParameterAttributes.None, typeContractFailureKind));
+				method.Parameters.Add (new ParameterDefinition ("message", ParameterAttributes.None, typeString));
+				method.Parameters.Add (new ParameterDefinition ("userMessage", ParameterAttributes.None, typeString));
+				method.Parameters.Add (new ParameterDefinition ("conditionText", ParameterAttributes.None, typeString));
+				method.Parameters.Add (new ParameterDefinition ("inner", ParameterAttributes.None, typeException));
+				var il = method.Body.GetILProcessor ();
 				if (this.options.ThrowOnFailure) {
 					il.Emit (OpCodes.Ldarg_0);
 					il.Emit (OpCodes.Ldarg_1);
@@ -199,15 +199,15 @@ namespace Mono.CodeContracts.Rewrite {
 				MethodReference mRaiseContractFailedEvent = this.module.Import (typeof (ContractHelper).GetMethod ("RaiseContractFailedEvent"));
 				// Create method
 				MethodDefinition method = new MethodDefinition ("ReportFailure",
-					MethodAttributes.Assem | MethodAttributes.Static, typeVoid);
-				method.Parameters.Add (new ParameterDefinition ("kind", 1, ParameterAttributes.None, typeContractFailureKind));
-				method.Parameters.Add (new ParameterDefinition ("message", 2, ParameterAttributes.None, typeString));
-				method.Parameters.Add (new ParameterDefinition ("conditionText", 3, ParameterAttributes.None, typeString));
-				method.Parameters.Add (new ParameterDefinition ("inner", 4, ParameterAttributes.None, typeException));
-				VariableDefinition vMsg = new VariableDefinition ("sMsg", 0, method, typeString);
+					MethodAttributes.Assembly | MethodAttributes.Static, typeVoid);
+				method.Parameters.Add (new ParameterDefinition ("kind", ParameterAttributes.None, typeContractFailureKind));
+				method.Parameters.Add (new ParameterDefinition ("message", ParameterAttributes.None, typeString));
+				method.Parameters.Add (new ParameterDefinition ("conditionText", ParameterAttributes.None, typeString));
+				method.Parameters.Add (new ParameterDefinition ("inner", ParameterAttributes.None, typeException));
+				VariableDefinition vMsg = new VariableDefinition ("sMsg", typeString);
 				method.Body.Variables.Add (vMsg);
 				method.Body.InitLocals = true;
-				var il = method.Body.CilWorker;
+				var il = method.Body.GetILProcessor ();
 				il.Emit (OpCodes.Ldarg_0);
 				il.Emit (OpCodes.Ldarg_1);
 				il.Emit (OpCodes.Ldarg_2);
@@ -256,11 +256,11 @@ namespace Mono.CodeContracts.Rewrite {
 				TypeReference typeString = this.module.Import (typeof (string));
 				// Create method
 				MethodDefinition method = new MethodDefinition ("Requires",
-				    MethodAttributes.Assem | MethodAttributes.Static, typeVoid);
-				method.Parameters.Add (new ParameterDefinition ("condition", 1, ParameterAttributes.None, typeBoolean));
-				method.Parameters.Add (new ParameterDefinition ("message", 2, ParameterAttributes.None, typeString));
-				method.Parameters.Add (new ParameterDefinition ("conditionText", 3, ParameterAttributes.None, typeString));
-				var il = method.Body.CilWorker;
+				    MethodAttributes.Assembly | MethodAttributes.Static, typeVoid);
+				method.Parameters.Add (new ParameterDefinition ("condition", ParameterAttributes.None, typeBoolean));
+				method.Parameters.Add (new ParameterDefinition ("message", ParameterAttributes.None, typeString));
+				method.Parameters.Add (new ParameterDefinition ("conditionText", ParameterAttributes.None, typeString));
+				var il = method.Body.GetILProcessor ();
 				il.Emit (OpCodes.Ldarg_0);
 				var instRet = il.Create(OpCodes.Ret);
 				il.Emit (OpCodes.Brtrue_S, instRet);

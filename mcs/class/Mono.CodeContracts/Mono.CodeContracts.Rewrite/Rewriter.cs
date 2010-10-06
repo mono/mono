@@ -54,43 +54,6 @@ namespace Mono.CodeContracts.Rewrite {
 		private List<string> errors = new List<string> ();
 		private bool usingMdb = false;
 		private bool usingPdb = false;
-		
-		private void LoadSymbolReader (AssemblyDefinition assembly) {
-			if (this.options.Assembly.IsStream && this.options.Assembly.Streams.Symbols == null) {
-				this.warnings.Add ("-debug specified, but no symbol stream provided.");
-			} else {
-				try {
-					foreach (ModuleDefinition module in assembly.Modules) {
-						module.LoadSymbols ();
-					}
-					this.usingMdb = true;
-				} catch {
-				}
-				if (!this.usingMdb && !this.usingPdb) {
-					this.warnings.Add ("-debug specified, but no MDB or PDB symbol file found.");
-				}
-			}
-		}
-		
-		private ISymbolWriter LoadSymbolWriter(AssemblyDefinition assembly, AssemblyRef output)
-		{
-			// TODO: Get symbol writing to work.
-//			ISymbolWriterProvider symProv = null;
-//			if (this.usingMdb) {
-//				symProv = new Mono.Cecil.Mdb.MdbWriterProvider ();
-//			} else if (this.usingPdb) {
-//				symProv = new Mono.Cecil.Pdb.PdbWriterProvider ();
-//			} else {
-//				this.warnings.Add ("-writePDBFile specified, but no symbol file found, cannot write symbols.");
-//			}
-//			if (symProv != null) {
-//				return output.IsFilename ?
-//					symProv.GetSymbolWriter (assembly.MainModule, output.Filename) :
-//					symProv.GetSymbolWriter (assembly.MainModule, output.Streams.Symbols);
-//			}
-			return null;
-		}
-
 
 		private RewriterResults RewriteImpl ()
 		{
@@ -101,9 +64,15 @@ namespace Mono.CodeContracts.Rewrite {
 			if (!this.options.Assembly.IsSet) {
 				return RewriterResults.Error ("No assembly given to rewrite");
 			}
-			AssemblyDefinition assembly = this.options.Assembly.IsFilename ?
-				AssemblyFactory.GetAssembly (this.options.Assembly.Filename) :
-				AssemblyFactory.GetAssembly (this.options.Assembly.Streams.Assembly);
+
+			var readerParameters = new ReaderParameters ();
+
+			if (options.Debug)
+				readerParameters.ReadSymbols = true;
+
+			var assembly = this.options.Assembly.IsFilename ?
+				AssemblyDefinition.ReadAssembly (options.Assembly.Filename, readerParameters) :
+				AssemblyDefinition.ReadAssembly (options.Assembly.Streams.Assembly, readerParameters);
 			
 			if (this.options.ForceAssemblyRename != null) {
 				assembly.Name.Name = this.options.ForceAssemblyRename;
@@ -111,37 +80,25 @@ namespace Mono.CodeContracts.Rewrite {
 				assembly.Name.Name = Path.GetFileNameWithoutExtension(this.options.OutputFile.Filename);
 			}
 
-			if (options.Debug) {
-				this.LoadSymbolReader (assembly);
-			}
-
 			var output = this.options.OutputFile.IsSet ? this.options.OutputFile : this.options.Assembly;
-			ISymbolWriter symWriter = null;
+			var writerParameters = new WriterParameters ();
 			if (options.WritePdbFile) {
 				if (!options.Debug) {
 					return RewriterResults.Error ("Must specify -debug if using -writePDBFile.");
 				}
-				if (output.IsStream && output.Streams.Symbols==null){
-					return RewriterResults.Error ("-writePDFFile specified, but no output symbol stream provided.");
-				}
-				symWriter = this.LoadSymbolWriter (assembly, output);
+				
+				writerParameters.WriteSymbols = true;
 			}
 			
-			try {
-				PerformRewrite rewriter = new PerformRewrite (symWriter, this.options);
-				rewriter.Rewrite (assembly);
+			PerformRewrite rewriter = new PerformRewrite (this.options);
+			rewriter.Rewrite (assembly);
 
-				if (output.IsFilename) {
-					AssemblyFactory.SaveAssembly(assembly, output.Filename);
-				} else {
-					AssemblyFactory.SaveAssembly(assembly, output.Streams.Assembly);
-				}
-			} finally {
-				if (symWriter != null) {
-					symWriter.Dispose ();
-				}
+			if (output.IsFilename) {
+				assembly.Write (output.Filename, writerParameters);
+			} else {
+				assembly.Write (output.Streams.Assembly, writerParameters);
 			}
-
+		
 			return new RewriterResults (warnings, errors);
 		}
 		
