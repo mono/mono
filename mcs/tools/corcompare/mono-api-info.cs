@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
@@ -61,7 +62,7 @@ namespace CorCompare
 			return CleanupTypeName (type.FullName);
 		}
 
-		static string CleanupTypeName (string t)
+		public static string CleanupTypeName (string t)
 		{
 			return t.Replace ('<', '[').Replace ('>', ']').Replace ('/', '+');
 		}
@@ -151,13 +152,10 @@ namespace CorCompare
 				natts = document.CreateElement ("attributes", null);
 				parent.AppendChild (natts);
 			}
-			
-			foreach (TypeReference tref in ass.MainModule.ExternTypes) {
-				TypeDefinition def = tref.Resolve ();
-				if (def == null)
-					continue;
 
-				if (((uint)def.Attributes & 0x200000u) == 0)
+			foreach (ExportedType type in ass.MainModule.ExportedTypes) {
+
+				if (((uint)type.Attributes & 0x200000u) == 0)
 					continue;
 
 				XmlNode node = document.CreateElement ("attribute");
@@ -165,7 +163,7 @@ namespace CorCompare
 				XmlNode properties = node.AppendChild (document.CreateElement ("properties"));
 				XmlNode property = properties.AppendChild (document.CreateElement ("property"));
 				AddAttribute (property, "name", "Destination");
-				AddAttribute (property, "value", Utils.CleanupTypeName (tref));
+				AddAttribute (property, "value", Utils.CleanupTypeName (type.FullName));
 				natts.AppendChild (node);
 			}
 		}
@@ -176,7 +174,7 @@ namespace CorCompare
 			tftd.DoOutput ();
 		}
 	}
-	
+
 	class AssemblyData : BaseData
 	{
 		AssemblyDefinition ass;
@@ -199,7 +197,7 @@ namespace CorCompare
 			parent.AppendChild (nassembly);
 			TypeForwardedToData.OutputForwarders (document, nassembly, ass);
 			AttributeData.OutputAttributes (document, nassembly, ass.CustomAttributes);
-			TypeDefinitionCollection typesCollection = ass.MainModule.Types;
+			var typesCollection = ass.MainModule.Types;
 			if (typesCollection == null || typesCollection.Count == 0)
 				return;
 			object [] typesArray = new object [typesCollection.Count];
@@ -268,7 +266,7 @@ namespace CorCompare
 		}
 
 
-		protected abstract CustomAttributeCollection GetCustomAttributes (MemberReference member);
+		protected abstract IList<CustomAttribute> GetCustomAttributes (MemberReference member);
 
 		protected virtual void AddExtraData (XmlNode p, MemberReference memberDefenition)
 		{
@@ -343,7 +341,7 @@ namespace CorCompare
 			this.type = type;
 		}
 
-		protected override CustomAttributeCollection GetCustomAttributes (MemberReference member) {
+		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
 			return ((TypeDefinition) member).CustomAttributes;
 		}
 
@@ -446,7 +444,7 @@ namespace CorCompare
 			foreach (MemberData md in members)
 				md.DoOutput ();
 
-			NestedTypeCollection nested = type.NestedTypes;
+			var nested = type.NestedTypes;
 			//remove non public(familiy) and nested in second degree
 			for (int i = nested.Count - 1; i >= 0; i--) {
 				TypeDefinition t = nested [i];
@@ -547,7 +545,7 @@ namespace CorCompare
 		FieldDefinition [] GetFields (TypeDefinition type) {
 			ArrayList list = new ArrayList ();
 
-			FieldDefinitionCollection fields = type.Fields;
+			var fields = type.Fields;
 			foreach (FieldDefinition field in fields) {
 				if (field.IsSpecialName)
 					continue;
@@ -575,7 +573,7 @@ namespace CorCompare
 		internal static PropertyDefinition [] GetProperties (TypeDefinition type) {
 			ArrayList list = new ArrayList ();
 
-			PropertyDefinitionCollection properties = type.Properties;//type.GetProperties (flags);
+			var properties = type.Properties;//type.GetProperties (flags);
 			foreach (PropertyDefinition property in properties) {
 				MethodDefinition getMethod = property.GetMethod;
 				MethodDefinition setMethod = property.SetMethod;
@@ -597,7 +595,7 @@ namespace CorCompare
 		{
 			ArrayList list = new ArrayList ();
 
-			MethodDefinitionCollection methods = type.Methods;//type.GetMethods (flags);
+			var methods = type.Methods;//type.GetMethods (flags);
 			foreach (MethodDefinition method in methods) {
 				if (method.IsSpecialName && !method.Name.StartsWith ("op_"))
 					continue;
@@ -633,7 +631,7 @@ namespace CorCompare
 		{
 			ArrayList list = new ArrayList ();
 
-			ConstructorCollection ctors = type.Constructors;//type.GetConstructors (flags);
+			var ctors = type.Methods.Where (m => m.IsConstructor);//type.GetConstructors (flags);
 			foreach (MethodDefinition constructor in ctors) {
 				// we're only interested in public or protected members
 				if (!MustDocumentMethod(constructor))
@@ -649,7 +647,7 @@ namespace CorCompare
 		{
 			ArrayList list = new ArrayList ();
 
-			EventDefinitionCollection events = type.Events;//type.GetEvents (flags);
+			var events = type.Events;//type.GetEvents (flags);
 			foreach (EventDefinition eventDef in events) {
 				MethodDefinition addMethod = eventDef.AddMethod;//eventInfo.GetAddMethod (true);
 
@@ -670,7 +668,7 @@ namespace CorCompare
 		{
 		}
 
-		protected override CustomAttributeCollection GetCustomAttributes (MemberReference member) {
+		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
 			return ((FieldDefinition) member).CustomAttributes;
 		}
 
@@ -726,7 +724,7 @@ namespace CorCompare
 		{
 		}
 
-		protected override CustomAttributeCollection GetCustomAttributes (MemberReference member) {
+		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
 			return ((PropertyDefinition) member).CustomAttributes;
 		}
 
@@ -789,7 +787,7 @@ namespace CorCompare
 		{
 		}
 
-		protected override CustomAttributeCollection GetCustomAttributes (MemberReference member) {
+		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
 			return ((EventDefinition) member).CustomAttributes;
 		}
 
@@ -830,7 +828,7 @@ namespace CorCompare
 		{
 		}
 
-		protected override CustomAttributeCollection GetCustomAttributes (MemberReference member) {
+		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
 			return ((MethodDefinition) member).CustomAttributes;
 		}
 
@@ -868,11 +866,11 @@ namespace CorCompare
 			if (mbase.IsStatic)
 				AddAttribute (p, "static", "true");
 
-			string rettype = Utils.CleanupTypeName (mbase.ReturnType.ReturnType);
+			string rettype = Utils.CleanupTypeName (mbase.MethodReturnType.ReturnType);
 			if (rettype != "System.Void" || !mbase.IsConstructor)
 				AddAttribute (p, "returntype", (rettype));
 
-			AttributeData.OutputAttributes (document, p, mbase.ReturnType.CustomAttributes);
+			AttributeData.OutputAttributes (document, p, mbase.MethodReturnType.CustomAttributes);
 
 			MemberData.OutputGenericParameters (document, p, mbase);
 		}
@@ -909,9 +907,9 @@ namespace CorCompare
 
 	class ParameterData : BaseData
 	{
-		private ParameterDefinitionCollection parameters;
+		private IList<ParameterDefinition> parameters;
 
-		public ParameterData (XmlDocument document, XmlNode parent, ParameterDefinitionCollection parameters)
+		public ParameterData (XmlDocument document, XmlNode parent, IList<ParameterDefinition> parameters)
 			: base (document, parent)
 		{
 			this.parameters = parameters;
@@ -931,7 +929,7 @@ namespace CorCompare
 
 				string direction = "in";
 
-				if (parameter.ParameterType is ReferenceType)
+				if (parameter.ParameterType is ByReferenceType)
 					direction = parameter.IsOut ? "out" : "ref";
 
 				TypeReference t = parameter.ParameterType;
@@ -953,9 +951,9 @@ namespace CorCompare
 
 	class AttributeData : BaseData
 	{
-		CustomAttributeCollection atts;
+		IList<CustomAttribute> atts;
 
-		AttributeData (XmlDocument doc, XmlNode parent, CustomAttributeCollection attributes)
+		AttributeData (XmlDocument doc, XmlNode parent, IList<CustomAttribute> attributes)
 			: base (doc, parent)
 		{
 			atts = attributes;
@@ -977,12 +975,6 @@ namespace CorCompare
 
 			for (int i = 0; i < atts.Count; ++i) {
 				CustomAttribute att = atts [i];
-				try {
-					att.Resolve ();
-				} catch {}
-
-				if (!att.Resolved)
-					continue;
 
 				string attName = Utils.CleanupTypeName (att.Constructor.DeclaringType);
 				if (SkipAttribute (att))
@@ -1039,10 +1031,10 @@ namespace CorCompare
 
 		static void PopulateMapping (Dictionary<string, object> mapping, CustomAttribute attribute)
 		{
-			foreach (DictionaryEntry entry in attribute.Properties) {
-				var name = (string) entry.Key;
+			foreach (var named_argument in attribute.Properties) {
+				var name = named_argument.Name;
 
-				mapping.Add (name, GetArgumentValue (attribute.GetPropertyType (name), entry.Value));
+				mapping.Add (name, GetArgumentValue (named_argument.Argument.Type, named_argument.Argument.Value));
 			}
 		}
 
@@ -1065,7 +1057,7 @@ namespace CorCompare
 					break;
 				case Code.Ldarg:
 				case Code.Ldarg_S:
-					argument = ((ParameterDefinition) instruction.Operand).Sequence;
+					argument = ((ParameterDefinition) instruction.Operand).Index + 1;
 					break;
 
 				case Code.Stfld:
@@ -1126,7 +1118,8 @@ namespace CorCompare
 				if (!field_mapping.TryGetValue (pair.Value, out argument))
 					continue;
 
-				mapping.Add (pair.Key.Name, GetArgumentValue (constructor.Parameters [argument].ParameterType, attribute.ConstructorParameters [argument]));
+				var ca_arg = attribute.ConstructorArguments [argument];
+				mapping.Add (pair.Key.Name, GetArgumentValue (ca_arg.Type, ca_arg.Value));
 			}
 		}
 
@@ -1210,7 +1203,7 @@ namespace CorCompare
 				|| type_name.EndsWith ("TODOAttribute");
 		}
 
-		public static void OutputAttributes (XmlDocument doc, XmlNode parent, CustomAttributeCollection attributes)
+		public static void OutputAttributes (XmlDocument doc, XmlNode parent, IList<CustomAttribute> attributes)
 		{
 			AttributeData ad = new AttributeData (doc, parent, attributes);
 			ad.DoOutput ();
@@ -1219,7 +1212,7 @@ namespace CorCompare
 
 	static class Parameters {
 
-		public static string GetSignature (ParameterDefinitionCollection infos)
+		public static string GetSignature (IList<ParameterDefinition> infos)
 		{
 			if (infos == null || infos.Count == 0)
 				return "";
@@ -1235,8 +1228,6 @@ namespace CorCompare
 				string modifier;
 				if ((info.Attributes & ParameterAttributes.In) != 0)
 					modifier = "in";
-				else if ((info.Attributes & ParameterAttributes.Retval) != 0)
-					modifier = "ref";
 				else if ((info.Attributes & ParameterAttributes.Out) != 0)
 					modifier = "out";
 				else
@@ -1293,8 +1284,8 @@ namespace CorCompare
 			if (res != 0)
 				return res;
 
-			ParameterDefinitionCollection pia = ma.Parameters ;
-			ParameterDefinitionCollection pib = mb.Parameters;
+			IList<ParameterDefinition> pia = ma.Parameters ;
+			IList<ParameterDefinition> pib = mb.Parameters;
 			res = pia.Count - pib.Count;
 			if (res != 0)
 				return res;
