@@ -769,7 +769,7 @@ namespace Mono.CSharp {
 			       FullNamedExpression return_type, Modifiers mod,
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
-				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersClass :
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
 				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
 				AllowedModifiersClass,
 				name, attrs, parameters)
