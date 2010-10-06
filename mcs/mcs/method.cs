@@ -361,7 +361,7 @@ namespace Mono.CSharp {
 			ms.returnType = inflator.Inflate (returnType);
 			ms.parameters = parameters.Inflate (inflator);
 			if (IsGeneric)
-				ms.constraints = TypeParameterSpec.InflateConstraints (inflator, GenericDefinition.TypeParameters);
+				ms.constraints = TypeParameterSpec.InflateConstraints (inflator, Constraints);
 
 			return ms;
 		}

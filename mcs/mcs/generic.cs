@@ -1927,7 +1927,7 @@ namespace Mono.CSharp {
 			bool ok = true;
 
 			//
-			// The class constraint comes next.
+			// Check the class constraint
 			//
 			if (tparam.HasTypeConstraint) {
 				if (!CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc)) {
@@ -1939,7 +1939,7 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Now, check the interfaces and type parameters constraints
+			// Check the interfaces constraints
 			//
 			if (tparam.Interfaces != null) {
 				if (TypeManager.IsNullableType (atype)) {
@@ -1958,6 +1958,20 @@ namespace Mono.CSharp {
 
 							ok = false;
 						}
+					}
+				}
+			}
+
+			//
+			// Check the type parameter constraint
+			//
+			if (tparam.TypeArguments != null) {
+				foreach (var ta in tparam.TypeArguments) {
+					if (!CheckConversion (mc, context, atype, tparam, ta, loc)) {
+						if (mc == null)
+							return false;
+
+						ok = false;
 					}
 				}
 			}
