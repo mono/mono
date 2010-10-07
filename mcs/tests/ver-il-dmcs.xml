@@ -2243,6 +2243,40 @@
       </method>
     </type>
   </test>
+  <test name="dtest-035.cs">
+    <type name="Test">
+      <method name="System.Object get_Item(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Void set_Item(Int32, System.Object)">
+        <size>1</size>
+      </method>
+      <method name="System.Object[] get_Prop()">
+        <size>16</size>
+      </method>
+      <method name="Void set_Prop(System.Object[])">
+        <size>1</size>
+      </method>
+      <method name="Int32 get_Prop2()">
+        <size>2</size>
+      </method>
+      <method name="Void set_Prop2(Int32)">
+        <size>1</size>
+      </method>
+      <method name="System.Object get_Prop3()">
+        <size>12</size>
+      </method>
+      <method name="Void set_Prop3(System.Object)">
+        <size>74</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>844</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>18</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Int32 Main()">
@@ -8782,6 +8816,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-232.cs">
+    <type name="M">
+      <method name="Int32 Main()">
+        <size>68</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-233.cs">
     <type name="Program">
       <method name="Void .ctor()">
@@ -13983,6 +14027,43 @@
       </method>
       <method name="Int32 Main()">
         <size>29</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-448.cs">
+    <type name="Impl`1[T]">
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>2</size>
+      </method>
+      <method name="Void Foo[U](IEnumerable`1)">
+        <size>1</size>
+      </method>
+      <method name="IEnumerator`1 GetEnumerator()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1[K]">
+      <method name="Void .ctor()">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Test`1[TT]">
+      <method name="Void Foo()">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void Main()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>

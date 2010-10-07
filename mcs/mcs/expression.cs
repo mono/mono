@@ -7959,7 +7959,7 @@ namespace Mono.CSharp {
 		//
 		ElementAccess ea;
 
-		LocalTemporary temp;
+		LocalTemporary temp, prepared_address;
 
 		bool prepared;
 		
@@ -8032,6 +8032,9 @@ namespace Mono.CSharp {
 			var ac = ea.Expr.Type as ArrayContainer;
 
 			if (prepared) {
+				if (prepared_address != null)
+					prepared_address.Emit (ec);
+
 				ec.EmitLoadFromPtr (type);
 			} else {
 				LoadArrayAndArguments (ec);
@@ -8056,12 +8059,21 @@ namespace Mono.CSharp {
 			TypeSpec t = source.Type;
 			prepared = prepare_for_load;
 
-			if (prepared) {
-				AddressOf (ec, AddressOp.LoadStore);
-				ec.Emit (OpCodes.Dup);
-			} else {
-				LoadArrayAndArguments (ec);
+			LoadArrayAndArguments (ec);
 
+			if (prepared) {
+				ec.EmitArrayAddress (ac);
+				if (source is DynamicExpressionStatement) {
+					// Store prepared address in a variable to keep stack
+					// consistent for compound dynamic operation which is
+					// emitted as a method call
+					prepared_address = new LocalTemporary (ReferenceContainer.MakeType (t));
+					prepared_address.Store (ec);
+					prepared_address.Emit (ec);
+				} else {
+					ec.Emit (OpCodes.Dup);
+				}
+			} else {
 				//
 				// If we are dealing with a struct, get the
 				// address of it, so we can store it.
@@ -8194,7 +8206,7 @@ namespace Mono.CSharp {
 			if (prepared) {
 				prepared_value.Emit (ec);
 			} else {
-				Invocation.EmitCall (ec, InstanceExpression, Getter, arguments, loc, false, false);
+				Invocation.EmitCall (ec, InstanceExpression, Getter, arguments, loc);
 			}
 
 			if (leave_copy) {
@@ -8210,8 +8222,7 @@ namespace Mono.CSharp {
 			Expression value = source;
 
 			if (prepared) {
-				Invocation.EmitCall (ec, InstanceExpression, Getter,
-					arguments, loc, true, false);
+				Invocation.EmitCall (ec, InstanceExpression, Getter, arguments, loc, true, false);
 
 				prepared_value = new LocalTemporary (type);
 				prepared_value.Store (ec);

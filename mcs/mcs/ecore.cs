@@ -4996,9 +4996,10 @@ namespace Mono.CSharp {
 
 		public override void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			Expression my_source = source;
+			Arguments args;
 
-			if (prepare_for_load) {
+			if (prepare_for_load && !(source is DynamicExpressionStatement)) {
+				args = new Arguments (0);
 				prepared = true;
 				source.Emit (ec);
 				
@@ -5009,16 +5010,19 @@ namespace Mono.CSharp {
 						temp.Store (ec);
 					}
 				}
-			} else if (leave_copy) {
-				source.Emit (ec);
-				temp = new LocalTemporary (this.Type);
-				temp.Store (ec);
-				my_source = temp;
+			} else {
+				args = new Arguments (1);
+
+				if (leave_copy) {
+					source.Emit (ec);
+					temp = new LocalTemporary (this.Type);
+					temp.Store (ec);
+					args.Add (new Argument (temp));
+				} else {
+					args.Add (new Argument (source));
+				}
 			}
 
-			Arguments args = new Arguments (1);
-			args.Add (new Argument (my_source));
-			
 			Invocation.EmitCall (ec, InstanceExpression, Setter, args, loc, false, prepared);
 			
 			if (temp != null) {
