@@ -1,5 +1,5 @@
-// CS0019: Operator `+=' cannot be applied to operands of type `EventHandler' and `T'
-// Line: 10
+// CS0029: Cannot implicitly convert type `T' to `EventHandler'
+// Line: 14
 
 using System;
 

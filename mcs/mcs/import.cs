@@ -655,7 +655,7 @@ namespace Mono.CSharp
 			//
 			// Two stage setup as the base type can be inflated declaring type
 			//
-			if (declaringType == null)
+			if (declaringType == null || !IgnorePrivateMembers)
 				ImportTypeBase (spec, type);
 
 			return spec;
