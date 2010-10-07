@@ -315,6 +315,22 @@ namespace MonoTests.System.Reflection.Emit
 			FieldBuilder fb = tb.DefineField ("foo", typeof (int), 0);
 			tb.CreateType ();
 
+			FieldInfo fi = mb.ResolveField (0x04000001);
+			Assert.IsNotNull (fi);
+			Assert.AreEqual ("foo", fi.Name);
+		}
+
+		[Test]
+		public void ResolveGenericFieldBuilderOnGenericTypeBuilder ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			TypeBuilder tb = mb.DefineType ("Foo`1");
+			var t = tb.DefineGenericParameters ("T") [0];
+			FieldBuilder fb = tb.DefineField ("foo", t, 0);
+			tb.CreateType ();
+
 			FieldInfo fi = mb.ResolveField (fb.GetToken ().Token);
 			Assert.IsNotNull (fi);
 			Assert.AreEqual ("foo", fi.Name);
