@@ -109,19 +109,13 @@ namespace System.Security.Cryptography {
 
 		public void Clear () 
 		{
-			Dispose (true);
-			GC.SuppressFinalize (this); // not called in Stream.Dispose
+			Close ();
 		}
 
 		// LAMESPEC: A CryptoStream can be close in read mode
 		public override void Close () 
 		{
-			// only flush in write mode (bugzilla 46143)
-			if ((!_flushedFinalBlock) && (_mode == CryptoStreamMode.Write))
-				FlushFinalBlock ();
-
-			if (_stream != null)
-				_stream.Close ();
+			base.Close ();
 		}
 
 		public override int Read ([In,Out] byte[] buffer, int offset, int count)
@@ -353,6 +347,21 @@ namespace System.Security.Cryptography {
 		protected override void Dispose (bool disposing) 
 		{
 			if (!_disposed) {
+				if (disposing) {
+					// only flush in write mode (bugzilla 46143)
+					if (!_flushedFinalBlock) {
+						if (_mode == CryptoStreamMode.Write) {
+							FlushFinalBlock ();
+						} else {
+							// See bug #644648
+							_transform.TransformFinalBlock (new byte [0], 0, 0);
+						}
+						_flushedFinalBlock = true;
+					}
+
+					if (_stream != null)
+						_stream.Close ();
+				}
 				_disposed = true;
 				// always cleared for security reason
 				if (_workingBlock != null)
