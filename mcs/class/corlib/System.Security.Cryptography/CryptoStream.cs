@@ -117,7 +117,12 @@ namespace System.Security.Cryptography {
 		// LAMESPEC: A CryptoStream can be close in read mode
 		public override void Close () 
 		{
+#if NET_1_1
+			Dispose (true);
+			GC.SuppressFinalize (this);
+#else
 			base.Close ();
+#endif
 		}
 
 		public override int Read ([In,Out] byte[] buffer, int offset, int count)
