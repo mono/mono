@@ -1389,6 +1389,46 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		}
 
+		[Test]
+		public void ReadModeDispose_FinalBlock ()
+		{
+			using (SHA1 sha1 = SHA1.Create()) {
+				using (MemoryStream mem = new MemoryStream(new byte[] { 1, 2, 3 }, false))
+					using (CryptoStream cs = new CryptoStream(mem, sha1, CryptoStreamMode.Read))
+					{
+					}
+				byte b = sha1.Hash [0]; // This will throw if TransformFinalBlock not called in sha1
+				GC.KeepAlive (b); // just the warning...
+			}
+                }
+
+		[Test]
+		public void CustomDisposeCalled ()
+		{
+			using (MemoryStream mem = new MemoryStream(new byte[] { 1, 2, 3 }, false)) {
+				MyCryptoStream cs;
+				using (cs = new MyCryptoStream (mem, SHA1.Create()))
+				{
+				}
+				Assert.IsTrue (cs.DisposeCalled, "#1");
+			}
+		}
+
+		class MyCryptoStream : CryptoStream {
+			public bool DisposeCalled { get; private set;}
+
+			public MyCryptoStream(Stream stream, ICryptoTransform transform)
+						: base(stream, transform, CryptoStreamMode.Read)
+			{
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				base.Dispose(disposing);
+				DisposeCalled = true;
+			}
+		}
+
 		class ExpandTransform : ICryptoTransform {
 
 			public bool CanReuseTransform {
