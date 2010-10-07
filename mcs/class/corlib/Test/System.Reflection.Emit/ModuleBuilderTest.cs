@@ -365,6 +365,48 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNotNull (mi);
 			Assert.AreEqual ("Frub", mi.Name);
 		}
+
+		[Test]
+		public void ResolveMemberField ()
+		{
+			var assembly = genAssembly ();
+			var module = assembly.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var type = module.DefineType ("Foo");
+			var method = type.DefineMethod ("Str", MethodAttributes.Static, typeof (string), Type.EmptyTypes);
+			var il = method.GetILGenerator ();
+
+			il.Emit (OpCodes.Ldsfld, typeof (string).GetField ("Empty"));
+			il.Emit (OpCodes.Ret);
+
+			type.CreateType ();
+
+			var string_empty = (FieldInfo) module.ResolveMember (0x0a000001);
+			Assert.IsNotNull (string_empty);
+			Assert.AreEqual ("Empty", string_empty.Name);
+			Assert.AreEqual (typeof (string), string_empty.DeclaringType);
+		}
+
+		[Test]
+		public void ResolveMemberMethod ()
+		{
+			var assembly = genAssembly ();
+			var module = assembly.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var type = module.DefineType ("Foo");
+			var method = type.DefineMethod ("Str", MethodAttributes.Static, typeof (void), Type.EmptyTypes);
+			var il = method.GetILGenerator ();
+
+			il.Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", Type.EmptyTypes));
+			il.Emit (OpCodes.Ret);
+
+			type.CreateType ();
+
+			var writeline = (MethodInfo) module.ResolveMember (0x0a000001);
+			Assert.IsNotNull (writeline);
+			Assert.AreEqual ("WriteLine", writeline.Name);
+			Assert.AreEqual (typeof (Console), writeline.DeclaringType);
+		}
 #endif
 
 		[Test]
