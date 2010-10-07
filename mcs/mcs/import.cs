@@ -652,7 +652,25 @@ namespace Mono.CSharp
 
 			import_cache.Add (type, spec);
 
-			if (kind == MemberKind.Interface)
+			//
+			// Two stage setup as the base type can be inflated declaring type
+			//
+			if (declaringType == null)
+				ImportTypeBase (spec, type);
+
+			return spec;
+		}
+
+		public void ImportTypeBase (Type type)
+		{
+			TypeSpec spec = import_cache[type];
+			if (spec != null)
+				ImportTypeBase (spec, type);
+		}
+
+		void ImportTypeBase (TypeSpec spec, Type type)
+		{
+			if (spec.Kind == MemberKind.Interface)
 				spec.BaseType = TypeManager.object_type;
 			else if (type.BaseType != null)
 				spec.BaseType = CreateType (type.BaseType);
@@ -663,8 +681,6 @@ namespace Mono.CSharp
 					spec.AddInterface (CreateType (iface));
 				}
 			}
-
-			return spec;
 		}
 
 		TypeParameterSpec CreateTypeParameter (Type type, TypeSpec declaringType)
@@ -1353,7 +1369,7 @@ namespace Mono.CSharp
 
 					break;
 				case MemberTypes.NestedType:
-					// Already done
+					meta_import.ImportTypeBase ((Type) member);
 					continue;
 				default:
 					throw new NotImplementedException (member.ToString ());
