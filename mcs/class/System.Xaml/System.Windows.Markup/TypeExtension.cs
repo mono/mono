@@ -54,6 +54,7 @@ namespace System.Windows.Markup
 		[ConstructorArgument ("type")]
 		[DefaultValue (null)]
 		public Type Type { get; set; }
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string TypeName { get; set; }
 
 		public override object ProvideValue (IServiceProvider serviceProvider)

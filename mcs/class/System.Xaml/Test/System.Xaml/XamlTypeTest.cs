@@ -344,8 +344,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsAmbient, "#22");
 			Assert.IsNull (t.AllowedContentTypes, "#23");
 			Assert.IsNull (t.ContentWrappers, "#24");
-			// FIXME: enable this when we fixed TypeConverter for Type.
-			//Assert.IsNotNull (t.TypeConverter, "#25"); // TypeTypeConverter
+			Assert.IsNotNull (t.TypeConverter, "#25"); // TypeTypeConverter
 			Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNull (t.ContentProperty, "#27");
 			//Assert.IsNull (t.DeferringLoader, "#28");

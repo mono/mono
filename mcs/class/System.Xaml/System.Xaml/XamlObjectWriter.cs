@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Markup;
+using System.Xaml.Schema;
 
 namespace System.Xaml
 {
@@ -39,6 +40,8 @@ namespace System.Xaml
 				throw new ArgumentNullException ("schemaContext");
 			this.sctx = schemaContext;
 			this.settings = settings ?? new XamlObjectWriterSettings ();
+
+			service_provider = new XamlObjectWriterServiceProvider (this);
 		}
 
 		XamlSchemaContext sctx;
@@ -47,17 +50,24 @@ namespace System.Xaml
 		XamlWriterStateManager manager = new XamlWriterStateManager<XamlObjectWriterException, XamlObjectWriterException> (false);
 		object result;
 		int line = -1, column = -1;
-		Stack<object> objects = new Stack<object> ();
-		Stack<XamlType> types = new Stack<XamlType> ();
 		Stack<XamlMember> members = new Stack<XamlMember> ();
 
-		List<object> arguments = new List<object> (); // FIXME: so far it has no contents.
-		string factory_method;
-		bool object_instantiated;
-		Stack<List<object>> contents_stack = new Stack<List<object>> ();
-		List<object> objects_from_getter = new List<object> ();
-		Stack<List<XamlMember>> written_properties_stack = new Stack<List<XamlMember>> ();
-		XamlNameResolver name_resolver = new XamlNameResolver ();
+		List<NamespaceDeclaration> namespaces = new List<NamespaceDeclaration> ();
+		IServiceProvider service_provider;
+		Stack<ObjectState> object_states = new Stack<ObjectState> ();
+
+		class ObjectState
+		{
+			public XamlType Type;
+			public object Value;
+			public List<object> Contents = new List<object> ();
+			public List<XamlMember> WrittenProperties = new List<XamlMember> ();
+			public bool IsInstantiated;
+			public bool IsGetObject;
+
+			public string FactoryMethod;
+			public List<object> Arguments = new List<object> ();
+		}
 
 		public virtual object Result {
 			get { return result; }
@@ -85,9 +95,9 @@ namespace System.Xaml
 			if (!disposing)
 				return;
 
-			while (types.Count > 0) {
+			while (object_states.Count > 0) {
 				WriteEndObject ();
-				if (types.Count > 0)
+				if (object_states.Count > 0)
 					WriteEndMember ();
 			}
 		}
@@ -126,7 +136,7 @@ namespace System.Xaml
 			if (member.IsDirective)
 				return;
 			if (!OnSetValue (this, member, value))
-				member.Invoker.SetValue (objects.Peek (), value);
+				member.Invoker.SetValue (object_states.Peek ().Value, value);
 		}
 
 		public void SetLineInfo (int lineNumber, int linePosition)
@@ -141,39 +151,53 @@ namespace System.Xaml
 			manager.EndMember ();
 			
 			var xm = members.Pop ();
-			var xt = xm.Type;
-			var contents = contents_stack.Peek ();
+			var state = object_states.Peek ();
+			var xt = state.Type;
+			var contents = state.Contents;
 
 			if (xm == XamlLanguage.Arguments) {
-				InitializeObjectWithArguments (contents.ToArray ());
+				throw new NotImplementedException ();
 			} else if (xm == XamlLanguage.Initialization) {
 				// ... and no need to do anything. The object value to pop *is* the return value.
-			} else if (xt.IsArray) {
+			} else if (xm.Type.IsArray) {
 				throw new NotImplementedException ();
-			} else if (xt.IsCollection) {
-				var obj = objects.Peek ();
+			} else if (xm == XamlLanguage.Items) {
+				var coll = state.Value;
 				foreach (var content in contents)
-					xt.Invoker.AddToCollection (obj, content);
-			} else if (xt.IsDictionary) {
+					xm.Type.Invoker.AddToCollection (coll, content);
+			} else if (xm.Type.IsDictionary) {
 				throw new NotImplementedException ();
 			} else {
 				if (contents.Count > 1)
-					throw new XamlDuplicateMemberException (String.Format ("Value for {0} is assigned more than once", xm.Name));
+					throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", xm, state.Type));
 				if (contents.Count == 1) {
-					var value = GetCorrectlyTypedValue (xm.Type, contents [0]);
-					if (!objects_from_getter.Remove (value))
+					var value = contents [0];
+					if (!xm.Type.IsCollection || !xm.IsReadOnly) // exclude read-only object.
 						SetValue (xm, value);
 				}
 			}
 
 			contents.Clear ();
-			written_properties_stack.Peek ().Add (xm);
+
+			if (object_states.Count > 0)
+				object_states.Peek ().WrittenProperties.Add (xm);
+			//written_properties_stack.Peek ().Add (xm);
 		}
 
 		object GetCorrectlyTypedValue (XamlType xt, object value)
 		{
+			// FIXME: this could be generalized by some means, but I cannot find any.
+			if (xt.UnderlyingType == typeof (Type))
+				xt = XamlLanguage.Type;
+			if (xt == XamlLanguage.Type && value is string)
+				value = new TypeExtension ((string) value);
+			
+			if (value is MarkupExtension)
+				value = ((MarkupExtension) value).ProvideValue (service_provider);
+
 			if (IsAllowedType (xt, value))
 				return value;
+
 			if (xt.TypeConverter != null && value != null) {
 				var tc = xt.TypeConverter.ConverterInstance;
 				if (tc != null && tc.CanConvertFrom (value.GetType ()))
@@ -181,30 +205,35 @@ namespace System.Xaml
 				if (IsAllowedType (xt, value))
 					return value;
 			}
-			throw new XamlObjectWriterException (String.Format ("Value is not of type {0}", xt));
+
+			throw new XamlObjectWriterException (String.Format ("Value '{1}' (of type {2}) is not of or convertible to type {0}", xt, value, value != null ? (object) value.GetType () : "(null)"));
 		}
 
 		bool IsAllowedType (XamlType xt, object value)
 		{
-			return xt == null || xt.UnderlyingType == null || xt.UnderlyingType.IsInstanceOfType (value);
+			return  xt == null ||
+				xt.UnderlyingType == null ||
+				xt.UnderlyingType.IsInstanceOfType (value) ||
+				value == null && xt == XamlLanguage.Null ||
+				xt.IsMarkupExtension && IsAllowedType (xt.MarkupExtensionReturnType, value);
 		}
 
 		public override void WriteEndObject ()
 		{
-			manager.EndObject (types.Count > 0);
+			manager.EndObject (object_states.Count > 0);
 
-			InitializeObjectIfRequired (null); // this is required for such case that there was no StartMember call.
+			InitializeObjectIfRequired (false); // this is required for such case that there was no StartMember call.
 
-			types.Pop ();
-			contents_stack.Pop ();
-			written_properties_stack.Pop ();
-			var obj = objects.Pop ();
-			if (members.Count > 0)
-				contents_stack.Peek ().Add (obj);
-			if (objects.Count == 0) {
-				var ext = obj as MarkupExtension;
-				result = ext != null ? ext.ProvideValue (name_resolver) : obj;
+			var state = object_states.Pop ();
+			var xt = state.Type;
+			var obj = GetCorrectlyTypedValue (state.Type, state.Value);
+			if (members.Count > 0) {
+				var pstate = object_states.Peek ();
+				pstate.Contents.Add (obj);
+				pstate.WrittenProperties.Add (members.Peek ());
 			}
+			if (object_states.Count == 0)
+				result = obj;
 		}
 
 		public override void WriteGetObject ()
@@ -212,18 +241,16 @@ namespace System.Xaml
 			manager.GetObject ();
 
 			var xm = members.Peek ();
-			// see GetObjectOnNonNullString() test
+			// see GetObjectOnNonNullString() test. Below is invalid.
 			//if (!xm.Type.IsCollection)
 			//	throw new XamlObjectWriterException (String.Format ("WriteGetObject method can be invoked only when current member '{0}' is of collection type", xm.Name));
 
-			var obj = xm.Invoker.GetValue (objects.Peek ());
-			if (obj == null)
+			var instance = xm.Invoker.GetValue (object_states.Peek ().Value);
+			if (instance == null)
 				throw new XamlObjectWriterException (String.Format ("The value  for '{0}' property is null", xm.Name));
 
-			types.Push (SchemaContext.GetXamlType (obj.GetType ()));
-			contents_stack.Push (new List<object> ());
-			ObjectInitialized (obj);
-			objects_from_getter.Add (obj);
+			var state = new ObjectState () {Type = SchemaContext.GetXamlType (instance.GetType ()), Value = instance, IsInstantiated = true, IsGetObject = true};
+			object_states.Push (state);
 		}
 
 		public override void WriteNamespace (NamespaceDeclaration namespaceDeclaration)
@@ -233,7 +260,7 @@ namespace System.Xaml
 
 			manager.Namespace ();
 
-			// FIXME: find out what to do.
+			namespaces.Add (namespaceDeclaration);
 		}
 
 		public override void WriteStartMember (XamlMember property)
@@ -243,34 +270,34 @@ namespace System.Xaml
 
 			manager.StartMember ();
 
-			var wpl = written_properties_stack.Peek ();
-			if (wpl.Contains (property))
-				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", property.Name, types.Peek ().Name));
-			wpl.Add (property);
+			var wpl = object_states.Peek ().WrittenProperties;
+			// FIXME: enable this. Duplicate property check should
+			// be differentiate from duplicate contents (both result
+			// in XamlDuplicateMemberException though).
+			// Now it is done at WriteStartObject/WriteValue, but
+			// it is simply wrong.
+//			if (wpl.Contains (property))
+//				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", property, object_states.Peek ().Type));
+//			wpl.Add (property);
 
 			members.Push (property);
 		}
 
-		void InitializeObjectWithArguments (object [] args)
+		void InitializeObjectIfRequired (bool isStart)
 		{
-			var obj = types.Peek ().Invoker.CreateInstance (args);
-			ObjectInitialized (obj);
-		}
-
-		void InitializeObjectIfRequired (XamlMember property)
-		{
-			if (object_instantiated)
+			var state = object_states.Peek ();
+			if (state.IsInstantiated)
 				return;
 
 			// FIXME: "The default techniques in absence of a factory method are to attempt to find a default constructor, then attempt to find an identified type converter on type, member, or destination type."
 			// http://msdn.microsoft.com/en-us/library/system.xaml.xamllanguage.factorymethod%28VS.100%29.aspx
 			object obj;
-			var args = arguments.ToArray ();
-			if (factory_method != null) // FIXME: it must be verified with tests.
-				obj = types.Peek ().UnderlyingType.GetMethod (factory_method).Invoke (null, args);
+			if (state.FactoryMethod != null) // FIXME: it must be implemented and verified with tests.
+				throw new NotImplementedException ();
 			else
-				obj = types.Peek ().Invoker.CreateInstance (args);
-			ObjectInitialized (obj);
+				obj = state.Type.Invoker.CreateInstance (null);
+			state.Value = obj;
+			state.IsInstantiated = true;
 		}
 
 		public override void WriteStartObject (XamlType xamlType)
@@ -280,15 +307,20 @@ namespace System.Xaml
 
 			manager.StartObject ();
 
-			types.Push (xamlType);
-			contents_stack.Push (new List<object> ());
+			var xm = members.Count > 0 ? members.Peek () : null;
+			var pstate = xm != null ? object_states.Peek () : null;
+			var wpl = xm != null && xm != XamlLanguage.Items ? pstate.WrittenProperties : null;
+			if (wpl != null && wpl.Contains (xm))
+				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", xm, pstate.Type));
 
-			object_instantiated = false;
+			var cstate = new ObjectState () {Type = xamlType, IsInstantiated = false};
+			object_states.Push (cstate);
 
-			written_properties_stack.Push (new List<XamlMember> ());
-
-			if (!xamlType.IsContentValue ()) // FIXME: there could be more conditions.
-				InitializeObjectIfRequired (null);
+			if (!xamlType.IsContentValue ()) // FIXME: there could be more conditions e.g. the type requires Arguments.
+				InitializeObjectIfRequired (true);
+			
+			if (wpl != null) // note that this adds to the *owner* object's properties.
+				wpl.Add (xm);
 		}
 
 		public override void WriteValue (object value)
@@ -296,21 +328,93 @@ namespace System.Xaml
 			manager.Value ();
 
 			var xm = members.Peek ();
+			var state = object_states.Peek ();
 
-			if (xm == XamlLanguage.Initialization)
-				ObjectInitialized (GetCorrectlyTypedValue (types.Peek (), value));
+			var wpl = xm != null && xm != XamlLanguage.Items ? state.WrittenProperties : null;
+			if (wpl != null && wpl.Contains (xm))
+				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", xm, state.Type));
+
+			if (xm == XamlLanguage.Initialization ||
+			    xm == state.Type.ContentProperty) {
+				value = GetCorrectlyTypedValue (state.Type, value);
+				state.Value = value;
+				state.IsInstantiated = true;
+			}
 			else if (xm == XamlLanguage.FactoryMethod)
-				factory_method = (string) value;
+				state.FactoryMethod = (string) value;
+//			else if (xm.Type.IsCollection)
+			else if (xm == XamlLanguage.Items) // FIXME: am not sure which is good yet.
+				state.Contents.Add (GetCorrectlyTypedValue (xm.Type.ItemType, value));
 			else
-				contents_stack.Peek ().Add (value);
+				state.Contents.Add (GetCorrectlyTypedValue (xm.Type, value));
+			if (wpl != null)
+				wpl.Add (xm);
 		}
 
-		void ObjectInitialized (object obj)
+		class XamlObjectWriterServiceProvider : IServiceProvider
 		{
-			objects.Push (obj);
-			object_instantiated = true;
-			arguments.Clear ();
-			factory_method = null;
+			XamlNameResolver name_resolver = new XamlNameResolver ();
+			XamlTypeResolver type_resolver;
+			NamespaceResolver namespace_resolver;
+
+			public XamlObjectWriterServiceProvider (XamlObjectWriter writer)
+			{
+				namespace_resolver = new NamespaceResolver (writer.namespaces);
+				type_resolver = new XamlTypeResolver (namespace_resolver, writer.SchemaContext);
+			}
+
+			public object GetService (Type serviceType)
+			{
+				if (serviceType == typeof (IXamlNamespaceResolver))
+					return namespace_resolver;
+				if (serviceType == typeof (IXamlNameResolver))
+					return name_resolver;
+				if (serviceType == typeof (IXamlTypeResolver))
+					return type_resolver;
+				return null;
+			}
+		}
+		
+		internal class XamlTypeResolver : IXamlTypeResolver
+		{
+			NamespaceResolver ns_resolver;
+			XamlSchemaContext schema_context;
+
+			public XamlTypeResolver (NamespaceResolver namespaceResolver, XamlSchemaContext schemaContext)
+			{
+				ns_resolver = namespaceResolver;
+				schema_context = schemaContext;
+			}
+
+			public Type Resolve (string typeName)
+			{
+				var tn = XamlTypeName.Parse (typeName, ns_resolver);
+				var xt = schema_context.GetXamlType (tn);
+				return xt != null ? xt.UnderlyingType : null;
+			}
+		}
+
+		internal class NamespaceResolver : IXamlNamespaceResolver
+		{
+			public NamespaceResolver (List<NamespaceDeclaration> source)
+			{
+				this.source = source;
+			}
+			
+			List<NamespaceDeclaration> source;
+			
+			public string GetNamespace (string prefix)
+			{
+				foreach (var nsd in source)
+					if (nsd.Prefix == prefix)
+						return nsd.Namespace;
+				return null;
+			}
+			
+			public IEnumerable<NamespaceDeclaration> GetNamespacePrefixes ()
+			{
+				return source;
+			}
 		}
 	}
 }

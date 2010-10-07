@@ -115,7 +115,9 @@ namespace MonoTests.System.Xaml
 		public void Read_ArrayInt32 ()
 		{
 			ReadTest ("Array_Int32.xml");
-			//LoadTest<int[]> ("Array_Int32.xml");
+			var ret = LoadTest<int[]> ("Array_Int32.xml");
+			Assert.AreEqual (5, ret.Length, "#1");
+			Assert.AreEqual (2147483647, ret [4], "#2");
 		}
 
 		[Test]

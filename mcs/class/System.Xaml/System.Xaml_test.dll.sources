@@ -1,5 +1,7 @@
 System.Windows.Markup/ArrayExtensionTest.cs
+System.Windows.Markup/ReferenceTest.cs
 System.Windows.Markup/StaticExtensionTest.cs
+System.Windows.Markup/TypeExtensionConverterTest.cs
 System.Windows.Markup/TypeExtensionTest.cs
 System.Windows.Markup/ValueSerializerTest.cs
 System.Windows.Markup/XDataTest.cs

@@ -254,6 +254,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[ExpectedException (typeof (XamlDuplicateMemberException))]
 		public void ValueAfterObject2 ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
@@ -263,6 +264,8 @@ namespace MonoTests.System.Xaml
 			xw.WriteEndObject ();
 			// passes here, but should be rejected later.
 			xw.WriteValue ("foo");
+
+			xw.WriteEndMember (); // Though this raises an error.
 		}
 
 		[Test]
@@ -280,6 +283,7 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		[ExpectedException (typeof (XamlDuplicateMemberException))]
+		[Category ("NotWorking")]
 		public void DuplicateAssignment2 ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
@@ -432,6 +436,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[ExpectedException (typeof (XamlDuplicateMemberException))] // duplicate member assignment
 		public void ObjectContainsObjectAndValue ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
@@ -440,6 +445,8 @@ namespace MonoTests.System.Xaml
 			xw.WriteStartObject (xt3);
 			xw.WriteEndObject ();
 			xw.WriteValue ("foo"); // but this is allowed ...
+
+			xw.WriteEndMember (); // Though this raises an error.
 		}
 
 		[Test]

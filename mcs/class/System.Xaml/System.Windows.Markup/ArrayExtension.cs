@@ -58,6 +58,7 @@ namespace System.Windows.Markup
 			Items = new List<object> ();
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public IList Items { get; private set; }
 
 		[ConstructorArgument ("arrayType")]

@@ -51,10 +51,13 @@ namespace System.Windows.Markup
 				throw new ArgumentNullException ("serviceProvider");
 			if (Name == null)
 				throw new InvalidOperationException ("Name property is not set");
-			var r = ((object) serviceProvider) as IXamlNameResolver;
+			var r = serviceProvider.GetService (typeof (IXamlNameResolver)) as IXamlNameResolver;
 			if (r == null)
-				throw new ArgumentException ("serviceProvider does not implement IXamlNameResolver");
-			return r.Resolve (Name);
+				throw new InvalidOperationException ("serviceProvider does not implement IXamlNameResolver");
+			var ret = r.Resolve (Name);
+			if (ret == null)
+				ret = r.GetFixupToken (new string [] {Name}, true);
+			return ret;
 		}
 	}
 }
