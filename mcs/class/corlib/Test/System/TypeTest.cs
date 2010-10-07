@@ -3345,7 +3345,7 @@ PublicKeyToken=b77a5c561934e089"));
 		public void DeclaringTypeOfGenericNestedTypeInstanceIsOpen ()
 		{
 			var type = typeof (Foo<int>.Nested<string>);
-			Assert.AreSame (typeof (Foo<>), a.DeclaringType, "#1");
+			Assert.AreSame (typeof (Foo<>), type.DeclaringType, "#1");
 		}
 
 #if NET_4_0
