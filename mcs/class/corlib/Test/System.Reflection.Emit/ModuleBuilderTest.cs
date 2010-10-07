@@ -331,7 +331,7 @@ namespace MonoTests.System.Reflection.Emit
 			FieldBuilder fb = tb.DefineField ("foo", t, 0);
 			tb.CreateType ();
 
-			FieldInfo fi = mb.ResolveField (fb.GetToken ().Token);
+			FieldInfo fi = mb.ResolveField (0x04000001);
 			Assert.IsNotNull (fi);
 			Assert.AreEqual ("foo", fi.Name);
 		}
