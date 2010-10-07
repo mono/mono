@@ -73,6 +73,8 @@ namespace System.Reflection.Emit {
 			offset = -1;
 			typeb = tb;
 			table_idx = tb.get_next_table_index (this, 0x04, true);
+
+			((ModuleBuilder) tb.Module).RegisterToken (this, GetToken ().Token);
 		}
 
 		public override FieldAttributes Attributes {
