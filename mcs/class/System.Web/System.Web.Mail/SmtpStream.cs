@@ -30,7 +30,6 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Text;
-using System.Security.Cryptography;
 using System.Diagnostics;
 
 namespace System.Web.Mail {
