@@ -71,14 +71,7 @@ namespace System.Security.Cryptography {
 			_mode = mode;
 			_disposed = false;
 			if (transform != null) {
-				if (mode == CryptoStreamMode.Read) {
-					_currentBlock = new byte [transform.InputBlockSize];
-					_workingBlock = new byte [transform.InputBlockSize];
-				}
-				else if (mode == CryptoStreamMode.Write) {
-					_currentBlock = new byte [transform.OutputBlockSize];
-					_workingBlock = new byte [transform.OutputBlockSize];
-				}
+				_workingBlock = new byte [transform.InputBlockSize];
 			}
 		}
 
@@ -250,7 +243,7 @@ namespace System.Security.Cryptography {
 			}
 
 			if (_stream == null)
-				throw new ArgumentNullException ("inner stream was diposed");
+				throw new ArgumentNullException ("inner stream was disposed");
 
 			int buffer_length = count;
 
@@ -267,6 +260,9 @@ namespace System.Security.Cryptography {
 			int bufferPos = offset;
 			while (count > 0) {
 				if (_partialCount == _transform.InputBlockSize) {
+					if (_currentBlock == null)
+						_currentBlock = new byte [_transform.OutputBlockSize];
+
 					// use partial block to avoid (re)allocation
 					int len = _transform.TransformBlock (_workingBlock, 0, _partialCount, _currentBlock, 0);
 					_stream.Write (_currentBlock, 0, len);

@@ -1457,6 +1457,16 @@ namespace MonoTests.System.Security.Cryptography {
 			CryptoStream cs = new CryptoStream (Stream.Null, SHA1.Create (), (CryptoStreamMode) 0xff);
 		}
 
+		[Test]
+		public void OutputBlock_Smaller ()
+		{
+			// The OutputBlockSize is smaller than the InputBlockSize
+			using (CryptoStream cs = new CryptoStream(Stream.Null, new MyCryptAlgorithm(), CryptoStreamMode.Write)) {
+				byte[] buffer = new byte[512 * 1024];
+				cs.Write(buffer, 0, buffer.Length);
+			}
+		}
+
 		class MyCryptoStream : CryptoStream {
 			public bool DisposeCalled { get; private set;}
 
@@ -1627,6 +1637,25 @@ namespace MonoTests.System.Security.Cryptography {
 					Assert.AreEqual (compress_values [n++], value);
 				}
 			}
+		}
+
+		class MyCryptAlgorithm : ICryptoTransform {
+			public bool CanReuseTransform { get { return true; } }
+			public bool CanTransformMultipleBlocks { get { return false; } }
+			public int InputBlockSize { get { return 128 * 1024; } }
+			public int OutputBlockSize { get { return 64 * 1024; } }
+
+			public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+			{
+				return this.OutputBlockSize;
+			}
+
+			public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
+			{
+				return new byte[this.OutputBlockSize];
+			}
+
+			public void Dispose() {}
 		}
 
 		class MyStream : Stream {
