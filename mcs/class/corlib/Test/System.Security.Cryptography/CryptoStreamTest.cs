@@ -1414,6 +1414,42 @@ namespace MonoTests.System.Security.Cryptography {
 			}
 		}
 
+		[Test]
+		public void ExplicitFlush ()
+		{
+			// Tests that explicitly calling Flush does not call Flush in the underlying stream
+			MyStream ms = new MyStream ();
+			using (CryptoStream cs = new CryptoStream (ms, SHA1.Create (), CryptoStreamMode.Read)) {
+				ms.FlushCounterEnabled = true;
+				cs.Flush ();
+				ms.FlushCounterEnabled = false;
+			}
+			Assert.IsTrue (ms.FlushCounter == 0);
+		}
+
+		[Test]
+		public void ImplicitFlush ()
+		{
+			// Tests that Dispose() calls Flush on the underlying stream
+			MyStream ms = new MyStream ();
+			ms.FlushCounterEnabled = true;
+			using (CryptoStream cs = new CryptoStream (ms, SHA1.Create (), CryptoStreamMode.Read)) {
+			}
+			Assert.IsTrue (ms.FlushCounter == 1);
+		}
+
+		[Test]
+		public void ImplicitFlushCascade ()
+		{
+			// Tests that Dispose() calls Flush on the underlying stream
+			MyStream ms = new MyStream ();
+			ms.FlushCounterEnabled = true;
+			CryptoStream cs1 = new CryptoStream (ms, SHA1.Create (), CryptoStreamMode.Read);
+			using (CryptoStream cs = new CryptoStream (cs1, SHA1.Create (), CryptoStreamMode.Read)) {
+			}
+			Assert.IsTrue (ms.FlushCounter == 1);
+		}
+
 		class MyCryptoStream : CryptoStream {
 			public bool DisposeCalled { get; private set;}
 
@@ -1583,6 +1619,81 @@ namespace MonoTests.System.Security.Cryptography {
 					string value = BitConverter.ToString (buffer, 0, ret);
 					Assert.AreEqual (compress_values [n++], value);
 				}
+			}
+		}
+
+		class MyStream : Stream {
+			public bool FlushCounterEnabled;
+			public int FlushCounter;
+
+			public override bool CanRead
+			{
+				get {
+					return true;
+				}
+			}
+
+			public override bool CanSeek
+			{
+				get {
+					return true;
+				}
+			}
+
+			public override bool CanWrite
+			{
+				get {
+					return true;
+				}
+			}
+
+			public override long Length
+			{
+				get {
+					return 0;
+				}
+			}
+
+			public override long Position
+			{
+				get {
+					return 0;
+				}
+				set {
+				}
+			}
+
+			public override void Flush ()
+			{
+				if (FlushCounterEnabled)
+					FlushCounter++;
+			}
+
+			public override int Read (byte[] buffer, int offset, int count)
+			{
+				return 0;
+			}
+
+			public override int ReadByte ()
+			{
+				return -1;
+			}
+
+			public override long Seek (long offset, SeekOrigin origin)
+			{
+				return 0;
+			}
+
+			public override void SetLength (long value)
+			{
+			}
+
+			public override void Write (byte[] buffer, int offset, int count)
+			{
+			}
+
+			public override void WriteByte (byte value)
+			{
 			}
 		}
 	}

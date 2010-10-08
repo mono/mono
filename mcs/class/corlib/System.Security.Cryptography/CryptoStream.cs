@@ -307,8 +307,6 @@ namespace System.Security.Cryptography {
 
 		public override void Flush ()
 		{
-			if (_stream != null)
-				_stream.Flush ();
 		}
 
 		public void FlushFinalBlock ()
@@ -317,16 +315,16 @@ namespace System.Security.Cryptography {
 				throw new NotSupportedException (Locale.GetText ("This method cannot be called twice."));
 			if (_disposed)
 				throw new NotSupportedException (Locale.GetText ("CryptoStream was disposed."));
-			if (_mode != CryptoStreamMode.Write)
-				return;
+
 			_flushedFinalBlock = true;
 			byte[] finalBuffer = _transform.TransformFinalBlock (_workingBlock, 0, _partialCount);
-			if (_stream != null) {
+			if (_stream != null && _mode == CryptoStreamMode.Write) {
 				_stream.Write (finalBuffer, 0, finalBuffer.Length);
-				if (_stream is CryptoStream) {
-					// for cascading crypto streams
-					(_stream as CryptoStream).FlushFinalBlock ();
-				}
+			}
+			if (_stream is CryptoStream) {
+				// for cascading crypto streams
+				(_stream as CryptoStream).FlushFinalBlock ();
+			} else {
 				_stream.Flush ();
 			}
 			// zeroize
@@ -348,15 +346,8 @@ namespace System.Security.Cryptography {
 		{
 			if (!_disposed) {
 				if (disposing) {
-					// only flush in write mode (bugzilla 46143)
 					if (!_flushedFinalBlock) {
-						if (_mode == CryptoStreamMode.Write) {
-							FlushFinalBlock ();
-						} else {
-							// See bug #644648
-							_transform.TransformFinalBlock (new byte [0], 0, 0);
-						}
-						_flushedFinalBlock = true;
+						FlushFinalBlock ();
 					}
 
 					if (_stream != null)
