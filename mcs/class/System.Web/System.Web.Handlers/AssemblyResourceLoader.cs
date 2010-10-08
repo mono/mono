@@ -34,7 +34,6 @@ using System.Reflection;
 using System.IO;
 using System.Resources;
 using System.Collections;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Configuration;
@@ -58,11 +57,6 @@ namespace System.Web.Handlers {
 		const char QueryParamSeparator = '&';
 
 		static readonly Hashtable _embeddedResources = Hashtable.Synchronized (new Hashtable ());
-#if SYSTEM_WEB_EXTENSIONS
-		static ScriptResourceHandler () {
-			MachineKeySectionUtils.AutoGenKeys ();
-		}
-#endif
 
 		static void InitEmbeddedResourcesUrls (Assembly assembly, Hashtable hashtable)
 		{
@@ -93,67 +87,25 @@ namespace System.Web.Handlers {
 		}
 #endif
 
-		static string GetHexString (byte [] bytes)
-		{
-			const int letterPart = 55;
-			const int numberPart = 48;
-			char [] result = new char [bytes.Length * 2];
-			for (int i = 0; i < bytes.Length; i++) {
-				int tmp = (int) bytes [i];
-				int second = tmp & 15;
-				int first = (tmp >> 4) & 15;
-				result [(i * 2)] = (char) (first > 9 ? letterPart + first : numberPart + first);
-				result [(i * 2) + 1] = (char) (second > 9 ? letterPart + second : numberPart + second);
-			}
-			return new string (result);
-		}
-		
-		static byte[] GetEncryptionKey ()
-		{
-#if NET_2_0
-			return MachineKeySectionUtils.DecryptionKey192Bits ();
-#else
-			MachineKeyConfig config = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
-			return config.DecryptionKey192Bits;
-#endif
-		}
-
-		static byte[] GetBytes (string val)
-		{
-#if NET_2_0
-			return MachineKeySectionUtils.GetBytes (val, val.Length);
-#else
-			return MachineKeyConfig.GetBytes (val, val.Length);
-#endif
-		}		
-		
-		static byte [] init_vector = { 0xD, 0xE, 0xA, 0xD, 0xB, 0xE, 0xE, 0xF };
-		
 		static string EncryptAssemblyResource (string asmName, string resName)
 		{
-			byte[] key = GetEncryptionKey ();
 			byte[] bytes = Encoding.UTF8.GetBytes (String.Concat (asmName, ";", resName));
-			string result;
-			
-			ICryptoTransform encryptor = TripleDES.Create ().CreateEncryptor (key, init_vector);
-			result = GetHexString (encryptor.TransformFinalBlock (bytes, 0, bytes.Length));
-			bytes = null;
-
-			return String.Concat ("d=", result.ToLowerInvariant ());
+			bytes = MachineKeySectionUtils.Encrypt (MachineKeySection.Config, bytes);
+			return Convert.ToBase64String (bytes);
 		}
 
 		static void DecryptAssemblyResource (string val, out string asmName, out string resName)
 		{
-			byte[] key = GetEncryptionKey ();
-			byte[] bytes = GetBytes (val);
-			byte[] result;
+			byte[] bytes = Convert.FromBase64String (val);
 
 			asmName = null;
 			resName = null;			
 
-			ICryptoTransform decryptor = TripleDES.Create ().CreateDecryptor (key, init_vector);
-			result = decryptor.TransformFinalBlock (bytes, 0, bytes.Length);
+			byte[] result = MachineKeySectionUtils.Decrypt (MachineKeySection.Config, bytes);
 			bytes = null;
+			// null will be returned if, for any reason, decryption fails
+			if (result == null)
+				return;
 
 			string data = Encoding.UTF8.GetString (result);
 			result = null;
@@ -201,7 +153,7 @@ namespace System.Web.Handlers {
 			if (apath != String.Empty)
 				atime = String.Concat (QueryParamSeparator, "t=", File.GetLastWriteTimeUtc (apath).Ticks);
 #endif
-			string href = HandlerFileName + "?" + EncryptAssemblyResource (aname, resourceName) + atime + extra;
+			string href = HandlerFileName + "?d=" + EncryptAssemblyResource (aname, resourceName) + atime + extra;
 
 			HttpContext ctx = HttpContext.Current;
 			if (ctx != null && ctx.Request != null) {

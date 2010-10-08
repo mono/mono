@@ -39,7 +39,6 @@ using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.IO;
-using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
@@ -2373,74 +2372,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	public void RegisterRequiresViewStateEncryption ()
 	{
 		controlRegisteredForViewStateEncryption = true;
-	}
-
-	static byte [] AES_IV = null;
-	static byte [] TripleDES_IV = null;
-	static object locker = new object ();
-	static bool isEncryptionInitialized = false;
-
-	static void InitializeEncryption () 
-	{
-		if (isEncryptionInitialized)
-			return;
-
-		lock (locker) {
-			if (isEncryptionInitialized)
-				return;
-
-			string iv_string = "0BA48A9E-736D-40f8-954B-B2F62241F282";
-			AES_IV = new byte [16];
-			TripleDES_IV = new byte [8];
-
-			int i;
-			for (i = 0; i < AES_IV.Length; i++) {
-				AES_IV [i] = (byte) iv_string [i];
-			}
-
-			for (i = 0; i < TripleDES_IV.Length; i++) {
-				TripleDES_IV [i] = (byte) iv_string [i];
-			}
-
-			isEncryptionInitialized = true;
-		}
-	}
-
-	internal ICryptoTransform GetCryptoTransform (CryptoStreamMode cryptoStreamMode) 
-	{
-		ICryptoTransform transform = null;
-		MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetSection (machineKeyConfigPath);
-		byte [] vk = MachineKeySectionUtils.ValidationKeyBytes (config);
-
-		switch (config.Validation) {
-			case MachineKeyValidation.SHA1:
-				transform = SHA1.Create ();
-				break;
-
-			case MachineKeyValidation.MD5:
-				transform = MD5.Create ();
-				break;
-
-			case MachineKeyValidation.AES:
-				InitializeEncryption ();
-				if (cryptoStreamMode == CryptoStreamMode.Read){
-					transform = Rijndael.Create().CreateDecryptor(vk, AES_IV);
-				} else {
-					transform = Rijndael.Create().CreateEncryptor(vk, AES_IV);
-				}
-				break;
-
-			case MachineKeyValidation.TripleDES:
-				InitializeEncryption ();
-				if (cryptoStreamMode == CryptoStreamMode.Read){
-					transform = TripleDES.Create().CreateDecryptor(vk, TripleDES_IV);
-				} else {
-					transform = TripleDES.Create().CreateEncryptor(vk, TripleDES_IV);
-				}
-				break;
-		}
-
-		return transform;
 	}
 
 	internal bool NeedViewStateEncryption {

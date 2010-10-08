@@ -49,56 +49,32 @@ namespace System.Web.Security
 			get { return Membership.Providers; }
 		}
 		
-		static SymmetricAlgorithm GetAlg ()
+		static SymmetricAlgorithm GetAlgorithm ()
 		{
-			MachineKeySection section = (MachineKeySection) WebConfigurationManager.GetSection ("system.web/machineKey");
+			MachineKeySection section = MachineKeySection.Config;
 
 			if (section.DecryptionKey.StartsWith ("AutoGenerate"))
 				throw new ProviderException ("You must explicitly specify a decryption key in the <machineKey> section when using encrypted passwords.");
 
-			string alg_type = section.Decryption;
-			if (alg_type == "Auto")
-				alg_type = "AES";
+			SymmetricAlgorithm sa = section.GetDecryptionAlgorithm ();
+			if (sa == null)
+				throw new ProviderException (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", section.Decryption));
 
-			SymmetricAlgorithm alg = null;
-			if (alg_type == "AES")
-				alg = Rijndael.Create ();
-			else if (alg_type == "3DES")
-				alg = TripleDES.Create ();
-			else
-				throw new ProviderException (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
-
-			alg.Key = MachineKeySectionUtils.DecryptionKey192Bits (section);
-			return alg;
+			sa.Key = section.GetDecryptionKey ();
+			return sa;
 		}
 		
 		public byte [] DecryptPassword (byte [] encodedPassword)
 		{
-			using (SymmetricAlgorithm alg = GetAlg ()) {
-				// alg.Key is set in GetAlg based on web.config
-				// iv is the first part of the encodedPassword
-				byte [] iv = new byte [alg.IV.Length];
-				Array.Copy (encodedPassword, 0, iv, 0, iv.Length);
-				using (ICryptoTransform decryptor = alg.CreateDecryptor (alg.Key, iv)) {
-					return decryptor.TransformFinalBlock (encodedPassword, iv.Length, encodedPassword.Length - iv.Length);
-				}
+			using (SymmetricAlgorithm sa = GetAlgorithm ()) {
+				return MachineKeySectionUtils.Decrypt (sa, encodedPassword, 0, encodedPassword.Length);
 			}
 		}
 
 		public byte[] EncryptPassword (byte[] password)
 		{
-			using (SymmetricAlgorithm alg = GetAlg ()) {
-				// alg.Key is set in GetAlg based on web.config
-				// alg.IV is randomly set (default behavior) and perfect for our needs
-				byte [] iv = alg.IV;
-				using (ICryptoTransform encryptor = alg.CreateEncryptor (alg.Key, iv)) {
-					byte [] encrypted = encryptor.TransformFinalBlock (password, 0, password.Length);
-					byte [] output = new byte [iv.Length + encrypted.Length];
-					// note: the IV can be public, however it should not be based on the password
-					Array.Copy (iv, 0, output, 0, iv.Length);
-					Array.Copy (encrypted, 0, output, iv.Length, encrypted.Length);
-					return output;
-				}
+			using (SymmetricAlgorithm sa = GetAlgorithm ()) {
+				return MachineKeySectionUtils.Encrypt (sa, password);
 			}
 		}
 	}

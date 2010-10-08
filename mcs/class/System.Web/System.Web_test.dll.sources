@@ -88,6 +88,8 @@ System.Web.Configuration/CustomErrorCollectionTest.cs
 System.Web.Configuration/DeploymentSectionTest.cs
 System.Web.Configuration/GlobalizationSectionTest.cs
 System.Web.Configuration/HostingEnvironmentSectionTest.cs
+System.Web.Configuration/MachineKeySectionTest.cs
+System.Web.Configuration/MachineKeySectionUtilsTest.cs
 System.Web.Configuration/MachineKeyValidationConverterTest.cs
 System.Web.Configuration/NullableStringValidatorTest.cs
 System.Web.Configuration/ProfilePropertySettingsTest.cs
