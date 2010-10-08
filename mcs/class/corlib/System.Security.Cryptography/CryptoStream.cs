@@ -57,13 +57,14 @@ namespace System.Security.Cryptography {
 		
 		public CryptoStream (Stream stream, ICryptoTransform transform, CryptoStreamMode mode)
 		{
-			if ((mode == CryptoStreamMode.Read) && (!stream.CanRead)) {
-				throw new ArgumentException (
-					Locale.GetText ("Can't read on stream"));
-			}
-			if ((mode == CryptoStreamMode.Write) && (!stream.CanWrite)) {
-				throw new ArgumentException (
-					Locale.GetText ("Can't write on stream"));
+			if (mode == CryptoStreamMode.Read) {
+				if (!stream.CanRead)
+					throw new ArgumentException (Locale.GetText ("Can't read on stream"));
+			} else if (mode == CryptoStreamMode.Write) {
+				if (!stream.CanWrite)
+					throw new ArgumentException (Locale.GetText ("Can't write on stream"));
+			} else {
+				throw new ArgumentException ("mode");
 			}
 			_stream = stream;
 			_transform = transform;

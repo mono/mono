@@ -1441,13 +1441,20 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void ImplicitFlushCascade ()
 		{
-			// Tests that Dispose() calls Flush on the underlying stream
+			// Tests that Dispose() calls FlushFinalBlock() on the underlying stream
 			MyStream ms = new MyStream ();
 			ms.FlushCounterEnabled = true;
 			CryptoStream cs1 = new CryptoStream (ms, SHA1.Create (), CryptoStreamMode.Read);
 			using (CryptoStream cs = new CryptoStream (cs1, SHA1.Create (), CryptoStreamMode.Read)) {
 			}
 			Assert.IsTrue (ms.FlushCounter == 1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Ctor_InvalidEnumValue ()
+		{
+			CryptoStream cs = new CryptoStream (Stream.Null, SHA1.Create (), (CryptoStreamMode) 0xff);
 		}
 
 		class MyCryptoStream : CryptoStream {
