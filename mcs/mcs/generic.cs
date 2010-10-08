@@ -532,7 +532,7 @@ namespace Mono.CSharp {
 			return MemberName.Name;
 		}
 
-		public void LoadMembers (TypeSpec declaringType, ref MemberCache cache)
+		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			throw new NotSupportedException ("Not supported for compiled definition");
 		}
@@ -1302,15 +1302,6 @@ namespace Mono.CSharp {
 					InitializeMemberCache (true);
 
 				return base.Interfaces;
-			}
-		}
-
-		public override MemberCache MemberCacheTypes {
-			get {
-				if (cache == null)
-					InitializeMemberCache (true);
-
-				return cache;
 			}
 		}
 

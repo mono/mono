@@ -1209,7 +1209,7 @@ namespace Mono.CSharp
 			return cattrs.AttributeUsage;
 		}
 
-		public void LoadMembers (TypeSpec declaringType, ref MemberCache cache)
+		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			//
 			// Not interested in members of nested private types unless the importer needs them
@@ -1241,141 +1241,152 @@ namespace Mono.CSharp
 					declaringType.GetSignatureForError (), declaringType.Assembly.Location);
 			}
 
-			cache = new MemberCache (all.Length);
+			if (cache == null) {
+				cache = new MemberCache (all.Length);
 
-			//
-			// Do the types first as they can be referenced by the members before
-			// they are found or inflated
-			//
-			foreach (var member in all) {
-				if (member.MemberType != MemberTypes.NestedType)
-					continue;
-
-				Type t = (Type) member;
-
-				// Ignore compiler generated types, mostly lambda containers
-				if (t.IsNotPublic && t.IsDefined (typeof (CompilerGeneratedAttribute), false))
-					continue;
-
-				imported = meta_import.CreateType (t, declaringType);
-				cache.AddMember (imported);
-			}
-
-			//
-			// The logic here requires methods to be returned first which seems to work for both Mono and .NET
-			//
-			foreach (var member in all) {
-				switch (member.MemberType) {
-				case MemberTypes.Constructor:
-				case MemberTypes.Method:
-					MethodBase mb = (MethodBase) member;
-
-					// Ignore explicitly implemented members
-					if ((mb.Attributes & explicit_impl) == explicit_impl && (mb.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private)
+				//
+				// Do the types first as they can be referenced by the members before
+				// they are found or inflated
+				//
+				foreach (var member in all) {
+					if (member.MemberType != MemberTypes.NestedType)
 						continue;
 
-					// Ignore compiler generated methods
-					if (mb.IsPrivate && mb.IsDefined (typeof (CompilerGeneratedAttribute), false))
+					Type t = (Type) member;
+
+					// Ignore compiler generated types, mostly lambda containers
+					if (t.IsNotPublic && t.IsDefined (typeof (CompilerGeneratedAttribute), false))
 						continue;
 
-					imported = meta_import.CreateMethod (mb, declaringType);
-					if (imported.Kind == MemberKind.Method && !imported.IsGeneric) {
-						if (possible_accessors == null)
-							possible_accessors = new Dictionary<MethodBase, MethodSpec> (ReferenceEquality<MethodBase>.Default);
-
-						// There are no metadata rules for accessors, we have to consider any method as possible candidate
-						possible_accessors.Add (mb, (MethodSpec) imported);
-					}
-
-					break;
-				case MemberTypes.Property:
-					if (possible_accessors == null)
-						continue;
-
-					var p = (PropertyInfo) member;
-					//
-					// Links possible accessors with property
-					//
-					MethodSpec get, set;
-					m = p.GetGetMethod (true);
-					if (m == null || !possible_accessors.TryGetValue (m, out get))
-						get = null;
-
-					m = p.GetSetMethod (true);
-					if (m == null || !possible_accessors.TryGetValue (m, out set))
-						set = null;
-
-					// No accessors registered (e.g. explicit implementation)
-					if (get == null && set == null)
-						continue;
-
-					imported = meta_import.CreateProperty (p, declaringType, get, set);
-					if (imported == null)
-						continue;
-
-					break;
-				case MemberTypes.Event:
-					if (possible_accessors == null)
-						continue;
-
-					var e = (EventInfo) member;
-					//
-					// Links accessors with event
-					//
-					MethodSpec add, remove;
-					m = e.GetAddMethod (true);
-					if (m == null || !possible_accessors.TryGetValue (m, out add))
-						add = null;
-
-					m = e.GetRemoveMethod (true);
-					if (m == null || !possible_accessors.TryGetValue (m, out remove))
-						remove = null;
-
-					// Both accessors are required
-					if (add == null || remove == null)
-						continue;
-
-					event_spec = meta_import.CreateEvent (e, declaringType, add, remove);
-					if (!meta_import.IgnorePrivateMembers) {
-						if (imported_events == null)
-							imported_events = new List<EventSpec> ();
-
-						imported_events.Add (event_spec);
-					}
-
-					imported = event_spec;
-					break;
-				case MemberTypes.Field:
-					var fi = (FieldInfo) member;
-
-					imported = meta_import.CreateField (fi, declaringType);
-					if (imported == null)
-						continue;
-
-					//
-					// For dynamic binder event has to be fully restored to allow operations
-					// within the type container to work correctly
-					//
-					if (imported_events != null) {
-						// The backing event field should be private but it may not
-						int index = imported_events.FindIndex (l => l.Name == fi.Name);
-						if (index >= 0) {
-							event_spec = imported_events[index];
-							event_spec.BackingField = (FieldSpec) imported;
-							imported_events.RemoveAt (index);
-							continue;
-						}
-					}
-
-					break;
-				case MemberTypes.NestedType:
-					meta_import.ImportTypeBase ((Type) member);
-					continue;
-				default:
-					throw new NotImplementedException (member.ToString ());
+					imported = meta_import.CreateType (t, declaringType);
+					cache.AddMember (imported);
 				}
 
-				cache.AddMember (imported);
+				foreach (var member in all) {
+					if (member.MemberType != MemberTypes.NestedType)
+						continue;
+
+					meta_import.ImportTypeBase ((Type) member);
+				}
+			}
+
+			if (!onlyTypes) {
+				//
+				// The logic here requires methods to be returned first which seems to work for both Mono and .NET
+				//
+				foreach (var member in all) {
+					switch (member.MemberType) {
+					case MemberTypes.Constructor:
+					case MemberTypes.Method:
+						MethodBase mb = (MethodBase) member;
+
+						// Ignore explicitly implemented members
+						if ((mb.Attributes & explicit_impl) == explicit_impl && (mb.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private)
+							continue;
+
+						// Ignore compiler generated methods
+						if (mb.IsPrivate && mb.IsDefined (typeof (CompilerGeneratedAttribute), false))
+							continue;
+
+						imported = meta_import.CreateMethod (mb, declaringType);
+						if (imported.Kind == MemberKind.Method && !imported.IsGeneric) {
+							if (possible_accessors == null)
+								possible_accessors = new Dictionary<MethodBase, MethodSpec> (ReferenceEquality<MethodBase>.Default);
+
+							// There are no metadata rules for accessors, we have to consider any method as possible candidate
+							possible_accessors.Add (mb, (MethodSpec) imported);
+						}
+
+						break;
+					case MemberTypes.Property:
+						if (possible_accessors == null)
+							continue;
+
+						var p = (PropertyInfo) member;
+						//
+						// Links possible accessors with property
+						//
+						MethodSpec get, set;
+						m = p.GetGetMethod (true);
+						if (m == null || !possible_accessors.TryGetValue (m, out get))
+							get = null;
+
+						m = p.GetSetMethod (true);
+						if (m == null || !possible_accessors.TryGetValue (m, out set))
+							set = null;
+
+						// No accessors registered (e.g. explicit implementation)
+						if (get == null && set == null)
+							continue;
+
+						imported = meta_import.CreateProperty (p, declaringType, get, set);
+						if (imported == null)
+							continue;
+
+						break;
+					case MemberTypes.Event:
+						if (possible_accessors == null)
+							continue;
+
+						var e = (EventInfo) member;
+						//
+						// Links accessors with event
+						//
+						MethodSpec add, remove;
+						m = e.GetAddMethod (true);
+						if (m == null || !possible_accessors.TryGetValue (m, out add))
+							add = null;
+
+						m = e.GetRemoveMethod (true);
+						if (m == null || !possible_accessors.TryGetValue (m, out remove))
+							remove = null;
+
+						// Both accessors are required
+						if (add == null || remove == null)
+							continue;
+
+						event_spec = meta_import.CreateEvent (e, declaringType, add, remove);
+						if (!meta_import.IgnorePrivateMembers) {
+							if (imported_events == null)
+								imported_events = new List<EventSpec> ();
+
+							imported_events.Add (event_spec);
+						}
+
+						imported = event_spec;
+						break;
+					case MemberTypes.Field:
+						var fi = (FieldInfo) member;
+
+						imported = meta_import.CreateField (fi, declaringType);
+						if (imported == null)
+							continue;
+
+						//
+						// For dynamic binder event has to be fully restored to allow operations
+						// within the type container to work correctly
+						//
+						if (imported_events != null) {
+							// The backing event field should be private but it may not
+							int index = imported_events.FindIndex (l => l.Name == fi.Name);
+							if (index >= 0) {
+								event_spec = imported_events[index];
+								event_spec.BackingField = (FieldSpec) imported;
+								imported_events.RemoveAt (index);
+								continue;
+							}
+						}
+
+						break;
+					case MemberTypes.NestedType:
+						// Already in the cache from the first pass
+						continue;
+					default:
+						throw new NotImplementedException (member.ToString ());
+					}
+
+					cache.AddMember (imported);
+				}
 			}
 
 			if (declaringType.IsInterface && declaringType.Interfaces != null) {
@@ -1430,7 +1441,7 @@ namespace Mono.CSharp
 			throw new NotSupportedException ();
 		}
 
-		public void LoadMembers (TypeSpec declaringType, ref MemberCache cache)
+		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			throw new NotImplementedException ();
 		}

@@ -194,9 +194,12 @@ namespace Mono.CSharp
 			}
 		}
 
-		public virtual MemberCache MemberCacheTypes {
+		public MemberCache MemberCacheTypes {
 			get {
-				return MemberCache;
+				if (cache == null)
+					InitializeMemberCache (true);
+
+				return cache;
 			}
 		}	
 
@@ -311,7 +314,12 @@ namespace Mono.CSharp
 
 		protected virtual void InitializeMemberCache (bool onlyTypes)
 		{
-			MemberDefinition.LoadMembers (this, ref cache);
+			MemberDefinition.LoadMembers (this, onlyTypes, ref cache);
+
+			if (onlyTypes)
+				state |= StateFlags.PendingMemberCacheMembers;
+			else
+				state &= ~StateFlags.PendingMemberCacheMembers;
 		}
 
 		//
@@ -850,7 +858,7 @@ namespace Mono.CSharp
 		TypeSpec GetAttributeCoClass ();
 		string GetAttributeDefaultMember ();
 		AttributeUsageAttribute GetAttributeUsage (PredefinedAttribute pa);
-		void LoadMembers (TypeSpec declaringType, ref MemberCache cache);
+		void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache);
 	}
 
 	class InternalType : TypeSpec
@@ -989,9 +997,9 @@ namespace Mono.CSharp
 			return Element.MemberDefinition.GetAttributeDefaultMember ();
 		}
 
-		public void LoadMembers (TypeSpec declaringType, ref MemberCache cache)
+		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
-			Element.MemberDefinition.LoadMembers (declaringType, ref cache);
+			Element.MemberDefinition.LoadMembers (declaringType, onlyTypes, ref cache);
 		}
 
 		public bool IsImported {

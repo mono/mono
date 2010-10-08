@@ -4,8 +4,6 @@ include ../build/rules.make
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
-EXTRA_SUPPORT_FILES = CSFriendAssembly-lib.dll GCS0122-2-lib.dll GCS0730-lib.dll GCS0733-lib.dll GCS1685-lib.dll
-
 ilasm = $(topdir)/class/lib/$(PROFILE)/ilasm.exe
 ILASM = $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
 
@@ -30,7 +28,11 @@ TEST_SUPPORT_FILES = \
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll CS0619-42-lib.dll \
 	CS0619-43-lib.dll CS1546-lib.dll CS0619-51-lib.dll CS1509-module.dll CS1681-2-lib.dll \
 	CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll CSExternAlias-lib.dll \
-	$(EXTRA_SUPPORT_FILES) 
+	GCS0122-2-lib.dll \
+	GCS0315-2-lib.dll \
+	GCS0730-lib.dll GCS0733-lib.dll \
+	GCS1685-lib.dll \
+	CSFriendAssembly-lib.dll
 
 # mention all targets
 all-local $(STD_TARGETS:=-local):
