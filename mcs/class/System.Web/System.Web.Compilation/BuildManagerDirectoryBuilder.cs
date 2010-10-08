@@ -420,12 +420,11 @@ namespace System.Web.Compilation
 			}
 			
 			object[] attrs = bp.GetType ().GetCustomAttributes (typeof (BuildProviderAppliesToAttribute), true);
-			if (attrs == null || attrs.Length == 0)
-				return bp;
-
-			BuildProviderAppliesTo appliesTo = ((BuildProviderAppliesToAttribute)attrs [0]).AppliesTo;
-			if ((appliesTo & BuildProviderAppliesTo.Web) == 0)
-				return null;
+			if (attrs != null && attrs.Length != 0) {
+				BuildProviderAppliesTo appliesTo = ((BuildProviderAppliesToAttribute)attrs [0]).AppliesTo;
+				if ((appliesTo & BuildProviderAppliesTo.Web) == 0)
+					return null;
+			}
 
 			bp.SetVirtualPath (virtualPath);
 			return bp;
