@@ -5833,7 +5833,6 @@ namespace Mono.CSharp {
 			if (initializers == null)
 				return true;
 
-			only_constant_initializers = true;
 			for (int i = 0; i < probe.Count; ++i) {
 				var o = probe [i];
 				if (o is ArrayInitializer) {
@@ -5941,6 +5940,8 @@ namespace Mono.CSharp {
 
 		protected bool ResolveInitializers (ResolveContext ec)
 		{
+			only_constant_initializers = true;
+
 			if (arguments != null) {
 				bool res = true;
 				for (int i = 0; i < arguments.Count; ++i) {
