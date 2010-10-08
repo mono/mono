@@ -783,9 +783,29 @@ namespace Mono.CSharp
 				all_types = e.Types;
 			}
 
+			ImportTypes (all_types, targetNamespace, extension_type);
+		}
+
+		public void ImportModule (Module module, Namespace targetNamespace)
+		{
+			Type extension_type = HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (module));
+
+			Type[] all_types;
+			try {
+				all_types = module.GetTypes ();
+			} catch (ReflectionTypeLoadException e) {
+				all_types = e.Types;
+				throw;
+			}
+
+			ImportTypes (all_types, targetNamespace, extension_type);
+		}
+
+		void ImportTypes (Type[] types, Namespace targetNamespace, Type extension_type)
+		{
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
-			foreach (var t in all_types) {
+			foreach (var t in types) {
 				if (t == null || t.IsNested)
 					continue;
 
