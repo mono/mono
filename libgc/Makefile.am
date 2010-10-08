@@ -35,9 +35,9 @@ EXTRA_DIST =
     ## more items will be succesively added below
 
 if POWERPC_DARWIN
-asm_libgc_sources = powerpc_darwin_mach_dep.s
+MACH_DEP = powerpc_darwin_mach_dep.s
 else
-asm_libgc_sources = 
+MACH_DEP = mach_dep.c
 endif
 
 libmonogc_la_SOURCES = allchblk.c alloc.c blacklst.c checksums.c dbg_mlc.c \
@@ -47,7 +47,7 @@ obj_map.c os_dep.c pcr_interface.c ptr_chck.c real_malloc.c reclaim.c \
 solaris_pthreads.c solaris_threads.c specific.c stubborn.c typd_mlc.c \
 backgraph.c win32_threads.c \
 pthread_support.c pthread_stop_world.c darwin_stop_world.c \
-$(asm_libgc_sources)
+$(MACH_DEP)
 
 # Include THREADDLLIBS here to ensure that the correct versions of
 # linuxthread semaphore functions get linked:
