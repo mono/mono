@@ -420,6 +420,14 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual (typeof (IFoo3), cd.ContractType, "#3");
 			Assert.AreEqual (3, cd.Operations.Count, "#4");
 		}
+		
+		[Test]
+		public static void MultipleContractsInTypeHierarchy ()
+		{
+			ContractDescription.GetContract (typeof (DuplicateCheckClassWrapper.ServiceInterface));
+
+			var host = new ServiceHost (typeof (DuplicateCheckClassWrapper.DummyService)); // fine in MS, fails in Mono with "A contract cannot have two operations that have the identical names and different set of parameters"
+		}
 
 		// It is for testing attribute search in interfaces.
 		public class Foo : IFoo
@@ -626,6 +634,34 @@ namespace MonoTests.System.ServiceModel.Description
 			public string Foo {
 				get { return foo; }
 				set { foo = value; }
+			}
+		}
+
+		public class DuplicateCheckClassWrapper
+		{
+
+			[ServiceContract]
+			internal interface ServiceInterface : Foo
+			{
+			}
+
+			[ServiceContract]
+			internal interface Foo : Bar
+			{
+				[OperationContract] void Foo();
+			}
+
+			[ServiceContract]
+			internal interface Bar
+			{
+				[OperationContract] void FooBar();
+			}
+
+			internal class DummyService : ServiceInterface
+			{
+				public void FooBar() { }
+
+				public void Foo() { }
 			}
 		}
 	}
