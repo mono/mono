@@ -407,6 +407,163 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual ("WriteLine", writeline.Name);
 			Assert.AreEqual (typeof (Console), writeline.DeclaringType);
 		}
+
+		[Test]
+		public void ResolveMethodDefWithGenericArguments ()
+		{
+			var assembly = genAssembly ();
+			var module = assembly.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var type = module.DefineType ("Foo`1");
+			var t = type.DefineGenericParameters ("T") [0];
+
+			var method = type.DefineMethod ("Method", MethodAttributes.Static, typeof (void), new Type [] { t });
+			method.GetILGenerator ().Emit (OpCodes.Ret);
+
+			type.DefineDefaultConstructor (MethodAttributes.Public);
+
+			type.CreateType ();
+
+			var resolved_method = (MethodInfo) module.ResolveMember (0x06000001, new [] { typeof (string) }, Type.EmptyTypes);
+			Assert.IsNotNull (resolved_method);
+			Assert.AreEqual ("Method", resolved_method.Name);
+			Assert.IsTrue (resolved_method.GetParameters () [0].ParameterType.IsGenericParameter);
+		}
+
+		[Test]
+		public void ResolveFieldDefWithGenericArguments ()
+		{
+			var assembly = genAssembly ();
+			var module = assembly.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var type = module.DefineType ("Foo`1");
+			var t = type.DefineGenericParameters ("T") [0];
+
+			var field = type.DefineField ("field", t, FieldAttributes.Public);
+
+			type.CreateType ();
+
+			var resolved_field = (FieldInfo) module.ResolveMember (0x04000001, new [] { typeof (string) }, Type.EmptyTypes);
+			Assert.IsNotNull (resolved_field);
+			Assert.AreEqual ("field", resolved_field.Name);
+			Assert.IsTrue (resolved_field.FieldType.IsGenericParameter);
+		}
+
+		[Test]
+		public void ResolveTypeDefWithGenericArguments ()
+		{
+			var assembly = genAssembly ();
+			var module = assembly.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var type = module.DefineType ("Foo`1");
+			var t = type.DefineGenericParameters ("T") [0];
+
+			type.CreateType ();
+
+			var foo = (Type) module.ResolveMember (0x02000002, new [] { typeof (string) }, Type.EmptyTypes);
+			Assert.IsNotNull (foo);
+			Assert.AreEqual ("Foo`1", foo.Name);
+			Assert.IsTrue (foo.IsGenericTypeDefinition);
+		}
+
+		[Test]
+		public void ResolveFieldMemberRefWithGenericArguments ()
+		{
+			var assembly = genAssembly ();
+			var module = assembly.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var type = module.DefineType ("Foo`1");
+			var t = type.DefineGenericParameters ("T") [0];
+
+			var field = type.DefineField ("field", t, FieldAttributes.Public);
+
+			var method = type.DefineMethod ("Method", MethodAttributes.Public, typeof (void), Type.EmptyTypes);
+			var il = method.GetILGenerator ();
+
+			il.Emit (OpCodes.Ldarg_0);
+			il.Emit (OpCodes.Ldfld, field); // this triggers the creation of a MemberRef on a generic TypeSpec
+			il.Emit (OpCodes.Pop);
+			il.Emit (OpCodes.Ret);
+
+			type.CreateType ();
+
+			var resolved_field = (FieldInfo) module.ResolveMember (0x0a000001, new [] { typeof (string) }, null);
+			Assert.IsNotNull (resolved_field);
+			Assert.AreEqual ("field", resolved_field.Name);
+			Assert.AreEqual (typeof (string), resolved_field.FieldType);
+		}
+
+		[Test]
+		public void ResolveMethodMemberRefWithGenericArguments ()
+		{
+			var assembly = genAssembly ();
+			var module = assembly.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var type = module.DefineType ("Foo`1");
+			var t = type.DefineGenericParameters ("T") [0];
+
+			var field = type.DefineField ("field", t, FieldAttributes.Public);
+
+			var method = type.DefineMethod ("Method", MethodAttributes.Public, typeof (void), new Type [] { t });
+			method.GetILGenerator ().Emit (OpCodes.Ret);
+
+			var ctor = type.DefineMethod ("Caller", MethodAttributes.Public, typeof (void), Type.EmptyTypes);
+			var il = ctor.GetILGenerator ();
+
+			il.Emit (OpCodes.Ldarg_0);
+			il.Emit (OpCodes.Ldarg_0);
+			il.Emit (OpCodes.Ldfld, field); // this triggers the creation of a MemberRef on a generic TypeSpec
+			il.Emit (OpCodes.Callvirt, method); // this too
+			il.Emit (OpCodes.Ret);
+
+			type.DefineDefaultConstructor (MethodAttributes.Public);
+
+			type.CreateType ();
+
+			var resolved_method = (MethodInfo) module.ResolveMember (0x0a000002, new [] { typeof (string) }, null);
+			Assert.IsNotNull (resolved_method);
+			Assert.AreEqual ("Method", resolved_method.Name);
+			Assert.AreEqual (typeof (string), resolved_method.GetParameters () [0].ParameterType);
+		}
+
+		[Test]
+		public void ResolveMethodSpecWithGenericArguments ()
+		{
+			var assembly = genAssembly ();
+			var module = assembly.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var type = module.DefineType ("Foo`1");
+			var t = type.DefineGenericParameters ("T") [0];
+
+			var field = type.DefineField ("field", t, FieldAttributes.Public);
+
+			var method = type.DefineMethod ("Method", MethodAttributes.Public);
+			var s = method.DefineGenericParameters ("S") [0];
+			method.SetReturnType (typeof (void));
+			method.SetParameters (t, s);
+			method.GetILGenerator ().Emit (OpCodes.Ret);
+
+			var ctor = type.DefineMethod ("Caller", MethodAttributes.Public, typeof (void), Type.EmptyTypes);
+			var il = ctor.GetILGenerator ();
+
+			il.Emit (OpCodes.Ldarg_0);
+			il.Emit (OpCodes.Ldarg_0);
+			il.Emit (OpCodes.Ldfld, field); // this triggers the creation of a MemberRef on a generic TypeSpec
+			il.Emit (OpCodes.Ldarg_0);
+			il.Emit (OpCodes.Ldfld, field); // this triggers the creation of a MemberRef on a generic TypeSpec
+			il.Emit (OpCodes.Callvirt, method); // this triggers the creation of a MethodSpec
+			il.Emit (OpCodes.Ret);
+
+			type.DefineDefaultConstructor (MethodAttributes.Public);
+
+			type.CreateType ();
+
+			var resolved_method = (MethodInfo) module.ResolveMember (0x2b000001, new [] { typeof (string) }, new [] { typeof (int) });
+			Assert.IsNotNull (resolved_method);
+			Assert.AreEqual ("Method", resolved_method.Name);
+			Assert.AreEqual (typeof (string), resolved_method.GetParameters () [0].ParameterType);
+			Assert.AreEqual (typeof (int), resolved_method.GetParameters () [1].ParameterType);
+		}
 #endif
 
 		[Test]
