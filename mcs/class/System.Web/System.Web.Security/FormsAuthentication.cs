@@ -45,9 +45,6 @@ namespace System.Web.Security
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class FormsAuthentication
 	{
-		const int MD5_hash_size = 16;
-		const int SHA1_hash_size = 20;
-
 		static string authConfigPath = "system.web/authentication";
 		static string machineKeyConfigPath = "system.web/machineKey";
 #if TARGET_J2EE
@@ -56,7 +53,6 @@ namespace System.Web.Security
 		const string Forms_cookiePath = "Forms.cookiePath";
 		const string Forms_timeout = "Forms.timeout";
 		const string Forms_protection = "Forms.protection";
-		const string Forms_init_vector = "Forms.init_vector";
 		static bool initialized
 		{
 			get {
@@ -88,11 +84,6 @@ namespace System.Web.Security
 			get { return (FormsProtectionEnum) AppDomain.CurrentDomain.GetData (Forms_protection); }
 			set { AppDomain.CurrentDomain.SetData (Forms_protection, value); }
 		}
-		static byte [] init_vector
-		{
-			get { return (byte []) AppDomain.CurrentDomain.GetData (Forms_init_vector); }
-			set { AppDomain.CurrentDomain.SetData (Forms_init_vector, value); }
-		}
 		static object locker = new object ();
 #else
 		static bool initialized;
@@ -101,7 +92,6 @@ namespace System.Web.Security
 		static int timeout;
 		static FormsProtectionEnum protection;
 		static object locker = new object ();
-		static byte [] init_vector; // initialization vector used for 3DES
 #endif
 #if NET_1_1
 #if TARGET_J2EE
@@ -237,18 +227,6 @@ namespace System.Web.Security
 			return String.Compare (password, stored, caseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) == 0;
 		}
 
-#if NET_2_0
-		static byte [] GetDecryptionKey (MachineKeySection config)
-		{
-			return MachineKeySectionUtils.DecryptionKey192Bits (config);
-		}
-#else
-		static byte [] GetDecryptionKey (MachineKeyConfig config)
-		{
-			return config.DecryptionKey192Bits;
-		}
-#endif
-		
 		static FormsAuthenticationTicket Decrypt2 (byte [] bytes)
 		{
 			if (protection == FormsProtectionEnum.None)
@@ -259,59 +237,14 @@ namespace System.Web.Security
 #else
 			MachineKeyConfig config = HttpContext.GetAppConfig (machineKeyConfigPath) as MachineKeyConfig;
 #endif
-			bool all = (protection == FormsProtectionEnum.All);
 
-			byte [] result = bytes;
-			if (all || protection == FormsProtectionEnum.Encryption) {
-				ICryptoTransform decryptor;
-				decryptor = TripleDES.Create ().CreateDecryptor (GetDecryptionKey (config), init_vector);
-				result = decryptor.TransformFinalBlock (bytes, 0, bytes.Length);
-				bytes = null;
-			}
-
-			if (all || protection == FormsProtectionEnum.Validation) {
-				int count;
-				MachineKeyValidation validationType;
-
-#if NET_2_0
-				validationType = config.Validation;
-#else
-				validationType = config.ValidationType;
-#endif
-				if (validationType == MachineKeyValidation.MD5)
-					count = MD5_hash_size;
-				else
-					count = SHA1_hash_size; // 3DES and SHA1
-
-#if NET_2_0
-				byte [] vk = MachineKeySectionUtils.ValidationKeyBytes (config);
-#else
-				byte [] vk = config.ValidationKey;
-#endif
-				byte [] mix = new byte [result.Length - count + vk.Length];
-				Buffer.BlockCopy (result, 0, mix, 0, result.Length - count);
-				Buffer.BlockCopy (vk, 0, mix, result.Length - count, vk.Length);
-
-				byte [] hash = null;
-				switch (validationType) {
-				case MachineKeyValidation.MD5:
-					hash = MD5.Create ().ComputeHash (mix);
-					break;
-				// From MS docs: "When 3DES is specified, forms authentication defaults to SHA1"
-				case MachineKeyValidation.TripleDES:
-				case MachineKeyValidation.SHA1:
-					hash = SHA1.Create ().ComputeHash (mix);
-					break;
-				}
-
-				if (result.Length < count)
-					throw new ArgumentException ("Error validating ticket (length).", "encryptedTicket");
-
-				int i, k;
-				for (i = result.Length - count, k = 0; k < count; i++, k++) {
-					if (result [i] != hash [k])
-						throw new ArgumentException ("Error validating ticket.", "encryptedTicket");
-				}
+			byte [] result = null;
+			if (protection == FormsProtectionEnum.All) {
+				result = MachineKeySectionUtils.VerifyDecrypt (config, bytes);
+			} else if (protection == FormsProtectionEnum.Encryption) {
+				result = MachineKeySectionUtils.Decrypt (config, bytes);
+			} else if (protection == FormsProtectionEnum.Validation) {
+				result = MachineKeySectionUtils.Verify (config, bytes);
 			}
 
 			return FormsAuthenticationTicket.FromByteArray (result);
@@ -325,11 +258,8 @@ namespace System.Web.Security
 			Initialize ();
 
 			FormsAuthenticationTicket ticket;
-#if NET_2_0
-			byte [] bytes = MachineKeySectionUtils.GetBytes (encryptedTicket, encryptedTicket.Length);
-#else
-			byte [] bytes = MachineKeyConfig.GetBytes (encryptedTicket, encryptedTicket.Length);
-#endif
+			byte [] bytes = Convert.FromBase64String (encryptedTicket);
+
 			try {
 				ticket = Decrypt2 (bytes);
 			} catch (Exception) {
@@ -347,57 +277,23 @@ namespace System.Web.Security
 			Initialize ();
 			byte [] ticket_bytes = ticket.ToByteArray ();
 			if (protection == FormsProtectionEnum.None)
-				return GetHexString (ticket_bytes);
+				return Convert.ToBase64String (ticket_bytes);
 
-			byte [] result = ticket_bytes;
+			byte [] result = null;
 #if NET_2_0
 			MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection (machineKeyConfigPath);
 #else
 			MachineKeyConfig config = HttpContext.GetAppConfig (machineKeyConfigPath) as MachineKeyConfig;
 #endif
-			bool all = (protection == FormsProtectionEnum.All);
-			if (all || protection == FormsProtectionEnum.Validation) {
-				byte [] valid_bytes = null;
-#if NET_2_0
-				byte [] vk = MachineKeySectionUtils.ValidationKeyBytes (config);
-#else
-				byte [] vk = config.ValidationKey;
-#endif
-				byte [] mix = new byte [ticket_bytes.Length + vk.Length];
-				Buffer.BlockCopy (ticket_bytes, 0, mix, 0, ticket_bytes.Length);
-				Buffer.BlockCopy (vk, 0, mix, result.Length, vk.Length);
-
-				switch (
-#if NET_2_0
-					config.Validation
-#else
-					config.ValidationType
-#endif
-					) {
-				case MachineKeyValidation.MD5:
-					valid_bytes = MD5.Create ().ComputeHash (mix);
-					break;
-				// From MS docs: "When 3DES is specified, forms authentication defaults to SHA1"
-				case MachineKeyValidation.TripleDES:
-				case MachineKeyValidation.SHA1:
-					valid_bytes = SHA1.Create ().ComputeHash (mix);
-					break;
-				}
-
-				int tlen = ticket_bytes.Length;
-				int vlen = valid_bytes.Length;
-				result = new byte [tlen + vlen];
-				Buffer.BlockCopy (ticket_bytes, 0, result, 0, tlen);
-				Buffer.BlockCopy (valid_bytes, 0, result, tlen, vlen);
+			if (protection == FormsProtectionEnum.All) {
+				result = MachineKeySectionUtils.EncryptSign (config, ticket_bytes);
+			} else if (protection == FormsProtectionEnum.Encryption) {
+				result = MachineKeySectionUtils.Encrypt (config, ticket_bytes);
+			} else if (protection == FormsProtectionEnum.Validation) {
+				result = MachineKeySectionUtils.Sign (config, ticket_bytes);
 			}
 
-			if (all || protection == FormsProtectionEnum.Encryption) {
-				ICryptoTransform encryptor;
-				encryptor = TripleDES.Create ().CreateEncryptor (GetDecryptionKey (config), init_vector);
-				result = encryptor.TransformFinalBlock (result, 0, result.Length);
-			}
-
-			return GetHexString (result);
+			return Convert.ToBase64String (result);
 		}
 
 		public static HttpCookie GetAuthCookie (string userName, bool createPersistentCookie)
@@ -478,21 +374,6 @@ namespace System.Web.Security
 			return returnUrl;
 		}
 
-		static string GetHexString (byte [] bytes)
-		{
-			const int letterPart = 55;
-			const int numberPart = 48;
-			char [] result = new char [bytes.Length * 2];
-			for (int i = 0; i < bytes.Length; i++) {
-				int tmp = (int) bytes [i];
-				int second = tmp & 15;
-				int first = (tmp >> 4) & 15;
-				result [(i * 2)] = (char) (first > 9 ? letterPart + first : numberPart + first);
-				result [(i * 2) + 1] = (char) (second > 9 ? letterPart + second : numberPart + second);
-			}
-			return new string (result);
-		}
-
 		static string HashPasswordForStoringInConfigFile (string password, FormsAuthPasswordFormat passwordFormat)
 		{
 			if (password == null)
@@ -512,7 +393,7 @@ namespace System.Web.Security
 					throw new ArgumentException ("The format must be either MD5 or SHA1", "passwordFormat");
 			}
 
-			return GetHexString (bytes);
+			return MachineKeySectionUtils.GetHexString (bytes);
 		}
 		
 		public static string HashPasswordForStoringInConfigFile (string password, string passwordFormat)
@@ -579,16 +460,6 @@ namespace System.Web.Security
 #endif
 				}
 #endif
-
-				// IV is 8 bytes long for 3DES
-				init_vector = new byte [8];
-				int len = cookieName.Length;
-				for (int i = 0; i < 8; i++) {
-					if (i >= len)
-						break;
-
-					init_vector [i] = (byte) cookieName [i];
-				}
 
 				initialized = true;
 			}

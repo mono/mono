@@ -30,6 +30,7 @@
 
 #if NET_2_0
 using System;
+using System.IO;
 using System.Reflection;
 using System.Web;
 using System.Web.UI;
@@ -115,6 +116,20 @@ namespace MonoTests.System.Web.UI
 
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
+#if false
+		[Test]
+		public void SerializeOverloads ()
+		{
+			ObjectStateFormatter osf = new ObjectStateFormatter ();
+			string s1 = osf.Serialize (String.Empty);
+			string s2;
+			using (MemoryStream ms = new MemoryStream ()) {
+				osf.Serialize (ms, String.Empty);
+				s2 = Convert.ToBase64String (ms.ToArray ());
+			}
+			Assert.AreEqual (s1, s2, "identical");
+		}
+#endif
 	}
 }
 #endif

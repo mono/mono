@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Security.Cryptography;
 using Microsoft.Win32;
 
 namespace System.Web.Configuration
@@ -42,9 +40,6 @@ namespace System.Web.Configuration
 			Encryption
 		};
 
-		const int encryptionKeyLength = 64;
-		const int validationKeyLength = 64;
-		
 		static string keyEncryption;
 		static string keyValidation;
 		
@@ -63,30 +58,15 @@ namespace System.Web.Configuration
 		
 		public static byte[] Retrieve (KeyType kt)
 		{
-			byte[] ret = GetKey (kt);
-			if (ret == null) {
-				ret = Generate (kt);
-				if (ret != null)
-					Store (ret, kt);
-			}
-			
-			return ret;
-		}
-
-		static byte[] GetKey (KeyType kt)
-		{
 			string key = null;
-			int len;
 			
 			switch (kt) {
 				case KeyType.Validation:
 					key = keyValidation;
-					len = validationKeyLength;
 					break;
 
 				case KeyType.Encryption:
 					key = keyEncryption;
-					len = validationKeyLength;
 					break;
 
 				default:
@@ -107,11 +87,7 @@ namespace System.Web.Configuration
 
 			if (o == null || o.GetType () != typeof (byte[]))
 				return null;
-			byte[] ret = (byte[])o;
-			if (ret.Length != len)
-				return null;
-
-			return ret;
+			return (byte[]) o;
 		}
 
 		static RegistryKey OpenRegistryKey (string path, bool write)
@@ -134,23 +110,19 @@ namespace System.Web.Configuration
 			return ret;
 		}
 		
-		static void Store (byte[] buf, KeyType kt)
+		public static void Store (byte[] buf, KeyType kt)
 		{
 			if (buf == null)
 				return;
 			
 			string key = null;
-			int len;
-			
 			switch (kt) {
 				case KeyType.Validation:
 					key = keyValidation;
-					len = validationKeyLength;
 					break;
 
 				case KeyType.Encryption:
 					key = keyEncryption;
-					len = validationKeyLength;
 					break;
 
 				default:
@@ -159,9 +131,6 @@ namespace System.Web.Configuration
 
 			if (key == null)
 				return;
-
-			if (buf.Length != len)
-				throw new ArgumentException ("Key has invalid length");
 
 			try {
 				using (RegistryKey rk = OpenRegistryKey (key, true)) {
@@ -179,28 +148,6 @@ namespace System.Web.Configuration
 			} catch (Exception ex) {
 				throw new ApplicationException ("Failed to store encryption key in the registry.", ex);
 			}
-		}
-
-		static byte[] Generate (KeyType kt)
-		{
-			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
-			byte[] ret = null;
-			
-			switch (kt) {
-				case KeyType.Validation:
-					ret = new byte [validationKeyLength];
-					break;
-
-				case KeyType.Encryption:
-					ret = new byte [encryptionKeyLength];
-					break;
-
-				default:
-					throw new ArgumentException ("Unknown key type.");
-			}
-			
-			rng.GetBytes (ret);
-			return ret;
 		}
 	}
 }

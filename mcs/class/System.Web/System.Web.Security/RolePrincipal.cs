@@ -29,7 +29,6 @@
 //
 
 using System.Collections.Specialized;
-using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Web.Configuration;
@@ -146,42 +145,16 @@ namespace System.Web.Security {
 
 			CookieProtection cookieProtection = RoleManagerConfig.CookieProtection;
 
-			if (cookieProtection == CookieProtection.None)
-				return GetBase64FromBytes (ticket.GetBuffer (), 0, (int) ticket.Position);
-			
-			if (cookieProtection == CookieProtection.All || cookieProtection == CookieProtection.Validation) {
-
-				byte [] hashBytes = null;
-				byte [] validationBytes = MachineKeySectionUtils.ValidationKeyBytes (MachineConfig);
-				writer.Write (validationBytes);
-
-				switch (MachineConfig.Validation) {
-					case MachineKeyValidation.MD5:
-						hashBytes = MD5.Create ().ComputeHash (ticket.GetBuffer (), 0, (int) ticket.Position);
-						break;
-
-					case MachineKeyValidation.TripleDES:
-					case MachineKeyValidation.SHA1:
-						hashBytes = SHA1.Create ().ComputeHash (ticket.GetBuffer (), 0, (int) ticket.Position);
-						break;
-				}
-
-				writer.Seek (-validationBytes.Length, SeekOrigin.Current);
-				writer.Write (hashBytes);
+			byte[] ticket_data = ticket.GetBuffer ();
+			if (cookieProtection == CookieProtection.All) {
+				ticket_data = MachineKeySectionUtils.EncryptSign (MachineConfig, ticket_data);
+			} else if (cookieProtection == CookieProtection.Encryption) {
+				ticket_data = MachineKeySectionUtils.Encrypt (MachineConfig, ticket_data);
+			} else if (cookieProtection == CookieProtection.Validation) {
+				ticket_data = MachineKeySectionUtils.Sign (MachineConfig, ticket_data);
 			}
 
-			byte [] ticketBytes = null;
-			if (cookieProtection == CookieProtection.All || cookieProtection == CookieProtection.Encryption) {
-				ICryptoTransform enc;
-				enc = TripleDES.Create ().CreateEncryptor (MachineKeySectionUtils.DecryptionKey192Bits (MachineConfig),
-									   InitVector);
-				ticketBytes = enc.TransformFinalBlock (ticket.GetBuffer (), 0, (int) ticket.Position);
-			}
-
-			if (ticketBytes == null)
-				return GetBase64FromBytes (ticket.GetBuffer (), 0, (int) ticket.Position);
-			else
-				return GetBase64FromBytes (ticketBytes, 0, ticketBytes.Length);
+			return GetBase64FromBytes (ticket_data, 0, ticket_data.Length);
 		}
 
 		void DecryptTicket (string encryptedTicket)
@@ -193,44 +166,17 @@ namespace System.Web.Security {
 			byte [] decryptedTicketBytes = null;
 
 			CookieProtection cookieProtection = RoleManagerConfig.CookieProtection;
-			if (cookieProtection == CookieProtection.All || cookieProtection == CookieProtection.Encryption) {
-				ICryptoTransform decryptor;
-				decryptor = TripleDES.Create ().CreateDecryptor (
-					MachineKeySectionUtils.DecryptionKey192Bits (MachineConfig),
-					InitVector);
-				decryptedTicketBytes = decryptor.TransformFinalBlock (ticketBytes, 0, ticketBytes.Length);
+
+			if (cookieProtection == CookieProtection.All) {
+				decryptedTicketBytes = MachineKeySectionUtils.VerifyDecrypt (MachineConfig, ticketBytes);
+			} else if (cookieProtection == CookieProtection.Encryption) {
+				decryptedTicketBytes = MachineKeySectionUtils.Decrypt (MachineConfig, ticketBytes);
+			} else if (cookieProtection == CookieProtection.Validation) {
+				decryptedTicketBytes = MachineKeySectionUtils.Verify (MachineConfig, ticketBytes);
 			}
-			else
-				decryptedTicketBytes = ticketBytes;
 
-			if (cookieProtection == CookieProtection.All || cookieProtection == CookieProtection.Validation) {
-				byte [] validationBytes = MachineKeySectionUtils.ValidationKeyBytes (MachineConfig);
-				byte [] rolesWithValidationBytes = null;
-				byte [] tmpValidation = null;
-
-				int hashSize = (MachineConfig.Validation == MachineKeyValidation.MD5) ? 16 : 20; //md5 is 16 bytes, sha1 is 20 bytes
-
-				rolesWithValidationBytes = new byte [decryptedTicketBytes.Length - hashSize + validationBytes.Length];
-
-				Buffer.BlockCopy (decryptedTicketBytes, 0, rolesWithValidationBytes, 0, decryptedTicketBytes.Length - hashSize);
-				Buffer.BlockCopy (validationBytes, 0, rolesWithValidationBytes, decryptedTicketBytes.Length - hashSize, validationBytes.Length);
-
-				switch (MachineConfig.Validation) {
-					case MachineKeyValidation.MD5:
-						tmpValidation = MD5.Create ().ComputeHash (rolesWithValidationBytes);
-						break;
-
-					case MachineKeyValidation.TripleDES:
-					case MachineKeyValidation.SHA1:
-						tmpValidation = SHA1.Create ().ComputeHash (rolesWithValidationBytes);
-						break;
-				}
-				for (int i = 0; i < tmpValidation.Length; i++) {
-					if (i >= decryptedTicketBytes.Length ||
-						tmpValidation [i] != decryptedTicketBytes [i + decryptedTicketBytes.Length - hashSize])
-						throw new HttpException ("ticket validation failed");
-				}
-			}
+			if (decryptedTicketBytes == null)
+				throw new HttpException ("ticket validation failed");
 
 			MemoryStream ticket = new MemoryStream (decryptedTicketBytes);
 			BinaryReader reader = new BinaryReader (ticket);
@@ -276,11 +222,6 @@ namespace System.Web.Security {
 				_cachedRoles.Add (r, r);
 		}
 
-		byte [] InitVector
-		{
-			get { return new byte [] { 1, 2, 3, 4, 5, 6, 7, 8 }; }
-		}
-		
 		public bool CachedListChanged {
 			get { return _listChanged; }
 		}

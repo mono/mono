@@ -1,10 +1,10 @@
 //
-// System.Web.SessionState.SessionId
+// System.Web.Configuration.MachineKeyCompatibilityMode
 //
-// Author(s):
-//  Jackson Harper (jackson@ximian.com)
+// Authors:
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2003,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,42 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Text;
-using System.Security.Cryptography;
-using System.Web.Configuration;
+#if NET_4_0
 
-namespace System.Web.SessionState {
+namespace System.Web.Configuration {
 
-	internal class SessionId {
-
-		internal const int IdLength = 24;
-		const int half_len = IdLength / 2;
-		static RandomNumberGenerator rng = RandomNumberGenerator.Create ();
-		
-		internal static string Create ()
-		{
-			byte[] key = new byte [half_len];
-
-			lock (rng) {
-				rng.GetBytes (key);
-			}
-			return MachineKeySectionUtils.GetHexString (key);
-		}
-
-#if !NET_2_0
-		internal static string Lookup (HttpRequest request, bool cookieless)
-		{
-			if (cookieless)
-				return (string) request.Headers [SessionStateModule.HeaderName];
-
-			HttpCookie cookie = request.Cookies [SessionStateModule.CookieName];
-			if (cookie == null)
-				return null;
-
-			return cookie.Value;
-		}
-#endif
+	public enum MachineKeyCompatibilityMode {
+		Framework20SP1 = 0,
+		Framework20SP2 = 1
 	}
-
 }
+
+#endif
 

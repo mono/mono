@@ -1,10 +1,12 @@
 //
 // LosFormatterTest.cs - Unit tests for System.Web.UI.LosFormatter
 //
-// Author:
+// Authors:
 //	Gert Driesen  <drieseng@users.sourceforge.net>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2007 Gert Driesen
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,6 +40,145 @@ namespace MonoTests.System.Web.UI
 	[TestFixture]
 	public class LosFormatterTest
 	{
+		static byte [] Empty = new byte [0];
+
+		string Serialize (LosFormatter lf, object value)
+		{
+			StringWriter sw = new StringWriter ();
+			lf.Serialize (sw, value);
+			return sw.ToString ();
+		}
+
+		object Deserialize (LosFormatter lf, string serializedData)
+		{
+			return lf.Deserialize (serializedData);
+		}
+
+		string NoKeyRoundTrip (LosFormatter lf, string assertionMessage)
+		{
+			string serializedData = Serialize (lf, "Mono");
+			Assert.AreEqual ("Mono", (string) Deserialize (lf, serializedData), assertionMessage);
+			return serializedData;
+		}
+
+		[Test]
+		public void Ctor_BoolByteArray ()
+		{
+			LosFormatter lf1 = new LosFormatter (false, (byte []) null);
+			string expected = NoKeyRoundTrip (lf1, "false, null");
+
+			LosFormatter lf2 = new LosFormatter (true, (byte []) null);
+			Assert.AreEqual (expected, NoKeyRoundTrip (lf2, "true, null"), "2");
+
+			LosFormatter lf3 = new LosFormatter (false, Empty);
+			Assert.AreEqual (expected, NoKeyRoundTrip (lf3, "false, empty"), "3");
+
+			// an empty key is still a key - a signature is appended
+			LosFormatter lf4 = new LosFormatter (true, Empty);
+			string signed = NoKeyRoundTrip (lf4, "true, empty");
+			Assert.AreNotEqual (expected, signed, "4");
+
+			byte [] data = Convert.FromBase64String (expected);
+			byte [] signed_data = Convert.FromBase64String (signed);
+			Assert.IsTrue (BitConverter.ToString (signed_data).StartsWith (BitConverter.ToString (data)), "4 / same data");
+#if NET_4_0
+			// 32 bytes == 256 bits -> match HMACSHA256 as default
+			Assert.AreEqual (32, signed_data.Length - data.Length, "signature length");
+#else
+			// 20 bytes == 160 bits -> match HMACSHA1 as default
+			Assert.AreEqual (20, signed_data.Length - data.Length, "signature length");
+#endif
+		}
+
+		[Test]
+		public void Ctor_BoolString ()
+		{
+			LosFormatter lf1 = new LosFormatter (false, (string) null);
+			string expected = NoKeyRoundTrip (lf1, "false, null");
+
+			LosFormatter lf2 = new LosFormatter (true, (string) null);
+			Assert.AreEqual (expected, NoKeyRoundTrip (lf2, "true, null"), "2");
+
+			LosFormatter lf3 = new LosFormatter (false, String.Empty);
+			Assert.AreEqual (expected, NoKeyRoundTrip (lf3, "false, empty"), "3");
+
+			// an empty string is not an empty key!
+			LosFormatter lf4 = new LosFormatter (true, String.Empty);
+			Assert.AreEqual (expected, NoKeyRoundTrip (lf4, "true, empty"), "4");
+
+			byte [] key = new byte [32];
+			LosFormatter lf5 = new LosFormatter (true, Convert.ToBase64String (key));
+			string signed = NoKeyRoundTrip (lf5, "true, b64");
+			Assert.AreNotEqual (expected, signed, "5");
+
+			byte [] data = Convert.FromBase64String (expected);
+			byte [] signed_data = Convert.FromBase64String (signed);
+			Assert.IsTrue (BitConverter.ToString (signed_data).StartsWith (BitConverter.ToString (data)), "5 / same data");
+#if NET_4_0
+			// 32 bytes == 256 bits -> match HMACSHA256 as default
+			Assert.AreEqual (32, signed_data.Length - data.Length, "signature length");
+#else
+			// 20 bytes == 160 bits -> match HMACSHA1 as default
+			Assert.AreEqual (20, signed_data.Length - data.Length, "signature length");
+#endif
+		}
+
+		string SerializeOverloads (LosFormatter lf, string message)
+		{
+			string stream_ser;
+			using (MemoryStream ms = new MemoryStream ()) {
+				lf.Serialize (ms, String.Empty);
+				stream_ser = Convert.ToBase64String (ms.ToArray ());
+			}
+
+			string tw_ser;
+			using (MemoryStream ms = new MemoryStream ()) {
+				using (TextWriter tw = new StreamWriter (ms)) {
+					lf.Serialize (tw, String.Empty);
+				}
+				tw_ser = Convert.ToBase64String (ms.ToArray ());
+			}
+
+			Assert.AreEqual (stream_ser, tw_ser, message);
+			return stream_ser;
+		}
+
+		[Test]
+		public void SerializeOverloads ()
+		{
+			LosFormatter lf1 = new LosFormatter (false, (string) null);
+			string r1 = SerializeOverloads (lf1, "false, null");
+
+			LosFormatter lf2 = new LosFormatter (true, (string) null);
+			string r2 = SerializeOverloads (lf2, "true, null");
+			Assert.AreEqual (r1, r2, "r1-r2");
+
+			LosFormatter lf3 = new LosFormatter (false, String.Empty);
+			string r3 = SerializeOverloads (lf3, "false, empty");
+			Assert.AreEqual (r2, r3, "r2-r3");
+
+			// an empty string is not an empty key!
+			LosFormatter lf4 = new LosFormatter (true, String.Empty);
+			string r4 = SerializeOverloads (lf4, "true, empty");
+			Assert.AreEqual (r3, r4, "r3-r4");
+
+			byte [] key = new byte [32];
+			LosFormatter lf5 = new LosFormatter (true, Convert.ToBase64String (key));
+			string r5 = SerializeOverloads (lf5, "false, b64");
+			Assert.AreNotEqual (r4, r5, "r4-r5");
+		}
+
+#if NET_4_0
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void Deserialize_Stream_NonSeekable ()
+		{
+			string s1 = "Hello world";
+			NonSeekableStream ns = new NonSeekableStream ();
+			LosFormatter lf = new LosFormatter ();
+			lf.Serialize (ns, s1);
+		}
+#else
 		[Test] // bug #411115
 		public void Deserialize_Stream_NonSeekable ()
 		{
@@ -49,7 +190,7 @@ namespace MonoTests.System.Web.UI
 			string s2 = lf.Deserialize (ns) as string;
 			Assert.AreEqual (s1, s2);
 		}
-
+#endif
 		[Test] // bug #324526
 		public void Serialize ()
 		{
