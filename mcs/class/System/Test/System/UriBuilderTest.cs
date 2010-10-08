@@ -343,6 +343,36 @@ namespace MonoTests.System
 			Assert.AreEqual (80, ub.Port, "2.Port");
 			Assert.AreEqual ("/dir/subdir/file", ub.Path, "2.Path");
 		}
+
+		[Test]
+		public void AspNetRedirectUsage_Old ()
+		{
+			Uri uri = new Uri ("http://192.168.0.21:80/WebResource.axd?d=AAAAAAAAAAEAAAAAAAAAAA2");
+			UriBuilder ub = new UriBuilder (uri);
+			ub.Path = "error404.aspx?aspxerrorpath=/WebResource.axd";
+			ub.Fragment = null;
+			ub.Password = null;
+			ub.Query = null;
+			ub.UserName = null;
+			// a bug in older UriBuilder did not encode the ? - existing ASP.NET depends on buggy behavior
+			Assert.AreEqual ("http://192.168.0.21/error404.aspx%3Faspxerrorpath=/WebResource.axd", ub.Uri.ToString ());
+		}
+
+		[Test]
+		public void AspNetRedirectUsage_New ()
+		{
+			string path = "error404.aspx?aspxerrorpath=/WebResource.axd";
+			Uri uri = new Uri ("http://192.168.0.21:80/WebResource.axd?d=AAAAAAAAAAEAAAAAAAAAAA2");
+			UriBuilder ub = new UriBuilder (uri);
+			int qpos = path.IndexOf ('?');
+			ub.Path = path.Substring (0, qpos);
+			ub.Fragment = null;
+			ub.Password = null;
+			ub.Query = path.Substring (qpos + 1);
+			ub.UserName = null;
+			// this is what ASP.NET really means (the ?)
+			Assert.AreEqual ("http://192.168.0.21/error404.aspx?aspxerrorpath=/WebResource.axd", ub.Uri.ToString ());
+		}
 	}
 }
 
