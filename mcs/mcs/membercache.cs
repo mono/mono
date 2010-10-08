@@ -486,8 +486,13 @@ namespace Mono.CSharp {
 		{
 			bestCandidate = null;
 			var container = member.Parent.PartialContainer.Definition;
-			if (!container.IsInterface)
+			if (!container.IsInterface) {
 				container = container.BaseType;
+
+				// It can happen for a user definition of System.Object
+				if (container == null)
+					return null;
+			}
 
 			string name = GetLookupName (member);
 			IList<MemberSpec> applicable;

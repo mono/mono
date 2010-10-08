@@ -6,7 +6,10 @@
 
 namespace System
 {
-	public class Object {}
+	public class Object
+	{
+		object value_with_no_base;
+	}
 		
 	public struct Byte {}
 	public struct Int16 {}
