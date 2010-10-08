@@ -118,6 +118,9 @@ namespace System.Net.Mail {
 			if (cfg != null) {
 				this.host = cfg.Network.Host;
 				this.port = cfg.Network.Port;
+#if NET_4_0
+				this.enableSsl = cfg.Network.EnableSsl;
+#endif
 				TargetName = cfg.Network.TargetName;
 				if (this.TargetName == null)
 					TargetName = "SMTPSVC/" + (host != null ? host : "");
