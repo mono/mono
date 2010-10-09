@@ -611,7 +611,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetObjectOnCollection ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
@@ -655,7 +654,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void StartMemberAfterGetObject ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);

@@ -126,6 +126,17 @@ namespace MonoTests.System.Xaml.Schema
 		}
 
 		[Test]
+		public void GetValueArrayExtension ()
+		{
+			var xt = sctx.GetXamlType (typeof (TestClass));
+			var xm = xt.GetMember ("ArrayMember");
+			Assert.IsNotNull (xm, "#-1");
+			Assert.AreEqual (XamlLanguage.Array, xm.Type, "#0");
+			var o = xm.Invoker.GetValue (new TestClass ());
+			Assert.AreEqual (typeof (ArrayExtension), o.GetType (), "#1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void GetValueInitialization ()
 		{
@@ -251,6 +262,19 @@ namespace MonoTests.System.Xaml.Schema
 
 		class MyXamlMemberInvoker : XamlMemberInvoker
 		{
+		}
+
+		class TestClass
+		{
+			public TestClass ()
+			{
+				ArrayMember = new ArrayExtension (typeof (int));
+				ArrayMember.AddChild (5);
+				ArrayMember.AddChild (3);
+				ArrayMember.AddChild (-1);
+			}
+
+			public ArrayExtension ArrayMember { get; set; }
 		}
 	}
 }

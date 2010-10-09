@@ -167,7 +167,7 @@ namespace System.Xaml
 			return false;
 		}
 
-		public static IEnumerable<XamlMember> GetAllReadWriteMembers (this XamlType type)
+		public static IEnumerable<XamlMember> GetAllObjectReaderMembers (this XamlType type)
 		{
 			// FIXME: find out why only TypeExtension yields this directive. Seealso XamlObjectReaderTest
 			if (type == XamlLanguage.Type) {
@@ -175,7 +175,7 @@ namespace System.Xaml
 				yield break;
 			}
 
-			// Note that unless the XamlType has the default constructor, we don't need "Arguments".
+			// Note that if the XamlType has the default constructor, we don't need "Arguments".
 			var args = type.ConstructionRequiresArguments ? type.GetConstructorArguments () : null;
 			if (args != null && args.Any ())
 				yield return XamlLanguage.Arguments;
