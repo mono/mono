@@ -861,7 +861,7 @@ namespace Mono.CSharp
 		void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache);
 	}
 
-	class InternalType : TypeSpec
+	class InternalType : TypeSpec, ITypeDefinition
 	{
 		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
 		public static readonly InternalType Arglist = new InternalType ("__arglist");
@@ -882,6 +882,7 @@ namespace Mono.CSharp
 			: base (MemberKind.InternalCompilerType, null, null, null, Modifiers.PUBLIC)
 		{
 			this.name = name;
+			this.definition = this;
 			cache = MemberCache.Empty;
 
 			// Make all internal types CLS-compliant, non-obsolete
@@ -896,9 +897,39 @@ namespace Mono.CSharp
 			}
 		}
 
+		System.Reflection.Assembly IMemberDefinition.Assembly {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		bool IMemberDefinition.IsImported {
+			get {
+				return false;
+			}
+		}
+
 		public override string Name {
 			get {
 				return name;
+			}
+		}
+
+		string ITypeDefinition.Namespace {
+			get {
+				return null;
+			}
+		}
+
+		int ITypeDefinition.TypeParametersCount {
+			get {
+				return 0;
+			}
+		}
+
+		TypeParameterSpec[] ITypeDefinition.TypeParameters {
+			get {
+				return null;
 			}
 		}
 
@@ -908,6 +939,53 @@ namespace Mono.CSharp
 		{
 			return name;
 		}
+
+		#region ITypeDefinition Members
+
+		TypeSpec ITypeDefinition.GetAttributeCoClass ()
+		{
+			return null;
+		}
+
+		string ITypeDefinition.GetAttributeDefaultMember ()
+		{
+			return null;
+		}
+
+		AttributeUsageAttribute ITypeDefinition.GetAttributeUsage (PredefinedAttribute pa)
+		{
+			return null;
+		}
+
+		void ITypeDefinition.LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
+		{
+			throw new NotImplementedException ();
+		}
+
+		string[] IMemberDefinition.ConditionalConditions ()
+		{
+			return null;
+		}
+
+		ObsoleteAttribute IMemberDefinition.GetAttributeObsolete ()
+		{
+			return null;
+		}
+
+		bool IMemberDefinition.IsNotCLSCompliant ()
+		{
+			return false;
+		}
+
+		void IMemberDefinition.SetIsAssigned ()
+		{
+		}
+
+		void IMemberDefinition.SetIsUsed ()
+		{
+		}
+
+		#endregion
 	}
 
 	public abstract class ElementTypeSpec : TypeSpec, ITypeDefinition
