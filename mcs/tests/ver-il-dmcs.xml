@@ -2296,6 +2296,19 @@
       </method>
     </type>
   </test>
+  <test name="dtest-037.cs">
+    <type name="A">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void CLSCompliantMethod(IEnumerable`1)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Int32 Main()">

@@ -1351,6 +1351,8 @@ namespace Mono.CSharp {
 				return true;
 
 			foreach (var ta in TypeArguments) {
+				if (ta == InternalType.Dynamic)
+					return false;
 				if (ta.MemberDefinition.IsNotCLSCompliant ())
 					return true;
 			}
