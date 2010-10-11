@@ -399,6 +399,20 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.IsTrue (function ());
 		}
+
+	public delegate object RetObj();
+		[Test] //#640702
+		public void GetCurrentMethodWorksWithDynamicMethods ()
+		{
+	        DynamicMethod dm = new DynamicMethod("Foo", typeof(object), null);
+	        ILGenerator ilgen = dm.GetILGenerator();
+	        ilgen.Emit(OpCodes.Call, typeof(MethodBase).GetMethod("GetCurrentMethod"));
+	        ilgen.Emit(OpCodes.Ret);
+	        RetObj del = (RetObj)dm.CreateDelegate(typeof(RetObj));
+		    MethodInfo res = (MethodInfo)del();
+			Assert.AreEqual (dm.Name, res.Name, "#1");
+
+		}
 	}
 }
 
