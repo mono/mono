@@ -55,6 +55,35 @@ public class Bla {
 		label[idx++, idx - 1] += s + s + s + s;
 	}
 	
+	static bool Test_Object ()
+	{
+		int a = 0;
+		object[] o_a = new string[] { "A" };
+		o_a [a++] += "Z";
+		if ((string) o_a [0] != "AZ")
+			return false;
+		
+		a = 0;
+		object[,] o_a2 = new string[,] { { "X" } };
+		o_a2[a++, 0] += "Z";
+		if ((string) o_a2 [0, 0] != "XZ")
+			return false;
+		
+		return true;
+	}
+	
+	static bool Test_Decimal ()
+	{
+		decimal[,] da = new decimal[,] { { 5, 6 } };
+		da[0,0] = 6.7m;
+		da[0,0] += 1.2m;
+		
+		if (da [0,0] != 7.9m)
+			return false;
+		
+		return true;
+	}
+	
 	public static int Main ()
 	{
 		String str = "test";
@@ -97,6 +126,12 @@ public class Bla {
 		if (sa2 [0,0] != "aaaa")
 			return 7;
 		
+		if (!Test_Object ())
+			return 8;
+
+		if (!Test_Decimal ())
+			return 9;
+
 		return 0;
 	}
 }

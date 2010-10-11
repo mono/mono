@@ -345,21 +345,23 @@ namespace Mono.CSharp
 		// 
 		public void Emit (EmitContext ec)
 		{
-			Emit (ec, false, null);
+			Emit (ec, false);
 		}
 
 		//
 		// if `dup_args' is true, a copy of the arguments will be left
-		// on the stack. If `dup_args' is true, you can specify `this_arg'
-		// which will be duplicated before any other args. Only EmitCall
-		// should be using this interface.
+		// on the stack and return value will contain an array of access
+		// expressions
+		// NOTE: It's caller responsibility is to release temporary variables
 		//
-		public void Emit (EmitContext ec, bool dup_args, LocalTemporary this_arg)
+		public Expression[] Emit (EmitContext ec, bool dup_args)
 		{
-			LocalTemporary[] temps = null;
+			Expression[] temps;
 
 			if (dup_args && Count != 0)
-				temps = new LocalTemporary [Count];
+				temps = new Expression [Count];
+			else
+				temps = null;
 
 			if (reordered != null && Count > 1) {
 				foreach (NamedArgument na in reordered)
@@ -367,23 +369,27 @@ namespace Mono.CSharp
 			}
 
 			int i = 0;
+			LocalTemporary lt;
 			foreach (Argument a in args) {
 				a.Emit (ec);
-				if (dup_args) {
+				if (!dup_args)
+					continue;
+
+				if (a.Expr is Constant) {
+					//
+					// No need to create a temporary variable for constants
+					//
+					temps[i] = a.Expr;
+				} else {
 					ec.Emit (OpCodes.Dup);
-					(temps [i++] = new LocalTemporary (a.Type)).Store (ec);
+					temps[i] = lt = new LocalTemporary (a.Type);
+					lt.Store (ec);
 				}
+
+				++i;
 			}
 
-			if (dup_args) {
-				if (this_arg != null)
-					this_arg.Emit (ec);
-
-				for (i = 0; i < temps.Length; i++) {
-					temps[i].Emit (ec);
-					temps[i].Release (ec);
-				}
-			}
+			return temps;
 		}
 
 		public List<Argument>.Enumerator GetEnumerator ()

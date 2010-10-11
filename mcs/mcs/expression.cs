@@ -5286,8 +5286,19 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!omit_args && Arguments != null)
-				Arguments.Emit (ec, dup_args, this_arg);
+			if (!omit_args && Arguments != null) {
+				var dup_arg_exprs = Arguments.Emit (ec, dup_args);
+				if (dup_args) {
+					this_arg.Emit (ec);
+					LocalTemporary lt;
+					foreach (var dup in dup_arg_exprs) {
+						dup.Emit (ec);
+						lt = dup as LocalTemporary;
+						if (lt != null)
+							lt.Release (ec);
+					}
+				}
+			}
 
 			if (call_op == OpCodes.Callvirt && (iexpr_type.IsGenericParameter || iexpr_type.IsStruct)) {
 				ec.Emit (OpCodes.Constrained, iexpr_type);
@@ -7960,8 +7971,8 @@ namespace Mono.CSharp {
 		//
 		ElementAccess ea;
 
-		LocalTemporary temp, prepared_address;
-
+		LocalTemporary temp, expr_copy;
+		Expression[] prepared_arguments;
 		bool prepared;
 		
 		public ArrayAccess (ElementAccess ea_data, Location l)
@@ -8022,10 +8033,7 @@ namespace Mono.CSharp {
 		void LoadArrayAndArguments (EmitContext ec)
 		{
 			ea.Expr.Emit (ec);
-
-			for (int i = 0; i < ea.Arguments.Count; ++i) {
-				ea.Arguments [i].Emit (ec);
-			}
+			ea.Arguments.Emit (ec);
 		}
 
 		public void Emit (EmitContext ec, bool leave_copy)
@@ -8033,12 +8041,21 @@ namespace Mono.CSharp {
 			var ac = ea.Expr.Type as ArrayContainer;
 
 			if (prepared) {
-				if (prepared_address != null)
-					prepared_address.Emit (ec);
-
 				ec.EmitLoadFromPtr (type);
 			} else {
-				LoadArrayAndArguments (ec);
+				if (prepared_arguments == null) {
+					LoadArrayAndArguments (ec);
+				} else {
+					expr_copy.Emit (ec);
+					LocalTemporary lt;
+					foreach (var expr in prepared_arguments) {
+						expr.Emit (ec);
+						lt = expr as LocalTemporary;
+						if (lt != null)
+							lt.Release (ec);
+					}
+				}
+
 				ec.EmitArrayLoad (ac);
 			}	
 
@@ -8058,40 +8075,38 @@ namespace Mono.CSharp {
 		{
 			var ac = (ArrayContainer) ea.Expr.Type;
 			TypeSpec t = source.Type;
-			prepared = prepare_for_load;
 
-			LoadArrayAndArguments (ec);
-
-			if (prepared) {
+			//
+			// When we are dealing with a struct, get the address of it to avoid value copy
+			// Same cannot be done for reference type because array covariance and the
+			// check in ldelema requires to specify the type of array element stored at the index
+			//
+			if (t.IsStruct && (prepare_for_load || !TypeManager.IsPrimitiveType (t))) {
+				LoadArrayAndArguments (ec);
 				ec.EmitArrayAddress (ac);
-				if (source is DynamicExpressionStatement) {
-					// Store prepared address in a variable to keep stack
-					// consistent for compound dynamic operation which is
-					// emitted as a method call
-					prepared_address = new LocalTemporary (ReferenceContainer.MakeType (t));
-					prepared_address.Store (ec);
-					prepared_address.Emit (ec);
-				} else {
+
+				if (prepare_for_load) {
 					ec.Emit (OpCodes.Dup);
 				}
-			} else {
-				//
-				// If we are dealing with a struct, get the
-				// address of it, so we can store it.
-				//
-				// The stobj opcode used by value types will need
-				// an address on the stack, not really an array/array
-				// pair
-				//
-				if (ac.Rank == 1 && TypeManager.IsStruct (t) &&
-					(!TypeManager.IsBuiltinOrEnum (t) ||
-					 t == TypeManager.decimal_type)) {
 
-					ec.Emit (OpCodes.Ldelema, t);
-				}
+				prepared = true;
+			} else if (prepare_for_load) {
+				ea.Expr.Emit (ec);
+				ec.Emit (OpCodes.Dup);
+
+				expr_copy = new LocalTemporary (ea.Expr.Type);
+				expr_copy.Store (ec);
+				prepared_arguments = ea.Arguments.Emit (ec, true);
+			} else {
+				LoadArrayAndArguments (ec);
 			}
 
 			source.Emit (ec);
+
+			if (expr_copy != null) {
+				expr_copy.Release (ec);
+			}
+
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
 				temp = new LocalTemporary (this.type);

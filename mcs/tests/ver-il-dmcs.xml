@@ -2270,7 +2270,7 @@
         <size>74</size>
       </method>
       <method name="Int32 Main()">
-        <size>844</size>
+        <size>842</size>
       </method>
       <method name="Void .ctor()">
         <size>18</size>
@@ -2290,6 +2290,22 @@
       </method>
       <method name="Int32 Foo(Int32)">
         <size>3</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-cls-01.cs">
+    <type name="A">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void CLSCompliantMethod(System.Object[])">
+        <size>1</size>
+      </method>
+      <method name="Void CLSCompliantMethod(IEnumerable`1)">
+        <size>1</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -29826,7 +29842,7 @@
         <size>7</size>
       </method>
       <method name="Void A(System.Collections.Specialized.NameValueCollection, MyClass, System.Object)">
-        <size>65</size>
+        <size>69</size>
       </method>
       <method name="Int32 Main()">
         <size>2</size>
@@ -30987,7 +31003,7 @@
         <size>1</size>
       </method>
       <method name="Boolean Test()">
-        <size>110</size>
+        <size>108</size>
       </method>
     </type>
     <type name="Driver">
@@ -35892,10 +35908,10 @@
         <size>18</size>
       </method>
       <method name="Int32 i_pre_increment(X)">
-        <size>27</size>
+        <size>26</size>
       </method>
       <method name="Int32 i_post_increment(X)">
-        <size>27</size>
+        <size>26</size>
       </method>
       <method name="Z overload_increment(Z)">
         <size>10</size>
@@ -38416,6 +38432,21 @@
       </method>
     </type>
   </test>
+  <test name="test-539.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>84</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-54.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -39349,22 +39380,28 @@
         <size>43</size>
       </method>
       <method name="Void BuildNode(System.String[] ByRef)">
-        <size>56</size>
+        <size>58</size>
       </method>
       <method name="Void BuildNode_B(System.Object ByRef)">
         <size>18</size>
       </method>
       <method name="System.String BuildNode_C(System.String ByRef)">
-        <size>76</size>
+        <size>80</size>
       </method>
       <method name="System.String BuildNode_D()">
-        <size>156</size>
+        <size>160</size>
       </method>
       <method name="Void BuildNode_E(System.String[,] ByRef)">
-        <size>68</size>
+        <size>83</size>
       </method>
       <method name="Int32 Main()">
-        <size>265</size>
+        <size>290</size>
+      </method>
+      <method name="Boolean Test_Object()">
+        <size>160</size>
+      </method>
+      <method name="Boolean Test_Decimal()">
+        <size>128</size>
       </method>
     </type>
   </test>
@@ -39394,7 +39431,7 @@
         <size>40</size>
       </method>
       <method name="Void TestMethod()">
-        <size>71</size>
+        <size>73</size>
       </method>
     </type>
     <type name="M">
@@ -39611,7 +39648,7 @@
         <size>8</size>
       </method>
       <method name="Int32 Do(System.String, System.String, System.String)">
-        <size>334</size>
+        <size>332</size>
       </method>
     </type>
   </test>
@@ -41067,7 +41104,7 @@
         <size>8</size>
       </method>
       <method name="Int32 Main()">
-        <size>77</size>
+        <size>69</size>
       </method>
     </type>
   </test>
@@ -42735,7 +42772,7 @@
     </type>
     <type name="Tester">
       <method name="Int32 Main()">
-        <size>80</size>
+        <size>74</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -43921,7 +43958,7 @@
         <size>9</size>
       </method>
       <method name="Int32 Main()">
-        <size>53</size>
+        <size>52</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
