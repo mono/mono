@@ -53,11 +53,14 @@ namespace System.Web.UI
 				return;
 			}
 #endif
+			string rawViewState = Page.RawViewState;
 			IStateFormatter formatter = StateFormatter;
-			Pair pair = formatter.Deserialize (Page.RawViewState) as Pair;
-			if (pair != null) {
-				ViewState = pair.First;
-				ControlState = pair.Second;
+			if (!String.IsNullOrEmpty (rawViewState)) {
+				Pair pair = formatter.Deserialize (rawViewState) as Pair;
+				if (pair != null) {
+					ViewState = pair.First;
+					ControlState = pair.Second;
+				}
 			}
 		}
 
