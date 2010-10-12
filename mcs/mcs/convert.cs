@@ -572,9 +572,9 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.uint64_type)
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (target_type == TypeManager.double_type)
-					return expr == null ? EmptyExpression.Null : new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R8);
+					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
-					return expr == null ? EmptyExpression.Null : new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R4);
+					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
 				if (target_type == TypeManager.decimal_type)
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.int64_type){
@@ -592,9 +592,9 @@ namespace Mono.CSharp {
 				// From ulong to float, double
 				//
 				if (target_type == TypeManager.double_type)
-					return expr == null ? EmptyExpression.Null : new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R8);
+					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
-					return expr == null ? EmptyExpression.Null : new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R4);
+					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
 				if (target_type == TypeManager.decimal_type)
 					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.char_type){

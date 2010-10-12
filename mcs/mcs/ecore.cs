@@ -1722,7 +1722,8 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class OpcodeCast : TypeCast {
+	class OpcodeCast : TypeCast
+	{
 		readonly OpCode op;
 		
 		public OpcodeCast (Expression child, TypeSpec return_type, OpCode op)
@@ -1747,6 +1748,27 @@ namespace Mono.CSharp {
 
 		public TypeSpec UnderlyingType {
 			get { return child.Type; }
+		}
+	}
+
+	//
+	// Opcode casts expression with 2 opcodes but only
+	// single expression tree node
+	//
+	class OpcodeCastDuplex : OpcodeCast
+	{
+		readonly OpCode second;
+
+		public OpcodeCastDuplex (Expression child, TypeSpec returnType, OpCode first, OpCode second)
+			: base (child, returnType, first)
+		{
+			this.second = second;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+			ec.Emit (second);
 		}
 	}
 

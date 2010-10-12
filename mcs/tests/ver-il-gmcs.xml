@@ -17498,7 +17498,7 @@
         <size>162</size>
       </method>
       <method name="Void LeftShiftTest_3()">
-        <size>184</size>
+        <size>169</size>
       </method>
       <method name="Void LeftShiftTest_4()">
         <size>261</size>
@@ -17840,7 +17840,7 @@
         <size>159</size>
       </method>
       <method name="Void RightShiftTest_3()">
-        <size>184</size>
+        <size>169</size>
       </method>
       <method name="Void RightShiftTest_4()">
         <size>258</size>
@@ -18231,6 +18231,15 @@
       </method>
       <method name="Void EqualTestDelegate_3()">
         <size>227</size>
+      </method>
+      <method name="Void DivideTest_7()">
+        <size>185</size>
+      </method>
+      <method name="Void MultiplyTest_8()">
+        <size>198</size>
+      </method>
+      <method name="Void RightShiftTest_6()">
+        <size>145</size>
       </method>
     </type>
   </test>

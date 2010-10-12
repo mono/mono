@@ -885,8 +885,12 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				if (right is UserCast || right is TypeCast)
-					right.Type = lifted_type.Type;
+				var r = right;
+				if (r is ReducedExpression)
+					r = ((ReducedExpression) r).OriginalExpression;
+
+				if (r is UserCast || r is TypeCast)
+					r.Type = lifted_type.Type;
 				else
 					right = EmptyCast.Create (right, lifted_type.Type);
 			}
