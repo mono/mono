@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.MachineKeySection
+// System.Web.Util.MachineKeySectionUtils
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -34,12 +34,13 @@ using System.Configuration;
 using System.Configuration.Provider;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web.Configuration;
 
 #if NET_2_0
 
-namespace System.Web.Configuration {
+namespace System.Web.Util {
 
-	internal static class MachineKeySectionUtils {
+	static class MachineKeySectionUtils {
 		static byte ToHexValue (char c, bool high)
 		{
 			byte v;

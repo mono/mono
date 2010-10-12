@@ -89,7 +89,6 @@ System.Web.Configuration/DeploymentSectionTest.cs
 System.Web.Configuration/GlobalizationSectionTest.cs
 System.Web.Configuration/HostingEnvironmentSectionTest.cs
 System.Web.Configuration/MachineKeySectionTest.cs
-System.Web.Configuration/MachineKeySectionUtilsTest.cs
 System.Web.Configuration/MachineKeyValidationConverterTest.cs
 System.Web.Configuration/NullableStringValidatorTest.cs
 System.Web.Configuration/ProfilePropertySettingsTest.cs
@@ -551,6 +550,7 @@ System.Web.UI.WebControls/WebControlCas.cs
 System.Web.UI.WebControls/XmlCas.cs
 System.Web.UI.WebControls/XmlDataSourceCas.cs
 System.Web.Util/HttpEncoderTest.cs
+System.Web.Util/MachineKeySectionUtilsTest.cs
 System.Web.Util/RequestValidatorTest.cs
 System.Web.Util/TransactionsCas.cs
 System.Web.Util/UrlUtilsTest.cs
