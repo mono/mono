@@ -385,6 +385,9 @@ namespace System.IO.IsolatedStorage {
 		{
 			string root = GetIsolatedStorageRoot (Scope);
 			string dir = null;
+#if MOBILE
+			dir = "";
+#else
 			if (_applicationIdentity != null) {
 				dir = String.Format ("a{0}{1}", SeparatorInternal, GetNameFromIdentity (_applicationIdentity));
 			} else if (_domainIdentity != null) {
@@ -395,6 +398,7 @@ namespace System.IO.IsolatedStorage {
 			} else {
 				throw new IsolatedStorageException (Locale.GetText ("No code identity available."));
 			}
+#endif
 
 			root = Path.Combine (root, dir);
 
