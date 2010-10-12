@@ -1022,15 +1022,20 @@ namespace Mono.CSharp {
 				if (t.IsInterface)
 					continue;
 
-				if (target != t && !ImplicitStandardConversionExists (new EmptyExpression (t), target)) {
-					if (implicitOnly)
-						continue;
+				if (target != t) {
+					if (TypeManager.IsNullableType (t))
+						t = Nullable.NullableInfo.GetUnderlyingType (t);
 
-					if (texpr == null)
-						texpr = new EmptyExpression (target);
+					if (!ImplicitStandardConversionExists (new EmptyExpression (t), target)) {
+						if (implicitOnly)
+							continue;
 
-					if (!ImplicitStandardConversionExists (texpr, t))
-						continue;
+						if (texpr == null)
+							texpr = new EmptyExpression (target);
+
+						if (!ImplicitStandardConversionExists (texpr, t))
+							continue;
+					}
 				}
 
 				if (candidates == null)
@@ -1088,7 +1093,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if ((target.Kind & user_conversion_kinds) != 0 && target != TypeManager.decimal_type) {
+			if ((target.Kind & user_conversion_kinds) != 0 && target_type != TypeManager.decimal_type) {
 				bool declared_only = target.IsStruct || implicitOnly;
 
 				var operators = MemberCache.GetUserOperator (target_type, Operator.OpType.Implicit, declared_only);
@@ -1118,7 +1123,7 @@ namespace Mono.CSharp {
 				t_x = most_specific_operator.ReturnType;
 			} else {
 				//
-				// Pass original source type to find best match against input type and
+				// Pass original source type to find the best match against input type and
 				// not the unwrapped expression
 				//
 				s_x = FindMostSpecificSource (candidates, source.Type, source_type_expr, !implicitOnly);
@@ -1129,13 +1134,27 @@ namespace Mono.CSharp {
 				if (t_x == null)
 					return null;
 
-				most_specific_operator = candidates[0];
-
-				for (int i = 1; i < candidates.Count; ++i) {
+				most_specific_operator = null;
+				for (int i = 0; i < candidates.Count; ++i) {
 					if (candidates[i].ReturnType == t_x && candidates[i].Parameters.Types[0] == s_x) {
 						most_specific_operator = candidates[i];
 						break;
 					}
+				}
+
+				if (most_specific_operator == null) {
+					MethodSpec ambig_arg = null;
+					foreach (var candidate in candidates) {
+						if (candidate.ReturnType == t_x)
+							most_specific_operator = candidate;
+						else if (candidate.Parameters.Types[0] == s_x)
+							ambig_arg = candidate;
+					}
+
+					ec.Report.Error (457, loc,
+						"Ambiguous user defined operators `{0}' and `{1}' when converting from `{2}' to `{3}'",
+						ambig_arg.GetSignatureForError (), most_specific_operator.GetSignatureForError (),
+						source.Type.GetSignatureForError (), target.GetSignatureForError ());
 				}
 			}
 
@@ -1165,6 +1184,9 @@ namespace Mono.CSharp {
 				source = implicitOnly ?
 					ImplicitConversionStandard (ec, source, target_type, loc) :
 					ExplicitConversionStandard (ec, source, target_type, loc);
+
+				if (source == null)
+					return null;
 			}
 
 			//
