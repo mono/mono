@@ -2245,8 +2245,9 @@ constructor_initializer
 		$$ = new ConstructorThisInitializer ((Arguments) $5, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3), GetLocation ($6));
 	  }
-	| COLON error {
-		Report.Error (1018, GetLocation ($1), "Keyword `this' or `base' expected");
+	| error
+	  {
+		Error_SyntaxError (yyToken);
 		$$ = null;
 	  }
 	;
