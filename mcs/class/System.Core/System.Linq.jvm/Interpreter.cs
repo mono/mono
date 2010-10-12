@@ -3,6 +3,7 @@
 //
 // (C) 2008 Mainsoft, Inc. (http://www.mainsoft.com)
 // (C) 2008 db4objects, Inc. (http://www.db4o.com)
+// (C) 2010 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,8 +25,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -33,22 +32,17 @@ namespace System.Linq.jvm {
 
 	class Interpreter {
 
-		class VoidTypeMarker {
-		}
+		class VoidTypeMarker {}
 
 		static readonly Type VoidMarker = typeof (VoidTypeMarker);
 		static readonly MethodInfo [] delegates = new MethodInfo [5];
+		const BindingFlags method_flags = BindingFlags.NonPublic | BindingFlags.Instance;
 
-		LambdaExpression lambda;
+		readonly LambdaExpression lambda;
 
 		static Interpreter ()
 		{
-			var methods = from method in typeof (Interpreter).GetMethods (
-							  BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
-						  where method.Name == "GetDelegate"
-						  select method;
-
-			foreach (var method in methods)
+			foreach (var method in typeof (Interpreter).GetMethods (method_flags).Where (m => m.Name == "GetDelegate"))
 				delegates [method.GetGenericArguments ().Length - 1] = method;
 		}
 
@@ -92,12 +86,53 @@ namespace System.Linq.jvm {
 			return ExpressionInterpreter.Interpret (lambda, arg);
 		}
 
+		MethodInfo GetActionRunner (params Type [] types)
+		{
+			return GetRunner ("ActionRunner", types);
+		}
+
+		MethodInfo GetFuncRunner (params Type [] types)
+		{
+			return GetRunner ("FuncRunner", types);
+		}
+
+		MethodInfo GetRunner (string name, Type [] type_arguments)
+		{
+			var method = GetMethod (name, type_arguments.Length);
+			if (method == null)
+				throw new InvalidOperationException ();
+
+			return method.MakeGenericMethod (type_arguments);
+		}
+
+		MethodInfo GetMethod (string name, int parameters)
+		{
+			foreach (var method in GetType ().GetMethods (method_flags)) {
+				if (method.Name != name)
+					continue;
+
+				if (method.GetGenericArguments ().Length != parameters)
+					continue;
+
+				return method;
+			}
+
+			return null;
+		}
+
+		Delegate CreateDelegate (MethodInfo runner)
+		{
+			return Delegate.CreateDelegate (lambda.Type, this, runner);
+		}
+
+		// all methods below are called through reflection
+
 		Delegate GetDelegate<TResult> ()
 		{
 			if (typeof (TResult) == VoidMarker)
-				return new Action (ActionRunner);
+				return CreateDelegate (GetActionRunner (Type.EmptyTypes));
 
-			return new Func<TResult> (FuncRunner<TResult>);
+			return CreateDelegate (GetFuncRunner (typeof (TResult)));
 		}
 
 		TResult FuncRunner<TResult> ()
@@ -113,9 +148,9 @@ namespace System.Linq.jvm {
 		Delegate GetDelegate<T, TResult> ()
 		{
 			if (typeof (TResult) == VoidMarker)
-				return new Action<T> (ActionRunner<T>);
+				return CreateDelegate (GetActionRunner (typeof (T)));
 
-			return new Func<T, TResult> (FuncRunner<T, TResult>);
+			return CreateDelegate (GetFuncRunner (typeof (T), typeof (TResult)));
 		}
 
 		TResult FuncRunner<T, TResult> (T arg)
@@ -131,9 +166,9 @@ namespace System.Linq.jvm {
 		Delegate GetDelegate<T1, T2, TResult> ()
 		{
 			if (typeof (TResult) == VoidMarker)
-				return new Action<T1, T2> (ActionRunner<T1, T2>);
+				return CreateDelegate (GetActionRunner (typeof (T1), typeof (T2)));
 
-			return new Func<T1, T2, TResult> (FuncRunner<T1, T2, TResult>);
+			return CreateDelegate (GetFuncRunner (typeof (T1), typeof (T2), typeof (TResult)));
 		}
 
 		TResult FuncRunner<T1, T2, TResult> (T1 arg1, T2 arg2)
@@ -149,9 +184,9 @@ namespace System.Linq.jvm {
 		Delegate GetDelegate<T1, T2, T3, TResult> ()
 		{
 			if (typeof (TResult) == VoidMarker)
-				return new Action<T1, T2, T3> (ActionRunner<T1, T2, T3>);
+				return CreateDelegate (GetActionRunner (typeof (T1), typeof (T2), typeof (T3)));
 
-			return new Func<T1, T2, T3, TResult> (FuncRunner<T1, T2, T3, TResult>);
+			return CreateDelegate (GetFuncRunner (typeof (T1), typeof (T2), typeof (T3), typeof (TResult)));
 		}
 
 		TResult FuncRunner<T1, T2, T3, TResult> (T1 arg1, T2 arg2, T3 arg3)
@@ -167,9 +202,9 @@ namespace System.Linq.jvm {
 		Delegate GetDelegate<T1, T2, T3, T4, TResult> ()
 		{
 			if (typeof (TResult) == VoidMarker)
-				return new Action<T1, T2, T3, T4> (ActionRunner<T1, T2, T3, T4>);
+				return CreateDelegate (GetActionRunner (typeof (T1), typeof (T2), typeof (T3), typeof (T4)));
 
-			return new Func<T1, T2, T3, T4, TResult> (FuncRunner<T1, T2, T3, T4, TResult>);
+			return CreateDelegate (GetFuncRunner (typeof (T1), typeof (T2), typeof (T3), typeof (T4), typeof (TResult)));
 		}
 
 		TResult FuncRunner<T1, T2, T3, T4, TResult> (T1 arg1, T2 arg2, T3 arg3, T4 arg4)
