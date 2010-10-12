@@ -201,7 +201,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		//
 		public Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
 		{
-			if (value.Value == null && (info == null || (info.Flags & (CSharpArgumentInfoFlags.IsOut | CSharpArgumentInfoFlags.IsRef)) == 0)) {
+			if (value.Value == null && (info == null || (info.Flags & (CSharpArgumentInfoFlags.IsOut | CSharpArgumentInfoFlags.IsRef | CSharpArgumentInfoFlags.UseCompileTimeType)) == 0)) {
 				if (value.LimitType == typeof (object))
 					return new Compiler.NullLiteral (Compiler.Location.Null);
 

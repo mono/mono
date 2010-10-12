@@ -2270,7 +2270,7 @@
         <size>74</size>
       </method>
       <method name="Int32 Main()">
-        <size>842</size>
+        <size>1039</size>
       </method>
       <method name="Void .ctor()">
         <size>18</size>
@@ -2344,25 +2344,13 @@
         <size>41</size>
       </method>
       <method name="Void AssertError(System.Action, System.String)">
-        <size>53</size>
+        <size>73</size>
       </method>
       <method name="Boolean RunTest(System.Reflection.MethodInfo)">
         <size>92</size>
       </method>
       <method name="Int32 Main()">
         <size>179</size>
-      </method>
-      <method name="Boolean &lt;Main&gt;m__1(System.Reflection.MethodInfo)">
-        <size>12</size>
-      </method>
-      <method name="System.String &lt;Main&gt;m__2(System.Reflection.MethodInfo)">
-        <size>7</size>
-      </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Reflection.MethodInfo)">
-        <size>7</size>
-      </method>
-      <method name="Boolean &lt;Main&gt;m__4(Boolean)">
-        <size>5</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -2374,6 +2362,26 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void NullableConversion()">
+        <size>47</size>
+      </method>
+      <method name="Void &lt;NullableConversion&gt;m__1()">
+        <size>105</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__2(System.Reflection.MethodInfo)">
+        <size>12</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__3(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__4(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__5(Boolean)">
+        <size>5</size>
       </method>
     </type>
   </test>
@@ -19968,7 +19976,7 @@
         <size>162</size>
       </method>
       <method name="Void LeftShiftTest_3()">
-        <size>184</size>
+        <size>169</size>
       </method>
       <method name="Void LeftShiftTest_4()">
         <size>261</size>
@@ -20310,7 +20318,7 @@
         <size>159</size>
       </method>
       <method name="Void RightShiftTest_3()">
-        <size>184</size>
+        <size>169</size>
       </method>
       <method name="Void RightShiftTest_4()">
         <size>258</size>
@@ -20701,6 +20709,15 @@
       </method>
       <method name="Void EqualTestDelegate_3()">
         <size>212</size>
+      </method>
+      <method name="Void DivideTest_7()">
+        <size>185</size>
+      </method>
+      <method name="Void MultiplyTest_8()">
+        <size>198</size>
+      </method>
+      <method name="Void RightShiftTest_6()">
+        <size>145</size>
       </method>
     </type>
   </test>

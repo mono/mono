@@ -309,7 +309,7 @@ class Tester
 
 		dynamic d2 = (MyEnumUlong?) MyEnumUlong.Value_1;
 		Assert (d2 + (byte) 1, MyEnumUlong.Value_2, "#2");
-		Assert<MyEnumUlong?> (d2 + (object) null, null, "#2a");
+		Assert<MyEnumUlong?> (d2 + null, null, "#2a");
 		
 		// CSC: Invalid System.InvalidOperationException
 		Assert<MyEnum?> (d + null, null, "#1");
@@ -1878,7 +1878,7 @@ class Tester
 
 		dynamic d2 = (MyEnumUlong?) MyEnumUlong.Value_2;
 		Assert (d2 - (byte) 1, MyEnumUlong.Value_1, "#2");
-		Assert<MyEnumUlong?> (d2 - (object) null, null, "#2a");
+		Assert<MyEnumUlong?> (d2 - null, null, "#2a");
 		
 		// CSC: Invalid System.InvalidOperationException
 		Assert<MyEnum?> (d - null, null, "#3");
