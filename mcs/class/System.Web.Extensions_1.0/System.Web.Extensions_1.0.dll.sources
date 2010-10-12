@@ -3,7 +3,7 @@
 ../../build/common/MonoTODOAttribute.cs
 ../System.Web/System.Web.Handlers/AssemblyResourceLoader.cs
 ../System.Web/System.Web.Configuration_2.0/MachineKeyRegistryStorage.cs
-../System.Web/System.Web.Configuration_2.0/MachineKeySectionUtils.cs
+../System.Web/System.Web.Util/MachineKeySectionUtils.cs
 ../System.Web.Extensions/Assembly/AssemblyInfo.cs
 ../System.Web.Extensions/System.Web.Handlers/ScriptModule.cs
 ../System.Web.Extensions/System.Web.Handlers/ScriptResourceHandler.cs
