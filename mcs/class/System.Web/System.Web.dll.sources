@@ -183,7 +183,6 @@ System.Web.Configuration_2.0/LowerCaseStringConverter.cs
 System.Web.Configuration_2.0/MachineKeyCompatibilityMode.cs
 System.Web.Configuration_2.0/MachineKeyRegistryStorage.cs
 System.Web.Configuration_2.0/MachineKeySection.cs
-System.Web.Configuration_2.0/MachineKeySectionUtils.cs
 System.Web.Configuration_2.0/MachineKeyValidation.cs
 System.Web.Configuration_2.0/MachineKeyValidationConverter.cs
 System.Web.Configuration_2.0/MembershipSection.cs
@@ -1169,6 +1168,7 @@ System.Web.Util/HttpEncoder.cs
 System.Web.Util/ICalls.cs
 System.Web.Util/IWebObjectFactory.cs
 System.Web.Util/IWebPropertyAccessor.cs
+System.Web.Util/MachineKeySectionUtils.cs
 System.Web.Util/RuntimeHelpers.cs
 System.Web.Util/SearchPattern.cs
 System.Web.Util/SerializationHelper.cs

@@ -1,5 +1,5 @@
 //
-// System.Web.Security.MembershipEncryptionHelper
+// System.Web.Security.MembershipHelper
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
@@ -27,10 +27,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Configuration.Provider;
 using System.Security.Cryptography;
 using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web.Security
 {

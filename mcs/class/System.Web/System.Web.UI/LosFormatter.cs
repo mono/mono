@@ -32,7 +32,7 @@ using System.Configuration;
 using System.IO;
 using System.Security.Permissions;
 using System.Text;
-using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web.UI {
 

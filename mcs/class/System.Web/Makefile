@@ -291,7 +291,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,159
 	$(foreach file,$(NUNIT_APP_GLOBALRESOURCES_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_GlobalResources/\2 ;g'))
 
 ifeq (net_2_0, $(PROFILE))
-TEST_MCS_FLAGS += -r:System.Web.Extensions.dll
+TEST_MCS_FLAGS += -r:System.Web.Extensions.dll -d:TEST
 endif
 
 EXTRA_DISTFILES = \

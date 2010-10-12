@@ -37,6 +37,7 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web.Handlers {
 #if SYSTEM_WEB_EXTENSIONS

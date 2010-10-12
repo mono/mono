@@ -35,6 +35,7 @@ using System;
 using System.ComponentModel;
 using System.Configuration;
 using System.Security.Cryptography;
+using System.Web.Util;
 
 namespace System.Web.Configuration {
 
@@ -127,7 +128,7 @@ namespace System.Web.Configuration {
 			get { return (string) base [decryptionKeyProp];}
 			set {
 				base[decryptionKeyProp] = value;
-//				SetDecryptionKey (value);
+				SetDecryptionKey (value);
 			}
 		}
 
@@ -138,7 +139,10 @@ namespace System.Web.Configuration {
 			set {
 				if (value == MachineKeyValidation.Custom)
 					throw new ArgumentException ();
-//				ValidationAlgorithm = value.ToString ();
+
+				string algo = value.ToString ();
+				// enum and accept values differs for TripleDES
+				ValidationAlgorithm = (algo == "TripleDES") ? "3DES" : algo;
 			}
 		}
 
@@ -175,7 +179,7 @@ namespace System.Web.Configuration {
 			get { return (string) base [validationKeyProp];}
 			set {
 				base[validationKeyProp] = value;
-//				SetValidationKey (value);
+				SetValidationKey (value);
 			}
 		}
 
@@ -188,10 +192,10 @@ namespace System.Web.Configuration {
 			get { return WebConfigurationManager.GetSection ("system.web/machineKey") as MachineKeySection; }
 		}
 
-		private byte[] decryption_key;
-		private byte[] validation_key;
-		private SymmetricAlgorithm decryption_template;
-		private KeyedHashAlgorithm validation_template;
+		byte[] decryption_key;
+		byte[] validation_key;
+		SymmetricAlgorithm decryption_template;
+		KeyedHashAlgorithm validation_template;
 
 		internal SymmetricAlgorithm GetDecryptionAlgorithm ()
 		{
@@ -200,7 +204,7 @@ namespace System.Web.Configuration {
 		}
 
 		// not to be reused outside algorithm and key validation purpose
-		private SymmetricAlgorithm DecryptionTemplate {
+		SymmetricAlgorithm DecryptionTemplate {
 			get {
 				if (decryption_template == null)
 					decryption_template = GetDecryptionAlgorithm ();
@@ -238,7 +242,7 @@ namespace System.Web.Configuration {
 		}
 
 		// not to be reused outside algorithm and key validation purpose
-		private KeyedHashAlgorithm ValidationTemplate {
+		KeyedHashAlgorithm ValidationTemplate {
 			get {
 				if (validation_template == null)
 					validation_template = GetValidationAlgorithm ();
