@@ -60,6 +60,12 @@ public class Test
 		v *= t.Prop3 -= 15;
 		if (v != 1455)
 			return 4;
+		
+		dynamic dvalue = 3;
+		int[] iar = new [] { -14 };
+		iar [0] += dvalue;
+		if (iar [0] != -11)
+			return 5;
 
 		Console.WriteLine ("ok");
 		return 0;

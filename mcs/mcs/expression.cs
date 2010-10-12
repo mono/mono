@@ -2789,8 +2789,11 @@ namespace Mono.CSharp {
 				((TypeManager.IsNullableType (left.Type) && (right is NullLiteral || TypeManager.IsNullableType (right.Type) || TypeManager.IsValueType (right.Type))) ||
 				(TypeManager.IsValueType (left.Type) && right is NullLiteral) ||
 				(TypeManager.IsNullableType (right.Type) && (left is NullLiteral || TypeManager.IsNullableType (left.Type) || TypeManager.IsValueType (left.Type))) ||
-				(TypeManager.IsValueType (right.Type) && left is NullLiteral)))
-				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
+				(TypeManager.IsValueType (right.Type) && left is NullLiteral))) {
+				var lifted = new Nullable.LiftedBinaryOperator (oper, left, right, loc);
+				lifted.state = state;
+				return lifted.Resolve (ec);
+			}
 
 			return DoResolveCore (ec, left, right);
 		}
@@ -8081,7 +8084,7 @@ namespace Mono.CSharp {
 			// Same cannot be done for reference type because array covariance and the
 			// check in ldelema requires to specify the type of array element stored at the index
 			//
-			if (t.IsStruct && (prepare_for_load || !TypeManager.IsPrimitiveType (t))) {
+			if (t.IsStruct && (prepare_for_load || !TypeManager.IsPrimitiveType (t)) && !(source is DynamicExpressionStatement)) {
 				LoadArrayAndArguments (ec);
 				ec.EmitArrayAddress (ac);
 
