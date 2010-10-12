@@ -102,6 +102,9 @@ namespace System.Linq.jvm {
 			if (method == null)
 				throw new InvalidOperationException ();
 
+			if (type_arguments.Length == 0)
+				return method;
+
 			return method.MakeGenericMethod (type_arguments);
 		}
 
