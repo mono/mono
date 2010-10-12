@@ -236,6 +236,25 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void BuildFinishedHandler (object sender, BuildFinishedEventArgs args)
 		{
+			BuildFinishedHandlerActual (args);
+
+			// Reset
+			events.Clear ();
+			errorsTable.Clear ();
+			warningsTable.Clear ();
+			targetPerfTable.Clear ();
+			tasksPerfTable.Clear ();
+			errors.Clear ();
+			warnings.Clear ();
+
+			indent = 0;
+			errorCount = 0;
+			warningCount = 0;
+			projectFailed = false;
+		}
+
+		void BuildFinishedHandlerActual (BuildFinishedEventArgs args)
+		{
 			if (!IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
 				PopEvent (args);
 				return;
