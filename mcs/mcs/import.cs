@@ -107,7 +107,10 @@ namespace Mono.CSharp
 			TypeSpec field_type;
 
 			try {
-				field_type = ImportType (fi.FieldType);
+				if (IsDynamicType (fi.FieldType, fi))
+					field_type = InternalType.Dynamic;
+				else
+					field_type = ImportType (fi.FieldType);
 			} catch (Exception e) {
 				// TODO: I should construct fake TypeSpec based on TypeRef signature
 				// but there is no way to do it with System.Reflection
@@ -275,7 +278,8 @@ namespace Mono.CSharp
 					}
 				}
 
-				returnType = ImportType (((MethodInfo)mb).ReturnType);
+				var mi = (MethodInfo) mb;
+				returnType = IsDynamicType (mi.ReturnType, mi.ReturnTypeCustomAttributes) ? InternalType.Dynamic : ImportType (mi.ReturnType);
 
 				// Cannot set to OVERRIDE without full hierarchy checks
 				// this flag indicates that the method could be override
@@ -330,13 +334,14 @@ namespace Mono.CSharp
 					//
 					// Strip reference wrapping
 					//
-					types[i] = ImportType (p.ParameterType.GetElementType ());
+					var el = p.ParameterType.GetElementType ();
+					types[i] = IsDynamicType (el, p) ? InternalType.Dynamic : ImportType (el);
 				} else if (i == 0 && method.IsStatic && parent.IsStatic && // TODO: parent.Assembly.IsExtension &&
 					HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (method)) != null) {
 					mod = Parameter.Modifier.This;
 					types[i] = ImportType (p.ParameterType);
 				} else {
-					types[i] = ImportType (p.ParameterType);
+					types[i] = IsDynamicType (p.ParameterType, p) ? InternalType.Dynamic : ImportType (p.ParameterType);
 
 					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
 						var cattrs = CustomAttributeData.GetCustomAttributes (p);
@@ -594,11 +599,8 @@ namespace Mono.CSharp
 				} else {
 					kind = MemberKind.Class;
 
-#if NET_4_0
-					if (type == typeof (object) && type.IsDefined (typeof (DynamicAttribute), false)) {
+					if (IsDynamicType (type, type))
 						return InternalType.Dynamic;
-					}
-#endif
 
 					if ((ma & TypeAttributes.Sealed) != 0) {
 						mod |= Modifiers.SEALED;
@@ -846,6 +848,16 @@ namespace Mono.CSharp
 			}
 
 			return CreateType (type);
+		}
+
+		static bool IsDynamicType (Type type, ICustomAttributeProvider ca)
+		{
+#if NET_4_0
+			if (type == typeof (object) && ca.IsDefined (typeof (DynamicAttribute), false)) {
+				return true;
+			}
+#endif
+			return false;
 		}
 
 		//
