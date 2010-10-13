@@ -896,6 +896,7 @@ namespace Mono.CSharp {
 			CLSCompliant_Undetected = 1 << 3,	// CLSCompliant attribute has not been detected yet
 			CLSCompliant = 1 << 4,		// Member is CLS Compliant
 
+			HasDynamicElement = 1 << 8,
 			IsAccessor = 1 << 9,		// Method is an accessor
 			IsGeneric = 1 << 10,		// Member contains type arguments
 

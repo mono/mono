@@ -107,10 +107,7 @@ namespace Mono.CSharp
 			TypeSpec field_type;
 
 			try {
-				if (IsDynamicType (fi.FieldType, fi))
-					field_type = InternalType.Dynamic;
-				else
-					field_type = ImportType (fi.FieldType);
+				field_type = ImportType (fi.FieldType, fi, 0);
 			} catch (Exception e) {
 				// TODO: I should construct fake TypeSpec based on TypeRef signature
 				// but there is no way to do it with System.Reflection
@@ -165,7 +162,7 @@ namespace Mono.CSharp
 				throw new NotImplementedException ("Different accessor modifiers " + ei.Name);
 
 			var definition = new ImportedMemberDefinition (ei);
-			return new EventSpec (declaringType, definition, ImportType (ei.EventHandlerType), add.Modifiers, add, remove);
+			return new EventSpec (declaringType, definition, ImportType (ei.EventHandlerType, ei, 0), add.Modifiers, add, remove);
 		}
 
 		T[] CreateGenericParameters<T> (Type type, TypeSpec declaringType) where T : TypeSpec
@@ -205,27 +202,29 @@ namespace Mono.CSharp
 			if (tparams.Length - parent_owned_count == 0)
 				return null;
 
-			return CreateGenericParameters<T> (parent_owned_count, tparams);
+			return CreateGenericParameters<T> (parent_owned_count, tparams, null, 0);
 		}
 
-		T[] CreateGenericParameters<T> (int first, Type[] tparams) where T : TypeSpec
+		T[] CreateGenericParameters<T> (int first, Type[] tparams, ICustomAttributeProvider ca, int dynamicCursor) where T : TypeSpec
 		{
 			var tspec = new T [tparams.Length - first];
 			for (int pos = first; pos < tparams.Length; ++pos) {
 				var type = tparams[pos];
+				int index = pos - first;
+
 				if (type.HasElementType) {
 					var element = type.GetElementType ();
 					var spec = ImportType (element);
 
 					if (type.IsArray) {
-						tspec[pos - first] = (T) (TypeSpec) ArrayContainer.MakeType (spec, type.GetArrayRank ());
+						tspec[index] = (T) (TypeSpec) ArrayContainer.MakeType (spec, type.GetArrayRank ());
 						continue;
 					}
 
 					throw new NotImplementedException ("Unknown element type " + type.ToString ());
 				}
 
-				tspec [pos - first] = (T) CreateType (type);
+				tspec [index] = (T) CreateType (type, ca, dynamicCursor + index + 1);
 			}
 
 			return tspec;
@@ -243,7 +242,7 @@ namespace Mono.CSharp
 				if (!mb.IsGenericMethodDefinition)
 					throw new NotSupportedException ("assert");
 
-				tparams = CreateGenericParameters<TypeParameterSpec>(0, mb.GetGenericArguments ());
+				tparams = CreateGenericParameters<TypeParameterSpec>(0, mb.GetGenericArguments (), null, 0);
 				definition = new ImportedGenericMethodDefinition ((MethodInfo) mb, parameters, tparams);
 			} else {
 				definition = new ImportedMethodDefinition (mb, parameters);
@@ -279,7 +278,7 @@ namespace Mono.CSharp
 				}
 
 				var mi = (MethodInfo) mb;
-				returnType = IsDynamicType (mi.ReturnType, mi.ReturnTypeCustomAttributes) ? InternalType.Dynamic : ImportType (mi.ReturnType);
+				returnType = ImportType (mi.ReturnType, mi.ReturnTypeCustomAttributes, 0);
 
 				// Cannot set to OVERRIDE without full hierarchy checks
 				// this flag indicates that the method could be override
@@ -335,13 +334,13 @@ namespace Mono.CSharp
 					// Strip reference wrapping
 					//
 					var el = p.ParameterType.GetElementType ();
-					types[i] = IsDynamicType (el, p) ? InternalType.Dynamic : ImportType (el);
+					types[i] = ImportType (el, p, 0);	// TODO: 1 to be csc compatible
 				} else if (i == 0 && method.IsStatic && parent.IsStatic && // TODO: parent.Assembly.IsExtension &&
 					HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (method)) != null) {
 					mod = Parameter.Modifier.This;
 					types[i] = ImportType (p.ParameterType);
 				} else {
-					types[i] = IsDynamicType (p.ParameterType, p) ? InternalType.Dynamic : ImportType (p.ParameterType);
+					types[i] = ImportType (p.ParameterType, p, 0);
 
 					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
 						var cattrs = CustomAttributeData.GetCustomAttributes (p);
@@ -496,27 +495,53 @@ namespace Mono.CSharp
 
 		public TypeSpec CreateType (Type type)
 		{
+			return CreateType (type, null, 0);
+		}
+
+		TypeSpec CreateType (Type type, ICustomAttributeProvider ca, int dynamicCursor)
+		{
 			TypeSpec declaring_type;
 			if (type.IsNested && !type.IsGenericParameter)
-				declaring_type = CreateType (type.DeclaringType);
+				declaring_type = CreateType (type.DeclaringType, type.DeclaringType, 0);
 			else
 				declaring_type = null;
 
-			return CreateType (type, declaring_type);
+			return CreateType (type, declaring_type, ca, dynamicCursor);
 		}
 
-		public TypeSpec CreateType (Type type, TypeSpec declaringType)
+		public TypeSpec CreateType (Type type, TypeSpec declaringType, ICustomAttributeProvider ca, int dynamicCursor)
 		{
 			TypeSpec spec;
-			if (import_cache.TryGetValue (type, out spec))
-				return spec;
+			if (import_cache.TryGetValue (type, out spec)) {
+				if (ca == null)
+					return spec;
+
+				if (type == typeof (object)) {
+					if (IsDynamicType (ca, dynamicCursor))
+						return InternalType.Dynamic;
+
+					return spec;
+				}
+
+				if (!spec.IsGeneric)
+					return spec;
+
+#if NET_4_0
+				if (!ca.IsDefined (typeof (DynamicAttribute), false))
+#endif
+					return spec;
+
+				// We've found same object in the cache but this one has a dynamic custom attribute
+				// and it's most likely dynamic version of same type IFoo<object> agains IFoo<dynamic>
+				// Do resolve the type process again in that case
+			}
 
 			if (type.IsGenericType && !type.IsGenericTypeDefinition) {	
 				var type_def = type.GetGenericTypeDefinition ();
-				var targs = CreateGenericParameters<TypeSpec> (0, type.GetGenericArguments ());
+				var targs = CreateGenericParameters<TypeSpec> (0, type.GetGenericArguments (), ca, dynamicCursor);
 				if (declaringType == null) {
 					// Simple case, no nesting
-					spec = CreateType (type_def, null);
+					spec = CreateType (type_def, null, null, 0);
 					spec = spec.MakeGenericType (targs);
 				} else {
 					//
@@ -558,9 +583,14 @@ namespace Mono.CSharp
 					}
 				}
 
-				// Add to reading cache to speed up reading
-				if (!import_cache.ContainsKey (type))
-					import_cache.Add (type, spec);
+				// Don't add generic type with dynamic arguments, they can interfere with same type
+				// using object type arguments
+				if (!spec.HasDynamicElement) {
+
+					// Add to reading cache to speed up reading
+					if (!import_cache.ContainsKey (type))
+						import_cache.Add (type, spec);
+				}
 
 				return spec;
 			}
@@ -592,16 +622,12 @@ namespace Mono.CSharp
 				kind = MemberKind.Interface;
 			} else if (type.IsGenericParameter) {
 				kind = MemberKind.TypeParameter;
-			} else if (type.IsClass || type.IsAbstract) {  				// SRE: System.Enum returns false for IsClass
+			} else if (type.IsClass || type.IsAbstract) {  				// System.Reflection: System.Enum returns false for IsClass
 				if ((ma & TypeAttributes.Sealed) != 0 && type.IsSubclassOf (typeof (MulticastDelegate))) {
 					kind = MemberKind.Delegate;
 					mod |= Modifiers.SEALED;
 				} else {
 					kind = MemberKind.Class;
-
-					if (IsDynamicType (type, type))
-						return InternalType.Dynamic;
-
 					if ((ma & TypeAttributes.Sealed) != 0) {
 						mod |= Modifiers.SEALED;
 						if ((ma & TypeAttributes.Abstract) != 0)
@@ -674,8 +700,12 @@ namespace Mono.CSharp
 		{
 			if (spec.Kind == MemberKind.Interface)
 				spec.BaseType = TypeManager.object_type;
-			else if (type.BaseType != null)
-				spec.BaseType = CreateType (type.BaseType);
+			else if (type.BaseType != null) {
+				if (type.BaseType.IsGenericType)
+					spec.BaseType = CreateType (type.BaseType, type, 0);
+				else
+					spec.BaseType = CreateType (type.BaseType);
+			}
 
 			var ifaces = type.GetInterfaces ();
 			if (ifaces.Length > 0) {
@@ -814,7 +844,7 @@ namespace Mono.CSharp
 				if (t.Name[0] == '<')
 					continue;
 
-				var it = CreateType (t, null);
+				var it = CreateType (t, null, t, 0);
 				if (it == null)
 					continue;
 
@@ -833,9 +863,14 @@ namespace Mono.CSharp
 
 		public TypeSpec ImportType (Type type)
 		{
+			return ImportType (type, null, 0);
+		}
+
+		public TypeSpec ImportType (Type type, ICustomAttributeProvider ca, int dynamicCursor)
+		{
 			if (type.HasElementType) {
 				var element = type.GetElementType ();
-				var spec = ImportType (element);
+				var spec = ImportType (element, ca, dynamicCursor + 1);
 
 				if (type.IsArray)
 					return ArrayContainer.MakeType (spec, type.GetArrayRank ());
@@ -847,14 +882,18 @@ namespace Mono.CSharp
 				throw new NotImplementedException ("Unknown element type " + type.ToString ());
 			}
 
-			return CreateType (type);
+			return CreateType (type, ca, dynamicCursor);
 		}
 
-		static bool IsDynamicType (Type type, ICustomAttributeProvider ca)
+		static bool IsDynamicType (ICustomAttributeProvider ca, int index)
 		{
 #if NET_4_0
-			if (type == typeof (object) && ca.IsDefined (typeof (DynamicAttribute), false)) {
-				return true;
+			if (ca.IsDefined (typeof (DynamicAttribute), false)) {
+				if (index == 0)
+					return true;
+
+				var v = (DynamicAttribute) ca.GetCustomAttributes (false)[0];
+				return v.TransformFlags[index];
 			}
 #endif
 			return false;
@@ -1290,7 +1329,7 @@ namespace Mono.CSharp
 					if (t.IsNotPublic && t.IsDefined (typeof (CompilerGeneratedAttribute), false))
 						continue;
 
-					imported = meta_import.CreateType (t, declaringType);
+					imported = meta_import.CreateType (t, declaringType, t, 0);
 					cache.AddMember (imported);
 				}
 

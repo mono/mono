@@ -1269,6 +1269,13 @@ namespace Mono.CSharp {
 //			this.state = openType.state;
 			this.open_type = openType;
 			this.targs = targs;
+
+			foreach (var arg in targs) {
+				if (arg.HasDynamicElement || arg == InternalType.Dynamic) {
+					state |= StateFlags.HasDynamicElement;
+					break;
+				}
+			}
 		}
 
 		#region Properties

@@ -66,6 +66,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool HasDynamicElement {
+			get {
+				return (state & StateFlags.HasDynamicElement) != 0;
+			}
+		}
+
 		public virtual IList<TypeSpec> Interfaces {
 			get {
 				return ifaces;
@@ -994,6 +1000,8 @@ namespace Mono.CSharp
 			: base (kind, element.DeclaringType, null, info, element.Modifiers)
 		{
 			this.Element = element;
+			if (element == InternalType.Dynamic)
+				state |= StateFlags.HasDynamicElement;
 
 			// Has to use its own type definition instead of just element definition to
 			// correctly identify itself for cases like x.MemberDefininition == predefined.MemberDefinition

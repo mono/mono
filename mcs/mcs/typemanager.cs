@@ -459,12 +459,17 @@ namespace Mono.CSharp {
 	//
 	public static bool[] HasDynamicTypeUsed (TypeSpec t)
 	{
+		bool[] element;
 		var ac = t as ArrayContainer;
 		if (ac != null) {
-			if (HasDynamicTypeUsed (ac.Element) != null)
-				return new bool[] { false, true };
+			element = HasDynamicTypeUsed (ac.Element);
+			if (element == null)
+				return null;
 
-			return null;
+			bool[] res = new bool[element.Length + 1];
+			res [0] = false;
+			Array.Copy (element, 0, res, 1, element.Length);
+			return res;
 		}
 
 		if (t == null)
@@ -474,7 +479,7 @@ namespace Mono.CSharp {
 			List<bool> transform = null;
 			var targs = GetTypeArguments (t);
 			for (int i = 0; i < targs.Length; ++i) {
-				var element = HasDynamicTypeUsed (targs [i]);
+				element = HasDynamicTypeUsed (targs [i]);
 				if (element != null) {
 					if (transform == null) {
 						transform = new List<bool> ();
@@ -492,7 +497,7 @@ namespace Mono.CSharp {
 				return transform.ToArray ();
 		}
 
-		if (object.ReferenceEquals (InternalType.Dynamic, t))
+		if (t == InternalType.Dynamic)
 			return new bool [] { true };
 
 		return null;

@@ -41,7 +41,7 @@
     </type>
     <type name="Test">
       <method name="Int32 Main()">
-        <size>987</size>
+        <size>1053</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -2305,7 +2305,7 @@
   <test name="dtest-037.cs">
     <type name="C">
       <method name="Int32 Main()">
-        <size>660</size>
+        <size>1166</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
