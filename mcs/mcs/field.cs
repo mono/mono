@@ -209,14 +209,8 @@ namespace Mono.CSharp
 		{
 			if (member_type == InternalType.Dynamic) {
 				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder);
-			} else {
-				var trans_flags = TypeManager.HasDynamicTypeUsed (member_type);
-				if (trans_flags != null) {
-					var pa = Compiler.PredefinedAttributes.DynamicTransform;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type, 1))) {
-						FieldBuilder.SetCustomAttribute (new CustomAttributeBuilder (pa.Constructor, new object[] { trans_flags }));
-					}
-				}
+			} else if (member_type.HasDynamicElement) {
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder, member_type);
 			}
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)

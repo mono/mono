@@ -271,18 +271,13 @@ namespace Mono.CSharp {
 
 		public override void EmitType ()
 		{
-			if (ReturnType.Type == InternalType.Dynamic) {
-				return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
-			} else {
-				var trans_flags = TypeManager.HasDynamicTypeUsed (ReturnType.Type);
-				if (trans_flags != null) {
-					var pa = Compiler.PredefinedAttributes.DynamicTransform;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
-						return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
-						return_attributes.Builder.SetCustomAttribute (
-							new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
-					}
+			if (ReturnType.Type != null) {
+				if (ReturnType.Type == InternalType.Dynamic) {
+					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
+					Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
+				} else if (ReturnType.Type.HasDynamicElement) {
+					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
+					Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType.Type);
 				}
 			}
 

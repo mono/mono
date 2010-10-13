@@ -1000,7 +1000,7 @@ namespace Mono.CSharp
 			: base (kind, element.DeclaringType, null, info, element.Modifiers)
 		{
 			this.Element = element;
-			if (element == InternalType.Dynamic)
+			if (element == InternalType.Dynamic || element.HasDynamicElement)
 				state |= StateFlags.HasDynamicElement;
 
 			// Has to use its own type definition instead of just element definition to

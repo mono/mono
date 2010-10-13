@@ -892,7 +892,7 @@ namespace Mono.CSharp
 				if (index == 0)
 					return true;
 
-				var v = (DynamicAttribute) ca.GetCustomAttributes (false)[0];
+				var v = (DynamicAttribute) ca.GetCustomAttributes (typeof (DynamicAttribute), false)[0];
 				return v.TransformFlags[index];
 			}
 #endif
