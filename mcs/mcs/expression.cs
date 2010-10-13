@@ -8084,7 +8084,7 @@ namespace Mono.CSharp {
 			// Same cannot be done for reference type because array covariance and the
 			// check in ldelema requires to specify the type of array element stored at the index
 			//
-			if (t.IsStruct && (prepare_for_load || !TypeManager.IsPrimitiveType (t)) && !(source is DynamicExpressionStatement)) {
+			if (t.IsStruct && ((prepare_for_load && !(source is DynamicExpressionStatement)) || !TypeManager.IsPrimitiveType (t))) {
 				LoadArrayAndArguments (ec);
 				ec.EmitArrayAddress (ac);
 

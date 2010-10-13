@@ -2276,7 +2276,7 @@
         <size>74</size>
       </method>
       <method name="Int32 Main()">
-        <size>1039</size>
+        <size>1181</size>
       </method>
       <method name="Void .ctor()">
         <size>18</size>
