@@ -107,7 +107,13 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_Address_Empty ()
+		{
+			new MailAddress ("");
+		}
+
+		[Test]
 		public void Constructor0_Address_Invalid ()
 		{
 			try {
@@ -246,6 +252,58 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		public void DisplayName_Precedence ()
+		{
+			var ma = new MailAddress ("Hola <foo@bar.com>");
+			Assert.AreEqual (ma.DisplayName, "Hola");
+			ma = new MailAddress ("Hola <foo@bar.com>", "Adios");
+			Assert.AreEqual (ma.DisplayName, "Adios");
+			ma = new MailAddress ("Hola <foo@bar.com>", "");
+			Assert.AreEqual (ma.DisplayName, "");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Address_Invalid ()
+		{
+			new MailAddress ("foobar");
+		}
+
+		[Test]
+		public void Address_QuoteFirst ()
+		{
+			new MailAddress ("\"Hola\" <foo@bar.com>");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Address_QuoteNotFirst ()
+		{
+			new MailAddress ("H\"ola\" <foo@bar.com>");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Address_NoClosingQuote ()
+		{
+			new MailAddress ("\"Hola <foo@bar.com>");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Address_NoUser ()
+		{
+			new MailAddress ("Hola <@bar.com>");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Address_NoUserNoHost ()
+		{
+			new MailAddress ("Hola <@>");
+		}
+
+		[Test]
 		public void Address ()
 		{
 			Assert.AreEqual ("foo@example.com", address.Address);
@@ -273,6 +331,21 @@ namespace MonoTests.System.Net.Mail
 		public void ToStringTest ()
 		{
 			Assert.AreEqual ("\"Mr. Foo Bar\" <foo@example.com>", address.ToString ());
+		}
+
+		[Test]
+		public void EqualsTest ()
+		{
+			var n = new MailAddress ("Mr. Bar <a@example.com>");
+			var n2 = new MailAddress ("a@example.com", "Mr. Bar");
+			Assert.AreEqual (n, n2);
+		}
+		[Test]
+		public void EqualsTest2 ()
+		{
+			var n = new MailAddress ("Mr. Bar <a@example.com>");
+			var n2 = new MailAddress ("MR. BAR <a@EXAMPLE.com>");
+			Assert.AreEqual (n, n2);
 		}
 	}
 }
