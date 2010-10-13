@@ -3367,8 +3367,8 @@ namespace Mono.CSharp {
 					q == TypeManager.uint64_type)
 					return 1;
 			} else if (p == InternalType.Dynamic) {
-				if (q == TypeManager.object_type)
-					return 2;
+				// Dynamic is never better
+				return 2;
 			}
 
 			if (q == TypeManager.int32_type) {
@@ -3386,8 +3386,8 @@ namespace Mono.CSharp {
 					p == TypeManager.uint64_type)
 					return 2;
 			} else if (q == InternalType.Dynamic) {
-				if (p == TypeManager.object_type)
-					return 1;
+				// Dynamic is never better
+				return 1;
 			}
 
 			// TODO: this is expensive

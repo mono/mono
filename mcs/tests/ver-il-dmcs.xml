@@ -1664,11 +1664,17 @@
       <method name="Void test()">
         <size>196</size>
       </method>
-      <method name="Void Main()">
-        <size>11</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Int32 MethodBest(Int16)">
+        <size>2</size>
+      </method>
+      <method name="Int32 MethodBest(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -2290,6 +2296,16 @@
       </method>
       <method name="Int32 Foo(Int32)">
         <size>3</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-037.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>660</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -14140,6 +14156,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-452.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="Single op_Implicit(S)">
+        <size>11</size>
+      </method>
+      <method name="Nullable`1 op_Implicit(S)">
+        <size>11</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-453.cs">
     <type name="Test.CompilerTest">
       <method name="Void .ctor()">
@@ -16044,6 +16078,24 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-537.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>86</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="System.String op_BitwiseOr(S, Nullable`1)">
+        <size>6</size>
+      </method>
+      <method name="Nullable`1 op_Addition(S, Nullable`1)">
+        <size>8</size>
       </method>
     </type>
   </test>

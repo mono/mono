@@ -16,6 +16,16 @@ class C
 	{
 		Console.WriteLine ("Got static long: {0}", l);
 	}
+	
+	static int MethodBest (short d)
+	{
+		return 1;
+	}
+	
+	static int MethodBest (dynamic d)
+	{
+		return -1;
+	}
 
 	void test ()
 	{
@@ -24,8 +34,13 @@ class C
 		foo_static (d);
 	}
 
-	static void Main ()
+	static int Main ()
 	{
 		new C ().test ();
+		
+		if (MethodBest (1) != 1)
+			return 1;
+		
+		return 0;
 	}
 }
