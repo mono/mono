@@ -3,6 +3,7 @@
 //
 // (C) 2008 Mainsoft, Inc. (http://www.mainsoft.com)
 // (C) 2008 db4objects, Inc. (http://www.db4o.com)
+// (C) 2010 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,8 +25,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
@@ -33,11 +32,75 @@ using System.Reflection;
 
 namespace System.Linq.jvm {
 
-	class ExpressionInterpreter : ExpressionVisitor {
+	struct LambdaInfo {
+		public readonly LambdaExpression Lambda;
+		public readonly object [] Arguments;
+
+		public LambdaInfo (LambdaExpression lambda, object [] arguments)
+		{
+			this.Lambda = lambda;
+			this.Arguments = arguments;
+		}
+	}
+
+	class HoistedVariableDetector : ExpressionVisitor {
+
+		readonly Dictionary<ParameterExpression, LambdaExpression> parameter_to_lambda =
+			new Dictionary<ParameterExpression, LambdaExpression> ();
+
+		Dictionary<LambdaExpression, List<ParameterExpression>> hoisted_map;
 
 		LambdaExpression lambda;
-		object [] arguments;
-		Stack<object> stack = new Stack<object> ();
+
+		public Dictionary<LambdaExpression, List<ParameterExpression>> Process (LambdaExpression lambda)
+		{
+			Visit (lambda);
+			return hoisted_map;
+		}
+
+		protected override void VisitLambda (LambdaExpression lambda)
+		{
+			this.lambda = lambda;
+			foreach (var parameter in lambda.Parameters)
+				parameter_to_lambda [parameter] = lambda;
+			base.VisitLambda (lambda);
+		}
+
+		protected override void VisitParameter (ParameterExpression parameter)
+		{
+			if (lambda.Parameters.Contains (parameter))
+				return;
+
+			Hoist (parameter);
+		}
+
+		void Hoist (ParameterExpression parameter)
+		{
+			LambdaExpression lambda;
+			if (!parameter_to_lambda.TryGetValue (parameter, out lambda))
+				return;
+
+			if (hoisted_map == null)
+				hoisted_map = new Dictionary<LambdaExpression, List<ParameterExpression>> ();
+
+			List<ParameterExpression> hoisted;
+			if (!hoisted_map.TryGetValue (lambda, out hoisted)) {
+				hoisted = new List<ParameterExpression> ();
+				hoisted_map [lambda] = hoisted;
+			}
+
+			hoisted.Add (parameter);
+		}
+	}
+
+
+	class ExpressionInterpreter : ExpressionVisitor {
+
+		readonly Stack<LambdaInfo> lambdas = new Stack<LambdaInfo> ();
+		readonly Stack<object> stack = new Stack<object> ();
+
+		readonly Dictionary<LambdaExpression, List<ParameterExpression>> hoisted_map;
+		readonly Dictionary<ParameterExpression, object> hoisted_values;
 
 		void Push (object value)
 		{
@@ -49,10 +112,12 @@ namespace System.Linq.jvm {
 			return stack.Pop ();
 		}
 
-		public ExpressionInterpreter (LambdaExpression lambda, object [] arguments)
+		public ExpressionInterpreter (LambdaExpression lambda)
 		{
-			this.lambda = lambda;
-			this.arguments = arguments;
+			hoisted_map = new HoistedVariableDetector ().Process (lambda);
+
+			if (hoisted_map != null)
+				hoisted_values = new Dictionary<ParameterExpression, object> ();
 		}
 
 		private void VisitCoalesce (BinaryExpression binary)
@@ -71,7 +136,7 @@ namespace System.Linq.jvm {
 				return;
 			}
 
-			Push (Invoke (binary.Conversion.Compile (), new [] { left }));
+			Push (Invoke (binary.Conversion.Compile (this), new [] { left }));
 		}
 
 		void VisitAndAlso (BinaryExpression binary)
@@ -262,16 +327,16 @@ namespace System.Linq.jvm {
 				Push (BinaryNotEqual (binary, left, right));
 				return;
 			case ExpressionType.LessThan:
-				Push (Comparer.Default.Compare (left, right) < 0);
+				Push (Comparer<object>.Default.Compare (left, right) < 0);
 				return;
 			case ExpressionType.LessThanOrEqual:
-				Push (Comparer.Default.Compare (left, right) <= 0);
+				Push (Comparer<object>.Default.Compare (left, right) <= 0);
 				return;
 			case ExpressionType.GreaterThan:
-				Push (Comparer.Default.Compare (left, right) > 0);
+				Push (Comparer<object>.Default.Compare (left, right) > 0);
 				return;
 			case ExpressionType.GreaterThanOrEqual:
-				Push (Comparer.Default.Compare (left, right) >= 0);
+				Push (Comparer<object>.Default.Compare (left, right) >= 0);
 				return;
 			}
 		}
@@ -702,11 +767,20 @@ namespace System.Linq.jvm {
 
 		protected override void VisitParameter (ParameterExpression parameter)
 		{
-			for (int i = 0; i < lambda.Parameters.Count; i++) {
-				if (lambda.Parameters [i] != parameter)
-					continue;
+			var info = lambdas.Peek ();
 
-				Push (arguments [i]);
+			var lambda = info.Lambda;
+			var arguments = info.Arguments;
+
+			var index = GetParameterIndex (lambda, parameter);
+			if (index >= 0) {
+				Push (arguments [index]);
+				return;
+			}
+
+			object value;
+			if (hoisted_values.TryGetValue (parameter, out value)) {
+				Push (value);
 				return;
 			}
 
@@ -803,7 +877,7 @@ namespace System.Linq.jvm {
 
 		protected override void VisitLambda (LambdaExpression lambda)
 		{
-			Push (lambda.Compile ());
+			Push (lambda.Compile (this));
 		}
 
 		private object [] VisitListExpressions (ReadOnlyCollection<Expression> collection)
@@ -817,13 +891,45 @@ namespace System.Linq.jvm {
 			return results;
 		}
 
-		public static object Interpret (LambdaExpression lambda, object [] arguments)
+		void StoreHoistedVariables (LambdaExpression lambda, object [] arguments)
 		{
-			var interpreter = new ExpressionInterpreter (lambda, arguments);
-			interpreter.Visit (lambda.Body);
+			if (hoisted_map == null)
+				return;
+
+			List<ParameterExpression> variables;
+			if (!hoisted_map.TryGetValue (lambda, out variables))
+				return;
+
+			foreach (var variable in variables)
+				StoreHoistedVariable (variable, lambda, arguments);
+		}
+
+		void StoreHoistedVariable (ParameterExpression variable, LambdaExpression lambda, object [] arguments)
+		{
+			var index = GetParameterIndex (lambda, variable);
+			if (index < 0)
+				return;
+
+			hoisted_values [variable] = arguments [index];
+		}
+
+		static int GetParameterIndex (LambdaExpression lambda, ParameterExpression parameter)
+		{
+			return lambda.Parameters.IndexOf (parameter);
+		}
+
+		public object Interpret (LambdaExpression lambda, object [] arguments)
+		{
+			lambdas.Push (new LambdaInfo (lambda, arguments));
+
+			StoreHoistedVariables (lambda, arguments);
+
+			Visit (lambda.Body);
+
+			lambdas.Pop ();
 
 			if (lambda.GetReturnType () != typeof (void))
-				return interpreter.Pop ();
+				return Pop ();
 
 			return null;
 		}

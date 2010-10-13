@@ -1,5 +1,5 @@
 ﻿//
-// Interpreter.cs
+// Runner.cs
 //
 // (C) 2008 Mainsoft, Inc. (http://www.mainsoft.com)
 // (C) 2008 db4objects, Inc. (http://www.db4o.com)
@@ -30,25 +30,32 @@ using System.Reflection;
 
 namespace System.Linq.jvm {
 
-	class Interpreter {
+	sealed class Runner {
 
-		class VoidTypeMarker {}
+		sealed class VoidTypeMarker {}
 
 		static readonly Type VoidMarker = typeof (VoidTypeMarker);
 		static readonly MethodInfo [] delegates = new MethodInfo [5];
-		const BindingFlags method_flags = BindingFlags.NonPublic | BindingFlags.Instance;
+		const BindingFlags method_flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
 		readonly LambdaExpression lambda;
+		readonly ExpressionInterpreter interpreter;
 
-		static Interpreter ()
+		static Runner ()
 		{
-			foreach (var method in typeof (Interpreter).GetMethods (method_flags).Where (m => m.Name == "GetDelegate"))
+			foreach (var method in typeof (Runner).GetMethods (method_flags).Where (m => m.Name == "GetDelegate"))
 				delegates [method.GetGenericArguments ().Length - 1] = method;
 		}
 
-		public Interpreter (LambdaExpression lambda)
+		public Runner (LambdaExpression lambda)
 		{
 			this.lambda = lambda;
+		}
+
+		public Runner (LambdaExpression lambda, ExpressionInterpreter interpreter)
+		{
+			this.lambda = lambda;
+			this.interpreter = interpreter;
 		}
 
 		public Delegate CreateDelegate ()
@@ -57,11 +64,6 @@ namespace System.Linq.jvm {
 			var creator = delegates [types.Length - 1].MakeGenericMethod (types);
 
 			return (Delegate) creator.Invoke (this, new object [0]);
-		}
-
-		public void Validate ()
-		{
-			new ExpressionValidator (lambda).Validate ();
 		}
 
 		Type [] GetGenericSignature ()
@@ -81,9 +83,11 @@ namespace System.Linq.jvm {
 			return types;
 		}
 
-		object Run (object [] arg)
+		object Run (object [] arguments)
 		{
-			return ExpressionInterpreter.Interpret (lambda, arg);
+			var interpreter = this.interpreter ?? new ExpressionInterpreter (lambda);
+
+			return interpreter.Interpret (lambda, arguments);
 		}
 
 		MethodInfo GetActionRunner (params Type [] types)
@@ -138,12 +142,12 @@ namespace System.Linq.jvm {
 			return CreateDelegate (GetFuncRunner (typeof (TResult)));
 		}
 
-		TResult FuncRunner<TResult> ()
+		public TResult FuncRunner<TResult> ()
 		{
 			return (TResult) Run (new object [0]);
 		}
 
-		void ActionRunner ()
+		public void ActionRunner ()
 		{
 			Run (new object [0]);
 		}
@@ -156,17 +160,17 @@ namespace System.Linq.jvm {
 			return CreateDelegate (GetFuncRunner (typeof (T), typeof (TResult)));
 		}
 
-		TResult FuncRunner<T, TResult> (T arg)
+		public TResult FuncRunner<T, TResult> (T arg)
 		{
 			return (TResult) Run (new object [] { arg });
 		}
 
-		void ActionRunner<T> (T arg)
+		public void ActionRunner<T> (T arg)
 		{
 			Run (new object [] { arg });
 		}
 
-		Delegate GetDelegate<T1, T2, TResult> ()
+		public Delegate GetDelegate<T1, T2, TResult> ()
 		{
 			if (typeof (TResult) == VoidMarker)
 				return CreateDelegate (GetActionRunner (typeof (T1), typeof (T2)));
@@ -174,12 +178,12 @@ namespace System.Linq.jvm {
 			return CreateDelegate (GetFuncRunner (typeof (T1), typeof (T2), typeof (TResult)));
 		}
 
-		TResult FuncRunner<T1, T2, TResult> (T1 arg1, T2 arg2)
+		public TResult FuncRunner<T1, T2, TResult> (T1 arg1, T2 arg2)
 		{
 			return (TResult) Run (new object [] { arg1, arg2 });
 		}
 
-		void ActionRunner<T1, T2> (T1 arg1, T2 arg2)
+		public void ActionRunner<T1, T2> (T1 arg1, T2 arg2)
 		{
 			Run (new object [] { arg1, arg2 });
 		}
@@ -192,12 +196,12 @@ namespace System.Linq.jvm {
 			return CreateDelegate (GetFuncRunner (typeof (T1), typeof (T2), typeof (T3), typeof (TResult)));
 		}
 
-		TResult FuncRunner<T1, T2, T3, TResult> (T1 arg1, T2 arg2, T3 arg3)
+		public TResult FuncRunner<T1, T2, T3, TResult> (T1 arg1, T2 arg2, T3 arg3)
 		{
 			return (TResult) Run (new object [] { arg1, arg2, arg3 });
 		}
 
-		void ActionRunner<T1, T2, T3> (T1 arg1, T2 arg2, T3 arg3)
+		public void ActionRunner<T1, T2, T3> (T1 arg1, T2 arg2, T3 arg3)
 		{
 			Run (new object [] { arg1, arg2, arg3 });
 		}
@@ -210,12 +214,12 @@ namespace System.Linq.jvm {
 			return CreateDelegate (GetFuncRunner (typeof (T1), typeof (T2), typeof (T3), typeof (T4), typeof (TResult)));
 		}
 
-		TResult FuncRunner<T1, T2, T3, T4, TResult> (T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+		public TResult FuncRunner<T1, T2, T3, T4, TResult> (T1 arg1, T2 arg2, T3 arg3, T4 arg4)
 		{
 			return (TResult) Run (new object [] { arg1, arg2, arg3, arg4 });
 		}
 
-		void ActionRunner<T1, T2, T3, T4> (T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+		public void ActionRunner<T1, T2, T3, T4> (T1 arg1, T2 arg2, T3 arg3, T4 arg4)
 		{
 			Run (new object [] { arg1, arg2, arg3, arg4 });
 		}
