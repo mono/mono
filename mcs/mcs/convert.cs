@@ -1278,6 +1278,11 @@ namespace Mono.CSharp {
 
 					goto case MemberKind.Struct;
 				case MemberKind.Struct:
+					// TODO: Should really introduce MemberKind.Void
+					if (target_type == TypeManager.void_type)
+						return null;
+
+					goto case MemberKind.Enum;
 				case MemberKind.Delegate:
 				case MemberKind.Enum:
 				case MemberKind.Interface:

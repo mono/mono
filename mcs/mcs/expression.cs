@@ -4357,19 +4357,17 @@ namespace Mono.CSharp {
 			//
 			if (!TypeSpecComparer.IsEqual (true_type, false_type)) {
 				Expression conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
-				if (conv != null) {
+				if (conv != null && true_type != InternalType.Dynamic) {
 					//
 					// Check if both can convert implicitly to each other's type
 					//
-					if (true_type != InternalType.Dynamic) {
-						type = false_type;
+					type = false_type;
 
-						if (false_type != InternalType.Dynamic && Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
-							ec.Report.Error (172, true_expr.Location,
-								"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
-								TypeManager.CSharpName (true_type), TypeManager.CSharpName (false_type));
-							return null;
-						}
+					if (false_type != InternalType.Dynamic && Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
+						ec.Report.Error (172, true_expr.Location,
+							"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
+								true_type.GetSignatureForError (), false_type.GetSignatureForError ());
+						return null;
 					}
 
 					true_expr = conv;
