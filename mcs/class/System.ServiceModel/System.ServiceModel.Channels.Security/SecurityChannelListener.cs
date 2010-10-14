@@ -73,7 +73,7 @@ namespace System.ServiceModel.Channels.Security
 
 		void AcquireTokens ()
 		{
-			security.Prepare (this);
+			security.Prepare (this, Uri);
 		}
 
 		void ReleaseTokens ()

@@ -69,14 +69,6 @@ namespace System.ServiceModel.Channels.Security
 			this.message_to = messageTo;
 		}
 
-		public override SecurityRequestContext RequestContext {
-			get { return null; }
-		}
-
-		public override UniqueId RelatesTo {
-			get { return null; }
-		}
-
 		public override SecurityTokenParameters Parameters {
 			get { return security.InitiatorParameters; }
 		}
@@ -119,27 +111,17 @@ namespace System.ServiceModel.Channels.Security
 	internal class RecipientMessageSecurityGenerator : MessageSecurityGenerator
 	{
 		RecipientMessageSecurityBindingSupport security;
-		SecurityRequestContext req_ctx;
 
 		public RecipientMessageSecurityGenerator (
 			Message msg,
-			SecurityRequestContext requestContext,
+			SecurityMessageProperty requestSecProp,
 			RecipientMessageSecurityBindingSupport security)
 			: base (msg, security)
 		{
 			this.security = security;
-			req_ctx = requestContext;
 			SecurityMessageProperty secprop =
-				(SecurityMessageProperty) req_ctx.RequestMessage.Properties.Security.CreateCopy ();
+				(SecurityMessageProperty) requestSecProp.CreateCopy ();
 			msg.Properties.Security = secprop;
-		}
-
-		public override SecurityRequestContext RequestContext {
-			get { return req_ctx; }
-		}
-
-		public override UniqueId RelatesTo {
-			get { return req_ctx.RequestMessage.Headers.MessageId; }
 		}
 
 		public override SecurityTokenParameters Parameters {
@@ -236,12 +218,8 @@ namespace System.ServiceModel.Channels.Security
 		public abstract bool ShouldIncludeToken (SecurityTokenInclusionMode mode, bool isInitialized);
 
 		public bool ShouldOutputEncryptedKey {
-			get { return RequestContext == null || RequestContext.RequestMessage.Properties.Security.ProtectionToken == null; } //security.Element is AsymmetricSecurityBindingElement; }
+			get { return Direction == MessageDirection.Input || secprop.ProtectionToken == null; } //security.Element is AsymmetricSecurityBindingElement; }
 		}
-
-		public abstract UniqueId RelatesTo { get; }
-
-		public abstract SecurityRequestContext RequestContext { get; }
 
 		public Message SecureMessage ()
 		{
@@ -261,20 +239,10 @@ namespace System.ServiceModel.Channels.Security
 				security.Element;
 			SecurityAlgorithmSuite suite = element.DefaultAlgorithmSuite;
 
-// FIXME: remove this hack
-if (!ShouldOutputEncryptedKey)
-	encToken = new BinarySecretSecurityToken (secprop.EncryptionKey);
-
 			string messageId = "uuid-" + Guid.NewGuid ();
 			int identForMessageId = 1;
 			XmlDocument doc = new XmlDocument ();
 			doc.PreserveWhitespace = true;
-
-			UniqueId relatesTo = RelatesTo;
-			if (relatesTo != null)
-				msg.Headers.RelatesTo = relatesTo;
-			else // FIXME: probably it is always added when it is stateful ?
-				msg.Headers.MessageId = new UniqueId ("urn:" + messageId);
 
 			// FIXME: get correct ReplyTo value
 			if (Direction == MessageDirection.Input)
@@ -343,10 +311,6 @@ if (!ShouldOutputEncryptedKey)
 			if (secprop.EncryptionKey != null)
 				actualKey.Key = secprop.EncryptionKey;
 
-// FIXME: remove thid hack
-if (!ShouldOutputEncryptedKey)
-primaryToken = RequestContext.RequestMessage.Properties.Security.ProtectionToken.SecurityToken as WrappedKeySecurityToken;
-else
 			primaryToken =
 				// FIXME: remove this hack?
 				encToken is SecurityContextSecurityToken ? encToken :

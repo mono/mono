@@ -78,7 +78,7 @@ namespace System.ServiceModel.Channels
 			if (typeof (TChannel) == typeof (IOutputSessionChannel))
 				return (TChannel) (object) new SecurityOutputSessionChannel ((IOutputSessionChannel) (object) src, (SecurityChannelFactory<IOutputSessionChannel>) (object) this);
 
-			throw new NotSupportedException ();
+			throw new NotSupportedException (String.Format ("Channel type '{0}' is not supported", typeof (TChannel)));
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
