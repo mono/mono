@@ -1110,7 +1110,7 @@ namespace Mono.CSharp
 					return null;
 
 				MethodBuilder mb = method_data.MethodBuilder;
-				ParameterInfo.ApplyAttributes (this, mb);
+
 				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, mb, ParameterInfo, method.ModFlags);
 				Spec.IsAccessor = true;
 
