@@ -994,14 +994,19 @@ namespace Mono.CSharp
 
 		public override bool Define()
 		{
+			var mod_flags_src = ModFlags;
+
 			if (!base.Define ())
 				return false;
 
 			if (declarators != null) {
+				if ((mod_flags_src & Modifiers.DEFAULT_ACCESS_MODIFER) != 0)
+					mod_flags_src &= ~(Modifiers.AccessibilityMask | Modifiers.DEFAULT_ACCESS_MODIFER);
+
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
 				int index = Parent.PartialContainer.Events.IndexOf (this);
 				foreach (var d in declarators) {
-					var ef = new EventField (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
+					var ef = new EventField (Parent, t, mod_flags_src, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 
 					if (d.Initializer != null)
 						ef.initializer = d.Initializer;
