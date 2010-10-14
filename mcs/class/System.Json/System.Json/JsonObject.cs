@@ -141,7 +141,13 @@ namespace System.Json
 				stream.WriteByte ((byte) '"');
 				stream.WriteByte ((byte) ',');
 				stream.WriteByte ((byte) ' ');
-				pair.Value.Save (stream);
+				if (pair.Value == null) {
+					stream.WriteByte ((byte) 'n');
+					stream.WriteByte ((byte) 'u');
+					stream.WriteByte ((byte) 'l');
+					stream.WriteByte ((byte) 'l');
+				} else
+					pair.Value.Save (stream);
 			}
 			stream.WriteByte ((byte) '}');
 		}
