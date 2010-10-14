@@ -182,6 +182,10 @@ namespace System.ServiceModel.Channels
 		[MonoTODO ("Implement for TransportSecurityBindingElement")]
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
+			// FIXME: enable implementation below (it somehow regressed, needs investigation)
+			return context.CanBuildInnerChannelListener<TChannel> ();
+
+/*
 			if (this is TransportSecurityBindingElement)
 				throw new NotImplementedException ();
 
@@ -211,6 +215,7 @@ namespace System.ServiceModel.Channels
 						context.CanBuildInnerChannelFactory<IDuplexSessionChannel> ();
 			}
 			return false;
+*/
 		}
 
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (

@@ -311,6 +311,10 @@ namespace System.ServiceModel.Channels.Security
 			if (secprop.EncryptionKey != null)
 				actualKey.Key = secprop.EncryptionKey;
 
+// FIXME: remove thid hack
+if (!ShouldOutputEncryptedKey)
+primaryToken = secprop.ProtectionToken.SecurityToken as WrappedKeySecurityToken;
+else
 			primaryToken =
 				// FIXME: remove this hack?
 				encToken is SecurityContextSecurityToken ? encToken :
