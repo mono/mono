@@ -138,6 +138,10 @@ namespace System.ServiceModel.Channels
 		[MonoTODO ("Implement for TransportSecurityBindingElement")]
 		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
 		{
+#if NET_2_1
+			// not sure this should be like this, but there isn't Symmetric/Asymmetric elements in 2.1 anyways.
+			return context.CanBuildInnerChannelFactory ();
+#else
 			if (this is TransportSecurityBindingElement)
 				throw new NotImplementedException ();
 
@@ -167,6 +171,7 @@ namespace System.ServiceModel.Channels
 						context.CanBuildInnerChannelFactory<IDuplexSessionChannel> ();
 			}
 			return false;
+#endif
 		}
 
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
