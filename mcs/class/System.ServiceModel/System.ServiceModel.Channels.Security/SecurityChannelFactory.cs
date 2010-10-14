@@ -71,12 +71,11 @@ namespace System.ServiceModel.Channels
 
 			if (typeof (TChannel) == typeof (IRequestChannel))
 				return (TChannel) (object) new SecurityRequestChannel ((IRequestChannel) (object) src, (SecurityChannelFactory<IRequestChannel>) (object) this);
-			if (typeof (TChannel) == typeof (IOutputChannel))
-				return (TChannel) (object) new SecurityOutputChannel ((IOutputChannel) (object) src, (SecurityChannelFactory<IOutputChannel>) (object) this);
 			if (typeof (TChannel) == typeof (IRequestSessionChannel))
 				return (TChannel) (object) new SecurityRequestSessionChannel ((IRequestSessionChannel) (object) src, (SecurityChannelFactory<IRequestSessionChannel>) (object) this);
-			if (typeof (TChannel) == typeof (IOutputSessionChannel))
-				return (TChannel) (object) new SecurityOutputSessionChannel ((IOutputSessionChannel) (object) src, (SecurityChannelFactory<IOutputSessionChannel>) (object) this);
+
+			if (typeof (TChannel).IsAssignableFrom (typeof (IDuplexSessionChannel)))
+				return (TChannel) (object) new SecurityDuplexSessionChannel (this, (IChannel) (object) src, remoteAddress, via, security);
 
 			throw new NotSupportedException (String.Format ("Channel type '{0}' is not supported", typeof (TChannel)));
 		}

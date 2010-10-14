@@ -68,6 +68,10 @@ namespace System.ServiceModel.Channels.Security
 		{
 			if (typeof (TChannel) == typeof (IReplyChannel))
 				return (TChannel) (object) new SecurityReplyChannel ((SecurityChannelListener<IReplyChannel>) (object) this, (IReplyChannel) (object) src);
+
+			if (typeof (TChannel).IsAssignableFrom (typeof (IDuplexSessionChannel)))
+				return (TChannel) (object) new SecurityDuplexSessionChannel (this, src, security);
+
 			throw new NotImplementedException ();
 		}
 

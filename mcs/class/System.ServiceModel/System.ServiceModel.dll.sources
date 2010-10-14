@@ -308,6 +308,7 @@ System.ServiceModel.Channels.Security/SecureMessageGenerator.cs
 System.ServiceModel.Channels.Security/SecurityCapabilities.cs
 System.ServiceModel.Channels.Security/SecurityChannelFactory.cs
 System.ServiceModel.Channels.Security/SecurityChannelListener.cs
+System.ServiceModel.Channels.Security/SecurityDuplexSessionChannel.cs
 System.ServiceModel.Channels.Security/SecurityOutputChannel.cs
 System.ServiceModel.Channels.Security/SecurityReplyChannel.cs
 System.ServiceModel.Channels.Security/SecurityRequestChannel.cs
