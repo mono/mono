@@ -52,37 +52,34 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		public ProtectionLevel ProtectionLevel { get; set; }
+
 		public override IChannelFactory<TChannel>
 			BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.BuildInnerChannelFactory<TChannel> ();
 		}
 
-		[MonoTODO]
 		public override IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.BuildInnerChannelListener<TChannel> ();
 		}
 
-		[MonoTODO]
 		public override bool CanBuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.CanBuildInnerChannelFactory<TChannel> ();
 		}
 
-		[MonoTODO]
 		public override bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.CanBuildInnerChannelListener<TChannel> ();
 		}
 
-		[MonoTODO]
 		public override BindingElement Clone ()
 		{
 			return new WindowsStreamSecurityBindingElement (this);

@@ -36,7 +36,6 @@ using System.Xml;
 
 namespace System.ServiceModel
 {
-	[MonoTODO]
 	public class NetTcpBinding : Binding, IBindingRuntimePreferences
 	{
 		int max_conn;
@@ -48,7 +47,7 @@ namespace System.ServiceModel
 		TcpTransportBindingElement transport = new TcpTransportBindingElement ();
 
 		public NetTcpBinding ()
-			: this (SecurityMode.Message)
+			: this (SecurityMode.Transport)
 		{
 		}
 
@@ -145,6 +144,7 @@ namespace System.ServiceModel
 			var msg = new BinaryMessageEncodingBindingElement ();
 			if (ReaderQuotas != null)
 				ReaderQuotas.CopyTo (msg.ReaderQuotas);
+			var trsec = CreateTransportSecurity ();
 			BindingElement tr = GetTransport ();
 			List<BindingElement> list = new List<BindingElement> ();
 			if (tx != null)
@@ -152,6 +152,8 @@ namespace System.ServiceModel
 			if (sec != null)
 				list.Add (sec);
 			list.Add (msg);
+			if (trsec != null)
+				list.Add (trsec);
 			list.Add (tr);
 			return new BindingElementCollection (list.ToArray ());
 		}
@@ -168,6 +170,7 @@ namespace System.ServiceModel
 			    Security.Mode == SecurityMode.None)
 				return null;
 
+			// FIXME: this is wrong. Could be Asymmetric, depends on Security.Message.AlgorithmSuite value.
 			SymmetricSecurityBindingElement element =
 				new SymmetricSecurityBindingElement ();
 
@@ -206,6 +209,27 @@ namespace System.ServiceModel
 			}
 
 			return element;
+		}
+
+		BindingElement CreateTransportSecurity ()
+		{
+			switch (Security.Mode) {
+			case SecurityMode.None:
+			case SecurityMode.Message:
+				return null;
+			}
+
+			// FIXME: consider Security.Transport.ExtendedProtectionPolicy.
+
+			switch (Security.Transport.ClientCredentialType) {
+			case TcpClientCredentialType.Windows:
+				return new WindowsStreamSecurityBindingElement () { ProtectionLevel = Security.Transport.ProtectionLevel };
+			case TcpClientCredentialType.Certificate:
+				// FIXME: set RequireClientCertificate and IdentityVerifier depending on other properties, if applicable.
+				return new SslStreamSecurityBindingElement ();
+			default: // includes None
+				return null;
+			}
 		}
 
 		bool IBindingRuntimePreferences.ReceiveSynchronously {
