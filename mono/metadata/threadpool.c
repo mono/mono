@@ -1458,6 +1458,7 @@ async_invoke_thread (gpointer data)
 				}
 				mono_thread_pop_appdomain_ref ();
 				InterlockedDecrement (&busy_worker_threads);
+				mono_thread_clr_state (thread , ~ThreadState_Background);
 				/* If the callee changes the background status, set it back to TRUE */
 				if (*version != '1' && !mono_thread_test_state (thread , ThreadState_Background))
 					ves_icall_System_Threading_Thread_SetState (thread, ThreadState_Background);
