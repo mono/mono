@@ -182,10 +182,6 @@ namespace System.ServiceModel.Channels
 		[MonoTODO ("Implement for TransportSecurityBindingElement")]
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
-			// FIXME: enable implementation below (it somehow regressed, needs investigation)
-			return context.CanBuildInnerChannelListener<TChannel> ();
-
-/*
 			if (this is TransportSecurityBindingElement)
 				throw new NotImplementedException ();
 
@@ -201,21 +197,20 @@ namespace System.ServiceModel.Channels
 			object dummy;
 			if (req.Properties.TryGetValue (ServiceModelSecurityTokenRequirement.IssuedSecurityTokenParametersProperty, out dummy) && dummy != null) {
 				if (t == typeof (IReplySessionChannel))
-					return context.CanBuildInnerChannelFactory<IReplyChannel> () ||
-						context.CanBuildInnerChannelFactory<IReplySessionChannel> ();
+					return context.CanBuildInnerChannelListener<IReplyChannel> () ||
+						context.CanBuildInnerChannelListener<IReplySessionChannel> ();
 				else if (t == typeof (IDuplexSessionChannel))
-					return context.CanBuildInnerChannelFactory<IDuplexChannel> () ||
-						context.CanBuildInnerChannelFactory<IDuplexSessionChannel> ();
+					return context.CanBuildInnerChannelListener<IDuplexChannel> () ||
+						context.CanBuildInnerChannelListener<IDuplexSessionChannel> ();
 			} else {
 				if (t == typeof (IReplyChannel))
-					return context.CanBuildInnerChannelFactory<IReplyChannel> () ||
-						context.CanBuildInnerChannelFactory<IReplySessionChannel> ();
+					return context.CanBuildInnerChannelListener<IReplyChannel> () ||
+						context.CanBuildInnerChannelListener<IReplySessionChannel> ();
 				else if (t == typeof (IDuplexChannel))
-					return context.CanBuildInnerChannelFactory<IDuplexChannel> () ||
-						context.CanBuildInnerChannelFactory<IDuplexSessionChannel> ();
+					return context.CanBuildInnerChannelListener<IDuplexChannel> () ||
+						context.CanBuildInnerChannelListener<IDuplexSessionChannel> ();
 			}
 			return false;
-*/
 		}
 
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
