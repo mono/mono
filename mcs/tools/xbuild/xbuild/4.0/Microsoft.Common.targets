@@ -142,6 +142,11 @@
 			ResolveAssemblyReferences;
 			AfterResolveReferences
 		</ResolveReferencesDependsOn>
+
+		<ResolveAssemblyReferencesDependsOn>
+			GetFrameworkPaths;
+			PrepareForBuild
+		</ResolveAssemblyReferencesDependsOn>
 	</PropertyGroup>
 
 	<Target Name="ResolveReferences" DependsOnTargets="$(ResolveReferencesDependsOn)"/>
@@ -149,7 +154,7 @@
 	<Target Name="BeforeResolveReferences" />
 	<Target Name="AfterResolveReferences" />
 
-	<Target Name="ResolveAssemblyReferences">
+	<Target Name="ResolveAssemblyReferences" DependsOnTargets="$(ResolveAssemblyReferencesDependsOn)">
 		<ResolveAssemblyReference
 			Assemblies="@(Reference)"
 			AssemblyFiles="@(ChildProjectReferences)"
