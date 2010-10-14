@@ -140,7 +140,7 @@ namespace System.ServiceModel.Channels
 		{
 #if NET_2_1
 			// not sure this should be like this, but there isn't Symmetric/Asymmetric elements in 2.1 anyways.
-			return context.CanBuildInnerChannelFactory ();
+			return context.CanBuildInnerChannelFactory<TChannel> ();
 #else
 			if (this is TransportSecurityBindingElement)
 				throw new NotImplementedException ();
