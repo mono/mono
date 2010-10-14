@@ -188,14 +188,20 @@ namespace System.ServiceModel
 				case SessionMode.Required:
 					if (Endpoint.Binding.CanBuildChannelFactory<IOutputSessionChannel> (pl))
 						return Endpoint.Binding.BuildChannelFactory<IOutputSessionChannel> (pl);
+					if (Endpoint.Binding.CanBuildChannelFactory<IDuplexSessionChannel> (pl))
+						return Endpoint.Binding.BuildChannelFactory<IDuplexSessionChannel> (pl);
 					break;
 				case SessionMode.Allowed:
 					if (Endpoint.Binding.CanBuildChannelFactory<IOutputChannel> (pl))
 						return Endpoint.Binding.BuildChannelFactory<IOutputChannel> (pl);
+					if (Endpoint.Binding.CanBuildChannelFactory<IDuplexChannel> (pl))
+						return Endpoint.Binding.BuildChannelFactory<IDuplexChannel> (pl);
 					goto case SessionMode.Required;
 				default:
 					if (Endpoint.Binding.CanBuildChannelFactory<IOutputChannel> (pl))
 						return Endpoint.Binding.BuildChannelFactory<IOutputChannel> (pl);
+					if (Endpoint.Binding.CanBuildChannelFactory<IDuplexChannel> (pl))
+						return Endpoint.Binding.BuildChannelFactory<IDuplexChannel> (pl);
 					break;
 				}
 			}

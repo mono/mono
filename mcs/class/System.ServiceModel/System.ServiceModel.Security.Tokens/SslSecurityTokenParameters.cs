@@ -118,7 +118,7 @@ namespace System.ServiceModel.Security.Tokens
 			*/
 		}
 
-		protected override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
+		protected internal override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
 		{
 			requirement.TokenType =
 				RequireClientCertificate ?

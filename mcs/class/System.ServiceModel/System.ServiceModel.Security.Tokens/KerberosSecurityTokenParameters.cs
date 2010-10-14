@@ -37,10 +37,9 @@ namespace System.ServiceModel.Security.Tokens
 		{
 		}
 
-		[MonoTODO]
 		protected KerberosSecurityTokenParameters (KerberosSecurityTokenParameters source)
+			: base (source)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -75,7 +74,7 @@ namespace System.ServiceModel.Security.Tokens
 			throw new NotImplementedException ();
 		}
 
-		protected override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
+		protected internal override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
 		{
 			if (requirement == null)
 				throw new ArgumentNullException ("requirement");

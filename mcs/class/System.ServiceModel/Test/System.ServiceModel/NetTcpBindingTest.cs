@@ -99,6 +99,70 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
+		public void MessageSecurityAndBindings2 ()
+		{
+			var n = new NetTcpBinding () { TransferMode = TransferMode.Streamed };
+			n.Security.Mode = SecurityMode.Message;
+			
+			Assert.AreEqual (SecurityAlgorithmSuite.Default, n.Security.Message.AlgorithmSuite, "#sec1");
+			Assert.AreEqual (MessageCredentialType.Windows/*huh*/, n.Security.Message.ClientCredentialType, "#sec2");
+
+			var bc = n.CreateBindingElements ();
+			Assert.AreEqual (4, bc.Count, "#bc1");
+			Assert.AreEqual (typeof (TransactionFlowBindingElement), bc [0].GetType (), "#bc2");
+			Assert.AreEqual (typeof (SymmetricSecurityBindingElement), bc [1].GetType (), "#bc3");
+			Assert.AreEqual (typeof (BinaryMessageEncodingBindingElement), bc [2].GetType (), "#bc4");
+			Assert.AreEqual (typeof (TcpTransportBindingElement), bc [3].GetType (), "#bc5");
+
+			Assert.IsFalse (n.CanBuildChannelFactory<IRequestChannel> (), "#cbf1");
+			Assert.IsFalse (n.CanBuildChannelFactory<IOutputChannel> (), "#cbf2");
+			Assert.IsFalse (n.CanBuildChannelFactory<IDuplexChannel> (), "#cbf3");
+			Assert.IsFalse (n.CanBuildChannelFactory<IDuplexSessionChannel> (), "#cbf4");
+			Assert.IsTrue (n.CanBuildChannelFactory<IRequestSessionChannel> (), "#cbf5");
+		}
+
+		[Test]
+		public void MessageSecurityAndBindings3 ()
+		{
+			var n = new NetTcpBinding () { TransferMode = TransferMode.Streamed };
+			n.Security.Mode = SecurityMode.Message;
+			n.Security.Message.ClientCredentialType = MessageCredentialType.Certificate;
+			
+			var bc = n.CreateBindingElements ();
+			Assert.AreEqual (4, bc.Count, "#bc1");
+			Assert.AreEqual (typeof (TransactionFlowBindingElement), bc [0].GetType (), "#bc2");
+			Assert.AreEqual (typeof (SymmetricSecurityBindingElement), bc [1].GetType (), "#bc3");
+			Assert.AreEqual (typeof (BinaryMessageEncodingBindingElement), bc [2].GetType (), "#bc4");
+			Assert.AreEqual (typeof (TcpTransportBindingElement), bc [3].GetType (), "#bc5");
+
+			Assert.IsFalse (n.CanBuildChannelFactory<IRequestChannel> (), "#cbf1");
+			Assert.IsFalse (n.CanBuildChannelFactory<IOutputChannel> (), "#cbf2");
+			Assert.IsFalse (n.CanBuildChannelFactory<IDuplexChannel> (), "#cbf3");
+			Assert.IsFalse (n.CanBuildChannelFactory<IDuplexSessionChannel> (), "#cbf4");
+			Assert.IsTrue (n.CanBuildChannelFactory<IRequestSessionChannel> (), "#cbf5");
+		}
+
+		[Test]
+		public void MessageSecurityAndBindings4 ()
+		{
+			var n = new NetTcpBinding ();
+			n.Security.Mode = SecurityMode.Message;
+			n.Security.Message.ClientCredentialType = MessageCredentialType.Certificate;
+
+			var bc = n.CreateBindingElements ();
+			Assert.AreEqual (4, bc.Count, "#bc1");
+			Assert.AreEqual (typeof (TransactionFlowBindingElement), bc [0].GetType (), "#bc2");
+			Assert.AreEqual (typeof (SymmetricSecurityBindingElement), bc [1].GetType (), "#bc3");
+			Assert.AreEqual (typeof (BinaryMessageEncodingBindingElement), bc [2].GetType (), "#bc4");
+			Assert.AreEqual (typeof (TcpTransportBindingElement), bc [3].GetType (), "#bc5");
+
+			Assert.IsFalse (n.CanBuildChannelFactory<IRequestChannel> (), "#cbf1");
+			Assert.IsFalse (n.CanBuildChannelFactory<IOutputChannel> (), "#cbf2");
+			Assert.IsFalse (n.CanBuildChannelFactory<IDuplexChannel> (), "#cbf3");
+			Assert.IsTrue (n.CanBuildChannelFactory<IDuplexSessionChannel> (), "#cbf4");
+		}
+
+		[Test]
 		public void BufferedConnection ()
 		{
 			var host = new ServiceHost (typeof (Foo));

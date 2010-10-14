@@ -39,17 +39,15 @@ namespace System.ServiceModel.Channels
 	public class WindowsStreamSecurityBindingElement
 		: BindingElement, ISecurityCapabilities, IPolicyExportExtension
 	{
-		[MonoTODO]
 		public WindowsStreamSecurityBindingElement ()
 		{
 		}
 
-		[MonoTODO]
-		private WindowsStreamSecurityBindingElement (
+		public WindowsStreamSecurityBindingElement (
 			WindowsStreamSecurityBindingElement other)
 			: base (other)
 		{
-			throw new NotImplementedException ();
+			ProtectionLevel = other.ProtectionLevel;
 		}
 
 		public ProtectionLevel ProtectionLevel { get; set; }

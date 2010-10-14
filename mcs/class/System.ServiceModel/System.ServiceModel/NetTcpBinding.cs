@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Net.Security;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 using System.Text;
 using System.Xml;
@@ -163,7 +164,7 @@ namespace System.ServiceModel
 			return transport.Clone ();
 		}
 
-		// based on WSHttpBinding.CreateMessageSecurity()
+		// It is problematic, but there is no option to disable establishing security context in this binding unlike WSHttpBinding...
 		SecurityBindingElement CreateMessageSecurity ()
 		{
 			if (Security.Mode == SecurityMode.Transport ||
@@ -208,7 +209,15 @@ namespace System.ServiceModel
 				break;
 			}
 
-			return element;
+			// SecureConversation enabled
+
+			ChannelProtectionRequirements reqs =
+				new ChannelProtectionRequirements ();
+			// FIXME: fill the reqs
+
+			return SecurityBindingElement.CreateSecureConversationBindingElement (
+				// FIXME: requireCancellation
+				element, true, reqs);
 		}
 
 		BindingElement CreateTransportSecurity ()
