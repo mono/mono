@@ -17,6 +17,14 @@ class Helper
 class Tester
 {
 #pragma warning disable 169
+	void Using_1 ()
+	{
+		AssertError (
+			() => {
+				using (dynamic d = 1) { }
+			}, "Cannot implicitly convert type `int' to `System.IDisposable'");
+	}
+	
 	void Unsafe_1 ()
 	{
 		dynamic d = 1;

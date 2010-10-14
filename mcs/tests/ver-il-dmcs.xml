@@ -1600,7 +1600,7 @@
         <size>404</size>
       </method>
       <method name="Boolean UsingTest()">
-        <size>453</size>
+        <size>585</size>
       </method>
       <method name="Int32 Main()">
         <size>71</size>
@@ -2373,9 +2373,6 @@
       </method>
     </type>
     <type name="Tester+&lt;Unsafe_1&gt;c__AnonStorey0">
-      <method name="Void &lt;&gt;m__0()">
-        <size>110</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -2384,20 +2381,31 @@
       <method name="Void NullableConversion()">
         <size>47</size>
       </method>
-      <method name="Void &lt;NullableConversion&gt;m__1()">
+      <method name="Void Using_1()">
+        <size>40</size>
+      </method>
+      <method name="Void &lt;Using_1&gt;m__0()">
+        <size>89</size>
+      </method>
+      <method name="Void &lt;NullableConversion&gt;m__2()">
         <size>105</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__2(System.Reflection.MethodInfo)">
+      <method name="Boolean &lt;Main&gt;m__3(System.Reflection.MethodInfo)">
         <size>12</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__3(System.Reflection.MethodInfo)">
+      <method name="System.String &lt;Main&gt;m__4(System.Reflection.MethodInfo)">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__4(System.Reflection.MethodInfo)">
+      <method name="Boolean &lt;Main&gt;m__5(System.Reflection.MethodInfo)">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__5(Boolean)">
+      <method name="Boolean &lt;Main&gt;m__6(Boolean)">
         <size>5</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Unsafe_1&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__1()">
+        <size>110</size>
       </method>
     </type>
   </test>
@@ -41868,17 +41876,17 @@
   </test>
   <test name="test-695.cs">
     <type name="Program">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void .cctor()">
-        <size>53</size>
-      </method>
       <method name="Int32 Main()">
         <size>680</size>
       </method>
       <method name="System.String get_BaseDirectory()">
         <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>53</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">

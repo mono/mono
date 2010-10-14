@@ -422,6 +422,9 @@ namespace Mono.CSharp
 		public PredefinedTypeSpec (MemberKind kind, string ns, string name)
 			: base (kind, null, null, null, Modifiers.PUBLIC)
 		{
+			if (kind == MemberKind.Struct)
+				modifiers |= Modifiers.SEALED;
+
 			this.name = name;
 			this.ns = ns;
 		}

@@ -4871,7 +4871,10 @@ namespace Mono.CSharp {
 					if (initializer == null)
 						return null;
 
-					initializer = Convert.ImplicitConversionRequired (bc, initializer, TypeManager.idisposable_type, loc);
+					// Once there is dynamic used defer conversion to runtime even if we know it will never succeed
+					Arguments args = new Arguments (1);
+					args.Add (new Argument (initializer));
+					initializer = new DynamicConversion (TypeManager.idisposable_type, 0, args, initializer.Location).Resolve (bc);
 					if (initializer == null)
 						return null;
 
