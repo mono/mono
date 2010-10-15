@@ -590,7 +590,7 @@ namespace Mono.CSharp {
 				return;
 
 			ctx.Compiler.Report.Warning (3001, 1, Location,
-				"Argument type `{0}' is not CLS-compliant", GetSignatureForError ());
+				"Argument type `{0}' is not CLS-compliant", parameter_type.GetSignatureForError ());
 		}
 
 		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index, PredefinedAttributes pa)

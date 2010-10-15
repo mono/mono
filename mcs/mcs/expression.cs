@@ -2779,6 +2779,14 @@ namespace Mono.CSharp {
 			}
 
 			if (left.Type == InternalType.Dynamic || right.Type == InternalType.Dynamic) {
+				var lt = left.Type;
+				var rt = right.Type;
+				if (lt == TypeManager.void_type || lt == InternalType.MethodGroup || lt == InternalType.AnonymousMethod ||
+					rt == TypeManager.void_type || rt == InternalType.MethodGroup || rt == InternalType.AnonymousMethod) {
+					Error_OperatorCannotBeApplied (ec, left, right);
+					return null;
+				}
+
 				Arguments args = new Arguments (2);
 				args.Add (new Argument (left));
 				args.Add (new Argument (right));

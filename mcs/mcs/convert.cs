@@ -1703,12 +1703,16 @@ namespace Mono.CSharp {
 			//
 			// From object or dynamic to any reference type or value type (unboxing)
 			//
-			if (source_type == TypeManager.object_type || source_type == InternalType.Dynamic)
+			if (source_type == TypeManager.object_type || source_type == InternalType.Dynamic) {
+				if (target_type.IsPointer)
+					return null;
+
 				return
 					source == null ? EmptyExpression.Null :
 					target_is_value_type ? new UnboxCast (source, target_type) :
 					source is Constant ? (Expression) new EmptyConstantCast ((Constant) source, target_type) :
 					new ClassCast (source, target_type);
+			}
 
 			//
 			// From any class S to any class-type T, provided S is a base class of T
