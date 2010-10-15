@@ -30,6 +30,9 @@
 		<_OriginalPlatform>$(Platform)</_OriginalPlatform>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 		<PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
+
+		<AddAdditionalExplicitAssemblyReferences Condition="'$(AddAdditionalExplicitAssemblyReferences)' == ''">true</AddAdditionalExplicitAssemblyReferences>
+		<AdditionalExplicitAssemblyReferences Condition="'$(AddAdditionalExplicitAssemblyReferences)' == 'true' and '$(TargetFrameworkVersion)' != 'v2.0' and '$(TargetFrameworkVersion)' != 'v3.0'">System.Core;$(AdditionalExplicitAssemblyReferences)</AdditionalExplicitAssemblyReferences>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -155,8 +158,16 @@
 	<Target Name="AfterResolveReferences" />
 
 	<Target Name="ResolveAssemblyReferences" DependsOnTargets="$(ResolveAssemblyReferencesDependsOn)">
+		<CreateItem Include="@(Reference)" Exclude="$(AdditionalExplicitAssemblyReferences)">
+			<Output TaskParameter="Include" ItemName="_Reference"/>
+		</CreateItem>
+
+		<CreateItem Include="$(AdditionalExplicitAssemblyReferences)">
+			<Output TaskParameter="Include" ItemName="_Reference"/>
+		</CreateItem>
+
 		<ResolveAssemblyReference
-			Assemblies="@(Reference)"
+			Assemblies="@(_Reference)"
 			AssemblyFiles="@(ChildProjectReferences)"
 			SearchPaths="$(AssemblySearchPaths)"
 			CandidateAssemblyFiles="@(Content);@(None)"
