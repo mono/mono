@@ -109,11 +109,11 @@ $(test_lib): $(the_assembly) $(test_response) $(test_nunit_dep)
 	$(TEST_COMPILE) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 $(test_response): $(test_sourcefile)
-	@echo Creating $@ ...
+#	@echo Creating $@ ...
 	@sed -e '/^$$/d' -e 's,^,Test/,' $(test_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
 $(test_makefrag): $(test_response)
-	@echo Creating $@ ...
+#	@echo Creating $@ ...
 	@sed 's,^,$(test_lib): ,' $< >$@
 
 -include $(test_makefrag)

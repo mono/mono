@@ -252,7 +252,7 @@ endif
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 library_CLEAN_FILES += $(makefrag)
 $(makefrag): $(sourcefile)
-	@echo Creating $@ ...
+#	@echo Creating $@ ...
 	@sed 's,^,$(build_lib): ,' $< >$@
 	@if test ! -f $(sourcefile).makefrag; then :; else \
 	   cat $(sourcefile).makefrag >> $@ ; \
