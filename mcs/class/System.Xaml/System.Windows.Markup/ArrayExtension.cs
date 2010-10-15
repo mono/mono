@@ -58,11 +58,11 @@ namespace System.Windows.Markup
 			Items = new List<object> ();
 		}
 
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public IList Items { get; private set; }
-
 		[ConstructorArgument ("arrayType")]
 		public Type Type { get; set; }
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public IList Items { get; private set; }
 
 		public void AddChild (Object value)
 		{

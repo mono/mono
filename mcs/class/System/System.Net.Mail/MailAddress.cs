@@ -39,6 +39,9 @@ namespace System.Net.Mail {
 
 		string address;
 		string displayName;
+		string host;
+		string user;
+		string to_string;
 		//Encoding displayNameEncoding;
 
 		#endregion // Fields
@@ -49,46 +52,69 @@ namespace System.Net.Mail {
 		{
 		}
 
-		public MailAddress (string address, string displayName) : this (address, displayName, Encoding.Default)
+		public MailAddress (string address, string displayName) : this (address, displayName, Encoding.UTF8)
 		{
 		}
 
+		[MonoTODO ("We don't do anything with displayNameEncoding")]
 		public MailAddress (string address, string displayName, Encoding displayNameEncoding)
 		{
 			if (address == null)
 				throw new ArgumentNullException ("address");
+			if (address.Length == 0)
+				throw new ArgumentException ("address");
 
-			// either displayname is enclosed in quotes, and/or e-mail address
-			// is enclosed in less than / greater than characters
-			int quoteStart = address.IndexOf ('"');
-			if (quoteStart == 0) {
-				int quoteEnd = address.IndexOf ('"', quoteStart + 1);
-				if (quoteEnd == -1)
-					throw CreateFormatException ();
-				this.displayName = address.Substring (quoteStart + 1, quoteEnd - 1).Trim ();
-				address = address.Substring (quoteEnd + 1);
-			}
-
-			int addressStart = address.IndexOf ('<');
-			if (addressStart != -1) {
-				if (addressStart + 1 >= address.Length)
-					throw CreateFormatException ();
-				int addressEnd = address.IndexOf ('>', addressStart + 1);
-				if (addressEnd == -1)
-					throw CreateFormatException ();
-				if (this.displayName == null)
-					this.displayName = address.Substring (0, addressStart).Trim ();
-				address = address.Substring (++addressStart, addressEnd - addressStart);
-			}
-
-			// LAMESPEC: zero-length displayName should not override display name
-			// specified in address
-			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=283163
 			if (displayName != null)
 				this.displayName = displayName.Trim ();
+			ParseAddress (address);
+		}
 
-			this.address = address.Trim ();
-			//this.displayNameEncoding = displayNameEncoding;
+		void ParseAddress (string address)
+		{
+			// 1. Quotes for display name
+			address = address.Trim ();
+			int idx = address.IndexOf ('"');
+			if (idx != -1) {
+				if (idx != 0 || address.Length == 1)
+					throw CreateFormatException ();
+
+				int closing = address.LastIndexOf ('"');
+				if (closing == idx)
+					throw CreateFormatException ();
+
+				if (this.displayName == null)
+					this.displayName = address.Substring (idx + 1, closing - idx - 1).Trim ();
+				address = address.Substring (closing + 1).Trim ();
+			}
+
+			// 2. <email>
+			idx = address.IndexOf ('<');
+			if (idx >= 0) {
+				if (this.displayName == null)
+					this.displayName = address.Substring (0, idx).Trim ();
+				if (address.Length - 1 == idx)
+					throw CreateFormatException ();
+
+				int end = address.IndexOf ('>', idx + 1);
+				if (end == -1)
+					throw CreateFormatException ();
+
+				address = address.Substring (idx + 1, end - idx - 1).Trim ();
+			}
+			this.address = address;
+			// 3. email
+			idx = address.IndexOf ('@');
+			if (idx <= 0)
+				throw CreateFormatException ();
+			if (idx != address.LastIndexOf ('@'))
+				throw CreateFormatException ();
+
+			this.user = address.Substring (0, idx).Trim ();
+			if (user.Length == 0)
+				throw CreateFormatException ();
+			this.host = address.Substring (idx + 1).Trim ();
+			if (host.Length == 0)
+				throw CreateFormatException ();
 		}
 
 		#endregion // Constructors
@@ -108,11 +134,11 @@ namespace System.Net.Mail {
 		}
 
 		public string Host {
-			get { return Address.Substring (address.IndexOf ("@") + 1); }
+			get { return host; }
 		}
 
 		public string User {
-			get { return Address.Substring (0, address.IndexOf ("@")); }
+			get { return user; }
 		}
 
 #endregion // Properties
@@ -121,36 +147,28 @@ namespace System.Net.Mail {
 		
 		public override bool Equals (object obj)
 		{
-			return Equals (obj as MailAddress);
-		}
+			if (obj == null)
+				return false;
 
-		bool Equals (MailAddress other)
-		{
-			return other != null && Address == other.Address;
+			return (0 == String.Compare (ToString (), obj.ToString (), StringComparison.OrdinalIgnoreCase));
 		}
 
 		public override int GetHashCode ()
 		{
-			return address.GetHashCode ();
+			return ToString ().GetHashCode ();
 		}
 
 		public override string ToString ()
 		{
-			StringBuilder sb = new StringBuilder ();
-			if (DisplayName != null && DisplayName.Length > 0) {
-				sb.Append ("\"");
-				sb.Append (DisplayName);
-				sb.Append ("\"");
-				sb.Append (" ");
-				sb.Append ("<");
-				sb.Append (Address);
-				sb.Append (">");
-			}
-			else {
-				sb.Append (Address);
-			}
+			if (to_string != null)
+				return to_string;
 
-			return sb.ToString ();
+			if (!String.IsNullOrEmpty (displayName))
+				to_string = String.Format ("\"{0}\" <{1}>", DisplayName, Address);
+			else
+				to_string = address;
+
+			return to_string;
 		}
 
 		private static FormatException CreateFormatException () {

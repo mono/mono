@@ -76,7 +76,7 @@ namespace System.ServiceModel.Security.Tokens
 			throw new NotSupportedException (String.Format ("This security token '{0}' with {1} reference mode is not supported.", token, referenceStyle));
 		}
 
-		protected override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
+		protected internal override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
 		{
 			requirement.TokenType = SecurityTokenTypes.UserName;
 			requirement.RequireCryptographicToken = true;

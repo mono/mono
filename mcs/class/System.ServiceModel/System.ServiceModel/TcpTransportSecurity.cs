@@ -34,21 +34,14 @@ namespace System.ServiceModel
 	[MonoTODO]
 	public sealed class TcpTransportSecurity
 	{
-		TcpClientCredentialType client;
-		ProtectionLevel protection_level;
-
 		internal TcpTransportSecurity ()
 		{
+			ClientCredentialType = TcpClientCredentialType.Windows; // huh
+			ProtectionLevel = ProtectionLevel.EncryptAndSign;
 		}
 
-		public TcpClientCredentialType ClientCredentialType {
-			get { return client; }
-			set { client = value; }
-		}
+		public TcpClientCredentialType ClientCredentialType { get; set; }
 
-		public ProtectionLevel ProtectionLevel {
-			get { return protection_level; }
-			set { protection_level = value; }
-		}
+		public ProtectionLevel ProtectionLevel { get; set; }
 	}
 }

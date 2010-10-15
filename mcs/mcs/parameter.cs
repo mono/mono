@@ -595,6 +595,9 @@ namespace Mono.CSharp {
 
 		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index, PredefinedAttributes pa)
 		{
+			if (builder != null)
+				throw new InternalErrorException ("builder already exists");
+
 			if (mb == null)
 				builder = cb.DefineParameter (index, Attributes, Name);
 			else

@@ -2041,7 +2041,7 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 #ifdef HOST_WIN32
 	QueueUserAPC (notify_thread_apc, thread->handle, NULL);
 #else
-	pthread_kill ((pthread_t) tid, mono_thread_get_abort_signal ());
+	mono_thread_kill (thread, mono_thread_get_abort_signal ());
 #endif
 }
 
@@ -4666,7 +4666,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 	MonoObject *this, *res, *exc;
 	MonoDomain *domain;
 	guint8 *this_buf;
-#ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
+#ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	MonoLMFExt ext;
 #endif
 
@@ -4761,7 +4761,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 	 * Add an LMF frame to link the stack frames on the invoke method with our caller.
 	 */
 	/* FIXME: Move this to arch specific code */
-#ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
+#ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	if (invoke->has_ctx) {
 		MonoLMF **lmf_addr;
 
@@ -4827,7 +4827,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 
 	tls->disable_breakpoints = FALSE;
 
-#ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
+#ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	if (invoke->has_ctx)
 		mono_set_lmf ((gpointer)(((gssize)ext.lmf.previous_lmf) & ~3));
 #endif

@@ -66,6 +66,12 @@ public class Test
 		iar [0] += dvalue;
 		if (iar [0] != -11)
 			return 5;
+		
+		dynamic dn = 1;
+		int?[] array = new int?[1];
+		array[0] = dn;
+		if (array [0] != 1)
+			return 6;
 
 		Console.WriteLine ("ok");
 		return 0;

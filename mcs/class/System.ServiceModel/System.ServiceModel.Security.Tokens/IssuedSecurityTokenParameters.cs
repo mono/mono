@@ -187,7 +187,7 @@ namespace System.ServiceModel.Security.Tokens
 			return ret;
 		}
 
-		protected override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
+		protected internal override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
 		{
 			if (requirement == null)
 				throw new ArgumentNullException ("requirement");

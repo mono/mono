@@ -553,7 +553,7 @@ is_valid_generic_instantiation (MonoGenericContainer *gc, MonoGenericContext *co
 		MonoGenericParamInfo *param_info = mono_generic_container_get_param_info (gc, i);
 		MonoClass *paramClass;
 		MonoClass **constraints;
-		MonoType *param_type =  ginst->type_argv [i];
+		MonoType *param_type = ginst->type_argv [i];
 
 		/*it's not our job to validate type variables*/
 		if (mono_type_is_generic_argument (param_type))
@@ -568,8 +568,15 @@ is_valid_generic_instantiation (MonoGenericContainer *gc, MonoGenericContext *co
 		 *
 		 * Due to how types are encoded we must check for the case of a genericinst MonoType and GTD MonoClass.
 		 * This happens in cases such as: class Foo<T>  { void X() { new Bar<T> (); } }
+		 *
+		 * Open instantiations can have GTDs as this happens when one type is instantiated with others params
+		 * and the former has an expansion into the later. For example:
+		 * class B<K> {}
+		 * class A<T>: B<K> {}
+		 * The type A <K> has a parent B<K>, that is inflated into the GTD B<>.
+		 * Since A<K> is open, thus not instantiatable, this is valid.
 		 */
-		if (paramClass->generic_container && param_type->type != MONO_TYPE_GENERICINST)
+		if (paramClass->generic_container && param_type->type != MONO_TYPE_GENERICINST && !ginst->is_open)
 			return FALSE;
 
 		/*it's not safe to call mono_class_init from here*/
@@ -5968,7 +5975,7 @@ mono_verifier_verify_class (MonoClass *class)
 	if (class->parent) {
 		if (MONO_CLASS_IS_INTERFACE (class->parent))
 			return FALSE;
-		if (class->parent->generic_container)
+		if (!class->generic_class && class->parent->generic_container)
 			return FALSE;
 	}
 	if (class->generic_container && (class->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT)

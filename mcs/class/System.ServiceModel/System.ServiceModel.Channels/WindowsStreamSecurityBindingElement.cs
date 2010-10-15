@@ -39,50 +39,45 @@ namespace System.ServiceModel.Channels
 	public class WindowsStreamSecurityBindingElement
 		: BindingElement, ISecurityCapabilities, IPolicyExportExtension
 	{
-		[MonoTODO]
 		public WindowsStreamSecurityBindingElement ()
 		{
 		}
 
-		[MonoTODO]
-		private WindowsStreamSecurityBindingElement (
+		public WindowsStreamSecurityBindingElement (
 			WindowsStreamSecurityBindingElement other)
 			: base (other)
 		{
-			throw new NotImplementedException ();
+			ProtectionLevel = other.ProtectionLevel;
 		}
 
-		[MonoTODO]
+		public ProtectionLevel ProtectionLevel { get; set; }
+
 		public override IChannelFactory<TChannel>
 			BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.BuildInnerChannelFactory<TChannel> ();
 		}
 
-		[MonoTODO]
 		public override IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.BuildInnerChannelListener<TChannel> ();
 		}
 
-		[MonoTODO]
 		public override bool CanBuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.CanBuildInnerChannelFactory<TChannel> ();
 		}
 
-		[MonoTODO]
 		public override bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.CanBuildInnerChannelListener<TChannel> ();
 		}
 
-		[MonoTODO]
 		public override BindingElement Clone ()
 		{
 			return new WindowsStreamSecurityBindingElement (this);

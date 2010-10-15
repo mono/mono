@@ -385,7 +385,13 @@ namespace Mono.CSharp
 				if (a.ArgType == Argument.AType.Out || a.ArgType == Argument.AType.Ref)
 					has_ref_out_argument = true;
 
-				targs [i + 1] = new TypeExpression (a.Type, loc);
+				var t = a.Type;
+
+				// Convert any internal type like dynamic or null to object
+				if (t.Kind == MemberKind.InternalCompilerType)
+					t = TypeManager.object_type;
+
+				targs [i + 1] = new TypeExpression (t, loc);
 			}
 
 			TypeExpr del_type = null;

@@ -135,10 +135,43 @@ namespace System.ServiceModel.Channels
 		}
 #endif
 
-		[MonoTODO ("It supports only IRequestSessionChannel")]
+		[MonoTODO ("Implement for TransportSecurityBindingElement")]
 		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
 		{
+#if NET_2_1
+			// not sure this should be like this, but there isn't Symmetric/Asymmetric elements in 2.1 anyways.
 			return context.CanBuildInnerChannelFactory<TChannel> ();
+#else
+			if (this is TransportSecurityBindingElement)
+				throw new NotImplementedException ();
+
+			var symm = this as SymmetricSecurityBindingElement;
+			var asymm = this as AsymmetricSecurityBindingElement;
+			var pt = symm != null ? symm.ProtectionTokenParameters : asymm != null ? asymm.InitiatorTokenParameters : null;
+			if (pt == null)
+				return false;
+
+			var t = typeof (TChannel);
+			var req = new InitiatorServiceModelSecurityTokenRequirement ();
+			pt.InitializeSecurityTokenRequirement (req);
+			object dummy;
+			if (req.Properties.TryGetValue (ServiceModelSecurityTokenRequirement.IssuedSecurityTokenParametersProperty, out dummy) && dummy != null) {
+				if (t == typeof (IRequestSessionChannel))
+					return context.CanBuildInnerChannelFactory<IRequestChannel> () ||
+						context.CanBuildInnerChannelFactory<IRequestSessionChannel> ();
+				else if (t == typeof (IDuplexSessionChannel))
+					return context.CanBuildInnerChannelFactory<IDuplexChannel> () ||
+						context.CanBuildInnerChannelFactory<IDuplexSessionChannel> ();
+			} else {
+				if (t == typeof (IRequestChannel))
+					return context.CanBuildInnerChannelFactory<IRequestChannel> () ||
+						context.CanBuildInnerChannelFactory<IRequestSessionChannel> ();
+				else if (t == typeof (IDuplexChannel))
+					return context.CanBuildInnerChannelFactory<IDuplexChannel> () ||
+						context.CanBuildInnerChannelFactory<IDuplexSessionChannel> ();
+			}
+			return false;
+#endif
 		}
 
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
@@ -151,10 +184,38 @@ namespace System.ServiceModel.Channels
 			BuildChannelFactoryCore<TChannel> (BindingContext context);
 
 #if !NET_2_1
-		[MonoTODO ("It probably supports only IReplySessionChannel")]
+		[MonoTODO ("Implement for TransportSecurityBindingElement")]
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
-			return context.CanBuildInnerChannelListener<TChannel> ();
+			if (this is TransportSecurityBindingElement)
+				throw new NotImplementedException ();
+
+			var symm = this as SymmetricSecurityBindingElement;
+			var asymm = this as AsymmetricSecurityBindingElement;
+			var pt = symm != null ? symm.ProtectionTokenParameters : asymm != null ? asymm.RecipientTokenParameters : null;
+			if (pt == null)
+				return false;
+
+			var t = typeof (TChannel);
+			var req = new InitiatorServiceModelSecurityTokenRequirement ();
+			pt.InitializeSecurityTokenRequirement (req);
+			object dummy;
+			if (req.Properties.TryGetValue (ServiceModelSecurityTokenRequirement.IssuedSecurityTokenParametersProperty, out dummy) && dummy != null) {
+				if (t == typeof (IReplySessionChannel))
+					return context.CanBuildInnerChannelListener<IReplyChannel> () ||
+						context.CanBuildInnerChannelListener<IReplySessionChannel> ();
+				else if (t == typeof (IDuplexSessionChannel))
+					return context.CanBuildInnerChannelListener<IDuplexChannel> () ||
+						context.CanBuildInnerChannelListener<IDuplexSessionChannel> ();
+			} else {
+				if (t == typeof (IReplyChannel))
+					return context.CanBuildInnerChannelListener<IReplyChannel> () ||
+						context.CanBuildInnerChannelListener<IReplySessionChannel> ();
+				else if (t == typeof (IDuplexChannel))
+					return context.CanBuildInnerChannelListener<IDuplexChannel> () ||
+						context.CanBuildInnerChannelListener<IDuplexSessionChannel> ();
+			}
+			return false;
 		}
 
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
