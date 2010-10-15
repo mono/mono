@@ -178,7 +178,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static Expression ImplicitReferenceConversion (Expression expr, TypeSpec target_type, bool explicit_cast)
+		public static Expression ImplicitReferenceConversion (Expression expr, TypeSpec target_type, bool explicit_cast)
 		{
 			TypeSpec expr_type = expr.Type;
 

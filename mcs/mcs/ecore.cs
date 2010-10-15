@@ -3769,11 +3769,24 @@ namespace Mono.CSharp {
 
 				score = 1;
 				if (!params_expanded_form) {
-					score = IsArgumentCompatible (ec, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
+					if (a.ArgType == Argument.AType.ExtensionType) {
+						//
+						// Indentity, implicit reference or boxing conversion must exist for the extension parameter
+						//
+						var at = a.Type;
+						if (at == pt || TypeSpecComparer.IsEqual (at, pt) ||
+							Convert.ImplicitReferenceConversionExists (a.Expr, pt) ||
+							Convert.ImplicitBoxingConversion (EmptyExpression.Null, at, pt) != null) {
+							score = 0;
+							continue;
+						}
+					} else {
+						score = IsArgumentCompatible (ec, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
 
-					if (score < 0) {
-						dynamicArgument = true;
-						continue;
+						if (score < 0) {
+							dynamicArgument = true;
+							continue;
+						}
 					}
 				}
 
@@ -4330,7 +4343,19 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				Expression conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
+				Expression conv = null;
+				if (a.ArgType == Argument.AType.ExtensionType) {
+					if (a.Expr.Type == pt || TypeSpecComparer.IsEqual (a.Expr.Type, pt)) {
+						conv = a.Expr;
+					} else {
+						conv = Convert.ImplicitReferenceConversion (a.Expr, pt, false);
+						if (conv == null)
+							conv = Convert.ImplicitBoxingConversion (a.Expr, a.Expr.Type, pt);
+					}
+				} else {
+					conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
+				}
+
 				if (conv == null)
 					break;
 
