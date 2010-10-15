@@ -77,7 +77,6 @@ namespace System.Runtime.Serialization.Json
 				break;
 			case TypeCode.Single:
 			case TypeCode.Double:
-			case TypeCode.Decimal:
 				writer.WriteAttributeString ("type", "number");
 				writer.WriteString (((IFormattable) graph).ToString ("R", CultureInfo.InvariantCulture));
 				break;
@@ -89,6 +88,7 @@ namespace System.Runtime.Serialization.Json
 			case TypeCode.UInt16:
 			case TypeCode.UInt32:
 			case TypeCode.UInt64:
+			case TypeCode.Decimal:
 				writer.WriteAttributeString ("type", "number");
 				if (graph.GetType ().IsEnum)
 					graph = ((IConvertible) graph).ToType (Enum.GetUnderlyingType (graph.GetType ()), CultureInfo.InvariantCulture);
