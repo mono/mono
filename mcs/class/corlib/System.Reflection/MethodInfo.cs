@@ -58,17 +58,6 @@ namespace System.Reflection {
 
 		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; }
 
-		// FIXME: when this method is uncommented, corlib fails
-		// to build
-/*
-		[DebuggerStepThrough]
-		[DebuggerHidden]
-		public new object Invoke (object obj, object[] parameters)
-		{
-			return base.Invoke (obj, parameters);
-		}
-*/
-
 		void _MethodInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -136,7 +125,7 @@ namespace System.Reflection {
 #if NET_4_0
 		public override bool Equals (object obj)
 		{
-			return obj == this;
+			return obj == (object) this;
 		}
 
 		public override int GetHashCode ()

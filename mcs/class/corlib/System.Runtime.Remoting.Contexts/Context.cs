@@ -64,7 +64,7 @@ namespace System.Runtime.Remoting.Contexts {
 
 		object[] datastore;
 		ArrayList context_properties;
-		bool frozen;
+//		bool frozen;
 		
 		static int global_count;
 
@@ -212,8 +212,8 @@ namespace System.Runtime.Remoting.Contexts {
 			if (this == DefaultContext)
 				throw new InvalidOperationException ("Can not add properties to " +
 								     "default context");
-			if (frozen)
-				throw new InvalidOperationException ("Context is Frozen");
+//			if (frozen)
+//				throw new InvalidOperationException ("Context is Frozen");
 			
 			if (context_properties == null)
 				context_properties = new ArrayList ();

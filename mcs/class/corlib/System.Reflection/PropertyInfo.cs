@@ -70,13 +70,6 @@ namespace System.Reflection {
 		
 		public abstract ParameterInfo[] GetIndexParameters();
 
-#if ONLY_1_1
-		public new Type GetType ()
-		{
-			return base.GetType ();
-		}
-#endif
-
 		public MethodInfo GetSetMethod()
 		{
 			return GetSetMethod (false);
@@ -110,7 +103,8 @@ namespace System.Reflection {
 			return Type.EmptyTypes;
 		}
 
-		NotImplementedException CreateNIE () {
+		static NotImplementedException CreateNIE ()
+		{
 			return new NotImplementedException ();
 		}
 
@@ -125,7 +119,7 @@ namespace System.Reflection {
 #if NET_4_0
 		public override bool Equals (object obj)
 		{
-			return obj == this;
+			return obj == (object) this;
 		}
 
 		public override int GetHashCode ()

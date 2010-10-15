@@ -381,11 +381,14 @@ namespace System {
 		}
 
 		public override MemberTypes MemberType {
-			get {return MemberTypes.TypeInfo;}
+			get {
+				return MemberTypes.TypeInfo;
+			}
 		}
 
-		override
-		public abstract Module Module {get;}
+		public abstract override Module Module {
+			get;
+		}
 	
 		public abstract string Namespace {get;}
 
@@ -435,7 +438,7 @@ namespace System {
 #if NET_4_0
 		public virtual bool Equals (Type o)
 		{
-			if ((object)o == this)
+			if ((object)o == (object)this)
 				return true;
 			if ((object)o == null)
 				return false;
@@ -446,7 +449,7 @@ namespace System {
 			o = o.UnderlyingSystemType;
 			if ((object)o == null)
 				return false;
-			if ((object)o == this)
+			if ((object)o == (object)this)
 				return true;
 			return me.EqualsInternal (o);
 		}		
@@ -504,7 +507,7 @@ namespace System {
 			return result;
 		}
 
-		NotImplementedException CreateNIE () {
+		static NotImplementedException CreateNIE () {
 			return new NotImplementedException ();
 		}
 

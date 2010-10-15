@@ -132,13 +132,6 @@ namespace System.Reflection {
 
 		public abstract void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
 
-#if ONLY_1_1
-		public new Type GetType ()
-		{
-			return base.GetType ();
-		}
-#endif
-
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public void SetValue (object obj, object value)
@@ -260,7 +253,7 @@ namespace System.Reflection {
 #if NET_4_0
 		public override bool Equals (object obj)
 		{
-			return obj == this;
+			return obj == (object) this;
 		}
 
 		public override int GetHashCode ()

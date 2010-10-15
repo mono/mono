@@ -44,6 +44,7 @@ namespace System.Reflection.Emit {
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class PropertyBuilder : PropertyInfo, _PropertyBuilder {
 
+// Managed version of MonoReflectionPropertyBuilder
 #pragma warning disable 169, 414
 		private PropertyAttributes attrs;
 		private string name;
@@ -59,8 +60,8 @@ namespace System.Reflection.Emit {
 		private Type[] returnModOpt;
 		private Type[][] paramModReq;
 		private Type[][] paramModOpt;
+		CallingConventions callingConvention;		
 #pragma warning restore 169, 414
-		CallingConventions callingConvention;	// TODO: Implement
 		
 		internal PropertyBuilder (TypeBuilder tb, string name, PropertyAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
 		{

@@ -42,7 +42,6 @@ namespace System.Runtime.Remoting.Messaging
 	{
 		object[] _outArgs;
 		object[] _args;
-		int _outArgsCount;
 		LogicalCallContext _callCtx;
 		object _returnValue;
 		string _uri;
@@ -63,7 +62,6 @@ namespace System.Runtime.Remoting.Messaging
 
 			_returnValue = ret;
 			_args = outArgs;
-			_outArgsCount = outArgsCount;
 			_callCtx = callCtx;
 			if (mcm != null) {
 				_uri = mcm.Uri;
