@@ -124,37 +124,36 @@ namespace System.Xaml
 		{
 			if (schemaContext == null)
 				throw new ArgumentNullException ("schemaContext");
-			// FIXME: special case? or can it be generalized?
+			// FIXME: special case? or can it be generalized? In .NET, For Type instance Instance returns TypeExtension at root StartObject, while for Array it remains to return Array.
 			if (instance is Type)
 				instance = new TypeExtension ((Type) instance);
 
-			this.instance = instance;
+			this.root = instance;
 			sctx = schemaContext;
 			this.settings = settings;
 
 			prefix_lookup = new PrefixLookup (this);
 
-			if (instance != null) {
-				// check type validity. Note that some checks are done at Read() phase.
-				var type = instance.GetType ();
-				if (!type.IsPublic)
-					throw new XamlObjectReaderException (String.Format ("instance type '{0}' must be public and non-nested.", type));
-				root_type = SchemaContext.GetXamlType (instance.GetType ());
-				if (root_type.ConstructionRequiresArguments && !root_type.GetConstructorArguments ().Any () && root_type.TypeConverter == null)
-					throw new XamlObjectReaderException (String.Format ("instance type '{0}' has no default constructor.", type));
-			}
-			else
-				root_type = XamlLanguage.Null;
+			// check type validity. Note that some checks are also done at Read() phase.
+			if (instance != null && !instance.GetType ().IsPublic)
+				throw new XamlObjectReaderException (String.Format ("instance type '{0}' must be public and non-nested.", instance.GetType ()));
+
+			var obj = GetExtensionWrappedInstance (instance);
+
+			var type = obj.GetType ();
+			root_type = SchemaContext.GetXamlType (type);
+			if (root_type.ConstructionRequiresArguments && !root_type.GetConstructorArguments ().Any () && root_type.TypeConverter == null)
+				throw new XamlObjectReaderException (String.Format ("instance type '{0}' has no default constructor.", type));
 		}
 
-		object instance;
-		XamlType root_type;
-		XamlSchemaContext sctx;
-		XamlObjectReaderSettings settings;
-
-		INamespacePrefixLookup prefix_lookup;
+		readonly object root;
+		readonly XamlType root_type;
+		readonly XamlSchemaContext sctx;
+		readonly XamlObjectReaderSettings settings;
+		readonly INamespacePrefixLookup prefix_lookup;
 
 		Stack<XamlType> types = new Stack<XamlType> ();
+		object instance; // could be different from objects. This field holds "raw" object value, and is used for Instance proeperty.
 		Stack<object> objects = new Stack<object> ();
 		Stack<IEnumerator<XamlMember>> members_stack = new Stack<IEnumerator<XamlMember>> ();
 		NSList namespaces;
@@ -166,7 +165,7 @@ namespace System.Xaml
 		Dictionary<object,IEnumerator<object>> constructor_arguments_stack = new Dictionary<object,IEnumerator<object>> ();
 
 		public virtual object Instance {
-			get { return NodeType == XamlNodeType.StartObject && objects.Count > 0 ? objects.Peek () : null; }
+			get { return NodeType == XamlNodeType.StartObject ? instance : null; }
 		}
 
 		public override bool IsEof {
@@ -220,7 +219,7 @@ namespace System.Xaml
 				// -> namespaces
 				var d = new Dictionary<string,string> ();
 				//l.Sort ((p1, p2) => String.CompareOrdinal (p1.Key, p2.Key));
-				CollectNamespaces (d, instance, root_type);
+				CollectNamespaces (d, root);
 				var nss = from k in d.Keys select new NamespaceDeclaration (k, d [k]);
 				namespaces = new NSList (XamlNodeType.StartObject, nss);
 				namespaces.Sort ((n1, n2) => String.CompareOrdinal (n1.Prefix, n2.Prefix));
@@ -280,8 +279,8 @@ namespace System.Xaml
 				else if (!curMember.IsContentValue ())
 					StartNextObject (curMember);
 				else {
-					obj = GetMemberValueOrRootInstance ();
-					objects.Push (obj);
+					instance = GetMemberValueOrRootInstance ();
+					objects.Push (GetExtensionWrappedInstance (instance));
 					node_type = XamlNodeType.Value;
 				}
 				return true;
@@ -345,15 +344,22 @@ namespace System.Xaml
 				node_type = XamlNodeType.EndMember;
 		}
 
-		void CollectNamespaces (Dictionary<string,string> d, object o, XamlType xt)
+		object GetExtensionWrappedInstance (object o)
 		{
-			if (xt == null)
-				return;
-			if (o == null) {
-				// it becomes NullExtension, so check standard ns.
-				CheckAddNamespace (d, XamlLanguage.Xaml2006Namespace);
-				return;
-			}
+			if (o == null)
+				return new NullExtension ();
+			if (o is Array)
+				return new ArrayExtension ((Array) o);
+			if (o is Type)
+				return new TypeExtension ((Type) o);
+			return o;
+		}
+
+		void CollectNamespaces (Dictionary<string,string> d, object o)
+		{
+			o = GetExtensionWrappedInstance (o);
+			var xt = SchemaContext.GetXamlType (o.GetType ());
+			
 			var ns = xt.PreferredXamlNamespace;
 			if (!xt.IsMarkupExtension || xt.TypeConverter == null) // FIXME: not sure why this gives the difference - see XamlObjectReaderTest.Read_CustomMarkupExtension2().
 				CheckAddNamespace (d, ns);
@@ -365,7 +371,7 @@ namespace System.Xaml
 				if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)
 					continue; // FIXME: process them too.
 				var mv = GetMemberValueOf (xm, o, xt, d);
-				CollectNamespaces (d, mv, xm.Type);
+				CollectNamespaces (d, mv);
 			}
 		}
 
@@ -382,7 +388,7 @@ namespace System.Xaml
 
 		void StartNextObject (object obj, XamlMember member)
 		{
-			var xt = Object.ReferenceEquals (obj, instance) ? root_type : obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
+			var xt = Object.ReferenceEquals (obj, root) ? root_type : obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
 
 			// FIXME: enable these lines.
 			// FIXME: if there is an applicable instance descriptor, then it could be still valid.
@@ -401,7 +407,8 @@ namespace System.Xaml
 				objects.Push (e);
 				node_type = XamlNodeType.GetObject;
 			} else {
-				objects.Push (obj);
+				instance = obj;
+				objects.Push (GetExtensionWrappedInstance (obj));
 				node_type = XamlNodeType.StartObject;
 			}
 		}
@@ -409,7 +416,7 @@ namespace System.Xaml
 		object GetMemberValueOrRootInstance ()
 		{
 			if (objects.Count == 0)
-				return instance;
+				return root;
 
 			var xm = members_stack.Peek ().Current;
 			var obj = objects.Peek ();

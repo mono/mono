@@ -279,17 +279,18 @@ namespace MonoTests.System.Xaml
 		public void Read_Type ()
 		{
 			var r = new XamlObjectReader (typeof (int));
-			Read_TypeOrTypeExtension (r);
+			Read_TypeOrTypeExtension (r, typeof (int));
 		}
 		
 		[Test]
 		public void Read_TypeExtension ()
 		{
-			var r = new XamlObjectReader (new TypeExtension (typeof (int)));
-			Read_TypeOrTypeExtension (r);
+			var tx = new TypeExtension (typeof (int));
+			var r = new XamlObjectReader (tx);
+			Read_TypeOrTypeExtension (r, tx);
 		}
 
-		void Read_TypeOrTypeExtension (XamlObjectReader r)
+		void Read_TypeOrTypeExtension (XamlObjectReader r, object obj)
 		{
 			Assert.IsTrue (r.Read (), "#11");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
@@ -494,7 +495,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Array ()
 		{
 			var obj = new int [] {5, -3, 0};
@@ -522,7 +522,7 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
 			var xt = new XamlType (typeof (ArrayExtension), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "#23");
-			Assert.AreEqual (instance, r.Instance, "#26"); // different between Array and ArrayExtension
+			Assert.AreEqual (instance, r.Instance, "#26"); // different between Array and ArrayExtension. Also, different from Type and TypeExtension (Type returns TypeExtension, while Array remains to return Array)
 
 			// This assumption on member ordering ("Type" then "Items") is somewhat wrong, and we might have to adjust it in the future.
 
