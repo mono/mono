@@ -292,10 +292,9 @@ namespace System.Xaml
 
 			case XamlNodeType.EndMember:
 				members = members_stack.Peek ();
-				if (members.MoveNext ()) {
-					members_stack.Push (members);
+				if (members.MoveNext ())
 					StartNextMember ();
-				} else {
+				else {
 					members_stack.Pop ();
 					node_type = XamlNodeType.EndObject;
 				}
