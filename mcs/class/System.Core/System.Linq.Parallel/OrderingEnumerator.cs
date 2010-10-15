@@ -143,7 +143,6 @@ namespace System.Linq.Parallel
 			}
 		}
 
-		readonly int num;
 		SlotBucket slotBucket;
 		
 		IEnumerator<KeyValuePair<long, T>?> currEnum;
@@ -151,7 +150,6 @@ namespace System.Linq.Parallel
 
 		internal OrderingEnumerator (int num, CancellationToken token)
 		{
-			this.num = num;
 			slotBucket = new SlotBucket (num, token);
 		}
 

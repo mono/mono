@@ -61,6 +61,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector4ui ArithmeticRightShift (this Vector4ui v1, int amount)
 		{
 			Vector4ui res = new Vector4ui ();
@@ -72,6 +73,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us ArithmeticRightShift (this Vector8us va, int amount)
 		{
 			Vector8us res = new Vector8us ();
@@ -111,6 +113,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe int ExtractByteMask (this Vector16sb va) {
 			int res = 0;
 			sbyte *a = (sbyte*)&va;
@@ -143,6 +146,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us AddWithSaturation (this Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -154,6 +158,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16sb AddWithSaturation (this Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -187,6 +192,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us SubtractWithSaturation (this Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -198,6 +204,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16sb SubtractWithSaturation (this Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -231,6 +238,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us MultiplyStoreHigh (this Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -293,6 +301,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us Average (this Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -337,6 +346,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE41)]
+		[CLSCompliant (false)]
 		public static Vector4ui Max (this Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (System.Math.Max (v1.x, v2.x), System.Math.Max (v1.y, v2.y), System.Math.Max (v1.z, v2.z), System.Math.Max (v1.w, v2.w));
@@ -354,6 +364,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE41)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us Max (this Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -374,6 +385,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE41)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16sb Max (this Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -409,6 +421,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE41)]
+		[CLSCompliant (false)]
 		public static Vector4ui Min (this Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (System.Math.Min (v1.x, v2.x), System.Math.Min (v1.y, v2.y), System.Math.Min (v1.z, v2.z), System.Math.Min (v1.w, v2.w));
@@ -426,6 +439,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE41)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us Min (this Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -437,6 +451,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE41)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16sb Min (this Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -529,6 +544,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE41)]
+		[CLSCompliant (false)]
 		public static Vector2ul CompareEqual (this Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul ((ulong)(v1.x ==  v2.x ? -1 : 0), (ulong)(v1.y ==  v2.y ? -1 : 0));
@@ -541,6 +557,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static Vector4ui CompareEqual (this Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui ((uint)(v1.x ==  v2.x ? -1 : 0), (uint)(v1.y ==  v2.y ? -1 : 0), (uint)(v1.z ==  v2.z ? -1 : 0), (uint)(v1.w ==  v2.w ? -1 : 0));
@@ -558,6 +575,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us CompareEqual (this Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
@@ -569,6 +587,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16sb CompareEqual (this Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -662,6 +681,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16sb CompareGreaterThan (this Vector16sb va, Vector16sb vb) {
 			Vector16sb res = new Vector16sb ();
 			sbyte *a = &va.v0;
@@ -844,6 +864,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static Vector2ul UnpackLow (this Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.x, v2.x);
@@ -856,6 +877,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static Vector4ui UnpackLow (this Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (v1.x, v2.x, v1.y, v2.y);
@@ -868,12 +890,14 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us UnpackLow (this Vector8us va, Vector8us vb)
 		{
 			return new Vector8us (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3);
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16sb UnpackLow (this Vector16sb va, Vector16sb vb)
 		{
 			return new Vector16sb (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3, va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
@@ -892,6 +916,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static Vector2ul UnpackHigh (this Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.y, v2.y);
@@ -904,6 +929,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static Vector4ui UnpackHigh (this Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (v1.z, v2.z, v1.w, v2.w);
@@ -916,12 +942,14 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us UnpackHigh (this Vector8us va, Vector8us vb)
 		{
 			return new Vector8us (va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16sb UnpackHigh (this Vector16sb va, Vector16sb vb)
 		{
 			return new Vector16sb (va.v8, vb.v8, va.v9, vb.v9, va.v10, vb.v10, va.v11, vb.v11, va.v12, vb.v12, va.v13, vb.v13, va.v14, vb.v14, va.v15, vb.v15);
@@ -950,6 +978,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector4ui Shuffle (this Vector4ui v1, ShuffleSel sel)
 		{
 			uint *ptr = (uint*)&v1;
@@ -966,6 +995,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us ShuffleHigh (this Vector8us va, ShuffleSel sel)
 		{
 			ushort *ptr = ((ushort*)&va) + 4;
@@ -982,6 +1012,7 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us ShuffleLow (this Vector8us va, ShuffleSel sel)
 		{
 			ushort *ptr = ((ushort*)&va);
@@ -1046,6 +1077,7 @@ namespace Mono.Simd
 
 		/* This function performs a packusdw, which treats the source as a signed value */
 		[Acceleration (AccelMode.SSE41)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8us SignedPackWithUnsignedSaturation (this Vector4ui va, Vector4ui vb) {
 			Vector8us res = new Vector8us ();
 			int *a = (int*)&va;
@@ -1060,6 +1092,7 @@ namespace Mono.Simd
 
 		/*This function performs a packuswb, which treats the source as a signed value */
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16b SignedPackWithUnsignedSaturation (this Vector8us va, Vector8us vb) {
 			Vector16b res = new Vector16b ();
 			short *a = (short*)&va;
@@ -1074,6 +1107,7 @@ namespace Mono.Simd
 		
 		/* This function performs a packssdw, which treats the source as a signed value*/
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector8s SignedPackWithSignedSaturation (this Vector4ui va, Vector4ui vb) {
 			Vector8s res = new Vector8s ();
 			int *a = (int*)&va;
@@ -1088,6 +1122,7 @@ namespace Mono.Simd
 
 		/*This function performs a packsswb, which treats the source as a signed value */
 		[Acceleration (AccelMode.SSE2)]
+		[CLSCompliant (false)]
 		public static unsafe Vector16sb SignedPackWithSignedSaturation (this Vector8us va, Vector8us vb) {
 			Vector16sb res = new Vector16sb ();
 			short *a = (short*)&va;

@@ -86,7 +86,7 @@ namespace System.Net
 		Thread async_thread;
 		Encoding encoding = Encoding.Default;
 		IWebProxy proxy;
-		RequestCachePolicy cache_policy;
+//		RequestCachePolicy cache_policy;
 
 		// Constructors
 		static WebClient ()
@@ -137,7 +137,7 @@ namespace System.Net
 			get {
 				throw GetMustImplement ();
 			}
-			set { cache_policy = value; }
+			set { /*cache_policy = value;*/ }
 		}
 
 		[MonoTODO ("Value can be set but is ignored")]

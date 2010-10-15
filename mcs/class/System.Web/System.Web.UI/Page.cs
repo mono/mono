@@ -68,7 +68,7 @@ namespace System.Web.UI
 [DesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, "System.ComponentModel.Design.Serialization.TypeCodeDomSerializer, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 public partial class Page : TemplateControl, IHttpHandler
 {
-	static string machineKeyConfigPath = "system.web/machineKey";
+//	static string machineKeyConfigPath = "system.web/machineKey";
 	bool _eventValidation = true;
 	object [] _savedControlState;
 	bool _doLoadPreviousPage;

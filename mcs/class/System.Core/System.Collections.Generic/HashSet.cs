@@ -357,8 +357,6 @@ namespace System.Collections.Generic {
 			if (predicate == null)
 				throw new ArgumentNullException ("predicate");
 
-			int counter = 0;
-
 			var candidates = new List<T> ();
 
 			foreach (var item in this)

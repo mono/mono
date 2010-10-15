@@ -63,7 +63,6 @@ namespace System.Linq.Expressions {
 		void EmitNullableConstant (EmitContext ec, Type type, object value)
 		{
 			if (value == null) {
-				var ig = ec.ig;
 				var local = ec.ig.DeclareLocal (type);
 				ec.EmitNullableInitialize (local);
 			} else {

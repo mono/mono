@@ -186,8 +186,6 @@ namespace System.ServiceModel.Dispatcher
 				}
 				return parameter.ToString ();
 			}
-
-			throw new NotImplementedException ();
 		}
 
 		Type ToActualType (Type t)

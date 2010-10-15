@@ -4603,7 +4603,8 @@ embedded_statement
 empty_statement
 	: SEMICOLON
 	  {
-		$$ = new EmptyStatement (GetLocation ($1));
+		// Uses lexer.Location because semicolon location is not kept in quick mode
+		$$ = new EmptyStatement (lexer.Location);
 	  }
 	;
 

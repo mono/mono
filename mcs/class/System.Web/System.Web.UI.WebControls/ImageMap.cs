@@ -154,7 +154,9 @@ namespace System.Web.UI.WebControls
 			base.Render (writer);
 
 			if (spots != null && spots.Count > 0) {
+#if NET_4_0				
 				bool enabled = Enabled;
+#endif
 				writer.AddAttribute (HtmlTextWriterAttribute.Id, "ImageMap" + ClientID);
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, "ImageMap" + ClientID);
 				writer.RenderBeginTag (HtmlTextWriterTag.Map);

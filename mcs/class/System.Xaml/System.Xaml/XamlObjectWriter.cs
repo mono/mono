@@ -152,7 +152,6 @@ namespace System.Xaml
 			
 			var xm = members.Pop ();
 			var state = object_states.Peek ();
-			var xt = state.Type;
 			var contents = state.Contents;
 
 			if (xm == XamlLanguage.Arguments) {
@@ -225,7 +224,6 @@ namespace System.Xaml
 			InitializeObjectIfRequired (false); // this is required for such case that there was no StartMember call.
 
 			var state = object_states.Pop ();
-			var xt = state.Type;
 			var obj = GetCorrectlyTypedValue (state.Type, state.Value);
 			if (members.Count > 0) {
 				var pstate = object_states.Peek ();
@@ -270,7 +268,7 @@ namespace System.Xaml
 
 			manager.StartMember ();
 
-			var wpl = object_states.Peek ().WrittenProperties;
+			//var wpl = object_states.Peek ().WrittenProperties;
 			// FIXME: enable this. Duplicate property check should
 			// be differentiate from duplicate contents (both result
 			// in XamlDuplicateMemberException though).

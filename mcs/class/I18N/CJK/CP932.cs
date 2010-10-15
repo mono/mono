@@ -447,7 +447,7 @@ namespace I18N.CJK
 	// Decoder that handles a rolling Shift-JIS state.
 	sealed class CP932Decoder : DbcsEncoding.DbcsDecoder
 	{
-		private JISConvert convert;
+		private new JISConvert convert;
 		private int last_byte_count;
 		private int last_byte_chars;
 

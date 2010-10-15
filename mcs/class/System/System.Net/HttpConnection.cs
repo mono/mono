@@ -354,10 +354,9 @@ namespace System.Net {
 			if (sock != null) {
 				force_close |= (context.Request.Headers ["connection"] == "close");
 				if (!force_close) {
-					int status_code = context.Response.StatusCode;
-					bool conn_close = (status_code == 400 || status_code == 408 || status_code == 411 ||
-							status_code == 413 || status_code == 414 || status_code == 500 ||
-							status_code == 503);
+//					bool conn_close = (status_code == 400 || status_code == 408 || status_code == 411 ||
+//							status_code == 413 || status_code == 414 || status_code == 500 ||
+//							status_code == 503);
 
 					force_close |= (context.Request.ProtocolVersion <= HttpVersion.Version10);
 				}

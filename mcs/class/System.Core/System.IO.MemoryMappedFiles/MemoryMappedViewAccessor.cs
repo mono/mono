@@ -57,7 +57,6 @@ namespace System.IO.MemoryMappedFiles
 			case MemoryMappedFileAccess.ReadWrite:
 			case MemoryMappedFileAccess.ReadWriteExecute:
 				return FileAccess.ReadWrite;
-				break;
 				
 			case MemoryMappedFileAccess.Write:
 				return FileAccess.Write;

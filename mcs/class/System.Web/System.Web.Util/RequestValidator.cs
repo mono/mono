@@ -34,8 +34,6 @@ namespace System.Web.Util
 {
 	public class RequestValidator
 	{
-		static readonly object currentCreationLock = new object();
-		
 		static RequestValidator current;
 		static Lazy <RequestValidator> lazyLoader;
 

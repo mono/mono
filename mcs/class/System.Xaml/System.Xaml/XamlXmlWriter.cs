@@ -81,7 +81,6 @@ namespace System.Xaml
 		XmlWriter w;
 		XamlSchemaContext sctx;
 		XamlXmlWriterSettings settings;
-		IValueSerializerContext serializer_context;
 
 		XamlWriterStateManager manager;
 
@@ -210,9 +209,9 @@ namespace System.Xaml
 		void DoEndMember ()
 		{
 			var xm = nodes.Pop (); // XamlMember
-			if (xm == XamlLanguage.Initialization)
-				; // do nothing
-			else if (w.WriteState == WriteState.Content)
+			if (xm == XamlLanguage.Initialization) {
+				// do nothing
+			} else if (w.WriteState == WriteState.Content)
 				w.WriteEndElement ();
 			else
 				w.WriteEndAttribute ();
@@ -230,9 +229,9 @@ namespace System.Xaml
 			if (xm == null)
 				return;
 
-			if (xm == XamlLanguage.Initialization)
-				; // do nothing
-			else if (next == XamlNodeType.StartObject || w.WriteState == WriteState.Content || has_namespace)
+			if (xm == XamlLanguage.Initialization) {
+				// do nothing
+			} else if (next == XamlNodeType.StartObject || w.WriteState == WriteState.Content || has_namespace)
 				DoWriteStartMemberElement (xm);
 			else
 				DoWriteStartMemberAttribute (xm);

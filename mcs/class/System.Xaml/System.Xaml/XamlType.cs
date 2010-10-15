@@ -38,9 +38,9 @@ namespace System.Xaml
 		{
 		}
 
-		static readonly Type [] predefined_types = {
-				typeof (XData), typeof (Uri), typeof (TimeSpan), typeof (PropertyDefinition), typeof (MemberDefinition), typeof (Reference)
-			};
+//		static readonly Type [] predefined_types = {
+//				typeof (XData), typeof (Uri), typeof (TimeSpan), typeof (PropertyDefinition), typeof (MemberDefinition), typeof (Reference)
+//			};
 
 		public XamlType (Type underlyingType, XamlSchemaContext schemaContext, XamlTypeInvoker invoker)
 			: this (schemaContext, invoker)

@@ -1,7 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
-../../build/common/basic-profile-check.cs
 Assembly/AssemblyInfo.cs
 System.Windows.Markup/AmbientAttribute.cs
 System.Windows.Markup/ArrayExtension.cs

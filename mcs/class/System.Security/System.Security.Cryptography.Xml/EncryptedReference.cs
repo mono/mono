@@ -37,7 +37,6 @@ namespace System.Security.Cryptography.Xml {
 
 		#region Fields
 
-		bool cacheValid;
 		string referenceType;
 		string uri;
 		TransformChain tc;
@@ -68,9 +67,9 @@ namespace System.Security.Cryptography.Xml {
 
 		#region Properties
 
-		[MonoTODO()]
+		[MonoTODO("Always returns false")]
 		protected internal bool CacheValid {
-			get { return cacheValid; }
+			get { return false; }
 		}
 
 		protected string ReferenceType {

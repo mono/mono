@@ -87,7 +87,6 @@ namespace System.Web.UI.WebControls
 			if (other == null)
 				return false;
 
-			int thisCount, otherCount;
 			IOrderedDictionary otherKeyTable = other.keyTable;
 			if (keyTable != null && otherKeyTable != null) {
 				if (keyTable.Count != otherKeyTable.Count)

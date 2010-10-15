@@ -37,7 +37,6 @@ namespace System.Security.Cryptography.Xml {
 
 		#region Fields
 
-		XmlElement elemProp;
 		string id;
 		string target;
 
@@ -62,8 +61,9 @@ namespace System.Security.Cryptography.Xml {
 			get { return id; }
 		}
 
+		[MonoTODO ("Always returns null")]
 		public XmlElement PropertyElement {
-			get { return elemProp; }
+			get { return null; }
 			set { LoadXml (value); }
 		}
 

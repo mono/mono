@@ -152,9 +152,6 @@ namespace System.Xaml
 		IEnumerator<Pair> stored_member_enumerator;
 		IXamlNamespaceResolver xaml_namespace_resolver;
 
-		// This is used for things like collection Items.
-		Dictionary<int,Stack<XamlMember>> inecting_members = new Dictionary<int,Stack<XamlMember>> ();
-
 		public bool HasLineInfo {
 			get { return line_info != null && line_info.HasLineInfo (); }
 		}

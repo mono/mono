@@ -38,7 +38,7 @@ namespace System.Web.UI {
 	public class StaticPartialCachingControl : BasePartialCachingControl
 	{
 		BuildMethod buildMethod;
-		string sqlDependency;
+//		string sqlDependency;
 
 		public StaticPartialCachingControl (string ctrlID, string guid, int duration,
 				string varyByParams, string varyByControls, string varyByCustom,
@@ -59,7 +59,7 @@ namespace System.Web.UI {
 						    BuildMethod buildMethod)
 			: this (ctrlID, guid, duration, varyByParams, varyByControls, varyByCustom, buildMethod)
 		{
-			this.sqlDependency = sqlDependency;
+//			this.sqlDependency = sqlDependency;
 		}
 #if NET_4_0
 		public StaticPartialCachingControl (string ctrlID, string guid, int duration, string varyByParams,

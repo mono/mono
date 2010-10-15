@@ -44,7 +44,7 @@ namespace System.Xaml
 			
 			public XamlNodeType OwnerType { get; set; }
 
-			public IEnumerator<NamespaceDeclaration> GetEnumerator ()
+			public new IEnumerator<NamespaceDeclaration> GetEnumerator ()
 			{
 				return new NSEnumerator (this, base.GetEnumerator ());
 			}
@@ -120,6 +120,7 @@ namespace System.Xaml
 		{
 		}
 
+		[MonoTODO ("settings is not used")]
 		public XamlObjectReader (object instance, XamlSchemaContext schemaContext, XamlObjectReaderSettings settings)
 		{
 			if (schemaContext == null)
@@ -130,7 +131,7 @@ namespace System.Xaml
 
 			this.root = instance;
 			sctx = schemaContext;
-			this.settings = settings;
+//			this.settings = settings;
 
 			prefix_lookup = new PrefixLookup (this);
 
@@ -149,7 +150,7 @@ namespace System.Xaml
 		readonly object root;
 		readonly XamlType root_type;
 		readonly XamlSchemaContext sctx;
-		readonly XamlObjectReaderSettings settings;
+//		readonly XamlObjectReaderSettings settings;
 		readonly INamespacePrefixLookup prefix_lookup;
 
 		Stack<XamlType> types = new Stack<XamlType> ();
@@ -442,7 +443,6 @@ namespace System.Xaml
 						return null;
 					var xtt = SchemaContext.GetXamlType (type);
 					var ns = xtt.PreferredXamlNamespace;
-					var nss = collectingNamespaces;
 					CheckAddNamespace (collectingNamespaces, ns);
 					return null;
 				}

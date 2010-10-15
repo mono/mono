@@ -33,7 +33,7 @@
 //
 
 namespace System {
-	
+#pragma warning disable 436
 	[AttributeUsage (AttributeTargets.All, AllowMultiple=true)]
 	internal class MonoTODOAttribute : Attribute {
 
@@ -97,4 +97,5 @@ namespace System {
 		{
 		}
 	}
+#pragma warning restore 436	
 }
