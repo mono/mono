@@ -150,7 +150,10 @@ namespace System.Reflection {
 				if (name == null)
 					return string.Empty;
 				StringBuilder fname = new StringBuilder ();
-				fname.Append (name);
+				if (Char.IsWhiteSpace (name [0]))
+					fname.Append ("\"" + name + "\"");
+				else
+					fname.Append (name);
 				if (Version != null) {
 					fname.Append (", Version=");
 					fname.Append (Version.ToString ());
