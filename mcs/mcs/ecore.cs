@@ -3562,13 +3562,12 @@ namespace Mono.CSharp {
 				type.GetSignatureForError (), argCount.ToString ());
 		}
 
-		///
-		/// Determines if the candidate method is applicable (section 14.4.2.1)
-		/// to the given set of arguments
-		/// A return value rates candidate method compatibility,
-		/// 0 = the best, int.MaxValue = the worst
-		///
-		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, ref bool params_expanded_form)
+		//
+		// Determines if the candidate method is applicable to the given set of arguments
+		// A return value rates candidate method compatibility,
+		// 0 = the best, int.MaxValue = the worst
+		//
+		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, ref bool params_expanded_form, ref bool dynamicArgument)
 		{
 			AParametersCollection pd = ((IParametersMember) candidate).Parameters;
 			int param_count = pd.Count;
@@ -3769,8 +3768,14 @@ namespace Mono.CSharp {
 				}
 
 				score = 1;
-				if (!params_expanded_form)
+				if (!params_expanded_form) {
 					score = IsArgumentCompatible (ec, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
+
+					if (score < 0) {
+						dynamicArgument = true;
+						continue;
+					}
+				}
 
 				//
 				// It can be applicable in expanded form (when not doing exact match like for delegates)
@@ -3800,6 +3805,14 @@ namespace Mono.CSharp {
 			return 0;
 		}
 
+		//
+		// Tests argument compatibility with the parameter
+		// The possible return values are
+		// 0 - success
+		// 1 - modifier mismatch
+		// 2 - type mismatch
+		// -1 - dynamic binding required
+		//
 		int IsArgumentCompatible (ResolveContext ec, Argument argument, Parameter.Modifier param_mod, TypeSpec parameter)
 		{
 			//
@@ -3807,20 +3820,35 @@ namespace Mono.CSharp {
 			// is used and argument is not of dynamic type
 			//
 			if ((argument.Modifier | param_mod) != 0) {
-				//
-				// Defer to dynamic binder
-				//
-				if (argument.Type == InternalType.Dynamic)
-					return 0;
-
 				if (argument.Type != parameter) {
 					//
 					// Do full equality check after quick path
 					//
-					if (!TypeSpecComparer.IsEqual (argument.Type, parameter))
+					if (!TypeSpecComparer.IsEqual (argument.Type, parameter)) {
+						//
+						// Using dynamic for ref/out parameter can still succeed at runtime
+						//
+						if (argument.Type == InternalType.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+							return -1;
+
 						return 2;
+					}
 				}
+
+				if (argument.Modifier != param_mod) {
+					//
+					// Using dynamic for ref/out parameter can still succeed at runtime
+					//
+					if (argument.Type == InternalType.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+						return -1;
+
+					return 1;
+				}
+
 			} else {
+				if (argument.Type == InternalType.Dynamic && (restrictions & Restrictions.CovariantDelegate) == 0)
+					return -1;
+
 				//
 				// Deploy custom error reporting for lambda methods. When probing lambda methods
 				// keep all errors reported in separate set and once we are done and no best
@@ -3842,9 +3870,6 @@ namespace Mono.CSharp {
 					return 2;
 				}
 			}
-
-			if (argument.Modifier != param_mod)
-				return 1;
 
 			return 0;
 		}
@@ -3898,6 +3923,7 @@ namespace Mono.CSharp {
 			MemberSpec best_candidate;
 			Arguments best_candidate_args = null;
 			bool best_candidate_params = false;
+			bool best_candidate_dynamic = false;
 			int best_candidate_rate;
 
 			int args_count = args != null ? args.Count : 0;
@@ -3942,7 +3968,8 @@ namespace Mono.CSharp {
 							// Check if candidate is applicable
 							//
 							bool params_expanded_form = false;
-							int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, ref params_expanded_form);
+							bool dynamic_argument = false;
+							int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, ref params_expanded_form, ref dynamic_argument);
 
 							//
 							// How does it score compare to others
@@ -3952,6 +3979,7 @@ namespace Mono.CSharp {
 								best_candidate = member;
 								best_candidate_args = candidate_args;
 								best_candidate_params = params_expanded_form;
+								best_candidate_dynamic = dynamic_argument;
 							} else if (candidate_rate == 0) {
 								//
 								// The member look is done per type for most operations but sometimes
@@ -3963,11 +3991,12 @@ namespace Mono.CSharp {
 										continue;
 								}
 
-								// Is new candidate better
+								// Is the new candidate better
 								if (BetterFunction (rc, candidate_args, member, params_expanded_form, best_candidate, best_candidate_params)) {
 									best_candidate = member;
 									best_candidate_args = candidate_args;
 									best_candidate_params = params_expanded_form;
+									best_candidate_dynamic = dynamic_argument;
 								} else {
 									// It's not better but any other found later could be but we are not sure yet
 									if (ambiguous_candidates == null)
@@ -4026,12 +4055,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			// TODO: HasDynamic is quite slow
-			if (args_count != 0 && (restrictions & Restrictions.CovariantDelegate) == 0 && args.HasDynamic) {
-				if (args [0].ArgType == Argument.AType.ExtensionType) {
+			if (best_candidate_dynamic) {
+				if (args[0].ArgType == Argument.AType.ExtensionType) {
 					rc.Report.Error (1973, loc,
 						"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' cannot be dynamically dispatched. Consider calling the method without the extension method syntax",
-						args [0].Type.GetSignatureForError (), best_candidate.Name, best_candidate.GetSignatureForError());
+						args [0].Type.GetSignatureForError (), best_candidate.Name, best_candidate.GetSignatureForError ());
 				}
 
 				BestCandidateIsDynamic = true;

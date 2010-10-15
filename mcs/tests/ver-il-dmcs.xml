@@ -964,7 +964,7 @@
         <size>1</size>
       </method>
       <method name="Void ConvertImplicitTest()">
-        <size>1331</size>
+        <size>1265</size>
       </method>
       <method name="Int32 ConvertImplicitReturnTest()">
         <size>75</size>
@@ -1787,10 +1787,18 @@
         <size>197</size>
       </method>
       <method name="Int32 Main()">
-        <size>18</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 M(System.String, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 M(System.Object ByRef, System.Object ByRef)">
+        <size>5</size>
       </method>
     </type>
   </test>
@@ -2312,6 +2320,19 @@
       </method>
     </type>
   </test>
+  <test name="dtest-038.cs">
+    <type name="Test">
+      <method name="Void Foo()">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>370</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-cls-01.cs">
     <type name="A">
       <method name="Void Main()">
@@ -2419,6 +2440,16 @@
       </method>
       <method name="Void Main()">
         <size>382</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-etree-02.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>190</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -39371,6 +39402,28 @@
       </method>
       <method name="Void Main()">
         <size>24</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-577.cs">
+    <type name="C">
+      <method name="Void IA.add_e_a(System.EventHandler)">
+        <size>1</size>
+      </method>
+      <method name="Void IA.remove_e_a(System.EventHandler)">
+        <size>1</size>
+      </method>
+      <method name="Void IA.add_e_b(System.EventHandler)">
+        <size>1</size>
+      </method>
+      <method name="Void IA.remove_e_b(System.EventHandler)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
