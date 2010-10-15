@@ -143,8 +143,7 @@ namespace System.Runtime.Serialization.Json
 						// FIXME: I'm not sure how it is determined whether __type is written or not...
 						if (outputTypeName || always_emit_type)
 							writer.WriteAttributeString ("__type", FormatTypeName (graph.GetType ()));
-						writer.WriteAttributeString ("type", "object");
-						tm.Serialize (this, graph);
+						tm.Serialize (this, graph, "object");
 					}
 					else
 						// it does not emit type="object" (as the graph is regarded as a string)

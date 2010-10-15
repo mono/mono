@@ -838,5 +838,51 @@ namespace System.Runtime.Serialization.Json
 		{
 			return new XmlException (String.Format ("{0} ({1},{2})", s, line, column));
 		}
+
+		// This reads the current element and all its content as a string,
+		// with no processing done except for advancing the reader.
+		public override string ReadInnerXml ()
+		{
+
+			if (NodeType != XmlNodeType.Element)
+				return base.ReadInnerXml ();
+
+			StringBuilder sb = new StringBuilder ();
+			bool isobject = elements.Peek ().Type == "object";
+			char end = isobject ? '}' : ']';
+			char start = isobject ? '{' : '[';
+			int count = 1;
+
+			sb.Append (start);
+
+			// add the first child manually, it's already been read
+			// but hasn't been processed yet
+			if (isobject && !String.IsNullOrEmpty (next_object_content_name))
+					sb.Append ("\"" + next_object_content_name + "\"");
+
+			// keep reading until we hit the end marker, no processing is
+			// done on anything
+			do {
+				char c = (char)ReadChar ();
+				sb.Append (c);
+				if (c == start)
+					++count;
+				else if (c == end)
+					--count;
+			} while (count > 0);
+
+			// Replace the content we've read with an empty object so it gets
+			// skipped on the following Read
+			reader.Pushback (end);
+			if (isobject) {
+				reader.Pushback ('"');
+				reader.Pushback ('"');
+				reader.Pushback (':');
+			}
+
+			// Skip the element
+			Read ();
+			return sb.ToString ();
+		}
 	}
 }

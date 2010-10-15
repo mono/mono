@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 System.Runtime.Serialization.Json/DataContractJsonSerializer_2_1.cs
+System.Runtime.Serialization.Json/ExternalTypeMap_2_1.cs
 System.Runtime.Serialization.Json/IXmlJsonReaderInitializer.cs
 System.Runtime.Serialization.Json/IXmlJsonWriterInitializer.cs
 System.Runtime.Serialization.Json/JavaScriptObjectDeserializer.cs
