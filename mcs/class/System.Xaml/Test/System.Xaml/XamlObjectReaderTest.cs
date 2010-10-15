@@ -503,7 +503,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_ArrayExtension ()
 		{
 			var obj = new ArrayExtension (new int [] {5, -3, 0});
@@ -524,6 +523,8 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (ArrayExtension), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "#23");
 			Assert.AreEqual (instance, r.Instance, "#26"); // different between Array and ArrayExtension
+
+			// This assumption on member ordering ("Type" then "Items") is somewhat wrong, and we might have to adjust it in the future.
 
 			Assert.IsTrue (r.Read (), "#31");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");

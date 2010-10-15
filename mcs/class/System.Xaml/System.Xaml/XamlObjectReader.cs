@@ -235,18 +235,26 @@ namespace System.Xaml
 					return true;
 				node_type = ((NSEnumerator) ns_iterator).OwnerType; // StartObject or StartMember
 				if (node_type == XamlNodeType.StartObject)
-					StartNextObject ();
+					StartNextObject (null);
 				else
-					StartNextMemberOrNamespace ();
+					StartNextMember ();
 				return true;
 
+			case XamlNodeType.GetObject:
+				var ml = new List<XamlMember> ();
+				ml.Add (XamlLanguage.Items);
+				members = ml.GetEnumerator ();
+				members.MoveNext ();
+				members_stack.Push (members);
+				StartNextMember ();
+				return true;
 			case XamlNodeType.StartObject:
 				var obj = objects.Peek ();
 				var xt = obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
 				members = xt.GetAllObjectReaderMembers ().GetEnumerator ();
 				if (members.MoveNext ()) {
 					members_stack.Push (members);
-					StartNextMemberOrNamespace ();
+					StartNextMember ();
 					return true;
 				}
 				else
@@ -265,10 +273,12 @@ namespace System.Xaml
 					arguments = l.GetEnumerator ();
 					constructor_arguments_stack [obj] = arguments;
 					arguments.MoveNext ();
-					StartNextObject (arguments.Current);
+					StartNextObject (arguments.Current, XamlLanguage.Arguments);
 				}
+				else if (curMember == XamlLanguage.Items)
+					MoveToNextCollectionItem ();
 				else if (!curMember.IsContentValue ())
-					StartNextObject ();
+					StartNextObject (curMember);
 				else {
 					obj = GetMemberValueOrRootInstance ();
 					objects.Push (obj);
@@ -281,15 +291,11 @@ namespace System.Xaml
 				node_type = XamlNodeType.EndMember;
 				return true;
 
-			case XamlNodeType.GetObject:
-				// how do we get here?
-				throw new NotImplementedException ();
-
 			case XamlNodeType.EndMember:
 				members = members_stack.Peek ();
 				if (members.MoveNext ()) {
 					members_stack.Push (members);
-					StartNextMemberOrNamespace ();
+					StartNextMember ();
 				} else {
 					members_stack.Pop ();
 					node_type = XamlNodeType.EndObject;
@@ -308,15 +314,18 @@ namespace System.Xaml
 
 				if (constructor_arguments_stack.TryGetValue (objects.Peek (), out arguments)) {
 					if (arguments.MoveNext ()) {
-						StartNextObject (arguments.Current);
+						StartNextObject (arguments.Current, XamlLanguage.Arguments);
 						return true;
 					}
 					// else -> end of Arguments
 					constructor_arguments_stack.Remove (objects.Peek ());
 				} else {
 					members = members_stack.Peek ();
-					if (members.MoveNext ()) {
-						StartNextMemberOrNamespace ();
+					if (members.Current == XamlLanguage.Items) {
+						MoveToNextCollectionItem ();
+						return true;
+					} else if (members.MoveNext ()) {
+						StartNextMember ();
 						return true;
 					}
 				}
@@ -324,6 +333,16 @@ namespace System.Xaml
 				node_type = XamlNodeType.EndMember;
 				return true;
 			}
+		}
+
+		// proceed to StartObject of the next item, or EndMember of XamlLanguage.Items.
+		void MoveToNextCollectionItem ()
+		{
+			IEnumerator e = (IEnumerator) (objects.Peek ());
+			if (e.MoveNext ())
+				StartNextObject (e.Current, XamlLanguage.Items);
+			else
+				node_type = XamlNodeType.EndMember;
 		}
 
 		void CollectNamespaces (Dictionary<string,string> d, object o, XamlType xt)
@@ -351,18 +370,17 @@ namespace System.Xaml
 		}
 
 		// This assumes that the next member is already on current position on current iterator.
-		void StartNextMemberOrNamespace ()
+		void StartNextMember ()
 		{
-			// FIXME: there might be NamespaceDeclarations.
 			node_type = XamlNodeType.StartMember;
 		}
 
-		void StartNextObject ()
+		void StartNextObject (XamlMember member)
 		{
-			StartNextObject (GetMemberValueOrRootInstance ());
+			StartNextObject (GetMemberValueOrRootInstance (), member);
 		}
 
-		void StartNextObject (object obj)
+		void StartNextObject (object obj, XamlMember member)
 		{
 			var xt = Object.ReferenceEquals (obj, instance) ? root_type : obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
 
@@ -378,8 +396,14 @@ namespace System.Xaml
 			//if (xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
 			//	obj = xt.TypeConverter.ConverterInstance.ConvertTo (obj, typeof (string));
 
-			objects.Push (obj);
-			node_type = XamlNodeType.StartObject;
+			if (member != null && member.IsReadOnly) {
+				IEnumerator e = ((IEnumerable) obj).GetEnumerator ();
+				objects.Push (e);
+				node_type = XamlNodeType.GetObject;
+			} else {
+				objects.Push (obj);
+				node_type = XamlNodeType.StartObject;
+			}
 		}
 		
 		object GetMemberValueOrRootInstance ()
