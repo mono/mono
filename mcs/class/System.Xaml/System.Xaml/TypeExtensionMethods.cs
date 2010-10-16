@@ -107,6 +107,8 @@ namespace System.Xaml
 		public static object GetMemberValueForObjectReader (this XamlMember xm, XamlType xt, object target, INamespacePrefixLookup prefixLookup)
 		{
 			object native = GetPropertyOrFieldValueForObjectReader (xm, xt, target, prefixLookup);
+			if (native == null)
+				return null; // this is to prevent SringConverter to convert null to empty.
 			var convertedType = xm.Type == null ? null : xm.Type.UnderlyingType;
 			return DoConvert (xm.TypeConverter, native, convertedType);
 		}

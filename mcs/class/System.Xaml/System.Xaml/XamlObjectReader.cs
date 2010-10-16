@@ -44,7 +44,7 @@ namespace System.Xaml
 			
 			public XamlNodeType OwnerType { get; set; }
 
-			public new IEnumerator<NamespaceDeclaration> GetEnumerator ()
+			public IEnumerator<NamespaceDeclaration> GetEnumerator ()
 			{
 				return new NSEnumerator (this, base.GetEnumerator ());
 			}
@@ -120,7 +120,6 @@ namespace System.Xaml
 		{
 		}
 
-		[MonoTODO ("settings is not used")]
 		public XamlObjectReader (object instance, XamlSchemaContext schemaContext, XamlObjectReaderSettings settings)
 		{
 			if (schemaContext == null)
@@ -131,7 +130,7 @@ namespace System.Xaml
 
 			this.root = instance;
 			sctx = schemaContext;
-//			this.settings = settings;
+			this.settings = settings;
 
 			prefix_lookup = new PrefixLookup (this);
 
@@ -150,7 +149,7 @@ namespace System.Xaml
 		readonly object root;
 		readonly XamlType root_type;
 		readonly XamlSchemaContext sctx;
-//		readonly XamlObjectReaderSettings settings;
+		readonly XamlObjectReaderSettings settings;
 		readonly INamespacePrefixLookup prefix_lookup;
 
 		Stack<XamlType> types = new Stack<XamlType> ();
@@ -251,7 +250,9 @@ namespace System.Xaml
 			case XamlNodeType.StartObject:
 				var obj = objects.Peek ();
 				var xt = obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
-				members = xt.GetAllObjectReaderMembers ().GetEnumerator ();
+				ml = xt.GetAllObjectReaderMembers ().ToList ();
+				ml.Sort ((m1, m2) => m1.DeclaringType.ContentProperty == m1 ? 1 : m2.DeclaringType.ContentProperty == m2 ? -1 : String.CompareOrdinal (m1.Name, m2.Name));
+				members = ml.GetEnumerator ();
 				if (members.MoveNext ()) {
 					members_stack.Push (members);
 					StartNextMember ();
@@ -277,12 +278,14 @@ namespace System.Xaml
 				}
 				else if (curMember == XamlLanguage.Items)
 					MoveToNextCollectionItem ();
-				else if (!curMember.IsContentValue ())
-					StartNextObject (curMember);
 				else {
 					instance = GetMemberValueOrRootInstance ();
-					objects.Push (GetExtensionWrappedInstance (instance));
-					node_type = XamlNodeType.Value;
+					if (instance == null || !curMember.IsContentValue ())
+						StartNextObject (instance, curMember);
+					else {
+						objects.Push (GetExtensionWrappedInstance (instance));
+						node_type = XamlNodeType.Value;
+					}
 				}
 				return true;
 
@@ -322,9 +325,6 @@ namespace System.Xaml
 					members = members_stack.Peek ();
 					if (members.Current == XamlLanguage.Items) {
 						MoveToNextCollectionItem ();
-						return true;
-					} else if (members.MoveNext ()) {
-						StartNextMember ();
 						return true;
 					}
 				}
@@ -443,14 +443,15 @@ namespace System.Xaml
 						return null;
 					var xtt = SchemaContext.GetXamlType (type);
 					var ns = xtt.PreferredXamlNamespace;
+					var nss = collectingNamespaces;
 					CheckAddNamespace (collectingNamespaces, ns);
 					return null;
 				}
-				else if (retxt.IsContentValue ())
+				else if (retobj != null && retxt.IsContentValue ())
 					return null;
 				else
 					return retobj;
-			} else if (retxt.IsContentValue ()) {
+			} else if (retobj != null && retxt.IsContentValue ()) {
 				// FIXME: I'm not sure if this should be really done 
 				// here, but every primitive values seem to be exposed
 				// as a string, not a typed object in XamlObjectReader.
