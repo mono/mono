@@ -720,7 +720,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension ()
 		{
 			var r = new XamlObjectReader (new MyExtension () { Foo = typeof (int), Bar = "v2", Baz = "v7"});
