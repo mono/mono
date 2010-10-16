@@ -643,7 +643,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test] // It gives Type member, not PositionalParameters... and no Items member here.
-		[Category ("NotWorking")]
 		public void Read_ArrayExtension2 ()
 		{
 			var r = new XamlObjectReader (new ArrayExtension (typeof (int)));

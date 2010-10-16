@@ -250,7 +250,7 @@ namespace System.Xaml
 			case XamlNodeType.StartObject:
 				var obj = objects.Peek ();
 				var xt = obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
-				ml = xt.GetAllObjectReaderMembers ().ToList ();
+				ml = xt.GetAllObjectReaderMembers (obj).ToList ();
 				ml.Sort ((m1, m2) => m1.DeclaringType.ContentProperty == m1 ? 1 : m2.DeclaringType.ContentProperty == m2 ? -1 : String.CompareOrdinal (m1.Name, m2.Name));
 				members = ml.GetEnumerator ();
 				if (members.MoveNext ()) {

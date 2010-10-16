@@ -169,7 +169,7 @@ namespace System.Xaml
 			return false;
 		}
 
-		public static IEnumerable<XamlMember> GetAllObjectReaderMembers (this XamlType type)
+		public static IEnumerable<XamlMember> GetAllObjectReaderMembers (this XamlType type, object instance)
 		{
 			// FIXME: find out why only TypeExtension yields this directive. Seealso XamlObjectReaderTest
 			if (type == XamlLanguage.Type) {
@@ -185,9 +185,13 @@ namespace System.Xaml
 			if (type.IsContentValue ())
 				yield return XamlLanguage.Initialization;
 
+			IEnumerable en = null;
 			foreach (var m in type.GetAllMembers ())
-				if (args == null || !args.Contains (m)) // do not read/write constructor arguments twice (they are written inside Arguments).
-					yield return m;
+				// do not read constructor arguments twice (they are written inside Arguments).
+				if (args == null || !args.Contains (m))
+					// do not return readonly property which holds a collection with no item.
+					if (!m.IsReadOnly || (en = (IEnumerable) m.Invoker.GetValue (instance)) != null && en.GetEnumerator ().MoveNext ())
+						yield return m;
 		}
 
 		public static bool ListEquals (this IList<XamlType> a1, IList<XamlType> a2)
