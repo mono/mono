@@ -187,16 +187,19 @@ namespace System.Xaml
 		
 		public override void WriteValue (object value)
 		{
+			if (value != null && !(value is string))
+				throw new ArgumentException ("Non-string value cannot be written.");
+
 			manager.Value ();
 
-			var xt = GetCurrentType ();
+			var xt = GetCurrentType (true);
 			
 			var xm = GetNonNamespaceNode () as XamlMember;
 			if (xm == XamlLanguage.Initialization) {
 				// do not reject type mismatch, as the value will be a string.
 			}
-			else if (xt != null && xt.UnderlyingType != null && !xt.UnderlyingType.IsInstanceOfType (value))
-				throw new ArgumentException (String.Format ("Value is not of type {0} but {1}", xt, value != null ? value.GetType ().FullName : "(null)"));
+			//else if (xt != null && xt.UnderlyingType != null && !xt.UnderlyingType.IsInstanceOfType (value))
+			//	throw new ArgumentException (String.Format ("Value is not of type {0} but {1}", xt, value != null ? value.GetType ().FullName : "(null)"));
 
 			if (!is_first_member_content) {
 				WriteStackedStartMember (XamlNodeType.Value);
@@ -294,8 +297,13 @@ namespace System.Xaml
 				nodes.Push (obj);
 			}
 		}
-
+		
 		XamlType GetCurrentType ()
+		{
+			return GetCurrentType (false);
+		}
+
+		XamlType GetCurrentType (bool alsoSearchMemberType)
 		{
 			if (nodes.Count == 0)
 				return null;
@@ -303,8 +311,10 @@ namespace System.Xaml
 			try {
 				if (obj is XamlType)
 					return (XamlType) obj;
+				else if (alsoSearchMemberType && obj is XamlMember)
+					return ((XamlMember) obj).Type;
 				else
-					return GetCurrentType ();
+					return GetCurrentType (alsoSearchMemberType);
 			} finally {
 				nodes.Push (obj);
 			}

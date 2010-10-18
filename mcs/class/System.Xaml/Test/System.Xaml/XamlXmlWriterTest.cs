@@ -284,13 +284,13 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void WriteValueTypeMismatch ()
+		public void WriteValueTypeNonString ()
 		{
 			var sw = new StringWriter ();
 			var xw = new XamlXmlWriter (sw, sctx, null);
 			xw.WriteStartObject (xt);
 			xw.WriteStartMember (xm);
-			xw.WriteValue (5);
+			xw.WriteValue (5); // even the type matches the member type, writing non-string value is rejected.
 		}
 
 		[Test]
@@ -618,5 +618,23 @@ namespace MonoTests.System.Xaml
 			XamlServices.Transform (r, w);
 			Assert.AreEqual (xml, sw.ToString ().Replace ('"', '\''), "#1");
 		}
+
+		[Test]
+		public void WriteValueAsString ()
+		{
+			var sw = new StringWriter ();
+			var xw = new XamlXmlWriter (sw, sctx, null);
+			var xt = sctx.GetXamlType (typeof (TestXmlWriterClass1));
+			xw.WriteStartObject (xt);
+			xw.WriteStartMember (xt.GetMember ("Foo"));
+			xw.WriteValue ("50");
+			xw.Close ();
+			string xml = String.Format (@"<?xml version='1.0' encoding='utf-16'?><TestXmlWriterClass1 xmlns='clr-namespace:MonoTests.System.Xaml;assembly={0}' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'></TestXmlWriterClass1>",  GetType ().Assembly.GetName ().Name);
+		}
+	}
+
+	public class TestXmlWriterClass1
+	{
+		public int Foo { get; set; }
 	}
 }
