@@ -156,6 +156,7 @@ class DocHandler (ContentHandler):
             self.usage = {}
             self.los_usage = {}
             self.pinned_usage = {}
+            self.occupancies = {}
             self.in_los = False
             self.in_pinned = False
             self.heap_used = 0
@@ -169,6 +170,13 @@ class DocHandler (ContentHandler):
             kind = attrs.get('type', None)
             bytes = int(attrs.get('bytes', None))
             print ('Pinned from %s: %d kB<br>' % (kind, bytes / 1024), file = self.collection_file)
+        elif name == 'occupancy':
+            size = int (attrs.get ('size', None))
+            available = int (attrs.get ('available', None))
+            used = int (attrs.get ('used', None))
+            unused = available - used
+
+            print ('Occupancy of %d byte slots: %d / %d (%d kB / %d%% wasted)<br>' % (size, used, available, unused * size / 1024, unused * 100 / available), file = self.collection_file)
         elif name == 'section':
             kind = attrs.get('type', None)
             size = int(attrs.get('size', None))
