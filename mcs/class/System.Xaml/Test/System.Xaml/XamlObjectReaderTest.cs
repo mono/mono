@@ -311,7 +311,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read2 ()
 		{
 			var doc = new XmlDocument ();
