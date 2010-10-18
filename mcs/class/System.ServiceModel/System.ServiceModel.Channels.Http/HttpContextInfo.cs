@@ -325,12 +325,15 @@ namespace System.ServiceModel.Channels.Http
 		
 		public override void Abort ()
 		{
-			res.Close ();
+			res.End ();
 		}
 		
 		public override void Close ()
 		{
-			res.Close ();
+			// We must not close the response here, as everything is taking place in the
+			// HttpApplication's pipeline context and the output is sent to the client
+			// _after_ we leave this method. Closing the response here will stop any
+			// output from reaching the client.
 		}
 		
 		public override void SetLength (long value)
