@@ -307,7 +307,7 @@ namespace System.Diagnostics
 		{
 			TraceListenerCollection shared_listeners = d ["sharedListeners"] as TraceListenerCollection;
 			if (shared_listeners == null) {
-				shared_listeners = new TraceListenerCollection ();
+				shared_listeners = new TraceListenerCollection (false);
 				d ["sharedListeners"] = shared_listeners;
 			}
 			return shared_listeners;
