@@ -178,7 +178,13 @@ namespace System.Web.Handlers {
 			string asmName;
 			Assembly assembly;
 
-			DecryptAssemblyResource (request.QueryString ["d"], out asmName, out resourceName);
+			// val is URL-decoded, which means every + has been replaced with ' ', we
+			// need to revert that or the base64 conversion will fail.
+			string d = request.QueryString ["d"];
+			if (!String.IsNullOrEmpty (d))
+				d = d.Replace (' ', '+');
+
+			DecryptAssemblyResource (d, out asmName, out resourceName);
 			if (resourceName == null)
 				throw new HttpException (404, "No resource name given");
 
