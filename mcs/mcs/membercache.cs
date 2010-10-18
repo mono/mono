@@ -59,7 +59,9 @@ namespace Mono.CSharp {
 		// Exclude static
 		InstanceOnly = 1 << 2,
 
-		NoAccessors = 1 << 3
+		NoAccessors = 1 << 3,
+
+		OverrideOnly = 1 << 4
 	}
 
 	public struct MemberFilter : IEquatable<MemberSpec>
@@ -362,6 +364,9 @@ namespace Mono.CSharp {
 							continue;
 
 						if ((restrictions & BindingRestriction.NoAccessors) != 0 && entry.IsAccessor)
+							continue;
+
+						if ((restrictions & BindingRestriction.OverrideOnly) != 0 && (entry.Modifiers & Modifiers.OVERRIDE) == 0)
 							continue;
 
 						if (!filter.Equals (entry))

@@ -16,6 +16,11 @@ public class C
 	{
 		return i ?? 9;
 	}
+	
+	public static long Test4 (long? i = 5)
+	{
+		return i.Value;
+	}
 
 	public static int Main ()
 	{
@@ -34,6 +39,9 @@ public class C
 		if (!Test3 ())
 			return 5;
 
+		if (Test4 () != 5)
+			return 6;
+		
 		return 0;
 	}
 }

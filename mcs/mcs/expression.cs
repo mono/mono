@@ -7885,7 +7885,7 @@ namespace Mono.CSharp {
 
 			var indexers = MemberCache.FindMembers (type, MemberCache.IndexerNameAlias, false);
 			if (indexers != null || type == InternalType.Dynamic) {
-				return new IndexerExpr (indexers, this);
+				return new IndexerExpr (indexers, type, this);
 			}
 
 			ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
@@ -8181,11 +8181,13 @@ namespace Mono.CSharp {
 		LocalTemporary prepared_value;
 		IList<MemberSpec> indexers;
 		Arguments arguments;
+		TypeSpec queried_type;
 		
-		public IndexerExpr (IList<MemberSpec> indexers, ElementAccess ea)
+		public IndexerExpr (IList<MemberSpec> indexers, TypeSpec queriedType, ElementAccess ea)
 			: base (ea.Location)
 		{
 			this.indexers = indexers;
+			this.queried_type = queriedType;
 			this.InstanceExpression = ea.Expr;
 			this.arguments = ea.Arguments;
 		}
@@ -8365,6 +8367,15 @@ namespace Mono.CSharp {
 		IList<MemberSpec> OverloadResolver.IBaseMembersProvider.GetBaseMembers (TypeSpec baseType)
 		{
 			return baseType == null ? null : MemberCache.FindMembers (baseType, MemberCache.IndexerNameAlias, false);
+		}
+
+		IParametersMember OverloadResolver.IBaseMembersProvider.GetOverrideMemberParameters (MemberSpec member)
+		{
+			if (queried_type == member.DeclaringType)
+				return null;
+
+			var filter = new MemberFilter (MemberCache.IndexerNameAlias, 0, MemberKind.Indexer, ((IndexerSpec) member).Parameters, null);
+			return MemberCache.FindMember (queried_type, filter, BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly) as IParametersMember;
 		}
 
 		MethodGroupExpr OverloadResolver.IBaseMembersProvider.LookupExtensionMethod (ResolveContext rc)

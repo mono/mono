@@ -3346,6 +3346,9 @@ expression_list_arguments
 	| expression_list_arguments COMMA expression_list_argument
 	  {
 		Arguments args = (Arguments) $1;
+		if (args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
+			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
+	  
 		args.Add ((Argument) $3);
 		$$ = args;	  
 	  }

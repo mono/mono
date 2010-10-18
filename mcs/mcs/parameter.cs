@@ -475,35 +475,28 @@ namespace Mono.CSharp {
 			if (default_expr.Type == parameter_type)
 				return default_expr;
 
-			if (TypeManager.IsNullableType (parameter_type)) {
-				if (default_expr.Type == InternalType.Null)
-					return default_expr;
+			var res = Convert.ImplicitConversionStandard (rc, default_expr, parameter_type, default_expr.Location);
+			if (res != null) {
+				if (TypeManager.IsNullableType (parameter_type) && res is Nullable.Wrap) {
+					Nullable.Wrap wrap = (Nullable.Wrap) res;
+					res = wrap.Child;
+					if (!(res is Constant)) {
+						rc.Compiler.Report.Error (1770, default_expr.Location,
+							"The expression being assigned to nullable optional parameter `{0}' must be default value",
+							Name);
+						return null;
+					}
+				}
 
-				var underlying = Nullable.NullableInfo.GetUnderlyingType (parameter_type);
-				var c = New.Constantify (underlying, Location.Null);
-				if (c == null) {
-					rc.Compiler.Report.Error (1770, default_expr.Location,
-						"The expression being assigned to nullable optional parameter `{0}' must be default value",
-						Name);
+				if (!default_expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type != TypeManager.string_type) {
+					rc.Compiler.Report.Error (1763, default_expr.Location,
+						"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
+						Name, GetSignatureForError ());
+
 					return null;
 				}
 
-				c = c.Resolve (rc);
-				if (c.Type == default_expr.Type)
-					return default_expr;
-			} else {
-				var res = Convert.ImplicitConversionStandard (rc, default_expr, parameter_type, default_expr.Location);
-				if (res != null) {
-					if (!default_expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type != TypeManager.string_type) {
-						rc.Compiler.Report.Error (1763, default_expr.Location,
-							"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
-							Name, GetSignatureForError ());
-
-						return null;
-					}
-
-					return res;
-				}
+				return res;
 			}
 
 			rc.Compiler.Report.Error (1750, Location,

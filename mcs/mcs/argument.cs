@@ -411,6 +411,21 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// At least one argument is named argument
+		//
+		public bool HasNamed {
+			get {
+				foreach (Argument a in args) {
+					if (a is NamedArgument)
+						return true;
+				}
+				
+				return false;
+			}
+		}
+
+
 		public void Insert (int index, Argument arg)
 		{
 			args.Insert (index, arg);
