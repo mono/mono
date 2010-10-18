@@ -568,7 +568,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test] // almost identical to TypeExtension (only type/instance difference)
-		[Category ("NotWorking")]
 		public void Read_StaticExtension ()
 		{
 			var r = new XamlObjectReader (new StaticExtension ("MyMember"));

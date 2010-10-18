@@ -172,8 +172,8 @@ namespace System.Xaml
 
 		public static IEnumerable<XamlMember> GetAllObjectReaderMembers (this XamlType type, object instance)
 		{
-			// FIXME: find out why only TypeExtension yields this directive. Seealso XamlObjectReaderTest
-			if (type == XamlLanguage.Type) {
+			// FIXME: find out why only TypeExtension and StaticExtension yield this directive. Seealso XamlObjectReaderTest.Read_CustomMarkupExtension*()
+			if (type == XamlLanguage.Type || type == XamlLanguage.Static) {
 				yield return XamlLanguage.PositionalParameters;
 				yield break;
 			}
