@@ -187,12 +187,17 @@ namespace System.Xaml
 				yield return XamlLanguage.Initialization;
 
 			IEnumerable en = null;
-			foreach (var m in type.GetAllMembers ())
+			foreach (var m in type.GetAllMembers ()) {
 				// do not read constructor arguments twice (they are written inside Arguments).
-				if (args == null || !args.Contains (m))
-					// do not return readonly property which holds a collection with no item.
-					if (!m.IsReadOnly || (en = (IEnumerable) m.Invoker.GetValue (instance)) != null && en.GetEnumerator ().MoveNext ())
+				if (args != null && args.Contains (m))
+					continue;
+				// do not return non-public members. Not sure why .NET filters out them though.
+				if (!m.IsReadPublic)
+					continue;
+				// do not return readonly property which holds a collection with no item.
+				if (!m.IsReadOnly || (en = (IEnumerable) m.Invoker.GetValue (instance)) != null && en.GetEnumerator ().MoveNext ())
 						yield return m;
+			}
 		}
 
 		public static bool ListEquals (this IList<XamlType> a1, IList<XamlType> a2)

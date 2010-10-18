@@ -360,10 +360,12 @@ namespace System.Xaml
 			yield break; // FIXME: what to return here?
 		}
 
+		static readonly XamlMember [] empty_array = new XamlMember [0];
+
 		protected virtual IEnumerable<XamlMember> LookupAllMembers ()
 		{
 			if (UnderlyingType == null)
-				return BaseType != null ? BaseType.GetAllMembers () : null;
+				return BaseType != null ? BaseType.GetAllMembers () : empty_array;
 			if (all_members_cache == null)
 				all_members_cache = new List<XamlMember> (DoLookupAllMembers ());
 			return all_members_cache;
@@ -373,7 +375,7 @@ namespace System.Xaml
 
 		IEnumerable<XamlMember> DoLookupAllMembers ()
 		{
-			foreach (var pi in UnderlyingType.GetProperties ())
+			foreach (var pi in UnderlyingType.GetProperties (BindingFlags.Public | BindingFlags.Instance))
 				if (pi.CanRead && pi.CanWrite && pi.GetIndexParameters ().Length == 0)
 					yield return new XamlMember (pi, SchemaContext);
 		}

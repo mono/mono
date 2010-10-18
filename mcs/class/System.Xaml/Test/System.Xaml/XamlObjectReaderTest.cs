@@ -236,6 +236,55 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void StaticMember ()
+		{
+			var r = new XamlObjectReader (new TestClass5 ());
+
+			Assert.AreEqual (XamlNodeType.None, r.NodeType, "#1");
+			Assert.IsTrue (r.Read (), "#6");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#7");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "#7-2");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "#7-3");
+
+			Assert.IsTrue (r.Read (), "#11");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "#12-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#12-3");
+
+			Assert.IsTrue (r.Read (), "#16");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#17");
+			var xt = new XamlType (typeof (TestClass5), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "#17-2");
+			Assert.IsTrue (r.Instance is TestClass5, "#17-3");
+			Assert.AreEqual (2, xt.GetAllMembers ().Count, "#17-4");
+			Assert.IsTrue (xt.GetAllMembers ().Any (xm => xm.Name == "Bar"), "#17-5");
+			Assert.IsTrue (xt.GetAllMembers ().Any (xm => xm.Name == "Baz"), "#17-6");
+
+			Assert.IsTrue (r.Read (), "#21");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#22");
+			Assert.AreEqual (xt.GetMember ("Bar"), r.Member, "#22-2");
+
+			Assert.IsTrue (r.Read (), "#26");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#27");
+			Assert.AreEqual (XamlLanguage.Null, r.Type, "#27-2");
+			Assert.IsNull (r.Instance, "#27-3");
+
+			Assert.IsTrue (r.Read (), "#31");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#32");
+
+			Assert.IsTrue (r.Read (), "#36");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#37");
+			// static Foo is not included in GetAllXembers() return value.
+			// nonpublic Baz does not appear either.
+
+			Assert.IsTrue (r.Read (), "#51");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#52");
+
+			Assert.IsFalse (r.Read (), "#56");
+			Assert.IsTrue (r.IsEof, "#57");
+		}
+
+		[Test]
 		public void Skip ()
 		{
 			var r = new XamlObjectReader ("Foo");
@@ -955,6 +1004,13 @@ namespace MonoTests.System.Xaml
 	{
 		public string Foo { get; set; }
 		public string Bar { get; set; }
+	}
+	
+	public class TestClass5
+	{
+		public static string Foo { get; set; }
+		public string Bar { get; set; }
+		public string Baz { internal get; set; }
 	}
 
 	public class MyExtension : MarkupExtension

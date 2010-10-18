@@ -251,7 +251,7 @@ namespace System.Xaml
 				var obj = objects.Peek ();
 				var xt = obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
 				ml = xt.GetAllObjectReaderMembers (obj).ToList ();
-				ml.Sort ((m1, m2) => m1.DeclaringType.ContentProperty == m1 ? 1 : m2.DeclaringType.ContentProperty == m2 ? -1 : String.CompareOrdinal (m1.Name, m2.Name));
+				ml.Sort (CompareMembers);
 				members = ml.GetEnumerator ();
 				if (members.MoveNext ()) {
 					members_stack.Push (members);
@@ -334,6 +334,29 @@ namespace System.Xaml
 			}
 		}
 
+		static int CompareMembers (XamlMember m1, XamlMember m2)
+		{
+			// static members should go first.
+			if (m1.DeclaringType == null) {
+				if (m2.DeclaringType == null)
+					// if both are static, compare names.
+					return String.CompareOrdinal (m1.Name, m2.Name);
+				else
+					return -1;
+			}
+			else if (m2.DeclaringType == null)
+				return 1;
+
+			// ContentProperty is returned at last.
+			if (m1.DeclaringType.ContentProperty == m1)
+				return 1;
+			else if (m2.DeclaringType.ContentProperty == m2)
+				return -1;
+
+			// then, compare names.
+			return String.CompareOrdinal (m1.Name, m2.Name);
+		}
+
 		// proceed to StartObject of the next item, or EndMember of XamlLanguage.Items.
 		void MoveToNextCollectionItem ()
 		{
@@ -368,9 +391,12 @@ namespace System.Xaml
 			if (xt.PreferredXamlNamespace != XamlLanguage.Xaml2006Namespace && xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
 				return; // the object is written as string value, so no member namespace will be involved.
 
+			// FIXME: should I use GetAllObjectReaderMembers()?
 			foreach (var xm in xt.GetAllMembers ()) {
 				ns = xm.PreferredXamlNamespace;
 				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace)
+					continue;
+				if (!xm.IsReadPublic)
 					continue;
 				if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)
 					continue; // FIXME: process them too.

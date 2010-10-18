@@ -144,6 +144,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsArray, "#5");
 			Assert.IsFalse (t.IsGeneric, "#6");
 			Assert.IsTrue (t.IsPublic, "#7");
+			Assert.AreEqual (0, t.GetAllMembers ().Count, "#8");
 		}
 
 		[Test]
@@ -568,10 +569,19 @@ namespace MonoTests.System.Xaml
 		public void GetXamlNamespaces ()
 		{
 			var xt = new XamlType (typeof (string), new XamlSchemaContext (null, null));
-			var l = xt.GetXamlNamespaces ();
-			Assert.AreEqual (2, l.Count, "#1");
-			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [0], "#2");
-			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", l [1], "#3");
+			var l = xt.GetXamlNamespaces ().ToList ();
+			l.Sort ();
+			Assert.AreEqual (2, l.Count, "#1-1");
+			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", l [0], "#1-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [1], "#1-3");
+
+			xt = new XamlType (typeof (TypeExtension), new XamlSchemaContext (null, null));
+			l = xt.GetXamlNamespaces ().ToList ();
+			l.Sort ();
+			Assert.AreEqual (3, l.Count, "#2-1");
+			Assert.AreEqual ("clr-namespace:System.Windows.Markup;assembly=System.Xaml", l [0], "#2-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [1], "#2-3");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [2], "#2-4"); // ??
 		}
 		
 		[Test]
