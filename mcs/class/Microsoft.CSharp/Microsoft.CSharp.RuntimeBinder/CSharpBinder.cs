@@ -244,7 +244,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			foreach (var item in info) {
 				var expr = CreateCompilerExpression (item, args[pos++]);
 				if (item.IsNamed) {
-					res.Add (new Compiler.NamedArgument (item.Name, Compiler.Location.Null, expr));
+					res.Add (new Compiler.NamedArgument (item.Name, Compiler.Location.Null, expr, item.ArgumentModifier));
 				} else {
 					res.Add (new Compiler.Argument (expr, item.ArgumentModifier));
 				}
