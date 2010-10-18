@@ -364,6 +364,10 @@ namespace System.Xaml
 			if (!xt.IsMarkupExtension || xt.TypeConverter == null) // FIXME: not sure why this gives the difference - see XamlObjectReaderTest.Read_CustomMarkupExtension2().
 				CheckAddNamespace (d, ns);
 
+			// FIXME: I cannot find any reason why it converts the instance to string like this...
+			if (xt.PreferredXamlNamespace != XamlLanguage.Xaml2006Namespace && xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
+				return; // the object is written as string value, so no member namespace will be involved.
+
 			foreach (var xm in xt.GetAllMembers ()) {
 				ns = xm.PreferredXamlNamespace;
 				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace)
@@ -398,9 +402,9 @@ namespace System.Xaml
 
 			types.Push (xt);
 
-			// FIXME: I cannot find any reason why it converts the instance like this...
-			//if (xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
-			//	obj = xt.TypeConverter.ConverterInstance.ConvertTo (obj, typeof (string));
+			// FIXME: I cannot find any reason why it converts the instance to string like this...
+			if (xt.PreferredXamlNamespace != XamlLanguage.Xaml2006Namespace && xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
+				obj = xt.TypeConverter.ConverterInstance.ConvertToInvariantString (obj);
 
 			if (member != null && member.IsReadOnly) {
 				IEnumerator e = ((IEnumerable) obj).GetEnumerator ();

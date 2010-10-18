@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
@@ -118,7 +119,7 @@ namespace System.Xaml
 			// First get member value, then convert it to appropriate target type.
 			var tc = converter != null ? converter.ConverterInstance : null;
 			if (tc != null && targetType != null && tc.CanConvertTo (targetType))
-				return tc.ConvertTo (value, targetType);
+				return tc.ConvertTo (null, CultureInfo.InvariantCulture, value, targetType);
 			return value;
 		}
 

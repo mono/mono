@@ -774,7 +774,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension2 ()
 		{
 			var r = new XamlObjectReader (new MyExtension2 () { Foo = typeof (int), Bar = "v2"});
@@ -795,7 +794,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension3 ()
 		{
 			var r = new XamlObjectReader (new MyExtension3 () { Foo = typeof (int), Bar = "v2"});
@@ -816,7 +814,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension4 ()
 		{
 			var r = new XamlObjectReader (new MyExtension4 () { Foo = typeof (int), Bar = "v2"});
