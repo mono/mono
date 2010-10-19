@@ -201,7 +201,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		//
 		public Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
 		{
-			if (value.Value == null && (info == null || (info.Flags & (CSharpArgumentInfoFlags.IsOut | CSharpArgumentInfoFlags.IsRef)) == 0)) {
+			if (value.Value == null && (info == null || (info.Flags & (CSharpArgumentInfoFlags.IsOut | CSharpArgumentInfoFlags.IsRef | CSharpArgumentInfoFlags.UseCompileTimeType)) == 0)) {
 				if (value.LimitType == typeof (object))
 					return new Compiler.NullLiteral (Compiler.Location.Null);
 
@@ -244,7 +244,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			foreach (var item in info) {
 				var expr = CreateCompilerExpression (item, args[pos++]);
 				if (item.IsNamed) {
-					res.Add (new Compiler.NamedArgument (item.Name, Compiler.Location.Null, expr));
+					res.Add (new Compiler.NamedArgument (item.Name, Compiler.Location.Null, expr, item.ArgumentModifier));
 				} else {
 					res.Add (new Compiler.Argument (expr, item.ArgumentModifier));
 				}

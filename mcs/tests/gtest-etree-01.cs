@@ -1070,7 +1070,15 @@ class Tester
 		Assert (50, e6.Compile ().Invoke (100, new MyType (2)));
 		Assert (null, e6.Compile ().Invoke (20, null));
 	}
-
+	
+	void DivideTest_7 ()
+	{
+		Expression<Func<float, uint?, float?>> e = (a, b) => a / b;
+		AssertNodeType (e, ExpressionType.Divide);
+		Assert (50, e.Compile () (100, 2));
+		Assert (null, e.Compile () (20, null));
+	}
+	
 	void EqualTest ()
 	{
 		Expression<Func<int, int, bool>> e = (int a, int b) => a == b;
@@ -1849,6 +1857,14 @@ class Tester
 		Assert (null, e7.Compile ().Invoke (60));
 	}
 	
+	void MultiplyTest_8 ()
+	{
+		Expression<Func<double, ulong?, double?>> e = (a, b) => a * b;
+		AssertNodeType (e, ExpressionType.Multiply);
+		Assert (180, e.Compile () (60, 3));
+		Assert (null, e.Compile () (60, null));
+	}
+	
 	void MultiplyCheckedTest ()
 	{
 		checked {
@@ -2490,6 +2506,13 @@ class Tester
 		Expression<Func<int, MyTypeImplicitOnly, int>> e = (a, b) => a >> b;
 		AssertNodeType (e, ExpressionType.RightShift);
 		Assert (31, e.Compile ().Invoke (0xFE, new MyTypeImplicitOnly (3)));
+	}
+	
+	void RightShiftTest_6 ()
+	{
+		Expression<Func<ulong, byte?, ulong?>> e = (a, b) => a >> b;
+		AssertNodeType (e, ExpressionType.RightShift);
+		Assert (null, e.Compile () (2, null));
 	}
 	
 	void SubtractTest ()

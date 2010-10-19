@@ -248,6 +248,12 @@ MonoMethod *
 mono_marshal_get_unbox_wrapper (MonoMethod *method) MONO_INTERNAL;
 
 MonoMethod *
+mono_marshal_get_castclass_with_cache (void) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_isinst_with_cache (void) MONO_INTERNAL;
+
+MonoMethod *
 mono_marshal_get_isinst (MonoClass *klass) MONO_INTERNAL;
 
 MonoMethod *
@@ -258,6 +264,9 @@ mono_marshal_get_proxy_cancast (MonoClass *klass) MONO_INTERNAL;
 
 MonoMethod *
 mono_marshal_get_stelemref (void) MONO_INTERNAL;
+
+MonoMethod*
+mono_marshal_get_virtual_stelemref (MonoClass *array_class) MONO_INTERNAL;
 
 MonoMethod*
 mono_marshal_get_array_address (int rank, int elem_size) MONO_INTERNAL;

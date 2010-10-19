@@ -16,7 +16,7 @@
 		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath> 
 		<OutputPath Condition=" '$(Platform)'=='' and '$(Configuration)'=='' and '$(OutputPath)'=='' ">bin\Debug\</OutputPath>
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
-		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v2.0</TargetFrameworkVersion>
+		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v4.0</TargetFrameworkVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -30,6 +30,9 @@
 		<_OriginalPlatform>$(Platform)</_OriginalPlatform>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 		<PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
+
+		<AddAdditionalExplicitAssemblyReferences Condition="'$(AddAdditionalExplicitAssemblyReferences)' == ''">true</AddAdditionalExplicitAssemblyReferences>
+		<AdditionalExplicitAssemblyReferences Condition="'$(AddAdditionalExplicitAssemblyReferences)' == 'true' and '$(TargetFrameworkVersion)' != 'v2.0' and '$(TargetFrameworkVersion)' != 'v3.0'">System.Core;$(AdditionalExplicitAssemblyReferences)</AdditionalExplicitAssemblyReferences>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -142,6 +145,11 @@
 			ResolveAssemblyReferences;
 			AfterResolveReferences
 		</ResolveReferencesDependsOn>
+
+		<ResolveAssemblyReferencesDependsOn>
+			GetFrameworkPaths;
+			PrepareForBuild
+		</ResolveAssemblyReferencesDependsOn>
 	</PropertyGroup>
 
 	<Target Name="ResolveReferences" DependsOnTargets="$(ResolveReferencesDependsOn)"/>
@@ -149,9 +157,17 @@
 	<Target Name="BeforeResolveReferences" />
 	<Target Name="AfterResolveReferences" />
 
-	<Target Name="ResolveAssemblyReferences">
+	<Target Name="ResolveAssemblyReferences" DependsOnTargets="$(ResolveAssemblyReferencesDependsOn)">
+		<CreateItem Include="@(Reference)" Exclude="$(AdditionalExplicitAssemblyReferences)">
+			<Output TaskParameter="Include" ItemName="_Reference"/>
+		</CreateItem>
+
+		<CreateItem Include="$(AdditionalExplicitAssemblyReferences)">
+			<Output TaskParameter="Include" ItemName="_Reference"/>
+		</CreateItem>
+
 		<ResolveAssemblyReference
-			Assemblies="@(Reference)"
+			Assemblies="@(_Reference)"
 			AssemblyFiles="@(ChildProjectReferences)"
 			SearchPaths="$(AssemblySearchPaths)"
 			CandidateAssemblyFiles="@(Content);@(None)"

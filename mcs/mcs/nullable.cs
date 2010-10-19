@@ -885,8 +885,12 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				if (right is UserCast || right is TypeCast)
-					right.Type = lifted_type.Type;
+				var r = right;
+				if (r is ReducedExpression)
+					r = ((ReducedExpression) r).OriginalExpression;
+
+				if (r is UserCast || r is TypeCast)
+					r.Type = lifted_type.Type;
 				else
 					right = EmptyCast.Create (right, lifted_type.Type);
 			}
@@ -968,20 +972,30 @@ namespace Mono.CSharp.Nullable
 
 		protected override Expression ResolveUserOperator (ResolveContext ec, Expression left, Expression right)
 		{
+			//
+			// Try original types first for exact match without unwrapping
+			//
+			Expression expr = base.ResolveUserOperator (ec, left_orig, right_orig);
+			if (expr != null)
+				return expr;
+
 			State orig_state = state;
 
-			// Try original types first
-			Expression expr = base.ResolveUserOperator (ec, left_orig, right_orig);
-			if (expr == null) {
-				if (left_unwrap != null || right_unwrap != null) {
-					// One side is nullable type, try underlying types
-					expr = base.ResolveUserOperator (ec, left, right);
-				} else if ((state & (State.RightNullLifted | State.LeftNullLifted)) != 0) {
-					expr = base.ResolveUserOperator (ec, left, right);
-				}
+			//
+			// One side is a nullable type, try to match underlying types
+			//
+			if (left_unwrap != null || right_unwrap != null || (state & (State.RightNullLifted | State.LeftNullLifted)) != 0) {
+				expr = base.ResolveUserOperator (ec, left, right);
 			}
 
 			if (expr == null)
+				return null;
+
+			//
+			// Lift the result in the case it can be null and predefined or user operator
+			// result type is of a value type
+			//
+			if (!TypeManager.IsValueType (expr.Type))
 				return null;
 
 			if (state != orig_state)

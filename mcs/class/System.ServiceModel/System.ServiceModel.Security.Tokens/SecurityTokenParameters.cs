@@ -39,8 +39,12 @@ namespace System.ServiceModel.Security.Tokens
 		{
 		}
 
-		protected SecurityTokenParameters (SecurityTokenParameters source)
+		protected SecurityTokenParameters (SecurityTokenParameters other)
 		{
+			inclusion_mode = other.inclusion_mode;
+			reference_style = other.reference_style;
+			require_derived_keys = other.require_derived_keys;
+			issuer_binding_context = other.issuer_binding_context != null ? other.issuer_binding_context.Clone () : null;
 		}
 
 		SecurityTokenInclusionMode inclusion_mode;
@@ -120,7 +124,7 @@ namespace System.ServiceModel.Security.Tokens
 			return CreateKeyIdentifierClause (token, referenceStyle);
 		}
 
-		protected abstract void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement);
+		protected internal abstract void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement);
 
 		internal BindingContext IssuerBindingContext {
 			set { issuer_binding_context = value; }

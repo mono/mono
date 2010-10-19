@@ -124,39 +124,40 @@ namespace System.Xaml
 		{
 			if (schemaContext == null)
 				throw new ArgumentNullException ("schemaContext");
-			// FIXME: special case? or can it be generalized?
+			// FIXME: special case? or can it be generalized? In .NET, For Type instance Instance returns TypeExtension at root StartObject, while for Array it remains to return Array.
 			if (instance is Type)
 				instance = new TypeExtension ((Type) instance);
 
-			this.instance = instance;
+			this.root = instance;
 			sctx = schemaContext;
 			this.settings = settings;
 
 			prefix_lookup = new PrefixLookup (this);
 
-			if (instance != null) {
-				// check type validity. Note that some checks are done at Read() phase.
-				var type = instance.GetType ();
-				if (!type.IsPublic)
-					throw new XamlObjectReaderException (String.Format ("instance type '{0}' must be public and non-nested.", type));
-				root_type = SchemaContext.GetXamlType (instance.GetType ());
-				if (root_type.ConstructionRequiresArguments && !root_type.GetConstructorArguments ().Any () && root_type.TypeConverter == null)
-					throw new XamlObjectReaderException (String.Format ("instance type '{0}' has no default constructor.", type));
-			}
-			else
-				root_type = XamlLanguage.Null;
+			// check type validity. Note that some checks are also done at Read() phase.
+			if (instance != null && !instance.GetType ().IsPublic)
+				throw new XamlObjectReaderException (String.Format ("instance type '{0}' must be public and non-nested.", instance.GetType ()));
+
+			var obj = GetExtensionWrappedInstance (instance);
+
+			var type = obj.GetType ();
+			root_type = SchemaContext.GetXamlType (type);
+			if (root_type.ConstructionRequiresArguments && !root_type.GetConstructorArguments ().Any () && root_type.TypeConverter == null)
+				throw new XamlObjectReaderException (String.Format ("instance type '{0}' has no default constructor.", type));
 		}
 
-		object instance;
-		XamlType root_type;
-		XamlSchemaContext sctx;
-		XamlObjectReaderSettings settings;
-
-		INamespacePrefixLookup prefix_lookup;
+		readonly object root;
+		readonly XamlType root_type;
+		readonly XamlSchemaContext sctx;
+		readonly XamlObjectReaderSettings settings;
+		readonly INamespacePrefixLookup prefix_lookup;
 
 		Stack<XamlType> types = new Stack<XamlType> ();
+		object instance; // could be different from objects. This field holds "raw" object value, and is used for Instance proeperty.
 		Stack<object> objects = new Stack<object> ();
 		Stack<IEnumerator<XamlMember>> members_stack = new Stack<IEnumerator<XamlMember>> ();
+		Stack<IEnumerator> dict_keys = new Stack<IEnumerator> ();
+		object next_key;
 		NSList namespaces;
 		IEnumerator<NamespaceDeclaration> ns_iterator;
 		XamlNodeType node_type = XamlNodeType.None;
@@ -166,7 +167,7 @@ namespace System.Xaml
 		Dictionary<object,IEnumerator<object>> constructor_arguments_stack = new Dictionary<object,IEnumerator<object>> ();
 
 		public virtual object Instance {
-			get { return NodeType == XamlNodeType.StartObject && objects.Count > 0 ? objects.Peek () : null; }
+			get { return NodeType == XamlNodeType.StartObject ? instance : null; }
 		}
 
 		public override bool IsEof {
@@ -220,7 +221,7 @@ namespace System.Xaml
 				// -> namespaces
 				var d = new Dictionary<string,string> ();
 				//l.Sort ((p1, p2) => String.CompareOrdinal (p1.Key, p2.Key));
-				CollectNamespaces (d, instance, root_type);
+				CollectNamespaces (d, root);
 				var nss = from k in d.Keys select new NamespaceDeclaration (k, d [k]);
 				namespaces = new NSList (XamlNodeType.StartObject, nss);
 				namespaces.Sort ((n1, n2) => String.CompareOrdinal (n1.Prefix, n2.Prefix));
@@ -235,17 +236,28 @@ namespace System.Xaml
 					return true;
 				node_type = ((NSEnumerator) ns_iterator).OwnerType; // StartObject or StartMember
 				if (node_type == XamlNodeType.StartObject)
-					StartNextObject ();
+					StartNextObject (null);
 				else
-					StartNextMemberOrNamespace ();
+					StartNextMember ();
 				return true;
 
+			case XamlNodeType.GetObject:
+				var ml = new List<XamlMember> ();
+				ml.Add (XamlLanguage.Items);
+				members = ml.GetEnumerator ();
+				members.MoveNext ();
+				members_stack.Push (members);
+				StartNextMember ();
+				return true;
 			case XamlNodeType.StartObject:
-				var xt = types.Peek ();
-				members = xt.GetAllReadWriteMembers ().GetEnumerator ();
+				var obj = objects.Peek ();
+				var xt = obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
+				ml = xt.GetAllObjectReaderMembers (obj, next_key).ToList ();
+				ml.Sort (CompareMembers);
+				members = ml.GetEnumerator ();
 				if (members.MoveNext ()) {
 					members_stack.Push (members);
-					StartNextMemberOrNamespace ();
+					StartNextMember ();
 					return true;
 				}
 				else
@@ -257,21 +269,36 @@ namespace System.Xaml
 				if (curMember == XamlLanguage.Arguments) {
 					type = types.Peek ();
 					var args = type.GetSortedConstructorArguments ();
-					var obj = objects.Peek ();
+					obj = objects.Peek ();
 					var l = new List<object> ();
 					foreach (var arg in args)
 						l.Add (arg.Invoker.GetValue (obj));
 					arguments = l.GetEnumerator ();
 					constructor_arguments_stack [obj] = arguments;
 					arguments.MoveNext ();
-					StartNextObject (arguments.Current);
+					StartNextObject (arguments.Current, XamlLanguage.Arguments);
 				}
-				else if (!curMember.IsContentValue ())
-					StartNextObject ();
+				else if (curMember == XamlLanguage.Key) {
+					instance = next_key;
+					next_key = null;
+					xt = instance != null ? SchemaContext.GetXamlType (instance.GetType ()) : null;
+					if (instance == null || !xt.IsContentValue ())
+						StartNextObject (instance, curMember);
+					else {
+						objects.Push (GetExtensionWrappedInstance (instance));
+						node_type = XamlNodeType.Value;
+					}
+				}
+				else if (curMember == XamlLanguage.Items)
+					MoveToNextCollectionItem ();
 				else {
-					var obj = GetMemberValueOrRootInstance ();
-					objects.Push (obj);
-					node_type = XamlNodeType.Value;
+					instance = GetMemberValueOrRootInstance ();
+					if (instance == null || !curMember.IsContentValue ())
+						StartNextObject (instance, curMember);
+					else {
+						objects.Push (GetExtensionWrappedInstance (instance));
+						node_type = XamlNodeType.Value;
+					}
 				}
 				return true;
 
@@ -280,16 +307,11 @@ namespace System.Xaml
 				node_type = XamlNodeType.EndMember;
 				return true;
 
-			case XamlNodeType.GetObject:
-				// how do we get here?
-				throw new NotImplementedException ();
-
 			case XamlNodeType.EndMember:
 				members = members_stack.Peek ();
-				if (members.MoveNext ()) {
-					members_stack.Push (members);
-					StartNextMemberOrNamespace ();
-				} else {
+				if (members.MoveNext ())
+					StartNextMember ();
+				else {
 					members_stack.Pop ();
 					node_type = XamlNodeType.EndObject;
 				}
@@ -297,8 +319,10 @@ namespace System.Xaml
 
 			case XamlNodeType.EndObject:
 				// It might be either end of the entire object tree or just the end of an object value.
-				types.Pop ();
-				objects.Pop ();
+				type = types.Pop ();
+				obj = objects.Pop ();
+				if (type.IsDictionary)
+					dict_keys.Pop ();
 				if (objects.Count == 0) {
 					node_type = XamlNodeType.None;
 					is_eof = true;
@@ -307,15 +331,15 @@ namespace System.Xaml
 
 				if (constructor_arguments_stack.TryGetValue (objects.Peek (), out arguments)) {
 					if (arguments.MoveNext ()) {
-						StartNextObject (arguments.Current);
+						StartNextObject (arguments.Current, XamlLanguage.Arguments);
 						return true;
 					}
 					// else -> end of Arguments
 					constructor_arguments_stack.Remove (objects.Peek ());
 				} else {
 					members = members_stack.Peek ();
-					if (members.MoveNext ()) {
-						StartNextMemberOrNamespace ();
+					if (members.Current == XamlLanguage.Items) {
+						MoveToNextCollectionItem ();
 						return true;
 					}
 				}
@@ -325,44 +349,107 @@ namespace System.Xaml
 			}
 		}
 
-		void CollectNamespaces (Dictionary<string,string> d, object o, XamlType xt)
+		static int CompareMembers (XamlMember m1, XamlMember m2)
 		{
-			if (xt == null)
-				return;
-			if (o == null) {
-				// it becomes NullExtension, so check standard ns.
-				CheckAddNamespace (d, XamlLanguage.Xaml2006Namespace);
-				return;
+			// static members should go first.
+			if (m1.DeclaringType == null) {
+				if (m2.DeclaringType == null)
+					// if both are static, compare names.
+					return String.CompareOrdinal (m1.Name, m2.Name);
+				else
+					return -1;
 			}
-			var ns = xt.PreferredXamlNamespace;
-			CheckAddNamespace (d, ns);
+			else if (m2.DeclaringType == null)
+				return 1;
 
-			foreach (var xm in xt.GetAllMembers ()) {
+			// ContentProperty is returned at last.
+			if (m1.DeclaringType.ContentProperty == m1)
+				return 1;
+			else if (m2.DeclaringType.ContentProperty == m2)
+				return -1;
+
+			// then, compare names.
+			return String.CompareOrdinal (m1.Name, m2.Name);
+		}
+
+		// proceed to StartObject of the next item, or EndMember of XamlLanguage.Items.
+		void MoveToNextCollectionItem ()
+		{
+			IEnumerator e = (IEnumerator) (objects.Peek ());
+			if (e.MoveNext ()) {
+				if (types.Peek ().IsDictionary) {
+					var ke = dict_keys.Peek ();
+					ke.MoveNext ();
+					next_key = ke.Current;
+				}
+				StartNextObject (e.Current, XamlLanguage.Items);
+			}
+			else
+				node_type = XamlNodeType.EndMember;
+		}
+
+		object GetExtensionWrappedInstance (object o)
+		{
+			if (o == null)
+				return new NullExtension ();
+			if (o is Array)
+				return new ArrayExtension ((Array) o);
+			if (o is Type)
+				return new TypeExtension ((Type) o);
+			return o;
+		}
+
+		void CollectNamespaces (Dictionary<string,string> d, object o)
+		{
+			o = GetExtensionWrappedInstance (o);
+			var xt = SchemaContext.GetXamlType (o.GetType ());
+			
+			var ns = xt.PreferredXamlNamespace;
+			if (!xt.IsMarkupExtension || xt.TypeConverter == null) // FIXME: not sure why this gives the difference - see XamlObjectReaderTest.Read_CustomMarkupExtension2().
+				CheckAddNamespace (d, ns);
+
+			// FIXME: I cannot find any reason why it converts the instance to string like this...
+			if (xt.PreferredXamlNamespace != XamlLanguage.Xaml2006Namespace && xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
+				return; // the object is written as string value, so no member namespace will be involved.
+
+			// FIXME: This should limit to GetAllObjectReaderMembers(), but it blocks some tests.
+			foreach (var xm in xt.GetAllObjectReaderMembers (o, null).Concat (xt.GetAllMembers ()).Distinct ()) {
 				ns = xm.PreferredXamlNamespace;
-				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace)
+				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace) {
+					CheckAddNamespace (d, ns);
+					continue;
+				}
+				if (!xm.IsReadPublic)
 					continue;
 				if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)
 					continue; // FIXME: process them too.
 				var mv = GetMemberValueOf (xm, o, xt, d);
-				CollectNamespaces (d, mv, xm.Type);
+				CollectNamespaces (d, mv);
 			}
 		}
 
 		// This assumes that the next member is already on current position on current iterator.
-		void StartNextMemberOrNamespace ()
+		void StartNextMember ()
 		{
-			// FIXME: there might be NamespaceDeclarations.
+			var xt = types.Peek ();
+			if (xt.IsDictionary) {
+				var dic = objects.Pop ();
+				var k = ((IEnumerable) xt.GetMember ("Keys").Invoker.GetValue (dic)).GetEnumerator ();
+				var v = ((IEnumerable) xt.GetMember ("Values").Invoker.GetValue (dic)).GetEnumerator ();
+				objects.Push (v);
+				dict_keys.Push (k);
+			}
 			node_type = XamlNodeType.StartMember;
 		}
 
-		void StartNextObject ()
+		void StartNextObject (XamlMember member)
 		{
-			StartNextObject (GetMemberValueOrRootInstance ());
+			StartNextObject (GetMemberValueOrRootInstance (), member);
 		}
 
-		void StartNextObject (object obj)
+		void StartNextObject (object obj, XamlMember member)
 		{
-			var xt = Object.ReferenceEquals (obj, instance) ? root_type : obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
+			var xt = Object.ReferenceEquals (obj, root) ? root_type : obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
 
 			// FIXME: enable these lines.
 			// FIXME: if there is an applicable instance descriptor, then it could be still valid.
@@ -370,15 +457,27 @@ namespace System.Xaml
 			//if (type.GetConstructor (System.Type.EmptyTypes) == null)
 			//	throw new XamlObjectReaderException (String.Format ("Type {0} has no default constructor or an instance descriptor.", type));
 
-			objects.Push (obj);
 			types.Push (xt);
-			node_type = XamlNodeType.StartObject;
+
+			// FIXME: I cannot find any reason why it converts the instance to string like this...
+			if (xt.PreferredXamlNamespace != XamlLanguage.Xaml2006Namespace && xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
+				obj = xt.TypeConverter.ConverterInstance.ConvertToInvariantString (obj);
+
+			instance = obj;
+			if (member != null && member.IsReadOnly) {
+				IEnumerator e = ((IEnumerable) obj).GetEnumerator ();
+				objects.Push (e);
+				node_type = XamlNodeType.GetObject;
+			} else {
+				objects.Push (GetExtensionWrappedInstance (obj));
+				node_type = XamlNodeType.StartObject;
+			}
 		}
 		
 		object GetMemberValueOrRootInstance ()
 		{
 			if (objects.Count == 0)
-				return instance;
+				return root;
 
 			var xm = members_stack.Peek ().Current;
 			var obj = objects.Peek ();
@@ -409,11 +508,11 @@ namespace System.Xaml
 					CheckAddNamespace (collectingNamespaces, ns);
 					return null;
 				}
-				else if (retxt.IsContentValue ())
+				else if (retobj != null && retxt.IsContentValue ())
 					return null;
 				else
 					return retobj;
-			} else if (retxt.IsContentValue ()) {
+			} else if (retobj != null && retxt.IsContentValue ()) {
 				// FIXME: I'm not sure if this should be really done 
 				// here, but every primitive values seem to be exposed
 				// as a string, not a typed object in XamlObjectReader.

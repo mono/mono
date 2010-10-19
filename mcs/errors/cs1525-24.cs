@@ -1,4 +1,4 @@
-// CS1018: Keyword `this' or `base' expected
+// CS1525: Unexpected symbol `{', expecting `base' or `this'
 // Line: 5
 
 class X {

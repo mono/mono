@@ -1389,6 +1389,99 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		}
 
+		[Test]
+		public void ReadModeDispose_FinalBlock ()
+		{
+			using (SHA1 sha1 = SHA1.Create()) {
+				using (MemoryStream mem = new MemoryStream(new byte[] { 1, 2, 3 }, false))
+					using (CryptoStream cs = new CryptoStream(mem, sha1, CryptoStreamMode.Read))
+					{
+					}
+				byte b = sha1.Hash [0]; // This will throw if TransformFinalBlock not called in sha1
+				GC.KeepAlive (b); // just the warning...
+			}
+                }
+
+		[Test]
+		public void CustomDisposeCalled ()
+		{
+			using (MemoryStream mem = new MemoryStream(new byte[] { 1, 2, 3 }, false)) {
+				MyCryptoStream cs;
+				using (cs = new MyCryptoStream (mem, SHA1.Create()))
+				{
+				}
+				Assert.IsTrue (cs.DisposeCalled, "#1");
+			}
+		}
+
+		[Test]
+		public void ExplicitFlush ()
+		{
+			// Tests that explicitly calling Flush does not call Flush in the underlying stream
+			MyStream ms = new MyStream ();
+			using (CryptoStream cs = new CryptoStream (ms, SHA1.Create (), CryptoStreamMode.Read)) {
+				ms.FlushCounterEnabled = true;
+				cs.Flush ();
+				ms.FlushCounterEnabled = false;
+			}
+			Assert.IsTrue (ms.FlushCounter == 0);
+		}
+
+		[Test]
+		public void ImplicitFlush ()
+		{
+			// Tests that Dispose() calls Flush on the underlying stream
+			MyStream ms = new MyStream ();
+			ms.FlushCounterEnabled = true;
+			using (CryptoStream cs = new CryptoStream (ms, SHA1.Create (), CryptoStreamMode.Read)) {
+			}
+			Assert.IsTrue (ms.FlushCounter == 1);
+		}
+
+		[Test]
+		public void ImplicitFlushCascade ()
+		{
+			// Tests that Dispose() calls FlushFinalBlock() on the underlying stream
+			MyStream ms = new MyStream ();
+			ms.FlushCounterEnabled = true;
+			CryptoStream cs1 = new CryptoStream (ms, SHA1.Create (), CryptoStreamMode.Read);
+			using (CryptoStream cs = new CryptoStream (cs1, SHA1.Create (), CryptoStreamMode.Read)) {
+			}
+			Assert.IsTrue (ms.FlushCounter == 1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Ctor_InvalidEnumValue ()
+		{
+			CryptoStream cs = new CryptoStream (Stream.Null, SHA1.Create (), (CryptoStreamMode) 0xff);
+		}
+
+		[Test]
+		public void OutputBlock_Smaller ()
+		{
+			// The OutputBlockSize is smaller than the InputBlockSize
+			using (CryptoStream cs = new CryptoStream(Stream.Null, new MyCryptAlgorithm(), CryptoStreamMode.Write)) {
+				byte[] buffer = new byte[512 * 1024];
+				cs.Write(buffer, 0, buffer.Length);
+			}
+		}
+
+		class MyCryptoStream : CryptoStream {
+			public bool DisposeCalled { get; private set;}
+
+			public MyCryptoStream(Stream stream, ICryptoTransform transform)
+						: base(stream, transform, CryptoStreamMode.Read)
+			{
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				base.Dispose(disposing);
+				DisposeCalled = true;
+			}
+		}
+
 		class ExpandTransform : ICryptoTransform {
 
 			public bool CanReuseTransform {
@@ -1543,6 +1636,100 @@ namespace MonoTests.System.Security.Cryptography {
 					string value = BitConverter.ToString (buffer, 0, ret);
 					Assert.AreEqual (compress_values [n++], value);
 				}
+			}
+		}
+
+		class MyCryptAlgorithm : ICryptoTransform {
+			public bool CanReuseTransform { get { return true; } }
+			public bool CanTransformMultipleBlocks { get { return false; } }
+			public int InputBlockSize { get { return 128 * 1024; } }
+			public int OutputBlockSize { get { return 64 * 1024; } }
+
+			public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+			{
+				return this.OutputBlockSize;
+			}
+
+			public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
+			{
+				return new byte[this.OutputBlockSize];
+			}
+
+			public void Dispose() {}
+		}
+
+		class MyStream : Stream {
+			public bool FlushCounterEnabled;
+			public int FlushCounter;
+
+			public override bool CanRead
+			{
+				get {
+					return true;
+				}
+			}
+
+			public override bool CanSeek
+			{
+				get {
+					return true;
+				}
+			}
+
+			public override bool CanWrite
+			{
+				get {
+					return true;
+				}
+			}
+
+			public override long Length
+			{
+				get {
+					return 0;
+				}
+			}
+
+			public override long Position
+			{
+				get {
+					return 0;
+				}
+				set {
+				}
+			}
+
+			public override void Flush ()
+			{
+				if (FlushCounterEnabled)
+					FlushCounter++;
+			}
+
+			public override int Read (byte[] buffer, int offset, int count)
+			{
+				return 0;
+			}
+
+			public override int ReadByte ()
+			{
+				return -1;
+			}
+
+			public override long Seek (long offset, SeekOrigin origin)
+			{
+				return 0;
+			}
+
+			public override void SetLength (long value)
+			{
+			}
+
+			public override void Write (byte[] buffer, int offset, int count)
+			{
+			}
+
+			public override void WriteByte (byte value)
+			{
 			}
 		}
 	}

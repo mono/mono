@@ -16,6 +16,8 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/monitor.h>
+#include <mono/metadata/monitor.h>
+#include <mono/metadata/gc-internal.h>
 #include <mono/arch/amd64/amd64-codegen.h>
 
 #include <mono/utils/memcheck.h>
@@ -29,7 +31,6 @@ static guint8* nullified_class_init_trampoline;
 
 /*
  * mono_arch_get_unbox_trampoline:
- * @gsctx: the generic sharing context
  * @m: method pointer
  * @addr: pointer to native code for @m
  *
@@ -38,14 +39,14 @@ static guint8* nullified_class_init_trampoline;
  * unboxing before calling the method
  */
 gpointer
-mono_arch_get_unbox_trampoline (MonoGenericSharingContext *gsctx, MonoMethod *m, gpointer addr)
+mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 {
 	guint8 *code, *start;
 	int this_reg;
 
 	MonoDomain *domain = mono_domain_get ();
 
-	this_reg = mono_arch_get_this_arg_reg (mono_method_signature (m), gsctx, NULL);
+	this_reg = mono_arch_get_this_arg_reg (NULL);
 
 	start = code = mono_domain_code_reserve (domain, 20);
 
@@ -105,7 +106,7 @@ mono_arch_get_llvm_imt_trampoline (MonoDomain *domain, MonoMethod *m, int vt_off
 
 	start = code = mono_domain_code_reserve (domain, buf_len);
 
-	this_reg = mono_arch_get_this_arg_reg (mono_method_signature (m), NULL, NULL);
+	this_reg = mono_arch_get_this_arg_reg (NULL);
 
 	/* Set imt arg */
 	amd64_mov_reg_imm (code, MONO_ARCH_IMT_REG, m);
@@ -804,7 +805,7 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 {
 	guint8 *tramp;
 	guint8 *code, *buf;
-	guint8 *jump_obj_null, *jump_sync_null, *jump_cmpxchg_failed, *jump_other_owner, *jump_tid;
+	guint8 *jump_obj_null, *jump_sync_null, *jump_cmpxchg_failed, *jump_other_owner, *jump_tid, *jump_sync_thin_hash = NULL;
 	int tramp_size;
 	int owner_offset, nest_offset, dummy;
 	MonoJumpInfo *ji = NULL;
@@ -834,6 +835,18 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 
 		/* load obj->synchronization to RCX */
 		amd64_mov_reg_membase (code, AMD64_RCX, AMD64_RDI, G_STRUCT_OFFSET (MonoObject, synchronisation), 8);
+
+		if (mono_gc_is_moving ()) {
+			/*if bit zero is set it's a thin hash*/
+			/*FIXME use testb encoding*/
+			amd64_test_reg_imm (code, AMD64_RCX, 0x01);
+			jump_sync_thin_hash = code;
+			amd64_branch8 (code, X86_CC_NE, -1, 1);
+
+			/*clear bits used by the gc*/
+			amd64_alu_reg_imm (code, X86_AND, AMD64_RCX, ~0x3);
+		}
+
 		/* is synchronization null? */
 		amd64_test_reg_reg (code, AMD64_RCX, AMD64_RCX);
 		/* if yes, jump to actual trampoline */
@@ -876,6 +889,8 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 		amd64_ret (code);
 
 		x86_patch (jump_obj_null, code);
+		if (jump_sync_thin_hash)
+			x86_patch (jump_sync_thin_hash, code);
 		x86_patch (jump_sync_null, code);
 		x86_patch (jump_cmpxchg_failed, code);
 		x86_patch (jump_other_owner, code);
@@ -910,7 +925,7 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 {
 	guint8 *tramp;
 	guint8 *code, *buf;
-	guint8 *jump_obj_null, *jump_have_waiters, *jump_sync_null, *jump_not_owned;
+	guint8 *jump_obj_null, *jump_have_waiters, *jump_sync_null, *jump_not_owned, *jump_sync_thin_hash = NULL;
 	guint8 *jump_next;
 	int tramp_size;
 	int owner_offset, nest_offset, entry_count_offset;
@@ -927,7 +942,7 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 	nest_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (nest_offset);
 	entry_count_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (entry_count_offset);
 
-	tramp_size = 94;
+	tramp_size = 112;
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
@@ -943,6 +958,18 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 
 		/* load obj->synchronization to RCX */
 		amd64_mov_reg_membase (code, AMD64_RCX, AMD64_RDI, G_STRUCT_OFFSET (MonoObject, synchronisation), 8);
+
+		if (mono_gc_is_moving ()) {
+			/*if bit zero is set it's a thin hash*/
+			/*FIXME use testb encoding*/
+			amd64_test_reg_imm (code, AMD64_RCX, 0x01);
+			jump_sync_thin_hash = code;
+			amd64_branch8 (code, X86_CC_NE, -1, 1);
+
+			/*clear bits used by the gc*/
+			amd64_alu_reg_imm (code, X86_AND, AMD64_RCX, ~0x3);
+		}
+
 		/* is synchronization null? */
 		amd64_test_reg_reg (code, AMD64_RCX, AMD64_RCX);
 		/* if yes, jump to actual trampoline */
@@ -1021,6 +1048,48 @@ mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 
 	x86_push_imm (code, (guint64)func_arg);
 	amd64_call_reg (code, AMD64_R11);
+}
+
+
+static void
+handler_block_trampoline_helper (gpointer *ptr)
+{
+	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	*ptr = jit_tls->handler_block_return_address;
+}
+
+gpointer
+mono_arch_create_handler_block_trampoline (void)
+{
+	guint8 *tramp = mono_get_trampoline_code (MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD);
+	guint8 *code, *buf;
+	int tramp_size = 64;
+	code = buf = mono_global_codeman_reserve (tramp_size);
+
+	/*
+	This trampoline restore the call chain of the handler block then jumps into the code that deals with it.
+	*/
+
+	if (mono_get_jit_tls_offset () != -1) {
+		code = mono_amd64_emit_tls_get (code, AMD64_RDI, mono_get_jit_tls_offset ());
+		/*simulate a call*/
+		amd64_mov_reg_membase (code, AMD64_RDI, AMD64_RDI, G_STRUCT_OFFSET (MonoJitTlsData, handler_block_return_address), 8);
+		amd64_jump_code (code, tramp);
+	} else {
+		/*Slow path uses a c helper*/
+		amd64_mov_reg_reg (code, AMD64_RDI, AMD64_RSP, 8);
+		amd64_mov_reg_imm (code, AMD64_RAX, tramp);
+		amd64_push_reg (code, AMD64_RAX);
+		amd64_jump_code (code, handler_block_trampoline_helper);
+	}
+
+	mono_arch_flush_icache (buf, code - buf);
+	g_assert (code - buf <= tramp_size);
+
+	if (mono_jit_map_is_enabled ())
+		mono_emit_jit_tramp (buf, code - buf, "handler_block_trampoline");
+
+	return buf;
 }
 
 /*

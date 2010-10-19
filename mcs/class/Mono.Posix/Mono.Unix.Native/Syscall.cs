@@ -1143,6 +1143,7 @@ namespace Mono.Unix.Native {
 	}
 
 	[Flags][Map]
+	[CLSCompliant (false)]
 	public enum EpollEvents : uint {
 		EPOLLIN = 0x001,
 		EPOLLPRI = 0x002,
@@ -1166,6 +1167,7 @@ namespace Mono.Unix.Native {
 	}
 
 	[StructLayout (LayoutKind.Explicit, Size=12, Pack=1)]
+	[CLSCompliant (false)]
 	public struct EpollEvent {
 		[FieldOffset (0)]
 		public EpollEvents events;

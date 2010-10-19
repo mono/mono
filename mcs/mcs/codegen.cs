@@ -184,15 +184,15 @@ namespace Mono.CSharp {
 
 			switch (RootContext.Platform) {
 			case Platform.X86:
-				pekind = PortableExecutableKinds.Required32Bit;
+				pekind = PortableExecutableKinds.Required32Bit | PortableExecutableKinds.ILOnly;
 				machine = ImageFileMachine.I386;
 				break;
 			case Platform.X64:
-				pekind = PortableExecutableKinds.PE32Plus;
+				pekind = PortableExecutableKinds.ILOnly;
 				machine = ImageFileMachine.AMD64;
 				break;
 			case Platform.IA64:
-				pekind = PortableExecutableKinds.PE32Plus;
+				pekind = PortableExecutableKinds.ILOnly;
 				machine = ImageFileMachine.IA64;
 				break;
 			case Platform.AnyCPU:

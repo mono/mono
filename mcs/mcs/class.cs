@@ -838,12 +838,14 @@ namespace Mono.CSharp {
 					continue;
 
 				if (i == 0 && Kind == MemberKind.Class && !fne_resolved.Type.IsInterface) {
-					if (fne_resolved.Type == InternalType.Dynamic)
+					if (fne_resolved.Type == InternalType.Dynamic) {
 						Report.Error (1965, Location, "Class `{0}' cannot derive from the dynamic type",
 							GetSignatureForError ());
-					else
-						base_type = fne_resolved.Type;
 
+						continue;
+					}
+					
+					base_type = fne_resolved.Type;
 					base_class = fne_resolved;
 					continue;
 				}
@@ -2051,7 +2053,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public MemberCache LoadMembers (TypeSpec declaringType)
+		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			throw new NotSupportedException ("Not supported for compiled definition " + GetSignatureForError ());
 		}
@@ -2402,12 +2404,8 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 				Compiler.PredefinedAttributes.Extension.EmitAttribute (TypeBuilder);
 
-			var trans_flags = TypeManager.HasDynamicTypeUsed (base_type);
-			if (trans_flags != null) {
-				var pa = Compiler.PredefinedAttributes.DynamicTransform;
-				if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
-					TypeBuilder.SetCustomAttribute (new CustomAttributeBuilder (pa.Constructor, new object[] { trans_flags }));
-				}
+			if (base_type != null && base_type.HasDynamicElement) {
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type);
 			}
 		}
 
@@ -2910,13 +2908,15 @@ namespace Mono.CSharp {
 			} else {
 				if ((ModFlags & Modifiers.NEW) == 0) {
 					ModFlags |= Modifiers.NEW;
-					Report.SymbolRelatedToPreviousError (base_member);
-					if (!IsInterface && (base_member.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) != 0) {
-						Report.Warning (114, 2, Location, "`{0}' hides inherited member `{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword",
-							GetSignatureForError (), base_member.GetSignatureForError ());
-					} else {
-						Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
-							GetSignatureForError (), base_member.GetSignatureForError ());
+					if (!IsCompilerGenerated) {
+						Report.SymbolRelatedToPreviousError (base_member);
+						if (!IsInterface && (base_member.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) != 0) {
+							Report.Warning (114, 2, Location, "`{0}' hides inherited member `{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword",
+								GetSignatureForError (), base_member.GetSignatureForError ());
+						} else {
+							Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+								GetSignatureForError (), base_member.GetSignatureForError ());
+						}
 					}
 				}
 

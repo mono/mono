@@ -327,12 +327,9 @@ namespace System.IO.MemoryMappedFiles
 
 		static MmapProts ToUnixProts (MemoryMappedFileAccess access)
 		{
-			MmapProts prots;
-			
 			switch (access){
 			case MemoryMappedFileAccess.ReadWrite:
 				return MmapProts.PROT_WRITE | MmapProts.PROT_READ;
-				break;
 				
 			case MemoryMappedFileAccess.Write:
 				return MmapProts.PROT_WRITE;

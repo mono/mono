@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
@@ -107,6 +108,8 @@ namespace System.Xaml
 		public static object GetMemberValueForObjectReader (this XamlMember xm, XamlType xt, object target, INamespacePrefixLookup prefixLookup)
 		{
 			object native = GetPropertyOrFieldValueForObjectReader (xm, xt, target, prefixLookup);
+			if (native == null)
+				return null; // this is to prevent SringConverter to convert null to empty.
 			var convertedType = xm.Type == null ? null : xm.Type.UnderlyingType;
 			return DoConvert (xm.TypeConverter, native, convertedType);
 		}
@@ -116,7 +119,7 @@ namespace System.Xaml
 			// First get member value, then convert it to appropriate target type.
 			var tc = converter != null ? converter.ConverterInstance : null;
 			if (tc != null && targetType != null && tc.CanConvertTo (targetType))
-				return tc.ConvertTo (value, targetType);
+				return tc.ConvertTo (null, CultureInfo.InvariantCulture, value, targetType);
 			return value;
 		}
 
@@ -167,25 +170,42 @@ namespace System.Xaml
 			return false;
 		}
 
-		public static IEnumerable<XamlMember> GetAllReadWriteMembers (this XamlType type)
+		public static IEnumerable<XamlMember> GetAllObjectReaderMembers (this XamlType type, object instance, object dictionaryKey)
 		{
-			// FIXME: find out why only TypeExtension yields this directive. Seealso XamlObjectReaderTest
-			if (type == XamlLanguage.Type) {
+			// FIXME: find out why only TypeExtension and StaticExtension yield this directive. Seealso XamlObjectReaderTest.Read_CustomMarkupExtension*()
+			if (type == XamlLanguage.Type || type == XamlLanguage.Static) {
 				yield return XamlLanguage.PositionalParameters;
 				yield break;
 			}
 
-			// Note that unless the XamlType has the default constructor, we don't need "Arguments".
+			// Note that if the XamlType has the default constructor, we don't need "Arguments".
 			var args = type.ConstructionRequiresArguments ? type.GetConstructorArguments () : null;
 			if (args != null && args.Any ())
 				yield return XamlLanguage.Arguments;
 
+			if (dictionaryKey != null)
+				yield return XamlLanguage.Key;
+
 			if (type.IsContentValue ())
 				yield return XamlLanguage.Initialization;
 
-			foreach (var m in type.GetAllMembers ())
-				if (args == null || !args.Contains (m)) // do not read/write constructor arguments twice (they are written inside Arguments).
-					yield return m;
+			if (type.IsDictionary) {
+				yield return XamlLanguage.Items;
+				yield break;
+			}
+
+			IEnumerable en = null;
+			foreach (var m in type.GetAllMembers ()) {
+				// do not read constructor arguments twice (they are written inside Arguments).
+				if (args != null && args.Contains (m))
+					continue;
+				// do not return non-public members. Not sure why .NET filters out them though.
+				if (!m.IsReadPublic)
+					continue;
+				// do not return readonly property which holds a collection with no item.
+				if (!m.IsReadOnly || (en = (IEnumerable) m.Invoker.GetValue (instance)) != null && en.GetEnumerator ().MoveNext ())
+						yield return m;
+			}
 		}
 
 		public static bool ListEquals (this IList<XamlType> a1, IList<XamlType> a2)

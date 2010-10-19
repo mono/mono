@@ -553,15 +553,30 @@ is_valid_generic_instantiation (MonoGenericContainer *gc, MonoGenericContext *co
 		MonoGenericParamInfo *param_info = mono_generic_container_get_param_info (gc, i);
 		MonoClass *paramClass;
 		MonoClass **constraints;
+		MonoType *param_type = ginst->type_argv [i];
 
-		if (!param_info->constraints && !(param_info->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK))
+		/*it's not our job to validate type variables*/
+		if (mono_type_is_generic_argument (param_type))
 			continue;
-		if (mono_type_is_generic_argument (ginst->type_argv [i]))
-			continue; //it's not our job to validate type variables
 
-		paramClass = mono_class_from_mono_type (ginst->type_argv [i]);
+		paramClass = mono_class_from_mono_type (param_type);
 
 		if (paramClass->exception_type != MONO_EXCEPTION_NONE)
+			return FALSE;
+
+		/* A GTD can't be a generic argument.
+		 *
+		 * Due to how types are encoded we must check for the case of a genericinst MonoType and GTD MonoClass.
+		 * This happens in cases such as: class Foo<T>  { void X() { new Bar<T> (); } }
+		 *
+		 * Open instantiations can have GTDs as this happens when one type is instantiated with others params
+		 * and the former has an expansion into the later. For example:
+		 * class B<K> {}
+		 * class A<T>: B<K> {}
+		 * The type A <K> has a parent B<K>, that is inflated into the GTD B<>.
+		 * Since A<K> is open, thus not instantiatable, this is valid.
+		 */
+		if (paramClass->generic_container && param_type->type != MONO_TYPE_GENERICINST && !ginst->is_open)
 			return FALSE;
 
 		/*it's not safe to call mono_class_init from here*/
@@ -569,6 +584,9 @@ is_valid_generic_instantiation (MonoGenericContainer *gc, MonoGenericContext *co
 			if (!mono_class_is_valid_generic_instantiation (NULL, paramClass))
 				return FALSE;
 		}
+
+		if (!param_info->constraints && !(param_info->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK))
+			continue;
 
 		if ((param_info->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) && (!paramClass->valuetype || mono_class_is_nullable (paramClass)))
 			return FALSE;
@@ -3540,6 +3558,11 @@ do_newobj (VerifyContext *ctx, int token)
 		return;
 	}
 
+	if (!sig->hasthis) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid constructor signature missing hasthis at 0x%04x", ctx->ip_offset));
+		return;
+	}
+
 	if (!check_underflow (ctx, sig->param_count))
 		return;
 
@@ -5924,6 +5947,8 @@ verify_generic_parameters (MonoClass *class)
 
 			if (mono_type_is_generic_argument (constraint_type) && !recursive_mark_constraint_args (used_args, gc, constraint_type))
 				goto fail;
+			if (ctr->generic_class && !mono_class_is_valid_generic_instantiation (NULL, ctr))
+				goto fail;
 		}
 	}
 	mono_bitset_free (used_args);
@@ -5952,8 +5977,12 @@ mono_verifier_verify_class (MonoClass *class)
 		!MONO_CLASS_IS_INTERFACE (class) &&
 		(!class->image->dynamic && class->type_token != 0x2000001)) /*<Module> is the first type in the assembly*/
 		return FALSE;
-	if (class->parent && MONO_CLASS_IS_INTERFACE (class->parent))
-		return FALSE;
+	if (class->parent) {
+		if (MONO_CLASS_IS_INTERFACE (class->parent))
+			return FALSE;
+		if (!class->generic_class && class->parent->generic_container)
+			return FALSE;
+	}
 	if (class->generic_container && (class->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT)
 		return FALSE;
 	if (class->generic_container && !verify_generic_parameters (class))

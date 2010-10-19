@@ -81,7 +81,7 @@ namespace System.Reflection {
 #if NET_4_0
 		public override bool Equals (object obj)
 		{
-			return obj == this;
+			return obj == (object) this;
 		}
 
 		public override int GetHashCode ()

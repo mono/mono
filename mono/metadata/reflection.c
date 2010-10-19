@@ -7138,23 +7138,35 @@ static int
 assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 	int found_sep;
 	char *s;
+	gboolean quoted = FALSE;
 
 	memset (assembly, 0, sizeof (MonoAssemblyName));
-	assembly->name = p;
 	assembly->culture = "";
 	memset (assembly->public_key_token, 0, MONO_PUBLIC_KEY_TOKEN_LENGTH);
 
-	while (*p && (isalnum (*p) || *p == '.' || *p == '-' || *p == '_' || *p == '$' || *p == '@'))
+	if (*p == '"') {
+		quoted = TRUE;
 		p++;
-	found_sep = 0;
-	while (g_ascii_isspace (*p) || *p == ',') {
-		*p++ = 0;
-		found_sep = 1;
-		continue;
 	}
-	/* failed */
-	if (!found_sep)
+	assembly->name = p;
+	while (*p && (isalnum (*p) || *p == '.' || *p == '-' || *p == '_' || *p == '$' || *p == '@' || g_ascii_isspace (*p)))
+		p++;
+	if (quoted) {
+		if (*p != '"')
+			return 1;
+		*p = 0;
+		p++;
+	}
+	if (*p != ',')
 		return 1;
+	*p = 0;
+	/* Remove trailing whitespace */
+	s = p - 1;
+	while (*s && g_ascii_isspace (*s))
+		*s-- = 0;
+	p ++;
+	while (g_ascii_isspace (*p))
+		p++;
 	while (*p) {
 		if (*p == 'V' && g_ascii_strncasecmp (p, "Version=", 8) == 0) {
 			p += 8;
@@ -7733,8 +7745,7 @@ mono_reflection_get_token (MonoObject *obj)
 	} else if (strcmp (klass->name, "FieldBuilder") == 0) {
 		MonoReflectionFieldBuilder *fb = (MonoReflectionFieldBuilder *)obj;
 
-		/* Call mono_image_create_token so the object gets added to the tokens hash table */
-		token = mono_image_create_token (((MonoReflectionTypeBuilder*)fb->typeb)->module->dynamic_image, obj, FALSE, TRUE);
+		token = fb->table_idx | MONO_TOKEN_FIELD_DEF;
 	} else if (strcmp (klass->name, "TypeBuilder") == 0) {
 		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)obj;
 		token = tb->table_idx | MONO_TOKEN_TYPE_DEF;
@@ -10830,8 +10841,12 @@ ensure_runtime_vtable (MonoClass *klass)
 	}
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
-		for (i = 0; i < klass->method.count; ++i)
-			klass->methods [i]->slot = i;
+		int slot_num = 0;
+		for (i = 0; i < klass->method.count; ++i) {
+			MonoMethod *im = klass->methods [i];
+			if (!(im->flags & METHOD_ATTRIBUTE_STATIC))
+				im->slot = slot_num++;
+		}
 		
 		klass->interfaces_packed = NULL; /*make setup_interface_offsets happy*/
 		mono_class_setup_interface_offsets (klass);

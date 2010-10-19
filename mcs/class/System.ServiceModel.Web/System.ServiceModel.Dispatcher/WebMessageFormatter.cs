@@ -164,7 +164,7 @@ namespace System.ServiceModel.Dispatcher
 					return GetSerializer (ref xml_serializer, p => new DataContractSerializer (p.Type, p.Name, p.Namespace));
 				else
 					return GetSerializer (ref xml_serializer, p => new DataContractSerializer (p.Type));
-				break;
+
 			case WebContentFormat.Json:
 				// FIXME: after name argument they are hack
 #if !MOONLIGHT
@@ -173,7 +173,7 @@ namespace System.ServiceModel.Dispatcher
 				else
 #endif
 					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type));
-				break;
+
 			default:
 				throw new NotImplementedException ();
 			}

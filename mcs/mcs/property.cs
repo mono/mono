@@ -656,15 +656,8 @@ namespace Mono.CSharp
 
 			if (member_type == InternalType.Dynamic) {
 				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder);
-			} else {
-				var trans_flags = TypeManager.HasDynamicTypeUsed (member_type);
-				if (trans_flags != null) {
-					var pa = Compiler.PredefinedAttributes.DynamicTransform;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
-						PropertyBuilder.SetCustomAttribute (
-							new CustomAttributeBuilder (pa.Constructor, new object[] { trans_flags }));
-					}
-				}
+			} else if (member_type.HasDynamicElement) {
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type);
 			}
 
 			first.Emit (Parent);
@@ -1001,14 +994,19 @@ namespace Mono.CSharp
 
 		public override bool Define()
 		{
+			var mod_flags_src = ModFlags;
+
 			if (!base.Define ())
 				return false;
 
 			if (declarators != null) {
+				if ((mod_flags_src & Modifiers.DEFAULT_ACCESS_MODIFER) != 0)
+					mod_flags_src &= ~(Modifiers.AccessibilityMask | Modifiers.DEFAULT_ACCESS_MODIFER);
+
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
 				int index = Parent.PartialContainer.Events.IndexOf (this);
 				foreach (var d in declarators) {
-					var ef = new EventField (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
+					var ef = new EventField (Parent, t, mod_flags_src, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 
 					if (d.Initializer != null)
 						ef.initializer = d.Initializer;
@@ -1112,7 +1110,7 @@ namespace Mono.CSharp
 					return null;
 
 				MethodBuilder mb = method_data.MethodBuilder;
-				ParameterInfo.ApplyAttributes (this, mb);
+
 				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, mb, ParameterInfo, method.ModFlags);
 				Spec.IsAccessor = true;
 

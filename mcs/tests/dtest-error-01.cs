@@ -17,12 +17,31 @@ class Helper
 class Tester
 {
 #pragma warning disable 169
+	void Using_1 ()
+	{
+		AssertError (
+			() => {
+				using (dynamic d = 1) { }
+			}, "Cannot implicitly convert type `int' to `System.IDisposable'");
+	}
+	
 	void Unsafe_1 ()
 	{
 		dynamic d = 1;
 		AssertError (
 			() => Helper.Foo (d),
 			"Pointers and fixed size buffers cannot be used in a dynamic context");
+	}
+	
+	void NullableConversion ()
+	{
+		dynamic d = 1;
+		AssertError (
+			() => {
+				dynamic b = false;
+				byte? b2 = null;
+				b &= b2;
+			}, "Operator `&=' cannot be applied to operands of type `bool' and `byte?'");
 	}
 	
 #pragma warning restore 169
@@ -33,7 +52,7 @@ class Tester
 			a ();
 		} catch (RuntimeBinderException e) {
 			if (e.Message != msg)
-				throw;
+				throw new ApplicationException ("Expected error message: " + e.Message);
 			
 			return;
 		}

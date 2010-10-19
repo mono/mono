@@ -443,60 +443,6 @@ namespace Mono.CSharp {
 	{
 		return t.IsDelegate;
 	}
-
-	//
-	// When any element of the type is a dynamic type
-	//
-	// This method builds a transformation array for dynamic types
-	// used in places where DynamicAttribute cannot be applied to.
-	// It uses bool flag when type is of dynamic type and each
-	// section always starts with "false" for some reason.
-	//
-	// LAMESPEC: This should be part of C# specification !
-	// 
-	// Example: Func<dynamic, int, dynamic[]>
-	// Transformation: { false, true, false, false, true }
-	//
-	public static bool[] HasDynamicTypeUsed (TypeSpec t)
-	{
-		var ac = t as ArrayContainer;
-		if (ac != null) {
-			if (HasDynamicTypeUsed (ac.Element) != null)
-				return new bool[] { false, true };
-
-			return null;
-		}
-
-		if (t == null)
-			return null;
-
-		if (IsGenericType (t)) {
-			List<bool> transform = null;
-			var targs = GetTypeArguments (t);
-			for (int i = 0; i < targs.Length; ++i) {
-				var element = HasDynamicTypeUsed (targs [i]);
-				if (element != null) {
-					if (transform == null) {
-						transform = new List<bool> ();
-						for (int ii = 0; ii <= i; ++ii)
-							transform.Add (false);
-					}
-
-					transform.AddRange (element);
-				} else if (transform != null) {
-					transform.Add (false);
-				}
-			}
-
-			if (transform != null)
-				return transform.ToArray ();
-		}
-
-		if (object.ReferenceEquals (InternalType.Dynamic, t))
-			return new bool [] { true };
-
-		return null;
-	}
 	
 	// Obsolete
 	public static bool IsEnumType (TypeSpec t)

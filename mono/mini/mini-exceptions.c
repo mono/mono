@@ -191,16 +191,13 @@ is_address_protected (MonoJitInfo *ji, MonoJitExceptionInfo *ei, gpointer ip)
 	return TRUE;
 }
 
-#ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
-
 /*
- * find_jit_info_no_ext:
+ * find_jit_info:
  *
- * If the target has the find_jit_info_ext version of this function, define the old
- * version here which translates between the old and new APIs.
+ * Translate between the mono_arch_find_jit_info function and the old API.
  */
 static MonoJitInfo *
-find_jit_info_no_ext (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *res, MonoJitInfo *prev_ji, MonoContext *ctx, 
+find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *res, MonoJitInfo *prev_ji, MonoContext *ctx, 
 			   MonoContext *new_ctx, MonoLMF **lmf, gboolean *managed)
 {
 	StackFrameInfo frame;
@@ -217,7 +214,7 @@ find_jit_info_no_ext (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *
 	if (managed)
 		*managed = FALSE;
 
-	err = mono_arch_find_jit_info_ext (domain, jit_tls, ji, ctx, new_ctx, lmf, &frame);
+	err = mono_arch_find_jit_info (domain, jit_tls, ji, ctx, new_ctx, lmf, &frame);
 	if (!err)
 		return (gpointer)-1;
 
@@ -226,7 +223,7 @@ find_jit_info_no_ext (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *
 	case FRAME_TYPE_MANAGED:
 		if (managed)
 			*managed = TRUE;
-		return ji;
+		return frame.ji;
 	case FRAME_TYPE_MANAGED_TO_NATIVE:
 		if (frame.ji)
 			return frame.ji;
@@ -242,7 +239,7 @@ find_jit_info_no_ext (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *
 		 * The normal exception handling code can't handle this frame, so just
 		 * skip it.
 		 */
-		ji = find_jit_info_no_ext (domain, jit_tls, res, NULL, new_ctx, &tmp_ctx, lmf, managed);
+		ji = find_jit_info (domain, jit_tls, res, NULL, new_ctx, &tmp_ctx, lmf, managed);
 		memcpy (new_ctx, &tmp_ctx, sizeof (MonoContext));
 		return ji;
 	}
@@ -251,8 +248,6 @@ find_jit_info_no_ext (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *
 		return NULL;
 	}
 }
-
-#endif
 
 /* mono_find_jit_info:
  *
@@ -281,11 +276,7 @@ mono_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *re
 	if (managed)
 		*managed = FALSE;
 
-#ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
-	ji = find_jit_info_no_ext (domain, jit_tls, res, prev_ji, ctx, new_ctx, lmf, &managed2);
-#else
-	ji = mono_arch_find_jit_info (domain, jit_tls, res, prev_ji, ctx, new_ctx, lmf, &managed2);
-#endif
+	ji = find_jit_info (domain, jit_tls, res, prev_ji, ctx, new_ctx, lmf, &managed2);
 
 	if (ji == (gpointer)-1)
 		return ji;
@@ -310,7 +301,7 @@ mono_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *re
 			*native_offset = offset;
 
 		if (managed)
-			if (!ji->method->wrapper_type)
+			if (!ji->method->wrapper_type || ji->method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD)
 				*managed = TRUE;
 
 		if (trace)
@@ -325,8 +316,6 @@ mono_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *re
 
 	return ji;
 }
-
-#ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
 
 /*
  * mono_find_jit_info_ext:
@@ -357,7 +346,7 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	if (!target_domain)
 		target_domain = domain;
 
-	err = mono_arch_find_jit_info_ext (target_domain, jit_tls, ji, ctx, new_ctx, lmf, frame);
+	err = mono_arch_find_jit_info (target_domain, jit_tls, ji, ctx, new_ctx, lmf, frame);
 	if (!err)
 		return FALSE;
 
@@ -393,8 +382,6 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 	return TRUE;
 }
-
-#endif /* MONO_ARCH_HAVE_FIND_JIT_INFO_EXT */
 
 static gpointer
 get_generic_info_from_stack_frame (MonoJitInfo *ji, MonoContext *ctx)
@@ -716,13 +703,7 @@ mono_jit_walk_stack_from_ctx_in_thread (MonoJitStackWalk func, MonoDomain *domai
 	gint il_offset;
 	MonoContext ctx, new_ctx;
 	StackFrameInfo frame;
-#ifndef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
-	gint native_offset;
-	gboolean managed;
-	MonoJitInfo *ji, rji;
-#else
 	gboolean res;
-#endif
 	
 	MONO_ARCH_CONTEXT_DEF
 
@@ -741,21 +722,9 @@ mono_jit_walk_stack_from_ctx_in_thread (MonoJitStackWalk func, MonoDomain *domai
 
 	while (MONO_CONTEXT_GET_SP (&ctx) < jit_tls->end_of_stack) {
 		frame.lmf = lmf;
-#ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
 		res = mono_find_jit_info_ext (domain, jit_tls, NULL, &ctx, &new_ctx, NULL, &lmf, &frame);
 		if (!res)
 			return;
-#else
-		ji = mono_find_jit_info (domain, jit_tls, &rji, NULL, &ctx, &new_ctx, NULL, &lmf, &native_offset, &managed);
-		g_assert (ji);
-		frame.type = FRAME_TYPE_MANAGED;
-		frame.ji = ji;
-		frame.managed = managed;
-		frame.native_offset = native_offset;
-
-		if (ji == (gpointer)-1)
-			return;
-#endif
 
 		if (do_il_offset && frame.ji) {
 			MonoDebugSourceLocation *source;
@@ -1243,14 +1212,25 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 		mono_ex = NULL;
 	}
 
-	if (mono_ex && jit_tls->class_cast_from && !strcmp (mono_ex->object.vtable->klass->name, "InvalidCastException")) {
-		char *from_name = mono_type_get_full_name (jit_tls->class_cast_from);
-		char *to_name = mono_type_get_full_name (jit_tls->class_cast_to);
-		char *msg = g_strdup_printf ("Unable to cast object of type '%s' to type '%s'.", from_name, to_name);
-		mono_ex->message = mono_string_new (domain, msg);
-		g_free (from_name);
-		g_free (to_name);
-		g_free (msg);
+	if (mono_ex && jit_tls->class_cast_from) {
+		if (!strcmp (mono_ex->object.vtable->klass->name, "InvalidCastException")) {
+			char *from_name = mono_type_get_full_name (jit_tls->class_cast_from);
+			char *to_name = mono_type_get_full_name (jit_tls->class_cast_to);
+			char *msg = g_strdup_printf ("Unable to cast object of type '%s' to type '%s'.", from_name, to_name);
+			mono_ex->message = mono_string_new (domain, msg);
+			g_free (from_name);
+			g_free (to_name);
+			g_free (msg);
+		}
+		if (!strcmp (mono_ex->object.vtable->klass->name, "ArrayTypeMismatchException")) {
+			char *from_name = mono_type_get_full_name (jit_tls->class_cast_from);
+			char *to_name = mono_type_get_full_name (jit_tls->class_cast_to);
+			char *msg = g_strdup_printf ("Source array of type '%s' cannot be cast to destination array type '%s'.", from_name, to_name);
+			mono_ex->message = mono_string_new (domain, msg);
+			g_free (from_name);
+			g_free (to_name);
+			g_free (msg);
+		}
 	}
 
 	if (!call_filter)

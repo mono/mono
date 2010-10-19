@@ -50,7 +50,6 @@ namespace System.Net {
 		Version version;
 		NameValueCollection query_string; // check if null is ok, check if read-only, check case-sensitiveness
 		string raw_url;
-		Guid identifier;
 		Uri url;
 		Uri referrer;
 		string [] user_languages;
@@ -408,8 +407,9 @@ namespace System.Net {
 			get { return context.Connection.RemoteEndPoint; }
 		}
 
+		[MonoTODO ("Always returns Guid.Empty")]
 		public Guid RequestTraceIdentifier {
-			get { return identifier; }
+			get { return Guid.Empty; }
 		}
 
 		public Uri Url {

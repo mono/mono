@@ -315,6 +315,7 @@ pthread_t GC_stopping_thread;
 int GC_stopping_pid;
 
 #ifdef PLATFORM_ANDROID
+static
 int android_thread_kill(pid_t tid, int sig)
 {
     int  ret;

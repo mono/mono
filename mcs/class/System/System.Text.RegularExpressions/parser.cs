@@ -860,7 +860,6 @@ namespace System.Text.RegularExpressions.Syntax {
 			case '1': case '2': case '3': case '4': case '5':
 			case '6': case '7': case '8': case '9': {
 				ptr --;
-				int oldptr = ptr;
 				int n = ParseNumber (10, 1, 0);
 				if (n < 0) {
 					ptr = p;

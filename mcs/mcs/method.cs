@@ -361,7 +361,7 @@ namespace Mono.CSharp {
 			ms.returnType = inflator.Inflate (returnType);
 			ms.parameters = parameters.Inflate (inflator);
 			if (IsGeneric)
-				ms.constraints = TypeParameterSpec.InflateConstraints (inflator, GenericDefinition.TypeParameters);
+				ms.constraints = TypeParameterSpec.InflateConstraints (inflator, Constraints);
 
 			return ms;
 		}
@@ -587,16 +587,9 @@ namespace Mono.CSharp {
 			if (ReturnType == InternalType.Dynamic) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
 				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
-			} else {
-				var trans_flags = TypeManager.HasDynamicTypeUsed (ReturnType);
-				if (trans_flags != null) {
-					var pa = Compiler.PredefinedAttributes.DynamicTransform;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
-						return_attributes = new ReturnParameter (this, MethodBuilder, Location);
-						return_attributes.Builder.SetCustomAttribute (
-							new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
-					}
-				}
+			} else if (ReturnType.HasDynamicElement) {
+				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType);
 			}
 
 			if (OptAttributes != null)
@@ -769,7 +762,7 @@ namespace Mono.CSharp {
 			       FullNamedExpression return_type, Modifiers mod,
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
-				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersClass :
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
 				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
 				AllowedModifiersClass,
 				name, attrs, parameters)
@@ -2103,16 +2096,9 @@ namespace Mono.CSharp {
 			if (ReturnType == InternalType.Dynamic) {
 				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
 				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
-			} else {
-				var trans_flags = TypeManager.HasDynamicTypeUsed (ReturnType);
-				if (trans_flags != null) {
-					var pa = Compiler.PredefinedAttributes.DynamicTransform;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
-						return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
-						return_attributes.Builder.SetCustomAttribute (
-							new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
-					}
-				}
+			} else if (ReturnType.HasDynamicElement) {
+				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
+				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType);
 			}
 
 			if (OptAttributes != null)

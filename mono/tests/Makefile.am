@@ -42,6 +42,8 @@ STRESS_TESTS_SRC=	\
 	process-stress.cs	\
 	assembly-load-stress.cs
 
+# Disabled until ?mcs is fixed
+#	bug-331958.cs
 BASE_TEST_CS_SRC=		\
 	array-init.cs		\
 	arraylist.cs		\
@@ -228,7 +230,6 @@ BASE_TEST_CS_SRC=		\
 	bug-78656.cs		\
 	bug-77127.cs		\
 	bug-323114.cs		\
-	bug-331958.cs		\
 	interlocked.cs		\
 	cross-domain.cs		\
 	appdomain-exit.cs	\
@@ -381,10 +382,10 @@ TEST_CS_SRC_GEN = \
 	imt_big_iface_test.cs
 
 if AMD64
-TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs
+TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs finally_guard.cs
 else
 if X86
-TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs
+TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs finally_guard.cs
 else
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN)
 endif

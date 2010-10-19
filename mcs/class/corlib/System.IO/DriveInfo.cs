@@ -190,7 +190,6 @@ namespace System.IO {
 				if (slash >= 0) {
 					if (sb == null)
 						sb = new StringBuilder ();
-					string str = path.Substring (start, slash - start);
 					sb.Append (path.Substring (start, slash - start));
 					char c = (char) ((path [slash + 1] - '0') << 6);
 					c += (char) ((path [slash + 2] - '0') << 3);

@@ -594,7 +594,7 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMemPool *mp, MonoMethodSign
  *
  * Returns the size of the argument area on the stack.
  * This should be signal safe, since it is called from
- * mono_arch_find_jit_info_ext ().
+ * mono_arch_find_jit_info ().
  * FIXME: The metadata calls might not be signal safe.
  */
 int
@@ -5718,8 +5718,7 @@ mono_x86_get_this_arg_offset (MonoGenericSharingContext *gsctx, MonoMethodSignat
 }
 
 gpointer
-mono_arch_get_this_arg_from_call (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig,
-		mgreg_t *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
 {
 	guint32 esp = regs [X86_ESP];
 	CallInfo *cinfo = NULL;

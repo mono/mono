@@ -26,7 +26,7 @@ namespace I18N.Common
 {
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 // This class provides an internal list of handlers, for runtime
 // engines that do not implement the altered "GetFile" semantics.
@@ -210,19 +210,20 @@ public sealed class Handlers
         "I18N.West.ENCibm865"
     };
 	
-	static Hashtable aliases;
+	static Dictionary<string, string> aliases;
 	public static string GetAlias (string name)
 	{
 		if (aliases == null)
 			BuildHash ();
 
-		return aliases [name] as string;
+		string v;
+		aliases.TryGetValue (name, out v);
+		return v;
 	}
 
 	static void BuildHash ()
 	{
-		aliases = new Hashtable (new CaseInsensitiveHashCodeProvider (),
-					 new CaseInsensitiveComparer ());
+		aliases = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
 
 		aliases.Add ("arabic", "iso_8859_6");
 		aliases.Add ("csISOLatinArabic", "iso_8859_6");

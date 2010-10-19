@@ -57,8 +57,8 @@ namespace System.Xaml.Schema
 		{
 			if (instance == null)
 				throw new ArgumentNullException ("instance");
-			if (this is XamlDirective)
-				throw new NotSupportedException ("not supported operation on directive members.");
+//			if (this is XamlDirective)
+//				throw new NotSupportedException ("not supported operation on directive members.");
 			if (UnderlyingGetter == null)
 				throw new NotSupportedException ("Attempt to get value from write-only property or event");
 			return UnderlyingGetter.Invoke (instance, new object [0]);
@@ -67,8 +67,8 @@ namespace System.Xaml.Schema
 		{
 			if (instance == null)
 				throw new ArgumentNullException ("instance");
-			if (this is XamlDirective)
-				throw new NotSupportedException ("not supported operation on directive members.");
+//			if (this is XamlDirective)
+//				throw new NotSupportedException ("not supported operation on directive members.");
 			if (UnderlyingSetter == null)
 				throw new NotSupportedException ("Attempt to get value from read-only property");
 			UnderlyingSetter.Invoke (instance, new object [] {value});

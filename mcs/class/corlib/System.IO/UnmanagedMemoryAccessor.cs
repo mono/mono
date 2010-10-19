@@ -35,6 +35,7 @@ using System.Security.Permissions;
 
 namespace System.IO
 {
+	[MonoTODO ("Offset is ignored")]
 	public class UnmanagedMemoryAccessor : IDisposable {
 		SafeBuffer buffer;
 		long offset;
@@ -64,8 +65,6 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException ("offset");
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("capacity");
-			if (offset + capacity < 0)
-				throw new InvalidOperationException ();
 
 			if (access == FileAccess.Read || access == FileAccess.ReadWrite)
 				canread = true;

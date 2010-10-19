@@ -428,7 +428,6 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 
 /*
  * mono_arch_get_unbox_trampoline:
- * @gsctx: the generic sharing context
  * @m: method pointer
  * @addr: pointer to native code for @m
  *
@@ -437,7 +436,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
  * unboxing before calling the method
  */
 gpointer
-mono_arch_get_unbox_trampoline (MonoGenericSharingContext *gsctx, MonoMethod *m, gpointer addr)
+mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 {
 	guint8 *code, *start;
 	MonoDomain *domain = mono_domain_get ();
@@ -496,7 +495,6 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	gboolean mrgctx;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
-	char *name;
 
 	mrgctx = MONO_RGCTX_SLOT_IS_MRGCTX (slot);
 	index = MONO_RGCTX_SLOT_INDEX (slot);
@@ -682,7 +680,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 }
 
 gpointer
-mono_arch_get_unbox_trampoline (MonoGenericSharingContext *gsctx, MonoMethod *m, gpointer addr)
+mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 {
 	g_assert_not_reached ();
 	return NULL;

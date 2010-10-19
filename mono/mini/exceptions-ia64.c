@@ -487,68 +487,68 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 	return res;
 }
 
-/* mono_arch_find_jit_info:
+/*
+ * mono_arch_find_jit_info:
  *
- * This function is used to gather information from @ctx. It return the 
- * MonoJitInfo of the corresponding function, unwinds one stack frame and
- * stores the resulting context into @new_ctx. It also stores a string 
- * describing the stack location into @trace (if not NULL), and modifies
- * the @lmf if necessary. @native_offset return the IP offset from the 
- * start of the function or -1 if that info is not available.
+ * This function is used to gather information from @ctx, and store it in @frame_info.
+ * It unwinds one stack frame, and stores the resulting context into @new_ctx. @lmf
+ * is modified if needed.
+ * Returns TRUE on success, FALSE otherwise.
  */
-MonoJitInfo *
-mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *res, MonoJitInfo *prev_ji, MonoContext *ctx, 
-			 MonoContext *new_ctx, MonoLMF **lmf, gboolean *managed)
+gboolean
+mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, 
+							 MonoJitInfo *ji, MonoContext *ctx, 
+							 MonoContext *new_ctx, MonoLMF **lmf, 
+							 StackFrameInfo *frame)
 {
-	MonoJitInfo *ji;
 	int err;
 	unw_word_t ip;
+
+	memset (frame, 0, sizeof (StackFrameInfo));
+	frame->ji = ji;
+	frame->managed = FALSE;
 
 	*new_ctx = *ctx;
 	new_ctx->precise_ip = FALSE;
 
-	while (TRUE) {
-		err = unw_get_reg (&new_ctx->cursor, UNW_IA64_IP, &ip);
-		g_assert (err == 0);
+	if (!ji) {
+		while (TRUE) {
+			err = unw_get_reg (&new_ctx->cursor, UNW_IA64_IP, &ip);
+			g_assert (err == 0);
 
-		/* Avoid costly table lookup during stack overflow */
-		if (prev_ji && ((guint8*)ip > (guint8*)prev_ji->code_start && ((guint8*)ip < ((guint8*)prev_ji->code_start) + prev_ji->code_size)))
-			ji = prev_ji;
-		else
 			ji = mini_jit_info_table_find (domain, (gpointer)ip, NULL);
 
-		if (managed)
-			*managed = FALSE;
+			/*
+			  {
+			  char name[256];
+			  unw_word_t off;
 
-		/*
-		{
-			char name[256];
-			unw_word_t off;
+			  unw_get_proc_name (&new_ctx->cursor, name, 256, &off);
+			  printf ("F: %s\n", name);
+			  }
+			*/
 
-			unw_get_proc_name (&new_ctx->cursor, name, 256, &off);
-			printf ("F: %s\n", name);
+			if (ji)
+				break;
+
+			/* This is an unmanaged frame, so just unwind through it */
+			/* FIXME: This returns -3 for the __clone2 frame in libc */
+			err = unw_step (&new_ctx->cursor);
+			if (err < 0)
+				break;
+
+			if (err == 0)
+				break;
 		}
-		*/
-
-		if (ji != NULL) {
-			if (managed)
-				if (!ji->method->wrapper_type)
-					*managed = TRUE;
-
-			break;
-		}
-
-		/* This is an unmanaged frame, so just unwind through it */
-		/* FIXME: This returns -3 for the __clone2 frame in libc */
-		err = unw_step (&new_ctx->cursor);
-		if (err < 0)
-			break;
-
-		if (err == 0)
-			break;
 	}
 
 	if (ji) {
+		frame->type = FRAME_TYPE_MANAGED;
+		frame->ji = ji;
+
+		if (!ji->method->wrapper_type || ji->method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD)
+			frame->managed = TRUE;
+
 		//print_ctx (new_ctx);
 
 		err = unw_step (&new_ctx->cursor);
@@ -556,10 +556,10 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 
 		//print_ctx (new_ctx);
 
-		return ji;
+		return TRUE;
 	}
 	else
-		return (gpointer)(gssize)-1;
+		return FALSE;
 }
 
 /**

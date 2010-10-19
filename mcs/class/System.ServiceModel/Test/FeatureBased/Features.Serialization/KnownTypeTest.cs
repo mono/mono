@@ -22,7 +22,7 @@ namespace MonoTests.Features.Serialization
 
 			Point2D r = Client.Move (p1, p2);
 			Assert.IsNotNull (r, "#1");
-			Assert.IsTrue (r is AdvPoint2D, "#2");
+			Assert.AreEqual (typeof (AdvPoint2D), r.GetType (), "#2");
 			Assert.AreEqual (((AdvPoint2D) r).ZeroDistance, 5, "#3");
 
 		}

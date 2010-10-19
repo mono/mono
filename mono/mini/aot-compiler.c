@@ -895,14 +895,14 @@ arch_emit_specific_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size
  * CALL_TARGET is the symbol pointing to the native code of METHOD.
  */
 static void
-arch_emit_unbox_trampoline (MonoAotCompile *acfg, MonoMethod *method, MonoGenericSharingContext *gsctx, const char *call_target)
+arch_emit_unbox_trampoline (MonoAotCompile *acfg, MonoMethod *method, const char *call_target)
 {
 #if defined(TARGET_AMD64)
 	guint8 buf [32];
 	guint8 *code;
 	int this_reg;
 
-	this_reg = mono_arch_get_this_arg_reg (mono_method_signature (method), gsctx, NULL);
+	this_reg = mono_arch_get_this_arg_reg (NULL);
 	code = buf;
 	amd64_alu_reg_imm (code, X86_ADD, this_reg, sizeof (MonoObject));
 
@@ -1787,8 +1787,13 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 		}
 		case MONO_WRAPPER_WRITE_BARRIER:
 			break;
-		case MONO_WRAPPER_STELEMREF:
+		case MONO_WRAPPER_STELEMREF: {
+			MonoClass *klass = mono_marshal_get_wrapper_info (method);
+
+			/* Make sure this is the 'normal' stelemref wrapper, not the virtual one */
+			g_assert (!klass);
 			break;
+		}
 		case MONO_WRAPPER_UNKNOWN:
 			if (strcmp (method->name, "FastMonitorEnter") == 0)
 				encode_value (MONO_AOT_WRAPPER_MONO_ENTER, p, &p);
@@ -2380,6 +2385,17 @@ add_wrappers (MonoAotCompile *acfg)
 		if (method)
 			add_method (acfg, method);
 #endif
+
+		/* Stelemref wrappers */
+		/* There is only a constant number of these, iterating over all types should handle them all */
+		for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
+			MonoClass *klass;
+		
+			token = MONO_TOKEN_TYPE_DEF | (i + 1);
+			klass = mono_class_get (acfg->image, token);
+			if (klass)
+				add_method (acfg, mono_marshal_get_virtual_stelemref (mono_array_class_get (klass, 1)));
+		}
 	}
 
 	/* 
@@ -4891,7 +4907,7 @@ emit_code (MonoAotCompile *acfg)
 
 			sprintf (call_target, "%s", cfg->asm_symbol);
 
-			arch_emit_unbox_trampoline (acfg, cfg->orig_method, cfg->generic_sharing_context, call_target);
+			arch_emit_unbox_trampoline (acfg, cfg->orig_method, call_target);
 		}
 
 		if (cfg->compile_llvm)
@@ -6253,11 +6269,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		}
 	}
 
-#ifdef ENABLE_LLVM
-	acfg->llvm = TRUE;
- 	acfg->aot_opts.asm_writer = TRUE;
-	acfg->flags |= MONO_AOT_FILE_FLAG_WITH_LLVM;
-#endif
+	if (mono_use_llvm) {
+		acfg->llvm = TRUE;
+		acfg->aot_opts.asm_writer = TRUE;
+		acfg->flags |= MONO_AOT_FILE_FLAG_WITH_LLVM;
+	}
 
 	if (acfg->aot_opts.full_aot)
 		acfg->flags |= MONO_AOT_FILE_FLAG_FULL_AOT;
@@ -6306,8 +6322,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	acfg->plt_offset = 1;
 
 #ifdef ENABLE_LLVM
-	llvm_acfg = acfg;
-	mono_llvm_create_aot_module (acfg->got_symbol_base);
+	if (acfg->llvm) {
+		llvm_acfg = acfg;
+		mono_llvm_create_aot_module (acfg->got_symbol_base);
+	}
 #endif
 
 	/* GOT offset 0 is reserved for the address of the current assembly */
@@ -6351,9 +6369,9 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		} else {
 			acfg->tmpfname = g_strdup ("temp.s");
 		}
-	}
 
-	emit_llvm_file (acfg);
+		emit_llvm_file (acfg);
+	}
 #endif
 
 	if (!acfg->aot_opts.asm_only && !acfg->aot_opts.asm_writer && bin_writer_supported ()) {

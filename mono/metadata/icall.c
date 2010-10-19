@@ -5016,14 +5016,7 @@ ves_icall_System_Reflection_Assembly_get_fullName (MonoReflectionAssembly *assem
 	MonoString *res;
 	gchar *name;
 
-	name = g_strdup_printf (
-		"%s, Version=%d.%d.%d.%d, Culture=%s, PublicKeyToken=%s%s",
-		mass->aname.name,
-		mass->aname.major, mass->aname.minor, mass->aname.build, mass->aname.revision,
-		mass->aname.culture && *mass->aname.culture? mass->aname.culture: "neutral",
-		mass->aname.public_key_token [0] ? (char *)mass->aname.public_key_token : "null",
-		(mass->aname.flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
-
+	name = mono_stringify_assembly_name (&mass->aname);
 	res = mono_string_new (domain, name);
 	g_free (name);
 
@@ -5401,14 +5394,23 @@ ves_icall_System_Reflection_Module_InternalGetTypes (MonoReflectionModule *modul
 }
 
 static gboolean
-mono_metadata_memberref_is_method (MonoImage *image, guint32 token)
+mono_memberref_is_method (MonoImage *image, guint32 token)
 {
-	guint32 cols [MONO_MEMBERREF_SIZE];
-	const char *sig;
-	mono_metadata_decode_row (&image->tables [MONO_TABLE_MEMBERREF], mono_metadata_token_index (token) - 1, cols, MONO_MEMBERREF_SIZE);
-	sig = mono_metadata_blob_heap (image, cols [MONO_MEMBERREF_SIGNATURE]);
-	mono_metadata_decode_blob_size (sig, &sig);
-	return (*sig != 0x6);
+	if (!image->dynamic) {
+		guint32 cols [MONO_MEMBERREF_SIZE];
+		const char *sig;
+		mono_metadata_decode_row (&image->tables [MONO_TABLE_MEMBERREF], mono_metadata_token_index (token) - 1, cols, MONO_MEMBERREF_SIZE);
+		sig = mono_metadata_blob_heap (image, cols [MONO_MEMBERREF_SIGNATURE]);
+		mono_metadata_decode_blob_size (sig, &sig);
+		return (*sig != 0x6);
+	} else {
+		MonoClass *handle_class;
+
+		if (!mono_lookup_dynamic_token_class (image, token, FALSE, &handle_class, NULL))
+			return FALSE;
+
+		return mono_defaults.methodhandle_class == handle_class;
+	}
 }
 
 static void
@@ -5444,12 +5446,14 @@ ves_icall_System_Reflection_Module_ResolveTypeToken (MonoImage *image, guint32 t
 	}
 
 	if (image->dynamic) {
-		if (type_args || method_args)
-			mono_raise_exception (mono_get_exception_not_implemented (NULL));
-		klass = mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
-		if (!klass)
-			return NULL;
-		return &klass->byval_arg;
+		if ((table == MONO_TABLE_TYPEDEF) || (table == MONO_TABLE_TYPEREF)) {
+			klass = mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
+			return klass ? &klass->byval_arg : NULL;
+		}
+
+		init_generic_context_from_args (&context, type_args, method_args);
+		klass = mono_lookup_dynamic_token_class (image, token, FALSE, NULL, &context);
+		return klass ? &klass->byval_arg : NULL;
 	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
@@ -5487,17 +5491,23 @@ ves_icall_System_Reflection_Module_ResolveMethodToken (MonoImage *image, guint32
 	}
 
 	if (image->dynamic) {
-		if (type_args || method_args)
-			mono_raise_exception (mono_get_exception_not_implemented (NULL));
-		/* FIXME: validate memberref token type */
-		return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
+		if (table == MONO_TABLE_METHOD)
+			return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
+
+		if ((table == MONO_TABLE_MEMBERREF) && !(mono_memberref_is_method (image, token))) {
+			*error = ResolveTokenError_BadTable;
+			return NULL;
+		}
+
+		init_generic_context_from_args (&context, type_args, method_args);
+		return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, &context);
 	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
 		*error = ResolveTokenError_OutOfRange;
 		return NULL;
 	}
-	if ((table == MONO_TABLE_MEMBERREF) && (!mono_metadata_memberref_is_method (image, token))) {
+	if ((table == MONO_TABLE_MEMBERREF) && (!mono_memberref_is_method (image, token))) {
 		*error = ResolveTokenError_BadTable;
 		return NULL;
 	}
@@ -5555,17 +5565,23 @@ ves_icall_System_Reflection_Module_ResolveFieldToken (MonoImage *image, guint32 
 	}
 
 	if (image->dynamic) {
-		if (type_args || method_args)
-			mono_raise_exception (mono_get_exception_not_implemented (NULL));
-		/* FIXME: validate memberref token type */
-		return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
+		if (table == MONO_TABLE_FIELD)
+			return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
+
+		if (mono_memberref_is_method (image, token)) {
+			*error = ResolveTokenError_BadTable;
+			return NULL;
+		}
+
+		init_generic_context_from_args (&context, type_args, method_args);
+		return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, &context);
 	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
 		*error = ResolveTokenError_OutOfRange;
 		return NULL;
 	}
-	if ((table == MONO_TABLE_MEMBERREF) && (mono_metadata_memberref_is_method (image, token))) {
+	if ((table == MONO_TABLE_MEMBERREF) && (mono_memberref_is_method (image, token))) {
 		*error = ResolveTokenError_BadTable;
 		return NULL;
 	}
@@ -5613,7 +5629,7 @@ ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32
 			return NULL;
 	}
 	case MONO_TABLE_MEMBERREF:
-		if (mono_metadata_memberref_is_method (image, token)) {
+		if (mono_memberref_is_method (image, token)) {
 			MonoMethod *m = ves_icall_System_Reflection_Module_ResolveMethodToken (image, token, type_args, method_args, error);
 			if (m)
 				return (MonoObject*)mono_method_get_object (mono_domain_get (), m, m->klass);

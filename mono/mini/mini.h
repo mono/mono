@@ -1585,7 +1585,7 @@ MonoInst *mono_get_got_var (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_add_seq_point (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int native_offset) MONO_INTERNAL;
 MonoInst* mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args) MONO_INTERNAL;
 MonoInst* mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, MonoInst *this) MONO_INTERNAL;
-
+void      mono_create_helper_signatures (void) MONO_INTERNAL;
 
 gboolean  mini_class_is_system_array (MonoClass *klass) MONO_INTERNAL;
 MonoMethodSignature *mono_get_element_address_signature (int arity) MONO_INTERNAL;
@@ -1830,19 +1830,11 @@ void     mono_arch_skip_single_step             (MonoContext *ctx) MONO_INTERNAL
 gpointer mono_arch_get_seq_point_info           (MonoDomain *domain, guint8 *code) MONO_INTERNAL;
 #endif
 
-MonoJitInfo *mono_arch_find_jit_info            (MonoDomain *domain, 
-						 MonoJitTlsData *jit_tls, 
-						 MonoJitInfo *res, 
-						 MonoJitInfo *prev_ji, 
-						 MonoContext *ctx, 
-						 MonoContext *new_ctx, 
-						 MonoLMF **lmf, 
-						 gboolean *managed) MONO_INTERNAL;
 gboolean
-mono_arch_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls, 
-							 MonoJitInfo *ji, MonoContext *ctx, 
-							 MonoContext *new_ctx, MonoLMF **lmf, 
-							 StackFrameInfo *frame_info) MONO_INTERNAL;
+mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, 
+						 MonoJitInfo *ji, MonoContext *ctx, 
+						 MonoContext *new_ctx, MonoLMF **lmf, 
+						 StackFrameInfo *frame_info) MONO_INTERNAL;
 gpointer  mono_arch_get_throw_exception_by_name (void) MONO_INTERNAL;
 gpointer mono_arch_get_call_filter              (MonoTrampInfo **info, gboolean aot) MONO_INTERNAL;
 gpointer mono_arch_get_restore_context          (MonoTrampInfo **info, gboolean aot) MONO_INTERNAL;
@@ -1867,15 +1859,15 @@ gpointer*mono_arch_get_delegate_method_ptr_addr (guint8* code, mgreg_t *regs) MO
 void     mono_arch_create_vars                  (MonoCompile *cfg) MONO_INTERNAL;
 void     mono_arch_save_unwind_info             (MonoCompile *cfg) MONO_INTERNAL;
 void     mono_arch_register_lowlevel_calls      (void) MONO_INTERNAL;
-gpointer mono_arch_get_unbox_trampoline         (MonoGenericSharingContext *gsctx, MonoMethod *m, gpointer addr) MONO_INTERNAL;
+gpointer mono_arch_get_unbox_trampoline         (MonoMethod *m, gpointer addr) MONO_INTERNAL;
 gpointer mono_arch_get_static_rgctx_trampoline  (MonoMethod *m, MonoMethodRuntimeGenericContext *mrgctx, gpointer addr) MONO_INTERNAL;
 gpointer  mono_arch_get_llvm_imt_trampoline     (MonoDomain *domain, MonoMethod *method, int vt_offset) MONO_INTERNAL;
 void     mono_arch_patch_callsite               (guint8 *method_start, guint8 *code, guint8 *addr) MONO_INTERNAL;
 void     mono_arch_patch_plt_entry              (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr) MONO_INTERNAL;
 void     mono_arch_nullify_class_init_trampoline(guint8 *code, mgreg_t *regs) MONO_INTERNAL;
 void     mono_arch_nullify_plt_entry            (guint8 *code, mgreg_t *regs) MONO_INTERNAL;
-int      mono_arch_get_this_arg_reg             (MonoMethodSignature *sig, MonoGenericSharingContext *gsctx, guint8 *code) MONO_INTERNAL;
-gpointer mono_arch_get_this_arg_from_call       (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, mgreg_t *regs, guint8 *code) MONO_INTERNAL;
+int      mono_arch_get_this_arg_reg             (guint8 *code) MONO_INTERNAL;
+gpointer mono_arch_get_this_arg_from_call       (mgreg_t *regs, guint8 *code) MONO_INTERNAL;
 gpointer mono_arch_get_delegate_invoke_impl     (MonoMethodSignature *sig, gboolean has_target) MONO_INTERNAL;
 gpointer mono_arch_create_specific_trampoline   (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len) MONO_INTERNAL;
 void        mono_arch_emit_imt_argument         (MonoCompile *cfg, MonoCallInst *call, MonoInst *imt_arg) MONO_INTERNAL;
@@ -2090,6 +2082,8 @@ void type_to_eval_stack_type (MonoCompile *cfg, MonoType *type, MonoInst *inst) 
 guint mono_type_to_regmove (MonoCompile *cfg, MonoType *type) MONO_INTERNAL;
 
 void mono_cfg_add_try_hole (MonoCompile *cfg, MonoExceptionClause *clause, guint8 *start, MonoBasicBlock *bb) MONO_INTERNAL;
+
+void mono_cfg_set_exception (MonoCompile *cfg, int type) MONO_INTERNAL;
 
 /* wapihandles.c */
 int mini_wapi_hps (int argc, char **argv) MONO_INTERNAL;

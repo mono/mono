@@ -91,7 +91,7 @@ namespace System.ServiceModel.Routing
 			return ret;
 		}
 
-		static readonly MethodInfo create_factory_method = typeof (ChannelFactory).GetMethod ("CreateFactory", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+//		static readonly MethodInfo create_factory_method = typeof (ChannelFactory).GetMethod ("CreateFactory", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
 		void ProcessMessageDuplexSession (Message message)
 		{

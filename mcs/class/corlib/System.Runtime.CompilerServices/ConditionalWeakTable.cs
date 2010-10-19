@@ -110,7 +110,6 @@ namespace System.Runtime.CompilerServices
 
 		public void Add (TKey key, TValue value)
 		{
-			TValue tmp;
 			if (key == default (TKey))
 				throw new ArgumentNullException ("Null key", "key");
 

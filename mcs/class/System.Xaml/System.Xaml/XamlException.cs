@@ -68,8 +68,8 @@ namespace System.Xaml
 			LinePosition = info.GetInt32 ("linePosition");
 		}
 
-		public int LineNumber { get; protected set; }
-		public int LinePosition { get; protected set; }
+		public int LineNumber { get; protected internal set; }
+		public int LinePosition { get; protected internal set; }
 		public override string Message {
 			get { return FormatLine (base.Message, LineNumber, LinePosition); }
 		}

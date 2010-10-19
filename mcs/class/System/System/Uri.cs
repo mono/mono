@@ -92,7 +92,7 @@ namespace System {
 		private int cachedHashCode;
 
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
-		private static string [] Empty = new string [0];
+		private static readonly string [] Empty = new string [0];
 		private static bool isWin32 = (Path.DirectorySeparatorChar == '\\');
 
 	

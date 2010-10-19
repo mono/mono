@@ -84,36 +84,38 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public bool Execute ()
 		{
-			bool		result;
+			bool		result = false;
 			TaskEngine	taskEngine;
 
 			LogTaskStarted ();
 			ITask task = null;
 
 			try {
-				task = InitializeTask ();
-			} catch (Exception e) {
-				LogError ("Error initializing task {0}: {1}", taskElement.LocalName, e.Message);
-				LogMessage (MessageImportance.Low, "Error initializing task {0}: {1}",
-						taskElement.LocalName, e.ToString ());
-				return false;
+				try {
+					task = InitializeTask ();
+				} catch (Exception e) {
+					LogError ("Error initializing task {0}: {1}", taskElement.LocalName, e.Message);
+					LogMessage (MessageImportance.Low, "Error initializing task {0}: {1}",
+							taskElement.LocalName, e.ToString ());
+					return false;
+				}
+
+				try {
+					taskEngine = new TaskEngine (parentTarget.Project);
+					taskEngine.Prepare (task, this.taskElement, GetParameters (), this.Type);
+					result = taskEngine.Execute ();
+					if (result)
+						taskEngine.PublishOutput ();
+				} catch (Exception e) {
+					task_logger.LogError ("Error executing task {0}: {1}", taskElement.LocalName, e.Message);
+					task_logger.LogMessage (MessageImportance.Low,
+							"Error executing task {0}: {1}", taskElement.LocalName, e.ToString ());
+					result = false;
+				}
+			} finally {
+				LogTaskFinished (result);
 			}
 
-			try {
-				taskEngine = new TaskEngine (parentTarget.Project);		
-				taskEngine.Prepare (task, this.taskElement, GetParameters (), this.Type);
-				result = taskEngine.Execute ();
-				if (result)
-					taskEngine.PublishOutput ();
-			} catch (Exception e) {
-				task_logger.LogError ("Error executing task {0}: {1}", taskElement.LocalName, e.Message);
-				task_logger.LogMessage (MessageImportance.Low,
-						"Error executing task {0}: {1}", taskElement.LocalName, e.ToString ());
-				result = false;
-			}
-
-			LogTaskFinished (result);
-		
 			return result;
 		}
 

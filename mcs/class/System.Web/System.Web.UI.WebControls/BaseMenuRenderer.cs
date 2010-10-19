@@ -403,7 +403,7 @@ namespace System.Web.UI.WebControls
 			}
 			
 			SubMenuStyle staticMenuStyle = owner.StaticMenuStyleInternal;
-			MenuItemStyle dynamicMenuItemStyle = owner.DynamicMenuItemStyleInternal;
+//			MenuItemStyle dynamicMenuItemStyle = owner.DynamicMenuItemStyleInternal;
 			SubMenuStyle dynamicMenuStyle = owner.DynamicMenuStyleInternal;
 			SubMenuStyleCollection levelSubMenuStyles = owner.LevelSubMenuStylesInternal;
 			

@@ -260,6 +260,7 @@ void
 mono_llvm_dump_value (LLVMValueRef value)
 {
 	/* Same as LLVMDumpValue (), but print to stdout */
+	fflush (stdout);
 	outs () << (*unwrap<Value> (value));
 }
 
@@ -376,7 +377,6 @@ force_pass_linking (void)
       (void) llvm::createLoopUnrollPass();
       (void) llvm::createLoopUnswitchPass();
       (void) llvm::createLoopRotatePass();
-      (void) llvm::createLoopIndexSplitPass();
       (void) llvm::createLowerInvokePass();
 	  /*
       (void) llvm::createLowerSetJmpPass();

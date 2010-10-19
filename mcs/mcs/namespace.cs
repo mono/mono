@@ -46,7 +46,7 @@ namespace Mono.CSharp {
 			referenced_assemblies = n;
 		}
 
-		public void ImportTypes (CompilerContext ctx)
+		public virtual void ImportTypes (CompilerContext ctx)
 		{
 			foreach (Assembly a in referenced_assemblies) {
 				try {
@@ -156,6 +156,18 @@ namespace Mono.CSharp {
 				return null;
 
 			return rn;
+		}
+
+		public override void ImportTypes (CompilerContext ctx)
+		{
+			base.ImportTypes (ctx);
+
+			if (modules != null) {
+				// 0 is this module
+				for (int i = 1; i < modules.Length; ++i) {
+					ctx.MetaImporter.ImportModule (modules[i], this);
+				}
+			}
 		}
 	}
 

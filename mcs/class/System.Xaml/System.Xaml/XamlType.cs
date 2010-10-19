@@ -38,9 +38,9 @@ namespace System.Xaml
 		{
 		}
 
-		static readonly Type [] predefined_types = {
-				typeof (XData), typeof (Uri), typeof (TimeSpan), typeof (PropertyDefinition), typeof (MemberDefinition), typeof (Reference)
-			};
+//		static readonly Type [] predefined_types = {
+//				typeof (XData), typeof (Uri), typeof (TimeSpan), typeof (PropertyDefinition), typeof (MemberDefinition), typeof (Reference)
+//			};
 
 		public XamlType (Type underlyingType, XamlSchemaContext schemaContext, XamlTypeInvoker invoker)
 			: this (schemaContext, invoker)
@@ -360,10 +360,12 @@ namespace System.Xaml
 			yield break; // FIXME: what to return here?
 		}
 
+		static readonly XamlMember [] empty_array = new XamlMember [0];
+
 		protected virtual IEnumerable<XamlMember> LookupAllMembers ()
 		{
 			if (UnderlyingType == null)
-				return BaseType != null ? BaseType.GetAllMembers () : null;
+				return BaseType != null ? BaseType.GetAllMembers () : empty_array;
 			if (all_members_cache == null)
 				all_members_cache = new List<XamlMember> (DoLookupAllMembers ());
 			return all_members_cache;
@@ -373,9 +375,39 @@ namespace System.Xaml
 
 		IEnumerable<XamlMember> DoLookupAllMembers ()
 		{
-			foreach (var pi in UnderlyingType.GetProperties ())
-				if (pi.CanRead && pi.CanWrite && pi.GetIndexParameters ().Length == 0)
+			// This is a hack that is likely required due to internal implementation difference in System.Uri. Our Uri has two readonly collection properties
+			if (this == XamlLanguage.Uri)
+				yield break;
+
+			var bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+			foreach (var pi in UnderlyingType.GetProperties (bf))
+				if (pi.CanRead && (pi.CanWrite && pi.GetIndexParameters ().Length == 0 || IsCollectionType (pi.PropertyType)))
 					yield return new XamlMember (pi, SchemaContext);
+			foreach (var ei in UnderlyingType.GetEvents (bf))
+				yield return new XamlMember (ei, SchemaContext);
+		}
+
+		static bool IsCollectionType (Type type)
+		{
+			if (type == null)
+				return false;
+			if (type.IsArray)
+				return true;
+
+			Type [] ifaces = type.GetInterfaces ();
+			foreach (Type i in ifaces)
+				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (typeof (ICollection<>)))
+					return true;
+			foreach (Type i in ifaces)
+				if (i == typeof (IList))
+					return true;
+
+			foreach (var iface in type.GetInterfaces ())
+				if (iface == typeof (IDictionary) || (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>)))
+					return true;
+
+			return false;
 		}
 
 		protected virtual IList<XamlType> LookupAllowedContentTypes ()
@@ -579,15 +611,8 @@ namespace System.Xaml
 
 		protected virtual XamlMember LookupMember (string name, bool skipReadOnlyCheck)
 		{
-			if (UnderlyingType == null)
-				return null;
-			var pi = UnderlyingType.GetProperty (name);
-			if (pi != null && (skipReadOnlyCheck || pi.CanWrite))
-				return new XamlMember (pi, SchemaContext);
-			var ei = UnderlyingType.GetEvent (name);
-			if (ei != null)
-				return new XamlMember (ei, SchemaContext);
-			return null;
+			// FIXME: verify if this does not filter out events.
+			return GetAllMembers ().FirstOrDefault (m => m.Name == name && (skipReadOnlyCheck || !m.IsReadOnly || m.Type.IsCollection || m.Type.IsDictionary || m.Type.IsArray));
 		}
 
 		protected virtual IList<XamlType> LookupPositionalParameters (int parameterCount)

@@ -126,6 +126,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (project == null)
 				throw new ArgumentException ("project");
+			builtTargetsOutputByName.Clear ();
 			return project.Build ();
 		}
 		
@@ -163,6 +164,9 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentException ("project");
 			if (targetNames == null)
 				return false;
+
+			if ((buildFlags & BuildSettings.DoNotResetPreviouslyBuiltTargets) != BuildSettings.DoNotResetPreviouslyBuiltTargets)
+				builtTargetsOutputByName.Clear ();
 
 			if (defaultToolsVersion != null)
 				// it has been explicitly set, xbuild does this..
@@ -224,6 +228,9 @@ namespace Microsoft.Build.BuildEngine {
 					      IDictionary targetOutputs,
 					      BuildSettings buildFlags, string toolsVersion)
 		{
+			if ((buildFlags & BuildSettings.DoNotResetPreviouslyBuiltTargets) != BuildSettings.DoNotResetPreviouslyBuiltTargets)
+				builtTargetsOutputByName.Clear ();
+
 			Project project;
 
 			bool newProject = false;

@@ -1,7 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
-../../build/common/basic-profile-check.cs
 Assembly/AssemblyInfo.cs
 System.Windows.Markup/AmbientAttribute.cs
 System.Windows.Markup/ArrayExtension.cs
@@ -86,6 +85,7 @@ System.Xaml/XamlException.cs
 System.Xaml/XamlInternalException.cs
 System.Xaml/XamlLanguage.cs
 System.Xaml/XamlMember.cs
+System.Xaml/XamlNameResolver.cs
 System.Xaml/XamlNodeList.cs
 System.Xaml/XamlNodeQueue.cs
 System.Xaml/XamlNodeType.cs

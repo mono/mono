@@ -276,7 +276,9 @@ mono_runtime_class_init_full (MonoVTable *vtable, gboolean raise_exception)
 			MonoVTable *module_vtable = mono_class_vtable_full (vtable->domain, module_klass, raise_exception);
 			if (!module_vtable)
 				return NULL;
-			mono_runtime_class_init (module_vtable);
+			exc = mono_runtime_class_init_full (module_vtable, raise_exception);
+			if (exc)
+				return exc;
 		}
 	}
 	method = mono_class_get_cctor (klass);
@@ -1841,6 +1843,9 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 	 */
 	if (!class->vtable_size)
 		mono_class_setup_vtable (class);
+
+	if (class->generic_class && !class->vtable)
+		mono_class_check_vtable_constraints (class);
 
 	if (class->exception_type) {
 		mono_domain_unlock (domain);

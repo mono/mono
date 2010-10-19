@@ -255,8 +255,8 @@ namespace System.ServiceModel.Description
 				}
 				cd.Operations.Add (od);
 			}
-			else if (oca.AsyncPattern && od.BeginMethod != null ||
-				 !oca.AsyncPattern && od.SyncMethod != null)
+			else if (oca.AsyncPattern && od.BeginMethod != null && od.BeginMethod != mi ||
+				 !oca.AsyncPattern && od.SyncMethod != null && od.SyncMethod != mi)
 				throw new InvalidOperationException (String.Format ("contract '{1}' cannot have two operations for '{0}' that have the identical names and different set of parameters.", name, cd.Name));
 
 			if (oca.AsyncPattern)

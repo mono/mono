@@ -486,6 +486,11 @@ namespace Mono.CSharp
 
 			foreach (var entry in external_aliases)
 				LoadAssembly (entry.Value, entry.Key, false);
+
+			if (modules.Count > 0) {
+				foreach (string module in modules)
+					LoadModule (module);
+			}
 				
 			ctx.GlobalRootNamespace.ComputeNamespaces (ctx);
 		}
@@ -1704,13 +1709,8 @@ namespace Mono.CSharp
 				ShowTime ("Loading references");
 
 			ctx.MetaImporter.Initialize ();
-			LoadReferences ();
-			
-			if (modules.Count > 0) {
-				foreach (string module in modules)
-					LoadModule (module);
-			}
-			
+			LoadReferences ();		
+		
 			if (timestamps)
 				ShowTime ("References loaded");
 			

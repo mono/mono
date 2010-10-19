@@ -77,7 +77,6 @@ namespace System.Runtime.Serialization.Json
 				break;
 			case TypeCode.Single:
 			case TypeCode.Double:
-			case TypeCode.Decimal:
 				writer.WriteAttributeString ("type", "number");
 				writer.WriteString (((IFormattable) graph).ToString ("R", CultureInfo.InvariantCulture));
 				break;
@@ -89,6 +88,7 @@ namespace System.Runtime.Serialization.Json
 			case TypeCode.UInt16:
 			case TypeCode.UInt32:
 			case TypeCode.UInt64:
+			case TypeCode.Decimal:
 				writer.WriteAttributeString ("type", "number");
 				if (graph.GetType ().IsEnum)
 					graph = ((IConvertible) graph).ToType (Enum.GetUnderlyingType (graph.GetType ()), CultureInfo.InvariantCulture);
@@ -143,8 +143,7 @@ namespace System.Runtime.Serialization.Json
 						// FIXME: I'm not sure how it is determined whether __type is written or not...
 						if (outputTypeName || always_emit_type)
 							writer.WriteAttributeString ("__type", FormatTypeName (graph.GetType ()));
-						writer.WriteAttributeString ("type", "object");
-						tm.Serialize (this, graph);
+						tm.Serialize (this, graph, "object");
 					}
 					else
 						// it does not emit type="object" (as the graph is regarded as a string)

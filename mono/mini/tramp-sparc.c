@@ -21,7 +21,6 @@
 
 /*
  * mono_arch_get_unbox_trampoline:
- * @gsctx: the generic sharing context
  * @m: method pointer
  * @addr: pointer to native code for @m
  *
@@ -30,14 +29,11 @@
  * unboxing before calling the method
  */
 gpointer
-mono_arch_get_unbox_trampoline (MonoGenericSharingContext *gsctx, MonoMethod *m, gpointer addr)
+mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 {
 	guint8 *code, *start;
-	int this_pos = 4, reg;
+	int reg;
 
-	if (MONO_TYPE_ISSTRUCT (mono_method_signature (m)->ret))
-		this_pos = 8;
-	    
 	start = code = mono_global_codeman_reserve (36);
 
 	/* This executes in the context of the caller, hence o0 */
@@ -264,8 +260,6 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 
 	if (code_len)
 		*code_len = (code - buf) * 4;
-
-	mono_jit_stats.method_trampolines++;
 
 	mono_arch_flush_icache ((guint8*)buf, (code - buf) * 4);
 

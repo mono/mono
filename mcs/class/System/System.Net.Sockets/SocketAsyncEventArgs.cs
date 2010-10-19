@@ -85,7 +85,6 @@ namespace System.Net.Sockets
 #if MOONLIGHT && !INSIDE_SYSTEM
 		private SocketClientAccessPolicyProtocol policy_protocol;
 
-		[MonoTODO ("Only TCP is currently supported by Moonlight")]
 		public SocketClientAccessPolicyProtocol SocketClientAccessPolicyProtocol {
 			get { return policy_protocol; }
 			set {

@@ -212,32 +212,38 @@ enum {
 	AIO_OP_LAST
 };
 
-static MonoImage *
-get_socket_assembly (void)
+/*
+ * Note that we call it is_socket_type() where 'socket' refers to the image
+ * that contains the System.Net.Sockets.Socket type.
+ * For moonlight there is a System.Net.Sockets.Socket class in both System.dll and System.Net.dll.
+*/
+static gboolean
+is_socket_type (MonoClass *klass)
 {
 	static const char *version = NULL;
 	static gboolean moonlight;
-	static MonoImage *socket_assembly = NULL;
+	static MonoImage *system_dll = NULL;
+	static MonoImage *system_net_dll = NULL;
 
+	if (system_dll == NULL)
+		system_dll = mono_image_loaded ("System");
+
+	if (klass->image == system_dll)
+		return TRUE;
+
+	/* If moonlight, check if the type is in System.Net.dll too */
 	if (version == NULL) {
 		version = mono_get_runtime_info ()->framework_version;
 		moonlight = !strcmp (version, "2.1");
 	}
 
-	if (socket_assembly == NULL)
-		socket_assembly = mono_image_loaded (moonlight ? "System.Net" : "System");
+	if (!moonlight)
+		return FALSE;
 
-	return socket_assembly;
-}
-
-/*
- * Note that we call it is_socket_type() where 'socket' refers to the image
- * that contains the System.Net.Sockets.Socket type.
-*/
-static gboolean
-is_socket_type (MonoClass *klass)
-{
-	return klass->image == get_socket_assembly ();
+	if (system_net_dll == NULL)
+		system_net_dll = mono_image_loaded ("System.Net");
+	
+	return klass->image == system_net_dll;
 }
 
 static gboolean
@@ -2016,6 +2022,7 @@ async_invoke_thread (gpointer data)
 				mono_thread_pop_appdomain_ref ();
 				InterlockedDecrement (&tp->busy_threads);
 				/* If the callee changes the background status, set it back to TRUE */
+				mono_thread_clr_state (thread , ~ThreadState_Background);
 				if (!mono_thread_test_state (thread , ThreadState_Background))
 					ves_icall_System_Threading_Thread_SetState (thread, ThreadState_Background);
 			}

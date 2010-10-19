@@ -658,7 +658,6 @@ namespace System.Web.Compilation
 			if (assembly == null)
 				throw new ArgumentNullException ("assembly");
 
-			Type ret = HttpApplicationFactory.AppType;
 			if (preStartMethodsDone)
 				throw new InvalidOperationException ("This method cannot be called after the application's pre-start initialization stage.");
 

@@ -880,10 +880,16 @@ namespace System.Web
 				HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
 				if (config != null && config.UseFullyQualifiedRedirectUrl) {
 					var ub = new UriBuilder (context.Request.Url);
-					ub.Path = url;
+					int qpos = url.IndexOf ('?');
+					if (qpos == -1) {
+						ub.Path = url;
+						ub.Query = null;
+					} else {
+						ub.Path = url.Substring (0, qpos);
+						ub.Query = url.Substring (qpos + 1);
+					}
 					ub.Fragment = null;
 					ub.Password = null;
-					ub.Query = null;
 					ub.UserName = null;
 					url = ub.Uri.ToString ();
 				}

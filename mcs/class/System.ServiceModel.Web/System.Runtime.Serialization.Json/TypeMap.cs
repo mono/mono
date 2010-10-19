@@ -66,6 +66,10 @@ namespace System.Runtime.Serialization.Json
 			if (IsPrimitiveType (type))
 				return null;
 
+#if MOONLIGHT
+			if (ExternalTypeMap.HasType (type))
+				return new ExternalTypeMap (type);
+#endif
 			return CreateDefaultTypeMap (type);
 		}
 
@@ -169,8 +173,9 @@ namespace System.Runtime.Serialization.Json
 		public MethodInfo OnDeserializing { get; set; }
 		public MethodInfo OnDeserialized { get; set; }
 
-		public void Serialize (JsonSerializationWriter outputter, object graph)
+		public virtual void Serialize (JsonSerializationWriter outputter, object graph, string type)
 		{
+			outputter.Writer.WriteAttributeString ("type", type);
 			foreach (TypeMapMember member in members) {
 				object memberObj = member.GetMemberOf (graph);
 				// FIXME: consider EmitDefaultValue
@@ -180,7 +185,7 @@ namespace System.Runtime.Serialization.Json
 			}
 		}
 
-		public object Deserialize (JsonSerializationReader jsr)
+		public virtual object Deserialize (JsonSerializationReader jsr)
 		{
 			XmlReader reader = jsr.Reader;
 			bool isNull = reader.GetAttribute ("type") == "null";

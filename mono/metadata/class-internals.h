@@ -226,7 +226,8 @@ enum {
 	MONO_RGCTX_INFO_METHOD_RGCTX,
 	MONO_RGCTX_INFO_METHOD_CONTEXT,
 	MONO_RGCTX_INFO_REMOTING_INVOKE_WITH_CHECK,
-	MONO_RGCTX_INFO_METHOD_DELEGATE_CODE
+	MONO_RGCTX_INFO_METHOD_DELEGATE_CODE,
+	MONO_RGCTX_INFO_CAST_CACHE
 };
 
 typedef struct _MonoRuntimeGenericContextOtherInfoTemplate {
@@ -1281,4 +1282,8 @@ mono_field_get_type_checked (MonoClassField *field, MonoError *error) MONO_INTER
 
 MonoClassField*
 mono_class_get_fields_lazy (MonoClass* klass, gpointer *iter) MONO_INTERNAL;
+
+gboolean
+mono_class_check_vtable_constraints (MonoClass *class) MONO_INTERNAL;
+
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */

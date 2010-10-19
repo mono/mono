@@ -144,6 +144,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsArray, "#5");
 			Assert.IsFalse (t.IsGeneric, "#6");
 			Assert.IsTrue (t.IsPublic, "#7");
+			Assert.AreEqual (0, t.GetAllMembers ().Count, "#8");
 		}
 
 		[Test]
@@ -239,6 +240,13 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsCollection, "#3.1-2");
 			Assert.IsNotNull (t.KeyType, "#3.2");
 			Assert.AreEqual ("Int32", t.KeyType.Name, "#3.3");
+
+			var ml = t.GetAllMembers ();
+			Assert.AreEqual (2, ml.Count, "#3.4");
+			Assert.IsTrue (ml.Any (mi => mi.Name == "Keys"), "#3.4-2");
+			Assert.IsTrue (ml.Any (mi => mi.Name == "Values"), "#3.4-3");
+			Assert.IsNotNull (t.GetMember ("Keys"), "#3.4-4");
+			Assert.IsNotNull (t.GetMember ("Values"), "#3.4-5");
 		}
 
 		public class TestClass1
@@ -344,8 +352,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsAmbient, "#22");
 			Assert.IsNull (t.AllowedContentTypes, "#23");
 			Assert.IsNull (t.ContentWrappers, "#24");
-			// FIXME: enable this when we fixed TypeConverter for Type.
-			//Assert.IsNotNull (t.TypeConverter, "#25"); // TypeTypeConverter
+			Assert.IsNotNull (t.TypeConverter, "#25"); // TypeTypeConverter
 			Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNull (t.ContentProperty, "#27");
 			//Assert.IsNull (t.DeferringLoader, "#28");
@@ -569,10 +576,19 @@ namespace MonoTests.System.Xaml
 		public void GetXamlNamespaces ()
 		{
 			var xt = new XamlType (typeof (string), new XamlSchemaContext (null, null));
-			var l = xt.GetXamlNamespaces ();
-			Assert.AreEqual (2, l.Count, "#1");
-			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [0], "#2");
-			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", l [1], "#3");
+			var l = xt.GetXamlNamespaces ().ToList ();
+			l.Sort ();
+			Assert.AreEqual (2, l.Count, "#1-1");
+			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", l [0], "#1-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [1], "#1-3");
+
+			xt = new XamlType (typeof (TypeExtension), new XamlSchemaContext (null, null));
+			l = xt.GetXamlNamespaces ().ToList ();
+			l.Sort ();
+			Assert.AreEqual (3, l.Count, "#2-1");
+			Assert.AreEqual ("clr-namespace:System.Windows.Markup;assembly=System.Xaml", l [0], "#2-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [1], "#2-3");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [2], "#2-4"); // ??
 		}
 		
 		[Test]

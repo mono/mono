@@ -2779,6 +2779,14 @@ namespace Mono.CSharp {
 			}
 
 			if (left.Type == InternalType.Dynamic || right.Type == InternalType.Dynamic) {
+				var lt = left.Type;
+				var rt = right.Type;
+				if (lt == TypeManager.void_type || lt == InternalType.MethodGroup || lt == InternalType.AnonymousMethod ||
+					rt == TypeManager.void_type || rt == InternalType.MethodGroup || rt == InternalType.AnonymousMethod) {
+					Error_OperatorCannotBeApplied (ec, left, right);
+					return null;
+				}
+
 				Arguments args = new Arguments (2);
 				args.Add (new Argument (left));
 				args.Add (new Argument (right));
@@ -2789,8 +2797,11 @@ namespace Mono.CSharp {
 				((TypeManager.IsNullableType (left.Type) && (right is NullLiteral || TypeManager.IsNullableType (right.Type) || TypeManager.IsValueType (right.Type))) ||
 				(TypeManager.IsValueType (left.Type) && right is NullLiteral) ||
 				(TypeManager.IsNullableType (right.Type) && (left is NullLiteral || TypeManager.IsNullableType (left.Type) || TypeManager.IsValueType (left.Type))) ||
-				(TypeManager.IsValueType (right.Type) && left is NullLiteral)))
-				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
+				(TypeManager.IsValueType (right.Type) && left is NullLiteral))) {
+				var lifted = new Nullable.LiftedBinaryOperator (oper, left, right, loc);
+				lifted.state = state;
+				return lifted.Resolve (ec);
+			}
 
 			return DoResolveCore (ec, left, right);
 		}
@@ -4354,19 +4365,17 @@ namespace Mono.CSharp {
 			//
 			if (!TypeSpecComparer.IsEqual (true_type, false_type)) {
 				Expression conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
-				if (conv != null) {
+				if (conv != null && true_type != InternalType.Dynamic) {
 					//
 					// Check if both can convert implicitly to each other's type
 					//
-					if (true_type != InternalType.Dynamic) {
-						type = false_type;
+					type = false_type;
 
-						if (false_type != InternalType.Dynamic && Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
-							ec.Report.Error (172, true_expr.Location,
-								"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
-								TypeManager.CSharpName (true_type), TypeManager.CSharpName (false_type));
-							return null;
-						}
+					if (false_type != InternalType.Dynamic && Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
+						ec.Report.Error (172, true_expr.Location,
+							"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
+								true_type.GetSignatureForError (), false_type.GetSignatureForError ());
+						return null;
 					}
 
 					true_expr = conv;
@@ -5286,8 +5295,19 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!omit_args && Arguments != null)
-				Arguments.Emit (ec, dup_args, this_arg);
+			if (!omit_args && Arguments != null) {
+				var dup_arg_exprs = Arguments.Emit (ec, dup_args);
+				if (dup_args) {
+					this_arg.Emit (ec);
+					LocalTemporary lt;
+					foreach (var dup in dup_arg_exprs) {
+						dup.Emit (ec);
+						lt = dup as LocalTemporary;
+						if (lt != null)
+							lt.Release (ec);
+					}
+				}
+			}
 
 			if (call_op == OpCodes.Callvirt && (iexpr_type.IsGenericParameter || iexpr_type.IsStruct)) {
 				ec.Emit (OpCodes.Constrained, iexpr_type);
@@ -5949,7 +5969,6 @@ namespace Mono.CSharp {
 			if (initializers == null)
 				return true;
 
-			only_constant_initializers = true;
 			for (int i = 0; i < probe.Count; ++i) {
 				var o = probe [i];
 				if (o is ArrayInitializer) {
@@ -6057,6 +6076,8 @@ namespace Mono.CSharp {
 
 		protected bool ResolveInitializers (ResolveContext ec)
 		{
+			only_constant_initializers = true;
+
 			if (arguments != null) {
 				bool res = true;
 				for (int i = 0; i < arguments.Count; ++i) {
@@ -7864,7 +7885,7 @@ namespace Mono.CSharp {
 
 			var indexers = MemberCache.FindMembers (type, MemberCache.IndexerNameAlias, false);
 			if (indexers != null || type == InternalType.Dynamic) {
-				return new IndexerExpr (indexers, this);
+				return new IndexerExpr (indexers, type, this);
 			}
 
 			ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
@@ -7959,8 +7980,8 @@ namespace Mono.CSharp {
 		//
 		ElementAccess ea;
 
-		LocalTemporary temp;
-
+		LocalTemporary temp, expr_copy;
+		Expression[] prepared_arguments;
 		bool prepared;
 		
 		public ArrayAccess (ElementAccess ea_data, Location l)
@@ -8021,10 +8042,7 @@ namespace Mono.CSharp {
 		void LoadArrayAndArguments (EmitContext ec)
 		{
 			ea.Expr.Emit (ec);
-
-			for (int i = 0; i < ea.Arguments.Count; ++i) {
-				ea.Arguments [i].Emit (ec);
-			}
+			ea.Arguments.Emit (ec);
 		}
 
 		public void Emit (EmitContext ec, bool leave_copy)
@@ -8034,7 +8052,19 @@ namespace Mono.CSharp {
 			if (prepared) {
 				ec.EmitLoadFromPtr (type);
 			} else {
-				LoadArrayAndArguments (ec);
+				if (prepared_arguments == null) {
+					LoadArrayAndArguments (ec);
+				} else {
+					expr_copy.Emit (ec);
+					LocalTemporary lt;
+					foreach (var expr in prepared_arguments) {
+						expr.Emit (ec);
+						lt = expr as LocalTemporary;
+						if (lt != null)
+							lt.Release (ec);
+					}
+				}
+
 				ec.EmitArrayLoad (ac);
 			}	
 
@@ -8054,31 +8084,38 @@ namespace Mono.CSharp {
 		{
 			var ac = (ArrayContainer) ea.Expr.Type;
 			TypeSpec t = source.Type;
-			prepared = prepare_for_load;
 
-			if (prepared) {
-				AddressOf (ec, AddressOp.LoadStore);
+			//
+			// When we are dealing with a struct, get the address of it to avoid value copy
+			// Same cannot be done for reference type because array covariance and the
+			// check in ldelema requires to specify the type of array element stored at the index
+			//
+			if (t.IsStruct && ((prepare_for_load && !(source is DynamicExpressionStatement)) || !TypeManager.IsPrimitiveType (t))) {
+				LoadArrayAndArguments (ec);
+				ec.EmitArrayAddress (ac);
+
+				if (prepare_for_load) {
+					ec.Emit (OpCodes.Dup);
+				}
+
+				prepared = true;
+			} else if (prepare_for_load) {
+				ea.Expr.Emit (ec);
 				ec.Emit (OpCodes.Dup);
+
+				expr_copy = new LocalTemporary (ea.Expr.Type);
+				expr_copy.Store (ec);
+				prepared_arguments = ea.Arguments.Emit (ec, true);
 			} else {
 				LoadArrayAndArguments (ec);
-
-				//
-				// If we are dealing with a struct, get the
-				// address of it, so we can store it.
-				//
-				// The stobj opcode used by value types will need
-				// an address on the stack, not really an array/array
-				// pair
-				//
-				if (ac.Rank == 1 && TypeManager.IsStruct (t) &&
-					(!TypeManager.IsBuiltinOrEnum (t) ||
-					 t == TypeManager.decimal_type)) {
-
-					ec.Emit (OpCodes.Ldelema, t);
-				}
 			}
 
 			source.Emit (ec);
+
+			if (expr_copy != null) {
+				expr_copy.Release (ec);
+			}
+
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
 				temp = new LocalTemporary (this.type);
@@ -8144,11 +8181,13 @@ namespace Mono.CSharp {
 		LocalTemporary prepared_value;
 		IList<MemberSpec> indexers;
 		Arguments arguments;
+		TypeSpec queried_type;
 		
-		public IndexerExpr (IList<MemberSpec> indexers, ElementAccess ea)
+		public IndexerExpr (IList<MemberSpec> indexers, TypeSpec queriedType, ElementAccess ea)
 			: base (ea.Location)
 		{
 			this.indexers = indexers;
+			this.queried_type = queriedType;
 			this.InstanceExpression = ea.Expr;
 			this.arguments = ea.Arguments;
 		}
@@ -8194,7 +8233,7 @@ namespace Mono.CSharp {
 			if (prepared) {
 				prepared_value.Emit (ec);
 			} else {
-				Invocation.EmitCall (ec, InstanceExpression, Getter, arguments, loc, false, false);
+				Invocation.EmitCall (ec, InstanceExpression, Getter, arguments, loc);
 			}
 
 			if (leave_copy) {
@@ -8210,8 +8249,7 @@ namespace Mono.CSharp {
 			Expression value = source;
 
 			if (prepared) {
-				Invocation.EmitCall (ec, InstanceExpression, Getter,
-					arguments, loc, true, false);
+				Invocation.EmitCall (ec, InstanceExpression, Getter, arguments, loc, true, false);
 
 				prepared_value = new LocalTemporary (type);
 				prepared_value.Store (ec);
@@ -8329,6 +8367,15 @@ namespace Mono.CSharp {
 		IList<MemberSpec> OverloadResolver.IBaseMembersProvider.GetBaseMembers (TypeSpec baseType)
 		{
 			return baseType == null ? null : MemberCache.FindMembers (baseType, MemberCache.IndexerNameAlias, false);
+		}
+
+		IParametersMember OverloadResolver.IBaseMembersProvider.GetOverrideMemberParameters (MemberSpec member)
+		{
+			if (queried_type == member.DeclaringType)
+				return null;
+
+			var filter = new MemberFilter (MemberCache.IndexerNameAlias, 0, MemberKind.Indexer, ((IndexerSpec) member).Parameters, null);
+			return MemberCache.FindMember (queried_type, filter, BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly) as IParametersMember;
 		}
 
 		MethodGroupExpr OverloadResolver.IBaseMembersProvider.LookupExtensionMethod (ResolveContext rc)

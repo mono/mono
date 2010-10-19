@@ -532,7 +532,7 @@ namespace Mono.CSharp {
 			return MemberName.Name;
 		}
 
-		public MemberCache LoadMembers (TypeSpec declaringType)
+		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			throw new NotSupportedException ("Not supported for compiled definition");
 		}
@@ -1071,7 +1071,7 @@ namespace Mono.CSharp {
 					// to use same cache for nested types on same generic parent
 					//
 					// TODO: Should use BindingRestriction.DeclaredOnly or GetMember
-					ts = MemberCache.FindNestedType (parent, ts.Name, targs.Length);
+					ts = MemberCache.FindNestedType (parent, ts.Name, ts.Arity);
 
 					//
 					// Handle the tricky case where parent shares local type arguments
@@ -1269,6 +1269,13 @@ namespace Mono.CSharp {
 //			this.state = openType.state;
 			this.open_type = openType;
 			this.targs = targs;
+
+			foreach (var arg in targs) {
+				if (arg.HasDynamicElement || arg == InternalType.Dynamic) {
+					state |= StateFlags.HasDynamicElement;
+					break;
+				}
+			}
 		}
 
 		#region Properties
@@ -1302,15 +1309,6 @@ namespace Mono.CSharp {
 					InitializeMemberCache (true);
 
 				return base.Interfaces;
-			}
-		}
-
-		public override MemberCache MemberCacheTypes {
-			get {
-				if (cache == null)
-					InitializeMemberCache (true);
-
-				return cache;
 			}
 		}
 
@@ -1927,7 +1925,7 @@ namespace Mono.CSharp {
 			bool ok = true;
 
 			//
-			// The class constraint comes next.
+			// Check the class constraint
 			//
 			if (tparam.HasTypeConstraint) {
 				if (!CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc)) {
@@ -1939,7 +1937,7 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Now, check the interfaces and type parameters constraints
+			// Check the interfaces constraints
 			//
 			if (tparam.Interfaces != null) {
 				if (TypeManager.IsNullableType (atype)) {
@@ -1958,6 +1956,20 @@ namespace Mono.CSharp {
 
 							ok = false;
 						}
+					}
+				}
+			}
+
+			//
+			// Check the type parameter constraint
+			//
+			if (tparam.TypeArguments != null) {
+				foreach (var ta in tparam.TypeArguments) {
+					if (!CheckConversion (mc, context, atype, tparam, ta, loc)) {
+						if (mc == null)
+							return false;
+
+						ok = false;
 					}
 				}
 			}

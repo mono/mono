@@ -82,7 +82,7 @@ namespace System.Xaml
 						continue;
 					}
 				}
-				return;
+
 			default:
 				Read ();
 				return;

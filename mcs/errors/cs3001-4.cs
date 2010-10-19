@@ -1,4 +1,4 @@
-// CS3001: Argument type `out IError' is not CLS-compliant
+// CS3001: Argument type `IError' is not CLS-compliant
 // Line: 13
 // Compiler options: -warnaserror -warn:1
 

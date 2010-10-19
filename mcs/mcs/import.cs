@@ -107,7 +107,7 @@ namespace Mono.CSharp
 			TypeSpec field_type;
 
 			try {
-				field_type = ImportType (fi.FieldType);
+				field_type = ImportType (fi.FieldType, fi, 0);
 			} catch (Exception e) {
 				// TODO: I should construct fake TypeSpec based on TypeRef signature
 				// but there is no way to do it with System.Reflection
@@ -162,7 +162,7 @@ namespace Mono.CSharp
 				throw new NotImplementedException ("Different accessor modifiers " + ei.Name);
 
 			var definition = new ImportedMemberDefinition (ei);
-			return new EventSpec (declaringType, definition, ImportType (ei.EventHandlerType), add.Modifiers, add, remove);
+			return new EventSpec (declaringType, definition, ImportType (ei.EventHandlerType, ei, 0), add.Modifiers, add, remove);
 		}
 
 		T[] CreateGenericParameters<T> (Type type, TypeSpec declaringType) where T : TypeSpec
@@ -202,27 +202,29 @@ namespace Mono.CSharp
 			if (tparams.Length - parent_owned_count == 0)
 				return null;
 
-			return CreateGenericParameters<T> (parent_owned_count, tparams);
+			return CreateGenericParameters<T> (parent_owned_count, tparams, null, 0);
 		}
 
-		T[] CreateGenericParameters<T> (int first, Type[] tparams) where T : TypeSpec
+		T[] CreateGenericParameters<T> (int first, Type[] tparams, ICustomAttributeProvider ca, int dynamicCursor) where T : TypeSpec
 		{
 			var tspec = new T [tparams.Length - first];
 			for (int pos = first; pos < tparams.Length; ++pos) {
 				var type = tparams[pos];
+				int index = pos - first;
+
 				if (type.HasElementType) {
 					var element = type.GetElementType ();
 					var spec = ImportType (element);
 
 					if (type.IsArray) {
-						tspec[pos - first] = (T) (TypeSpec) ArrayContainer.MakeType (spec, type.GetArrayRank ());
+						tspec[index] = (T) (TypeSpec) ArrayContainer.MakeType (spec, type.GetArrayRank ());
 						continue;
 					}
 
 					throw new NotImplementedException ("Unknown element type " + type.ToString ());
 				}
 
-				tspec [pos - first] = (T) CreateType (type);
+				tspec [index] = (T) CreateType (type, ca, dynamicCursor + index + 1);
 			}
 
 			return tspec;
@@ -240,7 +242,7 @@ namespace Mono.CSharp
 				if (!mb.IsGenericMethodDefinition)
 					throw new NotSupportedException ("assert");
 
-				tparams = CreateGenericParameters<TypeParameterSpec>(0, mb.GetGenericArguments ());
+				tparams = CreateGenericParameters<TypeParameterSpec>(0, mb.GetGenericArguments (), null, 0);
 				definition = new ImportedGenericMethodDefinition ((MethodInfo) mb, parameters, tparams);
 			} else {
 				definition = new ImportedMethodDefinition (mb, parameters);
@@ -275,7 +277,8 @@ namespace Mono.CSharp
 					}
 				}
 
-				returnType = ImportType (((MethodInfo)mb).ReturnType);
+				var mi = (MethodInfo) mb;
+				returnType = ImportType (mi.ReturnType, mi.ReturnTypeCustomAttributes, 0);
 
 				// Cannot set to OVERRIDE without full hierarchy checks
 				// this flag indicates that the method could be override
@@ -330,13 +333,14 @@ namespace Mono.CSharp
 					//
 					// Strip reference wrapping
 					//
-					types[i] = ImportType (p.ParameterType.GetElementType ());
+					var el = p.ParameterType.GetElementType ();
+					types[i] = ImportType (el, p, 0);	// TODO: 1 to be csc compatible
 				} else if (i == 0 && method.IsStatic && parent.IsStatic && // TODO: parent.Assembly.IsExtension &&
 					HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (method)) != null) {
 					mod = Parameter.Modifier.This;
 					types[i] = ImportType (p.ParameterType);
 				} else {
-					types[i] = ImportType (p.ParameterType);
+					types[i] = ImportType (p.ParameterType, p, 0);
 
 					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
 						var cattrs = CustomAttributeData.GetCustomAttributes (p);
@@ -491,43 +495,104 @@ namespace Mono.CSharp
 
 		public TypeSpec CreateType (Type type)
 		{
+			return CreateType (type, null, 0);
+		}
+
+		TypeSpec CreateType (Type type, ICustomAttributeProvider ca, int dynamicCursor)
+		{
 			TypeSpec declaring_type;
 			if (type.IsNested && !type.IsGenericParameter)
-				declaring_type = CreateType (type.DeclaringType);
+				declaring_type = CreateType (type.DeclaringType, type.DeclaringType, 0);
 			else
 				declaring_type = null;
 
-			return CreateType (type, declaring_type);
+			return CreateType (type, declaring_type, ca, dynamicCursor);
 		}
 
-		public TypeSpec CreateType (Type type, TypeSpec declaringType)
+		public TypeSpec CreateType (Type type, TypeSpec declaringType, ICustomAttributeProvider ca, int dynamicCursor)
 		{
 			TypeSpec spec;
-			if (import_cache.TryGetValue (type, out spec))
-				return spec;
+			if (import_cache.TryGetValue (type, out spec)) {
+				if (ca == null)
+					return spec;
+
+				if (type == typeof (object)) {
+					if (IsDynamicType (ca, dynamicCursor))
+						return InternalType.Dynamic;
+
+					return spec;
+				}
+
+				if (!spec.IsGeneric)
+					return spec;
+
+#if NET_4_0
+				if (!ca.IsDefined (typeof (DynamicAttribute), false))
+#endif
+					return spec;
+
+				// We've found same object in the cache but this one has a dynamic custom attribute
+				// and it's most likely dynamic version of same type IFoo<object> agains IFoo<dynamic>
+				// Do resolve the type process again in that case
+			}
 
 			if (type.IsGenericType && !type.IsGenericTypeDefinition) {	
 				var type_def = type.GetGenericTypeDefinition ();
-				spec = CreateType (type_def, declaringType);
-
-				var targs = CreateGenericParameters<TypeSpec> (type, null);
-
-				InflatedTypeSpec inflated;
-				if (targs == null) {
-					// Inflating nested non-generic type, same in TypeSpec::InflateMember
-					inflated = new InflatedTypeSpec (spec, declaringType, TypeSpec.EmptyTypes);
+				var targs = CreateGenericParameters<TypeSpec> (0, type.GetGenericArguments (), ca, dynamicCursor);
+				if (declaringType == null) {
+					// Simple case, no nesting
+					spec = CreateType (type_def, null, null, 0);
+					spec = spec.MakeGenericType (targs);
 				} else {
-					// CreateGenericParameters constraint could inflate type
-					if (import_cache.ContainsKey (type))
-						return import_cache[type];
+					//
+					// Nested type case, converting .NET types like
+					// A`1.B`1.C`1<int, long, string> to typespec like
+					// A<int>.B<long>.C<string>
+					//
+					var nested_hierarchy = new List<TypeSpec> ();
+					while (declaringType.IsNested) {
+						nested_hierarchy.Add (declaringType);
+						declaringType = declaringType.DeclaringType;
+					}
 
-					inflated = spec.MakeGenericType (targs);
+					int targs_pos = 0;
+					if (declaringType.Arity > 0) {
+						spec = declaringType.MakeGenericType (targs.Skip (targs_pos).Take (declaringType.Arity).ToArray ());
+						targs_pos = spec.Arity;
+					} else {
+						spec = declaringType;
+					}
 
-					// Use of reading cache to speed up reading only
-					import_cache.Add (type, inflated);
+					for (int i = nested_hierarchy.Count; i != 0; --i) {
+						var t = nested_hierarchy [i - 1];
+						spec = MemberCache.FindNestedType (spec, t.Name, t.Arity);
+						if (t.Arity > 0) {
+							spec = spec.MakeGenericType (targs.Skip (targs_pos).Take (spec.Arity).ToArray ());
+							targs_pos += t.Arity;
+						}
+					}
+
+					string name = type.Name;
+					int index = name.IndexOf ('`');
+					if (index > 0)
+						name = name.Substring (0, index);
+
+					spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
+					if (spec.Arity > 0) {
+						spec = spec.MakeGenericType (targs.Skip (targs_pos).ToArray ());
+					}
 				}
 
-				return inflated;
+				// Don't add generic type with dynamic arguments, they can interfere with same type
+				// using object type arguments
+				if (!spec.HasDynamicElement) {
+
+					// Add to reading cache to speed up reading
+					if (!import_cache.ContainsKey (type))
+						import_cache.Add (type, spec);
+				}
+
+				return spec;
 			}
 
 			Modifiers mod;
@@ -557,19 +622,12 @@ namespace Mono.CSharp
 				kind = MemberKind.Interface;
 			} else if (type.IsGenericParameter) {
 				kind = MemberKind.TypeParameter;
-			} else if (type.IsClass || type.IsAbstract) {  				// SRE: System.Enum returns false for IsClass
+			} else if (type.IsClass || type.IsAbstract) {  				// System.Reflection: System.Enum returns false for IsClass
 				if ((ma & TypeAttributes.Sealed) != 0 && type.IsSubclassOf (typeof (MulticastDelegate))) {
 					kind = MemberKind.Delegate;
 					mod |= Modifiers.SEALED;
 				} else {
 					kind = MemberKind.Class;
-
-#if NET_4_0
-					if (type == typeof (object) && type.IsDefined (typeof (DynamicAttribute), false)) {
-						return InternalType.Dynamic;
-					}
-#endif
-
 					if ((ma & TypeAttributes.Sealed) != 0) {
 						mod |= Modifiers.SEALED;
 						if ((ma & TypeAttributes.Abstract) != 0)
@@ -622,10 +680,32 @@ namespace Mono.CSharp
 
 			import_cache.Add (type, spec);
 
-			if (kind == MemberKind.Interface)
+			//
+			// Two stage setup as the base type can be inflated declaring type
+			//
+			if (declaringType == null || !IgnorePrivateMembers)
+				ImportTypeBase (spec, type);
+
+			return spec;
+		}
+
+		public void ImportTypeBase (Type type)
+		{
+			TypeSpec spec = import_cache[type];
+			if (spec != null)
+				ImportTypeBase (spec, type);
+		}
+
+		void ImportTypeBase (TypeSpec spec, Type type)
+		{
+			if (spec.Kind == MemberKind.Interface)
 				spec.BaseType = TypeManager.object_type;
-			else if (type.BaseType != null)
-				spec.BaseType = CreateType (type.BaseType);
+			else if (type.BaseType != null) {
+				if (type.BaseType.IsGenericType)
+					spec.BaseType = CreateType (type.BaseType, type, 0);
+				else
+					spec.BaseType = CreateType (type.BaseType);
+			}
 
 			var ifaces = type.GetInterfaces ();
 			if (ifaces.Length > 0) {
@@ -633,8 +713,6 @@ namespace Mono.CSharp
 					spec.AddInterface (CreateType (iface));
 				}
 			}
-
-			return spec;
 		}
 
 		TypeParameterSpec CreateTypeParameter (Type type, TypeSpec declaringType)
@@ -737,16 +815,36 @@ namespace Mono.CSharp
 				all_types = e.Types;
 			}
 
+			ImportTypes (all_types, targetNamespace, extension_type);
+		}
+
+		public void ImportModule (Module module, Namespace targetNamespace)
+		{
+			Type extension_type = HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (module));
+
+			Type[] all_types;
+			try {
+				all_types = module.GetTypes ();
+			} catch (ReflectionTypeLoadException e) {
+				all_types = e.Types;
+				throw;
+			}
+
+			ImportTypes (all_types, targetNamespace, extension_type);
+		}
+
+		void ImportTypes (Type[] types, Namespace targetNamespace, Type extension_type)
+		{
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
-			foreach (var t in all_types) {
+			foreach (var t in types) {
 				if (t == null || t.IsNested)
 					continue;
 
 				if (t.Name[0] == '<')
 					continue;
 
-				var it = CreateType (t, null);
+				var it = CreateType (t, null, t, 0);
 				if (it == null)
 					continue;
 
@@ -765,9 +863,14 @@ namespace Mono.CSharp
 
 		public TypeSpec ImportType (Type type)
 		{
+			return ImportType (type, null, 0);
+		}
+
+		public TypeSpec ImportType (Type type, ICustomAttributeProvider ca, int dynamicCursor)
+		{
 			if (type.HasElementType) {
 				var element = type.GetElementType ();
-				var spec = ImportType (element);
+				var spec = ImportType (element, ca, dynamicCursor + 1);
 
 				if (type.IsArray)
 					return ArrayContainer.MakeType (spec, type.GetArrayRank ());
@@ -779,13 +882,21 @@ namespace Mono.CSharp
 				throw new NotImplementedException ("Unknown element type " + type.ToString ());
 			}
 
-			TypeSpec dtype;
-			if (type.IsNested)
-				dtype = ImportType (type.DeclaringType);
-			else
-				dtype = null;
+			return CreateType (type, ca, dynamicCursor);
+		}
 
-			return CreateType (type, dtype);
+		static bool IsDynamicType (ICustomAttributeProvider ca, int index)
+		{
+#if NET_4_0
+			if (ca.IsDefined (typeof (DynamicAttribute), false)) {
+				if (index == 0)
+					return true;
+
+				var v = (DynamicAttribute) ca.GetCustomAttributes (typeof (DynamicAttribute), false)[0];
+				return v.TransformFlags[index];
+			}
+#endif
+			return false;
 		}
 
 		//
@@ -1169,13 +1280,15 @@ namespace Mono.CSharp
 			return cattrs.AttributeUsage;
 		}
 
-		public MemberCache LoadMembers (TypeSpec declaringType)
+		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			//
 			// Not interested in members of nested private types unless the importer needs them
 			//
-			if (declaringType.IsPrivate && meta_import.IgnorePrivateMembers)
-				return MemberCache.Empty;
+			if (declaringType.IsPrivate && meta_import.IgnorePrivateMembers) {
+				cache = MemberCache.Empty;
+				return;
+			}
 
 			var loading_type = (Type) provider;
 			const BindingFlags all_members = BindingFlags.DeclaredOnly |
@@ -1199,128 +1312,152 @@ namespace Mono.CSharp
 					declaringType.GetSignatureForError (), declaringType.Assembly.Location);
 			}
 
-			//
-			// The logic here requires methods to be returned first which seems to work for both Mono and .NET
-			//
-			var cache = new MemberCache (all.Length);
-			foreach (var member in all) {
-				switch (member.MemberType) {
-				case MemberTypes.Constructor:
-				case MemberTypes.Method:
-					MethodBase mb = (MethodBase) member;
+			if (cache == null) {
+				cache = new MemberCache (all.Length);
 
-					// Ignore explicitly implemented members
-					if ((mb.Attributes & explicit_impl) == explicit_impl && (mb.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private)
+				//
+				// Do the types first as they can be referenced by the members before
+				// they are found or inflated
+				//
+				foreach (var member in all) {
+					if (member.MemberType != MemberTypes.NestedType)
 						continue;
 
-					// Ignore compiler generated methods
-					if (mb.IsPrivate && mb.IsDefined (typeof (CompilerGeneratedAttribute), false))
-						continue;
-
-					imported = meta_import.CreateMethod (mb, declaringType);
-					if (imported.Kind == MemberKind.Method && !imported.IsGeneric) {
-						if (possible_accessors == null)
-							possible_accessors = new Dictionary<MethodBase, MethodSpec> (ReferenceEquality<MethodBase>.Default);
-
-						// There are no metadata rules for accessors, we have to consider any method as possible candidate
-						possible_accessors.Add (mb, (MethodSpec) imported);
-					}
-
-					break;
-				case MemberTypes.Property:
-					if (possible_accessors == null)
-						continue;
-
-					var p = (PropertyInfo) member;
-					//
-					// Links possible accessors with property
-					//
-					MethodSpec get, set;
-					m = p.GetGetMethod (true);
-					if (m == null || !possible_accessors.TryGetValue (m, out get))
-						get = null;
-
-					m = p.GetSetMethod (true);
-					if (m == null || !possible_accessors.TryGetValue (m, out set))
-						set = null;
-
-					// No accessors registered (e.g. explicit implementation)
-					if (get == null && set == null)
-						continue;
-
-					imported = meta_import.CreateProperty (p, declaringType, get, set);
-					if (imported == null)
-						continue;
-
-					break;
-				case MemberTypes.Event:
-					if (possible_accessors == null)
-						continue;
-
-					var e = (EventInfo) member;
-					//
-					// Links accessors with event
-					//
-					MethodSpec add, remove;
-					m = e.GetAddMethod (true);
-					if (m == null || !possible_accessors.TryGetValue (m, out add))
-						add = null;
-
-					m = e.GetRemoveMethod (true);
-					if (m == null || !possible_accessors.TryGetValue (m, out remove))
-						remove = null;
-
-					// Both accessors are required
-					if (add == null || remove == null)
-						continue;
-
-					event_spec = meta_import.CreateEvent (e, declaringType, add, remove);
-					if (!meta_import.IgnorePrivateMembers) {
-						if (imported_events == null)
-							imported_events = new List<EventSpec> ();
-
-						imported_events.Add (event_spec);
-					}
-
-					imported = event_spec;
-					break;
-				case MemberTypes.Field:
-					var fi = (FieldInfo) member;
-
-					imported = meta_import.CreateField (fi, declaringType);
-					if (imported == null)
-						continue;
-
-					//
-					// For dynamic binder event has to be fully restored to allow operations
-					// within the type container to work correctly
-					//
-					if (imported_events != null) {
-						// The backing event field should be private but it may not
-						int index = imported_events.FindIndex (l => l.Name == fi.Name);
-						if (index >= 0) {
-							event_spec = imported_events[index];
-							event_spec.BackingField = (FieldSpec) imported;
-							imported_events.RemoveAt (index);
-							continue;
-						}
-					}
-
-					break;
-				case MemberTypes.NestedType:
 					Type t = (Type) member;
 
 					// Ignore compiler generated types, mostly lambda containers
 					if (t.IsNotPublic && t.IsDefined (typeof (CompilerGeneratedAttribute), false))
 						continue;
 
-					imported = meta_import.CreateType (t, declaringType);
-					break;
-				default:
-					throw new NotImplementedException (member.ToString ());
+					imported = meta_import.CreateType (t, declaringType, t, 0);
+					cache.AddMember (imported);
 				}
 
-				cache.AddMember (imported);
+				foreach (var member in all) {
+					if (member.MemberType != MemberTypes.NestedType)
+						continue;
+
+					meta_import.ImportTypeBase ((Type) member);
+				}
+			}
+
+			if (!onlyTypes) {
+				//
+				// The logic here requires methods to be returned first which seems to work for both Mono and .NET
+				//
+				foreach (var member in all) {
+					switch (member.MemberType) {
+					case MemberTypes.Constructor:
+					case MemberTypes.Method:
+						MethodBase mb = (MethodBase) member;
+
+						// Ignore explicitly implemented members
+						if ((mb.Attributes & explicit_impl) == explicit_impl && (mb.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private)
+							continue;
+
+						// Ignore compiler generated methods
+						if (mb.IsPrivate && mb.IsDefined (typeof (CompilerGeneratedAttribute), false))
+							continue;
+
+						imported = meta_import.CreateMethod (mb, declaringType);
+						if (imported.Kind == MemberKind.Method && !imported.IsGeneric) {
+							if (possible_accessors == null)
+								possible_accessors = new Dictionary<MethodBase, MethodSpec> (ReferenceEquality<MethodBase>.Default);
+
+							// There are no metadata rules for accessors, we have to consider any method as possible candidate
+							possible_accessors.Add (mb, (MethodSpec) imported);
+						}
+
+						break;
+					case MemberTypes.Property:
+						if (possible_accessors == null)
+							continue;
+
+						var p = (PropertyInfo) member;
+						//
+						// Links possible accessors with property
+						//
+						MethodSpec get, set;
+						m = p.GetGetMethod (true);
+						if (m == null || !possible_accessors.TryGetValue (m, out get))
+							get = null;
+
+						m = p.GetSetMethod (true);
+						if (m == null || !possible_accessors.TryGetValue (m, out set))
+							set = null;
+
+						// No accessors registered (e.g. explicit implementation)
+						if (get == null && set == null)
+							continue;
+
+						imported = meta_import.CreateProperty (p, declaringType, get, set);
+						if (imported == null)
+							continue;
+
+						break;
+					case MemberTypes.Event:
+						if (possible_accessors == null)
+							continue;
+
+						var e = (EventInfo) member;
+						//
+						// Links accessors with event
+						//
+						MethodSpec add, remove;
+						m = e.GetAddMethod (true);
+						if (m == null || !possible_accessors.TryGetValue (m, out add))
+							add = null;
+
+						m = e.GetRemoveMethod (true);
+						if (m == null || !possible_accessors.TryGetValue (m, out remove))
+							remove = null;
+
+						// Both accessors are required
+						if (add == null || remove == null)
+							continue;
+
+						event_spec = meta_import.CreateEvent (e, declaringType, add, remove);
+						if (!meta_import.IgnorePrivateMembers) {
+							if (imported_events == null)
+								imported_events = new List<EventSpec> ();
+
+							imported_events.Add (event_spec);
+						}
+
+						imported = event_spec;
+						break;
+					case MemberTypes.Field:
+						var fi = (FieldInfo) member;
+
+						imported = meta_import.CreateField (fi, declaringType);
+						if (imported == null)
+							continue;
+
+						//
+						// For dynamic binder event has to be fully restored to allow operations
+						// within the type container to work correctly
+						//
+						if (imported_events != null) {
+							// The backing event field should be private but it may not
+							int index = imported_events.FindIndex (l => l.Name == fi.Name);
+							if (index >= 0) {
+								event_spec = imported_events[index];
+								event_spec.BackingField = (FieldSpec) imported;
+								imported_events.RemoveAt (index);
+								continue;
+							}
+						}
+
+						break;
+					case MemberTypes.NestedType:
+						// Already in the cache from the first pass
+						continue;
+					default:
+						throw new NotImplementedException (member.ToString ());
+					}
+
+					cache.AddMember (imported);
+				}
 			}
 
 			if (declaringType.IsInterface && declaringType.Interfaces != null) {
@@ -1328,8 +1465,6 @@ namespace Mono.CSharp
 					cache.AddInterface (iface);
 				}
 			}
-
-			return cache;
 		}
 	}
 
@@ -1377,7 +1512,7 @@ namespace Mono.CSharp
 			throw new NotSupportedException ();
 		}
 
-		public MemberCache LoadMembers (TypeSpec declaringType)
+		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			throw new NotImplementedException ();
 		}

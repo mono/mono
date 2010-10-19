@@ -2149,7 +2149,6 @@ namespace System.Web.UI
 				throw new ArgumentNullException ("control");
 
 			Control parent = this;
-			Page page = Page;
 			Control namingContainer = control.NamingContainer;
 			
 			if (namingContainer != null)

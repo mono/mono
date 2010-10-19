@@ -81,15 +81,19 @@ namespace System.Linq.Expressions {
 		public Delegate Compile ()
 		{
 #if TARGET_JVM || MONOTOUCH
-			System.Linq.jvm.Interpreter inter =
-				new System.Linq.jvm.Interpreter (this);
-			inter.Validate ();
-			return inter.CreateDelegate ();
+			return new System.Linq.jvm.Runner (this).CreateDelegate ();
 #else
 			var context = new CompilationContext ();
 			context.AddCompilationUnit (this);
 			return context.CreateDelegate ();
 #endif
 		}
+
+#if TARGET_JVM || MONOTOUCH
+		internal Delegate Compile (System.Linq.jvm.ExpressionInterpreter interpreter)
+		{
+			return new System.Linq.jvm.Runner (this, interpreter).CreateDelegate ();
+		}
+#endif
 	}
 }

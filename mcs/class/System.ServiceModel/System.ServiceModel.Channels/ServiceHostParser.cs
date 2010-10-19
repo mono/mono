@@ -99,15 +99,42 @@ namespace System.ServiceModel.Channels {
 				string line;
 				bool directive_found = false;
 				StringBuilder content = new StringBuilder ();
-					
+				StringBuilder directiveBuffer = null;
+
 				while ((line = reader.ReadLine ()) != null) {
 					string trimmed = line.Trim ();
-					if (!directive_found && trimmed == String.Empty)
+					if (!directive_found && trimmed.Length == 0)
 						continue;
-					
+
 					if (trimmed.StartsWith ("<%@")) {
+						int directiveEnd = trimmed.IndexOf ("%>");
+
+						if (directiveEnd == -1) {
+							if (directiveBuffer == null)
+								directiveBuffer = new StringBuilder ();
+							directiveBuffer.Append (line);
+							continue;
+						}
+
 						ParseDirective (trimmed);
 						directive_found = true;
+						continue;
+					} else if (!directive_found && directiveBuffer != null) {
+						int directiveEnd = trimmed.IndexOf ("%>");
+						if (directiveEnd == -1) {
+							directiveBuffer.Append (trimmed);
+							continue;
+						}
+
+						directiveEnd += 2;
+						int tlen = trimmed.Length;
+						if (tlen > directiveEnd)
+							content.Append (trimmed.Substring (directiveEnd) + "\n");
+
+						directiveBuffer.Append (trimmed.Substring (0, directiveEnd));
+						ParseDirective (directiveBuffer.ToString ());
+						directive_found = true;
+						directiveBuffer = null;
 						continue;
 					}
 
@@ -119,7 +146,7 @@ namespace System.ServiceModel.Channels {
 					throw new Exception ("No @ServiceHost directive found");
 
 				this.program = content.ToString ().Trim ();
-				if (this.program.Trim () == "")
+				if (this.program.Trim ().Length == 0)
 					this.program = null;
 			}
 

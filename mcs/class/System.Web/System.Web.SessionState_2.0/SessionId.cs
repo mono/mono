@@ -28,14 +28,11 @@
 
 using System.Text;
 using System.Security.Cryptography;
+using System.Web.Util;
 
 namespace System.Web.SessionState {
 
 	internal class SessionId {
-
-		static char [] allowed = { '0', '1', '2', '3', '4', '5',
-						   '6', '7', '8', '9', 'A', 'B',
-						   'C', 'D', 'E', 'F' };
 
 		internal const int IdLength = 24;
 		const int half_len = IdLength / 2;
@@ -48,25 +45,9 @@ namespace System.Web.SessionState {
 			lock (rng) {
 				rng.GetBytes (key);
 			}
-			return Encode (key);
+			return MachineKeySectionUtils.GetHexString (key);
 		}
 
-		internal static string Encode (byte[] key)
-		{
-			if (key == null)
-				throw new ArgumentNullException ("key");
-			if (key.Length != half_len)
-				throw new ArgumentException (String.Concat ("key must be ", half_len.ToString (), " bytes long."));
-
-			// Just a standard hex conversion
-			char[] res = new char [IdLength];
-			for (int i=0; i < half_len; i++) {
-				int b = key [i];
-				res [i * 2] = allowed [b >> 4];
-				res [(i * 2) + 1] = allowed [b & 0xF];
-			}
-			return new String (res);
-		}
 #if !NET_2_0
 		internal static string Lookup (HttpRequest request, bool cookieless)
 		{

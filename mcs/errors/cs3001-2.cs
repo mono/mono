@@ -1,4 +1,4 @@
-// CS3001: Argument type `ref ulong' is not CLS-compliant
+// CS3001: Argument type `ulong' is not CLS-compliant
 // Line: 10
 // Compiler options: -warnaserror -warn:1
 

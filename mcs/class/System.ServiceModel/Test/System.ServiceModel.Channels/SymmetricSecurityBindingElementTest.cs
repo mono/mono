@@ -395,6 +395,7 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
+		[Category ("NotWorking")] // it requires OneWay
 		public void RequestBasedOnContract2 ()
 		{
 			CustomBinding b = CreateBinding (delegate (Message input) {

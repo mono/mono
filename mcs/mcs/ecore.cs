@@ -1722,7 +1722,8 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class OpcodeCast : TypeCast {
+	class OpcodeCast : TypeCast
+	{
 		readonly OpCode op;
 		
 		public OpcodeCast (Expression child, TypeSpec return_type, OpCode op)
@@ -1747,6 +1748,27 @@ namespace Mono.CSharp {
 
 		public TypeSpec UnderlyingType {
 			get { return child.Type; }
+		}
+	}
+
+	//
+	// Opcode casts expression with 2 opcodes but only
+	// single expression tree node
+	//
+	class OpcodeCastDuplex : OpcodeCast
+	{
+		readonly OpCode second;
+
+		public OpcodeCastDuplex (Expression child, TypeSpec returnType, OpCode first, OpCode second)
+			: base (child, returnType, first)
+		{
+			this.second = second;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+			ec.Emit (second);
 		}
 	}
 
@@ -3119,6 +3141,15 @@ namespace Mono.CSharp {
 			return baseType == null ? null : MemberCache.FindMembers (baseType, Methods [0].Name, false);
 		}
 
+		public IParametersMember GetOverrideMemberParameters (MemberSpec member)
+		{
+			if (queried_type == member.DeclaringType)
+				return null;
+
+			return MemberCache.FindMember (queried_type, new MemberFilter ((MethodSpec) member),
+				BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly) as IParametersMember;
+		}
+
 		//
 		// Extension methods lookup after ordinary methods candidates failed to apply
 		//
@@ -3161,6 +3192,7 @@ namespace Mono.CSharp {
 		public interface IBaseMembersProvider
 		{
 			IList<MemberSpec> GetBaseMembers (TypeSpec baseType);
+			IParametersMember GetOverrideMemberParameters (MemberSpec member);
 			MethodGroupExpr LookupExtensionMethod (ResolveContext rc);
 		}
 
@@ -3177,6 +3209,11 @@ namespace Mono.CSharp {
 			public static readonly IBaseMembersProvider Instance = new NoBaseMembers ();
 
 			public IList<MemberSpec> GetBaseMembers (TypeSpec baseType)
+			{
+				return null;
+			}
+
+			public IParametersMember GetOverrideMemberParameters (MemberSpec member)
 			{
 				return null;
 			}
@@ -3345,8 +3382,8 @@ namespace Mono.CSharp {
 					q == TypeManager.uint64_type)
 					return 1;
 			} else if (p == InternalType.Dynamic) {
-				if (q == TypeManager.object_type)
-					return 2;
+				// Dynamic is never better
+				return 2;
 			}
 
 			if (q == TypeManager.int32_type) {
@@ -3364,8 +3401,8 @@ namespace Mono.CSharp {
 					p == TypeManager.uint64_type)
 					return 2;
 			} else if (q == InternalType.Dynamic) {
-				if (p == TypeManager.object_type)
-					return 1;
+				// Dynamic is never better
+				return 1;
 			}
 
 			// TODO: this is expensive
@@ -3540,18 +3577,21 @@ namespace Mono.CSharp {
 				type.GetSignatureForError (), argCount.ToString ());
 		}
 
-		///
-		/// Determines if the candidate method is applicable (section 14.4.2.1)
-		/// to the given set of arguments
-		/// A return value rates candidate method compatibility,
-		/// 0 = the best, int.MaxValue = the worst
-		///
-		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, ref bool params_expanded_form)
+		//
+		// Determines if the candidate method is applicable to the given set of arguments
+		// There could be two different set of parameters for same candidate where one
+		// is the closest override for default values and named arguments checks and second
+		// one being the virtual base for the parameter types and modifiers.
+		//
+		// A return value rates candidate method compatibility,
+		// 0 = the best, int.MaxValue = the worst
+		//
+		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, AParametersCollection pd, ref bool params_expanded_form, ref bool dynamicArgument)
 		{
-			AParametersCollection pd = ((IParametersMember) candidate).Parameters;
 			int param_count = pd.Count;
 			int optional_count = 0;
 			int score;
+			Arguments orig_args = arguments;
 
 			if (arg_count != param_count) {
 				for (int i = 0; i < pd.Count; ++i) {
@@ -3613,8 +3653,12 @@ namespace Mono.CSharp {
 
 							int index = pd.GetParameterIndexByName (na.Name);
 
-							// Named parameter not found or already reordered
-							if (index == i || index < 0)
+							// Named parameter not found
+							if (index < 0)
+								return (i + 1) * 3;
+
+							// already reordered
+							if (index == i)
 								break;
 
 							Argument temp;
@@ -3635,7 +3679,7 @@ namespace Mono.CSharp {
 							}
 
 							if (!arg_moved) {
-								arguments.MarkReorderedArgument (na);
+								arguments = arguments.MarkOrderedArgument (na);
 								arg_moved = true;
 							}
 
@@ -3707,11 +3751,15 @@ namespace Mono.CSharp {
 			//
 			Parameter.Modifier p_mod = 0;
 			TypeSpec pt = null;
+			TypeSpec[] ptypes = ((IParametersMember) candidate).Parameters.Types;
+
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = arguments[i];
 				if (a == null) {
-					if (!pd.FixedParameters[i].HasDefaultValue)
-						throw new InternalErrorException ();
+					if (!pd.FixedParameters[i].HasDefaultValue) {
+						arguments = orig_args;
+						return arg_count * 2 + 2;
+					}
 
 					//
 					// Get the default value expression, we can use the same expression
@@ -3722,11 +3770,11 @@ namespace Mono.CSharp {
 						//
 						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
 						//
-						if (e == EmptyExpression.MissingValue && pd.Types[i] == TypeManager.object_type) {
+						if (e == EmptyExpression.MissingValue && ptypes [i] == TypeManager.object_type) {
 							e = new MemberAccess (new MemberAccess (new MemberAccess (
 								new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
 						} else {
-							e = new DefaultValueExpression (new TypeExpression (pd.Types[i], loc), loc);
+							e = new DefaultValueExpression (new TypeExpression (ptypes [i], loc), loc);
 						}
 
 						e = e.Resolve (ec);
@@ -3738,7 +3786,7 @@ namespace Mono.CSharp {
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.FixedParameters[i].ModFlags;
-					pt = pd.Types[i];
+					pt = ptypes [i];
 				} else if (!params_expanded_form) {
 					params_expanded_form = true;
 					pt = ((ElementTypeSpec) pt).Element;
@@ -3747,8 +3795,25 @@ namespace Mono.CSharp {
 				}
 
 				score = 1;
-				if (!params_expanded_form)
-					score = IsArgumentCompatible (ec, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
+				if (!params_expanded_form) {
+					if (a.ArgType == Argument.AType.ExtensionType) {
+						//
+						// Indentity, implicit reference or boxing conversion must exist for the extension parameter
+						//
+						var at = a.Type;
+						if (at == pt || TypeSpecComparer.IsEqual (at, pt) ||
+							Convert.ImplicitReferenceConversionExists (a.Expr, pt) ||
+							Convert.ImplicitBoxingConversion (EmptyExpression.Null, at, pt) != null) {
+							score = 0;
+							continue;
+						}
+					} else {
+						score = IsArgumentCompatible (ec, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
+
+						if (score < 0)
+							dynamicArgument = true;
+					}
+				}
 
 				//
 				// It can be applicable in expanded form (when not doing exact match like for delegates)
@@ -3757,12 +3822,14 @@ namespace Mono.CSharp {
 					if (!params_expanded_form)
 						pt = ((ElementTypeSpec) pt).Element;
 
-					score = IsArgumentCompatible (ec, a, Parameter.Modifier.NONE, pt);
-					if (score == 0)
+					if (score > 0)
+						score = IsArgumentCompatible (ec, a, Parameter.Modifier.NONE, pt);
+
+					if (score <= 0)
 						params_expanded_form = true;
 				}
 
-				if (score != 0) {
+				if (score > 0) {
 					if (params_expanded_form)
 						++score;
 					return (arg_count - i) * 2 + score;
@@ -3770,14 +3837,28 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// When params parameter has notargument, will be provided later if the method is the best candidate
+			// When params parameter has no argument it will be provided later if the method is the best candidate
 			//
 			if (arg_count + 1 == pd.Count && (pd.FixedParameters [arg_count].ModFlags & Parameter.Modifier.PARAMS) != 0)
 				params_expanded_form = true;
 
+			//
+			// Restore original arguments for dynamic binder to keep the intention of original source code
+			//
+			if (dynamicArgument)
+				arguments = orig_args;
+
 			return 0;
 		}
 
+		//
+		// Tests argument compatibility with the parameter
+		// The possible return values are
+		// 0 - success
+		// 1 - modifier mismatch
+		// 2 - type mismatch
+		// -1 - dynamic binding required
+		//
 		int IsArgumentCompatible (ResolveContext ec, Argument argument, Parameter.Modifier param_mod, TypeSpec parameter)
 		{
 			//
@@ -3785,20 +3866,35 @@ namespace Mono.CSharp {
 			// is used and argument is not of dynamic type
 			//
 			if ((argument.Modifier | param_mod) != 0) {
-				//
-				// Defer to dynamic binder
-				//
-				if (argument.Type == InternalType.Dynamic)
-					return 0;
-
 				if (argument.Type != parameter) {
 					//
 					// Do full equality check after quick path
 					//
-					if (!TypeSpecComparer.IsEqual (argument.Type, parameter))
+					if (!TypeSpecComparer.IsEqual (argument.Type, parameter)) {
+						//
+						// Using dynamic for ref/out parameter can still succeed at runtime
+						//
+						if (argument.Type == InternalType.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+							return -1;
+
 						return 2;
+					}
 				}
+
+				if (argument.Modifier != param_mod) {
+					//
+					// Using dynamic for ref/out parameter can still succeed at runtime
+					//
+					if (argument.Type == InternalType.Dynamic && argument.Modifier == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+						return -1;
+
+					return 1;
+				}
+
 			} else {
+				if (argument.Type == InternalType.Dynamic && (restrictions & Restrictions.CovariantDelegate) == 0)
+					return -1;
+
 				//
 				// Deploy custom error reporting for lambda methods. When probing lambda methods
 				// keep all errors reported in separate set and once we are done and no best
@@ -3820,9 +3916,6 @@ namespace Mono.CSharp {
 					return 2;
 				}
 			}
-
-			if (argument.Modifier != param_mod)
-				return 1;
 
 			return 0;
 		}
@@ -3876,9 +3969,12 @@ namespace Mono.CSharp {
 			MemberSpec best_candidate;
 			Arguments best_candidate_args = null;
 			bool best_candidate_params = false;
+			bool best_candidate_dynamic = false;
 			int best_candidate_rate;
+			IParametersMember best_parameter_member = null;
 
 			int args_count = args != null ? args.Count : 0;
+
 			Arguments candidate_args = args;
 			bool error_mode = false;
 			var current_type = rc.CurrentType;
@@ -3906,7 +4002,8 @@ namespace Mono.CSharp {
 							if (!member.IsAccessible (current_type) && !error_mode)
 								continue;
 
-							if (!(member is IParametersMember)) {
+							IParametersMember pm = member as IParametersMember;
+							if (pm == null) {
 								//
 								// Will use it later to report ambiguity between best method and invocable member
 								//
@@ -3917,10 +4014,22 @@ namespace Mono.CSharp {
 							}
 
 							//
-							// Check if candidate is applicable
+							// Overload resolution is looking for base member but using parameter names
+							// and default values from the closest member. That means to do expensive lookup
+							// for the closest override for virtual or abstract members
+							//
+							if ((member.Modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT)) != 0) {
+								var override_params = base_provider.GetOverrideMemberParameters (member);
+								if (override_params != null)
+									pm = override_params;
+							}
+
+							//
+							// Check if the member candidate is applicable
 							//
 							bool params_expanded_form = false;
-							int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, ref params_expanded_form);
+							bool dynamic_argument = false;
+							int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, pm.Parameters, ref params_expanded_form, ref dynamic_argument);
 
 							//
 							// How does it score compare to others
@@ -3930,6 +4039,8 @@ namespace Mono.CSharp {
 								best_candidate = member;
 								best_candidate_args = candidate_args;
 								best_candidate_params = params_expanded_form;
+								best_candidate_dynamic = dynamic_argument;
+								best_parameter_member = pm;
 							} else if (candidate_rate == 0) {
 								//
 								// The member look is done per type for most operations but sometimes
@@ -3941,11 +4052,13 @@ namespace Mono.CSharp {
 										continue;
 								}
 
-								// Is new candidate better
+								// Is the new candidate better
 								if (BetterFunction (rc, candidate_args, member, params_expanded_form, best_candidate, best_candidate_params)) {
 									best_candidate = member;
 									best_candidate_args = candidate_args;
 									best_candidate_params = params_expanded_form;
+									best_candidate_dynamic = dynamic_argument;
+									best_parameter_member = pm;
 								} else {
 									// It's not better but any other found later could be but we are not sure yet
 									if (ambiguous_candidates == null)
@@ -4000,16 +4113,15 @@ namespace Mono.CSharp {
 			// No best member match found, report an error
 			//
 			if (best_candidate_rate != 0 || error_mode) {
-				ReportOverloadError (rc, best_candidate, best_candidate_args, best_candidate_params);
+				ReportOverloadError (rc, best_candidate, best_parameter_member, best_candidate_args, best_candidate_params);
 				return null;
 			}
 
-			// TODO: HasDynamic is quite slow
-			if (args_count != 0 && (restrictions & Restrictions.CovariantDelegate) == 0 && args.HasDynamic) {
-				if (args [0].ArgType == Argument.AType.ExtensionType) {
+			if (best_candidate_dynamic) {
+				if (args[0].ArgType == Argument.AType.ExtensionType) {
 					rc.Report.Error (1973, loc,
 						"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' cannot be dynamically dispatched. Consider calling the method without the extension method syntax",
-						args [0].Type.GetSignatureForError (), best_candidate.Name, best_candidate.GetSignatureForError());
+						args [0].Type.GetSignatureForError (), best_candidate.Name, best_candidate.GetSignatureForError ());
 				}
 
 				BestCandidateIsDynamic = true;
@@ -4051,7 +4163,7 @@ namespace Mono.CSharp {
 			// necessary etc. and return if everything is
 			// all right
 			//
-			if (!VerifyArguments (rc, ref best_candidate_args, best_candidate, best_candidate_params))
+			if (!VerifyArguments (rc, ref best_candidate_args, best_candidate, best_parameter_member, best_candidate_params))
 				return null;
 
 			if (best_candidate == null)
@@ -4128,7 +4240,7 @@ namespace Mono.CSharp {
 		//
 		// We have failed to find exact match so we return error info about the closest match
 		//
-		void ReportOverloadError (ResolveContext rc, MemberSpec best_candidate, Arguments args, bool params_expanded)
+		void ReportOverloadError (ResolveContext rc, MemberSpec best_candidate, IParametersMember pm, Arguments args, bool params_expanded)
 		{
 			int ta_count = type_arguments == null ? 0 : type_arguments.Count;
 			int arg_count = args == null ? 0 : args.Count;
@@ -4147,7 +4259,6 @@ namespace Mono.CSharp {
 			//
 			// For candidates which match on parameters count report more details about incorrect arguments
 			//
-			var pm = best_candidate as IParametersMember;
 			if (pm != null) {
 				int unexpanded_count = pm.Parameters.HasParams ? pm.Parameters.Count - 1 : pm.Parameters.Count;
 				if (pm.Parameters.Count == arg_count || params_expanded || unexpanded_count == arg_count) {
@@ -4178,7 +4289,7 @@ namespace Mono.CSharp {
 						}
 					}
 
-					VerifyArguments (rc, ref args, best_candidate, params_expanded);
+					VerifyArguments (rc, ref args, best_candidate, pm, params_expanded);
 					return;
 				}
 			}
@@ -4204,10 +4315,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		bool VerifyArguments (ResolveContext ec, ref Arguments args, MemberSpec member, bool chose_params_expanded)
+		bool VerifyArguments (ResolveContext ec, ref Arguments args, MemberSpec member, IParametersMember pm, bool chose_params_expanded)
 		{
-			var pm = member as IParametersMember;
 			var pd = pm.Parameters;
+			TypeSpec[] ptypes = ((IParametersMember) member).Parameters.Types;
 
 			Parameter.Modifier p_mod = 0;
 			TypeSpec pt = null;
@@ -4221,7 +4332,7 @@ namespace Mono.CSharp {
 				a = args[a_idx];
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.FixedParameters[a_idx].ModFlags;
-					pt = pd.Types[a_idx];
+					pt = ptypes[a_idx];
 					has_unsafe_arg |= pt.IsPointer;
 
 					if (p_mod == Parameter.Modifier.PARAMS) {
@@ -4280,7 +4391,19 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				Expression conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
+				Expression conv = null;
+				if (a.ArgType == Argument.AType.ExtensionType) {
+					if (a.Expr.Type == pt || TypeSpecComparer.IsEqual (a.Expr.Type, pt)) {
+						conv = a.Expr;
+					} else {
+						conv = Convert.ImplicitReferenceConversion (a.Expr, pt, false);
+						if (conv == null)
+							conv = Convert.ImplicitBoxingConversion (a.Expr, a.Expr.Type, pt);
+					}
+				} else {
+					conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
+				}
+
 				if (conv == null)
 					break;
 
@@ -4312,7 +4435,7 @@ namespace Mono.CSharp {
 				if (args == null)
 					args = new Arguments (1);
 
-				pt = pd.Types[pd.Count - 1];
+				pt = ptypes[pd.Count - 1];
 				pt = TypeManager.GetElementType (pt);
 				has_unsafe_arg |= pt.IsPointer;
 				params_initializers = new ArrayInitializer (0, loc);
@@ -4763,7 +4886,7 @@ namespace Mono.CSharp {
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			prepared = prepare_for_load;
+			prepared = prepare_for_load && !(source is DynamicExpressionStatement);
 			if (IsInstance)
 				EmitInstance (ec, prepared);
 
@@ -4996,9 +5119,10 @@ namespace Mono.CSharp {
 
 		public override void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			Expression my_source = source;
+			Arguments args;
 
-			if (prepare_for_load) {
+			if (prepare_for_load && !(source is DynamicExpressionStatement)) {
+				args = new Arguments (0);
 				prepared = true;
 				source.Emit (ec);
 				
@@ -5009,16 +5133,19 @@ namespace Mono.CSharp {
 						temp.Store (ec);
 					}
 				}
-			} else if (leave_copy) {
-				source.Emit (ec);
-				temp = new LocalTemporary (this.Type);
-				temp.Store (ec);
-				my_source = temp;
+			} else {
+				args = new Arguments (1);
+
+				if (leave_copy) {
+					source.Emit (ec);
+					temp = new LocalTemporary (this.Type);
+					temp.Store (ec);
+					args.Add (new Argument (temp));
+				} else {
+					args.Add (new Argument (source));
+				}
 			}
 
-			Arguments args = new Arguments (1);
-			args.Add (new Argument (my_source));
-			
 			Invocation.EmitCall (ec, InstanceExpression, Setter, args, loc, false, prepared);
 			
 			if (temp != null) {
@@ -5261,13 +5388,12 @@ namespace Mono.CSharp {
 		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
 			//
-			// If the event is local to this class, we transform ourselves into a FieldExpr
+			// If the event is local to this class and we are not lhs of +=/-= we transform ourselves into a FieldExpr
 			//
+			if (!ec.HasSet (ResolveContext.Options.CompoundAssignmentScope)) {
+				if (spec.BackingField != null &&
+					(spec.DeclaringType == ec.CurrentType || TypeManager.IsNestedChildOf (ec.CurrentType, spec.DeclaringType))) {
 
-			if (spec.DeclaringType == ec.CurrentType ||
-			    TypeManager.IsNestedChildOf(ec.CurrentType, spec.DeclaringType)) {
-					
-				if (spec.BackingField != null) {
 					spec.MemberDefinition.SetIsUsed ();
 
 					if (!ec.IsObsolete) {
@@ -5276,19 +5402,18 @@ namespace Mono.CSharp {
 							AttributeTester.Report_ObsoleteMessage (oa, spec.GetSignatureForError (), loc, ec.Report);
 					}
 
-					if ((spec.Modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.HasSet (ResolveContext.Options.CompoundAssignmentScope))
+					if ((spec.Modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 						Error_AssignmentEventOnly (ec);
-					
+
 					FieldExpr ml = new FieldExpr (spec.BackingField, loc);
 
 					InstanceExpression = null;
-				
+
 					return ml.ResolveMemberAccess (ec, left, original);
 				}
-			}
 
-			if (!ec.HasSet (ResolveContext.Options.CompoundAssignmentScope))			
 				Error_AssignmentEventOnly (ec);
+			}
 
 			return base.ResolveMemberAccess (ec, left, original);
 		}

@@ -38,13 +38,13 @@ using Mono.Security.Authenticode;
 using Mono.Security.X509;
 
 [assembly: AssemblyTitle ("Mozilla Roots Importer")]
-[assembly: AssemblyDescription ("Download and import trusted root certificates from Mozilla's LXR.")]
+[assembly: AssemblyDescription ("Download and import trusted root certificates from Mozilla's MXR.")]
 
 namespace Mono.Tools {
 
 	class MozRoots {
 
-		private const string defaultUrl = "http://lxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt";
+		private const string defaultUrl = "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1";
 
 		static string url;
 		static string inputFile;
@@ -79,10 +79,10 @@ namespace Mono.Tools {
 				} else {
 					WriteLine ("Downloading from '{0}'...", url);
 					HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+					req.Timeout = 10000;
 					return req.GetResponse ().GetResponseStream ();
 				}
-			}
-			catch {
+			} catch {
 				return null;
 			}
 		}
@@ -93,36 +93,34 @@ namespace Mono.Tools {
 			StringBuilder sb = new StringBuilder ();
 			bool processing = false;
 
-			Stream s = GetFile ();
-			if (s == null) {
-				WriteLine ("Couldn't retrieve the file using the supplied informations.");
-				return null;
-			}
-
-			StreamReader sr = new StreamReader (s);
-			while (true) {
-				string line = sr.ReadLine ();
-				if (line == null)
-					break;
-				int start = line.IndexOf ("</a> ");
-				if (start < 0)
-					continue;
-
-				if (processing) {
-					if (line.IndexOf ("END") > start) {
-						processing = false;
-						X509Certificate root = DecodeCertificate (sb.ToString ());
-						roots.Add (root);
-
-						sb = new StringBuilder ();
-						continue;
-					}
-					sb.Append (line.Substring (start + 5));
-				} else {
-					processing = (line.IndexOf ("CKA_VALUE MULTILINE_OCTAL") > start);
+			using (Stream s = GetFile ()) {
+				if (s == null) {
+					WriteLine ("Couldn't retrieve the file using the supplied information.");
+					return null;
 				}
+
+				StreamReader sr = new StreamReader (s);
+				while (true) {
+					string line = sr.ReadLine ();
+					if (line == null)
+						break;
+
+					if (processing) {
+						if (line.StartsWith ("END")) {
+							processing = false;
+							X509Certificate root = DecodeCertificate (sb.ToString ());
+							roots.Add (root);
+
+							sb = new StringBuilder ();
+							continue;
+						}
+						sb.Append (line);
+					} else {
+						processing = line.StartsWith ("CKA_VALUE MULTILINE_OCTAL");
+					}
+				}
+				return roots;
 			}
-			return roots;
 		}
 
 		static int Process ()
@@ -295,12 +293,18 @@ namespace Mono.Tools {
 			Console.WriteLine (" --ask-remove\tAlways confirm before removing an existing trusted certificate.");
 			Console.WriteLine ("{0}and the advanced options are", Environment.NewLine);
 			Console.WriteLine (" --url url\tSpecify an alternative URL for downloading the trusted");
-			Console.WriteLine ("\t\tcertificates (LXR source format).");
+			Console.WriteLine ("\t\tcertificates (MXR source format).");
 			Console.WriteLine (" --file name\tDo not download but use the specified file.");
 			Console.WriteLine (" --pkcs7 name\tExport the certificates into a PKCS#7 file.");
 			Console.WriteLine (" --machine\tImport the certificate in the machine trust store.");
 			Console.WriteLine ("\t\tThe default is to import into the user store.");
 			Console.WriteLine (" --quiet\tLimit console output to errors and confirmations messages.");
+		}
+
+		static void WriteLine (string str)
+		{
+			if (!quiet)
+				Console.WriteLine (str);
 		}
 
 		static void WriteLine (string format, params object[] args)

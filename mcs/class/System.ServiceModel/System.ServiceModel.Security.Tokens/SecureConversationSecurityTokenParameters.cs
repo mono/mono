@@ -143,7 +143,7 @@ namespace System.ServiceModel.Security.Tokens
 		}
 
 		[MonoTODO]
-		protected override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
+		protected internal override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
 		{
 			// .NET somehow causes NRE. dunno why.
 			requirement.TokenType = ServiceModelSecurityTokenTypes.SecureConversation;

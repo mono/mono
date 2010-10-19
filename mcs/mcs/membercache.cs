@@ -59,7 +59,9 @@ namespace Mono.CSharp {
 		// Exclude static
 		InstanceOnly = 1 << 2,
 
-		NoAccessors = 1 << 3
+		NoAccessors = 1 << 3,
+
+		OverrideOnly = 1 << 4
 	}
 
 	public struct MemberFilter : IEquatable<MemberSpec>
@@ -364,6 +366,9 @@ namespace Mono.CSharp {
 						if ((restrictions & BindingRestriction.NoAccessors) != 0 && entry.IsAccessor)
 							continue;
 
+						if ((restrictions & BindingRestriction.OverrideOnly) != 0 && (entry.Modifiers & Modifiers.OVERRIDE) == 0)
+							continue;
+
 						if (!filter.Equals (entry))
 							continue;
 
@@ -486,8 +491,13 @@ namespace Mono.CSharp {
 		{
 			bestCandidate = null;
 			var container = member.Parent.PartialContainer.Definition;
-			if (!container.IsInterface)
+			if (!container.IsInterface) {
 				container = container.BaseType;
+
+				// It can happen for a user definition of System.Object
+				if (container == null)
+					return null;
+			}
 
 			string name = GetLookupName (member);
 			IList<MemberSpec> applicable;

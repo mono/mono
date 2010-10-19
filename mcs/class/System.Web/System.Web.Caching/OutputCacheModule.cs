@@ -45,12 +45,14 @@ namespace System.Web.Caching
 {	
 	sealed class OutputCacheModule : IHttpModule
 	{
-		OutputCacheProvider provider;
 		CacheItemRemovedCallback response_removed;
 		static object keysCacheLock = new object ();
 		Dictionary <string, string> keysCache;
 		Dictionary <string, string> entriesToInvalidate;
+		
 #if !NET_4_0
+		OutputCacheProvider provider;
+
 		internal OutputCacheProvider InternalProvider {
 			get { return provider; }
 		}

@@ -445,6 +445,7 @@ namespace MonoTests.System.Xaml
 		{
 			var m = XamlLanguage.Type.GetMember ("Type");
 			TestMemberCommon (m, "Type", typeof (Type), typeof (TypeExtension), true);
+			Assert.AreNotEqual (XamlLanguage.Type, m.Type, "#1");
 		}
 
 		// primitive types
@@ -802,6 +803,7 @@ namespace MonoTests.System.Xaml
 				Assert.IsNotNull (t.TypeConverter, "#25");
 			Assert.IsNotNull (t.MarkupExtensionReturnType, "#29");
 			Assert.AreEqual (extReturnType, t.MarkupExtensionReturnType.UnderlyingType, "#29-2");
+			Assert.IsNull (t.Invoker.SetMarkupExtensionHandler, "#31"); // orly?
 		}
 
 		void TestMemberCommon (XamlMember m, string name, Type type, Type declType, bool hasSetter)

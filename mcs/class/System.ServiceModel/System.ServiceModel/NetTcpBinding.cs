@@ -30,13 +30,13 @@ using System.Collections.Generic;
 using System.Net.Security;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 using System.Text;
 using System.Xml;
 
 namespace System.ServiceModel
 {
-	[MonoTODO]
 	public class NetTcpBinding : Binding, IBindingRuntimePreferences
 	{
 		int max_conn;
@@ -48,7 +48,7 @@ namespace System.ServiceModel
 		TcpTransportBindingElement transport = new TcpTransportBindingElement ();
 
 		public NetTcpBinding ()
-			: this (SecurityMode.Message)
+			: this (SecurityMode.Transport)
 		{
 		}
 
@@ -145,6 +145,7 @@ namespace System.ServiceModel
 			var msg = new BinaryMessageEncodingBindingElement ();
 			if (ReaderQuotas != null)
 				ReaderQuotas.CopyTo (msg.ReaderQuotas);
+			var trsec = CreateTransportSecurity ();
 			BindingElement tr = GetTransport ();
 			List<BindingElement> list = new List<BindingElement> ();
 			if (tx != null)
@@ -152,6 +153,8 @@ namespace System.ServiceModel
 			if (sec != null)
 				list.Add (sec);
 			list.Add (msg);
+			if (trsec != null)
+				list.Add (trsec);
 			list.Add (tr);
 			return new BindingElementCollection (list.ToArray ());
 		}
@@ -161,13 +164,14 @@ namespace System.ServiceModel
 			return transport.Clone ();
 		}
 
-		// based on WSHttpBinding.CreateMessageSecurity()
+		// It is problematic, but there is no option to disable establishing security context in this binding unlike WSHttpBinding...
 		SecurityBindingElement CreateMessageSecurity ()
 		{
 			if (Security.Mode == SecurityMode.Transport ||
 			    Security.Mode == SecurityMode.None)
 				return null;
 
+			// FIXME: this is wrong. Could be Asymmetric, depends on Security.Message.AlgorithmSuite value.
 			SymmetricSecurityBindingElement element =
 				new SymmetricSecurityBindingElement ();
 
@@ -205,7 +209,36 @@ namespace System.ServiceModel
 				break;
 			}
 
-			return element;
+			// SecureConversation enabled
+
+			ChannelProtectionRequirements reqs =
+				new ChannelProtectionRequirements ();
+			// FIXME: fill the reqs
+
+			return SecurityBindingElement.CreateSecureConversationBindingElement (
+				// FIXME: requireCancellation
+				element, true, reqs);
+		}
+
+		BindingElement CreateTransportSecurity ()
+		{
+			switch (Security.Mode) {
+			case SecurityMode.None:
+			case SecurityMode.Message:
+				return null;
+			}
+
+			// FIXME: consider Security.Transport.ExtendedProtectionPolicy.
+
+			switch (Security.Transport.ClientCredentialType) {
+			case TcpClientCredentialType.Windows:
+				return new WindowsStreamSecurityBindingElement () { ProtectionLevel = Security.Transport.ProtectionLevel };
+			case TcpClientCredentialType.Certificate:
+				// FIXME: set RequireClientCertificate and IdentityVerifier depending on other properties, if applicable.
+				return new SslStreamSecurityBindingElement ();
+			default: // includes None
+				return null;
+			}
 		}
 
 		bool IBindingRuntimePreferences.ReceiveSynchronously {

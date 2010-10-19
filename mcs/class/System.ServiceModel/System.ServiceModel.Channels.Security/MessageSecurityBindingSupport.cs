@@ -343,6 +343,7 @@ namespace System.ServiceModel.Channels.Security
 	class RecipientMessageSecurityBindingSupport : MessageSecurityBindingSupport
 	{
 		ChannelListenerBase listener;
+		Uri listen_uri;
 		SecurityToken encryption_token;
 		SecurityToken signing_token;
 
@@ -358,9 +359,11 @@ namespace System.ServiceModel.Channels.Security
 			get { return listener; }
 		}
 
-		public void Prepare (ChannelListenerBase listener)
+		// FIXME: this is invoked inconsistently between SecurityReplyChannel and SecurityDuplexSessionChannel on when to do it.
+		public void Prepare (ChannelListenerBase listener, Uri listenUri)
 		{
 			this.listener = listener;
+			this.listen_uri = listenUri;
 
 			PrepareAuthenticator ();
 
@@ -422,7 +425,7 @@ namespace System.ServiceModel.Channels.Security
 		{
 			SecurityTokenRequirement requirement =
 				new RecipientServiceModelSecurityTokenRequirement ();
-			requirement.Properties [ReqType.ListenUriProperty] = listener.Uri;
+			requirement.Properties [ReqType.ListenUriProperty] = listen_uri;
 			return requirement;
 		}
 

@@ -189,7 +189,7 @@ namespace System.Web.Compilation
 			currentLocation = builder.Location;
 			bool inBuildControlTree = builder is RootBuilder;
 			string tailname = (inBuildControlTree ? "Tree" : ("_" + builder.ID));
-			bool isProperty = builder.IsProperty;
+//			bool isProperty = builder.IsProperty;
 			CodeMemberMethod method = new CodeMemberMethod ();
 			builder.Method = method;
 			builder.MethodStatements = method.Statements;

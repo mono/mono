@@ -1,12 +1,11 @@
-// CS0019: Cannot implicitly convert type `dynamic' to `int*'
-// Line: 10
-// Compiler options: -unsafe
+// CS0019: Operator `==' cannot be applied to operands of type `dynamic' and `void'
+// Line: 9
 
-public unsafe class C
+class C
 {
-	public static void Main ()
+	static void Main ()
 	{
-		dynamic d = 1;
-		int* i = d;
+		dynamic x = null;
+		var y = x == Main ();
 	}
 }

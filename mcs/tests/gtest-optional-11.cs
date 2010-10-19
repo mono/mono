@@ -19,6 +19,11 @@ public class C
 		return a;
 	}
 
+	public static int TestD ([Optional] int a, int i)
+	{
+		return a;
+	}
+
 	public static int Main ()
 	{
 		if (TestA () != 1)
@@ -32,6 +37,9 @@ public class C
 
 		if (TestC () != Missing.Value)
 			return 4;
+		
+		if (TestD (i:2) != 0)
+			return 5;
 		
 		return 0;
 	}

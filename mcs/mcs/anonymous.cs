@@ -1742,8 +1742,14 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			Report.SymbolRelatedToPreviousError (mc);
-			return false;
+			// A conflict between anonymous type members will be reported
+			if (symbol is TypeParameter) {
+				Report.SymbolRelatedToPreviousError (symbol);
+				return false;
+			}
+
+			// Ignore other conflicts
+			return true;
 		}
 
 		protected override bool DoDefineMembers ()

@@ -12,7 +12,7 @@ class Program {
 
 		typeof (Program).Module.GetPEKind (out pekind, out machine);
 
-		if ((pekind & PortableExecutableKinds.ILOnly) != 0)
+		if ((pekind & PortableExecutableKinds.ILOnly) == 0)
 			return 1;
 
 		if ((pekind & PortableExecutableKinds.Required32Bit) == 0)
