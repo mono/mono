@@ -22,6 +22,8 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml.Schema;
 
@@ -145,6 +147,8 @@ namespace System.Xaml
 			column = linePosition;
 		}
 
+		static readonly BindingFlags static_flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+
 		[MonoTODO ("Array and Dictionary needs implementation")]
 		public override void WriteEndMember ()
 		{
@@ -154,8 +158,19 @@ namespace System.Xaml
 			var state = object_states.Peek ();
 			var contents = state.Contents;
 
-			if (xm == XamlLanguage.Arguments) {
-				throw new NotImplementedException ();
+			if (xm == XamlLanguage.FactoryMethod) {
+				if (contents.Count != 1 || !(contents [0] is string))
+					throw new XamlObjectWriterException (String.Format ("FactoryMethod must be non-empty string name. {0} value exists.", contents.Count > 0 ? contents [0] : "0"));
+				state.FactoryMethod = (string) contents [0];
+			} else if (xm == XamlLanguage.Arguments) {
+				if (state.FactoryMethod != null) {
+					var mi = state.Type.UnderlyingType.GetMethods (static_flags).FirstOrDefault (mii => mii.Name == state.FactoryMethod && mii.GetParameters ().Length == contents.Count);
+					if (mi == null)
+						throw new XamlObjectWriterException (String.Format ("Specified static factory method '{0}' for type '{1}' was not found", state.FactoryMethod, state.Type));
+					state.Value = mi.Invoke (null, contents.ToArray ());
+				}
+				else
+					throw new NotImplementedException ();
 			} else if (xm == XamlLanguage.Initialization) {
 				// ... and no need to do anything. The object value to pop *is* the return value.
 			} else if (xm.Type.IsArray) {
@@ -338,8 +353,6 @@ namespace System.Xaml
 				state.Value = value;
 				state.IsInstantiated = true;
 			}
-			else if (xm == XamlLanguage.FactoryMethod)
-				state.FactoryMethod = (string) value;
 //			else if (xm.Type.IsCollection)
 			else if (xm == XamlLanguage.Items) // FIXME: am not sure which is good yet.
 				state.Contents.Add (GetCorrectlyTypedValue (xm.Type.ItemType, value));
