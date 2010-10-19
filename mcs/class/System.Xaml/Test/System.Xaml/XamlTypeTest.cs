@@ -240,6 +240,11 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsCollection, "#3.1-2");
 			Assert.IsNotNull (t.KeyType, "#3.2");
 			Assert.AreEqual ("Int32", t.KeyType.Name, "#3.3");
+
+			var ml = t.GetAllMembers ();
+			Assert.AreEqual (2, ml.Count, "#3.4");
+			Assert.IsTrue (ml.Any (mi => mi.Name == "Keys"), "#3.4-2");
+			Assert.IsTrue (ml.Any (mi => mi.Name == "Values"), "#3.4-3");
 		}
 
 		public class TestClass1

@@ -394,8 +394,10 @@ namespace System.Xaml
 			// FIXME: should I use GetAllObjectReaderMembers()?
 			foreach (var xm in xt.GetAllMembers ()) {
 				ns = xm.PreferredXamlNamespace;
-				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace)
+				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace) {
+					CheckAddNamespace (d, ns);
 					continue;
+				}
 				if (!xm.IsReadPublic)
 					continue;
 				if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)

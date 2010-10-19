@@ -375,9 +375,33 @@ namespace System.Xaml
 
 		IEnumerable<XamlMember> DoLookupAllMembers ()
 		{
-			foreach (var pi in UnderlyingType.GetProperties (BindingFlags.Public | BindingFlags.Instance))
-				if (pi.CanRead && pi.CanWrite && pi.GetIndexParameters ().Length == 0)
+			// This is a hack that is likely required due to internal implementation difference in System.Uri. Our Uri has two readonly collection properties
+			if (this == XamlLanguage.Uri)
+				yield break;
+
+			foreach (var pi in UnderlyingType.GetProperties (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+				if (pi.CanRead && (pi.CanWrite && pi.GetIndexParameters ().Length == 0 || IsCollectionType (pi.PropertyType)))
 					yield return new XamlMember (pi, SchemaContext);
+		}
+
+		static bool IsCollectionType (Type type)
+		{
+			if (type.IsArray)
+				return true;
+
+			Type [] ifaces = type.GetInterfaces ();
+			foreach (Type i in ifaces)
+				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (typeof (ICollection<>)))
+					return true;
+			foreach (Type i in ifaces)
+				if (i == typeof (IList))
+					return true;
+
+			foreach (var iface in type.GetInterfaces ())
+				if (iface == typeof (IDictionary) || (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>)))
+					return true;
+
+			return false;
 		}
 
 		protected virtual IList<XamlType> LookupAllowedContentTypes ()
