@@ -667,9 +667,10 @@ namespace System.Windows.Forms
 				} else {
 					document.Empty();
 
-					document.SetSelectionToCaret (true);
-					if (IsHandleCreated)
+					if (IsHandleCreated) {
+						document.SetSelectionToCaret (true);
 						CalculateDocument ();
+					}
 				}
 
 				OnTextChanged(EventArgs.Empty);
