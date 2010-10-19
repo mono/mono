@@ -379,13 +379,19 @@ namespace System.Xaml
 			if (this == XamlLanguage.Uri)
 				yield break;
 
-			foreach (var pi in UnderlyingType.GetProperties (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+			var bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+			foreach (var pi in UnderlyingType.GetProperties (bf))
 				if (pi.CanRead && (pi.CanWrite && pi.GetIndexParameters ().Length == 0 || IsCollectionType (pi.PropertyType)))
 					yield return new XamlMember (pi, SchemaContext);
+			foreach (var ei in UnderlyingType.GetEvents (bf))
+				yield return new XamlMember (ei, SchemaContext);
 		}
 
 		static bool IsCollectionType (Type type)
 		{
+			if (type == null)
+				return false;
 			if (type.IsArray)
 				return true;
 
@@ -605,15 +611,8 @@ namespace System.Xaml
 
 		protected virtual XamlMember LookupMember (string name, bool skipReadOnlyCheck)
 		{
-			if (UnderlyingType == null)
-				return null;
-			var pi = UnderlyingType.GetProperty (name);
-			if (pi != null && (skipReadOnlyCheck || pi.CanWrite))
-				return new XamlMember (pi, SchemaContext);
-			var ei = UnderlyingType.GetEvent (name);
-			if (ei != null)
-				return new XamlMember (ei, SchemaContext);
-			return null;
+			// FIXME: verify if this does not filter out events.
+			return GetAllMembers ().FirstOrDefault (m => m.Name == name && (skipReadOnlyCheck || !m.IsReadOnly || m.Type.IsCollection || m.Type.IsDictionary || m.Type.IsArray));
 		}
 
 		protected virtual IList<XamlType> LookupPositionalParameters (int parameterCount)

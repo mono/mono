@@ -410,6 +410,11 @@ namespace System.Xaml
 		// This assumes that the next member is already on current position on current iterator.
 		void StartNextMember ()
 		{
+			var xt = types.Peek ();
+			if (xt.IsDictionary) {
+				var c = (IEnumerable) xt.GetMember ("Values").Invoker.GetValue (objects.Pop ());
+				objects.Push (c.GetEnumerator ());
+			}
 			node_type = XamlNodeType.StartMember;
 		}
 
@@ -434,12 +439,12 @@ namespace System.Xaml
 			if (xt.PreferredXamlNamespace != XamlLanguage.Xaml2006Namespace && xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
 				obj = xt.TypeConverter.ConverterInstance.ConvertToInvariantString (obj);
 
+			instance = obj;
 			if (member != null && member.IsReadOnly) {
 				IEnumerator e = ((IEnumerable) obj).GetEnumerator ();
 				objects.Push (e);
 				node_type = XamlNodeType.GetObject;
 			} else {
-				instance = obj;
 				objects.Push (GetExtensionWrappedInstance (obj));
 				node_type = XamlNodeType.StartObject;
 			}

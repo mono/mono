@@ -186,6 +186,9 @@ namespace System.Xaml
 			if (type.IsContentValue ())
 				yield return XamlLanguage.Initialization;
 
+			if (type.IsDictionary)
+				yield return XamlLanguage.Items;
+
 			IEnumerable en = null;
 			foreach (var m in type.GetAllMembers ()) {
 				// do not read constructor arguments twice (they are written inside Arguments).

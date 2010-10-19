@@ -245,6 +245,8 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (2, ml.Count, "#3.4");
 			Assert.IsTrue (ml.Any (mi => mi.Name == "Keys"), "#3.4-2");
 			Assert.IsTrue (ml.Any (mi => mi.Name == "Values"), "#3.4-3");
+			Assert.IsNotNull (t.GetMember ("Keys"), "#3.4-4");
+			Assert.IsNotNull (t.GetMember ("Values"), "#3.4-5");
 		}
 
 		public class TestClass1
