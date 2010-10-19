@@ -158,7 +158,8 @@ namespace Mono.Debugger.Soft
 				con_sock.Close ();
 			}
 
-			dbg_sock.Disconnect (false);
+			if (dbg_sock.Connected)
+				dbg_sock.Disconnect (false);
 			dbg_sock.Close ();
 
 			Connection conn = new Connection (dbg_acc);
