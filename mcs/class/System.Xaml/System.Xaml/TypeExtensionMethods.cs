@@ -170,7 +170,7 @@ namespace System.Xaml
 			return false;
 		}
 
-		public static IEnumerable<XamlMember> GetAllObjectReaderMembers (this XamlType type, object instance)
+		public static IEnumerable<XamlMember> GetAllObjectReaderMembers (this XamlType type, object instance, object dictionaryKey)
 		{
 			// FIXME: find out why only TypeExtension and StaticExtension yield this directive. Seealso XamlObjectReaderTest.Read_CustomMarkupExtension*()
 			if (type == XamlLanguage.Type || type == XamlLanguage.Static) {
@@ -183,11 +183,16 @@ namespace System.Xaml
 			if (args != null && args.Any ())
 				yield return XamlLanguage.Arguments;
 
+			if (dictionaryKey != null)
+				yield return XamlLanguage.Key;
+
 			if (type.IsContentValue ())
 				yield return XamlLanguage.Initialization;
 
-			if (type.IsDictionary)
+			if (type.IsDictionary) {
 				yield return XamlLanguage.Items;
+				yield break;
+			}
 
 			IEnumerable en = null;
 			foreach (var m in type.GetAllMembers ()) {

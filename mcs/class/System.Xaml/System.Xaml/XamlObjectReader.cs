@@ -156,6 +156,8 @@ namespace System.Xaml
 		object instance; // could be different from objects. This field holds "raw" object value, and is used for Instance proeperty.
 		Stack<object> objects = new Stack<object> ();
 		Stack<IEnumerator<XamlMember>> members_stack = new Stack<IEnumerator<XamlMember>> ();
+		Stack<IEnumerator> dict_keys = new Stack<IEnumerator> ();
+		object next_key;
 		NSList namespaces;
 		IEnumerator<NamespaceDeclaration> ns_iterator;
 		XamlNodeType node_type = XamlNodeType.None;
@@ -250,7 +252,7 @@ namespace System.Xaml
 			case XamlNodeType.StartObject:
 				var obj = objects.Peek ();
 				var xt = obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
-				ml = xt.GetAllObjectReaderMembers (obj).ToList ();
+				ml = xt.GetAllObjectReaderMembers (obj, next_key).ToList ();
 				ml.Sort (CompareMembers);
 				members = ml.GetEnumerator ();
 				if (members.MoveNext ()) {
@@ -275,6 +277,17 @@ namespace System.Xaml
 					constructor_arguments_stack [obj] = arguments;
 					arguments.MoveNext ();
 					StartNextObject (arguments.Current, XamlLanguage.Arguments);
+				}
+				else if (curMember == XamlLanguage.Key) {
+					instance = next_key;
+					next_key = null;
+					xt = instance != null ? SchemaContext.GetXamlType (instance.GetType ()) : null;
+					if (instance == null || !xt.IsContentValue ())
+						StartNextObject (instance, curMember);
+					else {
+						objects.Push (GetExtensionWrappedInstance (instance));
+						node_type = XamlNodeType.Value;
+					}
 				}
 				else if (curMember == XamlLanguage.Items)
 					MoveToNextCollectionItem ();
@@ -306,8 +319,10 @@ namespace System.Xaml
 
 			case XamlNodeType.EndObject:
 				// It might be either end of the entire object tree or just the end of an object value.
-				types.Pop ();
-				objects.Pop ();
+				type = types.Pop ();
+				obj = objects.Pop ();
+				if (type.IsDictionary)
+					dict_keys.Pop ();
 				if (objects.Count == 0) {
 					node_type = XamlNodeType.None;
 					is_eof = true;
@@ -361,8 +376,14 @@ namespace System.Xaml
 		void MoveToNextCollectionItem ()
 		{
 			IEnumerator e = (IEnumerator) (objects.Peek ());
-			if (e.MoveNext ())
+			if (e.MoveNext ()) {
+				if (types.Peek ().IsDictionary) {
+					var ke = dict_keys.Peek ();
+					ke.MoveNext ();
+					next_key = ke.Current;
+				}
 				StartNextObject (e.Current, XamlLanguage.Items);
+			}
 			else
 				node_type = XamlNodeType.EndMember;
 		}
@@ -391,8 +412,8 @@ namespace System.Xaml
 			if (xt.PreferredXamlNamespace != XamlLanguage.Xaml2006Namespace && xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
 				return; // the object is written as string value, so no member namespace will be involved.
 
-			// FIXME: should I use GetAllObjectReaderMembers()?
-			foreach (var xm in xt.GetAllMembers ()) {
+			// FIXME: This should limit to GetAllObjectReaderMembers(), but it blocks some tests.
+			foreach (var xm in xt.GetAllObjectReaderMembers (o, null).Concat (xt.GetAllMembers ()).Distinct ()) {
 				ns = xm.PreferredXamlNamespace;
 				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace) {
 					CheckAddNamespace (d, ns);
@@ -412,8 +433,11 @@ namespace System.Xaml
 		{
 			var xt = types.Peek ();
 			if (xt.IsDictionary) {
-				var c = (IEnumerable) xt.GetMember ("Values").Invoker.GetValue (objects.Pop ());
-				objects.Push (c.GetEnumerator ());
+				var dic = objects.Pop ();
+				var k = ((IEnumerable) xt.GetMember ("Keys").Invoker.GetValue (dic)).GetEnumerator ();
+				var v = ((IEnumerable) xt.GetMember ("Values").Invoker.GetValue (dic)).GetEnumerator ();
+				objects.Push (v);
+				dict_keys.Push (k);
 			}
 			node_type = XamlNodeType.StartMember;
 		}

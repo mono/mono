@@ -892,7 +892,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Dictionary ()
 		{
 			var obj = new Dictionary<string,object> ();

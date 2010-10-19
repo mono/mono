@@ -78,7 +78,7 @@ namespace System.Xaml
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return ToString ().GetHashCode ();
 		}
 
 		public override IList<string> GetXamlNamespaces ()
