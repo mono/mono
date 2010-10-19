@@ -50,6 +50,11 @@ class Program
 		d = null;
 	}
 	
+	static int DynParams (int a, int b, params int[] arr)
+	{
+		return arr [1] + b;
+	}
+	
 	void TestErrorVersions ()
 	{
 		var c = new C ();
@@ -71,6 +76,11 @@ class Program
 		// This should not involve runtime binder
 		if (C.M (ref d1, out d2) != 1)
 			return 1;
+		
+		dynamic d3 = 5;
+		dynamic d4 = -9;
+		if (DynParams (1, 2, d3, d4) != -7)
+			return 2;
 		
 		return 0;
 	}

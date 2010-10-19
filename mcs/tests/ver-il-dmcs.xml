@@ -1787,7 +1787,7 @@
         <size>197</size>
       </method>
       <method name="Int32 Main()">
-        <size>42</size>
+        <size>361</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -1799,6 +1799,11 @@
       </method>
       <method name="Int32 M(System.Object ByRef, System.Object ByRef)">
         <size>5</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 DynParams(Int32, Int32, System.Int32[])">
+        <size>6</size>
       </method>
     </type>
   </test>
@@ -2528,6 +2533,49 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-named-01.cs">
+    <type name="Test">
+      <method name="Void Foo(Int32 ByRef)">
+        <size>4</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>117</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Main&gt;c__DynamicSite0+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-named-02.cs">
+    <type name="Test">
+      <method name="Int32 M1()">
+        <size>31</size>
+      </method>
+      <method name="Int32 M2()">
+        <size>31</size>
+      </method>
+      <method name="System.Object M3()">
+        <size>36</size>
+      </method>
+      <method name="Int32 Foo(Int32, Int32, Int32)">
+        <size>29</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>219</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -26542,10 +26590,13 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>76</size>
+        <size>90</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Int32 TestD(Int32, Int32)">
+        <size>2</size>
       </method>
     </type>
   </test>

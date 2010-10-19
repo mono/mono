@@ -1153,16 +1153,18 @@ namespace Mono.CSharp {
 
 		public void ResolveDefaultValues (MemberCore m)
 		{
-			var count = parameters.Length;
+			ResolveContext rc = null;
+			for (int i = 0; i < parameters.Length; ++i) {
+				Parameter p = (Parameter) parameters [i];
 
-			//
-			// Try not to enter default values resolution if there are not any
-			//
-			if (parameters[count - 1].HasDefaultValue || (HasParams && count > 1 && parameters[count - 2].HasDefaultValue) ||
-				((Parameter) parameters[count - 1]).OptAttributes != null) {
-				var rc = new ResolveContext (m);
-				for (int i = 0; i < count; ++i) {
-					this [i].ResolveDefaultValue (rc);
+				//
+				// Try not to enter default values resolution if there are is not any default value possible
+				//
+				if (p.HasDefaultValue || p.OptAttributes != null) {
+					if (rc == null)
+						rc = new ResolveContext (m);
+
+					p.ResolveDefaultValue (rc);
 				}
 			}
 		}

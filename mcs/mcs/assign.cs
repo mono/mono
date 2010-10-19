@@ -667,7 +667,7 @@ namespace Mono.CSharp {
 
 					// Handles possible event addition/subtraction
 					if (op == Binary.Operator.Addition || op == Binary.Operator.Subtraction) {
-						args = new Arguments (2);
+						args = new Arguments (targs.Count + 1);
 						args.AddRange (targs);
 						args.Add (new Argument (right));
 						string method_prefix = op == Binary.Operator.Addition ?
@@ -676,7 +676,7 @@ namespace Mono.CSharp {
 						var invoke = DynamicInvocation.CreateSpecialNameInvoke (
 							new MemberAccess (right, method_prefix + ma.Name, loc), args, loc).Resolve (ec);
 
-						args = new Arguments (1);
+						args = new Arguments (targs.Count);
 						args.AddRange (targs);
 						source = new DynamicEventCompoundAssign (ma.Name, args,
 							(ExpressionStatement) source, (ExpressionStatement) invoke, loc).Resolve (ec);

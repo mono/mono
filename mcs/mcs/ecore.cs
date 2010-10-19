@@ -3591,6 +3591,7 @@ namespace Mono.CSharp {
 			int param_count = pd.Count;
 			int optional_count = 0;
 			int score;
+			Arguments orig_args = arguments;
 
 			if (arg_count != param_count) {
 				for (int i = 0; i < pd.Count; ++i) {
@@ -3678,7 +3679,7 @@ namespace Mono.CSharp {
 							}
 
 							if (!arg_moved) {
-								arguments.MarkReorderedArgument (na);
+								arguments = arguments.MarkOrderedArgument (na);
 								arg_moved = true;
 							}
 
@@ -3755,8 +3756,10 @@ namespace Mono.CSharp {
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = arguments[i];
 				if (a == null) {
-					if (!pd.FixedParameters[i].HasDefaultValue)
-						throw new InternalErrorException ();
+					if (!pd.FixedParameters[i].HasDefaultValue) {
+						arguments = orig_args;
+						return arg_count * 2 + 2;
+					}
 
 					//
 					// Get the default value expression, we can use the same expression
@@ -3807,10 +3810,8 @@ namespace Mono.CSharp {
 					} else {
 						score = IsArgumentCompatible (ec, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
 
-						if (score < 0) {
+						if (score < 0)
 							dynamicArgument = true;
-							continue;
-						}
 					}
 				}
 
@@ -3821,12 +3822,14 @@ namespace Mono.CSharp {
 					if (!params_expanded_form)
 						pt = ((ElementTypeSpec) pt).Element;
 
-					score = IsArgumentCompatible (ec, a, Parameter.Modifier.NONE, pt);
-					if (score == 0)
+					if (score > 0)
+						score = IsArgumentCompatible (ec, a, Parameter.Modifier.NONE, pt);
+
+					if (score <= 0)
 						params_expanded_form = true;
 				}
 
-				if (score != 0) {
+				if (score > 0) {
 					if (params_expanded_form)
 						++score;
 					return (arg_count - i) * 2 + score;
@@ -3838,6 +3841,12 @@ namespace Mono.CSharp {
 			//
 			if (arg_count + 1 == pd.Count && (pd.FixedParameters [arg_count].ModFlags & Parameter.Modifier.PARAMS) != 0)
 				params_expanded_form = true;
+
+			//
+			// Restore original arguments for dynamic binder to keep the intention of original source code
+			//
+			if (dynamicArgument)
+				arguments = orig_args;
 
 			return 0;
 		}

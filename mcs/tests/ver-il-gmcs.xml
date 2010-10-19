@@ -24009,10 +24009,13 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>76</size>
+        <size>90</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Int32 TestD(Int32, Int32)">
+        <size>2</size>
       </method>
     </type>
   </test>

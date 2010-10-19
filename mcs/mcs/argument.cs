@@ -206,8 +206,33 @@ namespace Mono.CSharp
 	
 	public class Arguments
 	{
+		sealed class ArgumentsOrdered : Arguments
+		{
+			List<NamedArgument> ordered;
+
+			public ArgumentsOrdered (Arguments args)
+				: base (args.Count)
+			{
+				AddRange (args);
+				ordered = new List<NamedArgument> ();
+			}
+
+			public void AddOrdered (NamedArgument na)
+			{
+				ordered.Add (na);
+			}
+
+			public override Expression[] Emit (EmitContext ec, bool dup_args)
+			{
+				foreach (NamedArgument na in ordered)
+					na.EmitAssign (ec);
+
+				return base.Emit (ec, dup_args);
+			}
+		}
+
+		// Try not to add any more instances to this class, it's allocated a lot
 		List<Argument> args;
-		List<NamedArgument> reordered;
 
 		public Arguments (int capacity)
 		{
@@ -354,7 +379,7 @@ namespace Mono.CSharp
 		// expressions
 		// NOTE: It's caller responsibility is to release temporary variables
 		//
-		public Expression[] Emit (EmitContext ec, bool dup_args)
+		public virtual Expression[] Emit (EmitContext ec, bool dup_args)
 		{
 			Expression[] temps;
 
@@ -362,11 +387,6 @@ namespace Mono.CSharp
 				temps = new Expression [Count];
 			else
 				temps = null;
-
-			if (reordered != null && Count > 1) {
-				foreach (NamedArgument na in reordered)
-					na.EmitAssign (ec);
-			}
 
 			int i = 0;
 			LocalTemporary lt;
@@ -445,18 +465,24 @@ namespace Mono.CSharp
 			return exprs;
 		}
 
-		public void MarkReorderedArgument (NamedArgument a)
+		//
+		// For named arguments when the order of execution is different
+		// to order of invocation
+		//
+		public Arguments MarkOrderedArgument (NamedArgument a)
 		{
 			//
-			// Constant expression can have no effect on left-to-right execution
+			// Constant expression have no effect on left-to-right execution
 			//
 			if (a.Expr is Constant)
-				return;
+				return this;
 
-			if (reordered == null)
-				reordered = new List<NamedArgument> ();
+			ArgumentsOrdered ra = this as ArgumentsOrdered;
+			if (ra == null)
+				ra = new ArgumentsOrdered (this);
 
-			reordered.Add (a);
+			ra.AddOrdered (a);
+			return ra;
 		}
 
 		//
