@@ -152,6 +152,22 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Read_Guid ()
+		{
+			ReadTest ("Guid.xml");
+			var ret = LoadTest<Guid> ("Guid.xml");
+			Assert.AreEqual (Guid.Parse ("9c3345ec-8922-4662-8e8d-a4e41f47cf09"), ret, "ret");
+		}
+
+		[Test]
+		public void Read_GuidFactoryMethod ()
+		{
+			ReadTest ("GuidFactoryMethod.xml");
+			//var ret = LoadTest<Guid> ("GuidFactoryMethod.xml");
+			//Assert.AreEqual (Guid.Parse ("9c3345ec-8922-4662-8e8d-a4e41f47cf09"), ret, "ret");
+		}
+
+		[Test]
 		public void ReadInt32Details ()
 		{
 			var r = GetReader ("Int32.xml");
@@ -569,6 +585,80 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "einit#2");
 
 			// end of Reference
+			Assert.IsTrue (r.Read (), "eo#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		[Test]
+		public void ReadGuidFactoryMethodDetails ()
+		{
+			var r = GetReader ("GuidFactoryMethod.xml");
+
+			Assert.IsTrue (r.Read (), "ns#1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2");
+			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", r.Namespace.Namespace, "ns#3");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#4");
+
+			Assert.IsTrue (r.Read (), "ns2#1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns2#2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns2#3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns2#4");
+
+			Assert.IsTrue (r.Read (), "so#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
+			var xt = r.SchemaContext.GetXamlType (typeof (Guid));
+			Assert.AreEqual (xt, r.Type, "so#3");
+
+			Assert.IsTrue (r.Read (), "sbase#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
+			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
+
+			Assert.IsTrue (r.Read (), "vbase#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
+			Assert.IsTrue (r.Value is string, "vbase#3");
+
+			Assert.IsTrue (r.Read (), "ebase#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+
+			Assert.IsTrue (r.Read (), "sfactory#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sfactory#2");
+			Assert.AreEqual (XamlLanguage.FactoryMethod, r.Member, "sfactory#3");
+
+			Assert.IsTrue (r.Read (), "vfactory#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vfactory#2");
+			Assert.AreEqual ("Parse", r.Value, "vfactory#3"); // string
+
+			Assert.IsTrue (r.Read (), "efactory#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "efactory#2");
+
+			Assert.IsTrue (r.Read (), "sarg#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sarg#2");
+			Assert.AreEqual (XamlLanguage.Arguments, r.Member, "sarg#3");
+
+			Assert.IsTrue (r.Read (), "sarg1#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "sarg1#2");
+			Assert.AreEqual (XamlLanguage.String, r.Type, "sarg1#3");
+
+			Assert.IsTrue (r.Read (), "sInit#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sInit#2");
+			Assert.AreEqual (XamlLanguage.Initialization, r.Member, "sInit#3");
+
+			Assert.IsTrue (r.Read (), "varg1#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "varg1#2");
+			Assert.AreEqual ("9c3345ec-8922-4662-8e8d-a4e41f47cf09", r.Value, "varg1#3");
+
+			Assert.IsTrue (r.Read (), "eInit#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eInit#2");
+
+			Assert.IsTrue (r.Read (), "earg1#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "earg1#2");
+
+			Assert.IsTrue (r.Read (), "earg#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "earg#2");
+
+
 			Assert.IsTrue (r.Read (), "eo#1");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");
 

@@ -402,7 +402,7 @@ namespace System.Xaml
 				name = name.Substring (idx + 1);
 
 			var xt = types.Peek ();
-			var xm = xt.GetMember (name);
+			var xm = (XamlMember) FindStandardDirective (name, AllowedMemberLocations.MemberElement) ?? xt.GetMember (name);
 			if (xm == null)
 				// create unknown member.
 				xm = new XamlMember (name, xt, false); // FIXME: not sure if isAttachable is always false.
@@ -411,6 +411,8 @@ namespace System.Xaml
 
 			node_type = XamlNodeType.StartMember;
 			inside_object_not_member = false;
+			
+			r.Read ();
 		}
 		
 		void ReadEndType ()
@@ -455,6 +457,11 @@ namespace System.Xaml
 			types.Push (current_member.Type);
 		}
 
+		XamlDirective FindStandardDirective (string name, AllowedMemberLocations loc)
+		{
+			return XamlLanguage.AllDirectives.FirstOrDefault (dd => (dd.AllowedLocation & loc) != 0 && dd.Name == name);
+		}
+
 		// returns remaining attributes to be processed
 		Dictionary<string,string> ProcessAttributes (List<Pair> members)
 		{
@@ -469,19 +476,37 @@ namespace System.Xaml
 
 			if (r.MoveToFirstAttribute ()) {
 				do {
-					if (r.NamespaceURI == XamlLanguage.Xmlns2000Namespace)
+					switch (r.NamespaceURI) {
+					case XamlLanguage.Xml1998Namespace:
+						switch (r.LocalName) {
+						case "base":
+							continue; // already processed.
+						case "lang":
+							l.Add (new Pair (XamlLanguage.Lang, r.Value));
+							continue;
+						case "space":
+							l.Add (new Pair (XamlLanguage.Space, r.Value));
+							continue;
+						}
+						break;
+					case XamlLanguage.Xmlns2000Namespace:
 						continue;
-					XamlDirective d = XamlLanguage.AllDirectives.FirstOrDefault (dd => (dd.AllowedLocation & AllowedMemberLocations.Attribute) != 0 && dd.Name == r.LocalName);
-					if (d != null) {
-						l.Add (new Pair (d, r.Value));
-						continue;
+					case XamlLanguage.Xaml2006Namespace:
+						XamlDirective d = FindStandardDirective (r.LocalName, AllowedMemberLocations.Attribute);
+						if (d != null) {
+							l.Add (new Pair (d, r.Value));
+							continue;
+						}
+						throw new NotSupportedException (String.Format ("Attribute '{0}' is not supported", r.Name));
+					default:
+						if (r.NamespaceURI == String.Empty) {
+							atts.Add (r.LocalName, r.Value);
+							continue;
+						}
+						// Should we just ignore unknown attribute in XAML namespace or any other namespaces ?
+						// Probably yes for compatibility with future version.
+						break;
 					}
-					if (r.NamespaceURI == String.Empty) {
-						atts.Add (r.LocalName, r.Value);
-						continue;
-					}
-					// Should we just ignore unknown attribute in XAML namespace or any other namespaces ?
-					// Probably yes for compatibility with future version.
 				} while (r.MoveToNextAttribute ());
 				r.MoveToElement ();
 			}
