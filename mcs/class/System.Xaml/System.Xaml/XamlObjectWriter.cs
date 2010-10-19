@@ -149,7 +149,7 @@ namespace System.Xaml
 
 		static readonly BindingFlags static_flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-		[MonoTODO ("Array and Dictionary needs implementation")]
+		[MonoTODO ("Dictionary needs implementation")]
 		public override void WriteEndMember ()
 		{
 			manager.EndMember ();
@@ -173,8 +173,6 @@ namespace System.Xaml
 					throw new NotImplementedException ();
 			} else if (xm == XamlLanguage.Initialization) {
 				// ... and no need to do anything. The object value to pop *is* the return value.
-			} else if (xm.Type.IsArray) {
-				throw new NotImplementedException ();
 			} else if (xm == XamlLanguage.Items) {
 				var coll = state.Value;
 				foreach (var content in contents)
