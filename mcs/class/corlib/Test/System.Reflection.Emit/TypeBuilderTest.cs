@@ -10895,5 +10895,21 @@ namespace MonoTests.System.Reflection.Emit
 			Activator.CreateInstance(proxyType);
 		}
 
+		[Test] //Test for #640780
+		public void StaticMethodNotUsedInIfaceVtable ()
+		{
+			TypeBuilder tb1 = module.DefineType("Interface", TypeAttributes.Interface | TypeAttributes.Abstract);
+			tb1.DefineTypeInitializer().GetILGenerator().Emit(OpCodes.Ret);
+			tb1.DefineMethod("m", MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Abstract);
+			tb1.CreateType();
+			
+			TypeBuilder tb2 = module.DefineType("Class", TypeAttributes.Sealed);
+			tb2.AddInterfaceImplementation(tb1);
+			tb2.DefineMethod("m", MethodAttributes.Public | MethodAttributes.Virtual)
+			    .GetILGenerator().Emit(OpCodes.Ret);
+			tb2.DefineDefaultConstructor(MethodAttributes.Public);
+			
+			Activator.CreateInstance(tb2.CreateType());
+		}
 	}
 }
