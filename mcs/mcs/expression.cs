@@ -1688,6 +1688,13 @@ namespace Mono.CSharp {
 			temp_storage.Emit(ec);
 		}
 
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.Default (type.GetMetaInfo ());
+		}
+#endif
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			DefaultValueExpression target = (DefaultValueExpression) t;
