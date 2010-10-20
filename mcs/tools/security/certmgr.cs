@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -40,21 +41,24 @@ namespace Mono.Tools {
 			Console.WriteLine ("   or: certmgr -list object-type [options] store");
 			Console.WriteLine ("   or: certmgr -del object-type [options] store certhash");
 			Console.WriteLine ("   or: certmgr -ssl [options] url");
+			Console.WriteLine ("   or: certmgr -importKey [options] store pkcs12file");
 			Console.WriteLine ();
 			Console.WriteLine ("actions");
-			Console.WriteLine ("\t-add\tAdd a certificate, CRL or CTL to specified store");
-			Console.WriteLine ("\t-del\tRemove a certificate, CRL or CTL to specified store");
-			Console.WriteLine ("\t-put\tCopy a certificate, CRL or CTL from a store to a file");
-			Console.WriteLine ("\t-list\tList certificates, CRL ot CTL in the specified store.");
-			Console.WriteLine ("\t-ssl\tDownload and add certificates from an SSL session");
+			Console.WriteLine ("\t-add\t\tAdd a certificate, CRL or CTL to specified store");
+			Console.WriteLine ("\t-del\t\tRemove a certificate, CRL or CTL to specified store");
+			Console.WriteLine ("\t-put\t\tCopy a certificate, CRL or CTL from a store to a file");
+			Console.WriteLine ("\t-list\t\tList certificates, CRL ot CTL in the specified store.");
+			Console.WriteLine ("\t-ssl\t\tDownload and add certificates from an SSL session");
+			Console.WriteLine ("\t-importKey\tImport PKCS12 privateKey to keypair store.");
 			Console.WriteLine ("object types");
-			Console.WriteLine ("\t-c\tadd/del/put certificates");
-			Console.WriteLine ("\t-crl\tadd/del/put certificate revocation lists");
-			Console.WriteLine ("\t-ctl\tadd/del/put certificate trust lists [unsupported]");
+			Console.WriteLine ("\t-c\t\tadd/del/put certificates");
+			Console.WriteLine ("\t-crl\t\tadd/del/put certificate revocation lists");
+			Console.WriteLine ("\t-ctl\t\tadd/del/put certificate trust lists [unsupported]");
 			Console.WriteLine ("other options");
-			Console.WriteLine ("\t-m\tuse the machine certificate store (default to user)");
-			Console.WriteLine ("\t-v\tverbose mode (display status for every steps)");
-			Console.WriteLine ("\t-?\th[elp]\tDisplay this help message");
+			Console.WriteLine ("\t-m\t\tuse the machine certificate store (default to user)");
+			Console.WriteLine ("\t-v\t\tverbose mode (display status for every steps)");
+			Console.WriteLine ("\t-p [password]\tPassword used to decrypt PKCS12");
+			Console.WriteLine ("\t-?\t\th[elp]\tDisplay this help message");
 			Console.WriteLine ();
 		}
 
@@ -82,7 +86,8 @@ namespace Mono.Tools {
 			Delete,
 			Put,
 			List,
-			Ssl
+			Ssl,
+			ImportKey
 		}
 
 		static Action GetAction (string arg) 
@@ -106,6 +111,9 @@ namespace Mono.Tools {
 				case "SSL":
 				case "TLS":
 					action = Action.Ssl;
+					break;
+				case "IMPORTKEY":
+					action = Action.ImportKey;
 					break;
 			}
 			return action;
@@ -168,7 +176,7 @@ namespace Mono.Tools {
 			return Convert.FromBase64String (base64);
 		}
 
-		static X509CertificateCollection LoadCertificates (string filename) 
+		static X509CertificateCollection LoadCertificates (string filename, string password, bool verbose) 
 		{
 			X509Certificate x509 = null;
 			X509CertificateCollection coll = new X509CertificateCollection ();
@@ -196,9 +204,23 @@ namespace Mono.Tools {
 					break;
 				case ".P12":
 				case ".PFX":
-					// TODO - support PKCS12 with passwords
-					PKCS12 p12 = PKCS12.LoadFromFile (filename);
-					coll.AddRange (p12.Certificates);
+					PKCS12 p12 = password == null ? PKCS12.LoadFromFile (filename)
+						: PKCS12.LoadFromFile (filename, password);
+					X509CertificateCollection tmp = new X509CertificateCollection (p12.Certificates);
+
+					for (int i = 0; i != p12.Keys.Count; i++) {
+						X509Certificate cert = p12.Certificates[i];
+						RSACryptoServiceProvider pk = p12.Keys[i] as RSACryptoServiceProvider;
+
+						if (pk == null || pk.PublicOnly)
+							continue;
+
+						if (verbose)
+							Console.WriteLine ("Found key for certificate: {0}", cert.SubjectName);
+
+						tmp[0].RSA = pk;
+					}
+					coll.AddRange(tmp);
 					p12 = null;
 					break;
 				default:
@@ -236,11 +258,11 @@ namespace Mono.Tools {
 			return list;
 		}
 
-		static void Add (ObjectType type, X509Store store, string file, bool verbose) 
+		static void Add (ObjectType type, X509Store store, string file, string password, bool verbose) 
 		{
 			switch (type) {
 				case ObjectType.Certificate:
-					X509CertificateCollection coll = LoadCertificates (file);
+					X509CertificateCollection coll = LoadCertificates (file, password, verbose);
 					foreach (X509Certificate x509 in coll) {
 						store.Import (x509);
 					}
@@ -286,7 +308,7 @@ namespace Mono.Tools {
 			}
 		}
 
-		static void Put (ObjectType type, X509Store store, string file, bool verbose) 
+		static void Put (ObjectType type, X509Store store, string file, string password, bool verbose) 
 		{
 			throw new NotImplementedException ("Put not yet supported");
 /*			switch (type) {
@@ -300,7 +322,7 @@ namespace Mono.Tools {
 			}*/
 		}
 
-		static void DisplayCertificate (X509Certificate x509, bool verbose)
+		static void DisplayCertificate (X509Certificate x509, bool machine, bool verbose)
 		{
 			Console.WriteLine ("{0}X.509 v{1} Certificate", (x509.IsSelfSigned ? "Self-signed " : String.Empty), x509.Version);
 			Console.WriteLine ("  Serial Number: {0}", CryptoConvert.ToHex (x509.SerialNumber));
@@ -318,16 +340,25 @@ namespace Mono.Tools {
 				Console.WriteLine ("  Algorithm Parameters: {0}", (x509.SignatureAlgorithmParameters == null) ? "None" :
 					CryptoConvert.ToHex (x509.SignatureAlgorithmParameters));
 				Console.WriteLine ("  Signature:            {0}", CryptoConvert.ToHex (x509.Signature));
+				RSACryptoServiceProvider rsaCsp = x509.RSA as RSACryptoServiceProvider;
+				RSAManaged rsaManaged = x509.RSA as RSAManaged;
+				Console.WriteLine ("  Private Key:			{0}", ((rsaCsp != null && !rsaCsp.PublicOnly) 
+					|| (rsaManaged != null && !rsaManaged.PublicOnly)));
+				CspParameters cspParams = new CspParameters ();
+				cspParams.KeyContainerName = CryptoConvert.ToHex (x509.Hash);
+				cspParams.Flags = machine ? CspProviderFlags.UseMachineKeyStore : 0;
+				KeyPairPersistence kpp = new KeyPairPersistence (cspParams);
+				Console.WriteLine ("  KeyPair Key:			{0}", kpp.Load ());
 			}
 			Console.WriteLine ();
 		}
 
-		static void List (ObjectType type, X509Store store, string file, bool verbose) 
+		static void List (ObjectType type, X509Store store, bool machine, string file, bool verbose) 
 		{
 			switch (type) {
 				case ObjectType.Certificate:
 					foreach (X509Certificate x509 in store.Certificates) {
-						DisplayCertificate (x509, verbose);
+						DisplayCertificate (x509, machine, verbose);
 					}
 					break;
 				case ObjectType.CRL:
@@ -479,9 +510,40 @@ namespace Mono.Tools {
 			}
 		}
 
+		static void ImportKey (ObjectType type, bool machine, string file, string password, bool verbose)
+		{
+			switch (type) {
+				case ObjectType.Certificate:
+					X509CertificateCollection coll = LoadCertificates (file, password, verbose);
+					int count = 0;
+
+					foreach (X509Certificate x509 in coll) {
+						RSACryptoServiceProvider pk = x509.RSA as RSACryptoServiceProvider;
+
+						if (pk == null || pk.PublicOnly)
+							continue;
+
+						CspParameters csp = new CspParameters ();
+						csp.KeyContainerName = CryptoConvert.ToHex (x509.Hash);
+						csp.Flags = machine ? CspProviderFlags.UseMachineKeyStore : 0;
+						RSACryptoServiceProvider rsa = new RSACryptoServiceProvider (csp);
+						rsa.ImportParameters (pk.ExportParameters (true));
+						rsa.PersistKeyInCsp = true;
+						count++;
+					}
+					Console.WriteLine ("{0} keys(s) imported to KeyPair {1} persister.", 
+						count, machine ? "LocalMachine" : "CurrentUser");
+					break;
+				default:
+					throw new NotSupportedException (type.ToString ());
+			}
+		}
+
 		[STAThread]
 		static void Main (string[] args)
 		{
+			string password = null;
+
 			Header ();
 			if (args.Length < 2) {
 				Help ();
@@ -504,6 +566,12 @@ namespace Mono.Tools {
 			bool machine = (GetCommand (args [n]) == "M");
 			if (machine)
 				n++;
+
+			if (GetCommand (args [n]) == "P")
+			{
+				n++;
+				password = args[n++];
+			}
 
 			X509Store store = null;
 			string storeName = null;
@@ -537,19 +605,22 @@ namespace Mono.Tools {
 			try {
 				switch (action) {
 				case Action.Add:
-					Add (type, store, file, verbose);
+					Add (type, store, file, password, verbose);
 					break;
 				case Action.Delete:
 					Delete (type, store, file, verbose);
 					break;
 				case Action.Put:
-					Put (type, store, file, verbose);
+					Put (type, store, file, password, verbose);
 					break;
 				case Action.List:
-					List (type, store, file, verbose);
+					List (type, store, machine, file, verbose);
 					break;
 				case Action.Ssl:
 					Ssl (file, machine, verbose);
+					break;
+				case Action.ImportKey:
+					ImportKey (type, machine, file, password, verbose);
 					break;
 				default:
 					throw new NotSupportedException (action.ToString ());

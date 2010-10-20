@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Pablo Ruiz <pruiz@netway.org>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2010 Pablo Ruiz.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +33,9 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Security.Cryptography;
 
+using Mono.Security.Cryptography;
 using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
@@ -114,6 +118,16 @@ namespace Mono.Security.X509 {
 					fs.Close ();
 				}
 			}
+			
+			// Try to save privateKey if available..
+			CspParameters cspParams = new CspParameters ();
+			cspParams.KeyContainerName = CryptoConvert.ToHex (certificate.Hash);
+
+			// Right now this seems to be the best way to know if we should use LM store.. ;)
+			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath))
+				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
+
+			ImportPrivateKey (certificate, cspParams);
 		}
 
 		public void Import (X509Crl crl) 
@@ -188,6 +202,7 @@ namespace Mono.Security.X509 {
 		private string GetUniqueName (string method, byte[] name, string fileExtension) 
 		{
 			StringBuilder sb = new StringBuilder (method);
+			
 			sb.Append ("-");
 			foreach (byte b in name) {
 				sb.Append (b.ToString ("X2", CultureInfo.InvariantCulture));
@@ -212,6 +227,21 @@ namespace Mono.Security.X509 {
 		{
 			byte[] data = Load (filename);
 			X509Certificate cert = new X509Certificate (data);
+
+			// If privateKey it's available, load it too..
+			CspParameters cspParams = new CspParameters ();
+			cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
+			cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
+			KeyPairPersistence kpp = new KeyPairPersistence (cspParams);
+
+			if (!kpp.Load ())
+				return cert;
+
+			if (cert.RSA != null)
+				cert.RSA = new RSACryptoServiceProvider (cspParams);
+			else if (cert.DSA != null)
+				cert.DSA = new DSACryptoServiceProvider (cspParams);
+
 			return cert;
 		}
 
@@ -282,6 +312,41 @@ namespace Mono.Security.X509 {
 				}
 			}
 			return list;
+		}
+
+		private void ImportPrivateKey (X509Certificate certificate, CspParameters cspParams)
+		{
+			RSACryptoServiceProvider rsaCsp = certificate.RSA as RSACryptoServiceProvider;
+			if (rsaCsp != null) {
+				if (rsaCsp.PublicOnly)
+					return;
+
+				RSACryptoServiceProvider csp = new RSACryptoServiceProvider(cspParams);
+				csp.ImportParameters(rsaCsp.ExportParameters(true));
+				csp.PersistKeyInCsp = true;
+				return;
+			}
+
+			RSAManaged rsaMng = certificate.RSA as RSAManaged;
+			if (rsaMng != null) {
+				if (rsaMng.PublicOnly)
+					return;
+
+				RSACryptoServiceProvider csp = new RSACryptoServiceProvider(cspParams);
+				csp.ImportParameters(rsaMng.ExportParameters(true));
+				csp.PersistKeyInCsp = true;
+				return;
+			}
+
+			DSACryptoServiceProvider dsaCsp = certificate.DSA as DSACryptoServiceProvider;
+			if (dsaCsp != null) {
+				if (dsaCsp.PublicOnly)
+					return;
+
+				DSACryptoServiceProvider csp = new DSACryptoServiceProvider(cspParams);
+				csp.ImportParameters(dsaCsp.ExportParameters(true));
+				csp.PersistKeyInCsp = true;
+			}
 		}
 	}
 }
