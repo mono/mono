@@ -93,7 +93,9 @@ namespace System.ServiceModel.Configuration
 			properties.Add (client_credential_type);
 			properties.Add (proxy_credential_type);
 			properties.Add (realm);
+#if NET_4_0
 			properties.Add (extended_protection_policy);
+#endif
 		}
 
 		public HttpTransportSecurityElement ()
