@@ -891,6 +891,12 @@ System.Security.Authentication/HashAlgorithmType.cs
 System.Security.Authentication/SslProtocols.cs
 System.Security.Authentication/InvalidCredentialException.cs
 System.Security.Authentication.ExtendedProtection/ChannelBinding.cs
+System.Security.Authentication.ExtendedProtection/ChannelBindingKind.cs
+System.Security.Authentication.ExtendedProtection/ExtendedProtectionPolicy.cs
+System.Security.Authentication.ExtendedProtection/ExtendedProtectionPolicyTypeConverter.cs
+System.Security.Authentication.ExtendedProtection/PolicyEnforcement.cs
+System.Security.Authentication.ExtendedProtection/ProtectionScenario.cs
+System.Security.Authentication.ExtendedProtection/ServiceNameCollection.cs
 System.Security.Cryptography/AsnEncodedDataCollection.cs
 System.Security.Cryptography/AsnEncodedData.cs
 System.Security.Cryptography/AsnEncodedDataEnumerator.cs
