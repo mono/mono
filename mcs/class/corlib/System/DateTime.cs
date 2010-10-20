@@ -650,7 +650,7 @@ namespace System
 
 		public static DateTime FromBinary (long dateData)
 		{
-			switch ((ulong)dateData >> 62) {
+			switch ((ulong)dateData >> KindShift) {
 			case 1: // Utc
 				return new DateTime (dateData & TicksMask, DateTimeKind.Utc);
 			case 0: // Unspecified
