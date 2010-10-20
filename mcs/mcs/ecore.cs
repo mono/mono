@@ -2344,7 +2344,8 @@ namespace Mono.CSharp {
 							ErrorIsInaccesible (rc, me.GetSignatureForError (), loc);
 						}
 					} else {
-						if (variable != null && (restrictions & MemberLookupRestrictions.InvocableOnly) == 0) {
+						// LAMESPEC: again, ignores InvocableOnly
+						if (variable != null) {
 							rc.Report.SymbolRelatedToPreviousError (variable.Location, Name);
 							rc.Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", Name);
 						}
@@ -2387,8 +2388,14 @@ namespace Mono.CSharp {
 				//
 				if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0 && !variable_found) {
 					e = ResolveAsTypeStep (rc, lookup_arity == 0 || !errorMode);
-					if (e != null)
+					if (e != null) {
+						if (variable != null) {
+							rc.Report.SymbolRelatedToPreviousError (variable.Location, Name);
+							rc.Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", Name);
+						}
+
 						return e;
+					}
 				}
 
 				if (errorMode) {
