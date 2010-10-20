@@ -184,7 +184,11 @@ namespace System.Net.Sockets
 					SocketAsyncCall sac = null;
 					SocketAsyncResult req = null;
 					lock (queue) {
-						queue.Dequeue (); // remove ourselves
+						// queue.Count will only be 0 if the socket is closed while receive/send
+						// operation(s) are pending and at least one call to this method is
+						// waiting on the lock while another one calls CompleteAllOnDispose()
+						if (queue.Count > 0)
+							queue.Dequeue (); // remove ourselves
 						if (queue.Count > 0) {
 							req = (SocketAsyncResult) queue.Peek ();
 							if (!Sock.disposed) {
