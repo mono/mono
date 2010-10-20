@@ -13,6 +13,7 @@ tests/?mcs.log
 tests/gtest-*.dll
 tests/test-*.dll
 tests/xml-*.xml
+tests/?xml-*.xml
 tests/test-*.netmodule
 tests/data.xml
 class/Mono.Data.Sqlite/test.db

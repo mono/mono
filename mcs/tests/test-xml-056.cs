@@ -1,4 +1,4 @@
-// Compiler options: /doc:test-471.xml
+// Compiler options: -doc:xml-056.xml
 
 using System;
 

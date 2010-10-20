@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-056</name>
+    </assembly>
+    <members>
+        <member name="T:AAttribute">
+            <summary>
+                <see cref="T:AAttribute" />
+            </summary>
+        </member>
+    </members>
+</doc>
