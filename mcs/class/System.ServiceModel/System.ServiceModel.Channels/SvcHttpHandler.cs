@@ -75,7 +75,9 @@ namespace System.ServiceModel.Channels
 			EnsureServiceHost ();
 
 			var table = HttpListenerManagerTable.GetOrCreate (host);
-			var manager = table.GetOrCreateManager (host.BaseAddresses [0]);
+			var manager = table.GetOrCreateManager (context.Request.Url);
+			if (manager == null)
+				manager = table.GetOrCreateManager (host.BaseAddresses [0]);
 			var wait = new ManualResetEvent (false);
 			wcf_wait_handles [context] = wait;
 			manager.ProcessNewContext (new System.ServiceModel.Channels.Http.AspNetHttpContextInfo (this, context));

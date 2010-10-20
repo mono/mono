@@ -40,11 +40,6 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels.Http
 {
-	internal interface IChannelDispatcherBoundListener
-	{
-		ChannelDispatcher ChannelDispatcher { get; set; }
-	}
-
 	internal class HttpChannelListener<TChannel> : InternalChannelListenerBase<TChannel>, IChannelDispatcherBoundListener
 		where TChannel : class, IChannel
 	{
