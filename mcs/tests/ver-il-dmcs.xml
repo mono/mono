@@ -2582,6 +2582,36 @@
       </method>
     </type>
   </test>
+  <test name="dtest-optional-01.cs">
+    <type name="G`1[T]">
+      <method name="System.Object M1(T)">
+        <size>7</size>
+      </method>
+      <method name="System.Object M2(T)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="System.Object Test(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Void TestS(S)">
+        <size>1</size>
+      </method>
+      <method name="System.Object TestD(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>854</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-001.cs">
     <type name="Stack`1[type]">
       <method name="Void .ctor()">
@@ -26590,7 +26620,7 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>90</size>
+        <size>211</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -51195,6 +51225,25 @@
     <type name="Test">
       <method name="Int32 Main()">
         <size>98</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-named-06.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>25</size>
+      </method>
+      <method name="Int32 Foo(Int32, Int64, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo(Int32, Int64, System.String[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo(Int64, Int32)">
+        <size>2</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

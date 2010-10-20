@@ -3228,10 +3228,12 @@ namespace Mono.CSharp {
 		{
 			public readonly MemberSpec Member;
 			public readonly bool Expanded;
+			public readonly AParametersCollection Parameters;
 
-			public AmbiguousCandidate (MemberSpec member, bool expanded)
+			public AmbiguousCandidate (MemberSpec member, AParametersCollection parameters, bool expanded)
 			{
 				Member = member;
+				Parameters = parameters;
 				Expanded = expanded;
 			}
 		}
@@ -3430,8 +3432,8 @@ namespace Mono.CSharp {
 		///     false if candidate ain't better
 		///     true  if candidate is better than the current best match
 		/// </remarks>
-		static bool BetterFunction (ResolveContext ec, Arguments args, MemberSpec candidate, bool candidate_params,
-			MemberSpec best, bool best_params)
+		static bool BetterFunction (ResolveContext ec, Arguments args, MemberSpec candidate, AParametersCollection cparam, bool candidate_params,
+			MemberSpec best, AParametersCollection bparam, bool best_params)
 		{
 			AParametersCollection candidate_pd = ((IParametersMember) candidate).Parameters;
 			AParametersCollection best_pd = ((IParametersMember) best).Parameters;
@@ -3440,6 +3442,7 @@ namespace Mono.CSharp {
 			bool same = true;
 			int args_count = args == null ? 0 : args.Count;
 			int j = 0;
+			TypeSpec ct, bt;
 			for (int c_idx = 0, b_idx = 0; j < args_count; ++j, ++c_idx, ++b_idx) {
 				Argument a = args[j];
 
@@ -3447,17 +3450,34 @@ namespace Mono.CSharp {
 				if (a.IsDefaultArgument)
 					break;
 
-				TypeSpec ct = candidate_pd.Types[c_idx];
-				TypeSpec bt = best_pd.Types[b_idx];
+				//
+				// When comparing named argument the parameter type index has to be looked up
+				// in original parameter set (override version for virtual members)
+				//
+				NamedArgument na = a as NamedArgument;
+				if (na != null) {
+					int idx = cparam.GetParameterIndexByName (na.Name);
+					ct = candidate_pd.Types[idx];
+					if (candidate_params && candidate_pd.FixedParameters[idx].ModFlags == Parameter.Modifier.PARAMS)
+						ct = TypeManager.GetElementType (ct);
 
-				if (candidate_params && candidate_pd.FixedParameters[c_idx].ModFlags == Parameter.Modifier.PARAMS) {
-					ct = TypeManager.GetElementType (ct);
-					--c_idx;
-				}
+					idx = bparam.GetParameterIndexByName (na.Name);
+					bt = best_pd.Types[idx];
+					if (best_params && best_pd.FixedParameters[idx].ModFlags == Parameter.Modifier.PARAMS)
+						bt = TypeManager.GetElementType (bt);
+				} else {
+					ct = candidate_pd.Types[c_idx];
+					bt = best_pd.Types[b_idx];
 
-				if (best_params && best_pd.FixedParameters[b_idx].ModFlags == Parameter.Modifier.PARAMS) {
-					bt = TypeManager.GetElementType (bt);
-					--b_idx;
+					if (candidate_params && candidate_pd.FixedParameters[c_idx].ModFlags == Parameter.Modifier.PARAMS) {
+						ct = TypeManager.GetElementType (ct);
+						--c_idx;
+					}
+
+					if (best_params && best_pd.FixedParameters[b_idx].ModFlags == Parameter.Modifier.PARAMS) {
+						bt = TypeManager.GetElementType (bt);
+						--b_idx;
+					}
 				}
 
 				if (ct == bt)
@@ -3505,6 +3525,7 @@ namespace Mono.CSharp {
 			// Prefer non-optional version
 			//
 			// LAMESPEC: Specification claims this should be done at last but the opposite is true
+			//
 			if (candidate_params == best_params && candidate_pd.Count != best_pd.Count) {
 				if (candidate_pd.Count >= best_pd.Count)
 					return false;
@@ -3550,8 +3571,15 @@ namespace Mono.CSharp {
 
 			bool specific_at_least_once = false;
 			for (j = 0; j < candidate_param_count; ++j) {
-				var ct = candidate_def_pd.Types[j];
-				var bt = best_def_pd.Types[j];
+				NamedArgument na = args_count == 0 ? null : args [j] as NamedArgument;
+				if (na != null) {
+					ct = candidate_def_pd.Types[cparam.GetParameterIndexByName (na.Name)];
+					bt = best_def_pd.Types[bparam.GetParameterIndexByName (na.Name)];
+				} else {
+					ct = candidate_def_pd.Types[j];
+					bt = best_def_pd.Types[j];
+				}
+
 				if (ct == bt)
 					continue;
 				TypeSpec specific = MoreSpecific (ct, bt);
@@ -4053,7 +4081,7 @@ namespace Mono.CSharp {
 								}
 
 								// Is the new candidate better
-								if (BetterFunction (rc, candidate_args, member, params_expanded_form, best_candidate, best_candidate_params)) {
+								if (BetterFunction (rc, candidate_args, member, pm.Parameters, params_expanded_form, best_candidate, best_parameter_member.Parameters, best_candidate_params)) {
 									best_candidate = member;
 									best_candidate_args = candidate_args;
 									best_candidate_params = params_expanded_form;
@@ -4064,7 +4092,7 @@ namespace Mono.CSharp {
 									if (ambiguous_candidates == null)
 										ambiguous_candidates = new List<AmbiguousCandidate> ();
 
-									ambiguous_candidates.Add (new AmbiguousCandidate (member, params_expanded_form));
+									ambiguous_candidates.Add (new AmbiguousCandidate (member, pm.Parameters, params_expanded_form));
 								}
 							}
 
@@ -4136,7 +4164,7 @@ namespace Mono.CSharp {
 				for (int ix = 0; ix < ambiguous_candidates.Count; ix++) {
 					var candidate = ambiguous_candidates [ix];
 
-					if (!BetterFunction (rc, candidate_args, best_candidate, best_candidate_params, candidate.Member, candidate.Expanded)) {
+					if (!BetterFunction (rc, candidate_args, best_candidate, best_parameter_member.Parameters, best_candidate_params, candidate.Member, candidate.Parameters, candidate.Expanded)) {
 						var ambiguous = candidate.Member;
 						if (custom_errors == null || !custom_errors.AmbiguousCandidates (rc, best_candidate, ambiguous)) {
 							rc.Report.SymbolRelatedToPreviousError (best_candidate);
