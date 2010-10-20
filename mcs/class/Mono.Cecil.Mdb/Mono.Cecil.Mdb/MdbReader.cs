@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2006 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,113 +26,143 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+using Mono.Cecil.Cil;
+using Mono.Collections.Generic;
+using Mono.CompilerServices.SymbolWriter;
+
 namespace Mono.Cecil.Mdb {
 
-	using System.Collections;
+	public class MdbReaderProvider : ISymbolReaderProvider {
 
-	using Mono.Cecil.Cil;
+		public ISymbolReader GetSymbolReader (ModuleDefinition module, string fileName)
+		{
+			return new MdbReader (MonoSymbolFile.ReadSymbolFile (module, fileName));
+		}
 
-	using Mono.CompilerServices.SymbolWriter;
+		public ISymbolReader GetSymbolReader (ModuleDefinition module, Stream symbolStream)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 
-	class MdbReader : ISymbolReader {
+	public class MdbReader : ISymbolReader {
 
-		MonoSymbolFile m_symFile;
-		Hashtable m_documents;
-		Hashtable m_scopes;
+		readonly MonoSymbolFile symbol_file;
+		readonly Dictionary<string, Document> documents;
 
 		public MdbReader (MonoSymbolFile symFile)
 		{
-			m_symFile = symFile;
-			m_documents = new Hashtable ();
-			m_scopes = new Hashtable ();
+			symbol_file = symFile;
+			documents = new Dictionary<string, Document> ();
 		}
 
-		Instruction GetInstruction (MethodBody body, IDictionary instructions, int offset)
+		public bool ProcessDebugHeader (ImageDebugDirectory directory, byte [] header)
 		{
-			Instruction instr = (Instruction) instructions [offset];
-			if (instr != null)
-				return instr;
-
-			return body.Instructions.Outside;
+			return true;
 		}
 
-		public void Read (MethodBody body, IDictionary instructions)
+		public void Read (MethodBody body, InstructionMapper mapper)
 		{
-			MethodEntry entry = m_symFile.GetMethodByToken ((int) body.Method.MetadataToken.ToUInt ());
+			var method_token = body.Method.MetadataToken;
+			var entry = symbol_file.GetMethodByToken (method_token.ToInt32	());
 			if (entry == null)
 				return;
 
-			ReadScopes (entry, body, instructions);
-			ReadLineNumbers (entry, instructions);
-			ReadLocalVariables (entry, body);
+			var scopes = ReadScopes (entry, body, mapper);
+			ReadLineNumbers (entry, mapper);
+			ReadLocalVariables (entry, body, scopes);
 		}
 
-		void ReadLocalVariables (MethodEntry entry, MethodBody body)
+		static void ReadLocalVariables (MethodEntry entry, MethodBody body, Scope [] scopes)
 		{
-			LocalVariableEntry[] locals = entry.GetLocals ();
-			foreach (LocalVariableEntry loc in locals) {
-				VariableDefinition var = body.Variables [loc.Index];
-				var.Name = loc.Name;
+			var locals = entry.GetLocals ();
+			foreach (var local in locals) {
+				var variable = body.Variables [local.Index];
+				variable.Name = local.Name;
 
-				Scope scope = m_scopes [loc.BlockIndex] as Scope;
+				var index = local.BlockIndex;
+				if (index < 0 || index >= scopes.Length)
+					continue;
+
+				var scope = scopes [index];
 				if (scope == null)
 					continue;
-				scope.Variables.Add (var);
+
+				scope.Variables.Add (variable);
 			}
 		}
 
-		void ReadLineNumbers (MethodEntry entry, IDictionary instructions)
+		void ReadLineNumbers (MethodEntry entry, InstructionMapper mapper)
 		{
-			LineNumberTable lnt = entry.GetLineNumberTable ();
-			foreach (LineNumberEntry line in lnt.LineNumbers) {
-				Instruction instr = instructions [line.Offset] as Instruction;
-				if (instr == null)
+			Document document = null;
+			var table = entry.GetLineNumberTable ();
+
+			foreach (var line in table.LineNumbers) {
+				var instruction = mapper (line.Offset);
+				if (instruction == null)
 					continue;
 
-				Document doc = GetDocument (entry.CompileUnit.SourceFile);
-				instr.SequencePoint = new SequencePoint (doc);
-				instr.SequencePoint.StartLine = line.Row;
-				instr.SequencePoint.EndLine = line.Row;
+				if (document == null)
+					document = GetDocument (entry.CompileUnit.SourceFile);
+
+				instruction.SequencePoint = new SequencePoint (document) {
+					StartLine = line.Row,
+					EndLine = line.Row,
+				};
 			}
 		}
 
 		Document GetDocument (SourceFileEntry file)
 		{
-			Document doc = m_documents [file.FileName] as Document;
-			if (doc != null)
-				return doc;
+			var file_name = file.FileName;
 
-			doc = new Document (file.FileName);
+			Document document;
+			if (documents.TryGetValue (file_name, out document))
+				return document;
 
-			m_documents [file.FileName] = doc;
-			return doc;
+			document = new Document (file_name);
+			documents.Add (file_name, document);
+
+			return document;
 		}
 
-		void ReadScopes (MethodEntry entry, MethodBody body, IDictionary instructions)
+		static Scope [] ReadScopes (MethodEntry entry, MethodBody body, InstructionMapper mapper)
 		{
-			CodeBlockEntry[] blocks = entry.GetCodeBlocks ();
-			foreach (CodeBlockEntry cbe in blocks) {
-				if (cbe.BlockType != CodeBlockEntry.Type.Lexical)
+			var blocks = entry.GetCodeBlocks ();
+			var scopes = new Scope [blocks.Length];
+
+			foreach (var block in blocks) {
+				if (block.BlockType != CodeBlockEntry.Type.Lexical)
 					continue;
 
-				Scope s = new Scope ();
-				s.Start = GetInstruction (body, instructions, cbe.StartOffset);
-				s.End = GetInstruction(body, instructions, cbe.EndOffset);
-				m_scopes [entry.Index] = s;
+				var scope = new Scope ();
+				scope.Start = mapper (block.StartOffset);
+				scope.End = mapper (block.EndOffset);
 
-				if (!AddScope (body, s))
-					body.Scopes.Add (s);
+				scopes [block.Index] = scope;
+
+				if (body.Scope == null)
+					body.Scope = scope;
+
+				if (!AddScope (body.Scope, scope))
+					body.Scope = scope;
 			}
+
+			return scopes;
 		}
 
-		bool AddScope (IScopeProvider provider, Scope s)
+		static bool AddScope (Scope provider, Scope scope)
 		{
-			foreach (Scope scope in provider.Scopes) {
-				if (AddScope (scope, s))
+			foreach (var sub_scope in provider.Scopes) {
+				if (AddScope (sub_scope, scope))
 					return true;
 
-				if (s.Start.Offset >= scope.Start.Offset && s.End.Offset <= scope.End.Offset) {
-					scope.Scopes.Add (s);
+				if (scope.Start.Offset >= sub_scope.Start.Offset && scope.End.Offset <= sub_scope.End.Offset) {
+					sub_scope.Scopes.Add (scope);
 					return true;
 				}
 			}
@@ -140,9 +170,44 @@ namespace Mono.Cecil.Mdb {
 			return false;
 		}
 
+		public void Read (MethodSymbols symbols)
+		{
+			var entry = symbol_file.GetMethodByToken (symbols.MethodToken.ToInt32 ());
+			if (entry == null)
+				return;
+
+			ReadLineNumbers (entry, symbols);
+			ReadLocalVariables (entry, symbols);
+		}
+
+		void ReadLineNumbers (MethodEntry entry, MethodSymbols symbols)
+		{
+			var table = entry.GetLineNumberTable ();
+			var lines = table.LineNumbers;
+
+			var instructions = symbols.instructions = new Collection<InstructionSymbol> (lines.Length);
+
+			for (int i = 0; i < lines.Length; i++) {
+				var line = lines [i];
+
+				instructions.Add (new InstructionSymbol (line.Offset, new SequencePoint (GetDocument (entry.CompileUnit.SourceFile)) {
+					StartLine = line.Row,
+					EndLine = line.Row,
+				}));
+			}
+		}
+
+		static void ReadLocalVariables (MethodEntry entry, MethodSymbols symbols)
+		{
+			foreach (var local in entry.GetLocals ()) {
+				var variable = symbols.Variables [local.Index];
+				variable.Name = local.Name;
+			}
+		}
+
 		public void Dispose ()
 		{
-			m_symFile.Dispose ();
+			symbol_file.Dispose ();
 		}
 	}
 }

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2006 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,13 +31,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle ("Mono.Cecil.Mdb")]
-[assembly: AssemblyDescription ("Support for the mdb symbols store in Cecil")]
-[assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyProduct ("Mono.Cecil")]
-[assembly: AssemblyCopyright ("(C) 2006, Jb Evain")]
-[assembly: AssemblyCulture ("")]
+[assembly: AssemblyCopyright ("Copyright © 2008 - 2010 Jb Evain")]
 
 [assembly: CLSCompliant (false)]
 [assembly: ComVisible (false)]
 
-[assembly: AssemblyVersion ("0.2.0.0")]
+[assembly: AssemblyVersion ("0.9.4.0")]
+[assembly: AssemblyFileVersion ("0.9.4.0")]

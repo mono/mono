@@ -443,18 +443,22 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 
 #if CECIL
-		protected MonoSymbolFile (string filename, Mono.Cecil.AssemblyDefinition assembly) : this (filename)
+		protected MonoSymbolFile (string filename, Mono.Cecil.ModuleDefinition module)
+			: this (filename)
 		{
-			Guid mvid = assembly.MainModule.Mvid;
-
-			CheckGuidMatch (mvid, filename, assembly.MainModule.Image.FileInformation.FullName);
+			CheckGuidMatch (module.Mvid, filename, module.FullyQualifiedName);
 		}
 
-		public static MonoSymbolFile ReadSymbolFile (Mono.Cecil.AssemblyDefinition assembly, string filename)
+		public static MonoSymbolFile ReadSymbolFile (Mono.Cecil.ModuleDefinition module)
+		{
+			return ReadSymbolFile (module, module.FullyQualifiedName);
+		}
+
+		public static MonoSymbolFile ReadSymbolFile (Mono.Cecil.ModuleDefinition module, string filename)
 		{
 			string name = filename + ".mdb";
 
-			return new MonoSymbolFile (name, assembly);
+			return new MonoSymbolFile (name, module);
 		}
 #else
 		protected MonoSymbolFile (string filename, Assembly assembly) : this (filename)
