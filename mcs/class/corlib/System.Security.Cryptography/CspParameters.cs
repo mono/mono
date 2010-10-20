@@ -61,7 +61,7 @@ namespace System.Security.Cryptography {
 			// not defined in specs, only tested from M$ impl
 			KeyNumber = -1;
 		}
-		
+
 		public string KeyContainerName;
 		
 		public int KeyNumber;
@@ -94,6 +94,18 @@ namespace System.Security.Cryptography {
 			if (cryptoKeySecurity != null)
 				CryptoKeySecurity = cryptoKeySecurity;
 			_password = keyPassword;
+		}
+
+		internal CspParameters(CspParameters parameters)
+			: this(parameters.ProviderType, parameters.ProviderName, parameters.KeyContainerName)
+		{
+			if (parameters.CryptoKeySecurity != null)
+				CryptoKeySecurity = parameters.CryptoKeySecurity;
+
+			_Flags = parameters.Flags;
+			KeyNumber = parameters.KeyNumber;
+			_password = parameters.KeyPassword;
+			_windowHandle = parameters.ParentWindowHandle;
 		}
 
 		[MonoTODO ("access control isn't implemented")]

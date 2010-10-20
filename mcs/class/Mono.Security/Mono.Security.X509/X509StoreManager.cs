@@ -43,6 +43,8 @@ namespace Mono.Security.X509 {
 #endif
 	sealed class X509StoreManager {
 
+		static private string _userPath;
+		static private string _localMachinePath;
 		static private X509Stores _userStore;
 		static private X509Stores _machineStore;
 
@@ -50,30 +52,44 @@ namespace Mono.Security.X509 {
 		{
 		}
 
+		internal static string CurrentUserPath {
+			get {
+				if (_userPath == null) {
+					_userPath = Path.Combine(
+							Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+							".mono");
+					_userPath = Path.Combine(_userPath, "certs");
+				}
+				return _userPath;
+			}
+		}
+
+		internal static string LocalMachinePath {
+			get {
+				if (_localMachinePath == null) {
+					_localMachinePath = Path.Combine (
+						Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
+						".mono");
+					_localMachinePath = Path.Combine (_localMachinePath, "certs");
+				}
+				return _localMachinePath;
+			}
+		}
+
 		static public X509Stores CurrentUser {
 			get { 
-				if (_userStore == null) {
-					string _userPath = Path.Combine (
-						Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
-						".mono");
-					_userPath = Path.Combine (_userPath, "certs");
-
-					_userStore = new X509Stores (_userPath);
-				}
+				if (_userStore == null)
+					_userStore = new X509Stores(CurrentUserPath);
+				
 				return _userStore;
 			}
 		}
 
 		static public X509Stores LocalMachine {
 			get {
-				if (_machineStore == null) {
-					string _machinePath = Path.Combine (
-						Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
-						".mono");
-					_machinePath = Path.Combine (_machinePath, "certs");
+				if (_machineStore == null) 
+					_machineStore = new X509Stores (LocalMachinePath);
 
-					_machineStore = new X509Stores (_machinePath);
-				}
 				return _machineStore;
 			}
 		}
