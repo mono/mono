@@ -2287,21 +2287,21 @@ static class CecilExtensions {
 
 	public static MemberReference Resolve (this MemberReference member)
 	{
-		EventReference er = member as EventReference;
-		if (er != null)
-			return er.Resolve ();
 		FieldReference fr = member as FieldReference;
 		if (fr != null)
 			return fr.Resolve ();
 		MethodReference mr = member as MethodReference;
 		if (mr != null)
 			return mr.Resolve ();
-		PropertyReference pr = member as PropertyReference;
-		if (pr != null)
-			return pr.Resolve ();
 		TypeReference tr = member as TypeReference;
 		if (tr != null)
 			return tr.Resolve ();
+		PropertyReference pr = member as PropertyReference;
+		if (pr != null)
+			return pr;
+		EventReference er = member as EventReference;
+		if (er != null)
+			return er;
 		throw new NotSupportedException ("Cannot find definition for " + member.ToString ());
 	}
 
