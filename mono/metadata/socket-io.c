@@ -660,35 +660,33 @@ static MonoImage *get_socket_assembly (void)
 {
 	static const char *version = NULL;
 	static gboolean moonlight;
-	static MonoImage *socket_assembly = NULL;
+	MonoImage *socket_assembly = NULL;
 	
 	if (version == NULL) {
 		version = mono_get_runtime_info ()->framework_version;
 		moonlight = !strcmp (version, "2.1");
 	}
 	
-	if (socket_assembly == NULL) {
-		if (moonlight) {
-			socket_assembly = mono_image_loaded ("System.Net");
-			if (!socket_assembly) {
-				MonoAssembly *sa = mono_assembly_open ("System.Net.dll", NULL);
-			
-				if (!sa) {
-					g_assert_not_reached ();
-				} else {
-					socket_assembly = mono_assembly_get_image (sa);
-				}
+	if (moonlight) {
+		socket_assembly = mono_image_loaded ("System.Net");
+		if (!socket_assembly) {
+			MonoAssembly *sa = mono_assembly_open ("System.Net.dll", NULL);
+		
+			if (!sa) {
+				g_assert_not_reached ();
+			} else {
+				socket_assembly = mono_assembly_get_image (sa);
 			}
-		} else {
-			socket_assembly = mono_image_loaded ("System");
-			if (!socket_assembly) {
-				MonoAssembly *sa = mono_assembly_open ("System.dll", NULL);
-			
-				if (!sa) {
-					g_assert_not_reached ();
-				} else {
-					socket_assembly = mono_assembly_get_image (sa);
-				}
+		}
+	} else {
+		socket_assembly = mono_image_loaded ("System");
+		if (!socket_assembly) {
+			MonoAssembly *sa = mono_assembly_open ("System.dll", NULL);
+		
+			if (!sa) {
+				g_assert_not_reached ();
+			} else {
+				socket_assembly = mono_assembly_get_image (sa);
 			}
 		}
 	}
@@ -909,11 +907,11 @@ static MonoObject *create_object_from_sockaddr(struct sockaddr *saddr,
 	MonoAddressFamily family;
 
 	/* Build a System.Net.SocketAddress object instance */
-	sockaddr_class=mono_class_from_name_cached (get_socket_assembly (), "System.Net", "SocketAddress");
+	sockaddr_class=mono_class_from_name (get_socket_assembly (), "System.Net", "SocketAddress");
 	sockaddr_obj=mono_object_new(domain, sockaddr_class);
 	
 	/* Locate the SocketAddress data buffer in the object */
-	field=mono_class_get_field_from_name_cached (sockaddr_class, "data");
+	field=mono_class_get_field_from_name (sockaddr_class, "data");
 
 	/* Make sure there is space for the family and size bytes */
 #ifdef HAVE_SYS_UN_H
