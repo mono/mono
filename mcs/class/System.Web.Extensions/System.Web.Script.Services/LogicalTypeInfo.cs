@@ -72,11 +72,13 @@ namespace System.Web.Script.Services
 			readonly MethodInfo _methodInfo;
 			internal readonly ParameterInfo [] _params;
 			internal readonly Dictionary<string, int> _paramMap;
+			LogicalTypeInfo _typeInfo;
 
 			protected LogicalMethodInfo (LogicalTypeInfo typeInfo, MethodInfo method)
 			{
 				_methodInfo = method;
 				_params = MethodInfo.GetParameters ();
+				_typeInfo = typeInfo;
 
 				if (HasParameters) {
 					_paramMap = new Dictionary<string, int> (_params.Length, StringComparer.Ordinal);
@@ -101,8 +103,10 @@ namespace System.Web.Script.Services
 			}
 
 			public void GenerateMethod (StringBuilder proxy, bool isPrototype, bool isPage) {
-				string service = isPage ? "PageMethods" : MethodInfo.DeclaringType.FullName;
+				string ns;
+				string service;// = isPage ? "PageMethods" : MethodInfo.DeclaringType.FullName;
 
+				_typeInfo.GetNamespaceAndServiceName (MethodInfo.DeclaringType, isPage, out ns, out service);
 				string useHttpGet = UseHttpGet ? "true" : "false";
 				string paramMap = GenerateParameters (true);
 				string paramList = GenerateParameters (false);
@@ -187,6 +191,12 @@ Type.registerNamespace('{0}');",
 			return name;
 		}
 
+		protected virtual void GetNamespaceAndServiceName (Type type, bool isPage, out string ns, out string service)
+		{
+			ns = isPage ? String.Empty : type.Namespace;
+			service = isPage ? "PageMethods" : type.FullName;
+		}
+
 		// instance members
 
 		internal readonly Type _type;
@@ -205,8 +215,9 @@ Type.registerNamespace('{0}');",
 			for (int i = 0; i < logicalMethods.Count; i++)
 				_methodMap.Add (logicalMethods [i].MethodName, logicalMethods [i]);
 
-			string ns = isPage ? String.Empty : t.Namespace;
-			string service = isPage ? "PageMethods" : t.FullName;
+			string ns;
+			string service;
+			GetNamespaceAndServiceName (t, isPage, out ns, out service);
 			
 			StringBuilder proxy = new StringBuilder ();
 			List<string> registeredNamespaces = new List<string> ();
@@ -614,6 +625,16 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 				}
 			}
 			yield break;
+		}
+
+		protected override void GetNamespaceAndServiceName (Type type, bool isPage, out string ns, out string service)
+		{
+			string name = type.Namespace;
+			int dot = name.LastIndexOf ('.');
+			if (dot > -1)
+				name = name.Substring (dot + 1);
+			ns = name;
+			service = name + "." + type.Name;
 		}
 
 		protected override void GenerateTypeRegistrationScript (StringBuilder proxy, List<string> registeredNamespaces)
