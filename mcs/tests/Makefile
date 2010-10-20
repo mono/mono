@@ -6,7 +6,7 @@ thisdir = tests
 SUBDIRS =
 include ../build/rules.make
 
-DISTFILES = README.tests $(wildcard dlls/**/*.cs)
+DISTFILES = $(wildcard dlls/**/*.cs)
 DISTFILES += $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.inc) $(wildcard known-issues-*) $(wildcard *.snk)
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
