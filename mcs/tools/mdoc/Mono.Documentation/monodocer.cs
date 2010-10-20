@@ -2265,7 +2265,7 @@ static class CecilExtensions {
 
 	public static IEnumerable<TypeDefinition> GetTypes (this AssemblyDefinition assembly)
 	{
-		return assembly.Modules.SelectMany (md => md.Types);
+		return assembly.Modules.SelectMany (md => md.GetAllTypes ());
 	}
 
 	public static TypeDefinition GetType (this AssemblyDefinition assembly, string type)
@@ -2310,6 +2310,23 @@ static class CecilExtensions {
 		if (!type.IsEnum)
 			return type;
 		return type.Fields.Cast<FieldDefinition>().First (f => f.Name == "value__").FieldType;
+	}
+
+	public static IEnumerable<TypeDefinition> GetAllTypes (this ModuleDefinition self)
+	{
+		foreach (var type in self.Types.SelectMany (t => t.GetAllTypes ()))
+			yield return type;
+	}
+
+	static IEnumerable<TypeDefinition> GetAllTypes (this TypeDefinition self)
+	{
+		yield return self;
+
+		if (!self.HasNestedTypes)
+			yield break;
+
+		foreach (var type in self.NestedTypes.SelectMany (t => t.GetAllTypes ()))
+			yield return type;
 	}
 }
 
