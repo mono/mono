@@ -897,6 +897,10 @@ System.Security.Authentication.ExtendedProtection/ExtendedProtectionPolicyTypeCo
 System.Security.Authentication.ExtendedProtection/PolicyEnforcement.cs
 System.Security.Authentication.ExtendedProtection/ProtectionScenario.cs
 System.Security.Authentication.ExtendedProtection/ServiceNameCollection.cs
+System.Security.Authentication.ExtendedProtection.Configuration/ConfigUtil.cs
+System.Security.Authentication.ExtendedProtection.Configuration/ExtendedProtectionPolicyElement.cs
+System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElement.cs
+System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElementCollection.cs
 System.Security.Cryptography/AsnEncodedDataCollection.cs
 System.Security.Cryptography/AsnEncodedData.cs
 System.Security.Cryptography/AsnEncodedDataEnumerator.cs
