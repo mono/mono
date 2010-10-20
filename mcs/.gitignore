@@ -14,8 +14,6 @@ tests/gtest-*.dll
 tests/test-*.dll
 tests/xml-*.xml
 tests/test-*.netmodule
-tests/gxml-*.xml
-tests/test-*.xml
 tests/data.xml
 class/Mono.Data.Sqlite/test.db
 class/Mono.CSharp/Mono.CSharp.dll.sources
