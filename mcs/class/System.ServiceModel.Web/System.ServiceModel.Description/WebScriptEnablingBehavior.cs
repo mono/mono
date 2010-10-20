@@ -107,8 +107,8 @@ namespace System.ServiceModel.Description
 			var uri = new Uri (String.Concat (baseUriString, baseUriString [baseUriString.Length - 1] == '/' ? String.Empty : "/", subPath));
 			var listener = endpoint.Binding.BuildChannelListener<IReplyChannel> (uri);
 			var cd = new ChannelDispatcher (listener, String.Empty);
-			cd.MessageVersion = MessageVersion.None;
 
+			cd.MessageVersion = MessageVersion.None;
 			cd.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "InteropScriptService", String.Empty)
 				{ ContractFilter = new MatchAllMessageFilter () });
 

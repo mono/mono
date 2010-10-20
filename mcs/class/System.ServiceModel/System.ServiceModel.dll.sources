@@ -651,6 +651,7 @@ System.ServiceModel.Dispatcher/FaultContractInfo.cs
 System.ServiceModel.Dispatcher/FilterInvalidBodyAccessException.cs
 System.ServiceModel.Dispatcher/FinalizeProcessingHandler.cs
 System.ServiceModel.Dispatcher/ICallContextInitializer.cs
+System.ServiceModel.Dispatcher/IChannelDispatcherBoundListener.cs
 System.ServiceModel.Dispatcher/IChannelInitializer.cs
 System.ServiceModel.Dispatcher/IClientMessageFormatter.cs
 System.ServiceModel.Dispatcher/IClientMessageInspector.cs
