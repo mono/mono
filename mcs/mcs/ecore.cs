@@ -2315,9 +2315,18 @@ namespace Mono.CSharp {
 				TypeSpec member_type = rc.CurrentType;
 				TypeSpec current_type = member_type;
 				for (; member_type != null; member_type = member_type.DeclaringType) {
-					var me = MemberLookup (errorMode ? null : rc, current_type, member_type, Name, lookup_arity, restrictions, loc) as MemberExpr;
-					if (me == null)
+					e = MemberLookup (errorMode ? null : rc, current_type, member_type, Name, lookup_arity, restrictions, loc);
+					if (e == null)
 						continue;
+
+					var me = e as MemberExpr;
+					if (me == null) {
+						// The name matches a type, defer to ResolveAsTypeStep
+						if (e is TypeExpr)
+							break;
+
+						continue;
+					}
 
 					if (errorMode) {
 						if (variable != null) {
