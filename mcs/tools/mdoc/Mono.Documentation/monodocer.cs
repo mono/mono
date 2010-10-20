@@ -1902,7 +1902,7 @@ class MDocUpdater : MDocCommand
 	{
 		var values = new Dictionary<long, string> ();
 		foreach (var f in 
-				(from f in type.Fields.Cast<FieldDefinition> ()
+				(from f in type.Fields
 				 where !(f.IsRuntimeSpecialName || f.IsSpecialName)
 				 select f)) {
 			values [ToInt64 (f.Constant)] = f.Name;
@@ -2309,7 +2309,7 @@ static class CecilExtensions {
 	{
 		if (!type.IsEnum)
 			return type;
-		return type.Fields.Cast<FieldDefinition>().First (f => f.Name == "value__").FieldType;
+		return type.Fields.First (f => f.Name == "value__").FieldType;
 	}
 
 	public static IEnumerable<TypeDefinition> GetAllTypes (this ModuleDefinition self)
@@ -2411,12 +2411,10 @@ static class DocUtils {
 	public static bool IsExtensionMethod (MethodDefinition method)
 	{
 		return
-			method.CustomAttributes.Cast<CustomAttribute> ()
-					.Where (m => m.Constructor.DeclaringType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
-					.Any () &&
-			method.DeclaringType.CustomAttributes.Cast<CustomAttribute> ()
-					.Where (m => m.Constructor.DeclaringType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
-					.Any ();
+			method.CustomAttributes
+					.Any (m => m.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
+			&& method.DeclaringType.CustomAttributes
+					.Any (m => m.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute");
 	}
 
 	public static bool IsDelegate (TypeDefinition type)
@@ -2515,7 +2513,7 @@ class DocsNodeInfo {
 		if (type == null)
 			throw new ArgumentNullException ("type");
 		Type = type;
-		GenericParameters = new List<GenericParameter> (type.GenericParameters.Cast<GenericParameter> ());
+		GenericParameters = new List<GenericParameter> (type.GenericParameters);
 		List<TypeReference> declTypes = DocUtils.GetDeclaringTypes (type);
 		int maxGenArgs = DocUtils.GetGenericArgumentCount (type);
 		for (int i = 0; i < declTypes.Count - 1; ++i) {
@@ -2544,7 +2542,7 @@ class DocsNodeInfo {
 			MethodReference mr = (MethodReference) member;
 			Parameters = mr.Parameters;
 			if (mr.IsGenericMethod ()) {
-				GenericParameters = new List<GenericParameter> (mr.GenericParameters.Cast<GenericParameter> ());
+				GenericParameters = new List<GenericParameter> (mr.GenericParameters);
 			}
 		}
 		else if (member is PropertyDefinition) {
@@ -2635,7 +2633,7 @@ class DocumentationEnumerator {
 				if (docTypeParams != null && mb.IsGenericMethod ()) {
 					IList<GenericParameter> args = mb.GenericParameters;
 					if (args.Count == docTypeParams.Length) {
-						typeParams = args.Cast<GenericParameter> ().Select (p => p.Name).ToArray ();
+						typeParams = args.Select (p => p.Name).ToArray ();
 					}
 				}
 			}
@@ -3677,7 +3675,7 @@ class ILFullMemberFormatter : MemberFormatter {
 				buf.Append (full.GetName (type.BaseType).Substring ("class ".Length));
 		}
 		bool first = true;
-		foreach (var name in type.Interfaces.Cast<TypeReference>()
+		foreach (var name in type.Interfaces
 				.Select (i => full.GetName (i))
 				.OrderBy (n => n)) {
 			if (first) {
