@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Pablo Ruiz <pruiz@netway.org>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2010 Pablo Ruiz.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +33,9 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Security.Cryptography;
 
+using Mono.Security.Cryptography;
 using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
@@ -43,6 +47,7 @@ namespace Mono.Security.X509 {
 #endif
 	class X509Store {
 
+		private static byte[] _entropy = new byte[] { 0x11, 0x01, 0x82, 0x31, 0x33, 0x7 };
 		private string _storePath;
 		private X509CertificateCollection _certificates;
 		private ArrayList _crls;
@@ -114,6 +119,14 @@ namespace Mono.Security.X509 {
 					fs.Close ();
 				}
 			}
+			
+			// Try to save privateKey if available..
+			CspParameters cspParams = new CspParameters();
+			cspParams.KeyContainerName = GetUniqueName(certificate);
+			// FIXME: Find a way to guess if we should use User or Machine store
+			//		  not depending on parsing storePath.
+			cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
+			ImportPrivateKey(certificate, cspParams);
 		}
 
 		public void Import (X509Crl crl) 
@@ -135,6 +148,12 @@ namespace Mono.Security.X509 {
 			if (File.Exists (filename)) {
 				File.Delete (filename);
 			}
+
+			// Remove privateKey too..
+			filename = Path.ChangeExtension(filename, "key");
+
+			if (File.Exists(filename))
+				File.Delete(filename);
 		}
 
 		public void Remove (X509Crl crl) 
@@ -212,6 +231,24 @@ namespace Mono.Security.X509 {
 		{
 			byte[] data = Load (filename);
 			X509Certificate cert = new X509Certificate (data);
+
+			// If privateKey it's available, load it too..
+			try
+			{
+				CspParameters cspParams = new CspParameters();
+				cspParams.KeyContainerName = filename;
+				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
+
+				if (cert.RSA != null)
+					cert.RSA = new RSACryptoServiceProvider(cspParams);
+				else if (cert.DSA != null)
+					cert.DSA = new DSACryptoServiceProvider(cspParams);
+			}
+			catch
+			{
+				// Were can I log exceptions??
+			}
+
 			return cert;
 		}
 
@@ -282,6 +319,43 @@ namespace Mono.Security.X509 {
 				}
 			}
 			return list;
+		}
+
+		private void ImportPrivateKey(X509Certificate certificate, CspParameters cspParams)
+		{
+			if (certificate.RSA != null && certificate.RSA is RSACryptoServiceProvider)
+			{
+				RSACryptoServiceProvider pk = certificate.RSA as RSACryptoServiceProvider;
+
+				if (pk.PublicOnly)
+					return;
+
+				RSACryptoServiceProvider csp = new RSACryptoServiceProvider(cspParams);
+				csp.ImportParameters(pk.ExportParameters(true));
+				csp.PersistKeyInCsp = true;
+			}
+			else if (certificate.RSA != null && certificate.RSA is RSAManaged)
+			{
+				RSAManaged pk = certificate.RSA as RSAManaged;
+
+				if (pk.PublicOnly)
+					return;
+
+				RSACryptoServiceProvider csp = new RSACryptoServiceProvider(cspParams);
+				csp.ImportParameters(pk.ExportParameters(true));
+				csp.PersistKeyInCsp = true;
+			}
+			else if (certificate.DSA != null && certificate.DSA is DSACryptoServiceProvider)
+			{
+				DSACryptoServiceProvider pk = certificate.DSA as DSACryptoServiceProvider;
+
+				if (pk.PublicOnly)
+					return;
+
+				DSACryptoServiceProvider csp = new DSACryptoServiceProvider(cspParams);
+				csp.ImportParameters(pk.ExportParameters(true));
+				csp.PersistKeyInCsp = true;
+			}
 		}
 	}
 }
