@@ -267,6 +267,12 @@ struct _MonoDomain {
 
 	/* Contains the compiled method used by async resylt creation to capture thread context*/
 	gpointer            capture_context_method;
+
+	/* Used by socket-io.c */
+	/* These are domain specific, since the assembly can be unloaded */
+	MonoImage *socket_assembly;
+	MonoClass *sockaddr_class;
+	MonoClassField *sockaddr_data_field;
 };
 
 typedef struct  {
