@@ -656,7 +656,7 @@ namespace System
 			case 0: // Unspecified
 				return new DateTime (dateData, DateTimeKind.Unspecified);
 			default: // Local
-				return new DateTime (dateData & TicksMask, DateTimeKind.Utc).ToLocalTime ();
+				return new DateTime (dateData & TicksMask, DateTimeKind.Local);
 			}
 		}
 
