@@ -121,12 +121,12 @@ namespace Mono.Security.X509 {
 			}
 			
 			// Try to save privateKey if available..
-			CspParameters cspParams = new CspParameters();
-			cspParams.KeyContainerName = GetUniqueName(certificate);
+			CspParameters cspParams = new CspParameters ();
+			cspParams.KeyContainerName = CryptoConvert.ToHex (certificate.Hash);
 			// FIXME: Find a way to guess if we should use User or Machine store
 			//		  not depending on parsing storePath.
 			cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
-			ImportPrivateKey(certificate, cspParams);
+			ImportPrivateKey (certificate, cspParams);
 		}
 
 		public void Import (X509Crl crl) 
@@ -207,6 +207,7 @@ namespace Mono.Security.X509 {
 		private string GetUniqueName (string method, byte[] name, string fileExtension) 
 		{
 			StringBuilder sb = new StringBuilder (method);
+			
 			sb.Append ("-");
 			foreach (byte b in name) {
 				sb.Append (b.ToString ("X2", CultureInfo.InvariantCulture));
@@ -235,14 +236,18 @@ namespace Mono.Security.X509 {
 			// If privateKey it's available, load it too..
 			try
 			{
-				CspParameters cspParams = new CspParameters();
-				cspParams.KeyContainerName = filename;
+				CspParameters cspParams = new CspParameters ();
+				cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
 				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
+				KeyPairPersistence kpp = new KeyPairPersistence(cspParams);
+
+				if (!kpp.Load())
+					return cert;
 
 				if (cert.RSA != null)
-					cert.RSA = new RSACryptoServiceProvider(cspParams);
+					cert.RSA = new RSACryptoServiceProvider (cspParams);
 				else if (cert.DSA != null)
-					cert.DSA = new DSACryptoServiceProvider(cspParams);
+					cert.DSA = new DSACryptoServiceProvider (cspParams);
 			}
 			catch
 			{
