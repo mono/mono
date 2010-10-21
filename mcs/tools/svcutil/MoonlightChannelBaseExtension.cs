@@ -182,7 +182,7 @@ namespace Mono.ServiceContractTool
 			// Also clear ExtensionDataObject members.
 			foreach (CodeNamespace cns in context.ServiceContractGenerator.TargetCompileUnit.Namespaces) {
 				foreach (CodeTypeDeclaration ct in cns.Types) {
-					if (ct != ml_context.ClientType && !ct.Name.EndsWith ("EventArgs", StringComparison.Ordinal))
+					if (!ShouldPreserveBaseTypes (ct))
 						ct.BaseTypes.Clear ();
 					CodeTypeMember cp = null, cf = null;
 					foreach (CodeTypeMember cm in ct.Members) {
@@ -197,6 +197,17 @@ namespace Mono.ServiceContractTool
 						ct.Members.Remove (cp);
 				}
 			}
+		}
+
+		bool ShouldPreserveBaseTypes (CodeTypeDeclaration ct)
+		{
+			foreach (CodeTypeReference cr in ct.BaseTypes) {
+				if (cr.BaseType == "System.ServiceModel.ClientBase`1")
+					return true;
+				if (cr.BaseType == "System.ComponentModel.AsyncCompletedEventArgs")
+					return true;
+			}
+			return false;
 		}
 
 		void EliminateSync ()
