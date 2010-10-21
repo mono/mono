@@ -220,6 +220,13 @@ Specifies the diagnostics log level for
 .Sp
 Used to specify the file where the log will be stored, it defaults to
 standard output.
+.TP
+.I server=[y/n]
+Defaults to no, with the default option Mono will actively connect to the
+host/port configured with the \fBaddress\fR option.  If you set it to 'y', it 
+instructs the Mono runtime to start debugging in server mode, where Mono
+actively waits for the debugger front end to connect to the Mono process.  
+Mono will print out to stdout the IP address and port where it is listening.
 .ne
 .RE
 .TP
