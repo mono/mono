@@ -2338,6 +2338,152 @@
       </method>
     </type>
   </test>
+  <test name="dtest-039.cs">
+    <type name="A">
+      <method name="System.Object Foo()">
+        <size>2</size>
+      </method>
+      <method name="System.Object[] FooArray()">
+        <size>2</size>
+      </method>
+      <method name="System.Object get_Prop()">
+        <size>8</size>
+      </method>
+      <method name="Void set_Prop(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="System.Object[] get_PropArray()">
+        <size>2</size>
+      </method>
+      <method name="System.Object get_Item(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Void set_Item(Int32, System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.Object Foo()">
+        <size>7</size>
+      </method>
+      <method name="System.Object[] FooArray()">
+        <size>37</size>
+      </method>
+      <method name="Void set_Prop(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="System.Object[] get_PropArray()">
+        <size>27</size>
+      </method>
+      <method name="Void set_Item(Int32, System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Void Test()">
+        <size>223</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>512</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-040.cs">
+    <type name="A">
+      <method name="S`2 Foo[U](U)">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="S`2 Foo[T](T)">
+        <size>30</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Int32 Main()">
+        <size>378</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-041.cs">
+    <type name="A`1[AA]">
+      <method name="AA Foo[U](U)">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.Object Foo[T](T)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Int32 Main()">
+        <size>82</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-042.cs">
+    <type name="A">
+      <method name="System.Object get_Prop()">
+        <size>2</size>
+      </method>
+      <method name="Void set_Prop(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Foo()">
+        <size>1</size>
+      </method>
+      <method name="System.Object get_Prop()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Test()">
+        <size>89</size>
+      </method>
+      <method name="Void Main()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-cls-01.cs">
     <type name="A">
       <method name="Void Main()">
@@ -37184,21 +37330,6 @@
       </method>
     </type>
   </test>
-  <test name="test-471.cs">
-    <type name="AAttribute">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Demo">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-  </test>
   <test name="test-472.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -40792,6 +40923,21 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-629.cs">
+    <type name="Foo">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo+Nested">
+      <method name="Int32 get_Bar()">
+        <size>2</size>
       </method>
     </type>
   </test>

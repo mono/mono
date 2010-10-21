@@ -2942,6 +2942,7 @@ namespace Mono.CSharp {
 	{
 		protected IList<MemberSpec> Methods;
 		MethodSpec best_candidate;
+		TypeSpec best_candidate_return;
 		protected TypeArguments type_arguments;
 
  		SimpleName simple_name;
@@ -2967,6 +2968,12 @@ namespace Mono.CSharp {
 		public MethodSpec BestCandidate {
 			get {
 				return best_candidate;
+			}
+		}
+
+		public TypeSpec BestCandidateReturnType {
+			get {
+				return best_candidate_return;
 			}
 		}
 
@@ -3015,7 +3022,8 @@ namespace Mono.CSharp {
 		public static MethodGroupExpr CreatePredefined (MethodSpec best, TypeSpec queriedType, Location loc)
 		{
 			return new MethodGroupExpr (best, queriedType, loc) {
-				best_candidate = best
+				best_candidate = best,
+				best_candidate_return = best.ReturnType
 			};
 		}
 
@@ -3135,7 +3143,14 @@ namespace Mono.CSharp {
 					CheckProtectedMemberAccess (ec, best_candidate);
 			}
 
-			best_candidate = CandidateToBaseOverride (ec, best_candidate);
+			var base_override = CandidateToBaseOverride (ec, best_candidate);
+			if (base_override == best_candidate) {
+				best_candidate_return = r.BestCandidateReturnType;
+			} else {
+				best_candidate = base_override;
+				best_candidate_return = best_candidate.ReturnType;
+			}
+
 			return this;
 		}
 
@@ -3261,6 +3276,7 @@ namespace Mono.CSharp {
 		IErrorHandler custom_errors;
 		Restrictions restrictions;
 		MethodGroupExpr best_candidate_extension_group;
+		TypeSpec best_candidate_return_type;
 
 		SessionReportPrinter lambda_conv_msgs;
 		ReportPrinter prev_recorder;
@@ -3305,6 +3321,15 @@ namespace Mono.CSharp {
 		public MethodGroupExpr BestCandidateNewMethodGroup {
 			get {
 				return best_candidate_extension_group;
+			}
+		}
+
+		//
+		// Return type can be different between best candidate and closest override
+		//
+		public TypeSpec BestCandidateReturnType {
+			get {
+				return best_candidate_return_type;
 			}
 		}
 
@@ -3630,8 +3655,9 @@ namespace Mono.CSharp {
 		// A return value rates candidate method compatibility,
 		// 0 = the best, int.MaxValue = the worst
 		//
-		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, AParametersCollection pd, ref bool params_expanded_form, ref bool dynamicArgument)
+		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, IParametersMember pm, ref bool params_expanded_form, ref bool dynamicArgument, ref TypeSpec returnType)
 		{
+			var pd = pm.Parameters;
 			int param_count = pd.Count;
 			int optional_count = 0;
 			int score;
@@ -3754,8 +3780,7 @@ namespace Mono.CSharp {
 					if (g_args_count != type_arguments.Count)
 						return int.MaxValue - 20000 + System.Math.Abs (type_arguments.Count - g_args_count);
 
-					candidate = ms = ms.MakeGenericMethod (type_arguments.Arguments);
-					pd = ms.Parameters;
+					ms = ms.MakeGenericMethod (type_arguments.Arguments);
 				} else {
 					// TODO: It should not be here (we don't know yet whether any argument is lambda) but
 					// for now it simplifies things. I should probably add a callback to ResolveContext
@@ -3772,8 +3797,7 @@ namespace Mono.CSharp {
 						return ti.InferenceScore - 20000;
 
 					if (i_args.Length != 0) {
-						candidate = ms = ms.MakeGenericMethod (i_args);
-						pd = ms.Parameters;
+						ms = ms.MakeGenericMethod (i_args);
 					}
 
 					cc.IgnoreInferredDynamic = true;
@@ -3782,8 +3806,27 @@ namespace Mono.CSharp {
 				//
 				// Type arguments constraints have to match for the method to be applicable
 				//
-				if (!cc.CheckAll (ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc))
+				if (!cc.CheckAll (ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc)) {
+					candidate = ms;
 					return int.MaxValue - 25000;
+				}
+
+				//
+				// We have a generic return type and at same time the method is override which
+				// means we have to also inflate override return type in case the candidate is
+				// best candidate and override return type is different to base return type.
+				// 
+				// virtual Foo<T, object> with override Foo<T, dynamic>
+				//
+				if (candidate != pm) {
+					MethodSpec override_ms = (MethodSpec) pm;
+					var inflator = new TypeParameterInflator (ms.DeclaringType, override_ms.GenericDefinition.TypeParameters, ms.TypeArguments);
+					returnType = inflator.Inflate (returnType);
+				} else {
+					returnType = ms.ReturnType;
+				}
+
+				candidate = ms;
 
 			} else {
 				if (type_arguments != null)
@@ -4073,7 +4116,8 @@ namespace Mono.CSharp {
 							//
 							bool params_expanded_form = false;
 							bool dynamic_argument = false;
-							int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, pm.Parameters, ref params_expanded_form, ref dynamic_argument);
+							TypeSpec rt = pm.MemberType;
+							int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, pm, ref params_expanded_form, ref dynamic_argument, ref rt);
 
 							//
 							// How does it score compare to others
@@ -4085,6 +4129,7 @@ namespace Mono.CSharp {
 								best_candidate_params = params_expanded_form;
 								best_candidate_dynamic = dynamic_argument;
 								best_parameter_member = pm;
+								best_candidate_return_type = rt;
 							} else if (candidate_rate == 0) {
 								//
 								// The member look is done per type for most operations but sometimes
@@ -4103,6 +4148,7 @@ namespace Mono.CSharp {
 									best_candidate_params = params_expanded_form;
 									best_candidate_dynamic = dynamic_argument;
 									best_parameter_member = pm;
+									best_candidate_return_type = rt;
 								} else {
 									// It's not better but any other found later could be but we are not sure yet
 									if (ambiguous_candidates == null)
@@ -5211,6 +5257,14 @@ namespace Mono.CSharp {
 			if (ResolveInstanceExpression (rc)) {
 				if (right_side != null && best_candidate.DeclaringType.IsStruct)
 					InstanceExpression.DoResolveLValue (rc, EmptyExpression.LValueMemberAccess);
+			}
+
+			if ((best_candidate.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0 && best_candidate.DeclaringType != InstanceExpression.Type) {
+				var filter = new MemberFilter (best_candidate.Name, 0, MemberKind.Property, null, null);
+				var p = MemberCache.FindMember (InstanceExpression.Type, filter, BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly) as PropertySpec;
+				if (p != null) {
+					type = p.MemberType;
+				}
 			}
 
 			DoBestMemberChecks (rc, best_candidate);

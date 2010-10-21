@@ -5055,9 +5055,7 @@ namespace Mono.CSharp {
 				return DoResolveDynamic (ec, member_expr);
 
 			var method = mg.BestCandidate;
-			if (method != null) {
-				type = method.ReturnType;
-			}
+			type = mg.BestCandidateReturnType;
 		
 			if (arguments == null && method.DeclaringType == TypeManager.object_type && method.Name == Destructor.MetadataName) {
 				if (mg.IsBase)
@@ -8329,7 +8327,7 @@ namespace Mono.CSharp {
 				// TODO: Do I need 2 argument sets?
 				best_candidate = res.ResolveMember<IndexerSpec> (rc, ref arguments);
 				if (best_candidate != null)
-					type = best_candidate.MemberType;
+					type = res.BestCandidateReturnType;
 				else if (!res.BestCandidateIsDynamic)
 					return null;
 			}
