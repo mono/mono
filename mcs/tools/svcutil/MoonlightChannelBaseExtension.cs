@@ -179,10 +179,24 @@ namespace Mono.ServiceContractTool
 			// clear IExtensibleDataObject. Since there is *no* way 
 			// to identify the type of a TypeReference, I cannot do 
 			// anything but this brutal removal.
-			foreach (CodeNamespace cns in context.ServiceContractGenerator.TargetCompileUnit.Namespaces)
-				foreach (CodeTypeDeclaration ct in cns.Types)
+			// Also clear ExtensionDataObject members.
+			foreach (CodeNamespace cns in context.ServiceContractGenerator.TargetCompileUnit.Namespaces) {
+				foreach (CodeTypeDeclaration ct in cns.Types) {
 					if (ct != ml_context.ClientType && !ct.Name.EndsWith ("EventArgs", StringComparison.Ordinal))
 						ct.BaseTypes.Clear ();
+					CodeTypeMember cp = null, cf = null;
+					foreach (CodeTypeMember cm in ct.Members) {
+						if (cm is CodeMemberProperty && cm.Name == "ExtensionData")
+							cp = cm;
+						else if (cm is CodeMemberField && cm.Name == "extensionDataField")
+							cf = cm;
+					}
+					if (cf != null)
+						ct.Members.Remove (cf);
+					if (cp != null)
+						ct.Members.Remove (cp);
+				}
+			}
 		}
 
 		void EliminateSync ()
