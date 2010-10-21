@@ -627,12 +627,16 @@ namespace System.ServiceModel.Description
 
 			argsType.Members.Add (new CodeMemberField (typeof (object []), "results"));
 
-			var resultProp = new CodeMemberProperty {
-				Name = "Result",
-				Type = endMethod != null ? endMethod.ReturnType : method.ReturnType,
-				Attributes = MemberAttributes.Public | MemberAttributes.Final };
-			resultProp.GetStatements.Add (new CodeMethodReturnStatement (new CodeCastExpression (resultProp.Type, new CodeArrayIndexerExpression (resultsField, new CodePrimitiveExpression (0)))));
-			argsType.Members.Add (resultProp);
+			var resultType = endMethod != null ? endMethod.ReturnType : method.ReturnType;
+
+			if (resultType.BaseType != "System.Void") {
+				var resultProp = new CodeMemberProperty {
+					Name = "Result",
+					Type = resultType,
+					Attributes = MemberAttributes.Public | MemberAttributes.Final };
+				resultProp.GetStatements.Add (new CodeMethodReturnStatement (new CodeCastExpression (resultProp.Type, new CodeArrayIndexerExpression (resultsField, new CodePrimitiveExpression (0)))));
+				argsType.Members.Add (resultProp);
+			}
 
 			// event field
 			var handlerType = new CodeTypeReference (typeof (EventHandler<>));
