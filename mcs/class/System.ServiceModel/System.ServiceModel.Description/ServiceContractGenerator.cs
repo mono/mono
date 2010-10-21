@@ -517,6 +517,7 @@ namespace System.ServiceModel.Description
 			var method = FindByName (type, od.Name) ?? FindByName (type, "Begin" + od.Name);
 			var endMethod = method.Name == od.Name ? null : FindByName (type, "End" + od.Name);
 			bool methodAsync = method.Name.StartsWith ("Begin", StringComparison.Ordinal);
+			var resultType = endMethod != null ? endMethod.ReturnType : method.ReturnType;
 
 			var thisExpr = new CodeThisReferenceExpression ();
 			var baseExpr = new CodeBaseReferenceExpression ();
@@ -572,9 +573,13 @@ namespace System.ServiceModel.Description
 				new CodeArgumentReferenceExpression ("result"));
 			call.Parameters.AddRange (outArgRefs.Cast<CodeExpression> ().ToArray ()); // questionable
 
-			cm.Statements.Add (new CodeVariableDeclarationStatement (typeof (object), "__ret", call));
 			var retCreate = new CodeArrayCreateExpression (typeof (object));
-			retCreate.Initializers.Add (new CodeVariableReferenceExpression ("__ret"));
+			if (resultType.BaseType == "System.Void")
+				cm.Statements.Add (call);
+			else {
+				cm.Statements.Add (new CodeVariableDeclarationStatement (typeof (object), "__ret", call));
+				retCreate.Initializers.Add (new CodeVariableReferenceExpression ("__ret"));
+			}
 			foreach (var outArgRef in outArgRefs)
 				retCreate.Initializers.Add (new CodeVariableReferenceExpression (outArgRef.VariableName));
 
@@ -626,8 +631,6 @@ namespace System.ServiceModel.Description
 			argsType.Members.Add (argsCtor);
 
 			argsType.Members.Add (new CodeMemberField (typeof (object []), "results"));
-
-			var resultType = endMethod != null ? endMethod.ReturnType : method.ReturnType;
 
 			if (resultType.BaseType != "System.Void") {
 				var resultProp = new CodeMemberProperty {
