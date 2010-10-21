@@ -49,7 +49,10 @@
 
 //#define SGEN_BINARY_PROTOCOL
 
+#if SIZEOF_VOID_P == 4
 #define SGEN_HAVE_CARDTABLE	1
+#endif
+
 #if SIZEOF_VOID_P == 8
 #define SGEN_HAVE_OVERLAPPING_CARDS	1
 #endif
