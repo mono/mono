@@ -105,7 +105,12 @@ namespace System.Security.Cryptography {
 			}
 			else {
 				store = new KeyPairPersistence (p);
-				store.Load ();
+				bool exists = store.Load ();
+				bool required = (p.Flags & CspProviderFlags.UseExistingKey) != 0;
+
+				if (required && !exists)
+					throw new CryptographicException ("Keyset does not exist");
+
 				if (store.KeyValue != null) {
 					persisted = true;
 					this.FromXmlString (store.KeyValue);
