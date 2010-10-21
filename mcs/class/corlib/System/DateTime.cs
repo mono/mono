@@ -737,7 +737,7 @@ namespace System
 			case 0:
 				return new DateTime (dateData, DateTimeKind.Unspecified);
 			default:
-				return new DateTime (dateData & 0x3fffffffffffffff, DateTimeKind.Utc).ToLocalTime ();
+				return new DateTime (dateData & 0x3fffffffffffffff, DateTimeKind.Local);
 			}
 		}
 
