@@ -412,19 +412,16 @@ namespace Mono.ServiceContractTool
 				new CodeArrayCreateExpression (typeof (object), new CodePrimitiveExpression (outArgs.Count)));
 			cm.Statements.Add (argsDecl);
 
-			var cast = new CodeCastExpression (
-				context.EndMethod.ReturnType,
-				new CodeMethodInvokeExpression (
+			var ret = new CodeMethodInvokeExpression (
 				baseExpr,
 				"EndInvoke",
 				new CodePrimitiveExpression (od.Name),
 				new CodeVariableReferenceExpression ("args"),
-				new CodeArgumentReferenceExpression (resultArgName)));
-
+				new CodeArgumentReferenceExpression (resultArgName));
 			if (cm.ReturnType.BaseType == "System.Void")
-				cm.Statements.Add (new CodeExpressionStatement (cast));
+				cm.Statements.Add (new CodeExpressionStatement (ret));
 			else
-				cm.Statements.Add (new CodeMethodReturnStatement (cast));
+				cm.Statements.Add (new CodeMethodReturnStatement (new CodeCastExpression (context.EndMethod.ReturnType, ret)));
 		}
 
 		void AddMethodParam (CodeMemberMethod cm, Type type, string name)
