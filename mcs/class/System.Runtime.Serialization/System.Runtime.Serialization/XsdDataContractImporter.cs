@@ -273,13 +273,13 @@ namespace System.Runtime.Serialization
 					if (cns.Types.Count == 0)
 						CodeCompileUnit.Namespaces.Remove (cns);
 				}
-			}
 
-			foreach (var impinfo in imported_types)
-				for (; impinfo.KnownTypeOutputIndex < impinfo.KnownClrTypes.Count; impinfo.KnownTypeOutputIndex++)
-					td.CustomAttributes.Add (new CodeAttributeDeclaration (
-						new CodeTypeReference (typeof (KnownTypeAttribute)),
-						new CodeAttributeArgument (new CodeTypeOfExpression (impinfo.KnownClrTypes [impinfo.KnownTypeOutputIndex]))));
+				foreach (var impinfo in imported_types)
+					for (; impinfo.KnownTypeOutputIndex < impinfo.KnownClrTypes.Count; impinfo.KnownTypeOutputIndex++)
+						td.CustomAttributes.Add (new CodeAttributeDeclaration (
+							new CodeTypeReference (typeof (KnownTypeAttribute)),
+							new CodeAttributeArgument (new CodeTypeOfExpression (impinfo.KnownClrTypes [impinfo.KnownTypeOutputIndex]))));
+			}
 		}
 
 		static readonly string ass_name = typeof (DataContractAttribute).Assembly.GetName ().Name;
