@@ -834,6 +834,188 @@ int Mono_Posix_ToDirectoryNotifyFlags (int x, int *r)
 	return 0;
 }
 
+int Mono_Posix_FromEpollEvents (unsigned int x, unsigned int *r)
+{
+	*r = 0;
+	if ((x & Mono_Posix_EpollEvents_EPOLLERR) == Mono_Posix_EpollEvents_EPOLLERR)
+#ifdef EPOLLERR
+		*r |= EPOLLERR;
+#else /* def EPOLLERR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLERR */
+	if ((x & Mono_Posix_EpollEvents_EPOLLET) == Mono_Posix_EpollEvents_EPOLLET)
+#ifdef EPOLLET
+		*r |= EPOLLET;
+#else /* def EPOLLET */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLET */
+	if ((x & Mono_Posix_EpollEvents_EPOLLHUP) == Mono_Posix_EpollEvents_EPOLLHUP)
+#ifdef EPOLLHUP
+		*r |= EPOLLHUP;
+#else /* def EPOLLHUP */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLHUP */
+	if ((x & Mono_Posix_EpollEvents_EPOLLIN) == Mono_Posix_EpollEvents_EPOLLIN)
+#ifdef EPOLLIN
+		*r |= EPOLLIN;
+#else /* def EPOLLIN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLIN */
+	if ((x & Mono_Posix_EpollEvents_EPOLLMSG) == Mono_Posix_EpollEvents_EPOLLMSG)
+#ifdef EPOLLMSG
+		*r |= EPOLLMSG;
+#else /* def EPOLLMSG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLMSG */
+	if ((x & Mono_Posix_EpollEvents_EPOLLONESHOT) == Mono_Posix_EpollEvents_EPOLLONESHOT)
+#ifdef EPOLLONESHOT
+		*r |= EPOLLONESHOT;
+#else /* def EPOLLONESHOT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLONESHOT */
+	if ((x & Mono_Posix_EpollEvents_EPOLLOUT) == Mono_Posix_EpollEvents_EPOLLOUT)
+#ifdef EPOLLOUT
+		*r |= EPOLLOUT;
+#else /* def EPOLLOUT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLOUT */
+	if ((x & Mono_Posix_EpollEvents_EPOLLPRI) == Mono_Posix_EpollEvents_EPOLLPRI)
+#ifdef EPOLLPRI
+		*r |= EPOLLPRI;
+#else /* def EPOLLPRI */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLPRI */
+	if ((x & Mono_Posix_EpollEvents_EPOLLRDBAND) == Mono_Posix_EpollEvents_EPOLLRDBAND)
+#ifdef EPOLLRDBAND
+		*r |= EPOLLRDBAND;
+#else /* def EPOLLRDBAND */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLRDBAND */
+	if ((x & Mono_Posix_EpollEvents_EPOLLRDHUP) == Mono_Posix_EpollEvents_EPOLLRDHUP)
+#ifdef EPOLLRDHUP
+		*r |= EPOLLRDHUP;
+#else /* def EPOLLRDHUP */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLRDHUP */
+	if ((x & Mono_Posix_EpollEvents_EPOLLRDNORM) == Mono_Posix_EpollEvents_EPOLLRDNORM)
+#ifdef EPOLLRDNORM
+		*r |= EPOLLRDNORM;
+#else /* def EPOLLRDNORM */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLRDNORM */
+	if ((x & Mono_Posix_EpollEvents_EPOLLWRBAND) == Mono_Posix_EpollEvents_EPOLLWRBAND)
+#ifdef EPOLLWRBAND
+		*r |= EPOLLWRBAND;
+#else /* def EPOLLWRBAND */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLWRBAND */
+	if ((x & Mono_Posix_EpollEvents_EPOLLWRNORM) == Mono_Posix_EpollEvents_EPOLLWRNORM)
+#ifdef EPOLLWRNORM
+		*r |= EPOLLWRNORM;
+#else /* def EPOLLWRNORM */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLLWRNORM */
+	if (x == 0)
+		return 0;
+	return 0;
+}
+
+int Mono_Posix_ToEpollEvents (unsigned int x, unsigned int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef EPOLLERR
+	if ((x & EPOLLERR) == EPOLLERR)
+		*r |= Mono_Posix_EpollEvents_EPOLLERR;
+#endif /* ndef EPOLLERR */
+#ifdef EPOLLET
+	if ((x & EPOLLET) == EPOLLET)
+		*r |= Mono_Posix_EpollEvents_EPOLLET;
+#endif /* ndef EPOLLET */
+#ifdef EPOLLHUP
+	if ((x & EPOLLHUP) == EPOLLHUP)
+		*r |= Mono_Posix_EpollEvents_EPOLLHUP;
+#endif /* ndef EPOLLHUP */
+#ifdef EPOLLIN
+	if ((x & EPOLLIN) == EPOLLIN)
+		*r |= Mono_Posix_EpollEvents_EPOLLIN;
+#endif /* ndef EPOLLIN */
+#ifdef EPOLLMSG
+	if ((x & EPOLLMSG) == EPOLLMSG)
+		*r |= Mono_Posix_EpollEvents_EPOLLMSG;
+#endif /* ndef EPOLLMSG */
+#ifdef EPOLLONESHOT
+	if ((x & EPOLLONESHOT) == EPOLLONESHOT)
+		*r |= Mono_Posix_EpollEvents_EPOLLONESHOT;
+#endif /* ndef EPOLLONESHOT */
+#ifdef EPOLLOUT
+	if ((x & EPOLLOUT) == EPOLLOUT)
+		*r |= Mono_Posix_EpollEvents_EPOLLOUT;
+#endif /* ndef EPOLLOUT */
+#ifdef EPOLLPRI
+	if ((x & EPOLLPRI) == EPOLLPRI)
+		*r |= Mono_Posix_EpollEvents_EPOLLPRI;
+#endif /* ndef EPOLLPRI */
+#ifdef EPOLLRDBAND
+	if ((x & EPOLLRDBAND) == EPOLLRDBAND)
+		*r |= Mono_Posix_EpollEvents_EPOLLRDBAND;
+#endif /* ndef EPOLLRDBAND */
+#ifdef EPOLLRDHUP
+	if ((x & EPOLLRDHUP) == EPOLLRDHUP)
+		*r |= Mono_Posix_EpollEvents_EPOLLRDHUP;
+#endif /* ndef EPOLLRDHUP */
+#ifdef EPOLLRDNORM
+	if ((x & EPOLLRDNORM) == EPOLLRDNORM)
+		*r |= Mono_Posix_EpollEvents_EPOLLRDNORM;
+#endif /* ndef EPOLLRDNORM */
+#ifdef EPOLLWRBAND
+	if ((x & EPOLLWRBAND) == EPOLLWRBAND)
+		*r |= Mono_Posix_EpollEvents_EPOLLWRBAND;
+#endif /* ndef EPOLLWRBAND */
+#ifdef EPOLLWRNORM
+	if ((x & EPOLLWRNORM) == EPOLLWRNORM)
+		*r |= Mono_Posix_EpollEvents_EPOLLWRNORM;
+#endif /* ndef EPOLLWRNORM */
+	return 0;
+}
+
+int Mono_Posix_FromEpollFlags (int x, int *r)
+{
+	*r = 0;
+	if ((x & Mono_Posix_EpollFlags_EPOLL_CLOEXEC) == Mono_Posix_EpollFlags_EPOLL_CLOEXEC)
+#ifdef EPOLL_CLOEXEC
+		*r |= EPOLL_CLOEXEC;
+#else /* def EPOLL_CLOEXEC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLL_CLOEXEC */
+	if ((x & Mono_Posix_EpollFlags_EPOLL_NONBLOCK) == Mono_Posix_EpollFlags_EPOLL_NONBLOCK)
+#ifdef EPOLL_NONBLOCK
+		*r |= EPOLL_NONBLOCK;
+#else /* def EPOLL_NONBLOCK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPOLL_NONBLOCK */
+	if (x == 0)
+		return 0;
+	return 0;
+}
+
+int Mono_Posix_ToEpollFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef EPOLL_CLOEXEC
+	if ((x & EPOLL_CLOEXEC) == EPOLL_CLOEXEC)
+		*r |= Mono_Posix_EpollFlags_EPOLL_CLOEXEC;
+#endif /* ndef EPOLL_CLOEXEC */
+#ifdef EPOLL_NONBLOCK
+	if ((x & EPOLL_NONBLOCK) == EPOLL_NONBLOCK)
+		*r |= Mono_Posix_EpollFlags_EPOLL_NONBLOCK;
+#endif /* ndef EPOLL_NONBLOCK */
+	return 0;
+}
+
 int Mono_Posix_FromErrno (int x, int *r)
 {
 	*r = 0;
