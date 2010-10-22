@@ -60,6 +60,7 @@ namespace System.Runtime.Serialization
 		public CodeCompileUnit CodeCompileUnit { get; private set; }
 
 		CodeDomProvider code_provider = CodeDomProvider.CreateProvider ("csharp");
+		Dictionary<CodeNamespace,CodeIdentifiers> identifiers_table = new Dictionary<CodeNamespace,CodeIdentifiers> ();
 		ImportOptions import_options;
 
 		public ImportOptions Options {
@@ -232,6 +233,16 @@ namespace System.Runtime.Serialization
 			DoImport (schemas, type, qname);
 		}
 
+		string GetUniqueName (string name, CodeNamespace cns)
+		{
+			CodeIdentifiers i;
+			if (!identifiers_table.TryGetValue (cns, out i)) {
+				i = new CodeIdentifiers ();
+				identifiers_table.Add (cns, i);
+			}
+			return i.AddUnique (name, null);
+		}
+
 		void DoImport (XmlSchemaSet schemas, XmlSchemaType type, XmlQualifiedName qname)
 		{
 			CodeNamespace cns = null;
@@ -240,7 +251,7 @@ namespace System.Runtime.Serialization
 			clrRef = new CodeTypeReference (cns.Name.Length > 0 ? cns.Name + "." + qname.Name : qname.Name);
 
 			var td = new CodeTypeDeclaration () {
-				Name = CodeIdentifier.MakeValid (qname.Name),
+				Name = GetUniqueName (CodeIdentifier.MakeValid (qname.Name), cns),
 				TypeAttributes = GenerateInternal ? TypeAttributes.NotPublic : TypeAttributes.Public };
 			cns.Types.Add (td);
 
