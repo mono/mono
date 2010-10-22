@@ -10911,5 +10911,21 @@ namespace MonoTests.System.Reflection.Emit
 			
 			Activator.CreateInstance(tb2.CreateType());
 		}
+
+		[Test] //Test for #648391
+		public void GetConstructorCheckCtorDeclaringType ()
+		{
+			TypeBuilder myType = module.DefineType ("Sample", TypeAttributes.Public);
+			string[] typeParamNames = { "TFirst" };
+			GenericTypeParameterBuilder[] typeParams = myType.DefineGenericParameters (typeParamNames);
+			var ctor = myType.DefineDefaultConstructor (MethodAttributes.Public);
+			var ctori = TypeBuilder.GetConstructor (myType.MakeGenericType (typeof (int)), ctor);
+			try {
+				TypeBuilder.GetConstructor (myType.MakeGenericType (typeof (bool)), ctori);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+				//OK
+			}
+		}
 	}
 }
