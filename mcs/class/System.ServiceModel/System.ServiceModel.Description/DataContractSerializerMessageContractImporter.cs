@@ -153,7 +153,7 @@ namespace System.ServiceModel.Description
 				if (part.Name == "parameters") {
 					if (!part.Element.IsEmpty) {
 						body.WrapperName = part.Element.Name;
-						resolveElement (part.Element, parts, body.WrapperNamespace);
+						ImportPartsBySchemaElement (part.Element, parts, body.WrapperNamespace);
 					} else {
 						body.WrapperName = part.Type.Name;
 						resolveType (part.Type, parts, body.WrapperNamespace);
@@ -163,14 +163,41 @@ namespace System.ServiceModel.Description
 			}
 		}
 		
-		void resolveElement (QName qname, List<MessagePartDescription> parts, string ns)
+		void ImportPartsBySchemaElement (QName qname, List<MessagePartDescription> parts, string ns)
 		{
 			XmlSchemaElement element = (XmlSchemaElement) schema_set_in_use.GlobalElements [qname];
 			if (element == null)
 				//FIXME: What to do here?
 				throw new Exception ("Could not resolve : " + qname.ToString ());
 
-			resolveParticle (element, parts, ns, 2);
+			var ct = element.ElementSchemaType as XmlSchemaComplexType;
+			if (ct == null) // simple type
+				parts.Add (CreateMessagePart (element));
+			else // complex type
+				foreach (var elem in GetElementsInParticle (ct.ContentTypeParticle))
+					parts.Add (CreateMessagePart (elem));
+		}
+
+		IEnumerable<XmlSchemaElement> GetElementsInParticle (XmlSchemaParticle p)
+		{
+			if (p is XmlSchemaElement) {
+				yield return (XmlSchemaElement) p;
+			} else {
+				var gb = p as XmlSchemaGroupBase;
+				if (gb != null)
+					foreach (XmlSchemaParticle pp in gb.Items)
+						foreach (var e in GetElementsInParticle (pp))
+							yield return e;
+			}
+		}
+
+		MessagePartDescription CreateMessagePart (XmlSchemaElement elem)
+		{
+			var part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
+			part.Importer = dc_importer;
+			var typeQName = dc_importer.Import (schema_set_in_use, elem);
+			part.CodeTypeReference = dc_importer.GetCodeTypeReference (typeQName);
+			return part;
 		}
 
 		void resolveType (QName qname, List<MessagePartDescription> parts, string ns)
@@ -244,53 +271,6 @@ namespace System.ServiceModel.Description
 			}
 
 			return null;
-		}
-
-		void resolveParticle (XmlSchemaParticle particle, 
-				List<MessagePartDescription> parts, 
-				string ns, 
-				int depth)
-		{
-			if (particle is XmlSchemaGroupBase) {
-				//sequence, 
-				//FIXME: others?
-				if (depth <= 0)
-					return;
-
-				XmlSchemaGroupBase groupBase = particle as XmlSchemaGroupBase;
-				foreach (XmlSchemaParticle item in groupBase.Items)
-					resolveParticle (item, parts, ns, depth - 1);
-
-				return;
-			}
-
-			XmlSchemaElement elem = particle as XmlSchemaElement;
-			if (elem == null)
-				return;
-
-			MessagePartDescription msg_part = null;
-			
-			XmlSchemaComplexType ct = elem.ElementSchemaType as XmlSchemaComplexType;
-			if (ct == null) {
-				//Not a complex type
-				msg_part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
-				msg_part.Importer = dc_importer;
-				msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (schema_set_in_use, elem));
-				parts.Add (msg_part);
-
-				return;
-			}
-
-			if (depth > 0) {
-				resolveParticle (ct.ContentTypeParticle, parts, ns, depth - 1);
-				return;
-			}
-
-			//depth <= 0
-			msg_part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
-			msg_part.Importer = dc_importer;
-			msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (schema_set_in_use, elem));
-			parts.Add (msg_part);
 		}
 
 		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
