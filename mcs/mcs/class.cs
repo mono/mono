@@ -170,6 +170,8 @@ namespace Mono.CSharp {
 
 		Dictionary<MethodSpec, Method> hoisted_base_call_proxies;
 
+		Dictionary<string, FullNamedExpression> Cache = new Dictionary<string, FullNamedExpression> ();
+
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
@@ -182,7 +184,7 @@ namespace Mono.CSharp {
 		// This is an arbitrary choice.  We are interested in looking at _some_ non-static field,
 		// and the first one's as good as any.
 		//
-		FieldBase first_nonstatic_field = null;
+		FieldBase first_nonstatic_field;
 
 		//
 		// This one is computed after we can distinguish interfaces
@@ -2056,6 +2058,77 @@ namespace Mono.CSharp {
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			throw new NotSupportedException ("Not supported for compiled definition " + GetSignatureForError ());
+		}
+
+		//
+		// Public function used to locate types.
+		//
+		// Set 'ignore_cs0104' to true if you want to ignore cs0104 errors.
+		//
+		// Returns: Type or null if they type can not be found.
+		//
+		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		{
+			FullNamedExpression e;
+			if (arity == 0 && Cache.TryGetValue (name, out e))
+				return e;
+
+			e = null;
+			int errors = Report.Errors;
+
+			if (arity == 0) {
+				TypeParameter[] tp = CurrentTypeParameters;
+				if (tp != null) {
+					TypeParameter tparam = TypeParameter.FindTypeParameter (tp, name);
+					if (tparam != null)
+						e = new TypeParameterExpr (tparam, Location.Null);
+				}
+			}
+
+			if (e == null) {
+				TypeSpec t = LookupNestedTypeInHierarchy (name, arity);
+
+				if (t != null)
+					e = new TypeExpression (t, Location.Null);
+				else if (Parent != null) {
+					e = Parent.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+				} else
+					e = NamespaceEntry.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+			}
+
+			// TODO MemberCache: How to cache arity stuff ?
+			if (errors == Report.Errors && arity == 0)
+				Cache[name] = e;
+
+			return e;
+		}
+
+		TypeSpec LookupNestedTypeInHierarchy (string name, int arity)
+		{
+			// TODO: GenericMethod only
+			if (PartialContainer == null)
+				return null;
+
+			// Has any nested type
+			// Does not work, because base type can have
+			//if (PartialContainer.Types == null)
+			//	return null;
+
+			var container = PartialContainer.CurrentType;
+
+			// Is not Root container
+			if (container == null)
+				return null;
+
+			var t = MemberCache.FindNestedType (container, name, arity);
+			if (t == null)
+				return null;
+
+			// FIXME: Breaks error reporting
+			if (!t.IsAccessible (CurrentType))
+				return null;
+
+			return t;
 		}
 
 		public void Mark_HasEquals ()
