@@ -2314,8 +2314,7 @@ static class CecilExtensions {
 
 	public static IEnumerable<TypeDefinition> GetAllTypes (this ModuleDefinition self)
 	{
-		foreach (var type in self.Types.SelectMany (t => t.GetAllTypes ()))
-			yield return type;
+		return self.Types.SelectMany (t => t.GetAllTypes ());
 	}
 
 	static IEnumerable<TypeDefinition> GetAllTypes (this TypeDefinition self)
