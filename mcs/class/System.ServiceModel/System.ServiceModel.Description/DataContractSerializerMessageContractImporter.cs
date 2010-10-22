@@ -78,7 +78,10 @@ namespace System.ServiceModel.Description
 			foreach (WSDL wsdl in importer.WsdlDocuments)
 				foreach (XmlSchema xs in wsdl.Types.Schemas)
 					schema_set_in_use.Add (xs);
-			dc_importer.Import (schema_set_in_use);
+
+			// commenting out this import operation, but might be required (I guess not).
+			//dc_importer.Import (schema_set_in_use);
+			schema_set_in_use.Compile ();
 
 			this.importer = importer;
 			this.context = context;
