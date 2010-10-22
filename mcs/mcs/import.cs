@@ -840,7 +840,11 @@ namespace Mono.CSharp
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
 			foreach (var t in types) {
-				if (t == null || t.IsNested)
+				if (t == null)
+					continue;
+
+				// Be careful not to trigger full parent type loading
+				if (t.MemberType == MemberTypes.NestedType)
 					continue;
 
 				if (t.Name[0] == '<')
