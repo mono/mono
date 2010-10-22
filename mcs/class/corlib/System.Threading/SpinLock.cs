@@ -25,8 +25,10 @@
 using System;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
+
 namespace System.Threading
 {
 	[StructLayout(LayoutKind.Explicit)]
@@ -81,7 +83,7 @@ namespace System.Threading
 			this.ticket = new TicketType ();
 		}
 
-		[MonoTODO("This method is not rigorously correct. Need CER treatment")]
+		[MonoTODO("As a temporary hack, the while loop is kept inside a finally block which shouldn't be done")]
 		public void Enter (ref bool lockTaken)
 		{
 			if (lockTaken)
@@ -89,30 +91,30 @@ namespace System.Threading
 			if (isThreadOwnerTrackingEnabled && IsHeldByCurrentThread)
 				throw new LockRecursionException ();
 
-			int slot = Interlocked.Increment (ref ticket.Users) - 1;
+			RuntimeHelpers.PrepareConstrainedRegions ();
+			try {}
+			finally {
+				int slot = Interlocked.Increment (ref ticket.Users) - 1;
 
-			SpinWait wait = new SpinWait ();
-			while (slot != ticket.Value)
-				wait.SpinOnce ();
-			
-			lockTaken = true;
-			
-			threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
+				SpinWait wait = new SpinWait ();
+				while (slot != ticket.Value)
+					wait.SpinOnce ();
+
+				lockTaken = true;
+				threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
+			}
 		}
 
-		[MonoTODO("This method is not rigorously correct. Need CER treatment")]
 		public void TryEnter (ref bool lockTaken)
 		{
 			TryEnter (0, ref lockTaken);
 		}
 
-		[MonoTODO("This method is not rigorously correct. Need CER treatment")]
 		public void TryEnter (TimeSpan timeout, ref bool lockTaken)
 		{
 			TryEnter ((int)timeout.TotalMilliseconds, ref lockTaken);
 		}
 
-		[MonoTODO("This method is not rigorously correct. Need CER treatment")]
 		public void TryEnter (int milliSeconds, ref bool lockTaken)
 		{
 			if (milliSeconds < -1)
@@ -123,6 +125,7 @@ namespace System.Threading
 				throw new LockRecursionException ();
 
 			long start = milliSeconds == -1 ? 0 : sw.ElapsedMilliseconds;
+			bool stop = false;
 
 			do {
 				long u = ticket.Users;
@@ -130,13 +133,17 @@ namespace System.Threading
 				long newTotalValue
 					= BitConverter.IsLittleEndian ? (u << 32) | (u + 1) : ((u + 1) << 32) | u;
 				
-				lockTaken = Interlocked.CompareExchange (ref ticket.TotalValue, newTotalValue, totalValue) == totalValue;
+				RuntimeHelpers.PrepareConstrainedRegions ();
+				try {}
+				finally {
+					lockTaken = Interlocked.CompareExchange (ref ticket.TotalValue, newTotalValue, totalValue) == totalValue;
 				
-				if (lockTaken) {
-					threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
-					break;
+					if (lockTaken) {
+						threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
+						stop = true;
+					}
 				}
-			} while (milliSeconds == -1 || (sw.ElapsedMilliseconds - start) < milliSeconds);
+	        } while (!stop && (milliSeconds == -1 || (sw.ElapsedMilliseconds - start) < milliSeconds));
 		}
 
 		public void Exit ()
@@ -146,14 +153,19 @@ namespace System.Threading
 
 		public void Exit (bool flushReleaseWrites)
 		{
-			if (isThreadOwnerTrackingEnabled && !IsHeldByCurrentThread)
-				throw new SynchronizationLockException ("Current thread is not the owner of this lock");
+			RuntimeHelpers.PrepareConstrainedRegions ();
+			try {}
+			finally {
+				if (isThreadOwnerTrackingEnabled && !IsHeldByCurrentThread)
+					throw new SynchronizationLockException ("Current thread is not the owner of this lock");
 
-			threadWhoTookLock = int.MinValue;
-			if (flushReleaseWrites)
-				Interlocked.Increment (ref ticket.Value);
-			else
-				ticket.Value++;
+				threadWhoTookLock = int.MinValue;
+				// Fast path
+				if (flushReleaseWrites)
+					Interlocked.Increment (ref ticket.Value);
+				else
+					ticket.Value++;
+			}
 		}
 	}
 
