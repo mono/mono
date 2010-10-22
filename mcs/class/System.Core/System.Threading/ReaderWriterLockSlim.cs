@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Diagnostics;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace System.Threading {
 
@@ -137,9 +138,13 @@ namespace System.Threading {
 			// go for a Read too.
 			if (ctstate.LockState.Has (LockState.Upgradable)
 			    || recursionPolicy == LockRecursionPolicy.SupportsRecursion) {
-				Interlocked.Add (ref rwlock, RwRead);
-				ctstate.LockState ^= LockState.Read;
-				++ctstate.ReaderRecursiveCount;
+				RuntimeHelpers.PrepareConstrainedRegions ();
+				try {}
+				finally {
+					Interlocked.Add (ref rwlock, RwRead);
+					ctstate.LockState ^= LockState.Read;
+					++ctstate.ReaderRecursiveCount;
+				}
 
 				return true;
 			}
@@ -161,20 +166,24 @@ namespace System.Threading {
 				 * if the adding was too late and another writer came in between
 				 * we revert the operation.
 				 */
-				if (((val = Interlocked.Add (ref rwlock, RwRead)) & (RwWrite | RwWait | RwWaitUpgrade)) == 0) {
-					/* If we are the first reader, reset the event to let other threads
-					 * sleep correctly if they try to acquire write lock
-					 */
-					if (val >> RwReadBit == 1)
-						readerDoneEvent.Reset ();
+				RuntimeHelpers.PrepareConstrainedRegions ();
+				try {}
+				finally {
+					if (((val = Interlocked.Add (ref rwlock, RwRead)) & (RwWrite | RwWait | RwWaitUpgrade)) == 0) {
+						/* If we are the first reader, reset the event to let other threads
+						 * sleep correctly if they try to acquire write lock
+						 */
+						if (val >> RwReadBit == 1)
+							readerDoneEvent.Reset ();
 
-					ctstate.LockState ^= LockState.Read;
-					++ctstate.ReaderRecursiveCount;
-					--numReadWaiters;
-					return true;
+						ctstate.LockState ^= LockState.Read;
+						++ctstate.ReaderRecursiveCount;
+						--numReadWaiters;
+						return true;
+					} else {
+						Interlocked.Add (ref rwlock, -RwRead);
+					}
 				}
-
-				Interlocked.Add (ref rwlock, -RwRead);
 
 				writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
 			} while (millisecondsTimeout == -1 || (sw.ElapsedMilliseconds - start) < millisecondsTimeout);
@@ -190,15 +199,19 @@ namespace System.Threading {
 
 		public void ExitReadLock ()
 		{
-			ThreadLockState ctstate = CurrentThreadState;
+			RuntimeHelpers.PrepareConstrainedRegions ();
+			try {}
+			finally {
+				ThreadLockState ctstate = CurrentThreadState;
 
-			if (!ctstate.LockState.Has (LockState.Read))
-				throw new SynchronizationLockException ("The current thread has not entered the lock in read mode");
+				if (!ctstate.LockState.Has (LockState.Read))
+					throw new SynchronizationLockException ("The current thread has not entered the lock in read mode");
 
-			ctstate.LockState ^= LockState.Read;
-			--ctstate.ReaderRecursiveCount;
-			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
-				readerDoneEvent.Set ();
+				ctstate.LockState ^= LockState.Read;
+				--ctstate.ReaderRecursiveCount;
+				if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
+					readerDoneEvent.Set ();
+			}
 		}
 
 		public void EnterWriteLock ()
