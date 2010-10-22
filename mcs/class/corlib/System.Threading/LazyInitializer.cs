@@ -39,7 +39,8 @@ namespace System.Threading
 		
 		public static T EnsureInitialized<T> (ref T target, Func<T> initFunc) where T : class
 		{
-			Interlocked.CompareExchange (ref target, initFunc (), null);
+			if (target == null)
+				Interlocked.CompareExchange (ref target, initFunc (), null);
 			
 			return target;
 		}
