@@ -393,18 +393,22 @@ namespace System.Threading {
 	       
 		public void ExitUpgradeableReadLock ()
 		{
-			ThreadLockState ctstate = CurrentThreadState;
+			RuntimeHelpers.PrepareConstrainedRegions ();
+			try {}
+			finally {
+				ThreadLockState ctstate = CurrentThreadState;
 
-			if (!ctstate.LockState.Has (LockState.Upgradable | LockState.Read))
-				throw new SynchronizationLockException ("The current thread has not entered the lock in upgradable mode");
-			
-			upgradableTaken.Value = false;
-			upgradableEvent.Set ();
+				if (!ctstate.LockState.Has (LockState.Upgradable | LockState.Read))
+					throw new SynchronizationLockException ("The current thread has not entered the lock in upgradable mode");
 
-			ctstate.LockState ^= LockState.Upgradable;
-			--ctstate.UpgradeableRecursiveCount;
-			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
-				readerDoneEvent.Set ();
+				upgradableTaken.Value = false;
+				upgradableEvent.Set ();
+
+				ctstate.LockState ^= LockState.Upgradable;
+				--ctstate.UpgradeableRecursiveCount;
+				if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
+					readerDoneEvent.Set ();
+			}
 		}
 
 		public void Dispose ()
