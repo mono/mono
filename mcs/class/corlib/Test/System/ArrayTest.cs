@@ -2311,6 +2311,13 @@ public class ArrayTest
 			Assert.AreEqual (3, i1[4], "#N91");
 			Assert.AreEqual (6, i1[5], "#N92");
 		}
+
+		{
+			// #648828
+			double[] a = new double[115];
+			int[] b = new int[256];
+			Array.Sort<double, int> (a, b, 0, 115);
+		}
 	}
 
 	[Test] // #616416
