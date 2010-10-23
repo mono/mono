@@ -41,6 +41,7 @@ namespace Mono.Tools {
 			Console.WriteLine ("   or: certmgr -list object-type [options] store");
 			Console.WriteLine ("   or: certmgr -del object-type [options] store certhash");
 			Console.WriteLine ("   or: certmgr -ssl [options] url");
+			Console.WriteLine ("   or: certmgr -importKey [options] store pkcs12file");
 			Console.WriteLine ();
 			Console.WriteLine ("actions");
 			Console.WriteLine ("\t-add\t\tAdd a certificate, CRL or CTL to specified store");

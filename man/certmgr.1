@@ -1,8 +1,10 @@
 .\" 
 .\" certmgr manual page.
 .\" Copyright 2004-2005 Novell
+.\" Copyright 2010 Pablo Ruiz
 .\" Author:
 .\"   Sebastien Pouliot <sebastien@ximian.com>
+.\"   Pablo Ruiz Garcia <pruiz@netway.org>
 .\"
 .TH Mono "certmgr"
 .SH NAME
@@ -24,7 +26,9 @@ server certificates.
 List the certificates, CTL or CTL in the specified store.
 .TP
 .I "-add"
-Add a certificate, CRL or CTL to specified store.
+Add a certificate, CRL or CTL to specified store. If filename it's a pkcs12 
+or pfx file, and it contains a private key, it will be imported to local key
+pair container.
 .TP
 .I "-del"
 Remove a certificate, CRL or CTL from specified store. You must specify the 
@@ -44,6 +48,11 @@ This action assume an certificate (-c) object type and will import the
 certificates in appropriate stores (i.e. server certificate in the 
 OtherPeople store, the root certificate in the Trust store, any other 
 intermediate certificates in the IntermediateCA store).
+.TP
+.I "-importKey"
+Allows importing a private key from a pkcs12 file into a local key pair
+store. (Usefull when you already have the key's corresponding certificate
+installed at the specific store.)
 
 .SH OBJECT TYPES
 .TP
@@ -65,6 +74,9 @@ Use the machine's certificate stores (instead of the default user's stores).
 .TP
 .I "-v"
 More details displayed on the console.
+.TP
+.I "-p password"
+Use the specify password when accessing a pkcs12 file.
 .TP
 .I "-help", "-h", "-?", "/?"
 Display help about this tool.
@@ -88,6 +100,9 @@ The filenames either starts with
 (subject key identifier).
 .TP
 The rest of the filename is the base64-encoded value (tbp or ski).
+.TP
+Private key data is stored under
+.I ~/.config/.mono/keypairs/
 
 .SH EXAMPLES
 .TP
@@ -140,6 +155,8 @@ element of your machine.config file.
 
 .SH AUTHOR
 Written by Sebastien Pouliot
+
+Minor additions by Pablo Ruiz García
 .SH COPYRIGHT
 Copyright (C) 2004-2005 Novell.
 .SH MAILING LISTS
