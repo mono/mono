@@ -360,11 +360,11 @@ namespace System.Security.Cryptography {
 		}
 		// ICspAsymmetricAlgorithm
 
-		[MonoTODO ("Always return null")]
-		// FIXME: call into KeyPairPersistence to get details
 		[ComVisible (false)]
 		public CspKeyContainerInfo CspKeyContainerInfo {
-			get { return null; }
+			get {
+				return new CspKeyContainerInfo(store.Parameters);
+			}
 		}
 
 		[ComVisible (false)]

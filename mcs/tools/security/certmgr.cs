@@ -203,13 +203,11 @@ namespace Mono.Tools {
 					break;
 				case ".P12":
 				case ".PFX":
-					// TODO - support PKCS12 with passwords
-					PKCS12 p12 = password == null ? PKCS12.LoadFromFile(filename)
-						: PKCS12.LoadFromFile(filename, password);
-					X509CertificateCollection tmp = new X509CertificateCollection(p12.Certificates);
+					PKCS12 p12 = password == null ? PKCS12.LoadFromFile (filename)
+						: PKCS12.LoadFromFile (filename, password);
+					X509CertificateCollection tmp = new X509CertificateCollection (p12.Certificates);
 
-					for (int i = 0; i != p12.Keys.Count; i++)
-					{
+					for (int i = 0; i != p12.Keys.Count; i++) {
 						X509Certificate cert = p12.Certificates[i];
 						RSACryptoServiceProvider pk = p12.Keys[i] as RSACryptoServiceProvider;
 
@@ -348,8 +346,8 @@ namespace Mono.Tools {
 				CspParameters cspParams = new CspParameters ();
 				cspParams.KeyContainerName = CryptoConvert.ToHex (x509.Hash);
 				cspParams.Flags = machine ? CspProviderFlags.UseMachineKeyStore : 0;
-				KeyPairPersistence kpp = new KeyPairPersistence(cspParams);
-				Console.WriteLine ("  KeyPair Key:			{0}", kpp.Load());
+				KeyPairPersistence kpp = new KeyPairPersistence (cspParams);
+				Console.WriteLine ("  KeyPair Key:			{0}", kpp.Load ());
 			}
 			Console.WriteLine ();
 		}
@@ -621,7 +619,7 @@ namespace Mono.Tools {
 					Ssl (file, machine, verbose);
 					break;
 				case Action.ImportKey:
-					ImportKey(type, machine, file, password, verbose);
+					ImportKey (type, machine, file, password, verbose);
 					break;
 				default:
 					throw new NotSupportedException (action.ToString ());

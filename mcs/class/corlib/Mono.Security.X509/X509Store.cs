@@ -47,7 +47,6 @@ namespace Mono.Security.X509 {
 #endif
 	class X509Store {
 
-		private static byte[] _entropy = new byte[] { 0x11, 0x01, 0x82, 0x31, 0x33, 0x7 };
 		private string _storePath;
 		private X509CertificateCollection _certificates;
 		private ArrayList _crls;
@@ -123,9 +122,11 @@ namespace Mono.Security.X509 {
 			// Try to save privateKey if available..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (certificate.Hash);
-			// FIXME: Find a way to guess if we should use User or Machine store
-			//		  not depending on parsing storePath.
-			cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
+
+			// Right now this seems to be the best way to know if we should use LM store.. ;)
+			if (_storePath.StartsWith(X509StoreManager.LocalMachinePath))
+				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
+
 			ImportPrivateKey (certificate, cspParams);
 		}
 
@@ -234,25 +235,18 @@ namespace Mono.Security.X509 {
 			X509Certificate cert = new X509Certificate (data);
 
 			// If privateKey it's available, load it too..
-			try
-			{
-				CspParameters cspParams = new CspParameters ();
-				cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
-				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
-				KeyPairPersistence kpp = new KeyPairPersistence(cspParams);
+			CspParameters cspParams = new CspParameters ();
+			cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
+			cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
+			KeyPairPersistence kpp = new KeyPairPersistence (cspParams);
 
-				if (!kpp.Load())
-					return cert;
+			if (!kpp.Load ())
+				return cert;
 
-				if (cert.RSA != null)
-					cert.RSA = new RSACryptoServiceProvider (cspParams);
-				else if (cert.DSA != null)
-					cert.DSA = new DSACryptoServiceProvider (cspParams);
-			}
-			catch
-			{
-				// Were can I log exceptions??
-			}
+			if (cert.RSA != null)
+				cert.RSA = new RSACryptoServiceProvider (cspParams);
+			else if (cert.DSA != null)
+				cert.DSA = new DSACryptoServiceProvider (cspParams);
 
 			return cert;
 		}
@@ -328,37 +322,35 @@ namespace Mono.Security.X509 {
 
 		private void ImportPrivateKey(X509Certificate certificate, CspParameters cspParams)
 		{
-			if (certificate.RSA != null && certificate.RSA is RSACryptoServiceProvider)
-			{
-				RSACryptoServiceProvider pk = certificate.RSA as RSACryptoServiceProvider;
-
-				if (pk.PublicOnly)
+			RSACryptoServiceProvider rsaCsp = certificate.RSA as RSACryptoServiceProvider;
+			if (rsaCsp != null) {
+				if (rsaCsp.PublicOnly)
 					return;
 
 				RSACryptoServiceProvider csp = new RSACryptoServiceProvider(cspParams);
-				csp.ImportParameters(pk.ExportParameters(true));
+				csp.ImportParameters(rsaCsp.ExportParameters(true));
 				csp.PersistKeyInCsp = true;
+				return;
 			}
-			else if (certificate.RSA != null && certificate.RSA is RSAManaged)
-			{
-				RSAManaged pk = certificate.RSA as RSAManaged;
 
-				if (pk.PublicOnly)
+			RSAManaged rsaMng = certificate.RSA as RSAManaged;
+			if (rsaMng != null) {
+				if (rsaMng.PublicOnly)
 					return;
 
 				RSACryptoServiceProvider csp = new RSACryptoServiceProvider(cspParams);
-				csp.ImportParameters(pk.ExportParameters(true));
+				csp.ImportParameters(rsaMng.ExportParameters(true));
 				csp.PersistKeyInCsp = true;
+				return;
 			}
-			else if (certificate.DSA != null && certificate.DSA is DSACryptoServiceProvider)
-			{
-				DSACryptoServiceProvider pk = certificate.DSA as DSACryptoServiceProvider;
 
-				if (pk.PublicOnly)
+			DSACryptoServiceProvider dsaCsp = certificate.DSA as DSACryptoServiceProvider;
+			if (dsaCsp != null) {
+				if (dsaCsp.PublicOnly)
 					return;
 
 				DSACryptoServiceProvider csp = new DSACryptoServiceProvider(cspParams);
-				csp.ImportParameters(pk.ExportParameters(true));
+				csp.ImportParameters(dsaCsp.ExportParameters(true));
 				csp.PersistKeyInCsp = true;
 			}
 		}
