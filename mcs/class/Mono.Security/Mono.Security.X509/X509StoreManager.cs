@@ -79,7 +79,7 @@ namespace Mono.Security.X509 {
 		static public X509Stores CurrentUser {
 			get { 
 				if (_userStore == null)
-					_userStore = new X509Stores (_userPath);
+					_userStore = new X509Stores(CurrentUserPath);
 				
 				return _userStore;
 			}
@@ -88,7 +88,7 @@ namespace Mono.Security.X509 {
 		static public X509Stores LocalMachine {
 			get {
 				if (_machineStore == null) 
-					_machineStore = new X509Stores (_localMachinePath);
+					_machineStore = new X509Stores (LocalMachinePath);
 
 				return _machineStore;
 			}

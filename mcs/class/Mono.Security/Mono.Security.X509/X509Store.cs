@@ -124,7 +124,7 @@ namespace Mono.Security.X509 {
 			cspParams.KeyContainerName = CryptoConvert.ToHex (certificate.Hash);
 
 			// Right now this seems to be the best way to know if we should use LM store.. ;)
-			if (_storePath.StartsWith(X509StoreManager.LocalMachinePath))
+			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath))
 				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
 
 			ImportPrivateKey (certificate, cspParams);
@@ -149,12 +149,6 @@ namespace Mono.Security.X509 {
 			if (File.Exists (filename)) {
 				File.Delete (filename);
 			}
-
-			// Remove privateKey too..
-			filename = Path.ChangeExtension(filename, "key");
-
-			if (File.Exists(filename))
-				File.Delete(filename);
 		}
 
 		public void Remove (X509Crl crl) 
