@@ -79,3 +79,16 @@
   }
 }
 
+.class public auto ansi beforefieldinit G`1<T> extends [mscorlib]System.Object
+{
+  .field public class ['missing-lib']Missing foo
+  
+  .method public hidebysig specialname rtspecialname instance void  .ctor() cil managed
+  {
+    IL_0000:  ldarg.0
+    IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
+    IL_0006:  ret
+  }
+}
+
+
