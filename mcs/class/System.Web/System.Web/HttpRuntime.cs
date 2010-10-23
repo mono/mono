@@ -441,6 +441,11 @@ namespace System.Web
 		
 		static void RealProcessRequest (object o)
 		{
+			if (domainUnloading) {
+				Console.Error.WriteLine ("Domain is unloading, not processing the request.");
+				return;
+			}
+
 			HttpWorkerRequest req = (HttpWorkerRequest) o;
 			bool started_internally = req.StartedInternally;
 			do {
@@ -584,6 +589,7 @@ namespace System.Web
 			// TODO: call ReleaseResources
 			//
 			domainUnloading = true;
+			HttpApplicationFactory.DisableWatchers ();
 			ThreadPool.QueueUserWorkItem (delegate {
 				try {
 					ShutdownAppDomain ();

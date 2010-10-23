@@ -712,6 +712,8 @@ namespace System.Web
 
 	        static void OnFileChanged(object sender, FileSystemEventArgs args)
 	        {
+			if (HttpRuntime.DomainUnloading)
+				return;
 			string name = args.Name;
 			bool isConfig = false;
 
