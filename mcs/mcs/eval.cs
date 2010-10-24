@@ -729,7 +729,7 @@ namespace Mono.CSharp {
 			RootContext.CloseTypes (ctx);
 
 			if (Environment.GetEnvironmentVariable ("SAVE") != null)
-				CodeGen.Save (current_debug_name, false, Report);
+				CodeGen.Save (current_debug_name, Report);
 
 			if (host == null)
 				return null;

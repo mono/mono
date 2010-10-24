@@ -90,7 +90,8 @@ namespace Mono.CSharp
 		//
 		// Last time we took the time
 		//
-		DateTime last_time, first_time;
+		Stopwatch stopwatch;
+		DateTime first_time;
 
 		//
 		// Encoding.
@@ -131,13 +132,11 @@ namespace Mono.CSharp
 			if (!timestamps)
 				return;
 
-			DateTime now = DateTime.Now;
-			TimeSpan span = now - last_time;
-			last_time = now;
+			stopwatch.Stop ();
 
-			Console.WriteLine (
-				"[{0:00}:{1:000}] {2}",
-				(int) span.TotalSeconds, span.Milliseconds, msg);
+			Console.WriteLine ("{0,5}ms {1}", stopwatch.ElapsedMilliseconds, msg);
+
+			stopwatch = Stopwatch.StartNew ();
 		}
 
 		void ShowTotalTime (string msg)
@@ -147,7 +146,6 @@ namespace Mono.CSharp
 
 			DateTime now = DateTime.Now;
 			TimeSpan span = now - first_time;
-			last_time = now;
 
 			Console.WriteLine (
 				"[{0:00}:{1:000}] {2}",
@@ -1055,7 +1053,6 @@ namespace Mono.CSharp
 				
 			case "--timestamp":
 				timestamps = true;
-				last_time = first_time = DateTime.Now;
 				return true;
 
 			case "--debug": case "-g":
@@ -1657,7 +1654,14 @@ namespace Mono.CSharp
 			RootContext.ToplevelTypes = new ModuleCompiled (ctx, RootContext.Unsafe);
 			var ctypes = TypeManager.InitCoreTypes ();
 
+			if (timestamps) {
+				stopwatch = Stopwatch.StartNew ();
+				first_time = DateTime.Now;
+			}
+
 			Parse ();
+			ShowTime ("Parsing source files");
+
 			if (Report.Errors > 0)
 				return false;
 
@@ -1706,35 +1710,30 @@ namespace Mono.CSharp
 			// Load assemblies required
 			//
 			if (timestamps)
-				ShowTime ("Loading references");
+				stopwatch = Stopwatch.StartNew ();
 
 			ctx.MetaImporter.Initialize ();
 			LoadReferences ();		
 		
-			if (timestamps)
-				ShowTime ("References loaded");
+			ShowTime ("Imporing referenced assemblies");
 			
 			if (!TypeManager.InitCoreTypes (ctx, ctypes))
 				return false;
 
 			TypeManager.InitOptionalCoreTypes (ctx);
 
-			if (timestamps)
-				ShowTime ("   Core Types done");
+			ShowTime ("Initializing predefined types");
 
-			//
-			// The second pass of the compiler
-			//
-			if (timestamps)
-				ShowTime ("Resolving tree");
 			RootContext.ResolveTree ();
+
+			ShowTime ("Types definition");
 
 			if (Report.Errors > 0)
 				return false;
-			if (timestamps)
-				ShowTime ("Populate tree");
 
 			RootContext.PopulateTypes ();
+
+			ShowTime ("Type members definition");
 
 			if (Report.Errors == 0 &&
 				RootContext.Documentation != null &&
@@ -1765,20 +1764,19 @@ namespace Mono.CSharp
 			// The code generator
 			//
 			if (timestamps)
-				ShowTime ("Emitting code");
-			ShowTotalTime ("Total so far");
+				stopwatch = Stopwatch.StartNew ();
+
 			RootContext.EmitCode ();
-			if (timestamps)
-				ShowTime ("   done");
+
+			ShowTime ("Resolving and emitting members blocks");
 
 			if (Report.Errors > 0){
 				return false;
 			}
 
-			if (timestamps)
-				ShowTime ("Closing types");
-
 			RootContext.CloseTypes (ctx);
+
+			ShowTime ("Closing types");
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
 
@@ -1857,19 +1855,23 @@ namespace Mono.CSharp
 
 			if (Report.Errors > 0)
 				return false;
+
+			if (timestamps)
+				stopwatch = Stopwatch.StartNew ();
 			
-			CodeGen.Save (output_file, want_debugging_support, Report);
-			if (timestamps) {
-				ShowTime ("Saved output");
-				ShowTotalTime ("Total");
+			CodeGen.Save (output_file, Report);
+
+			ShowTime ("Saving output assembly");
+
+			if (want_debugging_support) {
+				SymbolWriter.WriteSymbolFile ();
+				ShowTime ("Saving debug symbols");
 			}
+
+			ShowTotalTime ("Total");
 
 			Timer.ShowTimers ();
 
-#if DEBUGME
-			Console.WriteLine ("Size of strings held: " + DeclSpace.length);
-			Console.WriteLine ("Size of strings short: " + DeclSpace.small);
-#endif
 			return (Report.Errors == 0);
 		}
 	}

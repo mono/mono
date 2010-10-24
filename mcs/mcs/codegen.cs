@@ -177,7 +177,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static public void Save (string name, bool saveDebugInfo, Report Report)
+		public static void Save (string name, Report Report)
 		{
 			PortableExecutableKinds pekind;
 			ImageFileMachine machine;
@@ -225,13 +225,7 @@ namespace Mono.CSharp {
 				Report.RuntimeMissingSupport (Location.Null, nie.Message);
 				return;
 			}
-
-			//
-			// Write debuger symbol file
-			//
-			if (saveDebugInfo)
-				SymbolWriter.WriteSymbolFile ();
-			}
+		}
 	}
 
 	/// <summary>
