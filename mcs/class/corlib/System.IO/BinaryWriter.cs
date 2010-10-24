@@ -68,6 +68,7 @@ namespace System.IO {
 
 		public virtual Stream BaseStream {
 			get {
+				Flush ();
 				return OutStream;
 			}
 		}

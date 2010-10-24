@@ -512,11 +512,80 @@ public class BinaryWriterTest {
 		Assert.AreEqual (0, bytes [9], "test#11");		
 	}
 
+	[Test]
+	public void BaseStreamCallsFlush ()
+	{
+		FlushStream stream = new FlushStream ();
+		BinaryWriter writer = new BinaryWriter (stream);
+		Stream s = writer.BaseStream;
+		Assert.IsTrue (stream.FlushCalled);
+	}
+
 	private void DeleteFile (string path)
 	{
 		if (File.Exists (path))
 			File.Delete (path);
 	}
+
+	class FlushStream : Stream
+	{
+		public bool FlushCalled;
+
+		public override bool CanRead {
+			get { return true; }
+		}
+
+		public override bool CanSeek {
+                        get { return true; }
+                }
+
+                public override bool CanWrite {
+                        get { return true; }
+                }
+
+		public override long Length {
+			get { return 0; }
+		}
+
+		public override long Position {
+			get { return 0; }
+			set { }
+		}
+
+		public override void Flush ()
+		{
+			FlushCalled = true;
+		}
+
+		public override int Read (byte[] buffer, int offset, int count)
+		{
+			return 0;
+		}
+
+		public override int ReadByte ()
+		{
+			return -1;
+		}
+
+		public override long Seek (long offset, SeekOrigin origin)
+		{
+			return 0;
+		}
+
+		public override void SetLength (long value)
+		{
+		}
+
+		public override void Write (byte[] buffer, int offset, int count)
+		{
+		}
+
+		public override void WriteByte (byte value)
+		{
+		}
+	}
+
+
 }
 
 }
