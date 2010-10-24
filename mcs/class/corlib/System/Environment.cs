@@ -597,7 +597,19 @@ namespace System {
 
 			case SpecialFolder.MyPictures:
 				return ReadXdgUserDir (config, home, "XDG_PICTURES_DIR", "Pictures");
-				
+			
+			case SpecialFolder.Templates:
+				return ReadXdgUserDir (config, home, "XDG_TEMPLATES_DIR", "Templates");
+#if NET_4_0 || MOONLIGHT
+			case SpecialFolder.MyVideos:
+				return ReadXdgUserDir (config, home, "XDG_VIDEOS_DIR", "Videos");
+#endif
+#if NET_4_0
+			case SpecialFolder.CommonTemplates:
+				return "/usr/share/templates";
+			case SpecialFolder.Fonts:
+				return Path.Combine (home, ".fonts");
+#endif
 			// these simply dont exist on Linux
 			// The spec says if a folder doesnt exist, we
 			// should return ""
@@ -606,7 +618,6 @@ namespace System {
 			case SpecialFolder.SendTo:
 			case SpecialFolder.StartMenu:
 			case SpecialFolder.Startup:
-			case SpecialFolder.Templates:
 			case SpecialFolder.Cookies:
 			case SpecialFolder.History:
 			case SpecialFolder.InternetCache:
@@ -614,6 +625,29 @@ namespace System {
 			case SpecialFolder.CommonProgramFiles:
 			case SpecialFolder.ProgramFiles:
 			case SpecialFolder.System:
+#if NET_4_0
+			case SpecialFolder.NetworkShortcuts:
+			case SpecialFolder.CommonStartMenu:
+			case SpecialFolder.CommonPrograms:
+			case SpecialFolder.CommonStartup:
+			case SpecialFolder.CommonDesktopDirectory:
+			case SpecialFolder.PrinterShortcuts:
+			case SpecialFolder.Windows:
+			case SpecialFolder.UserProfile:
+			case SpecialFolder.SystemX86:
+			case SpecialFolder.ProgramFilesX86:
+			case SpecialFolder.CommonProgramFilesX86:
+			case SpecialFolder.CommonDocuments:
+			case SpecialFolder.CommonAdminTools:
+			case SpecialFolder.AdminTools:
+			case SpecialFolder.CommonMusic:
+			case SpecialFolder.CommonPictures:
+			case SpecialFolder.CommonVideos:
+			case SpecialFolder.Resources:
+			case SpecialFolder.LocalizedResources:
+			case SpecialFolder.CommonOemLinks:
+			case SpecialFolder.CDBurning:
+#endif
 				return String.Empty;
 			// This is where data common to all users goes
 			case SpecialFolder.CommonApplicationData:
