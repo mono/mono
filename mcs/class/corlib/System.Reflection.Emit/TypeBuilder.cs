@@ -1827,6 +1827,11 @@ namespace System.Reflection.Emit
 			if (constructor == null)
 				throw new NullReferenceException (); //MS raises this instead of an ArgumentNullException
 
+			if (!constructor.DeclaringType.IsGenericTypeDefinition)
+				throw new ArgumentException ("constructor declaring type is not a generic type definition", "constructor");
+			if (constructor.DeclaringType != type.GetGenericTypeDefinition ())
+				throw new ArgumentException ("constructor declaring type is not the generic type definition of type", "constructor");
+
 			ConstructorInfo res = type.GetConstructor (constructor);
 			if (res == null)
 				throw new ArgumentException ("constructor not found");

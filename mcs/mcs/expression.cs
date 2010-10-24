@@ -1688,6 +1688,13 @@ namespace Mono.CSharp {
 			temp_storage.Emit(ec);
 		}
 
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.Default (type.GetMetaInfo ());
+		}
+#endif
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			DefaultValueExpression target = (DefaultValueExpression) t;
@@ -5048,9 +5055,7 @@ namespace Mono.CSharp {
 				return DoResolveDynamic (ec, member_expr);
 
 			var method = mg.BestCandidate;
-			if (method != null) {
-				type = method.ReturnType;
-			}
+			type = mg.BestCandidateReturnType;
 		
 			if (arguments == null && method.DeclaringType == TypeManager.object_type && method.Name == Destructor.MetadataName) {
 				if (mg.IsBase)
@@ -8322,7 +8327,7 @@ namespace Mono.CSharp {
 				// TODO: Do I need 2 argument sets?
 				best_candidate = res.ResolveMember<IndexerSpec> (rc, ref arguments);
 				if (best_candidate != null)
-					type = best_candidate.MemberType;
+					type = res.BestCandidateReturnType;
 				else if (!res.BestCandidateIsDynamic)
 					return null;
 			}

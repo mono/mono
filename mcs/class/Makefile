@@ -139,10 +139,10 @@ moonlight_dirs := \
 	System.XML		\
 	System.Net		\
 	System.Xml.Linq	\
-	System.Xml.Serialization	\
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
-	System.ServiceModel.Web
+	System.ServiceModel.Web	\
+	System.Xml.Serialization
 
 mobile_dirs := \
 	corlib	\

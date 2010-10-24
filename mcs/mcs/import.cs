@@ -352,12 +352,14 @@ namespace Mono.CSharp
 
 					if (!is_params && p.IsOptional) {
 						object value = p.DefaultValue;
-						if (value == Missing.Value) {
-							default_value = EmptyExpression.Null;
-						} else if (value == null) {
-							default_value = new NullLiteral (Location.Null);
+						var ptype = types[i];
+						if (((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter) || p.IsDefined (typeof (DecimalConstantAttribute), false)) {
+							var dtype = value == null ? ptype : ImportType (value.GetType ());
+							default_value = Constant.CreateConstant (null, dtype, value, Location.Null);
+						} else if (value == Missing.Value) {
+							default_value = EmptyExpression.MissingValue;
 						} else {
-							default_value = Constant.CreateConstant (null, ImportType (value.GetType ()), value, Location.Null);
+							default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
 						}
 					}
 				}
@@ -838,7 +840,11 @@ namespace Mono.CSharp
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
 			foreach (var t in types) {
-				if (t == null || t.IsNested)
+				if (t == null)
+					continue;
+
+				// Be careful not to trigger full parent type loading
+				if (t.MemberType == MemberTypes.NestedType)
 					continue;
 
 				if (t.Name[0] == '<')
@@ -904,7 +910,7 @@ namespace Mono.CSharp
 		// as IsInitOnly ('readonly' in C# parlance).  We get its value from the 
 		// DecimalConstantAttribute metadata.
 		//
-		static Constant ReadDecimalConstant (FieldInfo fi)
+		static Constant ReadDecimalConstant (ICustomAttributeProvider fi)
 		{
 			object[] attrs = fi.GetCustomAttributes (typeof (DecimalConstantAttribute), false);
 			if (attrs.Length != 1)

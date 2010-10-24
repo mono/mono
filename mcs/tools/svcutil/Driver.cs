@@ -2,6 +2,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -96,13 +97,12 @@ namespace Mono.ServiceContractTool
 
 			//WsdlImporter importer = new WsdlImporter (metadata, null, list);
 			WsdlImporter importer = new WsdlImporter (metadata);
-			//ServiceEndpointCollection endpoints = importer.ImportAllEndpoints ();
+			ServiceEndpointCollection endpoints = importer.ImportAllEndpoints ();
+			Collection<ContractDescription> contracts = new Collection<ContractDescription> ((from se in endpoints select se.Contract).ToArray ());
 
 			Console.WriteLine ("Generating files..");
-			/*foreach (ServiceEndpoint se in endpoints)
-				generator.GenerateServiceContractType (se.Contract);*/
 
-			Collection<ContractDescription> contracts = importer.ImportAllContracts ();
+			// FIXME: could better become IWsdlExportExtension
 			foreach (ContractDescription cd in contracts) {
 				if (co.GenerateMoonlightProxy) {
 					var moonctx = new MoonlightChannelBaseContext ();

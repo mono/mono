@@ -856,11 +856,10 @@ namespace System.Diagnostics {
 		public static Process[] GetProcesses()
 		{
 			int [] pids = GetProcesses_internal ();
-			ArrayList proclist = new ArrayList ();
-
 			if (pids == null)
 				return new Process [0];
-			
+
+			ArrayList proclist = new ArrayList (pids.Length);
 			for (int i = 0; i < pids.Length; i++) {
 				try {
 					proclist.Add (GetProcessById (pids [i]));
@@ -893,7 +892,7 @@ namespace System.Diagnostics {
 			if (pids == null)
 				return new Process [0];
 			
-			ArrayList proclist = new ArrayList ();
+			ArrayList proclist = new ArrayList (pids.Length);
 			for (int i = 0; i < pids.Length; i++) {
 				try {
 					Process p = GetProcessById (pids [i]);

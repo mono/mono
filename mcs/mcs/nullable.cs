@@ -1074,11 +1074,19 @@ namespace Mono.CSharp.Nullable
 			} else if (TypeManager.IsReferenceType (ltype)) {
 				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
 					//
-					// Reduce (constant ?? expr) to constant
+					// If right is a dynamic expression, the result type is dynamic
+					//
+					if (right.Type == InternalType.Dynamic) {
+						type = right.Type;
+						return this;
+					}
+
+					//
+					// Reduce ("foo" ?? expr) to expression
 					//
 					Constant lc = left as Constant;
 					if (lc != null && !lc.IsDefaultValue)
-						return new SideEffectConstant (lc, right, loc).Resolve (ec);
+						return ReducedExpression.Create (lc, this).Resolve (ec);
 
 					//
 					// Reduce (left ?? null) to left OR (null-constant ?? right) to right

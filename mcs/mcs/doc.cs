@@ -321,6 +321,17 @@ namespace Mono.CSharp {
 			int index = identifier.LastIndexOf ('.');
 			if (index < 0)
 				return null;
+
+			var nsName = identifier.Substring (0, index);
+			var typeName = identifier.Substring (index + 1);
+			Namespace ns = ds.NamespaceEntry.NS.GetNamespace (nsName, false);
+			ns = ns ?? mc.Compiler.GlobalRootNamespace.GetNamespace(nsName, false);
+			if (ns != null) {
+				var te = ns.LookupType(mc.Compiler, typeName, 0, true, mc.Location);
+				if(te != null)
+					return te.Type;
+			}
+
 			int warn;
 			TypeSpec parent = FindDocumentedType (mc, identifier.Substring (0, index), ds, cref, r);
 			if (parent == null)

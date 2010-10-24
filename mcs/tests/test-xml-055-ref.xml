@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-055</name>
+    </assembly>
+    <members>
+        <member name="T:NAnt.Core.Filters.FilterChain">
+            <summary>
+            Represent a chain of NAnt filters that can be applied to a 'Task'.
+            </summary>
+            <remarks>
+                <list type="bullet">
+                    <item>
+                        <description>
+                            <see cref="T:NAnt.Core.Tasks.CopyTask" />
+                        </description>
+                    </item>
+                </list>
+            </remarks>
+        </member>
+        <member name="T:NAnt.Core.Tasks.CopyTask">
+            <summary>
+            Copies a file or set of files to a new file or directory.
+            </summary>
+        </member>
+    </members>
+</doc>

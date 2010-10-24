@@ -1,21 +1,15 @@
 /* adler32.c -- compute the Adler-32 checksum of a data stream
- * Copyright (C) 1995-2006 Mark Adler
+ * Copyright (C) 1995-2007 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
 /* @(#) $Id$ */
 
-#define ZLIB_INTERNAL
-#include "zlib.h"
+#include "zutil.h"
 
 #define local static
 
-#ifdef _LARGEFILE64_SOURCE
-   local uLong adler32_combine_(uLong adler1, uLong adler2, off64_t len2);
-#else
-   local uLong adler32_combine_(uLong adler1, uLong adler2, z_off_t len2);
-#endif
-
+local uLong adler32_combine_(uLong adler1, uLong adler2, z_off64_t len2);
 
 #define BASE 65521UL    /* largest prime smaller than 65536 */
 #define NMAX 5552
@@ -137,11 +131,7 @@ uLong ZEXPORT adler32(adler, buf, len)
 local uLong adler32_combine_(adler1, adler2, len2)
     uLong adler1;
     uLong adler2;
-#ifdef _LARGEFILE64_SOURCE
-    off64_t len2;
-#else
-    z_off_t len2;
-#endif
+    z_off64_t len2;
 {
     unsigned long sum1;
     unsigned long sum2;
@@ -154,10 +144,10 @@ local uLong adler32_combine_(adler1, adler2, len2)
     MOD(sum2);
     sum1 += (adler2 & 0xffff) + BASE - 1;
     sum2 += ((adler1 >> 16) & 0xffff) + ((adler2 >> 16) & 0xffff) + BASE - rem;
-    if (sum1 > BASE) sum1 -= BASE;
-    if (sum1 > BASE) sum1 -= BASE;
-    if (sum2 > (BASE << 1)) sum2 -= (BASE << 1);
-    if (sum2 > BASE) sum2 -= BASE;
+    if (sum1 >= BASE) sum1 -= BASE;
+    if (sum1 >= BASE) sum1 -= BASE;
+    if (sum2 >= (BASE << 1)) sum2 -= (BASE << 1);
+    if (sum2 >= BASE) sum2 -= BASE;
     return sum1 | (sum2 << 16);
 }
 
@@ -170,20 +160,10 @@ uLong ZEXPORT adler32_combine(adler1, adler2, len2)
     return adler32_combine_(adler1, adler2, len2);
 }
 
-#ifdef _LARGEFILE64_SOURCE
 uLong ZEXPORT adler32_combine64(adler1, adler2, len2)
     uLong adler1;
     uLong adler2;
-    off64_t len2;
+    z_off64_t len2;
 {
     return adler32_combine_(adler1, adler2, len2);
 }
-#else
-uLong ZEXPORT adler32_combine64(adler1, adler2, len2)
-    uLong adler1;
-    uLong adler2;
-    z_off_t len2;
-{
-    return adler32_combine_(adler1, adler2, len2);
-}
-#endif

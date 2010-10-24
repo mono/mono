@@ -1295,7 +1295,7 @@ namespace Mono.CSharp {
 		public TypeParameterSpec[] Constraints {
 			get {
 				if (constraints == null) {
-					var inflator = new TypeParameterInflator (this, MemberDefinition.TypeParameters, targs);
+					var inflator = CreateLocalInflator ();
 					constraints = TypeParameterSpec.InflateConstraints (inflator, MemberDefinition.TypeParameters);
 				}
 
@@ -1322,6 +1322,58 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
+
+		TypeParameterInflator CreateLocalInflator ()
+		{
+			TypeParameterSpec[] tparams_full;
+			TypeSpec[] targs_full = targs;
+			if (IsNested) {
+				//
+				// Special case is needed when we are inflating an open type (nested type definition)
+				// on inflated parent. Consider following case
+				//
+				// Foo<T>.Bar<U> => Foo<string>.Bar<U>
+				//
+				// Any later inflation of Foo<string>.Bar<U> has to also inflate T if used inside Bar<U>
+				//
+				List<TypeSpec> merged_targs = null;
+				List<TypeParameterSpec> merged_tparams = null;
+
+				var type = DeclaringType;
+
+				do {
+					if (type.TypeArguments.Length > 0) {
+						if (merged_targs == null) {
+							merged_targs = new List<TypeSpec> ();
+							merged_tparams = new List<TypeParameterSpec> ();
+							if (targs.Length > 0) {
+								merged_targs.AddRange (targs);
+								merged_tparams.AddRange (open_type.MemberDefinition.TypeParameters);
+							}
+						}
+						merged_tparams.AddRange (type.MemberDefinition.TypeParameters);
+						merged_targs.AddRange (type.TypeArguments);
+					}
+					type = type.DeclaringType;
+				} while (type != null);
+
+				if (merged_targs != null) {
+					// Type arguments are not in the right order but it should not matter in this case
+					targs_full = merged_targs.ToArray ();
+					tparams_full = merged_tparams.ToArray ();
+				} else if (targs.Length == 0) {
+					tparams_full = TypeParameterSpec.EmptyTypes;
+				} else {
+					tparams_full = open_type.MemberDefinition.TypeParameters;
+				}
+			} else if (targs.Length == 0) {
+				tparams_full = TypeParameterSpec.EmptyTypes;
+			} else {
+				tparams_full = open_type.MemberDefinition.TypeParameters;
+			}
+
+			return new TypeParameterInflator (this, tparams_full, targs_full);
+		}
 
 		Type CreateMetaInfo (TypeParameterMutator mutator)
 		{
@@ -1399,54 +1451,7 @@ namespace Mono.CSharp {
 			if (cache == null)
 				cache = new MemberCache (onlyTypes ? open_type.MemberCacheTypes : open_type.MemberCache);
 
-			TypeParameterSpec[] tparams_full;
-			TypeSpec[] targs_full = targs;
-			if (IsNested) {
-				//
-				// Special case is needed when we are inflating an open type (nested type definition)
-				// on inflated parent. Consider following case
-				//
-				// Foo<T>.Bar<U> => Foo<string>.Bar<U>
-				//
-				// Any later inflation of Foo<string>.Bar<U> has to also inflate T if used inside Bar<U>
-				//
-				List<TypeSpec> merged_targs = null;
-				List<TypeParameterSpec> merged_tparams = null;
-
-				var type = DeclaringType;
-
-				do {
-					if (type.TypeArguments.Length > 0) {
-						if (merged_targs == null) {
-							merged_targs = new List<TypeSpec> ();
-							merged_tparams = new List<TypeParameterSpec> ();
-							if (targs.Length > 0) {
-								merged_targs.AddRange (targs);
-								merged_tparams.AddRange (open_type.MemberDefinition.TypeParameters);
-							}
-						}
-						merged_tparams.AddRange (type.MemberDefinition.TypeParameters);
-						merged_targs.AddRange (type.TypeArguments);
-					}
-					type = type.DeclaringType;
-				} while (type != null);
-
-				if (merged_targs != null) {
-					// Type arguments are not in the right order but it should not matter in this case
-					targs_full = merged_targs.ToArray ();
-					tparams_full = merged_tparams.ToArray ();
-				} else if (targs.Length == 0) {
-					tparams_full = TypeParameterSpec.EmptyTypes;
-				} else {
-					tparams_full = open_type.MemberDefinition.TypeParameters;
-				}
-			} else if (targs.Length == 0) {
-				tparams_full = TypeParameterSpec.EmptyTypes;
-			} else {
-				tparams_full = open_type.MemberDefinition.TypeParameters;
-			}
-
-			var inflator = new TypeParameterInflator (this, tparams_full, targs_full);
+			var inflator = CreateLocalInflator ();
 
 			//
 			// Two stage inflate due to possible nested types recursive

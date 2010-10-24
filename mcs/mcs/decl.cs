@@ -1184,8 +1184,6 @@ namespace Mono.CSharp {
 		//
 		public NamespaceEntry NamespaceEntry;
 
-		private Dictionary<string, FullNamedExpression> Cache = new Dictionary<string, FullNamedExpression> ();
-		
 		public readonly string Basename;
 		
 		protected Dictionary<string, MemberCore> defined_names;
@@ -1359,77 +1357,6 @@ namespace Mono.CSharp {
 			}
 
 			throw new NotImplementedException (check_attr.ToString ());
-		}
-
-		private TypeSpec LookupNestedTypeInHierarchy (string name, int arity)
-		{
-			// TODO: GenericMethod only
-			if (PartialContainer == null)
-				return null;
-
-			// Has any nested type
-			// Does not work, because base type can have
-			//if (PartialContainer.Types == null)
-			//	return null;
-
-			var container = PartialContainer.CurrentType;
-
-			// Is not Root container
-			if (container == null)
-				return null;
-
-			var	t = MemberCache.FindNestedType (container, name, arity);
-			if (t == null)
-				return null;
-
-			// FIXME: Breaks error reporting
-			if (!t.IsAccessible (CurrentType))
-				return null;
-
-			return t;
-		}
-
-		//
-		// Public function used to locate types.
-		//
-		// Set 'ignore_cs0104' to true if you want to ignore cs0104 errors.
-		//
-		// Returns: Type or null if they type can not be found.
-		//
-		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
-		{
-			FullNamedExpression e;
-			if (arity == 0 && Cache.TryGetValue (name, out e))
-				return e;
-
-			e = null;
-			int errors = Report.Errors;
-
-			if (arity == 0) {
-				TypeParameter[] tp = CurrentTypeParameters;
-				if (tp != null) {
-					TypeParameter tparam = TypeParameter.FindTypeParameter (tp, name);
-					if (tparam != null)
-						e = new TypeParameterExpr (tparam, Location.Null);
-				}
-			}
-
-			if (e == null) {
-				TypeSpec t = LookupNestedTypeInHierarchy (name, arity);
-
-				if (t != null)
-					e = new TypeExpression (t, Location.Null);
-				else if (Parent != null)
-					e = Parent.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
-				else
-					e = NamespaceEntry.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
-			}
-
-			// TODO MemberCache: How to cache arity stuff ?
-			if (errors == Report.Errors && arity == 0)
-				Cache [name] = e;
-			
-			return e;
 		}
 
 		public override Assembly Assembly {

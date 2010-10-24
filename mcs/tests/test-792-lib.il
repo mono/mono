@@ -53,9 +53,29 @@
   .method public hidebysig specialname rtspecialname 
           instance void  .ctor() cil managed
   {
-    .maxstack  8
     IL_0000:  ldarg.0
     IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
     IL_0006:  ret
   }  
 }
+
+.class public auto ansi beforefieldinit Another extends ['missing-lib']XXBase
+{
+  .class auto ansi nested public beforefieldinit Nested extends [mscorlib]System.Object
+  {
+    .method public hidebysig specialname rtspecialname instance void  .ctor() cil managed
+    {
+      IL_0000:  ldarg.0
+      IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
+      IL_0006:  ret
+    }
+  }
+
+  .method public hidebysig specialname rtspecialname instance void  .ctor() cil managed
+  {
+    IL_0000:  ldarg.0
+    IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
+    IL_0006:  ret
+  }
+}
+

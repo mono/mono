@@ -351,8 +351,8 @@ namespace MonoTests.System.Threading
 			ev2.WaitOne ();
 
 			Assert.IsFalse (v.TryEnterWriteLock (100));
-			Assert.IsFalse (v.TryEnterReadLock (100));
 			ev.Set ();
+			t1.Join ();
 
 			Assert.IsTrue (v.TryEnterWriteLock (100));
 		}

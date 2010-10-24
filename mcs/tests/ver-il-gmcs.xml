@@ -24009,7 +24009,7 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>90</size>
+        <size>211</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -48614,6 +48614,25 @@
     <type name="Test">
       <method name="Int32 Main()">
         <size>98</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-named-06.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>25</size>
+      </method>
+      <method name="Int32 Foo(Int32, Int64, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo(Int32, Int64, System.String[])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo(Int64, Int32)">
+        <size>2</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

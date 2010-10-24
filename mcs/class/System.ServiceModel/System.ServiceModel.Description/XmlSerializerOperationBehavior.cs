@@ -35,7 +35,10 @@ using System.Xml.Serialization;
 namespace System.ServiceModel.Description
 {
 	public class XmlSerializerOperationBehavior
-		: IOperationBehavior, IWsdlExportExtension
+		: IOperationBehavior
+#if !NET_2_1
+			, IWsdlExportExtension
+#endif
 	{
 		XmlSerializerFormatAttribute format;
 		OperationDescription operation;
@@ -72,13 +75,15 @@ namespace System.ServiceModel.Description
 		{
 			throw new NotImplementedException ();
 		}
-
+		
+#if !NET_2_1
 		void IOperationBehavior.ApplyDispatchBehavior (
 			OperationDescription description,
 			DispatchOperation dispatch)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		void IOperationBehavior.ApplyClientBehavior (
 			OperationDescription description,
@@ -93,6 +98,7 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
+#if !NET_2_1
 		void IWsdlExportExtension.ExportContract (
 			WsdlExporter exporter,
 			WsdlContractConversionContext context)
@@ -105,5 +111,6 @@ namespace System.ServiceModel.Description
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

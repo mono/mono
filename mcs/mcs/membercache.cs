@@ -61,6 +61,7 @@ namespace Mono.CSharp {
 
 		NoAccessors = 1 << 3,
 
+		// Member has to be override
 		OverrideOnly = 1 << 4
 	}
 

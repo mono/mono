@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005-2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,8 +27,12 @@
 //
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Security;
+#if NET_4_0
+using System.Security.Authentication.ExtendedProtection;
+#endif
 using System.ServiceModel.Channels;
 #if !NET_2_1
 using System.ServiceModel.Channels.Http;
@@ -81,50 +85,90 @@ namespace System.ServiceModel.Channels
 			auth_scheme = other.auth_scheme;
 			proxy_auth_scheme = other.proxy_auth_scheme;
 #endif
+
+#if NET_4_0
+			DecompressionEnabled = other.DecompressionEnabled;
+			LegacyExtendedProtectionPolicy = other.LegacyExtendedProtectionPolicy;
+			ExtendedProtectionPolicy = other.ExtendedProtectionPolicy;
+#endif
 		}
 
 #if !MOONLIGHT
+#if NET_4_0
+		[DefaultValue (AuthenticationSchemes.Anonymous)]
+#endif
 		public AuthenticationSchemes AuthenticationScheme {
 			get { return auth_scheme; }
 			set { auth_scheme = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (AuthenticationSchemes.Anonymous)]
+#endif
 		public AuthenticationSchemes ProxyAuthenticationScheme {
 			get { return proxy_auth_scheme; }
 			set { proxy_auth_scheme = value; }
 		}
 #endif
 
+#if NET_4_0
+		[DefaultValue (false)]
+#endif
 		public bool AllowCookies {
 			get { return allow_cookies; }
 			set { allow_cookies = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (false)]
+#endif
 		public bool BypassProxyOnLocal {
 			get { return bypass_proxy_on_local; }
 			set { bypass_proxy_on_local = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (false)]
+		[MonoTODO]
+		public bool DecompressionEnabled { get; set; }
+#endif
+
+#if NET_4_0
+		[DefaultValue (HostNameComparisonMode.StrongWildcard)]
+#endif
 		public HostNameComparisonMode HostNameComparisonMode {
 			get { return host_cmp_mode; }
 			set { host_cmp_mode = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (true)]
+#endif
 		public bool KeepAliveEnabled {
 			get { return keep_alive_enabled; }
 			set { keep_alive_enabled = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (0x10000)]
+#endif
 		public int MaxBufferSize {
 			get { return max_buffer_size; }
 			set { max_buffer_size = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (null)]
+		[TypeConverter (typeof (UriTypeConverter))]
+#endif
 		public Uri ProxyAddress {
 			get { return proxy_address; }
 			set { proxy_address = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue ("")]
+#endif
 		public string Realm {
 			get { return realm; }
 			set { realm = value; }
@@ -134,20 +178,38 @@ namespace System.ServiceModel.Channels
 			get { return Uri.UriSchemeHttp; }
 		}
 
+#if NET_4_0
+		[DefaultValue (TransferMode.Buffered)]
+#endif
 		public TransferMode TransferMode {
 			get { return transfer_mode; }
 			set { transfer_mode = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (false)]
+#endif
 		public bool UnsafeConnectionNtlmAuthentication {
 			get { return unsafe_ntlm_auth; }
 			set { unsafe_ntlm_auth = value; }
 		}
 
+#if NET_4_0
+		[DefaultValue (true)]
+#endif
 		public bool UseDefaultWebProxy {
 			get { return use_default_proxy; }
 			set { use_default_proxy = value; }
 		}
+
+#if NET_4_0
+		[Obsolete ("Use ExtendedProtectionPolicy")]
+		[MonoTODO]
+		public object LegacyExtendedProtectionPolicy { get; set; }
+
+		[MonoTODO]
+		public ExtendedProtectionPolicy ExtendedProtectionPolicy { get; set; }
+#endif
 
 		public override bool CanBuildChannelFactory<TChannel> (
 			BindingContext context)

@@ -51,6 +51,7 @@ namespace System.ServiceModel.Description
 	{
 		CodeCompileUnit ccu;
 		ConfigurationType config;
+		CodeIdentifiers identifiers = new CodeIdentifiers ();
 		Collection<MetadataConversionError> errors
 			= new Collection<MetadataConversionError> ();
 		Dictionary<string,string> nsmappings
@@ -194,6 +195,7 @@ namespace System.ServiceModel.Description
 			string name = cd.Name + "Client";
 			if (name [0] == 'I')
 				name = name.Substring (1);
+			name = identifiers.AddUnique (name, null);
 			CodeTypeDeclaration type = GetTypeDeclaration (cns, name);
 			if (type != null)
 				return; // already imported
@@ -276,6 +278,7 @@ namespace System.ServiceModel.Description
 		void GenerateChannelInterface (ContractDescription cd, CodeNamespace cns)
 		{
 			string name = cd.Name + "Channel";
+			name = identifiers.AddUnique (name, null);
 			CodeTypeDeclaration type = GetTypeDeclaration (cns, name);
 			if (type != null)
 				return;
@@ -298,7 +301,7 @@ namespace System.ServiceModel.Description
 			type.TypeAttributes = TypeAttributes.Interface;
 			type.TypeAttributes |= TypeAttributes.Public;
 			cns.Types.Add (type);
-			type.Name = cd.Name;
+			type.Name = identifiers.AddUnique (cd.Name, null);
 			CodeAttributeDeclaration ad = 
 				new CodeAttributeDeclaration (
 					new CodeTypeReference (
@@ -514,6 +517,7 @@ namespace System.ServiceModel.Description
 			var method = FindByName (type, od.Name) ?? FindByName (type, "Begin" + od.Name);
 			var endMethod = method.Name == od.Name ? null : FindByName (type, "End" + od.Name);
 			bool methodAsync = method.Name.StartsWith ("Begin", StringComparison.Ordinal);
+			var resultType = endMethod != null ? endMethod.ReturnType : method.ReturnType;
 
 			var thisExpr = new CodeThisReferenceExpression ();
 			var baseExpr = new CodeBaseReferenceExpression ();
@@ -569,9 +573,13 @@ namespace System.ServiceModel.Description
 				new CodeArgumentReferenceExpression ("result"));
 			call.Parameters.AddRange (outArgRefs.Cast<CodeExpression> ().ToArray ()); // questionable
 
-			cm.Statements.Add (new CodeVariableDeclarationStatement (typeof (object), "__ret", call));
 			var retCreate = new CodeArrayCreateExpression (typeof (object));
-			retCreate.Initializers.Add (new CodeVariableReferenceExpression ("__ret"));
+			if (resultType.BaseType == "System.Void")
+				cm.Statements.Add (call);
+			else {
+				cm.Statements.Add (new CodeVariableDeclarationStatement (typeof (object), "__ret", call));
+				retCreate.Initializers.Add (new CodeVariableReferenceExpression ("__ret"));
+			}
 			foreach (var outArgRef in outArgRefs)
 				retCreate.Initializers.Add (new CodeVariableReferenceExpression (outArgRef.VariableName));
 
@@ -585,9 +593,10 @@ namespace System.ServiceModel.Description
 
 			AddMethodParam (cm, typeof (object), "state");
 
+			string argsname = identifiers.AddUnique (od.Name + "CompletedEventArgs", null);
 			var iaargs = new CodeTypeReference ("InvokeAsyncCompletedEventArgs"); // avoid messy System.Type instance for generic nested type :|
 			var iaref = new CodeVariableReferenceExpression ("args");
-			var methodEventArgs = new CodeObjectCreateExpression (new CodeTypeReference (od.Name + "CompletedEventArgs"),
+			var methodEventArgs = new CodeObjectCreateExpression (new CodeTypeReference (argsname),
 				new CodePropertyReferenceExpression (iaref, "Results"),
 				new CodePropertyReferenceExpression (iaref, "Error"),
 				new CodePropertyReferenceExpression (iaref, "Cancelled"),
@@ -604,7 +613,7 @@ namespace System.ServiceModel.Description
 			type.Members.Add (new CodeMemberField (new CodeTypeReference (typeof (SendOrPostCallback)), "on" + od.Name + "CompletedDelegate"));
 
 			// XxxCompletedEventArgs class
-			var argsType = new CodeTypeDeclaration (od.Name + "CompletedEventArgs");
+			var argsType = new CodeTypeDeclaration (argsname);
 			argsType.BaseTypes.Add (new CodeTypeReference (typeof (AsyncCompletedEventArgs)));
 			cns.Types.Add (argsType);
 
@@ -623,12 +632,14 @@ namespace System.ServiceModel.Description
 
 			argsType.Members.Add (new CodeMemberField (typeof (object []), "results"));
 
-			var resultProp = new CodeMemberProperty {
-				Name = "Result",
-				Type = endMethod != null ? endMethod.ReturnType : method.ReturnType,
-				Attributes = MemberAttributes.Public | MemberAttributes.Final };
-			resultProp.GetStatements.Add (new CodeMethodReturnStatement (new CodeCastExpression (resultProp.Type, new CodeArrayIndexerExpression (resultsField, new CodePrimitiveExpression (0)))));
-			argsType.Members.Add (resultProp);
+			if (resultType.BaseType != "System.Void") {
+				var resultProp = new CodeMemberProperty {
+					Name = "Result",
+					Type = resultType,
+					Attributes = MemberAttributes.Public | MemberAttributes.Final };
+				resultProp.GetStatements.Add (new CodeMethodReturnStatement (new CodeCastExpression (resultProp.Type, new CodeArrayIndexerExpression (resultsField, new CodePrimitiveExpression (0)))));
+				argsType.Members.Add (resultProp);
+			}
 
 			// event field
 			var handlerType = new CodeTypeReference (typeof (EventHandler<>));

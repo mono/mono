@@ -318,6 +318,20 @@ struct _MonoDomain {
 	/* Assembly bindings, the per-domain part */
 	GSList *assembly_bindings;
 	gboolean assembly_bindings_parsed;
+
+	/* Used by socket-io.c */
+	/* These are domain specific, since the assembly can be unloaded */
+	MonoImage *socket_assembly;
+	MonoClass *sockaddr_class;
+	MonoClassField *sockaddr_data_field;
+
+	/* Used by threadpool.c */
+	MonoImage *system_image;
+	MonoImage *system_net_dll;
+	MonoClass *corlib_asyncresult_class;
+	MonoClass *socket_class;
+	MonoClass *ad_unloaded_ex_class;
+	MonoClass *process_class;
 };
 
 typedef struct  {

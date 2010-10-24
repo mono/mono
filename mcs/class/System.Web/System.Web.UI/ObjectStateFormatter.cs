@@ -50,6 +50,8 @@ namespace System.Web.UI
 {
 	public sealed class ObjectStateFormatter : IFormatter, IStateFormatter
 	{
+		const ushort SERIALIZED_STREAM_MAGIC = 0x01FF;
+
 		Page page;
 		MachineKeySection section;
 
@@ -90,7 +92,12 @@ namespace System.Web.UI
 			if (inputStream == null)
 				throw new ArgumentNullException ("inputStream");
 
-			return DeserializeObject (new BinaryReader (inputStream));
+			BinaryReader reader = new BinaryReader (inputStream);
+			short magic = reader.ReadInt16 ();
+			if (magic != SERIALIZED_STREAM_MAGIC)
+				throw new ArgumentException ("The serialized data is invalid");
+
+			return DeserializeObject (reader);
 		}
 		
 		public object Deserialize (string inputString)
@@ -154,7 +161,10 @@ namespace System.Web.UI
 			if (stateGraph == null)
 				throw new ArgumentNullException ("stateGraph");
 
-			SerializeValue (new BinaryWriter (outputStream), stateGraph);
+			BinaryWriter writer = new BinaryWriter (outputStream);
+			writer.Write (SERIALIZED_STREAM_MAGIC);
+
+			SerializeValue (writer, stateGraph);
 		}
 		
 		void SerializeValue (BinaryWriter w, object o)

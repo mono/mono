@@ -147,6 +147,46 @@ enum Mono_Posix_DirectoryNotifyFlags {
 int Mono_Posix_FromDirectoryNotifyFlags (int x, int *r);
 int Mono_Posix_ToDirectoryNotifyFlags (int x, int *r);
 
+enum Mono_Posix_EpollEvents {
+	Mono_Posix_EpollEvents_EPOLLERR           = 0x00000008,
+	#define Mono_Posix_EpollEvents_EPOLLERR     Mono_Posix_EpollEvents_EPOLLERR
+	Mono_Posix_EpollEvents_EPOLLET            = 0x80000000,
+	#define Mono_Posix_EpollEvents_EPOLLET      Mono_Posix_EpollEvents_EPOLLET
+	Mono_Posix_EpollEvents_EPOLLHUP           = 0x00000010,
+	#define Mono_Posix_EpollEvents_EPOLLHUP     Mono_Posix_EpollEvents_EPOLLHUP
+	Mono_Posix_EpollEvents_EPOLLIN            = 0x00000001,
+	#define Mono_Posix_EpollEvents_EPOLLIN      Mono_Posix_EpollEvents_EPOLLIN
+	Mono_Posix_EpollEvents_EPOLLMSG           = 0x00000400,
+	#define Mono_Posix_EpollEvents_EPOLLMSG     Mono_Posix_EpollEvents_EPOLLMSG
+	Mono_Posix_EpollEvents_EPOLLONESHOT       = 0x40000000,
+	#define Mono_Posix_EpollEvents_EPOLLONESHOT Mono_Posix_EpollEvents_EPOLLONESHOT
+	Mono_Posix_EpollEvents_EPOLLOUT           = 0x00000004,
+	#define Mono_Posix_EpollEvents_EPOLLOUT     Mono_Posix_EpollEvents_EPOLLOUT
+	Mono_Posix_EpollEvents_EPOLLPRI           = 0x00000002,
+	#define Mono_Posix_EpollEvents_EPOLLPRI     Mono_Posix_EpollEvents_EPOLLPRI
+	Mono_Posix_EpollEvents_EPOLLRDBAND        = 0x00000080,
+	#define Mono_Posix_EpollEvents_EPOLLRDBAND  Mono_Posix_EpollEvents_EPOLLRDBAND
+	Mono_Posix_EpollEvents_EPOLLRDHUP         = 0x00002000,
+	#define Mono_Posix_EpollEvents_EPOLLRDHUP   Mono_Posix_EpollEvents_EPOLLRDHUP
+	Mono_Posix_EpollEvents_EPOLLRDNORM        = 0x00000040,
+	#define Mono_Posix_EpollEvents_EPOLLRDNORM  Mono_Posix_EpollEvents_EPOLLRDNORM
+	Mono_Posix_EpollEvents_EPOLLWRBAND        = 0x00000200,
+	#define Mono_Posix_EpollEvents_EPOLLWRBAND  Mono_Posix_EpollEvents_EPOLLWRBAND
+	Mono_Posix_EpollEvents_EPOLLWRNORM        = 0x00000100,
+	#define Mono_Posix_EpollEvents_EPOLLWRNORM  Mono_Posix_EpollEvents_EPOLLWRNORM
+};
+int Mono_Posix_FromEpollEvents (unsigned int x, unsigned int *r);
+int Mono_Posix_ToEpollEvents (unsigned int x, unsigned int *r);
+
+enum Mono_Posix_EpollFlags {
+	Mono_Posix_EpollFlags_EPOLL_CLOEXEC        = 0x001e8480,
+	#define Mono_Posix_EpollFlags_EPOLL_CLOEXEC  Mono_Posix_EpollFlags_EPOLL_CLOEXEC
+	Mono_Posix_EpollFlags_EPOLL_NONBLOCK       = 0x00000fa0,
+	#define Mono_Posix_EpollFlags_EPOLL_NONBLOCK Mono_Posix_EpollFlags_EPOLL_NONBLOCK
+};
+int Mono_Posix_FromEpollFlags (int x, int *r);
+int Mono_Posix_ToEpollFlags (int x, int *r);
+
 enum Mono_Posix_Errno {
 	Mono_Posix_Errno_E2BIG                 = 0x00000007,
 	#define Mono_Posix_Errno_E2BIG           Mono_Posix_Errno_E2BIG

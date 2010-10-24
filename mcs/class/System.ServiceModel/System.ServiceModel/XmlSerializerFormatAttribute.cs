@@ -33,17 +33,11 @@ namespace System.ServiceModel
 		AttributeTargets.Method, Inherited = false)]
 	public sealed class XmlSerializerFormatAttribute : Attribute
 	{
-		OperationFormatStyle style;
-		OperationFormatUse use;
+		public OperationFormatStyle Style { get; set; }
 
-		public OperationFormatStyle Style {
-			get { return style; }
-			set { style = value; }
-		}
-
-		public OperationFormatUse Use {
-			get { return use; }
-			set { use = value; }
-		}
+		public OperationFormatUse Use { get; set; }
+		
+		[MonoTODO]
+		public bool SupportFaults { get; set; }
 	}
 }

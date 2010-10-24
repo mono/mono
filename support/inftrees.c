@@ -1,5 +1,5 @@
 /* inftrees.c -- generate Huffman trees for efficient decoding
- * Copyright (C) 1995-2006 Mark Adler
+ * Copyright (C) 1995-2010 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -9,7 +9,7 @@
 #define MAXBITS 15
 
 const char inflate_copyright[] =
-   " inflate 1.2.3.3 Copyright 1995-2006 Mark Adler ";
+   " inflate 1.2.5 Copyright 1995-2010 Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
   in the documentation of your product. If for some reason you cannot
@@ -29,7 +29,7 @@ const char inflate_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int inflate_table(type, lens, codes, table, bits, work)
+int ZLIB_INTERNAL inflate_table(type, lens, codes, table, bits, work)
 codetype type;
 unsigned short FAR *lens;
 unsigned codes;
@@ -62,7 +62,7 @@ unsigned short FAR *work;
         35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0};
     static const unsigned short lext[31] = { /* Length codes 257..285 extra */
         16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18,
-        19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 201, 203};
+        19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 73, 195};
     static const unsigned short dbase[32] = { /* Distance codes 0..29 base */
         1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
         257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
@@ -123,7 +123,7 @@ unsigned short FAR *work;
         *bits = 1;
         return 0;     /* no symbols, but wait for decoding to report error */
     }
-    for (min = 1; min <= MAXBITS; min++)
+    for (min = 1; min < max; min++)
         if (count[min] != 0) break;
     if (root < min) root = min;
 
@@ -166,11 +166,10 @@ unsigned short FAR *work;
        entered in the tables.
 
        used keeps track of how many table entries have been allocated from the
-       provided *table space.  It is checked when a LENS table is being made
-       against the space in *table, ENOUGH, minus the maximum space needed by
-       the worst case distance code, MAXD.  This should never happen, but the
-       sufficiency of ENOUGH has not been proven exhaustively, hence the check.
-       This assumes that when type == LENS, bits == 9.
+       provided *table space.  It is checked for LENS and DIST tables against
+       the constants ENOUGH_LENS and ENOUGH_DISTS to guard against changes in
+       the initial root table size constants.  See the comments in inftrees.h
+       for more information.
 
        sym increments through all symbols, and the loop terminates when
        all codes of length max, i.e. all codes, have been processed.  This
@@ -209,7 +208,8 @@ unsigned short FAR *work;
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if (type == LENS && used >= ENOUGH - MAXD)
+    if ((type == LENS && used >= ENOUGH_LENS) ||
+        (type == DISTS && used >= ENOUGH_DISTS))
         return 1;
 
     /* process all codes and make table entries */
@@ -277,7 +277,8 @@ unsigned short FAR *work;
 
             /* check for enough space */
             used += 1U << curr;
-            if (type == LENS && used >= ENOUGH - MAXD)
+            if ((type == LENS && used >= ENOUGH_LENS) ||
+                (type == DISTS && used >= ENOUGH_DISTS))
                 return 1;
 
             /* point entry in root table to sub-table */
