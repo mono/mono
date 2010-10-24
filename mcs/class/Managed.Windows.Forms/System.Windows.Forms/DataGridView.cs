@@ -76,7 +76,7 @@ namespace System.Windows.Forms {
 		private DataGridViewColumnCollection columns;
 		private DataGridViewCell currentCell;
 		private Point currentCellAddress;
-		private DataGridViewRow currentRow;
+		//private DataGridViewRow currentRow;
 		private string dataMember;
 		private object dataSource;
 		private DataGridViewCellStyle defaultCellStyle;
@@ -5253,8 +5253,6 @@ namespace System.Windows.Forms {
 			if (!AllowUserToDeleteRows || SelectedRows.Count == 0)
 				return false;
 
-			int index = Math.Max (selected_row - SelectedRows.Count + 1, 0);
-			
 			for (int i = SelectedRows.Count - 1; i >= 0; i--) {
 				DataGridViewRow row = SelectedRows[i];
 

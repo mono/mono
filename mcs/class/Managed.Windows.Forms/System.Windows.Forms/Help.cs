@@ -50,15 +50,9 @@ namespace System.Windows.Forms
 			ShowHelp(parent, url, navigator, null);
 		}
 
-[MonoTODO ("Stub, does nothing")]
-#if NET_2_0
+		[MonoTODO ("Stub, does nothing")]
 		public static void ShowHelp (Control parent, string url, HelpNavigator command, object parameter)
 		{
-			object param = parameter;
-#else
-		public static void ShowHelp (Control parent, string url, HelpNavigator command, object param)
-		{
-#endif
 		}
 
 		public static void ShowHelp (Control parent, string url, string keyword)
