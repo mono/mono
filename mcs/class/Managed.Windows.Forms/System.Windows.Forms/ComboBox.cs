@@ -1887,6 +1887,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		MouseEventArgs TranslateMouseEventArgs (MouseEventArgs args)
+		{
+			Point loc = PointToClient (Control.MousePosition);
+			return new MouseEventArgs (args.Button, args.Clicks, loc.X, loc.Y, args.Delta);
+		}
+
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
 			if (suspend_ctrlupdate)
@@ -2379,6 +2385,32 @@ namespace System.Windows.Forms
 			protected override void OnLostFocus (EventArgs e)
 			{
 				owner.Select (false, true);
+			}
+
+			// We have to pass these events to our owner - MouseMove is not, however.
+
+			protected override void OnMouseDown (MouseEventArgs e)
+			{
+				base.OnMouseDown (e);
+				owner.OnMouseDown (owner.TranslateMouseEventArgs (e));
+			}
+
+			protected override void OnMouseUp (MouseEventArgs e)
+			{
+				base.OnMouseUp (e);
+				owner.OnMouseUp (owner.TranslateMouseEventArgs (e));
+			}
+
+			protected override void OnMouseClick (MouseEventArgs e)
+			{
+				base.OnMouseClick (e);
+				owner.OnMouseClick (owner.TranslateMouseEventArgs (e));
+			}
+
+			protected override void OnMouseDoubleClick (MouseEventArgs e)
+			{
+				base.OnMouseDoubleClick (e);
+				owner.OnMouseDoubleClick (owner.TranslateMouseEventArgs (e));
 			}
 
 			public override bool Focused {
