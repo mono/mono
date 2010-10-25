@@ -530,25 +530,10 @@ namespace_body
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
-	  namespace_body_body
-	;
-	
-namespace_body_body
-	: opt_extern_alias_directives
+	  opt_extern_alias_directives
 	  opt_using_directives
 	  opt_namespace_member_declarations
 	  CLOSE_BRACE
-	| error
-	  {
-		Report.Error (1518, lexer.Location, "Expected `class', `delegate', `enum', `interface', or `struct'");
-	  }
-	| opt_extern_alias_directives
-	  opt_using_directives
-	  opt_namespace_member_declarations
-	  EOF
-	  {
-		Report.Error (1513, lexer.Location, "Expected `}'");
-	  }
 	;
 
 opt_using_directives
@@ -594,6 +579,10 @@ namespace_member_declaration
 	| method_declaration {
 		Report.Error (116, ((MemberCore) $1).Location, "A namespace can only contain types and namespace declarations");
 	  }
+	| error
+	 {
+		Error_SyntaxError (yyToken);
+	 }
 	;
 
 type_declaration
@@ -4091,19 +4080,29 @@ opt_lambda_parameter_list
 	;
 
 lambda_expression_body
+	: lambda_expression_body_simple
+	| block
+	;
+	
+lambda_expression_body_simple
 	: {
 		start_block (lexer.Location);
 	  }
-	  expression 
+	  expression_or_error	// Have to close block when error occurs
 	  {
 		Block b = end_block (lexer.Location);
 		b.AddStatement (new ContextualReturn ((Expression) $2));
 		$$ = b;
 	  } 
-	| block
-	  { 
-	  	$$ = $1; 
-	  } 
+	;
+	
+expression_or_error
+	: expression
+	| error
+	  {
+		Error_SyntaxError (yyToken);	
+		$$ = EmptyExpression.Null;
+	  }
 	;
 
 lambda_expression
