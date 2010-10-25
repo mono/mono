@@ -3877,6 +3877,8 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 
 		if (tls && tls->abort_requested)
 			return;
+		if (tls && tls->disable_breakpoints)
+			return;
 	}
 
 	memset (&ei, 0, sizeof (EventInfo));
