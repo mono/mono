@@ -966,6 +966,107 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsFalse (r.Read (), "end");
 		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void PositionalParameters1 ()
+		{
+			// ns1 > T:PositionalParametersClass1 > M:_PositionalParameters > foo > 5 > EM:_PositionalParameters > ET:PositionalParametersClass1
+
+			// Note: this can be read, but cannot be written to XML.
+			var obj = new PositionalParametersClass1 ("foo", 5);
+			var r = new XamlObjectReader (obj);
+
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#1-4");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (PositionalParametersClass1), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+			Assert.AreEqual (obj, r.Instance, "so#1-4");
+
+			Assert.IsTrue (r.Read (), "sposprm#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sposprm#2");
+			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "sposprm#3");
+
+			Assert.IsTrue (r.Read (), "sva#1-1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "sva#1-2");
+			Assert.AreEqual ("foo", r.Value, "sva#1-3");
+
+			Assert.IsTrue (r.Read (), "sva#2-1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "sva#2-2");
+			Assert.AreEqual ("5", r.Value, "sva#2-3");
+
+			Assert.IsTrue (r.Read (), "eposprm#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eposprm#2"); // XamlLanguage.PositionalParameters
+
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void PositionalParameters2 ()
+		{
+			// ns1 > T:PositionalParametersWrapper > M:Body > T:PositionalParametersClass1 > M:_PositionalParameters > foo > 5 > EM:_PositionalParameters > ET:PositionalParametersClass1
+
+			var obj = new PositionalParametersWrapper ("foo", 5);
+			var r = new XamlObjectReader (obj);
+
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#1-4");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (PositionalParametersWrapper), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+			Assert.AreEqual (obj, r.Instance, "so#1-4");
+
+			Assert.IsTrue (r.Read (), "sm#1-1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#1-2");
+			Assert.AreEqual (xt.GetMember ("Body"), r.Member, "sm#1-3");
+
+			xt = new XamlType (typeof (PositionalParametersClass1), r.SchemaContext);
+			Assert.IsTrue (r.Read (), "so#2-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2-2");
+			Assert.AreEqual (xt, r.Type, "so#2-3");
+			Assert.AreEqual (obj.Body, r.Instance, "so#2-4");
+
+			Assert.IsTrue (r.Read (), "sposprm#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sposprm#2");
+			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "sposprm#3");
+
+			Assert.IsTrue (r.Read (), "sva#1-1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "sva#1-2");
+			Assert.AreEqual ("foo", r.Value, "sva#1-3");
+
+			Assert.IsTrue (r.Read (), "sva#2-1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "sva#2-2");
+			Assert.AreEqual ("5", r.Value, "sva#2-3");
+
+			Assert.IsTrue (r.Read (), "eposprm#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eposprm#2"); // XamlLanguage.PositionalParameters
+
+			Assert.IsTrue (r.Read (), "eo#2-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2-2");
+
+			Assert.IsTrue (r.Read (), "em#1-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eo#1-2");
+
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
 
 		void SimpleReadStandardType (object instance)
 		{
@@ -1180,5 +1281,44 @@ namespace MonoTests.System.Xaml
 		
 		[ConstructorArgument ("arg2")]
 		public string Bar { get; set; }
+	}
+
+	public class PositionalParametersClass1 : MarkupExtension
+	{
+		public PositionalParametersClass1 (string foo)
+			: this (foo, -1)
+		{
+		}
+		
+		public PositionalParametersClass1 (string foo, int bar)
+		{
+			Foo = foo;
+			Bar = bar;
+		}
+		
+		[ConstructorArgument ("foo")]
+		public string Foo { get; set; }
+
+		[ConstructorArgument ("bar")]
+		public int Bar { get; set; }
+
+		public override object ProvideValue (IServiceProvider sp)
+		{
+			return Foo;
+		}
+	}
+
+	public class PositionalParametersWrapper
+	{
+		public PositionalParametersClass1 Body { get; set; }
+		
+		public PositionalParametersWrapper ()
+		{
+		}
+		
+		public PositionalParametersWrapper (string foo, int bar)
+		{
+			Body = new PositionalParametersClass1 (foo, bar);
+		}
 	}
 }

@@ -746,6 +746,32 @@ namespace MonoTests.System.Xaml
 			dic.Add ("t6", typeof (List<KeyValuePair<int,DateTime>>));
 			Assert.AreEqual (ReadXml ("Dictionary_String_Type.xml").Trim (), XamlServices.Save (dic), "#1");
 		}
+
+		[Test]
+		[ExpectedException (typeof (XamlXmlWriterException))]
+		[Category ("NotWorking")]
+		public void Write_PositionalParameters1 ()
+		{
+			// PositionalParameters can only be written when the 
+			// instance is NOT the root object.
+			//
+			// A single positional parameter can be written as an 
+			// attribute, but there are two in PositionalParameters1.
+			//
+			// A default constructor could be used to not use
+			// PositionalParameters, but there isn't in this type.
+			var obj = new PositionalParametersClass1 ("foo", 5);
+			XamlServices.Save (obj);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_PositionalParameters1Wrapper ()
+		{
+			// Unlike the above case, this has the wrapper object and hence PositionalParametersClass1 can be written as an attribute (markup extension)
+			var obj = new PositionalParametersWrapper ("foo", 5);
+			Assert.AreEqual (ReadXml ("PositionalParametersWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1
