@@ -663,14 +663,12 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_Null ()
 		{
 			Assert.AreEqual (ReadXml ("NullExtension.xml"), XamlServices.Save (null), "#1");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_NullExtension ()
 		{
 			Assert.AreEqual (ReadXml ("NullExtension.xml"), XamlServices.Save (new NullExtension ()), "#1");

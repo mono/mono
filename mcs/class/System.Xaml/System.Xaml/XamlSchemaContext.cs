@@ -194,7 +194,7 @@ namespace System.Xaml
 
 			XamlType ret;
 			if (xamlNamespace == XamlLanguage.Xaml2006Namespace) {
-				ret = XamlLanguage.GetSpecialXaml2006Type (name);
+				ret = XamlLanguage.SpecialNames.Find (name, xamlNamespace);
 				if (ret == null)
 					ret = XamlLanguage.AllTypes.FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
 				if (ret != null)

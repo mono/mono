@@ -39,6 +39,42 @@ namespace System.Xaml
 		public const string Xml1998Namespace = "http://www.w3.org/XML/1998/namespace";
 		internal const string Xmlns2000Namespace = "http://www.w3.org/2000/xmlns/";
 
+		// FIXME: I'm not sure if these "special names" should be resolved like this. I couldn't find any rule so far.
+		internal static readonly SpecialTypeNameList SpecialNames;
+
+		internal class SpecialTypeNameList : List<SpecialTypeName>
+		{
+			internal SpecialTypeNameList ()
+			{
+				Add (new SpecialTypeName ("Array", XamlLanguage.Array));
+				Add (new SpecialTypeName ("Member", XamlLanguage.Member));
+				Add (new SpecialTypeName ("Null", XamlLanguage.Null));
+				Add (new SpecialTypeName ("Property", XamlLanguage.Property));
+				Add (new SpecialTypeName ("Static", XamlLanguage.Static));
+				Add (new SpecialTypeName ("Type", XamlLanguage.Type));
+			}
+
+			public XamlType Find (string name, string ns)
+			{
+				if (ns != XamlLanguage.Xaml2006Namespace)
+					return null;
+				var stn = this.FirstOrDefault (s => s.Name == name);
+				return stn != null ? stn.Type : null;
+			}
+		}
+
+		internal class SpecialTypeName
+		{
+			public SpecialTypeName (string name, XamlType type)
+			{
+				Name = name;
+				Type = type;
+			}
+			
+			public string Name { get; private set; }
+			public XamlType Type { get; private set; }
+		}
+
 		static readonly XamlSchemaContext sctx = new XamlSchemaContext (new Assembly [] {typeof (XamlType).Assembly});
 
 		static XamlType XT<T> ()
@@ -52,6 +88,7 @@ namespace System.Xaml
 		static XamlLanguage ()
 		{
 			InitializingTypes = true;
+
 			// types
 
 			Array = XT<ArrayExtension> ();
@@ -117,6 +154,8 @@ namespace System.Xaml
 			AllDirectives = new ReadOnlyCollection<XamlDirective> (new XamlDirective [] {Arguments, AsyncRecords, Base, Class, ClassAttributes, ClassModifier, Code, ConnectionId, FactoryMethod, FieldModifier, Initialization, Items, Key, Lang, Members, Name, PositionalParameters, Space, Subclass, SynchronousMode, Shared, TypeArguments, Uid, UnknownContent});
 
 			InitializingDirectives = false;
+
+			SpecialNames = new SpecialTypeNameList ();
 		}
 
 		static readonly string [] xaml_nss = new string [] {Xaml2006Namespace};
@@ -215,28 +254,6 @@ namespace System.Xaml
 			}
 		}
 
-		internal static XamlType GetSpecialXaml2006Type (string name)
-		{
-			// FIXME: I'm not really sure if these *special* names 
-			// should be resolved here and there. There just does
-			// not seem to be any other appropriate places.
-			switch (name) {
-			case "Array":
-				return XamlLanguage.Array;
-			case "Member":
-				return XamlLanguage.Member;
-			case "Null":
-				return XamlLanguage.Null;
-			case "Property":
-				return XamlLanguage.Property;
-			case "Static":
-				return XamlLanguage.Static;
-			case "Type":
-				return XamlLanguage.Type;
-			}
-			return null;
-		}
-
 		static readonly int clr_ns_len = "clr-namespace:".Length;
 		static readonly int clr_ass_len = "assembly=".Length;
 
@@ -246,7 +263,7 @@ namespace System.Xaml
 			string name = xmlLocalName;
 
 			if (ns == XamlLanguage.Xaml2006Namespace) {
-				var xt = GetSpecialXaml2006Type (name);
+				var xt = SpecialNames.Find (name, ns);
 				if (xt == null)
 					xt = AllTypes.FirstOrDefault (t => t.Name == xmlLocalName);
 				if (xt == null)
