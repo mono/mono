@@ -2106,6 +2106,8 @@ namespace System.Windows.Forms
 			Controls.ClearImplicit ();
 			Controls.AddImplicit (header_control);
 			Controls.AddImplicit (item_control);
+			Controls.AddImplicit (h_scroll);
+			Controls.AddImplicit (v_scroll);
 			ResumeLayout ();
 		}
 
