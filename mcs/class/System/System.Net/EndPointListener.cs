@@ -58,7 +58,10 @@ namespace System.Net {
 			sock = new Socket (addr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			sock.Bind (endpoint);
 			sock.Listen (500);
-			sock.BeginAccept (OnAccept, this);
+			SocketAsyncEventArgs args = new SocketAsyncEventArgs ();
+			args.UserToken = this;
+			args.Completed += OnAccept;
+			sock.AcceptAsync (args);
 			prefixes = new Hashtable ();
 		}
 
@@ -78,28 +81,27 @@ namespace System.Net {
 			}
 		}
 
-		static void OnAccept (IAsyncResult ares)
+		static void OnAccept (object sender, EventArgs e)
 		{
-			EndPointListener epl = (EndPointListener) ares.AsyncState;
+			SocketAsyncEventArgs args = (SocketAsyncEventArgs) e;
+			EndPointListener epl = (EndPointListener) args.UserToken;
 			Socket accepted = null;
+			if (args.SocketError == SocketError.Success) {
+				accepted = args.AcceptSocket;
+				args.AcceptSocket = null;
+			}
+
 			try {
 				if (epl.sock != null)
-					accepted = epl.sock.EndAccept (ares);
+					epl.sock.AcceptAsync (args);
 			} catch {
-				// Anything to do here?
-			} finally {
-				try {
-					if (epl.sock != null)
-						epl.sock.BeginAccept (OnAccept, epl);
-				} catch {
-					if (accepted != null) {
-						try {
-							accepted.Close ();
-						} catch {}
-						accepted = null;
-					}
-				} 
-			}
+				if (accepted != null) {
+					try {
+						accepted.Close ();
+					} catch {}
+					accepted = null;
+				}
+			} 
 
 			if (accepted == null)
 				return;
