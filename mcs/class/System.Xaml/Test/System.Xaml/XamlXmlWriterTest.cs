@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml;
@@ -630,6 +631,115 @@ namespace MonoTests.System.Xaml
 			xw.WriteValue ("50");
 			xw.Close ();
 			string xml = String.Format (@"<?xml version='1.0' encoding='utf-16'?><TestXmlWriterClass1 xmlns='clr-namespace:MonoTests.System.Xaml;assembly={0}' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'></TestXmlWriterClass1>",  GetType ().Assembly.GetName ().Name);
+		}
+
+		string ReadXml (string name)
+		{
+			return File.ReadAllText ("Test/XmlFiles/" + name).Trim ().Replace ("\r\n", "\n").Replace ("\n", Environment.NewLine);
+		}
+
+		[Test]
+		public void Write_String ()
+		{
+			Assert.AreEqual (ReadXml ("String.xml"), XamlServices.Save ("foo"), "#1");
+		}
+
+		[Test]
+		public void Write_Int32 ()
+		{
+			Assert.AreEqual (ReadXml ("Int32.xml"), XamlServices.Save (5), "#1");
+		}
+
+		[Test]
+		public void Write_DateTime ()
+		{
+			Assert.AreEqual (ReadXml ("DateTime.xml"), XamlServices.Save (new DateTime (2010, 4, 14)), "#1");
+		}
+
+		[Test]
+		public void Write_TimeSpan ()
+		{
+			Assert.AreEqual (ReadXml ("TimeSpan.xml"), XamlServices.Save (TimeSpan.FromMinutes (7)), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_Null ()
+		{
+			Assert.AreEqual (ReadXml ("NullExtension.xml"), XamlServices.Save (null), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_NullExtension ()
+		{
+			Assert.AreEqual (ReadXml ("NullExtension.xml"), XamlServices.Save (new NullExtension ()), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_Type ()
+		{
+			Assert.AreEqual (ReadXml ("Type.xml").Trim (), XamlServices.Save (typeof (int)), "#1");
+		}
+
+		[Test]
+		public void Write_Guid ()
+		{
+			Assert.AreEqual (ReadXml ("Guid.xml").Trim (), XamlServices.Save (Guid.Parse ("9c3345ec-8922-4662-8e8d-a4e41f47cf09")), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_StaticExtension ()
+		{
+			Assert.AreEqual (ReadXml ("StaticExtension.xml").Trim (), XamlServices.Save (new StaticExtension ("FooBar")), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_Reference ()
+		{
+			Assert.AreEqual (ReadXml ("Reference.xml").Trim (), XamlServices.Save (new Reference ("FooBar")), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_ArrayInt32 ()
+		{
+			Assert.AreEqual (ReadXml ("Array_Int32.xml").Trim (), XamlServices.Save (new int [] {4, -5, 0, 255, int.MaxValue}), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_ListInt32 ()
+		{
+			Assert.AreEqual (ReadXml ("List_Int32.xml").Trim (), XamlServices.Save (new int [] {4, -5, 0, 255, int.MaxValue}.ToList ()), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_DictionaryInt32String ()
+		{
+			var dic = new Dictionary<int,string> ();
+			dic.Add (0, "foo");
+			dic.Add (5, "bar");
+			dic.Add (-2, "baz");
+			Assert.AreEqual (ReadXml ("Dictionary_Int32_String.xml").Trim (), XamlServices.Save (dic), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_DictionaryStringType ()
+		{
+			var dic = new Dictionary<string,Type> ();
+			dic.Add ("t1", typeof (int));
+			dic.Add ("t2", typeof (int []));
+			dic.Add ("t3", typeof (int?));
+			dic.Add ("t4", typeof (List<int>));
+			dic.Add ("t5", typeof (Dictionary<int,DateTime>));
+			dic.Add ("t6", typeof (List<KeyValuePair<int,DateTime>>));
+			Assert.AreEqual (ReadXml ("Dictionary_String_Type.xml").Trim (), XamlServices.Save (dic), "#1");
 		}
 	}
 

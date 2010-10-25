@@ -79,12 +79,14 @@ namespace System.Xaml
 
 		public static void Save (Stream stream, object instance)
 		{
-			Save (new XamlXmlWriter (stream, new XamlSchemaContext ()), instance);
+			using (var xw = XmlWriter.Create (stream, new XmlWriterSettings () { OmitXmlDeclaration = true }))
+				Save (xw, instance);
 		}
 
 		public static void Save (TextWriter textWriter, object instance)
 		{
-			Save (new XamlXmlWriter (textWriter, new XamlSchemaContext ()), instance);
+			using (var xw = XmlWriter.Create (textWriter, new XmlWriterSettings () { OmitXmlDeclaration = true }))
+				Save (xw, instance);
 		}
 
 		public static void Save (XmlWriter xmlWriter, object instance)
