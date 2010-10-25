@@ -74,10 +74,11 @@ namespace System.ComponentModel.DataAnnotations
 			return dt.ToString ();
 		}
 
-		[MonoTODO]
 		public override bool IsValid (object value)
 		{
-			throw new NotImplementedException ();
+			// Returns alwasy true 	
+			// See: http://msdn.microsoft.com/en-us/library/cc679235.aspx
+			return true;
 		}
 	}
 }
