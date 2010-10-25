@@ -586,8 +586,9 @@ namespace System.Web.Configuration {
 			HttpContext ctx = HttpContext.Current;
 			HttpRequest req = ctx != null ? ctx.Request : null;
 			string physPath = req != null ? VirtualPathUtility.AppendTrailingSlash (MapPath (req, path)) : null;
+			string appDomainPath = HttpRuntime.AppDomainAppPath;
 			
-			if (physPath != null && !physPath.StartsWith (HttpRuntime.AppDomainAppPath, StringComparison.Ordinal))
+			if (physPath != null && appDomainPath != null && !physPath.StartsWith (appDomainPath, StringComparison.Ordinal))
 				inAnotherApp = true;
 			
 			string dir;
