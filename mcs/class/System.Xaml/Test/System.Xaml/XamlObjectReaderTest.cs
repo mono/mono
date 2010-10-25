@@ -881,6 +881,48 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void Read_CustomMarkupExtension5 ()
+		{
+			var r = new XamlObjectReader (new MyExtension5 ("foo"));
+			r.Read (); // ns
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#1");
+			r.Read (); // note that there wasn't another NamespaceDeclaration.
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#2-0");
+			var xt = r.Type;
+			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (MyExtension5)), xt, "#2");
+			Assert.IsTrue (r.Read (), "#3");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-2");
+			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "#4");
+			Assert.IsTrue (r.Read (), "#5");
+			Assert.AreEqual ("foo", r.Value, "#6");
+			Assert.IsTrue (r.Read (), "#7"); // EndMember
+			Assert.IsTrue (r.Read (), "#8"); // EndObject
+			Assert.IsFalse (r.Read (), "#9");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_CustomMarkupExtension6 ()
+		{
+			var r = new XamlObjectReader (new MyExtension6 ("foo"));
+			r.Read (); // ns
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#1");
+			r.Read (); // note that there wasn't another NamespaceDeclaration.
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#2-0");
+			var xt = r.Type;
+			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (MyExtension6)), xt, "#2");
+			Assert.IsTrue (r.Read (), "#3");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-2");
+			Assert.AreEqual (xt.GetMember ("Foo"), r.Member, "#4"); // this is the only difference between MyExtension5 and MyExtension6.
+			Assert.IsTrue (r.Read (), "#5");
+			Assert.AreEqual ("foo", r.Value, "#6");
+			Assert.IsTrue (r.Read (), "#7"); // EndMember
+			Assert.IsTrue (r.Read (), "#8"); // EndObject
+			Assert.IsFalse (r.Read (), "#9");
+		}
+
+		[Test]
 		public void Read_ArgumentAttributed ()
 		{
 			var obj = new ArgumentAttributed ("foo", "bar");
@@ -1281,6 +1323,44 @@ namespace MonoTests.System.Xaml
 		
 		[ConstructorArgument ("arg2")]
 		public string Bar { get; set; }
+	}
+
+	// no type converter, and there's only one argument == _PositionalParameters is applicable.
+	public class MyExtension5 : MarkupExtension
+	{
+		public MyExtension5 (string arg1)
+		{
+			Foo = arg1;
+		}
+
+		[ConstructorArgument ("arg1")]
+		public string Foo { get; set; }
+		
+		public override object ProvideValue (IServiceProvider sp)
+		{
+			return Foo;
+		}
+	}
+
+	// Almost the same as MyExtension5, BUT there is default constructor which XamlObjectReader prefers.
+	public class MyExtension6 : MarkupExtension
+	{
+		public MyExtension6 ()
+		{
+		}
+
+		public MyExtension6 (string arg1)
+		{
+			Foo = arg1;
+		}
+
+		[ConstructorArgument ("arg1")]
+		public string Foo { get; set; }
+		
+		public override object ProvideValue (IServiceProvider sp)
+		{
+			return Foo;
+		}
 	}
 
 	public class PositionalParametersClass1 : MarkupExtension

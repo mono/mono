@@ -221,13 +221,14 @@ namespace System.Xaml
 				// -> namespaces
 				var d = new Dictionary<string,string> ();
 				//l.Sort ((p1, p2) => String.CompareOrdinal (p1.Key, p2.Key));
-				CollectNamespaces (d, root);
+				CollectNamespaces (d, root, true);
 				var nss = from k in d.Keys select new NamespaceDeclaration (k, d [k]);
 				namespaces = new NSList (XamlNodeType.StartObject, nss);
 				namespaces.Sort ((n1, n2) => String.CompareOrdinal (n1.Prefix, n2.Prefix));
 				ns_iterator = namespaces.GetEnumerator ();
 
-				ns_iterator.MoveNext ();
+				if (!ns_iterator.MoveNext ())
+					throw new Exception ("Unexpected internal state: there should be at least one xmlnsdecl");
 				node_type = XamlNodeType.NamespaceDeclaration;
 				return true;
 
@@ -399,33 +400,51 @@ namespace System.Xaml
 			return o;
 		}
 
-		void CollectNamespaces (Dictionary<string,string> d, object o)
+		void CollectNamespaces (Dictionary<string,string> d, object o, bool topLevel)
 		{
 			o = GetExtensionWrappedInstance (o);
 			var xt = SchemaContext.GetXamlType (o.GetType ());
 			
 			var ns = xt.PreferredXamlNamespace;
-			if (!xt.IsMarkupExtension || xt.TypeConverter == null) // FIXME: not sure why this gives the difference - see XamlObjectReaderTest.Read_CustomMarkupExtension2().
+			
+			// There are couple of conditions that namespaces involve:
+			//	- If it is top-level. Then it outputs ns as the wrapper element.
+			//	- Othewise, if the object is MarkupExtension, and
+			//	  - if it has TypeConverter, then the contents are serialized into a string, so ignore xt's namespace.
+			//	    FIXME: the string value might involve QName.
+			//	  - if it uses PositionalParameters, then ns lookup logic may change. It does not involve the xt's namespace here. (FIXME: ...probably.)
+			//	- Otherwise, add the ns.
+			//
+			// See XamlObjectReaderTest.Read_CustomMarkupExtension*() tests.
+			if (topLevel || !xt.IsMarkupExtension || xt.TypeConverter == null)
 				CheckAddNamespace (d, ns);
 
-			// FIXME: I cannot find any reason why it converts the instance to string like this...
+			// FIXME: give full explanation on this check (seealso above).
 			if (xt.PreferredXamlNamespace != XamlLanguage.Xaml2006Namespace && xt.TypeConverter != null && xt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
 				return; // the object is written as string value, so no member namespace will be involved.
 
-			// FIXME: This should limit to GetAllObjectReaderMembers(), but it blocks some tests.
-			foreach (var xm in xt.GetAllObjectReaderMembers (o, null).Concat (xt.GetAllMembers ()).Distinct ()) {
-				ns = xm.PreferredXamlNamespace;
-				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace) {
-					CheckAddNamespace (d, ns);
-					continue;
+			foreach (var xm in xt.GetAllObjectReaderMembers (o, null)) {
+				// Handle PositionalParameters specially.
+				// FIXME: x:Arguments too?
+				if (xm == XamlLanguage.PositionalParameters) {
+					foreach (var argm in xt.GetConstructorArguments ())
+						CollectNamespaces (d, argm, o, xt);
 				}
-				if (!xm.IsReadPublic)
-					continue;
-				if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)
-					continue; // FIXME: process them too.
-				var mv = GetMemberValueOf (xm, o, xt, d);
-				CollectNamespaces (d, mv);
+				else
+					CollectNamespaces (d, xm, o, xt);
 			}
+		}
+
+		void CollectNamespaces (Dictionary<string,string> d, XamlMember xm, object o, XamlType xtOfObject)
+		{
+			var ns = xm.PreferredXamlNamespace;
+			CheckAddNamespace (d, ns);
+			if (!xm.IsReadPublic)
+				return;
+			if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)
+				return; // FIXME: process them too.
+			var mv = GetMemberValueOf (xm, o, xtOfObject, d);
+			CollectNamespaces (d, mv, false);
 		}
 
 		// This assumes that the next member is already on current position on current iterator.
