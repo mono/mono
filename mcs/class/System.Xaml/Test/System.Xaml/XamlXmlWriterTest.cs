@@ -696,6 +696,13 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		[Category ("NotWorking")]
+		public void Write_StaticExtension2 ()
+		{
+			Assert.AreEqual (ReadXml ("StaticExtension.xml").Trim (), XamlServices.Save (new StaticExtension () { Member = "FooBar"}), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
 		public void Write_Reference ()
 		{
 			Assert.AreEqual (ReadXml ("Reference.xml").Trim (), XamlServices.Save (new Reference ("FooBar")), "#1");

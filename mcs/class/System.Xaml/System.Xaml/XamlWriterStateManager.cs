@@ -117,6 +117,10 @@ namespace System.Xaml
 		XamlWriteState state = XamlWriteState.Initial;
 		bool ns_pushed;
 
+		public bool HasNamespaces {
+			get { return ns_pushed; }
+		}
+
 		public void OnClosingItem ()
 		{
 			// somewhat hacky state change to not reject StartMember->EndMember.

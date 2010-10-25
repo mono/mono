@@ -236,6 +236,7 @@ namespace MonoTests.System.Xaml
 			var d = XamlLanguage.PositionalParameters;
 			// weird name
 			TestXamlDirectiveCommon (d, "_PositionalParameters", AllowedMemberLocations.Any, typeof (List<object>));
+			// LAMESPEC: In [MS-XAML-2009] AllowedLocations is None, unlike this Any value.
 		}
 
 		[Test]

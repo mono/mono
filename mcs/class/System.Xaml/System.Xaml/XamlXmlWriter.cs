@@ -26,6 +26,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Markup;
+using System.Xaml.Schema;
 using System.Xml;
 
 /*
@@ -85,7 +86,7 @@ namespace System.Xaml
 		XamlWriterStateManager manager;
 
 		Stack<object> nodes = new Stack<object> ();
-		bool is_first_member_content, has_namespace;
+		bool is_first_member_content, member_had_namespaces;
 		object first_member_value;
 
 		public override XamlSchemaContext SchemaContext {
@@ -126,12 +127,13 @@ namespace System.Xaml
 			manager.EndMember ();
 			WriteStackedStartMember (XamlNodeType.EndMember);
 			DoEndMember ();
-
+			member_had_namespaces = false;
 		}
 
 		public override void WriteEndObject ()
 		{
 			manager.EndObject (nodes.Count > 1);
+			WritePendingNamespaces ();
 			w.WriteEndElement ();
 			nodes.Pop ();
 		}
@@ -158,13 +160,15 @@ namespace System.Xaml
 			manager.Namespace ();
 
 			nodes.Push (namespaceDeclaration);
-			has_namespace = true;
 		}
 
 		public override void WriteStartMember (XamlMember property)
 		{
 			if (property == null)
 				throw new ArgumentNullException ("property");
+
+			if (manager.HasNamespaces)
+				member_had_namespaces = true;
 
 			manager.StartMember ();
 			nodes.Push (property);
@@ -192,7 +196,7 @@ namespace System.Xaml
 
 			manager.Value ();
 
-			var xt = GetCurrentType (true);
+			var xt = value != null ? SchemaContext.GetXamlType (value.GetType ()) : XamlLanguage.Null;
 			
 			var xm = GetNonNamespaceNode () as XamlMember;
 			if (xm == XamlLanguage.Initialization) {
@@ -203,7 +207,7 @@ namespace System.Xaml
 
 			if (!is_first_member_content) {
 				WriteStackedStartMember (XamlNodeType.Value);
-				DoWriteValue (value);
+				DoWriteValue (value, IsAttribute (xt, xm));
 			}
 			else
 				first_member_value = value;
@@ -214,13 +218,38 @@ namespace System.Xaml
 			var xm = nodes.Pop (); // XamlMember
 			if (xm == XamlLanguage.Initialization) {
 				// do nothing
-			} else if (w.WriteState == WriteState.Content)
-				w.WriteEndElement ();
-			else
-				w.WriteEndAttribute ();
+			}
+			else if (xm == XamlLanguage.PositionalParameters)
+				throw new NotImplementedException ();
+			else {
+				switch (w.WriteState) {
+				case WriteState.Content:
+				case WriteState.Element:
+					WritePendingNamespaces ();
+					w.WriteEndElement ();
+					break;
+				default:
+					w.WriteEndAttribute ();
+					break;
+				}
+			}
 
 			is_first_member_content = false;
 			first_member_value = null;
+		}
+
+		bool IsAttribute (XamlType xt, XamlMember xm)
+		{
+			if (xm == XamlLanguage.Initialization)
+				return false;
+			if (w.WriteState == WriteState.Content)
+				return false;
+			var xd = xm as XamlDirective;
+			if (xd != null && (xd.AllowedLocation & AllowedMemberLocations.Attribute) == 0)
+				return false;
+			if (xm.TypeConverter != null && xm.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
+				return true;
+			return false;
 		}
 
 		void WriteStackedStartMember (XamlNodeType next)
@@ -232,14 +261,20 @@ namespace System.Xaml
 			if (xm == null)
 				return;
 
+			bool isAttr = false;
 			if (xm == XamlLanguage.Initialization) {
 				// do nothing
-			} else if (next == XamlNodeType.StartObject || w.WriteState == WriteState.Content || has_namespace)
+			}
+			else if (xm == XamlLanguage.PositionalParameters)
+				throw new NotImplementedException ();
+			else if (member_had_namespaces || next == XamlNodeType.StartObject || !IsAttribute (GetCurrentType (false), xm))
 				DoWriteStartMemberElement (xm);
-			else
+			else {
+				isAttr = true;
 				DoWriteStartMemberAttribute (xm);
+			}
 			if (first_member_value != null)
-				DoWriteValue (first_member_value);
+				DoWriteValue (first_member_value, isAttr);
 			is_first_member_content = false;
 		}
 
@@ -247,7 +282,7 @@ namespace System.Xaml
 		{
 			string prefix = GetPrefix (xamlType.PreferredXamlNamespace);
 			w.WriteStartElement (prefix, xamlType.InternalXmlName, xamlType.PreferredXamlNamespace);
-			WriteAndClearNamespaces ();
+			WritePendingNamespaces ();
 		}
 		
 		void DoWriteStartMemberElement (XamlMember xm)
@@ -256,13 +291,11 @@ namespace System.Xaml
 			string prefix = GetPrefix (xm.PreferredXamlNamespace);
 			string name = xm.IsDirective ? xm.Name : String.Concat (xt.Name, ".", xm.Name);
 			w.WriteStartElement (prefix, name, xm.PreferredXamlNamespace);
-			WriteAndClearNamespaces ();
+			WritePendingNamespaces ();
 		}
 		
 		void DoWriteStartMemberAttribute (XamlMember xm)
 		{
-			WriteAndClearNamespaces ();
-			
 			var xt = GetCurrentType ();
 			if (xt.PreferredXamlNamespace == xm.PreferredXamlNamespace)
 				w.WriteStartAttribute (xm.Name);
@@ -272,11 +305,14 @@ namespace System.Xaml
 			}
 		}
 
-		void DoWriteValue (object value)
+		void DoWriteValue (object value, bool isAttr)
 		{
 			var xt = value == null ? XamlLanguage.Null : SchemaContext.GetXamlType (value.GetType ());
+
 			var vs = xt.TypeConverter;
 			var c = vs != null ? vs.ConverterInstance : null;
+			if (!isAttr)
+				WritePendingNamespaces ();
 			if (c != null && c.CanConvertTo (typeof (string)))
 				w.WriteString (c.ConvertToInvariantString (value));
 			else
@@ -330,8 +366,11 @@ namespace System.Xaml
 
 		Stack<NamespaceDeclaration> tmp_nss = new Stack<NamespaceDeclaration> ();
 
-		void WriteAndClearNamespaces ()
+		void WritePendingNamespaces ()
 		{
+			if (w.WriteState != WriteState.Element)
+				return;
+
 			// write namespace that are put *before* current item.
 
 			var top = nodes.Pop (); // temporarily pop out
@@ -349,7 +388,6 @@ namespace System.Xaml
 				var nd = tmp_nss.Pop ();
 				DoWriteNamespace (nd);
 			}
-			has_namespace = false;
 			manager.NamespaceCleanedUp ();
 
 			nodes.Push (top); // push back
