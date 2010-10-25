@@ -1,0 +1,8 @@
+<Guid
+ xmlns="clr-namespace:System;assembly=mscorlib"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ x:FactoryMethod="Parse">
+  <x:Arguments>
+    <x:String>9c3345ec-8922-4662-8e8d-a4e41f47cf09</x:String>
+  </x:Arguments>
+</Guid>
