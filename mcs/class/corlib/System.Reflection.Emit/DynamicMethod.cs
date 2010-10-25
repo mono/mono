@@ -432,7 +432,7 @@ namespace System.Reflection.Emit {
 			throw new InvalidOperationException ();
 		}
 
-		public int GetToken (MemberInfo member) {
+		public int GetToken (MemberInfo member, bool create_open_instance) {
 			return m.AddRef (member);
 		}
 

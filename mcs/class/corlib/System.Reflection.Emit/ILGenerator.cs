@@ -177,7 +177,7 @@ namespace System.Reflection.Emit {
 	internal interface TokenGenerator {
 		int GetToken (string str);
 
-		int GetToken (MemberInfo member);
+		int GetToken (MemberInfo member, bool create_open_instance);
 
 		int GetToken (MethodInfo method, Type[] opt_param_types);
 
@@ -516,7 +516,7 @@ namespace System.Reflection.Emit {
 		[ComVisible (true)]
 		public virtual void Emit (OpCode opcode, ConstructorInfo con)
 		{
-			int token = token_gen.GetToken (con);
+			int token = token_gen.GetToken (con, true);
 			make_room (6);
 			ll_emit (opcode);
 			if (con.DeclaringType.Module == module)
@@ -549,7 +549,7 @@ namespace System.Reflection.Emit {
 		
 		public virtual void Emit (OpCode opcode, FieldInfo field)
 		{
-			int token = token_gen.GetToken (field);
+			int token = token_gen.GetToken (field, true);
 			make_room (6);
 			ll_emit (opcode);
 			if (field.DeclaringType.Module == module)
@@ -729,7 +729,7 @@ namespace System.Reflection.Emit {
 			if ((meth is DynamicMethod) && ((opcode == OpCodes.Ldftn) || (opcode == OpCodes.Ldvirtftn) || (opcode == OpCodes.Ldtoken)))
 				throw new ArgumentException ("Ldtoken, Ldftn and Ldvirtftn OpCodes cannot target DynamicMethods.");
 
-			int token = token_gen.GetToken (meth);
+			int token = token_gen.GetToken (meth, true);
 			make_room (6);
 			ll_emit (opcode);
 			Type declaringType = meth.DeclaringType;
@@ -811,7 +811,7 @@ namespace System.Reflection.Emit {
 
 			make_room (6);
 			ll_emit (opcode);
-			emit_int (token_gen.GetToken (cls));
+			emit_int (token_gen.GetToken (cls, opcode != OpCodes.Ldtoken));
 		}
 
 		[MonoLimitation ("vararg methods are not supported")]
