@@ -6,6 +6,7 @@
 // (C) Novell, Inc.  http://www.novell.com
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -452,6 +453,53 @@ namespace MonoTests.System.Reflection.Emit
 			ILGenerator ig = il_gen;
 
 			ig.Emit (OpCodes.Ldtoken, typeof (int).MakeByRefType ());
+		}
+
+
+
+		[Test] //bug #649017
+		public void GtdEncodingAsOpenInstance () {
+	        AssemblyName asmname = new AssemblyName ();
+	        asmname.Name = "test";
+	        AssemblyBuilder asmbuild = Thread.GetDomain ().DefineDynamicAssembly (asmname, AssemblyBuilderAccess.RunAndSave);
+	        ModuleBuilder modbuild = asmbuild.DefineDynamicModule ("modulename", "test.exe");
+	
+	        TypeBuilder myType = modbuild.DefineType ("Sample", TypeAttributes.Public);
+	
+	        string[] typeParamNames = { "TFirst" };
+	        myType.DefineGenericParameters (typeParamNames);
+	
+	        var nested = myType.DefineNestedType ("nested");
+	        nested.DefineGenericParameters (typeParamNames);
+	
+	        var m = myType.DefineMethod ("test", MethodAttributes.Public);
+	        m.SetParameters (myType);
+	
+	        var ilgen = m.GetILGenerator ();
+	        ilgen.Emit (OpCodes.Castclass, nested);
+	        ilgen.Emit (OpCodes.Castclass, typeof (List<>));
+	        ilgen.Emit (OpCodes.Ldtoken, nested);
+	        ilgen.Emit (OpCodes.Ldtoken, typeof (List<>));
+	
+	        var baked = myType.CreateType ();
+	        nested.CreateType ();
+	
+			var method = baked.GetMethod ("test");
+			var body = method.GetMethodBody ();
+			/*
+			The resulting IL is:
+			[ 0] 0x74 token:uint
+			[ 5] 0x74 token:uint
+			[10] 0xd0 token:uint
+			[10] 0xd0 token:uint
+			The first two tokens must be to typespecs and the last two to typeref/typedef*/
+			var il = body.GetILAsByteArray ();
+		
+			Assert.AreEqual (20, il.Length, "#1");
+			Assert.AreEqual (0x1B, il [4]); //typespec
+			Assert.AreEqual (0x1B, il [9]); //typespec
+			Assert.AreEqual (0x02, il [14]); //typedef
+			Assert.AreEqual (0x01, il [19]); //typeref
 		}
 	}
 }
