@@ -515,6 +515,7 @@ public class Tests : TestsBase
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void invoke () {
 		new Tests ().invoke1 (new Tests2 (), new AStruct () { i = 42, j = (IntPtr)43 }, new GStruct<int> { j = 42 });
+		new Tests ().invoke_ex ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -524,6 +525,19 @@ public class Tests : TestsBase
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public void invoke2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void invoke_ex () {
+		invoke_ex_inner ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void invoke_ex_inner () {
+		try {
+			throw new Exception ();
+		} catch {
+		}
 	}
 
 	int counter;

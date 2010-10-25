@@ -1908,6 +1908,24 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void DisabledExceptionDuringInvoke () {
+		Event e = run_until ("invoke_ex");
+
+		MethodMirror m = entry_point.DeclaringType.GetMethod ("invoke_ex_inner");
+
+		StackFrame frame = e.Thread.GetFrames () [0];
+		var o = frame.GetThis () as ObjectMirror;
+
+		var req = vm.CreateExceptionRequest (null);
+		req.Enable ();
+
+		// Check InvokeOptions.DisableBreakpoints flag
+		o.InvokeMethod (e.Thread, m, null, InvokeOptions.DisableBreakpoints);
+
+		req.Disable ();
+	}
+
+	[Test]
 	public void InvokeSingleThreaded () {
 		vm.Dispose ();
 

@@ -8,9 +8,10 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:Mono.Cecil.dll /r:System.Core.dll 
 
 TEST_MCS_FLAGS = /r:Mono.Cecil.dll
 
+test: dtest-app.exe
 check: dtest-app.exe
 
-dtest-app.exe:
+dtest-app.exe: Test/dtest-app.cs
 	$(CSCOMPILE) -out:$@ -unsafe -debug Test/dtest-app.cs
 
 CLEAN_FILES = dtest-app.exe dtest-app.exe.mdb
