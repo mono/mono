@@ -37,6 +37,7 @@ namespace Mono.Linker {
 
 		private static readonly object _actionKey = new object ();
 		private static readonly object _markedKey = new object ();
+		private static readonly object _markedReasonKey = new object();
 		private static readonly object _processedKey = new object ();
 		private static readonly object _preservedKey = new object ();
 		private static readonly object _preservedMethodsKey = new object ();
@@ -83,7 +84,30 @@ namespace Mono.Linker {
 
 		public static void Mark (IAnnotationProvider provider)
 		{
+			Check(provider);
 			provider.Annotations [_markedKey] = _markedKey;
+		}
+
+		private static void Check(IAnnotationProvider provider)
+		{
+			//this is just very helpful for figuring out why something is marked but not recorded why
+			if (provider.ToString().Contains("System.Security.SecurityManager"))
+			{
+
+			}
+		}
+
+		public static void Mark(IAnnotationProvider provider, object markReason)
+		{
+			Check(provider);
+			provider.Annotations[_markedKey] = _markedKey;
+			if (provider.Annotations[_markedReasonKey] == null)
+				provider.Annotations[_markedReasonKey] = markReason;
+		}
+
+		public static object GetMarkReason(IAnnotationProvider provider)
+		{
+			return provider.Annotations[_markedReasonKey];
 		}
 
 		public static bool IsMarked (IAnnotationProvider provider)
@@ -108,7 +132,18 @@ namespace Mono.Linker {
 
 		public static void SetPreserve (TypeDefinition type, TypePreserve preserve)
 		{
-			AsProvider (type).Annotations [_preservedKey] = preserve;
+			TypePreserve effectivePreserve = IsPreserved(type)
+				? Merge(preserve, GetPreserve(type))
+				: preserve;
+			AsProvider (type).Annotations [_preservedKey] = effectivePreserve;
+		}
+				        
+		private static TypePreserve Merge (TypePreserve x, TypePreserve y)
+		{
+			if (x == y) return x;
+			if (x == TypePreserve.Nothing) return y;
+			if (y == TypePreserve.Nothing) return x;
+			return TypePreserve.All;
 		}
 
 		public static TypePreserve GetPreserve (TypeDefinition type)

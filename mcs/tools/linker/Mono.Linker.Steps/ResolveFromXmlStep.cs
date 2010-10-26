@@ -83,7 +83,7 @@ namespace Mono.Linker.Steps {
 
 		static void MarkAndPreserveAll (TypeDefinition type)
 		{
-			Annotations.Mark (type);
+			Annotations.Mark (type,"ResolveFromXMLStep");
 			Annotations.SetPreserve (type, TypePreserve.All);
 
 			if (!type.HasNestedTypes)
@@ -143,7 +143,7 @@ namespace Mono.Linker.Steps {
 				return;
 			}
 
-			Annotations.Mark (type);
+			Annotations.Mark (type, "ResolveFromXmlStep");
 
 			switch (preserve) {
 			case TypePreserve.Nothing:

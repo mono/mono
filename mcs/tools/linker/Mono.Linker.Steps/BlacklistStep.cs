@@ -37,6 +37,17 @@ namespace Mono.Linker.Steps {
 
 	public class BlacklistStep : BaseStep {
 
+		private Assembly resourceAssemblyToReadBlacklistsFrom;
+
+		public BlacklistStep() : this(Assembly.GetExecutingAssembly())
+		{
+		}
+
+		public BlacklistStep(Assembly resourceAssemblyToReadBlacklistsFrom)
+		{
+			this.resourceAssemblyToReadBlacklistsFrom = resourceAssemblyToReadBlacklistsFrom;
+		}
+
 		protected override bool ConditionToProcess()
 		{
 			return Context.CoreAction == AssemblyAction.Link;
@@ -44,7 +55,8 @@ namespace Mono.Linker.Steps {
 
 		protected override void Process ()
 		{
-			foreach (string name in Assembly.GetExecutingAssembly ().GetManifestResourceNames ()) {
+			foreach (string name in resourceAssemblyToReadBlacklistsFrom.GetManifestResourceNames())
+			{
 				if (!IsReferenced (GetAssemblyName (name)))
 					continue;
 
@@ -70,21 +82,21 @@ namespace Mono.Linker.Steps {
 			return false;
 		}
 
-		static ResolveFromXmlStep GetResolveStep (string descriptor)
+		ResolveFromXmlStep GetResolveStep (string descriptor)
 		{
 			return new ResolveFromXmlStep (GetDescriptor (descriptor));
 		}
 
-		static XPathDocument GetDescriptor (string descriptor)
+		XPathDocument GetDescriptor (string descriptor)
 		{
 			using (StreamReader sr = new StreamReader (GetResource (descriptor))) {
 				return new XPathDocument (new StringReader (sr.ReadToEnd ()));
 			}
 		}
 
-		static Stream GetResource (string descriptor)
+		Stream GetResource (string descriptor)
 		{
-			return Assembly.GetExecutingAssembly ().GetManifestResourceStream (descriptor);
+			return resourceAssemblyToReadBlacklistsFrom.GetManifestResourceStream(descriptor);
 		}
 	}
 }
