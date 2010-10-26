@@ -606,7 +606,7 @@ is_valid_generic_instantiation (MonoGenericContainer *gc, MonoGenericContext *co
  * This means that @candidate constraints are a super set of @target constaints
  */
 static gboolean
-mono_generic_param_is_constraint_compatible (VerifyContext *ctx, MonoGenericParam *target, MonoGenericParam *candidate, MonoGenericContext *context)
+mono_generic_param_is_constraint_compatible (VerifyContext *ctx, MonoGenericParam *target, MonoGenericParam *candidate, MonoClass *candidate_param_class, MonoGenericContext *context)
 {
 	MonoGenericParamInfo *tinfo = mono_generic_param_info (target);
 	MonoGenericParamInfo *cinfo = mono_generic_param_info (candidate);
@@ -627,6 +627,13 @@ mono_generic_param_is_constraint_compatible (VerifyContext *ctx, MonoGenericPara
 				return FALSE;
 			tc = mono_class_from_mono_type (inflated);
 			mono_metadata_free_type (inflated);
+
+			/*
+			 * A constraint from @target might inflate into @candidate itself and in that case we don't need
+			 * check it's constraints since it satisfy the constraint by itself.
+			 */
+			if (mono_metadata_type_equal (&tc->byval_arg, &candidate_param_class->byval_arg))
+				continue;
 
 			for (candidate_class = cinfo->constraints; *candidate_class; ++candidate_class) {
 				MonoClass *cc;
@@ -704,6 +711,7 @@ generic_arguments_respect_constraints (VerifyContext *ctx, MonoGenericContainer 
 		MonoType *type = ginst->type_argv [i];
 		MonoGenericParam *target = mono_generic_container_get_param (gc, i);
 		MonoGenericParam *candidate;
+		MonoClass *candidate_class;
 
 		if (!mono_type_is_generic_argument (type))
 			continue;
@@ -712,8 +720,9 @@ generic_arguments_respect_constraints (VerifyContext *ctx, MonoGenericContainer 
 			return FALSE;
 
 		candidate = verifier_get_generic_param_from_type (ctx, type);
+		candidate_class = mono_class_from_mono_type (type);
 
-		if (!mono_generic_param_is_constraint_compatible (ctx, target, candidate, context))
+		if (!mono_generic_param_is_constraint_compatible (ctx, target, candidate, candidate_class, context))
 			return FALSE;
 	}
 	return TRUE;
@@ -3552,6 +3561,14 @@ do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 			char *name = mono_method_full_name (method, TRUE);
 			CODE_NOT_VERIFIABLE2 (ctx, g_strdup_printf ("Method %s is not accessible at 0x%04x", name, ctx->ip_offset), MONO_EXCEPTION_METHOD_ACCESS);
 			g_free (name);
+		if (!verify_stack_type_compatibility (ctx, type, &copy)) {
+			 char *expected = mono_type_full_name (type);
+			 char *found = stack_slot_full_name (&copy);
+			 CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible this argument on stack. expected %s but found %s at 0x%04x", expected, found, ctx->ip_offset));
+			 g_free (expected);
+			 g_free (found);
+		}
+		
 		}
 
 	} else if (!IS_SKIP_VISIBILITY (ctx) && !mono_method_can_access_method_full (ctx->method, method, NULL)) {
