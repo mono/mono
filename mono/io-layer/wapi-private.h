@@ -172,7 +172,12 @@ struct _WapiHandleSharedLayout
 	struct _WapiHandleShared handles[_WAPI_HANDLE_INITIAL_COUNT];
 };
 
+// Why to allocate so much handles for mobile platforms? :) (mantas)
+#if defined(__arm__)
+#define _WAPI_FILESHARE_SIZE 1024
+#else
 #define _WAPI_FILESHARE_SIZE 102400
+#endif
 
 struct _WapiFileShare
 {
