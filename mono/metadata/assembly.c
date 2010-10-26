@@ -162,15 +162,13 @@ mono_public_tokens_are_equal (const unsigned char *pubt1, const unsigned char *p
 	return memcmp (pubt1, pubt2, 16) == 0;
 }
 
-static void
-check_path_env (void)
+/**
+ *	Explicitly sets assemblies path (similar to check_path_env), useful for platforms that do not support environment variables.
+ */
+void
+mono_set_assemblies_path (const char* path)
 {
-	const char *path;
 	char **splitted, **dest;
-	
-	path = g_getenv ("MONO_PATH");
-	if (!path)
-		return;
 
 	splitted = g_strsplit (path, G_SEARCHPATH_SEPARATOR_S, 1000);
 	if (assemblies_path)
@@ -193,6 +191,17 @@ check_path_env (void)
 
 		splitted++;
 	}
+}
+
+static void
+check_path_env (void)
+{
+	const char* path;
+	path = g_getenv ("MONO_PATH");
+	if (!path || assemblies_path != NULL)
+		return;
+
+	mono_set_assemblies_path(path);
 }
 
 static void
