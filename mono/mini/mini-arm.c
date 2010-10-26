@@ -40,6 +40,13 @@ static int v5_supported = 0;
 static int v7_supported = 0;
 static int thumb_supported = 0;
 
+/*                                                                                                                                                                                                                                                                    
+ * Whenever to use the iphone ABI extensions:                                                                                                                                                                                                                         
+ * http://developer.apple.com/iphone/library/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARMv6FunctionCallingConventions.html                                                                                                                        
+ * Basically, r7 is used as a frame pointer and it should point to the saved r7 + lr.                                                                                                                                                                                 
+ */                                                                                                                                                                                                                                                                   
+static int iphone_abi = TRUE;   
+
 /*
  * The code generated for sequence points reads from this location, which is
  * made read-only when single stepping is enabled.
@@ -535,6 +542,7 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 #if __APPLE__
 	thumb_supported = TRUE;
 	v5_supported = TRUE;
+	iphone_abi = TRUE;
 #else
 	char buf [512];
 	char *line;
@@ -646,7 +654,11 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 	regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V1));
 	regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V2));
 	regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V3));
-	regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V4));
+        if (iphone_abi)                                                                                                                                                                                                                                                
+                /* V4=R7 is used as a frame pointer, but V7=R10 is preserved */                                                                                                                                                                                        
+                regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V7));                                                                                                                                                                                            
+        else                                                                                                                                                                                                                                                           
+                regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V4));
 	if (!(cfg->compile_aot || cfg->uses_rgctx_reg))
 		/* V5 is reserved for passing the vtable/rgctx/IMT method */
 		regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V5));
@@ -3127,7 +3139,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_NOT_NULL:
 			break;
 		case OP_SEQ_POINT: {
-			int i, il_offset;
+			int i;
 			MonoInst *info_var = cfg->arch.seq_point_info_var;
 			MonoInst *ss_trigger_page_var = cfg->arch.ss_trigger_page_var;
 			MonoInst *var;
@@ -4338,10 +4350,28 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	alloc_size = cfg->stack_offset;
 	pos = 0;
 
+	prev_sp_offset = 0;
 	if (!method->save_lmf) {
+                if (iphone_abi) {                                                                                                                                                                                                                                      
+                        /*                                                                                                                                                                                                                                             
+                         * The iphone uses R7 as the frame pointer, and it points at the saved                                                                                                                                                                         
+                         * r7+lr:                                                                                                                                                                                                                                      
+                         *         <lr>                                                                                                                                                                                                                                
+                         * r7 ->   <r7>                                                                                                                                                                                                                                
+                         *         <rest of frame>                                                                                                                                                                                                                     
+                         * We can't use r7 as a frame pointer since it points into the middle of                                                                                                                                                                       
+                         * the frame, so we keep using our own frame pointer.                                                                                                                                                                                          
+                         * FIXME: Optimize this.                                                                                                                                                                                                                       
+                         */                                                                                                                                                                                                                                            
+                        ARM_PUSH (code, (1 << ARMREG_R7) | (1 << ARMREG_LR));                                                                                                                                                                                          
+                        ARM_MOV_REG_REG (code, ARMREG_R7, ARMREG_SP);                                                                                                                                                                                                  
+                        prev_sp_offset += 8; /* r7 and lr */                                                                                                                                                                                                           
+                        mono_emit_unwind_op_def_cfa_offset (cfg, code, prev_sp_offset);                                                                                                                                                                                
+                        mono_emit_unwind_op_offset (cfg, code, ARMREG_R7, (- prev_sp_offset) + 0);                                                                                                                                                                     
+                }
 		/* We save SP by storing it into IP and saving IP */
 		ARM_PUSH (code, (cfg->used_int_regs | (1 << ARMREG_IP) | (1 << ARMREG_LR)));
-		prev_sp_offset = 8; /* ip and lr */
+		prev_sp_offset += 8; /* ip and lr */
 		for (i = 0; i < 16; ++i) {
 			if (cfg->used_int_regs & (1 << i))
 				prev_sp_offset += 4;
@@ -4356,7 +4386,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		}
 	} else {
 		ARM_PUSH (code, 0x5ff0);
-		prev_sp_offset = 4 * 10; /* all but r0-r3, sp and pc */
+		prev_sp_offset += 4 * 10; /* all but r0-r3, sp and pc */
 		mono_emit_unwind_op_def_cfa_offset (cfg, code, prev_sp_offset);
 		reg_offset = 0;
 		for (i = 0; i < 16; ++i) {
@@ -4751,8 +4781,25 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			code = mono_arm_emit_load_imm (code, ARMREG_IP, cfg->stack_usage);
 			ARM_ADD_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_IP);
 		}
-		/* FIXME: add v4 thumb interworking support */
-		ARM_POP_NWB (code, cfg->used_int_regs | ((1 << ARMREG_SP) | (1 << ARMREG_PC)));
+                if (iphone_abi) {                                                                                                                                                                                                                                      
+                        /* Restore saved gregs */                                                                                                                                                                                                                      
+                        ARM_POP (code, cfg->used_int_regs);                                                                                                                                                                                                            
+                        /*                                                                                                                                                                                                                                             
+                         * The stack now contains:                                                                                                                                                                                                                     
+                         * <lr>                                                                                                                                                                                                                                        
+                         * <r7>                                                                                                                                                                                                                                        
+                         * <lr>                                                                                                                                                                                                                                        
+                         * <sp>                                                                                                                                                                                                                                        
+                         */                                                                                                                                                                                                                                            
+                        /* Restore saved r7 */                                                                                                                                                                                                                         
+                        ARM_LDR_IMM (code, ARMREG_R7, ARMREG_SP, 8);                                                                                                                                                                                                   
+                        /* Restore IP to SP and LR to PC */                                                                                                                                                                                                            
+                        ARM_POP_NWB (code, ((1 << ARMREG_SP) | (1 << ARMREG_PC)));                                                                                                                                                                                     
+                } else {                                                                                                                                                                                                                                               
+                        /* Restore saved gregs, restore IP to SP and LR to PC */                                                                                                                                                                                       
+                        /* FIXME: add v4 thumb interworking support */                                                                                                                                                                                                 
+                        ARM_POP_NWB (code, cfg->used_int_regs | ((1 << ARMREG_SP) | (1 << ARMREG_PC)));                                                                                                                                                                
+                } 
 	}
 
 	cfg->code_len = code - cfg->native_code;
