@@ -87,7 +87,13 @@ namespace System.Xml.Xsl {
 
 		static object GetDefaultDebugger ()
 		{
-			string env = Environment.GetEnvironmentVariable ("MONO_XSLT_DEBUGGER");
+			string env = null;
+			try{
+			  env = Environment.GetEnvironmentVariable ("MONO_XSLT_DEBUGGER");
+			} catch (Exception)
+			{
+				//under coreclr, this will throw.
+			}
 			if (env == null)
 				return null;
 			if (env == "simple")
