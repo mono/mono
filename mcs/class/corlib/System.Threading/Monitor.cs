@@ -178,17 +178,40 @@ namespace System.Threading
 		}
 
 #if NET_4_0 || MOONLIGHT
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
+
 		public static void Enter (object obj, ref bool lockTaken)
+		{
+			TryEnter (obj, Timeout.Infinite, ref lockTaken);
+		}
+
+		public static void TryEnter (object obj, ref bool lockTaken)
+		{
+			TryEnter (obj, 0, ref lockTaken);
+		}
+
+		public static void TryEnter (object obj, TimeSpan timeout, ref bool lockTaken)
+		{
+			long ms = (long) timeout.TotalMilliseconds;
+			if (ms < Timeout.Infinite || ms > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("timeout", "timeout out of range");
+			TryEnter (obj, (int)ms, ref lockTaken);
+		}
+
+		public static void TryEnter (object obj, int millisecondsTimeout, ref bool lockTaken)
 		{
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
 			if (lockTaken)
 				throw new ArgumentException ("lockTaken");
 
-			Enter (obj);
-			// if Enter throws then lockTaken will be false
-			lockTaken = true;
-		}
+			if (millisecondsTimeout < 0 && millisecondsTimeout != Timeout.Infinite)
+				throw new ArgumentException ("negative value for millisecondsTimeout", "millisecondsTimeout");
+
+			try_enter_with_atomic_var (obj, millisecondsTimeout, ref lockTaken);
+		}		
+
 #endif
 	}
 }
