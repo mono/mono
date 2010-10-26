@@ -393,7 +393,6 @@ namespace System.Net {
 
 		internal void SendHeaders (bool closing, MemoryStream ms)
 		{
-			//TODO: When do we send KeepAlive?
 			Encoding encoding = content_encoding;
 			if (encoding == null)
 				encoding = Encoding.Default;
@@ -441,23 +440,31 @@ namespace System.Net {
 					status_code == 413 || status_code == 414 || status_code == 500 ||
 					status_code == 503);
 
-			if (conn_close == false) {
-				conn_close = (context.Request.Headers ["connection"] == "close");
-				conn_close |= (v <= HttpVersion.Version10);
-			}
+			if (conn_close == false)
+				conn_close = !context.Request.KeepAlive;
 
 			// They sent both KeepAlive: true and Connection: close!?
-			if (!keep_alive || conn_close)
+			if (!keep_alive || conn_close) {
 				headers.SetInternal ("Connection", "close");
+				conn_close = true;
+			}
 
 			if (chunked)
 				headers.SetInternal ("Transfer-Encoding", "chunked");
 
-			int chunked_uses = context.Connection.ChunkedUses;
-			if (chunked_uses >= 100) {
+			int reuses = context.Connection.Reuses;
+			if (reuses >= 100) {
 				force_close_chunked = true;
-				if (!conn_close)
+				if (!conn_close) {
 					headers.SetInternal ("Connection", "close");
+					conn_close = true;
+				}
+			}
+
+			if (!conn_close) {
+				headers.SetInternal ("Keep-Alive", String.Format ("timeout=15,max={0}", 100 - reuses));
+				if (context.Request.ProtocolVersion <= HttpVersion.Version10)
+					headers.SetInternal ("Connection", "keep-alive");
 			}
 
 			if (location != null)
