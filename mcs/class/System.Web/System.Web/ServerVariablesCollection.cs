@@ -7,7 +7,7 @@
 //   	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 // (c) 2004 Mainsoft, Inc. (http://www.mainsoft.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,13 +35,13 @@ using System.Collections.Specialized;
 using System.Runtime.Serialization;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Security.Principal;
 using System.Web.Util;
 
 namespace System.Web
 {
-	class ServerVariablesCollection : BaseParamsCollection
+	sealed class ServerVariablesCollection : BaseParamsCollection
 	{
-		HttpRequest request;
 		bool loaded;
 
 		string QueryString {
@@ -57,11 +57,18 @@ namespace System.Web
 				return qs;
 			}
 		}
+
+		IIdentity UserIdentity {
+			get {
+				HttpContext context = _request != null ? _request.Context : null;
+				IPrincipal user = context != null ? context.User : null;
+				return user != null ? user.Identity : null;
+			}
+		}
 		
 		public ServerVariablesCollection(HttpRequest request) : base(request)
 		{
 			IsReadOnly = true;
-			this.request = request;
 		}
 
 		void AppendKeyValue (StringBuilder sb, string key, string value, bool standard)
@@ -90,7 +97,7 @@ namespace System.Web
 			
 			for (int i = 0; i < HttpWorkerRequest.RequestHeaderMaximum; i++){
 				string val = wr.GetKnownRequestHeader (i);
-				if (val == null || val == "")
+				if (String.IsNullOrEmpty (val))
 					continue;
 				string key = HttpWorkerRequest.GetKnownRequestHeaderName (i);
 				AppendKeyValue (sb, key, val, standard);
@@ -137,7 +144,7 @@ namespace System.Web
 
 		void loadServerVariablesCollection()
 		{
-			HttpWorkerRequest wr = request.WorkerRequest;
+			HttpWorkerRequest wr = _request.WorkerRequest;
 			if (loaded || (wr == null))
 				return;
 
@@ -149,12 +156,14 @@ namespace System.Web
 			Add("APPL_MD_PATH", wr.GetServerVariable("APPL_MD_PATH"));
 			Add("APPL_PHYSICAL_PATH", wr.GetServerVariable("APPL_PHYSICAL_PATH"));
 
-			if (null != request.Context.User && request.Context.User.Identity.IsAuthenticated) {
-				Add ("AUTH_TYPE", request.Context.User.Identity.AuthenticationType);
-				Add ("AUTH_USER", request.Context.User.Identity.Name);
+			IIdentity identity = UserIdentity;
+			
+			if (identity != null && identity.IsAuthenticated) {
+				Add ("AUTH_TYPE", identity.AuthenticationType);
+				Add ("AUTH_USER", identity.Name);
 			} else {
-				Add ("AUTH_TYPE", "");
-				Add ("AUTH_USER", "");
+				Add ("AUTH_TYPE", String.Empty);
+				Add ("AUTH_USER", String.Empty);
 			}
 
 			Add("AUTH_PASSWORD", wr.GetServerVariable("AUTH_PASSWORD"));
@@ -173,7 +182,7 @@ namespace System.Web
 			string sTmp = wr.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
 			if (null != sTmp)
 				Add ("CONTENT_LENGTH", sTmp);
-			Add ("CONTENT_TYPE", request.ContentType);
+			Add ("CONTENT_TYPE", _request.ContentType);
 
 			Add("GATEWAY_INTERFACE", wr.GetServerVariable("GATEWAY_INTERFACE"));
 			Add("HTTPS", wr.GetServerVariable("HTTPS"));
@@ -184,14 +193,14 @@ namespace System.Web
 			Add("INSTANCE_ID", wr.GetServerVariable("INSTANCE_ID"));
 			Add("INSTANCE_META_PATH", wr.GetServerVariable("INSTANCE_META_PATH"));
 			Add("LOCAL_ADDR", wr.GetLocalAddress());
-			Add("PATH_INFO", request.PathInfo);
-			Add("PATH_TRANSLATED", request.PhysicalPath);
+			Add("PATH_INFO", _request.PathInfo);
+			Add("PATH_TRANSLATED", _request.PhysicalPath);
 			Add("QUERY_STRING", QueryString);
-			Add("REMOTE_ADDR", request.UserHostAddress);
-			Add("REMOTE_HOST", request.UserHostName);
+			Add("REMOTE_ADDR", _request.UserHostAddress);
+			Add("REMOTE_HOST", _request.UserHostName);
 			Add("REMOTE_PORT", wr.GetRemotePort ().ToString ());
-			Add("REQUEST_METHOD", request.HttpMethod);
-			Add("SCRIPT_NAME", request.FilePath);
+			Add("REQUEST_METHOD", _request.HttpMethod);
+			Add("SCRIPT_NAME", _request.FilePath);
 			Add("SERVER_NAME", wr.GetServerName());
 			Add("SERVER_PORT", wr.GetLocalPort().ToString());
 			if (wr.IsSecure()) 
@@ -200,7 +209,7 @@ namespace System.Web
 				Add("SERVER_PORT_SECURE", "0");
 			Add("SERVER_PROTOCOL", wr.GetHttpVersion());
 			Add("SERVER_SOFTWARE", wr.GetServerVariable("SERVER_SOFTWARE"));
-			Add ("URL", request.FilePath);
+			Add ("URL", _request.FilePath);
 
 			AddHeaderVariables (wr);
 
@@ -218,15 +227,19 @@ namespace System.Web
 			if ((name == null) || (this._request == null))
 				return null;
 			name = name.ToUpper (Helpers.InvariantCulture);
+			IIdentity identity;
+			
 			switch (name) {
 				case "AUTH_TYPE":
-					if (null != _request.Context.User && _request.Context.User.Identity.IsAuthenticated)
-						return _request.Context.User.Identity.AuthenticationType;
+					identity = UserIdentity;
+					if (identity != null && identity.IsAuthenticated)
+						return identity.AuthenticationType;
 					else
 						return string.Empty;
 				case "AUTH_USER":
-					if (null != _request.Context.User && _request.Context.User.Identity.IsAuthenticated)
-						return _request.Context.User.Identity.Name;
+					identity = UserIdentity;
+					if (identity != null && identity.IsAuthenticated)
+						return identity.Name;
 					else
 						return string.Empty;
 				case "QUERY_STRING":
@@ -259,10 +272,6 @@ namespace System.Web
 					return _request.WorkerRequest.GetLocalPort ().ToString ();
 				case "APPL_PHYSICAL_PATH":
 					return _request.WorkerRequest.GetAppPathTranslated ();
-				case "REMOTE_USER":
-					return (_request.Context.User != null && _request.Context.User.Identity.IsAuthenticated) ?
-						_request.Context.User.Identity.Name :
-						String.Empty;
 				case "URL":
 					return _request.FilePath;
 				case "SERVER_PORT_SECURE":
@@ -271,6 +280,7 @@ namespace System.Web
 					return Fill (_request.WorkerRequest, true);
 				case "ALL_RAW":
 					return Fill (_request.WorkerRequest, false);
+				case "REMOTE_USER":
 				case "SERVER_SOFTWARE":
 				case "APPL_MD_PATH":
 				case "AUTH_PASSWORD":
