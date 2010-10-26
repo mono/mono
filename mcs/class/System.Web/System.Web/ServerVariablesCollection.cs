@@ -44,6 +44,20 @@ namespace System.Web
 		HttpRequest request;
 		bool loaded;
 
+		string QueryString {
+			get {
+				string qs = _request.QueryStringRaw;
+
+				if (String.IsNullOrEmpty (qs))
+					return qs;
+
+				if (qs [0] == '?')
+					return qs.Substring (1);
+
+				return qs;
+			}
+		}
+		
 		public ServerVariablesCollection(HttpRequest request) : base(request)
 		{
 			IsReadOnly = true;
@@ -172,7 +186,7 @@ namespace System.Web
 			Add("LOCAL_ADDR", wr.GetLocalAddress());
 			Add("PATH_INFO", request.PathInfo);
 			Add("PATH_TRANSLATED", request.PhysicalPath);
-			Add("QUERY_STRING", request.QueryStringRaw);
+			Add("QUERY_STRING", QueryString);
 			Add("REMOTE_ADDR", request.UserHostAddress);
 			Add("REMOTE_HOST", request.UserHostName);
 			Add("REMOTE_PORT", wr.GetRemotePort ().ToString ());
@@ -216,7 +230,7 @@ namespace System.Web
 					else
 						return string.Empty;
 				case "QUERY_STRING":
-					return this._request.QueryStringRaw;
+					return QueryString;
 				case "PATH_INFO":
 					return this._request.PathInfo;
 				case "PATH_TRANSLATED":
