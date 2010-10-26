@@ -1544,7 +1544,7 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 	loaded_assemblies = g_list_prepend (loaded_assemblies, ass);
 	mono_assemblies_unlock ();
 
-#ifdef PLATFORM_WIN32
+#ifdef USE_COREE
 	if (image->is_module_handle)
 		mono_image_fixup_vtable (image);
 #endif
