@@ -253,6 +253,10 @@ mono_security_core_clr_ensure_reflection_access_field (MonoClassField *field)
 	if (mono_security_core_clr_method_level (caller, TRUE) != MONO_SECURITY_CORE_CLR_TRANSPARENT)
 		return;
 
+	/* if the target field is in a non-platform assembly, everything goes, because that can't do no harm anyway */
+	if (!mono_security_core_clr_is_platform_image (mono_field_get_parent(field)->image))
+		return;
+
 	/* Transparent code cannot [get|set]value on Critical fields */
 	if (mono_security_core_clr_class_level (mono_field_get_parent (field)) == MONO_SECURITY_CORE_CLR_CRITICAL)
 		mono_raise_exception (mono_get_exception_field_access ());
@@ -277,6 +281,10 @@ mono_security_core_clr_ensure_reflection_access_method (MonoMethod *method)
 	MonoMethod *caller = get_reflection_caller ();
 	/* CoreCLR restrictions applies to Transparent code/caller */
 	if (mono_security_core_clr_method_level (caller, TRUE) != MONO_SECURITY_CORE_CLR_TRANSPARENT)
+		return;
+
+	/* if the target method is in a non-platform assembly, everything goes, because that can't do no harm anyway */
+	if (!mono_security_core_clr_is_platform_image (method->klass->image))
 		return;
 
 	/* Transparent code cannot invoke, even using reflection, Critical code */
@@ -341,6 +349,11 @@ mono_security_core_clr_ensure_delegate_creation (MonoMethod *method, gboolean th
 		return TRUE;
 
 	caller = get_reflection_caller ();
+
+	/* if the caller is excluded from the coreclr system, it can do whatever it wants */
+	if (!mono_security_core_clr_enabled_for_method(caller))
+		return TRUE;
+
 	/* if the "real" caller is not Transparent then it do can anything */
 	if (mono_security_core_clr_method_level (caller, TRUE) != MONO_SECURITY_CORE_CLR_TRANSPARENT)
 		return TRUE;
@@ -354,6 +367,10 @@ mono_security_core_clr_ensure_delegate_creation (MonoMethod *method, gboolean th
 		mono_raise_exception (mono_get_exception_argument ("method", "Transparent code cannot call Critical code"));
 	}
 	
+	// lucas added the platform check. If the target is not in a platform assembly, everything is fine.
+	if (!mono_security_core_clr_is_platform_image (method->klass->image))
+		return TRUE;
+
 	/* also it cannot create the delegate on a method that is not visible from it's (caller) point of view */
 	if (!check_method_access (caller, method))
 		mono_raise_exception (mono_get_exception_method_access ());
@@ -458,6 +475,11 @@ mono_security_core_clr_class_level_no_platform_check (MonoClass *class)
 {
 	MonoSecurityCoreCLRLevel level = MONO_SECURITY_CORE_CLR_TRANSPARENT;
 	MonoCustomAttrInfo *cinfo = mono_custom_attrs_from_class (class);
+
+	/* if the accessing assembly is excluded from coreclr rules, it can do whatever it feels like, and be called from anything.*/
+	if (!mono_security_core_clr_enabled_for_class(class))
+		return MONO_SECURITY_CORE_CLR_SAFE_CRITICAL;
+
 	if (cinfo) {
 		level = mono_security_core_clr_level_from_cinfo (cinfo, class->image);
 		mono_custom_attrs_free (cinfo);
@@ -484,6 +506,29 @@ mono_security_core_clr_class_level (MonoClass *class)
 	return mono_security_core_clr_class_level_no_platform_check (class);
 }
 
+gboolean
+mono_security_core_clr_enabled_for_method(MonoMethod* method)
+{
+	return mono_security_core_clr_enabled_for_class(method->klass);
+}
+
+gboolean
+mono_security_core_clr_enabled_for_class(MonoClass* klass)
+{
+	return mono_security_core_clr_enabled_for_image(klass->image);
+}
+
+gboolean
+mono_security_core_clr_enabled_for_image(MonoImage* image)
+{
+	return 1;
+	/*
+	if (strstr(image->name,"UnityEditor") != NULL)
+		return 0;
+	else
+		return 1;*/
+}
+
 /*
  * mono_security_core_clr_method_level:
  *
@@ -505,6 +550,10 @@ mono_security_core_clr_method_level (MonoMethod *method, gboolean with_class_lev
 	/* non-platform code is always Transparent - whatever the attributes says */
 	if (!mono_security_core_clr_test && !mono_security_core_clr_is_platform_image (method->klass->image))
 		return level;
+
+	/* methods excluded from the coreclr system can do whatever they feel like */
+	if (!mono_security_core_clr_enabled_for_method(method))
+		return MONO_SECURITY_CORE_CLR_SAFE_CRITICAL;
 
 	cinfo = mono_custom_attrs_from_method (method);
 	if (cinfo) {
