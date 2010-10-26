@@ -147,8 +147,10 @@ namespace System.Diagnostics
 
 		private void GetConfigFileSetting ()
 		{
-			IDictionary d = (IDictionary) DiagnosticsConfiguration.Settings ["switches"];
-			
+			IDictionary d = null;
+#if !UNITY
+			d = (IDictionary) DiagnosticsConfiguration.Settings ["switches"];
+#endif			
 			// Load up the specified switch
 			if (d != null) {
 				if (d.Contains (name)) {
