@@ -428,10 +428,12 @@ mono_runtime_posix_install_handlers (void)
 
 	signal (SIGPIPE, SIG_IGN);
 
+#ifndef MONO_CROSS_COMPILE
 	add_signal_handler (SIGABRT, sigabrt_signal_handler);
 
 	/* catch SIGSEGV */
 	add_signal_handler (SIGSEGV, mono_sigsegv_signal_handler);
+#endif
 }
 
 #ifndef PLATFORM_MACOSX
