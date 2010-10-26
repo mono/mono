@@ -32,6 +32,8 @@
 #include <mono/metadata/marshal.h>
 #include <mono/utils/strenc.h>
 
+#include <stdio.h>
+
 #undef DEBUG
 
 /* conversion functions */
@@ -885,8 +887,15 @@ ves_icall_System_IO_MonoIO_SetFileTime (HANDLE handle, gint64 creation_time,
 HANDLE 
 ves_icall_System_IO_MonoIO_get_ConsoleOutput ()
 {
+#if WIN32
+	HANDLE h;
+#endif
 	MONO_ARCH_SAVE_REGS;
 
+#if WIN32	
+	h = unity_mono_get_log_handle();
+	if (h) return h;
+#endif
 	return GetStdHandle (STD_OUTPUT_HANDLE);
 }
 
@@ -901,8 +910,15 @@ ves_icall_System_IO_MonoIO_get_ConsoleInput ()
 HANDLE 
 ves_icall_System_IO_MonoIO_get_ConsoleError ()
 {
+#if WIN32
+	HANDLE h;
+#endif
 	MONO_ARCH_SAVE_REGS;
 
+#if WIN32	
+	h = unity_mono_get_log_handle();
+	if (h) return h;
+#endif
 	return GetStdHandle (STD_ERROR_HANDLE);
 }
 
