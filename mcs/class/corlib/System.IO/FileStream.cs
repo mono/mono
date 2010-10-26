@@ -108,7 +108,7 @@ namespace System.IO
 			if (isZeroSize)
 				bufferSize = 1;
 
-			InitBuffer (bufferSize);
+			InitBuffer (bufferSize, isZeroSize);
 
 			if (canseek) {
 				buf_start = MonoIO.Seek (handle, 0, SeekOrigin.Current, out error);
@@ -335,7 +335,7 @@ namespace System.IO
 				}
 			}
 
-			InitBuffer (bufferSize);
+			InitBuffer (bufferSize, false);
 
 			if (mode==FileMode.Append) {
 				this.Seek (0, SeekOrigin.End);
@@ -1089,12 +1089,14 @@ namespace System.IO
 			return(amount);
 		}
 				
-		void InitBuffer (int size)
+		void InitBuffer (int size, bool isZeroSize)
 		{
 			if (size <= 0)
 				throw new ArgumentOutOfRangeException ("bufferSize", "Positive number required.");
 			
-			size = Math.Max (size, 8);
+			// Don't enforce a minimum size for zero-size buffers
+			if (!isZeroSize)
+				size = Math.Max (size, 8);
 			
 			//
 			// Instead of allocating a new default buffer use the
