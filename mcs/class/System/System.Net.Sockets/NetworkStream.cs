@@ -144,10 +144,19 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if NET_2_0 && !NET_2_1
+#if UNITY
+//adding hacky Timeout class here, as our profile doesn't pull in System.Threading.Timeout
+public static class Timeout
+{
+  public static readonly float Infinite = -1;
+}
+#endif
+
+#if NET_2_0 && !NET_2_1 || UNITY
 #if TARGET_JVM
 		[MonoNotSupported ("Not supported since Socket.ReceiveTimeout is not supported")]
 #endif
+
 		public override int ReadTimeout
 		{
 			get {
@@ -179,7 +188,7 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 || UNITY
 #if TARGET_JVM
 		[MonoNotSupported ("Not supported since Socket.SendTimeout is not supported")]
 #endif

@@ -51,7 +51,10 @@ namespace System.Diagnostics
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			Hashtable sources = DiagnosticsConfiguration.Settings ["sources"] as Hashtable;
+			Hashtable sources = null;
+#if !UNITY
+			sources = DiagnosticsConfiguration.Settings ["sources"] as Hashtable;
+#endif			
 			TraceSourceInfo info = sources != null ? sources [name] as TraceSourceInfo : null;
 			source_switch = new SourceSwitch (name);
 

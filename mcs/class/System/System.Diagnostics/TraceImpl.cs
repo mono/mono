@@ -196,11 +196,15 @@ namespace System.Diagnostics {
 			if (initLock != null) {
 				lock (initLock) {
 					if (listeners == null) {
+#if UNITY
+						TraceImplSettings s = new TraceImplSettings ();
+#else
 						IDictionary       d = DiagnosticsConfiguration.Settings;
 						TraceImplSettings s = (TraceImplSettings) d [TraceImplSettings.Key];
-
 						d.Remove (TraceImplSettings.Key);
 
+#endif
+						
 						autoFlush   = s.AutoFlush;
 						indentLevel = s.IndentLevel;
 						indentSize  = s.IndentSize;

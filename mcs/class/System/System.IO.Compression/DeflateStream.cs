@@ -34,7 +34,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 
-#if MONOTOUCH
+#if MONOTOUCH && !UNITY
 using MonoTouch;
 #endif
 
@@ -117,7 +117,7 @@ namespace System.IO.Compression {
 			base.Dispose (disposing);
 		}
 
-#if MONOTOUCH
+#if MONOTOUCH && !UNITY
 		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
 #endif
 		static int UnmanagedRead (IntPtr buffer, int length, IntPtr data)
@@ -151,7 +151,7 @@ namespace System.IO.Compression {
 			return total;
 		}
 
-#if MONOTOUCH
+#if MONOTOUCH && !UNITY
 		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
 #endif
 		static int UnmanagedWrite (IntPtr buffer, int length, IntPtr data)
