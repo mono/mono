@@ -1046,6 +1046,10 @@ search_sorted_table (VerifyContext *ctx, int table, int column, guint32 coded_to
 	locator.table = tinfo;
 
 	base = tinfo->base;
+	
+	//this happens on windows. need to talk to kumpera if this is okay or not.
+	if (!base)
+		return -1;
 
 	VERIFIER_DEBUG ( printf ("looking token %x table %d col %d rsize %d roff %d\n", coded_token, table, column, locator.col_size, locator.col_offset) );
 	res = bsearch (&locator, base, tinfo->rows, tinfo->row_size, token_locator);
