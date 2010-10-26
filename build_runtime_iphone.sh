@@ -50,7 +50,6 @@ build_arm_mono ()
 {
 	setenv "$1"
 
-	cd mono
 	make clean
 	rm config.h*
 
@@ -93,7 +92,6 @@ build_iphone_crosscompiler ()
 
 	export PLATFORM_IPHONE_XCOMP=1	
 
-	cd mono
 	pushd eglib 
 	./autogen.sh --prefix=$PRFX || exit 1
 	make clean

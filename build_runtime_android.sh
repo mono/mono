@@ -87,8 +87,6 @@ fi
 
 function clean_build
 {
-	pushd mono
-
 	make clean && make distclean
 	rm android_cross.cache
 

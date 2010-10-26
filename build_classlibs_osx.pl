@@ -54,19 +54,19 @@ if (not $skipbuild)
 	if ($cleanbuild)
 	{
 		rmtree($monoprefix);
-		chdir("$root/mono/eglib") eq 1 or die ("Failed chdir 1");
+		chdir("$root/eglib") eq 1 or die ("Failed chdir 1");
 		system("make","clean");
 	}
-	chdir("$root/mono") eq 1 or die ("failed to chdir 2");
+	chdir("$root") eq 1 or die ("failed to chdir 2");
 	if ($cleanbuild)
 	{
 		my $withMonotouch = $monotouch ? "yes" : "no";
 		my $withUnity = $unity ? "yes" : "no";
 		
-		chdir("$root/mono/eglib") eq 1 or die("failed to chdir 3");
+		chdir("$root/eglib") eq 1 or die("failed to chdir 3");
 		print(">>>Calling autoreconf in eglib\n");
 		system("autoreconf -i") eq 0 or die ("failed autoreconfing eglib");
-		chdir("$root/mono") eq 1 or die("failed to chdir4");
+		chdir("$root") eq 1 or die("failed to chdir4");
 		print(">>>Calling autoreconf in mono\n");
 		system("autoreconf -i") eq 0 or die("failed to autoreconf mono");
 		print(">>>Calling configure in mono\n");
@@ -98,8 +98,8 @@ system("cp -r $monoprefix/bin $monodistro/") eq 0 or die ("failed copying bin fo
 system("cp -r $monoprefix/etc $monodistro/") eq 0 or die("failed copy 4");
 mkpath("$root/builds/headers/mono");
 system("cp -r $monoprefix/include/mono-1.0/mono $root/builds/headers/") eq 0 or die("failed copy 5");
-system("cp $root/mono/eglib/src/glib.h $root/builds/headers/") eq 0 or die("failed copying glib.h");
-system("cp $root/mono/eglib/src/eglib-config.hw $root/builds/headers/") eq 0 or die ("failed copying eglib-config.hw");
+system("cp $root/eglib/src/glib.h $root/builds/headers/") eq 0 or die("failed copying glib.h");
+system("cp $root/eglib/src/eglib-config.hw $root/builds/headers/") eq 0 or die ("failed copying eglib-config.hw");
 system('perl -e \"s/\\bmono_/mangledmono_/g;\" -pi $(find '.$root.'/builds/headers -type f)');
 
 sub CopyIgnoringHiddenFiles

@@ -99,12 +99,12 @@ if (not $skipbuild)
         #more robust if other targetplatforms have been built from this same workincopy
         system("rm osx.cache");
 
-	chdir("$root/mono/eglib") eq 1 or die ("Failed chdir 1");
+	chdir("$root/eglib") eq 1 or die ("Failed chdir 1");
 	
 	#this will fail on a fresh working copy, so don't die on it.
 	system("make distclean");
 	system("autoreconf -i") eq 0 or die ("Failed autoreconfing eglib");
-	chdir("$root/mono") eq 1 or die ("failed to chdir 2");
+	chdir("$root") eq 1 or die ("failed to chdir 2");
 	system("autoreconf -i") eq 0 or die ("Failed autoreconfing mono");
 	my @autogenparams = ();
 	unshift(@autogenparams, "--cache-file=osx.cache");
@@ -142,7 +142,7 @@ chdir($root);
 mkpath($bintarget);
 mkpath($libtarget);
 
-my $cmdline = "gcc -arch $arch -bundle -reexport_library mono/mono/mini/.libs/libmono.a -isysroot /Developer/SDKs/MacOSX$sdkversion.sdk -mmacosx-version-min=$macversion -all_load -liconv -o $libtarget/MonoBundleBinary";
+my $cmdline = "gcc -arch $arch -bundle -reexport_library mono/mini/.libs/libmono.a -isysroot /Developer/SDKs/MacOSX$sdkversion.sdk -mmacosx-version-min=$macversion -all_load -liconv -o $libtarget/MonoBundleBinary";
 
 
 if (!$iphone_simulator)
@@ -151,14 +151,14 @@ if (!$iphone_simulator)
 	system($cmdline) eq 0 or die("failed to link libmono.a into mono bundle");
 
 	print "Symlinking libmono.dylib\n";
-	system("ln","-f", "$root/mono/mono/mini/.libs/libmono.0.dylib","$libtarget/libmono.0.dylib") eq 0 or die ("failed symlinking libmono.0.dylib");
+	system("ln","-f", "$root/mono/mini/.libs/libmono.0.dylib","$libtarget/libmono.0.dylib") eq 0 or die ("failed symlinking libmono.0.dylib");
 
 	print "Symlinking libmono.a\n";
-	system("ln", "-f", "$root/mono/mono/mini/.libs/libmono.a","$libtarget/libmono.a") eq 0 or die ("failed symlinking libmono.a");
+	system("ln", "-f", "$root/mono/mini/.libs/libmono.a","$libtarget/libmono.a") eq 0 or die ("failed symlinking libmono.a");
 
 	if (($arch eq 'i386') and (not $ENV{"UNITY_THISISABUILDMACHINE"}))
 	{
-		system("ln","-fs", "$root/mono/mono/mini/.libs/libmono.0.dylib.dSYM","$libtarget/libmono.0.dylib.dSYM") eq 0 or die ("failed symlinking libmono.0.dylib.dSYM");
+		system("ln","-fs", "$root/mono/mini/.libs/libmono.0.dylib.dSYM","$libtarget/libmono.0.dylib.dSYM") eq 0 or die ("failed symlinking libmono.0.dylib.dSYM");
 	}
  
 #if ($ENV{"UNITY_THISISABUILDMACHINE"})
@@ -169,6 +169,6 @@ if (!$iphone_simulator)
 
 InstallNameTool("$libtarget/libmono.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib");
 
-system("ln","-f","$root/mono/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
-system("ln","-f","$root/mono/mono/metadata/pedump","$bintarget/pedump") eq 0 or die("failed symlinking pedump executable");
+system("ln","-f","$root/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
+system("ln","-f","$root/mono/metadata/pedump","$bintarget/pedump") eq 0 or die("failed symlinking pedump executable");
 }

@@ -14,7 +14,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 }
 
 
-CompileVCProj("$root/mono/msvc/mono.sln","Release_eglib",0);
+CompileVCProj("$root/msvc/mono.sln","Release_eglib",0);
 unlink("$root/builds/embedruntimes/win32/libmono.bsc") or die("can't delete libmono.bsc");
 
 #have a duplicate for now...
