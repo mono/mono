@@ -594,6 +594,11 @@ namespace System.Xaml
 		{
 			if (IsArray)
 				return new XamlType (type.GetElementType (), SchemaContext);
+			if (IsDictionary) {
+				if (!IsGeneric)
+					return new XamlType (typeof (object), SchemaContext);
+				return new XamlType (type.GetGenericArguments () [1], SchemaContext);
+			}
 			if (!IsCollection)
 				return null;
 			if (!IsGeneric)
