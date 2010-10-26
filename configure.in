@@ -2155,8 +2155,8 @@ case "$host" in
 		arch_target=arm;
 		ACCESS_UNALIGNED="no"
 		JIT_SUPPORTED=yes
-		CPPFLAGS="$CPPFLAGS -DARM_FPU_NONE=1"
 		jit_wanted=true
+		CPPFLAGS="$CPPFLAGS -DARM_FPU_VFP=1 -D__ARM_EABI__"
 		;;
 	arm*-linux*)
 		TARGET=ARM;
