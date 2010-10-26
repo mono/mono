@@ -340,6 +340,10 @@ int GC_suspend_all()
         
         result = pthread_kill(p -> id, SIG_SUSPEND);
 	    switch(result) {
+#if defined(ANDROID)	/* Android kernel seems to return EINVAL for non-existent threads (and sometimes EPERM) */
+				case EINVAL:
+				case EPERM:
+#endif
                 case ESRCH:
                     /* Not really there anymore.  Possible? */
                     n_live_threads--;
