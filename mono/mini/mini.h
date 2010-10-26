@@ -1807,6 +1807,12 @@ MonoJitInfo* mini_jit_info_table_find           (MonoDomain *domain, char *addr,
 
 MonoJitInfo * mono_find_jit_info                (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *res, MonoJitInfo *prev_ji, MonoContext *ctx, MonoContext *new_ctx, char **trace, MonoLMF **lmf, int *native_offset, gboolean *managed) MONO_INTERNAL;
 
+gboolean
+mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls, 
+						MonoJitInfo *prev_ji, MonoContext *ctx,
+						MonoContext *new_ctx, char **trace, MonoLMF **lmf,
+						StackFrameInfo *frame) MONO_INTERNAL;
+
 gpointer mono_get_throw_exception               (void) MONO_INTERNAL;
 gpointer mono_get_rethrow_exception             (void) MONO_INTERNAL;
 gpointer mono_get_call_filter                   (void) MONO_INTERNAL;
