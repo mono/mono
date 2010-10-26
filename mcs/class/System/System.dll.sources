@@ -831,6 +831,7 @@ System.Net.Sockets/SelectMode.cs
 System.Net.Sockets/SendPacketsElement.cs
 System.Net.Sockets/Socket.cs
 System.Net.Sockets/Socket_2_1.cs
+System.Net.Sockets/SocketPolicyClient.cs
 System.Net.Sockets/SocketAsyncEventArgs.cs
 System.Net.Sockets/SocketAsyncOperation.cs
 System.Net.Sockets/SocketError.cs

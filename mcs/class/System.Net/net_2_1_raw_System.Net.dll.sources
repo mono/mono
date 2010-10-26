@@ -46,6 +46,7 @@ System.Net.NetworkInformation/NetworkInterface_2_1.cs
 ../System/System.Net.Sockets/ProtocolFamily.cs
 ../System/System.Net.Sockets/SelectMode.cs
 ../System/System.Net.Sockets/Socket_2_1.cs
+../System/System.Net.Sockets/SocketPolicyClient.cs
 ../System/System.Net.Sockets/SocketError.cs
 ../System/System.Net.Sockets/SocketFlags.cs
 ../System/System.Net.Sockets/SocketOptionLevel.cs

@@ -470,11 +470,78 @@ namespace System.Net.Sockets {
 
 		// Connects to the remote address
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Connect_internal(IntPtr sock,
+		private extern static void Connect_internal_real(IntPtr sock,
 							    SocketAddress sa,
 							    out int error);
 
+		private static void Connect_internal(IntPtr sock,
+							    SocketAddress sa,
+							    out int error)
+		{
+			Connect_internal(sock,sa, out error,true);
+		}
+		
+		static System.Reflection.MethodInfo check_socket_policy;
+		
+		private static void Connect_internal(IntPtr sock,
+							    SocketAddress sa,
+							    out int error,
+		                        bool requireSocketPolicyFile)
+		{
+#if NET_2_0
+			if (requireSocketPolicyFile)
+			{
+				if (!CheckEndPoint(sa))
+				{
+					throw new SecurityException("Unable to connect, as no valid crossdomain policy was found");
+				}
+			}
+#endif
+			Connect_internal_real(sock,sa, out error);
+		}
+		
+		
+#if NET_2_0
+		static internal bool CheckEndPoint (SocketAddress sa)
+		{
+			if (!System.Environment.SocketSecurityEnabled) return true;
+			try
+			{
+				//weird, why is EndPoint.Create not static?  Making a temp instance to be able to call the function
+				var temp = new IPEndPoint(IPAddress.Loopback, 123);
+				var endpoint = (IPEndPoint) temp.Create(sa);
+				
+				if (check_socket_policy == null)
+				{
+					check_socket_policy = GetUnityCrossDomainHelperMethod ("CheckSocketEndPoint");
+				}
+				return ((bool) check_socket_policy.Invoke (null, new object [2] { endpoint.Address.ToString(), endpoint.Port }));
+			} catch (Exception e)
+			{
+				Console.WriteLine("Unexpected error while trying to CheckEndPoint() : "+e);
+				return false;
+			}
+		}
+
+		static System.Reflection.MethodInfo GetUnityCrossDomainHelperMethod(string methodname)
+		{
+			//todo: enter strong name with public key here
+			Type type = Type.GetType ("UnityEngine.UnityCrossDomainHelper, CrossDomainPolicyParser, Version=1.0.0.0, Culture=neutral");
+            if (type==null)
+             	throw new SecurityException("Cant find type UnityCrossDomainHelper");
+			var result = type.GetMethod (methodname);
+			if (result == null)
+				throw new SecurityException("Cant find "+methodname);
+			return result;
+		}
+#endif
+		
 		public void Connect (EndPoint remoteEP)
+		{
+			Connect(remoteEP,true);
+		}
+		
+		internal void Connect (EndPoint remoteEP, bool requireSocketPolicy)
 		{
 			SocketAddress serial = null;
 
@@ -503,7 +570,7 @@ namespace System.Net.Sockets {
 
 			blocking_thread = Thread.CurrentThread;
 			try {
-				Connect_internal (socket, serial, out error);
+				Connect_internal (socket, serial, out error, requireSocketPolicy);
 			} catch (ThreadAbortException) {
 				if (disposed) {
 					Thread.ResetAbort ();
@@ -611,6 +678,15 @@ namespace System.Net.Sockets {
 
 		internal int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+			if (protocol_type == ProtocolType.Udp) {
+				EndPoint endpoint = new IPEndPoint (IPAddress.Any, 0);
+				int sillyError = 0;
+				int received = ReceiveFrom_nochecks_exc (buf, offset, size, flags, ref endpoint, false, out sillyError);
+				error = (SocketError)sillyError;
+				return received;
+			}
+#endif
 			int nativeError;
 			int ret = Receive_internal (socket, buf, offset, size, flags, out nativeError);
 			error = (SocketError) nativeError;

@@ -331,10 +331,16 @@ namespace System.Net.Sockets
 		private sealed class Worker 
 		{
 			SocketAsyncResult result;
+			bool requireSocketSecurity;
 
-			public Worker (SocketAsyncResult ares)
+			public Worker (SocketAsyncResult ares) : this (ares,true)
+			{
+			}
+
+			public Worker (SocketAsyncResult ares, bool requireSocketSecurity)
 			{
 				this.result = ares;
+				this.requireSocketSecurity = requireSocketSecurity;
 			}
 
 			public void Accept ()
@@ -417,7 +423,7 @@ namespace System.Net.Sockets
 							}
 						} else {
 							result.Sock.seed_endpoint = result.EndPoint;
-							result.Sock.Connect (result.EndPoint);
+							result.Sock.Connect (result.EndPoint,requireSocketSecurity);
 							result.Sock.connected = true;
 						}
 					} catch (Exception e) {
@@ -432,7 +438,16 @@ namespace System.Net.Sockets
 						IPEndPoint iep = new IPEndPoint (address, result.Port);
 						SocketAddress serial = iep.Serialize ();
 						
-						Socket.Connect_internal (result.Sock.socket, serial, out error);
+						try
+						{
+							Socket.Connect_internal (result.Sock.socket, serial, out error, requireSocketSecurity);
+						} catch (Exception e)
+						{
+							result.Complete(e);
+							return;
+						}
+
+
 						if (error == 0) {
 							result.Sock.connected = true;
 							result.Sock.seed_endpoint = iep;
@@ -1250,8 +1265,15 @@ namespace System.Net.Sockets
 #endif
 
 		public IAsyncResult BeginConnect(EndPoint end_point,
+                                                 AsyncCallback callback,
+                                                 object state)
+		{
+			return BeginConnect(end_point,callback,state,false);
+		}
+
+		internal IAsyncResult BeginConnect(EndPoint end_point,
 						 AsyncCallback callback,
-						 object state) {
+						 object state, bool bypassSocketSecurity) {
 
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -1289,7 +1311,7 @@ namespace System.Net.Sockets
 			if (blocking || error == (int) SocketError.InProgress || error == (int) SocketError.WouldBlock) {
 				// continue asynch
 				connected = false;
-				Worker worker = new Worker (req);
+				Worker worker = new Worker (req, bypassSocketSecurity);
 				SocketAsyncCall sac = new SocketAsyncCall (worker.Connect);
 				sac.BeginInvoke (null, req);
 			}
@@ -1767,6 +1789,9 @@ namespace System.Net.Sockets
 			return req;
 		}
 
+		private readonly int MinListenPort = 7100;
+		private readonly int MaxListenPort = 7150;
+		
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Bind_internal(IntPtr sock,
@@ -1781,7 +1806,7 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException("local_end");
 			
 			int error;
-			
+
 			Bind_internal(socket, local_end.Serialize(), out error);
 			if (error != 0)
 				throw new SocketException (error);
@@ -1792,7 +1817,7 @@ namespace System.Net.Sockets
 			
 			seed_endpoint = local_end;
 		}
-
+		
 #if NET_2_0
 		public bool ConnectAsync (SocketAsyncEventArgs e)
 		{
@@ -2273,8 +2298,15 @@ namespace System.Net.Sockets
 			 */
 			if (!isbound)
 				throw new SocketException ((int)SocketError.InvalidArgument);
-#endif
-
+			
+			if (System.Environment.SocketSecurityEnabled)
+			{
+				var se = new System.Security.SecurityException("Listening on TCP sockets is not allowed in the webplayer");
+				Console.WriteLine("Throwing the following securityexception: "+se);
+				throw se;
+			}
+#endif			
+			
 			int error;
 			
 			Listen_internal(socket, backlog, out error);
@@ -2630,6 +2662,18 @@ namespace System.Net.Sockets
 					throw new SocketException (error);
 				return 0;
 			}
+			
+#if NET_2_0
+			if (System.Environment.SocketSecurityEnabled)
+			{
+				Console.WriteLine ("Checking {0}", sockaddr);
+				if (!CheckEndPoint(sockaddr))
+				{
+					buf.Initialize ();
+					throw new System.Security.SecurityException("Unable to connect, as no valid crossdomain policy was found");
+				}
+			}
+#endif
 
 			connected = true;
 
@@ -2982,7 +3026,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int SendTo_internal(IntPtr sock,
+		private extern static int SendTo_internal_real(IntPtr sock,
 							  byte[] buffer,
 							  int offset,
 							  int count,
@@ -2990,6 +3034,31 @@ namespace System.Net.Sockets
 							  SocketAddress sa,
 							  out int error);
 
+		private static int SendTo_internal(IntPtr sock,
+							  byte[] buffer,
+							  int offset,
+							  int count,
+							  SocketFlags flags,
+							  SocketAddress sa,
+							  out int error)
+		{
+#if NET_2_0
+			if (System.Environment.SocketSecurityEnabled)
+			{
+				bool allowed = CheckEndPoint(sa);
+				if (!allowed)
+				{
+					var se = new System.Security.SecurityException("SendTo request refused by Unity webplayer security model");
+					Console.WriteLine("Throwing the following security exception: "+se);
+					throw se;
+				}
+			}
+#endif
+			return SendTo_internal_real(sock,buffer,offset,count,flags,sa,out error);
+		}
+				
+		
+		
 		public int SendTo (byte [] buffer, int offset, int size, SocketFlags flags,
 				   EndPoint remote_end)
 		{
