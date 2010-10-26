@@ -1,0 +1,6 @@
+#!/bin/sh
+. $(dirname $0)/mono-env
+
+BOOC=$MONO_PATH/booc.exe
+
+exec $MONO $MONO_OPTIONS --runtime=moonlight --security=temporary-smcs-hack $BOOC "$@"

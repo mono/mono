@@ -1,0 +1,6 @@
+#!/bin/sh
+. $(dirname $0)/mono-env
+
+SMCS=$MONO_PATH/smcs.exe
+
+exec $MONO $MONO_OPTIONS --runtime=moonlight --security=temporary-smcs-hack $SMCS "$@"
