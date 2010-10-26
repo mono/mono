@@ -485,9 +485,16 @@ yes|sibling) libgdiplus_loc=`cd ../libgdiplus && pwd`/src/libgdiplus.la ;;
 esac
 AC_SUBST([libgdiplus_loc])
 
-AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-if test "x$PKG_CONFIG" = "xno"; then
-	AC_MSG_ERROR([You need to install pkg-config])
+#Lucas disabled the pkg-config configure check, as we build an eglib-mono, which means that
+#we actually don't need pkgconfig to find anything for us anymore. woohoo! mono with no deps.
+#
+
+OS=`uname`
+if test "x$OS" = "xLinux"; then
+	AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+	if test "x$PKG_CONFIG" = "xno"; then
+		AC_MSG_ERROR([You need to install pkg-config])
+	fi
 fi
 
 pkg_config_path=
