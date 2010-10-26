@@ -110,7 +110,7 @@ namespace System.Xaml.Schema
 		}
 		public virtual IEnumerator GetItems (object instance)
 		{
-			throw new NotImplementedException ();
+			return ((IEnumerable) instance).GetEnumerator ();
 		}
 	}
 }

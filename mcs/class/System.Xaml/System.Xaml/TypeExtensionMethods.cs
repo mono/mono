@@ -206,6 +206,9 @@ namespace System.Xaml
 				if (!m.IsReadOnly || (en = (IEnumerable) m.Invoker.GetValue (instance)) != null && en.GetEnumerator ().MoveNext ())
 						yield return m;
 			}
+			
+			if (type.IsCollection)
+				yield return XamlLanguage.Items;
 		}
 
 		public static bool ListEquals (this IList<XamlType> a1, IList<XamlType> a2)

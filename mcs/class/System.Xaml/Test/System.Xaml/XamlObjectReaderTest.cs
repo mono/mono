@@ -602,7 +602,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_ListInt32 ()
 		{
 			var obj = new List<int> (new int [] {5, -3, 0});
@@ -894,7 +893,6 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void Read_CustomMarkupExtension2 ()
 		{
-Console.Error.WriteLine (XamlServices.Save (new MyExtension2 () { Foo = typeof (int), Bar = "v2"}));
 			var r = new XamlObjectReader (new MyExtension2 () { Foo = typeof (int), Bar = "v2"});
 			r.Read (); // ns
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#1");
@@ -979,7 +977,6 @@ Console.Error.WriteLine (XamlServices.Save (new MyExtension2 () { Foo = typeof (
 		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension6 ()
 		{
-Console.Error.WriteLine (XamlServices.Save (new MyExtension6 ("foo")));
 			var r = new XamlObjectReader (new MyExtension6 ("foo"));
 			r.Read (); // ns
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#1");

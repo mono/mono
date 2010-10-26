@@ -358,10 +358,10 @@ namespace System.Xaml
 					// if both are static, compare names.
 					return String.CompareOrdinal (m1.Name, m2.Name);
 				else
-					return -1;
+					return 1;
 			}
 			else if (m2.DeclaringType == null)
-				return 1;
+				return -1;
 
 			// ContentProperty is returned at last.
 			if (m1.DeclaringType.ContentProperty == m1)
@@ -457,6 +457,9 @@ namespace System.Xaml
 				var v = ((IEnumerable) xt.GetMember ("Values").Invoker.GetValue (dic)).GetEnumerator ();
 				objects.Push (v);
 				dict_keys.Push (k);
+			} else if (members_stack.Peek ().Current == XamlLanguage.Items) {
+				var coll = objects.Pop ();
+				objects.Push (xt.Invoker.GetItems (coll));
 			}
 			node_type = XamlNodeType.StartMember;
 		}
@@ -483,14 +486,12 @@ namespace System.Xaml
 				obj = xt.TypeConverter.ConverterInstance.ConvertToInvariantString (obj);
 
 			instance = obj;
-			if (member != null && member.IsReadOnly) {
-				IEnumerator e = ((IEnumerable) obj).GetEnumerator ();
-				objects.Push (e);
+			objects.Push (GetExtensionWrappedInstance (obj));
+
+			if (member != null && member.IsReadOnly)
 				node_type = XamlNodeType.GetObject;
-			} else {
-				objects.Push (GetExtensionWrappedInstance (obj));
+			else
 				node_type = XamlNodeType.StartObject;
-			}
 		}
 		
 		object GetMemberValueOrRootInstance ()
