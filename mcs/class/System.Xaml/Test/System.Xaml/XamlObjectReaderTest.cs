@@ -602,6 +602,77 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void Read_ListInt32 ()
+		{
+			var obj = new List<int> (new int [] {5, -3, 0});
+
+			var r = new XamlObjectReader (obj);
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+
+			var defns = "clr-namespace:System.Collections.Generic;assembly=mscorlib";
+
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#1-3");
+			Assert.AreEqual (defns, r.Namespace.Namespace, "ns#1-4");
+
+			Assert.IsTrue (r.Read (), "#11");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
+			Assert.IsNotNull (r.Namespace, "#13");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "#13-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#13-3");
+
+			Assert.IsTrue (r.Read (), "#21");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
+			var xt = new XamlType (typeof (List<int>), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "#23");
+			Assert.AreEqual (obj, r.Instance, "#26");
+			Assert.IsTrue (xt.IsCollection, "#27");
+
+			// This assumption on member ordering ("Type" then "Items") is somewhat wrong, and we might have to adjust it in the future.
+
+			Assert.IsTrue (r.Read (), "#31");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
+			Assert.AreEqual (xt.GetMember ("Capacity"), r.Member, "#33");
+
+			Assert.IsTrue (r.Read (), "#41");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#42");
+			// The value is implementation details, not testable.
+			//Assert.AreEqual ("3", r.Value, "#43");
+
+			Assert.IsTrue (r.Read (), "#51");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#52");
+
+			Assert.IsTrue (r.Read (), "#72");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#72-2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "#72-3");
+
+			string [] values = {"5", "-3", "0"};
+			for (int i = 0; i < 3; i++) {
+				Assert.IsTrue (r.Read (), i + "#73");
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, i + "#73-2");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, i + "#74-2");
+				Assert.AreEqual (XamlLanguage.Initialization, r.Member, i + "#74-3");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.IsNotNull (r.Value, i + "#75-2");
+				Assert.AreEqual (values [i], r.Value, i + "#73-3");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, i + "#74-2");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, i + "#75-2");
+			}
+
+			Assert.IsTrue (r.Read (), "#81");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#82"); // XamlLanguage.Items
+
+			Assert.IsTrue (r.Read (), "#87");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#88"); // ArrayExtension
+
+			Assert.IsFalse (r.Read (), "#89");
+		}
+
+		[Test]
 		public void Read_Array ()
 		{
 			var obj = new int [] {5, -3, 0};
@@ -823,6 +894,7 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void Read_CustomMarkupExtension2 ()
 		{
+Console.Error.WriteLine (XamlServices.Save (new MyExtension2 () { Foo = typeof (int), Bar = "v2"}));
 			var r = new XamlObjectReader (new MyExtension2 () { Foo = typeof (int), Bar = "v2"});
 			r.Read (); // ns
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#1");
@@ -884,6 +956,8 @@ namespace MonoTests.System.Xaml
 		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension5 ()
 		{
+			// This cannot be written to XamlXmlWriter though...
+
 			var r = new XamlObjectReader (new MyExtension5 ("foo"));
 			r.Read (); // ns
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#1");
@@ -905,6 +979,7 @@ namespace MonoTests.System.Xaml
 		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension6 ()
 		{
+Console.Error.WriteLine (XamlServices.Save (new MyExtension6 ("foo")));
 			var r = new XamlObjectReader (new MyExtension6 ("foo"));
 			r.Read (); // ns
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#1");
@@ -958,8 +1033,6 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (Dictionary<string,object>), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "so#1-3");
 			Assert.AreEqual (obj, r.Instance, "so#1-4");
-
-			// This assumption on member ordering ("Type" then "Items") is somewhat wrong, and we might have to adjust it in the future.
 
 			Assert.IsTrue (r.Read (), "smitems#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smitems#2");

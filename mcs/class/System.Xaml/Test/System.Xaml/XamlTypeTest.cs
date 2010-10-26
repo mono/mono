@@ -234,12 +234,16 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (t.IsDictionary, "#2.1");
 			Assert.IsFalse (t.IsCollection, "#2.1-2");
 			Assert.IsNotNull (t.KeyType, "#2.2");
+			Assert.IsNotNull (t.ItemType, "#2.2-2");
 			Assert.AreEqual ("Object", t.KeyType.Name, "#2.3");
+			Assert.AreEqual ("Object", t.ItemType.Name, "#2.3-2");
 			t = new XamlType (typeof (Dictionary<int,string>), sctx);
 			Assert.IsTrue (t.IsDictionary, "#3.1");
 			Assert.IsFalse (t.IsCollection, "#3.1-2");
 			Assert.IsNotNull (t.KeyType, "#3.2");
+			Assert.IsNotNull (t.ItemType, "#3.2-2");
 			Assert.AreEqual ("Int32", t.KeyType.Name, "#3.3");
+			Assert.AreEqual ("String", t.ItemType.Name, "#3.3-2");
 
 			var ml = t.GetAllMembers ();
 			Assert.AreEqual (2, ml.Count, "#3.4");
@@ -656,6 +660,15 @@ namespace MonoTests.System.Xaml
 		{
 			// wow, so it returns some meaningless method parameters.
 			Assert.IsNotNull (new XamlType (typeof (MyXamlType), sctx).GetPositionalParameters (3), "#1");
+		}
+		
+		[Test]
+		public void ListMembers ()
+		{
+			var xt = new XamlType (typeof (List<int>), sctx);
+			var ml = xt.GetAllMembers ().ToArray ();
+			Assert.AreEqual (1, ml.Length, "#1");
+			Assert.IsNotNull (xt.GetMember ("Capacity"), "#2");
 		}
 	}
 
