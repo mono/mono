@@ -212,6 +212,19 @@ typedef struct {
 	gpointer lmf;
 } StackFrameInfo;
 
+typedef struct {
+	int il_offset, native_offset;
+	/* Indexes of successor sequence points */
+	int *next;
+	/* Number of entries in next */
+	int next_len;
+} SeqPoint;
+
+typedef struct {
+	int len;
+	SeqPoint seq_points [MONO_ZERO_LEN_ARRAY];
+} MonoSeqPointInfo;
+
 #if 0
 #define mono_bitset_foreach_bit(set,b,n) \
 	for (b = 0; b < n; b++)\
@@ -506,6 +519,9 @@ struct MonoBasicBlock {
 	/* we use that to prevent merging of bblocks covered by different clauses*/
 	guint real_offset;
 
+	GSList *seq_points;
+	MonoInst *last_seq_point;
+
 	/*
 	 * The region encodes whether the basic block is inside
 	 * a finally, catch, filter or none of these.
@@ -797,7 +813,7 @@ typedef struct {
 	void            (*abort_func) (MonoObject *object);
 	/* Used to implement --debug=casts */
 	MonoClass       *class_cast_from, *class_cast_to;
-
+	/* Stores state needed by the backport of r157327 */
 	MonoContext      ex_ctx;
 } MonoJitTlsData;
 
@@ -1099,6 +1115,9 @@ typedef struct {
 	 * inside the prolog and epilog used to implement method entry/exit events.
 	 */
 	GPtrArray *seq_points;
+
+	/* The encoded sequence point info */
+	MonoSeqPointInfo *seq_point_info;
 
 	/* Used by AOT */
 	guint32 got_offset;
@@ -1475,6 +1494,7 @@ void	  mono_print_ins (MonoInst *ins) MONO_INTERNAL;
 gboolean  mini_assembly_can_skip_verification (MonoDomain *domain, MonoMethod *method) MONO_INTERNAL;
 gboolean  mini_method_verify (MonoCompile *cfg, MonoMethod *method) MONO_INTERNAL;
 MonoInst *mono_get_got_var (MonoCompile *cfg) MONO_INTERNAL;
+void      mono_add_seq_point (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int native_offset) MONO_INTERNAL;
 
 gboolean  mini_class_is_system_array (MonoClass *klass) MONO_INTERNAL;
 MonoMethodSignature *mono_get_element_address_signature (int arity) MONO_INTERNAL;
@@ -1984,7 +2004,7 @@ gboolean mono_gdb_render_native_backtraces (void) MONO_INTERNAL;
 #define SIG_HANDLER_SIGNATURE(ftn) ftn (int _dummy, siginfo_t *info, void *context)
 #define SIG_HANDLER_PARAMS _dummy, info, context
 #elif defined(PLATFORM_WIN32)
-#define SIG_HANDLER_SIGNATURE(ftn) ftn (int _dummy, EXCEPTION_RECORD *info, void *context)
+#define SIG_HANDLER_SIGNATURE(ftn) ftn (int _dummy, EXCEPTION_POINTERS *info, void *context)
 #define SIG_HANDLER_PARAMS _dummy, info, context
 #else
 #define SIG_HANDLER_SIGNATURE(ftn) ftn (int _dummy)
