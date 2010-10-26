@@ -194,7 +194,10 @@ macosx_register_exception_handler ()
 void
 mono_runtime_install_handlers (void)
 {
+#if !defined (MONO_ARCH_SOFT_DEBUG_SUPPORTED) || defined (DISABLE_SOFT_DEBUG)
+	/* Breaks breakpoint connection in Unity */
 	macosx_register_exception_handler ();
+#endif
 	mono_runtime_posix_install_handlers ();
 
 	/* Snow Leopard has a horrible bug: http://openradar.appspot.com/7209349
