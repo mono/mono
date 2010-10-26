@@ -74,7 +74,7 @@
 #include <mono/utils/mono-proclib.h>
 #include <mono/utils/mono-string.h>
 #include <mono/utils/mono-error-internals.h>
-
+#include <unity/unity_utils.h>
 
 #if defined (PLATFORM_WIN32)
 #include <windows.h>
