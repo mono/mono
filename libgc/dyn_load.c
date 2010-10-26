@@ -95,7 +95,9 @@
     (defined(NETBSD) && defined(__ELF__)) || defined(HURD)
 #   include <stddef.h>
 #   include <elf.h>
+#if !defined(PLATFORM_ANDROID)
 #   include <link.h>
+#endif
 #endif
 
 /* Newer versions of GNU/Linux define this macro.  We
@@ -488,7 +490,29 @@ GC_bool GC_register_main_static_data()
 #else
 #  include <elf.h>
 #endif
+#if defined(PLATFORM_ANDROID)
+// They are defined in mydroid/bionic/linker/linker.h, but are expected to be in <link.h>
+struct link_map
+{
+    uintptr_t l_addr;
+    char * l_name;
+    uintptr_t l_ld;
+    struct link_map * l_next;
+    struct link_map * l_prev;
+};
+
+
+struct r_debug
+{
+    int32_t r_version;
+    struct link_map * r_map;
+    void (*r_brk)(void);
+    int32_t r_state;
+    uintptr_t r_ldbase;
+};
+#else
 #include <link.h>
+#endif
 
 # endif
 
