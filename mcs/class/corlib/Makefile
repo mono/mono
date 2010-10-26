@@ -3,8 +3,13 @@ SUBDIRS =
 include ../../build/rules.make
 export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 
+ifdef MICRO
+LIBRARY = microcorlib.dll
+LIBRARY_NAME = mscorlib.dll
+else
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
+endif
 LIB_MCS_FLAGS = $(corlib_flags) $(RESOURCE_FILES:%=-resource:%)
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
@@ -23,7 +28,10 @@ RESOURCE_FILES = \
 	resources/collation.cjkKOlv2.bin
 
 corlib_flags = -unsafe -nostdlib
-LOCAL_MCS_FLAGS = -nowarn:612,618 -d:INSIDE_CORLIB
+ifdef MICRO
+MICRO_FLAGS = -d:MICRO_LIB -d:DISABLE_SECURITY -d:DISABLE_REMOTING
+endif
+LOCAL_MCS_FLAGS = -nowarn:612,618 -d:INSIDE_CORLIB $(MICRO_FLAGS)
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
 TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -define:MONO_DATACONVERTER_STATIC_METHODS

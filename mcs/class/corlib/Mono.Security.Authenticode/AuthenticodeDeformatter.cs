@@ -83,9 +83,11 @@ namespace Mono.Security.Authenticode {
 				try {
 					CheckSignature (value); 
 				}
+				#if !DISABLE_SECURITY
 				catch (SecurityException) {
 					throw;
 				}
+				#endif
 				catch (Exception) {
 					reason = 1;
 				}
