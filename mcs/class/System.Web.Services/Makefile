@@ -3,7 +3,9 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Services.dll
-ifeq (monotouch, $(PROFILE))
+
+MONOTOUCH_BASED_PROFILE := $(filter monotouch unity, $(PROFILE))
+ifdef MONOTOUCH_BASED_PROFILE
 LIB_MCS_FLAGS = \
 	-nowarn:649 -nowarn:169			\
 	-r:$(corlib)				\

@@ -1,0 +1,3 @@
+../../build/common/Consts.cs
+../../build/common/MonoTODOAttribute.cs
+#include net_2_1_raw_System.ServiceModel.dll.sources
