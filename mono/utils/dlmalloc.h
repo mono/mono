@@ -34,21 +34,21 @@ extern "C" {
 #if !ONLY_MSPACES
 
 #ifndef USE_DL_PREFIX
-#define dlcalloc               calloc
-#define dlfree                 free
-#define dlmalloc               malloc
-#define dlmemalign             memalign
-#define dlrealloc              realloc
-#define dlvalloc               valloc
-#define dlpvalloc              pvalloc
-#define dlmallinfo             mallinfo
-#define dlmallopt              mallopt
-#define dlmalloc_trim          malloc_trim
-#define dlmalloc_stats         malloc_stats
-#define dlmalloc_usable_size   malloc_usable_size
-#define dlmalloc_footprint     malloc_footprint
-#define dlindependent_calloc   independent_calloc
-#define dlindependent_comalloc independent_comalloc
+#define dlcalloc               zcalloc
+#define dlfree                 zfree
+#define dlmalloc               zmalloc
+#define dlmemalign             zmemalign
+#define dlrealloc              zrealloc
+#define dlvalloc               zvalloc
+#define dlpvalloc              zpvalloc
+#define dlmallinfo             zmallinfo
+#define dlmallopt              zmallopt
+#define dlmalloc_trim          zmalloc_trim
+#define dlmalloc_stats         zmalloc_stats
+#define dlmalloc_usable_size   zmalloc_usable_size
+#define dlmalloc_footprint     zmalloc_footprint
+#define dlindependent_calloc   zindependent_calloc
+#define dlindependent_comalloc zindependent_comalloc
 #endif /* USE_DL_PREFIX */
 
 
