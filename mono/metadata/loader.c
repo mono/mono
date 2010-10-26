@@ -1585,7 +1585,7 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	} else if (cols [2] & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
 		MonoMethodPInvoke *piinfo = (MonoMethodPInvoke *)result;
 
-#ifdef PLATFORM_WIN32
+#ifdef USE_COREE
 		/* IJW is P/Invoke with a predefined function pointer. */
 		if (image->is_module_handle && (cols [1] & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
 			piinfo->addr = mono_image_rva_map (image, cols [0]);

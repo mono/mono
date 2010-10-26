@@ -5330,7 +5330,7 @@ ves_icall_System_Reflection_Module_GetGuidInternal (MonoReflectionModule *module
 static gpointer
 ves_icall_System_Reflection_Module_GetHINSTANCE (MonoReflectionModule *module)
 {
-#ifdef PLATFORM_WIN32
+#ifdef USE_COREE
 	if (module->image && module->image->is_module_handle)
 		return module->image->raw_data;
 #endif
