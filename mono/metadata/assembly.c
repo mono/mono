@@ -403,12 +403,15 @@ load_in_path (const char *basename, const char** search_path, MonoImageOpenStatu
 {
 	int i;
 	char *fullpath;
+	char *afullpath;
 	MonoAssembly *result;
 
 	for (i = 0; search_path [i]; ++i) {
 		fullpath = g_build_filename (search_path [i], basename, NULL);
-		result = mono_assembly_open_full (fullpath, status, refonly);
+		afullpath = mono_path_resolve_symlinks(fullpath);
+		result = mono_assembly_open_full (afullpath, status, refonly);
 		g_free (fullpath);
+		g_free (afullpath);
 		if (result)
 			return result;
 	}
