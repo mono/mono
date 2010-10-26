@@ -240,7 +240,12 @@ namespace System.Diagnostics {
 #if NET_2_0
 		static void DoTrace (string kind, Assembly report, string message)
 		{
-			TraceImpl.WriteLine (String.Format ("{0} {1} : 0 : {2}", report.Location, kind, message));
+			string location = "";
+			try{
+				location = report.Location;
+			} catch (MethodAccessException) {}
+			
+			TraceImpl.WriteLine (String.Format ("{0} {1} : 0 : {2}", location, kind, message));
 		}
 		
 		[Conditional("TRACE")]
