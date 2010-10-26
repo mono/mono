@@ -42,22 +42,31 @@ namespace System.Globalization
 {
 	[Serializable]
 #if !NET_2_1 || MONOTOUCH
+#if !DISABLE_SECURITY
 	[ComVisible (true)]
+#endif
 	public class CompareInfo : IDeserializationCallback {
 
 		static readonly bool useManagedCollation =
+		#if !MICRO_LIB
 			Environment.internalGetEnvironmentVariable ("MONO_DISABLE_MANAGED_COLLATION")
 			!= "yes" && MSCompatUnicodeTable.IsReady;
+		#else
+			false;
+		#endif
 
 		internal static bool UseManagedCollation {
 			get { return useManagedCollation; }
 		}
-
+		
 		void IDeserializationCallback.OnDeserialization(object sender)
 		{
+			#if !MICRO_LIB
 			if (UseManagedCollation) {
 				collator = new SimpleCollator (new CultureInfo (culture));
-			} else {
+			} else 
+			#endif
+			{
 				/* This will build the ICU collator, and store
 				 * the pointer in ICU_collator
 				 */
@@ -126,10 +135,10 @@ namespace System.Globalization
 		private string m_name; // Unused, but MS.NET serializes this
 #endif
 #pragma warning restore 169
-
+#if !MICRO_LIB
 		[NonSerialized]
 		SimpleCollator collator;
-
+#endif
 		// Maps culture IDs to SimpleCollator objects
 		private static Hashtable collators;
 
@@ -143,6 +152,7 @@ namespace System.Globalization
 		internal CompareInfo (CultureInfo ci)
 		{
 			this.culture = ci.LCID;
+			#if !MICRO_LIB
 			if (UseManagedCollation) {
 				lock (monitor) {
 					if (collators == null)
@@ -153,7 +163,9 @@ namespace System.Globalization
 						collators [ci.LCID] = collator;
 					}
 				}
-			} else {
+			} else 
+			#endif 
+			{
 #if !NET_2_1 || MONOTOUCH
 				this.icu_name = ci.IcuName;
 				this.construct_compareinfo (icu_name);
@@ -167,8 +179,94 @@ namespace System.Globalization
 			free_internal_collator ();
 #endif
 		}
+		
+#if MICRO_LIB
+private int string_invariant_compare_char(char c1, char c2, CompareOptions options)
+		{
+			if ((options & CompareOptions.Ordinal) > 0) 
+				return c1 - c2;
+				
+			int result;
+					
+			if ((options & CompareOptions.IgnoreCase) > 0) {
+				result = Char.ToLower(c1) - Char.ToLower(c2);
+			} else {
+				/*
+				 * No options. Kana, symbol and spacing options don't
+				 * apply to the invariant culture.
+				 */
+		
+				/*
+				 * FIXME: here we must use the information from c1type and c2type
+				 * to find out the proper collation, even on the InvariantCulture, the
+				 * sorting is not done by computing the unicode values, but their
+				 * actual sort order.
+				 */
+				result = c1 - c2;
+				}
+			
+			return ((result < 0) ? -1 : (result > 0) ? 1 : 0);
+		}
+		
+private int internal_compare_micro (string str1, int offset1,
+						     int len1, string str2,
+						     int offset2, int len2,
+						     CompareOptions options)
+		{
+			int length;
+			int charcmp;
+			string ustr1;
+			string ustr2;
+			int pos;
+		
+			if(len1 >= len2) {
+				length=len1;
+			} else {
+				length=len2;
+			}
+		
+			ustr1 = str1.Substring(offset1);
+			ustr2 = str2.Substring(offset2);
+		
+			pos = 0;
+		
+			for (pos = 0; pos != length; pos++) {
+				if (pos >= len1 || pos >= len2)
+					break;
+		
+				charcmp = string_invariant_compare_char(ustr1[pos], ustr2[pos],
+									options);
+				if (charcmp != 0) {
+					return(charcmp);
+				}
+			}
+		
+			/* the lesser wins, so if we have looped until length we just
+			 * need to check the last char
+			 */
+			if (pos == length) {
+				return(string_invariant_compare_char(ustr1[pos - 1],
+								     ustr2[pos - 1], options));
+			}
+		
+			/* Test if one of the strings has been compared to the end */
+			if (pos >= len1) {
+				if (pos >= len2) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if (pos >= len2) {
+				return(1);
+			}
+		
+			/* if not, check our last char only.. (can this happen?) */
+			return(string_invariant_compare_char(ustr1[pos], ustr2[pos], options));
+		}
+#endif
 
 #if !NET_2_1 || MONOTOUCH
+#if !MICRO_LIB
 		private int internal_compare_managed (string str1, int offset1,
 						int length1, string str2,
 						int offset2, int length2,
@@ -177,18 +275,25 @@ namespace System.Globalization
 			return collator.Compare (str1, offset1, length1,
 				str2, offset2, length2, options);
 		}
+#endif
 
 		private int internal_compare_switch (string str1, int offset1,
 						int length1, string str2,
 						int offset2, int length2,
 						CompareOptions options)
 		{
+			#if !MICRO_LIB
 			return UseManagedCollation ?
 				internal_compare_managed (str1, offset1, length1,
 				str2, offset2, length2, options) :
 				internal_compare (str1, offset1, length1,
 				str2, offset2, length2, options);
+			#else
+			return internal_compare_micro (str1, offset1, length1,
+				str2, offset2, length2, options);
+			#endif
 		}
+
 #else
 		private int internal_compare_switch (string str1, int offset1,
 						int length1, string str2,
@@ -417,8 +522,10 @@ namespace System.Globalization
 			}
 #endif
 #if !NET_2_1 || MONOTOUCH
+#if !MICRO_LIB
 			if (UseManagedCollation)
 				return collator.GetSortKey (source, options);
+#endif
 			SortKey key=new SortKey (culture, source, options);
 
 			/* Need to do the icall here instead of in the
@@ -506,6 +613,7 @@ namespace System.Globalization
 		}
 
 #if !NET_2_1 || MONOTOUCH
+#if !MICRO_LIB
 		private int internal_index_managed (string s, int sindex,
 			int count, char c, CompareOptions opt,
 			bool first)
@@ -514,11 +622,12 @@ namespace System.Globalization
 				collator.IndexOf (s, c, sindex, count, opt) :
 				collator.LastIndexOf (s, c, sindex, count, opt);
 		}
-
+#endif
 		private int internal_index_switch (string s, int sindex,
 			int count, char c, CompareOptions opt,
 			bool first)
 		{
+			#if !MICRO_LIB
 			// - forward IndexOf() icall is much faster than
 			//   manged version, so always use icall. However,
 			//   it does not work for OrdinalIgnoreCase, so
@@ -526,6 +635,9 @@ namespace System.Globalization
 			return UseManagedCollation && ! (first && opt == CompareOptions.Ordinal) ?
 				internal_index_managed (s, sindex, count, c, opt, first) :
 				internal_index (s, sindex, count, c, opt, first);
+			#else
+				return internal_index (s, sindex, count, c, opt, first);
+			#endif
 		}
 #else
 		private int internal_index_switch (string s, int sindex,
@@ -575,6 +687,7 @@ namespace System.Globalization
 		}
 
 #if !NET_2_1 || MONOTOUCH
+#if !MICRO_LIB
 		private int internal_index_managed (string s1, int sindex,
 			int count, string s2, CompareOptions opt,
 			bool first)
@@ -583,11 +696,12 @@ namespace System.Globalization
 				collator.IndexOf (s1, s2, sindex, count, opt) :
 				collator.LastIndexOf (s1, s2, sindex, count, opt);
 		}
-
+#endif
 		private int internal_index_switch (string s1, int sindex,
 			int count, string s2, CompareOptions opt,
 			bool first)
 		{
+			#if !MICRO_LIB
 			// - forward IndexOf() icall is much faster than
 			//   manged version, so always use icall. However,
 			//   it does not work for OrdinalIgnoreCase, so
@@ -595,7 +709,10 @@ namespace System.Globalization
 			return UseManagedCollation && ! (first && opt == CompareOptions.Ordinal) ?
 				internal_index_managed (s1, sindex, count, s2, opt, first) :
 				internal_index (s1, sindex, count, s2, opt, first);
-		}
+			#else
+				return internal_index (s1, sindex, count, s2, opt, first);
+			#endif
+}
 #else
 		private int internal_index_switch (string s1, int sindex,
 			int count, string s2, CompareOptions opt,
@@ -650,13 +767,10 @@ namespace System.Globalization
 			if(prefix == null) {
 				throw new ArgumentNullException("prefix");
 			}
-
-			if ((options & ValidCompareOptions_NoStringSort) != options)
-				throw new ArgumentException ("options");
-
+#if !MICRO_LIB
 			if (UseManagedCollation)
 				return collator.IsPrefix (source, prefix, options);
-
+#endif
 			if(source.Length < prefix.Length) {
 				return(false);
 			} else {
@@ -680,13 +794,10 @@ namespace System.Globalization
 			if(suffix == null) {
 				throw new ArgumentNullException("suffix");
 			}
-
-			if ((options & ValidCompareOptions_NoStringSort) != options)
-				throw new ArgumentException ("options");
-
+#if !MICRO_LIB
 			if (UseManagedCollation)
 				return collator.IsSuffix (source, suffix, options);
-
+#endif
 			if(source.Length < suffix.Length) {
 				return(false);
 			} else {
@@ -838,7 +949,7 @@ namespace System.Globalization
 					       value, options, false));
 		}
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 		[ComVisible (false)]
 		public static bool IsSortable (char ch)
 		{

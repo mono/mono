@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 	[ComVisible (true)]
 #endif
 	[Serializable]
@@ -255,7 +255,7 @@ namespace System.Reflection
 						return true;
 				}
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 				if (to.IsGenericType && to.GetGenericTypeDefinition () == typeof (Nullable<>) && to.GetGenericArguments ()[0] == from)
 					return true;
 #endif
@@ -492,7 +492,7 @@ namespace System.Reflection
 			{
 				if (t1 == t2)
 					return 0;
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 				if (t1.IsGenericParameter && !t2.IsGenericParameter)
 					return 1; // t2
 				if (!t1.IsGenericParameter && t2.IsGenericParameter)

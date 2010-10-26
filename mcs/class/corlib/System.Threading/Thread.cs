@@ -30,8 +30,10 @@
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
 using System.Security.Principal;
+#endif
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -145,16 +147,20 @@ namespace System.Threading {
 		private int managed_id;
 #endif		
 		
+#if !DISABLE_SECURITY				
 		private IPrincipal _principal;
+#endif
 
 		public static Context CurrentContext {
+			#if !DISABLE_SECURITY
 			[SecurityPermission (SecurityAction.LinkDemand, Infrastructure=true)]
+			#endif
 			get {
 				return(AppDomain.InternalGetContext ());
 			}
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if (!NET_2_1 || MONOTOUCH) && !DISABLE_SECURITY
 		public static IPrincipal CurrentPrincipal {
 			get {
 				IPrincipal p = null;
@@ -163,14 +169,15 @@ namespace System.Threading {
 					p = th._principal;
 					if (p == null) {
 						p = GetDomain ().DefaultPrincipal;
-						th._principal = p;
+						// th._principal = p;
 					}
 				}
 				return p;
 			}
 			[SecurityPermission (SecurityAction.Demand, ControlPrincipal = true)]
 			set {
-				CurrentThread._principal = value;
+				Thread th = CurrentThread;
+				lock (th) { th._principal = value; }
 			}
 		}
 #endif
@@ -294,7 +301,9 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void ResetAbort_internal();
 
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+#endif
 		public static void ResetAbort ()
 		{
 			ResetAbort_internal ();
@@ -308,7 +317,7 @@ namespace System.Threading {
 			if (millisecondsTimeout < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "Negative timeout");
 
-			Sleep_internal (millisecondsTimeout);
+			Sleep_internal(millisecondsTimeout);
 		}
 
 		public static void Sleep (TimeSpan timeout)
@@ -461,7 +470,9 @@ namespace System.Threading {
 				return culture;
 			}
 			
+			#if !DISABLE_SECURITY
 			[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+			#endif
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("value");
@@ -669,14 +680,18 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Abort_internal (object stateInfo);
 
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+#endif
 		public void Abort () 
 		{
 			Abort_internal (null);
 		}
 
 #if !NET_2_1 || MONOTOUCH
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+#endif		
 		public void Abort (object stateInfo) 
 		{
 			Abort_internal (stateInfo);
@@ -688,7 +703,9 @@ namespace System.Threading {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void Interrupt_internal ();
 		
+#if !DISABLE_SECURITY		
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+#endif
 		public void Interrupt ()
 		{
 			Interrupt_internal ();
@@ -710,7 +727,7 @@ namespace System.Threading {
 			if (millisecondsTimeout < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "Timeout less than zero");
 
-			return Join_internal (millisecondsTimeout, system_thread_handle);
+			return Join_internal(millisecondsTimeout, system_thread_handle);
 		}
 
 #if !NET_2_1 || MONOTOUCH
@@ -719,7 +736,7 @@ namespace System.Threading {
 			long ms = (long) timeout.TotalMilliseconds;
 			if (ms < Timeout.Infinite || ms > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException ("timeout", "timeout out of range");
-
+			
 			return Join_internal ((int) ms, system_thread_handle);
 		}
 #endif
@@ -736,7 +753,9 @@ namespace System.Threading {
 #if NET_2_0
 		[Obsolete ("")]
 #endif
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+#endif
 		public void Resume () 
 		{
 			Resume_internal ();
@@ -760,7 +779,7 @@ namespace System.Threading {
 			}
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if NET_2_1 && !MONOTOUCH && !MICRO_LIB
 		private void StartSafe ()
 		{
 			try {
@@ -799,6 +818,7 @@ namespace System.Threading {
 #endif
 
 		public void Start() {
+#if !DISABLE_SECURITY
 			// propagate informations from the original thread to the new thread
 #if NET_2_0
 			if (!ExecutionContext.IsFlowSuppressed ())
@@ -811,9 +831,10 @@ namespace System.Threading {
 #endif
 			if (CurrentThread._principal != null)
 				_principal = CurrentThread._principal;
+#endif
 
 			// Thread_internal creates and starts the new thread, 
-#if NET_2_1 && !MONOTOUCH
+#if NET_2_1 && !MONOTOUCH && !MICRO_LIB
 			if (Thread_internal((ThreadStart) StartSafe) == (IntPtr) 0)
 #else
 			if (Thread_internal(threadstart) == (IntPtr) 0)
@@ -828,7 +849,9 @@ namespace System.Threading {
 #if NET_2_0
 		[Obsolete ("")]
 #endif
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
+#endif
 		public void Suspend ()
 		{
 			Suspend_internal ();
@@ -1031,7 +1054,7 @@ namespace System.Threading {
 		{
 			// Managed and native threads are currently bound together.
 		}
-
+		
 #if !NET_2_1 || MONOTOUCH
 		public ApartmentState GetApartmentState ()
 		{
@@ -1087,8 +1110,10 @@ namespace System.Threading {
 		// NOTE: This method doesn't show in the class library status page because
 		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
 		// But it's there!
+		#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
+		#endif
 #if NET_2_0
 		[Obsolete ("see CompressedStack class")]
 #endif
@@ -1102,15 +1127,21 @@ namespace System.Threading {
 			// Note: returns null if no CompressedStack has been set.
 			// However CompressedStack.GetCompressedStack returns an 
 			// (empty?) CompressedStack instance.
+			#if !DISABLE_SECURITY
 			CompressedStack cs = ExecutionContext.SecurityContext.CompressedStack;
 			return ((cs == null) || cs.IsEmpty ()) ? null : cs.CreateCopy ();
+			#else
+			return null;
+			#endif
 		}
 
 		// NOTE: This method doesn't show in the class library status page because
 		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
 		// But it's there!
+		#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
+		#endif
 #if NET_2_0
 		[Obsolete ("see CompressedStack class")]
 #endif
@@ -1121,7 +1152,9 @@ namespace System.Threading {
 #endif
 		void SetCompressedStack (CompressedStack stack)
 		{
+			#if !DISABLE_SECURITY
 			ExecutionContext.SecurityContext.CompressedStack = stack;
+			#endif
 		}
 
 #endif

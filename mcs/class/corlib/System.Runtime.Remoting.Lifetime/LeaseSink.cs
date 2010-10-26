@@ -60,11 +60,13 @@ namespace System.Runtime.Remoting.Lifetime
 
 		void RenewLease (IMessage msg)
 		{
+			#if !DISABLE_REMOTING
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 
 			ILease lease = identity.Lease;
 			if (lease != null && lease.CurrentLeaseTime < lease.RenewOnCallTime)
 				lease.Renew (lease.RenewOnCallTime);
+			#endif
 		}
 
 		public IMessageSink NextSink 

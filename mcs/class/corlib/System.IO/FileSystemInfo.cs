@@ -35,16 +35,20 @@
 
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 
 namespace System.IO {
 	
 	[Serializable]
+	#if !DISABLE_SECURITY
 	[FileIOPermission (SecurityAction.InheritanceDemand, Unrestricted = true)]
+	#endif
 #if NET_2_0
 	[ComVisible (true)]
 #endif
-#if NET_2_1
+#if NET_2_1 && !UNITY
 	public abstract class FileSystemInfo {
 #else
 	public abstract class FileSystemInfo : MarshalByRefObject, ISerializable {

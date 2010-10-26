@@ -32,21 +32,24 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Security;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 #endif
 
 namespace System.IO.IsolatedStorage {
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 	[ComVisible (true)]
 #endif
 	public class IsolatedStorageFileStream : FileStream {
-
+#if !DISABLE_SECURITY
 		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
+#endif
 		private static string CreateIsolatedPath (IsolatedStorageFile isf, string path, FileMode mode)
 		{
 			if (path == null)
@@ -63,8 +66,13 @@ namespace System.IO.IsolatedStorage {
 
 				StackFrame sf = new StackFrame (3); // skip self and constructor
 				isf = IsolatedStorageFile.GetStore (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly,
+				#if !DISABLE_SECURITY
 					IsolatedStorageFile.GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence), 
 					IsolatedStorageFile.GetAssemblyIdentityFromEvidence (sf.GetMethod ().ReflectedType.Assembly.UnprotectedGetEvidence ()));
+				#else
+					null, 
+					null);
+				#endif
 			}
 
 			// ensure that the _root_ isolated storage can be (and is) created.
@@ -120,7 +128,9 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		// FIXME: Further limit the assertion when imperative Assert is implemented
+		#if !DISABLE_SECURITY
 		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
+		#endif
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, IsolatedStorageFile isf)
 			: base (CreateIsolatedPath (isf, path, mode), mode, access, share, bufferSize, false, true)
 		{
@@ -153,7 +163,7 @@ namespace System.IO.IsolatedStorage {
 			get {return base.CanWrite;}
 		}
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 		public override SafeFileHandle SafeFileHandle {
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			get {
@@ -165,7 +175,9 @@ namespace System.IO.IsolatedStorage {
 		[Obsolete ("Use SafeFileHandle - once available")]
 #endif
 		public override IntPtr Handle {
+			#if !DISABLE_SECURITY
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+			#endif
 			get {
 				throw new IsolatedStorageException (
 					Locale.GetText ("Information is restricted"));

@@ -32,14 +32,16 @@
 //
 
 using System.Reflection;
+#if !MICRO_LIB
 using System.Reflection.Emit;
+#endif
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
+#if (NET_2_0 || BOOTSTRAP_NET_2_0) && !MICRO_LIB
 
 namespace System.Reflection
 {

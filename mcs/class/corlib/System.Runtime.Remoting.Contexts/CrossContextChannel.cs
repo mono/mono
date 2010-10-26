@@ -41,6 +41,7 @@ namespace System.Runtime.Remoting.Contexts
 	{
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
+			#if !DISABLE_REMOTING
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 
 			Context oldContext = null;
@@ -70,10 +71,14 @@ namespace System.Runtime.Remoting.Contexts
 			}
 			
 			return response;
+			#else
+			return null;
+			#endif
 		}
 
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
+			#if !DISABLE_REMOTING
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 			
 			Context oldContext = null;
@@ -107,6 +112,9 @@ namespace System.Runtime.Remoting.Contexts
 				if (oldContext != null)
 					Context.SwitchToContext (oldContext);
 			}
+			#else
+			return null;
+			#endif
 		}
 
 		public IMessageSink NextSink 

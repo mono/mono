@@ -651,7 +651,7 @@ namespace System
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
 #endif
@@ -673,7 +673,7 @@ namespace System
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
 #endif

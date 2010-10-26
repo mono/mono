@@ -34,7 +34,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 using System.Text;
 using System.Threading;
 
@@ -143,7 +145,7 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if ONLY_1_1
+#if ONLY_1_1 && !DISABLE_SECURITY
 		[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
 #endif
 		public StackTrace (StackFrame frame)
@@ -152,7 +154,7 @@ namespace System.Diagnostics {
 			this.frames [0] = frame;
 		}
 
-#if ONLY_1_1
+#if ONLY_1_1 && !DISABLE_SECURITY
 		[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
 #endif
 		[MonoTODO ("Not possible to create StackTraces from other threads")]

@@ -63,7 +63,9 @@ namespace System.Threading {
 				ExecutionContext.RestoreFlow ();
 				break;
 			case AsyncFlowControlType.Security:
+			#if !DISABLE_SECURITY
 				SecurityContext.RestoreFlow ();
+			#endif
 				break;
 			}
 			_t = null;

@@ -41,7 +41,7 @@ namespace System
 	[StructLayout (LayoutKind.Auto)]
 	public struct DateTimeOffset : IComparable, IFormattable, ISerializable, IDeserializationCallback, IComparable<DateTimeOffset>, IEquatable<DateTimeOffset>
 	{
-#if MONOTOUCH
+#if MONOTOUCH && !MICRO_LIB
 		static DateTimeOffset () {
 			if (MonoTouchAOTHelper.FalseFlag) {
 				var comparer = new System.Collections.Generic.GenericComparer <DateTimeOffset> ();

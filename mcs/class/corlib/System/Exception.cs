@@ -35,8 +35,9 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
-
+#endif
 namespace System
 {
 	[Serializable]
@@ -158,7 +159,7 @@ namespace System
 		}
 
 		public virtual string Source {
-#if ONLY_1_1
+#if ONLY_1_1 && !DISABLE_SECURITY
 			[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
 #endif
 			get {
@@ -221,7 +222,7 @@ namespace System
 
 							sb.AppendFormat ("in {0}:{1} ", frame.GetSecureFileName (), 
 								frame.GetFileLineNumber ());
-						}
+							}
 					}
 					stack_trace = sb.ToString ();
 				}
@@ -231,7 +232,7 @@ namespace System
 		}
 
 		public MethodBase TargetSite {
-#if ONLY_1_1
+#if ONLY_1_1 && !DISABLE_SECURITY
 			[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
 #endif
 			get {
@@ -270,10 +271,12 @@ namespace System
 			return this;
 		}
 
+#if !DISABLE_SECURITY
 #if ONLY_1_1
 		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
 #endif
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+#endif
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -298,7 +301,7 @@ namespace System
 #endif
 		}
 
-#if ONLY_1_1
+#if ONLY_1_1 && !DISABLE_SECURITY
 		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
 #endif
 		public override string ToString ()

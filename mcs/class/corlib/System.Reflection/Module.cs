@@ -32,7 +32,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Security;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 
 namespace System.Reflection {
 
@@ -80,7 +82,7 @@ namespace System.Reflection {
 	
 		public virtual string FullyQualifiedName {
 			get {
-#if !NET_2_1
+#if !NET_2_1 && !DISABLE_SECURITY
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fqname).Demand ();
 				}
@@ -226,8 +228,9 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetFields (bindingFlags) : new FieldInfo [0];
 		}
 #endif
-	
+#if !DISABLE_SECURITY	
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+#endif
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
 			if (info == null)

@@ -53,13 +53,21 @@ namespace System.Runtime.Remoting.Proxies {
 
 		public virtual MarshalByRefObject CreateInstance (Type serverType)
 		{
+			#if !DISABLE_REMOTING
 			RemotingProxy proxy = new RemotingProxy (serverType, ChannelServices.CrossContextUrl, null);
+			#else
+			RemotingProxy proxy = new RemotingProxy (serverType, "", null);
+			#endif
 			return (MarshalByRefObject) proxy.GetTransparentProxy();
 		}
 
 		public virtual RealProxy CreateProxy (ObjRef objRef, Type serverType, object serverObject, Context serverContext)
 		{
+			#if !DISABLE_REMOTING
 			return RemotingServices.GetRealProxy (RemotingServices.GetProxyForRemoteObject (objRef, serverType));
+			#else
+			return null;
+			#endif
 		}
 
 #if NET_2_0

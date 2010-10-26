@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 	[ComVisible(true)]
 	[System.Diagnostics.DebuggerDisplay ("Count={Count}")]
 	[System.Diagnostics.DebuggerTypeProxy (typeof (CollectionDebuggerView))]

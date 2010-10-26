@@ -36,7 +36,7 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 && !DISABLE_SECURITY
 using System.Security.AccessControl;
 #endif
 
@@ -93,7 +93,7 @@ namespace System.IO {
 			}
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 || UNITY
 		public bool IsReadOnly {
 			get {
 				if (!Exists)
@@ -271,7 +271,7 @@ namespace System.IO {
 #endif
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 && !DISABLE_SECURITY
 		public FileSecurity GetAccessControl ()
 		{
 			throw new NotImplementedException ();
@@ -281,7 +281,8 @@ namespace System.IO {
 		{
 			throw new NotImplementedException ();
 		}
-
+#endif
+#if NET_2_0 && !NET_2_1 || UNITY
 		[ComVisible (false)]
 		public FileInfo Replace (string destinationFileName,
 					 string destinationBackupFileName)
@@ -313,7 +314,7 @@ namespace System.IO {
             		File.Delete (FullPath);
 			return new FileInfo (destinationFullPath);
 		}
-		
+
 		[ComVisible (false)]
 		public FileInfo Replace (string destinationFileName,
 					 string destinationBackupFileName,
@@ -321,7 +322,8 @@ namespace System.IO {
 		{
 			throw new NotImplementedException ();
 		}
-
+#endif
+#if NET_2_0 && !NET_2_1 && !DISABLE_SECURITY
 		public void SetAccessControl (FileSecurity fileSecurity)
 		{
 			throw new NotImplementedException ();

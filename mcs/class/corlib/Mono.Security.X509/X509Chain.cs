@@ -33,7 +33,9 @@
 
 using System;
 using System.Security;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 
 #if !INSIDE_CORLIB
 using System.Net;
@@ -95,7 +97,9 @@ namespace Mono.Security.X509 {
 				}
 				return roots;
 			}
+			#if !DISABLE_SECURITY
 			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+			#endif
 			set { roots = value; }
 		}
 

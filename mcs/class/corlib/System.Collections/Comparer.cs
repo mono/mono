@@ -30,7 +30,9 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 
 namespace System.Collections
 {
@@ -101,7 +103,9 @@ namespace System.Collections
 		}
 
 		// ISerializable
+		#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+		#endif
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)

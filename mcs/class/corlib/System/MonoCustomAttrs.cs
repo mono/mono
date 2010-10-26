@@ -35,7 +35,9 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
+#if !MICRO_LIB
 using System.Reflection.Emit;
+#endif
 
 #if  NET_2_0
 using System.Collections.Generic;
@@ -51,7 +53,11 @@ namespace System
 		static bool IsUserCattrProvider (object obj)
 		{
 			Type type = obj as Type;
+			#if !MICRO_LIB
 			if ((type is MonoType) || (type is TypeBuilder))
+			#else
+			if (type is MonoType)
+			#endif
 				return false;
 			if ((obj is Type))
 				return true;
@@ -64,7 +70,7 @@ namespace System
 		internal static extern object[] GetCustomAttributesInternal (ICustomAttributeProvider obj, Type attributeType, bool pseudoAttrs);
 
 		internal static object[] GetPseudoCustomAttributes (ICustomAttributeProvider obj, Type attributeType) {
-#if NET_2_0 || BOOTSTRAP_NET_2_0
+#if (NET_2_0 || BOOTSTRAP_NET_2_0) && !MICRO_LIB
 			object[] pseudoAttrs = null;
 
 			/* FIXME: Add other types */

@@ -32,14 +32,14 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_EventInfo))]
 	[Serializable]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class EventInfo : MemberInfo, _EventInfo {
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 		AddEventAdapter cached_add_event;
 #else
 		object placeholder;
@@ -82,7 +82,7 @@ namespace System.Reflection {
 		[DebuggerStepThrough]
 		public void AddEventHandler (object target, Delegate handler)
 		{
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 			if (cached_add_event == null) {
 				MethodInfo add = GetAddMethod ();
 				if (add == null)
@@ -160,7 +160,7 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 		delegate void AddEventAdapter (object _this, Delegate dele);
 		delegate void AddEvent<T, D> (T _this, D dele);
 		delegate void StaticAddEvent<D> (D dele);

@@ -33,8 +33,10 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
 using System.Security.Policy;
+#endif
 using System.Configuration.Assemblies;
 using System.Text;
 #if !NET_2_1 || MONOTOUCH
@@ -104,7 +106,7 @@ namespace System
 			return Activator.CreateInstanceFrom (assemblyFile, typeName, false, _flags, null, null, null,
 				activationAttributes, null);
 		}
-
+#if !DISABLE_SECURITY
 		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
 		                                               BindingFlags bindingAttr, Binder binder, object [] args,
 		                                               CultureInfo culture, object [] activationAttributes,
@@ -121,6 +123,24 @@ namespace System
 			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
 			return (obj != null) ? new ObjectHandle (obj) : null;
 		}
+#else
+		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
+		                                               BindingFlags bindingAttr, Binder binder, object [] args,
+		                                               CultureInfo culture, object [] activationAttributes,
+		                                               object securityInfo)
+		{
+			Assembly assembly = Assembly.LoadFrom (assemblyFile, securityInfo);
+			if (assembly == null)
+				return null;
+
+			Type type = assembly.GetType (typeName, true, ignoreCase);
+			if (type == null)
+				return null;
+
+			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
+			return (obj != null) ? new ObjectHandle (obj) : null;
+		}
+#endif
 
 		public static ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{
@@ -138,7 +158,7 @@ namespace System
 			return Activator.CreateInstance (assemblyName, typeName, false, _flags, null, null, null,
 				activationAttributes, null);
 		}
-
+#if !DISABLE_SECURITY
 		public static ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
 		                                           BindingFlags bindingAttr, Binder binder, object [] args,
 							   CultureInfo culture, object [] activationAttributes, Evidence securityInfo)
@@ -152,8 +172,23 @@ namespace System
 			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
 			return (obj != null) ? new ObjectHandle (obj) : null;
 		}
+#else
+		public static ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
+		                                           BindingFlags bindingAttr, Binder binder, object [] args,
+							   CultureInfo culture, object [] activationAttributes, object securityInfo)
+		{
+			Assembly assembly = null;
+			if(assemblyName == null)
+				assembly = Assembly.GetCallingAssembly ();
+			else
+				assembly = Assembly.Load (assemblyName, securityInfo);
+			Type type = assembly.GetType (typeName, true, ignoreCase);
+			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
+			return (obj != null) ? new ObjectHandle (obj) : null;
+		}
+#endif
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 		[MonoNotSupported ("no ClickOnce in mono")]
 		public static ObjectHandle CreateInstance (ActivationContext activationContext)
 		{
@@ -244,7 +279,7 @@ namespace System
 		{
 			CheckType (type);
 
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 			if (type.ContainsGenericParameters)
 				throw new ArgumentException (type + " is an open generic type", "type");
 #endif
@@ -306,7 +341,7 @@ namespace System
 		public static object CreateInstance (Type type, bool nonPublic)
 		{ 
 			CheckType (type);
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 			if (type.ContainsGenericParameters)
 				throw new ArgumentException (type + " is an open generic type", "type");
 #endif
@@ -362,7 +397,10 @@ namespace System
 		}
 
 #if !NET_2_1 || MONOTOUCH
+#if !DISABLE_REMOTING
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
+#endif
 		public static object GetObject (Type type, string url)
 		{
 			if (type == null)
@@ -370,8 +408,9 @@ namespace System
 
 			return RemotingServices.Connect (type, url);
 		}
-
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
+#endif
 		public static object GetObject (Type type, string url, object state)
 		{
 			if (type == null)
@@ -379,6 +418,7 @@ namespace System
 
 			return RemotingServices.Connect (type, url, state);
 		}
+#endif
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object CreateInstanceInternal (Type type);

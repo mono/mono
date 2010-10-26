@@ -95,9 +95,13 @@ namespace System.Security {
 				throw new ArgumentException (String.Format (msg, fullname));
 #endif
 			}
+			#if !DISABLE_SECURITY
 			IPermission p = Create (classType);
 			p.FromXml (se);
 			return p;
+			#else
+			return null;
+			#endif
 		}
 	}
 }

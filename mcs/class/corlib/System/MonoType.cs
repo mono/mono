@@ -173,7 +173,7 @@ namespace System
 
 			foreach (Type type in interfaces) {
 				/*We must compare against the generic type definition*/
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 				Type t = type.IsGenericType ? type.GetGenericTypeDefinition () : type;
 #else
 				Type t = type;
@@ -598,7 +598,7 @@ namespace System
 		public override MemberTypes MemberType {
 			get {
 				if (DeclaringType != null
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 					&& !IsGenericParameter
 #endif
 					)
@@ -653,7 +653,7 @@ namespace System
 			return getFullName (false, false);
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
+#if (NET_2_0 || BOOTSTRAP_NET_2_0) && !DISABLE_SECURITY
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type [] GetGenericArguments ();
 
@@ -699,16 +699,21 @@ namespace System
 #if NET_2_1
 			return mb;
 #else
+#if !DISABLE_SECURITY
 			if (!SecurityManager.SecurityEnabled || (mb == null))
 				return mb;
-
+#endif
 			// Sadly we have no way to know which kind of security action this is
 			// so we must do it the hard way. Actually this isn't so bad 
 			// because we can skip the (mb.Attributes & MethodAttributes.HasSecurity)
 			// icall required (and do it ourselves)
 
 			// this (unlike the Invoke step) is _and stays_ a LinkDemand (caller)
+			#if !DISABLE_SECURITY
 			return SecurityManager.ReflectedLinkDemandQuery (mb) ? mb : null;
+			#else
+			return mb;
+			#endif
 #endif
 		}
 

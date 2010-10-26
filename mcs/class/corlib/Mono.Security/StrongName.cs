@@ -471,7 +471,9 @@ namespace Mono.Security {
 						// Moonlight cannot depend on machine.config
 #else
 						string config = Environment.GetMachineConfigPath ();
+						#if !DISABLE_SECURITY
 						StrongNameManager.LoadConfig (config);
+						#endif
 #endif
 						initialized = true;
 					}

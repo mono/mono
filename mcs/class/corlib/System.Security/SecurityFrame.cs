@@ -98,6 +98,7 @@ namespace System.Security {
 			_domain = frame.domain;
 			_method = frame.method;
 
+#if !DISABLE_SECURITY
 			if (frame.assert.size > 0) {
 				_assert = SecurityManager.Decode (frame.assert.blob, frame.assert.size);
 			}
@@ -107,6 +108,7 @@ namespace System.Security {
 			if (frame.permitonly.size > 0) {
 				_permitonly = SecurityManager.Decode (frame.permitonly.blob, frame.permitonly.size);
 			}
+#endif
 		}
 
 		public Assembly Assembly {

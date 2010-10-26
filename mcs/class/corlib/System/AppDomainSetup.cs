@@ -36,7 +36,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH) && !MICRO_LIB
 using System.Runtime.Hosting;
 using System.Security.Policy;
 #endif
@@ -71,13 +71,15 @@ namespace System
 		bool disallow_code_downloads;
 
 		// those fields also exist in the runtime, so we need dummies in 1.x profile too.
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH) && !MICRO_LIB
 		private ActivationArguments _activationArguments;
 		AppDomainInitializer domain_initializer;
 		[NonSerialized]
 		ApplicationTrust application_trust;
 		string [] domain_initializer_args;
+		#if !DISABLE_SECURITY
 		SecurityElement application_trust_xml;
+		#endif
 #else
 		object _activationArguments;
 		object domain_initializer; // always null
@@ -113,13 +115,15 @@ namespace System
 			_activationArguments = setup._activationArguments;
 			domain_initializer = setup.domain_initializer;
 			domain_initializer_args = setup.domain_initializer_args;
+			#if !DISABLE_SECURITY
 			application_trust_xml = setup.application_trust_xml;
+			#endif
 			disallow_appbase_probe = setup.disallow_appbase_probe;
 			configuration_bytes = setup.configuration_bytes;
 //#endif
 		}
 
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH) && !MICRO_LIB
 		public AppDomainSetup (ActivationArguments activationArguments)
 		{
 			_activationArguments = activationArguments;
@@ -302,7 +306,7 @@ namespace System
 		}
 #endif
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 		public ActivationArguments ActivationArguments {
 			get { return _activationArguments; }
 			set { _activationArguments = value; }

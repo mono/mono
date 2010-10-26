@@ -35,7 +35,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 && !MICRO_LIB
 using System.Security.AccessControl;
 #endif
 
@@ -244,7 +244,7 @@ namespace System.IO {
 			return OriginalPath;
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 || UNITY
 		public DirectoryInfo[] GetDirectories (string searchPattern, SearchOption searchOption)
 		{
 			switch (searchOption) {
@@ -314,7 +314,9 @@ namespace System.IO {
 		}
 
 		// access control methods
-
+#endif
+#if NET_2_0 && !NET_2_1
+#if !MICRO_LIB
 		[MonoLimitation ("DirectorySecurity isn't implemented")]
 		public void Create (DirectorySecurity directorySecurity)
 		{
@@ -350,6 +352,7 @@ namespace System.IO {
 				throw new ArgumentNullException ("directorySecurity");
 			throw new UnauthorizedAccessException ();
 		}
+#endif
 #endif
 	}
 }

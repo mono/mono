@@ -46,15 +46,23 @@ namespace System.Runtime.Remoting.Messaging
 				return ActivationServices.CreateInstanceFromMessage ((IConstructionCallMessage) msg);
 			else
 			{
+				#if !DISABLE_REMOTING
 				ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 				return identity.SyncObjectProcessMessage (msg);
+				#else
+				return null;
+				#endif
 			}
 		}
 
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
+			#if !DISABLE_REMOTING
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 			return identity.AsyncObjectProcessMessage (msg, replySink);
+			#else
+				return null;
+				#endif
 		}
 
 		public IMessageSink NextSink 

@@ -105,7 +105,9 @@ namespace System.Runtime.Remoting
 			Identity ident = srvID as Identity;
 			if (ident == null) throw new ArgumentException ("srvID");
 			
+			#if !DISABLE_REMOTING
 			RemotingServices.SetMessageTargetIdentity (m, ident);
+			#endif
 		}
 	}
 }

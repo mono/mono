@@ -30,7 +30,7 @@ using System.Diagnostics;
 
 namespace System.Collections 
 {
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]

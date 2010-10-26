@@ -31,7 +31,9 @@
 //
 
 using System.Reflection;
+#if !MICRO_LIB
 using System.Reflection.Emit;
+#endif
 
 namespace System.Runtime.InteropServices.Expando
 {

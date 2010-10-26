@@ -194,7 +194,11 @@ namespace System.Runtime.Serialization
 			if (basetype.IsAssignableFrom (type)) {
 				string msg = "Type " + basetype + " and the types derived from it";
 				msg += " (such as " + type + ") are not permitted to be deserialized at this security level";
+				#if !DISABLE_SECURITY
 				throw new System.Security.SecurityException (msg);
+				#else
+				throw new Exception(msg);
+				#endif
 			}
 		}
 

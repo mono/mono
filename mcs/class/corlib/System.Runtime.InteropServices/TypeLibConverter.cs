@@ -30,7 +30,9 @@
 
 using System;
 using System.Reflection;
+#if !MICRO_LIB
 using System.Reflection.Emit;
+#endif
 
 namespace System.Runtime.InteropServices
 {
@@ -53,7 +55,7 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
-
+#if !MICRO_LIB
 		[MonoTODO ("implement")]
 		public AssemblyBuilder ConvertTypeLibToAssembly ([MarshalAs(UnmanagedType.Interface)] object typeLib, string asmFileName, int flags, ITypeLibImporterNotifySink notifySink, byte[] publicKey, StrongNameKeyPair keyPair, bool unsafeInterfaces)
 		{
@@ -65,7 +67,7 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
-
+#endif
 		[MonoTODO ("implement")]
 		public bool GetPrimaryInteropAssembly (Guid g, int major, int minor, int lcid, out string asmName, out string asmCodeBase)
 		{

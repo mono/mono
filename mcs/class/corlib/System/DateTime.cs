@@ -49,7 +49,7 @@ namespace System
 		, IComparable<DateTime>, IEquatable <DateTime>
 #endif
 	{
-#if MONOTOUCH
+#if MONOTOUCH && !MICRO_LIB
 		static DateTime () {
 			if (MonoTouchAOTHelper.FalseFlag) {
 				var comparer = new System.Collections.Generic.GenericComparer <DateTime> ();

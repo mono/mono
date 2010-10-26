@@ -32,7 +32,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 
 namespace System.Runtime.InteropServices
 {
@@ -49,9 +51,11 @@ namespace System.Runtime.InteropServices
 			get {
 				// GetMachineConfigPath is internal and not protected by CAS
 				string path = Environment.GetMachineConfigPath ();
+				#if !DISABLE_SECURITY
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
 				}
+				#endif
 				return path;
 			}
 		}
@@ -67,7 +71,9 @@ namespace System.Runtime.InteropServices
 			return Path.GetDirectoryName (typeof (int).Assembly.Location);	
 		}
 
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public static string GetSystemVersion ()
 		{
 			return "v" + Environment.Version.Major + "." + Environment.Version.Minor + "." + Environment.Version.Build;

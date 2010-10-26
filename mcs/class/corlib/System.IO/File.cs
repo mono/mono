@@ -38,7 +38,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 #endif
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 && !DISABLE_SECURITY
 using System.Security.AccessControl;
 #endif
 
@@ -136,7 +136,7 @@ namespace System.IO
 				FileShare.None, bufferSize);
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 && !DISABLE_SECURITY
 		[MonoTODO ("options not implemented")]
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options)
@@ -196,7 +196,7 @@ namespace System.IO
 			return MonoIO.ExistsFile (path, out error);
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 && !DISABLE_SECURITY
 		public static FileSecurity GetAccessControl (string path)
 		{
 			throw new NotImplementedException ();
@@ -435,7 +435,7 @@ namespace System.IO
 			}
 		}
 #endif
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 && !DISABLE_SECURITY
 		public static void SetAccessControl (string path,
 						     FileSecurity fileSecurity)
 		{

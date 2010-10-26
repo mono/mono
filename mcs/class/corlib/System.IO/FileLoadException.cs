@@ -31,7 +31,9 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 using System.Text;
 
 #if NET_2_0
@@ -110,7 +112,9 @@ namespace System.IO {
 			// note: MS runtime throws a SecurityException when the Exception is created
 			// but a FileLoadException once the exception as been thrown. Mono always
 			// throw a SecurityException in both case (anyway fusionLog is currently empty)
+			#if !DISABLE_SECURITY
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
+			#endif
 			get { return fusionLog; }
 		}
 

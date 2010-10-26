@@ -905,12 +905,14 @@ namespace System.Globalization
 					greg_type = (GregorianCalendarTypes) (caldata & GregorianTypeMask);
 					cal = new GregorianCalendar (greg_type);
 					break;
+				#if !MICRO_LIB
 				case 1:
 					cal = new HijriCalendar ();
 					break;
 				case 2:
 					cal = new ThaiBuddhistCalendar ();
 					break;
+				#endif
 				default:
 					throw new Exception ("invalid calendar type:  " + caldata);
 				}

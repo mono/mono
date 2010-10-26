@@ -42,12 +42,13 @@ namespace System.Runtime.Remoting.Messaging
 		{               
 			if (null == obj || null == si)
 				throw new ArgumentNullException();
-
+#if !DISABLE_REMOTING
 			if (RemotingServices.IsTransparentProxy (obj) )
 			{
 				RealProxy rp = RemotingServices.GetRealProxy (obj);
 				rp.GetObjectData (si, sc);
 			} else RemotingServices.GetObjectData (obj, si, sc);
+#endif
 		}
 
 		public virtual Object  SetObjectData(Object obj, SerializationInfo si, StreamingContext sc, ISurrogateSelector selector)

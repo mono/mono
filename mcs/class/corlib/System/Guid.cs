@@ -46,7 +46,7 @@ namespace System {
 #else
 	public struct Guid : IFormattable, IComparable {
 #endif
-#if MONOTOUCH
+#if MONOTOUCH && !MICRO_LIB
 		static Guid () {
 			if (MonoTouchAOTHelper.FalseFlag) {
 				var comparer = new System.Collections.Generic.GenericComparer <Guid> ();

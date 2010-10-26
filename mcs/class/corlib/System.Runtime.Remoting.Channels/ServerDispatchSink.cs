@@ -77,7 +77,12 @@ namespace System.Runtime.Remoting.Channels {
 			responseHeaders = null;			
 			responseStream = null;
 
+			#if !DISABLE_REMOTING
 			return ChannelServices.DispatchMessage(sinkStack, requestMsg, out responseMsg);
+			#else
+			responseMsg = null;
+			return ServerProcessing.OneWay;
+			#endif
 		}
 	}
 }

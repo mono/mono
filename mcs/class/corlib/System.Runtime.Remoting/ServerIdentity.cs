@@ -109,6 +109,7 @@ namespace System.Runtime.Remoting
 			_context = context;
 			_serverObject = serverObject;
 			
+			#if !DISABLE_REMOTING
 			if (RemotingServices.IsTransparentProxy (serverObject))
 			{
 				RealProxy rp = RemotingServices.GetRealProxy (serverObject);
@@ -116,6 +117,7 @@ namespace System.Runtime.Remoting
 					rp.ObjectIdentity = this;
 			}
 			else
+			#endif
 			{
 				if (_objectType.IsContextful)
 					_envoySink = context.CreateEnvoySink (serverObject);
@@ -179,7 +181,9 @@ namespace System.Runtime.Remoting
 		public override void OnLifetimeExpired()
 		{
 			base.OnLifetimeExpired();
+			#if !DISABLE_REMOTING
 			RemotingServices.DisposeIdentity (this);
+			#endif
 		}
 
 		public override IMessage SyncObjectProcessMessage (IMessage msg)

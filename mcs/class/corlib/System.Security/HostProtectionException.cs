@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;

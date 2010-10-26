@@ -58,6 +58,7 @@ namespace System.Runtime.Remoting.Activation
 
 		public IConstructionReturnMessage Activate (IConstructionCallMessage ctorCall)
 		{
+			#if !DISABLE_REMOTING
 			IConstructionReturnMessage response;
 
 			// Create the object by calling the remote activation service
@@ -87,6 +88,9 @@ namespace System.Runtime.Remoting.Activation
 			Identity identity = RemotingServices.GetOrCreateClientIdentity (objRef, null, out proxy);
 			RemotingServices.SetMessageTargetIdentity (ctorCall, identity);
 			return response;
+			#else
+			return null;
+			#endif
 		}
 	}
 }

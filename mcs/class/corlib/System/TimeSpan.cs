@@ -43,7 +43,7 @@ namespace System
 		, IComparable<TimeSpan>, IEquatable <TimeSpan>
 #endif
 	{
-#if MONOTOUCH
+#if MONOTOUCH && !MICRO_LIB
 		static TimeSpan () {
 			if (MonoTouchAOTHelper.FalseFlag) {
 				var comparer = new System.Collections.Generic.GenericComparer <TimeSpan> ();

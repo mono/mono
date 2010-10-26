@@ -48,8 +48,12 @@ namespace System.Runtime.Remoting.Activation
 			// The activator must return a ConstructionResponse with an ObjRef as return value.
 			// It avoids the automatic creation of a proxy in the client.
 
+			#if !DISABLE_REMOTING
 			ObjRef objref = RemotingServices.Marshal (newObject);
 			return new ConstructionResponse (objref, null, msg);
+			#else
+			return new ConstructionResponse (newObject, null, msg);
+			#endif
 		}
 
 		public override Object InitializeLifetimeService()

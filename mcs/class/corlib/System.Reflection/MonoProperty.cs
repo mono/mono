@@ -224,7 +224,7 @@ namespace System.Reflection {
 		}
 
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 		delegate object GetterAdapter (object _this);
 		delegate R Getter<T,R> (T _this);
 		delegate R StaticGetter<R> ();
@@ -315,9 +315,16 @@ namespace System.Reflection {
 				else
 					ret = method.Invoke (obj, invokeAttr, binder, index, culture);
 			}
+			#if !DISABLE_SECURITY
 			catch (SecurityException se) {
 				throw new TargetInvocationException (se);
 			}
+			#else
+			catch 
+			{
+				throw;
+			}
+			#endif
 
 			return ret;
 		}

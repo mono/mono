@@ -30,7 +30,9 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 
 namespace System.Threading {
 
@@ -40,7 +42,7 @@ namespace System.Threading {
 #else
 	internal sealed class ExecutionContext : ISerializable {
 #endif
-#if !NET_2_1 || MONOTOUCH
+#if (!NET_2_1 || MONOTOUCH) && !DISABLE_SECURITY
 		private SecurityContext _sc;
 #endif
 		private bool _suppressFlow;
@@ -52,7 +54,7 @@ namespace System.Threading {
 
 		internal ExecutionContext (ExecutionContext ec)
 		{
-#if !NET_2_1 || MONOTOUCH
+#if (!NET_2_1 || MONOTOUCH) && !DISABLE_SECURITY
 			if (ec._sc != null)
 				_sc = new SecurityContext (ec._sc);
 #endif
@@ -73,7 +75,7 @@ namespace System.Threading {
 				return null;
 
 			ExecutionContext capture = new ExecutionContext (ec);
-#if !NET_2_1 || MONOTOUCH
+#if (!NET_2_1 || MONOTOUCH) && !DISABLE_SECURITY
 			if (SecurityManager.SecurityEnabled)
 				capture.SecurityContext = SecurityContext.Capture ();
 #endif
@@ -89,7 +91,9 @@ namespace System.Threading {
 		}
 
 		[MonoTODO]
+		#if !DISABLE_SECURITY
 		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]
+		#endif
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -98,7 +102,7 @@ namespace System.Threading {
 		}
 		
 		// internal stuff
-#if !NET_2_1 || MONOTOUCH
+#if (!NET_2_1 || MONOTOUCH) && !DISABLE_SECURITY
 		internal SecurityContext SecurityContext {
 			get {
 				if (_sc == null)
@@ -130,7 +134,7 @@ namespace System.Threading {
 
 			ec.FlowSuppressed = false;
 		}
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH) && !MICRO_LIB
 		[MonoTODO ("only the SecurityContext is considered")]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public static void Run (ExecutionContext executionContext, ContextCallback callback, object state)

@@ -33,8 +33,10 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
 using System.Security.Policy;
+#endif
 
 namespace System.IO.IsolatedStorage {
 
@@ -56,7 +58,7 @@ namespace System.IO.IsolatedStorage {
 
 		// Properties
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 		[MonoTODO ("requires manifest support")]
 		[ComVisible (false)]
 		public object ApplicationIdentity {
@@ -74,7 +76,9 @@ namespace System.IO.IsolatedStorage {
 #endif
 
 		public object AssemblyIdentity {
+			#if !DISABLE_SECURITY
 			[SecurityPermission (SecurityAction.Demand, ControlPolicy=true)]
+			#endif
 			get {
 #if NET_2_0
 				if ((storage_scope & IsolatedStorageScope.Assembly) == 0) {
@@ -96,7 +100,9 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		public object DomainIdentity {
+			#if !DISABLE_SECURITY
 			[SecurityPermission (SecurityAction.Demand, ControlPolicy=true)]
+			#endif
 			get {
 				if ((storage_scope & IsolatedStorageScope.Domain) == 0) {
 					throw new InvalidOperationException (Locale.GetText ("Invalid Isolation Scope.")); 
@@ -126,10 +132,10 @@ namespace System.IO.IsolatedStorage {
 		protected virtual char SeparatorInternal {
 			get { return '.'; }
 		}
-
+#if !DISABLE_SECURITY
 		// Methods
 		protected abstract IsolatedStoragePermission GetPermission (PermissionSet ps);
-
+#endif
 		protected void InitStore (IsolatedStorageScope scope, Type domainEvidenceType, Type assemblyEvidenceType)
 		{
 			// I know it's useless - but it's tested as such...
@@ -142,7 +148,7 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentException (scope.ToString ());
 			}
 		}
-#if NET_2_0
+#if NET_2_0  && !MICRO_LIB
 		[MonoTODO ("requires manifest support")]
 		protected void InitStore (IsolatedStorageScope scope, Type appEvidenceType)
 		{

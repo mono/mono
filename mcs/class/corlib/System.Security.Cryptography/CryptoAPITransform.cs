@@ -28,8 +28,9 @@
 //
 
 using System.Runtime.InteropServices;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
-
+#endif
 namespace System.Security.Cryptography {
 
 	// Note: This class isn't used by Mono as all algorithms are provided with
@@ -67,7 +68,9 @@ namespace System.Security.Cryptography {
 		}
 
 		public IntPtr KeyHandle {
+			#if !DISABLE_SECURITY
 			[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+			#endif
 			get { return IntPtr.Zero; }
 		}
 

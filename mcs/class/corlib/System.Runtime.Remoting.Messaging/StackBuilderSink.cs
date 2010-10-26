@@ -46,8 +46,11 @@ namespace System.Runtime.Remoting.Messaging
 		public StackBuilderSink (MarshalByRefObject obj, bool forceInternalExecute)
 		{
 			_target = obj;
+			
+			#if !DISABLE_REMOTING
 			if (!forceInternalExecute && RemotingServices.IsTransparentProxy (obj))
 				_rp = RemotingServices.GetRealProxy (obj);
+			#endif
 		}
 
 		public IMessage SyncProcessMessage (IMessage msg)
@@ -56,7 +59,11 @@ namespace System.Runtime.Remoting.Messaging
 
 			// Makes the real call to the object
 			if (_rp != null) return _rp.Invoke (msg);
+			#if !DISABLE_REMOTING
 			else return RemotingServices.InternalExecuteMessage (_target, (IMethodCallMessage)msg);
+			#else
+			return null;
+			#endif
 		}
 
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
@@ -76,7 +83,12 @@ namespace System.Runtime.Remoting.Messaging
 			
 			IMessage res;
 			if (_rp != null) res = _rp.Invoke (msg);
-			else res = RemotingServices.InternalExecuteMessage (_target, msg);
+			else
+			#if !DISABLE_REMOTING 
+			res = RemotingServices.InternalExecuteMessage (_target, msg);
+			#else
+			res = null;
+			#endif
 			
 			replySink.SyncProcessMessage (res);
 		}

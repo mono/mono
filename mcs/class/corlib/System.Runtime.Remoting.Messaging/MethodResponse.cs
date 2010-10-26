@@ -189,8 +189,10 @@ namespace System.Runtime.Remoting.Messaging {
 				if (null == _methodBase) {
 					if (_callMsg != null)
 						_methodBase = _callMsg.MethodBase;
+					#if !DISABLE_REMOTING
 					else if (MethodName != null && TypeName != null)
 						_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
+					#endif
 				}
 				return _methodBase;
 			}

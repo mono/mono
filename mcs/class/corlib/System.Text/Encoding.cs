@@ -35,7 +35,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [Serializable]
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 [ComVisible (true)]
 #endif
 public abstract class Encoding
@@ -414,8 +414,10 @@ public abstract class Encoding
 				}
 			} catch (MissingMethodException) {
 				return null;
+			#if !DISABLE_SECURITY
 			} catch (SecurityException) {
 				return null;
+			#endif
 			} catch (NotImplementedException) {
 				// "InvokeMember" is not supported by the engine.
 				i18nDisabled = true;
@@ -432,9 +434,12 @@ public abstract class Encoding
 						 null, manager, args, null, null, null);
 			} catch (MissingMethodException) {
 				return null;
-			} catch (SecurityException) {
+			} 
+			#if !DISABLE_SECURITY
+			catch (SecurityException) {
 				return null;
 			}
+			#endif
 		}
 	}
 
@@ -457,13 +462,14 @@ public abstract class Encoding
 			case ASCIIEncoding.ASCII_CODE_PAGE:
 				return ASCII;
 
+#if !MICRO_LIB
 			case UTF7Encoding.UTF7_CODE_PAGE:
 				return UTF7;
-
+#endif
 			case UTF8Encoding.UTF8_CODE_PAGE:
 				return UTF8;
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 			case UTF32Encoding.UTF32_CODE_PAGE:
 				return UTF32;
 
@@ -630,11 +636,12 @@ public abstract class Encoding
 			"ansi_x3.4_1986", "cp367", "csascii", "ibm367",
 			"iso_ir_6", "iso646_us", "iso_646.irv:1991",
 
+#if !MICRO_LIB
 			UTF7Encoding.UTF7_CODE_PAGE,
 			"utf_7", "csunicode11utf7", "unicode_1_1_utf_7",
 			"unicode_2_0_utf_7", "x_unicode_1_1_utf_7",
 			"x_unicode_2_0_utf_7",
-
+#endif			
 			UTF8Encoding.UTF8_CODE_PAGE,
 			"utf_8", "unicode_1_1_utf_8", "unicode_2_0_utf_8",
 			"x_unicode_1_1_utf_8", "x_unicode_2_0_utf_8",
@@ -645,7 +652,7 @@ public abstract class Encoding
 
 			UnicodeEncoding.BIG_UNICODE_CODE_PAGE,
 			"unicodefffe", "utf_16be",
-#if NET_2_0
+#if NET_2_0  && !MICRO_LIB
 			UTF32Encoding.UTF32_CODE_PAGE,
 			"utf_32", "UTF_32LE", "ucs_4",
 
@@ -920,7 +927,9 @@ public abstract class Encoding
 								code_page = code_page & 0x0fffffff;
 								switch (code_page){
 								case 1: code_page = ASCIIEncoding.ASCII_CODE_PAGE; break;
+								#if !MICRO_LIB
 								case 2: code_page = UTF7Encoding.UTF7_CODE_PAGE; break;
+								#endif
 								case 3: code_page = UTF8Encoding.UTF8_CODE_PAGE; break;
 								case 4: code_page = UnicodeEncoding.UNICODE_CODE_PAGE; break;
 								case 5: code_page = UnicodeEncoding.BIG_UNICODE_CODE_PAGE; break;
@@ -987,6 +996,7 @@ public abstract class Encoding
 	static Encoding UTF7
 	{
 		get {
+			#if !MICRO_LIB
 			if (utf7Encoding == null) {
 				lock (lockobj) {
 					if (utf7Encoding == null) {
@@ -995,6 +1005,7 @@ public abstract class Encoding
 					}
 				}
 			}
+			#endif
 
 			return utf7Encoding;
 		}
@@ -1076,7 +1087,7 @@ public abstract class Encoding
 		}
 	}
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 	// Get the standard little-endian UTF-32 encoding object.
 	public static Encoding UTF32
 	{

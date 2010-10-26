@@ -30,7 +30,9 @@
 //
 
 using System.Reflection;
+#if !MICRO_LIB
 using System.Reflection.Emit;
+#endif
 using System.Runtime.CompilerServices;
 
 namespace System.Reflection

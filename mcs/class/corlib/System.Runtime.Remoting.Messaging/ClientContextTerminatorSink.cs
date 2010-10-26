@@ -47,7 +47,7 @@ namespace System.Runtime.Remoting.Messaging
 
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
-			IMessage res;
+			IMessage res = null;
 
 			Context.NotifyGlobalDynamicSinks (true, msg, true, false);
 			_context.NotifyDynamicSinks (true, msg, true, false);
@@ -56,11 +56,13 @@ namespace System.Runtime.Remoting.Messaging
 			{
 				res = ActivationServices.RemoteActivate ((IConstructionCallMessage)msg);
 			}
+			#if !DISABLE_REMOTING
 			else
 			{
 				Identity identity = RemotingServices.GetMessageTargetIdentity (msg);
 				res = identity.ChannelSink.SyncProcessMessage (msg);
 			}
+			#endif
 
 			Context.NotifyGlobalDynamicSinks (false, msg, true, false);
 			_context.NotifyDynamicSinks (false, msg, true, false);
@@ -78,6 +80,8 @@ namespace System.Runtime.Remoting.Messaging
 				// replySink is null when calling a one way method
 				if (replySink != null) replySink = new ClientContextReplySink (_context, replySink);
 			}
+			
+			#if !DISABLE_REMOTING
 			Identity identity = RemotingServices.GetMessageTargetIdentity (msg);
 			IMessageCtrl res = identity.ChannelSink.AsyncProcessMessage (msg, replySink);
 
@@ -87,6 +91,9 @@ namespace System.Runtime.Remoting.Messaging
 				_context.NotifyDynamicSinks (false, msg, true, true);
 			}
 			return res;
+			#else
+			return null;
+			#endif
 		}
 
 		public IMessageSink NextSink 

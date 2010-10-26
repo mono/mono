@@ -29,8 +29,9 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
-
+#endif
 namespace System.Reflection {
 
 #if NET_2_0
@@ -39,7 +40,9 @@ namespace System.Reflection {
 #endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+	#if !DISABLE_SECURITY
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+	#endif
 	public abstract class MemberInfo : ICustomAttributeProvider, _MemberInfo {
 
 		protected MemberInfo ()

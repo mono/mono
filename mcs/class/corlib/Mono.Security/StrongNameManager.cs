@@ -105,6 +105,7 @@ namespace Mono.Security {
 		{
 		}
 
+#if !DISABLE_SECURITY
 		// note: more than one configuration file can be loaded at the 
 		// same time (e.g. user specific and machine specific config).
 		static public void LoadConfig (string filename) 
@@ -219,7 +220,7 @@ namespace Mono.Security {
 				}
 			}
 		}
-
+#endif
 		static public byte[] GetMappedPublicKey (byte[] token) 
 		{
 			if ((mappings == null) || (token == null))

@@ -31,20 +31,22 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
-#if !NET_2_1
+#if !NET_2_1 && !DISABLE_SECURITY
 using System.Security.AccessControl;
 #endif
 
 namespace System.Threading
 {
+#if !DISABLE_SECURITY
 	[ComVisible (true)]
+#endif
 	public class EventWaitHandle : WaitHandle
 	{
 		private EventWaitHandle (IntPtr handle)
 		{
 			Handle = handle;
 		}
-
+		
 		private bool IsManualReset (EventResetMode mode)
 		{
 			if ((mode < EventResetMode.AutoReset) || (mode > EventResetMode.ManualReset))
@@ -73,7 +75,7 @@ namespace System.Threading
 			bool manual = IsManualReset (mode);
 			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, name, out createdNew);
 		}
-#if !NET_2_1
+#if !NET_2_1 && !DISABLE_SECURITY
 		[MonoTODO ("Implement access control")]
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name, out bool createdNew,
@@ -88,7 +90,7 @@ namespace System.Threading
 		{
 			throw new NotImplementedException ();
 		}
-
+		
 		public static EventWaitHandle OpenExisting (string name)
 		{
 			return(OpenExisting (name, EventWaitHandleRights.Synchronize | EventWaitHandleRights.Modify));
@@ -132,7 +134,7 @@ namespace System.Threading
 			
 			return (NativeEventCalls.SetEvent_internal (Handle));
 		}
-#if !NET_2_1
+#if !NET_2_1 && !DISABLE_SECURITY
 		[MonoTODO]
 		public void SetAccessControl (EventWaitHandleSecurity eventSecurity)
 		{

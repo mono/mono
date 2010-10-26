@@ -58,6 +58,7 @@ namespace System.Runtime.Remoting.Activation
 
 		public IConstructionReturnMessage Activate (IConstructionCallMessage ctorCall)
 		{
+			#if !DISABLE_REMOTING
 			ServerIdentity identity = RemotingServices.CreateContextBoundObjectIdentity (ctorCall.ActivationType);
 			RemotingServices.SetMessageTargetIdentity (ctorCall, identity);
 
@@ -77,6 +78,7 @@ namespace System.Runtime.Remoting.Activation
 				}
 			}
 			else
+			#endif
 				return m_NextActivator.Activate (ctorCall);
 		}
 	}

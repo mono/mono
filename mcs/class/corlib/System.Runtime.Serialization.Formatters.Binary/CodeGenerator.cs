@@ -33,7 +33,9 @@ using System.IO;
 using System.Collections;
 using System.Runtime.Serialization;
 using System.Reflection;
+#if !MICRO_LIB
 using System.Reflection.Emit;
+#endif
 using System.Globalization;
 
 namespace System.Runtime.Serialization.Formatters.Binary

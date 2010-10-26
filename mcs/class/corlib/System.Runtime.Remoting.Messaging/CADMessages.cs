@@ -140,6 +140,7 @@ namespace System.Runtime.Remoting.Messaging {
 				return arg;
 
 			MarshalByRefObject mbr = arg as MarshalByRefObject;
+			#if !DISABLE_REMOTING
 			if (null != mbr)
 			{
 				if (RemotingServices.IsTransparentProxy(mbr)) {
@@ -150,6 +151,7 @@ namespace System.Runtime.Remoting.Messaging {
 					return new CADObjRef(objRef, System.Threading.Thread.GetDomainID());
 				}
 			}
+			#endif
 
 			if (null == args)
 				args = new ArrayList();
@@ -170,6 +172,7 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 
 			CADObjRef objref = arg as CADObjRef;
+			#if !DISABLE_REMOTING
 			if (null != objref) {
 				string typeName = string.Copy (objref.TypeName);
 				string uri = string.Copy (objref.URI);
@@ -179,6 +182,7 @@ namespace System.Runtime.Remoting.Messaging {
 				ObjRef localRef = new ObjRef (typeName, uri, cinfo);
 				return RemotingServices.Unmarshal (localRef);
 			}
+			#endif
 			
 			if (arg is Array)
 			{
@@ -361,7 +365,7 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			MethodBase methodBase = null;
 			Type tt = Type.GetType (FullTypeName);
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 			if (tt.IsGenericType || tt.IsGenericTypeDefinition) {
 				methodBase = MethodBase.GetMethodFromHandleNoGenericCheck (MethodHandle);
 			} else

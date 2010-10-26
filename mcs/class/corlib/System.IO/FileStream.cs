@@ -34,10 +34,12 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 using System.Threading;
 
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 using Microsoft.Win32.SafeHandles;
 #if NET_2_1
 using System.IO.IsolatedStorage;
@@ -72,7 +74,9 @@ namespace System.IO
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync)
 			: this (handle, access, ownsHandle, bufferSize, isAsync, false) {}
 
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool noBuffering)
 		{
 			this.handle = MonoIO.InvalidHandle;
@@ -149,7 +153,7 @@ namespace System.IO
 		{
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 && !DISABLE_SECURITY
 		public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options)
 			: this (path, mode, access, share, bufferSize, false, options)
 		{
@@ -224,7 +228,7 @@ namespace System.IO
 			}
 
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite) {
-#if NET_2_1
+#if NET_2_1 && !MICRO_LIB
 				if (anonymous)
 					throw new IsolatedStorageException ("Enum value for FileAccess was out of legal range.");
 				else
@@ -237,7 +241,7 @@ namespace System.IO
 #else
 			if (share < FileShare.None || share > FileShare.ReadWrite) {
 #endif
-#if NET_2_1
+#if NET_2_1 && !MICRO_LIB
 				if (anonymous)
 					throw new IsolatedStorageException ("Enum value for FileShare was out of legal range.");
 				else
@@ -281,7 +285,7 @@ namespace System.IO
 					// don't leak the path information for isolated storage
 					string msg = Locale.GetText ("Could not find a part of the path \"{0}\".");
 					string fname = (anonymous) ? dname : Path.GetFullPath (path);
-#if NET_2_1
+#if NET_2_1 && !MICRO_LIB
 					// don't use GetSecureFileName for the directory name
 					throw new IsolatedStorageException (String.Format (msg, fname));
 #else
@@ -295,7 +299,7 @@ namespace System.IO
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Could not find file \"{0}\".");
 				string fname = GetSecureFileName (path);
-#if NET_2_1
+#if NET_2_1 && !MICRO_LIB
 				throw new IsolatedStorageException (String.Format (msg, fname));
 #else
 				throw new FileNotFoundException (String.Format (msg, fname), fname);
@@ -437,14 +441,16 @@ namespace System.IO
 		[Obsolete ("Use SafeFileHandle instead")]
 #endif
 		public virtual IntPtr Handle {
+			#if !DISABLE_SECURITY
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
+			#endif
 			get {
 				return handle;
 			}
 		}
 
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 		public virtual SafeFileHandle SafeFileHandle {
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
@@ -954,7 +960,7 @@ namespace System.IO
  				throw exc;
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 && !DISABLE_SECURITY
 		public FileSecurity GetAccessControl ()
 		{
 			throw new NotImplementedException ();
@@ -1015,7 +1021,7 @@ namespace System.IO
 		{
 			if (buf_dirty) {
 				MonoIOError error;
-
+				
 				if (CanSeek == true) {
 					MonoIO.Seek (handle, buf_start,
 						     SeekOrigin.Begin,
@@ -1026,11 +1032,11 @@ namespace System.IO
 					}
 				}
 				if (st == null) {
-					MonoIO.Write (handle, buf, 0,
-						      buf_length, out error);
+				MonoIO.Write (handle, buf, 0,
+					      buf_length, out error);
 
-					if (error != MonoIOError.ERROR_SUCCESS) {
-						// don't leak the path information for isolated storage
+				if (error != MonoIOError.ERROR_SUCCESS) {
+					// don't leak the path information for isolated storage
 						throw MonoIO.GetException (GetSecureFileName (name), error);
 					}
 				} else {
@@ -1139,7 +1145,7 @@ namespace System.IO
 		private string name = "[Unknown]";	// name of file.
 
 		IntPtr handle;				// handle to underlying file
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 		SafeFileHandle safeHandle;              // set only when using one of the
 							// constructors taking SafeFileHandle
 #endif

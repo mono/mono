@@ -96,7 +96,10 @@ namespace System.Runtime.Remoting {
 			// The ObjRef can only be constructed if the given o
 			// has already been marshalled using RemotingServices.Marshall
 
+			#if !DISABLE_REMOTING
 			uri = RemotingServices.GetObjectUri (o);
+			#endif
+			
 			typeInfo = new TypeInfo (requestedType);
 
 			if (!requestedType.IsInstanceOfType (o))
@@ -110,8 +113,10 @@ namespace System.Runtime.Remoting {
 			uri = url;
 			typeInfo = new TypeInfo(type);
 
+			#if !DISABLE_REMOTING
 			if (remoteChannelData != null)
 				channel_info = new ChannelInfo (remoteChannelData);
+			#endif
 
 			flags |= WellKnowObjectRef;
 		}
@@ -224,18 +229,24 @@ namespace System.Runtime.Remoting {
 
 		public virtual object GetRealObject (StreamingContext context)
 		{
+			#if !DISABLE_REMOTING
 			if ((flags & MarshalledObjectRef) > 0)
 				return RemotingServices.Unmarshal (this);
 			else
+			#endif
 				return this;
 		}
 
 		public bool IsFromThisAppDomain ()
 		{
+			#if !DISABLE_REMOTING
 			Identity identity = RemotingServices.GetIdentityForUri (uri);
 			if (identity == null) return false;		// URI not registered in this domain
 
 			return identity.IsFromThisAppDomain;
+			#else
+			return false;
+			#endif
 		}
 
 #if NET_2_0
@@ -257,7 +268,9 @@ namespace System.Runtime.Remoting {
 
 		internal void UpdateChannelInfo()
 		{
+			#if !DISABLE_REMOTING
 			channel_info = new ChannelInfo ();
+			#endif
 		}
 
 		internal Type ServerType

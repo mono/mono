@@ -32,9 +32,11 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Contexts;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.ConstrainedExecution;
@@ -42,7 +44,7 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Threading
 {
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 	[ComVisible (true)]
 #endif
 	public abstract class WaitHandle : MarshalByRefObject, IDisposable
@@ -74,7 +76,7 @@ namespace System.Threading
 				if (w == null)
 					throw new ArgumentNullException ("waitHandles", "null handle");
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 				if (w.safe_wait_handle == null)
 					throw new ArgumentException ("null element found", "waitHandle");
 #else
@@ -147,7 +149,7 @@ namespace System.Threading
 		private static extern int WaitAny_internal(WaitHandle[] handles, int ms, bool exitContext);
 
 		// LAMESPEC: Doesn't specify how to signal failures
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int WaitAny(WaitHandle[] waitHandles)
@@ -156,7 +158,7 @@ namespace System.Threading
 			return(WaitAny_internal(waitHandles, Timeout.Infinite, false));
 		}
 
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int WaitAny(WaitHandle[] waitHandles,
@@ -177,7 +179,7 @@ namespace System.Threading
 			}
 		}
 
-#if NET_2_0
+#if NET_2_0 && !MICRO_LIB
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int WaitAny(WaitHandle[] waitHandles, TimeSpan timeout)
 		{
@@ -190,7 +192,7 @@ namespace System.Threading
 			return WaitAny (waitHandles, millisecondsTimeout, false);
 		}
 #endif
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int WaitAny(WaitHandle[] waitHandles,
@@ -227,7 +229,7 @@ namespace System.Threading
 
 		public const int WaitTimeout = 258;
 
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 		//
 		// In 2.0 we use SafeWaitHandles instead of IntPtrs
 		//
@@ -412,9 +414,10 @@ namespace System.Threading
 			get {
 				return(os_handle);
 			}
-				
+#if !DISABLE_SECURITY					
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
+#endif
 			set {
 				os_handle=value;
 			}

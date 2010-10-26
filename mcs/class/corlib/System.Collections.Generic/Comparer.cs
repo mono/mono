@@ -36,9 +36,11 @@ namespace System.Collections.Generic {
 		
 		static Comparer ()
 		{
+			#if !MICRO_LIB
 			if (typeof (IComparable<T>).IsAssignableFrom (typeof (T)))
 				_default = (Comparer<T>) Activator.CreateInstance (typeof (GenericComparer <>).MakeGenericType (typeof (T)));
 			else
+			#endif
 				_default = new DefaultComparer ();
 		}
 		

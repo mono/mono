@@ -48,15 +48,21 @@ namespace System.Runtime.Remoting.Messaging
 
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
+			#if !DISABLE_REMOTING
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 			identity.NotifyServerDynamicSinks (true, msg, false, false);
 			IMessage res = _nextSink.SyncProcessMessage (msg);
 			identity.NotifyServerDynamicSinks (false, msg, false, false);
 			return res;
+			#else
+			IMessage res = _nextSink.SyncProcessMessage (msg);
+			return res;
+			#endif
 		}
 
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
+			#if !DISABLE_REMOTING
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 			if (identity.HasServerDynamicSinks)
 			{
@@ -70,6 +76,10 @@ namespace System.Runtime.Remoting.Messaging
 				identity.NotifyServerDynamicSinks (false, msg, true, true);
 
 			return res;
+			#else
+			IMessageCtrl res = _nextSink.AsyncProcessMessage (msg, replySink);
+			return res;
+			#endif
 		}
 
 		public IMessageSink NextSink 

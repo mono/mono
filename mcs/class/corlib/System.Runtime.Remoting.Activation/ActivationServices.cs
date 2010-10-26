@@ -67,8 +67,10 @@ namespace System.Runtime.Remoting.Activation
 
 			if (response is IConstructionReturnMessage && ((IConstructionReturnMessage)response).Exception == null && proxy.ObjectIdentity == null)
 			{
+				#if !DISABLE_REMOTING
 				Identity identity = RemotingServices.GetMessageTargetIdentity (ctorCall);
 				proxy.AttachIdentity (identity);
+				#endif
 			}
 
 			return response;
@@ -95,6 +97,7 @@ namespace System.Runtime.Remoting.Activation
 				if (attr is UrlAttribute) activationUrl = ((UrlAttribute)attr).UrlValue;
 			}
 
+			#if !DISABLE_REMOTING
 			if (activationUrl != null)
 				return RemotingServices.CreateClientProxy (type, activationUrl, activationAttributes);
 
@@ -104,6 +107,8 @@ namespace System.Runtime.Remoting.Activation
 
 			if (type.IsContextful)
 				return RemotingServices.CreateClientProxyForContextBound (type, activationAttributes);
+			#endif
+			
 			
 			return null;
 		}
@@ -129,7 +134,12 @@ namespace System.Runtime.Remoting.Activation
 			ArrayList attributes = new ArrayList ();
 			if (activationAttributes != null) attributes.AddRange (activationAttributes);
 
+			#if !DISABLE_REMOTING
 			bool isContextOk = (activationUrl == ChannelServices.CrossContextUrl);	// Remote CBOs are always created in a new context
+			#else
+			bool isContextOk = false;
+			#endif
+			
 			Context currentContext = Threading.Thread.CurrentContext;
 
 			if (isContextOk) 
@@ -165,7 +175,9 @@ namespace System.Runtime.Remoting.Activation
 					attr.GetPropertiesForNewContext (ctorCall);
 			}
 
+			#if !DISABLE_REMOTING
 			if (activationUrl != ChannelServices.CrossContextUrl)
+			#endif
 				activatorChain = new AppDomainLevelActivator (activationUrl, activatorChain);
 			
 			ctorCall.Activator = activatorChain;
@@ -178,10 +190,13 @@ namespace System.Runtime.Remoting.Activation
 		{
 			object obj = AllocateUninitializedClassInstance (ctorCall.ActivationType);
 
+#if !DISABLE_REMOTING
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (ctorCall);
 			identity.AttachServerObject ((MarshalByRefObject) obj, Threading.Thread.CurrentContext);
+#endif
 
 			ConstructionCall call = ctorCall as ConstructionCall;
+			#if !DISABLE_REMOTING
 			if (ctorCall.ActivationType.IsContextful && call != null && call.SourceProxy != null)
 			{
 				call.SourceProxy.AttachIdentity (identity);
@@ -189,7 +204,8 @@ namespace System.Runtime.Remoting.Activation
 				RemotingServices.InternalExecuteMessage (target, ctorCall);
 			}
 			else
-				ctorCall.MethodBase.Invoke (obj, ctorCall.Args);
+			#endif
+			ctorCall.MethodBase.Invoke (obj, ctorCall.Args);
 
 			return new ConstructionResponse (obj, null, ctorCall);
 		}
@@ -202,6 +218,7 @@ namespace System.Runtime.Remoting.Activation
 			// First of all check for remote activation. If the object is not remote, then
 			// it may be contextbound.
 
+			#if !DISABLE_REMOTING
 			ActivatedClientTypeEntry activatedEntry = RemotingConfiguration.IsRemotelyActivatedClientType (type);
 			if (activatedEntry != null)
 				return RemotingServices.CreateClientProxy (activatedEntry, null);
@@ -216,6 +233,7 @@ namespace System.Runtime.Remoting.Activation
 			if (type.IsCOMObject) {
 				return RemotingServices.CreateClientProxyForComInterop (type);
 			}
+#endif
 #endif
 			return null;
 		}

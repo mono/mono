@@ -53,6 +53,7 @@ public class SignatureDescription {
 	{
 	}
 	
+	#if !DISABLE_SECURITY
 	/// LAMESPEC: ArgumentNullException is thrown (not CryptographicException)
 	public SignatureDescription (SecurityElement el) 
 	{
@@ -72,6 +73,7 @@ public class SignatureDescription {
 		child = el.SearchForChildByTag ("Key");
 		_KeyAlgorithm = ((child == null) ? null : child.Text);
 	}
+	#endif
 
 	// There are no validation of the property
 	public string DeformatterAlgorithm {

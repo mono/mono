@@ -31,7 +31,9 @@
 //
 
 using System.Reflection;
+#if !MICRO_LIB
 using System.Reflection.Emit;
+#endif
 
 namespace System.Runtime.InteropServices {
 
@@ -43,8 +45,10 @@ namespace System.Runtime.InteropServices {
 	public interface ITypeLibConverter {
 		[return: MarshalAs(UnmanagedType.Interface)]
 		object ConvertAssemblyToTypeLib (Assembly assembly, string typeLibName, TypeLibExporterFlags flags, ITypeLibExporterNotifySink notifySink);
+		#if !MICRO_LIB
 		AssemblyBuilder ConvertTypeLibToAssembly ([MarshalAs(UnmanagedType.Interface)] object typeLib, string asmFileName, int flags, ITypeLibImporterNotifySink notifySink, byte[] publicKey, StrongNameKeyPair keyPair, bool unsafeInterfaces);
 		AssemblyBuilder ConvertTypeLibToAssembly ([MarshalAs(UnmanagedType.Interface)] object typeLib, string asmFileName, TypeLibImporterFlags flags, ITypeLibImporterNotifySink notifySink, byte[] publicKey, StrongNameKeyPair keyPair, string asmNamespace, Version asmVersion);
+		#endif
 		bool GetPrimaryInteropAssembly (Guid g, int major, int minor, int lcid, out string asmName, out string asmCodeBase);
 	}
 }

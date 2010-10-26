@@ -32,43 +32,45 @@
 
 using System;
 using System.Reflection;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
+#if NET_2_0 && !DISABLE_SECURITY
 	[ComVisible(true)]
 #endif	
 	[Guid("CCBD682C-73A5-4568-B8B0-C7007E11ABA2")]
 	public interface IRegistrationServices {
 		Guid GetManagedCategoryGuid ();
-#if NET_2_0		
+#if NET_2_0 && !DISABLE_SECURITY		
 		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 #endif		
 		string GetProgIdForType (Type type);
 
-#if NET_2_0		
+#if NET_2_0	&& !DISABLE_SECURITY	
 		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 #endif		
 		Type[] GetRegistrableTypesInAssembly (Assembly assembly);
 
-#if NET_2_0		
+#if NET_2_0	&& !DISABLE_SECURITY	
 		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 #endif		
 		bool RegisterAssembly (Assembly assembly, AssemblyRegistrationFlags flags);
 
-#if NET_2_0		
+#if NET_2_0	&& !DISABLE_SECURITY	
 		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 #endif				
 		void RegisterTypeForComClients (Type type, ref Guid g);
 		
 		bool TypeRepresentsComType (Type type);
 		
-#if NET_2_0		
+#if NET_2_0	&& !DISABLE_SECURITY	
 		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 #endif		
 		bool TypeRequiresRegistration (Type type);
 
-#if NET_2_0		
+#if NET_2_0	&& !DISABLE_SECURITY	
 		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 #endif		
 		bool UnregisterAssembly (Assembly assembly);

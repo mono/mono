@@ -32,7 +32,9 @@ using System.IO;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
+#if !DISABLE_SECURITY
 using System.Security.Policy;
+#endif
 
 namespace System.Runtime.InteropServices
 {
@@ -89,7 +91,7 @@ namespace System.Runtime.InteropServices
 
 		string Location { get; }
 
-#if !NET_2_1
+#if !NET_2_1 && !DISABLE_SECURITY
 		Evidence Evidence { get; }
 #endif
 

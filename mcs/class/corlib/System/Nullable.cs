@@ -73,11 +73,13 @@ namespace System
 
 		public static Type GetUnderlyingType (Type nullableType)
 		{
+			#if !MICRO_LIB
 			if (nullableType == null)
 				throw new ArgumentNullException ("nullableType");
 			if (nullableType.IsGenericType && nullableType.GetGenericTypeDefinition () == typeof (Nullable<>))
 				return nullableType.GetGenericArguments ()[0];
 			else
+			#endif
 				return null;
 		}
 	}

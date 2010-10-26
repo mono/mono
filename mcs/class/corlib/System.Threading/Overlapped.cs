@@ -33,7 +33,9 @@
 //
 
 using System.Runtime.InteropServices;
+#if !DISABLE_SECURITY
 using System.Security.Permissions;
+#endif
 
 namespace System.Threading
 {
@@ -139,7 +141,9 @@ namespace System.Threading
 #if NET_2_0
 		[Obsolete ("Use UnsafePack(iocb, userData) instead", false)]
 #endif
+#if !DISABLE_SECURITY
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
+#endif
 		unsafe public NativeOverlapped *UnsafePack (IOCompletionCallback iocb)
 		{
 			// no need to propagate the call stack in the unsafe version
