@@ -62,6 +62,7 @@ null_sources = \
 
 libmonoruntime_la_SOURCES = \
 	$(platform_sources)	\
+	../../unity/unity_utils.c	\
 	appdomain.c		\
 	assembly.c		\
 	attach.h		\
