@@ -1,0 +1,103 @@
+#include "unity_utils.h"
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef WIN32
+#include <windows.h>
+#include <io.h>
+#include <fcntl.h>
+#endif
+#include <mono/metadata/object.h>
+#include <glib.h>
+
+#ifdef WIN32
+#define UTF8_2_WIDE(src,dst) MultiByteToWideChar( CP_UTF8, 0, src, -1, dst, MAX_PATH )
+#endif
+
+#undef exit
+
+void unity_mono_exit( int code )
+{
+	//fprintf( stderr, "mono: exit called, code %d\n", code );
+	exit( code );
+}
+
+#ifdef WIN32
+
+HANDLE unity_log_output = 0;
+
+void unity_mono_redirect_output( HANDLE handle )
+{
+	int fd;
+	DWORD written;
+//	int fd_copy;
+	unity_log_output = handle;	
+	fd = _open_osfhandle((intptr_t)handle, (_O_APPEND | _O_TEXT));
+	stdout->_file = fd;
+	_dup2(fd,_fileno(stdout));
+	//*stdout = *_fdopen(fd, "at");
+	
+	setvbuf(stdout, NULL, _IONBF, 0);
+	
+	//fprintf(stdout, "printf from mono\n");
+	//WriteFile(handle,"WriteFile from mono",16,&written,NULL);
+}
+
+HANDLE unity_mono_get_log_handle()
+{
+	return unity_log_output;
+}
+
+void unity_mono_close_output()
+{
+	fclose( stdout );
+	fclose( stderr );
+}
+
+FILE* unity_fopen( const char *name, const char *mode )
+{
+	wchar_t wideName[MAX_PATH];
+	wchar_t wideMode[MAX_PATH];
+	UTF8_2_WIDE(name, wideName);
+	UTF8_2_WIDE(mode, wideMode);
+	return _wfopen( wideName, wideMode );
+}
+
+#endif //Win32
+
+GString* gEmbeddingHostName = 0;
+
+
+void mono_unity_write_to_unity_log(MonoString* str)
+{
+	fprintf(stdout, mono_string_to_utf8(str));
+	fflush(stdout);
+}
+
+
+void mono_unity_set_embeddinghostname(const char* name)
+{
+	gEmbeddingHostName = g_string_new(name);
+}
+
+
+
+MonoString* mono_unity_get_embeddinghostname()
+{
+	if (gEmbeddingHostName == 0)
+		mono_unity_set_embeddinghostname("mono");
+	return mono_string_new_wrapper(gEmbeddingHostName->str);
+}
+
+static gboolean socket_security_enabled = FALSE;
+
+gboolean
+mono_unity_socket_security_enabled_get ()
+{
+	return socket_security_enabled;
+}
+
+void
+mono_unity_socket_security_enabled_set (gboolean enabled)
+{
+	socket_security_enabled = enabled;
+}
