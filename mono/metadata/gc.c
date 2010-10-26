@@ -375,7 +375,7 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	if (timeout == -1)
 		timeout = INFINITE;
 
-	res = WaitForSingleObjectEx (done_event, timeout, TRUE);
+	res = WaitForSingleObjectEx (done_event, timeout, FALSE);
 
 	/* printf ("WAIT RES: %d.\n", res); */
 	if (res == WAIT_TIMEOUT) {
