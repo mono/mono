@@ -208,6 +208,31 @@ w32_load_module (const char* file, int flags)
 }
 #endif
 
+
+/*                                                                                                                                                                                                
+ * Maps static symbol names to the address                                                                                                                                                        
+ * Symbol names registered by mono_dl_register_symbol ().                                                                                                                                         
+ */                                                                                                                                                                                               
+static GHashTable *static_dl_symbols;                                                                                                                                                             
+                                                                                                                                                                                                  
+/*                                                                                                                                                                                                
+ * mono_dl_register_symbol:                                                                                                                                                                       
+ *                                                                                                                                                                                                
+ *   This should be called by embedding code to register AOT modules statically linked                                                                                                            
+ * into the executable. AOT_INFO should be the value of the                                                                                                                                       
+ * 'mono_aot_module_<ASSEMBLY_NAME>_info' global symbol from the AOT module.                                                                                                                      
+ */                                                                                                                                                                                               
+void                                                                                                                                                                                              
+mono_dl_register_symbol (const char* name, gpointer *addr)                                                                                                                                        
+{                                                                                                                                                                                                 
+       if (!static_dl_symbols)                                                                                                                                                                    
+               static_dl_symbols = g_hash_table_new (g_str_hash, g_str_equal);                                                                                                                    
+                                                                                                                                                                                                  
+       g_hash_table_insert (static_dl_symbols, name, addr);                                                                                                                                       
+                                                                                                                                                                                                  
+}                                                                                                                                                                                                 
+              
+
 /*
  * read a value string from line with any of the following formats:
  * \s*=\s*'string'
@@ -387,6 +412,14 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 	}
 #else
 	sym = LL_SO_SYMBOL (module, name);
+#endif
+#ifndef PLATFORM_WIN32
+       // lookup in static table                                                                                                                                                                  
+       if (!sym && module->handle == RTLD_DEFAULT)                                                                                                                                               
+       {                                                                                                                                                                                         
+               if (static_dl_symbols)                                                                                                                                                            
+                       sym = g_hash_table_lookup (static_dl_symbols, name);                                                                                                                      
+       }
 #endif
 	if (sym) {
 		if (symbol)
