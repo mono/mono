@@ -353,7 +353,12 @@ namespace System.Web
 				cc = String.Concat (cc, ", no-store");
 			if (set_no_transform)
 				cc = String.Concat (cc, ", no-transform");
-
+			if (cache_extension != null && cache_extension.Length > 0) {
+				if (!Strng.IsNullOrEmpty (cc))
+					cc = String.Concat (cc, ", ");
+				cc = String.Concat (cc, cache_extension.ToString ());
+			}
+			
 			headers.Add ("Cache-Control", cc);
 
 			if (last_modified_from_file_dependencies || etag_from_file_dependencies)
