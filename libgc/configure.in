@@ -94,6 +94,12 @@ case "$THREADS" in
 	fi
 	AC_DEFINE(THREAD_LOCAL_ALLOC)
 	;;
+	## remove lib pthread for android 
+     arm-eabi-linux*)
+	THREADDLLIBS=
+	AC_DEFINE(GC_LINUX_THREADS)
+	AC_DEFINE(_REENTRANT)
+	;;
      *-*-linux*)
 	AC_DEFINE(GC_LINUX_THREADS)
 	AC_DEFINE(_REENTRANT)
