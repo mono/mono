@@ -1896,7 +1896,7 @@ namespace System.Reflection.Emit
 				throw new ArgumentException ("The specified field must be declared on a generic type definition.", "field");
 
 			if (field.DeclaringType != type.GetGenericTypeDefinition ())
-				throw new ArgumentException ("method declaring type is not the generic type definition of type", "method");
+				throw new ArgumentException ("field declaring type is not the generic type definition of type", "method");
 
 			FieldInfo res = type.GetField (field);
 			if (res == null)
