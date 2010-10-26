@@ -133,18 +133,96 @@ g_shell_parse_argv (const gchar *command_line, gint *argcp, gchar ***argvp, GErr
 	return TRUE;
 }
 
+
 gchar *
 g_shell_quote (const gchar *unquoted_string)
 {
-	//g_error ("%s", "Not implemented");
-	return g_strdup (unquoted_string);
-//	return NULL;
+	GString *result = g_string_new ("'");
+	const gchar *p;
+	
+	for (p = unquoted_string; *p; p++){
+		if (*p == '\'')
+			g_string_append (result, "'\\'");
+		g_string_append_c (result, *p);
+	}
+	g_string_append_c (result, '\'');
+	return g_string_free (result, FALSE);
 }
 
 gchar *
 g_shell_unquote (const gchar *quoted_string, GError **error)
 {
-//	g_error ("%s", "Not implemented");
-	return g_strdup (quoted_string);
-//	return NULL;
+	GString *result;
+	const char *p;
+	int do_unquote = 0;
+
+	if (quoted_string == NULL)
+		return NULL;
+	
+	/* Quickly try to determine if we need to unquote or not */
+	for (p = quoted_string; *p; p++){
+		if (*p == '\'' || *p == '"' || *p == '\\'){
+			do_unquote = 1;
+			break;
+		}
+	}
+	
+	if (!do_unquote)
+		return g_strdup (quoted_string);
+
+	/* We do need to unquote */
+	result = g_string_new ("");
+	for (p = quoted_string; *p; p++){
+
+		if (*p == '\''){
+			/* Process single quote, not even \ is processed by glib's version */
+			for (p++; *p; p++){
+				if (*p == '\'')
+					break;
+				g_string_append_c (result, *p);
+			}
+			if (!*p){
+				g_set_error (error, 0, 0, "Open quote");
+				return NULL;
+			}
+		} else if (*p == '"'){
+			/* Process double quote, allows some escaping */
+			for (p++; *p; p++){
+				if (*p == '"')
+					break;
+				if (*p == '\\'){
+					p++;
+					if (*p == 0){
+						g_set_error (error, 0, 0, "Open quote");
+						return NULL;
+					}
+					switch (*p){
+					case '$':
+					case '"':
+					case '\\':
+					case '`':
+						break;
+					default:
+						g_string_append_c (result, '\\');
+						break;
+					}
+				} 
+				g_string_append_c (result, *p);
+			}
+			if (!*p){
+				g_set_error (error, 0, 0, "Open quote");
+				return NULL;
+			}
+		} else if (*p == '\\'){
+			char c = *(++p);
+			if (!(c == '$' || c == '"' || c == '\\' || c == '`' || c == 0))
+				g_string_append_c (result, '\\');
+			if (c == 0)
+				break;
+			else
+				g_string_append_c (result, c);
+		} else
+			g_string_append_c (result, *p);
+	}
+	return g_string_free (result, FALSE);
 }
