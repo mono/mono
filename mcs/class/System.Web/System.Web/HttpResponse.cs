@@ -1083,6 +1083,34 @@ namespace System.Web
 			writer.Write (buffer, index, count);
 		}
 
+		bool IsFileSystemDirSeparator (char ch)
+		{
+			return ch == '\\' || ch == '/';
+		}
+		
+		string GetNormalizedFileName (string fn)
+		{
+			if (String.IsNullOrEmpty (fn))
+				return fn;
+
+			// On Linux we don't change \ to / since filenames with \ are valid. We also
+			// don't remove drive: designator for the same reason.
+			int len = fn.Length;
+			if (len >= 3 && fn [1] == ':' && IsFileSystemDirSeparator (fn [2]))
+				return Path.GetFullPath (fn); // drive-qualified absolute file path
+
+			if (len >= 2 && IsFileSystemDirSeparator (fn [0]) && IsFileSystemDirSeparator (fn [1]))
+				return Path.GetFullPath (fn); // UNC path
+
+			HttpContext ctx = context ?? HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+
+			if (req != null)
+				return req.MapPath (fn);
+			
+			return fn; // Or should we rather throw?
+		}
+		
 		internal void WriteFile (FileStream fs, long offset, long size)
 		{
 			byte [] buffer = new byte [32*1024];
@@ -1108,12 +1136,13 @@ namespace System.Web
 			if (filename == null)
 				throw new ArgumentNullException ("filename");
 
+			string fn = GetNormalizedFileName (filename);
 			if (readIntoMemory){
-				using (FileStream fs = File.OpenRead (filename))
+				using (FileStream fs = File.OpenRead (fn))
 					WriteFile (fs, 0, fs.Length);
 			} else {
-				FileInfo fi = new FileInfo (filename);
-				output_stream.WriteFile (filename, 0, fi.Length);
+				FileInfo fi = new FileInfo (fn);
+				output_stream.WriteFile (fn, 0, fi.Length);
 			}
 			if (buffer)
 				return;
