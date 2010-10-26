@@ -1215,6 +1215,15 @@ cached_module_load (const char *name, int flags, char **err)
 	return res;
 }
 
+
+static const char*(*unity_find_plugin_callback)(const char*) = NULL;
+
+void mono_set_find_plugin_callback (gconstpointer find)
+{
+	unity_find_plugin_callback = find;
+}
+
+
 gpointer
 mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char **exc_arg)
 {
@@ -1273,6 +1282,13 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 	/* we allow a special name to dlopen from the running process namespace */
 	if (strcmp (new_scope, "__Internal") == 0)
 		module = mono_dl_open (NULL, MONO_DL_LAZY, &error_msg);
+
+	if (unity_find_plugin_callback)
+	{
+		new_scope = unity_find_plugin_callback (new_scope);
+		//check if unity wants pinvoke to be totally disabled
+		if (new_scope == 0) return 0;
+	}
 
 	/*
 	 * Try loading the module using a variety of names
