@@ -604,6 +604,8 @@ namespace System.Reflection.Emit {
 		{
 			if (con == null)
 				throw new ArgumentNullException ("con");
+			if (con.DeclaringType.Module != this)
+				throw new InvalidOperationException ("The constructor is not in this module");
 			return new MethodToken (GetToken (con));
 		}
 
