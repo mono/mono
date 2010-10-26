@@ -2186,6 +2186,26 @@ case "$host" in
 		;;
 esac
 
+if test "x$host" != "x$target"; then
+   case "$target" in
+   arm*-darwin*)
+		TARGET=ARM;
+		arch_target=arm;
+		ACCESS_UNALIGNED="no"
+		JIT_SUPPORTED=yes
+		CPPFLAGS="$CPPFLAGS -DARM_FPU_VFP=1 -D__ARM_EABI__"
+		jit_wanted=true
+		# Can't use tls, since it depends on the runtime detection of tls offsets
+		# in mono-compiler.h
+		with_tls=pthread
+
+		AC_DEFINE(MONO_CROSS_COMPILE,1,[The runtime is compiled for cross-compiling mode])
+		;;
+	*)
+		AC_MSG_ERROR([Cross compiling is only supported for targets matching 'arm*-darwin*'])
+	esac
+fi
+
 # FIXME: Define the others as well
 case "$TARGET" in
 X86)
