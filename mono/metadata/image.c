@@ -884,6 +884,9 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 
 	mono_profiler_module_event (image, MONO_PROFILE_START_LOAD);
 
+	/* if MONO_SECURITY_MODE_CORE_CLR is set then determine if this image is platform code */
+	image->core_clr_platform_code = mono_security_core_clr_determine_platform_image (image);
+
 	mono_image_init (image);
 
 	iinfo = image->image_info;
@@ -971,9 +974,7 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	image->name = mono_path_resolve_symlinks (fname);
 	image->ref_only = refonly;
 	image->ref_count = 1;
-	/* if MONO_SECURITY_MODE_CORE_CLR is set then determine if this image is platform code */
-	image->core_clr_platform_code = mono_security_core_clr_determine_platform_image (image);
-
+	
 	mono_file_map_close (filed);
 	return do_mono_image_load (image, status, care_about_cli, care_about_pecoff);
 }
