@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <linker>
 	<assembly fullname="System">
+		
+<!--		
 		<type fullname="System.Configuration.DefaultConfig" />
 		<type fullname="System.Diagnostics.DefaultTraceListener" />
 		<type fullname="System.Diagnostics.FileVersionInfo" />
@@ -13,6 +15,8 @@
 		<type fullname="System.Net.SocketAddress" />
 		<type fullname="System.Net.Sockets.LingerOption" />
 		<type fullname="System.Net.Sockets.Socket" />
-		<type fullname="System.Net.Sockets.SocketException" />
+		<type fullname="System.Net.Sockets.SocketException" /> -->
+		
+		<type fullname="System.Net.Sockets.SocketPolicyClient" />
 	</assembly>
 </linker>

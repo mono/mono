@@ -329,7 +329,11 @@
 		<type fullname="System.Text.StringBuilder" preserve="fields" />
 
 		<type fullname="System.Security.AllowPartiallyTrustedCallersAttribute" />
+		
+<!-- lucas disabling this guy, hoping we indeed dont need it
 		<type fullname="System.Security.Policy.Evidence" />
+		-->
+		
 		<!--
 		<type fullname="System.Security.Principal.WindowsIdentity" />
 		<type fullname="System.Security.Principal.WindowsImpersonationContext" />
@@ -349,6 +353,11 @@
 		<type fullname="Mono.Interop.ComInteropProxy" feature="com" />
 		<type fullname="Mono.Interop.IDispatch" feature="com" />
 		<type fullname="Mono.Interop.IUnknown" feature="com" />
+
+<!-- lucas added the following constructor because Boo uses resources to look up error messages, and apparently the mono runtime uses this to look them up -->
+		<type fullname="System.Resources.RuntimeResourceSet" />
+
+
 
 	</assembly>
 </linker>
