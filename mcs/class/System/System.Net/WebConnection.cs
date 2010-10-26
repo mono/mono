@@ -86,7 +86,7 @@ namespace System.Net
 		static PropertyInfo piServer;
 		static PropertyInfo piTrustFailure;
 
-#if MONOTOUCH
+#if MONOTOUCH && !UNITY
                 static MethodInfo start_wwan;
 
                 static WebConnection ()
@@ -128,6 +128,65 @@ namespace System.Net
 			return (socket.Poll (0, SelectMode.SelectRead) == false);
 		}
 		
+		static System.Reflection.MethodInfo method_GetSecurityPolicyFromNonMainThread;
+		
+		void LoggedThrow(System.Exception e)
+		{
+			Console.WriteLine("Throwing this exception: "+e);
+			throw e;
+		}
+		
+		
+		//this is passed as a MethodInfo to CrossDomainPolicyParser, so it can use a WebRequest to
+		//download the actual policyfile, since using a WWW is very difficult, since WWW is not threadsafe,
+		//and this request can very well come in on a nonmain thread.
+		static internal Stream DownloadPolicy(string url, string proxy)
+		{
+			var wr = (HttpWebRequest) WebRequest.Create(url);
+			if (proxy != null)
+				wr.Proxy = new WebProxy(proxy);
+			
+			return wr.GetResponse().GetResponseStream();
+		}
+		
+		void CheckUnityWebSecurity(HttpWebRequest request)
+		{
+#if NET_2_0
+			//we should probably create a different securitysetting for webrequest, but for now we'll piggybag on the socketsecurity one.
+			if (!System.Environment.SocketSecurityEnabled) return;
+
+			Console.WriteLine("CheckingSecurityForUrl: "+request.RequestUri.AbsoluteUri);
+						
+			var uri = request.RequestUri;
+			string postfix = "";
+			if (!uri.IsDefaultPort) postfix = ":" + uri.Port;
+			if (uri.ToString() == uri.Scheme + "://" + uri.Host + postfix + "/crossdomain.xml") return;
+			try
+			{
+				if (method_GetSecurityPolicyFromNonMainThread == null)
+				{
+					//todo: enter strong name with public key here.	
+					Type type = Type.GetType ("UnityEngine.UnityCrossDomainHelper, CrossDomainPolicyParser, Version=1.0.0.0, Culture=neutral");
+					if (type==null)
+						LoggedThrow(new System.Security.SecurityException("Cant find type UnityCrossDomainHelper"));
+					method_GetSecurityPolicyFromNonMainThread = type.GetMethod ("GetSecurityPolicyForDotNetWebRequest");
+					if (method_GetSecurityPolicyFromNonMainThread == null) 
+						LoggedThrow(new System.Security.SecurityException("Cant find GetSecurityPolicyFromNonMainThread"));
+				}
+				var policy_mi = typeof(WebConnection).GetMethod("DownloadPolicy", BindingFlags.Static | BindingFlags.NonPublic);
+				if (policy_mi == null)
+					LoggedThrow(new System.Security.SecurityException("Cannot find method DownloadPolicy"));
+				bool allowed = ((bool) method_GetSecurityPolicyFromNonMainThread.Invoke (null, new object [2] { request.RequestUri.ToString(), policy_mi }));
+				if (!allowed)
+					LoggedThrow(new System.Security.SecurityException("Webrequest was denied"));
+
+			} catch (Exception e)
+			{
+				LoggedThrow(new System.Security.SecurityException("Unexpected error while trying to call method_GetSecurityPolicyBlocking : "+e));
+			}								
+#endif
+		}
+		
 		void Connect (HttpWebRequest request)
 		{
 			lock (socketLock) {
@@ -149,7 +208,7 @@ namespace System.Net
 				IPHostEntry hostEntry = sPoint.HostEntry;
 
 				if (hostEntry == null) {
-#if MONOTOUCH
+#if MONOTOUCH && !UNITY
 					if (start_wwan != null) {
 						start_wwan.Invoke (null, new object [1] { sPoint.Address });
 						hostEntry = sPoint.HostEntry;
@@ -159,7 +218,7 @@ namespace System.Net
 						status = sPoint.UsesProxy ? WebExceptionStatus.ProxyNameResolutionFailure :
 									    WebExceptionStatus.NameResolutionFailure;
 						return;
-#if MONOTOUCH
+#if MONOTOUCH && !UNITY
 					}
 #endif
 				}
@@ -182,7 +241,10 @@ namespace System.Net
 						try {
 							if (request.Aborted)
 								return;
-							socket.Connect (remote);
+							
+							CheckUnityWebSecurity(request);
+							
+							socket.Connect (remote, false);
 							status = WebExceptionStatus.Success;
 							break;
 						} catch (ThreadAbortException) {
@@ -217,7 +279,7 @@ namespace System.Net
 				if (sslStream != null)
 					return;
 
-#if MONOTOUCH && SECURITY_DEP
+#if MONOTOUCH && SECURITY_DEP 
 				sslStream = typeof (Mono.Security.Protocol.Tls.HttpsClientStream);
 #else
 				// HttpsClientStream is an internal glue class in Mono.Security.dll

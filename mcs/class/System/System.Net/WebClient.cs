@@ -918,10 +918,14 @@ namespace System.Net
 					return new Uri (path);
 #if NET_2_0
 				} catch (ArgumentNullException) {
+					if (System.Environment.UnityWebSecurityEnabled) throw;
 					path = Path.GetFullPath (path);
 					return new Uri ("file://" + path);
 #endif
 				} catch (UriFormatException) {
+#if NET_2_0
+					if (System.Environment.UnityWebSecurityEnabled) throw;
+#endif
 					path = Path.GetFullPath (path);
 					return new Uri ("file://" + path);
 				}

@@ -136,7 +136,10 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		private bool IsReadOnly {
-			get { return ((_flags & OpenFlags.ReadWrite) == OpenFlags.ReadOnly); }
+			get { 
+				if (System.Environment.UnityWebSecurityEnabled) return true;
+				return ((_flags & OpenFlags.ReadWrite) == OpenFlags.ReadOnly); 
+			}
 		}
 
 		internal MX.X509Store Store {
