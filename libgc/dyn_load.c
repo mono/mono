@@ -1259,9 +1259,11 @@ void GC_init_dyld() {
 #   ifdef DARWIN_DEBUG
       GC_printf0("Forcing full bind of GC code...\n");
 #   endif
-      
+     
+    #ifndef TARGET_IPHONE_SIMULATOR 
       if(!_dyld_bind_fully_image_containing_address((unsigned long*)GC_malloc))
         GC_abort("_dyld_bind_fully_image_containing_address failed");
+    #endif
     }
 
 }
