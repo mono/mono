@@ -29,3 +29,6 @@
 /install-sh
 /doltlibtool
 /doltcompile
+/external
+/builds
+*.pidb
