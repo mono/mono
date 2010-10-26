@@ -19,6 +19,13 @@
 #include "map.h"
 #include "mph.h"
 
+#if defined(PLATFORM_ANDROID)
+#define getgrent() (0)
+#define setgrent() (0)
+#define endgrent() (0)
+#endif
+
+
 G_BEGIN_DECLS
 
 static void

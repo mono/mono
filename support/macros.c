@@ -114,10 +114,12 @@ int helper_Mono_Posix_getpwnamuid (int mode, char *in_name, int in_uid,
 	char buf[4096];
 	int ret;
 
+#if !defined(PLATFORM_ANDROID)
 	if (mode == 0)
 		ret = getpwnam_r (in_name, &pw, buf, 4096, &pwp);
 	else
 		ret = getpwuid_r (in_uid, &pw, buf, 4096, &pwp);
+#endif
 
 	if (ret == 0 && pwp == NULL) {
 		// Don't know why this happens, but it does.
@@ -140,7 +142,11 @@ int helper_Mono_Posix_getpwnamuid (int mode, char *in_name, int in_uid,
 	*password = pwp->pw_passwd;
 	*uid = pwp->pw_uid;
 	*gid = pwp->pw_gid;
+#if PLATFORM_ANDROID
+	*name = pwp->pw_name;
+#else
 	*name = pwp->pw_gecos;
+#endif
 	*home = pwp->pw_dir;
 	*shell = pwp->pw_shell;
 

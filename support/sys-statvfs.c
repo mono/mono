@@ -1,3 +1,4 @@
+
 /*
  * <sys/sendfile.h> wrapper functions.
  *
@@ -21,7 +22,13 @@
 #ifdef HAVE_SYS_STATVFS_H
 #include <sys/statvfs.h>
 #elif defined (HAVE_STATFS) || defined (HAVE_FSTATFS)
-#include <sys/vfs.h>
+
+#if !defined(PLATFORM_ANDROID)
+#include <sys/stat.h>  //lucas had to change this for 10.3 compatibility. Apparently on some linux machines stat is defined in sys/vfs.h, but on 10.6, which is our current mono build platform, it's in sys/stat.h
+#else
+#include <sys/vfs.h>  // yes, but on android stat is _still_ in sys/vfs.h...
+#endif
+
 #endif /* def HAVE_SYS_STATVFS_H */
 
 #ifdef HAVE_GETFSSTAT
