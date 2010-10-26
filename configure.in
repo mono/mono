@@ -62,6 +62,19 @@ no_version_script=no
 # Set to yes if Unix sockets cannot be created in an anonymous namespace
 need_link_unlink=no
 
+AC_ARG_WITH([macversion],
+	[  --with-macversion=<version>    Choose minimum macos version],
+	[], [with_macversion=10.4])
+
+MACSYSROOTBASE="-isysroot /Developer/SDKs"
+if [[ "$with_macversion" == "10.4" ]]; then
+  MACSYSROOT="$MACSYSROOTBASE/MacOSX10.4u.sdk"
+else
+  MACSYSROOT="$MACSYSROOTBASE/MacOSX""$with_macversion"".sdk"
+fi
+MACSDKOPTIONS="-mmacosx-version-min=$with_macversion $MACSYSROOT"
+
+
 # Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
 libgc_threads=no
@@ -210,6 +223,11 @@ case "$host" in
 		platform_darwin=yes
 		CPPFLAGS="$CPPFLAGS -no-cpp-precomp -D_THREAD_SAFE -DGC_MACOSX_THREADS -DPLATFORM_MACOSX -DUSE_MMAP -DUSE_MUNMAP"
 		CPPFLAGS="$CPPFLAGS -DGetCurrentProcess=MonoGetCurrentProcess -DGetCurrentThread=MonoGetCurrentThread -DCreateEvent=MonoCreateEvent"
+		
+		if [[ "$host" != "arm-apple-darwin9" ]]; then 
+			CPPFLAGS="$CPPFLAGS $MACSDKOPTIONS"
+			LDFLAGS="$LDFLAGS $MACSDKOPTIONS"
+		fi
 		libmono_cflags="-D_THREAD_SAFE"
 		LDFLAGS="$LDFLAGS -pthread"
 		libmono_ldflags="-pthread"
@@ -228,7 +246,7 @@ case "$host" in
 		dnl we need to set some flags to build our 32-bit binaries on 10.6 properly
 		case "$host" in
 			i*86-*-darwin10*)
-				BROKEN_DARWIN_FLAGS="-arch i386 -D_XOPEN_SOURCE -mmacosx-version-min=10.5"
+				BROKEN_DARWIN_FLAGS="-arch i386 -D_XOPEN_SOURCE"
 				CPPFLAGS="$CPPFLAGS $BROKEN_DARWIN_FLAGS"
 				CFLAGS="$CFLAGS $BROKEN_DARWIN_FLAGS"
 				CXXFLAGS="$CXXFLAGS $BROKEN_DARWIN_FLAGS"
@@ -525,6 +543,16 @@ embedded)
   GMODULE_CFLAGS="$GLIB_CFLAGS"
   GMODULE_LIBS="$GLIB_LIBS"
   eglib_dir=eglib
+
+
+  #need to talk to kangaroo about what the right fix is here. eglib was being compiled against 10.6sdk, but linekd against 10.4
+  #causing _file$INODE64 symbols that dont exist in 10.4 to fail. this should be made configurable with the --with-macversion argument
+  case "$host" in
+    i*86-apple-darwin* | powerpc-apple-darwin* )
+      EGLIB_CPPFLAGS="$MACSDKOPTIONS"
+      CLAGS_FOR_EGLIB="$EGLIB_CPPFLAGS"
+  esac
+
   ac_configure_args="$ac_configure_args \"CPPFLAGS_FOR_EGLIB=$EGLIB_CPPFLAGS\" \"CFLAGS_FOR_EGLIB=$CFLAGS_FOR_EGLIB\""
   AC_CONFIG_SUBDIRS(eglib)
   ;;
