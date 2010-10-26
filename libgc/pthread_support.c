@@ -674,6 +674,7 @@ void GC_mark_thread_local_free_lists(void)
 #endif /* THREAD_LOCAL_ALLOC */
 
 static struct GC_Thread_Rep first_thread;
+static GC_bool first_thread_used = FALSE;
 
 /* Add a thread to GC_threads.  We assume it wasn't already there.	*/
 /* Caller holds allocation lock.					*/
@@ -681,7 +682,6 @@ GC_thread GC_new_thread(pthread_t id)
 {
     int hv = ((word)id) % THREAD_TABLE_SZ;
     GC_thread result;
-    static GC_bool first_thread_used = FALSE;
     
     if (!first_thread_used) {
     	result = &first_thread;
@@ -725,6 +725,11 @@ void GC_delete_thread(pthread_t id)
 	mach_port_deallocate(mach_task_self(), p->stop_info.mach_thread);
 #endif
 	
+	if (p == &first_thread)
+	{
+		first_thread_used = FALSE;
+		return;
+	}
     GC_INTERNAL_FREE(p);
 }
 
