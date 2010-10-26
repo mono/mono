@@ -2251,7 +2251,9 @@ static gchar *get_process_name_from_proc (pid_t pid)
 	g_free (filename);
 #elif defined(PLATFORM_MACOSX)
 	memset (buf, '\0', sizeof(buf));
-#  if !defined (__mono_ppc__)
+
+//lucas changed this check from !ppc to >=10.5, as os10.4 does not have proc_name.
+#  if (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5) && !defined(__arm__)
 	proc_name (pid, buf, sizeof(buf));
 #  endif
 	if (strlen (buf) > 0)
