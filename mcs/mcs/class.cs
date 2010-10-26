@@ -2086,7 +2086,13 @@ namespace Mono.CSharp {
 			}
 
 			if (e == null) {
-				TypeSpec t = LookupNestedTypeInHierarchy (name, arity);
+				TypeSpec t;
+				if (false && MemberName.Name == name && MemberName.Arity == arity) {
+					t = spec;
+				} else
+			{
+					t = LookupNestedTypeInHierarchy (name, arity);
+				}
 
 				if (t != null)
 					e = new TypeExpression (t, Location.Null);

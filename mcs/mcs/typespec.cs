@@ -565,21 +565,6 @@ namespace Mono.CSharp
 					return tp_b != null && tp_a.IsMethodOwned == tp_b.IsMethodOwned && tp_a.DeclaredPosition == tp_b.DeclaredPosition;
 				}
 
-				if (a.TypeArguments.Length != b.TypeArguments.Length)
-					return false;
-
-				if (a.TypeArguments.Length != 0) {
-					if (a.MemberDefinition != b.MemberDefinition)
-						return false;
-
-					for (int i = 0; i < a.TypeArguments.Length; ++i) {
-						if (!IsEqual (a.TypeArguments[i], b.TypeArguments[i]))
-							return false;
-					}
-
-					return true;
-				}
-
 				var ac_a = a as ArrayContainer;
 				if (ac_a != null) {
 					var ac_b = b as ArrayContainer;
@@ -589,7 +574,20 @@ namespace Mono.CSharp
 				if (a == InternalType.Dynamic || b == InternalType.Dynamic)
 					return b == TypeManager.object_type || a == TypeManager.object_type;
 
-				return false;
+				if (a.MemberDefinition != b.MemberDefinition)
+					return false;
+
+				do {
+					for (int i = 0; i < a.TypeArguments.Length; ++i) {
+						if (!IsEqual (a.TypeArguments[i], b.TypeArguments[i]))
+							return false;
+					}
+
+					a = a.DeclaringType;
+					b = b.DeclaringType;
+				} while (a != null);
+
+				return true;
 			}
 
 			//
