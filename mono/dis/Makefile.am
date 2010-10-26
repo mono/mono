@@ -10,7 +10,11 @@ else
 runtime_lib=../interpreter/libmint.la
 endif
 
+if CROSS_COMPILING
+bin_PROGRAMS = 
+else
 bin_PROGRAMS = monodis
+endif
 
 noinst_LIBRARIES = libmonodis.a
 
