@@ -422,6 +422,42 @@ g_hash_table_destroy (GHashTable *hash)
 	g_free (hash);
 }
 
+void
+g_hash_table_remove_all (GHashTable *hash)
+{
+	int i;
+	int count = 0;
+	
+	g_return_if_fail (hash != NULL);
+
+	for (i = 0; i < hash->table_size; i++){
+		Slot *s, *last;
+
+		last = NULL;
+		for (s = hash->table [i]; s != NULL; ){
+			Slot *n;
+
+			if (hash->key_destroy_func != NULL)
+				(*hash->key_destroy_func)(s->key);
+			if (hash->value_destroy_func != NULL)
+				(*hash->value_destroy_func)(s->value);
+			if (last == NULL){
+				hash->table [i] = s->next;
+				n = s->next;
+			} else  {
+				last->next = s->next;
+				n = last->next;
+			}
+			g_free (s);
+			hash->in_use--;
+			count++;
+			s = n;
+		}
+	}
+	if (count > 0)
+		rehash (hash);
+}
+
 gboolean
 g_direct_equal (gconstpointer v1, gconstpointer v2)
 {

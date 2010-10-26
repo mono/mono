@@ -2866,6 +2866,7 @@ appdomain_unload (MonoProfiler *prof, MonoDomain *domain)
 	/* Invalidate each thread's frame stack */
 	mono_g_hash_table_foreach (thread_to_tls, invalidate_each_thread, NULL);
 	clear_breakpoints_for_domain (domain);
+	g_hash_table_remove_all (loaded_classes);
 	process_profiler_event (EVENT_KIND_APPDOMAIN_UNLOAD, domain);
 }
 
@@ -2896,7 +2897,6 @@ assembly_unload (MonoProfiler *prof, MonoAssembly *assembly)
 	process_profiler_event (EVENT_KIND_ASSEMBLY_UNLOAD, assembly);
 
 	clear_event_requests_for_assembly (assembly);
-	clear_types_for_assembly (assembly);
 }
 
 static void
@@ -4377,30 +4377,6 @@ clear_event_requests_for_assembly (MonoAssembly *assembly)
 			}
 		}
 	}
-	mono_loader_unlock ();
-}
-
-/*
- * type_comes_from_assembly:
- *
- *   GHRFunc that returns TRUE if klass comes from assembly
- */
-static gboolean
-type_comes_from_assembly (gpointer klass, gpointer also_klass, gpointer assembly)
-{
-	return (mono_class_get_image ((MonoClass*)klass) == mono_assembly_get_image ((MonoAssembly*)assembly));
-}
-
-/*
- * clear_types_for_assembly:
- *
- *   Clears types from loaded_classes for a given assembly
- */
-static void
-clear_types_for_assembly (MonoAssembly *assembly)
-{
-	mono_loader_lock ();
-	g_hash_table_foreach_remove (loaded_classes, type_comes_from_assembly, assembly);
 	mono_loader_unlock ();
 }
 
