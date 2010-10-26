@@ -95,7 +95,7 @@ typedef gint64 mgreg_t;
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION "62"
+#define MONO_AOT_FILE_VERSION "66"
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -371,7 +371,6 @@ typedef struct MonoInstList MonoInstList;
 typedef struct MonoInst MonoInst;
 typedef struct MonoCallInst MonoCallInst;
 typedef struct MonoCallArgParm MonoCallArgParm;
-typedef struct MonoEdge MonoEdge;
 typedef struct MonoMethodVar MonoMethodVar;
 typedef struct MonoBasicBlock MonoBasicBlock;
 typedef struct MonoLMF MonoLMF;
@@ -412,12 +411,6 @@ extern const gint8 ins_sreg_counts [];
 #define MONO_BB_FOR_EACH_INS_REVERSE_SAFE(bb, p, ins) for ((ins) = (bb)->last_ins, p = (ins) ? (ins)->prev : NULL; (ins); (ins) = (p), (p) = (ins) ? (ins)->prev : NULL)
 
 #define mono_bb_first_ins(bb) (bb)->code
-
-struct MonoEdge {
-	MonoEdge *next;
-	MonoBasicBlock *bb;
-	/* add edge type? */
-};
 
 struct MonoSpillInfo {
 	int offset;
@@ -481,7 +474,6 @@ struct MonoBasicBlock {
 	GSList *dominated;
 	/* fast dominator algorithm */
 	MonoBasicBlock *df_parent, *ancestor, *child, *label;
-	MonoEdge *bucket;
 	int size, sdom, idomn;
 	
 	/* loop nesting and recognition */
