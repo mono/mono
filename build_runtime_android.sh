@@ -109,8 +109,6 @@ function clean_build
 
 	mkdir -p `dirname ../$2`
 	cp mono/mini/.libs/libmono.a ../$2
-
-	popd
 }
 
 clean_build -DARM_FPU_NONE=1 $OUTDIR/libmono_fpu_none.a
