@@ -1,0 +1,47 @@
+System.Collections.Specialized.StringDictionary System.Diagnostics.ProcessStartInfo::get_EnvironmentVariables\(\)
+System.Diagnostics.FileVersionInfo System.Diagnostics.FileVersionInfo::GetVersionInfo\(System.String\)
+
+#need to figure out what to do with semaphore
+System.Threading.Semaphore::
+System.String System.Net.Dns::GetHostName\(\)
+System.IAsyncResult System.Net.Sockets.Socket::BeginSendFile\(System.String,System.AsyncCallback,System.Object\)
+System.IAsyncResult System.Net.Sockets.Socket::BeginSendFile\(System.String,System.Byte\[\],System.Byte\[\],System.Net.Sockets.TransmitFileOptions,System.AsyncCallback,System.Object\)
+
+#the name of the current computer is offlimits
+System.String System.Net.Dns::GetHostName\(\)
+
+#we dont want people loading certificates from filenames
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate2Collection::Import\(System.String
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate2::.ctor\(System.String
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate2::Import\(System.String\)
+System.Security.Cryptography.X509Certificates.X509ContentType System.Security.Cryptography.X509Certificates.X509Certificate2::GetCertContentType\(System.String\)
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate2::Import\(System.String\)
+
+#We dont want this, and hope nobody calls it
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate2::Import\(
+System.Void System.Security.Cryptography.X509Certificates.X509Store::Add\(System.Security.Cryptography.X509Certificates.X509Certificate2\)
+System.Void System.Security.Cryptography.X509Certificates.X509Store::RemoveRange\(System.Security.Cryptography.X509Certificates.X509Certificate2Collection\)
+System.Void System.Security.Cryptography.X509Certificates.X509Store::AddRange\(System.Security.Cryptography.X509Certificates.X509Certificate2Collection\)
+
+#uploading local files-> not good idea
+System.Net.WebClient::UploadFileAsync\(System.Uri,System.String
+System.Net.WebClient::DownloadFile\(
+System.Net.WebClient::DownloadFileAsync\(
+System.Net.WebClient::UploadFile\(
+
+#dont care
+System.Void System.Net.WebPermission::FromXml\(System.Security.SecurityElement\)
+
+#we dont want to support writing to user specified logfiles
+System.Void System.Diagnostics.TextWriterTraceListener::.ctor\(System.String,System.String\)
+System.Void System.Diagnostics.TextWriterTraceListener::.ctor\(System.String\)
+
+
+#dont support licensemanager stuff
+System.ComponentModel.LicFileLicenseProvider::
+System.ComponentModel.LicenseManager::
+System.ComponentModel.LicenseContext::
+System.ComponentModel.LicenseProvider::
+
+#no need to have this available
+System.Void System.ComponentModel.Win32Exception::.ctor

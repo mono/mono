@@ -1,0 +1,22 @@
+#SSC in moonlight
+System.Byte[] Mono.Security.BitConverterLE::GetBytes(System.Int32)
+
+#user has no control over path
+System.Collections.ArrayList Mono.Security.X509.X509Store::BuildCrlsCollection(System.String)
+
+#will just return if the store is readonly, and we have readonly always return true in secure mode
+System.Void Mono.Security.X509.X509Store::Remove(Mono.Security.X509.X509Certificate)
+
+#user cannot control path
+Mono.Security.X509.X509CertificateCollection Mono.Security.X509.X509Store::BuildCertificatesCollection(System.String)
+System.Int32 Mono.Security.Protocol.Tls.SslStreamBase::EndRead(System.IAsyncResult)
+System.Void Mono.Security.Protocol.Tls.SslStreamBase::EndWrite(System.IAsyncResult)
+
+#user cannot control path
+Mono.Security.X509.X509CertificateCollection Mono.Security.X509.X509StoreManager::get_TrustedRootCertificates()
+
+#SSC in moonlight
+System.Int32 Mono.Security.BitConverterLE::ToInt32(System.Byte[],System.Int32)
+
+#SSC in moonlgiht
+System.UInt32 Mono.Security.BitConverterLE::ToUInt32(System.Byte[],System.Int32)

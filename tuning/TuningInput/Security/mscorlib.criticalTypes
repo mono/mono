@@ -1,0 +1,152 @@
+System.Runtime.Remoting.Activation.ActivationServices
+System.Runtime.Remoting.Activation.AppDomainLevelActivator
+System.Runtime.Remoting.Activation.ConstructionLevelActivator
+System.Runtime.Remoting.Activation.ContextLevelActivator
+System.Runtime.Remoting.Activation.RemoteActivator
+System.Runtime.Remoting.ChannelInfo
+System.Runtime.Remoting.Channels.CADSerializer
+System.Runtime.Remoting.Channels.ChannelServices
+System.Runtime.Remoting.Channels.CrossAppDomainChannel
+System.Runtime.Remoting.Channels.CrossAppDomainData
+System.Runtime.Remoting.Channels.CrossAppDomainSink
+System.Runtime.Remoting.ClientActivatedIdentity
+System.Runtime.Remoting.ClientIdentity
+System.Runtime.Remoting.ConfigHandler
+System.Runtime.Remoting.Contexts.Context
+System.Runtime.Remoting.Contexts.CrossContextChannel
+System.Runtime.Remoting.Contexts.SynchronizationAttribute
+System.Runtime.Remoting.Contexts.SynchronizedClientContextSink
+System.Runtime.Remoting.Contexts.SynchronizedContextReplySink
+System.Runtime.Remoting.Contexts.SynchronizedServerContextSink
+System.Runtime.Remoting.InternalRemotingServices
+System.Runtime.Remoting.Lifetime.Lease
+System.Runtime.Remoting.Lifetime.LeaseManager
+System.Runtime.Remoting.Lifetime.LeaseSink
+System.Runtime.Remoting.Lifetime.LifetimeServices
+System.Runtime.Remoting.Messaging.CADMessageBase
+System.Runtime.Remoting.Messaging.CADMethodCallMessage
+System.Runtime.Remoting.Messaging.CADMethodReturnMessage
+System.Runtime.Remoting.Messaging.CADObjRef
+System.Runtime.Remoting.Messaging.ClientContextReplySink
+System.Runtime.Remoting.Messaging.ClientContextTerminatorSink
+System.Runtime.Remoting.Messaging.ConstructionCall
+System.Runtime.Remoting.Messaging.ConstructionResponse
+System.Runtime.Remoting.Messaging.EnvoyTerminatorSink
+System.Runtime.Remoting.Messaging.MethodCall
+System.Runtime.Remoting.Messaging.MethodResponse
+System.Runtime.Remoting.Messaging.ObjRefSurrogate
+System.Runtime.Remoting.Messaging.RemotingSurrogate
+System.Runtime.Remoting.Messaging.RemotingSurrogateSelector
+System.Runtime.Remoting.Messaging.ServerContextTerminatorSink
+System.Runtime.Remoting.Messaging.ServerObjectTerminatorSink
+System.Runtime.Remoting.Messaging.StackBuilderSink
+System.Runtime.Remoting.Metadata.SoapMethodAttribute
+System.Runtime.Remoting.Metadata.SoapTypeAttribute
+System.Runtime.Remoting.ObjRef
+System.Runtime.Remoting.Proxies.ProxyAttribute
+System.Runtime.Remoting.Proxies.RealProxy
+System.Runtime.Remoting.Proxies.RemotingProxy
+System.Runtime.Remoting.RemotingConfiguration
+System.Runtime.Remoting.RemotingServices
+System.Runtime.Remoting.ServerIdentity
+System.Runtime.Remoting.SingleCallIdentity
+System.Runtime.Remoting.SingletonIdentity
+System.Runtime.Remoting.SoapServices
+System.Threading.ExecutionContext
+System.Security.Policy.Hash
+Microsoft.Win32.SafeHandles.SafeWaitHandle
+System.IO.BufferedStream
+System.IO.UnmanagedMemoryStream
+#System.Security.CodeAccessPermission
+System.__ComObject
+
+#Need to review, it's blocking IDisposable.Dispose() right now.
+System.Threading.AsyncFlowControl
+
+#I think mutex should be critical, needs some thought tho
+System.Threading.Mutex
+
+
+#users don't need to be messing around with gchandles
+System.Runtime.InteropServices.GCHandle
+
+#unfrotunattely we can't link this out because boocompiler depends on it
+System.IO.Directory
+System.IO.DriveInfo
+System.IO.FileStream
+System.IO.File
+
+#webplayer should not provide access to windows users information
+System.Security.Principal.WindowsIdentity
+#System.Security.Permissions.FileIOPermission
+System.AppDomainSetup
+System.IO.FileInfo
+System.IO.DirectoryInfo
+
+
+#not sure what to do wit this.
+System.Security.Policy.PolicyStatement
+
+
+#not sure
+System.Security.PermissionSet
+System.Security.Policy.ApplicationTrust
+#System.Security.ISecurityEncodable
+#System.Security.Permissions.EnvironmentPermission
+#System.Security.Permissions.SecurityPermission
+
+
+#critical type in moonlight
+System.Resources.ResourceReader
+
+
+#critical type in moonlight
+System.ArgIterator
+
+
+#only used behind the sceenes for reflection
+System.Reflection.MonoProperty
+
+
+#only used behind the scenes
+#System.Reflection.MonoCMethod
+#System.Reflection.MonoMethod
+#System.Reflection.MonoGenericClass
+#System.Reflection.MonoGenericCMethod
+#System.Reflection.MonoGenericMethod
+#System.MonoType
+
+#not sure what to do
+System.Security.SecurityContext
+
+#not sure
+System.Threading.CompressedStack
+
+System.Security.SecurityManager
+
+#needed for inheritance rules
+Mono.Interop.ComInteropProxy
+System.Security.NamedPermissionSet
+System.Security.Permissions.FileDialogPermission
+System.Security.Permissions.IsolatedStorageFilePermission
+System.Security.Permissions.IsolatedStoragePermission
+System.Security.Permissions.KeyContainerPermission
+System.Security.Permissions.ReflectionPermission
+System.Security.Permissions.RegistryPermission
+System.Security.Permissions.StrongNameIdentityPermission
+System.Security.Permissions.UIPermission
+System.Security.Permissions.ZoneIdentityPermission
+System.Security.Policy.PolicyLevel
+System.Security.Policy.PermissionRequestEvidence
+System.Security.Policy.CodeGroup
+System.Security.Policy.FileCodeGroup
+System.Security.Policy.FileMatchCodeGroup
+System.Security.Policy.FirstMatchCodeGroup
+System.Security.Policy.NetCodeGroup
+System.Security.Policy.UnionCodeGroup
+System.Security.Policy.AllMembershipCondition
+System.Security.Policy.ZoneMembershipCondition
+System.Security.Policy.StrongNameMembershipCondition
+
+#criticaltype in moonlight
+System.Resources.ResourceWriter

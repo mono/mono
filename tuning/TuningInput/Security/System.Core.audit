@@ -1,0 +1,11 @@
+#Tries to read timezone info from hardcoded /etc/ path
+System.TimeZoneInfo System.TimeZoneInfo::get_Local()
+
+#needs review. calls into WaitHandle::WaitOne
+System.Boolean System.Threading.ReaderWriterLockSlim::WaitOnEvent(System.Threading.EventWaitHandle,System.UInt32&,System.Int32)
+
+#tries to read hardcoded timezone info from disk. safe
+System.TimeZoneInfo System.TimeZoneInfo::FindSystemTimeZoneById(System.String)
+
+#reads only from timezones directory
+System.Collections.ObjectModel.ReadOnlyCollection`1<System.TimeZoneInfo> System.TimeZoneInfo::GetSystemTimeZones()

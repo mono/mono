@@ -1,0 +1,5 @@
+System.Void Mono.Security.X509.X509Store::Import\(Mono.Security.X509.X509Certificate\)
+Mono.Security.X509.X509Stores Mono.Security.X509.X509StoreManager::get_CurrentUser\(\)
+Mono.Security.X509.X509Stores Mono.Security.X509.X509StoreManager::get_LocalMachine\(\)
+Mono.Security.X509.X509Store Mono.Security.X509.X509Stores::Open\(System.String,System.Boolean\)
+Mono.Security.Authenticode.PrivateKey Mono.Security.Authenticode.PrivateKey::CreateFromFile\(

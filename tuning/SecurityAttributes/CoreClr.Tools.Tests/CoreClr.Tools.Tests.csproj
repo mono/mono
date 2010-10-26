@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CEC7D5FB-60DD-4C99-99AF-1F0EAB0C64B8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CoreClr.Tools.Tests</RootNamespace>
+    <AssemblyName>CoreClr.Tools.Tests</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyCompiler.cs" />
+    <Compile Include="CecilDefinitionFinderTest.cs" />
+    <Compile Include="CecilUtilsForTests.cs" />
+    <Compile Include="IntegrationTestBase.cs" />
+    <Compile Include="IntegrationTestForNestedTypeImplementingInterface.cs" />
+    <Compile Include="MethodMapTest.cs" />
+    <Compile Include="MethodMapTestBase.cs" />
+    <Compile Include="MethodMapTestForExplicitInterfaceImplementation.cs" />
+    <Compile Include="MethodPrivilegeDetectorTest.cs" />
+    <Compile Include="MethodPrivilegePropagationTests.cs" />
+    <Compile Include="MethodSignatureProviderTest.cs" />
+    <Compile Include="ReportAcceptanceTest.cs" />
+    <Compile Include="SecurityAttributeDescriptorParserTest.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="InjectorTest.cs" />
+    <Compile Include="CSharpCompiler.cs" />
+    <Compile Include="SecurityAttributeDescriptorTest.cs" />
+    <Compile Include="SecurityAttributeOperationsTest.cs" />
+    <Compile Include="StringAssert.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\mcs\class\Mono.Cecil\Mono.Cecil.csproj">
+      <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CoreClr.Tools\CoreClr.Tools.csproj">
+      <Project>{B3F61884-1AB9-420A-BC5F-A4D2974D4317}</Project>
+      <Name>CoreClr.Tools</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

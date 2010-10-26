@@ -1,0 +1,35 @@
+#the types in this file will not be marked by the linker, which means that if nobody else is using them, they will be removed
+#items with a + mean that they will be marked (useful when you want to ensure a private type is not linked away)
+System.IO.IsolatedStorage
+#System.Net
+System.Net.NetworkInformation
+System.Net.SmtpClient
+System.Net.Mail
+System.Security
+Mono.Security
+System.IO.Compression.DeflateStream
+System.IO.Compression.GZipStream
+System.IO.FileSystemWatcher
+System.IO.File
+System.IO.Directory
+System.Runtime.Remoting
+System.Threading.ExecutionContext
+System.Runtime.InteropServices
+System.IO.ErrorEventArgs
+System.IO.FileSystemEventArgs
+System.IO.ErrorEventHandler
+System.Diagnostics.Process
+System.IO.RenamedEventArgs
+System.IO.RenamedEventHandler
+#System.ComponentModel
+System.CodeDom
+System.Environment::GetEnvironmentVariable
+System.Environment::SetEnvironmentVariable
+Microsoft.Win32
++System.Net.IPAddress
++System.Net.IPHostEntry
++System.Net.Sockets
++System.Net.Dns
++System.Security.SecurityCriticalAttribute
++System.Security.SecuritySafeCriticalAttribute
++System\.Runtime\.InteropServices\.\w*Attribute

@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<Project DefaultTargets="Install" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+
+	<!--
+		Use:
+		
+			xbuild SecurityAttributes.proj /p:Profile=monotouch
+			
+		to run against monotouch assemblies.
+		
+	-->
+	<PropertyGroup>
+		<!-- what's the prefix for the mono installation to use -->
+		<MonoPrefix>$(MSBuildBinPath)/../../..</MonoPrefix>
+		
+		<!-- what' the prefix for the mono installation to be modified (usually the same) -->
+		<ProfilePrefix>$(MonoPrefix)</ProfilePrefix>
+		
+		<Mono>$(MonoPrefix)/bin/cli</Mono>
+		<Sn>../../mcs/tools/security/sn.exe</Sn>
+		<MonoKey>../../mcs/class/mono.snk</MonoKey>
+		<OutputPath>$(MSBuildProjectDirectory)/bin</OutputPath>
+		<Profile Condition=" '$(Profile)' == '' ">2.0</Profile>
+		<ProfileInputPath>$(ProfilePrefix)/lib/mono/$(Profile)</ProfileInputPath>
+		<ProfileOutputPath>profiles/$(Profile)</ProfileOutputPath>
+		
+		<MonoLinker>$(MonoPrefix)/lib/mono/2.0/monolinker.exe</MonoLinker>
+		<LinkerOptions>-l all -c link -a smcs -b true -g true</LinkerOptions>
+		
+		<DescriptorsPath>../Descriptors</DescriptorsPath>
+	</PropertyGroup>
+	
+	<ItemGroup Condition=" '$(Profile)' == '2.0' ">
+		<Assemblies Include="mscorlib" />
+		<Assemblies Include="System" />
+		<Assemblies Include="I18N;I18N.West;I18N.Rare;I18N.Other;I18N.MidEast;I18N.CJK" />
+		<Assemblies Include="Mono.Security" />
+	</ItemGroup>
+	
+	<!-- moonlight -->
+	<ItemGroup Condition=" '$(Profile)' == '2.1' ">
+		<Assemblies Include="mscorlib" />
+		<Assemblies Include="System" />
+		<Assemblies Include="System.Core" />
+		<Assemblies Include="System.Net" />
+		<Assemblies Include="System.Xml" />
+		<Assemblies Include="System.Xml.Linq" />
+		<Assemblies Include="Mono.CompilerServices.SymbolWriter" />
+		<Assemblies Include="System.Runtime.Serialization" />
+		<Assemblies Include="System.ServiceModel" />
+		<Assemblies Include="System.ServiceModel.Web" />
+	</ItemGroup>
+	
+	<ItemGroup Condition=" '$(Profile)' == 'monotouch' OR '$(Profile)' == 'unity_web' ">
+		<Assemblies Include="mscorlib" />
+		<Assemblies Include="System" />
+		<Assemblies Include="System.Core" />
+		<Assemblies Include="System.Xml" />
+		<Assemblies Include="Mono.CompilerServices.SymbolWriter" />
+		<Assemblies Include="System.Runtime.Serialization" />
+		<Assemblies Include="I18N;I18N.West;I18N.Rare;I18N.Other;I18N.MidEast;I18N.CJK" />
+		<Assemblies Include="Mono.Security" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Project Include="DetectMethodPrivileges/DetectMethodPrivileges.csproj" />
+	</ItemGroup>
+	
+	<Target Name="Link" DependsOnTargets="CreateOutputFolders">
+		<Exec Command="$(Mono) $(MonoLinker) -o $(ProfileOutputPath) -d $(ProfileInputPath) $(LinkerOptions) @(Assemblies->'-x $(DescriptorsPath)/%(Identity).xml', ' ')" />
+	</Target>
+	
+	<Target Name="Build" DependsOnTargets="GeneratePlatformCode">
+		<MSBuild Projects="@(Project)" Properties="OutputPath=$(OutputPath)" />
+	</Target>
+	
+	<Target Name="GeneratePlatformCode">
+		<Exec Command="perl PlatformCodeGenerator.pl @(Assemblies, ' ')" />
+	</Target>
+	
+	<Target Name="CreateOutputFolders">
+		<MakeDir Directories="$(ProfileOutputPath)" />
+	</Target>
+	
+	<Target Name="Inject" DependsOnTargets="Build; CopyAssembliesToOutputPath">
+	
+		<Exec Command="$(Mono) $(OutputPath)/DetectMethodPrivileges.exe $(ProfileOutputPath) @(Assemblies, ' ')" />
+		
+	</Target>
+	
+	<Target Name="Sign" DependsOnTargets="Inject">
+		<Exec Command="$(Mono) $(Sn) -q -R $(ProfileOutputPath)/%(Assemblies.Identity).dll $(MonoKey)" />
+	</Target>
+	
+	<Target Name="CopyAssembliesToOutputPath" DependsOnTargets="CreateOutputFolders">
+		<Copy
+			SourceFiles="@(Assemblies->'$(ProfileInputPath)/%(Identity).dll')"
+			DestinationFolder="$(ProfileOutputPath)" />
+	</Target>
+	
+	<Target Name="Install" DependsOnTargets="Sign; BackupProfileAssemblies; CopyAssembliesToInputPath">
+	</Target>
+	
+	<Target Name="BackupProfileAssemblies">
+		<Copy
+			SourceFiles="@(Assemblies->'$(ProfileInputPath)/%(Identity).dll')"
+			DestinationFolder="$(ProfileOutputPath)/backup" />
+	</Target>
+	
+	<Target Name="CopyAssembliesToInputPath">
+		<Copy
+			SourceFiles="@(Assemblies->'$(ProfileOutputPath)/%(Identity).dll')"
+			DestinationFolder="$(ProfileInputPath)" />
+	</Target>
+	
+	<Target Name="Revert">
+		<Copy
+			SourceFiles="@(Assemblies->'$(ProfileOutputPath)/backup/%(Identity).dll')"
+			DestinationFolder="$(ProfileInputPath)" />
+	</Target>
+	
+</Project>
+

@@ -1,0 +1,93 @@
+System.Void System.Net.Sockets.Socket::Dispose(System.Boolean)
+System.Int32 System.Net.Sockets.Socket::Send(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags)
+System.Int32 System.Net.Sockets.Socket::Receive(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags)
+System.String System.ComponentModel.Win32Exception::W32ErrorMessage(System.Int32)
+System.Void System.Net.Sockets.Socket::SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)
+System.Void System.Net.Sockets.Socket::.ctor(System.Net.Sockets.AddressFamily,System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType)
+System.Net.Sockets.Socket System.Net.Sockets.Socket::Accept()
+System.IAsyncResult System.Net.Sockets.Socket::BeginConnect(System.Net.EndPoint,System.AsyncCallback,System.Object)
+System.Void System.Net.Sockets.Socket::Bind(System.Net.EndPoint)
+System.Object System.Net.Sockets.Socket::GetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName)
+System.Void System.Net.Sockets.Socket/Worker::ReceiveFrom()
+System.Void System.Net.Sockets.Socket::SendFile(System.String,System.Byte[],System.Byte[],System.Net.Sockets.TransmitFileOptions)
+System.Boolean System.Net.Sockets.Socket::Poll(System.Int32,System.Net.Sockets.SelectMode)
+System.Void System.Net.Sockets.Socket::Connect(System.Net.EndPoint,System.Boolean)
+System.Void System.Net.Sockets.Socket/Worker::SendTo()
+System.Void System.Net.Sockets.Socket::Listen(System.Int32)
+System.Net.IPHostEntry System.Net.Dns::GetHostByName(System.String)
+System.Boolean System.Net.WebAsyncResult::WaitUntilComplete(System.Int32,System.Boolean)
+
+#uses WaitHandle internally
+System.Int32 System.Net.Sockets.Socket::EndReceive(System.IAsyncResult,System.Net.Sockets.SocketError&)
+
+#uses WaitHandle internally
+System.Int32 System.Net.Sockets.Socket::EndSend(System.IAsyncResult,System.Net.Sockets.SocketError&)
+
+System.Net.IPHostEntry System.Net.Dns::GetHostEntry(System.Net.IPAddress)
+System.Net.EndPoint System.Net.Sockets.Socket::get_LocalEndPoint()
+System.Net.EndPoint System.Net.Sockets.Socket::get_RemoteEndPoint()
+System.Void System.Net.Sockets.Socket::Accept(System.Net.Sockets.Socket)
+System.Void System.Net.Sockets.Socket::Connect(System.Net.IPAddress[],System.Int32)
+System.Void System.Net.Sockets.Socket::SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Object)
+System.Void System.Net.Sockets.SocketAsyncEventArgs::DoOperation(System.Net.Sockets.SocketAsyncOperation,System.Net.Sockets.Socket)
+System.Void System.Net.Sockets.Socket::Select(System.Collections.IList,System.Collections.IList,System.Collections.IList,System.Int32)
+System.Void System.Net.Sockets.Socket::GetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Byte[])
+System.Byte[] System.Net.Sockets.Socket::GetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)
+System.Void System.Net.Sockets.Socket::Disconnect(System.Boolean)
+System.Void System.Net.Sockets.Socket::set_Blocking(System.Boolean)
+System.Int32 System.Net.Sockets.Socket::SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)
+System.Int32 System.Net.Sockets.Socket::Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)
+System.Int32 System.Net.Sockets.Socket::Send(System.Byte[],System.Net.Sockets.SocketFlags)
+System.Int32 System.Net.Sockets.Socket::get_Available()
+System.Void System.ComponentModel.Win32Exception::.ctor()
+System.Void System.Net.Sockets.Socket/Worker::Connect()
+System.Void System.Net.Sockets.Socket::Shutdown(System.Net.Sockets.SocketShutdown)
+System.Void System.Net.Sockets.Socket::SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Byte[])
+System.Void System.Net.Sockets.Socket::SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Boolean)
+System.Void System.Net.Sockets.Socket/Worker::SendGeneric()
+System.Void System.Net.Sockets.Socket/Worker::ReceiveGeneric()
+System.Void System.Net.Sockets.Socket/Worker::AcceptReceive()
+System.Void System.Net.Sockets.SocketException::.ctor()
+
+System.Int32 System.Net.Sockets.Socket::IOControl(System.Int32,System.Byte[],System.Byte[])
+System.Int32 System.Net.Sockets.Socket::SendTo(System.Byte[],System.Net.EndPoint)
+System.Int32 System.Net.Sockets.Socket::SendTo(System.Byte[],System.Net.Sockets.SocketFlags,System.Net.EndPoint)
+System.Int32 System.Net.Sockets.Socket::SendTo(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)
+System.Int32 System.Net.Sockets.Socket::Send(System.Byte[])
+System.Int32 System.Net.Sockets.Socket::Send(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.Sockets.SocketError&)
+System.Int32 System.Net.Sockets.Socket::ReceiveFrom(System.Byte[],System.Net.EndPoint&)
+System.Int32 System.Net.Sockets.Socket::ReceiveFrom(System.Byte[],System.Net.Sockets.SocketFlags,System.Net.EndPoint&)
+System.Int32 System.Net.Sockets.Socket::ReceiveFrom(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint&)
+System.Int32 System.Net.Sockets.Socket::ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint&)
+System.Int32 System.Net.Sockets.Socket::Receive(System.Byte[])
+System.Int32 System.Net.Sockets.Socket::Receive(System.Byte[],System.Net.Sockets.SocketFlags)
+System.Int64 System.Diagnostics.Stopwatch::GetTimestamp()
+System.Int32 System.Net.Sockets.Socket::Receive(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)
+System.Int32 System.Net.Sockets.Socket::Receive(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.Sockets.SocketError&)
+System.Int32 System.Net.Sockets.Socket::Send(System.Collections.Generic.IList`1<System.ArraySegment`1<System.Byte>>,System.Net.Sockets.SocketFlags,System.Net.Sockets.SocketError&)
+System.Int32 System.Net.Sockets.Socket::Receive(System.Collections.Generic.IList`1<System.ArraySegment`1<System.Byte>>,System.Net.Sockets.SocketFlags,System.Net.Sockets.SocketError&)
+
+System.Net.IPHostEntry System.Net.Dns::GetHostByAddressFromString(System.String,System.Boolean)
+
+#user has no control over the path
+System.Void System.Security.Cryptography.X509Certificates.X509Store::Open(System.Security.Cryptography.X509Certificates.OpenFlags)
+
+#needs audit (calls WaitHandle::WaitOne
+System.Void System.Net.FtpDataStream::Write(System.Byte[],System.Int32,System.Int32)
+System.Int32 System.Net.FtpDataStream::Read(System.Byte[],System.Int32,System.Int32)
+System.Boolean System.Net.FtpAsyncResult::WaitUntilComplete(System.Int32,System.Boolean)
+System.IO.Stream System.Net.HttpWebRequest::GetRequestStream()
+
+#user cannot control path
+System.Void System.Net.EndPointListener::LoadCertificateAndKey(System.Net.IPAddress,System.Int32)
+Mono.Security.Protocol.Tls.ValidationResult System.Net.ServicePointManager/ChainValidationHelper::ValidateChain(Mono.Security.X509.X509CertificateCollection)
+
+#will refuse to call GetFullPath in secure mode
+System.Uri System.Net.WebClient::MakeUri(System.String)
+
+#user has no control over env var
+System.Net.IWebProxy System.Net.WebRequest::GetSystemWebProxy()
+System.Void System.Diagnostics.DefaultTraceListener::WriteWindowsDebugString(System.String)
+
+#only accesses processid, which is harmless
+System.Void System.Diagnostics.TraceEventCache::.ctor()

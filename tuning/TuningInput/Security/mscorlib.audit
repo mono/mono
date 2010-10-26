@@ -1,0 +1,2027 @@
+!SSC-39225A99A53BC5E46338CA8CCA5440D7
+System.AppDomain System.AppDomain::get_CurrentDomain()
+	r142142		spouliot - call getCurDomain (icall in appdomain.c)
+
+!SSC-AA4CC9592C6775C5327AAA826B6693FF
+System.Array System.Array::CreateInstance(System.Type,System.Int32[])
+	r142142		spouliot - can create any type (see security/MiscTest.cs)
+
+!SSC-6DBB0003F51B049FAE631DBAAB038439
+System.Boolean System.Array::InternalArray__ICollection_Contains<T>(T)
+	r142142		spouliot - call GetGenericValueImpl<T> (icall without bounds checking) with non user-controlled, valid values (0, length)
+
+!SSC-3A1EFC65174CF701111D5951B7B115FD
+System.Boolean System.Array::System.Collections.IList.Contains(System.Object)
+	r142142		spouliot - call GetValueImpl (icall without bounds checking) with non user-controlled, valid values (0, length)
+
+!SSC-232DD08701695A1E0295F781CDBC7758
+System.Boolean System.Decimal::PerformParse(System.String,System.Globalization.NumberStyles,System.IFormatProvider,System.Decimal&,System.Boolean)
+	r142142		spouliot - call string2decimal (icall named mono_string2decimal in decimal.c) and, if 'expFlag' is set, decimalSetExponent (icall named mono_decimalSetExponent in decimal.c)
+
+!SSC-08076C3361DCD0D45A70366031E1631B
+System.Boolean System.Diagnostics.Debugger::get_IsAttached()
+	r142142		spouliot - call IsAttached_internal (icall)
+
+!SSC-28A6AE5CB7AEC47DFAB246627020615A
+System.Boolean System.Diagnostics.StackFrame::get_frame_info(System.Int32,System.Boolean,System.Reflection.MethodBase&,System.Int32&,System.Int32&,System.String&,System.Int32&,System.Int32&)
+	r155239		spouliot - internal static icall. call ves_icall_get_frame_info (mini-exceptions.c)
+
+!SSC-41BE53BD0A4AC34B642F85BFAC47698F
+System.Boolean System.Double::Parse(System.String,System.Globalization.NumberStyles,System.IFormatProvider,System.Boolean,System.Double&,System.Exception&)
+	r142142		spouliot - call, from an unsafe block, ParseImpl (icall named mono_double_ParseImpl)
+
+!SSC-49DE777171D97109042D803D3A4C9BE8
+System.Boolean System.Environment::get_HasShutdownStarted()
+	r144558		spouliot - visible icall - parameterless
+
+!SSC-83557755C2FB7AE628A9BEC1895FAA7B
+System.Boolean System.Environment::get_IsRunningOnWindows()
+	r142142		spouliot - call Platform (icall) - the JIT will optimize this code away (mono/mini/method-to-ir.c) so the icall won't actually be called
+
+!SSC-F8F34F69684FF6CABFD9A76AFE3867E4
+System.Boolean System.Globalization.CompareInfo::IsPrefix(System.String,System.String,System.Globalization.CompareOptions)
+	r143412		spouliot - added CompareOptions validation. call SimpleCollator.IsPrefix (SecurityCritical) with non-null 'source' and 'prefix'
+
+!SSC-58AFCB24B76D1A62BA4B22D5E40E5948
+System.Boolean System.Globalization.CompareInfo::IsSuffix(System.String,System.String,System.Globalization.CompareOptions)
+	r143412		spouliot - added CompareOptions validation. call SimpleCollator.IsSuffix (SecurityCritical) with non-null 'source' and 'suffix'
+
+!SSC-379EF2FFCEE0E1A936045AC2CBB5174A
+System.Boolean System.Globalization.CultureInfo::ConstructInternalLocaleFromCurrentLocale(System.Globalization.CultureInfo)
+	r142142		spouliot - call construct_internal_locale_from_current_locale (icall in locales.c)
+
+!SSC-BFDABE3DCCF37A7125D3E2EC0B1BA69C
+System.Boolean System.MonoCustomAttrs::IsDefined(System.Reflection.ICustomAttributeProvider,System.Type,System.Boolean)
+	r142142		spouliot - validate parameters. call IsDefinedInternal (icall named custom_attrs_defined_internal) and GetPseudoCustomAttributes [SecurityCritical] to recursively (bool) find if the attribute 'attributeType' is defined on 'obj'
+
+!SSC-E7D58313265590DC568B1E963F6B081D
+System.Boolean System.MonoType::get_IsGenericParameter()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_get_IsGenericParameter (icall.c)
+
+!SSC-B2BF863503AD6C6190098E03C01E3E08
+System.Boolean System.MonoType::IsArrayImpl()
+	r142142		spouliot - call Type.IsArrayImpl (icall) on (non-null) 'this'
+
+!SSC-20028B82425E593836C74A8963802DC9
+System.Boolean System.MonoType::IsByRefImpl()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_type_isbyref (icall.c)
+
+!SSC-B37B7A6249A92A8B42D207B675886227
+System.Boolean System.MonoType::IsCOMObjectImpl()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_type_iscomobject (icall.c)
+
+!SSC-8498C9D4F4E3457A344A29E4B62CE935
+System.Boolean System.MonoType::IsPointerImpl()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_type_ispointer (icall.c)
+
+!SSC-6D3C037E08F615EEF559F008508D63BA
+System.Boolean System.MonoType::IsPrimitiveImpl()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_type_isprimitive (icall.c)
+
+!SSC-22C815D71375100455C740F21192FECD
+System.Boolean System.Reflection.Emit.CustomAttributeBuilder::IsValidType(System.Type)
+	r154423		spouliot - call Assembly.GetName() [SecurityCritical] to compare Name property with "mscorlib"
+
+!SSC-10AE4526620A10A068575015E894855E
+System.Boolean System.Reflection.Emit.TypeBuilder::get_IsGenericParameter()
+	r144558		spouliot - visible icall. parameter-less (instance)
+
+!SSC-B6C8A319476D539C7E32E304BAC63C54
+System.Boolean System.Reflection.MonoMethod::get_IsGenericMethod()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoMethod_get_IsGenericMethod (icall.c)
+
+!SSC-28FF0F2FE9B5C718CD95FC5C3F72BA04
+System.Boolean System.Reflection.MonoMethod::get_IsGenericMethodDefinition()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoMethod_get_IsGenericMethodDefinition (icall.c)
+
+!SSC-F8B28426F85A5FACDAE39A718C0D5564
+System.Boolean System.RuntimeFieldHandle::Equals(System.Object)
+	r155836		spouliot - call Value [SecurityCritical] property to compare instances
+
+!SSC-B5214AFA9A17ECC70CA70347F97B1472
+System.Boolean System.RuntimeFieldHandle::Equals(System.RuntimeFieldHandle)
+	r155836		spouliot - call Value [SecurityCritical] property to compare instances
+
+!SSC-55895E7142F3A29AFD0E318262FDDED4
+System.Boolean System.RuntimeMethodHandle::Equals(System.Object)
+	r155836		spouliot - call Value [SecurityCritical] property to compare instances
+
+!SSC-0438D38BFCF1EAB05B32DA39400FA419
+System.Boolean System.RuntimeMethodHandle::Equals(System.RuntimeMethodHandle)
+	r155836		spouliot - call Value [SecurityCritical] property to compare instances
+
+!SSC-A4026DF218AA0FD9868E0EE6552EE9D4
+System.Boolean System.Threading.EventWaitHandle::Reset()
+	r142142		spouliot - call NativeEventCalls.ResetEvent_internal (icall in mono/metadata/threads.c) with base.Handle
+
+!SSC-17178AD616DC489142655BEC9F8BCEB7
+System.Boolean System.Threading.EventWaitHandle::Set()
+	r142142		spouliot - call NativeEventCalls.SetEvent_internal (icall in mono/metadata/threads.c) with base.Handle
+
+!SSC-B905CBD8989FA4343BDBD85763B8EDB9
+System.Boolean System.Threading.Monitor::TryEnter(System.Object,System.Int32)
+	r142142		spouliot - call Monitor_try_enter (icall in monitor.c) with non-null 'obj' and validated 'millisecondsTimeout'
+
+!SSC-4BA94DEEF43D5C54E43B32C8E1C385EF
+System.Boolean System.Threading.Monitor::Wait(System.Object,System.Int32)
+	r142142		spouliot - call Monitor_wait (icall in monitor.c) with non-null 'obj' and validated 'millisecondsTimeout'
+
+!SSC-36360B381AD9EA4E1387B4DB733BA3BB
+System.Boolean System.Threading.Thread::get_IsAlive()
+	r142661		spouliot - call GetState(System.Threading.InternalThread) [SecurityCritical]
+
+!SSC-B8276F175DA5EF80004629207B456FAC
+System.Boolean System.Threading.Thread::get_IsBackground()
+	r142661		spouliot - call GetState(System.Threading.InternalThread) [SecurityCritical]
+
+!SSC-D025BE6346A3E268FD729B4F5921E310
+System.Boolean System.Threading.Thread::Join(System.Int32)
+	r142142		spouliot - call Join_internal (icall in threads.c) with non-negative (or infinite -1) 'ms' and 'system_thread_handle'
+
+!SSC-F45E6070DA498AA10D18D8880C4D7B38
+System.Boolean System.Threading.ThreadPool::QueueUserWorkItem(System.Threading.WaitCallback,System.Object)
+	r154243		spouliot - add a special case if the callback is not a transparent proxy, otherwise call (new) icall 'pool_queue' with the AsyncResult
+
+!SSC-4C5BC1CA0B56F7766DF6E2BC0876EF26
+System.Boolean System.Threading.Timer::Change(System.Int64,System.Int64,System.Boolean)
+	r142747		spouliot - call DateTime.GetTimeMonotonic (icall named mono_100ns_ticks in mono/utils/mono-time.c)
+
+!SSC-782E5206297D3A977ABBBE54C9F58F3D
+System.Boolean System.Threading.Timer::Dispose(System.Threading.WaitHandle)
+	r142142		spouliot - added validation, call NativeEventCalls.SetEvent_internal (icall in mono/metadata/threads.c)
+
+!SSC-916F3AB4396F82E3A5C9537B949ABB27
+System.Boolean System.Threading.WaitHandle::WaitAll(System.Threading.WaitHandle[])
+	r142142		spouliot - call WaitAll_internal (icall in mono/metadata/threads.c) with validated 'waitHandles', Timeout.Infinite (-1) and false (no context)
+
+!SSC-44413697398DC9B18DE904BB9211D363
+System.Boolean System.Threading.WaitHandle::WaitAll(System.Threading.WaitHandle[],System.Int32)
+	r142142		spouliot - call flow modified, added validation (negative ms), call overload with boolean (emitContext) parameter, which calls WaitAll_internal (icall in mono/metadata/threads.c) with false (no context)
+
+!SSC-7FEC740E543CCA124CBF0FAE7AAB0B88
+System.Boolean System.Threading.WaitHandle::WaitAll(System.Threading.WaitHandle[],System.TimeSpan)
+	r142142		spouliot - call flow modified, call overload with boolean (emitContext) parameter, which calls WaitAll_internal (icall in mono/metadata/threads.c) with false (no context)
+
+!SSC-E517B823728A308D529A98608AA17E47
+System.Boolean System.Threading.WaitHandle::WaitOne()
+	r142142		spouliot - call WaitOne_internal (icall in mono/metadata/threads.c) with handle, Timeout.Infinite (-1) and false (no context)
+
+!SSC-9D38A1E6D072FEA31DCFE6F07347FEB6
+System.Boolean System.Threading.WaitHandle::WaitOne(System.Int32)
+	r144107		spouliot - added validation (negative ms), call overload with boolean (emitContext) parameter, which calls WaitOne_internal (icall in mono/metadata/threads.c) with false (no context)
+
+!SSC-8BA9EE144B85E6AA3A4E039B5F6793BA
+System.Boolean System.Threading.WaitHandle::WaitOne(System.TimeSpan)
+	r144107		spouliot - call overload with boolean (emitContext) parameter, which calls WaitOne_internal (icall in mono/metadata/threads.c) with false (no context)
+
+!SSC-4B3287CB2FB7E80ECD485FC003B35216
+System.Boolean System.Type::Equals(System.Object)
+	r146014		spouliot - calls EqualsInternal (icall) with parameter 'o' as Type
+
+!SSC-75896F5E6F8D9157AB45FB23BBF3EF8A
+System.Boolean System.Type::Equals(System.Type)
+	r142142		spouliot - calls EqualsInternal (icall)
+
+!SSC-29B9F8EA76048A149252C6D4C6821653
+System.Boolean System.Type::get_IsGenericType()
+	r144558		spouliot - visible icall (instance, no other parameter)
+
+!SSC-A8F554D5FC26E21A995BB51146080251
+System.Boolean System.Type::get_IsGenericTypeDefinition()
+	r144558		spouliot - visible icall (instance, no other parameter)
+
+!SSC-D50C6C3D318003D7D98232F1596D1116
+System.Boolean System.Type::get_IsSerializable()
+	r142142		spouliot - call type_is_subtype_of (icall) checking for Enum and Delegate
+
+!SSC-D000D49A805D0EDE4109872F1C9E3D85
+System.Boolean System.Type::IsAssignableFrom(System.Type)
+	r142142		spouliot - call type_is_assignable_from (icall) using 'this' and, non-null, user-supplied 'type'
+
+!SSC-3CEA3D6E4406F01A5AC863BBD02895FE
+System.Boolean System.Type::IsInstanceOfType(System.Object)
+	r146014		spouliot - now a managed method calling an icall named IsInstanceOfType after validating !IsSystemType
+	r144558		spouliot - visible icall. callable with a 'null' object value
+
+!SSC-115AF0CD4220CFC21C537A1405D8B33F
+System.Boolean System.Type::IsSubclassOf(System.Type)
+	r142142		spouliot - call type_is_subtype_of (icall)
+
+!SSC-6259E36D2ABF066FB34369A42A8E7AD9
+System.Boolean System.ValueType::DefaultEquals(System.Object,System.Object)
+	r142142		spouliot - call InternalEquals (icall named ves_icall_System_ValueType_Equals)
+
+!SSC-42542272585DB0DB7392EF330192E879
+System.Byte System.Buffer::GetByte(System.Array,System.Int32)
+	r142142		spouliot - call GetByteInternal (icall) with non-null value, bounds validated
+
+!SSC-ADFCFE84111159AE05BCE23816E1D1D7
+System.Byte[] Mono.Security.BitConverterLE::GetBytes(System.Double)
+	r142142		spouliot - unsafe, call GetULongBytes on double 'value' address (byte*) returning an array of eight bytes
+
+!SSC-70209DE31292327A22F89C3E561F3178
+System.Byte[] Mono.Security.BitConverterLE::GetBytes(System.Int16)
+	r142142		spouliot - unsafe, call GetUShortBytes on short 'value' address (byte*) returning an array of two bytes
+
+!SSC-142DC1F2E368FB7669FD09BCA6987F44
+System.Byte[] Mono.Security.BitConverterLE::GetBytes(System.Int32)
+	r142142		spouliot - unsafe, call GetUIntBytes on int 'value' address (byte*) returning an array of four bytes
+
+!SSC-7B9DCAA5F7CA3B11302B09434E8E94B5
+System.Byte[] Mono.Security.BitConverterLE::GetBytes(System.Single)
+	r142142		spouliot - unsafe, call GetUIntBytes on float 'value' address (byte*) returning an array of four bytes
+
+!SSC-3516D467BFF1FDE774DB50E0E604CAD1
+System.Byte[] System.BitConverter::GetBytes(System.Boolean)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (1)
+
+!SSC-359DF9CA25159018BA1EB4934539C93C
+System.Byte[] System.BitConverter::GetBytes(System.Char)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (2)
+
+!SSC-24AF223B2D29AF50AE31B492D24F8D6C
+System.Byte[] System.BitConverter::GetBytes(System.Double)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (8) or do it inline if SwappedWordsInDouble is true
+
+!SSC-5E6C92949A9BBAB15A6FB930E47A7A4E
+System.Byte[] System.BitConverter::GetBytes(System.Int16)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (2)
+
+!SSC-C523746CB97391047329C2D246A7B6AC
+System.Byte[] System.BitConverter::GetBytes(System.Int32)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (4)
+
+!SSC-A9FC0671E7D0D5A631EE8AEE2F6296E3
+System.Byte[] System.BitConverter::GetBytes(System.Int64)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (8)
+
+!SSC-760F594E2D68615B893CBF48092EBD36
+System.Byte[] System.BitConverter::GetBytes(System.Single)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (4)
+
+!SSC-2D8638D3994E41902B0EFDD1A0BC3B13
+System.Byte[] System.BitConverter::GetBytes(System.UInt16)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (2)
+
+!SSC-92B50B2E8F3232EB426A41E572E53012
+System.Byte[] System.BitConverter::GetBytes(System.UInt32)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (4)
+
+!SSC-AEAE12B556B53F8B8CEA690CD1A60701
+System.Byte[] System.BitConverter::GetBytes(System.UInt64)
+	r142142		spouliot - call unsafe GetByte(byte*,int) on the pointer to the value and the type size (8)
+
+!SSC-F05BD9E57CBDF87D4D3816B3F471AB71
+System.Byte[] System.Convert::FromBase64CharArray(System.Char[],System.Int32,System.Int32)
+	r142142		spouliot - call InternalFromBase64CharArray (icall) on non-null value, bounds checked, no integer overflow
+
+!SSC-F0FF7AC23A40D1D010E75FE16C6E3B58
+System.Byte[] System.Convert::FromBase64String(System.String)
+	r142142		spouliot - call InternalFromBase64String (icall) on non-null value
+
+!SSC-4EFA3DEBD8E45482A5D1694742E222FA
+System.Byte[] System.IO.BinaryReader::ReadBytes(System.Int32)
+	r142142		spouliot - call Buffer.BlockCopyInternal (icall) on non-null, validated parameters
+
+!SSC-B97709B139B3BB7E8C90A5338ACCE86A
+System.Byte[] System.Reflection.Emit.SignatureHelper::GetSignature()
+	r142142		spouliot - call either get_signature_local or get_signature_field (both instance icall in reflection.c)
+
+!SSC-23A5CD6331CF136C7DD7DCA1F4B5914A
+System.Byte[] System.Text.Encoding::GetBytes(System.String)
+	r142142		spouliot - unsafe, call GetBytes(char*,int,byte*,int) overload with non-null, non-empty, string
+
+!SSC-85295CCBB138AE53197964F6C7FCA0E6
+System.Char System.BitConverter::ToChar(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call PutBytes giving the address of the type (Char) instance and it's size (2)
+
+!SSC-9F50FEB8F7DF5BF18704BE0D775402EC
+System.Char[] System.String::ToCharArray(System.Int32,System.Int32)
+	r142142		spouliot - unsafe call to CharCopy after all parameters are validated
+
+!SSC-C1420CCC249AEA3FFBCC987F35CD0518
+System.Collections.Generic.IList`1<System.Reflection.CustomAttributeData> System.MonoCustomAttrs::GetCustomAttributesData(System.Reflection.ICustomAttributeProvider)
+if	r156891		spouliot - old code now required (and tuned). call GetCustomAttributesDataInternal (icall) with validated (non-null) parameter. Return results as a readonly IList<CustomAttributeData>
+
+!SSC-D11ED37AED1474CDA3FDF7C08F264FB4
+System.Collections.IEnumerator System.Array::GetEnumerator()
+	r144307		spouliot - create a new instance of internal SimpleEnumerator (SecurityCritical type)
+
+!SSC-A8B503CE71241B771072505E18F979A8
+System.DateTime System.DateTime::get_Now()
+	r142142		spouliot - call GetNow (icall named mono_100ns_datetime inside mono/utils/mono-time.c)
+
+!SSC-434CB1AEE61CE4A69947EB706E765A59
+System.DateTime System.DateTime::get_UtcNow()
+	r142142		spouliot - call GetNow (icall named mono_100ns_datetime inside mono/utils/mono-time.c)
+
+!SSC-0319D769FEE4D1099A5D1F72F51A6B0B
+System.Decimal System.Decimal::Add(System.Decimal,System.Decimal)
+	r142142		spouliot - call decimalIncr (icall named mono_decimalIncr in decimal.c)
+
+!SSC-D1FDFBC9AE49E89D6F010070AB7F7151
+System.Decimal System.Decimal::Divide(System.Decimal,System.Decimal)
+	r142142		spouliot - call decimalDiv (icall named mono_decimalDiv in decimal.c)
+
+!SSC-9FBEDB243DB09CCCDBDE41BB6AAC555B
+System.Decimal System.Decimal::Floor(System.Decimal)
+	r142142		spouliot - call decimalFloorAndTrunc (icall named mono_decimalFloorAndTrunc in decimal.c) with '1'
+
+!SSC-8771C3E26E3C2016DD27418EB392B90F
+System.Decimal System.Decimal::Multiply(System.Decimal,System.Decimal)
+	r142142		spouliot - call decimalMult (icall named mono_decimalMult in decimal.c)
+
+!SSC-193BAF7775CB963FF4EE84463E0D27C3
+System.Decimal System.Decimal::Remainder(System.Decimal,System.Decimal)
+	r142142		spouliot - call decimalIntDiv (icall named mono_decimalIntDiv in decimal.c)
+
+!SSC-4ADDCE14D01CC37761763EFC1B60481A
+System.Decimal System.Decimal::Subtract(System.Decimal,System.Decimal)
+	r142142		spouliot - call decimalIncr (icall named mono_decimalIncr in decimal.c)
+
+!SSC-8BF4D149239A6544613BA4BE7323303A
+System.Decimal System.Decimal::Truncate(System.Decimal)
+	r142142		spouliot - call decimalFloorAndTrunc (icall named mono_decimalFloorAndTrunc in decimal.c) with '0'
+
+!SSC-28E0D171D73D7807868A3C5B63F96BB0
+System.Delegate System.Delegate::CreateDelegate(System.Type,System.Object,System.Reflection.MethodInfo,System.Boolean)
+	r142142		spouliot - call CreateDelegate_internal (icall) with validated parameters
+
+!SSC-243968E8782BA1166833CE5A45624FA4
+System.Delegate System.Delegate::CreateDelegate(System.Type,System.Object,System.String,System.Boolean,System.Boolean)
+	r142142		spouliot - call CreateDelegate_internal (icall) with non-null (validated inside GetCandidateMethod) 'type', non-null 'target', a non-null MethodInfo (based on parameters and 'BindingFlags.Instance') and 'throwOnBindFailure'
+
+!SSC-C16945A4A8DADFA8003051CB6AE66363
+System.Delegate System.Delegate::CreateDelegate(System.Type,System.Type,System.String,System.Boolean,System.Boolean)
+	r142142		spouliot - call CreateDelegate_internal (icall) with non-null (validated inside GetCandidateMethod) 'type', *null* (target), a non-null MethodInfo (based on parameters and 'BindingFlags.Static') and 'throwOnBindFailure'
+
+!SSC-7EA25928E5A17B93946A8A09F6420670
+System.Delegate System.MulticastDelegate::CombineImpl(System.Delegate)
+	r142142		spouliot - call Delegate.SetMulticastInvoke (icall) on the 'follow' (Delegate) parameter is validated
+
+!SSC-C3711CCB101B4AD6D95672EB848DF58F
+System.Double Mono.Security.BitConverterLE::ToDouble(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call ULongFromBytes to copy eight bytes from 'src' (bound-checked byte[]) into a 'double' (byte*)
+
+!SSC-D3AA0A0696F7A82BF1A3AD28F9749B79
+System.Double System.BitConverter::ToDouble(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call PutBytes giving the address of the type (double) instance and it's size (8) or do it inline if SwappedWordsInDouble is true
+
+!SSC-10B483BD62012D9F2CC15C48F1A08F6A
+System.Double System.Decimal::op_Explicit(System.Decimal)
+	r142142		spouliot - call decimal2double (icall named mono_decimal2double in decimal.c)
+
+!SSC-0E49C1A07E66AA3A5F2838EABE616460
+System.Double System.Math::Acos(System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-BA1B800D88FB4B8D83C0E69A0705B0AD
+System.Double System.Math::Asin(System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-EBE263894424B8AB6D0CC1E17910428F
+System.Double System.Math::Atan(System.Double)
+	r144558		spouliot - visible icall (sysmath.c). x86 has special opcode (i.e. icall not called)
+
+!SSC-75D0B4C1DD7365677F8CC05E822BBE30
+System.Double System.Math::Atan2(System.Double,System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-FA92C7DC8AE71B7BCE0C7910D24D4B61
+System.Double System.Math::Cos(System.Double)
+	r144558		spouliot - visible icall (sysmath.c). x86 and x86_64 have special opcode (i.e. icall not called)
+
+!SSC-C23805B0CFA3FF4104A41488646EF55D
+System.Double System.Math::Cosh(System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-BDD51205F1B64439021813F1F99F2766
+System.Double System.Math::Exp(System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-BC1AA9BFA609449BAC4E4AB33B02D580
+System.Double System.Math::Floor(System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-A59422F5B288C3844DA2C284F8396BA1
+System.Double System.Math::Log(System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-F9AE1D09E728162CB02F849AE9F43B20
+System.Double System.Math::Log10(System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-816E35ECDF3AEE9350AA3929DEB15C47
+System.Double System.Math::Pow(System.Double,System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-45BEABA3E003FBD72CB45033F485FCA6
+System.Double System.Math::Round(System.Double)
+	r144558		spouliot - visible icall (sysmath.c). x86 has special opcode (i.e. icall not called)
+
+!SSC-1CD4470AD64CB30DA89D56CE6CE49A57
+System.Double System.Math::Round(System.Double,System.Int32)
+	r142142		spouliot - call Round2 (icall in sysmath.c) with 'value', 'digits' [0..15] and 'false'
+
+!SSC-EE7B6D92DFAC1A320027BDB0DDF5F095
+System.Double System.Math::Sin(System.Double)
+	r144558		spouliot - visible icall (sysmath.c). x86 and x86_64 have special opcode (i.e. icall not called)
+
+!SSC-1A7FCA4A77CC6363964E58CAF9A9B5D8
+System.Double System.Math::Sinh(System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-467C2263902A137B9C2DB17FA10B8B47
+System.Double System.Math::Sqrt(System.Double)
+	r144558		spouliot - visible icall (sysmath.c). x86 and x86_64 have special opcode (i.e. icall not called)
+
+!SSC-711106A83D783C714A4C192878572E4B
+System.Double System.Math::Tan(System.Double)
+	r144558		spouliot - visible icall (sysmath.c). x86 has special opcode (i.e. icall not called)
+
+!SSC-C602D369D693D6B9EDF6EFAAB7BE1B60
+System.Double System.Math::Tanh(System.Double)
+	r144558		spouliot - visible icall (sysmath.c)
+
+!SSC-AACE3A4B9D79851EE93FB893C94828F9
+System.Globalization.CultureInfo System.Threading.Thread::get_CurrentCulture()
+	r142661		spouliot - most logic is now around the InternalThread (Internal property)
+	r142142		spouliot - call GetCachedCurrentCulture (icall in threads.c), GetSerializedCurrentCulture (icall in threads.c) and SetCachedCurrentCulture (icall in threads.c)
+
+!SSC-B96C243DD72BC227F6E95C0E41C8D3C6
+System.Globalization.CultureInfo System.Threading.Thread::get_CurrentUICulture()
+	r142661		spouliot - most logic is now around the InternalThread (Internal property)
+	r142142		spouliot - call GetCachedCurrentUICulture (icall in threads.c), GetSerializedCurrentUICulture (icall in threads.c) and SetCachedCurrentUICulture (icall in threads.c)
+
+!SSC-7DE3749D67E3D33069362F62A03FA08A
+System.Globalization.DateTimeFormatInfo System.Globalization.CultureInfo::get_DateTimeFormat()
+	r142142		spouliot - call construct_datetime_format (icall in locales.c). parameter-less (instance)
+
+!SSC-A57CBA569C065D7C40CB2825219E2EC9
+System.Globalization.DaylightTime System.CurrentSystemTimeZone::GetDaylightChanges(System.Int32)
+	r142142		spouliot - call GetTimeZoneData (icall) with the 'year' parameter
+
+!SSC-AF959BF3CAC74B8066C3A6248FB029EC
+System.Globalization.NumberFormatInfo System.Globalization.CultureInfo::get_NumberFormat()
+	r142142		spouliot - call construct_number_format (icall in locales.c)
+
+!SSC-367D601B2342A53059C3B66325682A5E
+System.Globalization.RegionInfo System.Globalization.RegionInfo::get_CurrentRegion()
+	r143653		spouliot - call internal .ctor(int) which later calls construct_internal_region_from_name (icall in locales.c)
+
+!SSC-2B2DCFAFD3FC875B2986BBA7F5649D90
+System.Globalization.TextInfo System.Globalization.CultureInfo::CreateTextInfo(System.Boolean)
+	r144107		spouliot - unsafe, pointer required to create a new TextInfo instance
+
+!SSC-092F2223C0E37A8AC10D3EBAD01BBC77
+System.Int16 Mono.Security.BitConverterLE::ToInt16(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call UShortFromBytes to copy two bytes from 'src' (bound-checked byte[]) into a 'short' (byte*)
+
+!SSC-D8AB1D92F294DACA8C9E0C29070EC418
+System.Int16 System.BitConverter::ToInt16(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call PutBytes giving the address of the type (short) instance and it's size (2)
+
+!SSC-E240DA649BDB6658CDBFDE2358774096
+System.Int32 Mono.Security.BitConverterLE::ToInt32(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call UIntFromBytes to copy four bytes from 'src' (bound-checked byte[]) into a 'int' (byte*)
+
+!SSC-B6573B56A3FDABEF30BBA28490E8AA3B
+System.Int32 System.Array::BinarySearch(System.Array,System.Int32,System.Int32,System.Object,System.Collections.IComparer)
+	r144309		spouliot - call DoBinarySearch (SecurityCritical) with validated parameters
+
+!SSC-EF8693D7527ECF3E39E4717F839FCD0B
+System.Int32 System.Array::BinarySearch(System.Array,System.Object)
+	r144309		spouliot - call DoBinarySearch (SecurityCritical) with validated parameters
+
+!SSC-C54CC98BB66B6AD55C44C7EFBF28A1F0
+System.Int32 System.Array::get_Rank()
+	r142142		spouliot - call GetRank (icall)
+
+!SSC-1E7C317176A43F74447428E8DDA3A3AD
+System.Int32 System.Array::GetLength(System.Int32)
+	r144558		spouliot - visible icall, 'dimension' parameters is checked/exception in unmanaged code
+
+!SSC-D4F41B4EE1F09285D134D168C624682C
+System.Int32 System.Array::GetLowerBound(System.Int32)
+	r144558		spouliot - visible icall, 'dimension' parameters is checked/exception in unmanaged code
+
+!SSC-D07CA0F89A7007BA712E48A7D754FB70
+System.Int32 System.Array::IndexOf(System.Array,System.Object,System.Int32,System.Int32)
+	r142142		spouliot - call GetValueImpl (icall without bounds checking) with a validated 'startIndex' and 'count'
+
+!SSC-588D3D823ACC75D92ABF1B47D0D4ACEE
+System.Int32 System.Array::InternalArray__IndexOf<T>(T)
+	r142142		spouliot - call GetGenericValueImpl<T> (icall without bounds checking) with non user-controlled, valid values (0, length)
+
+!SSC-4441D51C9BEBDE7BC880C4BE539C0A2D
+System.Int32 System.Array::LastIndexOf(System.Array,System.Object,System.Int32,System.Int32)
+	r142142		spouliot - call GetValueImpl (icall without bounds checking) with a validated 'startIndex' and 'count'
+
+!SSC-54D9BE064A35261BD2AA4C730C4A4F29
+System.Int32 System.Array::System.Collections.IList.IndexOf(System.Object)
+	r142142		spouliot - call GetValueImpl (icall without bounds checking) with non user-controlled, valid values (0, length)
+
+!SSC-26AB7C41889BC032441F970CF67C7487
+System.Int32 System.BitConverter::ToInt32(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call PutBytes giving the address of the type (int) instance and it's size (4)
+
+!SSC-F579617939A99125BFFF4BB4F6F29AFA
+System.Int32 System.Buffer::ByteLength(System.Array)
+	r142142		spouliot - call ByteLengthInternal (icall) on non-null value
+
+!SSC-3F6A67782CB4B51F8A388CC77AF6E76F
+System.Int32 System.CultureAwareComparer::GetHashCode(System.String)
+	r143653		spouliot - call CompareInfo.GetSortKey (marked SecurityCritical since it calls SimpleCollator.GetSortKey, a SecurityCritical type)
+
+!SSC-AF52984382A0594F77994D6767A2B133
+System.Int32 System.Decimal::Compare(System.Decimal,System.Decimal)
+	r142142		spouliot - call decimalCompare (icall named mono_decimalCompare in decimal.c)
+
+!SSC-4233597E9FD3FBD6426233B943074574
+System.Int32 System.Enum::CompareTo(System.Object)
+	r142142		spouliot - call compare_value_to (icall) on non-null, same type, enum type
+
+!SSC-F2810FE774847533536B26EDCE332DAA
+System.Int32 System.Enum::GetHashCode()
+	r142142		spouliot - call get_hashcode (icall) on self (this/instance)
+
+!SSC-8F9544A08D24EC4AAC522094331C0EE7
+System.Int32 System.Environment::get_ExitCode()
+	r144558		spouliot - visible icall (named mono_environment_exitcode_get in mono/metadata/environment.c). return static value
+
+!SSC-0027F79B703C378884729E1C6737030A
+System.Int32 System.Environment::get_ProcessorCount()
+	r155836		spouliot - visible icall (named mono_cpu_count in mono/utils/mono-proclib.c).
+
+!SSC-B9DCE5D3F065E1DCB5056AA680B0DF34
+System.Int32 System.Environment::get_TickCount()
+	r144558		spouliot - visible icall (named mono_msec_ticks in mono/utils/mono-time.c). return monotonic integer value
+
+!SSC-59CFF2379E855D532DC3B6BD9A5E9241
+System.Int32 System.GC::get_MaxGeneration()
+	r144558		spouliot - visible icall (named mono_gc_max_generation in mono/metadata/boehm-gc.c). return 0 (could be different if compiled with another GC)
+
+!SSC-C6280418C8F2CAE08117FF3189402525
+System.Int32 System.Globalization.CompareInfo::Compare(System.String,System.Int32,System.Int32,System.String,System.Int32,System.Int32,System.Globalization.CompareOptions)
+	r145010		spouliot - added 'options' validation. call call internal_compare_switch [SecurityCritical] with validated parameters
+
+!SSC-42A8F46992ADFA79EE040BA865B6F77E
+System.Int32 System.Globalization.CompareInfo::Compare(System.String,System.Int32,System.String,System.Int32,System.Globalization.CompareOptions)
+	r145010		spouliot - fixed length computation. added 'options' validation. call call internal_compare_switch [SecurityCritical] with validated (or computed) parameters
+
+!SSC-63315FC8288BBBD463762B4382803AD6
+System.Int32 System.Globalization.CompareInfo::Compare(System.String,System.String,System.Globalization.CompareOptions)
+	r145010		spouliot - call internal_compare_switch [SecurityCritical] with parameters derived from validated 'string1' and 'string2' and 'options'
+
+!SSC-05B31B628F41FF9FEC6F3EF7D3B5A656
+System.Int32 System.Globalization.CompareInfo::IndexOf(System.String,System.Char,System.Int32,System.Int32,System.Globalization.CompareOptions)
+	r145010		spouliot - added 'options' validation. call internal_index_switch [SecurityCritical] with validated parameters and 'true'
+
+!SSC-4F3F29276896BC87D729119E9D5AD616
+System.Int32 System.Globalization.CompareInfo::IndexOf(System.String,System.String,System.Int32,System.Int32,System.Globalization.CompareOptions)
+	r145010		spouliot - added 'options' validation. call internal_index_switch [SecurityCritical] with validated parameters and 'true'
+
+!SSC-95CD007626FF303A2004817261FF0EF2
+System.Int32 System.Globalization.CompareInfo::LastIndexOf(System.String,System.Char,System.Int32,System.Int32,System.Globalization.CompareOptions)
+	r145010		spouliot - added 'options' validation. call internal_index_switch [SecurityCritical] with validated parameters and 'false'
+
+!SSC-2C2026BA5EA6D004C607F99E3777041B
+System.Int32 System.Globalization.CompareInfo::LastIndexOf(System.String,System.String,System.Int32,System.Int32,System.Globalization.CompareOptions)
+	r145010		spouliot - added 'options' validation. call internal_index_switch [SecurityCritical] with validated parameters and 'false'
+
+!SSC-D1A13F52BEC84C8186B0E342DA33FCB0
+System.Int32 System.MonoType::GetArrayRank()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_GetArrayRank (icall.c)
+
+!SSC-AD5BB05E75E4281A341DB24B69695E0B
+System.Int32 System.Object::GetHashCode()
+	r142142		spouliot - call InternalGetHashCode (icall)
+
+!SSC-47DE7FC4D4B70DA8BC871559DE90879C
+System.Int32 System.Reflection.Emit.ModuleBuilder::GetToken(System.Reflection.Emit.SignatureHelper)
+	r142142		spouliot - call getToken (icall) with itself (instance) and the (non-null, checked by caller) parameter
+
+!SSC-EFF8D9DAD010380A3393836295F49FE8
+System.Int32 System.Reflection.Emit.ModuleBuilder::GetToken(System.Reflection.MemberInfo)
+	r142142		spouliot - call getToken (icall) with itself (instance) and the (non-null, checked by caller) parameter
+
+!SSC-19191BD3BB73EDA2F0DE5E5BF2C12901
+System.Int32 System.Reflection.Emit.ModuleBuilder::GetToken(System.Reflection.MethodInfo,System.Type[])
+	r142142		spouliot - call getMethodToken (icall) with itself (instance) and the (icall verified) parameters
+
+!SSC-E82C466995CD121040D7EBF68A2F0313
+System.Int32 System.Reflection.Emit.ModuleBuilder::GetToken(System.String)
+	r142142		spouliot - call getUSIndex (icall named mono_image_insert_string in reflection.c) with itself (instance) and the string
+
+!SSC-1F05584ADCD6FB63E932EB33D57A7619
+System.Int32 System.Reflection.MemberInfo::get_MetadataToken()
+	r144558		spouliot - visible icall (named mono_reflection_get_token in mono/metadata/reflection.c). parameter-less (instance)
+
+!SSC-95839221910244E7A8093AA2BFE6FBEF
+System.Int32 System.Reflection.Module::get_MetadataToken()
+	r154595		spouliot - not an icall anymore, call new icall "get_MetadataToken (Module module)" using 'this' (code moved to MonoModule.cs file)
+	r144558		spouliot - visible icall (named mono_reflection_get_token in mono/metadata/reflection.c). parameter-less (instance)
+
+!SSC-BD7E9B1BE604C606760A82E41A521BA3
+System.Int32 System.Reflection.MonoField::GetFieldOffset()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoField_GetFieldOffset (icall.c)
+
+!SSC-75C6365925F1D68B3CEA2B1A8EFFC850
+System.Int32 System.Reflection.ParameterInfo::get_MetadataToken()
+	r150954		spouliot - icall was replaced by managed code that call an internal GetMetadataToken (renamed, non-visible, icall) for MethodBase
+	r144558		spouliot - visible icall (named mono_reflection_get_token in mono/metadata/reflection.c). parameter-less (instance)
+
+!SSC-B889BA3F14ECBC9F4F3104204E49918E
+System.Int32 System.Runtime.CompilerServices.RuntimeHelpers::get_OffsetToStringData()
+	r144558		spouliot - visible icall. parameter-less (static)
+
+!SSC-13BBAC2DDD4B5567CE048A2B8DED7EAF
+System.Int32 System.Runtime.CompilerServices.RuntimeHelpers::GetHashCode(System.Object)
+	r142142		spouliot - call Object.InternalGetHashCode (icall named mono_object_hash in mono/metadata/monitor.c)
+
+!SSC-76EEE16393EB6927AF422D99015ECD52
+System.Int32 System.Text.ASCIIEncoding::GetBytes(System.Char[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Text.EncoderFallbackBuffer&,System.Char[]&)
+	r150721		spouliot - unsafe (fixed) block calling InternalGetBytes which validates the parameters
+
+!SSC-ED9E2FD2D374BC784264181A28E1F18B
+System.Int32 System.Text.ASCIIEncoding::GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32,System.Text.EncoderFallbackBuffer&,System.Char[]&)
+	r150721		spouliot - unsafe (fixed) block calling InternalGetBytes which validates the parameters
+
+!SSC-A5EFC1497B37207A46A43CEDF51FC608
+System.Int32 System.Text.Encoding::GetByteCount(System.String)
+	r142142		spouliot - unsafe, call GetByteCount(char*,int) overload with non-null, non-empty, 'string' parameter
+
+!SSC-D32C2B48A8283856973F96F9E91F19B5
+System.Int32 System.Text.Encoding::GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call GetBytes(char*,int,byte*,int) overload once all parameters are validated
+
+!SSC-6B7D98D82846C4C64AD29A60F89AF6DC
+System.Int32 System.Text.UnicodeEncoding/UnicodeDecoder::GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)
+	r142142		spouliot - unsafe, call CopyChars (with pointers) once all parameters were validated
+
+!SSC-303559277B046EB6C44864E9028018E8
+System.Int32 System.Text.UnicodeEncoding::GetBytes(System.Char[],System.Int32,System.Int32,System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call GetBytesInternal with pointers to char* and byte* once all parameters were validated
+
+!SSC-5BD8EBFC8A94870E10B8209538DF5FC3
+System.Int32 System.Text.UnicodeEncoding::GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call GetBytesInternal with pointers to char* and byte* once all parameters were validated
+
+!SSC-3951BD986CDEEA43A845D477E13A729F
+System.Int32 System.Text.UnicodeEncoding::GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)
+	r142142		spouliot - unsafe, call GetCharsInternal with pointers to byte* and char* once all parameters were validated. Some checks (charCount and odd-length) are delegated
+
+!SSC-32E83C0E4D5D5374CBF7AF78C722DACD
+System.Int32 System.Text.UTF8Encoding::GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call InternalGetBytes with pointers to char* and byte* once all parameters are validated
+
+!SSC-E142C80FB15537FC02C4A4DCE58BB266
+System.Int32 System.Text.UTF8Encoding::InternalGetByteCount(System.Char[],System.Int32,System.Int32,System.Char&,System.Boolean)
+	r142142		spouliot - unsafe, call InternalGetByteCount overload with char* once all parameters are validated
+
+!SSC-124ECF76908F5D8FA57B6BD559BF3721
+System.Int32 System.Text.UTF8Encoding::InternalGetBytes(System.Char[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Char&,System.Boolean)
+	r142142		spouliot - unsafe, call InternalGetBytes with pointers to char* and byte* once all parameters are validated
+
+!SSC-8B01BA235EA0DD4A775E6E6FCEF4BCA8
+System.Int32 System.Text.UTF8Encoding::InternalGetCharCount(System.Byte[],System.Int32,System.Int32,System.UInt32,System.UInt32,System.Object,System.Text.DecoderFallbackBuffer&,System.Byte[]&,System.Boolean)
+	r142142		spouliot - unsafe, call InternalGetCharCount overload with byte* once all parameters are validated
+
+!SSC-BCF7EACC38F8D39FE97FEFC5622AF720
+System.Int32 System.Text.UTF8Encoding::InternalGetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.UInt32&,System.UInt32&,System.Object,System.Text.DecoderFallbackBuffer&,System.Byte[]&,System.Boolean)
+	r142142		spouliot - unsafe, call InternalGetChars overload with byte* once all parameters are validated
+
+!SSC-6410DC949006091D6F73B8351B461568
+System.Int32 System.Threading.Interlocked::Add(System.Int32&,System.Int32)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_Add_Long in threads.c), JIT intrinsic on 64bits platforms
+
+!SSC-71CF602FA210835408F89DD1DDC9C30F
+System.Int32 System.Threading.Interlocked::CompareExchange(System.Int32&,System.Int32,System.Int32)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_CompareExchange_Int in threads.c)
+
+!SSC-4E0ECB892DC2BF44AA37DE63B313481D
+System.Int32 System.Threading.Interlocked::Decrement(System.Int32&)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_Decrement_Int in threads.c)
+
+!SSC-5C7FD40ED5A52CC70C5825C38A43B7E3
+System.Int32 System.Threading.Interlocked::Exchange(System.Int32&,System.Int32)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_Exchange_Int in threads.c)
+
+!SSC-146CFB61995F4DE95A3E0A915C1A53C2
+System.Int32 System.Threading.Interlocked::Increment(System.Int32&)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_Increment_Int in threads.c)
+
+!SSC-F20B0EA3182A59EB19B03F146D218233
+System.Int32 System.Threading.WaitHandle::WaitAny(System.Threading.WaitHandle[])
+	r142142		spouliot - call WaitAny_internal (icall in mono/metadata/threads.c) with validated 'waitHandles', Timeout.Infinite (-1) and false (no context)
+
+!SSC-002FF0EAA605679B0DAFEF86D115A5BB
+System.Int32 System.Threading.WaitHandle::WaitAny(System.Threading.WaitHandle[],System.Int32)
+	r144107		spouliot - added validation (negative ms), call overload with boolean (emitContext) parameter, which calls WaitAny_internal (icall in mono/metadata/threads.c) with false (no context)
+
+!SSC-5EEF1FF70D82F61EF7AC89EC761BBECA
+System.Int32 System.Threading.WaitHandle::WaitAny(System.Threading.WaitHandle[],System.TimeSpan)
+	r144107		spouliot - call overload with boolean (emitContext) parameter, which calls WaitAny_internal (icall in mono/metadata/threads.c) with false (no context)
+
+!SSC-C1094B0E396E772A4ACE16A47C1228EB
+System.Int32 System.Type::get_GenericParameterPosition()
+	r142142		spouliot - call GetGenericParameterPosition (icall)
+
+!SSC-36C96D1BBA7393F74A340FF8CF47759C
+System.Int32 System.ValueType::GetHashCode()
+	r142142		spouliot - call InternalGetHashCode (icall named mono_object_hash in mono/metadata/monitor.c)
+
+!SSC-39C7D4040F516BC0B5720CF19648229E
+System.Int64 System.BitConverter::ToInt64(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call PutBytes giving the address of the type (long) instance and it's size (8)
+
+!SSC-C10F113F05A932D20F8E73028A3739B6
+System.Int64 System.Decimal::s64(System.Decimal)
+	r142142		spouliot - call decimalFloorAndTrunc (icall) and decimal2Int64 (icall)
+
+!SSC-864507D0BD802956CB2A29586A47DF3D
+System.Int64 System.GC::GetTotalMemory(System.Boolean)
+	r144558		spouliot - visible icall (in mono/metadata/gc.c). return long value
+
+!SSC-AC22E41A287130F64AFB15F8C1E43B90
+System.Int64 System.Threading.Interlocked::Add(System.Int64&,System.Int64)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_Add_Long in threads.c), JIT intrinsic on 64bits platforms
+
+!SSC-6A7FEA6F2425A961ACF3FE1FC8E34522
+System.Int64 System.Threading.Interlocked::CompareExchange(System.Int64&,System.Int64,System.Int64)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_CompareExchange_Long in threads.c)
+
+!SSC-36BC1B0BE29E42A1B78B680C19DB6DFA
+System.Int64 System.Threading.Interlocked::Decrement(System.Int64&)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_Decrement_Long in threads.c)
+
+!SSC-867DDB407A3F6C26BDEB7D4ED4931F54
+System.Int64 System.Threading.Interlocked::Exchange(System.Int64&,System.Int64)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_Exchange_Long in threads.c)
+
+!SSC-2B4CAE91ABAE973038041DAA33A74379
+System.Int64 System.Threading.Interlocked::Increment(System.Int64&)
+	r144558		spouliot - visible icall (ves_icall_System_Threading_Interlocked_Increment_Long in treads.c)
+
+!SSC-6FB8E38696014B260A4B02FC558F7E05
+System.IO.Stream System.Reflection.Assembly::GetManifestResourceStream(System.String)
+	r142142		spouliot - added root-path safety check. validate 'name' parameter, call GetManifestResourceInfo (SecurityCritical) then File.Open based on Assembly.Location (SecurityCritical) or call GetManifestResourceInternal (icall) and creates an UnmanagedMemoryStream (internal resources)
+
+!SSC-8BD58063C3120E72B10D7CADDFA89851
+System.Object System.Activator::CreateInstance(System.Type)
+	r143653		spouliot - call CreateInstance(type,false) [SecurityCritical] which calls CreateInstanceInternal (icall) for ValueType or ctor.Invoke(null) otherwise.
+
+!SSC-1B3F037B72FA8F3BDBEF3708B962E74B
+System.Object System.Activator::CreateInstance(System.Type,System.Object[])
+	r143653		spouliot - call CreateInstance overload [SecurityCritical] with 'type' (later checked non-null), 'BindingFlags.Default', 'Binder.DefaultBinder', 'args', 'null' (Culture) and an empty object array.
+
+!SSC-E589C1C390F8FC81B0AAE44DCAA35E84
+System.Object System.Array::Clone()
+	r144558		spouliot - visible icall (named mono_array_clone in object.c)
+
+!SSC-08536F7F2A221B6F7C3BAE356640DF3D
+System.Object System.Array::GetValue(System.Int32)
+	r142142		spouliot - call GetValueImpl (icall without bounds checking) with validated 'index' value
+
+!SSC-AF8EB71FECF8E2FB74BE55137B66A1DC
+System.Object System.Array::GetValue(System.Int32[])
+	r144558		spouliot - visible icall. null-check/exception-thrown in unmanaged code
+
+!SSC-D11331AF64759CCAAC8B512036569C08
+System.Object System.Array::System.Collections.IList.get_Item(System.Int32)
+	r142142		spouliot - call GetValueImpl (icall without bounds checking) with validated 'index' value
+
+!SSC-6080BAC1413127DF5501F38F1069977A
+System.Object System.Delegate::DynamicInvoke(System.Object[])
+	r142142		spouliot - call virtual [Multicast]Delegate.DynamicInvokeImpl [SecurityCritical] with 'args' parameter
+
+!SSC-ED2AD943F72B8723E3CBE0985B4BE8D9
+System.Object System.Enum::get_Value()
+	r143653		spouliot - call get_value (icall)
+
+!SSC-6F8580B9119FD8267E5E6223806B5C19
+System.Object System.Enum::ToObject(System.Type,System.Object)
+	r144558		spouliot - visible icall. null-check and type-checks (enum/value type) exceptions are thrown from unmanaged code
+
+!SSC-FBDE2F422B9BD0A9E51177148EBDDF40
+System.Object System.MonoType::InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])
+	r142142		spouliot - call Activator.CreateInstanceInternal [SecurityCritical] with 'this' if 'BindingFlags.CreateInstance' is set. call GetMethodsByName [SecurityCritical] if 'BindingFlags.InvokeMethod' is set. call GetPropertiesByName [SecurityCritical] if 'BindingFlags.[G|S]etProperty' is set.
+
+!SSC-952097B2947CB8C56D84D3BB1DB20F6F
+System.Object System.Object::MemberwiseClone()
+	r144558		spouliot - visible icall. parameter-less (instance)
+
+!SSC-1ACF42595AA41A162DCA9D589C0A6022
+System.Object System.Reflection.MonoCMethod::Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)
+	r145113		spouliot - call InternalInvoke (icall named ves_icall_InternalInvoke) with potentially-null 'obj' and validated/converted 'parameters'
+
+!SSC-CDD859CADD0A41EE45CB1AC02AE74A38
+System.Object System.Reflection.MonoField::GetRawConstantValue()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoField_GetRawConstantValue (icall.c)
+
+!SSC-643276BCFB390C3DBD12CBE3D4FCDCEF
+System.Object System.Reflection.MonoField::GetValue(System.Object)
+	r142142		spouliot - call GetValueInternal (icall) with potentially null value (for static fields)
+
+!SSC-C2579C3E4A1314FAC055835424C0315F
+System.Object System.Reflection.MonoMethod::Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)
+	r150954		spouliot - now call MonoMethodInfo.GetParametersInfo instead of GetParameters (optimization to avoid allocating an array each time)
+	r142142		spouliot - call InternalInvoke (icall named ves_icall_InternalInvoke) with potentially-null 'obj' and validated/converted 'parameters'
+
+!SSC-4DD9FCF0E239E379546DA74A5F6DBCF2
+System.Object System.Runtime.CompilerServices.RuntimeHelpers::GetObjectValue(System.Object)
+	r144558		spouliot - visible icall. called with potentially null value
+
+!SSC-614DD8AE12D0E30A84C3A66580ED233F
+System.Object System.Threading.Interlocked::CompareExchange(System.Object&,System.Object,System.Object)
+	r153397		spouliot - visible icall (since SL4 beta) named ves_icall_System_Threading_Interlocked_CompareExchange_Object in threads.c
+
+!SSC-8442B2A0A9B0405E7702E37E800E3BA7
+System.Object System.WeakReference::get_Target()
+	r142142		spouliot - get the Target property of it's private GCHandle (SecurityCritical)
+
+!SSC-FF58B3EC1286281AEA8E86BF91919E24
+System.Object[] System.MonoCustomAttrs::GetCustomAttributes(System.Reflection.ICustomAttributeProvider,System.Boolean)
+	r145144		spouliot - validate 'obj' (non-null) then call either GetCustomAttributesBase [SecurityCritical] or GetCustomAttributes overload based on 'inherit' boolean parameter
+
+!SSC-4D4D55DA52055A53479C3A283F01E968
+System.Object[] System.MonoCustomAttrs::GetCustomAttributes(System.Reflection.ICustomAttributeProvider,System.Type,System.Boolean)
+	r144449		spouliot - validate parameters. call GetCustomAttributesBase [SecurityCritical] and RetrieveAttributeUsage [SecurityCritical] on validated, or computed, values
+
+!SSC-2483CF6B23FDAD5C840E07F9278E7B89
+System.Object[] System.Reflection.MonoMethod::GetPseudoCustomAttributes()
+	r142142		spouliot - call MonoMethodInfo.get_method_info (icall)
+
+!SSC-818EB29CA8CE41E13F2560A8BE445DE9
+System.OperatingSystem System.Environment::get_OSVersion()
+	r142142		spouliot - call GetOSVersionString (icall) and Platform (icall)
+
+!SSC-6802E0800C5A97A0EAF08A05F9092527
+System.Reflection.Assembly System.MonoType::get_Assembly()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_get_Assembly
+
+!SSC-724486D6F43BBD1B3DBAA8B3D14DA752
+System.Reflection.Assembly System.Reflection.Assembly::GetCallingAssembly()
+	r144558		spouliot - visible icall. parameter-less (static)
+
+!SSC-52D7ABEC28B3805404A76716F9F8DC91
+System.Reflection.Assembly System.Reflection.Assembly::GetExecutingAssembly()
+	r144558		spouliot - visible icall. parameter-less (static)
+
+!SSC-F17D5EB3540299473CA70964D6820436
+System.Reflection.Assembly System.Reflection.Assembly::GetSatelliteAssembly(System.Globalization.CultureInfo,System.Version,System.Boolean)
+	r154229		spouliot - visibility changed from private to internal
+	r150368		spouliot - call AppDomain.LoadSatellite(AssemblyName,bool), with false, instead of LoadSatellite(AssemblyName)
+	r145284		spouliot - try/catch to ignore FileNotFoundException added in r144845
+	r144798		spouliot - call AppDomain.LoadSatellite [SecurityCritical] or Assembly.LoadFrom [SecurityCritical] with a validated filename
+
+!SSC-FB0A26F46044BAB72C75D0264858B7AD
+System.Reflection.Assembly System.Reflection.Assembly::Load(System.String)
+	r143653		spouliot - call AppDomain.Load, which calls LoadAssembly (icall in mono/metadata/appdomain.c) with non-null, no-empty 'assemblyString'. This string is NOT a filename (but a fully qualified assembly name)
+
+!SSC-5945B08D3FC8A5BA9F7837F32CDE3A44
+System.Reflection.AssemblyName[] System.Reflection.Assembly::GetReferencedAssemblies()
+	r154229		spouliot - change from from icall to a method calling the icall with 'this' as parameter
+
+!SSC-D322BC4CB0F1FDE2DC72C2B98F74B78D
+System.Reflection.ConstructorInfo System.MonoType::GetConstructor(System.Reflection.ConstructorInfo)
+	r144963		spouliot - added null-check. call GetCorrespondingInflatedConstructor (icall named ves_icall_MonoType_GetCorrespondingInflatedMethod) with non-null parameter
+
+!SSC-E450B4AE23BB669D6A8AA2C24C8BB4AD
+System.Reflection.ConstructorInfo[] System.MonoType::GetConstructors(System.Reflection.BindingFlags)
+	r142142		spouliot - call GetConstructors_internal (icall) with user 'flags' and (non-null) this
+
+!SSC-F7718550DA3B0813F3F433CA020261F7
+System.Reflection.ConstructorInfo[] System.Reflection.MonoGenericClass::GetConstructors(System.Reflection.BindingFlags)
+	r142142		spouliot - call MonoType.GetConstructors_internal with parameter 'bf' and 'this'
+
+!SSC-9C870A2B70F14E31A8EE8E175362E8AD
+System.Reflection.Emit.AssemblyBuilder System.AppDomain::DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String,System.Security.Policy.Evidence,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet,System.Boolean)
+	r145113		spouliot - validate 'name' then call AssemblyBuilder ctor with 'name', 'dir' (always null from public api), 'access' and 'false'. *Permissions parameters (always null) are given to AddPermissionRequests but it does nothing with them (empty method)
+
+!SSC-82BF54D5E8BBEFE900DA7E4DF47055F5
+System.Reflection.Emit.ConstructorBuilder System.Reflection.Emit.TypeBuilder::DefineConstructor(System.Reflection.MethodAttributes,System.Reflection.CallingConventions,System.Type[],System.Type[][],System.Type[][])
+	r145113		spouliot - if the type is not created call ConstructorBuilder ctor with 'this' and the parameters
+
+!SSC-4C28B6B67F666E13898C949E12ADBA4F
+System.Reflection.Emit.EnumBuilder System.Reflection.Emit.ModuleBuilder::DefineEnum(System.String,System.Reflection.TypeAttributes,System.Type)
+	r145113		spouliot - validate 'name' (non-null and unique) then call EnumBuilder ctor with 'this' and the parameters
+
+!SSC-88E53A972887A525E943AAEB20D2F6BD
+System.Reflection.Emit.FieldBuilder System.Reflection.Emit.TypeBuilder::DefineField(System.String,System.Type,System.Type[],System.Type[],System.Reflection.FieldAttributes)
+	r142142		spouliot - call create_internal_class (icall in reflection.c) on 'this'
+
+!SSC-5B38D10533774F4AF92C8A9365DA2FB4
+System.Reflection.Emit.GenericTypeParameterBuilder[] System.Reflection.Emit.MethodBuilder::DefineGenericParameters(System.String[])
+	r145113		spouliot - added 'names' validations. call GenericTypeParameterBuilder [SecurityCritical] constructor with 'type' (TypeBuilder owner), 'this', a non-null name form 'names' and a unique integer (loop)
+
+!SSC-9D65EC9C6FFD95AFB393025F05604B3F
+System.Reflection.Emit.GenericTypeParameterBuilder[] System.Reflection.Emit.TypeBuilder::DefineGenericParameters(System.String[])
+	r142142		spouliot - added 'names' validations. call setup_generic_class (*empty* icall named mono_reflection_setup_generic_class in reflection.c). Call GenericTypeParameterBuilder [SecurityCritical] constructor with 'this', 'null', a non-null name form 'names' and a unique integer (loop)
+
+!SSC-DCE8522AF6BB2C4837A4DDF7B0E7AB20
+System.Reflection.Emit.MethodBuilder System.Reflection.Emit.TypeBuilder::DefineMethod(System.String,System.Reflection.MethodAttributes,System.Reflection.CallingConventions,System.Type,System.Type[],System.Type[],System.Type[],System.Type[][],System.Type[][])
+	r145113		spouliot - validation 'name' and 'attributes'. If type is not created call MethodBuilder ctor with 'this' and the parameters
+
+!SSC-1ACA4998111545C5A8E86ADB22238472
+System.Reflection.Emit.ModuleBuilder System.Reflection.Emit.AssemblyBuilder::DefineDynamicModule(System.String,System.String,System.Boolean,System.Boolean)
+	r143412		spouliot - call check_name_and_filename [SecurityCritical] but does not provide a user 'fileName' (instead the 'name' is reused)
+
+!SSC-9862C0A6312DB5DF80A35F83567190B6
+System.Reflection.EventInfo System.MonoType::GetEvent(System.String,System.Reflection.BindingFlags)
+	r142142		spouliot - call InternalGetEvent (icall named ves_icall_MonoType_GetEvent) with non-null 'name' and 'bindingAttr'
+
+!SSC-FC75BCA6B6EA647E53EBE01E53035046
+System.Reflection.EventInfo[] System.MonoType::GetEvents(System.Reflection.BindingFlags)
+	r142142		spouliot - call GetEvents_internal (icall) with specified 'bindingAttr' and 'this'
+
+!SSC-0053B8C81FBADB441B7C785EC872B3DF
+System.Reflection.EventInfo[] System.Reflection.Emit.TypeBuilder::GetEvents_internal(System.Reflection.BindingFlags)
+	r142142		spouliot - call get_event_info (icall) on each EventBuilder (note: do not confuse with icall of the same name used by MonoType)
+
+!SSC-3872F605157A2761C01694121D597FEB
+System.Reflection.FieldInfo System.MonoType::GetField(System.String,System.Reflection.BindingFlags)
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_Type_GetField (icall.c) with 'name' and 'bindingAttr' parameters (checked in unmanaged code)
+
+!SSC-E91F160981C173FFC2DB8B2B61698683
+System.Reflection.FieldInfo System.Reflection.FieldInfo::GetFieldFromHandle(System.RuntimeFieldHandle)
+	r142142		spouliot - call internal_from_handle_type with, non-zero, handle.Value
+
+!SSC-97091B946910D449A15AA534905F96C9
+System.Reflection.FieldInfo System.Reflection.FieldInfo::GetFieldFromHandle(System.RuntimeFieldHandle,System.RuntimeTypeHandle)
+	r142142		spouliot - call internal_from_handle_type with, non-zero, handle.Value and declaringType.Value
+
+!SSC-B40B9B38BB7173A0DC9B9E9F2CACE02F
+System.Reflection.FieldInfo[] System.MonoType::GetFields(System.Reflection.BindingFlags)
+	r142142		spouliot - call GetFields_internal (icall) with 'bindingAttr' and 'this'
+
+!SSC-2F16B7FC7A5AFA927077701F1E15FD18
+System.Reflection.FieldInfo[] System.Reflection.MonoGenericClass::GetFields(System.Reflection.BindingFlags)
+	r142142		spouliot - call MonoType.GetFields_internal (icall) with 'bindingAttr' and the MonoType instance
+
+!SSC-A6A9C00C6890A6796A9288D459C60626
+System.Reflection.GenericParameterAttributes System.Type::get_GenericParameterAttributes()
+	r142142		spouliot - call GetGenericParameterAttributes (icall)
+
+!SSC-66EBBAF25EB1EA04B0314FC904C01F5D
+System.Reflection.InterfaceMapping System.Type::GetInterfaceMap(System.Type)
+	r142142		spouliot - call GetInterfaceMapData (icall)
+
+!SSC-C87E75B8F19D0F9592A5B202CA9A2AC5
+System.Reflection.MethodBase System.MonoType::get_DeclaringMethod()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_get_DeclaringMethod (icall.c)
+
+!SSC-99567BD1F323D81936D95F770DA5A3A2
+System.Reflection.MethodBase System.Reflection.MethodBase::GetCurrentMethod()
+	r144558		spouliot - visible icall. parameter-less (static)
+
+!SSC-42545F95D5ADE6CCA27A1C848FEAC35D
+System.Reflection.MethodBase System.Reflection.MethodBase::GetMethodFromHandle(System.RuntimeMethodHandle)
+	r155836		spouliot - call RuntimeMethodHandle.get_Value [SecurityCritical]
+
+!SSC-751AD8056AC289E30B56EEC45CDF6B56
+System.Reflection.MethodBase System.Reflection.MethodBase::GetMethodFromHandle(System.RuntimeMethodHandle,System.RuntimeTypeHandle)
+	r155836		spouliot - call RuntimeMethodHandle.get_Value [SecurityCritical]
+
+!SSC-B98B1267A4440E3AD55888B729F1096B
+System.Reflection.MethodBase System.Reflection.MethodBase::GetMethodFromIntPtr(System.IntPtr,System.IntPtr)
+	r144449		spouliot - call GetMethodFromHandleInternalType (icall) with validated input parameters and output value
+
+!SSC-9928B1C328ECD0C048A4524A967A452C
+System.Reflection.MethodBase System.Reflection.Module::ResolveMethod(System.Int32,System.Type[],System.Type[])
+	r142142		spouliot - call ResolveMethodToken (icall w/FIXME)
+
+!SSC-63FE0230705F686F75882022F6489ADD
+System.Reflection.MethodInfo System.Delegate::get_Method()
+	r144337		spouliot - call MethodBase.GetMethodFromHandleNoGenericCheck [SecurityCritical] with non-null 'method' handle
+
+!SSC-5E6C3CA35345D004DDCADD3CCFD33AC8
+System.Reflection.MethodInfo System.MonoType::GetMethod(System.Reflection.MethodInfo)
+	r144963		spouliot - added null-check. call GetCorrespondingInflatedMethod (icall) with (non-null) parameter
+
+!SSC-083AC2F3F0A19225CDA1884E139C03A3
+System.Reflection.MethodInfo System.MonoType::GetMethodImpl(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Reflection.CallingConventions,System.Type[],System.Reflection.ParameterModifier[])
+	r142142		spouliot - call GetMethodsByName (icall) with possibly-null 'name', 'bindingAttr', 'ignoreCase' (based on bindingAttr) and 'this'
+
+!SSC-E91A8C9CC9ED090BB9B0792F2282C955
+System.Reflection.MethodInfo System.Reflection.Assembly::get_EntryPoint()
+	r144558		spouliot - visible icall. parameter-less (instance)
+
+!SSC-437CF6CB80028A2E282ABEBEEF1087BD
+System.Reflection.MethodInfo System.Reflection.MonoMethod::GetBaseDefinition()
+	r147460		spouliot - call get_base_method (icall) using 'this' and 'true'
+	r142142		spouliot - call get_base_definition (icall)
+
+!SSC-406E6FFE5C9AA5966DFB4A3111DCA74D
+System.Reflection.MethodInfo System.Reflection.MonoMethod::GetGenericMethodDefinition()
+	r142142		spouliot - call GetGenericMethodDefinition_impl (icall named ves_icall_MonoMethod_GetGenericMethodDefinition)
+
+!SSC-66EC3D7B5452CE6371635D7EA091A157
+System.Reflection.MethodInfo System.Reflection.MonoMethod::MakeGenericMethod(System.Type[])
+	r142142		spouliot - call MakeGenericMethod_impl (icall named mono_reflection_bind_generic_method_parameters in mono/metadata/reflection.c)
+
+!SSC-4A22757A735EC0F707FF25AB83D7006D
+System.Reflection.MethodInfo[] System.MonoType::GetMethods(System.Reflection.BindingFlags)
+	r142142		spouliot - call GetMethodsByName (icall) with 'null', 'bindingAttr', 'false' (ignoreCase) and 'this'
+
+!SSC-D646BE4FCB9F067C1437700774548DEF
+System.Reflection.MethodInfo[] System.Reflection.MonoGenericClass::GetMethods(System.Reflection.BindingFlags)
+	r142142		spouliot - call MonoType.GetMethodsByName (icall) with 'null', 'bindingAttr', 'false' (ignoreCase) and 'this'
+
+!SSC-08A935C2897BFD654ABF3BD6EB501CD4
+System.Reflection.Module System.MonoType::get_Module()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_get_Module (icall.c)
+
+!SSC-B615168E5230415014AB0BBA18ADD38F
+System.Reflection.Module System.Reflection.Assembly::GetManifestModule()
+	r142142		spouliot - call GetManifestModuleInternal (icall). Virtual method used by ManifestModule property (user visible)
+
+!SSC-C277F28725FAEBC3471E1497F2A65D17
+System.Reflection.Module[] System.Reflection.Assembly::GetModulesInternal()
+	r155239		spouliot - non-visible instance icall. call ves_icall_System_Reflection_Assembly_GetModulesInternal (icall.c)
+
+!SSC-ADB6CDCECE1639B2205CD0CD0148AEC5
+System.Reflection.MonoEventInfo System.Reflection.MonoEventInfo::GetEventInfo(System.Reflection.MonoEvent)
+	r144337		spouliot - call get_event_info (icall) 
+
+!SSC-8B0EC762AD212FE418869B62EEDED56A
+System.Reflection.MonoMethodInfo System.Reflection.MonoMethodInfo::GetMethodInfo(System.IntPtr)
+	r144307		spouliot - call get_method_info (icall)
+
+!SSC-427E9364B9C3161A0BEB50D483E7B3FB
+System.Reflection.ParameterInfo System.Reflection.MonoMethodInfo::GetReturnParameterInfo(System.Reflection.MonoMethod)
+	r144307		spouliot - call get_retval_marshal (icall)
+
+!SSC-D36F95124988D22D6786321C2DB0C9AB
+System.Reflection.ParameterInfo[] System.Reflection.MonoMethodInfo::GetParametersInfo(System.IntPtr,System.Reflection.MemberInfo)
+	r144307		spouliot - call get_parameter_info (icall)
+
+!SSC-B80AFC2B6E3F73FE4507471224A3EB2E
+System.Reflection.PropertyInfo System.MonoType::GetPropertyImpl(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Type,System.Type[],System.Reflection.ParameterModifier[])
+	r142142		spouliot - call GetPropertiesByName (icall) with 'name' (can be null), 'bindingAttr', 'ignoreCase' (based on 'bindingAttr') and 'this'
+
+!SSC-09EC3AA3E40AE0DAFA621048859E0E5F
+System.Reflection.PropertyInfo[] System.MonoType::GetProperties(System.Reflection.BindingFlags)
+	r142142		spouliot - call GetPropertiesByName (icall) with null, 'bindingAttr', false and 'this'
+
+!SSC-15E1AEF3180C2746B59DFC7E5B8C58B1
+System.Reflection.PropertyInfo[] System.Reflection.MonoGenericClass::GetProperties(System.Reflection.BindingFlags)
+	r142142		spouliot - call MonoType.GetPropertiesByName (icall) with null, 'bf', false and 'this'
+
+!SSC-FD623BBCA2C6E8C5426739B407CCAF7C
+System.Reflection.TypeAttributes System.MonoType::GetAttributeFlagsImpl()
+	r142142		spouliot - call get_attributes (icall) with 'this'
+
+!SSC-3CC41BF4CDA4AE2A57A06A50CE647A9B
+System.Resources.MissingManifestResourceException System.Resources.ResourceManager::AssemblyResourceMissing(System.String)
+	r142142		spouliot - call Assembly.GetName (SecurityCritical) to get the Name property (not an issue, it can be found using FullName)
+
+!SSC-6F034F8E66CCA8641D7A94228CE63452
+System.Resources.ResourceSet System.Resources.ResourceManager::InternalGetResourceSet(System.Globalization.CultureInfo,System.Boolean,System.Boolean)
+	r142142		spouliot - validate 'culture' (non-null). call File.Exists [SecurityCritical] on a culture (non-user-based) filename
+
+!SSC-B590CBBADADF0161E7E5E29CB6F57290
+System.Runtime.Remoting.Messaging.CallType System.Runtime.Remoting.Messaging.MonoMethodMessage::get_CallType()
+	r143412		spouliot - call RemotingServices.IsOneWay [SecurityCritical] type
+
+!SSC-40D39FDEE9B2610439CF9EDEFB2F8946
+System.Single Mono.Security.BitConverterLE::ToSingle(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call UIntFromBytes to copy four bytes from 'src' (bound-checked byte[]) into a 'float' (byte*)
+
+!SSC-47ABE5860D965AE8444D07189F06A516
+System.Single System.BitConverter::ToSingle(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call PutBytes giving the address of the type (float) instance and it's size (4)
+
+!SSC-DC4B3D7672CF5BE03216DBAA34CDC4A4
+System.String System.AppDomain::get_FriendlyName()
+	r142338		spouliot - call getFriendlyName (icall in mono/metadata/appdomain.c)
+
+!SSC-89746EC528E19F7433B1E4FBED517F5B
+System.String System.DateTimeUtils::ToString(System.DateTime,System.Nullable`1<System.TimeSpan>,System.String,System.Globalization.DateTimeFormatInfo)
+	r142142		spouliot - call unsafe method ZeroPad [SecurityCritical]
+
+!SSC-95D3EC353B414A80F83AFBC59889150B
+System.String System.Diagnostics.StackFrame::GetSecureFileName()
+	r144538		spouliot - call SecurityManager.SecurityEnabled (icall in security-manager.c) and, if 'true', remove the path information from the source filename
+
+!SSC-D696C829BA0569E185355F2F1D4A5AF3
+System.String System.Environment::get_NewLine()
+	r144558		spouliot - visible icall - returns "\r\n" string (except on windows)
+
+!SSC-7EF5BAE06648376C9C9D9F6BD1C05162
+System.String System.Exception::get_StackTrace()
+	r142142		spouliot - call StackTrace(Exception,int,bool,bool) a manual SC which calls get_trace (icall)
+
+!SSC-DAE3069978DBC58DA825EE53E7FA25E2
+System.String System.Globalization.TextInfo::ToLower(System.String)
+	r142142		spouliot - call String.InternalAllocateStr (icall) and use unsafe loop to convert string to lowercase
+
+!SSC-A6A36754FA36C145F363E685C7A6E5A6
+System.String System.Globalization.TextInfo::ToUpper(System.String)
+	r142142		spouliot - call String.InternalAllocateStr (icall) and use unsafe loop to convert string to uppercase
+
+!SSC-4E06E2FBBF038E7B7E602EFAA428A0A4
+System.String System.MonoType::get_AssemblyQualifiedName()
+	r142142		spouliot - call getFullName (icall) with true+true
+
+!SSC-7B055CC4499F97B7D91C5ADB0FFCA3E1
+System.String System.MonoType::get_FullName()
+	r142142		spouliot - call getFullName (icall) with true+false
+
+!SSC-11318829EFE12CBB337E3A76C6120EDF
+System.String System.MonoType::get_Name()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_get_Name (icall.c)
+
+!SSC-BF61C2437278FF9522D9C1D2DC28B16F
+System.String System.MonoType::get_Namespace()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_get_Namespace (icall.c)
+
+!SSC-2592395AA49A388B482845B06BAF7CF1
+System.String System.MonoType::ToString()
+	r142142		spouliot - call getFullName (icall) with false+false
+
+!SSC-A7A3AEB041C813ABA2B73495B2BA4969
+System.String System.Reflection.Assembly::get_ImageRuntimeVersion()
+	r142142		spouliot - call InternalImageRuntimeVersion (icall)
+
+!SSC-FCB36476883996858ABDEB7BD368354A
+System.String System.Reflection.Assembly::ToString()
+	r142142		spouliot - call get_fullname (icall)
+
+!SSC-DD9BF42D6ED15CA5BEC8FA03FC04F241
+System.String System.Reflection.Module::ResolveString(System.Int32)
+	r142142		spouliot - call ResolveStringToken (icall w/FIXME)
+
+!SSC-BFCE653CBEC9CCBF20D11AF5F36D0B16
+System.String System.Reflection.MonoCMethod::get_Name()
+	r142142		spouliot - call get_name (icall)
+
+!SSC-8BBA9D0FB0B3D2A360F23AEB5496FE5E
+System.String System.Reflection.MonoMethod::get_Name()
+	r142142		spouliot - call get_name (icall)
+
+!SSC-C91F9004B127B1349399FABB6DD9C4EC
+System.String System.String::Concat(System.Object[])
+	r144912		spouliot - call ConcatInternal [SecurityCritical] with a non-null, non-empty array of string and a computed 'len'
+
+!SSC-B106AF71AAA732C9A5E882D44B0EA681
+System.String System.String::Concat(System.String,System.String)
+	r142142		spouliot - after validating both string parameters (null, empty checks), call InternalAllocateStr (icall in string-icall.c) and CharCopy (unsafe block) twice
+
+!SSC-5C0A34BF02ECA7CA7F4E0CE90601E7C4
+System.String System.String::Concat(System.String,System.String,System.String)
+	r142142		spouliot - after validating all string parameters (null, empty checks), call InternalAllocateStr (icall in string-icall.c) and CharCopy (unsafe block) 3 times
+
+!SSC-05FBAB455FE6CEED85DC2A6EFB23FA6A
+System.String System.String::Concat(System.String,System.String,System.String,System.String)
+	r142142		spouliot - after validating all string parameters (null, empty checks), call InternalAllocateStr (icall in string-icall.c) and CharCopy (unsafe block) 4 times
+
+!SSC-BC1D57F52128607BEB9C10DD6604E1C0
+System.String System.String::Concat(System.String[])
+	r144912		spouliot - call ConcatInternal [SecurityCritical] with a validated (non-null) 'values' string array and a computed 'len'
+
+!SSC-7BB0D935F74DBAAFF03A7538C43AC400
+System.String System.String::Copy(System.String)
+	r142142		spouliot - call InternalAllocateStr (icall in string-icall.c) and CharCopy (unsafe block) on non-null 'str'
+
+!SSC-CD104ACCECE9072AE630E66E5A5A9EF8
+System.String System.String::CreateString(System.Char,System.Int32)
+	r142142		spouliot - calls InternalAllocateStr (icall in string-icall.c) with validated 'count' and an unsafe loop tp copy the character 'c'
+
+!SSC-89112714383C5D0F30D430003267C71B
+System.String System.String::CreateString(System.Char[])
+	r142142		spouliot - calls InternalAllocateStr (icall in string-icall.c) with validated (non-null, not-empty)  'val' and unsafe call to CharCopy
+
+!SSC-D33BDA90F8B48FBDB136295DE9FD857B
+System.String System.String::CreateString(System.Char[],System.Int32,System.Int32)
+	r142142		spouliot - calls InternalAllocateStr (icall in string-icall.c) and unsafe call to CharCopy once all parameters are validated
+
+!SSC-810BBBD4FB4038956C1B0C0FA2AC8B2D
+System.String System.String::Insert(System.Int32,System.String)
+	r142142		spouliot - calls InternalAllocateStr (icall in string-icall.c) and unsafe call to CharCopy (before, 'value', after) once all parameters are validated
+
+!SSC-5874389F686E7F094BF34D2FDDEB3CE7
+System.String System.String::Intern(System.String)
+	r142142		spouliot - call InternalIntern (icall) on non-null value
+
+!SSC-2635ACFC378D59455CC981B30264F5AC
+System.String System.String::IsInterned(System.String)
+	r142142		spouliot - call InternalIsInterned (icall) on non-null value
+
+!SSC-EB1F132ACFC4B4ED00489F5D3301E031
+System.String System.String::Join(System.String,System.String[])
+	r144912		spouliot - call JoinUnchecked [SecurityCritical] with validated parameters
+
+!SSC-85FA0C0EB3C9C77A277CD8A0337B2A0F
+System.String System.String::PadLeft(System.Int32,System.Char)
+	r142142		spouliot - call InternalAllocateStr (icall) on non-negative 'totalWidth' then unsafe block to pad and copy string
+
+!SSC-CC070FCFFD5F896184D774DB6C9312D5
+System.String System.String::PadRight(System.Int32,System.Char)
+	r142142		spouliot - call InternalAllocateStr (icall) on non-negative 'totalWidth' then unsafe block to copy and pad string
+
+!SSC-B98BC5E4DC74896EC7C122D5827B1B0F
+System.String System.String::Remove(System.Int32,System.Int32)
+	r142142		spouliot - validate 'startIndex' and 'count', call InternalAllocateStr (icall) then unsafe block to copy first and second part of the string
+
+!SSC-589AD98B8DC8A1D3857C6257DCAB63AD
+System.String System.String::Replace(System.Char,System.Char)
+	r142142		spouliot - call InternalAllocateStr (icall) and unsafe CharCopy (until first char to be replaced) and unsafe loop/copy/replace
+
+!SSC-F100204EFD5614ADEDECD00CC714D194
+System.String System.String::Replace(System.String,System.String)
+	r142142		spouliot - call ReplaceUnchecked (unsafe) once both parameters are validated
+
+!SSC-8E861C167D0920DFAED324D674E86EC5
+System.String System.String::Substring(System.Int32)
+	r144912		spouliot - call SubstringUnchecked [SecurityCritical] with validated 'startIndex' parameter
+
+!SSC-77012B73DD5F6EAA03EFD87192811FA3
+System.String System.String::Substring(System.Int32,System.Int32)
+	r144912		spouliot - call SubstringUnchecked [SecurityCritical] with validated 'startIndex' and 'length' parameters
+
+!SSC-FF25D2AC6026B9143FA09E11AAA9C54D
+System.String System.String::ToLowerInvariant()
+	r144921		spouliot - shortcut added to return String.Empty if length == 0 (no security concern)
+	r142142		spouliot - call InternalAllocateStr (icall in mono/metadata/string-icalls.c) and unsafe loop over the 'length' of the string
+
+!SSC-0D4F064AA8C0C553AB8B4C775A9E7FCC
+System.String System.String::ToUpperInvariant()
+	r144921		spouliot - shortcut added to return String.Empty if length == 0 (no security concern)
+	r142142		spouliot - call InternalAllocateStr (icall in mono/metadata/string-icalls.c) and unsafe loop over the 'length' of the string
+
+!SSC-2519AD0ACA4C6B37EE2C075DBA9FAD5A
+System.String System.String::Trim()
+	r144912		spouliot - call SubstringUnchecked [SecurityCritical] with computed parameters
+
+!SSC-54F0E19524E2950DB01623F85D5833E0
+System.String System.String::Trim(System.Char[])
+	r144912		spouliot - call SubstringUnchecked [SecurityCritical] with computed parameters
+
+!SSC-48762113DB178BEF770EFB6249387CB7
+System.String System.String::TrimEnd(System.Char[])
+	r144912		spouliot - call SubstringUnchecked [SecurityCritical] with computed parameters
+
+!SSC-440D9BD72CEBE69B2A70FA1287460D6C
+System.String System.String::TrimStart(System.Char[])
+	r144912		spouliot - call SubstringUnchecked [SecurityCritical] with computed parameters
+
+!SSC-C9C9A7463EF81E057582FA8B27998F3D
+System.String System.Text.ASCIIEncoding::GetString(System.Byte[],System.Int32,System.Int32)
+	r142142		spouliot - unsafe code also call String.InternalAllocateStr (icall) once all parameters are validated
+
+!SSC-DE41F63D71295F1A209CDD6F2D207214
+System.String System.Text.StringBuilder::ToString()
+	r144912		spouliot - call String.SubstringUnchecked [SecurityCritical] with computed (non-user) parameters if the string length is less than half the allocated buffer
+
+!SSC-C50EFAC1A0E604228088768BAE6EBFA3
+System.String System.Text.StringBuilder::ToString(System.Int32,System.Int32)
+	r144912		spouliot - call String.SubstringUnchecked [SecurityCritical] with validated 'startIndex' and 'length' parameters
+
+!SSC-1019B65D0947866DFB4E49C811666A08
+System.String System.Text.UnicodeEncoding::GetString(System.Byte[],System.Int32,System.Int32)
+	r142142		spouliot - unsafe, call GetCharsInternal with pointers to byte* and char* once all parameters were validated. Some checks (charCount and odd-length) are delegated
+
+!SSC-5646DD6E8836ED09ABA9ACD5181A6B7E
+System.String System.Threading.Thread::get_Name()
+	r142142		spouliot - call GetName_internal (icall in threads.c). parameter-less (instance)
+
+!SSC-D0AA0FAE7A4576B0953835785C137CEF
+System.String[] System.Reflection.Assembly::GetManifestResourceNames()
+	r144558		spouliot - visible icall. parameter-less (instance)
+
+!SSC-E512924DC977BF45886D3F334FBBEEDA
+System.String[] System.String::Split(System.Char[],System.Int32)
+	r142142		spouliot - call InternalSplit (icall in string-icalls.c) after validating parameters and '0' (options)
+
+!SSC-B0A6A0723C6BB28344816719CD1C631A
+System.String[] System.String::Split(System.Char[],System.Int32,System.StringSplitOptions)
+	r142142		spouliot - call InternalSplit (icall in string-icalls.c) after validating parameters
+
+!SSC-701A2077B5BC199B3E03105F4B7B49A4
+System.Text.Encoding System.Text.Encoding::get_Default()
+	r142747		spouliot - call InternalCodePage (icall) to retrieve the code page (int32)
+
+!SSC-8885668DEC6ABD7E56323548075FAFC5
+System.Text.StringBuilder System.Text.StringBuilder::Append(System.Char[])
+	r144912		spouliot - for non-null 'value' call String.CharCopy [SecurityCritical] with 'value' and computed parameters
+
+!SSC-56F8D2F3956F1E146DE3D6F7F0366687
+System.Text.StringBuilder System.Text.StringBuilder::Append(System.Char[],System.Int32,System.Int32)
+	r144912		spouliot - for non-null 'value' call String.CharCopy [SecurityCritical] with 'value' and validated 'startIndex' and 'charCount' parameters
+
+!SSC-D9C02767483DFBB6A8685C70C733B70C
+System.Text.StringBuilder System.Text.StringBuilder::Append(System.String)
+	r144912		spouliot - for non-null 'value' call String.CharCopy [SecurityCritical] with 'value' and computed parameters
+
+!SSC-787D53875617C926478982551F684B12
+System.Text.StringBuilder System.Text.StringBuilder::Append(System.String,System.Int32,System.Int32)
+	r144912		spouliot - for non-null 'value' call String.CharCopy [SecurityCritical] with 'value' and validated 'startIndex' and 'count' parameters
+
+!SSC-EC48530CCEA245DEF68988C65ED73245
+System.Text.StringBuilder System.Text.StringBuilder::Insert(System.Int32,System.Char)
+	r144912		spouliot - for non-null 'value' call String.CharCopyReverse and String.CharCopy [SecurityCritical] with 'value', validated 'index' and other computed parameters
+
+!SSC-6069FA7E39AD13DC1D8A114DD4E31007
+System.Text.StringBuilder System.Text.StringBuilder::Insert(System.Int32,System.String)
+	r144912		spouliot - for non-null 'value' call String.CharCopyReverse and String.CharCopy [SecurityCritical] with 'value', validated 'index' and other computed parameters
+
+!SSC-F0A8C30D91F3F551339150B4446221DD
+System.Text.StringBuilder System.Text.StringBuilder::Remove(System.Int32,System.Int32)
+	r144912		spouliot - for non-null 'value' call String.CharCopy [SecurityCritical] with 'value' and validated 'startIndex' and 'length' parameters
+
+!SSC-358E9A7B4B8D34F1FCA7F6CC3C040309
+System.Text.StringBuilder System.Text.StringBuilder::Replace(System.String,System.String,System.Int32,System.Int32)
+	r144912		spouliot - for non-null 'value' call String.CharCopyReverse and String.CharCopy [SecurityCritical] with 'value', validated and computed parameters
+
+!SSC-76C749EFD80DD7DD2D58D14C90357ED9
+System.Threading.RegisteredWaitHandle System.Threading.ThreadPool::RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.Int64,System.Boolean)
+	r144307		spouliot - creates a new WaitCallback on RegisteredWaitHandle::Wait (marked SecurityCritical)
+
+!SSC-FD5DD8600513342023CF647201CB2197
+System.Threading.Thread System.Threading.Thread::get_CurrentThread()
+	r142142		spouliot - call CurrentThread_internal (icall named mono_thread_current in threads.c). parameter-less (static)
+
+!SSC-80634AB6A451333C634C7E0FA1FAB94A
+System.Threading.ThreadState System.Threading.Thread::get_ThreadState()
+	r142661		spouliot - call GetState(System.Threading.InternalThread) [SecurityCritical]
+
+!SSC-331E6EE2AA9F6E0E2CDAC7A97DBE77F1
+System.Type System.Enum::GetUnderlyingType(System.Type)
+	r142142		spouliot - call get_underlying_type on non-null, enum, type
+
+!SSC-84224ADBB51A18E9E1F609DD15A45B48
+System.Type System.MonoType::get_BaseType()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_get_type_parent (icall.c)
+
+!SSC-27B9EFCCB078F4F7E05EBD11E69C53DE
+System.Type System.MonoType::get_DeclaringType()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_get_DeclaringType (icall.c)
+
+!SSC-D0D74ED9C17E545318BB4483D7E4473F
+System.Type System.MonoType::GetElementType()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_GetElementType (icall.c)
+
+!SSC-34850B92561B4B8803C83A8391116827
+System.Type System.MonoType::GetGenericTypeDefinition()
+	r142142		spouliot - call GetGenericTypeDefinition_impl (icall) on (non-null) instance
+
+!SSC-646E37635A7341D1A242177D1428B108
+System.Type System.MonoType::GetNestedType(System.String,System.Reflection.BindingFlags)
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_Type_GetNestedType (icall.c) with 'name' and 'bflags' (validated in unmanaged code)
+
+!SSC-C44A44B08210F81CA8B410B44249AC17
+System.Type System.Object::GetType()
+	r144558		spouliot - visible icall. parameter-less (instance)
+
+!SSC-38B58CA154EF6600C52A439DAFBEC1C8
+System.Type System.Reflection.Assembly::GetType(System.String,System.Boolean,System.Boolean)
+	r142142		spouliot - call (instance) InternalGetType (icall) with 'null' for 'module' and the validated parameters
+
+!SSC-07080879D7716F8D9D297B8ABBB40938
+System.Type System.Reflection.Emit.DerivedType::get_UnderlyingSystemType()
+	r142142		spouliot - call create_unmanaged_type (icall named mono_reflection_create_unmanaged_type in reflection.c) on 'this'
+
+!SSC-64545AE7DD70F8700018AE0DFACCA4F8
+System.Type System.Reflection.Emit.ModuleBuilder::GetType(System.String,System.Boolean,System.Boolean)
+	r142142		spouliot - call create_modified_type (icall) with cached 'TypeBuilder' and 'modifiers' (based on the string parameter)
+
+!SSC-70ACD3CF9521E417990489348A022308
+System.Type System.Reflection.Emit.TypeBuilder::CreateType()
+	r142142		spouliot - call create_generic_class (icall in reflection.c, parameter-less instance). call AppDomain.DoTypeResolve on fields where FieldType is a TypeBuilder (as parameter). call create_runtime_class (icall) on 'this'
+
+!SSC-A82D32CD29B07D5D1E384F6A70910D29
+System.Type System.Reflection.Module::GetGlobalType()
+	r155239		spouliot - non-visible instance icall. call ves_icall_System_Reflection_Module_GetGlobalType (icall.c)
+
+!SSC-CE56B82AF49F1F8FB267A0DAB371213F
+System.Type System.Reflection.Module::GetType(System.String,System.Boolean,System.Boolean)
+	r142142		spouliot - call assembly.InternalGetType (instance icall) with this and the validated (string) parameters
+
+!SSC-15EAA53FF2633858598068E26722C549
+System.Type System.Reflection.Module::ResolveType(System.Int32,System.Type[],System.Type[])
+	r142142		spouliot - call ResolveTypeToken (icall)
+
+!SSC-E9358DC28977AE78E7A4A67E07123669
+System.Type System.Reflection.MonoField::get_DeclaringType()
+	r142142		spouliot - call GetParentType (icall) with 'true'
+
+!SSC-570483006502F5741EF861753F4BC86A
+System.Type System.Reflection.MonoField::get_ReflectedType()
+	r142142		spouliot - call GetParentType (icall) with 'false'
+
+!SSC-2B7B2F3A1503BA37E4CCF23B2D593106
+System.Type System.Reflection.MonoGenericCMethod::get_ReflectedType()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoGenericMethod_get_ReflectedType (icall.c)
+
+!SSC-6E90ECAA2FF0F4AC652C1FCD62E0A664
+System.Type System.Reflection.MonoGenericMethod::get_ReflectedType()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoGenericMethod_get_ReflectedType (icall.c)
+
+!SSC-A2D3DD91FDAE1A4A7BF3F90016D9E23E
+System.Type System.Type::GetType(System.String)
+	r142142		spouliot - call internal_from_name (icall named ves_icall_type_from_name)
+
+!SSC-AD737767E893A570A474141497D1CF98
+System.Type System.Type::GetType(System.String,System.Boolean)
+	r142142		spouliot - call internal_from_name (icall named ves_icall_type_from_name)
+
+!SSC-D5455F207D9AF1A03FD87954C8F5A844
+System.Type System.Type::GetType(System.String,System.Boolean,System.Boolean)
+	r142142		spouliot - call internal_from_name (icall named ves_icall_type_from_name)
+
+!SSC-633D681447858729A0DE514C9A66501C
+System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)
+	r142142		spouliot - call internal_from_handle (icall named ves_icall_type_from_handle) with non-null pointer
+
+!SSC-BA4CCC353491F2B8701173D7DFB45C9B
+System.Type System.Type::MakeArrayType()
+	r142142		spouliot - call make_array_type (icall) with '0'
+
+!SSC-5811AA404497E3C7601E9658935CDD55
+System.Type System.Type::MakeArrayType(System.Int32)
+	r142142		spouliot - call make_array_type (icall) with 'rank' >= 1
+
+!SSC-AD9077554597EE88142E9D43BB2A81C8
+System.Type System.Type::MakeByRefType()
+	r142142		spouliot - call make_byref_type (icall)
+
+!SSC-5F6B062ECF76F441C455BBE6D8A7C78A
+System.Type System.Type::MakeGenericType(System.Type[])
+	r142142		spouliot - call MakeGenericType (icall) with validated parameters
+
+!SSC-8C756776FC072B894E54B8EFB85EA583
+System.Type System.Type::MakePointerType()
+	r146014		spouliot - now a managed method calling a new icall with 'this' after validation (!IsSystemType)
+	r144558		spouliot - visible icall (instance, no parameter)
+
+!SSC-0B2CCC8B4FBEA6B76037E2B9058B0C74
+System.Type[] System.MonoType::GetGenericArguments()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoType_GetGenericArguments (icall.c)
+
+!SSC-C594AC9F717E602A4694E88B1C139948
+System.Type[] System.MonoType::GetInterfaces()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_Type_GetInterfaces (icall.c)
+
+!SSC-0E922B23326E31226539E2DD7AE6CA69
+System.Type[] System.MonoType::GetNestedTypes(System.Reflection.BindingFlags)
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_Type_GetNestedTypes (icall.c) using 'bflags'
+
+!SSC-1E0B9B2D95D83F421E2EF5EE3BB71BED
+System.Type[] System.Reflection.Assembly::GetTypes(System.Boolean)
+	r155239		spouliot - internal icall. call ves_icall_System_Reflection_Assembly_GetTypes (icall.c) with boolean 'exportedOnly' parameter
+
+!SSC-BAA07B3B544BB4070AF2869386A011A7
+System.Type[] System.Reflection.Module::GetTypes()
+	r142142		spouliot - call InternalGetTypes (icall) on self (instance)
+
+!SSC-FC6461C4057C1A65EAE165002C8EB6E4
+System.Type[] System.Reflection.MonoMethod::GetGenericArguments()
+	r155239		spouliot - indirectly visible instance icall. call ves_icall_MonoMethod_GetGenericArguments (icall.c)
+
+!SSC-72E9DD287BED874AB00833743A2DAA23
+System.Type[] System.Type::GetGenericParameterConstraints()
+	r142142		spouliot - call GetGenericParameterConstraints_impl (icall named ves_icall_Type_GetGenericParameterConstraints)
+
+!SSC-D3290AE2BF81113F8E086D717328725E
+System.UInt16 Mono.Security.BitConverterLE::ToUInt16(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call UShortFromBytes to copy two bytes from 'src' (bound-checked byte[]) into a 'ushort' (byte*)
+
+!SSC-63F353E9050317AE9F7482D511E6E17E
+System.UInt16 System.BitConverter::ToUInt16(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call PutBytes giving the address of the type (ushort) instance and it's size (2)
+
+!SSC-FA9128ECBFD0343B11F3E160A05794CB
+System.UInt32 Mono.Security.BitConverterLE::ToUInt32(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call UIntFromBytes to copy four bytes from 'src' (bound-checked byte[]) into a 'uint' (byte*)
+
+!SSC-823A20A060C5B795C51F24C2328F6DA2
+System.UInt32 System.BitConverter::ToUInt32(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call PutBytes giving the address of the type (uint) instance and it's size (4)
+
+!SSC-C1D024648D3D3665FFD46BA56AFB2963
+System.UInt64 System.BitConverter::ToUInt64(System.Byte[],System.Int32)
+	r142142		spouliot - unsafe, call PutBytes giving the address of the type (ulong) instance and it's size (8)
+
+!SSC-404308ECDA75262FFC483CBE8F289408
+System.UInt64 System.Decimal::u64(System.Decimal)
+	r142142		spouliot - call decimalFloorAndTrunc (icall) and decimal2UInt64 (icall)
+
+!SSC-C93C838AE9E2369085EC02A7ED284BDD
+System.Void Mono.Globalization.Unicode.MSCompatUnicodeTable::.cctor()
+	r142142		spouliot - unsafe code used to build the tables from resources
+
+!SSC-5DECAB35347CFAF89278131BCABD7D0D
+System.Void Mono.Globalization.Unicode.SimpleCollator::.cctor()
+	r142142		spouliot - creates a static SimpleCollator instance for CultureInfo.InvariantCulture
+
+!SSC-020AAE9122FFBC5470D93CF6372114D4
+System.Void System.Array::Clear(System.Array,System.Int32,System.Int32)
+	r142142		spouliot - call ClearInternal (icall) after validating the parameters
+
+!SSC-A52AA658EB92314FF7ED2554B613887D
+System.Void System.Array::Copy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)
+	r142142		spouliot - call FastCopy (icall) after minimal validation (more is done if the icall fails) then loop calls on GetValueImpl (icall) and SetValueImpl (icall) with validated indexes
+
+!SSC-8212D9F80E98D331049928425F43A03D
+System.Void System.Array::InternalArray__set_Item<T>(System.Int32,T)
+	r142142		spouliot - call SetGenericValueImpl (icall without bounds checking) with validated 'index' value
+
+!SSC-06BAC6E672033B5F3645AEE7C3F752DC
+System.Void System.Array::Reverse(System.Array,System.Int32,System.Int32)
+	r144307		spouliot - if not array of object/int/double then calls get_swapper -> slow_swapper then [G|S]etValueImpl (icalls)
+
+!SSC-69AD566888003CA90D697E138ED75FB4
+System.Void System.Array::SetValue(System.Object,System.Int32)
+	r142142		spouliot - call SetValueImpl (icall without bounds checking) with validated 'index' value
+
+!SSC-35D51E0C75B8183FB2B73F28600C4AE7
+System.Void System.Array::SetValue(System.Object,System.Int32[])
+	r144558		spouliot - visible icall. null-check/exception-thrown in unmanaged code for 'idxs'
+
+!SSC-664BE40D6A52D221B303446EC36D9EFF
+System.Void System.Array::System.Collections.IList.set_Item(System.Int32,System.Object)
+	r142142		spouliot - call SetValueImpl (icall without bounds checking) with validated 'index' value
+
+!SSC-E66423928C7E07AAC7A7454EC5EB8E3C
+System.Void System.Buffer::BlockCopy(System.Array,System.Int32,System.Array,System.Int32,System.Int32)
+	r142142		spouliot - call BlockCopyInternal (icall) on non-null values, bounds validated, no integer overflow
+
+!SSC-D2F70BE6C8149E5E3E0C37B3CABB5435
+System.Void System.Buffer::SetByte(System.Array,System.Int32,System.Byte)
+	r142142		spouliot - call SetByteInternal (icall) with non-null value, bounds validated
+
+!SSC-90B0557059B560D0BD3B5D2C79B44C72
+System.Void System.Char::.cctor()
+	r142142		spouliot - call GetDataTablePointers (icall) to retrieve tables (arrays)
+
+!SSC-FF96E56FE96721AAC356A5204E94ADC7
+System.Void System.Collections.Generic.Comparer`1::.cctor()
+	r148381		spouliot - use Activator.CreateInstance to create (inaccessible) GenericComparer<T>
+
+!SSC-ADAB9C797367F496FE2E9DD258F87C20
+System.Void System.Collections.Generic.EqualityComparer`1::.cctor()
+	r142142		spouliot - use Activator.CreateInstance to create (inaccessible) GenericEqualityComparer<T>
+
+!SSC-AA2A3DACC8D6CA6C0457C74FA0E20B0B
+System.Void System.Console::.cctor()
+	r142142		spouliot - call Encoding.InternalCodePage (icall) to retrieve the code page (int32)
+
+!SSC-200D40A3C2B312706A925CC44E58B8EE
+System.Void System.CurrentSystemTimeZone::.ctor(System.Int64)
+	r142142		spouliot - call GetTimeZoneData (icall) with the Year computed from the 'ticks' input
+
+!SSC-8EEB81BD68DE54D5CC1F8B99B3E7EC28
+System.Void System.CurrentSystemTimeZone::OnDeserialization(System.Globalization.DaylightTime)
+	r142142		spouliot - call GetTimeZoneData (icall) with 'DateTime.Now.Year'
+
+!SSC-3123561E87FAB24CD74FE723474067ED
+System.Void System.Diagnostics.StackTrace::.ctor()
+	r143653		spouliot - calls init_frame(0,false) which calls StackFrame(int,bool) [SecurityCritical]
+
+!SSC-20C71A9CC185C7642C391262CCE84F89
+System.Void System.Diagnostics.StackTrace::.ctor(System.Exception)
+	r142142		spouliot - call get_trace (specially registred icall named ves_icall_get_trace in mono/mini/mini-exceptions.c) with non-null 'exception', METHODS_TO_SKIP (0) and 'false'
+
+!SSC-C3B438050254310B76395B3A6183392D
+System.Void System.Environment::set_ExitCode(System.Int32)
+	r144558		spouliot - visible icall (named mono_environment_exitcode_get in mono/metadata/environment.c). return static value
+
+!SSC-7F5CCED3D21CF155E090CE621A279182
+System.Void System.GC::Collect()
+	r142142		spouliot - calls InternalCollect (icall in mono/metadata/gc.c) with MaxGeneration (icall in mono/metadata/boehm-gc.c) which returns 0
+
+!SSC-629FD7755CE8911B933FEFC50B398B00
+System.Void System.GC::KeepAlive(System.Object)
+	r144558		spouliot - visible icall (mono/metadata/gc.c) - does nothing (existance is enough :)
+
+!SSC-5A4FA1E4C2E7728E0A3F5AD99F33F681
+System.Void System.GC::ReRegisterForFinalize(System.Object)
+	r144558		spouliot - visible icall (mono/metadata/gc.c). has non-null check (or exception) for 'obj'
+
+!SSC-F1C81E1245037FE91224A479505102ED
+System.Void System.GC::SuppressFinalize(System.Object)
+	r144558		spouliot - visible icall (mono/metadata/gc.c). has non-null check (or exception) for 'obj'
+
+!SSC-74052D3610E6B0C88B24749F1769C730
+System.Void System.GC::WaitForPendingFinalizers()
+	r144558		spouliot - visible icall (mono/metadata/gc.c). parameter less, no return value
+
+!SSC-A5F9F2D36883E466D1903F0BD34C2DC7
+System.Void System.Globalization.CompareInfo::.ctor(System.Globalization.CultureInfo)
+	r142142		spouliot - create a new SimpleCollator instance (SecurityCritical / unsafe) based on the culture
+
+!SSC-39B0B78F0A179875F605FFED272BE2CD
+System.Void System.Globalization.CultureInfo::.cctor()
+	r144107		spouliot - create the invariant culture info instance (ctor is SecurityCritical) returned by static InvariantCulture property
+
+!SSC-2ECE128844D07FC2C543207847661B3A
+System.Void System.Globalization.CultureInfo::.ctor(System.Int32)
+	r144107		spouliot - chain of calls (all SecurityCritical) leading to construct_internal_locale_from_lcid (icall in mono/metadata/locales.c)
+
+!SSC-A8F6CFFE129BD25220DC52FF5661AB99
+System.Void System.Globalization.CultureInfo::.ctor(System.String)
+	r144826		spouliot - chain of calls (all SecurityCritical) leading to construct_internal_locale_from_name (icall in locales.c) on a non-null 'name'
+
+!SSC-20898D83E710BD3D2D443E186BAF21F6
+System.Void System.Globalization.CultureInfo::Construct()
+	r142142		spouliot - call construct_internal_locale_from_lcid (icall in locales.c)
+
+!SSC-BF00C1E6B70E33803B10438A87FB2115
+System.Void System.Globalization.RegionInfo::.ctor(System.String)
+	r142142		spouliot - call construct_internal_region_from_name (icall in locales.c)
+
+!SSC-85ABF27C1DF25F7F3C14420ED1A923F0
+System.Void System.IO.BinaryReader::CheckBuffer(System.Int32)
+	r142142		spouliot - call Buffer.BlockCopyInternal (icall) on non-null, validated parameters
+
+!SSC-19979DD3EF6D6A65BF35B1561B9E2016
+System.Void System.IO.Path::.cctor()
+	r142142		spouliot - call MonoIO.[Volume|Directory|AltDirectory|Path]SeparatorChar (all icalls returning a char)
+
+!SSC-C9DFA7AE30876546CE520F50811F3C93
+System.Void System.MonoEnumInfo::GetInfo(System.Type,System.MonoEnumInfo&)
+	r155002		spouliot - changed to call Enum.GetUnderlyingType instead of using array types
+	r142142		spouliot - call get_enum_info (icall) with non-null 'enumType' value (checked by Hashtable.ContainsKey)
+
+!SSC-D825296AF049D727B0F05CB038272159
+System.Void System.NumberFormatter::.cctor()
+	r142142		spouliot - call GetFormatterTables (icall) to retrieve unsafe tables from the runtime
+
+!SSC-B449B453D60A8098146A297BEDA36D9D
+System.Void System.Reflection.AssemblyName::.ctor(System.String)
+	r142142		spouliot - call ParseName (icall) and throw if it return false
+
+!SSC-B4BB5593B0DE0768CD02F7BF6AD4E580
+System.Void System.Reflection.Emit.CustomAttributeBuilder::Initialize(System.Reflection.ConstructorInfo,System.Object[],System.Reflection.PropertyInfo[],System.Object[],System.Reflection.FieldInfo[],System.Object[])
+	r142142		spouliot - validate all parameters then call GetBlob [SecurityCritical] using them
+
+!SSC-7CCDE9B6C62D25E5F56968059D59CB2C
+System.Void System.Reflection.Emit.DynamicMethod::CreateDynMethod()
+	r142142		spouliot - call create_dynamic_method (icall named mono_reflection_create_dynamic_method in reflection.c) on 'this'
+
+!SSC-969E2B4E4F3F9225F0F72EDF529F01CF
+System.Void System.Reflection.Emit.DynamicMethod::Finalize()
+	r142142		spouliot - call destroy_dynamic_method (icall named mono_reflection_destroy_dynamic_method in reflection.c) on 'this'
+
+!SSC-E8B6CCBE11DFB9855DA3ED9187E11F6E
+System.Void System.Reflection.Emit.DynamicMethod::RejectIfCreated()
+	r155836		spouliot - call RuntimeMethodHandle.get_Value [SecurityCritical] to compare it with IntPtr.Zero
+
+!SSC-A9BBA57B3670D5537E9F91B185D810E3
+System.Void System.Reflection.Emit.ModuleBuilder::.ctor(System.Reflection.Emit.AssemblyBuilder,System.String,System.String,System.Boolean,System.Boolean)
+	r142142		spouliot - call set_wrappers_type (icall) and debugging symbol loading/initialization
+
+!SSC-BCE0E166D77CDB2A5E091DE7D4CF1870
+System.Void System.Reflection.Emit.TypeBuilder::.ctor(System.Reflection.Emit.ModuleBuilder,System.Reflection.TypeAttributes,System.Int32)
+	r142142		spouliot - call setup_internal_class (icall in reflection.c) with 'this'
+
+!SSC-2A7348CC0E47FFEEA1C1F8BE6607C601
+System.Void System.Reflection.Emit.TypeBuilder::.ctor(System.Reflection.Emit.ModuleBuilder,System.String,System.Reflection.TypeAttributes,System.Type,System.Type[],System.Reflection.Emit.PackingSize,System.Int32,System.Type)
+	r142142		spouliot - call setup_internal_class (icall in reflection.c) with 'this'
+
+!SSC-B52B077060901F8244CACDE21FDA69E0
+System.Void System.Reflection.Emit.TypeBuilder::SetParent(System.Type)
+	r142142		spouliot - call setup_internal_class (icall named mono_reflection_setup_internal_class in mono/metadata/reflection.c) on 'this'
+
+!SSC-BDACCD6A5564B9D49992DD7522C2349D
+System.Void System.Reflection.MonoField::SetValue(System.Object,System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Globalization.CultureInfo)
+	r142142		spouliot - call SetValueInternal (icall) with potentially null value (for static fields)
+
+!SSC-515D9907E9AAA782E082AA04D4827E82
+System.Void System.Reflection.MonoGenericClass::.ctor(System.Type,System.Type[])
+	r148083		spouliot - call register_with_runtime (icall) using 'this'
+
+!SSC-B4A206E08086594ACF279EC3032BD6FD
+System.Void System.Reflection.MonoGenericClass::initialize()
+	r142142		spouliot - call initialize (icall named mono_reflection_generic_class_initialize in mono/metadata/reflection.c)
+
+!SSC-D2747D83A950F786B75D8B9BF67DAA2D
+System.Void System.Reflection.MonoMethod::.ctor(System.RuntimeMethodHandle)
+	r155836		spouliot - internal. call RuntimeMethodHandle.get_Value [SecurityCritical] to initialize it's 'mhandle' field
+
+!SSC-E824BD503EA1C83C9897ADAC788416D2
+System.Void System.Runtime.CompilerServices.ConditionalWeakTable`2::.ctor()
+	r156851		spouliot - new implementation. calls GC.register_ephemeron_array (icall) on a (field) array of Ephemeron
+
+!SSC-97F061DE10F6A30BB858642C1008B1A3
+System.Void System.Runtime.CompilerServices.ConditionalWeakTable`2::Rehash()
+	r157174		spouliot - calls GC.register_ephemeron_array (icall) on a local variable that is later assigned to the 'data' field in order to resize the Ephemeron array
+
+!SSC-CD0076691FD2A903A2C718A3047D0832
+System.Void System.Runtime.CompilerServices.RuntimeHelpers::InitializeArray(System.Array,System.RuntimeFieldHandle)
+	r142142		spouliot - added validation (crash), calls InitializeArray (icall)
+
+!SSC-CA1465589002E93641B19A1ACEC46456
+System.Void System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(System.RuntimeTypeHandle)
+	r142142		spouliot - added validation, calls RunClassConstructor (icall)
+
+!SSC-546B8BF709E7E4DF8E74935411838D30
+System.Void System.Runtime.Serialization.Formatters.Binary.ObjectReader::.ctor(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter)
+	r143412		spouliot - internal type (needed to serialize CultureInfo and friends between appdomain/threads). Access multiple fields of BinaryFormatter [SecurityCritical] paramater
+
+!SSC-2BBF0752D5C8FDE3C00C84AD7D2E4754
+System.Void System.Runtime.Serialization.Formatters.Binary.ObjectReader::ReadObjectContent(System.IO.BinaryReader,System.Runtime.Serialization.Formatters.Binary.ObjectReader/TypeMetadata,System.Int64,System.Object&,System.Runtime.Serialization.SerializationInfo&)
+	r143412		spouliot - call FormatterServices [SecurityCritical] Get[Safe]UninitializedObject to create objects based on 'metadata' parameter
+
+!SSC-7737A55009679A96A160078979232BA5
+System.Void System.Runtime.Serialization.Formatters.Binary.ObjectReader::SetObjectValue(System.Object,System.String,System.Reflection.MemberInfo,System.Runtime.Serialization.SerializationInfo,System.Object,System.Type,System.Int32[])
+	r142142		spouliot - call FieldInfo.SetValue [SecuritySafeCritical] or PropertyInfo.SetValue [SecurityTransparent] on fields/properties that can be critical/safe critical (affects WebClient)
+
+!SSC-834028A2D9EBA6DFFEDF14AD8CC2F664
+System.Void System.Runtime.Serialization.Formatters.Binary.ObjectWriter::.ctor(System.Runtime.Serialization.ISurrogateSelector,System.Runtime.Serialization.StreamingContext,System.Runtime.Serialization.Formatters.FormatterAssemblyStyle,System.Runtime.Serialization.Formatters.FormatterTypeStyle)
+	r143412		spouliot - internal type (needed to serialize CultureInfo and friends between appdomain/threads). Create a ObjectIDGenerator [SecurityCritical] instance
+
+!SSC-0152970D1C01610ABB7284C6DEB3A2E0
+System.Void System.Runtime.Serialization.Formatters.Binary.ObjectWriter::GetObjectData(System.Object,System.Runtime.Serialization.Formatters.Binary.TypeMetadata&,System.Object&)
+	r145215		spouliot - create instance of SerializableTypeMetadata [SecurityCritical] or MemberTypeMetadata [SecurityCritical]
+
+!SSC-87444232C56A5DD778D4EF0436E10A66
+System.Void System.Runtime.Serialization.Formatters.Binary.ObjectWriter::WriteObject(System.IO.BinaryWriter,System.Int64,System.Object)
+	r145200		spouliot - call WriteAssemblyName [SecurityCritical] when 'metadata' is outside mscorlib.dll
+
+!SSC-917B5E42F96C1C01356026C993C27209
+System.Void System.Runtime.Serialization.Formatters.Binary.ObjectWriter::WriteObjectInstance(System.IO.BinaryWriter,System.Object,System.Boolean)
+	r145200		spouliot - call ObjectIDGenerator [SecurityCritical] NextId or GetId and call WriteArray [SecurityCritical]
+
+!SSC-4CD5B96065BD0827130D0A6B89C31D12
+System.Void System.Runtime.Serialization.Formatters.Binary.ObjectWriter::WriteValue(System.IO.BinaryWriter,System.Type,System.Object)
+	r145200		spouliot - call ObjectIDGenerator [SecurityCritical] GetId
+
+!SSC-D16421AA78B52FA2589E5DAA5CF5670A
+System.Void System.RuntimeFieldHandle::.ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)
+	r155836		spouliot - internal. assign 'value' field from the FieldHandle.Value [SecurityCritical] of the MonoField being deserialized
+
+!SSC-77636A6B0D9EDABC952D9C077C9F9D43
+System.Void System.RuntimeMethodHandle::.ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)
+	r155836		spouliot - internal. assign 'value' field from the MethodHandle.Value [SecurityCritical] of the MonoMethod being deserialized
+
+!SSC-CC6AAD6CCC1E649C3682E332171240A0
+System.Void System.Security.Cryptography.RNGCryptoServiceProvider::.cctor()
+	r142142		spouliot - call RngOpen (icall)
+
+!SSC-6CDF7D5C15B7CB57DD5D1CCDD6BB2DD9
+System.Void System.Security.Cryptography.RNGCryptoServiceProvider::.ctor()
+	r142142		spouliot - call RngInitialize (icall)
+
+!SSC-E2FF0D6DA7F865380BFE520CA4FB2407
+System.Void System.Security.Cryptography.RNGCryptoServiceProvider::Finalize()
+	r142142		spouliot - call RngClose (icall)
+
+!SSC-0BBFA754C8445E8697B92CF48FA31F8D
+System.Void System.Security.Cryptography.RNGCryptoServiceProvider::GetBytes(System.Byte[])
+	r142142		spouliot - call RngGetBytes (icall)
+
+!SSC-16DE708D4377D7F87E911DC99105A9D1
+System.Void System.Security.Cryptography.RNGCryptoServiceProvider::GetNonZeroBytes(System.Byte[])
+	r142142		spouliot - call RngGetBytes (icall)
+
+!SSC-5F7F5B8405D224AD6A5F561A93988C3D
+System.Void System.String::.cctor()
+	r147732		spouliot - call GetLOSLimit (parameter-less icall) to initialize LOS_limit readonly static int32 variable
+
+!SSC-33549640E201BCF91E45FA4E714BF26F
+System.Void System.String::.ctor(System.Char,System.Int32)
+	r144558		spouliot - icall redirected to CreateString(char,int) which calls InternalAllocateStr (icall) and an unsafe loop using validated parameters
+
+!SSC-ECE2B5841DC7D211E8891B42297DA87A
+System.Void System.String::.ctor(System.Char[])
+	r144558		spouliot - icall redirected to CreateString(char[]) which calls InternalAllocateStr (icall) and an unsafe copy using validated parameter 'val'
+
+!SSC-3449C45148F251B6EE603E7111458832
+System.Void System.String::.ctor(System.Char[],System.Int32,System.Int32)
+	r144558		spouliot - icall redirected to CreateString(char[],int,int) which calls InternalAllocateStr (icall) and an unsafe copy using validated parameters
+
+!SSC-AC216E3C7D6B80AF54C3D8FDBD83A9BD
+System.Void System.String::CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)
+	r142142		spouliot - unsafe call to CharCopy after all parameters are validated
+
+!SSC-4F5D68894B8C785063C529DF39AC48E0
+System.Void System.Text.StringBuilder::.ctor(System.String,System.Int32,System.Int32,System.Int32,System.Int32)
+	r142142		spouliot - after validating parameters call String.InternalAllocateStr (icall in string-icall.c) with the largest of 'length' or 'capacity'
+
+!SSC-5FE46F62AD1688C99A83343E947D69DD
+System.Void System.Text.StringBuilder::InternalEnsureCapacity(System.Int32)
+	r142142		spouliot - call String.InternalAllocateStr (icall in string-icalls.c) with calculated 'capacity' based on (non-directly-user) 'size' parameter
+
+!SSC-88E6602AAA4DE8761D33191D44A04E9A
+System.Void System.Threading.EventWaitHandle::.ctor(System.Boolean,System.Threading.EventResetMode)
+	r142142		spouliot - added validation. call NativeEventCalls.CreateEvent_internal (icall) with 'initialState' and true (manual) / false (automatic)
+
+!SSC-6C4046737B436A3564915F147575207D
+System.Void System.Threading.InternalThread::Finalize()
+	r142661		spouliot - call Thread_free_internal (icall) with 'system_thread_handle' field
+
+!SSC-450293DC155E074D55BF87F858EF091E
+System.Void System.Threading.Monitor::Enter(System.Object)
+	r144558		spouliot - visible icall (named mono_monitor_enter in monitor.c). Unmanaged null-check/exception on 'obj'
+
+!SSC-3DD02ABB5F18D81A136C65E431101C7D
+System.Void System.Threading.Monitor::Exit(System.Object)
+	r144558		spouliot - visible icall (named mono_monitor_exit in monitor.c). Unmanaged null-check/exception on 'obj'
+
+!SSC-98B571F0E235DAE5EF84CA088FF7565B
+System.Void System.Threading.Monitor::Pulse(System.Object)
+	r142142		spouliot - call Monitor_test_synchronised (icall in monitor.c) with non-null 'obj', if true then call Monitor_pulse (icall in monitor.c)
+
+!SSC-2D43FD425F1E6C19F72E25ED93A77C90
+System.Void System.Threading.Monitor::PulseAll(System.Object)
+	r142142		spouliot - call Monitor_test_synchronised (icall in monitor.c) with non-null 'obj', if true then call Monitor_pulse_all (icall in monitor.c)
+
+!SSC-835441225E27CA3275E3486E179E51EA
+System.Void System.Threading.Thread::Join()
+	r142142		spouliot - call Join_internal (icall in threads.c) with 'Infinite' and 'system_thread_handle'
+
+!SSC-1B1A9D38D3D086E2B7CA8C5999779383
+System.Void System.Threading.Thread::MemoryBarrier()
+	r144558		spouliot - visible icall. parameter-less (static)
+
+!SSC-CAE97EDA18F4D59D27160690CB788A5B
+System.Void System.Threading.Thread::MoonlightUnhandledException(System.Exception)
+	r142142		spouliot - use reflection to call System.Windows.Application.OnUnhandledException (System.Windows.dll) with the unhandled 'exception'
+
+!SSC-E6B1217AA739C0719BF50CFD1916913F
+System.Void System.Threading.Thread::set_CurrentCulture(System.Globalization.CultureInfo)
+	r145215		spouliot - call GetCachedCurrentCulture (icall in threads.c), SetCachedCurrentCulture (icall in threads.c) on non-null value and SetSerializedCurrentCulture (icall in threads.c)
+	r142661		spouliot - most logic is now around the InternalThread (Internal property)
+
+!SSC-FA060D337447D22A72C4706721F6F2C4
+System.Void System.Threading.Thread::set_CurrentUICulture(System.Globalization.CultureInfo)
+	r142661		spouliot - most logic is now around the InternalThread (Internal property)
+	r142142		spouliot - fixed in_currentculture flag. call GetCachedCurrentUICulture (icall in threads.c), SetCachedCurrentUICulture (icall in threads.c) on non-null value and SetSerializedCurrentUICulture (icall in threads.c)
+
+!SSC-B27076E8764DF0EAFC23A376B2B905E6
+System.Void System.Threading.Thread::set_IsBackground(System.Boolean)
+	r142142		spouliot - depending on parameter 'value' call SetState (icall in threads.c) or ClrState (icall in threads.c) with 'ThreadState.Background'
+
+!SSC-1B0DCCD7F1AFCAAE2F2F5B1E8182A02C
+System.Void System.Threading.Thread::set_Name(System.String)
+	r142142		spouliot - call SetName_internal (icall in threads.c) with the, potentially null, 'name'
+
+!SSC-D440BB9ED813CCA2C20065B0CED88A92
+System.Void System.Threading.Thread::Sleep(System.Int32)
+	r142142		spouliot - call Sleep_internal (icall in threads.c) with non-negative (or Infinite -1) 'ms'
+
+!SSC-2C7714C38A16929DC10680DC5B837A44
+System.Void System.Threading.Thread::Sleep(System.TimeSpan)
+	r142142		spouliot - call Sleep_internal (icall in threads.c) with between -1 (Infinite) and Int32.MaxValue 'ms'
+
+!SSC-C1EEEC98BB77AF0DEA0D811185465415
+System.Void System.Threading.Thread::SpinWait(System.Int32)
+	r142142		spouliot - if 'iterations > 0' calls SpinWait_nop (icall in threads.c)
+
+!SSC-703EEA8B3C4B9623EA1650910504BAB6
+System.Void System.Threading.Thread::Start()
+	r142142		spouliot - call Thread_internal (icall in threads.c) with (non-null) 'SafeStart'
+
+!SSC-3F81CF84F79C7CAB0BAF90BA6F04825B
+System.Void System.Threading.ThreadPool::GetMaxThreads(System.Int32&,System.Int32&)
+	r144558		spouliot - visible icall (in threadpool.c)
+
+!SSC-FA2E0F3E22585603D778ABBAE82CB480
+System.Void System.Threading.ThreadPool::GetMinThreads(System.Int32&,System.Int32&)
+	r144558		spouliot - visible icall (in threadpool.c)
+
+!SSC-DF3134C619FC3D70549D248FF78C6F9E
+System.Void System.Threading.Timer/Scheduler::.cctor()
+	r144307		spouliot - creates a global Scheduler instance (SecurityCritical type)
+
+!SSC-CB5C3BA10B54F30AB2CE0E864F9A2D9F
+System.Void System.Threading.WaitHandle::Dispose(System.Boolean)
+	r142142		spouliot - call SafeWaitHandle (SecurityCritical type) Dispose, eventually leading to NativeEventCalls.CloseEvent_internal (icall in threads.c)
+
+!SSC-B9241DD586DB8F47163315B4210124F0
+System.Void System.TimeZone::.cctor()
+	r142142		spouliot - creates/assign CurrentTimeZone to a new (local) TimeZone (ctor is SecurityCritical)
+
+!SSC-2071E67448CEC8F0DF68C1EE84496EF5
+System.Void System.WeakReference::AllocateHandle(System.Object)
+	r142142		spouliot - call GCHandle.Alloc on the specified (can be null) 'target' object
+
+!SSC-DE783A42ADC03B5B5427689ACB36DC0C
+System.Void System.WeakReference::Finalize()
+	r142142		spouliot - call Free on his private GCHandle (SecurityCritical)
+
+!SSC-520A405165EFD0A16A1FA58D3E72AE5A
+System.Void System.WeakReference::set_Target(System.Object)
+	r142142		spouliot - get the Target property of it's private GCHandle (SecurityCritical)
+
+!SSC-910C890AAD600783C557065A15EF28D8
+T System.Array::InternalArray__get_Item<T>(System.Int32)
+	r142142		spouliot - call GetGenericValueImpl<T> (icall without bounds checking) with validated 'index' value
+
+!SSC-C4A7D6A546FE71498196D4DA94671B48
+T System.Threading.Interlocked::CompareExchange<T>(T&,T,T)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_CompareExchange_T in threads.c)
+
+!SSC-C64D2BAAC78785994637295ECBE22F00
+T System.Threading.Interlocked::Exchange<T>(T&,T)
+	r144558		spouliot - visible icall (named ves_icall_System_Threading_Interlocked_Exchange_T in threads.c)
+	
+	
+System.Void Mono.Globalization.Unicode.SimpleCollator::.ctor(System.Globalization.CultureInfo)
+	
+System.Void Mono.Security.Cryptography.DSAManaged::Dispose(System.Boolean)
+System.Void Mono.Security.Cryptography.RSAManaged::Dispose(System.Boolean)
+System.Void Mono.Security.Cryptography.KeyPairPersistence::Remove()
+System.Boolean Mono.Security.Cryptography.KeyPairPersistence::Load()
+System.Void Mono.Security.Cryptography.KeyPairPersistence::Save()
+	
+System.Object System.Activator::CreateInstance(System.Type,System.Boolean)
+			
+System.String System.AppDomain::getFriendlyName()
+System.Reflection.Assembly[] System.AppDomain::GetAssemblies()
+System.Reflection.Assembly[] System.AppDomain::GetAssemblies(System.Boolean)
+System.Reflection.Assembly System.AppDomain::Load(System.Byte[],System.Byte[],System.Security.Policy.Evidence,System.Boolean)
+
+System.Object System.Array/SimpleEnumerator::get_Current()
+System.Int32 System.Array::BinarySearch(System.Array,System.Object,System.Collections.IComparer)
+System.Int32 System.Array::BinarySearch(System.Array,System.Int32,System.Int32,System.Object)
+System.Int32 System.Array::BinarySearch<T>(T[],System.Int32,System.Int32,T,System.Collections.Generic.IComparer`1<T>)
+System.Array System.Array::CreateInstance(System.Type,System.Int32[],System.Int32[])
+System.Void System.Array::Sort<TKey,TValue>(TKey[],TValue[],System.Int32,System.Int32,System.Collections.Generic.IComparer`1<TKey>)
+System.Void System.Array::Sort(System.Array,System.Array,System.Int32,System.Int32,System.Collections.IComparer)
+
+System.Void System.Console::Write(System.String,System.Object,System.Object,System.Object,System.Object)
+System.Void System.Console::WriteLine(System.String,System.Object,System.Object,System.Object,System.Object)
+
+System.Void System.Diagnostics.StackTrace::.ctor(System.Exception,System.Int32,System.Boolean)
+
+System.Collections.Generic.List`1<T> System.Collections.Generic.List`1::FindAll(System.Predicate`1<T>)
+
+System.String System.Environment::get_EmbeddingHostName()
+System.Boolean System.Environment::get_SocketSecurityEnabled()
+
+System.String System.Exception::get_Source()
+
+System.Int32 System.GC::CollectionCount(System.Int32)
+System.Int32 System.GC::GetGeneration(System.Object)
+System.Void System.GC::AddMemoryPressure(System.Int64)
+System.Void System.GC::RemoveMemoryPressure(System.Int64)
+System.Void System.GC::Collect(System.Int32)
+
+System.Void System.Globalization.CompareInfo::Finalize()
+System.Void System.Globalization.CompareInfo::construct_compareinfo(System.String)
+System.Globalization.CultureInfo[] System.Globalization.CultureInfo::GetCultures(System.Globalization.CultureTypes)
+
+System.String System.IO.Path::GetPathRoot(System.String)
+
+System.Void System.IO.UnityLogWriter::WriteStringToUnityLog(System.String)
+
+System.Void System.LocalDataStoreSlot::Finalize()
+
+System.Double System.Math::Round(System.Double,System.Int32,System.MidpointRounding)
+
+System.Int32 System.Object::InternalGetHashCode(System.Object)
+
+System.Boolean System.Reflection.Emit.TypeBuilder::IsValueTypeImpl()
+
+System.Reflection.MemberInfo System.Reflection.Module::ResolveMember(System.Int32,System.Type[],System.Type[])
+System.Reflection.MemberInfo System.Reflection.Module::ResolveMember(System.Int32)
+System.Reflection.FieldInfo System.Reflection.Module::ResolveField(System.Int32,System.Type[],System.Type[])
+System.Type[] System.Reflection.PropertyInfo::GetRequiredCustomModifiers()
+System.Type[] System.Reflection.PropertyInfo::GetOptionalCustomModifiers()
+System.Type[] System.Reflection.FieldInfo::GetTypeModifiers(System.Boolean)
+System.Type[] System.Reflection.ParameterInfo::GetTypeModifiers(System.Boolean)
+
+System.Object System.Runtime.Serialization.Formatters.Binary.BinaryFormatter::DeserializeMethodResponse(System.IO.Stream,System.Runtime.Remoting.Messaging.HeaderHandler,System.Runtime.Remoting.Messaging.IMethodCallMessage)
+System.Object System.Runtime.Serialization.Formatters.Binary.BinaryFormatter::Deserialize(System.IO.Stream,System.Runtime.Remoting.Messaging.HeaderHandler)
+System.Void System.Runtime.Serialization.Formatters.Binary.BinaryFormatter::Serialize(System.IO.Stream,System.Object)
+System.Object System.Runtime.Serialization.Formatters.Binary.BinaryFormatter::Deserialize(System.IO.Stream)
+System.Object System.Runtime.Serialization.IFormatter::Deserialize(System.IO.Stream)
+System.Void System.Runtime.Serialization.IFormatter::Serialize(System.IO.Stream,System.Object)
+
+System.String System.Security.SecurityFrame::ToString()
+
+System.Void System.Security.Cryptography.DSACryptoServiceProvider::Dispose(System.Boolean)
+
+System.Void System.Security.Cryptography.RSACryptoServiceProvider::Finalize()
+
+System.String System.Text.Latin1Encoding::GetString(System.Byte[],System.Int32,System.Int32)
+
+System.Void System.Threading.Thread::Finalize()
+System.Void System.Threading.Thread::.ctor(System.Threading.ThreadStart,System.Int32)
+System.Void System.Threading.Thread::.ctor(System.Threading.ParameterizedThreadStart,System.Int32)
+System.Void System.Threading.Thread::.ctor(System.Threading.ThreadStart)
+System.Void System.Threading.Thread::.ctor(System.Threading.ParameterizedThreadStart)
+System.Void System.Threading.Thread::Suspend()
+System.Void System.Threading.Thread::Resume()
+System.Void System.Threading.Thread::Interrupt()
+System.AppDomain System.Threading.Thread::GetDomain()
+System.Boolean System.Threading.Thread::Join(System.TimeSpan)
+System.Threading.ExecutionContext System.Threading.Thread::get_ExecutionContext()
+
+System.Boolean System.Threading.ThreadPool::SetMaxThreads(System.Int32,System.Int32)
+System.Boolean System.Threading.ThreadPool::SetMinThreads(System.Int32,System.Int32)
+
+System.String System.String::Concat(System.Object,System.Object,System.Object,System.Object)
+System.String System.String::Join(System.String,System.String[],System.Int32,System.Int32)
+
+System.TypeCode System.Type::GetTypeCode(System.Type)
+System.Runtime.InteropServices.StructLayoutAttribute System.Type::get_StructLayoutAttribute()
+
+System.Object System.TypedReference::ToObject(System.TypedReference)
+System.Globalization.CultureInfo System.Globalization.CultureInfo::GetCultureInfo(System.Int32)
+System.Void System.Globalization.CultureInfo::.ctor(System.Int32,System.Boolean)
+System.Globalization.CultureInfo System.Globalization.CultureInfo::GetCultureInfo(System.String)
+System.Void System.Globalization.CultureInfo::.ctor(System.String,System.Boolean)

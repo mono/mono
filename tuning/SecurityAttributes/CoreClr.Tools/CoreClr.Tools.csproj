@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B3F61884-1AB9-420A-BC5F-A4D2974D4317}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CoreClr.Tools</RootNamespace>
+    <AssemblyName>CoreClr.Tools</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblySecurityVerifier.cs" />
+    <Compile Include="AssemblySetResolver.cs" />
+    <Compile Include="CecilDefinitionFinder.cs" />
+    <Compile Include="CecilExtensions.cs" />
+    <Compile Include="CecilRocks.cs" />
+    <Compile Include="CecilSecurityAttributeDescriptor.cs" />
+    <Compile Include="CecilUtils.cs" />
+    <Compile Include="Compatibility.cs" />
+    <Compile Include="Enumerable.cs" />
+    <Compile Include="Injector.cs" />
+    <Compile Include="MethodDefinitionComparator.cs" />
+    <Compile Include="MethodDefinitionFilter.cs" />
+    <Compile Include="MethodMap.cs" />
+    <Compile Include="MethodPrivilegeDetector.cs" />
+    <Compile Include="MethodPrivilegePropagation.cs" />
+    <Compile Include="MethodPrivilegePropagationReportBuilder.cs" />
+    <Compile Include="MethodSignatureProvider.cs" />
+    <Compile Include="PlatformCode.cs" />
+    <Compile Include="PropagationReason.cs" />
+    <Compile Include="PropagationStack.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SecurityAttributeDescriptor.cs" />
+    <Compile Include="SecurityAttributeDescriptorOperations.cs" />
+    <Compile Include="SecurityAttributeDescriptorParser.cs" />
+    <Compile Include="SecurityAttributeTypeNames.cs" />
+    <Compile Include="Strings.cs" />
+    <Compile Include="UserInterface.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\mcs\class\Mono.Cecil\Mono.Cecil.csproj">
+      <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

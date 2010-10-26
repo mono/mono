@@ -1,0 +1,4 @@
+Mono.Security.Protocol.Ntlm.MessageBase
+Mono.Security.Protocol.Ntlm.Type1Message
+Mono.Security.Protocol.Ntlm.Type3Message
+Mono.Security.Protocol.Ntlm.Type2Message

@@ -1,0 +1,23 @@
+System.IO.kevent
+System.Diagnostics.Process
+System.IO.FileSystemWatcher
+System.IO.FAMWatcher
+System.IO.MonoSyncFileStream
+System.Net.FileWebRequest/FileWebStream
+System.Net.FileWebRequest
+System.Net.NetworkInformation.NetworkInterface
+System.Net.NetworkInformation.LinuxNetworkInterface
+System.Net.NetworkInformation.MacOsNetworkInterface
+System.Net.NetworkInformation.UnixNetworkInterface
+System.Net.NetworkInformation.Win32NetworkInterface2
+System.Net.NetworkInformation.Win32IPGlobalProperties
+System.Net.NetworkInformation.UnixIPInterfaceProperties
+System.Net.NetworkInformation.LinuxIPInterfaceProperties
+System.Net.NetworkInformation.MacOsIPInterfaceProperties
+System.Net.NetworkInformation.MibIPGlobalProperties
+
+#need zlib installed anyway
+System.IO.Compression.GZipStream
+
+#need zlib installed anyway
+System.IO.Compression.DeflateStream

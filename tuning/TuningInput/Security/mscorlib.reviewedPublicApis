@@ -1,0 +1,288 @@
+#make sure to prefix parenthesis with backslashes, as these things are interpeted as regular expressions
+
+System.Environment::
+System.Runtime.InteropServices.Marshal::
+System.Security.Policy.Evidence::
+System.Threading.Thread::VolatileRead
+System.Threading.Thread::VolatileWrite
+System.Threading.Interlocked::CompareExchange
+System.Threading.Interlocked::Exchange
+System.Runtime.InteropServices._Assembly::
+System.Runtime.CompilerServices.RuntimeHelpers::RunModuleConstructor\(System.IntPtr\)
+System.Threading.Thread::GetDomainID\(\)
+System.Runtime.InteropServices._Exception::
+System.Reflection.Emit.AssemblyBuilder::Save
+System.IO.Stream System.Console::OpenStandardOutput
+System.IO.Stream System.Console::OpenStandardInput
+System.IO.Stream System.Console::OpenStandardError
+System.Int64 System.Threading.Interlocked::Read\(System.Int64&\)
+System.String System.IO.Path::GetFullPath\(System.String\)
+System.Reflection.Assembly System.Reflection.Assembly::GetEntryAssembly
+System.String System.Reflection.Emit.AssemblyBuilder::get_Location\(\)
+System.String System.Reflection.Emit.AssemblyBuilder::get_CodeBase\(\)
+System.Void System.IO.StreamReader::.ctor\(System.String
+System.Void System.IO.StreamWriter::.ctor\(System.String
+System.String System.IO.Path::GetTempFileName\(\)
+System.Void System.Resources.ResourceWriter::.ctor\(System.String\)
+System.Void System.Resources.ResourceSet::.ctor\(System.String\)
+System.Void System.Reflection.Module::GetPEKind
+System.Void System.Resources.ResourceSet::.ctor
+System.String System.Reflection.Assembly::get_Location
+System.String System.IO.Path::GetTempPath
+System.ModuleHandle::
+System.Void System.Security.SecurityContext::Run\(System.Security.SecurityContext,System.Threading.ContextCallback,System.Object\)
+System.Void System.Security.Cryptography.DSACryptoServiceProvider::.ctorSystem.Void System.Threading.Thread::Abort\(\)
+
+#the following block is all SC in moonlight as well
+System.Void System.Threading.Thread::ResetAbort\(\)
+System.Void System.Reflection.Emit.AssemblyBuilder::DefineUnmanagedResource\(System.String\)
+System.Globalization.SortKey System.Globalization.CompareInfo::GetSortKey\(System.String,System.Globalization.CompareOptions\)
+System.String System.Reflection.Assembly::get_CodeBase\(\)
+System.Reflection.Assembly System.Reflection.Assembly::LoadWithPartialName\(System.String\)
+System.Reflection.Assembly System.Reflection.Assembly::LoadWithPartialName\(System.String,System.Security.Policy.Evidence\)
+System.Reflection.Assembly System.Reflection.Assembly::LoadFile\(System.String,System.Security.Policy.Evidence\)
+System.Reflection.Assembly System.Reflection.Assembly::LoadFrom\(System.String\)
+System.Reflection.Assembly System.Reflection.Assembly::LoadFile\(System.String\)
+System.Reflection.Assembly System.Reflection.Assembly::LoadFrom\(System.String,System.Security.Policy.Evidence\)
+System.Object System.Activator::CreateInstance\(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object\[\],System.Globalization.CultureInfo,System.Object\[\]\)
+System.Object System.Activator::CreateInstance\(System.Type,System.Boolean\)
+System.Object System.Activator::CreateInstance\(System.Type,System.Object\[\],System.Object\[\]\)
+System.Object System.Activator::CreateInstance\(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object\[\],System.Globalization.CultureInfo\)
+System.Int32 System.Threading.WaitHandle::WaitAny\(System.Threading.WaitHandle\[\],System.Int32,System.Boolean\)
+System.Int32 System.Threading.WaitHandle::WaitAny\(System.Threading.WaitHandle\[\],System.TimeSpan,System.Boolean\)
+System.Boolean System.Threading.WaitHandle::WaitOne\(System.Int32,System.Boolean\)
+System.Boolean System.Threading.WaitHandle::WaitOne\(System.TimeSpan,System.Boolean\)
+System.Boolean System.Threading.WaitHandle::WaitAll\(System.Threading.WaitHandle\[\],System.Int32,System.Boolean\)
+System.Boolean System.Threading.WaitHandle::WaitAll\(System.Threading.WaitHandle\[\],System.TimeSpan,System.Boolean\)
+System.Reflection.ManifestResourceInfo System.Reflection.Assembly::GetManifestResourceInfo\(System.String\)
+System.Void System.Globalization.RegionInfo::.ctor\(System.Int32\)
+System.Void System.Threading.Thread::Abort\(System.Object\)
+#up untill here
+
+System.Runtime.Remoting.Messaging.IMessage System.Runtime.Remoting.Messaging.IMessageSink::SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)
+System.Runtime.Remoting.Messaging.IMessage System.Runtime.Remoting.Messaging.AsyncResult::SyncProcessMessage\(System.Runtime.Remoting.Messaging.IMessage\)
+System.Reflection.ManifestResourceInfo System.Reflection.Emit.AssemblyBuilder::GetManifestResourceInfo\(System.String\)
+System.Void System.Threading.Thread::Abort\(\)
+System.Boolean System.Threading.Monitor::Wait\(System.Object,System.Int32,System.Boolean\)
+System.Resources.IResourceWriter System.Reflection.Emit.AssemblyBuilder::DefineResource(System.String,System.String,System.String,System.Reflection.ResourceAttributes)
+
+#not in ml
+System.Runtime.Remoting.ObjectHandle System.Activator::CreateInstanceFrom\(System.String,System.String,System.Object\[\]\)
+System.Resources.IResourceWriter System.Reflection.Emit.AssemblyBuilder::DefineResource\(System.String,System.String,System.String\)
+System.Globalization.CultureInfo System.Globalization.CultureInfo::get_InstalledUICulture\(\)
+System.Globalization.CultureInfo System.Globalization.CultureInfo::GetCultureInfo\(System.String,System.String\)
+System.Globalization.CultureInfo System.Globalization.CultureInfo::GetCultureInfoByIetfLanguageTag\(System.String\)
+System.Globalization.SortKey System.Globalization.CompareInfo::GetSortKey\(System.String\)
+
+#no gac in webplayer
+System.Boolean System.Reflection.Assembly::get_GlobalAssemblyCache\(\)
+
+#same in ml
+System.Runtime.Remoting.Messaging.IMessage System.Runtime.Remoting.Messaging.IMessageSink::SyncProcessMessage\(System.Runtime.Remoting.Messaging.IMessage\)
+
+#dont know
+System.Void System.Runtime.CompilerServices.RuntimeHelpers::RunModuleConstructor\(System.ModuleHandle\)
+System.Resources.IResourceWriter System.Reflection.Emit.AssemblyBuilder::DefineResource\(System.String,System.String,System.String,System.Reflection.ResourceAttributes\)
+System.String System.Reflection.Assembly::get_EscapedCodeBase\(\)
+
+#unsure
+System.Security.Principal.IPrincipal System.Threading.Thread::get_CurrentPrincipal\(\)
+
+#doesnt exist in moonlight
+System.Runtime.Remoting.ObjectHandle System.Activator::CreateInstanceFrom\(System.String,System.String\)
+
+#there's no such thing in webplayer
+System.Reflection.Assembly System.AppDomainManager::get_EntryAssembly\(\)
+
+#doesnt exist in moonlight
+System.Runtime.Remoting.ObjectHandle System.Activator::CreateInstance\(System.String,System.String,System.Object\[\]\)
+
+#doesnt exist in moonlight
+System.Runtime.Remoting.ObjectHandle System.Activator::CreateInstance\(System.String,System.String\)
+
+#doesnt exist in moonlight
+System.Reflection.FieldInfo System.Reflection.Module::ResolveField\(System.Int32\)
+System.Reflection.Assembly System.Reflection.Assembly::ReflectionOnlyLoadFrom\(System.String\)
+
+#notsure
+System.Object System.Activator::GetObject\(System.Type,System.String\)
+
+#not sure
+System.Object System.Activator::GetObject\(System.Type,System.String,System.Object\)
+
+#doesnt exist in moon
+System.Void System.Threading.EventWaitHandle::.ctor\(System.Boolean,System.Threading.EventResetMode,System.String\)
+
+#doesnt exist in moonlight
+System.Runtime.Remoting.ObjectHandle System.Activator::CreateInstance\(System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object\[\],System.Globalization.CultureInfo,System.Object\[\],System.Security.Policy.Evidence\)
+
+#doesnt exist in moonlight
+System.Runtime.Remoting.ObjectHandle System.Activator::CreateInstanceFrom\(System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object\[\],System.Globalization.CultureInfo,System.Object\[\],System.Security.Policy.Evidence\)
+
+#doesnt exist in moonlight
+System.Object System.Reflection.Assembly::CreateInstance\(System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object\[\],System.Globalization.CultureInfo,System.Object\[\]\)
+
+#not sure
+System.Void System.Threading.EventWaitHandle::.ctor\(System.Boolean,System.Threading.EventResetMode,System.String,System.Boolean&\)
+
+#sounds unsafe
+System.IntPtr System.RuntimeMethodHandle::GetFunctionPointer\(\)
+
+#doesnt exist in moon
+System.Globalization.CultureInfo\[\] System.Globalization.CultureInfo::GetCultures\(System.Globalization.CultureTypes\)
+
+#note sure
+System.Byte\[\] System.Reflection.Module::ResolveSignature\(System.Int32\)
+
+#doesnt exist in moon
+System.Int32 System.Reflection.Module::get_MDStreamVersion\(\)
+
+#doesnt exist in moon
+System.Guid System.Reflection.Module::get_ModuleVersionId\(\)
+
+#doesnt exist in moon
+System.Boolean System.Threading.WaitHandle::SignalAndWait\(System.Threading.WaitHandle,System.Threading.WaitHandle,System.Int32,System.Boolean\)
+
+#doesnt exist in moon
+System.Boolean System.Threading.WaitHandle::SignalAndWait\(System.Threading.WaitHandle,System.Threading.WaitHandle\)
+
+#doesnt exist in moon
+System.Globalization.CultureInfo System.Globalization.CultureInfo::CreateSpecificCulture\(System.String\)
+
+#doesnt exist in moon
+System.Boolean System.Threading.WaitHandle::SignalAndWait\(System.Threading.WaitHandle,System.Threading.WaitHandle,System.TimeSpan,System.Boolean\)
+System.Object System.AppDomain::GetData\(System.String\)
+System.Void System.AppDomain::SetData\(System.String,System.Object\)
+System.Reflection.Assembly System.AppDomain::Load\(System.String\)
+System.Int32 System.AppDomain::ExecuteAssemblyByName\(System.String\)
+System.Void System.AppDomain::Unload\(System.AppDomain\)
+System.Object System.AppDomain::CreateInstanceFromAndUnwrap\(System.String,System.String\)
+System.Object System.AppDomain::CreateInstanceFromAndUnwrap\(System.String,System.String,System.Object\[\]\)
+System.String System.AppDomain::get_RelativeSearchPath\(\)
+System.Boolean System.AppDomain::get_ShadowCopyFiles\(\)
+System.Void System.AppDomain::SetCachePath\(System.String\)
+System.Void System.AppDomain::SetShadowCopyFiles\(\)
+System.Void System.AppDomain::SetShadowCopyPath\(System.String\)
+System.Boolean System.AppDomain::IsDefaultAppDomain\(\)
+System.AppDomain System.AppDomain::CreateDomain\(System.String\)
+System.Runtime.Remoting.ObjectHandle System.AppDomain::CreateInstanceFrom\(System.String,System.String\)
+System.Object System.AppDomain::CreateInstanceAndUnwrap\(System.String,System.String,System.Object\[\]\)
+System.Object System.AppDomain::CreateInstanceAndUnwrap\(System.String,System.String\)
+System.Runtime.Remoting.ObjectHandle System.AppDomain::CreateInstanceFrom\(System.String,System.String,System.Object\[\]\)
+System.Runtime.Remoting.ObjectHandle System.AppDomain::CreateInstance\(System.String,System.String\)
+System.Runtime.Remoting.ObjectHandle System.AppDomain::CreateInstance\(System.String,System.String,System.Object\[\]\)
+
+#not sure what to do with this
+System.Type System.Type::ReflectionOnlyGetType\(System.String,System.Boolean,System.Boolean\)
+System.Security.Policy.Evidence System.AppDomain::get_Evidence\(\)
+System.Reflection.Assembly System.Reflection.Assembly::Load\(System.String,System.Security.Policy.Evidence\)
+System.Reflection.Assembly System.AppDomain::Load\(System.String,System.Security.Policy.Evidence\)
+System.Reflection.Assembly System.Reflection.Assembly::ReflectionOnlyLoad\(System.String\)
+
+#this one could actually maybe be safe
+System.Reflection.Assembly System.Reflection.Assembly::ReflectionOnlyLoad\(System.Byte\[\]\)
+System.Int32 System.AppDomain::get_Id\(\)
+System.Int32 System.AppDomain::ExecuteAssembly\(System.String,System.Security.Policy.Evidence,System.String\[\]\)
+System.Int32 System.AppDomain::ExecuteAssemblyByName\(System.String,System.Security.Policy.Evidence,System.String\[\]\)
+System.Int32 System.AppDomain::ExecuteAssembly\(System.String\)
+System.Boolean System.AppDomain::IsFinalizingForUnload\(\)
+System.Void System.AppDomain::AppendPrivatePath\(System.String\)
+System.Void System.AppDomain::ClearPrivatePath\(\)
+System.Void System.AppDomain::ClearShadowCopyPath\(\)
+System.String System.AppDomain::get_BaseDirectory\(\)
+System.String System.AppDomain::get_DynamicDirectory\(\)
+
+#whould add resources from localfiles inw ebplayer
+System.Void System.Reflection.Emit.AssemblyBuilder::AddResourceFile\(System.String,System.String,System.Reflection.ResourceAttributes\)
+
+#not sure
+System.Boolean System.Threading.Monitor::Wait\(System.Object,System.TimeSpan,System.Boolean\)
+
+#not sure
+System.Resources.IResourceWriter System.Reflection.Emit.ModuleBuilder::DefineResource\(System.String,System.String,System.Reflection.ResourceAttributes\)
+
+#not sure
+System.Object System.Runtime.Remoting.ObjectHandle::InitializeLifetimeService\(\)
+
+#note sure
+System.Security.IPermission System.Security.Policy.Zone::CreateIdentityPermission\(System.Security.Policy.Evidence\)
+
+#not sure
+System.Void System.Runtime.Remoting.Messaging.IRemotingFormatter::Serialize\(System.IO.Stream,System.Object,System.Runtime.Remoting.Messaging.Header\[\]\)
+
+#not sure
+System.Void System.Runtime.Serialization.Formatters.Binary.BinaryFormatter::Serialize\(System.IO.Stream,System.Object,System.Runtime.Remoting.Messaging.Header\[\]\)
+
+#not sure
+System.Object System.Runtime.Serialization.FormatterServices::GetSafeUninitializedObject\(System.Type\)
+
+#not sure
+System.Object System.Runtime.Serialization.FormatterServices::GetUninitializedObject\(System.Type\)
+
+#not sure
+System.Object System.AppDomain::InitializeLifetimeService\(\)
+
+#not sure
+System.Object System.MarshalByRefObject::InitializeLifetimeService\(\)
+
+#should be offlimits
+System.Void System.Reflection.Emit.AssemblyBuilder::AddResourceFile\(System.String,System.String\)
+
+#looks unsafe
+System.Void System.Threading.WaitHandle::set_Handle\(System.IntPtr\)
+
+#unsafe
+System.Void System.Reflection.Emit.ModuleBuilder::DefineUnmanagedResource\(System.String\)
+
+#not sure
+System.Object System.MarshalByRefObject::GetLifetimeService\(\)
+
+#not sure
+System.Resources.IResourceWriter System.Reflection.Emit.ModuleBuilder::DefineResource\(System.String,System.String\)
+
+#not sure
+System.Security.IPermission System.Security.Policy.StrongName::CreateIdentityPermission\(System.Security.Policy.Evidence\)
+
+#not sure
+System.Security.IPermission System.Security.Policy.IIdentityPermissionFactory::CreateIdentityPermission\(System.Security.Policy.Evidence\)
+System.Void System.Security.CodeAccessPermission::FromXml\(System.Security.SecurityElement\)
+System.Void System.Security.ISecurityEncodable::FromXml\(System.Security.SecurityElement\)
+System.Void System.Security.Permissions.EnvironmentPermission::FromXml\(System.Security.SecurityElement\)
+System.Void System.Security.Permissions.SecurityPermission::FromXml\(System.Security.SecurityElement\)
+System.Void System.Security.Permissions.FileIOPermission::.ctor\(System.Security.Permissions.FileIOPermissionAccess,System.String\)
+System.Void System.Security.Permissions.FileIOPermission::FromXml\(System.Security.SecurityElement\)
+System.Void System.Security.Permissions.FileIOPermission::AddPathList\(System.Security.Permissions.FileIOPermissionAccess,System.String\)
+System.Void System.Security.Permissions.FileIOPermission::AddPathList\(System.Security.Permissions.FileIOPermissionAccess,System.String\[\]\)
+
+#we dont want people loading certificates from filenames
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate::.ctor\(System.String\)
+
+#we dont want people loading certificates from filenames
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate::.ctor\(System.String,System.String\)
+
+#we dont want people loading certificates from filenames
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate::.ctor\(System.String,System.String,System.Security.Cryptography.X509Certificates.X509KeyStorageFlags\)
+
+#we dont want people loading certificates from filenames
+System.Security.Cryptography.X509Certificates.X509Certificate System.Security.Cryptography.X509Certificates.X509Certificate::CreateFromCertFile\(System.String\)
+
+#we dont want people loading certificates from filenames (intentionally leaving out closing parenthesis to also match all overloads)
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate::Import\(System.String
+System.Void System.Security.Cryptography.X509Certificates.X509Certificate::.ctor\(System.String,System.Security.SecureString
+System.Security.Cryptography.X509Certificates.X509Certificate System.Security.Cryptography.X509Certificates.X509Certificate::CreateFromSignedFile\(System.String\)
+
+#might reveal path information
+System.Reflection.AssemblyName System.Reflection.Assembly::GetName\(System.Boolean\)
+System.Reflection.AssemblyName System.Reflection.Assembly::GetName\(\)
+System.Reflection.AssemblyName System.Reflection.AssemblyName::GetAssemblyName\(System.String\)
+System.Reflection.AssemblyName System.Reflection.AssemblyNameProxy::GetAssemblyName\(System.String\)
+System.Reflection.AssemblyName System.Reflection.Assembly::GetName\(\)
+
+#appdomains are offlmiits
+System.Reflection.Assembly System.AppDomain::Load\(System.Reflection.AssemblyName,System.Security.Policy.Evidence\)
+System.Reflection.Assembly System.AppDomain::Load\(System.Reflection.AssemblyName\)
+System.Reflection.Emit.AssemblyBuilder System.AppDomain::DefineDynamicAssembly\(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.Collections.Generic.IEnumerable`1<System.Reflection.Emit.CustomAttributeBuilder>\)
+
+#unsure about this one, but it has been offlimits in 3.0b0->b5. maybe it could be opened up
+System.Reflection.Assembly System.Reflection.Assembly::Load\(System.Reflection.AssemblyName\)
+System.Reflection.MethodBody System.Reflection.MethodBase::GetMethodBody\(\)

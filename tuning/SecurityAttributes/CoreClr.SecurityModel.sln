@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "..\..\mcs\class\Mono.Cecil\Mono.Cecil.csproj", "{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DetectMethodPrivileges", "DetectMethodPrivileges\DetectMethodPrivileges.csproj", "{3EC447F7-AF2C-42F3-B4FF-D56D48F4D83D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityAttributesReviewer", "SecurityAttributesReviewer\SecurityAttributesReviewer.csproj", "{E6C1280D-F9C2-4503-B90B-33336DED90F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreClr.Tools", "CoreClr.Tools\CoreClr.Tools.csproj", "{B3F61884-1AB9-420A-BC5F-A4D2974D4317}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreClr.Tools.Tests", "CoreClr.Tools.Tests\CoreClr.Tools.Tests.csproj", "{CEC7D5FB-60DD-4C99-99AF-1F0EAB0C64B8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EC447F7-AF2C-42F3-B4FF-D56D48F4D83D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EC447F7-AF2C-42F3-B4FF-D56D48F4D83D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EC447F7-AF2C-42F3-B4FF-D56D48F4D83D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EC447F7-AF2C-42F3-B4FF-D56D48F4D83D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6C1280D-F9C2-4503-B90B-33336DED90F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6C1280D-F9C2-4503-B90B-33336DED90F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6C1280D-F9C2-4503-B90B-33336DED90F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6C1280D-F9C2-4503-B90B-33336DED90F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3F61884-1AB9-420A-BC5F-A4D2974D4317}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3F61884-1AB9-420A-BC5F-A4D2974D4317}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3F61884-1AB9-420A-BC5F-A4D2974D4317}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3F61884-1AB9-420A-BC5F-A4D2974D4317}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEC7D5FB-60DD-4C99-99AF-1F0EAB0C64B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEC7D5FB-60DD-4C99-99AF-1F0EAB0C64B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEC7D5FB-60DD-4C99-99AF-1F0EAB0C64B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEC7D5FB-60DD-4C99-99AF-1F0EAB0C64B8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = InjectSecurityAttributes\InjectSecurityAttributes.csproj
+	EndGlobalSection
+EndGlobal

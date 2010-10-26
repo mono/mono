@@ -1,0 +1,17 @@
+#this call wont happen as long as people dont try to put absolte paths in xml files.
+System.Uri System.Xml.XmlResolver::ResolveUri(System.Uri,System.String) => System.String System.IO.Path::GetFullPath(System.String)
+
+#xmlurlresolver will only do this for file:// urls
+System.Object System.Xml.XmlUrlResolver::GetEntity(System.Uri,System.String,System.Type) => System.Void System.IO.FileStream::.ctor(System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)
+
+#I wrapped this call in a try/catch block
+System.Object System.Xml.Xsl.XslTransform::GetDefaultDebugger() => System.String System.Environment::GetEnvironmentVariable(System.String)
+
+#I wrapped this in a try/batch block
+System.Void System.Diagnostics.DefaultTraceListener::WriteLogFile(System.String,System.String) => System.Void System.Diagnostics.DefaultTraceListener::WriteLogFileImpl(System.String,System.String)
+
+#I wrapped this in a try/batch block
+System.Void System.Diagnostics.Trace::DoTrace(System.String,System.Reflection.Assembly,System.String) => System.String System.Reflection.Assembly::get_Location()
+
+#I wrapped this in a try/batch block
+System.Void System.Diagnostics.DefaultTraceListener::Fail(System.String,System.String) => System.Void System.Threading.Thread::Abort()
