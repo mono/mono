@@ -10927,5 +10927,22 @@ namespace MonoTests.System.Reflection.Emit
 				//OK
 			}
 		}
+
+		[Test] //Test for #649237
+		public void GetFieldCheckFieldDeclaringType () {
+			TypeBuilder myType = module.DefineType ("Sample", TypeAttributes.Public);
+			myType.DefineGenericParameters ( "TFirst");
+			TypeBuilder otherType = module.DefineType ("Sample2", TypeAttributes.Public);
+			otherType.DefineGenericParameters ( "TFirst");
+
+			var field = myType.DefineField ("field", typeof (object), FieldAttributes.Public);
+
+			try {
+				TypeBuilder.GetField (otherType.MakeGenericType (typeof (int)), field);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+				//OK
+			}
+		}
 	}
 }
