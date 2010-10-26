@@ -43,7 +43,7 @@ using System.Collections;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Threading;
-
+using MonoTests.Common;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -74,6 +74,27 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class MasterPageTest
 	{
+#if NET_4_0
+		class MyTemplate : ITemplate
+		{
+			public const string MyText = "|MyTemplate.InstantiateIn called|";
+
+			public void InstantiateIn (Control container)
+			{
+				container.Controls.Add (new LiteralControl (MyText));
+			}
+		}
+
+		class MyContentTemplate : Content, ITemplate
+		{
+			public const string MyText = "|MyContentTemplate.InstantiateIn called|";
+
+			public void InstantiateIn (Control container)
+			{
+				container.Controls.Add (new LiteralControl (MyText));
+			}
+		}
+#endif
 		[TestFixtureSetUp]
 		public void CopyTestResources ()
 		{
@@ -195,7 +216,87 @@ namespace MonoTests.System.Web.UI.WebControls
 			if (PageRenderHtml.IndexOf ("FromMasterMethod") < 0)
 				Assert.Fail ("MasterType TypeName test failed");
 		}
+#if NET_4_0
+		[Test]
+		public void InstantiateInContentPlaceHolder ()
+		{
+			var mp = new MasterPage ();
+			ITemplate template = new MyTemplate ();
 
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				mp.InstantiateInContentPlaceHolder (null, template);
+			}, "#A1-1");
+
+			Control container = new Control ();
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				mp.InstantiateInContentPlaceHolder (container, null);
+			}, "#A1-2");
+#if DOTNET
+			// TODO: why does it throw? Unchecked 'as' type cast?
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				mp.InstantiateInContentPlaceHolder (container, template);
+			}, "#B1-1");
+#endif
+			// TODO: Still throws a NREX, probably needs a full web request context, as it works below in the
+			// InstantiateInContentPlaceHolder_WithPage test
+			//
+			//template = new MyContentTemplate ();
+			//mp.InstantiateInContentPlaceHolder (container, template);
+		}
+
+		[Test]
+		public void InstantiateInContentPlaceHolder_WithPage ()
+		{
+			WebTest t = new WebTest ("MyPageWithDerivedMaster.aspx");
+			var pd = new PageDelegates ();
+			pd.Load = InstantiateInContentPlaceHolder_WithPage_Load;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+		}
+
+		public static void InstantiateInContentPlaceHolder_WithPage_Load (Page p)
+		{
+			MasterPage mp = p.Master;
+			Assert.IsNotNull (mp, "#A0");
+
+			ITemplate template = new MyTemplate ();
+
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				mp.InstantiateInContentPlaceHolder (null, template);
+			}, "#A1-1");
+
+			Control container = new Control ();
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				mp.InstantiateInContentPlaceHolder (container, null);
+			}, "#A1-2");
+
+			mp.InstantiateInContentPlaceHolder (container, template);
+			Assert.IsTrue (HasLiteralWithText (container, MyTemplate.MyText), "#B1-1");
+
+			template = new MyContentTemplate ();
+			mp.InstantiateInContentPlaceHolder (container, template);
+			Assert.IsTrue (HasLiteralWithText (container, MyContentTemplate.MyText), "#B1-2");
+		}
+
+		static bool HasLiteralWithText (Control container, string text)
+		{
+			if (container == null || container.Controls.Count == 0)
+				return false;
+
+			LiteralControl ctl;
+			foreach (Control c in container.Controls) {
+				ctl = c as LiteralControl;
+				if (ctl == null)
+					continue;
+
+				if (String.Compare (ctl.Text, text, StringComparison.Ordinal) == 0)
+					return true;
+			}
+
+			return false;
+		}
+
+#endif
 		public static void _RenderDefault (Page p)
 		{
 			p.Form.Controls.Add(new LiteralControl("Page dynamic text"));
