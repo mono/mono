@@ -71,7 +71,11 @@ if JIT_SUPPORTED
 if PLATFORM_WIN32
 bin_PROGRAMS = mono monow
 else
+if CROSS_COMPILING
+bin_PROGRAMS = 
+else
 bin_PROGRAMS = mono
+endif
 endif
 
 noinst_PROGRAMS = genmdesc

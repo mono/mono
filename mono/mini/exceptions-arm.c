@@ -472,7 +472,7 @@ mono_arch_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 void
 mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 {
-#if BROKEN_LINUX
+#if BROKEN_LINUX || defined(MONO_CROSS_COMPILE)
 	g_assert_not_reached ();
 #else
 	my_ucontext *my_uc = sigctx;
@@ -487,7 +487,7 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 void
 mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 {
-#if BROKEN_LINUX
+#if BROKEN_LINUX || defined(MONO_CROSS_COMPILE)
 	g_assert_not_reached ();
 #else
 	my_ucontext *my_uc = ctx;
@@ -521,7 +521,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj, gboolean test_only)
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
-#if BROKEN_LINUX
+#if BROKEN_LINUX || defined(MONO_CROSS_COMPILE)
 	g_assert_not_reached ();
 #else
 	my_ucontext *my_uc = sigctx;
