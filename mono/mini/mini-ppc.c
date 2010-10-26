@@ -56,6 +56,8 @@ enum {
 	PPC_HW_CAP_END
 };
 
+#define BREAKPOINT_SIZE (PPC_LOAD_SEQUENCE_LENGTH + 4)
+
 /* This mutex protects architecture specific caches */
 #define mono_mini_arch_lock() EnterCriticalSection (&mini_arch_mutex)
 #define mono_mini_arch_unlock() LeaveCriticalSection (&mini_arch_mutex)
@@ -66,6 +68,12 @@ static int tls_mode = TLS_MODE_DETECT;
 static int lmf_pthread_key = -1;
 static int monothread_key = -1;
 static int monodomain_key = -1;
+
+/*
+ * The code generated for sequence points reads from this location, which is
+ * made read-only when single stepping is enabled.
+ */
+static gpointer ss_trigger_page;
 
 static int
 offsets_from_pthread_key (guint32 key, int *offset2)
@@ -3290,6 +3298,33 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL:
 			break;
+		case OP_SEQ_POINT: {
+			int i;
+
+			if (cfg->compile_aot)
+				NOT_IMPLEMENTED;
+
+			/* 
+			 * Read from the single stepping trigger page. This will cause a
+			 * SIGSEGV when single stepping is enabled.
+			 * We do this _before_ the breakpoint, so single stepping after
+			 * a breakpoint is hit will step to the next IL offset.
+			 */
+			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
+				ppc_load (code, ppc_r11, (gsize)ss_trigger_page);
+				ppc_ldptr (code, ppc_r11, 0, ppc_r11);
+			}
+
+			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
+
+			/* 
+			 * A placeholder for a possible breakpoint inserted by
+			 * mono_arch_set_breakpoint ().
+			 */
+			for (i = 0; i < BREAKPOINT_SIZE / 4; ++i)
+				ppc_nop (code);
+			break;
+		}
 		case OP_TLS_GET:
 			emit_tls_access (code, ins->dreg, ins->inst_offset);
 			break;

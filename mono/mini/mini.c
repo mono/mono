@@ -2853,6 +2853,15 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 
 #ifndef DISABLE_JIT
 
+void
+mono_add_seq_point (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int native_offset)
+{
+	ins->inst_offset = native_offset;
+	g_ptr_array_add (cfg->seq_points, ins);
+	bb->seq_points = g_slist_prepend_mempool (cfg->mempool, bb->seq_points, ins);
+	bb->last_seq_point = ins;
+}
+
 static void
 mono_compile_create_vars (MonoCompile *cfg)
 {
@@ -3018,6 +3027,93 @@ mono_postprocess_patches (MonoCompile *cfg)
 			break;
 		}
 	}
+}
+
+static void
+mono_save_seq_point_info (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb, *in_bb;
+	GSList *bb_seq_points, *l;
+	MonoInst *last;
+	MonoDomain *domain = cfg->domain;
+	int i;
+	MonoSeqPointInfo *info;
+	GSList **next;
+
+	if (!cfg->seq_points)
+		return;
+
+	info = g_malloc0 (sizeof (MonoSeqPointInfo) + (cfg->seq_points->len - MONO_ZERO_LEN_ARRAY) * sizeof (SeqPoint));
+	info->len = cfg->seq_points->len;
+	for (i = 0; i < cfg->seq_points->len; ++i) {
+		SeqPoint *sp = &info->seq_points [i];
+		MonoInst *ins = g_ptr_array_index (cfg->seq_points, i);
+
+		sp->il_offset = ins->inst_imm;
+		sp->native_offset = ins->inst_offset;
+
+		/* Used below */
+		ins->backend.size = i;
+	}
+
+	/*
+	 * For each sequence point, compute the list of sequence points immediately
+	 * following it, this is needed to implement 'step over' in the debugger agent.
+	 */ 
+	next = g_new0 (GSList*, cfg->seq_points->len);
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		bb_seq_points = g_slist_reverse (bb->seq_points);
+		last = NULL;
+		for (l = bb_seq_points; l; l = l->next) {
+			MonoInst *ins = l->data;
+
+			if (!(ins->flags & MONO_INST_SINGLE_STEP_LOC))
+				continue;
+
+			if (last != NULL) {
+				/* Link with the previous seq point in the same bb */
+				next [last->backend.size] = g_slist_append (next [last->backend.size], GUINT_TO_POINTER (ins->backend.size));
+			} else {
+				/* Link with the last bb in the previous bblocks */
+				/* 
+				 * FIXME: What if the prev bb doesn't have a seq point, but
+				 * one of its predecessors has ?
+				 */
+				for (i = 0; i < bb->in_count; ++i) {
+					in_bb = bb->in_bb [i];
+
+					if (in_bb->last_seq_point)
+						next [in_bb->last_seq_point->backend.size] = g_slist_append (next [in_bb->last_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+				}
+			}
+
+			last = ins;
+		}
+	}
+
+	for (i = 0; i < cfg->seq_points->len; ++i) {
+		SeqPoint *sp = &info->seq_points [i];
+		GSList *l;
+		int j;
+
+		sp->next_len = g_slist_length (next [i]);
+		sp->next = g_new (int, sp->next_len);
+		j = 0;
+		for (l = next [i]; l; l = l->next)
+			sp->next [j ++] = GPOINTER_TO_UINT (l->data);
+		g_slist_free (next [i]);
+	}
+	g_free (next);
+
+	cfg->seq_point_info = info;
+
+	// FIXME: dynamic methods
+	mono_domain_lock (domain);
+	g_hash_table_insert (domain_jit_info (domain)->seq_points, cfg->method_to_register, info);
+	mono_domain_unlock (domain);
+
+	g_ptr_array_free (cfg->seq_points, TRUE);
+	cfg->seq_points = NULL;
 }
 
 void
@@ -3275,6 +3371,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->generic_sharing_context = (MonoGenericSharingContext*)&cfg->generic_sharing_context;
 	cfg->compile_llvm = try_llvm;
 	cfg->token_info_hash = g_hash_table_new (NULL, NULL);
+
+	if (cfg->gen_seq_points)
+		cfg->seq_points = g_ptr_array_new ();
 
 	if (cfg->compile_aot && !try_generic_shared && (method->is_generic || method->klass->generic_container)) {
 		cfg->exception_type = MONO_EXCEPTION_GENERIC_SHARING_FAILED;
@@ -4032,12 +4131,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	mini_gc_create_gc_map (cfg);
  
-	if (cfg->seq_points) {
-		// FIXME: dynamic methods
-		mono_domain_lock (domain);
-		g_hash_table_insert (domain_jit_info (domain)->seq_points, method_to_register, cfg->seq_points);
-		mono_domain_unlock (domain);
-	}
+	mono_save_seq_point_info (cfg);
 
 	if (!cfg->compile_aot) {
 		mono_domain_lock (cfg->domain);
@@ -4423,7 +4517,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 			mono_jit_stats.methods_lookups++;
 			vtable = mono_class_vtable (domain, method->klass);
 			g_assert (vtable);
-			tmpEx = mono_runtime_class_init_full (vtable, ex == NULL);
+			tmpEx = mono_runtime_class_init_full (vtable, NULL == ex);
 			if (tmpEx) {
 				*ex = tmpEx;
 				return NULL;
@@ -5004,6 +5098,8 @@ mini_parse_debug_options (void)
 			debug_options.dyn_runtime_invoke = TRUE;
 		else if (!strcmp (arg, "gdb"))
 			debug_options.gdb = TRUE;
+		else if (!strcmp (arg, "gen-seq-points"))
+			debug_options.gen_seq_points = TRUE;
 		else {
 			fprintf (stderr, "Invalid option for the MONO_DEBUG env variable: %s\n", arg);
 			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'dont-free-domains', 'suspend-on-sigsegv', 'dyn-runtime-invoke', 'gdb'\n");
