@@ -1432,11 +1432,17 @@ bin_writer_emit_writeout (MonoImageWriter *acfg)
 static void
 asm_writer_emit_start (MonoImageWriter *acfg)
 {
+#if defined(TARGET_ARM) && defined(__APPLE__) 
+	fprintf (acfg->fp, "#if defined(__arm__)\n");
+#endif
 }
 
 static int
 asm_writer_emit_writeout (MonoImageWriter *acfg)
 {
+#if defined(TARGET_ARM) && defined(__APPLE__) 
+	fprintf (acfg->fp, "#endif\n");
+#endif
 	fclose (acfg->fp);
 
 	return 0;
