@@ -2410,4 +2410,12 @@
 #   define __STDC__ 0
 #endif
 
+#if defined(ANDROID)
+// Vytautas added this one; it causes dyn_load.c not to be dependendent on the contents of link.h
+#define USE_PROC_FOR_LIBRARIES
+#ifdef DYNAMIC_LOADING	// dynamic loading causes GC to register the main heap, which can shrink at any time..
+	#undef DYNAMIC_LOADING
+#endif
+#endif
+
 # endif /* GCCONFIG_H */
