@@ -927,7 +927,13 @@ namespace Mono.CSharp {
 
 		public static TypeParameterSpec[] InflateConstraints (TypeParameterInflator inflator, TypeParameterSpec[] tparams)
 		{
+			return InflateConstraints (tparams, l => l, inflator);
+		}
+
+		public static TypeParameterSpec[] InflateConstraints<T> (TypeParameterSpec[] tparams, Func<T, TypeParameterInflator> inflatorFactory, T arg)
+		{
 			TypeParameterSpec[] constraints = null;
+			TypeParameterInflator? inflator = null;
 
 			for (int i = 0; i < tparams.Length; ++i) {
 				var tp = tparams[i];
@@ -937,7 +943,13 @@ namespace Mono.CSharp {
 						Array.Copy (tparams, constraints, constraints.Length);
 					}
 
-					constraints[i] = (TypeParameterSpec) constraints[i].InflateMember (inflator);
+					//
+					// Using a factory to avoid possibly expensive inflator build up
+					//
+					if (inflator == null)
+						inflator = inflatorFactory (arg);
+
+					constraints[i] = (TypeParameterSpec) constraints[i].InflateMember (inflator.Value);
 				}
 			}
 
@@ -1295,8 +1307,7 @@ namespace Mono.CSharp {
 		public TypeParameterSpec[] Constraints {
 			get {
 				if (constraints == null) {
-					var inflator = CreateLocalInflator ();
-					constraints = TypeParameterSpec.InflateConstraints (inflator, MemberDefinition.TypeParameters);
+					constraints = TypeParameterSpec.InflateConstraints (MemberDefinition.TypeParameters, l => l.CreateLocalInflator (), this);
 				}
 
 				return constraints;
