@@ -3167,17 +3167,24 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (TypeManager.IsValueType (InstanceExpression.Type)) {
+			Type instance_type = InstanceExpression.Type;
+			if (TypeManager.IsValueType (instance_type)) {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
 				} else {
-					LocalTemporary t = new LocalTemporary (InstanceExpression.Type);
+					LocalTemporary t = new LocalTemporary (instance_type);
 					InstanceExpression.Emit (ec);
 					t.Store (ec);
 					t.AddressOf (ec, AddressOp.Store);
 				}
-			} else
+			} else {
 				InstanceExpression.Emit (ec);
+				#if GMCS_SOURCE
+				// Only to make verifier happy
+				if (instance_type.IsGenericParameter && !(InstanceExpression is This) && TypeManager.IsReferenceType (instance_type))
+					ec.ig.Emit (OpCodes.Box, instance_type);
+				#endif
+			}
 
 			if (prepare_for_load)
 				ec.ig.Emit (OpCodes.Dup);
