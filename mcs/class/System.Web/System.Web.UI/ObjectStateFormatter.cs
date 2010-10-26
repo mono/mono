@@ -87,6 +87,10 @@ namespace System.Web.UI
 			}
 		}
 
+		// There's no need to implement encryption support in this overload. Encryption is
+		// performed only when ObjectStateFormatter is created in the Page context, and that
+		// can happen only internally to System.Web. Since System.Web doesn't use this
+		// overload, the encryption code in here would be effectively dead.
 		public object Deserialize (Stream inputStream)
 		{
 			if (inputStream == null)
@@ -152,7 +156,11 @@ namespace System.Web.UI
 			
 			return Convert.ToBase64String (data, 0, data.Length);
 		}
-		
+
+		// There's no need to implement encryption support in this overload. Encryption is
+		// performed only when ObjectStateFormatter is created in the Page context, and that
+		// can happen only internally to System.Web. Since System.Web doesn't use this
+		// overload, the encryption code in here would be effectively dead.
 		public void Serialize (Stream outputStream, object stateGraph)
 		{
 			if (outputStream == null)
