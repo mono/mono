@@ -1691,8 +1691,12 @@ try_load_from (MonoAssembly **assembly, const gchar *path1, const gchar *path2,
 		found = g_file_test (fullpath, G_FILE_TEST_IS_REGULAR);
 	
 	if (found)
-		*assembly = mono_assembly_open_full (fullpath, NULL, refonly);
-
+	{
+		gchar* afullpath = mono_path_resolve_symlinks(fullpath);
+		*assembly = mono_assembly_open_full (afullpath, NULL, refonly);
+		g_free(afullpath);
+	}
+		
 	g_free (fullpath);
 	return (*assembly != NULL);
 }
