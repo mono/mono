@@ -47,6 +47,10 @@ if INSTALL_MONOTOUCH
 build_profiles += monotouch
 endif
 
+if INSTALL_UNITY
+build_profiles += unity
+endif
+
 if BUILD_MCS
 
 # The write check is to foil 'make distcheck'
