@@ -386,6 +386,14 @@ mono_debug_open_image (MonoImage *image, const guint8 *raw_contents, int size)
 
 	handle = _mono_debug_get_image (image);
 	if (handle != NULL) {
+
+		if (!handle->symfile) // if this image already has an empty dummy debug module, we'll kill that and load this one.
+		{
+			mono_debugger_unlock();
+			mono_debug_close_image(image);
+			return mono_debug_open_image(image,raw_contents,size);
+		}
+
 		mono_debugger_unlock ();
 		return handle;
 	}
