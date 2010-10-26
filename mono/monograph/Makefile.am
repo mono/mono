@@ -9,7 +9,11 @@ else
 runtime_lib=../interpreter/libmint.la
 endif
 
+if CROSS_COMPILING
+bin_PROGRAMS = 
+else
 bin_PROGRAMS = monograph
+endif
 
 INCLUDES = 				\
 	-I$(top_srcdir)			\
