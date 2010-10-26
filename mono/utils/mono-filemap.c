@@ -31,10 +31,17 @@ mono_file_map_open (const char* name)
 guint64 
 mono_file_map_size (MonoFileMap *fmap)
 {
+	#ifdef TARGET_IPHONE_SIMULATOR
+	struct stat64 stat_buf;
+	if (fstat64 (fileno ((FILE*)fmap), &stat_buf) < 0)
+		return 0;
+	return stat_buf.st_size;
+	#else
 	struct stat stat_buf;
 	if (fstat (fileno ((FILE*)fmap), &stat_buf) < 0)
 		return 0;
 	return stat_buf.st_size;
+	#endif
 }
 
 int
