@@ -163,7 +163,11 @@ namespace System.Diagnostics {
 		{
 			base.Fail (message, detailMessage);
 			if (ProcessUI (message, detailMessage) == DialogResult.Abort)
+			{
+				try{
 				Thread.CurrentThread.Abort ();
+				} catch (MethodAccessException) {}
+			}
 			WriteLine (new StackTrace().ToString());
 		}
 
@@ -267,6 +271,16 @@ namespace System.Diagnostics {
 		}
 
 		private void WriteLogFile (string message, string logFile)
+		{
+				try
+				{
+					WriteLogFileImpl(message,logFile);
+				} catch (MethodAccessException)
+				{
+					//looks like we're running with security mode enabled, in which case we don't support writing to the logfile.
+				}
+		}
+		private void WriteLogFileImpl (string message, string logFile)
 		{
 			string fname = logFile;
 			if (fname != null && fname.Length != 0) {
