@@ -840,6 +840,7 @@ mono_arch_get_throw_corlib_exception (void)
 
 #endif
 
+/* This is really incomplete, I added it only to backport r157327 (Massi) */
 void
 mono_arch_exceptions_init (void)
 {
@@ -865,13 +866,12 @@ mono_arch_exceptions_init (void)
 #endif
 
 	if (mono_aot_only) {
-		signal_exception_trampoline = mono_aot_get_named_code ("x86_signal_exception_trampoline");
+		// FIXME: backort does not work in full AOT mode yet (but we don't use it…) (Massi)
+		//signal_exception_trampoline = mono_aot_get_trampoline ("x86_signal_exception_trampoline");
 		return;
 	}
-
 	signal_exception_trampoline = mono_x86_get_signal_exception_trampoline (NULL, FALSE);
 }
-
 
 /*
  * mono_arch_find_jit_info_ext:
