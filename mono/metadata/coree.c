@@ -9,8 +9,6 @@
 
 #include <config.h>
 
-#ifdef PLATFORM_WIN32
-
 #if _WIN32_WINNT < 0x0501
 /* Required for ACTCTX. */
 #undef _WIN32_WINNT
@@ -33,9 +31,7 @@
 #include "environment.h"
 #include "coree.h"
 
-HMODULE coree_module_handle = NULL;
-
-static gboolean init_from_coree = FALSE;
+#ifdef PLATFORM_WIN32
 
 gchar*
 mono_get_module_file_name (HMODULE module_handle)
@@ -68,6 +64,13 @@ mono_get_module_file_name (HMODULE module_handle)
 
 	return file_name_utf8;
 }
+#endif
+
+#ifdef USE_COREE
+
+HMODULE coree_module_handle = NULL;
+
+static gboolean init_from_coree = FALSE;
 
 /* Entry point called by LdrLoadDll of ntdll.dll after _CorValidateImage. */
 BOOL STDMETHODCALLTYPE _CorDllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpReserved)
@@ -923,4 +926,4 @@ mono_fixup_exe_image (MonoImage* image)
 		MonoFixupExe ((HMODULE) image->raw_data);
 }
 
-#endif /* PLATFORM_WIN32 */
+#endif /* USE_COREE */
