@@ -5231,20 +5231,28 @@ static GHashTable *mvar_cache_slow;
 static MonoClass *
 get_anon_gparam_class (MonoGenericParam *param, gboolean is_mvar)
 {
+	return 0;
+/*	temp hack around mono domain unloading bug.
+
 	int n = mono_generic_param_num (param);
 	GHashTable *ht;
 
 	if (n < FAST_CACHE_SIZE)
 		return (is_mvar ? mvar_cache_fast : var_cache_fast) [n];
 	ht = is_mvar ? mvar_cache_slow : var_cache_slow;
-	return ht ? g_hash_table_lookup (ht, GINT_TO_POINTER (n)) : NULL;
+	return ht ? g_hash_table_lookup (ht, GINT_TO_POINTER (n)) : NULL;*/
 }
 
 static void
 set_anon_gparam_class (MonoGenericParam *param, gboolean is_mvar, MonoClass *klass)
 {
+	return;
+
+/*  temp hack around mono domain unloading bug.
 	int n = mono_generic_param_num (param);
 	GHashTable *ht;
+	
+	g_assert(klass->image == mono_defaults.corlib);
 
 	if (n < FAST_CACHE_SIZE) {
 		(is_mvar ? mvar_cache_fast : var_cache_fast) [n] = klass;
@@ -5259,7 +5267,7 @@ set_anon_gparam_class (MonoGenericParam *param, gboolean is_mvar, MonoClass *kla
 			var_cache_slow = ht;
 	}
 
-	g_hash_table_insert (ht, GINT_TO_POINTER (n), klass);
+	g_hash_table_insert (ht, GINT_TO_POINTER (n), klass);*/
 }
 
 /*
