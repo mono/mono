@@ -552,12 +552,14 @@ static gint32 convert_sockopt_level_and_name(MonoSocketOptionLevel mono_level,
 		case SocketOptionName_MulticastLoopback:
 			*system_name = IPV6_MULTICAST_LOOP;
 			break;
+#if !defined(PLATFORM_ANDROID) /* JOIN_/LEAVE_GROUP is missing from Android in6.h ... */
 		case SocketOptionName_AddMembership:
 			*system_name = IPV6_JOIN_GROUP;
 			break;
 		case SocketOptionName_DropMembership:
 			*system_name = IPV6_LEAVE_GROUP;
 			break;
+#endif
 		case SocketOptionName_PacketInformation:
 #ifdef HAVE_IPV6_PKTINFO
 			*system_name = IPV6_PKTINFO;
