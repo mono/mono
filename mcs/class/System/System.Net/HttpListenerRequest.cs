@@ -55,6 +55,8 @@ namespace System.Net {
 		string [] user_languages;
 		HttpListenerContext context;
 		bool is_chunked;
+		bool ka_set;
+		bool keep_alive;
 		static byte [] _100continue = Encoding.ASCII.GetBytes ("HTTP/1.1 100 Continue\r\n\r\n");
 		static readonly string [] no_body_methods = new string [] {
 			"GET", "HEAD", "DELETE" };
@@ -384,7 +386,26 @@ namespace System.Net {
 		}
 
 		public bool KeepAlive {
-			get { return false; }
+			get {
+				if (ka_set)
+					return keep_alive;
+
+				ka_set = true;
+				// 1. Connection header
+				// 2. Protocol (1.1 == keep-alive by default)
+				// 3. Keep-Alive header
+				string cnc = headers ["Connection"];
+				if (!String.IsNullOrEmpty (cnc)) {
+					keep_alive = (0 == String.Compare (cnc, "keep-alive", StringComparison.OrdinalIgnoreCase));
+				} else if (version == HttpVersion.Version11) {
+					keep_alive = true;
+				} else {
+					cnc = headers ["keep-alive"];
+					if (!String.IsNullOrEmpty (cnc))
+						keep_alive = (0 != String.Compare (cnc, "closed", StringComparison.OrdinalIgnoreCase));
+				}
+				return keep_alive;
+			}
 		}
 
 		public IPEndPoint LocalEndPoint {
