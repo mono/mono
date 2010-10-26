@@ -430,8 +430,8 @@ else
 		;;
 	esac
 fi
-CFLAGS="$CFLAGS -g $WARN"
-CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -g"
+CFLAGS="$CFLAGS $WARN"
+CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC "
 
 # Where's the 'mcs' source tree?
 if test -d $srcdir/mcs; then
