@@ -113,7 +113,7 @@ build_iphone_simulator ()
 	perl build_runtime_osx.pl -iphone_simulator=1 || exit 1
 	echo "Copying iPhone simulator static lib to final destination";
 	mkdir -p builds/embedruntimes/iphone
-	cp mono/mono/mini/.libs/libmono.a builds/embedruntimes/iphone/libmono-i386.a
+	cp mono/mini/.libs/libmono.a builds/embedruntimes/iphone/libmono-i386.a
 }
 
 usage()
