@@ -12,6 +12,9 @@
 #include <pthread.h>
 #include <signal.h>
 #include <sys/types.h>
+#if defined(PLATFORM_ANDROID)
+	#include <sys/mman.h>
+#endif
 #include <unistd.h>
 
 #include <mono/io-layer/wapi.h>
