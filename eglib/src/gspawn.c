@@ -63,7 +63,7 @@
 #define NO_INTR(var,cmd) do { (var) = (cmd); } while ((var) == -1 && errno == EINTR)
 #define CLOSE_PIPE(p) do { close (p [0]); close (p [1]); } while (0)
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(__arm__)
 /* Apple defines this in crt_externs.h but doesn't provide that header for 
  * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
  * in fact exist on all implementations (so far) 
@@ -388,8 +388,10 @@ g_spawn_async_with_pipes (const gchar *working_directory,
 			}
 
 			actual_args = ((flags & G_SPAWN_FILE_AND_ARGV_ZERO) == 0) ? argv : argv + 1;
+			#if !defined(__APPLE__) || !defined(__arm__)
 			if (envp == NULL)
 				envp = environ;
+			#endif
 
 			if (child_setup)
 				child_setup (user_data);
