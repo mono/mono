@@ -71,6 +71,7 @@ System.ComponentModel/TypeConverterAttribute.cs
 System.ComponentModel/TypeConverter_2_1.cs
 System/DefaultUriParser.cs
 System.Diagnostics/Debug_2_1.cs
+System.Diagnostics/Stopwatch.cs
 System/FileStyleUriParser.cs
 System/FtpStyleUriParser.cs
 System/GenericUriParser.cs
