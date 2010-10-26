@@ -5892,6 +5892,11 @@ void MONO_NOINLINE __jit_debug_register_code(void);
 
 void MONO_NOINLINE __jit_debug_register_code(void) { };
 
+#if defined(PLATFORM_ANDROID)
+/* Android GDB fails with "Unable to read JIT descriptor from remote memory!" */
+	#define __jit_debug_descriptor __jit_debug_descriptor_dummy
+#endif
+
 /* Make sure to specify the version statically, because the
    debugger may check the version before we can set it.  */
 struct jit_descriptor __jit_debug_descriptor = { 1, 0, 0, 0 };
