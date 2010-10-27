@@ -5,7 +5,7 @@
 //   Chris Toshok (toshok@ximian.com)
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2008 Novell, Inc
+// (C) 2008-2010 Novell, Inc (http://novell.com)
 //
 
 //
@@ -80,6 +80,7 @@ namespace System.Web.Compilation
 				css_urls [i] = VirtualPathUtility.Combine (vp, Path.GetFileName (css_files [i]));
 				ptp.AddDependency (css_urls [i]);
 			}
+			Array.Sort (css_urls, StringComparer.OrdinalIgnoreCase);
 			ptp.LinkedStyleSheets = css_urls;
 			
 			AspComponentFoundry shared_foundry = new AspComponentFoundry ();

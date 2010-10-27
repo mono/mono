@@ -2637,27 +2637,45 @@ public partial class Page : TemplateControl, IHttpHandler
 		return dataItemCtx.Peek ();
 	}
 
+	void AddStyleSheets (PageTheme theme, ref List <string> links)
+	{
+		if (theme == null)
+			return;
+
+		string[] tmpThemes = theme != null ? theme.GetStyleSheets () : null;
+		if (tmpThemes == null || tmpThemes.Length == 0)
+			return;
+
+		if (links == null)
+			links = new List <string> ();
+
+		links.AddRange (tmpThemes);
+	}
+	
 	protected internal override void OnInit (EventArgs e)
 	{
 		base.OnInit (e);
 
-		var themes = new List <string> ();
+		List <string> themes = null;
+		AddStyleSheets (StyleSheetPageTheme, ref themes);
+		AddStyleSheets (PageTheme, ref themes);
 
-		if (StyleSheetPageTheme != null && StyleSheetPageTheme.GetStyleSheets () != null)
-			themes.AddRange (StyleSheetPageTheme.GetStyleSheets ());
+		if (themes == null)
+			return;
 		
-		if (PageTheme != null && PageTheme.GetStyleSheets () != null)
-			themes.AddRange (PageTheme.GetStyleSheets ());
-
-		if (themes.Count > 0 && Header == null)
+		HtmlHead header = Header;
+		if (themes != null && header == null)
 			throw new InvalidOperationException ("Using themed css files requires a header control on the page.");
-
-		foreach (string lss in themes) {
+		
+		ControlCollection headerControls = header.Controls;
+		string lss;
+		for (int i = themes.Count - 1; i >= 0; i--) {
+			lss = themes [i];
 			HtmlLink hl = new HtmlLink ();
 			hl.Href = lss;
 			hl.Attributes["type"] = "text/css";
 			hl.Attributes["rel"] = "stylesheet";
-			Header.Controls.Add (hl);
+			headerControls.AddAt (0, hl);
 		}
 	}
 

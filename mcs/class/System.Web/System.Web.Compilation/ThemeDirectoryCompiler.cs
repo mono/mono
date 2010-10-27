@@ -55,6 +55,8 @@ namespace System.Web.UI
 				ptp.AddDependency (css_files [i]);
 				css_urls [i] = virtualPath + Path.GetFileName (css_files [i]);
 			}
+
+			Array.Sort (css_urls, StringComparer.OrdinalIgnoreCase);
 			ptp.LinkedStyleSheets = css_urls;
 			
 			AspComponentFoundry shared_foundry = new AspComponentFoundry ();
