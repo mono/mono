@@ -54,6 +54,9 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void get_method_info (IntPtr handle, out MonoMethodInfo info);
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern int get_method_attributes (IntPtr handle);
+		
 		internal static MonoMethodInfo GetMethodInfo (IntPtr handle)
 		{
 			MonoMethodInfo info;
@@ -73,7 +76,7 @@ namespace System.Reflection {
 
 		internal static MethodAttributes GetAttributes (IntPtr handle)
 		{
-			return GetMethodInfo (handle).attrs;
+			return (MethodAttributes)get_method_attributes (handle);
 		}
 
 		internal static CallingConventions GetCallingConvention (IntPtr handle)
