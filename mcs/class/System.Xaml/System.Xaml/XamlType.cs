@@ -515,10 +515,10 @@ namespace System.Xaml
 
 		protected virtual IList<XamlType> LookupContentWrappers ()
 		{
-			if (CustomAttributeProvider == null)
+			if (GetCustomAttributeProvider () == null)
 				return null;
 
-			var arr = CustomAttributeProvider.GetCustomAttributes (typeof (ContentWrapperAttribute), false);
+			var arr = GetCustomAttributeProvider ().GetCustomAttributes (typeof (ContentWrapperAttribute), false);
 			if (arr == null || arr.Length == 0)
 				return null;
 			var l = new XamlType [arr.Length];
@@ -527,14 +527,16 @@ namespace System.Xaml
 			return l;
 		}
 
-		internal ICustomAttributeProvider CustomAttributeProvider {
-			get { return LookupCustomAttributeProvider (); }
+		internal ICustomAttributeProvider GetCustomAttributeProvider ()
+		{
+			return LookupCustomAttributeProvider ();
 		}
 
-		protected virtual ICustomAttributeProvider LookupCustomAttributeProvider ()
+		protected internal virtual ICustomAttributeProvider LookupCustomAttributeProvider ()
 		{
 			return UnderlyingType;
 		}
+		
 		protected virtual XamlValueConverter<XamlDeferringLoader> LookupDeferringLoader ()
 		{
 			throw new NotImplementedException ();
@@ -650,7 +652,7 @@ namespace System.Xaml
 			// If there is, then return its type.
 			if (parameterCount == 1) {
 				foreach (var xm in GetAllMembers ()) {
-					var ca = xm.CustomAttributeProvider.GetCustomAttribute<ConstructorArgumentAttribute> (false);
+					var ca = xm.GetCustomAttributeProvider ().GetCustomAttribute<ConstructorArgumentAttribute> (false);
 					if (ca != null)
 						return new XamlType [] {xm.Type};
 				}
@@ -705,7 +707,7 @@ namespace System.Xaml
 			if (t == typeof (Type))
 				t = typeof (TypeExtension);
 
-			var a = CustomAttributeProvider.GetCustomAttribute<TypeConverterAttribute> (false);
+			var a = GetCustomAttributeProvider ().GetCustomAttribute<TypeConverterAttribute> (false);
 			if (a != null)
 				return SchemaContext.GetValueConverter<TypeConverter> (Type.GetType (a.ConverterTypeName), this);
 
@@ -734,7 +736,7 @@ namespace System.Xaml
 
 		protected virtual XamlValueConverter<ValueSerializer> LookupValueSerializer ()
 		{
-			return LookupValueSerializer (this, CustomAttributeProvider);
+			return LookupValueSerializer (this, GetCustomAttributeProvider ());
 		}
 
 		internal static XamlValueConverter<ValueSerializer> LookupValueSerializer (XamlType targetType, ICustomAttributeProvider provider)
@@ -759,11 +761,6 @@ namespace System.Xaml
 			}
 
 			return null;
-		}
-
-		internal IEnumerable<XamlMember> GetConstructorArguments ()
-		{
-			return GetAllMembers ().Where (m => m.UnderlyingMember != null && m.CustomAttributeProvider.GetCustomAttribute<ConstructorArgumentAttribute> (false) != null);
 		}
 	}
 }

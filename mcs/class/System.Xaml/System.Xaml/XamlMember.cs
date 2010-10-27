@@ -150,10 +150,6 @@ namespace System.Xaml
 		bool is_predefined_directive = XamlLanguage.InitializingDirectives;
 		string directive_ns;
 
-		internal ICustomAttributeProvider CustomAttributeProvider {
-			get { return LookupCustomAttributeProvider (); }
-		}
-
 		internal MethodInfo UnderlyingGetter {
 			get { return LookupUnderlyingGetter (); }
 			private set { underlying_getter = value; }
@@ -300,6 +296,11 @@ namespace System.Xaml
 		}
 
 		// lookups
+
+		internal ICustomAttributeProvider GetCustomAttributeProvider ()
+		{
+			return LookupCustomAttributeProvider ();
+		}
 
 		protected virtual ICustomAttributeProvider LookupCustomAttributeProvider ()
 		{

@@ -56,7 +56,7 @@ namespace System.Xaml
 			if (type.UnderlyingType == null)
 				return null;
 
-			T ret = type.CustomAttributeProvider.GetCustomAttribute<T> (true);
+			T ret = type.GetCustomAttributeProvider ().GetCustomAttribute<T> (true);
 			if (ret != null)
 				return ret;
 			if (type.BaseType != null)
@@ -225,6 +225,11 @@ namespace System.Xaml
 			return true;
 		}
 
+		public static IEnumerable<XamlMember> GetConstructorArguments (this XamlType type)
+		{
+			return type.GetAllMembers ().Where (m => m.UnderlyingMember != null && m.GetCustomAttributeProvider ().GetCustomAttribute<ConstructorArgumentAttribute> (false) != null);
+		}
+
 		public static IEnumerable<XamlMember> GetSortedConstructorArguments (this XamlType type)
 		{
 			var args = type.GetConstructorArguments ().ToArray ();
@@ -245,7 +250,7 @@ namespace System.Xaml
 
 		public static string ConstructorArgumentName (this XamlMember xm)
 		{
-			var caa = xm.CustomAttributeProvider.GetCustomAttribute<ConstructorArgumentAttribute> (false);
+			var caa = xm.GetCustomAttributeProvider ().GetCustomAttribute<ConstructorArgumentAttribute> (false);
 			return caa.ArgumentName;
 		}
 	}

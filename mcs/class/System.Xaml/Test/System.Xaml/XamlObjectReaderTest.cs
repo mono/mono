@@ -816,6 +816,16 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Read_Guid ()
+		{
+			var obj = Guid.NewGuid ();
+			var r = new XamlObjectReader (obj);
+			Assert.IsNotNull (r.SchemaContext.GetXamlType (typeof (Guid)).TypeConverter, "premise#1");
+			Read_CommonClrType (r, obj);
+			Assert.AreEqual (obj.ToString (), Read_Initialization (r, null), "#1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (XamlObjectReaderException))]
 		[Category ("NotWorking")]
 		public void Read_XData ()
