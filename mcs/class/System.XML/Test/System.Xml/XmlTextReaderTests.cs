@@ -1348,5 +1348,15 @@ namespace MonoTests.System.Xml
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<root xml:base='' />");
 		}
+
+		[Test]
+		public void GetAttribute ()
+		{
+			StringReader sr = new StringReader("<rootElement myAttribute=\"the value\"></rootElement>");
+			using (XmlReader reader = XmlReader.Create(sr)) {
+				reader.Read ();
+				Assert.AreEqual (reader.GetAttribute("myAttribute", null), "the value", "#1");
+			}
+		}
 	}
 }

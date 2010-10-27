@@ -424,6 +424,7 @@ namespace System.Xml
 
 		private int GetIndexOfQualifiedAttribute (string localName, string namespaceURI)
 		{
+			namespaceURI = namespaceURI ?? String.Empty;
 			for (int i = 0; i < attributeCount; i++) {
 				XmlAttributeTokenInfo ti = attributeTokens [i];
 				if (ti.LocalName == localName && ti.NamespaceURI == namespaceURI)
