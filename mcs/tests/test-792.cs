@@ -11,6 +11,11 @@ class Program
 		var s = new MultipleSameNames ();
 		s.AA = "1";
 	}
+	
+	void Test2 (IMemberDelayed md)
+	{
+		md.Working ();
+	}
 
 	static void Main ()
 	{
