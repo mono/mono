@@ -107,8 +107,8 @@ function clean_build
 
 	make && echo "Build SUCCESS!" || exit 1
 
-	mkdir -p `dirname ../$2`
-	cp mono/mini/.libs/libmono.a ../$2
+	mkdir -p `dirname $2`
+	cp mono/mini/.libs/libmono.a $2
 }
 
 clean_build -DARM_FPU_NONE=1 $OUTDIR/libmono_fpu_none.a
