@@ -138,11 +138,21 @@ namespace System.Web.Security
 		
 		public static MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, out MembershipCreateStatus status)
 		{
-			return Provider.CreateUser (username, password, email, pwdQuestion, pwdAnswer, isApproved, null, out status);
+			return CreateUser (username, password, email, pwdQuestion, pwdAnswer, isApproved, null, out status);
 		}
 		
 		public static MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status)
 		{
+			if (String.IsNullOrEmpty (username)) {
+				status = MembershipCreateStatus.InvalidUserName;
+				return null;
+			}
+
+			if (String.IsNullOrEmpty (password)) {
+				status = MembershipCreateStatus.InvalidPassword;
+				return null;
+			}
+
 			return Provider.CreateUser (username, password, email, pwdQuestion, pwdAnswer, isApproved, providerUserKey, out status);
 		}
 		
