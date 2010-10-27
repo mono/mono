@@ -21,9 +21,8 @@ class C
 		if (A.Test<dynamic> (d, o).TestCall () != 1)
 			return 1;
 
-		// FIXME: Very tricky, I not sure what to do for now
-		//if (A.Test (d, o).TestCall () != 1)
-		//	return 1;
+		if (A.Test (d, o).TestCall () != 1)
+			return 2;
 
 		return 0;
 	}

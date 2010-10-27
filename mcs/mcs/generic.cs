@@ -2909,6 +2909,13 @@ namespace Mono.CSharp {
 					if (open_v == t.MemberDefinition)
 						u_candidates.Add (t);
 
+					//
+					// Using this trick for dynamic type inference, the spec says the type arguments are "unknown" but
+					// that would complicate the process a lot, instead I treat them as dynamic
+					//
+					if (t == InternalType.Dynamic)
+						u_candidates.Add (t);
+
 					if (t.Interfaces != null) {
 						foreach (var iface in t.Interfaces) {
 							if (open_v == iface.MemberDefinition)
@@ -2939,7 +2946,21 @@ namespace Mono.CSharp {
 						return 1;
 					}
 
-					unique_candidate_targs = TypeManager.GetTypeArguments (u_candidate);
+					//
+					// A candidate is dynamic type expression, to simplify things use dynamic
+					// for all type parameter of this type. For methods like this one
+					// 
+					// void M<T, U> (IList<T>, IList<U[]>)
+					//
+					// dynamic becomes both T and U when the arguments are of dynamic type
+					//
+					if (u_candidate == InternalType.Dynamic) {
+						unique_candidate_targs = new TypeSpec[ga_v.Length];
+						for (int i = 0; i < unique_candidate_targs.Length; ++i)
+							unique_candidate_targs[i] = u_candidate;
+					} else {
+						unique_candidate_targs = TypeManager.GetTypeArguments (u_candidate);
+					}
 				}
 
 				if (unique_candidate_targs != null) {
