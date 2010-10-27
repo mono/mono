@@ -21,7 +21,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\builds\monodistribution\bin\"
+			OutputDirectory="..\builds\monodistribution\bin\"
 			IntermediateDirectory="$(PlatformName)_$(ConfigurationName)/obj/$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -101,7 +101,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\builds\monodistribution\bin\"
+			OutputDirectory="..\builds\monodistribution\bin\"
 			IntermediateDirectory="$(PlatformName)_$(ConfigurationName)/obj/$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -179,7 +179,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_eglib|Win32"
-			OutputDirectory="..\..\builds\monodistribution\bin\"
+			OutputDirectory="..\builds\monodistribution\bin\"
 			IntermediateDirectory="$(PlatformName)_$(ConfigurationName)/obj/$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -259,7 +259,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release_eglib|Win32"
-			OutputDirectory="..\..\builds\monodistribution\bin\"
+			OutputDirectory="..\builds\monodistribution\bin\"
 			IntermediateDirectory="$(PlatformName)_$(ConfigurationName)/obj/$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"

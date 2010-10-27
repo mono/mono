@@ -20,7 +20,7 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\builds\embedruntimes\win32\"
+			OutputDirectory="..\builds\embedruntimes\win32\"
 			IntermediateDirectory="$(PlatformName)_$(ConfigurationName)/obj/$(ProjectName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -109,7 +109,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\builds\embedruntimes\win32\"
+			OutputDirectory="..\builds\embedruntimes\win32\"
 			IntermediateDirectory="$(PlatformName)_$(ConfigurationName)/obj/$(ProjectName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -198,7 +198,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_eglib|Win32"
-			OutputDirectory="..\..\builds\embedruntimes\win32\"
+			OutputDirectory="..\builds\embedruntimes\win32\"
 			IntermediateDirectory="$(PlatformName)_$(ConfigurationName)/obj/$(ProjectName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -287,7 +287,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release_eglib|Win32"
-			OutputDirectory="..\..\builds\embedruntimes\win32\"
+			OutputDirectory="..\builds\embedruntimes\win32\"
 			IntermediateDirectory="$(PlatformName)_$(ConfigurationName)/obj/$(ProjectName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
