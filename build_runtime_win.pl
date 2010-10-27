@@ -15,7 +15,12 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 
 
 CompileVCProj("$root/msvc/mono.sln","Release_eglib",0);
-unlink("$root/builds/embedruntimes/win32/libmono.bsc") or die("can't delete libmono.bsc");
+my $remove = "$root/builds/embedruntimes/win32/libmono.bsc";
+if (-e $remove)
+{
+	unlink($remove) or die("can't delete libmono.bsc");
+}
+
 
 #have a duplicate for now...
 copy("$root/builds/embedruntimes/win32/mono.dll","$root/builds/monodistribution/bin/mono.dll");
