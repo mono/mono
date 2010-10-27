@@ -354,7 +354,7 @@ namespace System.Web
 			if (set_no_transform)
 				cc = String.Concat (cc, ", no-transform");
 			if (cache_extension != null && cache_extension.Length > 0) {
-				if (!Strng.IsNullOrEmpty (cc))
+				if (!String.IsNullOrEmpty (cc))
 					cc = String.Concat (cc, ", ");
 				cc = String.Concat (cc, cache_extension.ToString ());
 			}
