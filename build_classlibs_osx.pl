@@ -15,6 +15,8 @@ my $lib = "$monodistro/lib";
 my $libmono = "$lib/mono";
 my $monoprefix = "$root/tmp/monoprefix";
 
+my $dependencyBranchToUse = "unity3.0";
+
 if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	print "rmtree-ing $root/builds because we're on a buildserver, and want to make sure we don't include old artifacts\n";
 	rmtree("$root/builds");
@@ -258,10 +260,13 @@ sub GitClone
 {
 	my $repo = shift;
 	my $localFolder = shift;
+	my $branch = shift;
+	$branch = defined($branch)?$branch:master;
+
 	if (-d $localFolder) {
 		return;
 	}
-	system("git clone $repo $localFolder") eq 0 or die("git clone $repo $localFolder failed!");
+	system("git clone --branch $branch $repo $localFolder") eq 0 or die("git clone $repo $localFolder failed!");
 }
 
 sub BuildCecilForUnity
@@ -273,7 +278,7 @@ sub BuildCecilForUnity
 	if ($useCecilLight) {
 		
 		$cecilCheckout = "external/cecil";
-		GitClone("git://github.com/lucasmeijer/cecil.git", $cecilCheckout);
+		GitClone("http://github.com/Unity-Technologies/cecil", $cecilCheckout, $dependencyBranchToUse);
 		
 	}
 	
