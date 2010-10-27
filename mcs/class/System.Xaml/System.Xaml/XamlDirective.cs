@@ -36,6 +36,7 @@ namespace System.Xaml
 			XamlDirective directive;
 
 			public DirectiveMemberInvoker (XamlDirective directive)
+				: base (directive)
 			{
 			}
 		}

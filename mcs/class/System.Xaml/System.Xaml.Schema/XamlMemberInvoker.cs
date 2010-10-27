@@ -57,20 +57,20 @@ namespace System.Xaml.Schema
 		{
 			if (instance == null)
 				throw new ArgumentNullException ("instance");
-//			if (this is XamlDirective)
-//				throw new NotSupportedException ("not supported operation on directive members.");
+			if (member is XamlDirective)
+				throw new NotSupportedException (String.Format ("not supported operation on directive member {0}", member));
 			if (UnderlyingGetter == null)
-				throw new NotSupportedException ("Attempt to get value from write-only property or event");
+				throw new NotSupportedException (String.Format ("Attempt to get value from write-only property or event {0}", member));
 			return UnderlyingGetter.Invoke (instance, new object [0]);
 		}
 		public virtual void SetValue (object instance, object value)
 		{
 			if (instance == null)
 				throw new ArgumentNullException ("instance");
-//			if (this is XamlDirective)
-//				throw new NotSupportedException ("not supported operation on directive members.");
+			if (member is XamlDirective)
+				throw new NotSupportedException (String.Format ("not supported operation on directive member {0}", member));
 			if (UnderlyingSetter == null)
-				throw new NotSupportedException ("Attempt to get value from read-only property");
+				throw new NotSupportedException (String.Format ("Attempt to set value from read-only property {0}", member));
 			UnderlyingSetter.Invoke (instance, new object [] {value});
 		}
 

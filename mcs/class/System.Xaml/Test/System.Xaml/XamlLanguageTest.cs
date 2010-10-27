@@ -193,6 +193,13 @@ namespace MonoTests.System.Xaml
 			// weird name
 			TestXamlDirectiveCommon (d, "_Initialization", AllowedMemberLocations.Any, typeof (object));
 		}
+		
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void InitializationGetValue ()
+		{
+			XamlLanguage.Initialization.Invoker.GetValue ("foo");
+		}
 
 		[Test]
 		public void Items ()
