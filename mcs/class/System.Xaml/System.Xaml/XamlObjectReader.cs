@@ -243,9 +243,8 @@ namespace System.Xaml
 				return true;
 
 			case XamlNodeType.GetObject:
-				var ml = new List<XamlMember> ();
-				ml.Add (XamlLanguage.Items);
-				members = ml.GetEnumerator ();
+				IEnumerable<XamlMember> arr = new XamlMember [] {XamlLanguage.Items};
+				members = arr.GetEnumerator ();
 				members.MoveNext ();
 				members_stack.Push (members);
 				StartNextMember ();
@@ -253,8 +252,7 @@ namespace System.Xaml
 			case XamlNodeType.StartObject:
 				var obj = objects.Peek ();
 				var xt = obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
-				ml = xt.GetAllObjectReaderMembers (obj, next_key).ToList ();
-				ml.Sort (CompareMembers);
+				var ml = xt.GetAllObjectReaderMembers (obj, next_key).ToList ();
 				members = ml.GetEnumerator ();
 				if (members.MoveNext ()) {
 					members_stack.Push (members);
@@ -348,29 +346,6 @@ namespace System.Xaml
 				node_type = XamlNodeType.EndMember;
 				return true;
 			}
-		}
-
-		static int CompareMembers (XamlMember m1, XamlMember m2)
-		{
-			// static members should go first.
-			if (m1.DeclaringType == null) {
-				if (m2.DeclaringType == null)
-					// if both are static, compare names.
-					return String.CompareOrdinal (m1.Name, m2.Name);
-				else
-					return 1;
-			}
-			else if (m2.DeclaringType == null)
-				return -1;
-
-			// ContentProperty is returned at last.
-			if (m1.DeclaringType.ContentProperty == m1)
-				return 1;
-			else if (m2.DeclaringType.ContentProperty == m2)
-				return -1;
-
-			// then, compare names.
-			return String.CompareOrdinal (m1.Name, m2.Name);
 		}
 
 		// proceed to StartObject of the next item, or EndMember of XamlLanguage.Items.

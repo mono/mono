@@ -373,11 +373,25 @@ namespace System.Xaml
 		{
 			if (UnderlyingType == null)
 				return BaseType != null ? BaseType.GetAllMembers () : empty_array;
-			if (all_members_cache == null)
+			if (all_members_cache == null) {
 				all_members_cache = new List<XamlMember> (DoLookupAllMembers ());
+				all_members_cache.Sort (CompareMembers);
+			}
 			return all_members_cache;
 		}
 
+		int CompareMembers (XamlMember m1, XamlMember m2)
+		{
+			// ContentProperty is returned at last.
+			if (m1.DeclaringType.ContentProperty == m1)
+				return 1;
+			else if (m2.DeclaringType.ContentProperty == m2)
+				return -1;
+
+			// then, compare names.
+			return String.CompareOrdinal (m1.Name, m2.Name);
+		}
+		
 		List<XamlMember> all_members_cache;
 
 		IEnumerable<XamlMember> DoLookupAllMembers ()
