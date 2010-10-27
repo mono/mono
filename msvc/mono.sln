@@ -81,13 +81,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monoposixhelper", "monoposi
 		{B7098DFA-31E6-4006-8A15-1C9A4E925149} = {B7098DFA-31E6-4006-8A15-1C9A4E925149}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay2008", "..\..\mcs\jay\jay2008.vcproj", "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay2008", "..\mcs\jay\jay2008.vcproj", "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SmallReproCases", "SmallReproCases", "{AB7CAD06-49E0-4AA6-B7B7-D581B2C32CE0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asyncsocketshutdown", "..\..\unity\smalltestcases\asyncsocketshutdown\asyncsocketshutdown.vcproj", "{D02963B5-3792-472A-B05D-53EFEAA818EE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asyncsocketshutdown", "..\unity\smalltestcases\asyncsocketshutdown\asyncsocketshutdown.vcproj", "{D02963B5-3792-472A-B05D-53EFEAA818EE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asyncsocketshutdown2", "..\..\unity\smalltestcases\asyncsocketshutdown2\asyncsocketshutdown2.vcproj", "{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asyncsocketshutdown2", "..\unity\smalltestcases\asyncsocketshutdown2\asyncsocketshutdown2.vcproj", "{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
