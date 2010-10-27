@@ -27,8 +27,8 @@ namespace Mono.CSharp
 		public static readonly TypeSpec[] EmptyTypes = new TypeSpec[0];
 
 		// Reflection Emit hacking
-		static Type TypeBuilder;
-		static Type GenericTypeBuilder;
+		static readonly Type TypeBuilder;
+		static readonly Type GenericTypeBuilder;
 
 		static TypeSpec ()
 		{
