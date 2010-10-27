@@ -90,8 +90,6 @@ if (not $skipbuild)
         	$ENV{CXX} = "gcc-4.2";	
 	}
 	
-	chdir("$root/mono") eq 1 or die ("failed to chdir 2");
-	
 	#this will fail on a fresh working copy, so don't die on it.
 	system("make distclean");
 	#were going to tell autogen to use a specific cache file, that we purposely remove before starting.
