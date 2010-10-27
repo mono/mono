@@ -351,6 +351,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			//
+			// Update parent cache as we most likely passed the point
+			// where the cache was constructed
+			//
+			Parent.CurrentType.MemberCache.AddMember (this.spec);
+
 			return true;
 		}
 

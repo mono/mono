@@ -1042,6 +1042,12 @@ namespace Mono.CSharp {
 			this.type = type;
 		}
 
+		#region Properties
+
+		public TypeSpec TypeInstance {
+			get { return type; }
+		}
+
 		//
 		// Type parameters to inflate
 		//
@@ -1051,13 +1057,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public TypeSpec Inflate (TypeSpec ts)
+		#endregion
+
+		public TypeSpec Inflate (TypeSpec type)
 		{
-			var tp = ts as TypeParameterSpec;
+			var tp = type as TypeParameterSpec;
 			if (tp != null)
 				return Inflate (tp);
 
-			var ac = ts as ArrayContainer;
+			var ac = type as ArrayContainer;
 			if (ac != null) {
 				var et = Inflate (ac.Element);
 				if (et != ac.Element)
@@ -1070,50 +1078,69 @@ namespace Mono.CSharp {
 			// When inflating a nested type, inflate its parent first
 			// in case it's using same type parameters (was inflated within the type)
 			//
-			if (ts.IsNested) {
-				var parent = Inflate (ts.DeclaringType);
-				if (ts.DeclaringType != parent) {
-					//
-					// Keep the inflated type arguments
-					// 
-					var targs = ts.TypeArguments;
+			TypeSpec[] targs;
+			int i = 0;
+			if (type.IsNested) {
+				var parent = Inflate (type.DeclaringType);
 
-					//
-					// Parent was inflated, find the same type on inflated type
-					// to use same cache for nested types on same generic parent
-					//
-					// TODO: Should use BindingRestriction.DeclaredOnly or GetMember
-					ts = MemberCache.FindNestedType (parent, ts.Name, ts.Arity);
+				//
+				// Keep the inflated type arguments
+				// 
+				targs = type.TypeArguments;
 
-					//
-					// Handle the tricky case where parent shares local type arguments
-					// which means inflating inflated type
-					//
-					// class Test<T> {
-					//		public static Nested<T> Foo () { return null; }
-					//
-					//		public class Nested<U> {}
-					//	}
-					//
-					//  return type of Test<string>.Foo() has to be Test<string>.Nested<string> 
-					//
-					if (targs.Length > 0) {
-						var inflated_targs = new TypeSpec [targs.Length];
-						for (var i = 0; i < targs.Length; ++i)
-							inflated_targs[i] = Inflate (targs[i]);
+				//
+				// Parent was inflated, find the same type on inflated type
+				// to use same cache for nested types on same generic parent
+				//
+				type = MemberCache.FindNestedType (parent, type.Name, type.Arity);
 
-						ts = ts.MakeGenericType (inflated_targs);
-					}
+				//
+				// Handle the tricky case where parent shares local type arguments
+				// which means inflating inflated type
+				//
+				// class Test<T> {
+				//		public static Nested<T> Foo () { return null; }
+				//
+				//		public class Nested<U> {}
+				//	}
+				//
+				//  return type of Test<string>.Foo() has to be Test<string>.Nested<string> 
+				//
+				if (targs.Length > 0) {
+					var inflated_targs = new TypeSpec[targs.Length];
+					for (; i < targs.Length; ++i)
+						inflated_targs[i] = Inflate (targs[i]);
 
-					return ts;
+					type = type.MakeGenericType (inflated_targs);
 				}
+
+				return type;
 			}
 
-			// Inflate generic type
-			if (ts.Arity > 0)
-				return InflateTypeParameters (ts);
+			// Nothing to do for non-generic type
+			if (type.Arity == 0)
+				return type;
 
-			return ts;
+			targs = new TypeSpec[type.Arity];
+
+			//
+			// Inflating using outside type arguments, var v = new Foo<int> (), class Foo<T> {}
+			//
+			if (type is InflatedTypeSpec) {
+				for (; i < targs.Length; ++i)
+					targs[i] = Inflate (type.TypeArguments[i]);
+
+				type = type.GetDefinition ();
+			} else {
+				//
+				// Inflating parent using inside type arguments, class Foo<T> { ITest<T> foo; }
+				//
+				var args = type.MemberDefinition.TypeParameters;
+				foreach (var ds_tp in args)
+					targs[i++] = Inflate (ds_tp);
+			}
+
+			return type.MakeGenericType (targs);
 		}
 
 		public TypeSpec Inflate (TypeParameterSpec tp)
@@ -1125,40 +1152,6 @@ namespace Mono.CSharp {
 			// This can happen when inflating nested types
 			// without type arguments specified
 			return tp;
-		}
-
-		//
-		// Inflates generic types
-		//
-		TypeSpec InflateTypeParameters (TypeSpec type)
-		{
-			var targs = new TypeSpec[type.Arity];
-			var i = 0;
-
-			var gti = type as InflatedTypeSpec;
-
-			//
-			// Inflating using outside type arguments, var v = new Foo<int> (), class Foo<T> {}
-			//
-			if (gti != null) {
-				for (; i < targs.Length; ++i)
-					targs[i] = Inflate (gti.TypeArguments[i]);
-
-				return gti.GetDefinition ().MakeGenericType (targs);
-			}
-
-			//
-			// Inflating parent using inside type arguments, class Foo<T> { ITest<T> foo; }
-			//
-			var args = type.MemberDefinition.TypeParameters;
-			foreach (var ds_tp in args)
-				targs[i++] = Inflate (ds_tp);
-
-			return type.MakeGenericType (targs);
-		}
-
-		public TypeSpec TypeInstance {
-			get { return type; }
 		}
 	}
 

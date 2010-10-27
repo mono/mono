@@ -367,8 +367,9 @@ namespace Mono.CSharp
 			// When inflating nested type from inside the type instance will be same
 			// because type parameters are same for all nested types
 			//
-			if (DeclaringType == inflator.TypeInstance)
+			if (DeclaringType == inflator.TypeInstance) {
 				return MakeGenericType (targs);
+			}
 
 			return new InflatedTypeSpec (this, inflator.TypeInstance, targs);
 		}
@@ -380,8 +381,21 @@ namespace Mono.CSharp
 
 			InflatedTypeSpec instance;
 
-			if (inflated_instances == null)
+			if (inflated_instances == null) {
 				inflated_instances = new Dictionary<TypeSpec[], InflatedTypeSpec> (TypeSpecComparer.Default);
+
+				if (IsNested) {
+					instance = this as InflatedTypeSpec;
+					if (instance != null) {
+						//
+						// Nested types could be inflated on already inflated instances
+						// Caching this type ensured we are using same instance for
+						// inside/outside inflation using local type parameters
+						//
+						inflated_instances.Add (TypeArguments, instance);
+					}
+				}
+			}
 
 			if (!inflated_instances.TryGetValue (targs, out instance)) {
 				if (GetDefinition () != this && !IsNested)
