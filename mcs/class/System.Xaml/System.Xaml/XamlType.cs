@@ -358,7 +358,7 @@ namespace System.Xaml
 		protected virtual IEnumerable<XamlMember> LookupAllAttachableMembers ()
 		{
 			if (UnderlyingType == null)
-				return BaseType != null ? BaseType.GetAllMembers () : null;
+				return BaseType != null ? BaseType.GetAllAttachableMembers () : null;
 			return DoLookupAllAttachableMembers ();
 		}
 
