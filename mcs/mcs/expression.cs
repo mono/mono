@@ -7460,7 +7460,7 @@ namespace Mono.CSharp {
 							expr = expr.Resolve (rc);
 						}
 					} else if (expr is TypeParameterExpr) {
-						expr.Error_UnexpectedKind (rc, flags, expr.Location);
+						expr.Error_UnexpectedKind (rc, flags, sn.Location);
 						expr = null;
 					}
 				} else {
