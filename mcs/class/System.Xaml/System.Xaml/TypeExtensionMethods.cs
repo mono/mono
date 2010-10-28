@@ -93,11 +93,7 @@ namespace System.Xaml
 			if (obj is Type)
 				return new XamlTypeName (xt.SchemaContext.GetXamlType ((Type) obj)).ToString (prefixLookup);
 
-			if (obj is DateTime)
-				// FIXME: DateTimeValueSerializer should apply
-				return (string) TypeDescriptor.GetConverter (typeof (DateTime)).ConvertToInvariantString (obj);
-			else
-				return (string) xt.ConvertObject (obj, typeof (string));
+			return (string) xt.ConvertObject (obj, typeof (string));
 		}
 
 		public static object ConvertObject (this XamlType xt, object target, Type explicitTargetType)
@@ -170,10 +166,28 @@ namespace System.Xaml
 			return false;
 		}
 
+		static bool ExaminePositionalParametersApplicable (this XamlType type)
+		{
+			if (!type.IsMarkupExtension || type.UnderlyingType == null)
+				return false;
+
+			var args = type.GetConstructorArguments ();
+			if (args == null)
+				return false;
+
+			Type [] argTypes = (from arg in args select arg.Type.UnderlyingType).ToArray ();
+			if (argTypes.Any (at => at == null))
+				return false;
+			var ci = type.UnderlyingType.GetConstructor (argTypes);
+			return ci != null;
+		}
+	
 		public static IEnumerable<XamlMember> GetAllObjectReaderMembers (this XamlType type, object instance, object dictionaryKey)
 		{
 			// FIXME: find out why only TypeExtension and StaticExtension yield this directive. Seealso XamlObjectReaderTest.Read_CustomMarkupExtension*()
-			if (type == XamlLanguage.Type || type == XamlLanguage.Static) {
+			if (type == XamlLanguage.Type ||
+			    type == XamlLanguage.Static ||
+			    ExaminePositionalParametersApplicable (type) && type.ConstructionRequiresArguments) {
 				yield return XamlLanguage.PositionalParameters;
 				yield break;
 			}
