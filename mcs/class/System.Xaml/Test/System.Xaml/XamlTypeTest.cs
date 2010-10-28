@@ -676,6 +676,12 @@ namespace MonoTests.System.Xaml
 		{
 			var xt = new XamlType (typeof (ComplexPositionalParameterWrapper), sctx);
 		}
+		
+		[Test]
+		public void CustomArrayExtension ()
+		{
+			var xt = new XamlType (typeof (MyArrayExtension), sctx);
+		}
 	}
 
 	class MyXamlType : XamlType
@@ -729,5 +735,42 @@ namespace MonoTests.System.Xaml
 	public class ComplexPositionalParameterValue
 	{
 		public string Foo { get; set; }
+	}
+	
+	//[MarkupExtensionReturnType (typeof (Array))]
+	//[ContentProperty ("Items")]  ... so, these attributes do not affect XamlObjectReader.
+	public class MyArrayExtension : MarkupExtension
+	{
+		public MyArrayExtension ()
+		{
+			Items = new ArrayList ();
+		}
+
+		public MyArrayExtension (Array array)
+		{
+			this.Items = array;
+			this.Type = array.GetType ().GetElementType ();
+		}
+		
+		public MyArrayExtension (Type type)
+			: this ()
+		{
+			this.Type = type;
+		}
+		
+		[ConstructorArgument ("type")]
+		public Type Type { get; set; }
+
+		public IList Items { get; private set; }
+		
+		public override object ProvideValue (IServiceProvider serviceProvider)
+		{
+			if (Type == null)
+				throw new InvalidOperationException ("Type property must be set before calling ProvideValue method");
+
+			Array a = Array.CreateInstance (Type, Items.Count);
+			Items.CopyTo (a, 0);
+			return a;
+		}
 	}
 }

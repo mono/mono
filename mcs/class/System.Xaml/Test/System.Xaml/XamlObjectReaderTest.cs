@@ -275,7 +275,8 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.Read (), "#36");
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#37");
 			// static Foo is not included in GetAllXembers() return value.
-			// nonpublic Baz does not appear either.
+			// ReadOnly is not included in GetAllMembers() return value neither.
+			// nonpublic Baz is a member, but does not appear in the reader.
 
 			Assert.IsTrue (r.Read (), "#51");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#52");
@@ -686,9 +687,28 @@ namespace MonoTests.System.Xaml
 			var r = new XamlObjectReader (obj);
 			Read_ArrayOrArrayExtension (r, obj);
 		}
+		
+		[Test]
+		public void Read_MyArrayExtension ()
+		{
+			var obj = new MyArrayExtension (new int [] {5, -3, 0});
+			var r = new XamlObjectReader (obj);
+			Read_ArrayOrArrayExtensionOrMyArrayExtension (r, obj, typeof (MyArrayExtension));
+		}
 
 		void Read_ArrayOrArrayExtension (XamlObjectReader r, object instance)
 		{
+			Read_ArrayOrArrayExtensionOrMyArrayExtension (r, instance, typeof (ArrayExtension));
+		}
+
+		void Read_ArrayOrArrayExtensionOrMyArrayExtension (XamlObjectReader r, object instance, Type extType)
+		{
+			if (extType == typeof (MyArrayExtension)) {
+				Assert.IsTrue (r.Read (), "#1");
+				Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#2");
+				Assert.IsNotNull (r.Namespace, "#3");
+				Assert.AreEqual (String.Empty, r.Namespace.Prefix, "#3-2");
+			}
 			Assert.IsTrue (r.Read (), "#11");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
 			Assert.IsNotNull (r.Namespace, "#13");
@@ -697,7 +717,7 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsTrue (r.Read (), "#21");
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
-			var xt = new XamlType (typeof (ArrayExtension), r.SchemaContext);
+			var xt = new XamlType (extType, r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "#23");
 			Assert.AreEqual (instance, r.Instance, "#26"); // different between Array and ArrayExtension. Also, different from Type and TypeExtension (Type returns TypeExtension, while Array remains to return Array)
 
@@ -1383,6 +1403,9 @@ namespace MonoTests.System.Xaml
 		public static string Foo { get; set; }
 		public string Bar { get; set; }
 		public string Baz { internal get; set; }
+		public string ReadOnly {
+			get { return Foo; }
+		}
 	}
 
 	public class MyExtension : MarkupExtension

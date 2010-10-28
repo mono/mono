@@ -61,6 +61,15 @@ namespace MonoTests.System.Windows.Markup
 		}
 
 		[Test]
+		public void AddChild2 ()
+		{
+			var x = new ArrayExtension (new int [0]);
+			x.AddChild (new object ());
+			x.AddChild (5);
+			x.AddChild ("test");
+		}
+
+		[Test]
 		public void AddInconsistent ()
 		{
 			var x = new ArrayExtension (typeof (int));
