@@ -208,7 +208,7 @@ namespace System.Net.Mime {
 		{
 			System.IO.StringWriter writer = new System.IO.StringWriter ();
 			foreach (byte i in bytes) {
-				if (i > 127 || i == '\t') {
+				if (i < 0x21 || i > 0x7E || i == '?' || i == '=' || i == '_') {
 					writer.Write ("=");
 					writer.Write (Convert.ToString (i, 16).ToUpper ());
 				} else
