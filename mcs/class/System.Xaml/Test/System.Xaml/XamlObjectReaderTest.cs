@@ -327,18 +327,20 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (new XamlType (typeof (XmlDocument), r.SchemaContext), r.Type, "#2");
 			r.Read ();
 			var l = new List<XamlMember> ();
-			for (int i = 0; i < 5; i++) {
-				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-" + i);
+			while (r.NodeType == XamlNodeType.StartMember) {
+			// It depends on XmlDocument's implenentation details. It fails on mono only because XmlDocument.SchemaInfo overrides both getter and setter.
+			//for (int i = 0; i < 5; i++) {
+			//	Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-" + i);
 				l.Add (r.Member);
 				r.Skip ();
 			}
-			l.First (m => m.Name == "Value");
-			l.First (m => m.Name == "InnerXml");
-			l.First (m => m.Name == "Prefix");
-			l.First (m => m.Name == "PreserveWhitespace");
-			l.First (m => m.Name == "Schemas");
-			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#4");
-			Assert.IsFalse (r.Read (), "#5");
+			Assert.IsNotNull (l.FirstOrDefault (m => m.Name == "Value"), "#4-1");
+			Assert.IsNotNull (l.FirstOrDefault (m => m.Name == "InnerXml"), "#4-2");
+			Assert.IsNotNull (l.FirstOrDefault (m => m.Name == "Prefix"), "#4-3");
+			Assert.IsNotNull (l.FirstOrDefault (m => m.Name == "PreserveWhitespace"), "#4-4");
+			Assert.IsNotNull (l.FirstOrDefault (m => m.Name == "Schemas"), "#4-5");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#5");
+			Assert.IsFalse (r.Read (), "#6");
 		}
 
 		[Test]
@@ -610,7 +612,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_ListInt32_2 ()
 		{
 			var obj = new List<int> (new int [0]);
@@ -1068,7 +1069,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension5 ()
 		{
 			// This cannot be written to XamlXmlWriter though...
@@ -1095,7 +1095,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension6 ()
 		{
 			var r = new XamlObjectReader (new MyExtension6 ("foo"));
@@ -1201,7 +1200,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void PositionalParameters1 ()
 		{
 			// ns1 > T:PositionalParametersClass1 > M:_PositionalParameters > foo > 5 > EM:_PositionalParameters > ET:PositionalParametersClass1
@@ -1244,7 +1242,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void PositionalParameters2 ()
 		{
 			// ns1 > T:PositionalParametersWrapper > M:Body > T:PositionalParametersClass1 > M:_PositionalParameters > foo > 5 > EM:_PositionalParameters > ET:PositionalParametersClass1
@@ -1373,7 +1370,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_ListWrapper ()
 		{
 			var obj = new ListWrapper (new List<int> (new int [] {5, -3, 0}));
@@ -1442,7 +1438,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_ListWrapper2 () // read-write list member.
 		{
 			var obj = new ListWrapper2 (new List<int> (new int [] {5, -3, 0}));

@@ -241,7 +241,7 @@ namespace System.Xaml
 			var args = type.GetConstructorArguments ().ToArray ();
 			var ci = type.UnderlyingType.GetConstructors ().FirstOrDefault (c => c.GetParameters ().Length == args.Length);
 			if (ci == null)
-				throw new ArgumentException (String.Format ("Type '{0}' is expected to have constructor with {1} arguments, but was not find.", type.Name, args.Length));
+				return null;
 			var pis = ci.GetParameters ();
 			return args.OrderBy (c => pis.FindParameterWithName (c.ConstructorArgumentName ()).Position);
 		}
