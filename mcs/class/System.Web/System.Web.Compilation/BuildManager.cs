@@ -118,8 +118,7 @@ namespace System.Web.Compilation
 
 #if NET_4_0
 		internal static bool PreStartMethodsRunning {
-			get { return preStartMethodsRunning;
-			}
+			get { return preStartMethodsRunning; }
 		}
 		
 		public static bool? BatchCompilationEnabled {

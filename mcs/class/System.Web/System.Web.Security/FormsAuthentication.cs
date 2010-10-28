@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -36,8 +36,10 @@ using System.Security.Permissions;
 using System.Text;
 using System.Web;
 using System.Web.Configuration;
+using System.Web.Compilation;
 using System.Web.Util;
 using System.Globalization;
+using System.Collections.Specialized;
 
 namespace System.Web.Security
 {
@@ -178,7 +180,22 @@ namespace System.Web.Security
 						"default.aspx",
 						"index.html",
 						"index.htm" };
+#if NET_4_0
+		public static void EnableFormsAuthentication (NameValueCollection configurationData)
+		{
+			BuildManager.AssertPreStartMethodsRunning ();
+			if (configurationData == null || configurationData.Count == 0)
+				return;
 
+			string value = configurationData ["loginUrl"];
+			if (!String.IsNullOrEmpty (value))
+				login_url = value;
+
+			value = configurationData ["defaultUrl"];
+			if (!String.IsNullOrEmpty (value))
+				default_url = value;
+		}
+#endif
 		public FormsAuthentication ()
 		{
 		}
@@ -435,9 +452,19 @@ namespace System.Web.Security
 				cookie_domain = config.Domain;
 				cookie_mode = config.Cookieless;
 				cookies_supported = true; /* XXX ? */
-				default_url = MapUrl(config.DefaultUrl);
+#if NET_4_0
+				if (!String.IsNullOrEmpty (default_url))
+					default_url = MapUrl (default_url);
+				else
+#endif
+					default_url = MapUrl(config.DefaultUrl);
 				enable_crossapp_redirects = config.EnableCrossAppRedirects;
-				login_url = MapUrl(config.LoginUrl);
+#if NET_4_0
+				if (!String.IsNullOrEmpty (login_url))
+					login_url = MapUrl (login_url);
+				else
+#endif
+					login_url = MapUrl(config.LoginUrl);
 #else
 				HttpContext context = HttpContext.Current;
 				AuthConfig authConfig = context.GetConfig (authConfigPath) as AuthConfig;

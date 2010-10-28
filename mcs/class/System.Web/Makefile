@@ -371,6 +371,15 @@ STANDALONE_TEST_COMPILABLE_TESTS = \
 	ApplicationPreStartMethods/test_06 \
 	ApplicationPreStartMethods/test_07 \
 	ApplicationPreStartMethods/test_08 \
+	EnableFormsAuthentication/Test_01 \
+	EnableFormsAuthentication/Test_02 \
+	EnableFormsAuthentication/Test_03 \
+	EnableFormsAuthentication/Test_04 \
+	EnableFormsAuthentication/Test_05 \
+	EnableFormsAuthentication/Test_06 \
+	EnableFormsAuthentication/Test_07 \
+	EnableFormsAuthentication/Test_08 \
+	EnableFormsAuthentication/Test_09 \
 	RegisterBuildProvider \
 	PageParserDefaultTypeProperties
 endif

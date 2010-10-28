@@ -22,3 +22,5 @@ Test/standalone-tests/SiteMapPathRendering.cs
 Test/standalone-tests/PageParserDefaultTypeProperties.cs
 Test/standalone-tests/ChildrenAsProperties.cs
 Test/standalone-tests/Menu_4.0_List.cs
+Test/standalone-tests/EnableFormsAuthentication.cs
+
