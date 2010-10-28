@@ -34,14 +34,6 @@ namespace System.Xaml
 {
 	static class TypeExtensionMethods
 	{
-		// FIXME: this likely needs to be replaced with XamlTypeName
-		public static string GetXamlName (this Type type)
-		{
-			if (!type.IsNested)
-				return type.Name;
-			return type.DeclaringType.GetXamlName () + "+" + type.Name;
-		}
-
 		#region inheritance search and custom attribute provision
 
 		public static T GetCustomAttribute<T> (this ICustomAttributeProvider type, bool inherit) where T : Attribute

@@ -52,14 +52,19 @@ namespace System.Xaml
 
 			XamlType xt;
 			if (XamlLanguage.InitializingTypes) {
-				Name = type.GetXamlName ();
+				Name = GetXamlName (type);
 				PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
 			} else if ((xt = XamlLanguage.AllTypes.FirstOrDefault (t => t.UnderlyingType == type)) != null) {
 				Name = xt.Name;
 				PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
 			} else {
-				Name = type.GetXamlName ();
+				Name = GetXamlName (type);
 				PreferredXamlNamespace = String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
+			}
+			if (type.IsGenericType) {
+				TypeArguments = new List<XamlType> ();
+				foreach (var gta in type.GetGenericArguments ())
+					TypeArguments.Add (schemaContext.GetXamlType (gta));
 			}
 		}
 
@@ -281,7 +286,8 @@ namespace System.Xaml
 
 		public override string ToString ()
 		{
-			return String.IsNullOrEmpty (PreferredXamlNamespace) ? Name : String.Concat ("{", PreferredXamlNamespace, "}", Name);
+			return new XamlTypeName (this).ToString ();
+			//return String.IsNullOrEmpty (PreferredXamlNamespace) ? Name : String.Concat ("{", PreferredXamlNamespace, "}", Name);
 		}
 
 		public virtual bool CanAssignTo (XamlType xamlType)
@@ -761,6 +767,19 @@ namespace System.Xaml
 			}
 
 			return null;
+		}
+
+		static string GetXamlName (Type type)
+		{
+			string n;
+			if (!type.IsNested)
+				n = type.Name;
+			else
+				n = GetXamlName (type.DeclaringType) + "+" + type.Name;
+			if (type.IsGenericType && !type.ContainsGenericParameters) // the latter condition is to filter out "nested non-generic type within generic type".
+				return n.Substring (0, n.IndexOf ('`'));
+			else
+				return n;
 		}
 	}
 }

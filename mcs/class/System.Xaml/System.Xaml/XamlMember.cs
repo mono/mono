@@ -278,6 +278,7 @@ namespace System.Xaml
 			return ToString ().GetHashCode (); // should in general work.
 		}
 
+		[MonoTODO ("there are some patterns that return different kind of value: e.g. List<int>.Capacity")]
 		public override string ToString ()
 		{
 			if (is_attachable || String.IsNullOrEmpty (PreferredXamlNamespace)) {
