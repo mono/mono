@@ -37,7 +37,7 @@ namespace System.Windows.Markup
 	{
 		public ArrayExtension ()
 		{
-			Items = new List<object> ();
+			Items = new ArrayList ();
 		}
 
 		public ArrayExtension (Array elements)
@@ -45,9 +45,7 @@ namespace System.Windows.Markup
 			if (elements == null)
 				throw new ArgumentNullException ("elements");
 			Type = elements.GetType ().GetElementType ();
-			Items = new List<object> (elements.Length);
-			foreach (var o in elements)
-				Items.Add (o);
+			Items = new ArrayList (elements);
 		}
 
 		public ArrayExtension (Type arrayType)
@@ -55,7 +53,7 @@ namespace System.Windows.Markup
 			if (arrayType == null)
 				throw new ArgumentNullException ("arrayType");
 			Type = arrayType;
-			Items = new List<object> ();
+			Items = new ArrayList ();
 		}
 
 		[ConstructorArgument ("arrayType")]
