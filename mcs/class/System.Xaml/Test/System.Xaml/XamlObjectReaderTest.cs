@@ -966,7 +966,7 @@ namespace MonoTests.System.Xaml
 		{
 			// This cannot be written to XamlXmlWriter though...
 
-			var r = new XamlObjectReader (new MyExtension5 ("foo"));
+			var r = new XamlObjectReader (new MyExtension5 ("foo", "bar"));
 			r.Read (); // ns
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#1");
 			r.Read (); // note that there wasn't another NamespaceDeclaration.
@@ -978,9 +978,13 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "#4");
 			Assert.IsTrue (r.Read (), "#5");
 			Assert.AreEqual ("foo", r.Value, "#6");
-			Assert.IsTrue (r.Read (), "#7"); // EndMember
-			Assert.IsTrue (r.Read (), "#8"); // EndObject
-			Assert.IsFalse (r.Read (), "#9");
+			Assert.IsTrue (r.Read (), "#7");
+			Assert.AreEqual ("bar", r.Value, "#8");
+			Assert.IsTrue (r.Read (), "#9");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#10");
+			Assert.IsTrue (r.Read (), "#11");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#12");
+			Assert.IsFalse (r.Read (), "#13");
 		}
 
 		[Test]
@@ -996,7 +1000,7 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (MyExtension6)), xt, "#2");
 			Assert.IsTrue (r.Read (), "#3");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-2");
-			Assert.AreEqual (xt.GetMember ("Foo"), r.Member, "#4"); // this is the only difference between MyExtension5 and MyExtension6.
+			Assert.AreEqual (xt.GetMember ("Foo"), r.Member, "#4"); // this is the difference between MyExtension5 and MyExtension6: it outputs constructor arguments as normal members
 			Assert.IsTrue (r.Read (), "#5");
 			Assert.AreEqual ("foo", r.Value, "#6");
 			Assert.IsTrue (r.Read (), "#7"); // EndMember
@@ -1177,6 +1181,77 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsTrue (r.Read (), "eposprm#1");
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eposprm#2"); // XamlLanguage.PositionalParameters
+
+			Assert.IsTrue (r.Read (), "eo#2-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2-2");
+
+			Assert.IsTrue (r.Read (), "em#1-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eo#1-2");
+
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void ComplexPositionalParameters ()
+		{
+			var obj = new ComplexPositionalParameterWrapper () { Param = new ComplexPositionalParameterClass (new ComplexPositionalParameterValue () { Foo = "foo" })};
+			var r = new XamlObjectReader (obj);
+
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#1-4");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns#2-4");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#2-5");
+
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (obj.GetType (), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+			Assert.AreEqual (obj, r.Instance, "so#1-4");
+
+			Assert.IsTrue (r.Read (), "sm#1-1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#1-2");
+			Assert.AreEqual (xt.GetMember ("Param"), r.Member, "sm#1-3");
+
+			xt = r.SchemaContext.GetXamlType (typeof (ComplexPositionalParameterClass));
+			Assert.IsTrue (r.Read (), "so#2-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2-2");
+			Assert.AreEqual (xt, r.Type, "so#2-3");
+			Assert.AreEqual (obj.Param, r.Instance, "so#2-4");
+
+			Assert.IsTrue (r.Read (), "sarg#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sarg#2");
+			Assert.AreEqual (XamlLanguage.Arguments, r.Member, "sarg#3");
+
+			Assert.IsTrue (r.Read (), "so#3-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#3-2");
+			xt = r.SchemaContext.GetXamlType (typeof (ComplexPositionalParameterValue));
+			Assert.AreEqual (xt, r.Type, "so#3-3");
+
+			Assert.IsTrue (r.Read (), "sm#3-1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#3-2");
+			Assert.AreEqual (xt.GetMember ("Foo"), r.Member, "sm#3-3");
+			Assert.IsTrue (r.Read (), "v#3-1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v#3-2");
+			Assert.AreEqual ("foo", r.Value, "v#3-3");
+
+			Assert.IsTrue (r.Read (), "em#3-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em#3-2");
+			Assert.IsTrue (r.Read (), "eo#3-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#3-2");
+
+			Assert.IsTrue (r.Read (), "earg#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "earg#2"); // XamlLanguage.Arguments
 
 			Assert.IsTrue (r.Read (), "eo#2-1");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2-2");
@@ -1405,16 +1480,20 @@ namespace MonoTests.System.Xaml
 		public string Bar { get; set; }
 	}
 
-	// no type converter, and there's only one argument == _PositionalParameters is applicable.
+	// no type converter, and there are only simple-type arguments == _PositionalParameters is applicable. (Unlike MyExtension7)
 	public class MyExtension5 : MarkupExtension
 	{
-		public MyExtension5 (string arg1)
+		public MyExtension5 (string arg1, string arg2)
 		{
 			Foo = arg1;
+			Bar = arg2;
 		}
 
 		[ConstructorArgument ("arg1")]
 		public string Foo { get; set; }
+		
+		[ConstructorArgument ("arg2")]
+		public string Bar { get; set; }
 		
 		public override object ProvideValue (IServiceProvider sp)
 		{

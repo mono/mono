@@ -670,6 +670,12 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (1, ml.Length, "#1");
 			Assert.IsNotNull (xt.GetMember ("Capacity"), "#2");
 		}
+		
+		[Test]
+		public void ComplexPositionalParameters ()
+		{
+			var xt = new XamlType (typeof (ComplexPositionalParameterWrapper), sctx);
+		}
 	}
 
 	class MyXamlType : XamlType
@@ -693,5 +699,35 @@ namespace MonoTests.System.Xaml
 
 		[ConstructorArgument ("s2")]
 		public string Arg2 { get; set; }
+	}
+
+	public class ComplexPositionalParameterWrapper
+	{
+		public ComplexPositionalParameterWrapper ()
+		{
+		}
+		
+		public ComplexPositionalParameterClass Param { get; set; }
+	}
+	
+	public class ComplexPositionalParameterClass : MarkupExtension
+	{
+		public ComplexPositionalParameterClass (ComplexPositionalParameterValue value)
+		{
+			this.Value = value;
+		}
+
+		[ConstructorArgument ("value")]
+		public ComplexPositionalParameterValue Value { get; private set; }
+		
+		public override object ProvideValue (IServiceProvider sp)
+		{
+			return Value.Foo;
+		}
+	}
+	
+	public class ComplexPositionalParameterValue
+	{
+		public string Foo { get; set; }
 	}
 }
