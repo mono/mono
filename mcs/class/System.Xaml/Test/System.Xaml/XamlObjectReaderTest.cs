@@ -606,7 +606,18 @@ namespace MonoTests.System.Xaml
 		public void Read_ListInt32 ()
 		{
 			var obj = new List<int> (new int [] {5, -3, 0});
-
+			Read_ListInt32 (obj);
+		}
+		
+		[Test]
+		public void Read_ListInt32_2 ()
+		{
+			var obj = new List<int> (new int [0]);
+			Read_ListInt32 (obj);
+		}
+		
+		void Read_ListInt32 (List<int> obj)
+		{
 			var r = new XamlObjectReader (obj);
 			Assert.IsTrue (r.Read (), "ns#1-1");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
@@ -643,6 +654,8 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.Read (), "#51");
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#52");
 
+			if (obj.Count > 0) { // only when items exist.
+
 			Assert.IsTrue (r.Read (), "#72");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#72-2");
 			Assert.AreEqual (XamlLanguage.Items, r.Member, "#72-3");
@@ -665,6 +678,8 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsTrue (r.Read (), "#81");
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#82"); // XamlLanguage.Items
+			
+			} // end of "if count > 0".
 
 			Assert.IsTrue (r.Read (), "#87");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#88");
