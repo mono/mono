@@ -1343,12 +1343,17 @@ namespace System.Web
 			} else if (!VirtualPathUtility.IsAbsolute (virtualPath))
 				virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
 
+			bool isAppVirtualPath = String.Compare (virtualPath, appVirtualPath, RuntimeHelpers.StringComparison) == 0;
+			appVirtualPath = VirtualPathUtility.AppendTrailingSlash (appVirtualPath);
 			if (!allowCrossAppMapping){
 				if (!StrUtils.StartsWith (virtualPath, appVirtualPath, true))
-					throw HttpException.NewWithCode ("MapPath: Mapping across applications not allowed", WebEventCodes.RuntimeErrorRequestAbort);
+					throw new ArgumentException ("MapPath: Mapping across applications not allowed");
 				if (appVirtualPath.Length > 1 && virtualPath.Length > 1 && virtualPath [0] != '/')
 					throw HttpException.NewWithCode ("MapPath: Mapping across applications not allowed", WebEventCodes.RuntimeErrorRequestAbort);
 			}
+			
+			if (!isAppVirtualPath && !virtualPath.StartsWith (appVirtualPath, RuntimeHelpers.StringComparison))
+				throw new InvalidOperationException (String.Format ("Failed to map path '{0}'", virtualPath));
 #if TARGET_JVM
 			return worker_request.MapPath (virtualPath);
 #else
