@@ -88,17 +88,31 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		bool CheckConflictingInheritedConstraint (TypeSpec ba, TypeSpec bb, IMemberContext context, Location loc)
+		public static bool CheckConflictingInheritedConstraint (TypeParameterSpec spec, TypeSpec bb, IMemberContext context, Location loc)
 		{
-			if (!TypeSpec.IsBaseClass (ba, bb, false) && !TypeSpec.IsBaseClass (bb, ba, false)) {
+			if (spec.HasSpecialClass && bb.IsStruct) {
 				context.Compiler.Report.Error (455, loc,
 					"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
-					tparam.Value,
-					ba.GetSignatureForError (), bb.GetSignatureForError ());
+					spec.Name, "class", bb.GetSignatureForError ());
+
 				return false;
 			}
 
-			return true;
+			return CheckConflictingInheritedConstraint (spec, spec.BaseType, bb, context, loc);
+		}
+
+		static bool CheckConflictingInheritedConstraint (TypeParameterSpec spec, TypeSpec ba, TypeSpec bb, IMemberContext context, Location loc)
+		{
+			if (ba == bb)
+				return true;
+
+			if (TypeSpec.IsBaseClass (ba, bb, false) || TypeSpec.IsBaseClass (bb, ba, false))
+				return true;
+
+			context.Compiler.Report.Error (455, loc,
+				"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
+				spec.Name, ba.GetSignatureForError (), bb.GetSignatureForError ());
+			return false;
 		}
 
 		public void CheckGenericConstraints (IMemberContext context)
@@ -210,14 +224,14 @@ namespace Mono.CSharp {
 					//
 					if (constraint_tp.HasTypeConstraint) {
 						if (spec.HasTypeConstraint || spec.HasSpecialStruct) {
-							if (!CheckConflictingInheritedConstraint (spec.BaseType, constraint_tp.BaseType, context, constraint.Location))
+							if (!CheckConflictingInheritedConstraint (spec, constraint_tp.BaseType, context, constraint.Location))
 								continue;
 						} else {
 							for (int ii = 0; ii < tparam_types.Count; ++ii) {
 								if (!tparam_types[ii].HasTypeConstraint)
 									continue;
 
-								if (!CheckConflictingInheritedConstraint (tparam_types[ii].BaseType, constraint_tp.BaseType, context, constraint.Location))
+								if (!CheckConflictingInheritedConstraint (spec, tparam_types[ii].BaseType, constraint_tp.BaseType, context, constraint.Location))
 									break;
 							}
 						}
@@ -743,6 +757,21 @@ namespace Mono.CSharp {
 
 		#endregion
 
+		public void ChangeTypeArgumentToBaseType (int index)
+		{
+			BaseType = targs [index];
+			if (targs.Length == 1) {
+				targs = null;
+			} else {
+				var copy = new TypeSpec[targs.Length - 1];
+				if (index > 0)
+					Array.Copy (targs, copy, index);
+
+				Array.Copy (targs, index + 1, copy, index, targs.Length - index - 1);
+				targs = copy;
+			}
+		}
+
 		public string DisplayDebugInfo ()
 		{
 			var s = GetSignatureForError ();
@@ -967,6 +996,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < ifaces.Count; ++i)
 					tps.ifaces.Add (inflator.Inflate (ifaces[i]));
 			}
+
 			if (targs != null) {
 				tps.targs = new TypeSpec[targs.Length];
 				for (int i = 0; i < targs.Length; ++i)
@@ -2018,9 +2048,20 @@ namespace Mono.CSharp {
 
 		bool CheckConversion (IMemberContext mc, MemberSpec context, TypeSpec atype, TypeParameterSpec tparam, TypeSpec ttype, Location loc)
 		{
-			var expr = new EmptyExpression (atype);
-			if (Convert.ImplicitStandardConversionExists (expr, ttype))
-				return true;
+			if (TypeManager.IsValueType (atype)) {
+				if (atype == ttype || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
+					return true;
+			} else {
+				var expr = new EmptyExpression (atype);
+
+				if (atype.IsGenericParameter) {
+					if (Convert.ImplicitTypeParameterConversion (expr, ttype) != null)
+						return true;
+				}
+
+				if (Convert.ImplicitStandardConversionExists (expr, ttype))
+					return true;
+			}
 
 			//
 			// When partial/full type inference finds a dynamic type argument delay

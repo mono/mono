@@ -89,7 +89,7 @@ namespace Mono.CSharp {
 			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type) || ExplicitReferenceConversionExists (array.Element, arg_type);
 		}
 
-		static Expression ImplicitTypeParameterConversion (Expression expr, TypeSpec target_type)
+		public static Expression ImplicitTypeParameterConversion (Expression expr, TypeSpec target_type)
 		{
 			var expr_type = (TypeParameterSpec) expr.Type;
 

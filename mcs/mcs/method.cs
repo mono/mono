@@ -957,11 +957,38 @@ namespace Mono.CSharp {
 				//
 				if (base_tparams != null) {
 					var base_tparam = base_tparams[i];
-					tp.Type.SpecialConstraint = base_tparam.SpecialConstraint;
+					var local_tparam = tp.Type;
+					local_tparam.SpecialConstraint = base_tparam.SpecialConstraint;
 
 					var inflator = new TypeParameterInflator (CurrentType, base_decl_tparams, base_targs);
-					base_tparam.InflateConstraints (inflator, tp.Type);
-				} else if (MethodData.implementing != null) {
+					base_tparam.InflateConstraints (inflator, local_tparam);
+
+					//
+					// Check all type argument constraints for possible collision
+					// introduced by inflating inherited constraints in this context
+					//
+					// Conflict example:
+					//
+					// class A<T> { virtual void Foo<U> () where U : class, T {} }
+					// class B : A<int> { override void Foo<U> {} }
+					//
+					var local_tparam_targs = local_tparam.TypeArguments;
+					if (local_tparam_targs != null) {					
+						for (int ii = 0; ii < local_tparam_targs.Length; ++ii) {
+							var ta = local_tparam_targs [ii];
+							if (!ta.IsClass && !ta.IsStruct)
+								continue;
+
+							if (Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location)) {
+								local_tparam.ChangeTypeArgumentToBaseType (ii);
+							}
+						}
+					}
+
+					continue;
+				}
+				
+				if (MethodData.implementing != null) {
 					var base_tp = MethodData.implementing.Constraints[i];
 					if (!tp.Type.HasSameConstraintsImplementation (base_tp)) {
 						Report.SymbolRelatedToPreviousError (MethodData.implementing);

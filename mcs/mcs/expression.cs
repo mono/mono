@@ -5505,7 +5505,11 @@ namespace Mono.CSharp {
 
 			var tparam = type as TypeParameterSpec;
 			if (tparam != null) {
-				if (!tparam.HasSpecialConstructor && !tparam.HasSpecialStruct) {
+				//
+				// Check whether the type of type parameter can be constructed. BaseType can be a struct for method overrides
+				// where type parameter constraint is inflated to struct
+				//
+				if ((tparam.SpecialConstraint & (SpecialConstraint.Struct | SpecialConstraint.Constructor)) == 0 && !tparam.BaseType.IsStruct) {
 					ec.Report.Error (304, loc,
 						"Cannot create an instance of the variable type `{0}' because it does not have the new() constraint",
 						TypeManager.CSharpName (type));
