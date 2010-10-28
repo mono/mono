@@ -667,7 +667,77 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#82"); // XamlLanguage.Items
 
 			Assert.IsTrue (r.Read (), "#87");
-			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#88"); // ArrayExtension
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#88");
+
+			Assert.IsFalse (r.Read (), "#89");
+		}
+
+		[Test]
+		public void Read_ArrayList ()
+		{
+			var obj = new ArrayList (new int [] {5, -3, 0});
+
+			var r = new XamlObjectReader (obj);
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+
+			var defns = "clr-namespace:System.Collections;assembly=mscorlib";
+
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#1-3");
+			Assert.AreEqual (defns, r.Namespace.Namespace, "ns#1-4");
+
+			Assert.IsTrue (r.Read (), "#11");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
+			Assert.IsNotNull (r.Namespace, "#13");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "#13-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#13-3");
+
+			Assert.IsTrue (r.Read (), "#21");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
+			var xt = new XamlType (typeof (ArrayList), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "#23");
+			Assert.AreEqual (obj, r.Instance, "#26");
+			Assert.IsTrue (xt.IsCollection, "#27");
+
+			// This assumption on member ordering ("Type" then "Items") is somewhat wrong, and we might have to adjust it in the future.
+
+			Assert.IsTrue (r.Read (), "#31");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
+			Assert.AreEqual (xt.GetMember ("Capacity"), r.Member, "#33");
+
+			Assert.IsTrue (r.Read (), "#41");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#42");
+			// The value is implementation details, not testable.
+			//Assert.AreEqual ("3", r.Value, "#43");
+
+			Assert.IsTrue (r.Read (), "#51");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#52");
+
+			Assert.IsTrue (r.Read (), "#72");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#72-2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "#72-3");
+
+			string [] values = {"5", "-3", "0"};
+			for (int i = 0; i < 3; i++) {
+				Assert.IsTrue (r.Read (), i + "#73");
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, i + "#73-2");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, i + "#74-2");
+				Assert.AreEqual (XamlLanguage.Initialization, r.Member, i + "#74-3");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.IsNotNull (r.Value, i + "#75-2");
+				Assert.AreEqual (values [i], r.Value, i + "#73-3");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, i + "#74-2");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, i + "#75-2");
+			}
+
+			Assert.IsTrue (r.Read (), "#81");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#82"); // XamlLanguage.Items
+
+			Assert.IsTrue (r.Read (), "#87");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#88");
 
 			Assert.IsFalse (r.Read (), "#89");
 		}
@@ -1285,6 +1355,165 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "end");
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_ListWrapper ()
+		{
+			var obj = new ListWrapper (new List<int> (new int [] {5, -3, 0}));
+			var r = new XamlObjectReader (obj);
+			
+			Assert.IsTrue (r.Read (), "#1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#2");
+			Assert.IsNotNull (r.Namespace, "#3");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "#3-2");
+
+			Assert.IsTrue (r.Read (), "#11");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
+			Assert.IsNotNull (r.Namespace, "#13");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "#13-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#13-3");
+
+			Assert.IsTrue (r.Read (), "#21");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
+			var xt = new XamlType (obj.GetType (), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "#23");
+			Assert.AreEqual (obj, r.Instance, "#26");
+
+			Assert.IsTrue (r.Read (), "#61");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#62");
+			Assert.AreEqual (xt.GetMember ("Items"), r.Member, "#63");
+
+			Assert.IsTrue (r.Read (), "#71");
+			Assert.AreEqual (XamlNodeType.GetObject, r.NodeType, "#71-2");
+			Assert.IsNull (r.Type, "#71-3");
+			Assert.IsNull (r.Member, "#71-4");
+			Assert.IsNull (r.Value, "#71-5");
+
+			Assert.IsTrue (r.Read (), "#72");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#72-2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "#72-3");
+
+			string [] values = {"5", "-3", "0"};
+			for (int i = 0; i < 3; i++) {
+				Assert.IsTrue (r.Read (), i + "#73");
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, i + "#73-2");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, i + "#74-2");
+				Assert.AreEqual (XamlLanguage.Initialization, r.Member, i + "#74-3");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.IsNotNull (r.Value, i + "#75-2");
+				Assert.AreEqual (values [i], r.Value, i + "#73-3");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, i + "#74-2");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, i + "#75-2");
+			}
+
+			Assert.IsTrue (r.Read (), "#81");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#82"); // XamlLanguage.Items
+
+			Assert.IsTrue (r.Read (), "#83");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#84"); // GetObject
+
+			Assert.IsTrue (r.Read (), "#85");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#86"); // ListWrapper.Items
+
+			Assert.IsTrue (r.Read (), "#87");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#88"); // ListWrapper
+
+			Assert.IsFalse (r.Read (), "#89");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_ListWrapper2 () // read-write list member.
+		{
+			var obj = new ListWrapper2 (new List<int> (new int [] {5, -3, 0}));
+			var r = new XamlObjectReader (obj);
+			
+			Assert.IsTrue (r.Read (), "#1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#2");
+			Assert.IsNotNull (r.Namespace, "#3");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "#3-2");
+
+			Assert.IsTrue (r.Read (), "#6");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#7");
+			Assert.IsNotNull (r.Namespace, "#8");
+			Assert.AreEqual ("scg", r.Namespace.Prefix, "#8-2");
+			Assert.AreEqual ("clr-namespace:System.Collections.Generic;assembly=mscorlib", r.Namespace.Namespace, "#8-3");
+
+			Assert.IsTrue (r.Read (), "#11");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
+			Assert.IsNotNull (r.Namespace, "#13");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "#13-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#13-3");
+
+			Assert.IsTrue (r.Read (), "#21");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
+			var xt = new XamlType (obj.GetType (), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "#23");
+			Assert.AreEqual (obj, r.Instance, "#26");
+
+			Assert.IsTrue (r.Read (), "#61");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#62");
+			Assert.AreEqual (xt.GetMember ("Items"), r.Member, "#63");
+
+			Assert.IsTrue (r.Read (), "#71");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#71-2");
+			xt = r.SchemaContext.GetXamlType (typeof (List<int>));
+			Assert.AreEqual (xt, r.Type, "#71-3");
+			Assert.IsNull (r.Member, "#71-4");
+			Assert.IsNull (r.Value, "#71-5");
+
+			// Capacity
+			Assert.IsTrue (r.Read (), "#31");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
+			Assert.AreEqual (xt.GetMember ("Capacity"), r.Member, "#33");
+
+			Assert.IsTrue (r.Read (), "#41");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#42");
+			// The value is implementation details, not testable.
+			//Assert.AreEqual ("3", r.Value, "#43");
+
+			Assert.IsTrue (r.Read (), "#51");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#52");
+
+			// Items
+			Assert.IsTrue (r.Read (), "#72");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#72-2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "#72-3");
+
+			string [] values = {"5", "-3", "0"};
+			for (int i = 0; i < 3; i++) {
+				Assert.IsTrue (r.Read (), i + "#73");
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, i + "#73-2");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, i + "#74-2");
+				Assert.AreEqual (XamlLanguage.Initialization, r.Member, i + "#74-3");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.IsNotNull (r.Value, i + "#75-2");
+				Assert.AreEqual (values [i], r.Value, i + "#73-3");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, i + "#74-2");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, i + "#75-2");
+			}
+
+			Assert.IsTrue (r.Read (), "#81");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#82"); // XamlLanguage.Items
+
+			Assert.IsTrue (r.Read (), "#83");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#84"); // StartObject(of List<int>)
+
+			Assert.IsTrue (r.Read (), "#85");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#86"); // ListWrapper.Items
+
+			Assert.IsTrue (r.Read (), "#87");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#88"); // ListWrapper
+
+			Assert.IsFalse (r.Read (), "#89");
+		}
+
 		void SimpleReadStandardType (object instance)
 		{
 			var r = new XamlObjectReader (instance);
@@ -1582,5 +1811,35 @@ namespace MonoTests.System.Xaml
 		{
 			Body = new PositionalParametersClass1 (foo, bar);
 		}
+	}
+	
+	public class ListWrapper
+	{
+		public ListWrapper ()
+		{
+			Items = new List<int> ();
+		}
+
+		public ListWrapper (List<int> items)
+		{
+			Items = items;
+		}
+
+		public List<int> Items { get; private set; }
+	}
+	
+	public class ListWrapper2
+	{
+		public ListWrapper2 ()
+		{
+			Items = new List<int> ();
+		}
+
+		public ListWrapper2 (List<int> items)
+		{
+			Items = items;
+		}
+
+		public List<int> Items { get; set; } // it is settable, which makes difference.
 	}
 }
