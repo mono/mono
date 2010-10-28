@@ -696,7 +696,7 @@ namespace Mono.CSharp.Nullable
 			} else {
 				if (right_unwrap == null) {
 					right.Emit (ec);
-					if (right is EmptyConstantCast)
+					if (right is EmptyConstantCast || right is EmptyCast)
 						ec.Emit (OpCodes.Newobj, NullableInfo.GetConstructor (type));
 				} else {
 					right_unwrap.Load (ec);
@@ -710,7 +710,7 @@ namespace Mono.CSharp.Nullable
 			if (right_unwrap == null) {
 				if (Oper == Operator.BitwiseAnd) {
 					right.Emit (ec);
-					if (right is EmptyConstantCast)
+					if (right is EmptyConstantCast || right is EmptyCast)
 						ec.Emit (OpCodes.Newobj, NullableInfo.GetConstructor (type));
 				} else {
 					left_unwrap.Load (ec);

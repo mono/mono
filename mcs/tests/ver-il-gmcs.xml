@@ -13746,6 +13746,98 @@
       </method>
     </type>
   </test>
+  <test name="gtest-543.cs">
+    <type name="Blah`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Blah`1+WrapperWrapper`1[T,N]">
+      <method name="Blah`1+WrapperWrapper`1[T,N] NewWrapperWrapper(Wrapper`1[N])">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor(Wrapper`1)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="Wrapper`1[U]">
+      <method name="Void .ctor(U)">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>20</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-544.cs">
+    <type name="A`1[T]">
+      <method name="G Foo[G]()">
+        <size>0</size>
+      </method>
+      <method name="G Foo2[G]()">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="G Foo[G]()">
+        <size>6</size>
+      </method>
+      <method name="G Foo2[G]()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A2`1[T]">
+      <method name="Void Foo[U]()">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B2">
+      <method name="Void Foo[Y]()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-545.cs">
+    <type name="ApplicationContext">
+      <method name="Boolean Foo()">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>104</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -41920,19 +42012,6 @@
       </method>
     </type>
   </test>
-  <test name="test-792.cs">
-    <type name="Program">
-      <method name="Void Test()">
-        <size>24</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
   <test name="test-793.cs">
     <type name="MonoPointerBugTest.Program">
       <method name="Int32 Main()">
@@ -43454,6 +43533,36 @@
       </method>
       <method name="Int32 &lt;&gt;m__0(Int32)">
         <size>9</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-26.cs">
+    <type name="TestGotoLabels.GotoLabelsTest">
+      <method name="Int32 Main()">
+        <size>36</size>
+      </method>
+      <method name="Void TestMethod2(TestGotoLabels.GotoLabelsTest+MyDelegate)">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestGotoLabels.GotoLabelsTest+MyDelegate">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
       </method>
     </type>
   </test>
