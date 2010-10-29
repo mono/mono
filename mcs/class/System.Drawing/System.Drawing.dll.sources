@@ -8,7 +8,7 @@ System.Drawing/BufferedGraphics.cs
 System.Drawing/BufferedGraphicsManager.cs
 System.Drawing/BufferedGraphicsContext.cs
 System.Drawing/CharacterRange.cs
-System.Drawing/carbonFunctions.cs
+System.Drawing/macFunctions.cs
 System.Drawing/ColorConverter.cs
 System.Drawing/Color.cs
 System.Drawing/ColorTranslator.cs
