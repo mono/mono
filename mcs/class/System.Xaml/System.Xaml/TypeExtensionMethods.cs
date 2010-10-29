@@ -95,6 +95,7 @@ namespace System.Xaml
 			return DoConvert (xt.TypeConverter, target, explicitTargetType ?? xt.UnderlyingType);
 		}
 		
+#if USE_OLD
 		public static object GetMemberValueForObjectReader (this XamlMember xm, XamlType xt, object target, INamespacePrefixLookup prefixLookup)
 		{
 			object native = GetPropertyOrFieldValueForObjectReader (xm, xt, target, prefixLookup);
@@ -103,7 +104,8 @@ namespace System.Xaml
 			var convertedType = xm.Type == null ? null : xm.Type.UnderlyingType;
 			return DoConvert (xm.TypeConverter, native, convertedType);
 		}
-		
+#endif
+
 		static object DoConvert (XamlValueConverter<TypeConverter> converter, object value, Type targetType)
 		{
 			// First get member value, then convert it to appropriate target type.
@@ -113,6 +115,7 @@ namespace System.Xaml
 			return value;
 		}
 
+#if USE_OLD
 		static object GetPropertyOrFieldValueForObjectReader (this XamlMember xm, XamlType xt, object target, INamespacePrefixLookup prefixLookup)
 		{
 			// FIXME: should this be done here??
@@ -138,7 +141,7 @@ namespace System.Xaml
 
 			throw new NotImplementedException (String.Format ("Cannot get value for {0}", xm));
 		}
-		
+#endif
 		#endregion
 
 		public static bool IsContentValue (this XamlMember member)
@@ -160,6 +163,7 @@ namespace System.Xaml
 			return false;
 		}
 
+#if USE_OLD
 		static bool ExaminePositionalParametersApplicable (this XamlType type)
 		{
 			if (!type.IsMarkupExtension || type.UnderlyingType == null)
@@ -168,6 +172,11 @@ namespace System.Xaml
 			var args = type.GetConstructorArguments ();
 			if (args == null)
 				return false;
+
+			// Verify that all arguments can be in simple content
+			foreach (var arg in args)
+				if (!arg.IsContentValue () && arg.TypeConverter == null)
+					return false;
 
 			Type [] argTypes = (from arg in args select arg.Type.UnderlyingType).ToArray ();
 			if (argTypes.Any (at => at == null))
@@ -218,6 +227,7 @@ namespace System.Xaml
 			if (type.IsCollection)
 				yield return XamlLanguage.Items;
 		}
+#endif
 
 		public static bool ListEquals (this IList<XamlType> a1, IList<XamlType> a2)
 		{

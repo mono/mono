@@ -270,7 +270,9 @@ namespace System.Xaml
 					foreach (var ns in NamespacesInType (xn.Object.Type))
 						prefix_lookup.LookupPrefix (ns);
 				} else if (xn.NodeType == XamlNodeType.StartMember) {
-					if (xn.Member.Member is XamlDirective)
+					var xm = xn.Member.Member;
+					// This filtering is done as a black list so far. There does not seem to be any usable property on XamlDirective.
+					if (xm == XamlLanguage.Items || xm == XamlLanguage.PositionalParameters || xm == XamlLanguage.Initialization)
 						continue;
 					prefix_lookup.LookupPrefix (xn.Member.Member.PreferredXamlNamespace);
 				} else {
@@ -457,6 +459,10 @@ namespace System.Xaml
 			var args = type.GetSortedConstructorArguments ();
 			if (args == null)
 				return false;
+
+			foreach (var arg in args)
+				if (arg.Type != null && !arg.Type.IsContentValue () && arg.Type.TypeConverter == null)
+					return false;
 
 			Type [] argTypes = (from arg in args select arg.Type.UnderlyingType).ToArray ();
 			if (argTypes.Any (at => at == null))
