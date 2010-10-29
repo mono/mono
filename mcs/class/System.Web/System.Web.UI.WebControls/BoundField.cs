@@ -249,21 +249,33 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual void OnDataBindField (object sender, EventArgs e)
 		{
-			Control cell = (Control) sender;
-			Control controlContainer = cell.BindingContainer;
+			Control container = (Control) sender;
+			Control controlContainer = container.BindingContainer;
 			if (!(controlContainer is INamingContainer))
 				throw new HttpException ("A DataControlField must be within an INamingContainer.");
 			object val = GetValue (controlContainer);
+			TextBox box = sender as TextBox;
 
-			if (cell.Controls.Count > 0) {
-				TextBox box = (TextBox) cell.Controls [0];
-				if (ApplyFormatInEditMode)
-					box.Text = FormatDataValue (val, SupportsHtmlEncode && HtmlEncode);
-				else
-					box.Text = val != null ? val.ToString() : NullDisplayText;
+			if (box == null) {
+				var cell = sender as DataControlFieldCell;
+				if (cell != null) {
+					ControlCollection controls = cell.Controls;
+					int ccount = controls != null ? controls.Count : 0;
+					if (ccount == 1)
+						box = controls [0] as TextBox;
+					if (box == null) {
+						cell.Text = FormatDataValue (val, SupportsHtmlEncode && HtmlEncode);
+						return;
+					}
+				}
 			}
+
+			if (box == null)
+				throw new HttpException ("Bound field " + DataField + " contains a control that isn't a TextBox.  Override OnDataBindField to inherit from BoundField and add different controls.");
+			if (ApplyFormatInEditMode)
+				box.Text = FormatDataValue (val, SupportsHtmlEncode && HtmlEncode);
 			else
-				((DataControlFieldCell)cell).Text = FormatDataValue (val, SupportsHtmlEncode && HtmlEncode);
+				box.Text = val != null ? val.ToString() : NullDisplayText;
 		}
 		
 		protected override DataControlField CreateField ()

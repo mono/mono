@@ -121,6 +121,36 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class BoundFieldTest
 	{
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "BoundField_Bug646505.aspx", "BoundField_Bug646505.aspx");
+			WebTest.CopyResource (GetType (), "BoundField_Bug646505.aspx.cs", "BoundField_Bug646505.aspx.cs");
+		}
+
+		[Test (Description="Bug 646505")]
+		public void BoundField_Bug646505 ()
+		{
+#if NET_4_0
+			string originalHtml = "<div>\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\n\t\t<tr>\n\t\t\t<th scope=\"col\">&nbsp;</th><th scope=\"col\">&nbsp;</th>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;gridView$ctl02$ctl00&#39;,&#39;&#39;)\">Update</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;gridView&#39;,&#39;Cancel$0&#39;)\">Cancel</a></td><td><input name=\"gridView$ctl02$ctl02\" type=\"text\" value=\"False\" /></td>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;gridView&#39;,&#39;Edit$1&#39;)\">Edit</a></td><td>False</td>\n\t\t</tr>\n\t</table>\n</div>\n";
+#else
+			string originalHtml = "<div>\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\n\t\t<tr>\n\t\t\t<th scope=\"col\">&nbsp;</th><th scope=\"col\">&nbsp;</th>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack('gridView$ctl02$ctl00','')\">Update</a>&nbsp;<a href=\"javascript:__doPostBack('gridView','Cancel$0')\">Cancel</a></td><td><input name=\"gridView$ctl02$ctl02\" type=\"text\" value=\"False\" /></td>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack('gridView','Edit$1')\">Edit</a></td><td>False</td>\n\t\t</tr>\n\t</table>\n</div>\n";
+#endif
+			WebTest t = new WebTest ("BoundField_Bug646505.aspx");
+			t.Run ();
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "gridView";
+			fr.Controls ["__EVENTARGUMENT"].Value = "Edit$0";
+			t.Request = fr;
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+		
 		[Test]
 		public void BoundField_DefaultProperty () {
 			PokerBoundField bf = new PokerBoundField ();
