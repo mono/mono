@@ -776,7 +776,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_MyArrayExtension ()
 		{
 			var obj = new MyArrayExtension (new int [] {5, -3, 0});

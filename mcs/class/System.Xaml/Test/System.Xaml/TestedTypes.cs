@@ -97,15 +97,15 @@ namespace MonoTests.System.Xaml
 		{
 			this.Type = type;
 		}
-		
-		[ConstructorArgument ("type")]
-		public Type Type { get; set; }
 
 		IList items;
 		public IList Items {
 			get { return items; }
 			private set { items = value; }
 		}
+		
+		[ConstructorArgument ("type")]
+		public Type Type { get; set; }
 		
 		public override object ProvideValue (IServiceProvider serviceProvider)
 		{
