@@ -37,7 +37,7 @@ namespace System.Windows.Markup
 	{
 		public ArrayExtension ()
 		{
-			Items = new ArrayList ();
+			items = new ArrayList ();
 		}
 
 		public ArrayExtension (Array elements)
@@ -45,7 +45,7 @@ namespace System.Windows.Markup
 			if (elements == null)
 				throw new ArgumentNullException ("elements");
 			Type = elements.GetType ().GetElementType ();
-			Items = new ArrayList (elements);
+			items = new ArrayList (elements);
 		}
 
 		public ArrayExtension (Type arrayType)
@@ -53,14 +53,17 @@ namespace System.Windows.Markup
 			if (arrayType == null)
 				throw new ArgumentNullException ("arrayType");
 			Type = arrayType;
-			Items = new ArrayList ();
+			items = new ArrayList ();
 		}
 
 		[ConstructorArgument ("arrayType")]
 		public Type Type { get; set; }
 
+		IList items;
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public IList Items { get; private set; }
+		public IList Items {
+			get { return items; }
+		}
 
 		public void AddChild (Object value)
 		{

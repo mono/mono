@@ -67,6 +67,8 @@ namespace System.Xaml
 				throw new ArgumentNullException ("type");
 			if (definition == null)
 				throw new ArgumentNullException ("definition");
+			if (type == definition)
+				return true;
 
 			foreach (var iface in type.GetInterfaces ())
 				if (iface == definition || (iface.IsGenericType && iface.GetGenericTypeDefinition () == definition))
@@ -239,19 +241,25 @@ namespace System.Xaml
 		public static IEnumerable<XamlMember> GetSortedConstructorArguments (this XamlType type)
 		{
 			var args = type.GetConstructorArguments ().ToArray ();
-			var ci = type.UnderlyingType.GetConstructors ().FirstOrDefault (c => c.GetParameters ().Length == args.Length);
-			if (ci == null)
-				return null;
-			var pis = ci.GetParameters ();
-			return args.OrderBy (c => pis.FindParameterWithName (c.ConstructorArgumentName ()).Position);
+			foreach (var ci in type.UnderlyingType.GetConstructors ().Where (c => c.GetParameters ().Length == args.Length)) {
+				var pis = ci.GetParameters ();
+				if (args.Length != pis.Length)
+					continue;
+				bool mismatch = false;
+				foreach (var pi in pis)
+				for (int i = 0; i < args.Length; i++)
+					if (!args.Any (a => a.ConstructorArgumentName () == pi.Name))
+						mismatch = true;
+				if (mismatch)
+					continue;
+				return args.OrderBy (c => pis.FindParameterWithName (c.ConstructorArgumentName ()).Position);
+			}
+			return null;
 		}
 
 		static ParameterInfo FindParameterWithName (this IEnumerable<ParameterInfo> pis, string name)
 		{
-			var ret = pis.FirstOrDefault (pi => pi.Name == name);
-			if (ret == null)
-				throw new ArgumentException (String.Format ("Constructor argument '{0}' is expected, but was not found.", name));
-			return ret;
+			return pis.FirstOrDefault (pi => pi.Name == name);
 		}
 
 		public static string ConstructorArgumentName (this XamlMember xm)

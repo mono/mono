@@ -33,10 +33,13 @@ namespace System.Windows.Markup
 	{
 		public PropertyDefinition ()
 		{
-			Attributes = new List<Attribute> ();
+			attributes = new List<Attribute> ();
 		}
 
-		public IList<Attribute> Attributes { get; private set; }
+		List<Attribute> attributes;
+		public IList<Attribute> Attributes {
+			get { return attributes; }
+		}
 
 		[DefaultValue ("public")]
 		public string Modifier { get; set; }

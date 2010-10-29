@@ -178,7 +178,7 @@ namespace System.Xaml
 			}
 
 			// collection items: return GetObject and Items.
-			if (xm != null && xm.Type.IsCollection && xm.IsReadOnly) {
+			if (xm != null && xm.Type.IsCollection && !xm.IsWritePublic) {
 				yield return new XamlNodeInfo (XamlNodeType.GetObject, xobj);
 				// Write Items member only when there are items (i.e. do not write it if it is empty).
 				var xnm = new XamlNodeMember (xobj, XamlLanguage.Items);
@@ -210,7 +210,7 @@ namespace System.Xaml
 						continue;
 
 				// Other collections as well, but needs different iteration (as nodes contain GetObject and EndObject).
-				if (xce.Current.Member.IsReadOnly && xce.Current.Member.Type != null && xce.Current.Member.Type.IsCollection) {
+				if (!xce.Current.Member.IsWritePublic && xce.Current.Member.Type != null && xce.Current.Member.Type.IsCollection) {
 					var e = GetNodes (xce.Current.Member, xce.Current.Value).GetEnumerator ();
 					if (!(e.MoveNext () && e.MoveNext () && e.MoveNext ())) // GetObject, EndObject and more
 						continue;

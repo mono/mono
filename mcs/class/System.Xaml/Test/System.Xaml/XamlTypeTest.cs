@@ -210,17 +210,34 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsArray, "#1.1");
 			Assert.IsFalse (t.IsCollection, "#1.2");
 			Assert.IsNull (t.ItemType, "#1.3");
+
 			t = new XamlType (typeof (ArrayList), sctx);
 			Assert.IsFalse (t.IsArray, "#2.1");
 			Assert.IsTrue (t.IsCollection, "#2.2");
 			Assert.IsNotNull (t.ItemType, "#2.3");
 			Assert.AreEqual ("Object", t.ItemType.Name, "#2.4");
+
 			t = new XamlType (typeof (int []), sctx);
 			Assert.IsTrue (t.IsArray, "#3.1");
-			// why?
 			Assert.IsFalse (t.IsCollection, "#3.2");
 			Assert.IsNotNull (t.ItemType, "#3.3");
 			Assert.AreEqual (typeof (int), t.ItemType.UnderlyingType, "#3.4");
+
+			t = new XamlType (typeof (IList), sctx);
+			Assert.IsFalse (t.IsArray, "#4.1");
+			Assert.IsTrue (t.IsCollection, "#4.2");
+			Assert.IsNotNull (t.ItemType, "#4.3");
+			Assert.AreEqual (typeof (object), t.ItemType.UnderlyingType, "#4.4");
+
+			t = new XamlType (typeof (ICollection), sctx); // it is not a XAML collection.
+			Assert.IsFalse (t.IsArray, "#5.1");
+			Assert.IsFalse (t.IsCollection, "#5.2");
+			Assert.IsNull (t.ItemType, "#5.3");
+
+			t = new XamlType (typeof (ArrayExtension), sctx);
+			Assert.IsFalse (t.IsArray, "#6.1");
+			Assert.IsFalse (t.IsCollection, "#6.2");
+			Assert.IsNull (t.ItemType, "#6.3");
 		}
 
 		[Test]
@@ -681,6 +698,12 @@ namespace MonoTests.System.Xaml
 		public void CustomArrayExtension ()
 		{
 			var xt = new XamlType (typeof (MyArrayExtension), sctx);
+			var xm = xt.GetMember ("Items");
+			Assert.IsNotNull (xt.GetAllMembers ().FirstOrDefault (m => m.Name == "Items"), "#0");
+			Assert.IsNotNull (xm, "#1");
+			Assert.IsFalse (xm.IsReadOnly, "#2"); // Surprisingly it is False. Looks like XAML ReadOnly is true only if it lacks set accessor. Having private member does not make it ReadOnly.
+			Assert.IsTrue (xm.Type.IsCollection, "#3");
+			Assert.IsFalse (xm.Type.IsConstructible, "#4");
 		}
 	}
 

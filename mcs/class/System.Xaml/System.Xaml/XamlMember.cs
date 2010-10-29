@@ -63,8 +63,8 @@ namespace System.Xaml
 			underlying_member = propertyInfo;
 			DeclaringType = schemaContext.GetXamlType (propertyInfo.DeclaringType);
 			target_type = DeclaringType;
-			UnderlyingGetter = propertyInfo.GetGetMethod ();
-			UnderlyingSetter = propertyInfo.GetSetMethod ();
+			UnderlyingGetter = propertyInfo.GetGetMethod (true);
+			UnderlyingSetter = propertyInfo.GetSetMethod (true);
 		}
 
 		public XamlMember (string attachableEventName, MethodInfo adder, XamlSchemaContext schemaContext)

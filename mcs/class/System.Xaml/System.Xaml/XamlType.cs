@@ -317,7 +317,7 @@ namespace System.Xaml
 
 		public XamlMember GetMember (string name)
 		{
-			return LookupMember (name, false);
+			return LookupMember (name, true);
 		}
 
 		public IList<XamlType> GetPositionalParameters (int parameterCount)
@@ -414,27 +414,18 @@ namespace System.Xaml
 			foreach (var ei in UnderlyingType.GetEvents (bf))
 				yield return new XamlMember (ei, SchemaContext);
 		}
+		
+		static bool IsPublicAccessor (MethodInfo mi)
+		{
+			return mi != null && mi.IsPublic;
+		}
 
-		static bool IsCollectionType (Type type)
+		bool IsCollectionType (Type type)
 		{
 			if (type == null)
 				return false;
-			if (type.IsArray)
-				return true;
-
-			Type [] ifaces = type.GetInterfaces ();
-			foreach (Type i in ifaces)
-				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (typeof (ICollection<>)))
-					return true;
-			foreach (Type i in ifaces)
-				if (i == typeof (IList))
-					return true;
-
-			foreach (var iface in type.GetInterfaces ())
-				if (iface == typeof (IDictionary) || (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>)))
-					return true;
-
-			return false;
+			var xt = SchemaContext.GetXamlType (type);
+			return xt.LookupCollectionKind () != XamlCollectionKind.None;
 		}
 
 		protected virtual IList<XamlType> LookupAllowedContentTypes ()
@@ -483,7 +474,7 @@ namespace System.Xaml
 			if (type.ImplementsAnyInterfacesOf (typeof (IDictionary), typeof (IDictionary<,>)))
 				return XamlCollectionKind.Dictionary;
 
-			if (type.ImplementsAnyInterfacesOf (typeof (ICollection), typeof (ICollection<>)))
+			if (type.ImplementsAnyInterfacesOf (typeof (IList), typeof (ICollection<>)))
 				return XamlCollectionKind.Collection;
 
 			return XamlCollectionKind.None;

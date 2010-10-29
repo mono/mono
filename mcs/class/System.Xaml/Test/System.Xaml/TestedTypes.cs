@@ -83,12 +83,12 @@ namespace MonoTests.System.Xaml
 	{
 		public MyArrayExtension ()
 		{
-			Items = new ArrayList ();
+			items = new ArrayList ();
 		}
 
 		public MyArrayExtension (Array array)
 		{
-			this.Items = array;
+			items = new ArrayList (array);
 			this.Type = array.GetType ().GetElementType ();
 		}
 		
@@ -101,7 +101,11 @@ namespace MonoTests.System.Xaml
 		[ConstructorArgument ("type")]
 		public Type Type { get; set; }
 
-		public IList Items { get; private set; }
+		IList items;
+		public IList Items {
+			get { return items; }
+			private set { items = value; }
+		}
 		
 		public override object ProvideValue (IServiceProvider serviceProvider)
 		{
