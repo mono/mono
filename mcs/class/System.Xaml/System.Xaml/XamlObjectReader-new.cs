@@ -20,8 +20,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#define USE_NEW
-#if USE_NEW
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +29,22 @@ using System.Linq;
 using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
+
+//
+// This implementation can be compiled under .NET, using different namespace
+// (Mono.Xaml). To compile it into a usable library, use the following compile
+// optons and sources:
+//
+//	dmcs -d:DOTNET -t:library -r:System.Xaml.dll \
+//		System.Xaml/XamlObjectReader-new.cs \
+//		System.Xaml/XamlNode.cs \
+//		System.Xaml/TypeExtensionMethods.cs
+//
+// (At least it should compile as of the revision that this comment is added.)
+//
+// Adding Test/System.Xaml/TestedTypes.cs might also be useful to examine this
+// reader behavior under .NET and see where bugs are alive.
+//
 
 #if DOTNET
 namespace Mono.Xaml
@@ -156,5 +171,3 @@ namespace System.Xaml
 		}
 	}
 }
-
-#endif
