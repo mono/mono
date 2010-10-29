@@ -460,7 +460,11 @@ namespace System.Runtime.Serialization.Json
 
 		public override void WriteRaw (string text)
 		{
+#if MOONLIGHT
+			OutputString (text);
+#else
 			WriteString (text);
+#endif
 		}
 
 		public override void WriteRaw (char [] chars, int start, int length)
