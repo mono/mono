@@ -8166,9 +8166,7 @@ namespace Mono.CSharp {
 		public SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
 #if NET_4_0
-			return SLE.Expression.ArrayAccess (
-				ea.Expr.MakeExpression (ctx),
-				Arguments.MakeExpression (ea.Arguments, ctx));
+			return SLE.Expression.ArrayAccess (ea.Expr.MakeExpression (ctx), MakeExpressionArguments (ctx));
 #else
 			throw new NotImplementedException ();
 #endif
@@ -8176,9 +8174,14 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.ArrayIndex (
-				ea.Expr.MakeExpression (ctx),
-				Arguments.MakeExpression (ea.Arguments, ctx));
+			return SLE.Expression.ArrayIndex (ea.Expr.MakeExpression (ctx), MakeExpressionArguments (ctx));
+		}
+
+		SLE.Expression[] MakeExpressionArguments (BuilderContext ctx)
+		{
+			using (ctx.With (BuilderContext.Options.AllCheckStateFlags, true)) {
+				return Arguments.MakeExpression (ea.Arguments, ctx);
+			}
 		}
 	}
 
