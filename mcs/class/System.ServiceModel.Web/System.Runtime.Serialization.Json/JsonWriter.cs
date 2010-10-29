@@ -460,7 +460,7 @@ namespace System.Runtime.Serialization.Json
 
 		public override void WriteRaw (string text)
 		{
-			OutputString (text);
+			WriteString (text);
 		}
 
 		public override void WriteRaw (char [] chars, int start, int length)
