@@ -663,6 +663,12 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Write_Uri ()
+		{
+			Assert.AreEqual (ReadXml ("Uri.xml"), XamlServices.Save (new Uri ("urn:foo")), "#1");
+		}
+
+		[Test]
 		public void Write_Null ()
 		{
 			Assert.AreEqual (ReadXml ("NullExtension.xml"), XamlServices.Save (null), "#1");
@@ -679,6 +685,13 @@ namespace MonoTests.System.Xaml
 		public void Write_Type ()
 		{
 			Assert.AreEqual (ReadXml ("Type.xml").Trim (), XamlServices.Save (typeof (int)), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_Type2 ()
+		{
+			Assert.AreEqual (ReadXml ("Type2.xml").Trim (), XamlServices.Save (typeof (TestClass1)), "#1");
 		}
 
 		[Test]
@@ -720,6 +733,14 @@ namespace MonoTests.System.Xaml
 		public void Write_ListInt32 ()
 		{
 			Assert.AreEqual (ReadXml ("List_Int32.xml").Trim (), XamlServices.Save (new int [] {4, -5, 0, 255, int.MaxValue}.ToList ()), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_ListInt32_2 ()
+		{
+			var obj = new List<int> (new int [0]);
+			Assert.AreEqual (ReadXml ("List_Int32_2.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
 
 		[Test]
@@ -771,6 +792,99 @@ namespace MonoTests.System.Xaml
 			// Unlike the above case, this has the wrapper object and hence PositionalParametersClass1 can be written as an attribute (markup extension)
 			var obj = new PositionalParametersWrapper ("foo", 5);
 			Assert.AreEqual (ReadXml ("PositionalParametersWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_ArgumentAttributed ()
+		{
+			var obj = new ArgumentAttributed ("foo", "bar");
+			Assert.AreEqual (ReadXml ("ArgumentAttributed.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_ArrayExtension2 ()
+		{
+			var obj = new ArrayExtension (typeof (int));
+			Assert.AreEqual (ReadXml ("ArrayExtension2.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_ArrayList ()
+		{
+			var obj = new ArrayList (new int [] {5, -3, 0});
+			Assert.AreEqual (ReadXml ("ArrayList.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ComplexPositionalParameterWrapper ()
+		{
+			var obj = new ComplexPositionalParameterWrapper () { Param = new ComplexPositionalParameterClass (new ComplexPositionalParameterValue () { Foo = "foo" })};
+			Assert.AreEqual (ReadXml ("ComplexPositionalParameterWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_ListWrapper ()
+		{
+			var obj = new ListWrapper (new List<int> (new int [] {5, -3, 0}));
+			Assert.AreEqual (ReadXml ("ListWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_ListWrapper2 ()
+		{
+			var obj = new ListWrapper2 (new List<int> (new int [] {5, -3, 0}));
+			Assert.AreEqual (ReadXml ("ListWrapper2.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_MyArrayExtension ()
+		{
+			var obj = new MyArrayExtension (new int [] {5, -3, 0});
+			Assert.AreEqual (ReadXml ("MyArrayExtension.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_MyExtension ()
+		{
+			var obj = new MyExtension () { Foo = typeof (int), Bar = "v2", Baz = "v7"};
+			Assert.AreEqual (ReadXml ("MyExtension.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_MyExtension2 ()
+		{
+			var obj = new MyExtension2 () { Foo = typeof (int), Bar = "v2"};
+			Assert.AreEqual (ReadXml ("MyExtension2.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_MyExtension3 ()
+		{
+			var obj = new MyExtension3 () { Foo = typeof (int), Bar = "v2"};
+			Assert.AreEqual (ReadXml ("MyExtension3.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_MyExtension4 ()
+		{
+			var obj = new MyExtension4 () { Foo = typeof (int), Bar = "v2"};
+			Assert.AreEqual (ReadXml ("MyExtension4.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_MyExtension6 ()
+		{
+			var obj = new MyExtension6 ("foo");
+			Assert.AreEqual (ReadXml ("MyExtension6.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
 	}
 

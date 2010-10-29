@@ -1,0 +1,5 @@
+<ArrayList Capacity="3" xmlns="clr-namespace:System.Collections;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Int32>5</x:Int32>
+  <x:Int32>-3</x:Int32>
+  <x:Int32>0</x:Int32>
+</ArrayList>

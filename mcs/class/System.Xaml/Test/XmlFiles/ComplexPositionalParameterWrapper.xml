@@ -1,0 +1,9 @@
+<ComplexPositionalParameterWrapper xmlns="clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ComplexPositionalParameterWrapper.Param>
+    <ComplexPositionalParameterClass>
+      <x:Arguments>
+        <ComplexPositionalParameterValue Foo="foo" />
+      </x:Arguments>
+    </ComplexPositionalParameterClass>
+  </ComplexPositionalParameterWrapper.Param>
+</ComplexPositionalParameterWrapper>

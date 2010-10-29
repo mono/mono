@@ -1,0 +1,9 @@
+<ListWrapper2 xmlns="clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ListWrapper2.Items>
+    <scg:List x:TypeArguments="x:Int32" Capacity="3">
+      <x:Int32>5</x:Int32>
+      <x:Int32>-3</x:Int32>
+      <x:Int32>0</x:Int32>
+    </scg:List>
+  </ListWrapper2.Items>
+</ListWrapper2>
