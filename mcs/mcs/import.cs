@@ -1359,6 +1359,9 @@ namespace Mono.CSharp
 						var attrs = mb.Attributes;
 
 						if ((attrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Private) {
+							if (meta_import.IgnorePrivateMembers)
+								continue;
+
 							// Ignore explicitly implemented members
 							if ((attrs & explicit_impl) == explicit_impl)
 								continue;
