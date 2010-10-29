@@ -36,9 +36,9 @@ namespace System.Drawing {
 
 	[SuppressUnmanagedCodeSecurity]
 #if NET_2_0
-	internal static class Carbon {
+	internal static class MacSupport {
 #else
-	internal sealed class Carbon {
+	internal sealed class MacSupport {
 #endif
 		internal static Hashtable contextReference = new Hashtable ();
 		internal static object lockobj = new object ();
@@ -52,7 +52,7 @@ namespace System.Drawing {
 		internal static int debug_threshold = 1;
 #endif
 
-		static Carbon () {
+		static MacSupport () {
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies ()) {
 				if (String.Equals (asm.GetName ().Name, "System.Windows.Forms")) {
 					Type driver_type = asm.GetType ("System.Windows.Forms.XplatUICarbon");
@@ -61,6 +61,16 @@ namespace System.Drawing {
 					}
 				}
 			}
+		}
+
+		internal static CocoaContext GetCGContextForNSView (IntPtr handle) {
+			IntPtr graphicsContext = objc_msgSend (objc_getClass ("NSGraphicsContext"), sel_registerName ("currentContext"));
+			IntPtr ctx = objc_msgSend (graphicsContext, sel_registerName ("graphicsPort"));
+			Rect bounds = new Rect ();
+
+			objc_msgSend_stret (ref bounds, handle, sel_registerName ("bounds"));
+
+			return new CocoaContext (ctx, (int) bounds.size.width, (int) bounds.size.height);
 		}
 
 		internal static CarbonContext GetCGContextForView (IntPtr handle) {
@@ -289,7 +299,7 @@ namespace System.Drawing {
 		public short right;
 	}
 
-	internal struct CarbonContext
+	internal struct CarbonContext : IMacContext
 	{
 		public IntPtr port;
 		public IntPtr ctx;
@@ -303,5 +313,44 @@ namespace System.Drawing {
 			this.width = width;
 			this.height = height;
 		}
+
+		public void Synchronize ()
+		{
+			MacSupport.CGContextSynchronize (ctx);
+		}
+
+		public void Release ()
+		{
+			MacSupport.ReleaseContext (port, ctx);
+		}
+	}
+
+	internal struct CocoaContext : IMacContext
+	{
+		public IntPtr ctx;
+		public int width;
+		public int height;
+
+		public CocoaContext (IntPtr ctx, int width, int height)
+		{
+			this.ctx = ctx;
+			this.width = width;
+			this.height = height;
+		}
+
+		public void Synchronize ()
+		{
+			MacSupport.CGContextSynchronize (ctx);
+		}
+
+		public void Release ()
+		{
+		}
+	}
+
+	internal interface IMacContext
+	{
+		void Synchronize ();
+		void Release ();
 	}
 }

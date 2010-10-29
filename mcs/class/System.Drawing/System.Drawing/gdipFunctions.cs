@@ -61,6 +61,7 @@ namespace System.Drawing
 		public static IntPtr Display = IntPtr.Zero;
 		public static bool UseX11Drawable = false;
 		public static bool UseCarbonDrawable = false;
+		public static bool UseCocoaDrawable = false;
 
 		#region gdiplus.dll functions
 
@@ -138,12 +139,12 @@ namespace System.Drawing
 
 		static public bool RunningOnWindows ()
 		{
-			return !UseX11Drawable && !UseCarbonDrawable;
+			return !UseX11Drawable && !UseCarbonDrawable && !UseCocoaDrawable;
 		}
 
 		static public bool RunningOnUnix ()
 		{
-			return UseX11Drawable || UseCarbonDrawable;
+			return UseX11Drawable || UseCarbonDrawable || UseCocoaDrawable;
 		}
 		
 		// Copies a Ptr to an array of Points and releases the memory
