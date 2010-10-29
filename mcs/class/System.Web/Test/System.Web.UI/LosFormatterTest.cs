@@ -121,6 +121,9 @@ namespace MonoTests.System.Web.UI
 			// 20 bytes == 160 bits -> match HMACSHA1 as default
 			Assert.AreEqual (20, signed_data.Length - data.Length, "signature length");
 #endif
+			LosFormatter lf6 = new LosFormatter (true, "string"); // bug #649551
+			signed = NoKeyRoundTrip (lf6, "true, plain");
+			Assert.AreNotEqual (expected, signed, "6");
 		}
 
 		string SerializeOverloads (LosFormatter lf, string message)
