@@ -46,7 +46,7 @@ namespace System.Web.UI {
 			osf = new ObjectStateFormatter ();
 		}
 
-		public LosFormatter (bool enableMac, string macKeyModifier) : this (enableMac, Convert.FromBase64String (macKeyModifier))
+		public LosFormatter (bool enableMac, string macKeyModifier) : this (enableMac, String.IsNullOrEmpty (macKeyModifier) ? null : Encoding.ASCII.GetBytes (macKeyModifier))
 		{
 		}
 
