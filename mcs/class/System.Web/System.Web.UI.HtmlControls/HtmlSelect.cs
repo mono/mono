@@ -639,6 +639,11 @@ namespace System.Web.UI.HtmlControls
 				}
 				
 				w.WriteAttribute ("value", item.Value, true);
+				if (item.HasAttributes) {
+					AttributeCollection attrs = item.Attributes;
+					foreach (string key in attrs.Keys)
+						w.WriteAttribute (key, HttpUtility.HtmlAttributeEncode (attrs [key]));
+				}
 				w.Write (HtmlTextWriter.TagRightChar);
 				
 				w.Write (HttpUtility.HtmlEncode(item.Text));
