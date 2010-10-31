@@ -135,7 +135,7 @@ namespace System.Net.Mail {
 					Credentials = new CCredentialsByHost (cfg.Network.UserName, password);
 				}
 
-				if (cfg.From != null)
+				if (!String.IsNullOrEmpty (cfg.From))
 					defaultFrom = new MailAddress (cfg.From);
 			}
 #else
