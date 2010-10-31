@@ -297,7 +297,7 @@ namespace System.Resources
 			AddResource (name, value, string.Empty);
 		}
 
-		public void AddResource (string name, string value, string comment)
+		private void AddResource (string name, string value, string comment)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
