@@ -241,7 +241,7 @@ namespace System.Resources
 		private void AddResource (string name, object value, string comment)
 		{
 			if (value is string) {
-				AddResource (name, (string) value);
+				AddResource (name, (string) value, comment);
 				return;
 			}
 
@@ -294,6 +294,11 @@ namespace System.Resources
 		
 		public void AddResource (string name, string value)
 		{
+			AddResource (name, value, string.Empty);
+		}
+
+		public void AddResource (string name, string value, string comment)
+		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
@@ -306,7 +311,7 @@ namespace System.Resources
 			if (writer == null)
 				InitWriter ();
 
-			WriteString (name, value);
+			WriteString (name, value, null, comment);
 		}
 
 #if NET_2_0
