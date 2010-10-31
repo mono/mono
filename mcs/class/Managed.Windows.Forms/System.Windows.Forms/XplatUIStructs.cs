@@ -407,10 +407,10 @@ namespace System.Windows.Forms {
 		UISF_ACTIVE    = 0x4
 	}
 
-	[StructL
+	[StructLayout(LayoutKind.Sequential)]
 #if PUBLIC_TYPES
-	 public
-#elseayout(LayoutKind.Sequential)]
+	public
+#else
 	internal
 #endif
 	struct POINT {
@@ -434,10 +434,10 @@ namespace System.Windows.Forms {
 		}
 	}
 	
-	[StructL
+	[StructLayout(LayoutKind.Sequential)] 
 #if PUBLIC_TYPES
-	 public
-#elseayout(LayoutKind.Sequential)] 
+        public
+#else
 	internal
 #endif
 	struct MSG {
@@ -766,10 +766,10 @@ namespace System.Windows.Forms {
 
         }
 
-	[StructL
+	[StructLayout(LayoutKind.Sequential)]
 #if PUBLIC_TYPES
 	 public
-#elseayout(LayoutKind.Sequential)]
+#else
 	internal
 #endif
 	struct HELPINFO {
@@ -876,10 +876,10 @@ namespace System.Windows.Forms {
 		Tool				= 2
 	}
 
-	[StructL
+	[StructLayout(LayoutKind.Sequential)]
 #if PUBLIC_TYPES
 	 public
-#elseayout(LayoutKind.Sequential)]
+#else
 	internal
 #endif
 	struct BITMAPINFOHEADER {
@@ -921,10 +921,10 @@ namespace System.Windows.Forms {
 		CF_DIBV5            		= 17
 	}
 
-	[StructL
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
 #if PUBLIC_TYPES
 	 public
-#elseayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+#else
 	internal
 #endif
 	struct MINMAXINFO {
@@ -935,10 +935,10 @@ namespace System.Windows.Forms {
 		internal POINT			ptMaxTrackSize;
 	}
 
-	[StructL
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
 #if PUBLIC_TYPES
 	 public
-#elseayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+#else
 	internal
 #endif
 	struct KeyFilterData {
