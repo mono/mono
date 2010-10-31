@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -98,6 +99,39 @@ namespace MonoTests.System.Resources
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.AreEqual ("fileName", ex.ParamName, "#5");
 			}
+		}
+
+		[Test]
+		public void AddResource_WithComment ()
+		{
+			ResXResourceWriter w = new ResXResourceWriter (fileName);
+			ResXDataNode node = new ResXDataNode ("key", "value");
+    			node.Comment = "comment is preserved";
+			w.AddResource (node);
+			w.Generate ();
+			w.Close ();
+
+			ResXResourceReader r = new ResXResourceReader (fileName);
+			ITypeResolutionService typeres = null;
+			r.UseResXDataNodes = true;
+			
+			int count = 0;
+			foreach (DictionaryEntry o in r)
+			{
+				string key = o.Key.ToString();
+				node = (ResXDataNode)o.Value;
+				string value = node.GetValue (typeres).ToString ();
+				string comment = node.Comment;
+
+				Assert.AreEqual ("key", key, "key");
+				Assert.AreEqual ("value", value, "value");
+				Assert.AreEqual ("comment is preserved", comment, "comment");
+				Assert.AreEqual (0, count, "too many nodes");
+				count++;
+			}
+			r.Close ();
+
+			File.Delete (fileName);
 		}
 
 		[Test]
