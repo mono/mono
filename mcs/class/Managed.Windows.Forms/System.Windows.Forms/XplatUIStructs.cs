@@ -32,7 +32,12 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[Flags]
-	internal enum WindowStyles : int {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum WindowStyles : int {
 		WS_OVERLAPPED		= 0x00000000,
 		WS_POPUP		= unchecked((int)0x80000000),
 		WS_CHILD		= 0x40000000,
@@ -63,7 +68,12 @@ namespace System.Windows.Forms {
 	}
 
 	[Flags]
-	internal enum WindowExStyles : int {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum WindowExStyles : int {
 		// Extended Styles
 		WS_EX_DLGMODALFRAME	= 0x00000001,
 		WS_EX_DRAGDETECT	= 0x00000002,
@@ -99,14 +109,24 @@ namespace System.Windows.Forms {
 	}
 
 	[Flags]
-	internal enum ToolBarStyles : int {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum ToolBarStyles : int {
 		TBSTYLE_TOOLTIPS    = 0x100,
 		TBSTYLE_FLAT        = 0x800,
 		TBSTYLE_LIST        = 0x1000,
 		TBSTYLE_TRANSPARENT = 0x8000
 	}
-	
-	internal enum Msg {
+
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum Msg {
 		WM_NULL                   = 0x0000,
 		WM_CREATE                 = 0x0001,
 		WM_DESTROY                = 0x0002,
@@ -358,7 +378,12 @@ namespace System.Windows.Forms {
 		NIN_BALLOONUSERCLICK      = WM_USER + 0x0005 
 	}
 
-	internal enum MsgButtons {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum MsgButtons {
 		MK_LBUTTON		= 0x0001,
 		MK_RBUTTON		= 0x0002,
 		MK_SHIFT		= 0x0004,
@@ -367,8 +392,13 @@ namespace System.Windows.Forms {
 		MK_XBUTTON1		= 0x0020,
 		MK_XBUTTON2		= 0x0040,
 	}
-	
-	internal enum MsgUIState {
+
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum MsgUIState {
 		UIS_SET        = 1,
 		UIS_CLEAR      = 2,
 		UIS_INITIALIZE = 3,
@@ -377,18 +407,23 @@ namespace System.Windows.Forms {
 		UISF_ACTIVE    = 0x4
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct POINT {
-		internal int x;
-		internal int y;
+	[StructL
+#if PUBLIC_TYPES
+	 public
+#elseayout(LayoutKind.Sequential)]
+	internal
+#endif
+	struct POINT {
+		public int x;
+		public int y;
 
-		internal POINT (int x, int y)
+		public POINT (int x, int y)
 		{
 			this.x = x;
 			this.y = y;
 		}
 
-		internal Point ToPoint ()
+		public Point ToPoint ()
 		{
 			return new Point (x, y);
 		}
@@ -399,8 +434,13 @@ namespace System.Windows.Forms {
 		}
 	}
 	
-	[StructLayout(LayoutKind.Sequential)] 
-	internal struct MSG {
+	[StructL
+#if PUBLIC_TYPES
+	 public
+#elseayout(LayoutKind.Sequential)] 
+	internal
+#endif
+	struct MSG {
 		internal IntPtr	hwnd;
 		internal Msg	message;
 		internal IntPtr	wParam; 
@@ -416,26 +456,46 @@ namespace System.Windows.Forms {
 	}
 
 	[Flags]
-	internal enum TransparencySupport {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum TransparencySupport {
 		None = 0x00,
 		Get = 0x01,
 		Set = 0x02,
 		GetSet = 0x03
 	}
 
-	internal enum WindowActiveFlags {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum WindowActiveFlags {
 		WA_INACTIVE		= 0,
 		WA_ACTIVE		= 1,
 		WA_CLICKACTIVE		= 2
 	}
 
-	internal enum KeybdEventFlags {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum KeybdEventFlags {
 		None			= 0,
 		ExtendedKey		= 0x0001,
 		KeyUp			= 0x0002
 	}
 
-	internal enum VirtualKeys {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum VirtualKeys {
 		VK_LBUTTON		= 0x01,
 		VK_RBUTTON              = 0x02,
 		VK_CANCEL		= 0x03,
@@ -590,7 +650,12 @@ namespace System.Windows.Forms {
 		VK_OEM_CLEAR		= 0xFE,
 	}
 
-	internal enum TtyKeys {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum TtyKeys {
 		XK_BackSpace		= 0xff08,  /* Back space, back char */
 		XK_Tab			= 0xff09,
 		XK_Linefeed		= 0xff0a,  /* Linefeed, LF */
@@ -603,7 +668,12 @@ namespace System.Windows.Forms {
 		XK_Delete		= 0xffff  /* Delete, rubout */
 	}
 
-	internal enum MiscKeys {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum MiscKeys {
 		XK_ISO_Lock             = 0xfe01,
 		XK_ISO_Last_Group_Lock	= 0xfe0f,
 		XK_Select		= 0xff60,
@@ -622,7 +692,12 @@ namespace System.Windows.Forms {
 		XK_Num_Lock		= 0xff7f
 	}
 
-	internal enum KeypadKeys {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum KeypadKeys {
 		XK_KP_Space		= 0xff80,
 		XK_KP_Tab		= 0xff89,
 		XK_KP_Enter		= 0xff8d,  /* Enter */
@@ -663,7 +738,12 @@ namespace System.Windows.Forms {
 		XK_KP_9			= 0xffb9
 	}
 
-        internal enum DeadKeys {
+#if PUBLIC_TYPES
+	public
+#else
+        internal
+#endif
+	enum DeadKeys {
                 XK_dead_grave           = 0xfe50,
                 XK_dead_acute           = 0xfe51,
                 XK_dead_circumflex      = 0xfe52,
@@ -686,8 +766,13 @@ namespace System.Windows.Forms {
 
         }
 
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct HELPINFO {
+	[StructL
+#if PUBLIC_TYPES
+	 public
+#elseayout(LayoutKind.Sequential)]
+	internal
+#endif
+	struct HELPINFO {
 		internal uint		cbSize;
 		internal int		iContextType;
 		internal int		iCtrlId;
@@ -696,13 +781,23 @@ namespace System.Windows.Forms {
 		internal POINT		MousePos;
 	}
 
-	internal enum PeekMessageFlags {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum PeekMessageFlags {
 		PM_NOREMOVE			= 0x00000000,
 		PM_REMOVE			= 0x00000001,
 		PM_NOYIELD			= 0x00000002
 	}
 
-	internal enum StdCursor {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum StdCursor {
 		Default				= 0,
 		AppStarting			= 1,
 		Arrow				= 2,
@@ -733,7 +828,12 @@ namespace System.Windows.Forms {
 		WaitCursor			= 27
 	}
 
-	internal enum HitTest {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum HitTest {
 		HTERROR				= -2,
 		HTTRANSPARENT			= -1,
 		HTNOWHERE			= 0,
@@ -765,14 +865,24 @@ namespace System.Windows.Forms {
 		HTHELP				= 21
 	}
 
-	internal enum TitleStyle {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum TitleStyle {
 		None				= 0,
 		Normal				= 1,
 		Tool				= 2
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct BITMAPINFOHEADER {
+	[StructL
+#if PUBLIC_TYPES
+	 public
+#elseayout(LayoutKind.Sequential)]
+	internal
+#endif
+	struct BITMAPINFOHEADER {
 		internal uint     biSize;
 		internal int      biWidth;
 		internal int      biHeight;
@@ -786,7 +896,12 @@ namespace System.Windows.Forms {
 		internal uint     biClrImportant;
 	}
 
-	internal enum ClipboardFormats : ushort {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum ClipboardFormats : ushort {
 		CF_TEXT				= 1,
 		CF_BITMAP           		= 2,
 		CF_METAFILEPICT     		= 3,
@@ -806,8 +921,13 @@ namespace System.Windows.Forms {
 		CF_DIBV5            		= 17
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-	internal struct MINMAXINFO {
+	[StructL
+#if PUBLIC_TYPES
+	 public
+#elseayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	internal
+#endif
+	struct MINMAXINFO {
 		internal POINT			ptReserved;
 		internal POINT			ptMaxSize;
 		internal POINT			ptMaxPosition;
@@ -815,8 +935,13 @@ namespace System.Windows.Forms {
 		internal POINT			ptMaxTrackSize;
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-	internal struct KeyFilterData {
+	[StructL
+#if PUBLIC_TYPES
+	 public
+#elseayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	internal
+#endif
+	struct KeyFilterData {
 			internal bool Down;
 			internal int keycode;
 			internal int keysym;
@@ -824,7 +949,12 @@ namespace System.Windows.Forms {
 			internal String str;
 		}
 
-	internal enum ScrollBarCommands {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum ScrollBarCommands {
 		SB_LINEUP		= 0,
 		SB_LINELEFT		= 0,
 		SB_LINEDOWN		= 1,
@@ -842,7 +972,12 @@ namespace System.Windows.Forms {
 		SB_ENDSCROLL		= 8
 	}
 
-	internal enum ClipCombineMode {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum ClipCombineMode {
 		RGN_AND = 1,
 		RGN_OR,
 		RGN_XOR,
@@ -853,7 +988,12 @@ namespace System.Windows.Forms {
 		RGN_MAX = RGN_COPY
 	}
 
-	internal enum SystemCommands {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum SystemCommands {
 		SC_SIZE         = 0xF000,
 		SC_MOVE         = 0xF010,
 		SC_MINIMIZE     = 0xF020,
@@ -875,7 +1015,12 @@ namespace System.Windows.Forms {
 		SC_CONTEXTHELP  = 0xF180
 	}
 
-	internal enum AlertType {
+#if PUBLIC_TYPES
+	public
+#else
+	internal
+#endif
+	enum AlertType {
 		Default		= 1,
 		Error		= 2,
 		Question	= 3,
