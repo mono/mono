@@ -30,7 +30,12 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms {
+#if PUBLIC_TYPES
+namespace Mono.Winforms 
+#else
+namespace System.Windows.Forms
+#endif
+{
 	[Flags]
 #if PUBLIC_TYPES
 	public
