@@ -259,22 +259,22 @@ namespace System.Net {
 						if (str.Length == 0)
 							continue;
 						if (str.StartsWith ("$Version")) {
-							version = Int32.Parse (Unquote (str.Substring (str.IndexOf ("=") + 1)));
+							version = Int32.Parse (Unquote (str.Substring (str.IndexOf ('=') + 1)));
 						} else if (str.StartsWith ("$Path")) {
 							if (current != null)
-								current.Path = str.Substring (str.IndexOf ("=") + 1).Trim ();
+								current.Path = str.Substring (str.IndexOf ('=') + 1).Trim ();
 						} else if (str.StartsWith ("$Domain")) {
 							if (current != null)
-								current.Domain = str.Substring (str.IndexOf ("=") + 1).Trim ();
+								current.Domain = str.Substring (str.IndexOf ('=') + 1).Trim ();
 						} else if (str.StartsWith ("$Port")) {
 							if (current != null)
-								current.Port = str.Substring (str.IndexOf ("=") + 1).Trim ();
+								current.Port = str.Substring (str.IndexOf ('=') + 1).Trim ();
 						} else {
 							if (current != null) {
 								cookies.Add (current);
 							}
 							current = new Cookie ();
-							int idx = str.IndexOf ("=");
+							int idx = str.IndexOf ('=');
 							if (idx > 0) {
 								current.Name = str.Substring (0, idx).Trim ();
 								current.Value =  str.Substring (idx + 1).Trim ();

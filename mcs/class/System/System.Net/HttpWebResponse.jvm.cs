@@ -122,7 +122,7 @@ namespace System.Net
 				string contentType = ContentType;
 				if (contentType == null)
 					return "ISO-8859-1";
-				int pos = contentType.IndexOf ("charset=", StringComparison.InvariantCultureIgnoreCase);
+				int pos = contentType.IndexOf ("charset=", StringComparison.OrdinalIgnoreCase);
 				if (pos == -1)
 					return "ISO-8859-1";
 				pos += 8;

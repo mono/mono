@@ -76,7 +76,7 @@ namespace System.Net
 			write_timeout = read_timeout;
 			this.cnc = cnc;
 			string contentType = cnc.Data.Headers ["Transfer-Encoding"];
-			bool chunkedRead = (contentType != null && contentType.ToLower ().IndexOf ("chunked") != -1);
+			bool chunkedRead = (contentType != null && contentType.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
 			string clength = cnc.Data.Headers ["Content-Length"];
 			if (!chunkedRead && clength != null && clength != "") {
 				try {
@@ -113,7 +113,7 @@ namespace System.Net
 			bool isProxy = (request.Proxy != null && !request.Proxy.IsBypassed (request.Address));
 			string header_name = (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate";
 			string authHeader = cnc.Data.Headers [header_name];
-			return (authHeader != null && authHeader.IndexOf ("NTLM") != -1);
+			return (authHeader != null && authHeader.IndexOf ("NTLM", StringComparison.Ordinal) != -1);
 		}
 
 		internal void CheckResponseInBuffer ()

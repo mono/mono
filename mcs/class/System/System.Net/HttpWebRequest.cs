@@ -241,7 +241,7 @@ namespace System.Net
 				if (val == "keep-alive" || val == "close") 
 					throw new ArgumentException ("Keep-Alive and Close may not be set with this property");
 
-				if (keepAlive && val.IndexOf ("keep-alive") == -1)
+				if (keepAlive && val.IndexOf ("keep-alive", StringComparison.Ordinal) == -1)
 					value = value + ", Keep-Alive";
 				
 				webHeaders.RemoveAndAdd ("Connection", value);

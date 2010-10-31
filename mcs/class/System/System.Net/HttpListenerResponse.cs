@@ -398,7 +398,7 @@ namespace System.Net {
 				encoding = Encoding.Default;
 
 			if (content_type != null) {
-				if (content_encoding != null && content_type.IndexOf ("charset=") == -1) {
+				if (content_encoding != null && content_type.IndexOf ("charset=", StringComparison.Ordinal) == -1) {
 					string enc_name = content_encoding.WebName;
 					headers.SetInternal ("Content-Type", content_type + "; charset=" + enc_name);
 				} else {

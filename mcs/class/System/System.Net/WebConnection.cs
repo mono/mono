@@ -468,7 +468,7 @@ namespace System.Net
 			WebConnectionStream stream = new WebConnectionStream (cnc);
 
 			string contentType = data.Headers ["Transfer-Encoding"];
-			cnc.chunkedRead = (contentType != null && contentType.ToLower ().IndexOf ("chunked") != -1);
+			cnc.chunkedRead = (contentType != null && contentType.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
 			if (!cnc.chunkedRead) {
 				stream.ReadBuffer = cnc.buffer;
 				stream.ReadBufferOffset = pos;
@@ -709,11 +709,11 @@ namespace System.Net
 				bool keepAlive = (Data.Version == HttpVersion.Version11 && this.keepAlive);
 				if (cncHeader != null) {
 					cncHeader = cncHeader.ToLower ();
-					keepAlive = (this.keepAlive && cncHeader.IndexOf ("keep-alive") != -1);
+					keepAlive = (this.keepAlive && cncHeader.IndexOf ("keep-alive", StringComparison.Ordinal) != -1);
 				}
 
 				if ((socket != null && !socket.Connected) ||
-				   (!keepAlive || (cncHeader != null && cncHeader.IndexOf ("close") != -1))) {
+				   (!keepAlive || (cncHeader != null && cncHeader.IndexOf ("close", StringComparison.Ordinal) != -1))) {
 					Close (false);
 				}
 

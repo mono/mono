@@ -123,7 +123,7 @@ namespace System.Net
 				if (contentType == null)
 					return "ISO-8859-1";
 				string val = contentType.ToLower (); 					
-				int pos = val.IndexOf ("charset=");
+				int pos = val.IndexOf ("charset=", StringComparison.Ordinal);
 				if (pos == -1)
 					return "ISO-8859-1";
 				pos += 8;

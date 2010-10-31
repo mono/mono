@@ -71,7 +71,7 @@ namespace System.Net {
 			if (lp.Path.IndexOf ('%') != -1)
 				throw new HttpListenerException (400, "Invalid path.");
 
-			if (lp.Path.IndexOf ("//") != -1) // TODO: Code?
+			if (lp.Path.IndexOf ("//", StringComparison.Ordinal) != -1) // TODO: Code?
 				throw new HttpListenerException (400, "Invalid path.");
 
 			// Always listens on all the interfaces, no matter the host name/ip used.
@@ -136,7 +136,7 @@ namespace System.Net {
 			if (lp.Path.IndexOf ('%') != -1)
 				return;
 
-			if (lp.Path.IndexOf ("//") != -1)
+			if (lp.Path.IndexOf ("//", StringComparison.Ordinal) != -1)
 				return;
 
 			EndPointListener epl = GetEPListener (IPAddress.Any, lp.Port, listener, lp.Secure);

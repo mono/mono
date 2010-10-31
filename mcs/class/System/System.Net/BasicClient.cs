@@ -39,7 +39,7 @@ namespace System.Net
 				return null;
 
 			string header = challenge.Trim ();
-			if (header.ToLower ().IndexOf ("basic") == -1)
+			if (header.ToLower ().IndexOf ("basic", StringComparison.Ordinal) == -1)
 				return null;
 
 			return InternalAuthenticate (webRequest, credentials);

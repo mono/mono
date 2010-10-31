@@ -646,7 +646,7 @@ namespace System.Net
 					X509Extension ext = cert.Extensions ["2.16.840.1.113730.1.1"];
 					if (ext != null) {
 						string text = ext.NetscapeCertType (false);
-						return text.IndexOf ("SSL Server Authentication") != -1;
+						return text.IndexOf ("SSL Server Authentication", StringComparison.Ordinal) != -1;
 					}
 					return true;
 				} catch (Exception e) {
