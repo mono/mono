@@ -32,6 +32,8 @@ class X {
 		// Now try the implicit conversions for underlying types in enum operators
 		byte b = 1;
 		short s = (short) (Test.A + b);
+		
+		const int e = A.b + 1 - A.a;
 
 		//
 		// Make sure that other operators still work

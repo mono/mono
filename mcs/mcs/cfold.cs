@@ -169,7 +169,7 @@ namespace Mono.CSharp {
 					case Binary.Operator.Subtraction:
 						result = BinaryFold (ec, oper, ((EnumConstant)left).Child, ((EnumConstant)right).Child, loc);
 						if (result != null)
-							result = result.Resolve (ec).TryReduce (ec, ((EnumConstant)left).Child.Type, loc);
+							result = result.Resolve (ec).TryReduce (ec, EnumSpec.GetUnderlyingType (lt), loc);
 						return result;
 
 					///
