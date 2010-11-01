@@ -135,7 +135,7 @@ namespace System.Net {
 				timer.Change (s_timeout, Timeout.Infinite);
 				stream.BeginRead (buffer, 0, BufferSize, OnRead, this);
 			} catch {
-				sock.Close (); // stream disposed
+				CloseSocket ();
 			}
 		}
 
@@ -184,14 +184,14 @@ namespace System.Net {
 				if (ms != null && ms.Length > 0)
 					SendError ();
 				if (sock != null)
-					sock.Close ();
+					CloseSocket ();
 				return;
 			}
 
 			if (nread == 0) {
 				//if (ms.Length > 0)
 				//	SendError (); // Why bother?
-				sock.Close ();
+				CloseSocket ();
 				return;
 			}
 
@@ -360,6 +360,19 @@ namespace System.Net {
 			Close (false);
 		}
 
+		void CloseSocket ()
+		{
+			if (sock == null)
+				return;
+
+			try {
+				sock.Close ();
+			} catch {
+			} finally {
+				sock = null;
+			}
+		}
+
 		internal void Close (bool force_close)
 		{
 			if (sock != null) {
@@ -402,10 +415,12 @@ namespace System.Net {
 				Socket s = sock;
 				sock = null;
 				try {
-					s.Shutdown (SocketShutdown.Both);
+					if (s != null)
+						s.Shutdown (SocketShutdown.Both);
 				} catch {
 				} finally {
-					s.Close ();
+					if (s != null)
+						s.Close ();
 				}
 				Unbind ();
 				return;
