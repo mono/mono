@@ -133,8 +133,10 @@ namespace Mono.CSharp {
 			}
 
 			set {
+				//
 				// If the lookahead was too small, re-read from the beginning. Increase the buffer size while we're at it
 				// This should never happen until we are parsing some weird source code
+				//
 				if (value < buffer_start) {
 					InitializeStream (read_ahead_length);
 
