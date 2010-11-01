@@ -361,7 +361,13 @@ namespace Mono.CSharp {
 			if (target_object.NodeType == System.Linq.Expressions.ExpressionType.Block)
 				return target_object;
 
-			var source_object = System.Linq.Expressions.Expression.Convert (source.MakeExpression (ctx), target_object.Type);
+			System.Linq.Expressions.UnaryExpression source_object;
+			if (ctx.HasSet (BuilderContext.Options.CheckedScope)) {
+				source_object = System.Linq.Expressions.Expression.ConvertChecked (source.MakeExpression (ctx), target_object.Type);
+			} else {
+				source_object = System.Linq.Expressions.Expression.Convert (source.MakeExpression (ctx), target_object.Type);
+			}
+
 			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
 		}
 #endif

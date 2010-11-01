@@ -33,6 +33,18 @@ public class Test
 		byte b = 4;
 		a.Prop *= b;
 		a[4] ^= b;
+		
+		dynamic d = 1;
+		b = byte.MaxValue;
+		try {
+			checked {
+				b += d;
+				return 1;
+			}
+		} catch (OverflowException) {
+		}
+		
+		b += d;
 
 		return 0;
 	}

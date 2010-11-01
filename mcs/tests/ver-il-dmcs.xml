@@ -2229,7 +2229,7 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>1071</size>
+        <size>1420</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -2504,6 +2504,16 @@
       </method>
       <method name="Int32 Main()">
         <size>845</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-045.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>247</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -16557,6 +16567,90 @@
     <type name="C">
       <method name="Int32 Main()">
         <size>26</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-544.cs">
+    <type name="A`1[T]">
+      <method name="G Foo[G]()">
+        <size>0</size>
+      </method>
+      <method name="G Foo2[G]()">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="G Foo[G]()">
+        <size>6</size>
+      </method>
+      <method name="G Foo2[G]()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A2`1[T]">
+      <method name="Void Foo[U]()">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B2">
+      <method name="Void Foo[Y]()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-545.cs">
+    <type name="ApplicationContext">
+      <method name="Boolean Foo()">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>104</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-546.cs">
+    <type name="Factory">
+      <method name="Factory+S`2[F1,F2] Create[F1,F2](F1, F2)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Factory+S`2[G1,G2]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="TR Test[T1,T2,TR](T1, T2, System.Func`3[T1,T2,TR])">
+        <size>9</size>
+      </method>
+      <method name="Void Main()">
+        <size>29</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -44731,6 +44825,22 @@
       </method>
       <method name="Boolean GetEnumerator()">
         <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-792.cs">
+    <type name="Program">
+      <method name="Void Test()">
+        <size>24</size>
+      </method>
+      <method name="Void Test2(IMemberDelayed)">
+        <size>8</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
