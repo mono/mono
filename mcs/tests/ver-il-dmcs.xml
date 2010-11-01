@@ -2025,10 +2025,44 @@
   <test name="dtest-025.cs">
     <type name="C">
       <method name="Int32 Main()">
-        <size>187</size>
+        <size>340</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="Void SetValue(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Method[T](T ByRef)">
+        <size>104</size>
+      </method>
+    </type>
+    <type name="C+&lt;Method&gt;c__DynamicSite0`1+Container0[T]">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, T ByRef, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__DynamicSite1+Container0">
+      <method name="System.Object Invoke(System.Runtime.CompilerServices.CallSite, Nullable`1 ByRef, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__DynamicSite1+Container1">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, S ByRef, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
       </method>
     </type>
   </test>

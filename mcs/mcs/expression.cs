@@ -5018,40 +5018,38 @@ namespace Mono.CSharp {
 				arguments.Resolve (ec, out dynamic_arg);
 
 			TypeSpec expr_type = member_expr.Type;
+			if (expr_type == InternalType.Dynamic)
+				return DoResolveDynamic (ec, member_expr);
+
 			mg = member_expr as MethodGroupExpr;
+			Expression invoke = null;
 
-			bool dynamic_member = expr_type == InternalType.Dynamic;
-
-			if (!dynamic_member) {
-				Expression invoke = null;
-
-				if (mg == null) {
-					if (expr_type != null && TypeManager.IsDelegateType (expr_type)) {
-						invoke = new DelegateInvocation (member_expr, arguments, loc);
-						invoke = invoke.Resolve (ec);
-						if (invoke == null || !dynamic_arg)
-							return invoke;
-					} else {
-						MemberExpr me = member_expr as MemberExpr;
-						if (me == null) {
-							member_expr.Error_UnexpectedKind (ec, ResolveFlags.MethodGroup, loc);
-							return null;
-						}
-
-						ec.Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
-								member_expr.GetSignatureForError ());
+			if (mg == null) {
+				if (expr_type != null && TypeManager.IsDelegateType (expr_type)) {
+					invoke = new DelegateInvocation (member_expr, arguments, loc);
+					invoke = invoke.Resolve (ec);
+					if (invoke == null || !dynamic_arg)
+						return invoke;
+				} else {
+					MemberExpr me = member_expr as MemberExpr;
+					if (me == null) {
+						member_expr.Error_UnexpectedKind (ec, ResolveFlags.MethodGroup, loc);
 						return null;
 					}
-				}
 
-				if (invoke == null) {
-					mg = DoResolveOverload (ec);
-					if (mg == null)
-						return null;
+					ec.Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
+							member_expr.GetSignatureForError ());
+					return null;
 				}
 			}
 
-			if (dynamic_arg || dynamic_member)
+			if (invoke == null) {
+				mg = DoResolveOverload (ec);
+				if (mg == null)
+					return null;
+			}
+
+			if (dynamic_arg)
 				return DoResolveDynamic (ec, member_expr);
 
 			var method = mg.BestCandidate;
@@ -5109,7 +5107,8 @@ namespace Mono.CSharp {
 					if (left_type != null) {
 						args.Insert (0, new Argument (new TypeOf (left_type, loc).Resolve (ec), Argument.AType.DynamicTypeName));
 					} else {
-						args.Insert (0, new Argument (ma.LeftExpression.Resolve (ec)));
+						var mod = TypeManager.IsValueType (ma.LeftExpression.Type) ? Argument.AType.Ref : Argument.AType.None;
+						args.Insert (0, new Argument (ma.LeftExpression.Resolve (ec), mod));
 					}
 				} else {	// is SimpleName
 					if (ec.IsStatic) {
