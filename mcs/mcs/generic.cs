@@ -3079,6 +3079,9 @@ namespace Mono.CSharp {
 					if (inflated == null)
 						return 0;
 
+					if (IsUnfixed (inflated) >= 0)
+						return 0;
+
 					param_types[i] = inflated;
 				}
 
@@ -3088,7 +3091,7 @@ namespace Mono.CSharp {
 				if (mg == null)
 					return 0;
 
-				return LowerBoundInference (mg.BestCandidate.ReturnType, rtype) + 1;
+				return LowerBoundInference (mg.BestCandidateReturnType, rtype) + 1;
 			}
 
 			//
