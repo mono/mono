@@ -68,6 +68,7 @@ System.Threading/LockRecursionPolicy.cs
 System.Threading/ReaderWriterLockSlim.cs
 System.Threading/ThreadLockState.cs
 System.Threading/ReaderWriterLockSlimExtensions.cs
+System.Threading.Tasks/TaskExtensions.cs
 
 System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/ExpressionTransformer.cs
@@ -259,4 +260,3 @@ System.Linq.Parallel/QueryOptions.cs
 ../corlib/System.Collections.Concurrent/Partitioners/EnumerablePartitioner.cs
 ../corlib/System.Collections.Concurrent/ConcurrentSkipList.cs
 ../corlib/System.Threading/AtomicBoolean.cs
-
