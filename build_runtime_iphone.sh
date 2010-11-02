@@ -67,9 +67,8 @@ build_arm_mono ()
 
 	make || exit 1
 
-	mkdir -p ../builds/embedruntimes/iphone
-	cp mono/mini/.libs/libmono.a "../builds/embedruntimes/iphone/libmono-$1.a" || exit 1
-	cd ..
+	mkdir -p builds/embedruntimes/iphone
+	cp mono/mini/.libs/libmono.a "builds/embedruntimes/iphone/libmono-$1.a" || exit 1
 }
 
 build_iphone_runtime () 
@@ -100,9 +99,8 @@ build_iphone_crosscompiler ()
 	./autogen.sh --prefix=$PRF --with-macversion=10.5 --disable-mcs-build --disable-shared-handles --with-tls=pthread --with-signalstack=no --with-glib=embedded --target=arm-darwin --disable-nls || exit 1
 	make clean || exit 1
 	make || exit 1
-	mkdir -p ../builds/crosscompiler/iphone
-	cp mono/mini/mono ../builds/crosscompiler/iphone/mono-xcompiler
-	cd ..
+	mkdir -p builds/crosscompiler/iphone
+	cp mono/mini/mono builds/crosscompiler/iphone/mono-xcompiler
 	unsetenv
 	echo "iPhone cross compiler build done"
 }
