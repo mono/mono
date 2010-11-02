@@ -4736,7 +4736,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		if (cheader)
 			mono_metadata_free_mh (cheader);
 		if (inline_always && error)
-			mono_cfg_set_exception (cfg, error->exception_type);
+			cfg->exception_type = error->exception_type;
 
 		mono_loader_clear_error ();
 		return 0;
