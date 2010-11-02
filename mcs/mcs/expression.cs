@@ -5031,6 +5031,12 @@ namespace Mono.CSharp {
 					if (invoke == null || !dynamic_arg)
 						return invoke;
 				} else {
+					if (member_expr is RuntimeValueExpression) {
+						ec.Report.Error (Report.RuntimeErrorId, loc, "Cannot invoke a non-delegate type `{0}'",
+							member_expr.Type.GetSignatureForError ()); ;
+						return null;
+					}
+
 					MemberExpr me = member_expr as MemberExpr;
 					if (me == null) {
 						member_expr.Error_UnexpectedKind (ec, ResolveFlags.MethodGroup, loc);
@@ -5072,7 +5078,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		Expression DoResolveDynamic (ResolveContext ec, Expression memberExpr)
+		protected virtual Expression DoResolveDynamic (ResolveContext ec, Expression memberExpr)
 		{
 			Arguments args;
 			DynamicMemberBinder dmb = memberExpr as DynamicMemberBinder;
@@ -5107,6 +5113,10 @@ namespace Mono.CSharp {
 					if (left_type != null) {
 						args.Insert (0, new Argument (new TypeOf (left_type, loc).Resolve (ec), Argument.AType.DynamicTypeName));
 					} else {
+						//
+						// Any value type has to be pass as by-ref to get back the same
+						// instance on which the member was called
+						//
 						var mod = TypeManager.IsValueType (ma.LeftExpression.Type) ? Argument.AType.Ref : Argument.AType.None;
 						args.Insert (0, new Argument (ma.LeftExpression.Resolve (ec), mod));
 					}

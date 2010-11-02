@@ -2554,6 +2554,47 @@
       </method>
     </type>
   </test>
+  <test name="dtest-046.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>1076</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0(Int32)">
+        <size>4</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__1()">
+        <size>11</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__2(Int32 ByRef)">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+D">
+      <method name="Int32 Invoke(Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32 ByRef, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(Int32 ByRef, IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Main&gt;c__DynamicSite0+Container0">
+      <method name="System.Object Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-cls-01.cs">
     <type name="A">
       <method name="Void Main()">
@@ -2626,27 +2667,33 @@
       <method name="Void Using_1()">
         <size>40</size>
       </method>
-      <method name="Void &lt;Using_1&gt;m__0()">
+      <method name="Void NonInvocable()">
+        <size>40</size>
+      </method>
+      <method name="Void &lt;NonInvocable&gt;m__0()">
+        <size>85</size>
+      </method>
+      <method name="Void &lt;Using_1&gt;m__1()">
         <size>89</size>
       </method>
-      <method name="Void &lt;NullableConversion&gt;m__2()">
+      <method name="Void &lt;NullableConversion&gt;m__3()">
         <size>105</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Reflection.MethodInfo)">
+      <method name="Boolean &lt;Main&gt;m__4(System.Reflection.MethodInfo)">
         <size>12</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__4(System.Reflection.MethodInfo)">
+      <method name="System.String &lt;Main&gt;m__5(System.Reflection.MethodInfo)">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__5(System.Reflection.MethodInfo)">
+      <method name="Boolean &lt;Main&gt;m__6(System.Reflection.MethodInfo)">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__6(Boolean)">
+      <method name="Boolean &lt;Main&gt;m__7(Boolean)">
         <size>5</size>
       </method>
     </type>
     <type name="Tester+&lt;Unsafe_1&gt;c__AnonStorey0">
-      <method name="Void &lt;&gt;m__1()">
+      <method name="Void &lt;&gt;m__2()">
         <size>110</size>
       </method>
     </type>

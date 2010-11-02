@@ -17,6 +17,15 @@ class Helper
 class Tester
 {
 #pragma warning disable 169
+	void NonInvocable ()
+	{
+		AssertError (
+			() => {
+				dynamic d = 1;
+				d ();
+			}, "Cannot invoke a non-delegate type `int'");
+	}
+	
 	void Using_1 ()
 	{
 		AssertError (

@@ -31,11 +31,104 @@ using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
 using Compiler = Mono.CSharp;
+using SLE = System.Linq.Expressions;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
 	class CSharpInvokeMemberBinder : InvokeMemberBinder
 	{
+		//
+		// A custom runtime invocation is needed to deal with member invocation which
+		// is not real member invocation but invocation on invocalble member.
+		//
+		// An example:
+		// class C {
+		//		dynamic f;
+		//		void Foo ()
+		//		{
+		//			dynamic d = new C ();
+		//			d.f.M ();
+		//		}
+		//
+		// The runtime value of `f' can be a delegate in which case we are invoking result
+		// of member invocation, this is already handled by DoResolveDynamic but we need
+		// more runtime dependencies which require Microsoft.CSharp assembly reference or
+		// a lot of reflection calls
+		//
+		class Invocation : Compiler.Invocation
+		{
+			sealed class RuntimeDynamicInvocation : Compiler.ShimExpression
+			{
+				Invocation invoke;
+
+				public RuntimeDynamicInvocation (Invocation invoke, Compiler.Expression memberExpr)
+					: base (memberExpr)
+				{
+					this.invoke = invoke;
+				}
+
+				protected override Compiler.Expression DoResolve (Compiler.ResolveContext rc)
+				{
+					type = expr.Type;
+					eclass = Compiler.ExprClass.Value;
+					return this;
+				}
+
+				//
+				// Creates an invoke call on invocable expression
+				//
+				public override System.Linq.Expressions.Expression MakeExpression (Compiler.BuilderContext ctx)
+				{
+					var invokeBinder = invoke.invokeBinder;
+					var binder = Binder.Invoke (invokeBinder.flags, invokeBinder.callingContext, invokeBinder.argumentInfo);
+
+					var args = invoke.Arguments;
+					var args_expr = new SLE.Expression[invokeBinder.argumentInfo.Count];
+
+					var types = new Type [args_expr.Length + 2];
+
+					// Required by MakeDynamic
+					types[0] = typeof (System.Runtime.CompilerServices.CallSite);
+					types[1] = expr.Type.GetMetaInfo ();
+
+					args_expr[0] = expr.MakeExpression (ctx);
+
+					for (int i = 0; i < args.Count; ++i) {
+						args_expr[i + 1] = args[i].Expr.MakeExpression (ctx);
+
+						int type_index = i + 2;
+						types[type_index] = args[i].Type.GetMetaInfo ();
+						if (args[i].IsByRef)
+							types[type_index] = types[type_index].MakeByRefType ();
+					}
+
+					// Return type goes last
+					bool void_result = (invokeBinder.flags & CSharpBinderFlags.ResultDiscarded) != 0;
+					types[types.Length - 1] = void_result ? typeof (void) : invokeBinder.ReturnType;
+
+					//
+					// Much easier to use Expression.Dynamic cannot be used because it ignores ByRef arguments
+					// and it always generates either Func or Action and any value type argument is lost
+					//
+					Type delegateType = SLE.Expression.GetDelegateType (types);
+					return SLE.Expression.MakeDynamic (delegateType, binder, args_expr);
+				}
+			}
+
+			readonly CSharpInvokeMemberBinder invokeBinder;
+
+			public Invocation (Compiler.Expression expr, Compiler.Arguments arguments, CSharpInvokeMemberBinder invokeBinder)
+				: base (expr, arguments)
+			{
+				this.invokeBinder = invokeBinder;
+			}
+
+			protected override Compiler.Expression DoResolveDynamic (Compiler.ResolveContext ec, Compiler.Expression memberExpr)
+			{
+				return new RuntimeDynamicInvocation (this, memberExpr).Resolve (ec);
+			}
+		}
+
 		readonly CSharpBinderFlags flags;
 		IList<CSharpArgumentInfo> argumentInfo;
 		IList<Type> typeArguments;
@@ -81,7 +174,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 
 			expr = new Compiler.MemberAccess (expr, Name, t_args, Compiler.Location.Null);
-			expr = new Compiler.Invocation (expr, c_args);
+			expr = new Invocation (expr, c_args, this);
 
 			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)
 				expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
