@@ -37,26 +37,30 @@ namespace System.Threading.Tasks
 		public TaskCompletionSource ()
 		{
 			source = new Task<TResult> (null);
+			source.Status = TaskStatus.WaitingForActivation;
 		}
 		
 		public TaskCompletionSource (object state)
 		{
 			source = new Task<TResult> (null, state);
+			source.Status = TaskStatus.WaitingForActivation;
 		}
 		
 		public TaskCompletionSource (TaskCreationOptions options)
 		{
 			source = new Task<TResult> (null, options);
+			source.Status = TaskStatus.WaitingForActivation;
 		}
 		
 		public TaskCompletionSource (object state, TaskCreationOptions options)
 		{
 			source = new Task<TResult> (null, state, options);
+			source.Status = TaskStatus.WaitingForActivation;
 		}
 		
 		public void SetCanceled ()
 		{
-			if (!ApplyOperation (TaskStatus.Canceled, source.CancelReal))
+			if (!ApplyOperation (source.CancelReal))
 				ThrowInvalidException ();
 		}
 		
@@ -67,13 +71,13 @@ namespace System.Threading.Tasks
 		
 		public void SetException (IEnumerable<Exception> e)
 		{
-			if (!ApplyOperation (TaskStatus.Faulted, () => source.Exception = new AggregateException (e)))
+			if (!ApplyOperation (() => source.HandleGenericException (new AggregateException (e))))
 				ThrowInvalidException ();
 		}
 		
 		public void SetResult (TResult result)
 		{
-			if (!ApplyOperation (TaskStatus.RanToCompletion, () => source.Result = result))
+			if (!ApplyOperation (() => source.Result = result))
 				ThrowInvalidException ();
 		}
 				
@@ -84,7 +88,7 @@ namespace System.Threading.Tasks
 		
 		public bool TrySetCanceled ()
 		{
-			return ApplyOperation (TaskStatus.Canceled, source.CancelReal);
+			return ApplyOperation (source.CancelReal);
 		}
 		
 		public bool TrySetException (Exception e)
@@ -92,25 +96,27 @@ namespace System.Threading.Tasks
 			return TrySetException (new Exception[] { e });
 		}
 		
-		
 		public bool TrySetException (IEnumerable<Exception> e)
 		{
-			return ApplyOperation (TaskStatus.Faulted, () => source.Exception = new AggregateException (e));
+			return ApplyOperation (() => source.HandleGenericException (new AggregateException (e)));
 		}
 		
 		public bool TrySetResult (TResult result)
 		{
-			return ApplyOperation (TaskStatus.RanToCompletion, () => source.Result = result);
+			return ApplyOperation (() => source.Result = result);
 		}
 				
-		bool ApplyOperation (TaskStatus newStatus, Action action)
+		bool ApplyOperation (Action action)
 		{
 			if (CheckInvalidState ())
 				return false;
 			
+			source.Status = TaskStatus.Running;
+
 			if (action != null)
 				action ();
-			source.Status = newStatus;
+
+			source.Finish ();
 			
 			return true;
 		}

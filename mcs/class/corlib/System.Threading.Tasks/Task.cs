@@ -443,9 +443,14 @@ namespace System.Threading.Tasks
 
 		internal void HandleGenericException (Exception e)
 		{
-			exception = new AggregateException (e);
+			HandleGenericException (new AggregateException (e));
+		}
+
+		internal void HandleGenericException (AggregateException e)
+		{
+			exception = e;
 			status = TaskStatus.Faulted;
-			if (taskScheduler.FireUnobservedEvent (exception).Observed)
+			if (taskScheduler != null && taskScheduler.FireUnobservedEvent (exception).Observed)
 				exceptionObserved = true;
 		}
 		
