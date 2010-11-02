@@ -118,7 +118,7 @@ namespace Mono.Security.X509 {
 					fs.Close ();
 				}
 			}
-			
+#if !INSIDE_CORLIB
 			// Try to save privateKey if available..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (certificate.Hash);
@@ -128,6 +128,7 @@ namespace Mono.Security.X509 {
 				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
 
 			ImportPrivateKey (certificate, cspParams);
+#endif
 		}
 
 		public void Import (X509Crl crl) 
@@ -227,7 +228,7 @@ namespace Mono.Security.X509 {
 		{
 			byte[] data = Load (filename);
 			X509Certificate cert = new X509Certificate (data);
-
+#if !INSIDE_CORLIB
 			// If privateKey it's available, load it too..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
@@ -241,7 +242,7 @@ namespace Mono.Security.X509 {
 				cert.RSA = new RSACryptoServiceProvider (cspParams);
 			else if (cert.DSA != null)
 				cert.DSA = new DSACryptoServiceProvider (cspParams);
-
+#endif
 			return cert;
 		}
 
@@ -313,7 +314,7 @@ namespace Mono.Security.X509 {
 			}
 			return list;
 		}
-
+#if !INSIDE_CORLIB
 		private void ImportPrivateKey (X509Certificate certificate, CspParameters cspParams)
 		{
 			RSACryptoServiceProvider rsaCsp = certificate.RSA as RSACryptoServiceProvider;
@@ -348,5 +349,6 @@ namespace Mono.Security.X509 {
 				csp.PersistKeyInCsp = true;
 			}
 		}
+#endif
 	}
 }
