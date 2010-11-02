@@ -248,11 +248,14 @@ namespace Mono.CSharp {
 		return ts;
 	}
 
-	static MemberSpec GetPredefinedMember (TypeSpec t, MemberFilter filter, Location loc)
+	static MemberSpec GetPredefinedMember (TypeSpec t, MemberFilter filter, bool optional, Location loc)
 	{
 		var member = MemberCache.FindMember (t, filter, BindingRestriction.DeclaredOnly);
 
 		if (member != null && member.IsAccessible (InternalType.FakeInternalType))
+			return member;
+
+		if (optional)
 			return member;
 
 		string method_args = null;
@@ -271,7 +274,7 @@ namespace Mono.CSharp {
 	public static MethodSpec GetPredefinedConstructor (TypeSpec t, Location loc, params TypeSpec [] args)
 	{
 		var pc = ParametersCompiled.CreateFullyResolved (args);
-		return GetPredefinedMember (t, MemberFilter.Constructor (pc), loc) as MethodSpec;
+		return GetPredefinedMember (t, MemberFilter.Constructor (pc), false, loc) as MethodSpec;
 	}
 
 	//
@@ -281,22 +284,27 @@ namespace Mono.CSharp {
 	public static MethodSpec GetPredefinedMethod (TypeSpec t, string name, Location loc, params TypeSpec [] args)
 	{
 		var pc = ParametersCompiled.CreateFullyResolved (args);
-		return GetPredefinedMethod (t, MemberFilter.Method (name, 0, pc, null), loc);
+		return GetPredefinedMethod (t, MemberFilter.Method (name, 0, pc, null), false, loc);
 	}
 
 	public static MethodSpec GetPredefinedMethod (TypeSpec t, MemberFilter filter, Location loc)
 	{
-		return GetPredefinedMember (t, filter, loc) as MethodSpec;
+		return GetPredefinedMethod (t, filter, false, loc);
+	}
+
+	public static MethodSpec GetPredefinedMethod (TypeSpec t, MemberFilter filter, bool optional, Location loc)
+	{
+		return GetPredefinedMember (t, filter, optional, loc) as MethodSpec;
 	}
 
 	public static FieldSpec GetPredefinedField (TypeSpec t, string name, Location loc, TypeSpec type)
 	{
-		return GetPredefinedMember (t, MemberFilter.Field (name, type), loc) as FieldSpec;
+		return GetPredefinedMember (t, MemberFilter.Field (name, type), false, loc) as FieldSpec;
 	}
 
 	public static PropertySpec GetPredefinedProperty (TypeSpec t, string name, Location loc, TypeSpec type)
 	{
-		return GetPredefinedMember (t, MemberFilter.Property (name, type), loc) as PropertySpec;
+		return GetPredefinedMember (t, MemberFilter.Property (name, type), false, loc) as PropertySpec;
 	}
 
 	public static IList<PredefinedTypeSpec> InitCoreTypes ()

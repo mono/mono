@@ -4069,7 +4069,8 @@ namespace Mono.CSharp {
 
 	public class Lock : ExceptionStatement {
 		Expression expr;
-		TemporaryVariableReference temp;
+		TemporaryVariableReference expr_copy;
+		TemporaryVariableReference lock_taken;
 			
 		public Lock (Expression expr, Statement stmt, Location loc)
 			: base (stmt, loc)
@@ -4085,8 +4086,8 @@ namespace Mono.CSharp {
 
 			if (!TypeManager.IsReferenceType (expr.Type)){
 				ec.Report.Error (185, loc,
-					      "`{0}' is not a reference type as required by the lock statement",
-					      TypeManager.CSharpName (expr.Type));
+					"`{0}' is not a reference type as required by the lock statement",
+					expr.Type.GetSignatureForError ());
 				return false;
 			}
 
@@ -4096,36 +4097,93 @@ namespace Mono.CSharp {
 
 			ok &= base.Resolve (ec);
 
-			temp = TemporaryVariableReference.Create (expr.Type, ec.CurrentBlock.Parent, loc);
-			temp.Resolve (ec);
+			//
+			// Have to keep original lock value around to unlock same location
+			// in the case the original has changed or is null
+			//
+			expr_copy = TemporaryVariableReference.Create (expr.Type, ec.CurrentBlock.Parent, loc);
+			expr_copy.Resolve (ec);
 
-			if (TypeManager.void_monitor_enter_object == null || TypeManager.void_monitor_exit_object == null) {
-				TypeSpec monitor_type = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Monitor", MemberKind.Class, true);
-				TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (
-					monitor_type, "Enter", loc, TypeManager.object_type);
-				TypeManager.void_monitor_exit_object = TypeManager.GetPredefinedMethod (
-					monitor_type, "Exit", loc, TypeManager.object_type);
+			//
+			// Ensure Monitor methods are available
+			//
+			if (ResolvePredefinedMethods (ec) > 1) {
+				lock_taken = TemporaryVariableReference.Create (TypeManager.bool_type, ec.CurrentBlock.Parent, loc);
+				lock_taken.Resolve (ec);
 			}
-			
+
 			return ok;
 		}
 		
 		protected override void EmitPreTryBody (EmitContext ec)
 		{
-			temp.EmitAssign (ec, expr);
-			temp.Emit (ec);
-			ec.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
+			expr_copy.EmitAssign (ec, expr);
 		}
 
 		protected override void EmitTryBody (EmitContext ec)
 		{
+			//
+			// Monitor.Enter (expr_copy, ref lock_taken)
+			//
+			expr_copy.Emit (ec);
+
+			if (lock_taken != null) {
+				lock_taken.LocalInfo.CreateBuilder (ec);
+				lock_taken.AddressOf (ec, AddressOp.Load);
+			}
+
+			ec.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
+
 			Statement.Emit (ec);
 		}
 
 		protected override void EmitFinallyBody (EmitContext ec)
 		{
-			temp.Emit (ec);
+			//
+			// if (lock_taken) Monitor.Exit (expr_copy)
+			//
+			Label skip = ec.DefineLabel ();
+
+			if (lock_taken != null) {
+				lock_taken.Emit (ec);
+				ec.Emit (OpCodes.Brfalse_S, skip);
+			}
+
+			expr_copy.Emit (ec);
 			ec.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
+			ec.MarkLabel (skip);
+		}
+
+		int ResolvePredefinedMethods (ResolveContext rc)
+		{
+			if (TypeManager.void_monitor_enter_object == null || TypeManager.void_monitor_exit_object == null) {
+				TypeSpec monitor_type = TypeManager.CoreLookupType (rc.Compiler, "System.Threading", "Monitor", MemberKind.Class, true);
+
+				if (monitor_type == null)
+					return 0;
+
+				// Try 4.0 Monitor.Enter (object, ref bool) overload first
+				var filter = MemberFilter.Method ("Enter", 0, new ParametersImported (
+					new[] {
+							new ParameterData (null, Parameter.Modifier.NONE),
+							new ParameterData (null, Parameter.Modifier.REF)
+						},
+					new[] {
+							TypeManager.object_type,
+							TypeManager.bool_type
+						}, false), null);
+
+				TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (monitor_type, filter, true, loc);
+				if (TypeManager.void_monitor_enter_object == null) {
+					TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (
+						monitor_type, "Enter", loc, TypeManager.object_type);
+				}
+
+				TypeManager.void_monitor_exit_object = TypeManager.GetPredefinedMethod (
+					monitor_type, "Exit", loc, TypeManager.object_type);
+			}
+
+			return TypeManager.void_monitor_enter_object.Parameters.Count;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)

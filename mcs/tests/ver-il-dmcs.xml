@@ -17500,7 +17500,7 @@
     </type>
     <type name="Test+&lt;Lock&gt;c__AnonStorey4`1[T]">
       <method name="T &lt;&gt;m__4()">
-        <size>65</size>
+        <size>70</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -33569,7 +33569,7 @@
         <size>7</size>
       </method>
       <method name="Void T()">
-        <size>59</size>
+        <size>69</size>
       </method>
     </type>
   </test>
@@ -38826,7 +38826,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>42</size>
+        <size>47</size>
       </method>
     </type>
   </test>
@@ -51129,10 +51129,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>163</size>
+        <size>177</size>
       </method>
       <method name="Void Dispose()">
-        <size>55</size>
+        <size>63</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
