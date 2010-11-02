@@ -1,6 +1,6 @@
 #!/bin/sh
 ASPEN_ROOT=/Developer/Platforms/iPhoneOS.platform/Developer
-ASPEN_SDK=$ASPEN_ROOT/SDKs/iPhoneOS4.0.sdk/
+ASPEN_SDK=$ASPEN_ROOT/SDKs/iPhoneOS4.1.sdk/
 
 ORIG_PATH=$PATH
 PRFX=$PWD/tmp 
