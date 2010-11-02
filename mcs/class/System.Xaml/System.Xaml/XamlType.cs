@@ -237,11 +237,10 @@ namespace System.Xaml
 			get { return LookupValueSerializer (); }
 		}
 
-		internal string InternalXmlName {
-			get {
-				var stn = XamlLanguage.SpecialNames.FirstOrDefault (s => s.Type == this);
-				return stn != null ? stn.Name : Name;
-			}
+		internal string GetInternalXmlName ()
+		{
+			var stn = XamlLanguage.SpecialNames.FirstOrDefault (s => s.Type == this);
+			return stn != null ? stn.Name : Name;
 		}
 
 		public static bool operator == (XamlType left, XamlType right)

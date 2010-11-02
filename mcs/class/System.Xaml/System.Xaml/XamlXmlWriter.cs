@@ -281,7 +281,7 @@ namespace System.Xaml
 		void DoWriteStartObject (XamlType xamlType)
 		{
 			string prefix = GetPrefix (xamlType.PreferredXamlNamespace);
-			w.WriteStartElement (prefix, xamlType.InternalXmlName, xamlType.PreferredXamlNamespace);
+			w.WriteStartElement (prefix, xamlType.GetInternalXmlName (), xamlType.PreferredXamlNamespace);
 			WritePendingNamespaces ();
 		}
 		

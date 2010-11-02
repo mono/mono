@@ -173,5 +173,17 @@ namespace System.Xaml
 			var caa = xm.GetCustomAttributeProvider ().GetCustomAttribute<ConstructorArgumentAttribute> (false);
 			return caa.ArgumentName;
 		}
+		
+#if DOTNET
+		internal static ICustomAttributeProvider GetCustomAttributeProvider (this XamlType type)
+		{
+			return type.UnderlyingType;
+		}
+		
+		internal static ICustomAttributeProvider GetCustomAttributeProvider (this XamlMember member)
+		{
+			return member.UnderlyingMember;
+		}
+#endif
 	}
 }

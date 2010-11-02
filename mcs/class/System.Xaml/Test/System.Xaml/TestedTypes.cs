@@ -238,7 +238,7 @@ namespace MonoTests.System.Xaml
 		public string Bar { get; set; }
 	}
 
-	// no type converter, and there are only simple-type arguments == _PositionalParameters is applicable. (Unlike MyExtension7)
+	// no type converter, and there are only simple-type arguments == _PositionalParameters is applicable.
 	public class MyExtension5 : MarkupExtension
 	{
 		public MyExtension5 (string arg1, string arg2)

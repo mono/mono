@@ -534,17 +534,5 @@ namespace System.Xaml
 				return xobj.GetWrappedValue (); // dummy value
 			return xm.Invoker.GetValue (xobj.GetWrappedValue ());
 		}
-		
-#if DOTNET
-		internal static ICustomAttributeProvider GetCustomAttributeProvider (this XamlType type)
-		{
-			return type.UnderlyingType;
-		}
-		
-		internal static ICustomAttributeProvider GetCustomAttributeProvider (this XamlMember member)
-		{
-			return member.UnderlyingMember;
-		}
-#endif
 	}
 }
