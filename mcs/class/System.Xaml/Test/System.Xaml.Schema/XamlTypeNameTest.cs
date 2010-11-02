@@ -198,6 +198,20 @@ namespace MonoTests.System.Xaml.Schema
 			Assert.AreEqual ("b:Bar, c:Baz", XamlTypeName.ToString (n.TypeArguments, lookup), "#2");
 		}
 
+		// This test shows that MarkupExtension names are not replaced at XamlTypeName.ToString(), while XamlXmlWriter writes like "x:Null".
+		[Test]
+		public void ToStringNamespaceLookup2 ()
+		{
+			var lookup = new MyNamespaceLookup ();
+			lookup.Add ("x", XamlLanguage.Xaml2006Namespace);
+			Assert.AreEqual ("x:NullExtension", new XamlTypeName (XamlLanguage.Null).ToString (lookup), "#1");
+			// WHY is TypeExtension not the case?
+			//Assert.AreEqual ("x:TypeExtension", new XamlTypeName (XamlLanguage.Type).ToString (lookup), "#2");
+			Assert.AreEqual ("x:ArrayExtension", new XamlTypeName (XamlLanguage.Array).ToString (lookup), "#3");
+			Assert.AreEqual ("x:StaticExtension", new XamlTypeName (XamlLanguage.Static).ToString (lookup), "#4");
+			Assert.AreEqual ("x:Reference", new XamlTypeName (XamlLanguage.Reference).ToString (lookup), "#5");
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void StaticToStringNullLookup ()
