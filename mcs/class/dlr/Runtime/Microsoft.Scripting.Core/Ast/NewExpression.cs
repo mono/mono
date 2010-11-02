@@ -2,11 +2,11 @@
  *
  * Copyright (c) Microsoft Corporation. 
  *
- * This source code is subject to terms and conditions of the Microsoft Public License. A 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
  * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Microsoft Public License, please send an email to 
+ * you cannot locate the  Apache License, Version 2.0, please send an email to 
  * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
- * by the terms of the Microsoft Public License.
+ * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
  *
@@ -247,9 +247,7 @@ namespace System.Linq.Expressions {
                     Type memberType;
                     ValidateAnonymousTypeMember(ref member, out memberType);
                     if (!TypeUtils.AreReferenceAssignable(memberType, arg.Type)) {
-                        if (TypeUtils.IsSameOrSubclass(typeof(LambdaExpression), memberType) && memberType.IsAssignableFrom(arg.GetType())) {
-                            arg = Expression.Quote(arg);
-                        } else {
+                        if (!TryQuote(memberType, ref arg)) {
                             throw Error.ArgumentTypeDoesNotMatchMember(arg.Type, memberType);
                         }
                     }
@@ -259,9 +257,7 @@ namespace System.Linq.Expressions {
                         pType = pType.GetElementType();
                     }
                     if (!TypeUtils.AreReferenceAssignable(pType, arg.Type)) {
-                        if (TypeUtils.IsSameOrSubclass(typeof(LambdaExpression), pType) && pType.IsAssignableFrom(arg.Type)) {
-                            arg = Expression.Quote(arg);
-                        } else {
+                        if (!TryQuote(pType, ref arg)) {
                             throw Error.ExpressionTypeDoesNotMatchConstructorParameter(arg.Type, pType);
                         }
                     }
@@ -307,7 +303,7 @@ namespace System.Linq.Expressions {
                         throw Error.ArgumentMustBeInstanceMember();
                     }
                     memberType = field.FieldType;
-                    break;
+                    return;
                 case MemberTypes.Property:
                     PropertyInfo pi = member as PropertyInfo;
                     if (!pi.CanRead) {
@@ -317,20 +313,27 @@ namespace System.Linq.Expressions {
                         throw Error.ArgumentMustBeInstanceMember();
                     }
                     memberType = pi.PropertyType;
-                    break;
+                    return;
                 case MemberTypes.Method:
                     MethodInfo method = member as MethodInfo;
                     if (method.IsStatic) {
                         throw Error.ArgumentMustBeInstanceMember();
                     }
-
+#if SILVERLIGHT
+                    if (SilverlightQuirks) {
+                        // we used to just store the MethodInfo
+                        memberType = method.ReturnType;
+                        return;
+                    }
+#endif
                     PropertyInfo prop = GetProperty(method);
                     member = prop;
                     memberType = prop.PropertyType;
-                    break;
+                    return;
                 default:
                     throw Error.ArgumentMustBeFieldInfoOrPropertInfoOrMethod();
             }
+            // don't add code here, we've already returned
         }
     }
 }
