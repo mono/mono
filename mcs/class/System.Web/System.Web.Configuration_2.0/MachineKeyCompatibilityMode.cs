@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
-
 namespace System.Web.Configuration {
 
 	public enum MachineKeyCompatibilityMode {
@@ -35,6 +33,4 @@ namespace System.Web.Configuration {
 		Framework20SP2 = 1
 	}
 }
-
-#endif
 
