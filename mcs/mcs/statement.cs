@@ -4110,6 +4110,10 @@ namespace Mono.CSharp {
 					expr.Type.GetSignatureForError ());
 			}
 
+			if (expr.Type.IsGenericParameter) {
+				expr = Convert.ImplicitTypeParameterConversion (expr, TypeManager.object_type);
+			}
+
 			VariableReference lv = expr as VariableReference;
 			bool locked;
 			if (lv != null) {
@@ -4134,7 +4138,7 @@ namespace Mono.CSharp {
 			// Have to keep original lock value around to unlock same location
 			// in the case the original has changed or is null
 			//
-			expr_copy = TemporaryVariableReference.Create (expr.Type, ec.CurrentBlock.Parent, loc);
+			expr_copy = TemporaryVariableReference.Create (TypeManager.object_type, ec.CurrentBlock.Parent, loc);
 			expr_copy.Resolve (ec);
 
 			//

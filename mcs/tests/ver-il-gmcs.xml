@@ -13864,6 +13864,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-547.cs">
+    <type name="Foo">
+      <method name="Void GenericLock[T](T)">
+        <size>26</size>
+      </method>
+      <method name="Void Main()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -35952,7 +35965,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>42</size>
+        <size>91</size>
       </method>
     </type>
   </test>
