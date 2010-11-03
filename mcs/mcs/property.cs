@@ -1314,6 +1314,10 @@ namespace Mono.CSharp
 		{
 			var es = (EventSpec) base.InflateMember (inflator);
 			es.MemberType = inflator.Inflate (MemberType);
+
+			if (backing_field != null)
+				es.backing_field = (FieldSpec) backing_field.InflateMember (inflator);
+
 			return es;
 		}
 	}

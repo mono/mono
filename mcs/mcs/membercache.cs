@@ -917,7 +917,7 @@ namespace Mono.CSharp {
 		public void InflateMembers (MemberCache cacheToInflate, TypeSpec inflatedType, TypeParameterInflator inflator)
 		{
 			var inflated_member_hash = cacheToInflate.member_hash;
-			Dictionary<MethodSpec, MethodSpec> accessor_relation = null;
+			Dictionary<MemberSpec, MethodSpec> accessor_relation = null;
 			List<MemberSpec> accessor_members = null;
 
 			// Copy member specific flags when all members were added
@@ -993,8 +993,8 @@ namespace Mono.CSharp {
 
 					if (member.IsAccessor) {
 						if (accessor_relation == null)
-							accessor_relation = new Dictionary<MethodSpec, MethodSpec> ();
-						accessor_relation.Add ((MethodSpec) member, (MethodSpec) inflated);
+							accessor_relation = new Dictionary<MemberSpec, MethodSpec> ();
+						accessor_relation.Add (member, (MethodSpec) inflated);
 					}
 				}
 			}

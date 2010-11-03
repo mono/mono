@@ -262,7 +262,7 @@ namespace Mono.CSharp
 			this.memberType = memberType;
 		}
 
-#region Properties
+		#region Properties
 
 		public bool IsReadOnly {
 			get {

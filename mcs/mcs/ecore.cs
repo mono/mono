@@ -4652,7 +4652,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-#region Properties
+		#region Properties
 
 		public override string Name {
 			get {
