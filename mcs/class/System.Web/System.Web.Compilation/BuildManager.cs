@@ -187,7 +187,7 @@ namespace System.Web.Compilation
 		static BuildManager ()
 		{
 			hosted = (AppDomain.CurrentDomain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
-			buildCache = new Dictionary <string, BuildManagerCacheItem> (RuntimeHelpers.StringEqualityComparerCulture);
+			buildCache = new Dictionary <string, BuildManagerCacheItem> (RuntimeHelpers.StringEqualityComparer);
 #if SYSTEMCORE_DEP
 			buildCacheLock = new ReaderWriterLockSlim ();
 #else

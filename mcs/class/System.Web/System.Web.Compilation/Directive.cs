@@ -79,7 +79,7 @@ namespace System.Web.Compilation
 		
 		static void InitHash ()
 		{
-			StringComparer comparer = StringComparer.InvariantCultureIgnoreCase;
+			StringComparer comparer = StringComparer.OrdinalIgnoreCase;
 			directivesHash = new Hashtable (comparer);
 
 			// Use Hashtable 'cause is O(1) in Contains (ArrayList is O(n))
