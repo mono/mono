@@ -5646,6 +5646,14 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+		public override bool IsLockedByStatement {
+			get {
+				return false;
+			}
+			set {
+			}
+		}
+
 		public LocalVariable LocalInfo {
 		    get {
 		        return li;
