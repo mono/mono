@@ -4118,6 +4118,7 @@ namespace Mono.CSharp {
 		protected override void EmitPreTryBody (EmitContext ec)
 		{
 			expr_copy.EmitAssign (ec, expr);
+			lock_taken.EmitAssign (ec, new BoolLiteral (false, loc));
 		}
 
 		protected override void EmitTryBody (EmitContext ec)
