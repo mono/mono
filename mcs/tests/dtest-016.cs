@@ -81,6 +81,9 @@ class Program
 		dynamic d4 = -9;
 		if (DynParams (1, 2, d3, d4) != -7)
 			return 2;
+
+		if (DynParams (1, 2, 3, d4) != -7)
+			return 3;
 		
 		return 0;
 	}

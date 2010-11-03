@@ -1787,7 +1787,7 @@
         <size>197</size>
       </method>
       <method name="Int32 Main()">
-        <size>361</size>
+        <size>662</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -41492,6 +41492,35 @@
       </method>
       <method name="Void Main()">
         <size>30</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-637.cs">
+    <type name="A">
+      <method name="System.Type get_Value()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Value(System.Type)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Object)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="TestProp">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>106</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
