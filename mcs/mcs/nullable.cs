@@ -573,7 +573,7 @@ namespace Mono.CSharp.Nullable
 
 		bool IsBitwiseBoolean {
 			get {
-				return (Oper & Operator.BitwiseMask) != 0 &&
+				return (Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) &&
 				((left_unwrap != null && left_unwrap.Type == TypeManager.bool_type) ||
 				 (right_unwrap != null && right_unwrap.Type == TypeManager.bool_type));
 			}

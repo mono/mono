@@ -3642,7 +3642,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>847</size>
+        <size>920</size>
       </method>
     </type>
   </test>
@@ -3843,7 +3843,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>1605</size>
+        <size>2199</size>
       </method>
     </type>
   </test>

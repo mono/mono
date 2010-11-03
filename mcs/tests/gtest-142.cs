@@ -91,6 +91,16 @@ class X
 		Assert.IsTrue ("f | b", f | b);
 		Assert.IsTrue ("f | c", f | c);
 
+		Assert.IsNull ("d ^ a", d ^ a);
+		Assert.IsNull ("d ^ b", d ^ b);
+		Assert.IsNull ("d ^ c", d ^ c);
+		Assert.IsNull ("e ^ a", e ^ a);
+		Assert.IsFalse ("e ^ b", e ^ b);
+		Assert.IsTrue ("e ^ c", e ^ c);
+		Assert.IsNull ("f ^ a", f ^ a);
+		Assert.IsTrue ("f ^ b", f ^ b);
+		Assert.IsFalse ("f ^ c", f ^ c);
+		
 		int? g = 3, h = null, i = 3, j = null;
 
 		Assert.IsFalse ("g == null", g == null);
