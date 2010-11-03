@@ -118,7 +118,7 @@ namespace Mono.Security.X509 {
 					fs.Close ();
 				}
 			}
-#if !INSIDE_CORLIB
+#if !NET_2_1
 			// Try to save privateKey if available..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (certificate.Hash);
@@ -228,7 +228,7 @@ namespace Mono.Security.X509 {
 		{
 			byte[] data = Load (filename);
 			X509Certificate cert = new X509Certificate (data);
-#if !INSIDE_CORLIB
+#if !NET_2_1
 			// If privateKey it's available, load it too..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
