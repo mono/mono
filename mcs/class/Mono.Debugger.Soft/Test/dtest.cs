@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using Mono.Cecil.Cil;
 using Mono.Debugger.Soft;
 using Diag = System.Diagnostics;
@@ -1653,6 +1654,12 @@ public class DebuggerTests
 		Assert.AreEqual (vm, s.VirtualMachine);
 		Assert.AreEqual ("ABC", s.Value);
 		Assert.AreEqual (vm.RootDomain, s.Domain);
+
+		// Long strings
+		StringBuilder sb = new StringBuilder ();
+		for (int i = 0; i < 1024; ++i)
+			sb.Append ('A');
+		s = vm.RootDomain.CreateString (sb.ToString ());
 
 		// Argument checking
 		AssertThrows <ArgumentNullException> (delegate () {

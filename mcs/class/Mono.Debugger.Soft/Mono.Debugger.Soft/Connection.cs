@@ -678,32 +678,48 @@ namespace Mono.Debugger.Soft
 			int offset;
 
 			public PacketWriter () {
-				// FIXME:
 				data = new byte [1024];
 				offset = 0;
 			}
 
+			void MakeRoom (int size) {
+				if (offset + size >= data.Length) {
+					int new_len = data.Length * 2;
+					while (new_len < offset + size) {
+						new_len *= 2;
+					}
+					byte[] new_data = new byte [new_len];
+					Array.Copy (data, new_data, data.Length);
+					data = new_data;
+				}
+			}
+
 			public PacketWriter WriteByte (byte val) {
+				MakeRoom (1);
 				encode_byte (data, val, ref offset);
 				return this;
 			}
 
 			public PacketWriter WriteInt (int val) {
+				MakeRoom (4);
 				encode_int (data, val, ref offset);
 				return this;
 			}
 
 			public PacketWriter WriteId (long id) {
+				MakeRoom (8);
 				encode_id (data, id, ref offset);
 				return this;
 			}
 
 			public PacketWriter WriteLong (long val) {
+				MakeRoom (8);
 				encode_long (data, val, ref offset);
 				return this;
 			}
 
 			public PacketWriter WriteFloat (float f) {
+				MakeRoom (8);
 				byte[] b = DataConverter.GetBytesBE (f);
 				for (int i = 0; i < 4; ++i)
 					data [offset + i] = b [i];
@@ -712,6 +728,7 @@ namespace Mono.Debugger.Soft
 			}
 
 			public PacketWriter WriteDouble (double d) {
+				MakeRoom (8);
 				byte[] b = DataConverter.GetBytesBE (d);
 				for (int i = 0; i < 8; ++i)
 					data [offset + i] = b [i];
@@ -734,6 +751,7 @@ namespace Mono.Debugger.Soft
 			public PacketWriter WriteString (string s) {
 				encode_int (data, s.Length, ref offset);
 				byte[] b = Encoding.UTF8.GetBytes (s);
+				MakeRoom (b.Length);
 				Buffer.BlockCopy (b, 0, data, offset, b.Length);
 				offset += b.Length;
 				return this;
