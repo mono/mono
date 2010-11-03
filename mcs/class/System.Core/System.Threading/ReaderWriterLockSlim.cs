@@ -83,6 +83,12 @@ namespace System.Threading {
 		static int idPool = int.MinValue;
 		readonly int id = Interlocked.Increment (ref idPool);
 
+		/* This dictionary is instanciated per thread for all existing ReaderWriterLockSlim instance.
+		 * Each instance is defined by an internal integer id value used as a key in the dictionary.
+		 * to avoid keeping unneeded reference to the instance and getting in the way of the GC.
+		 * Since there is no LockCookie type here, all the useful per-thread infos concerning each
+		 * instance are kept here.
+		 */
 		[ThreadStatic]
 		static IDictionary<int, ThreadLockState> currentThreadState;
 
