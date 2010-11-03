@@ -2814,7 +2814,7 @@ namespace Mono.CSharp {
 			var tp = parameter as TypeParameterSpec;
 			if (tp != null) {
 				//
-				// Type inference work on generic arguments (MVAR) only
+				// Type inference works on generic arguments (MVAR) only
 				//
 				if (!tp.IsMethodOwned)
 					return parameter;

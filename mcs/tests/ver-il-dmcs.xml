@@ -1787,7 +1787,7 @@
         <size>197</size>
       </method>
       <method name="Int32 Main()">
-        <size>662</size>
+        <size>936</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -1804,6 +1804,17 @@
     <type name="Program">
       <method name="Int32 DynParams(Int32, Int32, System.Int32[])">
         <size>6</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Int32 Foo(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo(System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -16732,6 +16743,19 @@
       </method>
       <method name="Void Main()">
         <size>29</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-547.cs">
+    <type name="Foo">
+      <method name="Void GenericLock[T](T)">
+        <size>33</size>
+      </method>
+      <method name="Void Main()">
+        <size>11</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

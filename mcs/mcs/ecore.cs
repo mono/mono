@@ -3521,7 +3521,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (ct == bt)
+				if (TypeSpecComparer.IsEqual (ct, bt))
 					continue;
 
 				same = false;

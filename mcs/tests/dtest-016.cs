@@ -38,6 +38,19 @@ public class C
 	}
 }
 
+public class D
+{
+	public static int Foo (dynamic d)
+	{
+		return 1;
+	}
+
+	public static int Foo (params object[] o)
+	{
+		return 2;
+	}
+}
+
 class Program
 {
 	static void DynOut (out dynamic d)
@@ -84,6 +97,10 @@ class Program
 
 		if (DynParams (1, 2, 3, d4) != -7)
 			return 3;
+		
+		d = 44;
+		if (D.Foo (d) != 1)
+			return 4;
 		
 		return 0;
 	}
