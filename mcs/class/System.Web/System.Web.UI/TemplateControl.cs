@@ -33,6 +33,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 using System.Security.Permissions;
+using System.Threading;
 using System.Web.Compilation;
 using System.Web.Util;
 using System.Xml;
@@ -128,24 +129,33 @@ namespace System.Web.UI
 			public bool noParams;
 		}
 
-		static Hashtable auto_event_info;
-		static object auto_event_info_monitor = new Object ();
+		static ReaderWriterLockSlim auto_event_lock = new ReaderWriterLockSlim ();
+		static Hashtable auto_event_info = new Hashtable ();
 
 		internal void WireupAutomaticEvents ()
 		{
 			if (!SupportAutoEvents || !AutoEventWireup)
 				return;
 
-			ArrayList events = null;
-
 			/* Avoid expensive reflection operations by computing the event info only once */
-			lock (auto_event_info_monitor) {
-				if (auto_event_info == null)
-					auto_event_info = new Hashtable ();
-				events = (ArrayList)auto_event_info [GetType ()];
-				if (events == null) {
-					events = CollectAutomaticEventInfo ();
-					auto_event_info [GetType ()] = events;
+			Type type = GetType ();
+			ArrayList events;
+			// If our Hashtable was like MS's (safe for multiple
+			// readers, one writer), we could avoid the ReaderWriterLockSlim
+			try {
+				auto_event_lock.EnterReadLock ();
+				events = (ArrayList) auto_event_info [type];
+			} finally {
+				auto_event_lock.ExitReadLock ();
+			}
+
+			if (events == null) {
+				events = CollectAutomaticEventInfo ();
+				try {
+					auto_event_lock.EnterWriteLock ();
+					auto_event_info [type] = events;
+				} finally {
+					auto_event_lock.ExitWriteLock ();
 				}
 			}
 
