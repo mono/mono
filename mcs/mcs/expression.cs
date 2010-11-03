@@ -6944,7 +6944,15 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr;
+
+			//
+			// Pointer types are allowed without explicit unsafe, they are just tokens
+			//
+			using (ec.Set (ResolveContext.Options.UnsafeScope)) {
+				texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
+			}
+
 			if (texpr == null)
 				return null;
 
@@ -6952,8 +6960,6 @@ namespace Mono.CSharp {
 
 			if (typearg == TypeManager.void_type && !(QueriedType is TypeExpression)) {
 				ec.Report.Error (673, loc, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
-			} else if (typearg.IsPointer && !ec.IsUnsafe){
-				UnsafeError (ec, loc);
 			} else if (texpr is DynamicTypeExpr) {
 				ec.Report.Error (1962, QueriedType.Location,
 					"The typeof operator cannot be used on the dynamic type");

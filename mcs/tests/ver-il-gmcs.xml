@@ -13838,6 +13838,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-546.cs">
+    <type name="Factory">
+      <method name="Factory+S`2[F1,F2] Create[F1,F2](F1, F2)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Factory+S`2[G1,G2]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="TR Test[T1,T2,TR](T1, T2, System.Func`3[T1,T2,TR])">
+        <size>9</size>
+      </method>
+      <method name="Void Main()">
+        <size>29</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -38595,6 +38621,35 @@
       </method>
     </type>
   </test>
+  <test name="test-637.cs">
+    <type name="A">
+      <method name="System.Type get_Value()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Value(System.Type)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Object)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="TestProp">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>96</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-638.cs">
     <type name="Fail">
       <method name="Void .ctor()">
@@ -42006,6 +42061,22 @@
       </method>
       <method name="Boolean GetEnumerator()">
         <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-792.cs">
+    <type name="Program">
+      <method name="Void Test()">
+        <size>24</size>
+      </method>
+      <method name="Void Test2(IMemberDelayed)">
+        <size>8</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

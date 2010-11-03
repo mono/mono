@@ -861,7 +861,7 @@ class Tester
 		
 	}
 	
-	unsafe void ConstantTest_14 ()
+	void ConstantTest_14 ()
 	{
 		Expression<Func<Type>> e14 = () => typeof (bool*);
 		AssertNodeType (e14, ExpressionType.Constant);
