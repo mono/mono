@@ -137,15 +137,25 @@ namespace System.Threading.Tasks
 		
 		public void Start (TaskScheduler tscheduler)
 		{
-			this.taskScheduler = tscheduler;
 			Start (ProxifyScheduler (tscheduler));
 		}
 		
 		void Start (IScheduler scheduler)
 		{
+			SetupScheduler (scheduler);
+			Schedule ();
+		}
+
+		internal void SetupScheduler (TaskScheduler tscheduler)
+		{
+			SetupScheduler (ProxifyScheduler (tscheduler));
+		}
+
+		internal void SetupScheduler (IScheduler scheduler)
+		{
 			this.scheduler = scheduler;
 			status = TaskStatus.WaitingForActivation;
-			Schedule ();
+			schedWait.Set ();
 		}
 		
 		IScheduler ProxifyScheduler (TaskScheduler tscheduler)

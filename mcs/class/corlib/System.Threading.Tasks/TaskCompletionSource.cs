@@ -37,25 +37,25 @@ namespace System.Threading.Tasks
 		public TaskCompletionSource ()
 		{
 			source = new Task<TResult> (null);
-			source.Status = TaskStatus.WaitingForActivation;
+			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (object state)
 		{
 			source = new Task<TResult> (null, state);
-			source.Status = TaskStatus.WaitingForActivation;
+			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (TaskCreationOptions options)
 		{
 			source = new Task<TResult> (null, options);
-			source.Status = TaskStatus.WaitingForActivation;
+			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (object state, TaskCreationOptions options)
 		{
 			source = new Task<TResult> (null, state, options);
-			source.Status = TaskStatus.WaitingForActivation;
+			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public void SetCanceled ()
