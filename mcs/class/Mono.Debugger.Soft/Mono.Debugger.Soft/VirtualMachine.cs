@@ -109,7 +109,6 @@ namespace Mono.Debugger.Soft
 		public void Dispose () {
 			conn.VM_Dispose ();
 			conn.Close ();
-			notify_vm_event (EventType.VMDisconnect, 0, 0, null);
 		}
 
 		public IList<ThreadMirror> GetThreads () {
@@ -185,7 +184,11 @@ namespace Mono.Debugger.Soft
 		public void ClearAllBreakpoints () {
 			conn.ClearAllBreakpoints ();
 		}
-
+		
+		public void Disconnect () {
+			conn.Close ();
+		}
+		
 		internal void queue_event (Event e) {
 			lock (queue_monitor) {
 				queue.Enqueue (e);
