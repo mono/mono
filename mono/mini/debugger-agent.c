@@ -1671,6 +1671,8 @@ mono_debugger_agent_on_attach (void)
 	g_hash_table_foreach (domains, emit_appdomain_load, NULL);
 	g_ptr_array_foreach (pending_assembly_loads, emit_assembly_load, NULL);
 	g_ptr_array_foreach (pending_type_loads, emit_type_load, NULL);
+	g_ptr_array_set_size (pending_assembly_loads, 0);
+	g_ptr_array_set_size (pending_type_loads, 0);
 	mono_loader_unlock ();
 }
 
