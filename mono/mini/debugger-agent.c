@@ -1168,10 +1168,15 @@ stop_debugger_thread ()
 
 	/* This will interrupt the agent thread */
 	/* Close the read part only so it can still send back replies */
+	/* Also shut down the connection listener so that we can exit normally */
 #ifdef HOST_WIN32
 	shutdown (conn_fd, SD_RECEIVE);
+	shutdown (listen_fd, SD_BOTH);
+	close (listen_fd);
 #else
 	shutdown (conn_fd, SHUT_RD);
+	shutdown (listen_fd, SHUT_RDWR);
+	close (listen_fd);
 #endif
 
 	/* 
