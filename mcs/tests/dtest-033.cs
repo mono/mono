@@ -11,6 +11,11 @@ public class Test
 		get { return 2; }
 		set { }
 	}
+	
+	byte Byte = 200;
+	static dynamic V;
+	dynamic DynamicByte;
+	byte[] ByteArray = { 1, 100 };
 
 	public static int Main ()
 	{
@@ -39,12 +44,50 @@ public class Test
 		try {
 			checked {
 				b += d;
-				return 1;
+				return 3;
+			}
+		} catch (OverflowException) {
+		}
+			
+		b += d;
+		
+		try {
+			checked {
+				a.Byte += 100;
+				return 4;
 			}
 		} catch (OverflowException) {
 		}
 		
-		b += d;
+		a.Byte += 100;
+		
+		checked {
+			d = byte.MaxValue;
+			d += 100;
+		}
+
+		checked {
+			V = byte.MaxValue;
+			V -= 300;
+		}
+
+		var t = new Test ();
+		t.DynamicByte = byte.MaxValue;
+		d = t;
+		checked {
+			d.DynamicByte -= 500;
+		}
+		
+		if (t.DynamicByte != -245)
+			return 5;
+
+		try {
+			checked {
+				d.ByteArray[1] += 200;
+				return 6;
+			}			
+		} catch (OverflowException) {
+		}
 
 		return 0;
 	}

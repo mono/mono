@@ -2263,10 +2263,10 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>1420</size>
+        <size>3585</size>
       </method>
       <method name="Void .ctor()">
-        <size>7</size>
+        <size>39</size>
       </method>
     </type>
   </test>

@@ -69,6 +69,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 
+			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
+				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
+
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
 			binder.AddRestrictions (value);

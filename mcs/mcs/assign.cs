@@ -450,11 +450,8 @@ namespace Mono.CSharp {
 
 		protected override Expression ResolveConversions (ResolveContext ec)
 		{
-			source = Convert.ExplicitConversion (ec, source, target.Type, loc);
-			if (source != null)
-				return this;
-
-			return base.ResolveConversions (ec);
+			source = EmptyCast.Create (source, target.Type);
+			return this;
 		}
 	}
 
@@ -668,8 +665,18 @@ namespace Mono.CSharp {
 				Arguments args = new Arguments (targs.Count + 1);
 				args.AddRange (targs);
 				args.Add (new Argument (source));
+
+				var binder_flags = CSharpBinderFlags.ValueFromCompoundAssignment;
+
+				//
+				// Compound assignment does target conversion using additional method
+				// call, set checked context as the binary operation can overflow
+				//
+				if (ec.HasSet (ResolveContext.Options.CheckedScope))
+					binder_flags |= CSharpBinderFlags.CheckedContext;
+
 				if (target is DynamicMemberBinder) {
-					source = new DynamicMemberBinder (ma.Name, CSharpBinderFlags.ValueFromCompoundAssignment, args, loc).Resolve (ec);
+					source = new DynamicMemberBinder (ma.Name, binder_flags, args, loc).Resolve (ec);
 
 					// Handles possible event addition/subtraction
 					if (op == Binary.Operator.Addition || op == Binary.Operator.Subtraction) {
@@ -688,7 +695,7 @@ namespace Mono.CSharp {
 							(ExpressionStatement) source, (ExpressionStatement) invoke, loc).Resolve (ec);
 					}
 				} else {
-					source = new DynamicIndexBinder (CSharpBinderFlags.ValueFromCompoundAssignment, args, loc).Resolve (ec);
+					source = new DynamicIndexBinder (binder_flags, args, loc).Resolve (ec);
 				}
 
 				return source;
