@@ -52,34 +52,49 @@ namespace System.Collections.Concurrent
 			return new ListPartitioner<TSource> (source);
 		}
 		
-		[MonoTODO("What range size is supposed to be in context and what the result returned looks like")]
 		public static OrderablePartitioner<Tuple<int, int>> Create (int fromInclusive,
-		                                                             int toExclusive)
+		                                                            int toExclusive)
 		{
-			return Create (fromInclusive, toExclusive, 1);
+			// This formula that is somewhat non-straighforward was guessed based on MS output
+			int rangeSize = (toExclusive - fromInclusive) / (Environment.ProcessorCount * 3);
+			if (rangeSize < 1)
+				rangeSize = 1;
+
+			return Create (fromInclusive, toExclusive, rangeSize);
 		}
-		
-		[MonoTODO("What range size is supposed to be in context and what the result returned looks like")]
+
 		public static OrderablePartitioner<Tuple<int, int>> Create (int fromInclusive,
-		                                                             int toExclusive,
-		                                                             int rangeSize)
+		                                                            int toExclusive,
+		                                                            int rangeSize)
 		{
-			throw new NotImplementedException ();
+			if (fromInclusive >= toExclusive)
+				throw new ArgumentOutOfRangeException ("toExclusive");
+			if (rangeSize <= 0)
+				throw new ArgumentOutOfRangeException ("rangeSize");
+
+			return new UserRangePartitioner (fromInclusive, toExclusive, rangeSize);
 		}
-		
-		[MonoTODO("What range size is supposed to be in context and what the result returned looks like")]
+
 		public static OrderablePartitioner<Tuple<long, long>> Create (long fromInclusive,
-		                                                               long toExclusive)
+		                                                              long toExclusive)
 		{
-			return Create (fromInclusive, toExclusive, 1);
+			long rangeSize = (toExclusive - fromInclusive) / (Environment.ProcessorCount * 3);
+			if (rangeSize < 1)
+				rangeSize = 1;
+
+			return Create (fromInclusive, toExclusive, rangeSize);
 		}
-		
-		[MonoTODO("What range size is supposed to be in context and what the result returned looks like")]
+
 		public static OrderablePartitioner<Tuple<long, long>> Create (long fromInclusive,
-		                                                               long toExclusive,
-		                                                               long rangeSize)
+		                                                              long toExclusive,
+		                                                              long rangeSize)
 		{
-			throw new NotImplementedException ();
+			if (rangeSize <= 0)
+				throw new ArgumentOutOfRangeException ("rangeSize");
+			if (fromInclusive >= toExclusive)
+				throw new ArgumentOutOfRangeException ("toExclusive");
+
+			return new UserLongRangePartitioner (fromInclusive, toExclusive, rangeSize);
 		}
 	}
 	

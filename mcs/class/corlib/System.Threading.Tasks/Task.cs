@@ -603,7 +603,6 @@ namespace System.Threading.Tasks
 			if (millisecondsTimeout == -1)
 				return WaitAny (tasks);
 
-			Watch sw = Watch.StartNew ();
 			return WaitAny (tasks, millisecondsTimeout, CancellationToken.None);
 		}
 
