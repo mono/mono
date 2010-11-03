@@ -4088,7 +4088,6 @@ namespace Mono.CSharp {
 				ec.Report.Error (185, loc,
 					"`{0}' is not a reference type as required by the lock statement",
 					expr.Type.GetSignatureForError ());
-				return false;
 			}
 
 			ec.StartFlowBranching (this);
@@ -4118,7 +4117,13 @@ namespace Mono.CSharp {
 		protected override void EmitPreTryBody (EmitContext ec)
 		{
 			expr_copy.EmitAssign (ec, expr);
-			lock_taken.EmitAssign (ec, new BoolLiteral (false, loc));
+
+			if (lock_taken != null) {
+				//
+				// Initialize ref variable
+				//
+				lock_taken.EmitAssign (ec, new BoolLiteral (false, loc));
+			}
 		}
 
 		protected override void EmitTryBody (EmitContext ec)
