@@ -182,7 +182,7 @@ namespace System.Web.Util {
 			return section.GetDecryptionKey ();
 		}
 
-		static byte [] GetValidationKey (MachineKeySection section)
+		public static byte [] GetValidationKey (MachineKeySection section)
 		{
 			return section.GetValidationKey ();
 		}

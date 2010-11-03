@@ -62,7 +62,9 @@ namespace System.Web.UI
 		const string hiddenField = "hiddenField";
 		const string arrayDeclaration = "arrayDeclaration";
 		const string scriptBlock = "scriptBlock";
+#if NET_3_5
 		const string scriptStartupBlock = "scriptStartupBlock";
+#endif
 		const string expando = "expando";
 		const string onSubmit = "onSubmit";
 		const string asyncPostBackControlIDs = "asyncPostBackControlIDs";
@@ -1418,12 +1420,14 @@ namespace System.Web.UI
 							else
 								WriteCallbackOutput (output, scriptBlock, scriptContentWithTags, SerializeScriptBlock (scriptEntry));
 							break;
+#if NET_3_5
 						case RegisteredScriptType.ClientStartupScript:
 							if (scriptEntry.AddScriptTags)
 								WriteCallbackOutput (output, scriptStartupBlock, scriptContentNoTags, scriptEntry.Script);
 							else
 								WriteCallbackOutput (output, scriptStartupBlock, scriptContentWithTags, SerializeScriptBlock (scriptEntry));
 							break;
+#endif
 						case RegisteredScriptType.ClientScriptInclude:
 							WriteCallbackOutput (output, scriptBlock, scriptPath, scriptEntry.Url);
 							break;
