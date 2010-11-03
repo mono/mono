@@ -5108,8 +5108,8 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		}
 		mono_loader_unlock ();
 
-		// FIXME: Count resumes
-		resume_vm ();
+		while (suspend_count > 0)
+			resume_vm ();
 		disconnected = TRUE;
 		break;
 	case CMD_VM_EXIT: {
@@ -6932,6 +6932,9 @@ debugger_thread (void *arg)
 	}
 
 	mono_set_is_debugger_attached (FALSE);
+	
+	while (suspend_count > 0)
+		resume_vm ();
 
 	mono_mutex_lock (&debugger_thread_exited_mutex);
 	debugger_thread_exited = TRUE;
