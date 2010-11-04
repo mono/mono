@@ -38,6 +38,10 @@ using System.Threading;
 using System.Xml;
 using NUnit.Framework;
 
+#if NET_4_0
+using System.Security.Authentication.ExtendedProtection;
+#endif
+
 namespace MonoTests.System.ServiceModel.Channels
 {
 	[TestFixture]
@@ -417,5 +421,91 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		#endregion
-	}
+
+		#region metadata
+
+		[Test]
+		public void ExportPolicyDefault ()
+		{
+			IPolicyExportExtension binding_element = new HttpTransportBindingElement ();
+			PolicyConversionContext conversion_context = new CustomPolicyConversionContext ();
+			binding_element.ExportPolicy (new WsdlExporter (), conversion_context);
+
+			PolicyAssertionCollection binding_assertions = conversion_context.GetBindingAssertions ();
+			BindingElementCollection binding_elements = conversion_context.BindingElements;
+			Assert.AreEqual (1, binding_assertions.Count, "#A0");
+			Assert.AreEqual (0, binding_elements.Count, "#A1");
+
+			// wsaw:UsingAddressing
+			XmlNode using_addressing_node = FindAssertion (binding_assertions, "wsaw:UsingAddressing");
+			Assert.AreEqual (true, using_addressing_node != null, "#B0");
+			Assert.AreEqual ("UsingAddressing", using_addressing_node.LocalName, "#B1");
+			Assert.AreEqual ("http://www.w3.org/2006/05/addressing/wsdl", using_addressing_node.NamespaceURI, "#B2");
+			Assert.AreEqual (0, using_addressing_node.Attributes.Count, "#B3");
+			Assert.AreEqual (0, using_addressing_node.ChildNodes.Count, "#B4");
+			Assert.AreEqual (String.Empty, using_addressing_node.InnerText, "#B5");
+		}
+
+		[Test]
+		public void ExportPolicy ()
+		{
+			HttpTransportBindingElement http_binding_element = new HttpTransportBindingElement ();
+
+			//
+			// Specify some non-default values
+			//
+			http_binding_element.AllowCookies = !http_binding_element.AllowCookies;
+			http_binding_element.AuthenticationScheme = AuthenticationSchemes.Ntlm;
+			http_binding_element.BypassProxyOnLocal = !http_binding_element.BypassProxyOnLocal;
+			http_binding_element.HostNameComparisonMode = HostNameComparisonMode.WeakWildcard;
+			http_binding_element.KeepAliveEnabled = !http_binding_element.KeepAliveEnabled;
+			http_binding_element.ManualAddressing = !http_binding_element.ManualAddressing;
+			http_binding_element.MaxBufferPoolSize = http_binding_element.MaxBufferPoolSize / 2;
+			http_binding_element.MaxBufferSize = http_binding_element.MaxBufferSize / 2;
+			http_binding_element.MaxReceivedMessageSize = http_binding_element.MaxReceivedMessageSize / 2;
+			http_binding_element.ProxyAddress = new Uri ("http://proxyaddress.com");
+			http_binding_element.ProxyAuthenticationScheme = AuthenticationSchemes.Basic;
+			http_binding_element.Realm = "RandomRealm";
+			http_binding_element.TransferMode = TransferMode.Streamed;
+			http_binding_element.UnsafeConnectionNtlmAuthentication = !http_binding_element.UnsafeConnectionNtlmAuthentication;
+			http_binding_element.UseDefaultWebProxy = !http_binding_element.UseDefaultWebProxy;
+#if NET_4_0
+			http_binding_element.DecompressionEnabled = !http_binding_element.DecompressionEnabled;
+			http_binding_element.ExtendedProtectionPolicy = new ExtendedProtectionPolicy (PolicyEnforcement.WhenSupported);
+#endif
+
+			// 
+			// Actual call to ExportPolicy
+			//
+			IPolicyExportExtension binding_element = http_binding_element as IPolicyExportExtension;
+			PolicyConversionContext conversion_context = new CustomPolicyConversionContext ();
+			binding_element.ExportPolicy (new WsdlExporter (), conversion_context);
+
+			PolicyAssertionCollection binding_assertions = conversion_context.GetBindingAssertions ();
+			BindingElementCollection binding_elements = conversion_context.BindingElements;
+			Assert.AreEqual (2, binding_assertions.Count, "#A0");
+			Assert.AreEqual (0, binding_elements.Count, "#A1");
+
+			// AuthenticationScheme - the only property that causes information to be exported.
+			XmlNode authentication_node = FindAssertion (binding_assertions, "http:NtlmAuthentication");
+			Assert.AreEqual (true, authentication_node != null, "#B0");
+			Assert.AreEqual ("NtlmAuthentication", authentication_node.LocalName, "#B1");
+			Assert.AreEqual ("http://schemas.microsoft.com/ws/06/2004/policy/http", authentication_node.NamespaceURI, "#B2");
+			Assert.AreEqual (String.Empty, authentication_node.InnerText, "#B3");
+			Assert.AreEqual (0, authentication_node.Attributes.Count, "#B4");
+		}
+
+		// For some reason PolicyAssertionCollection.Find is not working as expected,
+		// so do the lookup manually.
+		XmlNode FindAssertion (PolicyAssertionCollection assertionCollection, string name)
+		{
+			foreach (XmlNode node in assertionCollection)
+				if (node.Name == name)
+					return node;
+
+			return null;
+		}
+
+		#endregion
+    }
 }
