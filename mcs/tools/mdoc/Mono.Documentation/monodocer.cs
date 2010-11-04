@@ -1248,7 +1248,30 @@ class MDocUpdater : MDocCommand
 		if (!DocUtils.IsDelegate (type))
 			WriteElement (root, "Members");
 
+		OrderTypeNodes (root, root.ChildNodes);
 		NormalizeWhitespace(root);
+	}
+
+	static readonly string[] TypeNodeOrder = {
+		"TypeSignature",
+		"MemberOfLibrary",
+		"AssemblyInfo",
+		"ThreadingSafetyStatement",
+		"ThreadSafetyStatement",
+		"TypeParameters",
+		"Base",
+		"Interfaces",
+		"Attributes",
+		"Parameters",
+		"ReturnValue",
+		"Docs",
+		"Members",
+		"TypeExcluded",
+	};
+
+	static void OrderTypeNodes (XmlNode member, XmlNodeList children)
+	{
+		ReorderNodes (member, children, TypeNodeOrder);
 	}
 
 	internal static IEnumerable<T> Sort<T> (IEnumerable<T> list)
