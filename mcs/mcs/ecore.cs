@@ -604,8 +604,27 @@ namespace Mono.CSharp {
 					if ((arity > 0 || (restrictions & MemberLookupRestrictions.ExactArity) != 0) && member.Arity != arity)
 						continue;
 
-					if (rc != null && !member.IsAccessible (currentType))
-						continue;
+					if (rc != null) {
+						if (!member.IsAccessible (currentType))
+							continue;
+
+						//
+						// With runtime binder we can have a situation where queried type is inaccessible
+						// because it came via dynamic object, the check about inconsisted accessibility
+						// had no effect as the type was unknown during compilation
+						//
+						// class A {
+						//		private class N { }
+						//
+						//		public dynamic Foo ()
+						//		{
+						//			return new N ();
+						//		}
+						//	}
+						//
+						if (rc.Compiler.IsRuntimeBinder && !member.DeclaringType.IsAccessible (currentType))
+							continue;
+					}
 
 					if ((restrictions & MemberLookupRestrictions.InvocableOnly) != 0) {
 						if (member is MethodSpec)
@@ -4090,8 +4109,13 @@ namespace Mono.CSharp {
 							if ((member.Modifiers & Modifiers.OVERRIDE) != 0)
 								continue;
 
-							if (!member.IsAccessible (current_type) && !error_mode)
-								continue;
+							if (!error_mode) {
+								if (!member.IsAccessible (current_type))
+									continue;
+
+								if (rc.Compiler.IsRuntimeBinder && !member.DeclaringType.IsAccessible (current_type))
+									continue;
+							}
 
 							IParametersMember pm = member as IParametersMember;
 							if (pm == null) {
@@ -4357,7 +4381,7 @@ namespace Mono.CSharp {
 				int unexpanded_count = pm.Parameters.HasParams ? pm.Parameters.Count - 1 : pm.Parameters.Count;
 				if (pm.Parameters.Count == arg_count || params_expanded || unexpanded_count == arg_count) {
 					// Reject any inaccessible member
-					if (!best_candidate.IsAccessible (rc.CurrentType)) {
+					if (!best_candidate.IsAccessible (rc.CurrentType) || !best_candidate.DeclaringType.IsAccessible (rc.CurrentType)) {
 						rc.Report.SymbolRelatedToPreviousError (best_candidate);
 						Expression.ErrorIsInaccesible (rc, best_candidate.GetSignatureForError (), loc);
 						return;
