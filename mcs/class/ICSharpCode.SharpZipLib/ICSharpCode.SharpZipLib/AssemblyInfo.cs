@@ -48,11 +48,12 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-#if NET_2_0
+#if NET_4_0
+[assembly: AssemblyVersion("4.84.0.0")]
+#elif NET_2_0
 [assembly: AssemblyVersion("2.84.0.0")]
 #else
-// not worrying about the NET_1_0 profile for now.
-[assembly: AssemblyVersion("0.84.0.0")]
+	#error "No profile"
 #endif
 
 [assembly: AssemblyDelaySign(true)]
