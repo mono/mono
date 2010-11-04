@@ -1,10 +1,12 @@
 //
 // ScriptManager.cs
 //
-// Author:
+// Authors:
 //   Igor Zelmanovich <igorz@mainsoft.com>
+//   Marek Habersack <grendel@twistedcode.net>
 //
 // (C) 2007 Mainsoft, Inc.  http://www.mainsoft.com
+// (C) 2007-2010 Novell, Inc (http://novell.com/)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -1236,7 +1238,7 @@ namespace System.Web.UI
 
 		static void WriteCallbackOutput (TextWriter output, string type, string name, object value) {
 			string str = value as string;
-			StringBuilder sb = value as StringBuilder;
+			StringBuilder sb = str == null ? value as StringBuilder : null;
 			int length = 0;
 			if (str != null)
 				length = str.Length;
@@ -1299,28 +1301,12 @@ namespace System.Web.UI
 			//
 			if (_updatePanels != null && _updatePanels.Count > 0) {
 				bool needsUpdate;
-				
 				foreach (UpdatePanel panel in _updatePanels) {
 					if (panel.RequiresUpdate || (!String.IsNullOrEmpty (_panelToRefreshID) && String.Compare (_panelToRefreshID, panel.UniqueID, StringComparison.Ordinal) == 0))
 						needsUpdate = true;
 					else
 						needsUpdate = false;
-					
-					if (needsUpdate == false) {
-						Control parent = panel.Parent;
-						UpdatePanel parentPanel;
-						
-						bool havePanelsToRefresh = _panelsToRefresh != null ? _panelsToRefresh.Count > 0 : false;
-						while (parent != null) {
-							parentPanel = parent as UpdatePanel;
-							if (havePanelsToRefresh && parentPanel != null && _panelsToRefresh.Contains (parentPanel)) {
-								needsUpdate = true;
-								break;
-							}
-							parent = parent.Parent;
-						}
-					}
-					
+
 					panel.SetInPartialRendering (needsUpdate);
 					if (needsUpdate)
 						RegisterPanelForRefresh (panel);
