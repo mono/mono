@@ -28,6 +28,7 @@
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
@@ -119,10 +120,32 @@ namespace System.ServiceModel.Channels
 			return base.GetProperty<T> (context);
 		}
 
-		[MonoTODO]
 		void IPolicyExportExtension.ExportPolicy (MetadataExporter exporter, PolicyConversionContext context)
 		{
-			throw new NotImplementedException ();
+			if (exporter == null)
+				throw new ArgumentNullException ("exporter");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+
+			PolicyAssertionCollection assertions = context.GetBindingAssertions ();
+			XmlDocument doc = new XmlDocument ();
+
+			assertions.Add (doc.CreateElement ("wsaw", "UsingAddressing", "http://www.w3.org/2006/05/addressing/wsdl"));
+			assertions.Add (doc.CreateElement ("msmq", "Authenticated", "http://schemas.microsoft.com/ws/06/2004/mspolicy/msmq"));
+			assertions.Add (doc.CreateElement ("msb", "BinaryEncoding",
+					"http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1"));
+
+			if (transport_security.MsmqAuthenticationMode == MsmqAuthenticationMode.WindowsDomain)
+				assertions.Add (doc.CreateElement ("msmq", "WindowsDomain",
+					"http://schemas.microsoft.com/ws/06/2004/mspolicy/msmq"));
+
+			if (!durable)
+				assertions.Add (doc.CreateElement ("msmq", "MsmqVolatile", 
+					"http://schemas.microsoft.com/ws/06/2004/mspolicy/msmq"));
+
+			if (!exactly_once)
+				assertions.Add (doc.CreateElement ("msmq", "MsmqBestEffort", 
+					"http://schemas.microsoft.com/ws/06/2004/mspolicy/msmq"));
 		}
 
 		[MonoTODO]
