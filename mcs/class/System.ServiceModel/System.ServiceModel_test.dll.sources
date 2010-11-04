@@ -41,7 +41,9 @@ System.ServiceModel.Channels/BindingElementTest.cs
 System.ServiceModel.Channels/BindingTest.cs
 System.ServiceModel.Channels/CalcSampleProxy.cs
 System.ServiceModel.Channels/CommunicationObjectTest.cs
+System.ServiceModel.Channels/ConnectionOrientedTransportBindingElementTest.cs
 System.ServiceModel.Channels/CustomBindingTest.cs
+System.ServiceModel.Channels/CustomPolicyConversionContext.cs
 System.ServiceModel.Channels/DebugBindingElement.cs
 System.ServiceModel.Channels/EmptyFaultExceptionTest.cs
 System.ServiceModel.Channels/EnvelopeVersionTest.cs
@@ -64,6 +66,7 @@ System.ServiceModel.Channels/MessageHeadersTest.cs
 System.ServiceModel.Channels/MessagePropertiesTest.cs
 System.ServiceModel.Channels/MessageTest.cs
 System.ServiceModel.Channels/MessageVersionTest.cs
+System.ServiceModel.Channels/MsmqBindingElementBaseTest.cs
 System.ServiceModel.Channels/MsmqTransportBindingElementTest.cs
 System.ServiceModel.Channels/NamedPipeTransportBindingElementTest.cs
 System.ServiceModel.Channels/OneWayBindingElementTest.cs
@@ -174,6 +177,7 @@ System.ServiceModel/FaultContractAttributeTest.cs
 System.ServiceModel/FaultReasonTest.cs
 System.ServiceModel/IntegratedConnectionTest.cs
 System.ServiceModel/MessageSecurityVersionTest.cs
+System.ServiceModel/MsmqTransportSecurityTest.cs
 System.ServiceModel/NetMsmqBindingTest.cs
 System.ServiceModel/NetPeerTcpBindingTest.cs
 System.ServiceModel/NetTcpBindingTest.cs
