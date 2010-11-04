@@ -32,10 +32,10 @@ namespace System.ServiceModel
 {
 	public sealed class MsmqTransportSecurity
 	{
-		MsmqAuthenticationMode auth;
+		MsmqAuthenticationMode auth = MsmqAuthenticationMode.WindowsDomain;
 		MsmqEncryptionAlgorithm enc;
-		MsmqSecureHashAlgorithm hash;
-		ProtectionLevel protection_level;
+		MsmqSecureHashAlgorithm hash = MsmqSecureHashAlgorithm.Sha1;
+		ProtectionLevel protection_level = ProtectionLevel.Sign;
 
 		public MsmqTransportSecurity ()
 		{
