@@ -30,12 +30,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
 	[MonoTODO]
 	public abstract class ConnectionOrientedTransportBindingElement
-		: TransportBindingElement
+		: TransportBindingElement, IPolicyExportExtension
 	{
 		int connection_buf_size = 0x2000, max_buf_size = 0x10000,
 			max_pending_conn = 10, max_pending_accepts = 1;
@@ -135,6 +136,24 @@ namespace System.ServiceModel.Channels
 			// only), we cannot examine what this should do.
 			// So, handle all properties in the derived types.
 			return base.GetProperty<T> (context);
+		}
+
+		void IPolicyExportExtension.ExportPolicy (MetadataExporter exporter, PolicyConversionContext context)
+		{
+			if (exporter == null)
+				throw new ArgumentNullException ("exporter");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+
+			PolicyAssertionCollection assertions = context.GetBindingAssertions ();
+			XmlDocument doc = new XmlDocument ();
+
+			assertions.Add (doc.CreateElement ("wsaw", "UsingAddressing", "http://www.w3.org/2006/05/addressing/wsdl"));
+			assertions.Add (doc.CreateElement ("msb", "BinaryEncoding", "http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1"));
+
+			if (transfer_mode == TransferMode.Streamed || transfer_mode == TransferMode.StreamedRequest ||
+				transfer_mode == TransferMode.StreamedResponse)
+				assertions.Add (doc.CreateElement ("msf", "Streamed", "http://schemas.microsoft.com/ws/2006/05/framing/policy"));
 		}
 	}
 }
