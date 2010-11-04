@@ -77,6 +77,12 @@ namespace System.Threading {
 		ManualResetEvent readerDoneEvent = new ManualResetEvent (true);
 #endif
 
+		// This Stopwatch instance is used for all threads since .Elapsed is thread-safe
+		readonly static Stopwatch sw = Stopwatch.StartNew ();
+
+		/* For performance sake, these numbers are manipulated via classic increment and
+		 * decrement operations and thus are (as hinted by MSDN) not meant to be precise
+		 */
 		int numReadWaiters, numUpgradeWaiters, numWriteWaiters;
 		bool disposed;
 
@@ -111,7 +117,7 @@ namespace System.Threading {
 			ThreadLockState ctstate = CurrentThreadState;
 
 			if (CheckState (millisecondsTimeout, LockState.Read)) {
-				ctstate.ReaderRecursiveCount++;
+				++ctstate.ReaderRecursiveCount;
 				return true;
 			}
 
@@ -124,21 +130,21 @@ namespace System.Threading {
 			    || recursionPolicy == LockRecursionPolicy.SupportsRecursion) {
 				Interlocked.Add (ref rwlock, RwRead);
 				ctstate.LockState ^= LockState.Read;
-				ctstate.ReaderRecursiveCount++;
+				++ctstate.ReaderRecursiveCount;
 
 				return true;
 			}
 			
-			Stopwatch sw = Stopwatch.StartNew ();
-			Interlocked.Increment (ref numReadWaiters);
+			++numReadWaiters;
 			int val = 0;
+			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
 
-			while (millisecondsTimeout == -1 || sw.ElapsedMilliseconds < millisecondsTimeout) {
+			do {
 				/* Check if a writer is present (RwWrite) or if there is someone waiting to
 				 * acquire a writer lock in the queue (RwWait | RwWaitUpgrade).
 				 */
 				if ((rwlock & 0x7) > 0) {
-					writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
+					writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
 					continue;
 				}
 
@@ -154,17 +160,17 @@ namespace System.Threading {
 						readerDoneEvent.Reset ();
 
 					ctstate.LockState ^= LockState.Read;
-					ctstate.ReaderRecursiveCount++;
-					Interlocked.Decrement (ref numReadWaiters);
+					++ctstate.ReaderRecursiveCount;
+					--numReadWaiters;
 					return true;
 				}
 
 				Interlocked.Add (ref rwlock, -RwRead);
 
-				writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
-			}
+				writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
+			} while (millisecondsTimeout == -1 || (sw.ElapsedMilliseconds - start) < millisecondsTimeout);
 
-			Interlocked.Decrement (ref numReadWaiters);
+			--numReadWaiters;
 			return false;
 		}
 
@@ -181,7 +187,7 @@ namespace System.Threading {
 				throw new SynchronizationLockException ("The current thread has not entered the lock in read mode");
 
 			ctstate.LockState ^= LockState.Read;
-			ctstate.ReaderRecursiveCount--;
+			--ctstate.ReaderRecursiveCount;
 			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
 				readerDoneEvent.Set ();
 		}
@@ -196,12 +202,11 @@ namespace System.Threading {
 			ThreadLockState ctstate = CurrentThreadState;
 
 			if (CheckState (millisecondsTimeout, LockState.Write)) {
-				ctstate.WriterRecursiveCount++;
+				++ctstate.WriterRecursiveCount;
 				return true;
 			}
 
-			Stopwatch sw = Stopwatch.StartNew ();
-			Interlocked.Increment (ref numWriteWaiters);
+			++numWriteWaiters;
 			bool isUpgradable = ctstate.LockState.Has (LockState.Upgradable);
 
 			/* If the code goes there that means we had a read lock beforehand
@@ -214,16 +219,17 @@ namespace System.Threading {
 					readerDoneEvent.Set ();
 
 			int stateCheck = isUpgradable ? RwWaitUpgrade : RwWait;
+			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
 
-			while (millisecondsTimeout < 0 || sw.ElapsedMilliseconds < millisecondsTimeout) {
+			do {
 				int state = rwlock;
 
 				if (state <= stateCheck) {
 					if (Interlocked.CompareExchange (ref rwlock, RwWrite, state) == state) {
 						writerDoneEvent.Reset ();
 						ctstate.LockState ^= LockState.Write;
-						ctstate.WriterRecursiveCount++;
-						Interlocked.Decrement (ref numWriteWaiters);
+						++ctstate.WriterRecursiveCount;
+						--numWriteWaiters;
 						return true;
 					}
 					state = rwlock;
@@ -235,15 +241,17 @@ namespace System.Threading {
 						state = rwlock;
 
 				// Before falling to sleep
-				while (rwlock > stateCheck && (millisecondsTimeout < 0 || sw.ElapsedMilliseconds < millisecondsTimeout)) {
+				do {
+					if (rwlock <= stateCheck)
+						break;
 					if ((rwlock & RwWrite) != 0)
-						writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
+						writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
 					else if ((rwlock >> RwReadBit) > 0)
-						readerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
-				}
-			}
+						readerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
+				} while (millisecondsTimeout < 0 || (sw.ElapsedMilliseconds - start) < millisecondsTimeout);
+			} while (millisecondsTimeout < 0 || (sw.ElapsedMilliseconds - start) < millisecondsTimeout);
 
-			Interlocked.Decrement (ref numWriteWaiters);
+			--numWriteWaiters;
 			return false;
 		}
 
@@ -261,7 +269,7 @@ namespace System.Threading {
 			
 			bool isUpgradable = ctstate.LockState.Has (LockState.Upgradable);
 			ctstate.LockState ^= LockState.Write;
-			ctstate.WriterRecursiveCount--;
+			--ctstate.WriterRecursiveCount;
 
 			int value = Interlocked.Add (ref rwlock, isUpgradable ? RwRead - RwWrite : -RwWrite);
 			writerDoneEvent.Set ();
@@ -283,41 +291,41 @@ namespace System.Threading {
 			ThreadLockState ctstate = CurrentThreadState;
 
 			if (CheckState (millisecondsTimeout, LockState.Upgradable)) {
-				ctstate.UpgradeableRecursiveCount++;
+				++ctstate.UpgradeableRecursiveCount;
 				return true;
 			}
 
 			if (ctstate.LockState.Has (LockState.Read))
 				throw new LockRecursionException ("The current thread has already entered read mode");
 
-			Stopwatch sw = Stopwatch.StartNew ();
-			Interlocked.Increment (ref numUpgradeWaiters);
+			++numUpgradeWaiters;
+			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
 
 			// We first try to obtain the upgradeable right
 			while (!upgradableEvent.IsSet () || !upgradableTaken.TryRelaxedSet ()) {
-				if (millisecondsTimeout != -1 && sw.ElapsedMilliseconds > millisecondsTimeout) {
-					Interlocked.Decrement (ref numUpgradeWaiters);
+				if (millisecondsTimeout != -1 && (sw.ElapsedMilliseconds - start) > millisecondsTimeout) {
+					--numUpgradeWaiters;
 					return false;
 				}
 
-				upgradableEvent.Wait (ComputeTimeout (millisecondsTimeout, sw));
+				upgradableEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
 			}
 
 			upgradableEvent.Reset ();
 
 			// Then it's a simple reader lock acquiring
-			if (TryEnterReadLock (ComputeTimeout (millisecondsTimeout, sw))) {
+			if (TryEnterReadLock (ComputeTimeout (millisecondsTimeout, start))) {
 				ctstate.LockState = LockState.Upgradable;
-				Interlocked.Decrement (ref numUpgradeWaiters);
-				ctstate.ReaderRecursiveCount--;
-				ctstate.UpgradeableRecursiveCount++;
+				--numUpgradeWaiters;
+				--ctstate.ReaderRecursiveCount;
+				++ctstate.UpgradeableRecursiveCount;
 				return true;
 			}
 
 			upgradableTaken.Value = false;
 			upgradableEvent.Set ();
 
-			Interlocked.Decrement (ref numUpgradeWaiters);
+			--numUpgradeWaiters;
 
 			return false;
 		}
@@ -338,7 +346,7 @@ namespace System.Threading {
 			upgradableEvent.Set ();
 
 			ctstate.LockState ^= LockState.Upgradable;
-			ctstate.UpgradeableRecursiveCount--;
+			--ctstate.UpgradeableRecursiveCount;
 			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
 				readerDoneEvent.Set ();
 		}
@@ -477,9 +485,9 @@ namespace System.Threading {
 			}
 		}
 
-		static int ComputeTimeout (int millisecondsTimeout, Stopwatch sw)
+		static int ComputeTimeout (int millisecondsTimeout, long start)
 		{
-			return millisecondsTimeout == -1 ? -1 : (int)Math.Max (sw.ElapsedMilliseconds - millisecondsTimeout, 1);
+			return millisecondsTimeout == -1 ? -1 : (int)Math.Max (sw.ElapsedMilliseconds - start - millisecondsTimeout, 1);
 		}
 	}
 }
