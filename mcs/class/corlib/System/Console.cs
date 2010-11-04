@@ -304,7 +304,10 @@ namespace System
 
 		public static void Write (string format, params object[] arg)
 		{
-			stdout.Write (format, arg);
+			if (arg == null)
+				stdout.Write (format);
+			else
+				stdout.Write (format, arg);
 		}
 
 		public static void Write (char[] buffer, int index, int count)
@@ -415,7 +418,10 @@ namespace System
 
 		public static void WriteLine (string format, params object[] arg)
 		{
-			stdout.WriteLine (format, arg);
+			if (arg == null)
+				stdout.WriteLine (format);
+			else
+				stdout.WriteLine (format, arg);
 		}
 
 		public static void WriteLine (char[] buffer, int index, int count)

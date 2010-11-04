@@ -223,6 +223,12 @@ public class ConsoleTest
 			Assert.AreEqual (testStr, line, "Wrong line");
 		}
 	}
+	
+	[Test]
+	public void TestWrite_Params()
+	{
+		Console.Write ("text {0}", (object[]) null);
+	}
 
 	[Test]
 	public void TestWrite()
@@ -310,6 +316,12 @@ public class ConsoleTest
 
 		// TODO - Likewise for char[], decimal, double, int, long, object, single, uint32, uint64
 		// TODO - write with format string
+	}
+	
+	[Test]
+	public void TestWriteLine_Params()
+	{
+		Console.WriteLine ("text {0}", (object[]) null);
 	}
 
 }
