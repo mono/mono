@@ -1294,7 +1294,49 @@ class MDocUpdater : MDocCommand
 		
 		info.Node = WriteElement (me, "Docs");
 		MakeDocNode (info);
+		OrderMemberNodes (me, me.ChildNodes);
 		UpdateExtensionMethods (me, info);
+	}
+
+	static readonly string[] MemberNodeOrder = {
+		"MemberSignature",
+		"MemberType",
+		"AssemblyInfo",
+		"Attributes",
+		"ReturnValue",
+		"TypeParameters",
+		"Parameters",
+		"MemberValue",
+		"Docs",
+		"Excluded",
+		"ExcludedLibrary",
+		"Link",
+	};
+
+	static void OrderMemberNodes (XmlNode member, XmlNodeList children)
+	{
+		ReorderNodes (member, children, MemberNodeOrder);
+	}
+
+	static void ReorderNodes (XmlNode node, XmlNodeList children, string[] ordering)
+	{
+		MyXmlNodeList newChildren = new MyXmlNodeList (children.Count);
+		for (int i = 0; i < ordering.Length; ++i) {
+			for (int j = 0; j < children.Count; ++j) {
+				XmlNode c = children [j];
+				if (c.Name == ordering [i]) {
+					newChildren.Add (c);
+				}
+			}
+		}
+		if (newChildren.Count >= 0)
+			node.PrependChild ((XmlNode) newChildren [0]);
+		for (int i = 1; i < newChildren.Count; ++i) {
+			XmlNode prev = (XmlNode) newChildren [i-1];
+			XmlNode cur  = (XmlNode) newChildren [i];
+			node.RemoveChild (cur);
+			node.InsertAfter (cur, prev);
+		}
 	}
 
 	IEnumerable<string> GetCustomAttributes (IMemberReference mi)
@@ -1609,23 +1651,7 @@ class MDocUpdater : MDocCommand
 
 	private static void OrderDocsNodes (XmlNode docs, XmlNodeList children)
 	{
-		MyXmlNodeList newChildren = new MyXmlNodeList (children.Count);
-		for (int i = 0; i < DocsNodeOrder.Length; ++i) {
-			for (int j = 0; j < children.Count; ++j) {
-				XmlNode c = children [j];
-				if (c.Name == DocsNodeOrder [i]) {
-					newChildren.Add (c);
-				}
-			}
-		}
-		if (newChildren.Count >= 0)
-			docs.PrependChild ((XmlNode) newChildren [0]);
-		for (int i = 1; i < newChildren.Count; ++i) {
-			XmlNode prev = (XmlNode) newChildren [i-1];
-			XmlNode cur  = (XmlNode) newChildren [i];
-			docs.RemoveChild (cur);
-			docs.InsertAfter (cur, prev);
-		}
+		ReorderNodes (docs, children, DocsNodeOrder);
 	}
 	
 
