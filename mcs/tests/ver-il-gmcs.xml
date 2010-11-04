@@ -8994,19 +8994,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-333.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="Void Foo(System.Object)">
-        <size>20</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-334.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -10447,10 +10434,13 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>121</size>
+        <size>194</size>
       </method>
       <method name="Boolean Test_1()">
         <size>36</size>
+      </method>
+      <method name="Void Test(System.Object, System.EventArgs)">
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -11121,19 +11111,6 @@
       </method>
       <method name="Boolean Test()">
         <size>51</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-423.cs">
-    <type name="App">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>33</size>
-      </method>
-      <method name="Void Test(System.Object, System.EventArgs)">
-        <size>1</size>
       </method>
     </type>
   </test>
