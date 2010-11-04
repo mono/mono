@@ -544,8 +544,10 @@ namespace System.Web.Caching
 					}
 
 					item = timedItems.Dequeue ();
-					if (!NeedsUpdate (item, CacheItemUpdateReason.Expired, false))
-						Remove (item.Key, CacheItemRemovedReason.Expired, false, true);
+					if (item != null) {
+						if (!NeedsUpdate (item, CacheItemUpdateReason.Expired, false))
+							Remove (item.Key, CacheItemRemovedReason.Expired, false, true);
+					}
 					item = timedItems.Peek ();
 				}
 			} finally {
