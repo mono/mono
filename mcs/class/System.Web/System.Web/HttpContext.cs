@@ -710,7 +710,8 @@ namespace System.Web
 		void TimeoutReached(object state) {
 			HttpRuntime.QueuePendingRequest (false);
 			if (Interlocked.CompareExchange (ref timeout_possible, 0, 0) == 0) {
-				timer.Change(2000, 0);
+				if (timer != null)
+					timer.Change(2000, 0);
 				return;			
 			}
 			StopTimeoutTimer();
