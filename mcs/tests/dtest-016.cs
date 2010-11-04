@@ -38,7 +38,7 @@ public class C
 	}
 }
 
-public class D
+class D
 {
 	public static int Foo (dynamic d)
 	{
@@ -46,6 +46,19 @@ public class D
 	}
 
 	public static int Foo (params object[] o)
+	{
+		return 2;
+	}
+}
+
+class E
+{
+	public static int Foo (int i, dynamic d)
+	{
+		return 1;
+	}
+
+	public static int Foo (double d, object i)
 	{
 		return 2;
 	}
@@ -101,6 +114,9 @@ class Program
 		d = 44;
 		if (D.Foo (d) != 1)
 			return 4;
+
+		if (E.Foo (0, 0) != 1)
+			return 5;
 		
 		return 0;
 	}

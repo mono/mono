@@ -8,6 +8,10 @@ class C
 		return xx ?? true;
 	}
 	
+	static void Test (object s, EventArgs a)
+	{
+	}
+	
 	public static int Main ()
 	{
 		string a = null;
@@ -31,6 +35,14 @@ class C
 		if (p2 != "x")
 			return 5;
 
+		object arg = null;
+		string result = arg as string ?? "";
+		
+		int? nint = null;
+		int? r = nint ?? null;
+		
+		EventHandler h = new EventHandler (Test) ?? Test;
+		
 		return 0;
 	}
 }

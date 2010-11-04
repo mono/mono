@@ -1065,10 +1065,29 @@ namespace Mono.CSharp.Nullable
 				if (unwrap == null)
 					return null;
 
+				//
+				// Reduce (left ?? null) to left
+				//
+				if (right.IsNull)
+					return ReducedExpression.Create (left, this);
+
 				if (Convert.ImplicitConversionExists (ec, right, unwrap.Type)) {
 					left = unwrap;
-					type = left.Type;
-					right = Convert.ImplicitConversion (ec, right, type, loc);
+					ltype = left.Type;
+
+					//
+					// If right is a dynamic expression, the result type is dynamic
+					//
+					if (right.Type == InternalType.Dynamic) {
+						type = right.Type;
+
+						// Need to box underlying value type
+						left = Convert.ImplicitBoxingConversion (left, ltype, type);
+						return this;
+					}
+
+					right = Convert.ImplicitConversion (ec, right, ltype, loc);
+					type = ltype;
 					return this;
 				}
 			} else if (TypeManager.IsReferenceType (ltype)) {
@@ -1095,7 +1114,7 @@ namespace Mono.CSharp.Nullable
 						return ReducedExpression.Create (lc != null ? right : left, this);
 
 					right = Convert.ImplicitConversion (ec, right, ltype, loc);
-					type = left.Type;
+					type = ltype;
 					return this;
 				}
 			} else {

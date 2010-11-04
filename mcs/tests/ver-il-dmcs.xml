@@ -1787,7 +1787,7 @@
         <size>197</size>
       </method>
       <method name="Int32 Main()">
-        <size>936</size>
+        <size>956</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -1811,6 +1811,17 @@
         <size>2</size>
       </method>
       <method name="Int32 Foo(System.Object[])">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="E">
+      <method name="Int32 Foo(Int32, System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo(Double, System.Object)">
         <size>2</size>
       </method>
       <method name="Void .ctor()">
@@ -2532,7 +2543,7 @@
   <test name="dtest-043.cs">
     <type name="A">
       <method name="Int32 Main()">
-        <size>276</size>
+        <size>323</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -2603,6 +2614,33 @@
       </method>
       <method name="Void .ctor(Object, IntPtr)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-047.cs">
+    <type name="C`1[T]">
+      <method name="Void add_E(System.Func`2[System.Int32,System.Int32])">
+        <size>24</size>
+      </method>
+      <method name="Void remove_E(System.Func`2[System.Int32,System.Int32])">
+        <size>24</size>
+      </method>
+      <method name="Int32 Test(Int32)">
+        <size>163</size>
+      </method>
+      <method name="Int32 &lt;E&gt;m__0(Int32)">
+        <size>5</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>42</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -2706,6 +2744,32 @@
     <type name="Tester+&lt;Unsafe_1&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__2()">
         <size>110</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-error-02.cs">
+    <type name="A">
+      <method name="System.Object Factory()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A+N">
+      <method name="Void Foo()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>139</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -11879,19 +11943,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-333.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="Void Foo(System.Object)">
-        <size>20</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-334.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -13332,10 +13383,13 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>121</size>
+        <size>194</size>
       </method>
       <method name="Boolean Test_1()">
         <size>36</size>
+      </method>
+      <method name="Void Test(System.Object, System.EventArgs)">
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -14006,19 +14060,6 @@
       </method>
       <method name="Boolean Test()">
         <size>51</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-423.cs">
-    <type name="App">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>33</size>
-      </method>
-      <method name="Void Test(System.Object, System.EventArgs)">
-        <size>1</size>
       </method>
     </type>
   </test>

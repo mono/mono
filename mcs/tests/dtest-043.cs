@@ -18,6 +18,10 @@ class A
 		if (ch != 'a')
 			return 3;
 		
+		int? n = null;
+		dynamic d2 = null;
+		var r = n ?? d2;
+		
 		return 0;
 	}
 }
