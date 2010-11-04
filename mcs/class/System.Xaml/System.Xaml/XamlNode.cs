@@ -395,33 +395,10 @@ namespace System.Xaml
 
 	internal static class TypeExtensionMethods2
 	{
-		static bool ExaminePositionalParametersApplicable (this XamlType type)
-		{
-			if (!type.IsMarkupExtension || type.UnderlyingType == null)
-				return false;
-
-			var args = type.GetSortedConstructorArguments ();
-			if (args == null)
-				return false;
-
-			foreach (var arg in args)
-				if (arg.Type != null && !arg.Type.IsContentValue () && arg.Type.TypeConverter == null)
-					return false;
-
-			Type [] argTypes = (from arg in args select arg.Type.UnderlyingType).ToArray ();
-			if (argTypes.Any (at => at == null))
-				return false;
-			var ci = type.UnderlyingType.GetConstructor (argTypes);
-			return ci != null;
-		}
-	
 		// Note that this returns XamlMember which might not actually appear in XamlObjectReader. For example, XamlLanguage.Items won't be returned when there is no item in the collection.
 		public static IEnumerable<XamlMember> GetAllObjectReaderMembersByType (this XamlType type, object dictionaryKey)
 		{
-			// FIXME: find out why only TypeExtension and StaticExtension yield this directive. Seealso XamlObjectReaderTest.Read_CustomMarkupExtension*()
-			if (type == XamlLanguage.Type ||
-			    type == XamlLanguage.Static ||
-			    ExaminePositionalParametersApplicable (type) && type.ConstructionRequiresArguments) {
+			if (type.HasPositionalParameters ()) {
 				yield return XamlLanguage.PositionalParameters;
 				yield break;
 			}

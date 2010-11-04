@@ -334,6 +334,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		// This behavior is different from XamlXmlWriter. Compare to XamlXmlWriterTest.WriteValueList().
 		public void WriteValueList ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);

@@ -139,6 +139,34 @@ namespace System.Xaml
 			return true;
 		}
 
+		public static bool HasPositionalParameters (this XamlType type)
+		{
+			// FIXME: find out why only TypeExtension and StaticExtension yield this directive. Seealso XamlObjectReaderTest.Read_CustomMarkupExtension*()
+			return  type == XamlLanguage.Type ||
+				type == XamlLanguage.Static ||
+				ExaminePositionalParametersApplicable (type) && type.ConstructionRequiresArguments;
+		}
+		
+		static bool ExaminePositionalParametersApplicable (this XamlType type)
+		{
+			if (!type.IsMarkupExtension || type.UnderlyingType == null)
+				return false;
+
+			var args = type.GetSortedConstructorArguments ();
+			if (args == null)
+				return false;
+
+			foreach (var arg in args)
+				if (arg.Type != null && !arg.Type.IsContentValue () && arg.Type.TypeConverter == null)
+					return false;
+
+			Type [] argTypes = (from arg in args select arg.Type.UnderlyingType).ToArray ();
+			if (argTypes.Any (at => at == null))
+				return false;
+			var ci = type.UnderlyingType.GetConstructor (argTypes);
+			return ci != null;
+		}
+		
 		public static IEnumerable<XamlMember> GetConstructorArguments (this XamlType type)
 		{
 			return type.GetAllMembers ().Where (m => m.UnderlyingMember != null && m.GetCustomAttributeProvider ().GetCustomAttribute<ConstructorArgumentAttribute> (false) != null);

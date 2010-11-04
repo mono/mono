@@ -116,9 +116,16 @@ namespace System.Xaml
 		// state
 		XamlWriteState state = XamlWriteState.Initial;
 		bool ns_pushed;
+		bool accept_multiple_values; // It is PositionalParameters-specific state.
 
 		public bool HasNamespaces {
 			get { return ns_pushed; }
+		}
+		
+		// FIXME: actually this property is a hack. It should preserve stacked flag values for each nested member in current tree state.
+		public bool AcceptMultipleValues {
+			get { return accept_multiple_values; }
+			set { accept_multiple_values = value; }
 		}
 
 		public void OnClosingItem ()
@@ -221,7 +228,7 @@ namespace System.Xaml
 			case XamlWriteState.ValueWritten:
 				switch (next) {
 				case XamlNodeType.Value:
-					if (allow_parallel_values)
+					if (allow_parallel_values | accept_multiple_values)
 						return;
 					break;
 				case XamlNodeType.StartObject:
