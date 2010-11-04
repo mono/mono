@@ -1,10 +1,12 @@
 //
 // UpdatePanel.cs
 //
-// Author:
+// Authors:
 //   Igor Zelmanovich <igorz@mainsoft.com>
+//   Marek Habersack <grendel@twistedcode.net>
 //
 // (C) 2007 Mainsoft, Inc.  http://www.mainsoft.com
+// (C) 2007-2010 Novell, Inc (http://novell.com/)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -95,6 +97,22 @@ namespace System.Web.UI
 		UpdatePanelTriggerCollection _triggers;
 		UpdatePanelRenderMode _renderMode = UpdatePanelRenderMode.Block;
 		ScriptManager _scriptManager;
+		Control cachedParent;
+		UpdatePanel parentPanel;
+		bool parentPanelChecked;
+		
+		UpdatePanel ParentPanel {
+			get {
+				Control parent = Parent;
+				if (cachedParent == parent && parentPanelChecked)
+					return parentPanel;
+
+				cachedParent = parent;
+				parentPanel = FindParentPanel (parent);
+
+				return parentPanel;
+			}
+		}
 		
 		[Category ("Behavior")]
 		[DefaultValue (true)]
@@ -228,7 +246,9 @@ namespace System.Web.UI
 			base.OnInit (e);
 
 			ScriptManager.RegisterUpdatePanel (this);
-
+			if (ParentPanel != null)
+				ScriptManager.RegisterChildUpdatePanel (this);
+			
 			if (ContentTemplate != null)
 				ContentTemplate.InstantiateIn (ContentTemplateContainer);
 		}
@@ -260,14 +280,14 @@ namespace System.Web.UI
 			writer.RenderEndTag ();
 		}
 
-		UpdatePanel FindParentPanel ()
+		UpdatePanel FindParentPanel (Control parent)
 		{
-			Control parent = Parent;
+			parentPanelChecked = true;
 			while (parent != null) {
 				UpdatePanel panel = parent as UpdatePanel;
 				if (panel != null)
 					return panel;
-
+				
 				parent = parent.Parent;
 			}
 
@@ -284,7 +304,7 @@ namespace System.Web.UI
 					altWriter = writer.InnerWriter as ScriptManager.AlternativeHtmlTextWriter;
 				
 				if (altWriter == null) {
-					UpdatePanel parentPanel = FindParentPanel ();
+					UpdatePanel parentPanel = ParentPanel;
 					if (parentPanel != null)
 						altWriter = parentPanel.RenderChildrenWriter;
 				}
@@ -300,7 +320,12 @@ namespace System.Web.UI
 					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
 					base.RenderChildren (w);
 					w.Flush ();
-					ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
+					if (sb.Length > 0) {
+						if (ParentPanel != null)
+							writer.Write (sb.ToString ());
+						else
+							ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
+					}
 				} finally {
 					RenderChildrenWriter = null;
 				}
