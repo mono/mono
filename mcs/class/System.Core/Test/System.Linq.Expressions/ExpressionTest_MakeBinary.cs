@@ -179,6 +179,11 @@ namespace MonoTests.System.Linq.Expressions
 			FailInt (ExpressionType.Quote);
 			FailInt (ExpressionType.TypeAs);
 			FailInt (ExpressionType.TypeIs);
+
+			Expression.MakeBinary (
+				ExpressionType.ArrayIndex,
+				Expression.Constant (new int[] { 1, 5, 15 }),
+				Expression.Constant (1));
 		}
 
 		public T CodeGen<T> (Func<Expression, Expression, Expression> bin, T v1, T v2)
