@@ -203,6 +203,7 @@ namespace System.IO
 				throw new ArgumentException ("Path is empty");
 			}
 
+			this.anonymous = anonymous;
 			// ignore the Inheritable flag
 			share &= ~FileShare.Inheritable;
 
@@ -311,7 +312,6 @@ namespace System.IO
 
 			this.access = access;
 			this.owner = true;
-			this.anonymous = anonymous;
 
 			/* Can we open non-files by name? */
 			
