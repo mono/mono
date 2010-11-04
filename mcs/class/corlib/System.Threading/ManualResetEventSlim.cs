@@ -25,7 +25,6 @@
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 
 using System;
-using System.Diagnostics;
 
 namespace System.Threading
 {
@@ -39,6 +38,8 @@ namespace System.Threading
 		readonly int spinCount;
 
 		ManualResetEvent handle;
+
+		readonly static Watch sw = Watch.StartNew ();
 
 		public ManualResetEventSlim () : this (false, defaultSpinCount)
 		{
@@ -72,6 +73,7 @@ namespace System.Threading
 		public void Reset ()
 		{
 			Interlocked.Exchange (ref state, isNotSet);
+			//state = isNotSet;
 			if (handle != null)
 				handle.Reset ();
 		}
@@ -79,6 +81,7 @@ namespace System.Threading
 		public void Set ()
 		{
 			Interlocked.Exchange (ref state, isSet);
+			//state = isSet;
 			if (handle != null)
 				handle.Set ();
 		}
@@ -109,19 +112,19 @@ namespace System.Threading
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout",
 				                                       "millisecondsTimeout is a negative number other than -1");
 
-			Watch s = Watch.StartNew ();
-			SpinWait sw = new SpinWait ();
+			long start = ms == -1 ? 0 : sw.ElapsedMilliseconds;
+			SpinWait wait = new SpinWait ();
 
 			while (state == isNotSet) {
 				token.ThrowIfCancellationRequested ();
 
-				if (ms > -1 && s.ElapsedMilliseconds > ms)
+				if (ms > -1 && (sw.ElapsedMilliseconds - start) > ms)
 					return false;
 
-				if (sw.Count < spinCount) {
-					sw.SpinOnce ();
+				if (wait.Count < spinCount) {
+					wait.SpinOnce ();
 				} else {
-					int waitTime = ms == -1 ? -1 : Math.Max (ms - (int)s.ElapsedMilliseconds, 1);
+					int waitTime = ms == -1 ? -1 : Math.Max (ms - (int)(sw.ElapsedMilliseconds - start) , 1);
 					WaitHandle handle = WaitHandle;
 					if (state == isSet)
 						return true;
