@@ -49,6 +49,8 @@ namespace System.Threading
 		int threadWhoTookLock;
 		readonly bool isThreadOwnerTrackingEnabled;
 
+		static Watch sw = Watch.StartNew ();
+
 		public bool IsThreadOwnerTrackingEnabled {
 			get {
 				return isThreadOwnerTrackingEnabled;
@@ -120,7 +122,7 @@ namespace System.Threading
 			if (isThreadOwnerTrackingEnabled && IsHeldByCurrentThread)
 				throw new LockRecursionException ();
 
-			Watch sw = Watch.StartNew ();
+			long start = milliSeconds == -1 ? 0 : sw.ElapsedMilliseconds;
 
 			do {
 				long u = ticket.Users;
@@ -134,7 +136,7 @@ namespace System.Threading
 					threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
 					break;
 				}
-			} while (milliSeconds == -1 || (milliSeconds > 0 && sw.ElapsedMilliseconds < milliSeconds));
+			} while (milliSeconds == -1 || (sw.ElapsedMilliseconds - start) < milliSeconds);
 		}
 
 		public void Exit ()
