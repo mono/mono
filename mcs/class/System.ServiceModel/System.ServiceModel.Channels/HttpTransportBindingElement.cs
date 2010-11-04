@@ -38,6 +38,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Channels.Http;
 #endif
 using System.ServiceModel.Description;
+using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
@@ -265,12 +266,30 @@ namespace System.ServiceModel.Channels
 		}
 
 #if !NET_2_1
-		[MonoTODO]
 		void IPolicyExportExtension.ExportPolicy (
 			MetadataExporter exporter,
 			PolicyConversionContext context)
 		{
-			throw new NotImplementedException ();
+			if (exporter == null)
+				throw new ArgumentNullException ("exporter");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+
+			PolicyAssertionCollection assertions = context.GetBindingAssertions ();
+			XmlDocument doc = new XmlDocument ();
+
+			assertions.Add (doc.CreateElement ("wsaw", "UsingAddressing", "http://www.w3.org/2006/05/addressing/wsdl"));
+
+			switch (auth_scheme) {
+				case AuthenticationSchemes.Basic:
+				case AuthenticationSchemes.Digest:
+				case AuthenticationSchemes.Negotiate:
+				case AuthenticationSchemes.Ntlm:
+					assertions.Add (doc.CreateElement ("http", 
+						auth_scheme.ToString () + "Authentication", 
+						"http://schemas.microsoft.com/ws/06/2004/policy/http"));
+					break;
+			}
 		}
 
 		[MonoTODO]
