@@ -117,6 +117,13 @@ namespace System.Collections.Concurrent
 			return AddOrUpdate (key, (_) => addValue, updateValueFactory);
 		}
 
+		TValue AddOrUpdate (TKey key, TValue addValue, TValue updateValue)
+		{
+			return internalDictionary.InsertOrUpdate (Hash (key),
+			                                          Make (key, addValue),
+			                                          Make (key, updateValue)).Value;
+		}
+
 		TValue GetValue (TKey key)
 		{
 			TValue temp;
@@ -145,7 +152,7 @@ namespace System.Collections.Concurrent
 				return GetValue (key);
 			}
 			set {
-				AddOrUpdate (key, (_) => value, (_, __) => value);
+				AddOrUpdate (key, value, value);
 			}
 		}
 

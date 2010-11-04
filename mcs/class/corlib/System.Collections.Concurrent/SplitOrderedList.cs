@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0 || INSIDE_SYSTEM_WEB
 
 using System;
 using System.Threading;
@@ -45,7 +45,7 @@ namespace System.Collections.Concurrent
 		class Node 
 		{
 			public readonly bool Marked;
-			public readonly uint Key;
+			public uint Key;
 			public T Data;
 			
 			public Node Next;
@@ -56,7 +56,7 @@ namespace System.Collections.Concurrent
 				this.Key = key;
 				this.Data = data;
 			}
-			
+
 			protected Node (bool marked)
 			{
 				this.Marked = marked;
@@ -86,7 +86,7 @@ namespace System.Collections.Concurrent
 
 		ManualResetEventSlim mres = new ManualResetEventSlim (true);
 		SpinLock mresLock = new SpinLock ();
-		
+
 		public SplitOrderedList ()
 		{
 			head = new Node (0, default (T));
@@ -111,6 +111,16 @@ namespace System.Collections.Concurrent
 
 			// FIXME: this should have a CAS-like behavior
 			return current.Data = updateGetter (current.Data);
+		}
+
+		public T InsertOrUpdate (uint key, T addValue, T updateValue)
+		{
+			Node current;
+			if (InsertInternal (key, addValue, null, out current))
+				return current.Data;
+
+			// FIXME: this should have a CAS-like behavior
+			return current.Data = updateValue;
 		}
 		
 		public bool Insert (uint key, T data)
@@ -339,7 +349,7 @@ namespace System.Collections.Concurrent
 				}
 			} while (true);
 		}
-	
+
 		bool ListDelete (Node startPoint, uint key, out T data)
 		{
 			Node rightNode = null, rightNodeNext = null, leftNode = null;
@@ -358,8 +368,8 @@ namespace System.Collections.Concurrent
 						break;
 			} while (true);
 			
-			if (Interlocked.CompareExchange (ref leftNode.Next, rightNode, rightNodeNext) != rightNodeNext)
-				rightNode = ListSearch (rightNode.Key, ref leftNode, startPoint);
+			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNodeNext)
+				ListSearch (rightNode.Key, ref leftNode, startPoint);
 			
 			return true;
 		}
