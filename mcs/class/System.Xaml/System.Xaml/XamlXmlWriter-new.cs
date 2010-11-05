@@ -492,7 +492,9 @@ namespace System.Xaml
 				return;
 			if (member == XamlLanguage.Items)
 				return;
-			if (member != null && member.Type.IsCollection && member.IsReadOnly)
+			if (member.Type.IsCollection && member.IsReadOnly)
+				return;
+			if (member.DeclaringType != null && member == member.DeclaringType.ContentProperty)
 				return;
 
 			if (inside_toplevel_positional_parameter) {
@@ -574,7 +576,9 @@ namespace System.Xaml
 				return;
 			if (member == XamlLanguage.Items)
 				return;
-			if (member != null && member.Type.IsCollection && member.IsReadOnly)
+			if (member.Type.IsCollection && member.IsReadOnly)
+				return;
+			if (member.DeclaringType != null && member == member.DeclaringType.ContentProperty)
 				return;
 
 			var state = object_states.Peek ();

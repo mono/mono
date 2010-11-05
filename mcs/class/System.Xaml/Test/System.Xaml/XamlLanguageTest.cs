@@ -704,6 +704,7 @@ namespace MonoTests.System.Xaml
 			var l = t.GetAllMembers ().ToArray ();
 			Assert.AreEqual (1, l.Length, "#31");
 			l.First (m => m.Name == "Name");
+			Assert.AreEqual (l [0], t.ContentProperty, "#32");
 		}
 
 		[Test]
