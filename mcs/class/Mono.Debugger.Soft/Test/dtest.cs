@@ -94,7 +94,7 @@ public class DebuggerTests
 		}
 
 		Assert.IsInstanceOfType (typeof (BreakpointEvent), e);
-		Assert.AreEqual (m, (e as BreakpointEvent).Method);
+		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
 
 		return (e as BreakpointEvent);
 	}
@@ -886,7 +886,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("only")]
 	public void Type_SetValue () {
 		var e = run_until ("o1");
 		var frame = e.Thread.GetFrames () [0];
@@ -1320,8 +1319,8 @@ public class DebuggerTests
 		StackFrame frame = e.Thread.GetFrames () [0];
 
 		var locals = frame.Method.GetLocals ();
-		Assert.AreEqual (5, locals.Length);
-		for (int i = 0; i < 5; ++i) {
+		Assert.AreEqual (6, locals.Length);
+		for (int i = 0; i < 6; ++i) {
 			if (locals [i].Name == "args") {
 				Assert.IsTrue (locals [i].IsArg);
 				Assert.AreEqual ("String[]", locals [i].Type.Name);
@@ -1337,6 +1336,10 @@ public class DebuggerTests
 			} else if (locals [i].Name == "s") {
 				Assert.IsFalse (locals [i].IsArg);
 				Assert.AreEqual ("String", locals [i].Type.Name);
+			} else if (locals [i].Name == "t") {
+				// gshared
+				Assert.IsTrue (locals [i].IsArg);
+				Assert.AreEqual ("String", locals [i].Type.Name);
 			} else {
 				Assert.Fail ();
 			}
@@ -1344,6 +1347,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("only")]
 	public void Locals () {
 		var be = run_until ("locals1");
 
@@ -1386,6 +1390,8 @@ public class DebuggerTests
 				AssertValue (42, vals [i]);
 			if (locals [i].Name == "s")
 				AssertValue ("AB", vals [i]);
+			if (locals [i].Name == "t")
+				AssertValue ("ABC", vals [i]);
 		}
 
 		// Argument checking
@@ -1668,7 +1674,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("only")]
 	public void CreateBoxedValue () {
 		ObjectMirror o = vm.RootDomain.CreateBoxedValue (new PrimitiveValue (vm, 42));
 
@@ -2000,6 +2005,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("only")]
 	public void Frame_SetValue () {
 		Event e = run_until ("locals2");
 
@@ -2024,6 +2030,11 @@ public class DebuggerTests
 		var p = frame.Method.GetParameters ()[1];
 		frame.SetValue (p, vm.CreateValue (7));
 		AssertValue (7, frame.GetValue (p));
+
+		// gshared
+		p = frame.Method.GetParameters ()[2];
+		frame.SetValue (p, vm.RootDomain.CreateString ("DEF"));
+		AssertValue ("DEF", frame.GetValue (p));
 
 		// argument checking
 
