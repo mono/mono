@@ -118,6 +118,46 @@ namespace MonoTests.System.Xaml
 		}
 	}
 
+	// The trailing "A" gives significant difference in XML output!
+	public class MyArrayExtensionA : MarkupExtension
+	{
+		public MyArrayExtensionA ()
+		{
+			items = new ArrayList ();
+		}
+
+		public MyArrayExtensionA (Array array)
+		{
+			items = new ArrayList (array);
+			this.Type = array.GetType ().GetElementType ();
+		}
+		
+		public MyArrayExtensionA (Type type)
+			: this ()
+		{
+			this.Type = type;
+		}
+
+		IList items;
+		public IList Items {
+			get { return items; }
+			private set { items = value; }
+		}
+		
+		[ConstructorArgument ("type")]
+		public Type Type { get; set; }
+		
+		public override object ProvideValue (IServiceProvider serviceProvider)
+		{
+			if (Type == null)
+				throw new InvalidOperationException ("Type property must be set before calling ProvideValue method");
+
+			Array a = Array.CreateInstance (Type, Items.Count);
+			Items.CopyTo (a, 0);
+			return a;
+		}
+	}
+
 	class TestClass1
 	{
 	}

@@ -1,3 +1,4 @@
+#if false
 //
 // Copyright (C) 2010 Novell Inc. http://novell.com
 //
@@ -402,3 +403,4 @@ namespace System.Xaml
 		}
 	}
 }
+#endif

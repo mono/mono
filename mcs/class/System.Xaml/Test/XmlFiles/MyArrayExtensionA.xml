@@ -1,0 +1,7 @@
+<MyArrayExtensionA Type="x:Int32" xmlns="clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <MyArrayExtensionA.Items>
+    <x:Int32>5</x:Int32>
+    <x:Int32>-3</x:Int32>
+    <x:Int32>0</x:Int32>
+  </MyArrayExtensionA.Items>
+</MyArrayExtensionA>
