@@ -46,6 +46,7 @@ namespace System.Xaml
 		{
 			internal SpecialTypeNameList ()
 			{
+				// FIXME: Extensions can be removed from this list.
 				Add (new SpecialTypeName ("Array", XamlLanguage.Array));
 				Add (new SpecialTypeName ("Member", XamlLanguage.Member));
 				Add (new SpecialTypeName ("Null", XamlLanguage.Null));

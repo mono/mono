@@ -239,6 +239,8 @@ namespace System.Xaml
 
 		internal string GetInternalXmlName ()
 		{
+			if (IsMarkupExtension && Name.EndsWith ("Extension", StringComparison.Ordinal))
+				return Name.Substring (0, Name.Length - 9);
 			var stn = XamlLanguage.SpecialNames.FirstOrDefault (s => s.Type == this);
 			return stn != null ? stn.Name : Name;
 		}
