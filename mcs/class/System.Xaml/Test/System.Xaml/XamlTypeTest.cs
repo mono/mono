@@ -705,6 +705,15 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (xm.Type.IsCollection, "#3");
 			Assert.IsFalse (xm.Type.IsConstructible, "#4");
 		}
+		
+		[Test]
+		public void ContentIncluded ()
+		{
+			var xt = new XamlType (typeof (ContentIncludedClass), sctx);
+			var xm = xt.GetMember ("Content");
+			Assert.AreEqual (xm, xt.ContentProperty, "#1");
+			Assert.IsTrue (xt.GetAllMembers ().Contains (xm), "#2");
+		}
 	}
 
 	class MyXamlType : XamlType

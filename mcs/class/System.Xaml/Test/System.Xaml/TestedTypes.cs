@@ -348,4 +348,10 @@ namespace MonoTests.System.Xaml
 
 		public List<int> Items { get; set; } // it is settable, which makes difference.
 	}
+
+	[ContentProperty ("Content")]
+	public class ContentIncludedClass
+	{
+		public string Content { get; set; }
+	}
 }

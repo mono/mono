@@ -1523,6 +1523,41 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsFalse (r.Read (), "#89");
 		}
+		
+		[Test]
+		public void ContentIncluded ()
+		{
+			var obj = new ContentIncludedClass () { Content = "foo" };
+			var r = new XamlObjectReader (obj);
+
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#1-4");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (ContentIncludedClass), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+			Assert.AreEqual (obj, r.Instance, "so#1-4");
+
+			Assert.IsTrue (r.Read (), "sposprm#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sposprm#2");
+			Assert.AreEqual (xt.GetMember ("Content"), r.Member, "sposprm#3");
+
+			Assert.IsTrue (r.Read (), "sva#1-1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "sva#1-2");
+			Assert.AreEqual ("foo", r.Value, "sva#1-3");
+
+			Assert.IsTrue (r.Read (), "eposprm#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eposprm#2"); // XamlLanguage.PositionalParameters
+
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
 
 		void SimpleReadStandardType (object instance)
 		{

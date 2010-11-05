@@ -89,6 +89,17 @@ namespace System.Xaml
 		}
 	}
 
+	internal enum XamlWriteState
+	{
+		Initial,
+		ObjectStarted,
+		MemberStarted,
+		ObjectWritten,
+		ValueWritten,
+		MemberDone,
+		End
+	}
+
 	internal abstract class XamlWriterStateManager
 	{
 		public XamlWriterStateManager (bool isXmlWriter)
@@ -97,17 +108,6 @@ namespace System.Xaml
 			allow_object_after_value = isXmlWriter;
 			allow_parallel_values = !isXmlWriter;
 			allow_empty_member = !isXmlWriter;
-		}
-
-		enum XamlWriteState
-		{
-			Initial,
-			ObjectStarted,
-			MemberStarted,
-			ObjectWritten,
-			ValueWritten,
-			MemberDone,
-			End
 		}
 
 		// configuration
@@ -120,6 +120,10 @@ namespace System.Xaml
 
 		public bool HasNamespaces {
 			get { return ns_pushed; }
+		}
+		
+		public XamlWriteState State {
+			get { return state; }
 		}
 		
 		// FIXME: actually this property is a hack. It should preserve stacked flag values for each nested member in current tree state.
