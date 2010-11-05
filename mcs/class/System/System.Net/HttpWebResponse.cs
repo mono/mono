@@ -401,7 +401,7 @@ namespace System.Net
 					if (cookie.Expires != DateTime.MinValue)
 						break;
 
-					cookie.Expires = TryParseCookieExpires (val);
+					cookie.Expires = CookieParser.TryParseCookieExpires (val);
 					break;
 				case "PATH":
 					cookie.Path = val;
@@ -439,112 +439,6 @@ namespace System.Net
 			foreach (string cookie_str in cookies)
 				SetCookie (cookie_str);
 		}
-
-		string[] cookieExpiresFormats =
-			new string[] { "r",
-					"ddd, dd'-'MMM'-'yyyy HH':'mm':'ss 'GMT'",
-					"ddd, dd'-'MMM'-'yy HH':'mm':'ss 'GMT'" };
-
-		DateTime TryParseCookieExpires (string value)
-		{
-			if (value == null || value.Length == 0)
-				return DateTime.MinValue;
-
-			for (int i = 0; i < cookieExpiresFormats.Length; i++)
-			{
-				try {
-					DateTime cookieExpiresUtc = DateTime.ParseExact (value, cookieExpiresFormats [i], CultureInfo.InvariantCulture);
-
-					//convert UTC/GMT time to local time
-					cookieExpiresUtc = DateTime.SpecifyKind (cookieExpiresUtc, DateTimeKind.Utc);
-					return TimeZone.CurrentTimeZone.ToLocalTime (cookieExpiresUtc);
-				} catch {}
-			}
-
-			//If we can't parse Expires, use cookie as session cookie (expires is DateTime.MinValue)
-			return DateTime.MinValue;
-		}
 	}	
-
-	class CookieParser {
-		string header;
-		int pos;
-		int length;
-
-		public CookieParser (string header) : this (header, 0)
-		{
-		}
-
-		public CookieParser (string header, int position)
-		{
-			this.header = header;
-			this.pos = position;
-			this.length = header.Length;
-		}
-
-		public bool GetNextNameValue (out string name, out string val)
-		{
-			name = null;
-			val = null;
-
-			if (pos >= length)
-				return false;
-
-			name = GetCookieName ();
-			if (pos < header.Length && header [pos] == '=') {
-				pos++;
-				val = GetCookieValue ();
-			}
-
-			if (pos < length && header [pos] == ';')
-				pos++;
-
-			return true;
-		}
-
-		string GetCookieName ()
-		{
-			int k = pos;
-			while (k < length && Char.IsWhiteSpace (header [k]))
-				k++;
-
-			int begin = k;
-			while (k < length && header [k] != ';' &&  header [k] != '=')
-				k++;
-
-			pos = k;
-			return header.Substring (begin, k - begin).Trim ();
-		}
-
-		string GetCookieValue ()
-		{
-			if (pos >= length)
-				return null;
-
-			int k = pos;
-			while (k < length && Char.IsWhiteSpace (header [k]))
-				k++;
-
-			int begin;
-			if (header [k] == '"'){
-				int j;
-				begin = ++k;
-
-				while (k < length && header [k] != '"')
-					k++;
-
-				for (j = k; j < length && header [j] != ';'; j++)
-					;
-				pos = j;
-			} else {
-				begin = k;
-				while (k < length && header [k] != ';')
-					k++;
-				pos = k;
-			}
-				
-			return header.Substring (begin, k - begin).Trim ();
-		}
-	}
 }
 

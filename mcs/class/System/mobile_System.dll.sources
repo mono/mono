@@ -329,6 +329,7 @@ System.Net/Cookie.cs
 System.Net/CookieCollection.cs
 System.Net/CookieContainer.cs
 System.Net/CookieException.cs
+System.Net/CookieParser.cs
 System.Net/CredentialCache.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
