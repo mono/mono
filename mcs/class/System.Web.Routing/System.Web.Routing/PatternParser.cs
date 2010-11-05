@@ -306,7 +306,6 @@ namespace System.Web.Routing
 				if (String.IsNullOrEmpty (argSegs [argsCount - 1]))
 					argsCount--; // path ends with a trailinig '/'
 			}
-			
 			bool haveDefaults = defaults != null && defaults.Count > 0;
 
 			if (argsCount == 1 && String.IsNullOrEmpty (argSegs [0]))
@@ -356,7 +355,8 @@ namespace System.Web.Routing
 					if (!defaults.ContainsKey (tokens [0].Name))
 						return null;
 				}
-			}
+			} else if (!haveSegmentWithCatchAll && argsCount > segmentCount)
+				return null;
 			
 			return AddDefaults (ret, defaults);
 		}
