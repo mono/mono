@@ -216,6 +216,7 @@ namespace Mono.Cecil {
 
 		public ModuleKind Kind {
 			get { return kind; }
+			set { kind = value; }
 		}
 
 		public TargetRuntime Runtime {
@@ -431,6 +432,9 @@ namespace Mono.Cecil {
 		{
 			CheckFullName (fullName);
 
+			if (!HasImage)
+				return false;
+
 			return Read (this, (_, reader) => reader.GetTypeReference (scope, fullName) != null);
 		}
 
@@ -443,16 +447,27 @@ namespace Mono.Cecil {
 		{
 			CheckFullName (fullName);
 
+			if (!HasImage) {
+				type = null;
+				return false;
+			}
+
 			return (type = Read (this, (_, reader) => reader.GetTypeReference (scope, fullName))) != null;
 		}
 
 		public IEnumerable<TypeReference> GetTypeReferences ()
 		{
+			if (!HasImage)
+				return Empty<TypeReference>.Array;
+
 			return Read (this, (_, reader) => reader.GetTypeReferences ());
 		}
 
 		public IEnumerable<MemberReference> GetMemberReferences ()
 		{
+			if (!HasImage)
+				return Empty<MemberReference>.Array;
+
 			return Read (this, (_, reader) => reader.GetMemberReferences ());
 		}
 
