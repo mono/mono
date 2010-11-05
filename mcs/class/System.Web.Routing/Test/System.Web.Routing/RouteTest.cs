@@ -936,6 +936,30 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual ("y", rd.Values ["bar"], "#4-2");
 		}
 
+		[Test (Description="Bug #651593")]
+		public void GetRouteData46 ()
+		{
+			var r = new Route ("Foo", null) {
+				Defaults = new RouteValueDictionary (new {
+					controller = "Foo",
+					action = "Index"
+				})
+			};
+			var hc = new HttpContextStub ("/Foo/123", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNull (rd, "#1");
+
+			r = new Route ("Foo", null) {
+				Defaults = new RouteValueDictionary (new {
+					controller = "Foo",
+					action = "Index"
+				})
+			};
+			hc = new HttpContextStub ("~/Foo/123", String.Empty);
+			rd = r.GetRouteData (hc);
+			Assert.IsNull (rd, "#2");
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetVirtualPathNullContext ()
