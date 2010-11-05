@@ -34,6 +34,7 @@ System.Net.Policy/SiteOfOriginPolicy.cs
 ../System/System.Net/CookieCollection.cs
 ../System/System.Net/CookieContainer.cs
 ../System/System.Net/CookieException.cs
+../System/System.Net/CookieParser.cs
 ../System/System.Net/DnsEndPoint.cs
 ../System/System.Net/EndPoint.cs
 ../System/System.Net/HttpRequestHeader.cs
