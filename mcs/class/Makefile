@@ -63,9 +63,6 @@ common_dirs := \
 	System.Design			\
 	PEAPI				\
 	Npgsql				\
-	Compat.ICSharpCode.SharpZipLib	\
-	ICSharpCode.SharpZipLib		\
-	Compat.ICSharpCode.SharpZipLib	\
 	Commons.Xml.Relaxng		\
 	Novell.Directory.Ldap		\
 	Mono.Security.Win32		\
@@ -77,6 +74,7 @@ common_dirs := \
 	System.ServiceProcess           \
 	System.Drawing.Design		\
 	System.Design			\
+	ICSharpCode.SharpZipLib		\
 	Mono.Http			\
 	Mono.Cairo                      \
 	IBM.Data.DB2			\
@@ -123,7 +121,8 @@ net_2_0_dirs := \
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
-	System.Web.Extensions.Design_1.0
+	System.Web.Extensions.Design_1.0	\
+	Compat.ICSharpCode.SharpZipLib
 
 net_2_1_bootstrap_dirs := \
 	corlib		\
