@@ -625,6 +625,9 @@ namespace MonoTests.System.Xaml
 			Assert.IsNotNull (xm, "#3");
 			xm = xt.GetAliasedProperty (XamlLanguage.Lang);
 			Assert.IsNotNull (xm, "#4");
+			
+			xt = new XamlType (typeof (Dictionary<int,string>), xt.SchemaContext);
+			Assert.IsNull (xt.GetAliasedProperty (XamlLanguage.Key), "#5");
 		}
 
 		[Test]

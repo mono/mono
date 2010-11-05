@@ -627,6 +627,8 @@ namespace System.Xaml
 				return AllowedMemberLocations.Attribute;
 			if (w.WriteState == WriteState.Content)
 				return AllowedMemberLocations.MemberElement;
+			if (xt.IsDictionary && xm != XamlLanguage.Key)
+				return AllowedMemberLocations.MemberElement; // as each item holds a key.
 
 			var xd = xm as XamlDirective;
 			if (xd != null && (xd.AllowedLocation & AllowedMemberLocations.Attribute) == 0)
@@ -640,7 +642,9 @@ namespace System.Xaml
 			if (xd == null && !xt.GetAllMembers ().Contains (xm))
 				return AllowedMemberLocations.None;
 
-			if (xm.TypeConverter != null && xm.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
+			// FIXME: this is likely unnecessarily complicated.
+			var mt = (xt != null && xd == XamlLanguage.Key ? xt.KeyType : xm.Type) ?? xm.Type;
+			if (mt != null && mt.TypeConverter != null && mt.TypeConverter.ConverterInstance != null && mt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
 				return AllowedMemberLocations.Attribute;
 
 			return AllowedMemberLocations.MemberElement;

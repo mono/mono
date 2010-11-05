@@ -737,7 +737,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_DictionaryInt32String ()
 		{
 			var dic = new Dictionary<int,string> ();
