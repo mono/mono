@@ -215,7 +215,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // cosmetic String.Length position issue.
 		public void WriteObjectInsideMember ()
 		{
 			string xml = @"<?xml version='1.0' encoding='utf-16'?><String xmlns='http://schemas.microsoft.com/winfx/2006/xaml'><String.Length><String /></String.Length></String>";
@@ -231,7 +230,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // cosmetic String.Length position issue.
 		public void ValueAfterObject ()
 		{
 			string xml = @"<?xml version='1.0' encoding='utf-16'?><String xmlns='http://schemas.microsoft.com/winfx/2006/xaml'><String.Length><String />foo</String.Length></String>";
@@ -249,7 +247,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // cosmetic String.Length position issue.
+		[Category ("NotWorking")] // This is an abnormal operation and I cannot completely care about such operations.
 		public void ValueAfterObject2 ()
 		{
 			string xml = @"<?xml version='1.0' encoding='utf-16'?><String xmlns='http://schemas.microsoft.com/winfx/2006/xaml'><String.Length>foo<String />foo</String.Length></String>";
@@ -268,7 +266,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // cosmetic String.Length position issue.
 		public void ValueAfterObject3 ()
 		{
 			string xml = @"<?xml version='1.0' encoding='utf-16'?><String xmlns='http://schemas.microsoft.com/winfx/2006/xaml'><String.Length><String />foo<String />foo</String.Length></String>";
@@ -322,7 +319,6 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		[ExpectedException (typeof (XamlXmlWriterException))]
-		[Category ("NotWorking")] // it raises ArgumentException earlier, which should not matter.
 		public void WriteValueList ()
 		{
 			var sw = new StringWriter ();
@@ -378,7 +374,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // cosmetic String.Length position issue.
 		public void ObjectThenNamespaceThenObjectThenObject ()
 		{
 			string xml = @"<?xml version='1.0' encoding='utf-16'?><String xmlns='http://schemas.microsoft.com/winfx/2006/xaml'><String.Length><String /><String /></String.Length></String>";
@@ -462,7 +457,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // cosmetic String.Length position issue.
 		public void StartMemberAfterNamespace ()
 		{
 			// This test shows:

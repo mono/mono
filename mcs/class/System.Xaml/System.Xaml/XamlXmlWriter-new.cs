@@ -1,11 +1,3 @@
-// dmcs -d:DOTNET -r:System.Xaml -debug System.Xaml/XamlXmlWriter-new.cs System.Xaml/TypeExtensionMethods.cs System.Xaml/XamlWriterStateManager.cs System.Xaml/XamlNameResolver.cs System.Xaml/PrefixLookup.cs ../../build/common/MonoTODOAttribute.cs Test/System.Xaml/TestedTypes.cs
-
-#define USE_NEW
-#if USE_NEW
-
-
-
-
 //
 // Copyright (C) 2010 Novell Inc. http://novell.com
 //
@@ -28,6 +20,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+// To use this under .NET, compile sources as:
+//
+//	dmcs -d:DOTNET -r:System.Xaml -debug System.Xaml/XamlXmlWriter-new.cs System.Xaml/TypeExtensionMethods.cs System.Xaml/XamlWriterStateManager.cs System.Xaml/XamlNameResolver.cs System.Xaml/PrefixLookup.cs ../../build/common/MonoTODOAttribute.cs Test/System.Xaml/TestedTypes.cs
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -171,8 +168,6 @@ namespace System.Xaml
 
 	internal abstract class XamlWriterInternalBase
 	{
-		static readonly BindingFlags static_flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-
 		public XamlWriterInternalBase (XamlSchemaContext schemaContext, XamlWriterStateManager manager)
 		{
 			this.sctx = schemaContext;
@@ -184,8 +179,6 @@ namespace System.Xaml
 		XamlSchemaContext sctx;
 		XamlWriterStateManager manager;
 
-		bool member_had_namespaces = false;
-		
 		IServiceProvider service_provider;
 
 		internal Stack<ObjectState> object_states = new Stack<ObjectState> ();
@@ -218,6 +211,7 @@ namespace System.Xaml
 
 			public XamlMember Member;
 			public object Value;
+			public AllowedMemberLocations OccuredAs = AllowedMemberLocations.None;
 		}
 
 		public void CloseAll ()
@@ -248,9 +242,13 @@ namespace System.Xaml
 			return null;
 		}
 
+		protected MemberAndValue CurrentMemberState {
+			get { return object_states.Count > 0 ? object_states.Peek ().WrittenProperties.LastOrDefault () : null; }
+		}
+
 		protected XamlMember CurrentMember {
 			get {
-				var mv = object_states.Count > 0 ? object_states.Peek ().WrittenProperties.LastOrDefault () : null;
+				var mv = CurrentMemberState;
 				return mv != null ? mv.Member : null;
 			}
 		}
@@ -261,17 +259,9 @@ namespace System.Xaml
 
 			var xm = CurrentMember;
 
-			// FIXME: see GetObjectOnNonNullString() test. Below is invalid.
 			if (!xm.Type.IsCollection)
 				throw new InvalidOperationException (String.Format ("WriteGetObject method can be invoked only when current member '{0}' is of collection type", xm.Name));
 
-/*
-			var instance = xm.Invoker.GetValue (object_states.Peek ().Value);
-			if (instance == null)
-				throw new XamlObjectWriterException (String.Format ("The value  for '{0}' property is null", xm.Name));
-
-			var state = new ObjectState () {Type = sctx.GetXamlType (instance.GetType ()), Value = instance, IsInstantiated = true, IsGetObject = true};
-*/
 			var state = new ObjectState () {Type = xm.Type, IsGetObject = true};
 
 			object_states.Push (state);
@@ -297,16 +287,10 @@ namespace System.Xaml
 
 			manager.StartObject ();
 
-			var xm = CurrentMember;
-//			var pstate = xm != null ? object_states.Peek () : null;
-//			var wpl = xm != null && xm != XamlLanguage.Items ? pstate.WrittenProperties : null;
-//			if (wpl != null && wpl.Any (wp => wp.Member == xm))
-//				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", xm, pstate.Type));
+			OnWriteStartObject (xamlType);
 
 			var cstate = new ObjectState () {Type = xamlType, IsInstantiated = false};
 			object_states.Push (cstate);
-
-			OnWriteStartObject (xamlType);
 		}
 		
 		public void WriteValue (object value)
@@ -318,10 +302,6 @@ namespace System.Xaml
 
 			var xm = CurrentMember;
 			var state = object_states.Peek ();
-
-//			var wpl = xm != null && xm != XamlLanguage.Items ? state.WrittenProperties : null;
-//			if (wpl != null && wpl.Any (wp => wp.Member == xm))
-//				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", xm, state.Type));
 
 			if (xm == XamlLanguage.Initialization ||
 			    xm == state.Type.ContentProperty) {
@@ -342,9 +322,6 @@ namespace System.Xaml
 			if (property == null)
 				throw new ArgumentNullException ("property");
 
-			if (manager.HasNamespaces)
-				member_had_namespaces = true;
-
 			manager.StartMember ();
 			if (property == XamlLanguage.PositionalParameters)
 				// this is an exception that indicates the state manager to accept more than values within this member.
@@ -352,11 +329,6 @@ namespace System.Xaml
 
 			var state = object_states.Peek ();
 			var wpl = state.WrittenProperties;
-			// FIXME: enable this. Duplicate property check should
-			// be differentiate from duplicate contents (both result
-			// in XamlDuplicateMemberException though).
-			// Now it is done at WriteStartObject/WriteValue, but
-			// it is simply wrong.
 			if (wpl.Any (wp => wp.Member == property))
 				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", property, object_states.Peek ().Type));
 			wpl.Add (new MemberAndValue (property));
@@ -370,19 +342,9 @@ namespace System.Xaml
 		{
 			manager.EndObject (object_states.Count > 1);
 
-			//InitializeObjectIfRequired (false); // this is required for such case that there was no StartMember call.
-
 			OnWriteEndObject ();
 
-			var state = object_states.Pop ();
-/*
-			var obj = GetCorrectlyTypedValue (state.Type, state.Value);
-			if (CurrentMember != null) {
-				var pstate = object_states.Peek ();
-				pstate.Contents.Add (obj);
-				pstate.WrittenProperties.Add (new MemberAndValue (CurrentMember));
-			}
-*/
+			object_states.Pop ();
 		}
 
 		public void WriteEndMember ()
@@ -401,47 +363,9 @@ namespace System.Xaml
 			if (xm == XamlLanguage.PositionalParameters)
 				state.PositionalParameterIndex = -1;
 
-/*
-			if (xm == XamlLanguage.FactoryMethod) {
-				if (contents.Count != 1 || !(contents [0] is string))
-					throw new XamlObjectWriterException (String.Format ("FactoryMethod must be non-empty string name. {0} value exists.", contents.Count > 0 ? contents [0] : "0"));
-				state.FactoryMethod = (string) contents [0];
-			} else if (xm == XamlLanguage.Arguments) {
-				if (state.FactoryMethod != null) {
-					var mi = state.Type.UnderlyingType.GetMethods (static_flags).FirstOrDefault (mii => mii.Name == state.FactoryMethod && mii.GetParameters ().Length == contents.Count);
-					if (mi == null)
-						throw new XamlObjectWriterException (String.Format ("Specified static factory method '{0}' for type '{1}' was not found", state.FactoryMethod, state.Type));
-					state.Value = mi.Invoke (null, contents.ToArray ());
-				}
-				else
-					throw new NotImplementedException ();
-			} else if (xm == XamlLanguage.Initialization) {
-				// ... and no need to do anything. The object value to pop *is* the return value.
-			} else if (xm == XamlLanguage.Items) {
-				var coll = state.Value;
-				foreach (var content in contents)
-					xm.Type.Invoker.AddToCollection (coll, content);
-			} else if (xm.Type.IsDictionary) {
-				throw new NotImplementedException ();
-			} else {
-				if (contents.Count > 1)
-					throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", xm, state.Type));
-				if (contents.Count == 1) {
-					var value = contents [0];
-					if (!xm.Type.IsCollection || !xm.IsReadOnly) // exclude read-only object.
-						OnWriteValue (xm, value);
-				}
-			}
-*/
-
 			contents.Clear ();
 
-//			if (object_states.Count > 0)
-//				object_states.Peek ().WrittenProperties.Add (new MemberAndValue (xm));
-			//written_properties_stack.Peek ().Add (xm);
-
 			OnWriteEndMember ();
-			member_had_namespaces = false;
 		}
 
 		protected abstract void OnWriteEndObject ();
@@ -544,6 +468,8 @@ namespace System.Xaml
 
 		protected override void OnWriteEndObject ()
 		{
+			WritePendingStartMember (XamlNodeType.EndObject);
+
 			var state = object_states.Count > 0 ? object_states.Peek () : null;
 			if (state != null && state.IsGetObject) {
 				// do nothing
@@ -559,6 +485,8 @@ namespace System.Xaml
 
 		protected override void OnWriteEndMember ()
 		{
+			WritePendingStartMember (XamlNodeType.EndMember);
+
 			var member = CurrentMember;
 			if (member == XamlLanguage.Initialization)
 				return;
@@ -573,18 +501,22 @@ namespace System.Xaml
 			} else if (inside_attribute_object) {
 				// do nothing. It didn't open this attribute.
 			} else {
-				var state = object_states.Peek ();
-				if (IsAttribute (state.Type, member)) {
+				switch (CurrentMemberState.OccuredAs) {
+				case AllowedMemberLocations.Attribute:
 					w.WriteEndAttribute ();
-				} else {
+					break;
+				case AllowedMemberLocations.MemberElement:
 					WritePendingNamespaces ();
 					w.WriteEndElement ();
+					break;
 				}
 			}
 		}
 		
 		protected override void OnWriteStartObject (XamlType xamlType)
 		{
+			WritePendingStartMember (XamlNodeType.StartObject);
+
 			string ns = xamlType.PreferredXamlNamespace;
 			string prefix = GetPrefix (ns); // null prefix is not rejected...
 
@@ -618,7 +550,22 @@ namespace System.Xaml
 
 		protected override void OnWriteGetObject ()
 		{
-			// nothing to do.
+			WritePendingStartMember (XamlNodeType.GetObject);
+
+			// Other than above, nothing to do.
+		}
+		
+		void WritePendingStartMember (XamlNodeType nodeType)
+		{
+			var cm = CurrentMemberState;
+			if (cm == null || cm.OccuredAs != AllowedMemberLocations.Any)
+				return;
+
+			var state = object_states.Peek ();
+			if (nodeType == XamlNodeType.Value)
+				OnWriteStartMemberAttribute (state.Type, CurrentMember);
+			else
+				OnWriteStartMemberElement (state.Type, CurrentMember);
 		}
 		
 		protected override void OnWriteStartMember (XamlMember member)
@@ -653,30 +600,51 @@ namespace System.Xaml
 					w.WriteString (member.Name);
 					w.WriteString ("=");
 				}
-			} else if (IsAttribute (state.Type, member))
-				OnWriteStartMemberAttribute (state.Type, member);
-			else
-				OnWriteStartMemberElement (state.Type, member);
+			} else {
+				switch (IsAttribute (state.Type, member)) {
+				case AllowedMemberLocations.Attribute:
+					OnWriteStartMemberAttribute (state.Type, member);
+					break;
+				case AllowedMemberLocations.MemberElement:
+					OnWriteStartMemberElement (state.Type, member);
+					break;
+				default: // otherwise - pending output
+					CurrentMemberState.OccuredAs = AllowedMemberLocations.Any; // differentiate from .None
+					break;
+				}
+			}
 		}
 
-		bool IsAttribute (XamlType xt, XamlMember xm)
+		AllowedMemberLocations IsAttribute (XamlType xt, XamlMember xm)
 		{
 			if (xm == XamlLanguage.Initialization)
-				return false;
+				return AllowedMemberLocations.MemberElement;
 			if (xm.Type.HasPositionalParameters ())
-				return true;
+				return AllowedMemberLocations.Attribute;
 			if (w.WriteState == WriteState.Content)
-				return false;
+				return AllowedMemberLocations.MemberElement;
+
 			var xd = xm as XamlDirective;
 			if (xd != null && (xd.AllowedLocation & AllowedMemberLocations.Attribute) == 0)
-				return false;
+				return AllowedMemberLocations.MemberElement;
+
+			// surprisingly, WriteNamespace() can affect this.
+			if (local_nss2.Count > 0)
+				return AllowedMemberLocations.MemberElement;
+
+			// Somehow such a "stranger" is processed as an element.
+			if (xd == null && !xt.GetAllMembers ().Contains (xm))
+				return AllowedMemberLocations.None;
+
 			if (xm.TypeConverter != null && xm.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
-				return true;
-			return false;
+				return AllowedMemberLocations.Attribute;
+
+			return AllowedMemberLocations.MemberElement;
 		}
 
 		void OnWriteStartMemberElement (XamlType xt, XamlMember xm)
 		{
+			CurrentMemberState.OccuredAs = AllowedMemberLocations.MemberElement;
 			string prefix = GetPrefix (xm.PreferredXamlNamespace);
 			string name = xm.IsDirective ? xm.Name : String.Concat (xt.GetInternalXmlName (), ".", xm.Name);
 			WritePendingNamespaces ();
@@ -685,6 +653,7 @@ namespace System.Xaml
 		
 		void OnWriteStartMemberAttribute (XamlType xt, XamlMember xm)
 		{
+			CurrentMemberState.OccuredAs = AllowedMemberLocations.Attribute;
 			if (xt.PreferredXamlNamespace == xm.PreferredXamlNamespace &&
 			    !(xm is XamlDirective)) // e.g. x:Key inside x:Int should not be written as Key.
 				w.WriteStartAttribute (xm.Name);
@@ -696,6 +665,8 @@ namespace System.Xaml
 
 		protected override void OnWriteValue (XamlMember xm, object value)
 		{
+			WritePendingStartMember (XamlNodeType.Value);
+
 			var xt = value == null ? XamlLanguage.Null : sctx.GetXamlType (value.GetType ());
 
 			var vs = xt.TypeConverter;
@@ -732,9 +703,6 @@ namespace System.Xaml
 		
 		void WritePendingNamespaces ()
 		{
-// FIXME: remove it
-w.Flush ();
-
 			foreach (var nd in local_nss) {
 				if (String.IsNullOrEmpty (nd.Prefix))
 					w.WriteAttributeString ("xmlns", nd.Namespace);
@@ -742,6 +710,7 @@ w.Flush ();
 					w.WriteAttributeString ("xmlns", nd.Prefix, Xmlns2000Namespace, nd.Namespace);
 			}
 			local_nss.Clear ();
+
 			local_nss.AddRange (local_nss2);
 			local_nss2.Clear ();
 		}
@@ -880,4 +849,3 @@ w.Flush ();
 	}
 #endif
 }
-#endif
