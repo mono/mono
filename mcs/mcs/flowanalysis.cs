@@ -1158,7 +1158,7 @@ namespace Mono.CSharp
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
 					if (field.MemberDefinition is Property.BackingField) {
 						ec.Report.Error (843, loc,
-							"An automatically implemented property `{0}' must be fully assigned before control leaves the constructor. Consider calling default contructor",
+							"An automatically implemented property `{0}' must be fully assigned before control leaves the constructor. Consider calling the default struct contructor from a constructor initializer",
 							field.GetSignatureForError ());
 					} else {
 						ec.Report.Error (171, loc,

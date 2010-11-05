@@ -224,7 +224,7 @@ namespace Mono.CSharp
 					throw new NotImplementedException ("Unknown element type " + type.ToString ());
 				}
 
-				tspec [index] = (T) CreateType (type, ca, dynamicCursor + index + 1);
+				tspec [index] = (T) CreateType (type, ca, dynamicCursor + index + 1, true);
 			}
 
 			return tspec;
@@ -497,21 +497,21 @@ namespace Mono.CSharp
 
 		public TypeSpec CreateType (Type type)
 		{
-			return CreateType (type, null, 0);
+			return CreateType (type, null, 0, true);
 		}
 
-		TypeSpec CreateType (Type type, ICustomAttributeProvider ca, int dynamicCursor)
+		TypeSpec CreateType (Type type, ICustomAttributeProvider ca, int dynamicCursor, bool canImportBaseType)
 		{
 			TypeSpec declaring_type;
 			if (type.IsNested && !type.IsGenericParameter)
-				declaring_type = CreateType (type.DeclaringType, type.DeclaringType, 0);
+				declaring_type = CreateType (type.DeclaringType, type.DeclaringType, 0, false);
 			else
 				declaring_type = null;
 
-			return CreateType (type, declaring_type, ca, dynamicCursor);
+			return CreateType (type, declaring_type, ca, dynamicCursor, canImportBaseType);
 		}
 
-		public TypeSpec CreateType (Type type, TypeSpec declaringType, ICustomAttributeProvider ca, int dynamicCursor)
+		public TypeSpec CreateType (Type type, TypeSpec declaringType, ICustomAttributeProvider ca, int dynamicCursor, bool canImportBaseType)
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
@@ -543,7 +543,7 @@ namespace Mono.CSharp
 				var targs = CreateGenericParameters<TypeSpec> (0, type.GetGenericArguments (), ca, dynamicCursor);
 				if (declaringType == null) {
 					// Simple case, no nesting
-					spec = CreateType (type_def, null, null, 0);
+					spec = CreateType (type_def, null, null, 0, canImportBaseType);
 					spec = spec.MakeGenericType (targs);
 				} else {
 					//
@@ -683,9 +683,12 @@ namespace Mono.CSharp
 			import_cache.Add (type, spec);
 
 			//
-			// Two stage setup as the base type can be inflated declaring type
+			// Two stage setup as the base type can be inflated declaring type or
+			// another nested type inside same declaring type which has not been
+			// loaded, therefore we can import a base type of nested types once
+			// the types have been imported
 			//
-			if (declaringType == null || !IgnorePrivateMembers)
+			if (canImportBaseType)
 				ImportTypeBase (spec, type);
 
 			return spec;
@@ -704,7 +707,7 @@ namespace Mono.CSharp
 				spec.BaseType = TypeManager.object_type;
 			else if (type.BaseType != null) {
 				if (type.BaseType.IsGenericType)
-					spec.BaseType = CreateType (type.BaseType, type, 0);
+					spec.BaseType = CreateType (type.BaseType, type, 0, true);
 				else
 					spec.BaseType = CreateType (type.BaseType);
 			}
@@ -850,7 +853,7 @@ namespace Mono.CSharp
 				if (t.Name[0] == '<')
 					continue;
 
-				var it = CreateType (t, null, t, 0);
+				var it = CreateType (t, null, t, 0, true);
 				if (it == null)
 					continue;
 
@@ -888,7 +891,7 @@ namespace Mono.CSharp
 				throw new NotImplementedException ("Unknown element type " + type.ToString ());
 			}
 
-			return CreateType (type, ca, dynamicCursor);
+			return CreateType (type, ca, dynamicCursor, true);
 		}
 
 		static bool IsDynamicType (ICustomAttributeProvider ca, int index)
@@ -1335,7 +1338,7 @@ namespace Mono.CSharp
 					if (t.IsNotPublic && t.IsDefined (typeof (CompilerGeneratedAttribute), false))
 						continue;
 
-					imported = meta_import.CreateType (t, declaringType, t, 0);
+					imported = meta_import.CreateType (t, declaringType, t, 0, false);
 					cache.AddMember (imported);
 				}
 
