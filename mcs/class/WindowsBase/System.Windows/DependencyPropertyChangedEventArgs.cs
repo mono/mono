@@ -30,6 +30,7 @@ namespace System.Windows {
 	public struct DependencyPropertyChangedEventArgs {
 
 		public DependencyPropertyChangedEventArgs (DependencyProperty property, object oldValue, object newValue)
+			: this ()
 		{
 			this.Property = property;
 			this.OldValue = oldValue;
