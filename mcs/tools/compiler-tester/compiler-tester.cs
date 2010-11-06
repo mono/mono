@@ -1141,7 +1141,7 @@ namespace TestRunner {
 			ArrayList ld = new ArrayList ();
 			CompilerError result = CompilerError.Missing;
 			while (line != null) {
-				if (ld.Contains (line)) {
+				if (ld.Contains (line) && result == CompilerError.Expected) {
 					if (line.IndexOf ("Location of the symbol related to previous") == -1)
 						return CompilerError.Duplicate;
 				}
