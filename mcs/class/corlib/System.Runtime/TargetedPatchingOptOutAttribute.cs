@@ -38,9 +38,6 @@ namespace System.Runtime {
 	{
 		string reason;
 
-		public TargetedPatchingOptOutAttribute () : this ("") {
-		}
-
 		public TargetedPatchingOptOutAttribute (string reason)
 		{
 			if (reason == null)
@@ -48,8 +45,7 @@ namespace System.Runtime {
 			this.reason = reason;
 		}
 
-		public string Reason
-		{
+		public string Reason {
 			get {
 				return reason;
 			}

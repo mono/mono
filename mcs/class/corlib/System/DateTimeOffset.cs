@@ -122,9 +122,9 @@ namespace System
 			return new DateTimeOffset (dt.AddHours (hours).Ticks, utc_offset);
 		}
 
-		public static DateTimeOffset operator + (DateTimeOffset dateTimeTz, TimeSpan timeSpan)
+		public static DateTimeOffset operator + (DateTimeOffset dateTimeOffset, TimeSpan timeSpan)
 		{
-			return dateTimeTz.Add (timeSpan);
+			return dateTimeOffset.Add (timeSpan);
 		}
 
 		public DateTimeOffset AddMilliseconds (double milliseconds)
@@ -692,9 +692,9 @@ namespace System
 			return left.Subtract (right);
 		}
 
-		public static DateTimeOffset operator - (DateTimeOffset dateTimeTz, TimeSpan timeSpan)
+		public static DateTimeOffset operator - (DateTimeOffset dateTimeOffset, TimeSpan timeSpan)
 		{
-			return dateTimeTz.Subtract (timeSpan);	
+			return dateTimeOffset.Subtract (timeSpan);	
 		}
 
 		public long ToFileTime ()

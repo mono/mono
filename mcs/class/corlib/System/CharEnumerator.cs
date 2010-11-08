@@ -69,6 +69,15 @@ namespace System
 				return Current;
 			}
 		}
+		
+#if NET_4_0
+		public void Dispose ()
+#else
+		void IDisposable.Dispose ()
+#endif
+		{
+			// nop
+		}		
 
 		// Methods
 		public object Clone ()
@@ -104,11 +113,6 @@ namespace System
 		public void Reset ()
 		{
 			index = -1;
-		}
-
-		void IDisposable.Dispose ()
-		{
-			// nop
 		}
 	}
 }

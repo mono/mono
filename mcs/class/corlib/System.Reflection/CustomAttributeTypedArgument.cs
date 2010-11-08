@@ -40,8 +40,14 @@ namespace System.Reflection {
 		Type argumentType;
 		object value;
 
-		internal CustomAttributeTypedArgument (Type argumentType, object value)
+#if NET_4_0
+		public
+#endif
+		CustomAttributeTypedArgument (Type argumentType, object value)
 		{
+			if (argumentType == null)
+				throw new ArgumentNullException ("argumentType");
+
 			this.argumentType = argumentType;
 			this.value = value;
 
@@ -56,6 +62,17 @@ namespace System.Reflection {
 				this.value = new ReadOnlyCollection <CustomAttributeTypedArgument> (new_value);
 			}
 		}
+		
+#if NET_4_0
+		public CustomAttributeTypedArgument (object value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			this.argumentType = value.GetType ();
+			this.value = value;
+		}
+#endif
 
 		public Type ArgumentType {
 			get {

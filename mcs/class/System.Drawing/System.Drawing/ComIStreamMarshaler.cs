@@ -38,12 +38,8 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-#if NET_2_0
 using System.Runtime.InteropServices.ComTypes;
 using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
-#else
-using IStream = System.Runtime.InteropServices.UCOMIStream;
-#endif
 
 namespace System.Drawing
 {

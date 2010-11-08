@@ -37,11 +37,14 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System.Collections.ObjectModel
 {
 	[ComVisible (false)]
 	[Serializable]
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]	
 	public class ReadOnlyCollection <T> : IList <T>, ICollection <T>, IEnumerable <T>, IList, ICollection, IEnumerable
 	{
 		IList <T> list;

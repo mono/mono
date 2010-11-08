@@ -360,25 +360,25 @@ namespace System
 		}
 
 #if NET_4_0 || MOONLIGHT
-		public static TimeSpan Parse (string s, IFormatProvider formatProvider)
+		public static TimeSpan Parse (string input, IFormatProvider formatProvider)
 		{
-			if (s == null)
-				throw new ArgumentNullException ("s");
+			if (input == null)
+				throw new ArgumentNullException ("input");
 
 			TimeSpan result;
-			Parser p = new Parser (s, formatProvider);
+			Parser p = new Parser (input, formatProvider);
 			p.Execute (false, out result);
 			return result;
 		}
 
-		public static bool TryParse (string s, IFormatProvider formatProvider, out TimeSpan result)
+		public static bool TryParse (string input, IFormatProvider formatProvider, out TimeSpan result)
 		{
-			if (s == null || s.Length == 0) {
+			if (string.IsNullOrEmpty (input)) {
 				result = TimeSpan.Zero;
 				return false;
 			}
 
-			Parser p = new Parser (s, formatProvider);
+			Parser p = new Parser (input, formatProvider);
 			return p.Execute (true, out result);
 		}
 

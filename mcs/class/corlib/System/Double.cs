@@ -141,34 +141,34 @@ namespace System {
 		}
 
 #if	NET_4_0
-		public static bool operator==(double a, double b)
+		public static bool operator==(double left, double right)
 		{
-			return a == b;
+			return left == right;
 		}
 
-		public static bool operator!=(double a, double b)
+		public static bool operator!=(double left, double right)
 		{
-			return a != b;
+			return left != right;
 		}
 
-		public static bool operator>(double a, double b)
+		public static bool operator>(double left, double right)
 		{
-			return a > b;
+			return left > right;
 		}
 
-		public static bool operator>=(double a, double b)
+		public static bool operator>=(double left, double right)
 		{
-			return a >= b;
+			return left >= right;
 		}
 
-		public static bool operator<(double a, double b)
+		public static bool operator<(double left, double right)
 		{
-			return a < b;
+			return left < right;
 		}
 
-		public static bool operator<=(double a, double b)
+		public static bool operator<=(double left, double right)
 		{
-			return a <= b;
+			return left <= right;
 		}
 #endif
 

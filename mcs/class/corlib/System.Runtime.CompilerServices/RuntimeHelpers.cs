@@ -150,6 +150,6 @@ namespace System.Runtime.CompilerServices
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern void RunModuleConstructor (IntPtr module);
+		static extern void RunModuleConstructor (IntPtr module);
 	}
 }

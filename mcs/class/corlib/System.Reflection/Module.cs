@@ -291,9 +291,9 @@ namespace System.Reflection {
 		}
 
 #if NET_4_0
-		public override bool Equals (object obj)
+		public override bool Equals (object o)
 		{
-			return obj == (object) this;
+			return o == (object) this;
 		}
 
 		public override int GetHashCode ()

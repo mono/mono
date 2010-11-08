@@ -144,34 +144,34 @@ namespace System
 		}
 
 #if	NET_4_0
-		public static bool operator==(float a, float b)
+		public static bool operator==(float left, float right)
 		{
-			return a == b;
+			return left == right;
 		}
 
-		public static bool operator!=(float a, float b)
+		public static bool operator!=(float left, float right)
 		{
-			return a != b;
+			return left != right;
 		}
 
-		public static bool operator>(float a, float b)
+		public static bool operator>(float left, float right)
 		{
-			return a > b;
+			return left > right;
 		}
 
-		public static bool operator>=(float a, float b)
+		public static bool operator>=(float left, float right)
 		{
-			return a >= b;
+			return left >= right;
 		}
 
-		public static bool operator<(float a, float b)
+		public static bool operator<(float left, float right)
 		{
-			return a < b;
+			return left < right;
 		}
 
-		public static bool operator<=(float a, float b)
+		public static bool operator<=(float left, float right)
 		{
-			return a <= b;
+			return left <= right;
 		}
 #endif
 

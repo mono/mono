@@ -2209,7 +2209,7 @@ namespace System
 			return InternalIsInterned (str);
 		}
 	
-		public static string Join (string separator, string [] value)
+		public static string Join (string separator, params string [] value)
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
