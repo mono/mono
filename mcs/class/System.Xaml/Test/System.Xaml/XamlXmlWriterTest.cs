@@ -737,6 +737,13 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Write_ListType ()
+		{
+			var obj = new List<Type> (new Type [] {typeof (int), typeof (Dictionary<Type, XamlType>)}) { Capacity = 2 };
+			Assert.AreEqual (ReadXml ("List_Type.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
 		public void Write_DictionaryInt32String ()
 		{
 			var dic = new Dictionary<int,string> ();

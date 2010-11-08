@@ -586,8 +586,11 @@ namespace System.Xaml
 			// Top-level positional parameters are somehow special.
 			// - If it has only one parameter, it is written as an
 			//   attribute using the actual argument's member name.
-			// - If there are more than one, then it is treated as
-			var posprms = object_states.Count == 1 && state.Type.HasPositionalParameters () ? state.Type.GetSortedConstructorArguments ().GetEnumerator () : null;
+			// - If there are more than one, then it is an error at
+			//   the second constructor argument.
+			// (Here "top-level" means an object that involves
+			//  StartObject i.e. the root or a collection item.)
+			var posprms = IsAtTopLevelObject () && object_states.Peek ().Type.HasPositionalParameters () ? state.Type.GetSortedConstructorArguments ().GetEnumerator () : null;
 			if (posprms != null) {
 				if (inside_toplevel_positional_parameter)
 					throw new XamlXmlWriterException (String.Format ("The XAML reader input has more than one positional parameter values within a top-level object {0}. While XamlObjectReader can read such an object, XamlXmlWriter cannot write such an object to XML.", state.Type));
@@ -617,6 +620,17 @@ namespace System.Xaml
 					break;
 				}
 			}
+		}
+
+		bool IsAtTopLevelObject ()
+		{
+			if (object_states.Count == 1)
+				return true;
+			var tmp = object_states.Pop ();
+			var parentMember = object_states.Peek ().WrittenProperties.LastOrDefault ().Member;
+			object_states.Push (tmp);
+
+			return parentMember == XamlLanguage.Items;
 		}
 
 		AllowedMemberLocations IsAttribute (XamlType xt, XamlMember xm)
