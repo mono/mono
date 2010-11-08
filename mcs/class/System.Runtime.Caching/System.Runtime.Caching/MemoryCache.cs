@@ -41,7 +41,7 @@ namespace System.Runtime.Caching
 	{
 		const long DEFAULT_TIMER_PERIOD = 20000; // .NET's default, ms
 
-		static long totalPhysicalMemory = 0;
+		static long totalPhysicalMemory;
 		static int numCPUs;
 		
 		string name;
@@ -74,13 +74,11 @@ namespace System.Runtime.Caching
 		}
 		
 		public override object this [string key] {
-			[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
 			get { return FindContainer (key).Get (key); }
 			set { Set (key, value, ObjectCache.InfiniteAbsoluteExpiration); }
 		}
 		
 		public override string Name {
-			[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
 			get { return name; }
 		}
 		
@@ -381,7 +379,6 @@ namespace System.Runtime.Caching
 			return containers [containerIdx];
 		}
 		
-		[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
 		public override object Get (string key, string regionName = null)
 		{
 			if (regionName != null)

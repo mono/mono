@@ -42,7 +42,6 @@ namespace System.Runtime.Caching
 		public static readonly TimeSpan NoSlidingExpiration = TimeSpan.Zero;
 
 		public static IServiceProvider Host {
-			[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
 			get { return host; }
 			set {
 				if (value == null)
@@ -59,7 +58,6 @@ namespace System.Runtime.Caching
 		public abstract object this [string key] { get; set; }
 		public abstract string Name { get; }
 		
-		[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
 		protected ObjectCache ()
 		{
 		}
@@ -90,7 +88,6 @@ namespace System.Runtime.Caching
 		protected abstract IEnumerator <KeyValuePair <string, object>> GetEnumerator ();
 		public abstract IDictionary <string, object> GetValues (IEnumerable <string> keys, string regionName = null);
 		
-		[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
 		public virtual IDictionary <string, object> GetValues (string regionName = null, params string[] keys)
 		{
 			return GetValues (keys.AsEnumerable <string> (), regionName);
@@ -101,7 +98,6 @@ namespace System.Runtime.Caching
 		public abstract void Set (string key, object value, CacheItemPolicy policy, string regionName = null);
 		public abstract void Set (string key, object value, DateTimeOffset absoluteExpiration, string regionName = null);
 		
-		[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
 		IEnumerator <KeyValuePair <string,object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator ()
 		{
 			return GetEnumerator ();
