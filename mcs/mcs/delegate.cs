@@ -189,11 +189,13 @@ namespace Mono.CSharp {
 				async_parameters = ParametersCompiled.EmptyReadOnlyParameters;
 			} else {
 				var compiled = new Parameter[Parameters.Count];
-				for (int i = 0; i < compiled.Length; ++i)
-					compiled[i] = new Parameter (new TypeExpression (Parameters.Types[i], Location),
-						Parameters.FixedParameters[i].Name,
-						Parameters.FixedParameters[i].ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT),
-						null, Location);
+				for (int i = 0; i < compiled.Length; ++i) {
+					var p = parameters[i];
+					compiled[i] = new Parameter (new TypeExpression (parameters.Types[i], Location),
+						p.Name,
+						p.ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT),
+						p.OptAttributes == null ? null : p.OptAttributes.Clone (), Location);
+				}
 
 				async_parameters = new ParametersCompiled (compiled);
 			}
@@ -231,7 +233,6 @@ namespace Mono.CSharp {
 			}
 
 			if (out_params > 0) {
-				var end_param_types = new TypeSpec [out_params];
 				Parameter[] end_params = new Parameter[out_params];
 
 				int param = 0;
@@ -240,11 +241,13 @@ namespace Mono.CSharp {
 					if ((p.ModFlags & Parameter.Modifier.ISBYREF) == 0)
 						continue;
 
-					end_param_types[param] = Parameters.Types[i];
-					end_params[param] = p;
-					++param;
+					end_params [param++] = new Parameter (new TypeExpression (p.Type, Location),
+						p.Name,
+						p.ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT),
+						p.OptAttributes == null ? null : p.OptAttributes.Clone (), Location);
 				}
-				end_parameters = ParametersCompiled.CreateFullyResolved (end_params, end_param_types);
+
+				end_parameters = new ParametersCompiled (end_params);
 			} else {
 				end_parameters = ParametersCompiled.EmptyReadOnlyParameters;
 			}
@@ -288,6 +291,7 @@ namespace Mono.CSharp {
 
 			if (BeginInvokeBuilder != null) {
 				BeginInvokeBuilder.ParameterInfo.ApplyAttributes (this, BeginInvokeBuilder.MethodBuilder);
+				EndInvokeBuilder.ParameterInfo.ApplyAttributes (this, EndInvokeBuilder.MethodBuilder);
 
 				BeginInvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 				EndInvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
