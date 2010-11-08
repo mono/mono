@@ -3486,6 +3486,8 @@ namespace Mono.CSharp {
 				return 1;
 			}
 
+			// FIXME: handle lifted operators
+
 			// TODO: this is expensive
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
@@ -3521,9 +3523,10 @@ namespace Mono.CSharp {
 			bool same = true;
 			int args_count = args == null ? 0 : args.Count;
 			int j = 0;
+			Argument a = null;
 			TypeSpec ct, bt;
 			for (int c_idx = 0, b_idx = 0; j < args_count; ++j, ++c_idx, ++b_idx) {
-				Argument a = args[j];
+				a = args[j];
 
 				// Default arguments are ignored for better decision
 				if (a.IsDefaultArgument)
@@ -3588,7 +3591,7 @@ namespace Mono.CSharp {
 			// The call Add (3, 4, 5) should be ambiguous.  Without this check, the
 			// first candidate would've chosen as better.
 			//
-			if (!same)
+			if (!same && !a.IsDefaultArgument)
 				return false;
 
 			//
@@ -3670,9 +3673,6 @@ namespace Mono.CSharp {
 
 			if (specific_at_least_once)
 				return true;
-
-			// FIXME: handle lifted operators
-			// ...
 
 			return false;
 		}
@@ -4273,7 +4273,7 @@ namespace Mono.CSharp {
 				for (int ix = 0; ix < ambiguous_candidates.Count; ix++) {
 					var candidate = ambiguous_candidates [ix];
 
-					if (!BetterFunction (rc, candidate_args, best_candidate, best_parameter_member.Parameters, best_candidate_params, candidate.Member, candidate.Parameters, candidate.Expanded)) {
+					if (!BetterFunction (rc, best_candidate_args, best_candidate, best_parameter_member.Parameters, best_candidate_params, candidate.Member, candidate.Parameters, candidate.Expanded)) {
 						var ambiguous = candidate.Member;
 						if (custom_errors == null || !custom_errors.AmbiguousCandidates (rc, best_candidate, ambiguous)) {
 							rc.Report.SymbolRelatedToPreviousError (best_candidate);
