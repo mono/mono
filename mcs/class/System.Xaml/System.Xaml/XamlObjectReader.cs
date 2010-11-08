@@ -38,6 +38,7 @@ using System.Xaml.Schema;
 //	dmcs -d:DOTNET -t:library -r:System.Xaml.dll \
 //		System.Xaml/XamlObjectReader.cs \
 //		System.Xaml/XamlNode.cs \
+//		System.Xaml/PrefixLookup.cs \
 //		System.Xaml/TypeExtensionMethods.cs
 //
 // (At least it should compile as of the revision that this comment is added.)

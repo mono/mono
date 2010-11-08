@@ -1197,6 +1197,92 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsFalse (r.Read (), "end");
 		}
+
+		[Test]
+		public void Read_Dictionary2 ()
+		{
+			var obj = new Dictionary<string,Type> ();
+			obj ["Foo"] = typeof (int);
+			obj ["Bar"] = typeof (Dictionary<Type,XamlType>);
+			var r = new XamlObjectReader (obj);
+
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#1-4");
+			Assert.AreEqual ("clr-namespace:System.Collections.Generic;assembly=mscorlib", r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("s", r.Namespace.Prefix, "ns#2-4");
+			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", r.Namespace.Namespace, "ns#2-5");
+
+			Assert.IsTrue (r.Read (), "ns#3-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#3-2");
+			Assert.IsNotNull (r.Namespace, "ns#3-3");
+			Assert.AreEqual ("sx", r.Namespace.Prefix, "ns#3-4");
+			Assert.AreEqual ("clr-namespace:System.Xaml;assembly=System.Xaml", r.Namespace.Namespace, "ns#3-5");
+
+			Assert.IsTrue (r.Read (), "ns#4-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#4-2");
+			Assert.IsNotNull (r.Namespace, "ns#4-3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns#4-4");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#4-5");
+
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (Dictionary<string,Type>), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+			Assert.AreEqual (obj, r.Instance, "so#1-4");
+
+			Assert.IsTrue (r.Read (), "smitems#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smitems#2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "smitems#3");
+
+			for (int i = 0; i < 2; i++) {
+
+				// start of an item
+				Assert.IsTrue (r.Read (), "soi#1-1." + i);
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "soi#1-2." + i);
+				var xt2 = XamlLanguage.Type;
+				Assert.AreEqual (xt2, r.Type, "soi#1-3." + i);
+
+				Assert.IsTrue (r.Read (), "smi#1-1." + i);
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smi#1-2." + i);
+				Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "smi#1-3." + i);
+
+				Assert.IsTrue (r.Read (), "svi#1-1." + i);
+				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "svi#1-2." + i);
+				Assert.AreEqual (i == 0 ? "x:Int32" : "Dictionary(s:Type, sx:XamlType)", r.Value, "svi#1-3." + i);
+
+				Assert.IsTrue (r.Read (), "emi#1-1." + i);
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emi#1-2." + i);
+
+				Assert.IsTrue (r.Read (), "smi#2-1." + i);
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smi#2-2." + i);
+				Assert.AreEqual (XamlLanguage.Key, r.Member, "smi#2-3." + i);
+
+				Assert.IsTrue (r.Read (), "svi#2-1." + i);
+				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "svi#2-2." + i);
+				Assert.AreEqual (i == 0 ? "Foo" : "Bar", r.Value, "svi#2-3." + i);
+
+				Assert.IsTrue (r.Read (), "emi#2-1." + i);
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emi#2-2." + i);
+
+				Assert.IsTrue (r.Read (), "eoi#1-1." + i);
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eoi#1-2." + i);
+				// end of an item
+			}
+
+			Assert.IsTrue (r.Read (), "emitems#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emitems#2"); // XamlLanguage.Items
+
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2"); // Dictionary
+
+			Assert.IsFalse (r.Read (), "end");
+		}
 		
 		[Test]
 		public void PositionalParameters1 ()

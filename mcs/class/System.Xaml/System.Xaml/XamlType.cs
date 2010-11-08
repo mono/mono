@@ -382,41 +382,9 @@ namespace System.Xaml
 				return BaseType != null ? BaseType.GetAllMembers () : empty_array;
 			if (all_members_cache == null) {
 				all_members_cache = new List<XamlMember> (DoLookupAllMembers ());
-				all_members_cache.Sort (CompareMembers);
+				all_members_cache.Sort (TypeExtensionMethods.CompareMembers);
 			}
 			return all_members_cache;
-		}
-
-		int CompareMembers (XamlMember m1, XamlMember m2)
-		{
-			// ConstructorArguments and PositionalParameters go first.
-			if (m1 == XamlLanguage.PositionalParameters)
-				return -1;
-			if (m2 == XamlLanguage.PositionalParameters)
-				return 1;
-			if (m1.IsConstructorArgument) {
-				if (!m2.IsConstructorArgument)
-					return -1;
-			}
-			else if (m2.IsConstructorArgument)
-				return 1;
-
-			// ContentProperty is returned at last.
-			if (m1.DeclaringType.ContentProperty == m1)
-				return 1;
-			if (m2.DeclaringType.ContentProperty == m2)
-				return -1;
-
-			// compare collection kind
-			var t1 = m1.Type;
-			var t2 = m2.Type;
-			int coll1 = t1.IsDictionary ? 3 : t1.IsCollection ? 2 : t1.IsArray ? 1 : 0;
-			int coll2 = t2.IsDictionary ? 3 : t2.IsCollection ? 2 : t2.IsArray ? 1 : 0;
-			if (coll1 != coll2)
-				return coll2 - coll1;
-
-			// then, compare names.
-			return String.CompareOrdinal (m1.Name, m2.Name);
 		}
 		
 		List<XamlMember> all_members_cache;

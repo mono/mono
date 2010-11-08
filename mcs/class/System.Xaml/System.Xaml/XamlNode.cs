@@ -174,31 +174,54 @@ namespace System.Xaml
 				var iobj = ie.Current;
 				// If it is dictionary, then retrieve the key, and rewrite the item as the Value part.
 				object ikey = null;
-				XamlNodeMember xknm = default (XamlNodeMember);
 				if (xobj.Type.IsDictionary) {
 					Type kvpType = iobj.GetType ();
 					bool isNonGeneric = kvpType == typeof (DictionaryEntry);
 					var kp = isNonGeneric ? null : kvpType.GetProperty ("Key");
 					var vp = isNonGeneric ? null : kvpType.GetProperty ("Value");
-					xknm = new XamlNodeMember (xobj, XamlLanguage.Key);
 					ikey = isNonGeneric ? ((DictionaryEntry) iobj).Key : kp.GetValue (iobj, null);
 					iobj = isNonGeneric ? ((DictionaryEntry) iobj).Value : vp.GetValue (iobj, null);
 				}
 
 				var xiobj = new XamlObject (GetType (iobj), iobj);
-				var en = GetNodes (null, xiobj).GetEnumerator ();
-				en.MoveNext ();
-				yield return en.Current;
 				if (ikey != null) {
 					// Key member is written *inside* the item object.
-					yield return new XamlNodeInfo (XamlNodeType.StartMember, xknm);
-					foreach (var xn in GetNodes (XamlLanguage.Key, new XamlObject (GetType (ikey), ikey), xobj.Type.KeyType))
-						yield return xn;
-					yield return new XamlNodeInfo (XamlNodeType.EndMember, xknm);
+					//
+					// It is messy, but Key and Value are *sorted*. In most cases Key goes first, but for example PositionalParameters comes first.
+					// To achieve this behavior, we compare XamlLanguage.Key and value's Member and returns in order. It's all nasty hack, but at least it could be achieved like this!
+
+					var en = GetNodes (null, xiobj).ToArray ();
+					yield return en [0]; // StartObject
+
+					var xknm = new XamlNodeMember (xobj, XamlLanguage.Key);
+					if (TypeExtensionMethods.CompareMembers (en [1].Member.Member, XamlLanguage.Key) < 0) { // en[1] is the StartMember of the first member.
+						// value -> key -> endobject
+						for (int i = 1; i < en.Length - 1; i++)
+							yield return en [i];
+						foreach (var kn in GetKeyNodes (ikey, xobj.Type.KeyType, xknm))
+							yield return kn;
+						yield return en [en.Length - 1];
+					} else {
+						// key -> value -> endobject
+						foreach (var kn in GetKeyNodes (ikey, xobj.Type.KeyType, xknm))
+							yield return kn;
+						for (int i = 1; i < en.Length - 1; i++)
+							yield return en [i];
+						yield return en [en.Length - 1];
+					}
 				}
-				while (en.MoveNext ())
-					yield return en.Current;
+				else
+					foreach (var xn in GetNodes (null, xiobj))
+						yield return xn;
 			}
+		}
+
+		IEnumerable<XamlNodeInfo> GetKeyNodes (object ikey, XamlType keyType, XamlNodeMember xknm)
+		{
+			yield return new XamlNodeInfo (XamlNodeType.StartMember, xknm);
+			foreach (var xn in GetNodes (XamlLanguage.Key, new XamlObject (GetType (ikey), ikey), keyType))
+				yield return xn;
+			yield return new XamlNodeInfo (XamlNodeType.EndMember, xknm);
 		}
 
 		// Namespace retrieval. 
