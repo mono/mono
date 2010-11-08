@@ -692,12 +692,7 @@ namespace Mono.CSharp {
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
-		{
-			if (InstanceExpr is EventExpr) {
-				((EventExpr) InstanceExpr).Error_CannotAssign (ec);
-				return null;
-			}
-			
+		{		
 			TypeSpec del_type = InstanceExpr.Type;
 			if (del_type == null)
 				return null;

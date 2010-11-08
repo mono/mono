@@ -5549,8 +5549,6 @@ namespace Mono.CSharp {
 
 					return ml.ResolveMemberAccess (ec, left, original);
 				}
-
-				Error_AssignmentEventOnly (ec);
 			}
 
 			return base.ResolveMemberAccess (ec, left, original);
@@ -5586,7 +5584,7 @@ namespace Mono.CSharp {
 			ResolveInstanceExpression (ec, null);
 
 			if (!ec.HasSet (ResolveContext.Options.CompoundAssignmentScope)) {
-				Error_CannotAssign (ec);
+				Error_AssignmentEventOnly (ec);
 			}
 
 			DoBestMemberChecks (ec, spec);
@@ -5620,15 +5618,15 @@ namespace Mono.CSharp {
 
 		void Error_AssignmentEventOnly (ResolveContext ec)
 		{
-			ec.Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of `+=' or `-=' operator",
-				GetSignatureForError ());
-		}
-
-		public void Error_CannotAssign (ResolveContext ec)
-		{
-			ec.Report.Error (70, loc,
-				"The event `{0}' can only appear on the left hand side of += or -= when used outside of the type `{1}'",
-				GetSignatureForError (), TypeManager.CSharpName (spec.DeclaringType));
+			if (spec.DeclaringType == ec.CurrentType || TypeManager.IsNestedChildOf (ec.CurrentType, spec.DeclaringType)) {
+				ec.Report.Error (79, loc,
+					"The event `{0}' can only appear on the left hand side of `+=' or `-=' operator",
+					GetSignatureForError ());
+			} else {
+				ec.Report.Error (70, loc,
+					"The event `{0}' can only appear on the left hand side of += or -= when used outside of the type `{1}'",
+					GetSignatureForError (), spec.DeclaringType.GetSignatureForError ());
+			}
 		}
 
 		protected override void Error_CannotCallAbstractBase (ResolveContext rc, string name)
