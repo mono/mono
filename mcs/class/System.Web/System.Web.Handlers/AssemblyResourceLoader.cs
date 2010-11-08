@@ -66,12 +66,31 @@ namespace System.Web.Handlers
 		static readonly Dictionary <string, AssemblyEmbeddedResources> _embeddedResources = new Dictionary <string, AssemblyEmbeddedResources> (StringComparer.Ordinal);
 		static readonly ReaderWriterLockSlim _embeddedResourcesLock = new ReaderWriterLockSlim ();
 
+		[ThreadStatic]
+		static Dictionary <string, string> stringHashCache;
+
+		static Dictionary <string, string> StringHashCache {
+			get {
+				if (stringHashCache == null)
+					stringHashCache = new Dictionary <string, string> (StringComparer.Ordinal);
+
+				return stringHashCache;
+			}
+		}
+		
 		static string GetStringHash (KeyedHashAlgorithm kha, string str)
 		{
 			if (String.IsNullOrEmpty (str))
 				return String.Empty;
+
+			string result;
+			Dictionary <string, string> cache = StringHashCache;
+			if (cache.TryGetValue (str, out result))
+				return result;
 			
-			return Convert.ToBase64String (kha.ComputeHash (Encoding.UTF8.GetBytes (str)));
+			result = Convert.ToBase64String (kha.ComputeHash (Encoding.UTF8.GetBytes (str)));
+			cache.Add (str, result);
+			return result;
 		}
 		
 		static void InitEmbeddedResourcesUrls (KeyedHashAlgorithm kha, Assembly assembly, string assemblyName, string assemblyHash, AssemblyEmbeddedResources entry)
