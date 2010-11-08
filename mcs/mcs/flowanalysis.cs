@@ -1069,39 +1069,11 @@ namespace Mono.CSharp
 			return info;
 		}
 
-		public static TypeInfo GetTypeInfo (TypeContainer tc)
-		{
-			TypeInfo info;
-			if (type_hash.TryGetValue (tc.Definition, out info))
-				return info;
-
-			info = new TypeInfo (tc);
-			type_hash.Add (tc.Definition, info);
-			return info;
-		}
-
 		private TypeInfo (TypeSpec type)
 		{
 			this.Type = type;
 
 			struct_info = StructInfo.GetStructInfo (type);
-			if (struct_info != null) {
-				Length = struct_info.Length;
-				TotalLength = struct_info.TotalLength;
-				SubStructInfo = struct_info.StructFields;
-				IsStruct = true;
-			} else {
-				Length = 0;
-				TotalLength = 1;
-				IsStruct = false;
-			}
-		}
-
-		private TypeInfo (TypeContainer tc)
-		{
-			this.Type = tc.Definition;
-
-			struct_info = StructInfo.GetStructInfo (tc);
 			if (struct_info != null) {
 				Length = struct_info.Length;
 				TotalLength = struct_info.TotalLength;
@@ -1291,11 +1263,7 @@ namespace Mono.CSharp
 
 			public static StructInfo GetStructInfo (TypeSpec type)
 			{
-				if (!TypeManager.IsValueType (type) || TypeManager.IsEnumType (type) ||
-				    TypeManager.IsBuiltinType (type))
-					return null;
-
-				if (TypeManager.IsGenericParameter (type))
+				if (!type.IsStruct || TypeManager.IsBuiltinType (type))
 					return null;
 
 				StructInfo info;
@@ -1303,15 +1271,6 @@ namespace Mono.CSharp
 					return info;
 
 				return new StructInfo (type);
-			}
-
-			public static StructInfo GetStructInfo (TypeContainer tc)
-			{
-				StructInfo info;
-				if (field_type_hash.TryGetValue (tc.Definition, out info))
-					return info;
-
-				return new StructInfo (tc.Definition);
 			}
 		}
 	}
@@ -1407,7 +1366,7 @@ namespace Mono.CSharp
 		public bool IsAssigned (ResolveContext ec)
 		{
 			return !ec.DoFlowAnalysis ||
-				ec.OmitStructFlowAnalysis && TypeInfo.IsStruct ||
+				(ec.OmitStructFlowAnalysis && TypeInfo.Type.IsStruct) ||
 				ec.CurrentBranching.IsAssigned (this);
 		}
 

@@ -38800,6 +38800,16 @@
       </method>
     </type>
   </test>
+  <test name="test-645.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-646.cs">
     <type name="Program">
       <method name="Void .ctor()">
@@ -39878,6 +39888,19 @@
       </method>
     </type>
   </test>
+  <test name="test-702.cs">
+    <type name="S">
+      <method name="Void Main()">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor(String, Int32)">
+        <size>15</size>
+      </method>
+    </type>
+  </test>
   <test name="test-703.cs">
     <type name="A">
       <method name="Void .ctor()">
@@ -40341,6 +40364,22 @@
       </method>
       <method name="Void set_Foo(Int32)">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-722.cs">
+    <type name="S">
+      <method name="Void set_Prop(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void M[T](T)">
+        <size>18</size>
+      </method>
+      <method name="Void Main()">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>8</size>
       </method>
     </type>
   </test>

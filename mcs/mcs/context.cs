@@ -417,14 +417,6 @@ namespace Mono.CSharp
 			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
 		}
 
-		// TODO: Merge with CompilerGeneratedThis
-		public Expression GetThis (Location loc)
-		{
-			This my_this = new This (loc);
-			my_this.ResolveBase (this);
-			return my_this;
-		}
-
 		public bool MustCaptureVariable (INamedBlockVariable local)
 		{
 			if (CurrentAnonymousMethod == null)

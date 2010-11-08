@@ -1726,14 +1726,14 @@ namespace Mono.CSharp {
 			//
 			if (source_type.IsInterface) {
 				if (!target_type.IsSealed || target_type.ImplementsInterface (source_type, true)) {
-					if (target_type.IsClass)
-						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
+					if (source == null)
+						return EmptyExpression.Null;
 
 					//
 					// Unboxing conversion from any interface-type to any non-nullable-value-type that
 					// implements the interface-type
 					//
-					return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
+					return target_is_value_type ? new UnboxCast (source, target_type) : (Expression) new ClassCast (source, target_type);
 				}
 
 				//

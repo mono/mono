@@ -5112,9 +5112,6 @@ namespace Mono.CSharp {
 
 			IsSpecialMethodInvocation (ec, method, loc);
 			
-			if (mg.InstanceExpression != null)
-				mg.InstanceExpression.CheckMarshalByRefAccess (ec);
-
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -6619,7 +6616,7 @@ namespace Mono.CSharp {
 		}
 	}	
 	
-	public sealed class CompilerGeneratedThis : This
+	sealed class CompilerGeneratedThis : This
 	{
 		public static This Instance = new CompilerGeneratedThis ();
 
@@ -6714,6 +6711,14 @@ namespace Mono.CSharp {
 
 		#endregion
 
+		public void CheckStructThisDefiniteAssignment (ResolveContext rc)
+		{
+			if (variable_info != null && !variable_info.IsAssigned (rc)) {
+				rc.Report.Error (188, loc,
+					"The `this' object cannot be used before all of its fields are assigned to");
+			}
+		}
+
 		protected virtual void Error_ThisNotAvailable (ResolveContext ec)
 		{
 			if (ec.IsStatic && !ec.HasSet (ResolveContext.Options.ConstantScope)) {
@@ -6760,8 +6765,12 @@ namespace Mono.CSharp {
 
 		public virtual void ResolveBase (ResolveContext ec)
 		{
+			eclass = ExprClass.Variable;
+			type = ec.CurrentType;
+
 			if (!IsThisAvailable (ec, false)) {
 				Error_ThisNotAvailable (ec);
+				return;
 			}
 
 			var block = ec.CurrentBlock;
@@ -6773,22 +6782,6 @@ namespace Mono.CSharp {
 				if (am != null && ec.IsVariableCapturingRequired) {
 					am.SetHasThisAccess ();
 				}
-			}
-
-			eclass = ExprClass.Variable;
-			type = ec.CurrentType;
-		}
-
-		//
-		// Called from Invocation to check if the invocation is correct
-		//
-		public override void CheckMarshalByRefAccess (ResolveContext ec)
-		{
-			if ((variable_info != null) && !(TypeManager.IsStruct (type) && ec.OmitStructFlowAnalysis) &&
-			    !variable_info.IsAssigned (ec)) {
-				ec.Report.Error (188, loc,
-					"The `this' object cannot be used before all of its fields are assigned to");
-				variable_info.SetAssigned (ec);
 			}
 		}
 
@@ -6805,6 +6798,11 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			ResolveBase (ec);
+
+			if (variable_info != null && type.IsStruct) {
+				CheckStructThisDefiniteAssignment (ec);
+			}
+
 			return this;
 		}
 
@@ -6815,7 +6813,7 @@ namespace Mono.CSharp {
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
 
-			if (ec.CurrentType.IsClass){
+			if (type.IsClass){
 				if (right_side == EmptyExpression.UnaryAddress)
 					ec.Report.Error (459, loc, "Cannot take the address of `this' because it is read-only");
 				else if (right_side == EmptyExpression.OutAccess.Instance)
@@ -7559,7 +7557,7 @@ namespace Mono.CSharp {
 			if (expr_type == InternalType.Dynamic) {
 				me = expr as MemberExpr;
 				if (me != null)
-					me.ResolveInstanceExpression (rc);
+					me.ResolveInstanceExpression (rc, null);
 
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
@@ -8420,7 +8418,7 @@ namespace Mono.CSharp {
 				return new DynamicIndexBinder (args, loc);
 			}
 
-			ResolveInstanceExpression (rc);
+			ResolveInstanceExpression (rc, right_side);
 			CheckProtectedMemberAccess (rc, best_candidate);
 			return this;
 		}
