@@ -6796,7 +6796,7 @@ wait_for_attach (void)
 
 	/* Block and wait for client connection */
 	conn_fd = transport_accept (listen_fd);
-	printf ("Accepted connection on %d\n", conn_fd);
+	DEBUG (1, fprintf (log_file, "Accepted connection on %d\n", conn_fd));
 	if (conn_fd == -1) {
 		DEBUG (1, fprintf (log_file, "[dbg] Bad client connection\n"));
 		return FALSE;
