@@ -768,7 +768,6 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		[ExpectedException (typeof (XamlXmlWriterException))]
-		[Category ("NotWorking")]
 		public void Write_PositionalParameters1 ()
 		{
 			// PositionalParameters can only be written when the 

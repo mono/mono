@@ -592,8 +592,6 @@ namespace System.Xaml
 			//  StartObject i.e. the root or a collection item.)
 			var posprms = member == XamlLanguage.PositionalParameters && IsAtTopLevelObject () && object_states.Peek ().Type.HasPositionalParameters () ? state.Type.GetSortedConstructorArguments ().GetEnumerator () : null;
 			if (posprms != null) {
-				if (inside_toplevel_positional_parameter)
-					throw new XamlXmlWriterException (String.Format ("The XAML reader input has more than one positional parameter values within a top-level object {0}. While XamlObjectReader can read such an object, XamlXmlWriter cannot write such an object to XML.", state.Type));
 				posprms.MoveNext ();
 				var arg = posprms.Current;
 				w.WriteStartAttribute (arg.Name);
@@ -717,6 +715,9 @@ namespace System.Xaml
 				state.PositionalParameterIndex++;
 				break;
 			default:
+				if (inside_toplevel_positional_parameter)
+					throw new XamlXmlWriterException (String.Format ("The XAML reader input has more than one positional parameter values within a top-level object {0} because it tries to write all of the argument values as an attribute value of the first argument. While XamlObjectReader can read such an object, XamlXmlWriter cannot write such an object to XML.", state.Type));
+
 				state.PositionalParameterIndex++;
 				w.WriteString (", ");
 				break;
