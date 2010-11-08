@@ -754,7 +754,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_DictionaryStringType ()
 		{
 			var dic = new Dictionary<string,Type> ();

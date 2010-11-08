@@ -350,6 +350,8 @@ namespace System.Xaml
 		public void WriteEndMember ()
 		{
 			manager.EndMember ();
+
+			OnWriteEndMember ();
 			
 			var state = object_states.Peek ();
 			if (CurrentMember == XamlLanguage.PositionalParameters) {
@@ -364,8 +366,6 @@ namespace System.Xaml
 				state.PositionalParameterIndex = -1;
 
 			contents.Clear ();
-
-			OnWriteEndMember ();
 		}
 
 		protected abstract void OnWriteEndObject ();
@@ -590,7 +590,7 @@ namespace System.Xaml
 			//   the second constructor argument.
 			// (Here "top-level" means an object that involves
 			//  StartObject i.e. the root or a collection item.)
-			var posprms = IsAtTopLevelObject () && object_states.Peek ().Type.HasPositionalParameters () ? state.Type.GetSortedConstructorArguments ().GetEnumerator () : null;
+			var posprms = member == XamlLanguage.PositionalParameters && IsAtTopLevelObject () && object_states.Peek ().Type.HasPositionalParameters () ? state.Type.GetSortedConstructorArguments ().GetEnumerator () : null;
 			if (posprms != null) {
 				if (inside_toplevel_positional_parameter)
 					throw new XamlXmlWriterException (String.Format ("The XAML reader input has more than one positional parameter values within a top-level object {0}. While XamlObjectReader can read such an object, XamlXmlWriter cannot write such an object to XML.", state.Type));
@@ -599,9 +599,10 @@ namespace System.Xaml
 				w.WriteStartAttribute (arg.Name);
 				inside_toplevel_positional_parameter = true;
 			}
+			else if (w.WriteState == WriteState.Attribute)
+				inside_attribute_object = true;
 
 			if (w.WriteState == WriteState.Attribute) {
-				inside_attribute_object = true;
 				if (state.PositionalParameterIndex < 0) {
 					w.WriteString (" ");
 					w.WriteString (member.Name);
@@ -635,9 +636,16 @@ namespace System.Xaml
 
 		AllowedMemberLocations IsAttribute (XamlType xt, XamlMember xm)
 		{
+			var mt = xm.Type;
+			if (xm == XamlLanguage.Key) {
+				var tmp = object_states.Pop ();
+				mt = object_states.Peek ().Type.KeyType;
+				object_states.Push (tmp);
+			}
+
 			if (xm == XamlLanguage.Initialization)
 				return AllowedMemberLocations.MemberElement;
-			if (xm.Type.HasPositionalParameters ())
+			if (mt.HasPositionalParameters ())
 				return AllowedMemberLocations.Attribute;
 			if (w.WriteState == WriteState.Content)
 				return AllowedMemberLocations.MemberElement;
@@ -656,8 +664,6 @@ namespace System.Xaml
 			if (xd == null && !xt.GetAllMembers ().Contains (xm))
 				return AllowedMemberLocations.None;
 
-			// FIXME: this is likely unnecessarily complicated.
-			var mt = (xt != null && xd == XamlLanguage.Key ? xt.KeyType : xm.Type) ?? xm.Type;
 			if (mt != null && mt.TypeConverter != null && mt.TypeConverter.ConverterInstance != null && mt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
 				return AllowedMemberLocations.Attribute;
 

@@ -201,12 +201,17 @@ namespace MonoTests.System.Xaml
 			//Assert.IsTrue (l.Any (t => t.Name == "Property"), "#8");
 			//Assert.IsFalse (l.Any (t => t.Name == "MemberDefinition"), "#9");
 			//Assert.IsFalse (l.Any (t => t.Name == "PropertyDefinition"), "#10");
+			//Assert.AreEqual ("MemberDefinition", new XamlType (typeof (MemberDefinition), new XamlSchemaContext (null, null)).Name);
+			//Assert.AreEqual ("Member", l.GetAllXamlTypes (XamlLanguage.Xaml2006Namespace).First (t => t.UnderlyingType == typeof (MemberDefinition)));
 			Assert.IsFalse (l.Any (t => t.Name == "Array"), "#11");
 			Assert.IsFalse (l.Any (t => t.Name == "Null"), "#12");
 			Assert.IsFalse (l.Any (t => t.Name == "Static"), "#13");
 			Assert.IsFalse (l.Any (t => t.Name == "Type"), "#14");
-			//Assert.AreEqual ("MemberDefinition", new XamlType (typeof (MemberDefinition), new XamlSchemaContext (null, null)).Name);
-			//Assert.AreEqual ("Member", l.GetAllXamlTypes (XamlLanguage.Xaml2006Namespace).First (t => t.UnderlyingType == typeof (MemberDefinition)));
+			Assert.IsTrue (l.Contains (XamlLanguage.Type), "#15");
+			Assert.IsFalse (l.Contains (XamlLanguage.String), "#16"); // huh?
+			Assert.IsFalse (l.Contains (XamlLanguage.Object), "#17"); // huh?
+			Assert.IsTrue (l.Contains (XamlLanguage.Array), "#18");
+			Assert.IsFalse (l.Contains (XamlLanguage.Uri), "#19");
 		}
 
 		[Test]

@@ -697,8 +697,8 @@ namespace System.Xaml
 			if (a != null)
 				return SchemaContext.GetValueConverter<TypeConverter> (Type.GetType (a.ConverterTypeName), this);
 
-			if (t == typeof (object))
-				return SchemaContext.GetValueConverter<TypeConverter> (typeof (TypeConverter), this);
+			if (t == typeof (object)) // This is a special case. ConverterType is null.
+				return SchemaContext.GetValueConverter<TypeConverter> (null, this);
 
 			// It's still not decent to check CollectionConverter.
 			var tct = TypeDescriptor.GetConverter (t).GetType ();
