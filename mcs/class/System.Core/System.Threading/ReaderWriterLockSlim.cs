@@ -237,7 +237,7 @@ namespace System.Threading {
 
 				// We register our interest in taking the Write lock (if upgradeable it's already done)
 				if (!isUpgradable)
-					while ((state & RwWait) == 0 && Interlocked.CompareExchange (ref rwlock, state | RwWait, state) == state)
+					while ((state & RwWait) == 0 && Interlocked.CompareExchange (ref rwlock, state | RwWait, state) != state)
 						state = rwlock;
 
 				// Before falling to sleep
