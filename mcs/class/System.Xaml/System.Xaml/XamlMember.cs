@@ -235,13 +235,6 @@ namespace System.Xaml
 		public XamlValueConverter<ValueSerializer> ValueSerializer {
 			get { return LookupValueSerializer (); }
 		}
-		
-		internal bool IsConstructorArgument {
-			get {
-				var ap = GetCustomAttributeProvider ();
-				return ap != null && ap.GetCustomAttributes (typeof (ConstructorArgumentAttribute), false).Length > 0;
-			}
-		}
 
 		public static bool operator == (XamlMember left, XamlMember right)
 		{
