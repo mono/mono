@@ -1,0 +1,4 @@
+<Dictionary x:TypeArguments="x:String, s:Type" xmlns="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:sx="clr-namespace:System.Xaml;assembly=System.Xaml" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Type Type="x:Int32" x:Key="Foo" />
+  <x:Type Type="Dictionary(s:Type, sx:XamlType)" x:Key="Bar" />
+</Dictionary>

@@ -726,7 +726,7 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void Write_ListInt32 ()
 		{
-			Assert.AreEqual (ReadXml ("List_Int32.xml").Trim (), XamlServices.Save (new int [] {4, -5, 0, 255, int.MaxValue}.ToList ()), "#1");
+			Assert.AreEqual (ReadXml ("List_Int32.xml").Trim (), XamlServices.Save (new int [] {5, -3, int.MaxValue, 0}.ToList ()), "#1");
 		}
 
 		[Test]

@@ -137,6 +137,9 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (new XamlType (typeof (string), r.SchemaContext), r.Type, "#23-2");
 			Assert.IsNull (r.Namespace, "#25");
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#31");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
 			Assert.IsNotNull (r.Member, "#33");
@@ -180,6 +183,9 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xt, r.Type, "#17-2");
 //			Assert.IsTrue (r.Instance is TestClass4, "#17-3");
 			Assert.AreEqual (2, xt.GetAllMembers ().Count, "#17-4");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "#21");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#22");
@@ -242,6 +248,9 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (xt.GetAllMembers ().Any (xm => xm.Name == "Bar"), "#17-5");
 			Assert.IsTrue (xt.GetAllMembers ().Any (xm => xm.Name == "Baz"), "#17-6");
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#21");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#22");
 			Assert.AreEqual (xt.GetMember ("Bar"), r.Member, "#22-2");
@@ -281,6 +290,8 @@ namespace MonoTests.System.Xaml
 		{
 			r.Read (); // NamespaceDeclaration
 			r.Read (); // Type
+			if (r is XamlXmlReader)
+				ReadBase (r);
 			r.Read (); // Member (Initialization)
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#1");
 			r.Skip ();
@@ -335,6 +346,9 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xt, r.Type, "#17-2");
 //			Assert.IsTrue (r.Instance is TestClass3, "#17-3");
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#21");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#22");
 			Assert.AreEqual (xt.GetMember ("Nested"), r.Member, "#22-2");
@@ -357,7 +371,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.IsEof, "#47");
 		}
 
-		protected void Read_TypeOrTypeExtension (XamlReader r, Action validateInstance)
+		protected void Read_TypeOrTypeExtension (XamlReader r, Action validateInstance, XamlMember ctorArgMember)
 		{
 			Assert.IsTrue (r.Read (), "#11");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
@@ -374,10 +388,13 @@ namespace MonoTests.System.Xaml
 			if (validateInstance != null)
 				validateInstance ();
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#31");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
 			Assert.IsNotNull (r.Member, "#33");
-			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "#33-2");
+			Assert.AreEqual (ctorArgMember, r.Member, "#33-2");
 			Assert.IsNull (r.Type, "#34");
 //			Assert.IsNull (r.Instance, "#35");
 
@@ -402,7 +419,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.IsEof, "#72");
 		}
 
-		protected void Read_TypeOrTypeExtension2 (XamlReader r, Action validateInstance)
+		protected void Read_TypeOrTypeExtension2 (XamlReader r, Action validateInstance, XamlMember ctorArgMember)
 		{
 			Assert.IsTrue (r.Read (), "#11");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
@@ -424,9 +441,12 @@ namespace MonoTests.System.Xaml
 			if (validateInstance != null)
 				validateInstance ();
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#31");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
-			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "#33-2");
+			Assert.AreEqual (ctorArgMember, r.Member, "#33-2");
 
 			Assert.IsTrue (r.Read (), "#41");
 			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#42");
@@ -455,6 +475,9 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xt, r.Type, "#23-2");
 //			Assert.IsTrue (r.Instance is Reference, "#26");
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#31");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
 			// unlike TypeExtension there is no PositionalParameters.
@@ -463,7 +486,7 @@ namespace MonoTests.System.Xaml
 			// It is a ContentProperty (besides [ConstructorArgument])
 			Assert.IsTrue (r.Read (), "#41");
 			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#42");
-			Assert.AreEqual ("TestName", r.Value, "#43-2");
+			Assert.AreEqual ("FooBar", r.Value, "#43-2");
 
 			Assert.IsTrue (r.Read (), "#51");
 			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#52");
@@ -490,6 +513,9 @@ namespace MonoTests.System.Xaml
 			if (validateInstance != null)
 				validateInstance ();
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#61");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#62");
 
@@ -498,7 +524,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		// almost identical to TypeExtension (only type/instance difference)
-		protected void Read_StaticExtension (XamlReader r)
+		protected void Read_StaticExtension (XamlReader r, XamlMember ctorArgMember)
 		{
 			Assert.IsTrue (r.Read (), "#11");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
@@ -512,9 +538,12 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (new XamlType (typeof (StaticExtension), r.SchemaContext), r.Type, "#23-2");
 //			Assert.IsTrue (r.Instance is StaticExtension, "#26");
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#31");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
-			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "#33-2");
+			Assert.AreEqual (ctorArgMember, r.Member, "#33-2");
 
 			Assert.IsTrue (r.Read (), "#41");
 			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#42");
@@ -556,6 +585,9 @@ namespace MonoTests.System.Xaml
 
 			// This assumption on member ordering ("Type" then "Items") is somewhat wrong, and we might have to adjust it in the future.
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#31");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
 			Assert.AreEqual (xt.GetMember ("Capacity"), r.Member, "#33");
@@ -574,8 +606,8 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#72-2");
 			Assert.AreEqual (XamlLanguage.Items, r.Member, "#72-3");
 
-			string [] values = {"5", "-3", "0"};
-			for (int i = 0; i < 3; i++) {
+			string [] values = {"5", "-3", "2147483647", "0"};
+			for (int i = 0; i < 4; i++) {
 				Assert.IsTrue (r.Read (), i + "#73");
 				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, i + "#73-2");
 				Assert.IsTrue (r.Read (), i + "#74");
@@ -623,6 +655,9 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xt, r.Type, "#23");
 //			Assert.AreEqual (obj, r.Instance, "#26");
 			Assert.IsTrue (xt.IsCollection, "#27");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			// This assumption on member ordering ("Type" then "Items") is somewhat wrong, and we might have to adjust it in the future.
 
@@ -687,6 +722,9 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xt, r.Type, "#23");
 			if (validateInstance != null)
 				validateInstance ();
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			// This assumption on member ordering ("Type" then "Items") is somewhat wrong, and we might have to adjust it in the future.
 
@@ -761,6 +799,9 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (ArrayExtension), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "#23-2");
 //			Assert.IsTrue (r.Instance is ArrayExtension, "#26");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "#31");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
@@ -855,7 +896,7 @@ namespace MonoTests.System.Xaml
 		{
 			Read_TypeOrTypeExtension (r, delegate {
 				Assert.IsTrue (r.Instance is TypeExtension, "#26");
-				});
+				}, XamlLanguage.PositionalParameters);
 		}
 		
 		[Test]
@@ -876,13 +917,13 @@ namespace MonoTests.System.Xaml
 		{
 			Read_TypeOrTypeExtension2 (r, delegate {
 				Assert.IsTrue (r.Instance is TypeExtension, "#26");
-			});
+			}, XamlLanguage.PositionalParameters);
 		}
 		
 		[Test]
 		public void Read_Reference ()
 		{
-			var r = new XamlObjectReader (new Reference ("TestName"));
+			var r = new XamlObjectReader (new Reference ("FooBar"));
 			Read_Reference (r);
 		}
 		
@@ -912,13 +953,13 @@ namespace MonoTests.System.Xaml
 		public void Read_StaticExtension ()
 		{
 			var r = new XamlObjectReader (new StaticExtension ("FooBar"));
-			Read_StaticExtension (r);
+			Read_StaticExtension (r, XamlLanguage.PositionalParameters);
 		}
 		
 		[Test]
 		public void Read_ListInt32 ()
 		{
-			var obj = new List<int> (new int [] {5, -3, 0});
+			var obj = new List<int> (new int [] {5, -3, int.MaxValue, 0});
 			Read_ListInt32 (obj);
 		}
 		
@@ -1116,6 +1157,9 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.IsEof, "#1");
 			var xt = r.Type;
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			r.Read ();
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#2-1");
 			Assert.IsFalse (r.IsEof, "#2-2");
@@ -1165,6 +1209,10 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#2-0");
 			var xt = r.Type;
 			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (MyExtension2)), xt, "#2");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#3");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-2");
 			Assert.AreEqual (XamlLanguage.Initialization, r.Member, "#4");
@@ -1183,6 +1231,10 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#2-0");
 			var xt = r.Type;
 			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (MyExtension3)), xt, "#2");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#3");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-2");
 			Assert.AreEqual (XamlLanguage.Initialization, r.Member, "#4");
@@ -1201,6 +1253,10 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#2-0");
 			var xt = r.Type;
 			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (MyExtension4)), xt, "#2");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#3");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-2");
 			Assert.AreEqual (XamlLanguage.Initialization, r.Member, "#4");
@@ -1219,6 +1275,10 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#2-0");
 			var xt = r.Type;
 			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (MyExtension5)), xt, "#2");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#3");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-2");
 			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "#4");
@@ -1241,6 +1301,10 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#2-0");
 			var xt = r.Type;
 			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (MyExtension6)), xt, "#2");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "#3");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#3-2");
 			Assert.AreEqual (xt.GetMember ("Foo"), r.Member, "#4"); // this is the difference between MyExtension5 and MyExtension6: it outputs constructor arguments as normal members
@@ -1270,6 +1334,9 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (Dictionary<string,object>), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "so#1-3");
 //			Assert.AreEqual (obj, r.Instance, "so#1-4");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "smitems#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smitems#2");
@@ -1319,7 +1386,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "end");
 		}
 
-		protected void Read_Dictionary2 (XamlReader r)
+		protected void Read_Dictionary2 (XamlReader r, XamlMember ctorArgMember)
 		{
 			Assert.IsTrue (r.Read (), "ns#1-1");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
@@ -1351,6 +1418,9 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xt, r.Type, "so#1-3");
 //			Assert.AreEqual (obj, r.Instance, "so#1-4");
 
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
 			Assert.IsTrue (r.Read (), "smitems#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smitems#2");
 			Assert.AreEqual (XamlLanguage.Items, r.Member, "smitems#3");
@@ -1363,27 +1433,13 @@ namespace MonoTests.System.Xaml
 				var xt2 = XamlLanguage.Type;
 				Assert.AreEqual (xt2, r.Type, "soi#1-3." + i);
 
-				Assert.IsTrue (r.Read (), "smi#1-1." + i);
-				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smi#1-2." + i);
-				Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "smi#1-3." + i);
-
-				Assert.IsTrue (r.Read (), "svi#1-1." + i);
-				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "svi#1-2." + i);
-				Assert.AreEqual (i == 0 ? "x:Int32" : "Dictionary(s:Type, sx:XamlType)", r.Value, "svi#1-3." + i);
-
-				Assert.IsTrue (r.Read (), "emi#1-1." + i);
-				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emi#1-2." + i);
-
-				Assert.IsTrue (r.Read (), "smi#2-1." + i);
-				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smi#2-2." + i);
-				Assert.AreEqual (XamlLanguage.Key, r.Member, "smi#2-3." + i);
-
-				Assert.IsTrue (r.Read (), "svi#2-1." + i);
-				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "svi#2-2." + i);
-				Assert.AreEqual (i == 0 ? "Foo" : "Bar", r.Value, "svi#2-3." + i);
-
-				Assert.IsTrue (r.Read (), "emi#2-1." + i);
-				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emi#2-2." + i);
+				if (r is XamlObjectReader) {
+					Read_Dictionary2_ConstructorArgument (r, ctorArgMember, i);
+					Read_Dictionary2_Key (r, i);
+				} else {
+					Read_Dictionary2_Key (r, i);
+					Read_Dictionary2_ConstructorArgument (r, ctorArgMember, i);
+				}
 
 				Assert.IsTrue (r.Read (), "eoi#1-1." + i);
 				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eoi#1-2." + i);
@@ -1399,6 +1455,34 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "end");
 		}
 		
+		void Read_Dictionary2_ConstructorArgument (XamlReader r, XamlMember ctorArgMember, int i)
+		{
+			Assert.IsTrue (r.Read (), "smi#1-1." + i);
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smi#1-2." + i);
+			Assert.AreEqual (ctorArgMember, r.Member, "smi#1-3." + i);
+
+			Assert.IsTrue (r.Read (), "svi#1-1." + i);
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "svi#1-2." + i);
+			Assert.AreEqual (i == 0 ? "x:Int32" : "Dictionary(s:Type, sx:XamlType)", r.Value, "svi#1-3." + i);
+
+			Assert.IsTrue (r.Read (), "emi#1-1." + i);
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emi#1-2." + i);
+		}
+
+		void Read_Dictionary2_Key (XamlReader r, int i)
+		{
+			Assert.IsTrue (r.Read (), "smi#2-1." + i);
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smi#2-2." + i);
+			Assert.AreEqual (XamlLanguage.Key, r.Member, "smi#2-3." + i);
+
+			Assert.IsTrue (r.Read (), "svi#2-1." + i);
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "svi#2-2." + i);
+			Assert.AreEqual (i == 0 ? "Foo" : "Bar", r.Value, "svi#2-3." + i);
+
+			Assert.IsTrue (r.Read (), "emi#2-1." + i);
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emi#2-2." + i);
+		}
+
 		protected void PositionalParameters1 (XamlReader r)
 		{
 			// ns1 > T:PositionalParametersClass1 > M:_PositionalParameters > foo > 5 > EM:_PositionalParameters > ET:PositionalParametersClass1
@@ -1414,6 +1498,9 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (PositionalParametersClass1), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "so#1-3");
 //			Assert.AreEqual (obj, r.Instance, "so#1-4");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "sposprm#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sposprm#2");
@@ -1451,6 +1538,9 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (PositionalParametersWrapper), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "so#1-3");
 //			Assert.AreEqual (obj, r.Instance, "so#1-4");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "sm#1-1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#1-2");
@@ -1508,6 +1598,9 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (ComplexPositionalParameterWrapper), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "so#1-3");
 //			Assert.AreEqual (obj, r.Instance, "so#1-4");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "sm#1-1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm#1-2");
@@ -1573,6 +1666,9 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (ListWrapper), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "#23");
 //			Assert.AreEqual (obj, r.Instance, "#26");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "#61");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#62");
@@ -1643,6 +1739,9 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (ListWrapper2), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "#23");
 //			Assert.AreEqual (obj, r.Instance, "#26");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "#61");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#62");
@@ -1716,6 +1815,9 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
 			var xt = new XamlType (typeof (ContentIncludedClass), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "sposprm#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sposprm#2");
@@ -1831,6 +1933,20 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.Read (), "ct#7");
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "ct#8");
 		}
+
+		protected void ReadBase (XamlReader r)
+		{
+			Assert.IsTrue (r.Read (), "sbase#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
+			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
+
+			Assert.IsTrue (r.Read (), "vbase#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
+			Assert.IsTrue (r.Value is string, "vbase#3");
+
+			Assert.IsTrue (r.Read (), "ebase#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+		}
 	}
 
 	public partial class XamlObjectReaderTest
@@ -1852,7 +1968,7 @@ namespace MonoTests.System.Xaml
 			obj ["Foo"] = typeof (int);
 			obj ["Bar"] = typeof (Dictionary<Type,XamlType>);
 			var r = new XamlObjectReader (obj);
-			Read_Dictionary2 (r);
+			Read_Dictionary2 (r, XamlLanguage.PositionalParameters);
 		}
 		
 		[Test]
