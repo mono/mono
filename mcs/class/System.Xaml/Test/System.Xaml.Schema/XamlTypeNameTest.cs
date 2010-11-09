@@ -38,7 +38,8 @@ namespace MonoTests.System.Xaml.Schema
 		[Test]
 		public void ConstructorDefault ()
 		{
-			new XamlTypeName ();
+			var xtn = new XamlTypeName ();
+			Assert.IsNotNull (xtn.TypeArguments, "#1");
 		}
 
 		[Test]
@@ -52,14 +53,16 @@ namespace MonoTests.System.Xaml.Schema
 		public void ConstructorNameNull ()
 		{
 			// allowed.
-			new XamlTypeName ("urn:foo", null);
+			var xtn = new XamlTypeName ("urn:foo", null);
+			Assert.IsNotNull (xtn.TypeArguments, "#1");
 		}
 
 		[Test]
 		public void ConstructorNamespaceNull ()
 		{
 			// allowed.
-			new XamlTypeName (null, "FooBar");
+			var xtn = new XamlTypeName (null, "FooBar");
+			Assert.IsNotNull (xtn.TypeArguments, "#1");
 		}
 
 		[Test]

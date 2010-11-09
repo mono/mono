@@ -130,7 +130,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_DictionaryInt32String ()
 		{
 			ReadTest ("Dictionary_Int32_String.xml");
@@ -138,7 +137,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_DictionaryStringType ()
 		{
 			ReadTest ("Dictionary_String_Type.xml");

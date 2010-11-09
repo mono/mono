@@ -140,11 +140,13 @@ namespace System.Xaml.Schema
 
 		public XamlTypeName ()
 		{
+			TypeArguments = empty_type_args;
 		}
 
 		static readonly XamlTypeName [] empty_type_args = new XamlTypeName [0];
 
 		public XamlTypeName (XamlType xamlType)
+			: this ()
 		{
 			if (xamlType == null)
 				throw new ArgumentNullException ("xamlType");
@@ -155,8 +157,6 @@ namespace System.Xaml.Schema
 				l.AddRange (from x in xamlType.TypeArguments.AsQueryable () select new XamlTypeName (x));
 				TypeArguments = l;
 			}
-			else
-				TypeArguments = empty_type_args;
 		}
 		
 		public XamlTypeName (string xamlNamespace, string name)
@@ -165,6 +165,7 @@ namespace System.Xaml.Schema
 		}
 
 		public XamlTypeName (string xamlNamespace, string name, IEnumerable<XamlTypeName> typeArguments)
+			: this ()
 		{
 			Namespace = xamlNamespace;
 			Name = name;
@@ -175,8 +176,6 @@ namespace System.Xaml.Schema
 				l.AddRange (typeArguments);
 				TypeArguments = l;
 			}
-			else
-				TypeArguments = empty_type_args;
 		}
 
 		public string Name { get; set; }

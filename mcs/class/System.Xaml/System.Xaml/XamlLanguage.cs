@@ -275,7 +275,7 @@ namespace System.Xaml
 				return null;
 
 			Type [] genArgs = null;
-			if (typeArguments != null) {
+			if (typeArguments != null && typeArguments.Count > 0) {
 				var xtns = typeArguments;
 				genArgs = new Type [xtns.Count];
 				for (int i = 0; i < genArgs.Length; i++) {
