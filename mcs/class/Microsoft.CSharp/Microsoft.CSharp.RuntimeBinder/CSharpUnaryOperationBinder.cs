@@ -59,6 +59,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			case ExpressionType.Negate:
 				return Compiler.Unary.Operator.UnaryNegation;
 			case ExpressionType.Not:
+			case ExpressionType.IsFalse:
 				return Compiler.Unary.Operator.LogicalNot;
 			case ExpressionType.OnesComplement:
 				return Compiler.Unary.Operator.OnesComplement;

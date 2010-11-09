@@ -360,13 +360,13 @@
         <size>158</size>
       </method>
       <method name="Void UnaryIsFalse_3(System.Object, DynamicObjectMock)">
-        <size>157</size>
+        <size>245</size>
       </method>
       <method name="Void UnaryIsTrue_1(System.Object, DynamicObjectMock)">
         <size>129</size>
       </method>
       <method name="Void UnaryIsTrue_2(System.Object, DynamicObjectMock)">
-        <size>158</size>
+        <size>246</size>
       </method>
       <method name="Boolean RunTest(System.Reflection.MethodInfo)">
         <size>130</size>
@@ -585,22 +585,6 @@
         <size>119</size>
       </method>
     </type>
-    <type name="Tester+&lt;InvokeMember_3&gt;c__DynamicSite30+Container0">
-      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;InvokeMember_4&gt;c__DynamicSite31+Container0">
-      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
-    </type>
     <type name="Tester">
       <method name="Void SetMember_2(System.Object, DynamicObjectMock)">
         <size>372</size>
@@ -687,25 +671,8 @@
       <method name="Void &lt;UnaryIsTrue_2&gt;m__52(System.Dynamic.BinaryOperationBinder, System.Object)">
         <size>68</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__53(System.Reflection.MethodInfo)">
-        <size>12</size>
-      </method>
-      <method name="System.String &lt;Main&gt;m__54(System.Reflection.MethodInfo)">
-        <size>7</size>
-      </method>
       <method name="Boolean &lt;Main&gt;m__55(System.Reflection.MethodInfo)">
-        <size>7</size>
-      </method>
-      <method name="Boolean &lt;Main&gt;m__56(Boolean)">
-        <size>5</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;InvokeMember_8&gt;c__DynamicSite35+Container0">
-      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, System.Object ByRef)">
-        <size>0</size>
-      </method>
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Tester+&lt;SetIndex_3&gt;c__AnonStorey5">
@@ -716,6 +683,56 @@
     <type name="Tester+&lt;SetMember_2&gt;c__AnonStorey6">
       <method name="System.Object &lt;&gt;m__3F(System.Dynamic.GetMemberBinder)">
         <size>72</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void BinaryLogicalAnd_1(System.Object, DynamicObjectMock)">
+        <size>116</size>
+      </method>
+      <method name="Void BinaryLogicalOr_1(System.Object, DynamicObjectMock)">
+        <size>117</size>
+      </method>
+      <method name="Void UnaryIsTrue_3(System.Object, DynamicObjectMock)">
+        <size>248</size>
+      </method>
+      <method name="System.Object &lt;UnaryIsTrue_3&gt;m__53(System.Dynamic.UnaryOperationBinder)">
+        <size>52</size>
+      </method>
+      <method name="Void &lt;UnaryIsTrue_3&gt;m__54(System.Dynamic.BinaryOperationBinder, System.Object)">
+        <size>73</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__56(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__57(System.Reflection.MethodInfo)">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__58(Boolean)">
+        <size>5</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;InvokeMember_3&gt;c__DynamicSite32+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;InvokeMember_4&gt;c__DynamicSite33+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;InvokeMember_8&gt;c__DynamicSite37+Container0">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Object, System.Object ByRef)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
       </method>
     </type>
   </test>
@@ -946,7 +963,7 @@
         <size>683</size>
       </method>
       <method name="Void AndAlsoTest()">
-        <size>892</size>
+        <size>1251</size>
       </method>
       <method name="Void DivideTest()">
         <size>927</size>
@@ -1129,7 +1146,7 @@
         <size>685</size>
       </method>
       <method name="Void OrElseTest()">
-        <size>896</size>
+        <size>1256</size>
       </method>
       <method name="Void RightShiftTest()">
         <size>1152</size>
@@ -2175,7 +2192,7 @@
   <test name="dtest-029.cs">
     <type name="C">
       <method name="Boolean Test[T,U](T, U)">
-        <size>335</size>
+        <size>508</size>
       </method>
       <method name="Int32 Main()">
         <size>82</size>
@@ -2638,6 +2655,71 @@
     <type name="Test">
       <method name="Int32 Main()">
         <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-048.cs">
+    <type name="A">
+      <method name="Int32 M(System.String, System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Int32 M(System.String, System.Object[])">
+        <size>10</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>319</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-049.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A+N">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+N">
+      <method name="Void Test()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()">
+        <size>90</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="dtest-050.cs">
+    <type name="C">
+      <method name="Boolean Throw()">
+        <size>11</size>
+      </method>
+      <method name="Boolean Return(Boolean)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>943</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -27191,6 +27273,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-14.cs">
+    <type name="A">
+      <method name="Int32 GetValues(System.String[], System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 GetValues(System.String, System.String[])">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 Main()">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()">
@@ -41749,6 +41852,16 @@
       </method>
     </type>
   </test>
+  <test name="test-645.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>30</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-646.cs">
     <type name="Program">
       <method name="Void .ctor()">
@@ -42827,6 +42940,19 @@
       </method>
     </type>
   </test>
+  <test name="test-702.cs">
+    <type name="S">
+      <method name="Void Main()">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor(String, Int32)">
+        <size>15</size>
+      </method>
+    </type>
+  </test>
   <test name="test-703.cs">
     <type name="A">
       <method name="Void .ctor()">
@@ -43293,6 +43419,22 @@
       </method>
     </type>
   </test>
+  <test name="test-722.cs">
+    <type name="S">
+      <method name="Void set_Prop(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void M[T](T)">
+        <size>18</size>
+      </method>
+      <method name="Void Main()">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+  </test>
   <test name="test-723.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -43332,6 +43474,30 @@
       </method>
       <method name="System.String get_Spec()">
         <size>6</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-725.cs">
+    <type name="D">
+      <method name="Int32 Invoke(Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32 ByRef, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(Int32 ByRef, IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 Main()">
+        <size>237</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>

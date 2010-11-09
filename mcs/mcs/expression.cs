@@ -2794,7 +2794,64 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				Arguments args = new Arguments (2);
+				Arguments args;
+
+				//
+				// Special handling for logical boolean operators which require rhs not to be
+				// evaluated based on lhs value
+				//
+				if ((oper & Operator.LogicalMask) != 0) {
+					Expression cond_left, cond_right, expr;
+
+					args = new Arguments (2);
+
+					if (lt == InternalType.Dynamic) {
+						LocalVariable temp = LocalVariable.CreateCompilerGenerated (lt, ec.CurrentBlock, loc);
+
+						var cond_args = new Arguments (1);
+						cond_args.Add (new Argument (new SimpleAssign (temp.CreateReferenceExpression (ec, loc), left).Resolve (ec)));
+
+						//
+						// dynamic && bool => IsFalse (temp = left) ? temp : temp && right;
+						// dynamic || bool => IsTrue (temp = left) ? temp : temp || right;
+						//					
+						if (oper == Operator.LogicalAnd) {
+							expr = DynamicUnaryConversion.CreateIsFalse (cond_args, loc);
+							cond_left = temp.CreateReferenceExpression (ec, loc);
+						} else {
+							expr = DynamicUnaryConversion.CreateIsTrue (cond_args, loc);
+							cond_left = temp.CreateReferenceExpression (ec, loc);
+						}
+
+						args.Add (new Argument (left));
+						args.Add (new Argument (right));
+						cond_right = new DynamicExpressionStatement (this, args, loc);
+					} else {
+						LocalVariable temp = LocalVariable.CreateCompilerGenerated (TypeManager.bool_type, ec.CurrentBlock, loc);
+
+						args.Add (new Argument (temp.CreateReferenceExpression (ec, loc).Resolve (ec)));
+						args.Add (new Argument (right));
+						right = new DynamicExpressionStatement (this, args, loc);
+
+						//
+						// bool && dynamic => (temp = left) ? temp && right : temp;
+						// bool || dynamic => (temp = left) ? temp : right || right;
+						//
+						if (oper == Operator.LogicalAnd) {
+							cond_left = right;
+							cond_right = temp.CreateReferenceExpression (ec, loc);
+						} else {
+							cond_left = temp.CreateReferenceExpression (ec, loc);
+							cond_right = right;
+						}
+
+						expr = new BooleanExpression (new SimpleAssign (temp.CreateReferenceExpression (ec, loc), left));
+					}
+
+					return new Conditional (expr, cond_left, cond_right, loc).Resolve (ec);
+				}
+
+				args = new Arguments (2);
 				args.Add (new Argument (left));
 				args.Add (new Argument (right));
 				return new DynamicExpressionStatement (this, args, loc).Resolve (ec);
@@ -4290,7 +4347,7 @@ namespace Mono.CSharp {
 			if (expr.Type == InternalType.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
-				return new DynamicUnaryConversion ("IsTrue", args, loc).Resolve (ec);
+				return DynamicUnaryConversion.CreateIsTrue (args, loc).Resolve (ec);
 			}
 
 			type = TypeManager.bool_type;
@@ -4317,7 +4374,7 @@ namespace Mono.CSharp {
 	public class Conditional : Expression {
 		Expression expr, true_expr, false_expr;
 
-		public Conditional (BooleanExpression expr, Expression true_expr, Expression false_expr, Location loc)
+		public Conditional (Expression expr, Expression true_expr, Expression false_expr, Location loc)
 		{
 			this.expr = expr;
 			this.true_expr = true_expr;

@@ -546,6 +546,20 @@ class Tester : DynamicObjectMock
 		d = d <= 1;
 	}
 
+	void BinaryLogicalAnd_1 (dynamic d, DynamicObjectMock mock)
+	{
+		mock.HitCounter = 1;
+		bool b = false;
+		d = b && d;
+	}
+
+	void BinaryLogicalOr_1 (dynamic d, DynamicObjectMock mock)
+	{
+		mock.HitCounter = 1;
+		bool b = true;
+		d = b || d;
+	}
+
 	void BinaryModulo_1 (dynamic d, DynamicObjectMock mock)
 	{
 		mock.BinaryOperation = (binder, arg) => {
@@ -1021,7 +1035,7 @@ class Tester : DynamicObjectMock
 
 		d.Max<dynamic> ();
 	}
-	
+
 	void InvokeMember_8 (dynamic d, DynamicObjectMock mock)
 	{
 		mock.InvokeMemberOperation = (binder, args) => {
@@ -1364,6 +1378,31 @@ class Tester : DynamicObjectMock
 		};
 
 		object x = d || null;
+	}
+
+	void UnaryIsTrue_3 (dynamic d, DynamicObjectMock mock)
+	{
+		mock.UnaryOperation = (binder) => {
+			Assert (binder.Operation, ExpressionType.IsTrue, "Operation");
+			AssertArgument (binder, new[] {
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null)
+			}, "ArgumentInfo");
+
+			return false;
+		};
+
+		mock.BinaryOperation = (binder, arg) => {
+			Assert (binder.Operation, ExpressionType.Or, "Operation");
+			AssertArgument (binder, new[] {
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType, null) },
+				"ArgumentInfo");
+
+			Assert (arg, false, "arg");
+		};
+
+		bool b = false;
+		object x = d || b;
 	}
 
 #pragma warning restore 168, 169, 219

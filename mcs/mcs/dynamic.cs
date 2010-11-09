@@ -775,15 +775,23 @@ namespace Mono.CSharp
 
 	class DynamicUnaryConversion : DynamicExpressionStatement, IDynamicBinder
 	{
-		string name;
+		readonly string name;
 
 		public DynamicUnaryConversion (string name, Arguments args, Location loc)
 			: base (null, args, loc)
 		{
 			this.name = name;
 			base.binder = this;
-			if (name == "IsTrue" || name == "IsFalse")
-				type = TypeManager.bool_type;
+		}
+
+		public static DynamicUnaryConversion CreateIsTrue (Arguments args, Location loc)
+		{
+			return new DynamicUnaryConversion ("IsTrue", args, loc) { type = TypeManager.bool_type };
+		}
+
+		public static DynamicUnaryConversion CreateIsFalse (Arguments args, Location loc)
+		{
+			return new DynamicUnaryConversion ("IsFalse", args, loc) { type = TypeManager.bool_type };
 		}
 
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)

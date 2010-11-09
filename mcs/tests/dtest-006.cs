@@ -1759,7 +1759,7 @@ class Tester
 		Assert (d || d, true, "#2");
 
 		dynamic d3 = new MyType (-7);
-		Assert<MyType> (d3 || new MyType (6), new MyType (-1), "#3");
+		Assert<MyType> (d3 || new MyType (6), new MyType (-7), "#3");
 	}
 
 	void RightShiftTest ()
