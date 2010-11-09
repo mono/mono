@@ -504,7 +504,7 @@ namespace Mono.CSharp
 		{
 			TypeSpec declaring_type;
 			if (type.IsNested && !type.IsGenericParameter)
-				declaring_type = CreateType (type.DeclaringType, type.DeclaringType, 0, false);
+				declaring_type = CreateType (type.DeclaringType, type.DeclaringType, 0, true);
 			else
 				declaring_type = null;
 

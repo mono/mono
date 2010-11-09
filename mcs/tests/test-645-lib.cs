@@ -29,3 +29,21 @@ public class C
 		}
 	}
 }
+
+public class T3 : T2.E
+{
+}
+
+public class T1
+{
+	public void Test ()
+	{
+	}
+}
+
+public class T2 : T1
+{
+	public interface E
+	{
+	}
+}

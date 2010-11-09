@@ -6,5 +6,8 @@ class C
 	{
 		var n = new A.AN ();
 		n.TestReturn ().Test ();
+		
+		var t2 = new T2 ();
+		t2.Test ();
 	}
 }

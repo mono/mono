@@ -24242,6 +24242,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-14.cs">
+    <type name="A">
+      <method name="Int32 GetValues(System.String[], System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 GetValues(System.String, System.String[])">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 Main()">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()">
@@ -38803,7 +38824,7 @@
   <test name="test-645.cs">
     <type name="C">
       <method name="Void Main()">
-        <size>18</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -40422,6 +40443,30 @@
       </method>
       <method name="System.String get_Spec()">
         <size>6</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-725.cs">
+    <type name="D">
+      <method name="Int32 Invoke(Int32 ByRef)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32 ByRef, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(Int32 ByRef, IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 Main()">
+        <size>237</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
