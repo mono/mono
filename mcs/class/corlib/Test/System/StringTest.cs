@@ -2297,7 +2297,7 @@ public class StringTest
 		Assert.IsTrue ("ABC".Contains ("ABC"));
 		Assert.IsTrue ("ABC".Contains ("AB"));
 		Assert.IsTrue (!"ABC".Contains ("AD"));
-		Assert.IsTrue (!"encyclopædia".Contains("encyclopaedia"));
+		Assert.IsTrue (!"encyclopï¿½dia".Contains("encyclopaedia"));
 	}
 
 	[Test]
@@ -4466,6 +4466,73 @@ public class StringTest
 		Assert.AreSame (String.Empty, "a".Trim ('a'), "Trim(char)");
 		Assert.AreSame (String.Empty, "a".TrimEnd ('a'), "TrimEnd(char)");
 		Assert.AreSame (String.Empty, "a".TrimStart ('a'), "TrimStart(char)");
+	}
+	
+	[Test]
+	public void LastIndexOfAndEmptiness () {
+		Assert.AreEqual (-1, "".LastIndexOf('.'), "#1");
+		Assert.AreEqual (-1, "".LastIndexOf('.', -1), "#2");
+		Assert.AreEqual (-1, "".LastIndexOf('.', -1, -1), "#3");
+		Assert.AreEqual (0, "x".LastIndexOf('x', 0), "#4");
+		Assert.AreEqual (0 , "x".LastIndexOf('x', 0, 1), "#5");
+		Assert.AreEqual (-1 , "x".LastIndexOf('z', 0, 1), "#6");
+
+		try {
+			"".LastIndexOf(null);
+			Assert.Fail ("#7");
+		} catch (ArgumentNullException) {}
+
+		Assert.AreEqual (0, "".LastIndexOf(""), "#8");
+		Assert.AreEqual (0, "".LastIndexOf("", -1), "#9");
+		Assert.AreEqual (0, "".LastIndexOf("", -1, 1), "#10");
+		Assert.AreEqual (0, "".LastIndexOf("", StringComparison.Ordinal), "#11");
+		Assert.AreEqual (0, "".LastIndexOf("", -1, StringComparison.Ordinal), "#12");
+		Assert.AreEqual (0, "".LastIndexOf("", -1, -1, StringComparison.Ordinal), "#13");
+		Assert.AreEqual (0, "x".LastIndexOf(""), "#14");
+
+		Assert.AreEqual (0, "x".LastIndexOf("x", 0), "#15");
+		Assert.AreEqual (0, "x".LastIndexOf("", 0), "#16");
+		Assert.AreEqual (0, "xxxx".LastIndexOf("", 0), "#17");
+		Assert.AreEqual (1, "xxxx".LastIndexOf("", 1), "#18");
+
+		Assert.AreEqual (1, "xy".LastIndexOf(""), "#19");
+		Assert.AreEqual (2, "xyz".LastIndexOf(""), "#20");
+		Assert.AreEqual (1, "xy".LastIndexOf(""), "#21");
+		Assert.AreEqual (1, "xy".LastIndexOf("", 2), "#22");
+		Assert.AreEqual (2, "xyz".LastIndexOf("", 2), "#23");
+		Assert.AreEqual (2, "xyz".LastIndexOf("", 2, 2), "#24");
+		Assert.AreEqual (2, "xyz".LastIndexOf("", 3, 3), "#25");
+
+		try {
+			"xy".LastIndexOf("", 29);
+			Assert.Fail ("#26");
+		}catch (ArgumentOutOfRangeException){}
+
+		Assert.AreEqual (-1, "".LastIndexOf("x"), "#27");
+		Assert.AreEqual (-1, "".LastIndexOf("x", -1), "#28");
+		Assert.AreEqual (-1, "".LastIndexOf("x", -1), "#29");
+		Assert.AreEqual (-1, "".LastIndexOf("x", StringComparison.Ordinal), "#30");
+		Assert.AreEqual (-1, "".LastIndexOf("x", -1, StringComparison.Ordinal), "#31");
+		Assert.AreEqual (-1, "".LastIndexOf("x", -1, -1, StringComparison.Ordinal), "#32");
+
+		Assert.AreEqual (1, "xx".LastIndexOf("", StringComparison.Ordinal), "#33");
+		Assert.AreEqual (1, "xx".LastIndexOf("", 2, StringComparison.Ordinal), "#34");
+		Assert.AreEqual (1, "xx".LastIndexOf("", 2, 2, StringComparison.Ordinal), "#35");
+
+		Assert.AreEqual (3, "xxxx".LastIndexOf("", StringComparison.Ordinal), "#36");
+		Assert.AreEqual (2, "xxxx".LastIndexOf("", 2, StringComparison.Ordinal), "#37");
+		Assert.AreEqual (2, "xxxx".LastIndexOf("", 2, 2, StringComparison.Ordinal), "#38");
+
+		Assert.AreEqual (3, "xxxx".LastIndexOf("", 3, StringComparison.Ordinal), "#39");
+		Assert.AreEqual (3, "xxxx".LastIndexOf("", 3, 3, StringComparison.Ordinal), "#40");
+	}
+	
+	
+	[Test]
+	public void LastIndexOfAnyAndEmptiness () {
+		Assert.AreEqual (-1, "".LastIndexOfAny(new char[] {'.', 'x'}), "#1");
+		Assert.AreEqual (-1, "".LastIndexOfAny(new char[] {'.', 'x'}, -1), "#2");
+		Assert.AreEqual (-1, "".LastIndexOfAny(new char[] {'.', 'x'}, -1, -1), "#3");
 	}
 }
 
