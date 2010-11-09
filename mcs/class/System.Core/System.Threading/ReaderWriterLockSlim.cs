@@ -116,7 +116,7 @@ namespace System.Threading {
 		{
 			ThreadLockState ctstate = CurrentThreadState;
 
-			if (CheckState (millisecondsTimeout, LockState.Read)) {
+			if (CheckState (ctstate, millisecondsTimeout, LockState.Read)) {
 				++ctstate.ReaderRecursiveCount;
 				return true;
 			}
@@ -126,7 +126,7 @@ namespace System.Threading {
 			// after user calls ExitUpgradeableReadLock.
 			// Same idea when recursion is allowed and a write thread wants to
 			// go for a Read too.
-			if (CurrentLockState.Has (LockState.Upgradable)
+			if (ctstate.LockState.Has (LockState.Upgradable)
 			    || recursionPolicy == LockRecursionPolicy.SupportsRecursion) {
 				Interlocked.Add (ref rwlock, RwRead);
 				ctstate.LockState ^= LockState.Read;
@@ -201,7 +201,7 @@ namespace System.Threading {
 		{
 			ThreadLockState ctstate = CurrentThreadState;
 
-			if (CheckState (millisecondsTimeout, LockState.Write)) {
+			if (CheckState (ctstate, millisecondsTimeout, LockState.Write)) {
 				++ctstate.WriterRecursiveCount;
 				return true;
 			}
@@ -290,7 +290,7 @@ namespace System.Threading {
 		{
 			ThreadLockState ctstate = CurrentThreadState;
 
-			if (CheckState (millisecondsTimeout, LockState.Upgradable)) {
+			if (CheckState (ctstate, millisecondsTimeout, LockState.Upgradable)) {
 				++ctstate.UpgradeableRecursiveCount;
 				return true;
 			}
@@ -422,15 +422,6 @@ namespace System.Threading {
 			}
 		}
 
-		LockState CurrentLockState {
-			get {
-				return CurrentThreadState.LockState;
-			}
-			set {
-				CurrentThreadState.LockState = value;
-			}
-		}
-
 		ThreadLockState CurrentThreadState {
 			get {
 				if (currentThreadState == null)
@@ -444,7 +435,7 @@ namespace System.Threading {
 			}
 		}
 
-		bool CheckState (int millisecondsTimeout, LockState validState)
+		bool CheckState (ThreadLockState state, int millisecondsTimeout, LockState validState)
 		{
 			if (disposed)
 				throw new ObjectDisposedException ("ReaderWriterLockSlim");
@@ -453,7 +444,7 @@ namespace System.Threading {
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
 			// Detect and prevent recursion
-			LockState ctstate = CurrentLockState;
+			LockState ctstate = state.LockState;
 
 			if (recursionPolicy == LockRecursionPolicy.NoRecursion)
 				if ((ctstate != LockState.None && ctstate != LockState.Upgradable)
