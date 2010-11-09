@@ -40,7 +40,8 @@ namespace System.Xml
 
 		public override void Close ()
 		{
-			writer.Close ();
+			if (state != WriteState.Closed)
+				writer.Close ();
 			state = WriteState.Closed;
 		}
 	
