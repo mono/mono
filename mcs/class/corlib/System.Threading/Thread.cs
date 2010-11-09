@@ -1022,6 +1022,10 @@ namespace System.Threading {
 		public int ManagedThreadId {
 			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 			get {
+				// Fastpath
+				if (internal_thread != null && internal_thread.managed_id != null)
+					return internal_thread.managed_id;
+
 				if (Internal.managed_id == 0) {
 					int new_managed_id = GetNewManagedId ();
 					
