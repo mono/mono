@@ -39,9 +39,8 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Xaml
 {
 	[TestFixture]
-	public class XamlXmlReaderTest
+	public class XamlXmlReaderTest : XamlReaderTestBase
 	{
-
 		// read test
 
 		XamlReader GetReader (string filename)
@@ -165,6 +164,20 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (Guid.Parse ("9c3345ec-8922-4662-8e8d-a4e41f47cf09"), ret, "ret");
 		}
 
+		void ReadBase (XamlReader r)
+		{
+			Assert.IsTrue (r.Read (), "sbase#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
+			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
+
+			Assert.IsTrue (r.Read (), "vbase#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
+			Assert.IsTrue (r.Value is string, "vbase#3");
+
+			Assert.IsTrue (r.Read (), "ebase#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+		}
+
 		[Test]
 		public void ReadInt32Details ()
 		{
@@ -178,16 +191,7 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
 			Assert.AreEqual (XamlLanguage.Int32, r.Type, "so#3");
 
-			Assert.IsTrue (r.Read (), "sbase#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
-			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
-
-			Assert.IsTrue (r.Read (), "vbase#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
-			Assert.IsTrue (r.Value is string, "vbase#3");
-
-			Assert.IsTrue (r.Read (), "ebase#1");
-			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+			ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "sinit#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
@@ -219,15 +223,7 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
 			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (DateTime)), r.Type, "so#3");
 
-			Assert.IsTrue (r.Read (), "sbase#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
-			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
-
-			Assert.IsTrue (r.Read (), "vbase#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
-			Assert.IsTrue (r.Value is string, "vbase#3");
-
-			Assert.IsTrue (r.Read (), "ebase#21");
+			ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "sinit#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
@@ -258,16 +254,7 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
 			Assert.AreEqual (XamlLanguage.Type, r.Type, "so#3");
 
-			Assert.IsTrue (r.Read (), "sbase#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
-			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
-
-			Assert.IsTrue (r.Read (), "vbase#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
-			Assert.IsTrue (r.Value is string, "vbase#3");
-
-			Assert.IsTrue (r.Read (), "ebase#1");
-			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+			ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "sinit#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
@@ -313,16 +300,7 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (List<int>), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "so#3");
 
-			Assert.IsTrue (r.Read (), "sbase#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
-			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
-
-			Assert.IsTrue (r.Read (), "vbase#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
-			Assert.IsTrue (r.Value is string, "vbase#3");
-
-			Assert.IsTrue (r.Read (), "ebase#1");
-			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+			ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "scap#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "scap#2");
@@ -384,16 +362,7 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
 			Assert.AreEqual (XamlLanguage.String, r.Type, "so#3");
 
-			Assert.IsTrue (r.Read (), "sbase#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
-			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
-
-			Assert.IsTrue (r.Read (), "vbase#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
-			Assert.IsTrue (r.Value is string, "vbase#3");
-
-			Assert.IsTrue (r.Read (), "ebase#1");
-			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+			ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "sinit#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
@@ -427,17 +396,7 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (ArrayExtension), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "soa#3");
 
-			// base
-			Assert.IsTrue (r.Read (), "sbase#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
-			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
-
-			Assert.IsTrue (r.Read (), "vbase#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
-			Assert.IsTrue (r.Value is string, "vbase#3");
-
-			Assert.IsTrue (r.Read (), "ebase#1");
-			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+			ReadBase (r);
 
 			// Type
 			Assert.IsTrue (r.Read (), "stype#1");
@@ -524,17 +483,7 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (NullExtension), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "so#3");
 
-			// base
-			Assert.IsTrue (r.Read (), "sbase#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
-			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
-
-			Assert.IsTrue (r.Read (), "vbase#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
-			Assert.IsTrue (r.Value is string, "vbase#3");
-
-			Assert.IsTrue (r.Read (), "ebase#1");
-			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+			ReadBase (r);
 
 			// end of NullExtension
 			Assert.IsTrue (r.Read (), "eo#1");
@@ -609,16 +558,7 @@ namespace MonoTests.System.Xaml
 			var xt = r.SchemaContext.GetXamlType (typeof (Guid));
 			Assert.AreEqual (xt, r.Type, "so#3");
 
-			Assert.IsTrue (r.Read (), "sbase#1");
-			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
-			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
-
-			Assert.IsTrue (r.Read (), "vbase#1");
-			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
-			Assert.IsTrue (r.Value is string, "vbase#3");
-
-			Assert.IsTrue (r.Read (), "ebase#1");
-			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+			ReadBase (r);
 
 			Assert.IsTrue (r.Read (), "sfactory#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sfactory#2");
