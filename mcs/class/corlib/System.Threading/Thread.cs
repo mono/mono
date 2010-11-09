@@ -1023,7 +1023,7 @@ namespace System.Threading {
 			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 			get {
 				// Fastpath
-				if (internal_thread != null && internal_thread.managed_id != null)
+				if (internal_thread != null && internal_thread.managed_id != 0)
 					return internal_thread.managed_id;
 
 				if (Internal.managed_id == 0) {
