@@ -631,15 +631,23 @@ namespace System.Web.UI
 			int oldIndent = writer.Indent;
 			writer.Indent = 0;
 			bool first = true;
-
+			var sb = new StringBuilder ();
+			
 			foreach (string key in hiddenFields.Keys) {
 				string value = hiddenFields [key] as string;
 				if (first)
 					first = false;
 				else
 					writer.WriteLine ();
-				writer.Write ("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, HttpUtility.HtmlAttributeEncode (value));
+				sb.Append ("<input type=\"hidden\" name=\"");
+				sb.Append (key);
+				sb.Append ("\" id=\"");
+				sb.Append (key);
+				sb.Append ("\" value=\"");
+				sb.Append (HttpUtility.HtmlAttributeEncode (value));
+				sb.Append ("\" />");
 			}
+			writer.Write (sb.ToString ());
 			writer.Indent = oldIndent;
 			writer.RenderEndTag (); // DIV
 			writer.WriteLine ();
