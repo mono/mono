@@ -67,6 +67,10 @@ namespace System.Web.Handlers
 		static readonly ReaderWriterLockSlim _embeddedResourcesLock = new ReaderWriterLockSlim ();
 
 		[ThreadStatic]
+		static KeyedHashAlgorithm hashAlg;
+		static bool canReuseHashAlg = true;
+		
+		[ThreadStatic]
 		static Dictionary <string, string> stringHashCache;
 
 		static Dictionary <string, string> StringHashCache {
@@ -75,6 +79,25 @@ namespace System.Web.Handlers
 					stringHashCache = new Dictionary <string, string> (StringComparer.Ordinal);
 
 				return stringHashCache;
+			}
+		}
+
+		static KeyedHashAlgorithm ReusableHashAlgorithm {
+			get {
+				if (!canReuseHashAlg)
+					return null;
+
+				if (hashAlg != null)
+					return hashAlg;
+				
+				MachineKeySection mks = MachineKeySection.Config;
+				hashAlg = MachineKeySectionUtils.GetValidationAlgorithm (mks);
+				if (!hashAlg.CanReuseTransform) {
+					canReuseHashAlg = false;
+					hashAlg = null;
+				}
+				
+				return hashAlg;
 			}
 		}
 		
@@ -189,11 +212,17 @@ namespace System.Web.Handlers
 		{
 			if (assembly == null)
 				return String.Empty;
-			
-			MachineKeySection mks = MachineKeySection.Config;
-			using (KeyedHashAlgorithm kha = MachineKeySectionUtils.GetValidationAlgorithm (mks)) {
-				kha.Key = MachineKeySectionUtils.GetValidationKey (mks);
+
+			KeyedHashAlgorithm kha = ReusableHashAlgorithm;
+			if (kha != null) {
+				kha.Initialize ();
 				return GetResourceUrl (kha, assembly, resourceName, notifyScriptLoaded);
+			} else {
+				MachineKeySection mks = MachineKeySection.Config;
+				using (kha = MachineKeySectionUtils.GetValidationAlgorithm (mks)) {
+					kha.Key = MachineKeySectionUtils.GetValidationKey (mks);
+					return GetResourceUrl (kha, assembly, resourceName, notifyScriptLoaded);
+				}
 			}
 		}
 
