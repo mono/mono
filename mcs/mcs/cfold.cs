@@ -850,6 +850,10 @@ namespace Mono.CSharp {
 				if (left.Type == TypeManager.uint32_type)
 					return new UIntConstant (((UIntConstant)left).Value << lshift_val, left.Location);
 
+				// null << value => null
+				if (left is NullLiteral)
+					return (Constant) new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
+
 				left = left.ConvertImplicitly (ec, TypeManager.int32_type);
 				if (left.Type == TypeManager.int32_type)
 					return new IntConstant (((IntConstant)left).Value << lshift_val, left.Location);
@@ -873,6 +877,10 @@ namespace Mono.CSharp {
 					return new LongConstant (((LongConstant)left).Value >> rshift_val, left.Location);
 				if (left.Type == TypeManager.uint32_type)
 					return new UIntConstant (((UIntConstant)left).Value >> rshift_val, left.Location);
+
+				// null >> value => null
+				if (left is NullLiteral)
+					return (Constant) new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 				left = left.ConvertImplicitly (ec, TypeManager.int32_type);
 				if (left.Type == TypeManager.int32_type)
