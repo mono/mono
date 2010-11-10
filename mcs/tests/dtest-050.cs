@@ -1,5 +1,24 @@
 using System;
 
+
+public struct S
+{
+	public static bool operator true (S s)
+	{
+		throw new ApplicationException ();
+	}
+
+	public static bool operator false (S s)
+	{
+		return true;
+	}
+
+	public static string operator ! (S s)
+	{
+		throw new ApplicationException ();
+	}
+}
+
 class C
 {
 	static bool Throw ()
@@ -33,6 +52,10 @@ class C
 		} else {
 			return 4;
 		}
+		
+		dynamic a = new S ();
+		dynamic b = new S ();
+		var result = a && b;
 		
 		Console.WriteLine ("ok");
 		return 0;

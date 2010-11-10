@@ -2719,10 +2719,21 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>943</size>
+        <size>1157</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="Boolean op_True(S)">
+        <size>6</size>
+      </method>
+      <method name="Boolean op_False(S)">
+        <size>2</size>
+      </method>
+      <method name="System.String op_LogicalNot(S)">
+        <size>6</size>
       </method>
     </type>
   </test>
@@ -43629,6 +43640,22 @@
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-732.cs">
+    <type name="C">
+      <method name="Int32 op_Implicit(C, Boolean)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>22</size>
+      </method>
+      <method name="Int32 op_Explicit(C)">
+        <size>2</size>
+      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>

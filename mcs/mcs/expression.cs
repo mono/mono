@@ -273,7 +273,7 @@ namespace Mono.CSharp {
 			throw new Exception ("Can not constant fold: " + Oper.ToString());
 		}
 		
-		protected Expression ResolveOperator (ResolveContext ec, Expression expr)
+		protected virtual Expression ResolveOperator (ResolveContext ec, Expression expr)
 		{
 			eclass = ExprClass.Value;
 
@@ -4365,6 +4365,19 @@ namespace Mono.CSharp {
 			}
 
 			return converted;
+		}
+	}
+
+	public class BooleanExpressionFalse : Unary
+	{
+		public BooleanExpressionFalse (Expression expr)
+			: base (Operator.LogicalNot, expr, expr.Location)
+		{
+		}
+
+		protected override Expression ResolveOperator (ResolveContext ec, Expression expr)
+		{
+			return GetOperatorFalse (ec, expr, loc) ?? base.ResolveOperator (ec, expr);
 		}
 	}
 	

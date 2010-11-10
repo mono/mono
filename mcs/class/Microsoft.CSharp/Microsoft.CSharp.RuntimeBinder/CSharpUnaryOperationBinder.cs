@@ -59,7 +59,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 			case ExpressionType.Negate:
 				return Compiler.Unary.Operator.UnaryNegation;
 			case ExpressionType.Not:
-			case ExpressionType.IsFalse:
 				return Compiler.Unary.Operator.LogicalNot;
 			case ExpressionType.OnesComplement:
 				return Compiler.Unary.Operator.OnesComplement;
@@ -77,6 +76,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			if (Operation == ExpressionType.IsTrue) {
 				expr = new Compiler.BooleanExpression (expr);
+			} else if (Operation == ExpressionType.IsFalse) {
+				expr = new Compiler.BooleanExpressionFalse (expr);
 			} else {
 				if (Operation == ExpressionType.Increment)
 					expr = new Compiler.UnaryMutator (Compiler.UnaryMutator.Mode.PreIncrement, expr, Compiler.Location.Null);

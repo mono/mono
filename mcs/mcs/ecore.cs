@@ -683,7 +683,7 @@ namespace Mono.CSharp {
 		///   Returns an expression that can be used to invoke operator false
 		///   on the expression if it exists.
 		/// </summary>
-		static public Expression GetOperatorFalse (ResolveContext ec, Expression e, Location loc)
+		protected static Expression GetOperatorFalse (ResolveContext ec, Expression e, Location loc)
 		{
 			return GetOperatorTrueOrFalse (ec, e, false, loc);
 		}
