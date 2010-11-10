@@ -963,7 +963,7 @@
         <size>683</size>
       </method>
       <method name="Void AndAlsoTest()">
-        <size>1251</size>
+        <size>1252</size>
       </method>
       <method name="Void DivideTest()">
         <size>927</size>
@@ -1146,7 +1146,7 @@
         <size>685</size>
       </method>
       <method name="Void OrElseTest()">
-        <size>1256</size>
+        <size>1257</size>
       </method>
       <method name="Void RightShiftTest()">
         <size>1152</size>
@@ -2192,7 +2192,7 @@
   <test name="dtest-029.cs">
     <type name="C">
       <method name="Boolean Test[T,U](T, U)">
-        <size>508</size>
+        <size>423</size>
       </method>
       <method name="Int32 Main()">
         <size>82</size>
@@ -2719,7 +2719,7 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>1157</size>
+        <size>1158</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -16890,6 +16890,16 @@
       </method>
       <method name="Void Main()">
         <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-548.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>12</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -44931,14 +44941,20 @@
   </test>
   <test name="test-783.cs">
     <type name="C">
-      <method name="Void Main()">
-        <size>25</size>
-      </method>
       <method name="Void M(E)">
         <size>1</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Int32 Test(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test(E)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>88</size>
       </method>
     </type>
   </test>

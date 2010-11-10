@@ -647,7 +647,7 @@ namespace Mono.CSharp.Nullable
 			// Arguments can be lifted for equal operators when the return type is bool and both
 			// arguments are of same type
 			//	
-			if (left_orig.IsNull) {
+			if (left_orig is NullLiteral) {
 				left = right;
 				state |= State.LeftNullLifted;
 				type = TypeManager.bool_type;

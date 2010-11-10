@@ -2814,13 +2814,14 @@ namespace Mono.CSharp {
 						//
 						// dynamic && bool => IsFalse (temp = left) ? temp : temp && right;
 						// dynamic || bool => IsTrue (temp = left) ? temp : temp || right;
-						//					
+						//
+						left = temp.CreateReferenceExpression (ec, loc);
 						if (oper == Operator.LogicalAnd) {
 							expr = DynamicUnaryConversion.CreateIsFalse (cond_args, loc);
-							cond_left = temp.CreateReferenceExpression (ec, loc);
+							cond_left = left;
 						} else {
 							expr = DynamicUnaryConversion.CreateIsTrue (cond_args, loc);
-							cond_left = temp.CreateReferenceExpression (ec, loc);
+							cond_left = left;
 						}
 
 						args.Add (new Argument (left));
@@ -2835,7 +2836,7 @@ namespace Mono.CSharp {
 
 						//
 						// bool && dynamic => (temp = left) ? temp && right : temp;
-						// bool || dynamic => (temp = left) ? temp : right || right;
+						// bool || dynamic => (temp = left) ? temp : temp || right;
 						//
 						if (oper == Operator.LogicalAnd) {
 							cond_left = right;
@@ -3074,7 +3075,7 @@ namespace Mono.CSharp {
 				} else if (lenum) {
 					underlying_type = EnumSpec.GetUnderlyingType (ltype);
 					expr = Convert.ImplicitConversion (ec, right, ltype, right.Location);
-					if (expr == null) {
+					if (expr == null || expr is EnumConstant) {
 						expr = Convert.ImplicitConversion (ec, right, underlying_type, right.Location);
 						if (expr == null)
 							return null;

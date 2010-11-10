@@ -40603,6 +40603,22 @@
       </method>
     </type>
   </test>
+  <test name="test-732.cs">
+    <type name="C">
+      <method name="Int32 op_Implicit(C, Boolean)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>22</size>
+      </method>
+      <method name="Int32 op_Explicit(C)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-733.cs">
     <type name="Test">
       <method name="Int32 Main()">
@@ -41873,14 +41889,20 @@
   </test>
   <test name="test-783.cs">
     <type name="C">
-      <method name="Void Main()">
-        <size>25</size>
-      </method>
       <method name="Void M(E)">
         <size>1</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Int32 Test(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test(E)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>88</size>
       </method>
     </type>
   </test>
