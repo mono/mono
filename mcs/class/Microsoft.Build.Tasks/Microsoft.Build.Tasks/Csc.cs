@@ -88,6 +88,7 @@ namespace Microsoft.Build.Tasks {
 				commandLine.AppendSwitch ("/nostdlib");
 
 			//platform
+			commandLine.AppendSwitchIfNotNull ("/platform:", Platform);
 			//
 			if (References != null)
 				foreach (ITaskItem item in References)
