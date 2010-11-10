@@ -48,8 +48,14 @@ namespace Mono.CSharp
 			this.Expr = expr;
 		}
 
-		public TypeSpec Type {
-			get { return Expr.Type; }
+		#region Properties
+
+		public bool IsByRef {
+			get { return ArgType == AType.Ref || ArgType == AType.Out; }
+		}
+
+		public bool IsDefaultArgument {
+			get { return ArgType == AType.Default; }
 		}
 
 		public Parameter.Modifier Modifier {
@@ -67,6 +73,24 @@ namespace Mono.CSharp
 			}
 		}
 
+		public TypeSpec Type {
+			get { return Expr.Type; }
+		}
+
+		#endregion
+
+		public Argument Clone (Expression expr)
+		{
+			Argument a = (Argument) MemberwiseClone ();
+			a.Expr = expr;
+			return a;
+		}
+
+		public Argument Clone (CloneContext clonectx)
+		{
+			return Clone (Expr.Clone (clonectx));
+		}
+
 		public virtual Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (ArgType == AType.Default)
@@ -81,14 +105,6 @@ namespace Mono.CSharp
 				return Expr.ExprClassName;
 
 			return TypeManager.CSharpName (Expr.Type);
-		}
-
-		public bool IsByRef {
-			get { return ArgType == AType.Ref || ArgType == AType.Out; }
-		}
-
-		public bool IsDefaultArgument {
-			get { return ArgType == AType.Default; }
 		}
 
 		public bool ResolveMethodGroup (ResolveContext ec)
@@ -138,13 +154,6 @@ namespace Mono.CSharp
 
 			IMemoryLocation ml = (IMemoryLocation) Expr;
 			ml.AddressOf (ec, mode);
-		}
-
-		public Argument Clone (CloneContext clonectx)
-		{
-			Argument a = (Argument) MemberwiseClone ();
-			a.Expr = Expr.Clone (clonectx);
-			return a;
 		}
 	}
 
@@ -395,7 +404,7 @@ namespace Mono.CSharp
 				if (!dup_args)
 					continue;
 
-				if (a.Expr is Constant) {
+				if (a.Expr is Constant || a.Expr is This) {
 					//
 					// No need to create a temporary variable for constants
 					//
