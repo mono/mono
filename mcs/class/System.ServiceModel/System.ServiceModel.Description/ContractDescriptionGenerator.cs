@@ -40,14 +40,41 @@ namespace System.ServiceModel.Description
 {
 	internal static class ContractDescriptionGenerator
 	{
-		public static OperationContractAttribute
-			GetOperationContractAttribute (MethodBase method)
+		public delegate bool GetOperationContractAttributeExtender (MethodBase method, object[] customAttributes, ref OperationContractAttribute oca);
+
+		static List <GetOperationContractAttributeExtender> getOperationContractAttributeExtenders;
+
+		public static void RegisterGetOperationContractAttributeExtender (GetOperationContractAttributeExtender extender)
 		{
-			object [] matts = method.GetCustomAttributes (
-				typeof (OperationContractAttribute), false);
+			if (extender == null)
+				return;
+
+			if (getOperationContractAttributeExtenders == null)
+				getOperationContractAttributeExtenders = new List <GetOperationContractAttributeExtender> ();
+
+			if (getOperationContractAttributeExtenders.Contains (extender))
+				return;
+
+			getOperationContractAttributeExtenders.Add (extender);
+		}
+
+		public static OperationContractAttribute GetOperationContractAttribute (MethodBase method)
+		{
+			object [] matts = method.GetCustomAttributes (typeof (OperationContractAttribute), false);
+			OperationContractAttribute oca;
+			
 			if (matts.Length == 0)
-				return null;
-			return (OperationContractAttribute) matts [0];
+				oca = null;
+			else
+				oca = matts [0] as OperationContractAttribute;
+
+			if (getOperationContractAttributeExtenders != null && getOperationContractAttributeExtenders.Count > 0) {
+				foreach (var extender in getOperationContractAttributeExtenders)
+					if (extender (method, matts, ref oca))
+						break;
+			}
+
+			return oca;
 		}
 
 		static void GetServiceContractAttribute (Type type, Dictionary<Type,ServiceContractAttribute> table)

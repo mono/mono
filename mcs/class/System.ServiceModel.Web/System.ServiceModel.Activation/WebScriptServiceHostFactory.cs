@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
@@ -37,8 +38,41 @@ namespace System.ServiceModel.Activation
 	{
 		public WebScriptServiceHostFactory ()
 		{
+			ContractDescriptionGenerator.RegisterGetOperationContractAttributeExtender (WebAttributesOCEExtender);
 		}
 
+		static bool WebAttributesOCEExtender (MethodBase method, object[] customAttributes, ref OperationContractAttribute oca)
+		{
+			int caLength = customAttributes == null ? 0 : customAttributes.Length;
+			if (method == null && caLength == 0)
+				return false;
+
+			if (caLength == 0) {
+				customAttributes = method.GetCustomAttributes (false);
+
+				if (customAttributes.Length == 0)
+					return false;
+			}
+
+			bool foundWebAttribute = false;
+			foreach (object o in customAttributes) {
+				if (o is WebInvokeAttribute || o is WebGetAttribute) {
+					foundWebAttribute = true;
+					break;
+				}
+			}
+
+			if (!foundWebAttribute)
+				return false;
+
+			// LAMESPEC: .NET allows for contract methods decorated only with
+			// Web{Get,Invoke}Attribute and _without_ the OperationContractAttribute.
+			if (oca == null)
+				oca = new OperationContractAttribute ();
+			
+			return true;
+		}
+		
 		protected override ServiceHost CreateServiceHost (Type serviceType, Uri [] baseAddresses)
 		{
 			if (serviceType == null)
