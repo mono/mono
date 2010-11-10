@@ -634,6 +634,23 @@ public class Tests : TestsBase
 			o.GetType ();
 		} catch (Exception) {
 		}
+
+		try {
+			exceptions2 ();
+		} catch (Exception) {
+		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static bool return_true () {
+		return true;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void exceptions2 () {
+		if (return_true ())
+			throw new Exception ();
+		Console.WriteLine ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

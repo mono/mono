@@ -2153,6 +2153,31 @@ public class DebuggerTests
 		Assert.AreEqual ("NullReferenceException", (e as ExceptionEvent).Exception.Type.Name);
 		req.Disable ();
 
+		// Single stepping after an exception
+		req = vm.CreateExceptionRequest (null);
+		req.Enable ();
+
+		vm.Resume ();
+
+		e = vm.GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
+		Assert.AreEqual ("Exception", (e as ExceptionEvent).Exception.Type.Name);
+		frames = e.Thread.GetFrames ();
+		Assert.AreEqual ("exceptions2", frames [0].Method.Name);
+		req.Disable ();
+
+		var sreq = vm.CreateStepRequest (e.Thread);
+		sreq.Depth = StepDepth.Over;
+		sreq.Size = StepSize.Line;
+		sreq.Enable ();
+
+		vm.Resume ();
+		e = vm.GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (StepEvent), e);
+		frames = e.Thread.GetFrames ();
+		Assert.AreEqual ("exceptions", frames [0].Method.Name);
+		sreq.Disable ();
+
 		// Argument checking
 		AssertThrows<ArgumentException> (delegate {
 				vm.CreateExceptionRequest (e.Thread.Type);
