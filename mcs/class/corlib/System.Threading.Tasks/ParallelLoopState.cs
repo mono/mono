@@ -32,8 +32,8 @@ namespace System.Threading.Tasks
 	{
 		internal class ExternalInfos
 		{
-			public AtomicBoolean IsStopped = new AtomicBoolean ();
-			public AtomicBoolean IsBroken = new AtomicBoolean ();
+			public bool IsStopped;
+			public AtomicBooleanValue IsBroken = new AtomicBooleanValue ();
 			public volatile bool IsExceptional;
 			public long? LowestBreakIteration;
 		}
@@ -47,7 +47,7 @@ namespace System.Threading.Tasks
 		
 		public bool IsStopped {
 			get {
-				return extInfos.IsStopped.Value;
+				return extInfos.IsStopped;
 			}
 		}
 		
@@ -83,7 +83,7 @@ namespace System.Threading.Tasks
 		
 		public void Stop ()
 		{
-			extInfos.IsStopped.Exchange (true);
+			extInfos.IsStopped = true;
 		}
 	}
 	
