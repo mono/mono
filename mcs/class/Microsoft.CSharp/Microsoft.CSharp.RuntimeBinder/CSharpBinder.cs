@@ -201,24 +201,27 @@ namespace Microsoft.CSharp.RuntimeBinder
 		//
 		public Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
 		{
-			if (value.Value == null && (info == null || (info.Flags & (CSharpArgumentInfoFlags.IsOut | CSharpArgumentInfoFlags.IsRef | CSharpArgumentInfoFlags.UseCompileTimeType)) == 0)) {
-				if (value.LimitType == typeof (object))
-					return new Compiler.NullLiteral (Compiler.Location.Null);
-
-				return Compiler.Constant.CreateConstantFromValue (ImportType (value.LimitType), null, Compiler.Location.Null);
-			}
-
 			//
 			// No type details provider, go with runtime type
 			//
-			if (info == null)
+			if (info == null) {
+				if (value.LimitType == typeof (object))
+					return new Compiler.NullLiteral (Compiler.Location.Null);
+
 				return new Compiler.RuntimeValueExpression (value, ImportType (value.RuntimeType));
+			}
 
 			//
 			// Value is known to be a type
 			//
 			if ((info.Flags & CSharpArgumentInfoFlags.IsStaticType) != 0)
 				return new Compiler.TypeExpression (ImportType ((Type) value.Value), Compiler.Location.Null);
+
+			if (value.Value == null &&
+				(info.Flags & (CSharpArgumentInfoFlags.IsOut | CSharpArgumentInfoFlags.IsRef | CSharpArgumentInfoFlags.UseCompileTimeType)) == 0 &&
+				value.LimitType == typeof (object)) {
+				return new Compiler.NullLiteral (Compiler.Location.Null);
+			}
 
 			//
 			// Use compilation time type when type was known not to be dynamic during compilation
