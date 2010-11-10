@@ -835,29 +835,37 @@ namespace Mono.CSharp {
 					 (mc.state & StateFlags.HasUserOperator) != 0) {
 
 					if (mc.member_hash.TryGetValue (Operator.GetMetadataName (op), out applicable)) {
-						int match_count = 0;
-						for (int i = 0; i < applicable.Count; ++i) {
-							if (applicable[i].Kind == MemberKind.Operator) {
-								++match_count;
-								continue;
-							}
-
-							// Handles very rare case where a method exists with same name as operator (op_xxxx)
-							if (found == null) {
-								found = new List<MemberSpec> ();
-								found.Add (applicable [i]);
-							} else {
-								var prev = found as List<MemberSpec>;
-								if (prev == null) {
-									prev = new List<MemberSpec> (found.Count + 1);
-									prev.AddRange (found);
-								}
-
-								prev.Add (applicable[i]);
+						int i;
+						for (i = 0; i < applicable.Count; ++i) {
+							if (applicable[i].Kind != MemberKind.Operator) {
+								break;
 							}
 						}
 
-						if (match_count > 0 && match_count == applicable.Count) {
+						//
+						// Handles very rare case where a method with same name as operator (op_xxxx) exists
+						// and we have to resize the applicable list
+						//
+						if (i != applicable.Count) {
+							for (i = 0; i < applicable.Count; ++i) {
+								if (applicable[i].Kind != MemberKind.Operator) {
+									continue;
+								}
+
+								if (found == null) {
+									found = new List<MemberSpec> ();
+									found.Add (applicable[i]);
+								} else {
+									var prev = found as List<MemberSpec>;
+									if (prev == null) {
+										prev = new List<MemberSpec> (found.Count + 1);
+										prev.AddRange (found);
+									}
+
+									prev.Add (applicable[i]);
+								}
+							}
+						} else {
 							if (found == null) {
 								found = applicable;
 							} else {
