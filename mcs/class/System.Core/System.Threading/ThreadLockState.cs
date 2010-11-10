@@ -34,9 +34,9 @@ namespace System.Threading
 	internal enum LockState
 	{
 		None = 0,
-		Read = 1,
-		Write = 2,
-		Upgradable = 4,
+		Upgradable = 1,
+		Read = 2,
+		Write = 4,
 		UpgradedRead = Upgradable | Read,
 		UpgradedWrite = Upgradable | Write
 	}

@@ -61,6 +61,7 @@ namespace System.Threading {
 		int rwlock;
 		
 		readonly LockRecursionPolicy recursionPolicy;
+		readonly bool noRecursion;
 
 		AtomicBoolean upgradableTaken = new AtomicBoolean ();
 
@@ -98,6 +99,13 @@ namespace System.Threading {
 		[ThreadStatic]
 		static IDictionary<int, ThreadLockState> currentThreadState;
 
+		/* Rwls tries to use this array as much as possible to quickly retrieve the thread-local
+		 * informations so that it ends up being only an array lookup. When the number of thread
+		 * using the instance goes past the length of the array, the code fallback to the normal
+		 * dictionary
+		 */
+		ThreadLockState[] fastStateCache = new ThreadLockState[64];
+
 		public ReaderWriterLockSlim () : this (LockRecursionPolicy.NoRecursion)
 		{
 		}
@@ -105,6 +113,7 @@ namespace System.Threading {
 		public ReaderWriterLockSlim (LockRecursionPolicy recursionPolicy)
 		{
 			this.recursionPolicy = recursionPolicy;
+			this.noRecursion = recursionPolicy == LockRecursionPolicy.NoRecursion;
 		}
 
 		public void EnterReadLock ()
@@ -143,7 +152,7 @@ namespace System.Threading {
 				/* Check if a writer is present (RwWrite) or if there is someone waiting to
 				 * acquire a writer lock in the queue (RwWait | RwWaitUpgrade).
 				 */
-				if ((rwlock & 0x7) > 0) {
+				if ((rwlock & (RwWrite | RwWait | RwWaitUpgrade)) > 0) {
 					writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
 					continue;
 				}
@@ -152,7 +161,7 @@ namespace System.Threading {
 				 * if the adding was too late and another writer came in between
 				 * we revert the operation.
 				 */
-				if (((val = Interlocked.Add (ref rwlock, RwRead)) & 0x7) == 0) {
+				if (((val = Interlocked.Add (ref rwlock, RwRead)) & (RwWrite | RwWait | RwWaitUpgrade)) == 0) {
 					/* If we are the first reader, reset the event to let other threads
 					 * sleep correctly if they try to acquire write lock
 					 */
@@ -424,6 +433,11 @@ namespace System.Threading {
 
 		ThreadLockState CurrentThreadState {
 			get {
+				int tid = Thread.CurrentThread.ManagedThreadId;
+
+				if (tid < fastStateCache.Length)
+					return fastStateCache[tid] == null ? (fastStateCache[tid] = new ThreadLockState ()) : fastStateCache[tid];
+
 				if (currentThreadState == null)
 					currentThreadState = new Dictionary<int, ThreadLockState> ();
 
@@ -440,16 +454,17 @@ namespace System.Threading {
 			if (disposed)
 				throw new ObjectDisposedException ("ReaderWriterLockSlim");
 
-			if (millisecondsTimeout < Timeout.Infinite)
+			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
 			// Detect and prevent recursion
 			LockState ctstate = state.LockState;
 
-			if (recursionPolicy == LockRecursionPolicy.NoRecursion)
-				if ((ctstate != LockState.None && ctstate != LockState.Upgradable)
-				    || (ctstate == LockState.Upgradable && validState == LockState.Upgradable))
-					throw new LockRecursionException ("The current thread has already a lock and recursion isn't supported");
+			if (ctstate != LockState.None && noRecursion && (ctstate != LockState.Upgradable || validState == LockState.Upgradable))
+				throw new LockRecursionException ("The current thread has already a lock and recursion isn't supported");
+
+			if (noRecursion)
+				return false;
 
 			// If we already had right lock state, just return
 			if (ctstate.Has (validState))

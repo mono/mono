@@ -72,16 +72,14 @@ namespace System.Threading
 
 		public void Reset ()
 		{
-			Interlocked.Exchange (ref state, isNotSet);
-			//state = isNotSet;
+			state = isNotSet;
 			if (handle != null)
 				handle.Reset ();
 		}
 
 		public void Set ()
 		{
-			Interlocked.Exchange (ref state, isSet);
-			//state = isSet;
+			state = isSet;
 			if (handle != null)
 				handle.Set ();
 		}
