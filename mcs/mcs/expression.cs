@@ -3475,6 +3475,9 @@ namespace Mono.CSharp {
 			var rlifted = (state & State.RightNullLifted) != 0;
 			if ((Oper & Operator.EqualityMask) != 0) {
 				var parameters = oper_method.Parameters;
+				// LAMESPEC: No idea why this is not allowed
+				if ((left is Nullable.Unwrap || right is Nullable.Unwrap) && parameters.Types [0] != parameters.Types [1])
+					return null;
 
 				// Binary operation was lifted but we have found a user operator
 				// which requires value-type argument, we downgrade ourself back to
