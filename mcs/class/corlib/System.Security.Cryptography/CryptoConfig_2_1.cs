@@ -153,6 +153,7 @@ namespace System.Security.Cryptography {
 			case "System.Security.Cryptography.RSA":
 				return new Mono.Security.Cryptography.RSAManaged ();
 			case "AES":
+			case AES:
 				return (Aes) Activator.CreateInstance (Type.GetType (AES), null);
 			default:
 				throw new NotImplementedException (name);
