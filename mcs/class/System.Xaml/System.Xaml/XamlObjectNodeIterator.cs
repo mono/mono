@@ -94,14 +94,14 @@ namespace System.Xaml
 			if (xm == XamlLanguage.PositionalParameters) {
 				foreach (var argm in xobj.Type.GetSortedConstructorArguments ()) {
 					// Unlike XamlLanguage.Items, it only outputs string value. So, convert values here.
-					var argv = argm.Type.GetStringValue (xobj.GetMemberValue (argm), prefix_lookup);
+					var argv = TypeExtensionMethods.GetStringValue (argm.Type, argm, xobj.GetMemberValue (argm), prefix_lookup);
 					yield return new XamlNodeInfo ((string) argv);
 				}
 				yield break;
 			}
 
 			if (xm == XamlLanguage.Initialization) {
-				yield return new XamlNodeInfo (xobj.Type.GetStringValue (xobj.GetRawValue (), prefix_lookup));
+				yield return new XamlNodeInfo (TypeExtensionMethods.GetStringValue (xobj.Type, xm, xobj.GetRawValue (), prefix_lookup));
 				yield break;
 			}
 
@@ -116,7 +116,7 @@ namespace System.Xaml
 						foreach (var xn in GetNodes (null, null_object))
 							yield return xn;
 					else
-						yield return new XamlNodeInfo (xtt.GetStringValue (val, prefix_lookup));
+						yield return new XamlNodeInfo (TypeExtensionMethods.GetStringValue (xtt, xm, val, prefix_lookup));
 					yield break;
 				}
 			}
@@ -248,7 +248,7 @@ namespace System.Xaml
 				} else {
 					if (xn.NodeType == XamlNodeType.Value && xn.Value is Type)
 						// this tries to lookup existing prefix, and if there isn't any, then adds a new declaration.
-						XamlLanguage.Type.GetStringValue (xn.Value, prefix_lookup);
+						TypeExtensionMethods.GetStringValue (XamlLanguage.Type, xn.Member.Member, xn.Value, prefix_lookup);
 					continue;
 				}
 			}

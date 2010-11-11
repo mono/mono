@@ -52,7 +52,13 @@ namespace System.Xaml
 
 			XamlType xt;
 			if (XamlLanguage.InitializingTypes) {
-				Name = GetXamlName (type);
+				// These are special. Only XamlLanguage members are with shorthand name.
+				if (type == typeof (PropertyDefinition))
+					Name = "Property";
+				else if (type == typeof (MemberDefinition))
+					Name = "Member";
+				else
+					Name = GetXamlName (type);
 				PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
 			} else if ((xt = XamlLanguage.AllTypes.FirstOrDefault (t => t.UnderlyingType == type)) != null) {
 				Name = xt.Name;
@@ -693,9 +699,10 @@ namespace System.Xaml
 			if (t == typeof (Type))
 				t = typeof (TypeExtension);
 
-			var a = GetCustomAttributeProvider ().GetCustomAttribute<TypeConverterAttribute> (false);
-			if (a != null)
-				return SchemaContext.GetValueConverter<TypeConverter> (Type.GetType (a.ConverterTypeName), this);
+			var a = GetCustomAttributeProvider ();
+			var ca = a != null ? a.GetCustomAttribute<TypeConverterAttribute> (false) : null;
+			if (ca != null)
+				return SchemaContext.GetValueConverter<TypeConverter> (Type.GetType (ca.ConverterTypeName), this);
 
 			if (t == typeof (object)) // This is a special case. ConverterType is null.
 				return SchemaContext.GetValueConverter<TypeConverter> (null, this);

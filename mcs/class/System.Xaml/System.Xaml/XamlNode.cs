@@ -104,8 +104,7 @@ namespace System.Xaml
 		
 		public IEnumerable<XamlNodeMember> Children ()
 		{
-			// FIXME: consider XamlLanguage.Key
-			foreach (var xm in type.GetAllObjectReaderMembersByType (null))
+			foreach (var xm in type.GetAllObjectReaderMembersByType ())
 				yield return new XamlNodeMember (this, xm);
 		}
 		
@@ -185,7 +184,7 @@ namespace System.Xaml
 	internal static class TypeExtensionMethods2
 	{
 		// Note that this returns XamlMember which might not actually appear in XamlObjectReader. For example, XamlLanguage.Items won't be returned when there is no item in the collection.
-		public static IEnumerable<XamlMember> GetAllObjectReaderMembersByType (this XamlType type, object dictionaryKey)
+		public static IEnumerable<XamlMember> GetAllObjectReaderMembersByType (this XamlType type)
 		{
 			if (type.HasPositionalParameters ()) {
 				yield return XamlLanguage.PositionalParameters;
@@ -197,10 +196,7 @@ namespace System.Xaml
 			if (args != null && args.Any ())
 				yield return XamlLanguage.Arguments;
 
-			if (dictionaryKey != null)
-				yield return XamlLanguage.Key;
-
-			if (type.TypeConverter != null || type.IsContentValue ()) {
+			if (type.IsContentValue ()) {
 				yield return XamlLanguage.Initialization;
 				yield break;
 			}

@@ -305,15 +305,15 @@ namespace System.Xaml
 
 			if (xm == XamlLanguage.Initialization ||
 			    xm == state.Type.ContentProperty) {
-				value = GetCorrectlyTypedValue (state.Type, value);
+				value = GetCorrectlyTypedValue (xm, state.Type, value);
 				state.Value = value;
 				state.IsInstantiated = true;
 			}
 //			else if (xm.Type.IsCollection)
 			else if (xm == XamlLanguage.Items) // FIXME: am not sure which is good yet.
-				state.Contents.Add (GetCorrectlyTypedValue (xm.Type.ItemType, value));
+				state.Contents.Add (GetCorrectlyTypedValue (null, xm.Type.ItemType, value));
 			else
-				state.Contents.Add (GetCorrectlyTypedValue (xm.Type, value));
+				state.Contents.Add (GetCorrectlyTypedValue (xm, xm.Type, value));
 			OnWriteValue (xm, value);
 		}
 		
@@ -413,7 +413,7 @@ namespace System.Xaml
 				xt.IsMarkupExtension && IsAllowedType (xt.MarkupExtensionReturnType, value);
 		}
 
-		object GetCorrectlyTypedValue (XamlType xt, object value)
+		object GetCorrectlyTypedValue (XamlMember xm, XamlType xt, object value)
 		{
 			// FIXME: this could be generalized by some means, but I cannot find any.
 			if (xt.UnderlyingType == typeof (Type))
@@ -427,8 +427,9 @@ namespace System.Xaml
 			if (IsAllowedType (xt, value))
 				return value;
 
-			if (xt.TypeConverter != null && value != null) {
-				var tc = xt.TypeConverter.ConverterInstance;
+			var vc = xm.TypeConverter ?? xt.TypeConverter;
+			if (vc != null && vc.ConverterInstance != null && value != null) {
+				var tc = vc.ConverterInstance;
 				if (tc != null && tc.CanConvertFrom (value.GetType ()))
 					value = tc.ConvertFrom (value);
 				if (IsAllowedType (xt, value))
@@ -662,7 +663,8 @@ namespace System.Xaml
 			if (xd == null && !xt.GetAllMembers ().Contains (xm))
 				return AllowedMemberLocations.None;
 
-			if (mt != null && mt.TypeConverter != null && mt.TypeConverter.ConverterInstance != null && mt.TypeConverter.ConverterInstance.CanConvertTo (typeof (string)))
+			var vc = mt.TypeConverter ?? (mt.TypeConverter != null ? mt.TypeConverter : null);
+			if (vc != null && vc.ConverterInstance != null && vc.ConverterInstance.CanConvertTo (typeof (string)))
 				return AllowedMemberLocations.Attribute;
 
 			return AllowedMemberLocations.MemberElement;
@@ -695,8 +697,8 @@ namespace System.Xaml
 
 			var xt = value == null ? XamlLanguage.Null : sctx.GetXamlType (value.GetType ());
 
-			var vs = xt.TypeConverter;
-			var c = vs != null ? vs.ConverterInstance : null;
+			var vc = xm.TypeConverter ?? xt.TypeConverter;
+			var c = vc != null ? vc.ConverterInstance : null;
 
 			if (w.WriteState != WriteState.Attribute)
 				WritePendingNamespaces ();

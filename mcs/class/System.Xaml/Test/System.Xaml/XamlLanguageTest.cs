@@ -677,6 +677,7 @@ namespace MonoTests.System.Xaml
 		{
 			var m = XamlLanguage.Property.GetMember ("Type");
 			TestMemberCommon (m, "Type", typeof (XamlType), typeof (PropertyDefinition), true);
+			Assert.IsNotNull (m.TypeConverter, "#1");
 		}
 
 		[Test]

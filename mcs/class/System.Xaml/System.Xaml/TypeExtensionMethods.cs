@@ -80,28 +80,25 @@ namespace System.Xaml
 		
 		#region type conversion and member value retrieval
 		
-		public static string GetStringValue (this XamlType xt, object obj, INamespacePrefixLookup prefixLookup)
+		public static string GetStringValue (XamlType xt, XamlMember xm, object obj, INamespacePrefixLookup prefixLookup)
 		{
 			if (obj == null)
 				return String.Empty;
 			if (obj is Type)
 				return new XamlTypeName (xt.SchemaContext.GetXamlType ((Type) obj)).ToString (prefixLookup);
 
-			return (string) xt.ConvertObject (obj, typeof (string));
+			return (string) ConvertObject (xt, xm, obj, typeof (string));
 		}
 
-		public static object ConvertObject (this XamlType xt, object target, Type explicitTargetType)
-		{
-			return DoConvert (xt.TypeConverter, target, explicitTargetType ?? xt.UnderlyingType);
-		}
-		
-		static object DoConvert (XamlValueConverter<TypeConverter> converter, object value, Type targetType)
+		public static object ConvertObject (XamlType xt, XamlMember xm, object target, Type explicitTargetType)
 		{
 			// First get member value, then convert it to appropriate target type.
-			var tc = converter != null ? converter.ConverterInstance : null;
-			if (tc != null && targetType != null && tc.CanConvertTo (targetType))
-				return tc.ConvertTo (null, CultureInfo.InvariantCulture, value, targetType);
-			return value;
+
+			var vc = (xm != null ? xm.TypeConverter : null) ?? xt.TypeConverter;
+			var tc = vc != null ? vc.ConverterInstance : null;
+			if (tc != null && explicitTargetType != null && tc.CanConvertTo (explicitTargetType))
+				return tc.ConvertTo (null, CultureInfo.InvariantCulture, target, explicitTargetType);
+			return target;
 		}
 
 		#endregion
@@ -112,15 +109,15 @@ namespace System.Xaml
 				return true;
 			if (member == XamlLanguage.PositionalParameters)
 				return true;
+			if (member.TypeConverter != null && member.TypeConverter.ConverterInstance != null)
+				return true;
 			return IsContentValue (member.Type);
 		}
 
 		public static bool IsContentValue (this XamlType type)
 		{
 			var t = type.UnderlyingType;
-			if (Type.GetTypeCode (t) != TypeCode.Object)
-				return true;
-			else if (t == typeof (Type) || t == typeof (TimeSpan) || t == typeof (Uri)) // special predefined types
+			if (type.TypeConverter != null && type.TypeConverter.ConverterInstance != null)
 				return true;
 			return false;
 		}
@@ -157,7 +154,7 @@ namespace System.Xaml
 				return false;
 
 			foreach (var arg in args)
-				if (arg.Type != null && !arg.Type.IsContentValue () && arg.Type.TypeConverter == null)
+				if (arg.Type != null && !arg.Type.IsContentValue ())
 					return false;
 
 			Type [] argTypes = (from arg in args select arg.Type.UnderlyingType).ToArray ();

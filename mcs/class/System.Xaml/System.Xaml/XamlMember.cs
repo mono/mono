@@ -406,6 +406,12 @@ namespace System.Xaml
 				return null;
 			if (t == typeof (object)) // it is different from XamlType.LookupTypeConverter().
 				return null;
+
+			var a = GetCustomAttributeProvider ();
+			var ca = a != null ? a.GetCustomAttribute<TypeConverterAttribute> (false) : null;
+			if (ca != null)
+				return context.GetValueConverter<TypeConverter> (System.Type.GetType (ca.ConverterTypeName), Type);
+
 			return Type.TypeConverter;
 		}
 
