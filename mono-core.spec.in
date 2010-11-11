@@ -722,6 +722,7 @@ Authors:
 %_libdir/pkgconfig/system.web.extensions_1.0.pc
 %_libdir/pkgconfig/system.web.extensions.design_1.0.pc
 %_libdir/pkgconfig/system.web.mvc.pc
+%_libdir/pkgconfig/system.web.mvc2.pc
 # exes
 %_prefix/lib/mono/1.0/disco.exe*
 %_prefix/lib/mono/1.0/soapsuds.exe*
