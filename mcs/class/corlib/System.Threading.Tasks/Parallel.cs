@@ -50,6 +50,8 @@ namespace System.Threading.Tasks
 			if ((step = (to - from) / num) < 5) {
 				step = 5;
 				num = (to - from) / 5;
+				if (num < 1)
+					num = 1;
 			}
 
 			return num;
@@ -162,8 +164,7 @@ namespace System.Threading.Tasks
 				CancellationToken token = options.CancellationToken;
 
 				try {
-					for (int i = index; i < stopIndex - range.Stolen; ++i) {
-						range.Actual = i;
+					for (int i = index; i < stopIndex; range.Actual = ++i) {
 						if (infos.IsStopped)
 							return;
 
@@ -174,6 +175,8 @@ namespace System.Threading.Tasks
 
 						state.CurrentIteration = i;
 						local = action (i, state, local);
+						if (i >= stopIndex - range.Stolen)
+							break;
 					}
 
 					// Try to steal from our right neighbor (cyclic)
@@ -183,13 +186,21 @@ namespace System.Threading.Tasks
 						range = ranges[extWorker];
 
 						stopIndex = extWorker + 1 == num ? to : Math.Min (to, from + (extWorker + 1) * step);
-						if (stopIndex - range.Stolen <= range.Actual + 2)
-							continue;
 
 						int stolen;
-						while ((stolen = stopIndex - Interlocked.Increment (ref range.Stolen)) > range.Actual + 2) {
+						do {
+							stolen = range.Stolen;
+							if (stopIndex - stolen > range.Actual)
+								goto next;
+						} while (Interlocked.CompareExchange (ref range.Stolen, stolen + 1, stolen) != stolen);
+
+						stolen = stopIndex - stolen - 1;
+
+						if (stolen > range.Actual)
 							local = action (stolen, state, local);
-						}
+
+					next:
+						continue;
 					}
 				} finally {
 					destruct (local);
