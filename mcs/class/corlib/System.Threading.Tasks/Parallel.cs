@@ -139,6 +139,8 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("localFinally");
 			if (options == null)
 				throw new ArgumentNullException ("options");
+			if (from >= to)
+				return new ParallelLoopResult (null, true);
 
 			// Number of task to be launched (normally == Env.ProcessorCount)
 			int step;
