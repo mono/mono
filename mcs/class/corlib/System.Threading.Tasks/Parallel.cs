@@ -119,11 +119,6 @@ namespace System.Threading.Tasks
 			return For<TLocal> (from, to, ParallelOptions.Default, init, action, destruct);
 		}
 
-		class StealableRange {
-			public readonly int To;
-			public int Stolen;
-		}
-
 		public static ParallelLoopResult For<TLocal> (int from,
 		                                              int to,
 		                                              ParallelOptions options,
@@ -148,15 +143,18 @@ namespace System.Threading.Tasks
 
 			Task[] tasks = new Task [num];
 
-			/*int[] actualRange = new int[num];
-			int[] stolenRange = new int[num];*/
+			StealRange[] ranges = new StealRange[num];
+			for (int i = 0; i < num; i++)
+				ranges[i] = new StealRange (from, i, step);
+
 			ParallelLoopState.ExternalInfos infos = new ParallelLoopState.ExternalInfos ();
 
 			int currentIndex = -1;
 
 			Action workerMethod = delegate {
 				int localWorker = Interlocked.Increment (ref currentIndex);
-				int index = from + localWorker * step;
+				StealRange range = ranges[localWorker];
+				int index = range.Actual;
 				int stopIndex = localWorker + 1 == num ? to : Math.Min (to, index + step);
 				TLocal local = init ();
 
@@ -164,7 +162,8 @@ namespace System.Threading.Tasks
 				CancellationToken token = options.CancellationToken;
 
 				try {
-					for (int i = index; i < stopIndex; i++) {
+					for (int i = index; i < stopIndex - range.Stolen; ++i) {
+						range.Actual = i;
 						if (infos.IsStopped)
 							return;
 
@@ -177,10 +176,21 @@ namespace System.Threading.Tasks
 						local = action (i, state, local);
 					}
 
-					// Try to steal from out right neighbor (cyclic)
-					/*for (int i = (localWorker + 1) % stolenRange.Length; i < stolenRange.Length; ++i) {
+					// Try to steal from our right neighbor (cyclic)
+					int len = num + localWorker;
+					for (int sIndex = localWorker + 1; sIndex < len; ++sIndex) {
+						int extWorker = sIndex % num;
+						range = ranges[extWorker];
 
-					}*/
+						stopIndex = extWorker + 1 == num ? to : Math.Min (to, from + (extWorker + 1) * step);
+						if (stopIndex - range.Stolen <= range.Actual + 2)
+							continue;
+
+						int stolen;
+						while ((stolen = stopIndex - Interlocked.Increment (ref range.Stolen)) > range.Actual + 2) {
+							local = action (stolen, state, local);
+						}
+					}
 				} finally {
 					destruct (local);
 				}
@@ -195,6 +205,17 @@ namespace System.Threading.Tasks
 			}
 
 			return new ParallelLoopResult (infos.LowestBreakIteration, !(infos.IsStopped || infos.IsExceptional));
+		}
+
+		class StealRange
+		{
+			public int Stolen;
+			public int Actual;
+
+			public StealRange (int from, int i, int step)
+			{
+				Actual = from + i * step;
+			}
 		}
 
 		#endregion
