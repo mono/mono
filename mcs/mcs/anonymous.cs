@@ -80,8 +80,21 @@ namespace Mono.CSharp {
 		{
 			if (tparams != null) {
 				type_params = new TypeParameter[tparams.Length];
+				var src = new TypeParameterSpec[tparams.Length];
+				var dst = new TypeParameterSpec[tparams.Length];
+
 				for (int i = 0; i < type_params.Length; ++i) {
 					type_params[i] = tparams[i].CreateHoistedCopy (this, spec);
+
+					src[i] = tparams[i].Type;
+					dst[i] = type_params[i].Type;
+				}
+
+				// A copy is not enough, inflate any type parameter constraints
+				// using a new type parameters
+				var inflator = new TypeParameterInflator (null, src, dst);
+				for (int i = 0; i < type_params.Length; ++i) {
+					src[i].InflateConstraints (inflator, dst[i]);
 				}
 			}
 		}
@@ -1589,6 +1602,9 @@ namespace Mono.CSharp {
 
 				ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
 			} else {
+				if (delegate_method.IsGeneric)
+					delegate_method = delegate_method.MakeGenericMethod (method.TypeParameters);
+
 				ec.Emit (OpCodes.Ldftn, delegate_method);
 			}
 
