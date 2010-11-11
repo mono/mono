@@ -81,11 +81,17 @@ namespace System.ServiceModel.Channels
 			result.WebRequest = web_request;
 			web_request.Method = "POST";
 			web_request.ContentType = Encoder.ContentType;
-
 #if NET_2_1
-			var cmgr = source.GetProperty<IHttpCookieContainerManager> ();
-			if (cmgr != null)
-				((HttpWebRequest) web_request).CookieContainer = cmgr.CookieContainer;
+			HttpWebRequest hwr = (web_request as HttpWebRequest);
+#if MOONLIGHT
+			if (hwr.SupportsCookieContainer) {
+#endif
+				var cmgr = source.GetProperty<IHttpCookieContainerManager> ();
+				if (cmgr != null)
+					hwr.CookieContainer = cmgr.CookieContainer;
+#if MOONLIGHT
+			}
+#endif
 #endif
 
 #if !MOONLIGHT // until we support NetworkCredential like SL4 will do.
