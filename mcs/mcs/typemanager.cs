@@ -114,6 +114,7 @@ namespace Mono.CSharp {
 	static public MethodSpec delegate_remove_delegate_delegate;
 	static public PropertySpec int_get_offset_to_string_data;
 	static public MethodSpec int_interlocked_compare_exchange;
+	public static MethodSpec gen_interlocked_compare_exchange;
 	static public PropertySpec ienumerator_getcurrent;
 	public static MethodSpec methodbase_get_type_from_handle;
 	public static MethodSpec methodbase_get_type_from_handle_generic;
@@ -149,6 +150,7 @@ namespace Mono.CSharp {
 		void_monitor_exit_object =
 		void_initializearray_array_fieldhandle =
 		int_interlocked_compare_exchange =
+		gen_interlocked_compare_exchange =
 		methodbase_get_type_from_handle =
 		methodbase_get_type_from_handle_generic =
 		fieldinfo_get_field_from_handle =

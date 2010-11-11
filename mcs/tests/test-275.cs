@@ -1,48 +1,36 @@
 using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
-public delegate void DelType ();
+public delegate int DelType ();
 
 struct S
 {
 	public event DelType MyEvent;
+	public static event DelType MyEventStatic;
+	
+	public int RunInstance ()
+	{
+		return MyEvent ();
+	}
+	
+	public int RunStatic ()
+	{
+		return MyEventStatic ();
+	}
 }
 
 public class Test
 {
-	public event DelType MyEvent;
-
 	public static int Main ()
 	{
-		EventInfo ei = typeof (Test).GetEvent ("MyEvent");
-		MethodImplAttributes methodImplAttributes = ei.GetAddMethod ().GetMethodImplementationFlags ();
-
-		if ((methodImplAttributes & MethodImplAttributes.Synchronized) == 0) {
-			Console.WriteLine ("FAILED");
+		S.MyEventStatic += delegate () { return 22; };
+		S s = new S ();
+		s.MyEvent += delegate () { return 6; };
+		if (s.RunInstance () != 6)
 			return 1;
-		}
-
-		methodImplAttributes = ei.GetRemoveMethod ().GetMethodImplementationFlags ();
-		if ((methodImplAttributes & MethodImplAttributes.Synchronized) == 0) {
-			Console.WriteLine ("FAILED");
+		
+		if (s.RunStatic () != 22)
 			return 2;
-		}
-
-		ei = typeof (S).GetEvent ("MyEvent");
-		methodImplAttributes = ei.GetAddMethod ().GetMethodImplementationFlags ();
-
-		if ((methodImplAttributes & MethodImplAttributes.Synchronized) != 0) {
-			Console.WriteLine ("FAILED");
-			return 3;
-		}
-
-		methodImplAttributes = ei.GetRemoveMethod ().GetMethodImplementationFlags ();
-		if ((methodImplAttributes & MethodImplAttributes.Synchronized) != 0) {
-			Console.WriteLine ("FAILED");
-			return 4;
-		}
-
+		
 		return 0;
 	}
 }

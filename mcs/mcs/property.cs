@@ -864,7 +864,8 @@ namespace Mono.CSharp
 	/// <summary>
 	/// Event is declared like field.
 	/// </summary>
-	public class EventField : Event {
+	public class EventField : Event
+	{
 		abstract class EventFieldAccessor : AEventAccessor
 		{
 			protected EventFieldAccessor (EventField method, string prefix)
@@ -872,31 +873,84 @@ namespace Mono.CSharp
 			{
 			}
 
+			protected abstract MethodSpec Operation { get; }
+
 			public override void Emit (DeclSpace parent)
 			{
 				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0) {
-					if (parent is Class) {
-						MethodBuilder mb = method_data.MethodBuilder;
-						mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.Synchronized);
-					}
-
-					var field_info = ((EventField) method).backing_field;
-					FieldExpr f_expr = new FieldExpr (field_info, Location);
-					if ((method.ModFlags & Modifiers.STATIC) == 0)
-						f_expr.InstanceExpression = new CompilerGeneratedThis (field_info.Spec.MemberType, Location);
-
 					block = new ToplevelBlock (Compiler, ParameterInfo, Location);
-					block.AddStatement (new StatementExpression (
-						new CompoundAssign (Operation,
-							f_expr,
-							block.GetParameterReference (0, Location),
-							Location)));
+					FabricateBodyStatement ();
 				}
 
 				base.Emit (parent);
 			}
 
-			protected abstract Binary.Operator Operation { get; }
+			void FabricateBodyStatement ()
+			{
+				var cas = TypeManager.gen_interlocked_compare_exchange;
+				if (cas == null) {
+					TypeSpec t = TypeManager.CoreLookupType (Compiler, "System.Threading", "Interlocked", MemberKind.Class, true);
+					if (t != null) {
+						var p = new ParametersImported (
+							new[] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.NONE),
+								new ParameterData (null, Parameter.Modifier.NONE)
+							},
+							new [] {
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
+							}, false);
+
+						var filter = new MemberFilter ("CompareExchange", 1, MemberKind.Method, p, null);
+						cas = TypeManager.gen_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, filter, Location);
+					}
+				}
+
+				//
+				// Delegate obj1 = backing_field
+				// do {
+				//   Delegate obj2 = obj1;
+				//   obj1 =	Interlocked.CompareExchange (ref backing_field, Delegate.Combine|Remove(obj2, value), obj1);
+				// } while (obj1 != obj2)
+				//
+
+				var field_info = ((EventField) method).backing_field;
+				FieldExpr f_expr = new FieldExpr (field_info, Location);
+				if (!IsStatic)
+					f_expr.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
+
+				var obj1 = LocalVariable.CreateCompilerGenerated (field_info.MemberType, block, Location);
+				var obj2 = LocalVariable.CreateCompilerGenerated (field_info.MemberType, block, Location);
+
+				block.AddStatement (new StatementExpression (new SimpleAssign (new LocalVariableReference (obj1, Location), f_expr)));
+
+				var cond = new BooleanExpression (new Binary (Binary.Operator.Inequality,
+					new LocalVariableReference (obj1, Location), new LocalVariableReference (obj2, Location), Location));
+
+				var body = new ExplicitBlock (block, Location, Location);
+				block.AddStatement (new Do (body, cond, Location));
+
+				body.AddStatement (new StatementExpression (
+					new SimpleAssign (new LocalVariableReference (obj2, Location), new LocalVariableReference (obj1, Location))));
+
+				var args_oper = new Arguments (2);
+				args_oper.Add (new Argument (new LocalVariableReference (obj2, Location)));
+				args_oper.Add (new Argument (block.GetParameterReference (0, Location)));
+
+				var args = new Arguments (3);
+				args.Add (new Argument (f_expr, Argument.AType.Ref));
+				args.Add (new Argument (new Cast (
+					new TypeExpression (field_info.MemberType, Location),
+					new Invocation (MethodGroupExpr.CreatePredefined (Operation, Operation.DeclaringType, Location), args_oper),
+					Location)));
+				args.Add (new Argument (new LocalVariableReference (obj1, Location)));
+
+				body.AddStatement (new StatementExpression (new SimpleAssign (
+					new LocalVariableReference (obj1, Location),
+					new Invocation (MethodGroupExpr.CreatePredefined (cas, cas.DeclaringType, Location), args))));
+			}
 		}
 
 		sealed class AddDelegateMethod: EventFieldAccessor
@@ -906,8 +960,15 @@ namespace Mono.CSharp
 			{
 			}
 
-			protected override Binary.Operator Operation {
-				get { return Binary.Operator.Addition; }
+			protected override MethodSpec Operation {
+				get {
+					if (TypeManager.delegate_combine_delegate_delegate == null) {
+						TypeManager.delegate_combine_delegate_delegate = TypeManager.GetPredefinedMethod (
+							TypeManager.delegate_type, "Combine", Location, TypeManager.delegate_type, TypeManager.delegate_type);
+					}
+
+					return TypeManager.delegate_combine_delegate_delegate;
+				}
 			}
 		}
 
@@ -918,8 +979,15 @@ namespace Mono.CSharp
 			{
 			}
 
-			protected override Binary.Operator Operation {
-				get { return Binary.Operator.Subtraction; }
+			protected override MethodSpec Operation {
+				get {
+					if (TypeManager.delegate_remove_delegate_delegate == null) {
+						TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
+							TypeManager.delegate_type, "Remove", Location, TypeManager.delegate_type, TypeManager.delegate_type);
+					}
+
+					return TypeManager.delegate_remove_delegate_delegate;
+				}
 			}
 		}
 
@@ -1042,7 +1110,8 @@ namespace Mono.CSharp
 		}
 	}
 
-	public abstract class Event : PropertyBasedMember {
+	public abstract class Event : PropertyBasedMember
+	{
 		public abstract class AEventAccessor : AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
