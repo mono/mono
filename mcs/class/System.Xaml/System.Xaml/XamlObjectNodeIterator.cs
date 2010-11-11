@@ -30,28 +30,7 @@ using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
 
-//
-// This implementation can be compiled under .NET, using different namespace
-// (Mono.Xaml). To compile it into a usable library, use the following compile
-// optons and sources:
-//
-//	dmcs -d:DOTNET -t:library -r:System.Xaml.dll \
-//		System.Xaml/XamlObjectReader.cs \
-//		System.Xaml/XamlNode.cs \
-//		System.Xaml/PrefixLookup.cs \
-//		System.Xaml/TypeExtensionMethods.cs
-//
-// (At least it should compile as of the revision that this comment is added.)
-//
-// Adding Test/System.Xaml/TestedTypes.cs might also be useful to examine this
-// reader behavior under .NET and see where bugs are alive.
-//
-
-#if DOTNET
-namespace Mono.Xaml
-#else
 namespace System.Xaml
-#endif
 {
 	internal struct XamlObjectNodeIterator
 	{
