@@ -27,6 +27,7 @@ man_MANS = \
 	mdvalidater.1         \
 	mkbundle.1            \
 	mono.1                \
+	mprof-report.1        \
 	mono-cil-strip.1      \
 	mono-config.5         \
 	monodocer.1           \
