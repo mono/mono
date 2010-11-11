@@ -37,6 +37,7 @@ using System.Xaml.Schema;
 //
 //	dmcs -d:DOTNET -t:library -r:System.Xaml.dll \
 //		System.Xaml/XamlObjectReader.cs \
+//		System.Xaml/XamlObjectNodeIterator.cs \
 //		System.Xaml/XamlNode.cs \
 //		System.Xaml/PrefixLookup.cs \
 //		System.Xaml/TypeExtensionMethods.cs
@@ -94,7 +95,7 @@ namespace System.Xaml
 					throw new XamlObjectReaderException (String.Format ("instance type '{0}' has no default constructor.", type));
 			}
 
-			new XamlNodeIterator (instance, sctx, prefix_lookup).CollectNamespaces ();
+			new XamlObjectNodeIterator (instance, sctx, prefix_lookup).CollectNamespaces ();
 		}
 		
 		bool is_eof;
@@ -163,7 +164,7 @@ namespace System.Xaml
 			if (ns_iterator.MoveNext ())
 				return true;
 			if (nodes == null)
-				nodes = new XamlNodeIterator (root, sctx, prefix_lookup).GetNodes ().GetEnumerator ();
+				nodes = new XamlObjectNodeIterator (root, sctx, prefix_lookup).GetNodes ().GetEnumerator ();
 			if (nodes.MoveNext ())
 				return true;
 			if (!is_eof)

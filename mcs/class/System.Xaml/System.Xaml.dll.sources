@@ -92,6 +92,7 @@ System.Xaml/XamlNodeList.cs
 System.Xaml/XamlNodeQueue.cs
 System.Xaml/XamlNodeType.cs
 System.Xaml/XamlObjectEventArgs.cs
+System.Xaml/XamlObjectNodeIterator.cs
 System.Xaml/XamlObjectReader.cs
 System.Xaml/XamlObjectReaderException.cs
 System.Xaml/XamlObjectReaderSettings.cs
