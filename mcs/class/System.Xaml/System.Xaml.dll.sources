@@ -113,6 +113,5 @@ System.Xaml/XamlWriterStateManager.cs
 System.Xaml/XamlXmlReader.cs
 System.Xaml/XamlXmlReaderSettings.cs
 System.Xaml/XamlXmlWriter.cs
-System.Xaml/XamlXmlWriter-new.cs
 System.Xaml/XamlXmlWriterException.cs
 System.Xaml/XamlXmlWriterSettings.cs
