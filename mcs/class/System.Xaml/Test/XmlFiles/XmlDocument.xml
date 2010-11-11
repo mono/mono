@@ -1,7 +1,4 @@
-<XmlDocument InnerXml="&lt;root xmlns=&quot;urn:foo&quot;&gt;&lt;elem attr=&quot;val&quot; /&gt;&lt;/root&gt;" Prefix="" PreserveWhitespace="False" xmlns="clr-namespace:System.Xml;assembly=System.Xml" xmlns:sxs="clr-namespace:System.Xml.Schema;assembly=System.Xml" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <XmlDocument.SchemaInfo>
-    <x:Null />
-  </XmlDocument.SchemaInfo>
+<XmlDocument Value="{x:Null}" InnerXml="&lt;root xmlns=&quot;urn:foo&quot;&gt;&lt;elem attr=&quot;val&quot; /&gt;&lt;/root&gt;" Prefix="" PreserveWhitespace="False" xmlns="clr-namespace:System.Xml;assembly=System.Xml" xmlns:sxs="clr-namespace:System.Xml.Schema;assembly=System.Xml" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <XmlDocument.Schemas>
     <sxs:XmlSchemaSet>
       <sxs:XmlSchemaSet.CompilationSettings>
@@ -9,7 +6,4 @@
       </sxs:XmlSchemaSet.CompilationSettings>
     </sxs:XmlSchemaSet>
   </XmlDocument.Schemas>
-  <XmlDocument.Value>
-    <x:Null />
-  </XmlDocument.Value>
 </XmlDocument>

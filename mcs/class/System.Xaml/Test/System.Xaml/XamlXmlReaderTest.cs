@@ -273,7 +273,6 @@ namespace MonoTests.System.Xaml
 		[Category ("NotWorking")]
 		public void WriteNullMemberAsObject ()
 		{
-using (var sw = File.CreateText ("Test/XmlFiles/TestClass4.xml")) sw.Write (XamlServices.Save (new TestClass4 ()));
 			var r = GetReader ("TestClass4.xml");
 			WriteNullMemberAsObject (r, null);
 		}
@@ -282,7 +281,6 @@ using (var sw = File.CreateText ("Test/XmlFiles/TestClass4.xml")) sw.Write (Xaml
 		[Category ("NotWorking")]
 		public void StaticMember ()
 		{
-using (var sw = File.CreateText ("Test/XmlFiles/TestClass5.xml")) sw.Write (XamlServices.Save (new TestClass5 ()));
 			var r = GetReader ("TestClass5.xml");
 			StaticMember (r);
 		}
@@ -306,7 +304,7 @@ using (var sw = File.CreateText ("Test/XmlFiles/TestClass5.xml")) sw.Write (Xaml
 		{
 			var doc = new XmlDocument ();
 			doc.LoadXml ("<root xmlns='urn:foo'><elem attr='val' /></root>");
-using (var sw = File.CreateText ("Test/XmlFiles/XmlDocument.xml")) sw.Write (XamlServices.Save (doc));
+			// note that corresponding XamlXmlWriter is untested yet.
 			var r = GetReader ("XmlDocument.xml");
 			Read_XmlDocument (r);
 		}
@@ -449,7 +447,6 @@ using (var sw = File.CreateText ("Test/XmlFiles/XmlDocument.xml")) sw.Write (Xam
 			var obj = new Dictionary<string,object> ();
 			obj ["Foo"] = 5.0;
 			obj ["Bar"] = -6.5;
-using (var sw = File.CreateText ("Test/XmlFiles/Dictionary_String_Double.xml")) sw.Write (XamlServices.Save (obj));
 			var r = GetReader ("Dictionary_String_Double.xml");
 			Read_Dictionary (r);
 		}
@@ -461,7 +458,6 @@ using (var sw = File.CreateText ("Test/XmlFiles/Dictionary_String_Double.xml")) 
 			var obj = new Dictionary<string,Type> ();
 			obj ["Foo"] = typeof (int);
 			obj ["Bar"] = typeof (Dictionary<Type,XamlType>);
-using (var sw = File.CreateText ("Test/XmlFiles/Dictionary_String_Type_2.xml")) sw.Write (XamlServices.Save (obj));
 			var r = GetReader ("Dictionary_String_Type_2.xml");
 			Read_Dictionary2 (r, XamlLanguage.Type.GetMember ("Type"));
 		}
@@ -482,7 +478,6 @@ using (var sw = File.CreateText ("Test/XmlFiles/Dictionary_String_Type_2.xml")) 
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_ListWrapper ()
 		{
 			var r = GetReader ("ListWrapper.xml");
@@ -500,7 +495,6 @@ using (var sw = File.CreateText ("Test/XmlFiles/Dictionary_String_Type_2.xml")) 
 		public void ContentIncluded ()
 		{
 			var obj = new ContentIncludedClass () { Content = "foo" };
-using (var sw = File.CreateText ("Test/XmlFiles/ContentIncluded.xml")) sw.Write (XamlServices.Save (obj));
 			var r = GetReader ("ContentIncluded.xml");
 			ContentIncluded (r);
 		}
