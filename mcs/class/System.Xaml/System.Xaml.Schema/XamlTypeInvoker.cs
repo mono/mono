@@ -110,6 +110,8 @@ namespace System.Xaml.Schema
 		}
 		public virtual IEnumerator GetItems (object instance)
 		{
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
 			return ((IEnumerable) instance).GetEnumerator ();
 		}
 	}

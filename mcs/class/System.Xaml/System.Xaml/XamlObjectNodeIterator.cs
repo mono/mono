@@ -169,7 +169,10 @@ namespace System.Xaml
 
 		IEnumerable<XamlNodeInfo> GetItemsNodes (XamlMember xm, XamlObject xobj)
 		{
-			var ie = xobj.Type.Invoker.GetItems (xobj.GetRawValue ());
+			var obj = xobj.GetRawValue ();
+			if (obj == null)
+				yield break;
+			var ie = xobj.Type.Invoker.GetItems (obj);
 			while (ie.MoveNext ()) {
 				var iobj = ie.Current;
 				// If it is dictionary, then retrieve the key, and rewrite the item as the Value part.

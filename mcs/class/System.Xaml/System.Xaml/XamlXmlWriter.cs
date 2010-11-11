@@ -23,7 +23,7 @@
 
 // To use this under .NET, compile sources as:
 //
-//	dmcs -d:DOTNET -r:System.Xaml -debug System.Xaml/XamlXmlWriter-new.cs System.Xaml/TypeExtensionMethods.cs System.Xaml/XamlWriterStateManager.cs System.Xaml/XamlNameResolver.cs System.Xaml/PrefixLookup.cs ../../build/common/MonoTODOAttribute.cs Test/System.Xaml/TestedTypes.cs
+//	dmcs -d:DOTNET -r:System.Xaml -debug System.Xaml/XamlXmlWriter.cs System.Xaml/TypeExtensionMethods.cs System.Xaml/XamlWriterStateManager.cs System.Xaml/XamlNameResolver.cs System.Xaml/PrefixLookup.cs ../../build/common/MonoTODOAttribute.cs Test/System.Xaml/TestedTypes.cs
 
 using System;
 using System.Collections.Generic;
