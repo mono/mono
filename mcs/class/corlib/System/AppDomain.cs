@@ -1537,13 +1537,22 @@ namespace System {
 #endif
 
 #if NET_4_0 || MOONLIGHT
-		[MonoTODO ("Currently always returns false")]
+		List<string> compatibility_switch;
+
 		public bool? IsCompatibilitySwitchSet (string value)
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
+
 			// default (at least for SL4) is to return false for unknown values (can't get a null out of it)
-			return false;
+			return ((compatibility_switch != null) && compatibility_switch.Contains (value));
+		}
+
+		internal void SetCompatibilitySwitch (string value)
+		{
+			if (compatibility_switch == null)
+				compatibility_switch = new List<string> ();
+			compatibility_switch.Add (value);
 		}
 
 		[MonoTODO ("Currently always returns false")]
