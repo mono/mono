@@ -241,7 +241,7 @@ namespace System.Xaml
 					if (!ReadExtraStartMember ())
 						ReadStartMember ();
 				} else {
-					if (current_member != null && current_member.IsReadOnly) {
+					if (current_member != null && !current_member.IsWritePublic) {
 						if (current_member.Type.IsCollection)
 							SetGetObject ();
 						else
@@ -257,7 +257,7 @@ namespace System.Xaml
 				// could be: EndObject, EndMember
 				if (inside_object_not_member) {
 					var xm = members.Count > 0 ? members.Peek () : null;
-					if (xm != null && xm.IsReadOnly && xm.Type.IsCollection)
+					if (xm != null && !xm.IsWritePublic && xm.Type.IsCollection)
 						SetEndOfObject ();
 					else
 						ReadEndType ();
