@@ -1336,6 +1336,9 @@ namespace Mono.CSharp {
 
 		static readonly string[] attribute_targets = new string [] { "method" };
 
+		public static readonly string ConstructorName = ".ctor";
+		public static readonly string TypeConstructorName = ".cctor";
+
 		//
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.

@@ -14,7 +14,6 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
 
 namespace Mono.CSharp {
@@ -801,9 +800,9 @@ namespace Mono.CSharp {
 
 			if (ms.Kind == MemberKind.Constructor) {
 				if (ms.IsStatic)
-					return ConstructorInfo.TypeConstructorName;
+					return Constructor.TypeConstructorName;
 
-				return ConstructorInfo.ConstructorName;
+				return Constructor.ConstructorName;
 			}
 
 			return ms.Name;
@@ -815,7 +814,7 @@ namespace Mono.CSharp {
 				return IndexerNameAlias;
 
 			if (mc is Constructor)
-				return ConstructorInfo.ConstructorName;
+				return Constructor.ConstructorName;
 
 			return mc.MemberName.Name;
 		}

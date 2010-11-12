@@ -70,8 +70,7 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			var method = oper.GetMetaInfo () as MethodInfo;
-			return SLE.Expression.Call (method, Arguments.MakeExpression (arguments, ctx));
+			return SLE.Expression.Call ((MethodInfo) oper.GetMetaInfo (), Arguments.MakeExpression (arguments, ctx));
 		}
 	}
 

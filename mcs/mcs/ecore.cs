@@ -548,7 +548,7 @@ namespace Mono.CSharp {
 
 		protected static MethodSpec ConstructorLookup (ResolveContext rc, TypeSpec type, ref Arguments args, Location loc)
 		{
-			var ctors = MemberCache.FindMembers (type, ConstructorInfo.ConstructorName, true);
+			var ctors = MemberCache.FindMembers (type, Constructor.ConstructorName, true);
 			if (ctors == null) {
 				rc.Report.SymbolRelatedToPreviousError (type);
 				if (type.IsStruct) {
