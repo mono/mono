@@ -43,7 +43,9 @@ namespace System.Xaml
 			this.sctx = schemaContext;
 			this.settings = settings ?? new XamlObjectWriterSettings ();
 
-			service_provider = new XamlObjectWriterServiceProvider (this);
+			var p = new PrefixLookup (sctx);
+			service_provider = new ValueSerializerContext (p, sctx);
+			namespaces = p.Namespaces;
 		}
 
 		XamlSchemaContext sctx;
@@ -54,7 +56,7 @@ namespace System.Xaml
 		int line = -1, column = -1;
 		Stack<XamlMember> members = new Stack<XamlMember> ();
 
-		List<NamespaceDeclaration> namespaces = new List<NamespaceDeclaration> ();
+		List<NamespaceDeclaration> namespaces;
 		IServiceProvider service_provider;
 		Stack<ObjectState> object_states = new Stack<ObjectState> ();
 
@@ -358,72 +360,6 @@ namespace System.Xaml
 				state.Contents.Add (GetCorrectlyTypedValue (xm.Type, value));
 			if (wpl != null)
 				wpl.Add (xm);
-		}
-
-		class XamlObjectWriterServiceProvider : IServiceProvider
-		{
-			XamlNameResolver name_resolver = new XamlNameResolver ();
-			XamlTypeResolver type_resolver;
-			NamespaceResolver namespace_resolver;
-
-			public XamlObjectWriterServiceProvider (XamlObjectWriter writer)
-			{
-				namespace_resolver = new NamespaceResolver (writer.namespaces);
-				type_resolver = new XamlTypeResolver (namespace_resolver, writer.SchemaContext);
-			}
-
-			public object GetService (Type serviceType)
-			{
-				if (serviceType == typeof (IXamlNamespaceResolver))
-					return namespace_resolver;
-				if (serviceType == typeof (IXamlNameResolver))
-					return name_resolver;
-				if (serviceType == typeof (IXamlTypeResolver))
-					return type_resolver;
-				return null;
-			}
-		}
-		
-		internal class XamlTypeResolver : IXamlTypeResolver
-		{
-			NamespaceResolver ns_resolver;
-			XamlSchemaContext schema_context;
-
-			public XamlTypeResolver (NamespaceResolver namespaceResolver, XamlSchemaContext schemaContext)
-			{
-				ns_resolver = namespaceResolver;
-				schema_context = schemaContext;
-			}
-
-			public Type Resolve (string typeName)
-			{
-				var tn = XamlTypeName.Parse (typeName, ns_resolver);
-				var xt = schema_context.GetXamlType (tn);
-				return xt != null ? xt.UnderlyingType : null;
-			}
-		}
-
-		internal class NamespaceResolver : IXamlNamespaceResolver
-		{
-			public NamespaceResolver (List<NamespaceDeclaration> source)
-			{
-				this.source = source;
-			}
-			
-			List<NamespaceDeclaration> source;
-			
-			public string GetNamespace (string prefix)
-			{
-				foreach (var nsd in source)
-					if (nsd.Prefix == prefix)
-						return nsd.Namespace;
-				return null;
-			}
-			
-			public IEnumerable<NamespaceDeclaration> GetNamespacePrefixes ()
-			{
-				return source;
-			}
 		}
 	}
 }

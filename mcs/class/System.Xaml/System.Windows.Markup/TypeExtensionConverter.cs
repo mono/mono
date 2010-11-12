@@ -54,12 +54,11 @@ namespace System.Windows.Markup
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			var xt = value as XamlType;
-			if (xt != null) {
-				if (destinationType == typeof (string))
-					return xt.ToString ();
-				throw new NotSupportedException (String.Format ("Conversion to type {0} is not supported", destinationType));
-			}
+			var vctx = (IValueSerializerContext) context;
+			var tx = value as TypeExtension;
+			var lookup = vctx != null ? (INamespacePrefixLookup) vctx.GetService (typeof (INamespacePrefixLookup)) : null;
+			if (tx != null && destinationType == typeof (string))
+				return tx.TypeName ?? new XamlTypeName ((XamlType) tx.ProvideValue (vctx)).ToString (lookup);
 			else
 				return base.ConvertTo (context, culture, value, destinationType); // it seems it still handles not-supported types (such as int).
 		}

@@ -172,17 +172,19 @@ namespace System.Xaml
 		{
 			this.sctx = schemaContext;
 			this.manager = manager;
-			prefix_lookup = new PrefixLookup (sctx) { IsCollectingNamespaces = true }; // it does not raise unknown namespace error.
-			service_provider = new XamlWriterInternalServiceProvider (namespaces, schemaContext);
+			var p = new PrefixLookup (sctx) { IsCollectingNamespaces = true }; // it does not raise unknown namespace error.
+			service_provider = new ValueSerializerContext (p, schemaContext);
 		}
 
 		XamlSchemaContext sctx;
 		XamlWriterStateManager manager;
 
-		IServiceProvider service_provider;
+		IValueSerializerContext service_provider;
 
 		internal Stack<ObjectState> object_states = new Stack<ObjectState> ();
-		internal PrefixLookup prefix_lookup;
+		internal PrefixLookup prefix_lookup {
+			get { return (PrefixLookup) service_provider.GetService (typeof (INamespacePrefixLookup)); }
+		}
 
 		List<NamespaceDeclaration> namespaces {
 			get { return prefix_lookup.Namespaces; }
@@ -438,6 +440,16 @@ namespace System.Xaml
 
 			throw new XamlObjectWriterException (String.Format ("Value '{1}' (of type {2}) is not of or convertible to type {0}", xt, value, value != null ? (object) value.GetType () : "(null)"));
 		}
+		
+		protected string GetValueString (XamlMember xm, object value)
+		{
+			var xt = value == null ? XamlLanguage.Null : sctx.GetXamlType (value.GetType ());
+			var vs = xm.ValueSerializer ?? xt.ValueSerializer;
+			if (vs != null)
+				return vs.ConverterInstance.ConvertToString (value, service_provider);
+			else
+				throw new XamlXmlWriterException (String.Format ("Value type is '{0}' but it must be either string or any type that is convertible to string indicated by TypeConverterAttribute.", value != null ? value.GetType () : null));
+		}
 	}
 	
 	// specific implementation
@@ -633,8 +645,9 @@ namespace System.Xaml
 			return parentMember == XamlLanguage.Items;
 		}
 
-		AllowedMemberLocations IsAttribute (XamlType xt, XamlMember xm)
+		AllowedMemberLocations IsAttribute (XamlType ownerType, XamlMember xm)
 		{
+			var xt = ownerType;
 			var mt = xm.Type;
 			if (xm == XamlLanguage.Key) {
 				var tmp = object_states.Pop ();
@@ -663,8 +676,7 @@ namespace System.Xaml
 			if (xd == null && !xt.GetAllMembers ().Contains (xm))
 				return AllowedMemberLocations.None;
 
-			var vc = mt.TypeConverter ?? (mt.TypeConverter != null ? mt.TypeConverter : null);
-			if (vc != null && vc.ConverterInstance != null && vc.ConverterInstance.CanConvertTo (typeof (string)))
+			if (xm.IsContentValue () || xt.IsContentValue ())
 				return AllowedMemberLocations.Attribute;
 
 			return AllowedMemberLocations.MemberElement;
@@ -695,19 +707,10 @@ namespace System.Xaml
 		{
 			WritePendingStartMember (XamlNodeType.Value);
 
-			var xt = value == null ? XamlLanguage.Null : sctx.GetXamlType (value.GetType ());
-
-			var vc = xm.TypeConverter ?? xt.TypeConverter;
-			var c = vc != null ? vc.ConverterInstance : null;
-
 			if (w.WriteState != WriteState.Attribute)
 				WritePendingNamespaces ();
 
-			string s;
-			if (c != null && c.CanConvertTo (typeof (string)))
-				s = c.ConvertToInvariantString (value);
-			else
-				throw new XamlXmlWriterException (String.Format ("Value type is '{0}' but it must be either string or any type that is convertible to string indicated by TypeConverterAttribute.", value != null ? value.GetType () : null));
+			string s = GetValueString (xm, value);
 
 			var state = object_states.Peek ();
 			switch (state.PositionalParameterIndex) {
@@ -759,74 +762,6 @@ namespace System.Xaml
 			sb.Append ('}');
 
 			return sb.ToString ();
-		}
-	}
-
-	// service provider and resolvers
-	
-	internal class XamlWriterInternalServiceProvider : IServiceProvider
-	{
-		XamlNameResolver name_resolver = new XamlNameResolver ();
-		XamlTypeResolver type_resolver;
-		NamespaceResolver namespace_resolver;
-
-		public XamlWriterInternalServiceProvider (IList<NamespaceDeclaration> namespaces, XamlSchemaContext schemaContext)
-		{
-			namespace_resolver = new NamespaceResolver (namespaces);
-			type_resolver = new XamlTypeResolver (namespace_resolver, schemaContext);
-		}
-
-		public object GetService (Type serviceType)
-		{
-			if (serviceType == typeof (IXamlNamespaceResolver))
-				return namespace_resolver;
-			if (serviceType == typeof (IXamlNameResolver))
-				return name_resolver;
-			if (serviceType == typeof (IXamlTypeResolver))
-				return type_resolver;
-			return null;
-		}
-	}
-
-	internal class XamlTypeResolver : IXamlTypeResolver
-	{
-		NamespaceResolver ns_resolver;
-		XamlSchemaContext schema_context;
-
-		public XamlTypeResolver (NamespaceResolver namespaceResolver, XamlSchemaContext schemaContext)
-		{
-			ns_resolver = namespaceResolver;
-			schema_context = schemaContext;
-		}
-
-		public Type Resolve (string typeName)
-		{
-			var tn = XamlTypeName.Parse (typeName, ns_resolver);
-			var xt = schema_context.GetXamlType (tn);
-			return xt != null ? xt.UnderlyingType : null;
-		}
-	}
-
-	internal class NamespaceResolver : IXamlNamespaceResolver
-	{
-		public NamespaceResolver (IList<NamespaceDeclaration> source)
-		{
-			this.source = source;
-		}
-	
-		IList<NamespaceDeclaration> source;
-	
-		public string GetNamespace (string prefix)
-		{
-			foreach (var nsd in source)
-				if (nsd.Prefix == prefix)
-					return nsd.Namespace;
-			return null;
-		}
-	
-		public IEnumerable<NamespaceDeclaration> GetNamespacePrefixes ()
-		{
-			return source;
 		}
 	}
 

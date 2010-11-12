@@ -24,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Windows.Markup;
+using System.Xaml;
 
 namespace System.Xaml.Schema
 {
@@ -46,11 +48,14 @@ namespace System.Xaml.Schema
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
+			var vctx = (IValueSerializerContext) context;
+			var lookup = vctx != null ? (INamespacePrefixLookup) vctx.GetService (typeof (INamespacePrefixLookup)) : null;
 			var xt = value as XamlType;
-			if (xt != null) {
-				if (destinationType == typeof (string))
+			if (xt != null && destinationType == typeof (string)) {
+				if (lookup != null)
+					return new XamlTypeName (xt).ToString (lookup);
+				else
 					return xt.UnderlyingType != null ? xt.UnderlyingType.ToString () : xt.ToString ();
-				throw new NotSupportedException (String.Format ("Conversion to type {0} is not supported", destinationType));
 			}
 			else
 				return base.ConvertTo (context, culture, value, destinationType); // it seems it still handles not-supported types (such as int).

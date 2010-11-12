@@ -80,24 +80,27 @@ namespace System.Xaml
 		
 		#region type conversion and member value retrieval
 		
-		public static string GetStringValue (XamlType xt, XamlMember xm, object obj, INamespacePrefixLookup prefixLookup)
+		public static string GetStringValue (XamlType xt, XamlMember xm, object obj, IValueSerializerContext vsctx)
 		{
 			if (obj == null)
 				return String.Empty;
 			if (obj is Type)
-				return new XamlTypeName (xt.SchemaContext.GetXamlType ((Type) obj)).ToString (prefixLookup);
+				return new XamlTypeName (xt.SchemaContext.GetXamlType ((Type) obj)).ToString (vsctx != null ? vsctx.GetService (typeof (INamespacePrefixLookup)) as INamespacePrefixLookup : null);
 
-			return (string) ConvertObject (xt, xm, obj, typeof (string));
+			var vs = (xm != null ? xm.ValueSerializer : null) ?? xt.ValueSerializer;
+			if (vs != null)
+				return vs.ConverterInstance.ConvertToString (obj, vsctx);
+			return (string) ConvertObject (xt, xm, obj, typeof (string), vsctx);
 		}
 
-		public static object ConvertObject (XamlType xt, XamlMember xm, object target, Type explicitTargetType)
+		public static object ConvertObject (XamlType xt, XamlMember xm, object target, Type explicitTargetType, IValueSerializerContext vscctx)
 		{
 			// First get member value, then convert it to appropriate target type.
 
 			var vc = (xm != null ? xm.TypeConverter : null) ?? xt.TypeConverter;
 			var tc = vc != null ? vc.ConverterInstance : null;
 			if (tc != null && explicitTargetType != null && tc.CanConvertTo (explicitTargetType))
-				return tc.ConvertTo (null, CultureInfo.InvariantCulture, target, explicitTargetType);
+				return tc.ConvertTo (vscctx, CultureInfo.InvariantCulture, target, explicitTargetType);
 			return target;
 		}
 

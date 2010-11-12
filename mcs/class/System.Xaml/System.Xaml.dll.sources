@@ -78,6 +78,7 @@ System.Xaml/IXamlSchemaContextProvider.cs
 System.Xaml/NamespaceDeclaration.cs
 System.Xaml/PrefixLookup.cs
 System.Xaml/TypeExtensionMethods.cs
+System.Xaml/ValueSerializerContext.cs
 System.Xaml/XamlBackgroundReader.cs
 System.Xaml/XamlDeferringLoader.cs
 System.Xaml/XamlDirective.cs
