@@ -76,6 +76,9 @@ namespace System.Threading.Tasks
 		
 		public void Break ()
 		{
+			if (extInfos.IsStopped)
+				throw new InvalidOperationException ("The Stop method was previously called. Break and Stop may not be used in combination by iterations of the same loop.");
+
 			bool result = extInfos.IsBroken.Exchange (true);
 			if (!result)
 				extInfos.LowestBreakIteration = CurrentIteration;
@@ -83,6 +86,8 @@ namespace System.Threading.Tasks
 		
 		public void Stop ()
 		{
+			if (extInfos.IsBroken.Value)
+				throw new InvalidOperationException ("The Break method was previously called. Break and Stop may not be used in combination by iterations of the same loop.");
 			extInfos.IsStopped = true;
 		}
 	}
