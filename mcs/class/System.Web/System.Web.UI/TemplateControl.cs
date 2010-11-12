@@ -40,6 +40,7 @@ using System.Xml;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace System.Web.UI
 {
@@ -129,8 +130,7 @@ namespace System.Web.UI
 			public bool noParams;
 		}
 
-		static ReaderWriterLockSlim auto_event_lock = new ReaderWriterLockSlim ();
-		static Hashtable auto_event_info = new Hashtable ();
+		static SplitOrderedList<ArrayList> auto_event_info = new SplitOrderedList<ArrayList> ();
 
 		internal void WireupAutomaticEvents ()
 		{
@@ -139,25 +139,7 @@ namespace System.Web.UI
 
 			/* Avoid expensive reflection operations by computing the event info only once */
 			Type type = GetType ();
-			ArrayList events;
-			// If our Hashtable was like MS's (safe for multiple
-			// readers, one writer), we could avoid the ReaderWriterLockSlim
-			try {
-				auto_event_lock.EnterReadLock ();
-				events = (ArrayList) auto_event_info [type];
-			} finally {
-				auto_event_lock.ExitReadLock ();
-			}
-
-			if (events == null) {
-				events = CollectAutomaticEventInfo ();
-				try {
-					auto_event_lock.EnterWriteLock ();
-					auto_event_info [type] = events;
-				} finally {
-					auto_event_lock.ExitWriteLock ();
-				}
-			}
+			ArrayList events = auto_event_info.InsertOrGet ((uint)type.GetHashCode (), null, CollectAutomaticEventInfo);
 
 			for (int i = 0; i < events.Count; ++i) {
 				EvtInfo evinfo = (EvtInfo)events [i];
