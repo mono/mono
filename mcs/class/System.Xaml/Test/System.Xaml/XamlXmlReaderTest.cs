@@ -270,7 +270,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteNullMemberAsObject ()
 		{
 			var r = GetReader ("TestClass4.xml");
@@ -278,7 +277,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void StaticMember ()
 		{
 			var r = GetReader ("TestClass5.xml");
@@ -310,7 +308,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_NonPrimitive ()
 		{
 			var r = GetReader ("NonPrimitive.xml");

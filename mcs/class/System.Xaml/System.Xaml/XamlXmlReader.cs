@@ -512,9 +512,59 @@ namespace System.Xaml
 			}
 			return atts;
 		}
+		
+		IEnumerator<KeyValuePair<XamlMember,object>> markup_extension_attr_members;
+		IEnumerator<string> markup_extension_attr_values;
+
+		bool MoveToNextMarkupExtensionAttributeMember ()
+		{
+			if (markup_extension_attr_members != null) {
+				switch (node_type) {
+				case XamlNodeType.StartObject:
+				case XamlNodeType.EndMember:
+					// -> next member or end object
+					if (!markup_extension_attr_members.MoveNext ()) {
+						node_type = XamlNodeType.EndObject;
+					} else {
+						current = current_member = markup_extension_attr_members.Current.Key;
+						members.Push (current_member);
+						node_type = XamlNodeType.StartMember;
+					}
+					return true;
+				case XamlNodeType.EndObject:
+					types.Pop ();
+					markup_extension_attr_members = null;
+					return false;
+				case XamlNodeType.StartMember:
+					node_type = XamlNodeType.Value;
+					current = markup_extension_attr_members.Current.Value;
+					if (current_member == XamlLanguage.PositionalParameters) {
+						markup_extension_attr_values = ((List<string>) current).GetEnumerator ();
+						goto case XamlNodeType.Value;
+					}
+					return true;
+				case XamlNodeType.Value:
+					if (markup_extension_attr_values != null) {
+						if (markup_extension_attr_values.MoveNext ())
+							current = markup_extension_attr_values.Current;
+						else {
+							node_type = XamlNodeType.EndMember;
+							markup_extension_attr_values = null;
+						}
+					}
+					else
+						node_type = XamlNodeType.EndMember;
+					return true;
+				}
+			}
+			return false;
+		}
 
 		bool MoveToNextStoredMember ()
 		{
+			if (MoveToNextMarkupExtensionAttributeMember ())
+				return true;
+
 			if (stored_member_enumerator != null) {
 				// FIXME: value might have to be deserialized.
 				switch (node_type) {
@@ -528,10 +578,22 @@ namespace System.Xaml
 					}
 					break;
 				case XamlNodeType.StartMember:
-					// -> Value
-					current = stored_member_enumerator.Current.Value;
-					node_type = XamlNodeType.Value;
+					// -> Value or StartObject (of MarkupExtension)
+					var v = stored_member_enumerator.Current.Value;
+					current = v;
+					// Try markup extension
+					// FIXME: is this rule correct?
+					if (!String.IsNullOrEmpty (v) && v [0] == '{') {
+						var pai = ParsedMarkupExtensionInfo.Parse (v, xaml_namespace_resolver, sctx);
+						types.Push (pai.Type);
+						current = pai.Type;
+						node_type = XamlNodeType.StartObject;
+						markup_extension_attr_members = pai.Arguments.GetEnumerator ();
+					}
+					else
+						node_type = XamlNodeType.Value;
 					return true;
+				case XamlNodeType.EndObject: // of MarkupExtension
 				case XamlNodeType.Value:
 					// -> EndMember
 					current = null;
@@ -566,3 +628,4 @@ namespace System.Xaml
 		}
 	}
 }
+
