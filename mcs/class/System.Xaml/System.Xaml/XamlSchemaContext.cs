@@ -203,6 +203,13 @@ namespace System.Xaml
 			ret = run_time_types.FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
 			if (ret == null)
 				ret = GetAllXamlTypes (xamlNamespace).FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
+
+			if (reference_assemblies == null) {
+				var type = ResolveXamlTypeName (xamlNamespace, name, typeArguments);
+				if (type != null)
+					ret = GetXamlType (type);
+			}
+
 			// If the type was not found, it just returns null.
 			return ret;
 		}
@@ -214,7 +221,7 @@ namespace System.Xaml
 
 		protected internal virtual Assembly OnAssemblyResolve (string assemblyName)
 		{
-			return null;
+			return Assembly.LoadWithPartialName (assemblyName);
 		}
 
 		public virtual bool TryGetCompatibleXamlNamespace (string xamlNamespace, out string compatibleNamespace)
@@ -272,6 +279,59 @@ namespace System.Xaml
 					if (t.Namespace == xda.ClrNamespace)
 						l.Add (GetXamlType (t));
 			}
+		}
+
+		// XamlTypeName -> Type resolution
+
+		static readonly int clr_ns_len = "clr-namespace:".Length;
+		static readonly int clr_ass_len = "assembly=".Length;
+
+		Type ResolveXamlTypeName (string xmlNamespace, string xmlLocalName, IList<XamlType> typeArguments)
+		{
+			string ns = xmlNamespace;
+			string name = xmlLocalName;
+
+			if (ns == XamlLanguage.Xaml2006Namespace) {
+				var xt = XamlLanguage.SpecialNames.Find (name, ns);
+				if (xt == null)
+					xt = XamlLanguage.AllTypes.FirstOrDefault (t => t.Name == xmlLocalName);
+				if (xt == null)
+					throw new FormatException (string.Format ("There is no type '{0}' in XAML namespace", name));
+				return xt.UnderlyingType;
+			}
+			else if (!ns.StartsWith ("clr-namespace:", StringComparison.Ordinal))
+				return null;
+
+			Type [] genArgs = null;
+			if (typeArguments != null && typeArguments.Count > 0) {
+				var xtns = typeArguments;
+				genArgs = (from t in typeArguments select t.UnderlyingType).ToArray ();
+				if (genArgs.Any (t => t == null))
+					return null;
+			}
+
+			// convert xml namespace to clr namespace and assembly
+			string [] split = ns.Split (';');
+			if (split.Length != 2 || split [0].Length <= clr_ns_len || split [1].Length <= clr_ass_len)
+				throw new XamlParseException (string.Format ("Cannot resolve runtime namespace from XML namespace '{0}'", ns));
+			string tns = split [0].Substring (clr_ns_len);
+			string aname = split [1].Substring (clr_ass_len);
+
+			string taqn = GetTypeName (tns, name, genArgs);
+			var ass = OnAssemblyResolve (aname);
+			// MarkupExtension type could omit "Extension" part in XML name.
+			Type ret = ass == null ? null : ass.GetType (taqn) ?? ass.GetType (GetTypeName (tns, name + "Extension", genArgs));
+			if (ret == null)
+				throw new XamlParseException (string.Format ("Cannot resolve runtime type from XML namespace '{0}', local name '{1}' with {2} type arguments ({3})", ns, name, typeArguments !=null ? typeArguments.Count : 0, taqn));
+			return genArgs == null ? ret : ret.MakeGenericType (genArgs);
+		}
+		
+		static string GetTypeName (string tns, string name, Type [] genArgs)
+		{
+			string tfn = tns.Length > 0 ? tns + '.' + name : name;
+			if (genArgs != null)
+				tfn += "`" + genArgs.Length;
+			return tfn;
 		}
 	}
 }

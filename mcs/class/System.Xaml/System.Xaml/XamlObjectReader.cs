@@ -40,6 +40,7 @@ using System.Xaml.Schema;
 //		System.Xaml/XamlObjectNodeIterator.cs \
 //		System.Xaml/XamlNode.cs \
 //		System.Xaml/PrefixLookup.cs \
+//		System.Xaml/ValueSerializerContext.cs \
 //		System.Xaml/TypeExtensionMethods.cs
 //
 // (At least it should compile as of the revision that this comment is added.)

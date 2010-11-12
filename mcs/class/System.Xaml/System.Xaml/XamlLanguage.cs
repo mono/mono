@@ -254,58 +254,5 @@ namespace System.Xaml
 				return false;
 			}
 		}
-
-		static readonly int clr_ns_len = "clr-namespace:".Length;
-		static readonly int clr_ass_len = "assembly=".Length;
-
-		internal static Type ResolveXamlTypeName (string xmlNamespace, string xmlLocalName, IList<XamlTypeName> typeArguments, IXamlNamespaceResolver nsResolver)
-		{
-			string ns = xmlNamespace;
-			string name = xmlLocalName;
-
-			if (ns == XamlLanguage.Xaml2006Namespace) {
-				var xt = SpecialNames.Find (name, ns);
-				if (xt == null)
-					xt = AllTypes.FirstOrDefault (t => t.Name == xmlLocalName);
-				if (xt == null)
-					throw new FormatException (string.Format ("There is no type '{0}' in XAML namespace", name));
-				return xt.UnderlyingType;
-			}
-			else if (!ns.StartsWith ("clr-namespace:", StringComparison.Ordinal))
-				return null;
-
-			Type [] genArgs = null;
-			if (typeArguments != null && typeArguments.Count > 0) {
-				var xtns = typeArguments;
-				genArgs = new Type [xtns.Count];
-				for (int i = 0; i < genArgs.Length; i++) {
-					var xtn = xtns [i];
-					genArgs [i] = ResolveXamlTypeName (xtn.Namespace, xtn.Name, xtn.TypeArguments, nsResolver);
-				}
-			}
-
-			// convert xml namespace to clr namespace and assembly
-			string [] split = ns.Split (';');
-			if (split.Length != 2 || split [0].Length <= clr_ns_len || split [1].Length <= clr_ass_len)
-				throw new XamlParseException (string.Format ("Cannot resolve runtime namespace from XML namespace '{0}'", ns));
-			string tns = split [0].Substring (clr_ns_len);
-			string aname = split [1].Substring (clr_ass_len);
-
-			// MarkupExtension type could omit "Extension" part in XML name.
-			string taqn = GetTypeName (tns, name, genArgs, aname);
-			var ret = System.Type.GetType (taqn) ?? System.Type.GetType (GetTypeName (tns, name + "Extension", genArgs, aname));
-
-			if (ret == null)
-				throw new XamlParseException (string.Format ("Cannot resolve runtime type from XML namespace '{0}', local name '{1}' with {2} type arguments ({3})", ns, name, typeArguments !=null ? typeArguments.Count : 0, taqn));
-			return genArgs == null ? ret : ret.MakeGenericType (genArgs);
-		}
-		
-		static string GetTypeName (string tns, string name, Type [] genArgs, string aname)
-		{
-			string tfn = tns.Length > 0 ? tns + '.' + name : name;
-			if (genArgs != null)
-				tfn += "`" + genArgs.Length;
-			return tfn + (aname.Length > 0 ? ", " + aname : string.Empty);
-		}
 	}
 }

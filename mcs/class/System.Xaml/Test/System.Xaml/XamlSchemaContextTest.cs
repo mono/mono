@@ -269,6 +269,10 @@ namespace MonoTests.System.Xaml
 			var ctx = NewStandardContext ();
 			var xt = ctx.GetXamlType (xn);
 			Assert.IsNull (xt, "#1");
+
+			ctx = new XamlSchemaContext ();
+			xt = ctx.GetXamlType (xn);
+			Assert.IsNotNull (xt, "#2");
 		}
 	}
 }
