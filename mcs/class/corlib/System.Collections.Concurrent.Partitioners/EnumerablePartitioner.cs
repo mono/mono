@@ -30,7 +30,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace System.Collections.Concurrent
+namespace System.Collections.Concurrent.Partitioners
 {
 	// Represent a chunk partitioner
 	internal class EnumerablePartitioner<T> : OrderablePartitioner<T>

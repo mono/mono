@@ -31,6 +31,8 @@ using System.Collections.Generic;
 
 namespace System.Collections.Concurrent
 {
+	using Partitioners;
+
 	public static class Partitioner
 	{
 		public static OrderablePartitioner<TSource> Create<TSource> (IEnumerable<TSource> source)

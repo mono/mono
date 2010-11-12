@@ -1542,9 +1542,9 @@ System.Collections.Concurrent/ConcurrentDictionary.cs
 System.Collections.Concurrent/Partitioner.cs
 System.Collections.Concurrent/ConcurrentQueue.cs
 System.Collections.Concurrent/ConcurrentSkipList.cs
-System.Collections.Concurrent/Partitioners/ListPartitioner.cs
-System.Collections.Concurrent/Partitioners/EnumerablePartitioner.cs
-System.Collections.Concurrent/Partitioners/UserRangePartitioner.cs
+System.Collections.Concurrent.Partitioners/ListPartitioner.cs
+System.Collections.Concurrent.Partitioners/EnumerablePartitioner.cs
+System.Collections.Concurrent.Partitioners/UserRangePartitioner.cs
 System.Collections.Concurrent/IProducerConsumerCollection.cs
 System.Collections.Concurrent/ConcurrentStack.cs
 System.Collections.Concurrent/SplitOrderedList.cs

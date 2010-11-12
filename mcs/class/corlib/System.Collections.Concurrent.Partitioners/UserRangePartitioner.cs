@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 
-namespace System.Collections.Concurrent
+namespace System.Collections.Concurrent.Partitioners
 {
 	internal class UserRangePartitioner : OrderablePartitioner<Tuple<int,  int>>
 	{
