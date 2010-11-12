@@ -961,10 +961,10 @@ namespace Mono.CSharp {
 
 					if (member.DeclaringType != inflatedType) {
 						//
-						// Don't inflate non generic interface members
+						// Don't inflate top-level non-generic interface members
 						// merged into generic interface
 						//
-						if (!member.DeclaringType.IsGeneric) {
+						if (!member.DeclaringType.IsGeneric && !member.DeclaringType.IsNested) {
 							inflated_members [i] = member;
 							continue;
 						}
