@@ -62,7 +62,7 @@ namespace System.Xml
 				supports_lookup = false;
 				return String.Empty;
 			} catch (Exception ex) {
-				throw ex;
+				throw;
 			}
 		}
 	
