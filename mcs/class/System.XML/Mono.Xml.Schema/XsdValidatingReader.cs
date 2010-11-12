@@ -1809,14 +1809,14 @@ namespace Mono.Xml.Schema
 					MissingIDReferences.Remove (str);
 				break;
 			case XmlTokenizedType.IDREF:
-				if (!idList.Contains (str))
+				if (!idList.Contains (str) && !MissingIDReferences.Contains (str))
 					MissingIDReferences.Add (str);
 				break;
 			case XmlTokenizedType.IDREFS:
 				string [] idrefs = (string []) parsedValue;
 				for (int i = 0; i < idrefs.Length; i++) {
 					string id = idrefs [i];
-					if (!idList.Contains (id))
+					if (!idList.Contains (id) && !MissingIDReferences.Contains (str))
 						MissingIDReferences.Add (id);
 				}
 				break;
