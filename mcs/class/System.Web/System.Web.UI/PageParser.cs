@@ -404,6 +404,7 @@ namespace System.Web.UI
 			value = GetString (atts, "MasterPageFile", masterPage != null ? masterPage.Value : null);
 			if (!String.IsNullOrEmpty (value)) {
 				if (!BaseParser.IsExpression (value)) {
+					value = System.Web.VirtualPathUtility.Combine(BaseVirtualDir, value);
 					if (!HostingEnvironment.VirtualPathProvider.FileExists (value))
 						ThrowParseFileNotFound (value);
 					AddDependency (value);
