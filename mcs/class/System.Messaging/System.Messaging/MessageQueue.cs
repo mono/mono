@@ -42,7 +42,7 @@ namespace System.Messaging
 {
 	[TypeConverter (typeof(MessageQueueConverter))]
 	[Editor ("System.Messaging.Design.QueuePathEditor", "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	[Designer ("Microsoft.VisualStudio.Install.MessageQueueInstallableComponentDesigner, " + Consts.AssemblyMicrosoft_VisualStudio)]
+//	[Designer ("Microsoft.VisualStudio.Install.MessageQueueInstallableComponentDesigner, " + Consts.AssemblyMicrosoft_VisualStudio)]
 	[InstallerType (typeof(MessageQueueInstaller))]
 	[DefaultEvent ("ReceiveCompleted")]
 	public class MessageQueue : Component, IEnumerable
@@ -293,7 +293,6 @@ namespace System.Messaging
 			}
 		}
 
-		[RecommendedAsConfigurable (true)]
 		[Editor ("System.Messaging.Design.QueuePathEditor", "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[Browsable (false)]
 		[DefaultValue ("")]
@@ -504,6 +503,7 @@ namespace System.Messaging
 			throw new NotImplementedException ();
 		}
 
+		[Obsolete]
 		public IEnumerator GetEnumerator ()
 		{
 			return GetMessageEnumerator ();
@@ -514,15 +514,24 @@ namespace System.Messaging
 			throw new NotImplementedException ();
 		}
 
+		[Obsolete]
 		public MessageEnumerator GetMessageEnumerator ()
 		{
 			return new MessageEnumerator (delegateQueue.GetMessageEnumerator (), Formatter);
 		}
+		
 		[MonoTODO]
 		public static MessageQueueEnumerator GetMessageQueueEnumerator ()
 		{
 			throw new NotImplementedException ();
 		}
+		
+		[MonoTODO]
+		public MessageEnumerator GetMessageEnumerator2 ()
+		{
+			throw new NotImplementedException ();
+		}
+		
 		[MonoTODO]
 		private static ArrayList filteredQueueList (MessageQueueCriteria criteria)
 		{
