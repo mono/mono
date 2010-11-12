@@ -462,7 +462,7 @@ namespace System.Collections.Concurrent
 		}
 	}
 
-#if INSIDE_SYSTEM_WEB
+#if INSIDE_SYSTEM_WEB && !NET_4_0 && !BOOTSTRAP_NET_4_0
 	internal struct SpinWait
 	{
 		public void SpinOnce ()
