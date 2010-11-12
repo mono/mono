@@ -238,8 +238,6 @@ namespace System.Threading {
 
 			RuntimeHelpers.PrepareConstrainedRegions ();
 			try {
-				Interlocked.Increment (ref numWriteWaiters);
-
 				/* If the code goes there that means we had a read lock beforehand
 				 * that need to be suppressed, we also take the opportunity to register
 				 * our interest in the write lock to avoid other write wannabe process
