@@ -268,6 +268,7 @@ namespace System.Xaml
 		
 		public bool Equals (XamlType other)
 		{
+			// It does not compare XamlSchemaContext.
 			return !IsNull (other) &&
 				UnderlyingType == other.UnderlyingType &&
 				Name == other.Name &&

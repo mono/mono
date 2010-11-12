@@ -27,6 +27,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
 using NUnit.Framework;
@@ -399,6 +400,11 @@ namespace MonoTests.System.Xaml
 
 			Assert.AreEqual (xt.GetAllMembers ().FirstOrDefault (mm => mm.Name == "Type"), xt.GetAllMembers ().FirstOrDefault (mm => mm.Name == "Type"), "#5");
 			Assert.AreEqual (xt.GetAllMembers ().FirstOrDefault (mm => mm.Name == "Type"), xt.GetMember ("Type"), "#6");
+
+			// different XamlSchemaContext
+			Assert.AreNotEqual (m, XamlLanguage.Type.GetMember ("Type"), "#7");
+			Assert.AreNotEqual (XamlLanguage.Type.GetMember ("Type"), new XamlSchemaContext ().GetXamlType (typeof (Type)).GetMember ("Type"), "#7");
+			Assert.AreEqual (XamlLanguage.Type.GetMember ("Type"), new XamlSchemaContext ().GetXamlType (typeof (TypeExtension)).GetMember ("Type"), "#8");
 		}
 
 		[Test]

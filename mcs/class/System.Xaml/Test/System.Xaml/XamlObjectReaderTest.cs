@@ -383,7 +383,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.Read (), "#21");
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
 			Assert.IsNotNull (r.Type, "#23");
-			Assert.AreEqual (new XamlType (typeof (TypeExtension), r.SchemaContext), r.Type, "#23-2");
+			Assert.AreEqual (XamlLanguage.Type, r.Type, "#23-2");
 			Assert.IsNull (r.Namespace, "#25");
 			if (validateInstance != null)
 				validateInstance ();
@@ -474,6 +474,11 @@ namespace MonoTests.System.Xaml
 			var xt = new XamlType (typeof (Reference), r.SchemaContext);
 			Assert.AreEqual (xt, r.Type, "#23-2");
 //			Assert.IsTrue (r.Instance is Reference, "#26");
+			Assert.IsNotNull (XamlLanguage.Type.SchemaContext, "#23-3");
+			Assert.IsNotNull (r.SchemaContext, "#23-4");
+			Assert.AreNotEqual (XamlLanguage.Type.SchemaContext, r.SchemaContext, "#23-5");
+			Assert.AreNotEqual (XamlLanguage.Reference.SchemaContext, xt.SchemaContext, "#23-6");
+			Assert.AreEqual (XamlLanguage.Reference, xt, "#23-7");
 
 			if (r is XamlXmlReader)
 				ReadBase (r);

@@ -64,6 +64,12 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void SchemaContext ()
+		{
+			Assert.AreNotEqual (XamlLanguage.Type.SchemaContext, new XamlXmlReader (XmlReader.Create (new StringReader ("<root/>"))).SchemaContext, "#1");
+		}
+
+		[Test]
 		public void Read_Int32 ()
 		{
 			ReadTest ("Int32.xml");
@@ -315,7 +321,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_TypeExtension ()
 		{
 			var r = GetReader ("Type.xml");
@@ -323,7 +328,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Type2 ()
 		{
 			var r = GetReader ("Type2.xml");
@@ -348,7 +352,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_StaticExtension ()
 		{
 			var r = GetReader ("StaticExtension.xml");

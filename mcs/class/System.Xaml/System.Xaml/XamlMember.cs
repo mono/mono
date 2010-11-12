@@ -262,8 +262,8 @@ namespace System.Xaml
 			// this should be in general correct; XamlMembers are almost not comparable.
 			if (Object.ReferenceEquals (this, other))
 				return true;
+			// It does not compare XamlSchemaContext.
 			return !IsNull (other) &&
-				context == other.context &&
 				underlying_member == other.underlying_member &&
 				underlying_getter == other.underlying_getter &&
 				underlying_setter == other.underlying_setter &&

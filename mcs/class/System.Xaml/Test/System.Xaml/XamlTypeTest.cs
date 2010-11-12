@@ -201,6 +201,8 @@ namespace MonoTests.System.Xaml
 			var t2 = new XamlType (t1.PreferredXamlNamespace, t1.Name, null, sctx);
 			// not sure if it always returns false for different .ctor comparisons...
 			Assert.IsFalse (t1 == t2, "#3");
+			
+			Assert.AreNotEqual (XamlLanguage.Type, new XamlSchemaContext ().GetXamlType (typeof (Type)), "#4");
 		}
 
 		[Test]
