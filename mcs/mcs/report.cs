@@ -12,7 +12,6 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace Mono.CSharp {
 
@@ -907,7 +906,7 @@ namespace Mono.CSharp {
 			
 			for (int i = 0; i < t.FrameCount; i++) {
 				StackFrame f = t.GetFrame (i);
-				MethodBase mb = f.GetMethod ();
+				var mb = f.GetMethod ();
 				
 				if (!foundUserCode && mb.ReflectedType == typeof (Report))
 					continue;
@@ -922,7 +921,7 @@ namespace Mono.CSharp {
 				sb.AppendFormat ("{0}.{1} (", mb.ReflectedType.Name, mb.Name);
 				
 				bool first = true;
-				foreach (ParameterInfo pi in mb.GetParameters ()) {
+				foreach (var pi in mb.GetParameters ()) {
 					if (!first)
 						sb.Append (", ");
 					first = false;
