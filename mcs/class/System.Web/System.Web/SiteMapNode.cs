@@ -35,6 +35,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.ComponentModel;
 using System.Resources;
+using System.Security.Principal;
 
 namespace System.Web {
 	public class SiteMapNode : IHierarchyData, INavigateUIData, ICloneable {
@@ -177,12 +178,20 @@ namespace System.Web {
 
 		public virtual SiteMapNodeCollection ChildNodes {
 			get {
-				if (childNodes == null)
+				if (provider.SecurityTrimmingEnabled) {
+					IPrincipal p = HttpContext.Current.User;
+					if ((user == null && user != p) || user != null && user != p) {
+						user = p;
+						childNodes = provider.GetChildNodes (this);
+					}
+				} else if (childNodes == null) {
 					childNodes = provider.GetChildNodes (this);
+				}
 				return childNodes;
 			} 
 			set {
 				CheckWritable ();
+				user = null;
 				childNodes = value;
 			}
 		}
@@ -439,6 +448,7 @@ namespace System.Web {
 		string resourceKey;
 		SiteMapNode parent;
 		SiteMapNodeCollection childNodes;
+		IPrincipal user;
 		#endregion
 		
 	}
