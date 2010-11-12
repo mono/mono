@@ -390,7 +390,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_MyArrayExtension ()
 		{
 			var r = GetReader ("MyArrayExtension.xml");
@@ -405,7 +404,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_CustomMarkupExtension ()
 		{
 			var r = GetReader ("MyExtension.xml");

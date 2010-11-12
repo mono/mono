@@ -291,14 +291,21 @@ namespace System.Xaml
 			string tns = split [0].Substring (clr_ns_len);
 			string aname = split [1].Substring (clr_ass_len);
 
+			// MarkupExtension type could omit "Extension" part in XML name.
+			string taqn = GetTypeName (tns, name, genArgs, aname);
+			var ret = System.Type.GetType (taqn) ?? System.Type.GetType (GetTypeName (tns, name + "Extension", genArgs, aname));
+
+			if (ret == null)
+				throw new XamlParseException (string.Format ("Cannot resolve runtime type from XML namespace '{0}', local name '{1}' with {2} type arguments ({3})", ns, name, typeArguments !=null ? typeArguments.Count : 0, taqn));
+			return genArgs == null ? ret : ret.MakeGenericType (genArgs);
+		}
+		
+		static string GetTypeName (string tns, string name, Type [] genArgs, string aname)
+		{
 			string tfn = tns.Length > 0 ? tns + '.' + name : name;
 			if (genArgs != null)
 				tfn += "`" + genArgs.Length;
-			string taqn = tfn + (aname.Length > 0 ? ", " + aname : string.Empty);
-			var ret = System.Type.GetType (taqn);
-			if (ret == null)
-				throw new XamlParseException (string.Format ("Cannot resolve runtime type from XML namespace '{0}', local name '{1}' with {2} type arguments ({3})", ns, name, typeArguments.Count, taqn));
-			return genArgs == null ? ret : ret.MakeGenericType (genArgs);
+			return tfn + (aname.Length > 0 ? ", " + aname : string.Empty);
 		}
 	}
 }
