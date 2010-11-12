@@ -236,6 +236,17 @@ namespace System.Threading.Tasks
 		                                                    Func<TLocal> init, Func<TSource, ParallelLoopState, TLocal, TLocal> action,
 		                                                    Action<TLocal> destruct)
 		{
+			if (enumerable == null)
+				throw new ArgumentNullException ("source");
+			if (options == null)
+				throw new ArgumentNullException ("options");
+			if (action == null)
+				throw new ArgumentNullException ("action");
+			if (init == null)
+				throw new ArgumentNullException ("init");
+			if (destruct == null)
+				throw new ArgumentNullException ("destruct");
+
 			int num = Math.Min (GetBestWorkerNumber (),
 			                    options != null && options.MaxDegreeOfParallelism != -1 ? options.MaxDegreeOfParallelism : int.MaxValue);
 
@@ -318,95 +329,195 @@ namespace System.Threading.Tasks
 
 		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> enumerable, Action<TSource> action)
 		{
-			return ForEach<TSource, object> (Partitioner.Create (enumerable), ParallelOptions.Default, null,
-			                                 (e, s, l) => { action (e); return null; }, null);
+			if (enumerable == null)
+				throw new ArgumentNullException ("source");
+			if (action == null)
+				throw new ArgumentNullException ("action");
+
+			return ForEach<TSource, object> (Partitioner.Create (enumerable),
+			                                 ParallelOptions.Default,
+			                                 () => null,
+			                                 (e, s, l) => { action (e); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> enumerable, Action<TSource, ParallelLoopState> action)
 		{
-			return ForEach<TSource, object> (Partitioner.Create (enumerable), ParallelOptions.Default, null,
-			                                 (e, s, l) => { action (e, s); return null; }, null);
+			if (enumerable == null)
+				throw new ArgumentNullException ("source");
+			if (action == null)
+				throw new ArgumentNullException ("action");
+
+			return ForEach<TSource, object> (Partitioner.Create (enumerable),
+			                                 ParallelOptions.Default,
+			                                 () => null,
+			                                 (e, s, l) => { action (e, s); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> enumerable,
 		                                                   Action<TSource, ParallelLoopState, long> action)
 		{
-			return ForEach<TSource, object> (Partitioner.Create (enumerable), ParallelOptions.Default, null,
-			                                 (e, s, l) => { action (e, s, -1); return null; }, null);
+			if (enumerable == null)
+				throw new ArgumentNullException ("source");
+			if (action == null)
+				throw new ArgumentNullException ("action");
+
+
+			return ForEach<TSource, object> (Partitioner.Create (enumerable),
+			                                 ParallelOptions.Default,
+			                                 () => null,
+			                                 (e, s, l) => { action (e, s, -1); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (Partitioner<TSource> source,
 		                                                   Action<TSource, ParallelLoopState> body)
 		{
-			return ForEach<TSource, object> (source, ParallelOptions.Default, null, (e, s, l) => { body (e, s); return null; }, null);
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return ForEach<TSource, object> (source,
+			                                 ParallelOptions.Default,
+			                                 () => null,
+			                                 (e, s, l) => { body (e, s); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (OrderablePartitioner<TSource> source,
 		                                                   Action<TSource, ParallelLoopState, long> body)
 
 		{
-			return ForEach<TSource, object> (source, ParallelOptions.Default, null, (e, s, i, l) => { body (e, s, i); return null; }, null);
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return ForEach<TSource, object> (source,
+			                                 ParallelOptions.Default,
+			                                 () => null,
+			                                 (e, s, i, l) => { body (e, s, i); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (Partitioner<TSource> source,
 		                                                   Action<TSource> body)
 
 		{
-			return ForEach<TSource, object> (source, ParallelOptions.Default, null, (e, s, l) => { body (e); return null; }, null);
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return ForEach<TSource, object> (source,
+			                                 ParallelOptions.Default,
+			                                 () => null,
+			                                 (e, s, l) => { body (e); return null; },
+			                                 _ => {});
 		}
 
-		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> source, ParallelOptions parallelOptions,
+		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> source,
+		                                                   ParallelOptions parallelOptions,
 		                                                   Action<TSource> body)
 		{
-			return ForEach<TSource, object> (Partitioner.Create (source), parallelOptions, null,
-			                                 (e, s, l) => { body (e); return null; }, null);
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return ForEach<TSource, object> (Partitioner.Create (source),
+			                                 parallelOptions,
+			                                 () => null,
+			                                 (e, s, l) => { body (e); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> source, ParallelOptions parallelOptions,
 		                                                   Action<TSource, ParallelLoopState> body)
 		{
-			return ForEach<TSource, object> (Partitioner.Create (source), parallelOptions, null,
-			                                 (e, s, l) => { body (e, s); return null; }, null);
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return ForEach<TSource, object> (Partitioner.Create (source),
+			                                 parallelOptions,
+			                                 () => null,
+			                                 (e, s, l) => { body (e, s); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> source, ParallelOptions parallelOptions,
 		                                                   Action<TSource, ParallelLoopState, long> body)
 		{
-			return ForEach<TSource, object> (Partitioner.Create (source), parallelOptions,
-			                                 null, (e, s, i, l) => { body (e, s, i); return null; }, null);
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return ForEach<TSource, object> (Partitioner.Create (source),
+			                                 parallelOptions,
+			                                 () => null,
+			                                 (e, s, i, l) => { body (e, s, i); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (OrderablePartitioner<TSource> source, ParallelOptions parallelOptions,
 		                                                   Action<TSource, ParallelLoopState, long> body)
 
 		{
-			return ForEach<TSource, object> (source, parallelOptions, null, (e, s, i, l) => { body (e, s, i); return null; }, null);
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return ForEach<TSource, object> (source,
+			                                 parallelOptions,
+			                                 () => null,
+			                                 (e, s, i, l) => { body (e, s, i); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (Partitioner<TSource> source, ParallelOptions parallelOptions,
 		                                                   Action<TSource> body)
 		{
-			return ForEach<TSource, object> (source, parallelOptions, null, (e, s, l) => {body (e); return null; }, null);
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return ForEach<TSource, object> (source,
+			                                 parallelOptions,
+			                                 () => null,
+			                                 (e, s, l) => { body (e); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource> (Partitioner<TSource> source, ParallelOptions parallelOptions,
 		                                                   Action<TSource, ParallelLoopState> body)
 		{
-			return ForEach<TSource, object> (source, parallelOptions, null, (e, s, l) => { body (e, s); return null; }, null);
+			return ForEach<TSource, object> (source,
+			                                 parallelOptions,
+			                                 () => null,
+			                                 (e, s, l) => { body (e, s); return null; },
+			                                 _ => {});
 		}
 
 		public static ParallelLoopResult ForEach<TSource, TLocal> (IEnumerable<TSource> source, Func<TLocal> localInit,
 		                                                           Func<TSource, ParallelLoopState, TLocal, TLocal> body,
 		                                                           Action<TLocal> localFinally)
 		{
-			return ForEach<TSource, TLocal> ((Partitioner<TSource>)Partitioner.Create (source), null, localInit, body, localFinally);
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
+			return ForEach<TSource, TLocal> ((Partitioner<TSource>)Partitioner.Create (source),
+			                                 ParallelOptions.Default,
+			                                 localInit,
+			                                 body,
+			                                 localFinally);
 		}
 
 		public static ParallelLoopResult ForEach<TSource, TLocal> (IEnumerable<TSource> source, Func<TLocal> localInit,
 		                                                           Func<TSource, ParallelLoopState, long, TLocal, TLocal> body,
 		                                                           Action<TLocal> localFinally)
 		{
-			return ForEach<TSource, TLocal> (Partitioner.Create (source), null, localInit, body, localFinally);
+			return ForEach<TSource, TLocal> (Partitioner.Create (source),
+			                                 ParallelOptions.Default,
+			                                 localInit,
+			                                 body,
+			                                 localFinally);
 		}
 
 		public static ParallelLoopResult ForEach<TSource, TLocal> (OrderablePartitioner<TSource> source, Func<TLocal> localInit,
@@ -428,6 +539,9 @@ namespace System.Threading.Tasks
 		                                                           Func<TSource, ParallelLoopState, TLocal, TLocal> body,
 		                                                           Action<TLocal> localFinally)
 		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
 			return ForEach<TSource, TLocal> (Partitioner.Create (source), parallelOptions, localInit, body, localFinally);
 		}
 
@@ -436,6 +550,9 @@ namespace System.Threading.Tasks
 		                                                           Func<TSource, ParallelLoopState, long, TLocal, TLocal> body,
 		                                                           Action<TLocal> localFinally)
 		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
 			return ForEach<TSource, TLocal> (Partitioner.Create (source), parallelOptions, localInit, body, localFinally);
 		}
 
@@ -444,6 +561,11 @@ namespace System.Threading.Tasks
 		                                                           Func<TSource, ParallelLoopState, TLocal, TLocal> action,
 		                                                           Action<TLocal> destruct)
 		{
+			if (enumerable == null)
+				throw new ArgumentNullException ("source");
+			if (action == null)
+				throw new ArgumentNullException ("action");
+
 			return ForEach<TSource, TLocal> (enumerable.GetPartitions, options, init, action, destruct);
 		}
 
@@ -452,8 +574,16 @@ namespace System.Threading.Tasks
 		                                                           Func<TSource, ParallelLoopState, long, TLocal, TLocal> action,
 		                                                           Action<TLocal> destruct)
 		{
-			return ForEach<KeyValuePair<long, TSource>, TLocal> (enumerable.GetOrderablePartitions, options,
-			                                                    init, (e, s, l) => action (e.Value, s, e.Key, l), destruct);
+			if (enumerable == null)
+				throw new ArgumentNullException ("source");
+			if (action == null)
+				throw new ArgumentNullException ("action");
+
+			return ForEach<KeyValuePair<long, TSource>, TLocal> (enumerable.GetOrderablePartitions,
+			                                                     options,
+			                                                     init,
+			                                                     (e, s, l) => action (e.Value, s, e.Key, l),
+			                                                     destruct);
 		}
 		#endregion
 
