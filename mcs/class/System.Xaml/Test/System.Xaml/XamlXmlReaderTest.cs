@@ -439,7 +439,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Dictionary ()
 		{
 			var obj = new Dictionary<string,object> ();
@@ -450,7 +449,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Dictionary2 ()
 		{
 			var obj = new Dictionary<string,Type> ();

@@ -279,10 +279,10 @@ namespace System.Xaml
 		// returns an optional member without xml node.
 		XamlMember GetExtraMember (XamlType xt)
 		{
-			if (xt == XamlLanguage.Array)
-				return xt.GetMember ("Items");
-			if (xt.IsCollection)
+			if (xt.IsCollection || xt.IsDictionary)
 				return XamlLanguage.Items;
+			if (xt.ContentProperty != null) // e.g. Array.Items
+				return xt.ContentProperty;
 			return null;
 		}
 
