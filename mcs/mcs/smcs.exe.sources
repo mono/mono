@@ -2,6 +2,7 @@ AssemblyInfo.cs
 anonymous.cs
 argument.cs
 assign.cs
+assembly.cs
 attribute.cs
 driver.cs
 cs-tokenizer.cs
