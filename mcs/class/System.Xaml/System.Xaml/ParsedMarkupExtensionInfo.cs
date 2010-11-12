@@ -61,7 +61,7 @@ namespace System.Xaml
 			if (idx < 0)
 				return ret;
 
-			string [] vpairs = raw.Substring (idx + 1, raw.Length - idx - 2).Split (',');
+			string [] vpairs = raw.Substring (idx + 1, raw.Length - idx - 1).Split (',');
 			List<string> posPrms = null;
 			foreach (string vpair in vpairs) {
 				idx = vpair.IndexOf ('=');

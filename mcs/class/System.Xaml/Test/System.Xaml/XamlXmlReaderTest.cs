@@ -461,7 +461,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void PositionalParameters2 ()
 		{
 			var r = GetReader ("PositionalParametersWrapper.xml");
