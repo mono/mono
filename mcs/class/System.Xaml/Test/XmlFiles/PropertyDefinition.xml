@@ -1,0 +1,1 @@
+<x:Property Modifier="protected" Name="foo" Type="x:String" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" />

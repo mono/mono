@@ -880,6 +880,13 @@ namespace MonoTests.System.Xaml
 			var obj = new MyExtension6 ("foo");
 			Assert.AreEqual (ReadXml ("MyExtension6.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+		
+		[Test]
+		public void Write_PropertyDefinition ()
+		{
+			var obj = new PropertyDefinition () { Modifier = "protected", Name = "foo", Type = XamlLanguage.String };
+			Assert.AreEqual (ReadXml ("PropertyDefinition.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1
