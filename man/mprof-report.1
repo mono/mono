@@ -101,16 +101,16 @@ See the \f[I]maxframes\f[] option to control this behaviour.
 \f[I]calls\f[] enables method enter/leave events if they were
 disabled by another option like \f[I]heapshot\f[].
 .IP \[bu] 2
-\f[I]heapshot\f[]: collect heap shot data at each major collection.
+\f[I]heapshot[=MODE]\f[]: collect heap shot data at each major
+collection.
 The frequency of the heap shots can be changed with the
-\f[I]hsmode\f[] option below.
+\f[I]MODE\f[] parameter.
 When this option is used allocation events and method enter/leave
 events are not recorded by default: if they are needed, they need
 to be enabled explicitly.
-.IP \[bu] 2
-\f[I]hsmode=MODE\f[]: modify the default heap shot frequency
-according to MODE.
-hsmode can be used multiple times with different modes: in that
+The optional parameter \f[I]MODE\f[] can modify the default heap
+shot frequency.
+heapshot can be used multiple times with different modes: in that
 case a heap shot is taken if either of the conditions are met.
 MODE can be one of:
 .RS 2
@@ -140,18 +140,28 @@ call chain depth is bigger than NUM.
 format.
 .IP \[bu] 2
 \f[I]output=OUTSPEC\f[]: instead of writing the profiling data to
-the output.mlpd file, do according to \f[I]OUTSPEC\f[]:
+the output.mlpd file, substitute \f[I]%p\f[] in \f[I]OUTSPEC\f[]
+with the current process id and \f[I]%t\f[] with the current date
+and time, then do according to \f[I]OUTSPEC\f[]:
 .RS 2
 .IP \[bu] 2
 if \f[I]OUTSPEC\f[] begins with a \f[I]|\f[] character, execute the
 rest as a program and feed the data to its standard input
 .IP \[bu] 2
-otherwise write the data the the named file
+if \f[I]OUTSPEC\f[] begins with a \f[I]-\f[] character, use the
+rest of OUTSPEC as the filename, but force overwrite any existing
+file by that name
+.IP \[bu] 2
+otherwise write the data the the named file: note that is a file by
+that name already exists, a warning is issued and profiling is
+disabled.
 .RE
 .IP \[bu] 2
 \f[I]report\f[]: the profiling data is sent to mprof-report, which
 will print a summary report.
 This is equivalent to the option: \f[B]output=mprof-report\ -\f[].
+If the \f[I]output\f[] option is specified as well, the report will
+be written to the output file instead of the console.
 .SS Analyzing the profile data
 .PP
 Currently there is a command line program (\f[I]mprof-report\f[])
@@ -347,8 +357,8 @@ completely, by setting it to 0.
 The other major source of data is the heapshot profiler option:
 especially if the managed heap is big, since every object needs to
 be inspected.
-The \f[I]hsmode\f[] option can be used to reduce the frequency of
-the heap shots.
+The \f[I]MODE\f[] parameter of the \f[I]heapshot\f[] option can be
+used to reduce the frequency of the heap shots.
 .SS Reduce the timestamp overhead
 .PP
 On many operating systems or architectures what actually slows down
@@ -401,15 +411,14 @@ option.
 .PP
 Heap shot data can also be huge: by default it is collected at each
 major collection.
-To reduce the frequency, you can use the \f[I]hsmode\f[] profiler
-option to collect for example every 5 collections (including major
-and minor):
+To reduce the frequency, you can specify a heapshot mode: for
+example to collect every 5 collections (including major and minor):
 .PP
-\f[B]hsmode=5gc\f[]
+\f[B]heapshot=5gc\f[]
 .PP
 or when at least 5 seconds passed since the last heap shot:
 .PP
-\f[B]hsmode=5000ms\f[]
+\f[B]heapshot=5000ms\f[]
 .SS Compressing the data
 .PP
 To reduce the amout of disk space used by the data, the data can be
