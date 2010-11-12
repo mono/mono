@@ -258,33 +258,25 @@ namespace System.Threading.Tasks
 
 			IList<IEnumerator<TSource>> slices = enumerable (num);
 
-			int sliceIndex = 0;
-
-			Func<ParallelLoopState, bool> cancellationTokenTest = (s) => {
-				if (options != null && options.CancellationToken.IsCancellationRequested) {
-					s.Stop ();
-					return true;
-				}
-				return false;
-			};
+			int sliceIndex = -1;
 
 			Action workerMethod = delegate {
-				IEnumerator<TSource> slice = slices[Interlocked.Increment (ref sliceIndex) - 1];
+				IEnumerator<TSource> slice = slices[Interlocked.Increment (ref sliceIndex)];
 
-				TLocal local = (init != null) ? init () : default (TLocal);
+				TLocal local = init ();
 				ParallelLoopState state = new ParallelLoopState (infos);
 				int workIndex = bag.GetNextIndex ();
+				CancellationToken token = options.CancellationToken;
 
 				try {
 					bool cont = true;
 					TSource element;
 
 					while (cont) {
-						if (infos.IsStopped)
+						if (infos.IsStopped || infos.IsBroken.Value)
 							return;
 
-						if (cancellationTokenTest (state))
-							return;
+						token.ThrowIfCancellationRequested ();
 
 						for (int i = 0; i < bagCount && (cont = slice.MoveNext ()); i++) {
 							bag.Add (workIndex, slice.Current);
@@ -294,25 +286,22 @@ namespace System.Threading.Tasks
 							if (infos.IsStopped)
 								return;
 
-							if (cancellationTokenTest (state))
-								return;
+							token.ThrowIfCancellationRequested ();
 
 							local = action (element, state, local);
 						}
 					}
 
 					while (bag.TrySteal (workIndex, out element)) {
-						if (infos.IsStopped)
-							return;
-
-						if (cancellationTokenTest (state))
-							return;
+						token.ThrowIfCancellationRequested ();
 
 						local = action (element, state, local);
+
+						if (infos.IsStopped || infos.IsBroken.Value)
+							return;
 					}
 				} finally {
-					if (destruct != null)
-						destruct (local);
+					destruct (local);
 				}
 			};
 
