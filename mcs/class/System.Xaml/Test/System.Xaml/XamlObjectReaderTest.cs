@@ -1803,7 +1803,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "#89");
 		}
 		
-		protected void ContentIncluded (XamlReader r)
+		protected void Read_ContentIncluded (XamlReader r)
 		{
 			Assert.IsTrue (r.Read (), "ns#1-1");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
@@ -2068,11 +2068,11 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		public void ContentIncluded ()
+		public void Read_ContentIncluded ()
 		{
 			var obj = new ContentIncludedClass () { Content = "foo" };
 			var r = new XamlObjectReader (obj);
-			ContentIncluded (r);
+			Read_ContentIncluded (r);
 		}
 
 		[Test]

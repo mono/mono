@@ -492,11 +492,17 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		public void ContentIncluded ()
+		public void Read_ContentIncluded ()
 		{
-			var obj = new ContentIncludedClass () { Content = "foo" };
 			var r = GetReader ("ContentIncluded.xml");
-			ContentIncluded (r);
+			Read_ContentIncluded (r);
+		}
+
+		[Test]
+		public void Read_PropertyDefinition ()
+		{
+			var r = GetReader ("PropertyDefinition.xml");
+			Read_PropertyDefinition (r);
 		}
 	}
 }
