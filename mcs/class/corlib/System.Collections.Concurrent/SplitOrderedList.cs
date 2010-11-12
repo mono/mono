@@ -461,6 +461,16 @@ namespace System.Collections.Concurrent
 			}
 		}
 	}
+
+#if INSIDE_SYSTEM_WEB
+	internal struct SpinWait
+	{
+		public void SpinOnce ()
+		{
+			Thread.SpinWait (30);
+		}
+	}
+#endif
 }
 
 #endif
