@@ -167,25 +167,27 @@ namespace System.Linq.Parallel
 
 			for (int i = 0; i < tasks.Length; i++) {
 				int index = i;
-				bool firstRun = true;
 
 				tasks[i] = Task.Factory.StartNew (() => {
-					foreach (T item in enumerables[index]) {
-						// This is from specific operators
-						if (options.ImplementerToken.IsCancellationRequested)
-							break;
-						if (options.Token.IsCancellationRequested)
-							throw new OperationCanceledException (options.Token);
+					var enumerator = enumerables[index].GetEnumerator ();
+					var token = options.Token;
+					var implementerToken = options.ImplementerToken;
 
-						if (firstRun && seedFunc == null) {
-							firstRun = false;
-							// HACK: TODO: omgwtfitsuckssomuch
-							locals[index] = (U)(object)item;
-							continue;
+					try {
+						if (seedFunc == null) {
+							if (!enumerator.MoveNext ())
+								return;
+							locals[index] = (U)(object)enumerator.Current;
 						}
 						
-						U acc = locals[index];
-						locals[index] = localCall (acc, item);
+						while (enumerator.MoveNext ()) {
+							if (implementerToken.IsCancellationRequested)
+								break;
+							token.ThrowIfCancellationRequested ();
+							locals[index] = localCall (locals[index], enumerator.Current);
+						}
+					} finally {
+						enumerator.Dispose ();
 					}
 				}, options.Token);
 			}
