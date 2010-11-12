@@ -152,6 +152,7 @@ namespace System.Threading {
 			++numReadWaiters;
 			int val = 0;
 			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
+			bool success = false;
 
 			do {
 				/* Check if a writer is present (RwWrite) or if there is someone waiting to
@@ -179,11 +180,13 @@ namespace System.Threading {
 						ctstate.LockState ^= LockState.Read;
 						++ctstate.ReaderRecursiveCount;
 						--numReadWaiters;
-						return true;
+						success = true;
 					} else {
 						Interlocked.Add (ref rwlock, -RwRead);
 					}
 				}
+				if (success)
+					return true;
 
 				writerDoneEvent.Wait (ComputeTimeout (millisecondsTimeout, start));
 			} while (millisecondsTimeout == -1 || (sw.ElapsedMilliseconds - start) < millisecondsTimeout);
@@ -231,6 +234,7 @@ namespace System.Threading {
 			++numWriteWaiters;
 			bool isUpgradable = ctstate.LockState.Has (LockState.Upgradable);
 			bool registered = false;
+			bool success = false;
 
 			RuntimeHelpers.PrepareConstrainedRegions ();
 			try {
@@ -265,10 +269,11 @@ namespace System.Threading {
 								++ctstate.WriterRecursiveCount;
 								--numWriteWaiters;
 								registered = false;
-
-								return true;
+								success = true;
 							}
 						}
+						if (success)
+							return true;
 					}
 
 					state = rwlock;
