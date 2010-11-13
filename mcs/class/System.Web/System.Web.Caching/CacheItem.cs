@@ -44,8 +44,8 @@ namespace System.Web.Caching
 		public DateTime LastChange;
 		public long ExpiresAt;
 		public bool Disabled;
-		public Timer Timer;
 		public Guid Guid;
+		public bool IsTimedItem;
 		
 		public CacheItem ()
 		{
