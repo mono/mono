@@ -5,6 +5,7 @@
 //	Marek Habersack <grendello@gmail.com>
 //
 // (C) 2006 Marek Habersack
+// (C) 2010 Novell, Inc (http://novell.com/)
 //
 
 //
@@ -46,7 +47,7 @@ namespace System.Web.SessionState
 		public ISessionStateItemCollection items;
 		public DateTime lockedTime;
 		public DateTime expiresAt;
-		public ReaderWriterLock rwlock;
+		public ReaderWriterLockSlim rwlock;
 		public Int32 lockId;
 		public int timeout;
 		public bool resettingTimeout;
@@ -60,10 +61,25 @@ namespace System.Web.SessionState
 			this.staticItems = null;
 			this.lockedTime = DateTime.MinValue;
 			this.expiresAt = DateTime.MinValue;
-			this.rwlock = new ReaderWriterLock ();
+			this.rwlock = new ReaderWriterLockSlim ();
 			this.lockId = Int32.MinValue;
 			this.timeout = 0;
 			this.resettingTimeout = false;
+		}
+
+		public void Dispose ()
+		{
+			if (rwlock != null) {
+				rwlock.Dispose ();
+				rwlock = null;
+			}
+			staticItems = null;
+			items = null;
+		}
+		
+		~InProcSessionItem ()
+		{
+			Dispose ();
 		}
 	}
 	
@@ -114,6 +130,10 @@ namespace System.Web.SessionState
 		
 		public override void EndRequest (HttpContext context)
 		{
+			if (staticObjects != null) {
+				staticObjects.GetObjects ().Clear ();
+				staticObjects = null;
+			}
 		}
 
 		SessionStateStoreData GetItemInternal (HttpContext context,
@@ -138,18 +158,26 @@ namespace System.Web.SessionState
 			
 			if (item == null)
 				return null;
-			
+
+			bool readLocked = false, writeLocked = false;
 			try {
-				item.rwlock.AcquireReaderLock (lockAcquireTimeout);
+				if (item.rwlock.TryEnterUpgradeableReadLock (lockAcquireTimeout))
+					readLocked = true;
+				else
+					throw new ApplicationException ("Failed to acquire lock");
+				
 				if (item.locked) {
 					locked = true;
 					lockAge = DateTime.UtcNow.Subtract (item.lockedTime);
 					lockId = item.lockId;
 					return null;
 				}
-				item.rwlock.ReleaseReaderLock ();
+				
 				if (exclusive) {
-					item.rwlock.AcquireWriterLock (lockAcquireTimeout);
+					if (item.rwlock.TryEnterWriteLock (lockAcquireTimeout))
+						writeLocked = true;
+					else
+						throw new ApplicationException ("Failed to acquire lock");
 					item.locked = true;
 					item.lockedTime = DateTime.UtcNow;
 					item.lockId++;
@@ -169,10 +197,10 @@ namespace System.Web.SessionState
 				// we want such errors to be passed to the application.
 				throw;
 			} finally {
-				if (item.rwlock.IsReaderLockHeld) 
-					item.rwlock.ReleaseReaderLock ();
-				if (item.rwlock.IsWriterLockHeld) 
-					item.rwlock.ReleaseWriterLock ();
+				if (writeLocked)
+					item.rwlock.ExitWriteLock ();
+				if (readLocked)
+					item.rwlock.ExitUpgradeableReadLock ();
 			}
 		}
 		
@@ -223,14 +251,18 @@ namespace System.Web.SessionState
 			if (item == null || lockId == null || lockId.GetType() != typeof(Int32) || item.lockId != (Int32)lockId)
 				return;
 
+			bool locked = false;
 			try {
-				item.rwlock.AcquireWriterLock (lockAcquireTimeout);
+				if (item.rwlock.TryEnterWriteLock (lockAcquireTimeout))
+					locked = true;
+				else
+					throw new ApplicationException ("Failed to acquire lock");
 				item.locked = false;
 			} catch {
 				throw;
 			} finally {
-				if (item.rwlock.IsWriterLockHeld)
-					item.rwlock.ReleaseWriterLock ();
+				if (locked)
+					item.rwlock.ExitWriteLock ();
 			}
 		}
 		
@@ -247,14 +279,18 @@ namespace System.Web.SessionState
 			if (inProcItem == null || lockId == null || lockId.GetType() != typeof(Int32) || inProcItem.lockId != (Int32)lockId)
 				return;
 
+			bool locked = false;
 			try {
-				inProcItem.rwlock.AcquireWriterLock (lockAcquireTimeout);
+				if (inProcItem.rwlock.TryEnterWriteLock (lockAcquireTimeout))
+					locked = true;
+				else
+					throw new ApplicationException ("Failed to acquire lock after");
 				cache.Remove (CacheId);
 			} catch {
 				throw;
 			} finally {
-				if (inProcItem.rwlock.IsWriterLockHeld)
-					inProcItem.rwlock.ReleaseWriterLock ();
+				if (locked)
+					inProcItem.rwlock.ExitWriteLock ();
 			}
 		}
 		
@@ -268,16 +304,20 @@ namespace System.Web.SessionState
 			if (item == null)
 				return;
 
+			bool locked = false;
 			try {
-				item.rwlock.AcquireWriterLock (lockAcquireTimeout);
+				if (item.rwlock.TryEnterWriteLock (lockAcquireTimeout))
+					locked = true;
+				else
+					throw new ApplicationException ("Failed to acquire lock after");
 				item.resettingTimeout = true;
 				cache.Remove (CacheId);
 				InsertSessionItem (item, item.timeout, CacheId);
 			} catch {
 				throw;
 			} finally {
-				if (item.rwlock.IsWriterLockHeld)
-					item.rwlock.ReleaseWriterLock ();
+				if (locked)
+					item.rwlock.ExitWriteLock ();
 			}
 		}
 
@@ -322,9 +362,13 @@ namespace System.Web.SessionState
 				inProcItem.resettingTimeout = true;
 				cache.Remove (CacheId);
 			}
-			
+
+			bool locked = false;
 			try {
-				inProcItem.rwlock.AcquireWriterLock (lockAcquireTimeout);
+				if (inProcItem.rwlock.TryEnterWriteLock (lockAcquireTimeout))
+					locked = true;
+				else
+					throw new ApplicationException ("Failed to acquire lock");
 				inProcItem.locked = false;
 				inProcItem.items = itemItems;
 				inProcItem.staticItems = itemStaticItems;
@@ -332,8 +376,8 @@ namespace System.Web.SessionState
 			} catch {
 				throw;
 			} finally {
-				if (inProcItem.rwlock.IsWriterLockHeld)
-					inProcItem.rwlock.ReleaseWriterLock ();
+				if (locked)
+					inProcItem.rwlock.ExitWriteLock ();
 			}
 		}
 		
@@ -375,9 +419,11 @@ namespace System.Web.SessionState
 								item.items,
 								item.staticItems,
 								item.timeout));
+					item.Dispose ();
 				} else
 					expireCallback (key, null);
-			}
+			} else if (value is InProcSessionItem)
+				((InProcSessionItem)value).Dispose ();
                 }
 	}
 }
