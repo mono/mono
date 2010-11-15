@@ -175,12 +175,7 @@ namespace System.Web.Caching
 				return;
 			
 			ThreadPool.QueueUserWorkItem (delegate {
-				try {
-					DoRemoveOldItemsIfNecessary ();
-				} catch (Exception ex) {
-					Console.Error.WriteLine ("Exception while attempting to purge old cache items:");
-					Console.Error.WriteLine (ex);
-				}
+				DoRemoveOldItemsIfNecessary ();
 			});
 		}
 
