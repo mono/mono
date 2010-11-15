@@ -1063,6 +1063,10 @@ namespace Mono.CSharp {
 				return true;
 
 			var parentType = /* this as TypeSpec ?? */ DeclaringType;
+
+			// It's null for module context
+			if (invocationType == null)
+				invocationType = InternalType.FakeInternalType;
 		
 			//
 			// If only accessible to the current class or children
@@ -1322,43 +1326,6 @@ namespace Mono.CSharp {
 			return MemberName.GetSignatureForError ();
 		}
 		
-		public bool CheckAccessLevel (TypeSpec check_type)
-		{
-// TODO: Use this instead
-//			return PartialContainer.Definition.IsAccessible (check_type);
-
-			TypeSpec tb = PartialContainer.Definition;
-			check_type = check_type.GetDefinition ();
-
-			var check_attr = check_type.Modifiers & Modifiers.AccessibilityMask;
-
-			switch (check_attr){
-			case Modifiers.PUBLIC:
-				return true;
-
-			case Modifiers.INTERNAL:
-				return TypeManager.IsThisOrFriendAssembly (Assembly, check_type.Assembly);
-				
-			case Modifiers.PRIVATE:
-				TypeSpec declaring = check_type.DeclaringType;
-				return tb == declaring.GetDefinition () || TypeManager.IsNestedChildOf (tb, declaring);	
-
-			case Modifiers.PROTECTED:
-				//
-				// Only accessible to methods in current type or any subtypes
-				//
-				return TypeManager.IsNestedFamilyAccessible (tb, check_type.DeclaringType);
-
-			case Modifiers.PROTECTED | Modifiers.INTERNAL:
-				if (TypeManager.IsThisOrFriendAssembly (Assembly, check_type.Assembly))
-					return true;
-
-				goto case Modifiers.PROTECTED;
-			}
-
-			throw new NotImplementedException (check_attr.ToString ());
-		}
-
 		public override Assembly Assembly {
 			get { return Module.Assembly; }
 		}

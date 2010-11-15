@@ -1282,11 +1282,6 @@ namespace Mono.CSharp {
 		{
 			return this;
 		}
-
-		public override bool CheckAccessLevel (IMemberContext ds)
-		{
-			return true;
-		}
 	}
 
 	public class InflatedTypeSpec : TypeSpec
@@ -1820,15 +1815,6 @@ namespace Mono.CSharp {
 				return true;
 
 			return new ConstraintChecker(ec).CheckAll (open_type, args.Arguments, constraints, loc);
-		}
-	
-		public override bool CheckAccessLevel (IMemberContext mc)
-		{
-			DeclSpace c = mc.CurrentMemberDefinition as DeclSpace;
-			if (c == null)
-				c = mc.CurrentMemberDefinition.Parent;
-
-			return c.CheckAccessLevel (open_type);
 		}
 
 		public bool HasDynamicArguments ()

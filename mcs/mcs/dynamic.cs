@@ -50,11 +50,6 @@ namespace Mono.CSharp
 			eclass = ExprClass.Type;
 		}
 
-		public override bool CheckAccessLevel (IMemberContext ds)
-		{
-			return true;
-		}
-
 		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			return this;

@@ -55,8 +55,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public Compiler.MemberCore CurrentMemberDefinition {
 			get {
-				// For operators and methods
-				return new Compiler.ModuleContainer (currentType.Assembly);
+				return null;
 			}
 		}
 

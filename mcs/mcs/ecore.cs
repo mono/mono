@@ -211,7 +211,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!te.CheckAccessLevel (ec)) {
+			if (!te.type.IsAccessible (ec.CurrentType)) {
 				ec.Compiler.Report.SymbolRelatedToPreviousError (te.Type);
 				ErrorIsInaccesible (ec, te.Type.GetSignatureForError (), loc);
 			}
@@ -2496,15 +2496,6 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return ResolveAsTypeTerminal (ec, false);
-		}
-
-		public virtual bool CheckAccessLevel (IMemberContext mc)
-		{
-			DeclSpace c = mc.CurrentMemberDefinition as DeclSpace;
-			if (c == null)
-				c = mc.CurrentMemberDefinition.Parent;
-
-			return c.CheckAccessLevel (Type);
 		}
 
 		protected abstract TypeExpr DoResolveAsTypeStep (IMemberContext ec);

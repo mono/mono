@@ -35,6 +35,8 @@ namespace Mono.CSharp
 		// A member definition of the context. For partial types definition use
 		// CurrentTypeDefinition.PartialContainer otherwise the context is local
 		//
+		// TODO: Obsolete it in this context, dynamic context cannot guarantee sensible value
+		//
 		MemberCore CurrentMemberDefinition { get; }
 
 		bool IsObsolete { get; }
