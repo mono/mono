@@ -344,6 +344,8 @@ AC_SUBST(addlibs)
 AC_SUBST(addtests)
 
 AC_PROG_LIBTOOL
+# Use dolt (http://dolt.freedesktop.org/) instead of libtool for building.
+DOLT
 
 #
 # Check for AViiON Machines running DGUX
