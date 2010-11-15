@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -432,8 +433,8 @@ namespace System.Xaml
 			var vc = xm.TypeConverter ?? xt.TypeConverter;
 			if (vc != null && vc.ConverterInstance != null && value != null) {
 				var tc = vc.ConverterInstance;
-				if (tc != null && tc.CanConvertFrom (value.GetType ()))
-					value = tc.ConvertFrom (value);
+				if (tc != null && tc.CanConvertFrom (service_provider, value.GetType ()) && tc.CanConvertTo (service_provider, typeof (string)))
+					value = tc.ConvertFrom (service_provider, CultureInfo.InvariantCulture, value);
 				if (IsAllowedType (xt, value))
 					return value;
 			}

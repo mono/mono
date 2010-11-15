@@ -90,37 +90,36 @@ namespace System.Xaml
 			var vs = (xm != null ? xm.ValueSerializer : null) ?? xt.ValueSerializer;
 			if (vs != null)
 				return vs.ConverterInstance.ConvertToString (obj, vsctx);
-			return (string) ConvertObject (xt, xm, obj, typeof (string), vsctx);
-		}
 
-		public static object ConvertObject (XamlType xt, XamlMember xm, object target, Type explicitTargetType, IValueSerializerContext vscctx)
-		{
-			// First get member value, then convert it to appropriate target type.
-
+			// FIXME: does this make sense?
 			var vc = (xm != null ? xm.TypeConverter : null) ?? xt.TypeConverter;
 			var tc = vc != null ? vc.ConverterInstance : null;
-			if (tc != null && explicitTargetType != null && tc.CanConvertTo (explicitTargetType))
-				return tc.ConvertTo (vscctx, CultureInfo.InvariantCulture, target, explicitTargetType);
-			return target;
+			if (tc != null && typeof (string) != null && tc.CanConvertTo (vsctx, typeof (string)))
+				return tc.ConvertToInvariantString (vsctx, obj);
+			if (obj is string || obj == null)
+				return (string) obj;
+			throw new InvalidCastException (String.Format ("Cannot cast object '{0}' to string", obj.GetType ()));
 		}
 
 		#endregion
 
+		// FIXME: receive IValueSerializerContext too.
 		public static bool IsContentValue (this XamlMember member)
 		{
 			if (member == XamlLanguage.Initialization)
 				return true;
 			if (member == XamlLanguage.PositionalParameters)
 				return true;
-			if (member.TypeConverter != null && member.TypeConverter.ConverterInstance != null)
+			if (member.TypeConverter != null && member.TypeConverter.ConverterInstance != null && member.TypeConverter.ConverterInstance.CanConvertTo (/*vsctx,*/ typeof (string)))
 				return true;
-			return IsContentValue (member.Type);
+			return IsContentValue (member.Type/*,vsctx*/);
 		}
 
+		// FIXME: receive IValueSerializerContext too.
 		public static bool IsContentValue (this XamlType type)
 		{
 			var t = type.UnderlyingType;
-			if (type.TypeConverter != null && type.TypeConverter.ConverterInstance != null)
+			if (type.TypeConverter != null && type.TypeConverter.ConverterInstance != null && type.TypeConverter.ConverterInstance.CanConvertTo (/*vsctx,*/ typeof (string)))
 				return true;
 			return false;
 		}

@@ -200,6 +200,15 @@ namespace System.Xaml
 
 		object GetCorrectlyTypedValue (XamlType xt, object value)
 		{
+			try {
+				return DoGetCorrectlyTypedValue (xt, value);
+			} catch (Exception ex) {
+				throw new XamlObjectWriterException (String.Format ("Could not convert object '{0}' to MarkupExtension", value), ex);
+			}
+		}
+
+		object DoGetCorrectlyTypedValue (XamlType xt, object value)
+		{
 			// FIXME: this could be generalized by some means, but I cannot find any.
 			if (xt.UnderlyingType == typeof (Type))
 				xt = XamlLanguage.Type;

@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
@@ -56,6 +57,7 @@ namespace MonoTests.System.Xaml
 		public ComplexPositionalParameterClass Param { get; set; }
 	}
 	
+	[TypeConverter (typeof (ComplexPositionalParameterClassConverter))]
 	public class ComplexPositionalParameterClass : MarkupExtension
 	{
 		public ComplexPositionalParameterClass (ComplexPositionalParameterValue value)
@@ -69,6 +71,25 @@ namespace MonoTests.System.Xaml
 		public override object ProvideValue (IServiceProvider sp)
 		{
 			return Value.Foo;
+		}
+	}
+	
+	public class ComplexPositionalParameterClassConverter : TypeConverter
+	{
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+		{
+			return sourceType == typeof (string);
+		}
+
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object valueToConvert)
+		{
+			return new ComplexPositionalParameterClass (new ComplexPositionalParameterValue () {Foo = (string) valueToConvert});
+		}
+
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+		{
+			// conversion to string is not supported.
+			return destinationType == typeof (ComplexPositionalParameterClass);
 		}
 	}
 	
@@ -393,5 +414,25 @@ namespace MonoTests.System.Xaml
 	public class ContentIncludedClass
 	{
 		public string Content { get; set; }
+	}
+
+	public class StaticClass1
+	{
+		static StaticClass1 ()
+		{
+			FooBar = "test";
+		}
+
+		public static string FooBar { get; set; }
+	}
+
+	// FIXME: test it
+	public class StaticExtensionWrapper
+	{
+		public StaticExtensionWrapper ()
+		{
+		}
+		
+		public StaticExtension Param { get; set; }
 	}
 }
