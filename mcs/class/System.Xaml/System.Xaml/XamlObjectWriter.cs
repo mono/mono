@@ -57,7 +57,7 @@ namespace System.Xaml
 		Stack<XamlMember> members = new Stack<XamlMember> ();
 
 		List<NamespaceDeclaration> namespaces;
-		IServiceProvider service_provider;
+		IValueSerializerContext service_provider;
 		Stack<ObjectState> object_states = new Stack<ObjectState> ();
 
 		class ObjectState
@@ -338,7 +338,7 @@ namespace System.Xaml
 			var cstate = new ObjectState () {Type = xamlType, IsInstantiated = false};
 			object_states.Push (cstate);
 
-			if (!xamlType.IsContentValue ()) // FIXME: there could be more conditions e.g. the type requires Arguments.
+			if (!xamlType.IsContentValue (service_provider)) // FIXME: there could be more conditions e.g. the type requires Arguments.
 				InitializeObjectIfRequired (true);
 			
 			if (wpl != null) // note that this adds to the *owner* object's properties.

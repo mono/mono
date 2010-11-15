@@ -102,9 +102,9 @@ namespace System.Xaml
 			return type.SchemaContext.GetXamlType (new InstanceContext (obj).GetWrappedValue ().GetType ());
 		}
 		
-		public IEnumerable<XamlNodeMember> Children ()
+		public IEnumerable<XamlNodeMember> Children (IValueSerializerContext vsctx)
 		{
-			foreach (var xm in type.GetAllObjectReaderMembersByType ())
+			foreach (var xm in type.GetAllObjectReaderMembersByType (vsctx))
 				yield return new XamlNodeMember (this, xm);
 		}
 		
@@ -184,9 +184,9 @@ namespace System.Xaml
 	internal static class TypeExtensionMethods2
 	{
 		// Note that this returns XamlMember which might not actually appear in XamlObjectReader. For example, XamlLanguage.Items won't be returned when there is no item in the collection.
-		public static IEnumerable<XamlMember> GetAllObjectReaderMembersByType (this XamlType type)
+		public static IEnumerable<XamlMember> GetAllObjectReaderMembersByType (this XamlType type, IValueSerializerContext vsctx)
 		{
-			if (type.HasPositionalParameters ()) {
+			if (type.HasPositionalParameters (vsctx)) {
 				yield return XamlLanguage.PositionalParameters;
 				yield break;
 			}
@@ -196,7 +196,7 @@ namespace System.Xaml
 			if (args != null && args.Any ())
 				yield return XamlLanguage.Arguments;
 
-			if (type.IsContentValue ()) {
+			if (type.IsContentValue (vsctx)) {
 				yield return XamlLanguage.Initialization;
 				yield break;
 			}

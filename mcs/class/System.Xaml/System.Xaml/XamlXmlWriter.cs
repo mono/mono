@@ -180,7 +180,7 @@ namespace System.Xaml
 		XamlSchemaContext sctx;
 		XamlWriterStateManager manager;
 
-		IValueSerializerContext service_provider;
+		internal IValueSerializerContext service_provider;
 
 		internal Stack<ObjectState> object_states = new Stack<ObjectState> ();
 		internal PrefixLookup prefix_lookup {
@@ -604,7 +604,7 @@ namespace System.Xaml
 			//   the second constructor argument.
 			// (Here "top-level" means an object that involves
 			//  StartObject i.e. the root or a collection item.)
-			var posprms = member == XamlLanguage.PositionalParameters && IsAtTopLevelObject () && object_states.Peek ().Type.HasPositionalParameters () ? state.Type.GetSortedConstructorArguments ().GetEnumerator () : null;
+			var posprms = member == XamlLanguage.PositionalParameters && IsAtTopLevelObject () && object_states.Peek ().Type.HasPositionalParameters (service_provider) ? state.Type.GetSortedConstructorArguments ().GetEnumerator () : null;
 			if (posprms != null) {
 				posprms.MoveNext ();
 				var arg = posprms.Current;
@@ -658,7 +658,7 @@ namespace System.Xaml
 
 			if (xm == XamlLanguage.Initialization)
 				return AllowedMemberLocations.MemberElement;
-			if (mt.HasPositionalParameters ())
+			if (mt.HasPositionalParameters (service_provider))
 				return AllowedMemberLocations.Attribute;
 			if (w.WriteState == WriteState.Content)
 				return AllowedMemberLocations.MemberElement;
@@ -677,7 +677,7 @@ namespace System.Xaml
 			if (xd == null && !xt.GetAllMembers ().Contains (xm))
 				return AllowedMemberLocations.None;
 
-			if (xm.IsContentValue () || xt.IsContentValue ())
+			if (xm.IsContentValue (service_provider) || xt.IsContentValue (service_provider))
 				return AllowedMemberLocations.Attribute;
 
 			return AllowedMemberLocations.MemberElement;

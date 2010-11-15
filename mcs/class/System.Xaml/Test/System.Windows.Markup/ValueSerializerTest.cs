@@ -77,6 +77,8 @@ namespace MonoTests.System.Windows.Markup
 					Assert.IsNull (v, "NoSerializer_" + t.Name);
 					continue;
 				}
+				else if (v == null)
+					Assert.Fail ("Missing serializer for " + t.Name);
 
 				// String ValueSerializer is the only exceptional one that mostly fails ConvertToString().
 				// For remaining types, ConvertToString() should succeed.

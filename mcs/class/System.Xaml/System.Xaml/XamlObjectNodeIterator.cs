@@ -112,7 +112,7 @@ namespace System.Xaml
 			if (xm != null) {
 				// overrideMemberType is (so far) used for XamlLanguage.Key.
 				var xtt = overrideMemberType ?? xm.Type;
-				if (xtt.IsContentValue () || xm.IsContentValue ()) {
+				if (xtt.IsContentValue (value_serializer_ctx) || xm.IsContentValue (value_serializer_ctx)) {
 					// though null value is special: it is written as a standalone object.
 					var val = xobj.GetRawValue ();
 					if (val == null)
@@ -149,7 +149,7 @@ namespace System.Xaml
 
 		IEnumerable<XamlNodeInfo> GetObjectMemberNodes (XamlObject xobj)
 		{
-			var xce = xobj.Children ().GetEnumerator ();
+			var xce = xobj.Children (value_serializer_ctx).GetEnumerator ();
 			while (xce.MoveNext ()) {
 				// XamlLanguage.Items does not show up if the content is empty.
 				if (xce.Current.Member == XamlLanguage.Items)

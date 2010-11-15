@@ -103,23 +103,21 @@ namespace System.Xaml
 
 		#endregion
 
-		// FIXME: receive IValueSerializerContext too.
-		public static bool IsContentValue (this XamlMember member)
+		public static bool IsContentValue (this XamlMember member, IValueSerializerContext vsctx)
 		{
 			if (member == XamlLanguage.Initialization)
 				return true;
 			if (member == XamlLanguage.PositionalParameters)
 				return true;
-			if (member.TypeConverter != null && member.TypeConverter.ConverterInstance != null && member.TypeConverter.ConverterInstance.CanConvertTo (/*vsctx,*/ typeof (string)))
+			if (member.TypeConverter != null && member.TypeConverter.ConverterInstance != null && member.TypeConverter.ConverterInstance.CanConvertTo (vsctx, typeof (string)))
 				return true;
-			return IsContentValue (member.Type/*,vsctx*/);
+			return IsContentValue (member.Type,vsctx);
 		}
 
-		// FIXME: receive IValueSerializerContext too.
-		public static bool IsContentValue (this XamlType type)
+		public static bool IsContentValue (this XamlType type, IValueSerializerContext vsctx)
 		{
 			var t = type.UnderlyingType;
-			if (type.TypeConverter != null && type.TypeConverter.ConverterInstance != null && type.TypeConverter.ConverterInstance.CanConvertTo (/*vsctx,*/ typeof (string)))
+			if (type.TypeConverter != null && type.TypeConverter.ConverterInstance != null && type.TypeConverter.ConverterInstance.CanConvertTo (vsctx, typeof (string)))
 				return true;
 			return false;
 		}
@@ -138,15 +136,15 @@ namespace System.Xaml
 			return true;
 		}
 
-		public static bool HasPositionalParameters (this XamlType type)
+		public static bool HasPositionalParameters (this XamlType type, IValueSerializerContext vsctx)
 		{
 			// FIXME: find out why only TypeExtension and StaticExtension yield this directive. Seealso XamlObjectReaderTest.Read_CustomMarkupExtension*()
 			return  type == XamlLanguage.Type ||
 				type == XamlLanguage.Static ||
-				ExaminePositionalParametersApplicable (type) && type.ConstructionRequiresArguments;
+				ExaminePositionalParametersApplicable (type, vsctx) && type.ConstructionRequiresArguments;
 		}
 		
-		static bool ExaminePositionalParametersApplicable (this XamlType type)
+		static bool ExaminePositionalParametersApplicable (this XamlType type, IValueSerializerContext vsctx)
 		{
 			if (!type.IsMarkupExtension || type.UnderlyingType == null)
 				return false;
@@ -156,7 +154,7 @@ namespace System.Xaml
 				return false;
 
 			foreach (var arg in args)
-				if (arg.Type != null && !arg.Type.IsContentValue ())
+				if (arg.Type != null && !arg.Type.IsContentValue (vsctx))
 					return false;
 
 			Type [] argTypes = (from arg in args select arg.Type.UnderlyingType).ToArray ();
