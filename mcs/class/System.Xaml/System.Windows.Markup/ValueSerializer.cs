@@ -150,22 +150,22 @@ namespace System.Windows.Markup
 
 		public override bool CanConvertFromString (string value, IValueSerializerContext context)
 		{
-			return c.CanConvertFrom (typeof (string));
+			return c.CanConvertFrom (context, typeof (string));
 		}
 
 		public override bool CanConvertToString (object value, IValueSerializerContext context)
 		{
-			return c.CanConvertTo (typeof (string));
+			return c.CanConvertTo (context, typeof (string));
 		}
 
 		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
-			return c.ConvertFromInvariantString (value);
+			return c.ConvertFromInvariantString (context, value);
 		}
 
 		public override string ConvertToString (object value,     IValueSerializerContext context)
 		{
-			return value == null ? String.Empty : c.ConvertToInvariantString (value);
+			return value == null ? String.Empty : c.ConvertToInvariantString (context, value);
 		}
 
 		public override IEnumerable<Type> TypeReferences (object value, IValueSerializerContext context)
