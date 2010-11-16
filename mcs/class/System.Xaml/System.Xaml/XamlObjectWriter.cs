@@ -356,8 +356,7 @@ namespace System.Xaml
 			if (wpl != null && wpl.Contains (xm))
 				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", xm, state.Type));
 
-			if (xm == XamlLanguage.Initialization ||
-			    xm == state.Type.ContentProperty) {
+			if (xm == XamlLanguage.Initialization) {
 				value = GetCorrectlyTypedValue (state.Type, value);
 				state.Value = value;
 				state.IsInstantiated = true;
