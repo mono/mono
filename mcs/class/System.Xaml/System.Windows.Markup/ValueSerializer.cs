@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Xaml;
 
@@ -47,19 +48,21 @@ namespace System.Windows.Markup
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("IValueSerializerContext parameter is not supported")]
 		public static ValueSerializer GetSerializerFor (Type type, IValueSerializerContext context)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
+			// weird, but .NET also throws NIE(!)
+			if (context != null)
+				throw new NotImplementedException ();
 
-			// FIXME: it is likely a hack.
-			if (Type.GetTypeCode (type) != TypeCode.Object)
+			// MarkupExtension is serialized without ValueSerializer.
+			if (typeof (MarkupExtension).IsAssignableFrom (type))
+				return null;
+
+			var tc = TypeDescriptor.GetConverter (type);
+			if (tc != null && tc.GetType () != typeof (TypeConverter))
 				return new TypeConverterValueSerializer (type);
-			if (type == typeof (TimeSpan))
-				return new TypeConverterValueSerializer (typeof (TimeSpan));
-			if (type == typeof (Uri))
-				return new TypeConverterValueSerializer (typeof (Uri));
 			return null;
 		}
 
