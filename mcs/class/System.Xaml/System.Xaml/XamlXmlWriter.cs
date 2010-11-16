@@ -214,6 +214,7 @@ namespace System.Xaml
 
 			public XamlMember Member;
 			public object Value;
+			public object KeyValue;
 			public AllowedMemberLocations OccuredAs = AllowedMemberLocations.None;
 		}
 
@@ -303,20 +304,7 @@ namespace System.Xaml
 
 			manager.Value ();
 
-			var xm = CurrentMember;
-			var state = object_states.Peek ();
-
-			if (xm == XamlLanguage.Initialization ||
-			    xm == state.Type.ContentProperty) {
-				value = GetCorrectlyTypedValue (xm, state.Type, value);
-				state.Value = value;
-				state.IsInstantiated = true;
-			}
-			else if (xm == XamlLanguage.Items)
-				state.Contents.Add (GetCorrectlyTypedValue (null, xm.Type.ItemType, value));
-			else
-				state.Contents.Add (GetCorrectlyTypedValue (xm, xm.Type, value));
-			OnWriteValue (xm, value);
+			OnWriteValue (value);
 		}
 		
 		public void WriteStartMember (XamlMember property)
@@ -380,7 +368,7 @@ namespace System.Xaml
 
 		protected abstract void OnWriteStartMember (XamlMember xm);
 
-		protected abstract void OnWriteValue (XamlMember xm, object value);
+		protected abstract void OnWriteValue (object value);
 
 		protected abstract void OnWriteNamespace (NamespaceDeclaration nd);
 
@@ -395,32 +383,6 @@ namespace System.Xaml
 				xt.UnderlyingType.IsInstanceOfType (value) ||
 				value == null && xt == XamlLanguage.Null ||
 				xt.IsMarkupExtension && IsAllowedType (xt.MarkupExtensionReturnType, value);
-		}
-
-		object GetCorrectlyTypedValue (XamlMember xm, XamlType xt, object value)
-		{
-			// FIXME: this could be generalized by some means, but I cannot find any.
-			if (xt.UnderlyingType == typeof (Type))
-				xt = XamlLanguage.Type;
-			if (xt == XamlLanguage.Type && value is string)
-				value = new TypeExtension ((string) value);
-			
-			if (value is MarkupExtension)
-				value = ((MarkupExtension) value).ProvideValue (service_provider);
-
-			if (IsAllowedType (xt, value))
-				return value;
-
-			var vc = xm.TypeConverter ?? xt.TypeConverter;
-			if (vc != null && vc.ConverterInstance != null && value != null) {
-				var tc = vc.ConverterInstance;
-				if (tc != null && tc.CanConvertFrom (service_provider, value.GetType ()) && tc.CanConvertTo (service_provider, typeof (string)))
-					value = tc.ConvertFrom (service_provider, CultureInfo.InvariantCulture, value);
-				if (IsAllowedType (xt, value))
-					return value;
-			}
-
-			throw new XamlObjectWriterException (String.Format ("Value '{1}' (of type {2}) is not of or convertible to type {0}", xt, value, value != null ? (object) value.GetType () : "(null)"));
 		}
 		
 		protected string GetValueString (XamlMember xm, object value)
@@ -685,8 +647,9 @@ namespace System.Xaml
 			}
 		}
 
-		protected override void OnWriteValue (XamlMember xm, object value)
+		protected override void OnWriteValue (object value)
 		{
+			XamlMember xm = CurrentMember;
 			WritePendingStartMember (XamlNodeType.Value);
 
 			if (w.WriteState != WriteState.Attribute)
