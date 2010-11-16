@@ -901,7 +901,7 @@ namespace MonoTests.System.Xaml
 		[Category ("NotWorking")]
 		public void Write_ArgumentAttributed ()
 		{
-			var obj = new ArgumentAttributed ("foo", "bar");
+			//var obj = new ArgumentAttributed ("foo", "bar");
 			using (var xr = GetReader ("ArgumentAttributed.xml")) {
 				var des = (ArgumentAttributed) XamlServices.Load (xr);
 				Assert.AreEqual ("foo", des.Arg1, "#1");
@@ -912,7 +912,7 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void Write_ArrayExtension2 ()
 		{
-			var obj = new ArrayExtension (typeof (int));
+			//var obj = new ArrayExtension (typeof (int));
 			using (var xr = GetReader ("ArrayExtension2.xml")) {
 				var des = XamlServices.Load (xr);
 				// The resulting object is not ArrayExtension.
@@ -934,7 +934,7 @@ namespace MonoTests.System.Xaml
 		[Ignore ("Needs to get successfully deserialized. Currently we can't")]
 		public void ComplexPositionalParameterWrapper ()
 		{
-			var obj = new ComplexPositionalParameterWrapper () { Param = new ComplexPositionalParameterClass (new ComplexPositionalParameterValue () { Foo = "foo" })};
+			//var obj = new ComplexPositionalParameterWrapper () { Param = new ComplexPositionalParameterClass (new ComplexPositionalParameterValue () { Foo = "foo" })};
 			using (var xr = GetReader ("ComplexPositionalParameterWrapper.xml")) {
 				var des = (ComplexPositionalParameterWrapper) XamlServices.Load (xr);
 				Assert.IsNotNull (des.Param, "#1");
@@ -969,7 +969,7 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void Write_MyArrayExtension ()
 		{
-			var obj = new MyArrayExtension (new int [] {5, -3, 0});
+			//var obj = new MyArrayExtension (new int [] {5, -3, 0});
 			using (var xr = GetReader ("MyArrayExtension.xml")) {
 				var des = XamlServices.Load (xr);
 				// ProvideValue() returns an array
@@ -980,7 +980,7 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void Write_MyArrayExtensionA ()
 		{
-			var obj = new MyArrayExtensionA (new int [] {5, -3, 0});
+			//var obj = new MyArrayExtensionA (new int [] {5, -3, 0});
 			using (var xr = GetReader ("MyArrayExtensionA.xml")) {
 				var des = XamlServices.Load (xr);
 				// ProvideValue() returns an array
@@ -991,7 +991,7 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void Write_MyExtension ()
 		{
-			var obj = new MyExtension () { Foo = typeof (int), Bar = "v2", Baz = "v7"};
+			//var obj = new MyExtension () { Foo = typeof (int), Bar = "v2", Baz = "v7"};
 			using (var xr = GetReader ("MyExtension.xml")) {
 				var des = XamlServices.Load (xr);
 				// ProvideValue() returns this.
@@ -1004,9 +1004,9 @@ namespace MonoTests.System.Xaml
 		[Category ("NotWorking")]
 		public void Write_MyExtension2 ()
 		{
-			var obj = new MyExtension2 () { Foo = typeof (int), Bar = "v2"};
+			//var obj = new MyExtension2 () { Foo = typeof (int), Bar = "v2"};
 			using (var xr = GetReader ("MyExtension2.xml")) {
-				var des = XamlServices.Load (xr);
+				XamlServices.Load (xr);
 			}
 		}
 
@@ -1014,7 +1014,7 @@ namespace MonoTests.System.Xaml
 		[Category ("NotWorking")]
 		public void Write_MyExtension3 ()
 		{
-			var obj = new MyExtension3 () { Foo = typeof (int), Bar = "v2"};
+			//var obj = new MyExtension3 () { Foo = typeof (int), Bar = "v2"};
 			using (var xr = GetReader ("MyExtension3.xml")) {
 				var des = XamlServices.Load (xr);
 				// StringConverter is used and the resulting value comes from ToString().
@@ -1036,7 +1036,7 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void Write_MyExtension6 ()
 		{
-			var obj = new MyExtension6 ("foo");
+			//var obj = new MyExtension6 ("foo");
 			using (var xr = GetReader ("MyExtension6.xml")) {
 				var des = XamlServices.Load (xr);
 				// ProvideValue() returns this.
@@ -1048,7 +1048,7 @@ namespace MonoTests.System.Xaml
 		[Category ("NotWorking")]
 		public void Write_PropertyDefinition ()
 		{
-			var obj = new PropertyDefinition () { Modifier = "protected", Name = "foo", Type = XamlLanguage.String };
+			//var obj = new PropertyDefinition () { Modifier = "protected", Name = "foo", Type = XamlLanguage.String };
 			using (var xr = GetReader ("PropertyDefinition.xml")) {
 				var des = (PropertyDefinition) XamlServices.Load (xr);
 				Assert.AreEqual ("protected", des.Modifier, "#1");

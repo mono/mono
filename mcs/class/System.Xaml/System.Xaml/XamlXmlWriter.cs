@@ -384,24 +384,6 @@ namespace System.Xaml
 
 		protected abstract void OnWriteNamespace (NamespaceDeclaration nd);
 
-
-		void InitializeObjectIfRequired (bool isStart)
-		{
-			var state = object_states.Peek ();
-			if (state.IsInstantiated)
-				return;
-
-			// FIXME: "The default techniques in absence of a factory method are to attempt to find a default constructor, then attempt to find an identified type converter on type, member, or destination type."
-			// http://msdn.microsoft.com/en-us/library/system.xaml.xamllanguage.factorymethod%28VS.100%29.aspx
-			object obj;
-			if (state.FactoryMethod != null) // FIXME: it must be implemented and verified with tests.
-				throw new NotImplementedException ();
-			else
-				obj = state.Type.Invoker.CreateInstance (null);
-			state.Value = obj;
-			state.IsInstantiated = true;
-		}
-
 		bool IsAllowedType (XamlType xt, object value)
 		{
 			// FIXME: not sure if it is correct
@@ -747,21 +729,6 @@ namespace System.Xaml
 
 			local_nss.AddRange (local_nss2);
 			local_nss2.Clear ();
-		}
-
-		string ToMarkupString (XamlType xt, MarkupExtension m)
-		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ('{');
-			sb.Append (new XamlTypeName (xt).ToString (prefix_lookup));
-			foreach (var xm in xt.GetConstructorArguments ()) {
-				sb.Append (' ').Append (xm.Name).Append ('=');
-				// FIXME: incomplete
-				sb.Append (xm.Invoker.GetValue (m));
-			}
-			sb.Append ('}');
-
-			return sb.ToString ();
 		}
 	}
 
