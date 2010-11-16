@@ -62,7 +62,7 @@ namespace System.Web.Caching
 		// Thread.Abort happened right after that during the stloc instruction to set the
 		// boolean flag. Once CERs are supported we can use the boolean flag reliably.
 		ReaderWriterLockSlim cacheLock;
-		Dictionary <string, CacheItem> cache;		
+		CacheItemLRU cache;
 		CacheItemPriorityQueue timedItems;
 		Timer expirationTimer;
 		long expirationTimerPeriod = 0;
@@ -128,7 +128,7 @@ namespace System.Web.Caching
 		public Cache ()
 		{
 			cacheLock = new ReaderWriterLockSlim ();
-			cache = new Dictionary <string, CacheItem> (StringComparer.Ordinal);
+			cache = new CacheItemLRU (this, HIGH_WATER_MARK, LOW_WATER_MARK);
 		}
 
 		public int Count {
@@ -140,26 +140,13 @@ namespace System.Web.Caching
 			set { Insert (key, value); }
 		}
 
-		CacheItem GetCacheItem (string key)
-		{
-			if (key == null)
-				return null;
-			
-			CacheItem ret;
-			if (cache.TryGetValue (key, out ret))
-				return ret;
-			return null;
-		}
-
-		// Must ALWAYS be called with the cache lock held
+		// Must ALWAYS be called with the cache write lock held
 		CacheItem RemoveCacheItem (string key)
 		{
 			if (key == null)
 				return null;
 
-			CacheItem ret = null;
-			if (!cache.TryGetValue (key, out ret))
-				return null;
+			CacheItem ret = cache [key];
 			if (timedItems != null)
 				timedItems.OnItemDisable (ret);
 			
@@ -167,64 +154,6 @@ namespace System.Web.Caching
 			cache.Remove (key);
 			
 			return ret;
-		}
-
-		void RemoveOldItemsIfNecessary ()
-		{
-			if (cache.Count < HIGH_WATER_MARK)
-				return;
-			
-			ThreadPool.QueueUserWorkItem (delegate {
-				DoRemoveOldItemsIfNecessary ();
-			});
-		}
-
-		void DoRemoveOldItemsIfNecessary ()
-		{
-			ICollection <CacheItem> values = null;
-			try {
-				cacheLock.EnterWriteLock ();
-				int count = cache.Count;
-				values = cache.Values;
-
-				if (RemoveOldItems (values.Where (item => item.Priority == CacheItemPriority.Low).OrderBy (item => item.LastChange).ToArray <CacheItem> (), ref count))
-					return;
-				
-				if (RemoveOldItems (values.Where (item => item.Priority == CacheItemPriority.Normal).OrderBy (item => item.LastChange).ToArray <CacheItem> (), ref count))
-					return;
-				
-				if (RemoveOldItems (values.Where (item => item.Priority == CacheItemPriority.AboveNormal).OrderBy (item => item.LastChange).ToArray <CacheItem> (), ref count))
-					return;
-				
-				if (RemoveOldItems (values.Where (item => item.Priority == CacheItemPriority.High).OrderBy (item => item.LastChange).ToArray <CacheItem> (), ref count))
-					return;
-			} finally {
-				// See comment at the top of the file, above cacheLock declaration
-				cacheLock.ExitWriteLock ();
-				values = null;
-				GC.Collect ();
-			}
-		}
-
-		bool RemoveOldItems (CacheItem[] byPriority, ref int count)
-		{			
-			if (byPriority == null || byPriority.Length == 0)
-				return false;
-
-			foreach (CacheItem item in byPriority) {
-				if (item.Disabled)
-					continue;
-
-				if (count < LOW_WATER_MARK)
-					break;
-
-				Remove (item.Key, CacheItemRemovedReason.Underused, false, true);
-				count--;
-			}
-			Array.Clear (byPriority, 0, byPriority.Length);
-			byPriority = null;			
-
-			return count < LOW_WATER_MARK;
 		}
 		
 		public object Add (string key, object value, CacheDependency dependencies, DateTime absoluteExpiration, TimeSpan slidingExpiration, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback)
@@ -234,7 +163,7 @@ namespace System.Web.Caching
 			
 			try {
 				cacheLock.EnterWriteLock ();
-				CacheItem it = GetCacheItem (key);
+				CacheItem it = cache [key];
 
 				if (it != null)
 					return it.Value;
@@ -251,7 +180,7 @@ namespace System.Web.Caching
 		{
 			try {
 				cacheLock.EnterUpgradeableReadLock ();
-				CacheItem it = GetCacheItem (key);
+				CacheItem it = cache [key];
 				if (it == null)
 					return null;
 				
@@ -362,11 +291,9 @@ namespace System.Web.Caching
 				if (doLock)
 					cacheLock.EnterWriteLock ();
 				
-				ci = GetCacheItem (key);
+				ci = cache [key];
 				if (ci != null)
 					SetItemTimeout (ci, absoluteExpiration, slidingExpiration, ci.OnRemoveCallback, null, key, false);
-				else
-					RemoveOldItemsIfNecessary ();
 			} finally {
 				if (doLock) {
 					// See comment at the top of the file, above cacheLock declaration
@@ -395,8 +322,10 @@ namespace System.Web.Caching
 				if (doLock)
 					cacheLock.EnterWriteLock ();
 
-				if (key != null)
+				if (key != null) {
 					cache [key] = ci;
+					cache.EvictIfNecessary ();
+				}
 				
 				ci.LastChange = DateTime.Now;
 				if (!disableExpiration && ci.AbsoluteExpiration != NoAbsoluteExpiration) {
@@ -409,7 +338,6 @@ namespace System.Web.Caching
 					cacheLock.ExitWriteLock ();
 				}
 			}
-			RemoveOldItemsIfNecessary ();
 		}
 
 		// MUST be called with cache lock held
@@ -443,7 +371,7 @@ namespace System.Web.Caching
 			return Remove (key, CacheItemRemovedReason.Removed, true, true);
 		}
 		
-		object Remove (string key, CacheItemRemovedReason reason, bool doLock, bool invokeCallback)
+		internal object Remove (string key, CacheItemRemovedReason reason, bool doLock, bool invokeCallback)
 		{
 			CacheItem it = null;
 			try {
@@ -481,7 +409,6 @@ namespace System.Web.Caching
 				it = null;
 			}
 
-			RemoveOldItemsIfNecessary ();
 			return ret;
 		}
 
@@ -489,22 +416,9 @@ namespace System.Web.Caching
 		// session_end events are sent for all sessions.
 		internal void InvokePrivateCallbacks ()
 		{
-			CacheItemRemovedReason reason = CacheItemRemovedReason.Removed;
 			try {
 				cacheLock.EnterReadLock ();
-				foreach (string key in cache.Keys) {
-					CacheItem item = GetCacheItem (key);
-					if (item.Disabled)
-						continue;
-					
-					if (item != null && item.OnRemoveCallback != null) {
-						try {
-							item.OnRemoveCallback (key, item.Value, reason);
-						} catch {
-							//TODO: anything to be done here?
-						}
-					}
-				}
+				cache.InvokePrivateCallbacks ();
 			}  finally {
 				// See comment at the top of the file, above cacheLock declaration
 				cacheLock.ExitReadLock ();
@@ -513,11 +427,10 @@ namespace System.Web.Caching
 
 		public IDictionaryEnumerator GetEnumerator ()
 		{
-			ArrayList list = new ArrayList ();
+			List <CacheItem> list = null;
 			try {
 				cacheLock.EnterReadLock ();
-				foreach (CacheItem it in cache.Values)
-					list.Add (it);
+				list = cache.ToList ();
 			} finally {
 				// See comment at the top of the file, above cacheLock declaration
 				cacheLock.ExitReadLock ();
@@ -631,17 +544,20 @@ namespace System.Web.Caching
 		
 		internal void CheckDependencies ()
 		{
-			IList list;
 			try {
 				cacheLock.EnterWriteLock ();
-				list = new List <CacheItem> ();
-				foreach (CacheItem it in cache.Values)
-					list.Add (it);
-			
-				foreach (CacheItem it in list) {
+				List <CacheItem> list = cache.SelectItems (it => {
+					if (it == null)
+						return false;
 					if (it.Dependency != null && it.Dependency.HasChanged && !NeedsUpdate (it, CacheItemUpdateReason.DependencyChanged, false))
-						Remove (it.Key, CacheItemRemovedReason.DependencyChanged, false, true);
-				}
+						return true;
+					return false;
+				});
+				
+				foreach (CacheItem it in list)
+					Remove (it.Key, CacheItemRemovedReason.DependencyChanged, false, true);
+				list.Clear ();
+				list.TrimExcess ();
 			} finally {
 				// See comment at the top of the file, above cacheLock declaration
 				cacheLock.ExitWriteLock ();
@@ -652,7 +568,7 @@ namespace System.Web.Caching
 		{
 			try {
 				cacheLock.EnterReadLock ();
-				CacheItem it = GetCacheItem (key);
+				CacheItem it = cache [key];
 
 				if (it == null)
 					return DateTime.MaxValue;

@@ -4,7 +4,7 @@
 // Author(s):
 //  Lluis Sanchez <lluis@ximian.com>
 //
-// (C) 2005-2009 Novell, Inc (http://novell.com)
+// (C) 2005-2010 Novell, Inc (http://novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -28,15 +28,16 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Web.Caching
 {
 	sealed class CacheItemEnumerator: IDictionaryEnumerator
 	{
-		ArrayList list;
+		List <CacheItem> list;
 		int pos = -1;
 		
-		public CacheItemEnumerator (ArrayList list)
+		public CacheItemEnumerator (List <CacheItem> list)
 		{
 			this.list = list;
 		}
@@ -45,7 +46,7 @@ namespace System.Web.Caching
 			get {
 				if (pos < 0 || pos >= list.Count)
 					throw new InvalidOperationException ();
-				return list [pos] as CacheItem;
+				return list [pos];
 			}
 		}
 		

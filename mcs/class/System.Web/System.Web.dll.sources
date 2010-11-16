@@ -25,6 +25,7 @@ System.Web.Caching/CachedRawResponse.cs
 System.Web.Caching/CachedVaryBy.cs
 System.Web.Caching/DatabaseNotEnabledForNotificationException.cs
 System.Web.Caching/InMemoryOutputCacheProvider.cs
+System.Web.Caching/CacheItemLRU.cs
 System.Web.Caching/OutputCacheModule.cs
 System.Web.Caching/OutputCacheProvider.cs
 System.Web.Caching/SqlCacheDependency.cs
