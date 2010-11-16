@@ -216,7 +216,12 @@ namespace System.Xaml
 
 		bool TypeMatches (XamlType t, string ns, string name, XamlType [] typeArgs)
 		{
-			return t.PreferredXamlNamespace == ns && t.Name == name && t.TypeArguments.ListEquals (typeArgs);
+			if (t.PreferredXamlNamespace == ns && t.Name == name && t.TypeArguments.ListEquals (typeArgs))
+				return true;
+			if (t.IsMarkupExtension)
+				return t.PreferredXamlNamespace == ns && t.Name.Substring (0, t.Name.Length - 9) == name && t.TypeArguments.ListEquals (typeArgs);
+			else
+				return false;
 		}
 
 		protected internal virtual Assembly OnAssemblyResolve (string assemblyName)

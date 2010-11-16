@@ -46,13 +46,8 @@ namespace System.Xaml
 		{
 			internal SpecialTypeNameList ()
 			{
-				// FIXME: Extensions can be removed from this list.
-				Add (new SpecialTypeName ("Array", XamlLanguage.Array));
 				Add (new SpecialTypeName ("Member", XamlLanguage.Member));
-				Add (new SpecialTypeName ("Null", XamlLanguage.Null));
 				Add (new SpecialTypeName ("Property", XamlLanguage.Property));
-				Add (new SpecialTypeName ("Static", XamlLanguage.Static));
-				Add (new SpecialTypeName ("Type", XamlLanguage.Type));
 			}
 
 			public XamlType Find (string name, string ns)

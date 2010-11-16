@@ -118,11 +118,6 @@ namespace System.Xaml
 		bool ns_pushed;
 		bool accept_multiple_values; // It is PositionalParameters-specific state.
 
-		// FIXME: remove this: obsoleted.
-		public bool HasNamespaces {
-			get { return ns_pushed; }
-		}
-		
 		public XamlWriteState State {
 			get { return state; }
 		}

@@ -312,8 +312,7 @@ namespace System.Xaml
 				state.Value = value;
 				state.IsInstantiated = true;
 			}
-//			else if (xm.Type.IsCollection)
-			else if (xm == XamlLanguage.Items) // FIXME: am not sure which is good yet.
+			else if (xm == XamlLanguage.Items)
 				state.Contents.Add (GetCorrectlyTypedValue (null, xm.Type.ItemType, value));
 			else
 				state.Contents.Add (GetCorrectlyTypedValue (xm, xm.Type, value));

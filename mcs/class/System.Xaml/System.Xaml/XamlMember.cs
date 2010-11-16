@@ -166,11 +166,11 @@ namespace System.Xaml
 			get { return directive_ns ?? (DeclaringType == null ? null : DeclaringType.PreferredXamlNamespace); }
 		}
 		
-		[MonoTODO]
 		public DesignerSerializationVisibility SerializationVisibility {
 			get {
-				// FIXME: probably use attribute.
-				return DesignerSerializationVisibility.Visible;
+				var c= GetCustomAttributeProvider ();
+				var a = c == null ? null : c.GetCustomAttribute<DesignerSerializationVisibilityAttribute> (false);
+				return a != null ? a.Visibility : DesignerSerializationVisibility.Visible;
 			}
 		}
 
@@ -310,7 +310,7 @@ namespace System.Xaml
 
 		protected virtual XamlValueConverter<XamlDeferringLoader> LookupDeferringLoader ()
 		{
-			// FIXME: probably fill from attribute.
+			// FIXME: use XamlDeferLoadAttribute.
 			return null;
 		}
 
