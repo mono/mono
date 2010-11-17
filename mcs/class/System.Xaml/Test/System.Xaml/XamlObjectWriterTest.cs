@@ -693,7 +693,35 @@ namespace MonoTests.System.Xaml
 			xw.WriteEndObject ();
 		}
 
-		// use case based tests.
+		// extra use case based tests.
+
+		[Test]
+		public void WriteEx_Type_WriteString ()
+		{
+			var ow = new XamlObjectWriter (sctx);
+			ow.WriteNamespace (new NamespaceDeclaration (XamlLanguage.Xaml2006Namespace, "x"
+			));
+			ow.WriteStartObject (XamlLanguage.Type);
+			ow.WriteStartMember (XamlLanguage.PositionalParameters);
+			ow.WriteValue ("x:Int32");
+			ow.Close ();
+			Assert.AreEqual (typeof (int), ow.Result, "#1");
+		}
+
+		[Test]
+		public void WriteEx_Type_WriteType ()
+		{
+			var ow = new XamlObjectWriter (sctx);
+			ow.WriteNamespace (new NamespaceDeclaration (XamlLanguage.Xaml2006Namespace, "x"
+			));
+			ow.WriteStartObject (XamlLanguage.Type);
+			ow.WriteStartMember (XamlLanguage.PositionalParameters);
+			ow.WriteValue (typeof (int));
+			ow.Close ();
+			Assert.AreEqual (typeof (int), ow.Result, "#1");
+		}
+		
+		// common use case based tests (to other readers/writers).
 
 		XamlReader GetReader (string filename)
 		{
