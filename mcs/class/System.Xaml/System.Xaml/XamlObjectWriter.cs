@@ -164,9 +164,13 @@ namespace System.Xaml
 			if (xm == XamlLanguage.PositionalParameters) {
 				manager.AcceptMultipleValues = false;
 				//state.PositionalParameterIndex = -1;
-			}
-
-			if (xm == XamlLanguage.FactoryMethod) {
+				var args = state.Type.GetSortedConstructorArguments ();
+				var argt = args != null ? (IList<XamlType>) (from arg in args select arg.Type).ToArray () : state.Type.GetPositionalParameters (state.Contents.Count);
+				var argv = new object [argt.Count];
+				for (int i = 0; i < argv.Length; i++)
+					argv [i] = GetCorrectlyTypedValue (argt [i], state.Contents [i]);
+				state.Value = state.Type.Invoker.CreateInstance (argv);
+			} else if (xm == XamlLanguage.FactoryMethod) {
 				if (contents.Count != 1 || !(contents [0] is string))
 					throw new XamlObjectWriterException (String.Format ("FactoryMethod must be non-empty string name. {0} value exists.", contents.Count > 0 ? contents [0] : "0"));
 				state.FactoryMethod = (string) contents [0];
@@ -209,12 +213,20 @@ namespace System.Xaml
 			try {
 				return DoGetCorrectlyTypedValue (xt, value);
 			} catch (Exception ex) {
-				throw new XamlObjectWriterException (String.Format ("Could not convert object '{0}' to MarkupExtension", value), ex);
+				// For + ex.Message, the runtime should print InnerException message like .NET does.
+				throw new XamlObjectWriterException (String.Format ("Could not convert object \'{0}' (of type {1}) to {2}: ", value, value != null ? (object) value.GetType () : "(null)", xt)  + ex.Message, ex);
 			}
 		}
 
+		// It expects that it is not invoked when there is no value to 
+		// assign.
+		// When it is passed null, then it returns a default instance.
+		// For example, passing null as Int32 results in 0.
 		object DoGetCorrectlyTypedValue (XamlType xt, object value)
 		{
+			if (value == null)
+				return xt.Invoker.CreateInstance (new object [0]);
+
 			// FIXME: this could be generalized by some means, but I cannot find any.
 			if (xt.UnderlyingType == typeof (Type))
 				xt = XamlLanguage.Type;
@@ -300,6 +312,9 @@ namespace System.Xaml
 			if (property == XamlLanguage.PositionalParameters)
 				manager.AcceptMultipleValues = true;
 
+			if (property != XamlLanguage.Arguments && property != XamlLanguage.PositionalParameters && property != XamlLanguage.Initialization)
+				InitializeObjectIfRequired (false);
+
 			//var wpl = object_states.Peek ().WrittenProperties;
 			// FIXME: enable this. Duplicate property check should
 			// be differentiate from duplicate contents (both result
@@ -313,10 +328,15 @@ namespace System.Xaml
 			members.Push (property);
 		}
 
-		void InitializeObjectIfRequired (bool isStart)
+		void InitializeObjectIfRequired (bool waitForParameters)
 		{
 			var state = object_states.Peek ();
 			if (state.IsInstantiated)
+				return;
+
+			if (state.Type.IsContentValue (service_provider))
+				return;
+			if (waitForParameters && (state.Type.ConstructionRequiresArguments || state.Type.HasPositionalParameters (service_provider)))
 				return;
 
 			// FIXME: "The default techniques in absence of a factory method are to attempt to find a default constructor, then attempt to find an identified type converter on type, member, or destination type."
@@ -346,8 +366,7 @@ namespace System.Xaml
 			var cstate = new ObjectState () {Type = xamlType, IsInstantiated = false};
 			object_states.Push (cstate);
 
-			if (!xamlType.IsContentValue (service_provider)) // FIXME: there could be more conditions e.g. the type requires Arguments.
-				InitializeObjectIfRequired (true);
+			InitializeObjectIfRequired (true);
 			
 			if (wpl != null) // note that this adds to the *owner* object's properties.
 				wpl.Add (xm);
