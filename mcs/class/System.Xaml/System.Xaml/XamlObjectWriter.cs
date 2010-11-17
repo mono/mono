@@ -233,6 +233,12 @@ namespace System.Xaml
 				xt = XamlLanguage.Type;
 			if (xt == XamlLanguage.Type && value is string)
 				value = new TypeExtension ((string) value);
+
+			// FIXME: this could be generalized by some means, but I cannot find any.
+			if (xt.UnderlyingType == typeof (XamlType) && value is string) {
+				var nsr = (IXamlNamespaceResolver) service_provider.GetService (typeof (IXamlNamespaceResolver));
+				value = sctx.GetXamlType (XamlTypeName.Parse ((string) value, nsr));
+			}
 			
 			if (value is MarkupExtension)
 				value = ((MarkupExtension) value).ProvideValue (service_provider);
