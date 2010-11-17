@@ -60,7 +60,7 @@ namespace System.Collections.Concurrent.Partitioners
 					enumerators[i] = GetEnumeratorForRange (i * step, enumerators.Length, source.Count, step);
 					continue;
 				}
-				
+
 				if (i != enumerators.Length - 1)
 					enumerators[i] = GetEnumeratorForRange (i * count, i * count + count);
 				else
@@ -97,7 +97,7 @@ namespace System.Collections.Concurrent.Partitioners
 				yield return new KeyValuePair<long, T> (i, source[i]);
 			}
 		}
-		
+
 		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int stride, int count, int step)
 		{
 			for (int i = startIndex; i < count; i += stride * step) {
