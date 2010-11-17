@@ -69,9 +69,13 @@ namespace System.Web.UI
 			string ctrlUniqueID = ctrl != null ? ctrl.UniqueID : null;
 			if (ctrlUniqueID == null)
 				return false;
-			
-			if (String.Compare (Owner.ScriptManager.AsyncPostBackSourceElementID, ctrlUniqueID, StringComparison.Ordinal) == 0)
+
+			string asyncPostBackElementID = Owner.ScriptManager.AsyncPostBackSourceElementID;
+			if (String.Compare (asyncPostBackElementID, ctrlUniqueID, StringComparison.Ordinal) == 0)
 				return true;
+			else if (asyncPostBackElementID.StartsWith (ctrlUniqueID + "$", StringComparison.Ordinal))
+				return true;
+			
 			return false;
 		}
 
@@ -109,7 +113,7 @@ namespace System.Web.UI
 		}
 
 		public override string ToString () {
-			return String.Format ("AsyncPostBack: {0}.{1}", ControlID, EventName);
+			return String.Format ("AsyncPostBackTrigger: {0}.{1}", ControlID, EventName);
 		}
 	}
 }
