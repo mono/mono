@@ -33,8 +33,8 @@ namespace System.Threading
 	
 	public sealed class CancellationTokenSource : IDisposable
 	{
-		volatile bool canceled;
-		volatile bool processed;
+		bool canceled;
+		bool processed;
 		
 		int currId = int.MinValue;
 		
@@ -76,6 +76,7 @@ namespace System.Threading
 				}
 			}
 			
+			Thread.MemoryBarrier ();
 			processed = true;
 			
 			if (exceptions != null && exceptions.Count > 0)
@@ -155,13 +156,7 @@ namespace System.Threading
 				sw.SpinOnce ();
 			
 		}
-		
-		internal void ThrowIfCancellationRequested ()
-		{
-			if (canceled)
-				throw new OperationCanceledException (CreateToken ());
-		}
-		
+
 		CancellationTokenRegistration GetTokenReg ()
 		{
 			CancellationTokenRegistration registration
