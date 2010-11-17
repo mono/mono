@@ -30,23 +30,23 @@ namespace System.Threading.Tasks
 {
 	internal class Scheduler: TaskScheduler, IScheduler
 	{
-		IProducerConsumerCollection<Task> workQueue;
-		ThreadWorker[]        workers;
-		EventWaitHandle       pulseHandle = new AutoResetEvent (false);
+		readonly IProducerConsumerCollection<Task> workQueue;
+		readonly ThreadWorker[]        workers;
+		readonly EventWaitHandle       pulseHandle = new AutoResetEvent (false);
 
 		public Scheduler ()
-			: this (Environment.ProcessorCount, 0, ThreadPriority.Normal)
+			: this (Environment.ProcessorCount, ThreadPriority.AboveNormal)
 		{
 			
 		}
 		
-		public Scheduler (int maxWorker, int maxStackSize, ThreadPriority priority)
+		public Scheduler (int maxWorker, ThreadPriority priority)
 		{
 			workQueue = new ConcurrentQueue<Task> ();
 			workers = new ThreadWorker [maxWorker];
 			
 			for (int i = 0; i < maxWorker; i++) {
-				workers [i] = new ThreadWorker (this, workers, workQueue, maxStackSize, priority, pulseHandle);
+				workers [i] = new ThreadWorker (this, workers, i, workQueue, priority, pulseHandle);
 				workers [i].Pulse ();
 			}
 		}
@@ -64,9 +64,7 @@ namespace System.Threading.Tasks
 			if (AreTasksFinished (task))
 				return;
 			
-			ParticipateUntil (delegate {
-				return AreTasksFinished (task);
-			});
+			ParticipateUntil (() => AreTasksFinished (task));
 		}
 		
 		public bool ParticipateUntil (Task task, Func<bool> predicate)
@@ -101,9 +99,8 @@ namespace System.Threading.Tasks
 		
 		public void Dispose ()
 		{
-			foreach (ThreadWorker w in workers) {
+			foreach (ThreadWorker w in workers)
 				w.Dispose ();
-			}
 		}
 		
 		bool AreTasksFinished (Task parent)
