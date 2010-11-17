@@ -112,7 +112,7 @@ namespace System.Web.UI {
 			
 			saveEverything = indices == null;
 			if (saveEverything) {
-				items.Clear ();
+				Clear ();
 
 				for (int i = 0; i < states.Count; i++) {
 					t = types [i];
