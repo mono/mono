@@ -164,13 +164,7 @@ namespace System.Xaml
 			if (xm == XamlLanguage.PositionalParameters) {
 				manager.AcceptMultipleValues = false;
 				//state.PositionalParameterIndex = -1;
-				var args = state.Type.GetSortedConstructorArguments ();
-				var argt = args != null ? (IList<XamlType>) (from arg in args select arg.Type).ToArray () : state.Type.GetPositionalParameters (state.Contents.Count);
-				var argv = new object [argt.Count];
-				for (int i = 0; i < argv.Length; i++)
-					argv [i] = GetCorrectlyTypedValue (argt [i], state.Contents [i]);
-				state.Value = state.Type.Invoker.CreateInstance (argv);
-				state.IsInstantiated = true;
+				FillConstructedObject (true);
 			} else if (xm == XamlLanguage.FactoryMethod) {
 				if (contents.Count != 1 || !(contents [0] is string))
 					throw new XamlObjectWriterException (String.Format ("FactoryMethod must be non-empty string name. {0} value exists.", contents.Count > 0 ? contents [0] : "0"));
@@ -183,7 +177,7 @@ namespace System.Xaml
 					state.Value = mi.Invoke (null, contents.ToArray ());
 				}
 				else
-					throw new NotImplementedException ();
+					FillConstructedObject (false);
 			} else if (xm == XamlLanguage.Initialization) {
 				// ... and no need to do anything. The object value to pop *is* the return value.
 			} else if (xm == XamlLanguage.Items) {
@@ -207,6 +201,20 @@ namespace System.Xaml
 			if (object_states.Count > 0)
 				object_states.Peek ().WrittenProperties.Add (xm);
 			//written_properties_stack.Peek ().Add (xm);
+		}
+
+		void FillConstructedObject (bool considerPositionalParameters)
+		{
+			var state = object_states.Peek ();
+
+			var args = state.Type.GetSortedConstructorArguments ();
+			var argt = args != null ? (IList<XamlType>) (from arg in args select arg.Type).ToArray () : considerPositionalParameters ? state.Type.GetPositionalParameters (state.Contents.Count) : null;
+
+			var argv = new object [argt.Count];
+			for (int i = 0; i < argv.Length; i++)
+				argv [i] = GetCorrectlyTypedValue (argt [i], state.Contents [i]);
+			state.Value = state.Type.Invoker.CreateInstance (argv);
+			state.IsInstantiated = true;
 		}
 
 		object GetCorrectlyTypedValue (XamlType xt, object value)
@@ -364,7 +372,7 @@ namespace System.Xaml
 
 			var xm = members.Count > 0 ? members.Peek () : null;
 			var pstate = xm != null ? object_states.Peek () : null;
-			var wpl = xm != null && xm != XamlLanguage.Items ? pstate.WrittenProperties : null;
+			var wpl = xm == null || xm.Type.IsCollection || xm.Type.IsDictionary ? null : pstate.WrittenProperties;
 			if (wpl != null && wpl.Contains (xm))
 				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", xm, pstate.Type));
 

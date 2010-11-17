@@ -931,7 +931,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_ArgumentAttributed ()
 		{
 			//var obj = new ArgumentAttributed ("foo", "bar");
