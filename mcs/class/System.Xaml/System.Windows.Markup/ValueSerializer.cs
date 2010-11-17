@@ -24,9 +24,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Xaml;
+using System.Xaml.Schema;
 
 namespace System.Windows.Markup
 {
@@ -85,7 +87,7 @@ namespace System.Windows.Markup
 			// Undocumented, but System.Type seems also special. While other MarkupExtension returned types are not handled specially, this method returns a valid instance for System.Type. Note that it doesn't for TypeExtension.
 			if (type == typeof (Type))
 				// Since System.Type does not have a valid TypeConverter, I use TypeExtensionConverter (may sound funny considering the above notes!) for this serializer.
-				return new TypeConverterValueSerializer (new TypeExtensionConverter ());
+				return new TypeValueSerializer ();
 
 			// Undocumented, but several primitive types get a valid serializer while it does not have TypeConverter.
 			switch (Type.GetTypeCode (type)) {
@@ -141,6 +143,8 @@ namespace System.Windows.Markup
 		}
 	}
 
+	#region Internal implementations.
+
 	internal class StringValueSerializer : ValueSerializer
 	{
 		public override bool CanConvertFromString (string value, IValueSerializerContext context)
@@ -155,7 +159,7 @@ namespace System.Windows.Markup
 
 		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			return value;
 		}
 
 		public override string ConvertToString (object value,     IValueSerializerContext context)
@@ -169,7 +173,37 @@ namespace System.Windows.Markup
 		}
 	}
 
-	#region Internal implementations.
+	internal class TypeValueSerializer : ValueSerializer
+	{
+		TypeExtensionConverter txc = new TypeExtensionConverter ();
+
+		public override bool CanConvertFromString (string value, IValueSerializerContext context)
+		{
+			return true;
+		}
+
+		public override bool CanConvertToString (object value, IValueSerializerContext context)
+		{
+			return true;
+		}
+
+		public override object ConvertFromString (string value, IValueSerializerContext context)
+		{
+			var nsr = (IXamlNamespaceResolver) context.GetService (typeof (IXamlNamespaceResolver));
+			var scp = (IXamlSchemaContextProvider) context.GetService (typeof (IXamlSchemaContextProvider));
+			return scp.SchemaContext.GetXamlType (XamlTypeName.Parse (value, nsr)).UnderlyingType;
+		}
+
+		public override string ConvertToString (object value,     IValueSerializerContext context)
+		{
+			return (string) txc.ConvertTo (context, CultureInfo.InvariantCulture, value, typeof (string));
+		}
+
+		public override IEnumerable<Type> TypeReferences (object value, IValueSerializerContext context)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 
 	internal class TypeConverterValueSerializer : ValueSerializer
 	{

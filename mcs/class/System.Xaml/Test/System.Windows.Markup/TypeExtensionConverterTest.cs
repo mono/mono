@@ -30,6 +30,7 @@ using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
 using NUnit.Framework;
+using MonoTests.System.Xaml;
 
 using Category = NUnit.Framework.CategoryAttribute;
 
@@ -122,7 +123,15 @@ namespace MonoTests.System.Windows.Markup
 		public void ConvertToFail2 ()
 		{
 			var tc = XamlLanguage.Type.TypeConverter.ConverterInstance;
-			tc.ConvertTo (null, null, "x:Int32", typeof (TypeExtension));
+			tc.ConvertTo (new DummyValueSerializerContext (), null, "x:Int32", typeof (TypeExtension));
+		}
+		
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertToFail3 ()
+		{
+			var tc = XamlLanguage.Type.TypeConverter.ConverterInstance;
+			tc.ConvertTo (new DummyValueSerializerContext (), null, "x:Int32", typeof (TypeExtension));
 		}
 	}
 }

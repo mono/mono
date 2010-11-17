@@ -121,6 +121,7 @@ namespace MonoTests.System.Windows.Markup
 			Assert.IsNull (ValueSerializer.GetSerializerFor (typeof (DateTimeOffset)), "#12"); // has no TypeConverter (undocumented behavior), TypeCode.Object -> expected
 			Assert.IsNull (ValueSerializer.GetSerializerFor (typeof (MyExtension)), "#13");
 			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (MyExtension4)), "#14"); // has TypeConverter.
+			Assert.IsNull (ValueSerializer.GetSerializerFor (typeof (XamlType)), "#15"); // While there is XamlTypeTypeConverter, it is not used on XamlType.
 		}
 
 		[Test]
