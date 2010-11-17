@@ -64,6 +64,7 @@ namespace System.Xaml
 		{
 			public XamlType Type;
 			public object Value;
+			public object KeyValue;
 			public List<object> Contents = new List<object> ();
 			public List<XamlMember> WrittenProperties = new List<XamlMember> ();
 			public bool IsInstantiated;
@@ -100,9 +101,9 @@ namespace System.Xaml
 				return;
 
 			while (object_states.Count > 0) {
-				WriteEndObject ();
-				if (object_states.Count > 0)
+				if (object_states.Count == members.Count)
 					WriteEndMember ();
+				WriteEndObject ();
 			}
 		}
 
@@ -159,6 +160,11 @@ namespace System.Xaml
 			var xm = members.Pop ();
 			var state = object_states.Peek ();
 			var contents = state.Contents;
+
+			if (xm == XamlLanguage.PositionalParameters) {
+				manager.AcceptMultipleValues = false;
+				//state.PositionalParameterIndex = -1;
+			}
 
 			if (xm == XamlLanguage.FactoryMethod) {
 				if (contents.Count != 1 || !(contents [0] is string))
@@ -291,6 +297,8 @@ namespace System.Xaml
 				throw new ArgumentNullException ("property");
 
 			manager.StartMember ();
+			if (property == XamlLanguage.PositionalParameters)
+				manager.AcceptMultipleValues = true;
 
 			//var wpl = object_states.Peek ().WrittenProperties;
 			// FIXME: enable this. Duplicate property check should
@@ -361,8 +369,13 @@ namespace System.Xaml
 				state.Value = value;
 				state.IsInstantiated = true;
 			}
-//			else if (xm.Type.IsCollection)
-			else if (xm == XamlLanguage.Items) // FIXME: am not sure which is good yet.
+			else if (xm.Type.IsDictionary) {
+				if (xm == XamlLanguage.Key)
+					state.KeyValue = GetCorrectlyTypedValue (xm.Type.KeyType, value);
+				else
+					state.Contents.Add (GetCorrectlyTypedValue (xm.Type.ItemType, value));
+			}
+			else if (xm.Type.IsCollection)
 				state.Contents.Add (GetCorrectlyTypedValue (xm.Type.ItemType, value));
 			else
 				state.Contents.Add (GetCorrectlyTypedValue (xm.Type, value));

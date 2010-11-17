@@ -345,15 +345,10 @@ namespace System.Xaml
 			
 			var state = object_states.Peek ();
 			if (CurrentMember == XamlLanguage.PositionalParameters) {
-				// this is an exception that indicates the state manager to accept more than values within this member.
 				manager.AcceptMultipleValues = false;
 				state.PositionalParameterIndex = -1;
 			}
-			var xm = CurrentMember;
 			var contents = state.Contents;
-
-			if (xm == XamlLanguage.PositionalParameters)
-				state.PositionalParameterIndex = -1;
 
 			contents.Clear ();
 		}

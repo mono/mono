@@ -56,8 +56,8 @@ namespace System.Windows.Markup
 			if (context != null)
 				throw new NotImplementedException ();
 
-			// MarkupExtension is serialized without ValueSerializer.
-			if (typeof (MarkupExtension).IsAssignableFrom (type))
+			// Standard MarkupExtensions are serialized without ValueSerializer.
+			if (typeof (MarkupExtension).IsAssignableFrom (type) && XamlLanguage.AllTypes.Any (x => x.UnderlyingType == type))
 				return null;
 
 			var tc = TypeDescriptor.GetConverter (type);
