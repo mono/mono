@@ -1044,7 +1044,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_MyExtension3 ()
 		{
 			//var obj = new MyExtension3 () { Foo = typeof (int), Bar = "v2"};

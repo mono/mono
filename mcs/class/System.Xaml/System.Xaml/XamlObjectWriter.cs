@@ -250,8 +250,7 @@ namespace System.Xaml
 				var tc = xt.TypeConverter.ConverterInstance;
 				if (tc != null && tc.CanConvertFrom (value.GetType ()))
 					value = tc.ConvertFrom (value);
-				if (IsAllowedType (xt, value))
-					return value;
+				return value;
 			}
 
 			throw new XamlObjectWriterException (String.Format ("Value '{1}' (of type {2}) is not of or convertible to type {0}", xt, value, value != null ? (object) value.GetType () : "(null)"));

@@ -1137,15 +1137,12 @@ namespace MonoTests.System.Xaml
 			Read_CustomMarkupExtension6 (r);
 		}
 
-		[Test] // not commonized
+		[Test]
 		public void Read_ArgumentAttributed ()
 		{
 			var obj = new ArgumentAttributed ("foo", "bar");
 			var r = new XamlObjectReader (obj);
-			Read_CommonClrType (r, obj, new KeyValuePair<string,string> ("x", XamlLanguage.Xaml2006Namespace));
-			var args = Read_AttributedArguments_String (r, new string [] {"arg1", "arg2"});
-			Assert.AreEqual ("foo", args [0], "#1");
-			Assert.AreEqual ("bar", args [1], "#2");
+			Read_ArgumentAttributed (r, obj);
 		}
 	}
 
@@ -1318,6 +1315,18 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.Read (), "#7"); // EndMember
 			Assert.IsTrue (r.Read (), "#8"); // EndObject
 			Assert.IsFalse (r.Read (), "#9");
+		}
+
+		protected void Read_ArgumentAttributed (XamlReader r, object obj)
+		{
+			Read_CommonClrType (r, obj, new KeyValuePair<string,string> ("x", XamlLanguage.Xaml2006Namespace));
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			var args = Read_AttributedArguments_String (r, new string [] {"arg1", "arg2"});
+			Assert.AreEqual ("foo", args [0], "#1");
+			Assert.AreEqual ("bar", args [1], "#2");
 		}
 
 		protected void Read_Dictionary (XamlReader r)

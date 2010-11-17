@@ -439,6 +439,14 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Read_ArgumentAttributed ()
+		{
+			var obj = new ArgumentAttributed ("foo", "bar");
+			var r = GetReader ("ArgumentAttributed.xml");
+			Read_ArgumentAttributed (r, obj);
+		}
+
+		[Test]
 		public void Read_Dictionary ()
 		{
 			var obj = new Dictionary<string,object> ();
