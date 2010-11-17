@@ -31,6 +31,7 @@ using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
 using NUnit.Framework;
+using MonoTests.System.Xaml;
 
 using Category = NUnit.Framework.CategoryAttribute;
 
@@ -104,6 +105,25 @@ namespace MonoTests.System.Windows.Markup
 		}
 
 		[Test]
+		public void GetSerializerFor ()
+		{
+			Assert.IsNull (ValueSerializer.GetSerializerFor (typeof (Array)), "#1");
+			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (Uri)), "#2");
+			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (Type)), "#3"); // has no TypeConverter (undocumented behavior)
+			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (string)), "#4"); // documented as special
+			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (DateTime)), "#5"); // documented as special
+			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (bool)), "#6"); // has no TypeConverter (undocumented behavior)
+			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (byte)), "#7"); // has no TypeConverter (undocumented behavior)
+			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (char)), "#8"); // has no TypeConverter (undocumented behavior)
+			Assert.IsNull (ValueSerializer.GetSerializerFor (typeof (DBNull)), "#9"); // TypeCode.DBNull
+			Assert.IsNull (ValueSerializer.GetSerializerFor (typeof (object)), "#10");
+			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (TimeSpan)), "#11"); // has no TypeConverter (undocumented behavior), TypeCode.Object -> unexpectedly has non-null serializer!
+			Assert.IsNull (ValueSerializer.GetSerializerFor (typeof (DateTimeOffset)), "#12"); // has no TypeConverter (undocumented behavior), TypeCode.Object -> expected
+			Assert.IsNull (ValueSerializer.GetSerializerFor (typeof (MyExtension)), "#13");
+			Assert.IsNotNull (ValueSerializer.GetSerializerFor (typeof (MyExtension4)), "#14"); // has TypeConverter.
+		}
+
+		[Test]
 		public void DefaultImplementation ()
 		{
 			var v = new MyValueSerializer ();
@@ -129,10 +149,23 @@ namespace MonoTests.System.Windows.Markup
 				} catch (NotSupportedException) {
 				}
 			}
+			
+			Assert.AreEqual (typeof (NotSupportedException), v.CallGetConvertFromException (null).GetType (), "#1");
+			Assert.AreEqual (typeof (NotSupportedException), v.CallGetConvertToException (null, typeof (int)).GetType (), "#2");
+			Assert.IsFalse (v.TypeReferences (null, null).GetEnumerator ().MoveNext (), "#3");
 		}
 
 		class MyValueSerializer : ValueSerializer
 		{
+			public Exception CallGetConvertFromException (object value)
+			{
+				return GetConvertFromException (value);
+			}
+
+			public Exception CallGetConvertToException (object value, Type destinationType)
+			{
+				return GetConvertToException (value, destinationType);
+			}
 		}
 	}
 }

@@ -48,6 +48,9 @@ namespace System.Xaml.Schema
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
+			if (!CanConvertTo (context, destinationType))
+				throw new NotSupportedException (String.Format ("Conversion to type {0} is not supported", destinationType));
+
 			var vctx = (IValueSerializerContext) context;
 			var lookup = vctx != null ? (INamespacePrefixLookup) vctx.GetService (typeof (INamespacePrefixLookup)) : null;
 			var xt = value as XamlType;

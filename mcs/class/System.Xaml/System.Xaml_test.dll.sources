@@ -12,6 +12,7 @@ System.Xaml.Schema/XamlTypeTypeConverterTest.cs
 System.Xaml.Schema/XamlValueConverterTest.cs
 System.Xaml/AmbientPropertyValueTest.cs
 System.Xaml/AttachableMemberIdentifierTest.cs
+System.Xaml/DummyValueSerializerContext.cs
 System.Xaml/NamespaceDeclarationTest.cs
 System.Xaml/TestedTypes.cs
 System.Xaml/XamlDirectiveTest.cs
