@@ -755,7 +755,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_Type ()
 		{
 			using (var xr = GetReader ("Type.xml")) {
@@ -765,7 +764,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_Type2 ()
 		{
 			var obj = typeof (MonoTests.System.Xaml.TestClass1);
@@ -852,7 +850,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_ListType ()
 		{
 			var obj = new List<Type> (new Type [] {typeof (int), typeof (Dictionary<Type, XamlType>)}) { Capacity = 2 };

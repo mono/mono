@@ -170,6 +170,7 @@ namespace System.Xaml
 				for (int i = 0; i < argv.Length; i++)
 					argv [i] = GetCorrectlyTypedValue (argt [i], state.Contents [i]);
 				state.Value = state.Type.Invoker.CreateInstance (argv);
+				state.IsInstantiated = true;
 			} else if (xm == XamlLanguage.FactoryMethod) {
 				if (contents.Count != 1 || !(contents [0] is string))
 					throw new XamlObjectWriterException (String.Format ("FactoryMethod must be non-empty string name. {0} value exists.", contents.Count > 0 ? contents [0] : "0"));
@@ -312,7 +313,8 @@ namespace System.Xaml
 			if (property == XamlLanguage.PositionalParameters)
 				manager.AcceptMultipleValues = true;
 
-			if (property != XamlLanguage.Arguments && property != XamlLanguage.PositionalParameters && property != XamlLanguage.Initialization)
+			// FIXME: this condition needs to be examined. What is known to be prevented are: PositionalParameters, Initialization and Base (the last one sort of indicates there's a lot more).
+			if (!(property is XamlDirective))
 				InitializeObjectIfRequired (false);
 
 			//var wpl = object_states.Peek ().WrittenProperties;
@@ -334,8 +336,6 @@ namespace System.Xaml
 			if (state.IsInstantiated)
 				return;
 
-			if (state.Type.IsContentValue (service_provider))
-				return;
 			if (waitForParameters && (state.Type.ConstructionRequiresArguments || state.Type.HasPositionalParameters (service_provider)))
 				return;
 
@@ -366,7 +366,8 @@ namespace System.Xaml
 			var cstate = new ObjectState () {Type = xamlType, IsInstantiated = false};
 			object_states.Push (cstate);
 
-			InitializeObjectIfRequired (true);
+			if (!xamlType.IsContentValue (service_provider))
+				InitializeObjectIfRequired (true);
 			
 			if (wpl != null) // note that this adds to the *owner* object's properties.
 				wpl.Add (xm);
