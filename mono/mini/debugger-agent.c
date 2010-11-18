@@ -600,6 +600,8 @@ static void appdomain_unload (MonoProfiler *prof, MonoDomain *domain);
 
 static void emit_appdomain_load (gpointer key, gpointer value, gpointer user_data);
 
+static void emit_thread_start (gpointer key, gpointer value, gpointer user_data);
+
 static void invalidate_each_thread (gpointer key, gpointer value, gpointer user_data);
 
 static void assembly_load (MonoProfiler *prof, MonoAssembly *assembly, int result);
@@ -2628,6 +2630,19 @@ static void
 emit_appdomain_load (gpointer key, gpointer value, gpointer user_data)
 {
 	process_profiler_event (EVENT_KIND_APPDOMAIN_CREATE, value);
+}
+
+/*
+ * GHFunc to emit a thread start event
+ * @param key A thread id
+ * @param value A thread object
+ * @param user_data Don't care
+ */
+static void
+emit_thread_start (gpointer key, gpointer value, gpointer user_data)
+{
+	if (GPOINTER_TO_INT (key) != debugger_thread_id)
+		process_profiler_event (EVENT_KIND_THREAD_START, value);
 }
 
 /*
