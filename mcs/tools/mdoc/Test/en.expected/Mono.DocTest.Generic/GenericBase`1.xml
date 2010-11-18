@@ -76,6 +76,23 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="ItemChanged">
+      <MemberSignature Language="C#" Value="public event Action&lt;Mono.DocTest.Generic.MyList&lt;U&gt;,Mono.DocTest.Generic.MyList&lt;U&gt;.Helper&lt;U,U&gt;&gt; ItemChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Action`2&lt;class Mono.DocTest.Generic.MyList`1&lt;!U&gt;, class Mono.DocTest.Generic.MyList`1/Helper`2&lt;!U, !U, !U&gt;&gt; ItemChanged" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Action&lt;Mono.DocTest.Generic.MyList&lt;U&gt;,Mono.DocTest.Generic.MyList&lt;U&gt;+Helper&lt;U,U&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
+        <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+      </Docs>
+    </Member>
     <Member MemberName="MyEvent">
       <MemberSignature Language="C#" Value="public event EventHandler&lt;Mono.DocTest.Generic.GenericBase&lt;U&gt;.FooEventArgs&gt; MyEvent;" />
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class Mono.DocTest.Generic.GenericBase`1/FooEventArgs&lt;!U&gt;&gt; MyEvent" />

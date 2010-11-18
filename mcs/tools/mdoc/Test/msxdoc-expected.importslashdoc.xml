@@ -604,6 +604,12 @@ class Example {
                 <c>F:Mono.DocTest.GenericBase`1.ConstField1</c>
             </remarks>
         </member>
+        <member name="E:Mono.DocTest.Generic.GenericBase`1.ItemChanged">
+            <summary>To be added.</summary>
+            <remarks>E:Mono.DocTest.Generic.GenericBase`1.ItemChanged</remarks>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
+            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+        </member>
         <member name="E:Mono.DocTest.Generic.GenericBase`1.MyEvent">
             <summary>To be added.</summary>
             <remarks>E:Mono.DocTest.Generic.GenericBase`1.MyEvent</remarks>

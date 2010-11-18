@@ -530,6 +530,9 @@ namespace Mono.DocTest.Generic {
 		/// <remarks>E:Mono.DocTest.Generic.GenericBase`1.MyEvent</remarks>
 		public event EventHandler<FooEventArgs> MyEvent;
 
+		/// <remarks>E:Mono.DocTest.Generic.GenericBase`1.ItemChanged</remarks>
+		public event Action<MyList<U>, MyList<U>.Helper<U, U>> ItemChanged;
+
 		/// <remarks>T:Mono.DocTest.Generic.GenericBase`1.NestedCollection</remarks>
 		public class NestedCollection {
 			/// <remarks>T:Mono.DocTest.Generic.GenericBase`1.NestedCollection.Enumerator</remarks>

@@ -2318,7 +2318,19 @@ SkipTypeArgument: invalid type substring '<xsl:value-of select="$s" />'
 						<xsl:with-param name="s" select="substring-after ($s, '&lt;')" />
 					</xsl:call-template>
 				</xsl:variable>
-				<xsl:value-of select="substring-after ($r, '&gt;')" />
+				<xsl:choose>
+					<xsl:when test="starts-with ($r, '>') or starts-with ($r, '+')">
+						<xsl:value-of select="substring-after ($r, '&gt;')" />
+					</xsl:when>
+					<xsl:when test="starts-with ($r, ',')">
+						<xsl:value-of select="$r" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:message>
+! WTF3: s=<xsl:value-of select="$s" />; r=<xsl:value-of select="$r" />
+						</xsl:message>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:when>
 			<xsl:when test="$p/Gt/@Length > 0">
 				<xsl:text>&gt;</xsl:text>
