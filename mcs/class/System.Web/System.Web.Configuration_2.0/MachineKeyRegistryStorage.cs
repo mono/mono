@@ -146,7 +146,7 @@ namespace System.Web.Configuration
 					rk.Flush (); // we want it synchronous
 				}
 			} catch (Exception ex) {
-				throw new ApplicationException ("Failed to store encryption key in the registry.", ex);
+				Console.Error.WriteLine ("(info) Auto generated encryption keys not saved: {0}", ex);
 			}
 		}
 	}
