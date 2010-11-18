@@ -610,7 +610,7 @@ static void assembly_unload (MonoProfiler *prof, MonoAssembly *assembly);
 
 static void emit_assembly_load (gpointer assembly, gpointer user_data);
 
-static void emit_type_load (gpointer type, gpointer user_data);
+static void emit_type_load (gpointer key, gpointer type, gpointer user_data);
 
 static void start_runtime_invoke (MonoProfiler *prof, MonoMethod *method);
 
@@ -1676,10 +1676,9 @@ mono_debugger_agent_on_attach (void)
 	/* Emit load events for currently loaded appdomains, assemblies, and types */
 	mono_loader_lock ();
 	g_hash_table_foreach (domains, emit_appdomain_load, NULL);
-	g_ptr_array_foreach (pending_assembly_loads, emit_assembly_load, NULL);
-	g_ptr_array_foreach (pending_type_loads, emit_type_load, NULL);
-	g_ptr_array_set_size (pending_assembly_loads, 0);
-	g_ptr_array_set_size (pending_type_loads, 0);
+	mono_g_hash_table_foreach (tid_to_thread, emit_thread_start, NULL);
+	mono_assembly_foreach (emit_assembly_load, NULL);
+	g_hash_table_foreach (loaded_classes, emit_type_load, NULL);
 	mono_loader_unlock ();
 }
 
@@ -2662,7 +2661,7 @@ emit_assembly_load (gpointer value, gpointer user_data)
  * @param user_data Don't care
  */
 static void
-emit_type_load (gpointer value, gpointer user_data)
+emit_type_load (gpointer key, gpointer value, gpointer user_data)
 {
 	process_profiler_event (EVENT_KIND_TYPE_LOAD, value);
 }
@@ -3182,7 +3181,7 @@ send_type_load (MonoClass *klass)
 	}
 	mono_loader_unlock ();
 	if (type_load)
-		emit_type_load (klass, NULL);
+		emit_type_load (klass, klass, NULL);
 }
 
 static void
