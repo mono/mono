@@ -2453,4 +2453,36 @@ public class DebuggerTests
 				vm.EnableEvents (EventType.Breakpoint);
 			});
 	}
+
+	[Test]
+	public void SingleStepRegress654694 () {
+		int il_offset = -1;
+
+		MethodMirror m = entry_point.DeclaringType.GetMethod ("ss_regress_654694");
+		foreach (Location l in m.Locations) {
+			if (l.ILOffset > 0 && il_offset == -1)
+				il_offset = l.ILOffset;
+		}
+
+		Event e = run_until ("ss_regress_654694");
+
+		Assert.IsNotNull (m);
+		vm.SetBreakpoint (m, il_offset);
+
+		vm.Resume ();
+
+		e = vm.GetNextEvent ();
+		Assert.IsTrue (e is BreakpointEvent);
+
+		var req = vm.CreateStepRequest (e.Thread);
+		req.Depth = StepDepth.Over;
+		req.Size = StepSize.Line;
+		req.Enable ();
+
+		vm.Resume ();
+
+		e = vm.GetNextEvent ();
+		Assert.IsTrue (e is StepEvent);
+	}
+
 }

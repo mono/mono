@@ -243,6 +243,7 @@ public class Tests : TestsBase
 			ss6 (true);
 		} catch {
 		}
+		ss_regress_654694 ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -738,6 +739,18 @@ public class Tests : TestsBase
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void frames_in_native () {
 		Thread.Sleep (500);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void string_call (string s) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_regress_654694 () {
+		if (true) {
+			string h = "hi";
+			string_call (h);
+		}
 	}
 }
 
