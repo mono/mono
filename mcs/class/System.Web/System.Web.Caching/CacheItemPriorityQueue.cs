@@ -64,6 +64,12 @@ namespace System.Web.Caching
 		{
 			CacheItem[] oldHeap = heap;
 			Array.Resize <CacheItem> (ref heap, newSize);
+			
+			// TODO: The code helps the GC in case the array is pinned. In such instance clearing
+			// the old array will release references to the CacheItems stored in there. If the
+			// array is not pinned, otoh, this is a waste of time.
+			// Currently we don't know if the array is pinned or not so it's safer to always clear it.
+			// However when we have more precise stack scanning the code should be revisited.
 			if (oldHeap != null) {
 				((IList)oldHeap).Clear ();
 				oldHeap = null;
@@ -120,6 +126,8 @@ namespace System.Web.Caching
 				// See comment at the top of the file, above queueLock declaration
 				queueLock.ExitWriteLock ();
 			}
+			Console.WriteLine ("{0}.Enqueue ({1})", this, item);
+			Console.WriteLine ("\titems in the dictionary == {0}", heapCount);
 		}
 
 		public CacheItem Dequeue ()
@@ -143,6 +151,9 @@ namespace System.Web.Caching
 					BubbleDown (heap);
 
 				AddSequenceEntry (ret, EDSequenceEntryType.Dequeue);
+				
+				Console.WriteLine ("{0}.Dequeue ()", this);
+				Console.WriteLine ("\titems in the dictionary == {0}", heapCount);
 				return ret;
 			} finally {
 				// See comment at the top of the file, above queueLock declaration
