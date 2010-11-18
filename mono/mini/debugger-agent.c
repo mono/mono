@@ -3062,7 +3062,13 @@ appdomain_unload (MonoProfiler *prof, MonoDomain *domain)
 	/* Invalidate each thread's frame stack */
 	mono_g_hash_table_foreach (thread_to_tls, invalidate_each_thread, NULL);
 	clear_breakpoints_for_domain (domain);
+	
+	mono_loader_lock ();
 	g_hash_table_remove_all (loaded_classes);
+	g_ptr_array_set_size (pending_type_loads, 0);
+	g_hash_table_remove (domains, domain);
+	mono_loader_unlock ();
+	
 	process_profiler_event (EVENT_KIND_APPDOMAIN_UNLOAD, domain);
 }
 
