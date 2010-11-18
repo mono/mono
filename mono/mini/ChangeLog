@@ -1,7 +1,3 @@
-2010-11-08  Levi Bard  <levi@unity3d.com>
-
-	* debugger-agent.c: 
-
 2010-06-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c (mono_arch_create_generic_trampoline): Increase the buf len a little,
