@@ -2825,7 +2825,7 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		return;
 	}
 	
-	if (debugger_thread_id == GetCurrentThreadId () && event != EVENT_KIND_VM_DEATH && event != EVENT_KIND_VM_START)
+	if (debugger_thread_id == GetCurrentThreadId ())
 		thread = mono_thread_get_main ();
 
 	buffer_init (&buf, 128);
@@ -2836,10 +2836,10 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		buffer_add_byte (&buf, event); // event kind
 		buffer_add_int (&buf, GPOINTER_TO_INT (l->data)); // request id
 
-		if (event == EVENT_KIND_VM_START)
+		if (event == EVENT_KIND_VM_START && arg != NULL)
 			thread = arg;
 		else if (event == EVENT_KIND_THREAD_START)
-			g_assert (mono_thread_internal_current () == arg);
+			g_assert (debugger_thread_id == GetCurrentThreadId () || mono_thread_internal_current () == arg);
 
 		buffer_add_objid (&buf, (MonoObject*)thread); // thread
 
@@ -2883,9 +2883,10 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 	}
 
 	if (event == EVENT_KIND_VM_START) {
-		if (agent_config.defer)
-			suspend_policy = SUSPEND_POLICY_NONE;
-		else {
+ 		if (agent_config.defer) {
+ 			/* Don't suspend when doing a deferred attach */
+ 			suspend_policy = SUSPEND_POLICY_NONE;
+ 		} else {
 			suspend_policy = agent_config.suspend ? SUSPEND_POLICY_ALL : SUSPEND_POLICY_NONE;
 			start_debugger_thread ();
 		}
