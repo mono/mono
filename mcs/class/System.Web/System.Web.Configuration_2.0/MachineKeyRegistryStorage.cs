@@ -146,7 +146,7 @@ namespace System.Web.Configuration
 					rk.Flush (); // we want it synchronous
 				}
 			} catch (Exception ex) {
-				Console.Error.WriteLine ("(info) Auto generated encryption keys not saved: {0}", e);
+				Console.Error.WriteLine ("(info) Auto generated encryption keys not saved: {0}", ex);
 			}
 		}
 	}
