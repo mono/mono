@@ -83,7 +83,7 @@ namespace System.Threading
 			this.ticket = new TicketType ();
 		}
 
-		[MonoTODO("As a temporary hack, the while loop is kept inside a finally block which shouldn't be done")]
+		[MonoTODO ("Not safe against async exceptions"]
 		public void Enter (ref bool lockTaken)
 		{
 			if (lockTaken)
@@ -91,18 +91,21 @@ namespace System.Threading
 			if (isThreadOwnerTrackingEnabled && IsHeldByCurrentThread)
 				throw new LockRecursionException ();
 
-			RuntimeHelpers.PrepareConstrainedRegions ();
-			try {}
-			finally {
-				int slot = Interlocked.Increment (ref ticket.Users) - 1;
+			/* The current ticket algorithm, even though it's a thing of beauty, doesn't make it easy to
+			 * hand back ticket that have been taken in the case of an asynchronous exception and naively
+			 * fixing it bloat a code that should be kept simple. A straightforward possibility is to wrap
+			 * the whole thing in a finally block but due to the while loop a number of bad things can
+			 * happen, thus for the moment the code is left as is in the spirit of "better breaking fast,
+			 * than later in a weird way".
+			 */
+			int slot = Interlocked.Increment (ref ticket.Users) - 1;
 
-				SpinWait wait = new SpinWait ();
-				while (slot != ticket.Value)
-					wait.SpinOnce ();
+			SpinWait wait = new SpinWait ();
+			while (slot != ticket.Value)
+				wait.SpinOnce ();
 
-				lockTaken = true;
-				threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
-			}
+			lockTaken = true;
+			threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
 		}
 
 		public void TryEnter (ref bool lockTaken)
