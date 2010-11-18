@@ -152,10 +152,16 @@ namespace System {
 			if ((components & UriComponents.Query) != 0)
 				sb.Append (m.Groups [6]);
 
-			if ((components & UriComponents.Fragment) != 0)
-				sb.Append (m.Groups [8]);
-
-			return Format (sb.ToString (), format);
+			string result = Format (sb.ToString (), format);
+			if ((components & UriComponents.Fragment) != 0) {
+				string f = m.Groups [8].Value;
+				if (!String.IsNullOrEmpty (f)) {
+					// make sure the '#' does not get escaped by 'format'
+					f = f.Substring (1);
+					result += "#" + Format (f, format);
+				}
+			}
+			return result;
 		}
 
 		protected internal virtual void InitializeAndValidate (Uri uri, out UriFormatException parsingError)
@@ -240,9 +246,7 @@ namespace System {
 			case UriFormat.UriEscaped:
 				return Uri.EscapeString (s, Uri.EscapeCommonHexBrackets);
 			case UriFormat.SafeUnescaped:
-				// TODO subset of escape rules
-				s = Uri.Unescape (s, false);
-				return s; //Uri.EscapeString (s, false, true, true);
+				return Uri.UnescapeDataString (s, true);
 			case UriFormat.Unescaped:
 				return Uri.Unescape (s, false);
 			default:

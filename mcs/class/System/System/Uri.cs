@@ -2197,6 +2197,11 @@ namespace System {
 
 		public static string UnescapeDataString (string stringToUnescape)
 		{
+			return UnescapeDataString (stringToUnescape, false);
+		}
+
+		internal static string UnescapeDataString (string stringToUnescape, bool safe)
+		{
 			if (stringToUnescape == null)
 				throw new ArgumentNullException ("stringToUnescape");
 
@@ -2216,7 +2221,7 @@ namespace System {
 							bytes.SetLength (0);
 						}
 
-						xchar = GetChar (stringToUnescape, i + 2, 4);
+						xchar = GetChar (stringToUnescape, i + 2, 4, safe);
 						if (xchar != -1) {
 							output.Append ((char) xchar);
 							i += 5;
@@ -2225,7 +2230,7 @@ namespace System {
 							output.Append ('%');
 						}
 					}
-					else if ((xchar = GetChar (stringToUnescape, i + 1, 2)) != -1) {
+					else if ((xchar = GetChar (stringToUnescape, i + 1, 2, safe)) != -1) {
 						bytes.WriteByte ((byte) xchar);
 						i += 2;
 					}
@@ -2266,7 +2271,7 @@ namespace System {
 			return -1;
 		}
 
-		private static int GetChar (string str, int offset, int length)
+		private static int GetChar (string str, int offset, int length, bool safe)
 		{
 			int val = 0;
 			int end = length + offset;
@@ -2281,7 +2286,21 @@ namespace System {
 				val = (val << 4) + current;
 			}
 
-			return val;
+			if (!safe)
+				return val;
+
+			switch ((char) val) {
+			case '%':
+			case '#':
+			case '?':
+			case '/':
+			case '\\':
+			case '@':
+			case '&': // not documented
+				return -1;
+			default:
+				return val;
+			}
 		}
 
 		private static char [] GetChars (MemoryStream b, Encoding e)

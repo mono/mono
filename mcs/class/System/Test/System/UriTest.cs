@@ -1708,5 +1708,155 @@ namespace MonoTests.System
 				return base.Unescape (path);
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GetComponents_Relative ()
+		{
+			Uri rel = new Uri ("/relative/path/with?query", UriKind.Relative);
+			rel.GetComponents (UriComponents.Query, UriFormat.SafeUnescaped);
+		}
+
+		[Test]
+		public void GetComponents_AbsoluteUri ()
+		{
+			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263");
+
+			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263", uri.AbsoluteUri, "AbsoluteUri");
+
+			string safe = uri.GetComponents (UriComponents.AbsoluteUri, UriFormat.SafeUnescaped);
+			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263", safe, "SafeUnescaped");
+
+			string unescaped = uri.GetComponents (UriComponents.AbsoluteUri, UriFormat.Unescaped);
+			Assert.AreEqual ("http://mono-project.com/list?id=1&2&sort=asc#fragment&3", unescaped, "Unescaped");
+
+			string escaped = uri.GetComponents (UriComponents.AbsoluteUri, UriFormat.UriEscaped);
+			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263", escaped, "UriEscaped");
+		}
+
+		[Test]
+		public void GetComponents_HttpRequestUrl ()
+		{
+			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263");
+
+			string safe = uri.GetComponents (UriComponents.HttpRequestUrl, UriFormat.SafeUnescaped);
+			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc", safe, "SafeUnescaped");
+
+			string unescaped = uri.GetComponents (UriComponents.HttpRequestUrl, UriFormat.Unescaped);
+			Assert.AreEqual ("http://mono-project.com/list?id=1&2&sort=asc", unescaped, "Unescaped");
+
+			string escaped = uri.GetComponents (UriComponents.HttpRequestUrl, UriFormat.UriEscaped);
+			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc", escaped, "UriEscaped");
+		}
+
+		[Test]
+		public void GetComponents_KeepDelimiter ()
+		{
+			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263");
+
+			string safe = uri.GetComponents (UriComponents.KeepDelimiter, UriFormat.SafeUnescaped);
+			Assert.AreEqual (String.Empty, safe, "SafeUnescaped");
+
+			string unescaped = uri.GetComponents (UriComponents.KeepDelimiter, UriFormat.Unescaped);
+			Assert.AreEqual (String.Empty, unescaped, "Unescaped");
+
+			string escaped = uri.GetComponents (UriComponents.KeepDelimiter, UriFormat.UriEscaped);
+			Assert.AreEqual (String.Empty, escaped, "UriEscaped");
+		}
+
+		[Test]
+		public void GetComponents_StrongAuthority ()
+		{
+			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263");
+
+			string safe = uri.GetComponents (UriComponents.StrongAuthority, UriFormat.SafeUnescaped);
+			Assert.AreEqual ("mono-project.com:80", safe, "SafeUnescaped");
+
+			string unescaped = uri.GetComponents (UriComponents.StrongAuthority, UriFormat.Unescaped);
+			Assert.AreEqual ("mono-project.com:80", unescaped, "Unescaped");
+
+			string escaped = uri.GetComponents (UriComponents.StrongAuthority, UriFormat.UriEscaped);
+			Assert.AreEqual ("mono-project.com:80", escaped, "UriEscaped");
+		}
+
+		[Test]
+		public void GetComponents_Path ()
+		{
+			Uri uri1 = new Uri ("http://mono-project.com/Main%20Page");
+			Assert.AreEqual ("/Main Page", uri1.LocalPath, "Path1");
+
+			string safe = uri1.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped);
+			Assert.AreEqual ("Main Page", safe, "SafeUnescaped1");
+
+			string unescaped = uri1.GetComponents (UriComponents.Path, UriFormat.Unescaped);
+			Assert.AreEqual ("Main Page", unescaped, "Unescaped1");
+
+			string escaped = uri1.GetComponents (UriComponents.Path, UriFormat.UriEscaped);
+			Assert.AreEqual ("Main%20Page", escaped, "UriEscaped1");
+
+			// same result is unescaped original string
+			Uri uri2 = new Uri ("http://mono-project.com/Main Page");
+			Assert.AreEqual ("/Main Page", uri2.LocalPath, "Path2");
+
+			safe = uri2.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped);
+			Assert.AreEqual ("Main Page", safe, "SafeUnescaped2");
+
+			unescaped = uri2.GetComponents (UriComponents.Path, UriFormat.Unescaped);
+			Assert.AreEqual ("Main Page", unescaped, "Unescaped2");
+
+			escaped = uri2.GetComponents (UriComponents.Path, UriFormat.UriEscaped);
+			Assert.AreEqual ("Main%20Page", escaped, "UriEscaped2");
+		}
+
+		[Test]
+		public void GetComponents_PathAndQuery ()
+		{
+			Uri uri = new Uri ("http://mono-project.com/MåÏn Påge?id=1%262&sort=asc");
+
+			Assert.AreEqual ("/M%C3%A5%C3%8Fn%20P%C3%A5ge?id=1%262&sort=asc", uri.PathAndQuery, "PathAndQuery");
+
+			string safe = uri.GetComponents (UriComponents.PathAndQuery, UriFormat.SafeUnescaped);
+			Assert.AreEqual ("/MåÏn Påge?id=1%262&sort=asc", safe, "SafeUnescaped");
+
+			string unescaped = uri.GetComponents (UriComponents.PathAndQuery, UriFormat.Unescaped);
+			Assert.AreEqual ("/MåÏn Påge?id=1&2&sort=asc", unescaped, "Unescaped");
+
+			string escaped = uri.GetComponents (UriComponents.PathAndQuery, UriFormat.UriEscaped);
+			Assert.AreEqual ("/M%C3%A5%C3%8Fn%20P%C3%A5ge?id=1%262&sort=asc", escaped, "UriEscaped");
+		}
+
+		[Test]
+		public void GetComponents_Query ()
+		{
+			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc");
+
+			Assert.AreEqual ("?id=1%262&sort=asc", uri.Query, "Query");
+			
+			string safe = uri.GetComponents (UriComponents.Query, UriFormat.SafeUnescaped);
+			Assert.AreEqual ("id=1%262&sort=asc", safe, "SafeUnescaped");
+
+			string unescaped = uri.GetComponents (UriComponents.Query, UriFormat.Unescaped);
+			Assert.AreEqual ("id=1&2&sort=asc", unescaped, "Unescaped");
+
+			string escaped = uri.GetComponents (UriComponents.Query, UriFormat.UriEscaped);
+			Assert.AreEqual ("id=1%262&sort=asc", escaped, "UriEscaped");
+		}
+
+		[Test]
+		public void GetComponents_Fragment ()
+		{
+			Uri uri = new Uri ("http://mono-project.com/list#id=1%262&sort=asc");
+
+			Assert.AreEqual ("#id=1%262&sort=asc", uri.Fragment, "Fragment");
+
+			string safe = uri.GetComponents (UriComponents.Fragment, UriFormat.SafeUnescaped);
+			Assert.AreEqual ("id=1%262&sort=asc", safe, "SafeUnescaped");
+
+			string unescaped = uri.GetComponents (UriComponents.Fragment, UriFormat.Unescaped);
+			Assert.AreEqual ("id=1&2&sort=asc", unescaped, "Unescaped");
+
+			string escaped = uri.GetComponents (UriComponents.Fragment, UriFormat.UriEscaped);
+			Assert.AreEqual ("id=1%262&sort=asc", escaped, "UriEscaped");
+		}
 	}
 }
