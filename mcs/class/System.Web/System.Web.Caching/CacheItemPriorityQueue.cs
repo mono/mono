@@ -25,6 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -59,6 +60,16 @@ namespace System.Web.Caching
 			InitDebugMode ();
 		}
 
+		void ResizeHeap (int newSize)
+		{
+			CacheItem[] oldHeap = heap;
+			Array.Resize <CacheItem> (ref heap, newSize);
+			if (oldHeap != null) {
+				((IList)oldHeap).Clear ();
+				oldHeap = null;
+			}
+		}
+		
 		CacheItem[] GetHeapWithGrow ()
 		{
 			if (heap == null) {
@@ -70,7 +81,7 @@ namespace System.Web.Caching
 
 			if (heapCount >= heapSize) {
 				heapSize <<= 1;
-				Array.Resize <CacheItem> (ref heap, heapSize);
+				ResizeHeap (heapSize);
 			}
 
 			return heap;
@@ -85,7 +96,7 @@ namespace System.Web.Caching
 				int halfTheSize = heapSize >> 1;
 
 				if (heapCount < halfTheSize)
-					Array.Resize <CacheItem> (ref heap, halfTheSize + (heapCount / 3));
+					ResizeHeap (halfTheSize + (heapCount / 3));
 			}
 			
 			return heap;

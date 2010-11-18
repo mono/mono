@@ -74,6 +74,8 @@ namespace System.Web.SessionState
 				rwlock = null;
 			}
 			staticItems = null;
+			if (items != null)
+				items.Clear ();
 			items = null;
 		}
 		

@@ -21,6 +21,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Permissions;
 using System.Web.UI;
@@ -31,8 +32,6 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpStaticObjectsCollection : ICollection, IEnumerable
 	{
-		Hashtable _Objects;
-
 		sealed class StaticItem {
 			object this_lock = new object();
 			
@@ -61,19 +60,25 @@ namespace System.Web
 			}
 		}
 
+		Dictionary <string, object> objects;
+
+		Dictionary <string, object> Objects {
+			get {
+				if (objects == null)
+					objects = new Dictionary <string, object> (StringComparer.Ordinal);
+
+				return objects;
+			}
+		}
+		
 		// Needs to hold object items that can be latebound and can be serialized
-#if ONLY_1_1
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-#endif
 		public HttpStaticObjectsCollection ()
 		{
-			_Objects = new Hashtable ();
 		}
 
 		// this ctor has no security requirements and is used when creating HttpApplicationState
 		internal HttpStaticObjectsCollection (HttpApplicationState appstate)
 		{
-			_Objects = new Hashtable ();
 		}
 
 		public object GetObject (string name)
@@ -83,22 +88,50 @@ namespace System.Web
 
 		public IEnumerator GetEnumerator ()
 		{
-			return _Objects.GetEnumerator ();
+			return Objects.GetEnumerator ();
 		}
 
 		public void CopyTo (Array array, int index)
 		{
-			_Objects.CopyTo (array, index);
+			if (objects == null)
+				return;
+
+			// Copied from Hashtable.CopyTo for the most part
+			if (array == null)
+                                throw new ArgumentNullException ("array");
+
+                        if (index < 0)
+                                throw new ArgumentOutOfRangeException ("index");
+
+                        if (array.Rank > 1)
+                                throw new ArgumentException ("array is multidimensional");
+
+                        if ((array.Length > 0) && (index >= array.Length))
+                                throw new ArgumentException ("index is equal to or greater than array.Length");
+
+                        if (index + objects.Count > array.Length)
+                                throw new ArgumentException ("Not enough room from index to end of array for this collection");
+
+			// We need to emulate Hashtable here, which uses DictionaryEntry for its items
+			foreach (var de in objects)
+				array.SetValue (new DictionaryEntry (de.Key, de.Value), index++);
 		}   
 
 		internal IDictionary GetObjects ()
 		{
-			return _Objects;
+			return Objects;
 		}
 
 		public object this [string name] {
 			get {
-				StaticItem item = _Objects [name] as StaticItem;
+				if (objects == null)
+					return null;
+				
+				StaticItem item = null;
+				object o;
+				if (Objects.TryGetValue (name, out o))
+					item = o as StaticItem;
+				
 				if (item == null)
 					return null;
 				
@@ -107,7 +140,12 @@ namespace System.Web
 		}
 
 		public int Count {
-			get { return _Objects.Count; }
+			get {
+				if (objects == null)
+					return 0;
+				
+				return Objects.Count;
+			}
 		}
 
 		public bool IsReadOnly {
@@ -130,10 +168,13 @@ namespace System.Web
 		internal HttpStaticObjectsCollection Clone ()
 		{
 			HttpStaticObjectsCollection coll = new HttpStaticObjectsCollection ();
-			coll._Objects = new Hashtable ();
-			foreach (string key in _Objects.Keys) {
-				StaticItem item = new StaticItem ((StaticItem) _Objects [key]);
-				coll._Objects [key] = item;
+			if (objects == null)
+				return coll;
+			
+			var collObjects = coll.Objects;
+			foreach (var de in objects) {
+				StaticItem item = new StaticItem ((StaticItem) de.Value);
+				collObjects [de.Key] = item;
 			}
 			
 			return coll;
@@ -141,20 +182,25 @@ namespace System.Web
 
 		internal void Add (ObjectTagBuilder tag)
 		{
-			_Objects.Add (tag.ObjectID, new StaticItem (tag.Type));
+			Objects.Add (tag.ObjectID, new StaticItem (tag.Type));
 		}
 		
 		void Set (string name, object obj)
 		{
-			_Objects [name] = obj;
+			Objects [name] = obj;
 		}
 
 		public void Serialize (BinaryWriter writer)
 		{
-			writer.Write (_Objects.Count);
-			foreach (string key in _Objects.Keys) {
-				writer.Write (key);
-				System.Web.Util.AltSerialization.Serialize (writer, _Objects [key]);
+			if (objects == null) {
+				writer.Write (0);
+				return;
+			}
+
+			writer.Write (objects.Count);
+			foreach (var de in objects) {
+				writer.Write (de.Key);
+				System.Web.Util.AltSerialization.Serialize (writer, de.Value);
 			}
 		}
 
@@ -162,8 +208,7 @@ namespace System.Web
 		{
 			HttpStaticObjectsCollection result = new HttpStaticObjectsCollection ();
 			for (int i = reader.ReadInt32 (); i > 0; i--)
-				result.Set (reader.ReadString (),
-					System.Web.Util.AltSerialization.Deserialize (reader));
+				result.Set (reader.ReadString (), System.Web.Util.AltSerialization.Deserialize (reader));
 
 			return result;
 		}
