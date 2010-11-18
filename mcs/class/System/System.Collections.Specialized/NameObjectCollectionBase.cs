@@ -278,6 +278,15 @@ namespace System.Collections.Specialized
 		
 		private void Init ()
 		{
+			if (m_ItemsContainer != null) {
+				m_ItemsContainer.Clear ();
+				m_ItemsContainer = null;
+			}
+			
+			if (m_ItemsArray != null) {
+				m_ItemsArray.Clear ();
+				m_ItemsArray = null;
+			}
 #if NET_2_0
 			if (equality_comparer != null)
 				m_ItemsContainer = new Hashtable (m_defCapacity, equality_comparer);
