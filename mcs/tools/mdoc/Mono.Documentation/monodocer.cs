@@ -1899,6 +1899,8 @@ class MDocUpdater : MDocCommand
 		"System.Runtime.CompilerServices.UnsafeValueTypeAttribute",
 		// extension methods
 		"System.Runtime.CompilerServices.ExtensionAttribute",
+		// Used to differentiate 'object' from C#4 'dynamic'
+		"System.Runtime.CompilerServices.DynamicAttribute",
 	};
 
 	private void MakeAttributes (XmlElement root, IEnumerable<string> attributes)
@@ -3518,13 +3520,18 @@ public abstract class MemberFormatter {
 
 		if (buf.Length != 0)
 			buf.Append (" ");
-		buf.Append (GetName (method.ReturnType.ReturnType)).Append (" ");
+		buf.Append (GetTypeName (method.ReturnType)).Append (" ");
 
 		AppendMethodName (buf, method);
 		AppendGenericMethod (buf, method).Append (" ");
 		AppendParameters (buf, method, method.Parameters);
 		AppendGenericMethodConstraints (buf, method);
 		return buf.ToString ();
+	}
+
+	protected virtual string GetTypeName (MethodReturnType returnType)
+	{
+		return GetName (returnType.ReturnType);
 	}
 
 	protected virtual StringBuilder AppendMethodName (StringBuilder buf, MethodDefinition method)
@@ -4336,6 +4343,21 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		return null;
 	}
 
+	protected override string GetTypeName (MethodReturnType returnType)
+	{
+		return GetTypeName (returnType, () => returnType.ReturnType);
+	}
+
+	string GetTypeName (ICustomAttributeProvider provider, Func<TypeReference> selector)
+	{
+		string type = GetName (selector ());
+		if (type == "object" && provider.HasCustomAttributes &&
+				provider.CustomAttributes.Cast<CustomAttribute>()
+				.Any (ca => ca.Constructor.DeclaringType.FullName == "System.Runtime.CompilerServices.DynamicAttribute"))
+			return "dynamic";
+		return type;
+	}
+
 	protected override StringBuilder AppendMethodName (StringBuilder buf, MethodDefinition method)
 	{
 		if (DocUtils.IsExplicitlyImplemented (method)) {
@@ -4437,7 +4459,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 			else
 				buf.Append ("ref ");
 		}
-		buf.Append (GetName (parameter.ParameterType)).Append (" ");
+		buf.Append (GetTypeName (parameter, () => parameter.ParameterType)).Append (" ");
 		return buf.Append (parameter.Name);
 	}
 
