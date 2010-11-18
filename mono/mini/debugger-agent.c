@@ -3199,16 +3199,17 @@ jit_end (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo, int result)
 
 		// FIXME: Maybe store this in TLS so the thread of the event is correct ?
 		mono_loader_lock ();
-		if (vm_start_event_sent && pending_assembly_loads->len > 0) {
+		if (pending_assembly_loads->len > 0) {
 			assembly = g_ptr_array_index (pending_assembly_loads, 0);
 			g_ptr_array_remove_index (pending_assembly_loads, 0);
 		}
 		mono_loader_unlock ();
 
-		if (assembly)
+		if (assembly) {
 			process_profiler_event (EVENT_KIND_ASSEMBLY_LOAD, assembly);
-		else
+		} else {
 			break;
+		}
 	}
 
 	if (disconnected || !vm_start_event_sent) {
