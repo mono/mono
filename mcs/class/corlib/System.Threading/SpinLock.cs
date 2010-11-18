@@ -83,7 +83,7 @@ namespace System.Threading
 			this.ticket = new TicketType ();
 		}
 
-		[MonoTODO ("Not safe against async exceptions"]
+		[MonoTODO ("Not safe against async exceptions")]
 		public void Enter (ref bool lockTaken)
 		{
 			if (lockTaken)
