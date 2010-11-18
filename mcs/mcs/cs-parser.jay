@@ -252,6 +252,7 @@ namespace Mono.CSharp
 %token INTO
 %token INTERR_NULLABLE
 %token EXTERN_ALIAS
+%token ASYNC
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -4312,6 +4313,11 @@ modifier
 		if (!RootContext.Unsafe)
 			Error_UnsafeCodeNotAllowed (GetLocation ($1));
 	  }
+	| ASYNC
+	  {
+		$$ = Modifiers.ASYNC;
+		StoreModifierLocation ($$, GetLocation ($1));
+	  }
 	;
 
 opt_class_base
@@ -6512,6 +6518,8 @@ static string GetTokenName (int token)
 		return "as";
 	case Token.ADD:
 		return "add";
+	case Token.ASYNC:
+		return "async";
 	case Token.BASE:
 		return "base";
 	case Token.BREAK:

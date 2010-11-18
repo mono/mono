@@ -24,6 +24,7 @@ namespace Mono.CSharp
 		VOLATILE  = 0x1000,
 		UNSAFE    = 0x2000,
 		TOP       = 0x4000,
+		ASYNC     = 0x8000,
 
 		//
 		// Compiler specific flags

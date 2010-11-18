@@ -555,6 +555,7 @@ namespace Mono.CSharp
 			AddKeyword ("while", Token.WHILE);
 			AddKeyword ("partial", Token.PARTIAL);
 			AddKeyword ("where", Token.WHERE);
+			AddKeyword ("async", Token.ASYNC);
 
 			// LINQ keywords
 			AddKeyword ("from", Token.FROM);
@@ -762,6 +763,13 @@ namespace Mono.CSharp
 				}					
 
 				res = -1;
+				break;
+
+			case Token.ASYNC:
+				if (parsing_block > 0 || RootContext.Version != LanguageVersion.Future) {
+					res = -1;
+					break;
+				}
 				break;
 			}
 
