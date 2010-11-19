@@ -145,9 +145,6 @@ namespace System.Xaml
 		
 		public override void WriteValue (object value)
 		{
-			if (value != null && !(value is string))
-				throw new ArgumentException ("Non-string value cannot be written.");
-
 			intl.WriteValue (value);
 		}
 		
@@ -299,9 +296,6 @@ namespace System.Xaml
 		
 		public void WriteValue (object value)
 		{
-			if (value != null && !(value is string))
-				throw new ArgumentException ("Non-string value cannot be written.");
-
 			manager.Value ();
 
 			OnWriteValue (value);
@@ -366,19 +360,6 @@ namespace System.Xaml
 		protected abstract void OnWriteValue (object value);
 
 		protected abstract void OnWriteNamespace (NamespaceDeclaration nd);
-
-		bool IsAllowedType (XamlType xt, object value)
-		{
-			// FIXME: not sure if it is correct
-			if (value is string)
-				return true;
-
-			return  xt == null ||
-				xt.UnderlyingType == null ||
-				xt.UnderlyingType.IsInstanceOfType (value) ||
-				value == null && xt == XamlLanguage.Null ||
-				xt.IsMarkupExtension && IsAllowedType (xt.MarkupExtensionReturnType, value);
-		}
 		
 		protected string GetValueString (XamlMember xm, object value)
 		{
@@ -644,6 +625,9 @@ namespace System.Xaml
 
 		protected override void OnWriteValue (object value)
 		{
+			if (value != null && !(value is string))
+				throw new ArgumentException ("Non-string value cannot be written.");
+
 			XamlMember xm = CurrentMember;
 			WritePendingStartMember (XamlNodeType.Value);
 
