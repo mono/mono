@@ -115,8 +115,31 @@ namespace System.Web
 			get { return validateRequestNewMode; }
 		}
 
-		internal static char[] RequestPathInvalidCharacters {
-			get; private set;
+		private static char[] RequestPathInvalidCharacters {
+			get; set;
+		}
+
+		private static char[] CharsFromList (string list)
+		{
+			// List format is very strict and enforced by the Configuration	
+			// there must be a single char separated by commas with no trailing comma
+			// whitespace is allowed though and should be trimmed.
+			
+			string [] pieces = list.Split (',');
+
+			char [] chars = new char [pieces.Length];
+			for (int i = 0; i < chars.Length; i++) {
+				string trimmed = pieces [i].Trim ();
+				if (trimmed.Length != 1) {
+					// This should have been caught by System.Web.Configuration
+					// and throw a configuration error. This is just here for sanity
+					throw new System.Configuration.ConfigurationErrorsException ();
+				}
+
+				chars [i] = trimmed [0];
+			}
+
+			return chars;
 		}
 #endif
 
@@ -138,7 +161,7 @@ namespace System.Web
 					validateRequestNewMode = true;
 					string invalidChars = runtimeConfig.RequestPathInvalidCharacters;
 					if (!String.IsNullOrEmpty (invalidChars))
-						RequestPathInvalidCharacters = invalidChars.ToCharArray ();
+						RequestPathInvalidCharacters = CharsFromList (invalidChars);
 				}
 #endif
 			} catch {
