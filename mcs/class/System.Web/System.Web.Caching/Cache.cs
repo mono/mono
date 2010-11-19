@@ -504,25 +504,34 @@ namespace System.Web.Caching
 		void ExpireItems (object data)
 		{
 			DateTime now = DateTime.Now;
-			CacheItem item = timedItems.Peek ();
+			CacheItem item = null;
 
+			expirationTimer.Change (Timeout.Infinite, Timeout.Infinite);
 			try {
 				cacheLock.EnterWriteLock ();
-
-				while (item != null) {
+				while (true) {
+					item = timedItems.Peek ();
+					
+					if (item == null) {
+						if (timedItems.Count == 0)
+							break;
+						
+						timedItems.Dequeue ();
+						continue;
+					}
+						
 					if (!item.Disabled && item.ExpiresAt > now.Ticks)
 						break;
+					
 					if (item.Disabled) {
 						item = timedItems.Dequeue ();
 						continue;
 					}
 
 					item = timedItems.Dequeue ();
-					if (item != null) {
+					if (item != null)
 						if (!NeedsUpdate (item, CacheItemUpdateReason.Expired, false))
 							Remove (item.Key, CacheItemRemovedReason.Expired, false, true);
-					}
-					item = timedItems.Peek ();
 				}
 			} finally {
 				// See comment at the top of the file, above cacheLock declaration
@@ -531,10 +540,10 @@ namespace System.Web.Caching
 
 			if (item != null) {
 				long remaining = Math.Max (0, (long)(item.AbsoluteExpiration - now).TotalMilliseconds);
-				if (expirationTimerPeriod != remaining && remaining > 0) {
+				if (remaining > 0 && expirationTimerPeriod > remaining)
 					expirationTimerPeriod = remaining;
-					expirationTimer.Change (expirationTimerPeriod, expirationTimerPeriod);
-				}
+				
+				expirationTimer.Change (expirationTimerPeriod, expirationTimerPeriod);
 				return;
 			}
 

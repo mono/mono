@@ -29,6 +29,7 @@ CACHE_PQ_TEST_GENERATOR_REFERENCES = \
 	-pkg:dotnet
 
 CACHE_PQ_TEST_SEQUENCES = $(wildcard ./CachePQTestGenerator/Sequences/*.seq)
+CACHE_PQ_TEST_PACKED_SEQUENCES = $(wildcard ./CachePQTestGenerator/Sequences/*.seq.gz)
 
 all-local: HtmlWriter.dll standalone-runner.exe cache-pq-test-generator.exe
 
@@ -42,7 +43,10 @@ cache-pq-test-generator.exe: $(CACHE_PQ_TEST_GENERATOR_SOURCES)
 	$(MCS) -debug:full -d:DEBUG $(CACHE_PQ_TEST_GENERATOR_REFERENCES) -out:$@ $(CACHE_PQ_TEST_GENERATOR_SOURCES)
 
 generate-cache-pq-tests: cache-pq-test-generator.exe 
-	$(RUNTIME) cache-pq-test-generator.exe ./CachePQTestGenerator/Sequences/ > ../System.Web.Caching/CacheItemPriorityQueueTest_generated.cs
+	for f in $(patsubst %.seq.gz,%.seq,$(CACHE_PQ_TEST_PACKED_SEQUENCES)); do \
+		gunzip -c $$f.gz > $$f ; \
+	done ;
+	$(RUNTIME) --debug cache-pq-test-generator.exe ./CachePQTestGenerator/Sequences/ > ../System.Web.Caching/CacheItemPriorityQueueTest_generated.cs
 
 deps:
 ifndef STANDALONE_SUPPORT_BUILT
@@ -52,3 +56,6 @@ endif
 clean:
 	rm -f HtmlWriter.dll HtmlWriter.*db
 	rm -f standalone-runner.exe standalone-runner.*db
+	for f in $(patsubst %.seq.gz,%.seq,$(CACHE_PQ_TEST_PACKED_SEQUENCES)); do \
+		rm -f $$f ; \
+	done ;

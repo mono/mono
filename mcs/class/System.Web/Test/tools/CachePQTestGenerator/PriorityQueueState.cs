@@ -44,15 +44,14 @@ namespace Tester
 	{
 		public readonly BinaryPriorityQueue Queue;
 		public readonly string ListName;
-		public readonly string QueueName;
-		public readonly string ItemName;
+		public readonly string TestsName;
 		
 		public int EnqueueCount;
 		public int DequeueCount;
 		public int DisableCount;
 		public int PeekCount;
 		
-		public PriorityQueueState (string listName, string queueName, string itemName)
+		public PriorityQueueState (string listName, string testsName)
 		{
 			Queue = new BinaryPriorityQueue (new CacheItemComparer ());
 			EnqueueCount = 0;
@@ -60,8 +59,7 @@ namespace Tester
 			DisableCount = 0;
 			PeekCount = 0;
 			ListName = listName;
-			QueueName = queueName;
-			ItemName = itemName;
+			TestsName = testsName;
 		}
 
 		public void Enqueue (CacheItem item)

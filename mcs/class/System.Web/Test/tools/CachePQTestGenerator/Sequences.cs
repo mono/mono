@@ -67,14 +67,18 @@ namespace Tester
 			if (edSequence == null || edSequence.Count == 0)
 				return;
 
+
+			string listName = String.Format ("list_{0:00000}", seqNum);
+			string testsName = String.Format ("tests_{0:00000}", seqNum);
+			sb.AppendLine ();
+			sb.FormatList (initialIndent, listName, cacheItems);
+
+			sb.AppendLine ();
+			sb.AppendFormat ("{0}List <TestItem> {1} = new List <TestItem> () {{\n", initialIndent, testsName);
+
 			string indent = initialIndent + "\t";
-			sb.SequenceMethodStart (initialIndent, file, seqNum);
-			sb.FormatList (indent, "list", cacheItems);
-			sb.Append (indent + "var queue = new CacheItemPriorityQueue ();\n");
-			sb.Append (indent + "CacheItem item;\n\n");
-			
 			int idx;
-			var pq = new PriorityQueueState ("list", "queue", "item");
+			var pq = new PriorityQueueState (listName, testsName);
 			foreach (EDSequenceEntry entry in edSequence) {
 				idx = cacheIndex [entry.Item.Guid];
 
@@ -101,6 +105,12 @@ namespace Tester
 
 			while (pq.Queue.Count > 0)
 				sb.FormatDequeue (indent, pq);
+			sb.AppendFormat ("{0}}};", initialIndent);
+			sb.AppendLine ();
+			
+			sb.SequenceMethodStart (initialIndent, file, seqNum);
+ 			sb.AppendFormat ("{0}RunTest ({1}, {2});", indent, testsName, listName);
+			sb.AppendLine ();
 			
 			sb.SequenceMethodEnd (initialIndent);
 		}
