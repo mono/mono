@@ -35,12 +35,13 @@ using System.Xml;
 
 namespace System.Xaml
 {
-	internal class ValueSerializerContext : IValueSerializerContext
+	internal class ValueSerializerContext : IValueSerializerContext, IXamlSchemaContextProvider
 	{
 		XamlNameResolver name_resolver = new XamlNameResolver ();
 		XamlTypeResolver type_resolver;
 		NamespaceResolver namespace_resolver;
 		PrefixLookup prefix_lookup;
+		XamlSchemaContext sctx;
 
 		public ValueSerializerContext (PrefixLookup prefixLookup, XamlSchemaContext schemaContext)
 		{
@@ -51,6 +52,7 @@ namespace System.Xaml
 			prefix_lookup = prefixLookup;
 			namespace_resolver = new NamespaceResolver (prefix_lookup.Namespaces);
 			type_resolver = new XamlTypeResolver (namespace_resolver, schemaContext);
+			sctx = schemaContext;
 		}
 
 		public object GetService (Type serviceType)
@@ -63,8 +65,15 @@ namespace System.Xaml
 				return name_resolver;
 			if (serviceType == typeof (IXamlTypeResolver))
 				return type_resolver;
+			if (serviceType == typeof (IXamlSchemaContextProvider))
+				return this;
 			return null;
 		}
+		
+		XamlSchemaContext IXamlSchemaContextProvider.SchemaContext {
+			get { return sctx; }
+		}
+		
 		public IContainer Container {
 			get { throw new NotImplementedException (); }
 		}

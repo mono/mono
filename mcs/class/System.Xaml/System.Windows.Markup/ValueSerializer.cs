@@ -189,6 +189,8 @@ namespace System.Windows.Markup
 
 		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
+			if (context == null)
+				return base.ConvertFromString (value, context);
 			var nsr = (IXamlNamespaceResolver) context.GetService (typeof (IXamlNamespaceResolver));
 			var scp = (IXamlSchemaContextProvider) context.GetService (typeof (IXamlSchemaContextProvider));
 			return scp.SchemaContext.GetXamlType (XamlTypeName.Parse (value, nsr)).UnderlyingType;
