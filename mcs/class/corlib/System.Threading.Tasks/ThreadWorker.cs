@@ -48,7 +48,7 @@ namespace System.Threading.Tasks
 		const    int  maxRetry = 5;
 		
 		const int sleepThreshold = 100;
-		const int deepSleepTime = 10;
+		const int deepSleepTime = 1000;
 		
 		public ThreadWorker (IScheduler sched,
 		                     ThreadWorker[] others,
