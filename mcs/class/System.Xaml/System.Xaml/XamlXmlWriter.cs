@@ -191,15 +191,13 @@ namespace System.Xaml
 		internal class ObjectState
 		{
 			public XamlType Type;
-			public object Value;
-			public List<object> Contents = new List<object> ();
-			public List<MemberAndValue> WrittenProperties = new List<MemberAndValue> ();
-			public bool IsInstantiated;
 			public bool IsGetObject;
 			public int PositionalParameterIndex = -1;
 
 			public string FactoryMethod;
-			public List<object> Arguments = new List<object> ();
+			public object Value;
+			public List<MemberAndValue> WrittenProperties = new List<MemberAndValue> ();
+			public bool IsInstantiated;
 		}
 		
 		internal class MemberAndValue
@@ -288,7 +286,7 @@ namespace System.Xaml
 
 			manager.StartObject ();
 
-			var cstate = new ObjectState () {Type = xamlType, IsInstantiated = false};
+			var cstate = new ObjectState () {Type = xamlType};
 			object_states.Push (cstate);
 
 			OnWriteStartObject ();
@@ -342,9 +340,6 @@ namespace System.Xaml
 				manager.AcceptMultipleValues = false;
 				state.PositionalParameterIndex = -1;
 			}
-			var contents = state.Contents;
-
-			contents.Clear ();
 		}
 
 		protected abstract void OnWriteEndObject ();

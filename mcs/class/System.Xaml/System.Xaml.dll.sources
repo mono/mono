@@ -98,7 +98,7 @@ System.Xaml/XamlObjectNodeIterator.cs
 System.Xaml/XamlObjectReader.cs
 System.Xaml/XamlObjectReaderException.cs
 System.Xaml/XamlObjectReaderSettings.cs
-System.Xaml/XamlObjectWriter.cs
+System.Xaml/XamlObjectWriter-new.cs
 System.Xaml/XamlObjectWriterException.cs
 System.Xaml/XamlObjectWriterSettings.cs
 System.Xaml/XamlParseException.cs

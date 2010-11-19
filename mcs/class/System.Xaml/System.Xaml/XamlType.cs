@@ -300,7 +300,10 @@ namespace System.Xaml
 
 		public virtual bool CanAssignTo (XamlType xamlType)
 		{
-			throw new NotImplementedException ();
+			if (this.UnderlyingType == null)
+				return true;
+			var ut = xamlType.UnderlyingType ?? typeof (object);
+			return ut.IsAssignableFrom (UnderlyingType);
 		}
 
 		public XamlMember GetAliasedProperty (XamlDirective directive)

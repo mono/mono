@@ -719,6 +719,15 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xm, xt.ContentProperty, "#1");
 			Assert.IsTrue (xt.GetAllMembers ().Contains (xm), "#2");
 		}
+
+		[Test]
+		public void CanAssignTo ()
+		{
+			foreach (var xt1 in XamlLanguage.AllTypes)
+				foreach (var xt2 in XamlLanguage.AllTypes)
+					Assert.AreEqual (xt1.UnderlyingType.IsAssignableFrom (xt2.UnderlyingType), xt2.CanAssignTo (xt1), "{0} to {1}", xt1, xt2);
+			Assert.IsTrue (XamlLanguage.Type.CanAssignTo (XamlLanguage.Object), "x#1"); // specific test
+		}
 	}
 
 	class MyXamlType : XamlType
