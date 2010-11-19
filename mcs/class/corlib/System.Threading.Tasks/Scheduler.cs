@@ -35,7 +35,7 @@ namespace System.Threading.Tasks
 		readonly EventWaitHandle       pulseHandle = new AutoResetEvent (false);
 
 		public Scheduler ()
-			: this (Environment.ProcessorCount, ThreadPriority.AboveNormal)
+			: this (Environment.ProcessorCount, ThreadPriority.Normal)
 		{
 			
 		}
@@ -61,15 +61,15 @@ namespace System.Threading.Tasks
 		
 		public void ParticipateUntil (Task task)
 		{
-			if (AreTasksFinished (task))
+			if (task.IsCompleted)
 				return;
 			
-			ParticipateUntil (() => AreTasksFinished (task));
+			ParticipateUntil (() => task.IsCompleted);
 		}
 		
 		public bool ParticipateUntil (Task task, Func<bool> predicate)
 		{
-			if (AreTasksFinished (task))
+			if (task.IsCompleted)
 				return false;
 			
 			bool isFromPredicate = false;
@@ -79,7 +79,7 @@ namespace System.Threading.Tasks
 					isFromPredicate = true;
 					return true;
 				}
-				return AreTasksFinished (task);	
+				return task.IsCompleted;
 			});
 				
 			return isFromPredicate;
@@ -102,12 +102,6 @@ namespace System.Threading.Tasks
 			foreach (ThreadWorker w in workers)
 				w.Dispose ();
 		}
-		
-		bool AreTasksFinished (Task parent)
-		{
-			return parent.IsCompleted;
-		}
-
 		#region Scheduler dummy stubs
 		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
 		{

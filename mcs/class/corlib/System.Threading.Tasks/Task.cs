@@ -56,7 +56,8 @@ namespace System.Threading.Tasks
 		
 		volatile AggregateException  exception;
 		volatile bool                exceptionObserved;
-		volatile TaskStatus          status;
+
+		TaskStatus          status;
 		
 		Action<object> action;
 		object         state;
