@@ -47,6 +47,7 @@
     <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
     <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
     <Compile Include="argument.cs" />
+    <Compile Include="assembly.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="anonymous.cs" />
     <Compile Include="assign.cs" />
