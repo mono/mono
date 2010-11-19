@@ -288,10 +288,10 @@ namespace System.Xaml
 
 			manager.StartObject ();
 
-			OnWriteStartObject (xamlType);
-
 			var cstate = new ObjectState () {Type = xamlType, IsInstantiated = false};
 			object_states.Push (cstate);
+
+			OnWriteStartObject ();
 		}
 		
 		public void WriteValue (object value)
@@ -351,7 +351,7 @@ namespace System.Xaml
 
 		protected abstract void OnWriteEndMember ();
 
-		protected abstract void OnWriteStartObject (XamlType xamlType);
+		protected abstract void OnWriteStartObject ();
 
 		protected abstract void OnWriteGetObject ();
 
@@ -448,8 +448,11 @@ namespace System.Xaml
 			}
 		}
 		
-		protected override void OnWriteStartObject (XamlType xamlType)
+		protected override void OnWriteStartObject ()
 		{
+			var tmp = object_states.Pop ();
+			XamlType xamlType = tmp.Type;
+
 			WritePendingStartMember (XamlNodeType.StartObject);
 
 			string ns = xamlType.PreferredXamlNamespace;
@@ -481,6 +484,8 @@ namespace System.Xaml
 					w.WriteEndAttribute ();
 				}
 			}
+
+			object_states.Push (tmp);
 		}
 
 		protected override void OnWriteGetObject ()
