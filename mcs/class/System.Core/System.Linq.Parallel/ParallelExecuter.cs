@@ -166,36 +166,68 @@ namespace System.Linq.Parallel
 			}
 
 			for (int i = 0; i < tasks.Length; i++) {
-				int index = i;
+				var procSlot = new AggregateProcessSlot<T, U> (options,
+				                                               i,
+				                                               enumerables[i].GetEnumerator (),
+				                                               locals,
+				                                               localCall,
+				                                               seedFunc);
 
-				tasks[i] = Task.Factory.StartNew (() => {
-					var enumerator = enumerables[index].GetEnumerator ();
-					var token = options.Token;
-					var implementerToken = options.ImplementerToken;
-
-					try {
-						if (seedFunc == null) {
-							if (!enumerator.MoveNext ())
-								return;
-							locals[index] = (U)(object)enumerator.Current;
-						}
-						
-						while (enumerator.MoveNext ()) {
-							if (implementerToken.IsCancellationRequested)
-								break;
-							token.ThrowIfCancellationRequested ();
-							locals[index] = localCall (locals[index], enumerator.Current);
-						}
-					} finally {
-						enumerator.Dispose ();
-					}
-				}, options.Token);
+				tasks[i] = Task.Factory.StartNew (procSlot.Process, options.Token);
 			}
 
 			Task.WaitAll (tasks, options.Token);
 
 			if (call != null)
 				call (locals);
+		}
+
+		class AggregateProcessSlot<T, U>
+		{
+			readonly QueryOptions options;
+			readonly int index;
+			readonly IEnumerator<T> enumerator;
+			readonly U[] locals;
+			readonly Func<U, T, U> localCall;
+			readonly Func<U> seedFunc;
+
+			public AggregateProcessSlot (QueryOptions options,
+			                             int index,
+			                             IEnumerator<T> enumerator,
+			                             U[] locals,
+			                             Func<U, T, U> localCall,
+			                             Func<U> seedFunc)
+			{
+				this.options = options;
+				this.index = index;
+				this.enumerator = enumerator;
+				this.locals = locals;
+				this.localCall = localCall;
+				this.seedFunc = seedFunc;
+			}
+
+			public void Process ()
+			{
+				var token = options.Token;
+				var implementerToken = options.ImplementerToken;
+
+				try {
+					if (seedFunc == null) {
+						if (!enumerator.MoveNext ())
+							return;
+						locals[index] = (U)(object)enumerator.Current;
+					}
+
+					while (enumerator.MoveNext ()) {
+						if (implementerToken.IsCancellationRequested)
+							break;
+						token.ThrowIfCancellationRequested ();
+						locals[index] = localCall (locals[index], enumerator.Current);
+					}
+				} finally {
+					enumerator.Dispose ();
+				}
+			}
 		}
 	}
 }
