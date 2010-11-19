@@ -474,10 +474,15 @@ private CodeDomProvider GetProvider(string langId)
 //
 // Document generation
 //
+class UTF8StringWriter : StringWriter {
+	public override Encoding Encoding {
+		get { return Encoding.UTF8; }
+	}
+}
 
 string GenerateDocument ()
 {
-	StringWriter sw = new StringWriter ();
+	UTF8StringWriter sw = new UTF8StringWriter ();
 	
 	if (CurrentDocType == "wsdl")
 		descriptions [CurrentDocInd].Write (sw);
