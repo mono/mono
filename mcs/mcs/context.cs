@@ -558,6 +558,8 @@ namespace Mono.CSharp
 			this.root = new GlobalRootNamespace ();
 		}
 
+		#region Properties
+
 		public GlobalRootNamespace GlobalRootNamespace {
 			get {
 				return root;
@@ -583,6 +585,8 @@ namespace Mono.CSharp
 				return report;
 			}
 		}
+
+		#endregion
 	}
 
 	//

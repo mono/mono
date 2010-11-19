@@ -1,4 +1,4 @@
-// cs1548.cs: Error during assembly signing. The specified file `file_not_found.snk' does not exist
+// CS1548: Error during assembly signing. The specified key file `file_not_found.snk' does not exist
 // Line: 0
 
 using System.Reflection;

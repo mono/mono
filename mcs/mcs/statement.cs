@@ -4854,13 +4854,18 @@ namespace Mono.CSharp {
 			}
 
 			if (General != null) {
-				if (CodeGen.Assembly.WrapNonExceptionThrows) {
-					foreach (Catch c in Specific){
-						if (c.CatchType == TypeManager.exception_type && ec.Compiler.PredefinedAttributes.RuntimeCompatibility.IsDefined) {
-							ec.Report.Warning (1058, 1, c.loc,
-								"A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
-						}
-					}
+				foreach (Catch c in Specific) {
+					if (c.CatchType != TypeManager.exception_type)
+						continue;
+
+					if (!ec.CurrentMemberDefinition.Module.DeclaringAssembly.WrapNonExceptionThrows)
+						continue;
+
+					if (!ec.Compiler.PredefinedAttributes.RuntimeCompatibility.IsDefined)
+						continue;
+
+					ec.Report.Warning (1058, 1, c.loc,
+						"A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
 				}
 
 				ec.CurrentBranching.CreateSibling (General.Block, FlowBranching.SiblingType.Catch);

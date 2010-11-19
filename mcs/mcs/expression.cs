@@ -6465,7 +6465,7 @@ namespace Mono.CSharp {
 			
 			byte [] data = MakeByteBlob ();
 
-			fb = RootContext.MakeStaticData (data);
+			fb = ec.CurrentTypeDefinition.Module.Module.MakeStaticData (data);
 
 			ec.Emit (OpCodes.Dup);
 			ec.Emit (OpCodes.Ldtoken, fb);
@@ -7670,7 +7670,7 @@ namespace Mono.CSharp {
 								emg.SetTypeArguments (rc, targs);
 							}
 
-							// TODO: Should it really skip the checks bellow
+							// TODO: it should really skip the checks bellow
 							return emg.Resolve (rc);
 						}
 					}
@@ -7808,7 +7808,7 @@ namespace Mono.CSharp {
 					break;
 				}
 
-				if (nested.IsAccessible (rc.CurrentType ?? InternalType.FakeInternalType))
+				if (nested.IsAccessible (rc.CurrentType))
 					break;
 
 				// Keep looking after inaccessible candidate
@@ -9562,7 +9562,7 @@ namespace Mono.CSharp {
 
 		AnonymousTypeClass CreateAnonymousType (ResolveContext ec, IList<AnonymousTypeParameter> parameters)
 		{
-			AnonymousTypeClass type = parent.Module.Compiled.GetAnonymousType (parameters);
+			AnonymousTypeClass type = parent.Module.GetAnonymousType (parameters);
 			if (type != null)
 				return type;
 
@@ -9578,7 +9578,7 @@ namespace Mono.CSharp {
 			if (ec.Report.Errors == 0)
 				type.CloseType ();
 
-			parent.Module.Compiled.AddAnonymousType (type);
+			parent.Module.AddAnonymousType (type);
 			return type;
 		}
 

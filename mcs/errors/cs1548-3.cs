@@ -1,4 +1,4 @@
-// cs1548-3.cs: Error during assembly signing. The specified file `cs1548.pub' does not have a private key
+// CS1548: Error during assembly signing. The specified key file does not have a private key
 // Line: 0
 
 using System.Reflection;

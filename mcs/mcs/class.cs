@@ -166,7 +166,7 @@ namespace Mono.CSharp {
 		List<MemberCore> operators;
 
 		// Holds the compiler generated classes
-		List<CompilerGeneratedClass> compiler_generated;
+		protected List<CompilerGeneratedClass> compiler_generated;
 
 		Dictionary<MethodSpec, Method> hoisted_base_call_proxies;
 
@@ -270,6 +270,18 @@ namespace Mono.CSharp {
 					return total - CurrentTypeParameters.Length;
 				}
 				return total;
+			}
+		}
+
+		public virtual AssemblyDefinition DeclaringAssembly {
+			get {
+				return Module.DeclaringAssembly;
+			}
+		}
+
+		IAssemblyDefinition ITypeDefinition.DeclaringAssembly {
+			get {
+				return Module.DeclaringAssembly;
 			}
 		}
 
@@ -637,12 +649,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public IList<CompilerGeneratedClass> CompilerGeneratedClasses {
-			get {
-				return compiler_generated;
-			}
-		}
-
 		protected override TypeAttributes TypeAttr {
 			get {
 				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) | base.TypeAttr;
@@ -1007,11 +1013,9 @@ namespace Mono.CSharp {
 			if (IsTopLevel) {
 				if (Compiler.GlobalRootNamespace.IsNamespace (Name)) {
 					Report.Error (519, Location, "`{0}' clashes with a predefined namespace", Name);
-					return false;
 				}
 
-				ModuleBuilder builder = Module.Compiled.Builder;
-				TypeBuilder = builder.DefineType (Name, TypeAttr, null, type_size);
+				TypeBuilder = Module.CreateBuilder (Name, TypeAttr, type_size);
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
 
@@ -1141,13 +1145,15 @@ namespace Mono.CSharp {
 					Report.Error (529, Location,
 						"Inherited interface `{0}' causes a cycle in the interface hierarchy of `{1}'",
 					    GetSignatureForError (), cycle.GetSignatureForError ());
+
+					iface_exprs = null;
 				} else {
 					Report.Error (146, Location,
 						"Circular base class dependency involving `{0}' and `{1}'",
 						GetSignatureForError (), cycle.GetSignatureForError ());
-				}
 
-				base_type = null;
+					base_type = null;
+				}
 			}
 
 			if (iface_exprs != null) {
@@ -1467,6 +1473,9 @@ namespace Mono.CSharp {
 		{
 			if (iface_exprs != null) {
 				foreach (TypeExpr iface in iface_exprs) {
+					if (iface == null)
+						continue;
+
 					var iface_type = iface.Type;
 
 					// Ensure the base is always setup
@@ -1498,7 +1507,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (base_type_expr != null) {
+			if (base_type != null) {
 				ObsoleteAttribute obsolete_attr = base_type.GetAttributeObsolete ();
 				if (obsolete_attr != null && !IsObsolete)
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), Location, Report);
@@ -1506,9 +1515,7 @@ namespace Mono.CSharp {
 				var ct = base_type_expr as GenericTypeExpr;
 				if (ct != null)
 					ct.CheckConstraints (this);
-			}
 
-			if (base_type != null) {
 				var baseContainer = base_type.MemberDefinition as ClassOrStruct;
 				if (baseContainer != null) {
 					baseContainer.Define ();
@@ -2053,6 +2060,11 @@ namespace Mono.CSharp {
 			} while (type != null);
 
 			return false;
+		}
+
+		bool ITypeDefinition.IsInternalAsPublic (IAssemblyDefinition assembly)
+		{
+			return Module.DeclaringAssembly == assembly;
 		}
 
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
@@ -3060,7 +3072,7 @@ namespace Mono.CSharp {
 				// which has InternalsVisibleTo
 				//
 				if ((thisp & (Modifiers.PROTECTED | Modifiers.INTERNAL)) == (Modifiers.PROTECTED | Modifiers.INTERNAL)) {
-					return TypeManager.IsThisOrFriendAssembly (this_member.Assembly, base_member.Assembly);
+					return base_member.DeclaringType.MemberDefinition.IsInternalAsPublic (this_member.Module.DeclaringAssembly);
 				} 
 				if ((thisp & Modifiers.PROTECTED) != Modifiers.PROTECTED) {
 					//
@@ -3069,7 +3081,7 @@ namespace Mono.CSharp {
 
 					return false;
 				}
-				if (this_member.Parent.PartialContainer.Module.Assembly == base_member.Assembly) {
+				if (this_member.Parent.PartialContainer.DeclaringAssembly == base_member.DeclaringType.MemberDefinition.DeclaringAssembly) {
 					//
 					// protected within the same assembly - an error
 					//

@@ -22,127 +22,111 @@ using System.Security.Permissions;
 
 using Mono.Security.Cryptography;
 
-namespace Mono.CSharp {
-
-	public abstract class CommonAssemblyModulClass : Attributable, IMemberContext
+namespace Mono.CSharp
+{
+	public interface IAssemblyDefinition
 	{
-		public void AddAttributes (List<Attribute> attrs, IMemberContext context)
-		{
-			foreach (Attribute a in attrs)
-				a.AttachTo (this, context);
+		string FullName { get; }
+		bool HasExtensionMethod { get; }
+		bool IsCLSCompliant { get; }
+		string Name { get; }
 
-			if (attributes == null) {
-				attributes = new Attributes (attrs);
-				return;
-			}
-			attributes.AddAttributes (attrs);
-		}
-
-		public virtual void Emit (TypeContainer tc) 
-		{
-			if (OptAttributes == null)
-				return;
-
-			OptAttributes.Emit ();
-		}
-
-		protected Attribute ResolveAttribute (PredefinedAttribute a_type)
-		{
-			Attribute a = OptAttributes.Search (a_type);
-			if (a != null) {
-				a.Resolve ();
-			}
-			return a;
-		}
-
-		#region IMemberContext Members
-
-		public CompilerContext Compiler {
-			get { return RootContext.ToplevelTypes.Compiler; }
-		}
-
-		public TypeSpec CurrentType {
-			get { return null; }
-		}
-
-		public TypeParameter[] CurrentTypeParameters {
-			get { return null; }
-		}
-
-		public MemberCore CurrentMemberDefinition {
-			get { return RootContext.ToplevelTypes; }
-		}
-
-		public string GetSignatureForError ()
-		{
-			return "<module>";
-		}
-
-		public bool HasUnresolvedConstraints {
-			get { return false; }
-		}
-
-		public bool IsObsolete {
-			get { return false; }
-		}
-
-		public bool IsUnsafe {
-			get { return false; }
-		}
-
-		public bool IsStatic {
-			get { return false; }
-		}
-
-		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
-		{
-			return RootContext.ToplevelTypes.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
-		}
-
-		public FullNamedExpression LookupNamespaceAlias (string name)
-		{
-			return null;
-		}
-
-		#endregion
+		byte[] GetPublicKeyToken ();
 	}
                 
-	public class AssemblyClass : CommonAssemblyModulClass {
+	public class AssemblyDefinition : IAssemblyDefinition
+	{
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
+		bool wrap_non_exception_throws_custom;
 
-		public Attribute ClsCompliantAttribute;
+		ModuleContainer module;
+		string name;
+		string file_name;
+		byte[] public_key, public_key_token;
+		bool private_key_exists;
+		bool delay_sign;
+
+		Attribute cls_attribute;
 
 		Dictionary<SecurityAction, PermissionSet> declarative_security;
-		bool has_extension_method;		
-		public AssemblyName Name;
 		MethodInfo add_type_forwarder;
 		Dictionary<ITypeDefinition, Attribute> emitted_forwarders;
 
-		// Module is here just because of error messages
-		static string[] attribute_targets = new string [] { "assembly", "module" };
-
-		public AssemblyClass ()
+		//
+		// In-memory only assembly container
+		//
+		public AssemblyDefinition (ModuleContainer module, string name)
 		{
-			wrap_non_exception_throws = true;
-		}
+			this.module = module;
+			this.name = Path.GetFileNameWithoutExtension (name);
 
-		public bool HasExtensionMethods {
-			set {
-				has_extension_method = value;
+			wrap_non_exception_throws = true;
+
+			delay_sign = RootContext.StrongNameDelaySign;
+
+			//
+			// Load strong name key early enough for assembly importer to be able to
+			// use the keys for InternalsVisibleTo
+			// This should go somewhere close to ReferencesLoading but don't have the place yet
+			//
+			if (RootContext.StrongNameKeyFile != null || RootContext.StrongNameKeyContainer != null) {
+				LoadPublicKey (RootContext.StrongNameKeyFile, RootContext.StrongNameKeyContainer);
 			}
 		}
 
-		public bool IsClsCompliant {
+		//
+		// Assembly container with file output
+		//
+		public AssemblyDefinition (ModuleContainer module, string name, string fileName)
+			: this (module, name)
+		{
+			this.file_name = fileName;
+		}
+
+		#region Properties
+
+		public Attribute CLSCompliantAttribute {
+			get {
+				return cls_attribute;
+			}
+		}
+
+		public CompilerContext Compiler {
+			get {
+				return module.Compiler;
+			}
+		}
+
+		public string FullName {
+			get {
+				return Builder.FullName;
+			}
+		}
+
+		public bool HasExtensionMethod {
+			get {
+				return module.HasExtensionMethod;
+			}
+		}
+
+		public bool HasCLSCompliantAttribute {
+			get {
+				return cls_attribute != null;
+			}
+		}
+
+		public bool IsCLSCompliant {
 			get {
 				return is_cls_compliant;
+			}
+		}
+
+		public string Name {
+			get {
+				return name;
 			}
 		}
 
@@ -152,288 +136,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Assembly;
-			}
-		}
-
-		public override bool IsClsComplianceRequired ()
-		{
-			return is_cls_compliant;
-		}
-
 		Report Report {
-			get { return Compiler.Report; }
-		}
-
-		public void Resolve ()
-		{
-			if (RootContext.Unsafe) {
-				//
-				// Emits [assembly: SecurityPermissionAttribute (SecurityAction.RequestMinimum, SkipVerification = true)]
-				// when -unsafe option was specified
-				//
-				
-				Location loc = Location.Null;
-
-				MemberAccess system_security_permissions = new MemberAccess (new MemberAccess (
-					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Security", loc), "Permissions", loc);
-
-				Arguments pos = new Arguments (1);
-				pos.Add (new Argument (new MemberAccess (new MemberAccess (system_security_permissions, "SecurityAction", loc), "RequestMinimum")));
-
-				Arguments named = new Arguments (1);
-				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (true, loc)));
-
-				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (Compiler, null, null, null), "assembly",
-					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
-					new Arguments[] { pos, named }, loc, false);
-				g.AttachTo (this, this);
-
-				if (g.Resolve () != null) {
-					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
-					g.ExtractSecurityPermissionSet (declarative_security);
-				}
-			}
-
-			if (OptAttributes == null)
-				return;
-
-			// Ensure that we only have GlobalAttributes, since the Search isn't safe with other types.
-			if (!OptAttributes.CheckTargets())
-				return;
-
-			ClsCompliantAttribute = ResolveAttribute (Compiler.PredefinedAttributes.CLSCompliant);
-
-			if (ClsCompliantAttribute != null) {
-				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
-			}
-
-			Attribute a = ResolveAttribute (Compiler.PredefinedAttributes.RuntimeCompatibility);
-			if (a != null) {
-				var val = a.GetPropertyValue ("WrapNonExceptionThrows") as BoolConstant;
-				if (val != null)
-					wrap_non_exception_throws = val.Value;
+			get {
+				return Compiler.Report;
 			}
 		}
 
-		// fix bug #56621
-		private void SetPublicKey (AssemblyName an, byte[] strongNameBlob) 
-		{
-			try {
-				// check for possible ECMA key
-				if (strongNameBlob.Length == 16) {
-					// will be rejected if not "the" ECMA key
-					an.SetPublicKey (strongNameBlob);
-				}
-				else {
-					// take it, with or without, a private key
-					RSA rsa = CryptoConvert.FromCapiKeyBlob (strongNameBlob);
-					// and make sure we only feed the public part to Sys.Ref
-					byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
-					
-					// AssemblyName.SetPublicKey requires an additional header
-					byte[] publicKeyHeader = new byte [12] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00 };
+		#endregion
 
-					byte[] encodedPublicKey = new byte [12 + publickey.Length];
-					Buffer.BlockCopy (publicKeyHeader, 0, encodedPublicKey, 0, 12);
-					Buffer.BlockCopy (publickey, 0, encodedPublicKey, 12, publickey.Length);
-					an.SetPublicKey (encodedPublicKey);
-				}
-			}
-			catch (Exception) {
-				Error_AssemblySigning ("The specified file `" + RootContext.StrongNameKeyFile + "' is incorrectly encoded");
-				Environment.Exit (1);
-			}
-		}
-
-		void Error_ObsoleteSecurityAttribute (Attribute a, string option)
-		{
-			Report.Warning (1699, 1, a.Location,
-				"Use compiler option `{0}' or appropriate project settings instead of `{1}' attribute",
-				option, a.Name);
-		}
-
-		// TODO: rewrite this code (to kill N bugs and make it faster) and use standard ApplyAttribute way.
-		public AssemblyName GetAssemblyName (string name, string output) 
-		{
-			if (OptAttributes != null) {
-				foreach (Attribute a in OptAttributes.Attrs) {
-					// cannot rely on any resolve-based members before you call Resolve
-					if (a.ExplicitTarget == null || a.ExplicitTarget != "assembly")
-						continue;
-
-					// TODO: This code is buggy: comparing Attribute name without resolving is wrong.
-					//       However, this is invoked by CodeGen.Init, when none of the namespaces
-					//       are loaded yet.
-					// TODO: Does not handle quoted attributes properly
-					switch (a.Name) {
-					case "AssemblyKeyFile":
-					case "AssemblyKeyFileAttribute":
-					case "System.Reflection.AssemblyKeyFileAttribute":
-						if (RootContext.StrongNameKeyFile != null) {
-							Report.SymbolRelatedToPreviousError (a.Location, a.GetSignatureForError ());
-							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
-									"keyfile", "System.Reflection.AssemblyKeyFileAttribute");
-						} else {
-							string value = a.GetString ();
-							if (!string.IsNullOrEmpty (value)) {
-								Error_ObsoleteSecurityAttribute (a, "keyfile");
-								RootContext.StrongNameKeyFile = value;
-							}
-						}
-						break;
-					case "AssemblyKeyName":
-					case "AssemblyKeyNameAttribute":
-					case "System.Reflection.AssemblyKeyNameAttribute":
-						if (RootContext.StrongNameKeyContainer != null) {
-							Report.SymbolRelatedToPreviousError (a.Location, a.GetSignatureForError ());
-							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
-									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
-						} else {
-							string value = a.GetString ();
-							if (!string.IsNullOrEmpty (value)) {
-								Error_ObsoleteSecurityAttribute (a, "keycontainer");
-								RootContext.StrongNameKeyContainer = value;
-							}
-						}
-						break;
-					case "AssemblyDelaySign":
-					case "AssemblyDelaySignAttribute":
-					case "System.Reflection.AssemblyDelaySignAttribute":
-						bool b = a.GetBoolean ();
-						if (b) {
-							Error_ObsoleteSecurityAttribute (a, "delaysign");
-						}
-
-						RootContext.StrongNameDelaySign = b;
-						break;
-					}
-				}
-			}
-			
-			AssemblyName an = new AssemblyName ();
-			an.Name = Path.GetFileNameWithoutExtension (name);
-
-			// note: delay doesn't apply when using a key container
-			if (RootContext.StrongNameKeyContainer != null) {
-				an.KeyPair = new StrongNameKeyPair (RootContext.StrongNameKeyContainer);
-				return an;
-			}
-
-			// strongname is optional
-			if (RootContext.StrongNameKeyFile == null)
-				return an;
-
-			string AssemblyDir = Path.GetDirectoryName (output);
-
-			// the StrongName key file may be relative to (a) the compiled
-			// file or (b) to the output assembly. See bugzilla #55320
-			// http://bugzilla.ximian.com/show_bug.cgi?id=55320
-
-			// (a) relative to the compiled file
-			string filename = Path.GetFullPath (RootContext.StrongNameKeyFile);
-			bool exist = File.Exists (filename);
-			if ((!exist) && (AssemblyDir != null) && (AssemblyDir != String.Empty)) {
-				// (b) relative to the outputed assembly
-				filename = Path.GetFullPath (Path.Combine (AssemblyDir, RootContext.StrongNameKeyFile));
-				exist = File.Exists (filename);
-			}
-
-			if (exist) {
-				using (FileStream fs = new FileStream (filename, FileMode.Open, FileAccess.Read)) {
-					byte[] snkeypair = new byte [fs.Length];
-					fs.Read (snkeypair, 0, snkeypair.Length);
-
-					if (RootContext.StrongNameDelaySign) {
-						// delayed signing - DO NOT include private key
-						SetPublicKey (an, snkeypair);
-					}
-					else {
-						// no delay so we make sure we have the private key
-						try {
-							CryptoConvert.FromCapiPrivateKeyBlob (snkeypair);
-							an.KeyPair = new StrongNameKeyPair (snkeypair);
-						}
-						catch (CryptographicException) {
-							if (snkeypair.Length == 16) {
-								// error # is different for ECMA key
-								Report.Error (1606, "Could not sign the assembly. " + 
-									"ECMA key can only be used to delay-sign assemblies");
-							}
-							else {
-								Error_AssemblySigning ("The specified file `" + RootContext.StrongNameKeyFile + "' does not have a private key");
-							}
-							return null;
-						}
-					}
-				}
-			}
-			else {
-				Error_AssemblySigning ("The specified file `" + RootContext.StrongNameKeyFile + "' does not exist");
-				return null;
-			}
-			return an;
-		}
-
-		void Error_AssemblySigning (string text)
-		{
-			Report.Error (1548, "Error during assembly signing. " + text);
-		}
-
-		bool CheckInternalsVisibleAttribute (Attribute a)
-		{
-			string assembly_name = a.GetString ();
-			if (assembly_name.Length == 0)
-				return false;
-				
-			AssemblyName aname = null;
-			try {
-				aname = new AssemblyName (assembly_name);
-			} catch (FileLoadException) {
-			} catch (ArgumentException) {
-			}
-				
-			// Bad assembly name format
-			if (aname == null)
-				Report.Warning (1700, 3, a.Location, "Assembly reference `" + assembly_name + "' is invalid and cannot be resolved");
-			// Report error if we have defined Version or Culture
-			else if (aname.Version != null || aname.CultureInfo != null)
-				throw new Exception ("Friend assembly `" + a.GetString () + 
-						"' is invalid. InternalsVisibleTo cannot have version or culture specified.");
-			else if (aname.GetPublicKey () == null && Name.GetPublicKey () != null && Name.GetPublicKey ().Length != 0) {
-				Report.Error (1726, a.Location, "Friend assembly reference `" + aname.FullName + "' is invalid." +
-						" Strong named assemblies must specify a public key in their InternalsVisibleTo declarations");
-				return false;
-			}
-
-			return true;
-		}
-
-		static string IsValidAssemblyVersion (string version)
-		{
-			Version v;
-			try {
-				v = new Version (version);
-			} catch {
-				try {
-					int major = int.Parse (version, CultureInfo.InvariantCulture);
-					v = new Version (major, 0);
-				} catch {
-					return null;
-				}
-			}
-
-			foreach (int candidate in new int [] { v.Major, v.Minor, v.Build, v.Revision }) {
-				if (candidate > ushort.MaxValue)
-					return null;
-			}
-
-			return new Version (v.Major, System.Math.Max (0, v.Minor), System.Math.Max (0, v.Build), System.Math.Max (0, v.Revision)).ToString (4);
-		}
-
-		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
+		public void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
@@ -504,13 +215,13 @@ namespace Mono.CSharp {
 			if (a.Type == pa.AssemblyFlags) {
 				const int pos = 2; // skip CA header
 				uint flags = (uint) cdata[pos];
-				flags |= ((uint) cdata[pos + 1]) << 8;
-				flags |= ((uint) cdata[pos + 2]) << 16;
-				flags |= ((uint) cdata[pos + 3]) << 24;
+				flags |= ((uint) cdata [pos + 1]) << 8;
+				flags |= ((uint) cdata [pos + 2]) << 16;
+				flags |= ((uint) cdata [pos + 3]) << 24;
 
 				// Ignore set PublicKey flag if assembly is not strongnamed
-				if ((flags & (uint) AssemblyNameFlags.PublicKey) != 0 && (Builder.GetName ().KeyPair == null))
-					flags &= ~(uint)AssemblyNameFlags.PublicKey;
+				if ((flags & (uint) AssemblyNameFlags.PublicKey) != 0 && public_key == null)
+					flags &= ~(uint) AssemblyNameFlags.PublicKey;
 
 				try {
 					var fi = typeof (AssemblyBuilder).GetField ("flags", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
@@ -522,9 +233,6 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == pa.InternalsVisibleTo && !CheckInternalsVisibleAttribute (a))
-				return;
-
 			if (a.Type == pa.TypeForwarder) {
 				TypeSpec t = a.GetArgumentType ();
 				if (t == null || TypeManager.HasElementType (t)) {
@@ -533,17 +241,17 @@ namespace Mono.CSharp {
 				}
 
 				if (emitted_forwarders == null) {
-					emitted_forwarders = new Dictionary<ITypeDefinition, Attribute>  ();
+					emitted_forwarders = new Dictionary<ITypeDefinition, Attribute> ();
 				} else if (emitted_forwarders.ContainsKey (t.MemberDefinition)) {
-					Report.SymbolRelatedToPreviousError(emitted_forwarders[t.MemberDefinition].Location, null);
-					Report.Error(739, a.Location, "A duplicate type forward of type `{0}'",
-						TypeManager.CSharpName(t));
+					Report.SymbolRelatedToPreviousError (emitted_forwarders[t.MemberDefinition].Location, null);
+					Report.Error (739, a.Location, "A duplicate type forward of type `{0}'",
+						TypeManager.CSharpName (t));
 					return;
 				}
 
-				emitted_forwarders.Add(t.MemberDefinition, a);
+				emitted_forwarders.Add (t.MemberDefinition, a);
 
-				if (t.Assembly == Builder) {
+				if (t.MemberDefinition.DeclaringAssembly == this) {
 					Report.SymbolRelatedToPreviousError (t);
 					Report.Error (729, a.Location, "Cannot forward type `{0}' because it is defined in this assembly",
 						TypeManager.CSharpName (t));
@@ -569,24 +277,165 @@ namespace Mono.CSharp {
 				add_type_forwarder.Invoke (Builder, new object[] { t.GetMetaInfo () });
 				return;
 			}
-			
+
 			if (a.Type == pa.Extension) {
 				a.Error_MisusedExtensionAttribute ();
 				return;
 			}
 
+			if (a.Type == pa.InternalsVisibleTo) {
+				string assembly_name = a.GetString ();
+				if (assembly_name.Length == 0)
+					return;
+
+				AssemblyName aname = null;
+				try {
+					aname = new AssemblyName (assembly_name);
+				} catch (Exception) {
+					Report.Warning (1700, 3, a.Location, "Assembly reference `{0}' is invalid and cannot be resolved",
+						assembly_name);
+					return;
+				}
+
+				if (aname.Version != null || aname.CultureInfo != null || aname.ProcessorArchitecture != ProcessorArchitecture.None) {
+					Report.Error (1725, a.Location,
+						"Friend assembly reference `{0}' is invalid. InternalsVisibleTo declarations cannot have a version, culture or processor architecture specified",
+						assembly_name);
+
+					return;
+				}
+
+				// TODO: GetPublicKey () does not work on .NET when AssemblyName is constructed from a string
+				if (public_key != null && aname.GetPublicKey () == null) {
+					Report.Error (1726, a.Location,
+						"Friend assembly reference `{0}' is invalid. Strong named assemblies must specify a public key in their InternalsVisibleTo declarations",
+						assembly_name);
+					return;
+				}
+			} else if (a.Type == pa.RuntimeCompatibility) {
+				wrap_non_exception_throws_custom = true;
+			}
+
 			Builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
-		public override void Emit (TypeContainer tc)
+		//
+		// When using assembly public key attributes InternalsVisibleTo key
+		// was not checked, we have to do it later when we actually know what
+		// our public key token is
+		//
+		void CheckReferencesPublicToken ()
 		{
-			base.Emit (tc);
+			// TODO: It should check only references assemblies but there is
+			// no working SRE API
+			foreach (var a in Compiler.GlobalRootNamespace.Assemblies) {
+				if (public_key != null && !a.HasStrongName) {
+					Report.Error (1577, "Referenced assembly `{0}' does not have a strong name",
+						a.FullName);
+				}
 
-			if (has_extension_method)
+				if (!a.IsFriendAssemblyTo (this))
+					continue;
+
+				var attr = a.GetAssemblyVisibleToName (this);
+				var atoken = attr.GetPublicKeyToken ();
+
+				if (ArrayComparer.IsEqual (GetPublicKeyToken (), atoken))
+					continue;
+
+				Report.Error (281,
+					"Friend access was granted to `{0}', but the output assembly is named `{1}'. Try adding a reference to `{0}' or change the output assembly name to match it",
+					attr.FullName, FullName);
+			}
+		}
+
+		//
+		// Initializes the code generator
+		//
+		public bool Create (AppDomain domain, AssemblyBuilderAccess access)
+		{
+			ResolveAssemblySecurityAttributes ();
+
+			var an = new AssemblyName (name);
+
+			if (public_key != null) {
+				if (!delay_sign && !private_key_exists) {
+					if (public_key.Length == 16) {
+						Report.Error (1606, "Could not sign the assembly. ECMA key can only be used to delay-sign assemblies");
+					} else {
+						Error_AssemblySigning ("The specified key file does not have a private key");
+					}
+				}
+
+				an.SetPublicKey (public_key);
+			}
+
+			try {
+				Builder = file_name == null ?
+					domain.DefineDynamicAssembly (an, access) :
+					domain.DefineDynamicAssembly (an, access, Dirname (file_name));
+			} catch (ArgumentException) {
+				// specified key may not be exportable outside it's container
+				if (RootContext.StrongNameKeyContainer != null) {
+					Report.Error (1548, "Could not access the key inside the container `" +
+						RootContext.StrongNameKeyContainer + "'.");
+				}
+				throw;
+			}
+
+			return true;
+		}
+
+		public ModuleBuilder CreateModuleBuilder ()
+		{
+			// Creates transient module
+			if (file_name == null)
+				return Builder.DefineDynamicModule (name, false);
+
+			ModuleBuilder mbuilder = null;
+
+			try {
+				var module_name = Path.GetFileName (file_name);
+				mbuilder = Builder.DefineDynamicModule (module_name, module_name, RootContext.GenerateDebugInfo);
+
+#if !MS_COMPATIBLE
+				// TODO: We should use SymbolWriter from DefineDynamicModule
+				if (RootContext.GenerateDebugInfo && !SymbolWriter.Initialize (mbuilder, file_name)) {
+					Report.Error (40, "Unexpected debug information initialization error `{0}'",
+						"Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll)");
+				}
+#endif
+			} catch (ExecutionEngineException e) {
+				Report.Error (40, "Unexpected debug information initialization error `{0}'",
+					e.Message);
+			}
+
+			return mbuilder;
+		}
+
+		static string Dirname (string name)
+		{
+			int pos = name.LastIndexOf ('/');
+
+			if (pos != -1)
+				return name.Substring (0, pos);
+
+			pos = name.LastIndexOf ('\\');
+			if (pos != -1)
+				return name.Substring (0, pos);
+
+			return ".";
+		}
+
+		public void Emit ()
+		{
+			module.Emit ();
+
+			if (module.HasExtensionMethod)
 				Compiler.PredefinedAttributes.Extension.EmitAttribute (Builder);
 
-			PredefinedAttribute pa = tc.Compiler.PredefinedAttributes.RuntimeCompatibility;
-			if (pa.IsDefined && (OptAttributes == null || !OptAttributes.Contains (pa))) {
+			PredefinedAttribute pa = Compiler.PredefinedAttributes.RuntimeCompatibility;
+			if (pa.IsDefined && !wrap_non_exception_throws_custom) {
 				var ci = TypeManager.GetPredefinedConstructor (pa.Type, Location.Null, TypeSpec.EmptyTypes);
 				PropertyInfo [] pis = new PropertyInfo [1];
 
@@ -617,18 +466,308 @@ namespace Mono.CSharp {
 					declarative_security.TryGetValue (SecurityAction.RequestOptional, out args [1]);
 					declarative_security.TryGetValue (SecurityAction.RequestRefuse, out args [2]);
 					add_permission.Invoke (builder_instance, args);
-				}
-				catch {
+				} catch {
 					Report.RuntimeMissingSupport (Location.Null, "assembly permission setting");
 				}
 			}
+
+			CheckReferencesPublicToken ();
 		}
 
-		public override string[] ValidAttributeTargets {
-			get {
-				return attribute_targets;
+		public byte[] GetPublicKeyToken ()
+		{
+			if (public_key == null || public_key_token != null)
+				return public_key_token;
+
+			HashAlgorithm ha = SHA1.Create ();
+			byte[] hash = ha.ComputeHash (public_key);
+			// we need the last 8 bytes in reverse order
+			public_key_token = new byte[8];
+			Array.Copy (hash, (hash.Length - 8), public_key_token, 0, 8);
+			Array.Reverse (public_key_token, 0, 8);
+			return public_key_token;
+		}
+
+		//
+		// Either keyFile or keyContainer has to be non-null
+		//
+		void LoadPublicKey (string keyFile, string keyContainer)
+		{
+			if (keyContainer != null) {
+				try {
+					public_key = new StrongNameKeyPair (keyContainer).PublicKey;
+					private_key_exists = true;
+				} catch {
+					Error_AssemblySigning ("The specified key container `" + keyContainer + "' does not exist");
+				}
+
+				return;
+			}
+
+			bool key_file_exists = File.Exists (keyFile);
+
+			//
+			// For attribute based KeyFile do additional lookup
+			// in output assembly path
+			//
+			if (!key_file_exists && RootContext.StrongNameKeyFile == null) {
+				//
+				// The key file can be relative to output assembly
+				//
+				string test_path = Path.Combine (Path.GetDirectoryName (file_name), keyFile);
+				key_file_exists = File.Exists (test_path);
+			}
+
+			if (!key_file_exists) {
+				Error_AssemblySigning ("The specified key file `" + keyFile + "' does not exist");
+				return;
+			}
+
+			using (FileStream fs = new FileStream (keyFile, FileMode.Open, FileAccess.Read)) {
+				byte[] snkeypair = new byte[fs.Length];
+				fs.Read (snkeypair, 0, snkeypair.Length);
+
+				// check for ECMA key
+				if (snkeypair.Length == 16) {
+					public_key = snkeypair;
+					return;
+				}
+
+				try {
+					// take it, with or without, a private key
+					RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
+					// and make sure we only feed the public part to Sys.Ref
+					byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
+
+					// AssemblyName.SetPublicKey requires an additional header
+					byte[] publicKeyHeader = new byte[12] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00 };
+
+					// Encode public key
+					public_key = new byte[12 + publickey.Length];
+					Buffer.BlockCopy (publicKeyHeader, 0, public_key, 0, 12);
+					Buffer.BlockCopy (publickey, 0, public_key, 12, publickey.Length);
+				} catch {
+					Error_AssemblySigning ("The specified key file `" + keyFile + "' has incorrect format");
+					return;
+				}
+
+				if (delay_sign)
+					return;
+
+				try {
+					// TODO: Is there better way to test for a private key presence ?
+					CryptoConvert.FromCapiPrivateKeyBlob (snkeypair);
+					private_key_exists = true;
+				} catch { }
 			}
 		}
+
+		public void Resolve ()
+		{
+			if (RootContext.Unsafe) {
+				//
+				// Emits [assembly: SecurityPermissionAttribute (SecurityAction.RequestMinimum, SkipVerification = true)]
+				// when -unsafe option was specified
+				//
+				
+				Location loc = Location.Null;
+
+				MemberAccess system_security_permissions = new MemberAccess (new MemberAccess (
+					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Security", loc), "Permissions", loc);
+
+				Arguments pos = new Arguments (1);
+				pos.Add (new Argument (new MemberAccess (new MemberAccess (system_security_permissions, "SecurityAction", loc), "RequestMinimum")));
+
+				Arguments named = new Arguments (1);
+				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (true, loc)));
+
+				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (Compiler, null, null, null), "assembly",
+					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
+					new Arguments[] { pos, named }, loc, false);
+				g.AttachTo (module, module);
+
+				if (g.Resolve () != null) {
+					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
+					g.ExtractSecurityPermissionSet (declarative_security);
+				}
+			}
+
+			if (module.OptAttributes == null)
+				return;
+
+			// Ensure that we only have GlobalAttributes, since the Search isn't safe with other types.
+			if (!module.OptAttributes.CheckTargets())
+				return;
+
+			cls_attribute = module.ResolveAssemblyAttribute (Compiler.PredefinedAttributes.CLSCompliant);
+
+			if (cls_attribute != null) {
+				is_cls_compliant = cls_attribute.GetClsCompliantAttributeValue ();
+			}
+
+			Attribute a = module.ResolveAssemblyAttribute (Compiler.PredefinedAttributes.RuntimeCompatibility);
+			if (a != null) {
+				var val = a.GetPropertyValue ("WrapNonExceptionThrows") as BoolConstant;
+				if (val != null)
+					wrap_non_exception_throws = val.Value;
+			}
+		}
+
+		void ResolveAssemblySecurityAttributes ()
+		{
+			string key_file = null;
+			string key_container = null;
+
+			if (module.OptAttributes != null) {
+				foreach (Attribute a in module.OptAttributes.Attrs) {
+					// cannot rely on any resolve-based members before you call Resolve
+					if (a.ExplicitTarget != "assembly")
+						continue;
+
+					// TODO: This code is buggy: comparing Attribute name without resolving is wrong.
+					//       However, this is invoked by CodeGen.Init, when none of the namespaces
+					//       are loaded yet.
+					// TODO: Does not handle quoted attributes properly
+					switch (a.Name) {
+					case "AssemblyKeyFile":
+					case "AssemblyKeyFileAttribute":
+					case "System.Reflection.AssemblyKeyFileAttribute":
+						if (RootContext.StrongNameKeyFile != null) {
+							Report.SymbolRelatedToPreviousError (a.Location, a.GetSignatureForError ());
+							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
+									"keyfile", "System.Reflection.AssemblyKeyFileAttribute");
+						} else {
+							string value = a.GetString ();
+							if (!string.IsNullOrEmpty (value)) {
+								Error_ObsoleteSecurityAttribute (a, "keyfile");
+								key_file = value;
+							}
+						}
+						break;
+					case "AssemblyKeyName":
+					case "AssemblyKeyNameAttribute":
+					case "System.Reflection.AssemblyKeyNameAttribute":
+						if (RootContext.StrongNameKeyContainer != null) {
+							Report.SymbolRelatedToPreviousError (a.Location, a.GetSignatureForError ());
+							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
+									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
+						} else {
+							string value = a.GetString ();
+							if (!string.IsNullOrEmpty (value)) {
+								Error_ObsoleteSecurityAttribute (a, "keycontainer");
+								key_container = value;
+							}
+						}
+						break;
+					case "AssemblyDelaySign":
+					case "AssemblyDelaySignAttribute":
+					case "System.Reflection.AssemblyDelaySignAttribute":
+						bool b = a.GetBoolean ();
+						if (b) {
+							Error_ObsoleteSecurityAttribute (a, "delaysign");
+						}
+
+						delay_sign = b;
+						break;
+					}
+				}
+			}
+
+			// We came here only to report assembly attributes warnings
+			if (public_key != null)
+				return;
+
+			//
+			// Load the strong key file found in attributes when no
+			// command line key was given
+			//
+			if (key_file != null || key_container != null) {
+				LoadPublicKey (key_file, key_container);
+			} else if (delay_sign) {
+				Report.Warning (1607, 1, "Delay signing was requested but no key file was given");
+			}
+		}
+
+		public void Save ()
+		{
+			PortableExecutableKinds pekind;
+			ImageFileMachine machine;
+
+			switch (RootContext.Platform) {
+			case Platform.X86:
+				pekind = PortableExecutableKinds.Required32Bit | PortableExecutableKinds.ILOnly;
+				machine = ImageFileMachine.I386;
+				break;
+			case Platform.X64:
+				pekind = PortableExecutableKinds.ILOnly;
+				machine = ImageFileMachine.AMD64;
+				break;
+			case Platform.IA64:
+				pekind = PortableExecutableKinds.ILOnly;
+				machine = ImageFileMachine.IA64;
+				break;
+			case Platform.AnyCPU:
+			default:
+				pekind = PortableExecutableKinds.ILOnly;
+				machine = ImageFileMachine.I386;
+				break;
+			}
+			try {
+				Builder.Save (module.Builder.ScopeName, pekind, machine);
+			} catch (System.Runtime.InteropServices.COMException) {
+				if ((RootContext.StrongNameKeyFile == null) || (!RootContext.StrongNameDelaySign))
+					throw;
+
+				// FIXME: it seems Microsoft AssemblyBuilder doesn't like to delay sign assemblies 
+				Report.Error (1548, "Couldn't delay-sign the assembly with the '" +
+					RootContext.StrongNameKeyFile +
+					"', Use MCS with the Mono runtime or CSC to compile this assembly.");
+			} catch (System.IO.IOException io) {
+				Report.Error (16, "Could not write to file `" + name + "', cause: " + io.Message);
+				return;
+			} catch (System.UnauthorizedAccessException ua) {
+				Report.Error (16, "Could not write to file `" + name + "', cause: " + ua.Message);
+				return;
+			} catch (System.NotImplementedException nie) {
+				Report.RuntimeMissingSupport (Location.Null, nie.Message);
+				return;
+			}
+		}
+
+		void Error_ObsoleteSecurityAttribute (Attribute a, string option)
+		{
+			Report.Warning (1699, 1, a.Location,
+				"Use compiler option `{0}' or appropriate project settings instead of `{1}' attribute",
+				option, a.Name);
+		}
+
+		void Error_AssemblySigning (string text)
+		{
+			Report.Error (1548, "Error during assembly signing. " + text);
+		}
+
+		static string IsValidAssemblyVersion (string version)
+		{
+			Version v;
+			try {
+				v = new Version (version);
+			} catch {
+				try {
+					int major = int.Parse (version, CultureInfo.InvariantCulture);
+					v = new Version (major, 0);
+				} catch {
+					return null;
+				}
+			}
+
+			foreach (int candidate in new int [] { v.Major, v.Minor, v.Build, v.Revision }) {
+				if (candidate > ushort.MaxValue)
+					return null;
+			}
+
+			return new Version (v.Major, System.Math.Max (0, v.Minor), System.Math.Max (0, v.Build), System.Math.Max (0, v.Revision)).ToString (4);
+		}
+
 
 		// Wrapper for AssemblyBuilder.AddModule
 		static MethodInfo adder_method;

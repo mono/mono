@@ -19,28 +19,93 @@ using System.Runtime.InteropServices;
 namespace Mono.CSharp
 {
 	//
-	// Module container, it can be used as a top-level type
+	// Module (top-level type) container
 	//
 	public class ModuleContainer : TypeContainer
 	{
 		public CharSet DefaultCharSet = CharSet.Ansi;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
 
-		protected Assembly assembly;
+		Method entry_point;
 
-		public ModuleContainer (Assembly assembly)
+		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
+
+		AssemblyDefinition assembly;
+		readonly CompilerContext context;
+
+		ModuleBuilder builder;
+		int static_data_counter;
+
+		// HACK
+		public List<Enum> hack_corlib_enums = new List<Enum> ();
+
+		bool has_default_charset;
+		bool has_extenstion_method;
+
+		static readonly string[] attribute_targets = new string[] { "assembly", "module" };
+
+		public ModuleContainer (CompilerContext context)
 			: base (null, null, MemberName.Null, null, 0)
 		{
-			this.assembly = assembly;
+			this.context = context;
+
+			caching_flags &= ~(Flags.Obsolete_Undetected | Flags.Excluded_Undetected);
+
+			types = new List<TypeContainer> ();
+			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
 		}
 
-		public override Assembly Assembly {
-			get { return assembly; }
+		#region Properties
+
+ 		public override AttributeTargets AttributeTargets {
+ 			get {
+ 				return AttributeTargets.Assembly;
+ 			}
 		}
 
-		// FIXME: Remove this evil one day
-		public ModuleCompiled Compiled {
-			get { return (ModuleCompiled) this; }
+		public ModuleBuilder Builder {
+			get {
+				return builder;
+			}
+		}
+
+		public override CompilerContext Compiler {
+			get {
+				return context;
+			}
+		}
+
+		public override AssemblyDefinition DeclaringAssembly {
+			get {
+				return assembly;
+			}
+		}
+
+		public bool HasDefaultCharSet {
+			get {
+				return has_default_charset;
+			}
+		}
+
+		public bool HasExtensionMethod {
+			get {
+				return has_extenstion_method;
+			}
+			set {
+				has_extenstion_method = value;
+			}
+		}
+
+		//
+		// Module entry point, aka Main method
+		//
+		public Method EntryPoint {
+			get {
+				return entry_point;
+			}
+			set {
+				entry_point = value;
+			}
 		}
 
 		public override ModuleContainer Module {
@@ -48,38 +113,14 @@ namespace Mono.CSharp
 				return this;
 			}
 		}
-	}
 
-	//
-	// Compiled top-level types
-	//
-	public class ModuleCompiled : ModuleContainer
-	{
-		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
-		readonly bool is_unsafe;
-		readonly CompilerContext context;
-
-		ModuleBuilder builder;
-
-		bool has_default_charset;
-
-		static readonly string[] attribute_targets = new string[] { "module" };
-
-		public ModuleCompiled (CompilerContext context, bool isUnsafe)
-			: base (null)
-		{
-			this.is_unsafe = isUnsafe;
-			this.context = context;
-
-			types = new List<TypeContainer> ();
-			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
 		}
 
- 		public override AttributeTargets AttributeTargets {
- 			get {
- 				return AttributeTargets.Module;
- 			}
-		}
+		#endregion
 
 		public void AddAnonymousType (AnonymousTypeClass type)
 		{
@@ -95,14 +136,18 @@ namespace Mono.CSharp
 
 		public void AddAttributes (List<Attribute> attrs)
 		{
+			AddAttributes (attrs, this);
+		}
+
+		public void AddAttributes (List<Attribute> attrs, IMemberContext context)
+		{
 			foreach (Attribute a in attrs)
-				a.AttachTo (this, CodeGen.Assembly);
+				a.AttachTo (this, context);
 
 			if (attributes == null) {
 				attributes = new Attributes (attrs);
 				return;
 			}
-
 			attributes.AddAttributes (attrs);
 		}
 
@@ -113,12 +158,20 @@ namespace Mono.CSharp
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
+			if (a.Target == AttributeTargets.Assembly) {
+				assembly.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				return;
+			}
+
 			if (a.Type == pa.CLSCompliant) {
-				if (CodeGen.Assembly.ClsCompliantAttribute == null) {
-					Report.Warning (3012, 1, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
-				} else if (CodeGen.Assembly.IsClsCompliant != a.GetBoolean ()) {
-					Report.SymbolRelatedToPreviousError (CodeGen.Assembly.ClsCompliantAttribute.Location, CodeGen.Assembly.ClsCompliantAttribute.GetSignatureForError ());
-					Report.Warning (3017, 1, a.Location, "You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly");
+				Attribute cls = DeclaringAssembly.CLSCompliantAttribute;
+				if (cls == null) {
+					Report.Warning (3012, 1, a.Location,
+						"You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
+				} else if (DeclaringAssembly.IsCLSCompliant != a.GetBoolean ()) {
+					Report.SymbolRelatedToPreviousError (cls.Location, cls.GetSignatureForError ());
+					Report.Warning (3017, 1, a.Location,
+						"You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly");
 					return;
 				}
 			}
@@ -126,19 +179,55 @@ namespace Mono.CSharp
 			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
-		public ModuleBuilder Builder {
-			get {
-				return builder;
+		public new void CloseType ()
+		{
+			HackCorlibEnums ();
+
+			foreach (TypeContainer tc in types) {
+				tc.CloseType ();
 			}
 
-			set {
-				builder = value;
-				assembly = builder.Assembly;
+			if (compiler_generated != null)
+				foreach (CompilerGeneratedClass c in compiler_generated)
+					c.CloseType ();
+
+			//
+			// If we have a <PrivateImplementationDetails> class, close it
+			//
+			if (TypeBuilder != null) {
+				var cg = Compiler.PredefinedAttributes.CompilerGenerated;
+				cg.EmitAttribute (TypeBuilder);
+				TypeBuilder.CreateType ();
 			}
 		}
 
-		public override CompilerContext Compiler {
-			get { return context; }
+		public TypeBuilder CreateBuilder (string name, TypeAttributes attr, int typeSize)
+		{
+			return builder.DefineType (name, attr, null, typeSize);
+		}
+
+		public new void Define ()
+		{
+			builder = assembly.CreateModuleBuilder ();
+
+			ResolveGlobalAttributes ();
+
+			foreach (TypeContainer tc in types)
+				tc.CreateType ();
+
+			foreach (TypeContainer tc in types)
+				tc.DefineType ();
+
+			foreach (TypeContainer tc in types)
+				tc.ResolveTypeParameters ();
+
+			foreach (TypeContainer tc in types) {
+				try {
+					tc.Define ();
+				} catch (Exception e) {
+					throw new InternalErrorException (tc, e);
+				}
+			}
 		}
 
 		public override void Emit ()
@@ -146,7 +235,7 @@ namespace Mono.CSharp
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (is_unsafe) {
+			if (RootContext.Unsafe) {
 				TypeSpec t = TypeManager.CoreLookupType (context, "System.Security", "UnverifiableCodeAttribute", MemberKind.Class, true);
 				if (t != null) {
 					var unverifiable_code_ctor = TypeManager.GetPredefinedConstructor (t, Location.Null, TypeSpec.EmptyTypes);
@@ -154,6 +243,24 @@ namespace Mono.CSharp
 						builder.SetCustomAttribute (new CustomAttributeBuilder ((ConstructorInfo) unverifiable_code_ctor.GetMetaInfo (), new object[0]));
 				}
 			}
+
+			foreach (var tc in types)
+				tc.DefineConstants ();
+
+			HackCorlib ();
+
+			foreach (TypeContainer tc in types)
+				tc.EmitType ();
+
+			if (Compiler.Report.Errors > 0)
+				return;
+
+			foreach (TypeContainer tc in types)
+				tc.VerifyMembers ();
+
+			if (compiler_generated != null)
+				foreach (var c in compiler_generated)
+					c.EmitType ();
 		}
 
 		public AnonymousTypeClass GetAnonymousType (IList<AnonymousTypeParameter> parameters)
@@ -176,20 +283,98 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		public bool HasDefaultCharSet {
-			get {
-				return has_default_charset;
-			}
-		}
-
 		public override string GetSignatureForError ()
 		{
 			return "<module>";
 		}
 
+		void HackCorlib ()
+		{
+			if (RootContext.StdLib)
+				return;
+
+			//
+			// HACK: When building corlib mcs uses loaded mscorlib which
+			// has different predefined types and this method sets mscorlib types
+			// to be same to avoid type check errors in CreateType.
+			//
+			var type = typeof (Type);
+			var system_4_type_arg = new[] { type, type, type, type };
+
+			MethodInfo set_corlib_type_builders =
+				typeof (System.Reflection.Emit.AssemblyBuilder).GetMethod (
+				"SetCorlibTypeBuilders", BindingFlags.NonPublic | BindingFlags.Instance, null,
+				system_4_type_arg, null);
+
+			if (set_corlib_type_builders == null) {
+				Compiler.Report.Warning (-26, 3, "The compilation may fail due to missing `{0}.SetCorlibTypeBuilders(...)' method",
+					typeof (System.Reflection.Emit.AssemblyBuilder).FullName);
+				return;
+			}
+
+			object[] args = new object[4];
+			args[0] = TypeManager.object_type.GetMetaInfo ();
+			args[1] = TypeManager.value_type.GetMetaInfo ();
+			args[2] = TypeManager.enum_type.GetMetaInfo ();
+			args[3] = TypeManager.void_type.GetMetaInfo ();
+			set_corlib_type_builders.Invoke (assembly.Builder, args);
+		}
+
+		void HackCorlibEnums ()
+		{
+			if (RootContext.StdLib)
+				return;
+
+			// Another Mono corlib HACK
+			// mono_class_layout_fields requires to have enums created
+			// before creating a class which used the enum for any of its fields
+			foreach (var e in hack_corlib_enums)
+				e.CloseType ();
+		}
+
 		public override bool IsClsComplianceRequired ()
 		{
-			return CodeGen.Assembly.IsClsCompliant;
+			return DeclaringAssembly.IsCLSCompliant;
+		}
+		
+		public AssemblyDefinition MakeExecutable (string name)
+		{
+			assembly = new AssemblyDefinition (this, name);
+			return assembly;
+		}
+		
+		public AssemblyDefinition MakeExecutable (string name, string fileName)
+		{
+			assembly = new AssemblyDefinition (this, name, fileName);
+			return assembly;
+		}
+
+		//
+		// Makes an initialized struct, returns the field builder that
+		// references the data.  Thanks go to Sergey Chaban for researching
+		// how to do this.  And coming up with a shorter mechanism than I
+		// was able to figure out.
+		//
+		// This works but makes an implicit public struct $ArrayType$SIZE and
+		// makes the fields point to it.  We could get more control if we did
+		// use instead:
+		//
+		// 1. DefineNestedType on the impl_details_class with our struct.
+		//
+		// 2. Define the field on the impl_details_class
+		//
+		public FieldBuilder MakeStaticData (byte[] data)
+		{
+			if (TypeBuilder == null) {
+				TypeBuilder = builder.DefineType ("<PrivateImplementationDetails>",
+					TypeAttributes.NotPublic, TypeManager.object_type.GetMetaInfo ());
+			}
+
+			var fb = TypeBuilder.DefineInitializedData (
+				"$$field-" + (static_data_counter++), data,
+				FieldAttributes.Static | FieldAttributes.Assembly);
+
+			return fb;
 		}
 
 		protected override bool AddMemberType (TypeContainer ds)
@@ -209,7 +394,7 @@ namespace Mono.CSharp
 		/// <summary>
 		/// It is called very early therefore can resolve only predefined attributes
 		/// </summary>
-		public void Resolve ()
+		public void ResolveGlobalAttributes ()
 		{
 			if (OptAttributes == null)
 				return;
@@ -217,7 +402,7 @@ namespace Mono.CSharp
 			if (!OptAttributes.CheckTargets ())
 				return;
 
-			Attribute a = ResolveAttribute (Compiler.PredefinedAttributes.DefaultCharset);
+			Attribute a = ResolveModuleAttribute (Compiler.PredefinedAttributes.DefaultCharset);
 			if (a != null) {
 				has_default_charset = true;
 				DefaultCharSet = a.GetCharSetValue ();
@@ -238,19 +423,22 @@ namespace Mono.CSharp
 			}
 		}
 
-		Attribute ResolveAttribute (PredefinedAttribute a_type)
+		public Attribute ResolveAssemblyAttribute (PredefinedAttribute a_type)
 		{
-			Attribute a = OptAttributes.Search (a_type);
+			Attribute a = OptAttributes.Search ("assembly", a_type);
 			if (a != null) {
 				a.Resolve ();
 			}
 			return a;
 		}
 
-		public override string[] ValidAttributeTargets {
-			get {
-				return attribute_targets;
+		Attribute ResolveModuleAttribute (PredefinedAttribute a_type)
+		{
+			Attribute a = OptAttributes.Search ("module", a_type);
+			if (a != null) {
+				a.Resolve ();
 			}
+			return a;
 		}
 	}
 
@@ -274,11 +462,6 @@ namespace Mono.CSharp
 		public override string DocCommentHeader {
 			get { throw new InternalErrorException ("should not be called"); }
 		}
-
-		//public override bool Define ()
-		//{
-		//    throw new InternalErrorException ("should not be called");
-		//}
 
 		public override TypeBuilder DefineType ()
 		{

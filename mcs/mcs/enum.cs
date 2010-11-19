@@ -204,7 +204,7 @@ namespace Mono.CSharp {
 				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
 
 			if (!RootContext.StdLib)
-				RootContext.hack_corlib_enums.Add (this);
+				Module.hack_corlib_enums.Add (this);
 
 			return true;
 		}

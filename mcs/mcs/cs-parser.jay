@@ -127,6 +127,8 @@ namespace Mono.CSharp
 		// A counter to create new class names in interactive mode
 		static int class_count;
 		
+		ModuleContainer module;
+		
 		CompilerContext compiler;
 		
 		//
@@ -610,7 +612,7 @@ global_attributes
 		if ($1 != null) {
 			Attributes attrs = (Attributes)$1;
 			if (global_attrs_enabled) {
-				CodeGen.Assembly.AddAttributes (attrs.Attrs, current_namespace);
+				module.AddAttributes (attrs.Attrs, current_namespace);
 			} else {
 				foreach (Attribute a in attrs.Attrs) {
 					Report.Error (1730, a.Location, "Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
@@ -642,11 +644,8 @@ attribute_sections
 			var sect = (List<Attribute>) $1;
 
 			if (global_attrs_enabled) {
-				if (current_attr_target == "module") {
-					current_container.Module.Compiled.AddAttributes (sect);
-					$$ = null;
-				} else if (current_attr_target != null && current_attr_target.Length > 0) {
-					CodeGen.Assembly.AddAttributes (sect, current_namespace);
+				if (!string.IsNullOrEmpty (current_attr_target)) {
+					module.AddAttributes (sect, current_namespace);
 					$$ = null;
 				} else {
 					$$ = new Attributes (sect);
@@ -673,11 +672,8 @@ attribute_sections
 			var sect = (List<Attribute>) $2;
 
 			if (global_attrs_enabled) {
-				if (current_attr_target == "module") {
-					current_container.Module.Compiled.AddAttributes (sect);
-					$$ = null;
-				} else if (current_attr_target == "assembly") {
-					CodeGen.Assembly.AddAttributes (sect, current_namespace);
+				if (!string.IsNullOrEmpty (current_attr_target)) {
+					module.AddAttributes (sect);
 					$$ = null;
 				} else {
 					if (attrs == null)
@@ -6146,18 +6142,19 @@ static CSharpParser ()
 	oob_stack = new Stack<object> ();
 }
 
-public CSharpParser (SeekableStreamReader reader, CompilationUnit file, CompilerContext ctx)
+public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ModuleContainer module)
 {
 	if (RootContext.EvalMode)
 		undo = new Undo ();
 
 	this.file = file;
-	this.compiler = ctx;
-	current_namespace = new NamespaceEntry (ctx, null, file, null);
+	this.module = module;
+	this.compiler = module.Compiler;
+	current_namespace = new NamespaceEntry (compiler, null, file, null);
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();
-	lexer = new Tokenizer (reader, file, ctx);
+	lexer = new Tokenizer (reader, file, compiler);
 	
 	use_global_stacks = true;
 }

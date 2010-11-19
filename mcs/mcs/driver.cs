@@ -65,7 +65,6 @@ namespace Mono.CSharp
 		
 		string first_source;
 
-		bool want_debugging_support;
 		bool parse_only;
 		bool timestamps;
 		internal int fatal_errors;
@@ -179,7 +178,7 @@ namespace Mono.CSharp
 			return;
 		}
 
-		void Parse (CompilationUnit file)
+		void Parse (CompilationUnit file, ModuleContainer module)
 		{
 			Stream input;
 
@@ -200,14 +199,14 @@ namespace Mono.CSharp
 			input.Position = 0;
 			SeekableStreamReader reader = new SeekableStreamReader (input, encoding);
 
-			Parse (reader, file);
+			Parse (reader, file, module);
 			reader.Dispose ();
 			input.Close ();
 		}	
 		
-		void Parse (SeekableStreamReader reader, CompilationUnit file)
+		void Parse (SeekableStreamReader reader, CompilationUnit file, ModuleContainer module)
 		{
-			CSharpParser parser = new CSharpParser (reader, file, ctx);
+			CSharpParser parser = new CSharpParser (reader, file, module);
 			parser.parse ();
 		}
 
@@ -339,7 +338,7 @@ namespace Mono.CSharp
 
 		void BadAssembly (string filename, string log)
 		{
-			MethodInfo adder_method = AssemblyClass.AddModule_Method;
+			MethodInfo adder_method = AssemblyDefinition.AddModule_Method;
 
 			if (adder_method != null) {
 				AssemblyName an = new AssemblyName ();
@@ -424,14 +423,14 @@ namespace Mono.CSharp
 			}
 		}
 
-		public void LoadModule (string module)
+		public void LoadModule (AssemblyDefinition assembly, string module)
 		{
 			Module m = null;
 			string total_log = "";
 
 			try {
 				try {
-					m = CodeGen.Assembly.AddModule (module);
+					m = assembly.AddModule (module);
 				} catch (FileNotFoundException) {
 					bool err = true;
 					foreach (string dir in link_paths) {
@@ -440,7 +439,7 @@ namespace Mono.CSharp
 							full_path += ".netmodule";
 
 						try {
-							m = CodeGen.Assembly.AddModule (full_path);
+							m = assembly.AddModule (full_path);
 							err = false;
 							break;
 						} catch (FileNotFoundException ff) {
@@ -487,7 +486,7 @@ namespace Mono.CSharp
 
 			if (modules.Count > 0) {
 				foreach (string module in modules)
-					LoadModule (module);
+					LoadModule (null, module);
 			}
 				
 			ctx.GlobalRootNamespace.ComputeNamespaces (ctx);
@@ -688,7 +687,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public void Parse ()
+		public void Parse (ModuleContainer module)
 		{
 			Location.Initialize ();
 
@@ -697,7 +696,7 @@ namespace Mono.CSharp
 				if (tokenize) {
 					tokenize_file (cu [i], ctx);
 				} else {
-					Parse (cu [i]);
+					Parse (cu [i], module);
 				}
 			}
 		}
@@ -1057,7 +1056,7 @@ namespace Mono.CSharp
 
 			case "--debug": case "-g":
 				Report.Warning (-29, 1, "Compatibility: Use -debug option instead of -g or --debug");
-				want_debugging_support = true;
+				RootContext.GenerateDebugInfo = true;
 				return true;
 				
 			case "--noconfig":
@@ -1361,17 +1360,17 @@ namespace Mono.CSharp
 			}
 
 			case "/debug-":
-				want_debugging_support = false;
+				RootContext.GenerateDebugInfo = false;
 				return true;
 				
 			case "/debug":
 				if (value == "full" || value == "")
-					want_debugging_support = true;
+					RootContext.GenerateDebugInfo = true;
 
 				return true;
 				
 			case "/debug+":
-				want_debugging_support = true;
+				RootContext.GenerateDebugInfo = true;
 				return true;
 
 			case "/checked":
@@ -1526,6 +1525,7 @@ namespace Mono.CSharp
 				RootContext.StrongNameKeyContainer = value;
 				return true;
 			case "/delaysign+":
+			case "/delaysign":
 				RootContext.StrongNameDelaySign = true;
 				return true;
 			case "/delaysign-":
@@ -1650,8 +1650,9 @@ namespace Mono.CSharp
 		//
 		public bool Compile ()
 		{
-			// TODO: Should be passed to parser as an argument
-			RootContext.ToplevelTypes = new ModuleCompiled (ctx, RootContext.Unsafe);
+			var module = new ModuleContainer (ctx);
+			RootContext.ToplevelTypes = module;
+
 			var ctypes = TypeManager.InitCoreTypes ();
 
 			if (timestamps) {
@@ -1659,7 +1660,7 @@ namespace Mono.CSharp
 				first_time = DateTime.Now;
 			}
 
-			Parse ();
+			Parse (module);
 			ShowTime ("Parsing source files");
 
 			if (Report.Errors > 0)
@@ -1690,20 +1691,6 @@ namespace Mono.CSharp
 					output_file = first_source + RootContext.TargetExt;
 			}
 
-			if (!CodeGen.Init (output_file, output_file, want_debugging_support, ctx))
-				return false;
-
-			if (RootContext.Target == Target.Module) {
-				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
-				if (module_only == null) {
-					Report.RuntimeMissingSupport (Location.Null, "/target:module");
-					Environment.Exit (1);
-				}
-
-				MethodInfo set_method = module_only.GetSetMethod (true);
-				set_method.Invoke (CodeGen.Assembly.Builder, BindingFlags.Default, null, new object[]{true}, null);
-			}
-
 			ctx.GlobalRootNamespace.AddModuleReference (RootContext.ToplevelTypes.Builder);
 
 			//
@@ -1713,6 +1700,9 @@ namespace Mono.CSharp
 				stopwatch = Stopwatch.StartNew ();
 
 			ctx.MetaImporter.Initialize ();
+
+			var assembly = module.MakeExecutable (output_file, output_file);
+			
 			LoadReferences ();		
 		
 			ShowTime ("Imporing referenced assemblies");
@@ -1724,16 +1714,26 @@ namespace Mono.CSharp
 
 			ShowTime ("Initializing predefined types");
 
-			RootContext.ResolveTree ();
+			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))
+				return false;
+
+			if (RootContext.Target == Target.Module) {
+				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				if (module_only == null) {
+					Report.RuntimeMissingSupport (Location.Null, "/target:module");
+					Environment.Exit (1);
+				}
+
+				MethodInfo set_method = module_only.GetSetMethod (true);
+				set_method.Invoke (assembly.Builder, BindingFlags.Default, null, new object[] { true }, null);
+			}
+
+			module.Define ();
 
 			ShowTime ("Types definition");
 
 			if (Report.Errors > 0)
 				return false;
-
-			RootContext.PopulateTypes ();
-
-			ShowTime ("Type members definition");
 
 			if (Report.Errors == 0 &&
 				RootContext.Documentation != null &&
@@ -1750,10 +1750,10 @@ namespace Mono.CSharp
 				return false;
 			}
 
-			CodeGen.Assembly.Resolve ();
+			assembly.Resolve ();
 			
 			if (RootContext.VerifyClsCompliance) {
-				if (CodeGen.Assembly.IsClsCompliant) {
+				if (assembly.IsCLSCompliant) {
 					AttributeTester.VerifyModulesClsCompliance (ctx);
 				}
 			}
@@ -1766,7 +1766,7 @@ namespace Mono.CSharp
 			if (timestamps)
 				stopwatch = Stopwatch.StartNew ();
 
-			RootContext.EmitCode ();
+			assembly.Emit ();
 
 			ShowTime ("Resolving and emitting members blocks");
 
@@ -1774,7 +1774,7 @@ namespace Mono.CSharp
 				return false;
 			}
 
-			RootContext.CloseTypes (ctx);
+			module.CloseType ();
 
 			ShowTime ("Closing types");
 
@@ -1791,7 +1791,7 @@ namespace Mono.CSharp
 			}
 
 			if (RootContext.NeedsEntryPoint) {
-				Method ep = RootContext.EntryPoint;
+				Method ep = module.EntryPoint;
 
 				if (ep == null) {
 					if (RootContext.MainClass != null) {
@@ -1816,7 +1816,7 @@ namespace Mono.CSharp
 					return false;
 				}
 
-				CodeGen.Assembly.Builder.SetEntryPoint (ep.MethodBuilder, k);
+				assembly.Builder.SetEntryPoint (ep.MethodBuilder, k);
 			} else if (RootContext.MainClass != null) {
 				Report.Error (2017, "Cannot specify -main if building a module or library");
 			}
@@ -1827,7 +1827,7 @@ namespace Mono.CSharp
 					return false;
 				}
 
-				embedded_resources.Emit ();
+				embedded_resources.Emit (assembly);
 			}
 
 			//
@@ -1836,12 +1836,12 @@ namespace Mono.CSharp
 
 			if (win32ResourceFile != null) {
 				try {
-					CodeGen.Assembly.Builder.DefineUnmanagedResource (win32ResourceFile);
+					assembly.Builder.DefineUnmanagedResource (win32ResourceFile);
 				} catch (ArgumentException) {
 					Report.RuntimeMissingSupport (Location.Null, "resource embedding ");
 				}
 			} else {
-				CodeGen.Assembly.Builder.DefineVersionInfoResource ();
+				assembly.Builder.DefineVersionInfoResource ();
 			}
 
 			if (win32IconFile != null) {
@@ -1849,7 +1849,7 @@ namespace Mono.CSharp
 				if (define_icon == null) {
 					Report.RuntimeMissingSupport (Location.Null, "resource embedding");
 				} else {
-					define_icon.Invoke (CodeGen.Assembly.Builder, new object [] { win32IconFile });
+					define_icon.Invoke (assembly.Builder, new object [] { win32IconFile });
 				}
 			}
 
@@ -1859,11 +1859,11 @@ namespace Mono.CSharp
 			if (timestamps)
 				stopwatch = Stopwatch.StartNew ();
 			
-			CodeGen.Save (output_file, Report);
+			assembly.Save ();
 
 			ShowTime ("Saving output assembly");
 
-			if (want_debugging_support) {
+			if (RootContext.GenerateDebugInfo) {
 				SymbolWriter.WriteSymbolFile ();
 				ShowTime ("Saving debug symbols");
 			}
@@ -1880,7 +1880,7 @@ namespace Mono.CSharp
 	{
 		interface IResource
 		{
-			void Emit (CompilerContext cc);
+			void Emit (AssemblyDefinition assembly);
 			string FileName { get; }
 		}
 
@@ -1897,7 +1897,7 @@ namespace Mono.CSharp
 				args [2] = isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public;
 			}
 
-			public void Emit (CompilerContext cc)
+			public void Emit (AssemblyDefinition assembly)
 			{
 				if (embed_res == null) {
 					var argst = new [] {
@@ -1909,11 +1909,11 @@ namespace Mono.CSharp
 						null, CallingConventions.Any, argst, null);
 
 					if (embed_res == null) {
-						cc.Report.RuntimeMissingSupport (Location.Null, "Resource embedding");
+						assembly.Compiler.Report.RuntimeMissingSupport (Location.Null, "Resource embedding");
 					}
 				}
 
-				embed_res.Invoke (CodeGen.Assembly.Builder, args);
+				embed_res.Invoke (assembly.Builder, args);
 			}
 
 			public string FileName {
@@ -1936,9 +1936,9 @@ namespace Mono.CSharp
 				this.attribute = isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public;
 			}
 
-			public void Emit (CompilerContext cc)
+			public void Emit (AssemblyDefinition assembly)
 			{
-				CodeGen.Assembly.Builder.AddResourceFile (name, Path.GetFileName(file), attribute);
+				assembly.Builder.AddResourceFile (name, Path.GetFileName (file), attribute);
 			}
 
 			public string FileName {
@@ -1975,7 +1975,7 @@ namespace Mono.CSharp
 			embedded_resources.Add (name, r);
 		}
 
-		public void Emit ()
+		public void Emit (AssemblyDefinition assembly)
 		{
 			foreach (IResource r in embedded_resources.Values) {
 				if (!File.Exists (r.FileName)) {
@@ -1983,7 +1983,7 @@ namespace Mono.CSharp
 					continue;
 				}
 				
-				r.Emit (ctx);
+				r.Emit (assembly);
 			}
 		}
 	}
@@ -2046,7 +2046,6 @@ namespace Mono.CSharp
 			StringConcat.Reset ();
 			
 			NamespaceEntry.Reset ();
-			CodeGen.Reset ();
 			Attribute.Reset ();
 			AnonymousTypeClass.Reset ();
 			AnonymousMethodBody.Reset ();

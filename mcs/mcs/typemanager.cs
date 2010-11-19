@@ -128,8 +128,6 @@ namespace Mono.CSharp {
 	static public MethodSpec void_decimal_ctor_int_arg;
 	public static MethodSpec void_decimal_ctor_long_arg;
 
-	static Dictionary<Assembly, bool> assembly_internals_vis_attrs;
-
 	static TypeManager ()
 	{
 		Reset ();
@@ -139,8 +137,6 @@ namespace Mono.CSharp {
 	{
 //		object_type = null;
 	
-		assembly_internals_vis_attrs = new Dictionary<Assembly, bool> ();
-		
 		// TODO: I am really bored by all this static stuff
 		system_type_get_type_from_handle =
 		bool_movenext_void =
@@ -590,91 +586,6 @@ namespace Mono.CSharp {
 	public static bool IsSpecialType (TypeSpec t)
 	{
 		return t == arg_iterator_type || t == typed_reference_type;
-	}
-
-	//
-	// Checks whether `invocationAssembly' is same or a friend of the assembly
-	//
-	public static bool IsThisOrFriendAssembly (Assembly invocationAssembly, Assembly assembly)
-	{
-		if (assembly == null)
-			throw new ArgumentNullException ("assembly");
-
-		// TODO: This can happen for constants used at assembly level and
-		// predefined members
-		// But there is no way to test for it for now, so it could be abused
-		// elsewhere too.
-		if (invocationAssembly == null)
-			invocationAssembly = CodeGen.Assembly.Builder;
-
-		if (invocationAssembly == assembly)
-			return true;
-
-		bool value;
-		if (assembly_internals_vis_attrs.TryGetValue (assembly, out value))
-			return value;
-
-		object[] attrs = assembly.GetCustomAttributes (typeof (InternalsVisibleToAttribute), false);
-		if (attrs.Length == 0) {
-			assembly_internals_vis_attrs.Add (assembly, false);
-			return false;
-		}
-
-		bool is_friend = false;
-
-		AssemblyName this_name = CodeGen.Assembly.Name;
-		if (this_name == null)
-			return false;
-
-		byte [] this_token = this_name.GetPublicKeyToken ();
-		foreach (InternalsVisibleToAttribute attr in attrs) {
-			if (attr.AssemblyName == null || attr.AssemblyName.Length == 0)
-				continue;
-			
-			AssemblyName aname = null;
-			try {
-				aname = new AssemblyName (attr.AssemblyName);
-			} catch (FileLoadException) {
-			} catch (ArgumentException) {
-			}
-
-			if (aname == null || aname.Name != this_name.Name)
-				continue;
-			
-			byte [] key_token = aname.GetPublicKeyToken ();
-			if (key_token != null) {
-				if (this_token.Length == 0) {
-					// Same name, but assembly is not strongnamed
-					Error_FriendAccessNameNotMatching (aname.FullName, RootContext.ToplevelTypes.Compiler.Report);
-					break;
-				}
-				
-				if (!CompareKeyTokens (this_token, key_token))
-					continue;
-			}
-
-			is_friend = true;
-			break;
-		}
-
-		assembly_internals_vis_attrs.Add (assembly, is_friend);
-		return is_friend;
-	}
-
-	static bool CompareKeyTokens (byte [] token1, byte [] token2)
-	{
-		for (int i = 0; i < token1.Length; i++)
-			if (token1 [i] != token2 [i])
-				return false;
-
-		return true;
-	}
-
-	static void Error_FriendAccessNameNotMatching (string other_name, Report Report)
-	{
-		Report.Error (281,
-			"Friend access was granted to `{0}', but the output assembly is named `{1}'. Try adding a reference to `{0}' or change the output assembly name to match it",
-			other_name, CodeGen.Assembly.Name.FullName);
 	}
 
 	public static TypeSpec GetElementType (TypeSpec t)

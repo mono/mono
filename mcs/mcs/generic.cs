@@ -347,6 +347,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public IAssemblyDefinition DeclaringAssembly {
+			get	{
+				return Module.DeclaringAssembly;
+			}
+		}
+
 		public override string DocCommentHeader {
 			get {
 				throw new InvalidOperationException (
@@ -544,6 +550,11 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return MemberName.Name;
+		}
+
+		bool ITypeDefinition.IsInternalAsPublic (IAssemblyDefinition assembly)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)

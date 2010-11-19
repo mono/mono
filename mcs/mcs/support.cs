@@ -72,6 +72,25 @@ namespace Mono.CSharp {
 		}
 	}
 
+	static class ArrayComparer
+	{
+		public static bool IsEqual<T> (T[] array1, T[] array2)
+		{
+			if (array1 == null || array2 == null)
+				return array1 == array2;
+
+			var eq = EqualityComparer<T>.Default;
+
+			for (int i = 0; i < array1.Length; ++i) {
+				if (!eq.Equals (array1[i], array2[i])) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+	}
+
 	/// <summary>
 	///   This is an arbitrarily seekable StreamReader wrapper.
 	///

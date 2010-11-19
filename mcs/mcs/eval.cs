@@ -119,7 +119,7 @@ namespace Mono.CSharp {
 
 				ctx = driver.ctx;
 
-				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
+				RootContext.ToplevelTypes = new ModuleContainer (ctx);
 				
 				driver.ProcessDefaultConfig ();
 
@@ -128,10 +128,11 @@ namespace Mono.CSharp {
 					startup_files.Add (file.Path);
 				
 				CompilerCallableEntryPoint.Reset ();
-				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 				var ctypes = TypeManager.InitCoreTypes ();
 
 				ctx.MetaImporter.Initialize ();
+
+				RootContext.ToplevelTypes.MakeExecutable ("temp");
 				driver.LoadReferences ();
 				TypeManager.InitCoreTypes (ctx, ctypes);
 				TypeManager.InitOptionalCoreTypes (ctx);
@@ -153,16 +154,10 @@ namespace Mono.CSharp {
 			CompilerCallableEntryPoint.PartialReset ();
 			RootContext.PartialReset ();
 			
-			RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
-
 			Location.AddFile (null, "{interactive}");
 			Location.Initialize ();
 
 			current_debug_name = "interactive" + (count++) + ".dll";
-			if (Environment.GetEnvironmentVariable ("SAVE") != null){
-				CodeGen.Init (current_debug_name, current_debug_name, false, ctx);
-			} else
-				CodeGen.InitDynamic (ctx, current_debug_name);
 		}
 
 		/// <summary>
@@ -248,7 +243,9 @@ namespace Mono.CSharp {
 			lock (evaluator_lock){
 				if (!inited)
 					Init ();
-				
+
+				RootContext.ToplevelTypes = new ModuleContainer (ctx);
+
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
 				if (parser == null){
@@ -405,14 +402,12 @@ namespace Mono.CSharp {
 				}
 
 				try {
-					RootContext.ResolveTree ();
+					var a = RootContext.ToplevelTypes.MakeExecutable ("temp");
+					a.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Run);
+					RootContext.ToplevelTypes.Define ();
 					if (ctx.Report.Errors != 0)
 						return null;
 					
-					RootContext.PopulateTypes ();
-					if (ctx.Report.Errors != 0)
-						return null;
-
 					MethodOrOperator method = null;
 					foreach (MemberCore member in parser_result.Methods){
 						if (member.Name != "Host")
@@ -635,7 +630,7 @@ namespace Mono.CSharp {
 			}
 			seekable.Position = 0;
 
-			CSharpParser parser = new CSharpParser (seekable, (CompilationUnit) Location.SourceFiles [0], ctx);
+			CSharpParser parser = new CSharpParser (seekable, (CompilationUnit) Location.SourceFiles [0], RootContext.ToplevelTypes);
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
@@ -688,13 +683,16 @@ namespace Mono.CSharp {
 		
 		static CompiledMethod CompileBlock (Class host, Undo undo, Report Report)
 		{
-			RootContext.ResolveTree ();
-			if (Report.Errors != 0){
-				undo.ExecuteUndo ();
-				return null;
+			AssemblyDefinition assembly;
+
+			if (Environment.GetEnvironmentVariable ("SAVE") != null) {
+				assembly = RootContext.ToplevelTypes.MakeExecutable (current_debug_name, current_debug_name);
+			} else {
+				assembly = RootContext.ToplevelTypes.MakeExecutable (current_debug_name);
 			}
-			
-			RootContext.PopulateTypes ();
+
+			assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.RunAndSave);
+			RootContext.ToplevelTypes.Define ();
 
 			if (Report.Errors != 0){
 				undo.ExecuteUndo ();
@@ -720,16 +718,16 @@ namespace Mono.CSharp {
 					throw new Exception ("Internal error: did not find the method builder for the generated method");
 			}
 			
-			RootContext.EmitCode ();
+			RootContext.ToplevelTypes.Emit ();
 			if (Report.Errors != 0){
 				undo.ExecuteUndo ();
 				return null;
 			}
-			
-			RootContext.CloseTypes (ctx);
+
+			RootContext.ToplevelTypes.CloseType ();
 
 			if (Environment.GetEnvironmentVariable ("SAVE") != null)
-				CodeGen.Save (current_debug_name, Report);
+				assembly.Save ();
 
 			if (host == null)
 				return null;
@@ -738,7 +736,7 @@ namespace Mono.CSharp {
 			// Unlike Mono, .NET requires that the MethodInfo is fetched, it cant
 			// work from MethodBuilders.   Retarded, I know.
 			//
-			var tt = CodeGen.Assembly.Builder.GetType (tb.Name);
+			var tt = assembly.Builder.GetType (tb.Name);
 			MethodInfo mi = tt.GetMethod (mb.Name);
 			
 			// Pull the FieldInfos from the type, and keep track of them
@@ -891,7 +889,7 @@ namespace Mono.CSharp {
 			lock (evaluator_lock){
 //				GlobalRootNamespace.Instance.AddAssemblyReference (a);
 //				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
-				ctx.MetaImporter.ImportAssembly (a, ctx.GlobalRootNamespace);
+				ctx.MetaImporter.ImportAssembly (new ImportedAssemblyDefinition (a), ctx.GlobalRootNamespace);
 			}
 		}
 

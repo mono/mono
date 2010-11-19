@@ -142,7 +142,7 @@ namespace Mono.CSharp {
 		// we use @target field as a list of targets. The attribute
 		// has to be resolved only once but emitted for each target.
 		//
-		public virtual void AttachTo (Attributable target, IMemberContext context)
+		public void AttachTo (Attributable target, IMemberContext context)
 		{
 			if (this.targets == null) {
 				this.targets = new Attributable[] { target };
@@ -340,7 +340,7 @@ namespace Mono.CSharp {
 			if (Type != context.Compiler.PredefinedAttributes.DllImport)
 				return;
 
-			if (!RootContext.ToplevelTypes.HasDefaultCharSet)
+			if (!rc.CurrentMemberDefinition.Module.HasDefaultCharSet)
 				return;
 
 			const string CharSetEnumMember = "CharSet";
@@ -355,7 +355,7 @@ namespace Mono.CSharp {
 
 			var char_set = rc.Compiler.MetaImporter.ImportType (typeof (CharSet));	// TODO: typeof
 			NamedArguments.Add (new NamedArgument (CharSetEnumMember, loc,
-				Constant.CreateConstant (rc, char_set, RootContext.ToplevelTypes.DefaultCharSet, Location)));
+				Constant.CreateConstant (rc, char_set, rc.CurrentMemberDefinition.Module.DefaultCharSet, Location)));
  		}
 
 		public Report Report {
@@ -701,6 +701,7 @@ namespace Mono.CSharp {
 				case "field": Target = AttributeTargets.Field; return true;
 				case "method": Target = AttributeTargets.Method; return true;
 				case "property": Target = AttributeTargets.Property; return true;
+				case "module": Target = AttributeTargets.Module; return true;
 				}
 				throw new InternalErrorException ("Unknown explicit target: " + ExplicitTarget);
 			}
@@ -1214,21 +1215,6 @@ namespace Mono.CSharp {
 		{
 			this.ns = ns;
 		}
-		
-		public override void AttachTo (Attributable target, IMemberContext context)
-		{
-			if (ExplicitTarget == "assembly") {
-				base.AttachTo (CodeGen.Assembly, context);
-				return;
-			}
-
-			if (ExplicitTarget == "module") {
-				base.AttachTo (RootContext.ToplevelTypes, context);
-				return;
-			}
-
-			throw new NotImplementedException ("Unknown global explicit target " + ExplicitTarget);
-		}
 
 		void Enter ()
 		{
@@ -1337,7 +1323,15 @@ namespace Mono.CSharp {
 
 		public Attribute Search (PredefinedAttribute t)
 		{
+			return Search (null, t);
+		}
+
+		public Attribute Search (string explicitTarget, PredefinedAttribute t)
+		{
 			foreach (Attribute a in Attrs) {
+				if (explicitTarget != null && a.ExplicitTarget != explicitTarget)
+					continue;
+
 				if (a.ResolveType () == t)
 					return a;
 			}

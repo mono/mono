@@ -13,207 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 
-namespace Mono.CSharp {
-
-	/// <summary>
-	///    Code generator class.
-	/// </summary>
-	public class CodeGen {
-		static AppDomain current_domain;
-
-		// Breaks dynamic and repl
-		public static AssemblyClass Assembly;
-
-		static CodeGen ()
-		{
-			Reset ();
-		}
-
-		public static void Reset ()
-		{
-			Assembly = new AssemblyClass ();
-		}
-
-		public static string Basename (string name)
-		{
-			int pos = name.LastIndexOf ('/');
-
-			if (pos != -1)
-				return name.Substring (pos + 1);
-
-			pos = name.LastIndexOf ('\\');
-			if (pos != -1)
-				return name.Substring (pos + 1);
-
-			return name;
-		}
-
-		public static string Dirname (string name)
-		{
-			int pos = name.LastIndexOf ('/');
-
-			if (pos != -1)
-				return name.Substring (0, pos);
-
-			pos = name.LastIndexOf ('\\');
-			if (pos != -1)
-				return name.Substring (0, pos);
-
-			return ".";
-		}
-
-		static public string FileName;
-				
-		//
-		// Initializes the code generator variables for interactive use (repl)
-		//
-		static public void InitDynamic (CompilerContext ctx, string name)
-		{
-			current_domain = AppDomain.CurrentDomain;
-			AssemblyName an = Assembly.GetAssemblyName (name, name);
-			
-			Assembly.Builder = current_domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
-			RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
-			RootContext.ToplevelTypes.Builder = Assembly.Builder.DefineDynamicModule (Basename (name), false);
-			Assembly.Name = Assembly.Builder.GetName ();
-		}
-
-		//
-		// Initializes the code generator variables
-		//
-		static public bool Init (string name, string output, bool want_debugging_support, CompilerContext ctx)
-		{
-			FileName = output;
-			AssemblyName an = Assembly.GetAssemblyName (name, output);
-			if (an == null)
-				return false;
-
-			if (an.KeyPair != null) {
-				// If we are going to strong name our assembly make
-				// sure all its refs are strong named
-				foreach (Assembly a in ctx.GlobalRootNamespace.Assemblies) {
-					AssemblyName ref_name = a.GetName ();
-					byte [] b = ref_name.GetPublicKeyToken ();
-					if (b == null || b.Length == 0) {
-						ctx.Report.Error (1577, "Assembly generation failed " +
-								"-- Referenced assembly '" +
-								ref_name.Name +
-								"' does not have a strong name.");
-						//Environment.Exit (1);
-					}
-				}
-			}
-			
-			current_domain = AppDomain.CurrentDomain;
-
-			try {
-				Assembly.Builder = current_domain.DefineDynamicAssembly (an,
-					AssemblyBuilderAccess.RunAndSave, Dirname (name));
-			}
-			catch (ArgumentException) {
-				// specified key may not be exportable outside it's container
-				if (RootContext.StrongNameKeyContainer != null) {
-					ctx.Report.Error (1548, "Could not access the key inside the container `" +
-						RootContext.StrongNameKeyContainer + "'.");
-					Environment.Exit (1);
-				}
-				throw;
-			}
-			catch (CryptographicException) {
-				if ((RootContext.StrongNameKeyContainer != null) || (RootContext.StrongNameKeyFile != null)) {
-					ctx.Report.Error (1548, "Could not use the specified key to strongname the assembly.");
-					Environment.Exit (1);
-				}
-				return false;
-			}
-
-			// Get the complete AssemblyName from the builder
-			// (We need to get the public key and token)
-			Assembly.Name = Assembly.Builder.GetName ();
-
-			//
-			// Pass a path-less name to DefineDynamicModule.  Wonder how
-			// this copes with output in different directories then.
-			// FIXME: figure out how this copes with --output /tmp/blah
-			//
-			// If the third argument is true, the ModuleBuilder will dynamically
-			// load the default symbol writer.
-			//
-			try {
-				RootContext.ToplevelTypes.Builder = Assembly.Builder.DefineDynamicModule (
-					Basename (name), Basename (output), want_debugging_support);
-
-#if !MS_COMPATIBLE
-				// TODO: We should use SymbolWriter from DefineDynamicModule
-				if (want_debugging_support && !SymbolWriter.Initialize (RootContext.ToplevelTypes.Builder, output)) {
-					ctx.Report.Error (40, "Unexpected debug information initialization error `{0}'",
-						"Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll)");
-					return false;
-				}
-#endif
-			} catch (ExecutionEngineException e) {
-				ctx.Report.Error (40, "Unexpected debug information initialization error `{0}'",
-					e.Message);
-				return false;
-			}
-
-			return true;
-		}
-
-		public static void Save (string name, Report Report)
-		{
-			PortableExecutableKinds pekind;
-			ImageFileMachine machine;
-
-			switch (RootContext.Platform) {
-			case Platform.X86:
-				pekind = PortableExecutableKinds.Required32Bit | PortableExecutableKinds.ILOnly;
-				machine = ImageFileMachine.I386;
-				break;
-			case Platform.X64:
-				pekind = PortableExecutableKinds.ILOnly;
-				machine = ImageFileMachine.AMD64;
-				break;
-			case Platform.IA64:
-				pekind = PortableExecutableKinds.ILOnly;
-				machine = ImageFileMachine.IA64;
-				break;
-			case Platform.AnyCPU:
-			default:
-				pekind = PortableExecutableKinds.ILOnly;
-				machine = ImageFileMachine.I386;
-				break;
-			}
-			try {
-				Assembly.Builder.Save (Basename (name), pekind, machine);
-			}
-			catch (COMException) {
-				if ((RootContext.StrongNameKeyFile == null) || (!RootContext.StrongNameDelaySign))
-					throw;
-
-				// FIXME: it seems Microsoft AssemblyBuilder doesn't like to delay sign assemblies 
-				Report.Error (1548, "Couldn't delay-sign the assembly with the '" +
-					RootContext.StrongNameKeyFile +
-					"', Use MCS with the Mono runtime or CSC to compile this assembly.");
-			}
-			catch (System.IO.IOException io) {
-				Report.Error (16, "Could not write to file `"+name+"', cause: " + io.Message);
-				return;
-			}
-			catch (System.UnauthorizedAccessException ua) {
-				Report.Error (16, "Could not write to file `"+name+"', cause: " + ua.Message);
-				return;
-			}
-			catch (System.NotImplementedException nie) {
-				Report.RuntimeMissingSupport (Location.Null, nie.Message);
-				return;
-			}
-		}
-	}
-
+namespace Mono.CSharp
+{
 	/// <summary>
 	///   An Emit Context is created for each body of code (from methods,
 	///   properties bodies, indexer bodies or constructor bodies)
@@ -277,6 +79,7 @@ namespace Mono.CSharp {
 
 		DynamicSiteClass dynamic_site_container;
 
+		// TODO: Replace IMemberContext with MemberCore
 		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type)
 		{
 			this.MemberContext = rc;
@@ -321,7 +124,7 @@ namespace Mono.CSharp {
 				return return_type;
 			}
 		}
-#endregion
+		#endregion
 
 		/// <summary>
 		///   This is called immediately before emitting an IL opcode to tell the symbol
@@ -381,7 +184,7 @@ namespace Mono.CSharp {
 				var mc = MemberContext.CurrentMemberDefinition as MemberBase;
 				dynamic_site_container = new DynamicSiteClass (CurrentTypeDefinition.Parent.PartialContainer, mc, CurrentTypeParameters);
 
-				RootContext.ToplevelTypes.AddCompilerGeneratedClass (dynamic_site_container);
+				CurrentTypeDefinition.Module.AddCompilerGeneratedClass (dynamic_site_container);
 				dynamic_site_container.CreateType ();
 				dynamic_site_container.DefineType ();
 				dynamic_site_container.ResolveTypeParameters ();

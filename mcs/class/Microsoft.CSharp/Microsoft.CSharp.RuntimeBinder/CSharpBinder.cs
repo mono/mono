@@ -173,16 +173,23 @@ namespace Microsoft.CSharp.RuntimeBinder
 				}
 
 				importer.Initialize ();
-
-				// I don't think dynamically loaded assemblies can be used as dynamic
-				// expression without static type to be loaded first
-				// AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => { throw new NotImplementedException (); };
-
 				// Import all currently loaded assemblies
 				var ns = cc.GlobalRootNamespace;
-				foreach (System.Reflection.Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) {
+				var domain = AppDomain.CurrentDomain;
+
+				//
+				// Any later loaded assemblies are handled internally by GetAssemblyDefinition
+				// domain.AssemblyLoad cannot be used as that would be too destructive as we
+				// would hold all loaded assemblies even if they can be never visited
+				//
+				// TODO: Remove this code and rely on GetAssemblyDefinition only
+				//
+				Compiler.RootContext.ToplevelTypes = new Compiler.ModuleContainer (cc);
+				var temp = Compiler.RootContext.ToplevelTypes.MakeExecutable ("dynamic");
+				temp.Create (AppDomain.CurrentDomain, System.Reflection.Emit.AssemblyBuilderAccess.Run);
+				foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
 					ns.AddAssemblyReference (a);
-					importer.ImportAssembly (a, ns);
+					importer.ImportAssembly (ns.CreateAssemblyDefinition (a), ns);
 				}
 
 				if (!Compiler.RootContext.EvalMode) {

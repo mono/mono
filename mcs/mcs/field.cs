@@ -382,7 +382,6 @@ namespace Mono.CSharp
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type.GetMetaInfo ());
 
 			fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
-			RootContext.RegisterCompilerGeneratedType (fixed_buffer_type);
 			
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, ModifiersExtensions.FieldAttr (ModFlags));
 			var element_spec = new FieldSpec (null, this, MemberType, FieldBuilder, ModFlags);
@@ -431,6 +430,8 @@ namespace Mono.CSharp
 			EmitFieldSize (buffer_size);
 
 			Compiler.PredefinedAttributes.UnsafeValueType.EmitAttribute (fixed_buffer_type);
+			Compiler.PredefinedAttributes.CompilerGenerated.EmitAttribute (fixed_buffer_type);
+			fixed_buffer_type.CreateType ();
 
 			base.Emit ();
 		}

@@ -827,7 +827,7 @@ namespace Mono.CSharp {
 		{
 			Report.Error (17, b.Location,
 				"Program `{0}' has more than one entry point defined: `{1}'",
-				CodeGen.FileName, b.GetSignatureForError ());
+				b.Module.Builder.ScopeName, b.GetSignatureForError ());
 		}
 
 		bool IsEntryPoint ()
@@ -1060,7 +1060,7 @@ namespace Mono.CSharp {
 					ModFlags |= Modifiers.METHOD_EXTENSION;
 					Parent.PartialContainer.ModFlags |= Modifiers.METHOD_EXTENSION;
 					Spec.DeclaringType.SetExtensionMethodContainer ();
-					CodeGen.Assembly.HasExtensionMethods = true;
+					Parent.Module.HasExtensionMethod = true;
 				} else {
 					Report.Error (1106, Location, "`{0}': Extension methods must be defined in a non-generic static class",
 						GetSignatureForError ());
@@ -1076,16 +1076,16 @@ namespace Mono.CSharp {
 				RootContext.MainClass == Parent.TypeBuilder.FullName)){
 				if (IsEntryPoint ()) {
 
-					if (RootContext.EntryPoint == null) {
+					if (Parent.Module.EntryPoint == null) {
 						if (Parent.IsGeneric || MemberName.IsGeneric) {
 							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",
 								GetSignatureForError ());
 						} else {
 							SetIsUsed ();
-							RootContext.EntryPoint = this;
+							Parent.Module.EntryPoint = this;
 						}
 					} else {
-						Error_DuplicateEntryPoint (RootContext.EntryPoint);
+						Error_DuplicateEntryPoint (Parent.Module.EntryPoint);
 						Error_DuplicateEntryPoint (this);
 					}
 				} else {

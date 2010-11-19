@@ -1,4 +1,4 @@
-// cs1548-2.cs: Error during assembly signing. The specified file `cs1548-2.cs' does not have a private key
+// CS1548: Error during assembly signing. The specified key file `cs1548-2.cs' has incorrect format
 // Line: 0
 
 using System.Reflection;

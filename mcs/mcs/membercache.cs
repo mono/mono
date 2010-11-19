@@ -452,7 +452,7 @@ namespace Mono.CSharp {
 		//
 		// Looks for extension methods with defined name and extension type
 		//
-		public List<MethodSpec> FindExtensionMethods (TypeSpec invocationType, TypeSpec extensionType, string name, int arity)
+		public List<MethodSpec> FindExtensionMethods (TypeContainer invocationType, TypeSpec extensionType, string name, int arity)
 		{
 			IList<MemberSpec> entries;
 			if (!member_hash.TryGetValue (name, out entries))
@@ -467,12 +467,10 @@ namespace Mono.CSharp {
 				if (!ms.IsExtensionMethod)
 					continue;
 
-				if (!ms.IsAccessible (invocationType))
+				if (!ms.IsAccessible (invocationType.CurrentType))
 					continue;
 
-				// TODO: CodeGen.Assembly.Builder
-				if ((ms.DeclaringType.Modifiers & Modifiers.INTERNAL) != 0 &&
-					!TypeManager.IsThisOrFriendAssembly (CodeGen.Assembly.Builder, ms.Assembly))
+				if ((ms.DeclaringType.Modifiers & Modifiers.INTERNAL) != 0 && !ms.DeclaringType.MemberDefinition.IsInternalAsPublic (invocationType.DeclaringAssembly))
 					continue;
 
 				if (candidates == null)
@@ -514,10 +512,9 @@ namespace Mono.CSharp {
 						if ((entry.Modifiers & Modifiers.PRIVATE) != 0)
 							continue;
 
-						if ((entry.Modifiers & Modifiers.AccessibilityMask) == Modifiers.INTERNAL) {
-							if (!TypeManager.IsThisOrFriendAssembly (member.Assembly, entry.Assembly))
-								continue;
-						}
+						if ((entry.Modifiers & Modifiers.AccessibilityMask) == Modifiers.INTERNAL &&
+							!entry.DeclaringType.MemberDefinition.IsInternalAsPublic (member.Module.DeclaringAssembly))
+							continue;
 
 						//
 						// Is the member of same type ?
