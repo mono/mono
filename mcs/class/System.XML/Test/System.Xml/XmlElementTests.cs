@@ -608,6 +608,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test] // bug #380720
+		[Category ("Networking")]
 		public void SetAttributeWithIdentity ()
 		{
 			XmlDocument doc = new XmlDocument ();
