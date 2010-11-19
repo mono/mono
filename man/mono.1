@@ -1009,7 +1009,7 @@ thread scan, it might be faster to enable remset.
 .TP
 \fBevacuation-threshold=\fIthreshold\fR
 Sets the evacuation threshold in percent.  This option is only available
-on the non-parallel Mark&Sweep major collectors.  The value must be an
+on the Mark&Sweep major collectors.  The value must be an
 integer in the range 0 to 100.  The default is 66.  If the sweep phase of
 the collection finds that the occupancy of a specific heap block type is
 less than this percentage, it will do a copying collection for that block
