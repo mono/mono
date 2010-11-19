@@ -297,6 +297,37 @@ namespace MonoTests.System.Xml
 			Validate (File.ReadAllText ("Test/XmlFiles/xsd/584664a.xml"), File.ReadAllText ("Test/XmlFiles/xsd/584664a.xsd"));
 			Validate (File.ReadAllText ("Test/XmlFiles/xsd/584664b.xml"), File.ReadAllText ("Test/XmlFiles/xsd/584664b.xsd"));
 		}
+
+		[Test]
+		public void MultipleMissingIds ()
+		{
+			var schema = XmlSchema.Read (new StringReader (@"<?xml version=""1.0"" encoding=""utf-8""?>
+<xs:schema targetNamespace=""urn:multiple-ids"" elementFormDefault=""qualified"" xmlns=""urn:multiple-ids"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+	<xs:element name=""root"">
+		<xs:complexType>
+			<xs:sequence minOccurs=""0"" maxOccurs=""unbounded"">
+				<xs:element name=""item"">
+					<xs:complexType>
+						<xs:attribute name=""id"" type=""xs:ID"" />
+						<xs:attribute name=""parent"" type=""xs:IDREF"" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>"), null);
+			var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<root xmlns=""urn:multiple-ids"">
+	<item id=""id2"" parent=""id1"" />
+	<item id=""id3"" parent=""id1"" />
+	<item id=""id1"" parent=""id1"" />
+</root>";
+			var document = new XmlDocument ();
+			document.LoadXml (xml);
+			document.Schemas = new XmlSchemaSet ();
+			document.Schemas.Add (schema);
+			document.Validate (null);
+		}
 	}
 }
 
