@@ -1342,7 +1342,7 @@ public class AssemblyNameTest {
 		const string assemblyVersion = "1.2.3.4";
 
 		an = new AssemblyName (assemblyName + ", Version=" + assemblyVersion + 
-				", Culture=" + assemblyCulture + ", PublicKeyToken=" + GetTokenString (pk_token1));
+				", Culture=" + assemblyCulture + ", PublicKeyToken=" + GetTokenString (pk_token1) + ",ProcessorArchitecture=X86");
 		Assert.IsNull (an.CodeBase, "CodeBase");
 		Assert.AreEqual (CultureInfo.InvariantCulture, an.CultureInfo, "CultureInfo");
 		Assert.IsNull (an.EscapedCodeBase, "EscapedCodeBase");
@@ -1352,7 +1352,7 @@ public class AssemblyNameTest {
 		Assert.AreEqual (AssemblyHashAlgorithm.None, an.HashAlgorithm, "HashAlgorithm");
 		Assert.IsNull (an.KeyPair, "KeyPair");
 		Assert.AreEqual (assemblyName, an.Name, "Name");
-		Assert.AreEqual (ProcessorArchitecture.None, an.ProcessorArchitecture, "PA");
+		Assert.AreEqual (ProcessorArchitecture.X86, an.ProcessorArchitecture, "PA");
 		Assert.AreEqual (new Version (assemblyVersion), an.Version, "Version");
 		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
 			an.VersionCompatibility, "VersionCompatibility");
