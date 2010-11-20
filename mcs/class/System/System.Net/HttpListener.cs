@@ -283,37 +283,31 @@ namespace System.Net {
 
 		internal void RegisterContext (HttpListenerContext context)
 		{
-			try {
-				Monitor.Enter (registry);
+			lock (registry)
 				registry [context] = context;
-				Monitor.Enter (wait_queue);
-				Monitor.Enter (ctx_queue);
+
+			ListenerAsyncResult ares = null;
+			lock (wait_queue) {
 				if (wait_queue.Count == 0) {
-					ctx_queue.Add (context);
+					lock (ctx_queue)
+						ctx_queue.Add (context);
 				} else {
-					ListenerAsyncResult ares = (ListenerAsyncResult) wait_queue [0];
+					ares = (ListenerAsyncResult) wait_queue [0];
 					wait_queue.RemoveAt (0);
-					ares.Complete (context);
 				}
-			} finally {
-				Monitor.Exit (ctx_queue);
-				Monitor.Exit (wait_queue);
-				Monitor.Exit (registry);
 			}
+			if (ares != null)
+				ares.Complete (context);
 		}
 
 		internal void UnregisterContext (HttpListenerContext context)
 		{
-			try {
-				Monitor.Enter (registry);
-				Monitor.Enter (ctx_queue);
+			lock (registry)
+				registry.Remove (context);
+			lock (ctx_queue) {
 				int idx = ctx_queue.IndexOf (context);
 				if (idx >= 0)
 					ctx_queue.RemoveAt (idx);
-				registry.Remove (context);
-			} finally {
-				Monitor.Exit (ctx_queue);
-				Monitor.Exit (registry);
 			}
 		}
 	}
