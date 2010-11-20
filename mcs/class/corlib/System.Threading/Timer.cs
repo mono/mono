@@ -186,6 +186,7 @@ namespace System.Threading
 		sealed class Scheduler {
 			static Scheduler instance;
 			SortedList list;
+			ManualResetEvent changed;
 
 			static Scheduler ()
 			{
@@ -198,6 +199,7 @@ namespace System.Threading
 
 			private Scheduler ()
 			{
+				changed = new ManualResetEvent (false);
 				list = new SortedList (new TimerComparer (), 1024);
 				Thread thread = new Thread (SchedulerThread);
 				thread.IsBackground = true;
@@ -219,6 +221,7 @@ namespace System.Threading
 
 			public void Change (Timer timer, long new_next_run)
 			{
+				bool wake = false;
 				lock (this) {
 					InternalRemove (timer);
 					if (new_next_run == Int64.MaxValue) {
@@ -231,10 +234,11 @@ namespace System.Threading
 						timer.next_run = new_next_run;
 						Add (timer);
 						// If this timer is next in line, wake up the scheduler
-						if (list.GetByIndex (0) == timer)
-							Monitor.Pulse (this);
+						wake = (list.GetByIndex (0) == timer);
 					}
 				}
+				if (wake)
+					changed.Set ();
 			}
 
 			// lock held by caller
@@ -310,8 +314,10 @@ namespace System.Threading
 				Thread.CurrentThread.Name = "Timer-Scheduler";
 				ArrayList new_time = new ArrayList (512);
 				while (true) {
+					int ms_wait = -1;
 					long ticks = DateTime.GetTimeMonotonic ();
 					lock (this) {
+						changed.Reset ();
 						//PrintList ();
 						int i;
 						int count = list.Count;
@@ -359,17 +365,16 @@ namespace System.Threading
 							min_next_run = ((Timer) list.GetByIndex (0)).next_run;
 
 						//PrintList ();
-						int ms_wait = -1;
+						ms_wait = -1;
 						if (min_next_run != Int64.MaxValue) {
 							long diff = min_next_run - DateTime.GetTimeMonotonic (); 
 							ms_wait = (int)(diff / TimeSpan.TicksPerMillisecond);
 							if (ms_wait < 0)
 								ms_wait = 0;
 						}
-
-						// Wait until due time or a timer is changed and moves from/to the first place in the list.
-						Monitor.Wait (this, ms_wait);
 					}
+					// Wait until due time or a timer is changed and moves from/to the first place in the list.
+					changed.WaitOne (ms_wait);
 				}
 			}
 
