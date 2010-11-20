@@ -297,7 +297,8 @@ namespace System.Drawing
 			if (! disposed) {
 				if (GDIPlus.UseCarbonDrawable || GDIPlus.UseCocoaDrawable) {
 					Flush ();
-					maccontext.Release ();
+					if (maccontext != null)
+						maccontext.Release ();
 				}
 
 				status = GDIPlus.GdipDeleteGraphics (nativeObject);
