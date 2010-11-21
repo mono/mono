@@ -441,7 +441,7 @@ namespace Mono.CSharp
 		public void Emit ()
 		{
 			if (RootContext.Target == Target.Module) {
-				module_target_attrs = new AssemblyAttributesPlaceholder (module);
+				module_target_attrs = new AssemblyAttributesPlaceholder (module, name);
 				module_target_attrs.CreateType ();
 				module_target_attrs.DefineType ();
 				module_target_attrs.Define ();
@@ -827,13 +827,13 @@ namespace Mono.CSharp
 	//
 	class AssemblyAttributesPlaceholder : CompilerGeneratedClass
 	{
-		public static readonly string TypeName = "<$AssemblyAttributes>";
+		static readonly string TypeNamePrefix = "<$AssemblyAttributes${0}>";
 		public static readonly string AssemblyFieldName = "attributes";
 
 		Field assembly;
 
-		public AssemblyAttributesPlaceholder (ModuleContainer parent)
-			: base (parent, new MemberName (TypeName), Modifiers.STATIC)
+		public AssemblyAttributesPlaceholder (ModuleContainer parent, string outputName)
+			: base (parent, new MemberName (GetGeneratedName (outputName)), Modifiers.STATIC)
 		{
 			assembly = new Field (this, new TypeExpression (TypeManager.object_type, Location), Modifiers.PUBLIC | Modifiers.STATIC,
 				new MemberName (AssemblyFieldName), null);
@@ -844,6 +844,11 @@ namespace Mono.CSharp
 		public void AddAssemblyAttribute (MethodSpec ctor, byte[] data)
 		{
 			assembly.SetCustomAttribute (ctor, data);
+		}
+
+		public static string GetGeneratedName (string outputName)
+		{
+			return string.Format (TypeNamePrefix, outputName);
 		}
 	}
 

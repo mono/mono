@@ -1211,7 +1211,7 @@ namespace Mono.CSharp
 		//
 		public List<Attribute> ReadAssemblyAttributes ()
 		{
-			var t = module.GetType (AssemblyAttributesPlaceholder.TypeName);
+			var t = module.GetType (AssemblyAttributesPlaceholder.GetGeneratedName (Name));
 			if (t == null)
 				return null;
 
