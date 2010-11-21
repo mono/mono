@@ -56,6 +56,7 @@ namespace Mono.CSharp
 		StrongNameKeyPair private_key;	
 
 		Attribute cls_attribute;
+		Method entry_point;
 
 		List<ImportedModuleDefinition> added_modules;
 		Dictionary<SecurityAction, PermissionSet> declarative_security;
@@ -104,6 +105,18 @@ namespace Mono.CSharp
 		public CompilerContext Compiler {
 			get {
 				return module.Compiler;
+			}
+		}
+
+		//
+		// Assembly entry point, aka Main method
+		//
+		public Method EntryPoint {
+			get {
+				return entry_point;
+			}
+			set {
+				entry_point = value;
 			}
 		}
 
@@ -497,6 +510,8 @@ namespace Mono.CSharp
 			}
 
 			CheckReferencesPublicToken ();
+
+			SetEntryPoint ();
 		}
 
 		public byte[] GetPublicKeyToken ()
@@ -785,6 +800,61 @@ namespace Mono.CSharp
 				module_target_attrs.AddAssemblyAttribute (ctor, data);
 			else
 				Builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), data);
+		}
+
+		void SetEntryPoint ()
+		{
+			if (!RootContext.NeedsEntryPoint) {
+				if (RootContext.MainClass != null)
+					Report.Error (2017, "Cannot specify -main if building a module or library");
+
+				return;
+			}
+
+			PEFileKinds file_kind;
+
+			switch (RootContext.Target) {
+			case Target.Library:
+			case Target.Module:
+				file_kind = PEFileKinds.Dll;
+				break;
+			case Target.WinExe:
+				file_kind = PEFileKinds.WindowApplication;
+				break;
+			default:
+				file_kind = PEFileKinds.ConsoleApplication;
+				break;
+			}
+
+			if (entry_point == null) {
+				if (RootContext.MainClass != null) {
+					// TODO: Should use MemberCache
+					DeclSpace main_cont = module.GetDefinition (RootContext.MainClass) as DeclSpace;
+					if (main_cont == null) {
+						Report.Error (1555, "Could not find `{0}' specified for Main method", RootContext.MainClass);
+						return;
+					}
+
+					if (!(main_cont is ClassOrStruct)) {
+						Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", RootContext.MainClass);
+						return;
+					}
+
+					Report.Error (1558, main_cont.Location, "`{0}' does not have a suitable static Main method", main_cont.GetSignatureForError ());
+					return;
+				}
+
+				if (Report.Errors == 0) {
+					string pname = file_name == null ? name : Path.GetFileName (file_name);
+
+					Report.Error (5001, "Program `{0}' does not contain a static `Main' method suitable for an entry point",
+						pname);
+				}
+
+				return;
+			}
+
+			Builder.SetEntryPoint (entry_point.MethodBuilder, file_kind);
 		}
 
 		void Error_ObsoleteSecurityAttribute (Attribute a, string option)

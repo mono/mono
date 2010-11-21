@@ -1076,16 +1076,16 @@ namespace Mono.CSharp {
 				RootContext.MainClass == Parent.TypeBuilder.FullName)){
 				if (IsEntryPoint ()) {
 
-					if (Parent.Module.EntryPoint == null) {
+					if (Parent.DeclaringAssembly.EntryPoint == null) {
 						if (Parent.IsGeneric || MemberName.IsGeneric) {
 							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",
 								GetSignatureForError ());
 						} else {
 							SetIsUsed ();
-							Parent.Module.EntryPoint = this;
+							Parent.DeclaringAssembly.EntryPoint = this;
 						}
 					} else {
-						Error_DuplicateEntryPoint (Parent.Module.EntryPoint);
+						Error_DuplicateEntryPoint (Parent.DeclaringAssembly.EntryPoint);
 						Error_DuplicateEntryPoint (this);
 					}
 				} else {

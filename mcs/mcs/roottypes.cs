@@ -26,8 +26,6 @@ namespace Mono.CSharp
 		public CharSet DefaultCharSet = CharSet.Ansi;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
 
-		Method entry_point;
-
 		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
 
 		AssemblyDefinition assembly;
@@ -100,18 +98,6 @@ namespace Mono.CSharp
 			}
 			set {
 				has_extenstion_method = value;
-			}
-		}
-
-		//
-		// Module entry point, aka Main method
-		//
-		public Method EntryPoint {
-			get {
-				return entry_point;
-			}
-			set {
-				entry_point = value;
 			}
 		}
 

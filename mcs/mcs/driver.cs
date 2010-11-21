@@ -1781,49 +1781,6 @@ namespace Mono.CSharp
 
 			ShowTime ("Closing types");
 
-			PEFileKinds k = PEFileKinds.ConsoleApplication;
-
-			switch (RootContext.Target) {
-			case Target.Library:
-			case Target.Module:
-				k = PEFileKinds.Dll; break;
-			case Target.Exe:
-				k = PEFileKinds.ConsoleApplication; break;
-			case Target.WinExe:
-				k = PEFileKinds.WindowApplication; break;
-			}
-
-			if (RootContext.NeedsEntryPoint) {
-				Method ep = module.EntryPoint;
-
-				if (ep == null) {
-					if (RootContext.MainClass != null) {
-						DeclSpace main_cont = RootContext.ToplevelTypes.GetDefinition (RootContext.MainClass) as DeclSpace;
-						if (main_cont == null) {
-							Report.Error (1555, "Could not find `{0}' specified for Main method", RootContext.MainClass); 
-							return false;
-						}
-
-						if (!(main_cont is ClassOrStruct)) {
-							Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", RootContext.MainClass);
-							return false;
-						}
-
-						Report.Error (1558, main_cont.Location, "`{0}' does not have a suitable static Main method", main_cont.GetSignatureForError ());
-						return false;
-					}
-
-					if (Report.Errors == 0)
-						Report.Error (5001, "Program `{0}' does not contain a static `Main' method suitable for an entry point",
-							output_file);
-					return false;
-				}
-
-				assembly.Builder.SetEntryPoint (ep.MethodBuilder, k);
-			} else if (RootContext.MainClass != null) {
-				Report.Error (2017, "Cannot specify -main if building a module or library");
-			}
-
 			if (embedded_resources != null){
 				if (RootContext.Target == Target.Module) {
 					Report.Error (1507, "Cannot link resource file when building a module");
@@ -1836,7 +1793,6 @@ namespace Mono.CSharp
 			//
 			// Add Win32 resources
 			//
-
 			if (win32ResourceFile != null) {
 				try {
 					assembly.Builder.DefineUnmanagedResource (win32ResourceFile);
