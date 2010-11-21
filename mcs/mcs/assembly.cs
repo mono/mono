@@ -38,6 +38,8 @@ namespace Mono.CSharp
 	{
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
+		AssemblyBuilderExtension builder_extra;
+
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
 		bool wrap_non_exception_throws_custom;
@@ -51,9 +53,10 @@ namespace Mono.CSharp
 
 		Attribute cls_attribute;
 
+		List<ImportedModuleDefinition> added_modules;
 		Dictionary<SecurityAction, PermissionSet> declarative_security;
-		MethodInfo add_type_forwarder;
 		Dictionary<ITypeDefinition, Attribute> emitted_forwarders;
+		AssemblyAttributesPlaceholder module_target_attrs;
 
 		//
 		// In-memory only assembly container
@@ -144,6 +147,17 @@ namespace Mono.CSharp
 
 		#endregion
 
+		public void AddModule (string moduleFile)
+		{
+			var mod = builder_extra.AddModule (moduleFile);
+			var imported = Compiler.MetaImporter.ImportModule (mod, module.GlobalRootNamespace);
+
+			if (added_modules == null) {
+				added_modules = new List<ImportedModuleDefinition> ();
+				added_modules.Add (imported);
+			}
+		}		
+
 		public void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
@@ -164,11 +178,13 @@ namespace Mono.CSharp
 					return;
 				}
 
-				try {
-					var fi = typeof (AssemblyBuilder).GetField ("culture", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-					fi.SetValue (Builder, value == "neutral" ? "" : value);
-				} catch {
-					Report.RuntimeMissingSupport (a.Location, "AssemblyCultureAttribute setting");
+				if (value == "neutral")
+					value = "";
+
+				if (RootContext.Target == Target.Module) {
+					SetCustomAttribute (ctor, cdata);
+				} else {
+					builder_extra.SetCulture (value, a.Location);
 				}
 
 				return;
@@ -185,11 +201,10 @@ namespace Mono.CSharp
 					return;
 				}
 
-				try {
-					var fi = typeof (AssemblyBuilder).GetField ("version", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-					fi.SetValue (Builder, vinfo);
-				} catch {
-					Report.RuntimeMissingSupport (a.Location, "AssemblyVersionAttribute setting");
+				if (RootContext.Target == Target.Module) {
+					SetCustomAttribute (ctor, cdata);
+				} else {
+					builder_extra.SetVersion (vinfo, a.Location);
 				}
 
 				return;
@@ -202,11 +217,10 @@ namespace Mono.CSharp
 				alg |= ((uint) cdata [pos + 2]) << 16;
 				alg |= ((uint) cdata [pos + 3]) << 24;
 
-				try {
-					var fi = typeof (AssemblyBuilder).GetField ("algid", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-					fi.SetValue (Builder, alg);
-				} catch {
-					Report.RuntimeMissingSupport (a.Location, "AssemblyAlgorithmIdAttribute setting");
+				if (RootContext.Target == Target.Module) {
+					SetCustomAttribute (ctor, cdata);
+				} else {
+					builder_extra.SetAlgorithmId (alg, a.Location);
 				}
 
 				return;
@@ -223,11 +237,10 @@ namespace Mono.CSharp
 				if ((flags & (uint) AssemblyNameFlags.PublicKey) != 0 && public_key == null)
 					flags &= ~(uint) AssemblyNameFlags.PublicKey;
 
-				try {
-					var fi = typeof (AssemblyBuilder).GetField ("flags", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-					fi.SetValue (Builder, flags);
-				} catch {
-					Report.RuntimeMissingSupport (a.Location, "AssemblyFlagsAttribute setting");
+				if (RootContext.Target == Target.Module) {
+					SetCustomAttribute (ctor, cdata);
+				} else {
+					builder_extra.SetFlags (flags, a.Location);
 				}
 
 				return;
@@ -264,17 +277,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				if (add_type_forwarder == null) {
-					add_type_forwarder = typeof (AssemblyBuilder).GetMethod ("AddTypeForwarder",
-						BindingFlags.NonPublic | BindingFlags.Instance);
-
-					if (add_type_forwarder == null) {
-						Report.RuntimeMissingSupport (a.Location, "TypeForwardedTo attribute");
-						return;
-					}
-				}
-
-				add_type_forwarder.Invoke (Builder, new object[] { t.GetMetaInfo () });
+				builder_extra.AddTypeForwarder (t, a.Location);
 				return;
 			}
 
@@ -316,7 +319,7 @@ namespace Mono.CSharp
 				wrap_non_exception_throws_custom = true;
 			}
 
-			Builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
+			SetCustomAttribute (ctor, cdata);
 		}
 
 		//
@@ -328,7 +331,7 @@ namespace Mono.CSharp
 		{
 			// TODO: It should check only references assemblies but there is
 			// no working SRE API
-			foreach (var a in Compiler.GlobalRootNamespace.Assemblies) {
+			foreach (var a in Compiler.MetaImporter.Assemblies) {
 				if (public_key != null && !a.HasStrongName) {
 					Report.Error (1577, "Referenced assembly `{0}' does not have a strong name",
 						a.FullName);
@@ -383,6 +386,8 @@ namespace Mono.CSharp
 				throw;
 			}
 
+			builder_extra = new AssemblyBuilderExtension (Builder, Compiler);
+
 			return true;
 		}
 
@@ -429,21 +434,35 @@ namespace Mono.CSharp
 
 		public void Emit ()
 		{
+			if (RootContext.Target == Target.Module) {
+				module_target_attrs = new AssemblyAttributesPlaceholder (module);
+				module_target_attrs.CreateType ();
+				module_target_attrs.DefineType ();
+				module_target_attrs.Define ();
+				module.AddCompilerGeneratedClass (module_target_attrs);
+			} else if (added_modules != null) {
+				ReadModulesAssemblyAttributes ();
+			}
+
 			module.Emit ();
 
-			if (module.HasExtensionMethod)
-				Compiler.PredefinedAttributes.Extension.EmitAttribute (Builder);
+			if (module.HasExtensionMethod) {
+				var pa = Compiler.PredefinedAttributes.Extension;
+				if (pa.IsDefined) {
+					SetCustomAttribute (pa.Constructor, AttributeEncoder.Empty);
+				}
+			}
 
-			PredefinedAttribute pa = Compiler.PredefinedAttributes.RuntimeCompatibility;
-			if (pa.IsDefined && !wrap_non_exception_throws_custom) {
-				var ci = TypeManager.GetPredefinedConstructor (pa.Type, Location.Null, TypeSpec.EmptyTypes);
-				PropertyInfo [] pis = new PropertyInfo [1];
-
-				pis [0] = TypeManager.GetPredefinedProperty (pa.Type,
-					"WrapNonExceptionThrows", Location.Null, TypeManager.bool_type).MetaInfo;
-				object [] pargs = new object [1];
-				pargs [0] = true;
-				Builder.SetCustomAttribute (new CustomAttributeBuilder ((ConstructorInfo) ci.GetMetaInfo (), new object[0], pis, pargs));
+			if (!wrap_non_exception_throws_custom) {
+				PredefinedAttribute pa = Compiler.PredefinedAttributes.RuntimeCompatibility;
+				if (pa.IsDefined && pa.ResolveBuilder ()) {
+					var prop = pa.GetProperty ("WrapNonExceptionThrows", TypeManager.bool_type, Location.Null);
+					if (prop != null) {
+						AttributeEncoder encoder = new AttributeEncoder (false);
+						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (true, Location.Null));
+						SetCustomAttribute (pa.Constructor, encoder.ToArray ());
+					}
+				}
 			}
 
 			if (declarative_security != null) {
@@ -562,6 +581,17 @@ namespace Mono.CSharp
 			}
 		}
 
+		void ReadModulesAssemblyAttributes ()
+		{
+			foreach (var m in added_modules) {
+				var cattrs = m.ReadAssemblyAttributes ();
+				if (cattrs == null)
+					continue;
+
+				module.OptAttributes.AddAttributes (cattrs);
+			}
+		}
+
 		public void Resolve ()
 		{
 			if (RootContext.Unsafe) {
@@ -581,7 +611,7 @@ namespace Mono.CSharp
 				Arguments named = new Arguments (1);
 				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (true, loc)));
 
-				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (Compiler, null, null, null), "assembly",
+				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (module, null, null, null), "assembly",
 					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
 					new Arguments[] { pos, named }, loc, false);
 				g.AttachTo (module, module);
@@ -603,6 +633,16 @@ namespace Mono.CSharp
 
 			if (cls_attribute != null) {
 				is_cls_compliant = cls_attribute.GetClsCompliantAttributeValue ();
+			}
+
+			if (added_modules != null && RootContext.VerifyClsCompliance && is_cls_compliant) {
+				foreach (var m in added_modules) {
+					if (!m.IsCLSCompliant) {
+						Report.Error (3013,
+							"Added modules must be marked with the CLSCompliant attribute to match the assembly",
+							m.Name);
+					}
+				}
 			}
 
 			Attribute a = module.ResolveAssemblyAttribute (Compiler.PredefinedAttributes.RuntimeCompatibility);
@@ -712,16 +752,13 @@ namespace Mono.CSharp
 				machine = ImageFileMachine.I386;
 				break;
 			}
+
+			if (RootContext.Target == Target.Module) {
+				builder_extra.SetModuleTarget ();
+			}
+
 			try {
 				Builder.Save (module.Builder.ScopeName, pekind, machine);
-			} catch (System.Runtime.InteropServices.COMException) {
-				if ((RootContext.StrongNameKeyFile == null) || (!RootContext.StrongNameDelaySign))
-					throw;
-
-				// FIXME: it seems Microsoft AssemblyBuilder doesn't like to delay sign assemblies 
-				Report.Error (1548, "Couldn't delay-sign the assembly with the '" +
-					RootContext.StrongNameKeyFile +
-					"', Use MCS with the Mono runtime or CSC to compile this assembly.");
 			} catch (System.IO.IOException io) {
 				Report.Error (16, "Could not write to file `" + name + "', cause: " + io.Message);
 				return;
@@ -732,6 +769,14 @@ namespace Mono.CSharp
 				Report.RuntimeMissingSupport (Location.Null, nie.Message);
 				return;
 			}
+		}
+
+		void SetCustomAttribute (MethodSpec ctor, byte[] data)
+		{
+			if (module_target_attrs != null)
+				module_target_attrs.AddAssemblyAttribute (ctor, data);
+			else
+				Builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), data);
 		}
 
 		void Error_ObsoleteSecurityAttribute (Attribute a, string option)
@@ -767,30 +812,144 @@ namespace Mono.CSharp
 
 			return new Version (v.Major, System.Math.Max (0, v.Minor), System.Math.Max (0, v.Build), System.Math.Max (0, v.Revision)).ToString (4);
 		}
+	}
 
+	//
+	// A placeholder class for assembly attributes when emitting module
+	//
+	class AssemblyAttributesPlaceholder : CompilerGeneratedClass
+	{
+		public static readonly string TypeName = "<$AssemblyAttributes>";
+		public static readonly string AssemblyFieldName = "attributes";
 
-		// Wrapper for AssemblyBuilder.AddModule
-		static MethodInfo adder_method;
-		static public MethodInfo AddModule_Method {
-			get {
-				if (adder_method == null)
-					adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
-				return adder_method;
-			}
+		Field assembly;
+
+		public AssemblyAttributesPlaceholder (ModuleContainer parent)
+			: base (parent, new MemberName (TypeName), Modifiers.STATIC)
+		{
+			assembly = new Field (this, new TypeExpression (TypeManager.object_type, Location), Modifiers.PUBLIC | Modifiers.STATIC,
+				new MemberName (AssemblyFieldName), null);
+
+			AddField (assembly);
 		}
+
+		public void AddAssemblyAttribute (MethodSpec ctor, byte[] data)
+		{
+			assembly.SetCustomAttribute (ctor, data);
+		}
+	}
+
+	//
+	// Extension to System.Reflection.Emit.AssemblyBuilder to have fully compatible
+	// compiler
+	//
+	class AssemblyBuilderExtension
+	{
+		static MethodInfo adder_method;
+		static MethodInfo set_module_only;
+		static MethodInfo add_type_forwarder;
+		static FieldInfo assembly_version;
+		static FieldInfo assembly_algorithm;
+		static FieldInfo assembly_culture;
+		static FieldInfo assembly_flags;
+
+		AssemblyBuilder builder;
+		CompilerContext ctx;
+
+		public AssemblyBuilderExtension (AssemblyBuilder ab, CompilerContext ctx)
+		{
+			this.builder = ab;
+			this.ctx = ctx;
+		}
+
 		public Module AddModule (string module)
 		{
-			MethodInfo m = AddModule_Method;
-			if (m == null) {
-				Report.RuntimeMissingSupport (Location.Null, "/addmodule");
-				Environment.Exit (1);
+			try {
+				if (adder_method == null)
+					adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance | BindingFlags.NonPublic);
+
+				return (Module) adder_method.Invoke (builder, new object[] { module });
+			} catch {
+				ctx.Report.RuntimeMissingSupport (Location.Null, "-addmodule");
+				return null;
+			}
+		}
+
+		public void AddTypeForwarder (TypeSpec type, Location loc)
+		{
+			try {
+				if (add_type_forwarder == null) {
+					add_type_forwarder = typeof (AssemblyBuilder).GetMethod ("AddTypeForwarder", BindingFlags.NonPublic | BindingFlags.Instance);
+				}
+
+				add_type_forwarder.Invoke (builder, new object[] { type.GetMetaInfo () });
+			} catch {
+				ctx.Report.RuntimeMissingSupport (loc, "TypeForwardedToAttribute");
+			}
+		}
+
+		public void SetAlgorithmId (uint value, Location loc)
+		{
+			try {
+				if (assembly_algorithm == null)
+					assembly_algorithm = typeof (AssemblyBuilder).GetField ("algid", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+
+				assembly_algorithm.SetValue (builder, value);
+			} catch {
+				ctx.Report.RuntimeMissingSupport (loc, "AssemblyAlgorithmIdAttribute");
+			}
+		}
+
+		public void SetCulture (string culture, Location loc)
+		{
+			try {
+				if (assembly_culture == null)
+					assembly_culture = typeof (AssemblyBuilder).GetField ("culture", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+
+				assembly_culture.SetValue (builder, culture);
+			} catch {
+				ctx.Report.RuntimeMissingSupport (loc, "AssemblyCultureAttribute");
+			}
+		}
+
+
+		public void SetFlags (uint flags, Location loc)
+		{
+			try {
+				if (assembly_flags == null)
+					assembly_flags = typeof (AssemblyBuilder).GetField ("flags", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+
+				assembly_flags.SetValue (builder, flags);
+			} catch {
+				ctx.Report.RuntimeMissingSupport (loc, "AssemblyFlagsAttribute");
 			}
 
+		}
+
+		public void SetVersion (string version, Location loc)
+		{
 			try {
-				return (Module) m.Invoke (Builder, new object [] { module });
-			} catch (TargetInvocationException ex) {
-				throw ex.InnerException;
+				if (assembly_version == null)
+					assembly_version = typeof (AssemblyBuilder).GetField ("version", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+
+				assembly_version.SetValue (builder, version);
+			} catch {
+				ctx.Report.RuntimeMissingSupport (loc, "AssemblyVersionAttribute");
 			}
-		}		
+		}
+
+		public void SetModuleTarget ()
+		{
+			try {
+				if (set_module_only == null) {
+					var module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+					set_module_only = module_only.GetSetMethod (true);
+				}
+
+				set_module_only.Invoke (builder, new object[] { true });
+			} catch {
+				ctx.Report.RuntimeMissingSupport (Location.Null, "-target:module");
+			}
+		}
 	}
 }

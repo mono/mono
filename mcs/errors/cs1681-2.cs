@@ -1,3 +1,3 @@
-// CS1681: You cannot redefine the global extern alias
+// CS1681: The global extern alias cannot be redefined
 // Line: 0
 // Compiler options: -r:global=CS1681-2-lib.dll

@@ -1,4 +1,4 @@
-// cs1681.cs: You cannot redefine the global extern alias
+// CS1681: The global extern alias cannot be redefined
 // Line: 3
 extern alias global;
 using System;

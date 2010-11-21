@@ -607,7 +607,7 @@ namespace Mono.CSharp {
 				Constant c = default_expr as Constant;
 				if (c != null) {
 					if (default_expr.Type == TypeManager.decimal_type) {
-						builder.SetCustomAttribute (Const.CreateDecimalConstantAttribute (c, pa));
+						pa.DecimalConstant.EmitAttribute (builder, (decimal) c.GetValue (), c.Location);
 					} else {
 						builder.SetConstant (c.GetTypedValue ());
 					}

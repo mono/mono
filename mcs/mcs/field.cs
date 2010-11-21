@@ -147,6 +147,11 @@ namespace Mono.CSharp
 			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
+		public void SetCustomAttribute (MethodSpec ctor, byte[] data)
+		{
+			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), data);
+		}
+
  		protected override bool CheckBase ()
 		{
  			if (!base.CheckBase ())
@@ -333,8 +338,6 @@ namespace Mono.CSharp
 	{
 		public const string FixedElementName = "FixedElementField";
 		static int GlobalCounter = 0;
-		static object[] ctor_args = new object[] { (short)LayoutKind.Sequential };
-		static FieldInfo[] fi;
 
 		TypeBuilder fixed_buffer_type;
 
@@ -438,25 +441,22 @@ namespace Mono.CSharp
 
 		void EmitFieldSize (int buffer_size)
 		{
-			CustomAttributeBuilder cab;
 			PredefinedAttribute pa;
+			AttributeEncoder encoder;
 
 			pa = Compiler.PredefinedAttributes.StructLayout;
-			if (pa.Constructor == null &&
-				!pa.ResolveConstructor (Location, TypeManager.short_type))
-					return;
+			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.short_type))
+				return;
 
-			// TODO: It's not cleared
-			if (fi == null) {
-				var field = (FieldSpec) MemberCache.FindMember (pa.Type, MemberFilter.Field ("Size", null), BindingRestriction.DeclaredOnly);
-				fi = new FieldInfo[] { field.GetMetaInfo () };
+			var field = pa.GetField ("Size", TypeManager.int32_type, Location);
+			if (field != null) {
+				encoder = new AttributeEncoder (false);
+				encoder.Encode ((short)LayoutKind.Sequential);
+				encoder.EncodeNamedFieldArgument (field, new IntConstant (buffer_size, Location));
+
+				pa.EmitAttribute (fixed_buffer_type, encoder);
 			}
 
-			object[] fi_val = new object[] { buffer_size };
-			cab = new CustomAttributeBuilder (pa.Constructor,
-				ctor_args, fi, fi_val);
-			fixed_buffer_type.SetCustomAttribute (cab);
-			
 			//
 			// Don't emit FixedBufferAttribute attribute for private types
 			//
@@ -464,12 +464,15 @@ namespace Mono.CSharp
 				return;
 
 			pa = Compiler.PredefinedAttributes.FixedBuffer;
-			if (pa.Constructor == null &&
-				!pa.ResolveConstructor (Location, TypeManager.type_type, TypeManager.int32_type))
+			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.type_type, TypeManager.int32_type))
 				return;
 
-			cab = new CustomAttributeBuilder (pa.Constructor, new object[] { MemberType.GetMetaInfo (), buffer_size });
-			FieldBuilder.SetCustomAttribute (cab);
+			encoder = new AttributeEncoder (false);
+			encoder.EncodeTypeName (MemberType);
+			encoder.Encode (buffer_size);
+			encoder.EncodeEmptyNamedArguments ();
+
+			pa.EmitAttribute (FieldBuilder, encoder);
 		}
 
 		public void SetCharSet (TypeAttributes ta)

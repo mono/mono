@@ -547,7 +547,6 @@ namespace Mono.CSharp
 		readonly Report report;
 		readonly ReflectionMetaImporter meta_importer;
 		readonly PredefinedAttributes attributes;
-		readonly GlobalRootNamespace root;
 
 		public CompilerContext (ReflectionMetaImporter metaImporter, Report report)
 		{
@@ -555,16 +554,12 @@ namespace Mono.CSharp
 			this.report = report;
 
 			this.attributes = new PredefinedAttributes ();
-			this.root = new GlobalRootNamespace ();
 		}
 
 		#region Properties
 
-		public GlobalRootNamespace GlobalRootNamespace {
-			get {
-				return root;
-			}
-		}
+		// TODO: Obsolete, it has to go
+		public RootNamespace GlobalRootNamespace { get; set; }
 
 		public bool IsRuntimeBinder { get; set; }
 

@@ -133,8 +133,8 @@ namespace Mono.CSharp {
 				ctx.MetaImporter.Initialize ();
 
 				RootContext.ToplevelTypes.MakeExecutable ("temp");
-				driver.LoadReferences ();
-				TypeManager.InitCoreTypes (ctx, ctypes);
+				driver.LoadReferences (RootContext.ToplevelTypes);
+				TypeManager.InitCoreTypes (RootContext.ToplevelTypes, ctypes);
 				TypeManager.InitOptionalCoreTypes (ctx);
 
 				RootContext.EvalMode = true;
@@ -152,7 +152,6 @@ namespace Mono.CSharp {
 		static void Reset ()
 		{
 			CompilerCallableEntryPoint.PartialReset ();
-			RootContext.PartialReset ();
 			
 			Location.AddFile (null, "{interactive}");
 			Location.Initialize ();
@@ -244,7 +243,7 @@ namespace Mono.CSharp {
 				if (!inited)
 					Init ();
 
-				RootContext.ToplevelTypes = new ModuleContainer (ctx);
+			//	RootContext.ToplevelTypes = new ModuleContainer (ctx);
 
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
@@ -630,7 +629,7 @@ namespace Mono.CSharp {
 			}
 			seekable.Position = 0;
 
-			CSharpParser parser = new CSharpParser (seekable, (CompilationUnit) Location.SourceFiles [0], RootContext.ToplevelTypes);
+			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0], RootContext.ToplevelTypes);
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
@@ -876,8 +875,9 @@ namespace Mono.CSharp {
 		static public void LoadAssembly (string file)
 		{
 			lock (evaluator_lock){
-				driver.LoadAssembly (file, false);
-				ctx.GlobalRootNamespace.ComputeNamespaces (ctx);
+				var a = driver.LoadAssemblyFile (file, false);
+				if (a != null)
+					ctx.MetaImporter.ImportAssembly (a, RootContext.ToplevelTypes.GlobalRootNamespace);
 			}
 		}
 
@@ -887,9 +887,7 @@ namespace Mono.CSharp {
 		static public void ReferenceAssembly (Assembly a)
 		{
 			lock (evaluator_lock){
-//				GlobalRootNamespace.Instance.AddAssemblyReference (a);
-//				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
-				ctx.MetaImporter.ImportAssembly (new ImportedAssemblyDefinition (a), ctx.GlobalRootNamespace);
+				ctx.MetaImporter.ImportAssembly (a, RootContext.ToplevelTypes.GlobalRootNamespace);
 			}
 		}
 

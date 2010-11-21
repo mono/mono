@@ -352,15 +352,16 @@ namespace Mono.CSharp {
 	///   population of the type has happened (for example, to
 	///   bootstrap the corlib.dll
 	/// </remarks>
-	public static bool InitCoreTypes (CompilerContext ctx, IList<PredefinedTypeSpec> predefined)
+	public static bool InitCoreTypes (ModuleContainer module, IList<PredefinedTypeSpec> predefined)
 	{
+		var ctx = module.Compiler;
 		foreach (var p in predefined) {
 			var found = CoreLookupType (ctx, p.Namespace, p.Name, p.Kind, true);
 			if (found == null || found == p)
 				continue;
 
 			if (!RootContext.StdLib) {
-				var ns = ctx.GlobalRootNamespace.GetNamespace (p.Namespace, false);
+				var ns = module.GlobalRootNamespace.GetNamespace (p.Namespace, false);
 				ns.ReplaceTypeWithPredefined (found, p);
 
 				var tc = found.MemberDefinition as TypeContainer;

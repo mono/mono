@@ -33,6 +33,12 @@ namespace Mono.CSharp
 
 		#region Properties
 
+		public ICollection<ImportedAssemblyDefinition> Assemblies {
+			get {
+				return assembly_2_definition.Values;
+			}
+		}
+
 		public bool IgnorePrivateMembers { get; set; }
 
 		#endregion
@@ -819,16 +825,19 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		public void ImportAssembly (ImportedAssemblyDefinition assembly, Namespace targetNamespace)
+		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)
 		{
 			// It can be used more than once when importing same assembly
 			// into 2 or more global aliases
-			if (!assembly_2_definition.ContainsKey (assembly.Assembly)) {
-				assembly_2_definition.Add (assembly.Assembly, assembly);
-				assembly.ReadAttributes ();
+			ImportedAssemblyDefinition definition;
+			if (!assembly_2_definition.TryGetValue (assembly, out definition)) {
+				definition = new ImportedAssemblyDefinition (assembly);
+				assembly_2_definition.Add (assembly, definition);
+
+				definition.ReadAttributes ();
 			}
 
-			Type extension_type = assembly.HasExtensionMethod ? HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (assembly.Assembly)) : null;
+			Type extension_type = definition.HasExtensionMethod ? HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (assembly)) : null;
 
 			//
 			// This part tries to simulate loading of top-level
@@ -838,7 +847,7 @@ namespace Mono.CSharp
 			//
 			Type[] all_types;
 			try {
-				all_types = assembly.Assembly.GetTypes ();
+				all_types = assembly.GetTypes ();
 			} catch (ReflectionTypeLoadException e) {
 				all_types = e.Types;
 			}
@@ -846,8 +855,11 @@ namespace Mono.CSharp
 			ImportTypes (all_types, targetNamespace, extension_type);
 		}
 
-		public void ImportModule (Module module, Namespace targetNamespace)
+		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)
 		{
+			var module_definition = new ImportedModuleDefinition (module, this);
+			module_definition.ReadAttributes ();
+
 			Type extension_type = HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (module));
 
 			Type[] all_types;
@@ -855,10 +867,11 @@ namespace Mono.CSharp
 				all_types = module.GetTypes ();
 			} catch (ReflectionTypeLoadException e) {
 				all_types = e.Types;
-				throw;
 			}
 
 			ImportTypes (all_types, targetNamespace, extension_type);
+
+			return module_definition;
 		}
 
 		void ImportTypes (Type[] types, Namespace targetNamespace, Type extension_type)
@@ -1149,6 +1162,82 @@ namespace Mono.CSharp
 		public void SetIsUsed ()
 		{
 			// Unused for imported members
+		}
+	}
+
+	public class ImportedModuleDefinition
+	{
+		readonly Module module;
+		bool cls_compliant;
+		//ReflectionMetaImporter metaImporter;
+		
+		public ImportedModuleDefinition (Module module, ReflectionMetaImporter metaImporter)
+		{
+			this.module = module;
+			//this.metaImporter = metaImporter;
+		}
+
+		#region Properties
+
+		public bool IsCLSCompliant {
+			get {
+				return cls_compliant;
+			}
+		}
+
+		public string Name {
+			get {
+				return module.Name;
+			}
+		}
+
+		#endregion
+
+		public void ReadAttributes ()
+		{
+			IList<CustomAttributeData> attrs = CustomAttributeData.GetCustomAttributes (module);
+			foreach (var a in attrs) {
+				var type = a.Constructor.DeclaringType;
+				if (type == typeof (CLSCompliantAttribute)) {
+					cls_compliant = (bool) a.ConstructorArguments[0].Value;
+					continue;
+				}
+			}
+		}
+
+		//
+		// Reads assembly attributes which where attached to a special type because
+		// module does have assembly manifest
+		//
+		public List<Attribute> ReadAssemblyAttributes ()
+		{
+			var t = module.GetType (AssemblyAttributesPlaceholder.TypeName);
+			if (t == null)
+				return null;
+
+			var field = t.GetField (AssemblyAttributesPlaceholder.AssemblyFieldName, BindingFlags.NonPublic | BindingFlags.Static);
+			if (field == null)
+				return null;
+
+			// TODO: implement, the idea is to fabricate specil Attribute class and
+			// add it to OptAttributes before resolving the source code attributes
+			// Need to build module location as well for correct error reporting
+
+			//var assembly_attributes = CustomAttributeData.GetCustomAttributes (field);
+			//var attrs = new List<Attribute> (assembly_attributes.Count);
+			//foreach (var a in assembly_attributes)
+			//{
+			//    var type = metaImporter.ImportType (a.Constructor.DeclaringType);
+			//    var ctor = metaImporter.CreateMethod (a.Constructor, type);
+
+			//    foreach (var carg in a.ConstructorArguments) {
+			//        carg.Value
+			//    }
+
+			//    attrs.Add (new Attribute ("assembly", ctor, null, Location.Null, true));
+			//}
+
+			return null;
 		}
 	}
 

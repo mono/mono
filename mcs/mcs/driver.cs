@@ -317,11 +317,6 @@ namespace Mono.CSharp
 			return 1;
 		}
 
-		public void LoadAssembly (string assembly, bool soft)
-		{
-			LoadAssembly (assembly, null, soft);
-		}
-
 		void Error6 (string name, string log)
 		{
 			if (log != null && log.Length > 0)
@@ -338,7 +333,7 @@ namespace Mono.CSharp
 
 		void BadAssembly (string filename, string log)
 		{
-			MethodInfo adder_method = AssemblyDefinition.AddModule_Method;
+			MethodInfo adder_method = null; // AssemblyDefinition.AddModule_Method;
 
 			if (adder_method != null) {
 				AssemblyName an = new AssemblyName ();
@@ -368,7 +363,7 @@ namespace Mono.CSharp
 			Error9 ("assembly", filename, log);
 		}
 
-		public void LoadAssembly (string assembly, string alias, bool soft)
+		public Assembly LoadAssemblyFile (string assembly, bool soft)
 		{
 			Assembly a = null;
 			string total_log = "";
@@ -398,22 +393,15 @@ namespace Mono.CSharp
 							break;
 						} catch (FileNotFoundException ff) {
 							if (soft)
-								return;
+								return a;
 							total_log += ff.FusionLog;
 						}
 					}
 					if (err) {
 						Error6 (assembly, total_log);
-						return;
+						return a;
 					}
 				}
-
-				// Extern aliased refs require special handling
-				if (alias == null)
-					ctx.GlobalRootNamespace.AddAssemblyReference (a);
-				else
-					ctx.GlobalRootNamespace.DefineRootNamespace (alias, a, ctx);
-
 			} catch (BadImageFormatException f) {
 				// .NET 2.0 throws this if we try to load a module without an assembly manifest ...
 				BadAssembly (f.FileName, f.FusionLog);
@@ -421,16 +409,17 @@ namespace Mono.CSharp
 				// ... while .NET 1.1 throws this
 				BadAssembly (f.FileName, f.FusionLog);
 			}
+
+			return a;
 		}
 
-		public void LoadModule (AssemblyDefinition assembly, string module)
+		void LoadModule (AssemblyDefinition assembly, string module)
 		{
-			Module m = null;
 			string total_log = "";
 
 			try {
 				try {
-					m = assembly.AddModule (module);
+					assembly.AddModule (module);
 				} catch (FileNotFoundException) {
 					bool err = true;
 					foreach (string dir in link_paths) {
@@ -439,7 +428,7 @@ namespace Mono.CSharp
 							full_path += ".netmodule";
 
 						try {
-							m = assembly.AddModule (full_path);
+							assembly.AddModule (full_path);
 							err = false;
 							break;
 						} catch (FileNotFoundException ff) {
@@ -451,9 +440,6 @@ namespace Mono.CSharp
 						return;
 					}
 				}
-
-				ctx.GlobalRootNamespace.AddModuleReference (m);
-
 			} catch (BadImageFormatException f) {
 				Error9 ("module", f.FileName, f.FusionLog);
 			} catch (FileLoadException f) {
@@ -464,32 +450,65 @@ namespace Mono.CSharp
 		/// <summary>
 		///   Loads all assemblies referenced on the command line
 		/// </summary>
-		public void LoadReferences ()
+		public void LoadReferences (ModuleContainer module)
 		{
 			link_paths.Add (GetSystemDir ());
 			link_paths.Add (Directory.GetCurrentDirectory ());
+			Assembly a;
+			var loaded = new List<Tuple<RootNamespace, Assembly>> ();
 
 			//
 			// Load Core Library for default compilation
 			//
-			if (RootContext.StdLib)
-				LoadAssembly ("mscorlib", false);
-
-			foreach (string r in soft_references)
-				LoadAssembly (r, true);
-
-			foreach (string r in references)
-				LoadAssembly (r, false);
-
-			foreach (var entry in external_aliases)
-				LoadAssembly (entry.Value, entry.Key, false);
-
-			if (modules.Count > 0) {
-				foreach (string module in modules)
-					LoadModule (null, module);
+			if (RootContext.StdLib) {
+				a = LoadAssemblyFile ("mscorlib", false);
+				if (a != null)
+					loaded.Add (Tuple.Create (module.GlobalRootNamespace, a));
 			}
-				
-			ctx.GlobalRootNamespace.ComputeNamespaces (ctx);
+
+			foreach (string r in soft_references) {
+				a = LoadAssemblyFile (r, true);
+				if (a != null)
+					loaded.Add (Tuple.Create (module.GlobalRootNamespace, a));
+			}
+
+			foreach (string r in references) {
+				a = LoadAssemblyFile (r, false);
+				if (a == null)
+					continue;
+
+				var key = Tuple.Create (module.GlobalRootNamespace, a);
+				if (loaded.Contains (key))
+					continue;
+
+				loaded.Add (key);
+			}
+
+			foreach (var entry in external_aliases) {
+				a = LoadAssemblyFile (entry.Value, false);
+				if (a == null)
+					continue;
+
+				var key = Tuple.Create (module.CreateRootNamespace (entry.Key), a);
+				if (loaded.Contains (key))
+					continue;
+
+				loaded.Add (key);
+			}
+
+			foreach (var entry in loaded) {
+				ctx.MetaImporter.ImportAssembly (entry.Item2, entry.Item1);
+			}
+		}
+
+		void LoadModules (AssemblyDefinition assembly)
+		{
+			if (modules.Count == 0)
+				return;
+
+			foreach (var module in modules) {
+				LoadModule (assembly, module);
+			}
 		}
 
 		static string [] LoadArgs (string file)
@@ -1691,8 +1710,6 @@ namespace Mono.CSharp
 					output_file = first_source + RootContext.TargetExt;
 			}
 
-			ctx.GlobalRootNamespace.AddModuleReference (RootContext.ToplevelTypes.Builder);
-
 			//
 			// Load assemblies required
 			//
@@ -1703,11 +1720,11 @@ namespace Mono.CSharp
 
 			var assembly = module.MakeExecutable (output_file, output_file);
 			
-			LoadReferences ();		
+			LoadReferences (module);
 		
 			ShowTime ("Imporing referenced assemblies");
 			
-			if (!TypeManager.InitCoreTypes (ctx, ctypes))
+			if (!TypeManager.InitCoreTypes (module, ctypes))
 				return false;
 
 			TypeManager.InitOptionalCoreTypes (ctx);
@@ -1717,16 +1734,7 @@ namespace Mono.CSharp
 			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))
 				return false;
 
-			if (RootContext.Target == Target.Module) {
-				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				if (module_only == null) {
-					Report.RuntimeMissingSupport (Location.Null, "/target:module");
-					Environment.Exit (1);
-				}
-
-				MethodInfo set_method = module_only.GetSetMethod (true);
-				set_method.Invoke (assembly.Builder, BindingFlags.Default, null, new object[] { true }, null);
-			}
+			LoadModules (assembly);
 
 			module.Define ();
 
@@ -1752,11 +1760,6 @@ namespace Mono.CSharp
 
 			assembly.Resolve ();
 			
-			if (RootContext.VerifyClsCompliance) {
-				if (assembly.IsCLSCompliant) {
-					AttributeTester.VerifyModulesClsCompliance (ctx);
-				}
-			}
 			if (Report.Errors > 0)
 				return false;
 			

@@ -1011,7 +1011,8 @@ namespace Mono.CSharp {
 			int type_size = Kind == MemberKind.Struct && first_nonstatic_field == null ? 1 : 0;
 
 			if (IsTopLevel) {
-				if (Compiler.GlobalRootNamespace.IsNamespace (Name)) {
+				// TODO: Completely wrong
+				if (Module.GlobalRootNamespace.IsNamespace (Name)) {
 					Report.Error (519, Location, "`{0}' clashes with a predefined namespace", Name);
 				}
 
@@ -1629,8 +1630,11 @@ namespace Mono.CSharp {
 				!pa.ResolveConstructor (Location, TypeManager.string_type))
 				return;
 
-			CustomAttributeBuilder cb = new CustomAttributeBuilder (pa.Constructor, new string [] { GetAttributeDefaultMember () });
-			TypeBuilder.SetCustomAttribute (cb);
+			var encoder = new AttributeEncoder (false);
+			encoder.Encode (GetAttributeDefaultMember ());
+			encoder.EncodeEmptyNamedArguments ();
+
+			pa.EmitAttribute (TypeBuilder, encoder);
 		}
 
 		protected virtual void CheckEqualsAndGetHashCode ()

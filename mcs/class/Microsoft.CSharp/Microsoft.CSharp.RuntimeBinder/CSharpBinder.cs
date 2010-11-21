@@ -173,9 +173,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 				}
 
 				importer.Initialize ();
-				// Import all currently loaded assemblies
-				var ns = cc.GlobalRootNamespace;
-				var domain = AppDomain.CurrentDomain;
 
 				//
 				// Any later loaded assemblies are handled internally by GetAssemblyDefinition
@@ -186,14 +183,17 @@ namespace Microsoft.CSharp.RuntimeBinder
 				//
 				Compiler.RootContext.ToplevelTypes = new Compiler.ModuleContainer (cc);
 				var temp = Compiler.RootContext.ToplevelTypes.MakeExecutable ("dynamic");
-				temp.Create (AppDomain.CurrentDomain, System.Reflection.Emit.AssemblyBuilderAccess.Run);
+
+				// Import all currently loaded assemblies
+				var domain = AppDomain.CurrentDomain;
+
+				temp.Create (domain, System.Reflection.Emit.AssemblyBuilderAccess.Run);
 				foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
-					ns.AddAssemblyReference (a);
-					importer.ImportAssembly (ns.CreateAssemblyDefinition (a), ns);
+					importer.ImportAssembly (a, Compiler.RootContext.ToplevelTypes.GlobalRootNamespace);
 				}
 
 				if (!Compiler.RootContext.EvalMode) {
-					Compiler.TypeManager.InitCoreTypes (cc, core_types);
+					Compiler.TypeManager.InitCoreTypes (Compiler.RootContext.ToplevelTypes, core_types);
 					Compiler.TypeManager.InitOptionalCoreTypes (cc);
 				}
 

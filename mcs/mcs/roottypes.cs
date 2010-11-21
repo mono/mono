@@ -32,6 +32,8 @@ namespace Mono.CSharp
 
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
+		readonly RootNamespace global_ns;
+		Dictionary<string, RootNamespace> alias_ns;
 
 		ModuleBuilder builder;
 		int static_data_counter;
@@ -53,6 +55,11 @@ namespace Mono.CSharp
 
 			types = new List<TypeContainer> ();
 			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
+			global_ns = new GlobalRootNamespace ();
+			alias_ns = new Dictionary<string, RootNamespace> ();
+
+			// TODO: REMOVE
+			context.GlobalRootNamespace = global_ns;
 		}
 
 		#region Properties
@@ -106,6 +113,15 @@ namespace Mono.CSharp
 			set {
 				entry_point = value;
 			}
+		}
+
+		//
+		// Returns module global:: namespace
+		//
+		public RootNamespace GlobalRootNamespace {
+		    get {
+		        return global_ns;
+		    }
 		}
 
 		public override ModuleContainer Module {
@@ -206,9 +222,31 @@ namespace Mono.CSharp
 			return builder.DefineType (name, attr, null, typeSize);
 		}
 
+		//
+		// Creates alias global namespace
+		//
+		public RootNamespace CreateRootNamespace (string alias)
+		{
+			if (alias == global_ns.Alias) {
+				NamespaceEntry.Error_GlobalNamespaceRedefined (Location.Null, Report);
+				return global_ns;
+			}
+
+			RootNamespace rn;
+			if (!alias_ns.TryGetValue (alias, out rn)) {
+				rn = new RootNamespace (alias);
+				alias_ns.Add (alias, rn);
+			}
+
+			return rn;
+		}
+
 		public new void Define ()
 		{
 			builder = assembly.CreateModuleBuilder ();
+
+			// FIXME: Temporary hack for repl to reset
+			TypeBuilder = null;
 
 			ResolveGlobalAttributes ();
 
@@ -236,12 +274,9 @@ namespace Mono.CSharp
 				OptAttributes.Emit ();
 
 			if (RootContext.Unsafe) {
-				TypeSpec t = TypeManager.CoreLookupType (context, "System.Security", "UnverifiableCodeAttribute", MemberKind.Class, true);
-				if (t != null) {
-					var unverifiable_code_ctor = TypeManager.GetPredefinedConstructor (t, Location.Null, TypeSpec.EmptyTypes);
-					if (unverifiable_code_ctor != null)
-						builder.SetCustomAttribute (new CustomAttributeBuilder ((ConstructorInfo) unverifiable_code_ctor.GetMetaInfo (), new object[0]));
-				}
+				var pa = Compiler.PredefinedAttributes.UnverifiableCode;
+				if (pa.IsDefined)
+					pa.EmitAttribute (builder);
 			}
 
 			foreach (var tc in types)
@@ -281,6 +316,13 @@ namespace Mono.CSharp
 			}
 
 			return null;
+		}
+
+		public RootNamespace GetRootNamespace (string name)
+		{
+			RootNamespace rn;
+			alias_ns.TryGetValue (name, out rn);
+			return rn;
 		}
 
 		public override string GetSignatureForError ()
@@ -394,7 +436,7 @@ namespace Mono.CSharp
 		/// <summary>
 		/// It is called very early therefore can resolve only predefined attributes
 		/// </summary>
-		public void ResolveGlobalAttributes ()
+		void ResolveGlobalAttributes ()
 		{
 			if (OptAttributes == null)
 				return;
