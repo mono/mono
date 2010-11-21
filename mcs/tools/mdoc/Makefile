@@ -67,7 +67,7 @@ $(PROGRAM) : Makefile
 
 MONO = \
 	MONO_PATH="$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
-	/home/jbevain/sources/mono/mono/mini/mono $(RUNTIME_FLAGS)
+	$(RUNTIME) $(RUNTIME_FLAGS)
 
 dist-local: dist-default dist-tests
 
