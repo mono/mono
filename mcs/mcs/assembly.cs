@@ -365,7 +365,7 @@ namespace Mono.CSharp
 
 			var an = new AssemblyName (name);
 
-			if (public_key != null) {
+			if (public_key != null && RootContext.Target != Target.Module) {
 				if (delay_sign) {
 					an.SetPublicKey (public_key);
 				} else {
