@@ -43,7 +43,7 @@ all-local: $(mscorlib_aot_image) $(mcs_aot_image)
 endif
 
 clean-local:
-	-rm -f $(mscorlib_aot_image) $(mcs_aot_image)
+	-rm -f $(mscorlib_aot_image) $(mcs_aot_image) $(PROFILE)_aot.log
 
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
