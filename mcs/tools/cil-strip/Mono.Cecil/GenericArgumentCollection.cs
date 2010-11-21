@@ -36,7 +36,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class GenericArgumentCollection : CollectionBase {
+	internal sealed class GenericArgumentCollection : CollectionBase {
 
 		IGenericInstance m_container;
 

@@ -31,7 +31,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public sealed class StandAloneSigTable : IMetadataTable {
+	internal sealed class StandAloneSigTable : IMetadataTable {
 
 		public const int RId = 0x11;
 
@@ -62,7 +62,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class StandAloneSigRow : IMetadataRow {
+	internal sealed class StandAloneSigRow : IMetadataRow {
 
 		public uint Signature;
 

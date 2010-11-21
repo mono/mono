@@ -32,7 +32,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Signatures;
 
-	public sealed class ArrayType : TypeSpecification {
+	internal sealed class ArrayType : TypeSpecification {
 
 		private ArrayDimensionCollection m_dimensions;
 

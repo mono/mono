@@ -31,7 +31,7 @@ using System;
 namespace Mono.Cecil.Binary {
 
 	[Flags]
-	public enum RuntimeImage : uint {
+	internal enum RuntimeImage : uint {
 		ILOnly = 0x0000001,
 		F32BitsRequired = 0x0000002,
 		StrongNameSigned = 0x0000008,

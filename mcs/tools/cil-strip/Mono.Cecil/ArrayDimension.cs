@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public sealed class ArrayDimension {
+	internal sealed class ArrayDimension {
 
 		int m_lowerBound;
 		int m_upperBound;

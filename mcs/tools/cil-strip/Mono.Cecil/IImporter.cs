@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IImporter {
+	internal interface IImporter {
 
 		TypeReference ImportTypeReference (TypeReference type, ImportContext context);
 		FieldReference ImportFieldReference (FieldReference field, ImportContext context);

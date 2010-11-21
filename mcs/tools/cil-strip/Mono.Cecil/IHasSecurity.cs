@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IHasSecurity : IMetadataTokenProvider {
+	internal interface IHasSecurity : IMetadataTokenProvider {
 
 		SecurityDeclarationCollection SecurityDeclarations { get; }
 

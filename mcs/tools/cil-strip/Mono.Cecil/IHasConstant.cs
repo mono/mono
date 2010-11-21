@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IHasConstant : IMetadataTokenProvider {
+	internal interface IHasConstant : IMetadataTokenProvider {
 
 		bool HasConstant { get; }
 		object Constant { get; set; }

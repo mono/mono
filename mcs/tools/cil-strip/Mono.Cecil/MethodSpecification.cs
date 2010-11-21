@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System;
 
-	public abstract class MethodSpecification : MethodReference {
+	internal abstract class MethodSpecification : MethodReference {
 
 		MethodReference m_elementMethod;
 

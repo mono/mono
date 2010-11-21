@@ -36,7 +36,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class ArrayDimensionCollection : CollectionBase {
+	internal sealed class ArrayDimensionCollection : CollectionBase {
 
 		ArrayType m_container;
 

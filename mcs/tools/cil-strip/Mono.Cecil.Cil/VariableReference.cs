@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public abstract class VariableReference : ICodeVisitable {
+	internal abstract class VariableReference : ICodeVisitable {
 
 		string m_name;
 		int m_index;

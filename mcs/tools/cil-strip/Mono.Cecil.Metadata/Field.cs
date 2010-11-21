@@ -33,7 +33,7 @@ namespace Mono.Cecil.Metadata {
 
 	using Mono.Cecil;
 
-	public sealed class FieldTable : IMetadataTable {
+	internal sealed class FieldTable : IMetadataTable {
 
 		public const int RId = 0x04;
 
@@ -64,7 +64,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class FieldRow : IMetadataRow {
+	internal sealed class FieldRow : IMetadataRow {
 
 		public FieldAttributes Flags;
 		public uint Name;

@@ -38,7 +38,7 @@ namespace Mono.Cecil {
 	using Mono.Cecil.Binary;
 	using Mono.Cecil.Metadata;
 
-	public sealed class ModuleDefinition : ModuleReference, ICustomAttributeProvider, IMetadataScope,
+	internal sealed class ModuleDefinition : ModuleReference, ICustomAttributeProvider, IMetadataScope,
 		IReflectionStructureVisitable, IReflectionVisitable {
 
 		Guid m_mvid;

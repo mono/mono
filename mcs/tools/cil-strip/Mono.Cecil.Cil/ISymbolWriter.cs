@@ -30,7 +30,7 @@ namespace Mono.Cecil.Cil {
 
 	using System;
 
-	public interface ISymbolWriter : IDisposable {
+	internal interface ISymbolWriter : IDisposable {
 
 		void Write (MethodBody body);
 	}

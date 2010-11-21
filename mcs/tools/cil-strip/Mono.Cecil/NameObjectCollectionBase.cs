@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace System.Collections.Specialized
 {
 	[Serializable]
-	public abstract class NameObjectCollectionBase : ICollection, IEnumerable, ISerializable, IDeserializationCallback
+	internal abstract class NameObjectCollectionBase : ICollection, IEnumerable, ISerializable, IDeserializationCallback
 	{
 		private Hashtable m_ItemsContainer;
 		/// <summary>
@@ -87,7 +87,7 @@ namespace System.Collections.Specialized
 		/// SDK: Represents a collection of the String keys of a collection.
 		/// </summary>
 		[Serializable]
-		public class KeysCollection : ICollection, IEnumerable
+		internal class KeysCollection : ICollection, IEnumerable
 		{
 			private NameObjectCollectionBase m_collection;
 

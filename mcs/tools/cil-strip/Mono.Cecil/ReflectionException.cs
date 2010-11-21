@@ -32,7 +32,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Metadata;
 
-	public sealed class ReflectionException : MetadataFormatException {
+	internal sealed class ReflectionException : MetadataFormatException {
 
 		internal ReflectionException () : base ()
 		{

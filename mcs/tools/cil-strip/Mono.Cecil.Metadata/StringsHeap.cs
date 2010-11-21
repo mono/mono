@@ -31,7 +31,7 @@ namespace Mono.Cecil.Metadata {
 	using System.Collections;
 	using System.Text;
 
-	public class StringsHeap : MetadataHeap {
+	internal class StringsHeap : MetadataHeap {
 
 		IDictionary m_strings;
 

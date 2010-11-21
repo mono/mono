@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public enum OpCodeType {
+	internal enum OpCodeType {
 		Annotation,
 		Macro,
 		Nternal,

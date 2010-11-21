@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Metadata;
 
-	public interface IMetadataTokenProvider {
+	internal interface IMetadataTokenProvider {
 
 		MetadataToken MetadataToken { get; set; }
 	}

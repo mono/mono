@@ -31,7 +31,7 @@ namespace Mono.Cecil {
 	using System;
 
 	[Flags]
-	public enum MethodSemanticsAttributes : ushort {
+	internal enum MethodSemanticsAttributes : ushort {
 		Setter		= 0x0001,	// Setter for property
 		Getter		= 0x0002,	// Getter for property
 		Other		= 0x0004,	// Other method for property or event

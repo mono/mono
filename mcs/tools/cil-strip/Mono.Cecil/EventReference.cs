@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public abstract class EventReference : MemberReference {
+	internal abstract class EventReference : MemberReference {
 
 		TypeReference m_eventType;
 

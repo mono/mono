@@ -32,7 +32,7 @@ using Mono.Cecil.Metadata;
 
 namespace Mono.Cecil {
 
-	public sealed class MethodReturnType : ICustomAttributeProvider, IHasMarshalSpec, IHasConstant {
+	internal sealed class MethodReturnType : ICustomAttributeProvider, IHasMarshalSpec, IHasConstant {
 
 		MethodReference m_method;
 		ParameterDefinition m_param;

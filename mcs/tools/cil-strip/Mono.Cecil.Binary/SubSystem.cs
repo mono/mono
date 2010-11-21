@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Binary {
 
-	public enum SubSystem : ushort {
+	internal enum SubSystem : ushort {
 		Unknown = 0x0,
 		Native = 0x1,
 		WindowsGui = 0x2,

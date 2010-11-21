@@ -31,7 +31,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public sealed class FieldMarshalTable : IMetadataTable {
+	internal sealed class FieldMarshalTable : IMetadataTable {
 
 		public const int RId = 0x0d;
 
@@ -62,7 +62,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class FieldMarshalRow : IMetadataRow {
+	internal sealed class FieldMarshalRow : IMetadataRow {
 
 		public MetadataToken Parent;
 		public uint NativeType;

@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public enum SecurityAction : short {
+	internal enum SecurityAction : short {
 		Request = 1,
 		Demand = 2,
 		Assert = 3,

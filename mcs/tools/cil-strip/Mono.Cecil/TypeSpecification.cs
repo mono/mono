@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System;
 
-	public abstract class TypeSpecification : TypeReference {
+	internal abstract class TypeSpecification : TypeReference {
 
 		private TypeReference m_elementType;
 

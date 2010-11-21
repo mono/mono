@@ -32,7 +32,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Metadata;
 
-	public abstract class MemberReference : IMemberReference {
+	internal abstract class MemberReference : IMemberReference {
 
 		string m_name;
 		TypeReference m_decType;

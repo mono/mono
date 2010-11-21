@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Binary {
 
-	public class ResourceDataEntry : ResourceNode {
+	internal class ResourceDataEntry : ResourceNode {
 
 		public RVA Data;
 		public uint Size;

@@ -42,10 +42,10 @@ namespace Mono.Cecil.Signatures {
 			this.NativeInstrinsic = nt;
 		}
 
-		public interface IMarshalSigSpec {
+		internal interface IMarshalSigSpec {
 		}
 
-		public sealed class Array : IMarshalSigSpec {
+		internal sealed class Array : IMarshalSigSpec {
 
 			public NativeType ArrayElemType;
 			public int ParamNum;
@@ -60,7 +60,7 @@ namespace Mono.Cecil.Signatures {
 			}
 		}
 
-		public sealed class CustomMarshaler : IMarshalSigSpec {
+		internal sealed class CustomMarshaler : IMarshalSigSpec {
 
 			public string Guid;
 			public string UnmanagedType;
@@ -68,7 +68,7 @@ namespace Mono.Cecil.Signatures {
 			public string Cookie;
 		}
 
-		public sealed class FixedArray : IMarshalSigSpec {
+		internal sealed class FixedArray : IMarshalSigSpec {
 
 			public int NumElem;
 			public NativeType ArrayElemType;
@@ -80,12 +80,12 @@ namespace Mono.Cecil.Signatures {
 			}
 		}
 
-		public sealed class SafeArray : IMarshalSigSpec {
+		internal sealed class SafeArray : IMarshalSigSpec {
 
 			public VariantType ArrayElemType;
 		}
 
-		public sealed class FixedSysString : IMarshalSigSpec {
+		internal sealed class FixedSysString : IMarshalSigSpec {
 
 			public int Size;
 		}

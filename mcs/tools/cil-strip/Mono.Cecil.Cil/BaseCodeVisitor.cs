@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public abstract class BaseCodeVisitor : ICodeVisitor {
+	internal abstract class BaseCodeVisitor : ICodeVisitor {
 
 		public virtual void VisitMethodBody (MethodBody body)
 		{

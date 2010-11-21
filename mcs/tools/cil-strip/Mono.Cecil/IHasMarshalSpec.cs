@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IHasMarshalSpec : IMetadataTokenProvider {
+	internal interface IHasMarshalSpec : IMetadataTokenProvider {
 
 		MarshalSpec MarshalSpec { get; set; }
 	}

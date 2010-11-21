@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System.Collections;
 
-	public class DefaultAssemblyResolver : BaseAssemblyResolver {
+	internal class DefaultAssemblyResolver : BaseAssemblyResolver {
 
 		IDictionary m_cache;
 

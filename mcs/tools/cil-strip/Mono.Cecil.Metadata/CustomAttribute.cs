@@ -31,7 +31,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public sealed class CustomAttributeTable : IMetadataTable {
+	internal sealed class CustomAttributeTable : IMetadataTable {
 
 		public const int RId = 0x0c;
 
@@ -62,7 +62,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class CustomAttributeRow : IMetadataRow {
+	internal sealed class CustomAttributeRow : IMetadataRow {
 
 		public MetadataToken Parent;
 		public MetadataToken Type;

@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System.Collections;
 
-	public abstract class BaseReflectionVisitor : IReflectionVisitor {
+	internal abstract class BaseReflectionVisitor : IReflectionVisitor {
 
 		public virtual void VisitModuleDefinition (ModuleDefinition module)
 		{

@@ -40,7 +40,7 @@ namespace Mono.Cecil {
 	using Hcp = Mono.Cecil.HashCodeProvider;
 	using Cmp = System.Collections.Comparer;
 
-	public sealed class TypeReferenceCollection : NameObjectCollectionBase, IList, IReflectionVisitable  {
+	internal sealed class TypeReferenceCollection : NameObjectCollectionBase, IList, IReflectionVisitable  {
 
 		ModuleDefinition m_container;
 

@@ -71,7 +71,7 @@ namespace Mono.Xml
 
 	internal class SmallXmlParser
 	{
-		public interface IContentHandler
+		internal interface IContentHandler
 		{
 			void OnStartParsing (SmallXmlParser parser);
 			void OnEndParsing (SmallXmlParser parser);
@@ -82,7 +82,7 @@ namespace Mono.Xml
 			void OnIgnorableWhitespace (string text);
 		}
 
-		public interface IAttrList
+		internal interface IAttrList
 		{
 			int Length { get; }
 			bool IsEmpty { get; }

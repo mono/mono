@@ -33,7 +33,7 @@ namespace Mono.Cecil {
 	using Mono.Cecil;
 	using Mono.Cecil.Metadata;
 
-	public class ModuleReference : IMetadataScope, IAnnotationProvider, IReflectionStructureVisitable {
+	internal class ModuleReference : IMetadataScope, IAnnotationProvider, IReflectionStructureVisitable {
 
 		string m_name;
 		MetadataToken m_token;

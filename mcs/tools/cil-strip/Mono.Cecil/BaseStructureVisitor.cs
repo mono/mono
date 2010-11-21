@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System.Collections;
 
-	public abstract class BaseStructureVisitor : IReflectionStructureVisitor {
+	internal abstract class BaseStructureVisitor : IReflectionStructureVisitor {
 
 		public virtual void VisitAssemblyDefinition (AssemblyDefinition asm)
 		{

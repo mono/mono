@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IRequireResolving {
+	internal interface IRequireResolving {
 
 		byte [] Blob { get; }
 		bool Resolved { get; }

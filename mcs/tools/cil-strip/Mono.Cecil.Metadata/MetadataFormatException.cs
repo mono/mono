@@ -32,7 +32,7 @@ namespace Mono.Cecil.Metadata {
 
 	using Mono.Cecil.Binary;
 
-	public class MetadataFormatException : ImageFormatException {
+	internal class MetadataFormatException : ImageFormatException {
 
 		internal MetadataFormatException () : base ()
 		{

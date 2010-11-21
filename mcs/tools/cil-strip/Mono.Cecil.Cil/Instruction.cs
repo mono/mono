@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public sealed class Instruction : ICodeVisitable {
+	internal sealed class Instruction : ICodeVisitable {
 
 		int m_offset;
 		OpCode m_opCode;

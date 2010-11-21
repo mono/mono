@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public sealed class LinkedResource : Resource {
+	internal sealed class LinkedResource : Resource {
 
 		byte [] m_hash;
 		string m_file;

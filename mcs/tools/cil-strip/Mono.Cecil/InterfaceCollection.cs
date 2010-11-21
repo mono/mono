@@ -36,7 +36,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class InterfaceCollection : CollectionBase, IReflectionVisitable {
+	internal sealed class InterfaceCollection : CollectionBase, IReflectionVisitable {
 
 		TypeDefinition m_container;
 

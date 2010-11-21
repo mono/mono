@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System.Reflection;
 
-	public interface ICustomAttributeProvider {
+	internal interface ICustomAttributeProvider {
 
 		CustomAttributeCollection CustomAttributes { get; }
 

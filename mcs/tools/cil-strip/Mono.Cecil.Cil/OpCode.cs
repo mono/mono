@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public struct OpCode {
+	internal struct OpCode {
 		short m_value;
 		byte m_code;
 		byte m_flowControl;

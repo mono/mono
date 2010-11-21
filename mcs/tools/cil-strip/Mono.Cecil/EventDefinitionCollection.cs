@@ -36,7 +36,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class EventDefinitionCollection : CollectionBase, IReflectionVisitable {
+	internal sealed class EventDefinitionCollection : CollectionBase, IReflectionVisitable {
 
 		TypeDefinition m_container;
 

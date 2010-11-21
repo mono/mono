@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public interface ICodeVisitor {
+	internal interface ICodeVisitor {
 
 		void VisitMethodBody (MethodBody body);
 		void VisitInstructionCollection (InstructionCollection instructions);

@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public struct MetadataToken {
+	internal struct MetadataToken {
 
 		uint m_rid;
 		TokenType m_type;

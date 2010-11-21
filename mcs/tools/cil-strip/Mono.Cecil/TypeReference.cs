@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public class TypeReference : MemberReference, IGenericParameterProvider, ICustomAttributeProvider {
+	internal class TypeReference : MemberReference, IGenericParameterProvider, ICustomAttributeProvider {
 
 		string m_namespace;
 		bool m_fullNameDiscarded;

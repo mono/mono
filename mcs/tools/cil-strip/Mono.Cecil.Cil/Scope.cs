@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public class Scope : IScopeProvider, IVariableDefinitionProvider, ICodeVisitable {
+	internal class Scope : IScopeProvider, IVariableDefinitionProvider, ICodeVisitable {
 
 		Instruction m_start;
 		Instruction m_end;

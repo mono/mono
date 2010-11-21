@@ -31,7 +31,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public sealed class FieldLayoutTable : IMetadataTable {
+	internal sealed class FieldLayoutTable : IMetadataTable {
 
 		public const int RId = 0x10;
 
@@ -62,7 +62,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class FieldLayoutRow : IMetadataRow {
+	internal sealed class FieldLayoutRow : IMetadataRow {
 
 		public uint Offset;
 		public uint Field;

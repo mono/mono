@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System.Collections;
 
-	public sealed class CustomAttribute : IRequireResolving, IAnnotationProvider, IReflectionVisitable {
+	internal sealed class CustomAttribute : IRequireResolving, IAnnotationProvider, IReflectionVisitable {
 
 		MethodReference m_ctor;
 		IList m_parameters;

@@ -36,7 +36,7 @@ namespace Mono.Cecil.Cil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class ScopeCollection : CollectionBase, ICodeVisitable {
+	internal sealed class ScopeCollection : CollectionBase, ICodeVisitable {
 
 		IScopeProvider m_container;
 

@@ -30,7 +30,7 @@ namespace Mono.Cecil.Cil {
 
 	using System;
 
-	public class Document {
+	internal class Document {
 
 		string m_url;
 

@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IReflectionStructureVisitor {
+	internal interface IReflectionStructureVisitor {
 
 		void VisitAssemblyDefinition (AssemblyDefinition asm);
 		void VisitAssemblyNameDefinition (AssemblyNameDefinition name);

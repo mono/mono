@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IMethodSignature {
+	internal interface IMethodSignature {
 
 		bool HasParameters { get; }
 		bool HasThis { get; set; }

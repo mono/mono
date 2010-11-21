@@ -47,7 +47,7 @@ namespace Mono.Cecil.Signatures {
 			visitor.VisitLocalVarSig (this);
 		}
 
-		public struct LocalVariable {
+		internal struct LocalVariable {
 
 			public CustomMod [] CustomMods;
 			public Constraint Constraint;

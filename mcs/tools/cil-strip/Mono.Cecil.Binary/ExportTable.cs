@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Binary {
 
-	public sealed class ExportTable : IBinaryVisitable {
+	internal sealed class ExportTable : IBinaryVisitable {
 
 		public uint Characteristics;
 		public uint TimeDateStamp;

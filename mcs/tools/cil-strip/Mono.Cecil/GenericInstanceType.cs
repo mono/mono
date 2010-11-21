@@ -31,7 +31,7 @@ namespace Mono.Cecil {
 
 	using System.Text;
 
-	public sealed class GenericInstanceType : TypeSpecification, IGenericInstance {
+	internal sealed class GenericInstanceType : TypeSpecification, IGenericInstance {
 
 		private GenericArgumentCollection m_genArgs;
 

@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public enum FlowControl {
+	internal enum FlowControl {
 		Branch,
 		Break,
 		Call,

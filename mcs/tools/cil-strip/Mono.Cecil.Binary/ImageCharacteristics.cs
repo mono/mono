@@ -31,7 +31,7 @@ namespace Mono.Cecil.Binary {
 	using System;
 
 	[Flags]
-	public enum ImageCharacteristics : ushort {
+	internal enum ImageCharacteristics : ushort {
 		RelocsStripped = 0x0001,
 		ExecutableImage = 0x0002,
 		LineNumsStripped = 0x0004,

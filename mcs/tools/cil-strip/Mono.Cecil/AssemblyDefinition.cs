@@ -33,7 +33,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Metadata;
 
-	public class AssemblyDefinition : ICustomAttributeProvider,
+	internal class AssemblyDefinition : ICustomAttributeProvider,
 		IHasSecurity, IAnnotationProvider, IReflectionStructureVisitable {
 
 		MetadataToken m_token;

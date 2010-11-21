@@ -30,7 +30,7 @@ namespace Mono.Cecil.Binary {
 
 	using System;
 
-	public class ImageFormatException : Exception {
+	internal class ImageFormatException : Exception {
 
 		internal ImageFormatException () : base()
 		{

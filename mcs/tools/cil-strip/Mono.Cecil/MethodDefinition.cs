@@ -31,7 +31,7 @@ namespace Mono.Cecil {
 	using Mono.Cecil.Binary;
 	using Mono.Cecil.Cil;
 
-	public sealed class MethodDefinition : MethodReference, IMemberDefinition,
+	internal sealed class MethodDefinition : MethodReference, IMemberDefinition,
 		IHasSecurity, ICustomAttributeProvider {
 
 		public const string Cctor = ".cctor";

@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public sealed class VariableDefinition : VariableReference {
+	internal sealed class VariableDefinition : VariableReference {
 
 		MethodDefinition m_method;
 

@@ -33,7 +33,7 @@ namespace Mono.Cecil.Metadata {
 
 	using Mono.Cecil;
 
-	public sealed class ImplMapTable : IMetadataTable {
+	internal sealed class ImplMapTable : IMetadataTable {
 
 		public const int RId = 0x1c;
 
@@ -64,7 +64,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class ImplMapRow : IMetadataRow {
+	internal sealed class ImplMapRow : IMetadataRow {
 
 		public PInvokeAttributes MappingFlags;
 		public MetadataToken MemberForwarded;

@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public enum MethodCallingConvention : byte {
+	internal enum MethodCallingConvention : byte {
 		Default		= 0x0,
 		C			= 0x1,
 		StdCall		= 0x2,

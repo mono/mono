@@ -31,7 +31,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public interface IMetadataVisitor {
+	internal interface IMetadataVisitor {
 		void VisitMetadataRoot (MetadataRoot root);
 		void VisitMetadataRootHeader (MetadataRoot.MetadataRootHeader header);
 		void VisitMetadataStreamCollection (MetadataStreamCollection streams);
@@ -46,7 +46,7 @@ namespace Mono.Cecil.Metadata {
 		void TerminateMetadataRoot (MetadataRoot root);
 	}
 
-	public interface IMetadataTableVisitor {
+	internal interface IMetadataTableVisitor {
 		void VisitTableCollection (TableCollection coll);
 
 		void VisitAssemblyTable (AssemblyTable table);
@@ -97,7 +97,7 @@ namespace Mono.Cecil.Metadata {
 		IMetadataRowVisitor GetRowVisitor();
 }
 
-	public interface IMetadataRowVisitor {
+	internal interface IMetadataRowVisitor {
 		void VisitRowCollection (RowCollection coll);
 
 		void VisitAssemblyRow (AssemblyRow row);

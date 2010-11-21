@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public sealed class ParameterDefinition : ParameterReference, IHasMarshalSpec,
+	internal sealed class ParameterDefinition : ParameterReference, IHasMarshalSpec,
 		IMetadataTokenProvider, ICustomAttributeProvider, IHasConstant {
 
 		ParameterAttributes m_attributes;

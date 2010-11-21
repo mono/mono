@@ -31,7 +31,7 @@ namespace Mono.Cecil.Cil {
 	using System;
 	using SR = System.Reflection;
 
-	public sealed class CilWorker {
+	internal sealed class CilWorker {
 
 		MethodBody m_mbody;
 		InstructionCollection m_instrs;

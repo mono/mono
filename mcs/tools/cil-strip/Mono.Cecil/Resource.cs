@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System.Collections;
 
-	public abstract class Resource : IAnnotationProvider, IReflectionStructureVisitable {
+	internal abstract class Resource : IAnnotationProvider, IReflectionStructureVisitable {
 
 		string m_name;
 		ManifestResourceAttributes m_attributes;

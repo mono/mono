@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System.Text;
 
-	public sealed class GenericInstanceMethod : MethodSpecification, IGenericInstance {
+	internal sealed class GenericInstanceMethod : MethodSpecification, IGenericInstance {
 
 		private GenericArgumentCollection m_genArgs;
 

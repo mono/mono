@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public class GenericContext {
+	internal class GenericContext {
 
 		TypeReference m_type;
 		MethodReference m_method;

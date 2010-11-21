@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public class ImportContext {
+	internal class ImportContext {
 
 		GenericContext m_genContext;
 		IImporter m_importer;

@@ -30,7 +30,7 @@ namespace Mono.Cecil.Cil {
 
 	using Mono.Cecil;
 
-	public sealed class ExceptionHandler : ICodeVisitable {
+	internal sealed class ExceptionHandler : ICodeVisitable {
 
 		Instruction m_tryStart;
 		Instruction m_tryEnd;

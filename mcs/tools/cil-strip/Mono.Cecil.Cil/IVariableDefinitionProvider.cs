@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public interface IVariableDefinitionProvider {
+	internal interface IVariableDefinitionProvider {
 
 		VariableDefinitionCollection Variables { get; }
 	}

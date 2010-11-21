@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IGenericInstance : IMetadataTokenProvider {
+	internal interface IGenericInstance : IMetadataTokenProvider {
 
 		GenericArgumentCollection GenericArguments { get; }
 

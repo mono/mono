@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IMetadataScope : IMetadataTokenProvider {
+	internal interface IMetadataScope : IMetadataTokenProvider {
 		string Name { get; set; }
 	}
 }

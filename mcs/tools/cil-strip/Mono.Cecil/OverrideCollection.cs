@@ -36,7 +36,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class OverrideCollection : CollectionBase, IReflectionVisitable {
+	internal sealed class OverrideCollection : CollectionBase, IReflectionVisitable {
 
 		MethodDefinition m_container;
 

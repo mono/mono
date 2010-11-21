@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public abstract class ModType : TypeSpecification {
+	internal abstract class ModType : TypeSpecification {
 
 		TypeReference m_modifierType;
 
@@ -62,7 +62,7 @@ namespace Mono.Cecil {
 		}
 	}
 
-	public sealed class ModifierOptional : ModType {
+	internal sealed class ModifierOptional : ModType {
 
 		protected override string ModifierName {
 			get { return "modopt"; }
@@ -74,7 +74,7 @@ namespace Mono.Cecil {
 
 	}
 
-	public sealed class ModifierRequired : ModType {
+	internal sealed class ModifierRequired : ModType {
 
 		protected override string ModifierName {
 			get { return "modreq"; }

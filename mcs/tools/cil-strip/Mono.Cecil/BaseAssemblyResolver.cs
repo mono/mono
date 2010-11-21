@@ -34,7 +34,7 @@ namespace Mono.Cecil {
 	using SR = System.Reflection;
 	using System.Text;
 
-	public abstract class BaseAssemblyResolver : IAssemblyResolver {
+	internal abstract class BaseAssemblyResolver : IAssemblyResolver {
 
 		ArrayList m_directories;
 		string[] m_monoGacPaths;

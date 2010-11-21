@@ -31,7 +31,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public sealed class PropertyPtrTable : IMetadataTable {
+	internal sealed class PropertyPtrTable : IMetadataTable {
 
 		public const int RId = 0x16;
 
@@ -62,7 +62,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class PropertyPtrRow : IMetadataRow {
+	internal sealed class PropertyPtrRow : IMetadataRow {
 
 		public uint Property;
 

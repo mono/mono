@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System;
 
-	public class DefaultImporter : IImporter {
+	internal class DefaultImporter : IImporter {
 
 		ModuleDefinition m_module;
 

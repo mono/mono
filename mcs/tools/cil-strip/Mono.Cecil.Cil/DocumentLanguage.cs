@@ -30,7 +30,7 @@ namespace Mono.Cecil.Cil {
 
 	using System;
 
-	public abstract class DocumentLanguage {
+	internal abstract class DocumentLanguage {
 #if CF_2_0
 		public static readonly Guid None = new Guid ("00000000-0000-0000-0000-000000000000");
 		public static readonly Guid C = new Guid ("63a08714-fc37-11d2-904c-00c04fa302a1");

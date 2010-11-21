@@ -31,7 +31,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public enum Code {
+	internal enum Code {
 		Nop,
 		Break,
 		Ldarg_0,

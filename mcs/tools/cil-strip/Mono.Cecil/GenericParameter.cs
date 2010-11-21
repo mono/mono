@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System;
 
-	public sealed class GenericParameter : TypeReference {
+	internal sealed class GenericParameter : TypeReference {
 
 		int m_position;
 		string m_name;

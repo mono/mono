@@ -44,7 +44,7 @@ namespace System {
 #if CF_1_0 || CF_2_0
 namespace System.Security {
 
-	public class SecurityElement 	{
+	internal class SecurityElement 	{
 
 		public SecurityElement (string tag)
 		{

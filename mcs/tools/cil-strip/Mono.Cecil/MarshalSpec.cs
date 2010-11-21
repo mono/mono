@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System;
 
-	public class MarshalSpec {
+	internal class MarshalSpec {
 
 		NativeType m_natIntr;
 		IHasMarshalSpec m_container;
@@ -62,7 +62,7 @@ namespace Mono.Cecil {
 		}
 	}
 
-	public sealed class ArrayMarshalSpec : MarshalSpec {
+	internal sealed class ArrayMarshalSpec : MarshalSpec {
 
 		NativeType m_elemType;
 		int m_paramNum;
@@ -104,7 +104,7 @@ namespace Mono.Cecil {
 		}
 	}
 
-	public sealed class CustomMarshalerSpec : MarshalSpec {
+	internal sealed class CustomMarshalerSpec : MarshalSpec {
 
 		Guid m_guid;
 		string m_unmanagedType;
@@ -146,7 +146,7 @@ namespace Mono.Cecil {
 		}
 	}
 
-	public sealed class SafeArraySpec : MarshalSpec {
+	internal sealed class SafeArraySpec : MarshalSpec {
 
 		private VariantType m_elemType;
 
@@ -167,7 +167,7 @@ namespace Mono.Cecil {
 		}
 	}
 
-	public sealed class FixedArraySpec : MarshalSpec {
+	internal sealed class FixedArraySpec : MarshalSpec {
 
 		private int m_numElem;
 		private NativeType m_elemType;
@@ -195,7 +195,7 @@ namespace Mono.Cecil {
 		}
 	}
 
-	public sealed class FixedSysStringSpec : MarshalSpec {
+	internal sealed class FixedSysStringSpec : MarshalSpec {
 
 		private int m_size;
 

@@ -31,7 +31,7 @@ namespace Mono.Cecil {
 	using System;
 
 	[Flags]
-	public enum MethodImplAttributes : ushort {
+	internal enum MethodImplAttributes : ushort {
 		CodeTypeMask		= 0x0003,
 		IL					= 0x0000,	// Method impl is CIL
 		Native				= 0x0001,	// Method impl is native

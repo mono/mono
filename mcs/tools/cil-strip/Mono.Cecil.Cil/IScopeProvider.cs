@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public interface IScopeProvider {
+	internal interface IScopeProvider {
 
 		ScopeCollection Scopes { get; }
 	}

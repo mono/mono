@@ -36,7 +36,7 @@ namespace Mono.Cecil.Cil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class VariableDefinitionCollection : CollectionBase, ICodeVisitable {
+	internal sealed class VariableDefinitionCollection : CollectionBase, ICodeVisitable {
 
 		IVariableDefinitionProvider m_container;
 

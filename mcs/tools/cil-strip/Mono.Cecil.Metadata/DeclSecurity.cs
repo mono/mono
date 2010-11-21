@@ -33,7 +33,7 @@ namespace Mono.Cecil.Metadata {
 
 	using Mono.Cecil;
 
-	public sealed class DeclSecurityTable : IMetadataTable {
+	internal sealed class DeclSecurityTable : IMetadataTable {
 
 		public const int RId = 0x0e;
 
@@ -64,7 +64,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class DeclSecurityRow : IMetadataRow {
+	internal sealed class DeclSecurityRow : IMetadataRow {
 
 		public SecurityAction Action;
 		public MetadataToken Parent;

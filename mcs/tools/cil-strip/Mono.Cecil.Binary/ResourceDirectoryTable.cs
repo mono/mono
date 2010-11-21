@@ -30,7 +30,7 @@ namespace Mono.Cecil.Binary {
 
 	using System.Collections;
 
-	public class ResourceDirectoryTable : ResourceNode {
+	internal class ResourceDirectoryTable : ResourceNode {
 
 		private ArrayList m_entries;
 

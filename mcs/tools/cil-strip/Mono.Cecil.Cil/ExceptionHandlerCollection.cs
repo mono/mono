@@ -36,7 +36,7 @@ namespace Mono.Cecil.Cil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class ExceptionHandlerCollection : CollectionBase, ICodeVisitable {
+	internal sealed class ExceptionHandlerCollection : CollectionBase, ICodeVisitable {
 
 		MethodBody m_container;
 

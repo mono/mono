@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System.Collections;
 
-	public interface IAnnotationProvider {
+	internal interface IAnnotationProvider {
 
 		IDictionary Annotations { get; }
 	}

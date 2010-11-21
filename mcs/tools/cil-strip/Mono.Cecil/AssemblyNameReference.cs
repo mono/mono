@@ -36,7 +36,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Metadata;
 
-	public class AssemblyNameReference : IMetadataScope, IAnnotationProvider, IReflectionStructureVisitable {
+	internal class AssemblyNameReference : IMetadataScope, IAnnotationProvider, IReflectionStructureVisitable {
 
 		string m_name;
 		string m_culture;

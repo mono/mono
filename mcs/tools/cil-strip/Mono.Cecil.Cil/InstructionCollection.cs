@@ -36,7 +36,7 @@ namespace Mono.Cecil.Cil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class InstructionCollection : CollectionBase, ICodeVisitable {
+	internal sealed class InstructionCollection : CollectionBase, ICodeVisitable {
 
 		MethodBody m_container;
 		public readonly Instruction Outside = new Instruction (int.MaxValue, OpCodes.Nop);

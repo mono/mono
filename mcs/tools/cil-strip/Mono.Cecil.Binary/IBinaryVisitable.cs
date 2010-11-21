@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Binary {
 
-	public interface IBinaryVisitable {
+	internal interface IBinaryVisitable {
 		void Accept (IBinaryVisitor visitor);
 	}
 }

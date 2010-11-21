@@ -32,7 +32,7 @@ namespace Mono.Cecil {
 	using System.Collections;
 	using System.Security;
 
-	public sealed class SecurityDeclaration : IRequireResolving, IAnnotationProvider, IReflectionVisitable {
+	internal sealed class SecurityDeclaration : IRequireResolving, IAnnotationProvider, IReflectionVisitable {
 
 		SecurityAction m_action;
 		SecurityDeclarationReader m_reader;

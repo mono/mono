@@ -30,7 +30,7 @@ namespace Mono.Cecil.Cil {
 
 	using System;
 
-	public abstract class DocumentLanguageVendor {
+	internal abstract class DocumentLanguageVendor {
 #if CF_2_0
 		public static readonly Guid Other = new Guid ("00000000-0000-0000-0000-000000000000");
 		public static readonly Guid Microsoft = new Guid ("994b45c4-e6e9-11d2-903f-00c04fa302a1");

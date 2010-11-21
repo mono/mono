@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public sealed class EmbeddedResource : Resource {
+	internal sealed class EmbeddedResource : Resource {
 
 		byte [] m_data;
 

@@ -33,7 +33,7 @@ namespace Mono.Cecil.Metadata {
 
 	using Mono.Cecil;
 
-	public sealed class ManifestResourceTable : IMetadataTable {
+	internal sealed class ManifestResourceTable : IMetadataTable {
 
 		public const int RId = 0x28;
 
@@ -64,7 +64,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class ManifestResourceRow : IMetadataRow {
+	internal sealed class ManifestResourceRow : IMetadataRow {
 
 		public uint Offset;
 		public ManifestResourceAttributes Flags;

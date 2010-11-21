@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public enum NativeType {
+	internal enum NativeType {
 		NONE = 0x66,
 
 		BOOLEAN = 0x02,

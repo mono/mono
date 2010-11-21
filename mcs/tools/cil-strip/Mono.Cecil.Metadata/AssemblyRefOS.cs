@@ -31,7 +31,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public sealed class AssemblyRefOSTable : IMetadataTable {
+	internal sealed class AssemblyRefOSTable : IMetadataTable {
 
 		public const int RId = 0x25;
 
@@ -62,7 +62,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class AssemblyRefOSRow : IMetadataRow {
+	internal sealed class AssemblyRefOSRow : IMetadataRow {
 
 		public uint OSPlatformID;
 		public uint OSMajorVersion;

@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public abstract class PropertyReference : MemberReference {
+	internal abstract class PropertyReference : MemberReference {
 
 		TypeReference m_propertyType;
 		protected ParameterDefinitionCollection m_parameters;

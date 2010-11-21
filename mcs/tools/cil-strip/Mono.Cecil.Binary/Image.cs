@@ -33,7 +33,7 @@ namespace Mono.Cecil.Binary {
 
 	using Mono.Cecil.Metadata;
 
-	public sealed class Image : IBinaryVisitable {
+	internal sealed class Image : IBinaryVisitable {
 
 		DOSHeader m_dosHeader;
 		PEFileHeader m_peFileHeader;

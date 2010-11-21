@@ -36,7 +36,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class AssemblyNameReferenceCollection : CollectionBase, IReflectionStructureVisitable {
+	internal sealed class AssemblyNameReferenceCollection : CollectionBase, IReflectionStructureVisitable {
 
 		ModuleDefinition m_container;
 

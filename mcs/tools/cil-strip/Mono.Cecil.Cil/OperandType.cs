@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public enum OperandType {
+	internal enum OperandType {
 		InlineBrTarget,
 		InlineField,
 		InlineI,

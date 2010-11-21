@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public sealed class EventDefinition : EventReference, IMemberDefinition, ICustomAttributeProvider {
+	internal sealed class EventDefinition : EventReference, IMemberDefinition, ICustomAttributeProvider {
 
 		EventAttributes m_attributes;
 

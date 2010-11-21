@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public sealed class TypeDefinition : TypeReference, IMemberDefinition, IHasSecurity {
+	internal sealed class TypeDefinition : TypeReference, IMemberDefinition, IHasSecurity {
 
 		TypeAttributes m_attributes;
 		TypeReference m_baseType;

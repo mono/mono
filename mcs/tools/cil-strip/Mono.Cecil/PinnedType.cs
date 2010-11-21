@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public sealed class PinnedType : TypeSpecification {
+	internal sealed class PinnedType : TypeSpecification {
 
 		public PinnedType (TypeReference pType) : base (pType)
 		{

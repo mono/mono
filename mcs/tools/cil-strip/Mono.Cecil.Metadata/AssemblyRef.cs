@@ -33,7 +33,7 @@ namespace Mono.Cecil.Metadata {
 
 	using Mono.Cecil;
 
-	public sealed class AssemblyRefTable : IMetadataTable {
+	internal sealed class AssemblyRefTable : IMetadataTable {
 
 		public const int RId = 0x23;
 
@@ -64,7 +64,7 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	public sealed class AssemblyRefRow : IMetadataRow {
+	internal sealed class AssemblyRefRow : IMetadataRow {
 
 		public ushort MajorVersion;
 		public ushort MinorVersion;

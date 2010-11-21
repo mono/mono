@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Binary {
 
-	public sealed class DOSHeader : IHeader, IBinaryVisitable {
+	internal sealed class DOSHeader : IHeader, IBinaryVisitable {
 
 		public byte [] Start;
 		public byte [] End;

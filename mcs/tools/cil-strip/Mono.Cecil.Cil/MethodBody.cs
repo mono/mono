@@ -30,7 +30,7 @@ namespace Mono.Cecil.Cil {
 
 	using Mono.Cecil;
 
-	public sealed class MethodBody : IVariableDefinitionProvider, IScopeProvider, ICodeVisitable {
+	internal sealed class MethodBody : IVariableDefinitionProvider, IScopeProvider, ICodeVisitable {
 
 		MethodDefinition m_method;
 		int m_maxStack;

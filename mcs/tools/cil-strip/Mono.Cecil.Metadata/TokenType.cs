@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public enum TokenType : uint {
+	internal enum TokenType : uint {
 		Module			  = 0x00000000,
 		TypeRef			 = 0x01000000,
 		TypeDef			 = 0x02000000,

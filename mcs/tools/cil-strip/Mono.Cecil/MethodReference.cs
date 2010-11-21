@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System.Text;
 
-	public class MethodReference : MemberReference, IMethodSignature, IGenericParameterProvider {
+	internal class MethodReference : MemberReference, IMethodSignature, IGenericParameterProvider {
 
 		ParameterDefinitionCollection m_parameters;
 		MethodReturnType m_returnType;

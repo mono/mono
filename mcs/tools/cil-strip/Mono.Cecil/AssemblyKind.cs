@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public enum AssemblyKind {
+	internal enum AssemblyKind {
 		Dll,
 		Console,
 		Windows

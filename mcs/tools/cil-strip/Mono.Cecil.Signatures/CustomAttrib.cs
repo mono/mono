@@ -47,7 +47,7 @@ namespace Mono.Cecil.Signatures {
 			Constructor = ctor;
 		}
 
-		public struct FixedArg {
+		internal struct FixedArg {
 
 			public bool SzArray;
 			public uint NumElem;
@@ -56,7 +56,7 @@ namespace Mono.Cecil.Signatures {
 			internal static FixedArg [] Empty = new FixedArg [0];
 		}
 
-		public struct Elem {
+		internal struct Elem {
 
 			public bool Simple;
 			public bool String;
@@ -69,7 +69,7 @@ namespace Mono.Cecil.Signatures {
 			public TypeReference ElemType;
 		}
 
-		public struct NamedArg {
+		internal struct NamedArg {
 
 			public bool Field;
 			public bool Property;

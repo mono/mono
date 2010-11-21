@@ -34,7 +34,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Binary;
 
-	public sealed class AssemblyFactory {
+	internal sealed class AssemblyFactory {
 
 		AssemblyFactory ()
 		{

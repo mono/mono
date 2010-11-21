@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public enum VariantType {
+	internal enum VariantType {
 		I2 = 2,
 		I4 = 3,
 		R4 = 4,

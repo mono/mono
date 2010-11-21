@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil;
 
-	public class FieldReference : MemberReference {
+	internal class FieldReference : MemberReference {
 
 		TypeReference m_fieldType;
 

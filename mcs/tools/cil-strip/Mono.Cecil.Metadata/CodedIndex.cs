@@ -31,7 +31,7 @@
 
 namespace Mono.Cecil.Metadata {
 
-	public enum CodedIndex {
+	internal enum CodedIndex {
 		TypeDefOrRef,
 		HasConstant,
 		HasCustomAttribute,

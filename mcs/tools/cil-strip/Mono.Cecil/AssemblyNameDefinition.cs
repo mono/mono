@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	using System;
 
-	public sealed class AssemblyNameDefinition : AssemblyNameReference {
+	internal sealed class AssemblyNameDefinition : AssemblyNameReference {
 
 		public override byte [] Hash {
 			get { return new byte [0]; }

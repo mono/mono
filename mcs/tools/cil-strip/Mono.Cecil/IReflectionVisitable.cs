@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public interface IReflectionVisitable {
+	internal interface IReflectionVisitable {
 
 		void Accept (IReflectionVisitor visitor);
 	}

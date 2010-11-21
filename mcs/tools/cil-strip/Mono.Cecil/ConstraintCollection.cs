@@ -36,7 +36,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class ConstraintCollection : CollectionBase {
+	internal sealed class ConstraintCollection : CollectionBase {
 
 		GenericParameter m_container;
 

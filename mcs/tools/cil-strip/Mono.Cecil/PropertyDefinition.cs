@@ -31,7 +31,7 @@ namespace Mono.Cecil {
 	using System;
 	using System.Text;
 
-	public sealed class PropertyDefinition : PropertyReference,
+	internal sealed class PropertyDefinition : PropertyReference,
 		IMemberDefinition, ICustomAttributeProvider, IHasConstant {
 
 		PropertyAttributes m_attributes;

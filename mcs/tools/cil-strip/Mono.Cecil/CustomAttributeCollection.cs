@@ -36,7 +36,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Cil;
 
-	public sealed class CustomAttributeCollection : CollectionBase, IReflectionVisitable {
+	internal sealed class CustomAttributeCollection : CollectionBase, IReflectionVisitable {
 
 		ICustomAttributeProvider m_container;
 

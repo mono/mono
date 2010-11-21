@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public sealed class ReferenceType : TypeSpecification {
+	internal sealed class ReferenceType : TypeSpecification {
 
 		public override string Name {
 			get { return string.Concat (base.Name, "&"); }

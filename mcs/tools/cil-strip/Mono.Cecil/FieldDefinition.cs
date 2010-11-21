@@ -31,7 +31,7 @@ namespace Mono.Cecil {
 	using Mono.Cecil;
 	using Mono.Cecil.Binary;
 
-	public sealed class FieldDefinition : FieldReference, IMemberDefinition,
+	internal sealed class FieldDefinition : FieldReference, IMemberDefinition,
 		ICustomAttributeProvider, IHasMarshalSpec, IHasConstant {
 
 		FieldAttributes m_attributes;

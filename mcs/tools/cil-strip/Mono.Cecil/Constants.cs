@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	public class Constants {
+	internal class Constants {
 
 		Constants ()
 		{

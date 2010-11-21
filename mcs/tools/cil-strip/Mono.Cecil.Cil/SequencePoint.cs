@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public class SequencePoint {
+	internal class SequencePoint {
 
 		Document m_document;
 
