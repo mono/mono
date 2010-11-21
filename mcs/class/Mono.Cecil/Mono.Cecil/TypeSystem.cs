@@ -123,9 +123,7 @@ namespace Mono.Cecil {
 
 			TypeReference CreateTypeReference (string @namespace, string name)
 			{
-				var type = new TypeReference (@namespace, name, GetCorlibReference ());
-				type.module = module;
-				return type;
+				return new TypeReference (@namespace, name, module, GetCorlibReference ());
 			}
 		}
 

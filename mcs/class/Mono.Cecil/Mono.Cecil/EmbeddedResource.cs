@@ -78,6 +78,9 @@ namespace Mono.Cecil {
 
 		public byte [] GetResourceData ()
 		{
+			if (stream != null)
+				return ReadStream (stream);
+
 			if (data != null)
 				return data;
 
@@ -85,6 +88,18 @@ namespace Mono.Cecil {
 				return reader.GetManagedResourceStream (offset.Value).ToArray ();
 
 			throw new InvalidOperationException ();
+		}
+
+		static byte [] ReadStream (Stream stream)
+		{
+			var length = (int) stream.Length;
+			var data = new byte [length];
+			int offset = 0, read;
+
+			while ((read = stream.Read (data, offset, length - offset)) > 0)
+				offset += read;
+
+			return data;
 		}
 	}
 }

@@ -52,6 +52,11 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public override TypeReference DeclaringType {
+			get { return ElementType.DeclaringType; }
+			set { throw new NotSupportedException (); }
+		}
+
 		public override string FullName {
 			get {
 				var name = new StringBuilder ();

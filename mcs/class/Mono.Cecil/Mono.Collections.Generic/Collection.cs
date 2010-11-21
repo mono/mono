@@ -113,6 +113,13 @@ namespace Mono.Collections.Generic {
 			items = new T [capacity];
 		}
 
+		public Collection (ICollection<T> items)
+		{
+			this.items = new T [items.Count];
+			items.CopyTo (this.items, 0);
+			this.size = this.items.Length;
+		}
+
 		public void Add (T item)
 		{
 			if (size == items.Length)

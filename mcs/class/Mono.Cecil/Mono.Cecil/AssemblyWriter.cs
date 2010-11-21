@@ -1413,8 +1413,7 @@ namespace Mono.Cecil {
 				GetBlobIndex (GetMethodSignature (method)),
 				param_rid));
 
-			if (method.HasParameters)
-				AddParameters (method);
+			AddParameters (method);
 
 			if (method.HasGenericParameters)
 				AddGenericParameters (method);
@@ -1434,12 +1433,15 @@ namespace Mono.Cecil {
 
 		void AddParameters (MethodDefinition method)
 		{
-			var parameters = method.Parameters;
-
 			var return_parameter = method.MethodReturnType.parameter;
 
 			if (return_parameter != null && RequiresParameterRow (return_parameter))
 				AddParameter (0, return_parameter, param_table);
+
+			if (!method.HasParameters)
+				return;
+
+			var parameters = method.Parameters;
 
 			for (int i = 0; i < parameters.Count; i++) {
 				var parameter = parameters [i];

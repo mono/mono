@@ -110,6 +110,16 @@ namespace Mono.Cecil {
 			set { attributes = attributes.SetAttributes ((ushort) ParameterAttributes.Out, value); }
 		}
 
+		public bool IsLcid {
+			get { return attributes.GetAttributes ((ushort) ParameterAttributes.Lcid); }
+			set { attributes = attributes.SetAttributes ((ushort) ParameterAttributes.Lcid, value); }
+		}
+
+		public bool IsReturnValue {
+			get { return attributes.GetAttributes ((ushort) ParameterAttributes.Retval); }
+			set { attributes = attributes.SetAttributes ((ushort) ParameterAttributes.Retval, value); }
+		}
+
 		public bool IsOptional {
 			get { return attributes.GetAttributes ((ushort) ParameterAttributes.Optional); }
 			set { attributes = attributes.SetAttributes ((ushort) ParameterAttributes.Optional, value); }

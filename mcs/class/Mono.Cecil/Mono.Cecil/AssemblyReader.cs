@@ -83,7 +83,7 @@ namespace Mono.Cecil {
 			ReadSymbols (module, parameters);
 
 			if (parameters.AssemblyResolver != null)
-				module.AssemblyResolver = parameters.AssemblyResolver;
+				module.assembly_resolver = parameters.AssemblyResolver;
 
 			return module;
 		}
@@ -989,11 +989,11 @@ namespace Mono.Cecil {
 			var type = new TypeReference (
 				@namespace,
 				name,
+				module,
 				scope);
 
 			type.DeclaringType = declaring_type;
 			type.token = new MetadataToken (TokenType.TypeRef, rid);
-			type.module = module;
 
 			MetadataSystem.TryProcessPrimitiveType (type);
 
@@ -2114,7 +2114,7 @@ namespace Mono.Cecil {
 			var type_system = module.TypeSystem;
 
 			var context = new MethodReference (string.Empty, type_system.Void);
-			context.DeclaringType = new TypeReference (string.Empty, string.Empty, type_system.Corlib);
+			context.DeclaringType = new TypeReference (string.Empty, string.Empty, module, type_system.Corlib);
 
 			var member_references = new MemberReference [length];
 

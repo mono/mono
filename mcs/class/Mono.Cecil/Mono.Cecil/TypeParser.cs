@@ -355,9 +355,7 @@ namespace Mono.Cecil {
 			string @namespace, name;
 			SplitFullName (type_info.type_fullname, out @namespace, out name);
 
-			var type = new TypeReference (@namespace, name, scope) {
-				module = module,
-			};
+			var type = new TypeReference (@namespace, name, module, scope);
 
 			AdjustGenericParameters (type);
 
@@ -366,9 +364,8 @@ namespace Mono.Cecil {
 				return type;
 
 			for (int i = 0; i < nested_names.Length; i++) {
-				type = new TypeReference (string.Empty, nested_names [i], null) {
+				type = new TypeReference (string.Empty, nested_names [i], module, null) {
 					DeclaringType = type,
-					module = module,
 				};
 
 				AdjustGenericParameters (type);
