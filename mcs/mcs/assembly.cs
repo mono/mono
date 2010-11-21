@@ -47,9 +47,13 @@ namespace Mono.CSharp
 		ModuleContainer module;
 		string name;
 		string file_name;
+
 		byte[] public_key, public_key_token;
-		bool private_key_exists;
 		bool delay_sign;
+
+		// Holds private/public key pair when private key
+		// was available
+		StrongNameKeyPair private_key;	
 
 		Attribute cls_attribute;
 
@@ -362,15 +366,17 @@ namespace Mono.CSharp
 			var an = new AssemblyName (name);
 
 			if (public_key != null) {
-				if (!delay_sign && !private_key_exists) {
+				if (delay_sign) {
+					an.SetPublicKey (public_key);
+				} else {
 					if (public_key.Length == 16) {
 						Report.Error (1606, "Could not sign the assembly. ECMA key can only be used to delay-sign assemblies");
-					} else {
+					} else if (private_key == null) {
 						Error_AssemblySigning ("The specified key file does not have a private key");
+					} else {
+						an.KeyPair = private_key;
 					}
 				}
-
-				an.SetPublicKey (public_key);
 			}
 
 			try {
@@ -514,8 +520,8 @@ namespace Mono.CSharp
 		{
 			if (keyContainer != null) {
 				try {
-					public_key = new StrongNameKeyPair (keyContainer).PublicKey;
-					private_key_exists = true;
+					private_key = new StrongNameKeyPair (keyContainer);
+					public_key = private_key.PublicKey;
 				} catch {
 					Error_AssemblySigning ("The specified key container `" + keyContainer + "' does not exist");
 				}
@@ -535,6 +541,8 @@ namespace Mono.CSharp
 				//
 				string test_path = Path.Combine (Path.GetDirectoryName (file_name), keyFile);
 				key_file_exists = File.Exists (test_path);
+				if (key_file_exists)
+					keyFile = test_path;
 			}
 
 			if (!key_file_exists) {
@@ -576,7 +584,7 @@ namespace Mono.CSharp
 				try {
 					// TODO: Is there better way to test for a private key presence ?
 					CryptoConvert.FromCapiPrivateKeyBlob (snkeypair);
-					private_key_exists = true;
+					private_key = new StrongNameKeyPair (snkeypair);
 				} catch { }
 			}
 		}
