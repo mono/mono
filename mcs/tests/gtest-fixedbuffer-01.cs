@@ -1,11 +1,11 @@
-// Compiler options: -unsafe -r:gtest-166-lib.dll
+// Compiler options: -unsafe -r:gtest-fixedbuffer-01-lib.dll
 
 // Fixed buffers tests
 
 using System;
 using System.Runtime.InteropServices;
 
-//[module: DefaultCharSet (CharSet.Ansi)]
+[module: DefaultCharSet (CharSet.Ansi)]
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public unsafe struct TestNew {
