@@ -24,13 +24,13 @@ namespace Mono.CSharp
 		VOLATILE  = 0x1000,
 		UNSAFE    = 0x2000,
 		TOP       = 0x4000,
-		ASYNC     = 0x8000,
 
 		//
 		// Compiler specific flags
 		//
 		PROPERTY_CUSTOM 		= 0x4000,
 
+		ASYNC					= 0x10000,
 		PARTIAL					= 0x20000,
 		DEFAULT_ACCESS_MODIFER	= 0x40000,
 		METHOD_EXTENSION		= 0x80000,
