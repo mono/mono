@@ -1435,14 +1435,6 @@ namespace System.Reflection.Emit
 			}
 		}
 		
-		//
-		// Used internally by mcs only
-		//
-		internal void SetCharSet (TypeAttributes ta)
-		{
-			this.attrs = ta;
-		}
-
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
 		{
 			if (customBuilder == null)
