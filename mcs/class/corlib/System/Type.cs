@@ -1,8 +1,9 @@
 //
 // System.Type.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -1586,7 +1587,7 @@ namespace System {
 		public virtual StructLayoutAttribute StructLayoutAttribute {
 			get {
 #if NET_4_0
-				throw CreateNIE ();
+				throw new NotSupportedException ();
 #else
 				return GetStructLayoutAttribute ();
 #endif
@@ -1613,8 +1614,13 @@ namespace System {
 			else
 				attr.CharSet = CharSet.Auto;
 
-			if (kind != LayoutKind.Auto)
-				GetPacking (out attr.Pack, out attr.Size);
+			if (kind != LayoutKind.Auto) {
+				int packing;
+				GetPacking (out packing, out attr.Size);
+				// 0 means no data provided, we end up with default value
+				if (packing != 0)
+					attr.Pack = packing;
+			}
 
 			return attr;
 		}
