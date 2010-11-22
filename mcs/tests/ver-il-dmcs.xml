@@ -36989,6 +36989,26 @@
       </method>
     </type>
   </test>
+  <test name="test-418.cs">
+    <type name="M3">
+      <method name="Int32 Main()">
+        <size>144</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="M1">
+      <method name="Void .ctor(String)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="M2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-419.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -37646,6 +37666,21 @@
       </method>
       <method name="Void Main()">
         <size>33</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-454.cs">
+    <type name="FooAttribute">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>247</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -42816,6 +42851,31 @@
       </method>
     </type>
   </test>
+  <test name="test-682.cs">
+    <type name="broken_cast">
+      <method name="Void report(System.String)">
+        <size>7</size>
+      </method>
+      <method name="Void conv_ovf_i(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Void conv_ovf_i_un(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Void conv_ovf_u(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Void conv_ovf_u_un(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>198</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-683.cs">
     <type name="broken_cast">
       <method name="Void .ctor()">
@@ -44504,6 +44564,16 @@
     <type name="D">
       <method name="Void Finalize()">
         <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-759.cs">
+    <type name="B">
+      <method name="Void Main()">
+        <size>12</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

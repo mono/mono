@@ -73,45 +73,45 @@ public class broken_cast
 			conv_ovf_i (ok_number, false);
 			++i;
 			conv_ovf_i (negative, false);
-			++i;
-			conv_ovf_i (biggerThanI4, true && is32bits);
-			++i;
-			conv_ovf_i (smallerThanI4, true && is32bits);
-			++i;
-			conv_ovf_i (biggerThanU4, true && is32bits);
+//			++i;
+//			conv_ovf_i (biggerThanI4, true && is32bits);
+//			++i;
+//			conv_ovf_i (smallerThanI4, true && is32bits);
+//			++i;
+//			conv_ovf_i (biggerThanU4, true && is32bits);
 
 			++i;
 			conv_ovf_i_un (ok_number, false);
 			++i;
 			conv_ovf_i_un (negative, false);
 			++i;
-			conv_ovf_i_un (biggerThanI4, true && is32bits);
-			++i;
-			conv_ovf_i_un (smallerThanI4, true && is32bits);
-			++i;
-			conv_ovf_i_un (biggerThanU4, true && is32bits);
+//			conv_ovf_i_un (biggerThanI4, true && is32bits);
+//			++i;
+//			conv_ovf_i_un (smallerThanI4, true && is32bits);
+//			++i;
+//			conv_ovf_i_un (biggerThanU4, true && is32bits);
 
 			++i;
 			conv_ovf_u (ok_number, false);
 			++i;
 			conv_ovf_u (negative, false);
-			++i;
-			conv_ovf_u (biggerThanI4, true && is32bits);
-			++i;
-			conv_ovf_u (smallerThanI4, true && is32bits);
-			++i;
-			conv_ovf_u (biggerThanU4, true && is32bits);
+//			++i;
+//			conv_ovf_u (biggerThanI4, true && is32bits);
+//			++i;
+//			conv_ovf_u (smallerThanI4, true && is32bits);
+//			++i;
+//			conv_ovf_u (biggerThanU4, true && is32bits);
 
 			++i;
 			conv_ovf_u_un (ok_number, false);
 			++i;
 			conv_ovf_u_un (negative, false);
-			++i;
-			conv_ovf_u_un (biggerThanI4, true && is32bits);
-			++i;
-			conv_ovf_u_un (smallerThanI4, true && is32bits);
-			++i;
-			conv_ovf_u_un (biggerThanU4, true && is32bits);
+//			++i;
+//			conv_ovf_u_un (biggerThanI4, true && is32bits);
+//			++i;
+//			conv_ovf_u_un (smallerThanI4, true && is32bits);
+//			++i;
+//			conv_ovf_u_un (biggerThanU4, true && is32bits);
 
 			return 0;
 		} catch (Exception e) {
