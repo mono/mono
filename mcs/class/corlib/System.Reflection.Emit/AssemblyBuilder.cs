@@ -427,7 +427,7 @@ namespace System.Reflection.Emit
 			}
 #endif
 		}
-
+/*
 		internal void EmbedResourceFile (string name, string fileName)
 		{
 			EmbedResourceFile (name, fileName, ResourceAttributes.Public);
@@ -452,7 +452,6 @@ namespace System.Reflection.Emit
 				s.Read (resources [p].data, 0, (int)len);
 				s.Close ();
 			} catch {
-				/* do something */
 			}
 		}
 
@@ -470,7 +469,7 @@ namespace System.Reflection.Emit
 			resources [p].attrs = attribute;
 			resources [p].data = blob;
 		}
-
+*/
 		internal void AddTypeForwarder (Type t) {
 			if (t == null)
 				throw new ArgumentNullException ("t");
