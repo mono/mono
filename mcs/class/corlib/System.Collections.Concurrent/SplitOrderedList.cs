@@ -465,9 +465,24 @@ namespace System.Collections.Concurrent
 #if INSIDE_SYSTEM_WEB && !NET_4_0 && !BOOTSTRAP_NET_4_0
 	internal struct SpinWait
 	{
+		const           int  step = 5;
+		const           int  maxTime = 50;
+		static readonly bool isSingleCpu = (Environment.ProcessorCount == 1);
+
+		int ntime;
+
 		public void SpinOnce ()
 		{
-			Thread.SpinWait (30);
+			if (isSingleCpu) {
+				// On a single-CPU system, spinning does no good
+				Thread.Sleep (0);
+			} else {
+				if ((ntime = ntime == maxTime ? maxTime : ntime + 1) % step == 0)
+					Thread.Sleep (0);
+				else
+					// Multi-CPU system might be hyper-threaded, let other thread run
+					Thread.SpinWait (ntime << 1);
+			}
 		}
 	}
 #endif
