@@ -751,6 +751,42 @@ namespace Mono.CSharp
 			}
 		}
 
+		public void EmbedResources ()
+		{
+			//
+			// Add Win32 resources
+			//
+			if (RootContext.Win32ResourceFile != null) {
+				Builder.DefineUnmanagedResource (RootContext.Win32ResourceFile);
+			} else {
+				Builder.DefineVersionInfoResource ();
+			}
+
+			if (RootContext.Win32IconFile != null) {
+				builder_extra.DefineWin32IconResource (RootContext.Win32IconFile);
+			}
+
+			if (RootContext.Resources != null) {
+				if (RootContext.Target == Target.Module) {
+					Report.Error (1507, "Cannot link resource file when building a module");
+				} else {
+					foreach (var res in RootContext.Resources) {
+						if (!File.Exists (res.FileName)) {
+							Report.Error (1566, "Error reading resource file `{0}'", res.FileName);
+							continue;
+						}
+
+						if (res.IsEmbeded) {
+							var stream = File.OpenRead (res.FileName);
+							module.Builder.DefineManifestResource (res.Name, stream, res.Attributes);
+						} else {
+							Builder.AddResourceFile (res.Name, Path.GetFileName (res.FileName), res.Attributes);
+						}
+					}
+				}
+			}
+		}
+
 		public void Save ()
 		{
 			PortableExecutableKinds pekind;
@@ -782,15 +818,8 @@ namespace Mono.CSharp
 
 			try {
 				Builder.Save (module.Builder.ScopeName, pekind, machine);
-			} catch (System.IO.IOException io) {
-				Report.Error (16, "Could not write to file `" + name + "', cause: " + io.Message);
-				return;
-			} catch (System.UnauthorizedAccessException ua) {
-				Report.Error (16, "Could not write to file `" + name + "', cause: " + ua.Message);
-				return;
-			} catch (System.NotImplementedException nie) {
-				Report.RuntimeMissingSupport (Location.Null, nie.Message);
-				return;
+			} catch (Exception e) {
+				Report.Error (16, "Could not write to file `" + name + "', cause: " + e.Message);
 			}
 		}
 
@@ -931,6 +960,7 @@ namespace Mono.CSharp
 		static MethodInfo adder_method;
 		static MethodInfo set_module_only;
 		static MethodInfo add_type_forwarder;
+		static MethodInfo win32_icon_define;
 		static FieldInfo assembly_version;
 		static FieldInfo assembly_algorithm;
 		static FieldInfo assembly_culture;
@@ -969,6 +999,18 @@ namespace Mono.CSharp
 			} catch {
 				ctx.Report.RuntimeMissingSupport (loc, "TypeForwardedToAttribute");
 			}
+		}
+
+		public void DefineWin32IconResource (string fileName)
+		{
+			try {
+				if (win32_icon_define == null)
+					win32_icon_define = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance | BindingFlags.NonPublic);
+
+				win32_icon_define.Invoke (builder, new object[] { fileName });
+			} catch {
+				ctx.Report.RuntimeMissingSupport (Location.Null, "-win32icon");
+			}		
 		}
 
 		public void SetAlgorithmId (uint value, Location loc)

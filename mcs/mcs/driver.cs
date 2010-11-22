@@ -75,13 +75,6 @@ namespace Mono.CSharp
 		bool load_default_config = true;
 
 		//
-		// A list of resource files
-		//
-		Resources embedded_resources;
-		string win32ResourceFile;
-		string win32IconFile;
-
-		//
 		// Output file
 		//
 		static string output_file;
@@ -698,7 +691,7 @@ namespace Mono.CSharp
 			//
 			// If there is nothing to put in the assembly, and we are not a library
 			//
-			if (first_source == null && embedded_resources == null) {
+			if (first_source == null && RootContext.Resources == null) {
 				Report.Error (2008, "No files to compile were specified");
 				return false;
 			}
@@ -924,10 +917,8 @@ namespace Mono.CSharp
 					Report.Error (5, "Missing argument to --linkres"); 
 					Environment.Exit (1);
 				}
-				if (embedded_resources == null)
-					embedded_resources = new Resources (ctx);
-				
-				embedded_resources.Add (false, args [++i], args [i]);
+
+				AddResource (new AssemblyResource (args[++i], args[i]));
 				return true;
 				
 			case "--resource":
@@ -938,10 +929,8 @@ namespace Mono.CSharp
 					Report.Error (5, "Missing argument to --resource"); 
 					Environment.Exit (1);
 				}
-				if (embedded_resources == null)
-					embedded_resources = new Resources (ctx);
-				
-				embedded_resources.Add (true, args [++i], args [i]);
+
+				AddResource (new AssemblyResource (args[++i], args[i], true));
 				return true;
 				
 			case "--target":
@@ -1261,30 +1250,32 @@ namespace Mono.CSharp
 			case "/linkresource":
 			case "/res":
 			case "/resource":
-				if (embedded_resources == null)
-					embedded_resources = new Resources (ctx);
-
-				bool embeded = arg [1] == 'r' || arg [1] == 'R';
+				AssemblyResource res = null;			
 				string[] s = value.Split (argument_value_separator);
 				switch (s.Length) {
 				case 1:
 					if (s[0].Length == 0)
 						goto default;
-					embedded_resources.Add (embeded, s [0], Path.GetFileName (s[0]));
+					res = new AssemblyResource (s [0], Path.GetFileName (s[0]));
 					break;
 				case 2:
-					embedded_resources.Add (embeded, s [0], s [1]);
+					res = new AssemblyResource (s [0], s [1]);
 					break;
 				case 3:
 					if (s [2] != "public" && s [2] != "private") {
 						Report.Error (1906, "Invalid resource visibility option `{0}'. Use either `public' or `private' instead", s [2]);
 						return true;
 					}
-					embedded_resources.Add (embeded, s [0], s [1], s [2] == "private");
+					res = new AssemblyResource (s[0], s[1], s[2] == "private");
 					break;
 				default:
 					Report.Error (-2005, "Wrong number of arguments for option `{0}'", option);
 					break;
+				}
+
+				if (res != null) {
+					res.IsEmbeded = arg [1] == 'r' || arg [1] == 'R';
+					AddResource (res);
 				}
 
 				return true;
@@ -1338,10 +1329,10 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 				
-				if (win32IconFile != null)
+				if (RootContext.Win32IconFile != null)
 					Report.Error (1565, "Cannot specify the `win32res' and the `win32ico' compiler option at the same time");
 
-				win32ResourceFile = value;
+				RootContext.Win32ResourceFile = value;
 				return true;
 			}
 			case "/win32icon": {
@@ -1350,10 +1341,10 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 
-				if (win32ResourceFile != null)
+				if (RootContext.Win32ResourceFile != null)
 					Report.Error (1565, "Cannot specify the `win32res' and the `win32ico' compiler option at the same time");
 
-				win32IconFile = value;
+				RootContext.Win32IconFile = value;
 				return true;
 			}
 			case "/doc": {
@@ -1641,6 +1632,22 @@ namespace Mono.CSharp
 			// Could here hashtable throw an exception?
 			external_aliases [identifier] = assembly;
 		}
+
+		void AddResource (AssemblyResource res)
+		{
+			if (RootContext.Resources == null) {
+				RootContext.Resources = new List<AssemblyResource> ();
+				RootContext.Resources.Add (res);
+				return;
+			}
+
+			if (RootContext.Resources.Contains (res)) {
+				ctx.Report.Error (1508, "The resource identifier `{0}' has already been used in this assembly", res.Name);
+				return;
+			}
+
+			RootContext.Resources.Add (res);
+		}
 		
 		static bool IsExternAliasValid (string identifier)
 		{
@@ -1781,36 +1788,11 @@ namespace Mono.CSharp
 
 			ShowTime ("Closing types");
 
-			if (embedded_resources != null){
-				if (RootContext.Target == Target.Module) {
-					Report.Error (1507, "Cannot link resource file when building a module");
-					return false;
-				}
+			if (timestamps)
+				stopwatch = Stopwatch.StartNew ();
 
-				embedded_resources.Emit (assembly);
-			}
-
-			//
-			// Add Win32 resources
-			//
-			if (win32ResourceFile != null) {
-				try {
-					assembly.Builder.DefineUnmanagedResource (win32ResourceFile);
-				} catch (ArgumentException) {
-					Report.RuntimeMissingSupport (Location.Null, "resource embedding ");
-				}
-			} else {
-				assembly.Builder.DefineVersionInfoResource ();
-			}
-
-			if (win32IconFile != null) {
-				MethodInfo define_icon = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				if (define_icon == null) {
-					Report.RuntimeMissingSupport (Location.Null, "resource embedding");
-				} else {
-					define_icon.Invoke (assembly.Builder, new object [] { win32IconFile });
-				}
-			}
+			assembly.EmbedResources ();
+			ShowTime ("Embedding resources");
 
 			if (Report.Errors > 0)
 				return false;
@@ -1835,116 +1817,33 @@ namespace Mono.CSharp
 		}
 	}
 
-	class Resources
+	public class AssemblyResource : IEquatable<AssemblyResource>
 	{
-		interface IResource
+		public AssemblyResource (string fileName, string name)
+			: this (fileName, name, false)
 		{
-			void Emit (AssemblyDefinition assembly);
-			string FileName { get; }
 		}
 
-		class EmbededResource : IResource
+		public AssemblyResource (string fileName, string name, bool isPrivate)
 		{
-			static MethodInfo embed_res;
-			readonly object[] args;
-
-			public EmbededResource (string name, string file, bool isPrivate)
-			{
-				args = new object [3];
-				args [0] = name;
-				args [1] = file;
-				args [2] = isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public;
-			}
-
-			public void Emit (AssemblyDefinition assembly)
-			{
-				if (embed_res == null) {
-					var argst = new [] {
-						typeof (string), typeof (string), typeof (ResourceAttributes)
-					};
-
-					embed_res = typeof (AssemblyBuilder).GetMethod (
-						"EmbedResourceFile", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-						null, CallingConventions.Any, argst, null);
-
-					if (embed_res == null) {
-						assembly.Compiler.Report.RuntimeMissingSupport (Location.Null, "Resource embedding");
-					}
-				}
-
-				embed_res.Invoke (assembly.Builder, args);
-			}
-
-			public string FileName {
-				get {
-					return (string)args [1];
-				}
-			}
+			FileName = fileName;
+			Name = name;
+			Attributes = isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public;
 		}
 
-		class LinkedResource : IResource
+		public ResourceAttributes Attributes { get; private set; }
+		public string Name { get; private set; }
+		public string FileName { get; private set; }
+		public bool IsEmbeded { get; set; }
+
+		#region IEquatable<AssemblyResource> Members
+
+		public bool Equals (AssemblyResource other)
 		{
-			readonly string file;
-			readonly string name;
-			readonly ResourceAttributes attribute;
-
-			public LinkedResource (string name, string file, bool isPrivate)
-			{
-				this.name = name;
-				this.file = file;
-				this.attribute = isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public;
-			}
-
-			public void Emit (AssemblyDefinition assembly)
-			{
-				assembly.Builder.AddResourceFile (name, Path.GetFileName (file), attribute);
-			}
-
-			public string FileName {
-				get {
-					return file;
-				}
-			}
+			return Name == other.Name;
 		}
 
-
-		Dictionary<string, IResource> embedded_resources = new Dictionary<string, IResource> ();
-		readonly CompilerContext ctx;
-
-		public Resources (CompilerContext ctx)
-		{
-			this.ctx = ctx;
-		}
-
-		public void Add (bool embeded, string file, string name)
-		{
-			Add (embeded, file, name, false);
-		}
-
-		public void Add (bool embeded, string file, string name, bool isPrivate)
-		{
-			if (embedded_resources.ContainsKey (name)) {
-				ctx.Report.Error (1508, "The resource identifier `{0}' has already been used in this assembly", name);
-				return;
-			}
-			IResource r = embeded ? 
-				(IResource) new EmbededResource (name, file, isPrivate) : 
-				new LinkedResource (name, file, isPrivate);
-
-			embedded_resources.Add (name, r);
-		}
-
-		public void Emit (AssemblyDefinition assembly)
-		{
-			foreach (IResource r in embedded_resources.Values) {
-				if (!File.Exists (r.FileName)) {
-					ctx.Report.Error (1566, "Error reading resource file `{0}'", r.FileName);
-					continue;
-				}
-				
-				r.Emit (assembly);
-			}
-		}
+		#endregion
 	}
 
 	//

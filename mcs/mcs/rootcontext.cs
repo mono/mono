@@ -91,6 +91,14 @@ namespace Mono.CSharp {
 		//
 		static public bool Unsafe;
 
+		static public string Win32ResourceFile;
+		static public string Win32IconFile;
+
+		//
+		// A list of resource files for embedding
+		//
+		static public  List<AssemblyResource> Resources;
+
 		static public bool GenerateDebugInfo;
 
 		//
@@ -150,6 +158,9 @@ namespace Mono.CSharp {
 			Version = LanguageVersion.Default;
 			Documentation = null;
 			GenerateDebugInfo = false;
+			Win32IconFile = null;
+			Win32ResourceFile = null;
+			Resources = null;
 
 #if NET_4_0
 			MetadataCompatibilityVersion = MetadataVersion.v4;
