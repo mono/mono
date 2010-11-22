@@ -610,6 +610,8 @@ namespace System.Reflection.Emit
 			/*
 			 * The format of the argument byte array is not documented
 			 * so this method is impossible to implement.
+			 *
+			 * https://connect.microsoft.com/VisualStudio/feedback/details/95784/fatal-assemblybuilder-defineunmanagedresource-byte-and-modulebuilder-defineunmanagedresource-byte-bugs-renders-them-useless
 			 */
 
 			throw new NotImplementedException ();
