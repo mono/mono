@@ -68,6 +68,7 @@ namespace Mono.CSharp {
 	static public TypeSpec asynccallback_type;
 	static public TypeSpec runtime_argument_handle_type;
 	static public TypeSpec void_ptr_type;
+	static public TypeSpec interop_charset;
 
 	// 
 	// C# 2.0
@@ -173,7 +174,7 @@ namespace Mono.CSharp {
 		runtime_helpers_type = iasyncresult_type = asynccallback_type =
 		runtime_argument_handle_type = void_ptr_type = isvolatile_type =
 		generic_ilist_type = generic_icollection_type = generic_ienumerator_type =
-		generic_ienumerable_type = generic_nullable_type = expression_type =
+		generic_ienumerable_type = generic_nullable_type = expression_type = interop_charset =
 		parameter_expression_type = fieldinfo_type = methodinfo_type = ctorinfo_type = null;
 
 		expression_type_expr = null;

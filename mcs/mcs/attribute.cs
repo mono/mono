@@ -119,6 +119,30 @@ namespace Mono.CSharp {
 			this.nameEscaped = nameEscaped;
 		}
 
+		void AddModuleCharSet (ResolveContext rc)
+		{
+			const string dll_import_char_set = "CharSet";
+
+			//
+			// Only when not customized by user
+			//
+			if (HasField (dll_import_char_set))
+				return;
+
+			if (TypeManager.interop_charset == null) {
+				TypeManager.interop_charset = TypeManager.CoreLookupType (rc.Compiler, "System.Runtime.InteropServices", "CharSet", MemberKind.Enum, true);
+
+				if (TypeManager.interop_charset == null)
+					return;
+			}
+
+			if (NamedArguments == null)
+				NamedArguments = new Arguments (1);
+
+			var value = Constant.CreateConstant (rc, TypeManager.interop_charset, rc.CurrentMemberDefinition.Module.DefaultCharSet, Location);
+			NamedArguments.Add (new NamedArgument (dll_import_char_set, loc, value));
+		}
+
 		public Attribute Clone ()
 		{
 			Attribute a = new Attribute (ExplicitTarget, expression, null, loc, nameEscaped);
@@ -335,29 +359,6 @@ namespace Mono.CSharp {
 			get { return expression.Name; }
 		}
 
-		void ApplyModuleCharSet (ResolveContext rc)
-		{
-			if (Type != context.Compiler.PredefinedAttributes.DllImport)
-				return;
-
-			if (!rc.CurrentMemberDefinition.Module.HasDefaultCharSet)
-				return;
-
-			const string CharSetEnumMember = "CharSet";
-			if (NamedArguments == null) {
-				NamedArguments = new Arguments (1);
-			} else {
-				foreach (NamedArgument a in NamedArguments) {
-					if (a.Name == CharSetEnumMember)
-						return;
-				}
-			}
-
-			var char_set = rc.Compiler.MetaImporter.ImportType (typeof (CharSet));	// TODO: typeof
-			NamedArguments.Add (new NamedArgument (CharSetEnumMember, loc,
-				Constant.CreateConstant (rc, char_set, rc.CurrentMemberDefinition.Module.DefaultCharSet, Location)));
- 		}
-
 		public Report Report {
 			get { return context.Compiler.Report; }
 		}
@@ -401,7 +402,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			ApplyModuleCharSet (rc);
+			//
+			// Add [module: DefaultCharSet] to all DllImport import attributes
+			//
+			if (Type == context.Compiler.PredefinedAttributes.DllImport && rc.CurrentMemberDefinition.Module.HasDefaultCharSet) {
+				AddModuleCharSet (rc);
+			}
 
 			if (NamedArguments != null && !ResolveNamedArguments (rc)) {
 				return null;

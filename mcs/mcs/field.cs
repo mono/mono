@@ -458,12 +458,15 @@ namespace Mono.CSharp
 			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.short_type))
 				return;
 
-			var interop_charset = TypeManager.CoreLookupType (Compiler, "System.Runtime.InteropServices", "CharSet", MemberKind.Enum, true);
-			if (interop_charset == null)
-				return;
+			if (TypeManager.interop_charset == null) {
+				TypeManager.interop_charset = TypeManager.CoreLookupType (Compiler, "System.Runtime.InteropServices", "CharSet", MemberKind.Enum, true);
+
+				if (TypeManager.interop_charset == null)
+					return;
+			}
 
 			var field_size = pa.GetField ("Size", TypeManager.int32_type, Location);
-			var field_charset = pa.GetField ("CharSet", interop_charset, Location);
+			var field_charset = pa.GetField ("CharSet", TypeManager.interop_charset, Location);
 			if (field_size == null || field_charset == null)
 				return;
 
