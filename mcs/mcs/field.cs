@@ -357,7 +357,7 @@ namespace Mono.CSharp
 		#region Properties
 
 		//
-		// Explicit struct layout set be parent
+		// Explicit struct layout set by parent
 		//
 		public CharSet? CharSet {
 			get; set;
@@ -440,7 +440,6 @@ namespace Mono.CSharp
 				return;
 			}
 
-			buffer_size *= type_size;
 			EmitFieldSize (buffer_size);
 
 			Compiler.PredefinedAttributes.UnsafeValueType.EmitAttribute (fixed_buffer_type);
