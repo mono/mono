@@ -2627,13 +2627,19 @@ namespace Mono.CSharp {
 			//
 			// When struct constains fixed fixed and struct layout has explicitly
 			// set CharSet, its value has to be propagated to compiler generated
-			// fixed field types
+			// fixed types
 			//
-			if (a.Type == pa.StructLayout && Fields != null && a.HasField ("CharSet")) {
+			if (a.Type == pa.StructLayout && Fields != null) {
+				var value = a.GetNamedValue ("CharSet");
+				if (value == null)
+					return;
+
 				for (int i = 0; i < Fields.Count; ++i) {
 					FixedField ff = Fields [i] as FixedField;
-					if (ff != null)
-						ff.SetCharSet (TypeBuilder.Attributes);
+					if (ff == null)
+						continue;
+
+					ff.CharSet = (CharSet) System.Enum.Parse (typeof (CharSet), value.GetValue ().ToString ());
 				}
 			}
 		}

@@ -354,6 +354,17 @@ namespace Mono.CSharp
 		{
 		}
 
+		#region Properties
+
+		//
+		// Explicit struct layout set be parent
+		//
+		public CharSet? CharSet {
+			get; set;
+		}		
+
+		#endregion
+
 		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)
 		{
 			return expr.ImplicitConversionRequired (rc, TypeManager.int32_type, Location);
@@ -448,14 +459,25 @@ namespace Mono.CSharp
 			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.short_type))
 				return;
 
-			var field = pa.GetField ("Size", TypeManager.int32_type, Location);
-			if (field != null) {
-				encoder = new AttributeEncoder (false);
-				encoder.Encode ((short)LayoutKind.Sequential);
-				encoder.EncodeNamedFieldArgument (field, new IntConstant (buffer_size, Location));
+			var interop_charset = TypeManager.CoreLookupType (Compiler, "System.Runtime.InteropServices", "CharSet", MemberKind.Enum, true);
+			if (interop_charset == null)
+				return;
 
-				pa.EmitAttribute (fixed_buffer_type, encoder);
-			}
+			var field_size = pa.GetField ("Size", TypeManager.int32_type, Location);
+			var field_charset = pa.GetField ("CharSet", interop_charset, Location);
+			if (field_size == null || field_charset == null)
+				return;
+
+			var char_set = CharSet ?? Module.DefaultCharSet;
+
+			encoder = new AttributeEncoder (false);
+			encoder.Encode ((short)LayoutKind.Sequential);
+			encoder.EncodeNamedArguments (
+				new [] { field_size, field_charset },
+				new Constant [] { new IntConstant (buffer_size, Location), new IntConstant ((int) char_set, Location) }
+			);
+
+			pa.EmitAttribute (fixed_buffer_type, encoder);
 
 			//
 			// Don't emit FixedBufferAttribute attribute for private types
@@ -473,27 +495,6 @@ namespace Mono.CSharp
 			encoder.EncodeEmptyNamedArguments ();
 
 			pa.EmitAttribute (FieldBuilder, encoder);
-		}
-
-		public void SetCharSet (TypeAttributes ta)
-		{
-			TypeAttributes cta = fixed_buffer_type.Attributes;
-			if ((cta & TypeAttributes.UnicodeClass) != (ta & TypeAttributes.UnicodeClass))
-				SetTypeBuilderCharSet ((cta & ~TypeAttributes.AutoClass) | TypeAttributes.UnicodeClass);
-			else if ((cta & TypeAttributes.AutoClass) != (ta & TypeAttributes.AutoClass))
-				SetTypeBuilderCharSet ((cta & ~TypeAttributes.UnicodeClass) | TypeAttributes.AutoClass);
-			else if (cta == 0 && ta != 0)
-				SetTypeBuilderCharSet (cta & ~(TypeAttributes.UnicodeClass | TypeAttributes.AutoClass));
-		}
-
-		void SetTypeBuilderCharSet (TypeAttributes ta)
-		{
-			MethodInfo mi = typeof (TypeBuilder).GetMethod ("SetCharSet", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (mi == null) {
-				Report.RuntimeMissingSupport (Location, "TypeBuilder::SetCharSet");
-			} else {
-				mi.Invoke (fixed_buffer_type, new object [] { ta });
-			}
 		}
 	}
 

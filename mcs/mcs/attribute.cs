@@ -584,11 +584,11 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attribute = new AttributeUsageAttribute ((AttributeTargets)((Constant) PosArguments [0].Expr).GetValue ());
 
-			var field = GetPropertyValue ("AllowMultiple") as BoolConstant;
+			var field = GetNamedValue ("AllowMultiple") as BoolConstant;
 			if (field != null)
 				usage_attribute.AllowMultiple = field.Value;
 
-			field = GetPropertyValue ("Inherited") as BoolConstant;
+			field = GetNamedValue ("Inherited") as BoolConstant;
 			if (field != null)
 				usage_attribute.Inherited = field.Value;
 
@@ -858,7 +858,7 @@ namespace Mono.CSharp {
 			ps.AddPermission (perm);
 		}
 
-		public Constant GetPropertyValue (string name)
+		public Constant GetNamedValue (string name)
 		{
 			if (named_values == null)
 				return null;
@@ -1426,6 +1426,11 @@ namespace Mono.CSharp {
 			Stream.Write (value);
 		}
 
+		public void Encode (short value)
+		{
+			Stream.Write (value);
+		}
+
 		public void Encode (int value)
 		{
 			Stream.Write (value);
@@ -1520,6 +1525,27 @@ namespace Mono.CSharp {
 			Encode (field.MemberType);
 			Encode (field.Name);
 			value.EncodeAttributeValue (null, this, field.MemberType);
+		}
+
+		public void EncodeNamedArguments<T> (T[] members, Constant[] values) where T : MemberSpec, IInterfaceMemberSpec
+		{
+			Stream.Write ((ushort) members.Length);
+
+			for (int i = 0; i < members.Length; ++i)
+			{
+				var member = members[i];
+
+				if (member.Kind == MemberKind.Field)
+					Stream.Write ((byte) 0x53);
+				else if (member.Kind == MemberKind.Property)
+					Stream.Write ((byte) 0x54);
+				else
+					throw new NotImplementedException (member.Kind.ToString ());
+
+				Encode (member.MemberType);
+				Encode (member.Name);
+				values [i].EncodeAttributeValue (null, this, member.MemberType);
+			}
 		}
 
 		public void EncodeEmptyNamedArguments ()

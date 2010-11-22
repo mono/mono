@@ -670,7 +670,7 @@ namespace Mono.CSharp
 
 			Attribute a = module.ResolveAssemblyAttribute (Compiler.PredefinedAttributes.RuntimeCompatibility);
 			if (a != null) {
-				var val = a.GetPropertyValue ("WrapNonExceptionThrows") as BoolConstant;
+				var val = a.GetNamedValue ("WrapNonExceptionThrows") as BoolConstant;
 				if (val != null)
 					wrap_non_exception_throws = val.Value;
 			}

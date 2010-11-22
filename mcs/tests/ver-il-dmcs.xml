@@ -7445,24 +7445,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-166.cs">
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Test()">
-        <size>323</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>6</size>
-      </method>
-    </type>
-    <type name="TestNew">
-      <method name="Void SetTest()">
-        <size>20</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-167.cs">
     <type name="TestAttribute">
       <method name="Void .ctor()">
@@ -12597,32 +12579,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-353.cs">
-    <type name="Bug.RedSkyTimeCode">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void CopyTo(Bug.xxx*)">
-        <size>99</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="Void Convert(Bug.xxx*, UInt64*)">
-        <size>93</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-354.cs">
-    <type name="M">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-355.cs">
     <type name="A">
       <method name="Void .ctor()">
@@ -13117,16 +13073,6 @@
       </method>
       <method name="T op_Implicit(MonoBug.GenericType`1[T])">
         <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-374.cs">
-    <type name="aClass">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main(System.String[])">
-        <size>14</size>
       </method>
     </type>
   </test>
@@ -14040,42 +13986,6 @@
         <size>1</size>
       </method>
       <method name="Void MonoTest.IG&lt;string&gt;.M()">
-        <size>1</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-415.cs">
-    <type name="S2">
-      <method name="Void Test()">
-        <size>39</size>
-      </method>
-      <method name="Void Main()">
-        <size>16</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-416.cs">
-    <type name="Bug.Demo">
-      <method name="Boolean Fixed()">
-        <size>14</size>
-      </method>
-      <method name="Boolean Foo(System.Int32[])">
-        <size>43</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>65</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-417.cs">
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Goo()">
-        <size>11</size>
-      </method>
-      <method name="Void Main()">
         <size>1</size>
       </method>
     </type>
@@ -22901,6 +22811,106 @@
     <type name="Repro2.MainClass">
       <method name="Int32 Main()">
         <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-01.cs">
+    <type name="TestNew">
+      <method name="Void SetTest()">
+        <size>20</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Test()">
+        <size>323</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-02.cs">
+    <type name="M">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-03.cs">
+    <type name="Bug.RedSkyTimeCode">
+      <method name="Void CopyTo(Bug.xxx*)">
+        <size>99</size>
+      </method>
+      <method name="Void Convert(Bug.xxx*, UInt64*)">
+        <size>93</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-04.cs">
+    <type name="aClass">
+      <method name="Void Main(System.String[])">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-05.cs">
+    <type name="S2">
+      <method name="Void Test()">
+        <size>39</size>
+      </method>
+      <method name="Void Main()">
+        <size>16</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-06.cs">
+    <type name="Bug.Demo">
+      <method name="Boolean Fixed()">
+        <size>14</size>
+      </method>
+      <method name="Boolean Foo(System.Int32[])">
+        <size>43</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>65</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-07.cs">
+    <type name="C">
+      <method name="Void Goo()">
+        <size>11</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-08.cs">
+    <type name="A">
+      <method name="Int32 Main()">
+        <size>150</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
