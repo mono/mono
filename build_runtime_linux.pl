@@ -115,3 +115,4 @@ if ($ENV{"UNITY_THISISABUILDMACHINE"})
 
 system("ln","-f","$root/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
 system("ln","-f","$root/mono/metadata/pedump","$bintarget/pedump") eq 0 or die("failed symlinking pedump executable");
+system("chmod","-R","755",$bintarget);
