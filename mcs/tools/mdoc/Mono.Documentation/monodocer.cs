@@ -3472,13 +3472,18 @@ public abstract class MemberFormatter {
 
 		if (buf.Length != 0)
 			buf.Append (" ");
-		buf.Append (GetName (method.ReturnType)).Append (" ");
+		buf.Append (GetTypeName (method.MethodReturnType)).Append (" ");
 
 		AppendMethodName (buf, method);
 		AppendGenericMethod (buf, method).Append (" ");
 		AppendParameters (buf, method, method.Parameters);
 		AppendGenericMethodConstraints (buf, method);
 		return buf.ToString ();
+	}
+
+	protected virtual string GetTypeName (MethodReturnType returnType)
+	{
+		return GetName (returnType.ReturnType);
 	}
 
 	protected virtual StringBuilder AppendMethodName (StringBuilder buf, MethodDefinition method)
