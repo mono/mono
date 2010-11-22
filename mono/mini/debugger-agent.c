@@ -715,6 +715,7 @@ mono_debugger_agent_parse_options (char *options)
 	agent_config.suspend = TRUE;
 	agent_config.server = FALSE;
 	agent_config.defer = FALSE;
+	agent_config.address = NULL;
 
 	args = g_strsplit (options, ",", -1);
 	for (ptr = args; ptr && *ptr; ptr ++) {
@@ -723,6 +724,8 @@ mono_debugger_agent_parse_options (char *options)
 		if (strncmp (arg, "transport=", 10) == 0) {
 			agent_config.transport = g_strdup (arg + 10);
 		} else if (strncmp (arg, "address=", 8) == 0) {
+			if (agent_config.address)
+				g_free (agent_config.address);
 			agent_config.address = g_strdup (arg + 8);
 		} else if (strncmp (arg, "loglevel=", 9) == 0) {
 			agent_config.log_level = atoi (arg + 9);
@@ -752,8 +755,12 @@ mono_debugger_agent_parse_options (char *options)
 			agent_config.embedding = atoi (arg + 10) == 1;
 		} else if (strncmp (arg, "defer=", 6) == 0) {
 			agent_config.defer = parse_flag ("defer", arg + 6);
-			if (agent_config.defer)
+			if (agent_config.defer) {
 				agent_config.server = TRUE;
+				if (agent_config.address == NULL) {
+					agent_config.address = g_strdup_printf ("127.0.0.1:%u", 56000 + (GetCurrentProcessId () % 1000));
+				}
+			}
 		} else {
 			print_usage ();
 			exit (1);
