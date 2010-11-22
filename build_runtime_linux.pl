@@ -29,7 +29,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	}
 }
 
-my $bintarget = "$root/builds/monodistribution/bin/linux";
+my $bintarget = "$root/builds/monodistribution/bin-linux";
 my $libtarget = "$root/builds/embedruntimes/linux";
 
 if ($minimal)
@@ -54,8 +54,6 @@ if (not $skipbuild)
 		$ENV{CFLAGS} = "-Os"  #optimize for size
 	}
 
-	chdir("$root/mono") eq 1 or die ("failed to chdir 2");
-	
 	#this will fail on a fresh working copy, so don't die on it.
 	system("make distclean");
 	#were going to tell autogen to use a specific cache file, that we purposely remove before starting.
@@ -69,13 +67,13 @@ if (not $skipbuild)
 	# system("make distclean");
 	# system("autoreconf -i") eq 0 or die ("Failed autoreconfing eglib");
 
-	chdir("$root/mono") eq 1 or die ("failed to chdir 2");
 	system("autoreconf -i") eq 0 or die ("Failed autoreconfing mono");
 	my @autogenparams = ();
 	unshift(@autogenparams, "--cache-file=linux.cache");
 	unshift(@autogenparams, "--disable-mcs-build");
 	# unshift(@autogenparams, "--with-glib=embedded");
 	unshift(@autogenparams, "--disable-nls");  #this removes the dependency on gettext package
+	unshift(@autogenparams, "--disable-parallel-mark");  #this causes crashes
 
 	# From Massi: I was getting failures in install_name_tool about space
 	# for the commands being too small, and adding here things like
@@ -98,25 +96,22 @@ if (not $skipbuild)
 	system("./configure", @autogenparams) eq 0 or die ("failing configuring mono");
 
 	system("make clean") eq 0 or die ("failed make cleaning");
-	system("make -j4") eq 0 or die ("failing runnig make for mono");
+	system("make -j4") eq 0 or die ("failing running make for mono");
 }
-
-chdir($root);
 
 mkpath($bintarget);
 mkpath($libtarget);
 
 print "Copying libmono.so\n";
-system("cp", "$root/mono/mono/mini/.libs/libmono.so.0","$libtarget/libmono.so.0") eq 0 or die ("failed symlinking libmono.so.0");
+system("cp", "$root/mono/mini/.libs/libmono.so.0","$libtarget/libmono.so.0") eq 0 or die ("failed symlinking libmono.so.0");
 
 print "Copying libmono.a\n";
-system("cp", "$root/mono/mono/mini/.libs/libmono.a","$libtarget/libmono.a") eq 0 or die ("failed symlinking libmono.a");
+system("cp", "$root/mono/mini/.libs/libmono.a","$libtarget/libmono.a") eq 0 or die ("failed symlinking libmono.a");
 
 if ($ENV{"UNITY_THISISABUILDMACHINE"})
 {
 	system("strip $libtarget/libmono.so.0") eq 0 or die("failed to strip libmono (shared)");
-	system("strip $libtarget/libmono.a") eq 0 or die ("failed to strip libmono (static)");
 }
 
-system("ln","-f","$root/mono/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
-system("ln","-f","$root/mono/mono/metadata/pedump","$bintarget/pedump") eq 0 or die("failed symlinking pedump executable");
+system("ln","-f","$root/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
+system("ln","-f","$root/mono/metadata/pedump","$bintarget/pedump") eq 0 or die("failed symlinking pedump executable");
