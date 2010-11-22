@@ -47,13 +47,13 @@ namespace Mono.Documentation {
 		internal ExceptionSources (TypeReference exception)
 		{
 			Exception = exception;
-			SourcesList = new List<IMemberReference> ();
-			Sources = new ReadOnlyCollection<IMemberReference> (SourcesList);
+			SourcesList = new List<MemberReference> ();
+			Sources = new ReadOnlyCollection<MemberReference> (SourcesList);
 		}
 
 		public TypeReference Exception { get; private set; }
-		public ReadOnlyCollection<IMemberReference> Sources { get; private set; }
-		internal List<IMemberReference> SourcesList;
+		public ReadOnlyCollection<MemberReference> Sources { get; private set; }
+		internal List<MemberReference> SourcesList;
 	}
 
 
@@ -72,11 +72,11 @@ namespace Mono.Documentation {
 			this.locations = locations;
 		}
 
-		public IEnumerable<ExceptionSources> this [IMemberReference member] {
+		public IEnumerable<ExceptionSources> this [MemberReference member] {
 			get {
 				if (member == null)
 					throw new ArgumentNullException ("member");
-				IMemberReference memberDef = member.Resolve ();
+				MemberReference memberDef = member.Resolve ();
 				if (memberDef == null) {
 					ArrayType array = member.DeclaringType as ArrayType;
 					if (array != null && array.Rank > 1) {
@@ -105,13 +105,13 @@ namespace Mono.Documentation {
 			}
 		}
 
-		MethodBody[] GetMethodBodies (IMemberReference member)
+		MethodBody[] GetMethodBodies (MemberReference member)
 		{
 			if (member is MethodReference) {
 				return new[]{ (((MethodReference) member).Resolve ()).Body };
 			}
 			if (member is PropertyReference) {
-				PropertyDefinition prop = ((PropertyReference) member).Resolve ();
+				PropertyDefinition prop = (PropertyDefinition) member;
 				return new[]{
 					prop.GetMethod != null ? prop.GetMethod.Body : null,
 					prop.SetMethod != null ? prop.SetMethod.Body : null,
@@ -120,7 +120,7 @@ namespace Mono.Documentation {
 			if (member is FieldReference)
 				return new MethodBody[]{};
 			if (member is EventReference) {
-				EventDefinition ev = ((EventReference) member).Resolve ();
+				EventDefinition ev = (EventDefinition) member;
 				return new[]{
 					ev.AddMethod != null ? ev.AddMethod.Body : null,
 					ev.InvokeMethod != null ? ev.InvokeMethod.Body : null, 
@@ -140,7 +140,7 @@ namespace Mono.Documentation {
 						if ((locations & ExceptionLocations.Assembly) == 0 && 
 								(locations & ExceptionLocations.DependentAssemblies) == 0)
 							break;
-						IMemberReference memberRef = ((IMemberReference) instruction.Operand);
+						MemberReference memberRef = ((MemberReference) instruction.Operand);
 						if (((locations & ExceptionLocations.Assembly) != 0 && 
 									body.Method.DeclaringType.Scope.Name == memberRef.DeclaringType.Scope.Name) ||
 								((locations & ExceptionLocations.DependentAssemblies) != 0 && 
@@ -158,7 +158,7 @@ namespace Mono.Documentation {
 						if (IsExceptionConstructor (ctor)) {
 							AddExceptions (body, instruction,
 									new TypeReference[]{ctor.DeclaringType},
-									new IMemberReference[]{body.Method},
+									new MemberReference[]{body.Method},
 									exceptions);
 						}
 						break;
@@ -167,7 +167,7 @@ namespace Mono.Documentation {
 			}
 		}
 
-		void AddExceptions (MethodBody body, Instruction instruction, IEnumerable<TypeReference> add, IEnumerable<IMemberReference> sources,
+		void AddExceptions (MethodBody body, Instruction instruction, IEnumerable<TypeReference> add, IEnumerable<MemberReference> sources,
 				Dictionary<string, ExceptionSources> exceptions)
 		{
 			var handlers = body.ExceptionHandlers.Cast<ExceptionHandler> ()

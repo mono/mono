@@ -146,7 +146,7 @@ namespace Pdb2Mdb {
 			if (!File.Exists (asm))
 				Usage ();
 
-			var assembly = AssemblyFactory.GetAssembly (asm);
+			var assembly = AssemblyDefinition.ReadAssembly (asm);
 
 			var pdb = assembly.Name.Name + ".pdb";
 

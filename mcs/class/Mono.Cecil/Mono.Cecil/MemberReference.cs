@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,55 +28,74 @@
 
 namespace Mono.Cecil {
 
-	using System.Collections;
+	public abstract class MemberReference : IMetadataTokenProvider {
 
-	using Mono.Cecil.Metadata;
+		string name;
+		TypeReference declaring_type;
 
-	public abstract class MemberReference : IMemberReference {
-
-		string m_name;
-		TypeReference m_decType;
-		MetadataToken m_token;
-		IDictionary m_annotations;
+		internal MetadataToken token;
 
 		public virtual string Name {
-			get { return m_name; }
-			set { m_name = value; }
+			get { return name; }
+			set { name = value; }
+		}
+
+		public abstract string FullName {
+			get;
 		}
 
 		public virtual TypeReference DeclaringType {
-			get { return m_decType; }
-			set { m_decType = value; }
+			get { return declaring_type; }
+			set { declaring_type = value; }
 		}
 
 		public MetadataToken MetadataToken {
-			get { return m_token; }
-			set { m_token = value; }
+			get { return token; }
+			set { token = value; }
 		}
 
-		IDictionary IAnnotationProvider.Annotations {
+		internal bool HasImage {
 			get {
-				if (m_annotations == null)
-					m_annotations = new Hashtable ();
-				return m_annotations;
+				var module = Module;
+				if (module == null)
+					return false;
+
+				return module.HasImage;
 			}
 		}
 
-		public MemberReference (string name)
+		public virtual ModuleDefinition Module {
+			get { return declaring_type != null ? declaring_type.Module : null; }
+		}
+
+		public virtual bool IsDefinition {
+			get { return false; }
+		}
+
+		internal virtual bool ContainsGenericParameter {
+			get { return declaring_type != null && declaring_type.ContainsGenericParameter; }
+		}
+
+		internal MemberReference ()
 		{
-			m_name = name;
+		}
+
+		internal MemberReference (string name)
+		{
+			this.name = name ?? string.Empty;
+		}
+
+		internal string MemberFullName ()
+		{
+			if (declaring_type == null)
+				return name;
+
+			return declaring_type.FullName + "::" + name;
 		}
 
 		public override string ToString ()
 		{
-			if (m_decType == null)
-				return m_name;
-
-			return string.Concat (m_decType.FullName, "::", m_name);
-		}
-
-		public virtual void Accept (IReflectionVisitor visitor)
-		{
+			return FullName;
 		}
 	}
 }

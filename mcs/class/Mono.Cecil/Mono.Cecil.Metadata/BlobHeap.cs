@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,65 +26,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
+using Mono.Cecil.PE;
+
 namespace Mono.Cecil.Metadata {
 
-	using System;
-	using System.Collections;
-	using System.IO;
+	sealed class BlobHeap : Heap {
 
-	public class BlobHeap : MetadataHeap {
-
-		internal BlobHeap (MetadataStream stream) : base (stream, MetadataStream.Blob)
+		public BlobHeap (Section section, uint start, uint size)
+			: base (section, start, size)
 		{
 		}
 
 		public byte [] Read (uint index)
 		{
-			return ReadBytesFromStream (index);
-		}
+			if (index == 0 || index > Size - 1)
+				return Empty<byte>.Array;
 
-		public BinaryReader GetReader (uint index)
-		{
-			return new BinaryReader (new MemoryStream (Read (index)));
-		}
+			var data = Section.Data;
 
-		public override void Accept (IMetadataVisitor visitor)
-		{
-			visitor.VisitBlobHeap (this);
-		}
-	}
+			int position = (int) (index + Offset);
+			int length = (int) data.ReadCompressedUInt32 (ref position);
 
-	class ByteArrayEqualityComparer : IHashCodeProvider, IComparer {
+			var buffer = new byte [length];
 
-		public static readonly ByteArrayEqualityComparer Instance = new ByteArrayEqualityComparer ();
+			Buffer.BlockCopy (data, position, buffer, 0, length);
 
-		public int GetHashCode (object obj)
-		{
-			byte [] array = (byte []) obj;
-
-			int hash = 0;
-			for (int i = 0; i < array.Length; i++)
-				hash = (hash * 37) ^ array [i];
-
-			return hash;
-		}
-
-		public int Compare (object a, object b)
-		{
-			byte [] x = (byte []) a;
-			byte [] y = (byte []) b;
-
-			if (x == null || y == null)
-				return x == y ? 0 : 1;
-
-			if (x.Length != y.Length)
-				return 1;
-
-			for (int i = 0; i < x.Length; i++)
-				if (x [i] != y [i])
-					return 1;
-
-			return 0;
+			return buffer;
 		}
 	}
 }

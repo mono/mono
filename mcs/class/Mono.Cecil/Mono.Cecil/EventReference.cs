@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,27 +26,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 namespace Mono.Cecil {
 
 	public abstract class EventReference : MemberReference {
 
-		TypeReference m_eventType;
+		TypeReference event_type;
 
 		public TypeReference EventType {
-			get { return m_eventType; }
-			set { m_eventType = value; }
+			get { return event_type; }
+			set { event_type = value; }
 		}
 
-		public EventReference (string name, TypeReference eventType) : base (name)
-		{
-			m_eventType = eventType;
+		public override string FullName {
+			get { return event_type.FullName + " " + MemberFullName (); }
 		}
 
-		public abstract EventDefinition Resolve ();
-
-		public override string ToString ()
+		protected EventReference (string name, TypeReference eventType)
+			: base (name)
 		{
-			return string.Concat (m_eventType.FullName, " ", base.ToString ());
+			if (eventType == null)
+				throw new ArgumentNullException ("eventType");
+
+			event_type = eventType;
 		}
 	}
 }

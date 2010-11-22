@@ -44,11 +44,7 @@ namespace Mono.CilStripper {
 
 		static void StripAssembly (AssemblyDefinition assembly, string output)
 		{
-			Type stripper = typeof (AssemblyDefinition).Assembly.GetType ("Mono.Cecil.AssemblyStripper");
-			if (stripper == null)
-				throw new NotSupportedException ("Cecil doesn't have support for mono-cil-strip");
-
-			stripper.GetMethod ("StripAssembly").Invoke (null, new object [] { assembly, output });
+			AssemblyStripper.StripAssembly (assembly, output);
 		}
 
 		static void Header ()

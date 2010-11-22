@@ -34,36 +34,19 @@ using Mono.Cecil;
 
 namespace GuiCompare {
 
-	public class AssemblyResolver : IAssemblyResolver {
+	public class AssemblyResolver : DefaultAssemblyResolver {
 
-		DefaultAssemblyResolver resolver = new DefaultAssemblyResolver ();
-
-		public AssemblyResolver ()
+		public AssemblyDefinition ResolveFile (string file)
 		{
-		}
-
-		public AssemblyDefinition Resolve (string fullName)
-		{
-			if (File.Exists (fullName))
-				return Attach (ProcessFile (fullName));
-
-			return Attach (resolver.Resolve (fullName));
+			return ProcessFile (file);
 		}
 
 		AssemblyDefinition ProcessFile (string file)
 		{
-			resolver.AddSearchDirectory (Path.GetDirectoryName (file));
-			return AssemblyFactory.GetAssembly (file);
-		}
+			AddSearchDirectory (Path.GetDirectoryName (file));
+			var assembly = AssemblyDefinition.ReadAssembly (file, new ReaderParameters { AssemblyResolver = this });
+			RegisterAssembly (assembly);
 
-		public AssemblyDefinition Resolve (AssemblyNameReference name)
-		{
-			return Attach (resolver.Resolve (name));
-		}
-
-		AssemblyDefinition Attach (AssemblyDefinition assembly)
-		{
-			assembly.Resolver = this;
 			return assembly;
 		}
 	}

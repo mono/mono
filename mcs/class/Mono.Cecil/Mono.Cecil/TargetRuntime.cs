@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,9 +29,9 @@
 namespace Mono.Cecil {
 
 	public enum TargetRuntime {
-		NET_1_0,
-		NET_1_1,
-		NET_2_0,
-		NET_4_0,
+		Net_1_0,
+		Net_1_1,
+		Net_2_0,
+		Net_4_0,
 	}
 }

@@ -36,19 +36,19 @@ using Mono.CodeContracts.Rewrite.Ast;
 namespace Mono.CodeContracts.Rewrite.AstVisitors {
 	class CompileVisitor : ExprVisitor {
 
-		public CompileVisitor (CilWorker il, Dictionary<Expr, Instruction> instructionLookup)
+		public CompileVisitor (ILProcessor il, Dictionary<Expr, Instruction> instructionLookup)
 			: this (il, instructionLookup, il.Append)
 		{
 		}
 
-		public CompileVisitor (CilWorker il, Dictionary<Expr, Instruction> instructionLookup, Action<Instruction> fnEmit)
+		public CompileVisitor (ILProcessor il, Dictionary<Expr, Instruction> instructionLookup, Action<Instruction> fnEmit)
 		{
 			this.il = il;
 			this.instructionLookup = instructionLookup;
 			this.fnEmit = fnEmit;
 		}
 
-		private CilWorker il;
+		private ILProcessor il;
 		private Dictionary<Expr, Instruction> instructionLookup;
 		private Action<Instruction> fnEmit;
 

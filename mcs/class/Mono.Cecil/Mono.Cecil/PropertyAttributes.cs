@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
 
-	using System;
+namespace Mono.Cecil {
 
 	[Flags]
 	public enum PropertyAttributes : ushort {
+		None			= 0x0000,
 		SpecialName		= 0x0200,	// Property is special
 		RTSpecialName	= 0x0400,	// Runtime(metadata internal APIs) should check name encoding
 		HasDefault		= 0x1000,	// Property has default

@@ -282,7 +282,7 @@ namespace Mono.Debugger.Soft
 		public C.MethodDefinition Metadata {
 			get {
 				if (meta == null)
-					meta = (C.MethodDefinition)DeclaringType.Assembly.Metadata.MainModule.LookupByToken (new MetadataToken (MetadataToken));
+					meta = (C.MethodDefinition)DeclaringType.Assembly.Metadata.MainModule.LookupToken (MetadataToken);
 				return meta;
 			}
 		}

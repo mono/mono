@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +35,6 @@ namespace Mono.Cecil {
 		ThisCall	= 0x3,
 		FastCall	= 0x4,
 		VarArg		= 0x5,
-		Generic		= 0x10
+		Generic		= 0x10,
 	}
 }

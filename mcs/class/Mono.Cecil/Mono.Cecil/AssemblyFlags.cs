@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,16 +26,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 namespace Mono.Cecil {
 
-	using System;
-
 	[Flags]
-	public enum AssemblyFlags : uint {
+	public enum AssemblyAttributes : uint {
 		PublicKey					 	= 0x0001,
 		SideBySideCompatible			= 0x0000,
 		Retargetable					= 0x0100,
-		EnableJITcompileTracking		= 0x8000,
-		DisableJITcompileOptimizer	  	= 0x4000
+		DisableJITCompileOptimizer		= 0x4000,
+		EnableJITCompileTracking		= 0x8000,
 	}
 }

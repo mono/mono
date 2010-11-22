@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,174 +26,192 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	using System.Collections;
+	public struct CustomAttributeArgument {
 
-	public sealed class CustomAttribute : IRequireResolving, IAnnotationProvider, IReflectionVisitable {
+		readonly TypeReference type;
+		readonly object value;
 
-		MethodReference m_ctor;
-		IList m_parameters;
-		IDictionary m_fields;
-		IDictionary m_properties;
-		IDictionary m_fieldTypes;
-		IDictionary m_propTypes;
-		IDictionary m_annotations;
+		public TypeReference Type {
+			get { return type; }
+		}
 
-		bool m_resolved;
-		byte [] m_blob;
+		public object Value {
+			get { return value; }
+		}
+
+		public CustomAttributeArgument (TypeReference type, object value)
+		{
+			Mixin.CheckType (type);
+			this.type = type;
+			this.value = value;
+		}
+	}
+
+	public struct CustomAttributeNamedArgument {
+
+		readonly string name;
+		readonly CustomAttributeArgument argument;
+
+		public string Name {
+			get { return name; }
+		}
+
+		public CustomAttributeArgument Argument {
+			get { return argument; }
+		}
+
+		public CustomAttributeNamedArgument (string name, CustomAttributeArgument argument)
+		{
+			Mixin.CheckName (name);
+			this.name = name;
+			this.argument = argument;
+		}
+	}
+
+	public interface ICustomAttribute {
+
+		TypeReference AttributeType { get; }
+
+		bool HasFields { get; }
+		bool HasProperties { get; }
+		Collection<CustomAttributeNamedArgument> Fields { get; }
+		Collection<CustomAttributeNamedArgument> Properties { get; }
+	}
+
+	public sealed class CustomAttribute : ICustomAttribute {
+
+		readonly internal uint signature;
+		internal bool resolved;
+		MethodReference constructor;
+		byte [] blob;
+		internal Collection<CustomAttributeArgument> arguments;
+		internal Collection<CustomAttributeNamedArgument> fields;
+		internal Collection<CustomAttributeNamedArgument> properties;
 
 		public MethodReference Constructor {
-			get { return m_ctor; }
-			set { m_ctor = value; }
+			get { return constructor; }
+			set { constructor = value; }
 		}
 
-		public IList ConstructorParameters {
+		public TypeReference AttributeType {
+			get { return constructor.DeclaringType; }
+		}
+
+		public bool HasConstructorArguments {
 			get {
-				if (m_parameters == null)
-					m_parameters = new ArrayList ();
-				return m_parameters;
+				Resolve ();
+
+				return !arguments.IsNullOrEmpty ();
 			}
 		}
 
-		public IDictionary Fields {
+		public Collection<CustomAttributeArgument> ConstructorArguments {
 			get {
-				if (m_fields == null)
-					m_fields = new Hashtable ();
+				Resolve ();
 
-				return m_fields;
+				return arguments ?? (arguments = new Collection<CustomAttributeArgument> ());
 			}
 		}
 
-		public IDictionary Properties {
+		public bool HasFields {
 			get {
-				if (m_properties == null)
-					m_properties = new Hashtable ();
+				Resolve ();
 
-				return m_properties;
+				return !fields.IsNullOrEmpty ();
 			}
 		}
 
-		internal IDictionary FieldTypes {
+		public Collection<CustomAttributeNamedArgument> Fields {
 			get {
-				if (m_fieldTypes == null)
-					m_fieldTypes = new Hashtable ();
+				Resolve ();
 
-				return m_fieldTypes;
+				return fields ?? (fields = new Collection<CustomAttributeNamedArgument> ());
 			}
 		}
 
-		internal IDictionary PropertyTypes {
+		public bool HasProperties {
 			get {
-				if (m_propTypes == null)
-					m_propTypes = new Hashtable ();
+				Resolve ();
 
-				return m_propTypes;
+				return !properties.IsNullOrEmpty ();
 			}
 		}
 
-		public bool Resolved {
-			get { return m_resolved; }
-			set { m_resolved = value; }
-		}
-
-		public byte [] Blob {
-			get { return m_blob; }
-			set { m_blob = value; }
-		}
-
-		IDictionary IAnnotationProvider.Annotations {
+		public Collection<CustomAttributeNamedArgument> Properties {
 			get {
-				if (m_annotations == null)
-					m_annotations = new Hashtable ();
-				return m_annotations;
+				Resolve ();
+
+				return properties ?? (properties = new Collection<CustomAttributeNamedArgument> ());
 			}
 		}
 
-		public CustomAttribute (MethodReference ctor)
-		{
-			m_ctor = ctor;
-			m_resolved = true;
+		internal bool HasImage {
+			get { return constructor != null && constructor.HasImage; }
 		}
 
-		public CustomAttribute (MethodReference ctor, byte [] blob)
-		{
-			m_ctor = ctor;
-			m_blob = blob;
+		internal ModuleDefinition Module {
+			get { return constructor.Module; }
 		}
 
-		public TypeReference GetFieldType (string fieldName)
+		internal CustomAttribute (uint signature, MethodReference constructor)
 		{
-			return (TypeReference) FieldTypes [fieldName];
+			this.signature = signature;
+			this.constructor = constructor;
+			this.resolved = false;
 		}
 
-		public TypeReference GetPropertyType (string propertyName)
+		public CustomAttribute (MethodReference constructor)
 		{
-			return (TypeReference) PropertyTypes [propertyName];
+			this.constructor = constructor;
+			this.resolved = true;
 		}
 
-		public void SetFieldType (string fieldName, TypeReference type)
+		public CustomAttribute (MethodReference constructor, byte [] blob)
 		{
-			FieldTypes [fieldName] = type;
+			this.constructor = constructor;
+			this.resolved = false;
+			this.blob = blob;
 		}
 
-		public void SetPropertyType (string propertyName, TypeReference type)
+		public byte [] GetBlob ()
 		{
-			PropertyTypes [propertyName] = type;
+			if (blob != null)
+				return blob;
+
+			if (!HasImage || signature == 0)
+				throw new NotSupportedException ();
+
+			return blob = Module.Read (this, (attribute, reader) => reader.ReadCustomAttributeBlob (attribute.signature));
 		}
 
-		public CustomAttribute Clone ()
+		void Resolve ()
 		{
-			return Clone (this, new ImportContext (NullReferenceImporter.Instance));
-		}
-
-		static void Clone (IDictionary original, IDictionary target)
-		{
-			target.Clear ();
-			foreach (DictionaryEntry entry in original)
-				target.Add (entry.Key, entry.Value);
-		}
-
-		internal static CustomAttribute Clone (CustomAttribute custattr, ImportContext context)
-		{
-			CustomAttribute ca = new CustomAttribute (context.Import (custattr.Constructor));
-			custattr.CopyTo (ca);
-			return ca;
-		}
-
-		void CopyTo (CustomAttribute target)
-		{
-			target.Resolved = Resolved;
-			if (!Resolved) {
-				target.Blob = Blob;
+			if (resolved || !HasImage)
 				return;
-			}
 
-			foreach (object o in ConstructorParameters)
-				target.ConstructorParameters.Add (o);
-			Clone (Fields, target.Fields);
-			Clone (FieldTypes, target.FieldTypes);
-			Clone (Properties, target.Properties);
-			Clone (PropertyTypes, target.PropertyTypes);
+			Module.Read (this, (attribute, reader) => {
+				reader.ReadCustomAttributeSignature (attribute);
+				return this;
+			});
+
+			resolved = true;
 		}
+	}
 
-		public bool Resolve ()
+	static partial class Mixin {
+
+		public static void CheckName (string name)
 		{
-			if (Resolved)
-				return true;
-
-			ReflectionReader r = m_ctor.DeclaringType.Module.Controller.Reader;
-			CustomAttribute newCa = r.GetCustomAttribute (m_ctor, Blob, true);
-			if (!newCa.Resolved)
-				return false;
-
-			newCa.CopyTo (this);
-			return true;
-		}
-
-		public void Accept (IReflectionVisitor visitor)
-		{
-			visitor.VisitCustomAttribute (this);
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name.Length == 0)
+				throw new ArgumentException ("Empty name");
 		}
 	}
 }

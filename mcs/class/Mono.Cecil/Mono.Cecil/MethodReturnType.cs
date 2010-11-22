@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,39 +26,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
-using Mono.Cecil.Metadata;
+using Mono.Collections.Generic;
 
 namespace Mono.Cecil {
 
-	public sealed class MethodReturnType : ICustomAttributeProvider, IHasMarshalSpec, IHasConstant {
+	public sealed class MethodReturnType : IConstantProvider, ICustomAttributeProvider, IMarshalInfoProvider {
 
-		MethodReference m_method;
-		ParameterDefinition m_param;
+		internal IMethodSignature method;
+		internal ParameterDefinition parameter;
+		TypeReference return_type;
 
-		TypeReference m_returnType;
-
-		public MethodReference Method {
-			get { return m_method; }
-			set { m_method = value; }
+		public IMethodSignature Method {
+			get { return method; }
 		}
 
 		public TypeReference ReturnType {
-			get { return m_returnType; }
-			set { m_returnType = value; }
+			get { return return_type; }
+			set { return_type = value; }
 		}
 
 		internal ParameterDefinition Parameter {
-			get {
-				if (m_param == null) {
-					m_param = new ParameterDefinition (m_returnType);
-					m_param.Method = m_method;
-				}
-
-				return m_param;
-			}
-			set { m_param = value; }
+			get { return parameter ?? (parameter = new ParameterDefinition (return_type)); }
+			set { parameter = value; }
 		}
 
 		public MetadataToken MetadataToken {
@@ -67,15 +56,20 @@ namespace Mono.Cecil {
 		}
 
 		public bool HasCustomAttributes {
-			get { return m_param != null && m_param.HasCustomAttributes; }
+			get { return parameter != null && parameter.HasCustomAttributes; }
 		}
 
-		public CustomAttributeCollection CustomAttributes {
+		public Collection<CustomAttribute> CustomAttributes {
 			get { return Parameter.CustomAttributes; }
 		}
 
+		public bool HasDefault {
+			get { return parameter != null && parameter.HasDefault; }
+			set { Parameter.HasDefault = value; }
+		}
+
 		public bool HasConstant {
-			get { return m_param != null && m_param.HasConstant; }
+			get { return parameter != null && parameter.HasConstant; }
 		}
 
 		public object Constant {
@@ -83,19 +77,23 @@ namespace Mono.Cecil {
 			set { Parameter.Constant = value; }
 		}
 
-		public MarshalSpec MarshalSpec {
-			get { return Parameter.MarshalSpec; }
-			set { Parameter.MarshalSpec = value; }
+		public bool HasFieldMarshal {
+			get { return parameter != null && parameter.HasFieldMarshal; }
+			set { Parameter.HasFieldMarshal = value; }
 		}
 
-		public MethodReturnType (TypeReference retType)
-		{
-			m_returnType = retType;
+		public bool HasMarshalInfo {
+			get { return parameter != null && parameter.HasMarshalInfo; }
 		}
 
-		public override string ToString ()
+		public MarshalInfo MarshalInfo {
+			get { return Parameter.MarshalInfo; }
+			set { Parameter.MarshalInfo = value; }
+		}
+
+		public MethodReturnType (IMethodSignature method)
 		{
-			return String.Format ("[return: {0}]", m_returnType);
+			this.method = method;
 		}
 	}
 }

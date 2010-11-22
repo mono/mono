@@ -38,13 +38,11 @@ using Mono.CodeContracts.Rewrite.AstVisitors;
 namespace Mono.CodeContracts.Rewrite {
 	class PerformRewrite {
 
-		public PerformRewrite (ISymbolWriter sym, RewriterOptions options)
+		public PerformRewrite (RewriterOptions options)
 		{
-			this.sym = sym;
 			this.options = options;
 		}
 
-		private ISymbolWriter sym;
 		private RewriterOptions options;
 		private Dictionary<MethodDefinition, TransformContractsVisitor> rewrittenMethods = new Dictionary<MethodDefinition, TransformContractsVisitor> ();
 
@@ -54,8 +52,8 @@ namespace Mono.CodeContracts.Rewrite {
 				ContractsRuntime contractsRuntime = new ContractsRuntime(module, this.options);
 
 				var allMethods =
-					from type in module.Types.Cast<TypeDefinition> ()
-					from method in type.Methods.Cast<MethodDefinition> ()
+					from type in module.Types
+					from method in type.Methods
 					select method;
 
 				foreach (MethodDefinition method in allMethods.ToArray ()) {
@@ -93,9 +91,6 @@ namespace Mono.CodeContracts.Rewrite {
 			TransformContractsVisitor vTransform = null;
 			if (method.HasBody) {
 				vTransform = this.TransformContracts (module, method, contractsRuntime);
-				if (this.sym != null) {
-					this.sym.Write (method.Body);
-				}
 				if (vTransform.ContractRequiresInfo.Any ()) {
 					anyRewrites = true;
 				}
@@ -127,7 +122,7 @@ namespace Mono.CodeContracts.Rewrite {
 
 		private void RewriteIL (MethodBody body, Dictionary<Expr,Instruction> instructionLookup, Expr remove, Expr insert)
 		{
-			var il = body.CilWorker;
+			var il = body.GetILProcessor ();
 			Instruction instInsertBefore;
 			if (remove != null) {
 				var vInstExtent = new InstructionExtentVisitor (instructionLookup);
@@ -154,7 +149,7 @@ namespace Mono.CodeContracts.Rewrite {
 			if (baseType == null) {
 				return null;
 			}
-			var overridden = baseType.Resolve ().Methods.Cast<MethodDefinition> ().FirstOrDefault (x => x.Name == method.Name);
+			var overridden = baseType.Resolve ().Methods.FirstOrDefault (x => x.Name == method.Name);
 			return overridden;
 		}
 

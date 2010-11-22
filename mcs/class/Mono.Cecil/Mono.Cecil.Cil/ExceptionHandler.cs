@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,68 +28,68 @@
 
 namespace Mono.Cecil.Cil {
 
-	using Mono.Cecil;
+	public enum ExceptionHandlerType {
+		Catch = 0,
+		Filter = 1,
+		Finally = 2,
+		Fault = 4,
+	}
 
-	public sealed class ExceptionHandler : ICodeVisitable {
+	public sealed class ExceptionHandler {
 
-		Instruction m_tryStart;
-		Instruction m_tryEnd;
-		Instruction m_filterStart;
-		Instruction m_filterEnd;
-		Instruction m_handlerStart;
-		Instruction m_handlerEnd;
+		Instruction try_start;
+		Instruction try_end;
+		Instruction filter_start;
+		Instruction filter_end;
+		Instruction handler_start;
+		Instruction handler_end;
 
-		TypeReference m_catchType;
-		ExceptionHandlerType m_type;
+		TypeReference catch_type;
+		ExceptionHandlerType handler_type;
 
 		public Instruction TryStart {
-			get { return m_tryStart; }
-			set { m_tryStart = value; }
+			get { return try_start; }
+			set { try_start = value; }
 		}
 
 		public Instruction TryEnd {
-			get { return m_tryEnd; }
-			set { m_tryEnd = value; }
+			get { return try_end; }
+			set { try_end = value; }
 		}
 
 		public Instruction FilterStart {
-			get { return m_filterStart; }
-			set { m_filterStart = value; }
+			get { return filter_start; }
+			set { filter_start = value; }
 		}
 
 		public Instruction FilterEnd {
-			get { return m_filterEnd; }
-			set { m_filterEnd = value; }
+			get { return filter_end; }
+			set { filter_end = value; }
 		}
 
 		public Instruction HandlerStart {
-			get { return m_handlerStart; }
-			set { m_handlerStart = value; }
+			get { return handler_start; }
+			set { handler_start = value; }
 		}
 
 		public Instruction HandlerEnd {
-			get { return m_handlerEnd; }
-			set { m_handlerEnd = value; }
+			get { return handler_end; }
+			set { handler_end = value; }
 		}
 
 		public TypeReference CatchType {
-			get { return m_catchType; }
-			set { m_catchType = value; }
+			get { return catch_type; }
+			set { catch_type = value; }
 		}
 
-		public ExceptionHandlerType Type {
-			get { return m_type; }
-			set { m_type = value; }
+		public ExceptionHandlerType HandlerType {
+			get { return handler_type; }
+			set { handler_type = value; }
 		}
 
-		public ExceptionHandler (ExceptionHandlerType type)
+		public ExceptionHandler (ExceptionHandlerType handlerType)
 		{
-			m_type = type;
-		}
-
-		public void Accept (ICodeVisitor visitor)
-		{
-			visitor.VisitExceptionHandler (this);
+			this.handler_type = handlerType;
 		}
 	}
 }

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,27 +26,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
 
-	using System;
+namespace Mono.Cecil {
 
 	public sealed class AssemblyNameDefinition : AssemblyNameReference {
 
 		public override byte [] Hash {
-			get { return new byte [0]; }
+			get { return Empty<byte>.Array; }
 		}
 
-		public AssemblyNameDefinition () : base()
+		internal AssemblyNameDefinition ()
 		{
+			this.token = new MetadataToken (TokenType.Assembly, 1);
 		}
 
-		public AssemblyNameDefinition (string name, string culture, Version version) : base (name, culture, version)
+		public AssemblyNameDefinition (string name, Version version)
+			: base (name, version)
 		{
-		}
-
-		public override void Accept (IReflectionStructureVisitor visitor)
-		{
-			visitor.VisitAssemblyNameDefinition (this);
+			this.token = new MetadataToken (TokenType.Assembly, 1);
 		}
 	}
 }

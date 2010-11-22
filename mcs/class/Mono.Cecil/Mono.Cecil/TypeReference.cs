@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,77 +26,126 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
+using Mono.Cecil.Metadata;
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	public class TypeReference : MemberReference, IGenericParameterProvider, ICustomAttributeProvider {
+	public enum MetadataType : byte {
+		Void = ElementType.Void,
+		Boolean = ElementType.Boolean,
+		Char = ElementType.Char,
+		SByte = ElementType.I1,
+		Byte = ElementType.U1,
+		Int16 = ElementType.I2,
+		UInt16 = ElementType.U2,
+		Int32 = ElementType.I4,
+		UInt32 = ElementType.U4,
+		Int64 = ElementType.I8,
+		UInt64 = ElementType.U8,
+		Single = ElementType.R4,
+		Double = ElementType.R8,
+		String = ElementType.String,
+		Pointer = ElementType.Ptr,
+		ByReference = ElementType.ByRef,
+		ValueType = ElementType.ValueType,
+		Class = ElementType.Class,
+		Var = ElementType.Var,
+		Array = ElementType.Array,
+		GenericInstance = ElementType.GenericInst,
+		TypedByReference = ElementType.TypedByRef,
+		IntPtr = ElementType.I,
+		UIntPtr = ElementType.U,
+		FunctionPointer = ElementType.FnPtr,
+		Object = ElementType.Object,
+		MVar = ElementType.MVar,
+		RequiredModifier = ElementType.CModReqD,
+		OptionalModifier = ElementType.CModOpt,
+		Sentinel = ElementType.Sentinel,
+		Pinned = ElementType.Pinned,
+	}
 
-		string m_namespace;
-		bool m_fullNameDiscarded;
-		string m_fullName;
-		protected bool m_isValueType;
-		IMetadataScope m_scope;
-		ModuleDefinition m_module;
+	public class TypeReference : MemberReference, IGenericParameterProvider, IGenericContext {
 
-		CustomAttributeCollection m_customAttrs;
-		GenericParameterCollection m_genparams;
+		string @namespace;
+		bool value_type;
+		internal IMetadataScope scope;
+		internal ModuleDefinition module;
+
+		internal ElementType etype = ElementType.None;
+
+		string fullname;
+
+		protected Collection<GenericParameter> generic_parameters;
 
 		public override string Name {
 			get { return base.Name; }
 			set {
 				base.Name = value;
-				m_fullNameDiscarded = true;
+				fullname = null;
 			}
 		}
 
 		public virtual string Namespace {
-			get { return m_namespace; }
+			get { return @namespace; }
 			set {
-				m_namespace = value;
-				m_fullNameDiscarded = true;
+				@namespace = value;
+				fullname = null;
 			}
 		}
 
 		public virtual bool IsValueType {
-			get { return m_isValueType; }
-			set { m_isValueType = value; }
+			get { return value_type; }
+			set { value_type = value; }
 		}
 
-		public virtual ModuleDefinition Module {
-			get { return m_module; }
-			set { m_module = value; }
-		}
-
-		public bool HasCustomAttributes {
-			get { return (m_customAttrs == null) ? false : (m_customAttrs.Count > 0); }
-		}
-
-		public CustomAttributeCollection CustomAttributes {
+		public override ModuleDefinition Module {
 			get {
-				if (m_customAttrs == null)
-					m_customAttrs = new CustomAttributeCollection (this);
+				if (module != null)
+					return module;
 
-				return m_customAttrs;
+				var declaring_type = this.DeclaringType;
+				if (declaring_type != null)
+					return declaring_type.Module;
+
+				return null;
 			}
 		}
 
-		public bool HasGenericParameters {
-			get { return (m_genparams == null) ? false : (m_genparams.Count > 0); }
+		IGenericParameterProvider IGenericContext.Type {
+			get { return this; }
 		}
 
-		public GenericParameterCollection GenericParameters {
+		IGenericParameterProvider IGenericContext.Method {
+			get { return null; }
+		}
+
+		GenericParameterType IGenericParameterProvider.GenericParameterType {
+			get { return GenericParameterType.Type; }
+		}
+
+		public virtual bool HasGenericParameters {
+			get { return !generic_parameters.IsNullOrEmpty (); }
+		}
+
+		public virtual Collection<GenericParameter> GenericParameters {
 			get {
-				if (m_genparams == null)
-					m_genparams = new GenericParameterCollection (this);
-				return m_genparams;
+				if (generic_parameters != null)
+					return generic_parameters;
+
+				return generic_parameters = new Collection<GenericParameter> ();
 			}
 		}
 
 		public virtual IMetadataScope Scope {
 			get {
-				if (this.DeclaringType != null)
-					return this.DeclaringType.Scope;
+				var declaring_type = this.DeclaringType;
+				if (declaring_type != null)
+					return declaring_type.Scope;
 
-				return m_scope;
+				return scope;
 			}
 		}
 
@@ -104,67 +153,175 @@ namespace Mono.Cecil {
 			get { return this.DeclaringType != null; }
 		}
 
-		public virtual string FullName {
-			get {
-				if (m_fullName != null && !m_fullNameDiscarded)
-					return m_fullName;
-
-				if (this.IsNested)
-					return string.Concat (this.DeclaringType.FullName, "/", this.Name);
-
-				if (m_namespace == null || m_namespace.Length == 0)
-					return this.Name;
-
-				m_fullName = string.Concat (m_namespace, ".", this.Name);
-				m_fullNameDiscarded = false;
-				return m_fullName;
+		public override TypeReference DeclaringType {
+			get { return base.DeclaringType; }
+			set {
+				base.DeclaringType = value;
+				fullname = null;
 			}
 		}
 
-		protected TypeReference (string name, string ns) : base (name)
-		{
-			m_namespace = ns;
-			m_fullNameDiscarded = false;
+		public override string FullName {
+			get {
+				if (fullname != null)
+					return fullname;
+
+				if (IsNested)
+					return fullname = DeclaringType.FullName + "/" + Name;
+
+				if (string.IsNullOrEmpty (@namespace))
+					return fullname = Name;
+
+				return fullname = @namespace + "." + Name;
+			}
 		}
 
-		internal TypeReference (string name, string ns, IMetadataScope scope) : this (name, ns)
-		{
-			m_scope = scope;
+		public virtual bool IsByReference {
+			get { return false; }
 		}
 
-		public TypeReference (string name, string ns, IMetadataScope scope, bool valueType) :
-			this (name, ns, scope)
-		{
-			m_isValueType = valueType;
+		public virtual bool IsPointer {
+			get { return false; }
 		}
 
-		public virtual TypeDefinition Resolve ()
-		{
-			ModuleDefinition module = Module;
-			if (module == null)
-				return null;
-
-			return module.Resolver.Resolve (this);
+		public virtual bool IsSentinel {
+			get { return false; }
 		}
 
-		public virtual TypeReference GetOriginalType ()
+		public virtual bool IsArray {
+			get { return false; }
+		}
+
+		public virtual bool IsGenericParameter {
+			get { return false; }
+		}
+
+		public virtual bool IsGenericInstance {
+			get { return false; }
+		}
+
+		public virtual bool IsRequiredModifier {
+			get { return false; }
+		}
+
+		public virtual bool IsOptionalModifier {
+			get { return false; }
+		}
+
+		public virtual bool IsPinned {
+			get { return false; }
+		}
+
+		public virtual bool IsFunctionPointer {
+			get { return false; }
+		}
+
+		public bool IsPrimitive {
+			get {
+				switch (etype) {
+				case ElementType.Boolean:
+				case ElementType.Char:
+				case ElementType.I:
+				case ElementType.U:
+				case ElementType.I1:
+				case ElementType.U1:
+				case ElementType.I2:
+				case ElementType.U2:
+				case ElementType.I4:
+				case ElementType.U4:
+				case ElementType.I8:
+				case ElementType.U8:
+				case ElementType.R4:
+				case ElementType.R8:
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
+
+		public virtual MetadataType MetadataType {
+			get {
+				switch (etype) {
+				case ElementType.None:
+					return IsValueType ? MetadataType.ValueType : MetadataType.Class;
+				default:
+					return (MetadataType) etype;
+				}
+			}
+		}
+
+		protected TypeReference (string @namespace, string name)
+			: base (name)
+		{
+			this.@namespace = @namespace ?? string.Empty;
+			this.token = new MetadataToken (TokenType.TypeRef, 0);
+		}
+
+		public TypeReference (string @namespace, string name, ModuleDefinition module, IMetadataScope scope)
+			: this (@namespace, name)
+		{
+			this.module = module;
+			this.scope = scope;
+		}
+
+		public TypeReference (string @namespace, string name, ModuleDefinition module, IMetadataScope scope, bool valueType) :
+			this (@namespace, name, module, scope)
+		{
+			value_type = valueType;
+		}
+
+		public virtual TypeReference GetElementType ()
 		{
 			return this;
 		}
 
-		internal void AttachToScope (IMetadataScope scope)
+		public virtual TypeDefinition Resolve ()
 		{
-			m_scope = scope;
+			var module = this.Module;
+			if (module == null)
+				throw new NotSupportedException ();
+
+			return module.Resolve (this);
+		}
+	}
+
+	static partial class Mixin {
+
+		public static bool IsTypeOf (this TypeReference self, string @namespace, string name)
+		{
+			return self.Name == name
+				&& self.Namespace == @namespace;
 		}
 
-		public override void Accept (IReflectionVisitor visitor)
+		public static bool IsTypeSpecification (this TypeReference type)
 		{
-			visitor.VisitTypeReference (this);
+			switch (type.etype) {
+			case ElementType.Array:
+			case ElementType.ByRef:
+			case ElementType.CModOpt:
+			case ElementType.CModReqD:
+			case ElementType.FnPtr:
+			case ElementType.GenericInst:
+			case ElementType.MVar:
+			case ElementType.Pinned:
+			case ElementType.Ptr:
+			case ElementType.SzArray:
+			case ElementType.Sentinel:
+			case ElementType.Var:
+				return true;
+			}
+
+			return false;
 		}
 
-		public override string ToString ()
+		public static TypeDefinition CheckedResolve (this TypeReference self)
 		{
-			return this.FullName;
+			var type = self.Resolve ();
+			if (type == null)
+				throw new InvalidOperationException (string.Format ("Failed to resolve type: {0}", self.FullName));
+
+			return type;
 		}
 	}
 }

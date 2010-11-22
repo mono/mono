@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,55 +26,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
+using Mono.Cecil.PE;
+
 namespace Mono.Cecil.Metadata {
 
-	using System;
-	using System.Collections;
+	sealed class GuidHeap : Heap {
 
-	public class GuidHeap : MetadataHeap {
-
-		readonly IDictionary m_guids;
-
-		public IDictionary Guids {
-			get { return m_guids; }
-		}
-
-		public GuidHeap (MetadataStream stream) : base (stream, MetadataStream.GUID)
+		public GuidHeap (Section section, uint start, uint size)
+			: base (section, start, size)
 		{
-			int capacity = (int)(stream.Header.Size / 16);
-			m_guids = new Hashtable (capacity);
 		}
 
-		public Guid this [uint index] {
-			get {
-				if (index == 0)
-					return new Guid (new byte [16]);
-
-				int idx = (int) index - 1;
-
-				if (m_guids.Contains (idx))
-					return (Guid) m_guids [idx];
-
-				if (idx + 16 > this.Data.Length)
-					throw new IndexOutOfRangeException ();
-
-				byte [] buffer = null;
-				if (this.Data.Length == 16) {
-					buffer = this.Data;
-				} else {
-					buffer = new byte [16];
-					Buffer.BlockCopy (this.Data, idx, buffer, 0, 16);
-				}
-				Guid res = new Guid (buffer);
-				m_guids [idx] = res;
-				return res;
-			}
-			set { m_guids [index] = value; }
-		}
-
-		public override void Accept (IMetadataVisitor visitor)
+		public Guid Read (uint index)
 		{
-			visitor.VisitGuidHeap (this);
+			if (index == 0)
+				return new Guid ();
+
+			const int guid_size = 16;
+
+			var buffer = new byte [guid_size];
+
+			index--;
+
+			Buffer.BlockCopy (Section.Data, (int) (Offset + index), buffer, 0, guid_size);
+
+			return new Guid (buffer);
+
 		}
 	}
 }

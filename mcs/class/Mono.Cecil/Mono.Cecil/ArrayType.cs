@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,84 +26,134 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Text;
+using Mono.Collections.Generic;
+using MD = Mono.Cecil.Metadata;
+
 namespace Mono.Cecil {
 
-	using System.Text;
+	public struct ArrayDimension {
 
-	using Mono.Cecil.Signatures;
+		int? lower_bound;
+		int? upper_bound;
+
+		public int? LowerBound {
+			get { return lower_bound; }
+			set { lower_bound = value; }
+		}
+
+		public int? UpperBound {
+			get { return upper_bound; }
+			set { upper_bound = value; }
+		}
+
+		public bool IsSized {
+			get { return lower_bound.HasValue || upper_bound.HasValue; }
+		}
+
+		public ArrayDimension (int? lowerBound, int? upperBound)
+		{
+			this.lower_bound = lowerBound;
+			this.upper_bound = upperBound;
+		}
+
+		public override string ToString ()
+		{
+			return !IsSized
+				? string.Empty
+				: lower_bound + "..." + upper_bound;
+		}
+	}
 
 	public sealed class ArrayType : TypeSpecification {
 
-		private ArrayDimensionCollection m_dimensions;
+		Collection<ArrayDimension> dimensions;
 
-		public ArrayDimensionCollection Dimensions {
-			get { return m_dimensions; }
+		public Collection<ArrayDimension> Dimensions {
+			get {
+				if (dimensions != null)
+					return dimensions;
+
+				dimensions = new Collection<ArrayDimension> ();
+				dimensions.Add (new ArrayDimension ());
+				return dimensions;
+			}
 		}
 
 		public int Rank {
-			get { return m_dimensions.Count; }
+			get { return dimensions == null ? 1 : dimensions.Count; }
 		}
 
-		public bool IsSizedArray {
+		public bool IsVector {
 			get {
-				if (this.Rank != 1)
+				if (dimensions == null)
+					return true;
+
+				if (dimensions.Count > 1)
 					return false;
-				ArrayDimension dim = m_dimensions [0];
-				return dim.UpperBound == 0;
+
+				var dimension = dimensions [0];
+
+				return !dimension.IsSized;
 			}
+		}
+
+		public override bool IsValueType {
+			get { return false; }
+			set { throw new InvalidOperationException (); }
 		}
 
 		public override string Name {
-			get { return string.Concat (base.Name, Suffix ()); }
+			get { return base.Name + Suffix; }
 		}
 
 		public override string FullName {
-			get { return string.Concat (base.FullName, Suffix ()); }
+			get { return base.FullName + Suffix; }
 		}
 
-		string Suffix ()
-		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("[");
-			for (int i = 0; i < m_dimensions.Count; i++) {
-				ArrayDimension dim = m_dimensions [i];
-				string rank = dim.ToString ();
-				if (i < m_dimensions.Count - 1)
-					sb.Append (",");
-				if (rank.Length > 0) {
-					sb.Append (" ");
-					sb.Append (rank);
+		string Suffix {
+			get {
+				if (IsVector)
+					return "[]";
+
+				var suffix = new StringBuilder ();
+				suffix.Append ("[");
+				for (int i = 0; i < dimensions.Count; i++) {
+					if (i > 0)
+						suffix.Append (",");
+
+					suffix.Append (dimensions [i].ToString ());
 				}
-			}
-			sb.Append ("]");
-			return sb.ToString ();
-		}
+				suffix.Append ("]");
 
-		internal ArrayType (TypeReference elementType, ArrayShape shape) : base (elementType)
-		{
-			m_dimensions = new ArrayDimensionCollection (this);
-			for (int i = 0; i < shape.Rank; i++) {
-				int lower = 0, upper = 0;
-				if (i < shape.NumSizes)
-					if (i < shape.NumLoBounds) {
-						lower = shape.LoBounds [i];
-						upper = shape.LoBounds [i] + shape.Sizes [i] - 1;
-					} else
-						upper = shape.Sizes [i] - 1;
-
-				m_dimensions.Add (new ArrayDimension (lower, upper));
+				return suffix.ToString ();
 			}
 		}
 
-		public ArrayType (TypeReference elementType, int rank) : base (elementType)
+		public override bool IsArray {
+			get { return true; }
+		}
+
+		public ArrayType (TypeReference type)
+			: base (type)
 		{
-			m_dimensions = new ArrayDimensionCollection (this);
+			Mixin.CheckType (type);
+			this.etype = MD.ElementType.Array;
+		}
+
+		public ArrayType (TypeReference type, int rank)
+			: this (type)
+		{
+			Mixin.CheckType (type);
+
+			if (rank == 1)
+				return;
+
+			dimensions = new Collection<ArrayDimension> (rank);
 			for (int i = 0; i < rank; i++)
-				m_dimensions.Add (new ArrayDimension (0, 0));
-		}
-
-		public ArrayType (TypeReference elementType) : this (elementType, 1)
-		{
+				dimensions.Add (new ArrayDimension ());
+			this.etype = MD.ElementType.Array;
 		}
 	}
 }

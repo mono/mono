@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,44 +28,41 @@
 
 namespace Mono.Cecil {
 
-	using System.Collections;
+	public class ModuleReference : IMetadataScope {
 
-	using Mono.Cecil;
-	using Mono.Cecil.Metadata;
+		string name;
 
-	public class ModuleReference : IMetadataScope, IAnnotationProvider, IReflectionStructureVisitable {
-
-		string m_name;
-		MetadataToken m_token;
-		IDictionary m_annotations;
+		internal MetadataToken token;
 
 		public string Name {
-			get { return m_name; }
-			set { m_name = value; }
+			get { return name; }
+			set { name = value; }
+		}
+
+		public virtual MetadataScopeType MetadataScopeType {
+			get { return MetadataScopeType.ModuleReference; }
 		}
 
 		public MetadataToken MetadataToken {
-			get { return m_token; }
-			set { m_token = value; }
+			get { return token; }
+			set { token = value; }
 		}
 
-		IDictionary IAnnotationProvider.Annotations {
-			get {
-				if (m_annotations == null)
-					m_annotations = new Hashtable ();
-				return m_annotations;
-			}
+		internal ModuleReference ()
+		{
+			this.token = new MetadataToken (TokenType.ModuleRef);
 		}
 
 		public ModuleReference (string name)
+			: this ()
 		{
-			m_name = name;
+			Mixin.CheckName (name);
+			this.name = name;
 		}
 
-		public virtual void Accept (IReflectionStructureVisitor visitor)
+		public override string ToString ()
 		{
-			visitor.VisitModuleReference (this);
+			return name;
 		}
 	}
 }
-

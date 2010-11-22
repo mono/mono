@@ -214,13 +214,12 @@ class MDocUpdater : MDocCommand
 	{
 		AssemblyDefinition assembly = null;
 		try {
-			assembly = AssemblyFactory.GetAssembly (name);
+			assembly = AssemblyDefinition.ReadAssembly (name, new ReaderParameters { AssemblyResolver = assemblyResolver });
 		} catch (System.IO.FileNotFoundException) { }
 
 		if (assembly == null)
 			throw new InvalidOperationException("Assembly " + name + " not found.");
 
-		assembly.Resolver = assemblyResolver;
 		return assembly;
 	}
 
@@ -873,7 +872,7 @@ class MDocUpdater : MDocCommand
 			MyXmlNodeList todelete = new MyXmlNodeList ();
 			foreach (DocsNodeInfo info in docEnum.GetDocumentationMembers (basefile, type)) {
 				XmlElement oldmember  = info.Node;
-				IMemberReference oldmember2 = info.Member;
+				MemberReference oldmember2 = info.Member;
 				string sig = oldmember2 != null ? memberFormatters [0].GetDeclaration (oldmember2) : null;
 
 				// Interface implementations and overrides are deleted from the docs
@@ -912,7 +911,7 @@ class MDocUpdater : MDocCommand
 		
 		if (!DocUtils.IsDelegate (type)) {
 			XmlNode members = WriteElement (basefile.DocumentElement, "Members");
-			foreach (IMemberReference m in type.GetMembers()) {
+			foreach (MemberReference m in type.GetMembers()) {
 				if (m is TypeDefinition) continue;
 				
 				string sig = memberFormatters [0].GetDeclaration (m);
@@ -1193,12 +1192,12 @@ class MDocUpdater : MDocCommand
 			WriteElementText(root, "Base/BaseTypeName", basetypename);
 			
 			// Document how this type instantiates the generic parameters of its base type
-			TypeReference origBase = type.BaseType.GetOriginalType ();
+			TypeReference origBase = type.BaseType.GetElementType ();
 			if (origBase.IsGenericType ()) {
 				ClearElement(basenode, "BaseTypeArguments");
 				GenericInstanceType baseInst             = type.BaseType as GenericInstanceType;
-				GenericArgumentCollection baseGenArgs    = baseInst == null ? null : baseInst.GenericArguments;
-				GenericParameterCollection baseGenParams = origBase.GenericParameters;
+				IList<TypeReference> baseGenArgs    = baseInst == null ? null : baseInst.GenericArguments;
+				IList<GenericParameter> baseGenParams = origBase.GenericParameters;
 				if (baseGenArgs.Count != baseGenParams.Count)
 					throw new InvalidOperationException ("internal error: number of generic arguments doesn't match number of generic parameters.");
 				for (int i = 0; baseGenArgs != null && i < baseGenArgs.Count; i++) {
@@ -1284,7 +1283,7 @@ class MDocUpdater : MDocCommand
 	private void UpdateMember (DocsNodeInfo info)
 	{
 		XmlElement me = (XmlElement) info.Node;
-		IMemberReference mi = info.Member;
+		MemberReference mi = info.Member;
 
 		foreach (MemberFormatter f in memberFormatters) {
 			string element = "MemberSignature[@Language='" + f.Language + "']";
@@ -1362,7 +1361,7 @@ class MDocUpdater : MDocCommand
 		}
 	}
 
-	IEnumerable<string> GetCustomAttributes (IMemberReference mi)
+	IEnumerable<string> GetCustomAttributes (MemberReference mi)
 	{
 		IEnumerable<string> attrs = Enumerable.Empty<string>();
 
@@ -1370,18 +1369,16 @@ class MDocUpdater : MDocCommand
 		if (p != null)
 			attrs = attrs.Concat (GetCustomAttributes (p.CustomAttributes, ""));
 
-		PropertyReference pr = mi as PropertyReference;
-		if (pr != null) {
-			PropertyDefinition pd = pr.Resolve ();
+		PropertyDefinition pd = mi as PropertyDefinition;
+		if (pd != null) {
 			if (pd.GetMethod != null)
 				attrs = attrs.Concat (GetCustomAttributes (pd.GetMethod.CustomAttributes, "get: "));
 			if (pd.SetMethod != null)
 				attrs = attrs.Concat (GetCustomAttributes (pd.SetMethod.CustomAttributes, "set: "));
 		}
 
-		EventReference er = mi as EventReference;
-		if (er != null) {
-			EventDefinition ed = er.Resolve ();
+		EventDefinition ed = mi as EventDefinition;
+		if (ed != null) {
 			if (ed.AddMethod != null)
 				attrs = attrs.Concat (GetCustomAttributes (ed.AddMethod.CustomAttributes, "add: "));
 			if (ed.RemoveMethod != null)
@@ -1391,38 +1388,33 @@ class MDocUpdater : MDocCommand
 		return attrs;
 	}
 
-	IEnumerable<string> GetCustomAttributes (CustomAttributeCollection attributes, string prefix)
+	IEnumerable<string> GetCustomAttributes (IList<CustomAttribute> attributes, string prefix)
 	{
-		foreach (CustomAttribute attribute in attributes.Cast<CustomAttribute> ()
-				.OrderBy (ca => ca.Constructor.DeclaringType.FullName)) {
-			if (!attribute.Resolve ()) {
-				// skip?
-				Warning ("warning: could not resolve type {0}.",
-						attribute.Constructor.DeclaringType.FullName);
-			}
-			TypeDefinition attrType = attribute.Constructor.DeclaringType as TypeDefinition;
+		foreach (CustomAttribute attribute in attributes.OrderBy (ca => ca.AttributeType.FullName)) {
+
+			TypeDefinition attrType = attribute.AttributeType as TypeDefinition;
 			if (attrType != null && !IsPublic (attrType))
 				continue;
-			if (slashdocFormatter.GetName (attribute.Constructor.DeclaringType) == null)
+			if (slashdocFormatter.GetName (attribute.AttributeType) == null)
 				continue;
 			
-			if (Array.IndexOf (IgnorableAttributes, attribute.Constructor.DeclaringType.FullName) >= 0)
+			if (Array.IndexOf (IgnorableAttributes, attribute.AttributeType.FullName) >= 0)
 				continue;
 			
 			StringList fields = new StringList ();
 
-			ParameterDefinitionCollection parameters = attribute.Constructor.Parameters;
-			for (int i = 0; i < attribute.ConstructorParameters.Count; ++i) {
+			for (int i = 0; i < attribute.ConstructorArguments.Count; ++i) {
+				CustomAttributeArgument argument = attribute.ConstructorArguments [i];
 				fields.Add (MakeAttributesValueString (
-						attribute.ConstructorParameters [i],
-						parameters [i].ParameterType));
+						argument.Value,
+						argument.Type));
 			}
 			var namedArgs =
-				(from de in attribute.Fields.Cast<DictionaryEntry> ()
-				 select new { Type=attribute.GetFieldType (de.Key.ToString ()), Name=de.Key, Value=de.Value })
+				(from namedArg in attribute.Fields
+				 select new { Type=namedArg.Argument.Type, Name=namedArg.Name, Value=namedArg.Argument.Value })
 				.Concat (
-						(from de in attribute.Properties.Cast<DictionaryEntry> ()
-						 select new { Type=attribute.GetPropertyType (de.Key.ToString ()), Name=de.Key, Value=de.Value }))
+						(from namedArg in attribute.Properties
+						 select new { Type=namedArg.Argument.Type, Name=namedArg.Name, Value=namedArg.Argument.Value }))
 				.OrderBy (v => v.Name);
 			foreach (var d in namedArgs)
 				fields.Add (string.Format ("{0}={1}", d.Name, 
@@ -1504,7 +1496,7 @@ class MDocUpdater : MDocCommand
 		}
 		else {
 			GenericParameter gp = (GenericParameter) info.Parameters [0].ParameterType;
-			ConstraintCollection constraints = gp.Constraints;
+			IList<TypeReference> constraints = gp.Constraints;
 			if (constraints.Count == 0)
 				AppendElementAttributeText (targets, "Target", "Type", "System.Object");
 			else
@@ -1611,7 +1603,7 @@ class MDocUpdater : MDocCommand
 	private void MakeDocNode (DocsNodeInfo info)
 	{
 		List<GenericParameter> genericParams      = info.GenericParameters;
-		ParameterDefinitionCollection parameters  = info.Parameters;
+		IList<ParameterDefinition> parameters  = info.Parameters;
 		TypeReference returntype                  = info.ReturnType;
 		bool returnisreturn         = info.ReturnIsReturn;
 		XmlElement e                = info.Node;
@@ -1806,7 +1798,7 @@ class MDocUpdater : MDocCommand
 		}
 	}
 	
-	private void UpdateExceptions (XmlNode docs, IMemberReference member)
+	private void UpdateExceptions (XmlNode docs, MemberReference member)
 	{
 		foreach (var source in new ExceptionLookup (exceptions.Value)[member]) {
 			string cref = slashdocFormatter.GetDeclaration (source.Exception);
@@ -1837,7 +1829,7 @@ class MDocUpdater : MDocCommand
 				n.ParentNode.RemoveChild(n);
 	}
 	
-	private static bool UpdateAssemblyVersions (XmlElement root, IMemberReference member, bool add)
+	private static bool UpdateAssemblyVersions (XmlElement root, MemberReference member, bool add)
 	{
 		TypeDefinition type = member as TypeDefinition;
 		if (type == null)
@@ -1947,8 +1939,7 @@ class MDocUpdater : MDocCommand
 		long c = ToInt64 (v);
 		if (values.ContainsKey (c))
 			return typename + "." + values [c];
-		if (valueDef.CustomAttributes.Cast<CustomAttribute> ()
-				.Any (ca => ca.Constructor.DeclaringType.FullName == "System.FlagsAttribute")) {
+		if (valueDef.CustomAttributes.Any (ca => ca.AttributeType.FullName == "System.FlagsAttribute")) {
 			return string.Join (" | ",
 					(from i in values.Keys
 					 where (c & i) != 0
@@ -1962,7 +1953,7 @@ class MDocUpdater : MDocCommand
 	{
 		var values = new Dictionary<long, string> ();
 		foreach (var f in 
-				(from f in type.Fields.Cast<FieldDefinition> ()
+				(from f in type.Fields
 				 where !(f.IsRuntimeSpecialName || f.IsSpecialName)
 				 select f)) {
 			values [ToInt64 (f.Constant)] = f.Name;
@@ -1977,7 +1968,7 @@ class MDocUpdater : MDocCommand
 		return Convert.ToInt64 (value);
 	}
 	
-	private void MakeParameters (XmlElement root, ParameterDefinitionCollection parameters)
+	private void MakeParameters (XmlElement root, IList<ParameterDefinition> parameters)
 	{
 		XmlElement e = WriteElement(root, "Parameters");
 		e.RemoveAll();
@@ -1986,7 +1977,7 @@ class MDocUpdater : MDocCommand
 			e.AppendChild(pe);
 			pe.SetAttribute("Name", p.Name);
 			pe.SetAttribute("Type", GetDocParameterType (p.ParameterType));
-			if (p.ParameterType is ReferenceType) {
+			if (p.ParameterType is ByReferenceType) {
 				if (p.IsOut) pe.SetAttribute("RefType", "out");
 				else pe.SetAttribute("RefType", "ref");
 			}
@@ -1994,7 +1985,7 @@ class MDocUpdater : MDocCommand
 		}
 	}
 	
-	private void MakeTypeParameters (XmlElement root, GenericParameterCollection typeParams)
+	private void MakeTypeParameters (XmlElement root, IList<GenericParameter> typeParams)
 	{
 		if (typeParams == null || typeParams.Count == 0) {
 			XmlElement f = (XmlElement) root.SelectSingleNode ("TypeParameters");
@@ -2010,7 +2001,7 @@ class MDocUpdater : MDocCommand
 			pe.SetAttribute("Name", t.Name);
 			MakeAttributes (pe, GetCustomAttributes (t.CustomAttributes, ""));
 			XmlElement ce = (XmlElement) e.SelectSingleNode ("Constraints");
-			ConstraintCollection constraints = t.Constraints;
+			IList<TypeReference> constraints = t.Constraints;
 			GenericParameterAttributes attrs = t.Attributes;
 			if (attrs == GenericParameterAttributes.NonVariant && constraints.Count == 0) {
 				if (ce != null)
@@ -2042,13 +2033,13 @@ class MDocUpdater : MDocCommand
 		}
 	}
 
-	private void MakeParameters (XmlElement root, IMemberReference mi)
+	private void MakeParameters (XmlElement root, MemberReference mi)
 	{
 		if (mi is MethodDefinition && ((MethodDefinition) mi).IsConstructor)
 			MakeParameters (root, ((MethodDefinition)mi).Parameters);
 		else if (mi is MethodDefinition) {
 			MethodDefinition mb = (MethodDefinition) mi;
-			ParameterDefinitionCollection parameters = mb.Parameters;
+			IList<ParameterDefinition> parameters = mb.Parameters;
 			MakeParameters(root, parameters);
 			if (parameters.Count > 0 && DocUtils.IsExtensionMethod (mb)) {
 				XmlElement p = (XmlElement) root.SelectSingleNode ("Parameters/Parameter[position()=1]");
@@ -2056,7 +2047,7 @@ class MDocUpdater : MDocCommand
 			}
 		}
 		else if (mi is PropertyDefinition) {
-			ParameterDefinitionCollection parameters = ((PropertyDefinition)mi).Parameters;
+			IList<ParameterDefinition> parameters = ((PropertyDefinition)mi).Parameters;
 			if (parameters.Count > 0)
 				MakeParameters(root, parameters);
 			else
@@ -2072,7 +2063,7 @@ class MDocUpdater : MDocCommand
 		return GetDocTypeFullName (type).Replace ("@", "&");
 	}
 
-	private void MakeReturnValue (XmlElement root, TypeReference type, CustomAttributeCollection attributes) 
+	private void MakeReturnValue (XmlElement root, TypeReference type, IList<CustomAttribute> attributes) 
 	{
 		XmlElement e = WriteElement(root, "ReturnValue");
 		e.RemoveAll();
@@ -2081,12 +2072,12 @@ class MDocUpdater : MDocCommand
 			MakeAttributes(e, GetCustomAttributes (attributes, ""));
 	}
 	
-	private void MakeReturnValue (XmlElement root, IMemberReference mi)
+	private void MakeReturnValue (XmlElement root, MemberReference mi)
 	{
 		if (mi is MethodDefinition && ((MethodDefinition) mi).IsConstructor)
 			return;
 		else if (mi is MethodDefinition)
-			MakeReturnValue (root, ((MethodDefinition)mi).ReturnType.ReturnType, ((MethodDefinition)mi).ReturnType.CustomAttributes);
+			MakeReturnValue (root, ((MethodDefinition)mi).ReturnType, ((MethodDefinition)mi).MethodReturnType.CustomAttributes);
 		else if (mi is PropertyDefinition)
 			MakeReturnValue (root, ((PropertyDefinition)mi).PropertyType, null);
 		else if (mi is FieldDefinition)
@@ -2099,7 +2090,7 @@ class MDocUpdater : MDocCommand
 	
 	private XmlElement MakeMember(XmlDocument doc, DocsNodeInfo info)
 	{
-		IMemberReference mi = info.Member;
+		MemberReference mi = info.Member;
 		if (mi is TypeDefinition) return null;
 
 		string sigs = memberFormatters [0].GetDeclaration (mi);
@@ -2129,7 +2120,7 @@ class MDocUpdater : MDocCommand
 		return me;
 	}
 
-	internal static string GetMemberName (IMemberReference mi)
+	internal static string GetMemberName (MemberReference mi)
 	{
 		MethodDefinition mb = mi as MethodDefinition;
 		if (mb == null) {
@@ -2150,7 +2141,7 @@ class MDocUpdater : MDocCommand
 			sb.Append (ifaceMethod.Name);
 		}
 		if (mb.IsGenericMethod ()) {
-			GenericParameterCollection typeParams = mb.GenericParameters;
+			IList<GenericParameter> typeParams = mb.GenericParameters;
 			if (typeParams.Count > 0) {
 				sb.Append ("<");
 				sb.Append (typeParams [0].Name);
@@ -2163,12 +2154,12 @@ class MDocUpdater : MDocCommand
 	}
 	
 	/// SIGNATURE GENERATION FUNCTIONS
-	internal static bool IsPrivate (IMemberReference mi)
+	internal static bool IsPrivate (MemberReference mi)
 	{
 		return memberFormatters [0].GetDeclaration (mi) == null;
 	}
 
-	internal static string GetMemberType (IMemberReference mi)
+	internal static string GetMemberType (MemberReference mi)
 	{
 		if (mi is MethodDefinition && ((MethodDefinition) mi).IsConstructor)
 			return "Constructor";
@@ -2237,7 +2228,7 @@ class MDocUpdater : MDocCommand
 		return xpath.ToString ();
 	}
 
-	public static string GetXPathForMember (IMemberReference member)
+	public static string GetXPathForMember (MemberReference member)
 	{
 		StringBuilder xpath = new StringBuilder ();
 		xpath.Append ("//Type[@FullName=\"")
@@ -2247,7 +2238,7 @@ class MDocUpdater : MDocCommand
 			.Append (GetMemberName (member))
 			.Append ("\"]");
 
-		ParameterDefinitionCollection parameters = null;
+		IList<ParameterDefinition> parameters = null;
 		if (member is MethodDefinition)
 			parameters = ((MethodDefinition) member).Parameters;
 		else if (member is PropertyDefinition) {
@@ -2268,28 +2259,28 @@ class MDocUpdater : MDocCommand
 }
 
 static class CecilExtensions {
-	public static IEnumerable<IMemberReference> GetMembers (this TypeDefinition type)
+	public static IEnumerable<MemberReference> GetMembers (this TypeDefinition type)
 	{
-		foreach (var c in type.Constructors)
-			yield return (IMemberReference) c;
+		foreach (var c in type.Methods.Where (m => m.IsConstructor))
+			yield return (MemberReference) c;
 		foreach (var e in type.Events)
-			yield return (IMemberReference) e;
+			yield return (MemberReference) e;
 		foreach (var f in type.Fields)
-			yield return (IMemberReference) f;
-		foreach (var m in type.Methods)
-			yield return (IMemberReference) m;
+			yield return (MemberReference) f;
+		foreach (var m in type.Methods.Where (m => !m.IsConstructor))
+			yield return (MemberReference) m;
 		foreach (var t in type.NestedTypes)
-			yield return (IMemberReference) t;
+			yield return (MemberReference) t;
 		foreach (var p in type.Properties)
-			yield return (IMemberReference) p;
+			yield return (MemberReference) p;
 	}
 
-	public static IEnumerable<IMemberReference> GetMembers (this TypeDefinition type, string member)
+	public static IEnumerable<MemberReference> GetMembers (this TypeDefinition type, string member)
 	{
 		return GetMembers (type).Where (m => m.Name == member);
 	}
 
-	public static IMemberReference GetMember (this TypeDefinition type, string member)
+	public static MemberReference GetMember (this TypeDefinition type, string member)
 	{
 		return GetMembers (type, member).EnsureZeroOrOne ();
 	}
@@ -2303,31 +2294,29 @@ static class CecilExtensions {
 
 	public static MethodDefinition GetMethod (this TypeDefinition type, string method)
 	{
-		return type.Methods.Cast<MethodDefinition> ()
+		return type.Methods
 			.Where (m => m.Name == method)
 			.EnsureZeroOrOne ();
 	}
 
-	public static IEnumerable<IMemberReference> GetDefaultMembers (this TypeReference type)
+	public static IEnumerable<MemberReference> GetDefaultMembers (this TypeReference type)
 	{
 		TypeDefinition def = type as TypeDefinition;
 		if (def == null)
-			return new IMemberReference [0];
-		CustomAttribute defMemberAttr = type.CustomAttributes.Cast<CustomAttribute> ()
-				.Where (c => c.Constructor.DeclaringType.FullName == "System.Reflection.DefaultMemberAttribute")
-				.FirstOrDefault ();
+			return new MemberReference [0];
+		CustomAttribute defMemberAttr = def.CustomAttributes
+				.FirstOrDefault (c => c.AttributeType.FullName == "System.Reflection.DefaultMemberAttribute");
 		if (defMemberAttr == null)
-			return new IMemberReference [0];
-		string name = (string) defMemberAttr.ConstructorParameters [0];
-		return def.Properties.Cast<PropertyDefinition> ()
+			return new MemberReference [0];
+		string name = (string) defMemberAttr.ConstructorArguments [0].Value;
+		return def.Properties
 				.Where (p => p.Name == name)
-				.Select (p => (IMemberReference) p);
+				.Select (p => (MemberReference) p);
 	}
 
 	public static IEnumerable<TypeDefinition> GetTypes (this AssemblyDefinition assembly)
 	{
-		return assembly.Modules.Cast<ModuleDefinition> ()
-				.SelectMany (md => md.Types.Cast<TypeDefinition> ());
+		return assembly.Modules.SelectMany (md => md.GetAllTypes ());
 	}
 
 	public static TypeDefinition GetType (this AssemblyDefinition assembly, string type)
@@ -2347,23 +2336,23 @@ static class CecilExtensions {
 		return method.GenericParameters.Count > 0;
 	}
 
-	public static IMemberReference Resolve (this IMemberReference member)
+	public static MemberReference Resolve (this MemberReference member)
 	{
-		EventReference er = member as EventReference;
-		if (er != null)
-			return er.Resolve ();
 		FieldReference fr = member as FieldReference;
 		if (fr != null)
 			return fr.Resolve ();
 		MethodReference mr = member as MethodReference;
 		if (mr != null)
 			return mr.Resolve ();
-		PropertyReference pr = member as PropertyReference;
-		if (pr != null)
-			return pr.Resolve ();
 		TypeReference tr = member as TypeReference;
 		if (tr != null)
 			return tr.Resolve ();
+		PropertyReference pr = member as PropertyReference;
+		if (pr != null)
+			return pr;
+		EventReference er = member as EventReference;
+		if (er != null)
+			return er;
 		throw new NotSupportedException ("Cannot find definition for " + member.ToString ());
 	}
 
@@ -2371,7 +2360,23 @@ static class CecilExtensions {
 	{
 		if (!type.IsEnum)
 			return type;
-		return type.Fields.Cast<FieldDefinition>().First (f => f.Name == "value__").FieldType;
+		return type.Fields.First (f => f.Name == "value__").FieldType;
+	}
+
+	public static IEnumerable<TypeDefinition> GetAllTypes (this ModuleDefinition self)
+	{
+		return self.Types.SelectMany (t => t.GetAllTypes ());
+	}
+
+	static IEnumerable<TypeDefinition> GetAllTypes (this TypeDefinition self)
+	{
+		yield return self;
+
+		if (!self.HasNestedTypes)
+			yield break;
+
+		foreach (var type in self.NestedTypes.SelectMany (t => t.GetAllTypes ()))
+			yield return type;
 	}
 }
 
@@ -2435,8 +2440,8 @@ static class DocUtils {
 
 	public static string GetNamespace (TypeReference type)
 	{
-		if (type.GetOriginalType ().IsNested)
-			type = type.GetOriginalType ();
+		if (type.GetElementType ().IsNested)
+			type = type.GetElementType ();
 		while (type != null && type.IsNested)
 			type = type.DeclaringType;
 		if (type == null)
@@ -2456,12 +2461,10 @@ static class DocUtils {
 	public static bool IsExtensionMethod (MethodDefinition method)
 	{
 		return
-			method.CustomAttributes.Cast<CustomAttribute> ()
-					.Where (m => m.Constructor.DeclaringType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
-					.Any () &&
-			method.DeclaringType.CustomAttributes.Cast<CustomAttribute> ()
-					.Where (m => m.Constructor.DeclaringType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
-					.Any ();
+			method.CustomAttributes
+					.Any (m => m.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
+			&& method.DeclaringType.CustomAttributes
+					.Any (m => m.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute");
 	}
 
 	public static bool IsDelegate (TypeDefinition type)
@@ -2549,7 +2552,7 @@ class DocsNodeInfo {
 		SetType (type);
 	}
 
-	public DocsNodeInfo (XmlElement node, IMemberReference member)
+	public DocsNodeInfo (XmlElement node, MemberReference member)
 		: this (node)
 	{
 		SetMemberInfo (member);
@@ -2560,7 +2563,7 @@ class DocsNodeInfo {
 		if (type == null)
 			throw new ArgumentNullException ("type");
 		Type = type;
-		GenericParameters = new List<GenericParameter> (type.GenericParameters.Cast<GenericParameter> ());
+		GenericParameters = new List<GenericParameter> (type.GenericParameters);
 		List<TypeReference> declTypes = DocUtils.GetDeclaringTypes (type);
 		int maxGenArgs = DocUtils.GetGenericArgumentCount (type);
 		for (int i = 0; i < declTypes.Count - 1; ++i) {
@@ -2572,12 +2575,12 @@ class DocsNodeInfo {
 		}
 		if (DocUtils.IsDelegate (type)) {
 			Parameters = type.GetMethod("Invoke").Parameters;
-			ReturnType = type.GetMethod("Invoke").ReturnType.ReturnType;
+			ReturnType = type.GetMethod("Invoke").ReturnType;
 			ReturnIsReturn = true;
 		}
 	}
 
-	void SetMemberInfo (IMemberReference member)
+	void SetMemberInfo (MemberReference member)
 	{
 		if (member == null)
 			throw new ArgumentNullException ("member");
@@ -2589,7 +2592,7 @@ class DocsNodeInfo {
 			MethodReference mr = (MethodReference) member;
 			Parameters = mr.Parameters;
 			if (mr.IsGenericMethod ()) {
-				GenericParameters = new List<GenericParameter> (mr.GenericParameters.Cast<GenericParameter> ());
+				GenericParameters = new List<GenericParameter> (mr.GenericParameters);
 			}
 		}
 		else if (member is PropertyDefinition) {
@@ -2597,7 +2600,7 @@ class DocsNodeInfo {
 		}
 			
 		if (member is MethodDefinition) {
-			ReturnType = ((MethodDefinition) member).ReturnType.ReturnType;
+			ReturnType = ((MethodDefinition) member).ReturnType;
 		} else if (member is PropertyDefinition) {
 			ReturnType = ((PropertyDefinition) member).PropertyType;
 			ReturnIsReturn = false;
@@ -2610,11 +2613,11 @@ class DocsNodeInfo {
 
 	public TypeReference ReturnType;
 	public List<GenericParameter> GenericParameters;
-	public ParameterDefinitionCollection Parameters;
+	public IList<ParameterDefinition> Parameters;
 	public bool ReturnIsReturn;
 	public XmlElement Node;
 	public bool AddRemarks = true;
-	public IMemberReference Member;
+	public MemberReference Member;
 	public TypeDefinition Type;
 }
 
@@ -2645,7 +2648,7 @@ class DocumentationEnumerator {
 				oldmember.RemoveAttribute ("__monodocer-seen__");
 				continue;
 			}
-			IMemberReference m = GetMember (type, new DocumentationMember (oldmember));
+			MemberReference m = GetMember (type, new DocumentationMember (oldmember));
 			if (m == null) {
 				yield return new DocsNodeInfo (oldmember);
 			}
@@ -2655,7 +2658,7 @@ class DocumentationEnumerator {
 		}
 	}
 
-	protected static IMemberReference GetMember (TypeDefinition type, DocumentationMember member)
+	protected static MemberReference GetMember (TypeDefinition type, DocumentationMember member)
 	{
 		string membertype = member.MemberType;
 		
@@ -2665,22 +2668,22 @@ class DocumentationEnumerator {
 		string[] docTypeParams = GetTypeParameters (docName);
 
 		// Loop through all members in this type with the same name
-		foreach (IMemberReference mi in GetReflectionMembers (type, docName)) {
+		foreach (MemberReference mi in GetReflectionMembers (type, docName)) {
 			if (mi is TypeDefinition) continue;
 			if (MDocUpdater.GetMemberType(mi) != membertype) continue;
 
 			if (MDocUpdater.IsPrivate (mi))
 				continue;
 
-			ParameterDefinitionCollection pis = null;
+			IList<ParameterDefinition> pis = null;
 			string[] typeParams = null;
 			if (mi is MethodDefinition) {
 				MethodDefinition mb = (MethodDefinition) mi;
 				pis = mb.Parameters;
 				if (docTypeParams != null && mb.IsGenericMethod ()) {
-					GenericParameterCollection args = mb.GenericParameters;
+					IList<GenericParameter> args = mb.GenericParameters;
 					if (args.Count == docTypeParams.Length) {
-						typeParams = args.Cast<GenericParameter> ().Select (p => p.Name).ToArray ();
+						typeParams = args.Select (p => p.Name).ToArray ();
 					}
 				}
 			}
@@ -2696,7 +2699,7 @@ class DocumentationEnumerator {
 			if (mDef != null && !mDef.IsConstructor) {
 				// Casting operators can overload based on return type.
 				if (returntype != GetReplacedString (
-							MDocUpdater.GetDocTypeFullName (((MethodDefinition)mi).ReturnType.ReturnType), 
+							MDocUpdater.GetDocTypeFullName (((MethodDefinition)mi).ReturnType), 
 							typeParams, docTypeParams)) {
 					continue;
 				}
@@ -2742,7 +2745,7 @@ class DocumentationEnumerator {
 		return types.ToArray ();
 	}
 
-	protected static IEnumerable<IMemberReference> GetReflectionMembers (TypeDefinition type, string docName)
+	protected static IEnumerable<MemberReference> GetReflectionMembers (TypeDefinition type, string docName)
 	{
 		// need to worry about 4 forms of //@MemberName values:
 		//  1. "Normal" (non-generic) member names: GetEnumerator
@@ -2761,12 +2764,12 @@ class DocumentationEnumerator {
 		//    this as (1) or (2).
 		if (docName.IndexOf ('<') == -1 && docName.IndexOf ('[') == -1) {
 			// Cases 1 & 2
-			foreach (IMemberReference mi in type.GetMembers (docName))
+			foreach (MemberReference mi in type.GetMembers (docName))
 				yield return mi;
 			if (CountChars (docName, '.') > 0)
 				// might be a property; try only type.member instead of
 				// namespace.type.member.
-				foreach (IMemberReference mi in 
+				foreach (MemberReference mi in 
 						type.GetMembers (DocUtils.GetTypeDotMember (docName)))
 					yield return mi;
 			yield break;
@@ -2800,11 +2803,11 @@ class DocumentationEnumerator {
 		}
 		string refName = startLt == -1 ? docName : docName.Substring (0, startLt);
 		// case 3
-		foreach (IMemberReference mi in type.GetMembers (refName))
+		foreach (MemberReference mi in type.GetMembers (refName))
 			yield return mi;
 
 		// case 4
-		foreach (IMemberReference mi in type.GetMembers (refName.Substring (startType + 1)))
+		foreach (MemberReference mi in type.GetMembers (refName.Substring (startType + 1)))
 			yield return mi;
 
 		// If we _still_ haven't found it, we've hit another generic naming issue:
@@ -2818,7 +2821,7 @@ class DocumentationEnumerator {
 		// over all member names, convert them into CSC format, and compare... :-(
 		if (numDot == 0)
 			yield break;
-		foreach (IMemberReference mi in type.GetMembers ()) {
+		foreach (MemberReference mi in type.GetMembers ()) {
 			if (MDocUpdater.GetMemberName (mi) == docName)
 				yield return mi;
 		}
@@ -2931,7 +2934,7 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 					DocumentationMember dm = new DocumentationMember (ecmadocs);
 					string xp = MDocUpdater.GetXPathForMember (dm);
 					XmlElement oldmember = (XmlElement) basefile.SelectSingleNode (xp);
-					IMemberReference m;
+					MemberReference m;
 					if (oldmember == null) {
 						m = GetMember (type, dm);
 						if (m == null) {
@@ -3083,7 +3086,7 @@ class MsxdocDocumentationImporter : DocumentationImporter {
 		}
 	}
 
-	private XmlNode GetDocs (IMemberReference member)
+	private XmlNode GetDocs (MemberReference member)
 	{
 		string slashdocsig = MDocUpdater.slashdocFormatter.GetDeclaration (member);
 		if (slashdocsig != null)
@@ -3264,7 +3267,7 @@ public abstract class MemberFormatter {
 		get {return "";}
 	}
 
-	public virtual string GetName (IMemberReference member)
+	public virtual string GetName (MemberReference member)
 	{
 		TypeReference type = member as TypeReference;
 		if (type != null)
@@ -3304,7 +3307,7 @@ public abstract class MemberFormatter {
 	{
 		if (type is ArrayType) {
 			TypeSpecification spec = type as TypeSpecification;
-			_AppendTypeName (buf, spec != null ? spec.ElementType : type.GetOriginalType ())
+			_AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType ())
 					.Append (ArrayDelimeters [0]);
 			var origState = MemberFormatterState;
 			MemberFormatterState = MemberFormatterState.WithinArray;
@@ -3315,7 +3318,7 @@ public abstract class MemberFormatter {
 			MemberFormatterState = origState;
 			return buf.Append (ArrayDelimeters [1]);
 		}
-		if (type is ReferenceType) {
+		if (type is ByReferenceType) {
 			return AppendRefTypeName (buf, type);
 		}
 		if (type is PointerType) {
@@ -3368,7 +3371,7 @@ public abstract class MemberFormatter {
 	protected virtual StringBuilder AppendRefTypeName (StringBuilder buf, TypeReference type)
 	{
 		TypeSpecification spec = type as TypeSpecification;
-		return _AppendTypeName (buf, spec != null ? spec.ElementType : type.GetOriginalType ())
+		return _AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType ())
 				.Append (RefTypeModifier);
 	}
 
@@ -3379,7 +3382,7 @@ public abstract class MemberFormatter {
 	protected virtual StringBuilder AppendPointerTypeName (StringBuilder buf, TypeReference type)
 	{
 		TypeSpecification spec = type as TypeSpecification;
-		return _AppendTypeName (buf, spec != null ? spec.ElementType : type.GetOriginalType ())
+		return _AppendTypeName (buf, spec != null ? spec.ElementType : type.GetElementType ())
 				.Append (PointerModifier);
 	}
 
@@ -3394,7 +3397,7 @@ public abstract class MemberFormatter {
 	protected virtual StringBuilder AppendGenericType (StringBuilder buf, TypeReference type)
 	{
 		List<TypeReference> decls = DocUtils.GetDeclaringTypes (
-				type is GenericInstanceType ? type.GetOriginalType () : type);
+				type is GenericInstanceType ? type.GetElementType () : type);
 		List<TypeReference> genArgs = GetGenericArguments (type);
 		int argIdx = 0;
 		int prev = 0;
@@ -3464,7 +3467,7 @@ public abstract class MemberFormatter {
 		return e.Name;
 	}
 
-	public virtual string GetDeclaration (IMemberReference member)
+	public virtual string GetDeclaration (MemberReference member)
 	{
 		if (member == null)
 			throw new ArgumentNullException ("member");
@@ -3520,7 +3523,7 @@ public abstract class MemberFormatter {
 
 		if (buf.Length != 0)
 			buf.Append (" ");
-		buf.Append (GetTypeName (method.ReturnType)).Append (" ");
+		buf.Append (GetTypeName (method.MethodReturnType)).Append (" ");
 
 		AppendMethodName (buf, method);
 		AppendGenericMethod (buf, method).Append (" ");
@@ -3559,7 +3562,7 @@ public abstract class MemberFormatter {
 		return buf;
 	}
 
-	protected virtual StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, ParameterDefinitionCollection parameters)
+	protected virtual StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, IList<ParameterDefinition> parameters)
 	{
 		return buf;
 	}
@@ -3667,7 +3670,7 @@ class ILFullMemberFormatter : MemberFormatter {
 			buf.Append ("struct ");
 		if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0)
 			buf.Append (".ctor ");
-		ConstraintCollection constraints = type.Constraints;
+		IList<TypeReference> constraints = type.Constraints;
 		MemberFormatterState = 0;
 		if (constraints.Count > 0) {
 			var full = new ILFullMemberFormatter ();
@@ -3727,7 +3730,7 @@ class ILFullMemberFormatter : MemberFormatter {
 				buf.Append (full.GetName (type.BaseType).Substring ("class ".Length));
 		}
 		bool first = true;
-		foreach (var name in type.Interfaces.Cast<TypeReference>()
+		foreach (var name in type.Interfaces
 				.Select (i => full.GetName (i))
 				.OrderBy (n => n)) {
 			if (first) {
@@ -3746,7 +3749,7 @@ class ILFullMemberFormatter : MemberFormatter {
 	protected override StringBuilder AppendGenericType (StringBuilder buf, TypeReference type)
 	{
 		List<TypeReference> decls = DocUtils.GetDeclaringTypes (
-				type is GenericInstanceType ? type.GetOriginalType () : type);
+				type is GenericInstanceType ? type.GetElementType () : type);
 		bool first = true;
 		foreach (var decl in decls) {
 			TypeReference declDef = decl.Resolve () ?? decl;
@@ -3836,13 +3839,13 @@ class ILFullMemberFormatter : MemberFormatter {
 			buf.Append ("virtual ");
 		if (!method.IsStatic)
 			buf.Append ("instance ");
-		_AppendTypeName (buf, method.ReturnType.ReturnType);
+		_AppendTypeName (buf, method.ReturnType);
 		buf.Append (' ')
 			.Append (method.Name);
 		if (method.IsGenericMethod ()) {
 			var state = MemberFormatterState;
 			MemberFormatterState = MemberFormatterState.WithinGenericTypeParameters;
-			GenericParameterCollection args = method.GenericParameters;
+			IList<GenericParameter> args = method.GenericParameters;
 			if (args.Count > 0) {
 				buf.Append ("<");
 				_AppendTypeName (buf, args [0]);
@@ -3923,7 +3926,7 @@ class ILFullMemberFormatter : MemberFormatter {
 	protected override StringBuilder AppendGenericMethod (StringBuilder buf, MethodDefinition method)
 	{
 		if (method.IsGenericMethod ()) {
-			GenericParameterCollection args = method.GenericParameters;
+			IList<GenericParameter> args = method.GenericParameters;
 			if (args.Count > 0) {
 				buf.Append ("<");
 				buf.Append (args [0].Name);
@@ -3935,12 +3938,12 @@ class ILFullMemberFormatter : MemberFormatter {
 		return buf;
 	}
 
-	protected override StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, ParameterDefinitionCollection parameters)
+	protected override StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, IList<ParameterDefinition> parameters)
 	{
 		return AppendParameters (buf, method, parameters, '(', ')');
 	}
 
-	private StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, ParameterDefinitionCollection parameters, char begin, char end)
+	private StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, IList<ParameterDefinition> parameters, char begin, char end)
 	{
 		buf.Append (begin);
 
@@ -3959,7 +3962,7 @@ class ILFullMemberFormatter : MemberFormatter {
 
 	private StringBuilder AppendParameter (StringBuilder buf, ParameterDefinition parameter)
 	{
-		if (parameter.ParameterType is ReferenceType) {
+		if (parameter.ParameterType is ByReferenceType) {
 			if (parameter.IsOut)
 				buf.Append ("out ");
 			else
@@ -4193,7 +4196,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		if (DocUtils.IsDelegate (type)) {
 			buf.Append("delegate ");
 			MethodDefinition invoke = type.GetMethod ("Invoke");
-			buf.Append (full.GetName (invoke.ReturnType.ReturnType)).Append (" ");
+			buf.Append (full.GetName (invoke.ReturnType)).Append (" ");
 			buf.Append (GetName (type));
 			AppendParameters (buf, invoke, invoke.Parameters);
 			AppendGenericTypeConstraints (buf, type);
@@ -4280,11 +4283,11 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		return AppendConstraints (buf, type.GenericParameters);
 	}
 
-	private StringBuilder AppendConstraints (StringBuilder buf, GenericParameterCollection genArgs)
+	private StringBuilder AppendConstraints (StringBuilder buf, IList<GenericParameter> genArgs)
 	{
 		foreach (GenericParameter genArg in genArgs) {
 			GenericParameterAttributes attrs = genArg.Attributes;
-			ConstraintCollection constraints = genArg.Constraints;
+			IList<TypeReference> constraints = genArg.Constraints;
 			if (attrs == GenericParameterAttributes.NonVariant && constraints.Count == 0)
 				continue;
 
@@ -4417,7 +4420,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 	protected override StringBuilder AppendGenericMethod (StringBuilder buf, MethodDefinition method)
 	{
 		if (method.IsGenericMethod ()) {
-			GenericParameterCollection args = method.GenericParameters;
+			IList<GenericParameter> args = method.GenericParameters;
 			if (args.Count > 0) {
 				buf.Append ("<");
 				buf.Append (args [0].Name);
@@ -4429,12 +4432,12 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		return buf;
 	}
 
-	protected override StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, ParameterDefinitionCollection parameters)
+	protected override StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, IList<ParameterDefinition> parameters)
 	{
 		return AppendParameters (buf, method, parameters, '(', ')');
 	}
 
-	private StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, ParameterDefinitionCollection parameters, char begin, char end)
+	private StringBuilder AppendParameters (StringBuilder buf, MethodDefinition method, IList<ParameterDefinition> parameters, char begin, char end)
 	{
 		buf.Append (begin);
 
@@ -4453,7 +4456,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 
 	private StringBuilder AppendParameter (StringBuilder buf, ParameterDefinition parameter)
 	{
-		if (parameter.ParameterType is ReferenceType) {
+		if (parameter.ParameterType is ByReferenceType) {
 			if (parameter.IsOut)
 				buf.Append ("out ");
 			else
@@ -4514,9 +4517,9 @@ class CSharpFullMemberFormatter : MemberFormatter {
 
 		buf.Append (GetName (property.PropertyType)).Append (' ');
 
-		IEnumerable<IMemberReference> defs = property.DeclaringType.GetDefaultMembers ();
+		IEnumerable<MemberReference> defs = property.DeclaringType.GetDefaultMembers ();
 		string name = property.Name;
-		foreach (IMemberReference mi in defs) {
+		foreach (MemberReference mi in defs) {
 			if (mi == property) {
 				name = "this";
 				break;
@@ -4664,7 +4667,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 		if (type is GenericParameter) {
 			int l = buf.Length;
 			if (genDeclType != null) {
-				GenericParameterCollection genArgs = genDeclType.GenericParameters;
+				IList<GenericParameter> genArgs = genDeclType.GenericParameters;
 				for (int i = 0; i < genArgs.Count; ++i) {
 					if (genArgs [i].Name == type.Name) {
 						buf.Append ('`').Append (i);
@@ -4673,7 +4676,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 				}
 			}
 			if (genDeclMethod != null) {
-				GenericParameterCollection genArgs = null;
+				IList<GenericParameter> genArgs = null;
 				if (genDeclMethod.IsGenericMethod ()) {
 					genArgs = genDeclMethod.GenericParameters;
 					for (int i = 0; i < genArgs.Count; ++i) {
@@ -4739,7 +4742,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 		return buf;
 	}
 
-	public override string GetDeclaration (IMemberReference member)
+	public override string GetDeclaration (MemberReference member)
 	{
 		TypeReference r = member as TypeReference;
 		if (r != null) {
@@ -4777,11 +4780,11 @@ class SlashDocMemberFormatter : MemberFormatter {
 		buf.Append ('.');
 		buf.Append (name.Replace (".", "#"));
 		if (method.IsGenericMethod ()) {
-			GenericParameterCollection genArgs = method.GenericParameters;
+			IList<GenericParameter> genArgs = method.GenericParameters;
 			if (genArgs.Count > 0)
 				buf.Append ("``").Append (genArgs.Count);
 		}
-		ParameterDefinitionCollection parameters = method.Parameters;
+		IList<ParameterDefinition> parameters = method.Parameters;
 		try {
 			genDeclType   = method.DeclaringType;
 			genDeclMethod = method;
@@ -4794,7 +4797,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 		return buf.ToString ();
 	}
 
-	private StringBuilder AppendParameters (StringBuilder buf, GenericParameterCollection genArgs, ParameterDefinitionCollection parameters)
+	private StringBuilder AppendParameters (StringBuilder buf, IList<GenericParameter> genArgs, IList<ParameterDefinition> parameters)
 	{
 		if (parameters.Count == 0)
 			return buf;
@@ -4810,7 +4813,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 		return buf.Append (')');
 	}
 
-	private StringBuilder AppendParameter (StringBuilder buf, GenericParameterCollection genArgs, ParameterDefinition parameter)
+	private StringBuilder AppendParameter (StringBuilder buf, IList<GenericParameter> genArgs, ParameterDefinition parameter)
 	{
 		AddTypeCount = false;
 		buf.Append (GetTypeName (parameter.ParameterType));
@@ -4844,11 +4847,11 @@ class SlashDocMemberFormatter : MemberFormatter {
 		buf.Append (GetName (property.DeclaringType));
 		buf.Append ('.');
 		buf.Append (name);
-		ParameterDefinitionCollection parameters = property.Parameters;
+		IList<ParameterDefinition> parameters = property.Parameters;
 		if (parameters.Count > 0) {
 			genDeclType = property.DeclaringType;
 			buf.Append ('(');
-			GenericParameterCollection genArgs = property.DeclaringType.GenericParameters;
+			IList<GenericParameter> genArgs = property.DeclaringType.GenericParameters;
 			AppendParameter (buf, genArgs, parameters [0]);
 			for (int i = 1; i < parameters.Count; ++i) {
 				 buf.Append (',');
@@ -4896,7 +4899,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 		if (method.Name == "op_Implicit" || method.Name == "op_Explicit") {
 			genDeclType = method.DeclaringType;
 			genDeclMethod = method;
-			name += "~" + GetName (method.ReturnType.ReturnType);
+			name += "~" + GetName (method.ReturnType);
 			genDeclType = null;
 			genDeclMethod = null;
 		}

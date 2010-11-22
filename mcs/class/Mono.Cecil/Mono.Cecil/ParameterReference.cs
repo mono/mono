@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,65 +26,50 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 namespace Mono.Cecil {
 
-	using System.Collections;
+	public abstract class ParameterReference : IMetadataTokenProvider {
 
-	using Mono.Cecil.Metadata;
-
-	public abstract class ParameterReference : IMetadataTokenProvider, IAnnotationProvider, IReflectionVisitable {
-
-		string m_name;
-		int m_sequence;
-		TypeReference m_paramType;
-		MetadataToken m_token;
-		IDictionary m_annotations;
+		string name;
+		internal int index = -1;
+		protected TypeReference parameter_type;
+		internal MetadataToken token;
 
 		public string Name {
-			get { return m_name; }
-			set { m_name = value; }
+			get { return name; }
+			set { name = value; }
 		}
 
-		public int Sequence {
-			get { return m_sequence; }
-			set { m_sequence = value; }
+		public int Index {
+			get { return index; }
 		}
 
 		public TypeReference ParameterType {
-			get { return m_paramType; }
-			set { m_paramType = value; }
+			get { return parameter_type; }
+			set { parameter_type = value; }
 		}
 
 		public MetadataToken MetadataToken {
-			get { return m_token; }
-			set { m_token = value; }
+			get { return token; }
+			set { token = value; }
 		}
 
-		IDictionary IAnnotationProvider.Annotations {
-			get {
-				if (m_annotations == null)
-					m_annotations = new Hashtable ();
-				return m_annotations;
-			}
-		}
-
-		public ParameterReference (string name, int sequence, TypeReference parameterType)
+		internal ParameterReference (string name, TypeReference parameterType)
 		{
-			m_name = name;
-			m_sequence = sequence;
-			m_paramType = parameterType;
-		}
+			if (parameterType == null)
+				throw new ArgumentNullException ("parameterType");
 
-		public abstract ParameterDefinition Resolve ();
+			this.name = name ?? string.Empty;
+			this.parameter_type = parameterType;
+		}
 
 		public override string ToString ()
 		{
-			if (m_name != null && m_name.Length > 0)
-				return m_name;
-
-			return string.Concat ("A_", m_sequence);
+			return name;
 		}
 
-		public abstract void Accept (IReflectionVisitor visitor);
+		public abstract ParameterDefinition Resolve ();
 	}
 }

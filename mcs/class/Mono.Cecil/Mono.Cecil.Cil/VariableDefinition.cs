@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,31 +30,23 @@ namespace Mono.Cecil.Cil {
 
 	public sealed class VariableDefinition : VariableReference {
 
-		MethodDefinition m_method;
-
-		public MethodDefinition Method {
-			get { return m_method; }
-			set { m_method = value; }
+		public bool IsPinned {
+			get { return variable_type.IsPinned; }
 		}
 
-		public VariableDefinition (TypeReference variableType) : base (variableType)
+		public VariableDefinition (TypeReference variableType)
+			: base (variableType)
 		{
 		}
 
-		public VariableDefinition (string name, int index, MethodDefinition method, TypeReference variableType) :
-			base (name, index, variableType)
+		public VariableDefinition (string name, TypeReference variableType)
+			: base (name, variableType)
 		{
-			m_method = method;
 		}
 
 		public override VariableDefinition Resolve ()
 		{
 			return this;
-		}
-
-		public override void Accept (ICodeVisitor visitor)
-		{
-			visitor.VisitVariableDefinition (this);
 		}
 	}
 }

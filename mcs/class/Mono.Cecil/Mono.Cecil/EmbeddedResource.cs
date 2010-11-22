@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,31 +26,80 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.IO;
+
 namespace Mono.Cecil {
 
 	public sealed class EmbeddedResource : Resource {
 
-		byte [] m_data;
+		readonly MetadataReader reader;
 
-		public byte [] Data {
-			get { return m_data; }
-			set { m_data = value; }
+		uint? offset;
+		byte [] data;
+		Stream stream;
+
+		public override ResourceType ResourceType {
+			get { return ResourceType.Embedded; }
 		}
 
-		public EmbeddedResource (string name, ManifestResourceAttributes flags) :
-			base (name, flags)
+		public EmbeddedResource (string name, ManifestResourceAttributes attributes, byte [] data) :
+			base (name, attributes)
 		{
+			this.data = data;
 		}
 
-		public EmbeddedResource (string name, ManifestResourceAttributes flags, byte [] data) :
-			base (name, flags)
+		public EmbeddedResource (string name, ManifestResourceAttributes attributes, Stream stream) :
+			base (name, attributes)
 		{
-			m_data = data;
+			this.stream = stream;
 		}
 
-		public override void Accept (IReflectionStructureVisitor visitor)
+		internal EmbeddedResource (string name, ManifestResourceAttributes attributes, uint offset, MetadataReader reader)
+			: base (name, attributes)
 		{
-			visitor.VisitEmbeddedResource (this);
+			this.offset = offset;
+			this.reader = reader;
+		}
+
+		public Stream GetResourceStream ()
+		{
+			if (stream != null)
+				return stream;
+
+			if (data != null)
+				return new MemoryStream (data);
+
+			if (offset.HasValue)
+				return reader.GetManagedResourceStream (offset.Value);
+
+			throw new InvalidOperationException ();
+		}
+
+		public byte [] GetResourceData ()
+		{
+			if (stream != null)
+				return ReadStream (stream);
+
+			if (data != null)
+				return data;
+
+			if (offset.HasValue)
+				return reader.GetManagedResourceStream (offset.Value).ToArray ();
+
+			throw new InvalidOperationException ();
+		}
+
+		static byte [] ReadStream (Stream stream)
+		{
+			var length = (int) stream.Length;
+			var data = new byte [length];
+			int offset = 0, read;
+
+			while ((read = stream.Read (data, offset, length - offset)) > 0)
+				offset += read;
+
+			return data;
 		}
 	}
 }

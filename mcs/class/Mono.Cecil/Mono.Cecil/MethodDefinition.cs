@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,314 +26,291 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Mono.Cecil.Cil;
+using Mono.Collections.Generic;
+
+using RVA = System.UInt32;
+
 namespace Mono.Cecil {
 
-	using Mono.Cecil.Binary;
-	using Mono.Cecil.Cil;
+	public sealed class MethodDefinition : MethodReference, IMemberDefinition, ISecurityDeclarationProvider {
 
-	public sealed class MethodDefinition : MethodReference, IMemberDefinition,
-		IHasSecurity, ICustomAttributeProvider {
+		ushort attributes;
+		ushort impl_attributes;
+		MethodSemanticsAttributes? sem_attrs;
+		Collection<CustomAttribute> custom_attributes;
+		Collection<SecurityDeclaration> security_declarations;
 
-		public const string Cctor = ".cctor";
-		public const string Ctor = ".ctor";
+		internal RVA rva;
+		internal PInvokeInfo pinvoke;
+		Collection<MethodReference> overrides;
 
-		MethodAttributes m_attributes;
-		MethodImplAttributes m_implAttrs;
-		MethodSemanticsAttributes m_semAttrs;
-		SecurityDeclarationCollection m_secDecls;
-		CustomAttributeCollection m_customAttrs;
-
-		MethodBody m_body;
-		RVA m_rva;
-		OverrideCollection m_overrides;
-		PInvokeInfo m_pinvoke;
-		readonly ParameterDefinition m_this;
+		internal MethodBody body;
 
 		public MethodAttributes Attributes {
-			get { return m_attributes; }
-			set { m_attributes = value; }
+			get { return (MethodAttributes) attributes; }
+			set { attributes = (ushort) value; }
 		}
 
 		public MethodImplAttributes ImplAttributes {
-			get { return m_implAttrs; }
-			set { m_implAttrs = value; }
+			get { return (MethodImplAttributes) impl_attributes; }
+			set { impl_attributes = (ushort) value; }
 		}
 
 		public MethodSemanticsAttributes SemanticsAttributes {
-			get { return m_semAttrs; }
-			set { m_semAttrs = value; }
+			get {
+				if (sem_attrs.HasValue)
+					return sem_attrs.Value;
+
+				if (HasImage) {
+					ReadSemantics ();
+					return sem_attrs.Value;
+				}
+
+				sem_attrs = MethodSemanticsAttributes.None;
+				return sem_attrs.Value;
+			}
+			set { sem_attrs = value; }
+		}
+
+		internal void ReadSemantics ()
+		{
+			if (sem_attrs.HasValue)
+				return;
+
+			var type = DeclaringType;
+			if (type == null)
+				return;
+
+			var module = type.Module;
+			if (module == null)
+				return;
+
+			if (!module.HasImage)
+				return;
+
+			sem_attrs = module.Read (this, (method, reader) => reader.ReadMethodSemantics (method));
 		}
 
 		public bool HasSecurityDeclarations {
-			get { return (m_secDecls == null) ? false : (m_secDecls.Count > 0); }
+			get {
+				if (security_declarations != null)
+					return security_declarations.Count > 0;
+
+				return this.GetHasSecurityDeclarations (Module);
+			}
 		}
 
-		public SecurityDeclarationCollection SecurityDeclarations {
-			get {
-				if (m_secDecls == null)
-					m_secDecls = new SecurityDeclarationCollection (this);
-
-				return m_secDecls;
-			}
+		public Collection<SecurityDeclaration> SecurityDeclarations {
+			get { return security_declarations ?? (security_declarations = this.GetSecurityDeclarations (Module)); }
 		}
 
 		public bool HasCustomAttributes {
-			get { return (m_customAttrs == null) ? false : (m_customAttrs.Count > 0); }
-		}
-
-		public CustomAttributeCollection CustomAttributes {
 			get {
-				if (m_customAttrs == null)
-					m_customAttrs = new CustomAttributeCollection (this);
+				if (custom_attributes != null)
+					return custom_attributes.Count > 0;
 
-				return m_customAttrs;
+				return this.GetHasCustomAttributes (Module);
 			}
 		}
 
-		public RVA RVA {
-			get { return m_rva; }
-			set { m_rva = value; }
+		public Collection<CustomAttribute> CustomAttributes {
+			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (Module)); }
+		}
+
+		public int RVA {
+			get { return (int) rva; }
+		}
+
+		public bool HasBody {
+			get {
+				return (attributes & (ushort) MethodAttributes.Abstract) == 0 &&
+					(attributes & (ushort) MethodAttributes.PInvokeImpl) == 0 &&
+					(impl_attributes & (ushort) MethodImplAttributes.InternalCall) == 0 &&
+					(impl_attributes & (ushort) MethodImplAttributes.Native) == 0 &&
+					(impl_attributes & (ushort) MethodImplAttributes.Unmanaged) == 0 &&
+					(impl_attributes & (ushort) MethodImplAttributes.Runtime) == 0;
+			}
 		}
 
 		public MethodBody Body {
 			get {
-				LoadBody ();
-				return m_body;
+				if (body != null)
+					return body;
+
+				if (!HasBody)
+					return null;
+
+				if (HasImage && rva != 0)
+					return body = Module.Read (this, (method, reader) => reader.ReadMethodBody (method));
+
+				return body = new MethodBody (this);
 			}
-			set { m_body = value; }
+			set { body = value; }
+		}
+
+		public bool HasPInvokeInfo {
+			get {
+				if (pinvoke != null)
+					return true;
+
+				return IsPInvokeImpl;
+			}
 		}
 
 		public PInvokeInfo PInvokeInfo {
-			get { return m_pinvoke; }
-			set { m_pinvoke = value; }
-		}
-
-		public bool HasOverrides {
-			get { return (m_overrides == null) ? false : (m_overrides.Count > 0); }
-		}
-
-		public OverrideCollection Overrides {
 			get {
-				if (m_overrides == null)
-					m_overrides = new OverrideCollection (this);
+				if (pinvoke != null)
+					return pinvoke;
 
-				return m_overrides;
+				if (HasImage && IsPInvokeImpl)
+					return pinvoke = Module.Read (this, (method, reader) => reader.ReadPInvokeInfo (method));
+
+				return null;
+			}
+			set {
+				IsPInvokeImpl = true;
+				pinvoke = value;
 			}
 		}
 
-		public ParameterDefinition This {
-			get { return m_this; }
+		public bool HasOverrides {
+			get {
+				if (overrides != null)
+					return overrides.Count > 0;
+
+				if (HasImage)
+					return Module.Read (this, (method, reader) => reader.HasOverrides (method));
+
+				return false;
+			}
+		}
+
+		public Collection<MethodReference> Overrides {
+			get {
+				if (overrides != null)
+					return overrides;
+
+				if (HasImage)
+					return overrides = Module.Read (this, (method, reader) => reader.ReadOverrides (method));
+
+				return overrides = new Collection<MethodReference> ();
+			}
+		}
+
+		public override bool HasGenericParameters {
+			get {
+				if (generic_parameters != null)
+					return generic_parameters.Count > 0;
+
+				return this.GetHasGenericParameters (Module);
+			}
+		}
+
+		public override Collection<GenericParameter> GenericParameters {
+			get { return generic_parameters ?? (generic_parameters = this.GetGenericParameters (Module)); }
 		}
 
 		#region MethodAttributes
 
 		public bool IsCompilerControlled {
-			get { return (m_attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Compilercontrolled; }
-			set {
-				if (value) {
-					m_attributes &= ~MethodAttributes.MemberAccessMask;
-					m_attributes |= MethodAttributes.Compilercontrolled;
-				} else
-					m_attributes &= ~(MethodAttributes.MemberAccessMask & MethodAttributes.Compilercontrolled);
-			}
+			get { return attributes.GetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.CompilerControlled); }
+			set { attributes = attributes.SetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.CompilerControlled, value); }
 		}
 
 		public bool IsPrivate {
-			get { return (m_attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private; }
-			set {
-				if (value) {
-					m_attributes &= ~MethodAttributes.MemberAccessMask;
-					m_attributes |= MethodAttributes.Private;
-				} else
-					m_attributes &= ~(MethodAttributes.MemberAccessMask & MethodAttributes.Private);
-			}
+			get { return attributes.GetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.Private); }
+			set { attributes = attributes.SetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.Private, value); }
 		}
 
 		public bool IsFamilyAndAssembly {
-			get { return (m_attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.FamANDAssem; }
-			set {
-				if (value) {
-					m_attributes &= ~MethodAttributes.MemberAccessMask;
-					m_attributes |= MethodAttributes.FamANDAssem;
-				} else
-					m_attributes &= ~(MethodAttributes.MemberAccessMask & MethodAttributes.FamANDAssem);
-			}
+			get { return attributes.GetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.FamANDAssem); }
+			set { attributes = attributes.SetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.FamANDAssem, value); }
 		}
 
 		public bool IsAssembly {
-			get { return (m_attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Assem; }
-			set {
-				if (value) {
-					m_attributes &= ~MethodAttributes.MemberAccessMask;
-					m_attributes |= MethodAttributes.Assem;
-				} else
-					m_attributes &= ~(MethodAttributes.MemberAccessMask & MethodAttributes.Assem);
-			}
+			get { return attributes.GetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.Assembly); }
+			set { attributes = attributes.SetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.Assembly, value); }
 		}
 
 		public bool IsFamily {
-			get { return (m_attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Family; }
-			set {
-				if (value) {
-					m_attributes &= ~MethodAttributes.MemberAccessMask;
-					m_attributes |= MethodAttributes.Family;
-				} else
-					m_attributes &= ~(MethodAttributes.MemberAccessMask & MethodAttributes.Family);
-			}
+			get { return attributes.GetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.Family); }
+			set { attributes = attributes.SetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.Family, value); }
 		}
 
 		public bool IsFamilyOrAssembly {
-			get { return (m_attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.FamORAssem; }
-			set {
-				if (value) {
-					m_attributes &= ~MethodAttributes.MemberAccessMask;
-					m_attributes |= MethodAttributes.FamORAssem;
-				} else
-					m_attributes &= ~(MethodAttributes.MemberAccessMask & MethodAttributes.FamORAssem);
-			}
+			get { return attributes.GetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.FamORAssem); }
+			set { attributes = attributes.SetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.FamORAssem, value); }
 		}
 
 		public bool IsPublic {
-			get { return (m_attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public; }
-			set {
-				if (value) {
-					m_attributes &= ~MethodAttributes.MemberAccessMask;
-					m_attributes |= MethodAttributes.Public;
-				} else
-					m_attributes &= ~(MethodAttributes.MemberAccessMask & MethodAttributes.Public);
-			}
+			get { return attributes.GetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.Public); }
+			set { attributes = attributes.SetMaskedAttributes ((ushort) MethodAttributes.MemberAccessMask, (ushort) MethodAttributes.Public, value); }
 		}
 
 		public bool IsStatic {
-			get { return (m_attributes & MethodAttributes.Static) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.Static;
-				else
-					m_attributes &= ~MethodAttributes.Static;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.Static); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.Static, value); }
 		}
 
 		public bool IsFinal {
-			get { return (m_attributes & MethodAttributes.Final) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.Final;
-				else
-					m_attributes &= ~MethodAttributes.Final;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.Final); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.Final, value); }
 		}
 
 		public bool IsVirtual {
-			get { return (m_attributes & MethodAttributes.Virtual) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.Virtual;
-				else
-					m_attributes &= ~MethodAttributes.Virtual;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.Virtual); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.Virtual, value); }
 		}
 
 		public bool IsHideBySig {
-			get { return (m_attributes & MethodAttributes.HideBySig) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.HideBySig;
-				else
-					m_attributes &= ~MethodAttributes.HideBySig;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.HideBySig); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.HideBySig, value); }
 		}
 
 		public bool IsReuseSlot {
-			get { return (m_attributes & MethodAttributes.VtableLayoutMask) == MethodAttributes.ReuseSlot; }
-			set {
-				if (value) {
-					m_attributes &= ~MethodAttributes.VtableLayoutMask;
-					m_attributes |= MethodAttributes.ReuseSlot;
-				} else
-					m_attributes &= ~(MethodAttributes.VtableLayoutMask & MethodAttributes.ReuseSlot);
-			}
+			get { return attributes.GetMaskedAttributes ((ushort) MethodAttributes.VtableLayoutMask, (ushort) MethodAttributes.ReuseSlot); }
+			set { attributes = attributes.SetMaskedAttributes ((ushort) MethodAttributes.VtableLayoutMask, (ushort) MethodAttributes.ReuseSlot, value); }
 		}
 
 		public bool IsNewSlot {
-			get { return (m_attributes & MethodAttributes.VtableLayoutMask) == MethodAttributes.NewSlot; }
-			set {
-				if (value) {
-					m_attributes &= ~MethodAttributes.VtableLayoutMask;
-					m_attributes |= MethodAttributes.NewSlot;
-				} else
-					m_attributes &= ~(MethodAttributes.VtableLayoutMask & MethodAttributes.NewSlot);
-			}
+			get { return attributes.GetMaskedAttributes ((ushort) MethodAttributes.VtableLayoutMask, (ushort) MethodAttributes.NewSlot); }
+			set { attributes = attributes.SetMaskedAttributes ((ushort) MethodAttributes.VtableLayoutMask, (ushort) MethodAttributes.NewSlot, value); }
 		}
 
-		public bool IsStrict {
-			get { return (m_attributes & MethodAttributes.Strict) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.Strict;
-				else
-					m_attributes &= ~MethodAttributes.Strict;
-			}
+		public bool IsCheckAccessOnOverride {
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.CheckAccessOnOverride); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.CheckAccessOnOverride, value); }
 		}
 
 		public bool IsAbstract {
-			get { return (m_attributes & MethodAttributes.Abstract) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.Abstract;
-				else
-					m_attributes &= ~MethodAttributes.Abstract;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.Abstract); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.Abstract, value); }
 		}
 
 		public bool IsSpecialName {
-			get { return (m_attributes & MethodAttributes.SpecialName) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.SpecialName;
-				else
-					m_attributes &= ~MethodAttributes.SpecialName;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.SpecialName); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.SpecialName, value); }
 		}
 
 		public bool IsPInvokeImpl {
-			get { return (m_attributes & MethodAttributes.PInvokeImpl) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.PInvokeImpl;
-				else
-					m_attributes &= ~MethodAttributes.PInvokeImpl;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.PInvokeImpl); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.PInvokeImpl, value); }
 		}
 
 		public bool IsUnmanagedExport {
-			get { return (m_attributes & MethodAttributes.UnmanagedExport) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.UnmanagedExport;
-				else
-					m_attributes &= ~MethodAttributes.UnmanagedExport;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.UnmanagedExport); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.UnmanagedExport, value); }
 		}
 
 		public bool IsRuntimeSpecialName {
-			get { return (m_attributes & MethodAttributes.RTSpecialName) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.RTSpecialName;
-				else
-					m_attributes &= ~MethodAttributes.RTSpecialName;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.RTSpecialName); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.RTSpecialName, value); }
 		}
 
 		public bool HasSecurity {
-			get { return (m_attributes & MethodAttributes.HasSecurity) != 0; }
-			set {
-				if (value)
-					m_attributes |= MethodAttributes.HasSecurity;
-				else
-					m_attributes &= ~MethodAttributes.HasSecurity;
-			}
+			get { return attributes.GetAttributes ((ushort) MethodAttributes.HasSecurity); }
+			set { attributes = attributes.SetAttributes ((ushort) MethodAttributes.HasSecurity, value); }
 		}
 
 		#endregion
@@ -341,313 +318,159 @@ namespace Mono.Cecil {
 		#region MethodImplAttributes
 
 		public bool IsIL {
-			get { return (m_implAttrs & MethodImplAttributes.CodeTypeMask) == MethodImplAttributes.IL; }
-			set {
-				if (value) {
-					m_implAttrs &= ~MethodImplAttributes.CodeTypeMask;
-					m_implAttrs |= MethodImplAttributes.IL;
-				} else
-					m_implAttrs &= ~(MethodImplAttributes.CodeTypeMask & MethodImplAttributes.IL);
-			}
+			get { return impl_attributes.GetMaskedAttributes ((ushort) MethodImplAttributes.CodeTypeMask, (ushort) MethodImplAttributes.IL); }
+			set { impl_attributes = impl_attributes.SetMaskedAttributes ((ushort) MethodImplAttributes.CodeTypeMask, (ushort) MethodImplAttributes.IL, value); }
 		}
 
 		public bool IsNative {
-			get { return (m_implAttrs & MethodImplAttributes.CodeTypeMask) == MethodImplAttributes.Native; }
-			set {
-				if (value) {
-					m_implAttrs &= ~MethodImplAttributes.CodeTypeMask;
-					m_implAttrs |= MethodImplAttributes.Native;
-				} else
-					m_implAttrs &= ~(MethodImplAttributes.CodeTypeMask & MethodImplAttributes.Native);
-			}
+			get { return impl_attributes.GetMaskedAttributes ((ushort) MethodImplAttributes.CodeTypeMask, (ushort) MethodImplAttributes.Native); }
+			set { impl_attributes = impl_attributes.SetMaskedAttributes ((ushort) MethodImplAttributes.CodeTypeMask, (ushort) MethodImplAttributes.Native, value); }
 		}
 
 		public bool IsRuntime {
-			get { return (m_implAttrs & MethodImplAttributes.CodeTypeMask) == MethodImplAttributes.Runtime; }
-			set {
-				if (value) {
-					m_implAttrs &= ~MethodImplAttributes.CodeTypeMask;
-					m_implAttrs |= MethodImplAttributes.Runtime;
-				} else
-					m_implAttrs &= ~(MethodImplAttributes.CodeTypeMask & MethodImplAttributes.Runtime);
-			}
+			get { return impl_attributes.GetMaskedAttributes ((ushort) MethodImplAttributes.CodeTypeMask, (ushort) MethodImplAttributes.Runtime); }
+			set { impl_attributes = impl_attributes.SetMaskedAttributes ((ushort) MethodImplAttributes.CodeTypeMask, (ushort) MethodImplAttributes.Runtime, value); }
 		}
 
 		public bool IsUnmanaged {
-			get { return (m_implAttrs & MethodImplAttributes.ManagedMask) == MethodImplAttributes.Unmanaged; }
-			set {
-				if (value) {
-					m_implAttrs &= ~MethodImplAttributes.ManagedMask;
-					m_implAttrs |= MethodImplAttributes.Unmanaged;
-				} else
-					m_implAttrs &= ~(MethodImplAttributes.ManagedMask & MethodImplAttributes.Unmanaged);
-			}
+			get { return impl_attributes.GetMaskedAttributes ((ushort) MethodImplAttributes.ManagedMask, (ushort) MethodImplAttributes.Unmanaged); }
+			set { impl_attributes = impl_attributes.SetMaskedAttributes ((ushort) MethodImplAttributes.ManagedMask, (ushort) MethodImplAttributes.Unmanaged, value); }
 		}
 
 		public bool IsManaged {
-			get { return (m_implAttrs & MethodImplAttributes.ManagedMask) == MethodImplAttributes.Managed; }
-			set {
-				if (value) {
-					m_implAttrs &= ~MethodImplAttributes.ManagedMask;
-					m_implAttrs |= MethodImplAttributes.Managed;
-				} else
-					m_implAttrs &= ~(MethodImplAttributes.ManagedMask & MethodImplAttributes.Managed);
-			}
+			get { return impl_attributes.GetMaskedAttributes ((ushort) MethodImplAttributes.ManagedMask, (ushort) MethodImplAttributes.Managed); }
+			set { impl_attributes = impl_attributes.SetMaskedAttributes ((ushort) MethodImplAttributes.ManagedMask, (ushort) MethodImplAttributes.Managed, value); }
 		}
 
 		public bool IsForwardRef {
-			get { return (m_implAttrs & MethodImplAttributes.ForwardRef) != 0; }
-			set {
-				if (value)
-					m_implAttrs |= MethodImplAttributes.ForwardRef;
-				else
-					m_implAttrs &= ~MethodImplAttributes.ForwardRef;
-			}
+			get { return impl_attributes.GetAttributes ((ushort) MethodImplAttributes.ForwardRef); }
+			set { impl_attributes = impl_attributes.SetAttributes ((ushort) MethodImplAttributes.ForwardRef, value); }
 		}
 
 		public bool IsPreserveSig {
-			get { return (m_implAttrs & MethodImplAttributes.PreserveSig) != 0; }
-			set {
-				if (value)
-					m_implAttrs |= MethodImplAttributes.PreserveSig;
-				else
-					m_implAttrs &= ~MethodImplAttributes.PreserveSig;
-			}
+			get { return impl_attributes.GetAttributes ((ushort) MethodImplAttributes.PreserveSig); }
+			set { impl_attributes = impl_attributes.SetAttributes ((ushort) MethodImplAttributes.PreserveSig, value); }
 		}
 
 		public bool IsInternalCall {
-			get { return (m_implAttrs & MethodImplAttributes.InternalCall) != 0; }
-			set {
-				if (value)
-					m_implAttrs |= MethodImplAttributes.InternalCall;
-				else
-					m_implAttrs &= ~MethodImplAttributes.InternalCall;
-			}
+			get { return impl_attributes.GetAttributes ((ushort) MethodImplAttributes.InternalCall); }
+			set { impl_attributes = impl_attributes.SetAttributes ((ushort) MethodImplAttributes.InternalCall, value); }
 		}
 
 		public bool IsSynchronized {
-			get { return (m_implAttrs & MethodImplAttributes.Synchronized) != 0; }
-			set {
-				if (value)
-					m_implAttrs |= MethodImplAttributes.Synchronized;
-				else
-					m_implAttrs &= ~MethodImplAttributes.Synchronized;
-			}
+			get { return impl_attributes.GetAttributes ((ushort) MethodImplAttributes.Synchronized); }
+			set { impl_attributes = impl_attributes.SetAttributes ((ushort) MethodImplAttributes.Synchronized, value); }
 		}
 
 		public bool NoInlining {
-			get { return (m_implAttrs & MethodImplAttributes.NoInlining) != 0; }
-			set {
-				if (value)
-					m_implAttrs |= MethodImplAttributes.NoInlining;
-				else
-					m_implAttrs &= ~MethodImplAttributes.NoInlining;
-			}
+			get { return impl_attributes.GetAttributes ((ushort) MethodImplAttributes.NoInlining); }
+			set { impl_attributes = impl_attributes.SetAttributes ((ushort) MethodImplAttributes.NoInlining, value); }
+		}
+
+		public bool NoOptimization {
+			get { return impl_attributes.GetAttributes ((ushort) MethodImplAttributes.NoOptimization); }
+			set { impl_attributes = impl_attributes.SetAttributes ((ushort) MethodImplAttributes.NoOptimization, value); }
 		}
 
 		#endregion
 
 		#region MethodSemanticsAttributes
+
 		public bool IsSetter {
-			get { return (m_semAttrs & MethodSemanticsAttributes.Setter) != 0; }
-			set {
-				if (value)
-					m_semAttrs |= MethodSemanticsAttributes.Setter;
-				else
-					m_semAttrs &= ~MethodSemanticsAttributes.Setter;
-			}
+			get { return this.GetSemantics (MethodSemanticsAttributes.Setter); }
+			set { this.SetSemantics (MethodSemanticsAttributes.Setter, value); }
 		}
 
 		public bool IsGetter {
-			get { return (m_semAttrs & MethodSemanticsAttributes.Getter) != 0; }
-			set {
-				if (value)
-					m_semAttrs |= MethodSemanticsAttributes.Getter;
-				else
-					m_semAttrs &= ~MethodSemanticsAttributes.Getter;
-			}
+			get { return this.GetSemantics (MethodSemanticsAttributes.Getter); }
+			set { this.SetSemantics (MethodSemanticsAttributes.Getter, value); }
 		}
 
 		public bool IsOther {
-			get { return (m_semAttrs & MethodSemanticsAttributes.Other) != 0; }
-			set {
-				if (value)
-					m_semAttrs |= MethodSemanticsAttributes.Other;
-				else
-					m_semAttrs &= ~MethodSemanticsAttributes.Other;
-			}
+			get { return this.GetSemantics (MethodSemanticsAttributes.Other); }
+			set { this.SetSemantics (MethodSemanticsAttributes.Other, value); }
 		}
 
 		public bool IsAddOn {
-			get { return (m_semAttrs & MethodSemanticsAttributes.AddOn) != 0; }
-			set {
-				if (value)
-					m_semAttrs |= MethodSemanticsAttributes.AddOn;
-				else
-					m_semAttrs &= ~MethodSemanticsAttributes.AddOn;
-			}
+			get { return this.GetSemantics (MethodSemanticsAttributes.AddOn); }
+			set { this.SetSemantics (MethodSemanticsAttributes.AddOn, value); }
 		}
 
 		public bool IsRemoveOn {
-			get { return (m_semAttrs & MethodSemanticsAttributes.RemoveOn) != 0; }
-			set {
-				if (value)
-					m_semAttrs |= MethodSemanticsAttributes.RemoveOn;
-				else
-					m_semAttrs &= ~MethodSemanticsAttributes.RemoveOn;
-			}
+			get { return this.GetSemantics (MethodSemanticsAttributes.RemoveOn); }
+			set { this.SetSemantics (MethodSemanticsAttributes.RemoveOn, value); }
 		}
 
 		public bool IsFire {
-			get { return (m_semAttrs & MethodSemanticsAttributes.Fire) != 0; }
-			set {
-				if (value)
-					m_semAttrs |= MethodSemanticsAttributes.Fire;
-				else
-					m_semAttrs &= ~MethodSemanticsAttributes.Fire;
-			}
+			get { return this.GetSemantics (MethodSemanticsAttributes.Fire); }
+			set { this.SetSemantics (MethodSemanticsAttributes.Fire, value); }
 		}
 
 		#endregion
-
-		public bool IsConstructor {
-			get {
-				return this.IsRuntimeSpecialName && this.IsSpecialName &&
-					(this.Name == Cctor || this.Name == Ctor);
-			}
-		}
-
-		public bool HasBody {
-			get {
-				return (m_attributes & MethodAttributes.Abstract) == 0 &&
-					(m_attributes & MethodAttributes.PInvokeImpl) == 0 &&
-					(m_implAttrs & MethodImplAttributes.InternalCall) == 0 &&
-					(m_implAttrs & MethodImplAttributes.Native) == 0 &&
-					(m_implAttrs & MethodImplAttributes.Unmanaged) == 0 &&
-					(m_implAttrs & MethodImplAttributes.Runtime) == 0;
-			}
-		}
 
 		public new TypeDefinition DeclaringType {
 			get { return (TypeDefinition) base.DeclaringType; }
 			set { base.DeclaringType = value; }
 		}
 
-		public MethodDefinition (string name, RVA rva,
-			MethodAttributes attrs, MethodImplAttributes implAttrs,
-			bool hasThis, bool explicitThis, MethodCallingConvention callConv) :
-			base (name, hasThis, explicitThis, callConv)
-		{
-			m_rva = rva;
-			m_attributes = attrs;
-			m_implAttrs = implAttrs;
-
-			if (!IsStatic)
-				m_this = new ParameterDefinition ("this", 0, (ParameterAttributes) 0, null);
-		}
-
-		internal MethodDefinition (string name, MethodAttributes attrs) : base (name)
-		{
-			m_attributes = attrs;
-
-			this.HasThis = !this.IsStatic;
-			if (!IsStatic)
-				m_this = new ParameterDefinition ("this", 0, (ParameterAttributes) 0, null);
-		}
-
-		public MethodDefinition (string name, MethodAttributes attrs, TypeReference returnType) :
-			this (name, attrs)
-		{
-			this.ReturnType.ReturnType = returnType;
-		}
-
-		internal void LoadBody ()
-		{
-			if (m_body == null && this.HasBody) {
-				m_body = new MethodBody (this);
-
-				ModuleDefinition module = DeclaringType != null ? DeclaringType.Module : null;
-
-				if (module != null && m_rva != RVA.Zero)
-					module.Controller.Reader.Code.VisitMethodBody (m_body);
+		public bool IsConstructor {
+			get {
+				return this.IsRuntimeSpecialName
+					&& this.IsSpecialName
+					&& (this.Name == ".cctor" || this.Name == ".ctor");
 			}
+		}
+
+		public override bool IsDefinition {
+			get { return true; }
+		}
+
+		internal MethodDefinition ()
+		{
+			this.token = new MetadataToken (TokenType.Method);
+		}
+
+		public MethodDefinition (string name, MethodAttributes attributes, TypeReference returnType)
+			: base (name, returnType)
+		{
+			this.attributes = (ushort) attributes;
+			this.HasThis = !this.IsStatic;
+			this.token = new MetadataToken (TokenType.Method);
 		}
 
 		public override MethodDefinition Resolve ()
 		{
 			return this;
 		}
+	}
 
-		public MethodDefinition Clone ()
+	static partial class Mixin {
+
+		public static ParameterDefinition GetParameter (this MethodBody self, int index)
 		{
-			return Clone (this, new ImportContext (NullReferenceImporter.Instance, this));
+			var method = self.method;
+
+			if (method.HasThis) {
+				if (index == 0)
+					return self.ThisParameter;
+
+				index--;
+			}
+
+			return method.Parameters [index];
 		}
 
-		internal static MethodDefinition Clone (MethodDefinition meth, ImportContext context)
+		public static bool GetSemantics (this MethodDefinition self, MethodSemanticsAttributes semantics)
 		{
-			MethodDefinition nm = new MethodDefinition (
-				meth.Name,
-				RVA.Zero,
-				meth.Attributes,
-				meth.ImplAttributes,
-				meth.HasThis,
-				meth.ExplicitThis,
-				meth.CallingConvention);
-
-			MethodReference contextMethod = context.GenericContext.Method;
-
-			context.GenericContext.Method = nm;
-
-			GenericParameter.CloneInto (meth, nm, context);
-
-			nm.ReturnType.ReturnType = context.Import (meth.ReturnType.ReturnType);
-
-			if (meth.ReturnType.Parameter != null) {
-				nm.ReturnType.Parameter = ParameterDefinition.Clone (meth.ReturnType.Parameter, context);
-				nm.ReturnType.Parameter.Method = nm;
-			}
-
-			if (meth.PInvokeInfo != null)
-				nm.PInvokeInfo = meth.PInvokeInfo; // TODO: import module ?
-
-			if (meth.HasParameters) {
-				foreach (ParameterDefinition param in meth.Parameters)
-					nm.Parameters.Add (ParameterDefinition.Clone (param, context));
-			}
-			if (meth.HasOverrides) {
-				foreach (MethodReference ov in meth.Overrides)
-					nm.Overrides.Add (context.Import (ov));
-			}
-			if (meth.HasCustomAttributes) {
-				foreach (CustomAttribute ca in meth.CustomAttributes)
-					nm.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
-			}
-			if (meth.HasSecurityDeclarations) {
-				foreach (SecurityDeclaration sec in meth.SecurityDeclarations)
-					nm.SecurityDeclarations.Add (SecurityDeclaration.Clone (sec));
-			}
-
-			if (meth.Body != null)
-				nm.Body = MethodBody.Clone (meth.Body, nm, context);
-
-			context.GenericContext.Method = contextMethod;
-
-			return nm;
+			return (self.SemanticsAttributes & semantics) != 0;
 		}
 
-		public override void Accept (IReflectionVisitor visitor)
+		public static void SetSemantics (this MethodDefinition self, MethodSemanticsAttributes semantics, bool value)
 		{
-			visitor.VisitMethodDefinition (this);
-
-			this.GenericParameters.Accept (visitor);
-			this.Parameters.Accept (visitor);
-
-			if (this.PInvokeInfo != null)
-				this.PInvokeInfo.Accept (visitor);
-
-			this.SecurityDeclarations.Accept (visitor);
-			this.Overrides.Accept (visitor);
-			this.CustomAttributes.Accept (visitor);
+			if (value)
+				self.SemanticsAttributes |= semantics;
+			else
+				self.SemanticsAttributes &= ~semantics;
 		}
 	}
 }

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,14 +26,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	using System.Reflection;
+	public interface ICustomAttributeProvider : IMetadataTokenProvider {
 
-	public interface ICustomAttributeProvider {
-
-		CustomAttributeCollection CustomAttributes { get; }
+		Collection<CustomAttribute> CustomAttributes { get; }
 
 		bool HasCustomAttributes { get; }
+	}
+
+	static partial class Mixin {
+
+		public static bool GetHasCustomAttributes (
+			this ICustomAttributeProvider self,
+			ModuleDefinition module)
+		{
+			return module.HasImage ()
+				? module.Read (self, (provider, reader) => reader.HasCustomAttributes (provider))
+				: false;
+		}
+
+		public static Collection<CustomAttribute> GetCustomAttributes (
+			this ICustomAttributeProvider self,
+			ModuleDefinition module)
+		{
+			return module.HasImage ()
+				? module.Read (self, (provider, reader) => reader.ReadCustomAttributes (provider))
+				: new Collection<CustomAttribute> ();
+		}
 	}
 }

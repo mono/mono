@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 - 2007 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,510 +26,425 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+
+using Mono.Collections.Generic;
+
+using Mono.Cecil.Metadata;
+using Mono.Cecil.PE;
+
+using RVA = System.UInt32;
+
+#if !READ_ONLY
+
 namespace Mono.Cecil.Cil {
 
-	using System;
-	using System.Collections;
+	sealed class CodeWriter : ByteBuffer {
 
-	using Mono.Cecil;
-	using Mono.Cecil.Binary;
-	using Mono.Cecil.Metadata;
-	using Mono.Cecil.Signatures;
+		readonly RVA code_base;
+		internal readonly MetadataBuilder metadata;
+		readonly Dictionary<uint, MetadataToken> standalone_signatures;
 
-	sealed class CodeWriter : BaseCodeVisitor {
+		RVA current;
+		MethodBody body;
 
-		ReflectionWriter m_reflectWriter;
-		MemoryBinaryWriter m_binaryWriter;
-		MemoryBinaryWriter m_codeWriter;
-
-		IDictionary m_localSigCache;
-		IDictionary m_standaloneSigCache;
-
-		IDictionary m_stackSizes;
-
-		bool stripped;
-
-		public bool Stripped {
-			get { return stripped; }
-			set { stripped = value; }
+		public CodeWriter (MetadataBuilder metadata)
+			: base (0)
+		{
+			this.code_base = metadata.text_map.GetNextRVA (TextSegment.CLIHeader);
+			this.current = code_base;
+			this.metadata = metadata;
+			this.standalone_signatures = new Dictionary<uint, MetadataToken> ();
 		}
 
-		public CodeWriter (ReflectionWriter reflectWriter, MemoryBinaryWriter writer)
+		public RVA WriteMethodBody (MethodDefinition method)
 		{
-			m_reflectWriter = reflectWriter;
-			m_binaryWriter = writer;
-			m_codeWriter = new MemoryBinaryWriter ();
+			var rva = BeginMethod ();
 
-			m_localSigCache = new Hashtable ();
-			m_standaloneSigCache = new Hashtable ();
+			if (IsUnresolved (method)) {
+				if (method.rva == 0)
+					return 0;
 
-			m_stackSizes = new Hashtable ();
-		}
-
-		public RVA WriteMethodBody (MethodDefinition meth)
-		{
-			if (meth.Body == null)
-				return RVA.Zero;
-
-			RVA ret = m_reflectWriter.MetadataWriter.GetDataCursor ();
-			meth.Body.Accept (this);
-			return ret;
-		}
-
-		public override void VisitMethodBody (MethodBody body)
-		{
-			m_codeWriter.Empty ();
-		}
-
-		void WriteToken (MetadataToken token)
-		{
-			if (token.RID == 0)
-				m_codeWriter.Write (0);
-			else
-				m_codeWriter.Write (token.ToUInt ());
-		}
-
-		static int GetParameterIndex (MethodBody body, ParameterDefinition p)
-		{
-			int idx = body.Method.Parameters.IndexOf (p);
-			if (idx == -1 && p == body.Method.This)
-				return 0;
-			if (body.Method.HasThis)
-				idx++;
-
-			return idx;
-		}
-
-		public override void VisitInstructionCollection (InstructionCollection instructions)
-		{
-			MethodBody body = instructions.Container;
-			long start = m_codeWriter.BaseStream.Position;
-
-			ComputeMaxStack (instructions);
-
-			foreach (Instruction instr in instructions) {
-
-				instr.Offset = (int) (m_codeWriter.BaseStream.Position - start);
-
-				if (instr.OpCode.Size == 1)
-					m_codeWriter.Write (instr.OpCode.Op2);
-				else {
-					m_codeWriter.Write (instr.OpCode.Op1);
-					m_codeWriter.Write (instr.OpCode.Op2);
-				}
-
-				if (instr.OpCode.OperandType != OperandType.InlineNone &&
-					instr.Operand == null)
-					throw new ReflectionException ("OpCode {0} have null operand", instr.OpCode.Name);
-
-				switch (instr.OpCode.OperandType) {
-				case OperandType.InlineNone :
-					break;
-				case OperandType.InlineSwitch :
-					Instruction [] targets = (Instruction []) instr.Operand;
-					for (int i = 0; i < targets.Length + 1; i++)
-						m_codeWriter.Write ((uint) 0);
-					break;
-				case OperandType.ShortInlineBrTarget :
-					m_codeWriter.Write ((byte) 0);
-					break;
-				case OperandType.InlineBrTarget :
-					m_codeWriter.Write (0);
-					break;
-				case OperandType.ShortInlineI :
-					if (instr.OpCode == OpCodes.Ldc_I4_S)
-						m_codeWriter.Write ((sbyte) instr.Operand);
-					else
-						m_codeWriter.Write ((byte) instr.Operand);
-					break;
-				case OperandType.ShortInlineVar :
-					m_codeWriter.Write ((byte) body.Variables.IndexOf (
-						(VariableDefinition) instr.Operand));
-					break;
-				case OperandType.ShortInlineParam :
-					m_codeWriter.Write ((byte) GetParameterIndex (body, (ParameterDefinition) instr.Operand));
-					break;
-				case OperandType.InlineSig :
-					WriteToken (GetCallSiteToken ((CallSite) instr.Operand));
-					break;
-				case OperandType.InlineI :
-					m_codeWriter.Write ((int) instr.Operand);
-					break;
-				case OperandType.InlineVar :
-					m_codeWriter.Write ((short) body.Variables.IndexOf (
-						(VariableDefinition) instr.Operand));
-					break;
-				case OperandType.InlineParam :
-					m_codeWriter.Write ((short) GetParameterIndex (
-							body, (ParameterDefinition) instr.Operand));
-					break;
-				case OperandType.InlineI8 :
-					m_codeWriter.Write ((long) instr.Operand);
-					break;
-				case OperandType.ShortInlineR :
-					m_codeWriter.Write ((float) instr.Operand);
-					break;
-				case OperandType.InlineR :
-					m_codeWriter.Write ((double) instr.Operand);
-					break;
-				case OperandType.InlineString :
-					WriteToken (new MetadataToken (TokenType.String,
-							m_reflectWriter.MetadataWriter.AddUserString (instr.Operand as string)));
-					break;
-				case OperandType.InlineField :
-				case OperandType.InlineMethod :
-				case OperandType.InlineType :
-				case OperandType.InlineTok :
-					if (instr.Operand is TypeReference)
-						WriteToken (GetTypeToken ((TypeReference) instr.Operand));
-					else if (instr.Operand is GenericInstanceMethod)
-						WriteToken (m_reflectWriter.GetMethodSpecToken (instr.Operand as GenericInstanceMethod));
-					else if (instr.Operand is MemberReference)
-						WriteToken (m_reflectWriter.GetMemberRefToken ((MemberReference) instr.Operand));
-					else if (instr.Operand is IMetadataTokenProvider)
-						WriteToken (((IMetadataTokenProvider) instr.Operand).MetadataToken);
-					else
-						throw new ReflectionException (
-							string.Format ("Wrong operand for {0} OpCode: {1}",
-								instr.OpCode.OperandType,
-								instr.Operand.GetType ().FullName));
-					break;
-				}
-			}
-
-			// patch branches
-			long pos = m_codeWriter.BaseStream.Position;
-
-			foreach (Instruction instr in instructions) {
-				switch (instr.OpCode.OperandType) {
-				case OperandType.InlineSwitch :
-					m_codeWriter.BaseStream.Position = instr.Offset + instr.OpCode.Size;
-					Instruction [] targets = (Instruction []) instr.Operand;
-					m_codeWriter.Write ((uint) targets.Length);
-					foreach (Instruction tgt in targets)
-						m_codeWriter.Write ((tgt.Offset - (instr.Offset +
-							instr.OpCode.Size + (4 * (targets.Length + 1)))));
-					break;
-				case OperandType.ShortInlineBrTarget :
-					m_codeWriter.BaseStream.Position = instr.Offset + instr.OpCode.Size;
-					m_codeWriter.Write ((byte) (((Instruction) instr.Operand).Offset -
-						(instr.Offset + instr.OpCode.Size + 1)));
-					break;
-				case OperandType.InlineBrTarget :
-					m_codeWriter.BaseStream.Position = instr.Offset + instr.OpCode.Size;
-					m_codeWriter.Write(((Instruction) instr.Operand).Offset -
-						(instr.Offset + instr.OpCode.Size + 4));
-					break;
-				}
-			}
-
-			m_codeWriter.BaseStream.Position = pos;
-		}
-
-		MetadataToken GetTypeToken (TypeReference type)
-		{
-			return m_reflectWriter.GetTypeDefOrRefToken (type);
-		}
-
-		MetadataToken GetCallSiteToken (CallSite cs)
-		{
-			uint sig;
-			int sentinel = cs.GetSentinel ();
-			if (sentinel > 0)
-				sig = m_reflectWriter.SignatureWriter.AddMethodDefSig (
-					m_reflectWriter.GetMethodDefSig (cs));
-			else
-				sig = m_reflectWriter.SignatureWriter.AddMethodRefSig (
-					m_reflectWriter.GetMethodRefSig (cs));
-
-			if (m_standaloneSigCache.Contains (sig))
-				return (MetadataToken) m_standaloneSigCache [sig];
-
-			StandAloneSigTable sasTable = m_reflectWriter.MetadataTableWriter.GetStandAloneSigTable ();
-			StandAloneSigRow sasRow = m_reflectWriter.MetadataRowWriter.CreateStandAloneSigRow (sig);
-
-			sasTable.Rows.Add(sasRow);
-
-			MetadataToken token = new MetadataToken (TokenType.Signature, (uint) sasTable.Rows.Count);
-			m_standaloneSigCache [sig] = token;
-			return token;
-		}
-
-		static int GetLength (Instruction start, Instruction end, InstructionCollection instructions)
-		{
-			Instruction last = instructions [instructions.Count - 1];
-			return (end == instructions.Outside ? last.Offset + last.GetSize () : end.Offset) - start.Offset;
-		}
-
-		static bool IsRangeFat (Instruction start, Instruction end, InstructionCollection instructions)
-		{
-			return GetLength (start, end, instructions) >= 256 ||
-				start.Offset >= 65536;
-		}
-
-		static bool IsFat (ExceptionHandlerCollection seh)
-		{
-			for (int i = 0; i < seh.Count; i++) {
-				ExceptionHandler eh = seh [i];
-				if (IsRangeFat (eh.TryStart, eh.TryEnd, seh.Container.Instructions))
-					return true;
-
-				if (IsRangeFat (eh.HandlerStart, eh.HandlerEnd, seh.Container.Instructions))
-					return true;
-
-				switch (eh.Type) {
-				case ExceptionHandlerType.Filter :
-					if (IsRangeFat (eh.FilterStart, eh.FilterEnd, seh.Container.Instructions))
-						return true;
-					break;
-				}
-			}
-
-			return false;
-		}
-
-		void WriteExceptionHandlerCollection (ExceptionHandlerCollection seh)
-		{
-			m_codeWriter.QuadAlign ();
-
-			if (seh.Count < 0x15 && !IsFat (seh)) {
-				m_codeWriter.Write ((byte) MethodDataSection.EHTable);
-				m_codeWriter.Write ((byte) (seh.Count * 12 + 4));
-				m_codeWriter.Write (new byte [2]);
-				foreach (ExceptionHandler eh in seh) {
-					m_codeWriter.Write ((ushort) eh.Type);
-					m_codeWriter.Write ((ushort) eh.TryStart.Offset);
-					m_codeWriter.Write ((byte) (eh.TryEnd.Offset - eh.TryStart.Offset));
-					m_codeWriter.Write ((ushort) eh.HandlerStart.Offset);
-					m_codeWriter.Write ((byte) GetLength (eh.HandlerStart, eh.HandlerEnd, seh.Container.Instructions));
-					WriteHandlerSpecific (eh);
-				}
+				WriteUnresolvedMethodBody (method);
 			} else {
-				m_codeWriter.Write ((byte) (MethodDataSection.FatFormat | MethodDataSection.EHTable));
-				WriteFatBlockSize (seh);
-				foreach (ExceptionHandler eh in seh) {
-					m_codeWriter.Write ((uint) eh.Type);
-					m_codeWriter.Write ((uint) eh.TryStart.Offset);
-					m_codeWriter.Write ((uint) (eh.TryEnd.Offset - eh.TryStart.Offset));
-					m_codeWriter.Write ((uint) eh.HandlerStart.Offset);
-					m_codeWriter.Write ((uint) GetLength (eh.HandlerStart, eh.HandlerEnd, seh.Container.Instructions));
-					WriteHandlerSpecific (eh);
-				}
+				if (IsEmptyMethodBody (method.Body))
+					return 0;
+
+				WriteResolvedMethodBody (method);
 			}
+
+			Align (4);
+
+			EndMethod ();
+			return rva;
 		}
 
-		void WriteFatBlockSize (ExceptionHandlerCollection seh)
+		static bool IsEmptyMethodBody (MethodBody body)
 		{
-			int size = seh.Count * 24 + 4;
-			m_codeWriter.Write ((byte) (size & 0xff));
-			m_codeWriter.Write ((byte) ((size >> 8) & 0xff));
-			m_codeWriter.Write ((byte) ((size >> 16) & 0xff));
+			return body.instructions.IsNullOrEmpty ()
+				&& body.variables.IsNullOrEmpty ();
 		}
 
-		void WriteHandlerSpecific (ExceptionHandler eh)
+		static bool IsUnresolved (MethodDefinition method)
 		{
-			switch (eh.Type) {
-			case ExceptionHandlerType.Catch :
-				WriteToken (GetTypeToken (eh.CatchType));
-				break;
-			case ExceptionHandlerType.Filter :
-				m_codeWriter.Write ((uint) eh.FilterStart.Offset);
-				break;
-			default :
-				m_codeWriter.Write (0);
-				break;
-			}
+			return method.HasBody && method.HasImage && method.body == null;
 		}
 
-		public override void VisitVariableDefinitionCollection (VariableDefinitionCollection variables)
+		void WriteUnresolvedMethodBody (MethodDefinition method)
 		{
-			MethodBody body = variables.Container as MethodBody;
-			if (body == null || stripped)
+			var code_reader = metadata.module.Read (method, (_, reader) => reader.code);
+
+			MethodSymbols symbols;
+			var buffer = code_reader.PatchRawMethodBody (method, this, out symbols);
+
+			WriteBytes (buffer);
+
+			if (symbols.instructions.IsNullOrEmpty ())
 				return;
 
-			uint sig = m_reflectWriter.SignatureWriter.AddLocalVarSig (
-					GetLocalVarSig (variables));
+			symbols.method_token = method.token;
+			symbols.local_var_token = GetLocalVarToken (buffer, symbols);
 
-			if (m_localSigCache.Contains (sig)) {
-				body.LocalVarToken = (int) m_localSigCache [sig];
+			var symbol_writer = metadata.symbol_writer;
+			if (symbol_writer != null)
+				symbol_writer.Write (symbols);
+		}
+
+		static MetadataToken GetLocalVarToken (ByteBuffer buffer, MethodSymbols symbols)
+		{
+			if (symbols.variables.IsNullOrEmpty ())
+				return MetadataToken.Zero;
+
+			buffer.position = 8;
+			return new MetadataToken (buffer.ReadUInt32 ());
+		}
+
+		void WriteResolvedMethodBody (MethodDefinition method)
+		{
+			body = method.Body;
+			ComputeHeader ();
+			if (RequiresFatHeader ())
+				WriteFatHeader ();
+			else
+				WriteByte ((byte) (0x2 | (body.CodeSize << 2))); // tiny
+
+			WriteInstructions ();
+
+			if (body.HasExceptionHandlers)
+				WriteExceptionHandlers ();
+
+			var symbol_writer = metadata.symbol_writer;
+			if (symbol_writer != null)
+				symbol_writer.Write (body);
+		}
+
+		void WriteFatHeader ()
+		{
+			var body = this.body;
+			byte flags = 0x3;	// fat
+			if (body.InitLocals)
+				flags |= 0x10;	// init locals
+			if (body.HasExceptionHandlers)
+				flags |= 0x8;	// more sections
+
+			WriteByte (flags);
+			WriteByte (0x30);
+			WriteInt16 ((short) body.max_stack_size);
+			WriteInt32 (body.code_size);
+			body.local_var_token = body.HasVariables
+				? GetStandAloneSignature (body.Variables)
+				: MetadataToken.Zero;
+			WriteMetadataToken (body.local_var_token);
+		}
+
+		void WriteInstructions ()
+		{
+			var instructions = body.Instructions;
+			var items = instructions.items;
+			var size = instructions.size;
+
+			for (int i = 0; i < size; i++) {
+				var instruction = items [i];
+				WriteOpCode (instruction.opcode);
+				WriteOperand (instruction);
+			}
+		}
+
+		void WriteOpCode (OpCode opcode)
+		{
+			if (opcode.Size == 1) {
+				WriteByte (opcode.Op2);
+			} else {
+				WriteByte (opcode.Op1);
+				WriteByte (opcode.Op2);
+			}
+		}
+
+		void WriteOperand (Instruction instruction)
+		{
+			var opcode = instruction.opcode;
+			var operand_type = opcode.OperandType;
+			if (operand_type == OperandType.InlineNone)
 				return;
+
+			var operand = instruction.operand;
+			if (operand == null)
+				throw new ArgumentException ();
+
+			switch (operand_type) {
+			case OperandType.InlineSwitch: {
+				var targets = (Instruction []) operand;
+				WriteInt32 (targets.Length);
+				var diff = instruction.Offset + opcode.Size + (4 * (targets.Length + 1));
+				for (int i = 0; i < targets.Length; i++)
+					WriteInt32 (GetTargetOffset (targets [i]) - diff);
+				break;
 			}
-
-			StandAloneSigTable sasTable = m_reflectWriter.MetadataTableWriter.GetStandAloneSigTable ();
-			StandAloneSigRow sasRow = m_reflectWriter.MetadataRowWriter.CreateStandAloneSigRow (
-				sig);
-
-			sasTable.Rows.Add (sasRow);
-			body.LocalVarToken = sasTable.Rows.Count;
-			m_localSigCache [sig] = body.LocalVarToken;
+			case OperandType.ShortInlineBrTarget: {
+				var target = (Instruction) operand;
+				WriteSByte ((sbyte) (GetTargetOffset (target) - (instruction.Offset + opcode.Size + 1)));
+				break;
+			}
+			case OperandType.InlineBrTarget: {
+				var target = (Instruction) operand;
+				WriteInt32 (GetTargetOffset (target) - (instruction.Offset + opcode.Size + 4));
+				break;
+			}
+			case OperandType.ShortInlineVar:
+				WriteByte ((byte) GetVariableIndex ((VariableDefinition) operand));
+				break;
+			case OperandType.ShortInlineArg:
+				WriteByte ((byte) GetParameterIndex ((ParameterDefinition) operand));
+				break;
+			case OperandType.InlineVar:
+				WriteInt16 ((short) GetVariableIndex ((VariableDefinition) operand));
+				break;
+			case OperandType.InlineArg:
+				WriteInt16 ((short) GetParameterIndex ((ParameterDefinition) operand));
+				break;
+			case OperandType.InlineSig:
+				WriteMetadataToken (GetStandAloneSignature ((CallSite) operand));
+				break;
+			case OperandType.ShortInlineI:
+				if (opcode == OpCodes.Ldc_I4_S)
+					WriteSByte ((sbyte) operand);
+				else
+					WriteByte ((byte) operand);
+				break;
+			case OperandType.InlineI:
+				WriteInt32 ((int) operand);
+				break;
+			case OperandType.InlineI8:
+				WriteInt64 ((long) operand);
+				break;
+			case OperandType.ShortInlineR:
+				WriteSingle ((float) operand);
+				break;
+			case OperandType.InlineR:
+				WriteDouble ((double) operand);
+				break;
+			case OperandType.InlineString:
+				WriteMetadataToken (
+					new MetadataToken (
+						TokenType.String,
+						GetUserStringIndex ((string) operand)));
+				break;
+			case OperandType.InlineType:
+			case OperandType.InlineField:
+			case OperandType.InlineMethod:
+			case OperandType.InlineTok:
+				WriteMetadataToken (metadata.LookupToken ((IMetadataTokenProvider) operand));
+				break;
+			default:
+				throw new ArgumentException ();
+			}
 		}
 
-		public override void TerminateMethodBody (MethodBody body)
+		int GetTargetOffset (Instruction instruction)
 		{
-			long pos = m_binaryWriter.BaseStream.Position;
+			if (instruction == null) {
+				var last = body.instructions [body.instructions.size - 1];
+				return last.offset + last.GetSize ();
+			}
 
-			if (body.HasVariables || body.HasExceptionHandlers
-				|| m_codeWriter.BaseStream.Length >= 64 || body.MaxStack > 8) {
-
-				MethodHeader header = MethodHeader.FatFormat;
-				if (body.InitLocals)
-					header |= MethodHeader.InitLocals;
-				if (body.HasExceptionHandlers)
-					header |= MethodHeader.MoreSects;
-
-				m_binaryWriter.Write ((byte) header);
-				m_binaryWriter.Write ((byte) 0x30); // (header size / 4) << 4
-				m_binaryWriter.Write ((short) body.MaxStack);
-				m_binaryWriter.Write ((int) m_codeWriter.BaseStream.Length);
-				// the token should be zero if there are no variables
-				int token = body.HasVariables ? ((int) TokenType.Signature | body.LocalVarToken) : 0;
-				m_binaryWriter.Write (token);
-
-				if (body.HasExceptionHandlers)
-					WriteExceptionHandlerCollection (body.ExceptionHandlers);
-			} else
-				m_binaryWriter.Write ((byte) ((byte) MethodHeader.TinyFormat |
-					m_codeWriter.BaseStream.Length << 2));
-
-			m_binaryWriter.Write (m_codeWriter);
-			m_binaryWriter.QuadAlign ();
-
-			m_reflectWriter.MetadataWriter.AddData (
-				(int) (m_binaryWriter.BaseStream.Position - pos));
+			return instruction.offset;
 		}
 
-		public LocalVarSig.LocalVariable GetLocalVariableSig (VariableDefinition var)
+		uint GetUserStringIndex (string @string)
 		{
-			LocalVarSig.LocalVariable lv = new LocalVarSig.LocalVariable ();
-			TypeReference type = var.VariableType;
-
-			lv.CustomMods = m_reflectWriter.GetCustomMods (type);
-
-			if (type is PinnedType) {
-				lv.Constraint |= Constraint.Pinned;
-				type = (type as PinnedType).ElementType;
-			}
-
-			if (type is ReferenceType) {
-				lv.ByRef = true;
-				type = (type as ReferenceType).ElementType;
-			}
-
-			lv.Type = m_reflectWriter.GetSigType (type);
-
-			return lv;
-		}
-
-		public LocalVarSig GetLocalVarSig (VariableDefinitionCollection vars)
-		{
-			LocalVarSig lvs = new LocalVarSig ();
-			lvs.CallingConvention |= 0x7;
-			lvs.Count = vars.Count;
-			lvs.LocalVariables = new LocalVarSig.LocalVariable [lvs.Count];
-			for (int i = 0; i < lvs.Count; i++) {
-				lvs.LocalVariables [i] = GetLocalVariableSig (vars [i]);
-			}
-
-			return lvs;
-		}
-
-		void ComputeMaxStack (InstructionCollection instructions)
-		{
-			int current = 0;
-			int max = 0;
-			m_stackSizes.Clear ();
-
-			foreach (ExceptionHandler eh in instructions.Container.ExceptionHandlers) {
-				switch (eh.Type) {
-				case ExceptionHandlerType.Catch :
-				case ExceptionHandlerType.Filter :
-					m_stackSizes [eh.HandlerStart] = 1;
-					max = 1;
-					break;
-				}
-			}
-
-			foreach (Instruction instr in instructions) {
-
-				object savedSize = m_stackSizes [instr];
-				if (savedSize != null)
-					current = (int) savedSize;
-
-				current -= GetPopDelta (instructions.Container.Method, instr, current);
-
-				if (current < 0)
-					current = 0;
-
-				current += GetPushDelta (instr);
-
-				if (current > max)
-					max = current;
-
-				// for forward branches, copy the stack size for the instruction that is being branched to
-				switch (instr.OpCode.OperandType) {
-					case OperandType.InlineBrTarget:
-					case OperandType.ShortInlineBrTarget:
-						m_stackSizes [instr.Operand] = current;
-					break;
-					case OperandType.InlineSwitch:
-						foreach (Instruction target in (Instruction []) instr.Operand)
-							m_stackSizes [target] = current;
-					break;
-				}
-
-				switch (instr.OpCode.FlowControl) {
-				case FlowControl.Branch:
-				case FlowControl.Throw:
-				case FlowControl.Return:
-					// next statement is not reachable from this statement, so reset the stack depth to 0
-					current = 0;
-					break;
-				}
-			}
-
-			instructions.Container.MaxStack = max + 1; // you never know
-		}
-
-		static int GetPushDelta (Instruction instruction)
-		{
-			OpCode code = instruction.OpCode;
-			switch (code.StackBehaviourPush) {
-			case StackBehaviour.Push0:
+			if (@string == null)
 				return 0;
 
-			case StackBehaviour.Push1:
-			case StackBehaviour.Pushi:
-			case StackBehaviour.Pushi8:
-			case StackBehaviour.Pushr4:
-			case StackBehaviour.Pushr8:
-			case StackBehaviour.Pushref:
-				return 1;
-
-			case StackBehaviour.Push1_push1:
-				return 2;
-
-			case StackBehaviour.Varpush:
-				if (code.FlowControl != FlowControl.Call)
-					break;
-
-				IMethodSignature method = (IMethodSignature) instruction.Operand;
-				return IsVoid (method.ReturnType.ReturnType) ? 0 : 1;
-			}
-
-			throw new NotSupportedException ();
+			return metadata.user_string_heap.GetStringIndex (@string);
 		}
 
-		static int GetPopDelta (MethodDefinition current, Instruction instruction, int height)
+		static int GetVariableIndex (VariableDefinition variable)
 		{
-			OpCode code = instruction.OpCode;
-			switch (code.StackBehaviourPop) {
-			case StackBehaviour.Pop0:
-				return 0;
+			return variable.Index;
+		}
+
+		int GetParameterIndex (ParameterDefinition parameter)
+		{
+			if (body.method.HasThis) {
+				if (parameter == body.this_parameter)
+					return 0;
+
+				return parameter.Index + 1;
+			}
+
+			return parameter.Index;
+		}
+
+		bool RequiresFatHeader ()
+		{
+			var body = this.body;
+			return body.CodeSize >= 64
+				|| body.InitLocals
+				|| body.HasVariables
+				|| body.HasExceptionHandlers
+				|| body.MaxStackSize > 8;
+		}
+
+		void ComputeHeader ()
+		{
+			int offset = 0;
+			var instructions = body.instructions;
+			var items = instructions.items;
+			var count = instructions.size;
+			var stack_size = 0;
+			var max_stack = 0;
+			Dictionary<Instruction, int> stack_sizes = null;
+
+			if (body.HasExceptionHandlers)
+				ComputeExceptionHandlerStackSize (ref stack_sizes);
+
+			for (int i = 0; i < count; i++) {
+				var instruction = items [i];
+				instruction.offset = offset;
+				offset += instruction.GetSize ();
+
+				ComputeStackSize (instruction, ref stack_sizes, ref stack_size, ref max_stack);
+			}
+
+			body.code_size = offset;
+			body.max_stack_size = max_stack;
+		}
+
+		void ComputeExceptionHandlerStackSize (ref Dictionary<Instruction, int> stack_sizes)
+		{
+			var exception_handlers = body.ExceptionHandlers;
+
+			for (int i = 0; i < exception_handlers.Count; i++) {
+				var exception_handler = exception_handlers [i];
+
+				switch (exception_handler.HandlerType) {
+				case ExceptionHandlerType.Catch:
+					AddExceptionStackSize (exception_handler.HandlerStart, ref stack_sizes);
+					break;
+				case ExceptionHandlerType.Filter:
+					AddExceptionStackSize (exception_handler.FilterStart, ref stack_sizes);
+					AddExceptionStackSize (exception_handler.HandlerStart, ref stack_sizes);
+					break;
+				}
+			}
+		}
+
+		static void AddExceptionStackSize (Instruction handler_start, ref Dictionary<Instruction, int> stack_sizes)
+		{
+			if (handler_start == null)
+				return;
+
+			if (stack_sizes == null)
+				stack_sizes = new Dictionary<Instruction, int> ();
+
+			stack_sizes [handler_start] = 1;
+		}
+
+		static void ComputeStackSize (Instruction instruction, ref Dictionary<Instruction, int> stack_sizes, ref int stack_size, ref int max_stack)
+		{
+			int computed_size;
+			if (stack_sizes != null && stack_sizes.TryGetValue (instruction, out computed_size))
+				stack_size = computed_size;
+
+			max_stack = System.Math.Max (max_stack, stack_size);
+			ComputeStackDelta (instruction, ref stack_size);
+			max_stack = System.Math.Max (max_stack, stack_size);
+
+			CopyBranchStackSize (instruction, ref stack_sizes, stack_size);
+			ComputeStackSize (instruction, ref stack_size);
+		}
+
+		static void CopyBranchStackSize (Instruction instruction, ref Dictionary<Instruction, int> stack_sizes, int stack_size)
+		{
+			if (stack_size == 0)
+				return;
+
+			switch (instruction.opcode.OperandType) {
+			case OperandType.ShortInlineBrTarget:
+			case OperandType.InlineBrTarget:
+				CopyBranchStackSize (ref stack_sizes, (Instruction) instruction.operand, stack_size);
+				break;
+			case OperandType.InlineSwitch:
+				var targets = (Instruction[]) instruction.operand;
+				for (int i = 0; i < targets.Length; i++)
+					CopyBranchStackSize (ref stack_sizes, targets [i], stack_size);
+				break;
+			}
+		}
+
+		static void CopyBranchStackSize (ref Dictionary<Instruction, int> stack_sizes, Instruction target, int stack_size)
+		{
+			if (stack_sizes == null)
+				stack_sizes = new Dictionary<Instruction, int> ();
+
+			int branch_stack_size = stack_size;
+
+			int computed_size;
+			if (stack_sizes.TryGetValue (target, out computed_size))
+				branch_stack_size = System.Math.Max (branch_stack_size, computed_size);
+
+			stack_sizes [target] = branch_stack_size;
+		}
+
+		static void ComputeStackSize (Instruction instruction, ref int stack_size)
+		{
+			switch (instruction.opcode.FlowControl) {
+			case FlowControl.Branch:
+			case FlowControl.Break:
+			case FlowControl.Throw:
+			case FlowControl.Return:
+				stack_size = 0;
+				break;
+			}
+		}
+
+		static void ComputeStackDelta (Instruction instruction, ref int stack_size)
+		{
+			switch (instruction.opcode.FlowControl) {
+			case FlowControl.Call: {
+				var method = (IMethodSignature) instruction.operand;
+				stack_size -= (method.HasParameters ? method.Parameters.Count : 0)
+					+ (method.HasThis && instruction.opcode.Code != Code.Newobj ? 1 : 0);
+				stack_size += (method.ReturnType.etype == ElementType.Void ? 0 : 1)
+					+ (method.HasThis && instruction.opcode.Code == Code.Newobj ? 1 : 0);
+				break;
+			}
+			default:
+				ComputePopDelta (instruction.opcode.StackBehaviourPop, ref stack_size);
+				ComputePushDelta (instruction.opcode.StackBehaviourPush, ref stack_size);
+				break;
+			}
+		}
+
+		static void ComputePopDelta (StackBehaviour pop_behavior, ref int stack_size)
+		{
+			switch (pop_behavior) {
 			case StackBehaviour.Popi:
 			case StackBehaviour.Popref:
 			case StackBehaviour.Pop1:
-				return 1;
-
+				stack_size--;
+				break;
 			case StackBehaviour.Pop1_pop1:
 			case StackBehaviour.Popi_pop1:
 			case StackBehaviour.Popi_popi:
@@ -538,40 +453,186 @@ namespace Mono.Cecil.Cil {
 			case StackBehaviour.Popi_popr8:
 			case StackBehaviour.Popref_pop1:
 			case StackBehaviour.Popref_popi:
-				return 2;
-
+				stack_size -= 2;
+				break;
 			case StackBehaviour.Popi_popi_popi:
 			case StackBehaviour.Popref_popi_popi:
 			case StackBehaviour.Popref_popi_popi8:
 			case StackBehaviour.Popref_popi_popr4:
 			case StackBehaviour.Popref_popi_popr8:
 			case StackBehaviour.Popref_popi_popref:
-				return 3;
-
+				stack_size -= 3;
+				break;
 			case StackBehaviour.PopAll:
-				return height;
-
-			case StackBehaviour.Varpop:
-				if (code == OpCodes.Ret)
-					return IsVoid (current.ReturnType.ReturnType) ? 0 : 1;
-
-				if (code.FlowControl != FlowControl.Call)
-					break;
-
-				IMethodSignature method = (IMethodSignature) instruction.Operand;
-				int count = method.HasParameters ? method.Parameters.Count : 0;
-				if (method.HasThis && code != OpCodes.Newobj)
-					++count;
-
-				return count;
+				stack_size = 0;
+				break;
 			}
-
-			throw new NotSupportedException ();
 		}
 
-		static bool IsVoid (TypeReference type)
+		static void ComputePushDelta (StackBehaviour push_behaviour, ref int stack_size)
 		{
-			return type.FullName == Constants.Void;
+			switch (push_behaviour) {
+			case StackBehaviour.Push1:
+			case StackBehaviour.Pushi:
+			case StackBehaviour.Pushi8:
+			case StackBehaviour.Pushr4:
+			case StackBehaviour.Pushr8:
+			case StackBehaviour.Pushref:
+				stack_size++;
+				break;
+			case StackBehaviour.Push1_push1:
+				stack_size += 2;
+				break;
+			}
+		}
+
+		void WriteExceptionHandlers ()
+		{
+			Align (4);
+
+			var handlers = body.ExceptionHandlers;
+
+			if (handlers.Count < 0x15 && !RequiresFatSection (handlers))
+				WriteSmallSection (handlers);
+			else
+				WriteFatSection (handlers);
+		}
+
+		static bool RequiresFatSection (Collection<ExceptionHandler> handlers)
+		{
+			for (int i = 0; i < handlers.Count; i++) {
+				var handler = handlers [i];
+
+				if (IsFatRange (handler.TryStart, handler.TryEnd))
+					return true;
+
+				if (IsFatRange (handler.HandlerStart, handler.HandlerEnd))
+					return true;
+
+				if (handler.HandlerType == ExceptionHandlerType.Filter
+					&& IsFatRange (handler.FilterStart, handler.FilterEnd))
+					return true;
+			}
+
+			return false;
+		}
+
+		static bool IsFatRange (Instruction start, Instruction end)
+		{
+			if (end == null)
+				return true;
+
+			return end.Offset - start.Offset > 255 || start.Offset > 65535;
+		}
+
+		void WriteSmallSection (Collection<ExceptionHandler> handlers)
+		{
+			const byte eh_table = 0x1;
+
+			WriteByte (eh_table);
+			WriteByte ((byte) (handlers.Count * 12 + 4));
+			WriteBytes (2);
+
+			WriteExceptionHandlers (
+				handlers,
+				i => WriteUInt16 ((ushort) i),
+				i => WriteByte ((byte) i));
+		}
+
+		void WriteFatSection (Collection<ExceptionHandler> handlers)
+		{
+			const byte eh_table = 0x1;
+			const byte fat_format = 0x40;
+
+			WriteByte (eh_table | fat_format);
+
+			int size = handlers.Count * 24 + 4;
+			WriteByte ((byte) (size & 0xff));
+			WriteByte ((byte) ((size >> 8) & 0xff));
+			WriteByte ((byte) ((size >> 16) & 0xff));
+
+			WriteExceptionHandlers (handlers, WriteInt32, WriteInt32);
+		}
+
+		void WriteExceptionHandlers (Collection<ExceptionHandler> handlers, Action<int> write_entry, Action<int> write_length)
+		{
+			for (int i = 0; i < handlers.Count; i++) {
+				var handler = handlers [i];
+
+				write_entry ((int) handler.HandlerType);
+
+				write_entry (handler.TryStart.Offset);
+				write_length (GetTargetOffset (handler.TryEnd) - handler.TryStart.Offset);
+
+				write_entry (handler.HandlerStart.Offset);
+				write_length (GetTargetOffset (handler.HandlerEnd) - handler.HandlerStart.Offset);
+
+				WriteExceptionHandlerSpecific (handler);
+			}
+		}
+
+		void WriteExceptionHandlerSpecific (ExceptionHandler handler)
+		{
+			switch (handler.HandlerType) {
+			case ExceptionHandlerType.Catch:
+				WriteMetadataToken (metadata.LookupToken (handler.CatchType));
+				break;
+			case ExceptionHandlerType.Filter:
+				WriteInt32 (handler.FilterStart.Offset);
+				break;
+			default:
+				WriteInt32 (0);
+				break;
+			}
+		}
+
+		public MetadataToken GetStandAloneSignature (Collection<VariableDefinition> variables)
+		{
+			var signature = metadata.GetLocalVariableBlobIndex (variables);
+
+			return GetStandAloneSignatureToken (signature);
+		}
+
+		public MetadataToken GetStandAloneSignature (CallSite call_site)
+		{
+			var signature = metadata.GetCallSiteBlobIndex (call_site);
+			var token = GetStandAloneSignatureToken (signature);
+			call_site.MetadataToken = token;
+			return token;
+		}
+
+		MetadataToken GetStandAloneSignatureToken (uint signature)
+		{
+			MetadataToken token;
+			if (standalone_signatures.TryGetValue (signature, out token))
+				return token;
+
+			token = new MetadataToken (TokenType.Signature, metadata.AddStandAloneSignature (signature));
+			standalone_signatures.Add (signature, token);
+			return token;
+		}
+
+		RVA BeginMethod ()
+		{
+			return current;
+		}
+
+		void WriteMetadataToken (MetadataToken token)
+		{
+			WriteUInt32 (token.ToUInt32 ());
+		}
+
+		void Align (int align)
+		{
+			align--;
+			WriteBytes (((position + align) & ~align) - position);
+		}
+
+		void EndMethod ()
+		{
+			current = (RVA) (code_base + position);
 		}
 	}
 }
+
+#endif

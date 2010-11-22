@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +26,50 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
 	public interface IGenericParameterProvider : IMetadataTokenProvider {
 
-		GenericParameterCollection GenericParameters { get; }
-
 		bool HasGenericParameters { get; }
+		bool IsDefinition { get; }
+		ModuleDefinition Module { get; }
+		Collection<GenericParameter> GenericParameters { get; }
+		GenericParameterType GenericParameterType { get; }
+	}
+
+	public enum GenericParameterType {
+		Type,
+		Method
+	}
+
+	interface IGenericContext {
+
+		bool IsDefinition { get; }
+		IGenericParameterProvider Type { get; }
+		IGenericParameterProvider Method { get; }
+	}
+
+	static partial class Mixin {
+
+		public static bool GetHasGenericParameters (
+			this IGenericParameterProvider self,
+			ModuleDefinition module)
+		{
+			return module.HasImage ()
+				? module.Read (self, (provider, reader) => reader.HasGenericParameters (provider))
+				: false;
+		}
+
+		public static Collection<GenericParameter> GetGenericParameters (
+			this IGenericParameterProvider self,
+			ModuleDefinition module)
+		{
+			return module.HasImage ()
+				? module.Read (self, (provider, reader) => reader.ReadGenericParameters (provider))
+				: new Collection<GenericParameter> ();
+		}
 	}
 }

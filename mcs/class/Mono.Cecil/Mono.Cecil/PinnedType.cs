@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +26,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
+using MD = Mono.Cecil.Metadata;
+
 namespace Mono.Cecil {
 
 	public sealed class PinnedType : TypeSpecification {
 
-		public PinnedType (TypeReference pType) : base (pType)
+		public override bool IsValueType {
+			get { return false; }
+			set { throw new InvalidOperationException (); }
+		}
+
+		public override bool IsPinned {
+			get { return true; }
+		}
+
+		public PinnedType (TypeReference type)
+			: base (type)
 		{
+			Mixin.CheckType (type);
+			this.etype = MD.ElementType.Pinned;
 		}
 	}
 }

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,71 +26,106 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Mono.Collections.Generic;
+
 namespace Mono.Cecil {
 
-	public sealed class EventDefinition : EventReference, IMemberDefinition, ICustomAttributeProvider {
+	public sealed class EventDefinition : EventReference, IMemberDefinition {
 
-		EventAttributes m_attributes;
+		ushort attributes;
 
-		CustomAttributeCollection m_customAttrs;
+		Collection<CustomAttribute> custom_attributes;
 
-		MethodDefinition m_addMeth;
-		MethodDefinition m_invMeth;
-		MethodDefinition m_remMeth;
+		internal MethodDefinition add_method;
+		internal MethodDefinition invoke_method;
+		internal MethodDefinition remove_method;
+		internal Collection<MethodDefinition> other_methods;
 
 		public EventAttributes Attributes {
-			get { return m_attributes; }
-			set { m_attributes = value; }
+			get { return (EventAttributes) attributes; }
+			set { attributes = (ushort) value; }
 		}
 
 		public MethodDefinition AddMethod {
-			get { return m_addMeth; }
-			set { m_addMeth = value; }
+			get {
+				if (add_method != null)
+					return add_method;
+
+				InitializeMethods ();
+				return add_method;
+			}
+			set { add_method = value; }
 		}
 
 		public MethodDefinition InvokeMethod {
-			get { return m_invMeth; }
-			set { m_invMeth = value; }
+			get {
+				if (invoke_method != null)
+					return invoke_method;
+
+				InitializeMethods ();
+				return invoke_method;
+			}
+			set { invoke_method = value; }
 		}
 
 		public MethodDefinition RemoveMethod {
-			get { return m_remMeth; }
-			set { m_remMeth = value; }
+			get {
+				if (remove_method != null)
+					return remove_method;
+
+				InitializeMethods ();
+				return remove_method;
+			}
+			set { remove_method = value; }
+		}
+
+		public bool HasOtherMethods {
+			get {
+				if (other_methods != null)
+					return other_methods.Count > 0;
+
+				InitializeMethods ();
+				return !other_methods.IsNullOrEmpty ();
+			}
+		}
+
+		public Collection<MethodDefinition> OtherMethods {
+			get {
+				if (other_methods != null)
+					return other_methods;
+
+				InitializeMethods ();
+
+				if (other_methods != null)
+					return other_methods;
+
+				return other_methods = new Collection<MethodDefinition> ();
+			}
 		}
 
 		public bool HasCustomAttributes {
-			get { return (m_customAttrs == null) ? false : (m_customAttrs.Count > 0); }
+			get {
+				if (custom_attributes != null)
+					return custom_attributes.Count > 0;
+
+				return this.GetHasCustomAttributes (Module);
+			}
 		}
 
-		public CustomAttributeCollection CustomAttributes {
-			get {
-				if (m_customAttrs == null)
-					m_customAttrs = new CustomAttributeCollection (this);
-
-				return m_customAttrs;
-			}
+		public Collection<CustomAttribute> CustomAttributes {
+			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (Module)); }
 		}
 
 		#region EventAttributes
 
 		public bool IsSpecialName {
-			get { return (m_attributes & EventAttributes.SpecialName) != 0; }
-			set {
-				if (value)
-					m_attributes |= EventAttributes.SpecialName;
-				else
-					m_attributes &= ~EventAttributes.SpecialName;
-			}
+			get { return attributes.GetAttributes ((ushort) EventAttributes.SpecialName); }
+			set { attributes = attributes.SetAttributes ((ushort) EventAttributes.SpecialName, value); }
 		}
 
 		public bool IsRuntimeSpecialName {
-			get { return (m_attributes & EventAttributes.RTSpecialName) != 0; }
-			set {
-				if (value)
-					m_attributes |= EventAttributes.RTSpecialName;
-				else
-					m_attributes &= ~EventAttributes.RTSpecialName;
-			}
+			get { return attributes.GetAttributes ((ushort) FieldAttributes.RTSpecialName); }
+			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.RTSpecialName, value); }
 		}
 
 		#endregion
@@ -100,74 +135,29 @@ namespace Mono.Cecil {
 			set { base.DeclaringType = value; }
 		}
 
-		public EventDefinition (string name, TypeReference eventType,
-			EventAttributes attrs) : base (name, eventType)
-		{
-			m_attributes = attrs;
+		public override bool IsDefinition {
+			get { return true; }
 		}
 
-		public override EventDefinition Resolve ()
+		public EventDefinition (string name, EventAttributes attributes, TypeReference eventType)
+			: base (name, eventType)
 		{
-			return this;
+			this.attributes = (ushort) attributes;
+			this.token = new MetadataToken (TokenType.Event);
 		}
 
-		public static MethodDefinition CreateAddMethod (EventDefinition evt)
+		void InitializeMethods ()
 		{
-			MethodDefinition add = new MethodDefinition (
-				string.Concat ("add_", evt.Name), (MethodAttributes) 0, evt.EventType);
-			evt.AddMethod = add;
-			return add;
-		}
+			if (add_method != null
+				|| invoke_method != null
+				|| remove_method != null)
+				return;
 
-		public static MethodDefinition CreateRemoveMethod (EventDefinition evt)
-		{
-			MethodDefinition remove = new MethodDefinition (
-				string.Concat ("remove_", evt.Name), (MethodAttributes) 0, evt.EventType);
-			evt.RemoveMethod = remove;
-			return remove;
-		}
+			var module = this.Module;
+			if (!module.HasImage ())
+				return;
 
-		public static MethodDefinition CreateInvokeMethod (EventDefinition evt)
-		{
-			MethodDefinition raise = new MethodDefinition (
-				string.Concat ("raise_", evt.Name), (MethodAttributes) 0, evt.EventType);
-			evt.InvokeMethod = raise;
-			return raise;
-		}
-
-		public EventDefinition Clone ()
-		{
-			return Clone (this, new ImportContext (NullReferenceImporter.Instance, this.DeclaringType));
-		}
-
-		internal static EventDefinition Clone (EventDefinition evt, ImportContext context)
-		{
-			EventDefinition ne = new EventDefinition (
-				evt.Name,
-				context.Import (evt.EventType),
-				evt.Attributes);
-
-			if (context.GenericContext.Type is TypeDefinition) {
-				TypeDefinition type = context.GenericContext.Type as TypeDefinition;
-				if (evt.AddMethod != null)
-					ne.AddMethod = type.Methods.GetMethod (evt.AddMethod.Name) [0];
-				if (evt.InvokeMethod != null)
-					ne.InvokeMethod = type.Methods.GetMethod (evt.InvokeMethod.Name) [0];
-				if (evt.RemoveMethod != null)
-					ne.RemoveMethod = type.Methods.GetMethod (evt.RemoveMethod.Name) [0];
-			}
-
-			foreach (CustomAttribute ca in evt.CustomAttributes)
-				ne.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
-
-			return ne;
-		}
-
-		public override void Accept (IReflectionVisitor visitor)
-		{
-			visitor.VisitEventDefinition (this);
-
-			this.CustomAttributes.Accept (visitor);
+			module.Read (this, (@event, reader) => reader.ReadMethods (@event));
 		}
 	}
 }

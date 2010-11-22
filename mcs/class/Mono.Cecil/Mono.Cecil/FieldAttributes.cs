@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// (C) 2005 Jb Evain
+// Copyright (c) 2008 - 2010 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,14 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil {
+using System;
 
-	using System;
+namespace Mono.Cecil {
 
 	[Flags]
 	public enum FieldAttributes : ushort {
 		FieldAccessMask		= 0x0007,
-		Compilercontrolled	= 0x0000,	// Member not referenceable
+		CompilerControlled	= 0x0000,	// Member not referenceable
 		Private				= 0x0001,	// Accessible only by the parent type
 		FamANDAssem			= 0x0002,	// Accessible by sub-types only in this assembly
 		Assembly			= 0x0003,	// Accessible by anyone in the Assembly
