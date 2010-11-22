@@ -5412,6 +5412,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		while (suspend_count > 0)
 			resume_vm ();
 		disconnected = TRUE;
+		vm_start_event_sent = FALSE;
 		break;
 	case CMD_VM_EXIT: {
 		MonoInternalThread *thread;
@@ -7316,16 +7317,18 @@ debugger_thread (void *arg)
 
 	mono_set_is_debugger_attached (FALSE);
 	
-	while (suspend_count > 0)
-		resume_vm ();
-
 	mono_mutex_lock (&debugger_thread_exited_mutex);
 	debugger_thread_exited = TRUE;
 	mono_cond_signal (&debugger_thread_exited_cond);
 	mono_mutex_unlock (&debugger_thread_exited_mutex);
 
 	DEBUG (1, printf ("[dbg] Debugger thread exited.\n"));
-
+	
+	if (command_set == CMD_SET_VM && command == CMD_VM_DISPOSE && !vm_death_event_sent && !mono_runtime_is_shutting_down ()) {
+		DEBUG (2, fprintf (log_file, "[dbg] Detached - restarting clean debugger thread.\n"));
+		start_debugger_thread ();
+	}
+	
 	return 0;
 }
 
