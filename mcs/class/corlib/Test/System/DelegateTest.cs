@@ -1096,6 +1096,41 @@ namespace MonoTests.System
 		}
 
 #endif
+		public static void CreateDelegateOfStaticMethodBoundToNull_Helper (object[] args) {}
+
+		[Test]
+		public void CreateDelegateOfStaticMethodBoundToNull ()
+		{
+			Type t = typeof (Action);
+			MethodInfo m = typeof (DelegateTest).GetMethod ("CreateDelegateOfStaticMethodBoundToNull_Helper");
+			object firstArg = null;
+	
+			try {
+				Delegate.CreateDelegate (t, m) ;
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {  }
+	
+			try {
+				Delegate.CreateDelegate(t, m, true);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {  }
+	
+			try {
+				Delegate.CreateDelegate(t, m, false);
+			} catch (ArgumentException) { Assert.Fail ("#3"); }
+	
+			try {
+				Delegate.CreateDelegate(t, null, m);
+			} catch (ArgumentException) { Assert.Fail ("#4"); }
+	
+			try {
+				Delegate.CreateDelegate(t, null, m, true);
+			} catch (ArgumentException) { Assert.Fail ("#5");  }
+	
+			try {
+				Delegate.CreateDelegate(t, null, m, false);
+			} catch (ArgumentException) { Assert.Fail ("#6"); }
+		}
 
 		[Test]
 		public void GetHashCode_Constant () {

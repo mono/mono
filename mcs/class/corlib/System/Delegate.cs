@@ -153,7 +153,7 @@ namespace System
 			return CreateDelegate (type, firstArgument, method, throwOnBindFailure, true);
 		}
 
-		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure, bool allowClosed)
+		static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure, bool allowClosed)
 		{
 			// The name of the parameter changed in 2.0
 			object target = firstArgument;
@@ -240,7 +240,7 @@ namespace System
 				} else {
 					if (delargs.Length + 1 == args.Length) {
 						// closed over a null reference
-						argsMatch = !args [0].ParameterType.IsValueType;
+						argsMatch = !args [0].ParameterType.IsValueType && allowClosed;
 						for (int i = 0; i < delargs.Length; i++)
 							argsMatch &= arg_type_match (delargs [i].ParameterType, args [i + 1].ParameterType);
 					} else {
