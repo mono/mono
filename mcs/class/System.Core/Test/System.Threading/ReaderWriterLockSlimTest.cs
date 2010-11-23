@@ -576,5 +576,60 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (false, wLock, "#1b");
 			Assert.AreEqual (0, rWrite, "#3b");
 		}
+
+		[Test]
+		public void RecursiveEnterExitReadTest ()
+		{
+			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+
+			v.EnterReadLock ();
+			v.EnterReadLock ();
+			v.EnterReadLock ();
+
+			Assert.IsTrue (v.IsReadLockHeld);
+			Assert.AreEqual (3, v.RecursiveReadCount);
+
+			v.ExitReadLock ();
+
+			Assert.IsTrue (v.IsReadLockHeld);
+			Assert.AreEqual (2, v.RecursiveReadCount);
+		}
+
+		[Test]
+		public void RecursiveEnterExitWriteTest ()
+		{
+			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+
+			v.EnterWriteLock ();
+			v.EnterWriteLock ();
+			v.EnterWriteLock ();
+
+			Assert.IsTrue (v.IsWriteLockHeld);
+			Assert.AreEqual (3, v.RecursiveWriteCount);
+
+			v.ExitWriteLock ();
+			v.ExitWriteLock ();
+
+			Assert.IsTrue (v.IsWriteLockHeld);
+			Assert.AreEqual (1, v.RecursiveWriteCount);
+		}
+
+		[Test]
+		public void RecursiveEnterExitUpgradableTest ()
+		{
+			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+
+			v.EnterUpgradeableReadLock ();
+			v.EnterUpgradeableReadLock ();
+			v.EnterUpgradeableReadLock ();
+
+			Assert.IsTrue (v.IsUpgradeableReadLockHeld);
+			Assert.AreEqual (3, v.RecursiveUpgradeCount);
+
+			v.ExitUpgradeableReadLock ();
+
+			Assert.IsTrue (v.IsUpgradeableReadLockHeld);
+			Assert.AreEqual (2, v.RecursiveUpgradeCount);
+		}
 	}
 }
