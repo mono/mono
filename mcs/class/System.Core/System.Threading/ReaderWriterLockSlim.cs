@@ -158,10 +158,11 @@ namespace System.Threading {
 			if (!ctstate.LockState.Has (LockState.Read))
 				throw new SynchronizationLockException ("The current thread has not entered the lock in read mode");
 
-			ctstate.LockState ^= LockState.Read;
-			ctstate.ReaderRecursiveCount--;
-			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
-				readerDoneEvent.Set ();
+			if (--ctstate.ReaderRecursiveCount == 0) {
+				ctstate.LockState ^= LockState.Read;
+				if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
+					readerDoneEvent.Set ();
+			}
 		}
 
 		public void EnterWriteLock ()
@@ -237,14 +238,15 @@ namespace System.Threading {
 			if (!ctstate.LockState.Has (LockState.Write))
 				throw new SynchronizationLockException ("The current thread has not entered the lock in write mode");
 			
-			bool isUpgradable = ctstate.LockState.Has (LockState.Upgradable);
-			ctstate.LockState ^= LockState.Write;
-			ctstate.WriterRecursiveCount--;
+			if (--ctstate.WriterRecursiveCount == 0) {
+				bool isUpgradable = ctstate.LockState.Has (LockState.Upgradable);
+				ctstate.LockState ^= LockState.Write;
 
-			int value = Interlocked.Add (ref rwlock, isUpgradable ? RwRead - RwWrite : -RwWrite);
-			writerDoneEvent.Set ();
-			if (isUpgradable && value >> RwReadBit == 1)
-				readerDoneEvent.Reset ();
+				int value = Interlocked.Add (ref rwlock, isUpgradable ? RwRead - RwWrite : -RwWrite);
+				writerDoneEvent.Set ();
+				if (isUpgradable && value >> RwReadBit == 1)
+					readerDoneEvent.Reset ();
+			}
 		}
 
 		public void EnterUpgradeableReadLock ()
@@ -307,16 +309,14 @@ namespace System.Threading {
 		{
 			ThreadLockState ctstate = CurrentThreadState;
 
-			if (!ctstate.LockState.Has (LockState.Upgradable | LockState.Read))
-				throw new SynchronizationLockException ("The current thread has not entered the lock in upgradable mode");
-			
-			upgradableTaken.Value = false;
-			upgradableEvent.Set ();
+			if (--ctstate.UpgradeableRecursiveCount == 0) {
+				upgradableTaken.Value = false;
+				upgradableEvent.Set ();
 
-			ctstate.LockState ^= LockState.Upgradable;
-			ctstate.UpgradeableRecursiveCount--;
-			if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
-				readerDoneEvent.Set ();
+				ctstate.LockState ^= LockState.Upgradable;
+				if (Interlocked.Add (ref rwlock, -RwRead) >> RwReadBit == 0)
+					readerDoneEvent.Set ();
+			}
 		}
 
 		public void Dispose ()
