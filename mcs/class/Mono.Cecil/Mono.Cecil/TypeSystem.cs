@@ -64,21 +64,6 @@ namespace Mono.Cecil {
 				});
 			}
 
-			internal TypeReference GetType (string fullname)
-			{
-				var types = module.MetadataSystem.Types;
-				for (int i = 0; i < types.Length; i++) {
-					var type = types [i];
-					if (type == null)
-						continue;
-
-					if (type.FullName == fullname)
-						return type;
-				}
-
-				return null;
-			}
-
 			static void Initialize (object obj)
 			{
 			}
