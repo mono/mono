@@ -19849,6 +19849,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-fixedbuffer-09.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>65</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">

@@ -2259,8 +2259,7 @@ namespace Mono.CSharp {
 
 			if (a.Type == pa.StructLayout) {
 				PartialContainer.HasStructLayout = true;
-
-				if (a.GetLayoutKindValue () == LayoutKind.Explicit)
+				if (a.IsExplicitLayoutKind ())
 					PartialContainer.HasExplicitLayout = true;
 			}
 

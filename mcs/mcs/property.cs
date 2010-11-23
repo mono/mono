@@ -325,8 +325,8 @@ namespace Mono.CSharp
 
 			public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
-				if (a.IsInternalMethodImplAttribute) {
-					method.is_external_implementation = true;
+				if (a.Type == pa.MethodImpl) {
+					method.is_external_implementation = a.IsInternalCall ();
 				}
 
 				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
@@ -1137,8 +1137,8 @@ namespace Mono.CSharp
 
 			public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
-				if (a.IsInternalMethodImplAttribute) {
-					method.is_external_implementation = true;
+				if (a.Type == pa.MethodImpl) {
+					method.is_external_implementation = a.IsInternalCall ();
 				}
 
 				base.ApplyAttributeBuilder (a, ctor, cdata, pa);

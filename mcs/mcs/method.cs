@@ -461,8 +461,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.IsInternalMethodImplAttribute) {
-				is_external_implementation = true;
+			if (a.Type == pa.MethodImpl) {
+				is_external_implementation = a.IsInternalCall ();
 			}
 
 			if (a.Type == pa.DllImport) {
@@ -1382,8 +1382,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.IsInternalMethodImplAttribute) {
-				is_external_implementation = true;
+			if (a.Type == pa.MethodImpl) {
+				is_external_implementation = a.IsInternalCall ();
 			}
 
 			ConstructorBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);

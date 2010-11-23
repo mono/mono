@@ -998,27 +998,32 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public bool IsInternalMethodImplAttribute {
-			get {
-				if (Type != context.Compiler.PredefinedAttributes.MethodImpl)
-					return false;
-
-				MethodImplOptions options;
-				if (PosArguments[0].Type.GetMetaInfo () != typeof (MethodImplOptions))
-					options = (MethodImplOptions) System.Enum.ToObject (typeof (MethodImplOptions), ((Constant) PosArguments[0].Expr).GetValue ());
-				else
-					options = (MethodImplOptions) ((Constant) PosArguments [0].Expr).GetValue ();
-
-				return (options & MethodImplOptions.InternalCall) != 0;
+		//
+		// Returns true for MethodImplAttribute with MethodImplOptions.InternalCall value
+		// 
+		public bool IsInternalCall ()
+		{
+			MethodImplOptions options = 0;
+			if (PosArguments.Count == 1) {
+				options = (MethodImplOptions) System.Enum.Parse (typeof (MethodImplOptions), ((Constant) PosArguments[0].Expr).GetValue ().ToString ());
+			} else if (HasField ("Value")) {
+				var named = GetNamedValue ("Value");
+				options = (MethodImplOptions) System.Enum.Parse (typeof (MethodImplOptions), named.GetValue ().ToString ());
 			}
+
+			return (options & MethodImplOptions.InternalCall) != 0;
 		}
 
-		public LayoutKind GetLayoutKindValue ()
+		//
+		// Returns true for StructLayoutAttribute with LayoutKind.Explicit value
+		// 
+		public bool IsExplicitLayoutKind ()
 		{
-			if (!RootContext.StdLib || PosArguments[0].Type.GetMetaInfo () != typeof (LayoutKind))
-				return (LayoutKind) System.Enum.ToObject (typeof (LayoutKind), ((Constant) PosArguments[0].Expr).GetValue ());
+			if (PosArguments.Count != 1)
+				return false;
 
-			return (LayoutKind) ((Constant) PosArguments[0].Expr).GetValue ();
+			var value = (LayoutKind) System.Enum.Parse (typeof (LayoutKind), ((Constant) PosArguments[0].Expr).GetValue ().ToString ());
+			return value == LayoutKind.Explicit;
 		}
 
 		public Constant GetParameterDefaultValue (out TypeSpec type)
@@ -1635,19 +1640,6 @@ namespace Mono.CSharp {
 					result = Result.RefOutArrayError;
 			}
 			return result;
-		}
-
-		static bool GetClsCompliantAttributeValue (ICustomAttributeProvider attribute_provider, Assembly a) 
-		{
-			object[] cls_attr = attribute_provider.GetCustomAttributes (typeof (CLSCompliantAttribute), false);
-			if (cls_attr.Length == 0) {
-				if (a == null)
-					return false;
-
-				return GetClsCompliantAttributeValue (a, null);
-			}
-			
-			return ((CLSCompliantAttribute)cls_attr [0]).IsCompliant;
 		}
 
 		/// <summary>
