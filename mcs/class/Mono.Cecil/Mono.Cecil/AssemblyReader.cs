@@ -900,7 +900,7 @@ namespace Mono.Cecil {
 			return (TypeReference) LookupToken (token);
 		}
 
-		TypeDefinition GetTypeDefinition (uint rid)
+		public TypeDefinition GetTypeDefinition (uint rid)
 		{
 			InitializeTypeDefinitions ();
 
