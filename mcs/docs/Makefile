@@ -89,7 +89,6 @@ NETDOCS_DIRS = \
 MONO_DIRS = \
 	$(classdir)/Commons.Xml.Relaxng/$(doc_en)          \
 	$(classdir)/Mono.Cairo/$(doc_en)                   \
-	$(classdir)/Mono.Cecil/$(doc_en)                   \
 	$(classdir)/Mono.Options/$(doc_en)                 \
 	$(classdir)/Mono.Posix/$(doc_en)                   \
 	$(classdir)/Mono.Security.Win32/$(doc_en)          \
