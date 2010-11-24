@@ -777,7 +777,7 @@ mono_debugger_agent_parse_options (char *options)
 			if (agent_config.defer) {
 				agent_config.server = TRUE;
 				if (agent_config.address == NULL) {
-					agent_config.address = g_strdup_printf ("127.0.0.1:%u", 56000 + (GetCurrentProcessId () % 1000));
+					agent_config.address = g_strdup_printf ("0.0.0.0:%u", 56000 + (GetCurrentProcessId () % 1000));
 				}
 			}
 		} else {
@@ -2388,6 +2388,7 @@ suspend_current (void)
 
 	while (suspend_count - tls->resume_count > 0) {
 #ifdef HOST_WIN32
+		/* FIXME: https://bugzilla.novell.com/show_bug.cgi?id=587470 */
 		if (WAIT_TIMEOUT == WaitForSingleObject(suspend_cond, 0))
 		{
 			mono_mutex_unlock (&suspend_mutex);
