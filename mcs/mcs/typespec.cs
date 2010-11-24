@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Reflection;
 
 namespace Mono.CSharp
 {
@@ -1194,7 +1195,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public System.Reflection.MethodInfo GetConstructor ()
+		public MethodInfo GetConstructor ()
 		{
 			var mb = RootContext.ToplevelTypes.Builder;
 
@@ -1204,13 +1205,13 @@ namespace Mono.CSharp
 
 			var ctor = mb.GetArrayMethod (
 				GetMetaInfo (), Constructor.ConstructorName,
-				System.Reflection.CallingConventions.HasThis,
+				CallingConventions.HasThis,
 				null, arg_types);
 
 			return ctor;
 		}
 
-		public System.Reflection.MethodInfo GetAddressMethod ()
+		public MethodInfo GetAddressMethod ()
 		{
 			var mb = RootContext.ToplevelTypes.Builder;
 
@@ -1220,13 +1221,13 @@ namespace Mono.CSharp
 
 			var address = mb.GetArrayMethod (
 				GetMetaInfo (), "Address",
-				System.Reflection.CallingConventions.HasThis | System.Reflection.CallingConventions.Standard,
+				CallingConventions.HasThis | CallingConventions.Standard,
 				ReferenceContainer.MakeType (Element).GetMetaInfo (), arg_types);
 
 			return address;
 		}
 
-		public System.Reflection.MethodInfo GetGetMethod ()
+		public MethodInfo GetGetMethod ()
 		{
 			var mb = RootContext.ToplevelTypes.Builder;
 
@@ -1236,13 +1237,13 @@ namespace Mono.CSharp
 
 			var get = mb.GetArrayMethod (
 				GetMetaInfo (), "Get",
-				System.Reflection.CallingConventions.HasThis | System.Reflection.CallingConventions.Standard,
+				CallingConventions.HasThis | CallingConventions.Standard,
 				Element.GetMetaInfo (), arg_types);
 
 			return get;
 		}
 
-		public System.Reflection.MethodInfo GetSetMethod ()
+		public MethodInfo GetSetMethod ()
 		{
 			var mb = RootContext.ToplevelTypes.Builder;
 
@@ -1254,7 +1255,7 @@ namespace Mono.CSharp
 
 			var set = mb.GetArrayMethod (
 				GetMetaInfo (), "Set",
-				System.Reflection.CallingConventions.HasThis | System.Reflection.CallingConventions.Standard,
+				CallingConventions.HasThis | CallingConventions.Standard,
 				TypeManager.void_type.GetMetaInfo (), arg_types);
 
 			return set;

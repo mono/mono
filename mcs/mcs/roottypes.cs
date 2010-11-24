@@ -335,8 +335,8 @@ namespace Mono.CSharp
 				system_4_type_arg, null);
 
 			if (set_corlib_type_builders == null) {
-				Compiler.Report.Warning (-26, 3, "The compilation may fail due to missing `{0}.SetCorlibTypeBuilders(...)' method",
-					typeof (System.Reflection.Emit.AssemblyBuilder).FullName);
+				Compiler.Report.Warning (-26, 3,
+					"The compilation may fail due to missing `System.Reflection.Emit.AssemblyBuilder.SetCorlibTypeBuilders(...)' method");
 				return;
 			}
 
