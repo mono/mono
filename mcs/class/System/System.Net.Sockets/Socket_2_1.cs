@@ -485,7 +485,11 @@ namespace System.Net.Sockets {
 				throw new ArgumentNullException ("remoteEP");
 
 			IPEndPoint ep = remoteEP as IPEndPoint;
+#if !MOONLIGHT
 			if (ep != null && socket_type != SocketType.Dgram) /* Dgram uses Any to 'disconnect' */
+#else
+			if (ep != null)
+#endif
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
 
