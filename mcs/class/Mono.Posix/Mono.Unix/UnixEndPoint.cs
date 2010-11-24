@@ -75,6 +75,13 @@ namespace Mono.Unix
 				throw new ArgumentException ("socketAddress is not a unix socket address.");
 			 */
 
+			if (socketAddress.Size == 2) {
+				// Empty filename.
+				// Probably from RemoteEndPoint which on linux does not return the file name.
+				UnixEndPoint uep = new UnixEndPoint ("a");
+				uep.filename = "";
+				return uep;
+			}
 			byte [] bytes = new byte [socketAddress.Size - 2 - 1];
 			for (int i = 0; i < bytes.Length; i++) {
 				bytes [i] = socketAddress [i + 2];
