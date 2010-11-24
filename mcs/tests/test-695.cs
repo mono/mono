@@ -18,28 +18,28 @@ class Program
 		AssemblyName an;
 		AssemblyBuilder ab;
 
-		assembly = AssemblyFactory.GetAssembly (Path.Combine (basedir, "test-695-2-lib.dll"));
-		if (assembly.Name.Flags != AssemblyFlags.PublicKey)
+		assembly = AssemblyDefinition.ReadAssembly (Path.Combine (basedir, "test-695-2-lib.dll"));
+		if (assembly.Name.Attributes != AssemblyAttributes.PublicKey)
 			return 1;
 		a = Assembly.LoadFrom (Path.Combine (basedir, "test-695-2-lib.dll"));
 		if (a.GetName ().Flags != AssemblyNameFlags.PublicKey)
 			return 2;
 
-		assembly = AssemblyFactory.GetAssembly (Path.Combine (basedir, "test-695-3-lib.dll"));
+		assembly = AssemblyDefinition.ReadAssembly (Path.Combine (basedir, "test-695-3-lib.dll"));
 		if (Environment.Version.Major >= 2) {
-			if (assembly.Name.Flags != AssemblyFlags.SideBySideCompatible)
+			if (assembly.Name.Attributes != AssemblyAttributes.SideBySideCompatible)
 				return 3;
 
 		} else {
-			if (assembly.Name.Flags != AssemblyFlags.PublicKey)
+			if (assembly.Name.Attributes != AssemblyAttributes.PublicKey)
 				return 3;
 		}
 		a = Assembly.LoadFrom (Path.Combine (basedir, "test-695-3-lib.dll"));
 		if (a.GetName ().Flags != AssemblyNameFlags.PublicKey)
 			return 4;
 
-		assembly = AssemblyFactory.GetAssembly (Path.Combine (basedir, "test-695.exe"));
-		if (assembly.Name.Flags != AssemblyFlags.SideBySideCompatible)
+		assembly = AssemblyDefinition.ReadAssembly (Path.Combine (basedir, "test-695.exe"));
+		if (assembly.Name.Attributes != AssemblyAttributes.SideBySideCompatible)
 			return 5;
 		a = Assembly.LoadFrom (Path.Combine (basedir, "test-695.exe"));
 		if (a.GetName ().Flags != AssemblyNameFlags.PublicKey)
@@ -54,8 +54,8 @@ class Program
 			AssemblyBuilderAccess.Save, basedir);
 		ab.Save ("test-695-4-lib.dll");
 
-		assembly = AssemblyFactory.GetAssembly (Path.Combine (basedir, "test-695-4-lib.dll"));
-		if (assembly.Name.Flags != (AssemblyFlags.PublicKey | AssemblyFlags.Retargetable))
+		assembly = AssemblyDefinition.ReadAssembly (Path.Combine (basedir, "test-695-4-lib.dll"));
+		if (assembly.Name.Attributes != (AssemblyAttributes.PublicKey | AssemblyAttributes.Retargetable))
 			return 7;
 
 		an = new AssemblyName ();
@@ -67,8 +67,8 @@ class Program
 			AssemblyBuilderAccess.Save, basedir);
 		ab.Save ("test-695-5-lib.dll");
 
-		assembly = AssemblyFactory.GetAssembly (Path.Combine (basedir, "test-695-5-lib.dll"));
-		if (assembly.Name.Flags != (AssemblyFlags.PublicKey | AssemblyFlags.Retargetable))
+		assembly = AssemblyDefinition.ReadAssembly (Path.Combine (basedir, "test-695-5-lib.dll"));
+		if (assembly.Name.Attributes != (AssemblyAttributes.PublicKey | AssemblyAttributes.Retargetable))
 			return 8;
 		a = Assembly.LoadFrom (Path.Combine (basedir, "test-695-5-lib.dll"));
 		if (a.GetName ().Flags != (AssemblyNameFlags.PublicKey | AssemblyNameFlags.Retargetable))
@@ -84,8 +84,8 @@ class Program
 		an.Flags = AssemblyNameFlags.None;
 		ab.Save ("test-695-6-lib.dll");
 
-		assembly = AssemblyFactory.GetAssembly (Path.Combine (basedir, "test-695-6-lib.dll"));
-		if (assembly.Name.Flags != (AssemblyFlags.PublicKey | AssemblyFlags.Retargetable))
+		assembly = AssemblyDefinition.ReadAssembly (Path.Combine (basedir, "test-695-6-lib.dll"));
+		if (assembly.Name.Attributes != (AssemblyAttributes.PublicKey | AssemblyAttributes.Retargetable))
 			return 10;
 		a = Assembly.LoadFrom (Path.Combine (basedir, "test-695-6-lib.dll"));
 		if (a.GetName ().Flags != (AssemblyNameFlags.PublicKey | AssemblyNameFlags.Retargetable))
