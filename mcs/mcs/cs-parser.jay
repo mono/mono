@@ -5038,20 +5038,33 @@ for_statement
 		start_block (GetLocation ($2));
 		current_block.IsCompilerGenerated = true;
 	  }
-	  opt_for_initializer SEMICOLON
+	  for_statement_cont
+	  {
+		$$ = $4;
+	  }
+	;
+	
+// Has to use be extra rule to recover started block
+for_statement_cont
+	: opt_for_initializer SEMICOLON
 	  opt_for_condition SEMICOLON
-	  opt_for_iterator CLOSE_PARENS 
+	  opt_for_iterator CLOSE_PARENS
 	  embedded_statement
 	  {
-		if ($10 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
-			Warning_EmptyStatement (GetLocation ($10));
+		if ($7 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($7));
 	  
-		For f = new For ((Statement) $4, (BooleanExpression) $6, (Statement) $8, (Statement) $10, GetLocation ($1));
+		For f = new For ((Statement) $1, (BooleanExpression) $3, (Statement) $5, (Statement) $7, GetLocation ($-2));
 		current_block.AddStatement (f);
 		
-		lbag.AddStatement (f, GetLocation ($2), GetLocation ($5), GetLocation ($7), GetLocation ($9));
+		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2), GetLocation ($4), GetLocation ($6));
 
-		$$ = end_block (GetLocation ($5));
+		$$ = end_block (GetLocation ($2));
+	  }
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = end_block (current_block.StartLocation);
 	  }
 	;
 
