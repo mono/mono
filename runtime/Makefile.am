@@ -35,6 +35,13 @@ test_profiles = $(build_profiles)
 if MOONLIGHT
 build_profiles += moonlight_raw
 test_profiles += moonlight_raw
+
+moon-do-build: $(SUPPORT_FILES)
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' all-profiles
+
+moon-do-clean:
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' clean-profiles
+
 endif
 
 if INSTALL_4_0
