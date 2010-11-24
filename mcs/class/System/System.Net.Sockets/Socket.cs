@@ -411,7 +411,7 @@ namespace System.Net.Sockets
 #if !TARGET_JVM
 		// Returns the local endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, out int error);
+		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, int family, out int error);
 #endif
 
 		// Wish:  support non-IP endpoints.
@@ -431,7 +431,7 @@ namespace System.Net.Sockets
 				SocketAddress sa;
 				int error;
 				
-				sa=LocalEndPoint_internal(socket, out error);
+				sa=LocalEndPoint_internal(socket, (int) address_family, out error);
 
 				if (error != 0)
 					throw new SocketException (error);

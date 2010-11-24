@@ -1040,7 +1040,7 @@ namespace System.Net.Sockets {
 
 		// Returns the remote endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static SocketAddress RemoteEndPoint_internal(IntPtr socket, out int error);
+		private extern static SocketAddress RemoteEndPoint_internal(IntPtr socket, int family, out int error);
 
 		public EndPoint RemoteEndPoint {
 			get {
@@ -1062,7 +1062,7 @@ namespace System.Net.Sockets {
 				SocketAddress sa;
 				int error;
 				
-				sa=RemoteEndPoint_internal(socket, out error);
+				sa=RemoteEndPoint_internal(socket, (int) address_family, out error);
 
 				if (error != 0)
 					throw new SocketException (error);
