@@ -86,23 +86,19 @@ namespace System.Linq.Parallel.QueryNodes
 		internal override IList<IEnumerable<KeyValuePair<long, TResult>>> GetOrderedEnumerables (QueryOptions options)
 		{
 			var source = Parent.GetOrderedEnumerables (options);
-			var sizeRequests = new Tuple<long, int, IEnumerable<TCollection>> [options.PartitionCount];
+			var sizeRequests = new SizeRequest[source.Count];
 			if (collectionSelectorIndexed == null)
 				collectionSelectorIndexed = (e, i) => collectionSelector (e);
 			long deviation = 0;
 
-			Barrier barrier = new Barrier (options.PartitionCount, delegate {
-					Array.Sort (sizeRequests, (e1, e2) => e1.Item1.CompareTo (e2.Item1));
-					long newDeviation = deviation;
-					for (int i = sizeRequests.Length - 1; i >= 0; i--) {
-						var reqi = sizeRequests[i];
-						long newIndex = reqi.Item1 + deviation;
-						newDeviation += reqi.Item2 - 1;
-						for (int j = i - 1; j >= 0; j--)
-							newIndex += sizeRequests[j].Item2 - 1;
-						sizeRequests[i] = Tuple.Create (newIndex, reqi.Item2, reqi.Item3);
+			Barrier barrier = new Barrier (source.Count, delegate (Barrier b) {
+					Array.Sort (sizeRequests, KeyComparator);
+					for (int i = 0; i < b.ParticipantCount; ++i) {
+						if (sizeRequests[i].Key == -1)
+							continue;
+						sizeRequests[i].Key = deviation;
+						deviation += sizeRequests[i].Size;
 					}
-					deviation = newDeviation;
 				});
 
 			return source
@@ -120,22 +116,38 @@ namespace System.Linq.Parallel.QueryNodes
 		}
 		
 		IEnumerable<KeyValuePair<long, TResult>> GetOrderedEnumerableInternal (IEnumerable<KeyValuePair<long, TSource>> source,
-		                                                                       Tuple<long, int, IEnumerable<TCollection>>[] sizeRequests,
+		                                                                       SizeRequest[] sizeRequests,
 		                                                                       int index,
 		                                                                       Barrier barrier)
 		{
+			IEnumerator<KeyValuePair<long, TSource>> enumerator = source.GetEnumerator ();
+
 			try {
-				foreach (KeyValuePair<long, TSource> element in source) {
-					IEnumerable<TCollection> collection = collectionSelectorIndexed (element.Value, (int)element.Key);
-					sizeRequests[index] = Tuple.Create (element.Key, GetCount (ref collection), collection);
+				while (true) {
+					KeyValuePair<long, TSource> element;
+					IEnumerable<TCollection> collection;
+
+					if (enumerator.MoveNext ()) {
+						element = enumerator.Current;
+						collection = collectionSelectorIndexed (element.Value, (int)element.Key);
+						var count = GetCount (ref collection);
+
+						sizeRequests[index].Update (element.Key, count, collection, element.Value);
+					}
 
 					barrier.SignalAndWait ();
 
-					long i = sizeRequests[index].Item1;
-					collection = sizeRequests[index].Item3;
+					long i = sizeRequests[index].Key;
+					collection = sizeRequests[index].Collection;
+					var elementValue = sizeRequests[index].ElementValue;
+
+					sizeRequests[index].Clear ();
+
+					if (i == -1)
+						break;
 
 					foreach (TCollection item in collection)
-						yield return new KeyValuePair<long, TResult> (i++, resultSelector (element.Value, item));
+						yield return new KeyValuePair<long, TResult> (i++, resultSelector (elementValue, item));
 				}
 			} finally {
 				barrier.RemoveParticipant ();
@@ -156,6 +168,35 @@ namespace System.Linq.Parallel.QueryNodes
 			actual = foo;
 
 			return foo.Count;
+		}
+
+		static int KeyComparator (SizeRequest e1, SizeRequest e2)
+		{
+			return e1.Key.CompareTo (e2.Key);
+		}
+
+		struct SizeRequest
+		{
+			public long Key;
+			public int Size;
+			public IEnumerable<TCollection> Collection;
+			public TSource ElementValue;
+
+			public void Update (long k, int s, IEnumerable<TCollection> c, TSource ev)
+			{
+				Key = k;
+				Size = s;
+				Collection = c;
+				ElementValue = ev;
+			}
+
+			public void Clear ()
+			{
+				Key = -1;
+				Size = 0;
+				Collection = null;
+				ElementValue = default (TSource);
+			}
 		}
 	}
 }
