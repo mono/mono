@@ -42,10 +42,7 @@ namespace System.Collections.Concurrent.Partitioners
 		
 		int initialPartitionSize;
 		int partitionMultiplier;
-		
-		int index = 0;
-		readonly object syncLock = new object ();
-		
+
 		public EnumerablePartitioner (IEnumerable<T> source)
 			: this (source, InitialPartitionSize, PartitionMultiplier)
 		{
@@ -68,27 +65,57 @@ namespace System.Collections.Concurrent.Partitioners
 			
 			IEnumerator<KeyValuePair<long, T>>[] enumerators
 				= new IEnumerator<KeyValuePair<long, T>>[partitionCount];
-			
+
+			PartitionerState state = new PartitionerState ();
 			IEnumerator<T> src = source.GetEnumerator ();
+			bool isSimple = initialPartitionSize == 1 && partitionMultiplier == 1;
+			Console.WriteLine ("Using simple?: " + isSimple.ToString ());
 			
 			for (int i = 0; i < enumerators.Length; i++) {
-				enumerators[i] = GetPartitionEnumerator (src);
+				enumerators[i] = isSimple ? GetPartitionEnumeratorSimple (src, state, i == enumerators.Length - 1) : GetPartitionEnumerator (src, state);
 			}
 			
 			return enumerators;
 		}
+
+		// This partitioner that is simpler than the general case (don't use a list) is called in the case
+		// of initialPartitionSize == partitionMultiplier == 1
+		IEnumerator<KeyValuePair<long, T>> GetPartitionEnumeratorSimple (IEnumerator<T> src,
+		                                                                 PartitionerState state,
+		                                                                 bool last)
+		{
+			long index = -1;
+			var value = default (T);
+
+			try {
+				do {
+					lock (state.SyncLock) {
+						if (!src.MoveNext ())
+							break;
+
+						index = state.Index++;
+						value = src.Current;
+					}
+
+					yield return new KeyValuePair<long, T> (index, value);
+				} while (true);
+			} finally {
+				if (last)
+					src.Dispose ();
+			}
+		}
 		
-		IEnumerator<KeyValuePair<long, T>> GetPartitionEnumerator (IEnumerator<T> src)
+		IEnumerator<KeyValuePair<long, T>> GetPartitionEnumerator (IEnumerator<T> src, PartitionerState state)
 		{
 			int count = initialPartitionSize;
 			List<T> list = new List<T> ();
 			
 			while (true) {
 				list.Clear ();
-				int ind = -1;
+				long ind = -1;
 				
-				lock (syncLock) {
-					ind = index;
+				lock (state.SyncLock) {
+					ind = state.Index;
 					
 					for (int i = 0; i < count; i++) {
 						if (!src.MoveNext ()) {
@@ -99,18 +126,22 @@ namespace System.Collections.Concurrent.Partitioners
 						}
 						
 						list.Add (src.Current);
-						index++;
+						state.Index++;
 					}					
 				}
-				
-				
 				
 				for (int i = 0; i < list.Count; i++)
 					yield return new KeyValuePair<long, T> (ind + i, list[i]);
 				
 				count *= partitionMultiplier;
 			}
-		}                                  
+		}
+
+		class PartitionerState
+		{
+			public long Index = 0;
+			public readonly object SyncLock = new object ();
+		}
 	}
 }
 #endif
