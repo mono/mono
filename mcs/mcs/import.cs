@@ -173,7 +173,7 @@ namespace Mono.CSharp
 			return new EventSpec (declaringType, definition, ImportType (ei.EventHandlerType, ei, 0), add.Modifiers, add, remove);
 		}
 
-		T[] CreateGenericParameters<T> (Type type, TypeSpec declaringType) where T : TypeSpec
+		TypeParameterSpec[] CreateGenericParameters (Type type, TypeSpec declaringType)
 		{
 			Type[] tparams = type.GetGenericArguments ();
 
@@ -210,29 +210,60 @@ namespace Mono.CSharp
 			if (tparams.Length - parent_owned_count == 0)
 				return null;
 
-			return CreateGenericParameters<T> (parent_owned_count, tparams, null, 0);
+			return CreateGenericParameters (parent_owned_count, tparams);
 		}
 
-		T[] CreateGenericParameters<T> (int first, Type[] tparams, ICustomAttributeProvider ca, int dynamicCursor) where T : TypeSpec
+		TypeParameterSpec[] CreateGenericParameters (int first, Type[] tparams)
 		{
-			var tspec = new T [tparams.Length - first];
+			var tspec = new TypeParameterSpec[tparams.Length - first];
 			for (int pos = first; pos < tparams.Length; ++pos) {
 				var type = tparams[pos];
 				int index = pos - first;
 
+				tspec [index] = (TypeParameterSpec) CreateType (type, null, 0, false);
+			}
+
+			return tspec;
+		}
+
+		TypeSpec[] CreateGenericArguments (int first, Type[] tparams, ICustomAttributeProvider ca, int dynamicCursor)
+		{
+			var tspec = new TypeSpec [tparams.Length - first];
+			for (int pos = first; pos < tparams.Length; ++pos) {
+				var type = tparams[pos];
+				int index = pos - first;
+
+				TypeSpec spec;
 				if (type.HasElementType) {
 					var element = type.GetElementType ();
-					var spec = ImportType (element);
+					spec = ImportType (element, ca, dynamicCursor + 1);
 
-					if (type.IsArray) {
-						tspec[index] = (T) (TypeSpec) ArrayContainer.MakeType (spec, type.GetArrayRank ());
-						continue;
+					if (!type.IsArray) {
+						throw new NotImplementedException ("Unknown element type " + type.ToString ());
 					}
 
-					throw new NotImplementedException ("Unknown element type " + type.ToString ());
+					spec = ArrayContainer.MakeType (spec, type.GetArrayRank ());
+				} else {
+					spec = CreateType (type, ca, dynamicCursor, true);
+
+					//
+					// We treat nested generic types as inflated internally where
+					// reflection uses type definition
+					//
+					// class A<T> {
+					//    IFoo<A<T>> foo;	// A<T> is definition in this case
+					// }
+					//
+					// TODO: Is full logic from CreateType needed here as well?
+					//
+					if (type.IsGenericTypeDefinition) {
+						var targs = CreateGenericArguments (0, type.GetGenericArguments (), ca, dynamicCursor + 1);
+						spec = spec.MakeGenericType (targs);
+					}
 				}
 
-				tspec [index] = (T) CreateType (type, ca, dynamicCursor + index + 1, true);
+				++dynamicCursor;
+				tspec[index] = spec;
 			}
 
 			return tspec;
@@ -250,7 +281,7 @@ namespace Mono.CSharp
 				if (!mb.IsGenericMethodDefinition)
 					throw new NotSupportedException ("assert");
 
-				tparams = CreateGenericParameters<TypeParameterSpec>(0, mb.GetGenericArguments (), null, 0);
+				tparams = CreateGenericParameters (0, mb.GetGenericArguments ());
 				definition = new ImportedGenericMethodDefinition ((MethodInfo) mb, parameters, tparams);
 			} else {
 				definition = new ImportedMethodDefinition (mb, parameters);
@@ -546,9 +577,9 @@ namespace Mono.CSharp
 				// Do resolve the type process again in that case
 			}
 
-			if (type.IsGenericType && !type.IsGenericTypeDefinition) {	
+			if (type.IsGenericType && !type.IsGenericTypeDefinition) {
 				var type_def = type.GetGenericTypeDefinition ();
-				var targs = CreateGenericParameters<TypeSpec> (0, type.GetGenericArguments (), ca, dynamicCursor);
+				var targs = CreateGenericArguments (0, type.GetGenericArguments (), ca, dynamicCursor + 1);
 				if (declaringType == null) {
 					// Simple case, no nesting
 					spec = CreateType (type_def, null, null, 0, canImportBaseType);
@@ -674,7 +705,7 @@ namespace Mono.CSharp
 				// Return as type_cache was updated
 				return CreateTypeParameter (type, declaringType);
 			} else if (type.IsGenericTypeDefinition) {
-				definition.TypeParameters = CreateGenericParameters<TypeParameterSpec>(type, declaringType);
+				definition.TypeParameters = CreateGenericParameters (type, declaringType);
 
 				// Constraints are not loaded on demand and can reference this type
 				if (import_cache.TryGetValue (type, out spec))

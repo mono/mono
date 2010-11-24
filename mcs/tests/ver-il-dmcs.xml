@@ -2753,6 +2753,19 @@
       </method>
     </type>
   </test>
+  <test name="dtest-052.cs">
+    <type name="A">
+      <method name="Void Method(DynamicReference)">
+        <size>191</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-cls-01.cs">
     <type name="A">
       <method name="Void Main()">
@@ -7439,6 +7452,16 @@
     <type name="C">
       <method name="Int32 Main()">
         <size>27</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-166.cs">
+    <type name="Foo">
+      <method name="Void Main()">
+        <size>7</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -22911,6 +22934,16 @@
     <type name="A">
       <method name="Int32 Main()">
         <size>150</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-fixedbuffer-09.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>65</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -43059,27 +43092,6 @@
       </method>
       <method name="Int32 Main()">
         <size>2</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-695.cs">
-    <type name="Program">
-      <method name="Int32 Main()">
-        <size>680</size>
-      </method>
-      <method name="System.String get_BaseDirectory()">
-        <size>28</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void .cctor()">
-        <size>53</size>
-      </method>
-    </type>
-    <type name="&lt;PrivateImplementationDetails&gt;">
-      <method name="Void .ctor()">
-        <size>7</size>
       </method>
     </type>
   </test>
