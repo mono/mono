@@ -45,8 +45,27 @@ namespace System.Xaml.Schema
 
 			result = null;
 			IList<XamlTypeName> args = null;
+			int nArray = 0;
+			int idx;
 
-			int idx = typeName.IndexOf ('(');
+			if (typeName.Length > 2 && typeName [typeName.Length - 1] == ']') {
+				idx = typeName.LastIndexOf ('[');
+				if (idx < 0)
+					return false; // mismatch brace
+				nArray = 1;
+				for (int i = idx + 1; i < typeName.Length - 1; i++) {
+					if (typeName [i] != ',')
+						return false; // only ',' is expected
+					nArray++;
+				}
+				if (!TryParse (typeName.Substring (0, idx), namespaceResolver, out result))
+					return false;
+				// Weird result, but Name ends with '[]'
+				result = new XamlTypeName (result.Namespace, result.Name + '[' + new string (',', nArray - 1) + ']', result.TypeArguments);
+				return true;
+			}
+
+			idx = typeName.IndexOf ('(');
 			if (idx >= 0) {
 				if (typeName [typeName.Length - 1] != ')')
 					return false;
@@ -203,11 +222,17 @@ namespace System.Xaml.Schema
 					throw new InvalidOperationException (String.Format ("Could not lookup prefix for namespace '{0}'", Namespace));
 				ret = p.Length == 0 ? Name : p + ":" + Name;
 			}
+			string arr = null;
+			if (ret [ret.Length - 1] == ']') {
+				int idx = ret.LastIndexOf ('[');
+				arr = ret.Substring (idx);
+				ret = ret.Substring (0, idx);
+			}
 
 			if (TypeArguments.Count > 0)
 				ret += String.Concat ("(", DoToString (TypeArguments, prefixLookup), ")");
 
-			return ret;
+			return ret + arr;
 		}
 	}
 }
