@@ -63,22 +63,23 @@ namespace System.Linq.Parallel.QueryNodes
 		internal override IList<IEnumerable<TSource>> GetEnumerablesIndexed (QueryOptions options)
 		{
 			return Parent.GetOrderedEnumerables (options)
-				.Select ((i) => i.Where ((e) => indexedPredicate (e.Value, (int)e.Key)).Select ((e) => e.Value))
+				.Select (i => i.Where (e => indexedPredicate (e.Value, (int)e.Key)).Select (e => e.Value))
 				.ToList ();
 		}
 
 		internal override IList<IEnumerable<TSource>> GetEnumerablesNonIndexed (QueryOptions options)
 		{
 			return Parent.GetEnumerables (options)
-				.Select ((i) => i.Where (predicate))
+				.Select (i => i.Where (predicate))
 				.ToList ();
 		}
 
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
 		{
 			IList<IEnumerable<KeyValuePair<long, TSource>>> sources = Parent.GetOrderedEnumerables (options);
+			Console.WriteLine ("QueryWhere nod number of element: " + sources.Count);
 
-			Tuple<TSource, long, bool>[] store = new Tuple<TSource, long, bool>[sources.Count];
+			ProcessingSlot[] store = new ProcessingSlot[sources.Count];
 			long lastIndex = 0;
 
 			Barrier barrier = new Barrier (sources.Count, delegate (Barrier b) {
@@ -87,11 +88,8 @@ namespace System.Linq.Parallel.QueryNodes
 
 				// Reassign a good index
 				int i = 0;
-
-				for (i = 0; i < store.Length && store[i].Item3; i++) {
-					Tuple<TSource, long, bool> old = store[i];
-					store[i] = Tuple.Create (old.Item1, lastIndex + i, old.Item3);
-				}
+				for (i = 0; i < store.Length && store[i].IsValid; ++i)
+					store[i].Index = lastIndex + i;
 
 				// Update lastIndex for next round
 				lastIndex += i;
@@ -102,48 +100,66 @@ namespace System.Linq.Parallel.QueryNodes
 				.ToList ();
 		}
 
-		static int ArraySortMethod (Tuple<TSource, long, bool> lhs, Tuple<TSource, long, bool> rhs)
+		static int ArraySortMethod (ProcessingSlot lhs, ProcessingSlot rhs)
 		{
-			if (lhs.Item3 && !rhs.Item3)
+			if (lhs.IsValid && !rhs.IsValid)
 				return -1;
-			if (!lhs.Item3 && rhs.Item3)
+			if (!lhs.IsValid && rhs.IsValid)
 				return 1;
-			if (!lhs.Item3 && !rhs.Item3)
+			if (!lhs.IsValid && !rhs.IsValid)
 				return 0;
 
-			return (lhs.Item2 < rhs.Item2) ? -1 : 1;
+			return lhs.Index < rhs.Index ? -1 : 1;
 		}
 
 		IEnumerable<KeyValuePair<long, TSource>> GetEnumerator (IEnumerable<KeyValuePair<long, TSource>> source,
 		                                                        Barrier barrier,
 		                                                        CancellationToken token,
-		                                                        Tuple<TSource, long, bool>[] store, int index)
+		                                                        ProcessingSlot[] store, int index)
 		{
 			IEnumerator<KeyValuePair<long, TSource>> current = source.GetEnumerator ();
-			bool result;
-			Tuple<TSource, long, bool> reset = Tuple.Create (default (TSource), long.MaxValue, false);
+			bool isIndexed = IsIndexed;
 
 			try {
 				while (current.MoveNext ()) {
 					KeyValuePair<long, TSource> curr = current.Current;
 
-					result = IsIndexed ? indexedPredicate (curr.Value, (int)curr.Key) : predicate (curr.Value);
-					store[index] = Tuple.Create (curr.Value, curr.Key, result);
+					bool result = isIndexed ? indexedPredicate (curr.Value, (int)curr.Key) : predicate (curr.Value);
+					store[index].Update (curr.Value, curr.Key, result);
 
 					barrier.SignalAndWait (token);
 
-					Tuple<TSource, long, bool> value = store [index];
+					var value = store [index];
 
-					if (value.Item3)
-						yield return new KeyValuePair<long, TSource> (value.Item2, value.Item1);
+					if (value.IsValid)
+						yield return new KeyValuePair<long, TSource> (value.Index, value.Value);
 
 					// Reset
-					store[index] = reset;
+					store[index].Clear ();
 				}
 			} finally {
 				// Remove our participation
 				barrier.RemoveParticipant ();
 				current.Dispose ();
+			}
+		}
+
+		struct ProcessingSlot
+		{
+			public TSource Value;
+			public long Index;
+			public bool IsValid;
+
+			public void Update (TSource v, long i, bool t)
+			{
+				Value = v;
+				Index = i;
+				IsValid = t;
+			}
+
+			public void Clear ()
+			{
+				Update (default (TSource), long.MaxValue, false);
 			}
 		}
 	}
