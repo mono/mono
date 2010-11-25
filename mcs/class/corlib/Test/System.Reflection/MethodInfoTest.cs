@@ -691,6 +691,18 @@ namespace MonoTests.System.Reflection
 			Assert.AreSame (gmd, oi);
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MakeGenericMethodRespectConstraints ()
+		{
+			var m = typeof (MethodInfoTest).GetMethod ("TestMethod");
+			m.MakeGenericMethod (typeof (Type));
+		}
+
+		public void TestMethod <T> () where T : string
+		{
+		}
+
 		public class MyList<T>
 		{
 			public TOutput ConvertAll<TOutput> (Foo<T,TOutput> arg)
