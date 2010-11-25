@@ -2162,7 +2162,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override TypeBuilder DefineType ()
+		public override void DefineType ()
 		{
 			throw new Exception ();
 		}

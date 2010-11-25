@@ -491,7 +491,7 @@ namespace Mono.CSharp
 			get { throw new InternalErrorException ("should not be called"); }
 		}
 
-		public override TypeBuilder DefineType ()
+		public override void DefineType ()
 		{
 			throw new InternalErrorException ("should not be called");
 		}

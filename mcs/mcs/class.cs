@@ -1295,26 +1295,24 @@ namespace Mono.CSharp {
 			return TypeBuilder;
 		}
 
-		public override TypeBuilder DefineType ()
+		public override void DefineType ()
 		{
 			if (error)
-				return null;
+				return;
 			if (type_defined)
-				return TypeBuilder;
+				return;
 
 			type_defined = true;
 
 			if (!DefineBaseTypes ()) {
 				error = true;
-				return null;
+				return;
 			}
 
 			if (!DefineNestedTypes ()) {
 				error = true;
-				return null;
+				return;
 			}
-
-			return TypeBuilder;
 		}
 
 		public override void SetParameterInfo (List<Constraints> constraints_list)
@@ -1413,8 +1411,7 @@ namespace Mono.CSharp {
 		{
 			if (Types != null) {
 				foreach (TypeContainer tc in Types)
-					if (tc.DefineType () == null)
-						return false;
+					tc.DefineType ();
 			}
 
 			return true;
