@@ -249,9 +249,6 @@ namespace MonoTests.System.Xaml
 			// passes here, but ...
 			xw.WriteValue ("foo");
 			// rejected here, unlike XamlXmlWriter.
-			//
-			// Basically, assume that no content could be written 
-			// for an object member within XamlObjectWriter.
 			xw.WriteEndMember ();
 		}
 
@@ -285,7 +282,6 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		[ExpectedException (typeof (XamlDuplicateMemberException))]
-		[Category ("NotWorking")]
 		public void DuplicateAssignment2 ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
@@ -337,6 +333,7 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		// This behavior is different from XamlXmlWriter. Compare to XamlXmlWriterTest.WriteValueList().
+		[Category ("NotWorking")] // not worthy of passing
 		public void WriteValueList ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
@@ -539,7 +536,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // not worthy of passing
 		public void StartMemberBeforeNamespace ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
@@ -599,7 +596,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetObjectOnIntValue ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
@@ -812,8 +808,17 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Write_GuidFactoryMethod ()
+		{
+			var obj = Guid.Parse ("9c3345ec-8922-4662-8e8d-a4e41f47cf09");
+			using (var xr = GetReader ("GuidFactoryMethod.xml")) {
+				var des = XamlServices.Load (xr);
+				Assert.AreEqual (obj, des, "#1");
+			}
+		}
+
+		[Test]
 		[ExpectedException (typeof (XamlObjectWriterException))] // cannot resolve the StaticExtension value.
-		[Category ("NotWorking")]
 		public void Write_StaticExtension ()
 		{
 			var obj = new StaticExtension ("FooBar");
@@ -888,7 +893,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_DictionaryInt32String ()
 		{
 			var dic = new Dictionary<int,string> ();
@@ -902,7 +906,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_DictionaryStringType ()
 		{
 			var dic = new Dictionary<string,Type> ();
