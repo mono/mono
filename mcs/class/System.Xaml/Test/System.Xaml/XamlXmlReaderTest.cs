@@ -55,14 +55,6 @@ namespace MonoTests.System.Xaml
 				r.Read ();
 		}
 
-		T LoadTest<T> (string filename)
-		{
-			Type type = typeof (T);
-			var obj = XamlServices.Load (GetReader (filename));
-			Assert.AreEqual (type, obj.GetType (), "type");
-			return (T) obj;
-		}
-
 		[Test]
 		public void SchemaContext ()
 		{
@@ -73,47 +65,36 @@ namespace MonoTests.System.Xaml
 		public void Read_Int32 ()
 		{
 			ReadTest ("Int32.xml");
-			var ret = LoadTest<int> ("Int32.xml");
-			Assert.AreEqual (5, ret, "ret");
 		}
 
 		[Test]
 		public void Read_DateTime ()
 		{
 			ReadTest ("DateTime.xml");
-			var ret = LoadTest<DateTime> ("DateTime.xml");
-			Assert.AreEqual (new DateTime (2010, 4, 14), ret, "ret");
 		}
 
 		[Test]
 		public void Read_TimeSpan ()
 		{
 			ReadTest ("TimeSpan.xml");
-			var ret = LoadTest<TimeSpan> ("TimeSpan.xml");
-			Assert.AreEqual (TimeSpan.FromMinutes (7), ret, "ret");
 		}
 
 		[Test]
 		public void Read_ArrayInt32 ()
 		{
 			ReadTest ("Array_Int32.xml");
-			var ret = LoadTest<int[]> ("Array_Int32.xml");
-			Assert.AreEqual (5, ret.Length, "#1");
-			Assert.AreEqual (2147483647, ret [4], "#2");
 		}
 
 		[Test]
 		public void Read_DictionaryInt32String ()
 		{
 			ReadTest ("Dictionary_Int32_String.xml");
-			//LoadTest<Dictionary<int,string>> ("Dictionary_Int32_String.xml");
 		}
 
 		[Test]
 		public void Read_DictionaryStringType ()
 		{
 			ReadTest ("Dictionary_String_Type.xml");
-			//LoadTest<Dictionary<string,Type>> ("Dictionary_String_Type.xml");
 		}
 
 		[Test]
@@ -126,16 +107,12 @@ namespace MonoTests.System.Xaml
 		public void Read_Guid ()
 		{
 			ReadTest ("Guid.xml");
-			var ret = LoadTest<Guid> ("Guid.xml");
-			Assert.AreEqual (Guid.Parse ("9c3345ec-8922-4662-8e8d-a4e41f47cf09"), ret, "ret");
 		}
 
 		[Test]
 		public void Read_GuidFactoryMethod ()
 		{
 			ReadTest ("GuidFactoryMethod.xml");
-			//var ret = LoadTest<Guid> ("GuidFactoryMethod.xml");
-			//Assert.AreEqual (Guid.Parse ("9c3345ec-8922-4662-8e8d-a4e41f47cf09"), ret, "ret");
 		}
 
 		[Test]
@@ -271,8 +248,6 @@ namespace MonoTests.System.Xaml
 		{
 			var r = GetReader ("String.xml");
 			Read_String (r);
-			var ret = LoadTest<string> ("String.xml");
-			Assert.AreEqual ("foo", ret, "ret");
 		}
 
 		[Test]
@@ -339,8 +314,6 @@ namespace MonoTests.System.Xaml
 		{
 			var r = GetReader ("Reference.xml");
 			Read_Reference (r);
-			var ret = XamlServices.Load (GetReader ("Reference.xml"));
-			Assert.IsNotNull (ret, "#1"); // the returned value is however not a Reference (in .NET 4.0 it is MS.Internal.Xaml.Context.NameFixupToken).
 		}
 		
 		[Test]
@@ -348,7 +321,6 @@ namespace MonoTests.System.Xaml
 		{
 			var r = GetReader ("NullExtension.xml");
 			Read_NullOrNullExtension (r, null);
-			Assert.IsNull (XamlServices.Load (GetReader ("NullExtension.xml")));
 		}
 		
 		[Test]
@@ -363,9 +335,6 @@ namespace MonoTests.System.Xaml
 		{
 			var r = GetReader ("List_Int32.xml");
 			Read_ListInt32 (r, null, new int [] {5, -3, int.MaxValue, 0}.ToList ());
-			var ret = LoadTest<List<int>> ("List_Int32.xml");
-			Assert.AreEqual (4, ret.Count, "#1");
-			Assert.AreEqual (2147483647, ret [2], "#2");
 		}
 		
 		[Test]
