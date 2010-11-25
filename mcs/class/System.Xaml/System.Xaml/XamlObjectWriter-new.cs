@@ -359,7 +359,6 @@ namespace System.Xaml
 					ms.Value = GetCorrectlyTypedValue (xm.Type, obj);
 				else {
 					var mt = xm.Type;
-//Console.Error.WriteLine ("COMMIT: {0} member: {1} msv: {2} ({3})", obj, ms.Member, ms.Value, keyObj);
 					if (ms.Member == XamlLanguage.Items ||
 					    ms.Member == XamlLanguage.PositionalParameters ||
 					    ms.Member == XamlLanguage.Arguments) {
