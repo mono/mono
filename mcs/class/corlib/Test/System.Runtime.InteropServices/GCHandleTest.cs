@@ -9,7 +9,9 @@
 
 using NUnit.Framework;
 using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Globalization;
 
 namespace MonoTests.System.Runtime.InteropServices
 {
@@ -123,6 +125,74 @@ namespace MonoTests.System.Runtime.InteropServices
 				gch.Free ();
 			}
 		}
+
+		[Test]
+		public void WeakHandleWorksOnNonRootDomain ()
+		{
+			Console.WriteLine("current app domain: " + AppDomain.CurrentDomain.Id);
+			AppDomain domain = AppDomain.CreateDomain("testdomain");
+
+			Assembly ea = Assembly.GetExecutingAssembly ();
+			domain.CreateInstanceFrom (ea.CodeBase,
+				typeof (AssemblyResolveHandler).FullName,
+				false,
+				BindingFlags.Public | BindingFlags.Instance,
+				null,
+				new object [] { ea.Location, ea.FullName },
+				CultureInfo.InvariantCulture,
+				null,
+				null);
+
+
+			var testerType = typeof (CrossDomainGCHandleRunner);
+			var r = (CrossDomainGCHandleRunner)domain.CreateInstanceAndUnwrap (
+				testerType.Assembly.FullName, testerType.FullName, false,
+				BindingFlags.Public | BindingFlags.Instance, null, new object [0],
+				CultureInfo.InvariantCulture, new object [0], null);
+
+
+			Assert.IsTrue (r.RunTest (), "#1");
+			AppDomain.Unload (domain);
+		}
+
+		public class CrossDomainGCHandleRunner : MarshalByRefObject {
+			public bool RunTest () {
+				object o = new object();
+				GCHandle gcHandle = GCHandle.Alloc (o, GCHandleType.Weak);
+				IntPtr intPtr = (IntPtr)gcHandle;
+				
+				try {
+					object target = GCHandle.FromIntPtr(intPtr).Target;
+					return true;
+				} catch (Exception) {}
+				return false;
+			}
+		}
+		
+		[Serializable ()]
+		class AssemblyResolveHandler
+		{
+			public AssemblyResolveHandler (string assemblyFile, string assemblyName)
+			{
+				_assemblyFile = assemblyFile;
+				_assemblyName = assemblyName;
+
+				AppDomain.CurrentDomain.AssemblyResolve +=
+					new ResolveEventHandler (ResolveAssembly);
+			}
+
+			private Assembly ResolveAssembly (object sender, ResolveEventArgs args)
+			{
+				if (args.Name == _assemblyName)
+					return Assembly.LoadFrom (_assemblyFile);
+
+				return null;
+			}
+
+			private readonly string _assemblyFile;
+			private readonly string _assemblyName;
+		}
 	}
+
 }
 
