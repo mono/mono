@@ -95,8 +95,6 @@ namespace System.Xaml.Schema
 			return true;
 		}
 
-		static readonly char [] commas = {','};
-
 		public static IList<XamlTypeName> ParseList (string typeNameList, IXamlNamespaceResolver namespaceResolver)
 		{
 			IList<XamlTypeName> list;
@@ -104,6 +102,8 @@ namespace System.Xaml.Schema
 				throw new FormatException (String.Format ("Invalid type name list: '{0}'", typeNameList));
 			return list;
 		}
+
+		static readonly char [] comma_or_parens = new char [] {',', '(', ')'};
 
 		public static bool TryParseList (string typeNameList, IXamlNamespaceResolver namespaceResolver, out IList<XamlTypeName> list)
 		{
@@ -113,21 +113,47 @@ namespace System.Xaml.Schema
 				throw new ArgumentNullException ("namespaceResolver");
 
 			list = null;
-			var split = typeNameList.Split (commas);
-			if (split.Length == 0)
-				return false;
+			int idx = 0;
+			int parens = 0;
+			XamlTypeName tn;
 
-			var arr = new XamlTypeName [split.Length];
-
-			for (int i = 0; i < split.Length; i++) {
-				var s = split [i].Trim ();
-				XamlTypeName tn;
-				if (!TryParse (s, namespaceResolver, out tn))
-					return false;
-				arr [i] = tn;
+			List<string> l = new List<string> ();
+			int lastToken = 0;
+			while (true) {
+				int i = typeNameList.IndexOfAny (comma_or_parens, idx);
+				if (i < 0) {
+					l.Add (typeNameList.Substring (lastToken));
+					break;
+				}
+				
+				switch (typeNameList [i]) {
+				case ',':
+					if (parens != 0)
+						break;
+					l.Add (typeNameList.Substring (idx, i - idx));
+					break;
+				case '(':
+					parens++;
+					break;
+				case ')':
+					parens--;
+					break;
+				}
+				idx = i + 1;
+				while (idx < typeNameList.Length && typeNameList [idx] == ' ')
+					idx++;
+				if (parens == 0 && typeNameList [i] == ',')
+					lastToken = idx;
 			}
 
-			list = arr;
+			var ret = new List<XamlTypeName> ();
+		 	foreach (var s in l) {
+				if (!TryParse (s, namespaceResolver, out tn))
+					return false;
+				ret.Add (tn);
+			}
+
+			list = ret;
 			return true;
 		}
 

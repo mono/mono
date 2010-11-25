@@ -410,6 +410,19 @@ namespace MonoTests.System.Xaml.Schema
 			Assert.AreEqual ("{urn:foo}Nullable({urn:foo}Int32)[,,]", xn.ToString (), "#3");
 		}
 
+		[Test]
+		public void GenericGenericName ()
+		{
+			var ns = new MyNSResolver ();
+			ns.Add ("s", "urn:foo");
+			ns.Add ("", "urn:bar");
+			ns.Add ("x", XamlLanguage.Xaml2006Namespace);
+			var xn = XamlTypeName.Parse ("List(KeyValuePair(x:Int32, s:DateTime))", ns);
+			Assert.AreEqual ("urn:bar", xn.Namespace, "#1");
+			Assert.AreEqual ("List", xn.Name, "#2");
+			Assert.AreEqual ("{urn:bar}List({urn:bar}KeyValuePair({http://schemas.microsoft.com/winfx/2006/xaml}Int32, {urn:foo}DateTime))", xn.ToString (), "#3");
+		}
+
 		class MyNSResolver : IXamlNamespaceResolver
 		{
 			public MyNSResolver ()
