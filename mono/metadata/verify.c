@@ -6498,6 +6498,13 @@ mono_verifier_verify_class (MonoClass *class)
 		return FALSE;
 	return TRUE;
 }
+
+gboolean
+mono_verifier_class_is_valid_generic_instantiation (MonoClass *class)
+{
+	return mono_class_is_valid_generic_instantiation (NULL, class);
+}
+
 #else
 
 gboolean
@@ -6569,4 +6576,12 @@ mono_image_verify_tables (MonoImage *image, int level)
 	/* The verifier was disabled at compile time */
 	return NULL;
 }	
+
+gboolean
+mono_verifier_class_is_valid_generic_instantiation (MonoClass *class)
+{
+	return TRUE;
+}
+
+
 #endif
