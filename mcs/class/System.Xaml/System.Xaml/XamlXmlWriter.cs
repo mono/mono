@@ -196,6 +196,7 @@ namespace System.Xaml
 
 			public string FactoryMethod;
 			public object Value;
+			public object KeyValue;
 			public List<MemberAndValue> WrittenProperties = new List<MemberAndValue> ();
 			public bool IsInstantiated;
 		}
@@ -209,7 +210,6 @@ namespace System.Xaml
 
 			public XamlMember Member;
 			public object Value;
-			public object KeyValue;
 			public AllowedMemberLocations OccuredAs = AllowedMemberLocations.None;
 		}
 
@@ -257,9 +257,6 @@ namespace System.Xaml
 			manager.GetObject ();
 
 			var xm = CurrentMember;
-
-			if (!xm.Type.IsCollection)
-				throw new InvalidOperationException (String.Format ("WriteGetObject method can be invoked only when current member '{0}' is of collection type", xm.Name));
 
 			var state = new ObjectState () {Type = xm.Type, IsGetObject = true};
 
@@ -485,9 +482,16 @@ namespace System.Xaml
 
 		protected override void OnWriteGetObject ()
 		{
-			WritePendingStartMember (XamlNodeType.GetObject);
+			if (object_states.Count > 1) {
+				var state = object_states.Pop ();
 
-			// Other than above, nothing to do.
+				if (!CurrentMember.Type.IsCollection)
+					throw new InvalidOperationException (String.Format ("WriteGetObject method can be invoked only when current member '{0}' is of collection type", CurrentMember));
+
+				object_states.Push (state);
+			}
+
+			WritePendingStartMember (XamlNodeType.GetObject);
 		}
 		
 		void WritePendingStartMember (XamlNodeType nodeType)

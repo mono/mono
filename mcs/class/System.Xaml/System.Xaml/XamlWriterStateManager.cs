@@ -108,10 +108,11 @@ namespace System.Xaml
 			allow_object_after_value = isXmlWriter;
 			allow_parallel_values = !isXmlWriter;
 			allow_empty_member = !isXmlWriter;
+			allow_multiple_results = !isXmlWriter;
 		}
 
 		// configuration
-		bool allow_ns_at_value, allow_object_after_value, allow_parallel_values, allow_empty_member;
+		bool allow_ns_at_value, allow_object_after_value, allow_parallel_values, allow_empty_member, allow_multiple_results;
 
 		// state
 		XamlWriteState state = XamlWriteState.Initial;
@@ -146,7 +147,7 @@ namespace System.Xaml
 		{
 			RejectNamespaces (XamlNodeType.EndObject);
 			CheckState (XamlNodeType.EndObject);
-			state = hasMoreNodes ? XamlWriteState.ObjectWritten : XamlWriteState.End;
+			state = hasMoreNodes ? XamlWriteState.ObjectWritten : allow_multiple_results ? XamlWriteState.Initial : XamlWriteState.End;
 		}
 
 		public void GetObject ()
