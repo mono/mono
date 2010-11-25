@@ -326,5 +326,28 @@ namespace MonoTests.System.Reflection
 			} catch (ArgumentException) {
 			}
 		}
+
+		// test case adapted from http://www.chrishowie.com/2010/11/24/mutable-strings-in-mono/
+		public class FakeString {
+			public int length;
+			public char start_char;
+		}
+
+		private static FakeString UnsafeConversion<T> (T thing) where T : FakeString
+		{
+			return thing;
+		}
+
+		[Test]
+		public void MutableString ()
+		{
+			var m = typeof (MethodBaseTest).GetMethod ("UnsafeConversion", BindingFlags.NonPublic | BindingFlags.Static);
+			try {
+				var m2 = m.MakeGenericMethod (typeof (string));
+				Assert.Fail ("MakeGenericMethod");
+			}
+			catch (ArgumentException) {
+			}
+		}
 	}
 }
