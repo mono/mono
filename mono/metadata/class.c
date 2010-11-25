@@ -4530,6 +4530,9 @@ mono_class_init (MonoClass *class)
 			setup_interface_offsets (class, 0);
 	}
 
+	if (class->generic_class && !mono_verifier_class_is_valid_generic_instantiation (class))
+		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Invalid generic instantiation"));
+
 	goto leave;
 
  leave:
