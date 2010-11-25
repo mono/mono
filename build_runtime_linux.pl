@@ -48,10 +48,10 @@ if (not $skipbuild)
 
 	if ($debug)
 	{
-		$ENV{CFLAGS} = "-g -O0";
+		$ENV{CFLAGS} = "-m32 -g -O0";
 	} else
 	{
-		$ENV{CFLAGS} = "-Os"  #optimize for size
+		$ENV{CFLAGS} = "-m32 -Os"  #optimize for size
 	}
 
 	#this will fail on a fresh working copy, so don't die on it.
