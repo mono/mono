@@ -386,8 +386,8 @@ typedef struct {
 #define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 
 #define MONO_ARCH_HAVE_LLVM_IMT_TRAMPOLINE 1
-
 #define MONO_ARCH_USE_OP_TAIL_CALL(caller_sig, callee_sig) mono_metadata_signature_equal ((caller_sig), (callee_sig))
+#define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)
