@@ -13,10 +13,7 @@
 // statements even when the expression is incomplete (for example
 // completing inside a lambda
 //
-using System;
 using System.Collections.Generic;
-using System.Text;
-using Mono.CSharp.Linq;
 using System.Linq;
 
 namespace Mono.CSharp {

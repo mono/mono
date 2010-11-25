@@ -9,15 +9,15 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 
-namespace Mono.CSharp {
-	using System;
-	using System.Collections.Generic;
-	using System.Reflection;
-	using System.Reflection.Emit;
-	using System.Text;
-	using System.Linq;
-	using SLE = System.Linq.Expressions;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Linq;
+using SLE = System.Linq.Expressions;
 
+namespace Mono.CSharp
+{
 	//
 	// This is an user operator expression, automatically created during
 	// resolve phase
@@ -7976,7 +7976,7 @@ namespace Mono.CSharp {
 			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				Expr.Emit (ec);
 		}
-		
+
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))

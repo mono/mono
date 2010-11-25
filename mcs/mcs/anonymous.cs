@@ -10,7 +10,6 @@
 //
 
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;

@@ -19,7 +19,6 @@
 // and are fully resolved when born.
 //
 
-using System;
 using System.Reflection.Emit;
 
 namespace Mono.CSharp {

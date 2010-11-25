@@ -11,17 +11,17 @@
 // Copyright 2004, 2005, 2006, 2007, 2008 Novell, Inc
 //
 
+using System;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Globalization;
+using System.Diagnostics;
+
 namespace Mono.CSharp
 {
-	using System;
-	using System.Reflection;
-	using System.Reflection.Emit;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Text;
-	using System.Globalization;
-	using System.Diagnostics;
-
 	public enum Target {
 		Library, Exe, Module, WinExe
 	};
@@ -326,12 +326,13 @@ namespace Mono.CSharp
 
 		void BadAssembly (string filename, string log)
 		{
+/*
 			MethodInfo adder_method = null; // AssemblyDefinition.AddModule_Method;
 
 			if (adder_method != null) {
 				AssemblyName an = new AssemblyName ();
 				an.Name = ".temp";
-				AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
+				var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
 				try {
 					object m = null;
 					try {
@@ -353,6 +354,7 @@ namespace Mono.CSharp
 					// swallow exception
 				}
 			}
+*/
 			Error9 ("assembly", filename, log);
 		}
 

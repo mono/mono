@@ -11,7 +11,6 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
