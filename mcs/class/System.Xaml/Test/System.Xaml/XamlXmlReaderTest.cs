@@ -343,6 +343,13 @@ namespace MonoTests.System.Xaml
 			var r = GetReader ("List_Int32_2.xml");
 			Read_ListInt32 (r, null, new int [0].ToList ());
 		}
+		
+		[Test]
+		public void Read_Type ()
+		{
+			var r = GetReader ("List_Type.xml");
+			Read_ListType (r, false);
+		}
 
 		[Test]
 		public void Read_ArrayList ()

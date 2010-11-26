@@ -638,6 +638,89 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "#89");
 		}
 
+		protected void Read_ListType (XamlReader r, bool isObjectReader)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+
+			var defns = "clr-namespace:System.Collections.Generic;assembly=mscorlib";
+			var defns2 = "clr-namespace:System;assembly=mscorlib";
+			var defns3 = "clr-namespace:System.Xaml;assembly=System.Xaml";
+
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#1-3");
+			Assert.AreEqual (defns, r.Namespace.Namespace, "ns#1-4");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("s", r.Namespace.Prefix, "ns#2-3-2");
+			Assert.AreEqual (defns2, r.Namespace.Namespace, "ns#2-3-3");
+
+			Assert.IsTrue (r.Read (), "ns#3-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#3-2");
+			Assert.IsNotNull (r.Namespace, "ns#3-3");
+			Assert.AreEqual ("sx", r.Namespace.Prefix, "ns#3-3-2");
+			Assert.AreEqual (defns3, r.Namespace.Namespace, "ns#3-3-3");
+
+			Assert.IsTrue (r.Read (), "#11");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
+			Assert.IsNotNull (r.Namespace, "#13");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "#13-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#13-3");
+
+			Assert.IsTrue (r.Read (), "#21");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
+			var xt = new XamlType (typeof (List<Type>), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "#23");
+			Assert.IsTrue (xt.IsCollection, "#27");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			Assert.IsTrue (r.Read (), "#31");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
+			Assert.AreEqual (xt.GetMember ("Capacity"), r.Member, "#33");
+
+			Assert.IsTrue (r.Read (), "#41");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#42");
+			Assert.AreEqual ("2", r.Value, "#43");
+
+			Assert.IsTrue (r.Read (), "#51");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#52");
+
+			Assert.IsTrue (r.Read (), "#72");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#72-2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "#72-3");
+
+			string [] values = {"x:Int32", "Dictionary(s:Type, sx:XamlType)"};
+			for (int i = 0; i < 2; i++) {
+				Assert.IsTrue (r.Read (), i + "#73");
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, i + "#73-2");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, i + "#74-2");
+				// Here XamlObjectReader and XamlXmlReader significantly differs. (Lucky we can make this test conditional so simply)
+				if (isObjectReader)
+					Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, i + "#74-3");
+				else
+					Assert.AreEqual (XamlLanguage.Type.GetMember ("Type"), r.Member, i + "#74-3");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.IsNotNull (r.Value, i + "#75-2");
+				Assert.AreEqual (values [i], r.Value, i + "#73-3");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, i + "#74-2");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, i + "#75-2");
+			}
+
+			Assert.IsTrue (r.Read (), "#81");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#82"); // XamlLanguage.Items
+			
+			Assert.IsTrue (r.Read (), "#87");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#88");
+
+			Assert.IsFalse (r.Read (), "#89");
+		}
+
 		protected void Read_ArrayList (XamlReader r)
 		{
 			Assert.IsTrue (r.Read (), "ns#1-1");
@@ -981,6 +1064,14 @@ namespace MonoTests.System.Xaml
 			Read_ListInt32 (r, delegate {
 				Assert.AreEqual (obj, r.Instance, "#26");
 				}, obj);
+		}
+		
+		[Test]
+		public void Read_ListType ()
+		{
+			var obj = new List<Type> (new Type [] {typeof (int), typeof (Dictionary<Type, XamlType>)}) { Capacity = 2 };
+			var r = new XamlObjectReader (obj);
+			Read_ListType (r, true);
 		}
 
 		[Test]
@@ -2210,7 +2301,6 @@ namespace MonoTests.System.Xaml
 		public void Read_StaticExtensionWrapper ()
 		{
 			var obj = new StaticExtensionWrapper () { Param = new StaticExtension ("StaticExtensionWrapper.Foo") };
-using (var sw = new StreamWriter ("Test/XmlFiles/StaticExtensionWrapper.xml")) sw.Write (XamlServices.Save (obj));
 			var r = new XamlObjectReader (obj);
 			Read_StaticExtensionWrapper (r);
 		}
