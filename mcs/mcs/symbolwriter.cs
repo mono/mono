@@ -1,11 +1,13 @@
 //
-// symbolwriter.cs: The symbol writer
+// symbolwriter.cs: The debug symbol writer
 //
-// Author:
-//   Martin Baulig (martin@ximian.com)
+// Authors: Martin Baulig (martin@ximian.com)
+//          Marek Safar (marek.safar@gmail.com)
 //
-// Copyright 2003 Ximian, Inc.
-// Copyright 2003-2008 Novell, Inc.
+// Dual licensed under the terms of the MIT X11 or GNU GPL
+//
+// Copyright 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright 2004-2010 Novell, Inc
 //
 
 using System;
@@ -92,8 +94,7 @@ namespace Mono.CSharp {
 		public static void DefineLocalVariable (string name, LocalBuilder builder)
 		{
 			if (symwriter != null) {
-				int index = MonoDebuggerSupport.GetLocalIndex (builder);
-				symwriter.DefineLocalVariable (index, name);
+				symwriter.DefineLocalVariable (builder.LocalIndex, name);
 			}
 		}
 
@@ -139,7 +140,6 @@ namespace Mono.CSharp {
 				return -1;
 		}
 
-#region Terrania additions
 		public static void DefineAnonymousScope (int id)
 		{
 			if (symwriter != null)
@@ -149,8 +149,7 @@ namespace Mono.CSharp {
 		public static void DefineScopeVariable (int scope, LocalBuilder builder)
 		{
 			if (symwriter != null) {
-				int index = MonoDebuggerSupport.GetLocalIndex (builder);
-				symwriter.DefineScopeVariable (scope, index);
+				symwriter.DefineScopeVariable (scope, builder.LocalIndex);
 			}
 		}
 
@@ -233,7 +232,6 @@ namespace Mono.CSharp {
 				symwriter.EndIteratorDispatcher (offset);
 			}
 		}
-#endregion
 
 		public static void MarkSequencePoint (ILGenerator ig, Location loc)
 		{
