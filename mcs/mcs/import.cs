@@ -124,7 +124,7 @@ namespace Mono.CSharp
 			}
 
 			if ((fa & FieldAttributes.Literal) != 0) {
-				var c = Constant.CreateConstantFromValue (field_type, fi.GetValue (fi), Location.Null);
+				var c = Constant.CreateConstantFromValue (field_type, fi.GetRawConstantValue (), Location.Null);
 				return new ConstSpec (declaringType, definition, field_type, fi, mod, c);
 			}
 
@@ -390,7 +390,7 @@ namespace Mono.CSharp
 					}
 
 					if (!is_params && p.IsOptional) {
-						object value = p.DefaultValue;
+						object value = p.RawDefaultValue;
 						var ptype = types[i];
 						if (((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter) || p.IsDefined (typeof (DecimalConstantAttribute), false)) {
 							var dtype = value == null ? ptype : ImportType (value.GetType ());
