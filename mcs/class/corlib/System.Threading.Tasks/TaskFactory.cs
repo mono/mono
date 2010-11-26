@@ -187,7 +187,7 @@ namespace System.Threading.Tasks
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction, CancellationToken token, 
 		                             TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var outTasks = (Task[])tasks.Clone ();
+			var ourTasks = (Task[])tasks.Clone ();
 			AtomicBoolean trigger = new AtomicBoolean ();
 			Task commonContinuation = new Task (null);
 			
