@@ -187,10 +187,11 @@ namespace System.Threading.Tasks
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction, CancellationToken token, 
 		                             TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
+			var outTasks = (Task[])tasks.Clone ();
 			AtomicBoolean trigger = new AtomicBoolean ();
 			Task commonContinuation = new Task (null);
 			
-			foreach (Task t in tasks) {
+			foreach (Task t in ourTasks) {
 				Task cont = new Task ((o) => { continuationAction ((Task)o); }, t, token, options);
 				t.ContinueWithCore (cont, continuationOptions, scheduler, trigger.TrySet);
 				cont.ContinueWithCore (commonContinuation, TaskContinuationOptions.None, scheduler);
@@ -305,10 +306,11 @@ namespace System.Threading.Tasks
 		public Task ContinueWhenAll (Task[] tasks, Action<Task[]> continuationFunction, CancellationToken token,
 		                             TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			CountdownEvent evt = new CountdownEvent (tasks.Length);
-			Task cont = new Task ((o) => continuationFunction ((Task[])o), tasks, token, options);
+			var ourTasks = (Task[])tasks.Clone ();
+			CountdownEvent evt = new CountdownEvent (ourTasks.Length);
+			Task cont = new Task ((o) => continuationFunction ((Task[])o), ourTasks, token, options);
 			
-			foreach (Task t in tasks)
+			foreach (Task t in ourTasks)
 				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
 			
 			return cont;
@@ -362,10 +364,11 @@ namespace System.Threading.Tasks
 		                                               CancellationToken token,
 		                                               TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			CountdownEvent evt = new CountdownEvent (tasks.Length);
-			Task<TResult> cont = new Task<TResult> ((o) => continuationFunction ((Task[])o), tasks, token, options);
+			var ourTasks = (Task[])tasks.Clone ();
+			CountdownEvent evt = new CountdownEvent (ourTasks.Length);
+			Task<TResult> cont = new Task<TResult> ((o) => continuationFunction ((Task[])o), ourTasks, token, options);
 			
-			foreach (Task t in tasks)
+			foreach (Task t in ourTasks)
 				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
 			
 			return cont;
@@ -785,10 +788,11 @@ namespace System.Threading.Tasks
 		                                      CancellationToken token,
 		                                      TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			CountdownEvent evt = new CountdownEvent (tasks.Length);
-			Task<TResult> cont = new Task<TResult> ((o) => continuationFunction (tasks), tasks, token, options);
+			var ourTasks = (Task[])tasks.Clone ();
+			CountdownEvent evt = new CountdownEvent (ourTasks.Length);
+			Task<TResult> cont = new Task<TResult> ((o) => continuationFunction (ourTasks), ourTasks, token, options);
 			
-			foreach (Task t in tasks)
+			foreach (Task t in ourTasks)
 				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
 			
 			return cont;
@@ -819,10 +823,11 @@ namespace System.Threading.Tasks
 		                                                         CancellationToken token,
 		                                                         TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			CountdownEvent evt = new CountdownEvent (tasks.Length);
-			Task<TResult> cont = new Task<TResult> ((o) => continuationFunction (tasks), tasks, token, options);
+			var ourTasks = (Task<TAntecedentResult>[])tasks.Clone ();
+			CountdownEvent evt = new CountdownEvent (ourTasks.Length);
+			Task<TResult> cont = new Task<TResult> ((o) => continuationFunction (ourTasks), ourTasks, token, options);
 			
-			foreach (Task t in tasks)
+			foreach (Task t in ourTasks)
 				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
 			
 			return cont;
