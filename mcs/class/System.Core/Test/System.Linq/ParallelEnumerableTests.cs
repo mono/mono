@@ -361,7 +361,7 @@ namespace MonoTests.System.Linq
 			ParallelTestHelper.Repeat (() => {
 					var actual = initial.AsReallyParallel ().AsOrdered ().SelectMany ((i) => Enumerable.Range (1, i));
 					AssertAreSame (expected, actual);
-				});
+				}, 5);
 		}
 		
 		[Test]
@@ -636,11 +636,17 @@ namespace MonoTests.System.Linq
 				IEnumerable<int> sync = baseEnumerable.Skip(2000);
 				
 				AreEquivalent(sync, async, 1);
+			}, 20);
+		}
+
+		[Test]
+		public void SkipTestCaseSmall ()
+		{
+			ParallelTestHelper.Repeat (() => {
+				var async = baseEnumerable.AsReallyParallel ().Skip(100);
+				var sync = baseEnumerable.Skip(100);
 				
-				async = baseEnumerable.AsReallyParallel ().Skip(100);
-				sync = baseEnumerable.Skip(100);
-				
-				Assert.AreEqual(sync.Count(), async.Count(), "#2");
+				Assert.AreEqual (sync.Count (), async.Count ());
 			}, 20);
 		}
 
