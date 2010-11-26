@@ -154,8 +154,6 @@ namespace System.Linq.Parallel
 							return null;
 					}
 				}
-
-				Console.WriteLine ("Returning a new slot to OrderingEnumerator");
 				
 				return stagingArea;
 			}

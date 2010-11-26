@@ -27,6 +27,7 @@
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -69,8 +70,7 @@ namespace System.Collections.Concurrent.Partitioners
 			PartitionerState state = new PartitionerState ();
 			IEnumerator<T> src = source.GetEnumerator ();
 			bool isSimple = initialPartitionSize == 1 && partitionMultiplier == 1;
-			Console.WriteLine ("Using simple?: " + isSimple.ToString ());
-			
+
 			for (int i = 0; i < enumerators.Length; i++) {
 				enumerators[i] = isSimple ? GetPartitionEnumeratorSimple (src, state, i == enumerators.Length - 1) : GetPartitionEnumerator (src, state);
 			}
