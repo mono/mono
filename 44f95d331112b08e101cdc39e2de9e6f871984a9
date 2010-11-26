@@ -1,0 +1,6 @@
+tree 9ae48704150dbc128a9fdffdc0a47f185a60e563
+parent a520998b6af3ca475cbf6aa857060c6e5db0796d
+author Jérémie Laval <jeremie.laval@gmail.com> 1290509947 +0000
+committer Jérémie Laval <jeremie.laval@gmail.com> 1290509947 +0000
+
+Fix ReaderWriterLockSlim Exit methods in SupportsRecursion mode and add corresponding unit tests
