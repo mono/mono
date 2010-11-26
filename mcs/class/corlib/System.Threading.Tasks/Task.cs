@@ -319,7 +319,7 @@ namespace System.Threading.Tasks
 		void CheckAndSchedule (Task continuation, TaskContinuationOptions options, TaskScheduler scheduler, bool fromCaller)
 		{
 			if (!fromCaller 
-			    && (options == TaskContinuationOptions.None || (options & TaskContinuationOptions.ExecuteSynchronously) > 0))
+			    && (options & TaskContinuationOptions.ExecuteSynchronously) > 0)
 				continuation.ThreadStart ();
 			else
 				continuation.Start (scheduler);
