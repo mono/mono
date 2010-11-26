@@ -4377,6 +4377,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-166.cs">
+    <type name="Foo">
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-167.cs">
     <type name="TestAttribute">
       <method name="Void .ctor()">
@@ -35039,6 +35049,21 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-471.cs">
+    <type name="AAttribute">
+      <method name="Void .ctor(String)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Int32 Main()">
+        <size>39</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
