@@ -32,7 +32,7 @@ namespace System.Threading
 	{
 		const int isSet    = 1;
 		const int isNotSet = 0;
-		const int defaultSpinCount = 10;
+		const int defaultSpinCount = 100;
 
 		int state;
 		readonly int spinCount;
