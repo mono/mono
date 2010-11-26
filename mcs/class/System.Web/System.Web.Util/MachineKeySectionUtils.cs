@@ -36,8 +36,9 @@ using System.Configuration.Provider;
 #endif
 using System.Security.Cryptography;
 using System.Text;
+using System.Web.Configuration;
 
-namespace System.Web.Configuration {
+namespace System.Web.Util {
 
 	internal static class MachineKeySectionUtils {
 		static byte ToHexValue (char c, bool high)

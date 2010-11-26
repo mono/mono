@@ -34,6 +34,7 @@ using System.Configuration.Provider;
 using System.Web.Configuration;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web.Util;
 
 namespace System.Web.Security
 {
