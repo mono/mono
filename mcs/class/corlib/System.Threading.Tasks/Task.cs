@@ -250,6 +250,7 @@ namespace System.Threading.Tasks
 			continuation.taskScheduler = scheduler;
 			continuation.scheduler = ProxifyScheduler (scheduler);
 			continuation.schedWait.Set ();
+			continuation.status = TaskStatus.WaitingForActivation;
 			
 			AtomicBoolean launched = new AtomicBoolean ();
 			EventHandler action = delegate (object sender, EventArgs e) {
