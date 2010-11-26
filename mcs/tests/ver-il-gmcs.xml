@@ -24191,7 +24191,7 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>225</size>
+        <size>240</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

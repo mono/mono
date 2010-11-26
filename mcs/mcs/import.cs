@@ -104,7 +104,7 @@ namespace Mono.CSharp
 					break;
 				default:
 					// Ignore private fields (even for error reporting) to not require extra dependencies
-					if (IgnorePrivateMembers || fi.IsDefined (typeof (CompilerGeneratedAttribute), false))
+					if (IgnorePrivateMembers || HasAttribute (CustomAttributeData.GetCustomAttributes (fi), typeof (CompilerGeneratedAttribute)))
 						return null;
 
 					mod = Modifiers.PRIVATE;
@@ -130,7 +130,7 @@ namespace Mono.CSharp
 
 			if ((fa & FieldAttributes.InitOnly) != 0) {
 				if (field_type == TypeManager.decimal_type) {
-					var dc = ReadDecimalConstant (fi);
+					var dc = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (fi));
 					if (dc != null)
 						return new ConstSpec (declaringType, definition, field_type, fi, mod, dc);
 				}
@@ -139,7 +139,7 @@ namespace Mono.CSharp
 			} else {
 				var reqs = fi.GetRequiredCustomModifiers ();
 				if (reqs.Length > 0) {
-					foreach (Type t in reqs) {
+					foreach (var t in reqs) {
 						if (t == typeof (System.Runtime.CompilerServices.IsVolatile)) {
 							mod |= Modifiers.VOLATILE;
 							break;
@@ -151,11 +151,11 @@ namespace Mono.CSharp
 			if ((fa & FieldAttributes.Static) != 0)
 				mod |= Modifiers.STATIC;
 
-			if (field_type.IsStruct) {
-				 if (fi.IsDefined (typeof (FixedBufferAttribute), false)) {
-					var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
-					return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
-				}
+			if (declaringType.IsStruct && field_type.IsStruct && field_type.IsNested && 
+				HasAttribute (CustomAttributeData.GetCustomAttributes (fi), typeof (FixedBufferAttribute))) {
+
+				var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
+				return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
 			}
 
 			return new FieldSpec (declaringType, definition, field_type, fi, mod);
@@ -382,8 +382,7 @@ namespace Mono.CSharp
 					types[i] = ImportType (p.ParameterType, p, 0);
 
 					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
-						var cattrs = CustomAttributeData.GetCustomAttributes (p);
-						if (cattrs != null && cattrs.Any (l => l.Constructor.DeclaringType == typeof (ParamArrayAttribute))) {
+						if (HasAttribute (CustomAttributeData.GetCustomAttributes (p), typeof (ParamArrayAttribute))) {
 							mod = Parameter.Modifier.PARAMS;
 							is_params = true;
 						}
@@ -392,13 +391,20 @@ namespace Mono.CSharp
 					if (!is_params && p.IsOptional) {
 						object value = p.RawDefaultValue;
 						var ptype = types[i];
-						if (((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter) || p.IsDefined (typeof (DecimalConstantAttribute), false)) {
+						if (((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter)) {
+							//
+							// Use value type as int constant can be used for object parameter type
+							//
 							var dtype = value == null ? ptype : ImportType (value.GetType ());
 							default_value = Constant.CreateConstant (null, dtype, value, Location.Null);
 						} else if (value == Missing.Value) {
 							default_value = EmptyExpression.MissingValue;
 						} else {
-							default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
+							if (ptype == TypeManager.decimal_type)
+								default_value = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (p));
+
+							if (default_value == null)
+								default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
 						}
 					}
 				}
@@ -844,8 +850,24 @@ namespace Mono.CSharp
 			return spec;
 		}
 
+		public bool HasAttribute (IList<CustomAttributeData> attributesData, Type type)
+		{
+			if (attributesData.Count == 0)
+				return false;
+
+			foreach (var attr in attributesData) {
+				if (attr.Constructor.DeclaringType == type)
+					return true;
+			}
+
+			return false;
+		}
+
 		static Type HasExtensionAttribute (IList<CustomAttributeData> attributes)
 		{
+			if (attributes.Count == 0)
+				return null;
+
 			foreach (var attr in attributes) {
 				var dt = attr.Constructor.DeclaringType;
 				if (dt.Name == "ExtensionAttribute" && dt.Namespace == "System.Runtime.CompilerServices") {
@@ -980,13 +1002,26 @@ namespace Mono.CSharp
 		// as IsInitOnly ('readonly' in C# parlance).  We get its value from the 
 		// DecimalConstantAttribute metadata.
 		//
-		static Constant ReadDecimalConstant (ICustomAttributeProvider fi)
+		static Constant ReadDecimalConstant (IList<CustomAttributeData> attrs)
 		{
-			object[] attrs = fi.GetCustomAttributes (typeof (DecimalConstantAttribute), false);
-			if (attrs.Length != 1)
+			if (attrs.Count == 0)
 				return null;
 
-			return new DecimalConstant (((DecimalConstantAttribute) attrs [0]).Value, Location.Null);
+			foreach (var ca in attrs) {
+				if (ca.Constructor.DeclaringType != typeof (DecimalConstantAttribute))
+					continue;
+
+				var value = new decimal (
+					(int) (uint) ca.ConstructorArguments[4].Value,
+					(int) (uint) ca.ConstructorArguments[3].Value,
+					(int) (uint) ca.ConstructorArguments[2].Value,
+					(byte) ca.ConstructorArguments[1].Value != 0,
+					(byte) ca.ConstructorArguments[0].Value);
+
+				return new DecimalConstant (value, Location.Null).Resolve (null);
+			}
+
+			return null;
 		}
 
 		static Modifiers ReadMethodModifiers (MethodBase mb, TypeSpec declaringType)
@@ -1049,8 +1084,9 @@ namespace Mono.CSharp
 			public string[] Conditionals;
 			public string DefaultIndexerName;
 			public bool IsNotCLSCompliant;
+			public TypeSpec CoClass;
 			
-			public static AttributesBag Read (MemberInfo mi)
+			public static AttributesBag Read (MemberInfo mi, ReflectionMetaImporter typeImporter)
 			{
 				AttributesBag bag = null;
 				List<string> conditionals = null;
@@ -1119,6 +1155,15 @@ namespace Mono.CSharp
 							}
 							continue;
 						}
+
+						// Interface only attribute
+						if (typeImporter != null && type == typeof (CoClassAttribute)) {
+							if (bag == null)
+								bag = new AttributesBag ();
+
+							bag.CoClass = typeImporter.ImportType ((Type) a.ConstructorArguments[0].Value);
+							continue;
+						}
 					}
 				}
 
@@ -1180,9 +1225,9 @@ namespace Mono.CSharp
 			return cattrs.IsNotCLSCompliant;
 		}
 
-		protected void ReadAttributes ()
+		protected virtual void ReadAttributes ()
 		{
-			cattrs = AttributesBag.Read (provider);
+			cattrs = AttributesBag.Read (provider, null);
 		}
 
 		public void SetIsAssigned ()
@@ -1556,12 +1601,10 @@ namespace Mono.CSharp
 
 		public TypeSpec GetAttributeCoClass ()
 		{
-			// TODO: Use ReadAttributes
-			var attr =  provider.GetCustomAttributes (typeof (CoClassAttribute), false);
-			if (attr.Length < 1)
-				return null;
+			if (cattrs == null)
+				ReadAttributes ();
 
-			return meta_import.CreateType (((CoClassAttribute) attr[0]).CoClass);
+			return cattrs.CoClass;
 		}
 
 		public string GetAttributeDefaultMember ()
@@ -1632,7 +1675,7 @@ namespace Mono.CSharp
 					Type t = (Type) member;
 
 					// Ignore compiler generated types, mostly lambda containers
-					if (t.IsNotPublic && t.IsDefined (typeof (CompilerGeneratedAttribute), false))
+					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate)
 						continue;
 
 					imported = meta_import.CreateType (t, declaringType, t, 0, false);
@@ -1643,7 +1686,12 @@ namespace Mono.CSharp
 					if (member.MemberType != MemberTypes.NestedType)
 						continue;
 
-					meta_import.ImportTypeBase ((Type) member);
+					Type t = (Type) member;
+
+					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate)
+						continue;
+
+					meta_import.ImportTypeBase (t);
 				}
 			}
 
@@ -1667,7 +1715,7 @@ namespace Mono.CSharp
 								continue;
 
 							// Ignore compiler generated methods
-							if (mb.IsDefined (typeof (CompilerGeneratedAttribute), false))
+							if (meta_import.HasAttribute (CustomAttributeData.GetCustomAttributes (mb), typeof (CompilerGeneratedAttribute)))
 								continue;
 						}
 
@@ -1777,6 +1825,11 @@ namespace Mono.CSharp
 					cache.AddInterface (iface);
 				}
 			}
+		}
+
+		protected override void ReadAttributes ()
+		{
+			cattrs = AttributesBag.Read (provider, meta_import);
 		}
 	}
 
