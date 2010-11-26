@@ -887,6 +887,22 @@ namespace MonoTests.System.Xaml
 			var obj = new PropertyDefinition () { Modifier = "protected", Name = "foo", Type = XamlLanguage.String };
 			Assert.AreEqual (ReadXml ("PropertyDefinition.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_StaticExtensionWrapper ()
+		{
+			var obj = new StaticExtensionWrapper () { Param = new StaticExtension ("StaticExtensionWrapper.Foo") };
+			Assert.AreEqual (ReadXml ("StaticExtensionWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_TypeExtensionWrapper ()
+		{
+			var obj = new TypeExtensionWrapper () { Param = new TypeExtension ("Foo") };
+			Assert.AreEqual (ReadXml ("TypeExtensionWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

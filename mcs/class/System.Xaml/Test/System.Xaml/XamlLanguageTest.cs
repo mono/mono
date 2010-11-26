@@ -398,7 +398,10 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Static;
 			TestXamlTypeExtension (t, "StaticExtension", typeof (StaticExtension), typeof (object), false);
-			Assert.IsNotNull (t.TypeConverter.ConverterInstance, "#25-2");
+			var tc = t.TypeConverter.ConverterInstance;
+			Assert.IsNotNull (tc, "#25-2");
+			Assert.IsFalse (tc.CanConvertFrom (typeof (string)), "#25-3");
+			Assert.IsTrue (tc.CanConvertTo (typeof (string)), "#25-4");
 			Assert.IsNull (t.ContentProperty, "#27");
 
 			var l = t.GetAllMembers ().ToArray ();

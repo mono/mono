@@ -1089,5 +1089,30 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (XamlLanguage.String, des.Type, "#3");
 			}
 		}
+		
+		[Test]
+		[Ignore ("this still does not give successful deserialization result - should there be any way?")]
+		public void Write_StaticExtensionWrapper ()
+		{
+			//var obj = new StaticExtensionWrapper () { Param = new StaticExtension ("Foo") };
+			using (var xr = GetReader ("StaticExtensionWrapper.xml")) {
+				var des = (StaticExtensionWrapper) XamlServices.Load (xr);
+				Assert.IsNotNull (des.Param, "#1");
+				Assert.AreEqual ("Foo", des.Param.Member, "#2");
+			}
+		}
+		
+		[Test]
+		[Ignore ("this still does not give successful deserialization result - should there be any way?")]
+		public void Write_TypeExtensionWrapper ()
+		{
+			//var obj = new TypeExtensionWrapper () { Param = new TypeExtension ("Foo") };
+			using (var xr = GetReader ("TypeExtensionWrapper.xml")) {
+				var des = (TypeExtensionWrapper) XamlServices.Load (xr);
+				Assert.IsNotNull (des.Param, "#1");
+				// TypeName was not serialized into xml, hence deserialized as empty.
+				Assert.AreEqual (String.Empty, des.Param.TypeName, "#2");
+			}
+		}
 	}
 }

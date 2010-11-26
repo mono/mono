@@ -476,5 +476,21 @@ namespace MonoTests.System.Xaml
 			var r = GetReader ("PropertyDefinition.xml");
 			Read_PropertyDefinition (r);
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_StaticExtensionWrapper ()
+		{
+			var r = GetReader ("StaticExtensionWrapper.xml");
+			Read_StaticExtensionWrapper (r);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_TypeExtensionWrapper ()
+		{
+			var r = GetReader ("TypeExtensionWrapper.xml");
+			Read_TypeExtensionWrapper (r);
+		}
 	}
 }

@@ -426,7 +426,6 @@ namespace MonoTests.System.Xaml
 		public static string FooBar { get; set; }
 	}
 
-	// FIXME: test it
 	public class StaticExtensionWrapper
 	{
 		public StaticExtensionWrapper ()
@@ -434,5 +433,22 @@ namespace MonoTests.System.Xaml
 		}
 		
 		public StaticExtension Param { get; set; }
+
+		public static string Foo = "foo";
+	}
+	
+	public class TypeExtensionWrapper
+	{
+		public TypeExtensionWrapper ()
+		{
+		}
+		
+		public TypeExtension Param { get; set; }
+	}
+	
+	// FIXME: test it
+	public class XDataWrapper
+	{
+		public XData Markup { get; set; }
 	}
 }

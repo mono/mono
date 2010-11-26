@@ -1905,6 +1905,114 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "end");
 		}
 
+		protected void Read_StaticExtensionWrapper (XamlReader r)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns#2-4");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#2-5");
+
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (StaticExtensionWrapper), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			Assert.IsTrue (r.Read (), "sprm#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sprm#2");
+			Assert.AreEqual (xt.GetMember ("Param"), r.Member, "sprm#3");
+
+			Assert.IsTrue (r.Read (), "so#2-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2-2");
+			xt = new XamlType (typeof (StaticExtension), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#2-3");
+
+			Assert.IsTrue (r.Read (), "smbr#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smbr#2");
+			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "smbr#3");
+
+			Assert.IsTrue (r.Read (), "vmbr#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vmbr#2");
+			Assert.AreEqual ("StaticExtensionWrapper.Foo", r.Value, "vmbr#3");
+
+			Assert.IsTrue (r.Read (), "embr#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "embr#2");
+
+			Assert.IsTrue (r.Read (), "eo#2-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2-2");
+
+			Assert.IsTrue (r.Read (), "emod#1-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emod#1-2");
+
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		protected void Read_TypeExtensionWrapper (XamlReader r)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns#2-4");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#2-5");
+
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (TypeExtensionWrapper), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			Assert.IsTrue (r.Read (), "sprm#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sprm#2");
+			Assert.AreEqual (xt.GetMember ("Param"), r.Member, "sprm#3");
+
+			Assert.IsTrue (r.Read (), "so#2-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2-2");
+			xt = new XamlType (typeof (TypeExtension), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#2-3");
+
+			Assert.IsTrue (r.Read (), "smbr#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smbr#2");
+			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "smbr#3");
+
+			Assert.IsTrue (r.Read (), "vmbr#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vmbr#2");
+			Assert.AreEqual (String.Empty, r.Value, "vmbr#3");
+
+			Assert.IsTrue (r.Read (), "embr#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "embr#2");
+
+			Assert.IsTrue (r.Read (), "eo#2-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2-2");
+
+			Assert.IsTrue (r.Read (), "emod#1-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emod#1-2");
+
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
 		protected void Read_CommonXamlPrimitive (object obj)
 		{
 			var r = new XamlObjectReader (obj);
@@ -2095,6 +2203,25 @@ namespace MonoTests.System.Xaml
 			var obj = new PropertyDefinition () { Modifier = "protected", Name = "foo", Type = XamlLanguage.String };
 			var r = new XamlObjectReader (obj);
 			Read_PropertyDefinition (r);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_StaticExtensionWrapper ()
+		{
+			var obj = new StaticExtensionWrapper () { Param = new StaticExtension ("StaticExtensionWrapper.Foo") };
+using (var sw = new StreamWriter ("Test/XmlFiles/StaticExtensionWrapper.xml")) sw.Write (XamlServices.Save (obj));
+			var r = new XamlObjectReader (obj);
+			Read_StaticExtensionWrapper (r);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_TypeExtensionWrapper ()
+		{
+			var obj = new TypeExtensionWrapper () { Param = new TypeExtension ("Foo") };
+			var r = new XamlObjectReader (obj);
+			Read_TypeExtensionWrapper (r);
 		}
 	}
 }
