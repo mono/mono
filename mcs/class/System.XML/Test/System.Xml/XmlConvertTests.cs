@@ -684,6 +684,13 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
+		public void XmlDateTimeSerializationModeLocal ()
+		{
+			XmlConvert.ToDateTime ("2010-11-10", XmlDateTimeSerializationMode.Local); // bug #655089
+			XmlConvert.ToDateTime ("2010-11", XmlDateTimeSerializationMode.Local);
+		}
+		
+		[Test]
 		public void XmlDateTimeSerializationModeUtc ()
 		{
 			Assert.AreEqual (27, XmlConvert.ToString (new DateTime (DateTime.MaxValue.Ticks, DateTimeKind.Utc), XmlDateTimeSerializationMode.Unspecified).Length, "#1");
