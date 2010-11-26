@@ -1453,8 +1453,10 @@ namespace Mono.CSharp {
 
 		public void Encode (string value)
 		{
-			if (value == null)
-				throw new ArgumentNullException ();
+			if (value == null) {
+				Stream.Write ((byte) 0xFF);
+				return;
+			}
 
 			var buf = Encoding.UTF8.GetBytes(value);
 			WriteCompressedValue (buf.Length);
