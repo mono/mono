@@ -49,9 +49,11 @@ if (not $skipbuild)
 	if ($debug)
 	{
 		$ENV{CFLAGS} = "-m32 -g -O0";
+		$ENV{LDFLAGS} = "-m32";
 	} else
 	{
-		$ENV{CFLAGS} = "-m32 -Os"  #optimize for size
+		$ENV{CFLAGS} = "-m32 -Os";  #optimize for size
+		$ENV{LDFLAGS} = "-m32";
 	}
 
 	#this will fail on a fresh working copy, so don't die on it.
@@ -74,6 +76,7 @@ if (not $skipbuild)
 	# unshift(@autogenparams, "--with-glib=embedded");
 	unshift(@autogenparams, "--disable-nls");  #this removes the dependency on gettext package
 	unshift(@autogenparams, "--disable-parallel-mark");  #this causes crashes
+	unshift(@autogenparams, "--build=i686-pc-linux-gnu");  #Force x86 build
 
 	# From Massi: I was getting failures in install_name_tool about space
 	# for the commands being too small, and adding here things like
