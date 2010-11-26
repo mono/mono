@@ -166,7 +166,7 @@ namespace System.Xml {
 			unspecifiedDateTimeFormats = new string [l * 4];
 			for (int i = 0; i < l; i++) {
 				string s = defaultDateTimeFormats [i];
-				localDateTimeFormats [i] = s + "zzz";
+				localDateTimeFormats [i] = s + (s [s.Length - 1] == 's' || s [s.Length - 1] == 'F' ? "zzz" : String.Empty);
 				roundtripDateTimeFormats [i] = s + 'K';
 				utcDateTimeFormats [i * 3] = s;
 				utcDateTimeFormats [i * 3 + 1] = s + 'Z';

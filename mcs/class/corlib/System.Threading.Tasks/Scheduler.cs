@@ -58,7 +58,7 @@ namespace System.Threading.Tasks
 			// Wake up some worker if they were asleep
 			PulseAll ();
 		}
-		
+
 		public void ParticipateUntil (Task task)
 		{
 			if (task.IsCompleted)

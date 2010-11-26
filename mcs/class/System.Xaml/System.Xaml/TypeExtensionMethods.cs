@@ -107,8 +107,8 @@ namespace System.Xaml
 		{
 			if (member == XamlLanguage.Initialization)
 				return true;
-			if (member == XamlLanguage.PositionalParameters)
-				return true;
+			if (member == XamlLanguage.PositionalParameters || member == XamlLanguage.Arguments)
+				return false; // it's up to the argument (no need to check them though, as IList<object> is not of value)
 			if (member.TypeConverter != null && member.TypeConverter.ConverterInstance != null && member.TypeConverter.ConverterInstance.CanConvertTo (vsctx, typeof (string)))
 				return true;
 			return IsContentValue (member.Type,vsctx);
@@ -116,7 +116,10 @@ namespace System.Xaml
 
 		public static bool IsContentValue (this XamlType type, IValueSerializerContext vsctx)
 		{
-			var t = type.UnderlyingType;
+			// FIXME: should not be special case, especially considering that TypeExtension cannot be special like this too.
+			if (type == XamlLanguage.Static)
+				return false;
+
 			if (type.TypeConverter != null && type.TypeConverter.ConverterInstance != null && type.TypeConverter.ConverterInstance.CanConvertTo (vsctx, typeof (string)))
 				return true;
 			return false;

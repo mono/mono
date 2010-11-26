@@ -9,7 +9,6 @@
 // Copyright 2007-2008 Novell, Inc
 //
 
-using System;
 using System.Reflection.Emit;
 
 namespace Mono.CSharp {

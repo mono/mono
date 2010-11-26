@@ -87,8 +87,6 @@ namespace System.Linq.Parallel.QueryNodes
 		{
 			var source = Parent.GetOrderedEnumerables (options);
 			var sizeRequests = new SizeRequest[source.Count];
-			if (collectionSelectorIndexed == null)
-				collectionSelectorIndexed = (e, i) => collectionSelector (e);
 			long deviation = 0;
 
 			Barrier barrier = new Barrier (source.Count, delegate (Barrier b) {
@@ -121,6 +119,7 @@ namespace System.Linq.Parallel.QueryNodes
 		                                                                       Barrier barrier)
 		{
 			IEnumerator<KeyValuePair<long, TSource>> enumerator = source.GetEnumerator ();
+			bool isIndexed = IsIndexed;
 
 			try {
 				while (true) {
@@ -129,7 +128,10 @@ namespace System.Linq.Parallel.QueryNodes
 
 					if (enumerator.MoveNext ()) {
 						element = enumerator.Current;
-						collection = collectionSelectorIndexed (element.Value, (int)element.Key);
+						collection = isIndexed ?
+							collectionSelectorIndexed (element.Value, (int)element.Key) :
+							collectionSelector (element.Value);
+
 						var count = GetCount (ref collection);
 
 						sizeRequests[index].Update (element.Key, count, collection, element.Value);

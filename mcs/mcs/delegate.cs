@@ -15,7 +15,6 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Collections.Generic;
 
 namespace Mono.CSharp {
 
@@ -109,7 +108,7 @@ namespace Mono.CSharp {
 				}
 			);
 
-			Constructor = new Constructor (this, System.Reflection.ConstructorInfo.ConstructorName,
+			Constructor = new Constructor (this, Constructor.ConstructorName,
 				Modifiers.PUBLIC, null, ctor_parameters, null, Location);
 			Constructor.Define ();
 

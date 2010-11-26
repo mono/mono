@@ -15,19 +15,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security;
-using System.Security.Permissions;
 using System.Text;
 
 #if NET_2_1
 using XmlElement = System.Object;
-#else
-using System.Xml;
 #endif
 
-using Mono.CompilerServices.SymbolWriter;
 
 namespace Mono.CSharp
 {

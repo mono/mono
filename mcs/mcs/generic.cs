@@ -13,7 +13,6 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -2162,7 +2161,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override TypeBuilder DefineType ()
+		public override void DefineType ()
 		{
 			throw new Exception ();
 		}

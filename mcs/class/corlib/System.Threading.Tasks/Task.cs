@@ -250,6 +250,7 @@ namespace System.Threading.Tasks
 			continuation.taskScheduler = scheduler;
 			continuation.scheduler = ProxifyScheduler (scheduler);
 			continuation.schedWait.Set ();
+			continuation.status = TaskStatus.WaitingForActivation;
 			
 			AtomicBoolean launched = new AtomicBoolean ();
 			EventHandler action = delegate (object sender, EventArgs e) {
@@ -319,7 +320,7 @@ namespace System.Threading.Tasks
 		void CheckAndSchedule (Task continuation, TaskContinuationOptions options, TaskScheduler scheduler, bool fromCaller)
 		{
 			if (!fromCaller 
-			    && (options == TaskContinuationOptions.None || (options & TaskContinuationOptions.ExecuteSynchronously) > 0))
+			    && (options & TaskContinuationOptions.ExecuteSynchronously) > 0)
 				continuation.ThreadStart ();
 			else
 				continuation.Start (scheduler);
@@ -474,7 +475,8 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				schedWait.Wait ();
 			
-			scheduler.ParticipateUntil (this);
+			if (!IsCompleted)
+				scheduler.ParticipateUntil (this);
 			if (exception != null)
 				throw exception;
 			if (IsCanceled)

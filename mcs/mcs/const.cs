@@ -9,9 +9,7 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 
-using System;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
@@ -88,7 +86,7 @@ namespace Mono.CSharp {
 			if (c.Type == TypeManager.decimal_type) {
 				Compiler.PredefinedAttributes.DecimalConstant.EmitAttribute (FieldBuilder, (decimal) c.GetValue (), c.Location);
 			} else {
-				FieldBuilder.SetConstant (c.GetTypedValue ());
+				FieldBuilder.SetConstant (c.GetValue ());
 			}
 
 			base.Emit ();

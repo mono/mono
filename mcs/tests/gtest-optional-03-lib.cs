@@ -4,6 +4,11 @@ public struct S
 {
 }
 
+public enum E
+{
+	Value = 3
+}
+
 public class B
 {
 	public static string TestString (string s = "mono")
@@ -29,6 +34,11 @@ public class B
 	public static decimal TestDecimal (int i, decimal d = decimal.MinValue)
 	{
 		return d;
+	}
+	
+	public static E TestEnum (E e = E.Value)
+	{
+		return e;
 	}
 	
 	char ch;

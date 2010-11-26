@@ -11,9 +11,7 @@
 //
 
 using System;
-using System.Text;
 using System.Reflection.Emit;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace Mono.CSharp {

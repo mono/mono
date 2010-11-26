@@ -12,9 +12,7 @@
 //
 
 using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Mono.CSharp {
 
@@ -102,7 +100,7 @@ namespace Mono.CSharp {
 
 		public static MemberFilter Constructor (AParametersCollection param)
 		{
-			return new MemberFilter (System.Reflection.ConstructorInfo.ConstructorName, 0, MemberKind.Constructor, param, null);
+			return new MemberFilter (Mono.CSharp.Constructor.ConstructorName, 0, MemberKind.Constructor, param, null);
 		}
 
 		public static MemberFilter Property (string name, TypeSpec type)

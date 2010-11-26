@@ -110,15 +110,14 @@ namespace Mono.CompilerServices.SymbolWriter
 	}
 
 #if !CECIL
+	// TODO: Obsolete under .net 4
 	internal class MonoDebuggerSupport
 	{
 		static GetMethodTokenFunc get_method_token;
 		static GetGuidFunc get_guid;
-		static GetLocalIndexFunc get_local_index;
 
 		delegate int GetMethodTokenFunc (MethodBase method);
 		delegate Guid GetGuidFunc (Module module);
-		delegate int GetLocalIndexFunc (SRE.LocalBuilder local);
 
 		static Delegate create_delegate (Type type, Type delegate_type, string name)
 		{
@@ -138,10 +137,6 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			get_guid = (GetGuidFunc) create_delegate (
 				typeof (Module), typeof (GetGuidFunc), "Mono_GetGuid");
-
-			get_local_index = (GetLocalIndexFunc) create_delegate (
-				typeof (SRE.LocalBuilder), typeof (GetLocalIndexFunc),
-				"Mono_GetLocalIndex");
 		}
 
 		public static int GetMethodToken (MethodBase method)
@@ -152,11 +147,6 @@ namespace Mono.CompilerServices.SymbolWriter
 		public static Guid GetGuid (Module module)
 		{
 			return get_guid (module);
-		}
-
-		public static int GetLocalIndex (SRE.LocalBuilder local)
-		{
-			return get_local_index (local);
 		}
 	}
 #endif

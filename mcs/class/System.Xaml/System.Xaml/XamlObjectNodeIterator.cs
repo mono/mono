@@ -93,12 +93,19 @@ namespace System.Xaml
 				yield break;
 			}
 
-			// PositionalParameters: items are from constructor arguments, and are all in simple string value, written as Value node sequentially.
+			// PositionalParameters: items are from constructor arguments, written as Value node sequentially. Note that not all of them are in simple string value.
 			if (xm == XamlLanguage.PositionalParameters) {
 				foreach (var argm in xobj.Type.GetSortedConstructorArguments ()) {
+#if true // FIXME: wrong (see the comment above)
 					// Unlike XamlLanguage.Items, it only outputs string value. So, convert values here.
 					var argv = TypeExtensionMethods.GetStringValue (argm.Type, argm, xobj.GetMemberValue (argm), value_serializer_ctx);
 					yield return new XamlNodeInfo ((string) argv);
+#else
+					var argv = argm.Invoker.GetValue (xobj.GetRawValue ());
+					var xarg = new XamlObject (argm.Type, argv);
+					foreach (var cn in GetNodes (null, xarg))
+						yield return cn;
+#endif
 				}
 				yield break;
 			}

@@ -27,7 +27,6 @@
 //
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle ("Mono C# Compiler")]
 [assembly: AssemblyProduct ("Mono C# Compiler")]
