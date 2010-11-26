@@ -29,6 +29,7 @@
 using System;
 using System.IO;
 using System.Web.Configuration;
+using System.Web.Util;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.Configuration {
