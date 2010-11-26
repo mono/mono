@@ -475,7 +475,8 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				schedWait.Wait ();
 			
-			scheduler.ParticipateUntil (this);
+			if (!IsCompleted)
+				scheduler.ParticipateUntil (this);
 			if (exception != null)
 				throw exception;
 			if (IsCanceled)
