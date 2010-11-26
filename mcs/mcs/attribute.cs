@@ -758,7 +758,7 @@ namespace Mono.CSharp {
 
 		System.Security.Permissions.SecurityAction GetSecurityActionValue ()
 		{
-			return (SecurityAction) ((Constant) PosArguments[0].Expr).GetTypedValue ();
+			return (SecurityAction) ((Constant) PosArguments[0].Expr).GetValue ();
 		}
 
 		/// <summary>
@@ -800,7 +800,7 @@ namespace Mono.CSharp {
 			if (orig_assembly_type == null) {
 				args = new object[PosArguments.Count];
 				for (int j = 0; j < args.Length; ++j) {
-					args[j] = ((Constant) PosArguments[j].Expr).GetTypedValue ();
+					args[j] = ((Constant) PosArguments[j].Expr).GetValue ();
 				}
 
 				sa = (SecurityAttribute) Activator.CreateInstance (Type.GetMetaInfo (), args);
@@ -808,7 +808,7 @@ namespace Mono.CSharp {
 				if (named_values != null) {
 					for (int i = 0; i < named_values.Count; ++i) {
 						PropertyInfo pi = ((PropertyExpr) named_values[i].Key).PropertyInfo.MetaInfo;
-						pi.SetValue (sa, ((Constant) named_values [i].Value.Expr).GetTypedValue (), null);
+						pi.SetValue (sa, ((Constant) named_values [i].Value.Expr).GetValue (), null);
 					}
 				}
 			} else {
@@ -824,7 +824,7 @@ namespace Mono.CSharp {
 						// TODO: pi can be null
 						PropertyInfo pi = orig_assembly_type.GetProperty (emited_pi.Name);
 
-						pi.SetValue (sa, ((Constant) named_values[i].Value.Expr).GetTypedValue (), null);
+						pi.SetValue (sa, ((Constant) named_values[i].Value.Expr).GetValue (), null);
 					}
 				}
 			}

@@ -45,6 +45,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		public abstract object GetValue ();
 
+		//
+		// Returns an object value which is typed to contant type
+		//
 		public virtual object GetTypedValue ()
 		{
 			return GetValue ();

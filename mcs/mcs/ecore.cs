@@ -1369,23 +1369,13 @@ namespace Mono.CSharp {
 
 		public override object GetTypedValue ()
 		{
-			// FIXME: runtime is not ready to work with just emited enums
-			if (!RootContext.StdLib) {
-				return Child.GetValue ();
-			}
-
-#if MS_COMPATIBLE
-			// Small workaround for big problem
+			//
+			// The method can be used in dynamic context only (on closed types)
+			//
 			// System.Enum.ToObject cannot be called on dynamic types
 			// EnumBuilder has to be used, but we cannot use EnumBuilder
 			// because it does not properly support generics
 			//
-			// This works only sometimes
-			//
-			if (type.MemberDefinition is TypeContainer)
-				return Child.GetValue ();
-#endif
-
 			return System.Enum.ToObject (type.GetMetaInfo (), Child.GetValue ());
 		}
 		
