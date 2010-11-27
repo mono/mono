@@ -51,7 +51,7 @@ namespace System.Threading {
 		internal IntPtr system_thread_handle;
 
 		/* Note this is an opaque object (an array), not a CultureInfo */
-		private object cached_culture_info;
+		private object cached_culture_info; /*FIXME remove this on the next corlib version bump*/
 		private IntPtr unused0;
 		internal bool threadpool_thread;
 		/* accessed only from unmanaged code */
@@ -111,17 +111,6 @@ namespace System.Threading {
 		internal byte[] _serialized_principal;
 		internal int _serialized_principal_version;
 
-		internal byte[] serialized_culture_info;
-		internal byte[] serialized_ui_culture_info;
-
-		/* If the current_lcid() isn't known by CultureInfo,
-		 * it will throw an exception which may cause
-		 * String.Concat to try and recursively look up the
-		 * CurrentCulture, which will throw an exception, etc.
-		 * Use a boolean to short-circuit this scenario.
-		 */
-		internal bool in_currentculture=false;
-
 		// Closes the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Thread_free_internal(IntPtr handle);
@@ -146,6 +135,8 @@ namespace System.Threading {
 
 		IPrincipal principal;
 		int principal_version;
+		CultureInfo current_culture;
+		CultureInfo current_ui_culture;
 
 		// the name of local_slots, current_thread and _ec is
 		// important because they are used by the runtime.
@@ -430,73 +421,13 @@ namespace System.Threading {
 		//[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		//private static extern int current_lcid ();
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static CultureInfo GetCachedCurrentCulture (InternalThread thread);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void SetCachedCurrentCulture (CultureInfo culture);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static CultureInfo GetCachedCurrentUICulture (InternalThread thread);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void SetCachedCurrentUICulture (CultureInfo culture);
-
-		/* FIXME: in_currentculture exists once, but
-		   culture_lock is once per appdomain.  Is it correct
-		   to lock this way? */
-		static object culture_lock = new object ();
-		
-		/*
-		 * Thread objects are shared between appdomains, and CurrentCulture
-		 * should always return an object in the calling appdomain. See bug
-		 * http://bugzilla.ximian.com/show_bug.cgi?id=50049 for more info.
-		 * This is hard to implement correctly and efficiently, so the current
-		 * implementation is not perfect: changes made in one appdomain to the 
-		 * state of the current cultureinfo object are not visible to other 
-		 * appdomains.
-		 */		
 		public CultureInfo CurrentCulture {
 			get {
-				if (Internal.in_currentculture)
-					/* Bail out */
-					return CultureInfo.InvariantCulture;
-
-				CultureInfo culture = GetCachedCurrentCulture (Internal);
+				CultureInfo culture = current_culture;
 				if (culture != null)
 					return culture;
 
-				byte[] arr = ByteArrayToCurrentDomain (Internal.serialized_culture_info);
-				if (arr == null) {
-					lock (culture_lock) {
-						Internal.in_currentculture=true;
-						culture = CultureInfo.ConstructCurrentCulture ();
-						//
-						// Don't serialize the culture in this case to avoid
-						// initializing the serialization infrastructure in the
-						// common case when the culture is not set explicitly.
-						//
-						SetCachedCurrentCulture (culture);
-						Internal.in_currentculture = false;
-						NumberFormatter.SetThreadCurrentCulture (culture);
-						return culture;
-					}
-				}
-
-				/*
-				 * No cultureinfo object exists for this domain, so create one
-				 * by deserializing the serialized form.
-				 */
-				Internal.in_currentculture = true;
-				try {
-					BinaryFormatter bf = new BinaryFormatter ();
-					MemoryStream ms = new MemoryStream (arr);
-					culture = (CultureInfo)bf.Deserialize (ms);
-					SetCachedCurrentCulture (culture);
-				} finally {
-					Internal.in_currentculture = false;
-				}
-
+				current_culture = culture = CultureInfo.ConstructCurrentCulture ();
 				NumberFormatter.SetThreadCurrentCulture (culture);
 				return culture;
 			}
@@ -506,117 +437,25 @@ namespace System.Threading {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
-				CultureInfo culture = GetCachedCurrentCulture (Internal);
-				if (culture == value)
-					return;
-
-				value.CheckNeutral ();
-				Internal.in_currentculture = true;
-				try {
-					SetCachedCurrentCulture (value);
-
-					byte[] serialized_form = null;
-
-					if (value.IsReadOnly && value.cached_serialized_form != null) {
-						serialized_form = value.cached_serialized_form;
-					} else {
-						BinaryFormatter bf = new BinaryFormatter();
-						MemoryStream ms = new MemoryStream ();
-						bf.Serialize (ms, value);
-
-						serialized_form = ms.GetBuffer ();
-						if (value.IsReadOnly)
-							value.cached_serialized_form = serialized_form;
-					}
-
-					Internal.serialized_culture_info = ByteArrayToRootDomain (serialized_form);
-				} finally {
-					Internal.in_currentculture = false;
-				}
+				current_culture = value;
 				NumberFormatter.SetThreadCurrentCulture (value);
 			}
 		}
 
 		public CultureInfo CurrentUICulture {
 			get {
-				if (Internal.in_currentculture)
-					/* Bail out */
-					return CultureInfo.InvariantCulture;
-
-				CultureInfo culture = GetCachedCurrentUICulture (Internal);
+				CultureInfo culture = current_ui_culture;
 				if (culture != null)
 					return culture;
 
-				byte[] arr = ByteArrayToCurrentDomain (Internal.serialized_ui_culture_info);
-				if (arr == null) {
-					lock (culture_lock) {
-						Internal.in_currentculture=true;
-						/* We don't
-						 * distinguish
-						 * between
-						 * System and
-						 * UI cultures
-						 */
-						culture = CultureInfo.ConstructCurrentUICulture ();
-						//
-						// Don't serialize the culture in this case to avoid
-						// initializing the serialization infrastructure in the
-						// common case when the culture is not set explicitly.
-						//
-						SetCachedCurrentUICulture (culture);
-						Internal.in_currentculture = false;
-						return culture;
-					}
-				}
-
-				/*
-				 * No cultureinfo object exists for this domain, so create one
-				 * by deserializing the serialized form.
-				 */
-				Internal.in_currentculture = true;
-				try {
-					BinaryFormatter bf = new BinaryFormatter ();
-					MemoryStream ms = new MemoryStream (arr);
-					culture = (CultureInfo)bf.Deserialize (ms);
-					SetCachedCurrentUICulture (culture);
-				}
-				finally {
-					Internal.in_currentculture = false;
-				}
-
+				current_ui_culture = culture = CultureInfo.ConstructCurrentUICulture ();
 				return culture;
 			}
 			
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("value");
-
-				CultureInfo culture = GetCachedCurrentUICulture (Internal);
-				if (culture == value)
-					return;
-
-				Internal.in_currentculture = true;
-				try {
-					SetCachedCurrentUICulture (value);
-
-					byte[] serialized_form = null;
-
-					if (value.IsReadOnly && value.cached_serialized_form != null) {
-						serialized_form = value.cached_serialized_form;
-					} else {
-						BinaryFormatter bf = new BinaryFormatter();
-						MemoryStream ms = new MemoryStream ();
-						bf.Serialize (ms, value);
-
-						serialized_form = ms.GetBuffer ();
-						if (value.IsReadOnly)
-							value.cached_serialized_form = serialized_form;
-					}
-
-					Internal.serialized_ui_culture_info = ByteArrayToRootDomain (serialized_form);
-				} finally {
-					Internal.in_currentculture = false;
-				}
+				current_ui_culture = value;
 			}
 		}
 
