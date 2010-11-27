@@ -5,6 +5,8 @@
 
 using System;
 using System.Reflection;
+using System.Reflection.Emit;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -1193,6 +1195,42 @@ namespace MonoTests.System
 		public interface Iface
 		{
 			string retarg (string s);
+		}
+
+		[Test]
+		public void CreateDelegateWithLdFtnAndAbstractMethod ()
+		{
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "customMod";
+			assemblyName.Version = new Version (1, 2, 3, 4);
+	
+			AssemblyBuilder assembly
+				= Thread.GetDomain ().DefineDynamicAssembly (
+					  assemblyName, AssemblyBuilderAccess.RunAndSave);
+	
+			ModuleBuilder module = assembly.DefineDynamicModule ("res", "res.dll");
+	
+			TypeBuilder tb = module.DefineType ("Test2", TypeAttributes.Public, typeof (object));
+	
+			{
+				MethodBuilder mb =
+					tb.DefineMethod ("test", MethodAttributes.Public | MethodAttributes.Static,
+									 typeof (int), null);
+				ILGenerator il = mb.GetILGenerator ();
+	
+				il.Emit (OpCodes.Newobj, typeof (CreateDelegateBar).GetConstructor (new Type [] { }));
+				il.Emit (OpCodes.Ldftn, typeof (CreateDelegateIFoo).GetMethod ("Test2"));
+				il.Emit (OpCodes.Newobj, typeof (IntNoArgs).GetConstructor (new Type [] { typeof (object), typeof (IntPtr) }));
+				il.Emit (OpCodes.Call, typeof (IntNoArgs).GetMethod ("Invoke"));
+				il.Emit (OpCodes.Ret);
+			}
+	
+			Type t = tb.CreateType ();
+	
+			Object obj = Activator.CreateInstance (t, new object [0] { });
+	
+			int a = (int) t.GetMethod ("test").Invoke (obj, null);
+			Assert.AreEqual (3, a, "#1");
 		}
 
 		public class B {
