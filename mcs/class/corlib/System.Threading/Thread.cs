@@ -437,6 +437,7 @@ namespace System.Threading {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
+				value.CheckNeutral ();
 				current_culture = value;
 				NumberFormatter.SetThreadCurrentCulture (value);
 			}
