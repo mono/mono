@@ -10,8 +10,8 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>A DirectFBSurface</summary>
+    <remarks />
   </Docs>
   <Members>
     <Member MemberName=".ctor">
