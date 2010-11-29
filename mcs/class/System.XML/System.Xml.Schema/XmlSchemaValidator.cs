@@ -128,6 +128,7 @@ namespace System.Xml.Schema
 		ValidationFlags options;
 
 		// Validation state
+		bool initial = true;
 		Transition transition;
 		XsdParticleStateManager state;
 
@@ -360,7 +361,11 @@ namespace System.Xml.Schema
 			if (attributeValue == null)
 				throw new ArgumentNullException ("attributeValue");
 
-			CheckState (Transition.StartTag);
+			bool wasInitial = initial;
+			if (initial)
+				initial = false;
+			else
+				CheckState (Transition.StartTag);
 
 			QName qname = new QName (localName, ns);
 			if (occuredAtts.Contains (qname))
@@ -372,6 +377,13 @@ namespace System.Xml.Schema
 
 			if (schemas.Count == 0)
 				return null;
+
+			if (wasInitial) {
+				var xa = startType as XmlSchemaAttribute;
+				if (xa == null)
+					return null;
+				return AssessAttributeLocallyValid (xa, info, attributeValue);
+			}
 
 			if (Context.Element != null && Context.XsiType == null) {
 
@@ -648,6 +660,7 @@ namespace System.Xml.Schema
 
 		private void CheckState (Transition expected)
 		{
+			initial = false;
 			if (transition != expected) {
 				if (transition == Transition.None)
 					throw new InvalidOperationException ("Initialize() must be called before processing validation.");
@@ -866,6 +879,11 @@ namespace System.Xml.Schema
 		// 3.2.4 Attribute Locally Valid and 3.4.4
 		private object AssessAttributeLocallyValid (XsAttribute attr, XmlSchemaInfo info, XmlValueGetter getter)
 		{
+			if (info != null) {
+				info.SchemaAttribute = attr;
+				info.SchemaType = attr.AttributeSchemaType;
+			}
+
 			// 2. - 4.
 			if (attr.AttributeType == null)
 				HandleError ("Attribute type is missing for " + attr.QualifiedName);
@@ -885,9 +903,17 @@ namespace System.Xml.Schema
 				}
 
 				// check part of 3.14.4 StringValid
-				SimpleType st = attr.AttributeType as SimpleType;
-				if (st != null)
-					ValidateRestrictedSimpleTypeValue (st, ref dt, new XmlAtomicValue (parsedValue, attr.AttributeSchemaType).Value);
+				SimpleType st = attr.AttributeSchemaType;
+				if (st != null) {
+					string xav = null;
+					try {
+						xav = new XmlAtomicValue (parsedValue, attr.AttributeSchemaType).Value;
+					} catch (Exception ex) {
+						HandleError (String.Format ("Failed to convert attribute value to type {0}", st.QualifiedName), ex);
+					}
+					if (xav != null)
+						ValidateRestrictedSimpleTypeValue (st, ref dt, xav);
+				}
 
 				if (attr.ValidatedFixedValue != null) {
 					if (!XmlSchemaUtil.AreSchemaDatatypeEqual (attr.AttributeSchemaType, attr.ValidatedFixedTypedValue, attr.AttributeSchemaType, parsedValue))
