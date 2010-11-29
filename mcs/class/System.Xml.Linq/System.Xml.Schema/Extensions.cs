@@ -44,16 +44,27 @@ namespace System.Xml.Schema
 			return element.Annotation<IXmlSchemaInfo> ();
 		}
 
-		[MonoTODO]
 		public static void Validate (this XAttribute attribute, XmlSchemaObject partialValidationType, XmlSchemaSet schemas, ValidationEventHandler handler)
 		{
-			throw new NotImplementedException ();
+			Validate (attribute, partialValidationType, schemas, handler, false);
 		}
 
-		[MonoTODO]
 		public static void Validate (this XAttribute attribute, XmlSchemaObject partialValidationType, XmlSchemaSet schemas, ValidationEventHandler handler, bool addSchemaInfo)
 		{
-			throw new NotImplementedException ();
+			if (attribute == null)
+				throw new ArgumentNullException ("attribute");
+			if (schemas == null)
+				throw new ArgumentNullException ("schemas");
+			var nsmgr = new XmlNamespaceManager (new NameTable ());
+			var v = new XmlSchemaValidator (nsmgr.NameTable, schemas, nsmgr, XmlSchemaValidationFlags.None);
+			if (handler != null)
+				v.ValidationEventHandler += handler;
+			if (partialValidationType != null)
+				v.Initialize (partialValidationType);
+			else
+				v.Initialize ();
+			var xi = addSchemaInfo ? new XmlSchemaInfo () : null;
+			v.ValidateAttribute (attribute.Name.LocalName, attribute.Name.NamespaceName, attribute.Value, xi);
 		}
 
 		public static void Validate (this XDocument document, XmlSchemaSet schemas, ValidationEventHandler handler)

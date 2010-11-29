@@ -276,7 +276,6 @@ namespace MonoTests.System.Xml.Schema
 
 		// attribute validation succeeds after change
 		[Test]
-		[Category ("NotWorking")]
 		public void XAttributeSuccessValidate ()
 		{
 			String elementName = "note";
@@ -299,7 +298,6 @@ namespace MonoTests.System.Xml.Schema
 
 		// attribute validation fails after change
 		[Test]
-		[Category ("NotWorking")]
 		public void XAttributeFailValidate ()
 		{
 			String elementName = "note";
@@ -326,7 +324,6 @@ namespace MonoTests.System.Xml.Schema
 		 */
 		[Test]
 		[ExpectedException (typeof (XmlSchemaValidationException))]
-		[Category ("NotWorking")]
 		public void XAttributeThrowExceptionValidate ()
 		{
 			String elementName = "note";
