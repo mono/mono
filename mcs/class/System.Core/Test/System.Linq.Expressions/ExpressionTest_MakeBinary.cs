@@ -284,5 +284,18 @@ namespace MonoTests.System.Linq.Expressions
 
 		}
 
+		[Test]
+		public void MakeArrayIndex ()
+		{
+			var array = Expression.Constant (new int [] { 1, 2 }, typeof (int []));
+			var index = Expression.Constant (1);
+
+			var array_index = Expression.MakeBinary (
+				ExpressionType.ArrayIndex,
+				array,
+				index);
+
+			Assert.AreEqual (ExpressionType.ArrayIndex, array_index.NodeType);
+		}
 	}
 }
