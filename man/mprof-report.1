@@ -32,6 +32,11 @@ In addition, the profiler can periodically collect info about all
 the objects present in the heap at the end of a garbage collection
 (this is called heap shot and currently implemented only for the
 sgen garbage collector).
+Another available profiler mode is the \f[I]sampling\f[] or
+\f[I]statistical\f[] mode: periodically the program is sampled and
+the information about what the program was busy with is saved.
+This allows to get information about the program behaviour without
+degrading its performance too much (usually less than 10%).
 .SS Basic profiler usage
 .PP
 The simpler way to use the profiler is the following:
@@ -64,13 +69,18 @@ allocations are, the needed info can be gathered with:
 .PP
 You will still be able to inspect information about the sequence of
 calls that lead to each allocation because at each object
-allocation a stack trace is collected as well.
+allocation a stack trace is collected if full enter/leave
+information is not available.
 .PP
 To periodically collect heap shots (and exclude method and
 allocation events) use the following options (making sure you run
 with the sgen garbage collector):
 .PP
 \f[B]mono\ --gc=sgen\ --profile=log:heapshot\ program.exe\f[]
+.PP
+To perform a sampling profiler run, use the \f[I]sample\f[] option:
+.PP
+\f[B]mono\ --profile=log:sample\ program.exe\f[]
 .SS Profiler option documentation
 .PP
 By default the \f[I]log\f[] profiler will gather all the events
@@ -118,8 +128,36 @@ MODE can be one of:
 \f[I]NUM\f[]ms: perform a heap shot if at least \f[I]NUM\f[]
 milliseconds passed since the last one.
 .IP \[bu] 2
-\f[I]NUM\f[]gc: perform a heap shot every \f[I]NUM\f[] garbage
-collections (either minor or major).
+\f[I]NUM\f[]gc: perform a heap shot every \f[I]NUM\f[] major
+garbage collections
+.IP \[bu] 2
+\f[I]ondemand\f[]: perform a heap shot when such a command is sent
+to the control port
+.RE
+.IP \[bu] 2
+\f[I]sample[=TYPE[/FREQ]]\f[]: collect statistical samples of the
+program behaviour.
+The default is to collect a 1000 times per second the instruction
+pointer.
+This is equivalent to the value \[lq]cycles/1000\[rq] for
+\f[I]TYPE\f[].
+On some systems, like with recent Linux kernels, it is possible to
+cause the sampling to happen for other events provided by the
+performance counters of the cpu.
+In this case, \f[I]TYPE\f[] can be one of:
+.RS 2
+.IP \[bu] 2
+\f[I]cycles\f[]: processor cycles
+.IP \[bu] 2
+\f[I]instr\f[]: executed instructions
+.IP \[bu] 2
+\f[I]cacherefs\f[]: cache references
+.IP \[bu] 2
+\f[I]cachemiss\f[]: cache misses
+.IP \[bu] 2
+\f[I]branches\f[]: executed branches
+.IP \[bu] 2
+\f[I]branchmiss\f[]: mispredicted branches
 .RE
 .IP \[bu] 2
 \f[I]time=TIMER\f[]: use the TIMER timestamp mode.
@@ -162,6 +200,17 @@ will print a summary report.
 This is equivalent to the option: \f[B]output=mprof-report\ -\f[].
 If the \f[I]output\f[] option is specified as well, the report will
 be written to the output file instead of the console.
+.IP \[bu] 2
+\f[I]port=PORT\f[]: specify the tcp/ip port to use for the
+listening command server.
+Currently not available for windows.
+This server is started for example when heapshot=ondemand is used:
+it will read commands line by line.
+The following commands are available:
+.RS 2
+.IP \[bu] 2
+\f[I]heapshot\f[]: perform a heapshot as soon as possible
+.RE
 .SS Analyzing the profile data
 .PP
 Currently there is a command line program (\f[I]mprof-report\f[])
@@ -248,6 +297,13 @@ some of them with the following option:
 where the report names R1, R2 etc.
 can be:
 .IP \[bu] 2
+\f[I]header\f[]: information about program startup and profiler
+version
+.IP \[bu] 2
+\f[I]jit\f[]: JIT compiler information
+.IP \[bu] 2
+\f[I]sample\f[]: statistical sampling information
+.IP \[bu] 2
 \f[I]gc\f[]: garbage collection information
 .IP \[bu] 2
 \f[I]alloc\f[]: object allocation information
@@ -322,6 +378,11 @@ For example, the following:
 .PP
 will find all the byte arrays that are at least 10000 bytes in
 size.
+.PP
+Note that with a moving garbage collector the object address can
+change, so you may need to track the changed address manually.
+It can also happen that multiple objects are allocated at the same
+address, so the output from this option can become large.
 .SS Saving a profiler report
 .PP
 By default mprof-report will print the summary data to the console.
@@ -335,6 +396,12 @@ program will slow down significantly, usually 10 to 20 times
 slower.
 There are several ways to reduce the impact of the profiler on the
 program execution.
+.SS Use the statistical sampling mode
+.PP
+Statistical sampling allows executing a program under the profiler
+with minimal performance overhead (usually less than 10%).
+This mode allows checking where the program is spending most of
+it's execution time without significantly perturbing its behaviour.
 .SS Collect less data
 .PP
 Collecting method enter/leave events can be very expensive,
@@ -368,12 +435,6 @@ The \f[I]time=fast\f[] profiler option can be usually used to speed
 up this operation, but, depending on the system, time accounting
 may have some level of approximation (though statistically the data
 should be still fairly valuable).
-.SS Use a statistical profiler instead
-.PP
-See the mono manpage for the use of a statistical (sampling)
-profiler.
-The \f[I]log\f[] profiler will be enhanced to provide sampling info
-in the future.
 .SS Dealing with the size of the data files
 .PP
 When collecting a lot of information about a profiled program, huge
