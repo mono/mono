@@ -202,7 +202,7 @@ sub BuildUnityScriptForUnity
 {
 	my $booCheckout = "external/boo";
 	
-	GitClone("git://github.com/bamboo/boo.git", $booCheckout);
+	GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout);
 	UnityXBuild("$booCheckout/src/booc/booc.csproj");
 	
 	cp("$booCheckout/ide-build/Boo.Lang*.dll $monoprefixUnity/");
@@ -216,7 +216,7 @@ sub BuildUnityScriptForUnity
 	cp("$booCheckout/src/Boo.Lang/bin/Micro-Release/Boo.Lang.dll $monodistroLibMono/micro/");
 	
 	my $usCheckout = "external/unityscript";
-	GitClone("git://github.com/bamboo/unityscript.git", $usCheckout);
+	GitClone("git://github.com/Unity-Technologies/unityscript.git", $usCheckout);
 	
 	my $UnityScriptLangDLL = "$monoprefixUnity/UnityScript.Lang.dll";
 	UnityBooc("-out:$UnityScriptLangDLL -srcdir:$usCheckout/src/UnityScript.Lang");
