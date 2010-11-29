@@ -219,7 +219,7 @@ namespace System.Web.Util {
 			return decryption_key;
 		}
 
-		static byte [] GetValidationKey (
+		public static byte [] GetValidationKey (
 #if NET_2_0
 			MachineKeySection section
 #else
@@ -254,7 +254,7 @@ namespace System.Web.Util {
 			return section.GetDecryptionKey ();
 		}
 
-		static byte [] GetValidationKey (
+		internal static byte [] GetValidationKey (
 #if NET_2_0
 			MachineKeySection section
 #else
