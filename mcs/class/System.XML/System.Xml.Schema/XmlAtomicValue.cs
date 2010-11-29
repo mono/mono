@@ -365,6 +365,8 @@ namespace System.Xml.Schema
 				case XmlTypeCode.Boolean:
 					stringValue = XQueryConvert.BooleanToString (ValueAsBoolean);
 					break;
+				case XmlTypeCode.Date:
+				case XmlTypeCode.Time:
 				case XmlTypeCode.DateTime:
 					stringValue = XQueryConvert.DateTimeToString (ValueAsDateTime);
 					break;
@@ -372,6 +374,7 @@ namespace System.Xml.Schema
 				case XmlTypeCode.Double:
 					stringValue = XQueryConvert.DoubleToString (ValueAsDouble);
 					break;
+				case XmlTypeCode.Integer:
 				case XmlTypeCode.Decimal:
 					stringValue = XQueryConvert.DecimalToString (ValueAsDecimal);
 					break;
@@ -401,6 +404,12 @@ namespace System.Xml.Schema
 					case XmlTypeCode.String:
 						stringValue = (string) objectValue;
 						break;
+					case XmlTypeCode.Date:
+						stringValue = XQueryConvert.DateToString ((DateTime) objectValue);
+						break;
+					case XmlTypeCode.Time:
+						stringValue = XQueryConvert.TimeToString ((DateTime) objectValue);
+						break;
 					case XmlTypeCode.DateTime:
 						stringValue = XQueryConvert.DateTimeToString ((DateTime) objectValue);
 						break;
@@ -413,6 +422,7 @@ namespace System.Xml.Schema
 					case XmlTypeCode.Double:
 						stringValue = XQueryConvert.DoubleToString ((double) objectValue);
 						break;
+					case XmlTypeCode.Integer:
 					case XmlTypeCode.Decimal:
 						stringValue = XQueryConvert.DecimalToString ((decimal) objectValue);
 						break;
