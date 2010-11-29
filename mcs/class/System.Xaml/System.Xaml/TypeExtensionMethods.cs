@@ -80,6 +80,21 @@ namespace System.Xaml
 		
 		#region type conversion and member value retrieval
 		
+		static readonly NullExtension null_value = new NullExtension ();
+
+		public static object GetExtensionWrapped (object o)
+		{
+			// FIXME: should this manually checked, or is there any way to automate it?
+			// Also XamlSchemaContext might be involved but this method signature does not take it consideration.
+			if (o == null)
+				return null_value;
+			if (o is Array)
+				return new ArrayExtension ((Array) o);
+			if (o is Type)
+				return new TypeExtension ((Type) o);
+			return o;
+		}
+		
 		public static string GetStringValue (XamlType xt, XamlMember xm, object obj, IValueSerializerContext vsctx)
 		{
 			if (obj == null)
@@ -116,10 +131,6 @@ namespace System.Xaml
 
 		public static bool IsContentValue (this XamlType type, IValueSerializerContext vsctx)
 		{
-			// FIXME: should not be special case, especially considering that TypeExtension cannot be special like this too.
-			if (type == XamlLanguage.Static)
-				return false;
-
 			if (type.TypeConverter != null && type.TypeConverter.ConverterInstance != null && type.TypeConverter.ConverterInstance.CanConvertTo (vsctx, typeof (string)))
 				return true;
 			return false;

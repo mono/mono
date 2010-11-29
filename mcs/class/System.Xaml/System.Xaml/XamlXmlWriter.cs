@@ -600,7 +600,7 @@ namespace System.Xaml
 			if (xd == null && !xt.GetAllMembers ().Contains (xm))
 				return AllowedMemberLocations.None;
 
-			if (xm.IsContentValue (service_provider) || xt.IsContentValue (service_provider))
+			if (xm.IsContentValue (service_provider) || mt.IsContentValue (service_provider))
 				return AllowedMemberLocations.Attribute;
 
 			return AllowedMemberLocations.MemberElement;

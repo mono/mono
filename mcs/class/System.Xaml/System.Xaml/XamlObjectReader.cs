@@ -80,7 +80,11 @@ namespace System.Xaml
 			if (instance is Type)
 				instance = new TypeExtension ((Type) instance);
 
+			// See also Instance property for this weirdness.
+			this.root_raw = instance;
+			instance = TypeExtensionMethods.GetExtensionWrapped (instance);
 			this.root = instance;
+
 			sctx = schemaContext;
 			this.settings = settings;
 
@@ -88,7 +92,7 @@ namespace System.Xaml
 
 			// check type validity. Note that some checks also needs done at Read() phase. (it is likely FIXME:)
 			if (instance != null) {
-				var type = new InstanceContext (instance).GetWrappedValue ().GetType ();
+				var type = new InstanceContext (instance).GetRawValue ().GetType ();
 				if (!type.IsPublic)
 					throw new XamlObjectReaderException (String.Format ("instance type '{0}' must be public and non-nested.", type));
 				var xt = SchemaContext.GetXamlType (type);
@@ -100,7 +104,7 @@ namespace System.Xaml
 		}
 		
 		bool is_eof;
-		object root;
+		object root, root_raw;
 		XamlSchemaContext sctx;
 		XamlObjectReaderSettings settings;
 		PrefixLookup prefix_lookup;
@@ -108,8 +112,15 @@ namespace System.Xaml
 		IEnumerator<NamespaceDeclaration> ns_iterator;
 		IEnumerator<XamlNodeInfo> nodes;
 
+		// This property value is weird.
+		// - For root Type it returns TypeExtension.
+		// - For root Array it returns Array.
+		// - For non-root Type it returns Type.
 		public virtual object Instance {
-			get { return NodeType == XamlNodeType.StartObject ? nodes.Current.Object.GetRawValue () : null; }
+			get {
+				var cur = NodeType == XamlNodeType.StartObject ? nodes.Current.Object.GetRawValue () : null;
+				return cur == root ? root_raw : cur;
+			}
 		}
 
 		public override bool IsEof {

@@ -99,7 +99,7 @@ namespace System.Xaml
 		
 		XamlType GetType (object obj)
 		{
-			return type.SchemaContext.GetXamlType (new InstanceContext (obj).GetWrappedValue ().GetType ());
+			return type.SchemaContext.GetXamlType (obj.GetType ());
 		}
 		
 		public IEnumerable<XamlNodeMember> Children (IValueSerializerContext vsctx)
@@ -111,11 +111,6 @@ namespace System.Xaml
 		public object GetRawValue ()
 		{
 			return context.GetRawValue ();
-		}
-		
-		public object GetWrappedValue ()
-		{
-			return context.GetWrappedValue ();
 		}
 	}
 	
@@ -145,35 +140,19 @@ namespace System.Xaml
 
 		XamlType GetType (object obj)
 		{
-			return owner.Type.SchemaContext.GetXamlType (new InstanceContext (obj).GetWrappedValue ().GetType ());
+			return obj == null ? XamlLanguage.Null : owner.Type.SchemaContext.GetXamlType (new InstanceContext (obj).GetRawValue ().GetType ());
 		}
 	}
 	
 	// Its original purpose was to enable delayed reflection, but it's not supported yet.
 	internal struct InstanceContext
 	{
-		static readonly NullExtension null_value = new NullExtension ();
-
 		public InstanceContext (object value)
 		{
 			this.value = value;
 		}
 		
 		object value;
-		
-		public object GetWrappedValue ()
-		{
-			var o = GetRawValue ();
-
-			// FIXME: should this manually checked, or is there any way to automate it?
-			if (o == null)
-				return null_value;
-			if (o is Array)
-				return new ArrayExtension ((Array) o);
-			if (o is Type)
-				return new TypeExtension ((Type) o);
-			return o;
-		}
 		
 		public object GetRawValue ()
 		{
@@ -237,8 +216,8 @@ namespace System.Xaml
 			if (xm == XamlLanguage.Arguments) // object itself
 				return obj;
 			if (xm == XamlLanguage.PositionalParameters)
-				return xobj.GetWrappedValue (); // dummy value
-			return xm.Invoker.GetValue (xobj.GetWrappedValue ());
+				return xobj.GetRawValue (); // dummy value
+			return xm.Invoker.GetValue (xobj.GetRawValue ());
 		}
 	}
 }

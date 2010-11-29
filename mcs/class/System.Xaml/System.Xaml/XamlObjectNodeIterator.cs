@@ -57,7 +57,7 @@ namespace System.Xaml
 		
 		XamlType GetType (object obj)
 		{
-			return ctx.GetXamlType (new InstanceContext (obj).GetWrappedValue ().GetType ());
+			return obj == null ? XamlLanguage.Null : ctx.GetXamlType (obj.GetType ());
 		}
 		
 		// returns StartObject, StartMember, Value, EndMember and EndObject. (NamespaceDeclaration is not included)
@@ -96,16 +96,9 @@ namespace System.Xaml
 			// PositionalParameters: items are from constructor arguments, written as Value node sequentially. Note that not all of them are in simple string value.
 			if (xm == XamlLanguage.PositionalParameters) {
 				foreach (var argm in xobj.Type.GetSortedConstructorArguments ()) {
-#if true // FIXME: wrong (see the comment above)
-					// Unlike XamlLanguage.Items, it only outputs string value. So, convert values here.
-					var argv = TypeExtensionMethods.GetStringValue (argm.Type, argm, xobj.GetMemberValue (argm), value_serializer_ctx);
-					yield return new XamlNodeInfo ((string) argv);
-#else
-					var argv = argm.Invoker.GetValue (xobj.GetRawValue ());
-					var xarg = new XamlObject (argm.Type, argv);
-					foreach (var cn in GetNodes (null, xarg))
+					// FIXME: this (probably this) needs further fix to return object nodes for MarkupExtension, regarding above comment. See Read_StaticExtensionWrapper test.
+					foreach (var cn in GetNodes (argm, new XamlObject (argm.Type, xobj.GetMemberValue (argm)), null))
 						yield return cn;
-#endif
 				}
 				yield break;
 			}
@@ -196,7 +189,8 @@ namespace System.Xaml
 					iobj = isNonGeneric ? ((DictionaryEntry) iobj).Value : vp.GetValue (iobj, null);
 				}
 
-				var xiobj = new XamlObject (GetType (iobj), iobj);
+				var wobj = TypeExtensionMethods.GetExtensionWrapped (iobj);
+				var xiobj = new XamlObject (GetType (wobj), wobj);
 				if (ikey != null) {
 					// Key member is written *inside* the item object.
 					//
