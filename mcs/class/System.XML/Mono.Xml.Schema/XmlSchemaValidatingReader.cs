@@ -391,7 +391,18 @@ namespace Mono.Xml.Schema
 		}
 
 		public override IXmlSchemaInfo SchemaInfo {
-			get { return this; }
+			get {
+				return new XmlSchemaInfo () {
+					//ContentType = this.ContentType,
+					IsDefault = this.IsDefault,
+					IsNil = this.IsNil,
+					MemberType = this.MemberType,
+					SchemaAttribute = this.SchemaAttribute,
+					SchemaElement = this.SchemaElement,
+					SchemaType = this.SchemaType,
+					Validity = this.Validity
+					};
+			}
 		}
 
 		public override string Value {

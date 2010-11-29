@@ -609,6 +609,7 @@ namespace MonoTests.System.Xml
 
 		[Test] // bug #380720
 		[Category ("Networking")]
+		[Ignore ("The server takes too much time to respond")]
 		public void SetAttributeWithIdentity ()
 		{
 			XmlDocument doc = new XmlDocument ();
