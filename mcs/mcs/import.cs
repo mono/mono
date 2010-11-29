@@ -24,6 +24,8 @@ namespace Mono.CSharp
 		Dictionary<Type, PredefinedTypeSpec> type_2_predefined;
 		Dictionary<Assembly, ImportedAssemblyDefinition> assembly_2_definition;
 
+		public static readonly string CompilerServicesNamespace = "System.Runtime.CompilerServices";
+
 		public ReflectionMetaImporter ()
 		{
 			import_cache = new Dictionary<Type, TypeSpec> (1024, ReferenceEquality<Type>.Default);
@@ -104,7 +106,7 @@ namespace Mono.CSharp
 					break;
 				default:
 					// Ignore private fields (even for error reporting) to not require extra dependencies
-					if (IgnorePrivateMembers || HasAttribute (CustomAttributeData.GetCustomAttributes (fi), typeof (CompilerGeneratedAttribute)))
+					if (IgnorePrivateMembers || HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
 						return null;
 
 					mod = Modifiers.PRIVATE;
@@ -155,7 +157,7 @@ namespace Mono.CSharp
 			} else {
 				// Fixed buffers cannot be static
 				if (declaringType.IsStruct && field_type.IsStruct && field_type.IsNested &&
-					HasAttribute (CustomAttributeData.GetCustomAttributes (fi), typeof (FixedBufferAttribute))) {
+					HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "FixedBufferAttribute", CompilerServicesNamespace)) {
 
 					// TODO: Sanity check on field_type (only few type are allowed)
 					var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
@@ -380,14 +382,14 @@ namespace Mono.CSharp
 					var el = p.ParameterType.GetElementType ();
 					types[i] = ImportType (el, p, 0);	// TODO: 1 to be csc compatible
 				} else if (i == 0 && method.IsStatic && parent.IsStatic && parent.MemberDefinition.DeclaringAssembly.HasExtensionMethod &&
-					HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (method)) != null) {
+					HasAttribute (CustomAttributeData.GetCustomAttributes (method), "ExtensionAttribute", CompilerServicesNamespace)) {
 					mod = Parameter.Modifier.This;
 					types[i] = ImportType (p.ParameterType);
 				} else {
 					types[i] = ImportType (p.ParameterType, p, 0);
 
 					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
-						if (HasAttribute (CustomAttributeData.GetCustomAttributes (p), typeof (ParamArrayAttribute))) {
+						if (HasAttribute (CustomAttributeData.GetCustomAttributes (p), "ParamArrayAttribute", "System")) {
 							mod = Parameter.Modifier.PARAMS;
 							is_params = true;
 						}
@@ -865,32 +867,22 @@ namespace Mono.CSharp
 			return spec;
 		}
 
-		public bool HasAttribute (IList<CustomAttributeData> attributesData, Type type)
+		//
+		// Test for a custom attribute type match. Custom attributes are not really predefined globaly 
+		// they can be assembly specific therefore we do check based on names only
+		//
+		public static bool HasAttribute (IList<CustomAttributeData> attributesData, string name, string ns)
 		{
 			if (attributesData.Count == 0)
 				return false;
 
 			foreach (var attr in attributesData) {
-				if (attr.Constructor.DeclaringType == type)
+				var type = attr.Constructor.DeclaringType;
+				if (type.Name == name && type.Namespace == ns)
 					return true;
 			}
 
 			return false;
-		}
-
-		static Type HasExtensionAttribute (IList<CustomAttributeData> attributes)
-		{
-			if (attributes.Count == 0)
-				return null;
-
-			foreach (var attr in attributes) {
-				var dt = attr.Constructor.DeclaringType;
-				if (dt.Name == "ExtensionAttribute" && dt.Namespace == "System.Runtime.CompilerServices") {
-					return dt;
-				}
-			}
-
-			return null;
 		}
 
 		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)
@@ -905,8 +897,6 @@ namespace Mono.CSharp
 				definition.ReadAttributes ();
 			}
 
-			Type extension_type = definition.HasExtensionMethod ? HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (assembly)) : null;
-
 			//
 			// This part tries to simulate loading of top-level
 			// types only, any missing dependencies are ignores here.
@@ -920,15 +910,13 @@ namespace Mono.CSharp
 				all_types = e.Types;
 			}
 
-			ImportTypes (all_types, targetNamespace, extension_type);
+			ImportTypes (all_types, targetNamespace, definition.HasExtensionMethod);
 		}
 
 		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)
 		{
 			var module_definition = new ImportedModuleDefinition (module, this);
 			module_definition.ReadAttributes ();
-
-			Type extension_type = HasExtensionAttribute (CustomAttributeData.GetCustomAttributes (module));
 
 			Type[] all_types;
 			try {
@@ -937,12 +925,12 @@ namespace Mono.CSharp
 				all_types = e.Types;
 			}
 
-			ImportTypes (all_types, targetNamespace, extension_type);
+			ImportTypes (all_types, targetNamespace, false);
 
 			return module_definition;
 		}
 
-		void ImportTypes (Type[] types, Namespace targetNamespace, Type extension_type)
+		void ImportTypes (Type[] types, Namespace targetNamespace, bool hasExtensionTypes)
 		{
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
@@ -968,7 +956,8 @@ namespace Mono.CSharp
 
 				ns.AddType (it);
 
-				if (it.IsStatic && extension_type != null && t.IsDefined (extension_type, false)) {
+				if (it.IsStatic && hasExtensionTypes &&
+					HasAttribute (CustomAttributeData.GetCustomAttributes (t), "ExtensionAttribute", CompilerServicesNamespace)) {
 					it.SetExtensionMethodContainer ();
 				}
 			}
@@ -1023,7 +1012,8 @@ namespace Mono.CSharp
 				return null;
 
 			foreach (var ca in attrs) {
-				if (ca.Constructor.DeclaringType != typeof (DecimalConstantAttribute))
+				var type = ca.Constructor.DeclaringType;
+				if (type.Name != "DecimalConstantAttribute" || type.Namespace != CompilerServicesNamespace)
 					continue;
 
 				var value = new decimal (
@@ -1111,7 +1101,11 @@ namespace Mono.CSharp
 
 				foreach (var a in attrs) {
 					var type = a.Constructor.DeclaringType;
-					if (type == typeof (ObsoleteAttribute)) {
+					var name = type.Name;
+					if (name == "ObsoleteAttribute") {
+						if (type.Namespace != "System")
+							continue;
+
 						if (bag == null)
 							bag = new AttributesBag ();
 
@@ -1128,7 +1122,10 @@ namespace Mono.CSharp
 						continue;
 					}
 
-					if (type == typeof (ConditionalAttribute)) {
+					if (name == "ConditionalAttribute") {
+						if (type.Namespace != "System.Diagnostics")
+							continue;
+
 						if (bag == null)
 							bag = new AttributesBag ();
 
@@ -1139,7 +1136,10 @@ namespace Mono.CSharp
 						continue;
 					}
 
-					if (type == typeof (CLSCompliantAttribute)) {
+					if (name == "CLSCompliantAttribute") {
+						if (type.Namespace != "System")
+							continue;
+
 						if (bag == null)
 							bag = new AttributesBag ();
 
@@ -1149,7 +1149,10 @@ namespace Mono.CSharp
 
 					// Type only attributes
 					if (mi.MemberType == MemberTypes.TypeInfo || mi.MemberType == MemberTypes.NestedType) {
-						if (type == typeof (DefaultMemberAttribute)) {
+						if (name == "DefaultMemberAttribute") {
+							if (type.Namespace != "System.Reflection")
+								continue;
+
 							if (bag == null)
 								bag = new AttributesBag ();
 
@@ -1157,7 +1160,10 @@ namespace Mono.CSharp
 							continue;
 						}
 
-						if (type == typeof (AttributeUsageAttribute)) {
+						if (name == "AttributeUsageAttribute") {
+							if (type.Namespace != "System")
+								continue;
+
 							if (bag == null)
 								bag = new AttributesBag ();
 
@@ -1172,7 +1178,10 @@ namespace Mono.CSharp
 						}
 
 						// Interface only attribute
-						if (typeImporter != null && type == typeof (CoClassAttribute)) {
+						if (typeImporter != null && name == "CoClassAttribute") {
+							if (type.Namespace != "System.Runtime.InteropServices")
+								continue;
+
 							if (bag == null)
 								bag = new AttributesBag ();
 
@@ -1289,7 +1298,10 @@ namespace Mono.CSharp
 			IList<CustomAttributeData> attrs = CustomAttributeData.GetCustomAttributes (module);
 			foreach (var a in attrs) {
 				var type = a.Constructor.DeclaringType;
-				if (type == typeof (CLSCompliantAttribute)) {
+				if (type.Name == "CLSCompliantAttribute") {
+					if (type.Namespace != "System")
+						continue;
+
 					cls_compliant = (bool) a.ConstructorArguments[0].Value;
 					continue;
 				}
@@ -1447,12 +1459,18 @@ namespace Mono.CSharp
 
 			foreach (var a in attrs) {
 				var type = a.Constructor.DeclaringType;
-				if (type == typeof (CLSCompliantAttribute)) {
-					cls_compliant = (bool) a.ConstructorArguments[0].Value;
+				var name = type.Name;
+
+				if (name == "CLSCompliantAttribute") {
+					if (type.Namespace == "System")
+						cls_compliant = (bool) a.ConstructorArguments[0].Value;
 					continue;
 				}
 
-				if (type == typeof (InternalsVisibleToAttribute)) {
+				if (name == "InternalsVisibleToAttribute") {
+					if (type.Namespace != ReflectionMetaImporter.CompilerServicesNamespace)
+						continue;
+
 					string s = a.ConstructorArguments[0].Value as string;
 					if (s == null)
 						continue;
@@ -1465,8 +1483,10 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				if (type.Name == "ExtensionAttribute" && type.Namespace == "System.Runtime.CompilerServices") {
-					contains_extension_methods = true;
+				if (name == "ExtensionAttribute") {
+					if (type.Namespace == ReflectionMetaImporter.CompilerServicesNamespace)
+						contains_extension_methods = true;
+
 					continue;
 				}
 			}
@@ -1730,7 +1750,7 @@ namespace Mono.CSharp
 								continue;
 
 							// Ignore compiler generated methods
-							if (meta_import.HasAttribute (CustomAttributeData.GetCustomAttributes (mb), typeof (CompilerGeneratedAttribute)))
+							if (ReflectionMetaImporter.HasAttribute (CustomAttributeData.GetCustomAttributes (mb), "CompilerGeneratedAttribute", ReflectionMetaImporter.CompilerServicesNamespace))
 								continue;
 						}
 
