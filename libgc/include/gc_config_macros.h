@@ -57,6 +57,7 @@
 	defined(GC_HPUX_THREADS) || defined(GC_OSF1_THREADS) || \
 	defined(GC_DGUX386_THREADS) || defined(GC_DARWIN_THREADS) || \
 	defined(GC_AIX_THREADS) || defined(GC_NETBSD_THREADS) || \
+	defined(GC_OPENBSD_THREADS) || \
         (defined(GC_WIN32_THREADS) && defined(__CYGWIN32__))
 #   define GC_PTHREADS
 # endif
@@ -85,6 +86,10 @@
 # endif
 # if defined(__APPLE__) && defined(__MACH__) && defined(__ppc__)
 #   define GC_DARWIN_THREADS
+#   define GC_PTHREADS
+# endif
+# if !defined(GC_PTHREADS) && defined(__OpenBSD__)
+#   define GC_OPENBSD_THREADS
 #   define GC_PTHREADS
 # endif
 # if !defined(GC_PTHREADS) && defined(__FreeBSD__)

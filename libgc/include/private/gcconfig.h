@@ -231,6 +231,10 @@
 #    define I386
 #    define mach_type_known
 # endif
+# if defined(OPENBSD) && defined(__amd64__)
+#    define X86_64
+#    define mach_type_known
+# endif
 # if defined(LINUX) && defined(__x86_64__)
 #    define X86_64
 #    define mach_type_known
@@ -1304,6 +1308,18 @@
 #   endif
 #   ifdef OPENBSD
 #	define OS_TYPE "OPENBSD"
+#    ifdef GC_OPENBSD_THREADS
+#       define UTHREAD_SP_OFFSET 192
+#    else
+#       include <sys/param.h>
+#       include <uvm/uvm_extern.h>
+#       define STACKBOTTOM USRSTACK
+#    endif
+        extern int __data_start[];
+#       define DATASTART ((ptr_t)(__data_start))
+        extern char _end[];
+#       define DATAEND ((ptr_t)(&_end))
+#       define DYNAMIC_LOADING
 #   endif
 #   ifdef FREEBSD
 #	define OS_TYPE "FREEBSD"
@@ -2085,6 +2101,22 @@
 #	define HEURISTIC2
 	extern char etext[];
 #	define SEARCH_FOR_DATA_START
+#   endif
+#   ifdef OPENBSD
+#       define OS_TYPE "OPENBSD"
+#       define ELF_CLASS ELFCLASS64
+#    ifdef GC_OPENBSD_THREADS
+#       define UTHREAD_SP_OFFSET 400
+#    else
+#       include <sys/param.h>
+#       include <uvm/uvm_extern.h>
+#       define STACKBOTTOM USRSTACK
+#    endif
+        extern int __data_start[];
+#       define DATASTART ((ptr_t)(__data_start))
+        extern char _end[];
+#       define DATAEND ((ptr_t)(&_end))
+#       define DYNAMIC_LOADING
 #   endif
 # endif
 

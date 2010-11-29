@@ -147,6 +147,13 @@ case "$THREADS" in
 	fi
 	AC_DEFINE(THREAD_LOCAL_ALLOC)
 	;;
+     *-*-openbsd*)
+	AC_DEFINE(GC_OPENBSD_THREADS)
+	if test "${enable_parallel_mark}" = yes; then
+	  AC_DEFINE(PARALLEL_MARK)
+	fi
+	AC_DEFINE(THREAD_LOCAL_ALLOC)
+	;;
      *-*-osf*)
 	AC_DEFINE(GC_OSF1_THREADS)
         if test "${enable_parallel_mark}" = yes; then
