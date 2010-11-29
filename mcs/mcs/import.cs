@@ -832,12 +832,7 @@ namespace Mono.CSharp
 				}
 
 				if (ct.IsClass) {
-					if (ct == typeof (ValueType)) {
-						spec.BaseType = TypeManager.value_type;
-					} else {
-						spec.BaseType = CreateType (ct);
-					}
-
+					spec.BaseType = CreateType (ct);
 					continue;
 				}
 
