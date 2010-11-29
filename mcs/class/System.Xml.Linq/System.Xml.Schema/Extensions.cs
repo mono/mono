@@ -32,19 +32,16 @@ using System.Xml.Linq;
 
 namespace System.Xml.Schema
 {
-	[MonoTODO]
 	public static class Extensions
 	{
-		[MonoTODO]
 		public static IXmlSchemaInfo GetSchemaInfo (this XAttribute attribute)
 		{
-			throw new NotImplementedException ();
+			return attribute.Annotation<IXmlSchemaInfo> ();
 		}
 
-		[MonoTODO]
 		public static IXmlSchemaInfo GetSchemaInfo (this XElement element)
 		{
-			throw new NotImplementedException ();
+			return element.Annotation<IXmlSchemaInfo> ();
 		}
 
 		[MonoTODO]
@@ -59,16 +56,33 @@ namespace System.Xml.Schema
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static void Validate (this XDocument document, XmlSchemaSet schemas, ValidationEventHandler handler)
 		{
-			throw new NotImplementedException ();
+			Validate (document, schemas, handler, false);
 		}
 
-		[MonoTODO]
 		public static void Validate (this XDocument document, XmlSchemaSet schemas, ValidationEventHandler handler, bool addSchemaInfo)
 		{
-			throw new NotImplementedException ();
+			if (document == null)
+				throw new ArgumentNullException ("document");
+			if (schemas == null)
+				throw new ArgumentNullException ("schemas");
+			var xrs = new XmlReaderSettings () { ValidationType = ValidationType.Schema };
+			xrs.Schemas = schemas;
+			xrs.ValidationEventHandler += handler;
+			var source = new XNodeReader (document);
+			var xr = XmlReader.Create (source, xrs);
+			while (xr.Read ()) {
+				if (addSchemaInfo) {
+					if (xr.NodeType == XmlNodeType.Element) {
+						source.CurrentNode.AddAnnotation (xr.SchemaInfo);
+						while (xr.MoveToNextAttribute ())
+							if (xr.NamespaceURI != XUtil.XmlnsNamespace)
+								source.GetCurrentAttribute ().AddAnnotation (xr.SchemaInfo);
+						xr.MoveToElement ();
+					}
+				}
+			}
 		}
 
 		[MonoTODO]

@@ -130,7 +130,7 @@ namespace System.Xml.Linq
 			get { return !EOF && attr < 0 && node is XElement ? ((XElement) node).IsEmpty : false; }
 		}
 
-		XAttribute GetCurrentAttribute ()
+		internal XAttribute GetCurrentAttribute ()
 		{
 			return GetXAttribute (attr);
 		}
@@ -514,6 +514,11 @@ namespace System.Xml.Linq
 		public override void ResolveEntity ()
 		{
 			throw new NotSupportedException ();
+		}
+		
+		// Note that this does not return attribute node.
+		internal XNode CurrentNode {
+			get { return node; }
 		}
 	}
 }
