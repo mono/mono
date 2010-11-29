@@ -407,6 +407,8 @@ namespace Mono.CSharp {
 		generic_ienumerable_type = CoreLookupType (ctx, "System.Collections.Generic", "IEnumerable", 1, MemberKind.Interface, false);
 		generic_nullable_type = CoreLookupType (ctx, "System", "Nullable", 1, MemberKind.Struct, false);
 
+		isvolatile_type = CoreLookupType (ctx, "System.Runtime.CompilerServices", "IsVolatile", MemberKind.Class, false);
+
 		//
 		// Optional types which are used as types and for member lookup
 		//

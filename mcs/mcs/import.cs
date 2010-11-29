@@ -137,12 +137,14 @@ namespace Mono.CSharp
 
 				mod |= Modifiers.READONLY;
 			} else {
-				var reqs = fi.GetRequiredCustomModifiers ();
-				if (reqs.Length > 0) {
-					foreach (var t in reqs) {
-						if (t == typeof (IsVolatile)) {
-							mod |= Modifiers.VOLATILE;
-							break;
+				if (TypeManager.isvolatile_type != null) {
+					var reqs = fi.GetRequiredCustomModifiers ();
+					if (reqs.Length > 0) {
+						foreach (var t in reqs) {
+							if (t == TypeManager.isvolatile_type.GetMetaInfo ()) {
+								mod |= Modifiers.VOLATILE;
+								break;
+							}
 						}
 					}
 				}
@@ -566,7 +568,7 @@ namespace Mono.CSharp
 				if (ca == null)
 					return spec;
 
-				if (type == typeof (object)) {
+				if (spec == TypeManager.object_type) {
 					if (IsDynamicType (ca, dynamicCursor))
 						return InternalType.Dynamic;
 
@@ -672,12 +674,18 @@ namespace Mono.CSharp
 				kind = MemberKind.Interface;
 			} else if (type.IsGenericParameter) {
 				kind = MemberKind.TypeParameter;
-			} else if (type.IsClass || type.IsAbstract) {  				// System.Reflection: System.Enum returns false for IsClass
-				if ((ma & TypeAttributes.Sealed) != 0 && type.IsSubclassOf (typeof (MulticastDelegate))) {
-					kind = MemberKind.Delegate;
-					mod |= Modifiers.SEALED;
-				} else {
+			} else {
+				var base_type = type.BaseType;
+				if (base_type == null || (ma & TypeAttributes.Abstract) != 0) {
 					kind = MemberKind.Class;
+				} else {
+					kind = DetermineKindFromBaseType (base_type);
+					if (kind == MemberKind.Struct || kind == MemberKind.Delegate) {
+						mod |= Modifiers.SEALED;
+					}
+				}
+
+				if (kind == MemberKind.Class) {
 					if ((ma & TypeAttributes.Sealed) != 0) {
 						mod |= Modifiers.SEALED;
 						if ((ma & TypeAttributes.Abstract) != 0)
@@ -686,11 +694,6 @@ namespace Mono.CSharp
 						mod |= Modifiers.ABSTRACT;
 					}
 				}
-			} else if (type.IsEnum) {
-				kind = MemberKind.Enum;
-			} else {
-				kind = MemberKind.Struct;
-				mod |= Modifiers.SEALED;
 			}
 
 			var definition = new ImportedTypeDefinition (this, type);
@@ -740,6 +743,20 @@ namespace Mono.CSharp
 				ImportTypeBase (spec, type);
 
 			return spec;
+		}
+
+		MemberKind DetermineKindFromBaseType (Type baseType)
+		{
+			if (baseType == typeof (ValueType))
+				return MemberKind.Struct;
+
+			if (baseType == typeof (System.Enum))
+				return MemberKind.Enum;
+
+			if (baseType == typeof (MulticastDelegate))
+				return MemberKind.Delegate;
+
+			return MemberKind.Class;
 		}
 
 		public ImportedAssemblyDefinition GetAssemblyDefinition (Assembly assembly)
