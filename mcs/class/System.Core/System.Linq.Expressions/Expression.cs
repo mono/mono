@@ -871,6 +871,8 @@ namespace System.Linq.Expressions {
 				return AddChecked (left, right, method);
 			case ExpressionType.AndAlso:
 				return AndAlso (left, right);
+			case ExpressionType.ArrayIndex:
+				return ArrayIndex (left, right);
 			case ExpressionType.Coalesce:
 				return Coalesce (left, right, conversion);
 			case ExpressionType.Divide:
