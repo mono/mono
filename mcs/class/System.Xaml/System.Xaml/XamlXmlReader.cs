@@ -346,11 +346,7 @@ namespace System.Xaml
 			XamlType xt;
 			IList<XamlTypeName> typeArgs = typeArgNames == null ? null : XamlTypeName.ParseList (typeArgNames, xaml_namespace_resolver);
 			var xtn = new XamlTypeName (ns, name, typeArgs);
-			//Type rtype = sctx.ResolveXamlTypeName (ns, name, typeArgs, xaml_namespace_resolver);
-			//if (rtype != null)
-			//	xt = sctx.GetXamlType (rtype);
-			//else
-				xt = sctx.GetXamlType (xtn);
+			xt = sctx.GetXamlType (xtn);
 			if (xt == null)
 				// creates name-only XamlType. Also, it does not seem that it does not store this XamlType to XamlSchemaContext (Try GetXamlType(xtn) after reading such xaml node, it will return null).
 				xt = new XamlType (ns, name, typeArgs == null ? null : typeArgs.Select<XamlTypeName,XamlType> (xxtn => sctx.GetXamlType (xxtn)).ToArray (), sctx);

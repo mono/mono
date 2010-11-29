@@ -71,17 +71,26 @@ namespace System.Xaml
 						posPrms = new List<string> ();
 						ret.Arguments.Add (XamlLanguage.PositionalParameters, posPrms);
 					}
-					posPrms.Add (vpair.Trim ());
+					posPrms.Add (UnescapeValue (vpair.Trim ()));
 				} else {
 					var key = vpair.Substring (0, idx).Trim ();
 					// FIXME: is unknown member always isAttacheable = false?
 					var xm = xt.GetMember (key) ?? new XamlMember (key, xt, false);
-					ret.Arguments.Add (xm, vpair.Substring (idx + 1).Trim ());
+					ret.Arguments.Add (xm, UnescapeValue (vpair.Substring (idx + 1).Trim ()));
 				}
 			}
 			return ret;
 		}
-	
+		
+		static string UnescapeValue (string s)
+		{
+			// change XamlXmlWriter too if we change here.
+			if (s == "\"\"") // FIXME: there could be some escape syntax.
+				return String.Empty;
+			else
+				return s;
+		}
+
 		static Exception Error (string format, params object [] args)
 		{
 			return new XamlParseException (String.Format (format, args));

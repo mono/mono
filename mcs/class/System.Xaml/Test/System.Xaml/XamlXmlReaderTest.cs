@@ -485,7 +485,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_StaticExtensionWrapper ()
 		{
 			var r = GetReader ("StaticExtensionWrapper.xml");
@@ -493,7 +492,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_TypeExtensionWrapper ()
 		{
 			var r = GetReader ("TypeExtensionWrapper.xml");

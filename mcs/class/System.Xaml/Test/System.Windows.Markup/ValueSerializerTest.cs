@@ -156,6 +156,13 @@ namespace MonoTests.System.Windows.Markup
 			Assert.IsFalse (v.TypeReferences (null, null).GetEnumerator ().MoveNext (), "#3");
 		}
 
+		[Test]
+		public void StringValueSerializer ()
+		{
+			var vs = ValueSerializer.GetSerializerFor (typeof (string));
+			Assert.AreEqual (String.Empty, vs.ConvertToString (String.Empty, null), "#1"); // it does not convert String.Empty to "\"\""
+		}
+
 		class MyValueSerializer : ValueSerializer
 		{
 			public Exception CallGetConvertFromException (object value)

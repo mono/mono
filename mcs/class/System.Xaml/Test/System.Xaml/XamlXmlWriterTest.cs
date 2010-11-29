@@ -898,7 +898,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_StaticExtensionWrapper ()
 		{
 			var obj = new StaticExtensionWrapper () { Param = new StaticExtension ("StaticExtensionWrapper.Foo") };
@@ -906,7 +905,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_TypeExtensionWrapper ()
 		{
 			var obj = new TypeExtensionWrapper () { Param = new TypeExtension ("Foo") };

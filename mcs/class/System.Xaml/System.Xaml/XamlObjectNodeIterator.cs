@@ -70,10 +70,10 @@ namespace System.Xaml
 		
 		IEnumerable<XamlNodeInfo> GetNodes (XamlMember xm, XamlObject xobj)
 		{
-			return GetNodes (xm, xobj, null);
+			return GetNodes (xm, xobj, null, false);
 		}
 
-		IEnumerable<XamlNodeInfo> GetNodes (XamlMember xm, XamlObject xobj, XamlType overrideMemberType)
+		IEnumerable<XamlNodeInfo> GetNodes (XamlMember xm, XamlObject xobj, XamlType overrideMemberType, bool partOfPositionalParameters)
 		{
 			// collection items: each item is exposed as a standalone object that has StartObject, EndObject and contents.
 			if (xm == XamlLanguage.Items) {
@@ -93,11 +93,10 @@ namespace System.Xaml
 				yield break;
 			}
 
-			// PositionalParameters: items are from constructor arguments, written as Value node sequentially. Note that not all of them are in simple string value.
+			// PositionalParameters: items are from constructor arguments, written as Value node sequentially. Note that not all of them are in simple string value. Also, null values are not written as NullExtension
 			if (xm == XamlLanguage.PositionalParameters) {
 				foreach (var argm in xobj.Type.GetSortedConstructorArguments ()) {
-					// FIXME: this (probably this) needs further fix to return object nodes for MarkupExtension, regarding above comment. See Read_StaticExtensionWrapper test.
-					foreach (var cn in GetNodes (argm, new XamlObject (argm.Type, xobj.GetMemberValue (argm)), null))
+					foreach (var cn in GetNodes (argm, new XamlObject (argm.Type, xobj.GetMemberValue (argm)), null, true))
 						yield return cn;
 				}
 				yield break;
@@ -112,12 +111,17 @@ namespace System.Xaml
 			if (xm != null) {
 				// overrideMemberType is (so far) used for XamlLanguage.Key.
 				var xtt = overrideMemberType ?? xm.Type;
-				if (xtt.IsContentValue (value_serializer_ctx) || xm.IsContentValue (value_serializer_ctx)) {
+				if (!xtt.IsMarkupExtension && // this condition is to not serialize MarkupExtension whose type has TypeConverterAttribute (e.g. StaticExtension) as a string.
+				    (xtt.IsContentValue (value_serializer_ctx) || xm.IsContentValue (value_serializer_ctx))) {
 					// though null value is special: it is written as a standalone object.
 					var val = xobj.GetRawValue ();
-					if (val == null)
-						foreach (var xn in GetNodes (null, null_object))
-							yield return xn;
+					if (val == null) {
+						if (!partOfPositionalParameters)
+							foreach (var xn in GetNodes (null, null_object))
+								yield return xn;
+						else
+							yield return new XamlNodeInfo (String.Empty);
+					}
 					else
 						yield return new XamlNodeInfo (TypeExtensionMethods.GetStringValue (xtt, xm, val, value_serializer_ctx));
 					yield break;
@@ -226,7 +230,7 @@ namespace System.Xaml
 		IEnumerable<XamlNodeInfo> GetKeyNodes (object ikey, XamlType keyType, XamlNodeMember xknm)
 		{
 			yield return new XamlNodeInfo (XamlNodeType.StartMember, xknm);
-			foreach (var xn in GetNodes (XamlLanguage.Key, new XamlObject (GetType (ikey), ikey), keyType))
+			foreach (var xn in GetNodes (XamlLanguage.Key, new XamlObject (GetType (ikey), ikey), keyType, false))
 				yield return xn;
 			yield return new XamlNodeInfo (XamlNodeType.EndMember, xknm);
 		}
