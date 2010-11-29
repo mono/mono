@@ -15,7 +15,7 @@ int main()
 	|| defined(GC_DARWIN_THREADS) || defined(GC_AIX_THREADS)
         printf("-lpthread\n");
 #   endif
-#   if defined(GC_FREEBSD_THREADS)
+#   if defined(GC_FREEBSD_THREADS) || defined(GC_OPENBSD_THREADS)
 #       if (__FREEBSD_version >= 500000)
           printf("-lpthread\n");
 #       else

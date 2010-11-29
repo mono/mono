@@ -8,6 +8,8 @@
      
 #if defined(GC_DARWIN_THREADS)
 # include "private/darwin_stop_world.h"
+#elif defined(GC_OPENBSD_THREADS)
+# include "private/openbsd_stop_world.h"
 #else
 # include "private/pthread_stop_world.h"
 #endif
