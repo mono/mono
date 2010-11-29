@@ -140,7 +140,7 @@ namespace Mono.CSharp
 				var reqs = fi.GetRequiredCustomModifiers ();
 				if (reqs.Length > 0) {
 					foreach (var t in reqs) {
-						if (t == typeof (System.Runtime.CompilerServices.IsVolatile)) {
+						if (t == typeof (IsVolatile)) {
 							mod |= Modifiers.VOLATILE;
 							break;
 						}
@@ -148,14 +148,17 @@ namespace Mono.CSharp
 				}
 			}
 
-			if ((fa & FieldAttributes.Static) != 0)
+			if ((fa & FieldAttributes.Static) != 0) {
 				mod |= Modifiers.STATIC;
+			} else {
+				// Fixed buffers cannot be static
+				if (declaringType.IsStruct && field_type.IsStruct && field_type.IsNested &&
+					HasAttribute (CustomAttributeData.GetCustomAttributes (fi), typeof (FixedBufferAttribute))) {
 
-			if (declaringType.IsStruct && field_type.IsStruct && field_type.IsNested && 
-				HasAttribute (CustomAttributeData.GetCustomAttributes (fi), typeof (FixedBufferAttribute))) {
-
-				var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
-				return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
+					// TODO: Sanity check on field_type (only few type are allowed)
+					var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
+					return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
+				}
 			}
 
 			return new FieldSpec (declaringType, definition, field_type, fi, mod);
