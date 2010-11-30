@@ -133,6 +133,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		static object lock_object = new object ();
 
 		readonly Compiler.CompilerContext cc;
+		Compiler.ReflectionMetaImporter importer;
 
 		private DynamicContext (Compiler.CompilerContext cc)
 		{
@@ -154,15 +155,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (dc != null)
 					return dc;
 
-				var importer = new Compiler.ReflectionMetaImporter () {
-					IgnorePrivateMembers = false
-				};
-
 				var reporter = new Compiler.Report (ErrorPrinter.Instance) {
 					WarningLevel = 0
 				};
 
-				var cc = new Compiler.CompilerContext (importer, reporter) {
+				var cc = new Compiler.CompilerContext (reporter) {
 					IsRuntimeBinder = true
 				};
 
@@ -171,8 +168,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (!Compiler.RootContext.EvalMode) {
 					core_types = Compiler.TypeManager.InitCoreTypes ();
 				}
-
-				importer.Initialize ();
 
 				//
 				// Any later loaded assemblies are handled internally by GetAssemblyDefinition
@@ -188,6 +183,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 				var domain = AppDomain.CurrentDomain;
 
 				temp.Create (domain, System.Reflection.Emit.AssemblyBuilderAccess.Run);
+				var importer = new Compiler.ReflectionMetaImporter () {
+					IgnorePrivateMembers = false
+				};
+
 				foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
 					importer.ImportAssembly (a, Compiler.RootContext.ToplevelTypes.GlobalRootNamespace);
 				}
@@ -198,6 +197,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				}
 
 				dc = new DynamicContext (cc);
+				dc.importer = importer;
 			}
 
 			return dc;
@@ -269,7 +269,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		public Compiler.TypeSpec ImportType (Type type)
 		{
 			lock (lock_object) {
-				return cc.MetaImporter.ImportType (type);
+				return importer.ImportType (type);
 			}
 		}
 	}

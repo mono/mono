@@ -107,7 +107,7 @@ namespace Mono.CSharp
 
 		public static Driver Create (string[] args, bool require_files, ReportPrinter printer)
 		{
-			Driver d = new Driver (new CompilerContext (new ReflectionMetaImporter (), new Report (printer)));
+			Driver d = new Driver (new CompilerContext (new Report (printer)));
 
 			if (!d.ParseArguments (args, require_files))
 				return null;
@@ -445,7 +445,7 @@ namespace Mono.CSharp
 		/// <summary>
 		///   Loads all assemblies referenced on the command line
 		/// </summary>
-		public void LoadReferences (ModuleContainer module)
+		public void LoadReferences (ModuleContainer module, ReflectionMetaImporter importer)
 		{
 			link_paths.Add (GetSystemDir ());
 			link_paths.Add (Directory.GetCurrentDirectory ());
@@ -492,7 +492,7 @@ namespace Mono.CSharp
 			}
 
 			foreach (var entry in loaded) {
-				ctx.MetaImporter.ImportAssembly (entry.Item2, entry.Item1);
+				importer.ImportAssembly (entry.Item2, entry.Item1);
 			}
 		}
 
@@ -1725,11 +1725,12 @@ namespace Mono.CSharp
 			if (timestamps)
 				stopwatch = Stopwatch.StartNew ();
 
-			ctx.MetaImporter.Initialize ();
-
 			var assembly = module.MakeExecutable (output_file, output_file);
-			
-			LoadReferences (module);
+
+			var importer = new ReflectionMetaImporter ();
+			assembly.Importer = importer;
+
+			LoadReferences (module, importer);
 		
 			ShowTime ("Imporing referenced assemblies");
 			

@@ -20,9 +20,9 @@ namespace Mono.CSharp
 {
 	public class ReflectionMetaImporter
 	{
-		Dictionary<Type, TypeSpec> import_cache;
+		readonly Dictionary<Type, TypeSpec> import_cache;
 		Dictionary<Type, PredefinedTypeSpec> type_2_predefined;
-		Dictionary<Assembly, ImportedAssemblyDefinition> assembly_2_definition;
+		readonly Dictionary<Assembly, ImportedAssemblyDefinition> assembly_2_definition;
 
 		public static readonly string CompilerServicesNamespace = "System.Runtime.CompilerServices";
 
@@ -31,6 +31,8 @@ namespace Mono.CSharp
 			import_cache = new Dictionary<Type, TypeSpec> (1024, ReferenceEquality<Type>.Default);
 			assembly_2_definition = new Dictionary<Assembly, ImportedAssemblyDefinition> (ReferenceEquality<Assembly>.Default);
 			IgnorePrivateMembers = true;
+
+			Initialize ();
 		}
 
 		#region Properties
@@ -45,7 +47,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public void Initialize ()
+		void Initialize ()
 		{
 			// Setup mapping for predefined types
 			type_2_predefined = new Dictionary<Type, PredefinedTypeSpec> () {

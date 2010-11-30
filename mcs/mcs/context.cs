@@ -545,12 +545,10 @@ namespace Mono.CSharp
 	public class CompilerContext
 	{
 		readonly Report report;
-		readonly ReflectionMetaImporter meta_importer;
 		readonly PredefinedAttributes attributes;
 
-		public CompilerContext (ReflectionMetaImporter metaImporter, Report report)
+		public CompilerContext (Report report)
 		{
-			this.meta_importer = metaImporter;
 			this.report = report;
 
 			this.attributes = new PredefinedAttributes ();
@@ -562,12 +560,6 @@ namespace Mono.CSharp
 		public RootNamespace GlobalRootNamespace { get; set; }
 
 		public bool IsRuntimeBinder { get; set; }
-
-		public ReflectionMetaImporter MetaImporter {
-			get {
-				return meta_importer;
-			}
-		}
 
 		public PredefinedAttributes PredefinedAttributes {
 			get {

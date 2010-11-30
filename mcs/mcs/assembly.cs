@@ -138,6 +138,11 @@ namespace Mono.CSharp
 			}
 		}
 
+		// TODO: This should not exist here but will require more changes
+		public ReflectionMetaImporter Importer {
+			get ; set;
+		}
+
 		public bool IsCLSCompliant {
 			get {
 				return is_cls_compliant;
@@ -167,7 +172,7 @@ namespace Mono.CSharp
 		public void AddModule (string moduleFile)
 		{
 			var mod = builder_extra.AddModule (moduleFile);
-			var imported = Compiler.MetaImporter.ImportModule (mod, module.GlobalRootNamespace);
+			var imported = Importer.ImportModule (mod, module.GlobalRootNamespace);
 
 			if (added_modules == null) {
 				added_modules = new List<ImportedModuleDefinition> ();
@@ -348,7 +353,7 @@ namespace Mono.CSharp
 		{
 			// TODO: It should check only references assemblies but there is
 			// no working SRE API
-			foreach (var a in Compiler.MetaImporter.Assemblies) {
+			foreach (var a in Importer.Assemblies) {
 				if (public_key != null && !a.HasStrongName) {
 					Report.Error (1577, "Referenced assembly `{0}' does not have a strong name",
 						a.FullName);
