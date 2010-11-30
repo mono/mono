@@ -370,6 +370,17 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[ExpectedException (typeof (XamlObjectReaderException))]
+		[Category ("NotWorking")]
+		public void Read_XDataWrapper ()
+		{
+			var obj = new XDataWrapper () { Markup = new XData () {Text = "<my_xdata/>" } };
+			var r = new XamlObjectReader (obj);
+			while (!r.IsEof)
+				r.Read ();
+		}
+
+		[Test]
 		public void ReadStandardTypes ()
 		{
 			SimpleReadStandardType (new ArrayExtension ());
