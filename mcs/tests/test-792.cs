@@ -15,6 +15,7 @@ class Program
 	void Test2 (IMemberDelayed md)
 	{
 		md.Working ();
+		var t = typeof (IMemberDelayed);
 	}
 
 	static void Main ()

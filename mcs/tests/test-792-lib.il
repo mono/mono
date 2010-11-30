@@ -36,6 +36,7 @@
   .field private class [mscorlib]System.Collections.Generic.List`1<valuetype ['missing-lib']XX> field2
   .field private class ['missing-lib']XX field3
   .field public class MembersDelayed[] fooArray
+  .field private static initonly class['missing-lib']XX field4
   
   .method public hidebysig specialname rtspecialname 
           instance void  .ctor() cil managed
