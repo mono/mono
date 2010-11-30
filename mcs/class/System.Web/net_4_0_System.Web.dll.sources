@@ -10,6 +10,7 @@ Assembly/AssemblyInfo.cs
 System.Web.Configuration_2.0/CapabilitiesBuild.cs
 System.Web.Configuration_2.0/CapabilitiesResult.cs
 System.Web.Configuration_2.0/ICapabilitiesProcess.cs
+System.Web.Configuration_2.0/MachineKeyCompatibilityMode.cs
 System.Web.Configuration_2.0/nBrowser/Result.cs
 System.Web.Configuration_2.0/nBrowser/NodeTypes.cs
 System.Web.Configuration_2.0/nBrowser/Identification.cs

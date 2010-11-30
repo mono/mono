@@ -23,10 +23,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2010 Novell, Inc (http://www.novell.com)
 //
-
-using System.Resources;
 
 namespace System.Web.Configuration
 {
@@ -40,7 +38,13 @@ namespace System.Web.Configuration
 		MD5 = 0,
 		SHA1 = 1,
 		TripleDES = 2,
-		AES = 3
+		AES = 3,
+#if NET_4_0
+		HMACSHA256 = 4,
+		HMACSHA384 = 5,
+		HMACSHA512 = 6,
+		Custom = 7
+#endif
 	}
 }
 

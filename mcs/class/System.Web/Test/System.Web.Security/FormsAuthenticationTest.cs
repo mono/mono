@@ -129,6 +129,16 @@ namespace MonoTests.System.Web.Security
 		{
 			FormsAuthentication.RedirectToLoginPage (String.Empty);
 		}
+
+		[Test]
+		[Category ("NotWorking")] // works on .net
+		public void Authenticate ()
+		{
+			Assert.IsFalse (FormsAuthentication.Authenticate (null, "password"), "null,string");
+			Assert.IsFalse (FormsAuthentication.Authenticate ("user", null), "string,null");
+			// not throwing
+			Assert.IsFalse (FormsAuthentication.Authenticate ("user", "password"), "string,string");
+		}
 #endif
 
 		[TestFixtureTearDown]

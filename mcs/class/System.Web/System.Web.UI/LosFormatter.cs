@@ -28,10 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Configuration;
 using System.IO;
-using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Text;
+using System.Web.Configuration;
 
 namespace System.Web.UI {
 
@@ -48,11 +49,14 @@ namespace System.Web.UI {
 
 #if NET_1_1
 		public LosFormatter (bool enableMac, string macKeyModifier)
-			: this (enableMac, Convert.FromBase64String (macKeyModifier))
 		{
+			osf = new ObjectStateFormatter ();
+			if (enableMac && macKeyModifier != null && macKeyModifier.Length > 0) {
+				SetMacKey (Convert.FromBase64String (macKeyModifier));
+			}
 		}
 #endif
-		[MonoTODO]
+
 #if NET_2_0
 		public
 #else
@@ -60,25 +64,53 @@ namespace System.Web.UI {
 #endif
 		LosFormatter (bool enableMac, byte[] macKeyModifier)
 		{
-			if (enableMac)
-				osf = new ObjectStateFormatter (macKeyModifier);
-			else
-				osf = new ObjectStateFormatter ();
+			osf = new ObjectStateFormatter ();
+			if (enableMac && (macKeyModifier != null)) {
+				SetMacKey (macKeyModifier);
+			}
 		}
 
+		void SetMacKey (byte[] macKeyModifier)
+		{
+			try {
+#if NET_2_0
+				osf.Section.ValidationKey = MachineKeySectionUtils.GetHexString (macKeyModifier);
+#else
+				osf.Section.SetValidationKey (MachineKeySectionUtils.GetHexString (macKeyModifier));
+#endif
+			}
+			catch (ArgumentException) {
+			}
+#if NET_2_0
+			catch (ConfigurationErrorsException) {
+				// bad key (e.g. size), default key will be used
+			}
+#else
+			catch (HttpException) {
+				// bad key (e.g. size), default key will be used
+			}
+#endif
+                }
+		
 		public object Deserialize (Stream stream)
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
+#if NET_4_0
+			using (StreamReader sr = new StreamReader (stream)) {
+				return Deserialize (sr.ReadToEnd ());
+			}
+#else
 			long streamLength = -1;
 			if (stream.CanSeek)
 				streamLength = stream.Length;
-			byte [] bytes = new byte [streamLength >= 0 ? streamLength : 2048];
+			
 			MemoryStream ms = null;
 			if (streamLength  != -1 && (stream is MemoryStream) && stream.Position == 0) {
 				// We save allocating a new stream and reading in this case.
 				ms = (MemoryStream) stream;
 			} else {
+				byte [] bytes = new byte [streamLength >= 0 ? streamLength : 2048];	
 				ms = new MemoryStream ();
 				int n;
 				while ((n = stream.Read (bytes, 0, bytes.Length)) > 0)
@@ -89,6 +121,7 @@ namespace System.Web.UI {
 			string b64 = Encoding.ASCII.GetString (ms.GetBuffer (),
 				0, (int) streamLength);
 			return Deserialize (b64);
+#endif
 		}
 
 		public object Deserialize (TextReader input)
@@ -116,7 +149,10 @@ namespace System.Web.UI {
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-
+#if NET_4_0
+			if (!stream.CanSeek)
+				throw new NotSupportedException ();
+#endif
 			string b64 = SerializeToBase64 (value);
 			byte [] bytes = Encoding.ASCII.GetBytes (b64);
 			stream.Write (bytes, 0, bytes.Length);
