@@ -1,0 +1,10 @@
+<NamedItem x:Name="__ReferenceID0" ItemName="foo" xmlns="clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <NamedItem.References>
+    <NamedItem ItemName="bar">
+      <NamedItem.References>
+        <x:Reference>__ReferenceID0</x:Reference>
+      </NamedItem.References>
+    </NamedItem>
+    <NamedItem ItemName="baz" />
+  </NamedItem.References>
+</NamedItem>
