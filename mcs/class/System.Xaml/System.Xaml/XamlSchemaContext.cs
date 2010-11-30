@@ -317,7 +317,7 @@ namespace System.Xaml
 
 			// convert xml namespace to clr namespace and assembly
 			string [] split = ns.Split (';');
-			if (split.Length != 2 || split [0].Length <= clr_ns_len || split [1].Length <= clr_ass_len)
+			if (split.Length != 2 || split [0].Length < clr_ns_len || split [1].Length <= clr_ass_len)
 				throw new XamlParseException (string.Format ("Cannot resolve runtime namespace from XML namespace '{0}'", ns));
 			string tns = split [0].Substring (clr_ns_len);
 			string aname = split [1].Substring (clr_ass_len);
