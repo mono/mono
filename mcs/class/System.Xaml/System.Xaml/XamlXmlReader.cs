@@ -241,7 +241,7 @@ namespace System.Xaml
 					if (!ReadExtraStartMember ())
 						ReadStartMember ();
 				} else {
-					if (current_member != null && !current_member.IsWritePublic) {
+					if (node_type == XamlNodeType.StartMember && current_member != null && !current_member.IsWritePublic) {
 						if (current_member.Type.IsCollection)
 							SetGetObject ();
 						else

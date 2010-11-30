@@ -743,9 +743,7 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (ReadXml ("List_Type.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
 
-		// FIXME: test in in other readers/writers.
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_ListArray ()
 		{
 			var obj = new List<Array> (new Array [] { new int [] { 1,2,3}, new string [] { "foo", "bar", "baz" }}) { Capacity = 2 };

@@ -352,7 +352,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_ListArray ()
 		{
 			var r = GetReader ("List_Array.xml");
