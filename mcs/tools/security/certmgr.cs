@@ -560,6 +560,11 @@ namespace Mono.Tools {
 					n++;
 			}
 			
+			if (n >= args.Length) {
+				Help ();
+				return;
+			}
+
 			bool verbose = (GetCommand (args [n]) == "V");
 			if (verbose)
 				n++;
