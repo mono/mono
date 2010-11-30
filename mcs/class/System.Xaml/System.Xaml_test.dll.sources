@@ -22,10 +22,10 @@ System.Xaml/XamlMemberTest.cs
 System.Xaml/XamlObjectEventArgsTest.cs
 System.Xaml/XamlObjectReaderSettingsTest.cs
 System.Xaml/XamlObjectReaderTest.cs
-System.Xaml/XamlObjectReaderTest_.cs
 System.Xaml/XamlObjectWriterSettingsTest.cs
 System.Xaml/XamlObjectWriterTest.cs
 System.Xaml/XamlReaderSettingsTest.cs
+System.Xaml/XamlReaderTestBase.cs
 System.Xaml/XamlSchemaContextSettingsTest.cs
 System.Xaml/XamlSchemaContextTest.cs
 System.Xaml/XamlTypeTest.cs
