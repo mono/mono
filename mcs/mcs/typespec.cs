@@ -66,6 +66,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public virtual BuildinTypeSpec.Type BuildinType {
+			get {
+				return BuildinTypeSpec.Type.None;
+			}
+		}
+
 		public bool HasDynamicElement {
 			get {
 				return (state & StateFlags.HasDynamicElement) != 0;
@@ -428,19 +434,52 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class PredefinedTypeSpec : TypeSpec
+	public sealed class BuildinTypeSpec : PredefinedTypeSpec
 	{
-		string name;
-		string ns;
-
-		public PredefinedTypeSpec (MemberKind kind, string ns, string name)
-			: base (kind, null, null, null, Modifiers.PUBLIC)
+		public enum Type
 		{
-			if (kind == MemberKind.Struct)
-				modifiers |= Modifiers.SEALED;
+			None = 0,
 
-			this.name = name;
-			this.ns = ns;
+			// TODO: Reorder it more carefully so we can do fast compares
+			Object,
+			ValueType,
+			Attribute,
+			Int,
+			UInt,
+			Long,
+			ULong,
+			Float,
+			Double,
+			Char,
+			Short,
+			Decimal,
+			Bool,
+			SByte,
+			Byte,
+			UShort,
+			String,
+			Enum,
+			Delegate,
+			MulticastDelegate,
+			Void,
+			Array,
+			Type,
+			IEnumerator,
+			IEnumerable,
+			IDisposable,
+			IntPtr,
+			UIntPtr,
+			RuntimeFieldHandle,
+			RuntimeTypeHandle,
+			Exception
+		}
+
+		readonly Type type;
+
+		public BuildinTypeSpec (MemberKind kind, string ns, string name, Type buildinKind)
+			: base (kind, ns, name)
+		{
+			this.type = buildinKind;
 		}
 
 		#region Properties
@@ -451,15 +490,9 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override string Name {
+		public override BuildinTypeSpec.Type BuildinType {
 			get {
-				return name;
-			}
-		}
-
-		public string Namespace {
-			get {
-				return ns;
+				return type;
 			}
 		}
 
@@ -467,7 +500,7 @@ namespace Mono.CSharp
 
 		public override string GetSignatureForError ()
 		{
-			switch (name) {
+			switch (Name) {
 			case "Int32": return "int";
 			case "Int64": return "long";
 			case "String": return "string";
@@ -486,10 +519,10 @@ namespace Mono.CSharp
 			case "SByte": return "sbyte";
 			}
 
-			return ns + "." + name;
+			return Namespace + "." + Name;
 		}
 
-		public void SetDefinition (ITypeDefinition td, Type type)
+		public void SetDefinition (ITypeDefinition td, System.Type type)
 		{
 			this.definition = td;
 			this.info = type;
@@ -502,6 +535,38 @@ namespace Mono.CSharp
 			this.BaseType = ts.BaseType;
 			this.Interfaces = ts.Interfaces;
 		}
+	}
+
+	public class PredefinedTypeSpec : TypeSpec
+	{
+		string name;
+		string ns;
+
+		public PredefinedTypeSpec (MemberKind kind, string ns, string name)
+			: base (kind, null, null, null, Modifiers.PUBLIC)
+		{
+			if (kind == MemberKind.Struct)
+				modifiers |= Modifiers.SEALED;
+
+			this.name = name;
+			this.ns = ns;
+		}
+
+		#region Properties
+
+		public override string Name {
+			get {
+				return name;
+			}
+		}
+
+		public string Namespace {
+			get {
+				return ns;
+			}
+		}
+
+		#endregion
 	}
 
 	static class TypeSpecComparer

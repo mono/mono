@@ -1681,8 +1681,6 @@ namespace Mono.CSharp
 			var module = new ModuleContainer (ctx);
 			RootContext.ToplevelTypes = module;
 
-			var ctypes = TypeManager.InitCoreTypes ();
-
 			if (timestamps) {
 				stopwatch = Stopwatch.StartNew ();
 				first_time = DateTime.Now;
@@ -1727,14 +1725,14 @@ namespace Mono.CSharp
 
 			var assembly = module.MakeExecutable (output_file, output_file);
 
-			var importer = new ReflectionImporter ();
+			var importer = new ReflectionImporter (ctx.BuildinTypes);
 			assembly.Importer = importer;
 
 			LoadReferences (module, importer);
 		
 			ShowTime ("Imporing referenced assemblies");
 			
-			if (!TypeManager.InitCoreTypes (module, ctypes))
+			if (!TypeManager.InitCoreTypes (module, ctx.BuildinTypes))
 				return false;
 
 			TypeManager.InitOptionalCoreTypes (ctx);

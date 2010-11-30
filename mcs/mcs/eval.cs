@@ -128,13 +128,12 @@ namespace Mono.CSharp {
 					startup_files.Add (file.Path);
 				
 				CompilerCallableEntryPoint.Reset ();
-				var ctypes = TypeManager.InitCoreTypes ();
 
-				importer = new ReflectionImporter ();
+				importer = new ReflectionImporter (ctx.BuildinTypes);
 
 				RootContext.ToplevelTypes.MakeExecutable ("temp");
 				driver.LoadReferences (RootContext.ToplevelTypes, importer);
-				TypeManager.InitCoreTypes (RootContext.ToplevelTypes, ctypes);
+				TypeManager.InitCoreTypes (RootContext.ToplevelTypes, ctx.BuildinTypes);
 				TypeManager.InitOptionalCoreTypes (ctx);
 
 				RootContext.EvalMode = true;

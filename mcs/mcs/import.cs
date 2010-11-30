@@ -19,7 +19,7 @@ namespace Mono.CSharp
 	public abstract class MetadataImporter
 	{
 		protected readonly Dictionary<Type, TypeSpec> import_cache;
-		protected readonly Dictionary<Type, PredefinedTypeSpec> buildin_types;
+		protected readonly Dictionary<Type, BuildinTypeSpec> buildin_types;
 		readonly Dictionary<Assembly, ImportedAssemblyDefinition> assembly_2_definition;
 
 		public static readonly string CompilerServicesNamespace = "System.Runtime.CompilerServices";
@@ -27,7 +27,7 @@ namespace Mono.CSharp
 		protected MetadataImporter ()
 		{
 			import_cache = new Dictionary<Type, TypeSpec> (1024, ReferenceEquality<Type>.Default);
-			buildin_types = new Dictionary<Type, PredefinedTypeSpec> (40, ReferenceEquality<Type>.Default);
+			buildin_types = new Dictionary<Type, BuildinTypeSpec> (40, ReferenceEquality<Type>.Default);
 			assembly_2_definition = new Dictionary<Assembly, ImportedAssemblyDefinition> (ReferenceEquality<Assembly>.Default);
 			IgnorePrivateMembers = true;
 		}
@@ -357,9 +357,9 @@ namespace Mono.CSharp
 					if (!is_params && p.IsOptional) {
 						object value = p.RawDefaultValue;
 						var ptype = types[i];
-						if (((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter)) {
+						if ((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter && (value != null || TypeManager.IsReferenceType (ptype))) {
 							//
-							// Use value type as int constant can be used for object parameter type
+							// Get type of underlying value as int constant can be used for object parameter type
 							//
 							var dtype = value == null ? ptype : ImportType (value.GetType ());
 							default_value = Constant.CreateConstant (null, dtype, value, Location.Null);
@@ -658,7 +658,7 @@ namespace Mono.CSharp
 			}
 
 			var definition = new ImportedTypeDefinition (this, type);
-			PredefinedTypeSpec pt;
+			BuildinTypeSpec pt;
 
 			if (kind == MemberKind.Enum) {
 				const BindingFlags underlying_member = BindingFlags.DeclaredOnly |

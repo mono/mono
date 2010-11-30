@@ -16,10 +16,10 @@ namespace Mono.CSharp
 {
 	public class ReflectionImporter : MetadataImporter
 	{
-		public ReflectionImporter ()
+		public ReflectionImporter (BuildinTypes buildin)
 			: base ()
 		{
-			Initialize ();
+			Initialize (buildin);
 		}
 
 		protected override MemberKind DetermineKindFromBaseType (Type baseType)
@@ -36,46 +36,46 @@ namespace Mono.CSharp
 			return MemberKind.Class;
 		}
 
-		void Initialize ()
+		void Initialize (BuildinTypes buildin)
 		{
 			//
 			// Setup mapping for build-in types to avoid duplication of their definition
 			//
-			buildin_types.Add (typeof (object), TypeManager.object_type);
-			buildin_types.Add (typeof (System.ValueType), TypeManager.value_type);
-			buildin_types.Add (typeof (System.Attribute), TypeManager.attribute_type);
+			buildin_types.Add (typeof (object), buildin.Object);
+			buildin_types.Add (typeof (System.ValueType), buildin.ValueType);
+			buildin_types.Add (typeof (System.Attribute), buildin.Attribute);
 
-			buildin_types.Add (typeof (int), TypeManager.int32_type);
-			buildin_types.Add (typeof (long), TypeManager.int64_type);
-			buildin_types.Add (typeof (uint), TypeManager.uint32_type);
-			buildin_types.Add (typeof (ulong), TypeManager.uint64_type);
-			buildin_types.Add (typeof (byte), TypeManager.byte_type);
-			buildin_types.Add (typeof (sbyte), TypeManager.sbyte_type);
-			buildin_types.Add (typeof (short), TypeManager.short_type);
-			buildin_types.Add (typeof (ushort), TypeManager.ushort_type);
+			buildin_types.Add (typeof (int), buildin.Int);
+			buildin_types.Add (typeof (long), buildin.Long);
+			buildin_types.Add (typeof (uint), buildin.UInt);
+			buildin_types.Add (typeof (ulong), buildin.ULong);
+			buildin_types.Add (typeof (byte), buildin.Byte);
+			buildin_types.Add (typeof (sbyte), buildin.SByte);
+			buildin_types.Add (typeof (short), buildin.Short);
+			buildin_types.Add (typeof (ushort), buildin.UShort);
 
-			buildin_types.Add (typeof (System.Collections.IEnumerator), TypeManager.ienumerator_type);
-			buildin_types.Add (typeof (System.Collections.IEnumerable), TypeManager.ienumerable_type);
-			buildin_types.Add (typeof (System.IDisposable), TypeManager.idisposable_type);
+			buildin_types.Add (typeof (System.Collections.IEnumerator), buildin.IEnumerator);
+			buildin_types.Add (typeof (System.Collections.IEnumerable), buildin.IEnumerable);
+			buildin_types.Add (typeof (System.IDisposable), buildin.IDisposable);
 
-			buildin_types.Add (typeof (char), TypeManager.char_type);
-			buildin_types.Add (typeof (string), TypeManager.string_type);
-			buildin_types.Add (typeof (float), TypeManager.float_type);
-			buildin_types.Add (typeof (double), TypeManager.double_type);
-			buildin_types.Add (typeof (decimal), TypeManager.decimal_type);
-			buildin_types.Add (typeof (bool), TypeManager.bool_type);
-			buildin_types.Add (typeof (System.IntPtr), TypeManager.intptr_type);
-			buildin_types.Add (typeof (System.UIntPtr), TypeManager.uintptr_type);
+			buildin_types.Add (typeof (char), buildin.Char);
+			buildin_types.Add (typeof (string), buildin.String);
+			buildin_types.Add (typeof (float), buildin.Float);
+			buildin_types.Add (typeof (double), buildin.Double);
+			buildin_types.Add (typeof (decimal), buildin.Decimal);
+			buildin_types.Add (typeof (bool), buildin.Bool);
+			buildin_types.Add (typeof (System.IntPtr), buildin.IntPtr);
+			buildin_types.Add (typeof (System.UIntPtr), buildin.UIntPtr);
 
-			buildin_types.Add (typeof (System.MulticastDelegate), TypeManager.multicast_delegate_type);
-			buildin_types.Add (typeof (System.Delegate), TypeManager.delegate_type);
-			buildin_types.Add (typeof (System.Enum), TypeManager.enum_type);
-			buildin_types.Add (typeof (System.Array), TypeManager.array_type);
-			buildin_types.Add (typeof (void), TypeManager.void_type);
-			buildin_types.Add (typeof (System.Type), TypeManager.type_type);
-			buildin_types.Add (typeof (System.Exception), TypeManager.exception_type);
-			buildin_types.Add (typeof (System.RuntimeFieldHandle), TypeManager.runtime_field_handle_type);
-			buildin_types.Add (typeof (System.RuntimeTypeHandle), TypeManager.runtime_handle_type);
+			buildin_types.Add (typeof (System.MulticastDelegate), buildin.MulticastDelegate);
+			buildin_types.Add (typeof (System.Delegate), buildin.Delegate);
+			buildin_types.Add (typeof (System.Enum), buildin.Enum);
+			buildin_types.Add (typeof (System.Array), buildin.Array);
+			buildin_types.Add (typeof (void), buildin.Void);
+			buildin_types.Add (typeof (System.Type), buildin.Type);
+			buildin_types.Add (typeof (System.Exception), buildin.Exception);
+			buildin_types.Add (typeof (System.RuntimeFieldHandle), buildin.RuntimeFieldHandle);
+			buildin_types.Add (typeof (System.RuntimeTypeHandle), buildin.RuntimeTypeHandle);
 		}
 	}
 }

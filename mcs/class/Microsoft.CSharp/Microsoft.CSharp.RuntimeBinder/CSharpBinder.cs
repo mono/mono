@@ -163,11 +163,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 					IsRuntimeBinder = true
 				};
 
-				IList<Compiler.PredefinedTypeSpec> core_types = null;
-				// HACK: To avoid re-initializing static TypeManager types, like string_type
-				if (!Compiler.RootContext.EvalMode) {
-					core_types = Compiler.TypeManager.InitCoreTypes ();
-				}
+				//IList<Compiler.PredefinedTypeSpec> core_types = null;
+				//// HACK: To avoid re-initializing static TypeManager types, like string_type
+				//if (!Compiler.RootContext.EvalMode) {
+				//    core_types = Compiler.TypeManager.InitCoreTypes ();
+				//}
 
 				//
 				// Any later loaded assemblies are handled internally by GetAssemblyDefinition
@@ -183,7 +183,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				var domain = AppDomain.CurrentDomain;
 
 				temp.Create (domain, System.Reflection.Emit.AssemblyBuilderAccess.Run);
-				var importer = new Compiler.ReflectionImporter () {
+				var importer = new Compiler.ReflectionImporter (cc.BuildinTypes) {
 					IgnorePrivateMembers = false
 				};
 
@@ -192,7 +192,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				}
 
 				if (!Compiler.RootContext.EvalMode) {
-					Compiler.TypeManager.InitCoreTypes (Compiler.RootContext.ToplevelTypes, core_types);
+					Compiler.TypeManager.InitCoreTypes (Compiler.RootContext.ToplevelTypes, cc.BuildinTypes);
 					Compiler.TypeManager.InitOptionalCoreTypes (cc);
 				}
 

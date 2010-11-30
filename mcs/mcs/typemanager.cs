@@ -16,7 +16,139 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mono.CSharp {
+namespace Mono.CSharp
+{
+	//
+	// All compiler build-in types (they have to exist otherwise the compile will not work)
+	//
+	public class BuildinTypes
+	{
+		public readonly BuildinTypeSpec Object;
+		public readonly BuildinTypeSpec ValueType;
+		public readonly BuildinTypeSpec Attribute;
+
+		public readonly BuildinTypeSpec Int;
+		public readonly BuildinTypeSpec UInt;
+		public readonly BuildinTypeSpec Long;
+		public readonly BuildinTypeSpec ULong;
+		public readonly BuildinTypeSpec Float;
+		public readonly BuildinTypeSpec Double;
+		public readonly BuildinTypeSpec Char;
+		public readonly BuildinTypeSpec Short;
+		public readonly BuildinTypeSpec Decimal;
+		public readonly BuildinTypeSpec Bool;
+		public readonly BuildinTypeSpec SByte;
+		public readonly BuildinTypeSpec Byte;
+		public readonly BuildinTypeSpec UShort;
+		public readonly BuildinTypeSpec String;
+
+		public readonly BuildinTypeSpec Enum;
+		public readonly BuildinTypeSpec Delegate;
+		public readonly BuildinTypeSpec MulticastDelegate;
+		public readonly BuildinTypeSpec Void;
+		public readonly BuildinTypeSpec Array;
+		public readonly BuildinTypeSpec Type;
+		public readonly BuildinTypeSpec IEnumerator;
+		public readonly BuildinTypeSpec IEnumerable;
+		public readonly BuildinTypeSpec IDisposable;
+		public readonly BuildinTypeSpec IntPtr;
+		public readonly BuildinTypeSpec UIntPtr;
+		public readonly BuildinTypeSpec RuntimeFieldHandle;
+		public readonly BuildinTypeSpec RuntimeTypeHandle;
+		public readonly BuildinTypeSpec Exception;
+
+		readonly BuildinTypeSpec[] types;
+
+		public BuildinTypes ()
+		{
+			Object = new BuildinTypeSpec (MemberKind.Class, "System", "Object", BuildinTypeSpec.Type.Object);
+			ValueType = new BuildinTypeSpec (MemberKind.Class, "System", "ValueType", BuildinTypeSpec.Type.ValueType);
+			Attribute = new BuildinTypeSpec (MemberKind.Class, "System", "Attribute", BuildinTypeSpec.Type.Attribute);
+
+			Int = new BuildinTypeSpec (MemberKind.Struct, "System", "Int32", BuildinTypeSpec.Type.Int);
+			Long = new BuildinTypeSpec (MemberKind.Struct, "System", "Int64", BuildinTypeSpec.Type.Long);
+			UInt = new BuildinTypeSpec (MemberKind.Struct, "System", "UInt32", BuildinTypeSpec.Type.UInt);
+			ULong = new BuildinTypeSpec (MemberKind.Struct, "System", "UInt64", BuildinTypeSpec.Type.ULong);
+			Byte = new BuildinTypeSpec (MemberKind.Struct, "System", "Byte", BuildinTypeSpec.Type.Byte);
+			SByte = new BuildinTypeSpec (MemberKind.Struct, "System", "SByte", BuildinTypeSpec.Type.SByte);
+			Short = new BuildinTypeSpec (MemberKind.Struct, "System", "Int16", BuildinTypeSpec.Type.Short);
+			UShort = new BuildinTypeSpec (MemberKind.Struct, "System", "UInt16", BuildinTypeSpec.Type.UShort);
+
+			IEnumerator = new BuildinTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerator", BuildinTypeSpec.Type.IEnumerator);
+			IEnumerable = new BuildinTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerable", BuildinTypeSpec.Type.IEnumerable);
+			IDisposable = new BuildinTypeSpec (MemberKind.Interface, "System", "IDisposable", BuildinTypeSpec.Type.IDisposable);
+
+			Char = new BuildinTypeSpec (MemberKind.Struct, "System", "Char", BuildinTypeSpec.Type.Char);
+			String = new BuildinTypeSpec (MemberKind.Class, "System", "String", BuildinTypeSpec.Type.String);
+			Float = new BuildinTypeSpec (MemberKind.Struct, "System", "Single", BuildinTypeSpec.Type.Float);
+			Double = new BuildinTypeSpec (MemberKind.Struct, "System", "Double", BuildinTypeSpec.Type.Double);
+			Decimal = new BuildinTypeSpec (MemberKind.Struct, "System", "Decimal", BuildinTypeSpec.Type.Decimal);
+			Bool = new BuildinTypeSpec (MemberKind.Struct, "System", "Boolean", BuildinTypeSpec.Type.Bool);
+			IntPtr = new BuildinTypeSpec (MemberKind.Struct, "System", "IntPtr", BuildinTypeSpec.Type.IntPtr);
+			UIntPtr = new BuildinTypeSpec (MemberKind.Struct, "System", "UIntPtr", BuildinTypeSpec.Type.UIntPtr);
+
+			MulticastDelegate = new BuildinTypeSpec (MemberKind.Class, "System", "MulticastDelegate", BuildinTypeSpec.Type.MulticastDelegate);
+			Delegate = new BuildinTypeSpec (MemberKind.Class, "System", "Delegate", BuildinTypeSpec.Type.Delegate);
+			Enum = new BuildinTypeSpec (MemberKind.Class, "System", "Enum", BuildinTypeSpec.Type.Enum);
+			Array = new BuildinTypeSpec (MemberKind.Class, "System", "Array", BuildinTypeSpec.Type.Array);
+			Void = new BuildinTypeSpec (MemberKind.Struct, "System", "Void", BuildinTypeSpec.Type.Void);
+			Type = new BuildinTypeSpec (MemberKind.Class, "System", "Type", BuildinTypeSpec.Type.Type);
+			Exception = new BuildinTypeSpec (MemberKind.Class, "System", "Exception", BuildinTypeSpec.Type.Exception);
+			RuntimeFieldHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuildinTypeSpec.Type.RuntimeFieldHandle);
+			RuntimeTypeHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle", BuildinTypeSpec.Type.RuntimeTypeHandle);
+
+			types = new BuildinTypeSpec[] {
+				Object, ValueType, Attribute,
+				Int, UInt, Long, ULong, Float, Double, Char, Short, Decimal, Bool, SByte, Byte, UShort, String,
+				Enum, Delegate, MulticastDelegate, Void, Array, Type, IEnumerator, IEnumerable, IDisposable,
+				IntPtr, UIntPtr, RuntimeFieldHandle, RuntimeTypeHandle, Exception };
+
+			// Deal with obsolete static types
+			// TODO: remove
+			TypeManager.object_type = Object;
+			TypeManager.value_type = ValueType;
+			TypeManager.string_type = String;
+			TypeManager.int32_type = Int;
+			TypeManager.uint32_type = UInt;
+			TypeManager.int64_type = Long;
+			TypeManager.uint64_type = ULong;
+			TypeManager.float_type = Float;
+			TypeManager.double_type = Double;
+			TypeManager.char_type = Char;
+			TypeManager.short_type = Short;
+			TypeManager.decimal_type = Decimal;
+			TypeManager.bool_type = Bool;
+			TypeManager.sbyte_type = SByte;
+			TypeManager.byte_type = Byte;
+			TypeManager.ushort_type = UShort;
+			TypeManager.enum_type = Enum;
+			TypeManager.delegate_type = Delegate;
+			TypeManager.multicast_delegate_type = MulticastDelegate; ;
+			TypeManager.void_type = Void;
+			TypeManager.array_type = Array; ;
+			TypeManager.runtime_handle_type = RuntimeTypeHandle;
+			TypeManager.type_type = Type;
+			TypeManager.ienumerator_type = IEnumerator;
+			TypeManager.ienumerable_type = IEnumerable;
+			TypeManager.idisposable_type = IDisposable;
+			TypeManager.intptr_type = IntPtr;
+			TypeManager.uintptr_type = UIntPtr;
+			TypeManager.runtime_field_handle_type = RuntimeFieldHandle;
+			TypeManager.attribute_type = Attribute;
+			TypeManager.exception_type = Exception;
+		}
+
+		#region Properties
+
+		public BuildinTypeSpec[] Types {
+			get {
+				return types;
+			}
+		}
+
+		#endregion
+	}
+
 
 	partial class TypeManager {
 	//
@@ -300,58 +432,15 @@ namespace Mono.CSharp {
 		return GetPredefinedMember (t, MemberFilter.Property (name, type), false, loc) as PropertySpec;
 	}
 
-	public static IList<PredefinedTypeSpec> InitCoreTypes ()
-	{
-		var core_types = new PredefinedTypeSpec[] {
-			object_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Object"),
-			value_type = new PredefinedTypeSpec (MemberKind.Class, "System", "ValueType"),
-			attribute_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Attribute"),
-
-			int32_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Int32"),
-			int64_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Int64"),
-			uint32_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "UInt32"),
-			uint64_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "UInt64"),
-			byte_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Byte"),
-			sbyte_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "SByte"),
-			short_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Int16"),
-			ushort_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "UInt16"),
-
-			ienumerator_type = new PredefinedTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerator"),
-			ienumerable_type = new PredefinedTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerable"),
-			idisposable_type = new PredefinedTypeSpec (MemberKind.Interface, "System", "IDisposable"),
-
-			char_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Char"),
-			string_type = new PredefinedTypeSpec (MemberKind.Class, "System", "String"),
-			float_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Single"),
-			double_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Double"),
-			decimal_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Decimal"),
-			bool_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Boolean"),
-			intptr_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "IntPtr"),
-			uintptr_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "UIntPtr"),
-
-			multicast_delegate_type = new PredefinedTypeSpec (MemberKind.Class, "System", "MulticastDelegate"),
-			delegate_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Delegate"),
-			enum_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Enum"),
-			array_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Array"),
-			void_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Void"),
-			type_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Type"),
-			exception_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Exception"),
-			runtime_field_handle_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle"),
-			runtime_handle_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle"),
-		};
-
-		return core_types;
-	}
-
 	/// <remarks>
 	///   The types have to be initialized after the initial
 	///   population of the type has happened (for example, to
 	///   bootstrap the corlib.dll
 	/// </remarks>
-	public static bool InitCoreTypes (ModuleContainer module, IList<PredefinedTypeSpec> predefined)
+	public static bool InitCoreTypes (ModuleContainer module, BuildinTypes buildin)
 	{
 		var ctx = module.Compiler;
-		foreach (var p in predefined) {
+		foreach (var p in buildin.Types) {
 			var found = CoreLookupType (ctx, p.Namespace, p.Name, p.Kind, true);
 			if (found == null || found == p)
 				continue;

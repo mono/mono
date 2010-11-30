@@ -328,7 +328,7 @@ namespace Mono.CSharp
 
 		public Block CurrentBlock;
 
-		public IMemberContext MemberContext;
+		public readonly IMemberContext MemberContext;
 
 		/// <summary>
 		///   If this is non-null, points to the current switch statement
@@ -546,15 +546,22 @@ namespace Mono.CSharp
 	{
 		readonly Report report;
 		readonly PredefinedAttributes attributes;
+		readonly BuildinTypes buildin_types;
 
 		public CompilerContext (Report report)
 		{
 			this.report = report;
-
 			this.attributes = new PredefinedAttributes ();
+			this.buildin_types = new BuildinTypes ();
 		}
 
 		#region Properties
+
+		public BuildinTypes BuildinTypes {
+			get {
+				return buildin_types;
+			}
+		}
 
 		// TODO: Obsolete, it has to go
 		public RootNamespace GlobalRootNamespace { get; set; }
