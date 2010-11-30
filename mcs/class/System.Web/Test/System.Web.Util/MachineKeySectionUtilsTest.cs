@@ -92,39 +92,7 @@ namespace MonoTests.System.Web.Configuration {
 			section.Validation = MachineKeyValidation.SHA1;
 			Encrypt_RoundTrip (section);
 		}
-#if NET_4_0
-		[Test]
-		public void Encrypt_RoundTrip_HMACSHA256 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.Validation = MachineKeyValidation.HMACSHA256;
-			EncryptSign_RoundTrip (section);
-		}
 
-		[Test]
-		public void Encrypt_RoundTrip_HMACSHA384 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.Validation = MachineKeyValidation.HMACSHA384;
-			EncryptSign_RoundTrip (section);
-		}
-
-		[Test]
-		public void Encrypt_RoundTrip_HMACSHA512 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.Validation = MachineKeyValidation.HMACSHA512;
-			EncryptSign_RoundTrip (section);
-		}
-
-		[Test]
-		public void Encrypt_RoundTrip_Custom_RIPEMD160 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.ValidationAlgorithm = "alg:HMACRIPEMD160";
-			EncryptSign_RoundTrip (section);
-		}
-#endif
 		public void EncryptSign_RoundTrip (MachineKeySection section)
 		{
 			byte [] data = new byte [14];
@@ -181,39 +149,7 @@ namespace MonoTests.System.Web.Configuration {
 			section.Validation = MachineKeyValidation.SHA1;
 			EncryptSign_RoundTrip (section);
 		}
-#if NET_4_0
-		[Test]
-		public void EncryptSign_RoundTrip_HMACSHA256 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.Validation = MachineKeyValidation.HMACSHA256;
-			EncryptSign_RoundTrip (section);
-		}
 
-		[Test]
-		public void EncryptSign_RoundTrip_HMACSHA384 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.Validation = MachineKeyValidation.HMACSHA384;
-			EncryptSign_RoundTrip (section);
-		}
-
-		[Test]
-		public void EncryptSign_RoundTrip_HMACSHA512 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.Validation = MachineKeyValidation.HMACSHA512;
-			EncryptSign_RoundTrip (section);
-		}
-
-		[Test]
-		public void EncryptSign_RoundTrip_Custom_RIPEMD160 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.ValidationAlgorithm = "alg:HMACRIPEMD160";
-			EncryptSign_RoundTrip (section);
-		}
-#endif
 		public void Validation_RoundTrip (MachineKeySection section)
 		{
 			byte [] data = new byte [] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 };
@@ -267,39 +203,6 @@ namespace MonoTests.System.Web.Configuration {
 			Validation_RoundTrip (section);
 		}
 
-#if NET_4_0
-		[Test]
-		public void Validation_RoundTrip_HMACSHA256 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.Validation = MachineKeyValidation.HMACSHA256;
-			Validation_RoundTrip (section);
-		}
-
-		[Test]
-		public void Validation_RoundTrip_HMACSHA384 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.Validation = MachineKeyValidation.HMACSHA384;
-			Validation_RoundTrip (section);
-		}
-
-		[Test]
-		public void Validation_RoundTrip_HMACSHA512 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.Validation = MachineKeyValidation.HMACSHA512;
-			Validation_RoundTrip (section);
-		}
-
-		[Test]
-		public void Validation_RoundTrip_Custom_RIPEMD160 ()
-		{
-			MachineKeySection section = new MachineKeySection ();
-			section.ValidationAlgorithm = "alg:HMACRIPEMD160";
-			Validation_RoundTrip (section);
-		}
-#endif
 		[Test]
 		public void GetHexString ()
 		{

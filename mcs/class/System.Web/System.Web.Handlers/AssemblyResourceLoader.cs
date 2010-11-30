@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Marek Habersack <grendel@twistedcode.net>
 //
 // (C) 2003 Ben Maurer
-//
+// (C) 2010 Novell, Inc (http://novell.com/)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -34,11 +35,16 @@ using System.Reflection;
 using System.IO;
 using System.Resources;
 using System.Collections;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web.Configuration;
+using System.Web.Util;
 
-namespace System.Web.Handlers {
+namespace System.Web.Handlers
+{
 #if SYSTEM_WEB_EXTENSIONS
 	partial class ScriptResourceHandler
 	{
@@ -50,31 +56,69 @@ namespace System.Web.Handlers {
 	#else
 	internal // since this is in the .config file, we need to support it, since we dont have versoned support.
 	#endif
-	class AssemblyResourceLoader : IHttpHandler {		
+	class AssemblyResourceLoader : IHttpHandler
+	{
 		const string HandlerFileName = "WebResource.axd";
 		static Assembly currAsm = typeof (AssemblyResourceLoader).Assembly;
 #endif
 		const char QueryParamSeparator = '&';
-
-		static readonly Hashtable _embeddedResources = Hashtable.Synchronized (new Hashtable ());
-
-		static void InitEmbeddedResourcesUrls (Assembly assembly, Hashtable hashtable)
+#if NET_2_0
+		static readonly Dictionary <string, AssemblyEmbeddedResources> _embeddedResources = new Dictionary <string, AssemblyEmbeddedResources> (StringComparer.Ordinal);
+#else
+		static readonly Hashtable _embeddedResources = new Hashtable ();
+#endif
+		static readonly ReaderWriterLock _embeddedResourcesLock = new ReaderWriterLock ();
+		static string GetStringHash (KeyedHashAlgorithm kha, string str)
+		{
+			if (str == null || str.Length == 0)
+				return String.Empty;
+			
+			return Convert.ToBase64String (kha.ComputeHash (Encoding.UTF8.GetBytes (str)));
+		}
+		
+		static void InitEmbeddedResourcesUrls (KeyedHashAlgorithm kha, Assembly assembly, string assemblyName, string assemblyHash, AssemblyEmbeddedResources entry)
 		{
 			WebResourceAttribute [] attrs = (WebResourceAttribute []) assembly.GetCustomAttributes (typeof (WebResourceAttribute), false);
+			WebResourceAttribute attr;
+			string apath = assembly.Location;
 			for (int i = 0; i < attrs.Length; i++) {
-				string resourceName = attrs [i].WebResource;
-				if (resourceName != null && resourceName.Length > 0) {
+				attr = attrs [i];
+				string resourceName = attr.WebResource;
+				if (resourceName == null || resourceName.Length == 0) {
+					string resourceNameHash = GetStringHash (kha, resourceName);
 #if SYSTEM_WEB_EXTENSIONS
-					ResourceKey rkNoNotify = new ResourceKey (resourceName, false);
-					ResourceKey rkNotify = new ResourceKey (resourceName, true);
+					bool debug = resourceName.EndsWith (".debug.js", StringComparison.OrdinalIgnoreCase);
+					string dbgTail = debug ? "d" : String.Empty;
+					string rkNoNotify = resourceNameHash + "f" + dbgTail;
+					string rkNotify = resourceNameHash + "t" + dbgTail;
 
-					if (!hashtable.Contains (rkNoNotify))
-						hashtable.Add (rkNoNotify, CreateResourceUrl (assembly, resourceName, false));
-					if (!hashtable.Contains (rkNotify))
-						hashtable.Add (rkNotify, CreateResourceUrl (assembly, resourceName, true));
+					if (!entry.Resources.ContainsKey (rkNoNotify)) {
+						var er = new EmbeddedResource () {
+							Name = resourceName,
+							Attribute = attr, 
+							Url = CreateResourceUrl (kha, assemblyName, assemblyHash, apath, rkNoNotify, debug, false)
+						};
+						
+						entry.Resources.Add (rkNoNotify, er);
+					}
+					
+					if (!entry.Resources.ContainsKey (rkNotify)) {
+						var er = new EmbeddedResource () {
+							Name = resourceName,
+							Attribute = attr, 
+							Url = CreateResourceUrl (kha, assemblyName, assemblyHash, apath, rkNotify, debug, true)
+						};
+						
+						entry.Resources.Add (rkNotify, er);
+					}
 #else
-					if (!hashtable.Contains (resourceName))
-						hashtable.Add (resourceName, CreateResourceUrl (assembly, resourceName, false));
+					if (!entry.Resources.ContainsKey (resourceNameHash)) {
+						EmbeddedResource er = new EmbeddedResource ();
+						er.Name = resourceName;
+						er.Attribute = attr;
+						er.Url = CreateResourceUrl (kha, assemblyName, assemblyHash, apath, resourceNameHash, false, false);
+						entry.Resources.Add (resourceNameHash, er);
+					}
 #endif
 				}
 			}
@@ -86,90 +130,155 @@ namespace System.Web.Handlers {
 			return GetResourceUrl (type.Assembly, resourceName, false);
 		}
 #endif
-		static string EncryptAssemblyResource (string asmName, string resName)
+		static EmbeddedResource DecryptAssemblyResource (string val, out AssemblyEmbeddedResources entry)
 		{
-			byte[] bytes = Encoding.UTF8.GetBytes (String.Concat (asmName, ";", resName));
-			bytes = MachineKeySectionUtils.Encrypt (
-#if NET_2_0
-				MachineKeySection.Config,
+			entry = null;
+                       
+			string[] parts = val.Split ('_');
+			if (parts.Length != 3)
+				return null;
+
+			Encoding enc = Encoding.UTF8;
+			string asmNameHash = parts [0];
+			string resNameHash = parts [1];
+			bool debug = parts [2] == "t";
+
+			try {
+				_embeddedResourcesLock.AcquireReaderLock (-1);
+#if NET_2_0				
+				if (!_embeddedResources.TryGetValue (asmNameHash, out entry) || entry == null)
+					return null;
 #else
-				MachineKeyConfig.Config,
+				
+				if ((entry = _embeddedResources [asmNameHash] as AssemblyEmbeddedResources) == null)
+					return null;
 #endif
-				bytes);
-			return Convert.ToBase64String (bytes);
-		}
-
-		static void DecryptAssemblyResource (string val, out string asmName, out string resName)
-		{
-			byte[] bytes = Convert.FromBase64String (val);
-
-			asmName = null;
-			resName = null;			
-
-			byte[] result = MachineKeySectionUtils.Decrypt (
+				EmbeddedResource res;
 #if NET_2_0
-				MachineKeySection.Config,
+				if (!entry.Resources.TryGetValue (resNameHash, out res) || res == null)
 #else
-				MachineKeyConfig.Config,
+				if ((res = entry.Resources [resNameHash] as EmbeddedResource) == null)
 #endif
-				bytes);
-			bytes = null;
-
-			// null will be returned if, for any reason, decryption fails
-			if (result == null)
-				return;
-
-			string data = Encoding.UTF8.GetString (result);
-			result = null;
-
-			string[] parts = data.Split (';');
-			if (parts.Length != 2)
-				return;
-			
-			asmName = parts [0];
-			resName = parts [1];
+				{
+#if SYSTEM_WEB_EXTENSIONS
+					if (!debug)
+						return null;
+					if (!entry.Resources.TryGetValue (resNameHash.Substring (0, resNameHash.Length - 1), out res))
+						return null;
+#else
+					return null;
+#endif
+				}
+				return res;
+			} finally {
+				_embeddedResourcesLock.ReleaseReaderLock ();
+			}
 		}
 
 		internal static string GetResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
 		{
-			Hashtable hashtable = (Hashtable)_embeddedResources [assembly];
-			if (hashtable == null) {
-				hashtable = new Hashtable ();
-				InitEmbeddedResourcesUrls (assembly, hashtable);
-				_embeddedResources [assembly] = hashtable;
-			}
-#if SYSTEM_WEB_EXTENSIONS
-			string url = (string) hashtable [new ResourceKey (resourceName, notifyScriptLoaded)];
+			if (assembly == null)
+				return String.Empty;
+#if NET_2_0
+			MachineKeySection mks = MachineKeySection.Config;
 #else
-			string url = (string) hashtable [resourceName];
+			MachineKeyConfig mks = MachineKeyConfig.Config;
 #endif
-			if (url == null)
-				url = CreateResourceUrl (assembly, resourceName, notifyScriptLoaded);
-			return url;
+			using (KeyedHashAlgorithm kha = MachineKeySectionUtils.GetValidationAlgorithm (mks)) {
+				kha.Key = MachineKeySectionUtils.GetValidationKey (mks);
+				return GetResourceUrl (kha, assembly, resourceName, notifyScriptLoaded);
+			}
+		}
+
+		static string GetResourceUrl (KeyedHashAlgorithm kha, Assembly assembly, string resourceName, bool notifyScriptLoaded)
+		{
+			string assemblyName = assembly == currAsm ? "s" : assembly.GetName ().FullName;
+			string assemblyNameHash = GetStringHash (kha, assemblyName);
+			string resourceNameHash = GetStringHash (kha, resourceName);
+			bool debug = false;
+			string url;
+			AssemblyEmbeddedResources entry;
+
+			try {
+				_embeddedResourcesLock.AcquireReaderLock (-1);
+#if NET_2_0
+				if (!_embeddedResources.TryGetValue (assemblyNameHash, out entry) || entry == null)
+#else
+				if ((entry = _embeddedResources [assemblyNameHash] as AssemblyEmbeddedResources) == null)
+#endif
+				{
+					LockCookie lc = new LockCookie ();
+					try {
+						lc = _embeddedResourcesLock.UpgradeToWriterLock (-1);
+						entry = new AssemblyEmbeddedResources ();
+						entry.AssemblyName = assemblyName;
+						InitEmbeddedResourcesUrls (kha, assembly, assemblyName, assemblyNameHash, entry);
+						_embeddedResources.Add (assemblyNameHash, entry);
+					} finally {
+						_embeddedResourcesLock.DowngradeFromWriterLock (ref lc);
+					}
+				}
+				string lookupKey;
+#if SYSTEM_WEB_EXTENSIONS
+				debug = resourceName.EndsWith (".debug.js", StringComparison.OrdinalIgnoreCase);
+				string dbgTail = debug ? "d" : String.Empty;
+				lookupKey = resourceNameHash + (notifyScriptLoaded ? "t" : "f") + dbgTail;
+#else
+				lookupKey = resourceNameHash;
+#endif
+				EmbeddedResource res;
+#if NET_2_0
+				if (entry.Resources.TryGetValue (lookupKey, out res) && res != null)
+#else
+				if ((res = entry.Resources [lookupKey] as EmbeddedResource) != null)
+#endif
+					url = res.Url;
+				else {
+#if SYSTEM_WEB_EXTENSIONS
+					if (debug) {
+						resourceNameHash = GetStringHash (kha, resourceName.Substring (0, resourceName.Length - 9) + ".js");
+						lookupKey = resourceNameHash + (notifyScriptLoaded ? "t" : "f");
+                                       
+						if (entry.Resources.TryGetValue (lookupKey, out res) && res != null)
+							url = res.Url;
+						else
+							url = null;
+					} else
+#endif
+						url = null;
+				}
+			} finally {
+				_embeddedResourcesLock.ReleaseReaderLock ();
+			}
+
+                        if (url == null)
+				url = CreateResourceUrl (kha, assemblyName, assemblyNameHash, assembly.Location, resourceNameHash, debug, notifyScriptLoaded);
+
+                        return url;
 		}
 		
-		static string CreateResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
+		static string CreateResourceUrl (KeyedHashAlgorithm kha, string assemblyName, string assemblyNameHash, string assemblyPath, string resourceNameHash, bool debug, bool notifyScriptLoaded)
 		{
-
-			string aname = assembly == currAsm ? "s" : assembly.GetName ().FullName;
-			string apath = assembly.Location;
 			string atime = String.Empty;
 			string extra = String.Empty;
 #if SYSTEM_WEB_EXTENSIONS
-			extra = String.Concat (QueryParamSeparator, "n=", notifyScriptLoaded ? "t" : "f");
+			extra = QueryParamSeparator + "n=" + (notifyScriptLoaded ? "t" : "f");
 #endif
 
 #if TARGET_JVM
-			atime = String.Format ("{0}t={1}", QueryParamSeparator, assembly.GetHashCode ());
+			atime = QueryParamSeparator + "t=" + assemblyName.GetHashCode ();
 #else
-			if (apath != String.Empty)
-				atime = String.Concat (QueryParamSeparator, "t=", File.GetLastWriteTimeUtc (apath).Ticks);
+			if ((assemblyPath != null && assemblyPath.Length > 0) && File.Exists (assemblyPath))
+				atime = QueryParamSeparator + "t=" + File.GetLastWriteTimeUtc (assemblyPath).Ticks;
+			else
+				atime = QueryParamSeparator + "t=" + DateTime.UtcNow.Ticks;
 #endif
-			string href = HandlerFileName + "?d=" + EncryptAssemblyResource (aname, resourceName) + atime + extra;
-
+			string d = assemblyNameHash + "_" + resourceNameHash +  (debug ? "_t" : "_f");
+			string href = HandlerFileName + "?d=" + d + atime + extra;
 			HttpContext ctx = HttpContext.Current;
-			if (ctx != null && ctx.Request != null) {
-				string appPath = VirtualPathUtility.AppendTrailingSlash (ctx.Request.ApplicationPath);
+			HttpRequest req = ctx != null ? ctx.Request : null;
+			if (req != null) {
+				string appPath = VirtualPathUtility.AppendTrailingSlash (req.ApplicationPath);
 				href = appPath + href;
 			}
 			
@@ -180,55 +289,36 @@ namespace System.Web.Handlers {
 #if SYSTEM_WEB_EXTENSIONS
 		protected virtual void ProcessRequest (HttpContext context)
 #else
-		[MonoTODO ("Substitution not implemented")]
 		void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
 #endif
 		{
 			HttpRequest request = context.Request;
-			HttpResponse response = context.Response;
-			string resourceName;
-			string asmName;
-			Assembly assembly;
 
-			// val is URL-decoded, which means every + has been replaced with ' ', we
+			// val is URL-encoded, which means every + has been replaced with ' ', we
 			// need to revert that or the base64 conversion will fail.
 			string d = request.QueryString ["d"];
 			if (d != null && d.Length > 0)
 				d = d.Replace (' ', '+');
 
-			DecryptAssemblyResource (d, out asmName, out resourceName);
-			if (resourceName == null)
-				throw new HttpException (404, "No resource name given");
-			
-			if (asmName == null || asmName == "s")
+			AssemblyEmbeddedResources entry;
+			EmbeddedResource res = DecryptAssemblyResource (d, out entry);
+			WebResourceAttribute wra = res != null ? res.Attribute : null;
+			if (wra == null)
+				throw new HttpException (404, "Resource not found");
+                       
+			Assembly assembly;
+			if (entry.AssemblyName == "s")
 				assembly = currAsm;
 			else
-				assembly = Assembly.Load (asmName);
+				assembly = Assembly.Load (entry.AssemblyName);
 			
-			WebResourceAttribute wra = null;
-			WebResourceAttribute [] attrs = (WebResourceAttribute []) assembly.GetCustomAttributes (typeof (WebResourceAttribute), false);
-			for (int i = 0; i < attrs.Length; i++) {
-				if (attrs [i].WebResource == resourceName) {
-					wra = attrs [i];
-					break;
-				}
-			}
-#if SYSTEM_WEB_EXTENSIONS
-			if (wra == null && resourceName.Length > 9 && resourceName.EndsWith (".debug.js", StringComparison.OrdinalIgnoreCase)) {
-				resourceName = String.Concat (resourceName.Substring (0, resourceName.Length - 9), ".js");
-				for (int i = 0; i < attrs.Length; i++) {
-					if (attrs [i].WebResource == resourceName) {
-						wra = attrs [i];
-						break;
-					}
-				}
-			}
-#endif
-			if (wra == null)
-				throw new HttpException (404, String.Concat ("Resource ", resourceName, " not found"));
-			
+			HttpResponse response = context.Response;
 			string req_cache = request.Headers ["Cache-Control"];
-			if (req_cache == "max-age=0") {
+			if (String.Compare (req_cache, "max-age=0"
+#if NET_2_0
+					    , StringComparison.Ordinal
+#endif
+			    ) == 0) {
 				long atime;
 #if NET_2_0
 				if (Int64.TryParse (request.QueryString ["t"], out atime)) {
@@ -246,21 +336,26 @@ namespace System.Web.Handlers {
 				}
 			}
 			string modif_since = request.Headers ["If-Modified-Since"];
-			if (modif_since != null && modif_since != "") {
+			if (modif_since != null && modif_since.Length > 0) {
 				try {
 					DateTime modif;
 #if NET_2_0
 					if (DateTime.TryParseExact (modif_since, "r", null, 0, out modif))
 #else
-					modif = DateTime.MinValue;
-					try {
-						modif = DateTime.ParseExact (modif_since, "r", null, 0);
-					} catch { }
+						try {
+							modif = DateTime.Parse (modif_since);
+						} catch {
+							modif = DateTime.MinValue;
+						}
+
 					if (modif != DateTime.MinValue)
 #endif
-						if (File.GetLastWriteTimeUtc (assembly.Location) <= modif)
+					{
+						if (File.GetLastWriteTimeUtc (assembly.Location) <= modif) {
 							response.StatusCode = 304;
 							return;
+						}
+					}
 				} catch {}
 			}
 
@@ -271,9 +366,9 @@ namespace System.Web.Handlers {
 			response.ExpiresAbsolute = utcnow.AddYears (1);
 			response.CacheControl = "public";
 
-			Stream s = assembly.GetManifestResourceStream (resourceName);
+			Stream s = assembly.GetManifestResourceStream (res.Name);
 			if (s == null)
-				throw new HttpException (404, String.Concat ("Resource ", resourceName, " not found"));
+				throw new HttpException (404, "Resource " + res.Name + " not found");
 
 			if (wra.PerformSubstitution) {
 				using (StreamReader r = new StreamReader (s)) {
@@ -293,7 +388,7 @@ namespace System.Web.Handlers {
 #if SYSTEM_WEB_EXTENSIONS
 			TextWriter writer = response.Output;
 			foreach (ScriptResourceAttribute sra in assembly.GetCustomAttributes (typeof (ScriptResourceAttribute), false)) {
-				if (sra.ScriptName == resourceName) {
+				if (String.Compare (sra.ScriptName, res.Name, StringComparison.Ordinal) == 0) {
 					string scriptResourceName = sra.ScriptResourceName;
 					ResourceSet rset = null;
 					try {
@@ -322,15 +417,15 @@ namespace System.Web.Handlers {
 						writer.WriteLine ("Type.registerNamespace('" + ns.Substring (0, indx) + "')");
 					writer.Write ("{0}={{", sra.TypeName);
 					bool first = true;
-					foreach (DictionaryEntry entry in rset) {
-						string value = entry.Value as string;
+					foreach (DictionaryEntry de in rset) {
+						string value = de.Value as string;
 						if (value != null) {
 							if (first)
 								first = false;
 							else
 								writer.Write (',');
 							writer.WriteLine ();
-							writer.Write ("{0}:{1}", GetScriptStringLiteral ((string) entry.Key), GetScriptStringLiteral (value));
+							writer.Write ("{0}:{1}", GetScriptStringLiteral ((string) de.Key), GetScriptStringLiteral (value));
 						}
 					}
 					writer.WriteLine ();
@@ -379,6 +474,22 @@ namespace System.Web.Handlers {
 #if !SYSTEM_WEB_EXTENSIONS
 		bool System.Web.IHttpHandler.IsReusable { get { return true; } }
 #endif
+		sealed class EmbeddedResource
+		{
+			public string Name;
+			public string Url;
+			public WebResourceAttribute Attribute;
+		}
+		
+		sealed class AssemblyEmbeddedResources
+		{
+			public string AssemblyName = String.Empty;
+#if NET_2_0
+			public Dictionary <string, EmbeddedResource> Resources = new Dictionary <string, EmbeddedResource> (StringComparer.Ordinal);
+#else
+			public Hashtable Resources = new Hashtable ();
+#endif
+		}
 	}
 }
 

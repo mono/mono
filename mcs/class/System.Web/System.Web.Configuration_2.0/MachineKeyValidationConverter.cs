@@ -39,11 +39,7 @@ namespace System.Web.Configuration {
 
 	public sealed class MachineKeyValidationConverter : ConfigurationConverterBase
 	{
-#if NET_4_0
-		const string InvalidValue = "The enumeration value must be one of the following: SHA1, MD5, 3DES, AES, HMACSHA256, HMACSHA384, HMACSHA512."; 
-#else
 		const string InvalidValue = "The enumeration value must be one of the following: SHA1, MD5, 3DES, AES."; 
-#endif
 		public MachineKeyValidationConverter ()
 		{
 		}
@@ -59,14 +55,6 @@ namespace System.Web.Configuration {
 				return MachineKeyValidation.TripleDES;
 			case "AES":
 				return MachineKeyValidation.AES;
-#if NET_4_0
-			case "HMACSHA256":
-				return MachineKeyValidation.HMACSHA256;
-			case "HMACSHA384":
-				return MachineKeyValidation.HMACSHA384;
-			case "HMACSHA512":
-				return MachineKeyValidation.HMACSHA512;
-#endif
 			default:
 				throw new ArgumentException (InvalidValue);
 			}
@@ -74,15 +62,10 @@ namespace System.Web.Configuration {
 
 		public override object ConvertTo (ITypeDescriptorContext ctx, CultureInfo ci, object value, Type type)
 		{
-#if NET_4_0
-			if ((value == null) || (value.GetType () != typeof (MachineKeyValidation)))
-				throw new ArgumentException (InvalidValue);
-#else
 			if (value.GetType () != typeof (MachineKeyValidation)) {
 				/* MS throws this exception on an invalid */
 				throw new FormatException (InvalidValue);
 			}				
-#endif
 
 			switch ((MachineKeyValidation) value) {
 			case MachineKeyValidation.MD5:
@@ -93,21 +76,9 @@ namespace System.Web.Configuration {
 				return "3DES";
 			case MachineKeyValidation.AES:
 				return "AES";
-#if NET_4_0
-			case MachineKeyValidation.HMACSHA256:
-				return "HMACSHA256";
-			case MachineKeyValidation.HMACSHA384:
-				return "HMACSHA384";
-			case MachineKeyValidation.HMACSHA512:
-				return "HMACSHA512";
-			default:
-				// includes MachineKeyValidation.Custom
-				throw new ArgumentException (InvalidValue);
-#else
 			default:
 				/* MS throws this exception on an invalid */
 				throw new FormatException (InvalidValue);
-#endif
 			}
 		}
 	}
