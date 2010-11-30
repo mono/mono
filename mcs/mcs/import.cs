@@ -90,11 +90,13 @@ namespace Mono.CSharp
 							break;
 						}
 
-						if (ca.ConstructorArguments [0].ArgumentType == typeof (bool[])) {
+						var arg_type = ca.ConstructorArguments[0].ArgumentType;
+
+						if (arg_type.IsArray && Type.GetTypeCode (arg_type.GetElementType ()) == TypeCode.Boolean) {
 							var carg = (IList<CustomAttributeTypedArgument>) ca.ConstructorArguments[0].Value;
 							flags = new bool[carg.Count];
 							for (int i = 0; i < flags.Length; ++i) {
-								if (carg[i].ArgumentType == typeof (bool))
+								if (Type.GetTypeCode (carg[i].ArgumentType) == TypeCode.Boolean)
 									flags[i] = (bool) carg[i].Value;
 							}
 
@@ -230,7 +232,7 @@ namespace Mono.CSharp
 
 		TypeParameterSpec[] CreateGenericParameters (Type type, TypeSpec declaringType)
 		{
-			Type[] tparams = type.GetGenericArguments ();
+			var tparams = type.GetGenericArguments ();
 
 			int parent_owned_count;
 			if (type.IsNested) {
@@ -834,7 +836,7 @@ namespace Mono.CSharp
 
 			var ifaces = type.GetInterfaces ();
 			if (ifaces.Length > 0) {
-				foreach (Type iface in ifaces) {
+				foreach (var iface in ifaces) {
 					spec.AddInterface (CreateType (iface));
 				}
 			}
