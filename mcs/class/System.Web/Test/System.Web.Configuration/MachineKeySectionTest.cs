@@ -121,6 +121,27 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
+		public void Validation ()
+		{
+			MachineKeySection section = new MachineKeySection ();
+			section.Validation = MachineKeyValidation.AES;
+			Assert.AreEqual ("AES", section.ValidationAlgorithm, "AES");
+			section.Validation = MachineKeyValidation.HMACSHA256;
+			Assert.AreEqual ("HMACSHA256", section.ValidationAlgorithm, "HMACSHA256");
+			section.Validation = MachineKeyValidation.HMACSHA384;
+			Assert.AreEqual ("HMACSHA384", section.ValidationAlgorithm, "HMACSHA384");
+			section.Validation = MachineKeyValidation.HMACSHA512;
+			Assert.AreEqual ("HMACSHA512", section.ValidationAlgorithm, "HMACSHA512");
+			section.Validation = MachineKeyValidation.MD5;
+			Assert.AreEqual ("MD5", section.ValidationAlgorithm, "MD5");
+			section.Validation = MachineKeyValidation.SHA1;
+			Assert.AreEqual ("SHA1", section.ValidationAlgorithm, "SHA1");
+			// special case, enum value and algorithm names differs
+			section.Validation = MachineKeyValidation.TripleDES;
+			Assert.AreEqual ("3DES", section.ValidationAlgorithm, "3DES");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ValidationAlgorithm ()
 		{
