@@ -1,0 +1,12 @@
+<List x:TypeArguments="s:Array" Capacity="2" xmlns="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Array Type="x:Int32">
+    <x:Int32>1</x:Int32>
+    <x:Int32>2</x:Int32>
+    <x:Int32>3</x:Int32>
+  </x:Array>
+  <x:Array Type="x:String">
+    <x:String>foo</x:String>
+    <x:String>bar</x:String>
+    <x:String>baz</x:String>
+  </x:Array>
+</List>
