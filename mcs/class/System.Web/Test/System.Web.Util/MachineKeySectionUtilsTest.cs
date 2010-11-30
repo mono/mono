@@ -37,6 +37,11 @@ namespace MonoTests.System.Web.Util {
 	[TestFixture]
 	public class MachineKeySectionUtilsTest {
 
+		static byte ChangeByte (byte b)
+		{
+			return (b == Byte.MaxValue) ? Byte.MinValue : (byte) (b + 1);
+		}
+
 		public void Encrypt_RoundTrip (MachineKeySection section)
 		{
 			byte [] data = new byte [14];
@@ -51,7 +56,7 @@ namespace MonoTests.System.Web.Util {
 
 			// changing last byte (padding)
 			byte be = encdata [encdata.Length - 1];
-			encdata [encdata.Length - 1] ^= (byte) (be + 1);
+			encdata [encdata.Length - 1] = ChangeByte (be);
 			Assert.IsNull (MachineKeySectionUtils.Decrypt (section, encdata), "bad padding");
 		}
 
@@ -134,13 +139,13 @@ namespace MonoTests.System.Web.Util {
 
 			// changing a byte of the data
 			byte b0 = block [0];
-			block [0] ^= b0;
+			block [0] = ChangeByte (b0);
 			Assert.IsNull (MachineKeySectionUtils.VerifyDecrypt (section, block), "bad data");
 			block [0] = b0;
 
 			// changing a byte of the signature
 			byte be = block [block.Length - 1];
-			block [block.Length - 1] ^= (byte) (be + 1);
+			block [block.Length - 1] = ChangeByte (be);
 			Assert.IsNull (MachineKeySectionUtils.VerifyDecrypt (section, block), "bad signature");
 		}
 
@@ -223,7 +228,7 @@ namespace MonoTests.System.Web.Util {
 			// changing last byte
 			for (int i = 0; i < data.Length; i++) {
 				byte b = block [i];
-				block [i] ^= 0xFF;
+				block [i] = ChangeByte (b);
 				Assert.IsNull (MachineKeySectionUtils.Verify (section, block), "bad-" + i.ToString ());
 				block [i] = b;
 			}
