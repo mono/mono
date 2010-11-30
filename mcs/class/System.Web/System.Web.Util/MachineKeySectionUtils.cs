@@ -101,11 +101,6 @@ namespace System.Web.Util {
 				sa = TripleDES.Create ();
 				break;
 			default:
-#if NET_4_0
-				if (name.StartsWith ("alg:"))
-					sa = SymmetricAlgorithm.Create (name.Substring (4));
-				else
-#endif
 				{
 #if NET_2_0
 					throw new ConfigurationErrorsException ();
@@ -113,9 +108,6 @@ namespace System.Web.Util {
 					throw new HttpException ("Unknown encryption algorithm name.");
 #endif
 				}
-#if NET_4_0
-				break;
-#endif
 			}
 			return sa;
 		}
@@ -138,22 +130,10 @@ namespace System.Web.Util {
 #else
 				section.ValidationType
 #endif
-#if NET_4_0
-				, section
-#endif
 			);
 		}
-#if NET_4_0
+
 		public static KeyedHashAlgorithm GetValidationAlgorithm (MachineKeyValidation validation)
-		{
-			return GetValidationAlgorithm (validation, null);
-		}
-#endif
-		public static KeyedHashAlgorithm GetValidationAlgorithm (MachineKeyValidation validation
-#if NET_4_0
-									 , MachineKeySection section
-#endif
-		)
 		{
 			KeyedHashAlgorithm kha = null;
 			switch (validation) {
@@ -169,23 +149,6 @@ namespace System.Web.Util {
 			case MachineKeyValidation.SHA1:
 				kha = new HMACSHA1 ();
 				break;
-#if NET_4_0
-			case MachineKeyValidation.HMACSHA256:
-				kha = new HMACSHA256 ();
-				break;
-			case MachineKeyValidation.HMACSHA384:
-				kha = new HMACSHA384 ();
-				break;
-			case MachineKeyValidation.HMACSHA512:
-				kha = new HMACSHA512 ();
-				break;
-			case MachineKeyValidation.Custom:
-				// remove the "alg:" from the start of the string
-				string algo = section.ValidationAlgorithm;
-				if (algo.StartsWith ("alg:"))
-					kha = KeyedHashAlgorithm.Create (algo.Substring (4));
-				break;
-#endif
 			}
 			return kha;
 		}
@@ -219,7 +182,7 @@ namespace System.Web.Util {
 			return decryption_key;
 		}
 
-		static byte [] GetValidationKey (
+		public static byte [] GetValidationKey (
 #if NET_2_0
 			MachineKeySection section
 #else
@@ -254,7 +217,7 @@ namespace System.Web.Util {
 			return section.GetDecryptionKey ();
 		}
 
-		static byte [] GetValidationKey (
+		internal static byte [] GetValidationKey (
 #if NET_2_0
 			MachineKeySection section
 #else
