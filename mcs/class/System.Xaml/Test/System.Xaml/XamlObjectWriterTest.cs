@@ -893,6 +893,17 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void Write_ListArray ()
+		{
+			var obj = new List<Array> (new Array [] { new int [] { 1,2,3}, new string [] { "foo", "bar", "baz" }});
+			using (var xr = GetReader ("List_Array.xml")) {
+				var des = (List<Array>) XamlServices.Load (xr);
+				Assert.AreEqual (obj, des, "#1");
+			}
+		}
+
+		[Test]
 		public void Write_DictionaryInt32String ()
 		{
 			var dic = new Dictionary<int,string> ();

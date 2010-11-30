@@ -652,6 +652,112 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "#89");
 		}
 
+		protected void Read_ListArray (XamlReader r)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+
+			var defns = "clr-namespace:System.Collections.Generic;assembly=mscorlib";
+			var defns2 = "clr-namespace:System;assembly=mscorlib";
+			var defns3 = "clr-namespace:System.Xaml;assembly=System.Xaml";
+
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#1-3");
+			Assert.AreEqual (defns, r.Namespace.Namespace, "ns#1-4");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("s", r.Namespace.Prefix, "ns#2-3-2");
+			Assert.AreEqual (defns2, r.Namespace.Namespace, "ns#2-3-3");
+
+			Assert.IsTrue (r.Read (), "#11");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
+			Assert.IsNotNull (r.Namespace, "#13");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "#13-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#13-3");
+
+			Assert.IsTrue (r.Read (), "#21");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
+			var xt = new XamlType (typeof (List<Array>), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "#23");
+			Assert.IsTrue (xt.IsCollection, "#27");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			Assert.IsTrue (r.Read (), "#31");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
+			Assert.AreEqual (xt.GetMember ("Capacity"), r.Member, "#33");
+
+			Assert.IsTrue (r.Read (), "#41");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#42");
+			Assert.AreEqual ("2", r.Value, "#43");
+
+			Assert.IsTrue (r.Read (), "#51");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#52");
+
+			Assert.IsTrue (r.Read (), "#72");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#72-2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "#72-3");
+
+			string [] values = {"x:Int32", "x:String"};
+			for (int i = 0; i < 2; i++) {
+				Assert.IsTrue (r.Read (), i + "#73");
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, i + "#73-2");
+				Assert.AreEqual (XamlLanguage.Array, r.Type, i + "#73-3");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, i + "#74-2");
+				Assert.AreEqual (XamlLanguage.Array.GetMember ("Type"), r.Member, i + "#74-3");
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.IsNotNull (r.Value, i + "#75-2");
+				Assert.AreEqual (values [i], r.Value, i + "#73-3");
+				Assert.IsTrue (r.Read (), i + "#74");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, i + "#74-2");
+
+				Assert.IsTrue (r.Read (), i + "#75");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, i + "#75-2");
+				Assert.AreEqual (XamlLanguage.Array.GetMember ("Items"), r.Member, i + "#75-3");
+				Assert.IsTrue (r.Read (), i + "#75-4");
+				Assert.AreEqual (XamlNodeType.GetObject, r.NodeType, i + "#75-5");
+				Assert.IsTrue (r.Read (), i + "#75-7");
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, i + "#75-8");
+				Assert.AreEqual (XamlLanguage.Items, r.Member, i + "#75-9");
+
+				for (int j = 0; j < 3; j++) {
+					Assert.IsTrue (r.Read (), i + "#76-" + j);
+					Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, i + "#76-2"+ "-" + j);
+					Assert.IsTrue (r.Read (), i + "#76-3"+ "-" + j);
+					Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, i + "#76-4"+ "-" + j);
+					Assert.IsTrue (r.Read (), i + "#76-5"+ "-" + j);
+					Assert.AreEqual (XamlNodeType.Value, r.NodeType, i + "#76-6"+ "-" + j);
+					Assert.IsTrue (r.Read (), i + "#76-7"+ "-" + j);
+					Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, i + "#76-8"+ "-" + j);
+					Assert.IsTrue (r.Read (), i + "#76-9"+ "-" + j);
+					Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, i + "#76-10"+ "-" + j);
+				}
+
+				Assert.IsTrue (r.Read (), i + "#77");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, i + "#77-2");
+
+				Assert.IsTrue (r.Read (), i + "#78");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, i + "#78-2");
+
+				Assert.IsTrue (r.Read (), i + "#79");
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, i + "#79-2");
+
+				Assert.IsTrue (r.Read (), i + "#80");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, i + "#80-2");
+			}
+
+			Assert.IsTrue (r.Read (), "#81");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#82"); // XamlLanguage.Items
+			
+			Assert.IsTrue (r.Read (), "#87");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#88");
+
+			Assert.IsFalse (r.Read (), "#89");
+		}
+
 		protected void Read_ArrayList (XamlReader r)
 		{
 			Assert.IsTrue (r.Read (), "ns#1-1");

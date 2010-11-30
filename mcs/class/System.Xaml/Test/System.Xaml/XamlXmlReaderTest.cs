@@ -345,10 +345,18 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		public void Read_Type ()
+		public void Read_ListType ()
 		{
 			var r = GetReader ("List_Type.xml");
 			Read_ListType (r, false);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_ListArray ()
+		{
+			var r = GetReader ("List_Array.xml");
+			Read_ListArray (r);
 		}
 
 		[Test]

@@ -270,6 +270,15 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void Read_ListArray ()
+		{
+			var obj = new List<Array> (new Array [] { new int [] { 1,2,3}, new string [] { "foo", "bar", "baz" }});
+			var r = new XamlObjectReader (obj);
+			Read_ListArray (r);
+		}
+
+		[Test]
 		public void Read_ArrayList ()
 		{
 			var obj = new ArrayList (new int [] {5, -3, 0});
