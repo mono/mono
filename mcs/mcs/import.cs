@@ -452,11 +452,15 @@ namespace Mono.CSharp
 						object value = p.RawDefaultValue;
 						var ptype = types[i];
 						if ((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter && (value != null || TypeManager.IsReferenceType (ptype))) {
-							//
-							// Get type of underlying value as int constant can be used for object parameter type
-							//
-							var dtype = value == null ? ptype : ImportType (value.GetType ());
-							default_value = Constant.CreateConstant (null, dtype, value, Location.Null);
+							if (value == null) {
+								default_value = Constant.CreateConstant (null, ptype, null, Location.Null);
+							} else {
+								default_value = ImportParameterConstant (value).Resolve (null);
+
+								if (ptype.IsEnum) {
+									default_value = new EnumConstant ((Constant) default_value, ptype).Resolve (null);
+								}
+							}
 						} else if (value == Missing.Value) {
 							default_value = EmptyExpression.MissingValue;
 						} else {
@@ -481,7 +485,6 @@ namespace Mono.CSharp
 				new ParametersImported (par, types, varargs != 0, is_params) :
 				new ParametersImported (par, types, is_params);
 		}
-
 
 		//
 		// Returns null when the property is not valid C# property
@@ -1002,6 +1005,46 @@ namespace Mono.CSharp
 					it.SetExtensionMethodContainer ();
 				}
 			}
+		}
+
+		static Constant ImportParameterConstant (object value)
+		{
+			//
+			// Get type of underlying value as int constant can be used for object
+			// parameter type. This is not allowed in C# but other languages can do that
+			//
+			switch (Type.GetTypeCode (value.GetType ())) {
+			case TypeCode.Boolean:
+				return new BoolConstant ((bool) value, Location.Null);
+			case TypeCode.Byte:
+				return new ByteConstant ((byte) value, Location.Null);
+			case TypeCode.Char:
+				return new CharConstant ((char) value, Location.Null);
+			case TypeCode.Decimal:
+				return new DecimalConstant ((decimal) value, Location.Null);
+			case TypeCode.Double:
+				return new DoubleConstant ((double) value, Location.Null);
+			case TypeCode.Int16:
+				return new ShortConstant ((short) value, Location.Null);
+			case TypeCode.Int32:
+				return new IntConstant ((int) value, Location.Null);
+			case TypeCode.Int64:
+				return new LongConstant ((long) value, Location.Null);
+			case TypeCode.SByte:
+				return new SByteConstant ((sbyte) value, Location.Null);
+			case TypeCode.Single:
+				return new FloatConstant ((float) value, Location.Null);
+			case TypeCode.String:
+				return new StringConstant ((string) value, Location.Null);
+			case TypeCode.UInt16:
+				return new UShortConstant ((ushort) value, Location.Null);
+			case TypeCode.UInt32:
+				return new UIntConstant ((uint) value, Location.Null);
+			case TypeCode.UInt64:
+				return new ULongConstant ((ulong) value, Location.Null);
+			}
+
+			throw new NotImplementedException (value.GetType ().ToString ());
 		}
 
 		public TypeSpec ImportType (Type type)

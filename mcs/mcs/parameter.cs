@@ -608,12 +608,11 @@ namespace Mono.CSharp {
 					if (default_expr.Type == TypeManager.decimal_type) {
 						pa.DecimalConstant.EmitAttribute (builder, (decimal) c.GetValue (), c.Location);
 					} else {
-						builder.SetConstant (c.GetTypedValue ());
+						builder.SetConstant (c.GetValue ());
 					}
 				} else if (default_expr.Type.IsStruct) {
 					//
-					// Handles special case like where default expression is used
-					// with value-type
+					// Handles special case where default expression is used with value-type
 					//
 					// void Foo (S s = default (S)) {}
 					//
