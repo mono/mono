@@ -446,9 +446,33 @@ namespace MonoTests.System.Xaml
 		public TypeExtension Param { get; set; }
 	}
 	
-	// FIXME: test it
+	// FIXME: test it with XamlXmlReader (needs to create xml first)
 	public class XDataWrapper
 	{
 		public XData Markup { get; set; }
+	}
+	
+	// FIXME: test it with XamlXmlReader (needs to create xml first)
+	public class EventContainer
+	{
+		public event Action Run;
+	}
+	
+	// FIXME: test it with XamlXmlWriter, XamlXmlReader and XamlObjectWriter.
+	public class NamedItem
+	{
+		public NamedItem ()
+		{
+			References = new List<NamedItem> ();
+		}
+		
+		public NamedItem (string name)
+			: this ()
+		{
+			ItemName = name;
+		}
+		
+		public string ItemName { get; set; }
+		public IList<NamedItem> References { get; private set; }
 	}
 }

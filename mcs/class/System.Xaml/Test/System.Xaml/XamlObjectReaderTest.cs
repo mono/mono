@@ -542,5 +542,28 @@ namespace MonoTests.System.Xaml
 			var r = new XamlObjectReader (obj);
 			Read_TypeExtensionWrapper (r);
 		}
+		
+		[Test]
+		public void Read_EventContainer ()
+		{
+			var obj = new EventContainer ();
+			obj.Run += delegate { Console.Error.WriteLine ("done"); };
+			var xr = new XamlObjectReader (obj);
+			Read_EventContainer (xr);
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_NamedItems ()
+		{
+			var obj = new NamedItem ("foo");
+			var obj2 = new NamedItem ("bar");
+			obj.References.Add (obj2);
+			obj.References.Add (new NamedItem ("baz"));
+			obj2.References.Add (obj);
+
+			var xr = new XamlObjectReader (obj);
+			Read_NamedItems (xr);
+		}
 	}
 }
