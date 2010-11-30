@@ -87,59 +87,33 @@ namespace System.Web.Security
 				eh (this, args);
 		}
 
-		SymmetricAlgorithm GetAlg (out byte [] decryptionKey)
+		SymmetricAlgorithm GetAlgorithm ()
 		{
-			MachineKeySection section = (MachineKeySection) WebConfigurationManager.GetSection ("system.web/machineKey");
+			MachineKeySection section = MachineKeySection.Config;
 
 			if (section.DecryptionKey.StartsWith ("AutoGenerate"))
 				throw new ProviderException ("You must explicitly specify a decryption key in the <machineKey> section when using encrypted passwords.");
 
-			string alg_type = section.Decryption;
-			if (alg_type == "Auto")
-				alg_type = "AES";
+			SymmetricAlgorithm sa = section.GetDecryptionAlgorithm ();
+			if (sa == null)
+				throw new ProviderException (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", section.Decryption));
 
-			SymmetricAlgorithm alg = null;
-			if (alg_type == "AES")
-				alg = Rijndael.Create ();
-			else if (alg_type == "3DES")
-				alg = TripleDES.Create ();
-			else
-				throw new ProviderException (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
-
-			decryptionKey = MachineKeySectionUtils.DecryptionKey192Bits (section);
-			return alg;
+			sa.Key = section.GetDecryptionKey ();
+			return sa;
 		}
 
 		internal const int SALT_BYTES = 16;
 		protected virtual byte [] DecryptPassword (byte [] encodedPassword)
 		{
-			byte [] decryptionKey;
-
-			using (SymmetricAlgorithm alg = GetAlg (out decryptionKey)) {
-				alg.Key = decryptionKey;
-
-				using (ICryptoTransform decryptor = alg.CreateDecryptor ()) {
-
-					byte [] buf = decryptor.TransformFinalBlock (encodedPassword, 0, encodedPassword.Length);
-					byte [] rv = new byte [buf.Length - SALT_BYTES];
-
-					Array.Copy (buf, 16, rv, 0, buf.Length - 16);
-					return rv;
-				}
+			using (SymmetricAlgorithm sa = GetAlgorithm ()) {
+				return MachineKeySectionUtils.Decrypt (sa, encodedPassword, 0, encodedPassword.Length);
 			}
 		}
 
 		protected virtual byte[] EncryptPassword (byte[] password)
 		{
-			byte [] decryptionKey;
-			byte [] iv = new byte [SALT_BYTES];
-
-			Array.Copy (password, 0, iv, 0, Math.Min(password.Length, SALT_BYTES));
-
-			using (SymmetricAlgorithm alg = GetAlg (out decryptionKey)) {
-				using (ICryptoTransform encryptor = alg.CreateEncryptor (decryptionKey, iv)) {
-					return encryptor.TransformFinalBlock (password, 0, password.Length);
-				}
+			using (SymmetricAlgorithm sa = GetAlgorithm ()) {
+				return MachineKeySectionUtils.Encrypt (sa, password);
 			}
 		}
 	}

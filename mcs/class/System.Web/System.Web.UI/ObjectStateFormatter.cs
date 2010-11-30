@@ -44,7 +44,6 @@ using System.Text;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using System.Diagnostics;
-using System.Security.Cryptography;
 using System.Web.Configuration;
 
 namespace System.Web.UI {
@@ -56,9 +55,11 @@ namespace System.Web.UI {
 	sealed class ObjectStateFormatter : IFormatter, IStateFormatter
 	{
 		Page page;
-		HashAlgorithm algo;
-		byte [] vkey;
-
+#if NET_2_0
+		MachineKeySection section;
+#else
+		MachineKeyConfig section;
+#endif
 		public ObjectStateFormatter ()
 		{
 		}
@@ -67,18 +68,11 @@ namespace System.Web.UI {
 		{
 			this.page = page;
 		}
-
-		internal ObjectStateFormatter (byte [] vkey)
-		{
-			this.vkey = vkey;
-		}
 		
-		internal bool EnableMac {
+		bool EnableMac {
 			get {
 				if (page == null) {
-					if (vkey == null)
-						return false;
-					return true;
+					return section != null;
 				} else {
 				
 #if NET_2_0
@@ -92,48 +86,45 @@ namespace System.Web.UI {
 			}
 		}
 
-		internal HashAlgorithm GetAlgo ()
-		{
-			if (algo != null)
-				return algo;
-			if (!EnableMac)
-				return null;
-			
-			byte [] algoKey;
-			if (page != null) {
+		bool NeedViewStateEncryption {
+			get {
 #if NET_2_0
-				MachineKeySection mconfig = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection ("system.web/machineKey");
-				algoKey = MachineKeySectionUtils.ValidationKeyBytes (mconfig);
+				return (page == null) ? false : page.NeedViewStateEncryption;
 #else
-				MachineKeyConfig mconfig = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
-				algoKey = mconfig.ValidationKey;
+				return false;
 #endif
-			} else
-				algoKey = vkey;
-			
-			return new HMACSHA1 (algoKey);
-		}
-
-		static int ValidateInput (HashAlgorithm algo, byte [] data, int offset, int size)
-		{
-			if (algo == null)
-				throw new HttpException ("Unable to validate data.");
-			
-			int hash_size = algo.HashSize / 8;
-			if (size != 0 && size < hash_size)
-				throw new HttpException ("Unable to validate data.");
-
-			int data_length = size - hash_size;
-			MemoryStream data_stream = new MemoryStream (data, offset, data_length, false, false);
-			byte [] hash = algo.ComputeHash (data_stream);
-			for (int i = 0; i < hash_size; i++) {
-				if (hash [i] != data [data_length + i])
-					throw new HttpException ("Unable to validate data.");
 			}
-			return data_length;
 		}
-		
-		public object Deserialize (Stream inputStream)
+#if NET_2_0
+		internal MachineKeySection Section {
+			get {
+				if (section == null)
+					section = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection ("system.web/machineKey");
+				return section;
+			}
+			set {
+				section = value;
+			}
+                }
+#else
+		internal MachineKeyConfig Section {
+			get {
+				if (section == null) {
+					HttpContext context = HttpContext.Current;
+					if (context == null)
+						section = new MachineKeyConfig (null);
+					else
+						section = (MachineKeyConfig) context.GetConfig ("system.web/machineKey");
+				}
+
+				return section;
+			}
+			set {
+				section = value;
+			}
+		}
+#endif
+	 	public object Deserialize (Stream inputStream)
 		{
 			if (inputStream == null)
 				throw new ArgumentNullException ("inputStream");
@@ -152,21 +143,25 @@ namespace System.Web.UI {
 			if (inputString == "")
 				return "";
 #endif
-			byte [] buffer = Convert.FromBase64String (inputString);
-			int length;
-			if (buffer == null || (length = buffer.Length) == 0)
+			byte [] data = Convert.FromBase64String (inputString);
+			if (data == null || (data.Length) == 0)
 				throw new ArgumentNullException ("inputString");
-			if (page != null && EnableMac)
-				length = ValidateInput (GetAlgo (), buffer, 0, length);
-#if NET_2_0
-			bool isEncrypted = ((int)buffer [--length] == 1)? true : false;
-#endif
-			Stream ms = new MemoryStream (buffer, 0, length, false, false);
-#if NET_2_0
-			if (isEncrypted)
-				ms = new CryptoStream (ms, page.GetCryptoTransform (CryptoStreamMode.Read), CryptoStreamMode.Read);
-#endif
-			return Deserialize (ms);
+			if (NeedViewStateEncryption) {
+				if (EnableMac) {
+					data = MachineKeySectionUtils.VerifyDecrypt (Section, data);
+				} else {
+					data = MachineKeySectionUtils.Decrypt (Section, data);
+				}
+			} else if (EnableMac) {
+				data = MachineKeySectionUtils.Verify (Section, data);
+			}
+
+			if (data == null)
+				throw new HttpException ("Unable to validate data.");
+
+			using (MemoryStream ms = new MemoryStream (data)) {
+				return Deserialize (ms);
+			}
 		}
 		
 		public string Serialize (object stateGraph)
@@ -174,31 +169,23 @@ namespace System.Web.UI {
 			if (stateGraph == null)
 				return "";
 			
-			MemoryStream ms = new MemoryStream ();
-			Stream output = ms;
-#if NET_2_0
-			bool needEncryption = page == null ? false : page.NeedViewStateEncryption;
-			if (needEncryption){
-				output = new CryptoStream (output, page.GetCryptoTransform (CryptoStreamMode.Write), CryptoStreamMode.Write);
+			byte[] data = null;
+			using (MemoryStream ms = new MemoryStream ()) {
+				Serialize (ms, stateGraph);
+				data = ms.GetBuffer ();
 			}
-#endif
-			Serialize (output, stateGraph);
-#if NET_2_0
-			ms.WriteByte((byte)(needEncryption? 1 : 0));
-#endif
-			
-#if TRACE
-			ms.WriteTo (File.OpenWrite (Path.GetTempFileName ()));
-#endif
-			if (EnableMac && ms.Length > 0) {
-				HashAlgorithm algo = GetAlgo ();
-				if (algo != null) {
-					byte [] hash = algo.ComputeHash (ms.GetBuffer (), 0, (int) ms.Length);
-					ms.Write (hash, 0, hash.Length);
+
+			if (NeedViewStateEncryption) {
+				if (EnableMac) {
+					data = MachineKeySectionUtils.EncryptSign (Section, data);
+				} else {
+					data = MachineKeySectionUtils.Encrypt (Section, data);
 				}
-				
+			} else if (EnableMac) {
+				data = MachineKeySectionUtils.Sign (Section, data);
+
 			}
-			return Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length);
+			return Convert.ToBase64String (data, 0, data.Length);
 		}
 		
 		public void Serialize (Stream outputStream, object stateGraph)
