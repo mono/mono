@@ -7,6 +7,7 @@ Assembly/AssemblyInfo.cs
 ../Managed.Windows.Forms/System.Resources/ResXFileRef.cs
 ../Managed.Windows.Forms/System.Resources/ResXDataNode.cs
 ../Managed.Windows.Forms/System.Resources/ResXNullRef.cs
+../Mono.Security/Mono.Security.Cryptography/TlsHMAC.cs
 System.Web.Configuration_2.0/CapabilitiesBuild.cs
 System.Web.Configuration_2.0/CapabilitiesResult.cs
 System.Web.Configuration_2.0/ICapabilitiesProcess.cs

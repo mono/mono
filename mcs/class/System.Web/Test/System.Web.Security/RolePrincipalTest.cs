@@ -1,6 +1,6 @@
 //
-// MembershipUserCollectionTest.cs
-//	- Unit tests for System.Web.Security.MembershipUserCollection
+// RolePrincipalTest.cs
+//	- Unit tests for System.Web.Security.RolePrincipal
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
