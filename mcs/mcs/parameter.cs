@@ -610,6 +610,14 @@ namespace Mono.CSharp {
 					} else {
 						builder.SetConstant (c.GetTypedValue ());
 					}
+				} else if (default_expr.Type.IsStruct) {
+					//
+					// Handles special case like where default expression is used
+					// with value-type
+					//
+					// void Foo (S s = default (S)) {}
+					//
+					builder.SetConstant (null);
 				}
 			}
 
