@@ -63,7 +63,7 @@ namespace Mono.CSharp {
 		static bool inited;
 
 		static CompilerContext ctx;
-		static ReflectionMetaImporter importer;
+		static MetadataImporter importer;
 		
 		public static TextWriter MessageOutput = Console.Out;
 
@@ -130,7 +130,7 @@ namespace Mono.CSharp {
 				CompilerCallableEntryPoint.Reset ();
 				var ctypes = TypeManager.InitCoreTypes ();
 
-				importer = new ReflectionMetaImporter ();
+				importer = new ReflectionImporter ();
 
 				RootContext.ToplevelTypes.MakeExecutable ("temp");
 				driver.LoadReferences (RootContext.ToplevelTypes, importer);

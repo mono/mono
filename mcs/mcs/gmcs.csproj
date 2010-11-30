@@ -87,6 +87,7 @@
     <Compile Include="parameter.cs" />
     <Compile Include="pending.cs" />
     <Compile Include="property.cs" />
+    <Compile Include="reflection.cs" />
     <Compile Include="report.cs" />
     <Compile Include="rootcontext.cs" />
     <Compile Include="roottypes.cs" />

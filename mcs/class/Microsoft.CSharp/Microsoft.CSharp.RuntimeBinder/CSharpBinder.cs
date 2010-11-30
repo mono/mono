@@ -133,7 +133,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		static object lock_object = new object ();
 
 		readonly Compiler.CompilerContext cc;
-		Compiler.ReflectionMetaImporter importer;
+		Compiler.ReflectionImporter importer;
 
 		private DynamicContext (Compiler.CompilerContext cc)
 		{
@@ -183,7 +183,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				var domain = AppDomain.CurrentDomain;
 
 				temp.Create (domain, System.Reflection.Emit.AssemblyBuilderAccess.Run);
-				var importer = new Compiler.ReflectionMetaImporter () {
+				var importer = new Compiler.ReflectionImporter () {
 					IgnorePrivateMembers = false
 				};
 

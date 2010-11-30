@@ -139,7 +139,7 @@ namespace Mono.CSharp
 		}
 
 		// TODO: This should not exist here but will require more changes
-		public ReflectionMetaImporter Importer {
+		public MetadataImporter Importer {
 			get ; set;
 		}
 

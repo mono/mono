@@ -13,26 +13,23 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace Mono.CSharp
 {
-	public class ReflectionMetaImporter
+	public abstract class MetadataImporter
 	{
-		readonly Dictionary<Type, TypeSpec> import_cache;
-		Dictionary<Type, PredefinedTypeSpec> type_2_predefined;
+		protected readonly Dictionary<Type, TypeSpec> import_cache;
+		protected readonly Dictionary<Type, PredefinedTypeSpec> buildin_types;
 		readonly Dictionary<Assembly, ImportedAssemblyDefinition> assembly_2_definition;
 
 		public static readonly string CompilerServicesNamespace = "System.Runtime.CompilerServices";
 
-		public ReflectionMetaImporter ()
+		protected MetadataImporter ()
 		{
 			import_cache = new Dictionary<Type, TypeSpec> (1024, ReferenceEquality<Type>.Default);
+			buildin_types = new Dictionary<Type, PredefinedTypeSpec> (40, ReferenceEquality<Type>.Default);
 			assembly_2_definition = new Dictionary<Assembly, ImportedAssemblyDefinition> (ReferenceEquality<Assembly>.Default);
 			IgnorePrivateMembers = true;
-
-			Initialize ();
 		}
 
 		#region Properties
@@ -47,47 +44,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		void Initialize ()
-		{
-			// Setup mapping for predefined types
-			type_2_predefined = new Dictionary<Type, PredefinedTypeSpec> () {
-				{ typeof (object), TypeManager.object_type },
-				{ typeof (System.ValueType), TypeManager.value_type },
-				{ typeof (System.Attribute), TypeManager.attribute_type },
-
-				{ typeof (int), TypeManager.int32_type },
-				{ typeof (long), TypeManager.int64_type },
-				{ typeof (uint), TypeManager.uint32_type },
-				{ typeof (ulong), TypeManager.uint64_type },
-				{ typeof (byte), TypeManager.byte_type },
-				{ typeof (sbyte), TypeManager.sbyte_type },
-				{ typeof (short), TypeManager.short_type },
-				{ typeof (ushort), TypeManager.ushort_type },
-
-				{ typeof (System.Collections.IEnumerator), TypeManager.ienumerator_type },
-				{ typeof (System.Collections.IEnumerable), TypeManager.ienumerable_type },
-				{ typeof (System.IDisposable), TypeManager.idisposable_type },
-
-				{ typeof (char), TypeManager.char_type },
-				{ typeof (string), TypeManager.string_type },
-				{ typeof (float), TypeManager.float_type },
-				{ typeof (double), TypeManager.double_type },
-				{ typeof (decimal), TypeManager.decimal_type },
-				{ typeof (bool), TypeManager.bool_type },
-				{ typeof (System.IntPtr), TypeManager.intptr_type },
-				{ typeof (System.UIntPtr), TypeManager.uintptr_type },
-
-				{ typeof (System.MulticastDelegate), TypeManager.multicast_delegate_type },
-				{ typeof (System.Delegate), TypeManager.delegate_type },
-				{ typeof (System.Enum), TypeManager.enum_type },
-				{ typeof (System.Array), TypeManager.array_type },
-				{ typeof (void), TypeManager.void_type },
-				{ typeof (System.Type), TypeManager.type_type },
-				{ typeof (System.Exception), TypeManager.exception_type },
-				{ typeof (System.RuntimeFieldHandle), TypeManager.runtime_field_handle_type },
-				{ typeof (System.RuntimeTypeHandle), TypeManager.runtime_handle_type }
-			};
-		}
+		protected abstract MemberKind DetermineKindFromBaseType (Type baseType);
 
 		public FieldSpec CreateField (FieldInfo fi, TypeSpec declaringType)
 		{
@@ -727,7 +684,7 @@ namespace Mono.CSharp
 				if (import_cache.TryGetValue (type, out spec))
 					return spec;
 
-			} else if (type_2_predefined.TryGetValue (type, out pt)) {
+			} else if (buildin_types.TryGetValue (type, out pt)) {
 				spec = pt;
 				pt.SetDefinition (definition, type);
 			}
@@ -747,20 +704,6 @@ namespace Mono.CSharp
 				ImportTypeBase (spec, type);
 
 			return spec;
-		}
-
-		MemberKind DetermineKindFromBaseType (Type baseType)
-		{
-			if (baseType == typeof (ValueType))
-				return MemberKind.Struct;
-
-			if (baseType == typeof (System.Enum))
-				return MemberKind.Enum;
-
-			if (baseType == typeof (MulticastDelegate))
-				return MemberKind.Delegate;
-
-			return MemberKind.Class;
 		}
 
 		public ImportedAssemblyDefinition GetAssemblyDefinition (Assembly assembly)
@@ -1093,7 +1036,7 @@ namespace Mono.CSharp
 			public bool IsNotCLSCompliant;
 			public TypeSpec CoClass;
 			
-			public static AttributesBag Read (MemberInfo mi, ReflectionMetaImporter typeImporter)
+			public static AttributesBag Read (MemberInfo mi, MetadataImporter typeImporter)
 			{
 				AttributesBag bag = null;
 				List<string> conditionals = null;
@@ -1273,7 +1216,7 @@ namespace Mono.CSharp
 		bool cls_compliant;
 		//ReflectionMetaImporter metaImporter;
 		
-		public ImportedModuleDefinition (Module module, ReflectionMetaImporter metaImporter)
+		public ImportedModuleDefinition (Module module, MetadataImporter metaImporter)
 		{
 			this.module = module;
 			//this.metaImporter = metaImporter;
@@ -1470,7 +1413,7 @@ namespace Mono.CSharp
 				}
 
 				if (name == "InternalsVisibleToAttribute") {
-					if (type.Namespace != ReflectionMetaImporter.CompilerServicesNamespace)
+					if (type.Namespace != MetadataImporter.CompilerServicesNamespace)
 						continue;
 
 					string s = a.ConstructorArguments[0].Value as string;
@@ -1486,7 +1429,7 @@ namespace Mono.CSharp
 				}
 
 				if (name == "ExtensionAttribute") {
-					if (type.Namespace == ReflectionMetaImporter.CompilerServicesNamespace)
+					if (type.Namespace == MetadataImporter.CompilerServicesNamespace)
 						contains_extension_methods = true;
 
 					continue;
@@ -1585,9 +1528,9 @@ namespace Mono.CSharp
 	{
 		TypeParameterSpec[] tparams;
 		string name;
-		ReflectionMetaImporter meta_import;
+		MetadataImporter meta_import;
 
-		public ImportedTypeDefinition (ReflectionMetaImporter metaImport, Type type)
+		public ImportedTypeDefinition (MetadataImporter metaImport, Type type)
 			: base (type)
 		{
 			this.meta_import = metaImport;
@@ -1752,7 +1695,7 @@ namespace Mono.CSharp
 								continue;
 
 							// Ignore compiler generated methods
-							if (ReflectionMetaImporter.HasAttribute (CustomAttributeData.GetCustomAttributes (mb), "CompilerGeneratedAttribute", ReflectionMetaImporter.CompilerServicesNamespace))
+							if (MetadataImporter.HasAttribute (CustomAttributeData.GetCustomAttributes (mb), "CompilerGeneratedAttribute", MetadataImporter.CompilerServicesNamespace))
 								continue;
 						}
 

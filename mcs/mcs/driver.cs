@@ -445,7 +445,7 @@ namespace Mono.CSharp
 		/// <summary>
 		///   Loads all assemblies referenced on the command line
 		/// </summary>
-		public void LoadReferences (ModuleContainer module, ReflectionMetaImporter importer)
+		public void LoadReferences (ModuleContainer module, MetadataImporter importer)
 		{
 			link_paths.Add (GetSystemDir ());
 			link_paths.Add (Directory.GetCurrentDirectory ());
@@ -1727,7 +1727,7 @@ namespace Mono.CSharp
 
 			var assembly = module.MakeExecutable (output_file, output_file);
 
-			var importer = new ReflectionMetaImporter ();
+			var importer = new ReflectionImporter ();
 			assembly.Importer = importer;
 
 			LoadReferences (module, importer);
