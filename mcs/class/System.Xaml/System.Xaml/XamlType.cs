@@ -408,7 +408,7 @@ namespace System.Xaml
 			var bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
 			foreach (var pi in UnderlyingType.GetProperties (bf))
-				if (pi.CanRead && (pi.CanWrite && pi.GetIndexParameters ().Length == 0 || IsCollectionType (pi.PropertyType)))
+				if (pi.CanRead && (pi.CanWrite || IsCollectionType (pi.PropertyType)) && pi.GetIndexParameters ().Length == 0)
 					yield return new XamlMember (pi, SchemaContext);
 			foreach (var ei in UnderlyingType.GetEvents (bf))
 				yield return new XamlMember (ei, SchemaContext);
