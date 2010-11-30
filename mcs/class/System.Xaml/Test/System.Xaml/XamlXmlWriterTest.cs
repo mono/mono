@@ -908,6 +908,44 @@ namespace MonoTests.System.Xaml
 			var obj = new TypeExtensionWrapper () { Param = new TypeExtension ("Foo") };
 			Assert.AreEqual (ReadXml ("TypeExtensionWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_NamedItems ()
+		{
+			// foo
+			// - bar
+			// -- foo
+			// - baz
+			var obj = new NamedItem ("foo");
+			var obj2 = new NamedItem ("bar");
+			obj.References.Add (obj2);
+			obj.References.Add (new NamedItem ("baz"));
+			obj2.References.Add (obj);
+
+			Assert.AreEqual (ReadXml ("NamedItems.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_NamedItems2 ()
+		{
+			// i1
+			// - i2
+			// -- i3
+			// - i4
+			// -- i3
+			var obj = new NamedItem2 ("i1");
+			var obj2 = new NamedItem2 ("i2");
+			var obj3 = new NamedItem2 ("i3");
+			var obj4 = new NamedItem2 ("i4");
+			obj.References.Add (obj2);
+			obj.References.Add (obj4);
+			obj2.References.Add (obj3);
+			obj4.References.Add (obj3);
+
+			Assert.AreEqual (ReadXml ("NamedItems2.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

@@ -458,7 +458,6 @@ namespace MonoTests.System.Xaml
 		public event Action Run;
 	}
 	
-	// FIXME: test it with XamlXmlWriter, XamlXmlReader and XamlObjectWriter.
 	public class NamedItem
 	{
 		public NamedItem ()
@@ -474,5 +473,23 @@ namespace MonoTests.System.Xaml
 		
 		public string ItemName { get; set; }
 		public IList<NamedItem> References { get; private set; }
+	}
+	
+	[RuntimeNameProperty ("ItemName")]
+	public class NamedItem2
+	{
+		public NamedItem2 ()
+		{
+			References = new List<NamedItem2> ();
+		}
+		
+		public NamedItem2 (string name)
+			: this ()
+		{
+			ItemName = name;
+		}
+		
+		public string ItemName { get; set; }
+		public IList<NamedItem2> References { get; private set; }
 	}
 }

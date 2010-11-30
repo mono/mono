@@ -556,6 +556,10 @@ namespace MonoTests.System.Xaml
 		[Category ("NotWorking")]
 		public void Read_NamedItems ()
 		{
+			// foo
+			// - bar
+			// -- foo
+			// - baz
 			var obj = new NamedItem ("foo");
 			var obj2 = new NamedItem ("bar");
 			obj.References.Add (obj2);
@@ -563,7 +567,29 @@ namespace MonoTests.System.Xaml
 			obj2.References.Add (obj);
 
 			var xr = new XamlObjectReader (obj);
-			Read_NamedItems (xr);
+			Read_NamedItems (xr, true);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_NamedItems2 ()
+		{
+			// i1
+			// - i2
+			// -- i3
+			// - i4
+			// -- i3
+			var obj = new NamedItem2 ("i1");
+			var obj2 = new NamedItem2 ("i2");
+			var obj3 = new NamedItem2 ("i3");
+			var obj4 = new NamedItem2 ("i4");
+			obj.References.Add (obj2);
+			obj.References.Add (obj4);
+			obj2.References.Add (obj3);
+			obj4.References.Add (obj3);
+
+			var xr = new XamlObjectReader (obj);
+			Read_NamedItems2 (xr, true);
 		}
 	}
 }

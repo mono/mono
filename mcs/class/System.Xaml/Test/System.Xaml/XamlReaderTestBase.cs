@@ -1833,7 +1833,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "end");
 		}
 
-		protected void Read_NamedItems (XamlReader r)
+		protected void Read_NamedItems (XamlReader r, bool isObjectReader)
 		{
 			Assert.IsTrue (r.Read (), "ns#1-1");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
@@ -1923,7 +1923,10 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsTrue (r.Read (), "smbrd#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smbrd#2");
-			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "smbrd#3");
+			if (isObjectReader)
+				Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "smbrd#3");
+			else
+				Assert.AreEqual (XamlLanguage.Reference.GetMember ("Name"), r.Member, "smbrd#3");
 
 			Assert.IsTrue (r.Read (), "vmbrd#1");
 			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vmbrd#2");
@@ -1976,6 +1979,182 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsTrue (r.Read (), "eo#1-1");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		protected void Read_NamedItems2 (XamlReader r, bool isObjectReader)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns#2-4");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#2-5");
+
+			var xt = new XamlType (typeof (NamedItem2), r.SchemaContext);
+
+			// i1
+			Assert.IsTrue (r.Read (), "so1#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so1#2");
+			Assert.AreEqual (xt, r.Type, "so1#3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			Assert.IsTrue (r.Read (), "sm1#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm1#2");
+			Assert.AreEqual (xt.GetMember ("ItemName"), r.Member, "sm1#3");
+
+			Assert.IsTrue (r.Read (), "v1#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v1#2");
+			Assert.AreEqual ("i1", r.Value, "v1#3");
+
+			Assert.IsTrue (r.Read (), "em1#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em1#2");
+
+			Assert.IsTrue (r.Read (), "srefs1#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "srefs1#2");
+			Assert.AreEqual (xt.GetMember ("References"), r.Member, "srefs1#3");
+
+			Assert.IsTrue (r.Read (), "go1#1");
+			Assert.AreEqual (XamlNodeType.GetObject, r.NodeType, "go1#2");
+
+			Assert.IsTrue (r.Read (), "sitems1#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sitems1#2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "sitems1#3");
+
+			// i2
+			Assert.IsTrue (r.Read (), "so2#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so2#1-2");
+			Assert.AreEqual (xt, r.Type, "so2#1-3");
+			Assert.IsTrue (r.Read (), "sm2#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm2#2");
+			Assert.AreEqual (xt.GetMember ("ItemName"), r.Member, "sm2#3");
+
+			Assert.IsTrue (r.Read (), "v2#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v2#2");
+			Assert.AreEqual ("i2", r.Value, "v2#3");
+
+			Assert.IsTrue (r.Read (), "em2#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em2#2");
+
+			Assert.IsTrue (r.Read (), "srefs2#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "srefs2#2");
+			Assert.AreEqual (xt.GetMember ("References"), r.Member, "srefs2#3");
+
+			Assert.IsTrue (r.Read (), "go2#1");
+			Assert.AreEqual (XamlNodeType.GetObject, r.NodeType, "go2#2");
+
+			Assert.IsTrue (r.Read (), "sItems1#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sItems1#2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "sItems1#3");
+
+			Assert.IsTrue (r.Read (), "so3#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so3#2");
+			Assert.AreEqual (xt, r.Type, "so3#3");
+			Assert.IsTrue (r.Read (), "sm3#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm3#2");
+			Assert.AreEqual (xt.GetMember ("ItemName"), r.Member, "sm3#3");
+
+			Assert.IsTrue (r.Read (), "v3#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v3#2");
+			Assert.AreEqual ("i3", r.Value, "v3#3");
+
+			Assert.IsTrue (r.Read (), "em3#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em3#2");
+
+			Assert.IsTrue (r.Read (), "eo3#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo3#2");
+
+			Assert.IsTrue (r.Read (), "eitems2#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eitems2#2");
+
+			Assert.IsTrue (r.Read (), "ego2#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "ego2#2");
+
+			Assert.IsTrue (r.Read (), "erefs2#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "erefs2#2");
+
+			Assert.IsTrue (r.Read (), "eo2#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo2#2");
+
+			// i4
+			Assert.IsTrue (r.Read (), "so4#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so4#2");
+			Assert.AreEqual (xt, r.Type, "so4#3");
+
+			Assert.IsTrue (r.Read (), "sm4#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm4#2");
+			Assert.AreEqual (xt.GetMember ("ItemName"), r.Member, "sm4#3");
+
+			Assert.IsTrue (r.Read (), "v4#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v4#2");
+			Assert.AreEqual ("i4", r.Value, "v4#3");
+
+			Assert.IsTrue (r.Read (), "em4#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em4#2");
+
+			Assert.IsTrue (r.Read (), "srefs4#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "srefs4#2");
+			Assert.AreEqual (xt.GetMember ("References"), r.Member, "srefs4#3");
+
+			Assert.IsTrue (r.Read (), "go4#1");
+			Assert.AreEqual (XamlNodeType.GetObject, r.NodeType, "go4#2");
+
+			Assert.IsTrue (r.Read (), "sitems4#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sitems4#2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "sitems4#3");
+
+			Assert.IsTrue (r.Read (), "sor1#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "sor1#2");
+			Assert.AreEqual (XamlLanguage.Reference, r.Type, "sor1#3");
+
+			Assert.IsTrue (r.Read (), "smr1#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "smr1#2");
+			if (isObjectReader)
+				Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "smr1#3");
+			else
+				Assert.AreEqual (XamlLanguage.Reference.GetMember ("Name"), r.Member, "smr1#3");
+
+			Assert.IsTrue (r.Read (), "vr1#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vr1#2");
+			Assert.AreEqual ("i3", r.Value, "vr1#3");
+
+			Assert.IsTrue (r.Read (), "emr1#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "emr1#2");
+
+			Assert.IsTrue (r.Read (), "eor#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eor#2");
+
+			Assert.IsTrue (r.Read (), "eitems4#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eitems4#2");
+
+			Assert.IsTrue (r.Read (), "ego4#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "ego4#2");
+
+			Assert.IsTrue (r.Read (), "erefs4#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "erefs4#2");
+
+			Assert.IsTrue (r.Read (), "eo4#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo4#1-2");
+
+			Assert.IsTrue (r.Read (), "eitems1#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eitems1#2");
+
+			Assert.IsTrue (r.Read (), "ego1#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "ego1#2");
+
+			Assert.IsTrue (r.Read (), "erefs1#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "erefs1#2");
+
+			Assert.IsTrue (r.Read (), "eo1#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo1#2");
 
 			Assert.IsFalse (r.Read (), "end");
 		}

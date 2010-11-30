@@ -1124,5 +1124,59 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (String.Empty, des.Param.TypeName, "#2");
 			}
 		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_NamedItems ()
+		{
+			// foo
+			// - bar
+			// -- foo
+			// - baz
+			var obj = new NamedItem ("foo");
+			var obj2 = new NamedItem ("bar");
+			obj.References.Add (obj2);
+			obj.References.Add (new NamedItem ("baz"));
+			obj2.References.Add (obj);
+
+			using (var xr = GetReader ("NamedItems.xml")) {
+				var des = (NamedItem) XamlServices.Load (xr);
+				Assert.IsNotNull (des, "#1");
+				Assert.AreEqual (2, des.References.Count, "#2");
+				Assert.AreEqual (typeof (NamedItem), des.References [0].GetType (), "#3");
+				Assert.AreEqual (typeof (NamedItem), des.References [1].GetType (), "#4");
+				Assert.AreEqual (des, des.References [0].References [0], "#5");
+			}
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_NamedItems2 ()
+		{
+			// i1
+			// - i2
+			// -- i3
+			// - i4
+			// -- i3
+			var obj = new NamedItem2 ("i1");
+			var obj2 = new NamedItem2 ("i2");
+			var obj3 = new NamedItem2 ("i3");
+			var obj4 = new NamedItem2 ("i4");
+			obj.References.Add (obj2);
+			obj.References.Add (obj4);
+			obj2.References.Add (obj3);
+			obj4.References.Add (obj3);
+
+			using (var xr = GetReader ("NamedItems2.xml")) {
+				var des = (NamedItem2) XamlServices.Load (xr);
+				Assert.IsNotNull (des, "#1");
+				Assert.AreEqual (2, des.References.Count, "#2");
+				Assert.AreEqual (typeof (NamedItem2), des.References [0].GetType (), "#3");
+				Assert.AreEqual (typeof (NamedItem2), des.References [1].GetType (), "#4");
+				Assert.AreEqual (1, des.References [0].References.Count, "#5");
+				Assert.AreEqual (1, des.References [1].References.Count, "#6");
+				Assert.AreEqual (des.References [0].References [0], des.References [1].References [0], "#7");
+			}
+		}
 	}
 }

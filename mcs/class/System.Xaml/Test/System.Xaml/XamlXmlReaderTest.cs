@@ -504,5 +504,19 @@ namespace MonoTests.System.Xaml
 			var r = GetReader ("TypeExtensionWrapper.xml");
 			Read_TypeExtensionWrapper (r);
 		}
+
+		[Test]
+		public void Read_NamedItems ()
+		{
+			var r = GetReader ("NamedItems.xml");
+			Read_NamedItems (r, false);
+		}
+
+		[Test]
+		public void Read_NamedItems2 ()
+		{
+			var r = GetReader ("NamedItems2.xml");
+			Read_NamedItems2 (r, false);
+		}
 	}
 }
