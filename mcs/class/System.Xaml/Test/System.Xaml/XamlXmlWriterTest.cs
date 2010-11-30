@@ -748,7 +748,7 @@ namespace MonoTests.System.Xaml
 		[Category ("NotWorking")]
 		public void Write_ListArray ()
 		{
-			var obj = new List<Array> (new Array [] { new int [] { 1,2,3}, new string [] { "foo", "bar", "baz" }});
+			var obj = new List<Array> (new Array [] { new int [] { 1,2,3}, new string [] { "foo", "bar", "baz" }}) { Capacity = 2 };
 			Assert.AreEqual (ReadXml ("List_Array.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
 
