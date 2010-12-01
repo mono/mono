@@ -102,7 +102,7 @@ namespace System.Threading {
 			// Same idea when recursion is allowed and a write thread wants to
 			// go for a Read too.
 			if (CurrentLockState.Has (LockState.Upgradable)
-			    || recursionPolicy == LockRecursionPolicy.SupportsRecursion) {
+			    || (recursionPolicy == LockRecursionPolicy.SupportsRecursion && ctstate.LockState.Has (LockState.Write))) {
 				Interlocked.Add (ref rwlock, RwRead);
 				ctstate.LockState ^= LockState.Read;
 				ctstate.ReaderRecursiveCount++;
