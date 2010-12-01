@@ -1818,35 +1818,6 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class AssemblyResource : IEquatable<AssemblyResource>
-	{
-		public AssemblyResource (string fileName, string name)
-			: this (fileName, name, false)
-		{
-		}
-
-		public AssemblyResource (string fileName, string name, bool isPrivate)
-		{
-			FileName = fileName;
-			Name = name;
-			Attributes = isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public;
-		}
-
-		public ResourceAttributes Attributes { get; private set; }
-		public string Name { get; private set; }
-		public string FileName { get; private set; }
-		public bool IsEmbeded { get; set; }
-
-		#region IEquatable<AssemblyResource> Members
-
-		public bool Equals (AssemblyResource other)
-		{
-			return Name == other.Name;
-		}
-
-		#endregion
-	}
-
 	//
 	// This is the only public entry point
 	//
