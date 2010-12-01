@@ -96,11 +96,7 @@ namespace System.Web.UI {
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-#if NET_4_0
-			using (StreamReader sr = new StreamReader (stream)) {
-				return Deserialize (sr.ReadToEnd ());
-			}
-#else
+
 			long streamLength = -1;
 			if (stream.CanSeek)
 				streamLength = stream.Length;
@@ -121,7 +117,6 @@ namespace System.Web.UI {
 			string b64 = Encoding.ASCII.GetString (ms.GetBuffer (),
 				0, (int) streamLength);
 			return Deserialize (b64);
-#endif
 		}
 
 		public object Deserialize (TextReader input)
@@ -149,10 +144,6 @@ namespace System.Web.UI {
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-#if NET_4_0
-			if (!stream.CanSeek)
-				throw new NotSupportedException ();
-#endif
 			string b64 = SerializeToBase64 (value);
 			byte [] bytes = Encoding.ASCII.GetBytes (b64);
 			stream.Write (bytes, 0, bytes.Length);
