@@ -22,44 +22,11 @@ using System.Diagnostics;
 
 namespace Mono.CSharp
 {
-	public enum Target {
-		Library, Exe, Module, WinExe
-	};
-
-	public enum Platform {
-		AnyCPU, X86, X64, IA64
-	}
-	
 	/// <summary>
 	///    The compiler driver.
 	/// </summary>
 	class Driver
 	{
-		//
-		// Assemblies references to be linked.   Initialized with
-		// mscorlib.dll here.
-		List<string> references;
-
-		//
-		// If any of these fail, we ignore the problem.  This is so
-		// that we can list all the assemblies in Windows and not fail
-		// if they are missing on Linux.
-		//
-		List<string> soft_references;
-
-		// 
-		// External aliases for assemblies.
-		//
-		Dictionary<string, string> external_aliases;
-
-		//
-		// Modules to be linked
-		//
-		List<string> modules;
-
-		// Lookup paths
-		List<string> link_paths;
-
 		// Whether we want to only run the tokenizer
 		bool tokenize;
 		
@@ -69,11 +36,6 @@ namespace Mono.CSharp
 		bool timestamps;
 		internal int fatal_errors;
 		
-		//
-		// Whether to load the initial config file (what CSC.RSP has by default)
-		// 
-		bool load_default_config = true;
-
 		//
 		// Output file
 		//
@@ -310,202 +272,6 @@ namespace Mono.CSharp
 			return 1;
 		}
 
-		void Error6 (string name, string log)
-		{
-			if (log != null && log.Length > 0)
-				Report.ExtraInformation (Location.Null, "Log:\n" + log + "\n(log related to previous ");
-			Report.Error (6, "cannot find metadata file `{0}'", name);
-		}
-
-		void Error9 (string type, string filename, string log)
-		{
-			if (log != null && log.Length > 0)
-				Report.ExtraInformation (Location.Null, "Log:\n" + log + "\n(log related to previous ");
-			Report.Error (9, "file `{0}' has invalid `{1}' metadata", filename, type);
-		}
-
-		void BadAssembly (string filename, string log)
-		{
-/*
-			MethodInfo adder_method = null; // AssemblyDefinition.AddModule_Method;
-
-			if (adder_method != null) {
-				AssemblyName an = new AssemblyName ();
-				an.Name = ".temp";
-				var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
-				try {
-					object m = null;
-					try {
-						m = adder_method.Invoke (ab, new object [] { filename });
-					} catch (TargetInvocationException ex) {
-						throw ex.InnerException;
-					}
-
-					if (m != null) {
-						Report.Error (1509, "Referenced file `{0}' is not an assembly. Consider using `-addmodule' option instead",
-						              Path.GetFileName (filename));
-						return;
-					}
-				} catch (FileNotFoundException) {
-					// did the file get deleted during compilation? who cares? swallow the exception
-				} catch (BadImageFormatException) {
-					// swallow exception
-				} catch (FileLoadException) {
-					// swallow exception
-				}
-			}
-*/
-			Error9 ("assembly", filename, log);
-		}
-
-		public Assembly LoadAssemblyFile (string assembly, bool soft)
-		{
-			Assembly a = null;
-			string total_log = "";
-
-			try {
-				try {
-					char[] path_chars = { '/', '\\' };
-
-					if (assembly.IndexOfAny (path_chars) != -1) {
-						a = Assembly.LoadFrom (assembly);
-					} else {
-						string ass = assembly;
-						if (ass.EndsWith (".dll") || ass.EndsWith (".exe"))
-							ass = assembly.Substring (0, assembly.Length - 4);
-						a = Assembly.Load (ass);
-					}
-				} catch (FileNotFoundException) {
-					bool err = !soft;
-					foreach (string dir in link_paths) {
-						string full_path = Path.Combine (dir, assembly);
-						if (!assembly.EndsWith (".dll") && !assembly.EndsWith (".exe"))
-							full_path += ".dll";
-
-						try {
-							a = Assembly.LoadFrom (full_path);
-							err = false;
-							break;
-						} catch (FileNotFoundException ff) {
-							if (soft)
-								return a;
-							total_log += ff.FusionLog;
-						}
-					}
-					if (err) {
-						Error6 (assembly, total_log);
-						return a;
-					}
-				}
-			} catch (BadImageFormatException f) {
-				// .NET 2.0 throws this if we try to load a module without an assembly manifest ...
-				BadAssembly (f.FileName, f.FusionLog);
-			} catch (FileLoadException f) {
-				// ... while .NET 1.1 throws this
-				BadAssembly (f.FileName, f.FusionLog);
-			}
-
-			return a;
-		}
-
-		void LoadModule (AssemblyDefinition assembly, string module)
-		{
-			string total_log = "";
-
-			try {
-				try {
-					assembly.AddModule (module);
-				} catch (FileNotFoundException) {
-					bool err = true;
-					foreach (string dir in link_paths) {
-						string full_path = Path.Combine (dir, module);
-						if (!module.EndsWith (".netmodule"))
-							full_path += ".netmodule";
-
-						try {
-							assembly.AddModule (full_path);
-							err = false;
-							break;
-						} catch (FileNotFoundException ff) {
-							total_log += ff.FusionLog;
-						}
-					}
-					if (err) {
-						Error6 (module, total_log);
-						return;
-					}
-				}
-			} catch (BadImageFormatException f) {
-				Error9 ("module", f.FileName, f.FusionLog);
-			} catch (FileLoadException f) {
-				Error9 ("module", f.FileName, f.FusionLog);
-			}
-		}
-
-		/// <summary>
-		///   Loads all assemblies referenced on the command line
-		/// </summary>
-		public void LoadReferences (ModuleContainer module, MetadataImporter importer)
-		{
-			link_paths.Add (GetSystemDir ());
-			link_paths.Add (Directory.GetCurrentDirectory ());
-			Assembly a;
-			var loaded = new List<Tuple<RootNamespace, Assembly>> ();
-
-			//
-			// Load Core Library for default compilation
-			//
-			if (RootContext.StdLib) {
-				a = LoadAssemblyFile ("mscorlib", false);
-				if (a != null)
-					loaded.Add (Tuple.Create (module.GlobalRootNamespace, a));
-			}
-
-			foreach (string r in soft_references) {
-				a = LoadAssemblyFile (r, true);
-				if (a != null)
-					loaded.Add (Tuple.Create (module.GlobalRootNamespace, a));
-			}
-
-			foreach (string r in references) {
-				a = LoadAssemblyFile (r, false);
-				if (a == null)
-					continue;
-
-				var key = Tuple.Create (module.GlobalRootNamespace, a);
-				if (loaded.Contains (key))
-					continue;
-
-				loaded.Add (key);
-			}
-
-			foreach (var entry in external_aliases) {
-				a = LoadAssemblyFile (entry.Value, false);
-				if (a == null)
-					continue;
-
-				var key = Tuple.Create (module.CreateRootNamespace (entry.Key), a);
-				if (loaded.Contains (key))
-					continue;
-
-				loaded.Add (key);
-			}
-
-			foreach (var entry in loaded) {
-				importer.ImportAssembly (entry.Item2, entry.Item1);
-			}
-		}
-
-		void LoadModules (AssemblyDefinition assembly)
-		{
-			if (modules.Count == 0)
-				return;
-
-			foreach (var module in modules) {
-				LoadModule (assembly, module);
-			}
-		}
-
 		static string [] LoadArgs (string file)
 		{
 			StreamReader f;
@@ -553,14 +319,6 @@ namespace Mono.CSharp
 		}
 
 		//
-		// Returns the directory where the system assemblies are installed
-		//
-		static string GetSystemDir ()
-		{
-			return Path.GetDirectoryName (typeof (object).Assembly.Location);
-		}
-
-		//
 		// Given a path specification, splits the path from the file/pattern
 		//
 		static void SplitPathAndPattern (string spec, out string path, out string pattern)
@@ -602,12 +360,6 @@ namespace Mono.CSharp
 
 		bool ParseArguments (string[] args, bool require_files)
 		{
-			references = new List<string> ();
-			external_aliases = new Dictionary<string, string> ();
-			soft_references = new List<string> ();
-			modules = new List<string> (2);
-			link_paths = new List<string> ();
-
 			List<string> response_file_list = null;
 			bool parsing_options = true;
 
@@ -755,56 +507,6 @@ namespace Mono.CSharp
 				// directory entry already does
 				ProcessSourceFiles (d + "/" + pattern, true);
 			}
-		}
-
-		public void ProcessDefaultConfig ()
-		{
-			if (!load_default_config)
-				return;
-	
-			//
-			// For now the "default config" is harcoded into the compiler
-			// we can move this outside later
-			//
-			string [] default_config = {
-				"System",
-				"System.Xml",
-#if NET_2_1
-				"System.Net",
-				"System.Windows",
-				"System.Windows.Browser",
-#endif
-#if false
-				//
-				// Is it worth pre-loading all this stuff?
-				//
-				"Accessibility",
-				"System.Configuration.Install",
-				"System.Data",
-				"System.Design",
-				"System.DirectoryServices",
-				"System.Drawing.Design",
-				"System.Drawing",
-				"System.EnterpriseServices",
-				"System.Management",
-				"System.Messaging",
-				"System.Runtime.Remoting",
-				"System.Runtime.Serialization.Formatters.Soap",
-				"System.Security",
-				"System.ServiceProcess",
-				"System.Web",
-				"System.Web.RegularExpressions",
-				"System.Web.Services",
-				"System.Windows.Forms"
-#endif
-			};
-
-			soft_references.AddRange (default_config);
-
-			if (RootContext.Version > LanguageVersion.ISO_2)
-				soft_references.Add ("System.Core");
-			if (RootContext.Version > LanguageVersion.V_3)
-				soft_references.Add ("Microsoft.CSharp");
 		}
 
 		public static string OutputFile
@@ -979,11 +681,11 @@ namespace Mono.CSharp
 				if (idx > -1) {
 					string alias = val.Substring (0, idx);
 					string assembly = val.Substring (idx + 1);
-					AddExternAlias (alias, assembly);
+					AddAssemblyReference (alias, assembly);
 					return true;
 				}
 
-				references.Add (val);
+				AddAssemblyReference (val);
 				return true;
 				
 			case "-L":
@@ -992,7 +694,7 @@ namespace Mono.CSharp
 					Usage ();	
 					Environment.Exit (1);
 				}
-				link_paths.Add (args [++i]);
+				RootContext.ReferencesLookupPaths.Add (args [++i]);
 				return true;
 
 			case "--lint":
@@ -1071,7 +773,7 @@ namespace Mono.CSharp
 				
 			case "--noconfig":
 				Report.Warning (-29, 1, "Compatibility: Use -noconfig option instead of --noconfig");
-				load_default_config = false;
+				RootContext.LoadDefaultReferences = false;
 				return true;
 
 			default:
@@ -1146,7 +848,7 @@ namespace Mono.CSharp
 				value = option.Substring (idx + 1);
 			}
 
-			switch (arg.ToLower (CultureInfo.InvariantCulture)){
+			switch (arg.ToLowerInvariant ()){
 			case "/nologo":
 				return true;
 
@@ -1178,9 +880,9 @@ namespace Mono.CSharp
 				return true;
 
 			case "/out":
-				if (value.Length == 0){
-					Usage ();
-					Environment.Exit (1);
+				if (value.Length == 0) {
+					Error_RequiresFileName (option);
+					break;
 				}
 				OutputFile = value;
 				return true;
@@ -1283,52 +985,57 @@ namespace Mono.CSharp
 				return true;
 				
 			case "/recurse":
-				if (value.Length == 0){
-					Report.Error (5, "-recurse requires an argument");
-					Environment.Exit (1);
+				if (value.Length == 0) {
+					Error_RequiresFileName (option);
+					break;
 				}
 				ProcessSourceFiles (value, true); 
 				return true;
 
 			case "/r":
 			case "/reference": {
-				if (value.Length == 0){
-					Report.Error (5, "-reference requires an argument");
-					Environment.Exit (1);
+				if (value.Length == 0) {
+					Error_RequiresFileName (option);
+					break;
 				}
 
 				string[] refs = value.Split (argument_value_separator);
 				foreach (string r in refs){
+					if (r.Length == 0)
+						continue;
+
 					string val = r;
 					int index = val.IndexOf ('=');
 					if (index > -1) {
 						string alias = r.Substring (0, index);
 						string assembly = r.Substring (index + 1);
-						AddExternAlias (alias, assembly);
-						return true;
+						AddAssemblyReference (alias, assembly);
+						if (refs.Length != 1) {
+							Report.Error (2034, "Cannot specify multiple aliases using single /reference option");
+							break;
+						}
+					} else {
+						AddAssemblyReference (val);
 					}
-
-					if (val.Length != 0)
-						references.Add (val);
 				}
 				return true;
 			}
 			case "/addmodule": {
-				if (value.Length == 0){
-					Report.Error (5, arg + " requires an argument");
-					Environment.Exit (1);
+				if (value.Length == 0) {
+					Error_RequiresFileName (option);
+					break;
 				}
 
 				string[] refs = value.Split (argument_value_separator);
 				foreach (string r in refs){
-					modules.Add (r);
+					RootContext.Modules.Add (r);
 				}
 				return true;
 			}
 			case "/win32res": {
 				if (value.Length == 0) {
-					Report.Error (5, arg + " requires an argument");
-					Environment.Exit (1);
+					Error_RequiresFileName (option);
+					break;
 				}
 				
 				if (RootContext.Win32IconFile != null)
@@ -1339,8 +1046,8 @@ namespace Mono.CSharp
 			}
 			case "/win32icon": {
 				if (value.Length == 0) {
-					Report.Error (5, arg + " requires an argument");
-					Environment.Exit (1);
+					Error_RequiresFileName (option);
+					break;
 				}
 
 				if (RootContext.Win32ResourceFile != null)
@@ -1350,24 +1057,25 @@ namespace Mono.CSharp
 				return true;
 			}
 			case "/doc": {
-				if (value.Length == 0){
-					Report.Error (2006, arg + " requires an argument");
-					Environment.Exit (1);
+				if (value.Length == 0) {
+					Error_RequiresFileName (option);
+					break;
 				}
+
 				RootContext.Documentation = new Documentation (value);
 				return true;
 			}
 			case "/lib": {
 				string [] libdirs;
 				
-				if (value.Length == 0){
-					Report.Error (5, "/lib requires an argument");
-					Environment.Exit (1);
+				if (value.Length == 0) {
+					Error_RequiresFileName (option);
+					break;
 				}
 
 				libdirs = value.Split (argument_value_separator);
 				foreach (string dir in libdirs)
-					link_paths.Add (dir);
+					RootContext.ReferencesLookupPaths.Add (dir);
 				return true;
 			}
 
@@ -1396,6 +1104,7 @@ namespace Mono.CSharp
 
 			case "/clscheck":
 			case "/clscheck+":
+				RootContext.VerifyClsCompliance = true;
 				return true;
 
 			case "/clscheck-":
@@ -1454,14 +1163,14 @@ namespace Mono.CSharp
 						}
 						Report.SetIgnoreWarning (warn);
 					} catch {
-						Report.Error (1904, String.Format("`{0}' is not a valid warning number", wc));
+						Report.Error (1904, "`{0}' is not a valid warning number", wc);
 					}
 				}
 				return true;
 			}
 
 			case "/noconfig":
-				load_default_config = false;
+				RootContext.LoadDefaultReferences = false;
 				return true;
 
 			case "/platform":
@@ -1523,10 +1232,11 @@ namespace Mono.CSharp
 				return true;
 
 			case "/keyfile":
-				if (value == String.Empty) {
-					Report.Error (5, arg + " requires an argument");
-					Environment.Exit (1);
+				if (value.Length == 0) {
+					Error_RequiresFileName (option);
+					break;
 				}
+
 				RootContext.StrongNameKeyFile = value;
 				return true;
 			case "/keycontainer":
@@ -1545,7 +1255,7 @@ namespace Mono.CSharp
 				return true;
 
 			case "/langversion":
-				switch (value.ToLower (CultureInfo.InvariantCulture)) {
+				switch (value.ToLowerInvariant ()) {
 				case "iso-1":
 					RootContext.Version = LanguageVersion.ISO_1;
 					return true;	
@@ -1595,6 +1305,11 @@ namespace Mono.CSharp
 			Report.Error (2007, "Unrecognized command-line option: `{0}'", option);
 		}
 
+		void Error_RequiresFileName (string option)
+		{
+			Report.Error (2005, "Missing file specification for `{0}' option", option);
+		}
+
 		static string [] AddArgs (string [] args, string [] extra_args)
 		{
 			string [] new_args;
@@ -1619,20 +1334,24 @@ namespace Mono.CSharp
 			return new_args;
 		}
 
-		void AddExternAlias (string identifier, string assembly)
+		void AddAssemblyReference (string assembly)
+		{
+			RootContext.AssemblyReferences.Add (assembly);
+		}
+
+		void AddAssemblyReference (string alias, string assembly)
 		{
 			if (assembly.Length == 0) {
-				Report.Error (1680, "Invalid reference alias '" + identifier + "='. Missing filename");
+				Report.Error (1680, "Invalid reference alias `{0}='. Missing filename", alias);
 				return;
 			}
 
-			if (!IsExternAliasValid (identifier)) {
-				Report.Error (1679, "Invalid extern alias for /reference. Alias '" + identifier + "' is not a valid identifier");
+			if (!IsExternAliasValid (alias)) {
+				Report.Error (1679, "Invalid extern alias for -reference. Alias `{0}' is not a valid identifier", alias);
 				return;
 			}
-			
-			// Could here hashtable throw an exception?
-			external_aliases [identifier] = assembly;
+
+			RootContext.AssemblyReferencesAliases.Add (Tuple.Create (alias, assembly));
 		}
 
 		void AddResource (AssemblyResource res)
@@ -1698,8 +1417,6 @@ namespace Mono.CSharp
 			if (RootContext.ToplevelTypes.NamespaceEntry != null)
 				throw new InternalErrorException ("who set it?");
 
-			ProcessDefaultConfig ();
-
 			//
 			// Quick hack
 			//
@@ -1728,10 +1445,11 @@ namespace Mono.CSharp
 			var importer = new ReflectionImporter (ctx.BuildinTypes);
 			assembly.Importer = importer;
 
-			LoadReferences (module, importer);
-		
+			var loader = new DynamicLoader (importer, ctx);
+			loader.LoadReferences (module);
+
 			ShowTime ("Imporing referenced assemblies");
-			
+
 			if (!TypeManager.InitCoreTypes (module, ctx.BuildinTypes))
 				return false;
 
@@ -1742,7 +1460,7 @@ namespace Mono.CSharp
 			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))
 				return false;
 
-			LoadModules (assembly);
+			loader.LoadModules (assembly);
 
 			module.Define ();
 

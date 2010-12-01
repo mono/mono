@@ -63,7 +63,7 @@ namespace Mono.CSharp {
 		static bool inited;
 
 		static CompilerContext ctx;
-		static MetadataImporter importer;
+		static DynamicLoader loader;
 		
 		public static TextWriter MessageOutput = Console.Out;
 
@@ -121,18 +121,17 @@ namespace Mono.CSharp {
 
 				RootContext.ToplevelTypes = new ModuleContainer (ctx);
 				
-				driver.ProcessDefaultConfig ();
-
 				var startup_files = new List<string> ();
 				foreach (CompilationUnit file in Location.SourceFiles)
 					startup_files.Add (file.Path);
 				
 				CompilerCallableEntryPoint.Reset ();
 
-				importer = new ReflectionImporter (ctx.BuildinTypes);
+				var importer = new ReflectionImporter (ctx.BuildinTypes);
+				loader = new DynamicLoader (importer, ctx);
 
 				RootContext.ToplevelTypes.MakeExecutable ("temp");
-				driver.LoadReferences (RootContext.ToplevelTypes, importer);
+				loader.LoadReferences (RootContext.ToplevelTypes);
 				TypeManager.InitCoreTypes (RootContext.ToplevelTypes, ctx.BuildinTypes);
 				TypeManager.InitOptionalCoreTypes (ctx);
 
@@ -177,7 +176,7 @@ namespace Mono.CSharp {
 				if (interactive_base_class != null)
 					return interactive_base_class;
 
-				return importer.ImportType (typeof (InteractiveBase));
+				return loader.Importer.ImportType (typeof (InteractiveBase));
 			}
 		}
 
@@ -187,7 +186,7 @@ namespace Mono.CSharp {
 				throw new ArgumentNullException ();
 
 			lock (evaluator_lock)
-				interactive_base_class = importer.ImportType (type);
+				interactive_base_class = loader.Importer.ImportType (type);
 		}
 
 		/// <summary>
@@ -685,7 +684,7 @@ namespace Mono.CSharp {
 
 			if (Environment.GetEnvironmentVariable ("SAVE") != null) {
 				assembly = RootContext.ToplevelTypes.MakeExecutable (current_debug_name, current_debug_name);
-				assembly.Importer = importer;
+				assembly.Importer = loader.Importer;
 			} else {
 				assembly = RootContext.ToplevelTypes.MakeExecutable (current_debug_name);
 			}
@@ -875,9 +874,9 @@ namespace Mono.CSharp {
 		static public void LoadAssembly (string file)
 		{
 			lock (evaluator_lock){
-				var a = driver.LoadAssemblyFile (file, false);
+				var a = loader.LoadAssemblyFile (file, false);
 				if (a != null)
-					importer.ImportAssembly (a, RootContext.ToplevelTypes.GlobalRootNamespace);
+					loader.Importer.ImportAssembly (a, RootContext.ToplevelTypes.GlobalRootNamespace);
 			}
 		}
 
@@ -887,7 +886,7 @@ namespace Mono.CSharp {
 		static public void ReferenceAssembly (Assembly a)
 		{
 			lock (evaluator_lock){
-				importer.ImportAssembly (a, RootContext.ToplevelTypes.GlobalRootNamespace);
+				loader.Importer.ImportAssembly (a, RootContext.ToplevelTypes.GlobalRootNamespace);
 			}
 		}
 

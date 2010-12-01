@@ -33,6 +33,16 @@ namespace Mono.CSharp {
 		v4
 	}
 
+	public enum Target
+	{
+		Library, Exe, Module, WinExe
+	}
+
+	public enum Platform
+	{
+		AnyCPU, X86, X64, IA64
+	}
+
 	public class RootContext {
 
 		//
@@ -41,10 +51,11 @@ namespace Mono.CSharp {
 		public static Target Target;
 		public static Platform Platform;
 		public static string TargetExt;
-		public static bool VerifyClsCompliance = true;
-		public static bool Optimize = true;
+		public static bool VerifyClsCompliance;
+		public static bool Optimize;
 		public static LanguageVersion Version;
 		public static bool EnhancedWarnings;
+		public static bool LoadDefaultReferences;
 
 		public static MetadataVersion MetadataCompatibilityVersion;
 
@@ -55,6 +66,26 @@ namespace Mono.CSharp {
 		public static string StrongNameKeyFile;
 		public static string StrongNameKeyContainer;
 		public static bool StrongNameDelaySign;
+
+		//
+		// Assemblies references to be loaded
+		//
+		public static List<string> AssemblyReferences;
+
+		// 
+		// External aliases for assemblies
+		//
+		public static List<Tuple<string, string>> AssemblyReferencesAliases;
+
+		//
+		// Modules to be embedded
+		//
+		public static List<string> Modules;
+
+		//
+		// Lookup paths for referenced assemblies
+		//
+		public static List<string> ReferencesLookupPaths;
 
 		//
 		// If set, enable XML documentation generation
@@ -152,11 +183,18 @@ namespace Mono.CSharp {
 			TargetExt = ".exe";
 			Platform = Platform.AnyCPU;
 			Version = LanguageVersion.Default;
+			VerifyClsCompliance = true;
+			Optimize = true;
 			Documentation = null;
 			GenerateDebugInfo = false;
 			Win32IconFile = null;
 			Win32ResourceFile = null;
 			Resources = null;
+			LoadDefaultReferences = true;
+			AssemblyReferences = new List<string> ();
+			AssemblyReferencesAliases = new List<Tuple<string, string>> ();
+			Modules = new List<string> ();
+			ReferencesLookupPaths = new List<string> ();
 
 #if NET_4_0
 			MetadataCompatibilityVersion = MetadataVersion.v4;
