@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (c) Copyright 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
@@ -39,40 +39,76 @@ namespace System.Web.Configuration {
 
 	public sealed class MachineKeyValidationConverter : ConfigurationConverterBase
 	{
+#if NET_4_0
+		const string InvalidValue = "The enumeration value must be one of the following: SHA1, MD5, 3DES, AES, HMACSHA256, HMACSHA384, HMACSHA512."; 
+#else
+		const string InvalidValue = "The enumeration value must be one of the following: SHA1, MD5, 3DES, AES."; 
+#endif
 		public MachineKeyValidationConverter ()
 		{
 		}
 
 		public override object ConvertFrom (ITypeDescriptorContext ctx, CultureInfo ci, object data)
 		{
-			if ((string)data == "MD5")
+			switch ((string) data) {
+			case "MD5":
 				return MachineKeyValidation.MD5;
-			else if ((string)data == "SHA1")
+			case "SHA1":
 				return MachineKeyValidation.SHA1;
-			else if ((string)data == "3DES")
+			case "3DES":
 				return MachineKeyValidation.TripleDES;
-			else if ((string)data == "AES")
+			case "AES":
 				return MachineKeyValidation.AES;
-			else
-				throw new ArgumentException ("The enumeration value must be one of the following: SHA1, MD5, 3DES, AES.");
+#if NET_4_0
+			case "HMACSHA256":
+				return MachineKeyValidation.HMACSHA256;
+			case "HMACSHA384":
+				return MachineKeyValidation.HMACSHA384;
+			case "HMACSHA512":
+				return MachineKeyValidation.HMACSHA512;
+#endif
+			default:
+				throw new ArgumentException (InvalidValue);
+			}
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext ctx, CultureInfo ci, object value, Type type)
 		{
+#if NET_4_0
+			if ((value == null) || (value.GetType () != typeof (MachineKeyValidation)))
+				throw new ArgumentException (InvalidValue);
+#else
 			if (value.GetType () != typeof (MachineKeyValidation)) {
 				/* MS throws this exception on an invalid */
-				throw new FormatException ("invalid validation value");
+				throw new FormatException (InvalidValue);
 			}				
+#endif
 
-			MachineKeyValidation v = (MachineKeyValidation)value;
-
-			if (v == MachineKeyValidation.MD5) return "MD5";
-			else if (v == MachineKeyValidation.SHA1) return "SHA1";
-			else if (v == MachineKeyValidation.TripleDES) return "3DES";
-			else if (v ==  MachineKeyValidation.AES) return "AES";
-			else
+			switch ((MachineKeyValidation) value) {
+			case MachineKeyValidation.MD5:
+				return "MD5";
+			case MachineKeyValidation.SHA1:
+				return "SHA1";
+			case MachineKeyValidation.TripleDES:
+				return "3DES";
+			case MachineKeyValidation.AES:
+				return "AES";
+#if NET_4_0
+			case MachineKeyValidation.HMACSHA256:
+				return "HMACSHA256";
+			case MachineKeyValidation.HMACSHA384:
+				return "HMACSHA384";
+			case MachineKeyValidation.HMACSHA512:
+				return "HMACSHA512";
+			default:
+				// includes MachineKeyValidation.Custom
+				throw new ArgumentException (InvalidValue);
+#else
+			default:
 				/* MS throws this exception on an invalid */
-				throw new FormatException ("invalid validation value");
+				throw new FormatException (InvalidValue);
+#endif
+			}
 		}
 	}
 }

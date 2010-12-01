@@ -1048,11 +1048,22 @@ namespace System.Web.Security {
 
 					MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
 					string alg_type = section.HashAlgorithmType;
-					if (alg_type == "") {
-						MachineKeySection keysection = (MachineKeySection) WebConfigurationManager.GetSection ("system.web/machineKey");
-						alg_type = keysection.Validation.ToString ();
+					if (alg_type.Length == 0) {
+						alg_type = MachineKeySection.Config.Validation.ToString ();
+#if NET_4_0
+						// support new (4.0) custom algorithms
+						if (alg_type.StartsWith ("alg:"))
+							alg_type = alg_type.Substring (4);
+#endif
 					}
 					using (HashAlgorithm hash = HashAlgorithm.Create (alg_type)) {
+#if NET_4_0
+						// for compatibility (with 2.0) we'll allow MD5 and SHA1 not to map to HMACMD5 and HMACSHA1
+						// but that won't work with new (4.0) algorithms, like HMACSHA256|384|512 or custom, won't work without using the key
+						KeyedHashAlgorithm kha = (hash as KeyedHashAlgorithm);
+						if (kha != null)
+							kha.Key = MachineKeySection.Config.GetValidationKey ();
+#endif
 						hash.TransformFinalBlock (hashBytes, 0, hashBytes.Length);
 						return Convert.ToBase64String (hash.Hash);
 					}
