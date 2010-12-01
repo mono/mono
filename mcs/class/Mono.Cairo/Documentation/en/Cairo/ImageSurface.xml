@@ -116,9 +116,9 @@
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The data of the ImageSurface</summary>
+        <value>the data as a <see cref="t:System.Byte" /> Array</value>
+        <remarks />
         <since version="cairo 1.2" />
       </Docs>
       <AssemblyInfo>
@@ -134,7 +134,7 @@
       </ReturnValue>
       <Docs>
         <summary>An IntPtr pointing to the image data in memory.</summary>
-        <value>To be added.</value>
+        <value>The <see cref="t:System.IntPtr" /> pointing to the image data in memory</value>
         <remarks>
         </remarks>
         <since version="Mono-1.2.5" />
@@ -151,9 +151,9 @@
         <ReturnType>Cairo.Format</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The format of the ImageSurface</summary>
+        <value>The <see cref="t:Cairo.Format" /> of the ImageSurface</value>
+        <remarks />
         <since version="cairo 1.2" />
       </Docs>
       <AssemblyInfo>
@@ -168,9 +168,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The height of the ImageSurface in pixels</summary>
+        <value>the height as <see cref="t:System.Int32" /></value>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -185,7 +185,7 @@
       </ReturnValue>
       <Docs>
         <summary>The number of bytes per row in the image.</summary>
-        <value>To be added.</value>
+        <value>The number of Bytes as <see cref="t:System.Int32" /></value>
         <remarks>the number of bytes between the start of rows in the buffer. Having this be specified separate from width  allows for padding at the end of rows, or for writing to a subportion of a larger image.</remarks>
         <since version="cairo 1.2" />
       </Docs>
@@ -201,9 +201,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The width of the ImageSurface in pixels</summary>
+        <value>the width as <see cref="t:System.Int32" /></value>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

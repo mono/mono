@@ -36,9 +36,9 @@
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="handle">The handle as a <see cref="t:System.IntPtr" /></param>
+        <summary>Costructor with the option to pass an handle</summary>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -100,9 +100,9 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets the count of Color Stops</summary>
+        <value>The ColorStopCount as <see cref="t:System.Int32" /></value>
+        <remarks />
       </Docs>
     </Member>
   </Members>

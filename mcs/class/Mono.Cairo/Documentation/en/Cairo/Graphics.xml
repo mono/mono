@@ -90,9 +90,9 @@ Note that the <paramref name="surface" /> can be a <see cref="T:Cairo.Surface" /
         <ReturnType>Cairo.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The current Color in the drawing context (obsolete, use <see cref="P:Cairo.Graphics.Color" />)</summary>
+        <value>the Color</value>
+        <remarks />
       </Docs>
       <Attributes>
         <Attribute>
@@ -129,7 +129,7 @@ Note that the <paramref name="surface" /> can be a <see cref="T:Cairo.Surface" /
       <Docs>
         <summary>Get or set the fill rule.</summary>
         <value>See <see cref="T:Cairo.FillRule" /></value>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -143,9 +143,9 @@ Note that the <paramref name="surface" /> can be a <see cref="T:Cairo.Surface" /
         <ReturnType>Cairo.FontExtents</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>The metric information for a font</summary>
+        <value>A <see cref="t:Cairo.FontExtents" /> structure</value>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -210,7 +210,7 @@ Note that the <paramref name="surface" /> can be a <see cref="T:Cairo.Surface" /
       <Docs>
         <summary>Get or set the line cap style.</summary>
         <value>See <see cref="T:Cairo.LineCap" />.</value>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -226,7 +226,7 @@ Note that the <paramref name="surface" /> can be a <see cref="T:Cairo.Surface" /
       <Docs>
         <summary>Get or set the line join style.</summary>
         <value>See <see cref="T:Cairo.LineJoin" />.</value>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -242,7 +242,7 @@ Note that the <paramref name="surface" /> can be a <see cref="T:Cairo.Surface" /
       <Docs>
         <summary>Get or set the width of the stroke.</summary>
         <value>The width of the stroke.</value>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -257,8 +257,8 @@ Note that the <paramref name="surface" /> can be a <see cref="T:Cairo.Surface" /
       </ReturnValue>
       <Docs>
         <summary>Get or set the current transformation matrix (CTM).</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <value>The current Transformation Matrix <see cref="t:Cairo.Matrix" /></value>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -273,8 +273,8 @@ Note that the <paramref name="surface" /> can be a <see cref="T:Cairo.Surface" /
       </ReturnValue>
       <Docs>
         <summary>Get or set the miter limit (the value beyond which joins are no longer mitered).</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <value>the miter limit as <see cref="t:System.Double" /></value>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
