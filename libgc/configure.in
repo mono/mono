@@ -153,6 +153,7 @@ case "$THREADS" in
 	  AC_DEFINE(PARALLEL_MARK)
 	fi
 	AC_DEFINE(THREAD_LOCAL_ALLOC)
+	openbsd=true
 	;;
      *-*-osf*)
 	AC_DEFINE(GC_OSF1_THREADS)
@@ -213,6 +214,7 @@ case "$host" in
       ;;
 esac
 AM_CONDITIONAL(POWERPC_DARWIN,test x$powerpc_darwin = xtrue)
+AM_CONDITIONAL(OPENBSD,test x$openbsd = xtrue)
 
 AC_MSG_CHECKING(for xlc)
 AC_TRY_COMPILE([],[
