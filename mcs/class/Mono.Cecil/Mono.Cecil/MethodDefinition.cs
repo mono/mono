@@ -37,7 +37,7 @@ namespace Mono.Cecil {
 
 		ushort attributes;
 		ushort impl_attributes;
-		MethodSemanticsAttributes? sem_attrs;
+		internal MethodSemanticsAttributes? sem_attrs;
 		Collection<CustomAttribute> custom_attributes;
 		Collection<SecurityDeclaration> security_declarations;
 
@@ -78,18 +78,14 @@ namespace Mono.Cecil {
 			if (sem_attrs.HasValue)
 				return;
 
-			var type = DeclaringType;
-			if (type == null)
-				return;
-
-			var module = type.Module;
+			var module = this.Module;
 			if (module == null)
 				return;
 
 			if (!module.HasImage)
 				return;
 
-			sem_attrs = module.Read (this, (method, reader) => reader.ReadMethodSemantics (method));
+			module.Read (this, (method, reader) => reader.ReadAllSemantics (method));
 		}
 
 		public bool HasSecurityDeclarations {
