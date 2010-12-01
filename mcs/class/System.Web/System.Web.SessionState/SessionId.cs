@@ -28,6 +28,7 @@
 
 using System.Text;
 using System.Security.Cryptography;
+using System.Web.Util;
 
 namespace System.Web.SessionState {
 
