@@ -1,9 +1,11 @@
 <Type Name="OptionValueType" FullName="Mono.Options.OptionValueType">
   <TypeSignature Language="C#" Value="public enum OptionValueType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed OptionValueType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Options</AssemblyName>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
+    <AssemblyVersion>0.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -20,10 +22,12 @@
   <Members>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Options.OptionValueType None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueType</ReturnType>
@@ -41,10 +45,12 @@
     </Member>
     <Member MemberName="Optional">
       <MemberSignature Language="C#" Value="Optional" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Options.OptionValueType Optional = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueType</ReturnType>
@@ -67,10 +73,12 @@
     </Member>
     <Member MemberName="Required">
       <MemberSignature Language="C#" Value="Required" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Options.OptionValueType Required = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueType</ReturnType>

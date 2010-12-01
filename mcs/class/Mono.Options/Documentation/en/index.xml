@@ -3,14 +3,9 @@
   <Remarks>Program option parser.</Remarks>
   <Copyright>2008 Novell, Inc.</Copyright>
   <Assemblies>
-    <Assembly Name="Mono.Options" Version="0.2.1.0">
+    <Assembly Name="Mono.Options" Version="0.2.2.0">
+      <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 d2 d0 3a 8e 6b ea 7a 2e 74 e8 d1 af cc 93 e8 85 19 74 95 2b b4 80 a1 2c 91 34 47 4d 04 06 24 47 c3 7e 0e 68 c0 80 53 6f cf 3c 3f be 2f f9 c9 79 ce 99 84 75 e5 06 e8 ce 82 dd 5b 0f 35 0d c1 0e 93 bf 2e ee cf 87 4b 24 77 0c 50 81 db ea 74 47 fd da fa 27 7b 22 de 47 d6 ff ea 44 96 74 a4 f9 fc cf 84 d1 50 69 08 93 80 28 4d bd d3 5f 46 cd ff 12 a1 bd 78 e4 ef 00 65 d0 16 df ]</AssemblyPublicKey>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.CLSCompliant(true)</AttributeName>
         </Attribute>
@@ -20,11 +15,18 @@
         <Attribute>
           <AttributeName>System.Reflection.AssemblyTitle("Mono.Options.dll")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
       </Attributes>
     </Assembly>
   </Assemblies>
   <Types>
     <Namespace Name="Mono.Options">
+      <Type Name="ArgumentSource" Kind="Class" />
       <Type Name="Option" Kind="Class" />
       <Type Name="OptionAction`2" DisplayName="OptionAction&lt;TKey,TValue&gt;" Kind="Delegate" />
       <Type Name="OptionContext" Kind="Class" />
@@ -32,6 +34,7 @@
       <Type Name="OptionSet" Kind="Class" />
       <Type Name="OptionValueCollection" Kind="Class" />
       <Type Name="OptionValueType" Kind="Enumeration" />
+      <Type Name="ResponseFileSource" Kind="Class" />
     </Namespace>
   </Types>
 </Overview>

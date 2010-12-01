@@ -1,9 +1,11 @@
 <Type Name="OptionContext" FullName="Mono.Options.OptionContext">
   <TypeSignature Language="C#" Value="public class OptionContext" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit OptionContext extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Options</AssemblyName>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
+    <AssemblyVersion>0.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -22,10 +24,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public OptionContext (Mono.Options.OptionSet set);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class Mono.Options.OptionSet set) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="set" Type="Mono.Options.OptionSet" />
@@ -46,10 +50,12 @@
     </Member>
     <Member MemberName="Option">
       <MemberSignature Language="C#" Value="public Mono.Options.Option Option { set; get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Options.Option Option" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.Option</ReturnType>
@@ -63,10 +69,12 @@
     </Member>
     <Member MemberName="OptionIndex">
       <MemberSignature Language="C#" Value="public int OptionIndex { set; get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 OptionIndex" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -88,10 +96,12 @@
     </Member>
     <Member MemberName="OptionName">
       <MemberSignature Language="C#" Value="public string OptionName { set; get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string OptionName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -109,10 +119,12 @@
     </Member>
     <Member MemberName="OptionSet">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet OptionSet { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Options.OptionSet OptionSet" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -137,10 +149,12 @@
     </Member>
     <Member MemberName="OptionValues">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionValueCollection OptionValues { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Options.OptionValueCollection OptionValues" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueCollection</ReturnType>

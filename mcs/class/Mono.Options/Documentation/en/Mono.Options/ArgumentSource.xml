@@ -1,0 +1,238 @@
+<Type Name="ArgumentSource" FullName="Mono.Options.ArgumentSource">
+  <TypeSignature Language="C#" Value="public abstract class ArgumentSource" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ArgumentSource extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Options</AssemblyName>
+    <AssemblyVersion>0.2.2.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      Support for inserting additional arguments during 
+      <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+      processing.
+    </summary>
+    <remarks>
+      <para>
+        The <see cref="T:Mono.Options.ArgumentSource" /> type is an
+        abstraction to allow "insertion" of additional values for option
+        processing while processing arguments.
+      </para>
+      <para>
+        The principal use case is for <i>response files</i>, as used by
+        <c>CSC.EXE</c>, <c>CL.EXE</c>, and numerous other
+        compilers.  A response file contains additional options for the tool,
+        and the contents of the response file should be "inserted" as if
+        entered on the command line.  Response files are useful for bypassing
+        command-line length limitations, among other things.
+      </para>
+      <para>
+        Applications must opt-in to response file support by calling 
+        <see cref="M:Mono.Options.OptionSet.Add(Mono.Options.ArgumentSource)" />
+        before calling 
+        <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />.
+      </para>
+      <block subset="none" type="overrides">
+        Inheriting classes must override the following abstract methods:
+        <list type="bullet"><item><term><see cref="M:Mono.Options.ArgumentSource.GetNames" /></term></item><item><term><see cref="P:Mono.Options.ArgumentSource.Description" /></term></item><item><term><see cref="M:Mono.Options.ArgumentSource.GetArguments(System.Int32, System.Collections.Generic.IEnumerable{System.String}@)" /></term></item></list></block>
+    </remarks>
+    <altmember cref="T:Mono.Options.ResponseFileSource" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ArgumentSource ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+          Construct and initialize a
+          <see cref="T:Mono.Options.ArgumentSource" /> instance.
+        </summary>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Description">
+      <MemberSignature Language="C#" Value="public abstract string Description { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Description" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The description to provide for the argument source within 
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+        </summary>
+        <value>
+          A <see cref="T:System.String" /> containing
+          the description to provide for the argument source within 
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetArguments">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;string&gt; GetArguments (System.IO.TextReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;string&gt; GetArguments(class System.IO.TextReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.IO.TextReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">
+          A <see cref="T:System.IO.TextReader" /> to extract arguments from.
+        </param>
+        <summary>
+          Extract arguments from a <see cref="T:System.IO.TextReader" />.
+        </summary>
+        <returns>
+          A <see cref="T:System.Collections.Generic.IEnumerable{System.String}" />
+          which will provide arguments extracted from <paramref name="reader" />.
+        </returns>
+        <remarks>
+          <para>
+            Arguments are extracted from <paramref name="reader" /> by
+            splitting on newlines and spaces but maintaining the contents of
+            single-quoted and double-quoted strings.  Thus, <c>A B</c> will be
+            split as the separate strings <c>"A", "B"</c>, while 
+            <c>"A B"</c> will be returned as-is.
+          </para>
+          <block subset="none" type="note">
+            <paramref name="reader" /> is not 
+            <see cref="M:System.IO&gt;TextReader.Close" />d.
+          </block>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetArguments">
+      <MemberSignature Language="C#" Value="public abstract bool GetArguments (string value, out System.Collections.Generic.IEnumerable&lt;string&gt; replacement);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool GetArguments(string value, class System.Collections.Generic.IEnumerable`1&lt;string&gt; replacement) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="replacement" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          A <see cref="T:System.String" /> containing the argument to replace
+          with additional arguments.
+        </param>
+        <param name="replacement">
+          A <see cref="T:System.Collections.Generic.IEnumerable{System.String}" />
+          which will refer to teh replacement arguments if this method returns
+          <see langword="true" />; otherwise, this value should be ignored by
+          callers.
+        </param>
+        <summary>
+          Replace the argument <paramref name="value" /> with a set of
+          replacement arguments.
+        </summary>
+        <returns>
+          <see langword="true" /> if this 
+          <see cref="T:Mono.Options.ArgumentSource" /> will replace 
+          <paramref name="value" /> with a set of replacement strings and
+          <paramref name="replacement" /> contains the replacement strings;
+          otherwise, <see langword="false" />.
+        </returns>
+        <remarks>
+          <para>
+            Before
+            <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+            attempts to parse an argument as an option (or option value), all
+            registered <see cref="T:Mono.Options.OptionSet.ArgumentSources" />
+            are consulted in registration order to see if 
+            <see cref="T:Mono.Options.ArgumentSource" /> "supports" the
+            argument via 
+            <see cref="M:Mono.Options.ArgumentSource.GetArguments(System.Int32, System.Collections.Generic.IEnumerable{System.String}@)" />.
+            The first <c>ArgumentSource</c> to return <see langword="true" />
+            from <c>GetArguments()</c> may provide the replacement tokens, and
+            no later <c>ArgumentSource</c>es are consulted.
+          </para>
+        </remarks>
+        <altmember cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetArgumentsFromFile">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;string&gt; GetArgumentsFromFile (string file);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;string&gt; GetArgumentsFromFile(string file) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="file" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="file">
+          A <see cref="T:System.String" /> containing the file to extract
+          arguments from.
+        </param>
+        <summary>
+          Extract arguments from the specified filename.
+        </summary>
+        <returns>
+          A <see cref="T:System.Collections.Generic.IEnumerable{System.String}" />
+          which will provide arguments extracted from <paramref name="file" />.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="file" /> could not be read.
+        </exception>
+        <altmember cref="M:Mono.Options.ArgumentSource.GetArguments(System.IO.TextReader)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetNames">
+      <MemberSignature Language="C#" Value="public abstract string[] GetNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetNames() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          The names to provide for the argument source within 
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+        </summary>
+        <returns>
+          A <see cref="T:System.String" /> array containing
+          the names to provide for the argument source within 
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
