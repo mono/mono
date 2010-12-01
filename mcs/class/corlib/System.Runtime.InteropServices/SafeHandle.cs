@@ -46,6 +46,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace System.Runtime.InteropServices
@@ -81,16 +82,26 @@ namespace System.Runtime.InteropServices
 			if (refcount == 0)
 				throw new ObjectDisposedException (GetType ().FullName);
 
-			int newcount, current;
-			do {
-				current = refcount;
-				newcount = current-1;
-			} while (Interlocked.CompareExchange (ref refcount, newcount, current) != current);
+			int newcount = 0, current = 0;
+			bool registered = false;
+			RuntimeHelpers.PrepareConstrainedRegions ();
+			try {
+				do {
+					current = refcount;
+					newcount = current-1;
 
-			if (newcount == 0 && owns_handle && !IsInvalid){
-				ReleaseHandle ();
-				handle = invalid_handle_value;
-				refcount = -1;
+					try {}
+					finally {
+						if (Interlocked.CompareExchange (ref refcount, newcount, current) == current)
+							registered = true;
+					}
+				} while (!registered);
+			} finally {
+				if (registered && newcount == 0 && owns_handle && !IsInvalid){
+					ReleaseHandle ();
+					handle = invalid_handle_value;
+					refcount = -1;
+				}
 			}
 		}
 
