@@ -78,27 +78,7 @@ namespace MonoTests.System.Web.Configuration {
 
 			o = cv.ConvertFrom (null, null, "AES");
 			Assert.AreEqual ("AES", o.ToString (), "AES");
-#if NET_4_0
-			o = cv.ConvertFrom (null, null, "HMACSHA256");
-			Assert.AreEqual ("HMACSHA256", o.ToString (), "HMACSHA256");
-
-			o = cv.ConvertFrom (null, null, "HMACSHA384");
-			Assert.AreEqual ("HMACSHA384", o.ToString (), "HMACSHA384");
-
-			o = cv.ConvertFrom (null, null, "HMACSHA512");
-			Assert.AreEqual ("HMACSHA512", o.ToString (), "HMACSHA512");
-#endif
 		}
-
-#if NET_4_0
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFrom_Custom ()
-		{
-			MachineKeyValidationConverter cv = new MachineKeyValidationConverter ();
-			cv.ConvertFrom (null, null, "Custom");
-		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -127,29 +107,11 @@ namespace MonoTests.System.Web.Configuration {
 			Assert.AreEqual ("MD5", cv.ConvertTo (null, null, MachineKeyValidation.MD5, typeof (string)), "A1");
 			Assert.AreEqual ("SHA1", cv.ConvertTo (null, null, MachineKeyValidation.SHA1, typeof (string)), "A2");
 			Assert.AreEqual ("3DES", cv.ConvertTo (null, null, MachineKeyValidation.TripleDES, typeof (string)), "A3");
-#if NET_4_0
-			Assert.AreEqual ("HMACSHA256", cv.ConvertTo (null, null, MachineKeyValidation.HMACSHA256, typeof (string)), "HMACSHA256");
-			Assert.AreEqual ("HMACSHA384", cv.ConvertTo (null, null, MachineKeyValidation.HMACSHA384, typeof (string)), "HMACSHA384");
-			Assert.AreEqual ("HMACSHA512", cv.ConvertTo (null, null, MachineKeyValidation.HMACSHA512, typeof (string)), "HMACSHA512");
-#endif
 		}
 
-#if NET_4_0
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertTo_Custom ()
-		{
-			MachineKeyValidationConverter cv = new MachineKeyValidationConverter ();
-			cv.ConvertTo (null, null, MachineKeyValidation.Custom, typeof (string));
-		}
-#endif
 
-		[Test]
-#if NET_4_0
-		[ExpectedException (typeof (ArgumentException))]
-#else
 		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void ConvertTo_NullError ()
 		{
 			MachineKeyValidationConverter cv = new MachineKeyValidationConverter ();
@@ -158,11 +120,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-#if NET_4_0
-		[ExpectedException (typeof (ArgumentException))]
-#else
 		[ExpectedException (typeof (FormatException))]
-#endif
 		public void ConvertTo_TypeError1 ()
 		{
 			MachineKeyValidationConverter cv = new MachineKeyValidationConverter ();
@@ -180,11 +138,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-#if NET_4_0
-		[ExpectedException (typeof (ArgumentException))]
-#else
 		[ExpectedException (typeof (FormatException))]
-#endif
 		public void ConvertTo_TypeError3 ()
 		{
 			MachineKeyValidationConverter cv = new MachineKeyValidationConverter ();

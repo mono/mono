@@ -47,9 +47,6 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty validationKeyProp;
 		static ConfigurationPropertyCollection properties;
 		static MachineKeyValidationConverter converter = new MachineKeyValidationConverter ();
-#if NET_4_0
-		MachineKeyValidation validation;
-#endif
 
 		static MachineKeySection ()
 		{
@@ -61,17 +58,10 @@ namespace System.Web.Configuration {
 								       PropertyHelper.WhiteSpaceTrimStringConverter,
 								       PropertyHelper.NonEmptyStringValidator,
 								       ConfigurationPropertyOptions.None);
-#if NET_4_0
-			validationProp = new ConfigurationProperty ("validation", typeof (string), "HMACSHA256",
-								    PropertyHelper.WhiteSpaceTrimStringConverter,
-								    PropertyHelper.NonEmptyStringValidator,
-								    ConfigurationPropertyOptions.None);
-#else
 			validationProp = new ConfigurationProperty ("validation", typeof (MachineKeyValidation), 
 								    MachineKeyValidation.SHA1, converter,
 								    PropertyHelper.DefaultValidator,
 								    ConfigurationPropertyOptions.None);
-#endif
 			validationKeyProp = new ConfigurationProperty ("validationKey", typeof (string), "AutoGenerate,IsolateApps",
 								       PropertyHelper.WhiteSpaceTrimStringConverter,
 								       PropertyHelper.NonEmptyStringValidator,
@@ -87,19 +77,6 @@ namespace System.Web.Configuration {
 			Config.AutoGenerate (MachineKeyRegistryStorage.KeyType.Encryption);
 			Config.AutoGenerate (MachineKeyRegistryStorage.KeyType.Validation);
 		}
-
-#if NET_4_0
-		public MachineKeySection ()
-		{
-			// get DefaultValue from ValidationAlgorithm
-			validation = (MachineKeyValidation) converter.ConvertFrom (null, null, ValidationAlgorithm);
-		}
-
-		[MonoTODO]
-		public MachineKeyCompatibilityMode CompatibilityMode {
-			get; set;
-		}
-#endif
 
 		protected override void Reset (ConfigurationElement parentElement)
 		{
@@ -132,45 +109,12 @@ namespace System.Web.Configuration {
 			}
 		}
 
-#if NET_4_0
-		// property exists for backward compatibility
-		public MachineKeyValidation Validation {
-			get { return validation; }
-			set {
-				if (value == MachineKeyValidation.Custom)
-					throw new ArgumentException ();
-
-				string algo = value.ToString ();
-				// enum and accept values differs for TripleDES
-				ValidationAlgorithm = (algo == "TripleDES") ? "3DES" : algo;
-			}
-		}
-
-		[StringValidator (MinLength = 1)]
-		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
-		[ConfigurationProperty ("validation", DefaultValue = "HMACSHA256")]
-		public string ValidationAlgorithm {
-			get { return (string) base [validationProp];}
-			set {
-				if (value == null)
-					return;
-
-				if (value.StartsWith ("alg:"))
-					validation = MachineKeyValidation.Custom;
-				else
-					validation = (MachineKeyValidation) converter.ConvertFrom (null, null, value);
-
-				base[validationProp] = value;
-			}
-		}
-#else
 		[TypeConverter (typeof (MachineKeyValidationConverter))]
 		[ConfigurationProperty ("validation", DefaultValue = "SHA1")]
 		public MachineKeyValidation Validation {
 			get { return (MachineKeyValidation) base [validationProp];}
 			set { base[validationProp] = value; }
 		}
-#endif
 
 		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
 		[StringValidator (MinLength = 1)]
