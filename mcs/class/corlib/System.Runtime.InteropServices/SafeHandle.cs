@@ -30,12 +30,14 @@
 //     For details, see:
 //     http://blogs.msdn.com/cbrumme/archive/2004/02/20/77460.aspx
 //
+//     CER-like behavior is implemented for Close and DangerousAddRef
+//     via the try/finally uninterruptible pattern in case of async
+//     exceptions like ThreadAbortException.
+//
 // On implementing SafeHandles:
 //     http://blogs.msdn.com/bclteam/archive/2005/03/15/396335.aspx
 //
 // Issues:
-//     The System.Runtime.ConstrainedExecution.ReliabilityContractAttribute has
-//     not been applied to any APIs here yet.
 //
 //     TODO: Although DangerousAddRef has been implemented, I need to
 //     find out whether the runtime performs the P/Invoke if the
@@ -90,6 +92,7 @@ namespace System.Runtime.InteropServices
 					current = refcount;
 					newcount = current-1;
 
+					// See notes for explanation
 					try {}
 					finally {
 						if (Interlocked.CompareExchange (ref refcount, newcount, current) == current)
@@ -136,6 +139,7 @@ namespace System.Runtime.InteropServices
 					throw new ObjectDisposedException (GetType ().FullName);
 				}
 
+				// See notes for explanations
 				RuntimeHelpers.PrepareConstrainedRegions ();
 				try {}
 				finally {
