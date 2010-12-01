@@ -120,6 +120,7 @@ namespace System.Runtime.InteropServices
 			if (refcount <= 0)
 				throw new ObjectDisposedException (GetType ().FullName);
 
+			bool registered = false;
 			int newcount, current;
 			do {
 				current = refcount;
@@ -134,8 +135,14 @@ namespace System.Runtime.InteropServices
 					//
 					throw new ObjectDisposedException (GetType ().FullName);
 				}
-			} while (Interlocked.CompareExchange (ref refcount, newcount, current) != current);
-			success = true;
+
+				RuntimeHelpers.PrepareConstrainedRegions ();
+				try {}
+				finally {
+					if (Interlocked.CompareExchange (ref refcount, newcount, current) == current)
+						registered = success = true;
+				}
+			} while (!registered);
 		}
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
