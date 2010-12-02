@@ -32,7 +32,7 @@ using System.Xaml.Schema;
 
 namespace System.Xaml
 {
-	internal struct XamlObjectNodeIterator
+	internal class XamlObjectNodeIterator
 	{
 		static readonly XamlObject null_object = new XamlObject (XamlLanguage.Null, null);
 
@@ -146,12 +146,57 @@ namespace System.Xaml
 				}
 				yield return new XamlNodeInfo (XamlNodeType.EndObject, xobj);
 			} else {
-				// Object
+				// Object - could become Reference
+				var val = xobj.GetRawValue ();
+				if (!xobj.Type.IsContentValue (value_serializer_ctx) && val != null) {
+					string refName = NameResolver.GetName (val);
+					if (refName != null) {
+						// The target object is already retrieved, so we don't return the same object again.
+						NameResolver.SaveAsReferenced (val); // Record it as named object.
+						// Then return Reference object instead.
+						foreach (var xn in GetNodes (null, new XamlObject (XamlLanguage.Reference, new Reference (refName))))
+							yield return xn;
+						yield break;
+					} else {
+						// The object appeared in the xaml tree for the first time. So we store the reference with a unique name so that it could be referenced later.
+						refName = GetReferenceName (xobj);
+						if (NameResolver.IsCollectingReferences && NameResolver.Contains (refName))
+							throw new InvalidOperationException (String.Format ("There is already an object of type {0} named as '{1}'. Object names must be unique.", val.GetType (), refName));
+						NameResolver.SetNamedObject (refName, val, true); // probably fullyInitialized is always true here.
+					}
+				}
 				yield return new XamlNodeInfo (XamlNodeType.StartObject, xobj);
+				// If this object is referenced and there is no [RuntimeNameProperty] member, then return Name property in addition.
+				if (val != null && xobj.Type.GetAliasedProperty (XamlLanguage.Name) == null) {
+					string name = NameResolver.GetReferencedName (val);
+					if (name != null) {
+						var sobj = new XamlObject (XamlLanguage.String, name);
+						foreach (var cn in GetMemberNodes (new XamlNodeMember (sobj, XamlLanguage.Name), new XamlNodeInfo [] { new XamlNodeInfo (name)}))
+							yield return cn;
+					}
+				}
 				foreach (var xn in GetObjectMemberNodes (xobj))
 					yield return xn;
 				yield return new XamlNodeInfo (XamlNodeType.EndObject, xobj);
 			}
+		}
+		
+		int used_reference_ids;
+		
+		string GetReferenceName (XamlObject xobj)
+		{
+			var xm = xobj.Type.GetAliasedProperty (XamlLanguage.Name);
+			if (xm != null)
+				return (string) xm.Invoker.GetValue (xobj.GetRawValue ());
+			return "__ReferenceID" + used_reference_ids++;
+		}
+
+		IEnumerable<XamlNodeInfo> GetMemberNodes (XamlNodeMember member, IEnumerable<XamlNodeInfo> contents)
+		{
+				yield return new XamlNodeInfo (XamlNodeType.StartMember, member);
+				foreach (var cn in contents)
+					yield return cn;
+				yield return new XamlNodeInfo (XamlNodeType.EndMember, member);
 		}
 
 		IEnumerable<XamlNodeInfo> GetObjectMemberNodes (XamlObject xobj)
@@ -159,21 +204,32 @@ namespace System.Xaml
 			var xce = xobj.Children (value_serializer_ctx).GetEnumerator ();
 			while (xce.MoveNext ()) {
 				// XamlLanguage.Items does not show up if the content is empty.
-				if (xce.Current.Member == XamlLanguage.Items)
-					if (!GetNodes (xce.Current.Member, xce.Current.Value).GetEnumerator ().MoveNext ())
-						continue;
+				if (xce.Current.Member == XamlLanguage.Items) {
+					// FIXME: this is nasty, but this name resolution is the only side effect of this iteration model. Save-Restore procedure is required.
+					NameResolver.Save ();
+					try {
+						if (!GetNodes (xce.Current.Member, xce.Current.Value).GetEnumerator ().MoveNext ())
+							continue;
+					} finally {
+						NameResolver.Restore ();
+					}
+				}
 
 				// Other collections as well, but needs different iteration (as nodes contain GetObject and EndObject).
 				if (!xce.Current.Member.IsWritePublic && xce.Current.Member.Type != null && xce.Current.Member.Type.IsCollection) {
 					var e = GetNodes (xce.Current.Member, xce.Current.Value).GetEnumerator ();
-					if (!(e.MoveNext () && e.MoveNext () && e.MoveNext ())) // GetObject, EndObject and more
-						continue;
+					// FIXME: this is nasty, but this name resolution is the only side effect of this iteration model. Save-Restore procedure is required.
+					NameResolver.Save ();
+					try {
+						if (!(e.MoveNext () && e.MoveNext () && e.MoveNext ())) // GetObject, EndObject and more
+							continue;
+					} finally {
+						NameResolver.Restore ();
+					}
 				}
 
-				yield return new XamlNodeInfo (XamlNodeType.StartMember, xce.Current);
-				foreach (var cn in GetNodes (xce.Current.Member, xce.Current.Value))
+				foreach (var cn in GetMemberNodes (xce.Current, GetNodes (xce.Current.Member, xce.Current.Value)))
 					yield return cn;
-				yield return new XamlNodeInfo (XamlNodeType.EndMember, xce.Current);
 			}
 		}
 
@@ -208,34 +264,53 @@ namespace System.Xaml
 					yield return en [0]; // StartObject
 
 					var xknm = new XamlNodeMember (xobj, XamlLanguage.Key);
-					if (TypeExtensionMethods.CompareMembers (en [1].Member.Member, XamlLanguage.Key) < 0) { // en[1] is the StartMember of the first member.
-						// value -> key -> endobject
-						for (int i = 1; i < en.Length - 1; i++)
-							yield return en [i];
-						foreach (var kn in GetKeyNodes (ikey, xobj.Type.KeyType, xknm))
-							yield return kn;
-						yield return en [en.Length - 1];
-					} else {
-						// key -> value -> endobject
-						foreach (var kn in GetKeyNodes (ikey, xobj.Type.KeyType, xknm))
-							yield return kn;
-						for (int i = 1; i < en.Length - 1; i++)
-							yield return en [i];
-						yield return en [en.Length - 1];
-					}
+					var nodes1 = en.Skip (1).Take (en.Length - 2);
+					var nodes2 = GetKeyNodes (ikey, xobj.Type.KeyType, xknm);
+					foreach (var xn in EnumerateMixingMember (nodes1, XamlLanguage.Key, nodes2))
+						yield return xn;
+					yield return en [en.Length - 1];
 				}
 				else
 					foreach (var xn in GetNodes (null, xiobj))
 						yield return xn;
 			}
 		}
+		
+		IEnumerable<XamlNodeInfo> EnumerateMixingMember (IEnumerable<XamlNodeInfo> nodes1, XamlMember m2, IEnumerable<XamlNodeInfo> nodes2)
+		{
+			if (nodes2 == null) {
+				foreach (var cn in nodes1)
+					yield return cn;
+				yield break;
+			}
+
+			var e1 = nodes1.GetEnumerator ();
+			var e2 = nodes2.GetEnumerator ();
+			int nest = 0;
+			while (e1.MoveNext ()) {
+				if (e1.Current.NodeType == XamlNodeType.StartMember) {
+					if (nest > 0)
+						nest++;
+					else
+						if (TypeExtensionMethods.CompareMembers (m2, e1.Current.Member.Member) < 0) {
+							while (e2.MoveNext ())
+								yield return e2.Current;
+						}
+						else
+							nest++;
+				}
+				else if (e1.Current.NodeType == XamlNodeType.EndMember)
+					nest--;
+				yield return e1.Current;
+			}
+			while (e2.MoveNext ())
+				yield return e2.Current;
+		}
 
 		IEnumerable<XamlNodeInfo> GetKeyNodes (object ikey, XamlType keyType, XamlNodeMember xknm)
 		{
-			yield return new XamlNodeInfo (XamlNodeType.StartMember, xknm);
-			foreach (var xn in GetNodes (XamlLanguage.Key, new XamlObject (GetType (ikey), ikey), keyType, false))
+			foreach (var xn in GetMemberNodes (xknm, GetNodes (XamlLanguage.Key, new XamlObject (GetType (ikey), ikey), keyType, false)))
 				yield return xn;
-			yield return new XamlNodeInfo (XamlNodeType.EndMember, xknm);
 		}
 
 		// Namespace and Reference retrieval.
@@ -244,6 +319,7 @@ namespace System.Xaml
 		public void PrepareReading ()
 		{
 			PrefixLookup.IsCollectingNamespaces = true;
+			NameResolver.IsCollectingReferences = true;
 			foreach (var xn in GetNodes ()) {
 				if (xn.NodeType == XamlNodeType.GetObject)
 					continue; // it is out of consideration here.
@@ -265,6 +341,8 @@ namespace System.Xaml
 			}
 			PrefixLookup.Namespaces.Sort ((nd1, nd2) => String.CompareOrdinal (nd1.Prefix, nd2.Prefix));
 			PrefixLookup.IsCollectingNamespaces = false;
+			NameResolver.IsCollectingReferences = false;
+			NameResolver.NameScopeInitializationCompleted (this);
 		}
 		
 		IEnumerable<string> NamespacesInType (XamlType xt)
