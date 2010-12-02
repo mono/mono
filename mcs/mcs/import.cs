@@ -136,6 +136,7 @@ namespace Mono.CSharp
 		#endregion
 
 		protected abstract MemberKind DetermineKindFromBaseType (Type baseType);
+		protected abstract bool HasVolatileModifier (FieldInfo field);
 
 		public FieldSpec CreateField (FieldInfo fi, TypeSpec declaringType)
 		{
@@ -189,17 +190,8 @@ namespace Mono.CSharp
 
 				mod |= Modifiers.READONLY;
 			} else {
-				if (TypeManager.isvolatile_type != null) {
-					var reqs = fi.GetRequiredCustomModifiers ();
-					if (reqs.Length > 0) {
-						foreach (var t in reqs) {
-							if (t == TypeManager.isvolatile_type.GetMetaInfo ()) {
-								mod |= Modifiers.VOLATILE;
-								break;
-							}
-						}
-					}
-				}
+				if (HasVolatileModifier (fi))
+					mod |= Modifiers.VOLATILE;
 			}
 
 			if ((fa & FieldAttributes.Static) != 0) {

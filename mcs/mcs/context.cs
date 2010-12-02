@@ -415,6 +415,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public ModuleContainer Module {
+			get {
+				return MemberContext.CurrentMemberDefinition.Module;
+			}
+		}
+
 		public bool OmitStructFlowAnalysis {
 			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
 		}
@@ -545,19 +551,17 @@ namespace Mono.CSharp
 	public class CompilerContext
 	{
 		readonly Report report;
-		readonly PredefinedAttributes attributes;
 		readonly BuildinTypes buildin_types;
 
 		public CompilerContext (Report report)
 		{
 			this.report = report;
-			this.attributes = new PredefinedAttributes ();
 			this.buildin_types = new BuildinTypes ();
 		}
 
 		#region Properties
 
-		public BuildinTypes BuildinTypes {
+		internal BuildinTypes BuildinTypes {
 			get {
 				return buildin_types;
 			}
@@ -567,12 +571,6 @@ namespace Mono.CSharp
 		public RootNamespace GlobalRootNamespace { get; set; }
 
 		public bool IsRuntimeBinder { get; set; }
-
-		public PredefinedAttributes PredefinedAttributes {
-			get {
-				return attributes;
-			}
-		}
 
 		public Report Report {
 			get {

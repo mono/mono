@@ -648,9 +648,9 @@ namespace Mono.CSharp
 				OptAttributes.Emit ();
 
 			if (member_type == InternalType.Dynamic) {
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder);
 			} else if (member_type.HasDynamicElement) {
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type, Location);
 			}
 
 			first.Emit (Parent);
@@ -882,23 +882,24 @@ namespace Mono.CSharp
 			{
 				var cas = TypeManager.gen_interlocked_compare_exchange;
 				if (cas == null) {
-					TypeSpec t = TypeManager.CoreLookupType (Compiler, "System.Threading", "Interlocked", MemberKind.Class, true);
-					if (t != null) {
-						var p = new ParametersImported (
-							new[] {
+					var t = Module.PredefinedTypes.Interlocked.Resolve (Location);
+					if (t == null)
+						return;
+
+					var p = new ParametersImported (
+						new[] {
 								new ParameterData (null, Parameter.Modifier.REF),
 								new ParameterData (null, Parameter.Modifier.NONE),
 								new ParameterData (null, Parameter.Modifier.NONE)
 							},
-							new [] {
+						new[] {
 								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
 								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
 								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
 							}, false);
 
-						var filter = new MemberFilter ("CompareExchange", 1, MemberKind.Method, p, null);
-						cas = TypeManager.gen_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, filter, Location);
-					}
+					var filter = new MemberFilter ("CompareExchange", 1, MemberKind.Method, p, null);
+					cas = TypeManager.gen_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, filter, Location);
 				}
 
 				//
@@ -1506,7 +1507,7 @@ namespace Mono.CSharp
 				return false;
 
 			if (OptAttributes != null) {
-				Attribute indexer_attr = OptAttributes.Search (Compiler.PredefinedAttributes.IndexerName);
+				Attribute indexer_attr = OptAttributes.Search (Module.PredefinedAttributes.IndexerName);
 				if (indexer_attr != null) {
 					var compiling = indexer_attr.Type.MemberDefinition as TypeContainer;
 					if (compiling != null)

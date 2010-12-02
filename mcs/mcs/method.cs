@@ -578,16 +578,16 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				Compiler.PredefinedAttributes.CompilerGenerated.EmitAttribute (MethodBuilder);
+				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (MethodBuilder);
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
-				Compiler.PredefinedAttributes.DebuggerHidden.EmitAttribute (MethodBuilder);
+				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (MethodBuilder);
 
 			if (ReturnType == InternalType.Dynamic) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else if (ReturnType.HasDynamicElement) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType, Location);
 			}
 
 			if (OptAttributes != null)
@@ -665,7 +665,7 @@ namespace Mono.CSharp {
 				if (OptAttributes == null)
 					return null;
 
-				Attribute[] attrs = OptAttributes.SearchMulti (Compiler.PredefinedAttributes.Conditional);
+				Attribute[] attrs = OptAttributes.SearchMulti (Module.PredefinedAttributes.Conditional);
 				if (attrs == null)
 					return null;
 
@@ -1048,7 +1048,7 @@ namespace Mono.CSharp {
 						Report.Error (1109, Location, "`{0}': Extension methods cannot be defined in a nested class",
 							GetSignatureForError ());
 
-					PredefinedAttribute pa = Compiler.PredefinedAttributes.Extension;
+					PredefinedAttribute pa = Module.PredefinedAttributes.Extension;
 					if (!pa.IsDefined) {
 						Report.Error (1110, Location,
 							"`{0}': Extension methods cannot be declared without a reference to System.Core.dll assembly. Add the assembly reference or remove `this' modifer from the first parameter",
@@ -1138,7 +1138,7 @@ namespace Mono.CSharp {
 				base.Emit ();
 				
 				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
-					Compiler.PredefinedAttributes.Extension.EmitAttribute (MethodBuilder);
+					Module.PredefinedAttributes.Extension.EmitAttribute (MethodBuilder);
 			} catch {
 				Console.WriteLine ("Internal compiler error at {0}: exception caught while emitting {1}",
 						   Location, MethodBuilder);
@@ -1472,7 +1472,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
-				Compiler.PredefinedAttributes.DebuggerHidden.EmitAttribute (ConstructorBuilder);
+				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (ConstructorBuilder);
 
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
@@ -2117,16 +2117,16 @@ namespace Mono.CSharp {
 			method_data.Emit (parent);
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				Compiler.PredefinedAttributes.CompilerGenerated.EmitAttribute (method_data.MethodBuilder);
+				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (method_data.MethodBuilder);
 			if (((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0))
-				Compiler.PredefinedAttributes.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
+				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
 
 			if (ReturnType == InternalType.Dynamic) {
 				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 			} else if (ReturnType.HasDynamicElement) {
 				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType, Location);
 			}
 
 			if (OptAttributes != null)

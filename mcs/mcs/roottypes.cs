@@ -42,6 +42,9 @@ namespace Mono.CSharp
 		bool has_default_charset;
 		bool has_extenstion_method;
 
+		PredefinedAttributes predefined_attributes;
+		PredefinedTypes predefined_types;
+
 		static readonly string[] attribute_targets = new string[] { "assembly", "module" };
 
 		public ModuleContainer (CompilerContext context)
@@ -113,6 +116,18 @@ namespace Mono.CSharp
 		public override ModuleContainer Module {
 			get {
 				return this;
+			}
+		}
+
+		internal PredefinedAttributes PredefinedAttributes {
+			get {
+				return predefined_attributes;
+			}
+		}
+
+		internal PredefinedTypes PredefinedTypes {
+			get {
+				return predefined_types;
 			}
 		}
 
@@ -197,7 +212,7 @@ namespace Mono.CSharp
 			// If we have a <PrivateImplementationDetails> class, close it
 			//
 			if (TypeBuilder != null) {
-				var cg = Compiler.PredefinedAttributes.CompilerGenerated;
+				var cg = PredefinedAttributes.CompilerGenerated;
 				cg.EmitAttribute (TypeBuilder);
 				TypeBuilder.CreateType ();
 			}
@@ -234,10 +249,15 @@ namespace Mono.CSharp
 			// FIXME: Temporary hack for repl to reset
 			TypeBuilder = null;
 
+			// TODO: It should be done much later when the types are resolved
+			// but that require DefineType clean-up
 			ResolveGlobalAttributes ();
 
 			foreach (TypeContainer tc in types)
 				tc.CreateType ();
+
+			predefined_attributes = new PredefinedAttributes (this);
+			predefined_types = new PredefinedTypes (this);
 
 			foreach (TypeContainer tc in types)
 				tc.DefineType ();
@@ -260,7 +280,7 @@ namespace Mono.CSharp
 				OptAttributes.Emit ();
 
 			if (RootContext.Unsafe) {
-				var pa = Compiler.PredefinedAttributes.UnverifiableCode;
+				var pa = PredefinedAttributes.UnverifiableCode;
 				if (pa.IsDefined)
 					pa.EmitAttribute (builder);
 			}
@@ -430,7 +450,10 @@ namespace Mono.CSharp
 			if (!OptAttributes.CheckTargets ())
 				return;
 
-			Attribute a = ResolveModuleAttribute (Compiler.PredefinedAttributes.DefaultCharset);
+			// FIXME: Define is wrong as the type may not exist yet
+			var DefaultCharSet_attr = new PredefinedAttribute (this, "System.Runtime.InteropServices", "DefaultCharSetAttribute");
+			DefaultCharSet_attr.Define ();
+			Attribute a = ResolveModuleAttribute (DefaultCharSet_attr);
 			if (a != null) {
 				has_default_charset = true;
 				DefaultCharSet = a.GetCharSetValue ();
@@ -445,7 +468,8 @@ namespace Mono.CSharp
 					DefaultCharSetType = TypeAttributes.UnicodeClass;
 					break;
 				default:
-					Report.Error (1724, a.Location, "Value specified for the argument to 'System.Runtime.InteropServices.DefaultCharSetAttribute' is not valid");
+					Report.Error (1724, a.Location, "Value specified for the argument to `{0}' is not valid", 
+						DefaultCharSet_attr.GetSignatureForError ());
 					break;
 				}
 			}

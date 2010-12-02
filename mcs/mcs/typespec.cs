@@ -434,7 +434,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	public sealed class BuildinTypeSpec : PredefinedTypeSpec
+	public sealed class BuildinTypeSpec : TypeSpec
 	{
 		public enum Type
 		{
@@ -475,11 +475,18 @@ namespace Mono.CSharp
 		}
 
 		readonly Type type;
+		readonly string ns;
+		readonly string name;
 
 		public BuildinTypeSpec (MemberKind kind, string ns, string name, Type buildinKind)
-			: base (kind, ns, name)
+			: base (kind, null, null, null, Modifiers.PUBLIC)
 		{
+			if (kind == MemberKind.Struct)
+				modifiers |= Modifiers.SEALED;
+
 			this.type = buildinKind;
+			this.ns = ns;
+			this.name = name;
 		}
 
 		#region Properties
@@ -493,6 +500,18 @@ namespace Mono.CSharp
 		public override BuildinTypeSpec.Type BuildinType {
 			get {
 				return type;
+			}
+		}
+
+		public override string Name {
+			get {
+				return name;
+			}
+		}
+
+		public string Namespace {
+			get {
+				return ns;
 			}
 		}
 
@@ -519,7 +538,7 @@ namespace Mono.CSharp
 			case "SByte": return "sbyte";
 			}
 
-			return Namespace + "." + Name;
+			return ns + "." + name;
 		}
 
 		public void SetDefinition (ITypeDefinition td, System.Type type)
@@ -535,38 +554,6 @@ namespace Mono.CSharp
 			this.BaseType = ts.BaseType;
 			this.Interfaces = ts.Interfaces;
 		}
-	}
-
-	public class PredefinedTypeSpec : TypeSpec
-	{
-		string name;
-		string ns;
-
-		public PredefinedTypeSpec (MemberKind kind, string ns, string name)
-			: base (kind, null, null, null, Modifiers.PUBLIC)
-		{
-			if (kind == MemberKind.Struct)
-				modifiers |= Modifiers.SEALED;
-
-			this.name = name;
-			this.ns = ns;
-		}
-
-		#region Properties
-
-		public override string Name {
-			get {
-				return name;
-			}
-		}
-
-		public string Namespace {
-			get {
-				return ns;
-			}
-		}
-
-		#endregion
 	}
 
 	static class TypeSpecComparer

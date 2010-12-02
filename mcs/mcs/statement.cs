@@ -4202,7 +4202,7 @@ namespace Mono.CSharp {
 		int ResolvePredefinedMethods (ResolveContext rc)
 		{
 			if (TypeManager.void_monitor_enter_object == null || TypeManager.void_monitor_exit_object == null) {
-				TypeSpec monitor_type = TypeManager.CoreLookupType (rc.Compiler, "System.Threading", "Monitor", MemberKind.Class, true);
+				TypeSpec monitor_type = rc.Module.PredefinedTypes.Monitor.Resolve (loc);
 
 				if (monitor_type == null)
 					return 0;
@@ -4395,8 +4395,11 @@ namespace Mono.CSharp {
 				pinned_string.Type = TypeManager.string_type;
 
 				if (TypeManager.int_get_offset_to_string_data == null) {
-					TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedProperty (
-						TypeManager.runtime_helpers_type, "OffsetToStringData", pinned_string.Location, TypeManager.int32_type);
+					var helper = rc.Module.PredefinedTypes.RuntimeHelpers.Resolve (loc);
+					if (helper != null) {
+						TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedProperty (helper,
+							"OffsetToStringData", pinned_string.Location, TypeManager.int32_type);
+					}
 				}
 
 				eclass = ExprClass.Variable;
@@ -4859,7 +4862,7 @@ namespace Mono.CSharp {
 					if (!ec.CurrentMemberDefinition.Module.DeclaringAssembly.WrapNonExceptionThrows)
 						continue;
 
-					if (!ec.Compiler.PredefinedAttributes.RuntimeCompatibility.IsDefined)
+					if (!ec.Module.PredefinedAttributes.RuntimeCompatibility.IsDefined)
 						continue;
 
 					ec.Report.Warning (1058, 1, c.loc,

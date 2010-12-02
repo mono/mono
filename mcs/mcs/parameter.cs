@@ -429,7 +429,7 @@ namespace Mono.CSharp {
 			if (attributes == null)
 				return;
 			
-			var pa = attributes.Search (rc.Compiler.PredefinedAttributes.OptionalParameter);
+			var pa = attributes.Search (rc.Module.PredefinedAttributes.OptionalParameter);
 			if (pa == null)
 				return;
 
@@ -439,7 +439,7 @@ namespace Mono.CSharp {
 			attributes.Attrs.Remove (pa);
 
 			TypeSpec expr_type = null;
-			pa = attributes.Search (rc.Compiler.PredefinedAttributes.DefaultParameterValue);
+			pa = attributes.Search (rc.Module.PredefinedAttributes.DefaultParameterValue);
 			if (pa != null) {
 				attributes.Attrs.Remove (pa);
 				default_expr = pa.GetParameterDefaultValue (out expr_type);
@@ -624,7 +624,7 @@ namespace Mono.CSharp {
 				if (parameter_type == InternalType.Dynamic) {
 					pa.Dynamic.EmitAttribute (builder);
 				} else if (parameter_type.HasDynamicElement) {
-					pa.Dynamic.EmitAttribute (builder, parameter_type);
+					pa.Dynamic.EmitAttribute (builder, parameter_type, Location);
 				}
 			}
 		}
@@ -706,12 +706,7 @@ namespace Mono.CSharp {
 			if (parameter_expr_tree_type != null)
 				return parameter_expr_tree_type;
 
-			TypeSpec p_type = TypeManager.parameter_expression_type;
-			if (p_type == null) {
-				p_type = TypeManager.CoreLookupType (ec.Compiler, "System.Linq.Expressions", "ParameterExpression", MemberKind.Class, true);
-				TypeManager.parameter_expression_type = p_type;
-			}
-
+			TypeSpec p_type = ec.CurrentMemberDefinition.Module.PredefinedTypes.ParameterExpression.Resolve (location);
 			parameter_expr_tree_type = new TypeExpression (p_type, location).
 				ResolveAsTypeTerminal (ec, false);
 
@@ -1184,7 +1179,7 @@ namespace Mono.CSharp {
 
 			MethodBuilder mb = builder as MethodBuilder;
 			ConstructorBuilder cb = builder as ConstructorBuilder;
-			var pa = mc.Compiler.PredefinedAttributes;
+			var pa = mc.CurrentMemberDefinition.Module.PredefinedAttributes;
 
 			for (int i = 0; i < Count; i++) {
 				this [i].ApplyAttributes (mb, cb, i + 1, pa);

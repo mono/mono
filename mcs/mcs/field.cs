@@ -213,13 +213,13 @@ namespace Mono.CSharp
 		public override void Emit ()
 		{
 			if (member_type == InternalType.Dynamic) {
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder);
 			} else if (!(Parent is CompilerGeneratedClass) && member_type.HasDynamicElement) {
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder, member_type);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder, member_type, Location);
 			}
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				Compiler.PredefinedAttributes.CompilerGenerated.EmitAttribute (FieldBuilder);
+				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (FieldBuilder);
 
 			if (OptAttributes != null) {
 				OptAttributes.Emit ();
@@ -442,8 +442,8 @@ namespace Mono.CSharp
 
 			EmitFieldSize (buffer_size);
 
-			Compiler.PredefinedAttributes.UnsafeValueType.EmitAttribute (fixed_buffer_type);
-			Compiler.PredefinedAttributes.CompilerGenerated.EmitAttribute (fixed_buffer_type);
+			Module.PredefinedAttributes.UnsafeValueType.EmitAttribute (fixed_buffer_type);
+			Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (fixed_buffer_type);
 			fixed_buffer_type.CreateType ();
 
 			base.Emit ();
@@ -454,19 +454,16 @@ namespace Mono.CSharp
 			PredefinedAttribute pa;
 			AttributeEncoder encoder;
 
-			pa = Compiler.PredefinedAttributes.StructLayout;
+			pa = Module.PredefinedAttributes.StructLayout;
 			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.short_type))
 				return;
 
-			if (TypeManager.interop_charset == null) {
-				TypeManager.interop_charset = TypeManager.CoreLookupType (Compiler, "System.Runtime.InteropServices", "CharSet", MemberKind.Enum, true);
-
-				if (TypeManager.interop_charset == null)
-					return;
-			}
+			var char_set_type = Module.PredefinedTypes.CharSet.Resolve (Location);
+			if (char_set_type == null)
+				return;
 
 			var field_size = pa.GetField ("Size", TypeManager.int32_type, Location);
-			var field_charset = pa.GetField ("CharSet", TypeManager.interop_charset, Location);
+			var field_charset = pa.GetField ("CharSet", char_set_type, Location);
 			if (field_size == null || field_charset == null)
 				return;
 
@@ -487,7 +484,7 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.PRIVATE) != 0)
 				return;
 
-			pa = Compiler.PredefinedAttributes.FixedBuffer;
+			pa = Module.PredefinedAttributes.FixedBuffer;
 			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.type_type, TypeManager.int32_type))
 				return;
 
@@ -576,12 +573,9 @@ namespace Mono.CSharp
 
 			Type[] required_modifier = null;
 			if ((ModFlags & Modifiers.VOLATILE) != 0) {
-				if (TypeManager.isvolatile_type == null)
-					TypeManager.isvolatile_type = TypeManager.CoreLookupType (Compiler,
-						"System.Runtime.CompilerServices", "IsVolatile", MemberKind.Class, true);
-
-				if (TypeManager.isvolatile_type != null)
-					required_modifier = new Type[] { TypeManager.isvolatile_type.GetMetaInfo () };
+				var mod = Module.PredefinedTypes.IsVolatile.Resolve (Location);
+				if (mod != null)
+					required_modifier = new Type[] { mod.GetMetaInfo () };
 			}
 
 			FieldBuilder = Parent.TypeBuilder.DefineField (

@@ -175,22 +175,20 @@ namespace Mono.CSharp {
 					if (new_storey != null)
 						new_storey = Convert.ImplicitConversionRequired (ec, new_storey, host_method.MemberType, loc);
 
-					if (TypeManager.int_interlocked_compare_exchange == null) {
-						TypeSpec t = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Interlocked", MemberKind.Class, true);
-						if (t != null) {
-							var p = new ParametersImported (
-								new[] {
+					var t = ec.Module.PredefinedTypes.Interlocked.Resolve (loc);
+					if (t != null) {
+						var p = new ParametersImported (
+							new[] {
 									new ParameterData (null, Parameter.Modifier.REF),
 									new ParameterData (null, Parameter.Modifier.NONE),
 									new ParameterData (null, Parameter.Modifier.NONE)
 								},
-								new[] {
+							new[] {
 									TypeManager.int32_type, TypeManager.int32_type, TypeManager.int32_type
 								},
-								false);
-							var f = new MemberFilter ("CompareExchange", 0, MemberKind.Method, p, TypeManager.int32_type);
-							TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, f, loc);
-						}
+							false);
+						var f = new MemberFilter ("CompareExchange", 0, MemberKind.Method, p, TypeManager.int32_type);
+						TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, f, loc);
 					}
 
 					ec.CurrentBranching.CurrentUsageVector.Goto ();
@@ -370,10 +368,9 @@ namespace Mono.CSharp {
 
 			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
 
-			if (TypeManager.generic_ienumerator_type != null) {
-				generic_enumerator_type = new GenericTypeExpr (
-					TypeManager.generic_ienumerator_type,
-					generic_args, Location);
+			var ienumerator_generic = Module.PredefinedTypes.IEnumeratorGeneric;
+			if (ienumerator_generic.Define ()) {
+				generic_enumerator_type = new GenericTypeExpr (ienumerator_generic.TypeSpec, generic_args, Location);
 				list.Add (generic_enumerator_type);
 			}
 
@@ -492,7 +489,7 @@ namespace Mono.CSharp {
 
 			reset.Block = new ToplevelBlock (Compiler, Location);
 
-			TypeSpec ex_type = TypeManager.CoreLookupType (Compiler, "System", "NotSupportedException", MemberKind.Class, true);
+			TypeSpec ex_type = Module.PredefinedTypes.NotSupportedException.Resolve (Location);
 			if (ex_type == null)
 				return;
 

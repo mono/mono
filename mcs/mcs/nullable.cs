@@ -34,13 +34,12 @@ namespace Mono.CSharp.Nullable
 
 		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
-			if (TypeManager.generic_nullable_type == null) {
-				TypeManager.generic_nullable_type = TypeManager.CoreLookupType (ec.Compiler,
-					"System", "Nullable", 1, MemberKind.Struct, true);
-			}
+			var type = ec.CurrentMemberDefinition.Module.PredefinedTypes.Nullable.Resolve (loc);
+			if (type == null)
+				return null;
 
 			TypeArguments args = new TypeArguments (underlying);
-			GenericTypeExpr ctype = new GenericTypeExpr (TypeManager.generic_nullable_type, args, loc);
+			GenericTypeExpr ctype = new GenericTypeExpr (type, args, loc);
 			return ctype.ResolveAsTypeTerminal (ec, false);
 		}
 	}

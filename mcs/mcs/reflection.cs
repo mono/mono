@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Mono.CSharp
 {
@@ -36,6 +37,19 @@ namespace Mono.CSharp
 				return MemberKind.Delegate;
 
 			return MemberKind.Class;
+		}
+
+		protected override bool HasVolatileModifier (FieldInfo field)
+		{
+			var reqs = field.GetRequiredCustomModifiers ();
+			if (reqs.Length > 0) {
+				foreach (var t in reqs) {
+					if (t == typeof (IsVolatile))
+						return true;
+				}
+			}
+
+			return false;
 		}
 
 		void Initialize (BuildinTypes buildin)

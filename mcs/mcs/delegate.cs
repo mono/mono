@@ -171,7 +171,7 @@ namespace Mono.CSharp {
 			//
 			// Don't emit async method for compiler generated delegates (e.g. dynamic site containers)
 			//
-			if (TypeManager.iasyncresult_type != null && TypeManager.asynccallback_type != null && !IsCompilerGenerated) {
+			if (!IsCompilerGenerated) {
 				DefineAsyncMethods (Parameters.CallingConvention);
 			}
 
@@ -180,6 +180,15 @@ namespace Mono.CSharp {
 
 		void DefineAsyncMethods (CallingConventions cc)
 		{
+			var iasync_result = Module.PredefinedTypes.IAsyncResult;
+			var async_callback = Module.PredefinedTypes.AsyncCallback;
+
+			//
+			// It's ok when async types don't exist, the delegate will have Invoke method only
+			//
+			if (!iasync_result.Define () || !async_callback.Define ())
+				return;
+
 			//
 			// BeginInvoke
 			//
@@ -201,17 +210,17 @@ namespace Mono.CSharp {
 
 			async_parameters = ParametersCompiled.MergeGenerated (Compiler, async_parameters, false,
 				new Parameter[] {
-					new Parameter (new TypeExpression (TypeManager.asynccallback_type, Location), "callback", Parameter.Modifier.NONE, null, Location),
+					new Parameter (new TypeExpression (async_callback.TypeSpec, Location), "callback", Parameter.Modifier.NONE, null, Location),
 					new Parameter (new TypeExpression (TypeManager.object_type, Location), "object", Parameter.Modifier.NONE, null, Location)
 				},
 				new [] {
-					TypeManager.asynccallback_type,
+					async_callback.TypeSpec,
 					TypeManager.object_type
 				}
 			);
 
 			BeginInvokeBuilder = new Method (this, null,
-				new TypeExpression (TypeManager.iasyncresult_type, Location), MethodModifiers,
+				new TypeExpression (iasync_result.TypeSpec, Location), MethodModifiers,
 				new MemberName ("BeginInvoke"), async_parameters, null);
 			BeginInvokeBuilder.Define ();
 
@@ -253,9 +262,9 @@ namespace Mono.CSharp {
 
 			end_parameters = ParametersCompiled.MergeGenerated (Compiler, end_parameters, false,
 				new Parameter (
-					new TypeExpression (TypeManager.iasyncresult_type, Location),
+					new TypeExpression (iasync_result.TypeSpec, Location),
 					"result", Parameter.Modifier.NONE, null, Location),
-				TypeManager.iasyncresult_type);
+				iasync_result.TypeSpec);
 
 			//
 			// Create method, define parameters, register parameters with type system
@@ -276,10 +285,10 @@ namespace Mono.CSharp {
 			if (ReturnType.Type != null) {
 				if (ReturnType.Type == InternalType.Dynamic) {
 					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
-					Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
+					Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
 				} else if (ReturnType.Type.HasDynamicElement) {
 					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
-					Compiler.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType.Type);
+					Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType.Type, Location);
 				}
 			}
 
