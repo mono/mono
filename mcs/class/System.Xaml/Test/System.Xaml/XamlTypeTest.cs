@@ -719,6 +719,18 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xm, xt.ContentProperty, "#1");
 			Assert.IsTrue (xt.GetAllMembers ().Contains (xm), "#2");
 		}
+		
+		[Test]
+		public void NamedItem ()
+		{
+			var xt = new XamlType (typeof (NamedItem), sctx);
+			var e = xt.GetAllMembers ().GetEnumerator ();
+			Assert.IsTrue (e.MoveNext (), "#1");
+			Assert.AreEqual (xt.GetMember ("ItemName"), e.Current, "#2");
+			Assert.IsTrue (e.MoveNext (), "#3");
+			Assert.AreEqual (xt.GetMember ("References"), e.Current, "#4");
+			Assert.IsFalse (e.MoveNext (), "#5");
+		}
 
 		[Test]
 		public void CanAssignTo ()
