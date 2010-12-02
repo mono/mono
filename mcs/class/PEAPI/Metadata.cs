@@ -4934,7 +4934,9 @@ namespace PEAPI {
 		private static readonly uint max3BitSmlIx = 0x1FFF;
 		private static readonly uint max5BitSmlIx = 0x7FF;
 		// NOTE: version and stream name strings MUST always be quad padded
-#if NET_2_0 || BOOTSTRAP_NET_2_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
+		private static readonly string version = "v4.0.30319\0\0";
+#elif NET_2_0 || BOOTSTRAP_NET_2_0
 		private static readonly string version = "v2.0.50727\0\0";
 #else
 		private static readonly string version = "v1.1.4322\0\0\0";
