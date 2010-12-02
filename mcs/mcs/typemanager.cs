@@ -57,6 +57,13 @@ namespace Mono.CSharp
 		public readonly BuildinTypeSpec RuntimeTypeHandle;
 		public readonly BuildinTypeSpec Exception;
 
+		//
+		// These are internal buil-in types which depend on other
+		// build-in type (mostly object)
+		//
+		public readonly BuildinTypeSpec Dynamic;
+		public readonly BuildinTypeSpec Null;
+
 		readonly BuildinTypeSpec[] types;
 
 		public BuildinTypes ()
@@ -97,6 +104,10 @@ namespace Mono.CSharp
 			RuntimeFieldHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle", BuildinTypeSpec.Type.RuntimeFieldHandle);
 			RuntimeTypeHandle = new BuildinTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle", BuildinTypeSpec.Type.RuntimeTypeHandle);
 
+			Dynamic = new BuildinTypeSpec ("dynamic", BuildinTypeSpec.Type.Dynamic);
+			Null = new BuildinTypeSpec ("null", BuildinTypeSpec.Type.Null);
+			Null.MemberCache = MemberCache.Empty;
+
 			types = new BuildinTypeSpec[] {
 				Object, ValueType, Attribute,
 				Int, UInt, Long, ULong, Float, Double, Char, Short, Decimal, Bool, SByte, Byte, UShort, String,
@@ -136,17 +147,38 @@ namespace Mono.CSharp
 			TypeManager.runtime_field_handle_type = RuntimeFieldHandle;
 			TypeManager.attribute_type = Attribute;
 			TypeManager.exception_type = Exception;
+
+			InternalType.Dynamic = Dynamic;
+			InternalType.Null = Null;
 		}
 
-		#region Properties
+		public bool CheckDefinitions (ModuleContainer module)
+		{
+			var ctx = module.Compiler;
+			foreach (var p in types) {
+				var found = PredefinedType.Resolve (module, p.Kind, p.Namespace, p.Name, p.Arity, Location.Null);
+				if (found == null || found == p)
+					continue;
 
-		public BuildinTypeSpec[] Types {
-			get {
-				return types;
+				if (!RootContext.StdLib) {
+					var ns = module.GlobalRootNamespace.GetNamespace (p.Namespace, false);
+					ns.ReplaceTypeWithPredefined (found, p);
+
+					var tc = found.MemberDefinition as TypeContainer;
+					tc.SetPredefinedSpec (p);
+					p.SetDefinition (found);
+				}
 			}
-		}
 
-		#endregion
+			if (ctx.Report.Errors != 0)
+				return false;
+
+			// Set internal build-in types
+			Dynamic.SetDefinition (Object);
+			Null.SetDefinition (Object);
+
+			return true;
+		}
 	}
 
 	//
@@ -576,41 +608,6 @@ namespace Mono.CSharp
 	public static PropertySpec GetPredefinedProperty (TypeSpec t, string name, Location loc, TypeSpec type)
 	{
 		return GetPredefinedMember (t, MemberFilter.Property (name, type), false, loc) as PropertySpec;
-	}
-
-	/// <remarks>
-	///   The types have to be initialized after the initial
-	///   population of the type has happened (for example, to
-	///   bootstrap the corlib.dll
-	/// </remarks>
-	public static bool InitCoreTypes (ModuleContainer module, BuildinTypes buildin)
-	{
-		var ctx = module.Compiler;
-		foreach (var p in buildin.Types) {
-			var found = PredefinedType.Resolve (module, p.Kind, p.Namespace, p.Name, p.Arity, Location.Null);
-			if (found == null || found == p)
-				continue;
-
-			if (!RootContext.StdLib) {
-				var ns = module.GlobalRootNamespace.GetNamespace (p.Namespace, false);
-				ns.ReplaceTypeWithPredefined (found, p);
-
-				var tc = found.MemberDefinition as TypeContainer;
-				tc.SetPredefinedSpec (p);
-				p.SetDefinition (found);
-			}
-		}
-
-		if (InternalType.Dynamic.GetMetaInfo () == null) {
-			InternalType.Dynamic.SetMetaInfo (object_type.GetMetaInfo ());
-
-			if (object_type.MemberDefinition.IsImported)
-				InternalType.Dynamic.MemberCache = object_type.MemberCache;
-
-			InternalType.Null.SetMetaInfo (object_type.GetMetaInfo ());
-		}
-
-		return ctx.Report.Errors == 0;
 	}
 
 	public static bool IsBuiltinType (TypeSpec t)

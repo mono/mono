@@ -132,7 +132,7 @@ namespace Mono.CSharp {
 
 				RootContext.ToplevelTypes.MakeExecutable ("temp");
 				loader.LoadReferences (RootContext.ToplevelTypes);
-				TypeManager.InitCoreTypes (RootContext.ToplevelTypes, ctx.BuildinTypes);
+				ctx.BuildinTypes.CheckDefinitions (RootContext.ToplevelTypes);
 				RootContext.ToplevelTypes.InitializePredefinedTypes ();
 
 				RootContext.EvalMode = true;

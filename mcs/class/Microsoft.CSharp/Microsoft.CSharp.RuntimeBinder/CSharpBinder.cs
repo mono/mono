@@ -201,7 +201,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				}
 
 				if (!Compiler.RootContext.EvalMode) {
-					Compiler.TypeManager.InitCoreTypes (module, cc.BuildinTypes);
+					cc.BuildinTypes.CheckDefinitions (module);
 					module.InitializePredefinedTypes ();
 				}
 

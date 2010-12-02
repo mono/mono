@@ -471,7 +471,10 @@ namespace Mono.CSharp
 			UIntPtr,
 			RuntimeFieldHandle,
 			RuntimeTypeHandle,
-			Exception
+			Exception,
+
+			Null,
+			Dynamic
 		}
 
 		readonly Type type;
@@ -487,6 +490,13 @@ namespace Mono.CSharp
 			this.type = buildinKind;
 			this.ns = ns;
 			this.name = name;
+		}
+
+		public BuildinTypeSpec (string name, Type buildinKind)
+			: this (MemberKind.InternalCompilerType, "", name, buildinKind)
+		{
+			// Make all internal types CLS-compliant, non-obsolete
+			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected)) | StateFlags.CLSCompliant;
 		}
 
 		#region Properties
@@ -537,6 +547,9 @@ namespace Mono.CSharp
 			case "Byte": return "byte";
 			case "SByte": return "sbyte";
 			}
+
+			if (ns.Length == 0)
+				return name;
 
 			return ns + "." + name;
 		}
@@ -940,9 +953,9 @@ namespace Mono.CSharp
 	{
 		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
 		public static readonly InternalType Arglist = new InternalType ("__arglist");
-		public static readonly InternalType Dynamic = new InternalType ("dynamic", null);
+		public static BuildinTypeSpec Dynamic;
 		public static readonly InternalType MethodGroup = new InternalType ("method group");
-		public static readonly InternalType Null = new InternalType ("null");
+		public static BuildinTypeSpec Null;
 		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
 
 		readonly string name;

@@ -1450,7 +1450,7 @@ namespace Mono.CSharp
 
 			ShowTime ("Imporing referenced assemblies");
 
-			if (!TypeManager.InitCoreTypes (module, ctx.BuildinTypes))
+			if (!ctx.BuildinTypes.CheckDefinitions (module))
 				return false;
 
 			ShowTime ("Initializing predefined types");
