@@ -32,6 +32,13 @@ namespace System.Threading.Tasks
 	internal class ThreadWorker : IDisposable
 	{
 		Thread workerThread;
+
+		/* This field is used when a TheadWorker have to call Task.Wait
+		 * which bring him back here with the static WorkerMethod although
+		 * it's more optimized for him to continue calling its own WorkerMethod
+		 */
+		[ThreadStatic]
+		static ThreadWorker autoReference;
 		
 		readonly IDequeOperations<Task> dDeque;
 		readonly ThreadWorker[]         others;
@@ -114,6 +121,7 @@ namespace System.Threading.Tasks
 		{
 			int sleepTime = 0;
 			SpinWait wait = new SpinWait ();
+			autoReference = this;
 			
 			// Main loop
 			while (started == 1) {
@@ -202,13 +210,16 @@ namespace System.Threading.Tasks
 			while (!predicate ()) {
 				Task value;
 				
-				// Dequeue only one item as we have restriction
-				if (sharedWorkQueue.TryTake (out value)) {
-					if (value != null) {
+				// If we are in fact a normal ThreadWorker, use our own deque
+				if (autoReference != null) {
+					while (autoReference.dDeque.PopBottom (out value) == PopResult.Succeed && value != null) {
 						if (CheckTaskFitness (value))
-							value.Execute (null);
+							value.Execute (autoReference.ChildWorkAdder);
 						else
-							sharedWorkQueue.TryAdd (value);
+							autoReference.dDeque.PushBottom (value);
+
+						if (predicate ())
+							return;
 					}
 				}
 				
