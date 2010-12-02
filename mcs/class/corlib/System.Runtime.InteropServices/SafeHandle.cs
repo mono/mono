@@ -92,7 +92,7 @@ namespace System.Runtime.InteropServices
 					current = refcount;
 					newcount = current-1;
 
-					// See notes for explanation
+					// perform changes in finally to avoid async interruptions
 					try {}
 					finally {
 						if (Interlocked.CompareExchange (ref refcount, newcount, current) == current)
@@ -139,7 +139,7 @@ namespace System.Runtime.InteropServices
 					throw new ObjectDisposedException (GetType ().FullName);
 				}
 
-				// See notes for explanations
+				// perform changes in finally to avoid async interruptions
 				RuntimeHelpers.PrepareConstrainedRegions ();
 				try {}
 				finally {
