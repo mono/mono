@@ -203,7 +203,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (!Compiler.RootContext.EvalMode) {
 					Compiler.TypeManager.InitCoreTypes (module, cc.BuildinTypes);
 					module.InitializePredefinedTypes ();
-					Compiler.TypeManager.InitOptionalCoreTypes (cc);
 				}
 
 				dc = new DynamicContext (module, importer);

@@ -850,17 +850,20 @@ namespace Mono.CSharp
 			if (!ec.IsUnsafe)
 				UnsafeError (ec, loc);
 
-			if (!expr.Type.IsPointer) {
+			var pc = expr.Type as PointerContainer;
+
+			if (pc == null) {
 				ec.Report.Error (193, loc, "The * or -> operator must be applied to a pointer");
 				return null;
 			}
 
-			if (expr.Type == TypeManager.void_ptr_type) {
+			type = pc.Element;
+
+			if (type.BuildinType == BuildinTypeSpec.Type.Void) {
 				Error_VoidPointerOperation (ec);
 				return null;
 			}
 
-			type = TypeManager.GetElementType (expr.Type);
 			eclass = ExprClass.Variable;
 			return this;
 		}
@@ -1095,7 +1098,7 @@ namespace Mono.CSharp
 
 			// ++/-- on pointer variables of all types except void*
 			if (source == null && type.IsPointer) {
-				if (type == TypeManager.void_ptr_type) {
+				if (((PointerContainer) type).Element.BuildinType == BuildinTypeSpec.Type.Void) {
 					Error_VoidPointerOperation (ec);
 					return null;
 				}
@@ -4196,8 +4199,9 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
-			
-			if (left.Type == TypeManager.void_ptr_type) {
+
+			var pc = left.Type as PointerContainer;
+			if (pc != null && pc.Element.BuildinType == BuildinTypeSpec.Type.Void) {
 				Error_VoidPointerOperation (ec);
 				return null;
 			}

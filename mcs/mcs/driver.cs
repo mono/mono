@@ -1453,8 +1453,6 @@ namespace Mono.CSharp
 			if (!TypeManager.InitCoreTypes (module, ctx.BuildinTypes))
 				return false;
 
-			TypeManager.InitOptionalCoreTypes (ctx);
-
 			ShowTime ("Initializing predefined types");
 
 			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))

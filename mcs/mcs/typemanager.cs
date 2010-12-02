@@ -149,6 +149,10 @@ namespace Mono.CSharp
 		#endregion
 	}
 
+	//
+	// Compiler predefined types. Usually used for compiler generated
+	// code or for comparison against well known framework type
+	//
 	class PredefinedTypes
 	{
 		// TODO: These two exist only to reject type comparison
@@ -406,7 +410,6 @@ namespace Mono.CSharp
 	static public TypeSpec typed_reference_type;
 	static public TypeSpec arg_iterator_type;
 	static public TypeSpec mbr_type;
-	static public TypeSpec void_ptr_type;
 	static public TypeSpec generic_ilist_type;
 	static public TypeSpec generic_icollection_type;
 	static public TypeSpec generic_ienumerator_type;
@@ -479,7 +482,6 @@ namespace Mono.CSharp
 		string_empty = null;
 
 		typed_reference_type = arg_iterator_type = mbr_type =
-		void_ptr_type =
 		generic_ilist_type = generic_icollection_type = generic_ienumerator_type =
 		generic_ienumerable_type = generic_nullable_type = expression_type = null;
 	}
@@ -609,14 +611,6 @@ namespace Mono.CSharp
 		}
 
 		return ctx.Report.Errors == 0;
-	}
-
-	//
-	// Initializes optional core types
-	//
-	public static void InitOptionalCoreTypes (CompilerContext ctx)
-	{
-		void_ptr_type = PointerContainer.MakeType (void_type);
 	}
 
 	public static bool IsBuiltinType (TypeSpec t)
