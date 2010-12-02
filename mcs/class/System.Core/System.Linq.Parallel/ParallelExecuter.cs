@@ -103,17 +103,20 @@ namespace System.Linq.Parallel
 			for (int i = 0; i < tasks.Length; i++) {
 				int index = i;
 				tasks[i] = Task.Factory.StartNew (() => {
-					foreach (TElement item in enumerables[index]) {
-						// This is from specific operators
-						if (options.ImplementerToken.IsCancellationRequested)
-							break;
-						if (options.Token.IsCancellationRequested)
-							throw new OperationCanceledException (options.Token);
+					try {
+						foreach (TElement item in enumerables[index]) {
+							// This is from specific operators
+							if (options.ImplementerToken.IsCancellationRequested)
+								break;
+							if (options.Token.IsCancellationRequested)
+								throw new OperationCanceledException (options.Token);
 
-						call (item, src.Token);
+							call (item, src.Token);
+						}
+					} finally {
+						if (endAction != null)
+							endAction ();
 					}
-					if (endAction != null)
-						endAction ();
 				  }, options.Token);
 			}
 
