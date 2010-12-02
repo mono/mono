@@ -572,15 +572,9 @@ namespace_member_declaration
 		}
 		current_namespace.DeclarationFound = true;
 	  }
-	| namespace_declaration {
+	| namespace_declaration
+	  {
 		current_namespace.DeclarationFound = true;
-	  }
-
-	| field_declaration {
-		Report.Error (116, ((MemberCore) $1).Location, "A namespace can only contain types and namespace declarations");
-	  }
-	| method_declaration {
-		Report.Error (116, ((MemberCore) $1).Location, "A namespace can only contain types and namespace declarations");
 	  }
 	| error
 	 {

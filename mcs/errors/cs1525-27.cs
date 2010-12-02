@@ -1,7 +1,7 @@
-// CS1525: Unexpected symbol `{'
+// CS1525: Unexpected symbol `fe', expecting `class', `delegate', `enum', `interface', `partial', or `struct'
 // Line: 6
 
-namespace X {
-
+namespace X
+{
 	sealed fe {}
 }
