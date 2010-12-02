@@ -328,7 +328,7 @@ namespace Mono.CSharp {
 
 		public bool HasSecurityAttribute {
 			get {
-				PredefinedAttribute pa = context.CurrentMemberDefinition.Module.PredefinedAttributes.Security;
+				PredefinedAttribute pa = context.Module.PredefinedAttributes.Security;
 				return pa.IsDefined && TypeSpec.IsBaseClass (type, pa.TypeSpec, false);
 			}
 		}
@@ -401,7 +401,7 @@ namespace Mono.CSharp {
 			//
 			// Add [module: DefaultCharSet] to all DllImport import attributes
 			//
-			var module = context.CurrentMemberDefinition.Module;
+			var module = context.Module;
 			// HACK: Needed for broken ModuleContainer::ResolveGlobalAttributes
 			if (module.PredefinedAttributes == null)
 				return ctor;
@@ -529,7 +529,7 @@ namespace Mono.CSharp {
 		public string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = Type.GetAttributeUsage (context.CurrentMemberDefinition.Module.PredefinedAttributes.AttributeUsage).ValidOn;
+			AttributeTargets targets = Type.GetAttributeUsage (context.Module.PredefinedAttributes.AttributeUsage).ValidOn;
 
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("assembly, ");
@@ -1061,7 +1061,7 @@ namespace Mono.CSharp {
 			if (ctor == null)
 				return;
 
-			var predefined = context.CurrentMemberDefinition.Module.PredefinedAttributes;
+			var predefined = context.Module.PredefinedAttributes;
 
 			AttributeUsageAttribute usage_attr = Type.GetAttributeUsage (predefined.AttributeUsage);
 			if ((usage_attr.ValidOn & Target) == 0) {

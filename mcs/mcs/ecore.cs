@@ -2247,10 +2247,10 @@ namespace Mono.CSharp {
 			}
 
 			if (Arity == 0 && Name == "dynamic" && RootContext.Version > LanguageVersion.V_3) {
-				if (!ec.CurrentMemberDefinition.Module.PredefinedAttributes.Dynamic.IsDefined) {
+				if (!ec.Module.PredefinedAttributes.Dynamic.IsDefined) {
 					ec.Compiler.Report.Error (1980, Location,
 						"Dynamic keyword requires `{0}' to be defined. Are you missing System.Core.dll assembly reference?",
-						ec.CurrentMemberDefinition.Module.PredefinedAttributes.Dynamic.GetSignatureForError ());
+						ec.Module.PredefinedAttributes.Dynamic.GetSignatureForError ());
 				}
 
 				return new DynamicTypeExpr (loc);

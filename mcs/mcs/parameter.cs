@@ -706,7 +706,7 @@ namespace Mono.CSharp {
 			if (parameter_expr_tree_type != null)
 				return parameter_expr_tree_type;
 
-			TypeSpec p_type = ec.CurrentMemberDefinition.Module.PredefinedTypes.ParameterExpression.Resolve (location);
+			TypeSpec p_type = ec.Module.PredefinedTypes.ParameterExpression.Resolve (location);
 			parameter_expr_tree_type = new TypeExpression (p_type, location).
 				ResolveAsTypeTerminal (ec, false);
 
@@ -1179,7 +1179,7 @@ namespace Mono.CSharp {
 
 			MethodBuilder mb = builder as MethodBuilder;
 			ConstructorBuilder cb = builder as ConstructorBuilder;
-			var pa = mc.CurrentMemberDefinition.Module.PredefinedAttributes;
+			var pa = mc.Module.PredefinedAttributes;
 
 			for (int i = 0; i < Count; i++) {
 				this [i].ApplyAttributes (mb, cb, i + 1, pa);

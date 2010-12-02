@@ -132,17 +132,24 @@ namespace Microsoft.CSharp.RuntimeBinder
 		static object compiler_initializer = new object ();
 		static object lock_object = new object ();
 
-		readonly Compiler.CompilerContext cc;
-		Compiler.ReflectionImporter importer;
+		readonly Compiler.ModuleContainer module;
+		readonly Compiler.ReflectionImporter importer;
 
-		private DynamicContext (Compiler.CompilerContext cc)
+		private DynamicContext (Compiler.ModuleContainer module, Compiler.ReflectionImporter importer)
 		{
-			this.cc = cc;
+			this.module = module;
+			this.importer = importer;
 		}
 
 		public Compiler.CompilerContext CompilerContext {
 			get {
-				return cc;
+				return module.Compiler;
+			}
+		}
+
+		public Compiler.ModuleContainer Module {
+			get {
+				return module;
 			}
 		}
 
@@ -176,8 +183,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 				//
 				// TODO: Remove this code and rely on GetAssemblyDefinition only
 				//
-				Compiler.RootContext.ToplevelTypes = new Compiler.ModuleContainer (cc);
-				var temp = Compiler.RootContext.ToplevelTypes.MakeExecutable ("dynamic");
+				var module = new Compiler.ModuleContainer (cc);
+				var temp = module.MakeExecutable ("dynamic");
 
 				// Import all currently loaded assemblies
 				var domain = AppDomain.CurrentDomain;
@@ -187,17 +194,19 @@ namespace Microsoft.CSharp.RuntimeBinder
 					IgnorePrivateMembers = false
 				};
 
+				Compiler.RootContext.ToplevelTypes = module;
+
 				foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
-					importer.ImportAssembly (a, Compiler.RootContext.ToplevelTypes.GlobalRootNamespace);
+					importer.ImportAssembly (a, module.GlobalRootNamespace);
 				}
 
 				if (!Compiler.RootContext.EvalMode) {
-					Compiler.TypeManager.InitCoreTypes (Compiler.RootContext.ToplevelTypes, cc.BuildinTypes);
+					Compiler.TypeManager.InitCoreTypes (module, cc.BuildinTypes);
+					module.InitializePredefinedTypes ();
 					Compiler.TypeManager.InitOptionalCoreTypes (cc);
 				}
 
-				dc = new DynamicContext (cc);
-				dc.importer = importer;
+				dc = new DynamicContext (module, importer);
 			}
 
 			return dc;

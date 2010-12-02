@@ -43,6 +43,7 @@ namespace Mono.CSharp
 		bool IsUnsafe { get; }
 		bool IsStatic { get; }
 		bool HasUnresolvedConstraints { get; }
+		ModuleContainer Module { get; }
 
 		string GetSignatureForError ();
 
@@ -50,6 +51,7 @@ namespace Mono.CSharp
 		FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
 
+		// TODO: It has been replaced by module
 		CompilerContext Compiler { get; }
 	}
 
@@ -417,7 +419,7 @@ namespace Mono.CSharp
 
 		public ModuleContainer Module {
 			get {
-				return MemberContext.CurrentMemberDefinition.Module;
+				return MemberContext.Module;
 			}
 		}
 
@@ -561,14 +563,11 @@ namespace Mono.CSharp
 
 		#region Properties
 
-		internal BuildinTypes BuildinTypes {
+		public BuildinTypes BuildinTypes {
 			get {
 				return buildin_types;
 			}
 		}
-
-		// TODO: Obsolete, it has to go
-		public RootNamespace GlobalRootNamespace { get; set; }
 
 		public bool IsRuntimeBinder { get; set; }
 

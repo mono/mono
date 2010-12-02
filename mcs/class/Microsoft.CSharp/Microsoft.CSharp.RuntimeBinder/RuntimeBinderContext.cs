@@ -34,12 +34,12 @@ namespace Microsoft.CSharp.RuntimeBinder
 {
 	class RuntimeBinderContext : Compiler.IMemberContext
 	{
-		readonly Compiler.CompilerContext ctx;
+		readonly Compiler.ModuleContainer module;
 		readonly Compiler.TypeSpec currentType;
 
 		public RuntimeBinderContext (DynamicContext ctx, Compiler.TypeSpec currentType)
 		{
-			this.ctx = ctx.CompilerContext;
+			this.module = ctx.Module;
 			this.currentType = currentType;
 		}
 
@@ -80,7 +80,15 @@ namespace Microsoft.CSharp.RuntimeBinder
 		}
 
 		public bool IsStatic {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public Compiler.ModuleContainer Module {
+			get {
+				return module;
+			}
 		}
 
 		public string GetSignatureForError ()
@@ -106,7 +114,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		}
 
 		public Compiler.CompilerContext Compiler {
-			get { return ctx; }
+			get { return module.Compiler; }
 		}
 
 		#endregion

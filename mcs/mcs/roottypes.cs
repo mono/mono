@@ -58,9 +58,6 @@ namespace Mono.CSharp
 			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
 			global_ns = new GlobalRootNamespace ();
 			alias_ns = new Dictionary<string, RootNamespace> ();
-
-			// TODO: REMOVE
-			context.GlobalRootNamespace = global_ns;
 		}
 
 		#region Properties
@@ -256,8 +253,7 @@ namespace Mono.CSharp
 			foreach (TypeContainer tc in types)
 				tc.CreateType ();
 
-			predefined_attributes = new PredefinedAttributes (this);
-			predefined_types = new PredefinedTypes (this);
+			InitializePredefinedTypes ();
 
 			foreach (TypeContainer tc in types)
 				tc.DefineType ();
@@ -378,6 +374,12 @@ namespace Mono.CSharp
 			// before creating a class which used the enum for any of its fields
 			foreach (var e in hack_corlib_enums)
 				e.CloseType ();
+		}
+
+		public void InitializePredefinedTypes ()
+		{
+			predefined_attributes = new PredefinedAttributes (this);
+			predefined_types = new PredefinedTypes (this);
 		}
 
 		public override bool IsClsComplianceRequired ()

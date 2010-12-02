@@ -5687,7 +5687,7 @@ namespace Mono.CSharp
 
 		bool DoEmitTypeParameter (EmitContext ec)
 		{
-			var activator = ec.MemberContext.CurrentMemberDefinition.Module.PredefinedTypes.Activator;
+			var activator = ec.MemberContext.Module.PredefinedTypes.Activator;
 			var t = activator.Resolve (loc);
 			if (t == null)
 				return true;
@@ -7458,7 +7458,7 @@ namespace Mono.CSharp
 		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
 		{
 			if (alias == GlobalAlias) {
-				expr = ec.CurrentMemberDefinition.Module.GlobalRootNamespace;
+				expr = ec.Module.GlobalRootNamespace;
 				return base.ResolveAsTypeStep (ec, silent);
 			}
 

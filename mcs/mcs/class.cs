@@ -82,6 +82,10 @@ namespace Mono.CSharp {
 				get { return tc.IsStatic; }
 			}
 
+			public ModuleContainer Module {
+				get { return tc.Module; }
+			}
+
 			public string GetSignatureForError ()
 			{
 				return tc.GetSignatureForError ();

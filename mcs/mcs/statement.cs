@@ -4859,7 +4859,7 @@ namespace Mono.CSharp {
 					if (c.CatchType != TypeManager.exception_type)
 						continue;
 
-					if (!ec.CurrentMemberDefinition.Module.DeclaringAssembly.WrapNonExceptionThrows)
+					if (!ec.Module.DeclaringAssembly.WrapNonExceptionThrows)
 						continue;
 
 					if (!ec.Module.PredefinedAttributes.RuntimeCompatibility.IsDefined)

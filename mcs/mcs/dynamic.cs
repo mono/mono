@@ -358,7 +358,7 @@ namespace Mono.CSharp
 		TypeExpr CreateSiteType (EmitContext ec, Arguments arguments, int dyn_args_count, bool is_statement)
 		{
 			int default_args = is_statement ? 1 : 2;
-			var module = ec.MemberContext.CurrentMemberDefinition.Module;
+			var module = ec.MemberContext.Module;
 
 			bool has_ref_out_argument = false;
 			var targs = new TypeExpression[dyn_args_count + default_args];
