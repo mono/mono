@@ -42,7 +42,7 @@ namespace System.Threading.Tasks
 		
 		readonly IDequeOperations<Task> dDeque;
 		readonly ThreadWorker[]         others;
-		readonly EventWaitHandle        waitHandle;
+		readonly ManualResetEventSlim   waitHandle;
 		readonly IProducerConsumerCollection<Task> sharedWorkQueue;
 		readonly IScheduler             sched;
 		readonly ThreadPriority         threadPriority;
@@ -55,14 +55,14 @@ namespace System.Threading.Tasks
 		const    int  maxRetry = 5;
 		
 		const int sleepThreshold = 100;
-		const int deepSleepTime = 1000;
+		const int deepSleepTime = 10000;
 		
 		public ThreadWorker (IScheduler sched,
 		                     ThreadWorker[] others,
 		                     int workerPosition,
 		                     IProducerConsumerCollection<Task> sharedWorkQueue,
 		                     ThreadPriority priority,
-		                     EventWaitHandle handle)
+		                     ManualResetEventSlim handle)
 		{
 			this.others          = others;
 			this.dDeque          = new CyclicDeque<Task> ();
@@ -138,8 +138,10 @@ namespace System.Threading.Tasks
 				wait.SpinOnce ();
 
 				// If we are spinning too much, have a deeper sleep
-				if (sleepTime++ > sleepThreshold)
-					waitHandle.WaitOne (deepSleepTime);
+				if (sleepTime++ > sleepThreshold) {
+					waitHandle.Reset ();
+					waitHandle.Wait (deepSleepTime);
+				}
 			}
 
 			started = 0;
@@ -147,7 +149,7 @@ namespace System.Threading.Tasks
 		
 		// Main method, used to do all the logic of retrieving, processing and stealing work.
 		bool WorkerMethod ()
-		{		
+		{
 			bool result = false;
 			bool hasStolenFromOther;
 			do {
@@ -159,17 +161,19 @@ namespace System.Threading.Tasks
 				while (sharedWorkQueue.Count > 0) {
 					while (sharedWorkQueue.TryTake (out value)) {
 						dDeque.PushBottom (value);
+						waitHandle.Set ();
 					}
-					
+
 					// Now we process our work
 					while (dDeque.PopBottom (out value) == PopResult.Succeed) {
+						waitHandle.Set ();
 						if (value != null) {
 							value.Execute (ChildWorkAdder);
 							result = true;
 						}
 					}
 				}
-				
+
 				// When we have finished, steal from other worker
 				ThreadWorker other;
 				
@@ -184,6 +188,7 @@ namespace System.Threading.Tasks
 						
 						// Maybe make this steal more than one item at a time, see TODO.
 						if (other.dDeque.PopTop (out value) == PopResult.Succeed) {
+							waitHandle.Set ();
 							hasStolenFromOther = true;
 							if (value != null) {
 								value.Execute (ChildWorkAdder);
@@ -203,10 +208,8 @@ namespace System.Threading.Tasks
 		// Predicate should be really fast and not blocking as it is called a good deal of time
 		// Also, the method skip tasks that are LongRunning to avoid blocking (Task are not LongRunning by default)
 		public static void WorkerMethod (Func<bool> predicate, IProducerConsumerCollection<Task> sharedWorkQueue,
-		                                 ThreadWorker[] others)
+		                                 ThreadWorker[] others, ManualResetEventSlim evt)
 		{
-			SpinWait wait = new SpinWait ();
-
 			while (!predicate ()) {
 				Task value;
 				
@@ -222,7 +225,19 @@ namespace System.Threading.Tasks
 							return;
 					}
 				}
-				
+
+				// Dequeue only one item as we have restriction
+				while (sharedWorkQueue.TryTake (out value) && value != null) {
+					evt.Set ();
+					if (CheckTaskFitness (value))
+						value.Execute (null);
+					else
+						sharedWorkQueue.TryAdd (value);
+
+					if (predicate ())
+						return;
+				}
+
 				// First check to see if we comply to predicate
 				if (predicate ())
 					return;
@@ -246,7 +261,7 @@ namespace System.Threading.Tasks
 						return;
 				}
 
-				wait.SpinOnce ();
+				Thread.Yield ();
 			}
 		}
 
