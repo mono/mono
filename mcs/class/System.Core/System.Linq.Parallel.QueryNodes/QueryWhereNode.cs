@@ -77,7 +77,6 @@ namespace System.Linq.Parallel.QueryNodes
 		internal override IList<IEnumerable<KeyValuePair<long, TSource>>> GetOrderedEnumerables (QueryOptions options)
 		{
 			IList<IEnumerable<KeyValuePair<long, TSource>>> sources = Parent.GetOrderedEnumerables (options);
-			Console.WriteLine ("QueryWhere nod number of element: " + sources.Count);
 
 			ProcessingSlot[] store = new ProcessingSlot[sources.Count];
 			long lastIndex = 0;
