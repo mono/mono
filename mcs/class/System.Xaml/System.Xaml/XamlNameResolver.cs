@@ -28,7 +28,7 @@ using System.Windows.Markup;
 
 namespace System.Xaml
 {
-	internal class XamlNameResolver : IXamlNameResolver, IServiceProvider
+	internal class XamlNameResolver : IXamlNameResolver
 	{
 		public XamlNameResolver ()
 		{
@@ -67,7 +67,7 @@ namespace System.Xaml
 		[MonoTODO]
 		public event EventHandler OnNameScopeInitializationComplete;
 
-		internal void Add (string name, object value, bool fullyInitialized)
+		internal void AddNamedObject (string name, object value, bool fullyInitialized)
 		{
 			objects.Add (new NamedObject (name, value, fullyInitialized));
 		}
@@ -101,13 +101,6 @@ namespace System.Xaml
 			var ret = objects.FirstOrDefault (no => no.Name == name);
 			isFullyInitialized = ret != null ? ret.FullyInitialized : false;
 			return ret != null ? ret.Value : new NameFixupReguired (name);
-		}
-
-		// IServiceProvider
-		[MonoTODO]
-		public object GetService (Type serviceType)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

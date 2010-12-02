@@ -36,19 +36,22 @@ namespace System.Xaml
 	{
 		static readonly XamlObject null_object = new XamlObject (XamlLanguage.Null, null);
 
-		public XamlObjectNodeIterator (object root, XamlSchemaContext schemaContext, PrefixLookup prefixLookup)
+		public XamlObjectNodeIterator (object root, XamlSchemaContext schemaContext, IValueSerializerContext vctx)
 		{
 			ctx = schemaContext;
 			this.root = root;
-			value_serializer_ctx = new ValueSerializerContext (prefixLookup, ctx);
+			value_serializer_ctx = vctx;
 		}
 		
 		XamlSchemaContext ctx;
 		object root;
 		IValueSerializerContext value_serializer_ctx;
 		
-		PrefixLookup prefix_lookup {
+		PrefixLookup PrefixLookup {
 			get { return (PrefixLookup) value_serializer_ctx.GetService (typeof (INamespacePrefixLookup)); }
+		}
+		XamlNameResolver NameResolver {
+			get { return (XamlNameResolver) value_serializer_ctx.GetService (typeof (IXamlNameResolver)); }
 		}
 
 		public XamlSchemaContext SchemaContext {
@@ -235,24 +238,24 @@ namespace System.Xaml
 			yield return new XamlNodeInfo (XamlNodeType.EndMember, xknm);
 		}
 
-		// Namespace retrieval. 
+		// Namespace and Reference retrieval.
 		// It is iterated before iterating the actual object nodes,
 		// and results are cached for use in XamlObjectReader.
-		public void CollectNamespaces ()
+		public void PrepareReading ()
 		{
-			prefix_lookup.IsCollectingNamespaces = true;
+			PrefixLookup.IsCollectingNamespaces = true;
 			foreach (var xn in GetNodes ()) {
 				if (xn.NodeType == XamlNodeType.GetObject)
 					continue; // it is out of consideration here.
 				if (xn.NodeType == XamlNodeType.StartObject) {
 					foreach (var ns in NamespacesInType (xn.Object.Type))
-						prefix_lookup.LookupPrefix (ns);
+						PrefixLookup.LookupPrefix (ns);
 				} else if (xn.NodeType == XamlNodeType.StartMember) {
 					var xm = xn.Member.Member;
 					// This filtering is done as a black list so far. There does not seem to be any usable property on XamlDirective.
 					if (xm == XamlLanguage.Items || xm == XamlLanguage.PositionalParameters || xm == XamlLanguage.Initialization)
 						continue;
-					prefix_lookup.LookupPrefix (xn.Member.Member.PreferredXamlNamespace);
+					PrefixLookup.LookupPrefix (xn.Member.Member.PreferredXamlNamespace);
 				} else {
 					if (xn.NodeType == XamlNodeType.Value && xn.Value is Type)
 						// this tries to lookup existing prefix, and if there isn't any, then adds a new declaration.
@@ -260,8 +263,8 @@ namespace System.Xaml
 					continue;
 				}
 			}
-			prefix_lookup.Namespaces.Sort ((nd1, nd2) => String.CompareOrdinal (nd1.Prefix, nd2.Prefix));
-			prefix_lookup.IsCollectingNamespaces = false;
+			PrefixLookup.Namespaces.Sort ((nd1, nd2) => String.CompareOrdinal (nd1.Prefix, nd2.Prefix));
+			PrefixLookup.IsCollectingNamespaces = false;
 		}
 		
 		IEnumerable<string> NamespacesInType (XamlType xt)
