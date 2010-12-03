@@ -412,8 +412,7 @@ namespace Mono.CSharp
 				throw;
 			}
 
-			builder_extra = new AssemblyBuilderExtension (Builder, Compiler);
-
+			builder_extra = new AssemblyBuilderMonoSpecific (Builder, Compiler);
 			return true;
 		}
 
@@ -974,141 +973,62 @@ namespace Mono.CSharp
 
 	//
 	// Extension to System.Reflection.Emit.AssemblyBuilder to have fully compatible
-	// compiler
+	// compiler. This is a default implementation for framework System.Reflection.Emit
+	// which does not implement any of the methods
 	//
 	class AssemblyBuilderExtension
 	{
-		static MethodInfo adder_method;
-		static MethodInfo add_permission;
-		static MethodInfo set_module_only;
-		static MethodInfo add_type_forwarder;
-		static MethodInfo win32_icon_define;
-		static FieldInfo assembly_version;
-		static FieldInfo assembly_algorithm;
-		static FieldInfo assembly_culture;
-		static FieldInfo assembly_flags;
+		readonly CompilerContext ctx;
 
-		AssemblyBuilder builder;
-		CompilerContext ctx;
-
-		public AssemblyBuilderExtension (AssemblyBuilder ab, CompilerContext ctx)
+		public AssemblyBuilderExtension (CompilerContext ctx)
 		{
-			this.builder = ab;
 			this.ctx = ctx;
 		}
 
-		public Module AddModule (string module)
+		public virtual Module AddModule (string module)
 		{
-			try {
-				if (adder_method == null)
-					adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance | BindingFlags.NonPublic);
-
-				return (Module) adder_method.Invoke (builder, new object[] { module });
-			} catch {
-				ctx.Report.RuntimeMissingSupport (Location.Null, "-addmodule");
-				return null;
-			}
+			ctx.Report.RuntimeMissingSupport (Location.Null, "-addmodule");
+			return null;
 		}
 
-		public void AddPermissionRequests (PermissionSet[] permissions)
+		public virtual void AddPermissionRequests (PermissionSet[] permissions)
 		{
-			try {
-				if (add_permission == null)
-					add_permission = typeof (AssemblyBuilder).GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
-
-				add_permission.Invoke (builder, permissions);
-			} catch {
-				ctx.Report.RuntimeMissingSupport (Location.Null, "assembly declarative security");
-			}
+			ctx.Report.RuntimeMissingSupport (Location.Null, "assembly declarative security");
 		}
 
-		public void AddTypeForwarder (TypeSpec type, Location loc)
+		public virtual void AddTypeForwarder (TypeSpec type, Location loc)
 		{
-			try {
-				if (add_type_forwarder == null) {
-					add_type_forwarder = typeof (AssemblyBuilder).GetMethod ("AddTypeForwarder", BindingFlags.NonPublic | BindingFlags.Instance);
-				}
-
-				add_type_forwarder.Invoke (builder, new object[] { type.GetMetaInfo () });
-			} catch {
-				ctx.Report.RuntimeMissingSupport (loc, "TypeForwardedToAttribute");
-			}
+			ctx.Report.RuntimeMissingSupport (loc, "TypeForwardedToAttribute");
 		}
 
-		public void DefineWin32IconResource (string fileName)
+		public virtual void DefineWin32IconResource (string fileName)
 		{
-			try {
-				if (win32_icon_define == null)
-					win32_icon_define = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance | BindingFlags.NonPublic);
-
-				win32_icon_define.Invoke (builder, new object[] { fileName });
-			} catch {
-				ctx.Report.RuntimeMissingSupport (Location.Null, "-win32icon");
-			}		
+			ctx.Report.RuntimeMissingSupport (Location.Null, "-win32icon");
 		}
 
-		public void SetAlgorithmId (uint value, Location loc)
+		public virtual void SetAlgorithmId (uint value, Location loc)
 		{
-			try {
-				if (assembly_algorithm == null)
-					assembly_algorithm = typeof (AssemblyBuilder).GetField ("algid", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-
-				assembly_algorithm.SetValue (builder, value);
-			} catch {
-				ctx.Report.RuntimeMissingSupport (loc, "AssemblyAlgorithmIdAttribute");
-			}
+			ctx.Report.RuntimeMissingSupport (loc, "AssemblyAlgorithmIdAttribute");
 		}
 
-		public void SetCulture (string culture, Location loc)
+		public virtual void SetCulture (string culture, Location loc)
 		{
-			try {
-				if (assembly_culture == null)
-					assembly_culture = typeof (AssemblyBuilder).GetField ("culture", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-
-				assembly_culture.SetValue (builder, culture);
-			} catch {
-				ctx.Report.RuntimeMissingSupport (loc, "AssemblyCultureAttribute");
-			}
+			ctx.Report.RuntimeMissingSupport (loc, "AssemblyCultureAttribute");
 		}
 
-
-		public void SetFlags (uint flags, Location loc)
+		public virtual void SetFlags (uint flags, Location loc)
 		{
-			try {
-				if (assembly_flags == null)
-					assembly_flags = typeof (AssemblyBuilder).GetField ("flags", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-
-				assembly_flags.SetValue (builder, flags);
-			} catch {
-				ctx.Report.RuntimeMissingSupport (loc, "AssemblyFlagsAttribute");
-			}
-
+			ctx.Report.RuntimeMissingSupport (loc, "AssemblyFlagsAttribute");
 		}
 
-		public void SetVersion (string version, Location loc)
+		public virtual void SetVersion (string version, Location loc)
 		{
-			try {
-				if (assembly_version == null)
-					assembly_version = typeof (AssemblyBuilder).GetField ("version", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
-
-				assembly_version.SetValue (builder, version);
-			} catch {
-				ctx.Report.RuntimeMissingSupport (loc, "AssemblyVersionAttribute");
-			}
+			ctx.Report.RuntimeMissingSupport (loc, "AssemblyVersionAttribute");
 		}
 
-		public void SetModuleTarget ()
+		public virtual void SetModuleTarget ()
 		{
-			try {
-				if (set_module_only == null) {
-					var module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-					set_module_only = module_only.GetSetMethod (true);
-				}
-
-				set_module_only.Invoke (builder, new object[] { true });
-			} catch {
-				ctx.Report.RuntimeMissingSupport (Location.Null, "-target:module");
-			}
+			ctx.Report.RuntimeMissingSupport (Location.Null, "-target:module");
 		}
 	}
 }

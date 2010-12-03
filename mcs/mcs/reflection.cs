@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Reflection.Emit;
+using System.Security;
 
 namespace Mono.CSharp
 {
@@ -92,6 +94,142 @@ namespace Mono.CSharp
 			buildin_types.Add (typeof (System.Exception), buildin.Exception);
 			buildin_types.Add (typeof (System.RuntimeFieldHandle), buildin.RuntimeFieldHandle);
 			buildin_types.Add (typeof (System.RuntimeTypeHandle), buildin.RuntimeTypeHandle);
+		}
+	}
+
+	//
+	// Extension to System.Reflection.Emit.AssemblyBuilder to have fully compatible
+	// compiler
+	//
+	class AssemblyBuilderMonoSpecific : AssemblyBuilderExtension
+	{
+		static MethodInfo adder_method;
+		static MethodInfo add_permission;
+		static MethodInfo set_module_only;
+		static MethodInfo add_type_forwarder;
+		static MethodInfo win32_icon_define;
+		static FieldInfo assembly_version;
+		static FieldInfo assembly_algorithm;
+		static FieldInfo assembly_culture;
+		static FieldInfo assembly_flags;
+
+		AssemblyBuilder builder;
+
+		public AssemblyBuilderMonoSpecific (AssemblyBuilder ab, CompilerContext ctx)
+			: base (ctx)
+		{
+			this.builder = ab;
+		}
+
+		public override Module AddModule (string module)
+		{
+			try {
+				if (adder_method == null)
+					adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance | BindingFlags.NonPublic);
+
+				return (Module) adder_method.Invoke (builder, new object[] { module });
+			} catch {
+				return base.AddModule (module);
+			}
+		}
+
+		public override void AddPermissionRequests (PermissionSet[] permissions)
+		{
+			try {
+				if (add_permission == null)
+					add_permission = typeof (AssemblyBuilder).GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+				add_permission.Invoke (builder, permissions);
+			} catch {
+				base.AddPermissionRequests (permissions);
+			}
+		}
+
+		public override void AddTypeForwarder (TypeSpec type, Location loc)
+		{
+			try {
+				if (add_type_forwarder == null) {
+					add_type_forwarder = typeof (AssemblyBuilder).GetMethod ("AddTypeForwarder", BindingFlags.NonPublic | BindingFlags.Instance);
+				}
+
+				add_type_forwarder.Invoke (builder, new object[] { type.GetMetaInfo () });
+			} catch {
+				base.AddTypeForwarder (type, loc);
+			}
+		}
+
+		public override void DefineWin32IconResource (string fileName)
+		{
+			try {
+				if (win32_icon_define == null)
+					win32_icon_define = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance | BindingFlags.NonPublic);
+
+				win32_icon_define.Invoke (builder, new object[] { fileName });
+			} catch {
+				base.DefineWin32IconResource (fileName);
+			}
+		}
+
+		public override void SetAlgorithmId (uint value, Location loc)
+		{
+			try {
+				if (assembly_algorithm == null)
+					assembly_algorithm = typeof (AssemblyBuilder).GetField ("algid", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+
+				assembly_algorithm.SetValue (builder, value);
+			} catch {
+				base.SetAlgorithmId (value, loc);
+			}
+		}
+
+		public override void SetCulture (string culture, Location loc)
+		{
+			try {
+				if (assembly_culture == null)
+					assembly_culture = typeof (AssemblyBuilder).GetField ("culture", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+
+				assembly_culture.SetValue (builder, culture);
+			} catch {
+				base.SetCulture (culture, loc);
+			}
+		}
+
+		public override void SetFlags (uint flags, Location loc)
+		{
+			try {
+				if (assembly_flags == null)
+					assembly_flags = typeof (AssemblyBuilder).GetField ("flags", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+
+				assembly_flags.SetValue (builder, flags);
+			} catch {
+				base.SetFlags (flags, loc);
+			}
+		}
+
+		public override void SetVersion (string version, Location loc)
+		{
+			try {
+				if (assembly_version == null)
+					assembly_version = typeof (AssemblyBuilder).GetField ("version", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+
+				assembly_version.SetValue (builder, version);
+			} catch {
+				base.SetVersion (version, loc);
+			}
+		}
+
+		public override void SetModuleTarget ()
+		{
+			try {
+				if (set_module_only == null) {
+					var module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+					set_module_only = module_only.GetSetMethod (true);
+				}
+
+				set_module_only.Invoke (builder, new object[] { true });
+			} catch {
+				base.SetModuleTarget ();
+			}
 		}
 	}
 

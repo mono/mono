@@ -513,6 +513,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public string FullName {
+			get {
+				return ns + '.' + name;
+			}
+		}
+
 		public override string Name {
 			get {
 				return name;
@@ -551,7 +557,7 @@ namespace Mono.CSharp
 			if (ns.Length == 0)
 				return name;
 
-			return ns + "." + name;
+			return FullName;
 		}
 
 		public void SetDefinition (ITypeDefinition td, System.Type type)
