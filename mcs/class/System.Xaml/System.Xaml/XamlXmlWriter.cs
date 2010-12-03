@@ -440,6 +440,8 @@ namespace System.Xaml
 					WritePendingNamespaces ();
 					w.WriteEndElement ();
 					break;
+				// case (AllowedMemberLocations) 0xFF:
+				//	do nothing
 				}
 			}
 		}
@@ -547,7 +549,10 @@ namespace System.Xaml
 					w.WriteString (member.Name);
 					w.WriteString ("=");
 				}
-			} else {
+			}
+			else if (member == XamlLanguage.PositionalParameters && posprms == null && state.Type.GetSortedConstructorArguments ().All (m => m == state.Type.ContentProperty)) // PositionalParameters and ContentProperty, excluding such cases that it is already processed above (as attribute).
+				OnWriteStartMemberContent (state.Type, member);
+			else {
 				switch (IsAttribute (state.Type, member)) {
 				case AllowedMemberLocations.Attribute:
 					OnWriteStartMemberAttribute (state.Type, member);
@@ -629,6 +634,12 @@ namespace System.Xaml
 				string prefix = GetPrefix (xm.PreferredXamlNamespace);
 				w.WriteStartAttribute (prefix, xm.Name, xm.PreferredXamlNamespace);
 			}
+		}
+
+		void OnWriteStartMemberContent (XamlType xt, XamlMember member)
+		{
+			// FIXME: well, it is sorta nasty, would be better to define different enum.
+			CurrentMemberState.OccuredAs = (AllowedMemberLocations) 0xFF;
 		}
 
 		protected override void OnWriteValue (object value)

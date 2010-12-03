@@ -553,7 +553,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_NamedItems ()
 		{
 			// foo
@@ -571,7 +570,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_NamedItems2 ()
 		{
 			// i1

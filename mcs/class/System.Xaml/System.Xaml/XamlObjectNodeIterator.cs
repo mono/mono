@@ -199,9 +199,19 @@ namespace System.Xaml
 				yield return new XamlNodeInfo (XamlNodeType.EndMember, member);
 		}
 
+		IEnumerable<XamlNodeMember> GetNodeMembers (XamlObject xobj, IValueSerializerContext vsctx)
+		{
+			// FIXME: find out why root Reference has PositionalParameters.
+			if (xobj.GetRawValue() != root && xobj.Type == XamlLanguage.Reference)
+				yield return new XamlNodeMember (xobj, XamlLanguage.PositionalParameters);
+			else
+				foreach (var xm in xobj.Type.GetAllObjectReaderMembersByType (vsctx))
+					yield return new XamlNodeMember (xobj, xm);
+		}
+
 		IEnumerable<XamlNodeInfo> GetObjectMemberNodes (XamlObject xobj)
 		{
-			var xce = xobj.Children (value_serializer_ctx).GetEnumerator ();
+			var xce = GetNodeMembers (xobj, value_serializer_ctx).GetEnumerator ();
 			while (xce.MoveNext ()) {
 				// XamlLanguage.Items does not show up if the content is empty.
 				if (xce.Current.Member == XamlLanguage.Items) {
