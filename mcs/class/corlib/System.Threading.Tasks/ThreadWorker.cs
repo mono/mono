@@ -42,7 +42,7 @@ namespace System.Threading.Tasks
 		
 		readonly IDequeOperations<Task> dDeque;
 		readonly ThreadWorker[]         others;
-		readonly ManualResetEventSlim   waitHandle;
+		readonly ManualResetEvent       waitHandle;
 		readonly IProducerConsumerCollection<Task> sharedWorkQueue;
 		readonly IScheduler             sched;
 		readonly ThreadPriority         threadPriority;
@@ -55,14 +55,14 @@ namespace System.Threading.Tasks
 		const    int  maxRetry = 5;
 		
 		const int sleepThreshold = 100;
-		const int deepSleepTime = 10000;
+		int deepSleepTime = 8;
 		
 		public ThreadWorker (IScheduler sched,
 		                     ThreadWorker[] others,
 		                     int workerPosition,
 		                     IProducerConsumerCollection<Task> sharedWorkQueue,
 		                     ThreadPriority priority,
-		                     ManualResetEventSlim handle)
+		                     ManualResetEvent handle)
 		{
 			this.others          = others;
 			this.dDeque          = new CyclicDeque<Task> ();
@@ -120,7 +120,6 @@ namespace System.Threading.Tasks
 		void WorkerMethodWrapper ()
 		{
 			int sleepTime = 0;
-			SpinWait wait = new SpinWait ();
 			autoReference = this;
 			
 			// Main loop
@@ -128,19 +127,20 @@ namespace System.Threading.Tasks
 				bool result = false;
 
 				result = WorkerMethod ();
-				
+				if (!result)
+					waitHandle.Reset ();
+
+				Thread.Yield ();
+
 				if (result) {
+					deepSleepTime = 8;
 					sleepTime = 0;
-					wait = new SpinWait ();
+					continue;
 				}
 
-				// Wait a little and if the Thread has been more sleeping than working shut it down
-				wait.SpinOnce ();
-
 				// If we are spinning too much, have a deeper sleep
-				if (sleepTime++ > sleepThreshold) {
-					waitHandle.Reset ();
-					waitHandle.Wait (deepSleepTime);
+				if (++sleepTime > sleepThreshold && sharedWorkQueue.Count == 0) {
+					waitHandle.WaitOne ((deepSleepTime =  deepSleepTime >= 0x4000 ? 0x4000 : deepSleepTime << 1));
 				}
 			}
 
@@ -208,7 +208,7 @@ namespace System.Threading.Tasks
 		// Predicate should be really fast and not blocking as it is called a good deal of time
 		// Also, the method skip tasks that are LongRunning to avoid blocking (Task are not LongRunning by default)
 		public static void WorkerMethod (Func<bool> predicate, IProducerConsumerCollection<Task> sharedWorkQueue,
-		                                 ThreadWorker[] others, ManualResetEventSlim evt)
+		                                 ThreadWorker[] others, ManualResetEvent evt)
 		{
 			while (!predicate ()) {
 				Task value;
@@ -216,10 +216,13 @@ namespace System.Threading.Tasks
 				// If we are in fact a normal ThreadWorker, use our own deque
 				if (autoReference != null) {
 					while (autoReference.dDeque.PopBottom (out value) == PopResult.Succeed && value != null) {
+						evt.Set ();
 						if (CheckTaskFitness (value))
 							value.Execute (autoReference.ChildWorkAdder);
-						else
+						else {
 							autoReference.dDeque.PushBottom (value);
+							evt.Set ();
+						}
 
 						if (predicate ())
 							return;
@@ -231,8 +234,10 @@ namespace System.Threading.Tasks
 					evt.Set ();
 					if (CheckTaskFitness (value))
 						value.Execute (null);
-					else
+					else {
 						sharedWorkQueue.TryAdd (value);
+						evt.Set ();
+					}
 
 					if (predicate ())
 						return;
@@ -248,12 +253,13 @@ namespace System.Threading.Tasks
 					if ((other = others [i]) == null)
 						continue;
 					
-					if (other.dDeque.PopTop (out value) == PopResult.Succeed) {
-						if (value != null) {
-							if (CheckTaskFitness (value))
-								value.Execute (null);
-							else
-								sharedWorkQueue.TryAdd (value);
+					if (other.dDeque.PopTop (out value) == PopResult.Succeed && value != null) {
+						evt.Set ();
+						if (CheckTaskFitness (value))
+							value.Execute (null);
+						else {
+							sharedWorkQueue.TryAdd (value);
+							evt.Set ();
 						}
 					}
 					

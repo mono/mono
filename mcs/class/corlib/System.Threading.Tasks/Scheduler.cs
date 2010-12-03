@@ -32,7 +32,7 @@ namespace System.Threading.Tasks
 	{
 		readonly IProducerConsumerCollection<Task> workQueue;
 		readonly ThreadWorker[]        workers;
-		readonly ManualResetEventSlim  pulseHandle = new ManualResetEventSlim (false);
+		readonly ManualResetEvent      pulseHandle = new ManualResetEvent (false);
 
 		public Scheduler ()
 			: this (Environment.ProcessorCount, ThreadPriority.Normal)
