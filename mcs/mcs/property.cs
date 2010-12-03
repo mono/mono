@@ -237,7 +237,6 @@ namespace Mono.CSharp
 
 			internal const string Prefix = "set_";
 
-			ImplicitParameter param_attr;
 			protected ParametersCompiled parameters;
 
 			public SetMethod (PropertyBase method, Modifiers modifiers, ParametersCompiled parameters, Attributes attrs, Location loc)
@@ -249,10 +248,7 @@ namespace Mono.CSharp
 			protected override void ApplyToExtraTarget (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
-					if (param_attr == null)
-						param_attr = new ImplicitParameter (method_data.MethodBuilder);
-
-					param_attr.ApplyAttributeBuilder (a, ctor, cdata, pa);
+					parameters[0].ApplyAttributeBuilder (a, ctor, cdata, pa);
 					return;
 				}
 
@@ -1109,7 +1105,6 @@ namespace Mono.CSharp
 		public abstract class AEventAccessor : AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
-			ImplicitParameter param_attr;
 			ParametersCompiled parameters;
 
 			static readonly string[] attribute_targets = new string [] { "method", "param", "return" };
@@ -1141,10 +1136,7 @@ namespace Mono.CSharp
 			protected override void ApplyToExtraTarget (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
-					if (param_attr == null)
-						param_attr = new ImplicitParameter (method_data.MethodBuilder);
-
-					param_attr.ApplyAttributeBuilder (a, ctor, cdata, pa);
+					parameters[0].ApplyAttributeBuilder (a, ctor, cdata, pa);
 					return;
 				}
 

@@ -109,34 +109,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	/// Class for applying custom attributes on the implicit parameter type
-	/// of the 'set' method in properties, and the 'add' and 'remove' methods in events.
-	/// </summary>
-	/// 
-	// TODO: should use more code from Parameter.ApplyAttributeBuilder
-	public class ImplicitParameter : ParameterBase {
-		public ImplicitParameter (MethodBuilder mb)
-		{
-			builder = mb.DefineParameter (1, ParameterAttributes.None, "value");			
-		}
-
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Parameter;
-			}
-		}
-
-		/// <summary>
-		/// Is never called
-		/// </summary>
-		public override string[] ValidAttributeTargets {
-			get {
-				return null;
-			}
-		}
-	}
-
 	public class ImplicitLambdaParameter : Parameter
 	{
 		public ImplicitLambdaParameter (string name, Location loc)
