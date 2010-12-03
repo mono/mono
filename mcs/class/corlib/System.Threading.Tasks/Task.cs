@@ -661,7 +661,7 @@ namespace System.Threading.Tasks
 			
 			// All tasks are supposed to use the same TaskScheduler
 			sched.ParticipateUntil (delegate {
-				if (millisecondsTimeout != 1 && watch.ElapsedMilliseconds > millisecondsTimeout)
+				if (millisecondsTimeout != -1 && watch.ElapsedMilliseconds > millisecondsTimeout)
 					return true;
 
 				token.ThrowIfCancellationRequested ();
