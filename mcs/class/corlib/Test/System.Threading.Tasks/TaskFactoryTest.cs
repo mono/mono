@@ -62,7 +62,7 @@ namespace MonoTests.System.Threading.Tasks
 			
 			bool result = false;
 			
-			Task cont = factory.ContinueWhenAll (tasks, (ts) => { if (r1 && r2 && r3) result = ts == tasks; });
+			Task cont = factory.ContinueWhenAll (tasks, (ts) => { if (r1 && r2 && r3) result = true; });
 			
 			foreach (Task t in tasks)
 				t.Start ();
