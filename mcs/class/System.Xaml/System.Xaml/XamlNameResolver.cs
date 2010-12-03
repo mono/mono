@@ -28,7 +28,8 @@ using System.Windows.Markup;
 
 namespace System.Xaml
 {
-	internal class XamlNameResolver : IXamlNameResolver
+	// FIXME: implement IXamlNameProvider (either within or outside this class)
+	internal class XamlNameResolver : IXamlNameResolver, IXamlNameProvider
 	{
 		public XamlNameResolver ()
 		{
@@ -106,7 +107,7 @@ namespace System.Xaml
 			return objects.ContainsKey (name);
 		}
 		
-		internal string GetName (object value)
+		public string GetName (object value)
 		{
 			foreach (var no in objects.Values)
 				if (object.ReferenceEquals (no.Value, value))

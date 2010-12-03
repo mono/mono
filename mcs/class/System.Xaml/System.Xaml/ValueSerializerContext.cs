@@ -63,6 +63,8 @@ namespace System.Xaml
 				return namespace_resolver;
 			if (serviceType == typeof (IXamlNameResolver))
 				return name_resolver;
+			if (serviceType == typeof (IXamlNameProvider))
+				return name_resolver;
 			if (serviceType == typeof (IXamlTypeResolver))
 				return type_resolver;
 			if (serviceType == typeof (IXamlSchemaContextProvider))
