@@ -21,6 +21,7 @@ using System.Security.Cryptography;
 using System.Security.Permissions;
 
 using Mono.Security.Cryptography;
+using Mono.CompilerServices.SymbolWriter;
 
 namespace Mono.CSharp
 {
@@ -39,6 +40,7 @@ namespace Mono.CSharp
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
 		AssemblyBuilderExtension builder_extra;
+		MonoSymbolWriter symbol_writer;
 
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
@@ -421,25 +423,13 @@ namespace Mono.CSharp
 			if (file_name == null)
 				return Builder.DefineDynamicModule (name, false);
 
-			ModuleBuilder mbuilder = null;
+			var module_name = Path.GetFileName (file_name);
 
-			try {
-				var module_name = Path.GetFileName (file_name);
-				mbuilder = Builder.DefineDynamicModule (module_name, module_name, RootContext.GenerateDebugInfo);
-
-#if !MS_COMPATIBLE
-				// TODO: We should use SymbolWriter from DefineDynamicModule
-				if (RootContext.GenerateDebugInfo && !SymbolWriter.Initialize (mbuilder, file_name)) {
-					Report.Error (40, "Unexpected debug information initialization error `{0}'",
-						"Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll)");
-				}
-#endif
-			} catch (ExecutionEngineException e) {
-				Report.Error (40, "Unexpected debug information initialization error `{0}'",
-					e.Message);
-			}
-
-			return mbuilder;
+			// Always initialize module without symbolInfo. We could be framework dependent
+			// but returned ISymbolWriter does not have all what we need therefore some
+			// adaptor will be needed for now we alwayas emit MDB format when generating
+			// debug info
+			return Builder.DefineDynamicModule (module_name, module_name, false);
 		}
 
 		static string Dirname (string name)
@@ -466,6 +456,14 @@ namespace Mono.CSharp
 				module.AddCompilerGeneratedClass (module_target_attrs);
 			} else if (added_modules != null) {
 				ReadModulesAssemblyAttributes ();
+			}
+
+			if (RootContext.GenerateDebugInfo) {
+				symbol_writer = new MonoSymbolWriter (file_name);
+
+				// TODO: global variables
+				Location.DefineSymbolDocuments (symbol_writer);
+				SymbolWriter.symwriter = symbol_writer;
 			}
 
 			module.Emit ();
@@ -825,6 +823,12 @@ namespace Mono.CSharp
 				Builder.Save (module.Builder.ScopeName, pekind, machine);
 			} catch (Exception e) {
 				Report.Error (16, "Could not write to file `" + name + "', cause: " + e.Message);
+			}
+
+			// Save debug symbols file
+			if (symbol_writer != null) {
+				// TODO: it should run in parallel
+				symbol_writer.WriteSymbolFile (SymbolWriter.GetGuid (module.Builder));
 			}
 		}
 

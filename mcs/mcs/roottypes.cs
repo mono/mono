@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using Mono.CompilerServices.SymbolWriter;
 
 namespace Mono.CSharp
 {

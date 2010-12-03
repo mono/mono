@@ -1521,11 +1521,6 @@ namespace Mono.CSharp
 
 			ShowTime ("Saving output assembly");
 
-			if (RootContext.GenerateDebugInfo) {
-				SymbolWriter.WriteSymbolFile ();
-				ShowTime ("Saving debug symbols");
-			}
-
 			ShowTotalTime ("Total");
 
 			Timer.ShowTimers ();
