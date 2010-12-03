@@ -488,28 +488,11 @@ namespace Mono.CSharp
 			}
 
 			if (declarative_security != null) {
-
-				MethodInfo add_permission = typeof (AssemblyBuilder).GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
-				object builder_instance = Builder;
-
-				try {
-					// Microsoft runtime hacking
-					if (add_permission == null) {
-						var assembly_builder = typeof (AssemblyBuilder).Assembly.GetType ("System.Reflection.Emit.AssemblyBuilderData");
-						add_permission = assembly_builder.GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
-
-						FieldInfo fi = typeof (AssemblyBuilder).GetField ("m_assemblyData", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
-						builder_instance = fi.GetValue (Builder);
-					}
-
-					var args = new PermissionSet [3];
-					declarative_security.TryGetValue (SecurityAction.RequestMinimum, out args [0]);
-					declarative_security.TryGetValue (SecurityAction.RequestOptional, out args [1]);
-					declarative_security.TryGetValue (SecurityAction.RequestRefuse, out args [2]);
-					add_permission.Invoke (builder_instance, args);
-				} catch {
-					Report.RuntimeMissingSupport (Location.Null, "assembly permission setting");
-				}
+				var args = new PermissionSet[3];
+				declarative_security.TryGetValue (SecurityAction.RequestMinimum, out args[0]);
+				declarative_security.TryGetValue (SecurityAction.RequestOptional, out args[1]);
+				declarative_security.TryGetValue (SecurityAction.RequestRefuse, out args[2]);
+				builder_extra.AddPermissionRequests (args);
 			}
 
 			CheckReferencesPublicToken ();
@@ -996,6 +979,7 @@ namespace Mono.CSharp
 	class AssemblyBuilderExtension
 	{
 		static MethodInfo adder_method;
+		static MethodInfo add_permission;
 		static MethodInfo set_module_only;
 		static MethodInfo add_type_forwarder;
 		static MethodInfo win32_icon_define;
@@ -1023,6 +1007,18 @@ namespace Mono.CSharp
 			} catch {
 				ctx.Report.RuntimeMissingSupport (Location.Null, "-addmodule");
 				return null;
+			}
+		}
+
+		public void AddPermissionRequests (PermissionSet[] permissions)
+		{
+			try {
+				if (add_permission == null)
+					add_permission = typeof (AssemblyBuilder).GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+				add_permission.Invoke (builder, permissions);
+			} catch {
+				ctx.Report.RuntimeMissingSupport (Location.Null, "assembly declarative security");
 			}
 		}
 
