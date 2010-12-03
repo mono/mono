@@ -1126,7 +1126,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_NamedItems ()
 		{
 			// foo
