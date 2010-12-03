@@ -27,7 +27,7 @@ namespace Mono.CSharp
 		delegate Guid GetGuidFunc (ModuleBuilder mb);
 		static GetGuidFunc get_guid_func;
 
-		static SymbolWriter ()
+		static void Initialize ()
 		{
 			var mi = typeof (ILGenerator).GetMethod (
 				"Mono_GetCurrentOffset",
@@ -54,6 +54,9 @@ namespace Mono.CSharp
 #if NET_4_0
 			return ig.ILOffset;
 #else
+			if (get_il_offset_func == null)
+				Initialize ();
+
 			return get_il_offset_func (ig);
 #endif
 		}
@@ -63,6 +66,9 @@ namespace Mono.CSharp
 #if NET_4_0
 			return module.ModuleVersionId;
 #else
+			if (get_guid_func == null)
+				Initialize ();
+
 			return get_guid_func (module);
 #endif
 		}
