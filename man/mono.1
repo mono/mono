@@ -1015,6 +1015,12 @@ the collection finds that the occupancy of a specific heap block type is
 less than this percentage, it will do a copying collection for that block
 type in the next major collection, thereby restoring occupancy to close
 to 100 percent.  A value of 0 turns evacuation off.
+.TP
+\fB(no-)concurrent-sweep\fR
+Enables or disables concurrent sweep for the Mark&Sweep collector.  If
+enabled, the sweep phase of the garbage collection is done in a thread
+concurrently with the application.  Concurrent sweep is disabled by
+default.
 .ne
 .RE
 .TP
