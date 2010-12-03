@@ -80,6 +80,8 @@ test-local:
 
 run-test-local: $(TEST_ILS:.il=.dll) setup qcheck
 
+check: run-test-local
+
 endif
 
 clean-local:
