@@ -142,8 +142,7 @@ DISTFILES = \
 	MonoIcon.png		\
 	README			\
 	ScalableMonoIcon.svg	\
-	winexe.in		\
-	nunit.key
+	winexe.in
 
 dist-local: dist-default
 
