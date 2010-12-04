@@ -101,7 +101,7 @@ if (cs == Cairo.Status.Success) {
         <param name="x0">x0 component of the affine transformation.</param>
         <param name="y0">y0 component of the affine transformation.</param>
         <summary>Create a new matrix, initialized with the specified values.</summary>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,9 +116,9 @@ if (cs == Cairo.Status.Success) {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Returns a clone of the matrix</summary>
+        <returns>The clone matrix as a <see cref="t:System.Object" /></returns>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -139,10 +139,10 @@ if (cs == Cairo.Status.Success) {
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="o">The matrix to test the equality with</param>
+        <summary>Tests the equality of this matrix and another one</summary>
+        <returns>True if the two matrices are equal, otherwise false</returns>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -157,9 +157,9 @@ if (cs == Cairo.Status.Success) {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Returns a hash representing the matrix</summary>
+        <returns>A hash as an <see cref="t:System.Int32" /> representing the matrix</returns>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Init">
@@ -187,7 +187,7 @@ if (cs == Cairo.Status.Success) {
 
 
 <list type="bullet"><item><term>x_new = xx * x + xy * y + x0;</term></item><item><term>y_new = yx * x + yy * y + y0;</term></item></list></summary>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -203,7 +203,7 @@ if (cs == Cairo.Status.Success) {
       <Parameters />
       <Docs>
         <summary>Initializes the matrix to the identity.</summary>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -301,7 +301,7 @@ if (cs == Cairo.Status.Success) {
       <Docs>
         <summary>Determine if a given matrix is the Identity.</summary>
         <returns>Returns true if this matrix is equivalent to the identity.</returns>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -320,7 +320,7 @@ if (cs == Cairo.Status.Success) {
       <Docs>
         <param name="b">The affine transformation matrix to multiply by.</param>
         <summary>Multiplies this Matrix by b. The effect is to apply b's transformation to this matrix, or in other words, to transform this matrix by b.</summary>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -342,7 +342,7 @@ if (cs == Cairo.Status.Success) {
         <param name="b">The matrix to multiply by.</param>
         <summary>Multiplies the affine transformations in a and b together and returns the result in result. The result is an affine transformation which is equivalent to separately applying the transformations a and b in order.</summary>
         <returns>The result of multiplying a and b.</returns>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -364,7 +364,7 @@ if (cs == Cairo.Status.Success) {
         <param name="rhs">The second Matrix to compare.</param>
         <summary>Determines whether two matrices have the same value.</summary>
         <returns>Returns true if all members are equal.</returns>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -386,7 +386,7 @@ if (cs == Cairo.Status.Success) {
         <param name="rhs">The second Matrix to compare.</param>
         <summary>Determines whether two matrices do not share the same value.</summary>
         <returns>Returns true if any members are not equal.</returns>
-        <remarks>To be added.</remarks>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -446,9 +446,9 @@ if (cs == Cairo.Status.Success) {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Returns the matrix as a string</summary>
+        <returns>A string describing the matrix</returns>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="TransformDistance">

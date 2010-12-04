@@ -67,9 +67,9 @@ pat.Destroy ();
         <ReturnType>Cairo.PointD[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Gets the gradient endpoints for a linear gradient</summary>
+        <value>A Array of <see cref="t:Cairo.PointD" /> with the Start- and Endpoint</value>
+        <remarks />
       </Docs>
     </Member>
   </Members>

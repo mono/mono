@@ -46,7 +46,7 @@ gr.Rectangle ( new PointD (0, 0), 1, 1);
       </ReturnValue>
       <Docs>
         <summary>Access to the X coordinate.</summary>
-        <value>To be added.</value>
+        <value>The X coordinate</value>
         <remarks>
         </remarks>
       </Docs>
@@ -63,7 +63,7 @@ gr.Rectangle ( new PointD (0, 0), 1, 1);
       </ReturnValue>
       <Docs>
         <summary>Access to the Y coordinate.</summary>
-        <value>To be added.</value>
+        <value>The Y coordinate</value>
         <remarks>
         </remarks>
       </Docs>

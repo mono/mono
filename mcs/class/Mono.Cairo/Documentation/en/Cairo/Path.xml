@@ -14,8 +14,8 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>The Cairo Path Class</summary>
+    <remarks />
   </Docs>
   <Members>
     <Member MemberName="Dispose">
@@ -32,9 +32,9 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="disposing">Defines if called from finalization thread</param>
+        <summary>Immediately releases all memory associated with Path</summary>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -49,8 +49,8 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Finalizes the path</summary>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
