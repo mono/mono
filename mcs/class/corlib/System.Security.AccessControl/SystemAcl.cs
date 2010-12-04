@@ -134,6 +134,11 @@ namespace System.Security.AccessControl {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal override string GetSddlForm(ControlFlags sdFlags, bool isDacl)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
 

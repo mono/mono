@@ -33,13 +33,12 @@ namespace System.Security.AccessControl
 {
 	public sealed class CompoundAce : KnownAce
 	{
-		CompoundAceType compound_ace_type;
+		private CompoundAceType compound_ace_type;
 		
 		public CompoundAce (AceFlags flags, int accessMask, CompoundAceType compoundAceType, SecurityIdentifier sid)
-			: base (InheritanceFlags.None, PropagationFlags.None)
+			: base (AceType.AccessAllowedCompound, flags)
 		{
 			this.compound_ace_type = compoundAceType;
-			this.AceFlags = flags;
 			this.AccessMask = accessMask;
 			this.SecurityIdentifier = sid;
 		}
@@ -61,6 +60,11 @@ namespace System.Security.AccessControl
 						    int offset)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		internal override string GetSddlForm ()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
