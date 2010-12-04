@@ -1423,6 +1423,7 @@ System.Security.Principal/PrincipalPolicy.cs
 System.Security.Principal/SecurityIdentifier.cs
 System.Security.Principal/TokenAccessLevels.cs
 System.Security.Principal/TokenImpersonationLevel.cs
+System.Security.Principal/WellKnownAccount.cs
 System.Security.Principal/WellKnownSidType.cs
 System.Security.Principal/WindowsAccountType.cs
 System.Security.Principal/WindowsBuiltInRole.cs
