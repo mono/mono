@@ -337,7 +337,8 @@ case "$host" in
     machdep="sparc_mach_dep.lo"
     ;;
  ia64-*-*)
-    machdep="mach_dep.lo ia64_save_regs_in_stack.lo"
+     machdep="mach_dep.lo ia64_save_regs_in_stack.lo"
+	target_ia64=true
     ;;
 esac
 if test x"$machdep" = x; then
@@ -345,10 +346,17 @@ AC_MSG_RESULT($machdep)
    machdep="mach_dep.lo"
 fi
 addobjs="$addobjs $machdep"
-AC_SUBST(addobjs)
+#
+# Adding object files directly to _LIBADD breaks -j builds, so we need to add the sources
+# instead, but _SOURCES can't contain autoconf substitutions, so add them using automake
+# conditionals.
+#
+#AC_SUBST(addobjs)
 AC_SUBST(addincludes)
 AC_SUBST(addlibs)
 AC_SUBST(addtests)
+
+AM_CONDITIONAL(TARGET_IA64,test x$target_ia64 = xtrue)
 
 AC_PROG_LIBTOOL
 # Use dolt (http://dolt.freedesktop.org/) instead of libtool for building.
