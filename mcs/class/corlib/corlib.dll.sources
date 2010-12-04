@@ -1220,6 +1220,7 @@ System.Security.AccessControl/RegistryAuditRule.cs
 System.Security.AccessControl/RegistryRights.cs
 System.Security.AccessControl/RegistrySecurity.cs
 System.Security.AccessControl/ResourceType.cs
+System.Security.AccessControl/SddlAccessRight.cs
 System.Security.AccessControl/SecurityInfos.cs
 System.Security.AccessControl/SystemAcl.cs
 ../System.Core/System.Security.Cryptography/Aes.cs

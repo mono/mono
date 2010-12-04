@@ -29,53 +29,56 @@
 
 using System.Collections;
 
-namespace System.Security.AccessControl
-{
-	public sealed class CustomAce : GenericAce
-	{
-		public CustomAce (AceType type, AceFlags flags, byte [] opaque)
-			: base (type)
-		{
-			AceFlags = flags;
+namespace System.Security.AccessControl {
+	public sealed class CustomAce : GenericAce {
+		private byte[] opaque;
 
+		public CustomAce (AceType type, AceFlags flags, byte[] opaque)
+			: base(type, flags)
+		{
 			/* FIXME: check length of opaque >
 			 * MaxOpaqueLength or !multiple of 4
-			 */
-			 SetOpaque (opaque);
+			 */			
+			SetOpaque (opaque);
 		}
-
-		byte [] opaque;
 
 		[MonoTODO]
 		public static readonly int MaxOpaqueLength;
-		
+
 		[MonoTODO]
 		public override int BinaryLength {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
-		
+
 		public int OpaqueLength {
 			get { return opaque.Length; }
 		}
 
 		[MonoTODO]
 		public override void GetBinaryForm (byte[] binaryForm,
-						    int offset)
+		                                    int offset)
 		{
 			throw new NotImplementedException ();
 		}
-		
-		public byte [] GetOpaque ()
+
+		public byte[] GetOpaque ()
 		{
-			return (byte []) opaque.Clone ();
+			return (byte[])opaque.Clone ();
 		}
-		
-		public void SetOpaque (byte [] opaque)
+
+		public void SetOpaque (byte[] opaque)
 		{
 			if (opaque == null)
-				throw new ArgumentNullException ("opaque");
-			this.opaque = (byte []) opaque.Clone ();
+				this.opaque = null;
+			else
+				this.opaque = (byte[])opaque.Clone ();
+		}
+
+		internal override string GetSddlForm ()
+		{
+			throw new NotSupportedException ();
 		}
 	}
 }
-
