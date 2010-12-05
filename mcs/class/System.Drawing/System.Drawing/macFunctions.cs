@@ -70,6 +70,12 @@ namespace System.Drawing {
 
 			objc_msgSend_stret (ref bounds, handle, sel_registerName ("bounds"));
 
+			var isFlipped = bool_objc_msgSend (handle, sel_registerName ("isFlipped"));
+			if (isFlipped) {
+				CGContextTranslateCTM (ctx, bounds.origin.x, bounds.size.height);
+				CGContextScaleCTM(ctx,1.0f,-1.0f);
+			}
+
 			return new CocoaContext (ctx, (int) bounds.size.width, (int) bounds.size.height);
 		}
 
@@ -191,6 +197,8 @@ namespace System.Drawing {
 		public static extern IntPtr objc_msgSend(IntPtr basePtr, IntPtr selector);        
 		[DllImport("libobjc.dylib")]
 		public static extern void objc_msgSend_stret(ref Rect arect, IntPtr basePtr, IntPtr selector);        
+		[DllImport ("libobjc.dylib", EntryPoint = "objc_msgSend")]
+		public static extern bool bool_objc_msgSend (IntPtr handle, IntPtr selector);
 		[DllImport("libobjc.dylib")]
 		public static extern IntPtr sel_registerName(string selectorName);         
 		#endregion
