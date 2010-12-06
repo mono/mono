@@ -27,44 +27,24 @@ namespace Mono.CSharp
 	/// </summary>
 	class Driver
 	{
-		// Whether we want to only run the tokenizer
-		bool tokenize;
-		
 		string first_source;
 
-		bool parse_only;
 		bool timestamps;
 		internal int fatal_errors;
 		
-		//
-		// Output file
-		//
-		static string output_file;
-
 		//
 		// Last time we took the time
 		//
 		Stopwatch stopwatch;
 		DateTime first_time;
 
-		//
-		// Encoding.
-		//
-		Encoding encoding;
-
 		internal readonly CompilerContext ctx;
 
 		static readonly char[] argument_value_separator = new char [] { ';', ',' };
 
-		static public void Reset ()
-		{
-			output_file = null;
-		}
-
 		private Driver (CompilerContext ctx)
 		{
 			this.ctx = ctx;
-			encoding = Encoding.Default;
 		}
 
 		public static Driver Create (string[] args, bool require_files, ReportPrinter printer)
@@ -118,7 +98,7 @@ namespace Mono.CSharp
 			}
 
 			using (input){
-				SeekableStreamReader reader = new SeekableStreamReader (input, encoding);
+				SeekableStreamReader reader = new SeekableStreamReader (input, RootContext.Encoding);
 				Tokenizer lexer = new Tokenizer (reader, file, ctx);
 				int token, tokens = 0, errors = 0;
 
@@ -152,7 +132,7 @@ namespace Mono.CSharp
 			}
 
 			input.Position = 0;
-			SeekableStreamReader reader = new SeekableStreamReader (input, encoding);
+			SeekableStreamReader reader = new SeekableStreamReader (input, RootContext.Encoding);
 
 			Parse (reader, file, module);
 			reader.Dispose ();
@@ -459,7 +439,7 @@ namespace Mono.CSharp
 
 			var cu = Location.SourceFiles;
 			for (int i = 0; i < cu.Count; ++i) {
-				if (tokenize) {
+				if (RootContext.TokenizeOnly) {
 					tokenize_file (cu [i], ctx);
 				} else {
 					Parse (cu [i], module);
@@ -509,16 +489,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public static string OutputFile
-		{
-			set {
-				output_file = value;
-			}
-			get {
-				return Path.GetFileName (output_file);
-			}
-		}
-
 		void SetWarningLevel (string s)
 		{
 			int level = -1;
@@ -558,7 +528,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--parse":
-				parse_only = true;
+				RootContext.ParseOnly = true;
 				return true;
 				
 			case "--main": case "-m":
@@ -591,7 +561,7 @@ namespace Mono.CSharp
 				return true;
 
 			case "--tokenize": 
-				tokenize = true;
+				RootContext.TokenizeOnly = true;
 				return true;
 				
 			case "-o": 
@@ -601,7 +571,7 @@ namespace Mono.CSharp
 					Usage ();
 					Environment.Exit (1);
 				}
-				OutputFile = args [++i];
+				RootContext.OutputFile = args [++i];
 				return true;
 
 			case "--checked":
@@ -884,7 +854,7 @@ namespace Mono.CSharp
 					Error_RequiresFileName (option);
 					break;
 				}
-				OutputFile = value;
+				RootContext.OutputFile = value;
 				return true;
 
 			case "/o":
@@ -1280,15 +1250,14 @@ namespace Mono.CSharp
 			case "/codepage":
 				switch (value) {
 				case "utf8":
-					encoding = new UTF8Encoding();
+					RootContext.Encoding = new UTF8Encoding();
 					break;
 				case "reset":
-					encoding = Encoding.Default;
+					RootContext.Encoding = Encoding.Default;
 					break;
 				default:
 					try {
-						encoding = Encoding.GetEncoding (
-						Int32.Parse (value));
+						RootContext.Encoding = Encoding.GetEncoding (Int32.Parse (value));
 					} catch {
 						Report.Error (2016, "Code page `{0}' is invalid or not installed", value);
 					}
@@ -1411,7 +1380,7 @@ namespace Mono.CSharp
 			if (Report.Errors > 0)
 				return false;
 
-			if (tokenize || parse_only)
+			if (RootContext.TokenizeOnly || RootContext.ParseOnly)
 				return true;
 
 			if (RootContext.ToplevelTypes.NamespaceEntry != null)
@@ -1420,6 +1389,7 @@ namespace Mono.CSharp
 			//
 			// Quick hack
 			//
+			var output_file = RootContext.OutputFile;
 			if (output_file == null){
 				if (first_source == null){
 					Report.Error (1562, "If no source files are specified you must specify the output file with -out:");
@@ -1565,7 +1535,6 @@ namespace Mono.CSharp
 		
 		public static void Reset (bool full_flag)
 		{
-			Driver.Reset ();
 			CSharpParser.yacc_verbose_flag = 0;
 			Location.Reset ();
 

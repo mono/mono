@@ -782,7 +782,7 @@ namespace Mono.CSharp {
 					}
 
 					if (orig_sec_assembly == null) {
-						string file = Path.Combine (orig_version_path, Driver.OutputFile);
+						string file = Path.Combine (orig_version_path, RootContext.OutputFile);
 						orig_sec_assembly = Assembly.LoadFile (file);
 					}
 
