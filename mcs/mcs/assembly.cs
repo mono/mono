@@ -1031,4 +1031,103 @@ namespace Mono.CSharp
 			ctx.Report.RuntimeMissingSupport (Location.Null, "-target:module");
 		}
 	}
+
+	abstract class AssemblyReferencesLoader<T>
+	{
+		protected readonly CompilerContext compiler;
+
+		protected readonly List<string> paths;
+		readonly string[] default_references;
+
+		public AssemblyReferencesLoader (CompilerContext compiler)
+		{
+			this.compiler = compiler;
+
+			if (RootContext.LoadDefaultReferences)
+				default_references = GetDefaultReferences ();
+			else
+				default_references = new string[0];
+
+			paths = new List<string> ();
+			paths.AddRange (RootContext.ReferencesLookupPaths);
+			paths.Add (GetSystemDir ());
+			paths.Add (Directory.GetCurrentDirectory ());
+			// TODO: should remove redundant paths
+		}
+
+		public abstract bool HasObjectType (T assembly);
+		protected abstract string[] GetDefaultReferences ();
+		public abstract T LoadAssemblyFile (string fileName);
+		public abstract T LoadAssemblyDefault (string assembly);
+		public abstract void LoadReferences (ModuleContainer module);
+
+		protected void Error_FileNotFound (string fileName)
+		{
+			compiler.Report.Error (6, "Metadata file `{0}' could not be found", fileName);
+		}
+
+		protected void Error_FileCorrupted (string fileName)
+		{
+			compiler.Report.Error (9, "Metadata file `{0}' does not contain valid metadata", fileName);
+		}
+
+		//
+		// Returns the directory where the system assemblies are installed
+		//
+		static string GetSystemDir ()
+		{
+			return Path.GetDirectoryName (typeof (object).Assembly.Location);
+		}
+
+		protected void LoadReferencesCore (ModuleContainer module, out T corlib_assembly, out List<Tuple<RootNamespace, T>> loaded)
+		{
+			loaded = new List<Tuple<RootNamespace, T>> ();
+
+			//
+			// Load mscorlib.dll as the first
+			//
+			if (RootContext.StdLib) {
+				corlib_assembly = LoadAssemblyDefault ("mscorlib.dll");
+			} else {
+				corlib_assembly = default (T);
+			}
+
+			T a;
+			foreach (string r in default_references) {
+				a = LoadAssemblyDefault (r);
+				if (a != null)
+					loaded.Add (Tuple.Create (module.GlobalRootNamespace, a));
+			}
+
+			foreach (string r in RootContext.AssemblyReferences) {
+				a = LoadAssemblyFile (r);
+				if (a == null || EqualityComparer<T>.Default.Equals (a, corlib_assembly))
+					continue;
+
+				var key = Tuple.Create (module.GlobalRootNamespace, a);
+				if (loaded.Contains (key))
+					continue;
+
+				// A corlib assembly is the first assembly which contains System.Object
+				if (corlib_assembly == null && HasObjectType (a)) {
+					corlib_assembly = a;
+					continue;
+				}
+
+				loaded.Add (key);
+			}
+
+			foreach (var entry in RootContext.AssemblyReferencesAliases) {
+				a = LoadAssemblyFile (entry.Item2);
+				if (a == null)
+					continue;
+
+				var key = Tuple.Create (module.CreateRootNamespace (entry.Item1), a);
+				if (loaded.Contains (key))
+					continue;
+
+				loaded.Add (key);
+			}
+		}
+	}
 }

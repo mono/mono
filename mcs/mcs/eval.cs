@@ -874,7 +874,7 @@ namespace Mono.CSharp {
 		static public void LoadAssembly (string file)
 		{
 			lock (evaluator_lock){
-				var a = loader.LoadAssemblyFile (file, false);
+				var a = loader.LoadAssemblyFile (file);
 				if (a != null)
 					loader.Importer.ImportAssembly (a, RootContext.ToplevelTypes.GlobalRootNamespace);
 			}

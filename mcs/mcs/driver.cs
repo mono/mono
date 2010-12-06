@@ -1390,18 +1390,23 @@ namespace Mono.CSharp
 			// Quick hack
 			//
 			var output_file = RootContext.OutputFile;
-			if (output_file == null){
-				if (first_source == null){
+			string output_file_name;
+			if (output_file == null) {
+				if (first_source == null) {
 					Report.Error (1562, "If no source files are specified you must specify the output file with -out:");
 					return false;
 				}
-					
+
 				int pos = first_source.LastIndexOf ('.');
 
 				if (pos > 0)
 					output_file = first_source.Substring (0, pos) + RootContext.TargetExt;
 				else
 					output_file = first_source + RootContext.TargetExt;
+
+				output_file_name = output_file;
+			} else {
+				output_file_name = Path.GetFileName (output_file);
 			}
 
 			//
@@ -1410,7 +1415,7 @@ namespace Mono.CSharp
 			if (timestamps)
 				stopwatch = Stopwatch.StartNew ();
 
-			var assembly = module.MakeExecutable (output_file, output_file);
+			var assembly = module.MakeExecutable (output_file_name, output_file);
 
 			var importer = new ReflectionImporter (ctx.BuildinTypes);
 			assembly.Importer = importer;

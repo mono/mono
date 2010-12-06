@@ -22,7 +22,6 @@ namespace Mono.CSharp
 	public class ReflectionImporter : MetadataImporter
 	{
 		public ReflectionImporter (BuildinTypes buildin)
-			: base ()
 		{
 			Initialize (buildin);
 		}
@@ -233,27 +232,17 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class DynamicLoader
+	//
+	// Reflection based references loader
+	//
+	class DynamicLoader : AssemblyReferencesLoader<Assembly>
 	{
 		readonly ReflectionImporter importer;
-		readonly Report reporter;
-
-		// A list of default references, they can fail to load as the user didn't not specify them
-		string[] default_references;
-
-		List<string> paths;
 
 		public DynamicLoader (ReflectionImporter importer, CompilerContext compiler)
+			: base (compiler)
 		{
 			this.importer = importer;
-			this.reporter = compiler.Report;
-
-			default_references = GetDefaultReferences ();
-
-			paths = new List<string> ();
-			paths.AddRange (RootContext.ReferencesLookupPaths);
-			paths.Add (GetSystemDir ());
-			paths.Add (Directory.GetCurrentDirectory ());
 		}
 
 		public ReflectionImporter Importer {
@@ -262,67 +251,13 @@ namespace Mono.CSharp
 			}
 		}
 
-		void Error6 (string name, string log)
+		public override bool HasObjectType (Assembly assembly)
 		{
-			if (log != null && log.Length > 0)
-				reporter.ExtraInformation (Location.Null, "Log:\n" + log + "\n(log related to previous ");
-			reporter.Error (6, "cannot find metadata file `{0}'", name);
+			return assembly.GetType (compiler.BuildinTypes.Object.FullName) != null;
 		}
 
-		void Error9 (string type, string filename, string log)
+		protected override string[] GetDefaultReferences ()
 		{
-			if (log != null && log.Length > 0)
-				reporter.ExtraInformation (Location.Null, "Log:\n" + log + "\n(log related to previous ");
-			reporter.Error (9, "file `{0}' has invalid `{1}' metadata", filename, type);
-		}
-
-		void BadAssembly (string filename, string log)
-		{
-/*
-			MethodInfo adder_method = null; // AssemblyDefinition.AddModule_Method;
-
-			if (adder_method != null) {
-				AssemblyName an = new AssemblyName ();
-				an.Name = ".temp";
-				var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
-				try {
-					object m = null;
-					try {
-						m = adder_method.Invoke (ab, new object [] { filename });
-					} catch (TargetInvocationException ex) {
-						throw ex.InnerException;
-					}
-
-					if (m != null) {
-						Report.Error (1509, "Referenced file `{0}' is not an assembly. Consider using `-addmodule' option instead",
-										Path.GetFileName (filename));
-						return;
-					}
-				} catch (FileNotFoundException) {
-					// did the file get deleted during compilation? who cares? swallow the exception
-				} catch (BadImageFormatException) {
-					// swallow exception
-				} catch (FileLoadException) {
-					// swallow exception
-				}
-			}
-*/
-			Error9 ("assembly", filename, log);
-		}
-
-		//
-		// Returns the directory where the system assemblies are installed
-		//
-		static string GetSystemDir ()
-		{
-			return Path.GetDirectoryName (typeof (object).Assembly.Location);
-		}
-
-		string[] GetDefaultReferences ()
-		{
-			if (!RootContext.LoadDefaultReferences)
-				return new string [0];
-
 			//
 			// For now the "default config" is harcoded into the compiler
 			// we can move this outside later
@@ -345,7 +280,12 @@ namespace Mono.CSharp
 			return default_references.ToArray ();
 		}
 
-		public Assembly LoadAssemblyFile (string assembly, bool soft)
+		public override Assembly LoadAssemblyFile (string fileName)
+		{
+			return LoadAssemblyFile (fileName, false);
+		}
+
+		Assembly LoadAssemblyFile (string assembly, bool soft)
 		{
 			Assembly a = null;
 			string total_log = "";
@@ -380,19 +320,20 @@ namespace Mono.CSharp
 						}
 					}
 					if (err) {
-						Error6 (assembly, total_log);
+						Error_FileNotFound (assembly);
 						return a;
 					}
 				}
-			} catch (BadImageFormatException f) {
-				// .NET 2.0 throws this if we try to load a module without an assembly manifest ...
-				BadAssembly (f.FileName, f.FusionLog);
-			} catch (FileLoadException f) {
-				// ... while .NET 1.1 throws this
-				BadAssembly (f.FileName, f.FusionLog);
+			} catch (BadImageFormatException) {
+				Error_FileCorrupted (assembly);
 			}
 
 			return a;
+		}
+
+		public override Assembly LoadAssemblyDefault (string fileName)
+		{
+			return LoadAssemblyFile (fileName, true);
 		}
 
 		void LoadModule (AssemblyDefinition assembly, string module)
@@ -418,66 +359,12 @@ namespace Mono.CSharp
 						}
 					}
 					if (err) {
-						Error6 (module, total_log);
+						Error_FileNotFound (module);
 						return;
 					}
 				}
-			} catch (BadImageFormatException f) {
-				Error9 ("module", f.FileName, f.FusionLog);
-			} catch (FileLoadException f) {
-				Error9 ("module", f.FileName, f.FusionLog);
-			}
-		}
-
-		/// <summary>
-		///   Loads all assemblies referenced on the command line
-		/// </summary>
-		public void LoadReferences (ModuleContainer module)
-		{
-			Assembly a;
-			var loaded = new List<Tuple<RootNamespace, Assembly>> ();
-
-			//
-			// Load Core Library for default compilation
-			//
-			if (RootContext.StdLib) {
-				a = LoadAssemblyFile ("mscorlib", false);
-				if (a != null)
-					loaded.Add (Tuple.Create (module.GlobalRootNamespace, a));
-			}
-
-			foreach (string r in default_references) {
-				a = LoadAssemblyFile (r, true);
-				if (a != null)
-					loaded.Add (Tuple.Create (module.GlobalRootNamespace, a));
-			}
-
-			foreach (string r in RootContext.AssemblyReferences) {
-				a = LoadAssemblyFile (r, false);
-				if (a == null)
-					continue;
-
-				var key = Tuple.Create (module.GlobalRootNamespace, a);
-				if (loaded.Contains (key))
-					continue;
-
-				loaded.Add (key);
-			}
-
-			foreach (var entry in RootContext.AssemblyReferencesAliases) {
-				a = LoadAssemblyFile (entry.Item2, false);
-				if (a == null)
-					continue;
-
-				var key = Tuple.Create (module.CreateRootNamespace (entry.Item1), a);
-				if (loaded.Contains (key))
-					continue;
-
-				loaded.Add (key);
-			}
-
-			foreach (var entry in loaded) {
-				importer.ImportAssembly (entry.Item2, entry.Item1);
+			} catch (BadImageFormatException) {
+				Error_FileCorrupted (module);
 			}
 		}
 
@@ -488,6 +375,21 @@ namespace Mono.CSharp
 
 			foreach (var module in RootContext.Modules) {
 				LoadModule (assembly, module);
+			}
+		}
+
+		public override void LoadReferences (ModuleContainer module)
+		{
+			Assembly corlib;
+			List<Tuple<RootNamespace, Assembly>> loaded;
+			base.LoadReferencesCore (module, out corlib, out loaded);
+
+			if (corlib == null)
+				return;
+
+			importer.ImportAssembly (corlib, module.GlobalRootNamespace);
+			foreach (var entry in loaded) {
+				importer.ImportAssembly (entry.Item2, entry.Item1);
 			}
 		}
 	}

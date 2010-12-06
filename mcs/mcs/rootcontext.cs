@@ -110,7 +110,7 @@ namespace Mono.CSharp {
 				output_file = value;
 			}
 			get {
-				return Path.GetFileName (output_file);
+				return output_file;
 			}
 		}
 
