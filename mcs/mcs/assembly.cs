@@ -301,7 +301,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				builder_extra.AddTypeForwarder (t, a.Location);
+				builder_extra.AddTypeForwarder (t.GetDefinition (), a.Location);
 				return;
 			}
 
