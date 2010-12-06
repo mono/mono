@@ -455,12 +455,10 @@ namespace Mono.CSharp
 							}
 						} else if (value == Missing.Value) {
 							default_value = EmptyExpression.MissingValue;
-						} else {
-							if (ptype == TypeManager.decimal_type)
-								default_value = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (p));
-
-							if (default_value == null)
-								default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
+						} else if (value == null) {
+							default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
+						} else if (ptype == TypeManager.decimal_type) {
+							default_value = ImportParameterConstant (value).Resolve (null);
 						}
 					}
 				}
