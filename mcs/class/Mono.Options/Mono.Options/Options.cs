@@ -933,8 +933,10 @@ namespace Mono.Options
 					IEnumerator<string> c = sources [sources.Count-1];
 					if (c.MoveNext ())
 						yield return c.Current;
-					else
+					else {
+						c.Dispose ();
 						sources.RemoveAt (sources.Count-1);
+					}
 				} while (sources.Count > 0);
 			}
 
