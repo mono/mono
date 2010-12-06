@@ -72,7 +72,7 @@ namespace MonoTests.System.Xaml
 			xw.WriteValue ("v");
 			xw.WriteEndMember ();
 			xw.Close ();
-			Assert.IsNotNull (Context, "premise#2");
+			Assert.IsNotNull (Provider, "premise#2"); // cannot get Context, it does not give IValueSerializerContext in the test.
 			GetServiceCoreWriter ();
 		}
 		

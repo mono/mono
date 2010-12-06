@@ -944,6 +944,14 @@ namespace MonoTests.System.Xaml
 
 			Assert.AreEqual (ReadXml ("NamedItems2.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_XmlSerializableWrapper ()
+		{
+			var obj = new XmlSerializableWrapper (new XmlSerializable ("<root/>"));
+			Assert.AreEqual (ReadXml ("XmlSerializableWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

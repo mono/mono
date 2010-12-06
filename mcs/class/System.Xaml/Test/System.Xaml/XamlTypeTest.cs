@@ -739,6 +739,16 @@ namespace MonoTests.System.Xaml
 				foreach (var xt2 in XamlLanguage.AllTypes)
 					Assert.AreEqual (xt1.UnderlyingType.IsAssignableFrom (xt2.UnderlyingType), xt2.CanAssignTo (xt1), "{0} to {1}", xt1, xt2);
 			Assert.IsTrue (XamlLanguage.Type.CanAssignTo (XamlLanguage.Object), "x#1"); // specific test
+			Assert.IsFalse (new MyXamlType ("MyFooBar", null, sctx).CanAssignTo (XamlLanguage.String), "x#2"); // custom type to string -> false
+			Assert.IsTrue (new MyXamlType ("MyFooBar", null, sctx).CanAssignTo (XamlLanguage.Object), "x#3"); // custom type to object -> true!
+		}
+
+		[Test]
+		public void IsXData ()
+		{
+			var sctx = new XamlSchemaContext ();
+			Assert.IsFalse (XamlLanguage.XData.IsXData, "#1"); // yes, it is false.
+			Assert.IsTrue (sctx.GetXamlType (typeof (XmlSerializable)).IsXData, "#2");
 		}
 	}
 

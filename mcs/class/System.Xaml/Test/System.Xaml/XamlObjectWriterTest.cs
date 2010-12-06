@@ -1176,5 +1176,18 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (des.References [0].References [0], des.References [1].References [0], "#7");
 			}
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Write_XmlSerializableWrapper ()
+		{
+			var assns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+			using (var xr = GetReader ("XmlSerializableWrapper.xml")) {
+				var des = (XmlSerializableWrapper) XamlServices.Load (xr);
+				Assert.IsNotNull (des, "#1");
+				Assert.IsNotNull (des.Value, "#2");
+				Assert.AreEqual ("<root xmlns=\"" + assns + "\" />", des.Value.GetRaw (), "#3");
+			}
+		}
 	}
 }

@@ -589,5 +589,14 @@ namespace MonoTests.System.Xaml
 			var xr = new XamlObjectReader (obj);
 			Read_NamedItems2 (xr, true);
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_XmlSerializableWrapper ()
+		{
+			var obj = new XmlSerializableWrapper (new XmlSerializable ("<root/>"));
+			var xr = new XamlObjectReader (obj);
+			Read_XmlSerializableWrapper (xr, true);
+		}
 	}
 }

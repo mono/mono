@@ -25,11 +25,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace MonoTests.System.Xaml
 {
@@ -446,7 +450,6 @@ namespace MonoTests.System.Xaml
 		public TypeExtension Param { get; set; }
 	}
 	
-	// FIXME: test it with XamlXmlReader (needs to create xml first)
 	public class XDataWrapper
 	{
 		public XData Markup { get; set; }
@@ -509,7 +512,6 @@ namespace MonoTests.System.Xaml
 		{
 			//Console.Error.WriteLine ("### {0}:{1}", sourceType, context);
 			ValueSerializerContextTest.Context = (IValueSerializerContext) context;
-			NUnit.Framework.Assert.AreEqual (typeof (string), sourceType, "CanConvertFrom#1");
 			return true;
 		}
 		
@@ -529,6 +531,66 @@ namespace MonoTests.System.Xaml
 			//Console.Error.WriteLine ("$$$ {0}:{1}", destinationType, context);
 			ValueSerializerContextTest.Context = (IValueSerializerContext) context;
 			return destinationType != typeof (MarkupExtension);
+		}
+	}
+
+	[ContentProperty ("Value")]
+	public class XmlSerializableWrapper
+	{
+		public XmlSerializableWrapper () // mandatory
+			: this (new XmlSerializable ())
+		{
+		}
+
+		public XmlSerializableWrapper (XmlSerializable val)
+		{
+			this.val = val;
+		}
+
+		XmlSerializable val;
+
+		public XmlSerializable Value {
+			get { return val; }
+			// To make it become XData, it cannot have a setter.
+		}
+	}
+
+	public class XmlSerializable : IXmlSerializable
+	{
+		public XmlSerializable ()
+		{
+		}
+
+		public XmlSerializable (string raw)
+		{
+			this.raw = raw;
+		}
+
+		string raw;
+
+		public string GetRaw ()
+		{
+			return raw;
+		}
+
+		public void ReadXml (XmlReader reader)
+		{
+			reader.MoveToContent ();
+			raw = reader.ReadOuterXml ();
+		}
+		
+		public void WriteXml (XmlWriter writer)
+		{
+			if (raw != null) {
+				var xr = XmlReader.Create (new StringReader (raw));
+				while (!xr.EOF)
+					writer.WriteNode (xr, false);
+			}
+		}
+		
+		public XmlSchema GetSchema ()
+		{
+			return null;
 		}
 	}
 }

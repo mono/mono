@@ -518,5 +518,13 @@ namespace MonoTests.System.Xaml
 			var r = GetReader ("NamedItems2.xml");
 			Read_NamedItems2 (r, false);
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_XmlSerializableWrapper ()
+		{
+			var r = GetReader ("XmlSerializableWrapper.xml");
+			Read_XmlSerializableWrapper (r, false);
+		}
 	}
 }

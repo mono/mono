@@ -28,6 +28,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml.Schema;
+using System.Xml.Serialization;
 
 namespace System.Xaml
 {
@@ -301,7 +302,7 @@ namespace System.Xaml
 		public virtual bool CanAssignTo (XamlType xamlType)
 		{
 			if (this.UnderlyingType == null)
-				return true;
+				return xamlType == XamlLanguage.Object;
 			var ut = xamlType.UnderlyingType ?? typeof (object);
 			return ut.IsAssignableFrom (UnderlyingType);
 		}
@@ -597,9 +598,7 @@ namespace System.Xaml
 
 		protected virtual bool LookupIsXData ()
 		{
-			// huh? XamlLanguage.XData.IsXData returns false(!)
-			// return typeof (XData).IsAssignableFrom (UnderlyingType);
-			return false;
+			return CanAssignTo (SchemaContext.GetXamlType (typeof (IXmlSerializable)));
 		}
 
 		protected virtual XamlType LookupItemType ()
