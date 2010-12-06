@@ -1873,8 +1873,12 @@ namespace Mono.CSharp {
 			// Close base type container first to avoid TypeLoadException
 			if (spec.BaseType != null) {
 				var btype = spec.BaseType.MemberDefinition as TypeContainer;
-				if (btype != null)
+				if (btype != null) {
 					btype.CloseType ();
+
+					if ((caching_flags & Flags.CloseTypeCreated) != 0)
+						return;
+				}
 			}
 
 			try {
