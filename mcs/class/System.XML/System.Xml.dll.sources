@@ -145,6 +145,7 @@ System.Xml/XmlQualifiedName.cs
 System.Xml/XmlReader.cs
 System.Xml/XmlReaderBinarySupport.cs
 System.Xml/XmlReaderSettings.cs
+System.Xml/DtdProcessing.cs
 System.Xml/XmlResolver.cs
 System.Xml/XmlSecureResolver.cs
 System.Xml/XmlSignificantWhitespace.cs

@@ -60,7 +60,7 @@ namespace System.Xml
 		private ValidationType validationType;
 #endif
 		private XmlResolver xmlResolver;
-#if MOONLIGHT
+#if MOONLIGHT || NET_4_0
 		private DtdProcessing dtdProcessing;
 		private long maxCharactersFromEntities;
 		private long maxCharactersInDocument;
@@ -118,7 +118,7 @@ namespace System.Xml
 			get { return conformance; }
 			set { conformance = value; }
 		}
-#if MOONLIGHT
+#if MOONLIGHT || NET_4_0
 		public DtdProcessing DtdProcessing {
 			get { return dtdProcessing; }
 			set {

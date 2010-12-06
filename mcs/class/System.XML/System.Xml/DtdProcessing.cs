@@ -28,7 +28,7 @@
 
 
 namespace System.Xml {
-#if NET_2_1
+#if NET_2_1 || NET_4_0
 	public enum DtdProcessing 
 	{
 		Prohibit = 0,
