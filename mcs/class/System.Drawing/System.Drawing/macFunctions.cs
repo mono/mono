@@ -72,8 +72,9 @@ namespace System.Drawing {
 
 			var isFlipped = bool_objc_msgSend (handle, sel_registerName ("isFlipped"));
 			if (isFlipped) {
+				CGContextSaveGState (ctx);
 				CGContextTranslateCTM (ctx, bounds.origin.x, bounds.size.height);
-				CGContextScaleCTM(ctx,1.0f,-1.0f);
+				CGContextScaleCTM (ctx,1.0f,-1.0f);
 			}
 
 			return new CocoaContext (ctx, (int) bounds.size.width, (int) bounds.size.height);
@@ -353,6 +354,7 @@ namespace System.Drawing {
 
 		public void Release ()
 		{
+			MacSupport.CGContextRestoreGState(ctx);
 		}
 	}
 
