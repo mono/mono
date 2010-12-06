@@ -310,7 +310,7 @@ namespace System.Net {
 						throw new HttpListenerException (400, "There's another listener for " + prefix);
 					return;
 				}
-				plock.AcquireWriterLock (-1);
+				plock.UpgradeToWriterLock (-1);
 				prefixes [prefix] = listener;
 			} finally {
 				try {
