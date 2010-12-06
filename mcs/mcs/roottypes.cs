@@ -387,18 +387,6 @@ namespace Mono.CSharp
 		{
 			return DeclaringAssembly.IsCLSCompliant;
 		}
-		
-		public AssemblyDefinition MakeExecutable (string name)
-		{
-			assembly = new AssemblyDefinition (this, name);
-			return assembly;
-		}
-		
-		public AssemblyDefinition MakeExecutable (string name, string fileName)
-		{
-			assembly = new AssemblyDefinition (this, name, fileName);
-			return assembly;
-		}
 
 		//
 		// Makes an initialized struct, returns the field builder that
@@ -494,6 +482,12 @@ namespace Mono.CSharp
 				a.Resolve ();
 			}
 			return a;
+		}
+
+		public void SetDeclaringAssembly (AssemblyDefinition assembly)
+		{
+			// TODO: This setter is quite ugly but I have not found a way around it yet
+			this.assembly = assembly;
 		}
 	}
 

@@ -130,7 +130,8 @@ namespace Mono.CSharp {
 				var importer = new ReflectionImporter (ctx.BuildinTypes);
 				loader = new DynamicLoader (importer, ctx);
 
-				RootContext.ToplevelTypes.MakeExecutable ("temp");
+				RootContext.ToplevelTypes.SetDeclaringAssembly (new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, "temp"));
+
 				loader.LoadReferences (RootContext.ToplevelTypes);
 				ctx.BuildinTypes.CheckDefinitions (RootContext.ToplevelTypes);
 				RootContext.ToplevelTypes.InitializePredefinedTypes ();
@@ -399,8 +400,9 @@ namespace Mono.CSharp {
 				}
 
 				try {
-					var a = RootContext.ToplevelTypes.MakeExecutable ("temp");
+					var a = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, "temp");
 					a.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Run);
+					RootContext.ToplevelTypes.SetDeclaringAssembly (a);
 					RootContext.ToplevelTypes.Define ();
 					if (ctx.Report.Errors != 0)
 						return null;
@@ -680,16 +682,17 @@ namespace Mono.CSharp {
 		
 		static CompiledMethod CompileBlock (Class host, Undo undo, Report Report)
 		{
-			AssemblyDefinition assembly;
+			AssemblyDefinitionDynamic assembly;
 
 			if (Environment.GetEnvironmentVariable ("SAVE") != null) {
-				assembly = RootContext.ToplevelTypes.MakeExecutable (current_debug_name, current_debug_name);
+				assembly = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, current_debug_name, current_debug_name);
 				assembly.Importer = loader.Importer;
 			} else {
-				assembly = RootContext.ToplevelTypes.MakeExecutable (current_debug_name);
+				assembly = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, current_debug_name);
 			}
 
 			assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.RunAndSave);
+			RootContext.ToplevelTypes.SetDeclaringAssembly (assembly);
 			RootContext.ToplevelTypes.Define ();
 
 			if (Report.Errors != 0){

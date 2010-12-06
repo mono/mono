@@ -96,6 +96,72 @@ namespace Mono.CSharp
 		}
 	}
 
+	class AssemblyDefinitionDynamic : AssemblyDefinition
+	{
+		//
+		// In-memory only assembly container
+		//
+		public AssemblyDefinitionDynamic (ModuleContainer module, string name)
+			: base (module, name)
+		{
+		}
+
+		//
+		// Assembly container with file output
+		//
+		public AssemblyDefinitionDynamic (ModuleContainer module, string name, string fileName)
+			: base (module, name, fileName)
+		{
+		}
+
+		public override ModuleBuilder CreateModuleBuilder ()
+		{
+			if (file_name == null)
+				return Builder.DefineDynamicModule (Name, false);
+
+			return base.CreateModuleBuilder ();
+		}
+
+		//
+		// Initializes the code generator
+		//
+		public bool Create (AppDomain domain, AssemblyBuilderAccess access)
+		{
+			ResolveAssemblySecurityAttributes ();
+			var an = CreateAssemblyName ();
+
+			try {
+				Builder = file_name == null ?
+					domain.DefineDynamicAssembly (an, access) :
+					domain.DefineDynamicAssembly (an, access, Dirname (file_name));
+			} catch (ArgumentException) {
+				// specified key may not be exportable outside it's container
+				if (RootContext.StrongNameKeyContainer != null) {
+					Report.Error (1548, "Could not access the key inside the container `" +
+						RootContext.StrongNameKeyContainer + "'.");
+				}
+				throw;
+			}
+
+			builder_extra = new AssemblyBuilderMonoSpecific (Builder, Compiler);
+			return true;
+		}
+
+		static string Dirname (string name)
+		{
+			int pos = name.LastIndexOf ('/');
+
+			if (pos != -1)
+				return name.Substring (0, pos);
+
+			pos = name.LastIndexOf ('\\');
+			if (pos != -1)
+				return name.Substring (0, pos);
+
+			return ".";
+		}
+	}
+
 	//
 	// Extension to System.Reflection.Emit.AssemblyBuilder to have fully compatible
 	// compiler

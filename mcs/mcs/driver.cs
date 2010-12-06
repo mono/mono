@@ -1415,7 +1415,8 @@ namespace Mono.CSharp
 			if (timestamps)
 				stopwatch = Stopwatch.StartNew ();
 
-			var assembly = module.MakeExecutable (output_file_name, output_file);
+			var assembly = new AssemblyDefinitionDynamic (module, output_file_name, output_file);
+			module.SetDeclaringAssembly (assembly);
 
 			var importer = new ReflectionImporter (ctx.BuildinTypes);
 			assembly.Importer = importer;

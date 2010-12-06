@@ -35,11 +35,11 @@ namespace Mono.CSharp
 		byte[] GetPublicKeyToken ();
 	}
                 
-	public class AssemblyDefinition : IAssemblyDefinition
+	public abstract class AssemblyDefinition : IAssemblyDefinition
 	{
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
-		AssemblyBuilderExtension builder_extra;
+		protected AssemblyBuilderExtension builder_extra;
 		MonoSymbolWriter symbol_writer;
 
 		bool is_cls_compliant;
@@ -47,8 +47,8 @@ namespace Mono.CSharp
 		bool wrap_non_exception_throws_custom;
 
 		ModuleContainer module;
-		string name;
-		string file_name;
+		readonly string name;
+		protected readonly string file_name;
 
 		byte[] public_key, public_key_token;
 		bool delay_sign;
@@ -65,10 +65,7 @@ namespace Mono.CSharp
 		Dictionary<ITypeDefinition, Attribute> emitted_forwarders;
 		AssemblyAttributesPlaceholder module_target_attrs;
 
-		//
-		// In-memory only assembly container
-		//
-		public AssemblyDefinition (ModuleContainer module, string name)
+		protected AssemblyDefinition (ModuleContainer module, string name)
 		{
 			this.module = module;
 			this.name = Path.GetFileNameWithoutExtension (name);
@@ -87,10 +84,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		//
-		// Assembly container with file output
-		//
-		public AssemblyDefinition (ModuleContainer module, string name, string fileName)
+		protected AssemblyDefinition (ModuleContainer module, string name, string fileName)
 			: this (module, name)
 		{
 			this.file_name = fileName;
@@ -163,7 +157,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		Report Report {
+		protected Report Report {
 			get {
 				return Compiler.Report;
 			}
@@ -376,13 +370,8 @@ namespace Mono.CSharp
 			}
 		}
 
-		//
-		// Initializes the code generator
-		//
-		public bool Create (AppDomain domain, AssemblyBuilderAccess access)
+		protected AssemblyName CreateAssemblyName ()
 		{
-			ResolveAssemblySecurityAttributes ();
-
 			var an = new AssemblyName (name);
 
 			if (public_key != null && RootContext.Target != Target.Module) {
@@ -399,28 +388,13 @@ namespace Mono.CSharp
 				}
 			}
 
-			try {
-				Builder = file_name == null ?
-					domain.DefineDynamicAssembly (an, access) :
-					domain.DefineDynamicAssembly (an, access, Dirname (file_name));
-			} catch (ArgumentException) {
-				// specified key may not be exportable outside it's container
-				if (RootContext.StrongNameKeyContainer != null) {
-					Report.Error (1548, "Could not access the key inside the container `" +
-						RootContext.StrongNameKeyContainer + "'.");
-				}
-				throw;
-			}
-
-			builder_extra = new AssemblyBuilderMonoSpecific (Builder, Compiler);
-			return true;
+			return an;
 		}
 
-		public ModuleBuilder CreateModuleBuilder ()
+		public virtual ModuleBuilder CreateModuleBuilder ()
 		{
-			// Creates transient module
 			if (file_name == null)
-				return Builder.DefineDynamicModule (name, false);
+				throw new NotSupportedException ("transient module in static assembly");
 
 			var module_name = Path.GetFileName (file_name);
 
@@ -429,20 +403,6 @@ namespace Mono.CSharp
 			// adaptor will be needed for now we alwayas emit MDB format when generating
 			// debug info
 			return Builder.DefineDynamicModule (module_name, module_name, false);
-		}
-
-		static string Dirname (string name)
-		{
-			int pos = name.LastIndexOf ('/');
-
-			if (pos != -1)
-				return name.Substring (0, pos);
-
-			pos = name.LastIndexOf ('\\');
-			if (pos != -1)
-				return name.Substring (0, pos);
-
-			return ".";
 		}
 
 		public void Emit ()
@@ -661,7 +621,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		void ResolveAssemblySecurityAttributes ()
+		protected void ResolveAssemblySecurityAttributes ()
 		{
 			string key_file = null;
 			string key_container = null;
@@ -976,7 +936,7 @@ namespace Mono.CSharp
 	// compiler. This is a default implementation for framework System.Reflection.Emit
 	// which does not implement any of the methods
 	//
-	class AssemblyBuilderExtension
+	public class AssemblyBuilderExtension
 	{
 		readonly CompilerContext ctx;
 
