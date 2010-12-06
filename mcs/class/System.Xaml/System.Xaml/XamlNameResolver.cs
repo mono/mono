@@ -28,7 +28,6 @@ using System.Windows.Markup;
 
 namespace System.Xaml
 {
-	// FIXME: implement IXamlNameProvider (either within or outside this class)
 	internal class XamlNameResolver : IXamlNameResolver, IXamlNameProvider
 	{
 		public XamlNameResolver ()
@@ -48,16 +47,6 @@ namespace System.Xaml
 			public string Name { get; set; }
 			public object Value { get; set; }
 			public bool FullyInitialized { get; set; }
-		}
-		
-		internal class NameFixupRequired
-		{
-			public NameFixupRequired (string name)
-			{
-				Name = name;
-			}
-			
-			public string Name { get; set; }
 		}
 
 		Dictionary<string,NamedObject> objects = new Dictionary<string,NamedObject> ();
@@ -127,16 +116,14 @@ namespace System.Xaml
 			return GetName (val);
 		}
 		
-		[MonoTODO]
 		public object GetFixupToken (IEnumerable<string> names)
 		{
-			throw new NotImplementedException ();
+			return new NameFixupRequired (names, false);
 		}
 
-		[MonoTODO]
 		public object GetFixupToken (IEnumerable<string> names, bool canAssignDirectly)
 		{
-			throw new NotImplementedException ();
+			return new NameFixupRequired (names, canAssignDirectly);
 		}
 
 		public IEnumerable<KeyValuePair<string, object>> GetAllNamesAndValuesInScope ()
@@ -147,8 +134,8 @@ namespace System.Xaml
 
 		public object Resolve (string name)
 		{
-			bool dummy;
-			return Resolve (name, out dummy);
+			NamedObject ret;
+			return objects.TryGetValue (name, out ret) ? ret.Value : null;
 		}
 
 		public object Resolve (string name, out bool isFullyInitialized)
@@ -159,9 +146,25 @@ namespace System.Xaml
 				return ret.Value;
 			} else {
 				isFullyInitialized = false;
-				return new NameFixupRequired (name);
+				return null;
 			}
 		}
+	}
+	
+	internal class NameFixupRequired
+	{
+		public NameFixupRequired (IEnumerable<string> names, bool canAssignDirectly)
+		{
+			CanAssignDirectly = canAssignDirectly;
+			Names = names.ToArray ();
+		}
+		
+		public XamlType ParentType { get; set; }
+		public XamlMember ParentMember { get; set; }
+		public object ParentValue { get; set; }
+
+		public bool CanAssignDirectly { get; set; }
+		public IList<string> Names { get; set; }
 	}
 }
 

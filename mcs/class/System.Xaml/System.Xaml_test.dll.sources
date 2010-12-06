@@ -15,6 +15,7 @@ System.Xaml/AttachableMemberIdentifierTest.cs
 System.Xaml/DummyValueSerializerContext.cs
 System.Xaml/NamespaceDeclarationTest.cs
 System.Xaml/TestedTypes.cs
+System.Xaml/ValueSerializerContextTest.cs
 System.Xaml/XamlDirectiveTest.cs
 System.Xaml/XamlDuplicateMemberExceptionTest.cs
 System.Xaml/XamlLanguageTest.cs

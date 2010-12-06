@@ -78,7 +78,7 @@ namespace MonoTests.System.Windows.Markup
 		[Test]
 		public void ProvideValueWithNameWithProviderResolveSuccess ()
 		{
-			var x = new Reference ("X");
+			var x = new Reference ("Y");
 			var r = new NameServiceProvider (true, true);
 			Assert.AreEqual ("FOO", x.ProvideValue (r), "#1");
 		}
@@ -118,10 +118,12 @@ namespace MonoTests.System.Windows.Markup
 				throw new NotImplementedException ();
 			}
 			
+			// only X (which 'failed' to resolve) calls this
 			public object GetFixupToken (IEnumerable<string> names, bool canAssignDirectly)
 			{
 				Assert.IsTrue (canAssignDirectly, "canAssignDirectly");
 				Assert.AreEqual (1, names.Count (), "Count");
+				Assert.AreEqual ("X", names.First (), "name0");
 				return "BAR";
 			}
 			
@@ -131,6 +133,7 @@ namespace MonoTests.System.Windows.Markup
 			
 			public event EventHandler OnNameScopeInitializationComplete;
 
+			// both X and Y calls this.
 			public object Resolve (string name)
 			{
 				return resolves ? "FOO" : null;

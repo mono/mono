@@ -492,4 +492,43 @@ namespace MonoTests.System.Xaml
 		public string ItemName { get; set; }
 		public IList<NamedItem2> References { get; private set; }
 	}
+
+	[TypeConverter (typeof (TestValueConverter))]
+	public class TestValueSerialized
+	{
+		public TestValueSerialized ()
+		{
+		}
+
+		public string Foo { get; set; }
+	}
+
+	public class TestValueConverter : TypeConverter
+	{
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+		{
+			//Console.Error.WriteLine ("### {0}:{1}", sourceType, context);
+			ValueSerializerContextTest.Context = (IValueSerializerContext) context;
+			NUnit.Framework.Assert.AreEqual (typeof (string), sourceType, "CanConvertFrom#1");
+			return true;
+		}
+		
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object source)
+		{
+			//Console.Error.WriteLine ("##### {0}:{1}", source, context);
+			ValueSerializerContextTest.Provider = (IServiceProvider) context;
+			var sp = context as IServiceProvider;
+			// ValueSerializerContextTest.Context = (IValueSerializerContext) context; -> causes InvalidCastException
+			if ((source as string) == "v")
+				return new TestValueSerialized ();
+			throw new Exception ("huh");
+		}
+
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+		{
+			//Console.Error.WriteLine ("$$$ {0}:{1}", destinationType, context);
+			ValueSerializerContextTest.Context = (IValueSerializerContext) context;
+			return destinationType != typeof (MarkupExtension);
+		}
+	}
 }

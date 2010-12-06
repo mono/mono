@@ -55,19 +55,27 @@ namespace System.Xaml
 			XamlSetValueHandler = s.XamlSetValueHandler;
 		}
 
-		public XamlAccessLevel AccessLevel { get; set; }
 		public EventHandler<XamlObjectEventArgs> AfterBeginInitHandler { get; set; }
 		public EventHandler<XamlObjectEventArgs> AfterEndInitHandler { get; set; }
 		public EventHandler<XamlObjectEventArgs> AfterPropertiesHandler { get; set; }
 		public EventHandler<XamlObjectEventArgs> BeforePropertiesHandler { get; set; }
-		public INameScope ExternalNameScope { get; set; }
-		public bool IgnoreCanConvert { get; set; }
-		public bool PreferUnconvertedDictionaryKeys { get; set; }
-		public bool RegisterNamesOnExternalNamescope { get; set; }
-		public object RootObjectInstance { get; set; }
-		public bool SkipDuplicatePropertyCheck { get; set; }
-		public bool SkipProvideValueOnRoot { get; set; }
 		public EventHandler<XamlSetValueEventArgs> XamlSetValueHandler { get; set; }
 
+		[MonoTODO ("Ignored")]
+		public XamlAccessLevel AccessLevel { get; set; }
+		[MonoTODO ("Ignored")]
+		public INameScope ExternalNameScope { get; set; }
+		[MonoTODO ("Ignored")]
+		public bool IgnoreCanConvert { get; set; }
+		[MonoTODO ("Ignored")]
+		public bool PreferUnconvertedDictionaryKeys { get; set; }
+		[MonoTODO ("Ignored")]
+		public bool RegisterNamesOnExternalNamescope { get; set; }
+		[MonoTODO ("Ignored")]
+		public object RootObjectInstance { get; set; }
+		[MonoTODO ("Ignored")]
+		public bool SkipDuplicatePropertyCheck { get; set; }
+		[MonoTODO ("Ignored")]
+		public bool SkipProvideValueOnRoot { get; set; }
 	}
 }

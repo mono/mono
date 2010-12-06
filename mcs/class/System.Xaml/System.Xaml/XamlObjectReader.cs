@@ -115,10 +115,6 @@ namespace System.Xaml
 			get { return (PrefixLookup) value_serializer_context.GetService (typeof (INamespacePrefixLookup)); }
 		}
 
-		XamlNameResolver NameResolver {
-			get { return (XamlNameResolver) value_serializer_context.GetService (typeof (IXamlNameResolver)); }
-		}
-
 		// This property value is weird.
 		// - For root Type it returns TypeExtension.
 		// - For root Array it returns Array.

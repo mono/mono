@@ -208,7 +208,9 @@ namespace System.Xaml
 		
 		XamlObjectWriter source;
 		XamlSchemaContext sctx;
-		
+		INameScope name_scope = new NameScope ();
+		List<NameFixupRequired> pending_name_references = new List<NameFixupRequired> ();
+
 		public object Result { get; set; }
 		
 		protected override void OnWriteStartObject ()
@@ -254,10 +256,22 @@ namespace System.Xaml
 					throw new XamlObjectWriterException ("An error occured on getting provided value", ex);
 				}
 			}
-			StoreAppropriatelyTypedValue (obj, state.KeyValue);
+			var nfr = obj as NameFixupRequired;
+			if (nfr != null && object_states.Count > 0) { // IF the root object to be written is x:Reference, then the Result property will become the NameFixupRequired. That's what .NET also does.
+				// actually .NET seems to seek "parent" object in its own IXamlNameResolver implementation.
+				var pstate = object_states.Peek ();
+				nfr.ParentType = pstate.Type;
+				nfr.ParentMember = CurrentMember; // Note that it is a member of the pstate.
+				nfr.ParentValue = pstate.Value;
+				pending_name_references.Add ((NameFixupRequired) obj);
+			}
+			else
+				StoreAppropriatelyTypedValue (obj, state.KeyValue);
 			object_states.Push (state);
-			if (object_states.Count == 1)
+			if (object_states.Count == 1) {
 				Result = obj;
+				ResolvePendingReferences ();
+			}
 		}
 
 		Stack<object> escaped_objects = new Stack<object> ();
@@ -303,8 +317,11 @@ namespace System.Xaml
 				escaped_objects.Pop ();
 			} else if (xm == XamlLanguage.Initialization) {
 				// ... and no need to do anything. The object value to pop *is* the return value.
+			} else if (xm == XamlLanguage.Name || xm == state.Type.GetAliasedProperty (XamlLanguage.Name)) {
+				string name = (string) CurrentMemberState.Value;
+				name_scope.RegisterName (name, state.Value);
 			} else {
-				if (!xm.IsReadOnly) // exclude read-only object.
+				if (!xm.IsReadOnly) // exclude read-only object such as collection item.
 					SetValue (xm, CurrentMemberState.Value);
 			}
 		}
@@ -350,30 +367,42 @@ namespace System.Xaml
 			var ms = CurrentMemberState; // note that this retrieves parent's current property for EndObject.
 			if (ms != null) {
 				var state = object_states.Peek ();
+				var parent = state.Value;
+				var xt = state.Type;
 				var xm = ms.Member;
 				if (xm == XamlLanguage.Initialization) {
-					state.Value = GetCorrectlyTypedValue (state.Type, obj);
+					state.Value = GetCorrectlyTypedValue (xt, obj);
 					state.IsInstantiated = true;
 				}
 				else if (xm == XamlLanguage.Base)
 					ms.Value = GetCorrectlyTypedValue (xm.Type, obj);
+				else if (xm == XamlLanguage.Name || xm == xt.GetAliasedProperty (XamlLanguage.Name))
+					ms.Value = GetCorrectlyTypedValue (XamlLanguage.String, obj);
+				else if (xm == XamlLanguage.Key)
+					state.KeyValue = GetCorrectlyTypedValue (xt.KeyType, obj);
 				else {
-					var mt = xm.Type;
-					if (ms.Member == XamlLanguage.Items ||
-					    ms.Member == XamlLanguage.PositionalParameters ||
-					    ms.Member == XamlLanguage.Arguments) {
-						if (state.Type.IsDictionary)
-							mt.Invoker.AddToDictionary (state.Value, GetCorrectlyTypedValue (state.Type.KeyType, keyObj), GetCorrectlyTypedValue (state.Type.ItemType, obj));
-						else // collection. Note that state.Type isn't usable for PositionalParameters to identify collection kind.
-							state.Type.Invoker.AddToCollection (state.Value, GetCorrectlyTypedValue (state.Type.ItemType, obj));
-					} else if (!ms.Member.IsReadOnly) {
-						if (ms.Member == XamlLanguage.Key)
-							state.KeyValue = GetCorrectlyTypedValue (state.Type.KeyType, obj);
-						else
-							ms.Value = GetCorrectlyTypedValue (ms.Member.Type, obj);
+					if (!AddToCollectionIfAppropriate (xt, xm, parent, obj, keyObj)) {
+						if (!xm.IsReadOnly)
+							ms.Value = GetCorrectlyTypedValue (xm.Type, obj);
 					}
 				}
 			}
+		}
+
+		bool AddToCollectionIfAppropriate (XamlType xt, XamlMember xm, object parent, object obj, object keyObj)
+		{
+			var mt = xm.Type;
+			if (xm == XamlLanguage.Items ||
+			    xm == XamlLanguage.PositionalParameters ||
+			    xm == XamlLanguage.Arguments) {
+				if (xt.IsDictionary)
+					mt.Invoker.AddToDictionary (parent, GetCorrectlyTypedValue (xt.KeyType, keyObj), GetCorrectlyTypedValue (xt.ItemType, obj));
+				else // collection. Note that state.Type isn't usable for PositionalParameters to identify collection kind.
+					mt.Invoker.AddToCollection (parent, GetCorrectlyTypedValue (xt.ItemType, obj));
+				return true;
+			}
+			else
+				return false;
 		}
 
 		object GetCorrectlyTypedValue (XamlType xt, object value)
@@ -460,6 +489,25 @@ namespace System.Xaml
 				obj = state.Type.Invoker.CreateInstance (null);
 			state.Value = obj;
 			state.IsInstantiated = true;
+		}
+
+		internal IXamlNameResolver name_resolver {
+			get { return (IXamlNameResolver) service_provider.GetService (typeof (IXamlNameResolver)); }
+		}
+
+		void ResolvePendingReferences ()
+		{
+			foreach (var fixup in pending_name_references) {
+				foreach (var name in fixup.Names) {
+					bool isFullyInitialized;
+					// FIXME: sort out relationship between name_scope and name_resolver. (unify to name_resolver, probably)
+					var obj = name_scope.FindName (name) ?? name_resolver.Resolve (name, out isFullyInitialized);
+					if (obj == null)
+						throw new XamlObjectWriterException (String.Format ("Unresolved object reference '{0}' was found", name));
+					if (!AddToCollectionIfAppropriate (fixup.ParentType, fixup.ParentMember, fixup.ParentValue, obj, null)) // FIXME: is keyObj always null?
+						fixup.ParentMember.Invoker.SetValue (fixup.ParentValue, obj);
+				}
+			}
 		}
 	}
 }
