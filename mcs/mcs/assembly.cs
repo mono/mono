@@ -889,7 +889,7 @@ namespace Mono.CSharp
 			Report.Error (1548, "Error during assembly signing. " + text);
 		}
 
-		static string IsValidAssemblyVersion (string version)
+		static Version IsValidAssemblyVersion (string version)
 		{
 			Version v;
 			try {
@@ -908,7 +908,7 @@ namespace Mono.CSharp
 					return null;
 			}
 
-			return new Version (v.Major, System.Math.Max (0, v.Minor), System.Math.Max (0, v.Build), System.Math.Max (0, v.Revision)).ToString (4);
+			return new Version (v.Major, System.Math.Max (0, v.Minor), System.Math.Max (0, v.Build), System.Math.Max (0, v.Revision));
 		}
 	}
 
@@ -1021,7 +1021,7 @@ namespace Mono.CSharp
 			ctx.Report.RuntimeMissingSupport (loc, "AssemblyFlagsAttribute");
 		}
 
-		public virtual void SetVersion (string version, Location loc)
+		public virtual void SetVersion (Version version, Location loc)
 		{
 			ctx.Report.RuntimeMissingSupport (loc, "AssemblyVersionAttribute");
 		}

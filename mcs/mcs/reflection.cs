@@ -206,13 +206,13 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override void SetVersion (string version, Location loc)
+		public override void SetVersion (Version version, Location loc)
 		{
 			try {
 				if (assembly_version == null)
 					assembly_version = typeof (AssemblyBuilder).GetField ("version", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
 
-				assembly_version.SetValue (builder, version);
+				assembly_version.SetValue (builder, version.ToString (4));
 			} catch {
 				base.SetVersion (version, loc);
 			}
