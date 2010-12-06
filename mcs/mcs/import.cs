@@ -923,13 +923,7 @@ namespace Mono.CSharp
 		{
 			// It can be used more than once when importing same assembly
 			// into 2 or more global aliases
-			ImportedAssemblyDefinition definition;
-			if (!assembly_2_definition.TryGetValue (assembly, out definition)) {
-				definition = new ImportedAssemblyDefinition (assembly);
-				assembly_2_definition.Add (assembly, definition);
-
-				definition.ReadAttributes ();
-			}
+			var definition = GetAssemblyDefinition (assembly);
 
 			//
 			// This part tries to simulate loading of top-level
