@@ -746,9 +746,18 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void IsXData ()
 		{
-			var sctx = new XamlSchemaContext ();
 			Assert.IsFalse (XamlLanguage.XData.IsXData, "#1"); // yes, it is false.
 			Assert.IsTrue (sctx.GetXamlType (typeof (XmlSerializable)).IsXData, "#2");
+		}
+		
+		[Test]
+		public void XDataMembers ()
+		{
+			var xt = sctx.GetXamlType (typeof (XmlSerializableWrapper));
+			Assert.IsNotNull (xt.GetMember ("Value"), "#1"); // it is read-only, so if wouldn't be retrieved if it were not XData.
+
+			Assert.IsNotNull (XamlLanguage.XData.GetMember ("XmlReader"), "#2"); // it is returned, but ignored by XamlObjectReader.
+			Assert.IsNotNull (XamlLanguage.XData.GetMember ("Text"), "#3");
 		}
 	}
 

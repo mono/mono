@@ -25,10 +25,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace System.Xaml
 {
@@ -145,6 +148,17 @@ namespace System.Xaml
 					yield return new XamlNodeInfo (XamlNodeType.EndMember, xnm);
 				}
 				yield return new XamlNodeInfo (XamlNodeType.EndObject, xobj);
+			} else if (xm != null && xm.Type.IsXData) {
+				var sw = new StringWriter ();
+				var xw = XmlWriter.Create (sw, new XmlWriterSettings () { OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Auto });
+				var val = xobj.GetRawValue () as IXmlSerializable;
+				if (val == null)
+					yield break; // do not output anything
+				val.WriteXml (xw);
+				xw.Close ();
+				var obj = new XData () { Text = sw.ToString () };
+				foreach (var xn in GetNodes (null, new XamlObject (XamlLanguage.XData, obj)))
+					yield return xn;
 			} else {
 				// Object - could become Reference
 				var val = xobj.GetRawValue ();
@@ -201,6 +215,12 @@ namespace System.Xaml
 
 		IEnumerable<XamlNodeMember> GetNodeMembers (XamlObject xobj, IValueSerializerContext vsctx)
 		{
+			// XData.XmlReader is not returned.
+			if (xobj.Type == XamlLanguage.XData) {
+				yield return new XamlNodeMember (xobj, XamlLanguage.XData.GetMember ("Text"));
+				yield break;
+			}
+
 			// FIXME: find out why root Reference has PositionalParameters.
 			if (xobj.GetRawValue() != root && xobj.Type == XamlLanguage.Reference)
 				yield return new XamlNodeMember (xobj, XamlLanguage.PositionalParameters);
