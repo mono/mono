@@ -269,6 +269,7 @@ namespace System.Collections.Concurrent
 
 				if (!mreRemove.IsSet)
 					mreRemove.Set ();
+				return true;
 			} while (contFunc ());
 
 			return false;
