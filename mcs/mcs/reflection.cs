@@ -246,6 +246,8 @@ namespace Mono.CSharp
 			} catch {
 				base.SaveModule (pekind, machine);
 			}
+
+			Builder.Save (file_name, pekind, machine);
 		}
 #endif
 	}
