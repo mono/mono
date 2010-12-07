@@ -946,7 +946,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_XmlSerializableWrapper ()
 		{
 			var obj = new XmlSerializableWrapper (new XmlSerializable ("<root/>"));

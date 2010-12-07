@@ -451,6 +451,15 @@ namespace System.Xaml
 
 			string s = GetValueString (xm, value);
 
+			// It looks like a bad practice, but since .NET disables
+			// indent around XData, I assume they do this, instead
+			// of examining valid Text value by creating XmlReader
+			// and call XmlWriter.WriteNode().
+			if (xm.DeclaringType == XamlLanguage.XData && xm == XamlLanguage.XData.GetMember ("Text")) {
+				w.WriteRaw (s);
+				return;
+			}
+
 			var state = object_states.Peek ();
 			switch (state.PositionalParameterIndex) {
 			case -1:
