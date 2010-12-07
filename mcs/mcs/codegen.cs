@@ -11,8 +11,16 @@
 
 using System;
 using System.Collections.Generic;
+
+#if STATIC
+using MetaType = IKVM.Reflection.Type;
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using MetaType = System.Type;
 using System.Reflection;
 using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp
 {
@@ -86,6 +94,10 @@ namespace Mono.CSharp
 			this.ig = ig;
 
 			this.return_type = return_type;
+
+#if STATIC
+			ig.__CleverExceptionBlockAssistance ();
+#endif
 		}
 
 		#region Properties
@@ -294,7 +306,7 @@ namespace Mono.CSharp
 			ig.Emit (opcode, field);
 		}
 
-		public void Emit (OpCode opcode, MethodSpec method, Type[] vargs)
+		public void Emit (OpCode opcode, MethodSpec method, MetaType[] vargs)
 		{
 			// TODO MemberCache: This should mutate too
 			ig.EmitCall (opcode, (MethodInfo) method.GetMetaInfo (), vargs);

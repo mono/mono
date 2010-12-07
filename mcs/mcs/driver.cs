@@ -506,7 +506,7 @@ namespace Mono.CSharp
 
 		static void Version ()
 		{
-			string version = Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
+			string version = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
 			Console.WriteLine ("Mono C# compiler version {0}", version);
 			Environment.Exit (0);
 		}
@@ -1415,6 +1415,26 @@ namespace Mono.CSharp
 			if (timestamps)
 				stopwatch = Stopwatch.StartNew ();
 
+#if STATIC
+			var assembly = new AssemblyDefinitionStatic (module, output_file_name, output_file);
+			module.SetDeclaringAssembly (assembly);
+
+			var importer = new StaticImporter ();
+			assembly.Importer = importer;
+
+			var loader = new StaticLoader (importer, ctx);
+			loader.LoadReferences (module);
+
+			if (!ctx.BuildinTypes.CheckDefinitions (module))
+				return false;
+
+			ShowTime ("Initializing predefined types");
+
+			if (!assembly.Create (loader.Domain))
+				return false;
+
+			loader.LoadModules (assembly, module.GlobalRootNamespace);
+#else
 			var assembly = new AssemblyDefinitionDynamic (module, output_file_name, output_file);
 			module.SetDeclaringAssembly (assembly);
 
@@ -1434,8 +1454,8 @@ namespace Mono.CSharp
 			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))
 				return false;
 
-			loader.LoadModules (assembly);
-
+			loader.LoadModules (assembly, module.GlobalRootNamespace);
+#endif
 			module.Define ();
 
 			ShowTime ("Types definition");
@@ -1494,6 +1514,10 @@ namespace Mono.CSharp
 				stopwatch = Stopwatch.StartNew ();
 			
 			assembly.Save ();
+
+#if STATIC
+			loader.Dispose ();
+#endif
 
 			ShowTime ("Saving output assembly");
 

@@ -13,8 +13,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
@@ -24,6 +22,18 @@ using System.Linq;
 using XmlElement = System.Object;
 #else
 using System.Xml;
+#endif
+
+#if STATIC
+using MetaType = IKVM.Reflection.Type;
+using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using MetaType = System.Type;
+using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
+using System.Reflection;
+using System.Reflection.Emit;
 #endif
 
 using Mono.CompilerServices.SymbolWriter;
@@ -298,14 +308,19 @@ namespace Mono.CSharp {
 					else
 						metaInfo = TypeBuilder.GetMethod (DeclaringType.GetMetaInfo (), (MethodInfo) metaInfo);
 				} else {
+#if STATIC
+					// it should not be reached
+					throw new NotImplementedException ();
+#else
 					metaInfo = MethodInfo.GetMethodFromHandle (metaInfo.MethodHandle, DeclaringType.GetMetaInfo ().TypeHandle);
+#endif
 				}
 
 				state &= ~StateFlags.PendingMetaInflate;
 			}
 
 			if ((state & StateFlags.PendingMakeMethod) != 0) {
-				var sre_targs = new Type[targs.Length];
+				var sre_targs = new MetaType[targs.Length];
 				for (int i = 0; i < sre_targs.Length; ++i)
 					sre_targs[i] = targs[i].GetMetaInfo ();
 
@@ -436,7 +451,7 @@ namespace Mono.CSharp {
 	{
 		public MethodBuilder MethodBuilder;
 		ReturnParameter return_attributes;
-		Dictionary<SecurityAction, PermissionSet> declarative_security;
+		SecurityType declarative_security;
 		protected MethodData MethodData;
 
 		static string[] attribute_targets = new string [] { "method", "return" };
@@ -472,9 +487,7 @@ namespace Mono.CSharp {
 			}
 
 			if (a.IsValidSecurityAttribute ()) {
-				if (declarative_security == null)
-					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
-				a.ExtractSecurityPermissionSet (declarative_security);
+				a.ExtractSecurityPermissionSet (ctor, ref declarative_security);
 				return;
 			}
 
@@ -595,7 +608,11 @@ namespace Mono.CSharp {
 
 			if (declarative_security != null) {
 				foreach (var de in declarative_security) {
+#if STATIC
+					MethodBuilder.__AddDeclarativeSecurity (de);
+#else
 					MethodBuilder.AddDeclarativeSecurity (de.Key, de.Value);
+#endif
 				}
 			}
 
@@ -1317,7 +1334,7 @@ namespace Mono.CSharp {
 	public class Constructor : MethodCore, IMethodData {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
-		Dictionary<SecurityAction, PermissionSet> declarative_security;
+		SecurityType declarative_security;
 		bool has_compliant_args;
 
 		// <summary>
@@ -1373,10 +1390,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
-				if (declarative_security == null) {
-					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
-				}
-				a.ExtractSecurityPermissionSet (declarative_security);
+				a.ExtractSecurityPermissionSet (ctor, ref declarative_security);
 				return;
 			}
 
@@ -1468,7 +1482,11 @@ namespace Mono.CSharp {
 					Report.Error (669, Location, "`{0}': A class with the ComImport attribute cannot have a user-defined constructor",
 						Parent.GetSignatureForError ());
 				}
+
+				// Set as internal implementation and reset block data
+				// to ensure no IL is generated
 				ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall);
+				block = null;
 			}
 
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
@@ -1532,7 +1550,11 @@ namespace Mono.CSharp {
 
 			if (declarative_security != null) {
 				foreach (var de in declarative_security) {
+#if STATIC
+					ConstructorBuilder.__AddDeclarativeSecurity (de);
+#else
 					ConstructorBuilder.AddDeclarativeSecurity (de.Key, de.Value);
+#endif
 				}
 			}
 
@@ -1864,6 +1886,9 @@ namespace Mono.CSharp {
 			builder.SetParameters (p_types);
 			builder.SetReturnType (return_type);
 			if (builder.Attributes != flags) {
+#if STATIC
+				builder.__SetAttributes (flags);
+#else
 				try {
 					if (methodbuilder_attrs_field == null)
 						methodbuilder_attrs_field = typeof (MethodBuilder).GetField ("attrs", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -1871,6 +1896,7 @@ namespace Mono.CSharp {
 				} catch {
 					container.Compiler.Report.RuntimeMissingSupport (method.Location, "Generic method MethodAttributes");
 				}
+#endif
 			}
 		}
 
@@ -1996,7 +2022,7 @@ namespace Mono.CSharp {
 	public abstract class AbstractPropertyEventMethod : MemberCore, IMethodData {
 		protected MethodData method_data;
 		protected ToplevelBlock block;
-		protected Dictionary<SecurityAction, PermissionSet> declarative_security;
+		protected SecurityType declarative_security;
 
 		protected readonly string prefix;
 
@@ -2079,9 +2105,7 @@ namespace Mono.CSharp {
 			}
 
 			if (a.IsValidSecurityAttribute ()) {
-				if (declarative_security == null)
-					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
-				a.ExtractSecurityPermissionSet (declarative_security);
+				a.ExtractSecurityPermissionSet (ctor, ref declarative_security);
 				return;
 			}
 
@@ -2134,7 +2158,11 @@ namespace Mono.CSharp {
 
 			if (declarative_security != null) {
 				foreach (var de in declarative_security) {
+#if STATIC
+					method_data.MethodBuilder.__AddDeclarativeSecurity (de);
+#else
 					method_data.MethodBuilder.AddDeclarativeSecurity (de.Key, de.Value);
+#endif
 				}
 			}
 

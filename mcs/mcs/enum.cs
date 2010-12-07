@@ -12,7 +12,14 @@
 //
 
 using System;
+
+#if STATIC
+using MetaType = IKVM.Reflection.Type;
+using IKVM.Reflection;
+#else
+using MetaType = System.Type;
 using System.Reflection;
+#endif
 
 namespace Mono.CSharp {
 
@@ -253,7 +260,7 @@ namespace Mono.CSharp {
 	{
 		TypeSpec underlying;
 
-		public EnumSpec (TypeSpec declaringType, ITypeDefinition definition, TypeSpec underlyingType, Type info, Modifiers modifiers)
+		public EnumSpec (TypeSpec declaringType, ITypeDefinition definition, TypeSpec underlyingType, MetaType info, Modifiers modifiers)
 			: base (MemberKind.Enum, declaringType, definition, info, modifiers | Modifiers.SEALED)
 		{
 			this.underlying = underlyingType;

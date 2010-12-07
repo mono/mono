@@ -10,7 +10,12 @@
 //
 
 using System;
+
+#if STATIC
+using IKVM.Reflection.Emit;
+#else
 using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp {
 
@@ -45,6 +50,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public abstract object GetValue ();
 
+#if !STATIC
 		//
 		// Returns an object value which is typed to contant type
 		//
@@ -52,6 +58,7 @@ namespace Mono.CSharp {
 		{
 			return GetValue ();
 		}
+#endif
 
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
@@ -265,7 +272,11 @@ namespace Mono.CSharp {
 
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			return System.Linq.Expressions.Expression.Constant (GetTypedValue (), type.GetMetaInfo ());
+#endif
 		}
 
 		public new Constant Resolve (ResolveContext rc)

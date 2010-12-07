@@ -152,6 +152,12 @@ namespace Mono.CSharp
 			InternalType.Null = Null;
 		}
 
+		public BuildinTypeSpec[] AllTypes {
+			get {
+				return types;
+			}
+		}
+
 		public bool CheckDefinitions (ModuleContainer module)
 		{
 			var ctx = module.Compiler;

@@ -9,7 +9,11 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 
+#if STATIC
+using IKVM.Reflection;
+#else
 using System.Reflection;
+#endif
 
 namespace Mono.CSharp {
 

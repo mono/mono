@@ -9,6 +9,7 @@
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004, 2005, 2006, 2007, 2008 Novell, Inc
 //
+
 using System;
 using System.Threading;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ using System.Reflection.Emit;
 using System.IO;
 using System.Text;
 
-namespace Mono.CSharp {
+namespace Mono.CSharp
+{
 
 	/// <summary>
 	///   Evaluator: provides an API to evaluate C# statements and
@@ -265,10 +267,13 @@ namespace Mono.CSharp {
 						parser.CurrentNamespace.Extract (using_alias_list, using_list);
 				}
 
+#if STATIC
+				throw new NotSupportedException ();
+#else
 				compiled = CompileBlock (parser_result as Class, parser.undo, ctx.Report);
+				return null;
+#endif
 			}
-			
-			return null;
 		}
 
 		/// <summary>
@@ -433,7 +438,7 @@ namespace Mono.CSharp {
 			}
 			return null;
 		}
-		
+
 		/// <summary>
 		///   Executes the given expression or statement.
 		/// </summary>
@@ -480,7 +485,7 @@ namespace Mono.CSharp {
 
 			return result;
 		}
-	
+
 		enum InputKind {
 			EOF,
 			StatementOrExpression,
@@ -679,7 +684,7 @@ namespace Mono.CSharp {
 		//static ArrayList types = new ArrayList ();
 
 		static volatile bool invoking;
-		
+#if !STATIC		
 		static CompiledMethod CompileBlock (Class host, Undo undo, Report Report)
 		{
 			AssemblyDefinitionDynamic assembly;
@@ -771,7 +776,7 @@ namespace Mono.CSharp {
 			
 			return (CompiledMethod) System.Delegate.CreateDelegate (typeof (CompiledMethod), mi);
 		}
-		
+#endif		
 		static internal void LoadAliases (NamespaceEntry ns)
 		{
 			ns.Populate (using_alias_list, using_list);
@@ -981,7 +986,7 @@ namespace Mono.CSharp {
 			return DateTime.Now - start;
 		}
 		
-#if !SMCS_SOURCE
+#if !SMCS_SOURCE && !STATIC
 		/// <summary>
 		///   Loads the assemblies from a package
 		/// </summary>
@@ -1015,6 +1020,7 @@ namespace Mono.CSharp {
 		}
 #endif
 
+#if !STATIC
 		/// <summary>
 		///   Loads the assembly
 		/// </summary>
@@ -1028,6 +1034,7 @@ namespace Mono.CSharp {
 		{
 			Evaluator.LoadAssembly (assembly);
 		}
+#endif
 		
 		/// <summary>
 		///   Returns a list of available static methods. 
@@ -1192,4 +1199,3 @@ namespace Mono.CSharp {
 	}
 	
 }
-	

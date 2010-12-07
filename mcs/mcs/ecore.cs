@@ -12,11 +12,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Text;
 using SLE = System.Linq.Expressions;
 using System.Linq;
+
+#if STATIC
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp {
 
@@ -1048,9 +1054,13 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			return ctx.HasSet (BuilderContext.Options.CheckedScope) ?
 				SLE.Expression.ConvertChecked (child.MakeExpression (ctx), type.GetMetaInfo ()) :
 				SLE.Expression.Convert (child.MakeExpression (ctx), type.GetMetaInfo ());
+#endif
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -1362,6 +1372,7 @@ namespace Mono.CSharp {
 			return Child.GetValue ();
 		}
 
+#if !STATIC
 		public override object GetTypedValue ()
 		{
 			//
@@ -1373,6 +1384,7 @@ namespace Mono.CSharp {
 			//
 			return System.Enum.ToObject (type.GetMetaInfo (), Child.GetValue ());
 		}
+#endif
 		
 		public override string AsString ()
 		{
@@ -5088,9 +5100,13 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			return SLE.Expression.Field (
 				IsStatic ? null : InstanceExpression.MakeExpression (ctx),
 				spec.GetMetaInfo ());
+#endif
 		}
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
@@ -5180,12 +5196,20 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) Setter.GetMetaInfo ());
+#endif
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) Getter.GetMetaInfo ());
+#endif
 		}
 
 		void Error_PropertyNotValid (ResolveContext ec)

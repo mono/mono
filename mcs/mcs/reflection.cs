@@ -19,6 +19,30 @@ using System.Security;
 
 namespace Mono.CSharp
 {
+#if STATIC
+	public class ReflectionImporter
+	{
+		public ReflectionImporter (BuildinTypes buildin)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public TypeSpec ImportType (Type type)
+		{
+			throw new NotSupportedException ();
+		}
+	}
+#else
 	public class ReflectionImporter : MetadataImporter
 	{
 		public ReflectionImporter (BuildinTypes buildin)
@@ -51,6 +75,45 @@ namespace Mono.CSharp
 			}
 
 			return false;
+		}
+
+		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)
+		{
+			// It can be used more than once when importing same assembly
+			// into 2 or more global aliases
+			var definition = GetAssemblyDefinition (assembly);
+
+			//
+			// This part tries to simulate loading of top-level
+			// types only, any missing dependencies are ignores here.
+			// Full error report is reported later when the type is
+			// actually used
+			//
+			Type[] all_types;
+			try {
+				all_types = assembly.GetTypes ();
+			} catch (ReflectionTypeLoadException e) {
+				all_types = e.Types;
+			}
+
+			ImportTypes (all_types, targetNamespace, definition.HasExtensionMethod);
+		}
+
+		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)
+		{
+			var module_definition = new ImportedModuleDefinition (module, this);
+			module_definition.ReadAttributes ();
+
+			Type[] all_types;
+			try {
+				all_types = module.GetTypes ();
+			} catch (ReflectionTypeLoadException e) {
+				all_types = e.Types;
+			}
+
+			ImportTypes (all_types, targetNamespace, false);
+
+			return module_definition;
 		}
 
 		void Initialize (BuildinTypes buildin)
@@ -95,8 +158,9 @@ namespace Mono.CSharp
 			buildin_types.Add (typeof (System.RuntimeTypeHandle), buildin.RuntimeTypeHandle);
 		}
 	}
+#endif
 
-	class AssemblyDefinitionDynamic : AssemblyDefinition
+	public class AssemblyDefinitionDynamic : AssemblyDefinition
 	{
 		//
 		// In-memory only assembly container
@@ -114,6 +178,12 @@ namespace Mono.CSharp
 		{
 		}
 
+		public Module IncludeModule (string moduleFile)
+		{
+			return builder_extra.AddModule (moduleFile);
+		}
+
+#if !STATIC
 		public override ModuleBuilder CreateModuleBuilder ()
 		{
 			if (file_name == null)
@@ -121,12 +191,15 @@ namespace Mono.CSharp
 
 			return base.CreateModuleBuilder ();
 		}
-
+#endif
 		//
 		// Initializes the code generator
 		//
 		public bool Create (AppDomain domain, AssemblyBuilderAccess access)
 		{
+#if STATIC
+			throw new NotSupportedException ();
+#else
 			ResolveAssemblySecurityAttributes ();
 			var an = CreateAssemblyName ();
 
@@ -145,6 +218,7 @@ namespace Mono.CSharp
 
 			builder_extra = new AssemblyBuilderMonoSpecific (Builder, Compiler);
 			return true;
+#endif
 		}
 
 		static string Dirname (string name)
@@ -160,6 +234,20 @@ namespace Mono.CSharp
 
 			return ".";
 		}
+
+#if !STATIC
+		protected override void SaveModule (PortableExecutableKinds pekind, ImageFileMachine machine)
+		{
+			try {
+				var module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				var set_module_only = module_only.GetSetMethod (true);
+
+				set_module_only.Invoke (Builder, new object[] { true });
+			} catch {
+				base.SaveModule (pekind, machine);
+			}
+		}
+#endif
 	}
 
 	//
@@ -170,7 +258,6 @@ namespace Mono.CSharp
 	{
 		static MethodInfo adder_method;
 		static MethodInfo add_permission;
-		static MethodInfo set_module_only;
 		static MethodInfo add_type_forwarder;
 		static MethodInfo win32_icon_define;
 		static FieldInfo assembly_version;
@@ -282,20 +369,6 @@ namespace Mono.CSharp
 				base.SetVersion (version, loc);
 			}
 		}
-
-		public override void SetModuleTarget ()
-		{
-			try {
-				if (set_module_only == null) {
-					var module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-					set_module_only = module_only.GetSetMethod (true);
-				}
-
-				set_module_only.Invoke (builder, new object[] { true });
-			} catch {
-				base.SetModuleTarget ();
-			}
-		}
 	}
 
 	//
@@ -402,13 +475,13 @@ namespace Mono.CSharp
 			return LoadAssemblyFile (fileName, true);
 		}
 
-		void LoadModule (AssemblyDefinition assembly, string module)
+		Module LoadModuleFile (AssemblyDefinitionDynamic assembly, string module)
 		{
 			string total_log = "";
 
 			try {
 				try {
-					assembly.AddModule (module);
+					return assembly.IncludeModule (module);
 				} catch (FileNotFoundException) {
 					bool err = true;
 					foreach (string dir in paths) {
@@ -417,30 +490,35 @@ namespace Mono.CSharp
 							full_path += ".netmodule";
 
 						try {
-							assembly.AddModule (full_path);
-							err = false;
-							break;
+							return assembly.IncludeModule (full_path);
 						} catch (FileNotFoundException ff) {
 							total_log += ff.FusionLog;
 						}
 					}
 					if (err) {
 						Error_FileNotFound (module);
-						return;
+						return null;
 					}
 				}
 			} catch (BadImageFormatException) {
 				Error_FileCorrupted (module);
 			}
+
+			return null;
 		}
 
-		public void LoadModules (AssemblyDefinition assembly)
+		public void LoadModules (AssemblyDefinitionDynamic assembly, RootNamespace targetNamespace)
 		{
 			if (RootContext.Modules.Count == 0)
 				return;
 
-			foreach (var module in RootContext.Modules) {
-				LoadModule (assembly, module);
+			foreach (var moduleName in RootContext.Modules) {
+				var m = LoadModuleFile (assembly, moduleName);
+				if (m == null)
+					continue;
+
+				var md = importer.ImportModule (m, targetNamespace);
+				assembly.AddModule (md);
 			}
 		}
 

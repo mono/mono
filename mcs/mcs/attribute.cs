@@ -12,14 +12,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Security; 
 using System.Security.Permissions;
 using System.Text;
 using System.IO;
+
+#if STATIC
+using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp {
 
@@ -767,8 +775,33 @@ namespace Mono.CSharp {
 		/// Creates instance of SecurityAttribute class and add result of CreatePermission method to permission table.
 		/// </summary>
 		/// <returns></returns>
-		public void ExtractSecurityPermissionSet (Dictionary<SecurityAction, PermissionSet> permissions)
+		public void ExtractSecurityPermissionSet (MethodSpec ctor, ref SecurityType permissions)
 		{
+#if STATIC
+			object[] values = new object [PosArguments.Count];
+			for (int i = 0; i < values.Length; ++i)
+				values [i] = ((Constant) PosArguments [i].Expr).GetValue ();
+
+			PropertyInfo[] prop;
+			object[] prop_values;
+			if (named_values == null) {
+				prop = null;
+				prop_values = null;
+			} else {
+				prop = new PropertyInfo[named_values.Count];
+				prop_values = new object [named_values.Count];
+				for (int i = 0; i < prop.Length; ++i) {
+					prop [i] = ((PropertyExpr) named_values [i].Key).PropertyInfo.MetaInfo;
+					prop_values [i] = ((Constant) named_values [i].Value.Expr).GetValue ();
+				}
+			}
+
+			if (permissions == null)
+				permissions = new SecurityType ();
+
+			var cab = new CustomAttributeBuilder ((ConstructorInfo) ctor.GetMetaInfo (), values, prop, prop_values);
+			permissions.Add (cab);
+#else
 			Type orig_assembly_type = null;
 
 			if (Type.MemberDefinition is TypeContainer) {
@@ -850,6 +883,9 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (permissions == null)
+				permissions = new SecurityType ();
+
 			PermissionSet ps;
 			if (!permissions.TryGetValue (action, out ps)) {
 				if (sa is PermissionSetAttribute)
@@ -863,6 +899,7 @@ namespace Mono.CSharp {
 				permissions [action] = ps;
 			}
 			ps.AddPermission (perm);
+#endif
 		}
 
 		public Constant GetNamedValue (string name)
@@ -1767,7 +1804,10 @@ namespace Mono.CSharp {
 			FieldOffset = new PredefinedAttribute (module, "System.Runtime.InteropServices", "FieldOffsetAttribute");
 
 			// TODO: Should define only attributes which are used for comparison
-			foreach (FieldInfo fi in GetType ().GetFields (BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)) {
+			const System.Reflection.BindingFlags all_fields = System.Reflection.BindingFlags.Public |
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly;
+
+			foreach (var fi in GetType ().GetFields (all_fields)) {
 				((PredefinedAttribute) fi.GetValue (this)).Define ();
 			}
 		}

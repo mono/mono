@@ -184,7 +184,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 				// TODO: Remove this code and rely on GetAssemblyDefinition only
 				//
 				var module = new Compiler.ModuleContainer (cc);
-				var temp = module.MakeExecutable ("dynamic");
+				var temp = new Compiler.AssemblyDefinitionDynamic (module, "dynamic");
+				module.SetDeclaringAssembly (temp);
 
 				// Import all currently loaded assemblies
 				var domain = AppDomain.CurrentDomain;

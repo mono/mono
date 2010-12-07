@@ -9,7 +9,11 @@
 // Copyright 2007-2008 Novell, Inc
 //
 
+#if STATIC
+using IKVM.Reflection.Emit;
+#else
 using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp {
 	public class LambdaExpression : AnonymousMethodExpression

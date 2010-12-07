@@ -11,10 +11,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Linq;
 using SLE = System.Linq.Expressions;
+
+#if STATIC
+using MetaType = IKVM.Reflection.Type;
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using MetaType = System.Type;
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp
 {
@@ -70,7 +78,11 @@ namespace Mono.CSharp
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			return SLE.Expression.Call ((MethodInfo) oper.GetMetaInfo (), Arguments.MakeExpression (arguments, ctx));
+#endif
 		}
 	}
 
@@ -1690,7 +1702,7 @@ namespace Mono.CSharp
 			temp_storage.Emit(ec);
 		}
 
-#if NET_4_0
+#if NET_4_0 && !STATIC
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return SLE.Expression.Default (type.GetMetaInfo ());
@@ -5252,7 +5264,7 @@ namespace Mono.CSharp
 			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.None);
 		}
 
-		static Type[] GetVarargsTypes (MethodSpec mb, Arguments arguments)
+		static MetaType[] GetVarargsTypes (MethodSpec mb, Arguments arguments)
 		{
 			AParametersCollection pd = mb.Parameters;
 
@@ -5443,7 +5455,7 @@ namespace Mono.CSharp
 			}
 
 			if (method.Parameters.HasArglist) {
-				Type[] varargs_types = GetVarargsTypes (method, Arguments);
+				var varargs_types = GetVarargsTypes (method, Arguments);
 				ec.Emit (call_op, method, varargs_types);
 				return;
 			}
@@ -5480,8 +5492,12 @@ namespace Mono.CSharp
 
 		public static SLE.Expression MakeExpression (BuilderContext ctx, Expression instance, MethodSpec mi, Arguments args)
 		{
+#if STATIC
+			throw new NotSupportedException ();
+#else
 			var instance_expr = instance == null ? null : instance.MakeExpression (ctx);
 			return SLE.Expression.Call (instance_expr, (MethodInfo) mi.GetMetaInfo (), Arguments.MakeExpression (args, ctx));
+#endif
 		}
 	}
 
@@ -5873,7 +5889,11 @@ namespace Mono.CSharp
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			return SLE.Expression.New ((ConstructorInfo) method.GetMetaInfo (), Arguments.MakeExpression (arguments, ctx));
+#endif
 		}
 	}
 
@@ -6439,6 +6459,9 @@ namespace Mono.CSharp
 #if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			var initializers = new SLE.Expression [array_data.Count];
 			for (var i = 0; i < initializers.Length; i++) {
 				if (array_data [i] == null)
@@ -6448,6 +6471,7 @@ namespace Mono.CSharp
 			}
 
 			return SLE.Expression.NewArrayInit (array_element_type.GetMetaInfo (), initializers);
+#endif
 		}
 #endif
 		//
@@ -6989,12 +7013,12 @@ namespace Mono.CSharp
 			loc = l;
 		}
 
-		public Type[] ArgumentTypes {
+		public MetaType[] ArgumentTypes {
 		    get {
 				if (Arguments == null)
-					return System.Type.EmptyTypes;
+					return MetaType.EmptyTypes;
 
-		        var retval = new Type [Arguments.Count];
+				var retval = new MetaType[Arguments.Count];
 		        for (int i = 0; i < retval.Length; i++)
 					retval[i] = Arguments[i].Expr.Type.GetMetaInfo ();
 
@@ -8446,6 +8470,9 @@ namespace Mono.CSharp
 		
 		public override SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
+#if STATIC
+			throw new NotSupportedException ();
+#else
 			var value = new[] { source.MakeExpression (ctx) };
 			var args = Arguments.MakeExpression (arguments, ctx).Concat (value);
 #if NET_4_0
@@ -8455,12 +8482,17 @@ namespace Mono.CSharp
 #else
 			return args.First ();
 #endif
+#endif
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			var args = Arguments.MakeExpression (arguments, ctx);
 			return SLE.Expression.Call (InstanceExpression.MakeExpression (ctx), (MethodInfo) Getter.GetMetaInfo (), args);
+#endif
 		}
 
 		protected override Expression OverloadResolve (ResolveContext rc, Expression right_side)
@@ -8781,7 +8813,11 @@ namespace Mono.CSharp
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			return SLE.Expression.Convert (source.MakeExpression (ctx), type.GetMetaInfo (), (MethodInfo) method.GetMetaInfo ());
+#endif
 		}
 	}
 

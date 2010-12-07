@@ -13,13 +13,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection.Emit;
-using System.Reflection;
 
 #if NET_2_1
 using XmlElement = System.Object;
 #else
 using System.Xml;
+#endif
+
+#if STATIC
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using System.Reflection;
+using System.Reflection.Emit;
 #endif
 
 namespace Mono.CSharp {

@@ -13,14 +13,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Text;
 
 #if NET_2_1
 using XmlElement = System.Object;
 #endif
 
+#if STATIC
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp
 {
@@ -1283,7 +1288,7 @@ namespace Mono.CSharp
 			if (RemoveBuilder == null)
 				return false;
 
-			EventBuilder = Parent.TypeBuilder.DefineEvent (Name, EventAttributes.None, MemberType.GetMetaInfo ());
+			EventBuilder = Parent.TypeBuilder.DefineEvent (GetFullName (MemberName), EventAttributes.None, MemberType.GetMetaInfo ());
 			EventBuilder.SetAddOnMethod (AddBuilder);
 			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 

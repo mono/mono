@@ -12,10 +12,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using Mono.CompilerServices.SymbolWriter;
+
+#if STATIC
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp
 {
@@ -335,6 +341,7 @@ namespace Mono.CSharp
 
 		void HackCorlib ()
 		{
+#if !STATIC
 			if (RootContext.StdLib)
 				return;
 
@@ -363,6 +370,7 @@ namespace Mono.CSharp
 			args[2] = TypeManager.enum_type.GetMetaInfo ();
 			args[3] = TypeManager.void_type.GetMetaInfo ();
 			set_corlib_type_builders.Invoke (assembly.Builder, args);
+#endif
 		}
 
 		void HackCorlibEnums ()

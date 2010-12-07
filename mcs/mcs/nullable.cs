@@ -12,7 +12,12 @@
 //
 
 using System;
+
+#if STATIC
+using IKVM.Reflection.Emit;
+#else
 using System.Reflection.Emit;
+#endif
 	
 namespace Mono.CSharp.Nullable
 {

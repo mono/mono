@@ -137,17 +137,22 @@ namespace Mono.CSharp
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-#if NET_4_0		
-			if (type.IsStruct && !obj.Expression.Type.IsValueType)
-				return SLE.Expression.Unbox (obj.Expression, type.GetMetaInfo ());
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 
-			if (obj.Expression.NodeType == SLE.ExpressionType.Parameter) {
-				if (((SLE.ParameterExpression) obj.Expression).IsByRef)
-					return obj.Expression;
-			}
+	#if NET_4_0		
+				if (type.IsStruct && !obj.Expression.Type.IsValueType)
+					return SLE.Expression.Unbox (obj.Expression, type.GetMetaInfo ());
+
+				if (obj.Expression.NodeType == SLE.ExpressionType.Parameter) {
+					if (((SLE.ParameterExpression) obj.Expression).IsByRef)
+						return obj.Expression;
+				}
+	#endif
+
+				return SLE.Expression.Convert (obj.Expression, type.GetMetaInfo ());
 #endif
-
-			return SLE.Expression.Convert (obj.Expression, type.GetMetaInfo ());
 		}
 	}
 
@@ -174,7 +179,11 @@ namespace Mono.CSharp
 #if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+#if STATIC
+			return base.MakeExpression (ctx);
+#else
 			return SLE.Expression.Block (expr.MakeExpression (ctx), SLE.Expression.Default (type.GetMetaInfo ()));
+#endif
 		}
 #endif
 	}

@@ -11,7 +11,12 @@
 //
 
 using System;
+
+#if STATIC
+using IKVM.Reflection;
+#else
 using System.Reflection;
+#endif
 
 namespace Mono.CSharp
 {

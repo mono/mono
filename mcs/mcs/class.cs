@@ -13,8 +13,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
@@ -22,10 +20,17 @@ using System.Linq;
 
 #if NET_2_1
 using XmlElement = System.Object;
-#else
-
 #endif
 
+#if STATIC
+using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp {
 
@@ -2199,7 +2204,7 @@ namespace Mono.CSharp {
 
 	public abstract class ClassOrStruct : TypeContainer
 	{
-		Dictionary<SecurityAction, PermissionSet> declarative_security;
+		SecurityType declarative_security;
 
 		public ClassOrStruct (NamespaceEntry ns, DeclSpace parent,
 				      MemberName name, Attributes attrs, MemberKind kind)
@@ -2246,10 +2251,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
-				if (declarative_security == null)
-					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
-
-				a.ExtractSecurityPermissionSet (declarative_security);
+				a.ExtractSecurityPermissionSet (ctor, ref declarative_security);
 				return;
 			}
 
@@ -2315,7 +2317,11 @@ namespace Mono.CSharp {
 
 			if (declarative_security != null) {
 				foreach (var de in declarative_security) {
+#if STATIC
+					TypeBuilder.__AddDeclarativeSecurity (de);
+#else
 					TypeBuilder.AddDeclarativeSecurity (de.Key, de.Value);
+#endif
 				}
 			}
 		}

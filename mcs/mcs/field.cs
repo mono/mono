@@ -13,9 +13,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
+#if STATIC
+using MetaType = IKVM.Reflection.Type;
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using MetaType = System.Type;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.InteropServices;
+#endif
 
 namespace Mono.CSharp
 {
@@ -571,11 +579,11 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			Type[] required_modifier = null;
+			MetaType[] required_modifier = null;
 			if ((ModFlags & Modifiers.VOLATILE) != 0) {
 				var mod = Module.PredefinedTypes.IsVolatile.Resolve (Location);
 				if (mod != null)
-					required_modifier = new Type[] { mod.GetMetaInfo () };
+					required_modifier = new MetaType[] { mod.GetMetaInfo () };
 			}
 
 			FieldBuilder = Parent.TypeBuilder.DefineField (

@@ -11,13 +11,20 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
+#if STATIC
+using MetaType = IKVM.Reflection.Type;
+using IKVM.Reflection;
+#else
+using MetaType = System.Type;
 using System.Reflection;
+#endif
 
 namespace Mono.CSharp
 {
 	public class TypeSpec : MemberSpec
 	{
-		protected Type info;
+		protected MetaType info;
 		protected MemberCache cache;
 		protected IList<TypeSpec> ifaces;
 		TypeSpec base_type;
@@ -26,6 +33,7 @@ namespace Mono.CSharp
 
 		public static readonly TypeSpec[] EmptyTypes = new TypeSpec[0];
 
+#if !STATIC
 		// Reflection Emit hacking
 		static readonly Type TypeBuilder;
 		static readonly Type GenericTypeBuilder;
@@ -38,8 +46,9 @@ namespace Mono.CSharp
 			if (GenericTypeBuilder == null)
 				GenericTypeBuilder = assembly.GetType ("System.Reflection.Emit.TypeBuilderInstantiation");
 		}
+#endif
 
-		public TypeSpec (MemberKind kind, TypeSpec declaringType, ITypeDefinition definition, Type info, Modifiers modifiers)
+		public TypeSpec (MemberKind kind, TypeSpec declaringType, ITypeDefinition definition, MetaType info, Modifiers modifiers)
 			: base (kind, declaringType, definition, modifiers)
 		{
 			this.declaringType = declaringType;
@@ -186,8 +195,12 @@ namespace Mono.CSharp
 
 		public bool IsTypeBuilder {
 			get {
+#if STATIC
+				return true;
+#else
 				var meta = GetMetaInfo().GetType ();
 				return meta == TypeBuilder || meta == GenericTypeBuilder;
+#endif
 			}
 		}
 
@@ -268,7 +281,7 @@ namespace Mono.CSharp
 			return aua;
 		}
 
-		public virtual Type GetMetaInfo ()
+		public virtual MetaType GetMetaInfo ()
 		{
 			return info;
 		}
@@ -420,7 +433,7 @@ namespace Mono.CSharp
 			return this;
 		}
 
-		public void SetMetaInfo (Type info)
+		public void SetMetaInfo (MetaType info)
 		{
 			if (this.info != null)
 				throw new InternalErrorException ("MetaInfo reset");
@@ -560,7 +573,7 @@ namespace Mono.CSharp
 			return FullName;
 		}
 
-		public void SetDefinition (ITypeDefinition td, System.Type type)
+		public void SetDefinition (ITypeDefinition td, MetaType type)
 		{
 			this.definition = td;
 			this.info = type;
@@ -1089,7 +1102,7 @@ namespace Mono.CSharp
 
 	public abstract class ElementTypeSpec : TypeSpec, ITypeDefinition
 	{
-		protected ElementTypeSpec (MemberKind kind, TypeSpec element, Type info)
+		protected ElementTypeSpec (MemberKind kind, TypeSpec element, MetaType info)
 			: base (kind, element.DeclaringType, null, info, element.Modifiers)
 		{
 			this.Element = element;
@@ -1269,7 +1282,7 @@ namespace Mono.CSharp
 		{
 			var mb = RootContext.ToplevelTypes.Builder;
 
-			var arg_types = new Type[rank];
+			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
 				arg_types[i] = TypeManager.int32_type.GetMetaInfo ();
 
@@ -1285,7 +1298,7 @@ namespace Mono.CSharp
 		{
 			var mb = RootContext.ToplevelTypes.Builder;
 
-			var arg_types = new Type[rank];
+			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
 				arg_types[i] = TypeManager.int32_type.GetMetaInfo ();
 
@@ -1301,7 +1314,7 @@ namespace Mono.CSharp
 		{
 			var mb = RootContext.ToplevelTypes.Builder;
 
-			var arg_types = new Type[rank];
+			var arg_types = new MetaType[rank];
 			for (int i = 0; i < rank; i++)
 				arg_types[i] = TypeManager.int32_type.GetMetaInfo ();
 
@@ -1317,7 +1330,7 @@ namespace Mono.CSharp
 		{
 			var mb = RootContext.ToplevelTypes.Builder;
 
-			var arg_types = new Type[rank + 1];
+			var arg_types = new MetaType[rank + 1];
 			for (int i = 0; i < rank; i++)
 				arg_types[i] = TypeManager.int32_type.GetMetaInfo ();
 
@@ -1331,7 +1344,7 @@ namespace Mono.CSharp
 			return set;
 		}
 
-		public override Type GetMetaInfo ()
+		public override MetaType GetMetaInfo ()
 		{
 			if (info == null) {
 				if (rank == 1)
@@ -1395,7 +1408,7 @@ namespace Mono.CSharp
 		{
 		}
 
-		public override Type GetMetaInfo ()
+		public override MetaType GetMetaInfo ()
 		{
 			if (info == null) {
 				info = Element.GetMetaInfo ().MakeByRefType ();
@@ -1432,7 +1445,7 @@ namespace Mono.CSharp
 			state &= ~StateFlags.CLSCompliant_Undetected;
 		}
 
-		public override Type GetMetaInfo ()
+		public override MetaType GetMetaInfo ()
 		{
 			if (info == null) {
 				info = Element.GetMetaInfo ().MakePointerType ();

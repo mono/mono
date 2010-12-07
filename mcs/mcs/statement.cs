@@ -11,8 +11,13 @@
 //
 
 using System;
-using System.Reflection.Emit;
 using System.Collections.Generic;
+
+#if STATIC
+using IKVM.Reflection.Emit;
+#else
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp {
 	

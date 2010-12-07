@@ -11,9 +11,17 @@
 //
 //
 using System;
+using System.Text;
+
+#if STATIC
+using MetaType = IKVM.Reflection.Type;
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using MetaType = System.Type;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
+#endif
 
 namespace Mono.CSharp {
 
@@ -783,19 +791,19 @@ namespace Mono.CSharp {
 		}
 
 		// Very expensive operation
-		public Type[] GetMetaInfo ()
+		public MetaType[] GetMetaInfo ()
 		{
-			Type[] types;
+			MetaType[] types;
 			if (has_arglist) {
 				if (Count == 1)
-					return Type.EmptyTypes;
+					return MetaType.EmptyTypes;
 
-				types = new Type [Count - 1];
+				types = new MetaType[Count - 1];
 			} else {
 				if (Count == 0)
-					return Type.EmptyTypes;
+					return MetaType.EmptyTypes;
 
-				types = new Type [Count];
+				types = new MetaType[Count];
 			}
 
 			for (int i = 0; i < types.Length; ++i) {

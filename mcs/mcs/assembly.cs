@@ -14,14 +14,21 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Permissions;
-
 using Mono.Security.Cryptography;
 using Mono.CompilerServices.SymbolWriter;
+
+#if STATIC
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
+#else
+using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp
 {
@@ -46,7 +53,7 @@ namespace Mono.CSharp
 		bool wrap_non_exception_throws;
 		bool wrap_non_exception_throws_custom;
 
-		ModuleContainer module;
+		protected ModuleContainer module;
 		readonly string name;
 		protected readonly string file_name;
 
@@ -60,8 +67,8 @@ namespace Mono.CSharp
 		Attribute cls_attribute;
 		Method entry_point;
 
-		List<ImportedModuleDefinition> added_modules;
-		Dictionary<SecurityAction, PermissionSet> declarative_security;
+		protected List<ImportedModuleDefinition> added_modules;
+		SecurityType declarative_security;
 		Dictionary<ITypeDefinition, Attribute> emitted_forwarders;
 		AssemblyAttributesPlaceholder module_target_attrs;
 
@@ -165,24 +172,18 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public void AddModule (string moduleFile)
+		public void AddModule (ImportedModuleDefinition module)
 		{
-			var mod = builder_extra.AddModule (moduleFile);
-			var imported = Importer.ImportModule (mod, module.GlobalRootNamespace);
-
 			if (added_modules == null) {
 				added_modules = new List<ImportedModuleDefinition> ();
-				added_modules.Add (imported);
+				added_modules.Add (module);
 			}
-		}		
+		}
 
 		public void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
-				if (declarative_security == null)
-					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
-
-				a.ExtractSecurityPermissionSet (declarative_security);
+				a.ExtractSecurityPermissionSet (ctor, ref declarative_security);
 				return;
 			}
 
@@ -447,11 +448,17 @@ namespace Mono.CSharp
 			}
 
 			if (declarative_security != null) {
+#if STATIC
+				foreach (var entry in declarative_security) {
+					Builder.__AddDeclarativeSecurity (entry);
+				}
+#else
 				var args = new PermissionSet[3];
 				declarative_security.TryGetValue (SecurityAction.RequestMinimum, out args[0]);
 				declarative_security.TryGetValue (SecurityAction.RequestOptional, out args[1]);
 				declarative_security.TryGetValue (SecurityAction.RequestRefuse, out args[2]);
 				builder_extra.AddPermissionRequests (args);
+#endif
 			}
 
 			CheckReferencesPublicToken ();
@@ -583,10 +590,9 @@ namespace Mono.CSharp
 					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
 					new Arguments[] { pos, named }, loc, false);
 				g.AttachTo (module, module);
-
-				if (g.Resolve () != null) {
-					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
-					g.ExtractSecurityPermissionSet (declarative_security);
+				var ctor = g.Resolve ();
+				if (ctor != null) {
+					g.ExtractSecurityPermissionSet (ctor, ref declarative_security);
 				}
 			}
 
@@ -757,12 +763,12 @@ namespace Mono.CSharp
 				break;
 			}
 
-			if (RootContext.Target == Target.Module) {
-				builder_extra.SetModuleTarget ();
-			}
-
 			try {
-				Builder.Save (module.Builder.ScopeName, pekind, machine);
+				if (RootContext.Target == Target.Module) {
+					SaveModule (pekind, machine);
+				} else {
+					Builder.Save (module.Builder.ScopeName, pekind, machine);
+				}
 			} catch (Exception e) {
 				Report.Error (16, "Could not write to file `" + name + "', cause: " + e.Message);
 			}
@@ -772,6 +778,11 @@ namespace Mono.CSharp
 				// TODO: it should run in parallel
 				symbol_writer.WriteSymbolFile (SymbolWriter.GetGuid (module.Builder));
 			}
+		}
+
+		protected virtual void SaveModule (PortableExecutableKinds pekind, ImageFileMachine machine)
+		{
+			Report.RuntimeMissingSupport (Location.Null, "-target:module");
 		}
 
 		void SetCustomAttribute (MethodSpec ctor, byte[] data)
@@ -945,7 +956,7 @@ namespace Mono.CSharp
 			this.ctx = ctx;
 		}
 
-		public virtual Module AddModule (string module)
+		public virtual System.Reflection.Module AddModule (string module)
 		{
 			ctx.Report.RuntimeMissingSupport (Location.Null, "-addmodule");
 			return null;
@@ -984,11 +995,6 @@ namespace Mono.CSharp
 		public virtual void SetVersion (Version version, Location loc)
 		{
 			ctx.Report.RuntimeMissingSupport (loc, "AssemblyVersionAttribute");
-		}
-
-		public virtual void SetModuleTarget ()
-		{
-			ctx.Report.RuntimeMissingSupport (Location.Null, "-target:module");
 		}
 	}
 
@@ -1029,6 +1035,20 @@ namespace Mono.CSharp
 		protected void Error_FileCorrupted (string fileName)
 		{
 			compiler.Report.Error (9, "Metadata file `{0}' does not contain valid metadata", fileName);
+		}
+
+		protected void Error_AssemblyIsModule (string fileName)
+		{
+			compiler.Report.Error (1509,
+				"Referenced assembly file `{0}' is a module. Consider using `-addmodule' option to add the module",
+				fileName);
+		}
+
+		protected void Error_ModuleIsAssembly (string fileName)
+		{
+			compiler.Report.Error (1542,
+				"Added module file `{0}' is an assembly. Consider using `-r' option to reference the file",
+				fileName);
 		}
 
 		//

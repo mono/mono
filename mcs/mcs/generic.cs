@@ -11,12 +11,20 @@
 // Copyright 2004-2008 Novell, Inc
 //
 using System;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-	
+
+#if STATIC
+using MetaType = IKVM.Reflection.Type;
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
+#else
+using MetaType = System.Type;
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
+
 namespace Mono.CSharp {
 	public enum Variance
 	{
@@ -611,7 +619,7 @@ namespace Mono.CSharp {
 		//
 		// Creates type owned type parameter
 		//
-		public TypeParameterSpec (TypeSpec declaringType, int index, ITypeDefinition definition, SpecialConstraint spec, Variance variance, Type info)
+		public TypeParameterSpec (TypeSpec declaringType, int index, ITypeDefinition definition, SpecialConstraint spec, Variance variance, MetaType info)
 			: base (MemberKind.TypeParameter, declaringType, definition, info, Modifiers.PUBLIC)
 		{
 			this.variance = variance;
@@ -623,7 +631,7 @@ namespace Mono.CSharp {
 		//
 		// Creates method owned type parameter
 		//
-		public TypeParameterSpec (int index, ITypeDefinition definition, SpecialConstraint spec, Variance variance, Type info)
+		public TypeParameterSpec (int index, ITypeDefinition definition, SpecialConstraint spec, Variance variance, MetaType info)
 			: this (null, index, definition, spec, variance, info)
 		{
 		}
@@ -1414,13 +1422,13 @@ namespace Mono.CSharp {
 			return new TypeParameterInflator (this, tparams_full, targs_full);
 		}
 
-		Type CreateMetaInfo (TypeParameterMutator mutator)
+		MetaType CreateMetaInfo (TypeParameterMutator mutator)
 		{
 			//
 			// Converts nested type arguments into right order
 			// Foo<string, bool>.Bar<int> => string, bool, int
 			//
-			var all = new List<Type> ();
+			var all = new List<MetaType> ();
 			TypeSpec type = this;
 			TypeSpec definition = type;
 			do {
@@ -1461,7 +1469,7 @@ namespace Mono.CSharp {
 			return open_type;
 		}
 
-		public override Type GetMetaInfo ()
+		public override MetaType GetMetaInfo ()
 		{
 			if (info == null)
 				info = CreateMetaInfo (null);
