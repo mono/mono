@@ -1189,5 +1189,23 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual ("<root xmlns=\"" + assns + "\" />", des.Value.GetRaw (), "#3");
 			}
 		}
+
+		[Test]
+		public void Write_XmlSerializable ()
+		{
+			using (var xr = GetReader ("XmlSerializable.xml")) {
+				var des = (XmlSerializable) XamlServices.Load (xr);
+				Assert.IsNotNull (des, "#1");
+			}
+		}
+
+		[Test]
+		public void Write_ListXmlSerializable ()
+		{
+			using (var xr = GetReader ("List_XmlSerializable.xml")) {
+				var des = (List<XmlSerializable>) XamlServices.Load (xr);
+				Assert.AreEqual (1, des.Count, "#1");
+			}
+		}
 	}
 }

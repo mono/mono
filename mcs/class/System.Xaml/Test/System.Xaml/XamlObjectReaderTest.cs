@@ -598,5 +598,22 @@ namespace MonoTests.System.Xaml
 			var xr = new XamlObjectReader (obj);
 			Read_XmlSerializableWrapper (xr, true);
 		}
+
+		[Test] // If it is root, it is not serialized as IXmlSerializable.
+		public void Read_XmlSerializable ()
+		{
+			var obj = new XmlSerializable ("<root/>");
+			var xr = new XamlObjectReader (obj);
+			Read_XmlSerializable (xr);
+		}
+
+		[Test] // List contents are (sort of) treated as top-level too, so it is not serialized as IXmlSerializable(!)
+		public void Read_ListXmlSerializable ()
+		{
+			var obj = new List<XmlSerializable> ();
+			obj.Add (new XmlSerializable ("<root/>"));
+			var xr = new XamlObjectReader (obj);
+			Read_ListXmlSerializable (xr);
+		}
 	}
 }

@@ -952,6 +952,21 @@ namespace MonoTests.System.Xaml
 			var obj = new XmlSerializableWrapper (new XmlSerializable ("<root/>"));
 			Assert.AreEqual (ReadXml ("XmlSerializableWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+
+		[Test]
+		public void Write_XmlSerializable ()
+		{
+			var obj = new XmlSerializable ("<root/>");
+			Assert.AreEqual (ReadXml ("XmlSerializable.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_ListXmlSerializable ()
+		{
+			var obj = new List<XmlSerializable> ();
+			obj.Add (new XmlSerializable ("<root/>"));
+			Assert.AreEqual (ReadXml ("List_XmlSerializable.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1
