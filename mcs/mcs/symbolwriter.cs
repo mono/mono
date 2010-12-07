@@ -26,7 +26,7 @@ namespace Mono.CSharp
 {
 	static class SymbolWriter
 	{
-#if !NET_4_0
+#if !NET_4_0 && !STATIC
 		delegate int GetILOffsetFunc (ILGenerator ig);
 		static GetILOffsetFunc get_il_offset_func;
 
@@ -57,7 +57,7 @@ namespace Mono.CSharp
 
 		static int GetILOffset (ILGenerator ig)
 		{
-#if NET_4_0
+#if NET_4_0 || STATIC
 			return ig.ILOffset;
 #else
 			if (get_il_offset_func == null)
@@ -69,7 +69,7 @@ namespace Mono.CSharp
 
 		public static Guid GetGuid (ModuleBuilder module)
 		{
-#if NET_4_0
+#if NET_4_0 || STATIC
 			return module.ModuleVersionId;
 #else
 			if (get_guid_func == null)
