@@ -520,7 +520,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_XmlSerializableWrapper ()
 		{
 			var r = GetReader ("XmlSerializableWrapper.xml");
