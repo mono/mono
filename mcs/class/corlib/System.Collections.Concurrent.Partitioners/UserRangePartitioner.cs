@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Threading;
 using System.Collections.Generic;
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
@@ -49,30 +50,29 @@ namespace System.Collections.Concurrent.Partitioners
 			if (partitionCount <= 0)
 				throw new ArgumentOutOfRangeException ("partitionCount");
 			
+			int currentIndex = 0;
+			Func<int> getNextIndex = () => Interlocked.Increment (ref currentIndex) - 1;
+
 			var enumerators = new IEnumerator<KeyValuePair<long, Tuple<int, int>>>[partitionCount];
-			for (int i = 1; i < partitionCount; i++)
-				enumerators[i] = GetEmpty ();
-			
-			enumerators[0] = GetEnumerator ();
+			for (int i = 0; i < partitionCount; i++)
+				enumerators[i] = GetEnumerator (getNextIndex);
 
 			return enumerators;
 		}
 		
-		IEnumerator<KeyValuePair<long, Tuple<int, int>>> GetEnumerator ()
+		IEnumerator<KeyValuePair<long, Tuple<int, int>>> GetEnumerator (Func<int> getNextIndex)
 		{
-			int sliceStart = start;
-			long index = -1;
-			
-			while (sliceStart <= end) {
-				yield return new KeyValuePair<long, Tuple<int, int>> (++index, Tuple.Create (sliceStart, Math.Min (end, sliceStart + rangeSize)));
+			while (true) {
+				int index = getNextIndex ();
+				int sliceStart = index * rangeSize + start;
+
+				if (sliceStart >= end)
+					break;
+
+				yield return new KeyValuePair<long, Tuple<int, int>> (index, Tuple.Create (sliceStart, Math.Min (end, sliceStart + rangeSize)));
 				sliceStart += rangeSize;
 			}
 		}
-
-		IEnumerator<KeyValuePair<long, Tuple<int, int>>> GetEmpty ()
-		{
-			yield break;
-		}		
 	}
 
 	internal class UserLongRangePartitioner : OrderablePartitioner<Tuple<long,  long>>
@@ -93,31 +93,29 @@ namespace System.Collections.Concurrent.Partitioners
 			if (partitionCount <= 0)
 				throw new ArgumentOutOfRangeException ("partitionCount");
 			
+			long currentIndex = 0;
+			Func<long> getNextIndex = () => Interlocked.Increment (ref currentIndex) - 1;
+
 			var enumerators = new IEnumerator<KeyValuePair<long, Tuple<long, long>>>[partitionCount];
-			for (int i = 1; i < partitionCount; i++)
-				enumerators[i] = GetEmpty ();
-			
-			enumerators[0] = GetEnumerator ();
+			for (int i = 0; i < partitionCount; i++)
+				enumerators[i] = GetEnumerator (getNextIndex);
 
 			return enumerators;
 		}
 		
-		IEnumerator<KeyValuePair<long, Tuple<long, long>>> GetEnumerator ()
+		IEnumerator<KeyValuePair<long, Tuple<long, long>>> GetEnumerator (Func<long> getNextIndex)
 		{
-			long sliceStart = start;
-			long index = -1;
-			
-			while (sliceStart <= end) {
-				yield return new KeyValuePair<long, Tuple<long, long>> (++index, Tuple.Create (sliceStart, Math.Min (end, sliceStart + rangeSize)));
+			while (true) {
+				long index = getNextIndex ();
+				long sliceStart = index * rangeSize + start;
+
+				if (sliceStart >= end)
+					break;
+
+				yield return new KeyValuePair<long, Tuple<long, long>> (index, Tuple.Create (sliceStart, Math.Min (end, sliceStart + rangeSize)));
 				sliceStart += rangeSize;
 			}
 		}
-
-		IEnumerator<KeyValuePair<long, Tuple<long, long>>> GetEmpty ()
-		{
-			yield break;
-		}		
 	}
-
 }
 #endif
