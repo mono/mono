@@ -29,6 +29,8 @@ using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
+using System.Xml;
+using System.Xml.Serialization;
 
 // To use this under .NET, compile sources as:
 //
@@ -373,6 +375,12 @@ namespace System.Xaml
 				if (xm == XamlLanguage.Initialization) {
 					state.Value = GetCorrectlyTypedValue (xt, obj);
 					state.IsInstantiated = true;
+				}
+				else if (xm.Type.IsXData) {
+					var xdata = (XData) obj;
+					var ixser = xm.Invoker.GetValue (state.Value) as IXmlSerializable;
+					if (ixser != null)
+						ixser.ReadXml ((XmlReader) xdata.XmlReader);
 				}
 				else if (xm == XamlLanguage.Base)
 					ms.Value = GetCorrectlyTypedValue (xm.Type, obj);
