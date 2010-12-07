@@ -732,6 +732,8 @@ namespace System.Data.Odbc
 					bufsize = (col.MaxLength < 127 ? (col.MaxLength*2+1) : 255);
 					buffer = new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
 					StringBuilder sb = new StringBuilder ();
+					char[] charBuffer = new char[bufsize];
+					Decoder unicodeDecoder = Encoding.Unicode.GetDecoder ();
 					do {
 						ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
@@ -740,24 +742,24 @@ namespace System.Data.Odbc
 						if (ret == OdbcReturn.Success && outsize==-1)
 							ret = OdbcReturn.NoData;
 
-						if (ret != OdbcReturn.NoData && outsize > 0) {
-							string value = null;
-
-							if (outsize < bufsize)
-								value = Encoding.Unicode.GetString (buffer, 0, outsize);
-							else
-								value = Encoding.Unicode.GetString (buffer, 0, bufsize);
-
-							sb.Append (RemoveTrailingNullChar (value));
+						if (ret == OdbcReturn.Success || ret == OdbcReturn.SuccessWithInfo) {
+							if (outsize >= bufsize || outsize == (int)OdbcLengthIndicator.NoTotal)
+								outsize = bufsize;
+							int charCount = unicodeDecoder.GetChars (buffer, 0, outsize, charBuffer, 0);
+							string strValue = new String (charBuffer, 0, charCount);
+							sb.Append (RemoveTrailingNullChar (strValue));
 						}
 					} while (ret != OdbcReturn.NoData);
 					DataValue = sb.ToString ();
+					charBuffer = null;
 					break;
 				case OdbcType.Text:
 				case OdbcType.VarChar:
 					bufsize = (col.MaxLength < 255 ? (col.MaxLength+1) : 255);
 					buffer = new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
 					StringBuilder sb1 = new StringBuilder ();
+					charBuffer = new char[bufsize];
+					Decoder defaultDecoder = Encoding.Default.GetDecoder();
 					do { 
 						ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
@@ -765,11 +767,11 @@ namespace System.Data.Odbc
 						// Fix for strance ODBC drivers (like psqlODBC)
 						if (ret == OdbcReturn.Success && outsize==-1)
 							ret = OdbcReturn.NoData;
-						if (ret != OdbcReturn.NoData && outsize > 0) {
-							if (outsize < bufsize)
-								sb1.Append (Encoding.Default.GetString (buffer, 0, outsize));
-							else
-								sb1.Append (Encoding.Default.GetString (buffer, 0, bufsize - 1));
+						if (ret == OdbcReturn.Success || ret == OdbcReturn.SuccessWithInfo) {
+							if (outsize >= bufsize || outsize == (int)OdbcLengthIndicator.NoTotal)
+								outsize = bufsize - 1;
+							int charCount = defaultDecoder.GetChars(buffer, 0, outsize, charBuffer, 0);
+							sb1.Append(charBuffer, 0, charCount);
 						}
 					} while (ret != OdbcReturn.NoData);
 					DataValue = sb1.ToString ();
