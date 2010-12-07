@@ -102,12 +102,6 @@ namespace System.Xaml
 			return type.SchemaContext.GetXamlType (obj.GetType ());
 		}
 		
-		public IEnumerable<XamlNodeMember> Children (IValueSerializerContext vsctx)
-		{
-			foreach (var xm in type.GetAllObjectReaderMembersByType (vsctx))
-				yield return new XamlNodeMember (this, xm);
-		}
-		
 		public object GetRawValue ()
 		{
 			return context.GetRawValue ();

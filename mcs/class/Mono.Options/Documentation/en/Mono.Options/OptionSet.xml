@@ -1,9 +1,11 @@
 <Type Name="OptionSet" FullName="Mono.Options.OptionSet">
   <TypeSignature Language="C#" Value="public class OptionSet : System.Collections.ObjectModel.KeyedCollection&lt;string,Mono.Options.Option&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit OptionSet extends System.Collections.ObjectModel.KeyedCollection`2&lt;string, class Mono.Options.Option&gt;" />
   <AssemblyInfo>
     <AssemblyName>Mono.Options</AssemblyName>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
+    <AssemblyVersion>0.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>
     All public static members of this type are safe for multithreaded
@@ -18,8 +20,8 @@
   <Base>
     <BaseTypeName>System.Collections.ObjectModel.KeyedCollection&lt;System.String,Mono.Options.Option&gt;</BaseTypeName>
     <BaseTypeArguments>
-      <BaseTypeArgument TypeParamName="TKey">System.String</BaseTypeArgument>
-      <BaseTypeArgument TypeParamName="TItem">Mono.Options.Option</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="!0">System.String</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="!1">Mono.Options.Option</BaseTypeArgument>
     </BaseTypeArguments>
   </Base>
   <Interfaces />
@@ -47,6 +49,10 @@
         <see cref="T:System.Collections.Generic.List{System.String}" /> of all
         arguments which were not matched by a registered
         <see cref="T:Mono.Options.Option" />.
+      </para>
+      <para>
+        Response files, as used by <c>mcs</c> and other compiler tools, may be
+        supported by using <see cref="T:Mono.Options.ResponseFileSource" />.
       </para>
       <para>
         Three conditions must be met for a sequence of arguments to be
@@ -290,7 +296,7 @@
       </para>
       <code lang="C#" src="examples/greet.cs">using System;
 using System.Collections.Generic;
-using Mono.Options;
+using NDesk.Options;
 
 class Test {
 	static int verbosity;
@@ -437,7 +443,7 @@ Try `greet --help' for more information.
       <code lang="C#" src="examples/bundling.cs">using System;
 using System.Linq;
 using System.Collections.Generic;
-using Mono.Options;
+using NDesk.Options;
 
 class Test {
 	public static void Main (string[] args)
@@ -630,7 +636,7 @@ Options:
       <code lang="C#" src="examples/subclass.cs">// Case-Insensitive and Concatenating OptionSet
 using System;
 using System.Collections.Generic;
-using Mono.Options;
+using NDesk.Options;
 
 class DemoOptionSet : OptionSet {
 	protected override void InsertItem (int index, Option item)
@@ -813,14 +819,17 @@ Key: a\b\c=d\e\f
         </item>
       </list>
     </example>
+    <altmember cref="T:Mono.Options.ResponseFileSource" />
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public OptionSet ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -841,10 +850,12 @@ Key: a\b\c=d\e\f
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public OptionSet (Converter&lt;string,string&gt; localizer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Converter`2&lt;string, string&gt; localizer) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="localizer" Type="System.Converter&lt;System.String,System.String&gt;" />
@@ -890,14 +901,14 @@ Key: a\b\c=d\e\f
             See the following example, which demonstrates how different
             localizers alter the program output.
           </para>
-          <code lang="C#" src="examples/localization.cs">// Localization with Mono.Options.OptionSet.
+          <code lang="C#" src="examples/localization.cs">// Localization with NDesk.Options.OptionSet.
 //
 // Compile as:
-//   gmcs -r:Mono.Posix.dll -r:Mono.Options.dll code-localization.cs
+//   gmcs -r:Mono.Posix.dll -r:NDesk.Options.dll code-localization.cs
 using System;
 using System.IO;
 using Mono.Unix;
-using Mono.Options;
+using NDesk.Options;
 
 class LocalizationDemo {
 	public static void Main (string[] args)
@@ -948,7 +959,7 @@ class LocalizationDemo {
 		if (help)
 			p.WriteOptionDescriptions (Console.Out);
 		if (version)
-			Console.WriteLine ("Mono.Options Localizer Demo 1.0");
+			Console.WriteLine ("NDesk.Options Localizer Demo 1.0");
 		if (verbose &gt; 0)
 			Console.WriteLine ("Message level: {0}", verbose);
 	}
@@ -961,21 +972,21 @@ class LocalizationDemo {
   -v, --verbose              increase message verbosity.
   -n=VALUE                   must be an int
   -V, --version              output version information and exit.
-Mono.Options Localizer Demo 1.0
+NDesk.Options Localizer Demo 1.0
 
 $ LANGUAGE=es mono localization.exe --with-gettext --help --version
   -h, -?, --help             A mostrar este mensaje y salir.
   -v, --verbose              Aumento mensaje verbosidad.
   -n=VALUE                   Debe ser un int
   -V, --version              Salida de información de versión y sale.
-Mono.Options Localizer Demo 1.0
+NDesk.Options Localizer Demo 1.0
 
 $ mono localization.exe --with-hello --help --version
   -h, -?, --help             hello:show this message and exit.
   -v, --verbose              hello:increase message verbosity.
   -nhello:=VALUE             hello:must be an int
   -V, --version              hello:output version information and exit.
-Mono.Options Localizer Demo 1.0
+NDesk.Options Localizer Demo 1.0
 
 $ mono localization.exe -n not-an-int
 localization: Could not convert string `not-an-int' to type Int32 for option `-n'.
@@ -1010,11 +1021,47 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </Docs>
     </Member>
     <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (Mono.Options.ArgumentSource source);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(class Mono.Options.ArgumentSource source) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="Mono.Options.ArgumentSource" />
+      </Parameters>
+      <Docs>
+        <param name="source">
+          A <see cref="T:Mono.Options.ArgumentSource" /> to register for
+          argument processing.
+        </param>
+        <summary>
+          Registers <paramref name="source" /> so that it may be consulted
+          during argument processing within
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="option" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (Mono.Options.Option option);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(class Mono.Options.Option option) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1054,10 +1101,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, Mono.Options.OptionAction&lt;string,string&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(string prototype, class Mono.Options.OptionAction`2&lt;string, string&gt; action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1113,10 +1162,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, Action&lt;string&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(string prototype, class System.Action`1&lt;string&gt; action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1172,10 +1223,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, string description, Mono.Options.OptionAction&lt;string,string&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(string prototype, string description, class Mono.Options.OptionAction`2&lt;string, string&gt; action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1241,10 +1294,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, string description, Action&lt;string&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(string prototype, string description, class System.Action`1&lt;string&gt; action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
@@ -1300,14 +1355,19 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="Add&lt;T&gt;">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add&lt;T&gt; (string prototype, Action&lt;T&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add&lt;T&gt;(string prototype, class System.Action`1&lt;!!T&gt; action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
         <Parameter Name="action" Type="System.Action&lt;T&gt;" />
@@ -1353,20 +1413,22 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Add&lt;T&gt;">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add&lt;T&gt; (string prototype, string description, Action&lt;T&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add&lt;T&gt;(string prototype, string description, class System.Action`1&lt;!!T&gt; action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
         <Parameter Name="description" Type="System.String" />
@@ -1446,20 +1508,23 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
             <paramref name="action" /> is <see langword="null" /></para>
         </exception>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Add&lt;TKey,TValue&gt;">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add&lt;TKey,TValue&gt; (string prototype, Mono.Options.OptionAction&lt;TKey,TValue&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add&lt;TKey, TValue&gt;(string prototype, class Mono.Options.OptionAction`2&lt;!!TKey, !!TValue&gt; action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TValue" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
         <Parameter Name="action" Type="Mono.Options.OptionAction&lt;TKey,TValue&gt;" />
@@ -1516,21 +1581,23 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
             <paramref name="action" /> is <see langword="null" /></para>
         </exception>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TValue" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Add&lt;TKey,TValue&gt;">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add&lt;TKey,TValue&gt; (string prototype, string description, Mono.Options.OptionAction&lt;TKey,TValue&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add&lt;TKey, TValue&gt;(string prototype, string description, class Mono.Options.OptionAction`2&lt;!!TKey, !!TValue&gt; action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TValue" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
         <Parameter Name="description" Type="System.String" />
@@ -1600,17 +1667,42 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
             <paramref name="action" /> is <see langword="null" /></para>
         </exception>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TValue" />
-      </TypeParameters>
+    </Member>
+    <Member MemberName="ArgumentSources">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;Mono.Options.ArgumentSource&gt; ArgumentSources { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class Mono.Options.ArgumentSource&gt; ArgumentSources" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;Mono.Options.ArgumentSource&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          A collection of all
+          <see cref="T:Mono.Options.ArgumentSource" />s which will be consulted during 
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          processing.
+        </summary>
+        <value>
+          A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection{Mono.Options.ArgumentSource}" />
+          containing all <see cref="T:Mono.Options.ArgumentSource" />s which
+          have been 
+          <see cref="M:Mono.Options.OptionSet.Add(Mono.Options.ArgumentSource)" />ed.
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
     </Member>
     <Member MemberName="CreateOptionContext">
       <MemberSignature Language="C#" Value="protected virtual Mono.Options.OptionContext CreateOptionContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class Mono.Options.OptionContext CreateOptionContext() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionContext</ReturnType>
@@ -1645,9 +1737,11 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="GetKeyForItem">
       <MemberSignature Language="C#" Value="protected override string GetKeyForItem (Mono.Options.Option item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance string GetKeyForItem(class Mono.Options.Option item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1694,22 +1788,24 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="GetOptionForName">
       <MemberSignature Language="C#" Value="protected Mono.Options.Option GetOptionForName (string option);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance class Mono.Options.Option GetOptionForName(string option) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use KeyedCollection.this[string]")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Mono.Options.Option</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="option" Type="System.String" />
       </Parameters>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use KeyedCollection.this[string]")</AttributeName>
-        </Attribute>
-      </Attributes>
       <Docs>
         <param name="option">
           A <see cref="T:System.String" /> containing the option name to
@@ -1740,10 +1836,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="GetOptionParts">
       <MemberSignature Language="C#" Value="protected bool GetOptionParts (string argument, out string flag, out string name, out string sep, out string value);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance bool GetOptionParts(string argument, string flag, string name, string sep, string value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1832,10 +1930,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="InsertItem">
       <MemberSignature Language="C#" Value="protected override void InsertItem (int index, Mono.Options.Option item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void InsertItem(int32 index, class Mono.Options.Option item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1862,10 +1962,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="MessageLocalizer">
       <MemberSignature Language="C#" Value="public Converter&lt;string,string&gt; MessageLocalizer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Converter`2&lt;string, string&gt; MessageLocalizer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Converter&lt;System.String,System.String&gt;</ReturnType>
@@ -1891,10 +1993,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="Parse">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.List&lt;string&gt; Parse (System.Collections.Generic.IEnumerable&lt;string&gt; arguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.List`1&lt;string&gt; Parse(class System.Collections.Generic.IEnumerable`1&lt;string&gt; arguments) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.List&lt;System.String&gt;</ReturnType>
@@ -1917,6 +2021,16 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           containing all unhandled arguments.
         </returns>
         <remarks>
+          <para>
+            <c>Parse</c> looks at each argument from <paramref name="arguments" /> in order, passing each argument to each
+            <see cref="T:Mono.Options.ArgumentSource" /> within
+            <see cref="P:Mono.Options.OptionSet.ArgumentSources" /> using
+            <see cref="M:Mono.Options.ArgumentSource.GetArguments(System.Int32, System.Collections.Generic.IEnumerable{System.String}@)" />
+            until a source returns <see langword="true" /> (and the
+            replacement sequence is used) or no <c>ArgumentSource</c> supports
+            the argument.  <c>Parse</c> then attempts to process argument as
+            an option.
+          </para>
           <para>
             An argument is unhandled if:
           </para>
@@ -1978,7 +2092,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           </para>
           <code lang="C#" src="examples/greet.cs">using System;
 using System.Collections.Generic;
-using Mono.Options;
+using NDesk.Options;
 
 class Test {
 	static int verbosity;
@@ -2059,10 +2173,12 @@ class Test {
     </Member>
     <Member MemberName="Parse">
       <MemberSignature Language="C#" Value="protected virtual bool Parse (string argument, Mono.Options.OptionContext c);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool Parse(string argument, class Mono.Options.OptionContext c) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2154,10 +2270,12 @@ class Test {
     </Member>
     <Member MemberName="RemoveItem">
       <MemberSignature Language="C#" Value="protected override void RemoveItem (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void RemoveItem(int32 index) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2180,10 +2298,12 @@ class Test {
     </Member>
     <Member MemberName="SetItem">
       <MemberSignature Language="C#" Value="protected override void SetItem (int index, Mono.Options.Option item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void SetItem(int32 index, class Mono.Options.Option item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2212,10 +2332,12 @@ class Test {
     </Member>
     <Member MemberName="WriteOptionDescriptions">
       <MemberSignature Language="C#" Value="public void WriteOptionDescriptions (System.IO.TextWriter o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteOptionDescriptions(class System.IO.TextWriter o) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2261,6 +2383,12 @@ class Test {
             more than one value, the leading number is used to specify which
             value the string is for.
           </para>
+          <para>
+            Once all <see cref="T:Mono.Options.Option" />s have been written,
+            all <see cref="T:Mono.Options.ArgumentSource" />s are printed out
+            using <see cref="M:Mono.Options.ArgumentSource.GetNames" /> and
+            <see cref="P:Mono.Options.ArgumentSource.Description" />.
+          </para>
         </remarks>
         <example>
           <para>
@@ -2271,7 +2399,7 @@ class Test {
           </para>
           <code lang="C#" src="examples/greet.cs">using System;
 using System.Collections.Generic;
-using Mono.Options;
+using NDesk.Options;
 
 class Test {
 	static int verbosity;

@@ -24,6 +24,20 @@ $(symlinks):
 
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
+if MOONLIGHT
+moon-do-basic: Makefile $(SUPPORT_FILES)
+	cd $(mcs_topdir)/class/Mono.Cecil && $(MAKE) PROFILE=basic
+	cd $(mcs_topdir)/class/Mono.Cecil.Mdb && $(MAKE) PROFILE=basic
+	cd $(mcs_topdir)/tools/linker && $(MAKE) PROFILE=basic
+	cd $(mcs_topdir)/tools/tuner && $(MAKE) PROFILE=basic
+
+moon-do-basic-clean:
+	cd $(mcs_topdir)/class/Mono.Cecil && $(MAKE) PROFILE=basic clean
+	cd $(mcs_topdir)/class/Mono.Cecil.Mdb && $(MAKE) PROFILE=basic clean
+	cd $(mcs_topdir)/tools/linker && $(MAKE) PROFILE=basic clean
+	cd $(mcs_topdir)/tools/tuner && $(MAKE) PROFILE=basic clean
+endif
+
 if ONLY_MOONLIGHT
 build_profiles = moonlight_raw
 test_profiles = moonlight_raw
@@ -36,11 +50,14 @@ if MOONLIGHT
 build_profiles += moonlight_raw
 test_profiles += moonlight_raw
 
-moon-do-build: $(SUPPORT_FILES)
+moon-do-moonlight-raw: Makefile $(SUPPORT_FILES)
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' all-profiles
 
-moon-do-clean:
+moon-do-moonlight-raw-clean:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' clean-profiles
+
+moon-do-build: moon-do-moonlight-raw moon-do-basic
+moon-do-clean: moon-do-moonlight-raw-clean moon-do-basic-clean
 
 endif
 

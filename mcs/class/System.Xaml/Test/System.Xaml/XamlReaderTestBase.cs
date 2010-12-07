@@ -2159,6 +2159,113 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (r.Read (), "end");
 		}
 
+		protected void Read_XmlSerializableWrapper (XamlReader r, bool isObjectReader)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			var assns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+			Assert.AreEqual (assns, r.Namespace.Namespace, "ns#1-5");
+
+			Assert.IsTrue (r.Read (), "ns#2-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2-2");
+			Assert.IsNotNull (r.Namespace, "ns#2-3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns#2-4");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#2-5");
+
+			// t:XmlSerializableWrapper
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (XmlSerializableWrapper), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			// m:Value
+			Assert.IsTrue (r.Read (), "sm1#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm1#2");
+			Assert.AreEqual (xt.GetMember ("Value"), r.Member, "sm1#3");
+
+			// x:XData
+			Assert.IsTrue (r.Read (), "so#2-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2-2");
+			Assert.AreEqual (XamlLanguage.XData, r.Type, "so#2-3");
+
+			Assert.IsTrue (r.Read (), "sm2#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm2#2");
+			Assert.AreEqual (XamlLanguage.XData.GetMember ("Text"), r.Member, "sm2#3");
+
+			Assert.IsTrue (r.Read (), "v1#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "v1#2");
+			var val = isObjectReader ? "<root />" : "<root xmlns=\"" + assns + "\" />";
+			Assert.AreEqual (val, r.Value, "v1#3");
+
+			Assert.IsTrue (r.Read (), "em2#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em2#2");
+
+			Assert.IsTrue (r.Read (), "eo#2-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2-2");
+
+			Assert.IsTrue (r.Read (), "em1#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "em1#2");
+
+			// /t:XmlSerializableWrapper
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		protected void Read_XmlSerializable (XamlReader r)
+		{
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			var assns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+			Assert.AreEqual (assns, r.Namespace.Namespace, "ns#1-5");
+
+			// t:XmlSerializable
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (XmlSerializable), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			// /t:XmlSerializable
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		protected void Read_ListXmlSerializable (XamlReader r)
+		{
+			while (true) {
+				r.Read ();
+				if (r.Member == XamlLanguage.Items)
+					break;
+				if (r.IsEof)
+					Assert.Fail ("Items did not appear");
+			}
+
+			// t:XmlSerializable (yes...it is not XData!)
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (XmlSerializable), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			// /t:XmlSerializable
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			r.Close ();
+		}
+
 		protected void Read_CommonXamlPrimitive (object obj)
 		{
 			var r = new XamlObjectReader (obj);

@@ -12,6 +12,8 @@
 // Copyright 2004-2008 Novell, Inc
 
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace Mono.CSharp {
 
@@ -33,6 +35,16 @@ namespace Mono.CSharp {
 		v4
 	}
 
+	public enum Target
+	{
+		Library, Exe, Module, WinExe
+	}
+
+	public enum Platform
+	{
+		AnyCPU, X86, X64, IA64
+	}
+
 	public class RootContext {
 
 		//
@@ -41,10 +53,11 @@ namespace Mono.CSharp {
 		public static Target Target;
 		public static Platform Platform;
 		public static string TargetExt;
-		public static bool VerifyClsCompliance = true;
-		public static bool Optimize = true;
+		public static bool VerifyClsCompliance;
+		public static bool Optimize;
 		public static LanguageVersion Version;
 		public static bool EnhancedWarnings;
+		public static bool LoadDefaultReferences;
 
 		public static MetadataVersion MetadataCompatibilityVersion;
 
@@ -57,11 +70,50 @@ namespace Mono.CSharp {
 		public static bool StrongNameDelaySign;
 
 		//
+		// Assemblies references to be loaded
+		//
+		public static List<string> AssemblyReferences;
+
+		// 
+		// External aliases for assemblies
+		//
+		public static List<Tuple<string, string>> AssemblyReferencesAliases;
+
+		//
+		// Modules to be embedded
+		//
+		public static List<string> Modules;
+
+		//
+		// Lookup paths for referenced assemblies
+		//
+		public static List<string> ReferencesLookupPaths;
+
+		//
+		// Encoding.
+		//
+		public static Encoding Encoding;
+
+		//
 		// If set, enable XML documentation generation
 		//
 		public static Documentation Documentation;
 
 		static public string MainClass;
+
+		//
+		// Output file
+		//
+		static string output_file;
+		public static string OutputFile {
+			set {
+				output_file = value;
+			}
+			get {
+				return output_file;
+			}
+		}
+
 
 		// 
 		// The default compiler checked state
@@ -96,6 +148,9 @@ namespace Mono.CSharp {
 		static public  List<AssemblyResource> Resources;
 
 		static public bool GenerateDebugInfo;
+
+		// Compiler debug flags only
+		public static bool ParseOnly, TokenizeOnly;
 
 		//
 		// Whether we are being linked against the standard libraries.
@@ -148,15 +203,26 @@ namespace Mono.CSharp {
 			StrongNameKeyContainer = null;
 			StrongNameDelaySign = false;
 			MainClass = null;
+			OutputFile = null;
 			Target = Target.Exe;
 			TargetExt = ".exe";
 			Platform = Platform.AnyCPU;
 			Version = LanguageVersion.Default;
+			VerifyClsCompliance = true;
+			Optimize = true;
+			Encoding = Encoding.Default;
 			Documentation = null;
 			GenerateDebugInfo = false;
+			ParseOnly = false;
+			TokenizeOnly = false;
 			Win32IconFile = null;
 			Win32ResourceFile = null;
 			Resources = null;
+			LoadDefaultReferences = true;
+			AssemblyReferences = new List<string> ();
+			AssemblyReferencesAliases = new List<Tuple<string, string>> ();
+			Modules = new List<string> ();
+			ReferencesLookupPaths = new List<string> ();
 
 #if NET_4_0
 			MetadataCompatibilityVersion = MetadataVersion.v4;

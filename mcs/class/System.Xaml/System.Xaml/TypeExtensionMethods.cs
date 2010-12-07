@@ -234,14 +234,6 @@ namespace System.Xaml
 			if (m2.DeclaringType != null && m2.DeclaringType.ContentProperty == m2)
 				return -1;
 
-			// compare collection kind
-			var t1 = m1.Type;
-			var t2 = m2.Type;
-			int coll1 = t1.IsDictionary ? 3 : t1.IsCollection ? 2 : t1.IsArray ? 1 : 0;
-			int coll2 = t2.IsDictionary ? 3 : t2.IsCollection ? 2 : t2.IsArray ? 1 : 0;
-			if (coll1 != coll2)
-				return coll2 - coll1;
-
 			// then, compare names.
 			return String.CompareOrdinal (m1.Name, m2.Name);
 		}

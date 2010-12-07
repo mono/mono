@@ -1,0 +1,3 @@
+<List x:TypeArguments="msx:XmlSerializable" Capacity="4" xmlns="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:msx="clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <msx:XmlSerializable />
+</List>

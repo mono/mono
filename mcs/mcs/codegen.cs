@@ -160,7 +160,6 @@ namespace Mono.CSharp
 
 		public void BeginScope ()
 		{
-			ig.BeginScope();
 			SymbolWriter.OpenScope(ig);
 		}
 
@@ -171,7 +170,6 @@ namespace Mono.CSharp
 
 		public void EndScope ()
 		{
-			ig.EndScope();
 			SymbolWriter.CloseScope(ig);
 		}
 

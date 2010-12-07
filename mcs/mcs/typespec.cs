@@ -434,7 +434,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	public sealed class BuildinTypeSpec : PredefinedTypeSpec
+	public sealed class BuildinTypeSpec : TypeSpec
 	{
 		public enum Type
 		{
@@ -471,15 +471,32 @@ namespace Mono.CSharp
 			UIntPtr,
 			RuntimeFieldHandle,
 			RuntimeTypeHandle,
-			Exception
+			Exception,
+
+			Null,
+			Dynamic
 		}
 
 		readonly Type type;
+		readonly string ns;
+		readonly string name;
 
 		public BuildinTypeSpec (MemberKind kind, string ns, string name, Type buildinKind)
-			: base (kind, ns, name)
+			: base (kind, null, null, null, Modifiers.PUBLIC)
 		{
+			if (kind == MemberKind.Struct)
+				modifiers |= Modifiers.SEALED;
+
 			this.type = buildinKind;
+			this.ns = ns;
+			this.name = name;
+		}
+
+		public BuildinTypeSpec (string name, Type buildinKind)
+			: this (MemberKind.InternalCompilerType, "", name, buildinKind)
+		{
+			// Make all internal types CLS-compliant, non-obsolete
+			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected)) | StateFlags.CLSCompliant;
 		}
 
 		#region Properties
@@ -493,6 +510,24 @@ namespace Mono.CSharp
 		public override BuildinTypeSpec.Type BuildinType {
 			get {
 				return type;
+			}
+		}
+
+		public string FullName {
+			get {
+				return ns + '.' + name;
+			}
+		}
+
+		public override string Name {
+			get {
+				return name;
+			}
+		}
+
+		public string Namespace {
+			get {
+				return ns;
 			}
 		}
 
@@ -519,7 +554,10 @@ namespace Mono.CSharp
 			case "SByte": return "sbyte";
 			}
 
-			return Namespace + "." + Name;
+			if (ns.Length == 0)
+				return name;
+
+			return FullName;
 		}
 
 		public void SetDefinition (ITypeDefinition td, System.Type type)
@@ -535,38 +573,6 @@ namespace Mono.CSharp
 			this.BaseType = ts.BaseType;
 			this.Interfaces = ts.Interfaces;
 		}
-	}
-
-	public class PredefinedTypeSpec : TypeSpec
-	{
-		string name;
-		string ns;
-
-		public PredefinedTypeSpec (MemberKind kind, string ns, string name)
-			: base (kind, null, null, null, Modifiers.PUBLIC)
-		{
-			if (kind == MemberKind.Struct)
-				modifiers |= Modifiers.SEALED;
-
-			this.name = name;
-			this.ns = ns;
-		}
-
-		#region Properties
-
-		public override string Name {
-			get {
-				return name;
-			}
-		}
-
-		public string Namespace {
-			get {
-				return ns;
-			}
-		}
-
-		#endregion
 	}
 
 	static class TypeSpecComparer
@@ -953,9 +959,9 @@ namespace Mono.CSharp
 	{
 		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
 		public static readonly InternalType Arglist = new InternalType ("__arglist");
-		public static readonly InternalType Dynamic = new InternalType ("dynamic", null);
+		public static BuildinTypeSpec Dynamic;
 		public static readonly InternalType MethodGroup = new InternalType ("method group");
-		public static readonly InternalType Null = new InternalType ("null");
+		public static BuildinTypeSpec Null;
 		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
 
 		readonly string name;

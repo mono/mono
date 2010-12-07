@@ -553,7 +553,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_NamedItems ()
 		{
 			// foo
@@ -571,7 +570,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_NamedItems2 ()
 		{
 			// i1
@@ -590,6 +588,31 @@ namespace MonoTests.System.Xaml
 
 			var xr = new XamlObjectReader (obj);
 			Read_NamedItems2 (xr, true);
+		}
+
+		[Test]
+		public void Read_XmlSerializableWrapper ()
+		{
+			var obj = new XmlSerializableWrapper (new XmlSerializable ("<root/>"));
+			var xr = new XamlObjectReader (obj);
+			Read_XmlSerializableWrapper (xr, true);
+		}
+
+		[Test] // If it is root, it is not serialized as IXmlSerializable.
+		public void Read_XmlSerializable ()
+		{
+			var obj = new XmlSerializable ("<root/>");
+			var xr = new XamlObjectReader (obj);
+			Read_XmlSerializable (xr);
+		}
+
+		[Test] // List contents are (sort of) treated as top-level too, so it is not serialized as IXmlSerializable(!)
+		public void Read_ListXmlSerializable ()
+		{
+			var obj = new List<XmlSerializable> ();
+			obj.Add (new XmlSerializable ("<root/>"));
+			var xr = new XamlObjectReader (obj);
+			Read_ListXmlSerializable (xr);
 		}
 	}
 }

@@ -10,8 +10,8 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>The PostScript surface is used to render cairo graphics to Adobe PostScript files.</summary>
+    <remarks />
     <since version="cairo 1.2" />
   </Docs>
   <Members>
@@ -24,11 +24,11 @@
         <Parameter Name="height" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added.</param>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="filename">Filename for the PDF output as <see cref="t:System.String" /></param>
+        <param name="width">width of the surface, in points as <see cref="t:System.Double" /> (1 point == 1/72.0 inch)</param>
+        <param name="height">height of the surface, in points as <see cref="t:System.Double" /> (1 point == 1/72.0 inch)</param>
+        <summary>Creates a PostScript surface of the specified size in points to be written to filename.</summary>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,8 +43,8 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Begins the setup of the page</summary>
+        <remarks>Note that it is only necessary to call <see cref="M:Cairo.PSSurface.BeginPageSetup" /> for the first page of any surface.</remarks>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +59,8 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Begins the setup</summary>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +77,9 @@
         <Parameter Name="comment" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="comment">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="comment">The comment as a <see cref="t:System.String" /></param>
+        <summary>Emits a comment into the PostScript output</summary>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -97,10 +97,10 @@
         <Parameter Name="height" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="width">The new surface width in points as <see cref="t:System.Double" /> (1 point == 1/72.0 inch)</param>
+        <param name="height">The new surface height in points as <see cref="t:System.Double" /> (1 point == 1/72.0 inch)</param>
+        <summary>Changes the size of the PostScript surface for the current (and subsequent) pages.</summary>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

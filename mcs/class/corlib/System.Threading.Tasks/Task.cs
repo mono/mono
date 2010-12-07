@@ -637,10 +637,12 @@ namespace System.Threading.Tasks
 					if (numFinished >= 1)
 						return;
 					int result = Interlocked.Increment (ref numFinished);
+
 					// Check if we are the first to have finished
 					if (result == 1)
 						indexFirstFinished = indexResult;
 				}, TaskContinuationOptions.ExecuteSynchronously);
+
 				if (sched == null && t.scheduler != null)
 					sched = t.scheduler;
 			}
@@ -661,13 +663,20 @@ namespace System.Threading.Tasks
 			
 			// All tasks are supposed to use the same TaskScheduler
 			sched.ParticipateUntil (delegate {
-				if (millisecondsTimeout != 1 && watch.ElapsedMilliseconds > millisecondsTimeout)
+				if (millisecondsTimeout != -1 && watch.ElapsedMilliseconds > millisecondsTimeout)
 					return true;
 
 				token.ThrowIfCancellationRequested ();
 
 				return numFinished >= 1;
 			});
+
+			// Index update is still not done
+			if (indexFirstFinished == -1) {
+				SpinWait wait = new SpinWait ();
+				while (indexFirstFinished == -1)
+					wait.SpinOnce ();
+			}
 			
 			return indexFirstFinished;
 		}

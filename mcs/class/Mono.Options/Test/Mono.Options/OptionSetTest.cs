@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -80,6 +81,52 @@ namespace Tests.Mono.Options
 		public override string ToString () {return s;}
 	}
 
+	class TestArgumentSource : ArgumentSource, IEnumerable {
+		string[] names;
+		string desc;
+
+		public TestArgumentSource (string[] names, string desc)
+		{
+			this.names  = names;
+			this.desc   = desc;
+		}
+
+		Dictionary<string, string[]> args = new Dictionary<string, string[]>();
+
+		public void Add (string key, params string[] values)
+		{
+			args.Add (key, values);
+		}
+
+		public override string[] GetNames ()
+		{
+			return names;
+		}
+
+		public override string Description {
+			get {return desc;}
+		}
+
+		public override bool GetArguments (string value, out IEnumerable<string> replacement)
+		{
+			replacement = null;
+
+			string[] values;
+			if (args.TryGetValue (value, out values)) {
+				replacement = values;
+				return true;
+			}
+
+			return false;
+		}
+
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return args.GetEnumerator ();
+		}
+	}
+
 	[TestFixture]
 	public class OptionSetTest : ListContract<Option> {
 
@@ -114,6 +161,12 @@ namespace Tests.Mono.Options
 		[Test]
 		public void BundledValues ()
 		{
+			BundledValues (_("-DNAME", "-D", "NAME2", "-Debug", "-L/foo", "-L", "/bar", "-EDNAME3"));
+			BundledValues (_("@s1", "-D", "@s2", "-L/foo", "@s4"));
+		}
+
+		public void BundledValues (IEnumerable<string> args)
+		{
 			var defines = new List<string> ();
 			var libs    = new List<string> ();
 			bool debug  = false;
@@ -122,8 +175,14 @@ namespace Tests.Mono.Options
 				{ "L|library:", v => libs.Add (v) },
 				{ "Debug",      v => debug = v != null },
 				{ "E",          v => { /* ignore */ } },
+				new TestArgumentSource (null, null) {
+					{ "@s1", "-DNAME" },
+					{ "@s2", "NAME2", "@s3" },
+					{ "@s3", "-Debug" },
+					{ "@s4", "-L", "/bar", "-EDNAME3" },
+				},
 			};
-			p.Parse (_("-DNAME", "-D", "NAME2", "-Debug", "-L/foo", "-L", "/bar", "-EDNAME3"));
+			p.Parse (args);
 			Assert.AreEqual (defines.Count, 3);
 			Assert.AreEqual (defines [0], "NAME");
 			Assert.AreEqual (defines [1], "NAME2");
@@ -141,13 +200,23 @@ namespace Tests.Mono.Options
 		[Test]
 		public void RequiredValues ()
 		{
+			RequiredValues (_("a", "-a", "s", "-n=42", "n"));
+			RequiredValues (_("@s1", "s", "@s2", "n"));
+		}
+
+		void RequiredValues (IEnumerable<string> args)
+		{
 			string a = null;
 			int n = 0;
 			OptionSet p = new OptionSet () {
 				{ "a=", v => a = v },
 				{ "n=", (int v) => n = v },
+				new TestArgumentSource (null, null) {
+					{ "@s1", "a", "-a" },
+					{ "@s2", "-n=42" },
+				},
 			};
-			List<string> extra = p.Parse (_("a", "-a", "s", "-n=42", "n"));
+			List<string> extra = p.Parse (args);
 			Assert.AreEqual (extra.Count, 2);
 			Assert.AreEqual (extra [0], "a");
 			Assert.AreEqual (extra [1], "n");
@@ -218,6 +287,13 @@ namespace Tests.Mono.Options
 		[Test]
 		public void CombinationPlatter ()
 		{
+			CombinationPlatter (new string[]{"foo", "-v", "-a=42", "/b-",
+				"-a", "64", "bar", "--f", "B", "/h", "-?", "--help", "-v"});
+			CombinationPlatter (_("@s1", "-a=42", "@s3", "-a", "64", "bar", "@s4"));
+		}
+
+		void CombinationPlatter (IEnumerable<string> args)
+		{
 			int a = -1, b = -1;
 			string av = null, bv = null;
 			Foo f = null;
@@ -233,9 +309,14 @@ namespace Tests.Mono.Options
 					case "?": help |= 0x2; break;
 					case "help": help |= 0x4; break;
 				} } },
+				new TestArgumentSource (null, null) {
+					{ "@s1", "foo", "-v", "@s2" },
+					{ "@s2" },
+					{ "@s3", "/b-" },
+					{ "@s4", "--f", "B", "/h", "-?", "--help", "-v" },
+				},
 			};
-			List<string> e = p.Parse (new string[]{"foo", "-v", "-a=42", "/b-",
-				"-a", "64", "bar", "--f", "B", "/h", "-?", "--help", "-v"});
+			List<string> e = p.Parse (args);
 
 			Assert.AreEqual (e.Count, 2);
 			Assert.AreEqual (e[0], "foo");
@@ -274,7 +355,7 @@ namespace Tests.Mono.Options
 			Assert.AreEqual (a, "-b");
 			Utils.AssertException (typeof(ArgumentNullException),
 					"Argument cannot be null.\nParameter name: option",
-					p, v => { v.Add (null); });
+					p, v => { v.Add ((Option) null); });
 
 			// bad type
 			Utils.AssertException (typeof(OptionException),
@@ -333,6 +414,7 @@ namespace Tests.Mono.Options
 				{ "h|?|help",           "show help text",                       v => {} },
 				{ "version",            "output version information and exit",  v => {} },
 				{ "<>", v => {} },
+				new TestArgumentSource (new[]{"@s1", "@s2"}, "Read Response File for More Options"),
 			};
 
 			StringWriter expected = new StringWriter ();
@@ -366,6 +448,7 @@ namespace Tests.Mono.Options
  			expected.WriteLine ("                               `dirname FILE`/cache/`basename FILE .tree`.");
 			expected.WriteLine ("  -h, -?, --help             show help text");
 			expected.WriteLine ("      --version              output version information and exit");
+			expected.WriteLine ("  @s1, @s2                   Read Response File for More Options");
 
 			StringWriter actual = new StringWriter ();
 			p.WriteOptionDescriptions (actual);
@@ -376,6 +459,12 @@ namespace Tests.Mono.Options
 		[Test]
 		public void OptionBundling ()
 		{
+			OptionBundling (_ ("-abcf", "foo", "bar"));
+			OptionBundling (_ ("@s1", "foo", "bar"));
+		}
+
+		void OptionBundling (IEnumerable<string> args)
+		{
 			string a, b, c, f;
 			a = b = c = f = null;
 			var p = new OptionSet () {
@@ -383,8 +472,11 @@ namespace Tests.Mono.Options
 				{ "b", v => b = "b" },
 				{ "c", v => c = "c" },
 				{ "f=", v => f = v },
+				new TestArgumentSource (null, null) {
+					{ "@s1", "-abcf" },
+				},
 			};
-			List<string> extra = p.Parse (_ ("-abcf", "foo", "bar"));
+			List<string> extra = p.Parse (args);
 			Assert.AreEqual (extra.Count, 1);
 			Assert.AreEqual (extra [0], "bar");
 			Assert.AreEqual (a, "a");
@@ -399,11 +491,18 @@ namespace Tests.Mono.Options
 			var p = new OptionSet () {
 				{ "a", v => {} },
 				{ "b", v => {} },
+				new TestArgumentSource (null, null) {
+					{ "@s1", "-a", "-b" },
+				},
 			};
 			List<string> e = p.Parse (_ ("-a", "-b", "--", "-a", "-b"));
 			Assert.AreEqual (e.Count, 2);
 			Assert.AreEqual (e [0], "-a");
 			Assert.AreEqual (e [1], "-b");
+
+			e = p.Parse (_ ("@s1", "--", "@s1"));
+			Assert.AreEqual (e.Count, 1);
+			Assert.AreEqual (e [0], "@s1");
 		}
 
 		[Test]
@@ -418,19 +517,42 @@ namespace Tests.Mono.Options
 				{ "d={=>}{-->}", (k, v) => a.Add (k, v) },
 				{ "e={}", (k, v) => a.Add (k, v) },
 				{ "f=+/", (k, v) => a.Add (k, v) },
+				new TestArgumentSource (null, null) {
+					{ "@s1", "-a", "A" },
+					{ "@s2", @"C:\tmp", "-a" },
+					{ "@s3", "C=D", @"-a=E=F:\tmp" },
+					{ "@s4", "-a:G:H", "-aI=J" },
+					{ "@s5", "-b", "1" },
+					{ "@s6", "a", "-b" },
+					{ "@s7", "2", "b" },
+					{ "@s8", "-dA=>B", "-d" },
+					{ "@s9", "C-->D", "-d:E" },
+					{ "@s10", "F", "-d" },
+					{ "@s11", "G", "H" },
+					{ "@s12", "-dJ-->K" }
+				},
 			};
 			p.Parse (_("-a", "A", @"C:\tmp", "-a", "C=D", @"-a=E=F:\tmp", "-a:G:H", "-aI=J", "-b", "1", "a", "-b", "2", "b"));
-			AssertDictionary (a, 
-					"A", @"C:\tmp", 
-					"C", "D", 
-					"E", @"F:\tmp", 
-					"G", "H", 
-					"I", "J");
-			AssertDictionary (b,
-					"1", "a",
-					"2", "b");
-
+			Action assert = () => {
+				AssertDictionary (a, 
+						"A", @"C:\tmp", 
+						"C", "D", 
+						"E", @"F:\tmp", 
+						"G", "H", 
+						"I", "J");
+				AssertDictionary (b,
+						"1", "a",
+						"2", "b");
+			};
+			assert ();
 			a.Clear ();
+			b.Clear ();
+
+			p.Parse (_("@s1", "@s2", "@s3", "@s4", "@s5", "@s6", "@s7"));
+			assert ();
+			a.Clear ();
+			b.Clear ();
+
 			p.Parse (_("-c"));
 			Assert.AreEqual (a.Count, 0);
 			p.Parse (_("-c", "a"));
@@ -443,14 +565,21 @@ namespace Tests.Mono.Options
 
 			a.Clear ();
 			p.Parse (_("-dA=>B", "-d", "C-->D", "-d:E", "F", "-d", "G", "H", "-dJ-->K"));
-			AssertDictionary (a,
-					"A", "B",
-					"C", "D", 
-					"E", "F",
-					"G", "H",
-					"J", "K");
-
+			assert = () => {
+				AssertDictionary (a,
+						"A", "B",
+						"C", "D", 
+						"E", "F",
+						"G", "H",
+						"J", "K");
+			};
+			assert ();
 			a.Clear ();
+
+			p.Parse (_("@s8", "@s9", "@s10", "@s11", "@s12"));
+			assert ();
+			a.Clear ();
+
 			p.Parse (_("-eA=B", "-eC=D", "-eE", "F", "-e:G", "H"));
 			AssertDictionary (a,
 					"A=B", "-eC=D",

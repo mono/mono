@@ -130,31 +130,25 @@ namespace System.Linq.Parallel
 				Skim ();
 
 				while (!stagingCount.IsSet) {
-					if (!participantCount.IsSet)
+					if (!participantCount.IsSet) {
 						try {
 							stagingCount.Wait (mergedToken);
 						} catch {
 							Skim ();
 						}
+					}
 
-
-					// Ok so basically we hit the case where we return null but there is actually
-					// every remaining element inside temporaryArea. Thing is that index are basically getting messed up (probably)
-					// So Skim doesn't see them and inaccurately say there is nothing remaining.
-					// To prove this, adding a if (temporaryArea.IsEmpty) before returning null result in infinite loop
-					// plus if it was a problem with something here it would show elsewhere so the problem definitely comes from
-					// SelectMany.
 					if (participantCount.IsSet) {
 						if (Skim ())
 							continue;
 						// Totally finished
-						if (stagingArea.Any (s => s.Key != -1))
+						if (stagingArea[0].Key != -1)
 							break;
 						else
 							return null;
 					}
 				}
-				
+
 				return stagingArea;
 			}
 		}

@@ -108,12 +108,9 @@ namespace System.Reflection.Emit {
 #else
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
 				if (asm == null)
-					throw new ExecutionEngineException ("The assembly for default symbol writer cannot be loaded");
+					throw new TypeLoadException ("The assembly for default symbol writer cannot be loaded");
 
-				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl");
-				if (t == null)
-					throw new ExecutionEngineException ("The type that implements the default symbol writer interface cannot be found");
-
+				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl", true);
 				symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
 #endif
 				string fileName = fqname;

@@ -719,6 +719,18 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xm, xt.ContentProperty, "#1");
 			Assert.IsTrue (xt.GetAllMembers ().Contains (xm), "#2");
 		}
+		
+		[Test]
+		public void NamedItem ()
+		{
+			var xt = new XamlType (typeof (NamedItem), sctx);
+			var e = xt.GetAllMembers ().GetEnumerator ();
+			Assert.IsTrue (e.MoveNext (), "#1");
+			Assert.AreEqual (xt.GetMember ("ItemName"), e.Current, "#2");
+			Assert.IsTrue (e.MoveNext (), "#3");
+			Assert.AreEqual (xt.GetMember ("References"), e.Current, "#4");
+			Assert.IsFalse (e.MoveNext (), "#5");
+		}
 
 		[Test]
 		public void CanAssignTo ()
@@ -727,6 +739,25 @@ namespace MonoTests.System.Xaml
 				foreach (var xt2 in XamlLanguage.AllTypes)
 					Assert.AreEqual (xt1.UnderlyingType.IsAssignableFrom (xt2.UnderlyingType), xt2.CanAssignTo (xt1), "{0} to {1}", xt1, xt2);
 			Assert.IsTrue (XamlLanguage.Type.CanAssignTo (XamlLanguage.Object), "x#1"); // specific test
+			Assert.IsFalse (new MyXamlType ("MyFooBar", null, sctx).CanAssignTo (XamlLanguage.String), "x#2"); // custom type to string -> false
+			Assert.IsTrue (new MyXamlType ("MyFooBar", null, sctx).CanAssignTo (XamlLanguage.Object), "x#3"); // custom type to object -> true!
+		}
+
+		[Test]
+		public void IsXData ()
+		{
+			Assert.IsFalse (XamlLanguage.XData.IsXData, "#1"); // yes, it is false.
+			Assert.IsTrue (sctx.GetXamlType (typeof (XmlSerializable)).IsXData, "#2");
+		}
+		
+		[Test]
+		public void XDataMembers ()
+		{
+			var xt = sctx.GetXamlType (typeof (XmlSerializableWrapper));
+			Assert.IsNotNull (xt.GetMember ("Value"), "#1"); // it is read-only, so if wouldn't be retrieved if it were not XData.
+
+			Assert.IsNotNull (XamlLanguage.XData.GetMember ("XmlReader"), "#2"); // it is returned, but ignored by XamlObjectReader.
+			Assert.IsNotNull (XamlLanguage.XData.GetMember ("Text"), "#3");
 		}
 	}
 

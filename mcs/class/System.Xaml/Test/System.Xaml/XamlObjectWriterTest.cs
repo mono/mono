@@ -1126,7 +1126,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_NamedItems ()
 		{
 			// foo
@@ -1150,7 +1149,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_NamedItems2 ()
 		{
 			// i1
@@ -1176,6 +1174,36 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (1, des.References [0].References.Count, "#5");
 				Assert.AreEqual (1, des.References [1].References.Count, "#6");
 				Assert.AreEqual (des.References [0].References [0], des.References [1].References [0], "#7");
+			}
+		}
+
+		[Test]
+		public void Write_XmlSerializableWrapper ()
+		{
+			var assns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+			using (var xr = GetReader ("XmlSerializableWrapper.xml")) {
+				var des = (XmlSerializableWrapper) XamlServices.Load (xr);
+				Assert.IsNotNull (des, "#1");
+				Assert.IsNotNull (des.Value, "#2");
+				Assert.AreEqual ("<root xmlns=\"" + assns + "\" />", des.Value.GetRaw (), "#3");
+			}
+		}
+
+		[Test]
+		public void Write_XmlSerializable ()
+		{
+			using (var xr = GetReader ("XmlSerializable.xml")) {
+				var des = (XmlSerializable) XamlServices.Load (xr);
+				Assert.IsNotNull (des, "#1");
+			}
+		}
+
+		[Test]
+		public void Write_ListXmlSerializable ()
+		{
+			using (var xr = GetReader ("List_XmlSerializable.xml")) {
+				var des = (List<XmlSerializable>) XamlServices.Load (xr);
+				Assert.AreEqual (1, des.Count, "#1");
 			}
 		}
 	}

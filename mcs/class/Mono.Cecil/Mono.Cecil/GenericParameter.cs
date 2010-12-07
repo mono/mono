@@ -192,5 +192,10 @@ namespace Mono.Cecil {
 			this.owner = owner;
 			this.etype = owner.GenericParameterType == GenericParameterType.Type ? ElementType.Var : ElementType.MVar;
 		}
+
+		public override TypeDefinition Resolve ()
+		{
+			return null;
+		}
 	}
 }

@@ -75,6 +75,7 @@ System.Xaml/IXamlNameResolver.cs
 System.Xaml/IXamlNamespaceResolver.cs
 System.Xaml/IXamlObjectWriterFactory.cs
 System.Xaml/IXamlSchemaContextProvider.cs
+System.Xaml/NameScope.cs
 System.Xaml/NamespaceDeclaration.cs
 System.Xaml/ParsedMarkupExtensionInfo.cs
 System.Xaml/PrefixLookup.cs
@@ -98,7 +99,7 @@ System.Xaml/XamlObjectNodeIterator.cs
 System.Xaml/XamlObjectReader.cs
 System.Xaml/XamlObjectReaderException.cs
 System.Xaml/XamlObjectReaderSettings.cs
-System.Xaml/XamlObjectWriter-new.cs
+System.Xaml/XamlObjectWriter.cs
 System.Xaml/XamlObjectWriterException.cs
 System.Xaml/XamlObjectWriterSettings.cs
 System.Xaml/XamlParseException.cs
@@ -110,6 +111,7 @@ System.Xaml/XamlSchemaException.cs
 System.Xaml/XamlServices.cs
 System.Xaml/XamlType.cs
 System.Xaml/XamlWriter.cs
+System.Xaml/XamlWriterInternalBase.cs
 System.Xaml/XamlWriterSettings.cs
 System.Xaml/XamlWriterStateManager.cs
 System.Xaml/XamlXmlReader.cs

@@ -82,6 +82,10 @@ namespace Mono.CSharp {
 				get { return tc.IsStatic; }
 			}
 
+			public ModuleContainer Module {
+				get { return tc.Module; }
+			}
+
 			public string GetSignatureForError ()
 			{
 				return tc.GetSignatureForError ();
@@ -674,7 +678,7 @@ namespace Mono.CSharp {
 				if (OptAttributes == null)
 					return false;
 
-				return OptAttributes.Contains (Compiler.PredefinedAttributes.ComImport);
+				return OptAttributes.Contains (Module.PredefinedAttributes.ComImport);
 			}
 		}
 
@@ -788,7 +792,7 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return null;
 
-			Attribute a = OptAttributes.Search (Compiler.PredefinedAttributes.CoClass);
+			Attribute a = OptAttributes.Search (Module.PredefinedAttributes.CoClass);
 			if (a == null)
 				return null;
 
@@ -1070,7 +1074,7 @@ namespace Mono.CSharp {
 				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, method.Parameters.Types);
 				if (method.Parameters.HasArglist) {
 					cloned_params.FixedParameters[0] = new Parameter (null, "__arglist", Parameter.Modifier.NONE, null, Location);
-					cloned_params.Types[0] = TypeManager.runtime_argument_handle_type;
+					cloned_params.Types[0] = Module.PredefinedTypes.RuntimeArgumentHandle.Resolve (Location);
 				}
 
 				GenericMethod generic_method;
@@ -1335,7 +1339,7 @@ namespace Mono.CSharp {
 		// Replaces normal spec with predefined one when compiling corlib
 		// and this type container defines predefined type
 		//
-		public void SetPredefinedSpec (PredefinedTypeSpec spec)
+		public void SetPredefinedSpec (BuildinTypeSpec spec)
 		{
 			this.spec = spec;
 		}
@@ -1613,7 +1617,7 @@ namespace Mono.CSharp {
 			if (!seen_normal_indexers)
 				return;
 
-			PredefinedAttribute pa = Compiler.PredefinedAttributes.DefaultMember;
+			PredefinedAttribute pa = Module.PredefinedAttributes.DefaultMember;
 			if (pa.Constructor == null &&
 				!pa.ResolveConstructor (Location, TypeManager.string_type))
 				return;
@@ -1755,7 +1759,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				Compiler.PredefinedAttributes.CompilerGenerated.EmitAttribute (TypeBuilder);
+				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (TypeBuilder);
 
 			base.Emit ();
 		}
@@ -1869,8 +1873,12 @@ namespace Mono.CSharp {
 			// Close base type container first to avoid TypeLoadException
 			if (spec.BaseType != null) {
 				var btype = spec.BaseType.MemberDefinition as TypeContainer;
-				if (btype != null)
+				if (btype != null) {
 					btype.CloseType ();
+
+					if ((caching_flags & Flags.CloseTypeCreated) != 0)
+						return;
+				}
 			}
 
 			try {
@@ -2478,10 +2486,10 @@ namespace Mono.CSharp {
 			base.Emit ();
 
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
-				Compiler.PredefinedAttributes.Extension.EmitAttribute (TypeBuilder);
+				Module.PredefinedAttributes.Extension.EmitAttribute (TypeBuilder);
 
 			if (base_type != null && base_type.HasDynamicElement) {
-				Compiler.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type, Location);
 			}
 		}
 
@@ -2513,7 +2521,7 @@ namespace Mono.CSharp {
 						GetSignatureForError (), base_class.GetSignatureForError ());
 				}
 
-				if (base_type is PredefinedTypeSpec && !(spec is PredefinedTypeSpec) &&
+				if (base_type is BuildinTypeSpec && !(spec is BuildinTypeSpec) &&
 					(base_type == TypeManager.enum_type || base_type == TypeManager.value_type || base_type == TypeManager.multicast_delegate_type ||
 					base_type == TypeManager.delegate_type || base_type == TypeManager.array_type)) {
 					Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
@@ -2550,7 +2558,7 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return null;
 
-			Attribute[] attrs = OptAttributes.SearchMulti (Compiler.PredefinedAttributes.Conditional);
+			Attribute[] attrs = OptAttributes.SearchMulti (Module.PredefinedAttributes.Conditional);
 			if (attrs == null)
 				return null;
 
@@ -2645,7 +2653,7 @@ namespace Mono.CSharp {
 				if (!ftype.IsStruct)
 					continue;
 
-				if (ftype is PredefinedTypeSpec)
+				if (ftype is BuildinTypeSpec)
 					continue;
 
 				foreach (var targ in ftype.TypeArguments) {
@@ -2960,13 +2968,13 @@ namespace Mono.CSharp {
 
 				ObsoleteAttribute oa = base_member.GetAttributeObsolete ();
 				if (oa != null) {
-					if (OptAttributes == null || !OptAttributes.Contains (Compiler.PredefinedAttributes.Obsolete)) {
+					if (OptAttributes == null || !OptAttributes.Contains (Module.PredefinedAttributes.Obsolete)) {
 						Report.SymbolRelatedToPreviousError (base_member);
 						Report.Warning (672, 1, Location, "Member `{0}' overrides obsolete member `{1}'. Add the Obsolete attribute to `{0}'",
 							GetSignatureForError (), TypeManager.GetFullNameSignature (base_member));
 					}
 				} else {
-					if (OptAttributes != null && OptAttributes.Contains (Compiler.PredefinedAttributes.Obsolete)) {
+					if (OptAttributes != null && OptAttributes.Contains (Module.PredefinedAttributes.Obsolete)) {
 						Report.SymbolRelatedToPreviousError (base_member);
 						Report.Warning (809, 1, Location, "Obsolete member `{0}' overrides non-obsolete member `{1}'",
 							GetSignatureForError (), TypeManager.GetFullNameSignature (base_member));

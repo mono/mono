@@ -24483,6 +24483,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-15.cs">
+    <type name="Program">
+      <method name="Void Test(S)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>63</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()">
@@ -42520,7 +42533,7 @@
         <size>24</size>
       </method>
       <method name="Void Test2(IMemberDelayed)">
-        <size>8</size>
+        <size>19</size>
       </method>
       <method name="Void Main()">
         <size>1</size>

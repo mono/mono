@@ -1413,14 +1413,13 @@ namespace Mono.Cecil {
 			return ReadListRange (rid, Table.PropertyMap, Table.Property);
 		}
 
-		public MethodSemanticsAttributes ReadMethodSemantics (MethodDefinition method)
+		MethodSemanticsAttributes ReadMethodSemantics (MethodDefinition method)
 		{
 			InitializeMethodSemantics ();
 			Row<MethodSemanticsAttributes, MetadataToken> row;
 			if (!metadata.Semantics.TryGetValue (method.token.RID, out row))
 				return MethodSemanticsAttributes.None;
 
-			method.SemanticsAttributes = row.Col1;
 			var type = method.DeclaringType;
 
 			switch (row.Col1) {
@@ -1528,11 +1527,23 @@ namespace Mono.Cecil {
 			return @event;
 		}
 
-		static void ReadAllSemantics (TypeDefinition type)
+		public MethodSemanticsAttributes ReadAllSemantics (MethodDefinition method)
+		{
+			ReadAllSemantics (method.DeclaringType);
+
+			return method.SemanticsAttributes;
+		}
+
+		void ReadAllSemantics (TypeDefinition type)
 		{
 			var methods = type.Methods;
-			for (int i = 0; i < methods.Count; i++)
-				methods [i].ReadSemantics ();
+			for (int i = 0; i < methods.Count; i++) {
+				var method = methods [i];
+				if (method.sem_attrs.HasValue)
+					continue;
+
+				method.sem_attrs = ReadMethodSemantics (method);
+			}
 		}
 
 		Range ReadParametersRange (uint method_rid)

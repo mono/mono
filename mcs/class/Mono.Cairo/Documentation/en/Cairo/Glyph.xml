@@ -27,11 +27,12 @@
         <Parameter Name="y" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="index">A <see cref="t:System.Int64" /> value as index. </param>
+        <param name="x">A <see cref="t:System.Double" /> value as x</param>
+        <param name="y">A <see cref="t:System.Int64" /> value as y</param>
+        <summary>Sets the index, x and y values</summary>
+        <remarks>The x value represents the offset in the X direction between the origin used for drawing or measuring the string and the origin of this glyph.
+The y value represents the offset in the Y direction between the origin used for drawing or measuring the string and the origin of this glyph.</remarks>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -52,10 +53,10 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="obj">the other object</param>
+        <summary>Compares this Glyph object with another one for equality.</summary>
+        <returns>True if this Glyph is equal to the other, in all other cases false.</returns>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -70,9 +71,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Compute a hash for the Glyph</summary>
+        <returns>The hash value for the Glyph</returns>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Index">
@@ -83,7 +84,7 @@
       </ReturnValue>
       <Docs>
         <summary>Glyph index in the font. The exact interpretation of the glyph index depends on the font technology being used.</summary>
-        <value>To be added.</value>
+        <value>A <see cref="t:System.Int64" /> representing the index</value>
         <remarks>
         </remarks>
       </Docs>
@@ -103,11 +104,11 @@
         <Parameter Name="other" Type="Cairo.Glyph" />
       </Parameters>
       <Docs>
-        <param name="glyph">To be added.</param>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="glyph">The first Glyph</param>
+        <param name="other">The other Glyph</param>
+        <summary>Checks the equality of two Glyphs</summary>
+        <returns>A <see cref="t:System.Boolean" /> representing the result</returns>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -125,11 +126,11 @@
         <Parameter Name="other" Type="Cairo.Glyph" />
       </Parameters>
       <Docs>
-        <param name="glyph">To be added.</param>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="glyph">The first Glyph</param>
+        <param name="other">The other Glyph</param>
+        <summary>Checks the inequality of two Glyphs</summary>
+        <returns>A <see cref="t:System.Boolean" /> representing the result</returns>
+        <remarks />
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -144,7 +145,7 @@
       </ReturnValue>
       <Docs>
         <summary>The offset in the X direction between the origin used for drawing or measuring the string and the origin of this glyph.</summary>
-        <value>To be added.</value>
+        <value>A <see cref="t:System.Double" /> representing X</value>
         <remarks>
         </remarks>
       </Docs>
@@ -161,7 +162,7 @@
       </ReturnValue>
       <Docs>
         <summary>The offset in the Y direction between the origin used for drawing or measuring the string and the origin of this glyph.</summary>
-        <value>To be added.</value>
+        <value>A <see cref="t:System.Double" /> representing Y</value>
         <remarks>
         </remarks>
       </Docs>

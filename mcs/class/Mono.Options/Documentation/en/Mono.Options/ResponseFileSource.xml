@@ -1,0 +1,134 @@
+<Type Name="ResponseFileSource" FullName="Mono.Options.ResponseFileSource">
+  <TypeSignature Language="C#" Value="public class ResponseFileSource : Mono.Options.ArgumentSource" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ResponseFileSource extends Mono.Options.ArgumentSource" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Options</AssemblyName>
+    <AssemblyVersion>0.2.2.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Options.ArgumentSource</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      Inserts the contents of a file during argument processing.
+    </summary>
+    <remarks>
+      <para>
+        <c>ResponseFileSource</c> looks for arguments which start with
+        <c>@</c>, assumes that what follows the <c>@</c> is a valid filename,
+        and reads the contents of the filename as the replacement text.
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResponseFileSource ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+          Constructs and initializes a
+          <see cref="T:Mono.Options.ResponseFileSource" /> instance.
+        </summary>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Description">
+      <MemberSignature Language="C#" Value="public override string Description { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Description" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The description to provide for the argument source within
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+        </summary>
+        <value>
+          <c>"Read response file for more options."</c>.
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetArguments">
+      <MemberSignature Language="C#" Value="public override bool GetArguments (string value, out System.Collections.Generic.IEnumerable&lt;string&gt; replacement);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool GetArguments(string value, class System.Collections.Generic.IEnumerable`1&lt;string&gt; replacement) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="replacement" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          A <see cref="T:System.String" /> containing the argument to replace
+          with additional arguments.
+        </param>
+        <param name="replacement">
+          A <see cref="T:System.Collections.Generic.IEnumerable{System.String}" />
+          which will refer to teh replacement arguments if this method returns
+          <see langword="true" />; otherwise, this value should be ignored by
+          callers.
+        </param>
+        <summary>
+          Replace the argument <paramref name="value" /> with the contents of
+          the specified file.
+        </summary>
+        <returns>
+          If <paramref name="value" /> starts with <c>@</c>, then
+          <paramref name="replacement" /> will contain the parsed contents of
+          the filename resulting from <c><paramref name="value" />.Substring(1)</c>
+          and <see langword="true" /> is returned; otherwise, 
+          <see langword="false" /> is returned.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.IO.IOException">
+          <paramref name="value" /> starts with <c>@</c> and 
+          <c><paramref name="value" />.Substring(1)</c> doees not exist.
+        </exception>
+        <altmember cref="M:Mono.Options.ArgumentSource.GetArgumentsFromFile(System.String)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetNames">
+      <MemberSignature Language="C#" Value="public override string[] GetNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string[] GetNames() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+          The names to provide for the argument source within 
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />.
+        </summary>
+        <returns>
+          A <see cref="T:System.String" /> array containing
+          an element with the value <c>"@file"</c>.
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

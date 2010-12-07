@@ -56,7 +56,6 @@ namespace Mono.Cecil {
 		public ModuleReference (string name)
 			: this ()
 		{
-			Mixin.CheckName (name);
 			this.name = name;
 		}
 

@@ -138,18 +138,17 @@ namespace System
 
 			int src = 0;
 			StringBuilder sb = new StringBuilder (template.Length);
-			BindByName (ref src, sb, path, nvc, dic, omitDefaults);
-			BindByName (ref src, sb, query, nvc, dic, omitDefaults);
+			BindByName (ref src, sb, path, nvc, dic, omitDefaults, false);
+			BindByName (ref src, sb, query, nvc, dic, omitDefaults, true);
 			sb.Append (template.Substring (src));
 			return new Uri (baseAddress.ToString () + sb.ToString ());
 		}
 
-		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection nvc, IDictionary<string,string> dic, bool omitDefaults)
+		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection nvc, IDictionary<string,string> dic, bool omitDefaults, bool query)
 		{
 			foreach (string name in names) {
 				int s = template.IndexOf ('{', src);
 				int e = template.IndexOf ('}', s + 1);
-				sb.Append (template.Substring (src, s - src));
 #if NET_2_1
 				string value = null;
 #else
@@ -157,9 +156,18 @@ namespace System
 #endif
 				if (dic != null)
 					dic.TryGetValue (name, out value);
-				if (value == null && (omitDefaults || !Defaults.TryGetValue (name, out value)))
-					throw new ArgumentException (String.Format ("The argument name value collection does not contain non-null value for '{0}'", name), "parameters");
-				sb.Append (value);
+				if (query) {
+					if (value != null || (!omitDefaults && Defaults.TryGetValue (name, out value))) {
+						sb.Append (template.Substring (src, s - src));
+						sb.Append (value);
+					}
+				} else
+					if (value == null && (omitDefaults || !Defaults.TryGetValue(name, out value)))
+						throw new ArgumentException(string.Format("The argument name value collection does not contain non-nul vaalue for '{0}'", name), "parameters");
+					else {
+						sb.Append (template.Substring (src, s - src));
+						sb.Append (value);
+					}
 				src = e + 1;
 			}
 		}

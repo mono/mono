@@ -223,6 +223,8 @@ namespace System.Net.Sockets
 				BytesTransferred = curSocket.EndReceive (ares);
 			} catch (SocketException se){
 				SocketError = se.SocketErrorCode;
+			} catch (ObjectDisposedException) {
+				SocketError = SocketError.OperationAborted;
 			} finally {
 				OnCompleted (this);
 			}
@@ -295,6 +297,8 @@ namespace System.Net.Sockets
 				return (curSocket.Connected ? 0 : SocketError);
 			} catch (SocketException se){
 				return se.SocketErrorCode;
+			} catch (ObjectDisposedException) {
+				return SocketError.OperationAborted;
 			}
 		}
 
@@ -304,6 +308,8 @@ namespace System.Net.Sockets
 				BytesTransferred = curSocket.EndSend (ares);
 			} catch (SocketException se){
 				SocketError = se.SocketErrorCode;
+			} catch (ObjectDisposedException) {
+				SocketError = SocketError.OperationAborted;
 			} finally {
 				OnCompleted (this);
 			}
@@ -316,7 +322,11 @@ namespace System.Net.Sockets
 				AcceptSocket = curSocket.EndAccept (ares);
 			} catch (SocketException ex) {
 				SocketError = ex.SocketErrorCode;
+			} catch (ObjectDisposedException) {
+				SocketError = SocketError.OperationAborted;
 			} finally {
+				if (AcceptSocket == null)
+					AcceptSocket = new Socket (curSocket.AddressFamily, curSocket.SocketType, curSocket.ProtocolType, (IntPtr)(-1));
 				OnCompleted (this);
 			}
 		}
@@ -327,6 +337,8 @@ namespace System.Net.Sockets
 				curSocket.EndDisconnect (ares);
 			} catch (SocketException ex) {
 				SocketError = ex.SocketErrorCode;
+			} catch (ObjectDisposedException) {
+				SocketError = SocketError.OperationAborted;
 			} finally {
 				OnCompleted (this);
 			}
@@ -338,6 +350,8 @@ namespace System.Net.Sockets
 				BytesTransferred = curSocket.EndReceiveFrom (ares, ref remote_ep);
 			} catch (SocketException ex) {
 				SocketError = ex.SocketErrorCode;
+			} catch (ObjectDisposedException) {
+				SocketError = SocketError.OperationAborted;
 			} finally {
 				OnCompleted (this);
 			}
@@ -349,6 +363,8 @@ namespace System.Net.Sockets
 				BytesTransferred = curSocket.EndSendTo (ares);
 			} catch (SocketException ex) {
 				SocketError = ex.SocketErrorCode;
+			} catch (ObjectDisposedException) {
+				SocketError = SocketError.OperationAborted;
 			} finally {
 				OnCompleted (this);
 			}

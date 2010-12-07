@@ -144,7 +144,7 @@ namespace System.Xaml
 		XamlNodeType node_type;
 		
 		object current;
-		bool inside_object_not_member, is_empty_object, is_empty_member;
+		bool inside_object_not_member, is_xdata, is_empty_object, is_empty_member;
 		Stack<XamlType> types = new Stack<XamlType> ();
 		Stack<XamlMember> members = new Stack<XamlMember> ();
 		XamlMember current_member;
@@ -202,6 +202,11 @@ namespace System.Xaml
 			if (MoveToNextStoredMember ())
 				return true;
 
+			if (is_xdata) {
+				is_xdata = false;
+				SetEndOfObject ();
+				return true;
+			}
 			if (is_empty_object) {
 				is_empty_object = false;
 				ReadEndType ();
@@ -242,7 +247,9 @@ namespace System.Xaml
 						ReadStartMember ();
 				} else {
 					if (node_type == XamlNodeType.StartMember && current_member != null && !current_member.IsWritePublic) {
-						if (current_member.Type.IsCollection)
+						if (current_member.Type.IsXData)
+							ReadStartXData ();
+						else if (current_member.Type.IsCollection)
 							SetGetObject ();
 						else
 							throw new XamlParseException (String.Format ("Read-only member '{0}' showed up in the source XML, and the xml contains element content that cannot be read.", current_member.Name)) { LineNumber = this.LineNumber, LinePosition = this.LinePosition };
@@ -389,6 +396,19 @@ namespace System.Xaml
 
 			// The next Read() results are likely directives.
 			stored_member_enumerator = members.GetEnumerator ();
+		}
+
+		void ReadStartXData ()
+		{
+			var xt = XamlLanguage.XData;
+			string xdata = r.ReadInnerXml ();
+			stored_member_enumerator = new List<Pair> (new Pair [] { new Pair (xt.GetMember ("Text"), xdata) }).GetEnumerator ();
+			
+			types.Push (xt);
+			current = xt;
+			node_type = XamlNodeType.StartObject;
+			inside_object_not_member = true;
+			is_xdata = true;
 		}
 		
 		void ReadStartMember ()

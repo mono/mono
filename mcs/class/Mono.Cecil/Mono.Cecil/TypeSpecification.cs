@@ -77,7 +77,7 @@ namespace Mono.Cecil {
 			this.token = new MetadataToken (TokenType.TypeSpec);
 		}
 
-		public sealed override TypeReference GetElementType ()
+		public override TypeReference GetElementType ()
 		{
 			return element_type.GetElementType ();
 		}

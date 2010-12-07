@@ -28,11 +28,13 @@ using System.Windows.Markup;
 
 namespace System.Xaml
 {
-	internal class XamlNameResolver : IXamlNameResolver, IServiceProvider
+	internal class XamlNameResolver : IXamlNameResolver, IXamlNameProvider
 	{
 		public XamlNameResolver ()
 		{
 		}
+		
+		public bool IsCollectingReferences { get; set; }
 
 		internal class NamedObject
 		{
@@ -47,68 +49,122 @@ namespace System.Xaml
 			public bool FullyInitialized { get; set; }
 		}
 
-		internal class NameFixupReguired
-		{
-			public NameFixupReguired (string name)
-			{
-				Name = name;
-			}
-			
-			public string Name { get; set; }
-		}
-
-		List<NamedObject> objects = new List<NamedObject> ();
+		Dictionary<string,NamedObject> objects = new Dictionary<string,NamedObject> ();
+		List<object> referenced = new List<object> ();
 
 		[MonoTODO]
 		public bool IsFixupTokenAvailable {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public event EventHandler OnNameScopeInitializationComplete;
 
-		internal void Add (string name, object value, bool fullyInitialized)
+		internal void NameScopeInitializationCompleted (object sender)
 		{
-			objects.Add (new NamedObject (name, value, fullyInitialized));
+			if (OnNameScopeInitializationComplete != null)
+				OnNameScopeInitializationComplete (sender, EventArgs.Empty);
+			objects.Clear ();
+		}
+		
+		int saved_count, saved_referenced_count;
+		public void Save ()
+		{
+			if (saved_count != 0)
+				throw new Exception ();
+			saved_count = objects.Count;
+			saved_referenced_count = referenced.Count;
+		}
+		public void Restore ()
+		{
+			while (saved_count < objects.Count)
+				objects.Remove (objects.Last ().Key);
+				referenced.Remove (objects.Last ().Key);
+			saved_count = 0;
+			referenced.RemoveRange (saved_referenced_count, referenced.Count - saved_referenced_count);
+			saved_referenced_count = 0;
 		}
 
-		[MonoTODO]
+		internal void SetNamedObject (string name, object value, bool fullyInitialized)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			objects [name] = new NamedObject (name, value, fullyInitialized);
+		}
+		
+		internal bool Contains (string name)
+		{
+			return objects.ContainsKey (name);
+		}
+		
+		public string GetName (object value)
+		{
+			foreach (var no in objects.Values)
+				if (object.ReferenceEquals (no.Value, value))
+					return no.Name;
+			return null;
+		}
+
+		internal void SaveAsReferenced (object val)
+		{
+			referenced.Add (val);
+		}
+		
+		internal string GetReferencedName (object val)
+		{
+			if (!referenced.Contains (val))
+				return null;
+			return GetName (val);
+		}
+		
 		public object GetFixupToken (IEnumerable<string> names)
 		{
-			throw new NotImplementedException ();
+			return new NameFixupRequired (names, false);
 		}
 
-		[MonoTODO]
 		public object GetFixupToken (IEnumerable<string> names, bool canAssignDirectly)
 		{
-			throw new NotImplementedException ();
+			return new NameFixupRequired (names, canAssignDirectly);
 		}
 
 		public IEnumerable<KeyValuePair<string, object>> GetAllNamesAndValuesInScope ()
 		{
-			foreach (var no in objects)
-				yield return new KeyValuePair<string,object> (no.Name, no.Value);
+			foreach (var pair in objects)
+				yield return new KeyValuePair<string,object> (pair.Key, pair.Value.Value);
 		}
 
 		public object Resolve (string name)
 		{
-			var ret = objects.FirstOrDefault (no => no.Name == name);
-			return ret != null ? ret.Value : new NameFixupReguired (name);
+			NamedObject ret;
+			return objects.TryGetValue (name, out ret) ? ret.Value : null;
 		}
 
 		public object Resolve (string name, out bool isFullyInitialized)
 		{
-			var ret = objects.FirstOrDefault (no => no.Name == name);
-			isFullyInitialized = ret != null ? ret.FullyInitialized : false;
-			return ret != null ? ret.Value : new NameFixupReguired (name);
+			NamedObject ret;
+			if (objects.TryGetValue (name, out ret)) {
+				isFullyInitialized = ret.FullyInitialized;
+				return ret.Value;
+			} else {
+				isFullyInitialized = false;
+				return null;
+			}
 		}
-
-		// IServiceProvider
-		[MonoTODO]
-		public object GetService (Type serviceType)
+	}
+	
+	internal class NameFixupRequired
+	{
+		public NameFixupRequired (IEnumerable<string> names, bool canAssignDirectly)
 		{
-			throw new NotImplementedException ();
+			CanAssignDirectly = canAssignDirectly;
+			Names = names.ToArray ();
 		}
+		
+		public XamlType ParentType { get; set; }
+		public XamlMember ParentMember { get; set; }
+		public object ParentValue { get; set; }
+
+		public bool CanAssignDirectly { get; set; }
+		public IList<string> Names { get; set; }
 	}
 }
 

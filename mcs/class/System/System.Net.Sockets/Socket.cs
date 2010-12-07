@@ -143,7 +143,7 @@ namespace System.Net.Sockets
 
 		// private constructor used by Accept, which already
 		// has a socket handle to use
-		private Socket(AddressFamily family, SocketType type,
+		internal Socket(AddressFamily family, SocketType type,
 			       ProtocolType proto, IntPtr sock)
 		{
 			address_family=family;

@@ -850,17 +850,20 @@ namespace Mono.CSharp
 			if (!ec.IsUnsafe)
 				UnsafeError (ec, loc);
 
-			if (!expr.Type.IsPointer) {
+			var pc = expr.Type as PointerContainer;
+
+			if (pc == null) {
 				ec.Report.Error (193, loc, "The * or -> operator must be applied to a pointer");
 				return null;
 			}
 
-			if (expr.Type == TypeManager.void_ptr_type) {
+			type = pc.Element;
+
+			if (type.BuildinType == BuildinTypeSpec.Type.Void) {
 				Error_VoidPointerOperation (ec);
 				return null;
 			}
 
-			type = TypeManager.GetElementType (expr.Type);
 			eclass = ExprClass.Variable;
 			return this;
 		}
@@ -1095,7 +1098,7 @@ namespace Mono.CSharp
 
 			// ++/-- on pointer variables of all types except void*
 			if (source == null && type.IsPointer) {
-				if (type == TypeManager.void_ptr_type) {
+				if (((PointerContainer) type).Element.BuildinType == BuildinTypeSpec.Type.Void) {
 					Error_VoidPointerOperation (ec);
 					return null;
 				}
@@ -3873,12 +3876,12 @@ namespace Mono.CSharp
 			if ((oper & Operator.LogicalMask) != 0)
 				flags |= CSharpBinderFlags.BinaryOperationLogical;
 
-			binder_args.Add (new Argument (new EnumConstant (new IntLiteral ((int) flags, loc), TypeManager.binder_flags)));
+			binder_args.Add (new Argument (new EnumConstant (new IntLiteral ((int) flags, loc), ec.Module.PredefinedTypes.BinderFlags.Resolve (loc))));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));									
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
-			return new Invocation (DynamicExpressionStatement.GetBinder ("BinaryOperation", loc), binder_args);
+			return new Invocation (new MemberAccess (new TypeExpression (ec.Module.PredefinedTypes.Binder.TypeSpec, loc), "BinaryOperation", loc), binder_args);
 		}
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -4196,8 +4199,9 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
-			
-			if (left.Type == TypeManager.void_ptr_type) {
+
+			var pc = left.Type as PointerContainer;
+			if (pc != null && pc.Element.BuildinType == BuildinTypeSpec.Type.Void) {
 				Error_VoidPointerOperation (ec);
 				return null;
 			}
@@ -5641,14 +5645,6 @@ namespace Mono.CSharp
 						TypeManager.CSharpName (type));
 				}
 
-				if (TypeManager.activator_create_instance == null) {
-					TypeSpec activator_type = TypeManager.CoreLookupType (ec.Compiler, "System", "Activator", MemberKind.Class, true);
-					if (activator_type != null) {
-						TypeManager.activator_create_instance = TypeManager.GetPredefinedMethod (
-							activator_type, MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null), loc);
-					}
-				}
-
 				return this;
 			}
 
@@ -5695,6 +5691,16 @@ namespace Mono.CSharp
 
 		bool DoEmitTypeParameter (EmitContext ec)
 		{
+			var activator = ec.MemberContext.Module.PredefinedTypes.Activator;
+			var t = activator.Resolve (loc);
+			if (t == null)
+				return true;
+
+			if (TypeManager.activator_create_instance == null) {
+				TypeManager.activator_create_instance = TypeManager.GetPredefinedMethod (
+					t, MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null), loc);
+			}
+
 			var ctor_factory = TypeManager.activator_create_instance.MakeGenericMethod (type);
 			var tparam = (TypeParameterSpec) type;
 
@@ -6449,10 +6455,13 @@ namespace Mono.CSharp
 		//
 		void EmitStaticInitializers (EmitContext ec)
 		{
-			// FIXME: This should go to Resolve !
 			if (TypeManager.void_initializearray_array_fieldhandle == null) {
+				var helper = ec.CurrentTypeDefinition.Module.PredefinedTypes.RuntimeHelpers.Resolve (loc);
+				if (helper == null)
+					return;
+
 				TypeManager.void_initializearray_array_fieldhandle = TypeManager.GetPredefinedMethod (
-					TypeManager.runtime_helpers_type, "InitializeArray", loc,
+					helper, "InitializeArray", loc,
 					TypeManager.array_type, TypeManager.runtime_field_handle_type);
 				if (TypeManager.void_initializearray_array_fieldhandle == null)
 					return;
@@ -6941,7 +6950,7 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = TypeManager.runtime_argument_handle_type;
+			type = ec.Module.PredefinedTypes.RuntimeArgumentHandle.Resolve (loc);
 
 			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope) || !ec.CurrentBlock.ParametersBlock.Parameters.HasArglist) {
 				ec.Report.Error (190, loc,
@@ -7192,14 +7201,13 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (member.IsConstructor) {
-				type = TypeManager.ctorinfo_type;
-				if (type == null)
-					type = TypeManager.ctorinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", "ConstructorInfo", MemberKind.Class, true);
+				type = ec.Module.PredefinedTypes.ConstructorInfo.Resolve (loc);
 			} else {
-				type = TypeManager.methodinfo_type;
-				if (type == null)
-					type = TypeManager.methodinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", "MethodInfo", MemberKind.Class, true);
+				type = ec.Module.PredefinedTypes.MethodInfo.Resolve (loc);
 			}
+
+			if (type == null)
+				return null;
 
 			return base.DoResolve (ec);
 		}
@@ -7216,8 +7224,14 @@ namespace Mono.CSharp
 			get { return "GetMethodFromHandle"; }
 		}
 
-		protected override string RuntimeHandleName {
-			get { return "RuntimeMethodHandle"; }
+		protected override PredefinedType GetDeclaringType (PredefinedTypes types)
+		{
+			return types.MethodBase;
+		}
+
+		protected override PredefinedType GetRuntimeHandle (PredefinedTypes types)
+		{
+			return types.RuntimeMethodHandle;
 		}
 
 		protected override MethodSpec TypeFromHandle {
@@ -7236,10 +7250,6 @@ namespace Mono.CSharp
 			set {
 				TypeManager.methodbase_get_type_from_handle_generic = value;
 			}
-		}
-
-		protected override string TypeName {
-			get { return "MethodBase"; }
 		}
 	}
 
@@ -7267,13 +7277,13 @@ namespace Mono.CSharp
 			var mi = is_generic ? TypeFromHandleGeneric : TypeFromHandle;
 
 			if (mi == null) {
-				TypeSpec t = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", TypeName, MemberKind.Class, true);
-				TypeSpec handle_type = TypeManager.CoreLookupType (ec.Compiler, "System", RuntimeHandleName, MemberKind.Struct, true);
+				TypeSpec declaring_type = GetDeclaringType (ec.Module.PredefinedTypes).Resolve (loc);
+				TypeSpec handle_type = GetRuntimeHandle (ec.Module.PredefinedTypes).Resolve (loc);
 
-				if (t == null || handle_type == null)
+				if (handle_type == null || declaring_type == null)
 					return null;
 
-				mi = TypeManager.GetPredefinedMethod (t, GetMethodName, loc,
+				mi = TypeManager.GetPredefinedMethod (declaring_type, GetMethodName, loc,
 					is_generic ?
 					new TypeSpec[] { handle_type, TypeManager.runtime_handle_type } :
 					new TypeSpec[] { handle_type } );
@@ -7302,11 +7312,11 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Call, mi);
 		}
 
+		protected abstract PredefinedType GetDeclaringType (PredefinedTypes types);
 		protected abstract string GetMethodName { get; }
-		protected abstract string RuntimeHandleName { get; }
+		protected abstract PredefinedType GetRuntimeHandle (PredefinedTypes types);
 		protected abstract MethodSpec TypeFromHandle { get; set; }
 		protected abstract MethodSpec TypeFromHandleGeneric { get; set; }
-		protected abstract string TypeName { get; }
 	}
 
 	class TypeOfField : TypeOfMember<FieldSpec>
@@ -7318,10 +7328,10 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (TypeManager.fieldinfo_type == null)
-				TypeManager.fieldinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", TypeName, MemberKind.Class, true);
+			type = ec.Module.PredefinedTypes.FieldInfo.Resolve (loc);
+			if (type == null)
+				return null;
 
-			type = TypeManager.fieldinfo_type;
 			return base.DoResolve (ec);
 		}
 
@@ -7331,12 +7341,18 @@ namespace Mono.CSharp
 			base.Emit (ec);
 		}
 
+		protected override PredefinedType GetDeclaringType (PredefinedTypes types)
+		{
+			return types.FieldInfo;
+		}
+
 		protected override string GetMethodName {
 			get { return "GetFieldFromHandle"; }
 		}
 
-		protected override string RuntimeHandleName {
-			get { return "RuntimeFieldHandle"; }
+		protected override PredefinedType GetRuntimeHandle (PredefinedTypes types)
+		{
+			return types.RuntimeFieldHandle;
 		}
 
 		protected override MethodSpec TypeFromHandle {
@@ -7355,10 +7371,6 @@ namespace Mono.CSharp
 			set {
 				TypeManager.fieldinfo_get_field_from_handle_generic = value;
 			}
-		}
-
-		protected override string TypeName {
-			get { return "FieldInfo"; }
 		}
 	}
 
@@ -7450,7 +7462,7 @@ namespace Mono.CSharp
 		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
 		{
 			if (alias == GlobalAlias) {
-				expr = ec.CurrentMemberDefinition.Module.GlobalRootNamespace;
+				expr = ec.Module.GlobalRootNamespace;
 				return base.ResolveAsTypeStep (ec, silent);
 			}
 
@@ -9597,7 +9609,7 @@ namespace Mono.CSharp
 
 			Arguments args = new Arguments (3);
 			args.Add (new Argument (new TypeOfMethod (method, loc)));
-			args.Add (new Argument (new ArrayCreation (TypeManager.expression_type_expr, ctor_args, loc)));
+			args.Add (new Argument (new ArrayCreation (CreateExpressionTypeExpression (ec, loc), ctor_args, loc)));
 			args.Add (new Argument (new ImplicitlyTypedArrayCreation (init, loc)));
 
 			return CreateExpressionFactoryCall (ec, "New", args);

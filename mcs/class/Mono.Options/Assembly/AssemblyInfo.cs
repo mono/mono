@@ -41,7 +41,7 @@ using System.Security.Permissions;
 	//
 	// DO NOT MODIFY STRINGS BELOW WITHOUT UPDATING mono/data/mono-options.pc.in
 	//
-	"0.2.1.0"
+	"0.2.2.0"
 	//
 	// DO NOT MODIFY STRINGS ABOVE WITHOUT UPDATING mono/data/mono-options.pc.in
 	//

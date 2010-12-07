@@ -137,7 +137,7 @@ namespace System.Threading {
 			// Same idea when recursion is allowed and a write thread wants to
 			// go for a Read too.
 			if (ctstate.LockState.Has (LockState.Upgradable)
-			    || recursionPolicy == LockRecursionPolicy.SupportsRecursion) {
+			    || (!noRecursion && ctstate.LockState.Has (LockState.Write))) {
 				RuntimeHelpers.PrepareConstrainedRegions ();
 				try {}
 				finally {

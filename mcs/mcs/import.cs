@@ -18,6 +18,97 @@ namespace Mono.CSharp
 {
 	public abstract class MetadataImporter
 	{
+		//
+		// Dynamic types reader with additional logic to reconstruct a dynamic
+		// type using DynamicAttribute values
+		//
+		struct DynamicTypeReader
+		{
+			static readonly bool[] single_attribute = { true };
+
+			public int Position;
+			bool[] flags;
+
+			// There is no common type for CustomAttributeData and we cannot
+			// use ICustomAttributeProvider
+			object provider;
+
+			//
+			// A member provider which can be used to get CustomAttributeData
+			//
+			public DynamicTypeReader (object provider)
+			{
+				Position = 0;
+				flags = null;
+				this.provider = provider;
+			}
+
+			//
+			// Returns true when object at local position has dynamic attribute flag
+			//
+			public bool IsDynamicObject {
+				get {
+					if (provider != null)
+						ReadAttribute ();
+
+					return flags != null && Position < flags.Length && flags[Position];
+				}
+			}
+
+			//
+			// Returns true when DynamicAttribute exists
+			//
+			public bool HasDynamicAttribute {
+				get {
+					if (provider != null)
+						ReadAttribute ();
+
+					return flags != null;
+				}
+			}
+
+			void ReadAttribute ()
+			{
+				IList<CustomAttributeData> cad;
+				if (provider is MemberInfo) {
+					cad = CustomAttributeData.GetCustomAttributes ((MemberInfo) provider);
+				} else if (provider is ParameterInfo) {
+					cad = CustomAttributeData.GetCustomAttributes ((ParameterInfo) provider);
+				} else {
+					provider = null;
+					return;
+				}
+
+				if (cad.Count > 0) {
+					foreach (var ca in cad) {
+						var type = ca.Constructor.DeclaringType;
+						if (type.Name != "DynamicAttribute" && type.Namespace != CompilerServicesNamespace)
+							continue;
+
+						if (ca.ConstructorArguments.Count == 0) {
+							flags = single_attribute;
+							break;
+						}
+
+						var arg_type = ca.ConstructorArguments[0].ArgumentType;
+
+						if (arg_type.IsArray && Type.GetTypeCode (arg_type.GetElementType ()) == TypeCode.Boolean) {
+							var carg = (IList<CustomAttributeTypedArgument>) ca.ConstructorArguments[0].Value;
+							flags = new bool[carg.Count];
+							for (int i = 0; i < flags.Length; ++i) {
+								if (Type.GetTypeCode (carg[i].ArgumentType) == TypeCode.Boolean)
+									flags[i] = (bool) carg[i].Value;
+							}
+
+							break;
+						}
+					}
+				}
+
+				provider = null;
+			}
+		}
+
 		protected readonly Dictionary<Type, TypeSpec> import_cache;
 		protected readonly Dictionary<Type, BuildinTypeSpec> buildin_types;
 		readonly Dictionary<Assembly, ImportedAssemblyDefinition> assembly_2_definition;
@@ -45,6 +136,7 @@ namespace Mono.CSharp
 		#endregion
 
 		protected abstract MemberKind DetermineKindFromBaseType (Type baseType);
+		protected abstract bool HasVolatileModifier (FieldInfo field);
 
 		public FieldSpec CreateField (FieldInfo fi, TypeSpec declaringType)
 		{
@@ -76,7 +168,7 @@ namespace Mono.CSharp
 			TypeSpec field_type;
 
 			try {
-				field_type = ImportType (fi.FieldType, fi, 0);
+				field_type = ImportType (fi.FieldType, new DynamicTypeReader (fi));
 			} catch (Exception e) {
 				// TODO: I should construct fake TypeSpec based on TypeRef signature
 				// but there is no way to do it with System.Reflection
@@ -98,17 +190,8 @@ namespace Mono.CSharp
 
 				mod |= Modifiers.READONLY;
 			} else {
-				if (TypeManager.isvolatile_type != null) {
-					var reqs = fi.GetRequiredCustomModifiers ();
-					if (reqs.Length > 0) {
-						foreach (var t in reqs) {
-							if (t == TypeManager.isvolatile_type.GetMetaInfo ()) {
-								mod |= Modifiers.VOLATILE;
-								break;
-							}
-						}
-					}
-				}
+				if (HasVolatileModifier (fi))
+					mod |= Modifiers.VOLATILE;
 			}
 
 			if ((fa & FieldAttributes.Static) != 0) {
@@ -136,12 +219,12 @@ namespace Mono.CSharp
 				throw new NotImplementedException ("Different accessor modifiers " + ei.Name);
 
 			var definition = new ImportedMemberDefinition (ei);
-			return new EventSpec (declaringType, definition, ImportType (ei.EventHandlerType, ei, 0), add.Modifiers, add, remove);
+			return new EventSpec (declaringType, definition, ImportType (ei.EventHandlerType, new DynamicTypeReader (ei)), add.Modifiers, add, remove);
 		}
 
 		TypeParameterSpec[] CreateGenericParameters (Type type, TypeSpec declaringType)
 		{
-			Type[] tparams = type.GetGenericArguments ();
+			var tparams = type.GetGenericArguments ();
 
 			int parent_owned_count;
 			if (type.IsNested) {
@@ -186,14 +269,16 @@ namespace Mono.CSharp
 				var type = tparams[pos];
 				int index = pos - first;
 
-				tspec [index] = (TypeParameterSpec) CreateType (type, null, 0, false);
+				tspec [index] = (TypeParameterSpec) CreateType (type, new DynamicTypeReader (), false);
 			}
 
 			return tspec;
 		}
 
-		TypeSpec[] CreateGenericArguments (int first, Type[] tparams, ICustomAttributeProvider ca, int dynamicCursor)
+		TypeSpec[] CreateGenericArguments (int first, Type[] tparams, DynamicTypeReader dtype)
 		{
+			++dtype.Position;
+
 			var tspec = new TypeSpec [tparams.Length - first];
 			for (int pos = first; pos < tparams.Length; ++pos) {
 				var type = tparams[pos];
@@ -202,7 +287,8 @@ namespace Mono.CSharp
 				TypeSpec spec;
 				if (type.HasElementType) {
 					var element = type.GetElementType ();
-					spec = ImportType (element, ca, dynamicCursor + 1);
+					++dtype.Position;
+					spec = ImportType (element, dtype);
 
 					if (!type.IsArray) {
 						throw new NotImplementedException ("Unknown element type " + type.ToString ());
@@ -210,7 +296,7 @@ namespace Mono.CSharp
 
 					spec = ArrayContainer.MakeType (spec, type.GetArrayRank ());
 				} else {
-					spec = CreateType (type, ca, dynamicCursor, true);
+					spec = CreateType (type, dtype, true);
 
 					//
 					// We treat nested generic types as inflated internally where
@@ -223,12 +309,12 @@ namespace Mono.CSharp
 					// TODO: Is full logic from CreateType needed here as well?
 					//
 					if (type.IsGenericTypeDefinition) {
-						var targs = CreateGenericArguments (0, type.GetGenericArguments (), ca, dynamicCursor + 1);
+						var targs = CreateGenericArguments (0, type.GetGenericArguments (), dtype);
 						spec = spec.MakeGenericType (targs);
 					}
 				}
 
-				++dynamicCursor;
+				++dtype.Position;
 				tspec[index] = spec;
 			}
 
@@ -283,7 +369,7 @@ namespace Mono.CSharp
 				}
 
 				var mi = (MethodInfo) mb;
-				returnType = ImportType (mi.ReturnType, mi.ReturnTypeCustomAttributes, 0);
+				returnType = ImportType (mi.ReturnType, new DynamicTypeReader (mi.ReturnParameter));
 
 				// Cannot set to OVERRIDE without full hierarchy checks
 				// this flag indicates that the method could be override
@@ -339,13 +425,13 @@ namespace Mono.CSharp
 					// Strip reference wrapping
 					//
 					var el = p.ParameterType.GetElementType ();
-					types[i] = ImportType (el, p, 0);	// TODO: 1 to be csc compatible
+					types[i] = ImportType (el, new DynamicTypeReader (p));	// TODO: 1-based positio to be csc compatible
 				} else if (i == 0 && method.IsStatic && parent.IsStatic && parent.MemberDefinition.DeclaringAssembly.HasExtensionMethod &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (method), "ExtensionAttribute", CompilerServicesNamespace)) {
 					mod = Parameter.Modifier.This;
 					types[i] = ImportType (p.ParameterType);
 				} else {
-					types[i] = ImportType (p.ParameterType, p, 0);
+					types[i] = ImportType (p.ParameterType, new DynamicTypeReader (p));
 
 					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
 						if (HasAttribute (CustomAttributeData.GetCustomAttributes (p), "ParamArrayAttribute", "System")) {
@@ -358,19 +444,21 @@ namespace Mono.CSharp
 						object value = p.RawDefaultValue;
 						var ptype = types[i];
 						if ((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter && (value != null || TypeManager.IsReferenceType (ptype))) {
-							//
-							// Get type of underlying value as int constant can be used for object parameter type
-							//
-							var dtype = value == null ? ptype : ImportType (value.GetType ());
-							default_value = Constant.CreateConstant (null, dtype, value, Location.Null);
+							if (value == null) {
+								default_value = Constant.CreateConstant (null, ptype, null, Location.Null);
+							} else {
+								default_value = ImportParameterConstant (value).Resolve (null);
+
+								if (ptype.IsEnum) {
+									default_value = new EnumConstant ((Constant) default_value, ptype).Resolve (null);
+								}
+							}
 						} else if (value == Missing.Value) {
 							default_value = EmptyExpression.MissingValue;
-						} else {
-							if (ptype == TypeManager.decimal_type)
-								default_value = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (p));
-
-							if (default_value == null)
-								default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
+						} else if (value == null) {
+							default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
+						} else if (ptype == TypeManager.decimal_type) {
+							default_value = ImportParameterConstant (value).Resolve (null);
 						}
 					}
 				}
@@ -387,7 +475,6 @@ namespace Mono.CSharp
 				new ParametersImported (par, types, varargs != 0, is_params) :
 				new ParametersImported (par, types, is_params);
 		}
-
 
 		//
 		// Returns null when the property is not valid C# property
@@ -508,53 +595,55 @@ namespace Mono.CSharp
 
 		public TypeSpec CreateType (Type type)
 		{
-			return CreateType (type, null, 0, true);
+			return CreateType (type, new DynamicTypeReader (), true);
 		}
 
-		TypeSpec CreateType (Type type, ICustomAttributeProvider ca, int dynamicCursor, bool canImportBaseType)
+		public TypeSpec CreateNestedType (Type type, TypeSpec declaringType)
+		{
+			return CreateType (type, declaringType, new DynamicTypeReader (type), false);
+		}
+
+		TypeSpec CreateType (Type type, DynamicTypeReader dtype, bool canImportBaseType)
 		{
 			TypeSpec declaring_type;
 			if (type.IsNested && !type.IsGenericParameter)
-				declaring_type = CreateType (type.DeclaringType, type.DeclaringType, 0, true);
+				declaring_type = CreateType (type.DeclaringType, new DynamicTypeReader (type.DeclaringType), true);
 			else
 				declaring_type = null;
 
-			return CreateType (type, declaring_type, ca, dynamicCursor, canImportBaseType);
+			return CreateType (type, declaring_type, dtype, canImportBaseType);
 		}
 
-		public TypeSpec CreateType (Type type, TypeSpec declaringType, ICustomAttributeProvider ca, int dynamicCursor, bool canImportBaseType)
+		TypeSpec CreateType (Type type, TypeSpec declaringType, DynamicTypeReader dtype, bool canImportBaseType)
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
-				if (ca == null)
-					return spec;
-
 				if (spec == TypeManager.object_type) {
-					if (IsDynamicType (ca, dynamicCursor))
+					if (dtype.IsDynamicObject)
 						return InternalType.Dynamic;
 
 					return spec;
 				}
 
-				if (!spec.IsGeneric)
+				if (!spec.IsGeneric || type.IsGenericTypeDefinition)
 					return spec;
 
-#if NET_4_0
-				if (!ca.IsDefined (typeof (DynamicAttribute), false))
-#endif
+				if (!dtype.HasDynamicAttribute)
 					return spec;
 
 				// We've found same object in the cache but this one has a dynamic custom attribute
 				// and it's most likely dynamic version of same type IFoo<object> agains IFoo<dynamic>
-				// Do resolve the type process again in that case
+				// Do type resolve process again in that case
+
+				// TODO: Handle cases where they still unify
 			}
 
 			if (type.IsGenericType && !type.IsGenericTypeDefinition) {
 				var type_def = type.GetGenericTypeDefinition ();
-				var targs = CreateGenericArguments (0, type.GetGenericArguments (), ca, dynamicCursor + 1);
+				var targs = CreateGenericArguments (0, type.GetGenericArguments (), dtype);
 				if (declaringType == null) {
 					// Simple case, no nesting
-					spec = CreateType (type_def, null, null, 0, canImportBaseType);
+					spec = CreateType (type_def, null, new DynamicTypeReader (), canImportBaseType);
 					spec = spec.MakeGenericType (targs);
 				} else {
 					//
@@ -733,14 +822,14 @@ namespace Mono.CSharp
 				spec.BaseType = TypeManager.object_type;
 			else if (type.BaseType != null) {
 				if (type.BaseType.IsGenericType)
-					spec.BaseType = CreateType (type.BaseType, type, 0, true);
+					spec.BaseType = CreateType (type.BaseType, new DynamicTypeReader (type), true);
 				else
 					spec.BaseType = CreateType (type.BaseType);
 			}
 
 			var ifaces = type.GetInterfaces ();
 			if (ifaces.Length > 0) {
-				foreach (Type iface in ifaces) {
+				foreach (var iface in ifaces) {
 					spec.AddInterface (CreateType (iface));
 				}
 			}
@@ -890,7 +979,7 @@ namespace Mono.CSharp
 				if (t.Name[0] == '<')
 					continue;
 
-				var it = CreateType (t, null, t, 0, true);
+				var it = CreateType (t, null, new DynamicTypeReader (t), true);
 				if (it == null)
 					continue;
 
@@ -908,16 +997,57 @@ namespace Mono.CSharp
 			}
 		}
 
-		public TypeSpec ImportType (Type type)
+		static Constant ImportParameterConstant (object value)
 		{
-			return ImportType (type, null, 0);
+			//
+			// Get type of underlying value as int constant can be used for object
+			// parameter type. This is not allowed in C# but other languages can do that
+			//
+			switch (Type.GetTypeCode (value.GetType ())) {
+			case TypeCode.Boolean:
+				return new BoolConstant ((bool) value, Location.Null);
+			case TypeCode.Byte:
+				return new ByteConstant ((byte) value, Location.Null);
+			case TypeCode.Char:
+				return new CharConstant ((char) value, Location.Null);
+			case TypeCode.Decimal:
+				return new DecimalConstant ((decimal) value, Location.Null);
+			case TypeCode.Double:
+				return new DoubleConstant ((double) value, Location.Null);
+			case TypeCode.Int16:
+				return new ShortConstant ((short) value, Location.Null);
+			case TypeCode.Int32:
+				return new IntConstant ((int) value, Location.Null);
+			case TypeCode.Int64:
+				return new LongConstant ((long) value, Location.Null);
+			case TypeCode.SByte:
+				return new SByteConstant ((sbyte) value, Location.Null);
+			case TypeCode.Single:
+				return new FloatConstant ((float) value, Location.Null);
+			case TypeCode.String:
+				return new StringConstant ((string) value, Location.Null);
+			case TypeCode.UInt16:
+				return new UShortConstant ((ushort) value, Location.Null);
+			case TypeCode.UInt32:
+				return new UIntConstant ((uint) value, Location.Null);
+			case TypeCode.UInt64:
+				return new ULongConstant ((ulong) value, Location.Null);
+			}
+
+			throw new NotImplementedException (value.GetType ().ToString ());
 		}
 
-		public TypeSpec ImportType (Type type, ICustomAttributeProvider ca, int dynamicCursor)
+		public TypeSpec ImportType (Type type)
+		{
+			return ImportType (type, new DynamicTypeReader (type));
+		}
+
+		TypeSpec ImportType (Type type, DynamicTypeReader dtype)
 		{
 			if (type.HasElementType) {
 				var element = type.GetElementType ();
-				var spec = ImportType (element, ca, dynamicCursor + 1);
+				++dtype.Position;
+				var spec = ImportType (element, dtype);
 
 				if (type.IsArray)
 					return ArrayContainer.MakeType (spec, type.GetArrayRank ());
@@ -929,21 +1059,7 @@ namespace Mono.CSharp
 				throw new NotImplementedException ("Unknown element type " + type.ToString ());
 			}
 
-			return CreateType (type, ca, dynamicCursor, true);
-		}
-
-		static bool IsDynamicType (ICustomAttributeProvider ca, int index)
-		{
-#if NET_4_0
-			if (ca.IsDefined (typeof (DynamicAttribute), false)) {
-				if (index == 0)
-					return true;
-
-				var v = (DynamicAttribute) ca.GetCustomAttributes (typeof (DynamicAttribute), false)[0];
-				return v.TransformFlags[index];
-			}
-#endif
-			return false;
+			return CreateType (type, dtype, true);
 		}
 
 		//
@@ -1658,7 +1774,7 @@ namespace Mono.CSharp
 					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate)
 						continue;
 
-					imported = meta_import.CreateType (t, declaringType, t, 0, false);
+					imported = meta_import.CreateNestedType (t, declaringType);
 					cache.AddMember (imported);
 				}
 

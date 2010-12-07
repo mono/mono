@@ -28,6 +28,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml.Schema;
+using System.Xml.Serialization;
 
 namespace System.Xaml
 {
@@ -301,7 +302,7 @@ namespace System.Xaml
 		public virtual bool CanAssignTo (XamlType xamlType)
 		{
 			if (this.UnderlyingType == null)
-				return true;
+				return xamlType == XamlLanguage.Object;
 			var ut = xamlType.UnderlyingType ?? typeof (object);
 			return ut.IsAssignableFrom (UnderlyingType);
 		}
@@ -408,7 +409,7 @@ namespace System.Xaml
 			var bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
 			foreach (var pi in UnderlyingType.GetProperties (bf))
-				if (pi.CanRead && (pi.CanWrite || IsCollectionType (pi.PropertyType)) && pi.GetIndexParameters ().Length == 0)
+				if (pi.CanRead && (pi.CanWrite || IsCollectionType (pi.PropertyType) || typeof (IXmlSerializable).IsAssignableFrom (pi.PropertyType)) && pi.GetIndexParameters ().Length == 0)
 					yield return new XamlMember (pi, SchemaContext);
 			foreach (var ei in UnderlyingType.GetEvents (bf))
 				yield return new XamlMember (ei, SchemaContext);
@@ -597,9 +598,7 @@ namespace System.Xaml
 
 		protected virtual bool LookupIsXData ()
 		{
-			// huh? XamlLanguage.XData.IsXData returns false(!)
-			// return typeof (XData).IsAssignableFrom (UnderlyingType);
-			return false;
+			return CanAssignTo (SchemaContext.GetXamlType (typeof (IXmlSerializable)));
 		}
 
 		protected virtual XamlType LookupItemType ()

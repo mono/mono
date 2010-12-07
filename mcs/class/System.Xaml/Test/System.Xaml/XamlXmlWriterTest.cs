@@ -910,7 +910,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_NamedItems ()
 		{
 			// foo
@@ -927,7 +926,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_NamedItems2 ()
 		{
 			// i1
@@ -945,6 +943,28 @@ namespace MonoTests.System.Xaml
 			obj4.References.Add (obj3);
 
 			Assert.AreEqual (ReadXml ("NamedItems2.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_XmlSerializableWrapper ()
+		{
+			var obj = new XmlSerializableWrapper (new XmlSerializable ("<root/>"));
+			Assert.AreEqual (ReadXml ("XmlSerializableWrapper.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_XmlSerializable ()
+		{
+			var obj = new XmlSerializable ("<root/>");
+			Assert.AreEqual (ReadXml ("XmlSerializable.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
+
+		[Test]
+		public void Write_ListXmlSerializable ()
+		{
+			var obj = new List<XmlSerializable> ();
+			obj.Add (new XmlSerializable ("<root/>"));
+			Assert.AreEqual (ReadXml ("List_XmlSerializable.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
 	}
 

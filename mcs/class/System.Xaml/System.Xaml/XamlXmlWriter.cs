@@ -23,7 +23,7 @@
 
 // To use this under .NET, compile sources as:
 //
-//	dmcs -d:DOTNET -r:System.Xaml -debug System.Xaml/XamlXmlWriter.cs System.Xaml/TypeExtensionMethods.cs System.Xaml/XamlWriterStateManager.cs System.Xaml/XamlNameResolver.cs System.Xaml/PrefixLookup.cs System.Xaml/ValueSerializerContext.cs ../../build/common/MonoTODOAttribute.cs Test/System.Xaml/TestedTypes.cs
+//	dmcs -d:DOTNET -r:System.Xaml -debug System.Xaml/XamlXmlWriter.cs System.Xaml/XamlWriterInternalBase.cs System.Xaml/TypeExtensionMethods.cs System.Xaml/XamlWriterStateManager.cs System.Xaml/XamlNameResolver.cs System.Xaml/PrefixLookup.cs System.Xaml/ValueSerializerContext.cs ../../build/common/MonoTODOAttribute.cs Test/System.Xaml/TestedTypes.cs
 
 using System;
 using System.Collections.Generic;
@@ -163,210 +163,6 @@ namespace System.Xaml
 			intl.WriteEndMember ();
 		}
 	}
-
-	internal abstract class XamlWriterInternalBase
-	{
-		public XamlWriterInternalBase (XamlSchemaContext schemaContext, XamlWriterStateManager manager)
-		{
-			this.sctx = schemaContext;
-			this.manager = manager;
-			var p = new PrefixLookup (sctx) { IsCollectingNamespaces = true }; // it does not raise unknown namespace error.
-			service_provider = new ValueSerializerContext (p, schemaContext);
-		}
-
-		XamlSchemaContext sctx;
-		XamlWriterStateManager manager;
-
-		internal IValueSerializerContext service_provider;
-
-		internal Stack<ObjectState> object_states = new Stack<ObjectState> ();
-		internal PrefixLookup prefix_lookup {
-			get { return (PrefixLookup) service_provider.GetService (typeof (INamespacePrefixLookup)); }
-		}
-
-		List<NamespaceDeclaration> namespaces {
-			get { return prefix_lookup.Namespaces; }
-		}
-
-		internal class ObjectState
-		{
-			public XamlType Type;
-			public bool IsGetObject;
-			public int PositionalParameterIndex = -1;
-
-			public string FactoryMethod;
-			public object Value;
-			public object KeyValue;
-			public List<MemberAndValue> WrittenProperties = new List<MemberAndValue> ();
-			public bool IsInstantiated;
-		}
-		
-		internal class MemberAndValue
-		{
-			public MemberAndValue (XamlMember xm)
-			{
-				Member = xm;
-			}
-
-			public XamlMember Member;
-			public object Value;
-			public AllowedMemberLocations OccuredAs = AllowedMemberLocations.None;
-		}
-
-		public void CloseAll ()
-		{
-			while (object_states.Count > 0) {
-				switch (manager.State) {
-				case XamlWriteState.MemberDone:
-				case XamlWriteState.ObjectStarted: // StartObject without member
-					WriteEndObject ();
-					break;
-				case XamlWriteState.ValueWritten:
-				case XamlWriteState.ObjectWritten:
-				case XamlWriteState.MemberStarted: // StartMember without content
-					manager.OnClosingItem ();
-					WriteEndMember ();
-					break;
-				default:
-					throw new NotImplementedException (manager.State.ToString ()); // there shouldn't be anything though
-				}
-			}
-		}
-
-		internal string GetPrefix (string ns)
-		{
-			foreach (var nd in namespaces)
-				if (nd.Namespace == ns)
-					return nd.Prefix;
-			return null;
-		}
-
-		protected MemberAndValue CurrentMemberState {
-			get { return object_states.Count > 0 ? object_states.Peek ().WrittenProperties.LastOrDefault () : null; }
-		}
-
-		protected XamlMember CurrentMember {
-			get {
-				var mv = CurrentMemberState;
-				return mv != null ? mv.Member : null;
-			}
-		}
-
-		public void WriteGetObject ()
-		{
-			manager.GetObject ();
-
-			var xm = CurrentMember;
-
-			var state = new ObjectState () {Type = xm.Type, IsGetObject = true};
-
-			object_states.Push (state);
-
-			OnWriteGetObject ();
-		}
-
-		public void WriteNamespace (NamespaceDeclaration namespaceDeclaration)
-		{
-			if (namespaceDeclaration == null)
-				throw new ArgumentNullException ("namespaceDeclaration");
-
-			manager.Namespace ();
-
-			namespaces.Add (namespaceDeclaration);
-			OnWriteNamespace (namespaceDeclaration);
-		}
-
-		public void WriteStartObject (XamlType xamlType)
-		{
-			if (xamlType == null)
-				throw new ArgumentNullException ("xamlType");
-
-			manager.StartObject ();
-
-			var cstate = new ObjectState () {Type = xamlType};
-			object_states.Push (cstate);
-
-			OnWriteStartObject ();
-		}
-		
-		public void WriteValue (object value)
-		{
-			manager.Value ();
-
-			OnWriteValue (value);
-		}
-		
-		public void WriteStartMember (XamlMember property)
-		{
-			if (property == null)
-				throw new ArgumentNullException ("property");
-
-			manager.StartMember ();
-			if (property == XamlLanguage.PositionalParameters)
-				// this is an exception that indicates the state manager to accept more than values within this member.
-				manager.AcceptMultipleValues = true;
-
-			var state = object_states.Peek ();
-			var wpl = state.WrittenProperties;
-			if (wpl.Any (wp => wp.Member == property))
-				throw new XamlDuplicateMemberException (String.Format ("Property '{0}' is already set to this '{1}' object", property, object_states.Peek ().Type));
-			wpl.Add (new MemberAndValue (property));
-			if (property == XamlLanguage.PositionalParameters)
-				state.PositionalParameterIndex = 0;
-
-			OnWriteStartMember (property);
-		}
-		
-		public void WriteEndObject ()
-		{
-			manager.EndObject (object_states.Count > 1);
-
-			OnWriteEndObject ();
-
-			object_states.Pop ();
-		}
-
-		public void WriteEndMember ()
-		{
-			manager.EndMember ();
-
-			OnWriteEndMember ();
-			
-			var state = object_states.Peek ();
-			if (CurrentMember == XamlLanguage.PositionalParameters) {
-				manager.AcceptMultipleValues = false;
-				state.PositionalParameterIndex = -1;
-			}
-		}
-
-		protected abstract void OnWriteEndObject ();
-
-		protected abstract void OnWriteEndMember ();
-
-		protected abstract void OnWriteStartObject ();
-
-		protected abstract void OnWriteGetObject ();
-
-		protected abstract void OnWriteStartMember (XamlMember xm);
-
-		protected abstract void OnWriteValue (object value);
-
-		protected abstract void OnWriteNamespace (NamespaceDeclaration nd);
-		
-		protected string GetValueString (XamlMember xm, object value)
-		{
-			// change XamlXmlReader too if we change here.
-			if ((value as string) == String.Empty) // FIXME: there could be some escape syntax.
-				return "\"\"";
-
-			var xt = value == null ? XamlLanguage.Null : sctx.GetXamlType (value.GetType ());
-			var vs = xm.ValueSerializer ?? xt.ValueSerializer;
-			if (vs != null)
-				return vs.ConverterInstance.ConvertToString (value, service_provider);
-			else
-				throw new XamlXmlWriterException (String.Format ("Value type is '{0}' but it must be either string or any type that is convertible to string indicated by TypeConverterAttribute.", value != null ? value.GetType () : null));
-		}
-	}
 	
 	// specific implementation
 	class XamlXmlWriterInternal : XamlWriterInternalBase
@@ -440,6 +236,8 @@ namespace System.Xaml
 					WritePendingNamespaces ();
 					w.WriteEndElement ();
 					break;
+				// case (AllowedMemberLocations) 0xFF:
+				//	do nothing
 				}
 			}
 		}
@@ -547,7 +345,10 @@ namespace System.Xaml
 					w.WriteString (member.Name);
 					w.WriteString ("=");
 				}
-			} else {
+			}
+			else if (member == XamlLanguage.PositionalParameters && posprms == null && state.Type.GetSortedConstructorArguments ().All (m => m == state.Type.ContentProperty)) // PositionalParameters and ContentProperty, excluding such cases that it is already processed above (as attribute).
+				OnWriteStartMemberContent (state.Type, member);
+			else {
 				switch (IsAttribute (state.Type, member)) {
 				case AllowedMemberLocations.Attribute:
 					OnWriteStartMemberAttribute (state.Type, member);
@@ -631,6 +432,12 @@ namespace System.Xaml
 			}
 		}
 
+		void OnWriteStartMemberContent (XamlType xt, XamlMember member)
+		{
+			// FIXME: well, it is sorta nasty, would be better to define different enum.
+			CurrentMemberState.OccuredAs = (AllowedMemberLocations) 0xFF;
+		}
+
 		protected override void OnWriteValue (object value)
 		{
 			if (value != null && !(value is string))
@@ -643,6 +450,15 @@ namespace System.Xaml
 				WritePendingNamespaces ();
 
 			string s = GetValueString (xm, value);
+
+			// It looks like a bad practice, but since .NET disables
+			// indent around XData, I assume they do this, instead
+			// of examining valid Text value by creating XmlReader
+			// and call XmlWriter.WriteNode().
+			if (xm.DeclaringType == XamlLanguage.XData && xm == XamlLanguage.XData.GetMember ("Text")) {
+				w.WriteRaw (s);
+				return;
+			}
 
 			var state = object_states.Peek ();
 			switch (state.PositionalParameterIndex) {

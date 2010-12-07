@@ -32,7 +32,7 @@ namespace System.Threading.Tasks
 	{
 		readonly IProducerConsumerCollection<Task> workQueue;
 		readonly ThreadWorker[]        workers;
-		readonly EventWaitHandle       pulseHandle = new AutoResetEvent (false);
+		readonly ManualResetEvent      pulseHandle = new ManualResetEvent (false);
 
 		public Scheduler ()
 			: this (Environment.ProcessorCount, ThreadPriority.Normal)
@@ -89,7 +89,7 @@ namespace System.Threading.Tasks
 		// also when our wait condition is ok
 		public void ParticipateUntil (Func<bool> predicate)
 		{	
-			ThreadWorker.WorkerMethod (predicate, workQueue, workers);
+			ThreadWorker.WorkerMethod (predicate, workQueue, workers, pulseHandle);
 		}
 		
 		public void PulseAll ()

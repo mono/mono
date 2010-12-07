@@ -10,7 +10,7 @@
   </Base>
   <Docs>
     <summary>Used to identify the memory format of image data.</summary>
-    <remarks>To be added.</remarks>
+    <remarks />
   </Docs>
   <Members>
     <Member MemberName="A1">

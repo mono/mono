@@ -229,9 +229,9 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					var pts = best as PredefinedTypeSpec;
+					var pts = best as BuildinTypeSpec;
 					if (pts == null)
-						pts = ts as PredefinedTypeSpec;
+						pts = ts as BuildinTypeSpec;
 
 					if (pts != null) {
 						ctx.Report.SymbolRelatedToPreviousError (best);
@@ -468,7 +468,7 @@ namespace Mono.CSharp {
 			types.Remove (name);
 		}
 
-		public void ReplaceTypeWithPredefined (TypeSpec ts, PredefinedTypeSpec pts)
+		public void ReplaceTypeWithPredefined (TypeSpec ts, BuildinTypeSpec pts)
 		{
 			var found = types [ts.Name];
 			cached_types.Remove (ts.Name);
@@ -604,7 +604,7 @@ namespace Mono.CSharp {
 
 			public virtual FullNamedExpression Resolve (IMemberContext rc, bool local)
 			{
-				FullNamedExpression fne = rc.CurrentMemberDefinition.Module.GetRootNamespace (Alias);
+				FullNamedExpression fne = rc.Module.GetRootNamespace (Alias);
 				if (fne == null) {
 					rc.Compiler.Report.Error (430, Location,
 						"The extern alias `{0}' was not specified in -reference option",
@@ -1225,6 +1225,10 @@ namespace Mono.CSharp {
 
 		public bool IsStatic {
 			get { return SlaveDeclSpace.IsStatic; }
+		}
+
+		public ModuleContainer Module {
+			get { return SlaveDeclSpace.Module; }
 		}
 
 		#endregion

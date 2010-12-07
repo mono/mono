@@ -153,6 +153,7 @@ namespace System.Linq.Parallel.QueryNodes
 				}
 			} finally {
 				barrier.RemoveParticipant ();
+				enumerator.Dispose ();
 			}
 		}
 

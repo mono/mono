@@ -769,7 +769,7 @@ namespace Mono.CSharp {
 			if (target_type.IsInterface && expr_type.ImplementsInterface (target_type, true))
 				return true;
 
-			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
+			if (target_type.IsPointer && expr_type.IsPointer && ((PointerContainer) target_type).Element.BuildinType == BuildinTypeSpec.Type.Void)
 				return true;
 
 			// Conversion from __arglist to System.ArgIterator
@@ -1335,24 +1335,24 @@ namespace Mono.CSharp {
 			}
 
 			if (ec.IsUnsafe) {
-				if (expr_type.IsPointer){
-					if (target_type == TypeManager.void_ptr_type)
-						return EmptyCast.Create (expr, target_type);
-
-					//
-					// yep, comparing pointer types cant be done with
-					// t1 == t2, we have to compare their element types.
-					//
-					if (target_type.IsPointer){
-						if (TypeManager.GetElementType(target_type) == TypeManager.GetElementType(expr_type))
+				var target_pc = target_type as PointerContainer;
+				if (target_pc != null) {
+					if (expr_type.IsPointer) {
+						//
+						// Pointer types are same when they have same element types
+						//
+						if (expr_type == target_pc)
 							return expr;
+
+						if (target_pc.Element.BuildinType == BuildinTypeSpec.Type.Void)
+							return EmptyCast.Create (expr, target_type);
 
 						//return null;
 					}
-				}
 
-				if (expr_type == InternalType.Null && target_type.IsPointer)
-					return EmptyCast.Create (new NullPointer (loc), target_type);
+					if (expr_type == InternalType.Null)
+						return EmptyCast.Create (new NullPointer (loc), target_type);
+				}
 			}
 
 			if (expr_type == InternalType.AnonymousMethod){
@@ -2004,7 +2004,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			if (ec.IsUnsafe && expr.Type == TypeManager.void_ptr_type && target_type.IsPointer)
+			if (ec.IsUnsafe && expr.Type.IsPointer && target_type.IsPointer && ((PointerContainer)expr.Type).Element.BuildinType == BuildinTypeSpec.Type.Void)
 				return EmptyCast.Create (expr, target_type);
 
 			expr.Error_ValueCannotBeConverted (ec, l, target_type, true);

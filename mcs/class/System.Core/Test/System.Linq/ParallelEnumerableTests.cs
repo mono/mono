@@ -361,7 +361,7 @@ namespace MonoTests.System.Linq
 			ParallelTestHelper.Repeat (() => {
 					var actual = initial.AsReallyParallel ().AsOrdered ().SelectMany ((i) => Enumerable.Range (1, i));
 					AssertAreSame (expected, actual);
-				}, 5);
+				});
 		}
 		
 		[Test]

@@ -114,5 +114,15 @@ namespace Mono.Cecil {
 			this.function.Name = "method";
 			this.etype = MD.ElementType.FnPtr;
 		}
+
+		public override TypeDefinition Resolve ()
+		{
+			return null;
+		}
+
+		public override TypeReference GetElementType ()
+		{
+			return this;
+		}
 	}
 }

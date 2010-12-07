@@ -14,7 +14,7 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>How a font should be rendered</summary>
+    <summary>The FontOptions Class defines how a font should be rendered</summary>
     <remarks>
     </remarks>
   </Docs>
@@ -115,10 +115,10 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="other">The other object</param>
+        <summary>Compares this FontOptions object with another one for equality.</summary>
+        <returns>True when equal, in all other cases false.</returns>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -133,8 +133,8 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Disposes the FontOptions object</summary>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -149,9 +149,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <summary>Compute a hash for the FontOptions object</summary>
+        <returns>the hash value for the FontOptions object.</returns>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Handle">

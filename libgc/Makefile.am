@@ -36,8 +36,10 @@ EXTRA_DIST =
 
 if POWERPC_DARWIN
 asm_libgc_sources = powerpc_darwin_mach_dep.s
-else
-asm_libgc_sources = 
+endif
+
+if TARGET_IA64
+asm_libgc_sources = ia64_save_regs_in_stack.s
 endif
 
 libmonogc_la_SOURCES = allchblk.c alloc.c blacklst.c checksums.c dbg_mlc.c \

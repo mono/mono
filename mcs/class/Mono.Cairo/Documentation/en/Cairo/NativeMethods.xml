@@ -10,8 +10,8 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Contains references to the native cairo methods</summary>
+    <remarks />
   </Docs>
   <Members />
 </Type>

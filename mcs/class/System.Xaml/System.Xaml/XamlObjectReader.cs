@@ -88,8 +88,6 @@ namespace System.Xaml
 			sctx = schemaContext;
 			this.settings = settings;
 
-			prefix_lookup = new PrefixLookup (sctx);
-
 			// check type validity. Note that some checks also needs done at Read() phase. (it is likely FIXME:)
 			if (instance != null) {
 				var type = new InstanceContext (instance).GetRawValue ().GetType ();
@@ -100,17 +98,22 @@ namespace System.Xaml
 					throw new XamlObjectReaderException (String.Format ("instance type '{0}' has no default constructor.", type));
 			}
 
-			new XamlObjectNodeIterator (instance, sctx, prefix_lookup).CollectNamespaces ();
+			value_serializer_context = new ValueSerializerContext (new PrefixLookup (sctx), sctx);
+			new XamlObjectNodeIterator (instance, sctx, value_serializer_context).PrepareReading ();
 		}
 		
 		bool is_eof;
 		object root, root_raw;
 		XamlSchemaContext sctx;
 		XamlObjectReaderSettings settings;
-		PrefixLookup prefix_lookup;
+		IValueSerializerContext value_serializer_context;
 
 		IEnumerator<NamespaceDeclaration> ns_iterator;
 		IEnumerator<XamlNodeInfo> nodes;
+
+		PrefixLookup PrefixLookup {
+			get { return (PrefixLookup) value_serializer_context.GetService (typeof (INamespacePrefixLookup)); }
+		}
 
 		// This property value is weird.
 		// - For root Type it returns TypeExtension.
@@ -172,11 +175,11 @@ namespace System.Xaml
 				return false;
 			
 			if (ns_iterator == null)
-				ns_iterator = prefix_lookup.Namespaces.GetEnumerator ();
+				ns_iterator = PrefixLookup.Namespaces.GetEnumerator ();
 			if (ns_iterator.MoveNext ())
 				return true;
 			if (nodes == null)
-				nodes = new XamlObjectNodeIterator (root, sctx, prefix_lookup).GetNodes ().GetEnumerator ();
+				nodes = new XamlObjectNodeIterator (root, sctx, value_serializer_context).GetNodes ().GetEnumerator ();
 			if (nodes.MoveNext ())
 				return true;
 			if (!is_eof)

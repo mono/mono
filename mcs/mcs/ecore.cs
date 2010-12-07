@@ -937,16 +937,11 @@ namespace Mono.CSharp {
 
 		protected static TypeExpr CreateExpressionTypeExpression (ResolveContext ec, Location loc)
 		{
-			TypeExpr texpr = TypeManager.expression_type_expr;
-			if (texpr == null) {
-				TypeSpec t = TypeManager.CoreLookupType (ec.Compiler, "System.Linq.Expressions", "Expression", MemberKind.Class, true);
-				if (t == null)
-					return null;
+			var t = ec.Module.PredefinedTypes.Expression.Resolve (loc);
+			if (t == null)
+				return null;
 
-				TypeManager.expression_type_expr = texpr = new TypeExpression (t, Location.Null);
-			}
-
-			return texpr;
+			return new TypeExpression (t, loc);
 		}
 
 		//
@@ -2252,10 +2247,10 @@ namespace Mono.CSharp {
 			}
 
 			if (Arity == 0 && Name == "dynamic" && RootContext.Version > LanguageVersion.V_3) {
-				if (!ec.Compiler.PredefinedAttributes.Dynamic.IsDefined) {
+				if (!ec.Module.PredefinedAttributes.Dynamic.IsDefined) {
 					ec.Compiler.Report.Error (1980, Location,
 						"Dynamic keyword requires `{0}' to be defined. Are you missing System.Core.dll assembly reference?",
-						ec.Compiler.PredefinedAttributes.Dynamic.GetSignatureForError ());
+						ec.Module.PredefinedAttributes.Dynamic.GetSignatureForError ());
 				}
 
 				return new DynamicTypeExpr (loc);

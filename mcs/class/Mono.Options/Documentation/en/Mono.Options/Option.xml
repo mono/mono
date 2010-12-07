@@ -1,9 +1,11 @@
 <Type Name="Option" FullName="Mono.Options.Option">
   <TypeSignature Language="C#" Value="public abstract class Option" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Option extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Options</AssemblyName>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
+    <AssemblyVersion>0.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>
     All members of this type are safe for multithreaded operations.
@@ -86,10 +88,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected Option (string prototype, string description);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(string prototype, string description) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
@@ -154,10 +158,12 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected Option (string prototype, string description, int maxValueCount);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(string prototype, string description, int32 maxValueCount) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
@@ -348,10 +354,12 @@
     </Member>
     <Member MemberName="Description">
       <MemberSignature Language="C#" Value="public string Description { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Description" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -379,10 +387,12 @@
     </Member>
     <Member MemberName="GetNames">
       <MemberSignature Language="C#" Value="public string[] GetNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetNames() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -407,10 +417,12 @@
     </Member>
     <Member MemberName="GetValueSeparators">
       <MemberSignature Language="C#" Value="public string[] GetValueSeparators ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetValueSeparators() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -456,10 +468,12 @@
     </Member>
     <Member MemberName="Invoke">
       <MemberSignature Language="C#" Value="public void Invoke (Mono.Options.OptionContext c);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Invoke(class Mono.Options.OptionContext c) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -507,10 +521,12 @@
     </Member>
     <Member MemberName="MaxValueCount">
       <MemberSignature Language="C#" Value="public int MaxValueCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxValueCount" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -544,10 +560,12 @@
     </Member>
     <Member MemberName="OnParseComplete">
       <MemberSignature Language="C#" Value="protected abstract void OnParseComplete (Mono.Options.OptionContext c);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnParseComplete(class Mono.Options.OptionContext c) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -587,7 +605,7 @@
           <code lang="C#" src="examples/subclass.cs">// Case-Insensitive and Concatenating OptionSet
 using System;
 using System.Collections.Generic;
-using Mono.Options;
+using NDesk.Options;
 
 class DemoOptionSet : OptionSet {
 	protected override void InsertItem (int index, Option item)
@@ -730,10 +748,12 @@ class Demo {
     </Member>
     <Member MemberName="OptionValueType">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionValueType OptionValueType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Options.OptionValueType OptionValueType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueType</ReturnType>
@@ -758,14 +778,19 @@ class Demo {
     </Member>
     <Member MemberName="Parse&lt;T&gt;">
       <MemberSignature Language="C#" Value="protected static T Parse&lt;T&gt; (string value, Mono.Options.OptionContext c);" />
+      <MemberSignature Language="ILAsm" Value=".method familystatic hidebysig !!T Parse&lt;T&gt;(string value, class Mono.Options.OptionContext c) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="value" Type="System.String" />
         <Parameter Name="c" Type="Mono.Options.OptionContext" />
@@ -811,16 +836,15 @@ class Demo {
           <paramref name="value" />.
         </exception>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Prototype">
       <MemberSignature Language="C#" Value="public string Prototype { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Prototype" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -850,10 +874,12 @@ class Demo {
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
+        <AssemblyVersion>0.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

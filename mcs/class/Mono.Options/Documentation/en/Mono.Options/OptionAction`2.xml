@@ -1,9 +1,11 @@
 <Type Name="OptionAction&lt;TKey,TValue&gt;" FullName="Mono.Options.OptionAction&lt;TKey,TValue&gt;">
   <TypeSignature Language="C#" Value="public delegate void OptionAction&lt;TKey,TValue&gt;(TKey key, TValue value);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed OptionAction`2&lt;TKey, TValue&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>Mono.Options</AssemblyName>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
+    <AssemblyVersion>0.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
     <TypeParameter Name="TKey" />

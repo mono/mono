@@ -43,6 +43,7 @@ namespace Mono.CSharp
 		bool IsUnsafe { get; }
 		bool IsStatic { get; }
 		bool HasUnresolvedConstraints { get; }
+		ModuleContainer Module { get; }
 
 		string GetSignatureForError ();
 
@@ -50,6 +51,7 @@ namespace Mono.CSharp
 		FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
 
+		// TODO: It has been replaced by module
 		CompilerContext Compiler { get; }
 	}
 
@@ -415,6 +417,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public ModuleContainer Module {
+			get {
+				return MemberContext.Module;
+			}
+		}
+
 		public bool OmitStructFlowAnalysis {
 			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
 		}
@@ -545,13 +553,11 @@ namespace Mono.CSharp
 	public class CompilerContext
 	{
 		readonly Report report;
-		readonly PredefinedAttributes attributes;
 		readonly BuildinTypes buildin_types;
 
 		public CompilerContext (Report report)
 		{
 			this.report = report;
-			this.attributes = new PredefinedAttributes ();
 			this.buildin_types = new BuildinTypes ();
 		}
 
@@ -563,16 +569,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		// TODO: Obsolete, it has to go
-		public RootNamespace GlobalRootNamespace { get; set; }
-
 		public bool IsRuntimeBinder { get; set; }
-
-		public PredefinedAttributes PredefinedAttributes {
-			get {
-				return attributes;
-			}
-		}
 
 		public Report Report {
 			get {

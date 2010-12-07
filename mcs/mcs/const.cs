@@ -84,7 +84,7 @@ namespace Mono.CSharp {
 		{
 			var c = ((ConstSpec) spec).Value as Constant;
 			if (c.Type == TypeManager.decimal_type) {
-				Compiler.PredefinedAttributes.DecimalConstant.EmitAttribute (FieldBuilder, (decimal) c.GetValue (), c.Location);
+				Module.PredefinedAttributes.DecimalConstant.EmitAttribute (FieldBuilder, (decimal) c.GetValue (), c.Location);
 			} else {
 				FieldBuilder.SetConstant (c.GetValue ());
 			}

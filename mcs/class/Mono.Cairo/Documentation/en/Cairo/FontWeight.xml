@@ -9,8 +9,8 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>Defines the wieght of the font (normal, bold).</summary>
-    <remarks>To be added.</remarks>
+    <summary>Defines the weight of the font (normal, bold).</summary>
+    <remarks />
   </Docs>
   <Members>
     <Member MemberName="Bold">
