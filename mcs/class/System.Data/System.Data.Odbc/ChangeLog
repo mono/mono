@@ -1,3 +1,9 @@
+2010-12-07  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #456234 - Patch by amc1999@gmail.com
+	* OdbcDataReader.cs (GetValue): Handle SQL_NO_TOTAL sanely and 
+	use corresponding Decoder.GetChars instead of Encoding.GetString.
+	
 2010-06-15 Jonathan Chambers  <joncham@gmail.com>
 
 	* OdbcDataReader.cs: Remove unneeded cast on ref parameter
