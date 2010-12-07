@@ -205,10 +205,14 @@ namespace Mono.CSharp
 
 		public override Assembly LoadAssemblyFile (string fileName)
 		{
+			bool? has_extension;
 			foreach (var path in paths) {
 				var file = Path.Combine (path, fileName);
 				if (!File.Exists (file)) {
-					if (Path.HasExtension (fileName))
+					if (!has_extension.HasValue)
+						has_extension = fileName.EndsWith (".dll", StringComparison.Ordinal) || fileName.EndsWith (".exe", StringComparison.Ordinal);
+
+					if (has_extension.Value)
 						continue;
 
 					file += ".dll";
@@ -240,7 +244,7 @@ namespace Mono.CSharp
 			foreach (var path in paths) {
 				var file = Path.Combine (path, moduleName);
 				if (!File.Exists (file)) {
-					if (Path.HasExtension (moduleName))
+					if (moduleName.EndsWith (".netmodule", StringComparison.Ordinal))
 						continue;
 
 					file += ".netmodule";
