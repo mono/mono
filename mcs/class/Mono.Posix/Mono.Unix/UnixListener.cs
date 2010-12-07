@@ -150,6 +150,10 @@ namespace Mono.Unix {
 				return;
 
 			if (disposing) {
+				try {
+					File.Delete (((UnixEndPoint) savedEP).Filename);
+				} catch {
+				}
 				if (server != null)
 					server.Close ();
 
