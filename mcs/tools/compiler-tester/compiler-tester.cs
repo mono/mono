@@ -1385,7 +1385,7 @@ namespace TestRunner {
 			}
 
 			checker.Initialize ();
-
+/*
 			files.Sort ((a, b) => {
 				if (a.EndsWith ("-lib.cs", StringComparison.Ordinal)) {
 					if (!b.EndsWith ("-lib.cs", StringComparison.Ordinal))
@@ -1397,7 +1397,7 @@ namespace TestRunner {
 
 				return a.CompareTo (b);
 			});
-
+*/
 			foreach (string s in files) {
 				string filename = Path.GetFileName (s);
 				if (Char.IsUpper (filename, 0)) { // Windows hack
