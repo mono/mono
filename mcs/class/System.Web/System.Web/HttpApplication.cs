@@ -199,7 +199,7 @@ namespace System.Web
 		internal void InitOnce (bool full_init)
 		{
 			if (initialization_exception != null)
-				throw initialization_exception;
+				return;
 
 			if (modcoll != null)
 				return;
