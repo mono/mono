@@ -1425,6 +1425,8 @@ namespace Mono.CSharp
 			var loader = new StaticLoader (importer, ctx);
 			loader.LoadReferences (module);
 
+			ShowTime ("Imporing referenced assemblies");
+
 			if (!ctx.BuildinTypes.CheckDefinitions (module))
 				return false;
 
