@@ -33,6 +33,7 @@ namespace Mono.Debugger.Soft
 	{
 		private delegate VirtualMachine LaunchCallback (ITargetProcess p, ProcessStartInfo info, Socket socket);
 		private delegate VirtualMachine ListenCallback (Socket dbg_sock, Socket con_sock); 
+		private delegate VirtualMachine ConnectCallback (Socket dbg_sock, Socket con_sock, IPEndPoint dbg_ep, IPEndPoint con_ep); 
 
 		internal VirtualMachineManager () {
 		}
@@ -220,21 +221,88 @@ namespace Mono.Debugger.Soft
 		 * Connect to a virtual machine listening at the specified address.
 		 */
 		public static VirtualMachine Connect (IPEndPoint endpoint) {
+			return Connect (endpoint, null);
+		}
+
+		public static VirtualMachine Connect (IPEndPoint endpoint, IPEndPoint consoleEndpoint) { 
 			if (endpoint == null)
 				throw new ArgumentNullException ("endpoint");
 
-			Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			socket.Connect (endpoint);
+			return EndConnect (BeginConnect (endpoint, consoleEndpoint, null));
+		}
 
-			Connection conn = new Connection (socket);
+		public static VirtualMachine ConnectInternal (Socket dbg_sock, Socket con_sock, IPEndPoint dbg_ep, IPEndPoint con_ep) {
+			if (con_sock != null) {
+				try {
+					con_sock.Connect (con_ep);
+				} catch (Exception) {
+					try {
+						dbg_sock.Close ();
+					} catch {}
+					throw;
+				}
+			}
+						
+			try {
+				dbg_sock.Connect (dbg_ep);
+			} catch (Exception) {
+				if (con_sock != null) {
+					try {
+						con_sock.Close ();
+					} catch {}
+				}
+				throw;
+			}
+
+			Connection conn = new Connection (dbg_sock);
 
 			VirtualMachine vm = new VirtualMachine (null, conn);
+
+			if (con_sock != null) {
+				vm.StandardOutput = new StreamReader (new NetworkStream (con_sock));
+				vm.StandardError = null;
+			}
 
 			conn.EventHandler = new EventHandler (vm);
 
 			vm.connect ();
 
 			return vm;
+		}
+
+		public static IAsyncResult BeginConnect (IPEndPoint dbg_ep, AsyncCallback callback) {
+			return BeginConnect (dbg_ep, null, callback);
+		}
+
+		public static IAsyncResult BeginConnect (IPEndPoint dbg_ep, IPEndPoint con_ep, AsyncCallback callback) {
+			Socket dbg_sock = null;
+			Socket con_sock = null;
+
+			dbg_sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+			if (con_ep != null) {
+				con_sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			}
+			
+			ConnectCallback c = new ConnectCallback (ConnectInternal);
+			return c.BeginInvoke (dbg_sock, con_sock, dbg_ep, con_ep, callback, con_sock ?? dbg_sock);
+		}
+
+		public static VirtualMachine EndConnect (IAsyncResult asyncResult) {
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+
+			if (!asyncResult.IsCompleted)
+				asyncResult.AsyncWaitHandle.WaitOne ();
+
+			AsyncResult async = (AsyncResult) asyncResult;
+			ConnectCallback cb = (ConnectCallback) async.AsyncDelegate;
+			return cb.EndInvoke (asyncResult);
+		}
+
+		public static void CancelConnection (IAsyncResult asyncResult)
+		{
+			((Socket)asyncResult.AsyncState).Close ();
 		}
 	}
 }
