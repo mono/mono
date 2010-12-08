@@ -2642,9 +2642,7 @@ opt_nullable
 	: /* empty */
 	| INTERR_NULLABLE
 	  {
-		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
-	  		Report.FeatureIsNotSupported (GetLocation ($1), "nullable types");
-		else if (RootContext.Version < LanguageVersion.ISO_2)
+		if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "nullable types");
 	  
 	  	$$ = ComposedTypeSpecifier.CreateNullable (GetLocation ($1));
@@ -2687,9 +2685,7 @@ opt_type_argument_list
 	: /* empty */
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
-		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
-	  		Report.FeatureIsNotSupported (GetLocation ($1), "generics");
-		else if (RootContext.Version < LanguageVersion.ISO_2)
+		if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");	  
 	  
 		$$ = $2;
@@ -2792,9 +2788,7 @@ opt_type_parameter_list
 	: /* empty */
 	| OP_GENERICS_LT_DECL type_parameters OP_GENERICS_GT
 	  {
-		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
-	  		Report.FeatureIsNotSupported (GetLocation ($1), "generics");
-		else if (RootContext.Version < LanguageVersion.ISO_2)
+		if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");
 	  
 		$$ = $2;
@@ -3450,9 +3444,7 @@ new_expr_type
 anonymous_type_expression
 	: NEW OPEN_BRACE anonymous_type_parameters_opt_comma CLOSE_BRACE
 	  {
-		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
-	  		Report.FeatureIsNotSupported (GetLocation ($1), "anonymous types");
-	  	else if (RootContext.Version <= LanguageVersion.ISO_2)
+		if (RootContext.Version <= LanguageVersion.ISO_2)
 	  		Report.FeatureIsNotAvailable (GetLocation ($1), "anonymous types");
 
 		$$ = new NewAnonymousType ((List<AnonymousTypeParameter>) $3, current_container, GetLocation ($1));
@@ -3655,9 +3647,7 @@ unbound_type_name
 generic_dimension
 	: GENERIC_DIMENSION
 	  {
-		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
-	  		Report.FeatureIsNotSupported (GetLocation ($1), "generics");
-		else if (RootContext.Version < LanguageVersion.ISO_2)
+		if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");
 
 		$$ = $1;
@@ -4425,9 +4415,7 @@ opt_type_parameter_variance
 	  }
 	| type_parameter_variance
 	  {
-		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
-	  		Report.FeatureIsNotSupported (lexer.Location, "generic type variance");
-		else if (RootContext.Version <= LanguageVersion.V_3)
+		if (RootContext.Version <= LanguageVersion.V_3)
 			Report.FeatureIsNotAvailable (lexer.Location, "generic type variance");
 
 		$$ = $1;

@@ -28,9 +28,8 @@ namespace Mono.CSharp {
 		Default		= LanguageVersion.V_4,
 	}
 
-	public enum MetadataVersion
+	public enum RuntimeVersion
 	{
-		v1,
 		v2,
 		v4
 	}
@@ -58,8 +57,6 @@ namespace Mono.CSharp {
 		public static LanguageVersion Version;
 		public static bool EnhancedWarnings;
 		public static bool LoadDefaultReferences;
-
-		public static MetadataVersion MetadataCompatibilityVersion;
 
 		//
 		// We keep strongname related info here because
@@ -159,6 +156,8 @@ namespace Mono.CSharp {
 		//
 		public static bool StdLib;
 
+		public static RuntimeVersion StdLibRuntimeVersion;
+
 		public static bool NeedsEntryPoint {
 			get { return Target == Target.Exe || Target == Target.WinExe; }
 		}
@@ -223,12 +222,7 @@ namespace Mono.CSharp {
 			AssemblyReferencesAliases = new List<Tuple<string, string>> ();
 			Modules = new List<string> ();
 			ReferencesLookupPaths = new List<string> ();
-
-#if NET_4_0
-			MetadataCompatibilityVersion = MetadataVersion.v4;
-#else
-			MetadataCompatibilityVersion = MetadataVersion.v2;
-#endif
+			StdLibRuntimeVersion = RuntimeVersion.v2;
 
 			//
 			// Setup default defines
