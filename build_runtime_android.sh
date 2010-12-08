@@ -32,8 +32,8 @@ case "$HOST_ENV" in
 		;;
 esac
 
-PLATFORM_ROOT=$NDK_ROOT/build/platforms/$ANDROID_PLATFORM/arch-arm
-TOOLCHAIN=$NDK_ROOT/build/prebuilt/$HOST_ENV/arm-eabi-$GCC_VERSION
+PLATFORM_ROOT=$NDK_ROOT/platforms/$ANDROID_PLATFORM/arch-arm
+TOOLCHAIN=$NDK_ROOT/toolchains/arm-eabi-$GCC_VERSION/prebuilt/$HOST_ENV
 
 if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 	NDK_NAME=`basename $NDK_ROOT`
