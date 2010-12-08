@@ -152,6 +152,7 @@ namespace Mono.CSharp
 				"   --fatal[=COUNT]    Makes errors after COUNT fatal\n" +
 				"   --lint             Enhanced warnings\n" +
 				"   --parse            Only parses the source file\n" +
+				"   --runtime:VERSION  Sets mscorlib.dll metadata version: V2, V4\n" +
 				"   --stacktrace       Shows stack trace at error location\n" +
 				"   --timestamp        Displays time stamps of various compiler events\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" + 
@@ -197,7 +198,7 @@ namespace Mono.CSharp
 				"   -warnaserror[+|-]    Treats all warnings as errors\n" +
 				"   -warnaserror[+|-]:W1[,Wn] Treats one or more compiler warnings as errors\n" +
 				"   -warn:0-4            Sets warning level, the default is 4 (short -w:)\n" +
-				"   -help2               Shows internal compiler options\n" + 
+				"   -helpinternal        Shows internal and advanced compiler options\n" + 
 				"\n" +
 				"Resources:\n" +
 				"   -linkresource:FILE[,ID] Links FILE as a resource (short: -linkres)\n" +
@@ -692,7 +693,7 @@ namespace Mono.CSharp
 				}
 				Report.SetIgnoreWarning (warn);
 				return true;
-				
+
 			case "--wlevel":
 				Report.Warning (-29, 1, "Compatibility: Use -warn:LEVEL instead of --wlevel LEVEL");
 				if ((i + 1) >= args.Length){
@@ -755,6 +756,22 @@ namespace Mono.CSharp
 						fatal_errors = 1;
 					return true;
 				}
+				if (arg.StartsWith ("--runtime:", StringComparison.Ordinal)) {
+					string version = arg.Substring (10);
+
+					switch (version) {
+					case "v2":
+					case "V2":
+						RootContext.StdLibRuntimeVersion = RuntimeVersion.v2;
+						return true;
+					case "v4":
+					case "V4":
+						RootContext.StdLibRuntimeVersion = RuntimeVersion.v4;
+						return true;
+					}
+					return true;
+				}
+
 				break;
 			}
 
@@ -1110,18 +1127,21 @@ namespace Mono.CSharp
 				return true;
 
 			case "/warn":
+				if (value.Length == 0) {
+					Error_RequiresArgument (option);
+					break;
+				}
+
 				SetWarningLevel (value);
 				return true;
 
 			case "/nowarn": {
-				string [] warns;
-
 				if (value.Length == 0){
-					Report.Error (5, "/nowarn requires an argument");
-					Environment.Exit (1);
+					Error_RequiresArgument (option);
+					break;
 				}
 
-				warns = value.Split (argument_value_separator);
+				var warns = value.Split (argument_value_separator);
 				foreach (string wc in warns){
 					try {
 						if (wc.Trim ().Length == 0)
@@ -1144,6 +1164,11 @@ namespace Mono.CSharp
 				return true;
 
 			case "/platform":
+				if (value.Length == 0) {
+					Error_RequiresArgument (option);
+					break;
+				}
+
 				switch (value.ToLower (CultureInfo.InvariantCulture)) {
 				case "anycpu":
 					RootContext.Platform = Platform.AnyCPU;
@@ -1167,9 +1192,14 @@ namespace Mono.CSharp
 				// We just ignore this.
 			case "/errorreport":
 			case "/filealign":
+				if (value.Length == 0) {
+					Error_RequiresArgument (option);
+					break;
+				}
+
 				return true;
 				
-			case "/help2":
+			case "/helpinternal":
 				OtherFlags ();
 				Environment.Exit(0);
 				return true;
@@ -1183,8 +1213,8 @@ namespace Mono.CSharp
 			case "/main":
 			case "/m":
 				if (value.Length == 0){
-					Report.Error (5, arg + " requires an argument");					
-					Environment.Exit (1);
+					Error_RequiresArgument (option);
+					break;
 				}
 				RootContext.MainClass = value;
 				return true;
@@ -1209,11 +1239,13 @@ namespace Mono.CSharp
 
 				RootContext.StrongNameKeyFile = value;
 				return true;
+
 			case "/keycontainer":
-				if (value == String.Empty) {
-					Report.Error (5, arg + " requires an argument");
-					Environment.Exit (1);
+				if (value.Length == 0) {
+					Error_RequiresArgument (option);
+					break;
 				}
+
 				RootContext.StrongNameKeyContainer = value;
 				return true;
 			case "/delaysign+":
@@ -1225,6 +1257,11 @@ namespace Mono.CSharp
 				return true;
 
 			case "/langversion":
+				if (value.Length == 0) {
+					Error_RequiresArgument (option);
+					break;
+				}
+
 				switch (value.ToLowerInvariant ()) {
 				case "iso-1":
 					RootContext.Version = LanguageVersion.ISO_1;
@@ -1248,6 +1285,11 @@ namespace Mono.CSharp
 				return true;
 
 			case "/codepage":
+				if (value.Length == 0) {
+					Error_RequiresArgument (option);
+					break;
+				}
+
 				switch (value) {
 				case "utf8":
 					RootContext.Encoding = new UTF8Encoding();
@@ -1264,9 +1306,12 @@ namespace Mono.CSharp
 					break;
 				}
 				return true;
+
+			default:
+				return false;
 			}
 
-			return false;
+			return true;
 		}
 
 		void Error_WrongOption (string option)
@@ -1277,6 +1322,11 @@ namespace Mono.CSharp
 		void Error_RequiresFileName (string option)
 		{
 			Report.Error (2005, "Missing file specification for `{0}' option", option);
+		}
+
+		void Error_RequiresArgument (string option)
+		{
+			Report.Error (2006, "Missing argument for `{0}' option", option);
 		}
 
 		static string [] AddArgs (string [] args, string [] extra_args)
