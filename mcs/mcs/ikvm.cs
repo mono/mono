@@ -134,6 +134,14 @@ namespace Mono.CSharp
 
 			Builder = domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Save, Path.GetDirectoryName (file_name));
 
+			// Sets output file metadata version, this makes sense for mscorlib
+			// compilation only but won't restrict that for now
+			if (RootContext.StdLibRuntimeVersion == RuntimeVersion.v4) {
+				Builder.__SetImageRuntimeVersion ("v4.0.30319", 0x20000);
+			} else {
+				// otherwise we default to v2.0.50727
+			}
+
 			builder_extra = new AssemblyBuilderIKVM (Builder, Compiler);
 			return true;
 		}
@@ -159,12 +167,20 @@ namespace Mono.CSharp
 		{
 			this.importer = importer;
 			domain = new Universe ();
+			domain.AssemblyResolve += AssemblyReferenceResolver;
 		}
 
 		public Universe Domain {
 			get {
 				return domain;
 			}
+		}
+
+		Assembly AssemblyReferenceResolver (object sender, IKVM.Reflection.ResolveEventArgs args)
+		{
+			// AssemblyReference has not been found in the domain
+			// create missing reference and continue
+			return new MissingAssembly (domain, args.Name);
 		}
 
 		public void Dispose ()
@@ -205,7 +221,7 @@ namespace Mono.CSharp
 
 		public override Assembly LoadAssemblyFile (string fileName)
 		{
-			bool? has_extension;
+			bool? has_extension = null;
 			foreach (var path in paths) {
 				var file = Path.Combine (path, fileName);
 				if (!File.Exists (file)) {
@@ -319,6 +335,153 @@ namespace Mono.CSharp
 
 				var md = importer.ImportModule (assembly.IncludeModule (m), targetNamespace);
 				assembly.AddModule (md);
+			}
+		}
+	}
+
+	//
+	// Represents missing assembly reference
+	//
+	class MissingAssembly : Assembly
+	{
+		readonly string full_name;
+		Dictionary<string, MetaType> types;
+
+		public MissingAssembly (Universe universe, string fullName)
+			: base (universe)
+		{
+			this.full_name = fullName;
+			types = new Dictionary<string, MetaType> ();
+		}
+
+		public override MetaType[] GetTypes ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override string FullName {
+			get {
+				return full_name;
+			}
+		}
+
+		public override AssemblyName GetName ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override string ImageRuntimeVersion {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override Module ManifestModule {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override MethodInfo EntryPoint {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override string Location {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override AssemblyName[] GetReferencedAssemblies ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Module[] GetModules (bool getResourceModules)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Module[] GetLoadedModules (bool getResourceModules)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Module GetModule (string name)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override string[] GetManifestResourceNames ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override ManifestResourceInfo GetManifestResourceInfo (string resourceName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Stream GetManifestResourceStream (string resourceName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override MetaType GetTypeImpl (string typeName)
+		{
+			//
+			// We are loading a type from missing reference
+			// this itself is fine. The error will be reported
+			// later when the type is actually used
+			//
+			MetaType t;
+			if (!types.TryGetValue (typeName, out t)) {
+				t = new MissingType (typeName);
+				types.Add (typeName, t);
+			}
+
+			return t;
+		}
+
+		internal override IList<CustomAttributeData> GetCustomAttributesData (MetaType attributeType)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+
+	class MissingType : MetaType
+	{
+		readonly string full_name;
+
+		public MissingType (string typeName)
+		{
+			this.full_name = typeName;
+		}
+
+		public override TypeAttributes Attributes {
+			get {
+				// TODO: Don't know yet
+				return TypeAttributes.Public;
+			}
+		}
+
+		public override MetaType BaseType {
+			get {
+				return null;
+			}
+		}
+
+		public override string FullName {
+			get {
+				return full_name;
+			}
+		}
+
+		public override Module Module {
+			get {
+				throw new NotImplementedException ();
 			}
 		}
 	}
