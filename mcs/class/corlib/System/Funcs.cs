@@ -30,11 +30,11 @@ using System.Runtime.CompilerServices;
 namespace System {
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
-	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]	
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 	public delegate TResult Func<out TResult> ();
 	
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-	public delegate TResult Func<in T, out TResult> (T arg1);
+	public delegate TResult Func<in T, out TResult> (T arg);
 	
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 	public delegate TResult Func<in T1, in T2, out TResult> (T1 arg1, T2 arg2);
