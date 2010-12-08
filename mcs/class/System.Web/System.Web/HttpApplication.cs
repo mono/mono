@@ -109,7 +109,7 @@ namespace System.Web
 		ISite isite;
 
 		// The source, and the exposed API (cache).
-		HttpModuleCollection modcoll;
+		volatile HttpModuleCollection modcoll;
 
 		string assemblyLocation;
 
@@ -168,7 +168,7 @@ namespace System.Web
 			set { AppDomain.CurrentDomain.SetData (initialization_exception_key, value); }
 		}
 #else
-		static Exception initialization_exception;
+		static volatile Exception initialization_exception;
 #endif
 		bool removeConfigurationFromCache;
 		bool fullInitComplete = false;
@@ -198,21 +198,35 @@ namespace System.Web
 		
 		internal void InitOnce (bool full_init)
 		{
+			if (initialization_exception != null)
+				throw initialization_exception;
+
+			if (modcoll != null)
+				return;
+
 			lock (this_lock) {
+				if (initialization_exception != null)
+					return;
+
 				if (modcoll != null)
 					return;
-				
-				HttpModulesSection modules;
-				modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
-				HttpContext saved = HttpContext.Current;
-				HttpContext.Current = new HttpContext (new System.Web.Hosting.SimpleWorkerRequest (String.Empty, String.Empty, new StringWriter()));
-				modcoll = modules.LoadModules (this);
-				HttpContext.Current = saved;
 
-				if (full_init) {
-					HttpApplicationFactory.AttachEvents (this);
-					Init ();
-					fullInitComplete = true;
+				try {
+					HttpModulesSection modules;
+					modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
+					HttpContext saved = HttpContext.Current;
+					HttpContext.Current = new HttpContext (new System.Web.Hosting.SimpleWorkerRequest (String.Empty, String.Empty, new StringWriter()));
+					HttpModuleCollection coll = modules.LoadModules (this);
+					Interlocked.CompareExchange (ref modcoll, coll, null);
+					HttpContext.Current = saved;
+
+					if (full_init) {
+						HttpApplicationFactory.AttachEvents (this);
+						Init ();
+						fullInitComplete = true;
+					}
+				} catch (Exception e) {
+					initialization_exception = e;
 				}
 			}
 		}
@@ -264,10 +278,8 @@ namespace System.Web
 		public HttpModuleCollection Modules {
 			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
 			get {
-				lock (this_lock) {
-					if (modcoll == null)
-						modcoll = new HttpModuleCollection ();
-				}
+				if (modcoll == null)
+					modcoll = new HttpModuleCollection ();
 				
 				return modcoll;
 			}
@@ -811,13 +823,13 @@ namespace System.Web
 		internal void DisposeInternal ()
 		{
 			Dispose ();
-			lock (this_lock) {
-				if (modcoll != null) {
-					for (int i = modcoll.Count - 1; i >= 0; i--) {
-						modcoll.Get (i).Dispose ();
-					}
-					modcoll = null;
+			HttpModuleCollection coll = new HttpModuleCollection ();
+			Interlocked.Exchange (ref modcoll, coll);
+			if (coll != null) {
+				for (int i = coll.Count - 1; i >= 0; i--) {
+					coll.Get (i).Dispose ();
 				}
+				coll = null;
 			}
 
 			EventHandler eh = nonApplicationEvents [disposedEvent] as EventHandler;
@@ -1528,12 +1540,12 @@ namespace System.Web
 				ct.CurrentCulture = cultures [0];
 				ct.CurrentUICulture = cultures [1];
 			}
-			
-			try {
-				InitOnce (true);
-			} catch (Exception e) {
-				initialization_exception = e;
-				FinalErrorWrite (context.Response, HttpException.NewWithCode (String.Empty, e, WebEventCodes.RuntimeErrorRequestAbort).GetHtmlErrorMessage ());
+
+			InitOnce (true);
+			if (initialization_exception != null) {
+				Exception e = initialization_exception;
+				HttpException exc = HttpException.NewWithCode (String.Empty, e, WebEventCodes.RuntimeErrorRequestAbort);
+				FinalErrorWrite (context.Response, exc.GetHtmlErrorMessage ());
 				PipelineDone ();
 				return;
 			}
