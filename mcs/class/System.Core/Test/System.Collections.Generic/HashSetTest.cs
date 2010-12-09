@@ -345,6 +345,31 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (1, set.Count);
 		}
 
+		[Test]
+		public void TestHashSetEqualityComparer ()
+		{
+			var data = new string[] { "foo", "bar", "foobar" };
+			var set1 = new HashSet<string> (data, StringComparer.Ordinal);
+			var set2 = new HashSet<string> (data, StringComparer.OrdinalIgnoreCase);
+
+			var comparer = HashSet<string>.CreateSetComparer ();
+			Assert.IsTrue (comparer.Equals (set1, set1));
+			Assert.IsTrue (comparer.Equals (set1, set2));
+			Assert.AreEqual (comparer.GetHashCode (set1), comparer.GetHashCode (set2));
+
+			var set3 = new HashSet<string> (new [] { "foobar", "foo", "bar" });
+			Assert.IsTrue (comparer.Equals (set1, set3));
+			Assert.AreEqual (comparer.GetHashCode (set1), comparer.GetHashCode (set3));
+
+			var set4 = new HashSet<string> (new [] { "oh", "hai", "folks" });
+			Assert.IsFalse (comparer.Equals (set2, set4));
+			Assert.AreNotEqual (comparer.GetHashCode (set2), comparer.GetHashCode (set4));
+
+			Assert.IsTrue (comparer.Equals (null, null));
+			Assert.AreEqual (0, comparer.GetHashCode (null));
+			Assert.IsFalse (comparer.Equals (set1, null));
+		}
+
 		static void AssertContainsOnly<T> (IEnumerable<T> result, IEnumerable<T> data)
 		{
 			Assert.AreEqual (result.Count (), data.Count ());
