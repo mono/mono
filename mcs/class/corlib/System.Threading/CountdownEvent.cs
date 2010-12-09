@@ -31,7 +31,7 @@ namespace System.Threading
 	public class CountdownEvent : IDisposable
 	{
 		int count;
-		readonly int initial;
+		int initial;
 		ManualResetEventSlim evt = new ManualResetEventSlim (false);
 		
 		public CountdownEvent (int count)
@@ -158,7 +158,7 @@ namespace System.Threading
 		public void Reset (int value)
 		{
 			evt.Reset ();
-			Interlocked.Exchange (ref count, value);
+			count = initial = value;
 		}
 		
 		public int CurrentCount {
