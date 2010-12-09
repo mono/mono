@@ -70,7 +70,12 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return new ParallelQuery<TSource> (new QueryStartNode<TSource> (source));
+			/* Someone might be trying to use AsParallel a bit too much, if the query was in fact
+			 * already a ParallelQuery, just cast it
+			 */
+			ParallelQuery<TSource> query = source as ParallelQuery<TSource>;
+
+			return query ?? new ParallelQuery<TSource> (new QueryStartNode<TSource> (source));
 		}
 
 		public static ParallelQuery<TSource> AsParallel<TSource> (this Partitioner<TSource> source)
@@ -78,7 +83,12 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return new ParallelQuery<TSource> (new QueryStartNode<TSource> (source));
+			/* Someone might be trying to use AsParallel a bit too much, if the query was in fact
+			 * already a ParallelQuery, just cast it
+			 */
+			ParallelQuery<TSource> query = source as ParallelQuery<TSource>;
+
+			return query ?? new ParallelQuery<TSource> (new QueryStartNode<TSource> (source));
 		}
 
 		public static ParallelQuery AsParallel (this IEnumerable source)
@@ -86,7 +96,12 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return new ParallelQuery<object> (new QueryStartNode<object> (source.Cast<object> ()));
+			/* Someone might be trying to use AsParallel a bit too much, if the query was in fact
+			 * already a ParallelQuery, just cast it
+			 */
+			ParallelQuery query = source as ParallelQuery;
+
+			return query ?? new ParallelQuery<object> (new QueryStartNode<object> (source.Cast<object> ()));
 		}
 
 		public static IEnumerable<TSource> AsEnumerable<TSource> (this ParallelQuery<TSource> source)
