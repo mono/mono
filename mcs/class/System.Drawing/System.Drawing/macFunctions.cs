@@ -68,11 +68,12 @@ namespace System.Drawing {
 			IntPtr ctx = objc_msgSend (graphicsContext, sel_registerName ("graphicsPort"));
 			Rect bounds = new Rect ();
 
+			CGContextSaveGState (ctx);
+
 			objc_msgSend_stret (ref bounds, handle, sel_registerName ("bounds"));
 
 			var isFlipped = bool_objc_msgSend (handle, sel_registerName ("isFlipped"));
 			if (isFlipped) {
-				CGContextSaveGState (ctx);
 				CGContextTranslateCTM (ctx, bounds.origin.x, bounds.size.height);
 				CGContextScaleCTM (ctx,1.0f,-1.0f);
 			}
