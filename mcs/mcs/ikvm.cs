@@ -45,7 +45,7 @@ namespace Mono.CSharp
 
 #else
 
-	class StaticImporter : MetadataImporter
+	sealed class StaticImporter : MetadataImporter
 	{
 		public StaticImporter ()
 		{
@@ -68,17 +68,19 @@ namespace Mono.CSharp
 			return MemberKind.Class;
 		}
 
-		protected override bool HasVolatileModifier (FieldInfo field)
+		protected override bool HasVolatileModifier (MetaType[] modifiers)
 		{
-			var reqs = field.GetRequiredCustomModifiers ();
-			if (reqs.Length > 0) {
-				foreach (var t in reqs) {
-					if (t.Name == "IsVolatile" && t.Namespace == CompilerServicesNamespace)
-						return true;
-				}
+			foreach (var t in modifiers) {
+				if (t.Name == "IsVolatile" && t.Namespace == CompilerServicesNamespace)
+					return true;
 			}
 
 			return false;
+		}
+
+		public override void GetCustomAttributeTypeName (CustomAttributeData cad, out string typeNamespace, out string typeName)
+		{
+			cad.__ReadTypeName (out typeNamespace, out typeName);
 		}
 
 		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)

@@ -43,7 +43,7 @@ namespace Mono.CSharp
 		}
 	}
 #else
-	public class ReflectionImporter : MetadataImporter
+	public sealed class ReflectionImporter : MetadataImporter
 	{
 		public ReflectionImporter (BuildinTypes buildin)
 		{
@@ -64,14 +64,18 @@ namespace Mono.CSharp
 			return MemberKind.Class;
 		}
 
-		protected override bool HasVolatileModifier (FieldInfo field)
+		public override void GetCustomAttributeTypeName (CustomAttributeData cad, out string typeNamespace, out string typeName)
 		{
-			var reqs = field.GetRequiredCustomModifiers ();
-			if (reqs.Length > 0) {
-				foreach (var t in reqs) {
-					if (t == typeof (IsVolatile))
-						return true;
-				}
+			var dt = cad.Constructor.DeclaringType;
+			typeNamespace = dt.Namespace;
+			typeName = dt.Name;
+		}
+
+		protected override bool HasVolatileModifier (Type[] modifiers)
+		{
+			foreach (var t in modifiers) {
+				if (t == typeof (IsVolatile))
+					return true;
 			}
 
 			return false;
