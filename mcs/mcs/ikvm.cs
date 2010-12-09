@@ -161,6 +161,7 @@ namespace Mono.CSharp
 	{
 		readonly StaticImporter importer;
 		readonly Universe domain;
+		Assembly corlib;
 
 		public StaticLoader (StaticImporter importer, CompilerContext compiler)
 			: base (compiler)
@@ -168,6 +169,15 @@ namespace Mono.CSharp
 			this.importer = importer;
 			domain = new Universe ();
 			domain.AssemblyResolve += AssemblyReferenceResolver;
+		}
+
+		public Assembly Corlib {
+			get {
+				return corlib;
+			}
+			set {
+				corlib = value;
+			}
 		}
 
 		public Universe Domain {
@@ -178,6 +188,9 @@ namespace Mono.CSharp
 
 		Assembly AssemblyReferenceResolver (object sender, IKVM.Reflection.ResolveEventArgs args)
 		{
+			if (args.Name == "mscorlib")
+				return corlib;
+
 			// AssemblyReference has not been found in the domain
 			// create missing reference and continue
 			return new MissingAssembly (domain, args.Name);
@@ -303,15 +316,13 @@ namespace Mono.CSharp
 
 		public override void LoadReferences (ModuleContainer module)
 		{
-			Assembly corlib;
 			List<Tuple<RootNamespace, Assembly>> loaded;
 			base.LoadReferencesCore (module, out corlib, out loaded);
 
-			if (corlib == null)
-				return;
-
-			importer.InitializeBuildinTypes (compiler.BuildinTypes, corlib);
-			importer.ImportAssembly (corlib, module.GlobalRootNamespace);
+			if (corlib != null) {
+				importer.InitializeBuildinTypes (compiler.BuildinTypes, corlib);
+				importer.ImportAssembly (corlib, module.GlobalRootNamespace);
+			}
 
 			foreach (var entry in loaded) {
 				importer.ImportAssembly (entry.Item2, entry.Item1);

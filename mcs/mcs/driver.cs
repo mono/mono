@@ -1485,6 +1485,10 @@ namespace Mono.CSharp
 			if (!assembly.Create (loader.Domain))
 				return false;
 
+			// System.Object was not loaded, use compiled assembly as corlib
+			if (loader.Corlib == null)
+				loader.Corlib = assembly.Builder;
+
 			loader.LoadModules (assembly, module.GlobalRootNamespace);
 #else
 			var assembly = new AssemblyDefinitionDynamic (module, output_file_name, output_file);
