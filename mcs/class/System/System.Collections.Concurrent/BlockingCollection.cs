@@ -507,23 +507,22 @@ namespace System.Collections.Concurrent
 
 		public IEnumerable<T> GetConsumingEnumerable ()
 		{
-			return GetConsumingEnumerable (Take);
+			return GetConsumingEnumerable (CancellationToken.None);
 		}
 
 		public IEnumerable<T> GetConsumingEnumerable (CancellationToken token)
-		{
-			return GetConsumingEnumerable (() => Take (token));
-		}
-
-		IEnumerable<T> GetConsumingEnumerable (Func<T> getFunc)
 		{
 			while (true) {
 				T item = default (T);
 
 				try {
-					item = getFunc ();
+					item = Take (token);
 				} catch {
-					break;
+					// Then the exception is perfectly normal
+					if (IsCompleted)
+						break;
+					// otherwise rethrow
+					throw;
 				}
 
 				yield return item;
