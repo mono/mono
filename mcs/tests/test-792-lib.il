@@ -8,6 +8,7 @@
 
 .assembly 'test-792-lib'
 {
+//	.custom instance void ['missing-lib']System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
 }
 
 .module 'test-792-lib.dll'
@@ -47,7 +48,7 @@
   }
   
   .method private hidebysig specialname
-          instance void  PrivateMissing(['missing-lib']XX p) cil managed
+          instance void  PrivateMissing(class ['missing-lib']XX p) cil managed
   {
     IL_0000:  ret
   }
