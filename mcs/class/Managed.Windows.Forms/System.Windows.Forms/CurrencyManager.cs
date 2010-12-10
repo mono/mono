@@ -439,7 +439,7 @@ namespace System.Windows.Forms {
 				else {
 #if NET_2_0
 					if (e.NewIndex <= listposition) {
-						ChangeRecordState (listposition + 1,
+						ChangeRecordState (e.NewIndex,
 								   false, false, false, false);
 						OnItemChanged (new ItemChangedEventArgs (-1));
 						OnListChanged (e);
