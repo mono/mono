@@ -56,7 +56,7 @@ namespace System.Web
 		
 		static BaseResponseHeader ()
 		{
-			HttpRuntimeSection section = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
+			HttpRuntimeSection section = HttpRuntime.Section;
 			headerCheckingEnabled = section == null || section.EnableHeaderChecking;
 		}
 */

@@ -173,7 +173,7 @@ namespace System.Web.SessionState
 			}
 
 			supportsExpiration = handler.SetItemExpireCallback (OnSessionExpired);
-			HttpRuntimeSection runtime = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
+			HttpRuntimeSection runtime = HttpRuntime.Section;
 			executionTimeout = runtime.ExecutionTimeout;
 			//executionTimeoutMS = executionTimeout.Milliseconds;
 

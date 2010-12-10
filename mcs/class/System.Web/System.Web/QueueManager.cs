@@ -53,7 +53,7 @@ namespace System.Web
 			Exception ex = null;
 			
 			try {
-				HttpRuntimeSection config = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
+				HttpRuntimeSection config = HttpRuntime.Section;
 				if (config != null) {
 					minFree = config.MinFreeThreads;
 					minLocalFree = config.MinLocalRequestFreeThreads;

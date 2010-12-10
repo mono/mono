@@ -144,7 +144,7 @@ namespace System.Web
 			get {
 				if (!version_header_checked && version_header == null) {
 					version_header_checked = true;
-					HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
+					HttpRuntimeSection config = HttpRuntime.Section;
 					if (config != null && config.EnableVersionHeader)
 						version_header = Environment.Version.ToString (3);
 				}
@@ -877,7 +877,7 @@ namespace System.Web
 				isFullyQualified = false;
 
 			if (!isFullyQualified) {
-				HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
+				HttpRuntimeSection config = HttpRuntime.Section;
 				if (config != null && config.UseFullyQualifiedRedirectUrl) {
 					var ub = new UriBuilder (context.Request.Url);
 					int qpos = url.IndexOf ('?');
