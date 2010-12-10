@@ -3150,7 +3150,7 @@ namespace Mono.CSharp {
 			if (r.BestCandidateNewMethodGroup != null)
 				return r.BestCandidateNewMethodGroup;
 
-			if (best_candidate.Kind == MemberKind.Method) {
+			if (best_candidate.Kind == MemberKind.Method && (restr & OverloadResolver.Restrictions.ProbingOnly) == 0) {
 				if (InstanceExpression != null) {
 					if (best_candidate.IsExtensionMethod && args[0].Expr == InstanceExpression) {
 						InstanceExpression = null;

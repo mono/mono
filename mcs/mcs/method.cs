@@ -1242,47 +1242,46 @@ namespace Mono.CSharp {
 			// FIXME: Hack
 			var caller_builder = (Constructor) ec.MemberContext;
 
-			if (argument_list != null) {
-				bool dynamic;
-
-				//
-				// Spec mandates that constructor initializer will not have `this' access
-				//
-				using (ec.Set (ResolveContext.Options.BaseInitializer)) {
+			//
+			// Spec mandates that constructor initializer will not have `this' access
+			//
+			using (ec.Set (ResolveContext.Options.BaseInitializer)) {
+				if (argument_list != null) {
+					bool dynamic;
 					argument_list.Resolve (ec, out dynamic);
+
+					if (dynamic) {
+						ec.Report.Error (1975, loc,
+							"The constructor call cannot be dynamically dispatched within constructor initializer");
+
+						return null;
+					}
 				}
 
-				if (dynamic) {
-					ec.Report.Error (1975, loc,
-						"The constructor call cannot be dynamically dispatched within constructor initializer");
+				type = ec.CurrentType;
+				if (this is ConstructorBaseInitializer) {
+					if (ec.CurrentType.BaseType == null)
+						return this;
 
-					return null;
+					type = ec.CurrentType.BaseType;
+					if (ec.CurrentType.IsStruct) {
+						ec.Report.Error (522, loc,
+							"`{0}': Struct constructors cannot call base constructors", caller_builder.GetSignatureForError ());
+						return this;
+					}
+				} else {
+					//
+					// It is legal to have "this" initializers that take no arguments
+					// in structs, they are just no-ops.
+					//
+					// struct D { public D (int a) : this () {}
+					//
+					if (TypeManager.IsStruct (ec.CurrentType) && argument_list == null)
+						return this;
 				}
+
+				base_ctor = ConstructorLookup (ec, type, ref argument_list, loc);
 			}
-
-			type = ec.CurrentType;
-			if (this is ConstructorBaseInitializer) {
-				if (ec.CurrentType.BaseType == null)
-					return this;
-
-				type = ec.CurrentType.BaseType;
-				if (ec.CurrentType.IsStruct) {
-					ec.Report.Error (522, loc,
-						"`{0}': Struct constructors cannot call base constructors", caller_builder.GetSignatureForError ());
-					return this;
-				}
-			} else {
-				//
-				// It is legal to have "this" initializers that take no arguments
-				// in structs, they are just no-ops.
-				//
-				// struct D { public D (int a) : this () {}
-				//
-				if (TypeManager.IsStruct (ec.CurrentType) && argument_list == null)
-					return this;			
-			}
-
-			base_ctor = ConstructorLookup (ec, type, ref argument_list, loc);
 	
 			// TODO MemberCache: Does it work for inflated types ?
 			if (base_ctor == caller_builder.Spec){
