@@ -4532,15 +4532,15 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		}
 
 		buf.Append (" {");
-		if (set_visible != null) {
-			if (set_visible != visibility)
-				buf.Append (' ').Append (set_visible);
-			buf.Append (" set;");
-		}
 		if (get_visible != null) {
 			if (get_visible != visibility)
 				buf.Append (' ').Append (get_visible);
 			buf.Append (" get;");
+		}
+		if (set_visible != null) {
+			if (set_visible != visibility)
+				buf.Append (' ').Append (set_visible);
+			buf.Append (" set;");
 		}
 		buf.Append (" }");
 	
