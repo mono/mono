@@ -188,7 +188,7 @@ namespace System.Web.Util
 
 		static HttpEncoder GetCustomEncoderFromConfig ()
 		{
-			var cfg = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
+			var cfg = HttpRuntime.Section;
 			string typeName = cfg.EncoderType;
 
 			if (String.Compare (typeName, "System.Web.Util.HttpEncoder", StringComparison.OrdinalIgnoreCase) == 0)

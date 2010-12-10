@@ -120,6 +120,7 @@ namespace System.Web
 		static bool assemblyMappingEnabled;
 		static object assemblyMappingLock = new object ();
 		static object appOfflineLock = new object ();
+		static HttpRuntimeSection runtime_section;
 		
 		public HttpRuntime ()
 		{
@@ -136,6 +137,7 @@ namespace System.Web
 #if MONOWEB_DEP
 				SettingsMappingManager.Init ();
 #endif
+				runtime_section = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");
 			} catch (Exception ex) {
 				initialException = ex;
 			}
@@ -304,6 +306,8 @@ namespace System.Web
 				return dirname;
 			}
 		}
+
+		internal static HttpRuntimeSection Section { get { return runtime_section; } }
 
 		public static bool UsingIntegratedPipeline { get { return false; } }
 		
