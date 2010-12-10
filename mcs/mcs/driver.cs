@@ -152,7 +152,7 @@ namespace Mono.CSharp
 				"   --fatal[=COUNT]    Makes errors after COUNT fatal\n" +
 				"   --lint             Enhanced warnings\n" +
 				"   --parse            Only parses the source file\n" +
-				"   --runtime:VERSION  Sets mscorlib.dll metadata version: V2, V4\n" +
+				"   --runtime:VERSION  Sets mscorlib.dll metadata version: v1, v2, v4\n" +
 				"   --stacktrace       Shows stack trace at error location\n" +
 				"   --timestamp        Displays time stamps of various compiler events\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" + 
@@ -760,6 +760,10 @@ namespace Mono.CSharp
 					string version = arg.Substring (10);
 
 					switch (version) {
+					case "v1":
+					case "V1":
+						RootContext.StdLibRuntimeVersion = RuntimeVersion.v1;
+						break;
 					case "v2":
 					case "V2":
 						RootContext.StdLibRuntimeVersion = RuntimeVersion.v2;

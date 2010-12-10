@@ -138,10 +138,20 @@ namespace Mono.CSharp
 
 			// Sets output file metadata version, this makes sense for mscorlib
 			// compilation only but won't restrict that for now
-			if (RootContext.StdLibRuntimeVersion == RuntimeVersion.v4) {
+			switch (RootContext.StdLibRuntimeVersion){
+			case RuntimeVersion.v4:
 				Builder.__SetImageRuntimeVersion ("v4.0.30319", 0x20000);
-			} else {
-				// otherwise we default to v2.0.50727
+				break;
+			case RuntimeVersion.v2:
+				Builder.__SetImageRuntimeVersion ("v2.0.50727", 0x20000);
+				break;
+			case RuntimeVersion.v1:
+				// Compiler does not do any checks whether the produced metadata
+				// are valid in the context of 1.0 stream version
+				Builder.__SetImageRuntimeVersion ("v1.1.4322", 0x10000);
+				break;
+			default:
+				throw new NotImplementedException ();
 			}
 
 			builder_extra = new AssemblyBuilderIKVM (Builder, Compiler);
