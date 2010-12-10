@@ -1016,9 +1016,7 @@ namespace Mono.CSharp
 
 			paths = new List<string> ();
 			paths.AddRange (RootContext.ReferencesLookupPaths);
-			paths.Add (GetSystemDir ());
 			paths.Add (Directory.GetCurrentDirectory ());
-			// TODO: should remove redundant paths
 		}
 
 		public abstract bool HasObjectType (T assembly);
@@ -1049,14 +1047,6 @@ namespace Mono.CSharp
 			compiler.Report.Error (1542,
 				"Added module file `{0}' is an assembly. Consider using `-r' option to reference the file",
 				fileName);
-		}
-
-		//
-		// Returns the directory where the system assemblies are installed
-		//
-		static string GetSystemDir ()
-		{
-			return Path.GetDirectoryName (typeof (object).Assembly.Location);
 		}
 
 		protected void LoadReferencesCore (ModuleContainer module, out T corlib_assembly, out List<Tuple<RootNamespace, T>> loaded)

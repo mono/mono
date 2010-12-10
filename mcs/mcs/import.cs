@@ -830,10 +830,13 @@ namespace Mono.CSharp
 			if (spec.Kind == MemberKind.Interface)
 				spec.BaseType = TypeManager.object_type;
 			else if (type.BaseType != null) {
+				TypeSpec base_type;
 				if (type.BaseType.IsGenericType)
-					spec.BaseType = CreateType (type.BaseType, new DynamicTypeReader (type), true);
+					base_type = CreateType (type.BaseType, new DynamicTypeReader (type), true);
 				else
-					spec.BaseType = CreateType (type.BaseType);
+					base_type = CreateType (type.BaseType);
+
+				spec.BaseType = base_type;
 			}
 
 			var ifaces = type.GetInterfaces ();
@@ -1687,6 +1690,23 @@ namespace Mono.CSharp
 				ReadAttributes ();
 
 			return cattrs.AttributeUsage;
+		}
+
+		public MetaType GetMissingBaseType ()
+		{
+#if STATIC
+			MetaType mt = (MetaType) provider;
+			do {
+				if (mt is MissingType)
+					break;
+
+				mt = mt.BaseType;
+			} while (mt != null);
+
+			return mt;
+#else
+			return null;
+#endif
 		}
 
 		bool ITypeDefinition.IsInternalAsPublic (IAssemblyDefinition assembly)

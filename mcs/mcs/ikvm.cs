@@ -359,9 +359,12 @@ namespace Mono.CSharp
 	{
 		class MissingModule : Module
 		{
-			public MissingModule (Universe universe)
+			readonly Assembly assembly;
+
+			public MissingModule (Universe universe, Assembly assembly)
 				: base (universe)
 			{
+				this.assembly = assembly;
 			}
 
 			public override int MDStreamVersion {
@@ -372,7 +375,7 @@ namespace Mono.CSharp
 
 			public override Assembly Assembly {
 				get {
-					throw new NotImplementedException ();
+					return assembly;
 				}
 			}
 
@@ -464,7 +467,7 @@ namespace Mono.CSharp
 			: base (universe)
 		{
 			this.full_name = fullName;
-			this.module = new MissingModule (universe);
+			this.module = new MissingModule (universe, this);
 			types = new Dictionary<string, MetaType> ();
 		}
 

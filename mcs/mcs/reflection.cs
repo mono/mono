@@ -387,6 +387,8 @@ namespace Mono.CSharp
 		public DynamicLoader (ReflectionImporter importer, CompilerContext compiler)
 			: base (compiler)
 		{
+			paths.Add (GetSystemDir ());
+
 			this.importer = importer;
 		}
 
@@ -394,11 +396,6 @@ namespace Mono.CSharp
 			get {
 				return importer;
 			}
-		}
-
-		public override bool HasObjectType (Assembly assembly)
-		{
-			return assembly.GetType (compiler.BuildinTypes.Object.FullName) != null;
 		}
 
 		protected override string[] GetDefaultReferences ()
@@ -423,6 +420,19 @@ namespace Mono.CSharp
 				default_references.Add ("Microsoft.CSharp");
 
 			return default_references.ToArray ();
+		}
+
+		//
+		// Returns the directory where the system assemblies are installed
+		//
+		static string GetSystemDir ()
+		{
+			return Path.GetDirectoryName (typeof (object).Assembly.Location);
+		}
+
+		public override bool HasObjectType (Assembly assembly)
+		{
+			return assembly.GetType (compiler.BuildinTypes.Object.FullName) != null;
 		}
 
 		public override Assembly LoadAssemblyFile (string fileName)
