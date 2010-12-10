@@ -50,7 +50,7 @@ namespace System.ComponentModel.DataAnnotations
 			MaximumLength = maximumLength;
 		}
 
-		string GetDefaultErrorMessage ()
+		static string GetDefaultErrorMessage ()
 		{
 			return "The field {0} must be a string with a maximum length of {1}.";
 		}

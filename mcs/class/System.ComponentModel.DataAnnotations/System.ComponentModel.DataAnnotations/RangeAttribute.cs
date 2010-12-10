@@ -83,7 +83,7 @@ namespace System.ComponentModel.DataAnnotations
 #endif
 		}
 
-		string GetDefaultErrorMessage ()
+		static string GetDefaultErrorMessage ()
 		{
 			return "The field {0} must be between {1} and {2}.";
 		}
@@ -140,8 +140,8 @@ namespace System.ComponentModel.DataAnnotations
 				throw new InvalidOperationException ("The OperandType must be set when strings are used for minimum and maximum values.");
 			
 			if (!typeof(IComparable).IsAssignableFrom (ot)) {
-				string message = String.Format ("The type {0} must implement System.IComparable", ot.FullName);
 #if NET_4_0
+				string message = String.Format ("The type {0} must implement System.IComparable", ot.FullName);
 				throw new InvalidOperationException (message);
 #else
 				throw new ArgumentException ("object");
