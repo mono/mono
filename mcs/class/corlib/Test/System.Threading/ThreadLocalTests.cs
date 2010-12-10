@@ -27,6 +27,7 @@
 
 using System;
 using System.Threading;
+using System.Collections;
 
 using NUnit;
 using NUnit.Core;
@@ -61,7 +62,18 @@ namespace MonoTests.System.Threading
 			Thread t = new Thread ((object o) => { Interlocked.Decrement (ref nTimes); AssertThreadLocal (); });
 			t.Start ();
 			t.Join ();
+
 		}
+
+
+		[Test]
+		public void DefaultValueIsUsedIfNoneSupplied()
+		{
+			ThreadLocal<IEnumerable> local  = new ThreadLocal<IEnumerable>();
+			IEnumerable value = local.Value;
+			Assert.AreEqual(null, value);
+		}
+
 
 		[Test]
 		public void InitializeThrowingTest ()
@@ -114,6 +126,12 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (42, threadLocal.Value, "#4");
 			Assert.AreEqual (1, nTimes, "#5");
 		}
+
 	}
+
 }
+
+
+
+
 #endif

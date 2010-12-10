@@ -47,7 +47,7 @@ namespace System.Threading
 			public Func<T> Getter;
 		}
 		
-		public ThreadLocal () : this (LazyInitializer.GetDefaultCtorValue<T>)
+		public ThreadLocal () : this (()=> default(T))
 		{
 		}
 
