@@ -36,10 +36,8 @@ namespace System.Web
 
 		bool HeaderCheckingEnabled {
 			get {
-				if (headerCheckingEnabled == null) {
-					var cfg = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
-					headerCheckingEnabled = cfg.EnableHeaderChecking;
-				}
+				if (headerCheckingEnabled == null)
+					headerCheckingEnabled = HttpRuntime.Section.EnableHeaderChecking;
 
 				return (bool)headerCheckingEnabled;
 			}
