@@ -466,10 +466,17 @@ namespace System.Windows.Forms
 				Init ();
 			
 			Uri uri = new Uri (file_name);
-			
-			string icon = gnome_icon_lookup (default_icon_theme, IntPtr.Zero, uri.AbsoluteUri,
-							 null, IntPtr.Zero, mime_type,
-							 GnomeIconLookupFlags.GNOME_ICON_LOOKUP_FLAGS_NONE, IntPtr.Zero);
+	
+			string icon;
+
+			try {
+				icon = gnome_icon_lookup (default_icon_theme, IntPtr.Zero, uri.AbsoluteUri,
+							  null, IntPtr.Zero, mime_type,
+							  GnomeIconLookupFlags.GNOME_ICON_LOOKUP_FLAGS_NONE, IntPtr.Zero);
+			} catch {
+				// If libgnomeui is not installed, in preparation for Gnome 3
+				return null;
+			}
 			
 			IntPtr error = IntPtr.Zero;
 			IntPtr pixbuf = gtk_icon_theme_load_icon (default_icon_theme, icon, size,
