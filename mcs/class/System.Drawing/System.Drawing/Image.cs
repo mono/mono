@@ -300,8 +300,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			st = GDIPlus.GdipLoadImageFromStream (new ComIStreamWrapper (stream), out imagePtr);
 		}
 
-		GDIPlus.CheckStatus (st);
-		return imagePtr;
+		return st == Status.Ok ? imagePtr : IntPtr.Zero;
 	}
 
 	// non-static	
