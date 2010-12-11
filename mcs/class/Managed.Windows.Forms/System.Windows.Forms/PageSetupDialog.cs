@@ -456,7 +456,7 @@ namespace System.Windows.Forms
 
 		static bool UseYardPound {
 			get {
-				var current = Region.CurrentRegion;
+				var current = RegionInfo.CurrentRegion;
 				if (current == null)
 					return true;
 				return !current.IsMetric;

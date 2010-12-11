@@ -1164,46 +1164,50 @@ namespace System.Windows.Forms {
 //			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
 		{
-			Graphics dc = Graphics.FromImage (bitmap);
-
-			Draw (dc, targetBounds);
+			using (Graphics dc = Graphics.FromImage (bitmap))
+				Draw (dc, targetBounds);
 		}
-#endif
 
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		protected virtual object CreateRichEditOleCallback() {
-			throw new NotImplementedException();
+		protected virtual object CreateRichEditOleCallback()
+		{
+			throw new NotImplementedException ();
 		}
 
-		protected override void OnBackColorChanged(EventArgs e) {
+		protected override void OnBackColorChanged (EventArgs e)
+		{
 			base.OnBackColorChanged (e);
 		}
 
-		protected virtual void OnContentsResized(ContentsResizedEventArgs e) {
+		protected virtual void OnContentsResized (ContentsResizedEventArgs e)
+		{
 			ContentsResizedEventHandler eh = (ContentsResizedEventHandler)(Events [ContentsResizedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 
-		protected override void OnContextMenuChanged(EventArgs e) {
+		protected override void OnContextMenuChanged (EventArgs e)
+		{
 			base.OnContextMenuChanged (e);
 		}
 
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated (EventArgs e)
+		{
 			base.OnHandleCreated (e);
 		}
 
-		protected override void OnHandleDestroyed(EventArgs e) {
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
 			base.OnHandleDestroyed (e);
 		}
 
-		protected virtual void OnHScroll(EventArgs e) {
+		protected virtual void OnHScroll(EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [HScrollEvent]);
 			if (eh != null)
 				eh (this, e);
