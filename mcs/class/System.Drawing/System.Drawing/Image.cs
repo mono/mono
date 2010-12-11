@@ -785,7 +785,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public void Dispose ()
 	{
 		Dispose (true);
-		System.GC.SuppressFinalize (this);
+		GC.SuppressFinalize (this);
 	}
 
 	~Image ()
