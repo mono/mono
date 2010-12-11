@@ -103,6 +103,10 @@ namespace System.Windows.Forms {
 		private Rectangle		restore_bounds;
 		private bool			autoscale_base_size_set;
 #endif
+
+		internal ArrayList disabled_by_showdialog = new ArrayList();
+		internal static ArrayList modal_dialogs = new ArrayList();
+		
 		#endregion	// Local Variables
 
 		#region Private & Internal Methods
@@ -1788,6 +1792,16 @@ namespace System.Windows.Forms {
 				XplatUI.UngrabWindow(capture_window);
 			}
 
+			foreach (Form form in Application.OpenForms)
+			{
+				if (form.Enabled == true)
+				{
+					disabled_by_showdialog.Add(form);
+					form.Enabled = false;
+				}
+			}
+			modal_dialogs.Add(this);
+
 #if not
 			// Commented out; we instead let the Visible=true inside the runloop create the control
 			// otherwise setting DialogResult inside any of the events that are triggered by the
@@ -2661,6 +2675,9 @@ namespace System.Windows.Forms {
 
 		private void WmClose (ref Message m)
 		{
+			if (this.Enabled == false)
+				return; // prevent closing a disabled form.
+
 			Form act = Form.ActiveForm;
 			// Don't close this form if there's another modal form visible.
 			if (act != null && act != this && act.Modal == true) {
@@ -2745,6 +2762,12 @@ namespace System.Windows.Forms {
 #endif	
 		private void WmActivate (ref Message m)
 		{
+			if (!this.Enabled && modal_dialogs.Count > 0)
+			{
+				(modal_dialogs[modal_dialogs.Count -1] as Form).Activate ();
+				return; // prevent Activating of disabled form.
+			}
+
 			if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
 				if (is_loaded) {
 					SelectActiveControl ();
@@ -3242,6 +3265,14 @@ namespace System.Windows.Forms {
 			FormClosedEventHandler eh = (FormClosedEventHandler)(Events[FormClosedEvent]);
 			if (eh != null)
 				eh (this, e);
+
+			foreach (Form form in disabled_by_showdialog)
+			{
+				form.Enabled = true;
+			}
+			disabled_by_showdialog.Clear();
+			if (modal_dialogs.Contains(this))
+				modal_dialogs.Remove(this);
 		}
 		
 		// Consider calling FireClosingEvents instead of calling this directly.
