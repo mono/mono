@@ -5508,11 +5508,9 @@ namespace System.Windows.Forms
 		// can be found here: http://pluralsight.com/wiki/default.aspx/Craig/FlickerFreeControlDrawing.html
 		// and here http://msdn.microsoft.com/msdnmag/issues/06/03/WindowsFormsPerformance/
 		private void WmPaint (ref Message m) {
-			PaintEventArgs	paint_event;
-
 			IntPtr handle = Handle;
 
-			paint_event = XplatUI.PaintEventStart (ref m, handle, true);
+			PaintEventArgs paint_event = XplatUI.PaintEventStart (ref m, handle, true);
 
 			if (paint_event == null)
 				return;
