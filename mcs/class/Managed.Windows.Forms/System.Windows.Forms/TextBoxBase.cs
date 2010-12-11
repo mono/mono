@@ -654,24 +654,20 @@ namespace System.Windows.Forms
 				if (value == Text)
 					return;
 
+				document.Empty ();
 				if ((value != null) && (value != "")) {
-
-					document.Empty ();
-
 					document.Insert (document.GetLine (1), 0, false, value);
-							
-					document.PositionCaret (document.GetLine (1), 0);
-					document.SetSelectionToCaret (true);
-
-					ScrollToCaret ();
 				} else {
-					document.Empty();
-
 					if (IsHandleCreated) {
 						document.SetSelectionToCaret (true);
 						CalculateDocument ();
 					}
 				}
+							
+				document.PositionCaret (document.GetLine (1), 0);
+				document.SetSelectionToCaret (true);
+
+				ScrollToCaret ();
 
 				OnTextChanged(EventArgs.Empty);
 			}
