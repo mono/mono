@@ -230,10 +230,7 @@ namespace System.Windows.Forms.Theming.Default
 		public Rectangle GetTabPanelRect (System.Windows.Forms.TabControl tab)
 		{	
 			// Offset the tab page (panel) from the top corner
-			Rectangle res = new Rectangle (tab.ClientRectangle.X,
-				tab.ClientRectangle.Y,
-				tab.ClientRectangle.Width,
-				tab.ClientRectangle.Height);
+			Rectangle res = tab.ClientRectangle;
 
 			if (tab.TabCount == 0)
 				return res;
