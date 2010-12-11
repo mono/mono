@@ -17,14 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2010 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-
-
-// NOT COMPLETE
 
 using System;
 using System.Drawing;
@@ -41,7 +38,7 @@ namespace System.Windows.Forms {
 	[TypeConverter(typeof(CursorConverter))]
 	public sealed class Cursor : IDisposable, ISerializable {
 		#region	Internal Structs
-		[StructLayout(LayoutKind.Sequential)]
+		[StructLayout (LayoutKind.Sequential)]
 		private  struct CursorDir {
 			internal ushort		idReserved;	// Reserved
 			internal ushort		idType;		// resource type (2 for cursors)
@@ -49,7 +46,7 @@ namespace System.Windows.Forms {
 			internal CursorEntry[]	idEntries;	// the entries for each cursor
 		};
 		
-		[StructLayout(LayoutKind.Sequential)]
+		[StructLayout (LayoutKind.Sequential)]
 		private  struct CursorEntry {
 			internal byte		width;		// Width of cursor
 			internal byte		height;		// Height of cursor
@@ -100,13 +97,13 @@ namespace System.Windows.Forms {
 		internal string		name;
 		private StdCursor	std_cursor = (StdCursor) (-1);
 
-#if NET_2_0
 		private object tag;
-#endif
+
 		#endregion	// Local Variables
 
 		#region Public Constructors
-		private void CreateCursor(System.IO.Stream stream) {
+		private void CreateCursor (Stream stream)
+		{
 			InitFromStream(stream);
 			this.shape = ToBitmap(true, false);
 			this.mask = ToBitmap(false, false);
@@ -121,26 +118,32 @@ namespace System.Windows.Forms {
 			}
 		}
 	
-		internal Cursor (StdCursor cursor) : this (XplatUI.DefineStdCursor (cursor)) {
+		internal Cursor (StdCursor cursor) : this (XplatUI.DefineStdCursor (cursor))
+		{
 			std_cursor = cursor;
 		}
 		
-		private Cursor(SerializationInfo info, StreamingContext context) {
+		private Cursor(SerializationInfo info, StreamingContext context)
+		{
 		}
 
-		private Cursor() {
+		private Cursor()
+		{
 		}
 
-		~Cursor() {
+		~Cursor()
+		{
 			Dispose();
 		}
 
 		// This is supposed to take a Win32 handle
-		public Cursor(IntPtr handle) {
+		public Cursor (IntPtr handle) 
+		{
 			this.handle = handle;
 		}
 
-		public Cursor(System.IO.Stream stream) {
+		public Cursor (Stream stream)
+		{
 			CreateCursor(stream);
 		}
 
@@ -154,15 +157,15 @@ namespace System.Windows.Forms {
 		public Cursor(Type type, string resource) {
 			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)) {
 				if (s != null) {
-					CreateCursor(s);
+					CreateCursor (s);
 					return;
 				}
 			}
 
 			// Try a different way, previous failed
-			using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(resource)) {
+			using (Stream s = Assembly.GetExecutingAssembly ().GetManifestResourceStream (resource)) {
 				if (s != null) {
-					CreateCursor(s);
+					CreateCursor (s);
 					return;
 				}
 			}
@@ -178,12 +181,12 @@ namespace System.Windows.Forms {
 				Rectangle	rect;
 				Size		size;
 
-				XplatUI.GrabInfo(out handle, out confined, out rect);
+				XplatUI.GrabInfo (out handle, out confined, out rect);
 				if (handle != IntPtr.Zero) {
 					return rect;
 				}
 
-				XplatUI.GetDisplaySize(out size);
+				XplatUI.GetDisplaySize (out size);
 				rect.X = 0;
 				rect.Y = 0;
 				rect.Width = size.Width;
@@ -200,21 +203,21 @@ namespace System.Windows.Forms {
 
 		public static Cursor Current {
 			get {
-				if (current != null) {
+				if (current != null) 
 					return current;
-				}
 				return Cursors.Default;
 			}
 
 			set {
-				if (current != value) {
-					current = value;
-					if (current == null){
-						// FIXME - define and set empty cursor
-						XplatUI.OverrideCursor(IntPtr.Zero);
-					} else
-						XplatUI.OverrideCursor(current.handle);
-				}
+				if (current == value)
+					return;
+				
+				current = value;
+				if (current == null){
+					// FIXME - define and set empty cursor
+					XplatUI.OverrideCursor(IntPtr.Zero);
+				} else
+					XplatUI.OverrideCursor(current.handle);
 			}
 		}
 
@@ -240,7 +243,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO ("Implemented for Win32, X11 always returns 0,0")]
 		public Point HotSpot {
 			get {
@@ -250,14 +252,13 @@ namespace System.Windows.Forms {
 				return new Point (hot_x, hot_y);
 			}
 		}
-#endif
+
 		public Size Size {
 			get {
 				return size;
 			}
 		}
 		
-#if NET_2_0
 		[Localizable (false)]
 		[Bindable (true)]
 		[TypeConverter (typeof (StringConverter))]
@@ -267,46 +268,44 @@ namespace System.Windows.Forms {
 			get { return this.tag; }
 			set { this.tag = value; }
 		}
-#endif
+
 		#endregion	// Public Instance Properties
 
 		#region Public Static Methods
-		public static void Hide() {
+		public static void Hide ()
+		{
 			XplatUI.ShowCursor(false);
 		}
 
-		public static void Show() {
+		public static void Show ()
+		{
 			XplatUI.ShowCursor(true);
 		}
 
-		public static bool operator !=(Cursor left, Cursor right) {
-			if ((object)left == (object)right) {
+		public static bool operator != (Cursor left, Cursor right) {
+			if ((object)left == (object)right)
 				return false;
-			}
 
-			if ((object)left == null || (object)right == null) {
+			if ((object)left == null || (object)right == null) 
 				return true;
-			}
 
-			if (left.handle == right.handle) {
+			if (left.handle == right.handle) 
 				return false;
-			}
 			return true;
 		}
 
 
-		public static bool operator ==(Cursor left, Cursor right) {
-			if ((object)left == (object)right) {
+		public static bool operator ==(Cursor left, Cursor right)
+		{
+			if ((object)left == (object)right) 
 				return true;
-			}
 
-			if ((object)left == null || (object)right == null) {
+			if ((object)left == null || (object)right == null)
 				return false;
-			}
 
-			if (left.handle == right.handle) {
+			if (left.handle == right.handle)
 				return true;
-			}
+
 			return false;
 		}
 		#endregion	// Public Static Methods
@@ -316,62 +315,65 @@ namespace System.Windows.Forms {
 			return handle;
 		}
 
-		public void Dispose() {
-			if (this.cursor != null) {
-				this.cursor.Dispose();
-				this.cursor = null;
+		public void Dispose ()
+		{
+			if (cursor != null) {
+				cursor.Dispose ();
+				cursor = null;
 			}
 
-			if (this.shape != null) {
-				this.shape.Dispose();
-				this.shape = null;
+			if (shape != null) {
+				shape.Dispose ();
+				shape = null;
 			}
 
-			if (this.mask != null) {
-				this.mask.Dispose();
-				this.mask = null;
+			if (mask != null) {
+				mask.Dispose ();
+				mask = null;
 			}
 
 			GC.SuppressFinalize (this);
 		}
 
-		public void Draw(Graphics g, Rectangle targetRect) {
-			if (this.cursor == null && std_cursor != (StdCursor) (-1)) {
-				this.cursor = XplatUI.DefineStdCursorBitmap (std_cursor);
-			}
-			if (this.cursor != null) {
+		public void Draw (Graphics g, Rectangle targetRect)
+		{
+			if (cursor == null && std_cursor != (StdCursor) (-1)) 
+				cursor = XplatUI.DefineStdCursorBitmap (std_cursor);
+
+			if (cursor != null) {
 				// Size of the targetRect is not considered at all
-				g.DrawImage (this.cursor, targetRect.X, targetRect.Y);
+				g.DrawImage (cursor, targetRect.X, targetRect.Y);
 			}
 		}
 
 		public void DrawStretched (Graphics g, Rectangle targetRect)
 		{
-			if (this.cursor == null && std_cursor != (StdCursor)(-1)) {
-				this.cursor = XplatUI.DefineStdCursorBitmap (std_cursor);
-			}
-			if (this.cursor != null) {
-				g.DrawImage(this.cursor, targetRect, new Rectangle(0, 0, this.cursor.Width, this.cursor.Height), GraphicsUnit.Pixel);
+			if (cursor == null && std_cursor != (StdCursor)(-1)) 
+				cursor = XplatUI.DefineStdCursorBitmap (std_cursor);
+
+			if (cursor != null) {
+				g.DrawImage (cursor, targetRect, new Rectangle(0, 0, cursor.Width, cursor.Height), GraphicsUnit.Pixel);
 			}
 		}
 
-		public override bool Equals(object obj) {
-			if ( !(obj is Cursor)) {
+		public override bool Equals (object obj)
+		{
+			if (!(obj is Cursor)) 
 				return false;
-			}
 
-			if (((Cursor)obj).handle == this.handle) {
+			if (((Cursor)obj).handle == handle)
 				return true;
-			}
 
 			return false;
 		}
 
-		public override int GetHashCode() {
+		public override int GetHashCode()
+		{
 			return base.GetHashCode ();
 		}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			if (name != null) {
 				return "[Cursor:" + name + "]";
 			}
@@ -379,63 +381,65 @@ namespace System.Windows.Forms {
 			throw new FormatException("Cannot convert custom cursors to string.");
 		}
 
-		void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context) {
+		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
+		{
 			MemoryStream	ms;
 			BinaryWriter	wr;
 			CursorImage	ci;
 
-			ms = new MemoryStream();
-			wr = new BinaryWriter(ms);
-			ci = cursor_data[this.id];
+			ms = new MemoryStream ();
+			wr = new BinaryWriter (ms);
+			ci = cursor_data [this.id];
 
 			// Build the headers, first the CursorDir
-			wr.Write((ushort)0);	// Reserved
-			wr.Write((ushort)2);	// Resource type
-			wr.Write((ushort)1);	// Count
+			wr.Write ((ushort) 0);	// Reserved
+			wr.Write ((ushort) 2);	// Resource type
+			wr.Write ((ushort) 1);	// Count
 
 			// Next the CursorEntry
-			wr.Write((byte)cursor_dir.idEntries[this.id].width);
-			wr.Write((byte)cursor_dir.idEntries[this.id].height);
-			wr.Write((byte)cursor_dir.idEntries[this.id].colorCount);
-			wr.Write((byte)cursor_dir.idEntries[this.id].reserved);
-			wr.Write((ushort)cursor_dir.idEntries[this.id].xHotspot);
-			wr.Write((ushort)cursor_dir.idEntries[this.id].yHotspot);
-			wr.Write((uint)(40 + (ci.cursorColors.Length * 4) + ci.cursorXOR.Length + ci.cursorAND.Length));
-			wr.Write((uint)(6 + 16));	// CursorDir + CursorEntry size
+			wr.Write ((byte)cursor_dir.idEntries [this.id].width);
+			wr.Write ((byte)cursor_dir.idEntries [this.id].height);
+			wr.Write ((byte)cursor_dir.idEntries [this.id].colorCount);
+			wr.Write ((byte)cursor_dir.idEntries [this.id].reserved);
+			wr.Write ((ushort)cursor_dir.idEntries [this.id].xHotspot);
+			wr.Write ((ushort)cursor_dir.idEntries [this.id].yHotspot);
+			wr.Write ((uint)(40 + (ci.cursorColors.Length * 4) + ci.cursorXOR.Length + ci.cursorAND.Length));
+			wr.Write ((uint)(6 + 16));	// CursorDir + CursorEntry size
 
 			// Then the CursorInfoHeader
-			wr.Write(ci.cursorHeader.biSize);
-			wr.Write(ci.cursorHeader.biWidth);
-			wr.Write(ci.cursorHeader.biHeight);
-			wr.Write(ci.cursorHeader.biPlanes);
-			wr.Write(ci.cursorHeader.biBitCount);
-			wr.Write(ci.cursorHeader.biCompression);
-			wr.Write(ci.cursorHeader.biSizeImage);
-			wr.Write(ci.cursorHeader.biXPelsPerMeter);
-			wr.Write(ci.cursorHeader.biYPelsPerMeter);
-			wr.Write(ci.cursorHeader.biClrUsed);
-			wr.Write(ci.cursorHeader.biClrImportant);
-			for (int i = 0; i < ci.cursorColors.Length; i++) {
+			wr.Write (ci.cursorHeader.biSize);
+			wr.Write (ci.cursorHeader.biWidth);
+			wr.Write (ci.cursorHeader.biHeight);
+			wr.Write (ci.cursorHeader.biPlanes);
+			wr.Write (ci.cursorHeader.biBitCount);
+			wr.Write (ci.cursorHeader.biCompression);
+			wr.Write (ci.cursorHeader.biSizeImage);
+			wr.Write (ci.cursorHeader.biXPelsPerMeter);
+			wr.Write (ci.cursorHeader.biYPelsPerMeter);
+			wr.Write (ci.cursorHeader.biClrUsed);
+			wr.Write (ci.cursorHeader.biClrImportant);
+			
+			for (int i = 0; i < ci.cursorColors.Length; i++) 
 				wr.Write(ci.cursorColors[i]);
-			}
-			wr.Write(ci.cursorXOR);
-			wr.Write(ci.cursorAND);
-			wr.Flush();
 
-			si.AddValue ("CursorData", ms.ToArray());
+			wr.Write (ci.cursorXOR);
+			wr.Write (ci.cursorAND);
+			wr.Flush ();
+
+			si.AddValue ("CursorData", ms.ToArray ());
 		}
 		#endregion	// Public Instance Methods
 
-		#region Private Methods		  w
-		private void InitFromStream(Stream stream) {
+		#region Private Methods
+		private void InitFromStream (Stream stream)
+		{
 			ushort		entry_count;
 			CursorEntry	ce;
 			uint		largest;
 
 			//read the cursor header
-			if (stream == null || stream.Length == 0) {
-				throw new System.ArgumentException ("The argument 'stream' must be a picture that can be used as a cursor", "stream");
-			}
+			if (stream == null || stream.Length == 0) 
+				throw new ArgumentException ("The argument 'stream' must be a picture that can be used as a cursor", "stream");
 			
 			BinaryReader reader = new BinaryReader (stream);
             
@@ -443,7 +447,7 @@ namespace System.Windows.Forms {
 			cursor_dir.idReserved = reader.ReadUInt16();
 			cursor_dir.idType = reader.ReadUInt16();
 			if (cursor_dir.idReserved != 0 || !(cursor_dir.idType == 2 || cursor_dir.idType == 1))
-				throw new System.ArgumentException ("Invalid Argument, format error", "stream");
+				throw new ArgumentException ("Invalid Argument, format error", "stream");
 
 			entry_count = reader.ReadUInt16();
 			cursor_dir.idCount = entry_count;
@@ -472,7 +476,7 @@ namespace System.Windows.Forms {
 
 			// If we have more than one pick the largest cursor
 			largest = 0;
-			for (int j=0; j < entry_count; j++){
+			for (int j = 0; j < entry_count; j++){
 				if (cursor_dir.idEntries[j].sizeInBytes >= largest)	{
 					largest = cursor_dir.idEntries[j].sizeInBytes;
 					this.id = (ushort)j;
@@ -504,7 +508,7 @@ namespace System.Windows.Forms {
 
 				cih.biSize = cih_reader.ReadUInt32 ();
 				if (cih.biSize != 40) {
-					throw new System.ArgumentException ("Invalid cursor file", "stream");
+					throw new ArgumentException ("Invalid cursor file", "stream");
 				}
 				cih.biWidth = cih_reader.ReadInt32 ();
 				cih.biHeight = cih_reader.ReadInt32 ();
@@ -564,7 +568,8 @@ namespace System.Windows.Forms {
 			reader.Close();
 		}
 
-		private Bitmap ToBitmap(bool xor, bool transparent) {
+		private Bitmap ToBitmap(bool xor, bool transparent)
+		{
 			CursorImage		ci;
 			CursorInfoHeader	cih;
 			int			ncolors;
@@ -574,9 +579,8 @@ namespace System.Windows.Forms {
 			int			biHeight;
 			int			bytesPerLine;
 
-			if (cursor_data == null) {
+			if (cursor_data == null)
 				return new Bitmap(32, 32);
-			}
 
 			ci = cursor_data[this.id];
 			cih = ci.cursorHeader;
@@ -604,47 +608,43 @@ namespace System.Windows.Forms {
 				}
 
 				switch(cih.biBitCount) {
-					case 1: {	// Monochrome
-						bmp = new Bitmap(cih.biWidth, biHeight, PixelFormat.Format1bppIndexed);
-						break;
-					}
-
-					case 4: {	// 4bpp
-						bmp = new Bitmap(cih.biWidth, biHeight, PixelFormat.Format4bppIndexed);
-						break;
-					}
-
-					case 8: {	// 8bpp
-						bmp = new Bitmap(cih.biWidth, biHeight, PixelFormat.Format8bppIndexed);
-						break;
-					}
-
-					case 24:
-					case 32: {	// 32bpp
-						bmp = new Bitmap(cih.biWidth, biHeight, PixelFormat.Format32bppArgb);
-						break;
-					}
-
-					default: {
-						throw new Exception("Unexpected number of bits:" + cih.biBitCount.ToString());
-					}
+				case 1: {	// Monochrome
+					bmp = new Bitmap (cih.biWidth, biHeight, PixelFormat.Format1bppIndexed);
+					break;
 				}
-
+					
+				case 4: {	// 4bpp
+					bmp = new Bitmap (cih.biWidth, biHeight, PixelFormat.Format4bppIndexed);
+					break;
+				}
+					
+				case 8: {	// 8bpp
+					bmp = new Bitmap (cih.biWidth, biHeight, PixelFormat.Format8bppIndexed);
+					break;
+				}
+					
+				case 24:
+				case 32: {	// 32bpp
+					bmp = new Bitmap (cih.biWidth, biHeight, PixelFormat.Format32bppArgb);
+					break;
+				}
+					
+				default: 
+					throw new Exception("Unexpected number of bits:" + cih.biBitCount.ToString());
+				}
+				
 				if (cih.biBitCount < 24) {
 					pal = bmp.Palette;				// Managed palette
-
-					for (int i = 0; i < ci.cursorColors.Length; i++) {
+					for (int i = 0; i < ci.cursorColors.Length; i++) 
 						pal.Entries[i] = Color.FromArgb((int)ci.cursorColors[i] | unchecked((int)0xff000000));
-					}
 					bmp.Palette = pal;
 				}
 
 				bytesPerLine = (int)((((cih.biWidth * cih.biBitCount) + 31) & ~31) >> 3);
 				bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
-				for (int y = 0; y < biHeight; y++) {
+				for (int y = 0; y < biHeight; y++) 
 					Marshal.Copy(ci.cursorXOR, bytesPerLine * y, (IntPtr)(bits.Scan0.ToInt64() + bits.Stride * (biHeight - 1 - y)), bytesPerLine);
-				}
 				
 				bmp.UnlockBits(bits);
 			}
@@ -655,9 +655,8 @@ namespace System.Windows.Forms {
 				for (int y = 0; y < biHeight; y++) {
 					for (int x = 0; x < cih.biWidth / 8; x++) {
 						for (int bit = 7; bit >= 0; bit--) {
-							if (((ci.cursorAND[y * cih.biWidth / 8 +x] >> bit) & 1) != 0) {
+							if (((ci.cursorAND[y * cih.biWidth / 8 +x] >> bit) & 1) != 0) 
 								bmp.SetPixel(x*8 + 7-bit, biHeight - y - 1, Color.Transparent);
-							}
 						}
 					}
 				}
