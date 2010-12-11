@@ -1591,7 +1591,8 @@ namespace System.Windows.Forms {
 					break;
 
 				case RTF.Minor.LeftIndent:
-					rtf_style.rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * CreateGraphics ().DpiX + 0.5F);
+					using (Graphics g = CreateGraphics ())
+						rtf_style.rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
 					break;
 
 				case RTF.Minor.QuadCenter:
