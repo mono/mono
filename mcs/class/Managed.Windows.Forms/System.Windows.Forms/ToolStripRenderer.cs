@@ -60,7 +60,8 @@ namespace System.Windows.Forms
 			ia.SetColorMatrix (grayscale_matrix);
 			
 			Bitmap b = new Bitmap(normalImage.Width, normalImage.Height);
-			Graphics.FromImage(b).DrawImage(normalImage, new Rectangle (0, 0, normalImage.Width, normalImage.Height), 0, 0, normalImage.Width, normalImage.Height, GraphicsUnit.Pixel, ia);
+			using (Graphics g = Graphics.FromImage(b))
+				g.DrawImage(normalImage, new Rectangle (0, 0, normalImage.Width, normalImage.Height), 0, 0, normalImage.Width, normalImage.Height, GraphicsUnit.Pixel, ia);
 			
 			return b;
 		}
