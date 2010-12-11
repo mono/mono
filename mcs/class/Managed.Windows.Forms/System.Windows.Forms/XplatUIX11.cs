@@ -78,155 +78,155 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		// General
 		static volatile XplatUIX11	Instance;
-		private static int		RefCount;
-		private static object		XlibLock;		// Our locking object
-		private static bool		themes_enabled;
+		static int		RefCount;
+		static object		XlibLock;		// Our locking object
+		static bool		themes_enabled;
 
 		// General X11
-		private static IntPtr		DisplayHandle;		// X11 handle to display
-		private static int		ScreenNo;		// Screen number used
-		private static IntPtr		DefaultColormap;	// Colormap for screen
-		private static IntPtr		CustomVisual;		// Visual for window creation
-		private static IntPtr		CustomColormap;		// Colormap for window creation
-		private static IntPtr		RootWindow;		// Handle of the root window for the screen/display
-		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
-		private static XErrorHandler	ErrorHandler;		// Error handler delegate
-		private static bool		ErrorExceptions;	// Throw exceptions on X errors
-		private int                     render_major_opcode;
-		private int                     render_first_event;
-		private int                     render_first_error;
+		static IntPtr		DisplayHandle;		// X11 handle to display
+		static int		ScreenNo;		// Screen number used
+		static IntPtr		DefaultColormap;	// Colormap for screen
+		static IntPtr		CustomVisual;		// Visual for window creation
+		static IntPtr		CustomColormap;		// Colormap for window creation
+		static IntPtr		RootWindow;		// Handle of the root window for the screen/display
+		static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
+		static XErrorHandler	ErrorHandler;		// Error handler delegate
+		static bool		ErrorExceptions;	// Throw exceptions on X errors
+		int                     render_major_opcode;
+		int                     render_first_event;
+		int                     render_first_error;
 
 		// Clipboard
-		private static IntPtr 		ClipMagic;
-		private static ClipboardData	Clipboard;		// Our clipboard
+		static IntPtr 		ClipMagic;
+		static ClipboardData	Clipboard;		// Our clipboard
 
 		// Communication
-		private static IntPtr		PostAtom;		// PostMessage atom
-		private static IntPtr		AsyncAtom;		// Support for async messages
+		static IntPtr		PostAtom;		// PostMessage atom
+		static IntPtr		AsyncAtom;		// Support for async messages
 
 		// Message Loop
-		private static Hashtable	MessageQueues;		// Holds our thread-specific XEventQueues
-		private static ArrayList	unattached_timer_list; // holds timers that are enabled but not attached to a window.
+		static Hashtable	MessageQueues;		// Holds our thread-specific XEventQueues
+		static ArrayList	unattached_timer_list; // holds timers that are enabled but not attached to a window.
 		#if __MonoCS__						//
-		private static Pollfd[]		pollfds;		// For watching the X11 socket
-		private static bool wake_waiting;
-		private static object wake_waiting_lock = new object ();
+		static Pollfd[]		pollfds;		// For watching the X11 socket
+		static bool wake_waiting;
+		static object wake_waiting_lock = new object ();
 		#endif							//
-		private static X11Keyboard	Keyboard;		//
-		private static X11Dnd		Dnd;
-		private static Socket		listen;			//
-		private static Socket		wake;			//
-		private static Socket		wake_receive;		//
-		private static byte[]		network_buffer;		//
-		private static bool		detectable_key_auto_repeat;
+		static X11Keyboard	Keyboard;		//
+		static X11Dnd		Dnd;
+		static Socket		listen;			//
+		static Socket		wake;			//
+		static Socket		wake_receive;		//
+		static byte[]		network_buffer;		//
+		static bool		detectable_key_auto_repeat;
 
 		// Focus tracking
-		private static IntPtr		ActiveWindow;		// Handle of the active window
-		private static IntPtr		FocusWindow;		// Handle of the window with keyboard focus (if any)
+		static IntPtr		ActiveWindow;		// Handle of the active window
+		static IntPtr		FocusWindow;		// Handle of the window with keyboard focus (if any)
 
 		// Modality support
-		private static Stack		ModalWindows;		// Stack of our modal windows
+		static Stack		ModalWindows;		// Stack of our modal windows
 
 		// Systray
-		private static IntPtr		SystrayMgrWindow;	// Handle of the Systray Manager window
+		static IntPtr		SystrayMgrWindow;	// Handle of the Systray Manager window
 
 		// Cursors
-		private static IntPtr		LastCursorWindow;	// The last window we set the cursor on
-		private static IntPtr		LastCursorHandle;	// The handle that was last set on LastCursorWindow
-		private static IntPtr		OverrideCursorHandle;	// The cursor that is set to override any other cursors
+		static IntPtr		LastCursorWindow;	// The last window we set the cursor on
+		static IntPtr		LastCursorHandle;	// The handle that was last set on LastCursorWindow
+		static IntPtr		OverrideCursorHandle;	// The cursor that is set to override any other cursors
 
 		// Caret
-		private static CaretStruct	Caret;			//
+		static CaretStruct	Caret;			//
 
 		// Last window containing the pointer
-		private static IntPtr		LastPointerWindow;	// The last window containing the pointer
+		static IntPtr		LastPointerWindow;	// The last window containing the pointer
 
 		// Our atoms
-		private static IntPtr WM_PROTOCOLS;
-		private static IntPtr WM_DELETE_WINDOW;
-		private static IntPtr WM_TAKE_FOCUS;
-		//private static IntPtr _NET_SUPPORTED;
-		//private static IntPtr _NET_CLIENT_LIST;
-		//private static IntPtr _NET_NUMBER_OF_DESKTOPS;
-		private static IntPtr _NET_DESKTOP_GEOMETRY;
-		//private static IntPtr _NET_DESKTOP_VIEWPORT;
-		private static IntPtr _NET_CURRENT_DESKTOP;
-		//private static IntPtr _NET_DESKTOP_NAMES;
-		private static IntPtr _NET_ACTIVE_WINDOW;
-		private static IntPtr _NET_WORKAREA;
-		//private static IntPtr _NET_SUPPORTING_WM_CHECK;
-		//private static IntPtr _NET_VIRTUAL_ROOTS;
-		//private static IntPtr _NET_DESKTOP_LAYOUT;
-		//private static IntPtr _NET_SHOWING_DESKTOP;
-		//private static IntPtr _NET_CLOSE_WINDOW;
-		//private static IntPtr _NET_MOVERESIZE_WINDOW;
-		private static IntPtr _NET_WM_MOVERESIZE;
-		//private static IntPtr _NET_RESTACK_WINDOW;
-		//private static IntPtr _NET_REQUEST_FRAME_EXTENTS;
-		private static IntPtr _NET_WM_NAME;
-		//private static IntPtr _NET_WM_VISIBLE_NAME;
-		//private static IntPtr _NET_WM_ICON_NAME;
-		//private static IntPtr _NET_WM_VISIBLE_ICON_NAME;
-		//private static IntPtr _NET_WM_DESKTOP;
-		private static IntPtr _NET_WM_WINDOW_TYPE;
-		private static IntPtr _NET_WM_STATE;
-		//private static IntPtr _NET_WM_ALLOWED_ACTIONS;
-		//private static IntPtr _NET_WM_STRUT;
-		//private static IntPtr _NET_WM_STRUT_PARTIAL;
-		//private static IntPtr _NET_WM_ICON_GEOMETRY;
-		private static IntPtr _NET_WM_ICON;
-		//private static IntPtr _NET_WM_PID;
-		//private static IntPtr _NET_WM_HANDLED_ICONS;
-		private static IntPtr _NET_WM_USER_TIME;
-		private static IntPtr _NET_FRAME_EXTENTS;
-		//private static IntPtr _NET_WM_PING;
-		//private static IntPtr _NET_WM_SYNC_REQUEST;
-		private static IntPtr _NET_SYSTEM_TRAY_S;
-		//private static IntPtr _NET_SYSTEM_TRAY_ORIENTATION;
-		private static IntPtr _NET_SYSTEM_TRAY_OPCODE;
-		private static IntPtr _NET_WM_STATE_MAXIMIZED_HORZ;
-		private static IntPtr _NET_WM_STATE_MAXIMIZED_VERT;
-		private static IntPtr _XEMBED;
-		private static IntPtr _XEMBED_INFO;
-		private static IntPtr _MOTIF_WM_HINTS;
-		private static IntPtr _NET_WM_STATE_SKIP_TASKBAR;
-		private static IntPtr _NET_WM_STATE_ABOVE;
-		private static IntPtr _NET_WM_STATE_MODAL;
-		private static IntPtr _NET_WM_STATE_HIDDEN;
-		private static IntPtr _NET_WM_CONTEXT_HELP;
-		private static IntPtr _NET_WM_WINDOW_OPACITY;
-		//private static IntPtr _NET_WM_WINDOW_TYPE_DESKTOP;
-		//private static IntPtr _NET_WM_WINDOW_TYPE_DOCK;
-		//private static IntPtr _NET_WM_WINDOW_TYPE_TOOLBAR;
-		//private static IntPtr _NET_WM_WINDOW_TYPE_MENU;
-		private static IntPtr _NET_WM_WINDOW_TYPE_UTILITY;
-		//private static IntPtr _NET_WM_WINDOW_TYPE_SPLASH;
-		// private static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
-		private static IntPtr _NET_WM_WINDOW_TYPE_NORMAL;
-		private static IntPtr CLIPBOARD;
-		private static IntPtr PRIMARY;
-		//private static IntPtr DIB;
-		private static IntPtr OEMTEXT;
-		private static IntPtr UTF8_STRING;
-		private static IntPtr UTF16_STRING;
-		private static IntPtr RICHTEXTFORMAT;
-		private static IntPtr TARGETS;
+		static IntPtr WM_PROTOCOLS;
+		static IntPtr WM_DELETE_WINDOW;
+		static IntPtr WM_TAKE_FOCUS;
+		//static IntPtr _NET_SUPPORTED;
+		//static IntPtr _NET_CLIENT_LIST;
+		//static IntPtr _NET_NUMBER_OF_DESKTOPS;
+		static IntPtr _NET_DESKTOP_GEOMETRY;
+		//static IntPtr _NET_DESKTOP_VIEWPORT;
+		static IntPtr _NET_CURRENT_DESKTOP;
+		//static IntPtr _NET_DESKTOP_NAMES;
+		static IntPtr _NET_ACTIVE_WINDOW;
+		static IntPtr _NET_WORKAREA;
+		//static IntPtr _NET_SUPPORTING_WM_CHECK;
+		//static IntPtr _NET_VIRTUAL_ROOTS;
+		//static IntPtr _NET_DESKTOP_LAYOUT;
+		//static IntPtr _NET_SHOWING_DESKTOP;
+		//static IntPtr _NET_CLOSE_WINDOW;
+		//static IntPtr _NET_MOVERESIZE_WINDOW;
+		static IntPtr _NET_WM_MOVERESIZE;
+		//static IntPtr _NET_RESTACK_WINDOW;
+		//static IntPtr _NET_REQUEST_FRAME_EXTENTS;
+		static IntPtr _NET_WM_NAME;
+		//static IntPtr _NET_WM_VISIBLE_NAME;
+		//static IntPtr _NET_WM_ICON_NAME;
+		//static IntPtr _NET_WM_VISIBLE_ICON_NAME;
+		//static IntPtr _NET_WM_DESKTOP;
+		static IntPtr _NET_WM_WINDOW_TYPE;
+		static IntPtr _NET_WM_STATE;
+		//static IntPtr _NET_WM_ALLOWED_ACTIONS;
+		//static IntPtr _NET_WM_STRUT;
+		//static IntPtr _NET_WM_STRUT_PARTIAL;
+		//static IntPtr _NET_WM_ICON_GEOMETRY;
+		static IntPtr _NET_WM_ICON;
+		//static IntPtr _NET_WM_PID;
+		//static IntPtr _NET_WM_HANDLED_ICONS;
+		static IntPtr _NET_WM_USER_TIME;
+		static IntPtr _NET_FRAME_EXTENTS;
+		//static IntPtr _NET_WM_PING;
+		//static IntPtr _NET_WM_SYNC_REQUEST;
+		static IntPtr _NET_SYSTEM_TRAY_S;
+		//static IntPtr _NET_SYSTEM_TRAY_ORIENTATION;
+		static IntPtr _NET_SYSTEM_TRAY_OPCODE;
+		static IntPtr _NET_WM_STATE_MAXIMIZED_HORZ;
+		static IntPtr _NET_WM_STATE_MAXIMIZED_VERT;
+		static IntPtr _XEMBED;
+		static IntPtr _XEMBED_INFO;
+		static IntPtr _MOTIF_WM_HINTS;
+		static IntPtr _NET_WM_STATE_SKIP_TASKBAR;
+		static IntPtr _NET_WM_STATE_ABOVE;
+		static IntPtr _NET_WM_STATE_MODAL;
+		static IntPtr _NET_WM_STATE_HIDDEN;
+		static IntPtr _NET_WM_CONTEXT_HELP;
+		static IntPtr _NET_WM_WINDOW_OPACITY;
+		//static IntPtr _NET_WM_WINDOW_TYPE_DESKTOP;
+		//static IntPtr _NET_WM_WINDOW_TYPE_DOCK;
+		//static IntPtr _NET_WM_WINDOW_TYPE_TOOLBAR;
+		//static IntPtr _NET_WM_WINDOW_TYPE_MENU;
+		static IntPtr _NET_WM_WINDOW_TYPE_UTILITY;
+		//static IntPtr _NET_WM_WINDOW_TYPE_SPLASH;
+		// static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
+		static IntPtr _NET_WM_WINDOW_TYPE_NORMAL;
+		static IntPtr CLIPBOARD;
+		static IntPtr PRIMARY;
+		//static IntPtr DIB;
+		static IntPtr OEMTEXT;
+		static IntPtr UTF8_STRING;
+		static IntPtr UTF16_STRING;
+		static IntPtr RICHTEXTFORMAT;
+		static IntPtr TARGETS;
 
 		// mouse hover message generation
-		private static HoverStruct	HoverState;		//
+		static HoverStruct	HoverState;		//
 
 		// double click message generation
-		private static ClickStruct	ClickPending;		//
+		static ClickStruct	ClickPending;		//
 
 		// Support for mouse grab
-		private static GrabStruct	Grab;			//
+		static GrabStruct	Grab;			//
 
 		// State
 		Point		mouse_position;		// Last position of mouse, in screen coords
 		internal static MouseButtons	MouseState;		// Last state of mouse buttons
 		internal static bool in_doevents;
 		// 'Constants'
-		private static int		DoubleClickInterval;	// msec; max interval between clicks to count as double click
+		static int		DoubleClickInterval;	// msec; max interval between clicks to count as double click
 
 		const EventMask SelectInputMask = (EventMask.ButtonPressMask | 
 						   EventMask.ButtonReleaseMask | 
@@ -247,7 +247,7 @@ namespace System.Windows.Forms {
 
 		#endregion	// Local Variables
 		#region Constructors
-		private XplatUIX11() {
+		XplatUIX11() {
 			// Handle singleton stuff first
 			RefCount = 0;
 			in_doevents = false;
@@ -425,7 +425,8 @@ namespace System.Windows.Forms {
 		#endregion	// XExceptionClass
 
 		#region Internal Methods
-		internal void SetDisplay(IntPtr display_handle) {
+		internal void SetDisplay(IntPtr display_handle)
+		{
 			if (display_handle != IntPtr.Zero) {
 				Hwnd	hwnd;
 
@@ -549,14 +550,20 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Internal Methods
 
-		#region Private Methods
-		private int unixtime() {
+		#region Methods
+		[Conditional ("DriverDebug")]
+		static void DriverDebug (string format, params object [] args)
+		{
+			Console.WriteLine (String.Format (format, args));
+		}
+		
+		int unixtime() {
 			TimeSpan t = (DateTime.UtcNow - new DateTime(1970, 1, 1));
 
 			return (int) t.TotalSeconds;
 		}
 
-		private static void SetupAtoms() {
+		static void SetupAtoms() {
 			// make sure this array stays in sync with the statements below
 			string [] atom_names = new string[] {
 				"WM_PROTOCOLS",
@@ -710,18 +717,18 @@ namespace System.Windows.Forms {
 			_NET_SYSTEM_TRAY_S = XInternAtom (DisplayHandle, "_NET_SYSTEM_TRAY_S" + ScreenNo.ToString(), false);
 		}
 
-		private void GetSystrayManagerWindow() {
+		void GetSystrayManagerWindow() {
 			XGrabServer(DisplayHandle);
 			SystrayMgrWindow = XGetSelectionOwner(DisplayHandle, _NET_SYSTEM_TRAY_S);
 			XUngrabServer(DisplayHandle);
 			XFlush(DisplayHandle);
 		}
 
-		private void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
+		void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
 			SendNetWMMessage (window, message_type, l0, l1, l2, IntPtr.Zero);
 		}
 
-		private void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2, IntPtr l3) {
+		void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2, IntPtr l3) {
 			XEvent	xev;
 
 			xev = new XEvent();
@@ -737,7 +744,7 @@ namespace System.Windows.Forms {
 			XSendEvent(DisplayHandle, RootWindow, false, new IntPtr ((int) (EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask)), ref xev);
 		}
 
-		private void SendNetClientMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
+		void SendNetClientMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
 			XEvent	xev;
 
 			xev = new XEvent();
@@ -909,7 +916,7 @@ namespace System.Windows.Forms {
 			return new Point (x, y);
 		}
 		
-		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out bool border_static, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
+		void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out bool border_static, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
 
 			caption_height = 0;
 			tool_caption_height = 19;
@@ -989,11 +996,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
+		void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
 			DeriveStyles(cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.border_static, out hwnd.title_style, out hwnd.caption_height, out hwnd.tool_caption_height);
 		}
 
-		private void SetWMStyles(Hwnd hwnd, CreateParams cp) {
+		void SetWMStyles(Hwnd hwnd, CreateParams cp) {
 			MotifWmHints		mwmHints;
 			MotifFunctions		functions;
 			MotifDecorations	decorations;
@@ -1098,9 +1105,7 @@ namespace System.Windows.Forms {
 			mwmHints.functions = (IntPtr)functions;
 			mwmHints.decorations = (IntPtr)decorations;
 
-#if debug
-			Console.WriteLine ("SetWMStyles ({0}, {1}) functions = {2}, decorations = {3}", hwnd, cp, functions, decorations);
-#endif
+			DriverDebug ("SetWMStyles ({0}, {1}) functions = {2}, decorations = {3}", hwnd, cp, functions, decorations);
 
 			if (cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)) {
 				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
@@ -1184,7 +1189,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void SetIcon(Hwnd hwnd, Icon icon)
+		void SetIcon(Hwnd hwnd, Icon icon)
 		{
 			if (icon == null) {
 				// XXX
@@ -1223,11 +1228,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void WakeupMain () {
+		void WakeupMain () {
 			wake.Send (new byte [] { 0xFF });
 		}
 
-		private XEventQueue ThreadQueue(Thread thread) {
+		XEventQueue ThreadQueue(Thread thread) {
 			XEventQueue	queue;
 
 			queue = (XEventQueue)MessageQueues[thread];
@@ -1239,7 +1244,7 @@ namespace System.Windows.Forms {
 			return queue;
 		}
 
-		private void TranslatePropertyToClipboard(IntPtr property) {
+		void TranslatePropertyToClipboard(IntPtr property) {
 			IntPtr			actual_atom;
 			int			actual_format;
 			IntPtr			nitems;
@@ -1287,7 +1292,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private string UnescapeUnicodeFromAnsi (string value)
+		string UnescapeUnicodeFromAnsi (string value)
 		{
 			if (value == null || value.IndexOf ("\\u") == -1)
 				return value;
@@ -1329,7 +1334,7 @@ namespace System.Windows.Forms {
 			return sb.ToString ();
 		}
 
-		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
+		void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
 			// Don't waste time
 			if ((hwnd == null) || (x > hwnd.Width) || (y > hwnd.Height) || ((x + width) < 0) || ((y + height) < 0)) {
 				return;
@@ -1364,7 +1369,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private static Hwnd.Borders FrameExtents (IntPtr window)
+		static Hwnd.Borders FrameExtents (IntPtr window)
 		{
 			IntPtr actual_atom;
 			int actual_format;
@@ -1387,7 +1392,7 @@ namespace System.Windows.Forms {
 			return rect;
 		}
 
-		private void AddConfigureNotify (XEvent xevent) {
+		void AddConfigureNotify (XEvent xevent) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.GetObjectFromWindow(xevent.ConfigureEvent.window);
@@ -1417,9 +1422,9 @@ namespace System.Windows.Forms {
 				hwnd.height = TranslatedSize.Height;
 				hwnd.ClientRect = Rectangle.Empty;
 
-#if debug
-				Console.WriteLine ("AddConfigureNotify (hwnd.Handle = {1}, final hwnd.rect = {0}, reported rect={2})", new Rectangle (hwnd.x, hwnd.y, hwnd.width, hwnd.height), hwnd.Handle, new Rectangle (xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.width));
-#endif			
+				DriverDebug ("AddConfigureNotify (hwnd.Handle = {1}, final hwnd.rect = {0}, reported rect={2})",
+					     new Rectangle (hwnd.x, hwnd.y, hwnd.width, hwnd.height), hwnd.Handle,
+					     new Rectangle (xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.width));
 				lock (hwnd.configure_lock) {
 					if (!hwnd.configure_pending) {
 						hwnd.Queue.EnqueueLocked (xevent);
@@ -1430,7 +1435,7 @@ namespace System.Windows.Forms {
 			// We drop configure events for Client windows
 		}
 
-		private void ShowCaret() {
+		void ShowCaret() {
 			if ((Caret.gc == IntPtr.Zero) || Caret.On) {
 				return;
 			}
@@ -1441,7 +1446,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void HideCaret() {
+		void HideCaret() {
 			if ((Caret.gc == IntPtr.Zero) || !Caret.On) {
 				return;
 			}
@@ -1452,7 +1457,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private int NextTimeout (ArrayList timers, DateTime now) {
+		int NextTimeout (ArrayList timers, DateTime now) {
 			int timeout = 0; 
 
 			foreach (Timer timer in timers) {
@@ -1474,7 +1479,7 @@ namespace System.Windows.Forms {
 			return timeout;
 		}
 
-		private void CheckTimers (ArrayList timers, DateTime now) {
+		void CheckTimers (ArrayList timers, DateTime now) {
 			int count;
 
 			count = timers.Count;
@@ -1505,12 +1510,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void WaitForHwndMessage (Hwnd hwnd, Msg message) {
+		void WaitForHwndMessage (Hwnd hwnd, Msg message) {
 			WaitForHwndMessage (hwnd, message, false);
 
 		}
 
-		private void WaitForHwndMessage (Hwnd hwnd, Msg message, bool process) {
+		void WaitForHwndMessage (Hwnd hwnd, Msg message, bool process) {
 			MSG msg = new MSG ();
 			XEventQueue queue;
 
@@ -1569,7 +1574,7 @@ namespace System.Windows.Forms {
 
 		}
 
-		private void MapWindow(Hwnd hwnd, WindowType windows) {
+		void MapWindow(Hwnd hwnd, WindowType windows) {
 			if (!hwnd.mapped) {
 				Form f = Control.FromHandle(hwnd.Handle) as Form;
 				if (f != null) {
@@ -1607,7 +1612,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void UnmapWindow(Hwnd hwnd, WindowType windows) {
+		void UnmapWindow(Hwnd hwnd, WindowType windows) {
 			if (hwnd.mapped) {
 				Form f = null;
 				if (Control.FromHandle(hwnd.Handle) is Form) {
@@ -1647,11 +1652,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void UpdateMessageQueue (XEventQueue queue) {
+		void UpdateMessageQueue (XEventQueue queue) {
 			UpdateMessageQueue(queue, true);
 		}
 
-		private void UpdateMessageQueue (XEventQueue queue, bool allowIdle) {
+		void UpdateMessageQueue (XEventQueue queue, bool allowIdle) {
 			DateTime	now;
 			int		pending;
 			Hwnd		hwnd;
@@ -1738,11 +1743,8 @@ namespace System.Windows.Forms {
 				if (hwnd == null)
 					continue;
 
-#if debug				
-				Console.WriteLine ("UpdateMessageQueue (), got Event: {0}", xevent.ToString ());
-#else
 				DebugHelper.WriteLine  ("UpdateMessageQueue got Event: " + xevent.ToString ());
-#endif
+
 				switch (xevent.type) {
 				case XEventName.Expose:
 					AddExpose (hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
@@ -1885,9 +1887,7 @@ namespace System.Windows.Forms {
 							XDeleteProperty(DisplayHandle, FosterParent, (IntPtr)xevent.SelectionEvent.property);
 							if (!Clipboard.Formats.Contains(xevent.SelectionEvent.property)) {
 								Clipboard.Formats.Add(xevent.SelectionEvent.property);
-								#if DriverDebugExtra
-								Console.WriteLine("Got supported clipboard atom format: {0}", xevent.SelectionEvent.property);
-								#endif
+								DriverDebug("Got supported clipboard atom format: {0}", xevent.SelectionEvent.property);
 							}
 						}
 					} else if (Clipboard.Retrieving) {
@@ -1956,9 +1956,7 @@ namespace System.Windows.Forms {
 					break;
 
 				case XEventName.PropertyNotify:
-#if debug
-					Console.WriteLine ("UpdateMessageQueue (), got Event: {0}", xevent.ToString ());
-#endif
+					DriverDebug ("UpdateMessageQueue (), got Event: {0}", xevent.ToString ());
 					if (xevent.PropertyEvent.atom == _NET_ACTIVE_WINDOW) {
 						IntPtr	actual_atom;
 						int	actual_format;
@@ -2021,7 +2019,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private IntPtr GetMousewParam(int Delta) {
+		IntPtr GetMousewParam(int Delta) {
 			int	result = 0;
 
 			if ((MouseState & MouseButtons.Left) != 0) {
@@ -2049,7 +2047,7 @@ namespace System.Windows.Forms {
 
 			return (IntPtr)result;
 		}
-		private IntPtr XGetParent(IntPtr handle) {
+		IntPtr XGetParent(IntPtr handle) {
 			IntPtr	Root;
 			IntPtr	Parent;
 			IntPtr	Children;
@@ -2067,7 +2065,7 @@ namespace System.Windows.Forms {
 			return Parent;
 		}
 
-		private int HandleError (IntPtr display, ref XErrorEvent error_event)
+		int HandleError (IntPtr display, ref XErrorEvent error_event)
 		{
 			// we need to workaround a problem with the
 			// ordering of destruction of Drawables and
@@ -2094,7 +2092,7 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
-		private void AccumulateDestroyedHandles (Control c, ArrayList list)
+		void AccumulateDestroyedHandles (Control c, ArrayList list)
 		{
 			DebugHelper.Enter ();
 			if (c != null) {
@@ -2106,10 +2104,8 @@ namespace System.Windows.Forms {
 				if (c.IsHandleCreated && !c.IsDisposed) {
 					Hwnd hwnd = Hwnd.ObjectFromHandle(c.Handle);
 
-					#if DriverDebug || DriverDebugDestroy
-					Console.WriteLine (" + adding {0} to the list of zombie windows", XplatUI.Window (hwnd.Handle));
-					Console.WriteLine (" + parent X window is {0:X}", XGetParent (hwnd.whole_window).ToInt32());
-					#endif
+					DriverDebug (" + adding {0} to the list of zombie windows", XplatUI.Window (hwnd.Handle));
+					DriverDebug (" + parent X window is {0:X}", XGetParent (hwnd.whole_window).ToInt32());
 
 					list.Add (hwnd);
 					CleanupCachedWindows (hwnd);
@@ -2142,7 +2138,7 @@ namespace System.Windows.Forms {
 			DestroyCaret (hwnd.Handle);
 		}
 
-		private void PerformNCCalc(Hwnd hwnd) {
+		void PerformNCCalc(Hwnd hwnd) {
 			XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
 			IntPtr				ptr;
 			Rectangle			rect;
@@ -2174,10 +2170,10 @@ namespace System.Windows.Forms {
 
 			AddExpose (hwnd, hwnd.WholeWindow == hwnd.ClientWindow, 0, 0, hwnd.Width, hwnd.Height);
 		}
-		#endregion	// Private Methods
+		#endregion	// Methods
 
 		#region	Callbacks
-		private void MouseHover(object sender, EventArgs e) {
+		void MouseHover(object sender, EventArgs e) {
 			XEvent	xevent;
 			Hwnd	hwnd;
 
@@ -2202,7 +2198,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void CaretCallback(object sender, EventArgs e) {
+		void CaretCallback(object sender, EventArgs e) {
 			if (Caret.Paused) {
 				return;
 			}
@@ -2894,9 +2890,7 @@ namespace System.Windows.Forms {
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
 
-			#if DriverDebug || DriverDebugCreate
-				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}, Style {3}, ExStyle {4}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, (WindowStyles)cp.Style, (WindowExStyles)cp.ExStyle);
-			#endif
+			DriverDebug("Created window {0:X} / {1:X} parent {2:X}, Style {3}, ExStyle {4}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, (WindowStyles)cp.Style, (WindowExStyles)cp.ExStyle);
 			
 			if (!StyleSet (cp.Style, WindowStyles.WS_CHILD)) {
 				if ((X != unchecked((int)0x80000000)) && (Y != unchecked((int)0x80000000))) {
@@ -3086,26 +3080,20 @@ namespace System.Windows.Forms {
 				size = XcursorGetDefaultSize (DisplayHandle);
 				theme = XcursorGetTheme (DisplayHandle);
 				IntPtr images_ptr = XcursorLibraryLoadImages (name, theme, size);
-#if debug
-				Console.WriteLine ("DefineStdCursorBitmap, id={0}, #id={1}, name{2}, size={3}, theme: {4}, images_ptr={5}", id, (int) id, name, size, Marshal.PtrToStringAnsi (theme), images_ptr);
-#endif
+				DriverDebug ("DefineStdCursorBitmap, id={0}, #id={1}, name{2}, size={3}, theme: {4}, images_ptr={5}", id, (int) id, name, size, Marshal.PtrToStringAnsi (theme), images_ptr);
 
 				if (images_ptr == IntPtr.Zero) {
 					return null;
 				}
 
 				XcursorImages images = (XcursorImages) Marshal.PtrToStructure (images_ptr, typeof (XcursorImages));
-#if debug
-				Console.WriteLine ("DefineStdCursorBitmap, cursor has {0} images", images.nimage);
-#endif
+				DriverDebug ("DefineStdCursorBitmap, cursor has {0} images", images.nimage);
 
 				if (images.nimage > 0) {			
 					// We only care about the first image.
 					XcursorImage image = (XcursorImage)Marshal.PtrToStructure (Marshal.ReadIntPtr (images.images), typeof (XcursorImage));
 					
-#if debug
-					Console.WriteLine ("DefineStdCursorBitmap, loaded image <size={0}, height={1}, width={2}, xhot={3}, yhot={4}, pixels={5}", image.size, image.height, image.width, image.xhot, image.yhot, image.pixels);
-#endif
+					DriverDebug ("DefineStdCursorBitmap, loaded image <size={0}, height={1}, width={2}, xhot={3}, yhot={4}, pixels={5}", image.size, image.height, image.width, image.xhot, image.yhot, image.pixels);
 					// A sanity check
 					if (image.width <= short.MaxValue && image.height <= short.MaxValue) {
 						int [] pixels = new int [image.width * image.height];
@@ -3477,15 +3465,11 @@ namespace System.Windows.Forms {
 			// wait until it's completely dead before returning from 
 			// "destroying" calls, but just in case....
 			if (hwnd == null || hwnd.zombie) {
-				#if DriverDebug || DriverDebugDestroy
-					Console.WriteLine("window {0:X} already destroyed", handle.ToInt32());
-				#endif
+				DriverDebug ("window {0:X} already destroyed", handle.ToInt32());
 				return;
 			}
 
-			#if DriverDebug || DriverDebugDestroy
-				Console.WriteLine("Destroying window {0}", XplatUI.Window(hwnd.client_window));
-			#endif
+			DriverDebug ("Destroying window {0}", XplatUI.Window(hwnd.client_window));
 
 			SendParentNotify (hwnd.Handle, Msg.WM_DESTROY, int.MaxValue, int.MaxValue);
 				
@@ -3503,16 +3487,12 @@ namespace System.Windows.Forms {
 
 			lock (XlibLock) {
 				if (hwnd.whole_window != IntPtr.Zero) {
-					#if DriverDebug || DriverDebugDestroy
-					Console.WriteLine ("XDestroyWindow (whole_window = {0:X})", hwnd.whole_window.ToInt32());
-					#endif
+					DriverDebug ("XDestroyWindow (whole_window = {0:X})", hwnd.whole_window.ToInt32());
 					Keyboard.DestroyICForWindow (hwnd.whole_window);
 					XDestroyWindow(DisplayHandle, hwnd.whole_window);
 				}
 				else if (hwnd.client_window != IntPtr.Zero) {
-					#if DriverDebug || DriverDebugDestroy
-					Console.WriteLine ("XDestroyWindow (client_window = {0:X})", hwnd.client_window.ToInt32());
-					#endif
+					DriverDebug ("XDestroyWindow (client_window = {0:X})", hwnd.client_window.ToInt32());
 					Keyboard.DestroyICForWindow (hwnd.client_window);
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 				}
@@ -3919,9 +3899,7 @@ namespace System.Windows.Forms {
 			// client_window, and that'll result in BadWindow errors if there's some lag
 			// between the XDestroyWindow call and the DestroyNotify event.
 			if (hwnd == null || hwnd.zombie && xevent.AnyEvent.type != XEventName.ClientMessage) {
-				#if DriverDebug || DriverDebugDestroy
-					Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
-				#endif
+				DriverDebug("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
 				goto ProcessNextMessage;
 			}
 
@@ -4189,9 +4167,9 @@ namespace System.Windows.Forms {
 
 				case XEventName.MotionNotify: {
 					if (client) {
-						#if DriverDebugExtra
-							Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
-						#endif
+						DriverDebug("GetMessage(): Window {0:X} MotionNotify x={1} y={2}",
+							    client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(),
+							    xevent.MotionEvent.x, xevent.MotionEvent.y);
 
 						if (Grab.Hwnd != IntPtr.Zero) {
 							msg.hwnd = Grab.Hwnd;
@@ -4244,9 +4222,9 @@ namespace System.Windows.Forms {
 						HitTest	ht;
 						IntPtr dummy;
 
-						#if DriverDebugExtra
-							Console.WriteLine("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
-						#endif
+						DriverDebug("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}",
+							    client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(),
+							    xevent.MotionEvent.x, xevent.MotionEvent.y);
 						msg.message = Msg.WM_NCMOUSEMOVE;
 
 						if (!hwnd.Enabled) {
@@ -4394,9 +4372,9 @@ namespace System.Windows.Forms {
 
 				case XEventName.ConfigureNotify: {
 					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
-						#if DriverDebugExtra
-							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
-						#endif
+						DriverDebug("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}",
+							    hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x,
+							    xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 
 						lock (hwnd.configure_lock) {
 							Form form = Control.FromHandle (hwnd.client_window) as Form;
@@ -4533,9 +4511,9 @@ namespace System.Windows.Forms {
 								break;
 							}
 						}
-						#if DriverDebugExtra
-							Console.WriteLine("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}", hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-						#endif
+						DriverDebug("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}",
+							    hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+							    xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 
 						Rectangle rect = new Rectangle (xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 						Region region = new Region (rect);
@@ -4545,9 +4523,9 @@ namespace System.Windows.Forms {
 						msg.refobject = region;
 						break;
 					}
-					#if DriverDebugExtra
-						Console.WriteLine("GetMessage(): Window {0:X} Exposed area {1},{2} {3}x{4}", hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-					#endif
+					DriverDebug("GetMessage(): Window {0:X} Exposed area {1},{2} {3}x{4}",
+						    hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+						    xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 					if (Caret.Visible == true) {
 						Caret.Paused = true;
 						HideCaret();
@@ -4570,9 +4548,7 @@ namespace System.Windows.Forms {
 					if ((hwnd != null) && (hwnd.client_window == xevent.DestroyWindowEvent.window)) {
 						CleanupCachedWindows (hwnd);
 
-						#if DriverDebugDestroy
-							Console.WriteLine("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.client_window));
-						#endif
+						DriverDebug("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.client_window));
 
 						msg.hwnd = hwnd.client_window;
 						msg.message=Msg.WM_DESTROY;
@@ -4656,7 +4632,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private HitTest NCHitTest (Hwnd hwnd, int x, int y)
+		HitTest NCHitTest (Hwnd hwnd, int x, int y)
 		{
 			// The hit test is sent in screen coordinates
 			IntPtr dummy;
@@ -4760,7 +4736,7 @@ namespace System.Windows.Forms {
 			return hwnd.cached_window_state;
 		}
 
-		private FormWindowState UpdateWindowState (IntPtr handle) {
+		FormWindowState UpdateWindowState (IntPtr handle) {
 			IntPtr			actual_atom;
 			int			actual_format;
 			IntPtr			nitems;
@@ -4854,7 +4830,7 @@ namespace System.Windows.Forms {
 			WindowUngrabbed (hwnd);			
 		}
 		
-		private void WindowUngrabbed (IntPtr hwnd) {
+		void WindowUngrabbed (IntPtr hwnd) {
 			bool was_grabbed = Grab.Hwnd != IntPtr.Zero;
 			
 			Grab.Hwnd = IntPtr.Zero;
@@ -5363,9 +5339,7 @@ namespace System.Windows.Forms {
 				data.Result = result;
 				
 				SendAsyncMethod (data);
-				#if DriverDebug || DriverDebugThreads
-				Console.WriteLine ("Sending {0} message across.", message);
-				#endif
+				DriverDebug("Sending {0} message across.", message);
 
 				return IntPtr.Zero;
 			}
@@ -5491,7 +5465,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void QueryPointer (IntPtr display, IntPtr w, out IntPtr root, out IntPtr child,
+		void QueryPointer (IntPtr display, IntPtr w, out IntPtr root, out IntPtr child,
 					   out int root_x, out int root_y, out int child_x, out int child_y,
 					   out int mask)
 		{
@@ -5660,9 +5634,7 @@ namespace System.Windows.Forms {
 			hwnd.parent = Hwnd.ObjectFromHandle(parent);
 
 			lock (XlibLock) {
-				#if DriverDebug || DriverDebugParent
-					Console.WriteLine("Parent for window {0} = {1}", XplatUI.Window(hwnd.Handle), XplatUI.Window(hwnd.parent != null ? hwnd.parent.Handle : IntPtr.Zero));
-				#endif
+				DriverDebug("Parent for window {0} = {1}", XplatUI.Window(hwnd.Handle), XplatUI.Window(hwnd.parent != null ? hwnd.parent.Handle : IntPtr.Zero));
 				XReparentWindow(DisplayHandle, hwnd.whole_window, hwnd.parent == null ? FosterParent : hwnd.parent.client_window, hwnd.x, hwnd.y);
 			}
 
@@ -6048,9 +6020,7 @@ namespace System.Windows.Forms {
 				Hwnd		hwnd;
 
 				hwnd = Hwnd.ObjectFromHandle(handle);
-				#if DriverDebug
-					Console.WriteLine("Adding Systray Whole:{0:X}, Client:{1:X}", hwnd.whole_window.ToInt32(), hwnd.client_window.ToInt32());
-				#endif
+				DriverDebug("Adding Systray Whole:{0:X}, Client:{1:X}", hwnd.whole_window.ToInt32(), hwnd.client_window.ToInt32());
 
 				// Oh boy.
 				if (hwnd.client_window != hwnd.whole_window) {
@@ -6356,8 +6326,8 @@ namespace System.Windows.Forms {
 		}
 		
 		[DllImport ("libX11", EntryPoint="XMoveResizeWindow")]
-		private extern static int _XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height);
-		private static int XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height) {
+		extern static int _XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height);
+		static int XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height) {
 			DebugHelper.TraceWriteLine ("XMoveResizeWindow");
 			return _XMoveResizeWindow(display, window, x, y, width, height);
 		}
@@ -7072,7 +7042,7 @@ namespace System.Windows.Forms {
 		internal extern static int XReparentWindow(IntPtr display, IntPtr window, IntPtr parent, int x, int y);
 		
 		[DllImport ("libX11", EntryPoint="XMoveResizeWindow")]
-		private extern static int XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height);
+		extern static int XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height);
 		internal static int MoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height)
 		{
 			int ret = XMoveResizeWindow (display, window, x, y, width, height);
