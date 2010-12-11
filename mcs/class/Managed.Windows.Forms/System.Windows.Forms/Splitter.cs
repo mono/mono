@@ -428,25 +428,25 @@ namespace System.Windows.Forms {
 			SplitterBeginMove (Parent.PointToClient (PointToScreen (new Point (e.X, e.Y))));
 		}
 
-		protected override void OnMouseMove(MouseEventArgs e) {
+		protected override void OnMouseMove (MouseEventArgs e)
+		{
 			base.OnMouseMove (e);
 
 			if (!Capture  || e.Button != MouseButtons.Left || affected == null)
 				return;
 
 			// We need our mouse coordinates relative to our parent
-			SplitterMove (Parent.PointToClient (PointToScreen (new Point (e.X, e.Y))));
+			SplitterMove (Parent.PointToClient (PointToScreen (e.Location)));
 		}
 
-		protected override void OnMouseUp(MouseEventArgs e) {
-			if (!Capture || e.Button != MouseButtons.Left || affected == null) {
-				base.OnMouseUp (e);
-				return;
-			}
-
+		protected override void OnMouseUp (MouseEventArgs e)
+		{
 			base.OnMouseUp (e);
+			if (!Capture || e.Button != MouseButtons.Left || affected == null) 
+				return;
+
+			SplitterEndMove (Parent.PointToClient (PointToScreen (e.Location)), false);
 			Capture = false;
-			SplitterEndMove (Parent.PointToClient (PointToScreen (new Point (e.X, e.Y))), false);
 		}
 
 		private void SplitterBeginMove (Point location)
