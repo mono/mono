@@ -933,15 +933,14 @@ namespace System.Windows.Forms {
 
 			int start_line_top = line.Y;			
 
-			int end_line_bottom;
-			Line end_line;
-
-			end_line = GetLine (line.line_no + line_count);
+			Line end_line = GetLine (line.line_no + line_count);
 			if (end_line == null)
 				end_line = GetLine (lines);
 
-
-			end_line_bottom = end_line.Y + end_line.height;
+			if (end_line == null)
+				return;
+			
+			int end_line_bottom = end_line.Y + end_line.height;
 			
 			if (RecalculateDocument(owner.CreateGraphicsInternal(), line.line_no, line.line_no + line_count, true)) {
 				// Lineheight changed, invalidate the rest of the document
