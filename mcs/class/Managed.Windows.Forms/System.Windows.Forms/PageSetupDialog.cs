@@ -33,6 +33,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.Globalization;
 using System.Reflection;
+using System.Text;
 
 namespace System.Windows.Forms
 {
@@ -454,7 +455,12 @@ namespace System.Windows.Forms
 		}
 
 		static bool UseYardPound {
-			get { return !RegionInfo.CurrentRegion.IsMetric; }
+			get {
+				var current = Region.CurrentRegion;
+				if (current == null)
+					return true;
+				return !current.IsMetric;
+			}
 		}
 
 		// .Net uses PrinterSettings property if it is not null.
@@ -856,7 +862,7 @@ namespace System.Windows.Forms
 
 			bool loaded = false;
 
-			System.Text.StringBuilder sb;
+			StringBuilder sb;
 			float displayHeight;
 			new Font font;
 
@@ -882,7 +888,7 @@ namespace System.Windows.Forms
 
 			public PagePreview ()
 			{
-				sb = new System.Text.StringBuilder ();
+				sb = new StringBuilder ();
 				for (int i = 0; i < 4; i++) {
 					sb.Append ("blabla piu piublapiu haha lai dlais dhlçai shd ");
 					sb.Append ("çoasd çlaj sdç\r\n lajsd lçaisdj lçillaisd lahs dli");
