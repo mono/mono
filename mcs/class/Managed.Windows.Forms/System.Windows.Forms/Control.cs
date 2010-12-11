@@ -1545,7 +1545,7 @@ namespace System.Windows.Forms
 
 			if (background_image == null) {
 				if (!tbstyle_flat) {
-					Rectangle paintRect = new Rectangle(pevent.ClipRectangle.X, pevent.ClipRectangle.Y, pevent.ClipRectangle.Width, pevent.ClipRectangle.Height);
+					Rectangle paintRect = pevent.ClipRectangle;
 					Brush pen = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
 					pevent.Graphics.FillRectangle(pen, paintRect);
 				}
@@ -2383,7 +2383,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Bottom {
 			get {
-				return bounds.Y+bounds.Height;
+				return this.bounds.Bottom;
 			}
 		}
 
@@ -3018,7 +3018,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Left {
 			get {
-				return this.bounds.X;
+				return this.bounds.Left;
 			}
 
 			set {
@@ -3030,7 +3030,7 @@ namespace System.Windows.Forms
 		[MWFCategory("Layout")]
 		public Point Location {
 			get {
-				return new Point(bounds.X, bounds.Y);
+				return this.bounds.Location;
 			}
 
 			set {
@@ -3204,7 +3204,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Right {
 			get {
-				return this.bounds.X+this.bounds.Width;
+				return this.bounds.Right;
 			}
 		}
 
@@ -3371,7 +3371,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Top {
 			get {
-				return this.bounds.Y;
+				return this.bounds.Top;
 			}
 
 			set {
@@ -3996,7 +3996,7 @@ namespace System.Windows.Forms
 			if (!IsHandleCreated)
 				return;
 
-			if (rc == Rectangle.Empty)
+			if (rc.IsEmpty)
 				rc = ClientRectangle;
 				
 			if  (rc.Width > 0 && rc.Height > 0) {
