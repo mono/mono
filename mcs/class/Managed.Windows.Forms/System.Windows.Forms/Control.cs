@@ -393,7 +393,8 @@ namespace System.Windows.Forms
 				buffered_graphics.Dispose ();
 			}
 			
-			public void Invalidate () {
+			public void Invalidate ()
+			{
 				if (InvalidRegion != null)
 					InvalidRegion.Dispose ();
 				InvalidRegion = new Region (parent.ClientRectangle);
@@ -3978,19 +3979,23 @@ namespace System.Windows.Forms
 			this.Visible = false;
 		}
 
-		public void Invalidate() {
-			Invalidate(ClientRectangle, false);
+		public void Invalidate ()
+		{
+			Invalidate (ClientRectangle, false);
 		}
 
-		public void Invalidate(bool invalidateChildren) {
-			Invalidate(ClientRectangle, invalidateChildren);
+		public void Invalidate (bool invalidateChildren)
+		{
+			Invalidate (ClientRectangle, invalidateChildren);
 		}
 
-		public void Invalidate(System.Drawing.Rectangle rc) {
-			Invalidate(rc, false);
+		public void Invalidate (Rectangle rc)
+		{
+			Invalidate (rc, false);
 		}
 
-		public void Invalidate(System.Drawing.Rectangle rc, bool invalidateChildren) {
+		public void Invalidate (Rectangle rc, bool invalidateChildren)
+		{
 			// Win32 invalidates control including when Width and Height is equal 0
 			// or is not visible, only Paint event must be care about this.
 			if (!IsHandleCreated)
@@ -4020,14 +4025,17 @@ namespace System.Windows.Forms
 			OnInvalidated(new InvalidateEventArgs(rc));
 		}
 
-		public void Invalidate(System.Drawing.Region region) {
-			Invalidate(region, false);
+		public void Invalidate (Region region)
+		{
+			Invalidate (region, false);
 		}
 
-		public void Invalidate(System.Drawing.Region region, bool invalidateChildren) {
-			RectangleF bounds = region.GetBounds (CreateGraphics ());
-			Invalidate (new Rectangle ((int) bounds.X, (int) bounds.Y, (int) bounds.Width, (int) bounds.Height),
-					invalidateChildren);
+		public void Invalidate (Region region, bool invalidateChildren)
+		{
+			using (Graphics g = CreateGraphics ()){
+				RectangleF bounds = region.GetBounds (g);
+				Invalidate (new Rectangle ((int) bounds.X, (int) bounds.Y, (int) bounds.Width, (int) bounds.Height), invalidateChildren);
+			}
 		}
 
 		public object Invoke (Delegate method) {
