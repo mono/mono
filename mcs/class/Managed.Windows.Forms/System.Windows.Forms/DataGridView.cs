@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Reflection;
 using System.Collections;
-using System.Data;
+using System.Text;
 using System.Collections.Generic;
 
 namespace System.Windows.Forms {
@@ -2665,10 +2665,10 @@ namespace System.Windows.Forms {
 			
 			DataObject result = new DataObject ();
 			
-			System.Text.StringBuilder text_builder = new System.Text.StringBuilder ();
-			System.Text.StringBuilder utext_builder = new System.Text.StringBuilder ();
-			System.Text.StringBuilder html_builder = new System.Text.StringBuilder ();
-			System.Text.StringBuilder csv_builder = new System.Text.StringBuilder ();
+			StringBuilder text_builder = new StringBuilder ();
+			StringBuilder utext_builder = new StringBuilder ();
+			StringBuilder html_builder = new StringBuilder ();
+			StringBuilder csv_builder = new StringBuilder ();
 			
 			// Loop through all rows and columns to create the content.
 			// -1 is the header row/column.
