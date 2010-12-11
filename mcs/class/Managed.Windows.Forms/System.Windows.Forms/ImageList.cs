@@ -567,26 +567,23 @@ namespace System.Windows.Forms
 			{
 				int imageWidth;
 				int imageHeight;
-				Bitmap bitmap;
-				Graphics graphics;
 				ImageAttributes imageAttributes;
 
 				if (transparentColor.A == 0)
 					imageAttributes = null;
 				else {
 					imageAttributes = new ImageAttributes();
-					imageAttributes.SetColorKey(transparentColor, transparentColor);
+					imageAttributes.SetColorKey (transparentColor, transparentColor);
 				}
 
-				bitmap = new Bitmap(imageWidth = this.imageSize.Width, imageHeight = this.imageSize.Height, PixelFormat.Format32bppArgb);
-				graphics = Graphics.FromImage(bitmap);
-				graphics.DrawImage(value, new Rectangle(0, 0, imageWidth, imageHeight), 0, 0, value.Width, value.Height, GraphicsUnit.Pixel, imageAttributes);
-				graphics.Dispose();
+				var bitmap = new Bitmap (imageWidth = this.imageSize.Width, imageHeight = this.imageSize.Height, PixelFormat.Format32bppArgb);
+				using (var graphics = Graphics.FromImage (bitmap))
+					graphics.DrawImage (value, new Rectangle(0, 0, imageWidth, imageHeight), 0, 0, value.Width, value.Height, GraphicsUnit.Pixel, imageAttributes);
 
 				if (imageAttributes != null)
-					imageAttributes.Dispose();
+					imageAttributes.Dispose ();
 
-				ReduceColorDepth(bitmap);
+				ReduceColorDepth (bitmap);
 				return bitmap;
 			}
 
