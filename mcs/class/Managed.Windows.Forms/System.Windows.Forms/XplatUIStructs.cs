@@ -376,6 +376,12 @@ namespace System.Windows.Forms
 		WM_REFLECT                = WM_USER + 0x1c00,
 		WM_CLOSE_INTERNAL         = WM_USER + 0x1c01,
 
+		// private messages to support on-the-spot IME editing.
+		WM_XIM_PREEDITSTART		  = WM_USER + 0x1d00,
+		WM_XIM_PREEDITDONE		  = WM_USER + 0x1d01,
+		WM_XIM_PREEDITDRAW		  = WM_USER + 0x1d02,
+		WM_XIM_PREEDITCARET		  = WM_USER + 0x1d03,
+
 		// NotifyIcon (Systray) Balloon messages 
 		NIN_BALLOONSHOW           = WM_USER + 0x0002,
 		NIN_BALLOONHIDE           = WM_USER + 0x0003,

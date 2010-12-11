@@ -32,6 +32,7 @@
 // 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Globalization;
@@ -1025,10 +1026,10 @@ namespace System.Windows.Forms {
 
 			public XIMCallbackContext (IntPtr clientWindow)
 			{
-				startCB = new XIMCallback (IntPtr.Zero, DoPreeditStart);
-				doneCB = new XIMCallback (IntPtr.Zero, DoPreeditDone);
-				drawCB = new XIMCallback (IntPtr.Zero, DoPreeditDraw);
-				caretCB = new XIMCallback (IntPtr.Zero, DoPreeditCaret);
+				startCB = new XIMCallback (clientWindow, DoPreeditStart);
+				doneCB = new XIMCallback (clientWindow, DoPreeditDone);
+				drawCB = new XIMCallback (clientWindow, DoPreeditDraw);
+				caretCB = new XIMCallback (clientWindow, DoPreeditCaret);
 				pStartCB = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (XIMCallback)));
 				pDoneCB = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (XIMCallback)));
 				pDrawCB = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (XIMCallback)));
@@ -1062,27 +1063,29 @@ namespace System.Windows.Forms {
 
 			int DoPreeditStart (IntPtr xic, IntPtr clientData, IntPtr callData)
 			{
-				Console.WriteLine ("DoPreeditStart");
+				Debug.WriteLine ("DoPreeditStart");
+				XplatUI.SendMessage(clientData, Msg.WM_XIM_PREEDITSTART, clientData, callData);
 				return 100;
 			}
 
 			int DoPreeditDone (IntPtr xic, IntPtr clientData, IntPtr callData)
 			{
-				Console.WriteLine ("DoPreeditDone");
+				Debug.WriteLine ("DoPreeditDone");
+				XplatUI.SendMessage(clientData, Msg.WM_XIM_PREEDITDONE, clientData, callData);
 				return 0;
 			}
 
 			int DoPreeditDraw (IntPtr xic, IntPtr clientData, IntPtr callData)
 			{
-				Console.WriteLine ("DoPreeditDraw");
-				//XIMPreeditDrawCallbackStruct cd = (XIMPreeditDrawCallbackStruct) Marshal.PtrToStructure (callData, typeof (XIMPreeditDrawCallbackStruct));
+				Debug.WriteLine ("DoPreeditDraw");
+				XplatUI.SendMessage(clientData, Msg.WM_XIM_PREEDITDRAW, clientData, callData);
 				return 0;
 			}
 
 			int DoPreeditCaret (IntPtr xic, IntPtr clientData, IntPtr callData)
 			{
-				Console.WriteLine ("DoPreeditCaret");
-				//XIMPreeditCaretCallbackStruct cd = (XIMPreeditCaretCallbackStruct) Marshal.PtrToStructure (callData, typeof (XIMPreeditCaretCallbackStruct));
+				Debug.WriteLine ("DoPreeditCaret");
+				XplatUI.SendMessage(clientData, Msg.WM_XIM_PREEDITCARET, clientData, callData);
 				return 0;
 			}
 

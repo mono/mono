@@ -1717,11 +1717,26 @@ namespace System.Windows.Forms {
 			gch.Free ();
 		}
 	}
+	
+	internal enum XIMFeedback
+	{
+		Reverse = 1,
+		Underline = 2,
+		Highlight = 4,
+		Primary = 32,
+		Secondary = 64,
+		Tertiary = 128,
+	}
 
+	internal struct XIMFeedbackStruct
+	{
+		public byte FeedbackMask; // one or more of XIMFeedback enum
+	}
+	
 	internal struct XIMText
 	{
 		public ushort Length;
-		public IntPtr Feedback;
+		public IntPtr Feedback; // to XIMFeedbackStruct
 		public bool EncodingIsWChar;
 		public IntPtr String; // it could be either char* or wchar_t*
 	}
