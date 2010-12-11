@@ -2878,11 +2878,8 @@ namespace System.Windows.Forms {
 		private void WmNcPaint (ref Message m)
 		{
 			if (ActiveMenu != null) {
-				PaintEventArgs pe;
-				Point pnt;
-
-				pe = XplatUI.PaintEventStart (ref m, Handle, false);
-				pnt = XplatUI.GetMenuOrigin (window.Handle);
+				PaintEventArgs pe = XplatUI.PaintEventStart (ref m, Handle, false);
+				Point pnt = XplatUI.GetMenuOrigin (window.Handle);
 
 				// The entire menu has to be in the clip rectangle because the 
 				// control buttons are right-aligned and otherwise they would
@@ -2894,9 +2891,8 @@ namespace System.Windows.Forms {
 
 				ActiveMenu.Draw (pe, new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
 
-				if (ActiveMaximizedMdiChild != null) {
+				if (ActiveMaximizedMdiChild != null)
 					ActiveMaximizedMdiChild.DrawMaximizedButtons (ActiveMenu, pe);
-				}
 
 				XplatUI.PaintEventEnd (ref m, Handle, false);
 			}
