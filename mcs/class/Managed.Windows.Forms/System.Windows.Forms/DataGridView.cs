@@ -6270,7 +6270,7 @@ namespace System.Windows.Forms {
 					if (disp_x == Columns.Count - 1)
 						delta_x = horizontalScrollBar.Maximum - horizontalScrollBar.Value;
 					else
-						for (int i = first_col_index + displayedColumnsCount - 1; i < disp_x; i++)
+						for (int i = first_col_index + displayedColumnsCount - 1; i < disp_x && i != -1; i++)
 							delta_x += Columns[ColumnDisplayIndexToIndex (i)].Width;
 
 					horizontalScrollBar.SafeValueSet (horizontalScrollBar.Value + delta_x);
