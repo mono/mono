@@ -4287,7 +4287,8 @@ namespace System.Windows.Forms
 			case 2: // Marquee
 				if (XplatUI.ThemesEnabled) {
 					int ms_diff = (int) (DateTime.Now - ctrl.start).TotalMilliseconds;
-					double percent_done = (double) ms_diff % (double)ctrl.MarqueeAnimationSpeed / (double)ctrl.MarqueeAnimationSpeed;
+					double percent_done = (double) ms_diff / ProgressBarMarqueeSpeedScaling 
+						% (double)ctrl.MarqueeAnimationSpeed / (double)ctrl.MarqueeAnimationSpeed;
 					max_blocks = 5;
 					start_pixel = client_area.X + (int) (client_area.Width * percent_done);
 				}
@@ -4352,6 +4353,8 @@ namespace System.Windows.Forms
 				return new Size (100, ProgressBarDefaultHeight);
 			}
 		}
+
+		public const double ProgressBarMarqueeSpeedScaling = 15;
 
 		#endregion	// ProgressBar
 
