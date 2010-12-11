@@ -4448,8 +4448,8 @@ namespace System.Windows.Forms {
 						}
 						goto ProcessNextMessage;
 					}
-					SendMessage(FocusWindow, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
 					Keyboard.FocusIn (FocusWindow);
+					SendMessage(FocusWindow, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
 					goto ProcessNextMessage;
 				}
 
@@ -5611,9 +5611,9 @@ namespace System.Windows.Forms {
 
 			if (prev_focus_window != IntPtr.Zero) {
 				SendMessage(prev_focus_window, Msg.WM_KILLFOCUS, FocusWindow, IntPtr.Zero);
-			}
-			SendMessage(FocusWindow, Msg.WM_SETFOCUS, prev_focus_window, IntPtr.Zero);
+			}			
 			Keyboard.FocusIn (FocusWindow);
+			SendMessage(FocusWindow, Msg.WM_SETFOCUS, prev_focus_window, IntPtr.Zero);
 
 			//XSetInputFocus(DisplayHandle, Hwnd.ObjectFromHandle(handle).client_window, RevertTo.None, IntPtr.Zero);
 		}
