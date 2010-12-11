@@ -1477,7 +1477,7 @@ namespace System.Windows.Forms
 				// v_scroll to account for the height of h_scroll
 				if (h_scroll.Visible) {
 					v_scroll.Maximum = layout_ht + h_scroll.Height;
-					v_scroll.Height = client_area.Height - h_scroll.Height;
+					v_scroll.Height = client_area.Height > h_scroll.Height ? client_area.Height - h_scroll.Height : 0;
 				} else {
 					v_scroll.Maximum = layout_ht;
 					v_scroll.Height = client_area.Height;
@@ -1485,8 +1485,9 @@ namespace System.Windows.Forms
 
 				if (view == View.Details) {
 					// Need to update Maximum if using LargeChange with value other than the visible area
-					v_scroll.LargeChange = v_scroll.Height - (header_control.Height + item_size.Height);
-					v_scroll.Maximum -= header_control.Height + item_size.Height;
+					int headerPlusOneItem = header_control.Height + item_size.Height;
+					v_scroll.LargeChange = v_scroll.Height > headerPlusOneItem ? v_scroll.Height - headerPlusOneItem : 0;
+					v_scroll.Maximum = v_scroll.Maximum > headerPlusOneItem ? v_scroll.Maximum - headerPlusOneItem : 0;
 				} else
 					v_scroll.LargeChange = v_scroll.Height;
 
