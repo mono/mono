@@ -136,14 +136,12 @@ namespace System.Windows.Forms {
 			get { return driver.ActiveWindowTrackingDelay; }
 		}
 
-		internal static string DefaultClassName {
-			get {
-				return default_class_name;
-			}
-
-			set {
-				default_class_name=value;
-			}
+		// Compose name with current domain id because on Win32 we register class name
+		// and name must be unique to process. If we load MWF into multiple appdomains
+		// and try to register same class name we fail.
+		internal static string GetDefaultClassName (Type type)
+		{
+			return "SWFClass" + Thread.GetDomainID ().ToString () + "." + type.ToString ();
 		}
 
 		static public Size Border3DSize {

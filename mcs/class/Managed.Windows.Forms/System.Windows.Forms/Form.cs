@@ -1401,7 +1401,7 @@ namespace System.Windows.Forms {
 				if (Text != null)
 					cp.Caption = Text.Replace (Environment.NewLine, string.Empty);
 				
-				cp.ClassName = XplatUI.DefaultClassName;
+				cp.ClassName = XplatUI.GetDefaultClassName (GetType ());
 				cp.ClassStyle = 0;
 				cp.Style = 0;
 				cp.ExStyle = 0;

@@ -1664,7 +1664,7 @@ namespace System.Windows.Forms {
 			create_params.Width = Width;
 			create_params.Height = Height;
 
-			create_params.ClassName=XplatUI.DefaultClassName;
+			create_params.ClassName=XplatUI.GetDefaultClassName (GetType ());
 			create_params.ClassStyle = 0;
 			create_params.ExStyle=0;
 			create_params.Parent=IntPtr.Zero;
