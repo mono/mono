@@ -5262,7 +5262,7 @@ namespace System.Windows.Forms
 					continue;
 
 				Hwnd hwnd = Hwnd.ObjectFromHandle (controls[i].Handle);
-				if (hwnd.zero_sized)
+				if (hwnd == null || hwnd.zero_sized)
 					continue;
 
 				children_to_order.Add (controls[i]);
