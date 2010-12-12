@@ -62,7 +62,6 @@ class MDocUpdater : MDocCommand
 	public override void Run (IEnumerable<string> args)
 	{
 		show_exceptions = DebugOutput;
-		string import = null;
 		var types = new List<string> ();
 		var p = new OptionSet () {
 			{ "delete",
@@ -1423,7 +1422,7 @@ class MDocUpdater : MDocCommand
 			string a2 = String.Join(", ", fields.ToArray ());
 			if (a2 != "") a2 = "(" + a2 + ")";
 
-			string name = attribute.Constructor.DeclaringType.FullName;
+			string name = attribute.GetDeclaringType();
 			if (name.EndsWith("Attribute")) name = name.Substring(0, name.Length-"Attribute".Length);
 			yield return prefix + name + a2;
 		}
@@ -2259,6 +2258,11 @@ class MDocUpdater : MDocCommand
 }
 
 static class CecilExtensions {
+	public static string GetDeclaringType(this CustomAttribute attribute)
+	{
+		return attribute.Constructor.DeclaringType.FullName;
+	}
+
 	public static IEnumerable<MemberReference> GetMembers (this TypeDefinition type)
 	{
 		foreach (var c in type.Methods.Where (m => m.IsConstructor))
@@ -2865,7 +2869,7 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 			.Concat (base.GetDocumentationTypes (assembly, forTypes, seen));
 	}
 
-	IEnumerable<TypeDefinition> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes, HashSet<string> seen)
+	new IEnumerable<TypeDefinition> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes, HashSet<string> seen)
 	{
 		int typeDepth = -1;
 		while (ecmadocs.Read ()) {
@@ -3508,6 +3512,10 @@ public abstract class MemberFormatter {
 
 	protected virtual string GetMethodDeclaration (MethodDefinition method)
 	{
+		if (method.HasCustomAttributes && method.CustomAttributes.Cast<CustomAttribute>().Any(
+			ca => ca.GetDeclaringType() == "System.Diagnostics.Contracts.ContractInvariantMethodAttribute"))
+			return null;
+
 		// Special signature for destructors.
 		if (method.Name == "Finalize" && method.Parameters.Count == 0)
 			return GetFinalizerName (method);
@@ -3648,7 +3656,6 @@ class ILFullMemberFormatter : MemberFormatter {
 
 	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type)
 	{
-		var gp = type as GenericParameter;
 		if (type is GenericParameter)
 			return AppendGenericParameterConstraints (buf, (GenericParameter) type).Append (type.Name);
 
@@ -3990,7 +3997,6 @@ class ILFullMemberFormatter : MemberFormatter {
 		if ((set_visible == null) && (get_visible == null))
 			return null;
 
-		string visibility;
 		StringBuilder buf = new StringBuilder ()
 			.Append (".property ");
 		if (!(gm ?? sm).IsStatic)
@@ -4356,7 +4362,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		string type = GetName (selector ());
 		if (type == "object" && provider.HasCustomAttributes &&
 				provider.CustomAttributes.Cast<CustomAttribute>()
-				.Any (ca => ca.Constructor.DeclaringType.FullName == "System.Runtime.CompilerServices.DynamicAttribute"))
+				.Any (ca => ca.GetDeclaringType() == "System.Runtime.CompilerServices.DynamicAttribute"))
 			return "dynamic";
 		return type;
 	}
