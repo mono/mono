@@ -62,7 +62,6 @@ class MDocUpdater : MDocCommand
 	public override void Run (IEnumerable<string> args)
 	{
 		show_exceptions = DebugOutput;
-		string import = null;
 		var types = new List<string> ();
 		var p = new OptionSet () {
 			{ "delete",
@@ -2865,7 +2864,7 @@ class EcmaDocumentationEnumerator : DocumentationEnumerator {
 			.Concat (base.GetDocumentationTypes (assembly, forTypes, seen));
 	}
 
-	IEnumerable<TypeDefinition> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes, HashSet<string> seen)
+	new IEnumerable<TypeDefinition> GetDocumentationTypes (AssemblyDefinition assembly, List<string> forTypes, HashSet<string> seen)
 	{
 		int typeDepth = -1;
 		while (ecmadocs.Read ()) {
@@ -3648,7 +3647,6 @@ class ILFullMemberFormatter : MemberFormatter {
 
 	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type)
 	{
-		var gp = type as GenericParameter;
 		if (type is GenericParameter)
 			return AppendGenericParameterConstraints (buf, (GenericParameter) type).Append (type.Name);
 
@@ -3990,7 +3988,6 @@ class ILFullMemberFormatter : MemberFormatter {
 		if ((set_visible == null) && (get_visible == null))
 			return null;
 
-		string visibility;
 		StringBuilder buf = new StringBuilder ()
 			.Append (".property ");
 		if (!(gm ?? sm).IsStatic)

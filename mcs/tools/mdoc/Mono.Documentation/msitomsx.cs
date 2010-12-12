@@ -57,8 +57,6 @@ namespace Mono.Documentation {
 
 		public override void Run (IEnumerable<string> args)
 		{
-			string current_library = "";
-
 			var types = new List<string> ();
 			string outdir = null;
 

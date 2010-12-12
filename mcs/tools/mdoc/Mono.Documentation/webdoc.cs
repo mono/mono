@@ -196,7 +196,6 @@ namespace Mono.Documentation
 					docRoot.AddSourceFile (source);
 			}
 			hs.RootTree = docRoot;
-			string helpSourceName = Path.GetFileName (basePath);
 			foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
 				var url = node.URL;
 				Message (TraceLevel.Info, "\tProcessing URL: {0}", url);

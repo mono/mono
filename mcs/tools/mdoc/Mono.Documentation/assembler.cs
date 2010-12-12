@@ -49,7 +49,6 @@ public class MDocAssembler : MDocCommand {
 	{
 		var formats = new Dictionary<string, List<string>> ();
 		string prefix = "tree";
-		string cur_format = "ecma";
 		var formatOptions = CreateFormatOptions (this, formats);
 		var options = new OptionSet () {
 			formatOptions [0],
