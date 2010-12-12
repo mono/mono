@@ -3507,6 +3507,10 @@ public abstract class MemberFormatter {
 
 	protected virtual string GetMethodDeclaration (MethodDefinition method)
 	{
+		if (method.HasCustomAttributes && method.CustomAttributes.Cast<CustomAttribute>().Any(
+			ca => ca.Constructor.DeclaringType.FullName == "System.Diagnostics.Contracts.ContractInvariantMethodAttribute"))
+			return null;
+
 		// Special signature for destructors.
 		if (method.Name == "Finalize" && method.Parameters.Count == 0)
 			return GetFinalizerName (method);
