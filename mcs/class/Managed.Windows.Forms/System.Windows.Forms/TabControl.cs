@@ -1365,12 +1365,6 @@ namespace System.Windows.Forms {
 
 				switch (Alignment) {
 					case TabAlignment.Top:
-						page.TabBounds = new Rectangle (
-							xpos + CalcXPos (),
-							ypos + (height + spacing.Height) * (row_count - page.Row) + CalcYPos (),
-							width, 
-							height);
-						break;
 					case TabAlignment.Bottom:
 						page.TabBounds = new Rectangle (
 							xpos + CalcXPos (),
@@ -1472,21 +1466,8 @@ namespace System.Windows.Forms {
 				return;
 
 			Rectangle r = page.TabBounds;
-			switch (Alignment) {
-				case TabAlignment.Top:
-				case TabAlignment.Left:
-					r.Y -= ThemeEngine.Current.TabControlSelectedDelta.Y;
-					r.X -= ThemeEngine.Current.TabControlSelectedDelta.X;
-					break;
-				case TabAlignment.Bottom:
-					r.Y -= ThemeEngine.Current.TabControlSelectedDelta.Y;
-					r.X -= ThemeEngine.Current.TabControlSelectedDelta.X;
-					break;
-				case TabAlignment.Right:
-					r.Y -= ThemeEngine.Current.TabControlSelectedDelta.Y;
-					r.X -= ThemeEngine.Current.TabControlSelectedDelta.X;
-					break;
-			}
+			r.Y -= ThemeEngine.Current.TabControlSelectedDelta.Y;
+			r.X -= ThemeEngine.Current.TabControlSelectedDelta.X;
 
 			r.Width += ThemeEngine.Current.TabControlSelectedDelta.Width;
 			r.Height += ThemeEngine.Current.TabControlSelectedDelta.Height;
