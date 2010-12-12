@@ -3513,7 +3513,7 @@ public abstract class MemberFormatter {
 	protected virtual string GetMethodDeclaration (MethodDefinition method)
 	{
 		if (method.HasCustomAttributes && method.CustomAttributes.Cast<CustomAttribute>().Any(
-			ca => ca.GetDeclaringType() == "System.Diagnostics.Contracts.ContractInvariantMethodAttribute"))
+					ca => ca.GetDeclaringType() == "System.Diagnostics.Contracts.ContractInvariantMethodAttribute"))
 			return null;
 
 		// Special signature for destructors.
