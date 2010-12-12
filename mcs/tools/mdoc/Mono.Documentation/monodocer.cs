@@ -1422,7 +1422,7 @@ class MDocUpdater : MDocCommand
 			string a2 = String.Join(", ", fields.ToArray ());
 			if (a2 != "") a2 = "(" + a2 + ")";
 
-			string name = attribute.Constructor.DeclaringType.FullName;
+			string name = attribute.GetDeclaringType();
 			if (name.EndsWith("Attribute")) name = name.Substring(0, name.Length-"Attribute".Length);
 			yield return prefix + name + a2;
 		}
@@ -2258,6 +2258,11 @@ class MDocUpdater : MDocCommand
 }
 
 static class CecilExtensions {
+	public static string GetDeclaringType(this CustomAttribute attribute)
+	{
+		return attribute.Constructor.DeclaringType.FullName;
+	}
+
 	public static IEnumerable<MemberReference> GetMembers (this TypeDefinition type)
 	{
 		foreach (var c in type.Methods.Where (m => m.IsConstructor))
@@ -3508,7 +3513,7 @@ public abstract class MemberFormatter {
 	protected virtual string GetMethodDeclaration (MethodDefinition method)
 	{
 		if (method.HasCustomAttributes && method.CustomAttributes.Cast<CustomAttribute>().Any(
-			ca => ca.Constructor.DeclaringType.FullName == "System.Diagnostics.Contracts.ContractInvariantMethodAttribute"))
+			ca => ca.GetDeclaringType() == "System.Diagnostics.Contracts.ContractInvariantMethodAttribute"))
 			return null;
 
 		// Special signature for destructors.
@@ -4357,7 +4362,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		string type = GetName (selector ());
 		if (type == "object" && provider.HasCustomAttributes &&
 				provider.CustomAttributes.Cast<CustomAttribute>()
-				.Any (ca => ca.Constructor.DeclaringType.FullName == "System.Runtime.CompilerServices.DynamicAttribute"))
+				.Any (ca => ca.GetDeclaringType() == "System.Runtime.CompilerServices.DynamicAttribute"))
 			return "dynamic";
 		return type;
 	}
