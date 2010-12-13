@@ -1,6 +1,6 @@
 #!/bin/sh
 ASPEN_ROOT=/Developer/Platforms/iPhoneOS.platform/Developer
-ASPEN_SDK=$ASPEN_ROOT/SDKs/iPhoneOS4.1.sdk/
+ASPEN_SDK=$ASPEN_ROOT/SDKs/iPhoneOS4.2.sdk/
 
 ORIG_PATH=$PATH
 PRFX=$PWD/tmp 
@@ -39,6 +39,8 @@ unsetenv () {
 	unset LD
 	unset LDFLAGS
 	unset PLATFORM_IPHONE_XCOMP
+	unset CFLAGS
+	unset CXXFLAGS
 }
 
 export mono_cv_uscore=yes
