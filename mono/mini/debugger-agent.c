@@ -569,9 +569,6 @@ static GHashTable *loaded_classes;
 /* Assemblies whose assembly load event has no been sent yet */
 static GPtrArray *pending_assembly_loads;
 
-/* Types whose type load event has no been sent yet */
-static GPtrArray *pending_type_loads;
-
 /* Whenever the debugger thread has exited */
 static gboolean debugger_thread_exited;
 
@@ -842,7 +839,6 @@ mono_debugger_agent_init (void)
 
 	loaded_classes = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	pending_assembly_loads = g_ptr_array_new ();
-	pending_type_loads = g_ptr_array_new ();
 	domains = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
 	log_level = agent_config.log_level;
@@ -3247,7 +3243,6 @@ appdomain_unload (MonoProfiler *prof, MonoDomain *domain)
 	
 	mono_loader_lock ();
 	g_hash_table_remove_all (loaded_classes);
-	g_ptr_array_set_size (pending_type_loads, 0);
 	g_hash_table_remove (domains, domain);
 	mono_loader_unlock ();
 	
@@ -3380,30 +3375,7 @@ jit_end (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo, int result)
 		}
 	}
 
-	if (disconnected || !vm_start_event_sent) {
-		/* Save these so they can be sent after the vm start event */
-		mono_loader_lock ();
-		g_ptr_array_add (pending_type_loads, method->klass);
-		mono_loader_unlock ();
-	} else {
-		/* Send all pending type load events */
-		MonoClass *klass;
-		while (TRUE) {
-			klass = NULL;
-			mono_loader_lock ();
-			if (pending_type_loads->len > 0) {
-				klass = g_ptr_array_index (pending_type_loads, 0);
-				g_ptr_array_remove_index (pending_type_loads, 0);
-			}
-			mono_loader_unlock ();
-			if (klass)
-				send_type_load (klass);
-			else
-				break;
-		}
-
-		send_type_load (method->klass);
-	}
+	send_type_load (method->klass);
 
 	if (!result)
 		add_pending_breakpoints (method, jinfo);
