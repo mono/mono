@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # This script will generate SWF.cs.target from our System.Windows.Forms.dll.sources
 #
