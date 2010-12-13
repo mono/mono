@@ -162,8 +162,9 @@ namespace System.Xml.Serialization
 		public static string ToCSharpName (Type type, bool full)
 		{
 			// return csprovider.GetTypeOutput (new System.CodeDom.CodeTypeReference (type));
+			StringBuilder sb = new StringBuilder ();
+			
 			if (type.IsArray) {
-				StringBuilder sb = new StringBuilder ();
 				sb.Append (ToCSharpName (type.GetElementType (), full));
 				sb.Append ('[');
 				int rank = type.GetArrayRank ();
@@ -173,25 +174,48 @@ namespace System.Xml.Serialization
 				return sb.ToString ();
 			}
 #if NET_2_0
+			// Generic nested types return the complete list of type arguments,
+			// including type arguments for the declaring class. This requires
+			// some special handling
 			if (type.IsGenericType && !type.IsGenericTypeDefinition) {
-				StringBuilder sb = new StringBuilder ();
-				sb.Append (ToCSharpName (type.GetGenericTypeDefinition (), full));
-				sb.Append ('<');
-				foreach (Type arg in type.GetGenericArguments ())
-					sb.Append (ToCSharpName (arg, full)).Append (',');
-				sb.Length--;
-				sb.Append ('>');
+				Type[] args = type.GetGenericArguments ();
+				int nt = args.Length - 1;
+				Type pt = type;
+				// Loop throguh the declaring class chain, consuming type arguments for every
+				// generic class in the chain
+				while (pt != null) {
+					if (sb.Length > 0)
+						sb.Insert (0, '.');
+					int i = pt.Name.IndexOf ('`');
+					if (i != -1) {
+						int na = nt - int.Parse (pt.Name.Substring (i+1));
+						sb.Insert (0,'>');
+						for (;nt > na; nt--) {
+							sb.Insert (0, ToCSharpName (args[nt],full));
+							if (nt - 1 != na)
+								sb.Insert (0, ',');
+						}
+						sb.Insert (0,'<');
+						sb.Insert (0, pt.Name.Substring (0, i));
+					} else
+						sb.Insert (0, pt.Name);
+					pt = pt.DeclaringType;
+				}
+				if (full && type.Namespace.Length > 0)
+					sb.Insert (0, type.Namespace + ".");
 				return sb.ToString ();
 			}
 #endif
-			string name = full ? type.FullName : type.Name;
-			name = name.Replace ('+', '.');
-			int idx = name.IndexOf ('`'); // generic definition has extra `n.
-			name = idx > 0 ? name.Substring (0, idx) : name;
-			if (IsKeyword (name))
-				return "@" + name;
-			else
-				return name;
+			if (type.DeclaringType != null) {
+				sb.Append (ToCSharpName (type.DeclaringType, full)).Append ('.');
+				sb.Append (type.Name);
+			}
+			else {
+				if (full && type.Namespace.Length > 0)
+					sb.Append (type.Namespace).Append ('.');
+				sb.Append (type.Name);
+			}
+			return sb.ToString ();
 		}
 		
 		static bool IsKeyword (string name)
