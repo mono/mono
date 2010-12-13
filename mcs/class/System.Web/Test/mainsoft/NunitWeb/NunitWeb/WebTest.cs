@@ -607,7 +607,11 @@ namespace MonoTests.SystemWeb.Framework
 #if DOTNET
 			CopyResource (myself, "Web.config", "Web.config");
 #else
+#if NET_4_0
+			CopyResource (myself, "Web.mono.config.4.0", "Web.config");
+#else
 			CopyResource (myself, "Web.mono.config", "Web.config");
+#endif
 #endif
 #else
 			CopyResource (myself, "Web.mono.config.1.1", "Web.config");
