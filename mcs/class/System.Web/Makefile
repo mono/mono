@@ -95,7 +95,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx.cs \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPageWithMaster.aspx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.mono.config \
-	Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.mono.config.1.1 \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.mono.config.4.0 \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/sub_map_01.sitemap \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_01.sitemap \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_02.sitemap \
