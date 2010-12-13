@@ -21,6 +21,7 @@
 ./System.Web.Configuration/ScriptingAuthenticationServiceSection.cs
 ./System.Web.Configuration/ScriptingJsonSerializationSection.cs
 ./System.Web.Configuration/ScriptingProfileServiceSection.cs
+./System.Web.Configuration/ScriptingRoleServiceSection.cs
 ./System.Web.Configuration/ScriptingScriptResourceHandlerSection.cs
 ./System.Web.Configuration/ScriptingSectionGroup.cs
 ./System.Web.Configuration/ScriptingWebServicesSectionGroup.cs
