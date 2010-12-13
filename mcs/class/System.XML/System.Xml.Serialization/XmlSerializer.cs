@@ -359,8 +359,13 @@ namespace System.Xml.Serialization
 			try {
 				if (reader is XmlSerializationReaderInterpreter)
 					return ((XmlSerializationReaderInterpreter) reader).ReadRoot ();
-				else
-					return serializerData.ReaderMethod.Invoke (reader, null);
+				else {
+					try {
+						return serializerData.ReaderMethod.Invoke (reader, null);
+					} catch (TargetInvocationException ex) {
+						throw ex.InnerException;
+					}
+				}
 			} catch (Exception ex) {
 				if (ex is InvalidOperationException || ex is InvalidCastException)
 					throw new InvalidOperationException ("There is an error in"
@@ -407,8 +412,13 @@ namespace System.Xml.Serialization
 				
 			if (writer is XmlSerializationWriterInterpreter)
 				((XmlSerializationWriterInterpreter)writer).WriteRoot (o);
-			else
-				serializerData.WriterMethod.Invoke (writer, new object[] {o});
+			else {
+				try {
+					serializerData.WriterMethod.Invoke (writer, new object[] {o});
+				} catch (TargetInvocationException ex) {
+					throw ex.InnerException;
+				}
+			}
 		}
 
 		public void Serialize (Stream stream, object o)
