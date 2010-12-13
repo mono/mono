@@ -1637,8 +1637,11 @@ namespace Mono.CSharp
 			get {
 				if (name == null) {
 					name = base.Name;
-					if (tparams != null)
-						name = name.Substring (0, name.IndexOf ('`'));
+					if (tparams != null) {
+						int arity_start = name.IndexOf ('`');
+						if (arity_start > 0)
+							name = name.Substring (0, arity_start);
+					}
 				}
 
 				return name;
