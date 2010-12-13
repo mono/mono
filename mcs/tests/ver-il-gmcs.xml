@@ -8986,6 +8986,13 @@
       </method>
     </type>
   </test>
+  <test name="gtest-333.cs">
+    <type name="Program">
+      <method name="Void Main()">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-334.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -9518,6 +9525,56 @@
       </method>
       <method name="Void .cctor()">
         <size>12</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-353.cs">
+    <type name="A`3[D1,D2,D3]">
+      <method name="Void Foo[T]()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B`1[DD2]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Foo[T]()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Main()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-354.cs">
+    <type name="M">
+      <method name="Void IC.Method(System.Int32[])">
+        <size>1</size>
+      </method>
+      <method name="System.String IA&lt;string&gt;.Method(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Void IB.Method(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Void Main()">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -39771,16 +39828,6 @@
       </method>
       <method name="Int32 Main()">
         <size>26</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-679.cs">
-    <type name="Program">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>12</size>
       </method>
     </type>
   </test>

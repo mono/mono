@@ -4175,8 +4175,39 @@ namespace Mono.CSharp {
 										continue;
 								}
 
-								// Is the new candidate better
-								if (BetterFunction (rc, candidate_args, member, pm.Parameters, params_expanded_form, best_candidate, best_parameter_member.Parameters, best_candidate_params)) {
+								bool is_better;
+								if (best_candidate.DeclaringType.IsInterface && member.DeclaringType.ImplementsInterface (best_candidate.DeclaringType, false)) {
+									//
+									// We pack all interface members into top level type which makes the overload resolution
+									// more complicated for interfaces. We accomodate for this by removing methods with same
+									// signature when building the cache hence this path should not really be hit often
+									//
+									// Example:
+									// interface IA { void Foo (int arg); }
+									// interface IB : IA { void Foo (params int[] args); }
+									//
+									// IB::Foo is the best overload when calling IB.Foo (1)
+									//
+									is_better = true;
+									if (ambiguous_candidates != null) {
+										foreach (var amb_cand in ambiguous_candidates) {
+											if (member.DeclaringType.ImplementsInterface (best_candidate.DeclaringType, false)) {
+												continue;
+											}
+
+											is_better = false;
+											break;
+										}
+
+										if (is_better)
+											ambiguous_candidates = null;
+									}
+								} else {
+									// Is the new candidate better
+									is_better = BetterFunction (rc, candidate_args, member, pm.Parameters, params_expanded_form, best_candidate, best_parameter_member.Parameters, best_candidate_params);
+								}
+
+								if (is_better) {
 									best_candidate = member;
 									best_candidate_args = candidate_args;
 									best_candidate_params = params_expanded_form;
@@ -4253,6 +4284,33 @@ namespace Mono.CSharp {
 			}
 
 			if (ambiguous_candidates != null) {
+				if (best_candidate.DeclaringType.IsInterface) {
+					ambiguous_candidates.Add (new AmbiguousCandidate (best_candidate, best_parameter_member.Parameters, best_candidate_params));
+					for (int cix = 0; cix < ambiguous_candidates.Count; ++cix) {
+						var tested_type = ambiguous_candidates[cix].Member.DeclaringType;
+
+						int ix = 0;
+						for (; ix < ambiguous_candidates.Count; ++ix) {
+							var amb_cand_type = ambiguous_candidates[ix].Member.DeclaringType;
+							if (amb_cand_type == tested_type)
+								continue;
+
+							if (tested_type.ImplementsInterface (amb_cand_type, false))
+								continue;
+
+							break;
+						}
+
+						if (ix != ambiguous_candidates.Count)
+							continue;
+
+						best_candidate = ambiguous_candidates[cix].Member;
+						//best_parameter_member = ambiguous_candidates
+
+						throw new NotImplementedException ();
+					}
+				}
+
 				//
 				// Now check that there are no ambiguities i.e the selected method
 				// should be better than all the others
