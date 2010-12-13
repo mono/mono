@@ -4284,33 +4284,6 @@ namespace Mono.CSharp {
 			}
 
 			if (ambiguous_candidates != null) {
-				if (best_candidate.DeclaringType.IsInterface) {
-					ambiguous_candidates.Add (new AmbiguousCandidate (best_candidate, best_parameter_member.Parameters, best_candidate_params));
-					for (int cix = 0; cix < ambiguous_candidates.Count; ++cix) {
-						var tested_type = ambiguous_candidates[cix].Member.DeclaringType;
-
-						int ix = 0;
-						for (; ix < ambiguous_candidates.Count; ++ix) {
-							var amb_cand_type = ambiguous_candidates[ix].Member.DeclaringType;
-							if (amb_cand_type == tested_type)
-								continue;
-
-							if (tested_type.ImplementsInterface (amb_cand_type, false))
-								continue;
-
-							break;
-						}
-
-						if (ix != ambiguous_candidates.Count)
-							continue;
-
-						best_candidate = ambiguous_candidates[cix].Member;
-						//best_parameter_member = ambiguous_candidates
-
-						throw new NotImplementedException ();
-					}
-				}
-
 				//
 				// Now check that there are no ambiguities i.e the selected method
 				// should be better than all the others
