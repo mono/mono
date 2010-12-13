@@ -935,7 +935,13 @@ namespace Mono.CSharp {
 				
 					if (base_method.DeclaringType.IsGeneric) {
 						base_decl_tparams = base_method.DeclaringType.MemberDefinition.TypeParameters;
-						base_targs = Parent.BaseType.TypeArguments;
+
+						var base_type_parent = CurrentType;
+						while (base_type_parent.BaseType != base_method.DeclaringType) {
+							base_type_parent = base_type_parent.BaseType;
+						}
+
+						base_targs = base_type_parent.BaseType.TypeArguments;
 					}
 
 					if (base_method.IsGeneric) {
