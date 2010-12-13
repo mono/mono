@@ -173,7 +173,8 @@ namespace Mono.Debugger.Soft
 			}
 
 			if (con_sock != null) {
-				con_sock.Disconnect (false);
+				if (con_sock.Connected)
+					con_sock.Disconnect (false);
 				con_sock.Close ();
 			}
 
