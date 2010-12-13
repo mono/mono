@@ -40,11 +40,7 @@ namespace System.Windows.Forms {
 		private bool checked_isnull;
 
 		private BindingMemberInfo binding_member_info;
-#if NET_2_0
 		private IBindableComponent control;
-#else
-		private Control control;
-#endif
 
 		private BindingManagerBase manager;
 		private PropertyDescriptor control_property;
@@ -53,7 +49,6 @@ namespace System.Windows.Forms {
 		private object data;
 		private Type data_type;
 
-#if NET_2_0
 		private DataSourceUpdateMode datasource_update_mode;
 		private ControlUpdateMode control_update_mode;
 		private object datasource_null_value = Convert.DBNull;
@@ -61,9 +56,7 @@ namespace System.Windows.Forms {
 		private IFormatProvider format_info;
 		private string format_string;
 		private bool formatting_enabled;
-#endif
 		#region Public Constructors
-#if NET_2_0
 		public Binding (string propertyName, object dataSource, string dataMember) 
 			: this (propertyName, dataSource, dataMember, false, DataSourceUpdateMode.OnValidation, null, string.Empty, null)
 		{
@@ -100,26 +93,16 @@ namespace System.Windows.Forms {
 			format_string = formatString;
 			format_info = formatInfo;
 		}
-#else
-		public Binding (string propertyName, object dataSource, string dataMember)
-		{
-			property_name = propertyName;
-			data_source = dataSource;
-			data_member = dataMember;
-			binding_member_info = new BindingMemberInfo (dataMember);
-		}		
-#endif
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
-#if NET_2_0
 		[DefaultValue (null)]
 		public IBindableComponent BindableComponent {
 			get {
 				return control;
 			}
 		}
-#endif
+
 		public BindingManagerBase BindingManagerBase {
 			get {
 				return manager;
@@ -135,15 +118,10 @@ namespace System.Windows.Forms {
 		[DefaultValue (null)]
 		public Control Control {
 			get {
-#if NET_2_0
 				return control as Control;
-#else
-				return control;
-#endif
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (ControlUpdateMode.OnPropertyChanged)]
 		public ControlUpdateMode ControlUpdateMode {
 			get {
@@ -153,7 +131,6 @@ namespace System.Windows.Forms {
 				control_update_mode = value;
 			}
 		}
-#endif
 
 		public object DataSource {
 			get {
@@ -161,7 +138,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (DataSourceUpdateMode.OnValidation)]
 		public DataSourceUpdateMode DataSourceUpdateMode {
 			get {
@@ -225,7 +201,6 @@ namespace System.Windows.Forms {
 					PushData ();
 			}
 		}
-#endif
 
 		public bool IsBinding {
 			get {
@@ -236,7 +211,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		public object NullValue {
 			get {
 				return null_value;
@@ -250,7 +224,6 @@ namespace System.Windows.Forms {
 					PushData ();
 			}
 		}
-#endif
 
 		[DefaultValue ("")]
 		public string PropertyName {
@@ -260,7 +233,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Instance Properties
 
-#if NET_2_0
 		public void ReadValue ()
 		{
 			PushData (true);
@@ -270,16 +242,13 @@ namespace System.Windows.Forms {
 		{
 			PullData (true);
 		}
-#endif
 
 		#region Protected Instance Methods
-#if NET_2_0
 		protected virtual void OnBindingComplete (BindingCompleteEventArgs e)
 		{
 			if (BindingComplete != null)
 				BindingComplete (this, e);
 		}
-#endif
 
 		protected virtual void OnFormat (ConvertEventArgs cevent)
 		{
@@ -298,11 +267,7 @@ namespace System.Windows.Forms {
 			get { return data_member; }
 		}
 		
-#if NET_2_0
 		internal void SetControl (IBindableComponent control)
-#else
-		internal void SetControl (Control control)
-#endif
 		{
 			if (control == this.control)
 				return;
@@ -323,11 +288,9 @@ namespace System.Windows.Forms {
 					ctrl.HandleCreated += new EventHandler (ControlCreatedHandler);
 			}
 
-#if NET_2_0
 			EventDescriptor prop_changed_event = GetPropertyChangedEvent (control, property_name);
 			if (prop_changed_event != null)
 				prop_changed_event.AddEventHandler (control, new EventHandler (ControlPropertyChangedHandler));
-#endif
 			this.control = control;
 			UpdateIsBinding ();
 		}
@@ -377,33 +340,25 @@ namespace System.Windows.Forms {
 		{
 			if (IsBinding == false || manager.Current == null)
 				return true;
-#if NET_2_0
 			if (!force && datasource_update_mode == DataSourceUpdateMode.Never)
 				return true;
-#endif
 
 			data = control_property.GetValue (control);
-#if NET_2_0
 			if (data == null)
 				data = datasource_null_value;
-#endif
 
 			try {
 				SetPropertyValue (data);
 			} catch (Exception e) {
-#if NET_2_0
 				if (formatting_enabled) {
 					FireBindingComplete (BindingCompleteContext.DataSourceUpdate, e, e.Message);
 					return false;
 				}
-#endif
 				throw e;
 			}
 
-#if NET_2_0
 			if (formatting_enabled)
 				FireBindingComplete (BindingCompleteContext.DataSourceUpdate, null, null);
-#endif
 			return true;
 		}
 
@@ -416,10 +371,8 @@ namespace System.Windows.Forms {
 		{
 			if (manager == null || manager.IsSuspended || manager.Count == 0 || manager.Position == -1)
 				return;
-#if NET_2_0
 			if (!force && control_update_mode == ControlUpdateMode.Never)
 				return;
-#endif
 
 			if (is_null_desc != null) {
 				bool is_null = (bool) is_null_desc.GetValue (manager.Current);
@@ -436,38 +389,28 @@ namespace System.Windows.Forms {
 				data = pd.GetValue (manager.Current);
 			}
 
-#if NET_2_0
 			if ((data == null || data == DBNull.Value) && null_value != null)
 				data = null_value;
-#endif
 
 			try {
 				data = FormatData (data);
 				SetControlValue (data);
 			} catch (Exception e) {
-#if NET_2_0
 				if (formatting_enabled) {
 					FireBindingComplete (BindingCompleteContext.ControlUpdate, e, e.Message);
 					return;
 				}
-#endif
 				throw e;
 			}
 
-#if NET_2_0
 			if (formatting_enabled)
 				FireBindingComplete (BindingCompleteContext.ControlUpdate, null, null);
-#endif
 		}
 
 		internal void UpdateIsBinding ()
 		{
 			is_binding = false;
-#if NET_2_0
 			if (control == null || (control is Control && !((Control)control).IsHandleCreated))
-#else
-			if (control == null && !control.IsHandleCreated)
-#endif
 				return;
 
 			is_binding = true;
@@ -490,10 +433,8 @@ namespace System.Windows.Forms {
 
 		private void ControlValidatingHandler (object sender, CancelEventArgs e)
 		{
-#if NET_2_0
 			if (datasource_update_mode != DataSourceUpdateMode.OnValidation)
 				return;
-#endif
 
 			bool ok = true;
 			// If the data doesn't seem to be valid (it can't be converted,
@@ -543,7 +484,6 @@ namespace System.Windows.Forms {
 			PushData ();
 		}
 
-#if NET_2_0
 		void ControlPropertyChangedHandler (object o, EventArgs args)
 		{
 			if (datasource_update_mode != DataSourceUpdateMode.OnPropertyChanged)
@@ -551,7 +491,6 @@ namespace System.Windows.Forms {
 
 			PullData ();
 		}
-#endif
 
 		private object ParseData (object data, Type data_type)
 		{
@@ -562,13 +501,11 @@ namespace System.Windows.Forms {
 				return e.Value;
 			if (e.Value == Convert.DBNull)
 				return e.Value;
-#if NET_2_0
 			if (e.Value == null) {
 				bool nullable = data_type.IsGenericType && !data_type.ContainsGenericParameters &&
 					data_type.GetGenericTypeDefinition () == typeof (Nullable<>);
 				return data_type.IsValueType && !nullable ? Convert.DBNull : null;
 			}
-#endif
 
 			return ConvertData (e.Value, data_type);
 		}
@@ -581,7 +518,6 @@ namespace System.Windows.Forms {
 			if (data_type.IsInstanceOfType (e.Value))
 				return e.Value;
 
-#if NET_2_0
 			if (formatting_enabled) {
 				if ((e.Value == null || e.Value == Convert.DBNull) && null_value != null)
 					return null_value;
@@ -591,7 +527,7 @@ namespace System.Windows.Forms {
 					return formattable.ToString (format_string, format_info);
 				}
 			}
-#endif
+
 			if (e.Value == null && data_type == typeof (object))
 				return Convert.DBNull;
 
@@ -619,7 +555,6 @@ namespace System.Windows.Forms {
 
 			return null;
 		}
-#if NET_2_0
 		void FireBindingComplete (BindingCompleteContext context, Exception exc, string error_message)
 		{
 			BindingCompleteEventArgs args = new BindingCompleteEventArgs (this, 
@@ -632,14 +567,11 @@ namespace System.Windows.Forms {
 
 			OnBindingComplete (args);
 		}
-#endif
 
 		#region Events
 		public event ConvertEventHandler Format;
 		public event ConvertEventHandler Parse;
-#if NET_2_0
 		public event BindingCompleteEventHandler BindingComplete;
-#endif
 		#endregion	// Events
 	}
 }

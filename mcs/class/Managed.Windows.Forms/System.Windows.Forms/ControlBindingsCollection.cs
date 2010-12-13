@@ -36,29 +36,23 @@ namespace System.Windows.Forms {
 	public class ControlBindingsCollection : BindingsCollection {
 		#region	Fields
 		private Control control;
-#if NET_2_0
 		private IBindableComponent bindable_component;
 		private DataSourceUpdateMode default_datasource_update_mode;
-#endif
 		#endregion	// Fields
 
 		#region Constructors
 		internal ControlBindingsCollection (Control control) {
 			this.control = control;
-#if NET_2_0
 			bindable_component = control as IBindableComponent;
 			default_datasource_update_mode = DataSourceUpdateMode.OnValidation;
-#endif
 		}
 
-#if NET_2_0
 		public ControlBindingsCollection (IBindableComponent control)
 		{
 			bindable_component = control;
 			control = control as Control;
 			default_datasource_update_mode = DataSourceUpdateMode.OnValidation;
 		}
-#endif
 		#endregion	// Constructors
 
 		#region Public Instance Properties
@@ -79,7 +73,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		public IBindableComponent BindableComponent {
 			get {
 				return bindable_component;
@@ -94,7 +87,6 @@ namespace System.Windows.Forms {
 				default_datasource_update_mode = value;
 			}
 		}
-#endif
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
@@ -110,14 +102,11 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException ("dataSource");
 
 			Binding res = new Binding (propertyName, dataSource, dataMember);
-#if NET_2_0
 			res.DataSourceUpdateMode = default_datasource_update_mode;
-#endif
 			Add (res);
 			return res;
 		}
 
-#if NET_2_0
 		public Binding Add (string propertyName, object dataSource, string dataMember, bool formattingEnabled)
 		{
 			return Add (propertyName, dataSource, dataMember, formattingEnabled, default_datasource_update_mode, null, String.Empty, null);
@@ -156,7 +145,6 @@ namespace System.Windows.Forms {
 			Add (res);
 			return res;
 		}
-#endif
 
 		public new void Clear() {
 			base.Clear();
@@ -183,11 +171,7 @@ namespace System.Windows.Forms {
 			if (dataBinding == null)
 				throw new ArgumentNullException ("dataBinding");
 
-#if NET_2_0
 			if (dataBinding.Control != null && dataBinding.BindableComponent != bindable_component)
-#else
-			if (dataBinding.Control != null && dataBinding.Control != control)
-#endif
 				throw new ArgumentException ("dataBinding belongs to another BindingsCollection");
 
 			for (int i = 0; i < Count; i++) {
@@ -201,11 +185,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-#if NET_2_0
 			dataBinding.SetControl (bindable_component);
-#else
-			dataBinding.SetControl (control);
-#endif
 			dataBinding.Check ();
 			base.AddCore (dataBinding);
 		}

@@ -32,10 +32,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class ContainerControl : ScrollableControl, IContainerControl {
 		private Control		active_control;
 		private Control		unvalidated_control;
@@ -44,13 +42,11 @@ namespace System.Windows.Forms {
 		// This is an internal hack that allows some container controls
 		// to not auto select their child when they are activated
 		internal bool 		auto_select_child = true;
-#if NET_2_0
 		private SizeF		auto_scale_dimensions;
 		private AutoScaleMode	auto_scale_mode;
 		private bool		auto_scale_mode_set;
 		private bool		auto_scale_pending;
 		private bool		is_auto_scaling;
-#endif
 
 		internal bool validation_failed; //track whether validation was cancelled by a validating control
 
@@ -59,10 +55,8 @@ namespace System.Windows.Forms {
 			active_control = null;
 			unvalidated_control = null;
 			ControlRemoved += new ControlEventHandler(OnControlRemoved);
-#if NET_2_0
 			auto_scale_dimensions = SizeF.Empty;
 			auto_scale_mode = AutoScaleMode.Inherit;
-#endif
 		}
 		#endregion	// Public Constructors
 
@@ -333,7 +327,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -386,7 +379,6 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif // NET_2_0
 
 		[Browsable (false)]
 		public override BindingContext BindingContext {
@@ -402,7 +394,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public SizeF CurrentAutoScaleDimensions {
@@ -421,7 +412,6 @@ namespace System.Windows.Forms {
 				return auto_scale_dimensions;
 			}
 		}
-#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -444,11 +434,9 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
-#if NET_2_0
 		protected override bool CanEnableIme {
 			get { return false; }
 		}
-#endif
 		protected override CreateParams CreateParams {
 			get {
 				return base.CreateParams;
@@ -457,7 +445,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Public Instance Methods
-#if NET_2_0
 		internal void PerformAutoScale (bool called_by_scale)
 		{
 			if ((AutoScaleMode == AutoScaleMode.Inherit) && !called_by_scale)
@@ -502,7 +489,6 @@ namespace System.Windows.Forms {
 		internal bool IsAutoScaling {
 			get { return is_auto_scaling; }
 		}
-#endif
 
 		[MonoTODO ("Stub, not implemented")]
 		static bool ValidateWarned;
@@ -515,7 +501,6 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-#if NET_2_0
 		public bool Validate (bool checkAutoValidate)
 		{
 			if ((checkAutoValidate && (AutoValidate != AutoValidate.Disable)) || !checkAutoValidate)
@@ -543,7 +528,6 @@ namespace System.Windows.Forms {
 
 			return true;
 		}
-#endif
 
 		bool IContainerControl.ActivateControl(Control control) {
 			return Select(control);
@@ -582,7 +566,6 @@ namespace System.Windows.Forms {
 			OnBindingContextChanged (EventArgs.Empty);
 		}
 
-#if NET_2_0
 		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
 		{
 			if (ToolStripManager.ProcessCmdKey (ref msg, keyData) == true)
@@ -590,7 +573,6 @@ namespace System.Windows.Forms {
 				
 			return base.ProcessCmdKey (ref msg, keyData);
 		}
-#endif
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override bool ProcessDialogChar(char charCode) {
@@ -701,10 +683,6 @@ namespace System.Windows.Forms {
 						Select (active_control);
 					else
 						base.WndProc (ref m);
-#if false
-					else
-						SelectNextControl (null, true, true, true, false);
-#endif
 				break;
 
 				default:
@@ -769,7 +747,6 @@ namespace System.Windows.Forms {
 			// do nothing here, only called if it is a Form
 		}
 
-#if NET_2_0
 		private bool ValidateNestedControls (Control c, ValidationConstraints constraints, bool recurse)
 		{
 			bool validate_result = true;
@@ -808,10 +785,8 @@ namespace System.Windows.Forms {
 
 			return true;
 		}
-#endif
 		#endregion	// Internal Methods
 
-#if NET_2_0
 		protected override void OnParentChanged (EventArgs e)
 		{
 			base.OnParentChanged (e);
@@ -870,6 +845,5 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (OnValidateChanged, value); }
 			remove { Events.RemoveHandler (OnValidateChanged, value); }
 		}
-#endif
 	}
 }

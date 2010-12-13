@@ -83,7 +83,6 @@ namespace System.Windows.Forms {
 				if (dataMember == null)
 					dataMember = String.Empty;
 
-#if NET_2_0
 				ICurrencyManagerProvider cm_provider = dataSource as ICurrencyManagerProvider;
 				if (cm_provider != null) {
 					if (dataMember.Length == 0)
@@ -91,7 +90,6 @@ namespace System.Windows.Forms {
 
 					return cm_provider.GetRelatedCurrencyManager (dataMember);
 				}
-#endif
 
 				HashKey key = new HashKey (dataSource, dataMember);
 				BindingManagerBase res = managers [key] as BindingManagerBase;

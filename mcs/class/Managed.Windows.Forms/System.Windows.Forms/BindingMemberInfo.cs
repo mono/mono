@@ -91,7 +91,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Public Static Methods
-#if NET_2_0
 		public static bool operator == (BindingMemberInfo a, BindingMemberInfo b)
 		{
 			return (a.Equals (b));
@@ -101,7 +100,6 @@ namespace System.Windows.Forms {
 		{
 			return !(a.Equals (b));
 		}
-#endif
 		#endregion	// Public Static Methods
 
 	}

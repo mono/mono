@@ -34,11 +34,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[LookupBindingPropertiesAttribute ()]
-#endif
 	public class CheckedListBox : ListBox
 	{
 		private CheckedIndexCollection checked_indices;
@@ -57,13 +55,8 @@ namespace System.Windows.Forms
 		#region events
 		static object ItemCheckEvent = new object ();
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
-#else
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		public new event EventHandler Click {
 			add { base.Click += value; }
 			remove { base.Click -= value; }
@@ -109,14 +102,12 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (ItemCheckEvent, value); }
 		}
 		
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event MouseEventHandler MouseClick {
 			add { base.MouseClick += value; }
 			remove { base.MouseClick -= value; }
 		}
-#endif
 		#endregion Events
 
 		#region Public Properties
@@ -213,7 +204,6 @@ namespace System.Windows.Forms
 			set { base.ValueMember = value; }			
 		}
 		
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -221,7 +211,6 @@ namespace System.Windows.Forms
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}
-#endif
 		#endregion Public Properties
 
 		#region Public Methods
@@ -309,12 +298,11 @@ namespace System.Windows.Forms
 			base.OnSelectedIndexChanged (e);
 		}
 
-#if NET_2_0
 		protected override void RefreshItems ()
 		{
 			base.RefreshItems ();
 		}
-#endif
+
 		public void SetItemChecked (int index, bool value)
 		{
 			SetItemCheckState (index, value ? CheckState.Checked : CheckState.Unchecked);
@@ -656,14 +644,11 @@ namespace System.Windows.Forms
 			}
 			#endregion Private Methods
 		}
-#if NET_2_0
 		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
 			get { return use_compatible_text_rendering; }
 			set { use_compatible_text_rendering = value; }
 		}
-#endif
-
 	}
 }
 

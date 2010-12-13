@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum AutoSizeMode
@@ -36,4 +35,3 @@ namespace System.Windows.Forms
 		GrowOnly = 1
 	}
 }
-#endif

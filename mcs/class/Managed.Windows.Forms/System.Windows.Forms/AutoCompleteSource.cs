@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum AutoCompleteSource
@@ -43,4 +42,3 @@ namespace System.Windows.Forms
 		ListItems = 256
 	}
 }
-#endif

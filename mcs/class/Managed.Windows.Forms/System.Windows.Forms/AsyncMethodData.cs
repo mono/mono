@@ -34,11 +34,7 @@ namespace System.Windows.Forms {
 		public Delegate Method;
 		public object [] Args;
 		public AsyncMethodResult Result;
-#if NET_2_0
 		public ExecutionContext Context;
-#else
-		public CompressedStack Stack;
-#endif
 	}
 
 }

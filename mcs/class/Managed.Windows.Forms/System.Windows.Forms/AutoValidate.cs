@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum AutoValidate
@@ -38,4 +37,3 @@ namespace System.Windows.Forms
 		EnableAllowFocusChange = 2
 	}
 }
-#endif

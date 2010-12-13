@@ -31,10 +31,7 @@ using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public
-#endif
-	sealed class ButtonRenderer
+	public sealed class ButtonRenderer
 	{
 		private static bool always_use_visual_styles = false;
 

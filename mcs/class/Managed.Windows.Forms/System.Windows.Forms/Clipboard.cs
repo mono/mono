@@ -61,7 +61,6 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Static Methods
-#if NET_2_0
 		public static void Clear ()
 		{
 			IntPtr clipboard_handle;
@@ -132,14 +131,12 @@ namespace System.Windows.Forms {
 
 			return data.GetData (format, true);
 		}
-#endif
 
 		public static IDataObject GetDataObject ()
 		{
 			return GetDataObject (false);
 		}
 
-#if NET_2_0
 		public static StringCollection GetFileDropList ()
 		{
 			IDataObject data = GetDataObject ();
@@ -225,7 +222,6 @@ namespace System.Windows.Forms {
 			DataObject data_object = new DataObject (format, data);
 			SetDataObject (data_object);
 		}
-#endif
 
 		public static void SetDataObject(object data) {
 			SetDataObject(data, false);  // MSDN says default behavior is to place non-persistent data to clipboard
@@ -287,12 +283,7 @@ namespace System.Windows.Forms {
 			return attrs [typeof (SerializableAttribute)] != null;
 		}
 
-#if NET_2_0
-		public 
-#else
-		internal 
-#endif
-		static void SetDataObject(object data, bool copy, int retryTimes, int retryDelay)
+		public static void SetDataObject(object data, bool copy, int retryTimes, int retryDelay)
 		{
 			if (data == null)
 				throw new ArgumentNullException("data");
@@ -319,7 +310,6 @@ namespace System.Windows.Forms {
 			} while (retry && retryTimes > 0);
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Needs additional checks for valid paths, see MSDN")]
 		public static void SetFileDropList (StringCollection filePaths)
 		{
@@ -370,7 +360,6 @@ namespace System.Windows.Forms {
 					break;
 			}
 		}
-#endif
 		#endregion	// Public Static Methods
 
 		#region Internal Static Methods

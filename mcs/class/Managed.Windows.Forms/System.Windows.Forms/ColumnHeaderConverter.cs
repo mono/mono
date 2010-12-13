@@ -26,8 +26,6 @@
 
 // COMPLETE
 
-#if NET_2_0
-
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Collections;
@@ -95,5 +93,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-
-#endif

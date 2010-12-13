@@ -34,11 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[ComVisible(true)]
-#if NET_2_0
 	public class AccessibleObject : StandardOleMarshalObject, IReflect, IAccessible {
-#else
-	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible {
-#endif
 		#region Private Variables
 		internal string		name;
 		internal string		value;

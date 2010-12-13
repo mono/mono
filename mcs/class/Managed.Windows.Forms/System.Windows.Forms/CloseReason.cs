@@ -29,10 +29,7 @@
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public 
-#endif
-	enum CloseReason
+	public enum CloseReason
 	{
 		None = 0,
 		WindowsShutDown = 1,

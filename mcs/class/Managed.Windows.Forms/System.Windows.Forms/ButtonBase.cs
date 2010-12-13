@@ -30,12 +30,10 @@ using System.Drawing.Text;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[Designer ("System.Windows.Forms.Design.ButtonBaseDesigner, " + Consts.AssemblySystem_Design,
 		   "System.ComponentModel.Design.IDesigner")]
-#endif
 	public abstract class ButtonBase : Control
 	{
 		#region Local Variables
@@ -54,9 +52,7 @@ namespace System.Windows.Forms {
 		// Properties are 2.0, but variables used in 1.1 for common drawing code
 		private bool			auto_ellipsis;
 		private FlatButtonAppearance	flat_button_appearance;
-#if NET_2_0		
 		private string			image_key;
-#endif
 		private TextImageRelation	text_image_relation;
 		private TextFormatFlags		text_format_flags;
 		private bool			use_mnemonic;
@@ -68,12 +64,10 @@ namespace System.Windows.Forms {
 		{
 			flat_style	= FlatStyle.Standard;
 			flat_button_appearance = new FlatButtonAppearance (this);
-#if NET_2_0
 			this.image_key = string.Empty;
 			this.text_image_relation = TextImageRelation.Overlay;
 			this.use_mnemonic = true;
 			use_visual_style_back_color = true;
-#endif
 			image_index	= -1;
 			image		= null;
 			image_list	= null;
@@ -97,11 +91,7 @@ namespace System.Windows.Forms {
 				ControlStyles.UserMouse | 
 				ControlStyles.SupportsTransparentBackColor | 
 				ControlStyles.CacheText |
-#if NET_2_0
 				ControlStyles.OptimizedDoubleBuffer, true);
-#else
-				ControlStyles.DoubleBuffer, true);
-#endif
 			SetStyle (ControlStyles.StandardClick, false);
 		}
 		#endregion	// Public Constructors
@@ -111,12 +101,7 @@ namespace System.Windows.Forms {
 		[DefaultValue (false)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[MWFCategory("Behavior")]
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		bool AutoEllipsis {
+		public bool AutoEllipsis {
 			get { return this.auto_ellipsis; }
 			set
 			{
@@ -138,7 +123,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
@@ -152,17 +136,11 @@ namespace System.Windows.Forms {
 			get { return base.BackColor; }
 			set { base.BackColor = value; }
 		}
-#endif
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Browsable (true)]
 		[MWFCategory("Appearance")]
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		FlatButtonAppearance FlatAppearance {
+		public FlatButtonAppearance FlatAppearance {
 			get { return flat_button_appearance; }
 		}
 
@@ -193,26 +171,20 @@ namespace System.Windows.Forms {
 					if (this.image_list != null)
 						return this.image_list.Images[this.image_index];
 
-#if NET_2_0
 				if (!string.IsNullOrEmpty (this.image_key))
 					if (this.image_list != null)
 						return this.image_list.Images[this.image_key];
-#endif
 				return null;
 			}
 			set {
 				if (this.image != value) {
 					this.image = value;
 					this.image_index = -1;
-#if NET_2_0
 					this.image_key = string.Empty;
-#endif
 					this.image_list = null;
 
-#if NET_2_0
 					if (this.AutoSize && this.Parent != null)
 						this.Parent.PerformLayout (this, "Image");
-#endif
 
 					Invalidate ();
 				}
@@ -242,9 +214,7 @@ namespace System.Windows.Forms {
 		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[TypeConverter(typeof(ImageIndexConverter))]
 		[MWFDescription("Index of image to display, if ImageList is used for button face images"), MWFCategory("Appearance")]
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		public int ImageIndex {
 			get {
 				if (image_list == null)
@@ -256,15 +226,12 @@ namespace System.Windows.Forms {
 				if (this.image_index != value) {
 					this.image_index = value;
 					this.image = null;
-#if NET_2_0
 					this.image_key = string.Empty;
-#endif
 					Invalidate ();
 				}
 			}
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[DefaultValue ("")]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
@@ -282,13 +249,10 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif
 
 		[DefaultValue(null)]
 		[MWFDescription("ImageList used for ImageIndex"), MWFCategory("Appearance")]
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		public ImageList ImageList {
 			get { return image_list; }
 			set {
@@ -310,7 +274,6 @@ namespace System.Windows.Forms {
 			set { base.ImeMode = value; }
 		}
 
-#if NET_2_0
 		[SettingsBindable (true)]
 		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
 			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
@@ -318,7 +281,6 @@ namespace System.Windows.Forms {
 			get { return base.Text; }
 			set { base.Text = value; }
 		}
-#endif
 
 		[Localizable(true)]
 		[DefaultValue(ContentAlignment.MiddleCenter)]
@@ -396,15 +358,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[DefaultValue (TextImageRelation.Overlay)]
 		[MWFCategory("Appearance")]
-		public
-#else
-		internal
-#endif
-		TextImageRelation TextImageRelation {
+		public TextImageRelation TextImageRelation {
 			get { return this.text_image_relation; }
 			set {
 				if (!Enum.IsDefined (typeof (TextImageRelation), value))
@@ -413,10 +370,8 @@ namespace System.Windows.Forms {
 				if (this.text_image_relation != value) {
 					this.text_image_relation = value;
 					
-#if NET_2_0
 					if (this.AutoSize && this.Parent != null)
 						this.Parent.PerformLayout (this, "TextImageRelation");
-#endif
 					
 					this.Invalidate ();
 				}
@@ -425,12 +380,7 @@ namespace System.Windows.Forms {
 
 		[DefaultValue (false)]
 		[MWFCategory("Behavior")]
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		bool UseCompatibleTextRendering {
+		public bool UseCompatibleTextRendering {
 			get { return use_compatible_text_rendering; }
 			set {
 				if (use_compatible_text_rendering != value) {
@@ -444,12 +394,7 @@ namespace System.Windows.Forms {
 		
 		[DefaultValue (true)]
 		[MWFCategory("Appearance")]
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		bool UseMnemonic {
+		public bool UseMnemonic {
 			get { return this.use_mnemonic; }
 			set {
 				if (this.use_mnemonic != value) {
@@ -466,12 +411,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MWFCategory("Appearance")]
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		bool UseVisualStyleBackColor {
+		public bool UseVisualStyleBackColor {
 			get { return use_visual_style_back_color; }
 			set {
 				if (use_visual_style_back_color != value) {
@@ -507,13 +447,11 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Public Methods
-#if NET_2_0
 		// The base calls into GetPreferredSizeCore, which we will override in our subclasses
 		public override Size GetPreferredSize (Size proposedSize)
 		{
 			return base.GetPreferredSize (proposedSize);
 		}
-#endif
 		#endregion
 		
 		#region Protected Methods
@@ -632,9 +570,7 @@ namespace System.Windows.Forms {
 				if (ClientRectangle.Contains (mevent.Location))
 					if (!ValidationFailed) {
 						OnClick (EventArgs.Empty);
-#if NET_2_0
 						OnMouseClick (mevent);
-#endif
 					}
 			}
 			
@@ -698,14 +634,12 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region	Public Events
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -795,11 +729,9 @@ namespace System.Windows.Forms {
 			#endregion	// ButtonBaseAccessibleObject Constructors
 
 			#region Public Properties
-#if NET_2_0
 			public override AccessibleStates State {
 				get { return base.State; }
 			}
-#endif
 			#endregion
 			
 			#region ButtonBaseAccessibleObject Methods

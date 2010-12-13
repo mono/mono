@@ -26,16 +26,11 @@
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
-	public class ApplicationContext
-#if NET_2_0
-		: IDisposable
-#endif
+	public class ApplicationContext : IDisposable
 	{
 		#region Local Variables
 		Form main_form;
-#if NET_2_0
 		object tag;
-#endif
 		bool thread_exit_raised;
 
 		#endregion	// Local Variables
@@ -74,7 +69,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[BindableAttribute (true)] 
 		[DefaultValue (null)]
 		[LocalizableAttribute (false)] 
@@ -83,7 +77,6 @@ namespace System.Windows.Forms {
 			get { return tag; }
 			set { tag = value; }
 		}
-#endif
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
@@ -100,9 +93,7 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected virtual void Dispose(bool disposing) {
 			MainForm = null;
-#if NET_2_0
 			tag = null;
-#endif
 		}
 
 		protected virtual void ExitThreadCore() {

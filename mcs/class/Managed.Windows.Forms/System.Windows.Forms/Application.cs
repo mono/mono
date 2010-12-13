@@ -39,9 +39,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-#if NET_2_0
 using System.Text;
-#endif
 using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms
@@ -148,10 +146,8 @@ namespace System.Windows.Forms
 		private static readonly ArrayList message_filters = new ArrayList();
 		private static readonly FormCollection forms = new FormCollection ();
 
-#if NET_2_0
 		private static bool use_wait_cursor;
 		private static ToolStrip keyboard_capture;
-#endif
 		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
 		static bool visual_styles_enabled;
 
@@ -160,19 +156,15 @@ namespace System.Windows.Forms
 			browser_embedded = false;
 		}
 
-#if NET_2_0
 		static Application ()
 		{
 			// Attempt to load UIA support for winforms
 			// UIA support requires .NET 2.0
 			InitializeUIAutomation ();
 		}
-#endif
 
 		#region Private Methods
 
-#if NET_2_0
-		
 		private static void InitializeUIAutomation ()
 		{
 			// Initialize the UIAutomationWinforms Global class,
@@ -210,7 +202,6 @@ namespace System.Windows.Forms
 				Console.Error.WriteLine ("Error setting up UIA: " + ex);
 			}
 		}
-#endif
 		
 		internal static void CloseForms (Thread thread)
 		{
@@ -434,7 +425,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public static bool UseWaitCursor {
 			get {
 				return use_wait_cursor;
@@ -448,14 +438,8 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#endif
-		
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static bool RenderWithVisualStyles {
+
+		public static bool RenderWithVisualStyles {
 			get {
 				if (VisualStyleInformation.IsSupportedByOS) {
 					if (!VisualStyleInformation.IsEnabledByUser)
@@ -471,12 +455,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
-		public 
-#else
-		internal
-#endif
-		static VisualStyleState VisualStyleState {
+		public static VisualStyleState VisualStyleState {
 			get { return Application.visual_style_state; }
 			set { Application.visual_style_state = value; }
 		}
@@ -508,13 +487,8 @@ namespace System.Windows.Forms
 			XplatUI.EnableThemes ();
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public
-#else
-		internal
-#endif
-		static bool FilterMessage (ref Message message)
+		public static bool FilterMessage (ref Message message)
 		{
 			lock (message_filters) {
 				for (int i = 0; i < message_filters.Count; i++) {
@@ -526,7 +500,6 @@ namespace System.Windows.Forms
 			return false;
 		}
 		
-#if NET_2_0
 		//
 		// If true, it uses GDI+, performance reasons were quoted
 		//
@@ -641,19 +614,12 @@ namespace System.Windows.Forms
 			Application.Exit ();
 			Process.Start (procInfo);
 		}
-#endif
 
 		public static void Exit ()
 		{
-#if NET_2_0
 			Exit (new CancelEventArgs ());
-#else
-			XplatUI.PostQuitMessage (0);
-			CloseForms (null);
-#endif
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static void Exit (CancelEventArgs e)
 		{
@@ -677,7 +643,6 @@ namespace System.Windows.Forms
 
 			XplatUI.PostQuitMessage (0);
 		}
-#endif
 
 		public static void ExitThread()
 		{
@@ -742,31 +707,25 @@ namespace System.Windows.Forms
 			Run (new ApplicationContext (mainForm));
 		}
 
-#if NET_2_0
 		internal static void FirePreRun ()
 		{
 			EventHandler handler = PreRun;
 			if (handler != null)
 				handler (null, EventArgs.Empty);
 		}
-#endif
 
 		public static void Run (ApplicationContext context)
 		{
-#if NET_2_0
 			// If a sync context hasn't been created by now, create
 			// a default one
 			if (SynchronizationContext.Current == null)
 				SynchronizationContext.SetSynchronizationContext (new SynchronizationContext ());
-#endif
 				
 			RunLoop (false, context);
 			
-#if NET_2_0
 			// Reset the sync context back to the default
 			if (SynchronizationContext.Current is WindowsFormsSynchronizationContext)
 				WindowsFormsSynchronizationContext.Uninstall ();
-#endif
 		}
 
 		private static void DisableFormsForModalLoop (Queue toplevels, ApplicationContext context)
@@ -906,7 +865,6 @@ namespace System.Windows.Forms
 					Control c;
 					c = Control.FromHandle(msg.hwnd);
 
-#if NET_2_0
 					// If we have a control with keyboard capture (usually a *Strip)
 					// give it the message, and then drop the message
 					if (keyboard_capture != null) {
@@ -935,14 +893,13 @@ namespace System.Windows.Forms
 								break;
 						}
 					}
-#endif
 
 					if (((c != null) && c.PreProcessControlMessageInternal (ref m) != PreProcessControlState.MessageProcessed) ||
 						(c == null)) {
 						goto default;
 					} 
 					break;
-#if NET_2_0
+
 				case Msg.WM_LBUTTONDOWN:
 				case Msg.WM_MBUTTONDOWN:
 				case Msg.WM_RBUTTONDOWN:
@@ -975,7 +932,7 @@ namespace System.Windows.Forms
 					}
 					
 					goto default;
-#endif
+
 				case Msg.WM_QUIT:
 					quit = true; // make sure we exit
 					break;
@@ -1055,7 +1012,6 @@ namespace System.Windows.Forms
 		public static event EventHandler ThreadExit;
 		public static event ThreadExceptionEventHandler ThreadException;
 		
-#if NET_2_0
 		// These are used externally by the UIA framework
 		internal static event EventHandler FormAdded;
 		internal static event EventHandler PreRun;
@@ -1065,26 +1021,21 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static event EventHandler LeaveThreadModal;
-#endif
 
 		#endregion	// Events
 
 		#region Public Delegates
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public delegate bool MessageLoopCallback ();
-#endif
 
 		#endregion
 		
 		#region Internal Properties
-#if NET_2_0
 		internal static ToolStrip KeyboardCapture {
 			get { return keyboard_capture; }
 			set { keyboard_capture = value; }
 		}
-#endif
 
 		internal static bool VisualStylesEnabled {
 			get { return visual_styles_enabled; }
@@ -1097,7 +1048,6 @@ namespace System.Windows.Forms
 		{
 			lock (forms)
 				forms.Add (f);
-#if NET_2_0
 			// Signal that a Form has been added to this
 			// Application. Used by UIA to detect new Forms that
 			// need a11y support. This event may be fired even if
@@ -1105,7 +1055,6 @@ namespace System.Windows.Forms
 			// account for that when handling this signal.
 			if (FormAdded != null)
 				FormAdded (f, null);
-#endif
 		}
 		
 		internal static void RemoveForm (Form f)
@@ -1114,7 +1063,6 @@ namespace System.Windows.Forms
 				forms.Remove (f);
 		}
 
-#if NET_2_0
 		private static bool ControlOnToolStrip (Control c)
 		{
 			Control p = c.Parent;
@@ -1128,7 +1076,6 @@ namespace System.Windows.Forms
 			
 			return false;
 		}
-#endif
 
 		// Takes a starting path, appends company name, product name, and
 		// product version.  If the directory doesn't exist, create it

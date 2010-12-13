@@ -62,12 +62,8 @@ namespace System.Windows.Forms {
 		AlertMedium	= 0x08000000,
 		AlertHigh	= 0x10000000,
 		Protected	= 0x20000000,
-#if NET_2_0
 		[Obsolete]
-#endif
 		Valid		= 0x3FFFFFFF,
-#if NET_2_0
 		HasPopup	= 0x40000000
-#endif
 	}
 }

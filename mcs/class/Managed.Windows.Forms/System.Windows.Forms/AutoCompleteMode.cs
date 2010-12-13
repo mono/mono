@@ -26,8 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum AutoCompleteMode
@@ -38,4 +36,3 @@ namespace System.Windows.Forms
 		SuggestAppend = 3
 	}
 }
-#endif

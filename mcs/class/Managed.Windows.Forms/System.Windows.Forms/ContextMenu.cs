@@ -37,17 +37,13 @@ namespace System.Windows.Forms
 		private Control	src_control;
 
 		#region Events
-#if NET_2_0
 		static object CollapseEvent = new object ();
-#endif
 		static object PopupEvent = new object ();
 
-#if NET_2_0
 		public event EventHandler Collapse {
 			add { Events.AddHandler (CollapseEvent, value); }
 			remove { Events.RemoveHandler (CollapseEvent, value); }
 		}
-#endif
 
 		public event EventHandler Popup {
 			add { Events.AddHandler (PopupEvent, value); }
@@ -71,9 +67,7 @@ namespace System.Windows.Forms
 		#region Public Properties
 		
 		[Localizable(true)]
-#if NET_2_0
 		[DefaultValue (RightToLeft.No)]
-#endif
 		public virtual RightToLeft RightToLeft {
 			get { return right_to_left; }
 			set { right_to_left = value; }
@@ -89,7 +83,6 @@ namespace System.Windows.Forms
 
 		#region Public Methods
 
-#if NET_2_0
 		protected internal virtual bool ProcessCmdKey (ref Message msg, Keys keyData, Control control)
 		{
 			src_control = control;
@@ -102,7 +95,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		protected internal virtual void OnPopup (EventArgs e)
 		{
@@ -121,12 +113,9 @@ namespace System.Windows.Forms
 			OnPopup (EventArgs.Empty);
 			pos = control.PointToScreen (pos);
 			MenuTracker.TrackPopupMenu (this, pos);
-#if NET_2_0
 			OnCollapse (EventArgs.Empty);
-#endif
 		}
 
-#if NET_2_0
 		public void Show (Control control, Point pos, LeftRightAlignment alignment)
 		{
 			Point point;
@@ -138,7 +127,6 @@ namespace System.Windows.Forms
 
 			Show (control, point);
 		}
-#endif
 		#endregion Public Methods
 		internal void Hide ()
 		{

@@ -37,10 +37,8 @@ namespace System.Windows.Forms {
 	[Designer("System.Windows.Forms.Design.AxHostDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DesignTimeVisible(false)]
 	[ToolboxItem(false)]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public abstract class AxHost : Control, ISupportInitialize, ICustomTypeDescriptor {
 		#region AxHost Subclasses
 		#region AxHost.ActiveXInvokeKind Enum
@@ -52,9 +50,7 @@ namespace System.Windows.Forms {
 		#endregion	// AxHost.ActiveXInvokeKind Enum
 
 		#region AxHost.AxComponentEditor Class
-#if NET_2_0
 		[ComVisible (false)]
-#endif
 		public class AxComponentEditor : System.Windows.Forms.Design.WindowsFormsComponentEditor {
 			public AxComponentEditor ()
 			{
@@ -85,9 +81,6 @@ namespace System.Windows.Forms {
 		#endregion AxHost.ClsidAttribute
 		
 		#region AxHost.ConnectionPointCookie
-#if !NET_2_0
-		[ComVisible(false)]
-#endif
 		public class ConnectionPointCookie {
 			public ConnectionPointCookie (object source, object sink, Type eventInterface)
 			{
@@ -108,12 +101,10 @@ namespace System.Windows.Forms {
 		
 		#region AxHost.InvalidActiveXStateException  Class
 		public class InvalidActiveXStateException : Exception {
-#if NET_2_0
 			public InvalidActiveXStateException ()
 			{
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
-#endif
 
 			public InvalidActiveXStateException (string name, ActiveXInvokeKind kind)
 			{
@@ -136,12 +127,7 @@ namespace System.Windows.Forms {
 				//throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
 
-#if NET_2_0
-			protected
-#else
-			private
-#endif
-			State (SerializationInfo info, StreamingContext context)
+			protected State (SerializationInfo info, StreamingContext context)
 			{
 			}
 
@@ -224,9 +210,7 @@ namespace System.Windows.Forms {
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public override Image BackgroundImage {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -237,7 +221,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -250,13 +233,10 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
 		}
-#endif
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public ContainerControl ContainingControl {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -345,7 +325,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -357,7 +336,6 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
 		}
-#endif
 		
 		[Browsable (false)]
 		[DefaultValue (null)]
@@ -569,12 +547,10 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-#if NET_2_0
 		protected virtual object CreateInstanceCore (Guid clsid)
 		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
-#endif
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void CreateSink ()
@@ -598,7 +574,6 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
 		{
@@ -610,7 +585,6 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
-#endif
 
 		protected override bool IsInputChar (char charCode)
 		{
@@ -978,7 +952,6 @@ namespace System.Windows.Forms {
 			remove { base.StyleChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
@@ -1002,21 +975,6 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (MouseDoubleClickEvent, value); }
 			remove { Events.RemoveHandler (MouseDoubleClickEvent, value); }
 		}
-#else
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TabIndexChanged {
-			add { base.TabIndexChanged += value; }
-			remove { base.TabIndexChanged -= value; }
-		}
-
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TabStopChanged {
-			add { base.TabStopChanged += value; }
-			remove { base.TabStopChanged -= value; }
-		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -1027,9 +985,6 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region Delegates
-#if ONLY_1_1
-		[Serializable]
-#endif
 		protected delegate void AboutBoxDelegate ();
 		#endregion	// Delegates
 

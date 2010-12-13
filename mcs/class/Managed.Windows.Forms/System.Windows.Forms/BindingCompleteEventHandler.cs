@@ -26,9 +26,7 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public delegate void BindingCompleteEventHandler(object sender, BindingCompleteEventArgs e);
 }
-#endif

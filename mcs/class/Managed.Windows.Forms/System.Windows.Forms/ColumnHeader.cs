@@ -35,9 +35,7 @@ namespace System.Windows.Forms
 	[DefaultProperty ("Text")]
 	[DesignTimeVisible (false)]
 	[ToolboxItem (false)]
-#if NET_2_0
 	[TypeConverter (typeof (ColumnHeaderConverter))]
-#endif
 	public class ColumnHeader : Component, ICloneable
 	{
 		#region Instance Variables
@@ -45,12 +43,10 @@ namespace System.Windows.Forms
 		private string text = "ColumnHeader";
 		private HorizontalAlignment text_alignment = HorizontalAlignment.Left;
 		private int width = ThemeEngine.Current.ListViewDefaultColumnWidth;
-#if NET_2_0
 		private int image_index = -1;
 		private string image_key = String.Empty;
 		private string name = String.Empty;
 		private object tag;
-#endif
 		private int display_index = -1;
 
 		// internal variables
@@ -70,7 +66,6 @@ namespace System.Windows.Forms
 			CalcColumnHeader ();
 		}
 
-#if NET_2_0
 		internal ColumnHeader (string key, string text, int width, HorizontalAlignment textAlign)
 		{
 			Name = key;
@@ -79,13 +74,11 @@ namespace System.Windows.Forms
 			this.text_alignment = textAlign;
 			CalcColumnHeader ();
 		}
-#endif
 		#endregion	// Internal Constructor
 
 		#region Public Constructors
 		public ColumnHeader () { }
 
-#if NET_2_0
 		public ColumnHeader (int imageIndex)
 		{
 			ImageIndex = imageIndex;
@@ -95,7 +88,6 @@ namespace System.Windows.Forms
 		{
 			ImageKey = imageKey;
 		}
-#endif
 		#endregion	// Public Constructors
 
 		#region Private Internal Methods Properties
@@ -188,7 +180,6 @@ namespace System.Windows.Forms
 
 		#region Public Instance Properties
 
-#if NET_2_0
 		[Localizable (true)]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		public int DisplayIndex {
@@ -260,7 +251,6 @@ namespace System.Windows.Forms
 				return owner.SmallImageList;
 			}
 		}
-#endif
 
 		[Browsable (false)]
 		public int Index {
@@ -277,7 +267,6 @@ namespace System.Windows.Forms
 			get { return owner; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		public string Name {
 			get {
@@ -300,7 +289,6 @@ namespace System.Windows.Forms
 				tag = value;
 			}
 		}
-#endif
 
 		[Localizable (true)]
 		public string Text {
@@ -311,10 +299,8 @@ namespace System.Windows.Forms
 					if (owner != null)
 						owner.Redraw (true);
 
-#if NET_2_0
 					// UIA Framework: Raising Value changed event
 					OnUIATextChanged ();
-#endif
 				}
 			}
 		}
@@ -347,7 +333,6 @@ namespace System.Windows.Forms
 		#endregion // Public Instance Properties
 
 		#region Public Methods
-#if NET_2_0
 		public void AutoResize (ColumnHeaderAutoResizeStyle headerAutoResize)
 		{
 			switch (headerAutoResize) {
@@ -364,7 +349,6 @@ namespace System.Windows.Forms
 							typeof (ColumnHeaderAutoResizeStyle));
 			}
 		}
-#endif
 
 		public object Clone ()
 		{
@@ -391,7 +375,6 @@ namespace System.Windows.Forms
 		}
 		#endregion // Protected Methods
 
-#if NET_2_0
 		
 		#region UIA Framework: Methods, Properties and Events
 
@@ -410,7 +393,5 @@ namespace System.Windows.Forms
 		}
 
 		#endregion
-
-#endif
 	}
 }

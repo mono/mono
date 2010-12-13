@@ -969,7 +969,6 @@ namespace System.Windows.Forms {
 			private SmallColorControl selectedSmallColorControl;
 
 			#region UIA Framework Property
-#if NET_2_0
 			public SmallColorControl UIASelectedSmallColorControl {
 				get {
 					for (int i = 0; i < smallColorControl.Length - 1; ++i)
@@ -981,7 +980,6 @@ namespace System.Windows.Forms {
 					return null;
 				}
 			}
-#endif
 			#endregion
 
 			private int currentlyUsedUserSmallColorControl = 0;

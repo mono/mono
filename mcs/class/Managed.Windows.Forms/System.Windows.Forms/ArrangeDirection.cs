@@ -29,9 +29,7 @@
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[Flags]
-#endif
 	[ComVisible(true)]
 	public enum ArrangeDirection {
 		Left		= 0,

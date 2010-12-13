@@ -30,12 +30,10 @@ using System.Drawing.Text;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[Designer ("System.Windows.Forms.Design.ButtonBaseDesigner, " + Consts.AssemblySystem_Design,
 		   "System.ComponentModel.Design.IDesigner")]
-#endif
 	public class Button : ButtonBase, IButtonControl {
 		#region Local variables
 		DialogResult	dialog_result;
@@ -50,7 +48,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Properties
-#if NET_2_0
 		[Browsable (true)]
 		[Localizable (true)]
 		[DefaultValue (AutoSizeMode.GrowOnly)]
@@ -59,7 +56,6 @@ namespace System.Windows.Forms {
 			get { return base.GetAutoSizeMode (); }
 			set { base.SetAutoSizeMode (value); }
 		}
-#endif
 
 		[DefaultValue (DialogResult.None)]
 		[MWFCategory("Behavior")]
@@ -106,7 +102,6 @@ namespace System.Windows.Forms {
 			base.OnClick (e);
 		}
 
-#if NET_2_0
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
@@ -121,19 +116,16 @@ namespace System.Windows.Forms {
 		{
 			base.OnMouseLeave (e);
 		}
-#endif
 
 		protected override void OnMouseUp (MouseEventArgs mevent)
 		{
 			base.OnMouseUp (mevent);
 		}
 
-#if NET_2_0
 		protected override void OnTextChanged (EventArgs e)
 		{
 			base.OnTextChanged (e);
 		}
-#endif
 
 		protected override bool ProcessMnemonic (char charCode)
 		{
@@ -159,18 +151,15 @@ namespace System.Windows.Forms {
 			remove { base.DoubleClick -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public new event MouseEventHandler MouseDoubleClick {
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }
 		}
-#endif
 		#endregion	// Events
 
 		#region	Internal methods
-#if NET_2_0
 		internal override void Draw (PaintEventArgs pevent)
 		{
 			// System style does not use any of the new 2.0 stuff
@@ -204,7 +193,6 @@ namespace System.Windows.Forms {
 				
 			return base.GetPreferredSizeCore (proposedSize);
 		}
-#endif
 		#endregion	// Internal methods
 	}
 }

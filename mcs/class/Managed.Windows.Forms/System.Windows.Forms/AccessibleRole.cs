@@ -91,11 +91,8 @@ namespace System.Windows.Forms {
 		PageTabList	= 60,
 		Clock		= 61,
 		Default		= -1,
-#if NET_2_0
 		SplitButton	= 62,
 		IpAddress	= 63,
 		OutlineButton	= 64
-#endif
-
 	}
 }

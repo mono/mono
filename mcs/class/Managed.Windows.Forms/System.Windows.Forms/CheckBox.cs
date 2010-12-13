@@ -32,12 +32,10 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[DefaultProperty("Checked")]
 	[DefaultEvent("CheckedChanged")]
-#if NET_2_0
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[DefaultBindingProperty ("CheckState")]
 	[ToolboxItem ("System.Windows.Forms.Design.AutoSizeToolboxItem," + Consts.AssemblySystem_Design)]
-#endif
 	public class CheckBox : ButtonBase {
 		#region Local Variables
 		internal Appearance		appearance;
@@ -96,14 +94,12 @@ namespace System.Windows.Forms {
 			}
 			#endregion	// CheckBoxAccessibleObject Properties
 
-#if NET_2_0
 			#region CheckBoxAccessibleObject Methods
 			public override void DoDefaultAction ()
 			{
 				owner.Checked = !owner.Checked;
 			}
 			#endregion	// CheckBoxAccessibleObject Methods
-#endif
 		}
 		#endregion	// CheckBoxAccessibleObject Sub-class
 
@@ -114,15 +110,12 @@ namespace System.Windows.Forms {
 			check_alignment = ContentAlignment.MiddleLeft;
 			TextAlign = ContentAlignment.MiddleLeft;
 			SetStyle(ControlStyles.StandardDoubleClick, false);
-#if NET_2_0
 			SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
-#endif
 		}
 		#endregion	// Public Constructors
 
 		#region	Internal Methods
 		internal override void Draw (PaintEventArgs pe) {
-#if NET_2_0
 			// FIXME: This should be called every time something that can affect it
 			// is changed, not every paint.  Can only change so many things at a time.
 
@@ -138,12 +131,8 @@ namespace System.Windows.Forms {
 				ThemeEngine.Current.DrawCheckBox (pe.Graphics, this, glyph_rectangle, text_rectangle, image_rectangle, pe.ClipRectangle);
 			else
 				ThemeEngine.Current.DrawCheckBox (pe.Graphics, this.ClientRectangle, this);
-#else
-			ThemeEngine.Current.DrawCheckBox (pe.Graphics, this.ClientRectangle, this);
-#endif
 		}
 
-#if NET_2_0
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
 			if (this.AutoSize)
@@ -151,7 +140,6 @@ namespace System.Windows.Forms {
 
 			return base.GetPreferredSizeCore (proposedSize);
 		}
-#endif
 
 		internal override void HaveDoubleClick() {
 			if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
@@ -210,9 +198,7 @@ namespace System.Windows.Forms {
 		[Bindable(true)]
 		[RefreshProperties(RefreshProperties.All)]
 		[DefaultValue(false)]
-#if NET_2_0
 		[SettingsBindable (true)]
-#endif
 		public bool Checked {
 			get {
 				if (check_state != CheckState.Unchecked) {
@@ -357,12 +343,10 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated (e);
 		}
 
-#if NET_2_0
 		protected override void OnKeyDown (KeyEventArgs e)
 		{
 			base.OnKeyDown (e);
 		}
-#endif
 
 		protected override void OnMouseUp(MouseEventArgs mevent) {
 			base.OnMouseUp (mevent);
@@ -399,14 +383,12 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (CheckStateChangedEvent, value); }
 		}
 		
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseDoubleClick {
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }
 		}
-#endif
 		#endregion	// Events
 
 		#region Events

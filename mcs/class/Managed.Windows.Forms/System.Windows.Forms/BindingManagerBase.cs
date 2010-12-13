@@ -46,9 +46,7 @@ namespace System.Windows.Forms
 		#region Protected Instance Fields
 		protected EventHandler onCurrentChangedHandler;
 		protected EventHandler onPositionChangedHandler;
-#if NET_2_0
 		internal EventHandler onCurrentItemChangedHandler;
-#endif
 		#endregion	// Protected Instance Fields
 
 		#region Public Instance Properties
@@ -69,13 +67,11 @@ namespace System.Windows.Forms
 			get;
 		}
 
-#if NET_2_0
 		public bool IsBindingSuspended {
 			get {
 				return IsSuspended;
 			}
 		}
-#endif
 
 		public abstract int Position {
 			get; set;
@@ -89,7 +85,6 @@ namespace System.Windows.Forms
 
 		public abstract void EndCurrentEdit();
 
-#if NET_2_0
 		public virtual PropertyDescriptorCollection GetItemProperties()
 		{
 			return GetItemPropertiesInternal ();
@@ -99,9 +94,6 @@ namespace System.Windows.Forms
 		{
 			throw new NotImplementedException ();
 		}
-#else
-		public abstract PropertyDescriptorCollection GetItemProperties();
-#endif
 
 		public abstract void RemoveAt(int index);
 
@@ -164,7 +156,6 @@ namespace System.Windows.Forms
 		}
 
 
-#if NET_2_0
 		protected void OnBindingComplete (BindingCompleteEventArgs args)
 		{
 			if (BindingComplete != null)
@@ -178,7 +169,6 @@ namespace System.Windows.Forms
 			if (DataError != null)
 				DataError (this, new BindingManagerDataErrorEventArgs (e));
 		}
-#endif
 
 		protected abstract void UpdateIsBinding();
 		#endregion	// Protected Instance Methods
@@ -201,7 +191,6 @@ namespace System.Windows.Forms
 			remove { onPositionChangedHandler -= value; }
 		}
 
-#if NET_2_0
 		public event EventHandler CurrentItemChanged {
 			add { onCurrentItemChangedHandler += value; }
 			remove { onCurrentItemChangedHandler -= value; }
@@ -209,7 +198,6 @@ namespace System.Windows.Forms
 
 		public event BindingCompleteEventHandler BindingComplete;
 		public event BindingManagerDataErrorEventHandler DataError;
-#endif
 		#endregion	// Events
 	}
 }

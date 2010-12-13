@@ -30,9 +30,6 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms {
 	[Flags]
-#if !NET_2_0
-	[Serializable]
-#endif
 	[Editor("System.Windows.Forms.Design.AnchorEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 	public enum AnchorStyles {
 		None	= 0x00000000,

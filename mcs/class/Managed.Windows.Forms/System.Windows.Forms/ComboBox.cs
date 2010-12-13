@@ -39,11 +39,9 @@ namespace System.Windows.Forms
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedIndexChanged")]
 	[Designer ("System.Windows.Forms.Design.ComboBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[DefaultBindingProperty ("Text")]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
-#endif
 	public class ComboBox : ListControl
 	{
 		private DrawMode draw_mode = DrawMode.Normal;
@@ -72,14 +70,12 @@ namespace System.Windows.Forms
 		private Rectangle listbox_area;
 		private const int button_width = 16;
 		bool drop_down_button_entered;
-#if NET_2_0
 		private AutoCompleteStringCollection auto_complete_custom_source = null;
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
 		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
 		private FlatStyle flat_style;
 		private int drop_down_height;
 		const int default_drop_down_height = 106;
-#endif
 
 		[ComVisible(true)]
 		public class ChildAccessibleObject : AccessibleObject {
@@ -104,10 +100,8 @@ namespace System.Windows.Forms
 			background_color = ThemeEngine.Current.ColorWindow;
 			border_style = BorderStyle.None;
 
-#if NET_2_0
 			drop_down_height = default_drop_down_height;
 			flat_style = FlatStyle.Standard;
-#endif
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
@@ -128,8 +122,6 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 		
-#if NET_2_0
-
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged
@@ -145,7 +137,6 @@ namespace System.Windows.Forms
 			add { base.DoubleClick += value; }
 			remove { base.DoubleClick -= value; }
 		}
-#endif
 
 		static object DrawItemEvent = new object ();
 		static object DropDownEvent = new object ();
@@ -153,10 +144,8 @@ namespace System.Windows.Forms
 		static object MeasureItemEvent = new object ();
 		static object SelectedIndexChangedEvent = new object ();
 		static object SelectionChangeCommittedEvent = new object ();
-#if NET_2_0
 		static object DropDownClosedEvent = new object ();
 		static object TextUpdateEvent = new object ();
-#endif
 
 		public event DrawItemEventHandler DrawItem {
 			add { Events.AddHandler (DrawItemEvent, value); }
@@ -167,13 +156,11 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (DropDownEvent, value); }
 			remove { Events.RemoveHandler (DropDownEvent, value); }
 		}
-#if NET_2_0
 		public event EventHandler DropDownClosed
 		{
 			add { Events.AddHandler (DropDownClosedEvent, value); }
 			remove { Events.RemoveHandler (DropDownClosedEvent, value); }
 		}
-#endif
 
 		public event EventHandler DropDownStyleChanged {
 			add { Events.AddHandler (DropDownStyleChangedEvent, value); }
@@ -184,7 +171,6 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (MeasureItemEvent, value); }
 			remove { Events.RemoveHandler (MeasureItemEvent, value); }
 		}
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler PaddingChanged
@@ -192,7 +178,6 @@ namespace System.Windows.Forms
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
 		}
-#endif
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -210,18 +195,15 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (SelectionChangeCommittedEvent, value); }
 			remove { Events.RemoveHandler (SelectionChangeCommittedEvent, value); }
 		}
-#if NET_2_0
 		public event EventHandler TextUpdate
 		{
 			add { Events.AddHandler (TextUpdateEvent, value); }
 			remove { Events.RemoveHandler (TextUpdateEvent, value); }
 		}
-#endif
 
 		#endregion Events
 
 		#region Public Properties
-#if NET_2_0
 		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Browsable (true)]
@@ -306,7 +288,6 @@ namespace System.Windows.Forms
 				textbox_ctrl.AutoCompleteInternalSource = null;
 			}
 		}
-#endif
 		public override Color BackColor {
 			get { return base.BackColor; }
 			set {
@@ -329,20 +310,17 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 
 		protected override CreateParams CreateParams {
 			get { return base.CreateParams;}
 		}
 
-#if NET_2_0
 		[DefaultValue ((string)null)]
 		[AttributeProvider (typeof (IListSource))]
 		[RefreshProperties (RefreshProperties.Repaint)]
@@ -351,7 +329,6 @@ namespace System.Windows.Forms
 			get { return base.DataSource; }
 			set { base.DataSource = value; }
 		}
-#endif
 
 		protected override Size DefaultSize {
 			get { return new Size (121, 21); }
@@ -378,7 +355,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[DefaultValue (106)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
@@ -398,7 +374,6 @@ namespace System.Windows.Forms
 				IntegralHeight = false;
 			}
 		}
-#endif
 
 		[DefaultValue (ComboBoxStyle.DropDown)]
 		[RefreshProperties(RefreshProperties.Repaint)]
@@ -461,9 +436,7 @@ namespace System.Windows.Forms
 
 					if (IsHandleCreated == true)
 						Controls.AddImplicit (textbox_ctrl);
-#if NET_2_0
 					SetTextBoxAutoCompleteData ();
-#endif
 				}
 				
 				ResumeLayout ();
@@ -488,12 +461,8 @@ namespace System.Windows.Forms
 					return;
 					
 				if (value < 1)
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("DropDownWidth",
 						"The DropDownWidth value is less than one.");
-#else
-					throw new ArgumentException ("The DropDownWidth value is less than one.");
-#endif
 
 				dropdown_width = value;
 			}
@@ -519,7 +488,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (FlatStyle.Standard)]
 		[Localizable (true)]
 		[MWFCategory("Appearance")]
@@ -534,7 +502,6 @@ namespace System.Windows.Forms
 				Invalidate ();
 			}
 		}
-#endif
 
 		public override bool Focused {
 			get { return base.Focused; }
@@ -576,12 +543,8 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < 1)
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("ItemHeight",
 						"The item height value is less than one.");
-#else
-					throw new ArgumentException ("The item height value is less than one.");
-#endif
 
 				item_height_specified = true;
 				item_height = value;
@@ -595,9 +558,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
 		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-#if NET_2_0
 		[MergableProperty (false)]
-#endif
 		[MWFCategory("Data")]
 		public ComboBox.ObjectCollection Items {
 			get { return items; }
@@ -615,14 +576,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public override Size MaximumSize {
 			get { return base.MaximumSize; }
 			set {
 				base.MaximumSize = new Size (value.Width, 0);
 			}
 		}
-#endif
 
 		[DefaultValue (0)]
 		[Localizable (true)]
@@ -644,7 +603,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public override Size MinimumSize {
 			get { return base.MinimumSize; }
 			set {
@@ -659,7 +617,6 @@ namespace System.Windows.Forms
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}
-#endif
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -702,11 +659,6 @@ namespace System.Windows.Forms
 					
 				string retval = textbox_ctrl.SelectedText;
 				
-#if ONLY_1_1
-				// On 1.1, the textbox will return null, combobox returns ""
-				if (retval == null && !textbox_ctrl.IsHandleCreated)
-					return string.Empty;
-#endif					
 				return retval;
 			}
 			set {
@@ -840,9 +792,7 @@ namespace System.Windows.Forms
 		#endregion UIA Framework Properties
 
 		#region Public Methods
-#if NET_2_0
 		[Obsolete ("This method has been deprecated")]
-#endif
 		protected virtual void AddItemsCore (object[] value)
 		{
 			
@@ -853,7 +803,6 @@ namespace System.Windows.Forms
 			suspend_ctrlupdate = true;
 		}
 
-#if NET_2_0
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
 			return base.CreateAccessibilityInstance ();
@@ -863,7 +812,6 @@ namespace System.Windows.Forms
 		{
 			base.CreateHandle ();
 		}
-#endif
 
 		protected override void Dispose (bool disposing)
 		{
@@ -901,18 +849,12 @@ namespace System.Windows.Forms
 			if (s == null || Items.Count == 0) 
 				return -1;
 
-#if NET_2_0
 			if (startIndex < -1 || startIndex >= Items.Count)
-#else
-			if (startIndex < -1 || startIndex >= Items.Count - 1)
-#endif
 				throw new ArgumentOutOfRangeException ("startIndex");
 
 			int i = startIndex;
-#if NET_2_0
 			if (i == (Items.Count - 1))
 				i = -1;
-#endif
 			do {
 				i++;
 				if (string.Compare (s, 0, GetItemText (Items [i]), 0, s.Length, true) == 0)
@@ -939,18 +881,12 @@ namespace System.Windows.Forms
 			if (s == null || Items.Count == 0) 
 				return -1;
 
-#if NET_2_0
 			if (startIndex < -1 || startIndex >= Items.Count)
-#else
-			if (startIndex < -1 || startIndex >= Items.Count - 1)
-#endif
 				throw new ArgumentOutOfRangeException ("startIndex");
 
 			int i = startIndex;
-#if NET_2_0
 			if (i == (Items.Count - 1))
 				i = -1;
-#endif
 			do {
 				i++;
 				if (string.Compare (s, GetItemText (Items [i]), ignoreCase, CultureInfo.CurrentCulture) == 0)
@@ -1067,14 +1003,12 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-#if NET_2_0
 		protected virtual void OnDropDownClosed (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) Events [DropDownClosedEvent];
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		protected virtual void OnDropDownStyleChanged (EventArgs e)
 		{
@@ -1143,9 +1077,7 @@ namespace System.Windows.Forms
 				textbox_ctrl.ActivateCaret (false);
 				textbox_ctrl.ShowSelection = false;
 				textbox_ctrl.SelectionLength = 0;
-#if NET_2_0
 				textbox_ctrl.HideAutoCompleteList ();
-#endif
 			}
 
 			base.OnLostFocus (e);
@@ -1241,7 +1173,6 @@ namespace System.Windows.Forms
 				item_heights.Remove (Items [index]);
 		}
 
-#if NET_2_0
 		protected override void RefreshItems ()
 		{
 			for (int i = 0; i < Items.Count; i++) {
@@ -1283,39 +1214,30 @@ namespace System.Windows.Forms
 			base.OnTextChanged (e);
 		}
 
-#if NET_2_0
 		protected virtual void OnTextUpdate (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) Events [TextUpdateEvent];
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		protected override void OnMouseLeave (EventArgs e)
 		{
-#if NET_2_0
 			if (flat_style == FlatStyle.Popup)
 				Invalidate ();
-#endif
 			base.OnMouseLeave (e);
 		}
 		
 		protected override void OnMouseEnter (EventArgs e)
 		{
-#if NET_2_0
 			if (flat_style == FlatStyle.Popup)
 				Invalidate ();
-#endif
 			base.OnMouseEnter (e);
 		}
-#endif
 
-#if NET_2_0
 		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
 		{
 			base.ScaleControl (factor, specified);
 		}
-#endif
 
 		public void Select (int start, int length)
 		{
@@ -1387,13 +1309,11 @@ namespace System.Windows.Forms
 			case Msg.WM_KEYUP:
 			case Msg.WM_KEYDOWN:
 				Keys keys = (Keys) m.WParam.ToInt32 ();
-#if NET_2_0
 				// Don't pass the message to base if auto complete is being used and available.
 				if (textbox_ctrl != null && textbox_ctrl.CanNavigateAutoCompleteList) {
 					XplatUI.SendMessage (textbox_ctrl.Handle, (Msg) m.Msg, m.WParam, m.LParam);
 					return;
 				}
-#endif
 				if (keys == Keys.Up || keys == Keys.Down)
 					break;
 				goto case Msg.WM_CHAR;
@@ -1416,13 +1336,11 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 
 		#region Private Methods
-#if NET_2_0
 		void OnAutoCompleteCustomSourceChanged(object sender, CollectionChangeEventArgs e) {
 			if(auto_complete_source == AutoCompleteSource.CustomSource) {
 				//FIXME: handle add, remove and refresh events in AutoComplete algorithm.
 			}
 		}
-#endif
 
 		internal override bool InternalCapture {
 			get { return Capture; }
@@ -1450,13 +1368,11 @@ namespace System.Windows.Forms
 				button_area.Y = text_area.Y + border;
 				button_area.Width = button_width;
 				button_area.Height = text_area.Height - 2 * border;
-#if NET_2_0
 				if (flat_style == FlatStyle.Popup || flat_style == FlatStyle.Flat) {
 					button_area.Inflate (1, 1);
 					button_area.X += 2;
 					button_area.Width -= 2;
 				}
-#endif
 			}
 
 			if (button_area != prev_button_area) {
@@ -1492,10 +1408,8 @@ namespace System.Windows.Forms
 			FlatStyle style = FlatStyle.Standard;
 			bool is_flat = false;
 
-#if NET_2_0
 			style = this.FlatStyle;
 			is_flat = style == FlatStyle.Flat || style == FlatStyle.Popup;
-#endif
 
 			theme.ComboBoxDrawBackground (this, dc, clip, style);
 
@@ -1566,10 +1480,8 @@ namespace System.Windows.Forms
 
 			FindMatchOrSetIndex(SelectedIndex);
 
-#if NET_2_0
 			if (textbox_ctrl != null)
 				textbox_ctrl.HideAutoCompleteList ();
-#endif
 
 			if (listbox_ctrl.ShowWindow ())
 				dropped_down = true;
@@ -1588,9 +1500,7 @@ namespace System.Windows.Forms
 			button_state = ButtonState.Normal;
 			Invalidate (button_area);
 			dropped_down = false;
-#if NET_2_0
 			OnDropDownClosed (EventArgs.Empty);
-#endif
 			/*
 			 * Apples X11 looses override-redirect when doing a Unmap/Map on a previously mapped window
 			 * this causes the popup to appear under the main form.  This is horrible but necessary
@@ -1602,12 +1512,10 @@ namespace System.Windows.Forms
 				listbox_ctrl.Dispose ();
 				listbox_ctrl = null;
 			}
-#if NET_2_0
 			 // The auto complete list could have been shown after the listbox,
 			 // so make sure it's hidden.
 			 if (textbox_ctrl != null)
 				 textbox_ctrl.HideAutoCompleteList ();
-#endif
 		}
 		
 		private int FindStringCaseInsensitive (string search)
@@ -2004,7 +1912,6 @@ namespace System.Windows.Forms
 			
 			#region UIA Framework Events
 
-#if NET_2_0
 			//NOTE:
 			//	We are using Reflection to add/remove internal events.
 			//	Class ListProvider uses the events.
@@ -2024,7 +1931,6 @@ namespace System.Windows.Forms
 				if (eh != null)
 					eh (owner, args);
 			}
-#endif
 
 			#endregion UIA Framework Events
 
@@ -2057,17 +1963,13 @@ namespace System.Windows.Forms
 					if (value == null)
 						throw new ArgumentNullException ("value");
 
-#if NET_2_0
 					//UIA Framework event: Item Removed
 					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, object_items [index]));
-#endif
 
 					object_items[index] = value;
 					
-#if NET_2_0
 					//UIA Framework event: Item Added
 					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
-#endif
 
 					if (owner.listbox_ctrl != null)
 						owner.listbox_ctrl.InvalidateItem (index);
@@ -2125,10 +2027,8 @@ namespace System.Windows.Forms
 				owner.UpdatedItems ();
 				owner.Refresh ();
 				
-#if NET_2_0
 				//UIA Framework event: Items list cleared
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
-#endif
 			}
 			
 			public bool Contains (object value)
@@ -2139,7 +2039,6 @@ namespace System.Windows.Forms
 				return object_items.Contains (value);
 			}
 
-#if NET_2_0
 			public void CopyTo (object [] destination, int arrayIndex)
 			{
 				object_items.CopyTo (destination, arrayIndex);
@@ -2149,17 +2048,6 @@ namespace System.Windows.Forms
 			{
 				object_items.CopyTo (destination, index);
 			}
-#else
-			public void CopyTo (object [] dest, int arrayIndex)
-			{
-				object_items.CopyTo (dest, arrayIndex);
-			}
-
-			void ICollection.CopyTo (Array dest, int index)
-			{
-				object_items.CopyTo (dest, index);
-			}
-#endif
 
 			public IEnumerator GetEnumerator ()
 			{
@@ -2192,10 +2080,8 @@ namespace System.Windows.Forms
 					AddItem (item, false);
 				else {
 					object_items.Insert (index, item);
-#if NET_2_0
 					//UIA Framework event: Item added
 					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
-#endif					
 				}
 				
 				owner.EndUpdate ();	// Calls UpdatedItems
@@ -2220,18 +2106,13 @@ namespace System.Windows.Forms
 				if (index == owner.SelectedIndex)
 					owner.SelectedIndex = -1;
 
-#if NET_2_0
 				object removed = object_items [index];
-#endif
-
 
 				object_items.RemoveAt (index);
 				owner.UpdatedItems ();
 				
-#if NET_2_0
 				//UIA Framework event: Item removed
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, removed));
-#endif
 			}
 			#endregion Public Methods
 
@@ -2255,10 +2136,8 @@ namespace System.Windows.Forms
 							if (index <= owner.selected_index && owner.IsHandleCreated)
 								owner.selected_index++;
 								
-#if NET_2_0
 							//UIA Framework event: Item added
 							OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
-#endif
 
 							return index;
 						}
@@ -2267,10 +2146,8 @@ namespace System.Windows.Forms
 				}
 				object_items.Add (item);
 				
-#if NET_2_0
 				//UIA Framework event: Item added
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
-#endif
 				
 				return object_items.Count - 1;
 			}
@@ -2324,9 +2201,7 @@ namespace System.Windows.Forms
 				this.owner = owner;
 				ShowSelection = false;
 				owner.EnabledChanged += OwnerEnabledChangedHandler;
-#if NET_2_0
 				owner.LostFocus += OwnerLostFocusHandler;
-#endif
 			}
 
 			void OwnerEnabledChangedHandler (object o, EventArgs args)
@@ -2334,7 +2209,6 @@ namespace System.Windows.Forms
 				ShowSelection = owner.Focused && owner.Enabled;
 			}
 
-#if NET_2_0
 			void OwnerLostFocusHandler (object o, EventArgs args)
 			{
 				if (IsAutoCompleteAvailable)
@@ -2354,7 +2228,6 @@ namespace System.Windows.Forms
 				base.OnAutoCompleteValueSelected (args);
 				owner.Text = Text;
 			}
-#endif
 
 			internal void SetSelectable (bool selectable)
 			{
@@ -2369,13 +2242,11 @@ namespace System.Windows.Forms
 					document.CaretLostFocus ();
 			}
 			
-#if NET_2_0
 			internal override void OnTextUpdate ()
 			{
 				base.OnTextUpdate ();
 				owner.OnTextUpdate (EventArgs.Empty);
 			}
-#endif
 			
 			protected override void OnGotFocus (EventArgs e)
 			{
@@ -2580,7 +2451,6 @@ namespace System.Windows.Forms
 						show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
 						
 					} else	{
-#if NET_2_0
 						if (owner.DropDownHeight == default_drop_down_height) { // ignore DropDownHeight
 							height = owner.ItemHeight * visible_items_count;
 							show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
@@ -2589,10 +2459,6 @@ namespace System.Windows.Forms
 							height = owner.DropDownHeight;
 							show_scrollbar = (owner.Items.Count * owner.ItemHeight) > height;
 						}
-#else		
-						height = owner.ItemHeight * visible_items_count;
-						show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
-#endif
 					}
 				}
 				
@@ -2620,11 +2486,7 @@ namespace System.Windows.Forms
 					vscrollbar_ctrl.Dock = DockStyle.Right;
 
 					vscrollbar_ctrl.Maximum = owner.Items.Count - 1;
-#if NET_2_0
 					int large = page_size;
-#else
-					int large = (dropdown_style == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items) - 1;
-#endif
 					if (large < 1)
 						large = 1;
 					vscrollbar_ctrl.LargeChange = large;

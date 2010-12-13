@@ -70,9 +70,7 @@ namespace System.Windows.Forms {
 		protected virtual void AddCore (Binding dataBinding) 
 		{
 			CollectionChangeEventArgs args = new CollectionChangeEventArgs (CollectionChangeAction.Add, dataBinding);
-#if NET_2_0
 			OnCollectionChanging (args);
-#endif
 			base.List.Add(dataBinding);
 			OnCollectionChanged (args);
 		}
@@ -84,9 +82,7 @@ namespace System.Windows.Forms {
 		protected virtual void ClearCore() 
 		{
 			CollectionChangeEventArgs args = new CollectionChangeEventArgs(CollectionChangeAction.Refresh, null);
-#if NET_2_0
 			OnCollectionChanging (args);
-#endif
 			base.List.Clear();
 			OnCollectionChanged (args);
 		}
@@ -95,13 +91,11 @@ namespace System.Windows.Forms {
 			if (CollectionChanged!=null) CollectionChanged(this, ccevent);
 		}
 
-#if NET_2_0
 		protected virtual void OnCollectionChanging (CollectionChangeEventArgs e)
 		{
 			if (CollectionChanging != null)
 				CollectionChanging (this, e);
 		}
-#endif
 
 		protected internal void Remove(Binding binding) {
 			RemoveCore(binding);
@@ -115,9 +109,7 @@ namespace System.Windows.Forms {
 		protected virtual void RemoveCore(Binding dataBinding) 
 		{
 			CollectionChangeEventArgs args = new CollectionChangeEventArgs(CollectionChangeAction.Remove, dataBinding);
-#if NET_2_0
 			OnCollectionChanging (args);
-#endif
 			base.List.Remove(dataBinding);
 			OnCollectionChanged (args);
 		}
@@ -138,9 +130,7 @@ namespace System.Windows.Forms {
 
 		#region Events
 		public event CollectionChangeEventHandler	CollectionChanged;
-#if NET_2_0
 		public event CollectionChangeEventHandler	CollectionChanging;
-#endif
 		#endregion	// Events
 	}
 }
