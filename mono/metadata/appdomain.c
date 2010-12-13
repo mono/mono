@@ -2427,6 +2427,11 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 			/* The icall wrapper will execute the abort */
 			CloseHandle (thread_handle);
 			return;
+		} else if (mono_thread_internal_has_appdomain_ref (mono_thread_internal_current (), domain) && !(mono_thread_interruption_requested ())) {
+			if (!domain->friendly_name) {
+				CloseHandle (thread_handle);
+				return;
+			}
 		}
 	}
 	CloseHandle (thread_handle);
