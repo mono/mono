@@ -2846,8 +2846,6 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 
 		if (event == EVENT_KIND_VM_START && arg != NULL)
 			thread = arg;
-		else if (event == EVENT_KIND_THREAD_START)
-			g_assert (debugger_thread_id == GetCurrentThreadId () || mono_thread_internal_current () == arg);
 
 		buffer_add_objid (&buf, (MonoObject*)thread); // thread
 
