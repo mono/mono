@@ -427,13 +427,14 @@ namespace System.Reflection.Emit
 			}
 #endif
 		}
-/*
+
+		// Still in use by al.exe
 		internal void EmbedResourceFile (string name, string fileName)
 		{
 			EmbedResourceFile (name, fileName, ResourceAttributes.Public);
 		}
 
-		internal void EmbedResourceFile (string name, string fileName, ResourceAttributes attribute)
+		void EmbedResourceFile (string name, string fileName, ResourceAttributes attribute)
 		{
 			if (resources != null) {
 				MonoResource[] new_r = new MonoResource [resources.Length + 1];
@@ -454,7 +455,7 @@ namespace System.Reflection.Emit
 			} catch {
 			}
 		}
-
+/*
 		internal void EmbedResource (string name, byte[] blob, ResourceAttributes attribute)
 		{
 			if (resources != null) {
