@@ -843,7 +843,8 @@ namespace System.Xml.Serialization
 						else if (memType == typeof(XmlTypeMapMemberElement))
 						{
 							if (member.ElementInfo.Count == 1) {
-								GenerateWriteMemberElement ((XmlTypeMapElementInfo)member.ElementInfo[0], memberValue);
+								XmlTypeMapElementInfo elem = (XmlTypeMapElementInfo)member.ElementInfo[0];
+								GenerateWriteMemberElement (elem, GetCast(elem.TypeData, member.TypeData, memberValue));
 							}
 							else if (member.ChoiceMember != null)
 							{
@@ -973,20 +974,19 @@ namespace System.Xml.Serialization
 			bool singleElement = (member.TypeData.Type == typeof (XmlElement));
 			string var, var2;
 			
-			var2 = GetObTempVar ();
+			var = GetObTempVar ();
 			if (singleElement)
-				var = memberValue;
+				var2 = memberValue;
 			else {
-				var = GetObTempVar ();
+				var2 = GetObTempVar ();
 				WriteLineInd ("foreach (object " + var2 + " in " + memberValue + ") {");
 			}
 			WriteLine ("XmlNode " + var + " = " + var2 + " as XmlNode;");
-			WriteLine ("if (" + var + " == null && " + var2 + "!= null) throw new InvalidOperationException (\"A member with XmlAnyElementAttribute can only serialize and deserialize certain XmlNode types.");
-			WriteLineUni ("}");
+			WriteLine ("if (" + var + " == null && " + var2 + "!= null) throw new InvalidOperationException (\"A member with XmlAnyElementAttribute can only serialize and deserialize certain XmlNode types.\");");
 
 			string elem = GetObTempVar ();
 			WriteLine ("XmlNode " + elem + " = " + var + ";");
-			WriteLine ("if (" + elem + " is XmlElement) {");
+			WriteLineInd ("if (" + elem + " is XmlElement) {");
 			
 			if (!member.IsDefaultAny) {
 				for (int n=0; n<member.ElementInfo.Count; n++) {
@@ -997,8 +997,6 @@ namespace System.Xml.Serialization
 					else WriteLine ("|| " + txt);
 				}				
 			}
-			WriteLine ("}");
-			WriteLine ("else " + elem + ".WriteTo (Writer);");
 
 			if (_format == SerializationFormat.Literal) 
 				WriteLine ("WriteElementLiteral (" + elem + ", \"\", \"\", false, true);");
@@ -1011,6 +1009,8 @@ namespace System.Xml.Serialization
 				WriteLine ("throw CreateUnknownAnyElementException (" + elem + ".Name, " + elem + ".NamespaceURI);");
 				Unindent ();
 			}
+			WriteLineUni ("}");
+			WriteLine ("else " + elem + ".WriteTo (Writer);");
 			
 			if (!singleElement)
 				WriteLineUni ("}");
@@ -1743,7 +1743,10 @@ namespace System.Xml.Serialization
 							if (!map.IgnoreMemberNamespace) elemCond += " && Reader.NamespaceURI == " + GetLiteral (info.Namespace);
 							elemCond += " && ";
 						}
-						elemCond += "!" + readFlag[info.Member.Index] + ") {";
+						if (readFlag[info.Member.Index] != null)
+							elemCond += "!" + readFlag[info.Member.Index] + ") {";
+						else
+							elemCond += "true) {";
 						WriteLineInd (elemCond);
 					}
 	
@@ -2741,7 +2744,10 @@ namespace System.Xml.Serialization
 
 		string GetCast (TypeData td, string val)
 		{
-			return "((" + td.CSharpFullName + ") " + val + ")";
+			if (td.IsNullable && td.IsValueType)
+				return "((" + td.CSharpFullName + "?) " + val + ")";
+			else
+				return "((" + td.CSharpFullName + ") " + val + ")";
 		}
 
 		string GetCast (Type td, string val)
