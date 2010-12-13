@@ -5109,20 +5109,16 @@ namespace System.Windows.Forms
 			{
 				if (items == null)
 					throw new ArgumentNullException ("Argument cannot be null!", "items");
-#if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
-#endif
 
 				owner.BeginUpdate ();
 				
 				foreach (ListViewItem item in items) {
 					AddItem (item);
 
-#if NET_2_0
 					//UIA Framework event: Item Added
 					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
-#endif
 				}
 
 				owner.EndUpdate ();
@@ -5130,7 +5126,6 @@ namespace System.Windows.Forms
 				CollectionChanged (true);
 			}
 
-#if NET_2_0
 			public void AddRange (ListViewItemCollection items)
 			{
 				if (items == null)
@@ -5140,46 +5135,36 @@ namespace System.Windows.Forms
 				items.CopyTo (itemArray,0);
 				this.AddRange (itemArray);
 			}
-#endif
 
 			public virtual void Clear ()
 			{
-#if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
-#endif
 				if (is_main_collection && owner != null) {
 					owner.SetFocusedItem (-1);
 					owner.h_scroll.Value = owner.v_scroll.Value = 0;
 
-#if NET_2_0
 					// first remove any item in the groups that *are* part of this LV too
 					foreach (ListViewGroup group in owner.groups)
 						group.Items.ClearItemsWithSameListView ();
-#endif
 				
 					foreach (ListViewItem item in list) {
 						owner.item_control.CancelEdit (item);
 						item.Owner = null;
 					}
 				}
-#if NET_2_0
 				else
 					foreach (ListViewItem item in list)
 						item.SetGroup (null);
-#endif
 
 				list.Clear ();
 				CollectionChanged (false);
 
-#if NET_2_0
 				//UIA Framework event: Items Removed
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
-#endif
 
 			}
 
-#if NET_2_0
 			// This method is intended to be used from ListViewGroup.Items, not from ListView.Items,
 			// added for performance reasons (avoid calling manually Remove for every item on ListViewGroup.Items)
 			void ClearItemsWithSameListView ()
@@ -5200,26 +5185,22 @@ namespace System.Windows.Forms
 					counter--;
 				}
 			}
-#endif
 
 			public bool Contains (ListViewItem item)
 			{
 				return IndexOf (item) != -1;
 			}
 
-#if NET_2_0
 			public virtual bool ContainsKey (string key)
 			{
 				return IndexOfKey (key) != -1;
 			}
-#endif
 
 			public void CopyTo (Array dest, int index)
 			{
 				list.CopyTo (dest, index);
 			}
 
-#if NET_2_0
 			public ListViewItem [] Find (string key, bool searchAllSubItems)
 			{
 				if (key == null)
@@ -5238,14 +5219,11 @@ namespace System.Windows.Forms
 
 				return retval;
 			}
-#endif
 
 			public IEnumerator GetEnumerator ()
 			{
-#if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
-#endif
 
 				// This enumerator makes a copy of the collection so
 				// it can be deleted from in a foreach
@@ -5257,10 +5235,8 @@ namespace System.Windows.Forms
 				int result;
 				ListViewItem li;
 
-#if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
-#endif
 
 				if (item is ListViewItem) {
 					li = (ListViewItem) item;
@@ -5279,10 +5255,8 @@ namespace System.Windows.Forms
 				result = list.Add (li);
 				CollectionChanged (true);
 
-#if NET_2_0
 				//UIA Framework event: Item Added
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, li));
-#endif
 
 				return result;
 			}
@@ -5304,10 +5278,8 @@ namespace System.Windows.Forms
 				else
 					this.Insert (index, item.ToString ());
 
-#if NET_2_0
 				//UIA Framework event: Item Added
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, this [index]));
-#endif
 			}
 
 			void IList.Remove (object item)
@@ -5317,7 +5289,6 @@ namespace System.Windows.Forms
 
 			public int IndexOf (ListViewItem item)
 			{
-#if NET_2_0
 				if (owner != null && owner.VirtualMode) {
 					for (int i = 0; i < Count; i++)
 						if (RetrieveVirtualItemFromOwner (i) == item)
@@ -5325,12 +5296,10 @@ namespace System.Windows.Forms
 
 					return -1;
 				}
-#endif
 				
 				return list.IndexOf (item);
 			}
 
-#if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
 				if (key == null || key.Length == 0)
@@ -5344,17 +5313,14 @@ namespace System.Windows.Forms
 
 				return -1;
 			}
-#endif
 
 			public ListViewItem Insert (int index, ListViewItem item)
 			{
 				if (index < 0 || index > list.Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-#if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
-#endif
 
 				if (list.Contains (item))
 					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
@@ -5364,14 +5330,12 @@ namespace System.Windows.Forms
 
 				if (is_main_collection)
 					item.Owner = owner;
-#if NET_2_0
 				else {
 					if (item.Group != null)
 						item.Group.Items.Remove (item);
 
 					item.SetGroup (group);
 				}
-#endif
 
 				list.Insert (index, item);
 
@@ -5381,10 +5345,8 @@ namespace System.Windows.Forms
 				// force an update of the selected info if the new item is selected.
 				if (item.Selected)
 					item.SetSelectedCore (true);
-#if NET_2_0
 				//UIA Framework event: Item Added
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
-#endif
 
 				return item;
 			}
@@ -5399,7 +5361,6 @@ namespace System.Windows.Forms
 				return this.Insert (index, new ListViewItem (text, imageIndex));
 			}
 
-#if NET_2_0
 			public ListViewItem Insert (int index, string text, string imageKey)
 			{
 				ListViewItem lvi = new ListViewItem (text, imageKey);
@@ -5419,14 +5380,11 @@ namespace System.Windows.Forms
 				lvi.Name = key;
 				return Insert (index, lvi);
 			}
-#endif
 
 			public virtual void Remove (ListViewItem item)
 			{
-#if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
-#endif
 
 				int idx = list.IndexOf (item);
 				if (idx != -1)
@@ -5438,10 +5396,8 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-#if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
-#endif
 
 				ListViewItem item = (ListViewItem) list [index];
 
@@ -5458,36 +5414,28 @@ namespace System.Windows.Forms
 
 				list.RemoveAt (index);
 
-#if NET_2_0
 				if (is_main_collection) {
 					item.Owner = null;
 					if (item.Group != null)
 						item.Group.Items.Remove (item);
 				} else
 					item.SetGroup (null);
-#else
-				item.Owner = null;
-#endif
 
 				CollectionChanged (false);
 				if (selection_changed && owner != null)
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
 
 
-#if NET_2_0
 				//UIA Framework event: Item Removed 
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
-#endif
 			}
 
-#if NET_2_0
 			public virtual void RemoveByKey (string key)
 			{
 				int idx = IndexOfKey (key);
 				if (idx != -1)
 					RemoveAt (idx);
 			}
-#endif
 
 			#endregion	// Public Methods
 
@@ -5500,7 +5448,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			internal ListViewGroup Group {
 				get {
 					return group;
@@ -5509,7 +5456,6 @@ namespace System.Windows.Forms
 					group = value;
 				}
 			}
-#endif
 
 			void AddItem (ListViewItem value)
 			{
@@ -5520,14 +5466,12 @@ namespace System.Windows.Forms
 					throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
 				if (is_main_collection)
 					value.Owner = owner;
-#if NET_2_0
 				else {
 					if (value.Group != null)
 						value.Group.Items.Remove (value);
 
 					value.SetGroup (group);
 				}
-#endif
 
 				list.Add (value);
 
@@ -5547,7 +5491,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			ListViewItem RetrieveVirtualItemFromOwner (int displayIndex)
 			{
 				RetrieveVirtualItemEventArgs args = new RetrieveVirtualItemEventArgs (displayIndex);
@@ -5560,7 +5503,6 @@ namespace System.Windows.Forms
 
 				return retval;
 			}
-#endif
 
 			internal event CollectionChangedHandler Changed;
 
@@ -5583,9 +5525,7 @@ namespace System.Windows.Forms
 		//
 		// In virtual mode, SelectedIndexCollection directly saves the selection
 		// information, instead of getting it from Items, making List read-and-write
-#if NET_2_0
 		[ListBindable (false)]
-#endif
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
@@ -5612,11 +5552,7 @@ namespace System.Windows.Forms
 
 			public bool IsReadOnly {
 				get { 
-#if NET_2_0
 					return false;
-#else
-					return true; 
-#endif
 				}
 			}
 
@@ -5639,11 +5575,7 @@ namespace System.Windows.Forms
 
 			bool IList.IsFixedSize {
 				get { 
-#if NET_2_0
 					return false;
-#else
-					return true;
-#endif
 				}
 			}
 
@@ -5654,7 +5586,6 @@ namespace System.Windows.Forms
 			#endregion	// Public Properties
 
 			#region Public Methods
-#if NET_2_0
 			public int Add (int itemIndex)
 			{
 				if (itemIndex < 0 || itemIndex >= owner.Items.Count)
@@ -5670,14 +5601,8 @@ namespace System.Windows.Forms
 
 				return List.Count;
 			}
-#endif
 
-#if NET_2_0
-			public 
-#else
-			internal
-#endif	
-			void Clear ()
+			public void Clear ()
 			{
 				if (!owner.is_selection_available)
 					return;
@@ -5749,7 +5674,6 @@ namespace System.Windows.Forms
 				return List.IndexOf (selectedIndex);
 			}
 
-#if NET_2_0
 			public void Remove (int itemIndex)
 			{
 				if (itemIndex < 0 || itemIndex >= owner.Items.Count)
@@ -5757,16 +5681,13 @@ namespace System.Windows.Forms
 
 				owner.Items [itemIndex].Selected = false;
 			}
-#endif
 			#endregion	// Public Methods
 
 			internal ArrayList List {
 				get {
 					if (list == null) {
 						list = new ArrayList ();
-#if NET_2_0
 						if (!owner.VirtualMode)
-#endif
 						for (int i = 0; i < owner.Items.Count; i++) {
 							if (owner.Items [i].Selected)
 								list.Add (i);
@@ -5787,7 +5708,6 @@ namespace System.Windows.Forms
 				Reset ();
 			}
 
-#if NET_2_0
 			internal void RemoveIndex (int index)
 			{
 				int idx = List.BinarySearch (index);
@@ -5815,13 +5735,10 @@ namespace System.Windows.Forms
 
 				List.Insert (iMin, index);
 			}
-#endif
 
 		}	// SelectedIndexCollection
 
-#if NET_2_0
 		[ListBindable (false)]
-#endif
 		public class SelectedListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
@@ -5855,7 +5772,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			public virtual ListViewItem this [string key] {
 				get {
 					int idx = IndexOfKey (key);
@@ -5865,7 +5781,6 @@ namespace System.Windows.Forms
 					return this [idx];
 				}
 			}
-#endif
 
 			bool ICollection.IsSynchronized {
 				get { return false; }
@@ -5896,12 +5811,10 @@ namespace System.Windows.Forms
 				return IndexOf (item) != -1;
 			}
 
-#if NET_2_0
 			public virtual bool ContainsKey (string key)
 			{
 				return IndexOfKey (key) != -1;
 			}
-#endif
 
 			public void CopyTo (Array dest, int index)
 			{
@@ -5972,7 +5885,6 @@ namespace System.Windows.Forms
 				return -1;
 			}
 
-#if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
 				if (!owner.is_selection_available || key == null || key.Length == 0)
@@ -5986,7 +5898,6 @@ namespace System.Windows.Forms
 
 				return -1;
 			}
-#endif
 			#endregion	// Public Methods
 
 		}	// SelectedListViewItemCollection
@@ -6026,7 +5937,6 @@ namespace System.Windows.Forms
 		}
 
 		#endregion // Subclasses
-#if NET_2_0
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
@@ -6106,19 +6016,6 @@ namespace System.Windows.Forms
 			cwceh (this, changing);
 			return !changing.Cancel;
 		}
-#else
-		//
-		// 1.0 profile based implementation
-		//
-		bool CanProceedWithResize (ColumnHeader col, int width)
-		{
-			return true;
-		}
-
-		void RaiseColumnWidthChanged (int resize_column)
-		{
-		}
-#endif
 
 		internal void RaiseColumnWidthChanged (ColumnHeader column)
 		{
@@ -6126,7 +6023,6 @@ namespace System.Windows.Forms
 			RaiseColumnWidthChanged (index);
 		}
 
-#if NET_2_0
 		
 		#region UIA Framework: Methods, Properties and Events
 		
@@ -6246,6 +6142,5 @@ namespace System.Windows.Forms
 
 		#endregion // UIA Framework: Methods, Properties and Events
 
-#endif
 	}
 }
