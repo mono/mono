@@ -983,9 +983,23 @@ namespace System.Runtime.Serialization
 			HandleId (id, deserializer, value);
 
 			if (value != String.Empty) {
-				foreach (EnumMemberInfo emi in enum_members)
-					if (emi.XmlName == value)
-						return emi.Value;
+				if (flag_attr && value.IndexOf (' ') != -1) {
+					long flags = 0l;
+					foreach (string flag in value.Split (' ')) {
+						foreach (EnumMemberInfo emi in enum_members) {
+							if (emi.XmlName == flag) {
+								flags |= Convert.ToInt64 (emi.Value);
+								break;
+							}
+						}
+					}
+					return Enum.ToObject (RuntimeType, flags);
+				}
+				else {
+					foreach (EnumMemberInfo emi in enum_members)
+						if (emi.XmlName == value)
+							return emi.Value;
+				}
 			}
 
 			if (!flag_attr)
