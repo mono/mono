@@ -33,10 +33,8 @@ using System.Windows.Forms.Theming;
 using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ComVisibleAttribute (true)]
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
-#endif
 	[DefaultEvent("SelectedIndexChanged")]
 	[DefaultProperty("TabPages")]
 	[Designer("System.Windows.Forms.Design.TabControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -66,13 +64,10 @@ namespace System.Windows.Forms {
 		ToolTip.TipState tooltip_state = ToolTip.TipState.Down;
 		Timer tooltip_timer;
 
-#if NET_2_0
 		private bool rightToLeftLayout;
-#endif		
 		#endregion	// Fields
 
 		#region UIA Framework Events
-#if NET_2_0
 		static object UIAHorizontallyScrollableChangedEvent = new object ();
 
 		internal event EventHandler UIAHorizontallyScrollableChanged {
@@ -102,15 +97,12 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		#endregion
 
 		#region UIA Framework Property
-#if NET_2_0
 		internal double UIAHorizontalViewSize {
 			get { return LeftScrollButtonArea.Left * 100 / TabPages [TabCount - 1].TabBounds.Right; }
 		}
-#endif
 		#endregion
 
 		#region Public Constructors
@@ -171,14 +163,12 @@ namespace System.Windows.Forms {
 			set { base.BackgroundImage = value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 		
 		public override Rectangle DisplayRectangle {
 			get {
@@ -186,13 +176,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get { return base.DoubleBuffered; }
 			set { base.DoubleBuffered = value; }
 		}
-#endif
 
 		[DefaultValue(TabDrawMode.Normal)]
 		public TabDrawMode DrawMode {
@@ -223,9 +211,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		[DefaultValue(null)]
 		public ImageList ImageList {
 			get { return image_list; }
@@ -279,9 +265,7 @@ namespace System.Windows.Forms {
 
 		[Localizable(true)]
 		public
-#if NET_2_0
 		new
-#endif
 		Point Padding {
 			get { return padding; }
 			set {
@@ -295,7 +279,6 @@ namespace System.Windows.Forms {
 
 		}
 
-#if NET_2_0
 		[MonoTODO ("RTL not supported")]
 		[Localizable (true)]
 		[DefaultValue (false)]
@@ -308,7 +291,6 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -323,20 +305,12 @@ namespace System.Windows.Forms {
 			set {
 
 				if (value < -1) {
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("SelectedIndex", "Value of '" + value + "' is valid for 'SelectedIndex'. " +
 						"'SelectedIndex' must be greater than or equal to -1.");
-#else
-					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
-						"'value' must be greater than or equal to -1.");
-#endif
 				}
 				if (!this.IsHandleCreated) {
 					if (selected_index != value) {
 						selected_index = value;
-#if !NET_2_0
-						OnSelectedIndexChanged (EventArgs.Empty);
-#endif
 					}
 					return;
 				}
@@ -353,27 +327,23 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-#if NET_2_0
 				TabControlCancelEventArgs ret = new TabControlCancelEventArgs (SelectedTab, selected_index, false, TabControlAction.Deselecting);
 				OnDeselecting (ret);
 				if (ret.Cancel)
 					return;
 
-#endif
 				Focus ();
 				int old_index = selected_index;
 				int new_index = value;
 
 				selected_index = new_index;
 
-#if NET_2_0
 				ret = new TabControlCancelEventArgs (SelectedTab, selected_index, false, TabControlAction.Selecting);
 				OnSelecting (ret);
 				if (ret.Cancel) {
 					selected_index = old_index;
 					return;
 				}
-#endif
 
 				SuspendLayout ();
 
@@ -492,11 +462,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Editor ("System.Windows.Forms.Design.TabPageCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-#else
-		[DefaultValue(null)]
-#endif
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[MergableProperty(false)]
 		public TabPageCollection TabPages {
@@ -518,10 +484,8 @@ namespace System.Windows.Forms {
 			set {
 				show_slider = value;
 
-#if NET_2_0
 				// UIA Framework Event: HorizontallyScrollable Changed
 				OnUIAHorizontallyScrollableChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -613,7 +577,6 @@ namespace System.Windows.Forms {
 			return GetTab (index);
 		}
 
-#if NET_2_0
 		public void SelectTab (TabPage tabPage)
 		{
 			if (tabPage == null)
@@ -664,7 +627,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#endif
 
 		public override string ToString ()
 		{
@@ -767,7 +729,6 @@ namespace System.Windows.Forms {
 			pe.Handled = true;
 		}
 
-#if NET_2_0
 		protected override void OnEnter (EventArgs e)
 		{
 			base.OnEnter (e);
@@ -835,7 +796,6 @@ namespace System.Windows.Forms {
 			if (this.SelectedTab != null)
 				this.SelectedTab.FireEnter ();
 		}
-#endif
 
 		#endregion
 
@@ -937,11 +897,7 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
-#if NET_2_0
 		protected void UpdateTabSelection (bool updateFocus)
-#else
-		protected void UpdateTabSelection (bool uiselected)
-#endif
 		{
 			ResizeTabPages ();
 		}
@@ -998,10 +954,8 @@ namespace System.Windows.Forms {
 						slider_pos++;
 						SizeTabs ();
 
-#if NET_2_0
 						// UIA Framework Event: Horizontally Scrolled
 						OnUIAHorizontallyScrolled (EventArgs.Empty);
-#endif
 
 						switch (this.Alignment) {
 							case TabAlignment.Top:
@@ -1028,10 +982,8 @@ namespace System.Windows.Forms {
 						slider_pos--;
 						SizeTabs ();
 
-#if NET_2_0
 						// UIA Framework Event: Horizontally Scrolled
 						OnUIAHorizontallyScrolled (EventArgs.Empty);
-#endif
 
 						switch (this.Alignment) {
 							case TabAlignment.Top:
@@ -1500,7 +1452,6 @@ namespace System.Windows.Forms {
 			this.Controls.SetChildIndex (value, index);
 			Redraw ();
 		}
-#if NET_2_0
 		private void InsertTab (int index, TabPage value)
 		{
 			if (!tab_pages.Contains (value)) {
@@ -1509,7 +1460,6 @@ namespace System.Windows.Forms {
 			this.Controls.SetChildIndex (value, index);
 			Redraw ();
 		}
-#endif
 		internal void Redraw ()
 		{
 			if (!IsHandleCreated)
@@ -1644,7 +1594,6 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged
@@ -1652,7 +1601,6 @@ namespace System.Windows.Forms {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -1688,7 +1636,6 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
 		}
 		
-#if NET_2_0
 		static object SelectedEvent = new object ();
 		
 		public event TabControlEventHandler Selected {
@@ -1726,14 +1673,11 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
 			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
 		}
-#endif
 		#endregion	// Events
 
 
 		#region Class TaControl.ControlCollection
-#if NET_2_0
 		[ComVisible (false)]
-#endif
 		public new class ControlCollection : System.Windows.Forms.Control.ControlCollection {
 
 			private TabControl owner;
@@ -1821,7 +1765,6 @@ namespace System.Windows.Forms {
 					owner.SetTab (index, value);
 				}
 			}
-#if NET_2_0
 			public virtual TabPage this [string key] {
 				get {
 					if (string.IsNullOrEmpty (key))
@@ -1834,7 +1777,6 @@ namespace System.Windows.Forms {
 					return this[index];
 				}
 			}
-#endif
 
 			internal int this[TabPage tabPage] {
 				get {
@@ -1877,7 +1819,6 @@ namespace System.Windows.Forms {
 				owner.Controls.Add (value);
 			}
 
-#if NET_2_0
 			public void Add (string text)
 			{
 				TabPage page = new TabPage (text);
@@ -1907,7 +1848,6 @@ namespace System.Windows.Forms {
 				page.ImageKey = imageKey;
 				this.Add (page);
 			}
-#endif
 
 			public void AddRange (TabPage [] pages)
 			{
@@ -1929,13 +1869,11 @@ namespace System.Windows.Forms {
 				return owner.Controls.Contains (page);
 			}
 
-#if NET_2_0
 			public virtual bool ContainsKey (string key)
 			{
 				int index = this.IndexOfKey (key);
 				return (index >= 0 && index < this.Count);
 			}
-#endif
 
 			public IEnumerator GetEnumerator ()
 			{
@@ -1947,7 +1885,6 @@ namespace System.Windows.Forms {
 				return owner.Controls.IndexOf (page);
 			}
 
-#if NET_2_0
 			public virtual int IndexOfKey(string key)
 			{
 				if (string.IsNullOrEmpty (key))
@@ -1962,7 +1899,6 @@ namespace System.Windows.Forms {
 
 				return -1;
 			}
-#endif
 
 			public void Remove (TabPage value)
 			{
@@ -1976,14 +1912,12 @@ namespace System.Windows.Forms {
 				owner.Invalidate ();
 			}
 
-#if NET_2_0
 			public virtual void RemoveByKey (string key)
 			{
 				int index = this.IndexOfKey (key);
 				if (index >= 0 && index < this.Count)
 					this.RemoveAt (index);
 			}
-#endif
 
 			void ICollection.CopyTo (Array dest, int index)
 			{
@@ -2015,16 +1949,11 @@ namespace System.Windows.Forms {
 				return IndexOf (tabPage);
 			}
 
-#if NET_2_0
 			void IList.Insert (int index, object tabPage)
-#else
-			void IList.Insert (int index, object value)
-#endif
 			{
 				throw new NotSupportedException ();
 			}
 
-#if NET_2_0
 			public void Insert (int index, string text)
 			{
 				owner.InsertTab (index, new TabPage (text));
@@ -2057,7 +1986,6 @@ namespace System.Windows.Forms {
 				owner.InsertTab (index, page);
 				page.ImageKey = imageKey;
 			}
-#endif
 			void IList.Remove (object value)
 			{
 				TabPage page = value as TabPage;
