@@ -30,16 +30,10 @@ using System.Drawing;
 using System.Drawing.Text;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[DefaultEvent ("Popup")]
-#endif
 	[ProvideProperty ("ToolTip", typeof(System.Windows.Forms.Control))]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
-	public
-#if !NET_2_0
-	sealed
-#endif
-	class ToolTip : System.ComponentModel.Component, System.ComponentModel.IExtenderProvider {
+	public class ToolTip : System.ComponentModel.Component, System.ComponentModel.IExtenderProvider {
 		#region Local variables
 		internal bool		is_active;
 		internal int		automatic_delay;
@@ -59,7 +53,6 @@ namespace System.Windows.Forms {
 		internal Timer		timer;				// Used for the various intervals
 		private Form		hooked_form;
 
-#if NET_2_0
 		private bool isBalloon;
 		private bool owner_draw;
 		private bool stripAmpersands;
@@ -67,7 +60,6 @@ namespace System.Windows.Forms {
 		private bool useAnimation;
 		private bool useFading;
 		private object tag;
-#endif
 
 		#endregion	// Local variables
 
@@ -91,10 +83,8 @@ namespace System.Windows.Forms {
 
 				VisibleChanged += new EventHandler(ToolTipWindow_VisibleChanged);
 
-#if NET_2_0
 				// UIA Framework: Used to generate UnPopup
 				VisibleChanged += new EventHandler (OnUIAToolTip_VisibleChanged);
-#endif
 
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw, true);
@@ -183,7 +173,6 @@ namespace System.Windows.Forms {
 					XplatUI.SetTopmost(control.window.Handle, false);
 				}
 			}
-#if NET_2_0
 
 			// UIA Framework
 			private void OnUIAToolTip_VisibleChanged (object sender, EventArgs e)
@@ -199,7 +188,6 @@ namespace System.Windows.Forms {
 					eh (this, e);
 			}
 
-#endif
 
 			#endregion	// ToolTipWindow Class Protected Instance Methods
 
@@ -240,9 +228,7 @@ namespace System.Windows.Forms {
 				Size display_size;
 				XplatUI.GetDisplaySize (out display_size);
 
-#if NET_2_0
 				associated_control = control;
-#endif
 
 				Text = text;
 
@@ -277,10 +263,8 @@ namespace System.Windows.Forms {
 			static object DrawEvent = new object ();
 			static object PopupEvent = new object ();
 	
-#if NET_2_0
 			// UIA Framework
 			static object UnPopupEvent = new object ();
-#endif
 
 			public event DrawToolTipEventHandler Draw {
 				add { Events.AddHandler (DrawEvent, value); }
@@ -292,12 +276,10 @@ namespace System.Windows.Forms {
 				remove { Events.RemoveHandler (PopupEvent, value); }
 			}
 
-#if NET_2_0
 			internal event PopupEventHandler UnPopup {
 				add { Events.AddHandler (UnPopupEvent, value); }
 				remove { Events.RemoveHandler (UnPopupEvent, value); }
 			}
-#endif
 			#endregion
 		}
 		#endregion	// ToolTipWindow Class
@@ -315,12 +297,10 @@ namespace System.Windows.Forms {
 			back_color = SystemColors.Info;
 			fore_color = SystemColors.InfoText;
 			
-#if NET_2_0
 			isBalloon = false;
 			stripAmpersands = false;
 			useAnimation = true;
 			useFading = true;
-#endif
 			tooltip_strings = new Hashtable(5);
 			controls = new ArrayList(5);
 
@@ -329,13 +309,11 @@ namespace System.Windows.Forms {
 			tooltip_window.Draw += new DrawToolTipEventHandler (tooltip_window_Draw);
 			tooltip_window.Popup += new PopupEventHandler (tooltip_window_Popup);
 
-#if NET_2_0
 			// UIA Framework: Static event handlers
 			tooltip_window.UnPopup += delegate (object sender, PopupEventArgs args) {
 				OnUnPopup (args);
 			};
 			UnPopup += new PopupEventHandler (OnUIAUnPopup);
-#endif
 
 			timer = new Timer();
 			timer.Enabled = false;
@@ -345,7 +323,6 @@ namespace System.Windows.Forms {
 
 
 		#region UIA Framework: Events, Delegates and Methods
-#if NET_2_0
 		// NOTE: 
 		//	We are using Reflection to add/remove internal events.
 		//      Class ToolTipListener uses the events.
@@ -386,7 +363,6 @@ namespace System.Windows.Forms {
 				UIAToolTipUnhookUp (sender, args);
 		}
 
-#endif 
 		#endregion
 
 		public ToolTip(System.ComponentModel.IContainer cont) : this() {
@@ -446,7 +422,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("Color [Info]")]
 		public Color BackColor {
 			get { return this.back_color; }
@@ -459,7 +434,6 @@ namespace System.Windows.Forms {
 			get { return this.fore_color; }
 			set { this.fore_color = value; tooltip_window.ForeColor = value; }
 		}
-#endif
 
 		[RefreshProperties (RefreshProperties.All)]
 		public int InitialDelay {
@@ -474,13 +448,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		public bool OwnerDraw {
 			get { return this.owner_draw; }
 			set { this.owner_draw = value; }
 		}
-#endif
 
 		[RefreshProperties (RefreshProperties.All)]
 		public int ReshowDelay {
@@ -509,7 +481,6 @@ namespace System.Windows.Forms {
 		}
 
 
-#if NET_2_0
 		[DefaultValue (false)]
 		public bool IsBalloon {
 			get { return isBalloon; }
@@ -579,12 +550,10 @@ namespace System.Windows.Forms {
 			get { return useFading; }
 			set { useFading = value; }
 		}
-#endif
 
 		#endregion	// Public Instance Properties
 
 		#region Protected Properties
-#if NET_2_0
 		protected virtual CreateParams CreateParams
 		{
 			get
@@ -596,7 +565,6 @@ namespace System.Windows.Forms {
 				return cp;
 			}
 		}
-#endif
 		#endregion
 
 		#region Public Instance Methods
@@ -604,10 +572,8 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-#if NET_2_0
 		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
 			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#endif
 		[Localizable (true)]
 		[DefaultValue ("")]
 		public string GetToolTip (Control control)
@@ -620,20 +586,16 @@ namespace System.Windows.Forms {
 
 		public void RemoveAll() {
 			tooltip_strings.Clear();
-#if NET_2_0
 			//UIA Framework: ToolTip isn't associated anymore
 			foreach (Control control in controls)
 				OnUIAToolTipUnhookUp (this, new ControlEventArgs (control));
-#endif
 
 			controls.Clear();
 		}
 
 		public void SetToolTip(Control control, string caption) {
-#if NET_2_0
 			// UIA Framework
 			OnUIAToolTipHookUp (this, new ControlEventArgs (control));
-#endif
 			tooltip_strings[control] = caption;
 
 			// no need for duplicates
@@ -663,7 +625,6 @@ namespace System.Windows.Forms {
 			return base.ToString() + " InitialDelay: " + initial_delay + ", ShowAlways: " + show_always;
 		}
 
-#if NET_2_0
 		public void Show (string text, IWin32Window window)
 		{
 			Show (text, window, 0);
@@ -757,11 +718,7 @@ namespace System.Windows.Forms {
 			Show (text, window, new Point (x, y), duration);
 		}
 		
-		public
-#else
-		internal
-#endif
-		void Hide (IWin32Window win)
+		public void Hide (IWin32Window win)
  		{
 			timer.Stop ();
 			state = TipState.Initial;
@@ -786,21 +743,17 @@ namespace System.Windows.Forms {
 
 				tooltip_strings.Clear();
 				
-#if NET_2_0
 				//UIA Framework: ToolTip isn't associated anymore
 				foreach (Control control in controls)
 					OnUIAToolTipUnhookUp (this, new ControlEventArgs (control));
-#endif
 				controls.Clear();
 			}
 		}
 
-#if NET_2_0
 		protected void StopTimer ()
 		{
 			timer.Stop ();
 		}
-#endif
 		#endregion	// Protected Instance Methods
 
 		internal enum TipState {
@@ -813,7 +766,6 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 
-#if NET_2_0
 		private void HookupFormEvents (Form form)
 		{
 			hooked_form = form;
@@ -841,7 +793,6 @@ namespace System.Windows.Forms {
 			control.MouseLeave -= new EventHandler (control_MouseLeave);
 			control.MouseDown -= new MouseEventHandler (control_MouseDown);
 		}
-#endif
 		private void UnhookFormEvents ()
 		{
 			if (hooked_form == null)
@@ -944,11 +895,9 @@ namespace System.Windows.Forms {
 
 		private void tooltip_window_Draw (object sender, DrawToolTipEventArgs e)
 		{
-#if NET_2_0
 			if (OwnerDraw)
 				OnDraw (e);
 			else
-#endif
 				ThemeEngine.Current.DrawToolTip (e.Graphics, e.Bounds, tooltip_window);
 		}
 		
@@ -1003,23 +952,6 @@ namespace System.Windows.Forms {
 				last_control = null;
 		}
 
-#if NET_2_0
-/*
-		private void Hide (Control sender)
-		{
-			timer.Stop();
-
-			if (!MouseInControl (tooltip_window, true) && !MouseInControl (active_control, true)) {
-				active_control = null;
-				tooltip_window.Visible = false;
-			}
-			
-			if (last_control == sender)
-				last_control = null;
-		}
-*/
-#endif
-
 		private void control_MouseMove(object sender, MouseEventArgs e) {
 			if (state != TipState.Down) {
 				timer.Stop();
@@ -1041,14 +973,12 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-#if NET_2_0
 		internal void OnUnPopup (PopupEventArgs e)
 		{
 			PopupEventHandler eh = (PopupEventHandler) (Events [UnPopupEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		
 		internal bool Visible {
 			get { return tooltip_window.Visible; }
@@ -1059,18 +989,12 @@ namespace System.Windows.Forms {
 		static object PopupEvent = new object ();
 		static object DrawEvent = new object ();
 		
-#if NET_2_0
-		public
-#endif		
-		event PopupEventHandler Popup {
+		public event PopupEventHandler Popup {
 			add { Events.AddHandler (PopupEvent, value); }
 			remove { Events.RemoveHandler (PopupEvent, value); }
 		}
 
-#if NET_2_0
-		public
-#endif
-		event DrawToolTipEventHandler Draw {
+		public event DrawToolTipEventHandler Draw {
 			add { Events.AddHandler (DrawEvent, value); }
 			remove { Events.RemoveHandler (DrawEvent, value); }
 		}

@@ -37,12 +37,10 @@ using System.Runtime.InteropServices;
 using RTF=System.Windows.Forms.RTF;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[Docking (DockingBehavior.Ask)]
 	[ComVisible (true)]
 	[Designer ("System.Windows.Forms.Design.RichTextBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#endif
 	public class RichTextBox : TextBoxBase {
 		#region Local Variables
 		internal bool		auto_word_select;
@@ -63,12 +61,10 @@ namespace System.Windows.Forms {
 		private int		rtf_cursor_y;
 		private int		rtf_chars;
 
-#if NET_2_0
 		private bool		enable_auto_drag_drop;
 		private RichTextBoxLanguageOptions language_option;
 		private bool		rich_text_shortcuts_enabled;
 		private Color		selection_back_color;
-#endif
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -94,20 +90,16 @@ namespace System.Windows.Forms {
 			LostFocus += new EventHandler(RichTextBox_LostFocus);
 			GotFocus += new EventHandler(RichTextBox_GotFocus);
 			BackColor = ThemeEngine.Current.ColorWindow;
-#if NET_2_0
 			backcolor_set = false;
 			language_option = RichTextBoxLanguageOptions.AutoFontSizeAdjust;
 			rich_text_shortcuts_enabled = true;
 			selection_back_color = DefaultBackColor;
-#endif
 			ForeColor = ThemeEngine.Current.ColorWindowText;
 
 			base.HScrolled += new EventHandler(RichTextBox_HScrolled);
 			base.VScrolled += new EventHandler(RichTextBox_VScrolled);
 
-#if NET_2_0
 			SetStyle (ControlStyles.StandardDoubleClick, false);
-#endif
 		}
 		#endregion	// Public Constructors
 
@@ -121,14 +113,10 @@ namespace System.Windows.Forms {
 		internal override Color ChangeBackColor (Color backColor)
 		{
 			if (backColor == Color.Empty) {
-#if NET_2_0
 				backcolor_set = false;
 				if (!ReadOnly) {
 					backColor = SystemColors.Window;
 				}
-#else
-				backColor = SystemColors.Window;
-#endif
 			}
 			return backColor;
 		}
@@ -148,9 +136,7 @@ namespace System.Windows.Forms {
 		#endregion	// Private & Internal Methods
 
 		#region Public Instance Properties
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		public override bool AllowDrop {
 			get {
 				return base.AllowDrop;
@@ -162,14 +148,10 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
-#if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
-#else
-		[Localizable(true)]
-#endif
 		public override bool AutoSize {
 			get {
 				return auto_size;
@@ -194,14 +176,12 @@ namespace System.Windows.Forms {
 			set { base.BackgroundImage = value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 
 		[DefaultValue(0)]
 		[Localizable(true)]
@@ -229,14 +209,12 @@ namespace System.Windows.Forms {
 			set { base.EnableLinks = value; }
 		}
 
-#if NET_2_0
 		[MonoTODO ("Stub, does nothing")]
 		[DefaultValue (false)]
 		public bool EnableAutoDragDrop {
 			get { return enable_auto_drag_drop; }
 			set { enable_auto_drag_drop = value; }
 		}
-#endif
 
 		public override Font Font {
 			get {
@@ -274,7 +252,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -282,7 +259,6 @@ namespace System.Windows.Forms {
 			get { return language_option; }
 			set { language_option = value; }
 		}
-#endif
 
 		[DefaultValue(Int32.MaxValue)]
 		public override int MaxLength {
@@ -309,7 +285,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DefaultValue (true)]
@@ -318,7 +293,6 @@ namespace System.Windows.Forms {
 			get { return rich_text_shortcuts_enabled; }
 			set { rich_text_shortcuts_enabled = value; }
 		}
-#endif
 
 		[DefaultValue(0)]
 		[Localizable(true)]
@@ -336,11 +310,7 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.All)]
-#else
-		[DefaultValue("")]
-#endif
 		public string Rtf {
 			get {
 				Line		start_line;
@@ -503,7 +473,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -511,7 +480,6 @@ namespace System.Windows.Forms {
 			get { return selection_back_color; }
 			set { selection_back_color = value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[DefaultValue(false)]
@@ -760,9 +728,7 @@ namespace System.Windows.Forms {
 		}
 
 		[Localizable(true)]
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.All)]
-#endif
 		public override string Text {
 			get {
 				return base.Text;
@@ -932,20 +898,6 @@ namespace System.Windows.Forms {
 		}
 
 		
-#if !NET_2_0
-		public char GetCharFromPosition(Point pt) {
-			LineTag	tag;
-			int	pos;
-
-			PointToTagPos(pt, out tag, out pos);
-
-			if (pos >= tag.Line.text.Length) {
-				return '\n';
-			}
-
-			return tag.Line.text[pos];
-		}
-#else
 		internal override char GetCharFromPositionInternal (Point p)
 		{
 			LineTag tag;
@@ -958,13 +910,8 @@ namespace System.Windows.Forms {
 
 			return tag.Line.text[pos];
 		}
-#endif
 
-		public
-#if NET_2_0
-		override
-#endif	
-		int GetCharIndexFromPosition(Point pt) {
+		public override int GetCharIndexFromPosition(Point pt) {
 			LineTag	tag;
 			int	pos;
 
@@ -973,11 +920,7 @@ namespace System.Windows.Forms {
 			return document.LineTagToCharIndex(tag.Line, pos);
 		}
 
-		public
-#if NET_2_0
-		override
-#endif
-		int GetLineFromCharIndex(int index) {
+		public override int GetLineFromCharIndex(int index) {
 			Line	line;
 			LineTag	tag;
 			int	pos;
@@ -987,11 +930,7 @@ namespace System.Windows.Forms {
 			return line.LineNo - 1;
 		}
 
-		public
-#if NET_2_0
-		override
-#endif
-		Point GetPositionFromCharIndex(int index) {
+		public override Point GetPositionFromCharIndex(int index) {
 			Line	line;
 			LineTag	tag;
 			int	pos;
@@ -1242,16 +1181,6 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-#if !NET_2_0
-		protected override void OnSystemColorsChanged(EventArgs e) {
-			base.OnSystemColorsChanged (e);
-		}
-
-		protected override void OnTextChanged(EventArgs e) {
-			base.OnTextChanged (e);
-		}
-#endif
-
 		protected virtual void OnVScroll(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [VScrollEvent]);
 			if (eh != null)
@@ -1262,12 +1191,10 @@ namespace System.Windows.Forms {
 			base.WndProc (ref m);
 		}
 
-#if NET_2_0
 		protected override bool ProcessCmdKey (ref Message m, Keys keyData)
 		{
 			return base.ProcessCmdKey (ref m, keyData);
 		}
-#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
@@ -1286,42 +1213,25 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif
 
 		public event ContentsResizedEventHandler ContentsResized {
 			add { Events.AddHandler (ContentsResizedEvent, value); }
 			remove { Events.RemoveHandler (ContentsResizedEvent, value); }
 		}
 
-#if !NET_2_0
 		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler DoubleClick {
-			add { base.DoubleClick += value; }
-			remove { base.DoubleClick -= value; }
-		}
-#endif
-
-		[Browsable(false)]
-#if !NET_2_0
-		[EditorBrowsable(EditorBrowsableState.Never)]
-#endif
 		public new event DragEventHandler DragDrop {
 			add { base.DragDrop += value; }
 			remove { base.DragDrop -= value; }
 		}
 
 		[Browsable(false)]
-#if !NET_2_0
-		[EditorBrowsable(EditorBrowsableState.Never)]
-#endif
 		public new event DragEventHandler DragEnter {
 			add { base.DragEnter += value; }
 			remove { base.DragEnter -= value; }
