@@ -321,7 +321,8 @@ namespace System.Web.UI
 					base.RenderChildren (w);
 					w.Flush ();
 					if (sb.Length > 0) {
-						if (ParentPanel != null)
+						UpdatePanel parent = ParentPanel;
+						if (parent != null && parent.ChildrenAsTriggers)
 							writer.Write (sb.ToString ());
 						else
 							ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
