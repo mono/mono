@@ -38,15 +38,17 @@ namespace System.Threading
 
 		public void SpinOnce ()
 		{
+			ntime += 1;
+
 			if (isSingleCpu) {
 				// On a single-CPU system, spinning does no good
 				Thread.Yield ();
 			} else {
-				if ((ntime = ntime == maxTime ? maxTime : ntime + 1) % step == 0)
+				if (ntime % step == 0)
 					Thread.Yield ();
 				else
 					// Multi-CPU system might be hyper-threaded, let other thread run
-					Thread.SpinWait (ntime << 1);
+					Thread.SpinWait (Math.Min (ntime, maxTime) << 1);
 			}
 		}
 
