@@ -957,10 +957,23 @@ namespace System.Runtime.Serialization
 		public override void Serialize (object graph,
 			XmlFormatterSerializer serializer)
 		{
-			foreach (EnumMemberInfo emi in enum_members) {
-				if (Enum.Equals (emi.Value, graph)) {
-					serializer.Writer.WriteString (emi.XmlName);
-					return;
+			if (flag_attr) {
+				long val = Convert.ToInt64 (graph);
+				string s = null;
+				foreach (EnumMemberInfo emi in enum_members) {
+					long f = Convert.ToInt64 (emi.Value);
+					if ((f & val) == f)
+						s += (s != null ? " " : String.Empty) + emi.XmlName;
+				}
+				if (s != null)
+					serializer.Writer.WriteString (s);
+				return;
+			} else {
+				foreach (EnumMemberInfo emi in enum_members) {
+					if (Enum.Equals (emi.Value, graph)) {
+						serializer.Writer.WriteString (emi.XmlName);
+						return;
+					}
 				}
 			}
 
