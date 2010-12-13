@@ -2031,7 +2031,10 @@ namespace System.Net.Sockets
 		{
 			SocketError error;
 			
-			return (EndReceive (result, out error));
+			int bytesReceived = EndReceive (result, out error);
+			if (error != SocketError.Success)
+				throw new SocketException ((int)error);
+			return bytesReceived;
 		}
 
 #if NET_2_0
@@ -2057,7 +2060,10 @@ namespace System.Net.Sockets
 				asyncResult.AsyncWaitHandle.WaitOne ();
 
 			errorCode = req.ErrorCode;
-			req.CheckIfThrowDelayedException ();
+			// If no socket error occurred, call CheckIfThrowDelayedException in case there are other
+			// kinds of exceptions that should be thrown.
+			if (errorCode == SocketError.Success)
+				req.CheckIfThrowDelayedException();
 			
 			return(req.Total);
 		}
@@ -2114,7 +2120,10 @@ namespace System.Net.Sockets
 		{
 			SocketError error;
 			
-			return(EndSend (result, out error));
+			int bytesSent = EndSend (result, out error);
+			if (error != SocketError.Success)
+				throw new SocketException ((int)error);
+			return bytesSent;
 		}
 
 #if NET_2_0
@@ -2140,7 +2149,10 @@ namespace System.Net.Sockets
 				asyncResult.AsyncWaitHandle.WaitOne ();
 
 			errorCode = req.ErrorCode;
-			req.CheckIfThrowDelayedException ();
+			// If no socket error occurred, call CheckIfThrowDelayedException in case there are other
+			// kinds of exceptions that should be thrown.
+			if (errorCode == SocketError.Success)
+				req.CheckIfThrowDelayedException ();
 			
 			return(req.Total);
 		}
