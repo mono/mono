@@ -700,10 +700,7 @@ namespace System.Data.Common
 #if NET_2_0
 							if (columnMappings.Contains(dsColumnName)) {
 								dsColumnName = columnMappings [dsColumnName].DataSetColumn;
-								parameter.Value = row [dsColumnName, rowVersion];
-							} else {
-								parameter.Value = null;
-							}
+							} 
 
 							DbParameter nullCheckParam = parameter as DbParameter;
 #else
@@ -713,8 +710,11 @@ namespace System.Data.Common
 								nullCheckParam = parameter;
 								continue;
 							}
-							parameter.Value = row [dsColumnName, rowVersion];
 #endif
+
+							// Fetch columnName from column-mapping if found one, 
+							// otherwise, use the source column name to fetch parameter value.
+							parameter.Value = row [dsColumnName, rowVersion];
 
 #if NET_2_0
 							if (nullCheckParam != null && nullCheckParam.SourceColumnNullMapping) {

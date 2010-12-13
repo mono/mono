@@ -1,3 +1,9 @@
+2010-12-13  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	** Fixes #582838 - Based on Patch by Jeffrey Alvarez <kuritsu@gmail.com>
+	* DbDataAdapter.cs (Update): Fetch columnName from column-mapping if found one, 
+	otherwise use source column name to fetch parameter value.
+	
 2010-07-23  Veerapuram Varadhan  <v.varadhan@gmail.com>
 
 	** Fixes #565616 - Based on Patch by Hubert FONGARNAND
