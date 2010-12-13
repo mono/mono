@@ -23,8 +23,6 @@
 //
 
 
-#if NET_2_0
-
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -765,4 +763,3 @@ namespace System.Windows.Forms
 	}
 }
 
-#endif

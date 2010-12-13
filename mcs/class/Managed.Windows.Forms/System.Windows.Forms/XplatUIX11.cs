@@ -6199,19 +6199,15 @@ namespace System.Windows.Forms {
 				tt.Dispose();
 				tt = null;
 			}
-#if NET_2_0
 			// Close any balloon window *we* fired.
 			ThemeEngine.Current.HideBalloonWindow (handle);
-#endif
 		}
 
-#if NET_2_0
 		internal override void SystrayBalloon(IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
 		{
 			ThemeEngine.Current.ShowBalloonWindow (handle, timeout, title, text, icon);
 			SendMessage(handle, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONSHOW);	
 		}
-#endif
 
 		internal override bool Text(IntPtr handle, string text)
 {

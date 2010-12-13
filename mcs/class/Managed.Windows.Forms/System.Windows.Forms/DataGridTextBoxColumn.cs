@@ -76,9 +76,7 @@ namespace System.Windows.Forms
 
 		#region Public Instance Properties
 		[Editor("System.Windows.Forms.Design.DataGridColumnStyleFormatEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
-#if NET_2_0
 		[DefaultValue (null)]
-#endif
 		public string Format {
 			get { return format; }
 			set {
@@ -166,14 +164,9 @@ namespace System.Windows.Forms
 			HideEditBox ();
 		}
 
-#if NET_2_0
 		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string displayText, bool cellIsVisible)
 		{
 			string instantText = displayText;
-#else
-		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText, bool cellIsVisible)
-		{
-#endif
 			grid.SuspendLayout ();
 
 			textbox.TextChanged -= new EventHandler (textbox_TextChanged);
@@ -336,14 +329,9 @@ namespace System.Windows.Forms
 			grid.ResumeLayout (false);
 		}
 
-#if NET_2_0
 		protected internal override void UpdateUI (CurrencyManager source, int rowNum, string displayText)
 		{
 			string instantText = displayText;
-#else
-		protected internal override void UpdateUI (CurrencyManager source, int rowNum, string instantText)
-		{
-#endif
 			if (textbox.Visible // I don't really like this, but it gets DataGridTextBoxColumnTest.TestUpdateUI passing
 			    && textbox.IsInEditOrNavigateMode) {
 				textbox.Text = GetFormattedValue (source, rowNum);

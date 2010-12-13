@@ -34,10 +34,8 @@ namespace System.Windows.Forms
 	[DefaultProperty("GridEditName")]
 	[DesignTimeVisible(false)]
 	[ToolboxItem(false)]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class DataGridTextBox : TextBox
 	{
 

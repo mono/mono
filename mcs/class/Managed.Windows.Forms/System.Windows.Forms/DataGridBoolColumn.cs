@@ -93,9 +93,7 @@ namespace System.Windows.Forms
 		}
 
 		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
-#if NET_2_0
 		[DefaultValue (false)]
-#endif
 		public object FalseValue {
 			get {
 				return false_value;
@@ -126,9 +124,7 @@ namespace System.Windows.Forms
 		}
 
 		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
-#if NET_2_0
 		[DefaultValue (true)]
-#endif
 		public object TrueValue {
 			get {
 				return true_value;
@@ -178,13 +174,8 @@ namespace System.Windows.Forms
 			base.ConcedeFocus ();
 		}
 
-#if NET_2_0
 		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string displayText,  bool cellIsVisible)
 		{
-#else
-		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText, bool cellIsVisible)
-		{
-#endif
 			editing_row = rowNum;
 			model_state = FromValueToState (GetColumnValueAtRow (source, rowNum));
 			editing_state = model_state | CheckState.Selected;

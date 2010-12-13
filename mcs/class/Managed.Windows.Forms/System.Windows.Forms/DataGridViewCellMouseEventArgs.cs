@@ -24,7 +24,6 @@
 //
 
 
-#if NET_2_0
 
 namespace System.Windows.Forms {
 
@@ -50,4 +49,3 @@ namespace System.Windows.Forms {
 
 }
 
-#endif

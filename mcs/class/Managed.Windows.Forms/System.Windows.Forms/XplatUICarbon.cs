@@ -2071,13 +2071,11 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		internal override void SystrayBalloon(IntPtr hwnd, int timeout, string title, string text, ToolTipIcon icon)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		
 		internal override bool Text(IntPtr handle, string text) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);

@@ -652,11 +652,7 @@ namespace System.Windows.Forms {
 			internal int				uTimeoutOrVersion;
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=64)]
 			internal string				szInfoTitle;
-#if NET_2_0
 			internal ToolTipIcon		dwInfoFlags;
-#else
-			internal int				dwInfoFlags;
-#endif
 		}
 
 		[Flags]
@@ -1211,7 +1207,6 @@ namespace System.Windows.Forms {
 			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETMENUDROPALIGNMENT) == true ? LeftRightAlignment.Left : LeftRightAlignment.Right; }
 		}
 
-#if NET_2_0
 		internal override PowerStatus PowerStatus {
 			get {
 				SYSTEMPOWERSTATUS p = new SYSTEMPOWERSTATUS ();
@@ -1223,7 +1218,6 @@ namespace System.Windows.Forms {
 				return ps;
 			}
 		}
-#endif
 
 		internal override int SizingBorderWidth {
 			get { return Win32GetSystemMetrics (SystemMetrics.SM_CXSIZEFRAME); }
@@ -2740,7 +2734,6 @@ namespace System.Windows.Forms {
 			Win32Shell_NotifyIcon(NotifyIconMessage.NIM_DELETE, ref nid);
 		}
 
-#if NET_2_0
 		internal override void SystrayBalloon(IntPtr hwnd, int timeout, string title, string text, ToolTipIcon icon)
 		{
 			NOTIFYICONDATA	nid;
@@ -2758,7 +2751,6 @@ namespace System.Windows.Forms {
 			
 			Win32Shell_NotifyIcon(NotifyIconMessage.NIM_MODIFY, ref nid);
 		}
-#endif
 
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			// Nothing to do on Win32

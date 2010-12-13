@@ -24,12 +24,9 @@
 //
 
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public delegate void DataGridViewBindingCompleteEventHandler (object sender, DataGridViewBindingCompleteEventArgs e);
 
 }
 
-#endif

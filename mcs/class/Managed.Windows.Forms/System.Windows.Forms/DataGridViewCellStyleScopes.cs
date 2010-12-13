@@ -23,8 +23,6 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	[FlagsAttribute()]
@@ -41,5 +39,3 @@ namespace System.Windows.Forms {
 	}
 
 }
-
-#endif

@@ -24,8 +24,6 @@
 //
 
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public class DataGridViewCellParsingEventArgs : ConvertEventArgs {
@@ -65,4 +63,3 @@ namespace System.Windows.Forms {
 
 }
 
-#endif

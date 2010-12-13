@@ -24,8 +24,6 @@
 //	Ivan N. Zlatev <contact@i-nz.net>
 //
 
-#if NET_2_0
-
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -6733,5 +6731,3 @@ namespace System.Windows.Forms {
 		}
 	}
 }
-
-#endif

@@ -24,8 +24,6 @@
 //
 
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public class DataGridViewCellToolTipTextNeededEventArgs : DataGridViewCellEventArgs {
@@ -44,5 +42,3 @@ namespace System.Windows.Forms {
 	}
 
 }
-
-#endif

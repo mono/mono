@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum DataSourceUpdateMode
@@ -37,4 +36,3 @@ namespace System.Windows.Forms
 		Never = 2
 	}
 }
-#endif

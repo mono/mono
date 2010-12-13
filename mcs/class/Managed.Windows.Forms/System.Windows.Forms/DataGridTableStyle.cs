@@ -42,9 +42,7 @@ namespace System.Windows.Forms
 	[ToolboxItem(false)]
 	public class DataGridTableStyle : Component, IDataGridEditingService
 	{
-#if NET_2_0
 		readonly
-#endif
 		public static DataGridTableStyle DefaultTableStyle = new DataGridTableStyle (true);
 
 		#region	Local Variables
@@ -314,9 +312,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if !NET_2_0
-		[ComVisible(false)]
-#endif
+
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[Browsable(false)]
 		public Color LinkHoverColor {
@@ -331,9 +327,7 @@ namespace System.Windows.Forms
 		}
 
 		[Editor("System.Windows.Forms.Design.DataGridTableStyleMappingNameEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
-#if NET_2_0
 		[DefaultValue ("")]
-#endif
 		public string MappingName {
 			get { return mapping_name; }
 			set {

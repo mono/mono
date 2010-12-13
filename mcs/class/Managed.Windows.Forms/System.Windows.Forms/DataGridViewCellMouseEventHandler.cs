@@ -24,12 +24,8 @@
 //
 
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public delegate void DataGridViewCellMouseEventHandler (object sender, DataGridViewCellMouseEventArgs e);
 
 }
-
-#endif

@@ -23,9 +23,6 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-
-#if NET_2_0
-
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
@@ -76,4 +73,3 @@ namespace System.Windows.Forms {
 
 }
 
-#endif

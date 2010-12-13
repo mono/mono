@@ -24,8 +24,6 @@
 //
 
 
-#if NET_2_0
-
 using System.ComponentModel;
 using System.Collections;
 using System.ComponentModel.Design.Serialization;
@@ -591,5 +589,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-
-#endif

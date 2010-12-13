@@ -23,13 +23,9 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public delegate void DataGridViewRowHeightInfoNeededEventHandler (object sender, DataGridViewRowHeightInfoNeededEventArgs e);
 
 }
 
-#endif

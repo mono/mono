@@ -173,11 +173,9 @@ namespace System.Windows.Forms {
 			get { return LeftRightAlignment.Left; }
 		}
 		
-#if NET_2_0
 		internal virtual PowerStatus PowerStatus {
 			get { throw new NotImplementedException ("Has not been implemented yet for this platform."); }
 		}
-#endif
 
 		internal virtual int SizingBorderWidth {
 			get { return 4; }
@@ -390,9 +388,7 @@ namespace System.Windows.Forms {
 		internal abstract bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt);
 		internal abstract bool SystrayChange(IntPtr hwnd, string tip, Icon icon, ref ToolTip tt);
 		internal abstract void SystrayRemove(IntPtr hwnd, ref ToolTip tt);
-#if NET_2_0		
 		internal abstract void SystrayBalloon(IntPtr hwnd, int timeout, string title, string text, ToolTipIcon icon);
-#endif
 
 		internal abstract Point GetMenuOrigin(IntPtr hwnd);
 		internal abstract void MenuToScreen(IntPtr hwnd, ref int x, ref int y);
@@ -473,7 +469,6 @@ namespace System.Windows.Forms {
 
 	internal class XplatUIDriverSupport {
 		#region XplatUI Driver Support Methods
-#if NET_2_0
 		internal static void ExecutionCallback (object state)
 		{
 			AsyncMethodData data = (AsyncMethodData) state;
@@ -510,42 +505,6 @@ namespace System.Windows.Forms {
 				gchandle.Free ();
 			}
 		}
-#else
-		// for NET_1_0 and NET_1_1 no (public) ExecutionContext exists 
-		// so we must use the System.Threading.CompressedStack class
-		internal static void ExecuteClientMessage (GCHandle gchandle) {
-			AsyncMethodData data = (AsyncMethodData) gchandle.Target;
-			CompressedStack original = null;
-			
-#if !MWF_ON_MSRUNTIME
-			// Stack is non-null only if the security manager is active
-			if (data.Stack != null) {
-				original = Thread.CurrentThread.GetCompressedStack ();
-				Thread.CurrentThread.SetCompressedStack (data.Stack);
-			}
-#endif
-
-			AsyncMethodResult result = data.Result;
-			object ret;
-
-			try {
-				ret = data.Method.DynamicInvoke (data.Args);
-				result.Complete (ret);
-			} catch (Exception ex) {
-				result.CompleteWithException (ex);
-				return;
-			} finally {
-#if !MWF_ON_MSRUNTIME
-				if (data.Stack != null) {
-					// whatever occurs we must revert to the original compressed
-					// stack (null being a valid, empty, value in this case).
-					Thread.CurrentThread.SetCompressedStack (original);
-				}
-#endif
-				gchandle.Free ();
-			}
-		}
-#endif
 		
 		#endregion	// XplatUI Driver Support Methods
 	}

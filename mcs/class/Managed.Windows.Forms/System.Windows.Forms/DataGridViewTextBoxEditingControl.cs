@@ -22,10 +22,6 @@
 // Author:
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
-
-
-#if NET_2_0
-
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
@@ -128,4 +124,3 @@ namespace System.Windows.Forms {
 
 }
 
-#endif

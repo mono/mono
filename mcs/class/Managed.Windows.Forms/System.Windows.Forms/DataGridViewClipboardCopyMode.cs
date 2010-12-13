@@ -24,8 +24,6 @@
 //
 
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public enum DataGridViewClipboardCopyMode {
@@ -37,4 +35,3 @@ namespace System.Windows.Forms {
 
 }
 
-#endif

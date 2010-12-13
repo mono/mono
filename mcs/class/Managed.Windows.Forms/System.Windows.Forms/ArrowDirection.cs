@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum ArrowDirection
@@ -38,4 +37,3 @@ namespace System.Windows.Forms
 		Down = 17
 	}
 }
-#endif

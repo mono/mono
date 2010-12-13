@@ -23,8 +23,6 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-#if NET_2_0
-
 using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms.VisualStyles;
@@ -285,4 +283,3 @@ namespace System.Windows.Forms {
 
 }
 
-#endif

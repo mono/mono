@@ -24,8 +24,6 @@
 //
 
 
-#if NET_2_0
-
 using System.Drawing;
 using System.ComponentModel;
 using System.Globalization;
@@ -388,4 +386,3 @@ namespace System.Windows.Forms {
 
 }
 
-#endif

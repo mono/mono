@@ -36,10 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[ClassInterface(ClassInterfaceType.None)]
-	public class DataObject : IDataObject
-#if NET_2_0
-	, System.Runtime.InteropServices.ComTypes.IDataObject
-#endif
+	public class DataObject : IDataObject, System.Runtime.InteropServices.ComTypes.IDataObject
 	 {
 		#region DataObject.Entry Class
 		private class Entry {
@@ -194,7 +191,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Instance Methods
-#if NET_2_0
 		public virtual bool ContainsAudio ()
 		{
 			return GetDataPresent (DataFormats.WaveAudio, true);
@@ -227,7 +223,6 @@ namespace System.Windows.Forms {
 		{
 			return (Stream)GetData (DataFormats.WaveAudio, true);
 		}
-#endif
 
 		public virtual object GetData(string format) {
 			return GetData(format, true);
@@ -265,12 +260,10 @@ namespace System.Windows.Forms {
 			return GetDataPresent(format.FullName, true);
 		}
 
-#if NET_2_0
 		public virtual StringCollection GetFileDropList ()
 		{
 			return (StringCollection)GetData (DataFormats.FileDrop, true);
 		}
-#endif
 		public virtual string[] GetFormats() {
 			return GetFormats(true);
 		}
@@ -279,7 +272,6 @@ namespace System.Windows.Forms {
 			return Entry.Entries(entries, autoConvert);
 		}
 
-#if NET_2_0
 		public virtual Image GetImage ()
 		{
 			return (Image)GetData (DataFormats.Bitmap, true);
@@ -315,7 +307,6 @@ namespace System.Windows.Forms {
 
 			SetData (DataFormats.WaveAudio, audioStream);
 		}
-#endif
 
 		public virtual void SetData(object data) {
 			SetData(data.GetType(), data); 
@@ -357,7 +348,6 @@ namespace System.Windows.Forms {
 			SetData(EnsureFormat(format), true, data);
 		}
 		
-#if NET_2_0
 		[MonoInternalNote ("Needs additional checks for valid paths, see MSDN")]
 		public virtual void SetFileDropList (StringCollection filePaths)
 		{
@@ -408,7 +398,6 @@ namespace System.Windows.Forms {
 					break;
 			}
 		}
-#endif
 		#endregion	// Public Instance Methods
 
 		#region Private Methods
@@ -428,7 +417,6 @@ namespace System.Windows.Forms {
 			return EnsureFormat(type.FullName);
 		}
 
-#if NET_2_0
 		private string TextFormatToDataFormat (TextDataFormat format)
 		{
 			switch (format) {
@@ -445,10 +433,8 @@ namespace System.Windows.Forms {
 					return DataFormats.CommaSeparatedValue;
 			}
 		}
-#endif
 		#endregion	// Private Methods
 
-#if NET_2_0
 		#region IDataObject Members
 		int System.Runtime.InteropServices.ComTypes.IDataObject.DAdvise (ref System.Runtime.InteropServices.ComTypes.FORMATETC pFormatetc, System.Runtime.InteropServices.ComTypes.ADVF advf, System.Runtime.InteropServices.ComTypes.IAdviseSink adviseSink, out int connection)
 		{
@@ -495,6 +481,5 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		#endregion
-#endif
 	 }
 }

@@ -49,19 +49,15 @@ using System.Threading;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
 	[ComVisible(true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-#endif
 	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Text")]
 	[DefaultEvent("Click")]
 	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	[ToolboxItemFilter("System.Windows.Forms")]
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
-#if NET_2_0
 		, IBindableComponent, IDropTarget, IBounds
-#endif
 	{
 		#region Local Variables
 
@@ -148,7 +144,6 @@ namespace System.Windows.Forms
 
 		ControlBindingsCollection data_bindings;
 
-#if NET_2_0
 		static bool verify_thread_handle;
 		Padding padding;
 		ImageLayout backgroundimage_layout;
@@ -160,7 +155,6 @@ namespace System.Windows.Forms
 		Point auto_scroll_offset;
 		private AutoSizeMode auto_size_mode;
 		private bool suppressing_key_press;
-#endif
 
 		#endregion	// Local Variables
 
@@ -333,13 +327,11 @@ namespace System.Windows.Forms
 			{
 			}
 
-#if NET_2_0
 			[MonoTODO ("Stub, does nothing")]
 			public void NotifyClients (AccessibleEvents accEvent, int objectID, int childID)
 			{
 			}
 
-#endif
 			public override string ToString() {
 				return "ControlAccessibleObject: Owner = " + owner.ToString() + ", Text: " + owner.text;
 			}
@@ -427,17 +419,9 @@ namespace System.Windows.Forms
 		}
 
 		[ListBindable (false)]
-#if NET_2_0
 		[ComVisible (false)]
 		public class ControlCollection : Layout.ArrangedElementCollection, IList, ICollection, ICloneable, IEnumerable {
-#else
-		[DesignerSerializer("System.Windows.Forms.Design.ControlCollectionCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
-		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
-#endif
 			#region ControlCollection Local Variables
-#if !NET_2_0
-			ArrayList list;
-#endif
 			ArrayList impl_list;
 			Control [] all_controls;
 			Control owner;
@@ -447,27 +431,12 @@ namespace System.Windows.Forms
 			public ControlCollection (Control owner)
 			{
 				this.owner = owner;
-#if !NET_2_0
-				this.list = new ArrayList();
-#endif
 			}
 			#endregion
 
 			#region ControlCollection Public Instance Properties
 
-#if !NET_2_0
-			public int Count {
-				get { return list.Count; }
-			}
 
-			public bool IsReadOnly {
-				get {
-					return list.IsReadOnly;
-				}
-			}
-#endif
-
-#if NET_2_0
 			public Control Owner {
 				get { return this.owner; }
 			}
@@ -483,9 +452,7 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			new
-#endif
-			public virtual Control this[int index] {
+			new public virtual Control this[int index] {
 				get {
 					if (index < 0 || index >= list.Count) {
 						throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
@@ -591,9 +558,7 @@ namespace System.Windows.Forms
 				if (control.VisibleInternal)
 					owner.PerformLayout (control, "Parent");
 			}
-#if NET_2_0
 			[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 			public virtual void AddRange (Control[] controls)
 			{
 				if (controls == null)
@@ -624,9 +589,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
-			new
-#endif
+			new 
 			public virtual void Clear ()
 			{
 				all_controls = null;
@@ -661,30 +624,13 @@ namespace System.Windows.Forms
 				return Contains (value) || ImplicitContains (value);
 			}
 
-#if NET_2_0
+
 			public virtual bool ContainsKey (string key)
 			{
 				return IndexOfKey (key) >= 0;
 			}
-#endif
 
-#if !NET_2_0
-			public void CopyTo (Array dest, int index)
-			{
-				list.CopyTo (dest, index);
-			}
 
-			public override bool Equals (object other)
-			{
-				if (other is ControlCollection && (((ControlCollection)other).owner==this.owner)) {
-					return(true);
-				} else {
-					return(false);
-				}
-			}
-#endif
-
-#if NET_2_0
 			// LAMESPEC: MSDN says AE, MS implementation throws ANE
 			public Control[] Find (string key, bool searchAllChildren)
 			{
@@ -703,18 +649,12 @@ namespace System.Windows.Forms
 				
 				return (Control[])al.ToArray (typeof (Control));
 			}
-#endif
 
 			public int GetChildIndex(Control child) {
 				return GetChildIndex(child, false);
 			}
 
-#if NET_2_0
-			public virtual int
-#else
-			public int
-#endif
-			GetChildIndex(Control child, bool throwException) {
+			public virtual int GetChildIndex(Control child, bool throwException) {
 				int index;
 
 				index=list.IndexOf(child);
@@ -725,11 +665,7 @@ namespace System.Windows.Forms
 				return index;
 			}
 
-#if NET_2_0
 			public override IEnumerator
-#else
-			public IEnumerator
-#endif
 			GetEnumerator () {
 				return new ControlCollectionEnumerator (list);
 			}
@@ -759,19 +695,11 @@ namespace System.Windows.Forms
 				return all_controls;
 			}
 
-#if !NET_2_0
-			public override int GetHashCode ()
-			{
-				return base.GetHashCode ();
-			}
-#endif
-
 			public int IndexOf (Control control)
 			{
 				return list.IndexOf (control);
 			}
 
-#if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
 				if (string.IsNullOrEmpty (key))
@@ -783,7 +711,6 @@ namespace System.Windows.Forms
 						
 				return -1;
 			}
-#endif
 
 			public virtual void Remove (Control value)
 			{
@@ -828,7 +755,6 @@ namespace System.Windows.Forms
 				Remove ((Control) list [index]);
 			}
 
-#if NET_2_0
 			public virtual void RemoveByKey (string key)
 			{
 				int index = IndexOfKey (key);
@@ -836,14 +762,8 @@ namespace System.Windows.Forms
 				if (index >= 0)
 					RemoveAt (index);
 			}
-#endif
 
-#if NET_2_0
-			public virtual void
-#else
-			public void
-#endif
-			SetChildIndex(Control child, int newIndex)
+			public virtual void SetChildIndex(Control child, int newIndex)
 			{
 				if (child == null)
 					throw new ArgumentNullException ("child");
@@ -875,52 +795,6 @@ namespace System.Windows.Forms
 
 			#region ControlCollection Interface Properties
 
-#if !NET_2_0
-			object IList.this [int index] {
-				get {
-					if (index<0 || index>=list.Count) {
-						throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
-					}
-					return this[index];
-				}
-
-				set {
-					if (!(value is Control)) {
-						throw new ArgumentException("Object of type Control required", "value");
-					}
-
-					all_controls = null;
-					Control ctrl = (Control) value;
-					list[index]= ctrl;
-
-					ctrl.ChangeParent(owner);
-
-					ctrl.InitLayout();
-
-					owner.UpdateChildrenZOrder();
-					owner.PerformLayout(ctrl, "Parent");
-				}
-			}
-
-			bool IList.IsFixedSize {
-				get {
-					return false;
-				}
-			}
-
-			bool ICollection.IsSynchronized {
-				get {
-					return list.IsSynchronized;
-				}
-			}
-
-			object ICollection.SyncRoot {
-				get {
-					return list.SyncRoot;
-				}
-			}
-#endif
-
 			#endregion // ControlCollection Interface Properties
 
 			#region ControlCollection Interface Methods
@@ -936,33 +810,6 @@ namespace System.Windows.Forms
 				this.Add ((Control)control);
 				return this.IndexOf ((Control)control);
 			}
-
-#if !NET_2_0
-			bool IList.Contains (object control)
-			{
-				if (!(control is Control))
-					throw new ArgumentException ("Object of type Control required", "control");
-
-				return this.Contains ((Control) control);
-			}
-
-			int IList.IndexOf (object control)
-			{
-				if (!(control is Control))
-					throw new ArgumentException ("Object of type Control  required", "control");
-
-				return this.IndexOf ((Control) control);
-			}
-
-			void IList.Insert (int index, object value)
-			{
-				if (!(value is Control))
-					throw new ArgumentException("Object of type Control required", "value");
-
-				all_controls = null;
-				list.Insert (index, value);
-			}
-#endif
 
 			void IList.Remove (object control)
 			{
@@ -1021,11 +868,9 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public Control ()
 		{
-#if NET_2_0
 			if (WindowsFormsSynchronizationContext.AutoInstall)
 				if (!(SynchronizationContext.Current is WindowsFormsSynchronizationContext))
 					SynchronizationContext.SetSynchronizationContext (new WindowsFormsSynchronizationContext ());
-#endif
 
 			layout_type = LayoutType.Anchor;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
@@ -1056,7 +901,6 @@ namespace System.Windows.Forms
 			show_focus_cues = SystemInformation.MenuAccessKeysUnderlined;
 			use_wait_cursor = false;
 
-#if NET_2_0
 			backgroundimage_layout = ImageLayout.Tile;
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
 			padding = this.DefaultPadding;
@@ -1064,14 +908,11 @@ namespace System.Windows.Forms
 			minimum_size = new Size();
 			margin = this.DefaultMargin;
 			auto_size_mode = AutoSizeMode.GrowOnly;
-#endif
 
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
 					ControlStyles.Selectable | ControlStyles.StandardClick | 
 					ControlStyles.StandardDoubleClick;
-#if NET_2_0
 			control_style |= ControlStyles.UseTextForAccessibility;
-#endif
 
 			parent = null;
 			background_image = null;
@@ -1149,15 +990,11 @@ namespace System.Windows.Forms
 		internal Rectangle PaddingClientRectangle
 		{
 			get {
-#if NET_2_0
 				return new Rectangle (
 					ClientRectangle.Left   + padding.Left,
 					ClientRectangle.Top    + padding.Top, 
 					ClientRectangle.Width  - padding.Horizontal, 
 					ClientRectangle.Height - padding.Vertical);
-#else
-				return ClientRectangle;
-#endif
 			}
 		}
 
@@ -1265,7 +1102,6 @@ namespace System.Windows.Forms
 
 		#region Private & Internal Methods
 		
-#if NET_2_0
 		void IDropTarget.OnDragDrop (DragEventArgs drgEvent)
 		{
 			OnDragDrop (drgEvent);
@@ -1285,7 +1121,6 @@ namespace System.Windows.Forms
 		{
 			OnDragOver (drgEvent);
 		}
-#endif
 
 		internal IAsyncResult BeginInvokeInternal (Delegate method, object [] args) {
 			return BeginInvokeInternal (method, args, FindControlToInvokeOn ());
@@ -1303,17 +1138,9 @@ namespace System.Windows.Forms
 			data.Args = args;
 			data.Result = result;
 
-#if NET_2_0
 			if (!ExecutionContext.IsFlowSuppressed ()) {
 				data.Context = ExecutionContext.Capture ();
 			}
-#else
-#if !MWF_ON_MSRUNTIME
-			if (SecurityManager.SecurityEnabled) {
-				data.Stack = CompressedStack.GetCompressedStack ();
-			}
-#endif
-#endif
 
 			XplatUI.SendAsyncMethod (data);
 			return result;
@@ -1557,7 +1384,6 @@ namespace System.Windows.Forms
 		}
 
 		void DrawBackgroundImage (Graphics g) {
-#if NET_2_0
 			Rectangle drawing_rectangle = new Rectangle ();
 			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
 				
@@ -1595,11 +1421,6 @@ namespace System.Windows.Forms
 
 			g.DrawImage (background_image, drawing_rectangle);
 
-#else
-			using (TextureBrush b = new TextureBrush (background_image, WrapMode.Tile)) {
-				g.FillRectangle (b, ClientRectangle);
-			}
-#endif
 		}
 
 		internal virtual void DndEnter (DragEventArgs e) {
@@ -1827,19 +1648,11 @@ namespace System.Windows.Forms
 			bool standardclick = GetStyle (ControlStyles.StandardClick);
 			bool standardclickclick = GetStyle (ControlStyles.StandardDoubleClick);
 			if ((clicks > 1) && standardclick && standardclickclick) {
-#if NET_2_0
 				OnDoubleClick (me);
 				OnMouseDoubleClick (me);
-#else
-				OnDoubleClick(EventArgs.Empty);
-#endif
 			} else if (clicks == 1 && standardclick && !ValidationFailed) {
-#if NET_2_0
 				OnClick (me);
 				OnMouseClick (me);
-#else
-				OnClick(EventArgs.Empty);
-#endif
 			}
 		}
 		
@@ -1961,12 +1774,10 @@ namespace System.Windows.Forms
 			return CreateParams;
 		}
 
-#if NET_2_0
 		internal virtual Size GetPreferredSizeCore (Size proposedSize)
 		{
 			return this.explicit_bounds.Size;
 		}
-#endif
 
 		private void UpdateDistances() {
 			if (parent != null) {
@@ -2025,10 +1836,8 @@ namespace System.Windows.Forms
 				if (force_double_buffer)
 					return true;
 					
-#if NET_2_0
 				if (DoubleBuffered)
 					return true;
-#endif
 				return (control_style & ControlStyles.DoubleBuffer) != 0;
 			}
 		}
@@ -2078,7 +1887,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -2093,7 +1901,6 @@ namespace System.Windows.Forms
 				verify_thread_handle = value;
 			}
 		}
-#endif
 		#endregion	// Public Static Properties
 
 		#region Public Instance Properties
@@ -2203,7 +2010,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DefaultValue (typeof (Point), "0, 0")]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -2245,11 +2051,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		[AmbientValue ("{Width=0, Height=0}")]
-#else
-		[AmbientValue (typeof(Size), "0, 0")]
-#endif
 		[MWFCategory("Layout")]
 		public virtual Size MaximumSize {
 			get {
@@ -2285,7 +2087,6 @@ namespace System.Windows.Forms
 		{
 			return this.MinimumSize != DefaultMinimumSize;
 		}
-#endif // NET_2_0
 
 		[DispId(-501)]
 		[MWFCategory("Appearance")]
@@ -2338,7 +2139,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (ImageLayout.Tile)]
 		[Localizable (true)]
 		[MWFCategory("Appearance")]
@@ -2358,7 +2158,7 @@ namespace System.Windows.Forms
 				
 			}
 		} 
-#endif
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -2511,9 +2311,7 @@ namespace System.Windows.Forms
 
 			set {
 				this.SetClientSizeCore(value.Width, value.Height);
-#if NET_2_0
 				this.OnClientSizeChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -2549,9 +2347,7 @@ namespace System.Windows.Forms
 				return false;
 			}
 		}
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		[DefaultValue(null)]
 		[MWFCategory("Behavior")]
 		public virtual ContextMenu ContextMenu {
@@ -2576,7 +2372,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (null)]
 		[MWFCategory("Behavior")]
 		public virtual ContextMenuStrip ContextMenuStrip {
@@ -2590,7 +2385,6 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -2613,10 +2407,8 @@ namespace System.Windows.Forms
 		[MWFCategory("Appearance")]
 		public virtual Cursor Cursor {
 			get {
-#if NET_2_0
 				if (use_wait_cursor)
 					return Cursors.WaitCursor;
-#endif
 
 				if (cursor != null) {
 					return cursor;
@@ -2716,7 +2508,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		protected virtual bool DoubleBuffered {
 			get {
 				return (control_style & ControlStyles.OptimizedDoubleBuffer) != 0;
@@ -2757,7 +2548,6 @@ namespace System.Windows.Forms
 			
 			g.Dispose ();
 		}
-#endif
 		
 		[DispId(-514)]
 		[Localizable(true)]
@@ -2812,9 +2602,7 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		[MWFCategory("Appearance")]
 		public virtual Font Font {
-#if NET_2_0
 			[return: MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Font))]
-#endif
 			get {
 				if (font != null)
 					return font;
@@ -2879,13 +2667,11 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IntPtr Handle {							// IWin32Window
 			get {
-#if NET_2_0
 				if (verify_thread_handle) {
 					if (this.InvokeRequired) {
 						throw new InvalidOperationException("Cross-thread access of handle detected. Handle access only valid on thread that created the control");
 					}
 				}
-#endif
 				if (!IsHandleCreated) {
 					CreateHandle();
 				}
@@ -2991,7 +2777,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
@@ -2999,14 +2784,10 @@ namespace System.Windows.Forms
 		public bool IsMirrored {
 			get { return false; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#if NET_2_0
-		public virtual
-#endif
-		Layout.LayoutEngine LayoutEngine {
+		public virtual Layout.LayoutEngine LayoutEngine {
 			get {
 				if (layout_engine == null)
 					layout_engine = new Layout.DefaultLayout ();
@@ -3044,7 +2825,6 @@ namespace System.Windows.Forms
 			return this.Location != new Point (0, 0);
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[MWFCategory("Layout")]
 		public Padding Margin {
@@ -3063,7 +2843,6 @@ namespace System.Windows.Forms
 		{
 			return this.Margin != DefaultMargin;
 		}
-#endif
 
 		[Browsable(false)]
 		public string Name {
@@ -3076,7 +2855,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Localizable(true)]
 		[MWFCategory("Layout")]
 		public Padding Padding {
@@ -3102,7 +2880,6 @@ namespace System.Windows.Forms
 		{
 			return this.Padding != DefaultPadding;
 		}
-#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -3128,12 +2905,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		public Size PreferredSize {
 			get { return this.GetPreferredSize (Size.Empty); }
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
@@ -3193,9 +2968,7 @@ namespace System.Windows.Forms
 
 					clip_region = value;
 					
-#if NET_2_0
 					OnRegionChanged (EventArgs.Empty);
-#endif
 				}
 			}
 		}
@@ -3350,11 +3123,9 @@ namespace System.Windows.Forms
 					UpdateWindowText ();
 					OnTextChanged (EventArgs.Empty);
 
-#if NET_2_0
 					// Label has its own AutoSize implementation
 					if (AutoSize && Parent != null && (!(this is Label)))
 						Parent.PerformLayout (this, "Text");
-#endif
 				}
 			}
 		}
@@ -3395,7 +3166,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0		
 		[EditorBrowsable(EditorBrowsableState.Always)]
 		[Browsable(true)]
 		[DefaultValue (false)]
@@ -3410,7 +3180,6 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#endif
 
 		[Localizable(true)]
 		[MWFCategory("Behavior")]
@@ -3463,7 +3232,6 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 
 		#region	Protected Instance Properties
-#if NET_2_0
 		protected virtual bool CanEnableIme {
 			get { return false; }
 		}
@@ -3472,7 +3240,6 @@ namespace System.Windows.Forms
 		protected override bool CanRaiseEvents {
 			get { return true; }
 		}
-#endif
 
 		protected virtual CreateParams CreateParams {
 			get {
@@ -3552,9 +3319,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		protected virtual Cursor DefaultCursor { get { return Cursors.Default; } }
-#endif
 
 		protected virtual ImeMode DefaultImeMode {
 			get {
@@ -3562,7 +3327,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		protected virtual Padding DefaultMargin {
 			get { return new Padding (3); }
 		}
@@ -3570,7 +3334,6 @@ namespace System.Windows.Forms
 		protected virtual Size DefaultMaximumSize { get { return new Size (); } }
 		protected virtual Size DefaultMinimumSize { get { return new Size (); } }
 		protected virtual Padding DefaultPadding { get { return new Padding (); } }
-#endif
 
 		protected virtual Size DefaultSize {
 			get {
@@ -3587,9 +3350,7 @@ namespace System.Windows.Forms
 				;; // Nothing to do
 			}
 		}
-#if NET_2_0
 		[Obsolete ()]
-#endif
 		protected bool RenderRightToLeft {
 			get {
 				return (this.right_to_left == RightToLeft.Yes);
@@ -3606,12 +3367,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual bool ScaleChildren {
 			get { return ScaleChildrenInternal; }
 		}
-#endif
 
 		internal virtual bool ScaleChildrenInternal {
 			get { return true; }
@@ -3640,10 +3399,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
-		internal virtual
-#endif
-		protected bool ShowKeyboardCues {
+		internal virtual protected bool ShowKeyboardCues {
 			get {
 				return ShowKeyboardCuesInternal;
 			}
@@ -3671,7 +3427,6 @@ namespace System.Windows.Forms
 			return Control.ControlNativeWindow.ControlFromHandle(handle);
 		}
 
-#if NET_2_0
 		[MonoTODO ("Only implemented for Win32, others always return false")]
 		public static bool IsKeyLocked (Keys keyVal)
 		{
@@ -3684,7 +3439,6 @@ namespace System.Windows.Forms
 					throw new NotSupportedException ("keyVal must be CapsLock, NumLock, or ScrollLock");
 			}
 		}
-#endif
 
 		public static bool IsMnemonic(char charCode, string text) {
 			int amp;
@@ -3729,11 +3483,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-#if NET_2_0
 		public IAsyncResult BeginInvoke (Delegate method, params object[] args)
-#else
-		public IAsyncResult BeginInvoke (Delegate method, object[] args)
-#endif
 		{
 			return BeginInvokeInternal (method, args);
 		}
@@ -3789,12 +3539,6 @@ namespace System.Windows.Forms
 					if (!c.Created && !c.IsDisposed)
 						c.CreateControl ();
 						
-#if ONLY_1_1
-				if (binding_context == null && parent != null) {
-					OnBindingContextChanged(EventArgs.Empty);
-				}
-#endif
-
 				OnCreateControl();
 			}
 		}
@@ -3846,9 +3590,7 @@ namespace System.Windows.Forms
 			}
 			return null;
 		}
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public bool Focus() {
 			return FocusInternal (false);
 		}
@@ -3884,10 +3626,7 @@ namespace System.Windows.Forms
 			return GetChildAtPoint (pt, GetChildAtPointSkip.None);
 		}
 
-#if NET_2_0
-		public
-#endif
-		Control GetChildAtPoint (Point pt, GetChildAtPointSkip skipValue)
+		public Control GetChildAtPoint (Point pt, GetChildAtPointSkip skipValue)
 		{
 			// MS's version causes the handle to be created.  The stack trace shows that get_Handle is called here, but
 			// we'll just call CreateHandle instead.
@@ -3954,7 +3693,6 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Size GetPreferredSize (Size proposedSize) {
 			Size retsize = GetPreferredSizeCore (proposedSize);
@@ -3973,7 +3711,6 @@ namespace System.Windows.Forms
 				
 			return retsize;
 		}
-#endif
 
 		public void Hide() {
 			this.Visible = false;
@@ -4045,11 +3782,7 @@ namespace System.Windows.Forms
 
 			return Invoke(method, prms);
 		}
-#if NET_2_0
 		public object Invoke (Delegate method, params object [] args) {
-#else
-		public object Invoke (Delegate method, object[] args) {
-#endif
 			Control control = FindControlToInvokeOn ();
 			
 			if (!this.InvokeRequired) {
@@ -4112,26 +3845,22 @@ namespace System.Windows.Forms
 			return new Point(x, y);
 		}
 
-#if NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public PreProcessControlState PreProcessControlMessage (ref Message msg)
 		{
 			return PreProcessControlMessageInternal (ref msg);
 		}
-#endif
 
 		internal PreProcessControlState PreProcessControlMessageInternal (ref Message msg)
 		{
 			switch ((Msg)msg.Msg) {
 				case Msg.WM_KEYDOWN:
 				case Msg.WM_SYSKEYDOWN:
-#if NET_2_0
 					PreviewKeyDownEventArgs e = new PreviewKeyDownEventArgs ((Keys)msg.WParam.ToInt32 () | XplatUI.State.ModifierKeys);
 					OnPreviewKeyDown (e);
 				
 					if (e.IsInputKey)
 						return PreProcessControlState.MessageNeeded;
-#endif
 				
 					if (PreProcessMessage (ref msg))
 						return PreProcessControlState.MessageProcessed;
@@ -4185,11 +3914,7 @@ namespace System.Windows.Forms
 				if (ProcessDialogChar((char)msg.WParam))
 					return true;
 				else
-#if NET_2_0
 					return ToolStripManager.ProcessMenuKey (ref msg);
-#else
-					return false;
-#endif
 			}
 			return false;
 		}
@@ -4259,10 +3984,8 @@ namespace System.Windows.Forms
 			}
 
 			if (layout_suspended == 0) {
-#if NET_2_0
 				if (this is ContainerControl)
 					(this as ContainerControl).PerformDelayedAutoScale();
-#endif
 
 				if (!performLayout)
 					foreach (Control c in Controls.GetAllControls ())
@@ -4273,23 +3996,18 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Obsolete ()]
-#endif
 		public void Scale(float ratio) {
 			ScaleCore(ratio, ratio);
 		}
 		
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Obsolete ()]
-#endif
 		public void Scale(float dx, float dy) {
 			ScaleCore(dx, dy);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public void Scale (SizeF factor)
 		{
@@ -4333,7 +4051,6 @@ namespace System.Windows.Forms
 			ContainerControl cc = FindContainer (c);
 			return (cc != null) && cc.IsAutoScaling;
 		}
-#endif
 
 		public void Select() {
 			Select(false, false);	
@@ -4460,22 +4177,17 @@ namespace System.Windows.Forms
 			// CWL shows nothing.  So we fudge it and put
 			// a CreateHandle here.
 
-#if ONLY_1_1
-			CreateHandle ();
-#endif
 
 			if (accessibility_object != null && accessibility_object is ControlAccessibleObject)
 				((ControlAccessibleObject)accessibility_object).NotifyClients (accEvent, childID);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected void AccessibilityNotifyClients (AccessibleEvents accEvent, int objectID, int childID)
 		{
 			if (accessibility_object != null && accessibility_object is ControlAccessibleObject)
 				((ControlAccessibleObject)accessibility_object).NotifyClients (accEvent, objectID, childID);
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual AccessibleObject CreateAccessibilityInstance() {
@@ -4543,7 +4255,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		protected virtual AccessibleObject GetAccessibilityObjectById (int objectId)
 		{
 			// XXX need to implement this.
@@ -4579,7 +4290,6 @@ namespace System.Windows.Forms
 
 			return bounds;
 		}
-#endif
 
 		private Rectangle GetScaledBoundsOld (Rectangle bounds, SizeF factor, BoundsSpecified specified)
 		{
@@ -4704,9 +4414,7 @@ namespace System.Windows.Forms
 				case (int)Msg.WM_KEYDOWN: {
 					key_event = new KeyEventArgs ((Keys) m.WParam.ToInt32 ());
 					OnKeyDown (key_event);
-#if NET_2_0
 					suppressing_key_press = key_event.SuppressKeyPress;
-#endif
 					return key_event.Handled;
 				}
 
@@ -4719,17 +4427,13 @@ namespace System.Windows.Forms
 
 				case (int)Msg.WM_SYSCHAR:
 				case (int)Msg.WM_CHAR: {
-#if NET_2_0
 					if (suppressing_key_press)
 						return true;
-#endif
 					KeyPressEventArgs key_press_event;
 
 					key_press_event = new KeyPressEventArgs ((char) m.WParam);
 					OnKeyPress(key_press_event);
-#if NET_2_0
 					m.WParam = (IntPtr) key_press_event.KeyChar;
-#endif
 					return key_press_event.Handled;
 				}
 
@@ -4912,7 +4616,6 @@ namespace System.Windows.Forms
 			return RtlTranslateAlignment(align);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void ScaleControl (SizeF factor, BoundsSpecified specified)
 		{
@@ -4920,13 +4623,8 @@ namespace System.Windows.Forms
 
 			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, specified);
 		}
-#endif
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#else
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		protected virtual void ScaleCore (float dx, float dy)
 		{
 			Rectangle new_bounds = GetScaledBoundsOld (bounds, new SizeF (dx, dy), BoundsSpecified.All);
@@ -4950,7 +4648,6 @@ namespace System.Windows.Forms
 				container.ActiveControl = this;
 		}
 
-#if NET_2_0
 		protected void SetAutoSizeMode (AutoSizeMode mode)
 		{
 			if (auto_size_mode != mode) {
@@ -4958,7 +4655,6 @@ namespace System.Windows.Forms
 				PerformLayout (this, "AutoSizeMode");
 			}
 		}
-#endif
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
@@ -5111,12 +4807,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#if NET_2_0
-		protected 
-#else
-		internal
-#endif
-		virtual Size SizeFromClientSize (Size clientSize) {
+		protected virtual Size SizeFromClientSize (Size clientSize) {
 			return InternalSizeFromClientSize (clientSize);
 		}
 
@@ -5187,9 +4878,7 @@ namespace System.Windows.Forms
 			if (resized) {
 				OnSizeInitializedOrChanged ();
 				OnSizeChanged(EventArgs.Empty);
-#if NET_2_0
 				OnClientSizeChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -5539,11 +5228,9 @@ namespace System.Windows.Forms
 				//}
 				current_buffer.Start (paint_event);
 			}
-#if NET_2_0
 			// If using OptimizedDoubleBuffer, ensure the clip region gets set
 			if (GetStyle (ControlStyles.OptimizedDoubleBuffer))
 				paint_event.Graphics.SetClip (Rectangle.Intersect (paint_event.ClipRectangle, this.ClientRectangle));
-#endif
 
 			if (!GetStyle(ControlStyles.Opaque)) {
 				OnPaintBackground (paint_event);
@@ -5731,7 +5418,6 @@ namespace System.Windows.Forms
 				return;
 			}
 
-#if NET_2_0
 				// If there isn't a regular context menu, show the Strip version
 				if (context_menu == null && context_menu_strip != null) {
 					Point pt;
@@ -5748,7 +5434,6 @@ namespace System.Windows.Forms
 					context_menu_strip.Show (this, PointToClient (pt));
 					return;
 				}
-#endif
 			DefWndProc(ref m);
 		}
 
@@ -5859,11 +5544,9 @@ namespace System.Windows.Forms
 				if (form != null && form.ActiveMenu != null) {
 					form.ActiveMenu.ProcessCmdKey(ref m, (Keys)m.WParam.ToInt32());
 				}
-#if NET_2_0
 				else
 					if (ToolStripManager.ProcessMenuKey (ref m))
 						return;
-#endif
 			}
 
 			DefWndProc (ref m);
@@ -5965,14 +5648,12 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region OnXXX methods
-#if NET_2_0
 		protected virtual void OnAutoSizeChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events[AutoSizeChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnBackColorChanged(EventArgs e) {
@@ -5990,7 +5671,6 @@ namespace System.Windows.Forms
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBackgroundImageChanged(e);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnBackgroundImageLayoutChanged (EventArgs e)
 		{
@@ -5998,7 +5678,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnBindingContextChanged(EventArgs e) {
@@ -6030,7 +5709,6 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnClientSizeChanged (EventArgs e)
 		{
@@ -6038,7 +5716,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnContextMenuChanged(EventArgs e) {
@@ -6047,14 +5724,12 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnContextMenuStripChanged (EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [ContextMenuStripChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnControlAdded(ControlEventArgs e) {
@@ -6081,9 +5756,7 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 				
-#if NET_2_0
 			for (int i = 0; i < child_controls.Count; i++) child_controls[i].OnParentCursorChanged (e);
-#endif
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -6268,7 +5941,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, levent);
 
-#if NET_2_0
 			Size s = Size;
 			
 			// If our layout changed our PreferredSize, our parent
@@ -6279,7 +5951,6 @@ namespace System.Windows.Forms
 				Parent.PerformLayout ();
 				nested_layout = false;
 			}
-#endif
 			
 			LayoutEngine.Layout (this, levent);
 		}
@@ -6306,27 +5977,20 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-#if NET_2_0
 		protected virtual void OnMarginChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events[MarginChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#if NET_2_0
 		protected virtual void OnMouseCaptureChanged (EventArgs e)
-#else
-		internal virtual void OnMouseCaptureChanged (EventArgs e)
-#endif
 		{
 			EventHandler eh = (EventHandler)(Events [MouseCaptureChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseClick (MouseEventArgs e)
 		{
@@ -6342,7 +6006,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseDown(MouseEventArgs e) {
@@ -6405,13 +6068,11 @@ namespace System.Windows.Forms
 			// Override me!
 		}
 
-#if NET_2_0
 		protected virtual void OnPaddingChanged (EventArgs e) {
 			EventHandler eh = (EventHandler) (Events [PaddingChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnPaint(PaintEventArgs e) {
@@ -6462,12 +6123,10 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnParentCursorChanged (EventArgs e)
 		{
 		}
-#endif
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnParentEnabledChanged(EventArgs e) {
@@ -6515,7 +6174,6 @@ namespace System.Windows.Forms
 				eh (this, qcdevent);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnPreviewKeyDown (PreviewKeyDownEventArgs e)
 		{
@@ -6539,7 +6197,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnResize(EventArgs e) {
@@ -6637,25 +6294,17 @@ namespace System.Windows.Forms
 		#endregion	// OnXXX methods
 
 		#region Events
-#if NET_2_0
 		static object AutoSizeChangedEvent = new object ();
-#endif
 		static object BackColorChangedEvent = new object ();
 		static object BackgroundImageChangedEvent = new object ();
-#if NET_2_0
 		static object BackgroundImageLayoutChangedEvent = new object ();
-#endif
 		static object BindingContextChangedEvent = new object ();
 		static object CausesValidationChangedEvent = new object ();
 		static object ChangeUICuesEvent = new object ();
 		static object ClickEvent = new object ();
-#if NET_2_0
 		static object ClientSizeChangedEvent = new object ();
-#endif
 		static object ContextMenuChangedEvent = new object ();
-#if NET_2_0
 		static object ContextMenuStripChangedEvent = new object ();
-#endif
 		static object ControlAddedEvent = new object ();
 		static object ControlRemovedEvent = new object ();
 		static object CursorChangedEvent = new object ();
@@ -6683,14 +6332,10 @@ namespace System.Windows.Forms
 		static object LeaveEvent = new object ();
 		static object LocationChangedEvent = new object ();
 		static object LostFocusEvent = new object ();
-#if NET_2_0
 		static object MarginChangedEvent = new object ();
-#endif
 		static object MouseCaptureChangedEvent = new object ();
-#if NET_2_0
 		static object MouseClickEvent = new object ();
 		static object MouseDoubleClickEvent = new object ();
-#endif
 		static object MouseDownEvent = new object ();
 		static object MouseEnterEvent = new object ();
 		static object MouseHoverEvent = new object ();
@@ -6699,19 +6344,13 @@ namespace System.Windows.Forms
 		static object MouseUpEvent = new object ();
 		static object MouseWheelEvent = new object ();
 		static object MoveEvent = new object ();
-#if NET_2_0
 		static object PaddingChangedEvent = new object ();
-#endif
 		static object PaintEvent = new object ();
 		static object ParentChangedEvent = new object ();
-#if NET_2_0
 		static object PreviewKeyDownEvent = new object ();
-#endif
 		static object QueryAccessibilityHelpEvent = new object ();
 		static object QueryContinueDragEvent = new object ();
-#if NET_2_0
 		static object RegionChangedEvent = new object ();
-#endif
 		static object ResizeEvent = new object ();
 		static object RightToLeftChangedEvent = new object ();
 		static object SizeChangedEvent = new object ();
@@ -6724,14 +6363,12 @@ namespace System.Windows.Forms
 		static object ValidatingEvent = new object ();
 		static object VisibleChangedEvent = new object ();
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value);}
 			remove {Events.RemoveHandler (AutoSizeChangedEvent, value);}
 		}
-#endif
 		public event EventHandler BackColorChanged {
 			add { Events.AddHandler (BackColorChangedEvent, value); }
 			remove { Events.RemoveHandler (BackColorChangedEvent, value); }
@@ -6742,12 +6379,10 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (BackgroundImageChangedEvent, value); }
 		}
 
-#if NET_2_0	
 		public event EventHandler BackgroundImageLayoutChanged {
 			add {Events.AddHandler (BackgroundImageLayoutChangedEvent, value);}
 			remove {Events.RemoveHandler (BackgroundImageLayoutChangedEvent, value);}
 		}
-#endif
 
 		public event EventHandler BindingContextChanged {
 			add { Events.AddHandler (BindingContextChangedEvent, value); }
@@ -6769,46 +6404,32 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (ClickEvent, value); }
 		}
 		
-#if NET_2_0
 		public event EventHandler ClientSizeChanged {
 			add {Events.AddHandler (ClientSizeChangedEvent, value);}
 			remove {Events.RemoveHandler (ClientSizeChangedEvent, value);}
 		}
-#endif
 
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		public event EventHandler ContextMenuChanged {
 			add { Events.AddHandler (ContextMenuChangedEvent, value); }
 			remove { Events.RemoveHandler (ContextMenuChangedEvent, value); }
 		}
 
-#if NET_2_0
 		public event EventHandler ContextMenuStripChanged {
 			add { Events.AddHandler (ContextMenuStripChangedEvent, value); }
 			remove { Events.RemoveHandler (ContextMenuStripChangedEvent, value);}
 		}
-#endif
 
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-#if NET_2_0
 		[Browsable(true)]
-#else 
-		[Browsable(false)]
-#endif
 		public event ControlEventHandler ControlAdded {
 			add { Events.AddHandler (ControlAddedEvent, value); }
 			remove { Events.RemoveHandler (ControlAddedEvent, value); }
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-#if NET_2_0
 		[Browsable(true)]
-#else 
-		[Browsable(false)]
-#endif
 		public event ControlEventHandler ControlRemoved {
 			add { Events.AddHandler (ControlRemovedEvent, value); }
 			remove { Events.RemoveHandler (ControlRemovedEvent, value); }
@@ -6950,21 +6571,15 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (LostFocusEvent, value); }
 		}
 
-#if NET_2_0
 		public event EventHandler MarginChanged {
 			add { Events.AddHandler (MarginChangedEvent, value); }
 			remove {Events.RemoveHandler (MarginChangedEvent, value); }
 		}
-#endif
-#if NET_2_0
+
 		public event EventHandler MouseCaptureChanged {
-#else
-		internal event EventHandler MouseCaptureChanged {
-#endif
 			add { Events.AddHandler (MouseCaptureChangedEvent, value); }
 			remove { Events.RemoveHandler (MouseCaptureChangedEvent, value); }
 		}
-#if NET_2_0		
 		public event MouseEventHandler MouseClick
 		{
 			add { Events.AddHandler (MouseClickEvent, value); }
@@ -6975,7 +6590,6 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (MouseDoubleClickEvent, value); }
 			remove { Events.RemoveHandler (MouseDoubleClickEvent, value); }
 		}
-#endif
 		public event MouseEventHandler MouseDown {
 			add { Events.AddHandler (MouseDownEvent, value); }
 			remove { Events.RemoveHandler (MouseDownEvent, value); }
@@ -7017,13 +6631,11 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (MoveEvent, value); }
 			remove { Events.RemoveHandler (MoveEvent, value); }
 		}
-#if NET_2_0
 		public event EventHandler PaddingChanged
 		{
 			add { Events.AddHandler (PaddingChangedEvent, value); }
 			remove { Events.RemoveHandler (PaddingChangedEvent, value); }
 		}
-#endif
 		public event PaintEventHandler Paint {
 			add { Events.AddHandler (PaintEvent, value); }
 			remove { Events.RemoveHandler (PaintEvent, value); }
@@ -7034,12 +6646,10 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (ParentChangedEvent, value); }
 		}
 
-#if NET_2_0
 		public event PreviewKeyDownEventHandler PreviewKeyDown {
 			add { Events.AddHandler (PreviewKeyDownEvent, value); }
 			remove { Events.RemoveHandler (PreviewKeyDownEvent, value); }
 		}
-#endif
 
 		public event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp {
 			add { Events.AddHandler (QueryAccessibilityHelpEvent, value); }
@@ -7051,16 +6661,12 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (QueryContinueDragEvent, value); }
 		}
 
-#if NET_2_0
 		public event EventHandler RegionChanged {
 			add { Events.AddHandler (RegionChangedEvent, value); }
 			remove { Events.RemoveHandler (RegionChangedEvent, value); }
 		}
-#endif
 
-#if NET_2_0	
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public event EventHandler Resize {
 			add { Events.AddHandler (ResizeEvent, value); }
 			remove { Events.RemoveHandler (ResizeEvent, value); }

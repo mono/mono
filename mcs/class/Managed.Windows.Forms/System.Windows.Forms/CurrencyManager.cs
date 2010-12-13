@@ -218,11 +218,8 @@ namespace System.Windows.Forms {
 				editable.CancelEdit ();
 				OnItemChanged (new ItemChangedEventArgs (Position));
 			}
-#if NET_2_0
 			if (list is ICancelAddNew)
 				((ICancelAddNew)list).CancelNew (listposition);
-#endif
-
 		}
 		
 		public override void EndCurrentEdit ()
@@ -237,10 +234,8 @@ namespace System.Windows.Forms {
 				editable.EndEdit ();
 			}
 
-#if NET_2_0
 			if (list is ICancelAddNew)
 				((ICancelAddNew)list).EndNew (listposition);
-#endif
 		}
 
 		public void Refresh ()
@@ -261,23 +256,19 @@ namespace System.Windows.Forms {
 				onCurrentChangedHandler (this, e);
 			}
 
-#if NET_2_0
 			// don't call OnCurrentItemChanged here, as it can be overridden
 			if (onCurrentItemChangedHandler != null) {
 				onCurrentItemChangedHandler (this, e);
 			}
-#endif
 
 		}
 
-#if NET_2_0
 		protected override void OnCurrentItemChanged (EventArgs e)
 		{
 			if (onCurrentItemChangedHandler != null) {
 				onCurrentItemChangedHandler (this, e);
 			}
 		}
-#endif
 
 		protected virtual void OnItemChanged (ItemChangedEventArgs e)
 		{
@@ -289,13 +280,11 @@ namespace System.Windows.Forms {
 			transfering_data = false;
 		}
 
-#if NET_2_0
 		void OnListChanged (ListChangedEventArgs args)
 		{
 			if (ListChanged != null)
 				ListChanged (this, args);
 		}
-#endif
 
 		protected virtual void OnPositionChanged (EventArgs e)
 		{
@@ -374,12 +363,7 @@ namespace System.Windows.Forms {
 			return TypeDescriptor.GetProperties (t, att);
 		}
 
-#if NET_2_0
-		protected
-#else
-		private
-#endif
-		void OnMetaDataChanged (EventArgs e)
+		protected void OnMetaDataChanged (EventArgs e)
 		{
 			if (MetaDataChanged != null)
 				MetaDataChanged (this, e);
@@ -392,9 +376,7 @@ namespace System.Windows.Forms {
 			case ListChangedType.PropertyDescriptorDeleted:
 			case ListChangedType.PropertyDescriptorChanged:
 				OnMetaDataChanged (EventArgs.Empty);
-#if NET_2_0
 				OnListChanged (e);
-#endif
 				break;
 			case ListChangedType.ItemDeleted:
 				if (list.Count == 0) {
@@ -402,10 +384,8 @@ namespace System.Windows.Forms {
 					listposition = -1;
 					UpdateIsBinding ();
 
-#if NET_2_0
 					OnPositionChanged (EventArgs.Empty);
 					OnCurrentChanged (EventArgs.Empty);
-#endif
 				}
 				else if (e.NewIndex <= listposition) {
 					/* the deleted row was either the current one, or one earlier in the list.
@@ -419,9 +399,7 @@ namespace System.Windows.Forms {
 				}
 
 				OnItemChanged (new ItemChangedEventArgs (-1));
-#if NET_2_0
 				OnListChanged (e);
-#endif
 				break;
 			case ListChangedType.ItemAdded:
 				if (list.Count == 1) {
@@ -429,15 +407,10 @@ namespace System.Windows.Forms {
 					ChangeRecordState (e.NewIndex,
 							   false, false, true, false);
 
-#if ONLY_1_1
-					UpdateIsBinding ();
-#else
 					OnItemChanged (new ItemChangedEventArgs (-1));
 					OnListChanged (e);
-#endif					 	
 				}
 				else {
-#if NET_2_0
 					if (e.NewIndex <= listposition) {
 						ChangeRecordState (e.NewIndex,
 								   false, false, false, false);
@@ -449,42 +422,29 @@ namespace System.Windows.Forms {
 						OnItemChanged (new ItemChangedEventArgs (-1));
 						OnListChanged (e);
 					}
-#else
-					OnItemChanged (new ItemChangedEventArgs (-1));
-#endif
 				}
 
 				break;
 			case ListChangedType.ItemChanged:
 				if (editing) {
-#if NET_2_0
 					if (e.NewIndex == listposition)
 						OnCurrentItemChanged (EventArgs.Empty);
-#endif
 					OnItemChanged (new ItemChangedEventArgs (e.NewIndex));
 				}
-#if NET_2_0
 				OnListChanged (e);
-#endif					 	
 				break;
 			case ListChangedType.Reset:
 				PushData();
 				UpdateIsBinding();
-#if NET_2_0	
 				OnListChanged (e);
-#endif
 				break;
 			default:
-#if NET_2_0
 				OnListChanged (e);
-#endif
 				break;
 			}
 		}
 
-#if NET_2_0
 		public event ListChangedEventHandler ListChanged;
-#endif
 		public event ItemChangedEventHandler ItemChanged;
 		public event EventHandler MetaDataChanged;
 	}

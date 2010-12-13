@@ -24,7 +24,6 @@
 //
 
 
-#if NET_2_0
 using System.Drawing;
 using System.ComponentModel;
 
@@ -145,4 +144,3 @@ namespace System.Windows.Forms {
 
 }
 
-#endif

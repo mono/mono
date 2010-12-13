@@ -23,12 +23,8 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public delegate void DataGridViewCellValidatingEventHandler (object sender, DataGridViewCellValidatingEventArgs e);
 
 }
-
-#endif

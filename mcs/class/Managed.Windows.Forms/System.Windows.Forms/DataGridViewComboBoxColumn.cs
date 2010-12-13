@@ -23,9 +23,6 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-
-#if NET_2_0
-
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -244,5 +241,3 @@ namespace System.Windows.Forms {
 	}
 
 }
-
-#endif

@@ -24,7 +24,6 @@ using System;
 using System.Threading;
 using System.ComponentModel;
 
-#if NET_2_0
 
 // Some implementation details:
 // http://msdn.microsoft.com/msdnmag/issues/06/06/NETMatters/default.aspx
@@ -88,4 +87,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

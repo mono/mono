@@ -44,11 +44,9 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region Constructors
-#if NET_2_0
 			public DataGridColumnHeaderAccessibleObject ()
 			{
 			}
-#endif		
 			public DataGridColumnHeaderAccessibleObject (DataGridColumnStyle owner)
 			{
 				this.owner = owner;
@@ -231,9 +229,7 @@ namespace System.Windows.Forms
 
 		[Editor("System.Windows.Forms.Design.DataGridColumnStyleMappingNameEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
-#if NET_2_0
 		[DefaultValue ("")]
-#endif
 		public string MappingName {
 			get {
 				return mapping_name;
@@ -404,24 +400,15 @@ namespace System.Windows.Forms
 			Edit (source, rowNum, bounds, readOnly, string.Empty);
 		}
 
-#if NET_2_0
 		protected internal virtual void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string displayText)
 		{
 			string instantText = displayText;
-#else
-		protected internal virtual void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText)
-		{
-#endif
 			Edit (source, rowNum, bounds, readOnly, instantText, true);
 		}
 
 		protected internal abstract void Edit (CurrencyManager source,
 			int rowNum, Rectangle bounds, bool readOnly,
-#if NET_2_0
 			string displayText,
-#else
-			string instantText,
-#endif
 			bool cellIsVisible);
 
 
@@ -501,15 +488,9 @@ namespace System.Windows.Forms
 			SetDataGridInColumn (value);
 		}
 
-#if NET_2_0
 		protected internal virtual void UpdateUI (CurrencyManager source, int rowNum, string displayText)
 		{
 		}
-#else
-		protected internal virtual void UpdateUI (CurrencyManager source, int rowNum, string instantText)
-		{
-		}
-#endif
 
 		#endregion	// Public Instance Methods
 		
