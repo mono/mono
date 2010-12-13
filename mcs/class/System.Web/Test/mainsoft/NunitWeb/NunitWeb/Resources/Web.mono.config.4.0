@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<configSections>
+		<section name="CustomTags" restartOnExternalChanges="false" type="MonoTests.SystemWeb.Framework.CustomSection, System.Web_test_net_4_0" />
+	</configSections>
+	<appSettings>
+		<add key="strvalue" value="str" />
+		<add key="intvalue" value="123" />
+	</appSettings>
+	
+	<!-- DO NOT REMOVE: USED BY TESTS -->
+	<CustomTags>
+		<sections>
+			<add area="activityTemplateTitle">
+				<add name="a" />
+			</add>
+			<add area="Something">
+			</add>
+		</sections>
+	</CustomTags>
+	
+	<system.web>
+		<siteMap enabled="true">
+			<providers>
+				<add name="TestSiteMapProvider" type="Tests.TestSiteMapProvider" />
+			</providers>
+		</siteMap>
+		<compilation debug="true" batch="false" numRecompilesBeforeAppRestart="100000" />
+		<httpHandlers>
+			<add path="WebResource.axd" verb="GET" type="System.Web.Handlers.AssemblyResourceLoader" validate="true" />
+			<remove verb="*" path="*.asmx"/>
+			<add verb="*" path="*.asmx" validate="false" type="System.Web.Script.Services.ScriptHandlerFactory, System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+		</httpHandlers>
+		<pages enableSessionState="false" />
+		<membership defaultProvider="FakeProvider">
+			<providers>
+				<add name="FakeProvider" type="MonoTests.SystemWeb.Framework.FakeMembershipProvider"
+				     enablePasswordRetrieval="false" enablePasswordReset="true" requiresQuestionAndAnswer="true"
+				     applicationName="/" requiresUniqueEmail="false" passwordFormat="Hashed"
+				     maxInvalidPasswordAttempts="5" minRequiredPasswordLength="7"
+				     minRequiredNonalphanumericCharacters="1" passwordAttemptWindow="10"
+				     passwordStrengthRegularExpression="" />
+			</providers>
+		</membership>
+
+		<roleManager defaultProvider="TheRoleProvider" enabled="true">
+			<providers>
+				<clear />
+				<add name="TheRoleProvider" type="MonoTests.SystemWeb.Framework.TestRoleProvider"/>
+			</providers>
+		</roleManager>
+	</system.web>
+	<system.net>
+		<mailSettings>
+			<smtp from="heh@heh.com">
+				<network host="localhost" port="125"/>
+			</smtp>
+		</mailSettings>
+	</system.net>
+</configuration>

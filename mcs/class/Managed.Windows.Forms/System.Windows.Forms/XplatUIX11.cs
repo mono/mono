@@ -1648,6 +1648,10 @@ namespace System.Windows.Forms {
 		}
 
 		private void UpdateMessageQueue (XEventQueue queue) {
+			UpdateMessageQueue(queue, true);
+		}
+
+		private void UpdateMessageQueue (XEventQueue queue, bool allowIdle) {
 			DateTime	now;
 			int		pending;
 			Hwnd		hwnd;
@@ -1658,7 +1662,7 @@ namespace System.Windows.Forms {
 				pending = XPending (DisplayHandle);
 			}
 
-			if (pending == 0) {
+			if (pending == 0 && allowIdle) {
 				if ((queue == null || queue.DispatchIdle) && Idle != null) {
 					Idle (this, EventArgs.Empty);
 				}
@@ -2679,7 +2683,7 @@ namespace System.Windows.Forms {
 
 				Clipboard.Enumerating = true;
 				while (Clipboard.Enumerating) {
-					UpdateMessageQueue(null);
+					UpdateMessageQueue(null, false);
 				}
 				f = f.Next;
 			}
@@ -2740,7 +2744,7 @@ namespace System.Windows.Forms {
 
 			Clipboard.Retrieving = true;
 			while (Clipboard.Retrieving) {
-				UpdateMessageQueue(null);
+				UpdateMessageQueue(null, false);
 			}
 
 			return Clipboard.Item;
@@ -4444,8 +4448,8 @@ namespace System.Windows.Forms {
 						}
 						goto ProcessNextMessage;
 					}
-					SendMessage(FocusWindow, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
 					Keyboard.FocusIn (FocusWindow);
+					SendMessage(FocusWindow, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
 					goto ProcessNextMessage;
 				}
 
@@ -5607,9 +5611,9 @@ namespace System.Windows.Forms {
 
 			if (prev_focus_window != IntPtr.Zero) {
 				SendMessage(prev_focus_window, Msg.WM_KILLFOCUS, FocusWindow, IntPtr.Zero);
-			}
-			SendMessage(FocusWindow, Msg.WM_SETFOCUS, prev_focus_window, IntPtr.Zero);
+			}			
 			Keyboard.FocusIn (FocusWindow);
+			SendMessage(FocusWindow, Msg.WM_SETFOCUS, prev_focus_window, IntPtr.Zero);
 
 			//XSetInputFocus(DisplayHandle, Hwnd.ObjectFromHandle(handle).client_window, RevertTo.None, IntPtr.Zero);
 		}

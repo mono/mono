@@ -1153,7 +1153,8 @@ namespace System.Windows.Forms
 				break;
 			case 2: // Marquee
 				int ms_diff = (int)(DateTime.Now - ctrl.start).TotalMilliseconds;
-				double percent_done = (double)ms_diff % (double)ctrl.MarqueeAnimationSpeed / (double)ctrl.MarqueeAnimationSpeed;
+				double percent_done = (double) ms_diff / ProgressBarMarqueeSpeedScaling 
+					% (double)ctrl.MarqueeAnimationSpeed / (double)ctrl.MarqueeAnimationSpeed;
 				max_blocks = 5;
 				start_pixel = client_area.X + (int)(client_area.Width * percent_done);
 				goto default;

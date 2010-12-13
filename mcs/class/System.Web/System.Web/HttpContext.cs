@@ -674,10 +674,8 @@ namespace System.Web
 
 		internal TimeSpan ConfigTimeout {
 			get {
-				if (config_timeout == null) {
-					HttpRuntimeSection section = (HttpRuntimeSection)WebConfigurationManager.GetSection ("system.web/httpRuntime");
-					config_timeout = section.ExecutionTimeout;
-				}
+				if (config_timeout == null)
+					config_timeout = HttpRuntime.Section.ExecutionTimeout;
 
 				return (TimeSpan) config_timeout;
 			}
