@@ -31,18 +31,14 @@ using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
-#if NET_2_0
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Windows.Forms {
 
-#if NET_2_0
 	[ComVisible(true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[Designer ("System.Windows.Forms.Design.TextBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#endif
 	public class TextBox : TextBoxBase {
 		#region Variables
 		private ContextMenu	menu;
@@ -53,7 +49,6 @@ namespace System.Windows.Forms {
 		private MenuItem	delete;
 		private MenuItem	select_all;
 
-#if NET_2_0
 		private bool use_system_password_char;
 		private AutoCompleteStringCollection auto_complete_custom_source;
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
@@ -63,7 +58,6 @@ namespace System.Windows.Forms {
 		private int auto_complete_selected_index = -1;
 		private List<string> auto_complete_matches;
 		private ComboBox auto_complete_cb_source;
-#endif
 		#endregion	// Variables
 
 		#region Public Constructors
@@ -73,9 +67,7 @@ namespace System.Windows.Forms {
 			alignment = HorizontalAlignment.Left;
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
 			this.RightToLeftChanged += new EventHandler (TextBox_RightToLeftChanged);
-#if NET_2_0
 			MouseWheel += new MouseEventHandler (TextBox_MouseWheel);
-#endif
 
 			BackColor = SystemColors.Window;
 			ForeColor = SystemColors.WindowText;
@@ -117,13 +109,10 @@ namespace System.Windows.Forms {
 		private void TextBox_LostFocus (object sender, EventArgs e) {
 			if (hide_selection)
 				document.InvalidateSelectionArea ();
-#if NET_2_0
 			if (auto_complete_listbox != null && auto_complete_listbox.Visible)
 				auto_complete_listbox.HideListBox (false);
-#endif
 		}
 
-#if NET_2_0
 		private void TextBox_MouseWheel (object o, MouseEventArgs args)
 		{
 			if (auto_complete_listbox == null || !auto_complete_listbox.Visible)
@@ -329,7 +318,6 @@ namespace System.Windows.Forms {
 		internal virtual void OnAutoCompleteValueSelected (EventArgs args)
 		{
 		}
-#endif
 
 		private void UpdateAlignment ()
 		{
@@ -366,28 +354,20 @@ namespace System.Windows.Forms {
 		internal override Color ChangeBackColor (Color backColor)
 		{
 			if (backColor == Color.Empty) {
-#if NET_2_0
 				if (!ReadOnly)
 					backColor = SystemColors.Window;
-#else
-				backColor = SystemColors.Window;
-#endif
-				backcolor_set = false;
 			}
 			return backColor;
 		}
 
-#if NET_2_0
 		void OnAutoCompleteCustomSourceChanged(object sender, CollectionChangeEventArgs e) {
 			if(auto_complete_source == AutoCompleteSource.CustomSource) {
 				//FIXME: handle add, remove and refresh events in AutoComplete algorithm.
 			}
 		}
-#endif
 		#endregion	// Private & Internal Methods
 
 		#region Public Instance Properties
-#if NET_2_0
 		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Browsable (true)]
@@ -471,7 +451,6 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif
 
 		[DefaultValue(false)]
 		[MWFCategory("Behavior")]
@@ -504,16 +483,12 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		[DefaultValue('\0')]
 		[MWFCategory("Behavior")]
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		public char PasswordChar {
 			get {
-#if NET_2_0
 				if (use_system_password_char) {
 					return '*';
 				}
-#endif
 				return password_char;
 			}
 
@@ -550,19 +525,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if ONLY_1_1
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public override int SelectionLength {
-			get {
-				return base.SelectionLength;
-			}
-			set {
-				base.SelectionLength = value;
-			}
-		}
-#endif
-
 		public override string Text {
 			get {
 				return base.Text;
@@ -593,7 +555,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Instance Properties
 
-#if NET_2_0
 		public void Paste (string text)
 		{
 			document.ReplaceSelection (CaseAdjust (text), false);
@@ -601,7 +562,6 @@ namespace System.Windows.Forms {
 			ScrollToCaret();
 			OnTextChanged(EventArgs.Empty);
 		}
-#endif
 		#region Protected Instance Methods
 		protected override CreateParams CreateParams {
 			get {
@@ -609,19 +569,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if ONLY_1_1
-		protected override ImeMode DefaultImeMode {
-			get {
-				return base.DefaultImeMode;
-			}
-		}
-#endif
-#if NET_2_0
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
 		}
-#endif
 
 		protected override bool IsInputKey (Keys keyData)
 		{
@@ -641,13 +592,6 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated (e);
 		}
 
-#if ONLY_1_1
-		protected override void OnMouseUp(MouseEventArgs mevent)
-		{
-			base.OnMouseUp (mevent);
-		}
-#endif
-
 		protected virtual void OnTextAlignChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [TextAlignChangedEvent]);
@@ -658,7 +602,6 @@ namespace System.Windows.Forms {
 		protected override void WndProc (ref Message m)
 		{
 			switch ((Msg)m.Msg) {
-#if NET_2_0
 				case Msg.WM_KEYDOWN:
 					if (!IsAutoCompleteAvailable)
 						break;
@@ -701,7 +644,6 @@ namespace System.Windows.Forms {
 
 					ProcessAutoCompleteInput (ref m, char_value == 8);
 					return;
-#endif
 				case Msg.WM_LBUTTONDOWN:
 					// When the textbox gets focus by LBUTTON (but not by middle or right)
 					// it does not do the select all / scroll thing.
@@ -793,7 +735,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Private Methods
 
-#if NET_2_0
 		public override bool Multiline {
 			get {
 				return base.Multiline;
@@ -1085,10 +1026,8 @@ namespace System.Windows.Forms {
 				ThemeEngine.Current.CPDrawSizeGrip (g, SystemColors.Control, resizer_bounds);
 			}
 		}
-#endif
 	}
 	
-#if NET_2_0
 	internal class TextBoxAutoCompleteSourceConverter : EnumConverter
 	{
 		public TextBoxAutoCompleteSourceConverter(Type type)
@@ -1107,5 +1046,4 @@ namespace System.Windows.Forms {
 			return new StandardValuesCollection(arr2);
 		}
 	}
-#endif
 }
