@@ -101,11 +101,11 @@ namespace StandAloneRunnerSupport
 			Info = info;
 		}
 
-		public void Run (ApplicationManager appMan)
+		public void Run (ApplicationManager appMan, bool verbose)
 		{
 			try {
 				Success = true;
-				RunInternal (appMan);
+				RunInternal (appMan, verbose);
 			} catch (TestCaseFailureException ex) {
 				Exception = ex;
 				Success = false;
@@ -116,7 +116,7 @@ namespace StandAloneRunnerSupport
 			}
 		}
 		
-		void RunInternal (ApplicationManager appMan)
+		void RunInternal (ApplicationManager appMan, bool verbose)
 		{
 			ITestCase test = Activator.CreateInstance (TestType) as ITestCase;
 			var runItems = new List <TestRunItem> ();			
@@ -138,10 +138,15 @@ namespace StandAloneRunnerSupport
 			
 			try {
 				Console.Write ('[');
+				if (verbose)
+					Console.WriteLine ("{0} ({1}: {2})]", TestType, Info.Name, Info.Description);
 				foreach (var tri in runItems) {
 					if (tri == null)
 						continue;
 
+					if (verbose)
+						Console.Write ("\t{0} ({1}) ", tri.Callback != null ? tri.Callback.Method.ToString () : "<null>", 
+							       !String.IsNullOrEmpty (tri.UrlDescription) ? tri.UrlDescription : tri.Url);
 					runner = null;
 					response = null;
 					try {
@@ -168,7 +173,7 @@ namespace StandAloneRunnerSupport
 
 						if (tri.Callback != null)
 							tri.Callback (response.Body, tri);
-						
+
 						Console.Write ('.');
 					} catch (Exception) {
 						FailedUrl = tri.Url;
@@ -192,7 +197,10 @@ namespace StandAloneRunnerSupport
 			} catch (AssertionException ex) {
 				throw new TestCaseFailureException ("Assertion failed.", ex.Message, ex);
 			} finally {
-				Console.Write (']');
+				if (verbose)
+					Console.WriteLine ();
+				else
+					Console.Write (']');
 			}
 		}
 

@@ -84,11 +84,13 @@ namespace StandAloneRunner
 			bool showHelp = false;
 			string testName = null;
 			string outputName = null;
-			
+			bool verbose = false;
+
 			var options = new OptionSet () {
 				{"?|h|help", "Show short usage screen.", v => showHelp = true},
 				{"t=|test=", "Run this test only (full type name)", (string s) => testName = s},
 				{"o=|output=", "Output test results to the console and to the indicated file", (string s) => outputName = s},
+				{"v|verbose", "Print the running test name", v => verbose = true}
 			}; 
 			
 			List <string> extra = options.Parse (args);
@@ -126,7 +128,7 @@ namespace StandAloneRunner
 						continue;
 				}
 				
-				test.Run (appMan);
+				test.Run (appMan, verbose);
 				runCounter++;
 				if (!test.Success) {
 					failedCounter++;
