@@ -208,6 +208,35 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// For cases where we need to union cache members
+		//
+		public void AddBaseType (TypeSpec baseType)
+		{
+			var cache = baseType.MemberCache;
+
+			IList<MemberSpec> list;
+			foreach (var entry in cache.member_hash) {
+				if (!member_hash.TryGetValue (entry.Key, out list)) {
+					if (entry.Value.Count == 1) {
+						list = entry.Value;
+					} else {
+						list = new List<MemberSpec> (entry.Value);
+					}
+
+					member_hash.Add (entry.Key, list);
+					continue;
+				}
+
+				foreach (var ce in entry.Value) {
+					if (list.Contains (ce))
+						continue;
+
+					list.Add (ce);
+				}
+			}
+		}
+
+		//
 		// Member-cache does not contain base members but it does
 		// contain all base interface members, so the Lookup code
 		// can use simple inheritance rules.

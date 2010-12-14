@@ -1037,9 +1037,30 @@ namespace Mono.CSharp {
 		protected override void InitializeMemberCache (bool onlyTypes)
 		{
 			cache = new MemberCache ();
+
+			//
+			// For a type parameter the membercache is the union of the sets of members of the types
+			// specified as a primary constraint or secondary constraint
+			//
+			if (BaseType != TypeManager.object_type && BaseType != TypeManager.value_type)
+				cache.AddBaseType (BaseType);
+
 			if (ifaces != null) {
 				foreach (var iface_type in Interfaces) {
 					cache.AddInterface (iface_type);
+				}
+			}
+
+			if (targs != null) {
+				foreach (var ta in targs) {
+					if (ta.BaseType != TypeManager.object_type && ta.BaseType != TypeManager.value_type)
+						cache.AddBaseType (ta.BaseType);
+
+					if (ta.Interfaces != null) {
+						foreach (var iface_type in ta.Interfaces) {
+							cache.AddInterface (iface_type);
+						}
+					}
 				}
 			}
 		}
