@@ -723,7 +723,17 @@ namespace Mono.CSharp {
 		//
 		public bool IsReferenceType {
 			get {
-				return (spec & SpecialConstraint.Class) != 0 || HasTypeConstraint;
+				if ((spec & SpecialConstraint.Class) != 0 || HasTypeConstraint)
+					return true;
+
+				if (targs != null) {
+					foreach (var ta in targs) {
+						if (TypeManager.IsReferenceType (ta))
+							return true;
+					}
+				}
+
+				return false;
 			}
 		}
 
