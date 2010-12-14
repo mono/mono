@@ -584,7 +584,7 @@ namespace Mono.CSharp {
 
 			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
-				throw new NotSupportedException ("ET");
+				return hv.CreateExpressionTree ();
 			}
 
 			protected override Expression DoResolve (ResolveContext ec)

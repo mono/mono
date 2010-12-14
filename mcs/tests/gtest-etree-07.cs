@@ -27,11 +27,16 @@ class C
 	int TestInstance ()
 	{
 		Expression<Func<EmptyDelegate>> e = () => M;
-		Console.WriteLine (e.Body.ToString ());
 		if (e.Body.ToString () != "Convert(CreateDelegate(EmptyDelegate, value(C), Void M()))")
 			return 1;
 		
 		e.Compile () ();
+		
+		Expression<Func<C, EmptyDelegate>> e2 = (l) => l.M;
+		if (e2.Body.ToString () != "Convert(CreateDelegate(EmptyDelegate, l, Void M()))")
+			return 2;
+		
+		e2.Compile () (this);
 		return 0;
 	}
 	

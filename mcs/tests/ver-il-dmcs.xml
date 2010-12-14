@@ -12067,6 +12067,13 @@
       </method>
     </type>
   </test>
+  <test name="gtest-333.cs">
+    <type name="Program">
+      <method name="Void Main()">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-334.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -12602,6 +12609,56 @@
       </method>
     </type>
   </test>
+  <test name="gtest-353.cs">
+    <type name="A`3[D1,D2,D3]">
+      <method name="Void Foo[T]()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B`1[DD2]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Foo[T]()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Main()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-354.cs">
+    <type name="M">
+      <method name="Void IC.Method(System.Int32[])">
+        <size>1</size>
+      </method>
+      <method name="System.String IA&lt;string&gt;.Method(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Void IB.Method(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Void Main()">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-355.cs">
     <type name="A">
       <method name="Void .ctor()">
@@ -13095,6 +13152,38 @@
         <size>14</size>
       </method>
       <method name="T op_Implicit(MonoBug.GenericType`1[T])">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-374.cs">
+    <type name="Z">
+      <method name="Z IGenericInterface&lt;Z&gt;.Start()">
+        <size>2</size>
+      </method>
+      <method name="Void Stop()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`3[Y,Y2,W]">
+      <method name="Void SomeOperation(W)">
+        <size>28</size>
+      </method>
+      <method name="Void SomeOtherOperation(Y)">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Int32 Main()">
+        <size>30</size>
+      </method>
+      <method name="Void .ctor()">
         <size>7</size>
       </method>
     </type>
@@ -14010,6 +14099,19 @@
       </method>
       <method name="Void MonoTest.IG&lt;string&gt;.M()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-415.cs">
+    <type name="Foo">
+      <method name="Int32 Main()">
+        <size>32</size>
+      </method>
+      <method name="Boolean Bar[T](T)">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -21692,7 +21794,7 @@
         <size>3</size>
       </method>
       <method name="Int32 Main()">
-        <size>519</size>
+        <size>536</size>
       </method>
     </type>
     <type name="EmptyDelegate">
@@ -21721,6 +21823,14 @@
       </method>
       <method name="Int32* EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void M()">
+        <size>1</size>
+      </method>
+      <method name="Int32 TestInstance()">
+        <size>321</size>
       </method>
     </type>
   </test>
@@ -22093,6 +22203,32 @@
       </method>
     </type>
     <type name="NotifyingPropertyTest+&lt;CreateDependent_DependentsNull&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-25.cs">
+    <type name="Foo">
+      <method name="Void OnBaz(IBaz)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void RunOnBaz(System.Action`1[IBaz])">
+        <size>8</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>214</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -40957,8 +41093,8 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>1</size>
+      <method name="Int32 Main()">
+        <size>84</size>
       </method>
     </type>
   </test>
@@ -42852,16 +42988,6 @@
       </method>
       <method name="Int32 Main()">
         <size>26</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-679.cs">
-    <type name="Program">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>12</size>
       </method>
     </type>
   </test>

@@ -18713,7 +18713,7 @@
         <size>3</size>
       </method>
       <method name="Int32 Main()">
-        <size>564</size>
+        <size>581</size>
       </method>
     </type>
     <type name="EmptyDelegate">
@@ -18742,6 +18742,14 @@
       </method>
       <method name="Int32* EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void M()">
+        <size>1</size>
+      </method>
+      <method name="Int32 TestInstance()">
+        <size>351</size>
       </method>
     </type>
   </test>
@@ -19114,6 +19122,32 @@
       </method>
     </type>
     <type name="NotifyingPropertyTest+&lt;CreateDependent_DependentsNull&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-25.cs">
+    <type name="Foo">
+      <method name="Void OnBaz(IBaz)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void RunOnBaz(System.Action`1[IBaz])">
+        <size>8</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>229</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
