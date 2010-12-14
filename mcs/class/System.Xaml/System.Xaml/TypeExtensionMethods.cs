@@ -110,10 +110,52 @@ namespace System.Xaml
 			var vc = (xm != null ? xm.TypeConverter : null) ?? xt.TypeConverter;
 			var tc = vc != null ? vc.ConverterInstance : null;
 			if (tc != null && typeof (string) != null && tc.CanConvertTo (vsctx, typeof (string)))
-				return tc.ConvertToInvariantString (vsctx, obj);
+				return (string) tc.ConvertTo (vsctx, CultureInfo.InvariantCulture, obj, typeof (string));
 			if (obj is string || obj == null)
 				return (string) obj;
 			throw new InvalidCastException (String.Format ("Cannot cast object '{0}' to string", obj.GetType ()));
+		}
+		
+		public static TypeConverter GetTypeConverter (this Type type)
+		{
+#if NET_2_1
+			if (typeof (IConvertible).IsAssignableFrom (type))
+				return (TypeConverter) Activator.CreateInstance (typeof (ConvertibleTypeConverter<>).MakeGenericType (new Type [] {type}));
+			var name = type.GetCustomAttribute<TypeConverterAttribute> (true).ConverterTypeName;
+			return (TypeConverter) Activator.CreateInstance (type.Assembly.GetType (name) ?? Type.GetType (name));
+#else
+			return TypeDescriptor.GetConverter (type);
+#endif
+		}
+		
+		// FIXME: I want this to cover all the existing types and make it valid in both NET_2_1 and !NET_2_1.
+		class ConvertibleTypeConverter<T> : TypeConverter
+		{
+			Type type;
+			public ConvertibleTypeConverter ()
+			{
+				this.type = typeof (T);
+			}
+			public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+			{
+				return sourceType == typeof (string);
+			}
+			public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+			{
+				return destinationType == typeof (string);
+			}
+			public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
+			{
+				if (type == typeof (DateTime))
+					return System.Xml.XmlConvert.ToDateTime ((string) value, System.Xml.XmlDateTimeSerializationMode.Unspecified);
+				return ((IConvertible) value).ToType (type, CultureInfo.InvariantCulture);
+			}
+			public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+			{
+				if (value is DateTime)
+					return System.Xml.XmlConvert.ToString ((DateTime) value);
+				return ((IConvertible) value).ToType (destinationType, CultureInfo.InvariantCulture);
+			}
 		}
 
 		#endregion

@@ -32,12 +32,18 @@ namespace System.Windows.Markup
 {
 	[MarkupExtensionReturnType (typeof (Array))]
 	[ContentProperty ("Items")]
+#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationFramework_3_5)]
+#endif
 	public class ArrayExtension : MarkupExtension
 	{
 		public ArrayExtension ()
-		{
+		{		
+#if NET_2_1
+			items = new List<object> ();
+#else
 			items = new ArrayList ();
+#endif
 		}
 
 		public ArrayExtension (Array elements)
@@ -45,7 +51,13 @@ namespace System.Windows.Markup
 			if (elements == null)
 				throw new ArgumentNullException ("elements");
 			Type = elements.GetType ().GetElementType ();
+#if NET_2_1
+			items = new List<object> ();
+			foreach (var element in elements)
+				items.Add (element);
+#else
 			items = new ArrayList (elements);
+#endif
 		}
 
 		public ArrayExtension (Type arrayType)
@@ -53,14 +65,20 @@ namespace System.Windows.Markup
 			if (arrayType == null)
 				throw new ArgumentNullException ("arrayType");
 			Type = arrayType;
+#if NET_2_1
+			items = new List<object> ();
+#else
 			items = new ArrayList ();
+#endif
 		}
 
 		[ConstructorArgument ("arrayType")]
 		public Type Type { get; set; }
 
 		IList items;
+#if !NET_2_1
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+#endif
 		public IList Items {
 			get { return items; }
 		}

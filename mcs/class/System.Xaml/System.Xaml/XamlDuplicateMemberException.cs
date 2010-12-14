@@ -27,7 +27,9 @@ using System.Runtime.Serialization;
 
 namespace System.Xaml
 {
+#if !NET_2_1
 	[Serializable]
+#endif
 	public class XamlDuplicateMemberException : XamlException
 	{
 		public XamlDuplicateMemberException ()
@@ -52,21 +54,25 @@ namespace System.Xaml
 		{
 		}
 
+#if !NET_2_1
 		protected XamlDuplicateMemberException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			DuplicateMember = (XamlMember) info.GetValue ("member", typeof (XamlMember));
 			ParentType = (XamlType) info.GetValue ("type", typeof (XamlType));
 		}
+#endif
 
 		public XamlMember DuplicateMember { get; set; }
 		public XamlType ParentType { get; set; }
 
+#if !NET_2_1
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
 			info.AddValue ("member", DuplicateMember);
 			info.AddValue ("type", ParentType);
 		}
+#endif
 	}
 }

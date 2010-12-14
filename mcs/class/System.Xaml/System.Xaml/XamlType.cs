@@ -711,8 +711,12 @@ namespace System.Xaml
 				return SchemaContext.GetValueConverter<TypeConverter> (null, this);
 
 			// It's still not decent to check CollectionConverter.
-			var tct = TypeDescriptor.GetConverter (t).GetType ();
+			var tct = t.GetTypeConverter ().GetType ();
+#if NET_2_1
+			if (tct != typeof (TypeConverter))
+#else
 			if (tct != typeof (TypeConverter) && tct != typeof (CollectionConverter) && tct != typeof (ReferenceConverter))
+#endif
 				return SchemaContext.GetValueConverter<TypeConverter> (tct, this);
 			return null;
 		}
@@ -762,7 +766,7 @@ namespace System.Xaml
 		static string GetXamlName (Type type)
 		{
 			string n;
-			if (!type.IsNested)
+			if (!type.IsNestedPublic && !type.IsNestedAssembly && !type.IsNestedPrivate)
 				n = type.Name;
 			else
 				n = GetXamlName (type.DeclaringType) + "+" + type.Name;

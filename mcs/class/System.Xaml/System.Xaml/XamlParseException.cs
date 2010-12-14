@@ -27,7 +27,9 @@ using System.Runtime.Serialization;
 
 namespace System.Xaml
 {
+#if !NET_2_1
 	[Serializable]
+#endif
 	public class XamlParseException : XamlException
 	{
 		public XamlParseException ()
@@ -45,9 +47,11 @@ namespace System.Xaml
 		{
 		}
 
+#if !NET_2_1
 		protected XamlParseException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 	}
 }

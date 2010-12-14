@@ -27,7 +27,9 @@ using System.Runtime.Serialization;
 
 namespace System.Xaml
 {
+#if !NET_2_1
 	[Serializable]
+#endif
 	public class XamlObjectWriterException : XamlException
 	{
 		public XamlObjectWriterException ()
@@ -45,9 +47,11 @@ namespace System.Xaml
 		{
 		}
 
+#if !NET_2_1
 		protected XamlObjectWriterException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 	}
 }

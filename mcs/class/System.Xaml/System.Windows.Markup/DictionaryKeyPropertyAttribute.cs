@@ -25,7 +25,9 @@ using System;
 namespace System.Windows.Markup
 {
 	[AttributeUsageAttribute(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
+#endif
 	public sealed class DictionaryKeyPropertyAttribute : Attribute
 	{
 		public DictionaryKeyPropertyAttribute (string name)

@@ -31,7 +31,9 @@ using System.Xaml.Schema;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple = true)]
+#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
+#endif
 	public sealed class XmlnsPrefixAttribute : Attribute
 	{
 		public XmlnsPrefixAttribute (string xmlNamespace, string prefix)

@@ -30,7 +30,9 @@ namespace System.Windows.Markup
 {
 	[MarkupExtensionReturnType (typeof (object))]
 	[TypeConverter (typeof (StaticExtensionConverter))]
+#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationFramework_3_5)]
+#endif
 	public class StaticExtension : MarkupExtension
 	{
 		public StaticExtension ()

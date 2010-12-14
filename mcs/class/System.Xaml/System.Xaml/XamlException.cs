@@ -27,7 +27,9 @@ using System.Runtime.Serialization;
 
 namespace System.Xaml
 {
+#if !NET_2_1
 	[Serializable]
+#endif
 	public class XamlException : Exception
 	{
 		public XamlException ()
@@ -61,12 +63,14 @@ namespace System.Xaml
 			LinePosition = linePosition;
 		}
 
+#if !NET_2_1
 		protected XamlException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			LineNumber = info.GetInt32 ("lineNumber");
 			LinePosition = info.GetInt32 ("linePosition");
 		}
+#endif
 
 		public int LineNumber { get; protected internal set; }
 		public int LinePosition { get; protected internal set; }
@@ -74,10 +78,12 @@ namespace System.Xaml
 			get { return FormatLine (base.Message, LineNumber, LinePosition); }
 		}
 
+#if !NET_2_1
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue ("lineNumber", LineNumber);
 			info.AddValue ("linePosition", LinePosition);
 		}
+#endif
 	}
 }

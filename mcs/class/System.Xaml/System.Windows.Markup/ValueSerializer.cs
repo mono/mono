@@ -32,19 +32,24 @@ using System.Xaml.Schema;
 
 namespace System.Windows.Markup
 {
+#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
+#endif
 	public abstract class ValueSerializer
 	{
+#if !NET_2_1
 		public static ValueSerializer GetSerializerFor (PropertyDescriptor descriptor)
 		{
 			return GetSerializerFor (descriptor, null);
 		}
+#endif
 
 		public static ValueSerializer GetSerializerFor (Type type)
 		{
 			return GetSerializerFor (type, null);
 		}
 
+#if !NET_2_1
 		// untested
 		public static ValueSerializer GetSerializerFor (PropertyDescriptor descriptor, IValueSerializerContext context)
 		{
@@ -58,6 +63,7 @@ namespace System.Windows.Markup
 				return new TypeConverterValueSerializer (tc);
 			return null;
 		}
+#endif
 
 		public static ValueSerializer GetSerializerFor (Type type, IValueSerializerContext context)
 		{
@@ -79,7 +85,7 @@ namespace System.Windows.Markup
 
 			// FIXME: this is hack. The complete condition is fully documented at http://msdn.microsoft.com/en-us/library/ms590363.aspx
 			if (type.GetCustomAttribute<TypeConverterAttribute> (true) != null) {
-				var tc = TypeDescriptor.GetConverter (type);
+				var tc = type.GetTypeConverter ();
 				if (tc != null && tc.GetType () != typeof (TypeConverter))
 					return new TypeConverterValueSerializer (tc);
 			}
@@ -95,12 +101,12 @@ namespace System.Windows.Markup
 			case TypeCode.DBNull:
 				break;
 			default:
-				return new TypeConverterValueSerializer (TypeDescriptor.GetConverter (type));
+				return new TypeConverterValueSerializer (type.GetTypeConverter ());
 			}
 
 			// There is still exceptional type! TimeSpan. Why aren't they documented?
 			if (type == typeof (TimeSpan))
-				return new TypeConverterValueSerializer (TypeDescriptor.GetConverter (type));
+				return new TypeConverterValueSerializer (type.GetTypeConverter ());
 
 			return null;
 		}
@@ -228,12 +234,12 @@ namespace System.Windows.Markup
 
 		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
-			return c.ConvertFromInvariantString (context, value);
+			return c.ConvertFrom (context, CultureInfo.InvariantCulture, value);
 		}
 
 		public override string ConvertToString (object value,     IValueSerializerContext context)
 		{
-			return value == null ? String.Empty : c.ConvertToInvariantString (context, value);
+			return value == null ? String.Empty : (string) c.ConvertTo (context, CultureInfo.InvariantCulture, value, typeof (string));
 		}
 
 		public override IEnumerable<Type> TypeReferences (object value, IValueSerializerContext context)

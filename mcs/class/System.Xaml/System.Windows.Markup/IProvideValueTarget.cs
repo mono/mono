@@ -28,7 +28,9 @@ using System.Xaml.Schema;
 
 namespace System.Windows.Markup
 {
+#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationFramework_3_5)]
+#endif
 	public interface IProvideValueTarget
 	{
 		object TargetObject { get; }

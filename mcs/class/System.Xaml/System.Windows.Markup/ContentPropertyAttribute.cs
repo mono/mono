@@ -29,7 +29,9 @@ namespace System.Windows.Markup
 	// member regardless of this attribute.
 
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
+#endif
 	public sealed class ContentPropertyAttribute : Attribute
 	{
 		public ContentPropertyAttribute ()

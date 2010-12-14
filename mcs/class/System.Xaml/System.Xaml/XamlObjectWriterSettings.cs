@@ -25,7 +25,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Markup;
+#if !NET_2_1
 using System.Xaml.Permissions;
+#endif
 using System.Xaml.Schema;
 
 namespace System.Xaml
@@ -40,7 +42,9 @@ namespace System.Xaml
 			: base (settings)
 		{
 			var s = settings;
+#if !NET_2_1
 			AccessLevel = s.AccessLevel;
+#endif
 			AfterBeginInitHandler = s.AfterBeginInitHandler;
 			AfterEndInitHandler = s.AfterEndInitHandler;
 			AfterPropertiesHandler = s.AfterPropertiesHandler;
@@ -61,8 +65,10 @@ namespace System.Xaml
 		public EventHandler<XamlObjectEventArgs> BeforePropertiesHandler { get; set; }
 		public EventHandler<XamlSetValueEventArgs> XamlSetValueHandler { get; set; }
 
+#if !NET_2_1
 		[MonoTODO ("Ignored")]
 		public XamlAccessLevel AccessLevel { get; set; }
+#endif
 		[MonoTODO ("Ignored")]
 		public INameScope ExternalNameScope { get; set; }
 		[MonoTODO ("Ignored")]

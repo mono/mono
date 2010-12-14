@@ -28,7 +28,9 @@ using System.Globalization;
 
 namespace System.Windows.Markup
 {
+#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
+#endif
 	public class DateTimeValueSerializer : ValueSerializer
 	{
 		const DateTimeStyles styles = DateTimeStyles.RoundtripKind | DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite;

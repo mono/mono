@@ -25,7 +25,9 @@ using System;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
+#endif
 	public sealed class ConstructorArgumentAttribute : Attribute
 	{
 		public ConstructorArgumentAttribute (string argumentName)
