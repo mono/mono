@@ -54,7 +54,42 @@ namespace System.Configuration {
 					return loc;
 			return null;
 		}
+
+		internal ConfigurationLocation FindBest (string location)
+		{
+			if(String.IsNullOrEmpty (location))
+				return null;
+			
+			ConfigurationLocation bestMatch = null;
+			int locationlen = location.Length;
+			int bestmatchlen = 0;
+			
+			foreach (ConfigurationLocation loc in InnerList) {
+				string lpath = loc.Path;
+				if (String.IsNullOrEmpty (lpath))
+					continue;
+				
+				int lpathlen = lpath.Length;
+				if (location.StartsWith (lpath, StringComparison.OrdinalIgnoreCase)) {
+					// Exact match always takes precedence
+					if (locationlen == lpathlen)
+						return loc;
+					
+					// ensure path based comparisons consider full directory names (i.e. so 'admin' does not match an 'administration' path)
+					if(locationlen > lpathlen && location [lpathlen] != '/')
+						continue;
+
+					if(bestMatch == null)
+						bestMatch = loc;
+					else if (bestmatchlen < lpathlen) {
+						bestMatch = loc;
+						bestmatchlen = lpathlen;
+					}
+				}
+			}
+
+			return bestMatch;
+		}
 	}
 }
-
 #endif

@@ -100,7 +100,7 @@ namespace System.Configuration {
 			if (relativePath.StartsWith (relConfigPath, StringComparison.Ordinal))
 				relativePath = relativePath.Substring (relConfigPath.Length);
 
-			ConfigurationLocation loc = Locations.Find (relativePath);
+			ConfigurationLocation loc = Locations.FindBest (relativePath);
 			if (loc == null)
 				return parentConfig;
 			
