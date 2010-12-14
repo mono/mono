@@ -2256,6 +2256,11 @@ namespace Mono.CSharp {
 						Report.Warning (67, 3, e.Location, "The event `{0}' is never used", e.GetSignatureForError ());
 				}
 			}
+
+			if (types != null) {
+				foreach (var t in types)
+					t.VerifyMembers ();
+			}
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
