@@ -10075,6 +10075,38 @@
       </method>
     </type>
   </test>
+  <test name="gtest-374.cs">
+    <type name="Z">
+      <method name="Z IGenericInterface&lt;Z&gt;.Start()">
+        <size>2</size>
+      </method>
+      <method name="Void Stop()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`3[Y,Y2,W]">
+      <method name="Void SomeOperation(W)">
+        <size>28</size>
+      </method>
+      <method name="Void SomeOtherOperation(Y)">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Int32 Main()">
+        <size>30</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-375.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -10986,6 +11018,19 @@
       </method>
       <method name="Void MonoTest.IG&lt;string&gt;.M()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-415.cs">
+    <type name="Foo">
+      <method name="Int32 Main()">
+        <size>32</size>
+      </method>
+      <method name="Boolean Bar[T](T)">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -37933,8 +37978,8 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>1</size>
+      <method name="Int32 Main()">
+        <size>84</size>
       </method>
     </type>
   </test>

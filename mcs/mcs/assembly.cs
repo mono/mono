@@ -214,7 +214,7 @@ namespace Mono.CSharp
 				if (value == null || value.Length == 0)
 					return;
 
-				var vinfo = IsValidAssemblyVersion (value.Replace ('*', '0'));
+				var vinfo = IsValidAssemblyVersion (value);
 				if (vinfo == null) {
 					a.Error_AttributeEmitError (string.Format ("Specified version `{0}' is not valid", value));
 					return;
@@ -862,24 +862,42 @@ namespace Mono.CSharp
 
 		static Version IsValidAssemblyVersion (string version)
 		{
-			Version v;
-			try {
-				v = new Version (version);
-			} catch {
-				try {
-					int major = int.Parse (version, CultureInfo.InvariantCulture);
-					v = new Version (major, 0);
-				} catch {
+			string[] parts = version.Split ('.');
+			if (parts.Length < 1 || parts.Length > 4)
+				return null;
+
+			var values = new int[4];
+			for (int i = 0; i < parts.Length; ++i) {
+				if (!int.TryParse (parts[i], out values[i])) {
+					if (parts[i].Length == 1 && parts[i][0] == '*') {
+						if (i == 2) {
+							// Nothing can follow *
+							if (parts.Length > 3)
+								return null;
+
+							// Generate Build value based on days since 1/1/2000
+							TimeSpan days = DateTime.Today - new DateTime (2000, 1, 1);
+							values[i] = System.Math.Max (days.Days, 0);
+							i = 3;
+						}
+
+						if (i == 3) {
+							// Generate Revision value based on every other second today
+							var seconds = DateTime.Now - DateTime.Today;
+							values[i] = (int) seconds.TotalSeconds / 2;
+						}
+
+						continue;
+					}
+
 					return null;
 				}
-			}
 
-			foreach (int candidate in new int [] { v.Major, v.Minor, v.Build, v.Revision }) {
-				if (candidate > ushort.MaxValue)
+				if (values[i] > ushort.MaxValue)
 					return null;
 			}
 
-			return new Version (v.Major, System.Math.Max (0, v.Minor), System.Math.Max (0, v.Build), System.Math.Max (0, v.Revision));
+			return new Version (values[0], values[1], values[2], values[3]);
 		}
 	}
 

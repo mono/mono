@@ -1,11 +1,25 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyVersion ("1.0.0.*")]
+[assembly: AssemblyVersion ("2.3.*")]
 
-public class Test {
-
-	static void Main ()
+public class Test
+{
+	static int Main ()
 	{
+		var v = typeof (Test).Assembly.GetName ().Version;
+		if (v.Major != 2)
+			return 1;
+		
+		if (v.Minor != 3)
+			return 2;
+
+		if (v.Build < 1)
+			return 3;
+		
+		if (v.Revision < 1)
+			return 4;
+
+		return 0;
 	}
 }
