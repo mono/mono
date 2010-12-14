@@ -885,9 +885,8 @@ namespace Mono.CSharp
 							// Generate Revision value based on every other second today
 							var seconds = DateTime.Now - DateTime.Today;
 							values[i] = (int) seconds.TotalSeconds / 2;
+							continue;
 						}
-
-						continue;
 					}
 
 					return null;
