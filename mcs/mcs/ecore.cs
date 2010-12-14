@@ -1458,6 +1458,12 @@ namespace Mono.CSharp {
 
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
+			// Only boxing to object type is supported
+			if (targetType != TypeManager.object_type) {
+				base.EncodeAttributeValue (rc, enc, targetType);
+				return;
+			}
+
 			enc.Encode (child.Type);
 			child.EncodeAttributeValue (rc, enc, child.Type);
 		}
