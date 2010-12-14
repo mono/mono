@@ -1442,7 +1442,7 @@ namespace Mono.CSharp
 			}
 
 			if (TypeManager.IsGenericParameter (expr.Type)) {
-				if (t.IsValueType && expr.Type == t)
+				if (t.IsValueType && expr.Type == d)
 					return CreateConstantResult (ec, true);
 
 				expr = new BoxedCast (expr, d);
