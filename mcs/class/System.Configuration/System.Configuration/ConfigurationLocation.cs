@@ -107,6 +107,9 @@ namespace System.Configuration {
 		
 		internal void SetParentConfiguration (Configuration parent)
 		{
+			if (parentResolved)
+				return;
+
 			parentResolved = true;
 			this.parent = parent;
 			if (configuration != null)
