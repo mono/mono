@@ -74,7 +74,7 @@ using System.Runtime.InteropServices;
 
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
 
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0 || MOONLIGHT
 [assembly: TypeForwardedTo (typeof (System.Security.Cryptography.Aes))]
 #endif
 

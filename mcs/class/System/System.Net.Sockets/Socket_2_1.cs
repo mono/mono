@@ -1129,7 +1129,7 @@ namespace System.Net.Sockets {
 			}
 		}
 
-#if NET_2_1
+#if NET_2_1 || NET_4_0
 		public void Dispose ()
 #else
 		void IDisposable.Dispose ()
