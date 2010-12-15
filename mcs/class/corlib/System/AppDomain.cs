@@ -226,7 +226,7 @@ namespace System {
 
 #if NET_4_0
 		public PermissionSet PermissionSet {
-			get { return this.GrantedPermissionSet; }
+			get { return _granted ?? (_granted = new PermissionSet (PermissionState.Unrestricted)); }
 		}
 #endif
 
