@@ -2473,14 +2473,14 @@ namespace Mono.CSharp {
 
 	public class TypeInferenceContext
 	{
-		enum BoundKind
+		protected enum BoundKind
 		{
 			Exact	= 0,
 			Lower	= 1,
 			Upper	= 2
 		}
 
-		class BoundInfo : IEquatable<BoundInfo>
+		protected class BoundInfo : IEquatable<BoundInfo>
 		{
 			public readonly TypeSpec Type;
 			public readonly BoundKind Kind;
@@ -2496,9 +2496,14 @@ namespace Mono.CSharp {
 				return Type.GetHashCode ();
 			}
 
+			public virtual Expression GetTypeExpression ()
+			{
+				return new TypeExpression (Type, Location.Null);
+			}
+
 			#region IEquatable<BoundInfo> Members
 
-			public bool Equals (BoundInfo other)
+			public virtual bool Equals (BoundInfo other)
 			{
 				return Type == other.Type && Kind == other.Kind;
 			}
@@ -2554,7 +2559,7 @@ namespace Mono.CSharp {
 			AddToBounds (new BoundInfo (type, BoundKind.Lower), 0);
 		}
 
-		void AddToBounds (BoundInfo bound, int index)
+		protected void AddToBounds (BoundInfo bound, int index)
 		{
 			//
 			// Some types cannot be used as type arguments
@@ -2760,14 +2765,14 @@ namespace Mono.CSharp {
 
 					if (bound.Kind == BoundKind.Exact || cbound.Kind == BoundKind.Exact) {
 						if (cbound.Kind == BoundKind.Lower) {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, cbound.GetTypeExpression (), bound.Type)) {
 								break;
 							}
 
 							continue;
 						}
 						if (cbound.Kind == BoundKind.Upper) {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
 								break;
 							}
 
@@ -2775,7 +2780,7 @@ namespace Mono.CSharp {
 						}
 						
 						if (bound.Kind != BoundKind.Exact) {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
 								break;
 							}
 
@@ -2788,11 +2793,11 @@ namespace Mono.CSharp {
 
 					if (bound.Kind == BoundKind.Lower) {
 						if (cbound.Kind == BoundKind.Lower) {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, cbound.GetTypeExpression (), bound.Type)) {
 								break;
 							}
 						} else {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
 								break;
 							}
 
@@ -2803,7 +2808,7 @@ namespace Mono.CSharp {
 					}
 
 					if (bound.Kind == BoundKind.Upper) {
-						if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+						if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
 							break;
 						}
 					} else {
