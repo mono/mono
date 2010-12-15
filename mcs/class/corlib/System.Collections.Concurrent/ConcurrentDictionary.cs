@@ -47,10 +47,10 @@ namespace System.Collections.Concurrent
 		{
 		}
 
-		public ConcurrentDictionary (IEnumerable<KeyValuePair<TKey, TValue>> values)
-			: this (values, EqualityComparer<TKey>.Default)
+		public ConcurrentDictionary (IEnumerable<KeyValuePair<TKey, TValue>> collection)
+			: this (collection, EqualityComparer<TKey>.Default)
 		{
-			foreach (KeyValuePair<TKey, TValue> pair in values)
+			foreach (KeyValuePair<TKey, TValue> pair in collection)
 				Add (pair.Key, pair.Value);
 		}
 
@@ -59,10 +59,10 @@ namespace System.Collections.Concurrent
 			this.comparer = comparer;
 		}
 
-		public ConcurrentDictionary (IEnumerable<KeyValuePair<TKey, TValue>> values, IEqualityComparer<TKey> comparer)
+		public ConcurrentDictionary (IEnumerable<KeyValuePair<TKey, TValue>> collection, IEqualityComparer<TKey> comparer)
 			: this (comparer)
 		{
-			foreach (KeyValuePair<TKey, TValue> pair in values)
+			foreach (KeyValuePair<TKey, TValue> pair in collection)
 				Add (pair.Key, pair.Value);
 		}
 
@@ -74,9 +74,9 @@ namespace System.Collections.Concurrent
 		}
 
 		public ConcurrentDictionary (int concurrencyLevel,
-		                             IEnumerable<KeyValuePair<TKey, TValue>> values,
+		                             IEnumerable<KeyValuePair<TKey, TValue>> collection,
 		                             IEqualityComparer<TKey> comparer)
-			: this (values, comparer)
+			: this (collection, comparer)
 		{
 
 		}
@@ -145,9 +145,9 @@ namespace System.Collections.Concurrent
 			return result;
 		}
 
-		public bool TryUpdate (TKey key, TValue newValue, TValue comparand)
+		public bool TryUpdate (TKey key, TValue newValue, TValue comparisonValue)
 		{
-			return internalDictionary.CompareExchange (Hash (key), Make (key, newValue), (e) => e.Value.Equals (comparand));
+			return internalDictionary.CompareExchange (Hash (key), Make (key, newValue), (e) => e.Value.Equals (comparisonValue));
 		}
 
 		public TValue this[TKey key] {

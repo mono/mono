@@ -44,14 +44,14 @@ namespace System.Collections.Concurrent
 			return new EnumerablePartitioner<TSource> (source);
 		}
 		
-		public static OrderablePartitioner<TSource> Create<TSource> (TSource[] source, bool loadBalance)
+		public static OrderablePartitioner<TSource> Create<TSource> (TSource[] array, bool loadBalance)
 		{
-			return Create ((IList<TSource>)source, loadBalance);
+			return Create ((IList<TSource>)array, loadBalance);
 		}
 		
-		public static OrderablePartitioner<TSource> Create<TSource> (IList<TSource> source, bool loadBalance)
+		public static OrderablePartitioner<TSource> Create<TSource> (IList<TSource> list, bool loadBalance)
 		{
-			return new ListPartitioner<TSource> (source);
+			return new ListPartitioner<TSource> (list);
 		}
 		
 		public static OrderablePartitioner<Tuple<int, int>> Create (int fromInclusive,

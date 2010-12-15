@@ -32,7 +32,9 @@ using System.Runtime.Serialization;
 
 namespace System.Collections.Concurrent
 {
-	
+
+	[System.Diagnostics.DebuggerDisplay ("Count = {Count}")]
+	[System.Diagnostics.DebuggerTypeProxy ("System.Collections.Concurrent.SystemCollectionsConcurrent_ProducerConsumerCollectionDebugView`1")]
 	public class ConcurrentQueue<T> : IProducerConsumerCollection<T>, IEnumerable<T>, ICollection,
 	                                  IEnumerable
 	{
@@ -51,9 +53,9 @@ namespace System.Collections.Concurrent
 			tail = head;
 		}
 		
-		public ConcurrentQueue (IEnumerable<T> enumerable): this()
+		public ConcurrentQueue (IEnumerable<T> collection): this()
 		{
-			foreach (T item in enumerable)
+			foreach (T item in collection)
 				Enqueue (item);
 		}
 		
@@ -93,9 +95,9 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 
-		public bool TryDequeue (out T value)
+		public bool TryDequeue (out T result)
 		{
-			value = default (T);
+			result = default (T);
 			bool advanced = false;
 
 			while (!advanced) {
@@ -111,10 +113,10 @@ namespace System.Collections.Concurrent
 							// If not then the linked list is mal formed, update tail
 							Interlocked.CompareExchange (ref tail, oldNext, oldTail);
 						}
-						value = default (T);
+						result = default (T);
 						return false;
 					} else {
-						value = oldNext.Value;
+						result = oldNext.Value;
 						advanced = Interlocked.CompareExchange (ref head, oldNext, oldHead) == oldHead;
 					}
 				}
@@ -125,15 +127,15 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 		
-		public bool TryPeek (out T value)
+		public bool TryPeek (out T result)
 		{
 			if (IsEmpty) {
-				value = default (T);
+				result = default (T);
 				return false;
 			}
 			
 			Node first = head.Next;
-			value = first.Value;
+			result = first.Value;
 			return true;
 		}
 		
@@ -169,12 +171,12 @@ namespace System.Collections.Concurrent
 			CopyTo (dest, index);
 		}
 		
-		public void CopyTo (T[] dest, int index)
+		public void CopyTo (T[] array, int index)
 		{
 			IEnumerator<T> e = InternalGetEnumerator ();
 			int i = index;
 			while (e.MoveNext ()) {
-				dest [i++] = e.Current;
+				array [i++] = e.Current;
 			}
 		}
 		

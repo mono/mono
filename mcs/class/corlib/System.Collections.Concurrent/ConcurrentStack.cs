@@ -33,7 +33,8 @@ using System.Runtime.Serialization;
 namespace System.Collections.Concurrent
 {
 	
-	
+	[System.Diagnostics.DebuggerDisplay ("Count = {Count}")]
+	[System.Diagnostics.DebuggerTypeProxy ("System.Collections.Concurrent.SystemCollectionsConcurrent_ProducerConsumerCollectionDebugView`1")]
 	public class ConcurrentStack<T> : IProducerConsumerCollection<T>, IEnumerable<T>,
 	                                  ICollection, IEnumerable
 	{
@@ -51,9 +52,9 @@ namespace System.Collections.Concurrent
 		{
 		}
 		
-		public ConcurrentStack (IEnumerable<T> enumerable)
+		public ConcurrentStack (IEnumerable<T> collection)
 		{
-			foreach (T item in enumerable) 
+			foreach (T item in collection) 
 				Push (item);
 		}
 		
@@ -63,10 +64,10 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 		
-		public void Push (T element)
+		public void Push (T item)
 		{
 			Node temp = new Node ();
-			temp.Value = element;
+			temp.Value = item;
 			do {
 			  temp.Next = head;
 			} while (Interlocked.CompareExchange (ref head, temp, temp.Next) != temp.Next);
@@ -74,19 +75,19 @@ namespace System.Collections.Concurrent
 			Interlocked.Increment (ref count);
 		}
 
-		public void PushRange (T[] values)
+		public void PushRange (T[] items)
 		{
-			PushRange (values, 0, values.Length);
+			PushRange (items, 0, items.Length);
 		}
 		
-		public void PushRange (T[] values, int start, int length)
+		public void PushRange (T[] items, int start, int length)
 		{
 			Node insert = null;
 			Node first = null;
 			
 			for (int i = start; i < length; i++) {
 				Node temp = new Node ();
-				temp.Value = values[i];
+				temp.Value = items[i];
 				temp.Next = insert;
 				insert = temp;
 				
@@ -101,30 +102,30 @@ namespace System.Collections.Concurrent
 			Interlocked.Add (ref count, length);
 		}
 		
-		public bool TryPop (out T value)
+		public bool TryPop (out T result)
 		{
 			Node temp;
 			do {
 				temp = head;
 				// The stak is empty
 				if (temp == null) {
-					value = default (T);
+					result = default (T);
 					return false;
 				}
 			} while (Interlocked.CompareExchange (ref head, temp.Next, temp) != temp);
 			
 			Interlocked.Decrement (ref count);
 			
-			value = temp.Value;
+			result = temp.Value;
 			return true;
 		}
 
-		public int TryPopRange (T[] values)
+		public int TryPopRange (T[] items)
 		{
-			return TryPopRange (values, 0, values.Length);
+			return TryPopRange (items, 0, items.Length);
 		}
 
-		public int TryPopRange (T[] values, int startIndex, int count)
+		public int TryPopRange (T[] items, int startIndex, int count)
 		{
 			Node temp;
 			Node end;
@@ -143,21 +144,21 @@ namespace System.Collections.Concurrent
 			
 			int i;
 			for (i = startIndex; i < count && temp != null; i++) {
-				values[i] = temp.Value;
+				items[i] = temp.Value;
 				temp = temp.Next;
 			}
 			
 			return i - 1;
 		}
 		
-		public bool TryPeek (out T value)
+		public bool TryPeek (out T result)
 		{
 			Node myHead = head;
 			if (myHead == null) {
-				value = default (T);
+				result = default (T);
 				return false;
 			}
-			value = myHead.Value;
+			result = myHead.Value;
 			return true;
 		}
 		
@@ -198,12 +199,12 @@ namespace System.Collections.Concurrent
 			CopyTo (dest, index);
 		}
 		
-		public void CopyTo (T[] dest, int index)
+		public void CopyTo (T[] array, int index)
 		{
 			IEnumerator<T> e = InternalGetEnumerator ();
 			int i = index;
 			while (e.MoveNext ()) {
-				dest[i++] = e.Current;
+				array[i++] = e.Current;
 			}
 		}
 		
