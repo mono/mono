@@ -90,7 +90,7 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		#region For
+#region For
 
 		public static ParallelLoopResult For (int fromInclusive, int toExclusive, Action<int> body)
 		{
@@ -229,9 +229,69 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		#endregion
+#endregion
 
-		#region Foreach
+#region For (long)
+
+		[MonoTODO]
+		public static ParallelLoopResult For (long fromInclusive, long toExclusive, Action<long> body)
+		{
+			return For (fromInclusive, toExclusive, ParallelOptions.Default, body);
+		}
+
+		[MonoTODO]
+		public static ParallelLoopResult For (long fromInclusive, long toExclusive, Action<long, ParallelLoopState> body)
+		{
+			return For (fromInclusive, toExclusive, ParallelOptions.Default, body);
+		}
+
+		[MonoTODO]
+		public static ParallelLoopResult For (long fromInclusive, long toExclusive, ParallelOptions parallelOptions, Action<long> body)
+		{
+			return For (fromInclusive, toExclusive, parallelOptions, (index, state) => body (index));
+		}
+
+		[MonoTODO]
+		public static ParallelLoopResult For (long fromInclusive, long toExclusive, ParallelOptions parallelOptions, Action<long, ParallelLoopState> body)
+		{
+			return For<object> (fromInclusive, toExclusive, parallelOptions, () => null, (i, s, l) => { body (i, s); return null; }, _ => {});
+		}
+
+		[MonoTODO]
+		public static ParallelLoopResult For<TLocal> (long fromInclusive,
+		                                              long toExclusive,
+		                                              Func<TLocal> localInit,
+		                                              Func<long, ParallelLoopState, TLocal, TLocal> body,
+		                                              Action<TLocal> localFinally)
+		{
+			return For<TLocal> (fromInclusive, toExclusive, ParallelOptions.Default, localInit, body, localFinally);
+		}
+
+		[MonoTODO ("See how this can be refactored with the above For implementation")]
+		public static ParallelLoopResult For<TLocal> (long fromInclusive,
+		                                              long toExclusive,
+		                                              ParallelOptions parallelOptions,
+		                                              Func<TLocal> localInit,
+		                                              Func<long, ParallelLoopState, TLocal, TLocal> body,
+		                                              Action<TLocal> localFinally)
+		{
+			if (body == null)
+				throw new ArgumentNullException ("body");
+			if (localInit == null)
+				throw new ArgumentNullException ("localInit");
+			if (localFinally == null)
+				throw new ArgumentNullException ("localFinally");
+			if (parallelOptions == null)
+				throw new ArgumentNullException ("options");
+			if (fromInclusive >= toExclusive)
+				return new ParallelLoopResult (null, true);
+
+			throw new NotImplementedException ();
+		}
+
+#endregion
+
+#region Foreach
 		static ParallelLoopResult ForEach<TSource, TLocal> (Func<int, IList<IEnumerator<TSource>>> enumerable, ParallelOptions options,
 		                                                    Func<TLocal> init, Func<TSource, ParallelLoopState, TLocal, TLocal> action,
 		                                                    Action<TLocal> destruct)
@@ -660,7 +720,7 @@ namespace System.Threading.Tasks
 
 			return tasks;
 		}
-		#endregion
+#endregion
 	}
 }
 #endif
