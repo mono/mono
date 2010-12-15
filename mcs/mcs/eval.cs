@@ -243,6 +243,8 @@ namespace Mono.CSharp
 			lock (evaluator_lock){
 				if (!inited)
 					Init ();
+				else
+					ctx.Report.Printer.Reset ();
 
 			//	RootContext.ToplevelTypes = new ModuleContainer (ctx);
 

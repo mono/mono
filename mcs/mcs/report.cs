@@ -657,6 +657,12 @@ namespace Mono.CSharp {
 					output.WriteLine (s + msg.MessageType + ")");
 			}
 		}
+
+		public void Reset ()
+		{
+			// Temporary hack for broken repl flow
+			errors = warnings = 0;
+		}
 	}
 
 	//
