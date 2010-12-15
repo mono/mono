@@ -5568,6 +5568,11 @@ query_body
 		$$ = head;
 	  }
 	| opt_query_body_clauses COMPLETE_COMPLETION
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = null;
+	  }
 	;
 	
 select_or_group_clause
