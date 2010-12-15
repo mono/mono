@@ -193,10 +193,10 @@ namespace System
 				throw new NotImplementedException ();
 			}
 	
-			public override bool Equals (object other)
+			public override bool Equals (object obj)
 			{
-				if (other is TransitionTime)
-					return this == (TransitionTime) other;
+				if (obj is TransitionTime)
+					return this == (TransitionTime) obj;
 				return false;
 			}
 

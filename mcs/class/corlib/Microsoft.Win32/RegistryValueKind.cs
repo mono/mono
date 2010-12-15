@@ -41,7 +41,7 @@ namespace Microsoft.Win32
 		MultiString = 7,
 		QWord = 11,
 #if NET_4_0
-		None = 12
+		None = -1
 #endif
 	}
 }

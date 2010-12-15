@@ -110,13 +110,13 @@ namespace System.Numerics {
 				(left.imaginary * right.real - left.real * right.imaginary) / rsri);
 		}
 
-		public static Complex Divide (Complex left, Complex right)
+		public static Complex Divide (Complex dividend, Complex divisor)
 		{
-			double rsri = right.real * right.real + right.imaginary * right.imaginary;
+			double rsri = divisor.real * divisor.real + divisor.imaginary * divisor.imaginary;
 			return new Complex (
-				(left.real * right.real + left.imaginary * right.imaginary) / rsri,
+				(dividend.real * divisor.real + dividend.imaginary * divisor.imaginary) / rsri,
 
-				(left.imaginary * right.real - left.real * right.imaginary) / rsri);
+				(dividend.imaginary * divisor.real - dividend.real * divisor.imaginary) / rsri);
 		}
 
 		public static bool operator == (Complex left, Complex right)
@@ -129,12 +129,12 @@ namespace System.Numerics {
 			return real == value.real && imaginary == value.imaginary;
 		}
 
-		public override bool Equals (object value)
+		public override bool Equals (object obj)
 		{
-			if (value == null || !(value is Complex))
+			if (obj == null || !(obj is Complex))
 				return false;
 
-			Complex r = (Complex) value;
+			Complex r = (Complex) obj;
 			return real == r.real && imaginary == r.imaginary;
 		}
 		

@@ -37,17 +37,17 @@ namespace System.Linq
 {
 	public class EnumerableQuery<T> : EnumerableQuery, IOrderedQueryable<T>, IQueryable<T>, IQueryProvider
 	{
-		QueryableEnumerable<T> queryable;
+		readonly QueryableEnumerable<T> queryable;
 
-		public Type ElementType {
+		Type IQueryable.ElementType {
 			get { return queryable.ElementType; }
 		}
 
-		public Expression Expression {
+		Expression IQueryable.Expression {
 			get { return queryable.Expression; }
 		}
 
-		public IQueryProvider Provider {
+		IQueryProvider IQueryable.Provider {
 			get { return queryable; }
 		}
 
@@ -61,37 +61,32 @@ namespace System.Linq
 			queryable = new QueryableEnumerable<T> (enumerable);
 		}
 
-		public IEnumerable GetEnumerable ()
-		{
-			return queryable.GetEnumerable ();
-		}
-
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return queryable.GetEnumerator ();
 		}
 
-		public IEnumerator<T> GetEnumerator ()
+		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
 		{
 			return queryable.GetEnumerator ();
 		}
 
-		public IQueryable CreateQuery (Expression expression)
+		IQueryable IQueryProvider.CreateQuery (Expression expression)
 		{
 			return queryable.CreateQuery (expression);
 		}
 
-		public object Execute (Expression expression)
+		object IQueryProvider.Execute (Expression expression)
 		{
 			return queryable.Execute (expression);
 		}
 
-		public IQueryable<TElem> CreateQuery<TElem> (Expression expression)
+		IQueryable<TElem> IQueryProvider.CreateQuery<TElem> (Expression expression)
 		{
 			return new EnumerableQuery<TElem> (expression);
 		}
 
-		public TResult Execute<TResult> (Expression expression)
+		TResult IQueryProvider.Execute<TResult> (Expression expression)
 		{
 			return queryable.Execute<TResult> (expression);
 		}

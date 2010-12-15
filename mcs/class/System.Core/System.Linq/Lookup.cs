@@ -69,13 +69,13 @@ namespace System.Linq {
 				nullGrouping = new Grouping<TKey, TElement> (default (TKey), nullKeyElements);
 		}
 
-		public IEnumerable<TResult> ApplyResultSelector<TResult> (Func<TKey, IEnumerable<TElement>, TResult> selector)
+		public IEnumerable<TResult> ApplyResultSelector<TResult> (Func<TKey, IEnumerable<TElement>, TResult> resultSelector)
 		{
 			if (nullGrouping != null)
-				yield return selector (nullGrouping.Key, nullGrouping);
+				yield return resultSelector (nullGrouping.Key, nullGrouping);
 			
 			foreach (var group in groups.Values)
-				yield return selector (group.Key, group);
+				yield return resultSelector (group.Key, group);
 		}
 
 		public bool Contains (TKey key)

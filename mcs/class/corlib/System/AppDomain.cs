@@ -390,11 +390,11 @@ namespace System {
 			                                     culture, activationAttributes, null);
 		}
 
-		public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
+		public object CreateInstanceFromAndUnwrap (string assemblyFile, string typeName, bool ignoreCase,
 		                                           BindingFlags bindingAttr, Binder binder, object[] args,
 		                                           CultureInfo culture, object[] activationAttributes)
 		{
-			ObjectHandle oh = CreateInstanceFrom (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+			ObjectHandle oh = CreateInstanceFrom (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args,
 				culture, activationAttributes);
 
 			return (oh != null) ? oh.Unwrap () : null;

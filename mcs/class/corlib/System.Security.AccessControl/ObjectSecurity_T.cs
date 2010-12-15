@@ -23,12 +23,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
+
+using System.Security.Principal;
 
 namespace System.Security.AccessControl
 {
-	public abstract class ObjectSecurity<T> : NativeObjectSecurity
+	public abstract class ObjectSecurity<T> : NativeObjectSecurity where T : struct
 	{
+		public override Type AccessRightType {
+			get {
+				return null;
+			}
+		}
+		
+		public override Type AccessRuleType {
+			get {
+				return null;
+			}
+		}
+		
+		public override Type AuditRuleType {
+			get {
+				return null;
+			}
+		}
+		
+		public override AccessRule AccessRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+		{
+			return null;
+		}
+		
+		public override AuditRule AuditRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+		{
+			return null;
+		}
 	}
 }
 	

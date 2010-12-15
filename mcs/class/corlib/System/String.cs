@@ -2217,7 +2217,11 @@ namespace System
 			return InternalIsInterned (str);
 		}
 	
+#if NET_4_0
 		public static string Join (string separator, params string [] value)
+#else
+		public static string Join (string separator, string [] value)
+#endif
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");

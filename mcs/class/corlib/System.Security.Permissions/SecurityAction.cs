@@ -43,12 +43,24 @@ namespace System.Security.Permissions {
 	public enum SecurityAction {
 		Demand = 2,
 		Assert = 3,
+#if NET_4_0
+		[Obsolete]
+#endif
 		Deny = 4,
 		PermitOnly = 5,
 		LinkDemand = 6,
 		InheritanceDemand = 7,
+#if NET_4_0
+		[Obsolete]
+#endif
 		RequestMinimum = 8,
+#if NET_4_0
+		[Obsolete]
+#endif
 		RequestOptional = 9,
+#if NET_4_0
+		[Obsolete]
+#endif
 		RequestRefuse = 10,
 	}
 }

@@ -642,13 +642,13 @@ namespace System.Linq
 			return counter;
 		}
 
-		public static int Count<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> selector)
+		public static int Count<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, predicate);
 
 			int counter = 0;
 			foreach (var element in source)
-				if (selector (element))
+				if (predicate (element))
 					counter++;
 
 			return counter;
@@ -1262,13 +1262,13 @@ namespace System.Linq
 			return counter;
 		}
 
-		public static long LongCount<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> selector)
+		public static long LongCount<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, predicate);
 
 			long counter = 0;
 			foreach (TSource element in source)
-				if (selector (element))
+				if (predicate (element))
 					counter++;
 
 			return counter;
@@ -2285,11 +2285,11 @@ namespace System.Linq
 		}
 
 		public static IEnumerable<TResult> SelectMany<TSource, TCollection, TResult> (this IEnumerable<TSource> source,
-			Func<TSource, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> selector)
+			Func<TSource, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector)
 		{
-			Check.SourceAndCollectionSelectors (source, collectionSelector, selector);
+			Check.SourceAndCollectionSelectors (source, collectionSelector, resultSelector);
 
-			return CreateSelectManyIterator (source, collectionSelector, selector);
+			return CreateSelectManyIterator (source, collectionSelector, resultSelector);
 		}
 
 		static IEnumerable<TResult> CreateSelectManyIterator<TSource, TCollection, TResult> (IEnumerable<TSource> source,
@@ -2301,11 +2301,11 @@ namespace System.Linq
 		}
 
 		public static IEnumerable<TResult> SelectMany<TSource, TCollection, TResult> (this IEnumerable<TSource> source,
-			Func<TSource, int, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> selector)
+			Func<TSource, int, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector)
 		{
-			Check.SourceAndCollectionSelectors (source, collectionSelector, selector);
+			Check.SourceAndCollectionSelectors (source, collectionSelector, resultSelector);
 
-			return CreateSelectManyIterator (source, collectionSelector, selector);
+			return CreateSelectManyIterator (source, collectionSelector, resultSelector);
 		}
 
 		static IEnumerable<TResult> CreateSelectManyIterator<TSource, TCollection, TResult> (IEnumerable<TSource> source,

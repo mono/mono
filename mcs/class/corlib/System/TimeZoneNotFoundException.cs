@@ -44,10 +44,10 @@ namespace System
 		public TimeZoneNotFoundException (string message) : base (message)
 		{}
 
-		public TimeZoneNotFoundException (string message, Exception e) : base (message, e)
+		public TimeZoneNotFoundException (string message, Exception innerException) : base (message, innerException)
 		{}
 
-		protected TimeZoneNotFoundException (Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext sc) : base (info, sc)
+		protected TimeZoneNotFoundException (Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context) : base (info, context)
 		{}
 	}
 }

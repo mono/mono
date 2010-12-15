@@ -44,10 +44,10 @@ namespace System
 		public InvalidTimeZoneException (string message) : base (message)
 		{}
 
-		public InvalidTimeZoneException (string message, Exception e) : base (message, e)
+		public InvalidTimeZoneException (string message, Exception innerException) : base (message, innerException)
 		{}
 
-		protected InvalidTimeZoneException (Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext sc) : base (info, sc)
+		protected InvalidTimeZoneException (Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context) : base (info, context)
 		{}
 	}
 }
