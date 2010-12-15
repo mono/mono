@@ -30,7 +30,9 @@ using System.Runtime.Serialization;
 
 namespace System
 {
+
 	[System.SerializableAttribute]
+	[System.Diagnostics.DebuggerDisplay ("Count = {InnerExceptions.Count}")]
 	public class AggregateException : Exception
 	{
 		List<Exception> innerExceptions;
@@ -113,6 +115,16 @@ namespace System
 		public override string ToString ()
 		{
 			return this.Message;
+		}
+
+		public override Exception GetBaseException ()
+		{
+			return this;
+		}
+
+		public override void GetObjectData (SerializationInfo info,	StreamingContext context)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		static string GetFormattedMessage (string customMessage, IEnumerable<Exception> inner)
