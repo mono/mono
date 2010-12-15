@@ -733,9 +733,9 @@ namespace Mono.CSharp
 							if (counter++ < 10) {
 								stream = File.OpenRead (res.FileName);
 							} else {
-								// TODO: SRE API requires resouce stream to be available during AssemblyBuilder::Save
+								// TODO: SRE API requires resource stream to be available during AssemblyBuilder::Save
 								// we workaround it by reading everything into memory to compile projects with
-								// many embedded resources (over 3500) references
+								// many embedded resource (over 3500) references
 								stream = new MemoryStream (File.ReadAllBytes (res.FileName));
 							}
 
