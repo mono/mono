@@ -231,6 +231,11 @@ namespace Mono.CSharp {
 					if (list.Contains (ce))
 						continue;
 
+					if (list is MemberSpec[]) {
+						list = new List<MemberSpec> () { list [0] };
+						member_hash[entry.Key] = list;
+					}
+
 					list.Add (ce);
 				}
 			}
