@@ -248,7 +248,9 @@ namespace Mono.CSharp {
 			lock (evaluator_lock){
 				if (!inited)
 					Init ();
-				
+				else
+					ctx.Report.Printer.Reset ();
+
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
 				if (parser == null){
