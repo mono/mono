@@ -3090,6 +3090,9 @@ namespace Mono.CSharp {
 
 		public SwitchLabel Clone (CloneContext clonectx)
 		{
+			if (label == null)
+				return this;
+
 			return new SwitchLabel (label.Clone (clonectx), loc);
 		}
 	}

@@ -23,7 +23,8 @@ class MemberAccessData
 enum E
 {
 	E1,
-	E2
+	E2,
+	E3
 }
 
 public class B
@@ -98,6 +99,8 @@ public class C : B
 			case E.E1:
 				goto case E.E2;
 			case E.E2:
+				break;
+			default:
 				break;
 			}
 		});		
