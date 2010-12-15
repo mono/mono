@@ -721,6 +721,7 @@ namespace Mono.CSharp
 				if (RootContext.Target == Target.Module) {
 					Report.Error (1507, "Cannot link resource file when building a module");
 				} else {
+					int counter = 0;
 					foreach (var res in RootContext.Resources) {
 						if (!File.Exists (res.FileName)) {
 							Report.Error (1566, "Error reading resource file `{0}'", res.FileName);
@@ -728,7 +729,16 @@ namespace Mono.CSharp
 						}
 
 						if (res.IsEmbeded) {
-							var stream = File.OpenRead (res.FileName);
+							Stream stream;
+							if (counter++ < 10) {
+								stream = File.OpenRead (res.FileName);
+							} else {
+								// TODO: SRE API requires resouce stream to be available during AssemblyBuilder::Save
+								// we workaround it by reading everything into memory to compile projects with
+								// many embedded resources (over 3500) references
+								stream = new MemoryStream (File.ReadAllBytes (res.FileName));
+							}
+
 							module.Builder.DefineManifestResource (res.Name, stream, res.Attributes);
 						} else {
 							Builder.AddResourceFile (res.Name, Path.GetFileName (res.FileName), res.Attributes);
