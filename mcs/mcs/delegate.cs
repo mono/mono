@@ -298,9 +298,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			parameters.ApplyAttributes (this, InvokeBuilder.MethodBuilder);
-			
+			Constructor.ParameterInfo.ApplyAttributes (this, Constructor.ConstructorBuilder);
 			Constructor.ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
+
+			parameters.ApplyAttributes (this, InvokeBuilder.MethodBuilder);
 			InvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			if (BeginInvokeBuilder != null) {
