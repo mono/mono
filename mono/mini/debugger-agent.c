@@ -1177,7 +1177,7 @@ stop_debugger_thread ()
 #ifdef HOST_WIN32
 	shutdown (conn_fd, SD_RECEIVE);
 	shutdown (listen_fd, SD_BOTH);
-	close (listen_fd);
+	closesocket (listen_fd);
 #else
 	shutdown (conn_fd, SHUT_RD);
 	shutdown (listen_fd, SHUT_RDWR);
