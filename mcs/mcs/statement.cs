@@ -3108,7 +3108,7 @@ namespace Mono.CSharp {
 		{
 			var cloned_labels = new List<SwitchLabel> ();
 
-			foreach (SwitchLabel sl in cloned_labels)
+			foreach (SwitchLabel sl in Labels)
 				cloned_labels.Add (sl.Clone (clonectx));
 			
 			return new SwitchSection (cloned_labels, clonectx.LookupBlock (Block));
