@@ -740,6 +740,7 @@ namespace Mono.CSharp {
 			SecurityAction action = GetSecurityActionValue ();
 
 			switch (action) {
+#pragma warning disable 618
 			case SecurityAction.Demand:
 			case SecurityAction.Assert:
 			case SecurityAction.Deny:
@@ -756,6 +757,7 @@ namespace Mono.CSharp {
 				if (for_assembly)
 					return true;
 				break;
+#pragma warning restore 618
 
 			default:
 				Error_AttributeEmitError ("SecurityAction is out of range");
@@ -915,109 +917,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		//
-		// Theoretically, we can get rid of this, since FieldBuilder.SetCustomAttribute()
-		// and ParameterBuilder.SetCustomAttribute() are supposed to handle this attribute.
-		// However, we can't, since it appears that the .NET 1.1 SRE hangs when given a MarshalAsAttribute.
-		//
-#if false
-		public UnmanagedMarshal GetMarshal (Attributable attr)
-		{
-			UnmanagedType UnmanagedType;
-			if (!RootContext.StdLib || pos_values [0].GetType () != typeof (UnmanagedType))
-				UnmanagedType = (UnmanagedType) System.Enum.ToObject (typeof (UnmanagedType), pos_values [0]);
-			else
-				UnmanagedType = (UnmanagedType) pos_values [0];
-
-			object value = GetFieldValue ("SizeParamIndex");
-			if (value != null && UnmanagedType != UnmanagedType.LPArray) {
-				Error_AttributeEmitError ("SizeParamIndex field is not valid for the specified unmanaged type");
-				return null;
-			}
-
-			object o = GetFieldValue ("ArraySubType");
-			UnmanagedType array_sub_type = o == null ? (UnmanagedType) 0x50 /* NATIVE_MAX */ : (UnmanagedType) o;
-
-			switch (UnmanagedType) {
-			case UnmanagedType.CustomMarshaler: {
-				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom",
-					BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-				if (define_custom == null) {
-					Report.RuntimeMissingSupport (Location, "set marshal info");
-					return null;
-				}
-				
-				object [] args = new object [4];
-				args [0] = GetFieldValue ("MarshalTypeRef");
-				args [1] = GetFieldValue ("MarshalCookie");
-				args [2] = GetFieldValue ("MarshalType");
-				args [3] = Guid.Empty;
-				return (UnmanagedMarshal) define_custom.Invoke (null, args);
-			}
-			case UnmanagedType.LPArray: {
-				object size_const = GetFieldValue ("SizeConst");
-				object size_param_index = GetFieldValue ("SizeParamIndex");
-
-				if ((size_const != null) || (size_param_index != null)) {
-					MethodInfo define_array = typeof (UnmanagedMarshal).GetMethod ("DefineLPArrayInternal",
-						BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-					if (define_array == null) {
-						Report.RuntimeMissingSupport (Location, "set marshal info");
-						return null;
-					}
-				
-					object [] args = new object [3];
-					args [0] = array_sub_type;
-					args [1] = size_const == null ? -1 : size_const;
-					args [2] = size_param_index == null ? -1 : size_param_index;
-					return (UnmanagedMarshal) define_array.Invoke (null, args);
-				}
-				else
-					return UnmanagedMarshal.DefineLPArray (array_sub_type);
-			}
-			case UnmanagedType.SafeArray:
-				return UnmanagedMarshal.DefineSafeArray (array_sub_type);
-
-			case UnmanagedType.ByValArray:
-				FieldBase fm = attr as FieldBase;
-				if (fm == null) {
-					Error_AttributeEmitError ("Specified unmanaged type is only valid on fields");
-					return null;
-				}
-				return UnmanagedMarshal.DefineByValArray ((int) GetFieldValue ("SizeConst"));
-
-			case UnmanagedType.ByValTStr:
-				return UnmanagedMarshal.DefineByValTStr ((int) GetFieldValue ("SizeConst"));
-
-			default:
-				return UnmanagedMarshal.DefineUnmanagedMarshal (UnmanagedType);
-			}
-		}
-
-		object GetFieldValue (string name)
-		{
-			int i;
-			if (field_info_arr == null)
-				return null;
-			i = 0;
-			foreach (FieldInfo fi in field_info_arr) {
-				if (fi.Name == name)
-					return GetValue (field_values_arr [i]);
-				i++;
-			}
-			return null;
-		}
-
-		static object GetValue (object value)
-		{
-			if (value is EnumConstant)
-				return ((EnumConstant) value).GetValue ();
-			else
-				return value;				
-		}
-		
-#endif
-
 		public CharSet GetCharSetValue ()
 		{
 			return (CharSet)System.Enum.Parse (typeof (CharSet), ((Constant) PosArguments [0].Expr).GetValue ().ToString ());
@@ -1135,6 +1034,19 @@ namespace Mono.CSharp {
 							if (v == 0) {
 								context.Compiler.Report.Error (591, Location, "Invalid value for argument to `{0}' attribute",
 									"System.AttributeUsage");
+							}
+						} else if (Type == predefined.MarshalAs) {
+							if (PosArguments.Count == 1) {
+								var u_type = (UnmanagedType) System.Enum.Parse (typeof (UnmanagedType), ((Constant) PosArguments[0].Expr).GetValue ().ToString ());
+								if (u_type == UnmanagedType.ByValArray && !(Owner is FieldBase)) {
+									Error_AttributeEmitError ("Specified unmanaged type is only valid on fields");
+								}
+							}
+						} else if (Type == predefined.DllImport) {
+							if (PosArguments.Count == 1) {
+								var value = ((Constant) PosArguments[0].Expr).GetValue () as string;
+								if (string.IsNullOrEmpty (value))
+									Error_AttributeEmitError ("DllName cannot be empty");
 							}
 						} else if (Type == predefined.MethodImpl && pt == TypeManager.short_type &&
 							!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
