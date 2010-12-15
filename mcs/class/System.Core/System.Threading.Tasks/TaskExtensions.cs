@@ -37,26 +37,26 @@ namespace System.Threading.Tasks
 	{
 		const TaskContinuationOptions opt = TaskContinuationOptions.ExecuteSynchronously;
 
-		public static Task<TResult> Unwrap<TResult> (this Task<Task<TResult>> outer)
+		public static Task<TResult> Unwrap<TResult> (this Task<Task<TResult>> task)
 		{
-			if (outer == null)
-				throw new ArgumentNullException ("outer");
+			if (task == null)
+				throw new ArgumentNullException ("task");
 
 			TaskCompletionSource<TResult> src = new TaskCompletionSource<TResult> ();
 
-			outer.ContinueWith (t1 => CopyCat (t1, src, () => t1.Result.ContinueWith (t2 => CopyCat (t2, src, () => src.SetResult (t2.Result)), opt)), opt);
+			task.ContinueWith (t1 => CopyCat (t1, src, () => t1.Result.ContinueWith (t2 => CopyCat (t2, src, () => src.SetResult (t2.Result)), opt)), opt);
 
 			return src.Task;
 		}
 
-		public static Task Unwrap (this Task<Task> outer)
+		public static Task Unwrap (this Task<Task> task)
 		{
-			if (outer == null)
-				throw new ArgumentNullException ("outer");
+			if (task == null)
+				throw new ArgumentNullException ("task");
 
 			TaskCompletionSource<object> src = new TaskCompletionSource<object> ();
 
-			outer.ContinueWith (t1 => CopyCat (t1, src, () => t1.Result.ContinueWith (t2 => CopyCat (t2, src, () => src.SetResult (null)), opt)), opt);
+			task.ContinueWith (t1 => CopyCat (t1, src, () => t1.Result.ContinueWith (t2 => CopyCat (t2, src, () => src.SetResult (null)), opt)), opt);
 
 			return src.Task;
 		}
