@@ -53,18 +53,18 @@ namespace System.Threading
 		}
 		
 		// If parameter is true we throw exception as soon as they appear otherwise we aggregate them
-		public void Cancel (bool throwOnFirst)
+		public void Cancel (bool throwOnFirstException)
 		{
 			canceled = true;
 			handle.Set ();
 			
 			List<Exception> exceptions = null;
-			if (!throwOnFirst)
+			if (!throwOnFirstException)
 				exceptions = new List<Exception> ();
 			
 			lock (callbacks) {
 				foreach (KeyValuePair<CancellationTokenRegistration, Action> item in callbacks) {
-					if (throwOnFirst) {
+					if (throwOnFirstException) {
 						item.Value ();
 					} else {
 						try {

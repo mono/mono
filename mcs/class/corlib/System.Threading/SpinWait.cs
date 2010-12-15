@@ -52,25 +52,25 @@ namespace System.Threading
 			}
 		}
 
-		public static void SpinUntil (Func<bool> predicate)
+		public static void SpinUntil (Func<bool> condition)
 		{
 			SpinWait sw = new SpinWait ();
-			while (!predicate ())
+			while (!condition ())
 				sw.SpinOnce ();
 		}
 
-		public static bool SpinUntil (Func<bool> predicate, TimeSpan ts)
+		public static bool SpinUntil (Func<bool> condition, TimeSpan timeout)
 		{
-			return SpinUntil (predicate, (int)ts.TotalMilliseconds);
+			return SpinUntil (condition, (int)timeout.TotalMilliseconds);
 		}
 
-		public static bool SpinUntil (Func<bool> predicate, int milliseconds)
+		public static bool SpinUntil (Func<bool> condition, int millisecondsTimeout)
 		{
 			SpinWait sw = new SpinWait ();
 			Watch watch = Watch.StartNew ();
 
-			while (!predicate ()) {
-				if (watch.ElapsedMilliseconds > milliseconds)
+			while (!condition ()) {
+				if (watch.ElapsedMilliseconds > millisecondsTimeout)
 					return false;
 				sw.SpinOnce ();
 			}

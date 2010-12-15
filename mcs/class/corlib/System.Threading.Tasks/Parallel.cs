@@ -92,62 +92,62 @@ namespace System.Threading.Tasks
 
 		#region For
 
-		public static ParallelLoopResult For (int from, int to, Action<int> action)
+		public static ParallelLoopResult For (int fromInclusive, int toExclusive, Action<int> body)
 		{
-			return For (from, to, ParallelOptions.Default, action);
+			return For (fromInclusive, toExclusive, ParallelOptions.Default, body);
 		}
 
-		public static ParallelLoopResult For (int from, int to, Action<int, ParallelLoopState> action)
+		public static ParallelLoopResult For (int fromInclusive, int toExclusive, Action<int, ParallelLoopState> body)
 		{
-			return For (from, to, ParallelOptions.Default, action);
+			return For (fromInclusive, toExclusive, ParallelOptions.Default, body);
 		}
 
-		public static ParallelLoopResult For (int from, int to, ParallelOptions options, Action<int> action)
+		public static ParallelLoopResult For (int fromInclusive, int toExclusive, ParallelOptions parallelOptions, Action<int> body)
 		{
-			return For (from, to, options, (index, state) => action (index));
+			return For (fromInclusive, toExclusive, parallelOptions, (index, state) => body (index));
 		}
 
-		public static ParallelLoopResult For (int from, int to, ParallelOptions options, Action<int, ParallelLoopState> action)
+		public static ParallelLoopResult For (int fromInclusive, int toExclusive, ParallelOptions parallelOptions, Action<int, ParallelLoopState> body)
 		{
-			return For<object> (from, to, options, () => null, (i, s, l) => { action (i, s); return null; }, _ => {});
+			return For<object> (fromInclusive, toExclusive, parallelOptions, () => null, (i, s, l) => { body (i, s); return null; }, _ => {});
 		}
 
-		public static ParallelLoopResult For<TLocal> (int from,
-		                                              int to,
-		                                              Func<TLocal> init,
-		                                              Func<int, ParallelLoopState, TLocal, TLocal> action,
-		                                              Action<TLocal> destruct)
+		public static ParallelLoopResult For<TLocal> (int fromInclusive,
+		                                              int toExclusive,
+		                                              Func<TLocal> localInit,
+		                                              Func<int, ParallelLoopState, TLocal, TLocal> body,
+		                                              Action<TLocal> localFinally)
 		{
-			return For<TLocal> (from, to, ParallelOptions.Default, init, action, destruct);
+			return For<TLocal> (fromInclusive, toExclusive, ParallelOptions.Default, localInit, body, localFinally);
 		}
 
-		public static ParallelLoopResult For<TLocal> (int from,
-		                                              int to,
-		                                              ParallelOptions options,
-		                                              Func<TLocal> init,
-		                                              Func<int, ParallelLoopState, TLocal, TLocal> action,
-		                                              Action<TLocal> destruct)
+		public static ParallelLoopResult For<TLocal> (int fromInclusive,
+		                                              int toExclusive,
+		                                              ParallelOptions parallelOptions,
+		                                              Func<TLocal> localInit,
+		                                              Func<int, ParallelLoopState, TLocal, TLocal> body,
+		                                              Action<TLocal> localFinally)
 		{
-			if (action == null)
-				throw new ArgumentNullException ("action");
-			if (init == null)
+			if (body == null)
+				throw new ArgumentNullException ("body");
+			if (localInit == null)
 				throw new ArgumentNullException ("localInit");
-			if (destruct == null)
+			if (localFinally == null)
 				throw new ArgumentNullException ("localFinally");
-			if (options == null)
+			if (parallelOptions == null)
 				throw new ArgumentNullException ("options");
-			if (from >= to)
+			if (fromInclusive >= toExclusive)
 				return new ParallelLoopResult (null, true);
 
-			// Number of task to be launched (normally == Env.ProcessorCount)
+			// Number of task toExclusive be launched (normally == Env.ProcessorCount)
 			int step;
-			int num = GetBestWorkerNumber (from, to, options, out step);
+			int num = GetBestWorkerNumber (fromInclusive, toExclusive, parallelOptions, out step);
 
 			Task[] tasks = new Task [num];
 
 			StealRange[] ranges = new StealRange[num];
 			for (int i = 0; i < num; i++)
-				ranges[i] = new StealRange (from, i, step);
+				ranges[i] = new StealRange (fromInclusive, i, step);
 
 			ParallelLoopState.ExternalInfos infos = new ParallelLoopState.ExternalInfos ();
 
@@ -157,11 +157,11 @@ namespace System.Threading.Tasks
 				int localWorker = Interlocked.Increment (ref currentIndex);
 				StealRange range = ranges[localWorker];
 				int index = range.Actual;
-				int stopIndex = localWorker + 1 == num ? to : Math.Min (to, index + step);
-				TLocal local = init ();
+				int stopIndex = localWorker + 1 == num ? toExclusive : Math.Min (toExclusive, index + step);
+				TLocal local = localInit ();
 
 				ParallelLoopState state = new ParallelLoopState (infos);
-				CancellationToken token = options.CancellationToken;
+				CancellationToken token = parallelOptions.CancellationToken;
 
 				try {
 					for (int i = index; i < stopIndex; range.Actual = ++i) {
@@ -174,18 +174,18 @@ namespace System.Threading.Tasks
 							return;
 
 						state.CurrentIteration = i;
-						local = action (i, state, local);
+						local = body (i, state, local);
 						if (i >= stopIndex - range.Stolen)
 							break;
 					}
 
-					// Try to steal from our right neighbor (cyclic)
+					// Try toExclusive steal fromInclusive our right neighbor (cyclic)
 					int len = num + localWorker;
 					for (int sIndex = localWorker + 1; sIndex < len; ++sIndex) {
 						int extWorker = sIndex % num;
 						range = ranges[extWorker];
 
-						stopIndex = extWorker + 1 == num ? to : Math.Min (to, from + (extWorker + 1) * step);
+						stopIndex = extWorker + 1 == num ? toExclusive : Math.Min (toExclusive, fromInclusive + (extWorker + 1) * step);
 
 						int stolen;
 						do {
@@ -197,17 +197,17 @@ namespace System.Threading.Tasks
 						stolen = stopIndex - stolen - 1;
 
 						if (stolen > range.Actual)
-							local = action (stolen, state, local);
+							local = body (stolen, state, local);
 
 					next:
 						continue;
 					}
 				} finally {
-					destruct (local);
+					localFinally (local);
 				}
 			};
 
-			InitTasks (tasks, num, workerMethod, options);
+			InitTasks (tasks, num, workerMethod, parallelOptions);
 
 			try {
 				Task.WaitAll (tasks);
@@ -223,9 +223,9 @@ namespace System.Threading.Tasks
 			public int Stolen;
 			public int Actual;
 
-			public StealRange (int from, int i, int step)
+			public StealRange (int fromInclusive, int i, int step)
 			{
-				Actual = from + i * step;
+				Actual = fromInclusive + i * step;
 			}
 		}
 
@@ -316,47 +316,47 @@ namespace System.Threading.Tasks
 			return new ParallelLoopResult (infos.LowestBreakIteration, !(infos.IsStopped || infos.IsExceptional));
 		}
 
-		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> enumerable, Action<TSource> action)
+		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> source, Action<TSource> body)
 		{
-			if (enumerable == null)
+			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (action == null)
-				throw new ArgumentNullException ("action");
+			if (body == null)
+				throw new ArgumentNullException ("body");
 
-			return ForEach<TSource, object> (Partitioner.Create (enumerable),
+			return ForEach<TSource, object> (Partitioner.Create (source),
 			                                 ParallelOptions.Default,
 			                                 () => null,
-			                                 (e, s, l) => { action (e); return null; },
+			                                 (e, s, l) => { body (e); return null; },
 			                                 _ => {});
 		}
 
-		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> enumerable, Action<TSource, ParallelLoopState> action)
+		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> source, Action<TSource, ParallelLoopState> body)
 		{
-			if (enumerable == null)
+			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (action == null)
-				throw new ArgumentNullException ("action");
+			if (body == null)
+				throw new ArgumentNullException ("body");
 
-			return ForEach<TSource, object> (Partitioner.Create (enumerable),
+			return ForEach<TSource, object> (Partitioner.Create (source),
 			                                 ParallelOptions.Default,
 			                                 () => null,
-			                                 (e, s, l) => { action (e, s); return null; },
+			                                 (e, s, l) => { body (e, s); return null; },
 			                                 _ => {});
 		}
 
-		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> enumerable,
-		                                                   Action<TSource, ParallelLoopState, long> action)
+		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> source,
+		                                                   Action<TSource, ParallelLoopState, long> body)
 		{
-			if (enumerable == null)
+			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (action == null)
-				throw new ArgumentNullException ("action");
+			if (body == null)
+				throw new ArgumentNullException ("body");
 
 
-			return ForEach<TSource, object> (Partitioner.Create (enumerable),
+			return ForEach<TSource, object> (Partitioner.Create (source),
 			                                 ParallelOptions.Default,
 			                                 () => null,
-			                                 (e, s, l) => { action (e, s, -1); return null; },
+			                                 (e, s, l) => { body (e, s, -1); return null; },
 			                                 _ => {});
 		}
 
@@ -545,34 +545,34 @@ namespace System.Threading.Tasks
 			return ForEach<TSource, TLocal> (Partitioner.Create (source), parallelOptions, localInit, body, localFinally);
 		}
 
-		public static ParallelLoopResult ForEach<TSource, TLocal> (Partitioner<TSource> enumerable, ParallelOptions options,
-		                                                           Func<TLocal> init,
-		                                                           Func<TSource, ParallelLoopState, TLocal, TLocal> action,
-		                                                           Action<TLocal> destruct)
+		public static ParallelLoopResult ForEach<TSource, TLocal> (Partitioner<TSource> source, ParallelOptions parallelOptions,
+		                                                           Func<TLocal> localInit,
+		                                                           Func<TSource, ParallelLoopState, TLocal, TLocal> body,
+		                                                           Action<TLocal> localFinally)
 		{
-			if (enumerable == null)
+			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (action == null)
-				throw new ArgumentNullException ("action");
+			if (body == null)
+				throw new ArgumentNullException ("body");
 
-			return ForEach<TSource, TLocal> (enumerable.GetPartitions, options, init, action, destruct);
+			return ForEach<TSource, TLocal> (source.GetPartitions, parallelOptions, localInit, body, localFinally);
 		}
 
-		public static ParallelLoopResult ForEach<TSource, TLocal> (OrderablePartitioner<TSource> enumerable, ParallelOptions options,
-		                                                           Func<TLocal> init,
-		                                                           Func<TSource, ParallelLoopState, long, TLocal, TLocal> action,
-		                                                           Action<TLocal> destruct)
+		public static ParallelLoopResult ForEach<TSource, TLocal> (OrderablePartitioner<TSource> source, ParallelOptions parallelOptions,
+		                                                           Func<TLocal> localInit,
+		                                                           Func<TSource, ParallelLoopState, long, TLocal, TLocal> body,
+		                                                           Action<TLocal> localFinally)
 		{
-			if (enumerable == null)
+			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (action == null)
-				throw new ArgumentNullException ("action");
+			if (body == null)
+				throw new ArgumentNullException ("body");
 
-			return ForEach<KeyValuePair<long, TSource>, TLocal> (enumerable.GetOrderablePartitions,
-			                                                     options,
-			                                                     init,
-			                                                     (e, s, l) => action (e.Value, s, e.Key, l),
-			                                                     destruct);
+			return ForEach<KeyValuePair<long, TSource>, TLocal> (source.GetOrderablePartitions,
+			                                                     parallelOptions,
+			                                                     localInit,
+			                                                     (e, s, l) => body (e.Value, s, e.Key, l),
+			                                                     localFinally);
 		}
 		#endregion
 

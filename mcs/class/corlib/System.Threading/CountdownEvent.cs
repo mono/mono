@@ -30,15 +30,15 @@ namespace System.Threading
 {	
 	public class CountdownEvent : IDisposable
 	{
-		int count;
+		int initialCount;
 		int initial;
 		ManualResetEventSlim evt = new ManualResetEventSlim (false);
 		
-		public CountdownEvent (int count)
+		public CountdownEvent (int initialCount)
 		{
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count is negative");
-			this.initial = this.count = count;
+			if (initialCount < 0)
+				throw new ArgumentOutOfRangeException ("initialCount is negative");
+			this.initial = this.initialCount = initialCount;
 		}
 		
 		public bool Signal ()
@@ -46,18 +46,18 @@ namespace System.Threading
 			return Signal (1);
 		}
 		
-		public bool Signal (int num)
+		public bool Signal (int signalCount)
 		{
-			if (num <= 0)
-				throw new ArgumentOutOfRangeException ("num");
+			if (signalCount <= 0)
+				throw new ArgumentOutOfRangeException ("signalCount");
 			
 			Action<int> check = delegate (int value) {
 				if (value < 0)
-				throw new InvalidOperationException ("the specified count is larger that CurrentCount");
+				throw new InvalidOperationException ("the specified initialCount is larger that CurrentCount");
 			};
 			
 			int newValue;
-			if (!ApplyOperation (-num, check, out newValue))
+			if (!ApplyOperation (-signalCount, check, out newValue))
 				throw new InvalidOperationException ("The event is already set");
 			
 			if (newValue == 0) {
@@ -73,12 +73,12 @@ namespace System.Threading
 			AddCount (1);
 		}
 		
-		public void AddCount (int num)
+		public void AddCount (int signalCount)
 		{
-			if (num < 0)
-				throw new ArgumentOutOfRangeException ("num");
+			if (signalCount < 0)
+				throw new ArgumentOutOfRangeException ("signalCount");
 			
-			if (!TryAddCount (num))
+			if (!TryAddCount (signalCount))
 				throw new InvalidOperationException ("The event is already set");
 		}
 		
@@ -87,12 +87,12 @@ namespace System.Threading
 			return TryAddCount (1);
 		}
 		
-		public bool TryAddCount (int num)
+		public bool TryAddCount (int signalCount)
 		{	
-			if (num < 0)
-				throw new ArgumentOutOfRangeException ("num");
+			if (signalCount < 0)
+				throw new ArgumentOutOfRangeException ("signalCount");
 			
-			return ApplyOperation (num, null);
+			return ApplyOperation (signalCount, null);
 		}
 		
 		bool ApplyOperation (int num, Action<int> doCheck)
@@ -107,7 +107,7 @@ namespace System.Threading
 			newValue = 0;
 			
 			do {
-				oldCount = count;
+				oldCount = initialCount;
 				if (oldCount == 0)
 					return false;
 				
@@ -115,7 +115,7 @@ namespace System.Threading
 				
 				if (doCheck != null)
 					doCheck (newValue);
-			} while (Interlocked.CompareExchange (ref count, newValue, oldCount) != oldCount);
+			} while (Interlocked.CompareExchange (ref initialCount, newValue, oldCount) != oldCount);
 			
 			return true;
 		}
@@ -125,29 +125,29 @@ namespace System.Threading
 			evt.Wait ();
 		}
 		
-		public void Wait (CancellationToken token)
+		public void Wait (CancellationToken cancellationToken)
 		{
-			evt.Wait (token);
+			evt.Wait (cancellationToken);
 		}
 		
-		public bool Wait (int timeoutMilli)
+		public bool Wait (int millisecondsTimeout)
 		{
-			return evt.Wait (timeoutMilli);
+			return evt.Wait (millisecondsTimeout);
 		}
 		
-		public bool Wait(TimeSpan span)
+		public bool Wait(TimeSpan timeout)
 		{
-			return evt.Wait (span);
+			return evt.Wait (timeout);
 		}
 		
-		public bool Wait (int timeoutMilli, CancellationToken token)
+		public bool Wait (int millisecondsTimeout, CancellationToken cancellationToken)
 		{
-			return evt.Wait (timeoutMilli, token);
+			return evt.Wait (millisecondsTimeout, cancellationToken);
 		}
 		
-		public bool Wait(TimeSpan span, CancellationToken token)
+		public bool Wait(TimeSpan timeout, CancellationToken cancellationToken)
 		{
-			return evt.Wait (span, token);
+			return evt.Wait (timeout, cancellationToken);
 		}
 
 		public void Reset ()
@@ -155,15 +155,15 @@ namespace System.Threading
 			Reset (initial);
 		}
 		
-		public void Reset (int value)
+		public void Reset (int count)
 		{
 			evt.Reset ();
-			count = initial = value;
+			initialCount = initial = count;
 		}
 		
 		public int CurrentCount {
 			get {
-				return count;
+				return initialCount;
 			}
 		}
 		
@@ -175,7 +175,7 @@ namespace System.Threading
 			
 		public bool IsSet {
 			get {
-				return count == 0;
+				return initialCount == 0;
 			}
 		}
 		
@@ -192,7 +192,7 @@ namespace System.Threading
 			
 		}
 		
-		protected virtual void Dispose (bool managedRes)
+		protected virtual void Dispose (bool disposing)
 		{
 			
 		}

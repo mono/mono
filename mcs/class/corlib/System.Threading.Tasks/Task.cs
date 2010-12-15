@@ -34,7 +34,7 @@ namespace System.Threading.Tasks
 	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.SystemThreadingTasks_TaskDebugView")]
 	public class Task : IDisposable, IAsyncResult
 	{
-		// With this attribute each thread has itimeout own value so that it's correct for our Schedule code
+		// With this attribute each thread has its own value so that it's correct for our Schedule code
 		// and for Parent property.
 		[System.ThreadStatic]
 		static Task         current;
@@ -233,6 +233,11 @@ namespace System.Threading.Tasks
 		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> continuationFunction, CancellationToken cancellationToken,
 		                                            TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
+			if (continuationFunction == null)
+				throw new ArgumentNullException ("continuationFunction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
 			Task<TResult> t = new Task<TResult> ((o) => continuationFunction ((Task)o), this, cancellationToken, GetCreationOptions (continuationOptions));
 			
 			ContinueWithCore (t, continuationOptions, scheduler);

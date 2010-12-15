@@ -27,7 +27,8 @@ using System;
 
 namespace System.Threading.Tasks
 {
-	
+	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Method = {DebuggerDisplayMethodDescription}, Result = {DebuggerDisplayResultDescription}")]
+	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.SystemThreadingTasks_FutureDebugView`1")]
 	public class Task<TResult>: Task
 	{
 		TResult value;
@@ -36,6 +37,7 @@ namespace System.Threading.Tasks
 		Func<object, TResult> function;
 		object state;
 		
+		[System.Diagnostics.DebuggerBrowsable (System.Diagnostics.DebuggerBrowsableState.Never)]
 		public TResult Result {
 			get {
 				if (function != null)
@@ -58,20 +60,20 @@ namespace System.Threading.Tasks
 			
 		}
 		
-		public Task (Func<TResult> function, CancellationToken token)
-			: this ((o) => function (), null, token, TaskCreationOptions.None)
+		public Task (Func<TResult> function, CancellationToken cancellationToken)
+			: this ((o) => function (), null, cancellationToken, TaskCreationOptions.None)
 		{
 			
 		}
 		
-		public Task (Func<TResult> function, TaskCreationOptions options)
-			: this ((o) => function (), null, CancellationToken.None, options)
+		public Task (Func<TResult> function, TaskCreationOptions creationOptions)
+			: this ((o) => function (), null, CancellationToken.None, creationOptions)
 		{
 			
 		}
 		
-		public Task (Func<TResult> function, CancellationToken token, TaskCreationOptions options)
-			: this ((o) => function (), null, token, options)
+		public Task (Func<TResult> function, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
+			: this ((o) => function (), null, cancellationToken, creationOptions)
 		{
 			
 		}
@@ -81,20 +83,20 @@ namespace System.Threading.Tasks
 			
 		}
 		
-		public Task (Func<object, TResult> function, object state, CancellationToken token)
-			: this (function, state, token, TaskCreationOptions.None)
+		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken)
+			: this (function, state, cancellationToken, TaskCreationOptions.None)
 		{
 			
 		}
 		
-		public Task (Func<object, TResult> function, object state, TaskCreationOptions options)
-			: this (function, state, CancellationToken.None, options)
+		public Task (Func<object, TResult> function, object state, TaskCreationOptions creationOptions)
+			: this (function, state, CancellationToken.None, creationOptions)
 		{
 			
 		}
 		
-		public Task (Func<object, TResult> function, object state, CancellationToken token, TaskCreationOptions options)
-			: base (null, state, token, options)
+		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
+			: base (null, state, cancellationToken, creationOptions)
 		{
 			this.function = function;
 			this.state = state;
@@ -109,61 +111,70 @@ namespace System.Threading.Tasks
 			state = null;
 		}
 		
-		public Task ContinueWith (Action<Task<TResult>> a)
+		public Task ContinueWith (Action<Task<TResult>> continuationAction)
 		{
-			return ContinueWith (a, TaskContinuationOptions.None);
+			return ContinueWith (continuationAction, TaskContinuationOptions.None);
 		}
 		
-		public Task ContinueWith (Action<Task<TResult>> a, TaskContinuationOptions options)
+		public Task ContinueWith (Action<Task<TResult>> continuationAction, TaskContinuationOptions continuationOptions)
 		{
-			return ContinueWith (a, CancellationToken.None, options, TaskScheduler.Current);
+			return ContinueWith (continuationAction, CancellationToken.None, continuationOptions, TaskScheduler.Current);
 		}
 		
-		public Task ContinueWith (Action<Task<TResult>> a, CancellationToken token)
+		public Task ContinueWith (Action<Task<TResult>> continuationAction, CancellationToken cancellationToken)
 		{
-			return ContinueWith (a, token, TaskContinuationOptions.None, TaskScheduler.Current);
+			return ContinueWith (continuationAction, cancellationToken, TaskContinuationOptions.None, TaskScheduler.Current);
 		}
 		
-		public Task ContinueWith (Action<Task<TResult>> a, TaskScheduler scheduler)
+		public Task ContinueWith (Action<Task<TResult>> continuationAction, TaskScheduler scheduler)
 		{
-			return ContinueWith (a, CancellationToken.None, TaskContinuationOptions.None, scheduler);
+			return ContinueWith (continuationAction, CancellationToken.None, TaskContinuationOptions.None, scheduler);
 		}
 		
-		public Task ContinueWith (Action<Task<TResult>> a, CancellationToken token,
-		                          TaskContinuationOptions options, TaskScheduler scheduler)
+		public Task ContinueWith (Action<Task<TResult>> continuationAction, CancellationToken cancellationToken,
+		                          TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			Task t = new Task ((o) => a ((Task<TResult>)o), this, token, GetCreationOptions (options));
-			ContinueWithCore (t, options, scheduler);
+			if (continuationAction == null)
+				throw new ArgumentNullException ("continuationFunction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			Task t = new Task ((o) => continuationAction ((Task<TResult>)o), this, cancellationToken, GetCreationOptions (continuationOptions));
+			ContinueWithCore (t, continuationOptions, scheduler);
 			
 			return t;
 		}
 		
-		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a)
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> continuationFunction)
 		{
-			return ContinueWith<TNewResult> (a, TaskContinuationOptions.None);
+			return ContinueWith<TNewResult> (continuationFunction, TaskContinuationOptions.None);
 		}
 		
-		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, CancellationToken token)
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> continuationFunction, CancellationToken cancellationToken)
 		{
-			return ContinueWith<TNewResult> (a, token, TaskContinuationOptions.None, TaskScheduler.Current);
+			return ContinueWith<TNewResult> (continuationFunction, cancellationToken, TaskContinuationOptions.None, TaskScheduler.Current);
 		}
 		
-		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, TaskContinuationOptions options)
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> continuationFunction, TaskContinuationOptions continuationOptions)
 		{
-			return ContinueWith<TNewResult> (a, CancellationToken.None, options, TaskScheduler.Current);
+			return ContinueWith<TNewResult> (continuationFunction, CancellationToken.None, continuationOptions, TaskScheduler.Current);
 		}
 		
-		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, TaskScheduler scheduler)
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> continuationFunction, TaskScheduler scheduler)
 		{
-			return ContinueWith<TNewResult> (a, CancellationToken.None, TaskContinuationOptions.None, scheduler);
+			return ContinueWith<TNewResult> (continuationFunction, CancellationToken.None, TaskContinuationOptions.None, scheduler);
 		}
 		
-		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, CancellationToken token,
-		                                                  TaskContinuationOptions options,
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> continuationFunction,
+		                                                  CancellationToken cancellationToken,
+		                                                  TaskContinuationOptions continuationOptions,
 		                                                  TaskScheduler scheduler)
 		{
-			Task<TNewResult> t = new Task<TNewResult> ((o) => a ((Task<TResult>)o), this, token, GetCreationOptions (options));
-			ContinueWithCore (t, options, scheduler);
+			Task<TNewResult> t = new Task<TNewResult> ((o) => continuationFunction ((Task<TResult>)o),
+			                                           this,
+			                                           cancellationToken,
+			                                           GetCreationOptions (continuationOptions));
+			ContinueWithCore (t, continuationOptions, scheduler);
 			
 			return t;
 		}

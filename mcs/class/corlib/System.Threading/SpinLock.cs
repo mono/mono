@@ -44,6 +44,8 @@ namespace System.Threading
 	// Implement the ticket SpinLock algorithm described on http://locklessinc.com/articles/locks/
 	// This lock is usable on both endianness
 	// TODO: some 32 bits platform apparently doesn't support CAS with 64 bits value
+	[System.Diagnostics.DebuggerDisplay ("IsHeld = {IsHeld}")]
+	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.SpinLock+SystemThreading_SpinLockDebugView")]
 	public struct SpinLock
 	{
 		TicketType ticket;
@@ -76,9 +78,9 @@ namespace System.Threading
 			}
 		}
 
-		public SpinLock (bool trackId)
+		public SpinLock (bool enableThreadOwnerTracking)
 		{
-			this.isThreadOwnerTrackingEnabled = trackId;
+			this.isThreadOwnerTrackingEnabled = enableThreadOwnerTracking;
 			this.threadWhoTookLock = 0;
 			this.ticket = new TicketType ();
 		}
@@ -118,16 +120,16 @@ namespace System.Threading
 			TryEnter ((int)timeout.TotalMilliseconds, ref lockTaken);
 		}
 
-		public void TryEnter (int milliSeconds, ref bool lockTaken)
+		public void TryEnter (int millisecondsTimeout, ref bool lockTaken)
 		{
-			if (milliSeconds < -1)
+			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("milliSeconds", "millisecondsTimeout is a negative number other than -1");
 			if (lockTaken)
 				throw new ArgumentException ("lockTaken", "lockTaken must be initialized to false");
 			if (isThreadOwnerTrackingEnabled && IsHeldByCurrentThread)
 				throw new LockRecursionException ();
 
-			long start = milliSeconds == -1 ? 0 : sw.ElapsedMilliseconds;
+			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
 			bool stop = false;
 
 			do {
@@ -146,7 +148,7 @@ namespace System.Threading
 						stop = true;
 					}
 				}
-	        } while (!stop && (milliSeconds == -1 || (sw.ElapsedMilliseconds - start) < milliSeconds));
+	        } while (!stop && (millisecondsTimeout == -1 || (sw.ElapsedMilliseconds - start) < millisecondsTimeout));
 		}
 
 		public void Exit ()
@@ -154,7 +156,8 @@ namespace System.Threading
 			Exit (false);
 		}
 
-		public void Exit (bool flushReleaseWrites)
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+		public void Exit (bool useMemoryBarrier)
 		{
 			RuntimeHelpers.PrepareConstrainedRegions ();
 			try {}
@@ -164,7 +167,7 @@ namespace System.Threading
 
 				threadWhoTookLock = int.MinValue;
 				// Fast path
-				if (flushReleaseWrites)
+				if (useMemoryBarrier)
 					Interlocked.Increment (ref ticket.Value);
 				else
 					ticket.Value++;

@@ -45,16 +45,16 @@ namespace System.Threading
 		{
 		}
 
-		public ManualResetEventSlim (bool initState) : this (initState, defaultSpinCount)
+		public ManualResetEventSlim (bool initialState) : this (initialState, defaultSpinCount)
 		{
 		}
 
-		public ManualResetEventSlim (bool initState, int spinCount)
+		public ManualResetEventSlim (bool initialState, int spinCount)
 		{
 			if (spinCount < 0)
 				throw new ArgumentOutOfRangeException ("spinCount is less than 0", "spinCount");
 
-			this.state = initState ? isSet : isNotSet;
+			this.state = initialState ? isSet : isNotSet;
 			this.spinCount = spinCount;
 		}
 
@@ -94,39 +94,39 @@ namespace System.Threading
 			return Wait (millisecondsTimeout, CancellationToken.None);
 		}
 
-		public bool Wait (TimeSpan ts)
+		public bool Wait (TimeSpan timeout)
 		{
-			return Wait ((int)ts.TotalMilliseconds, CancellationToken.None);
+			return Wait ((int)timeout.TotalMilliseconds, CancellationToken.None);
 		}
 
-		public void Wait (CancellationToken token)
+		public void Wait (CancellationToken cancellationToken)
 		{
-			Wait (-1, token);
+			Wait (-1, cancellationToken);
 		}
 
-		public bool Wait (int ms, CancellationToken token)
+		public bool Wait (int millisecondsTimeout, CancellationToken cancellationToken)
 		{
-			if (ms < -1)
+			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout",
 				                                       "millisecondsTimeout is a negative number other than -1");
 
-			long start = ms == -1 ? 0 : sw.ElapsedMilliseconds;
+			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
 			SpinWait wait = new SpinWait ();
 
 			while (state == isNotSet) {
-				token.ThrowIfCancellationRequested ();
+				cancellationToken.ThrowIfCancellationRequested ();
 
-				if (ms > -1 && (sw.ElapsedMilliseconds - start) > ms)
+				if (millisecondsTimeout > -1 && (sw.ElapsedMilliseconds - start) > millisecondsTimeout)
 					return false;
 
 				if (wait.Count < spinCount) {
 					wait.SpinOnce ();
 				} else {
-					int waitTime = ms == -1 ? -1 : Math.Max (ms - (int)(sw.ElapsedMilliseconds - start) , 1);
+					int waitTime = millisecondsTimeout == -1 ? -1 : Math.Max (millisecondsTimeout - (int)(sw.ElapsedMilliseconds - start) , 1);
 					WaitHandle handle = WaitHandle;
 					if (state == isSet)
 						return true;
-					if (WaitHandle.WaitAny (new[] { handle, token.WaitHandle }, waitTime, false) == 0)
+					if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, waitTime, false) == 0)
 						return true;
 				}
 			}
@@ -134,9 +134,9 @@ namespace System.Threading
 			return true;
 		}
 
-		public bool Wait (TimeSpan ts, CancellationToken token)
+		public bool Wait (TimeSpan timeout, CancellationToken cancellationToken)
 		{
-			return Wait ((int)ts.TotalMilliseconds, token);
+			return Wait ((int)timeout.TotalMilliseconds, cancellationToken);
 		}
 
 		public WaitHandle WaitHandle {
@@ -154,7 +154,7 @@ namespace System.Threading
 			Dispose(true);
 		}
 
-		protected virtual void Dispose(bool managedRes)
+		protected virtual void Dispose (bool disposing)
 		{
 
 		}

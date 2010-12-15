@@ -41,7 +41,7 @@ namespace System.Threading.Tasks
 		{
 		}
 		
-		public TaskCanceledException (string message, Exception inner): base (message, inner)
+		public TaskCanceledException (string message, Exception innerException): base (message, innerException)
 		{
 		}
 		

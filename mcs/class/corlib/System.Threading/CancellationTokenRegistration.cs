@@ -56,14 +56,14 @@ namespace System.Threading
 			return this.id == other.id && this.source == other.source;
 		}
 		
-		public static bool operator== (CancellationTokenRegistration lhs, CancellationTokenRegistration rhs)
+		public static bool operator== (CancellationTokenRegistration left, CancellationTokenRegistration right)
 		{
-			return lhs.Equals (rhs);
+			return left.Equals (right);
 		}
 		
-		public static bool operator!= (CancellationTokenRegistration lhs, CancellationTokenRegistration rhs)
+		public static bool operator!= (CancellationTokenRegistration left, CancellationTokenRegistration right)
 		{
-			return !lhs.Equals (rhs);
+			return !left.Equals (right);
 		}
 		#endregion
 		

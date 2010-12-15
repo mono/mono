@@ -46,15 +46,15 @@ namespace System.Threading.Tasks
 			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
-		public TaskCompletionSource (TaskCreationOptions options)
+		public TaskCompletionSource (TaskCreationOptions creationOptions)
 		{
-			source = new Task<TResult> (null, options);
+			source = new Task<TResult> (null, creationOptions);
 			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
-		public TaskCompletionSource (object state, TaskCreationOptions options)
+		public TaskCompletionSource (object state, TaskCreationOptions creationOptions)
 		{
-			source = new Task<TResult> (null, state, options);
+			source = new Task<TResult> (null, state, creationOptions);
 			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
@@ -64,14 +64,14 @@ namespace System.Threading.Tasks
 				ThrowInvalidException ();
 		}
 		
-		public void SetException (Exception e)
+		public void SetException (Exception exception)
 		{
-			SetException (new Exception[] { e });
+			SetException (new Exception[] { exception });
 		}
 		
-		public void SetException (IEnumerable<Exception> e)
+		public void SetException (IEnumerable<Exception> exceptions)
 		{
-			if (!ApplyOperation (() => source.HandleGenericException (new AggregateException (e))))
+			if (!ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions))))
 				ThrowInvalidException ();
 		}
 		
@@ -91,14 +91,14 @@ namespace System.Threading.Tasks
 			return ApplyOperation (source.CancelReal);
 		}
 		
-		public bool TrySetException (Exception e)
+		public bool TrySetException (Exception exception)
 		{
-			return TrySetException (new Exception[] { e });
+			return TrySetException (new Exception[] { exception });
 		}
 		
-		public bool TrySetException (IEnumerable<Exception> e)
+		public bool TrySetException (IEnumerable<Exception> exceptions)
 		{
-			return ApplyOperation (() => source.HandleGenericException (new AggregateException (e)));
+			return ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions)));
 		}
 		
 		public bool TrySetResult (TResult result)
