@@ -99,11 +99,11 @@ namespace System.IO.IsolatedStorage {
 			}
 			throw new IsolatedStorageException ();
 		}
-		
+
+		[MonoTODO ("always return true since this was the only behavior in Silverlight 3")]
 		public static bool IsEnabled {
 			get {
-				Console.WriteLine ("NIEX: System.IO.IsolatedStorage.IsolatedStorageFile:get_IsEnabled");
-				throw new NotImplementedException ();
+				return true;
 			}
 		}
 
