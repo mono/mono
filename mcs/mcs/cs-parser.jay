@@ -6250,6 +6250,7 @@ void start_block (Location loc)
 {
 	if (current_block == null) {
 		current_block = new ToplevelBlock (compiler, current_local_parameters, loc);
+		parsing_anonymous_method = false;
 	} else if (parsing_anonymous_method) {
 		current_block = new ParametersBlock (current_block, current_local_parameters, loc);
 		parsing_anonymous_method = false;
