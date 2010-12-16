@@ -41,7 +41,7 @@ namespace System.Collections.Concurrent
 	{
 		IEqualityComparer<TKey> comparer;
 
-		SplitOrderedList<KeyValuePair<TKey, TValue>> internalDictionary = new SplitOrderedList<KeyValuePair<TKey, TValue>> ();
+		SplitOrderedList<TKey, KeyValuePair<TKey, TValue>> internalDictionary;
 
 		public ConcurrentDictionary () : this (EqualityComparer<TKey>.Default)
 		{
@@ -57,6 +57,7 @@ namespace System.Collections.Concurrent
 		public ConcurrentDictionary (IEqualityComparer<TKey> comparer)
 		{
 			this.comparer = comparer;
+			this.internalDictionary = new SplitOrderedList<TKey, KeyValuePair<TKey, TValue>> (comparer);
 		}
 
 		public ConcurrentDictionary (IEnumerable<KeyValuePair<TKey, TValue>> collection, IEqualityComparer<TKey> comparer)
@@ -100,7 +101,7 @@ namespace System.Collections.Concurrent
 
 		public bool TryAdd (TKey key, TValue value)
 		{
-			return internalDictionary.Insert (Hash (key), Make (key, value));
+			return internalDictionary.Insert (Hash (key), key, Make (key, value));
 		}
 
 		void ICollection<KeyValuePair<TKey,TValue>>.Add (KeyValuePair<TKey, TValue> pair)
@@ -111,6 +112,7 @@ namespace System.Collections.Concurrent
 		public TValue AddOrUpdate (TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
 		{
 			return internalDictionary.InsertOrUpdate (Hash (key),
+			                                          key,
 			                                          () => Make (key, addValueFactory (key)),
 			                                          (e) => Make (key, updateValueFactory (key, e.Value))).Value;
 		}
@@ -123,6 +125,7 @@ namespace System.Collections.Concurrent
 		TValue AddOrUpdate (TKey key, TValue addValue, TValue updateValue)
 		{
 			return internalDictionary.InsertOrUpdate (Hash (key),
+			                                          key,
 			                                          Make (key, addValue),
 			                                          Make (key, updateValue)).Value;
 		}
@@ -139,7 +142,7 @@ namespace System.Collections.Concurrent
 		public bool TryGetValue (TKey key, out TValue value)
 		{
 			KeyValuePair<TKey, TValue> pair;
-			bool result = internalDictionary.Find (Hash (key), out pair);
+			bool result = internalDictionary.Find (Hash (key), key, out pair);
 			value = pair.Value;
 
 			return result;
@@ -147,7 +150,7 @@ namespace System.Collections.Concurrent
 
 		public bool TryUpdate (TKey key, TValue newValue, TValue comparisonValue)
 		{
-			return internalDictionary.CompareExchange (Hash (key), Make (key, newValue), (e) => e.Value.Equals (comparisonValue));
+			return internalDictionary.CompareExchange (Hash (key), key, Make (key, newValue), (e) => e.Value.Equals (comparisonValue));
 		}
 
 		public TValue this[TKey key] {
@@ -161,18 +164,18 @@ namespace System.Collections.Concurrent
 
 		public TValue GetOrAdd (TKey key, Func<TKey, TValue> valueFactory)
 		{
-			return internalDictionary.InsertOrGet (Hash (key), Make (key, default(TValue)), () => Make (key, valueFactory (key))).Value;
+			return internalDictionary.InsertOrGet (Hash (key), key, Make (key, default(TValue)), () => Make (key, valueFactory (key))).Value;
 		}
 
 		public TValue GetOrAdd (TKey key, TValue value)
 		{
-			return internalDictionary.InsertOrGet (Hash (key), Make (key, value), null).Value;
+			return internalDictionary.InsertOrGet (Hash (key), key, Make (key, value), null).Value;
 		}
 
 		public bool TryRemove (TKey key, out TValue value)
 		{
 			KeyValuePair<TKey, TValue> data;
-			bool result = internalDictionary.Delete (Hash (key), out data);
+			bool result = internalDictionary.Delete (Hash (key), key, out data);
 			value = data.Value;
 			return result;
 		}
@@ -197,7 +200,7 @@ namespace System.Collections.Concurrent
 		public bool ContainsKey (TKey key)
 		{
 			KeyValuePair<TKey, TValue> dummy;
-			return internalDictionary.Find (Hash (key), out dummy);
+			return internalDictionary.Find (Hash (key), key, out dummy);
 		}
 
 		bool IDictionary.Contains (object key)
@@ -256,7 +259,7 @@ namespace System.Collections.Concurrent
 		public void Clear()
 		{
 			// Pronk
-			internalDictionary = new SplitOrderedList<KeyValuePair<TKey, TValue>> ();
+			internalDictionary = new SplitOrderedList<TKey, KeyValuePair<TKey, TValue>> (comparer);
 		}
 
 		public int Count {

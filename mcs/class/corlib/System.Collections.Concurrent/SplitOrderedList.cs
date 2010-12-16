@@ -32,20 +32,28 @@ using System.Runtime.Serialization;
 
 namespace System.Collections.Concurrent
 {
-	internal class SplitOrderedList<T>
+	internal class SplitOrderedList<TKey, T>
 	{
 		class Node
 		{
 			public readonly bool Marked;
 			public readonly ulong Key;
+			public readonly TKey SubKey;
 			public T Data;
-			
 			public Node Next;
 			
-			public Node (ulong key, T data)
+			public Node (ulong key, TKey subKey, T data)
 			{
 				this.Key = key;
+				this.SubKey = subKey;
 				this.Data = data;
+			}
+
+			// Used to create dummy node
+			public Node (ulong key)
+			{
+				this.Key = key;
+				this.Data = default (T);
 			}
 
 			// Used to create marked node
@@ -57,27 +65,24 @@ namespace System.Collections.Concurrent
 		}
 
 		const int MaxLoad = 5;
-		/*const uint SegmentSize = 1u << SegmentShift;
-		const int SegmentShift = 5;*/
 		const uint BucketSize = 512;
-
-		/*[ThreadStatic]
-		Node[] segmentCache;*/
 
 		Node head;
 		Node tail;
 
-		//Node[][] buckets = new Node[BucketSize][];
 		Node[] buckets = new Node [BucketSize];
 		int count;
 		int size = 2;
 
 		SimpleRwLock slim = new SimpleRwLock ();
 
-		public SplitOrderedList ()
+		readonly IEqualityComparer<TKey> comparer;
+
+		public SplitOrderedList (IEqualityComparer<TKey> comparer)
 		{
-			head = new Node (0, default (T));
-			tail = new Node (ulong.MaxValue, default (T));
+			this.comparer = comparer;
+			head = new Node (0);
+			tail = new Node (ulong.MaxValue);
 			head.Next = tail;
 			SetBucket (0, head);
 		}
@@ -88,10 +93,10 @@ namespace System.Collections.Concurrent
 			}
 		}
 
-		public T InsertOrUpdate (uint key, Func<T> addGetter, Func<T, T> updateGetter)
+		public T InsertOrUpdate (uint key, TKey subKey, Func<T> addGetter, Func<T, T> updateGetter)
 		{
 			Node current;
-			bool result = InsertInternal (key, default (T), addGetter, out current);
+			bool result = InsertInternal (key, subKey, default (T), addGetter, out current);
 
 			if (result)
 				return current.Data;
@@ -100,32 +105,32 @@ namespace System.Collections.Concurrent
 			return current.Data = updateGetter (current.Data);
 		}
 
-		public T InsertOrUpdate (uint key, T addValue, T updateValue)
+		public T InsertOrUpdate (uint key, TKey subKey, T addValue, T updateValue)
 		{
 			Node current;
-			if (InsertInternal (key, addValue, null, out current))
+			if (InsertInternal (key, subKey, addValue, null, out current))
 				return current.Data;
 
 			// FIXME: this should have a CAS-like behavior
 			return current.Data = updateValue;
 		}
 		
-		public bool Insert (uint key, T data)
+		public bool Insert (uint key, TKey subKey, T data)
 		{
 			Node current;
-			return InsertInternal (key, data, null, out current);
+			return InsertInternal (key, subKey, data, null, out current);
 		}
 
-		public T InsertOrGet (uint key, T data, Func<T> dataCreator)
+		public T InsertOrGet (uint key, TKey subKey, T data, Func<T> dataCreator)
 		{
 			Node current;
-			InsertInternal (key, data, dataCreator, out current);
+			InsertInternal (key, subKey, data, dataCreator, out current);
 			return current.Data;
 		}
 
-		bool InsertInternal (uint key, T data, Func<T> dataCreator, out Node current)
+		bool InsertInternal (uint key, TKey subKey, T data, Func<T> dataCreator, out Node current)
 		{
-			Node node = new Node (ComputeRegularKey (key), data);
+			Node node = new Node (ComputeRegularKey (key), subKey, data);
 
 			uint b = key % (uint)size;
 			Node bucket;
@@ -145,7 +150,7 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 		
-		public bool Find (uint key, out T data)
+		public bool Find (uint key, TKey subKey, out T data)
 		{
 			Node node;
 			uint b = key % (uint)size;
@@ -155,7 +160,7 @@ namespace System.Collections.Concurrent
 			if ((bucket = GetBucket (b)) == null)
 				bucket = InitializeBucket (b);
 
-			if (!ListFind (ComputeRegularKey (key), bucket, out node))
+			if (!ListFind (ComputeRegularKey (key), subKey, bucket, out node))
 				return false;
 
 			data = node.Data;
@@ -163,7 +168,7 @@ namespace System.Collections.Concurrent
 			return !node.Marked;
 		}
 
-		public bool CompareExchange (uint key, T data, Func<T, bool> check)
+		public bool CompareExchange (uint key, TKey subKey, T data, Func<T, bool> check)
 		{
 			Node node;
 			uint b = key % (uint)size;
@@ -172,7 +177,7 @@ namespace System.Collections.Concurrent
 			if ((bucket = GetBucket (b)) == null)
 				bucket = InitializeBucket (b);
 
-			if (!ListFind (ComputeRegularKey (key), bucket, out node))
+			if (!ListFind (ComputeRegularKey (key), subKey, bucket, out node))
 				return false;
 
 			if (!check (node.Data))
@@ -183,7 +188,7 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 
-		public bool Delete (uint key, out T data)
+		public bool Delete (uint key, TKey subKey, out T data)
 		{
 			uint b = key % (uint)size;
 			Node bucket;
@@ -191,7 +196,7 @@ namespace System.Collections.Concurrent
 			if ((bucket = GetBucket (b)) == null)
 				bucket = InitializeBucket (b);
 
-			if (!ListDelete (bucket, ComputeRegularKey (key), out data))
+			if (!ListDelete (bucket, ComputeRegularKey (key), subKey, out data))
 				return false;
 
 			Interlocked.Decrement (ref count);
@@ -222,7 +227,7 @@ namespace System.Collections.Concurrent
 			if ((bucket = GetBucket (parent)) == null)
 				bucket = InitializeBucket (parent);
 
-			Node dummy = new Node (ComputeDummyKey (b), default (T));
+			Node dummy = new Node (ComputeDummyKey (b));
 			if (!ListInsert (dummy, bucket, out current, null))
 				return current;
 
@@ -260,12 +265,6 @@ namespace System.Collections.Concurrent
 		// Bucket storage is abstracted in a simple two-layer tree to avoid too much memory resize
 		Node GetBucket (uint index)
 		{
-			/*uint segment = index >> SegmentShift;
-
-			if (buckets[segment] == null)
-				return null;
-
-			return buckets[segment][index & (SegmentSize - 1)];*/
 			if (index >= buckets.Length)
 				return null;
 			return buckets[index];
@@ -273,17 +272,9 @@ namespace System.Collections.Concurrent
 
 		Node SetBucket (uint index, Node node)
 		{
-			//uint segment = index >> SegmentShift;
 			try {
 				slim.EnterReadLock ();
 				CheckSegment (index, true);
-
-				/*if (buckets[segment] == null) {
-					// Cache segment creation in case CAS fails
-					Node[] newSegment = segmentCache == null ? new Node[SegmentSize] : segmentCache;
-					segmentCache = Interlocked.CompareExchange (ref buckets[segment], newSegment, null) == null ? null : newSegment;
-				}
-				return buckets[segment][index & (SegmentSize - 1)] = node;*/
 
 				Interlocked.CompareExchange (ref buckets[index], node, null);
 				return buckets[index];
@@ -311,7 +302,7 @@ namespace System.Collections.Concurrent
 				slim.EnterReadLock ();
 		}
 
-		Node ListSearch (ulong key, ref Node left, Node h)
+		Node ListSearch (ulong key, TKey subKey, ref Node left, Node h)
 		{
 			Node leftNodeNext = null, rightNode = null;
 
@@ -328,7 +319,8 @@ namespace System.Collections.Concurrent
 						break;
 					
 					tNext = t.Next;
-				} while (tNext.Marked || t.Key < key);
+					Console.WriteLine ("Check: " + (tNext.Key == key && !comparer.Equals (subKey, t.SubKey)));
+				} while (tNext.Marked || t.Key < key || (tNext.Key == key && !comparer.Equals (subKey, t.SubKey)));
 				
 				rightNode = t;
 				
@@ -348,13 +340,13 @@ namespace System.Collections.Concurrent
 			} while (true);
 		}
 
-		bool ListDelete (Node startPoint, ulong key, out T data)
+		bool ListDelete (Node startPoint, ulong key, TKey subKey, out T data)
 		{
 			Node rightNode = null, rightNodeNext = null, leftNode = null;
 			data = default (T);
 			
 			do {
-				rightNode = ListSearch (key, ref leftNode, startPoint);
+				rightNode = ListSearch (key, subKey, ref leftNode, startPoint);
 				if (rightNode == tail || rightNode.Key != key)
 					return false;
 
@@ -367,7 +359,7 @@ namespace System.Collections.Concurrent
 			} while (true);
 			
 			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNodeNext)
-				ListSearch (rightNode.Key, ref leftNode, startPoint);
+				ListSearch (rightNode.Key, subKey, ref leftNode, startPoint);
 			
 			return true;
 		}
@@ -378,8 +370,8 @@ namespace System.Collections.Concurrent
 			Node rightNode = null, leftNode = null;
 			
 			do {
-				rightNode = current = ListSearch (key, ref leftNode, startPoint);
-				if (rightNode != tail && rightNode.Key == key)
+				rightNode = current = ListSearch (key, newNode.SubKey, ref leftNode, startPoint);
+				if (rightNode != tail && rightNode.Key == key && comparer.Equals (newNode.SubKey, rightNode.SubKey))
 					return false;
 				
 				newNode.Next = rightNode;
@@ -390,12 +382,12 @@ namespace System.Collections.Concurrent
 			} while (true);
 		}
 		
-		bool ListFind (ulong key, Node startPoint, out Node data)
+		bool ListFind (ulong key, TKey subKey, Node startPoint, out Node data)
 		{
 			Node rightNode = null, leftNode = null;
 			data = null;
 			
-			rightNode = ListSearch (key, ref leftNode, startPoint);
+			rightNode = ListSearch (key, subKey, ref leftNode, startPoint);
 			data = rightNode;
 			
 			return rightNode != tail && rightNode.Key == key;
@@ -465,23 +457,26 @@ namespace System.Collections.Concurrent
 #if INSIDE_SYSTEM_WEB && !NET_4_0 && !BOOTSTRAP_NET_4_0
 	internal struct SpinWait
 	{
-		const           int  step = 5;
-		const           int  maxTime = 50;
+		// The number of step until SpinOnce yield on multicore machine
+		const           int  step = 10;
+		const           int  maxTime = 200;
 		static readonly bool isSingleCpu = (Environment.ProcessorCount == 1);
 
 		int ntime;
 
 		public void SpinOnce ()
 		{
+			ntime += 1;
+
 			if (isSingleCpu) {
 				// On a single-CPU system, spinning does no good
 				Thread.Sleep (0);
 			} else {
-				if ((ntime = ntime == maxTime ? maxTime : ntime + 1) % step == 0)
+				if (ntime % step == 0)
 					Thread.Sleep (0);
 				else
 					// Multi-CPU system might be hyper-threaded, let other thread run
-					Thread.SpinWait (ntime << 1);
+					Thread.SpinWait (Math.Min (ntime, maxTime) << 1);
 			}
 		}
 	}

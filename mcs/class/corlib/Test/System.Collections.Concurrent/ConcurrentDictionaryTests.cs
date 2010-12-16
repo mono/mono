@@ -211,6 +211,54 @@ namespace MonoTests.System.Collections.Concurrent
 			Assert.IsFalse (map.ContainsKey ("baz"));
 			Assert.IsFalse (map.ContainsKey ("oof"));
 		}
+
+		class DumbClass : IEquatable<DumbClass>
+		{
+			int foo;
+
+			public DumbClass (int foo)
+			{
+				this.foo = foo;
+			}
+
+			public int Foo {
+				get {
+					return foo;
+				}
+			}
+
+			public override bool Equals (object rhs)
+			{
+				DumbClass temp = rhs as DumbClass;
+				return temp == null ? false : Equals (temp);
+			}
+
+			public bool Equals (DumbClass rhs)
+			{
+				return this.foo == rhs.foo;
+			}
+
+			public override int GetHashCode ()
+			{
+				return 5;
+			}
+		}
+
+		[Test]
+		public void SameHashCodeInsertTest ()
+		{
+			var classMap = new ConcurrentDictionary<DumbClass, string> ();
+
+			var class1 = new DumbClass (1);
+			var class2 = new DumbClass (2);
+
+			Assert.IsTrue (classMap.TryAdd (class1, "class1"), "class 1");
+			Console.WriteLine ();
+			Assert.IsTrue (classMap.TryAdd (class2, "class2"), "class 2");
+
+			Assert.AreEqual ("class1", classMap[class1], "class 1 check");
+			Assert.AreEqual ("class2", classMap[class2], "class 2 check");
+		}
 	}
 }
 #endif
