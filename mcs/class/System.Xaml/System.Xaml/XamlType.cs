@@ -391,18 +391,19 @@ namespace System.Xaml
 
 			var gl = new Dictionary<string,MethodInfo> ();
 			var sl = new Dictionary<string,MethodInfo> ();
+			var al = new Dictionary<string,MethodInfo> ();
+			//var rl = new Dictionary<string,MethodInfo> ();
 			var nl = new List<string> ();
 			foreach (var mi in UnderlyingType.GetMethods (bf)) {
+				string name = null;
 				if (mi.Name.StartsWith ("Get", StringComparison.Ordinal)) {
 					if (mi.ReturnType == typeof (void))
 						continue;
 					var args = mi.GetParameters ();
 					if (args.Length != 1)
 						continue;
-					var name = mi.Name.Substring (3);
+					name = mi.Name.Substring (3);
 					gl.Add (name, mi);
-					if (!nl.Contains (name))
-						nl.Add (name);
 				} else if (mi.Name.StartsWith ("Set", StringComparison.Ordinal)) {
 					// looks like the return type is *ignored*
 					//if (mi.ReturnType != typeof (void))
@@ -410,21 +411,35 @@ namespace System.Xaml
 					var args = mi.GetParameters ();
 					if (args.Length != 2)
 						continue;
-					var name = mi.Name.Substring (3);
+					name = mi.Name.Substring (3);
 					sl.Add (name, mi);
-					if (!nl.Contains (name))
-						nl.Add (name);
+				} else if (mi.Name.EndsWith ("Handler", StringComparison.Ordinal)) {
+					var args = mi.GetParameters ();
+					if (args.Length != 2)
+						continue;
+					if (mi.Name.StartsWith ("Add", StringComparison.Ordinal)) {
+						name = mi.Name.Substring (3, mi.Name.Length - 3 - 7);
+						al.Add (name, mi);
+					}/* else if (mi.Name.StartsWith ("Remove", StringComparison.Ordinal)) {
+						name = mi.Name.Substring (6, mi.Name.Length - 6 - 7);
+						rl.Add (name, mi);
+					}*/
 				}
+				if (name != null && !nl.Contains (name))
+					nl.Add (name);
 			}
 
 			foreach (var name in nl) {
 				MethodInfo m;
 				var g = gl.TryGetValue (name, out m) ? m : null;
 				var s = sl.TryGetValue (name, out m) ? m : null;
-				yield return new XamlMember (name, g, s, SchemaContext);
+				if (g != null || s != null)
+					yield return new XamlMember (name, g, s, SchemaContext);
+				var a = al.TryGetValue (name, out m) ? m : null;
+				//var r = rl.TryGetValue (name, out m) ? m : null;
+				if (a != null)
+					yield return new XamlMember (name, a, SchemaContext);
 			}
-
-			// FIXME: attachable events?
 		}
 
 		static readonly XamlMember [] empty_array = new XamlMember [0];

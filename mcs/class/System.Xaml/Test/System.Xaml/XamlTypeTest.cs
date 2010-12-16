@@ -769,8 +769,10 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (apl.Any (ap => ap.Name == "Protected"), "#2");
 			// oh? SetBaz() has non-void return value, but it seems ignored.
 			Assert.IsTrue (apl.Any (ap => ap.Name == "Baz"), "#3");
-			Assert.AreEqual (3, apl.Count, "#4");
+			Assert.AreEqual (4, apl.Count, "#4");
 			Assert.IsTrue (apl.All (ap => ap.IsAttachable), "#5");
+			var x = apl.First (ap => ap.Name == "X");
+			Assert.IsTrue (x.IsEvent, "#6");
 		}
 	}
 

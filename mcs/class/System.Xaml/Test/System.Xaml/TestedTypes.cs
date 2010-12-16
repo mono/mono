@@ -637,6 +637,23 @@ namespace MonoTests.System.Xaml
 		{
 			dic [target] = value;
 		}
+
+		static Dictionary<object,List<EventHandler>> handlers = new Dictionary<object,List<EventHandler>> ();
+
+		public static void AddXHandler (object target, EventHandler handler)
+		{
+			List<EventHandler> l;
+			if (!handlers.TryGetValue (target, out l)) {
+				l = new List<EventHandler> ();
+				handlers [target] = l;
+			}
+			l.Add (handler);
+		}
+
+		public static void RemoveXHandler (object target, EventHandler handler)
+		{
+			handlers [target].Remove (handler);
+		}
 	}
 	
 	public class AttachedPropertyStore : IAttachedPropertyStore
@@ -670,5 +687,19 @@ namespace MonoTests.System.Xaml
 		{
 			return props.TryGetValue (attachableMemberIdentifier, out value);
 		}
+	}
+
+	public class AttachedWrapper : Attachable
+	{
+		public AttachedWrapper ()
+		{
+			Value = new Attached ();
+		}
+
+		public Attached Value { get; set; }
+	}
+
+	public class Attached
+	{
 	}
 }
