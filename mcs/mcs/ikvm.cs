@@ -181,6 +181,9 @@ namespace Mono.CSharp
 			this.importer = importer;
 			domain = new Universe ();
 			domain.AssemblyResolve += AssemblyReferenceResolver;
+
+			// TODO: profile specific
+			paths.Add (Path.GetDirectoryName (typeof (object).Assembly.Location));
 		}
 
 		public Assembly Corlib {
@@ -219,17 +222,10 @@ namespace Mono.CSharp
 			// For now the "default config" is harcoded into the compiler
 			// we can move this outside later
 			//
-			var default_references = new List<string> (8);
+			var default_references = new List<string> (4);
 
 			default_references.Add ("System.dll");
 			default_references.Add ("System.Xml.dll");
-#if NET_2_1
-			default_references.Add ("System.Net.dll");
-			default_references.Add ("System.Windows.dll");
-			default_references.Add ("System.Windows.Browser.dll");
-#endif
-
-			// TODO: Will have to do it based on mscorlib version or something like that
 
 			if (RootContext.Version > LanguageVersion.ISO_2)
 				default_references.Add ("System.Core.dll");
