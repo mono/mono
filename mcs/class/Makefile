@@ -202,9 +202,8 @@ DISTFILES = \
 all-local $(STD_TARGETS:=-local):
 	@:
 
-# What is this used for ?
-
-basic_files = gmcs.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll
+# Files needed to bootstrap C# compiler
+basic_files = mcs.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll
 monolite_files = $(basic_files:%=lib/monolite/%)
 
 lib/monolite:
