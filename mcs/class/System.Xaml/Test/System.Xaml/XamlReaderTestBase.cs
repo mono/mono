@@ -2192,6 +2192,8 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.Read (), "so#2-1");
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2-2");
 			Assert.AreEqual (XamlLanguage.XData, r.Type, "so#2-3");
+			if (r is XamlObjectReader)
+				Assert.IsNull (((XamlObjectReader) r).Instance, "xdata-instance");
 
 			Assert.IsTrue (r.Read (), "sm2#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sm2#2");
