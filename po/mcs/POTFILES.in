@@ -3,7 +3,7 @@ mcs/mcs/anonymous.cs
 mcs/mcs/argument.cs
 mcs/mcs/assign.cs
 mcs/mcs/attribute.cs
-mcs/mcs/cs-parser.cs
+mcs/mcs/cs-parser.jay
 mcs/mcs/cs-tokenizer.cs
 mcs/mcs/cfold.cs
 mcs/mcs/class.cs

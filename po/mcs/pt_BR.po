@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mono 2.1\n"
 "Report-Msgid-Bugs-To: http://www.mono-project.com/Bugs\n"
-"POT-Creation-Date: 2010-12-16 13:01+0000\n"
+"POT-Creation-Date: 2010-12-16 13:32+0000\n"
 "PO-Revision-Date: 2009-03-01 07:52-0300\n"
 "Last-Translator: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
 "Language-Team: pt-BR <mono-list@lists.ximian.com>\n"
@@ -255,55 +255,18 @@ msgstr "O atributo \"{0}\" não pode ser aplicado múltiplas vezes"
 msgid "`{0}' is obsolete: `{1}'"
 msgstr "\"{0}\" é obsoleto: \"{1}\""
 
-#: mcs/mcs/cs-parser.cs:1646
-msgid ""
-"A fixed size buffer field must have the array size specifier after the field "
-"name"
-msgstr ""
-
-#: mcs/mcs/cs-parser.cs:1940 mcs/mcs/cs-parser.cs:1946
-#, fuzzy
-msgid "Interfaces cannot contain fields or constants"
-msgstr "Structs não podem conter construtores explícitos sem parâmetros"
-
-#: mcs/mcs/cs-parser.cs:1952
-#, fuzzy
-msgid "Interfaces cannot contain operators"
-msgstr ""
-"\"{0}\": Classes estáticas não podem conter operadores definidos pelo usuário"
-
-#: mcs/mcs/cs-parser.cs:1958
-#, fuzzy
-msgid "Interfaces cannot contain contructors"
-msgstr "\"{0}\": Classes estáticas não podem conter um destrutor"
-
-#: mcs/mcs/cs-parser.cs:1964
-msgid ""
-"Interfaces cannot declare classes, structs, interfaces, delegates, or "
-"enumerations"
-msgstr ""
-
-#: mcs/mcs/cs-parser.cs:3341 mcs/mcs/cs-parser.cs:4257
-msgid "A const field requires a value to be provided"
-msgstr ""
-
-#: mcs/mcs/cs-parser.cs:3602
-msgid ""
-"You must provide an initializer in a fixed or using statement declaration"
-msgstr ""
-
-#: mcs/mcs/cs-parser.cs:3884
+#: mcs/mcs/cs-parser.jay:474
 #, fuzzy
 msgid "A namespace declaration cannot have modifiers or attributes"
 msgstr "Um parâmetro externo não pode ter o atributo \"In\""
 
-#: mcs/mcs/cs-parser.cs:3948
+#: mcs/mcs/cs-parser.jay:570
 msgid ""
 "Namespace elements cannot be explicitly declared as private, protected or "
 "protected internal"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:3963
+#: mcs/mcs/cs-parser.jay:613
 #, fuzzy
 msgid ""
 "Assembly and module attributes must precede all other elements except using "
@@ -312,47 +275,57 @@ msgstr ""
 "Uma cláusula em uso deve preceder todos os outros elementos do namespace, "
 "exceto declarações de alias externos"
 
-#: mcs/mcs/cs-parser.cs:4080
+#: mcs/mcs/cs-parser.jay:752
 msgid "'<' unexpected: attributes cannot be generic"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4117
+#: mcs/mcs/cs-parser.jay:800
 msgid "Named attribute arguments must appear after the positional arguments"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4163
+#: mcs/mcs/cs-parser.jay:892
 #, csharp-format
 msgid ""
 "Unexpected symbol `{0}' in class, struct, or interface member declaration"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4220
+#: mcs/mcs/cs-parser.jay:992
 #, fuzzy, csharp-format
 msgid "The constant `{0}' cannot be marked static"
 msgstr "O método abstrato \"{0}\" não pode ser marcado como virtual"
 
-#: mcs/mcs/cs-parser.cs:4268
+#: mcs/mcs/cs-parser.jay:1047 mcs/mcs/cs-parser.jay:4787
+msgid "A const field requires a value to be provided"
+msgstr ""
+
+#: mcs/mcs/cs-parser.jay:1066
 #, fuzzy
 msgid "Fields cannot have void type"
 msgstr "Campo ou propriedade não podem ser do tipo \"{0}\""
 
-#: mcs/mcs/cs-parser.cs:4369
+#: mcs/mcs/cs-parser.jay:1116
+msgid ""
+"A fixed size buffer field must have the array size specifier after the field "
+"name"
+msgstr ""
+
+#: mcs/mcs/cs-parser.jay:1211
 #, fuzzy
 msgid "Value or constant expected"
 msgstr "Um valor constante é esperado"
 
-#: mcs/mcs/cs-parser.cs:4396 mcs/mcs/cs-parser.cs:4898
-#: mcs/mcs/cs-parser.cs:4947 mcs/mcs/cs-parser.cs:5398
-#: mcs/mcs/cs-parser.cs:5427
+#: mcs/mcs/cs-parser.jay:1239 mcs/mcs/cs-parser.jay:1800
+#: mcs/mcs/cs-parser.jay:1848 mcs/mcs/cs-parser.jay:2433
+#: mcs/mcs/cs-parser.jay:2461
 #, fuzzy, csharp-format
 msgid "`{0}': interface members cannot have a definition"
 msgstr "\"{0}\": evento abstrato não pode ter um inicializador"
 
-#: mcs/mcs/cs-parser.cs:4421 mcs/mcs/cs-parser.cs:4451 mcs/mcs/decl.cs:1373
+#: mcs/mcs/cs-parser.jay:1276 mcs/mcs/cs-parser.jay:1316 mcs/mcs/decl.cs:1373
 msgid "Constraints are not allowed on non-generic declarations"
 msgstr "Restrições não são permitidas em declarações não genéricas"
 
-#: mcs/mcs/cs-parser.cs:4429
+#: mcs/mcs/cs-parser.jay:1284
 #, fuzzy, csharp-format
 msgid ""
 "`{0}': Cannot specify constraints for overrides and explicit interface "
@@ -361,182 +334,204 @@ msgstr ""
 "\"{0}\": Não foi possível especificar restrições para sobrescritos ou "
 "métodos de implementação explícitos de interface"
 
-#: mcs/mcs/cs-parser.cs:4470
+#: mcs/mcs/cs-parser.jay:1335
 msgid ""
 "A partial method cannot define access modifier or any of abstract, extern, "
 "new, override, sealed, or virtual modifiers"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4476
+#: mcs/mcs/cs-parser.jay:1341
 msgid ""
 "A partial method must be declared within a partial class or partial struct"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4499
+#: mcs/mcs/cs-parser.jay:1365
 #, csharp-format
 msgid "Member modifier `{0}' must precede the member type and name"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4540 mcs/mcs/cs-parser.cs:4549
+#: mcs/mcs/cs-parser.jay:1411 mcs/mcs/cs-parser.jay:1418
 #, fuzzy
 msgid ""
 "A params parameter must be the last parameter in a formal parameter list"
 msgstr "O parâmetro params deve ser um array de uma dimensão"
 
-#: mcs/mcs/cs-parser.cs:4560 mcs/mcs/cs-parser.cs:4568
+#: mcs/mcs/cs-parser.jay:1427 mcs/mcs/cs-parser.jay:1433
 msgid ""
 "An __arglist parameter must be the last parameter in a formal parameter list"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4601
+#: mcs/mcs/cs-parser.jay:1471
 msgid "The parameter modifier `this' can only be used on the first parameter"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4603
+#: mcs/mcs/cs-parser.jay:1473
 #, fuzzy
 msgid "Optional parameter cannot precede required parameters"
 msgstr "Iteradores não podem ter parâmetros ref ou out"
 
-#: mcs/mcs/cs-parser.cs:4625
+#: mcs/mcs/cs-parser.jay:1500
 msgid "Array type specifier, [], must appear before parameter name"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4650 mcs/mcs/cs-parser.cs:4655
+#: mcs/mcs/cs-parser.jay:1532 mcs/mcs/cs-parser.jay:1537
 #, fuzzy, csharp-format
 msgid "Cannot specify a default value for the `{0}' parameter"
 msgstr ""
 "Não foi possível especificar o atributo \"DefaultMember\" no tipo contendo "
 "um indexador"
 
-#: mcs/mcs/cs-parser.cs:4666
+#: mcs/mcs/cs-parser.jay:1548
 #, fuzzy
 msgid "Optional parameter is not valid in this context"
 msgstr "Uso do null é inválido neste contexto"
 
-#: mcs/mcs/cs-parser.cs:4686
+#: mcs/mcs/cs-parser.jay:1578
 msgid "The parameter modifiers `this' and `ref' cannot be used altogether"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4689
+#: mcs/mcs/cs-parser.jay:1581
 msgid "The parameter modifiers `this' and `out' cannot be used altogether"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4692
+#: mcs/mcs/cs-parser.jay:1584
 #, fuzzy
 msgid "A parameter cannot have specified more than one modifier"
 msgstr ""
 "Um parâmetro de árvore de expressão não pode usar modificadores \"ref\" ou "
 "\"out\""
 
-#: mcs/mcs/cs-parser.cs:4739
+#: mcs/mcs/cs-parser.jay:1627
 #, fuzzy
 msgid "Cannot specify a default value for a parameter array"
 msgstr ""
 "Não foi possível especificar o atributo \"DefaultMember\" no tipo contendo "
 "um indexador"
 
-#: mcs/mcs/cs-parser.cs:4756
+#: mcs/mcs/cs-parser.jay:1643
 #, fuzzy
 msgid "The `params' modifier is not allowed in current context"
 msgstr "O nome \"{0}\" não existe no contexto atual"
 
-#: mcs/mcs/cs-parser.cs:4764
+#: mcs/mcs/cs-parser.jay:1649
 msgid "The parameter modifiers `this' and `params' cannot be used altogether"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4766
+#: mcs/mcs/cs-parser.jay:1651
 #, fuzzy
 msgid "The params parameter cannot be declared as ref or out"
 msgstr "O tipo \"{0}\" não pode ser declarado const"
 
-#: mcs/mcs/cs-parser.cs:4774
+#: mcs/mcs/cs-parser.jay:1664
 #, fuzzy
 msgid "__arglist is not valid in this context"
 msgstr "Uso do null é inválido neste contexto"
 
-#: mcs/mcs/cs-parser.cs:4791
+#: mcs/mcs/cs-parser.jay:1683
 #, fuzzy, csharp-format
 msgid "`{0}': property or indexer cannot have void type"
 msgstr ""
 "A propriedade ou o indexador somente leitura \"{0}\" não pôde ser atribuído"
 
-#: mcs/mcs/cs-parser.cs:4829
+#: mcs/mcs/cs-parser.jay:1724
 #, csharp-format
 msgid "`{0}': indexer return type cannot be `void'"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4832
+#: mcs/mcs/cs-parser.jay:1727
 msgid "Indexers must have at least one parameter"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4857
+#: mcs/mcs/cs-parser.jay:1760
 #, fuzzy, csharp-format
 msgid "`{0}': property or indexer must have at least one accessor"
 msgstr "\"{0}\": propriedades abstratas não podem ter acessores privados"
 
-#: mcs/mcs/cs-parser.cs:4860
+#: mcs/mcs/cs-parser.jay:1763
 msgid "Semicolon after method or accessor block is not valid"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:4862
+#: mcs/mcs/cs-parser.jay:1765
 #, fuzzy
 msgid "A get or set accessor expected"
 msgstr "Um valor constante é esperado"
 
-#: mcs/mcs/cs-parser.cs:4874 mcs/mcs/cs-parser.cs:4918
+#: mcs/mcs/cs-parser.jay:1778 mcs/mcs/cs-parser.jay:1821
 msgid "Property accessor already defined"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:5036
+#: mcs/mcs/cs-parser.jay:1931 mcs/mcs/cs-parser.jay:1935
+#, fuzzy
+msgid "Interfaces cannot contain fields or constants"
+msgstr "Structs não podem conter construtores explícitos sem parâmetros"
+
+#: mcs/mcs/cs-parser.jay:1943
+#, fuzzy
+msgid "Interfaces cannot contain operators"
+msgstr ""
+"\"{0}\": Classes estáticas não podem conter operadores definidos pelo usuário"
+
+#: mcs/mcs/cs-parser.jay:1947
+#, fuzzy
+msgid "Interfaces cannot contain contructors"
+msgstr "\"{0}\": Classes estáticas não podem conter um destrutor"
+
+#: mcs/mcs/cs-parser.jay:1951
+msgid ""
+"Interfaces cannot declare classes, structs, interfaces, delegates, or "
+"enumerations"
+msgstr ""
+
+#: mcs/mcs/cs-parser.jay:1992
 #, fuzzy
 msgid "User-defined operators cannot return void"
 msgstr ""
 "Operador definido pelo usuário \"{0}\" deve ser declarado estático e público"
 
-#: mcs/mcs/cs-parser.cs:5059
+#: mcs/mcs/cs-parser.jay:2020
 msgid "Overloadable binary operator expected"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:5061
+#: mcs/mcs/cs-parser.jay:2022
 #, fuzzy, csharp-format
 msgid "Overloaded unary operator `{0}' takes one parameter"
 msgstr "Sem sobrecarga para o método \"{0}\" aceitar os argumentos \"{1}\""
 
-#: mcs/mcs/cs-parser.cs:5066
+#: mcs/mcs/cs-parser.jay:2027
 #, fuzzy, csharp-format
 msgid "Overloaded binary operator `{0}' takes two parameters"
 msgstr "Sem sobrecarga para o método \"{0}\" aceitar os argumentos \"{1}\""
 
-#: mcs/mcs/cs-parser.cs:5069
+#: mcs/mcs/cs-parser.jay:2030
 msgid "Overloadable unary operator expected"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:5183
+#: mcs/mcs/cs-parser.jay:2177
 msgid "Class, struct, or interface method must have a return type"
 msgstr "Classes, structs ou métodos de interface devem ter um tipo de retorno"
 
-#: mcs/mcs/cs-parser.cs:5187
+#: mcs/mcs/cs-parser.jay:2181
 #, fuzzy, csharp-format
 msgid "`{0}': static constructor cannot have an access modifier"
 msgstr "\"{0}\": propriedades abstratas não podem ter acessores privados"
 
-#: mcs/mcs/cs-parser.cs:5192
+#: mcs/mcs/cs-parser.jay:2186
 #, fuzzy, csharp-format
 msgid ""
 "`{0}': static constructor cannot have an explicit `this' or `base' "
 "constructor call"
 msgstr "\"{0}\": Construtores de structs não podem chamar construtores da base"
 
-#: mcs/mcs/cs-parser.cs:5241
+#: mcs/mcs/cs-parser.jay:2249
 msgid "Name of destructor must match name of class"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:5243
+#: mcs/mcs/cs-parser.jay:2251
 #, fuzzy
 msgid "Only class types can contain destructor"
 msgstr "\"{0}\": Classes estáticas não podem conter um destrutor"
 
-#: mcs/mcs/cs-parser.cs:5265
+#: mcs/mcs/cs-parser.jay:2276
 #, fuzzy, csharp-format
 msgid ""
 "`{0}': An explicit interface implementation of an event must use property "
@@ -545,230 +540,235 @@ msgstr ""
 "\"{0}\": a implementação explicita da interface não pode fornecer o "
 "modificador de parâmetros"
 
-#: mcs/mcs/cs-parser.cs:5298
+#: mcs/mcs/cs-parser.jay:2308
 msgid "Event in interface cannot have add or remove accessors"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:5344
+#: mcs/mcs/cs-parser.jay:2377
 #, fuzzy, csharp-format
 msgid "`{0}': event in interface cannot have an initializer"
 msgstr "\"{0}\": evento abstrato não pode ter um inicializador"
 
-#: mcs/mcs/cs-parser.cs:5349
+#: mcs/mcs/cs-parser.jay:2382
 #, csharp-format
 msgid "`{0}': abstract event cannot have an initializer"
 msgstr "\"{0}\": evento abstrato não pode ter um inicializador"
 
-#: mcs/mcs/cs-parser.cs:5357 mcs/mcs/cs-parser.cs:5364
+#: mcs/mcs/cs-parser.jay:2397 mcs/mcs/cs-parser.jay:2402
 #, fuzzy, csharp-format
 msgid "`{0}': event property must have both add and remove accessors"
 msgstr "\"{0}\": propriedades abstratas não podem ter acessores privados"
 
-#: mcs/mcs/cs-parser.cs:5371
+#: mcs/mcs/cs-parser.jay:2407
 msgid "An add or remove accessor expected"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:5379 mcs/mcs/cs-parser.cs:5408
+#: mcs/mcs/cs-parser.jay:2416 mcs/mcs/cs-parser.jay:2444
 msgid "Modifiers cannot be placed on event accessor declarations"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:5436
+#: mcs/mcs/cs-parser.jay:2471
 msgid "An add or remove accessor must have a body"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:5455
+#: mcs/mcs/cs-parser.jay:2493
 #, fuzzy
 msgid "Enums cannot have type parameters"
 msgstr "Iteradores não podem ter parâmetros ref ou out"
 
-#: mcs/mcs/cs-parser.cs:5755
+#: mcs/mcs/cs-parser.jay:2824
 msgid "Type parameter declaration must be an identifier not a type"
 msgstr ""
 "A declaração de um tipo parâmetro deve ser um identificador e não um tipo"
 
-#: mcs/mcs/cs-parser.cs:5779
+#: mcs/mcs/cs-parser.jay:2875
 msgid "Invalid parameter type `void'"
 msgstr "Tipo de parâmetro inválido \"void\""
 
-#: mcs/mcs/cs-parser.cs:5825
+#: mcs/mcs/cs-parser.jay:2940
 #, fuzzy, csharp-format
 msgid "Invalid base type `{0}'"
 msgstr "Tipo de parâmetro inválido \"void\""
 
-#: mcs/mcs/cs-parser.cs:5984
+#: mcs/mcs/cs-parser.jay:3189
 msgid "An element initializer cannot be empty"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:6015
+#: mcs/mcs/cs-parser.jay:3227
 #, fuzzy, csharp-format
 msgid "Named argument `{0}' specified multiple times"
 msgstr "Arquivo de código fonte \"{0}\" especificado múltiplas vezes"
 
-#: mcs/mcs/cs-parser.cs:6026 mcs/mcs/cs-parser.cs:6033
+#: mcs/mcs/cs-parser.jay:3236 mcs/mcs/cs-parser.jay:3241
 #, fuzzy
 msgid "An argument is missing"
 msgstr "Argumento \"#{0}\" não encontrou o modificador \"{1}\""
 
-#: mcs/mcs/cs-parser.cs:6166
+#: mcs/mcs/cs-parser.jay:3410
 msgid "Array creation must have array size or array initializer"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:6183
+#: mcs/mcs/cs-parser.jay:3423
 msgid "Invalid rank specifier, expecting `,' or `]'"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:6256
+#: mcs/mcs/cs-parser.jay:3503
 msgid ""
 "Invalid anonymous type member declarator. Anonymous type members must be a "
 "member assignment, simple name or member access expression"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:6658
+#: mcs/mcs/cs-parser.jay:4027
 msgid "All lambda parameters must be typed either explicitly or implicitly"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:6799
+#: mcs/mcs/cs-parser.jay:4213
 #, csharp-format
 msgid "Duplicate `{0}' modifier"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:6803
+#: mcs/mcs/cs-parser.jay:4217
 msgid "More than one protection modifier specified"
 msgstr "Mais de um modificador de proteção especificado"
 
-#: mcs/mcs/cs-parser.cs:6816
+#: mcs/mcs/cs-parser.jay:4231
 #, fuzzy
 msgid "Keyword `new' is not allowed on namespace elements"
 msgstr "Palavra chave \"new\" não é permitida em elementos do namespace"
 
-#: mcs/mcs/cs-parser.cs:6936
+#: mcs/mcs/cs-parser.jay:4338
 #, fuzzy, csharp-format
 msgid "A constraint clause has already been specified for type parameter `{0}'"
 msgstr ""
 "Um tipo aninhado não pode ser especificado através de um tipo parâmetro "
 "\"{0}\""
 
-#: mcs/mcs/cs-parser.cs:6966
+#: mcs/mcs/cs-parser.jay:4368
 #, fuzzy
 msgid "The `new()' constraint must be the last constraint specified"
 msgstr "A restrição new() deve ser a última restrição especificada"
 
-#: mcs/mcs/cs-parser.cs:6972
+#: mcs/mcs/cs-parser.jay:4374
 msgid ""
 "The `class' or `struct' constraint must be the first constraint specified"
 msgstr ""
 "As restrições \"class\" ou \"struct\" devem ser as primeiras restrições "
 "especificadas"
 
-#: mcs/mcs/cs-parser.cs:6976
+#: mcs/mcs/cs-parser.jay:4378
 msgid "The `new()' constraint cannot be used with the `struct' constraint"
 msgstr ""
 "A restrição \"new()\" não pode ser utilizada com a restrição \"struct\""
 
-#: mcs/mcs/cs-parser.cs:6989
+#: mcs/mcs/cs-parser.jay:4392
 #, fuzzy, csharp-format
 msgid "Invalid constraint type `{0}'"
 msgstr "Símbolo de definição condicional \"{0}\" inválido"
 
-#: mcs/mcs/cs-parser.cs:7055 mcs/mcs/cs-parser.cs:7062
+#: mcs/mcs/cs-parser.jay:4574 mcs/mcs/cs-parser.jay:4579
 msgid "An embedded statement may not be a declaration or labeled statement"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:7213
+#: mcs/mcs/cs-parser.jay:4746
 msgid ""
 "Syntax error, bad array declarator. To declare a managed array the rank "
 "specifier precedes the variable's identifier. To declare a fixed size buffer "
 "field, use the fixed keyword before the field type"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:7262
+#: mcs/mcs/cs-parser.jay:4826
 msgid "A stackalloc expression requires [] after type"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:7468
+#: mcs/mcs/cs-parser.jay:5108
 msgid "Type and identifier are both required in a foreach statement"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:7553 mcs/mcs/cs-parser.cs:7571
+#: mcs/mcs/cs-parser.jay:5200 mcs/mcs/cs-parser.jay:5216
 #, fuzzy
 msgid "; expected"
 msgstr "Nome do método esperado"
 
-#: mcs/mcs/cs-parser.cs:7555
+#: mcs/mcs/cs-parser.jay:5202
 msgid "Expression expected after yield return"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:7598
+#: mcs/mcs/cs-parser.jay:5249
 msgid "Expected catch or finally"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:7618
+#: mcs/mcs/cs-parser.jay:5268
 msgid "Try statement already has an empty catch block"
 msgstr "A declaração do try já tem um bloco catch vazio"
 
-#: mcs/mcs/cs-parser.cs:7651
+#: mcs/mcs/cs-parser.jay:5313
 msgid ""
 "A type that derives from `System.Exception', `object', or `string' expected"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:11367
+#: mcs/mcs/cs-parser.jay:5421
+msgid ""
+"You must provide an initializer in a fixed or using statement declaration"
+msgstr ""
+
+#: mcs/mcs/cs-parser.jay:6009
 msgid "Expecting `;'"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:11375
+#: mcs/mcs/cs-parser.jay:6017
 #, fuzzy, csharp-format
 msgid "The parameter modifier `{0}' is not valid in this context"
 msgstr "Código de página \"{0}\" é inválido ou não está instalado"
 
-#: mcs/mcs/cs-parser.cs:11381
+#: mcs/mcs/cs-parser.jay:6023
 #, fuzzy, csharp-format
 msgid "Duplicate parameter modifier `{0}'"
 msgstr "Tipo de parâmetro duplicado \"{0}\""
 
-#: mcs/mcs/cs-parser.cs:11387
+#: mcs/mcs/cs-parser.jay:6029
 #, fuzzy
 msgid "Type expected"
 msgstr "Nome do método esperado"
 
-#: mcs/mcs/cs-parser.cs:11392
+#: mcs/mcs/cs-parser.jay:6034
 msgid "Unsafe code requires the `unsafe' command line option to be specified"
 msgstr ""
 "Código inseguro requer a opção de linha de comando \"unsafe\" para ser "
 "especificada"
 
-#: mcs/mcs/cs-parser.cs:11402
+#: mcs/mcs/cs-parser.jay:6044
 msgid "Named arguments must appear after the positional arguments"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:11493
+#: mcs/mcs/cs-parser.jay:6135
 msgid "Syntax error, "
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:11547
+#: mcs/mcs/cs-parser.jay:6189
 #, fuzzy
 msgid "Parsing error"
 msgstr "Erro na Análise de Detecção"
 
-#: mcs/mcs/cs-parser.cs:11553
+#: mcs/mcs/cs-parser.jay:6195
 msgid "Internal compiler error during parsing"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:11564
+#: mcs/mcs/cs-parser.jay:6206
 #, csharp-format
 msgid "{0}: `{1}' is a keyword"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:11690
+#: mcs/mcs/cs-parser.jay:6332
 #, fuzzy, csharp-format
 msgid "Identifier expected, `{0}' is a keyword"
 msgstr "Identificador esperado: {0}"
 
-#: mcs/mcs/cs-parser.cs:11704
+#: mcs/mcs/cs-parser.jay:6346
 #, csharp-format
 msgid "{1} `{0}'"
 msgstr ""
 
-#: mcs/mcs/cs-parser.cs:11706
+#: mcs/mcs/cs-parser.jay:6348
 #, csharp-format
 msgid "{2} `{0}', expecting {1}"
 msgstr ""
