@@ -70,6 +70,9 @@
  */
 gchar ***_NSGetEnviron();
 #define environ (*_NSGetEnviron())
+#elif !defined(G_OS_WIN32)
+/* POSIX makes us declare this ourselves */
+extern char **environ;
 #endif
 
 static int
