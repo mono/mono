@@ -171,6 +171,7 @@ public class Tests : TestsBase
 		assembly_load ();
 		invoke ();
 		exceptions ();
+		exception_filter ();
 		threads ();
 		dynamic_methods ();
 		if (args.Length > 0 && args [0] == "domain-test")
@@ -640,6 +641,78 @@ public class Tests : TestsBase
 			exceptions2 ();
 		} catch (Exception) {
 		}
+	}
+
+	internal static Delegate create_filter_delegate (Delegate dlg, MethodInfo filter_method)
+	{
+		if (dlg == null)
+			throw new ArgumentNullException ();
+		if (dlg.Target != null)
+			throw new ArgumentException ();
+		if (dlg.Method == null)
+			throw new ArgumentException ();
+
+		var ret_type = dlg.Method.ReturnType;
+		var param_types = dlg.Method.GetParameters ().Select (x => x.ParameterType).ToArray ();
+
+		var dynamic = new DynamicMethod (Guid.NewGuid ().ToString (), ret_type, param_types, typeof (object), true);
+		var ig = dynamic.GetILGenerator ();
+
+		LocalBuilder retval = null;
+		if (ret_type != typeof (void))
+			retval = ig.DeclareLocal (ret_type);
+
+		var label = ig.BeginExceptionBlock ();
+
+		for (int i = 0; i < param_types.Length; i++)
+			ig.Emit (OpCodes.Ldarg, i);
+		ig.Emit (OpCodes.Call, dlg.Method);
+
+		if (retval != null)
+			ig.Emit (OpCodes.Stloc, retval);
+
+		ig.Emit (OpCodes.Leave, label);
+
+		ig.BeginExceptFilterBlock ();
+
+		ig.Emit (OpCodes.Call, filter_method);
+
+		ig.BeginCatchBlock (null);
+
+		ig.Emit (OpCodes.Pop);
+
+		ig.EndExceptionBlock ();
+
+		if (retval != null)
+			ig.Emit (OpCodes.Ldloc, retval);
+
+		ig.Emit (OpCodes.Ret);
+
+		return dynamic.CreateDelegate (dlg.GetType ());
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void exception_filter_method () {
+		throw new InvalidOperationException ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static int exception_filter_filter (Exception exc) {
+		return 1;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void exception_filter () {
+		var method = typeof (Tests).GetMethod (
+			"exception_filter_method", BindingFlags.NonPublic | BindingFlags.Static);
+		var filter_method = typeof (Tests).GetMethod (
+			"exception_filter_filter", BindingFlags.NonPublic | BindingFlags.Static);
+
+		var dlg = Delegate.CreateDelegate (typeof (Action), method);
+
+		var wrapper = (Action) create_filter_delegate (dlg, filter_method);
+
+		wrapper ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

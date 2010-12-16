@@ -2185,6 +2185,85 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void ExceptionFilter () {
+		Event e = run_until ("exception_filter");
+
+		MethodMirror m = entry_point.DeclaringType.GetMethod ("exception_filter_filter");
+		Assert.IsNotNull (m);
+
+		vm.SetBreakpoint (m, 0);
+
+		vm.Resume ();
+
+		e = vm.GetNextEvent ();
+		Assert.AreEqual (EventType.Breakpoint, e.EventType);
+		Assert.IsTrue (e is BreakpointEvent);
+		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
+
+		var frames = e.Thread.GetFrames ();
+
+		Assert.IsTrue (frames [0].Location.SourceFile.IndexOf ("dtest-app.cs") != -1);
+		Assert.AreEqual ("exception_filter_filter", frames [0].Location.Method.Name);
+
+		Assert.AreEqual (0, frames [1].Location.Method.MetadataToken);
+		Assert.AreEqual (0x0f, frames [1].Location.ILOffset);
+
+		Assert.AreEqual ("exception_filter_method", frames [2].Location.Method.Name);
+		Assert.AreEqual (0x05, frames [2].Location.ILOffset);
+
+		Assert.AreEqual (0, frames [3].Location.Method.MetadataToken, 0);
+		Assert.AreEqual (0, frames [3].Location.ILOffset);
+
+		Assert.AreEqual ("exception_filter", frames [4].Location.Method.Name);
+	}
+
+	[Test]
+	public void ExceptionFilter2 () {
+		vm.Dispose ();
+
+		Start (new string [] { "dtest-excfilter.exe" });
+
+		MethodMirror filter_method = entry_point.DeclaringType.GetMethod ("Filter");
+		Assert.IsNotNull (filter_method);
+
+		MethodMirror test_method = entry_point.DeclaringType.GetMethod ("Test");
+		Assert.IsNotNull (test_method);
+
+		vm.SetBreakpoint (filter_method, 0);
+
+		vm.Resume ();
+
+		var e = vm.GetNextEvent ();
+		Assert.AreEqual (EventType.Breakpoint, e.EventType);
+		Assert.IsTrue (e is BreakpointEvent);
+		Assert.AreEqual (filter_method.Name, (e as BreakpointEvent).Method.Name);
+
+		var frames = e.Thread.GetFrames ();
+
+		Assert.AreEqual (4, frames.Count ());
+
+		Assert.AreEqual (filter_method.Name, frames [0].Location.Method.Name);
+		Assert.AreEqual (20, frames [0].Location.LineNumber);
+		Assert.AreEqual (0, frames [0].Location.ILOffset);
+
+		Assert.AreEqual (test_method.Name, frames [1].Location.Method.Name);
+		Assert.AreEqual (37, frames [1].Location.LineNumber);
+		Assert.AreEqual (0x0b, frames [1].Location.ILOffset);
+
+		Assert.AreEqual (test_method.Name, frames [2].Location.Method.Name);
+		Assert.AreEqual (33, frames [2].Location.LineNumber);
+		Assert.AreEqual (0x05, frames [2].Location.ILOffset);
+
+		Assert.AreEqual (entry_point.Name, frames [3].Location.Method.Name);
+		Assert.AreEqual (14, frames [3].Location.LineNumber);
+		Assert.AreEqual (0x00, frames [3].Location.ILOffset);
+
+		vm.Exit (0);
+
+		vm = null;
+	}
+
+	[Test]
 	public void EventSets () {
 		//
 		// Create two filter which both match the same exception
