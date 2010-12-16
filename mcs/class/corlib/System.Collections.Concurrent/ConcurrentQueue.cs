@@ -33,8 +33,8 @@ using System.Runtime.Serialization;
 namespace System.Collections.Concurrent
 {
 
-	[System.Diagnostics.DebuggerDisplay ("Count = {Count}")]
-	[System.Diagnostics.DebuggerTypeProxy ("System.Collections.Concurrent.SystemCollectionsConcurrent_ProducerConsumerCollectionDebugView`1")]
+	[System.Diagnostics.DebuggerDisplay ("Count={Count}")]
+	[System.Diagnostics.DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class ConcurrentQueue<T> : IProducerConsumerCollection<T>, IEnumerable<T>, ICollection,
 	                                  IEnumerable
 	{

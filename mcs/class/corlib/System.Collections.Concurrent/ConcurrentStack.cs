@@ -34,7 +34,7 @@ namespace System.Collections.Concurrent
 {
 	
 	[System.Diagnostics.DebuggerDisplay ("Count = {Count}")]
-	[System.Diagnostics.DebuggerTypeProxy ("System.Collections.Concurrent.SystemCollectionsConcurrent_ProducerConsumerCollectionDebugView`1")]
+	[System.Diagnostics.DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class ConcurrentStack<T> : IProducerConsumerCollection<T>, IEnumerable<T>,
 	                                  ICollection, IEnumerable
 	{
@@ -80,12 +80,12 @@ namespace System.Collections.Concurrent
 			PushRange (items, 0, items.Length);
 		}
 		
-		public void PushRange (T[] items, int start, int length)
+		public void PushRange (T[] items, int startIndex, int count)
 		{
 			Node insert = null;
 			Node first = null;
 			
-			for (int i = start; i < length; i++) {
+			for (int i = startIndex; i < count; i++) {
 				Node temp = new Node ();
 				temp.Value = items[i];
 				temp.Next = insert;
@@ -99,7 +99,7 @@ namespace System.Collections.Concurrent
 				first.Next = head;
 			} while (Interlocked.CompareExchange (ref head, insert, first.Next) != first.Next);
 			
-			Interlocked.Add (ref count, length);
+			Interlocked.Add (ref count, count);
 		}
 		
 		public bool TryPop (out T result)
