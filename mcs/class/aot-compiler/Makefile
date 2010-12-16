@@ -10,12 +10,7 @@ include ../../build/rules.make
 
 the_libdir = $(topdir)/class/lib/$(PROFILE)/
 
-ifeq (net_2_0, $(PROFILE))
-mcs_exe = $(the_libdir)/gmcs.exe
-else ifeq (net_4_0, $(PROFILE))
-mcs_exe = $(the_libdir)/dmcs.exe
-endif
-
+mcs_exe = $(the_libdir)/mcs.exe
 mcs_aot_image = $(mcs_exe)$(PLATFORM_AOT_SUFFIX)
 
 mscorlib_dll = $(the_libdir)/mscorlib.dll
@@ -34,13 +29,7 @@ $(mscorlib_aot_image): $(mscorlib_dll)
 
 ifdef ENABLE_AOT
 
-ifeq (net_2_0, $(PROFILE))
 all-local: $(mscorlib_aot_image) $(mcs_aot_image)
-endif
-
-ifeq (net_4_0, $(PROFILE))
-all-local: $(mscorlib_aot_image) $(mcs_aot_image)
-endif
 
 clean-local:
 	-rm -f $(mscorlib_aot_image) $(mcs_aot_image) $(PROFILE)_aot.log

@@ -36,9 +36,8 @@ INSTALL_DATA = $(INSTALL) -c -m 644
 INSTALL_BIN = $(INSTALL) -c -m 755
 INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
-INTERNAL_MCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/mcs.exe
 INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
-INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/gmcs.exe
+INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/basic/mcs.exe
 INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
 corlib = mscorlib.dll
 
@@ -196,11 +195,6 @@ dist-default:
 %/.stamp:
 	$(MKINSTALLDIRS) $(@D)
 	touch $@
-
-# Useful
-
-withmcs:
-	$(MAKE) MCS='$(INTERNAL_MCS)' BOOTSTRAP_MCS='$(INTERNAL_MCS)' all
 
 ## Documentation stuff
 

@@ -1,19 +1,8 @@
 thisdir = class
 
-bootstrap_dirs := \
-	corlib					\
-	Mono.CompilerServices.SymbolWriter	\
-	System					\
-	System.XML				\
-	Mono.Security				\
-	System.Security				\
-	System.Configuration			\
-	System
-
-
 # Note that Mono.Security and System.Security aren't listed.
 # We may have to add those if 'mcs' starts using them.
-basic_SUBDIRS := corlib System System.XML System Mono.Security Mono.CompilerServices.SymbolWriter System.Core
+basic_SUBDIRS := corlib System System.XML System Mono.Security Mono.CompilerServices.SymbolWriter System.Core aot-compiler
 
 net_1_1_java_SUBDIRS = \
 	System.Xml					\
@@ -37,7 +26,6 @@ common_dirs := \
 	System.Configuration		\
 	System				\
 	System.XML			\
-	aot-compiler		\
 	I18N				\
 	System.Drawing			\
 	System.Transactions		\
@@ -124,17 +112,11 @@ net_2_0_only_dirs := \
 	System.Web.Extensions.Design_1.0	\
 	Compat.ICSharpCode.SharpZipLib
 
-net_2_1_bootstrap_dirs := \
-	corlib		\
-	System		\
-	Mono.CompilerServices.SymbolWriter	\
-	System.Core
-
 moonlight_dirs := \
 	corlib			\
+	System			\
 	Mono.CompilerServices.SymbolWriter \
 	System.Core		\
-	System			\
 	System.XML		\
 	System.Net		\
 	System.Xml.Linq	\
@@ -145,9 +127,9 @@ moonlight_dirs := \
 
 mobile_dirs := \
 	corlib	\
+	System	\
 	Mono.CompilerServices.SymbolWriter	\
 	System.Core	\
-	System	\
 	System.XML	\
 	Mono.Security	\
 	System	\
@@ -183,16 +165,11 @@ net_4_0_dirs := \
 	System.Runtime.DurableInstancing \
 	Mono.CodeContracts
 
-net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
-moonlight_bootstrap_SUBDIRS := $(net_2_1_bootstrap_dirs)
 moonlight_raw_SUBDIRS := $(moonlight_dirs)
-monodroid_bootstrap_SUBDIRS := $(net_2_1_bootstrap_dirs)
 monodroid_SUBDIRS := $(mobile_dirs)
-monotouch_bootstrap_SUBDIRS := $(net_2_1_bootstrap_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
-net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) Mono.Posix System.Core
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
 
 include ../build/rules.make

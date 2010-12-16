@@ -5,8 +5,12 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
-LIB_MCS_FLAGS = $(corlib_flags) $(RESOURCE_FILES:%=-resource:%)
+LIB_MCS_FLAGS = $(RESOURCE_FILES:%=-resource:%)
 LIBRARY_USE_INTERMEDIATE_FILE = yes
+
+ifeq (4.0, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += --runtime:v4
+endif
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
@@ -20,8 +24,8 @@ RESOURCE_FILES = \
 	resources/collation.cjkKO.bin \
 	resources/collation.cjkKOlv2.bin
 
-corlib_flags = -unsafe -nostdlib
-LOCAL_MCS_FLAGS = -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
+LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
+DEFAULT_REFERENCES =
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
 TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -define:MONO_DATACONVERTER_STATIC_METHODS
@@ -43,6 +47,7 @@ include $(topdir)/build/library.make
 
 ifdef FIXME_CORLIB_CMP
 # corlib_cmp
+corlib_flags = -unsafe -nostdlib
 cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
 cmppdb = $(cmplib:.dll=.pdb)
 cmp_response = $(depsdir)/$(PROFILE)_corlib_cmp.dll.response

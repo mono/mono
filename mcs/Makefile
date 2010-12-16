@@ -3,18 +3,13 @@ thisdir := .
 SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs
 
 basic_SUBDIRS := build jay mcs class tools
-net_2_0_bootstrap_SUBDIRS := build tools
-net_2_0_SUBDIRS := build mcs class nunit24 ilasm tools tests errors 
-moonlight_bootstrap_SUBDIRS := build mcs class
-moonlight_raw_SUBDIRS := build mcs class tools
-moonlight_SUBDIRS := tools tests errors
-monodroid_bootstrap_SUBDIRS := build mcs class
-monodroid_SUBDIRS := build mcs class
-monotouch_bootstrap_SUBDIRS := build mcs class
-monotouch_SUBDIRS := build mcs class
+net_2_0_SUBDIRS := build class nunit24 ilasm tools tests errors mcs
+moonlight_raw_SUBDIRS := build class tools mcs
+moonlight_SUBDIRS := tools
+monodroid_SUBDIRS := build class mcs
+monotouch_SUBDIRS := build class mcs
 net_3_5_SUBDIRS := build class tools/xbuild
-net_4_0_bootstrap_SUBDIRS := build mcs class tools 
-net_4_0_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
+net_4_0_SUBDIRS := build class nunit24 ilasm tools tests errors docs mcs
 
 # List of test subdirs that should pass 100%
 centum_tests := \
@@ -105,18 +100,13 @@ profiles-do--run-test:
 
 # Orchestrate the bootstrap here.
 _boot_ = all clean install
-$(_boot_:%=profile-do--net_4_0--%):           profile-do--net_4_0--%:           profile-do--net_4_0_bootstrap--%
-$(_boot_:%=profile-do--net_4_0_bootstrap--%): profile-do--net_4_0_bootstrap--%: profile-do--net_2_0--%
+$(_boot_:%=profile-do--net_4_0--%):           profile-do--net_4_0--%:           profile-do--basic--%
 $(_boot_:%=profile-do--net_3_5--%):           profile-do--net_3_5--%:           profile-do--net_2_0--%
-$(_boot_:%=profile-do--moonlight--%):           profile-do--moonlight--%:           profile-do--moonlight_raw--%
-$(_boot_:%=profile-do--monodroid--%):         profile-do--monodroid--%:         profile-do--monodroid_bootstrap--%
-$(_boot_:%=profile-do--monodroid_bootstrap--%): profile-do--monodroid_bootstrap--%: profile-do--net_2_0--%
-$(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--monotouch_bootstrap--%
-$(_boot_:%=profile-do--monotouch_bootstrap--%): profile-do--monotouch_bootstrap--%: profile-do--net_2_0--%
-$(_boot_:%=profile-do--moonlight_raw--%):       profile-do--moonlight_raw--%:       profile-do--moonlight_bootstrap--%
-$(_boot_:%=profile-do--moonlight_bootstrap--%): profile-do--moonlight_bootstrap--%: profile-do--basic--%
-$(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--net_2_0_bootstrap--%
-$(_boot_:%=profile-do--net_2_0_bootstrap--%): profile-do--net_2_0_bootstrap--%: profile-do--basic--%
+$(_boot_:%=profile-do--moonlight--%):         profile-do--moonlight--%:         profile-do--moonlight_raw--%
+$(_boot_:%=profile-do--monodroid--%):         profile-do--monodroid--%:         profile-do--basic--%
+$(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--basic--%
+$(_boot_:%=profile-do--moonlight_raw--%):     profile-do--moonlight_raw--%:     profile-do--basic--%
+$(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--basic--%
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test

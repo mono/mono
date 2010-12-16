@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Core.dll
 
-LIB_MCS_FLAGS = -d:INSIDE_SYSCORE -d:LIBC /r:$(corlib) /r:System
+LIB_MCS_FLAGS = -d:INSIDE_SYSCORE -d:LIBC /r:$(corlib) /r:System.dll
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
@@ -18,17 +18,12 @@ ifeq (4.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:CODEPLEX_40
 endif
 
-FULL_PROFILE := $(filter net_2_0 net_4_0 moonlight_raw monotouch monodroid, $(PROFILE))
-ifdef FULL_PROFILE
-LIBRARY_COMPILE = $(BOOT_COMPILE)
-endif
-
 ifneq (basic, $(PROFILE))
 CLR_PROFILE := $(filter 2.0 4.0, $(FRAMEWORK_VERSION))
 endif
 
 ifdef CLR_PROFILE
-LIB_MCS_FLAGS += -r:../lib/$(PROFILE)/Mono.Posix -unsafe
+LIB_MCS_FLAGS += -r:Mono.Posix.dll -unsafe
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

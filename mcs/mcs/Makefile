@@ -12,14 +12,13 @@ EXTRA_DISTFILES = \
 	TODO			\
 	*mcs.exe.config
 
-COMPILER_NAME = gmcs
-
-ifeq (net_2_0, $(PROFILE))
-INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/gmcs.exe
+ifeq (basic, $(PROFILE))
+LOCAL_MCS_FLAGS += -d:STATIC
+COMPILER_NAME = mcs
 endif
 
-ifeq (moonlight_bootstrap, $(PROFILE))
-INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/gmcs.exe
+ifeq (net_2_0, $(PROFILE))
+COMPILER_NAME = gmcs
 endif
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
