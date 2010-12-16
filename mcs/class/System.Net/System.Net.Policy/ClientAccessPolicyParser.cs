@@ -191,23 +191,10 @@ namespace System.Net.Policy {
 				switch (reader.LocalName) {
 				case "domain":
 					var d = reader.GetAttribute ("uri");
-					switch (d) {
-					case "*":
+					if (d == "*")
 						v.AllowAnyDomain = true;
-						break;
-					case "http://*":
-						v.Scheme = "http";
-						break;
-					case "https://*":
-						v.Scheme = "https";
-						break;
-					case "file:///":
-						v.Scheme = "file";
-						break;
-					default:
+					else
 						v.Domains.Add (d);
-						break;
-					}
 					reader.Skip ();
 					break;
 				default:
