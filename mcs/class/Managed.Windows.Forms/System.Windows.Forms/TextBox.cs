@@ -356,8 +356,10 @@ namespace System.Windows.Forms {
 			if (backColor == Color.Empty) {
 				if (!ReadOnly)
 					backColor = SystemColors.Window;
+
+				backcolor_set = false;
 			}
-			backcolor_set = false;
+
 			return backColor;
 		}
 
