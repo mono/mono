@@ -98,6 +98,13 @@ For comments, corrections and updates, please contact mono@novell.com
             ICSharpCode.SharpZipLib, GPL with exceptions.
 		See: mcs/class/ICSharpCode.SharpZipLib/README
 
+** mcs/class/System.Core/System/TimeZoneInfo.Android.cs
+
+	This is a port of Apache 2.0-licensed Android code, and thus is
+	licensed under the Apache 2.0 license:
+
+	    http://www.apache.org/licenses/LICENSE-2.0
+
 	     
 ** mcs/tools
 

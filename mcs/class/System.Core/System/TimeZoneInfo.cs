@@ -35,10 +35,11 @@ using System.Runtime.CompilerServices;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-#if LIBC
+#if LIBC || MONODROID
 using System.IO;
 using Mono;
 #endif
@@ -83,7 +84,9 @@ namespace System
 		public static TimeZoneInfo Local {
 			get { 
 				if (local == null) {
-#if LIBC
+#if MONODROID
+					local = ZoneInfoDB.Default;
+#elif LIBC
 					try {
 						local = FindSystemTimeZoneByFileName ("Local", "/etc/localtime");	
 					} catch {
@@ -320,7 +323,9 @@ namespace System
 				return FromRegistryKey(id, key);
 			}
 #endif
-#if LIBC	
+#if MONODROID
+			return ZoneInfoDB.GetTimeZone (id);
+#elif LIBC
 			string filepath = Path.Combine (TimeZoneDirectory, id);
 			return FindSystemTimeZoneByFileName (id, filepath);
 #else
@@ -522,7 +527,10 @@ namespace System
 					return new ReadOnlyCollection<TimeZoneInfo> (systemTimeZones);
 				}
 #endif
-#if LIBC
+#if MONODROID
+			systemTimeZones.AddRange (ZoneInfoDB.GetAvailableIds ()
+					.Select (id => ZoneInfoDB.GetTimeZone (id)));
+#elif LIBC
 				string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
 				foreach (string continent in continents) {
 					try {
@@ -782,7 +790,7 @@ namespace System
 			return adjustmentRules;
 		}
 
-#if LIBC
+#if LIBC || MONODROID
 		private static bool ValidTZFile (byte [] buffer, int length)
 		{
 			StringBuilder magic = new StringBuilder ();
