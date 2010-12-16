@@ -1486,7 +1486,7 @@ namespace Mono.CSharp
 
 			ShowTime ("Initializing predefined types");
 
-			if (!assembly.Create (loader.Domain))
+			if (!assembly.Create (loader))
 				return false;
 
 			// System.Object was not loaded, use compiled assembly as corlib
