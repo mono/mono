@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<project name="reflect" default="IKVM.Reflection">
+    <target name="IKVM.Reflection">
+        <property name="defs" value="TRACE" />
+        <if test="${framework::exists('mono-2.0')}">
+            <property name="defs" value="${defs};MONO" />
+        </if>
+        <if test="${property::exists('signed')}">
+            <property name="defs" value="${defs};${signed}" />
+        </if>
+        <if test="${version::get-major(framework::get-version(framework::get-target-framework() )) == 4}">
+            <property name="defs" value="${defs};NET_4_0" />
+        </if>
+        <!-- workaround for the fact that <include if="${framework::exists('mono-2.0')} ...> still insists on evaluating the name attribute -->
+        <property name="MonoSymbolWriter" value="dummy.dll" />
+        <if test="${framework::exists('mono-2.0')}">
+            <property name="MonoSymbolWriter" value="${path::combine(framework::get-assembly-directory('mono-2.0'), 'Mono.CompilerServices.SymbolWriter.dll')}" />
+        </if>
+        <csc target="library" output="../bin/IKVM.Reflection.dll" optimize="true" define="${defs}">
+            <sources>
+                <include name="../CommonAssemblyInfo.cs" />
+                <include name="AmbiguousMatchException.cs" />
+                <include name="Assembly.cs" />
+                <include name="AssemblyName.cs" />
+                <include name="BadImageFormatException.cs" />
+                <include name="Binder.cs" />
+                <include name="ConstructorInfo.cs" />
+                <include name="CustomAttributeData.cs" />
+                <include name="CustomAttributeNamedArgument.cs" />
+                <include name="CustomAttributeTypedArgument.cs" />
+                <include name="Enums.cs" />
+                <include name="EventInfo.cs" />
+                <include name="ExceptionHandlingClause.cs" />
+                <include name="FieldInfo.cs" />
+                <include name="FieldSignature.cs" />
+                <include name="Fusion.cs" />
+                <include name="GenericWrappers.cs" />
+                <include name="InterfaceMapping.cs" />
+                <include name="LocalVariableInfo.cs" />
+                <include name="ManifestResourceInfo.cs" />
+                <include name="MarshalSpec.cs" />
+                <include name="MemberInfo.cs" />
+                <include name="MethodBase.cs" />
+                <include name="MethodBody.cs" />
+                <include name="MethodImplMap.cs" />
+                <include name="MethodInfo.cs" />
+                <include name="MethodSignature.cs" />
+                <include name="Module.cs" />
+                <include name="ParameterInfo.cs" />
+                <include name="ParameterModifier.cs" />
+                <include name="PropertyInfo.cs" />
+                <include name="PropertySignature.cs" />
+                <include name="Signature.cs" />
+                <include name="StandAloneMethodSig.cs" />
+                <include name="StrongNameKeyPair.cs" />
+                <include name="Type.cs" />
+                <include name="TypeNameParser.cs" />
+                <include name="Universe.cs" />
+                <include name="Util.cs" />
+                <include name="Emit\AssemblyBuilder.cs" />
+                <include name="Emit\ConstructorBuilder.cs" />
+                <include name="Emit\CustomAttributeBuilder.cs" />
+                <include name="Emit\EnumBuilder.cs" />
+                <include name="Emit\Enums.cs" />
+                <include name="Emit\EventBuilder.cs" />
+                <include name="Emit\FieldBuilder.cs" />
+                <include name="Emit\ILGenerator.cs" />
+                <include name="Emit\MethodBuilder.cs" />
+                <include name="Emit\ModuleBuilder.cs" />
+                <include name="Emit\OpCode.cs" />
+                <include name="Emit\OpCodes.cs" />
+                <include name="Emit\ParameterBuilder.cs" />
+                <include name="Emit\PropertyBuilder.cs" />
+                <include name="Emit\SignatureHelper.cs" />
+                <include name="Emit\Tokens.cs" />
+                <include name="Emit\TypeBuilder.cs" />
+                <include name="Impl\CryptoConvert.cs" />
+                <include name="Impl\CryptoHack.cs" />
+                <include name="Impl\ITypeOwner.cs" />
+                <include name="Impl\MdbWriter.cs" />
+                <include name="Impl\PdbWriter.cs" />
+                <include name="Impl\SymbolSupport.cs" />
+                <include name="Metadata\CliHeader.cs" />
+                <include name="Metadata\MetadataRW.cs" />
+                <include name="Metadata\Tables.cs" />
+                <include name="Properties\AssemblyInfo.cs" />
+                <include name="Reader\AssemblyReader.cs" />
+                <include name="Reader\ByteReader.cs" />
+                <include name="Reader\EventInfoImpl.cs" />
+                <include name="Reader\Field.cs" />
+                <include name="Reader\GenericTypeParameter.cs" />
+                <include name="Reader\MetadataReader.cs" />
+                <include name="Reader\Method.cs" />
+                <include name="Reader\ModuleReader.cs" />
+                <include name="Reader\PEReader.cs" />
+                <include name="Reader\PropertyInfoImpl.cs" />
+                <include name="Reader\ResourceModule.cs" />
+                <include name="Reader\TypeDefImpl.cs" />
+                <include name="Writer\ByteBuffer.cs" />
+                <include name="Writer\Heaps.cs" />
+                <include name="Writer\MetadataWriter.cs" />
+                <include name="Writer\ModuleWriter.cs" />
+                <include name="Writer\PEWriter.cs" />
+                <include name="Writer\ResourceSection.cs" />
+                <include name="Writer\TextSection.cs" />
+                <include name="Writer\VersionInfo.cs" />
+            </sources>
+            <references>
+                <include if="${framework::exists('mono-2.0')}" name="${MonoSymbolWriter}" />
+            </references>
+        </csc>
+    </target>
+</project>
