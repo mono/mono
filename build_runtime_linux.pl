@@ -63,17 +63,17 @@ if (not $skipbuild)
         #more robust if other targetplatforms have been built from this same workincopy
         system("rm linux.cache");
 
-	# Don't use eglib on linux
-	# chdir("$root/mono/eglib") eq 1 or die ("Failed chdir 1");
-	# #this will fail on a fresh working copy, so don't die on it.
-	# system("make distclean");
-	# system("autoreconf -i") eq 0 or die ("Failed autoreconfing eglib");
+	chdir("$root/eglib") eq 1 or die ("Failed chdir 1");
+	#this will fail on a fresh working copy, so don't die on it.
+	system("make distclean");
+	system("autoreconf -i") eq 0 or die ("Failed autoreconfing eglib");
+	chdir("$root") eq 1 or die ("Failed chdir 2");
 
 	system("autoreconf -i") eq 0 or die ("Failed autoreconfing mono");
 	my @autogenparams = ();
 	unshift(@autogenparams, "--cache-file=linux.cache");
 	unshift(@autogenparams, "--disable-mcs-build");
-	# unshift(@autogenparams, "--with-glib=embedded");
+	unshift(@autogenparams, "--with-glib=embedded");
 	unshift(@autogenparams, "--disable-nls");  #this removes the dependency on gettext package
 	unshift(@autogenparams, "--disable-parallel-mark");  #this causes crashes
 	unshift(@autogenparams, "--build=i686-pc-linux-gnu");  #Force x86 build
