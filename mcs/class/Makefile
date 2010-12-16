@@ -214,7 +214,7 @@ $(monolite_files): lib/monolite/%: lib/basic/%
 	cp -p $< $@
 
 $(basic_files:%=lib/basic/%):
-	cd $(topdir) && $(MAKE) profile-do--basic--all
+	cd $(topdir) && $(MAKE) profile-do--basic--all SKIP_AOT=1
 
 dist-default: $(monolite_files)
 dist-local: dist-default

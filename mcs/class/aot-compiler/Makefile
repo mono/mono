@@ -19,6 +19,8 @@ mscorlib_aot_image = $(mscorlib_dll)$(PLATFORM_AOT_SUFFIX)
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
+ifndef SKIP_AOT
+
 ifdef PLATFORM_AOT_SUFFIX
 Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
 $(mcs_aot_image): $(mcs_exe)
@@ -38,6 +40,8 @@ install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
 	$(INSTALL_LIB) $(mscorlib_aot_image) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
 	$(INSTALL_LIB) $(mcs_aot_image) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+
+endif
 
 endif
 
