@@ -376,13 +376,55 @@ namespace System.Xaml
 		protected virtual IEnumerable<XamlMember> LookupAllAttachableMembers ()
 		{
 			if (UnderlyingType == null)
-				return BaseType != null ? BaseType.GetAllAttachableMembers () : null;
-			return DoLookupAllAttachableMembers ();
+				return BaseType != null ? BaseType.GetAllAttachableMembers () : empty_array;
+			if (all_attachable_members_cache == null) {
+				all_attachable_members_cache = new List<XamlMember> (DoLookupAllAttachableMembers ());
+				all_attachable_members_cache.Sort (TypeExtensionMethods.CompareMembers);
+			}
+			return all_attachable_members_cache;
 		}
 
 		IEnumerable<XamlMember> DoLookupAllAttachableMembers ()
 		{
-			yield break; // FIXME: what to return here?
+			// based on http://msdn.microsoft.com/en-us/library/ff184560.aspx
+			var bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+
+			var gl = new Dictionary<string,MethodInfo> ();
+			var sl = new Dictionary<string,MethodInfo> ();
+			var nl = new List<string> ();
+			foreach (var mi in UnderlyingType.GetMethods (bf)) {
+				if (mi.Name.StartsWith ("Get", StringComparison.Ordinal)) {
+					if (mi.ReturnType == typeof (void))
+						continue;
+					var args = mi.GetParameters ();
+					if (args.Length != 1)
+						continue;
+					var name = mi.Name.Substring (3);
+					gl.Add (name, mi);
+					if (!nl.Contains (name))
+						nl.Add (name);
+				} else if (mi.Name.StartsWith ("Set", StringComparison.Ordinal)) {
+					// looks like the return type is *ignored*
+					//if (mi.ReturnType != typeof (void))
+					//	continue;
+					var args = mi.GetParameters ();
+					if (args.Length != 2)
+						continue;
+					var name = mi.Name.Substring (3);
+					sl.Add (name, mi);
+					if (!nl.Contains (name))
+						nl.Add (name);
+				}
+			}
+
+			foreach (var name in nl) {
+				MethodInfo m;
+				var g = gl.TryGetValue (name, out m) ? m : null;
+				var s = sl.TryGetValue (name, out m) ? m : null;
+				yield return new XamlMember (name, g, s, SchemaContext);
+			}
+
+			// FIXME: attachable events?
 		}
 
 		static readonly XamlMember [] empty_array = new XamlMember [0];
@@ -399,6 +441,7 @@ namespace System.Xaml
 		}
 		
 		List<XamlMember> all_members_cache;
+		List<XamlMember> all_attachable_members_cache;
 
 		IEnumerable<XamlMember> DoLookupAllMembers ()
 		{
@@ -447,7 +490,7 @@ namespace System.Xaml
 
 		protected virtual XamlMember LookupAttachableMember (string name)
 		{
-			throw new NotImplementedException ();
+			return GetAllAttachableMembers ().FirstOrDefault (m => m.Name == name);
 		}
 
 		[MonoTODO]

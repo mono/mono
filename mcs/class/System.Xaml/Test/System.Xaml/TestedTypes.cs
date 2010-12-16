@@ -593,4 +593,82 @@ namespace MonoTests.System.Xaml
 			return null;
 		}
 	}
+	
+	public class Attachable
+	{
+		static Dictionary<object,string> dic = new Dictionary<object,string> ();
+
+		public static string GetFoo (object target)
+		{
+			string v;
+			return dic.TryGetValue (target, out v) ? v : null;
+		}
+		
+		public static void SetFoo (object target, string value)
+		{
+			dic [target] = value;
+		}
+
+		public static string GetBar (object target, object signatureMismatch)
+		{
+			return null;
+		}
+		
+		public static void SetBar (object signatureMismatch)
+		{
+		}
+
+		public static void GetBaz (object noReturnType)
+		{
+		}
+		
+		public static string SetBaz (object target, object extraReturnType)
+		{
+			return null;
+		}
+
+		protected static string GetProtected (object target)
+		{
+			string v;
+			return dic.TryGetValue (target, out v) ? v : null;
+		}
+		
+		protected static void SetProtected (object target, string value)
+		{
+			dic [target] = value;
+		}
+	}
+	
+	public class AttachedPropertyStore : IAttachedPropertyStore
+	{
+		public AttachedPropertyStore ()
+		{
+		}
+		
+		Dictionary<AttachableMemberIdentifier,object> props = new Dictionary<AttachableMemberIdentifier,object> ();
+
+		public int PropertyCount {
+			get { return props.Count; }
+		}
+		
+		public void CopyPropertiesTo (KeyValuePair<AttachableMemberIdentifier, object> [] array, int index)
+		{
+			((ICollection<KeyValuePair<AttachableMemberIdentifier, object>>) props).CopyTo (array, index);
+		}
+		
+		public bool RemoveProperty (AttachableMemberIdentifier attachableMemberIdentifier)
+		{
+			return props.Remove (attachableMemberIdentifier);
+		}
+		
+		public void SetProperty (AttachableMemberIdentifier attachableMemberIdentifier, object value)
+		{
+			props [attachableMemberIdentifier] = value;
+		}
+		
+		public bool TryGetProperty (AttachableMemberIdentifier attachableMemberIdentifier, out object value)
+		{
+			return props.TryGetValue (attachableMemberIdentifier, out value);
+		}
+	}
 }

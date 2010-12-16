@@ -759,6 +759,19 @@ namespace MonoTests.System.Xaml
 			Assert.IsNotNull (XamlLanguage.XData.GetMember ("XmlReader"), "#2"); // it is returned, but ignored by XamlObjectReader.
 			Assert.IsNotNull (XamlLanguage.XData.GetMember ("Text"), "#3");
 		}
+
+		[Test]
+		public void AttachableProperty ()
+		{
+			var xt = new XamlType (typeof (Attachable), sctx);
+			var apl = xt.GetAllAttachableMembers ();
+			Assert.IsTrue (apl.Any (ap => ap.Name == "Foo"), "#1");
+			Assert.IsTrue (apl.Any (ap => ap.Name == "Protected"), "#2");
+			// oh? SetBaz() has non-void return value, but it seems ignored.
+			Assert.IsTrue (apl.Any (ap => ap.Name == "Baz"), "#3");
+			Assert.AreEqual (3, apl.Count, "#4");
+			Assert.IsTrue (apl.All (ap => ap.IsAttachable), "#5");
+		}
 	}
 
 	class MyXamlType : XamlType
