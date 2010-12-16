@@ -357,6 +357,7 @@ namespace System.Windows.Forms {
 				if (!ReadOnly)
 					backColor = SystemColors.Window;
 			}
+			backcolor_set = false;
 			return backColor;
 		}
 
