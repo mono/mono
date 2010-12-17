@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 
-namespace System.Collections.Concurrent
+namespace System.Collections.Concurrent.Partitioners
 {
 	// Represent a Range partitioner
 	internal class ListPartitioner<T> : OrderablePartitioner<T>
@@ -60,7 +60,7 @@ namespace System.Collections.Concurrent
 					enumerators[i] = GetEnumeratorForRange (i * step, enumerators.Length, source.Count, step);
 					continue;
 				}
-				
+
 				if (i != enumerators.Length - 1)
 					enumerators[i] = GetEnumeratorForRange (i * count, i * count + count);
 				else
@@ -97,7 +97,7 @@ namespace System.Collections.Concurrent
 				yield return new KeyValuePair<long, T> (i, source[i]);
 			}
 		}
-		
+
 		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int stride, int count, int step)
 		{
 			for (int i = startIndex; i < count; i += stride * step) {

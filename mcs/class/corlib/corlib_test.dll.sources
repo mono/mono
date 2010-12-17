@@ -439,6 +439,7 @@ System.Threading.Tasks/ParallelTestHelper.cs
 System.Threading.Tasks/ParallelTests.cs
 System.Collections.Concurrent/ParallelConcurrentStackTests.cs
 System.Collections.Concurrent/ConcurrentSkipListTests.cs
+System.Collections.Concurrent/PartitionerTests.cs
 ../System.Collections.Concurrent/ConcurrentSkipList.cs
 System.Collections.Concurrent/ConcurrentQueueTests.cs
 System.Collections.Concurrent/ConcurrentBagTests.cs

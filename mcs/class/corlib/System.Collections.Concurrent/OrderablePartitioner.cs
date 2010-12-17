@@ -59,10 +59,11 @@ namespace System.Collections.Concurrent
 			  = GetOrderablePartitions (partitionCount);
 			
 			for (int i = 0; i < enumerators.Count; i++)
-				temp[i] = GetProxyEnumerator (enumerators[i]);
+				temp[i] = new ProxyEnumerator (enumerators[i]);
 			
 			return temp;
 		}
+
 		
 		IEnumerator<TSource> GetProxyEnumerator (IEnumerator<KeyValuePair<long, TSource>> enumerator)
 		{
@@ -80,7 +81,6 @@ namespace System.Collections.Concurrent
 			return null;
 		}
 
-		
 		public bool KeysOrderedInEachPartition {
 			get {
 				return keysOrderedInEachPartition;
@@ -96,6 +96,47 @@ namespace System.Collections.Concurrent
 		public bool KeysNormalized {
 			get {
 				return keysNormalized;
+			}
+		}
+
+		class ProxyEnumerator : IEnumerator<TSource>, IDisposable
+		{
+			IEnumerator<KeyValuePair<long, TSource>> internalEnumerator;
+
+			internal ProxyEnumerator (IEnumerator<KeyValuePair<long, TSource>> enumerator)
+			{
+				internalEnumerator = enumerator;
+			}
+
+			public void Dispose ()
+			{
+				internalEnumerator.Dispose ();
+			}
+
+			public bool MoveNext ()
+			{
+				if (!internalEnumerator.MoveNext ())
+					return false;
+
+				Current = internalEnumerator.Current.Value;
+
+				return true;
+			}
+
+			public void Reset ()
+			{
+				internalEnumerator.Reset ();
+			}
+
+			object IEnumerator.Current {
+				get {
+					return Current;
+				}
+			}
+
+			public TSource Current {
+				get;
+				private set;
 			}
 		}
 	}
