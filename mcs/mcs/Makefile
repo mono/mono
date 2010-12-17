@@ -6,11 +6,12 @@ EXTRA_DISTFILES = \
 	*mcs.csproj		\
 	compiler.doc		\
 	*mcs.sln		\
-	*cs-parser.jay		\
+	cs-parser.jay		\
 	*.sources		\
 	NOTES			\
 	TODO			\
-	*mcs.exe.config
+	*mcs.exe.config		\
+	ikvm.cs
 
 ifeq (basic, $(PROFILE))
 LOCAL_MCS_FLAGS += -d:STATIC
