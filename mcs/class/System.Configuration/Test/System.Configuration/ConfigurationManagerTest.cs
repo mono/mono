@@ -145,10 +145,10 @@ namespace MonoTests.System.Configuration {
 			FileInfo fi = new FileInfo (config.FilePath);
 #if TARGET_JVM
 			Assert.AreEqual ("nunit-console.jar.config", fi.Name);
-#elif NET_2_0
-			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
-#else
+#elif NET_4_0
 			Assert.AreEqual ("System.Configuration_test_net_4_0.dll.config", fi.Name);
+#else
+			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
 #endif
 		}
 
