@@ -24,11 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-
-#if NET_4_0
+using System.Collections.Concurrent.Partitioners;
 
 namespace System.Linq.Parallel
 {

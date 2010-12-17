@@ -32,9 +32,20 @@ namespace System.Linq.Parallel
 {
 	internal class QueryOptions
 	{
-		public ParallelMergeOptions? Options;
-		public ParallelExecutionMode? Mode;
-		public CancellationToken Token;
+		public ParallelMergeOptions? Options {
+			get;
+			private set;
+		}
+
+		public ParallelExecutionMode? Mode {
+			get;
+			private set;
+		}
+
+		public CancellationToken Token {
+			get;
+			private set;
+		}
 		/* This token is to be used by some operator (like Take) to tell that
 		 * the execution of the query can be prematurly stopped
 		 *
@@ -43,11 +54,40 @@ namespace System.Linq.Parallel
 		 * set. Operator may chain up multiple cancellation token that way.
 		 * When checking for this token, the task body should simply return.
 		 */
-		public CancellationToken ImplementerToken;
-		public bool UseStrip;
-		public bool? BehindOrderGuard;
-		public int PartitionCount;
-		public Tuple<bool, bool, bool> PartitionerSettings;
+		public CancellationToken ImplementerToken {
+			get;
+			private set;
+		}
+
+		public bool UseStrip {
+			get;
+			private set;
+		}
+
+		public bool? BehindOrderGuard {
+			get;
+			private set;
+		}
+
+		public int PartitionCount {
+			get;
+			private set;
+		}
+
+		public Tuple<bool, bool, bool> PartitionerSettings {
+			get;
+			internal set;
+		}
+
+		public CancellationToken MergedToken {
+			get;
+			private set;
+		}
+
+		public bool ShouldBeSequential {
+			get;
+			private set;
+		}
 
 		public QueryOptions (ParallelMergeOptions? options,
 		                     ParallelExecutionMode? mode,
@@ -55,7 +95,8 @@ namespace System.Linq.Parallel
 		                     bool useStrip,
 		                     bool? behindOrderGuard,
 		                     int partitionCount,
-		                     CancellationToken implementerToken)
+		                     CancellationToken implementerToken,
+		                     bool shouldBeSequential)
 		{
 			Options = options;
 			Mode = mode;
@@ -65,6 +106,7 @@ namespace System.Linq.Parallel
 			PartitionCount = partitionCount;
 			PartitionerSettings = null;
 			ImplementerToken = implementerToken;
+			ShouldBeSequential = shouldBeSequential;
 
 			MergeTokens (token, implementerToken);
 		}
@@ -81,11 +123,6 @@ namespace System.Linq.Parallel
 				MergedToken = implementerToken;
 			else
 				MergedToken = CancellationToken.None;
-		}
-
-		public CancellationToken MergedToken {
-			get;
-			private set;
 		}
 	}
 }

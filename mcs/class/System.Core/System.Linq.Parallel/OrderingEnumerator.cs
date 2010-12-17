@@ -37,13 +37,15 @@ namespace System.Linq.Parallel
 	{
 		internal class SlotBucket
 		{
-			ConcurrentDictionary<long, T> temporaryArea = new ConcurrentDictionary<long, T> ();
-			KeyValuePair<long, T>?[] stagingArea;
+			readonly ConcurrentDictionary<long, T> temporaryArea = new ConcurrentDictionary<long, T> ();
+			readonly KeyValuePair<long, T>[] stagingArea;
 			
 			long currentIndex;
 			readonly int count;
+
 			CountdownEvent stagingCount;
 			CountdownEvent participantCount;
+
 			CancellationTokenSource src = new CancellationTokenSource ();
 			CancellationToken mergedToken;
 
@@ -52,7 +54,7 @@ namespace System.Linq.Parallel
 				this.count = count;
 				stagingCount = new CountdownEvent (count);
 				participantCount = new CountdownEvent (count);
-				stagingArea = new KeyValuePair<long, T>?[count];
+				stagingArea = new KeyValuePair<long, T>[count];
 				currentIndex = -count;
 				mergedToken = CancellationTokenSource.CreateLinkedTokenSource (src.Token, token).Token;
 			}
@@ -89,31 +91,36 @@ namespace System.Linq.Parallel
 				src.Cancel ();
 			}
 
-			void Skim ()
+			bool Skim ()
 			{
+				bool result = false;
+
 				for (int i = 0; i < count; i++) {
 					T temp;
 					int index = i + (int)currentIndex;
 					
-					if (stagingArea[index % count].HasValue)
+					if (stagingArea[i].Key != -1)
 						continue;
 
 					if (!temporaryArea.TryRemove (index, out temp))
 						continue;
-					
-					stagingArea [index % count] = new KeyValuePair<long, T> (index, temp);
+
+					result = true;
+					stagingArea [i] = new KeyValuePair<long, T> (index, temp);
 					if (stagingCount.Signal ())
 						break;
 				}
+
+				return result;
 			}
 			
 			void Clean ()
 			{
 				for (int i = 0; i < stagingArea.Length; i++)
-					stagingArea[i] = new Nullable<KeyValuePair<long, T>> ();
+					stagingArea[i] = new KeyValuePair<long, T> (-1, default (T));
 			}
 
-			public IEnumerator<KeyValuePair<long, T>?> Wait ()
+			public KeyValuePair<long, T>[] Wait ()
 			{
 				Clean ();
 				stagingCount.Reset ();
@@ -123,35 +130,36 @@ namespace System.Linq.Parallel
 				Skim ();
 
 				while (!stagingCount.IsSet) {
-					if (!participantCount.IsSet)
+					if (!participantCount.IsSet) {
 						try {
 							stagingCount.Wait (mergedToken);
 						} catch {
 							Skim ();
 						}
+					}
 
 					if (participantCount.IsSet) {
+						if (Skim ())
+							continue;
 						// Totally finished
-						if (stagingArea[0].HasValue)
+						if (stagingArea[0].Key != -1)
 							break;
 						else
 							return null;
 					}
 				}
-				
-				return ((IEnumerable<KeyValuePair<long, T>?>)stagingArea).GetEnumerator ();
+
+				return stagingArea;
 			}
 		}
 
-		readonly int num;
 		SlotBucket slotBucket;
 		
-		IEnumerator<KeyValuePair<long, T>?> currEnum;
-		KeyValuePair<long, T> curr;
+		KeyValuePair<long, T>[] slot;
+		int current;
 
 		internal OrderingEnumerator (int num, CancellationToken token)
 		{
-			this.num = num;
 			slotBucket = new SlotBucket (num, token);
 		}
 
@@ -168,28 +176,25 @@ namespace System.Linq.Parallel
 		public bool MoveNext ()
 		{
 			do {
-				while (currEnum == null || !currEnum.MoveNext ()) {
-					if (currEnum != null)
-						currEnum.Dispose ();
-					if ((currEnum = slotBucket.Wait ()) == null)
+				if (slot == null || ++current >= slot.Length) {
+					if ((slot = slotBucket.Wait ()) == null)
 						return false;
+					current = 0;
 				}
-			} while (!currEnum.Current.HasValue);
-
-			curr = currEnum.Current.Value;
+			} while (slot[current].Key == -1);
 
 			return true;
 		}
 
 		public T Current {
 			get {
-				return curr.Value;
+				return slot[current].Value;
 			}
 		}
 
 		object IEnumerator.Current {
 			get {
-				return curr.Value;
+				return slot[current].Value;
 			}
 		}
 		
