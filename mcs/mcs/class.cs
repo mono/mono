@@ -1524,6 +1524,11 @@ namespace Mono.CSharp {
 				if (ct != null)
 					ct.CheckConstraints (this);
 
+				if (base_type.Interfaces != null) {
+					foreach (var iface in base_type.Interfaces)
+						spec.AddInterface (iface);
+				}
+
 				var baseContainer = base_type.MemberDefinition as ClassOrStruct;
 				if (baseContainer != null) {
 					baseContainer.Define ();
