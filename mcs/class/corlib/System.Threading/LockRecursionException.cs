@@ -47,13 +47,13 @@ namespace System.Threading
 		{
 		}
 
-		public LockRecursionException (string message, Exception e) 
-			: base (message, e)
+		public LockRecursionException (string message, Exception innerException) 
+			: base (message, innerException)
 		{
 		}
 
-		protected LockRecursionException (SerializationInfo info, StreamingContext sc)
-			 : base (info, sc)
+		protected LockRecursionException (SerializationInfo info, StreamingContext context)
+			 : base (info, context)
 		{
 		}
 	}
