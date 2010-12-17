@@ -227,6 +227,8 @@ namespace Mono.Debugger.Soft
 				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 			case ErrorCode.ABSENT_INFORMATION:
 				throw new AbsentInformationException ();
+			case ErrorCode.NO_SEQ_POINT_AT_IL_OFFSET:
+				throw new ArgumentException ("Cannot set breakpoint on the specified IL offset.");
 			default:
 				throw new CommandException (args.ErrorCode);
 			}

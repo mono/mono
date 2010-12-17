@@ -276,7 +276,8 @@ namespace Mono.Debugger.Soft
 		INVALID_ARGUMENT = 102,
 		ERR_UNLOADED = 103,
 		ERR_NO_INVOCATION = 104,
-		ABSENT_INFORMATION = 105
+		ABSENT_INFORMATION = 105,
+		NO_SEQ_POINT_AT_IL_OFFSET = 106
 	}
 
 	public class ErrorHandlerEventArgs : EventArgs {
