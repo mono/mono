@@ -55,6 +55,19 @@ namespace System.Linq.Parallel.QueryNodes
 			this.customPartitioner = custom;
 		}
 
+		// If possible, this property will return the number of element the query
+		// is going to process. If that number if pretty low, executing the query
+		// sequentially is better
+		internal int Count {
+			get {
+				if (source == null)
+					return -1;
+
+				ICollection coll = source as ICollection;
+				return coll == null ? -1 : coll.Count;
+			}
+		}
+
 		public override void Visit (INodeVisitor visitor)
 		{
 			visitor.Visit<T> (this);
