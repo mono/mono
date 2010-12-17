@@ -1879,6 +1879,8 @@ async_invoke_thread (gpointer data)
 							mono_unhandled_exception (exc);
 							exit (255);
 						}
+						if (klass == mono_defaults.threadabortexception_class)
+							mono_thread_internal_reset_abort (thread);
 					}
 					mono_domain_set (mono_get_root_domain (), TRUE);
 				}
