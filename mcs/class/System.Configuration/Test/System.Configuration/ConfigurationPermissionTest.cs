@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Configuration;
@@ -153,18 +152,28 @@ namespace MonoTests.System.Configuration {
 		{
 			ConfigurationPermission p = new ConfigurationPermission (PermissionState.Unrestricted);
 
+#if NET_4_0
 			Assert.AreEqual(
-					"<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\nversion=\"1\"\nUnrestricted=\"true\"/>\n",
+					"<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\nversion=\"1\"\nUnrestricted=\"true\"/>\n",
 					p.ToString().Replace ("\r\n", "\n"), "A1");
-
+#else
+			Assert.AreEqual (
+					"<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\nversion=\"1\"\nUnrestricted=\"true\"/>\n",
+					p.ToString ().Replace ("\r\n", "\n"), "A1");
+#endif
 
 			p = new ConfigurationPermission (PermissionState.None);
 
+#if NET_4_0
+			Assert.AreEqual (
+					 "<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\nversion=\"1\"/>\n",
+					 p.ToString().Replace ("\r\n", "\n"), "A2");
+#else
 			Assert.AreEqual (
 					 "<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\nversion=\"1\"/>\n",
-					 p.ToString().Replace ("\r\n", "\n"), "A2");
+					 p.ToString ().Replace ("\r\n", "\n"), "A2");
+#endif
 		}
 	}
 }
 
-#endif
