@@ -8,7 +8,7 @@ use_monolite := $(wildcard $(monolite_flag))
 
 ifdef use_monolite
 PROFILE_RUNTIME = $(with_mono_path_monolite) $(RUNTIME)
-BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/monolite/gmcs.exe
+BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/monolite/mcs.exe
 else
 PROFILE_RUNTIME = $(EXTERNAL_RUNTIME)
 BOOTSTRAP_MCS = $(EXTERNAL_MCS)
@@ -60,7 +60,7 @@ do-profile-check: $(depsdir)/.stamp
 	$(MAKE) $(MAKE_Q) $(PROFILE_OUT) || ok=false; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
 	if $$ok; then :; else \
-	    if test -f $(topdir)/class/lib/monolite/gmcs.exe; then \
+	    if test -f $(topdir)/class/lib/monolite/mcs.exe; then \
 		$(MAKE) -s do-profile-check-monolite ; \
 	    else \
 		echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2; \
