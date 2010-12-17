@@ -319,7 +319,6 @@ namespace System.Collections.Concurrent
 						break;
 					
 					tNext = t.Next;
-					Console.WriteLine ("Check: " + (tNext.Key == key && !comparer.Equals (subKey, t.SubKey)));
 				} while (tNext.Marked || t.Key < key || (tNext.Key == key && !comparer.Equals (subKey, t.SubKey)));
 				
 				rightNode = t;
