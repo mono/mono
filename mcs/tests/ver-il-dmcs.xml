@@ -14115,6 +14115,29 @@
       </method>
     </type>
   </test>
+  <test name="gtest-416.cs">
+    <type name="Z">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`2[X,Y]">
+      <method name="X Foo(Y)">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Int32 Main()">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-418.cs">
     <type name="N.Nested">
       <method name="Void .ctor()">
@@ -17624,7 +17647,7 @@
         <size>1</size>
       </method>
       <method name="Void Main()">
-        <size>212</size>
+        <size>246</size>
       </method>
     </type>
     <type name="C+D">
@@ -17692,6 +17715,12 @@
     <type name="C">
       <method name="Void &lt;BaseM&gt;__BaseCallProxy0()">
         <size>7</size>
+      </method>
+      <method name="Void Test(System.Action`1[E])">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__7(E)">
+        <size>36</size>
       </method>
     </type>
   </test>
@@ -23267,6 +23296,27 @@
       </method>
       <method name="Int32 Main()">
         <size>50</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-implicitarray-03.cs">
+    <type name="InferArrayType">
+      <method name="Void foo(System.Func`2[System.Linq.Expressions.Expression,System.Boolean][])">
+        <size>1</size>
+      </method>
+      <method name="Void bar(System.Action`1[System.Linq.Expressions.Expression], System.Func`2[System.Linq.Expressions.Expression,System.Boolean])">
+        <size>44</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="InferArrayType+&lt;bar&gt;c__AnonStorey0">
+      <method name="Boolean &lt;&gt;m__0(System.Linq.Expressions.Expression)">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -45914,6 +45964,16 @@
       </method>
     </type>
   </test>
+  <test name="test-802.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-81.cs">
     <type name="N1.A">
       <method name="Void .ctor()">
@@ -49941,6 +50001,28 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-83.cs">
+    <type name="C">
+      <method name="Void add_MyDelegate(System.EventHandler)">
+        <size>47</size>
+      </method>
+      <method name="Void remove_MyDelegate(System.EventHandler)">
+        <size>47</size>
+      </method>
+      <method name="Void DoSomething(Boolean)">
+        <size>8</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;MyDelegate&gt;m__0(System.Object, System.EventArgs)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>42</size>
+      </method>
+    </type>
+  </test>
   <test name="test-anon-84.cs">
     <type name="C">
       <method name="Void .ctor()">
@@ -50586,6 +50668,27 @@
       </method>
       <method name="Void &lt;&gt;m__1()">
         <size>68</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-98.cs">
+    <type name="Foo">
+      <method name="Void Finalize()">
+        <size>39</size>
+      </method>
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo+&lt;Finalize&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0()">
+        <size>22</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

@@ -215,6 +215,7 @@ namespace Mono.CSharp
 		public readonly PredefinedType NotSupportedException;
 		public readonly PredefinedType RuntimeFieldHandle;
 		public readonly PredefinedType RuntimeMethodHandle;
+		public readonly PredefinedType SecurityAction;
 
 		//
 		// C# 3.0
@@ -257,6 +258,7 @@ namespace Mono.CSharp
 			NotSupportedException = new PredefinedType (module, MemberKind.Class, "System", "NotSupportedException");
 			RuntimeFieldHandle = new PredefinedType (module, MemberKind.Struct, "System", "RuntimeFieldHandle");
 			RuntimeMethodHandle = new PredefinedType (module, MemberKind.Struct, "System", "RuntimeMethodHandle");
+			SecurityAction = new PredefinedType (module, MemberKind.Enum, "System.Security.Permissions", "SecurityAction");
 
 			Expression = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression");
 			ExpressionGeneric = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression", 1);
@@ -374,6 +376,11 @@ namespace Mono.CSharp
 
 			type = te.Type;
 			return true;
+		}
+
+		public FieldSpec GetField (string name, TypeSpec memberType, Location loc)
+		{
+			return TypeManager.GetPredefinedField (type, name, loc, memberType);
 		}
 
 		public string GetSignatureForError ()

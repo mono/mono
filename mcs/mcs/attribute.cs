@@ -1728,7 +1728,6 @@ namespace Mono.CSharp {
 	public class PredefinedAttribute : PredefinedType
 	{
 		protected MethodSpec ctor;
-		List<FieldSpec> fields;
 		List<PropertySpec> properties;
 
 		public PredefinedAttribute (ModuleContainer module, string ns, string name)
@@ -1832,30 +1831,6 @@ namespace Mono.CSharp {
 		ConstructorInfo GetCtorMetaInfo ()
 		{
 			return (ConstructorInfo) ctor.GetMetaInfo ();
-		}
-
-		public FieldSpec GetField (string name, TypeSpec memberType, Location loc)
-		{
-			FieldSpec spec;
-			if (fields != null) {
-				spec = fields.Find (l => l.Name == name);
-			} else {
-				spec = null;
-			}
-
-			if (spec == null) {
-				spec = TypeManager.GetPredefinedField (type, name, loc, memberType);
-
-				if (spec != null) {
-					if (fields == null) {
-						fields = new List<FieldSpec> ();
-					}
-
-					fields.Add (spec);
-				}
-			}
-
-			return spec;
 		}
 
 		public PropertySpec GetProperty (string name, TypeSpec memberType, Location loc)

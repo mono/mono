@@ -569,19 +569,20 @@ namespace Mono.CSharp
 
 		public void Resolve ()
 		{
-			if (RootContext.Unsafe) {
+			if (RootContext.Unsafe && module.PredefinedTypes.SecurityAction.Define ()) {
 				//
 				// Emits [assembly: SecurityPermissionAttribute (SecurityAction.RequestMinimum, SkipVerification = true)]
 				// when -unsafe option was specified
 				//
-				
 				Location loc = Location.Null;
 
 				MemberAccess system_security_permissions = new MemberAccess (new MemberAccess (
 					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Security", loc), "Permissions", loc);
 
+				var req_min = (ConstSpec) module.PredefinedTypes.SecurityAction.GetField ("RequestMinimum", module.PredefinedTypes.SecurityAction.TypeSpec, loc);
+
 				Arguments pos = new Arguments (1);
-				pos.Add (new Argument (new MemberAccess (new MemberAccess (system_security_permissions, "SecurityAction", loc), "RequestMinimum")));
+				pos.Add (new Argument (req_min.GetConstant (null)));
 
 				Arguments named = new Arguments (1);
 				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (true, loc)));
