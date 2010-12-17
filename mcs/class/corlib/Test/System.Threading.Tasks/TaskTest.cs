@@ -69,9 +69,9 @@ namespace MonoTests.System.Threading.Tasks
 				
 				int index = Task.WaitAny(tasks);
 				
-				Assert.IsTrue (flag == 1, "#1");
-				Assert.AreEqual (1, finished, "#2");
 				Assert.AreNotEqual (-1, index, "#3");
+				Assert.AreEqual (1, flag, "#1");
+				Assert.AreEqual (1, finished, "#2");
 				
 				Task.WaitAll (tasks);
 			});

@@ -107,6 +107,19 @@ namespace MonoTests.System.Threading.Tasks
 			
 			completionSource.SetResult (43);
 		}
+
+		[Test]
+		public void ContinuationTest ()
+		{
+			bool result = false;
+			var t = completionSource.Task.ContinueWith ((p) => { if (p.Result == 2) result = true; });
+			Assert.AreEqual (TaskStatus.WaitingForActivation, completionSource.Task.Status, "#A");
+			completionSource.SetResult (2);
+			t.Wait ();
+			Assert.AreEqual (TaskStatus.RanToCompletion, completionSource.Task.Status, "#1");
+			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#2");
+			Assert.IsTrue (result);
+		}
 	}
 }
 #endif
