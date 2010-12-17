@@ -164,6 +164,9 @@
 #   endif
 #   undef pthread_join
 #   undef pthread_detach
+#   if defined(NACL)
+#     undef pthread_exit
+#   endif
 #   if defined(GC_OSF1_THREADS) && defined(_PTHREAD_USE_MANGLED_NAMES_) \
        && !defined(_PTHREAD_USE_PTDNAM_)
 /* Restore the original mangled names on Tru64 UNIX.  */
@@ -676,6 +679,52 @@ void GC_mark_thread_local_free_lists(void)
 
 static struct GC_Thread_Rep first_thread;
 
+#ifdef NACL
+extern int nacl_thread_parked[MAX_NACL_GC_THREADS];
+extern int nacl_thread_used[MAX_NACL_GC_THREADS];
+extern int nacl_thread_parking_inited;
+extern int nacl_num_gc_threads;
+extern pthread_mutex_t nacl_thread_alloc_lock;
+extern __thread int nacl_thread_idx;
+extern __thread GC_thread nacl_gc_thread_self;
+
+void nacl_initialize_gc_thread()
+{
+    int i;
+    pthread_mutex_lock(&nacl_thread_alloc_lock);
+    if (!nacl_thread_parking_inited)
+    {
+        for (i = 0; i < MAX_NACL_GC_THREADS; i++) {
+            nacl_thread_used[i] = 0;
+            nacl_thread_parked[i] = 0;
+        }
+        nacl_thread_parking_inited = 1;
+    }
+    GC_ASSERT(nacl_num_gc_threads <= MAX_NACL_GC_THREADS);
+    for (i = 0; i < MAX_NACL_GC_THREADS; i++) {
+        if (nacl_thread_used[i] == 0) {
+            nacl_thread_used[i] = 1;
+            nacl_thread_idx = i;
+            nacl_num_gc_threads++;
+            break;
+        }
+    }
+    pthread_mutex_unlock(&nacl_thread_alloc_lock);
+}
+
+void nacl_shutdown_gc_thread()
+{
+    pthread_mutex_lock(&nacl_thread_alloc_lock);
+    GC_ASSERT(nacl_thread_idx >= 0 && nacl_thread_idx < MAX_NACL_GC_THREADS);
+    GC_ASSERT(nacl_thread_used[nacl_thread_idx] != 0);
+    nacl_thread_used[nacl_thread_idx] = 0;
+    nacl_thread_idx = -1;
+    nacl_num_gc_threads--;
+    pthread_mutex_unlock(&nacl_thread_alloc_lock);
+}
+
+#endif /* NACL */
+
 /* Add a thread to GC_threads.  We assume it wasn't already there.	*/
 /* Caller holds allocation lock.					*/
 GC_thread GC_new_thread(pthread_t id)
@@ -698,6 +747,10 @@ GC_thread GC_new_thread(pthread_t id)
 #endif
     result -> next = GC_threads[hv];
     GC_threads[hv] = result;
+#ifdef NACL
+    nacl_gc_thread_self = result;
+    nacl_initialize_gc_thread();
+#endif
     GC_ASSERT(result -> flags == 0 && result -> thread_blocked == 0);
     return(result);
 }
@@ -711,6 +764,11 @@ void GC_delete_thread(pthread_t id)
     register GC_thread p = GC_threads[hv];
     register GC_thread prev = 0;
     
+#ifdef NACL
+    nacl_shutdown_gc_thread();
+    nacl_gc_thread_self = NULL;
+#endif
+
     while (!pthread_equal(p -> id, id)) {
         prev = p;
         p = p -> next;
@@ -1118,6 +1176,7 @@ void GC_init_parallel()
 
 
 #if !defined(GC_DARWIN_THREADS) && !defined(GC_OPENBSD_THREADS)
+#ifndef NACL
 int WRAP_FUNC(pthread_sigmask)(int how, const sigset_t *set, sigset_t *oset)
 {
     sigset_t fudged_set;
@@ -1129,6 +1188,7 @@ int WRAP_FUNC(pthread_sigmask)(int how, const sigset_t *set, sigset_t *oset)
     }
     return(REAL_FUNC(pthread_sigmask)(how, set, oset));
 }
+#endif
 #endif /* !GC_DARWIN_THREADS */
 
 /* Wrappers for functions that are likely to block for an appreciable	*/
@@ -1258,6 +1318,17 @@ int WRAP_FUNC(pthread_join)(pthread_t thread, void **retval)
     }
     return result;
 }
+
+#ifdef NACL
+/* Native Client doesn't support pthread cleanup functions, */
+/* so wrap pthread_exit and manually cleanup the thread.    */
+void
+WRAP_FUNC(pthread_exit)(void *status)
+{
+    GC_thread_exit_proc(0); 
+    REAL_FUNC(pthread_exit)(status);
+}
+#endif
 
 int
 WRAP_FUNC(pthread_detach)(pthread_t thread)

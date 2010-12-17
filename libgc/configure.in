@@ -94,7 +94,7 @@ case "$THREADS" in
 	fi
 	AC_DEFINE(THREAD_LOCAL_ALLOC)
 	;;
-     *-*-linux*)
+     *-*-linux* | *-*-nacl*)
 	AC_DEFINE(GC_LINUX_THREADS)
 	AC_DEFINE(_REENTRANT)
 	;;
@@ -339,6 +339,9 @@ case "$host" in
  ia64-*-*)
      machdep="mach_dep.lo ia64_save_regs_in_stack.lo"
 	target_ia64=true
+    ;;
+ *-*-nacl*)
+    AC_DEFINE(NO_EXECUTE_PERMISSION)
     ;;
 esac
 if test x"$machdep" = x; then
