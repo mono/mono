@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 using System;
 using System.Collections.Generic;
 
@@ -37,43 +37,47 @@ namespace System.Threading.Tasks
 		public TaskCompletionSource ()
 		{
 			source = new Task<TResult> (null);
+			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (object state)
 		{
 			source = new Task<TResult> (null, state);
+			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
-		public TaskCompletionSource (TaskCreationOptions options)
+		public TaskCompletionSource (TaskCreationOptions creationOptions)
 		{
-			source = new Task<TResult> (null, options);
+			source = new Task<TResult> (null, creationOptions);
+			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
-		public TaskCompletionSource (object state, TaskCreationOptions options)
+		public TaskCompletionSource (object state, TaskCreationOptions creationOptions)
 		{
-			source = new Task<TResult> (null, state, options);
+			source = new Task<TResult> (null, state, creationOptions);
+			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public void SetCanceled ()
 		{
-			if (!ApplyOperation (TaskStatus.Canceled, source.CancelReal))
+			if (!ApplyOperation (source.CancelReal))
 				ThrowInvalidException ();
 		}
 		
-		public void SetException (Exception e)
+		public void SetException (Exception exception)
 		{
-			SetException (new Exception[] { e });
+			SetException (new Exception[] { exception });
 		}
 		
-		public void SetException (IEnumerable<Exception> e)
+		public void SetException (IEnumerable<Exception> exceptions)
 		{
-			if (!ApplyOperation (TaskStatus.Faulted, () => source.Exception = new AggregateException (e)))
+			if (!ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions))))
 				ThrowInvalidException ();
 		}
 		
 		public void SetResult (TResult result)
 		{
-			if (!ApplyOperation (TaskStatus.RanToCompletion, () => source.Result = result))
+			if (!ApplyOperation (() => source.Result = result))
 				ThrowInvalidException ();
 		}
 				
@@ -84,33 +88,35 @@ namespace System.Threading.Tasks
 		
 		public bool TrySetCanceled ()
 		{
-			return ApplyOperation (TaskStatus.Canceled, source.CancelReal);
+			return ApplyOperation (source.CancelReal);
 		}
 		
-		public bool TrySetException (Exception e)
+		public bool TrySetException (Exception exception)
 		{
-			return TrySetException (new Exception[] { e });
+			return TrySetException (new Exception[] { exception });
 		}
 		
-		
-		public bool TrySetException (IEnumerable<Exception> e)
+		public bool TrySetException (IEnumerable<Exception> exceptions)
 		{
-			return ApplyOperation (TaskStatus.Faulted, () => source.Exception = new AggregateException (e));
+			return ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions)));
 		}
 		
 		public bool TrySetResult (TResult result)
 		{
-			return ApplyOperation (TaskStatus.RanToCompletion, () => source.Result = result);
+			return ApplyOperation (() => source.Result = result);
 		}
 				
-		bool ApplyOperation (TaskStatus newStatus, Action action)
+		bool ApplyOperation (Action action)
 		{
 			if (CheckInvalidState ())
 				return false;
 			
+			source.Status = TaskStatus.Running;
+
 			if (action != null)
 				action ();
-			source.Status = newStatus;
+
+			source.Finish ();
 			
 			return true;
 		}

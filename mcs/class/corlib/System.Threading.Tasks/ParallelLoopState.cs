@@ -28,12 +28,13 @@ using System.Threading;
 
 namespace System.Threading.Tasks
 {
+	[System.Diagnostics.DebuggerDisplayAttribute ("ShouldExitCurrentIteration = {ShouldExitCurrentIteration}")]
 	public class ParallelLoopState
 	{
 		internal class ExternalInfos
 		{
-			public AtomicBoolean IsStopped = new AtomicBoolean ();
-			public AtomicBoolean IsBroken = new AtomicBoolean ();
+			public bool IsStopped;
+			public AtomicBooleanValue IsBroken = new AtomicBooleanValue ();
 			public volatile bool IsExceptional;
 			public long? LowestBreakIteration;
 		}
@@ -47,7 +48,7 @@ namespace System.Threading.Tasks
 		
 		public bool IsStopped {
 			get {
-				return extInfos.IsStopped.Value;
+				return extInfos.IsStopped;
 			}
 		}
 		
@@ -76,6 +77,9 @@ namespace System.Threading.Tasks
 		
 		public void Break ()
 		{
+			if (extInfos.IsStopped)
+				throw new InvalidOperationException ("The Stop method was previously called. Break and Stop may not be used in combination by iterations of the same loop.");
+
 			bool result = extInfos.IsBroken.Exchange (true);
 			if (!result)
 				extInfos.LowestBreakIteration = CurrentIteration;
@@ -83,7 +87,9 @@ namespace System.Threading.Tasks
 		
 		public void Stop ()
 		{
-			extInfos.IsStopped.Exchange (true);
+			if (extInfos.IsBroken.Value)
+				throw new InvalidOperationException ("The Break method was previously called. Break and Stop may not be used in combination by iterations of the same loop.");
+			extInfos.IsStopped = true;
 		}
 	}
 	

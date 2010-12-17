@@ -31,6 +31,8 @@ using System.Collections.Generic;
 
 namespace System.Threading.Tasks
 {
+	[System.Diagnostics.DebuggerDisplay ("Id={Id}")]
+	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.TaskScheduler+SystemThreadingTasks_TaskSchedulerDebugView")]
 	public abstract class TaskScheduler
 	{
 		static TaskScheduler defaultScheduler = new Scheduler ();

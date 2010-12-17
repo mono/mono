@@ -31,98 +31,82 @@ namespace System.Threading.Tasks
 {
 	internal class ThreadWorker : IDisposable
 	{
-		static Random r = new Random ();
-		
 		Thread workerThread;
+
+		/* This field is used when a TheadWorker have to call Task.Wait
+		 * which bring him back here with the static WorkerMethod although
+		 * it's more optimized for him to continue calling its own WorkerMethod
+		 */
+		[ThreadStatic]
+		static ThreadWorker autoReference;
 		
-		readonly          ThreadWorker[]         others;
-		internal readonly IDequeOperations<Task> dDeque;
-		readonly          Action<Task>           childWorkAdder;
-		readonly          EventWaitHandle        waitHandle;
-		readonly          IProducerConsumerCollection<Task> sharedWorkQueue;
+		readonly IDequeOperations<Task> dDeque;
+		readonly ThreadWorker[]         others;
+		readonly ManualResetEvent       waitHandle;
+		readonly IProducerConsumerCollection<Task> sharedWorkQueue;
+		readonly IScheduler             sched;
+		readonly ThreadPriority         threadPriority;
+
 		// Flag to tell if workerThread is running
 		int started = 0; 
 		
-		readonly bool isLocal;
 		readonly int  workerLength;
-		readonly int  stealingStart;
+		readonly int  workerPosition;
 		const    int  maxRetry = 5;
 		
 		const int sleepThreshold = 100;
-		const int deepSleepTime = 10;
+		int deepSleepTime = 8;
 		
-		Action threadInitializer;
-		
-		public ThreadWorker (IScheduler sched, ThreadWorker[] others, IProducerConsumerCollection<Task> sharedWorkQueue,
-		                     int maxStackSize, ThreadPriority priority, EventWaitHandle handle)
-		: this (sched, others, sharedWorkQueue, true, maxStackSize, priority, handle)
-		{
-		}
-		
-		public ThreadWorker (IScheduler sched, ThreadWorker[] others, IProducerConsumerCollection<Task> sharedWorkQueue,
-		                     bool createThread, int maxStackSize, ThreadPriority priority, EventWaitHandle handle)
+		public ThreadWorker (IScheduler sched,
+		                     ThreadWorker[] others,
+		                     int workerPosition,
+		                     IProducerConsumerCollection<Task> sharedWorkQueue,
+		                     ThreadPriority priority,
+		                     ManualResetEvent handle)
 		{
 			this.others          = others;
-
-			this.dDeque = new CyclicDeque<Task> ();
-			
+			this.dDeque          = new CyclicDeque<Task> ();
+			this.sched           = sched;
 			this.sharedWorkQueue = sharedWorkQueue;
 			this.workerLength    = others.Length;
-			this.isLocal         = !createThread;
+			this.workerPosition  = workerPosition;
 			this.waitHandle      = handle;
-			
-			this.childWorkAdder = delegate (Task t) { 
-				dDeque.PushBottom (t);
-				sched.PulseAll ();
-			};
-			
-			// Find the stealing start index randomly (then the traversal
-			// will be done in Round-Robin fashion)
-			do {
-				this.stealingStart = r.Next(0, workerLength);
-			} while (others[stealingStart] == this);
-			
-			InitializeUnderlyingThread (maxStackSize, priority);
+			this.threadPriority  = priority;
+
+			InitializeUnderlyingThread ();
 		}
 		
-		void InitializeUnderlyingThread (int maxStackSize, ThreadPriority priority)
+		void InitializeUnderlyingThread ()
 		{
-			threadInitializer = delegate {
-				// Special case of the participant ThreadWorker
-				if (isLocal) {			
-					this.workerThread = Thread.CurrentThread;
-					return;
-				}
-				
-				this.workerThread = (maxStackSize == 0) ? new Thread (WorkerMethodWrapper) :
-					new Thread (WorkerMethodWrapper, maxStackSize);
+			this.workerThread = new Thread (WorkerMethodWrapper);
 	
-				this.workerThread.IsBackground = true;
-				this.workerThread.Priority = priority;
-				this.workerThread.Name = "ParallelFxThreadWorker";
-			};
-			threadInitializer ();
+			this.workerThread.IsBackground = true;
+			this.workerThread.Priority = threadPriority;
+			this.workerThread.Name = "ParallelFxThreadWorker";
 		}
 
 		public void Dispose ()
 		{
 			Stop ();
-			if (!isLocal && workerThread.ThreadState != ThreadState.Stopped)
+			if (workerThread.ThreadState != ThreadState.Stopped)
 				workerThread.Abort ();
 		}
 		
 		public void Pulse ()
 		{
+			if (started == 1)
+				return;
+
 			// If the thread was stopped then set it in use and restart it
 			int result = Interlocked.Exchange (ref started, 1);
 			if (result != 0)
 				return;
-			if (!isLocal) {
-				if (this.workerThread.ThreadState != ThreadState.Unstarted) {
-					threadInitializer ();
-				}
-				workerThread.Start ();
+
+			if (this.workerThread.ThreadState != ThreadState.Unstarted) {
+				InitializeUnderlyingThread ();
 			}
+
+			workerThread.Start ();
 		}
 		
 		public void Stop ()
@@ -136,25 +120,28 @@ namespace System.Threading.Tasks
 		void WorkerMethodWrapper ()
 		{
 			int sleepTime = 0;
-			SpinWait wait = new SpinWait ();
+			autoReference = this;
 			
 			// Main loop
 			while (started == 1) {
 				bool result = false;
 
 				result = WorkerMethod ();
-				
+				if (!result)
+					waitHandle.Reset ();
+
+				Thread.Yield ();
+
 				if (result) {
+					deepSleepTime = 8;
 					sleepTime = 0;
-					wait = new SpinWait ();
+					continue;
 				}
 
-				// Wait a little and if the Thread has been more sleeping than working shut it down
-				wait.SpinOnce ();
-
 				// If we are spinning too much, have a deeper sleep
-				if (sleepTime++ > sleepThreshold)
-					waitHandle.WaitOne (deepSleepTime);
+				if (++sleepTime > sleepThreshold && sharedWorkQueue.Count == 0) {
+					waitHandle.WaitOne ((deepSleepTime =  deepSleepTime >= 0x4000 ? 0x4000 : deepSleepTime << 1));
+				}
 			}
 
 			started = 0;
@@ -162,7 +149,7 @@ namespace System.Threading.Tasks
 		
 		// Main method, used to do all the logic of retrieving, processing and stealing work.
 		bool WorkerMethod ()
-		{		
+		{
 			bool result = false;
 			bool hasStolenFromOther;
 			do {
@@ -174,33 +161,37 @@ namespace System.Threading.Tasks
 				while (sharedWorkQueue.Count > 0) {
 					while (sharedWorkQueue.TryTake (out value)) {
 						dDeque.PushBottom (value);
+						waitHandle.Set ();
 					}
-					
+
 					// Now we process our work
 					while (dDeque.PopBottom (out value) == PopResult.Succeed) {
+						waitHandle.Set ();
 						if (value != null) {
-							value.Execute (childWorkAdder);
+							value.Execute (ChildWorkAdder);
 							result = true;
 						}
 					}
 				}
-				
+
 				// When we have finished, steal from other worker
 				ThreadWorker other;
 				
 				// Repeat the operation a little so that we can let other things process.
-				for (int j = 0; j < maxRetry; j++) {
+				for (int j = 0; j < maxRetry; ++j) {
+					int len = workerLength + workerPosition;
 					// Start stealing with the ThreadWorker at our right to minimize contention
-					for (int it = stealingStart; it < stealingStart + workerLength; it++) {
+					for (int it = workerPosition + 1; it < len; ++it) {
 						int i = it % workerLength;
 						if ((other = others [i]) == null || other == this)
 							continue;
 						
 						// Maybe make this steal more than one item at a time, see TODO.
 						if (other.dDeque.PopTop (out value) == PopResult.Succeed) {
+							waitHandle.Set ();
 							hasStolenFromOther = true;
 							if (value != null) {
-								value.Execute (childWorkAdder);
+								value.Execute (ChildWorkAdder);
 								result = true;
 							}
 						}
@@ -217,23 +208,41 @@ namespace System.Threading.Tasks
 		// Predicate should be really fast and not blocking as it is called a good deal of time
 		// Also, the method skip tasks that are LongRunning to avoid blocking (Task are not LongRunning by default)
 		public static void WorkerMethod (Func<bool> predicate, IProducerConsumerCollection<Task> sharedWorkQueue,
-		                                 ThreadWorker[] others)
+		                                 ThreadWorker[] others, ManualResetEvent evt)
 		{
-			SpinWait wait = new SpinWait ();
-
 			while (!predicate ()) {
 				Task value;
 				
-				// Dequeue only one item as we have restriction
-				if (sharedWorkQueue.TryTake (out value)) {
-					if (value != null) {
+				// If we are in fact a normal ThreadWorker, use our own deque
+				if (autoReference != null) {
+					while (autoReference.dDeque.PopBottom (out value) == PopResult.Succeed && value != null) {
+						evt.Set ();
 						if (CheckTaskFitness (value))
-							value.Execute (null);
-						else
-							sharedWorkQueue.TryAdd (value);
+							value.Execute (autoReference.ChildWorkAdder);
+						else {
+							autoReference.dDeque.PushBottom (value);
+							evt.Set ();
+						}
+
+						if (predicate ())
+							return;
 					}
 				}
-				
+
+				// Dequeue only one item as we have restriction
+				while (sharedWorkQueue.TryTake (out value) && value != null) {
+					evt.Set ();
+					if (CheckTaskFitness (value))
+						value.Execute (null);
+					else {
+						sharedWorkQueue.TryAdd (value);
+						evt.Set ();
+					}
+
+					if (predicate ())
+						return;
+				}
+
 				// First check to see if we comply to predicate
 				if (predicate ())
 					return;
@@ -244,12 +253,13 @@ namespace System.Threading.Tasks
 					if ((other = others [i]) == null)
 						continue;
 					
-					if (other.dDeque.PopTop (out value) == PopResult.Succeed) {
-						if (value != null) {
-							if (CheckTaskFitness (value))
-								value.Execute (null);
-							else
-								sharedWorkQueue.TryAdd (value);
+					if (other.dDeque.PopTop (out value) == PopResult.Succeed && value != null) {
+						evt.Set ();
+						if (CheckTaskFitness (value))
+							value.Execute (null);
+						else {
+							sharedWorkQueue.TryAdd (value);
+							evt.Set ();
 						}
 					}
 					
@@ -257,8 +267,14 @@ namespace System.Threading.Tasks
 						return;
 				}
 
-				wait.SpinOnce ();
+				Thread.Yield ();
 			}
+		}
+
+		internal void ChildWorkAdder (Task t)
+		{
+			dDeque.PushBottom (t);
+			sched.PulseAll ();
 		}
 		
 		static bool CheckTaskFitness (Task t)
@@ -271,13 +287,7 @@ namespace System.Threading.Tasks
 				return started == 0;
 			}
 		}
-		
-		public bool IsLocal {
-			get {
-				return isLocal;
-			}
-		}
-		
+
 		public int Id {
 			get {
 				return workerThread.ManagedThreadId;

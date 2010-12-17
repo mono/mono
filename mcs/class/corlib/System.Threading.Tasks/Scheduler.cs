@@ -30,23 +30,23 @@ namespace System.Threading.Tasks
 {
 	internal class Scheduler: TaskScheduler, IScheduler
 	{
-		IProducerConsumerCollection<Task> workQueue;
-		ThreadWorker[]        workers;
-		EventWaitHandle       pulseHandle = new AutoResetEvent (false);
+		readonly IProducerConsumerCollection<Task> workQueue;
+		readonly ThreadWorker[]        workers;
+		readonly ManualResetEvent      pulseHandle = new ManualResetEvent (false);
 
 		public Scheduler ()
-			: this (Environment.ProcessorCount, 0, ThreadPriority.Normal)
+			: this (Environment.ProcessorCount, ThreadPriority.Normal)
 		{
 			
 		}
 		
-		public Scheduler (int maxWorker, int maxStackSize, ThreadPriority priority)
+		public Scheduler (int maxWorker, ThreadPriority priority)
 		{
 			workQueue = new ConcurrentQueue<Task> ();
 			workers = new ThreadWorker [maxWorker];
 			
 			for (int i = 0; i < maxWorker; i++) {
-				workers [i] = new ThreadWorker (this, workers, workQueue, maxStackSize, priority, pulseHandle);
+				workers [i] = new ThreadWorker (this, workers, i, workQueue, priority, pulseHandle);
 				workers [i].Pulse ();
 			}
 		}
@@ -58,20 +58,18 @@ namespace System.Threading.Tasks
 			// Wake up some worker if they were asleep
 			PulseAll ();
 		}
-		
+
 		public void ParticipateUntil (Task task)
 		{
-			if (AreTasksFinished (task))
+			if (task.IsCompleted)
 				return;
 			
-			ParticipateUntil (delegate {
-				return AreTasksFinished (task);
-			});
+			ParticipateUntil (() => task.IsCompleted);
 		}
 		
 		public bool ParticipateUntil (Task task, Func<bool> predicate)
 		{
-			if (AreTasksFinished (task))
+			if (task.IsCompleted)
 				return false;
 			
 			bool isFromPredicate = false;
@@ -81,7 +79,7 @@ namespace System.Threading.Tasks
 					isFromPredicate = true;
 					return true;
 				}
-				return AreTasksFinished (task);	
+				return task.IsCompleted;
 			});
 				
 			return isFromPredicate;
@@ -91,7 +89,7 @@ namespace System.Threading.Tasks
 		// also when our wait condition is ok
 		public void ParticipateUntil (Func<bool> predicate)
 		{	
-			ThreadWorker.WorkerMethod (predicate, workQueue, workers);
+			ThreadWorker.WorkerMethod (predicate, workQueue, workers, pulseHandle);
 		}
 		
 		public void PulseAll ()
@@ -101,16 +99,9 @@ namespace System.Threading.Tasks
 		
 		public void Dispose ()
 		{
-			foreach (ThreadWorker w in workers) {
+			foreach (ThreadWorker w in workers)
 				w.Dispose ();
-			}
 		}
-		
-		bool AreTasksFinished (Task parent)
-		{
-			return parent.IsCompleted;
-		}
-
 		#region Scheduler dummy stubs
 		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
 		{
