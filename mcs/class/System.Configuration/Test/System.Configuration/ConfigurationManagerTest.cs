@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -147,8 +145,10 @@ namespace MonoTests.System.Configuration {
 			FileInfo fi = new FileInfo (config.FilePath);
 #if TARGET_JVM
 			Assert.AreEqual ("nunit-console.jar.config", fi.Name);
-#else
+#elif NET_2_0
 			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
+#else
+			Assert.AreEqual ("System.Configuration_test_net_4_0.dll.config", fi.Name);
 #endif
 		}
 
@@ -492,5 +492,3 @@ namespace MonoTests.System.Configuration {
 		}
 	}
 }
-
-#endif
