@@ -176,7 +176,7 @@ include ../build/rules.make
 
 SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(moonlight_dirs) $(mobile_dirs) $(net_4_0_dirs)
 
-DIST_ONLY_SUBDIRS = dlr IKVM.Reflection
+DIST_ONLY_SUBDIRS = dlr IKVM.Reflection aot-compiler
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
