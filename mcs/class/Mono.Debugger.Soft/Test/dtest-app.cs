@@ -156,6 +156,8 @@ public class Tests : TestsBase
 	}
 
 	public static int Main (String[] args) {
+		tls_i = 42;
+
 		if (args.Length > 0 && args [0] == "suspend-test")
 			/* This contains an infinite loop, so execute it conditionally */
 			suspend ();

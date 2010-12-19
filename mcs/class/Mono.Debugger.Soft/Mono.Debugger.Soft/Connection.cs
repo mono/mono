@@ -437,7 +437,9 @@ namespace Mono.Debugger.Soft
 			GET_FIELD_CATTRS = 11,
 			GET_PROPERTY_CATTRS = 12,
 			/* FIXME: Merge into GET_SOURCE_FILES when the major protocol version is increased */
-			GET_SOURCE_FILES_2 = 13
+			GET_SOURCE_FILES_2 = 13,
+			/* FIXME: Merge into GET_VALUES when the major protocol version is increased */
+			GET_VALUES_2 = 14
 		}
 
 		enum CmdStackFrame {
@@ -1672,9 +1674,13 @@ namespace Mono.Debugger.Soft
 			return SendReceive (CommandSet.TYPE, (int)CmdType.GET_OBJECT, new PacketWriter ().WriteId (id)).ReadId ();
 		}
 
-		public ValueImpl[] Type_GetValues (long id, long[] fields) {
+		public ValueImpl[] Type_GetValues (long id, long[] fields, long thread_id) {
 			int len = fields.Length;
-			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUES, new PacketWriter ().WriteId (id).WriteInt (len).WriteIds (fields));
+			PacketReader r;
+			if (thread_id != 0)
+				r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUES_2, new PacketWriter ().WriteId (id).WriteId (thread_id).WriteInt (len).WriteIds (fields));
+			else
+				r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUES, new PacketWriter ().WriteId (id).WriteInt (len).WriteIds (fields));
 
 			ValueImpl[] res = new ValueImpl [len];
 			for (int i = 0; i < len; ++i)

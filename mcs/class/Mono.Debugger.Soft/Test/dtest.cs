@@ -1086,6 +1086,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("only5")]
 	public void Type_GetValue () {
 		Event e = run_until ("o1");
 		StackFrame frame = e.Thread.GetFrames () [0];
@@ -1117,6 +1118,10 @@ public class DebuggerTests
 
 		f = t.GetValue (parent.GetField ("base_static_s"));
 		AssertValue ("C", f);
+
+		// thread static field
+		f = t.GetValue (t.GetField ("tls_i"), e.Thread);
+		AssertValue (42, f);
 
 		// Argument checking
 		AssertThrows<ArgumentNullException> (delegate () {
