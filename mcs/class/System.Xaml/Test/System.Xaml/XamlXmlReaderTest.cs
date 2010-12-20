@@ -539,5 +539,12 @@ namespace MonoTests.System.Xaml
 			var r = GetReader ("List_XmlSerializable.xml");
 			Read_ListXmlSerializable (r);
 		}
+
+		[Test]
+		public void Read_AttachedProperty ()
+		{
+			var r = GetReader ("AttachedProperty.xml");
+			Read_AttachedProperty (r);
+		}
 	}
 }

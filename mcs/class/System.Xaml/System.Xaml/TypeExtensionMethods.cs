@@ -286,6 +286,11 @@ namespace System.Xaml
 			return ap != null && ap.GetCustomAttributes (typeof (ConstructorArgumentAttribute), false).Length > 0;
 		}
 
+		internal static string GetInternalXmlName (this XamlMember xm)
+		{
+			return xm.IsAttachable ? String.Concat (xm.DeclaringType.GetInternalXmlName (), ".", xm.Name) : xm.Name;
+		}
+
 #if DOTNET
 		internal static ICustomAttributeProvider GetCustomAttributeProvider (this XamlType type)
 		{

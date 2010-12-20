@@ -385,7 +385,21 @@ namespace System.Xaml
 				is_empty_object = true;
 
 			foreach (var p in atts) {
-				var xm = xt.GetMember (p.Key);
+				int idx = p.Key.IndexOf (':');
+				string prefix = idx > 0 ? p.Key.Substring (0, idx) : String.Empty;
+				string aname = idx > 0 ? p.Key.Substring (idx + 1) : p.Key;
+				idx = aname.IndexOf ('.');
+				if (idx > 0) {
+					string apns = prefix.Length > 0 ? r.LookupNamespace (prefix) : r.NamespaceURI;
+					var apname = aname.Substring (0, idx);
+					var axtn = new XamlTypeName (apns, apname, null);
+					var at = sctx.GetXamlType (axtn);
+					var am = at.GetAttachableMember (aname.Substring (idx + 1));
+					if (am != null)
+						members.Add (new Pair (am, p.Value));
+					// ignore unknown attribute
+				}
+				var xm = xt.GetMember (aname);
 				if (xm != null)
 					members.Add (new Pair (xm, p.Value));
 				// ignore unknown attribute
@@ -413,13 +427,17 @@ namespace System.Xaml
 		
 		void ReadStartMember ()
 		{
+			var xt = types.Peek ();
 			var name = r.LocalName;
 			int idx = name.IndexOf ('.');
-			if (idx >= 0)
+			if (idx >= 0) {
+				string tname = name.Substring (0, idx);
+				var xtn = new XamlTypeName (r.NamespaceURI, tname, null);
+				xt = SchemaContext.GetXamlType (xtn) ?? new XamlType (xtn.Namespace, xtn.Name, null, SchemaContext);
 				name = name.Substring (idx + 1);
+			}
 
-			var xt = types.Peek ();
-			var xm = (XamlMember) FindStandardDirective (name, AllowedMemberLocations.MemberElement) ?? xt.GetMember (name);
+			var xm = (XamlMember) FindStandardDirective (name, AllowedMemberLocations.MemberElement) ?? xt.GetAttachableMember (name) ?? xt.GetMember (name);
 			if (xm == null)
 				// create unknown member.
 				xm = new XamlMember (name, xt, false); // FIXME: not sure if isAttachable is always false.
@@ -517,7 +535,7 @@ namespace System.Xaml
 						throw new NotSupportedException (String.Format ("Attribute '{0}' is not supported", r.Name));
 					default:
 						if (r.NamespaceURI == String.Empty) {
-							atts.Add (r.LocalName, r.Value);
+							atts.Add (r.Name, r.Value);
 							continue;
 						}
 						// Should we just ignore unknown attribute in XAML namespace or any other namespaces ?

@@ -1206,5 +1206,24 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual (1, des.Count, "#1");
 			}
 		}
+
+		[Test]
+		public void Write_AttachedProperty ()
+		{
+			using (var xr = GetReader ("AttachedProperty.xml")) {
+				AttachedWrapper des = null;
+				try {
+					des = (AttachedWrapper) XamlServices.Load (xr);
+					Assert.IsNotNull (des.Value, "#1");
+					Assert.AreEqual ("x", Attachable.GetFoo (des), "#2");
+					Assert.AreEqual ("y", Attachable.GetFoo (des.Value), "#3");
+				} finally {
+					if (des != null) {
+						Attachable.SetFoo (des, null);
+						Attachable.SetFoo (des.Value, null);
+					}
+				}
+			}
+		}
 	}
 }

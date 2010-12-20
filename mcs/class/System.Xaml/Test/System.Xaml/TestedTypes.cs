@@ -596,17 +596,18 @@ namespace MonoTests.System.Xaml
 	
 	public class Attachable
 	{
-		static Dictionary<object,string> dic = new Dictionary<object,string> ();
-
+		public static readonly AttachableMemberIdentifier FooIdentifier = new AttachableMemberIdentifier (typeof (Attachable), "Foo");
+		public static readonly AttachableMemberIdentifier ProtectedIdentifier = new AttachableMemberIdentifier (typeof (Attachable), "Protected");
+		
 		public static string GetFoo (object target)
 		{
 			string v;
-			return dic.TryGetValue (target, out v) ? v : null;
+			return AttachablePropertyServices.TryGetProperty (target, FooIdentifier, out v) ? v : null;
 		}
 		
 		public static void SetFoo (object target, string value)
 		{
-			dic [target] = value;
+			AttachablePropertyServices.SetProperty (target, FooIdentifier, value);
 		}
 
 		public static string GetBar (object target, object signatureMismatch)
@@ -630,12 +631,12 @@ namespace MonoTests.System.Xaml
 		protected static string GetProtected (object target)
 		{
 			string v;
-			return dic.TryGetValue (target, out v) ? v : null;
+			return AttachablePropertyServices.TryGetProperty (target, ProtectedIdentifier, out v) ? v : null;
 		}
 		
 		protected static void SetProtected (object target, string value)
 		{
-			dic [target] = value;
+			AttachablePropertyServices.SetProperty (target, ProtectedIdentifier, value);
 		}
 
 		static Dictionary<object,List<EventHandler>> handlers = new Dictionary<object,List<EventHandler>> ();
@@ -689,7 +690,7 @@ namespace MonoTests.System.Xaml
 		}
 	}
 
-	public class AttachedWrapper : Attachable
+	public class AttachedWrapper : AttachedPropertyStore
 	{
 		public AttachedWrapper ()
 		{
@@ -699,7 +700,36 @@ namespace MonoTests.System.Xaml
 		public Attached Value { get; set; }
 	}
 
-	public class Attached
+	public class AttachedWrapper2
+	{
+		public static readonly AttachableMemberIdentifier FooIdentifier = new AttachableMemberIdentifier (typeof (AttachedWrapper2), "Foo");
+
+		static AttachedPropertyStore store = new AttachedPropertyStore ();
+
+		public static string GetFoo (object target)
+		{
+			object v;
+			return store.TryGetProperty (FooIdentifier, out v) ? (string) v : null;
+		}
+		
+		public static void SetFoo (object target, string value)
+		{
+			store.SetProperty (FooIdentifier, value);
+		}
+
+		public static int PropertyCount {
+			get { return store.PropertyCount; }
+		}
+
+		public AttachedWrapper2 ()
+		{
+			Value = new Attached ();
+		}
+
+		public Attached Value { get; set; }
+	}
+
+	public class Attached : Attachable
 	{
 	}
 }

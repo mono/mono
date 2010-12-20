@@ -334,6 +334,8 @@ namespace System.Xaml
 				object_states.Peek ().FactoryMethod = (string) value;
 			else if (member.IsDirective)
 				return;
+			else if (member.IsAttachable)
+				AttachablePropertyServices.SetProperty (object_states.Peek ().Value, new AttachableMemberIdentifier (member.DeclaringType.UnderlyingType, member.Name), value);
 			else if (!source.OnSetValue (this, member, value))
 				member.Invoker.SetValue (object_states.Peek ().Value, value);
 		}

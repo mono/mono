@@ -2268,6 +2268,68 @@ namespace MonoTests.System.Xaml
 			r.Close ();
 		}
 
+		protected void Read_AttachedProperty (XamlReader r)
+		{
+			var at = new XamlType (typeof (Attachable), r.SchemaContext);
+
+			Assert.IsTrue (r.Read (), "ns#1-1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#1-2");
+			Assert.IsNotNull (r.Namespace, "ns#1-3");
+			Assert.AreEqual ("", r.Namespace.Prefix, "ns#1-4");
+			var assns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+			Assert.AreEqual (assns, r.Namespace.Namespace, "ns#1-5");
+
+			// t:AttachedWrapper
+			Assert.IsTrue (r.Read (), "so#1-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#1-2");
+			var xt = new XamlType (typeof (AttachedWrapper), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#1-3");
+
+			if (r is XamlXmlReader)
+				ReadBase (r);
+
+			ReadAttachedProperty (r, at.GetAttachableMember ("Foo"), "x", "x");
+
+			// m:Value
+			Assert.IsTrue (r.Read (), "sm#2-1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#sm#2-2");
+			Assert.AreEqual (xt.GetMember ("Value"), r.Member, "sm#2-3");
+
+			// t:Attached
+			Assert.IsTrue (r.Read (), "so#2-1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#so#2-2");
+			Assert.AreEqual (r.SchemaContext.GetXamlType (typeof (Attached)), r.Type, "so#2-3");
+
+			ReadAttachedProperty (r, at.GetAttachableMember ("Foo"), "y", "y");
+
+			Assert.IsTrue (r.Read (), "eo#2-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#eo#2-2");
+
+			// /m:Value
+			Assert.IsTrue (r.Read (), "em#2-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#em#2-2");
+
+			// /t:AttachedWrapper
+			Assert.IsTrue (r.Read (), "eo#1-1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#1-2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		void ReadAttachedProperty (XamlReader r, XamlMember xm, string value, string label)
+		{
+			Assert.IsTrue (r.Read (), label + "#1-1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, label + "#1-2");
+			Assert.AreEqual (xm, r.Member, label + "#1-3");
+
+			Assert.IsTrue (r.Read (), label + "#2-1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, label + "#2-2");
+			Assert.AreEqual (value, r.Value, label + "2-3");
+
+			Assert.IsTrue (r.Read (), label + "#3-1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, label + "#3-2");
+		}
+
 		protected void Read_CommonXamlPrimitive (object obj)
 		{
 			var r = new XamlObjectReader (obj);
