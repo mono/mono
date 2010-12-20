@@ -6494,11 +6494,8 @@ namespace Mono.CSharp
 			//
 			// First, the static data
 			//
-			FieldBuilder fb;
-			
 			byte [] data = MakeByteBlob ();
-
-			fb = ec.CurrentTypeDefinition.Module.Module.MakeStaticData (data);
+			var fb = ec.CurrentTypeDefinition.Module.MakeStaticData (data, loc);
 
 			ec.Emit (OpCodes.Dup);
 			ec.Emit (OpCodes.Ldtoken, fb);

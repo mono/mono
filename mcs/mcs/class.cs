@@ -1885,7 +1885,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void CloseType ()
+		public virtual void CloseType ()
 		{
 			if ((caching_flags & Flags.CloseTypeCreated) != 0)
 				return;

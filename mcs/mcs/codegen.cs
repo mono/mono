@@ -300,12 +300,6 @@ namespace Mono.CSharp
 			ig.Emit (opcode, method);
 		}
 
-		// TODO: REMOVE breaks mutator
-		public void Emit (OpCode opcode, FieldBuilder field)
-		{
-			ig.Emit (opcode, field);
-		}
-
 		public void Emit (OpCode opcode, MethodSpec method, MetaType[] vargs)
 		{
 			// TODO MemberCache: This should mutate too
