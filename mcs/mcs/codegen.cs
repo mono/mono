@@ -96,7 +96,7 @@ namespace Mono.CSharp
 			this.return_type = return_type;
 
 #if STATIC
-			ig.__CleverExceptionBlockAssistance ();
+			//ig.__CleverExceptionBlockAssistance ();
 #endif
 		}
 
