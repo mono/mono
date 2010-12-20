@@ -751,20 +751,10 @@ namespace Mono.XBuild.CommandLine {
 					string target_name = GetTargetNameForProject (project.Name, buildTarget);
 					Target target = p.Targets.AddNewTarget (target_name);
 					target.Condition = "'$(CurrentSolutionConfigurationContents)' != ''"; 
-
-					if (project.Dependencies.Count > 0) {
-						StringBuilder dependencies = new StringBuilder ();
-						foreach (ProjectInfo dependentInfo in project.Dependencies.Values) {
-							if (dependencies.Length > 0)
-								dependencies.Append (";");
-							if (IsBuildTargetName (dependentInfo.Name))
-								dependencies.Append ("Solution:");
-							dependencies.Append (dependentInfo.Name);
-							if (buildTarget != "Build")
-								dependencies.Append (":" + buildTarget);
-						}
-						target.DependsOnTargets = dependencies.ToString ();
-					}
+					if (project.Dependencies.Count > 0)
+						target.DependsOnTargets = String.Join (";",
+								project.Dependencies.Values.Select (
+									di => GetTargetNameForProject (di.Name, buildTarget)).ToArray ());
 
 					foreach (TargetInfo targetInfo in solutionTargets) {
 						BuildTask task = null;
