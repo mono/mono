@@ -193,9 +193,9 @@ namespace Mono.CSharp {
 //		MethodInfo MakeGenericMethod (TypeSpec[] targs);
 	}
 
-	public class MethodSpec : MemberSpec, IParametersMember
+	public sealed class MethodSpec : MemberSpec, IParametersMember
 	{
-		MethodBase metaInfo;
+		MethodBase metaInfo, inflatedMetaInfo;
 		AParametersCollection parameters;
 		TypeSpec returnType;
 
@@ -301,22 +301,32 @@ namespace Mono.CSharp {
 
 		public MethodBase GetMetaInfo ()
 		{
-			if ((state & StateFlags.PendingMetaInflate) != 0) {
-				if (DeclaringType.IsTypeBuilder) {
-					if (IsConstructor)
-						metaInfo = TypeBuilder.GetConstructor (DeclaringType.GetMetaInfo (), (ConstructorInfo) metaInfo);
-					else
-						metaInfo = TypeBuilder.GetMethod (DeclaringType.GetMetaInfo (), (MethodInfo) metaInfo);
-				} else {
+			//
+			// inflatedMetaInfo is extra field needed for cases where we
+			// inflate method but another nested type can later inflate
+			// again (the cache would be build with inflated metaInfo) and
+			// TypeBuilder can work with method definitions only
+			//
+			if (inflatedMetaInfo == null) {
+				if ((state & StateFlags.PendingMetaInflate) != 0) {
+					if (DeclaringType.IsTypeBuilder) {
+						if (IsConstructor)
+							inflatedMetaInfo = TypeBuilder.GetConstructor (DeclaringType.GetMetaInfo (), (ConstructorInfo) metaInfo);
+						else
+							inflatedMetaInfo = TypeBuilder.GetMethod (DeclaringType.GetMetaInfo (), (MethodInfo) metaInfo);
+					} else {
 #if STATIC
 					// it should not be reached
 					throw new NotImplementedException ();
 #else
-					metaInfo = MethodInfo.GetMethodFromHandle (metaInfo.MethodHandle, DeclaringType.GetMetaInfo ().TypeHandle);
+						inflatedMetaInfo = MethodInfo.GetMethodFromHandle (metaInfo.MethodHandle, DeclaringType.GetMetaInfo ().TypeHandle);
 #endif
-				}
+					}
 
-				state &= ~StateFlags.PendingMetaInflate;
+					state &= ~StateFlags.PendingMetaInflate;
+				} else {
+					inflatedMetaInfo = metaInfo;
+				}
 			}
 
 			if ((state & StateFlags.PendingMakeMethod) != 0) {
@@ -324,11 +334,11 @@ namespace Mono.CSharp {
 				for (int i = 0; i < sre_targs.Length; ++i)
 					sre_targs[i] = targs[i].GetMetaInfo ();
 
-				metaInfo = ((MethodInfo) metaInfo).MakeGenericMethod (sre_targs);
+				inflatedMetaInfo = ((MethodInfo) inflatedMetaInfo).MakeGenericMethod (sre_targs);
 				state &= ~StateFlags.PendingMakeMethod;
 			}
 
-			return metaInfo;
+			return inflatedMetaInfo;
 		}
 
 		public override string GetSignatureForError ()
@@ -371,6 +381,7 @@ namespace Mono.CSharp {
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
 		{
 			var ms = (MethodSpec) base.InflateMember (inflator);
+			ms.inflatedMetaInfo = null;
 			ms.returnType = inflator.Inflate (returnType);
 			ms.parameters = parameters.Inflate (inflator);
 			if (IsGeneric)
@@ -423,9 +434,7 @@ namespace Mono.CSharp {
 
 			var ms = (MethodSpec) MemberwiseClone ();
 			if (decl != DeclaringType) {
-				// Gets back MethodInfo in case of metaInfo was inflated
-				ms.metaInfo = MemberCache.GetMember (TypeParameterMutator.GetMemberDeclaringType (DeclaringType), this).metaInfo;
-
+				ms.inflatedMetaInfo = null;
 				ms.declaringType = decl;
 				ms.state |= StateFlags.PendingMetaInflate;
 			}
