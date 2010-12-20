@@ -911,7 +911,7 @@ namespace System.Xml
 				node.TypedValue = new Decimal (bits);
 				break;
 			case BF.DateTime:
-				node.TypedValue = new DateTime (source.Reader.ReadInt64 ());
+				node.TypedValue = DateTime.FromBinary (source.Reader.ReadInt64 ());
 				break;
 			//case BF.UniqueId: // identical to .Text
 			case BF.Bytes8:

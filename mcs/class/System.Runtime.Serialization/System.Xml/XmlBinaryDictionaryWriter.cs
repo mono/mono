@@ -998,7 +998,7 @@ namespace System.Xml
 
 		void WriteValueContent (DateTime value)
 		{
-			writer.Write (value.Ticks);
+			writer.Write (value.ToBinary ());
 		}
 
 		public override void WriteValue (Guid value)
