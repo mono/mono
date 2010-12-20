@@ -522,7 +522,7 @@ namespace IKVM.Reflection.Emit
 				rec.PackingSize = (short)(pack ?? 0);
 				rec.ClassSize = size ?? 0;
 				rec.Parent = token;
-				this.ModuleBuilder.ClassLayout.AddRecord(rec);
+				this.ModuleBuilder.ClassLayout.AddOrReplaceRecord(rec);
 			}
 			attribs &= ~TypeAttributes.LayoutMask;
 			switch (layout)

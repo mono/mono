@@ -1241,6 +1241,19 @@ namespace IKVM.Reflection.Metadata
 			internal int Parent;
 		}
 
+		internal void AddOrReplaceRecord(Record rec)
+		{
+			for (int i = 0; i < records.Length; i++)
+			{
+				if (records[i].Parent == rec.Parent)
+				{
+					records[i] = rec;
+					return;
+				}
+			}
+			AddRecord(rec);
+		}
+
 		internal override void Read(MetadataReader mr)
 		{
 			for (int i = 0; i < records.Length; i++)

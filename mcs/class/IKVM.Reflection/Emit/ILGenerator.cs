@@ -297,6 +297,7 @@ namespace IKVM.Reflection.Emit
 			block.tryOffset = code.Position;
 			exceptionStack.Push(block);
 			exceptions.Add(block);
+			stackHeight = 0;
 			return block.labelEnd;
 		}
 
