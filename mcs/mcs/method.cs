@@ -739,12 +739,17 @@ namespace Mono.CSharp {
 
 		public int Token {
 			get {
-				if (method is MethodBuilder)
-					return ((MethodBuilder) method).GetToken ().Token;
-				else if (method is ConstructorBuilder)
-					return ((ConstructorBuilder) method).GetToken ().Token;
+				MethodToken token;
+				var mb = method as MethodBuilder;
+				if (mb != null)
+					token = mb.GetToken ();
 				else
-					throw new NotSupportedException ();
+					token = ((ConstructorBuilder) method).GetToken ();
+#if STATIC
+				if (token.IsPseudoToken)
+					return ((ModuleBuilder) method.Module).ResolvePseudoToken (token.Token);
+#endif
+				return token.Token;
 			}
 		}
 
