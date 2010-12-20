@@ -5566,7 +5566,7 @@ namespace Mono.CSharp {
 			//
 			if (!ec.HasSet (ResolveContext.Options.CompoundAssignmentScope)) {
 				if (spec.BackingField != null &&
-					(spec.DeclaringType == ec.CurrentType || TypeManager.IsNestedChildOf (ec.CurrentType, spec.DeclaringType))) {
+					(spec.DeclaringType == ec.CurrentType || TypeManager.IsNestedChildOf (ec.CurrentType, spec.DeclaringType.MemberDefinition))) {
 
 					spec.MemberDefinition.SetIsUsed ();
 
@@ -5654,7 +5654,7 @@ namespace Mono.CSharp {
 
 		void Error_AssignmentEventOnly (ResolveContext ec)
 		{
-			if (spec.DeclaringType == ec.CurrentType || TypeManager.IsNestedChildOf (ec.CurrentType, spec.DeclaringType)) {
+			if (spec.DeclaringType == ec.CurrentType || TypeManager.IsNestedChildOf (ec.CurrentType, spec.DeclaringType.MemberDefinition)) {
 				ec.Report.Error (79, loc,
 					"The event `{0}' can only appear on the left hand side of `+=' or `-=' operator",
 					GetSignatureForError ());

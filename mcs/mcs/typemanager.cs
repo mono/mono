@@ -764,20 +764,17 @@ namespace Mono.CSharp
 	//
 	// Checks whether `type' is a nested child of `parent'.
 	//
-	public static bool IsNestedChildOf (TypeSpec type, TypeSpec parent)
+	public static bool IsNestedChildOf (TypeSpec type, ITypeDefinition parent)
 	{
 		if (type == null)
 			return false;
 
-		type = type.GetDefinition (); // DropGenericTypeArguments (type);
-		parent = parent.GetDefinition (); // DropGenericTypeArguments (parent);
-
-		if (type == parent)
+		if (type.MemberDefinition == parent)
 			return false;
 
 		type = type.DeclaringType;
 		while (type != null) {
-			if (type.GetDefinition () == parent)
+			if (type.MemberDefinition == parent)
 				return true;
 
 			type = type.DeclaringType;

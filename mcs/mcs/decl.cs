@@ -1046,8 +1046,7 @@ namespace Mono.CSharp {
 			inflated.declaringType = inflator.TypeInstance;
 			inflated.state |= StateFlags.PendingMetaInflate;
 #if DEBUG
-			if (inflated.ID > 0)
-				inflated.ID = -inflated.ID;
+			inflated.ID += 1000000;
 #endif
 			return inflated;
 		}
@@ -1072,7 +1071,7 @@ namespace Mono.CSharp {
 			//
 			if (ma == Modifiers.PRIVATE)
 				return invocationType.MemberDefinition == parentType.MemberDefinition ||
-					TypeManager.IsNestedChildOf (invocationType, parentType);
+					TypeManager.IsNestedChildOf (invocationType, parentType.MemberDefinition);
 
 			if ((ma & Modifiers.INTERNAL) != 0) {
 				bool b;
