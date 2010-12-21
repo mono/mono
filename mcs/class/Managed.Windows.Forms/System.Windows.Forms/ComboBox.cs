@@ -664,6 +664,8 @@ namespace System.Windows.Forms
 			set {
 				if (dropdown_style == ComboBoxStyle.DropDownList)
 					return;
+				if (value == null)
+					value = String.Empty;
 				textbox_ctrl.SelectedText = value;
 			}
 		}
