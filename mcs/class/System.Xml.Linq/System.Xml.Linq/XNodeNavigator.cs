@@ -68,13 +68,22 @@ namespace System.Xml.Linq
 
 		public override bool HasAttributes {
 			get {
+				if (attr != null)
+					return false;
 				XElement el = node as XElement;
-				return el != null && el.HasAttributes;
+				if (el == null)
+					return false;
+				foreach (var at in el.Attributes ())
+					if (!at.IsNamespaceDeclaration)
+						return true;
+				return false;
 			}
 		}
 
 		public override bool HasChildren {
 			get {
+				if (attr != null)
+					return false;
 				XContainer c = node as XContainer;
 				return c != null && c.FirstNode != null;
 			}
@@ -82,6 +91,8 @@ namespace System.Xml.Linq
 
 		public override bool IsEmptyElement {
 			get {
+				if (attr != null)
+					return false;
 				XElement el = node as XElement;
 				return el != null && el.IsEmpty;
 			}
@@ -130,8 +141,9 @@ namespace System.Xml.Linq
 		public override string NamespaceURI {
 			get {
 				switch (NodeType) {
+				case XPathNodeType.ProcessingInstruction:
 				case XPathNodeType.Namespace:
-					return attr.Value;
+					return String.Empty;
 				case XPathNodeType.Attribute:
 					return attr.Name.NamespaceName;
 				case XPathNodeType.Element:
@@ -171,6 +183,9 @@ namespace System.Xml.Linq
 			get {
 				XName name = null;
 				switch (NodeType) {
+				case XPathNodeType.ProcessingInstruction:
+				case XPathNodeType.Namespace:
+					return String.Empty;
 				case XPathNodeType.Attribute:
 					name = attr.Name;
 					break;
@@ -208,7 +223,10 @@ namespace System.Xml.Linq
 				case XPathNodeType.ProcessingInstruction:
 					return ((XPI) node).Data;
 				case XPathNodeType.Text:
-					return ((XText) node).Value;
+					string s = String.Empty;
+					for (var xn = node as XText; xn != null; xn = xn.NextNode as XText)
+						s += xn.Value;
+					return s;
 				case XPathNodeType.Element:
 				case XPathNodeType.Root:
 					return GetInnerText ((XContainer) node);
@@ -257,7 +275,7 @@ namespace System.Xml.Linq
 		public override bool MoveTo (XPathNavigator other)
 		{
 			XNodeNavigator nav = other as XNodeNavigator;
-			if (nav == null || nav.node.Owner != node.Owner)
+			if (nav == null || nav.node.Document != node.Document)
 				return false;
 			node = nav.node;
 			attr = nav.attr;
@@ -266,6 +284,8 @@ namespace System.Xml.Linq
 
 		public override bool MoveToFirstAttribute ()
 		{
+			if (attr != null)
+				return false;
 			XElement el = node as XElement;
 			if (el == null || !el.HasAttributes)
 				return false;
@@ -279,6 +299,8 @@ namespace System.Xml.Linq
 
 		public override bool MoveToFirstChild ()
 		{
+			if (attr != null)
+				return false;
 			XContainer c = node as XContainer;
 			if (c == null || c.FirstNode == null)
 				return false;
@@ -289,6 +311,8 @@ namespace System.Xml.Linq
 
 		public override bool MoveToFirstNamespace (XPathNamespaceScope scope)
 		{
+			if (NodeType != XPathNodeType.Element)
+				return false;
 			for (XElement el = node as XElement; el != null; el = el.Parent) {
 				foreach (XAttribute a in el.Attributes ())
 					if (a.IsNamespaceDeclaration) {
@@ -311,9 +335,14 @@ namespace System.Xml.Linq
 
 		public override bool MoveToNext ()
 		{
-			if (node.NextNode == null)
+			XNode xn = node.NextNode;
+			if (node is XText)
+				for (; xn != null; xn = xn.NextNode)
+					if (!(xn.NextNode is XText))
+						break;
+			if (xn == null)
 				return false;
-			node = node.NextNode;
+			node = xn;
 			attr = null;
 			return true;
 		}
@@ -345,6 +374,9 @@ namespace System.Xml.Linq
 			if (scope == XPathNamespaceScope.Local)
 				return false;
 
+			if (attr == attr_ns_xml)
+				return false; // no next attribute
+
 			for (XElement el = ((XElement) attr.Parent).Parent; el != null; el = el.Parent) {
 				foreach (XAttribute a in el.Attributes ())
 					if (a.IsNamespaceDeclaration) {
@@ -364,9 +396,9 @@ namespace System.Xml.Linq
 				attr = null;
 				return true;
 			}
-			if (node.Parent == null)
+			if (node.Owner == null)
 				return false;
-			node = node.Parent;
+			node = node.Owner;
 			return true;
 		}
 
@@ -381,7 +413,7 @@ namespace System.Xml.Linq
 
 		public override void MoveToRoot ()
 		{
-			node = node.Owner;
+			node = node.Document;
 			attr = null;
 		}
 	}
