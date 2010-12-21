@@ -63,6 +63,19 @@ namespace MonoTests.System.Windows.Forms
 			base.TearDown ();
 		}
 
+		[Test] // bug 660294
+		public void TestNullSelectedText ()
+		{
+			ComboBox comboBox = new ComboBox ();
+			string text = "abc";
+			comboBox.Items.Add (text);
+			comboBox.SelectedIndex = 0;
+			comboBox.Select (0, text.Length);
+			comboBox.SelectedText = null;
+
+			Assert.AreEqual (String.Empty, comboBox.SelectedText);
+		}
+
 		[Test] // bug #331144
 		public void DropDownStyle ()
 		{
