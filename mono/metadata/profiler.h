@@ -25,7 +25,9 @@ typedef enum {
 	MONO_PROFILE_INS_COVERAGE     = 1 << 14,
 	MONO_PROFILE_STATISTICAL      = 1 << 15,
 	MONO_PROFILE_METHOD_EVENTS    = 1 << 16,
-	MONO_PROFILE_MONITOR_EVENTS   = 1 << 17
+	MONO_PROFILE_MONITOR_EVENTS   = 1 << 17,
+	MONO_PROFILE_IOMAP_EVENTS = 1 << 18, /* this should likely be removed, too */
+	MONO_PROFILE_GC_MOVES = 1 << 19
 } MonoProfileFlags;
 
 typedef enum {
@@ -71,6 +73,14 @@ typedef enum {
 	MONO_PROFILER_MONITOR_FAIL = 3
 } MonoProfilerMonitorEvent;
 
+typedef enum {
+	MONO_PROFILER_CALL_CHAIN_NONE = 0,
+	MONO_PROFILER_CALL_CHAIN_NATIVE = 1,
+	MONO_PROFILER_CALL_CHAIN_GLIBC = 2,
+	MONO_PROFILER_CALL_CHAIN_MANAGED = 3,
+	MONO_PROFILER_CALL_CHAIN_INVALID = 4
+} MonoProfilerCallChainStrategy;
+
 /*
  * Functions that the runtime will call on the profiler.
  */
@@ -101,7 +111,10 @@ typedef void (*MonoProfileAllocFunc)      (MonoProfiler *prof, MonoObject *obj, 
 typedef void (*MonoProfileStatFunc)       (MonoProfiler *prof, guchar *ip, void *context);
 typedef void (*MonoProfileStatCallChainFunc) (MonoProfiler *prof, int call_chain_depth, guchar **ip, void *context);
 typedef void (*MonoProfileGCFunc)         (MonoProfiler *prof, MonoGCEvent event, int generation);
+typedef void (*MonoProfileGCMoveFunc) (MonoProfiler *prof, void **objects, int num);
 typedef void (*MonoProfileGCResizeFunc)   (MonoProfiler *prof, gint64 new_size);
+
+typedef void (*MonoProfileIomapFunc) (MonoProfiler *prof, const char *report, const char *pathname, const char *new_pathname);
 
 typedef gboolean (*MonoProfileCoverageFilterFunc)   (MonoProfiler *prof, MonoMethod *method);
 
@@ -139,12 +152,15 @@ void mono_profiler_install_transition  (MonoProfileMethodResult callback);
 void mono_profiler_install_allocation  (MonoProfileAllocFunc callback);
 void mono_profiler_install_monitor     (MonoProfileMonitorFunc callback);
 void mono_profiler_install_statistical (MonoProfileStatFunc callback);
-void mono_profiler_install_statistical_call_chain (MonoProfileStatCallChainFunc callback, int call_chain_depth);
+void mono_profiler_install_statistical_call_chain (MonoProfileStatCallChainFunc callback, int call_chain_depth, MonoProfilerCallChainStrategy call_chain_strategy);
 void mono_profiler_install_exception   (MonoProfileExceptionFunc throw_callback, MonoProfileMethodFunc exc_method_leave, MonoProfileExceptionClauseFunc clause_callback);
 void mono_profiler_install_coverage_filter (MonoProfileCoverageFilterFunc callback);
 void mono_profiler_coverage_get  (MonoProfiler *prof, MonoMethod *method, MonoProfileCoverageFunc func);
 void mono_profiler_install_gc    (MonoProfileGCFunc callback, MonoProfileGCResizeFunc heap_resize_callback);
+void mono_profiler_install_gc_moves (MonoProfileGCMoveFunc callback);
 void mono_profiler_install_runtime_initialized (MonoProfileFunc runtime_initialized_callback);
+
+void mono_profiler_install_iomap (MonoProfileIomapFunc callback);
 
 void mono_profiler_install_code_chunk_new (MonoProfilerCodeChunkNew callback);
 void mono_profiler_install_code_chunk_destroy (MonoProfilerCodeChunkDestroy callback);
