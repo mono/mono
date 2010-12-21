@@ -70,6 +70,7 @@ namespace Mono.Cecil {
 
 		public bool HasConstant {
 			get { return parameter != null && parameter.HasConstant; }
+			set { Parameter.HasConstant = value; }
 		}
 
 		public object Constant {

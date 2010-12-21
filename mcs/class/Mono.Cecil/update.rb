@@ -9,9 +9,7 @@ sources = {
 	"Mono.Security.Cryptography/*.cs" => "Mono.Security.Cryptography",
 	"Mono/*.cs" => "Mono",
 	"System.Runtime.CompilerServices/*.cs" => "System.Runtime.CompilerServices",
-	"Mono.Cecil.nunit" => ".",
 	"NOTES.txt" => ".",
-	"Mono.Cecil.csproj" => ".",
 
 	"symbols/mdb/Mono.Cecil.Mdb/*.cs" => "../Mono.Cecil.Mdb/Mono.Cecil.Mdb/",
 }

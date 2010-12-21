@@ -171,7 +171,7 @@ namespace Mono.Cecil {
 
 		static bool IsZero (Version version)
 		{
-			return version.Major == 0 && version.Minor == 0 && version.Build == 0 && version.Revision == 0;
+			return version == null || (version.Major == 0 && version.Minor == 0 && version.Build == 0 && version.Revision == 0);
 		}
 
 #if !SILVERLIGHT && !CF

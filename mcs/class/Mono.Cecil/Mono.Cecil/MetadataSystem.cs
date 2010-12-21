@@ -100,6 +100,9 @@ namespace Mono.Cecil {
 		public static void TryProcessPrimitiveType (TypeReference type)
 		{
 			var scope = type.scope;
+			if (scope == null)
+				return;
+
 			if (scope.MetadataScopeType != MetadataScopeType.AssemblyNameReference)
 				return;
 
@@ -368,7 +371,7 @@ namespace Mono.Cecil {
 					return type;
 			}
 
-			throw new ArgumentException ();
+			return null;
 		}
 	}
 }
