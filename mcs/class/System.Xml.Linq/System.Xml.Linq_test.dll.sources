@@ -15,4 +15,4 @@ System.Xml.Linq/XStreamingElementTest.cs
 System.Xml.Linq/XTextTest.cs
 System.Xml.Schema/ExtensionsTest.cs
 System.Xml.XPath/ExtensionsTest.cs
-
+System.Xml.XPath/ExtensionsTest2.cs

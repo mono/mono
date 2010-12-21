@@ -40,7 +40,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XPathNavigatorCommonTests
+	public class ExtensionsTest
 	{
 		XPathNavigator nav;
 
