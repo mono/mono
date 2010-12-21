@@ -413,7 +413,7 @@ namespace System.Xml.Linq
 
 		public override void MoveToRoot ()
 		{
-			node = node.Document;
+			node = node.Document ?? node;
 			attr = null;
 		}
 	}

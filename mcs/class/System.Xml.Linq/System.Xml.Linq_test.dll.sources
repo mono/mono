@@ -17,3 +17,4 @@ System.Xml.Schema/ExtensionsTest.cs
 System.Xml.XPath/ExtensionsTest.cs
 System.Xml.XPath/ExtensionsTest2.cs
 System.Xml.XPath/ExtensionsTest3.cs
+System.Xml.XPath/ExtensionsTest4.cs
