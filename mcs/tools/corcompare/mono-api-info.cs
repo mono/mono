@@ -604,27 +604,10 @@ namespace CorCompare
 				if (!MustDocumentMethod(method))
 					continue;
 
-				if (IsFinalizer (method))
-					continue;
-
 				list.Add (method);
 			}
 
 			return (MethodDefinition []) list.ToArray (typeof (MethodDefinition));
-		}
-
-		static bool IsFinalizer (MethodDefinition method)
-		{
-			if (method.Name != "Finalize")
-				return false;
-
-			if (!method.IsVirtual)
-				return false;
-
-			if (method.Parameters.Count != 0)
-				return false;
-
-			return true;
 		}
 
 		private MethodDefinition [] GetConstructors (TypeDefinition type)
