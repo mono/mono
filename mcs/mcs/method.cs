@@ -316,8 +316,8 @@ namespace Mono.CSharp {
 							inflatedMetaInfo = TypeBuilder.GetMethod (DeclaringType.GetMetaInfo (), (MethodInfo) metaInfo);
 					} else {
 #if STATIC
-					// it should not be reached
-					throw new NotImplementedException ();
+						// it should not be reached
+						throw new NotImplementedException ();
 #else
 						inflatedMetaInfo = MethodInfo.GetMethodFromHandle (metaInfo.MethodHandle, DeclaringType.GetMetaInfo ().TypeHandle);
 #endif
@@ -959,6 +959,23 @@ namespace Mono.CSharp {
 					}
 
 					if (base_method.IsGeneric) {
+						ObsoleteAttribute oa;
+						foreach (var base_tp in base_tparams) {
+							oa = base_tp.BaseType.GetAttributeObsolete ();
+							if (oa != null) {
+								AttributeTester.Report_ObsoleteMessage (oa, base_tp.BaseType.GetSignatureForError (), Location, Report);
+							}
+
+							if (base_tp.InterfacesDefined != null) {
+								foreach (var iface in base_tp.InterfacesDefined) {
+									oa = iface.GetAttributeObsolete ();
+									if (oa != null) {
+										AttributeTester.Report_ObsoleteMessage (oa, iface.GetSignatureForError (), Location, Report);
+									}
+								}
+							}
+						}
+
 						if (base_decl_tparams.Length != 0) {
 							base_decl_tparams = base_decl_tparams.Concat (base_tparams).ToArray ();
 							base_targs = base_targs.Concat (tparams.Select<TypeParameter, TypeSpec> (l => l.Type)).ToArray ();
