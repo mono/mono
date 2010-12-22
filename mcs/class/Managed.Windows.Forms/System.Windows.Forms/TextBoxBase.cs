@@ -510,6 +510,9 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (value == null)
+					value = String.Empty;
+
 				document.ReplaceSelection(CaseAdjust(value), false);
 
 				ScrollToCaret();
