@@ -37,7 +37,7 @@ public class Int16Test
 	private CultureInfo old_culture;
 
 	[TestFixtureSetUp]
-	public void SetUp () 
+	public void SetUpFixture () 
 	{
 		old_culture = Thread.CurrentThread.CurrentCulture;
 
@@ -47,6 +47,12 @@ public class Int16Test
 		// We can't initialize this until we set the culture.
 		Results1 [0] = "("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"32,768.00)";
 		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"32,767.00000";
+	}
+	
+	[SetUp]
+	public void Setup ()
+	{
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
 	}
 
 	[TestFixtureTearDown]
