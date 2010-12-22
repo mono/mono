@@ -549,54 +549,34 @@ namespace Mono.CSharp {
 							continue;
 
 						//
-						// Is the member of same type ?
+						// Is the member of same kind ?
 						//
 						if ((entry.Kind & ~MemberKind.Destructor & mkind & MemberKind.MaskType) == 0) {
 							// Destructors are ignored as they cannot be overridden by user
 							if ((entry.Kind & MemberKind.Destructor) != 0)
 								continue;
 
-							// Only different arity methods hide
+							// A method with different arity does not hide base member
 							if (mkind != MemberKind.Method && member.MemberName.Arity != entry.Arity)
 								continue;
-							
-							if ((member_param == null || !(entry is IParametersMember))) {
-								bestCandidate = entry;
-								return null;
-							}
 
+							bestCandidate = entry;
+							return null;
+						}
+
+						//
+						// Same kind of different arity is valid
+						//
+						if (member.MemberName.Arity != entry.Arity) {
 							continue;
 						}
 
-						if (entry.Kind != mkind) {
-							if (bestCandidate == null)
-								bestCandidate = entry;
-
-							continue;
-						}
-
-						if (member_param != null) {
-							// Check arity match
-							int arity = member.MemberName.Arity;
-							if (arity != entry.Arity)
-								continue;
-
-							var pm = entry as IParametersMember;
-							AParametersCollection entry_parameters;
-							if (pm == null) {
-								if (entry.Kind != MemberKind.Delegate)
-									continue;
-
-								// TODO: I don't have DelegateSpec
-								entry_parameters = Delegate.GetParameters (member.Compiler, (TypeSpec) entry);
-							} else {
-								entry_parameters = pm.Parameters;
-							}
-
+						if ((entry.Kind & mkind & (MemberKind.Method | MemberKind.Indexer)) != 0) {
 							if (entry.IsAccessor != member is AbstractPropertyEventMethod)
 								continue;
 
-							if (!TypeSpecComparer.Override.IsEqual (entry_parameters, member_param))
+							var pm = entry as IParametersMember;
+							if (!TypeSpecComparer.Override.IsEqual (pm.Parameters, member_param))
 								continue;
 						}
 
