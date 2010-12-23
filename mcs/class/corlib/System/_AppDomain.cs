@@ -103,8 +103,8 @@ namespace System
 
 #if !NET_4_0
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
-		object GetLifetimeService ();
 #endif
+		object GetLifetimeService ();
 
 		Type GetType ();
 

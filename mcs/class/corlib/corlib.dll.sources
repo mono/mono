@@ -660,6 +660,8 @@ System.Runtime.ConstrainedExecution/CER.cs
 System.Runtime.ConstrainedExecution/Consistency.cs
 System.Runtime.ConstrainedExecution/PrePrepareMethodAttribute.cs
 System.Runtime.ConstrainedExecution/ReliabilityContractAttribute.cs
+System.Runtime.ExceptionServices/FirstChanceExceptionEventArgs.cs
+System.Runtime.ExceptionServices/HandleProcessCorruptedStateExceptionsAttribute.cs
 System.Runtime.Hosting/ActivationArguments.cs
 System.Runtime.Hosting/ApplicationActivator.cs
 System.Runtime.InteropServices/_Activator.cs
@@ -1112,6 +1114,8 @@ System.Runtime.Serialization.Formatters.Binary/CodeGenerator.cs
 System.Runtime.Serialization.Formatters.Binary/ObjectReader.cs
 System.Runtime.Serialization.Formatters.Binary/ObjectWriter.cs
 System.Runtime.Serialization.Formatters.Binary/MessageFormatter.cs
+System.Runtime.Versioning/ComponentGuaranteesAttribute.cs
+System.Runtime.Versioning/ComponentGuaranteesOptions.cs
 System.Runtime.Versioning/ResourceConsumptionAttribute.cs
 System.Runtime.Versioning/ResourceExposureAttribute.cs
 System.Runtime.Versioning/ResourceScope.cs
