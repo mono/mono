@@ -1,6 +1,9 @@
 #!/bin/sh
+SDK_VERSION=4.2
 ASPEN_ROOT=/Developer/Platforms/iPhoneOS.platform/Developer
-ASPEN_SDK=$ASPEN_ROOT/SDKs/iPhoneOS4.2.sdk/
+SIMULATOR_ASPEN_ROOT=/Developer/Platforms/iPhoneSimulator.platform/Developer
+ASPEN_SDK=$ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk/
+SIMULATOR_ASPEN_SDK=$SIMULATOR_ASPEN_ROOT/SDKs/iPhoneSimulator${SDK_VERSION}.sdk
 
 ORIG_PATH=$PATH
 PRFX=$PWD/tmp 
@@ -110,10 +113,15 @@ build_iphone_crosscompiler ()
 build_iphone_simulator ()
 {
 	echo "Building iPhone simulator static lib";
+	export MACSYSROOT="-isysroot $SIMULATOR_ASPEN_SDK"
+	export MACSDKOPTIONS="-miphoneos-version-min=3.0 $MACSYSROOT"
+	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc-4.2"
+	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++-4.2"
 	perl build_runtime_osx.pl -iphone_simulator=1 || exit 1
 	echo "Copying iPhone simulator static lib to final destination";
 	mkdir -p builds/embedruntimes/iphone
 	cp mono/mini/.libs/libmono.a builds/embedruntimes/iphone/libmono-i386.a
+	unsetenv
 }
 
 usage()

@@ -2666,7 +2666,7 @@ namespace System.Net.Sockets
 #if NET_2_0
 			if (System.Environment.SocketSecurityEnabled)
 			{
-				Console.WriteLine ("Checking {0}", sockaddr);
+				//Console.WriteLine ("Checking {0}", sockaddr);
 				if (!CheckEndPoint(sockaddr))
 				{
 					buf.Initialize ();

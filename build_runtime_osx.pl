@@ -70,8 +70,14 @@ if (not $skipbuild)
 	#we need to manually set the compiler to gcc4, because the 10.4 sdk only shipped with the gcc4 headers
 	#their setup is a bit broken as they dont autodetect this, but basically the gist is if you want to copmile
 	#against the 10.4 sdk, you better use gcc4, otherwise things go boink.
-	$ENV{CC} = "gcc-4.0";
-	$ENV{CXX} = "gcc-4.0";
+	unless ($ENV{CC})
+	{
+		$ENV{CC} = "gcc-4.0";
+	}
+	unless ($ENV{CXX})
+	{
+		$ENV{CXX} = "gcc-4.0";
+	}
 
 	if ($debug)
 	{
@@ -86,8 +92,6 @@ if (not $skipbuild)
 		$ENV{CFLAGS} = "-DTARGET_IPHONE_SIMULATOR -g -O0";
 		$macversion = "10.5";
 		$sdkversion = "10.5";
-		$ENV{CC} = "gcc-4.2";
-        	$ENV{CXX} = "gcc-4.2";	
 	}
 	
 	#this will fail on a fresh working copy, so don't die on it.
@@ -108,7 +112,10 @@ if (not $skipbuild)
 	unshift(@autogenparams, "--cache-file=osx.cache");
 	unshift(@autogenparams, "--disable-mcs-build");
 	unshift(@autogenparams, "--with-glib=embedded");
-	unshift(@autogenparams, "--with-macversion=$macversion");
+	if (!$iphone_simulator)
+	{
+		unshift(@autogenparams, "--with-macversion=$macversion");
+	}
 	unshift(@autogenparams, "--disable-nls");  #this removes the dependency on gettext package
 
 	# From Massi: I was getting failures in install_name_tool about space

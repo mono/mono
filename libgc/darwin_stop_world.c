@@ -112,7 +112,7 @@ void GC_push_all_stacks() {
 	if(r != KERN_SUCCESS) ABORT("thread_get_state failed");
 	
 #if defined(I386)
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5) || defined(TARGET_IPHONE_SIMULATOR)
 
 	lo = state.__esp;
 
