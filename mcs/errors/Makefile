@@ -20,6 +20,7 @@ DISTFILES = \
 	$(wildcard known-issues-*)
 
 TEST_SUPPORT_FILES = \
+	CS0012-lib.dll CS0012-2-lib.dll CS0012-3-lib.dll CS0012-4-lib.dll \
 	CS0103-2-lib.dll CS0118-2-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0122-19-lib.dll CS0143-lib.dll CS0144-3-lib.dll \
 	CS0205-3-lib.dll \
 	CS0229-3-lib.dll CS0229-4-lib.dll \
