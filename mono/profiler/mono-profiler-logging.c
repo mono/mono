@@ -5848,7 +5848,7 @@ mono_profiler_startup (const char *desc)
 	mono_profiler_install_allocation (object_allocated);
 	mono_profiler_install_monitor (monitor_event);
 	mono_profiler_install_statistical (statistical_hit);
-	mono_profiler_install_statistical_call_chain (statistical_call_chain, profiler->statistical_call_chain_depth);
+	mono_profiler_install_statistical_call_chain (statistical_call_chain, profiler->statistical_call_chain_depth, MONO_PROFILER_CALL_CHAIN_MANAGED);
 	mono_profiler_install_gc (gc_event, gc_resize);
 	mono_profiler_install_runtime_initialized (runtime_initialized);
 #if (HAS_OPROFILE)
