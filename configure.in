@@ -66,6 +66,7 @@ AC_ARG_WITH([macversion],
 	[  --with-macversion=<version>    Choose minimum macos version],
 	[], [with_macversion=10.4])
 
+if test -z MACSDKOPTIONS; then
 MACSYSROOTBASE="-isysroot /Developer/SDKs"
 if [[ "$with_macversion" == "10.4" ]]; then
   MACSYSROOT="$MACSYSROOTBASE/MacOSX10.4u.sdk"
@@ -73,7 +74,7 @@ else
   MACSYSROOT="$MACSYSROOTBASE/MacOSX""$with_macversion"".sdk"
 fi
 MACSDKOPTIONS="-mmacosx-version-min=$with_macversion $MACSYSROOT"
-
+fi
 
 # Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
