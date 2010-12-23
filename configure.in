@@ -66,7 +66,7 @@ AC_ARG_WITH([macversion],
 	[  --with-macversion=<version>    Choose minimum macos version],
 	[], [with_macversion=10.4])
 
-if test -z MACSDKOPTIONS; then
+if test -z $MACSDKOPTIONS; then
 MACSYSROOTBASE="-isysroot /Developer/SDKs"
 if [[ "$with_macversion" == "10.4" ]]; then
   MACSYSROOT="$MACSYSROOTBASE/MacOSX10.4u.sdk"
