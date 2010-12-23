@@ -30,7 +30,9 @@
 
 namespace System.Runtime.Versioning
 {
-	[AttributeUsageAttribute(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+	[AttributeUsageAttribute (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct |
+		AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event |
+		AttributeTargets.Interface | AttributeTargets.Delegate, AllowMultiple = false, Inherited = false)]
 	public sealed class ComponentGuaranteesAttribute : Attribute
 	{
 		readonly ComponentGuaranteesOptions guarantees;
