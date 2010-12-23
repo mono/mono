@@ -9,9 +9,12 @@ $fx1_1 = File.join $fx, "v1.1.4322"
 $fx2_0 = File.join $fx, "v2.0.50727"
 $fx3_0 = 'C:/Program Files/Reference Assemblies/Microsoft/Framework/v3.0'
 $fx3_5 = 'C:/Program Files/Reference Assemblies/Microsoft/Framework/v3.5'
-$fx4_0 = 'C:/Program Files/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.0'
+$fx4_0 = File.join $fx, "v4.0.30319"
+$fx4_0_wpf = File.join $fx4_0, "WPF"
 $sl2_0 = 'C:/Program Files/Microsoft Silverlight/2.0.40115.0'
 $sl2_0sdk = 'C:/Program Files/Microsoft SDKs/Silverlight/v2.0/Libraries/Client/'
+$sl4 = 'C:/Program Files/Microsoft Silverlight/4.0.51204.0'
+$sl4_sdk = 'C:/Program Files/Microsoft SDKs/Silverlight/v4.0/Libraries/Client'
 
 $net_1_1 = [
 	"mscorlib",
@@ -138,6 +141,8 @@ $net_3_5 = [
 	"Microsoft.Build.Framework",
 	"Microsoft.Build.Tasks",
 	"Microsoft.Build.Utilities",
+	"Microsoft.Build.Conversion.v3.5",
+	"Microsoft.Build.Utilities.v3.5",
 	"",
 	"System.Configuration.Install",
 	"System.Design",
@@ -218,7 +223,6 @@ $net_4_0 = [
 	"System.Net",
 	"System.Numerics",
 	"System.Printing",
-	"System.Runtime",
 	"System.Runtime.Caching",
 	"System.Runtime.Remoting",
 	"System.Runtime.Serialization",
@@ -283,6 +287,44 @@ $sl_2_0 = [
 	"System.Windows.Controls.Data",
 ]
 
+$sl_4 = [
+	"mscorlib",
+	"Microsoft.VisualBasic",
+	"System",
+	"System.Core",
+	"System.Net",
+	"System.Runtime.Serialization",
+	"System.ServiceModel",
+	"System.ServiceModel.Web",
+	"System.Windows",
+	"System.Windows.Browser",
+	"System.Xml",
+	"",
+	"Microsoft.CSharp",
+	"System.ComponentModel.Composition",
+	"System.ComponentModel.Composition.Initialization",
+	"System.ComponentModel.DataAnnotations",
+	"System.Data.Services.Client",
+	"System.Json",
+	"System.Numerics",
+	"System.Runtime.Serialization.Json",
+	"System.ServiceModel.Extensions",
+	"System.ServiceModel.NetTcp",
+	"System.ServiceModel.PollingDuplex",
+	"System.ServiceModel.Syndication",
+	"System.ServiceModel.Web.Extensions",
+	"System.Windows.Controls.Data",
+	"System.Windows.Controls.Data.Input",
+	"System.Windows.Controls",
+	"System.Windows.Controls.Input",
+	"System.Windows.Controls.Navigation",
+	"System.Windows.Data",
+	"System.Xml.Linq",
+	"System.Xml.Serialization",
+	"System.Xml.Utils",
+	"System.Xml.XPath"
+]
+
 def locate(assembly, fxs = nil)
 	if fxs
 		fxs.each do |fx|
@@ -323,7 +365,7 @@ def process(profile, assemblies, fxs = nil)
 
 	assemblies.each do |assembly|
 		if assembly != nil and assembly.length > 0
-			#puts assembly
+			puts assembly
 			location = locate(assembly, fxs)
 			if location
 				generate(location, assembly)
@@ -352,5 +394,5 @@ process("1.1", $net_1_1, [$fx1_1])
 process("2.0", $net_2_0, [$fx2_0])
 process("3.0", $net_3_0, [$fx3_0, $fx2_0])
 process("3.5", $net_3_5, [$fx3_5, $fx2_0])
-process("4.0", $net_4_0, [$fx4_0])
-process("SL2", $sl_2_0, [$sl2_0, $sl2_0sdk])
+process("4.0", $net_4_0, [$fx4_0, $fx4_0_wpf])
+process("SL4", $sl_4, [$sl4, $sl4_sdk])

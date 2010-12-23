@@ -20,6 +20,7 @@ using System.Xml;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using System.IO;
 
 namespace CorCompare
 {
@@ -34,11 +35,31 @@ namespace CorCompare
 
 			AssemblyCollection acoll = new AssemblyCollection ();
 
+			string windir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+			string pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"assembly\GAC\MSDATASRC\7.0.3300.0__b03f5f7f11d50a3a"));
+
 			foreach (string arg in args) {
-				if (arg == "--abi")
+				if (arg == "--abi") {
 					AbiMode = true;
-				else
+				} else {
 					acoll.Add (arg);
+
+					if (arg.Contains ("v3.0")) {
+						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+					} else if (arg.Contains ("v3.5")) {
+						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v3.0\Windows Communication Foundation"));
+					} else if (arg.Contains ("v4.0")) {
+						if (arg.Contains ("Silverlight")) {
+							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (pf, @"Microsoft Silverlight\4.0.51204.0"));
+						} else {
+							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
+							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
+						}
+					}
+
+				}
 			}
 
 			XmlDocument doc = new XmlDocument ();
@@ -80,8 +101,10 @@ namespace CorCompare
 		public bool Add (string name)
 		{
 			AssemblyDefinition ass = LoadAssembly (name);
-			if (ass == null)
+			if (ass == null) {
+				Console.Error.WriteLine ("Cannot load assembly file " + name);
 				return false;
+			}
 
 			assemblies.Add (ass);
 			return true;
@@ -374,6 +397,14 @@ namespace CorCompare
 			if (layout != null)
 				AddAttribute (nclass, "layout", layout);
 
+			if (type.PackingSize >= 0) {
+				AddAttribute (nclass, "pack", type.PackingSize.ToString ());
+			}
+
+			if (type.ClassSize >= 0) {
+				AddAttribute (nclass, "size", type.ClassSize.ToString ());
+			}
+
 			parent.AppendChild (nclass);
 
 			AttributeData.OutputAttributes (document, nclass, GetCustomAttributes(type));
@@ -604,10 +635,33 @@ namespace CorCompare
 				if (!MustDocumentMethod(method))
 					continue;
 
+				if (IsFinalizer (method)) {
+					string name = method.DeclaringType.Name;
+					int arity = name.IndexOf ('`');
+					if (arity > 0)
+						name = name.Substring (0, arity);
+
+					method.Name = "~" + name;
+				}
+
 				list.Add (method);
 			}
 
 			return (MethodDefinition []) list.ToArray (typeof (MethodDefinition));
+		}
+
+		static bool IsFinalizer (MethodDefinition method)
+		{
+			if (method.Name != "Finalize")
+				return false;
+
+			if (!method.IsVirtual)
+				return false;
+
+			if (method.Parameters.Count != 0)
+				return false;
+
+			return true;
 		}
 
 		private MethodDefinition [] GetConstructors (TypeDefinition type)
