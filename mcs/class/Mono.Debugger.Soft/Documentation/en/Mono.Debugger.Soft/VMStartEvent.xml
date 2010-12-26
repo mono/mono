@@ -1,5 +1,6 @@
 <Type Name="VMStartEvent" FullName="Mono.Debugger.Soft.VMStartEvent">
   <TypeSignature Language="C#" Value="public class VMStartEvent : Mono.Debugger.Soft.Event" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit VMStartEvent extends Mono.Debugger.Soft.Event" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public VMStartEvent (Mono.Debugger.Soft.VirtualMachine vm, int req_id, long thread_id);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class Mono.Debugger.Soft.VirtualMachine vm, int32 req_id, int64 thread_id) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

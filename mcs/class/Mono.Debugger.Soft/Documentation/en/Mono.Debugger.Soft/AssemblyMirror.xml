@@ -1,5 +1,6 @@
 <Type Name="AssemblyMirror" FullName="Mono.Debugger.Soft.AssemblyMirror">
   <TypeSignature Language="C#" Value="public class AssemblyMirror : Mono.Debugger.Soft.Mirror" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AssemblyMirror extends Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="EntryPoint">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror EntryPoint { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.MethodMirror EntryPoint" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -31,6 +33,7 @@
     </Member>
     <Member MemberName="GetAssemblyObject">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ObjectMirror GetAssemblyObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.ObjectMirror GetAssemblyObject() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -45,8 +48,68 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="GetName">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.AssemblyName GetName ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.AssemblyName GetName() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.AssemblyName</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror GetType (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.TypeMirror GetType(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.TypeMirror</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror GetType (string name, bool throwOnError);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.TypeMirror GetType(string name, bool throwOnError) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.TypeMirror</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="throwOnError" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="throwOnError">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="GetType">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror GetType (string name, bool throwOnError, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.TypeMirror GetType(string name, bool throwOnError, bool ignoreCase) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -70,6 +133,7 @@
     </Member>
     <Member MemberName="Location">
       <MemberSignature Language="C#" Value="public string Location { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Location" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -85,6 +149,7 @@
     </Member>
     <Member MemberName="ManifestModule">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ModuleMirror ManifestModule { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.ModuleMirror ManifestModule" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -99,7 +164,8 @@
       </Docs>
     </Member>
     <Member MemberName="Metadata">
-      <MemberSignature Language="C#" Value="public Mono.Cecil.AssemblyDefinition Metadata { set; get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Cecil.AssemblyDefinition Metadata { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Cecil.AssemblyDefinition Metadata" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

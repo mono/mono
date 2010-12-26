@@ -1,5 +1,6 @@
 <Type Name="InvocationException" FullName="Mono.Debugger.Soft.InvocationException">
   <TypeSignature Language="C#" Value="public class InvocationException : Exception" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit InvocationException extends System.Exception" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public InvocationException (Mono.Debugger.Soft.ObjectMirror exception);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class Mono.Debugger.Soft.ObjectMirror exception) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -30,6 +32,7 @@
     </Member>
     <Member MemberName="Exception">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ObjectMirror Exception { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.ObjectMirror Exception" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

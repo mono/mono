@@ -1,5 +1,6 @@
 <Type Name="StepEvent" FullName="Mono.Debugger.Soft.StepEvent">
   <TypeSignature Language="C#" Value="public class StepEvent : Mono.Debugger.Soft.Event" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit StepEvent extends Mono.Debugger.Soft.Event" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="Location">
       <MemberSignature Language="C#" Value="public long Location { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Location" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -31,6 +33,7 @@
     </Member>
     <Member MemberName="Method">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror Method { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.MethodMirror Method" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

@@ -1,6 +1,7 @@
 <Overview>
   <Assemblies>
-    <Assembly Name="Mono.Debugger" Version="0.0.0.0">
+    <Assembly Name="Mono.Debugger.Soft" Version="0.0.0.0">
+      <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 d2 d0 3a 8e 6b ea 7a 2e 74 e8 d1 af cc 93 e8 85 19 74 95 2b b4 80 a1 2c 91 34 47 4d 04 06 24 47 c3 7e 0e 68 c0 80 53 6f cf 3c 3f be 2f f9 c9 79 ce 99 84 75 e5 06 e8 ce 82 dd 5b 0f 35 0d c1 0e 93 bf 2e ee cf 87 4b 24 77 0c 50 81 db ea 74 47 fd da fa 27 7b 22 de 47 d6 ff ea 44 96 74 a4 f9 fc cf 84 d1 50 69 08 93 80 28 4d bd d3 5f 46 cd ff 12 a1 bd 78 e4 ef 00 65 d0 16 df ]</AssemblyPublicKey>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
@@ -11,10 +12,14 @@
   <Copyright>(C) 2009 Novell, Inc.</Copyright>
   <Types>
     <Namespace Name="Mono.Debugger.Soft">
+      <Type Name="AbsentInformationException" Kind="Class" />
+      <Type Name="AppDomainCreateEvent" Kind="Class" />
       <Type Name="AppDomainMirror" Kind="Class" />
+      <Type Name="AppDomainUnloadEvent" Kind="Class" />
       <Type Name="ArrayMirror" Kind="Class" />
       <Type Name="AssemblyLoadEvent" Kind="Class" />
       <Type Name="AssemblyMirror" Kind="Class" />
+      <Type Name="AssemblyUnloadEvent" Kind="Class" />
       <Type Name="BreakpointEvent" Kind="Class" />
       <Type Name="BreakpointEventRequest" Kind="Class" />
       <Type Name="CustomAttributeDataMirror" Kind="Class" />
@@ -25,13 +30,21 @@
       <Type Name="ErrorHandlerEventArgs" Kind="Class" />
       <Type Name="Event" Kind="Class" />
       <Type Name="EventRequest" Kind="Class" />
+      <Type Name="EventSet" Kind="Class" />
       <Type Name="EventType" Kind="Enumeration" />
+      <Type Name="ExceptionEvent" Kind="Class" />
+      <Type Name="ExceptionEventRequest" Kind="Class" />
       <Type Name="FieldInfoMirror" Kind="Class" />
+      <Type Name="IInvokeAsyncResult" Kind="Interface" />
       <Type Name="ILInstruction" Kind="Class" />
       <Type Name="IMirror" Kind="Interface" />
       <Type Name="InvalidStackFrameException" Kind="Class" />
       <Type Name="InvocationException" Kind="Class" />
+      <Type Name="InvokeOptions" Kind="Enumeration" />
+      <Type Name="ITargetProcess" Kind="Interface" />
       <Type Name="LaunchOptions" Kind="Class" />
+      <Type Name="LaunchOptions+ProcessLauncher" Kind="Delegate" />
+      <Type Name="LaunchOptions+TargetProcessLauncher" Kind="Delegate" />
       <Type Name="LocalVariable" Kind="Class" />
       <Type Name="Location" Kind="Class" />
       <Type Name="MethodBodyMirror" Kind="Class" />
@@ -48,7 +61,6 @@
       <Type Name="PrimitiveValue" Kind="Class" />
       <Type Name="PropertyInfoMirror" Kind="Class" />
       <Type Name="StackFrame" Kind="Class" />
-      <Type Name="StackFrameType" Kind="Enumeration" />
       <Type Name="StepDepth" Kind="Enumeration" />
       <Type Name="StepEvent" Kind="Class" />
       <Type Name="StepEventRequest" Kind="Class" />
@@ -62,6 +74,7 @@
       <Type Name="TypeLoadEvent" Kind="Class" />
       <Type Name="TypeMirror" Kind="Class" />
       <Type Name="Value" Kind="Class" />
+      <Type Name="VersionInfo" Kind="Class" />
       <Type Name="VirtualMachine" Kind="Class" />
       <Type Name="VirtualMachineManager" Kind="Class" />
       <Type Name="VMDeathEvent" Kind="Class" />

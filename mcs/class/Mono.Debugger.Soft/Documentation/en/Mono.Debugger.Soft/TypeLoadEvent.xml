@@ -1,5 +1,6 @@
 <Type Name="TypeLoadEvent" FullName="Mono.Debugger.Soft.TypeLoadEvent">
   <TypeSignature Language="C#" Value="public class TypeLoadEvent : Mono.Debugger.Soft.Event" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TypeLoadEvent extends Mono.Debugger.Soft.Event" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="Type">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror Type { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.TypeMirror Type" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

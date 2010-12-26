@@ -1,5 +1,6 @@
 <Type Name="StepSize" FullName="Mono.Debugger.Soft.StepSize">
   <TypeSignature Language="C#" Value="public enum StepSize" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed StepSize extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="Line">
       <MemberSignature Language="C#" Value="Line" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.StepSize Line = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -28,6 +30,7 @@
     </Member>
     <Member MemberName="Min">
       <MemberSignature Language="C#" Value="Min" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.StepSize Min = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

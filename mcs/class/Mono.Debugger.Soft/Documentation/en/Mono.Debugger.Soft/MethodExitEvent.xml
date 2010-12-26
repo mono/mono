@@ -1,5 +1,6 @@
 <Type Name="MethodExitEvent" FullName="Mono.Debugger.Soft.MethodExitEvent">
   <TypeSignature Language="C#" Value="public class MethodExitEvent : Mono.Debugger.Soft.Event" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MethodExitEvent extends Mono.Debugger.Soft.Event" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="Method">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror Method { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.MethodMirror Method" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

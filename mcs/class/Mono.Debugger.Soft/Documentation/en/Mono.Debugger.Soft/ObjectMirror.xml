@@ -1,5 +1,6 @@
 <Type Name="ObjectMirror" FullName="Mono.Debugger.Soft.ObjectMirror">
   <TypeSignature Language="C#" Value="public class ObjectMirror : Mono.Debugger.Soft.Value" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ObjectMirror extends Mono.Debugger.Soft.Value" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="Address">
       <MemberSignature Language="C#" Value="public long Address { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Address" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -29,8 +31,76 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="BeginInvokeMethod">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginInvokeMethod (Mono.Debugger.Soft.ThreadMirror thread, Mono.Debugger.Soft.MethodMirror method, System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt; arguments, Mono.Debugger.Soft.InvokeOptions options, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IAsyncResult BeginInvokeMethod(class Mono.Debugger.Soft.ThreadMirror thread, class Mono.Debugger.Soft.MethodMirror method, class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.Value&gt; arguments, valuetype Mono.Debugger.Soft.InvokeOptions options, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="thread" Type="Mono.Debugger.Soft.ThreadMirror" />
+        <Parameter Name="method" Type="Mono.Debugger.Soft.MethodMirror" />
+        <Parameter Name="arguments" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt;" />
+        <Parameter Name="options" Type="Mono.Debugger.Soft.InvokeOptions" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="thread">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="arguments">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginInvokeMethod">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginInvokeMethod (Mono.Debugger.Soft.VirtualMachine vm, Mono.Debugger.Soft.ThreadMirror thread, Mono.Debugger.Soft.MethodMirror method, System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt; arguments, Mono.Debugger.Soft.InvokeOptions options, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IAsyncResult BeginInvokeMethod(class Mono.Debugger.Soft.VirtualMachine vm, class Mono.Debugger.Soft.ThreadMirror thread, class Mono.Debugger.Soft.MethodMirror method, class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.Value&gt; arguments, valuetype Mono.Debugger.Soft.InvokeOptions options, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use the overload without the 'vm' argument")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="vm" Type="Mono.Debugger.Soft.VirtualMachine" />
+        <Parameter Name="thread" Type="Mono.Debugger.Soft.ThreadMirror" />
+        <Parameter Name="method" Type="Mono.Debugger.Soft.MethodMirror" />
+        <Parameter Name="arguments" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt;" />
+        <Parameter Name="options" Type="Mono.Debugger.Soft.InvokeOptions" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="vm">To be added.</param>
+        <param name="thread">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="arguments">To be added.</param>
+        <param name="options">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="state">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Domain">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AppDomainMirror Domain { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.AppDomainMirror Domain" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -44,8 +114,29 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="EndInvokeMethod">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value EndInvokeMethod (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.Value EndInvokeMethod(class System.IAsyncResult asyncResult) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="GetValue">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value GetValue (Mono.Debugger.Soft.FieldInfoMirror field);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.Value GetValue(class Mono.Debugger.Soft.FieldInfoMirror field) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -65,6 +156,7 @@
     </Member>
     <Member MemberName="GetValues">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value[] GetValues (System.Collections.Generic.IList&lt;Mono.Debugger.Soft.FieldInfoMirror&gt; fields);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.Value[] GetValues(class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.FieldInfoMirror&gt; fields) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -84,6 +176,7 @@
     </Member>
     <Member MemberName="InvokeMethod">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value InvokeMethod (Mono.Debugger.Soft.ThreadMirror thread, Mono.Debugger.Soft.MethodMirror method, System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt; arguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.Value InvokeMethod(class Mono.Debugger.Soft.ThreadMirror thread, class Mono.Debugger.Soft.MethodMirror method, class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.Value&gt; arguments) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -105,8 +198,35 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="InvokeMethod">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value InvokeMethod (Mono.Debugger.Soft.ThreadMirror thread, Mono.Debugger.Soft.MethodMirror method, System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt; arguments, Mono.Debugger.Soft.InvokeOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.Value InvokeMethod(class Mono.Debugger.Soft.ThreadMirror thread, class Mono.Debugger.Soft.MethodMirror method, class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.Value&gt; arguments, valuetype Mono.Debugger.Soft.InvokeOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="thread" Type="Mono.Debugger.Soft.ThreadMirror" />
+        <Parameter Name="method" Type="Mono.Debugger.Soft.MethodMirror" />
+        <Parameter Name="arguments" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt;" />
+        <Parameter Name="options" Type="Mono.Debugger.Soft.InvokeOptions" />
+      </Parameters>
+      <Docs>
+        <param name="thread">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="arguments">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="IsCollected">
       <MemberSignature Language="C#" Value="public bool IsCollected { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCollected" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -122,6 +242,7 @@
     </Member>
     <Member MemberName="SetValue">
       <MemberSignature Language="C#" Value="public void SetValue (Mono.Debugger.Soft.FieldInfoMirror field, Mono.Debugger.Soft.Value value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(class Mono.Debugger.Soft.FieldInfoMirror field, class Mono.Debugger.Soft.Value value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -142,6 +263,7 @@
     </Member>
     <Member MemberName="SetValues">
       <MemberSignature Language="C#" Value="public void SetValues (System.Collections.Generic.IList&lt;Mono.Debugger.Soft.FieldInfoMirror&gt; fields, Mono.Debugger.Soft.Value[] values);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValues(class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.FieldInfoMirror&gt; fields, class Mono.Debugger.Soft.Value[] values) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -162,6 +284,7 @@
     </Member>
     <Member MemberName="Type">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror Type { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.TypeMirror Type" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

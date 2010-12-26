@@ -1,5 +1,6 @@
 <Type Name="MethodBodyMirror" FullName="Mono.Debugger.Soft.MethodBodyMirror">
   <TypeSignature Language="C#" Value="public class MethodBodyMirror : Mono.Debugger.Soft.Mirror" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MethodBodyMirror extends Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="GetILAsByteArray">
       <MemberSignature Language="C#" Value="public byte[] GetILAsByteArray ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetILAsByteArray() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -32,6 +34,7 @@
     </Member>
     <Member MemberName="Instructions">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.List&lt;Mono.Debugger.Soft.ILInstruction&gt; Instructions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.List`1&lt;class Mono.Debugger.Soft.ILInstruction&gt; Instructions" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -47,6 +50,7 @@
     </Member>
     <Member MemberName="Method">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror Method { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.MethodMirror Method" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

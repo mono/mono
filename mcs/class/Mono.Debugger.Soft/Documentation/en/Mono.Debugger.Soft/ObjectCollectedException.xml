@@ -1,5 +1,6 @@
 <Type Name="ObjectCollectedException" FullName="Mono.Debugger.Soft.ObjectCollectedException">
   <TypeSignature Language="C#" Value="public class ObjectCollectedException : Exception" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ObjectCollectedException extends System.Exception" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ObjectCollectedException ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

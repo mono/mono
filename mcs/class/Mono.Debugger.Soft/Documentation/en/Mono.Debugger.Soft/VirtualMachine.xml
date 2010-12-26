@@ -1,5 +1,6 @@
 <Type Name="VirtualMachine" FullName="Mono.Debugger.Soft.VirtualMachine">
   <TypeSignature Language="C#" Value="public class VirtualMachine : Mono.Debugger.Soft.Mirror" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit VirtualMachine extends Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -19,6 +20,7 @@
   <Members>
     <Member MemberName="ClearAllBreakpoints">
       <MemberSignature Language="C#" Value="public void ClearAllBreakpoints ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ClearAllBreakpoints() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -33,7 +35,28 @@
       </Docs>
     </Member>
     <Member MemberName="CreateBreakpointRequest">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.BreakpointEventRequest CreateBreakpointRequest (Mono.Debugger.Soft.Location loc);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.BreakpointEventRequest CreateBreakpointRequest(class Mono.Debugger.Soft.Location loc) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.BreakpointEventRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="loc" Type="Mono.Debugger.Soft.Location" />
+      </Parameters>
+      <Docs>
+        <param name="loc">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBreakpointRequest">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.BreakpointEventRequest CreateBreakpointRequest (Mono.Debugger.Soft.MethodMirror method, long il_offset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.BreakpointEventRequest CreateBreakpointRequest(class Mono.Debugger.Soft.MethodMirror method, int64 il_offset) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -49,8 +72,72 @@
         <param name="method">
         </param>
         <param name="il_offset">To be added.</param>
-        <param name="location">
-        </param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateEnumMirror">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.EnumMirror CreateEnumMirror (Mono.Debugger.Soft.TypeMirror type, Mono.Debugger.Soft.PrimitiveValue value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.EnumMirror CreateEnumMirror(class Mono.Debugger.Soft.TypeMirror type, class Mono.Debugger.Soft.PrimitiveValue value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.EnumMirror</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="Mono.Debugger.Soft.TypeMirror" />
+        <Parameter Name="value" Type="Mono.Debugger.Soft.PrimitiveValue" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateExceptionRequest">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ExceptionEventRequest CreateExceptionRequest (Mono.Debugger.Soft.TypeMirror exc_type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.ExceptionEventRequest CreateExceptionRequest(class Mono.Debugger.Soft.TypeMirror exc_type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.ExceptionEventRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exc_type" Type="Mono.Debugger.Soft.TypeMirror" />
+      </Parameters>
+      <Docs>
+        <param name="exc_type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateExceptionRequest">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ExceptionEventRequest CreateExceptionRequest (Mono.Debugger.Soft.TypeMirror exc_type, bool caught, bool uncaught);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.ExceptionEventRequest CreateExceptionRequest(class Mono.Debugger.Soft.TypeMirror exc_type, bool caught, bool uncaught) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.ExceptionEventRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exc_type" Type="Mono.Debugger.Soft.TypeMirror" />
+        <Parameter Name="caught" Type="System.Boolean" />
+        <Parameter Name="uncaught" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="exc_type">To be added.</param>
+        <param name="caught">To be added.</param>
+        <param name="uncaught">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -58,6 +145,7 @@
     </Member>
     <Member MemberName="CreateMethodEntryRequest">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodEntryEventRequest CreateMethodEntryRequest ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.MethodEntryEventRequest CreateMethodEntryRequest() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -74,6 +162,7 @@
     </Member>
     <Member MemberName="CreateMethodExitRequest">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodExitEventRequest CreateMethodExitRequest ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.MethodExitEventRequest CreateMethodExitRequest() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -93,6 +182,7 @@
     </Member>
     <Member MemberName="CreateStepRequest">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.StepEventRequest CreateStepRequest (Mono.Debugger.Soft.ThreadMirror thread);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.StepEventRequest CreateStepRequest(class Mono.Debugger.Soft.ThreadMirror thread) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -116,6 +206,7 @@
     </Member>
     <Member MemberName="CreateValue">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.PrimitiveValue CreateValue (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.PrimitiveValue CreateValue(object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -135,6 +226,7 @@
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -152,6 +244,7 @@
     </Member>
     <Member MemberName="EnableEvents">
       <MemberSignature Language="C#" Value="public void EnableEvents (Mono.Debugger.Soft.EventType[] events);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnableEvents(valuetype Mono.Debugger.Soft.EventType[] events) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -179,6 +272,7 @@
     </Member>
     <Member MemberName="EndPoint">
       <MemberSignature Language="C#" Value="public System.Net.EndPoint EndPoint { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.EndPoint EndPoint" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -197,6 +291,7 @@
     </Member>
     <Member MemberName="Exit">
       <MemberSignature Language="C#" Value="public void Exit (int exitCode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Exit(int32 exitCode) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -218,6 +313,7 @@
     </Member>
     <Member MemberName="GetNextEvent">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Event GetNextEvent ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.Event GetNextEvent() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -237,6 +333,7 @@
     </Member>
     <Member MemberName="GetNextEvent">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Event GetNextEvent (int timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.Event GetNextEvent(int32 timeout) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -260,6 +357,7 @@
     </Member>
     <Member MemberName="GetNextEvent&lt;T&gt;">
       <MemberSignature Language="C#" Value="public T GetNextEvent&lt;T&gt; () where T : Mono.Debugger.Soft.Event;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetNextEvent&lt;(class Mono.Debugger.Soft.Event) T&gt;() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -286,8 +384,26 @@
         </remarks>
       </Docs>
     </Member>
+    <Member MemberName="GetNextEventSet">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.EventSet GetNextEventSet ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.EventSet GetNextEventSet() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.EventSet</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="GetThreads">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.Soft.ThreadMirror&gt; GetThreads ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.ThreadMirror&gt; GetThreads() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -304,6 +420,7 @@
     </Member>
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="public System.Diagnostics.Process Process { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Diagnostics.Process Process" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -322,6 +439,7 @@
     </Member>
     <Member MemberName="Resume">
       <MemberSignature Language="C#" Value="public void Resume ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Resume() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -339,6 +457,7 @@
     </Member>
     <Member MemberName="RootDomain">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AppDomainMirror RootDomain { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.AppDomainMirror RootDomain" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -357,6 +476,7 @@
     </Member>
     <Member MemberName="SetBreakpoint">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.BreakpointEventRequest SetBreakpoint (Mono.Debugger.Soft.MethodMirror method, long il_offset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.BreakpointEventRequest SetBreakpoint(class Mono.Debugger.Soft.MethodMirror method, int64 il_offset) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -381,8 +501,41 @@
         </remarks>
       </Docs>
     </Member>
+    <Member MemberName="StandardError">
+      <MemberSignature Language="C#" Value="public System.IO.StreamReader StandardError { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.StreamReader StandardError" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.StreamReader</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="StandardOutput">
+      <MemberSignature Language="C#" Value="public System.IO.StreamReader StandardOutput { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.StreamReader StandardOutput" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.StreamReader</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Suspend">
       <MemberSignature Language="C#" Value="public void Suspend ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Suspend() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -396,6 +549,38 @@
         </summary>
         <remarks>
         </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TargetProcess">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ITargetProcess TargetProcess { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.ITargetProcess TargetProcess" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.ITargetProcess</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Version">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.VersionInfo Version { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.VersionInfo Version" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VersionInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
   </Members>

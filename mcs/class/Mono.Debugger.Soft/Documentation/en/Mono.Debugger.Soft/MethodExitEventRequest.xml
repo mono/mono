@@ -1,5 +1,6 @@
 <Type Name="MethodExitEventRequest" FullName="Mono.Debugger.Soft.MethodExitEventRequest">
   <TypeSignature Language="C#" Value="public sealed class MethodExitEventRequest : Mono.Debugger.Soft.EventRequest" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MethodExitEventRequest extends Mono.Debugger.Soft.EventRequest" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

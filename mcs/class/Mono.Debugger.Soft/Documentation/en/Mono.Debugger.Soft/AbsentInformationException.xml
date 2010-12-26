@@ -1,6 +1,6 @@
-<Type Name="VMMismatchException" FullName="Mono.Debugger.Soft.VMMismatchException">
-  <TypeSignature Language="C#" Value="public class VMMismatchException : Exception" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit VMMismatchException extends System.Exception" />
+<Type Name="AbsentInformationException" FullName="Mono.Debugger.Soft.AbsentInformationException">
+  <TypeSignature Language="C#" Value="public class AbsentInformationException : Exception" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AbsentInformationException extends System.Exception" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -10,13 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Thrown when an attempt was made to use entities belonging to different virtual machines.</summary>
-    <remarks>
-    </remarks>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public VMMismatchException ();" />
+      <MemberSignature Language="C#" Value="public AbsentInformationException ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>

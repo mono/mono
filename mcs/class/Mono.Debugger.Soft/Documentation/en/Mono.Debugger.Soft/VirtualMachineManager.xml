@@ -1,5 +1,6 @@
 <Type Name="VirtualMachineManager" FullName="Mono.Debugger.Soft.VirtualMachineManager">
   <TypeSignature Language="C#" Value="public class VirtualMachineManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit VirtualMachineManager extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -13,8 +14,356 @@
     <remarks>This class implements the functionality of the classes in the <format type="text/html"><a href="http://java.sun.com/j2se/1.5.0/docs/guide/jpda/jdi/com/sun/jdi/connect/package-frame.html">com.sun.kdi.connect</a></format> package in JDI.</remarks>
   </Docs>
   <Members>
+    <Member MemberName="BeginConnect">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginConnect (System.Net.IPEndPoint dbg_ep, AsyncCallback callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginConnect(class System.Net.IPEndPoint dbg_ep, class System.AsyncCallback callback) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dbg_ep" Type="System.Net.IPEndPoint" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+      </Parameters>
+      <Docs>
+        <param name="dbg_ep">To be added.</param>
+        <param name="callback">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginConnect">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginConnect (System.Net.IPEndPoint dbg_ep, System.Net.IPEndPoint con_ep, AsyncCallback callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginConnect(class System.Net.IPEndPoint dbg_ep, class System.Net.IPEndPoint con_ep, class System.AsyncCallback callback) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dbg_ep" Type="System.Net.IPEndPoint" />
+        <Parameter Name="con_ep" Type="System.Net.IPEndPoint" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+      </Parameters>
+      <Docs>
+        <param name="dbg_ep">To be added.</param>
+        <param name="con_ep">To be added.</param>
+        <param name="callback">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginLaunch">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginLaunch (System.Diagnostics.ProcessStartInfo info, AsyncCallback callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginLaunch(class System.Diagnostics.ProcessStartInfo info, class System.AsyncCallback callback) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Diagnostics.ProcessStartInfo" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="callback">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginLaunch">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginLaunch (System.Diagnostics.ProcessStartInfo info, AsyncCallback callback, Mono.Debugger.Soft.LaunchOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginLaunch(class System.Diagnostics.ProcessStartInfo info, class System.AsyncCallback callback, class Mono.Debugger.Soft.LaunchOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Diagnostics.ProcessStartInfo" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="options" Type="Mono.Debugger.Soft.LaunchOptions" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginListen">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginListen (System.Net.IPEndPoint dbg_ep, AsyncCallback callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginListen(class System.Net.IPEndPoint dbg_ep, class System.AsyncCallback callback) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dbg_ep" Type="System.Net.IPEndPoint" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+      </Parameters>
+      <Docs>
+        <param name="dbg_ep">To be added.</param>
+        <param name="callback">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginListen">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginListen (System.Net.IPEndPoint dbg_ep, System.Net.IPEndPoint con_ep, AsyncCallback callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginListen(class System.Net.IPEndPoint dbg_ep, class System.Net.IPEndPoint con_ep, class System.AsyncCallback callback) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dbg_ep" Type="System.Net.IPEndPoint" />
+        <Parameter Name="con_ep" Type="System.Net.IPEndPoint" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+      </Parameters>
+      <Docs>
+        <param name="dbg_ep">To be added.</param>
+        <param name="con_ep">To be added.</param>
+        <param name="callback">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CancelConnection">
+      <MemberSignature Language="C#" Value="public static void CancelConnection (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void CancelConnection(class System.IAsyncResult asyncResult) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Connect (System.Net.IPEndPoint endpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine Connect(class System.Net.IPEndPoint endpoint) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.Net.IPEndPoint" />
+      </Parameters>
+      <Docs>
+        <param name="endpoint">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Connect (System.Net.IPEndPoint endpoint, System.Net.IPEndPoint consoleEndpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine Connect(class System.Net.IPEndPoint endpoint, class System.Net.IPEndPoint consoleEndpoint) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.Net.IPEndPoint" />
+        <Parameter Name="consoleEndpoint" Type="System.Net.IPEndPoint" />
+      </Parameters>
+      <Docs>
+        <param name="endpoint">To be added.</param>
+        <param name="consoleEndpoint">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectInternal">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine ConnectInternal (System.Net.Sockets.Socket dbg_sock, System.Net.Sockets.Socket con_sock, System.Net.IPEndPoint dbg_ep, System.Net.IPEndPoint con_ep);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine ConnectInternal(class System.Net.Sockets.Socket dbg_sock, class System.Net.Sockets.Socket con_sock, class System.Net.IPEndPoint dbg_ep, class System.Net.IPEndPoint con_ep) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dbg_sock" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="con_sock" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="dbg_ep" Type="System.Net.IPEndPoint" />
+        <Parameter Name="con_ep" Type="System.Net.IPEndPoint" />
+      </Parameters>
+      <Docs>
+        <param name="dbg_sock">To be added.</param>
+        <param name="con_sock">To be added.</param>
+        <param name="dbg_ep">To be added.</param>
+        <param name="con_ep">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndConnect">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine EndConnect (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine EndConnect(class System.IAsyncResult asyncResult) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndLaunch">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine EndLaunch (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine EndLaunch(class System.IAsyncResult asyncResult) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndListen">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine EndListen (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine EndListen(class System.IAsyncResult asyncResult) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="asyncResult">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Launch">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Launch (System.Diagnostics.ProcessStartInfo info);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine Launch(class System.Diagnostics.ProcessStartInfo info) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Diagnostics.ProcessStartInfo" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Launch">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Launch (string[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine Launch(string[] args) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="args">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Launch">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Launch (System.Diagnostics.ProcessStartInfo info, Mono.Debugger.Soft.LaunchOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine Launch(class System.Diagnostics.ProcessStartInfo info, class Mono.Debugger.Soft.LaunchOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Diagnostics.ProcessStartInfo" />
+        <Parameter Name="options" Type="Mono.Debugger.Soft.LaunchOptions" />
+      </Parameters>
+      <Docs>
+        <param name="info">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Launch">
       <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Launch (string[] args, Mono.Debugger.Soft.LaunchOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine Launch(string[] args, class Mono.Debugger.Soft.LaunchOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -34,8 +383,9 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="Listen">
-      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Listen (System.Net.IPEndPoint endpoint);" />
+    <Member MemberName="LaunchInternal">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine LaunchInternal (Mono.Debugger.Soft.ITargetProcess p, System.Diagnostics.ProcessStartInfo info, System.Net.Sockets.Socket socket);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine LaunchInternal(class Mono.Debugger.Soft.ITargetProcess p, class System.Diagnostics.ProcessStartInfo info, class System.Net.Sockets.Socket socket) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -44,11 +394,103 @@
         <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="endpoint" Type="System.Net.IPEndPoint" />
+        <Parameter Name="p" Type="Mono.Debugger.Soft.ITargetProcess" />
+        <Parameter Name="info" Type="System.Diagnostics.ProcessStartInfo" />
+        <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
       </Parameters>
       <Docs>
-        <param name="endpoint">The TCP/IP endpoint to listen at.</param>
+        <param name="p">To be added.</param>
+        <param name="info">To be added.</param>
+        <param name="socket">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LaunchInternal">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine LaunchInternal (System.Diagnostics.Process p, System.Diagnostics.ProcessStartInfo info, System.Net.Sockets.Socket socket);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine LaunchInternal(class System.Diagnostics.Process p, class System.Diagnostics.ProcessStartInfo info, class System.Net.Sockets.Socket socket) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="p" Type="System.Diagnostics.Process" />
+        <Parameter Name="info" Type="System.Diagnostics.ProcessStartInfo" />
+        <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+      </Parameters>
+      <Docs>
+        <param name="p">To be added.</param>
+        <param name="info">To be added.</param>
+        <param name="socket">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Listen">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Listen (System.Net.IPEndPoint dbg_ep);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine Listen(class System.Net.IPEndPoint dbg_ep) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dbg_ep" Type="System.Net.IPEndPoint" />
+      </Parameters>
+      <Docs>
+        <param name="dbg_ep">The TCP/IP endpoint to listen at.</param>
         <summary>Wait for a virtual machine to connect at the specified address.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Listen">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Listen (System.Net.IPEndPoint dbg_ep, System.Net.IPEndPoint con_ep);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine Listen(class System.Net.IPEndPoint dbg_ep, class System.Net.IPEndPoint con_ep) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dbg_ep" Type="System.Net.IPEndPoint" />
+        <Parameter Name="con_ep" Type="System.Net.IPEndPoint" />
+      </Parameters>
+      <Docs>
+        <param name="dbg_ep">To be added.</param>
+        <param name="con_ep">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ListenInternal">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine ListenInternal (System.Net.Sockets.Socket dbg_sock, System.Net.Sockets.Socket con_sock);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Debugger.Soft.VirtualMachine ListenInternal(class System.Net.Sockets.Socket dbg_sock, class System.Net.Sockets.Socket con_sock) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dbg_sock" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="con_sock" Type="System.Net.Sockets.Socket" />
+      </Parameters>
+      <Docs>
+        <param name="dbg_sock">To be added.</param>
+        <param name="con_sock">To be added.</param>
+        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>

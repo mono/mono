@@ -1,5 +1,6 @@
 <Type Name="MethodMirror" FullName="Mono.Debugger.Soft.MethodMirror">
   <TypeSignature Language="C#" Value="public class MethodMirror : Mono.Debugger.Soft.Mirror" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MethodMirror extends Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="Attributes">
       <MemberSignature Language="C#" Value="public System.Reflection.MethodAttributes Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.MethodAttributes Attributes" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -31,6 +33,7 @@
     </Member>
     <Member MemberName="DeclaringType">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror DeclaringType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.TypeMirror DeclaringType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -46,6 +49,7 @@
     </Member>
     <Member MemberName="FullName">
       <MemberSignature Language="C#" Value="public string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -61,6 +65,7 @@
     </Member>
     <Member MemberName="GetLocal">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.LocalVariable GetLocal (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.LocalVariable GetLocal(string name) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -80,6 +85,7 @@
     </Member>
     <Member MemberName="GetLocals">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.LocalVariable[] GetLocals ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.LocalVariable[] GetLocals() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -96,6 +102,7 @@
     </Member>
     <Member MemberName="GetMethodBody">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodBodyMirror GetMethodBody ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.MethodBodyMirror GetMethodBody() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -112,6 +119,7 @@
     </Member>
     <Member MemberName="GetParameters">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ParameterInfoMirror[] GetParameters ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.ParameterInfoMirror[] GetParameters() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -128,6 +136,7 @@
     </Member>
     <Member MemberName="ILOffsets">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;int&gt; ILOffsets { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;int32&gt; ILOffsets" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -143,6 +152,7 @@
     </Member>
     <Member MemberName="IsAbstract">
       <MemberSignature Language="C#" Value="public bool IsAbstract { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAbstract" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -158,6 +168,7 @@
     </Member>
     <Member MemberName="IsAssembly">
       <MemberSignature Language="C#" Value="public bool IsAssembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAssembly" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -173,6 +184,7 @@
     </Member>
     <Member MemberName="IsConstructor">
       <MemberSignature Language="C#" Value="public bool IsConstructor { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsConstructor" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -188,6 +200,7 @@
     </Member>
     <Member MemberName="IsFamily">
       <MemberSignature Language="C#" Value="public bool IsFamily { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFamily" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -203,6 +216,7 @@
     </Member>
     <Member MemberName="IsFamilyAndAssembly">
       <MemberSignature Language="C#" Value="public bool IsFamilyAndAssembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFamilyAndAssembly" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -218,6 +232,7 @@
     </Member>
     <Member MemberName="IsFamilyOrAssembly">
       <MemberSignature Language="C#" Value="public bool IsFamilyOrAssembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFamilyOrAssembly" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -233,6 +248,7 @@
     </Member>
     <Member MemberName="IsFinal">
       <MemberSignature Language="C#" Value="public bool IsFinal { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFinal" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -248,6 +264,7 @@
     </Member>
     <Member MemberName="IsHideBySig">
       <MemberSignature Language="C#" Value="public bool IsHideBySig { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsHideBySig" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -263,6 +280,7 @@
     </Member>
     <Member MemberName="IsPrivate">
       <MemberSignature Language="C#" Value="public bool IsPrivate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsPrivate" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -278,6 +296,7 @@
     </Member>
     <Member MemberName="IsPublic">
       <MemberSignature Language="C#" Value="public bool IsPublic { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsPublic" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -293,6 +312,7 @@
     </Member>
     <Member MemberName="IsSpecialName">
       <MemberSignature Language="C#" Value="public bool IsSpecialName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSpecialName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -308,6 +328,7 @@
     </Member>
     <Member MemberName="IsStatic">
       <MemberSignature Language="C#" Value="public bool IsStatic { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsStatic" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -323,6 +344,7 @@
     </Member>
     <Member MemberName="IsVirtual">
       <MemberSignature Language="C#" Value="public bool IsVirtual { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsVirtual" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -338,6 +360,7 @@
     </Member>
     <Member MemberName="LineNumbers">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;int&gt; LineNumbers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;int32&gt; LineNumbers" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -353,6 +376,7 @@
     </Member>
     <Member MemberName="LocationAtILOffset">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Location LocationAtILOffset (int il_offset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.Location LocationAtILOffset(int32 il_offset) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -372,6 +396,7 @@
     </Member>
     <Member MemberName="Locations">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Location&gt; Locations { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.Location&gt; Locations" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -387,6 +412,7 @@
     </Member>
     <Member MemberName="Metadata">
       <MemberSignature Language="C#" Value="public Mono.Cecil.MethodDefinition Metadata { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Cecil.MethodDefinition Metadata" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -402,6 +428,7 @@
     </Member>
     <Member MemberName="MetadataToken">
       <MemberSignature Language="C#" Value="public int MetadataToken { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MetadataToken" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -417,6 +444,7 @@
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -432,6 +460,7 @@
     </Member>
     <Member MemberName="ReturnParameter">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ParameterInfoMirror ReturnParameter { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.ParameterInfoMirror ReturnParameter" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -447,6 +476,7 @@
     </Member>
     <Member MemberName="ReturnType">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror ReturnType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.TypeMirror ReturnType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -462,6 +492,7 @@
     </Member>
     <Member MemberName="SourceFile">
       <MemberSignature Language="C#" Value="public string SourceFile { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SourceFile" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
