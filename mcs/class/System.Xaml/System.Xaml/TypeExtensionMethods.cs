@@ -118,7 +118,7 @@ namespace System.Xaml
 		
 		public static TypeConverter GetTypeConverter (this Type type)
 		{
-#if NET_2_1
+#if MOONLIGHT
 			if (typeof (IConvertible).IsAssignableFrom (type))
 				return (TypeConverter) Activator.CreateInstance (typeof (ConvertibleTypeConverter<>).MakeGenericType (new Type [] {type}));
 			var name = type.GetCustomAttribute<TypeConverterAttribute> (true).ConverterTypeName;

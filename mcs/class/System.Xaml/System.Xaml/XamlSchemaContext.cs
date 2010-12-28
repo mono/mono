@@ -94,7 +94,7 @@ namespace System.Xaml
 		}
 
 		IEnumerable<Assembly> AssembliesInScope {
-#if NET_2_1
+#if MOONLIGHT
 			get { return reference_assemblies; }
 #else
 			get { return reference_assemblies ?? AppDomain.CurrentDomain.GetAssemblies (); }
@@ -234,7 +234,7 @@ namespace System.Xaml
 
 		protected internal virtual Assembly OnAssemblyResolve (string assemblyName)
 		{
-#if NET_2_1
+#if MOONLIGHT
 			return Assembly.Load (assemblyName);
 #else
 			return Assembly.LoadWithPartialName (assemblyName);
