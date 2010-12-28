@@ -7,18 +7,6 @@ body, table {
 	font-size: @@FONT_SIZE@@%;
 }
 
-#title {
-	width: 94%;
-	margin-left: 1%;
-	padding: 2%;
-	border: 2px solid black;
-	background: #b0c4de;
-	font-size: 140%;
-	font-weight: bold;
-	font-variant: small-caps;
-	text-align: center;
-	}
-
 /* ECMA BLOCK */
 #docs {
 	margin-bottom: 1em;
@@ -32,12 +20,14 @@ body, table {
 	color: black;
 	background: #fff3f3;
 	border: 1px solid #ffc9c9;
+	@@EDITING_ENABLED@@
 	}
 #contribTitle {
 	text-align: left;
 	font-weight: bold;
 	padding: .4em;
 	font-size: 110%;
+	@@CONTRIB_DISP@@
 }
 #contrib #content {
 	padding: .4em;
@@ -52,25 +42,58 @@ body, table {
 	text-indent: 1em;
 	text-align: justify;
 	}
+#header
+{
+    position: relative;
+    margin-bottom: 0px;
+    color: #000;
+    padding: 0 0 0 15px;
+    background: url('headerbg.png');
+    background-position: right;
+    background-repeat: no-repeat;
+    background-color: #679EF1;
+    height: 40px;
+    border-bottom: 1px solid #98C2F7;
+    border-bottom: 1px dotted #3363BD;
+}
+
+#header h1
+{
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+    color: #fff;
+    border: none;
+    line-height: 1.8em;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 22px !important;
+}
 </style>
+<link type="text/css" rel="stylesheet" href="mono-ecma.css"/>
 </head>
 
-<div id="title">Mono Documentation Library</div>
-
-<div id="docs">
-	<ul>
-	    @@API_DOCS@@
-	</ul>
+<div id="header">
+  <div id="title">
+    <h1>Mono Documentation Library</h1>
+  </div>
 </div>
 
-<div id="contrib">
-	<div id="contribTitle">Contributions</div>
-	<div id="content">
-		<div id="some-contrib">
-			@@CONTRIBS@@
-		</div>
-		<div id="no-contrib">
-			<p><b>You have not made any contributions yet.</b></p>
- 			<p>The Documentation of the libraries is not complete and your contributions would be greatly appreciated. The procedure is easy, browse to the part of the documentation you want to contribute to and click on the <font color="blue">[Edit]</font> link to start writing documentation.</p>
- 			<p>When you are happy with your changes, use the Contributing--&gt; Upload Contribution--&gt; menu to send your contributions to our server.</p></div>	</div>
+<div class="Content">
+  <div id="docs">
+  	<ul>
+  	    @@API_DOCS@@
+  	</ul>
+  </div>
+  
+  <div id="contrib">
+  	<div id="contribTitle">Contributions</div>
+  	<div id="content">
+  		<div id="some-contrib">
+  			@@CONTRIBS@@
+  		</div>
+  		<div id="no-contrib">
+  			<p><b>You have not made any contributions yet.</b></p>
+   			<p>The Documentation of the libraries is not complete and your contributions would be greatly appreciated. The procedure is easy, browse to the part of the documentation you want to contribute to and click on the <font color="blue">[Edit]</font> link to start writing documentation.</p>
+   			<p>When you are happy with your changes, use the Contributing--&gt; Upload Contribution--&gt; menu to send your contributions to our server.</p></div>	</div>
+  </div>
 </div>
