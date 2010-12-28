@@ -253,7 +253,7 @@ static void shared_init (void)
 	_wapi_fileshare_layout = _wapi_shm_attach (WAPI_SHM_FILESHARE);
 	g_assert (_wapi_fileshare_layout != NULL);
 	
-#if !defined (DISABLE_SHARED_HANDLES)
+#if !defined (DISABLE_SHARED_HANDLES) && !defined(MONO_DISABLE_SHM)
 	if (!g_getenv ("MONO_DISABLE_SHM"))
 		_wapi_collection_init ();
 #endif

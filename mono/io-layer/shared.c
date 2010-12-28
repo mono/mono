@@ -391,6 +391,7 @@ try_again:
 static gboolean
 check_disabled (void)
 {
+#if !defined(MONO_DISABLE_SHM)
 	if (_wapi_shm_disabled || g_getenv ("MONO_DISABLE_SHM")) {
 		const char* val = g_getenv ("MONO_DISABLE_SHM");
 		if (val == NULL || *val == '1' || *val == 'y' || *val == 'Y') {
@@ -399,6 +400,10 @@ check_disabled (void)
 	}
 
 	return _wapi_shm_disabled;
+#else
+	_wapi_shm_disabled = TRUE;
+	return _wapi_shm_disabled;
+#endif
 }
 
 /*
