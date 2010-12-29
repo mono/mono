@@ -1215,16 +1215,6 @@ namespace Mono.CSharp {
 			}
 
 			if (base_type != null) {
-				var imported = base_type.MemberDefinition as ImportedTypeDefinition;
-				if (imported != null) {
-					var missing = imported.GetMissingBaseType ();
-					if (missing != null) {
-						Report.Error (12, Location,
-							"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-							missing.Name, missing.Assembly.FullName);
-					}
-				}
-
 				spec.BaseType = base_type;
 
 				// Set base type after type creation

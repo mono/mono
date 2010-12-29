@@ -364,7 +364,7 @@ namespace Mono.CSharp
 	//
 	// Represents missing assembly reference
 	//
-	class MissingAssembly : Assembly
+	public class MissingAssembly : Assembly
 	{
 		class MissingModule : Module
 		{
@@ -577,7 +577,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class MissingType : MetaType
+	public class MissingType : MetaType
 	{
 		readonly string full_name;
 		readonly MissingAssembly assembly;

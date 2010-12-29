@@ -162,6 +162,22 @@ namespace Mono.CSharp
 			buildin_types.Add (typeof (System.RuntimeTypeHandle), buildin.RuntimeTypeHandle);
 		}
 	}
+
+	public class MissingType
+	{
+		public Module Module {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
+
+		public string Name {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
+	}
+
 #endif
 
 	public class AssemblyDefinitionDynamic : AssemblyDefinition

@@ -2002,6 +2002,15 @@ namespace Mono.CSharp {
 			// Check the class constraint
 			//
 			if (tparam.HasTypeConstraint) {
+				var dep = tparam.BaseType.GetMissingDependencies ();
+				if (dep != null) {
+					if (mc == null)
+						return false;
+
+					ImportedTypeDefinition.Error_MissingDependency (mc.Compiler, dep, loc);
+					ok = false;
+				}
+
 				if (!CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc)) {
 					if (mc == null)
 						return false;
@@ -2024,6 +2033,19 @@ namespace Mono.CSharp {
 					ok = false;
 				} else {
 					foreach (TypeSpec iface in tparam.Interfaces) {
+						var dep = iface.GetMissingDependencies ();
+						if (dep != null) {
+							if (mc == null)
+								return false;
+
+							ImportedTypeDefinition.Error_MissingDependency (mc.Compiler, dep, loc);
+							ok = false;
+
+							// return immediately to avoid duplicate errors because we are scanning
+							// expanded interface list
+							return false;
+						}
+
 						if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
 							if (mc == null)
 								return false;

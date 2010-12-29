@@ -223,6 +223,11 @@ namespace Mono.CSharp {
 
 			te.loc = loc;
 
+			var dep = te.type.GetMissingDependencies ();
+			if (dep != null) {
+				ImportedTypeDefinition.Error_MissingDependency (ec.Compiler, dep, loc);
+			}
+
 			//
 			// Obsolete checks cannot be done when resolving base context as they
 			// require type dependecies to be set but we are just resolving them
@@ -2693,6 +2698,11 @@ namespace Mono.CSharp {
 				UnsafeError (rc, loc);
 			}
 
+			var dep = member.GetMissingDependencies ();
+			if (dep != null) {
+				ImportedTypeDefinition.Error_MissingDependency (rc.Compiler, dep, loc);
+			}
+
 			if (!rc.IsObsolete) {
 				ObsoleteAttribute oa = member.GetAttributeObsolete ();
 				if (oa != null)
@@ -2736,10 +2746,15 @@ namespace Mono.CSharp {
 			if (IsStatic) {
 				if (InstanceExpression != null) {
 					if (InstanceExpression is TypeExpr) {
-						ObsoleteAttribute oa = InstanceExpression.Type.GetAttributeObsolete ();
-						if (oa != null && !rc.IsObsolete) {
-							AttributeTester.Report_ObsoleteMessage (oa, InstanceExpression.GetSignatureForError (), loc, rc.Report);
-						}
+						var t = InstanceExpression.Type;
+						do {
+							ObsoleteAttribute oa = t.GetAttributeObsolete ();
+							if (oa != null && !rc.IsObsolete) {
+								AttributeTester.Report_ObsoleteMessage (oa, t.GetSignatureForError (), loc, rc.Report);
+							}
+
+							t = t.DeclaringType;
+						} while (t != null);
 					} else {
 						var runtime_expr = InstanceExpression as RuntimeValueExpression;
 						if (runtime_expr == null || !runtime_expr.IsSuggestionOnly) {
@@ -4336,6 +4351,11 @@ namespace Mono.CSharp {
 			ObsoleteAttribute oa = best_candidate.GetAttributeObsolete ();
 			if (oa != null && !rc.IsObsolete)
 				AttributeTester.Report_ObsoleteMessage (oa, best_candidate.GetSignatureForError (), loc, rc.Report);
+
+			var dep = best_candidate.GetMissingDependencies ();
+			if (dep != null) {
+				ImportedTypeDefinition.Error_MissingDependency (rc.Compiler, dep, loc);
+			}
 
 			best_candidate.MemberDefinition.SetIsUsed ();
 

@@ -172,7 +172,6 @@ namespace Mono.CSharp
 					break;
 			}
 
-			var definition = new ImportedMemberDefinition (fi, this);
 			TypeSpec field_type;
 
 			try {
@@ -183,6 +182,8 @@ namespace Mono.CSharp
 				throw new InternalErrorException (e, "Cannot import field `{0}.{1}' referenced in assembly `{2}'",
 					declaringType.GetSignatureForError (), fi.Name, declaringType.MemberDefinition.DeclaringAssembly);
 			}
+
+			var definition = new ImportedMemberDefinition (fi, field_type, this);
 
 			if ((fa & FieldAttributes.Literal) != 0) {
 				var c = Constant.CreateConstantFromValue (field_type, fi.GetRawConstantValue (), Location.Null);
@@ -227,8 +228,9 @@ namespace Mono.CSharp
 			if (add.Modifiers != remove.Modifiers)
 				throw new NotImplementedException ("Different accessor modifiers " + ei.Name);
 
-			var definition = new ImportedMemberDefinition (ei, this);
-			return new EventSpec (declaringType, definition, ImportType (ei.EventHandlerType, new DynamicTypeReader (ei)), add.Modifiers, add, remove);
+			var event_type = ImportType (ei.EventHandlerType, new DynamicTypeReader (ei));
+			var definition = new ImportedMemberDefinition (ei, event_type,  this);
+			return new EventSpec (declaringType, definition, event_type, add.Modifiers, add, remove);
 		}
 
 		TypeParameterSpec[] CreateGenericParameters (MetaType type, TypeSpec declaringType)
@@ -334,7 +336,6 @@ namespace Mono.CSharp
 		{
 			Modifiers mod = ReadMethodModifiers (mb, declaringType);
 			TypeParameterSpec[] tparams;
-			ImportedMethodDefinition definition;
 
 			var parameters = CreateParameters (declaringType, mb.GetParameters (), mb);
 
@@ -343,9 +344,7 @@ namespace Mono.CSharp
 					throw new NotSupportedException ("assert");
 
 				tparams = CreateGenericParameters (0, mb.GetGenericArguments ());
-				definition = new ImportedGenericMethodDefinition ((MethodInfo) mb, parameters, tparams, this);
 			} else {
-				definition = new ImportedMethodDefinition (mb, parameters, this);
 				tparams = null;
 			}
 
@@ -398,6 +397,13 @@ namespace Mono.CSharp
 						mod &= ~Modifiers.OVERRIDE;
 					}
 				}
+			}
+
+			IMemberDefinition definition;
+			if (tparams != null) {
+				definition = new ImportedGenericMethodDefinition ((MethodInfo) mb, returnType, parameters, tparams, this);
+			} else {
+				definition = new ImportedParameterMemberDefinition (mb, returnType, parameters, this);
 			}
 
 			MethodSpec ms = new MethodSpec (kind, declaringType, definition, returnType, mb, parameters, mod);
@@ -583,11 +589,11 @@ namespace Mono.CSharp
 				}
 
 				if (is_valid_property)
-					spec = new IndexerSpec (declaringType, new ImportedIndexerDefinition (pi, param, this), type, param, pi, mod);
+					spec = new IndexerSpec (declaringType, new ImportedParameterMemberDefinition (pi, type, param, this), type, param, pi, mod);
 			}
 
 			if (spec == null)
-				spec = new PropertySpec (MemberKind.Property, declaringType, new ImportedMemberDefinition (pi, this), type, pi, mod);
+				spec = new PropertySpec (MemberKind.Property, declaringType, new ImportedMemberDefinition (pi, type, this), type, pi, mod);
 
 			if (!is_valid_property) {
 				spec.IsNotRealProperty = true;
@@ -1108,7 +1114,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class ImportedMemberDefinition : IMemberDefinition
+	abstract class ImportedDefinition : IMemberDefinition
 	{
 		protected class AttributesBag
 		{
@@ -1235,7 +1241,7 @@ namespace Mono.CSharp
 		protected AttributesBag cattrs;
 		protected readonly MetadataImporter importer;
 
-		public ImportedMemberDefinition (MemberInfo provider, MetadataImporter importer)
+		public ImportedDefinition (MemberInfo provider, MetadataImporter importer)
 		{
 			this.provider = provider;
 			this.importer = importer;
@@ -1256,6 +1262,8 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		public abstract List<MissingType> ResolveMissingDependencies ();
 
 		public string[] ConditionalConditions ()
 		{
@@ -1534,12 +1542,44 @@ namespace Mono.CSharp
 		}
 	}
 
-	class ImportedMethodDefinition : ImportedMemberDefinition, IParametersMember
+	class ImportedMemberDefinition : ImportedDefinition
+	{
+		readonly TypeSpec type;
+
+		public ImportedMemberDefinition (MemberInfo member, TypeSpec type, MetadataImporter importer)
+			: base (member, importer)
+		{
+			this.type = type;
+		}
+
+		#region Properties
+
+		public TypeSpec MemberType {
+			get {
+				return type;
+			}
+		}
+
+		#endregion
+
+		public override List<MissingType> ResolveMissingDependencies ()
+		{
+			return type.GetMissingDependencies ();
+		}
+	}
+
+	class ImportedParameterMemberDefinition : ImportedMemberDefinition, IParametersMember
 	{
 		readonly AParametersCollection parameters;
 
-		public ImportedMethodDefinition (MethodBase provider, AParametersCollection parameters, MetadataImporter importer)
-			: base (provider, importer)
+		public ImportedParameterMemberDefinition (MethodBase provider, TypeSpec type, AParametersCollection parameters, MetadataImporter importer)
+			: base (provider, type, importer)
+		{
+			this.parameters = parameters;
+		}
+
+		public ImportedParameterMemberDefinition (PropertyInfo provider, TypeSpec type, AParametersCollection parameters, MetadataImporter importer)
+			: base (provider, type, importer)
 		{
 			this.parameters = parameters;
 		}
@@ -1552,48 +1592,32 @@ namespace Mono.CSharp
 			}
 		}
 
-		public TypeSpec MemberType {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
 		#endregion
-	}
 
-	class ImportedIndexerDefinition : ImportedMemberDefinition, IParametersMember
-	{
-		readonly AParametersCollection parameters;
-
-		public ImportedIndexerDefinition (PropertyInfo provider, AParametersCollection parameters, MetadataImporter importer)
-			: base (provider, importer)
+		public override List<MissingType> ResolveMissingDependencies ()
 		{
-			this.parameters = parameters;
-		}
+			var missing = base.ResolveMissingDependencies ();
+			foreach (var pt in parameters.Types) {
+				var m = pt.GetMissingDependencies ();
+				if (m == null)
+					continue;
 
-		#region Properties
+				if (missing == null)
+					missing = new List<MissingType> ();
 
-		public AParametersCollection Parameters {
-			get {
-				return parameters;
+				missing.AddRange (m);
 			}
-		}
 
-		public TypeSpec MemberType {
-			get {
-				throw new NotImplementedException ();
-			}
+			return missing;
 		}
-
-		#endregion
 	}
 
-	class ImportedGenericMethodDefinition : ImportedMethodDefinition, IGenericMethodDefinition
+	class ImportedGenericMethodDefinition : ImportedParameterMemberDefinition, IGenericMethodDefinition
 	{
 		readonly TypeParameterSpec[] tparams;
 
-		public ImportedGenericMethodDefinition (MethodInfo provider, AParametersCollection parameters, TypeParameterSpec[] tparams, MetadataImporter importer)
-			: base (provider, parameters, importer)
+		public ImportedGenericMethodDefinition (MethodInfo provider, TypeSpec type, AParametersCollection parameters, TypeParameterSpec[] tparams, MetadataImporter importer)
+			: base (provider, type, parameters, importer)
 		{
 			this.tparams = tparams;
 		}
@@ -1615,7 +1639,7 @@ namespace Mono.CSharp
 		#endregion
 	}
 
-	class ImportedTypeDefinition : ImportedMemberDefinition, ITypeDefinition
+	class ImportedTypeDefinition : ImportedDefinition, ITypeDefinition
 	{
 		TypeParameterSpec[] tparams;
 		string name;
@@ -1671,6 +1695,15 @@ namespace Mono.CSharp
 
 		#endregion
 
+		public static void Error_MissingDependency (CompilerContext ctx, List<MissingType> types, Location loc)
+		{
+			foreach (var t in types) {
+				ctx.Report.Error (12, loc,
+					"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
+					t.Name, t.Module.Assembly.FullName);
+			}
+		}
+
 		public TypeSpec GetAttributeCoClass ()
 		{
 			if (cattrs == null)
@@ -1693,23 +1726,6 @@ namespace Mono.CSharp
 				ReadAttributes ();
 
 			return cattrs.AttributeUsage;
-		}
-
-		public MetaType GetMissingBaseType ()
-		{
-#if STATIC
-			MetaType mt = (MetaType) provider;
-			do {
-				if (mt is MissingType)
-					break;
-
-				mt = mt.BaseType;
-			} while (mt != null);
-
-			return mt;
-#else
-			return null;
-#endif
 		}
 
 		bool ITypeDefinition.IsInternalAsPublic (IAssemblyDefinition assembly)
@@ -1915,9 +1931,39 @@ namespace Mono.CSharp
 				}
 			}
 		}
+
+		public override List<MissingType> ResolveMissingDependencies ()
+		{
+#if STATIC
+			List<MissingType> missing = null;
+
+			MetaType mt = (MetaType) provider;
+			do {
+				if (mt is MissingType) {
+					missing = new List<MissingType> ();
+					missing.Add ((MissingType) mt);
+				}
+
+				foreach (var iface in mt.GetInterfaces ()) {
+					if (iface is MissingType) {
+						if (missing == null)
+							missing = new List<MissingType> ();
+
+						missing.Add ((MissingType) iface);
+					}
+				}
+
+				if (missing != null)
+					return missing;
+
+				mt = mt.BaseType;
+			} while (mt != null);
+#endif
+			return null;
+		}
 	}
 
-	class ImportedTypeParameterDefinition : ImportedMemberDefinition, ITypeDefinition
+	class ImportedTypeParameterDefinition : ImportedDefinition, ITypeDefinition
 	{
 		public ImportedTypeParameterDefinition (MetaType type, MetadataImporter importer)
 			: base (type, importer)
@@ -1975,6 +2021,11 @@ namespace Mono.CSharp
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public override List<MissingType> ResolveMissingDependencies ()
+		{
+			return null;
 		}
 	}
 }

@@ -21,7 +21,7 @@
           instance void  .ctor() cil managed
   {
     IL_0000:  ldarg.0
-    IL_0001:  call       instance void ['CS0012-lib-1']A1::.ctor()
+    IL_0001:  call       instance void ['CS0012-lib-missing']A1::.ctor()
     IL_0006:  ret
   }
 

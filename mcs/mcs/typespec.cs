@@ -508,8 +508,8 @@ namespace Mono.CSharp
 		public BuildinTypeSpec (string name, Type buildinKind)
 			: this (MemberKind.InternalCompilerType, "", name, buildinKind)
 		{
-			// Make all internal types CLS-compliant, non-obsolete
-			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected)) | StateFlags.CLSCompliant;
+			// Make all internal types CLS-compliant, non-obsolete, compact
+			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected | StateFlags.MissingDependency_Undetected)) | StateFlags.CLSCompliant;
 		}
 
 		#region Properties
