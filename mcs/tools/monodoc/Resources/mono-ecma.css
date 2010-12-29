@@ -1,7 +1,6 @@
 body
 {
-    font-size: .75em;
-    font-family: Verdana, Helvetica, Sans-Serif;
+    font-family: "Lucida Grande", Geneva, Helvetica, Arial, Verdana, Sans-Serif;
     margin: 0;
     padding: 0;
     color: #333333;
@@ -26,15 +25,8 @@ a:active
     color: #12eb87;
 }
 
-p, ul
-{
-    margin-bottom: 20px;
-    line-height: 1.6em;
-}
-
 pre
 {
-    font-size: 1em;
     font-family: Consolas, "Courier New", Monospace;
     border: 1px solid #CCCCCC;
     background-color: #F7F7F7;
@@ -55,36 +47,36 @@ img
 ----------------------------------------------------------*/
 h1, h2, h3, h4, h5, h6
 {
-    font-size: 1.5em;
     color: #000;
     font-family: Arial, Helvetica, sans-serif;
 }
 
 h1
 {
-    font-size: 2em;
+    font-size: 16pt;
     padding-bottom: 0;
     margin-bottom: 0;
 }
 h2
 {
+    font-size: 14pt;
     padding: 0 0 1px 0;
     border-bottom: 1px solid #DDDDDD;
     margin-top: 20px;
 }
 h3
 {
-    font-size: 1.2em;
+    font-size: 12pt;
     margin-top: 20px;
     margin-bottom: 5px;
 }
 h4
 {
-    font-size: 1.1em;
+    font-size: 11pt;
 }
 h5, h6
 {
-    font-size: 1em;
+    font-size: 10pt;
 }
 
 /* this rule styles <h2> tags that are the 
@@ -147,7 +139,7 @@ page width. Or, you can specify an exact pixel width. */
     text-align: center;
     line-height: normal;
     margin: 0;
-    font-size: .9em;
+    font-size: 8pt;
 }
 
 #line-background
@@ -183,10 +175,10 @@ page width. Or, you can specify an exact pixel width. */
     background: url('mdocimages/hatch.png') repeat-x left bottom;
     height: 48px;
     background-color: #FAFBFD;
-    font-size: 1.7em;
+    font-size: 16pt;
     font-weight: bold;
     padding: 8px 0 0 10px;
-    font-family: 'Segoe UI',Verdana,Arial;
+    font-family: 'Segoe UI',Verdana,Arial, sans-serif;
 }
 
 .member-list
@@ -276,7 +268,7 @@ fieldset p
 
 legend 
 {
-    font-size: 1.1em;
+    font-size: 11pt;
     font-weight: 600;
     padding: 2px 4px 8px 4px;
 }
@@ -348,7 +340,7 @@ div#title
 
 #logindisplay
 {
-    font-size:1.1em;
+    font-size:11pt;
     display:block;
     text-align:right;
     margin:0px;

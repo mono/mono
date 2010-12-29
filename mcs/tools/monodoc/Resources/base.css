@@ -6,8 +6,12 @@
 
 body, table {
 	margin: 0px;
+}
+
+body, table, pre, p {
 	font-family: @@FONT_FAMILY@@, sans-serif;
-	font-size: @@FONT_SIZE@@%;
+	/* font-size: @@FONT_SIZE@@pt; */
+	font-size: 10pt;
 }
 
 div.header {
