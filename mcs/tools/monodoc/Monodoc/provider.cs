@@ -871,7 +871,7 @@ public class RootTree : Tree {
 				d.Load (cfgFile);
 				basedir = d.SelectSingleNode ("config/path").Attributes ["docsPath"].Value;
 			}
-			basedir = "/Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc/";
+			//basedir = "/Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc/";
 		}
 
 		//
