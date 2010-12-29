@@ -52,7 +52,7 @@ net_2_0_dirs := \
 moonlight_dirs := \
 	compiler-tester
 
-basic_SUBDIRS = gacutil resgen security
+basic_SUBDIRS = gacutil resgen security culevel
 net_2_0_SUBDIRS := $(basic_SUBDIRS) $(net_2_0_dirs)
 moonlight_raw_SUBDIRS := $(moonlight_dirs)
 moonlight_SUBDIRS := $(moonlight_dirs)

@@ -3,13 +3,13 @@ thisdir := .
 SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs
 
 basic_SUBDIRS := build jay mcs class tools
-net_2_0_SUBDIRS := build tools/culevel class nunit24 ilasm tools tests errors mcs
+net_2_0_SUBDIRS := build class nunit24 ilasm tools tests errors mcs
 moonlight_raw_SUBDIRS := build class tools mcs
 moonlight_SUBDIRS := tools
 monodroid_SUBDIRS := build class mcs
 monotouch_SUBDIRS := build class mcs
 net_3_5_SUBDIRS := build class tools/xbuild
-net_4_0_SUBDIRS := build tools/culevel class nunit24 ilasm tools tests errors docs mcs
+net_4_0_SUBDIRS := build class nunit24 ilasm tools tests errors docs mcs
 
 # List of test subdirs that should pass 100%
 centum_tests := \
