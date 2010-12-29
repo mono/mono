@@ -61,51 +61,82 @@
 
 		<xsl:call-template name="CreateHeader">
 			<xsl:with-param name="content">
-				<i class="subtitle">Mono Class Library</i>
-
+			  <ul class="breadcrumb">
 				<xsl:choose>
 					<xsl:when test="$show='masteroverview'">
+						<li class="namespace">
+						  <xsl:text>Namespaces in this Collection</xsl:text>
+						</li>
 					</xsl:when>
 					<xsl:when test="$show='typeoverview'">
-						<xsl:text>: </xsl:text>
+						<li class="namespace">
 						<a>
 							<xsl:attribute name="href">N:<xsl:value-of select="$TypeNamespace"/></xsl:attribute>
-							<xsl:value-of select="$TypeNamespace"/> Namespace</a>						
+							<xsl:value-of select="$TypeNamespace"/></a>
+						</li>
+						<li class="pubclass">
+							<xsl:value-of select="@Name"/>
+						</li>
 					</xsl:when>
 					<xsl:when test="$show='members'">
-						<xsl:text>: </xsl:text>
-						<a>
+						<li class="namespace">
+						  <a>
+						    <xsl:attribute name="href">N:<xsl:value-of select="$TypeNamespace"/></xsl:attribute>
+						    <xsl:value-of select="$TypeNamespace"/>
+						  </a>
+						</li>
+						<li class="pubclass">
+						  <a>
 							<xsl:attribute name="href">
 								<xsl:text>T:</xsl:text>
 								<xsl:value-of select="$typelink" />
-							</xsl:attribute>
-							<xsl:value-of select="typename"/> Overview</a>
+							</xsl:attribute>						  
+							<xsl:value-of select="@Name"/>
+						  </a>
+						</li>
+						<li class="members">
+						  Members
+						</li>
 					</xsl:when>
 					<xsl:when test="$show='member' or $show='overloads'">
-						<xsl:text>: </xsl:text>
+						<li class="namespace">
 						<a>
+							<xsl:attribute name="href">N:<xsl:value-of select="$TypeNamespace"/></xsl:attribute>
+							<xsl:value-of select="$TypeNamespace"/></a>
+						</li>
+						<li class="pubclass">
+						  <a>
 							<xsl:attribute name="href">
 								<xsl:text>T:</xsl:text>
 								<xsl:value-of select="$typelink" />
-							</xsl:attribute>
-							<xsl:value-of select="$typename"/> Overview</a>
-						<xsl:text> | </xsl:text>
-						<a>
-							<xsl:attribute name="href">
-								<xsl:text>T:</xsl:text>
-								<xsl:value-of select="$typelink" />
-								<xsl:text>/*</xsl:text>
-							</xsl:attribute>
-							<xsl:text>Members</xsl:text>
-						</a>
+							</xsl:attribute>						  
+							<xsl:value-of select="@Name"/>
+						  </a>
+						</li>
+						<li class="pubproperty">
+						  <xsl:choose>
+						  <xsl:when test="$membertype='Operator'">
+						  	<xsl:value-of select="$typename"/>
+						  	<xsl:value-of select="' '"/> <!-- hard space -->
+						  	<xsl:value-of select="substring-after(Members/Member[MemberType='Method'][position()=$index+1]/@MemberName, 'op_')"/>
+						  </xsl:when>
+						  <xsl:when test="$membertype='Constructor'">
+						  	<xsl:value-of select="$typename"/>
+						  </xsl:when>
+						  <xsl:otherwise>
+						  	<xsl:value-of select="Members/Member[MemberType=$membertype][position()=$index+1]/@MemberName"/>
+						  </xsl:otherwise>
+						  </xsl:choose>
+						</li>
 					</xsl:when>
 					<xsl:when test="$show='namespace'">
-						<xsl:text>: </xsl:text>
-						<a href="root:/classlib">Namespaces</a>
+						<li class="namespace">
+						  <xsl:value-of select="$namespace"/>
+						</li>
 					</xsl:when>
 				</xsl:choose>
-			
-				<h3>
+			</ul>
+			<div class="named-header">
 				<xsl:choose>
 					<xsl:when test="$show='masteroverview'">
 						<xsl:text>Master Overview</xsl:text>
@@ -117,7 +148,7 @@
 					</xsl:when>
 					<xsl:when test="$show='members' and $membertype='All'">
 						<xsl:value-of select="$typename"/>
-						<xsl:text>: Members</xsl:text>
+						<xsl:text> Members</xsl:text>
 					</xsl:when>
 					<xsl:when test="$show='members'">
 						<xsl:value-of select="$typename"/>
@@ -153,7 +184,7 @@
 					</xsl:when>
 
 				</xsl:choose>
-				</h3>
+			</div>
 			</xsl:with-param>
 		</xsl:call-template>
 
@@ -383,14 +414,14 @@
 			<!-- remarks -->
 
 			<xsl:if test="not(remarks = '')">
-				<h4>Remarks</h4>
-				<blockquote>
-				<xsl:apply-templates select="remarks"/>
-				<xsl:if test="monodoc:MonoEditing()">
-					<xsl:value-of select="' '" />
-					[<a href="{monodoc:EditUrlNamespace (., $namespace, 'remarks')}">Edit</a>]
-				</xsl:if>
-				</blockquote>
+				<h2>Remarks</h2>
+				<div class="SectionBox">
+					<xsl:apply-templates select="remarks"/>
+					<xsl:if test="monodoc:MonoEditing()">
+						<xsl:value-of select="' '" />
+						[<a href="{monodoc:EditUrlNamespace (., $namespace, 'remarks')}">Edit</a>]
+					</xsl:if>
+				</div>
 			</xsl:if>
 		
 			<xsl:call-template name="namespacetypes">
@@ -453,7 +484,7 @@
 
 		<xsl:if test="count($NODES)">
 
-		<xsl:call-template name="CreateH4Section">
+		<xsl:call-template name="CreateH2Section">
 			<xsl:with-param name="name" select="$typetitle" />
 			<xsl:with-param name="child-id" select="$typetitle" />
 			<xsl:with-param name="content">

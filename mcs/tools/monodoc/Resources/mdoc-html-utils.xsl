@@ -663,47 +663,6 @@
 			</xsl:call-template>
 		</xsl:if>
 
-		<!-- thread safety -->
-
-		<xsl:if test="count(ThreadingSafetyStatement)">
-			<xsl:call-template name="CreateH4Section">
-				<xsl:with-param name="name" select="'Thread Safety'"/>
-				<xsl:with-param name="child-id" select="concat ($linkid, ':Thread Safety')" />
-				<xsl:with-param name="content">
-					<xsl:apply-templates select="ThreadingSafetyStatement" mode="notoppara"/>
-				</xsl:with-param>
-			</xsl:call-template>
-		</xsl:if>
-
-
-		<!-- permissions -->
-
-		<xsl:if test="count(Docs/permission)">
-			<xsl:call-template name="CreateH4Section">
-				<xsl:with-param name="name" select="'Permissions'"/>
-				<xsl:with-param name="child-id" select="concat ($linkid, ':Permissions')" />
-				<xsl:with-param name="content">
-					<xsl:call-template name="CreateTypeDocumentationTable">
-					<xsl:with-param name="content">
-					<xsl:for-each select="Docs/permission">
-						<tr valign="top">
-						<td>
-							<xsl:apply-templates select="@cref" mode="typelink">
-								<xsl:with-param name="wrt" select="$TypeNamespace"/>
-							</xsl:apply-templates>
-							<xsl:apply-templates select="." mode="editlink"/>
-						</td>
-						<td>
-							<xsl:apply-templates select="." mode="notoppara"/>
-						</td>
-						</tr>
-					</xsl:for-each>
-					</xsl:with-param>
-					</xsl:call-template>
-				</xsl:with-param>
-			</xsl:call-template>
-		</xsl:if>
-
 		<!-- method/property/constructor exceptions -->
 
 		<xsl:if test="count(Docs/exception)">
@@ -735,7 +694,7 @@
 		<!-- remarks -->
 
 		<xsl:if test="count(Docs/remarks)">
-			<xsl:call-template name="CreateH4Section">
+			<xsl:call-template name="CreateH2Section">
 				<xsl:with-param name="name" select="'Remarks'"/>
 				<xsl:with-param name="child-id" select="concat ($linkid, ':Remarks')" />
 				<xsl:with-param name="content">
@@ -745,10 +704,51 @@
 			</xsl:call-template>
 		</xsl:if>
 
+		<!-- thread safety -->
+
+		<xsl:if test="count(ThreadingSafetyStatement)">
+			<xsl:call-template name="CreateH2Section">
+				<xsl:with-param name="name" select="'Thread Safety'"/>
+				<xsl:with-param name="child-id" select="concat ($linkid, ':Thread Safety')" />
+				<xsl:with-param name="content">
+					<xsl:apply-templates select="ThreadingSafetyStatement" mode="notoppara"/>
+				</xsl:with-param>
+			</xsl:call-template>
+		</xsl:if>
+
+
+		<!-- permissions -->
+
+		<xsl:if test="count(Docs/permission)">
+			<xsl:call-template name="CreateH2Section">
+				<xsl:with-param name="name" select="'Permissions'"/>
+				<xsl:with-param name="child-id" select="concat ($linkid, ':Permissions')" />
+				<xsl:with-param name="content">
+					<xsl:call-template name="CreateTypeDocumentationTable">
+					<xsl:with-param name="content">
+					<xsl:for-each select="Docs/permission">
+						<tr valign="top">
+						<td>
+							<xsl:apply-templates select="@cref" mode="typelink">
+								<xsl:with-param name="wrt" select="$TypeNamespace"/>
+							</xsl:apply-templates>
+							<xsl:apply-templates select="." mode="editlink"/>
+						</td>
+						<td>
+							<xsl:apply-templates select="." mode="notoppara"/>
+						</td>
+						</tr>
+					</xsl:for-each>
+					</xsl:with-param>
+					</xsl:call-template>
+				</xsl:with-param>
+			</xsl:call-template>
+		</xsl:if>
+
 		<!-- enumeration values -->
 
 		<xsl:if test="Base/BaseTypeName = 'System.Enum'">
-			<xsl:call-template name="CreateH4Section">
+			<xsl:call-template name="CreateH2Section">
 				<xsl:with-param name="name" select="'Members'"/>
 				<xsl:with-param name="child-id" select="concat ($linkid, ':Members')" />
 				<xsl:with-param name="content">
@@ -785,7 +785,7 @@
 
 		<xsl:if test="count(Docs/example)">
 			<xsl:for-each select="Docs/example">
-				<xsl:call-template name="CreateH4Section">
+				<xsl:call-template name="CreateH2Section">
 					<xsl:with-param name="name" select="'Example'"/>
 					<xsl:with-param name="child-id" select="concat ($linkid, ':Example:', position())" />
 					<xsl:with-param name="content">
@@ -795,7 +795,7 @@
 			</xsl:for-each>
 		</xsl:if>
 
-		<xsl:call-template name="CreateH4Section">
+		<xsl:call-template name="CreateH2Section">
 			<xsl:with-param name="name" select="'Requirements'"/>
 			<xsl:with-param name="child-id" select="concat ($linkid, ':Version Information')" />
 			<xsl:with-param name="content">
@@ -1855,7 +1855,7 @@
 		</xsl:variable>
 
 		<!-- header -->
-		<xsl:call-template name="CreateH3Section">
+		<xsl:call-template name="CreateH2Section">
 			<xsl:with-param name="name" select="$SectionName" />
 			<xsl:with-param name="child-id" select="$SectionName" />
 			<xsl:with-param name="content">

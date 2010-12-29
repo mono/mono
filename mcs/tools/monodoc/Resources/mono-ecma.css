@@ -1,58 +1,573 @@
-#ecma {
-	background: #b0c4de;
-	border: 2px solid #0b366f;
+body
+{
+    font-size: .75em;
+    font-family: Verdana, Helvetica, Sans-Serif;
+    margin: 0;
+    padding: 0;
+    color: #333333;
 }
 
-div.Footer {
-	border-top: 1px solid gray;
-	margin-top: 1.5em;
-	padding-top: 0.6em;
-	text-align: center;
-	color: gray;
+a:link
+{
+    color: #034af3;
+    text-decoration: underline;
+}
+a:visited
+{
+    color: #505abc;
+}
+a:hover
+{
+    color: #1d60ff;
+    text-decoration: none;
+}
+a:active
+{
+    color: #12eb87;
 }
 
-span.NotEntered /* Documentation for this section has not yet been entered */ {
-	font-style: italic;
-	color: red;	
+p, ul
+{
+    margin-bottom: 20px;
+    line-height: 1.6em;
 }
 
-div.Header {
-  background: #B0C4DE;
-  border: double;
-  border-color: white;
-  border-width: 7px;
-  padding: 0.5em;
+pre
+{
+    font-size: 1em;
+    font-family: Consolas, "Courier New", Monospace;
+    border: 1px solid #CCCCCC;
+    background-color: #F7F7F7;
+    padding: 7px;
+    margin: 0 20px 0 20px;
+    line-height: 1.3em;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
 }
 
-div.Header * {
-  font-size: smaller;
+img
+{
+    border: 0px;
 }
 
-div.Note {
+/* HEADINGS   
+----------------------------------------------------------*/
+h1, h2, h3, h4, h5, h6
+{
+    font-size: 1.5em;
+    color: #000;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-i.ParamRef {
+h1
+{
+    font-size: 2em;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+h2
+{
+    padding: 0 0 1px 0;
+    border-bottom: 1px solid #DDDDDD;
+    margin-top: 20px;
+}
+h3
+{
+    font-size: 1.2em;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+h4
+{
+    font-size: 1.1em;
+}
+h5, h6
+{
+    font-size: 1em;
 }
 
-i.subtitle {
+/* this rule styles <h2> tags that are the 
+first child of the left and right table columns */
+.rightColumn > h1, .rightColumn > h2, .leftColumn > h1, .leftColumn > h2
+{
+    margin-top: 0;
 }
 
-ul.TypeMembersIndex {
+/* PRIMARY LAYOUT ELEMENTS   
+----------------------------------------------------------*/
+
+/* you can specify a greater or lesser percentage for the 
+page width. Or, you can specify an exact pixel width. */
+.page
+{
+    padding: 0;
+    margin: 0;
+}
+
+#header
+{
+    position: relative;
+    margin-bottom: 0px;
+    color: #000;
+    padding: 0 0 0 15px;
+    background: url('mdocimages/headerbg.png');
+    background-position: right;
+    background-repeat: no-repeat;
+    background-color: #679EF1;
+    height: 40px;
+    border-bottom: 1px solid #98C2F7;
+    border-bottom: 1px dotted #3363BD;
+}
+
+#header h1
+{
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+    color: #fff;
+    border: none;
+    line-height: 1.8em;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 22px !important;
+}
+
+#main
+{
+    padding: 0px 0px 15px 0px;
+    background-color: #fff;
+    margin-bottom: 30px;
+    _height: 1px; /* only IE6 applies CSS properties starting with an underscore */
+}
+
+#footer
+{
+    color: #999;
+    padding: 10px 0;
+    text-align: center;
+    line-height: normal;
+    margin: 0;
+    font-size: .9em;
+}
+
+#line-background
+{
+    background-image: url('mdocimages/treebg.png');
+    background-repeat: repeat-y;
+    height: 100%;
+}
+
+#left-content
+{
+    float: left;
+    width: 186px;
+    padding-top: 5px;
+    margin-right: 5px;
+    overflow: hidden;
+}
+
+#right-content
+{
+    padding-top: 0px;
+    overflow: auto;
+    height: 100%;
+}
+
+.right-content-pad
+{
+    margin: 6px 10px 0px 10px;
+}
+
+.named-header
+{
+    background: url('mdocimages/hatch.png') repeat-x left bottom;
+    height: 48px;
+    background-color: #FAFBFD;
+    font-size: 1.7em;
+    font-weight: bold;
+    padding: 8px 0 0 10px;
+    font-family: 'Segoe UI',Verdana,Arial;
+}
+
+.member-list
+{
+    border-spacing: 0px;
+}
+
+.member-list td
+{
+    padding: 4px;
+    margin: 0px;
+    border-bottom: 1px dotted #CCCCCC;
+}
+
+.member-list
+{
+    
+}
+/* TAB MENU   
+----------------------------------------------------------*/
+ul#menu
+{
+    border-bottom: 1px #5C87B2 solid;
+    padding: 0 0 2px;
+    position: relative;
+    margin: 0;
+    text-align: right;
+}
+
+ul#menu li
+{
+    display: inline;
+    list-style: none;
+}
+
+ul#menu li#greeting
+{
+    padding: 10px 20px;
+    font-weight: bold;
+    text-decoration: none;
+    line-height: 2.8em;
+    color: #fff;
+}
+
+ul#menu li a
+{
+    padding: 10px 20px;
+    font-weight: bold;
+    text-decoration: none;
+    line-height: 2.8em;
+    background-color: #e8eef4;
+    color: #034af3;
+}
+
+ul#menu li a:hover
+{
+    background-color: #fff;
+    text-decoration: none;
+}
+
+ul#menu li a:active
+{
+    background-color: #a6e2a6;
+    text-decoration: none;
+}
+
+ul#menu li.selected a
+{
+    background-color: #fff;
+    color: #000;
+}
+
+/* FORM LAYOUT ELEMENTS   
+----------------------------------------------------------*/
+
+fieldset 
+{
+    margin: 1em 0;
+    padding: 1em;
+    border: 1px solid #CCC;
+}
+
+fieldset p 
+{
+    margin: 2px 12px 10px 10px;
+}
+
+legend 
+{
+    font-size: 1.1em;
+    font-weight: 600;
+    padding: 2px 4px 8px 4px;
+}
+
+input[type="text"] 
+{
+    width: 200px;
+    border: 1px solid #CCC;
+}
+
+input[type="password"] 
+{
+    width: 200px;
+    border: 1px solid #CCC;
+}
+
+/* TABLE
+----------------------------------------------------------*/
+
+table 
+{
+/*  border: solid 1px #e8eef4;
+  border-collapse: collapse;*/
+}
+
+table td 
+{
+  padding: 5px;   
+/*  border: solid 1px #e8eef4;*/
+}
+
+table th
+{
+  padding: 6px 5px;
   text-align: left;
-  background: #F8F8F8;
+  background-color: #e8eef4; 
+  border: solid 1px #e8eef4;   
 }
 
-ul.TypeMembersIndex li {
-  display: inline;
-  margin:  0.5em;
+/* MISC  
+----------------------------------------------------------*/
+.clear
+{
+    clear: both;
 }
 
-table.HeaderTable {
+.error
+{
+    color:Red;
 }
 
-table.SignatureTable {
+.indent
+{
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
+#menucontainer
+{
+    margin-top:40px;
+}
+
+div#title
+{
+    display:block;
+    float:left;
+    text-align:left;
+}
+
+#logindisplay
+{
+    font-size:1.1em;
+    display:block;
+    text-align:right;
+    margin:0px;
+    color:White;
+}
+
+#logindisplay a:link
+{
+    color: white;
+    text-decoration: underline;
+}
+
+#logindisplay a:visited
+{
+    color: white;
+    text-decoration: underline;
+}
+
+#logindisplay a:hover
+{
+    color: white;
+    text-decoration: none;
+}
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}
+
+/* Styles for editor and display helpers
+----------------------------------------------------------*/
+.display-label,
+.editor-label,
+.display-field,
+.editor-field
+{
+    margin: 0.5em 0;
+}
+
+.text-box
+{
+    width: 30em;
+}
+
+.text-box.multi-line
+{
+    height: 6.5em;
+}
+
+.tri-state
+{
+    width: 6em;
+}
+
+/* Breadcrumb Bar */
+.breadcrumb
+{
+    border-left: 1px solid #cacaca;
+    border-right: 1px solid #cacaca;
+    border-bottom: 1px solid #cacaca;
+    background-image: url('mdocimages/bc_bg.png');
+    background-repeat: repeat-x;
+    height: 25px;
+    line-height: 25px;
+    color: #454545;
+    border-top: 0px;
+    width: 100%;
+    overflow: hidden;
+    margin-left: -2px;
+    padding: 0px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font-size: 11px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.breadcrumb li
+{
+    list-style-type: none;
+    float: left;
+    padding-left: 25px;
+    background-position: 5px center;
+    background-repeat: no-repeat;
+}
+
+.breadcrumb li.pubclass { background-image: url('mdocimages/pubclass.png'); }
+.breadcrumb li.pubdelegate { background-image: url('mdocimages/pubdelegate.png'); }
+.breadcrumb li.pubenumeration { background-image: url('mdocimages/pubenumeration.png'); }
+.breadcrumb li.pubevent { background-image: url('mdocimages/pubevent.png'); }
+.breadcrumb li.pubextension { background-image: url('mdocimages/pubextension.png'); }
+.breadcrumb li.pubfield { background-image: url('mdocimages/pubfield.png'); }
+.breadcrumb li.pubinterface { background-image: url('mdocimages/pubinterface.png'); }
+.breadcrumb li.pubmethod { background-image: url('mdocimages/pubmethod.png'); }
+.breadcrumb li.pubproperty { background-image: url('mdocimages/pubproperty.png'); }
+.breadcrumb li.pubstructure { background-image: url('mdocimages/pubstructure.png'); }
+
+.breadcrumb li.protclass { background-image: url('mdocimages/protclass.png'); }
+.breadcrumb li.protdelegate { background-image: url('mdocimages/protdelegate.png'); }
+.breadcrumb li.protenumeration { background-image: url('mdocimages/protenumeration.png'); }
+.breadcrumb li.protevent { background-image: url('mdocimages/protevent.png'); }
+.breadcrumb li.protextension { background-image: url('mdocimages/protextension.png'); }
+.breadcrumb li.protfield { background-image: url('mdocimages/protfield.png'); }
+.breadcrumb li.protinterface { background-image: url('mdocimages/protinterface.png'); }
+.breadcrumb li.protmethod { background-image: url('mdocimages/protmethod.png'); }
+.breadcrumb li.protproperty { background-image: url('mdocimages/protproperty.png'); }
+.breadcrumb li.protstructure { background-image: url('mdocimages/protstructure.png'); }
+
+.breadcrumb li.privclass { background-image: url('mdocimages/privclass.png'); }
+.breadcrumb li.privdelegate { background-image: url('mdocimages/privdelegate.png'); }
+.breadcrumb li.privenumeration { background-image: url('mdocimages/privenumeration.png'); }
+.breadcrumb li.privevent { background-image: url('mdocimages/privevent.png'); }
+.breadcrumb li.privextension { background-image: url('mdocimages/privextension.png'); }
+.breadcrumb li.privfield { background-image: url('mdocimages/privfield.png'); }
+.breadcrumb li.privinterface { background-image: url('mdocimages/privinterface.png'); }
+.breadcrumb li.privmethod { background-image: url('mdocimages/privmethod.png'); }
+.breadcrumb li.privproperty { background-image: url('mdocimages/privproperty.png'); }
+.breadcrumb li.privstructure { background-image: url('mdocimages/privstructure.png'); }
+
+.breadcrumb li.namespace 
+{
+    padding-left: 26px;
+    background-image: url('mdocimages/namespace.png');
+}
+
+.breadcrumb li.reference 
+{
+    padding-left: 26px;
+    background-image: url('mdocimages/reference.png');
+}
+
+.breadcrumb li.members 
+{
+    padding-left: 24px;
+    background-image: url('mdocimages/members.png');
+}
+
+.breadcrumb li.home 
+{
+    padding-left: 31px;
+    background-image: url('mdocimages/house.png');
+    background-position: 8px center;
+}
+
+.breadcrumb li.help 
+{
+    background-image: url('mdocimages/help.png');
+}
+
+.breadcrumb li.unrecognized 
+{
+    background-image: url('mdocimages/error.png');
+}
+
+.breadcrumb a
+{
+    height: 25px;
+    display: block;
+    background-image: url('mdocimages/bc_separator.png');
+    background-repeat: no-repeat;
+    background-position: right;
+    padding-right: 15px;
+    color: #454545;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover
+{
+    text-decoration: underline;
+}
+
+.clearer
+{
+    clear: both;
+}
+
+div.Signature {
+  border: 1px solid #C0C0C0;
+  background: #F2F2F2;
+  padding: 1em;
+  margin-left: 1em;
+}
+
+div.Content {
+    margin-left: 1em;
+}
+
+.SectionBox {
+    margin-left: 1em;
+}
+
+/* Salvaged from the old style */
 table.Documentation, table.Enumeration, table.TypeDocumentation {
   border-collapse: collapse;
   width: 100%;
@@ -83,38 +598,7 @@ table.TypeMembers tr td {
   border: white;
 }
 
-table.Documentation {
-}
-
-table.TypeMembers {
-}
-
-div.CodeExample {
-  width: 100%;
-  border: 1px solid #DDDDDD;
-  background-color: #F8F8F8;
-}
-
-div.CodeExample p {
-  margin: 0.5em;
-  border-bottom: 1px solid #DDDDDD;
-}
-
-div.CodeExample div {
-  margin: 0.5em;
-}
-
-h4 {
-  margin-bottom: 0;
-}
-
-h2 a, h3 a, h4 a {
-  color: inherit;
-  text-decoration: none;
-}
-
-div.Signature {
-  border: 1px solid #C0C0C0;
-  background: #F2F2F2;
-  padding: 1em;
+span.NotEntered /* Documentation for this section has not yet been entered */ {
+	font-style: italic;
+	color: #aaa;	
 }

@@ -5,12 +5,17 @@
 */
 
 body, table {
+	margin: 0px;
 	font-family: @@FONT_FAMILY@@, sans-serif;
 	font-size: @@FONT_SIZE@@%;
 }
 
 div.header {
-	padding: 0.2em;
+    background-color: #FAFBFD;
+    font-size: 1.7em;
+    font-weight: bold;
+    padding: 8px 0 0 10px;
+    font-family: 'Segoe UI',Verdana,Arial;
 }
 
 div.title {
