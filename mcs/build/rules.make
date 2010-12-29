@@ -42,7 +42,7 @@ INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilas
 corlib = mscorlib.dll
 
 ifndef BUILD_TOOLS_PROFILE
-BUILD_TOOLS_PROFILE = $(PROFILE)
+BUILD_TOOLS_PROFILE = basic
 endif
 
 INTERNAL_RESGEN = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resgen.exe
