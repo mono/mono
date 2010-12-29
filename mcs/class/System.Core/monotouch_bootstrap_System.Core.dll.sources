@@ -1,5 +1,0 @@
-#include mobile_System.Core.dll.sources
-System.Linq.jvm/Conversion.cs
-System.Linq.jvm/ExpressionInterpreter.cs
-System.Linq.jvm/Runner.cs
-System.Linq.jvm/Math.cs

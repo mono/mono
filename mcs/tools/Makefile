@@ -53,14 +53,12 @@ moonlight_dirs := \
 	compiler-tester
 
 basic_SUBDIRS = gacutil security
-net_2_0_bootstrap_SUBDIRS = resgen culevel
 net_2_0_SUBDIRS := $(basic_SUBDIRS) $(net_2_0_dirs)
 moonlight_raw_SUBDIRS := $(moonlight_dirs)
 moonlight_SUBDIRS := $(moonlight_dirs)
-net_4_0_bootstrap_SUBDIRS = resgen culevel
 net_4_0_SUBDIRS := $(net_4_0_dirs) $(basic_SUBDIRS)
 
-SUBDIRS = $(basic_SUBDIRS) $(net_2_0_bootstrap_SUBDIRS) $(net_2_0_SUBDIRS) $(moonlight_SUBDIRS)
+SUBDIRS = $(basic_SUBDIRS) $(net_2_0_SUBDIRS) $(moonlight_SUBDIRS)
 DIST_SUBDIRS = $(SUBDIRS) $(net_4_0_dirs)
 
 include ../build/rules.make

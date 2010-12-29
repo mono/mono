@@ -1,2 +1,2 @@
-#include monodroid_bootstrap_System.Core.dll.sources
+#include mobile_System.Core.dll.sources
 System/TimeZoneInfo.Android.cs
