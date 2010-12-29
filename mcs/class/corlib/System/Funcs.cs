@@ -29,7 +29,7 @@ using System.Runtime.CompilerServices;
 
 namespace System {
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 	public delegate TResult Func<out TResult> ();
 	

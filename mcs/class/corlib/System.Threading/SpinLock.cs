@@ -22,12 +22,12 @@
 //
 //
 
+#if NET_4_0
+
 using System;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-
-#if NET_4_0 || BOOTSTRAP_NET_4_0
 
 namespace System.Threading
 {

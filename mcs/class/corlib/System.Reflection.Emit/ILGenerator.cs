@@ -1010,7 +1010,7 @@ namespace System.Reflection.Emit {
 			return ig.code_len;
 		}	
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 		public
 #else
 		internal

@@ -45,25 +45,5 @@ namespace System.Threading
 			: base(initialState, EventResetMode.ManualReset)
 		{
 		}
-
-		// Methods
-
-/* Need BOOTSTRAP_NET_2_0 because System.IO.FileStreamAsyncResult
- * wants to use the Set method that has moved to EventWaitHandle in
- * the 2.0 profile
- */
-#if BOOTSTRAP_NET_2_0
-		public bool Set()
-		{
-			CheckDisposed ();
-			return (NativeEventCalls.SetEvent_internal (Handle));
-		}
-
-		public bool Reset()
-		{
-			CheckDisposed ();
-			return(NativeEventCalls.ResetEvent_internal (Handle));
-		}
-#endif
 	}
 }

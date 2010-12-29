@@ -31,7 +31,7 @@
 //
 
 // Since 4.0 (both FX and SL) this type is defined in mscorlib - before 4.0 it was in System.Core.dll
-#if (INSIDE_CORLIB && (NET_4_0 || BOOTSTRAP_NET_4_0 || MOONLIGHT)) || (!INSIDE_CORLIB && !NET_4_0 && !BOOTSTRAP_NET_4_0 && !MOONLIGHT)
+#if (INSIDE_CORLIB && (NET_4_0 || MOONLIGHT)) || (!INSIDE_CORLIB && !NET_4_0 && !MOONLIGHT)
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -47,7 +47,7 @@ namespace System.Security.Cryptography {
 	#if MOONLIGHT
 	// version has not changed between SL3 (System.Core) and SL4
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
-	#elif NET_4_0 || BOOTSTRAP_NET_4_0
+	#elif NET_4_0
 	// use 3.5 version
 	[TypeForwardedFrom ("System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	#endif

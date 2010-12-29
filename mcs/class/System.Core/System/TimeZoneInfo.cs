@@ -27,7 +27,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-#if !INSIDE_CORLIB && (NET_4_0 || BOOTSTRAP_NET_4_0 || MOONLIGHT)
+#if !INSIDE_CORLIB && (NET_4_0 || MOONLIGHT)
 
 [assembly:TypeForwardedTo (typeof(TimeZoneInfo))]
 
@@ -48,7 +48,7 @@ using Microsoft.Win32;
 
 namespace System
 {
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #elif MOONLIGHT
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]

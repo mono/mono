@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0 || INSIDE_SYSTEM_WEB
+#if NET_4_0 || INSIDE_SYSTEM_WEB
 
 using System;
 using System.Threading;
@@ -453,7 +453,7 @@ namespace System.Collections.Concurrent
 		}
 	}
 
-#if INSIDE_SYSTEM_WEB && !NET_4_0 && !BOOTSTRAP_NET_4_0
+#if INSIDE_SYSTEM_WEB && !NET_4_0
 	internal struct SpinWait
 	{
 		// The number of step until SpinOnce yield on multicore machine

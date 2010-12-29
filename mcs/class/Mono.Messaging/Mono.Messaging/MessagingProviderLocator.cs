@@ -66,7 +66,7 @@ namespace Mono.Messaging
 			return Instance.provider;
 		}
 		
-#if NET_2_0 || BOOTSTRAP_NET_2_0 || NET_3_0 || NET_2_1 || NET_3_0 || NET_3_5 || NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_2_1 || NET_3_0 || NET_3_5 || NET_4_0
 		private string GetProviderClassName ()
 		{
 			string className = System.Configuration.ConfigurationManager.AppSettings[MESSAGING_PROVIDER_KEY];

@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 
 using System;
 using System.Runtime.Serialization;

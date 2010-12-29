@@ -24,14 +24,14 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT
 
 using System.Runtime.CompilerServices;
 
 namespace System
 {
 	[Serializable]
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #elif MOONLIGHT
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
