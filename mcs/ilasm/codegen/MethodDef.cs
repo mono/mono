@@ -295,17 +295,13 @@ namespace Mono.ILASM {
 
                 public LocalVariableEntry[] GetLocalVars()
                 {
-                        System.IO.MemoryStream str = new System.IO.MemoryStream();
-                        int i = 0;
-                        int num_locals = ((Hashtable) named_local_tables [current_scope_depth]).Count;
-                        LocalVariableEntry[] locals = new LocalVariableEntry[num_locals];
-
+                        ArrayList named_locals = new ArrayList ();
                         foreach (Local local in local_list) {
                                 if (local.Name != null) {  // only named variables
-                                        locals[i++] = new LocalVariableEntry(local.Slot, local.Name, 0);
+                                        named_locals.Add (new LocalVariableEntry(local.Slot, local.Name, 0));
                                 }
                         }
-                        return locals;
+                        return (LocalVariableEntry []) named_locals.ToArray (typeof (LocalVariableEntry));
                 }
 
 
