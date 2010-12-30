@@ -402,6 +402,28 @@ namespace MonoTests.System.Linq {
 			IEnumerable<int> nonGen = new int[] { 1, 2, 3 };
 			Assert.IsTrue (nonGen.AsQueryable () is IQueryable<int>);
 		}
+
+		class Bar<T1, T2> : IEnumerable<T2> {
+
+			public IEnumerator<T2> GetEnumerator ()
+			{
+				yield break;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return GetEnumerator ();
+			}
+		}
+
+		[Test]
+		public void NonGenericAsQueryableInstantiateProperQueryable ()
+		{
+			IEnumerable bar = new Bar<int, string> ();
+			IQueryable queryable = bar.AsQueryable ();
+
+			Assert.IsInstanceOfType (typeof (IQueryable<string>), queryable);
+		}
 	}
 
 	class MyEnum : IEnumerable
