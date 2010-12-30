@@ -158,13 +158,12 @@ namespace System.Linq {
 			if (queryable != null)
 				return queryable;
 
-			var type = source.GetType ();
-
-			if (!type.IsGenericImplementationOf (typeof (IEnumerable<>)))
+			Type ienumerable;
+			if (!source.GetType ().IsGenericImplementationOf (typeof (IEnumerable<>), out ienumerable))
 				throw new ArgumentException ("source is not IEnumerable<>");
 
 			return (IQueryable) Activator.CreateInstance (
-				typeof (QueryableEnumerable<>).MakeGenericType (type.GetFirstGenericArgument ()), source);
+				typeof (QueryableEnumerable<>).MakeGenericType (ienumerable.GetFirstGenericArgument ()), source);
 		}
 
 		#endregion
