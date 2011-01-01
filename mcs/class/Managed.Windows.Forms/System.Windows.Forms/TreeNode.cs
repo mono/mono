@@ -146,21 +146,29 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 
 		#region ICloneable Members
-		public virtual object Clone()
+		public virtual object Clone ()
 		{
 			TreeNode tn = (TreeNode)Activator.CreateInstance (GetType ());
-			tn.Text = text;
+			tn.name = name;
+			tn.text = text;
+			tn.image_key = image_key;
 			tn.image_index = image_index;
 			tn.selected_image_index = selected_image_index;
+			tn.selected_image_key = selected_image_key;
+			tn.state_image_index = state_image_index;
+			tn.state_image_key = state_image_key;
+			tn.tag = tag;
+			tn.check = check;
+			tn.tool_tip_text = tool_tip_text;
+			tn.context_menu = context_menu;
+			tn.context_menu_strip = context_menu_strip;
 			if (nodes != null) {
 				foreach (TreeNode child in nodes)
-					tn.Nodes.Add ((TreeNode)child.Clone ());
+					tn.nodes.Add ((TreeNode)child.Clone ());
 			}
-			tn.Tag = tag;
-			tn.Checked = Checked;
 			if (prop_bag != null)
 				tn.prop_bag = OwnerDrawPropertyBag.Copy (prop_bag);
-			return tn;	
+			return tn;
 		}
 
 		#endregion	// ICloneable Members
