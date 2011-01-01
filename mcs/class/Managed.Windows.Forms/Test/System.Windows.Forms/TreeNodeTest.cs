@@ -178,6 +178,74 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (SystemDrawingNamespace.Color.Beige, clone.ForeColor, "#13");
 		}
 
+		[Test] // bug 661753
+		public void TestTreeNodeClone ()
+		{
+			TreeNode orig = new TreeNode ();
+
+			orig.Nodes.Add ("Node1");
+			orig.Nodes.Add ("Node2");
+			orig.Nodes.Add ("Node3");
+
+			orig.Checked = true;
+			orig.ImageIndex = 4;
+			orig.Name = "MyName";
+			orig.SelectedImageIndex = 3;
+			orig.StateImageIndex = 8;
+			orig.Tag = new object ();
+			orig.Text = "MyText";
+			orig.ToolTipText = "MyToolTipText";
+
+			orig.ContextMenu = new ContextMenu ();
+			orig.ContextMenu.Name = "MyContextMenu";
+			orig.ContextMenu.MenuItems.Add (new MenuItem ("MenuItem1"));
+			orig.ContextMenu.MenuItems.Add (new MenuItem ("MenuItem2"));
+
+			orig.ContextMenuStrip = new ContextMenuStrip ();
+			orig.ContextMenuStrip.Name = "MyContextMenuStrip";
+			orig.ContextMenuStrip.Items.Add ("ToolStripText");
+			orig.ContextMenuStrip.Items.Add (new Bitmap (1, 1));
+
+			TreeNode clone = orig.Clone () as TreeNode;
+
+			Assert.AreEqual (orig.Nodes[0].Name, clone.Nodes[0].Name, "#01");
+			Assert.AreEqual (orig.Nodes[1].Name, clone.Nodes[1].Name, "#02");
+			Assert.AreEqual (orig.Nodes[2].Name, clone.Nodes[2].Name, "#03");
+			Assert.AreNotEqual (orig.Nodes[0], clone.Nodes[0], "#04");
+			Assert.AreNotEqual (orig.Nodes[1], clone.Nodes[1], "#05");
+			Assert.AreNotEqual (orig.Nodes[2], clone.Nodes[2], "#06");
+
+			Assert.AreEqual (orig.Checked, clone.Checked, "#07");
+			Assert.AreEqual (orig.ImageIndex, clone.ImageIndex, "#08");
+			Assert.AreEqual (orig.Name, clone.Name, "#09");
+			Assert.AreEqual (orig.SelectedImageIndex, clone.SelectedImageIndex, "#10");
+			Assert.AreEqual (orig.StateImageIndex, clone.StateImageIndex, "#11");
+			Assert.AreEqual (orig.Tag, clone.Tag, "#12");
+			Assert.AreEqual (orig.Text, clone.Text, "#13");
+			Assert.AreEqual (orig.ToolTipText, clone.ToolTipText, "#14");
+			Assert.AreEqual (orig.ContextMenu, clone.ContextMenu, "#15");
+			Assert.AreEqual (orig.ContextMenuStrip, clone.ContextMenuStrip, "#16");
+		}
+
+		[Test] // bug 661753
+		public void TestTreeNodeClone2 ()
+		{
+			// Cannot test ImageIndex and ImageKey properties at the same time,
+			// as one excludes the other. So this method is for Keys only.
+
+			TreeNode orig = new TreeNode ();
+
+			orig.ImageKey = "MyImageKey";
+			orig.SelectedImageKey = "MySelectedImageKey";
+			orig.StateImageKey = "MyStateImageKey";
+
+			TreeNode clone = orig.Clone () as TreeNode;
+
+			Assert.AreEqual (orig.ImageKey, clone.ImageKey, "#01");
+			Assert.AreEqual (orig.SelectedImageKey, clone.SelectedImageKey, "#02");
+			Assert.AreEqual (orig.StateImageKey, clone.StateImageKey, "#03");
+		}
+
 		[Test]
 		public void SingleNodeIndexTest ()
 		{
