@@ -65,38 +65,30 @@ namespace System.Web.Handlers
 
 		static readonly Dictionary <string, AssemblyEmbeddedResources> _embeddedResources = new Dictionary <string, AssemblyEmbeddedResources> (StringComparer.Ordinal);
 		static readonly ReaderWriterLockSlim _embeddedResourcesLock = new ReaderWriterLockSlim ();
+		static readonly ReaderWriterLockSlim _stringHashCacheLock = new ReaderWriterLockSlim ();
+		static readonly Dictionary <string, string> stringHashCache = new Dictionary <string, string> (StringComparer.Ordinal);
 
 		[ThreadStatic]
 		static KeyedHashAlgorithm hashAlg;
 		static bool canReuseHashAlg = true;
-		
-		[ThreadStatic]
-		static Dictionary <string, string> stringHashCache;
-
-		static Dictionary <string, string> StringHashCache {
-			get {
-				if (stringHashCache == null)
-					stringHashCache = new Dictionary <string, string> (StringComparer.Ordinal);
-
-				return stringHashCache;
-			}
-		}
 
 		static KeyedHashAlgorithm ReusableHashAlgorithm {
 			get {
 				if (!canReuseHashAlg)
 					return null;
 
-				if (hashAlg != null)
-					return hashAlg;
-				
-				MachineKeySection mks = MachineKeySection.Config;
-				hashAlg = MachineKeySectionUtils.GetValidationAlgorithm (mks);
-				if (!hashAlg.CanReuseTransform) {
-					canReuseHashAlg = false;
-					hashAlg = null;
+				if (hashAlg == null) {				
+					MachineKeySection mks = MachineKeySection.Config;
+					hashAlg = MachineKeySectionUtils.GetValidationAlgorithm (mks);
+					if (!hashAlg.CanReuseTransform) {
+						canReuseHashAlg = false;
+						hashAlg = null;
+					}
 				}
-				
+
+				if (hashAlg != null)
+					hashAlg.Initialize ();
+
 				return hashAlg;
 			}
 		}
@@ -107,12 +99,25 @@ namespace System.Web.Handlers
 				return String.Empty;
 
 			string result;
-			Dictionary <string, string> cache = StringHashCache;
-			if (cache.TryGetValue (str, out result))
-				return result;
+			try {
+				_stringHashCacheLock.EnterUpgradeableReadLock ();
+				if (stringHashCache.TryGetValue (str, out result))
+					return result;
+
+				try {
+					_stringHashCacheLock.EnterWriteLock ();
+					if (stringHashCache.TryGetValue (str, out result))
+						return result;
+					
+					result = Convert.ToBase64String (kha.ComputeHash (Encoding.UTF8.GetBytes (str)));
+					stringHashCache.Add (str, result);
+				} finally {
+					_stringHashCacheLock.ExitWriteLock ();
+				}
+			} finally {
+				_stringHashCacheLock.ExitUpgradeableReadLock ();
+			}
 			
-			result = Convert.ToBase64String (kha.ComputeHash (Encoding.UTF8.GetBytes (str)));
-			cache.Add (str, result);
 			return result;
 		}
 		
@@ -215,7 +220,6 @@ namespace System.Web.Handlers
 
 			KeyedHashAlgorithm kha = ReusableHashAlgorithm;
 			if (kha != null) {
-				kha.Initialize ();
 				return GetResourceUrl (kha, assembly, resourceName, notifyScriptLoaded);
 			} else {
 				MachineKeySection mks = MachineKeySection.Config;

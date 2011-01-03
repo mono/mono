@@ -234,12 +234,10 @@ namespace System.Web.UI
 
 		protected internal virtual void Initialize ()
 		{
-			int tcount = _triggers != null ? _triggers.Count : 0;
-			if (tcount == 0 || !ScriptManager.SupportsPartialRendering)
+			if (_triggers == null || _triggers.Count == 0 || !ScriptManager.SupportsPartialRendering)
 				return;
-			
-			for (int i = 0; i < tcount; i++)
-				_triggers [i].Initialize ();
+
+			_triggers.Initialize ();
 		}
 
 		protected internal override void OnInit (EventArgs e) {
