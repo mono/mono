@@ -6923,7 +6923,7 @@ mono_get_object_from_blob (MonoDomain *domain, MonoType *type, const char *blob)
 		return NULL;
 }
 
-static int
+int
 assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 	int found_sep;
 	char *s;

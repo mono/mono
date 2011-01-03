@@ -14,6 +14,11 @@ mono_gchandle_new
 mono_jit_parse_options
 g_free
 mono_image_open_from_data_with_name
+mono_assembly_fill_assembly_name
+mono_stringify_assembly_name
+assembly_name_to_aname
+mono_assembly_loaded
+
 ;Unity Exports that add new functions created by Unity
 unity_mono_redirect_output
 unity_mono_close_output
