@@ -309,8 +309,8 @@
       </ReturnValue>
       <MemberValue>Favorites</MemberValue>
       <Docs>
-        <summary>The Favorites directory.  Not available non-Windows operating systems.</summary>
-        <remarks>To be added.</remarks>
+        <summary>The Favorites directory.  </summary>
+        <remarks>On Windows, the system favorite directory.   On MacOS X this is ~/Library/Favorites, and is empty for other operating systems.</remarks>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -328,7 +328,7 @@
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The fonts directory, on MacOS X this is ~/Library/Fonts, on other Unix operating systems it is ~/.fonts/</summary>
       </Docs>
     </Member>
     <Member MemberName="History">
@@ -356,8 +356,8 @@
       </ReturnValue>
       <MemberValue>InternetCache</MemberValue>
       <Docs>
-        <summary>The Internet cache directory.  Not available non-Windows operating systems.</summary>
-        <remarks>To be added.</remarks>
+        <summary>The Internet cache directory.</summary>
+        <remarks>The Internet cache directory on Windows.   On MacOS X this is the ~/Library/Caches directory, and not available on other operating systems.</remarks>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -435,7 +435,7 @@
       </ReturnValue>
       <MemberValue>MyMusic</MemberValue>
       <Docs>
-        <summary>The music directory.  On Unix operating systems, this is either XDG_MUSIC_DIR from the environment, XDG_MUSIC_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Music" within the SpecialFolder.Personal directory (usually the home directory).</summary>
+        <summary>The music directory.  On MacOS X this is ~/Music.  On other Unix operating systems, this is either XDG_MUSIC_DIR from the environment, XDG_MUSIC_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Music" within the SpecialFolder.Personal directory (usually the home directory).</summary>
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyInfo>
@@ -452,7 +452,7 @@
       </ReturnValue>
       <MemberValue>MyPictures</MemberValue>
       <Docs>
-        <summary>The pictures directory.  On Unix operating systems, this is either XDG_PICTURES_DIR from the environment, XDG_PICTURES_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Pictures" within the SpecialFolder.Personal directory (usually the home directory).</summary>
+        <summary>The pictures directory.  On MacOS X this is ~/Pictures.   On other Unix operating systems, this is either XDG_PICTURES_DIR from the environment, XDG_PICTURES_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Pictures" within the SpecialFolder.Personal directory (usually the home directory).</summary>
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyInfo>
@@ -525,8 +525,8 @@
       </ReturnValue>
       <MemberValue>ProgramFiles</MemberValue>
       <Docs>
-        <summary>The ProgramFiles directory.  Not available non-Windows operating systems.</summary>
-        <remarks>To be added.</remarks>
+        <summary>Where program files are located.  </summary>
+        <remarks>The ProgramFiles directory on Windows, /Application on MacOS X and the empty string for other operating systems.</remarks>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

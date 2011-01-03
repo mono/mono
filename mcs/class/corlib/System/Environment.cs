@@ -596,10 +596,16 @@ namespace System {
 				return ReadXdgUserDir (config, home, "XDG_DESKTOP_DIR", "Desktop");
 
 			case SpecialFolder.MyMusic:
-				return ReadXdgUserDir (config, home, "XDG_MUSIC_DIR", "Music");
+				if (Platform == PlatformID.MacOSX)
+					return Path.Combine (home, "Music");
+				else
+					return ReadXdgUserDir (config, home, "XDG_MUSIC_DIR", "Music");
 
 			case SpecialFolder.MyPictures:
-				return ReadXdgUserDir (config, home, "XDG_PICTURES_DIR", "Pictures");
+				if (Platform == PlatformID.MacOSX)
+					return Path.Combine (home, "Pictures");
+				else
+					return ReadXdgUserDir (config, home, "XDG_PICTURES_DIR", "Pictures");
 			
 			case SpecialFolder.Templates:
 				return ReadXdgUserDir (config, home, "XDG_TEMPLATES_DIR", "Templates");
@@ -611,22 +617,40 @@ namespace System {
 			case SpecialFolder.CommonTemplates:
 				return "/usr/share/templates";
 			case SpecialFolder.Fonts:
+				if (Platform == PlatformID.MacOSX)
+					return Path.Combine (home, "Library", "Fonts");
+				
 				return Path.Combine (home, ".fonts");
 #endif
 			// these simply dont exist on Linux
 			// The spec says if a folder doesnt exist, we
 			// should return ""
 			case SpecialFolder.Favorites:
+				if (Platform == PlatformID.MacOSX)
+					return Path.Combine (home, "Library", "Favorites");
+				else
+					return String.Empty;
+				
+			case SpecialFolder.ProgramFiles:
+				if (Platform == PlatformID.MacOSX)
+					return "/Applications";
+				else
+					return String.Empty;
+
+			case SpecialFolder.InternetCache:
+				if (Platform == PlatformID.MacOSX)
+					return Path.Combine (home, "Library", "Caches");
+				else
+					return String.Empty;
+				
 			case SpecialFolder.Programs:
 			case SpecialFolder.SendTo:
 			case SpecialFolder.StartMenu:
 			case SpecialFolder.Startup:
 			case SpecialFolder.Cookies:
 			case SpecialFolder.History:
-			case SpecialFolder.InternetCache:
 			case SpecialFolder.Recent:
 			case SpecialFolder.CommonProgramFiles:
-			case SpecialFolder.ProgramFiles:
 			case SpecialFolder.System:
 #if NET_4_0
 			case SpecialFolder.NetworkShortcuts:
