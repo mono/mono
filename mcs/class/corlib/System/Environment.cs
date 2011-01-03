@@ -208,7 +208,7 @@ namespace System {
 		//
 		static OperatingSystem os;
 
-		internal static extern PlatformID Platform {
+		static extern PlatformID Platform {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
@@ -224,6 +224,8 @@ namespace System {
 				if (os == null) {
 					Version v = Version.CreateFromString (GetOSVersionString ());
 					PlatformID p = Platform;
+					if (p == PlatformID.MacOSX)
+						p = PlatformID.Unix;
 					os = new OperatingSystem (p, v);
 				}
 				return os;
