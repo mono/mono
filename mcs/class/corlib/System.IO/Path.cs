@@ -748,7 +748,11 @@ namespace System.IO {
 		}
 
 #if NET_4_0 || MOONLIGHT
-		public static string Combine (params string [] paths)
+		public
+#else
+                internal
+#endif
+		static string Combine (params string [] paths)
 		{
 			if (paths == null)
 				throw new ArgumentNullException ("paths");
@@ -783,7 +787,12 @@ namespace System.IO {
 			return ret.ToString ();
 		}
 
-		public static string Combine (string path1, string path2, string path3)
+#if NET_4_0 || MOONLIGHT
+		public
+#else
+                internal
+#endif
+		static string Combine (string path1, string path2, string path3)
 		{
 			if (path1 == null)
 				throw new ArgumentNullException ("path1");
@@ -797,7 +806,12 @@ namespace System.IO {
 			return Combine (new string [] { path1, path2, path3 });
 		}
 
-		public static string Combine (string path1, string path2, string path3, string path4)
+#if NET_4_0 || MOONLIGHT
+		public
+#else
+                internal
+#endif
+		static string Combine (string path1, string path2, string path3, string path4)
 		{
 			if (path1 == null)
 				throw new ArgumentNullException ("path1");
@@ -813,7 +827,6 @@ namespace System.IO {
 			
 			return Combine (new string [] { path1, path2, path3, path4 });
 		}
-#endif
 
 		internal static void Validate (string path)
 		{
