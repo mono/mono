@@ -468,7 +468,6 @@ namespace System {
 			return GetFolderPath (folder, SpecialFolderOption.None);
 		}
 #if NET_4_0
-		[MonoTODO ("Figure out the folder path for all the new values in SpecialFolder. Use the 'option' argument.")]
 		public
 #endif
 		static string GetFolderPath(SpecialFolder folder, SpecialFolderOption option)
