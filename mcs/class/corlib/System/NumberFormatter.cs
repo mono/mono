@@ -1677,6 +1677,19 @@ namespace System
 						groupIndex++;
 				}
 
+				if (total >= _decPointPos) {
+					int lastGroupSize = groups [0];
+					if (total > lastGroupSize) {
+						int lastGroupDiff = -(lastGroupSize - _decPointPos);
+						int lastGroupMod;
+
+						if (lastGroupDiff < lastGroupSize)
+							counter = lastGroupDiff;
+						else if (lastGroupSize > 0 && (lastGroupMod = _decPointPos % lastGroupSize) > 0)
+							counter = lastGroupMod;
+					}
+				}
+				
 				for (int i = 0; ;) {
 					if ((_decPointPos - i) <= counter || counter == 0) {
 						AppendDigits (_digitsLen - _decPointPos, _digitsLen - i);

@@ -3961,6 +3961,63 @@ namespace MonoTests.System
 			Assert.AreEqual ("NaN", (0.0 / 0.0).ToString ("N99", _nfi) , "#03");
 		}
 
+		[Test (Description = "Bug #659061")]
+		public void Test14032 ()
+		{
+			NumberFormatInfo nfi = _nfi.Clone () as NumberFormatInfo;
+			int[] groups = new int [10];
+
+			for (int i = 0; i < groups.Length; i++)
+				groups [i] = 1;
+			nfi.NumberGroupSizes = groups;
+			Assert.AreEqual ("2,5,5,5,6,6,6.65", (2555666.65).ToString ("N", nfi), "#01");
+
+			for (int i = 0; i < groups.Length; i++)
+				groups [i] = 2;
+			nfi.NumberGroupSizes = groups;
+			Assert.AreEqual ("2,55,56,66.65", (2555666.65).ToString ("N", nfi), "#02");
+
+			for (int i = 0; i < groups.Length; i++)
+				groups [i] = 3;
+			nfi.NumberGroupSizes = groups;
+			Assert.AreEqual ("2,555,666.65", (2555666.65).ToString ("N", nfi), "#03");
+
+			for (int i = 0; i < groups.Length; i++)
+				groups [i] = 4;
+			nfi.NumberGroupSizes = groups;
+			Assert.AreEqual ("255,5666.65", (2555666.65).ToString ("N", nfi), "#04");
+
+			for (int i = 0; i < groups.Length; i++)
+				groups [i] = 5;
+			nfi.NumberGroupSizes = groups;
+			Assert.AreEqual ("25,55666.65", (2555666.65).ToString ("N", nfi), "#05");
+
+			for (int i = 0; i < groups.Length; i++)
+				groups [i] = 6;
+			nfi.NumberGroupSizes = groups;
+			Assert.AreEqual ("2,555666.65", (2555666.65).ToString ("N", nfi), "#06");
+
+			for (int i = 0; i < groups.Length; i++)
+				groups [i] = 7;
+			nfi.NumberGroupSizes = groups;
+			Assert.AreEqual ("2555666.65", (2555666.65).ToString ("N", nfi), "#07");
+
+			for (int i = 0; i < groups.Length; i++)
+				groups [i] = 8;
+			nfi.NumberGroupSizes = groups;
+			Assert.AreEqual ("2555666.65", (2555666.65).ToString ("N", nfi), "#08");
+		}
+
+		[Test]
+		public void Test14033 ()
+		{
+			NumberFormatInfo nfi = _nfi.Clone () as NumberFormatInfo;
+			int[] groups = new int [] { 1, 2, 3 }; 
+
+			nfi.NumberGroupSizes = groups;
+			Assert.AreEqual ("2,555,66,6.65", (2555666.65).ToString ("N", nfi), "#01");
+		}
+
 		// Test15000- Double and P
 		[Test]
 		public void Test15000 ()
