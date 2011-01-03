@@ -397,7 +397,7 @@ namespace System.Security {
 		{
 			string machinePolicyPath = Path.GetDirectoryName (Environment.GetMachineConfigPath ());
 			// note: use InternalGetFolderPath to avoid recursive policy initialization
-			string userPolicyPath = Path.Combine (Environment.InternalGetFolderPath (Environment.SpecialFolder.ApplicationData), "mono");
+			string userPolicyPath = Path.Combine (Environment.UnixGetFolderPath (Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create), "mono");
 
 			PolicyLevel enterprise = new PolicyLevel ("Enterprise", PolicyLevelType.Enterprise);
 			_level = enterprise;

@@ -116,6 +116,8 @@ namespace System {
 
 #if NET_4_0
 		public
+#else
+		internal
 #endif
 		enum SpecialFolderOption {
 			None = 0,
@@ -475,11 +477,11 @@ namespace System {
 
 			string dir = null;
 
-			if (Environment.IsRunningOnWindows) {
+			if (Environment.IsRunningOnWindows)
 				dir = GetWindowsFolderPath ((int) folder);
-			} else {
-				dir = InternalGetFolderPath (folder);
-			}
+			else
+				dir = UnixGetFolderPath (folder, option);
+
 #if !NET_2_1
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dir).Demand ();
@@ -488,8 +490,7 @@ namespace System {
 			return dir;
 		}
 
-		private static string ReadXdgUserDir (string config_dir, string home_dir, 
-			string key, string fallback)
+		private static string ReadXdgUserDir (string config_dir, string home_dir, string key, string fallback)
 		{
 			string env_path = internalGetEnvironmentVariable (key);
 			if (env_path != null && env_path != String.Empty) {
@@ -508,19 +509,19 @@ namespace System {
 					while ((line = reader.ReadLine ()) != null) {
 						line = line.Trim ();
 						int delim_index = line.IndexOf ('=');
-                        if(delim_index > 8 && line.Substring (0, delim_index) == key) {
-                            string path = line.Substring (delim_index + 1).Trim ('"');
-                            bool relative = false;
-
-                            if (path.StartsWith ("$HOME/")) {
-                                relative = true;
-                                path = path.Substring (6);
-                            } else if (!path.StartsWith ("/")) {
-                                relative = true;
-                            }
-
-                            return relative ? Path.Combine (home_dir, path) : path;
-                        }
+						if(delim_index > 8 && line.Substring (0, delim_index) == key) {
+							string path = line.Substring (delim_index + 1).Trim ('"');
+							bool relative = false;
+							
+							if (path.StartsWith ("$HOME/")) {
+								relative = true;
+								path = path.Substring (6);
+							} else if (!path.StartsWith ("/")) {
+								relative = true;
+							}
+							
+							return relative ? Path.Combine (home_dir, path) : path;
+						}
 					}
 				}
 			} catch (FileNotFoundException) {
@@ -532,7 +533,7 @@ namespace System {
 
 		// the security runtime (and maybe other parts of corlib) needs the
 		// information to initialize themselves before permissions can be checked
-		internal static string InternalGetFolderPath (SpecialFolder folder)
+		internal static string UnixGetFolderPath (SpecialFolder folder, SpecialFolderOption option)
 		{
 			string home = internalGetHome ();
 
@@ -568,9 +569,10 @@ namespace System {
 #if MONOTOUCH
 			{
 				string dir = Path.Combine (Path.Combine (home, "Documents"), ".config");
-				if (!Directory.Exists (dir))
-					Directory.CreateDirectory (dir);
-
+				if (option == SpecialFolderOption.Create){
+					if (!Directory.Exists (dir))
+						Directory.CreateDirectory (dir);
+				}
 				return dir;
 			}
 #else
@@ -659,6 +661,7 @@ namespace System {
                         }
                 }
 
+		
 		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 		public static string[] GetLogicalDrives ()
 		{
