@@ -1,4 +1,5 @@
 /.deps
 Makefile
 Makefile.in
-
+/sgen-grep-binprot
+/*.o
