@@ -282,7 +282,7 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private void Send (IModel model, IMessage msg)
 		{
-			string finalName = model.QueueDeclare (QRef.Queue, true);
+			string finalName = model.QueueDeclare (QRef.Queue, false);
 			IMessageBuilder mb = helper.WriteMessage (model, msg);
 
 			model.BasicPublish ("", finalName,
