@@ -95,7 +95,7 @@ namespace System.Threading.Tasks
 
 		internal protected bool TryExecuteTask (Task task)
 		{
-			throw new NotSupportedException ();
+			return TryExecuteTaskInline (task, false);
 		}
 
 		protected abstract bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued);
