@@ -134,8 +134,7 @@ namespace System.Collections.Concurrent
 		{
 			TValue temp;
 			if (!TryGetValue (key, out temp))
-				// TODO: find a correct Exception
-				throw new ArgumentException ("Not a valid key for this dictionary", "key");
+				throw new KeyNotFoundException (key.ToString ());
 			return temp;
 		}
 
