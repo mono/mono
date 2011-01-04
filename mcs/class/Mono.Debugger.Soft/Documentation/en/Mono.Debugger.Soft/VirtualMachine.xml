@@ -34,6 +34,23 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="CreateAssemblyLoadRequest">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AssemblyLoadEventRequest CreateAssemblyLoadRequest ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.AssemblyLoadEventRequest CreateAssemblyLoadRequest() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.AssemblyLoadEventRequest</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="CreateBreakpointRequest">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.BreakpointEventRequest CreateBreakpointRequest (Mono.Debugger.Soft.Location loc);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.BreakpointEventRequest CreateBreakpointRequest(class Mono.Debugger.Soft.Location loc) cil managed" />

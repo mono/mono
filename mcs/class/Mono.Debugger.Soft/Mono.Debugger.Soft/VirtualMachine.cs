@@ -188,6 +188,10 @@ namespace Mono.Debugger.Soft
 			return new ExceptionEventRequest (this, exc_type, caught, uncaught);
 		}
 
+		public AssemblyLoadEventRequest CreateAssemblyLoadRequest () {
+			return new AssemblyLoadEventRequest (this);
+		}
+
 		public void EnableEvents (params EventType[] events) {
 			foreach (EventType etype in events) {
 				if (etype == EventType.Breakpoint)

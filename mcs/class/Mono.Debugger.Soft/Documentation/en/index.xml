@@ -18,6 +18,7 @@
       <Type Name="AppDomainUnloadEvent" Kind="Class" />
       <Type Name="ArrayMirror" Kind="Class" />
       <Type Name="AssemblyLoadEvent" Kind="Class" />
+      <Type Name="AssemblyLoadEventRequest" Kind="Class" />
       <Type Name="AssemblyMirror" Kind="Class" />
       <Type Name="AssemblyUnloadEvent" Kind="Class" />
       <Type Name="BreakpointEvent" Kind="Class" />

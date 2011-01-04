@@ -51,7 +51,8 @@ public class DebuggerTests
 			vm = VirtualMachineManager.Listen (new IPEndPoint (IPAddress.Any, 10000));
 		}
 
-		vm.EnableEvents (EventType.AssemblyLoad);
+		var load_req = vm.CreateAssemblyLoadRequest ();
+		load_req.Enable ();
 
 		Event vmstart = vm.GetNextEvent ();
 		Assert.AreEqual (EventType.VMStart, vmstart.EventType);
@@ -76,6 +77,8 @@ public class DebuggerTests
 
 			vm.Resume ();
 		}
+
+		load_req.Disable ();
 	}
 
 	BreakpointEvent run_until (string name) {
@@ -1628,6 +1631,9 @@ public class DebuggerTests
 	[Test]
 	public void AssemblyLoad () {
 		Event e = run_until ("assembly_load");
+
+		var load_req = vm.CreateAssemblyLoadRequest ();
+		load_req.Enable ();
 
 		vm.Resume ();
 
