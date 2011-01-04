@@ -790,7 +790,7 @@ namespace Mono.CSharp
 
 			} else if (buildin_types.TryGetValue (type, out pt)) {
 				spec = pt;
-				pt.SetDefinition (definition, type);
+				pt.SetDefinition (definition, type, mod);
 			}
 
 			if (spec == null)

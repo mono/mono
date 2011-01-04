@@ -497,9 +497,6 @@ namespace Mono.CSharp
 		public BuildinTypeSpec (MemberKind kind, string ns, string name, Type buildinKind)
 			: base (kind, null, null, null, Modifiers.PUBLIC)
 		{
-			if (kind == MemberKind.Struct)
-				modifiers |= Modifiers.SEALED;
-
 			this.type = buildinKind;
 			this.ns = ns;
 			this.name = name;
@@ -573,10 +570,11 @@ namespace Mono.CSharp
 			return FullName;
 		}
 
-		public void SetDefinition (ITypeDefinition td, MetaType type)
+		public void SetDefinition (ITypeDefinition td, MetaType type, Modifiers mod)
 		{
 			this.definition = td;
 			this.info = type;
+			this.modifiers |= (mod & ~Modifiers.AccessibilityMask);
 		}
 
 		public void SetDefinition (TypeSpec ts)
@@ -585,6 +583,7 @@ namespace Mono.CSharp
 			this.info = ts.GetMetaInfo ();
 			this.BaseType = ts.BaseType;
 			this.Interfaces = ts.Interfaces;
+			this.modifiers = ts.Modifiers;
 		}
 	}
 
