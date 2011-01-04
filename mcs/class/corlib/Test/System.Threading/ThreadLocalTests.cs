@@ -106,6 +106,16 @@ namespace MonoTests.System.Threading
 			var value = threadLocal.Value;
 		}
 
+		[Test]
+		public void DefaultThreadLocalInitTest ()
+		{
+			var local = new ThreadLocal<DateTime> ();
+			var local2 = new ThreadLocal<object> ();
+
+			Assert.AreEqual (default (DateTime), local.Value);
+			Assert.AreEqual (default (object), local2.Value);
+		}
+
 		void AssertThreadLocal ()
 		{
 			Assert.IsFalse (threadLocal.IsValueCreated, "#1");
