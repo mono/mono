@@ -1,3 +1,10 @@
+2011-01-04  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	* assembly.c (framework_assemblies): Map System.Transactions to
+	4.0 framework assemblies.
+
+	Fixes #635335
+
 2010-11-03  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_register_symfile_for_assembly): New method.
