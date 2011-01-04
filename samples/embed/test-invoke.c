@@ -5,7 +5,10 @@
 #include <mono/metadata/debug-helpers.h>
 #include <string.h>
 #include <stdlib.h>
-#include <glib.h>
+
+#ifndef FALSE
+#define FALSE 0
+#endif
 
 /*
  * Simple mono embedding example.
@@ -76,7 +79,7 @@ access_reference_field (MonoObject *obj)
 	p = mono_string_to_utf8 (strval);
 	printf ("Value of str is: %s\n", p);
 	/* we need to free the result from mono_string_to_utf8 () */
-	g_free (p);
+	mono_free (p);
 
 	/* string are immutable, so we need to create a different string */
 	strval = mono_string_new (domain, "hello from the embedding API");
@@ -99,8 +102,8 @@ call_methods (MonoObject *obj)
 	MonoObject *result, *exception;
 	MonoString *str;
 	char *p;
-	gpointer iter;
-	gpointer args [2];
+	void* iter;
+	void* args [2];
 	int val;
 
 	klass = mono_object_get_class (obj);
@@ -164,7 +167,7 @@ call_methods (MonoObject *obj)
 	p = mono_string_to_utf8 (str);
 	printf ("Value of str from property is: %s\n", p);
 	/* we need to free the result from mono_string_to_utf8 () */
-	g_free (p);
+	mono_free (p);
 
 	/* Now we'll show two things:
 	 * 1) static methods are invoked with mono_runtime_invoke () as well,
@@ -205,7 +208,7 @@ call_methods (MonoObject *obj)
 	p = mono_string_to_utf8 (str);
 	printf ("Values of str/val from Values () are: %s/%d\n", p, val);
 	/* we need to free the result from mono_string_to_utf8 () */
-	g_free (p);
+	mono_free (p);
 }
 
 static void
@@ -241,7 +244,7 @@ more_methods (MonoDomain *domain)
 	p = mono_string_to_utf8 (str);
 	printf ("25.ToString (): %s\n", p);
 	/* we need to free the result from mono_string_to_utf8 () */
-	g_free (p);
+	mono_free (p);
 
 	/* Now: see how the result is different if we search for the ToString ()
 	 * method in System.Object: mono_runtime_invoke () doesn't do any sort of
@@ -255,7 +258,7 @@ more_methods (MonoDomain *domain)
 	p = mono_string_to_utf8 (str);
 	printf ("25.ToString (), from System.Object: %s\n", p);
 	/* we need to free the result from mono_string_to_utf8 () */
-	g_free (p);
+	mono_free (p);
 
 	/* Now get the method that overrides ToString () in obj */
 	vtmethod = mono_object_get_virtual_method (obj, method);
