@@ -304,11 +304,7 @@ namespace MonoTests.System.Runtime.Caching
 			// It's probably caused by the code passing a DateTime.MinValue to DateTimeOffset constructor for non-existing entries.
 			// Until this (apparent) bug is fixed, Mono is going to implement the buggy behavior.
 			//
-#if true
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
-				monitor = mc.CreateCacheEntryChangeMonitor (new string [] { "key1", "doesnotexist" });
-			}, "#A3");
-#else
+#if false
 			monitor = mc.CreateCacheEntryChangeMonitor (new string [] { "key1", "doesnotexist" });
 			Assert.IsNotNull (monitor, "#A3-1");
 			Assert.AreEqual ("System.Runtime.Caching.MemoryCacheEntryChangeMonitor", monitor.GetType ().ToString (), "#A3-2");
