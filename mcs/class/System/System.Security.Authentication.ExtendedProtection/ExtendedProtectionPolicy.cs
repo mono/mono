@@ -41,9 +41,11 @@ namespace System.Security.Authentication.ExtendedProtection
 	[TypeConverter (typeof (ExtendedProtectionPolicyTypeConverter))]
 	public class ExtendedProtectionPolicy : ISerializable
 	{
+		[MonoTODO ("Not implemented.")]
 		public ExtendedProtectionPolicy (PolicyEnforcement policyEnforcement)
 		{
-			throw new NotImplementedException ();
+			// Do not throw NotImplementedException - System.ServiceModel.Channels.HttpTransportBindingElement tests
+			// instantiate this type
 		}
 
 		public ExtendedProtectionPolicy (PolicyEnforcement policyEnforcement, ChannelBinding customChannelBinding)
