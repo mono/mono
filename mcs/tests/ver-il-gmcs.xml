@@ -8894,8 +8894,8 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>53</size>
+      <method name="Int32 Main()">
+        <size>91</size>
       </method>
     </type>
   </test>

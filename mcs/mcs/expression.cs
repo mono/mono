@@ -1460,7 +1460,6 @@ namespace Mono.CSharp
 	///   Implementation of the `as' operator.
 	/// </summary>
 	public class As : Probe {
-		bool do_isinst;
 		Expression resolved_type;
 		
 		public As (Expression expr, Expression probe_type, Location l)
@@ -1481,8 +1480,7 @@ namespace Mono.CSharp
 		{
 			expr.Emit (ec);
 
-			if (do_isinst)
-				ec.Emit (OpCodes.Isinst, type);
+			ec.Emit (OpCodes.Isinst, type);
 
 			if (TypeManager.IsGenericParameter (type) || TypeManager.IsNullableType (type))
 				ec.Emit (OpCodes.Unbox_Any, type);
@@ -1520,7 +1518,6 @@ namespace Mono.CSharp
 
 			// If the compile-time type of E is dynamic, unlike the cast operator the as operator is not dynamically bound
 			if (etype == InternalType.Dynamic) {
-				do_isinst = true;
 				return this;
 			}
 			
@@ -1533,13 +1530,11 @@ namespace Mono.CSharp
 				if (TypeManager.IsGenericParameter (etype))
 					expr = new BoxedCast (expr, etype);
 
-				do_isinst = true;
 				return this;
 			}
 
 			if (InflatedTypeSpec.ContainsTypeParameter (etype) || InflatedTypeSpec.ContainsTypeParameter (type)) {
 				expr = new BoxedCast (expr, etype);
-				do_isinst = true;
 				return this;
 			}
 
