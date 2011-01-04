@@ -26,6 +26,7 @@
 using System;
 using System.Threading;
 using MonoTests.System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 using NUnit;
@@ -146,7 +147,7 @@ namespace MonoTests.System.Collections.Concurrent
 			Assert.AreEqual(3, map.Count, "#3");
 		}
 		
-		[Test, ExpectedException(typeof(ArgumentException))]
+		[Test, ExpectedException(typeof(KeyNotFoundException))]
 		public void GetValueUnknownTest()
 		{
 			int val;
