@@ -48,7 +48,7 @@ namespace System.Threading
 			public Func<T> Getter;
 		}
 		
-		public ThreadLocal () : this (LazyInitializer.GetDefaultCtorValue<T>)
+		public ThreadLocal () : this (LazyInitializer.GetDefaultValueFactory<T>)
 		{
 		}
 
@@ -96,7 +96,6 @@ namespace System.Threading
 		{
 			return string.Format ("[ThreadLocal: IsValueCreated={0}, Value={1}]", IsValueCreated, Value);
 		}
-
 		
 		T GetValueThreadLocal ()
 		{

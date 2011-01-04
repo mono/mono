@@ -70,6 +70,11 @@ namespace System.Threading
 				                                  + "public, parameterless constructor.");
 			}
 		}
+
+		internal static T GetDefaultValueFactory<T> ()
+		{
+			return default (T);
+		}
 	}
 }
 #endif
