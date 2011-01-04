@@ -904,12 +904,6 @@ namespace Mono.CSharp
 		return type.IsGeneric;
 	}
 
-	// TODO: Implement correctly
-	public static bool ContainsGenericParameters (TypeSpec type)
-	{
-		return type.GetMetaInfo ().ContainsGenericParameters;
-	}
-
 	public static TypeSpec[] GetTypeArguments (TypeSpec t)
 	{
 		// TODO: return empty array !!

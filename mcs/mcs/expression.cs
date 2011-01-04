@@ -1421,7 +1421,7 @@ namespace Mono.CSharp
 					if (TypeManager.IsGenericParameter (d))
 						return ResolveGenericParameter (ec, t, (TypeParameterSpec) d);
 
-					if (TypeManager.ContainsGenericParameters (d))
+					if (InflatedTypeSpec.ContainsTypeParameter (d))
 						return this;
 
 					if (Convert.ImplicitReferenceConversionExists (expr, t) ||
@@ -1524,8 +1524,8 @@ namespace Mono.CSharp
 				return this;
 			}
 			
-			Expression e = Convert.ImplicitConversion (ec, expr, type, loc);
-			if (e != null){
+			Expression e = Convert.ImplicitConversionStandard (ec, expr, type, loc);
+			if (e != null) {
 				expr = e;
 				return this;
 			}
@@ -1538,8 +1538,7 @@ namespace Mono.CSharp
 				return this;
 			}
 
-			if (TypeManager.ContainsGenericParameters (etype) ||
-			    TypeManager.ContainsGenericParameters (type)) {
+			if (InflatedTypeSpec.ContainsTypeParameter (etype) || InflatedTypeSpec.ContainsTypeParameter (type)) {
 				expr = new BoxedCast (expr, etype);
 				do_isinst = true;
 				return this;
@@ -7183,24 +7182,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		static bool ContainsTypeParameter (TypeSpec type)
-		{
-			if (type.Kind == MemberKind.TypeParameter)
-				return true;
-
-			var element_container = type as ElementTypeSpec;
-			if (element_container != null)
-				return ContainsTypeParameter (element_container.Element);
-
-			foreach (var t in type.TypeArguments) {
-				if (ContainsTypeParameter (t)) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Target type is not System.Type therefore must be object
@@ -7211,7 +7192,7 @@ namespace Mono.CSharp
 			if (!(QueriedType is GenericOpenTypeExpr)) {
 				var gt = typearg;
 				while (gt != null) {
-					if (ContainsTypeParameter (gt)) {
+					if (InflatedTypeSpec.ContainsTypeParameter (gt)) {
 						rc.Compiler.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
 							typearg.GetSignatureForError ());
 						return;

@@ -1401,6 +1401,24 @@ namespace Mono.CSharp {
 
 		#endregion
 
+		public static bool ContainsTypeParameter (TypeSpec type)
+		{
+			if (type.Kind == MemberKind.TypeParameter)
+				return true;
+
+			var element_container = type as ElementTypeSpec;
+			if (element_container != null)
+				return ContainsTypeParameter (element_container.Element);
+
+			foreach (var t in type.TypeArguments) {
+				if (ContainsTypeParameter (t)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		TypeParameterInflator CreateLocalInflator ()
 		{
 			TypeParameterSpec[] tparams_full;
