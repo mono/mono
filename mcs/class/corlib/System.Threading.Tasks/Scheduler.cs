@@ -120,7 +120,8 @@ namespace System.Threading.Tasks
 
 		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 		{
-			throw new System.NotImplementedException();
+			task.Execute (null);
+			return true;
 		}
 		
 		public override int MaximumConcurrencyLevel {

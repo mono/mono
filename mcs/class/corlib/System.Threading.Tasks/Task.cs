@@ -176,9 +176,11 @@ namespace System.Threading.Tasks
 		
 		public void RunSynchronously (TaskScheduler scheduler)
 		{
-			// TODO
-			// Adopt this scheme for the moment
-			ThreadStart ();
+			if (scheduler.TryExecuteTask (this))
+				return;
+
+			Start (scheduler);
+			Wait ();
 		}
 		#endregion
 		
