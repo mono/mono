@@ -36,6 +36,7 @@ mainsoft/NunitWeb/NunitWeb/Response.cs
 mainsoft/NunitWeb/NunitWeb/StandardUrl.cs
 mainsoft/NunitWeb/NunitWeb/TestRoleProvider.cs
 mainsoft/NunitWeb/NunitWeb/WebTest.cs
+mainsoft/NunitWeb/NunitWeb/WebTestLocal.cs
 mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
 mainsoft/NunitWeb/NunitWeb/Tests/TagsNestedInClientTag.cs
 mainsoft/NunitWeb/NunitWeb/Tests/TestSiteMapProvider.cs

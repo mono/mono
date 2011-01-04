@@ -22,7 +22,7 @@ namespace MonoTests.SystemWeb.Framework
 	/// <seealso cref="Invoker"/>
 	/// <seealso cref="Run"/>
 	[Serializable]
-	public class WebTest
+	public partial class WebTest
 	{
 		/// <summary>
 		/// Thrown when trying to copy a resource after appdomain was created. Please call
@@ -599,28 +599,15 @@ namespace MonoTests.SystemWeb.Framework
 			
 			CopyResource (myself, "My.ashx", "My.ashx");
 			CopyResource (myself, "Global.asax", "Global.asax");
-#if NET_2_0
-#if INSIDE_SYSTEM_WEB || DOTNET
-			CopyPrefixedResources (myself, "App_GlobalResources/", "App_GlobalResources");
-			CopyPrefixedResources (myself, "App_Code/", "App_Code");
-#endif
-#if DOTNET
-			CopyResource (myself, "Web.config", "Web.config");
-#else
-#if NET_4_0
-			CopyResource (myself, "Web.mono.config.4.0", "Web.config");
-#else
-			CopyResource (myself, "Web.mono.config", "Web.config");
-#endif
-#endif
-#else
-			CopyResource (myself, "Web.mono.config.1.1", "Web.config");
-#endif
 			CopyResource (myself, "MyPage.aspx", "MyPage.aspx");
 			CopyResource (myself, "MyPage.aspx.cs", "MyPage.aspx.cs");
 			CopyResource (myself, "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
 			CopyResource (myself, "My.master", "My.master");
+
+			CopyResourcesLocal ();
 		}
+
+		static partial void CopyResourcesLocal ();
 #endif
 	}
 }
