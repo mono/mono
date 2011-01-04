@@ -1523,6 +1523,7 @@ namespace Mono.CSharp
 			
 			Expression e = Convert.ImplicitConversionStandard (ec, expr, type, loc);
 			if (e != null) {
+				e = EmptyCast.Create (e, type);
 				return ReducedExpression.Create (e, this).Resolve (ec);
 			}
 
