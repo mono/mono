@@ -1526,8 +1526,7 @@ namespace Mono.CSharp
 			
 			Expression e = Convert.ImplicitConversionStandard (ec, expr, type, loc);
 			if (e != null) {
-				expr = e;
-				return this;
+				return ReducedExpression.Create (e, this).Resolve (ec);
 			}
 
 			if (Convert.ExplicitReferenceConversionExists (etype, type)){
