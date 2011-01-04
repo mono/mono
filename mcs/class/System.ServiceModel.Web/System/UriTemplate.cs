@@ -128,6 +128,17 @@ namespace System
 			return BindByNameCommon (baseAddress, null, parameters, omitDefaults);
 		}
 
+		string TrimRenderedUri (StringBuilder sb)
+		{
+			if (sb.Length == 0)
+				return String.Empty;
+			
+			if (sb [0] == '/')
+				sb.Remove (0, 1);
+
+			return sb.ToString ();
+		}
+		
 		Uri BindByNameCommon (Uri baseAddress, NameValueCollection nvc, IDictionary<string,string> dic, bool omitDefaults)
 		{
 			CheckBaseAddress (baseAddress);
@@ -141,7 +152,7 @@ namespace System
 			BindByName (ref src, sb, path, nvc, dic, omitDefaults, false);
 			BindByName (ref src, sb, query, nvc, dic, omitDefaults, true);
 			sb.Append (template.Substring (src));
-			return new Uri (baseAddress.ToString () + sb.ToString ());
+			return new Uri (baseAddress.ToString () + TrimRenderedUri (sb));
 		}
 
 		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection nvc, IDictionary<string,string> dic, bool omitDefaults, bool query)
@@ -184,7 +195,7 @@ namespace System
 			BindByPosition (ref src, sb, path, values, ref index);
 			BindByPosition (ref src, sb, query, values, ref index);
 			sb.Append (template.Substring (src));
-			return new Uri (baseAddress.ToString () + sb.ToString ());
+			return new Uri (baseAddress.ToString () + TrimRenderedUri (sb));
 		}
 
 		void BindByPosition (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, string [] values, ref int index)
