@@ -369,12 +369,12 @@ namespace System.Xml {
 			switch (mode) {
 			case XmlDateTimeSerializationMode.Local:
 				dt = ToDateTime (value, localDateTimeFormats);
-				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToLocalTime ();
+				return new DateTime (dt.Ticks, DateTimeKind.Local);
 			case XmlDateTimeSerializationMode.RoundtripKind:
 				return ToDateTime (value, roundtripDateTimeFormats, _defaultStyle | DateTimeStyles.RoundtripKind);
 			case XmlDateTimeSerializationMode.Utc:
 				dt = ToDateTime (value, utcDateTimeFormats);
-				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToUniversalTime ();
+				return new DateTime (dt.Ticks, DateTimeKind.Utc);
 			case XmlDateTimeSerializationMode.Unspecified:
 				return ToDateTime (value, unspecifiedDateTimeFormats);
 			default:
