@@ -23,9 +23,11 @@ CACHE_PQ_TEST_GENERATOR_SOURCES = \
 	CachePQTestGenerator/cache-pq-test-generator.cs \
 	../../System.Web.Caching/CacheItem.cs \
 	../../System.Web.Caching/CacheItemPriorityQueue.cs \
-	../../System.Web.Caching/CacheItemPriorityQueueDebug.cs
+	../../System.Web.Caching/CacheItemPriorityQueueDebug.cs \
+	../System.Web.Caching/CacheItemPriorityQueueTestSupport.cs
 
 CACHE_PQ_TEST_GENERATOR_REFERENCES = \
+	-lib:$(CLASSLIB_DIR) \
 	-pkg:dotnet
 
 CACHE_PQ_TEST_SEQUENCES = $(wildcard ./CachePQTestGenerator/Sequences/*.seq)

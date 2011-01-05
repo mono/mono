@@ -351,6 +351,7 @@ System.Web.Caching/AggregateCacheDependencyTest.cs
 System.Web.Caching/CacheCas.cs
 System.Web.Caching/CacheDependencyCas.cs
 System.Web.Caching/CacheItemPriorityQueueTest.cs
+System.Web.Caching/CacheItemPriorityQueueTestSupport.cs
 System.Web.Caching/CacheItemPriorityQueueTest_generated.cs
 System.Web.Caching/FileResponseElementTest.cs
 System.Web.Caching/HeaderElementTest.cs
