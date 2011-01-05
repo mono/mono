@@ -638,6 +638,7 @@ namespace System.Threading.Tasks
 			int indexFirstFinished = -1;
 			int index = 0;
 			IScheduler sched = null;
+			Task task = null;
 			Watch watch = Watch.StartNew ();
 
 			foreach (Task t in tasks) {
@@ -652,8 +653,10 @@ namespace System.Threading.Tasks
 						indexFirstFinished = indexResult;
 				}, TaskContinuationOptions.ExecuteSynchronously);
 
-				if (sched == null && t.scheduler != null)
+				if (sched == null && t.scheduler != null) {
+					task = t;
 					sched = t.scheduler;
+				}
 			}
 
 			// If none of task have a scheduler we are forced to wait for at least one to start
@@ -663,6 +666,7 @@ namespace System.Threading.Tasks
 				if ((shandle = WaitHandle.WaitAny (handles, millisecondsTimeout)) == WaitHandle.WaitTimeout)
 					return -1;
 				sched = tasks[shandle].scheduler;
+				task = tasks[shandle];
 				millisecondsTimeout = ComputeTimeout (millisecondsTimeout, watch);
 			}
 			
@@ -671,7 +675,7 @@ namespace System.Threading.Tasks
 				return indexFirstFinished;
 			
 			// All tasks are supposed to use the same TaskScheduler
-			sched.ParticipateUntil (delegate {
+			sched.ParticipateUntil (task, delegate {
 				if (millisecondsTimeout != -1 && watch.ElapsedMilliseconds > millisecondsTimeout)
 					return true;
 

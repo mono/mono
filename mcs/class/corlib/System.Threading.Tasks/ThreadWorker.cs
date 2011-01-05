@@ -207,24 +207,27 @@ namespace System.Threading.Tasks
 		// Task.WaitAll(someTasks) or Task.WaitAny(someTasks)
 		// Predicate should be really fast and not blocking as it is called a good deal of time
 		// Also, the method skip tasks that are LongRunning to avoid blocking (Task are not LongRunning by default)
-		public static void WorkerMethod (Func<bool> predicate, IProducerConsumerCollection<Task> sharedWorkQueue,
-		                                 ThreadWorker[] others, ManualResetEvent evt)
+		public static void WorkerMethod (Task self,
+		                                 Func<Task, bool> predicate,
+		                                 IProducerConsumerCollection<Task> sharedWorkQueue,
+		                                 ThreadWorker[] others,
+		                                 ManualResetEvent evt)
 		{
-			while (!predicate ()) {
+			while (!predicate (self)) {
 				Task value;
 				
 				// If we are in fact a normal ThreadWorker, use our own deque
 				if (autoReference != null) {
 					while (autoReference.dDeque.PopBottom (out value) == PopResult.Succeed && value != null) {
 						evt.Set ();
-						if (CheckTaskFitness (value))
+						if (CheckTaskFitness (self, value))
 							value.Execute (autoReference.ChildWorkAdder);
 						else {
-							autoReference.dDeque.PushBottom (value);
+							sharedWorkQueue.TryAdd (value);
 							evt.Set ();
 						}
 
-						if (predicate ())
+						if (predicate (self))
 							return;
 					}
 				}
@@ -232,19 +235,19 @@ namespace System.Threading.Tasks
 				// Dequeue only one item as we have restriction
 				while (sharedWorkQueue.TryTake (out value) && value != null) {
 					evt.Set ();
-					if (CheckTaskFitness (value))
+					if (CheckTaskFitness (self, value))
 						value.Execute (null);
 					else {
 						sharedWorkQueue.TryAdd (value);
 						evt.Set ();
 					}
 
-					if (predicate ())
+					if (predicate (self))
 						return;
 				}
 
 				// First check to see if we comply to predicate
-				if (predicate ())
+				if (predicate (self))
 					return;
 				
 				// Try to complete other work by stealing since our desired tasks may be in other worker
@@ -255,7 +258,7 @@ namespace System.Threading.Tasks
 					
 					if (other.dDeque.PopTop (out value) == PopResult.Succeed && value != null) {
 						evt.Set ();
-						if (CheckTaskFitness (value))
+						if (CheckTaskFitness (self, value))
 							value.Execute (null);
 						else {
 							sharedWorkQueue.TryAdd (value);
@@ -263,7 +266,7 @@ namespace System.Threading.Tasks
 						}
 					}
 					
-					if (predicate ())
+					if (predicate (self))
 						return;
 				}
 
@@ -277,9 +280,9 @@ namespace System.Threading.Tasks
 			sched.PulseAll ();
 		}
 		
-		static bool CheckTaskFitness (Task t)
+		static bool CheckTaskFitness (Task self, Task t)
 		{
-			return (t.CreationOptions | TaskCreationOptions.LongRunning) > 0;
+			return (t.CreationOptions & TaskCreationOptions.LongRunning) == 0 && t.Id < self.Id;
 		}
 		
 		public bool Finished {

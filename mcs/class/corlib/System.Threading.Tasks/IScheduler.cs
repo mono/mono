@@ -34,7 +34,6 @@ namespace System.Threading.Tasks
 		void AddWork (Task t);
 		void ParticipateUntil (Task task);
 		bool ParticipateUntil (Task task, Func<bool> predicate);
-		void ParticipateUntil (Func<bool> predicate);
 		void PulseAll ();
 	}
 }

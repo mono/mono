@@ -64,7 +64,7 @@ namespace System.Threading.Tasks
 			if (task.IsCompleted)
 				return;
 			
-			ParticipateUntil (() => task.IsCompleted);
+			ParticipateUntilInternal (task, TaskCompletedPredicate);
 		}
 		
 		public bool ParticipateUntil (Task task, Func<bool> predicate)
@@ -74,22 +74,27 @@ namespace System.Threading.Tasks
 			
 			bool isFromPredicate = false;
 			
-			ParticipateUntil (delegate {
+			ParticipateUntilInternal (task, delegate {
 				if (predicate ()) {
 					isFromPredicate = true;
 					return true;
 				}
 				return task.IsCompleted;
 			});
-				
+
 			return isFromPredicate;
 		}
 		
 		// Called with Task.WaitAll(someTasks) or Task.WaitAny(someTasks) so that we can remove ourselves
 		// also when our wait condition is ok
-		public void ParticipateUntil (Func<bool> predicate)
+		public void ParticipateUntilInternal (Task self, Func<Task, bool> predicate)
 		{	
-			ThreadWorker.WorkerMethod (predicate, workQueue, workers, pulseHandle);
+			ThreadWorker.WorkerMethod (self, predicate, workQueue, workers, pulseHandle);
+		}
+
+		static bool TaskCompletedPredicate (Task self)
+		{
+			return self.IsCompleted;
 		}
 		
 		public void PulseAll ()
