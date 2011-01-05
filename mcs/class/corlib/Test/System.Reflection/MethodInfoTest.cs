@@ -699,7 +699,7 @@ namespace MonoTests.System.Reflection
 			m.MakeGenericMethod (typeof (Type));
 		}
 
-		public void TestMethod <T> () where T : string
+		public void TestMethod <T> () where T : Exception
 		{
 		}
 
