@@ -204,7 +204,7 @@ namespace MonoTests.System.Windows.Forms {
 			orig.ContextMenuStrip = new ContextMenuStrip ();
 			orig.ContextMenuStrip.Name = "MyContextMenuStrip";
 			orig.ContextMenuStrip.Items.Add ("ToolStripText");
-			orig.ContextMenuStrip.Items.Add (new Bitmap (1, 1));
+			orig.ContextMenuStrip.Items.Add (new SystemDrawingNamespace.Bitmap (1, 1));
 
 			TreeNode clone = orig.Clone () as TreeNode;
 
