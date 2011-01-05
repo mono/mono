@@ -341,6 +341,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
 		}
 
+		// Behavior for this intentionally differs from .net .
+		// msbuild doesn't quote the define args, but we do
+		// that to make it easier to copy/paste and execute
+		// compiler command lines, helps in debugging.
+		[Category ("NotDotNet")]
 		[Test]
 		public void TestDefineConstants ()
 		{
@@ -352,7 +357,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			csc.ARFC (c1);
 			csc.ACLC (c2);
 
-			Assert.AreEqual ("/define:A;B;CD;Foo;Bar", c1.ToString (), "A1");
+			Assert.AreEqual ("/define:\"A;B;CD;Foo;Bar\"", c1.ToString (), "A1");
 			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
 		}
 
