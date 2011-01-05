@@ -91,8 +91,14 @@ namespace Microsoft.Build.Tasks {
 			commandLine.AppendSwitchIfNotNull ("/platform:", Platform);
 			//
 			if (References != null)
-				foreach (ITaskItem item in References)
-					commandLine.AppendSwitchIfNotNull ("/reference:", item.ItemSpec);
+				foreach (ITaskItem item in References) {
+					string aliases = item.GetMetadata ("Aliases") ?? String.Empty;
+					aliases = aliases.Trim ();
+					if (aliases.Length > 0)
+						commandLine.AppendSwitchIfNotNull ("/reference:" + aliases + "=", item.ItemSpec);
+					else
+						commandLine.AppendSwitchIfNotNull ("/reference:", item.ItemSpec);
+				}
 
 			if (ResponseFiles != null)
 				foreach (ITaskItem item in ResponseFiles) 
