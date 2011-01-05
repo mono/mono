@@ -106,7 +106,7 @@ clean-local:
 
 endif BUILD_MCS
 
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs $(tmpinst)/bin/dmcs $(tmpinst)/bin/al2
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs $(tmpinst)/bin/dmcs $(tmpinst)/bin/al2 $(tmpinst)/bin/al
 
 # now a misnomer, but it'll go away soon enough.
 if ENABLE_NUNIT_TESTS
@@ -200,6 +200,12 @@ $(tmpinst)/bin/al2: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
 	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
 	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/net_2_0/al.exe"'" "$$@"' >> $@ ; \
+	chmod +x $@
+
+$(tmpinst)/bin/al: $(tmpinst)/bin/mono Makefile
+	echo '#! /bin/sh' > $@ ; \
+	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/net_4_0/al.exe"'" "$$@"' >> $@ ; \
 	chmod +x $@
 
 test-support-files: $(TEST_SUPPORT_FILES)
