@@ -101,7 +101,7 @@ EXTRA_DISTFILES = \
 	$(IMAGES_RESOURCES) \
 	$(TEST_DISTFILES)
 
-TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll \
+TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll /r:Accessibility.dll \
 	-resource:Test/resources/a.cur,a.cur \
 	-resource:Test/resources/32x32.ico,32x32.ico \
 	-nowarn:618,612
