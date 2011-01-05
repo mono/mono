@@ -309,17 +309,19 @@ namespace Mono.CSharp {
 			//
 			if (inflatedMetaInfo == null) {
 				if ((state & StateFlags.PendingMetaInflate) != 0) {
+					var dt_meta = DeclaringType.GetMetaInfo ();
+
 					if (DeclaringType.IsTypeBuilder) {
 						if (IsConstructor)
-							inflatedMetaInfo = TypeBuilder.GetConstructor (DeclaringType.GetMetaInfo (), (ConstructorInfo) metaInfo);
+							inflatedMetaInfo = TypeBuilder.GetConstructor (dt_meta, (ConstructorInfo) metaInfo);
 						else
-							inflatedMetaInfo = TypeBuilder.GetMethod (DeclaringType.GetMetaInfo (), (MethodInfo) metaInfo);
+							inflatedMetaInfo = TypeBuilder.GetMethod (dt_meta, (MethodInfo) metaInfo);
 					} else {
 #if STATIC
 						// it should not be reached
 						throw new NotImplementedException ();
 #else
-						inflatedMetaInfo = MethodInfo.GetMethodFromHandle (metaInfo.MethodHandle, DeclaringType.GetMetaInfo ().TypeHandle);
+						inflatedMetaInfo = MethodInfo.GetMethodFromHandle (metaInfo.MethodHandle, dt_meta.TypeHandle);
 #endif
 					}
 

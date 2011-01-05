@@ -1075,7 +1075,8 @@ namespace Mono.CSharp {
 		{
 			var inflated = (MemberSpec) MemberwiseClone ();
 			inflated.declaringType = inflator.TypeInstance;
-			inflated.state |= StateFlags.PendingMetaInflate;
+			if (DeclaringType.IsGenericOrParentIsGeneric)
+				inflated.state |= StateFlags.PendingMetaInflate;
 #if DEBUG
 			inflated.ID += 1000000;
 #endif
