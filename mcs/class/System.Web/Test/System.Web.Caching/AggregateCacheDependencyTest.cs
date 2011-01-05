@@ -99,6 +99,7 @@ namespace MonoTests.System.Web.Caching
 		}
 
 		[Test]
+		[Ignore ("This test is racy, it fails from time to time.")]
 		public void AbsoluteExpiration ()
 		{
 			string depFile = Path.Combine (_tempFolder, "dep.tmp");
