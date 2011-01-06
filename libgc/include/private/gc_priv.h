@@ -1962,6 +1962,8 @@ void GC_err_puts GC_PROTO((GC_CONST char *s));
        /* SPARC/Linux doesn't properly define SIGPWR in <signal.h>.
         * It is aliased to SIGLOST in asm/signal.h, though.		*/
 #      define SIG_SUSPEND SIGLOST
+#    elif defined(NACL)
+#	define SIG_SUSPEND 0
 #    else
        /* Linuxthreads itself uses SIGUSR1 and SIGUSR2.			*/
 #      define SIG_SUSPEND SIGPWR

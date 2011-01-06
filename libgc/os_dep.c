@@ -133,7 +133,7 @@
 # include <errno.h>
 #endif
 
-#ifdef UNIX_LIKE
+#if defined( UNIX_LIKE ) || defined(NACL)
 # include <fcntl.h>
 #endif
 
@@ -618,6 +618,12 @@ void GC_enable_signals(void)
     	  /* longjmp implementations.  Most systems appear not to have	*/
     	  /* a signal 32.						*/
 #	define SIGSETMASK(old, new) (old) = sigsetmask(new)
+#   elif defined(NACL)
+	/* We don't use signals in NaCl. */
+#	define SIGSET_T int
+#	define SIG_DEL(set, signal)
+#	define SIG_FILL(set)
+#	define SIGSETMASK(old, new)
 #   else
 	/* Use POSIX/SYSV interface	*/
 #	define SIGSET_T sigset_t
@@ -2067,8 +2073,21 @@ void GC_remap(ptr_t start, word bytes)
       int result; 
 
       if (0 == start_addr) return;
+#ifdef NACL
+      {
+	/* NaCl doesn't expose mprotect, but mmap should work fine */
+	void * mmap_result;
+        mmap_result = mmap(start_addr, len, PROT_READ | PROT_WRITE | OPT_PROT_EXEC,
+		      MAP_PRIVATE | MAP_FIXED | OPT_MAP_ANON,
+		      zero_fd, 0/* offset */);
+        if (mmap_result != (void *)start_addr) ABORT("mmap as mprotect failed");
+        /* Fake the return value as if mprotect succeeded. */
+        result = 0;
+      }
+#else /* NACL */
       result = mprotect(start_addr, len,
 		        PROT_READ | PROT_WRITE | OPT_PROT_EXEC);
+#endif /* NACL */
       if (result != 0) {
 	  GC_err_printf3(
 		"Mprotect failed at 0x%lx (length %ld) with errno %ld\n",

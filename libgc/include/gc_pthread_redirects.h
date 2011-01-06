@@ -59,6 +59,11 @@
 #endif
   int GC_pthread_join(pthread_t thread, void **retval);
   int GC_pthread_detach(pthread_t thread);
+#if defined(__native_client__) || defined(NACL)
+  void GC_pthread_exit(void *status);
+# undef pthread_exit
+# define pthread_exit GC_pthread_exit
+#endif
 
 #if defined(GC_OSF1_THREADS) \
     && defined(_PTHREAD_USE_MANGLED_NAMES_) && !defined(_PTHREAD_USE_PTDNAM_)
