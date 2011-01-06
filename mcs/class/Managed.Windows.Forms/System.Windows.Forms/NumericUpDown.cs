@@ -38,11 +38,9 @@ using System.Windows.Forms;
 namespace System.Windows.Forms {
 	[DefaultEvent("ValueChanged")]
 	[DefaultProperty("Value")]
-#if NET_2_0
 	[DefaultBindingProperty ("Value")]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class NumericUpDown : UpDownBase, ISupportInitialize {
 		#region Local Variables
 		private bool	suppress_validation;
@@ -55,15 +53,12 @@ namespace System.Windows.Forms {
 		private decimal	dvalue;
 		
 
-#if NET_2_0
 		NumericUpDownAccelerationCollection accelerations;
 //		private long buttonPressedTicks;
 		//private bool isSpinning;
-#endif
 		#endregion	// Local Variables
 
 		#region UIA FrameWork Events
-#if NET_2_0
 		static object UIAMinimumChangedEvent = new object ();
 
 		internal event EventHandler UIAMinimumChanged {
@@ -105,7 +100,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		#endregion
 
 		#region Public Constructors
@@ -202,7 +196,6 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Properties
 
-#if NET_2_0	
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public NumericUpDownAccelerationCollection Accelerations {
@@ -212,7 +205,6 @@ namespace System.Windows.Forms {
 				return accelerations;
 			}
 		}
-#endif
 
 		[DefaultValue(0)]
 		public int DecimalPlaces {
@@ -251,10 +243,8 @@ namespace System.Windows.Forms {
 
 				increment = value;
 
-#if NET_2_0
 				// UIA Framework Event: SmallChange Changed
 				OnUIASmallChangeChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -273,10 +263,8 @@ namespace System.Windows.Forms {
 				if (dvalue > maximum)
 					Value = maximum;
 
-#if NET_2_0
 				// UIA Framework Event: Maximum Changed
 				OnUIAMaximumChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -295,14 +283,11 @@ namespace System.Windows.Forms {
 				if (dvalue < minimum)
 					Value = minimum;
 
-#if NET_2_0
 				// UIA Framework Event: Minimum Changed
 				OnUIAMinimumChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -310,7 +295,6 @@ namespace System.Windows.Forms {
 			get { return Padding.Empty; }
 			set { }
 		}
-#endif
 
 		[Bindable(false)]
 		[Browsable(false)]
@@ -350,11 +334,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value != dvalue) {
 					if (!suppress_validation && ((value < minimum) || (value > maximum))) {
-#if NET_2_0
 						throw new ArgumentOutOfRangeException ("value", "NumericUpDown.Value must be within the specified Minimum and Maximum values");
-#else
-						throw new ArgumentException ("NumericUpDown.Value must be within the specified Minimum and Maximum values", "value");						
-#endif
 					}
 
 					dvalue = value;
@@ -387,10 +367,8 @@ namespace System.Windows.Forms {
 
 			Value = Math.Max (minimum, unchecked (dvalue - increment));
 
-#if NET_2_0
 			// UIA Framework Event: DownButton Click
 			OnUIADownButtonClick (EventArgs.Empty);
-#endif
 		}
 
 		public override void UpButton() {
@@ -400,10 +378,8 @@ namespace System.Windows.Forms {
 
 			Value = Math.Min (maximum, unchecked (dvalue + increment));
 
-#if NET_2_0
 			// UIA Framework Event: UpButton Click
 			OnUIAUpButtonClick (EventArgs.Empty);
-#endif
 		}
 		#endregion	// Public Instance Methods
 
@@ -564,7 +540,6 @@ namespace System.Windows.Forms {
 			UpdateEditText ();
 		}
 
-#if NET_2_0
 		protected override void OnLostFocus(EventArgs e) {
 			base.OnLostFocus(e);
 			if (UserEdit)
@@ -583,18 +558,15 @@ namespace System.Windows.Forms {
 //			isSpinning = true;
 			base.OnKeyDown (e);
 		}
-#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler PaddingChanged {
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
 		}
-#endif
 
 		static object ValueChangedEvent = new object ();
 
