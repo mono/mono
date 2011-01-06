@@ -55,9 +55,9 @@ namespace System.Collections.Concurrent
 		{
 		}
 		
-		public ConcurrentBag (IEnumerable<T> enumerable) : this ()
+		public ConcurrentBag (IEnumerable<T> collection) : this ()
 		{
-			foreach (T item in enumerable)
+			foreach (T item in collection)
 				Add (item);
 		}
 		
@@ -80,9 +80,9 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 		
-		public bool TryTake (out T item)
+		public bool TryTake (out T result)
 		{
-			item = default (T);
+			result = default (T);
 
 			if (count == 0)
 				return false;
@@ -91,17 +91,17 @@ namespace System.Collections.Concurrent
 			CyclicDeque<T> bag = GetBag (out hintIndex);
 			bool hintEnabled = container.Count > hintThreshold;
 			
-			if (bag == null || bag.PopBottom (out item) != PopResult.Succeed) {
+			if (bag == null || bag.PopBottom (out result) != PopResult.Succeed) {
 				foreach (var other in container) {
 					// Try to retrieve something based on a hint
-					bool result = hintEnabled && addHints.TryDequeue (out hintIndex) && container[hintIndex].PopTop (out item) == PopResult.Succeed;
+					bool ret = hintEnabled && addHints.TryDequeue (out hintIndex) && container[hintIndex].PopTop (out result) == PopResult.Succeed;
 
 					// We fall back to testing our slot
-					if (!result && other.Value != bag)
-						result = other.Value.PopTop (out item) == PopResult.Succeed;
+					if (!ret && other.Value != bag)
+						ret = other.Value.PopTop (out result) == PopResult.Succeed;
 					
 					// If we found something, stop
-					if (result) {
+					if (ret) {
 						Interlocked.Decrement (ref count);
 						return true;
 					}
@@ -112,6 +112,11 @@ namespace System.Collections.Concurrent
 			}
 			
 			return false;
+		}
+
+		public bool TryPeek (out T result)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		public int Count {
