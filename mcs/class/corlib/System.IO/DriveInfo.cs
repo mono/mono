@@ -45,8 +45,18 @@ namespace System.IO {
 
 		public DriveInfo (string driveName)
 		{
-			DriveInfo [] drives = GetDrives ();
+			if (!Environment.IsUnix) {
+				if (driveName == null || driveName.Length == 0)
+					throw new ArgumentException ("The drive name is null or empty", "driveName");
 
+				if (driveName.Length >= 2 && driveName [1] != ':')
+					throw new ArgumentException ("Invalid drive name", "driveName");
+
+				// Convert the path to a standard format so we can find it later.
+				driveName = String.Concat (Char.ToUpper (driveName [0]).ToString (), ":\\");
+			}
+
+			DriveInfo [] drives = GetDrives ();
 			foreach (DriveInfo d in drives){
 				if (d.path == driveName){
 					this.path = d.path;
