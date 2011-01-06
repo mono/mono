@@ -25,6 +25,7 @@
 #if NET_4_0
 
 using System;
+using System.Collections.Concurrent;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
@@ -55,6 +56,8 @@ namespace System.Threading
 
 		static Watch sw = Watch.StartNew ();
 
+		ConcurrentOrderedList<int> stallTickets;
+
 		public bool IsThreadOwnerTrackingEnabled {
 			get {
 				return isThreadOwnerTrackingEnabled;
@@ -83,6 +86,7 @@ namespace System.Threading
 			this.isThreadOwnerTrackingEnabled = enableThreadOwnerTracking;
 			this.threadWhoTookLock = 0;
 			this.ticket = new TicketType ();
+			this.stallTickets = null;
 		}
 
 		[MonoTODO ("Not safe against async exceptions")]
@@ -93,21 +97,30 @@ namespace System.Threading
 			if (isThreadOwnerTrackingEnabled && IsHeldByCurrentThread)
 				throw new LockRecursionException ();
 
-			/* The current ticket algorithm, even though it's a thing of beauty, doesn't make it easy to
-			 * hand back ticket that have been taken in the case of an asynchronous exception and naively
-			 * fixing it bloat a code that should be kept simple. A straightforward possibility is to wrap
-			 * the whole thing in a finally block but due to the while loop a number of bad things can
-			 * happen, thus for the moment the code is left as is in the spirit of "better breaking fast,
-			 * than later in a weird way".
-			 */
-			int slot = Interlocked.Increment (ref ticket.Users) - 1;
+			int slot = -1;
 
-			SpinWait wait = new SpinWait ();
-			while (slot != ticket.Value)
-				wait.SpinOnce ();
+			RuntimeHelpers.PrepareConstrainedRegions ();
+			try {
+				slot = Interlocked.Increment (ref ticket.Users) - 1;
 
-			lockTaken = true;
-			threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
+				SpinWait wait = new SpinWait ();
+				while (slot != ticket.Value) {
+					wait.SpinOnce ();
+
+					if (stallTickets != null && stallTickets.TryRemove (ticket.Value))
+						++ticket.Value;
+				}
+			} finally {
+				if (slot == ticket.Value) {
+					lockTaken = true;
+					threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
+				} else if (slot != -1) {
+					// We have been interrupted, initialize stallTickets
+					if (stallTickets == null)
+						Interlocked.CompareExchange (ref stallTickets, new ConcurrentOrderedList<int> (), null);
+					stallTickets.TryAdd (slot);
+				}
+			}
 		}
 
 		public void TryEnter (ref bool lockTaken)
@@ -133,6 +146,9 @@ namespace System.Threading
 			bool stop = false;
 
 			do {
+				if (stallTickets != null && stallTickets.TryRemove (ticket.Value))
+					++ticket.Value;
+
 				long u = ticket.Users;
 				long totalValue = (u << 32) | u;
 				long newTotalValue
@@ -167,10 +183,12 @@ namespace System.Threading
 
 				threadWhoTookLock = int.MinValue;
 				// Fast path
-				if (useMemoryBarrier)
-					Interlocked.Increment (ref ticket.Value);
-				else
-					ticket.Value++;
+				do {
+					if (useMemoryBarrier)
+						Interlocked.Increment (ref ticket.Value);
+					else
+						ticket.Value++;
+				} while (stallTickets != null && stallTickets.TryRemove (ticket.Value));
 			}
 		}
 	}
