@@ -232,10 +232,16 @@ namespace System.IO {
 
 		static DriveInfo [] WindowsGetDrives ()
 		{
-			throw new NotImplementedException ();
+			string [] drives = Environment.GetLogicalDrives ();
+			DriveInfo [] infos = new DriveInfo [drives.Length];
+			int i = 0;
+			foreach (string s in drives) {
+				infos [i++] = new DriveInfo (_DriveType.Windows, s, "Fixed");
+			}
+			return infos;
 		}
 		
-		[MonoTODO("Currently only implemented on Mono/Linux")]
+		[MonoTODO("In windows, alldrives are 'Fixed'")]
 		public static DriveInfo[] GetDrives ()
 		{
 			if (Environment.IsUnix)
