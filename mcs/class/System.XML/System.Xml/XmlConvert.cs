@@ -399,11 +399,7 @@ namespace System.Xml {
 
 		private static DateTime ToDateTime (string s, string [] formats, DateTimeStyles style) 
 		{
-			try {
-				return DateTime.ParseExact (s, formats, DateTimeFormatInfo.InvariantInfo, style);
-			} catch (ArgumentOutOfRangeException) {
-				return DateTime.MinValue;
-			}
+			return DateTime.ParseExact (s, formats, DateTimeFormatInfo.InvariantInfo, style);
 		}
 		
 		public static Decimal ToDecimal(string s)
