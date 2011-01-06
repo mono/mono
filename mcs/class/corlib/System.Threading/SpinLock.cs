@@ -42,9 +42,11 @@ namespace System.Threading
 		public int Users;
 	}
 
-	// Implement the ticket SpinLock algorithm described on http://locklessinc.com/articles/locks/
-	// This lock is usable on both endianness
-	// TODO: some 32 bits platform apparently doesn't support CAS with 64 bits value
+	/* Implement the ticket SpinLock algorithm described on http://locklessinc.com/articles/locks/
+	 * This lock is usable on both endianness.
+	 * All the try/finally patterns in this class and various extra gimmicks compared to the original
+	 * algorithm are here to avoid problems caused by asynchronous exceptions.
+	 */
 	[System.Diagnostics.DebuggerDisplay ("IsHeld = {IsHeld}")]
 	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.SpinLock+SystemThreading_SpinLockDebugView")]
 	public struct SpinLock
@@ -182,7 +184,6 @@ namespace System.Threading
 					throw new SynchronizationLockException ("Current thread is not the owner of this lock");
 
 				threadWhoTookLock = int.MinValue;
-				// Fast path
 				do {
 					if (useMemoryBarrier)
 						Interlocked.Increment (ref ticket.Value);
