@@ -1173,7 +1173,7 @@ namespace System {
 			}
 		}
 
-#if (NET_2_0 || BOOTSTRAP_NET_2_0) && !DISABLE_SECURITY
+#if (NET_2_0 || BOOTSTRAP_NET_2_0) 
 		public virtual Type[] GetGenericArguments ()
 		{
 			throw new NotSupportedException ();
@@ -1204,6 +1204,7 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
+#if !MICRO_LIB
 		public virtual Type MakeGenericType (params Type[] typeArguments)
 		{
 			if (!IsGenericTypeDefinition)
@@ -1230,6 +1231,7 @@ namespace System {
 				throw new TypeLoadException ();
 			return res;
 		}
+#endif // !MICRO_LIB
 
 		public virtual bool IsGenericParameter {
 			get {
