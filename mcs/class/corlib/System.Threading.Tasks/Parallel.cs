@@ -80,7 +80,7 @@ namespace System.Threading.Tasks
 
 		static void InitTasks (Task[] tasks, int count, Action action, ParallelOptions options)
 		{
-			TaskCreationOptions creation = TaskCreationOptions.LongRunning;
+			TaskCreationOptions creation = TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent;
 
 			for (int i = 0; i < count; i++) {
 				if (options == null)
