@@ -84,6 +84,21 @@ namespace MonoTests.System.Threading.Tasks
 			Parallel.For (4, 1, (i) => launched = true);
 			Assert.IsFalse (launched, "#1");
 		}
+
+		[Test]
+		public void ParallelForNestedTest ()
+		{
+			bool[] launched = new bool[100 * 20 * 10];
+			Parallel.For (0, 100, delegate (int i) {
+				Parallel.For (0, 20, delegate (int j) {
+					Parallel.For (0, 10, delegate (int k) {
+							launched[i * 20 * 10 + j * 10 + k] = true;
+					});
+				});
+		    });
+
+			Assert.IsTrue (launched.All ((_) => _), "All true");
+		}
 		
 		[Test]
 		public void ParallelForEachTestCase ()
