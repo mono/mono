@@ -17040,6 +17040,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-550.cs">
+    <type name="Foo.Magic">
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="Foo.Magic`1[T]">
+      <method name="Void Upsample(IUpDown)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Foo.Instance">
+      <method name="Int32 get_DestinationDimension()">
+        <size>2</size>
+      </method>
+      <method name="Decimal get_Item(Int32)">
+        <size>6</size>
+      </method>
+      <method name="Void set_Item(Int32, Decimal)">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -27780,6 +27806,22 @@
     <type name="C">
       <method name="Void Main()">
         <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-repl-01.cs">
+    <type name="MyTest">
+      <method name="Void Run(System.String, System.String)">
+        <size>23</size>
+      </method>
+      <method name="Void Evaluate(System.String, System.String, System.Object)">
+        <size>80</size>
+      </method>
+      <method name="Void Main()">
+        <size>561</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
