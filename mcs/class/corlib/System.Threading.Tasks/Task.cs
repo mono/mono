@@ -810,6 +810,12 @@ namespace System.Threading.Tasks
 				return taskId;
 			}
 		}
+
+		internal Task Parent {
+			get {
+				return parent;
+			}
+		}
 		#endregion
 	}
 }

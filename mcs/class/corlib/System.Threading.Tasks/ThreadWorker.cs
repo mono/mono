@@ -282,7 +282,7 @@ namespace System.Threading.Tasks
 		
 		static bool CheckTaskFitness (Task self, Task t)
 		{
-			return (t.CreationOptions & TaskCreationOptions.LongRunning) == 0 && t.Id < self.Id;
+			return ((t.CreationOptions & TaskCreationOptions.LongRunning) == 0 && t.Id < self.Id) || t.Parent == self || t == self;
 		}
 		
 		public bool Finished {
