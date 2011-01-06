@@ -1,4 +1,3 @@
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -21,12 +20,9 @@ namespace MonoTests.System.Windows.Forms
 		public void DefaultValues ()
 		{
 			NumericUpDown n = new NumericUpDown ();
-#if NET_2_0
 			Assert.IsFalse (n.Accelerations.IsReadOnly, "#A1");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void SortedAccelerationsTest ()
 		{
@@ -44,7 +40,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (9, numericUpDown1.Accelerations[2].Seconds, "#A3");
 			Assert.AreEqual (10, numericUpDown1.Accelerations[3].Seconds, "#A4");
 		}
-#endif
+
 		[Test]
 		public void Minimum ()
 		{
@@ -125,11 +121,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void SetValueThrowsException ()
 		{
 			NumericUpDown nud = new NumericUpDown ();
@@ -139,11 +131,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void InitTest ()
 		{
 			NumericUpDown nud = new NumericUpDown ();
