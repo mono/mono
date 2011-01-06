@@ -27,7 +27,8 @@
 using System;
 
 namespace System.Threading
-{	
+{
+	[System.Diagnostics.DebuggerDisplayAttribute ("Initial Count={InitialCount}, Current Count={CurrentCount}")]
 	public class CountdownEvent : IDisposable
 	{
 		int initialCount;

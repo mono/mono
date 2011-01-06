@@ -169,6 +169,7 @@ namespace System.Threading
 	        } while (!stop && (millisecondsTimeout == -1 || (sw.ElapsedMilliseconds - start) < millisecondsTimeout));
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Exit ()
 		{
 			Exit (false);

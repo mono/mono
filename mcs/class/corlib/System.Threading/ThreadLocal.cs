@@ -77,7 +77,8 @@ namespace System.Threading
 				return IsInitializedThreadLocal ();
 			}
 		}
-		
+
+		[System.Diagnostics.DebuggerBrowsableAttribute (System.Diagnostics.DebuggerBrowsableState.Never)]
 		public T Value {
 			get {
 				ThrowIfNeeded ();

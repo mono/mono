@@ -28,6 +28,7 @@ using System;
 
 namespace System.Threading
 {
+	[System.Diagnostics.DebuggerDisplayAttribute ("Set = {IsSet}")]
 	public class ManualResetEventSlim : IDisposable
 	{
 		const int isSet    = 1;

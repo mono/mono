@@ -30,6 +30,7 @@ using System.Threading;
 #if NET_4_0
 namespace System.Threading
 {
+	[System.Diagnostics.DebuggerDisplay ("IsCancellationRequested = {IsCancellationRequested}")]
 	public struct CancellationToken
 	{
 		public CancellationToken (bool canceled)
