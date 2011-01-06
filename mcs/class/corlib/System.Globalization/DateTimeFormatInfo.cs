@@ -31,7 +31,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -611,7 +611,7 @@ namespace System.Globalization
 			if (all_date_time_patterns != null)
 				return;
 			
-			ArrayList al = new ArrayList ();
+			var al = new List<string> ();
 			al.AddRange (GetAllRawDateTimePatterns ('d'));
 			al.AddRange (GetAllRawDateTimePatterns ('D'));
 			al.AddRange (GetAllRawDateTimePatterns ('g'));
@@ -637,7 +637,7 @@ namespace System.Globalization
 
 			// all_date_time_patterns needs to be volatile to prevent
 			// reordering of writes here and still avoid any locking.
-			all_date_time_patterns = (string []) al.ToArray (typeof (string)) as string [];
+			all_date_time_patterns = al.ToArray ();
 		}
 
 		//

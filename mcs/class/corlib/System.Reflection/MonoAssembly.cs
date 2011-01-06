@@ -31,7 +31,7 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Reflection.Emit;
-
+using System.Collections.Generic;
 
 namespace System.Reflection {
 
@@ -103,11 +103,11 @@ namespace System.Reflection {
 			Module[] modules = GetModulesInternal ();
 
 			if (!getResourceModules) {
-				ArrayList result = new ArrayList (modules.Length);
+				var result = new List<Module> (modules.Length);
 				foreach (Module m in modules)
 					if (!m.IsResource ())
 						result.Add (m);
-				return (Module[])result.ToArray (typeof (Module));
+				return result.ToArray ();
 			}
 			else
 				return modules;

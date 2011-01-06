@@ -32,6 +32,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace System
@@ -121,7 +122,7 @@ namespace System
 				return new Delegate [1] { other };
 			}
 
-			ArrayList list = new ArrayList ();
+			var list = new List<Delegate> ();
 			for (; d != null; d = d.kpm_next) {
 				MulticastDelegate other = (MulticastDelegate) d.Clone ();
 				other.prev = null;
@@ -129,7 +130,7 @@ namespace System
 				list.Add (other);
 			}
 
-			return (Delegate []) list.ToArray (typeof (Delegate));
+			return list.ToArray ();
 		}
 
 		// <summary>

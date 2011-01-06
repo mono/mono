@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -751,10 +751,10 @@ namespace System
 		{
 			DateTimeFormatInfo info = (DateTimeFormatInfo) provider.GetFormat (typeof(DateTimeFormatInfo));
 //			return GetDateTimeFormats (info.GetAllDateTimePatterns ());
-			ArrayList al = new ArrayList ();
+			var l = new List<string> ();
 			foreach (char c in "dDgGfFmMrRstTuUyY")
-				al.AddRange (GetDateTimeFormats (c, info));
-			return al.ToArray (typeof (string)) as string [];
+				l.AddRange (GetDateTimeFormats (c, info));
+			return l.ToArray ();
 		}
 
 		public string[] GetDateTimeFormats(char format,IFormatProvider provider	)

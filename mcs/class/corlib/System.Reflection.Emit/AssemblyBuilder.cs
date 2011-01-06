@@ -1256,11 +1256,11 @@ namespace System.Reflection.Emit
 			Module[] modules = GetModulesInternal ();
 
 			if (!getResourceModules) {
-				ArrayList result = new ArrayList (modules.Length);
+				var result = new List<Module> (modules.Length);
 				foreach (Module m in modules)
 					if (!m.IsResource ())
 						result.Add (m);
-				return (Module[])result.ToArray (typeof (Module));
+				return result.ToArray ();
 			}
 			return modules;
 		}

@@ -22,7 +22,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
@@ -163,7 +163,7 @@ namespace System.IO {
 		static DriveInfo [] LinuxGetDrives ()
 		{
 			using (StreamReader mounts = TryOpen ("/proc/mounts")){
-				ArrayList drives = new ArrayList ();
+				var drives = new List<DriveInfo> ();
 				string line;
 				
 				while ((line = mounts.ReadLine ()) != null){
@@ -177,7 +177,7 @@ namespace System.IO {
 					drives.Add (new DriveInfo (_DriveType.Linux, path, fstype));
 				}
 
-				return (DriveInfo []) drives.ToArray (typeof (DriveInfo));
+				return drives.ToArray ();
 			}
 		}
 

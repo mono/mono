@@ -40,6 +40,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 
 // See RFC 2396 for more info on URI's.
@@ -1092,7 +1093,7 @@ namespace Mono.Security {
 		{
 			path = path.Replace ('\\','/');
 			string [] parts = path.Split ('/');
-			ArrayList result = new ArrayList ();
+			var result = new List<string> ();
 
 			int end = parts.Length;
 			for (int i = 0; i < end; i++) {
@@ -1119,7 +1120,7 @@ namespace Mono.Security {
 
 			result.Insert (0, String.Empty);
 
-			string res = String.Join ("/", (string []) result.ToArray (typeof (string)));
+			string res = String.Join ("/", result.ToArray ());
 			if (path.EndsWith ("/"))
 				res += '/';
 				

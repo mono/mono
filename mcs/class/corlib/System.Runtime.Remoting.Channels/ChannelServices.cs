@@ -32,6 +32,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -153,7 +154,7 @@ namespace System.Runtime.Remoting.Channels
 			get {
 				lock (registeredChannels.SyncRoot)
 				{
-					ArrayList list = new ArrayList ();
+					var list = new List<IChannel> ();
 					
 					for (int i = 0; i < registeredChannels.Count; i++) {
 						IChannel ch = (IChannel) registeredChannels[i];
@@ -161,7 +162,7 @@ namespace System.Runtime.Remoting.Channels
 						list.Add (ch);
 					}
 
-					return (IChannel[]) list.ToArray (typeof(IChannel));
+					return list.ToArray ();
 				}
 			}
 		}
@@ -213,7 +214,7 @@ namespace System.Runtime.Remoting.Channels
 				
 			ClientIdentity ident = (ClientIdentity) RemotingServices.GetRealProxy (obj).ObjectIdentity;
 			IMessageSink sink = ident.ChannelSink;
-			ArrayList dics = new ArrayList ();
+			var dics = new List<IDictionary> ();
 			
 			while (sink != null && !(sink is IClientChannelSink))
 				sink = sink.NextSink;
@@ -228,7 +229,7 @@ namespace System.Runtime.Remoting.Channels
 				csink = csink.NextChannelSink;
 			}
 
-			IDictionary[] adics = (IDictionary[]) dics.ToArray (typeof(IDictionary[]));
+			IDictionary[] adics = dics.ToArray ();
 			return new AggregateDictionary (adics);
 		}
 
@@ -237,7 +238,7 @@ namespace System.Runtime.Remoting.Channels
 			string uri = RemotingServices.GetObjectUri (obj);
 			if (uri == null) return new string [0];
 
-			ArrayList list = new ArrayList ();
+			var list = new List<string> ();
 
 			lock (registeredChannels.SyncRoot)
 			{
@@ -251,7 +252,7 @@ namespace System.Runtime.Remoting.Channels
 				}
 			}
 			
-			return  (string[]) list.ToArray (typeof(string));
+			return list.ToArray ();
 		}
 
 		[Obsolete ("Use RegisterChannel(IChannel,Boolean)")]
@@ -475,7 +476,7 @@ namespace System.Runtime.Remoting.Channels
 
 		internal static object [] GetCurrentChannelInfo ()
 		{
-			ArrayList list = new ArrayList ();
+			var list = new List<object> ();
 			
 			lock (registeredChannels.SyncRoot)
 			{
@@ -490,7 +491,7 @@ namespace System.Runtime.Remoting.Channels
 				}
 			}
 			
-			return  list.ToArray ();
+			return list.ToArray ();
 		}
 
 		// Back compatibility fix. StartListener will be called for the types listed here		

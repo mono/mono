@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -113,28 +114,28 @@ namespace Mono.Xml
 			}
 			public string GetName (int i)
 			{
-				return (string) attrNames [i];
+				return attrNames [i];
 			}
 			public string GetValue (int i)
 			{
-				return (string) attrValues [i];
+				return attrValues [i];
 			}
 			public string GetValue (string name)
 			{
 				for (int i = 0; i < attrNames.Count; i++)
-					if ((string) attrNames [i] == name)
-						return (string) attrValues [i];
+					if (attrNames [i] == name)
+						return attrValues [i];
 				return null;
 			}
 			public string [] Names {
-				get { return (string []) attrNames.ToArray (typeof (string)); }
+				get { return attrNames.ToArray (); }
 			}
 			public string [] Values {
-				get { return (string []) attrValues.ToArray (typeof (string)); }
+				get { return attrValues.ToArray (); }
 			}
 
-			ArrayList attrNames = new ArrayList ();
-			ArrayList attrValues = new ArrayList ();
+			List<string> attrNames = new List<string> ();
+			List<string> attrValues = new List<string> ();
 
 			internal void Clear ()
 			{

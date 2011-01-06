@@ -37,6 +37,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -542,7 +543,7 @@ namespace Microsoft.Win32
 		{
 			IntPtr handle = GetHandle (rkey);
 			StringBuilder buffer = new StringBuilder (BufferMaxLength);
-			ArrayList keys = new ArrayList ();
+			var keys = new List<string> ();
 				
 			for (int index = 0; true; index ++) {
 				int result = RegEnumKey (handle, index, buffer, buffer.Capacity);
@@ -559,14 +560,14 @@ namespace Microsoft.Win32
 				// should not be here!
 				GenerateException (result);
 			}
-			return (string []) keys.ToArray (typeof(String));
+			return keys.ToArray ();
 		}
 
 
 		public string [] GetValueNames (RegistryKey rkey)
 		{
 			IntPtr handle = GetHandle (rkey);
-			ArrayList values = new ArrayList ();
+			var values = new List<string> ();
 			
 			for (int index = 0; true; index ++)
 			{
@@ -591,7 +592,7 @@ namespace Microsoft.Win32
 				GenerateException (result);
 			}
 
-			return (string []) values.ToArray (typeof(String));
+			return values.ToArray ();
 		}
 
 		/// <summary>

@@ -204,13 +204,13 @@ namespace Microsoft.Win32 {
 					values [name] = Int64.Parse (se.Text);
 					break;
 				case "string-array":
-					ArrayList sa = new ArrayList ();
+					var sa = new List<string> ();
 					if (se.Children != null){
 						foreach (SecurityElement stre in se.Children){
 							sa.Add (stre.Text);
 						}
 					}
-					values [name] = sa.ToArray (typeof (string));
+					values [name] = sa.ToArray ();
 					break;
 				}
 			} catch {

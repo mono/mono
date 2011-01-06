@@ -37,7 +37,6 @@ using System.IO;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Collections;
 using System.Collections.Generic;
 using System.Configuration.Assemblies;
 

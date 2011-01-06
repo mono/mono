@@ -266,12 +266,12 @@ namespace System.IO
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
 				return GetDirectories (path, searchPattern);
-			ArrayList all = new ArrayList ();
+			var all = new List<string> ();
 			GetDirectoriesRecurse (path, searchPattern, all);
-			return (string []) all.ToArray (typeof (string));
+			return all.ToArray ();
 		}
 		
-		static void GetDirectoriesRecurse (string path, string searchPattern, ArrayList all)
+		static void GetDirectoriesRecurse (string path, string searchPattern, List<string> all)
 		{
 			all.AddRange (GetDirectories (path, searchPattern));
 			foreach (string dir in GetDirectories (path))
@@ -303,12 +303,12 @@ namespace System.IO
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
 				return GetFiles (path, searchPattern);
-			ArrayList all = new ArrayList ();
+			var all = new List<string> ();
 			GetFilesRecurse (path, searchPattern, all);
-			return (string []) all.ToArray (typeof (string));
+			return all.ToArray ();
 		}
 		
-		static void GetFilesRecurse (string path, string searchPattern, ArrayList all)
+		static void GetFilesRecurse (string path, string searchPattern, List<string> all)
 		{
 			all.AddRange (GetFiles (path, searchPattern));
 			foreach (string dir in GetDirectories (path))
