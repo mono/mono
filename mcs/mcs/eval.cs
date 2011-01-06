@@ -121,6 +121,7 @@ namespace Mono.CSharp
 
 				ctx = driver.ctx;
 
+				CompilerCallableEntryPoint.Reset ();
 				RootContext.ToplevelTypes = new ModuleContainer (ctx);
 				
 				var startup_files = new List<string> ();
