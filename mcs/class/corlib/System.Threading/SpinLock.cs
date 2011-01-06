@@ -109,7 +109,7 @@ namespace System.Threading
 				while (slot != ticket.Value) {
 					wait.SpinOnce ();
 
-					if (stallTickets != null && stallTickets.TryRemove (ticket.Value))
+					while (stallTickets != null && stallTickets.TryRemove (ticket.Value))
 						++ticket.Value;
 				}
 			} finally {
@@ -148,7 +148,7 @@ namespace System.Threading
 			bool stop = false;
 
 			do {
-				if (stallTickets != null && stallTickets.TryRemove (ticket.Value))
+				while (stallTickets != null && stallTickets.TryRemove (ticket.Value))
 					++ticket.Value;
 
 				long u = ticket.Users;
