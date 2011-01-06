@@ -105,7 +105,7 @@ namespace MonoTests.System.Threading
 					e.Wait();
 					s = true;
 				}
-			});
+			}, 3);
 			
 			Assert.IsTrue(s, "#1");
 			Assert.IsTrue(evt.IsSet, "#2");
