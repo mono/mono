@@ -56,7 +56,7 @@ namespace System.Net.Sockets
 		private bool islistening;
 		private bool useoverlappedIO;
 
-		static void AddSockets (ArrayList sockets, IList list, string name)
+		static void AddSockets (List<Socket> sockets, IList list, string name)
 		{
 			if (list != null) {
 				foreach (Socket sock in list) {
@@ -76,7 +76,7 @@ namespace System.Net.Sockets
 #endif
 		public static void Select (IList checkRead, IList checkWrite, IList checkError, int microSeconds)
 		{
-			ArrayList list = new ArrayList ();
+			var list = new List<Socket> ();
 			AddSockets (list, checkRead, "checkRead");
 			AddSockets (list, checkWrite, "checkWrite");
 			AddSockets (list, checkError, "checkError");
@@ -92,7 +92,7 @@ namespace System.Net.Sockets
 			 * 				 WRITE socket 0-n, null,
 			 *				 ERROR socket 0-n, null
 			 */
-			Socket [] sockets = (Socket []) list.ToArray (typeof (Socket));
+			Socket [] sockets = list.ToArray ();
 			Select_internal (ref sockets, microSeconds, out error);
 
 			if (error != 0)
