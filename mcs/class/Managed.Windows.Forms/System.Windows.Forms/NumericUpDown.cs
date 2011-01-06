@@ -116,84 +116,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
-		#region Private Methods
-		void wide_number_multiply_by_10(int[] number) {
-			long carry = 0;
-
-			for (int i=0; i < number.Length; i++) {
-				long multiplication = unchecked(carry + 10 * (long)(uint)number[i]);
-
-				carry = multiplication >> 32;
-
-				number[i] = unchecked((int)multiplication);
-			}
-		}
-
-		void wide_number_multiply_by_16(int[] number) {
-			int carry = 0;
-
-			for (int i=0; i < number.Length; i++) {
-				int multiplication = unchecked(carry | (number[i] << 4));
-
-				carry = (number[i] >> 28) & 0x0F;
-
-				number[i] = multiplication;
-			}
-		}
-
-		void wide_number_divide_by_16(int[] number) {
-			int carry = 0;
-
-			for (int i=number.Length - 1; i >= 0; i--) {
-				int division = unchecked(carry | ((number[i] >> 4) & 0x0FFFFFFF));
-
-				carry = (number[i] << 28);
-
-				number[i] = division;
-			}
-		}
-
-		bool wide_number_less_than(int[] left, int[] right) {
-			unchecked {
-				for (int i=left.Length - 1; i >= 0; i--) {
-					uint leftvalue = (uint)left[i];
-					uint rightvalue = (uint)right[i];
-
-					if (leftvalue > rightvalue)
-						return false;
-					if (leftvalue < rightvalue)
-						return true;
-				}
-			}
-
-			// equal
-			return false;
-		}
-
-		void wide_number_subtract(int[] subtrahend, int[] minuend) {
-			long carry = 0;
-
-			unchecked {
-				for (int i=0; i < subtrahend.Length; i++) {
-					long subtrahendvalue = (uint)subtrahend[i];
-					long minuendvalue = (uint)minuend[i];
-
-					long result = subtrahendvalue - minuendvalue + carry;
-
-					if (result < 0) {
-						carry = -1;
-						result -= int.MinValue;
-						result -= int.MinValue;
-					}
-					else
-						carry = 0;
-
-					subtrahend[i] = unchecked((int)result);
-				}
-			}
-		}
-		#endregion	// Private Methods
-
 		#region Public Instance Properties
 
 		[Browsable (false)]
@@ -478,59 +400,10 @@ namespace System.Windows.Forms {
 				Text = dvalue.ToString (format_string, CultureInfo.CurrentCulture);
 
 			} else {
-				// Decimal.ToString doesn't know the "X" formatter, and
-				// converting it to an int is narrowing, so do it
-				// manually...
-
-				int[] bits = decimal.GetBits (dvalue);
-
-				bool negative = (bits[3] < 0);
-
-				int scale = (bits[3] >> 16) & 0x1F;
-
-				bits[3] = 0;
-
-				int[] radix = new int[4];
-
-				radix[0] = 1;
-
-				for (int i = 0; i < scale; i++)
-					wide_number_multiply_by_10 (radix);
-
-				int num_chars = 0;
-
-				while (!wide_number_less_than (bits, radix)) {
-					num_chars++;
-					wide_number_multiply_by_16 (radix);
-				}
-
-				if (num_chars == 0) {
-					Text = "0";
-				}
-
-				StringBuilder chars = new StringBuilder ();
-
-				if (negative)
-					chars.Append ('-');
-
-				for (int i = 0; i < num_chars; i++) {
-					int digit = 0;
-
-					wide_number_divide_by_16 (radix);
-
-					while (!wide_number_less_than (bits, radix)) { // greater than or equals
-						digit++;
-						wide_number_subtract (bits, radix);
-					}
-
-					if (digit < 10) {
-						chars.Append ((char) ('0' + digit));
-					} else {
-						chars.Append ((char) ('A' + digit - 10));
-					}
-				}
-
-				Text = chars.ToString ();
+				// Cast to Int64 to be able to use the "X" formatter.
+				// If the value is below Int64.MinValue or above Int64.MaxValue,
+				// then an OverflowException will be thrown, as with .NET.
+				Text = ((Int64)dvalue).ToString("X", CultureInfo.CurrentCulture);
 			}
 		}
 
