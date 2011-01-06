@@ -2182,7 +2182,7 @@ namespace Mono.CSharp
 										Report.RegisterWarningRegion (loc).WarningEnable (loc, code, Report);
 									}
 								}
-							} while (code >= 0 && c != '\n');
+							} while (code >= 0 && c != '\n' && c != -1);
 						}
 
 						return;

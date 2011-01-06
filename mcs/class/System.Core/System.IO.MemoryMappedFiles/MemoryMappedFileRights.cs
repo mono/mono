@@ -35,7 +35,6 @@ namespace System.IO.MemoryMappedFiles
 {
 	[Flags]
 	public enum MemoryMappedFileRights {
-		None = 0,
 		CopyOnWrite = 1,
 		Write = 2,
 		Read  = 4,
@@ -48,8 +47,7 @@ namespace System.IO.MemoryMappedFiles
 		ChangePermissions = 0x40000,
 		TakeOwnership = 0x80000,
 		FullControl = 0xf000f,
-		AccessSystemSecurity = 0x1000000,
-		DelayAllocatePages = 0x4000000
+		AccessSystemSecurity = 0x1000000
 	}
 }
 

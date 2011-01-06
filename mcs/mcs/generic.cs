@@ -1401,6 +1401,24 @@ namespace Mono.CSharp {
 
 		#endregion
 
+		public static bool ContainsTypeParameter (TypeSpec type)
+		{
+			if (type.Kind == MemberKind.TypeParameter)
+				return true;
+
+			var element_container = type as ElementTypeSpec;
+			if (element_container != null)
+				return ContainsTypeParameter (element_container.Element);
+
+			foreach (var t in type.TypeArguments) {
+				if (ContainsTypeParameter (t)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		TypeParameterInflator CreateLocalInflator ()
 		{
 			TypeParameterSpec[] tparams_full;
@@ -2002,6 +2020,15 @@ namespace Mono.CSharp {
 			// Check the class constraint
 			//
 			if (tparam.HasTypeConstraint) {
+				var dep = tparam.BaseType.GetMissingDependencies ();
+				if (dep != null) {
+					if (mc == null)
+						return false;
+
+					ImportedTypeDefinition.Error_MissingDependency (mc.Compiler, dep, loc);
+					ok = false;
+				}
+
 				if (!CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc)) {
 					if (mc == null)
 						return false;
@@ -2024,6 +2051,19 @@ namespace Mono.CSharp {
 					ok = false;
 				} else {
 					foreach (TypeSpec iface in tparam.Interfaces) {
+						var dep = iface.GetMissingDependencies ();
+						if (dep != null) {
+							if (mc == null)
+								return false;
+
+							ImportedTypeDefinition.Error_MissingDependency (mc.Compiler, dep, loc);
+							ok = false;
+
+							// return immediately to avoid duplicate errors because we are scanning
+							// expanded interface list
+							return false;
+						}
+
 						if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
 							if (mc == null)
 								return false;
@@ -2473,14 +2513,14 @@ namespace Mono.CSharp {
 
 	public class TypeInferenceContext
 	{
-		enum BoundKind
+		protected enum BoundKind
 		{
 			Exact	= 0,
 			Lower	= 1,
 			Upper	= 2
 		}
 
-		class BoundInfo : IEquatable<BoundInfo>
+		protected class BoundInfo : IEquatable<BoundInfo>
 		{
 			public readonly TypeSpec Type;
 			public readonly BoundKind Kind;
@@ -2496,9 +2536,14 @@ namespace Mono.CSharp {
 				return Type.GetHashCode ();
 			}
 
+			public virtual Expression GetTypeExpression ()
+			{
+				return new TypeExpression (Type, Location.Null);
+			}
+
 			#region IEquatable<BoundInfo> Members
 
-			public bool Equals (BoundInfo other)
+			public virtual bool Equals (BoundInfo other)
 			{
 				return Type == other.Type && Kind == other.Kind;
 			}
@@ -2554,7 +2599,7 @@ namespace Mono.CSharp {
 			AddToBounds (new BoundInfo (type, BoundKind.Lower), 0);
 		}
 
-		void AddToBounds (BoundInfo bound, int index)
+		protected void AddToBounds (BoundInfo bound, int index)
 		{
 			//
 			// Some types cannot be used as type arguments
@@ -2760,14 +2805,14 @@ namespace Mono.CSharp {
 
 					if (bound.Kind == BoundKind.Exact || cbound.Kind == BoundKind.Exact) {
 						if (cbound.Kind == BoundKind.Lower) {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, cbound.GetTypeExpression (), bound.Type)) {
 								break;
 							}
 
 							continue;
 						}
 						if (cbound.Kind == BoundKind.Upper) {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
 								break;
 							}
 
@@ -2775,7 +2820,7 @@ namespace Mono.CSharp {
 						}
 						
 						if (bound.Kind != BoundKind.Exact) {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
 								break;
 							}
 
@@ -2788,11 +2833,11 @@ namespace Mono.CSharp {
 
 					if (bound.Kind == BoundKind.Lower) {
 						if (cbound.Kind == BoundKind.Lower) {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, cbound.GetTypeExpression (), bound.Type)) {
 								break;
 							}
 						} else {
-							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
 								break;
 							}
 
@@ -2803,7 +2848,7 @@ namespace Mono.CSharp {
 					}
 
 					if (bound.Kind == BoundKind.Upper) {
-						if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+						if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
 							break;
 						}
 					} else {

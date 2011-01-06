@@ -10,10 +10,6 @@ ifndef lib_file
 USE_BOOT_COMPILE = yes
 endif
 
-ifeq (monotouch, $(PROFILE))
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/monotouch$(PLATFORM_PATH_SEPARATOR)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_SMCS)
-endif
-
 ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif

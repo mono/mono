@@ -1,5 +1,6 @@
 <Type Name="ThreadStartEvent" FullName="Mono.Debugger.Soft.ThreadStartEvent">
   <TypeSignature Language="C#" Value="public class ThreadStartEvent : Mono.Debugger.Soft.Event" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ThreadStartEvent extends Mono.Debugger.Soft.Event" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

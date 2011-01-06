@@ -32,11 +32,12 @@ using System.Security.Permissions;
 
 namespace System.Threading
 {
-	[HostProtectionAttribute(SecurityAction.LinkDemand, Synchronization = true, 
-	                         ExternalThreading = true)]
+	[HostProtection (SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
+	[System.Diagnostics.DebuggerDisplay ("IsValueCreated={IsValueCreated}, Value={ValueForDebugDisplay}")]
+	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.SystemThreading_ThreadLocalDebugView`1")]
 	public class ThreadLocal<T> : IDisposable
 	{
-		readonly Func<T> initializer;
+		readonly Func<T> valueFactory;
 		LocalDataStoreSlot localStore;
 		Exception cachedException;
 		
@@ -47,17 +48,17 @@ namespace System.Threading
 			public Func<T> Getter;
 		}
 		
-		public ThreadLocal () : this (LazyInitializer.GetDefaultCtorValue<T>)
+		public ThreadLocal () : this (LazyInitializer.GetDefaultValueFactory<T>)
 		{
 		}
 
-		public ThreadLocal (Func<T> initializer)
+		public ThreadLocal (Func<T> valueFactory)
 		{
-			if (initializer == null)
-				throw new ArgumentNullException ("initializer");
+			if (valueFactory == null)
+				throw new ArgumentNullException ("valueFactory");
 			
 			localStore = Thread.AllocateDataSlot ();
-			this.initializer = initializer;
+			this.valueFactory = valueFactory;
 		}
 		
 		public void Dispose ()
@@ -65,7 +66,7 @@ namespace System.Threading
 			Dispose (true);
 		}
 		
-		protected virtual void Dispose (bool dispManagedRes)
+		protected virtual void Dispose (bool disposing)
 		{
 			
 		}
@@ -95,7 +96,6 @@ namespace System.Threading
 		{
 			return string.Format ("[ThreadLocal: IsValueCreated={0}, Value={1}]", IsValueCreated, Value);
 		}
-
 		
 		T GetValueThreadLocal ()
 		{
@@ -133,7 +133,7 @@ namespace System.Threading
 		DataSlotWrapper DataSlotCreator ()
 		{
 			DataSlotWrapper wrapper = new DataSlotWrapper ();
-			Func<T> valSelector = initializer;
+			Func<T> valSelector = valueFactory;
 	
 			wrapper.Getter = delegate {
 				wrapper.Creating = true;

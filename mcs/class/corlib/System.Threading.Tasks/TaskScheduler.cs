@@ -24,13 +24,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 using System;
 using System.Threading;
 using System.Collections.Generic;
 
 namespace System.Threading.Tasks
 {
+	[System.Diagnostics.DebuggerDisplay ("Id={Id}")]
+	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.TaskScheduler+SystemThreadingTasks_TaskSchedulerDebugView")]
 	public abstract class TaskScheduler
 	{
 		static TaskScheduler defaultScheduler = new Scheduler ();
@@ -93,7 +95,7 @@ namespace System.Threading.Tasks
 
 		internal protected bool TryExecuteTask (Task task)
 		{
-			throw new NotSupportedException ();
+			return TryExecuteTaskInline (task, false);
 		}
 
 		protected abstract bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued);

@@ -30,10 +30,17 @@ namespace CorCompare {
 
 		internal static bool IsDerivedFrom (TypeReference type, string derivedFrom)
 		{
-			foreach (var def in WalkHierarchy (type))
+			bool first = true;
+			foreach (var def in WalkHierarchy (type)) {
+				if (first) {
+					first = false;
+					continue;
+				}
+				
 				if (def.FullName == derivedFrom)
 					return true;
-
+			}
+			
 			return false;
 		}
 

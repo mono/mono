@@ -193,9 +193,9 @@ namespace Mono.CSharp {
 //		MethodInfo MakeGenericMethod (TypeSpec[] targs);
 	}
 
-	public class MethodSpec : MemberSpec, IParametersMember
+	public sealed class MethodSpec : MemberSpec, IParametersMember
 	{
-		MethodBase metaInfo;
+		MethodBase metaInfo, inflatedMetaInfo;
 		AParametersCollection parameters;
 		TypeSpec returnType;
 
@@ -301,22 +301,34 @@ namespace Mono.CSharp {
 
 		public MethodBase GetMetaInfo ()
 		{
-			if ((state & StateFlags.PendingMetaInflate) != 0) {
-				if (DeclaringType.IsTypeBuilder) {
-					if (IsConstructor)
-						metaInfo = TypeBuilder.GetConstructor (DeclaringType.GetMetaInfo (), (ConstructorInfo) metaInfo);
-					else
-						metaInfo = TypeBuilder.GetMethod (DeclaringType.GetMetaInfo (), (MethodInfo) metaInfo);
-				} else {
-#if STATIC
-					// it should not be reached
-					throw new NotImplementedException ();
-#else
-					metaInfo = MethodInfo.GetMethodFromHandle (metaInfo.MethodHandle, DeclaringType.GetMetaInfo ().TypeHandle);
-#endif
-				}
+			//
+			// inflatedMetaInfo is extra field needed for cases where we
+			// inflate method but another nested type can later inflate
+			// again (the cache would be build with inflated metaInfo) and
+			// TypeBuilder can work with method definitions only
+			//
+			if (inflatedMetaInfo == null) {
+				if ((state & StateFlags.PendingMetaInflate) != 0) {
+					var dt_meta = DeclaringType.GetMetaInfo ();
 
-				state &= ~StateFlags.PendingMetaInflate;
+					if (DeclaringType.IsTypeBuilder) {
+						if (IsConstructor)
+							inflatedMetaInfo = TypeBuilder.GetConstructor (dt_meta, (ConstructorInfo) metaInfo);
+						else
+							inflatedMetaInfo = TypeBuilder.GetMethod (dt_meta, (MethodInfo) metaInfo);
+					} else {
+#if STATIC
+						// it should not be reached
+						throw new NotImplementedException ();
+#else
+						inflatedMetaInfo = MethodInfo.GetMethodFromHandle (metaInfo.MethodHandle, dt_meta.TypeHandle);
+#endif
+					}
+
+					state &= ~StateFlags.PendingMetaInflate;
+				} else {
+					inflatedMetaInfo = metaInfo;
+				}
 			}
 
 			if ((state & StateFlags.PendingMakeMethod) != 0) {
@@ -324,11 +336,11 @@ namespace Mono.CSharp {
 				for (int i = 0; i < sre_targs.Length; ++i)
 					sre_targs[i] = targs[i].GetMetaInfo ();
 
-				metaInfo = ((MethodInfo) metaInfo).MakeGenericMethod (sre_targs);
+				inflatedMetaInfo = ((MethodInfo) inflatedMetaInfo).MakeGenericMethod (sre_targs);
 				state &= ~StateFlags.PendingMakeMethod;
 			}
 
-			return metaInfo;
+			return inflatedMetaInfo;
 		}
 
 		public override string GetSignatureForError ()
@@ -371,6 +383,7 @@ namespace Mono.CSharp {
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
 		{
 			var ms = (MethodSpec) base.InflateMember (inflator);
+			ms.inflatedMetaInfo = null;
 			ms.returnType = inflator.Inflate (returnType);
 			ms.parameters = parameters.Inflate (inflator);
 			if (IsGeneric)
@@ -423,9 +436,7 @@ namespace Mono.CSharp {
 
 			var ms = (MethodSpec) MemberwiseClone ();
 			if (decl != DeclaringType) {
-				// Gets back MethodInfo in case of metaInfo was inflated
-				ms.metaInfo = MemberCache.GetMember (TypeParameterMutator.GetMemberDeclaringType (DeclaringType), this).metaInfo;
-
+				ms.inflatedMetaInfo = null;
 				ms.declaringType = decl;
 				ms.state |= StateFlags.PendingMetaInflate;
 			}
@@ -730,12 +741,17 @@ namespace Mono.CSharp {
 
 		public int Token {
 			get {
-				if (method is MethodBuilder)
-					return ((MethodBuilder) method).GetToken ().Token;
-				else if (method is ConstructorBuilder)
-					return ((ConstructorBuilder) method).GetToken ().Token;
+				MethodToken token;
+				var mb = method as MethodBuilder;
+				if (mb != null)
+					token = mb.GetToken ();
 				else
-					throw new NotSupportedException ();
+					token = ((ConstructorBuilder) method).GetToken ();
+#if STATIC
+				if (token.IsPseudoToken)
+					return ((ModuleBuilder) method.Module).ResolvePseudoToken (token.Token);
+#endif
+				return token.Token;
 			}
 		}
 
@@ -945,6 +961,23 @@ namespace Mono.CSharp {
 					}
 
 					if (base_method.IsGeneric) {
+						ObsoleteAttribute oa;
+						foreach (var base_tp in base_tparams) {
+							oa = base_tp.BaseType.GetAttributeObsolete ();
+							if (oa != null) {
+								AttributeTester.Report_ObsoleteMessage (oa, base_tp.BaseType.GetSignatureForError (), Location, Report);
+							}
+
+							if (base_tp.InterfacesDefined != null) {
+								foreach (var iface in base_tp.InterfacesDefined) {
+									oa = iface.GetAttributeObsolete ();
+									if (oa != null) {
+										AttributeTester.Report_ObsoleteMessage (oa, iface.GetSignatureForError (), Location, Report);
+									}
+								}
+							}
+						}
+
 						if (base_decl_tparams.Length != 0) {
 							base_decl_tparams = base_decl_tparams.Concat (base_tparams).ToArray ();
 							base_targs = base_targs.Concat (tparams.Select<TypeParameter, TypeSpec> (l => l.Type)).ToArray ();

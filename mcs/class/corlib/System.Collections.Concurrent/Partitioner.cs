@@ -24,10 +24,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0
+
 using System;
 using System.Collections.Generic;
-
-#if NET_4_0 || BOOTSTRAP_NET_4_0
 
 namespace System.Collections.Concurrent
 {
@@ -44,14 +44,14 @@ namespace System.Collections.Concurrent
 			return new EnumerablePartitioner<TSource> (source);
 		}
 		
-		public static OrderablePartitioner<TSource> Create<TSource> (TSource[] source, bool loadBalance)
+		public static OrderablePartitioner<TSource> Create<TSource> (TSource[] array, bool loadBalance)
 		{
-			return Create ((IList<TSource>)source, loadBalance);
+			return Create ((IList<TSource>)array, loadBalance);
 		}
 		
-		public static OrderablePartitioner<TSource> Create<TSource> (IList<TSource> source, bool loadBalance)
+		public static OrderablePartitioner<TSource> Create<TSource> (IList<TSource> list, bool loadBalance)
 		{
-			return new ListPartitioner<TSource> (source);
+			return new ListPartitioner<TSource> (list);
 		}
 		
 		public static OrderablePartitioner<Tuple<int, int>> Create (int fromInclusive,

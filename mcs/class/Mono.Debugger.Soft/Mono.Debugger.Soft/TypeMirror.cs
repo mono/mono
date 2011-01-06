@@ -442,7 +442,7 @@ namespace Mono.Debugger.Soft
 			return GetValues (new FieldInfoMirror [] { field }) [0];
 		}
 
-		public Value[] GetValues (IList<FieldInfoMirror> fields) {
+		public Value[] GetValues (IList<FieldInfoMirror> fields, ThreadMirror thread) {
 			if (fields == null)
 				throw new ArgumentNullException ("fields");
 			foreach (FieldInfoMirror f in fields) {
@@ -454,13 +454,27 @@ namespace Mono.Debugger.Soft
 			for (int i = 0; i < fields.Count; ++i)
 				ids [i] = fields [i].Id;
 			try {
-				return vm.DecodeValues (vm.conn.Type_GetValues (id, ids));
+				return vm.DecodeValues (vm.conn.Type_GetValues (id, ids, thread !=  null ? thread.Id : 0));
 			} catch (CommandException ex) {
 				if (ex.ErrorCode == ErrorCode.INVALID_FIELDID)
 					throw new ArgumentException ("One of the fields is not valid for this type.", "fields");
 				else
 					throw;
 			}
+		}
+
+		public Value[] GetValues (IList<FieldInfoMirror> fields) {
+			return GetValues (fields, null);
+		}
+
+		/*
+		 * Return the value of the [ThreadStatic] field FIELD on the thread THREAD.
+		 */
+		public Value GetValue (FieldInfoMirror field, ThreadMirror thread) {
+			if (thread == null)
+				throw new ArgumentNullException ("thread");
+			CheckMirror (thread);
+			return GetValues (new FieldInfoMirror [] { field }, thread) [0];
 		}
 
 		public void SetValues (IList<FieldInfoMirror> fields, Value[] values) {

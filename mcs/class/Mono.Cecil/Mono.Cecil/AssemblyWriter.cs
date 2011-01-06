@@ -1960,10 +1960,19 @@ namespace Mono.Cecil {
 			return signature;
 		}
 
+		static Exception CreateForeignMemberException (MemberReference member)
+		{
+			return new ArgumentException (string.Format ("Member '{0}' is declared in another module and needs to be imported", member));
+		}
+
 		public MetadataToken LookupToken (IMetadataTokenProvider provider)
 		{
 			if (provider == null)
 				throw new ArgumentNullException ();
+
+			var member = provider as MemberReference;
+			if (member == null || member.Module != module)
+				throw CreateForeignMemberException (member);
 
 			var token = provider.MetadataToken;
 
@@ -1981,7 +1990,7 @@ namespace Mono.Cecil {
 			case TokenType.MethodSpec:
 				return GetMethodSpecToken ((MethodSpecification) provider);
 			case TokenType.MemberRef:
-				return GetMemberRefToken ((MemberReference) provider);
+				return GetMemberRefToken (member);
 			default:
 				throw new NotSupportedException ();
 			}

@@ -40,6 +40,7 @@ using System.Xml;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 namespace System.Web.UI
@@ -130,7 +131,7 @@ namespace System.Web.UI
 			public bool noParams;
 		}
 
-		static SplitOrderedList<ArrayList> auto_event_info = new SplitOrderedList<ArrayList> ();
+		static SplitOrderedList<Type, ArrayList> auto_event_info = new SplitOrderedList<Type, ArrayList> (EqualityComparer<Type>.Default);
 
 		internal void WireupAutomaticEvents ()
 		{
@@ -139,7 +140,7 @@ namespace System.Web.UI
 
 			/* Avoid expensive reflection operations by computing the event info only once */
 			Type type = GetType ();
-			ArrayList events = auto_event_info.InsertOrGet ((uint)type.GetHashCode (), null, CollectAutomaticEventInfo);
+			ArrayList events = auto_event_info.InsertOrGet ((uint)type.GetHashCode (), type, null, CollectAutomaticEventInfo);
 
 			for (int i = 0; i < events.Count; ++i) {
 				EvtInfo evinfo = (EvtInfo)events [i];

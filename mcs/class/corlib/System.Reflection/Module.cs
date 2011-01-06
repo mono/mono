@@ -312,7 +312,7 @@ namespace System.Reflection {
 
 		public static bool operator != (Module left, Module right)
 		{
-			if ((object)left != (object)right)
+			if ((object)left == (object)right)
 				return false;
 			if ((object)left == null ^ (object)right == null)
 				return true;

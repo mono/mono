@@ -966,6 +966,20 @@ namespace MonoTests.System.Xaml
 			obj.Add (new XmlSerializable ("<root/>"));
 			Assert.AreEqual (ReadXml ("List_XmlSerializable.xml").Trim (), XamlServices.Save (obj), "#1");
 		}
+
+		[Test]
+		public void Write_AttachedProperty ()
+		{
+			var obj = new AttachedWrapper ();
+			Attachable.SetFoo (obj, "x");
+			Attachable.SetFoo (obj.Value, "y");
+			try {
+				Assert.AreEqual (ReadXml ("AttachedProperty.xml").Trim (), XamlServices.Save (obj), "#1");
+			} finally {
+				Attachable.SetFoo (obj, null);
+				Attachable.SetFoo (obj.Value, null);
+			}
+		}
 	}
 
 	public class TestXmlWriterClass1

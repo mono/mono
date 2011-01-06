@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -30,7 +30,9 @@ using System.Runtime.Serialization;
 
 namespace System
 {
+
 	[System.SerializableAttribute]
+	[System.Diagnostics.DebuggerDisplay ("Count = {InnerExceptions.Count}")]
 	public class AggregateException : Exception
 	{
 		List<Exception> innerExceptions;
@@ -43,12 +45,12 @@ namespace System
 		{
 		}
 		
-		public AggregateException (string message, Exception e): base (message, e)
+		public AggregateException (string message, Exception innerException): base (message, innerException)
 		{
 		}
 		
-		protected AggregateException (SerializationInfo info, StreamingContext ctx)
-			: base (info, ctx)
+		protected AggregateException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 		
@@ -67,10 +69,10 @@ namespace System
 		{
 		}
 		
-		public AggregateException (string message, IEnumerable<Exception> inner)
-			: base(GetFormattedMessage(message, inner))
+		public AggregateException (string message, IEnumerable<Exception> innerExceptions)
+			: base(GetFormattedMessage(message, innerExceptions))
 		{
-			this.innerExceptions = new List<Exception> (inner);
+			this.innerExceptions = new List<Exception> (innerExceptions);
 		}
 		
 		public AggregateException Flatten ()
@@ -89,12 +91,12 @@ namespace System
 			return new AggregateException (inner);
 		}
 		
-		public void Handle (Func<Exception, bool> handler)
+		public void Handle (Func<Exception, bool> predicate)
 		{
 			List<Exception> failed = new List<Exception> ();
 			foreach (var e in innerExceptions) {
 				try {
-					if (!handler (e))
+					if (!predicate (e))
 						failed.Add (e);
 				} catch {
 					throw new AggregateException (failed);
@@ -114,10 +116,21 @@ namespace System
 		{
 			return this.Message;
 		}
+
+		public override Exception GetBaseException ()
+		{
+			return this;
+		}
+
+		public override void GetObjectData (SerializationInfo info,	StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
 		
-		const string baseMessage = "Exception(s) occurred : {0}.";
 		static string GetFormattedMessage (string customMessage, IEnumerable<Exception> inner)
 		{
+			const string baseMessage = "Exception(s) occurred : {0}.";
+			
 			System.Text.StringBuilder finalMessage
 				= new System.Text.StringBuilder (string.Format (baseMessage, customMessage));
 			foreach (Exception e in inner) {

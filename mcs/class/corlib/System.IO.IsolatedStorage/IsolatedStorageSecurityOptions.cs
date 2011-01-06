@@ -29,8 +29,9 @@
 #if NET_4_0
 namespace System.IO.IsolatedStorage
 {
-	public enum IsolatedStorageSecurityOptions {
-		IncreaseQuotaForApplication
+	public enum IsolatedStorageSecurityOptions
+	{
+		IncreaseQuotaForApplication = 4
 	}
 }
 

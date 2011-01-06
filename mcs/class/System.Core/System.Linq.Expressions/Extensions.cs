@@ -53,11 +53,17 @@ namespace System.Linq.Expressions {
 			return self == typeof (Expression) || self.IsSubclassOf (typeof (Expression));
 		}
 
-		public static bool IsGenericImplementationOf (this Type self, Type type)
+		public static bool IsGenericImplementationOf (this Type self, Type type, out Type generic_iface)
 		{
-			foreach (Type iface in self.GetInterfaces ())
-				if (iface.IsGenericInstanceOf (type))
-					return true;
+			foreach (var iface in self.GetInterfaces ()) {
+				if (!iface.IsGenericInstanceOf (type))
+					continue;
+
+				generic_iface = iface;
+				return true;
+			}
+
+			generic_iface = null;
 			return false;
 		}
 

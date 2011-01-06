@@ -1,5 +1,6 @@
 <Type Name="VMMismatchException" FullName="Mono.Debugger.Soft.VMMismatchException">
   <TypeSignature Language="C#" Value="public class VMMismatchException : Exception" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit VMMismatchException extends System.Exception" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public VMMismatchException ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

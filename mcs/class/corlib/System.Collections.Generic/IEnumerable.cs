@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 	public interface IEnumerable<out T> : IEnumerable
 #else
 	public interface IEnumerable<T> : IEnumerable

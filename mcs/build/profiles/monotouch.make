@@ -1,17 +1,15 @@
 #! -*- makefile -*-
 
-my_runtime = $(RUNTIME) $(RUNTIME_FLAGS) --security=temporary-smcs-hack
-INTERNAL_SMCS = $(my_runtime) $(topdir)/class/lib/$(PROFILE)/smcs.exe
+BOOTSTRAP_PROFILE = basic
 
-BOOTSTRAP_PROFILE = monotouch_bootstrap
-
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(my_runtime) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/smcs.exe
-MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_SMCS)
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
+MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
 
 profile-check:
 	@:
 
-PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_2_1 -d:MOBILE -d:MONOTOUCH
+DEFAULT_REFERENCES = -r:mscorlib.dll
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_2_1 -d:MOBILE -d:MONOTOUCH -nowarn:1699 -nostdlib -lib:$(topdir)/class/lib/$(PROFILE) $(DEFAULT_REFERENCES)
 FRAMEWORK_VERSION = 2.1
 NO_TEST = yes
 

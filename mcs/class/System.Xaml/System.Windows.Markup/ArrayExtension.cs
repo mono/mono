@@ -39,7 +39,7 @@ namespace System.Windows.Markup
 	{
 		public ArrayExtension ()
 		{		
-#if NET_2_1
+#if MOONLIGHT
 			items = new List<object> ();
 #else
 			items = new ArrayList ();
@@ -51,7 +51,7 @@ namespace System.Windows.Markup
 			if (elements == null)
 				throw new ArgumentNullException ("elements");
 			Type = elements.GetType ().GetElementType ();
-#if NET_2_1
+#if MOONLIGHT
 			items = new List<object> ();
 			foreach (var element in elements)
 				items.Add (element);
@@ -65,7 +65,7 @@ namespace System.Windows.Markup
 			if (arrayType == null)
 				throw new ArgumentNullException ("arrayType");
 			Type = arrayType;
-#if NET_2_1
+#if MOONLIGHT
 			items = new List<object> ();
 #else
 			items = new ArrayList ();

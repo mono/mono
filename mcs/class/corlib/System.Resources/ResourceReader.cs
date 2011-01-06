@@ -479,10 +479,12 @@ namespace System.Resources
 
 #if NET_4_0
 		public void Dispose ()
+#else
+		void IDisposable.Dispose ()
+#endif
 		{
 			Dispose(true);
 		}
-#endif
 		
 		public IDictionaryEnumerator GetEnumerator () {
 			if (reader == null){
@@ -545,11 +547,6 @@ namespace System.Resources
 				data = new byte [datalen];
 				reader.BaseStream.Read (data, 0, datalen);
 			}
-		}
-
-		void IDisposable.Dispose ()
-		{
-			Dispose(true);
 		}
 
 		private void Dispose (bool disposing)

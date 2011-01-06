@@ -28,6 +28,7 @@ using System.Threading;
 
 namespace System.Threading.Tasks
 {
+	[System.Diagnostics.DebuggerDisplayAttribute ("ShouldExitCurrentIteration = {ShouldExitCurrentIteration}")]
 	public class ParallelLoopState
 	{
 		internal class ExternalInfos

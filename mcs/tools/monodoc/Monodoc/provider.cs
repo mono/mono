@@ -871,6 +871,7 @@ public class RootTree : Tree {
 				d.Load (cfgFile);
 				basedir = d.SelectSingleNode ("config/path").Attributes ["docsPath"].Value;
 			}
+			//basedir = "/Library/Frameworks/Mono.framework/Versions/Current/lib/monodoc/";
 		}
 
 		//
@@ -1454,12 +1455,16 @@ public class RootTree : Tree {
 				sb.Replace ("@@FONT_FAMILY@@", SettingsHandler.Settings.preferred_font_family);
 				sb.Replace ("@@FONT_SIZE@@", SettingsHandler.Settings.preferred_font_size.ToString());
 				//contributions
+				var visible = SettingsHandler.Settings.EnableEditing ? "block;" : "none;";
 				if ((oldContrib + contribs) == 0) {
 					sb.Replace ("@@CONTRIB_DISP@@", "display: none;");
+                                        sb.Replace ("@@NO_CONTRIB_DISP@@", "display: " + visible);
 				} else {
+					sb.Replace ("@@CONTRIB_DISP@@", "display: " + visible);
 					sb.Replace ("@@NO_CONTRIB_DISP@@", "display: none;");
 					sb.Replace ("@@CONTRIBS@@", con.ToString ());
 				}
+				sb.Replace ("@@EDITING_ENABLED@@", "display: " + visible);
 					
 				// load the url of nodes
 				String add_str;

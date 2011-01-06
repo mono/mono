@@ -29,16 +29,17 @@
 #if NET_2_0
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using NUnit.Framework;
 
 namespace MonoTests.System.Collections.Generic
 {
 	[TestFixture]
-        public class SortedDictionaryTest
+	public class SortedDictionaryTest
 	{
 		[Test]
 		public void CtorNullComparer ()
@@ -565,8 +566,58 @@ namespace MonoTests.System.Collections.Generic
 			((IDisposable) e4).Dispose ();
 			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x); }));
 		}
+
+		// Serialize a dictionary out and deserialize it back in again
+		SortedDictionary<int, string> Roundtrip(SortedDictionary<int, string> dic)
+		{
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream stream = new MemoryStream ();
+			bf.Serialize (stream, dic);
+			stream.Position = 0;
+			return (SortedDictionary<int, string>)bf.Deserialize (stream);
+		}
+	    
+		[Test]
+		public void Serialize()
+		{
+			SortedDictionary<int, string> test = new SortedDictionary<int, string>();
+			test.Add(1, "a");
+			test.Add(3, "c");
+			test.Add(2, "b");
+
+			SortedDictionary<int, string> result = Roundtrip(test);
+			Assert.AreEqual(3, result.Count);
+
+			Assert.AreEqual("a", result[1]);
+			Assert.AreEqual("b", result[2]);
+			Assert.AreEqual("c", result[3]);
+		}
+
+		[Test]
+		public void SerializeReverseComparer()
+		{
+			SortedDictionary<int,string> test =
+				new SortedDictionary<int,string> (
+					ReverseComparer<int>.Instance);
+
+			test.Add (1, "A");
+			test.Add (3, "B");
+			test.Add (2, "C");
+
+			SortedDictionary<int,string> result = Roundtrip (test);
+		    
+			SortedDictionary<int,string>.Enumerator e = result.GetEnumerator ();
+			Assert.IsTrue (e.MoveNext (), "#1");
+			Assert.AreEqual ("B", e.Current.Value, "#2");
+			Assert.IsTrue (e.MoveNext (), "#3");
+			Assert.AreEqual ("C", e.Current.Value, "#4");
+			Assert.IsTrue (e.MoveNext (), "#5");
+			Assert.AreEqual ("A", e.Current.Value, "#6");
+			Assert.IsFalse (e.MoveNext (), "#7");
+		}
 	}
 
+	[Serializable]
 	class ReverseComparer<T> : IComparer<T>
 	{
 		static ReverseComparer<T> instance = new ReverseComparer<T> ();

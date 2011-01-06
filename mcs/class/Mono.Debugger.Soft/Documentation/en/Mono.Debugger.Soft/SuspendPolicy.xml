@@ -1,5 +1,6 @@
 <Type Name="SuspendPolicy" FullName="Mono.Debugger.Soft.SuspendPolicy">
   <TypeSignature Language="C#" Value="public enum SuspendPolicy" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SuspendPolicy extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="All">
       <MemberSignature Language="C#" Value="All" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.SuspendPolicy All = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -28,6 +30,7 @@
     </Member>
     <Member MemberName="EventThread">
       <MemberSignature Language="C#" Value="EventThread" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.SuspendPolicy EventThread = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -41,6 +44,7 @@
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.SuspendPolicy None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

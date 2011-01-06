@@ -302,14 +302,12 @@ namespace System.Resources
 			return null;
 		}
 
-		[CLSCompliant (false)]
 		[ComVisible (false)]
 		public UnmanagedMemoryStream GetStream (string name)
 		{
 			return GetStream (name, (CultureInfo) null);
 		}
 
-		[CLSCompliant (false)]
 		[ComVisible (false)]
 		public UnmanagedMemoryStream GetStream (string name, CultureInfo culture)
 		{

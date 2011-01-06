@@ -119,10 +119,11 @@ namespace System.Xaml
 		// - For root Type it returns TypeExtension.
 		// - For root Array it returns Array.
 		// - For non-root Type it returns Type.
+		// - For IXmlSerializable, it does not either return the raw IXmlSerializable or interpreted XData (it just returns null).
 		public virtual object Instance {
 			get {
 				var cur = NodeType == XamlNodeType.StartObject ? nodes.Current.Object.GetRawValue () : null;
-				return cur == root ? root_raw : cur;
+				return cur == root ? root_raw : cur is XData ? null : cur;
 			}
 		}
 

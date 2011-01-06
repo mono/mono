@@ -1,5 +1,6 @@
 <Type Name="EventRequest" FullName="Mono.Debugger.Soft.EventRequest">
   <TypeSignature Language="C#" Value="public abstract class EventRequest" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit EventRequest extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -14,8 +15,40 @@
     </remarks>
   </Docs>
   <Members>
+    <Member MemberName="assembly_filter">
+      <MemberSignature Language="C#" Value="protected System.Collections.Generic.IList&lt;Mono.Debugger.Soft.AssemblyMirror&gt; assembly_filter;" />
+      <MemberSignature Language="ILAsm" Value=".field family class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.AssemblyMirror&gt; assembly_filter" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.Soft.AssemblyMirror&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AssemblyFilter">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.Soft.AssemblyMirror&gt; AssemblyFilter { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;class Mono.Debugger.Soft.AssemblyMirror&gt; AssemblyFilter" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.Soft.AssemblyMirror&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="CheckDisabled">
       <MemberSignature Language="C#" Value="protected void CheckDisabled ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void CheckDisabled() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -31,6 +64,7 @@
     </Member>
     <Member MemberName="CheckMirror">
       <MemberSignature Language="C#" Value="protected void CheckMirror (Mono.Debugger.Soft.VirtualMachine vm, Mono.Debugger.Soft.Mirror m);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void CheckMirror(class Mono.Debugger.Soft.VirtualMachine vm, class Mono.Debugger.Soft.Mirror m) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -51,6 +85,7 @@
     </Member>
     <Member MemberName="count">
       <MemberSignature Language="C#" Value="protected int count;" />
+      <MemberSignature Language="ILAsm" Value=".field family int32 count" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -64,7 +99,8 @@
       </Docs>
     </Member>
     <Member MemberName="Count">
-      <MemberSignature Language="C#" Value="public int Count { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Count { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -80,6 +116,7 @@
     </Member>
     <Member MemberName="Disable">
       <MemberSignature Language="C#" Value="public void Disable ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Disable() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -95,6 +132,7 @@
     </Member>
     <Member MemberName="Enable">
       <MemberSignature Language="C#" Value="public virtual void Enable ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Enable() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -110,6 +148,7 @@
     </Member>
     <Member MemberName="enabled">
       <MemberSignature Language="C#" Value="protected bool enabled;" />
+      <MemberSignature Language="ILAsm" Value=".field family bool enabled" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -123,7 +162,8 @@
       </Docs>
     </Member>
     <Member MemberName="Enabled">
-      <MemberSignature Language="C#" Value="public bool Enabled { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Enabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Enabled" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -139,6 +179,7 @@
     </Member>
     <Member MemberName="etype">
       <MemberSignature Language="C#" Value="protected Mono.Debugger.Soft.EventType etype;" />
+      <MemberSignature Language="ILAsm" Value=".field family valuetype Mono.Debugger.Soft.EventType etype" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -153,6 +194,7 @@
     </Member>
     <Member MemberName="EventType">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.EventType EventType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Debugger.Soft.EventType EventType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -168,6 +210,7 @@
     </Member>
     <Member MemberName="id">
       <MemberSignature Language="C#" Value="protected int id;" />
+      <MemberSignature Language="ILAsm" Value=".field family int32 id" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -182,6 +225,7 @@
     </Member>
     <Member MemberName="SetEnabled">
       <MemberSignature Language="C#" Value="protected void SetEnabled (int id);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void SetEnabled(int32 id) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -200,6 +244,7 @@
     </Member>
     <Member MemberName="suspend">
       <MemberSignature Language="C#" Value="protected Mono.Debugger.Soft.SuspendPolicy suspend;" />
+      <MemberSignature Language="ILAsm" Value=".field family valuetype Mono.Debugger.Soft.SuspendPolicy suspend" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -214,6 +259,7 @@
     </Member>
     <Member MemberName="thread">
       <MemberSignature Language="C#" Value="protected Mono.Debugger.Soft.ThreadMirror thread;" />
+      <MemberSignature Language="ILAsm" Value=".field family class Mono.Debugger.Soft.ThreadMirror thread" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -227,7 +273,8 @@
       </Docs>
     </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ThreadMirror Thread { set; get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ThreadMirror Thread { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.ThreadMirror Thread" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -243,6 +290,7 @@
     </Member>
     <Member MemberName="vm">
       <MemberSignature Language="C#" Value="protected Mono.Debugger.Soft.VirtualMachine vm;" />
+      <MemberSignature Language="ILAsm" Value=".field family class Mono.Debugger.Soft.VirtualMachine vm" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

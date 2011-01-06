@@ -1,5 +1,6 @@
 <Type Name="LaunchOptions" FullName="Mono.Debugger.Soft.LaunchOptions">
   <TypeSignature Language="C#" Value="public class LaunchOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit LaunchOptions extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public LaunchOptions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -26,7 +28,8 @@
       </Docs>
     </Member>
     <Member MemberName="AgentArgs">
-      <MemberSignature Language="C#" Value="public string AgentArgs { set; get; }" />
+      <MemberSignature Language="C#" Value="public string AgentArgs { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AgentArgs" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -40,29 +43,31 @@
         <remarks>A comma separate list of arguments, run mono with --debugger-agent=help for more information. Defaults to null.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="RedirectStandardOutput">
-      <MemberSignature Language="C#" Value="public bool RedirectStandardOutput { set; get; }" />
+    <Member MemberName="CustomProcessLauncher">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.LaunchOptions.ProcessLauncher CustomProcessLauncher { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.LaunchOptions/ProcessLauncher CustomProcessLauncher" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.LaunchOptions+ProcessLauncher</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Sets the ProcessStartInfo.RedirectStandardOutput option when launching the process.</summary>
+        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>Defaults to false.</remarks>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="Runtime">
-      <MemberSignature Language="C#" Value="public string Runtime { set; get; }" />
+    <Member MemberName="CustomTargetProcessLauncher">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.LaunchOptions.TargetProcessLauncher CustomTargetProcessLauncher { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.LaunchOptions/TargetProcessLauncher CustomTargetProcessLauncher" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.LaunchOptions+TargetProcessLauncher</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -71,7 +76,8 @@
       </Docs>
     </Member>
     <Member MemberName="Valgrind">
-      <MemberSignature Language="C#" Value="public bool Valgrind { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Valgrind { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Valgrind" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

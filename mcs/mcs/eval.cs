@@ -127,7 +127,7 @@ namespace Mono.CSharp
 				foreach (CompilationUnit file in Location.SourceFiles)
 					startup_files.Add (file.Path);
 				
-				CompilerCallableEntryPoint.Reset ();
+				CompilerCallableEntryPoint.PartialReset ();
 
 				var importer = new ReflectionImporter (ctx.BuildinTypes);
 				loader = new DynamicLoader (importer, ctx);
@@ -243,6 +243,8 @@ namespace Mono.CSharp
 			lock (evaluator_lock){
 				if (!inited)
 					Init ();
+				else
+					ctx.Report.Printer.Reset ();
 
 			//	RootContext.ToplevelTypes = new ModuleContainer (ctx);
 

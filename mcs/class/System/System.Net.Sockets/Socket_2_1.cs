@@ -1688,8 +1688,11 @@ namespace System.Net.Sockets {
 		{
 			SocketError error;
 			int bytesReceived = EndReceive (result, out error);
-			if (error != SocketError.Success)
+			if (error != SocketError.Success) {
+				if (error != SocketError.WouldBlock && error != SocketError.InProgress)
+					connected = false;
 				throw new SocketException ((int)error);
+			}
 			return bytesReceived;
 		}
 
@@ -1733,8 +1736,11 @@ namespace System.Net.Sockets {
 		{
 			SocketError error;
 			int bytesSent = EndSend (result, out error);
-			if (error != SocketError.Success)
+			if (error != SocketError.Success) {
+				if (error != SocketError.WouldBlock && error != SocketError.InProgress)
+					connected = false;
 				throw new SocketException ((int)error);
+			}
 			return bytesSent;
 		}
 

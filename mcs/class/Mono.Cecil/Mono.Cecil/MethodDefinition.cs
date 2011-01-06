@@ -453,7 +453,22 @@ namespace Mono.Cecil {
 				index--;
 			}
 
-			return method.Parameters [index];
+			var parameters = method.Parameters;
+
+			if (index < 0 || index >= parameters.size)
+				return null;
+
+			return parameters [index];
+		}
+
+		public static VariableDefinition GetVariable (this MethodBody self, int index)
+		{
+			var variables = self.Variables;
+
+			if (index < 0 || index >= variables.size)
+				return null;
+
+			return variables [index];
 		}
 
 		public static bool GetSemantics (this MethodDefinition self, MethodSemanticsAttributes semantics)

@@ -11,7 +11,13 @@ The Boehm licensing information is in the libgc directory
 The SGen Garbage Collector is under the terms of the MIT X11
 license
 
-		  
+The class libraries under mono/mcs are unless otherwise stated
+under the MIT X11 license.
+
+Open source Microsoft code is licensed under the original terms
+which is either MS-PL for older components, or dual licensed
+MS-PL/Apache2 licensed.
+ 
 		GNU LIBRARY GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 

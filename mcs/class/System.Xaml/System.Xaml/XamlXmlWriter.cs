@@ -333,7 +333,7 @@ namespace System.Xaml
 			if (posprms != null) {
 				posprms.MoveNext ();
 				var arg = posprms.Current;
-				w.WriteStartAttribute (arg.Name);
+				w.WriteStartAttribute (arg.GetInternalXmlName ());
 				inside_toplevel_positional_parameter = true;
 			}
 			else if (w.WriteState == WriteState.Attribute)
@@ -423,12 +423,13 @@ namespace System.Xaml
 		void OnWriteStartMemberAttribute (XamlType xt, XamlMember xm)
 		{
 			CurrentMemberState.OccuredAs = AllowedMemberLocations.Attribute;
+			string name = xm.GetInternalXmlName ();
 			if (xt.PreferredXamlNamespace == xm.PreferredXamlNamespace &&
 			    !(xm is XamlDirective)) // e.g. x:Key inside x:Int should not be written as Key.
-				w.WriteStartAttribute (xm.Name);
+				w.WriteStartAttribute (name);
 			else {
 				string prefix = GetPrefix (xm.PreferredXamlNamespace);
-				w.WriteStartAttribute (prefix, xm.Name, xm.PreferredXamlNamespace);
+				w.WriteStartAttribute (prefix, name, xm.PreferredXamlNamespace);
 			}
 		}
 

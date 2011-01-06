@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 
 using System;
 using System.Threading;
@@ -30,6 +30,8 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
+	[System.Diagnostics.DebuggerDisplay ("Id = {Id}, Status = {Status}, Method = {DebuggerDisplayMethodDescription}")]
+	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.SystemThreadingTasks_TaskDebugView")]
 	public class Task : IDisposable, IAsyncResult
 	{
 		// With this attribute each thread has its own value so that it's correct for our Schedule code
@@ -64,25 +66,25 @@ namespace System.Threading.Tasks
 
 		ConcurrentQueue<EventHandler> completed = new ConcurrentQueue<EventHandler> ();
 
-		CancellationToken token;			
-		
+		CancellationToken token;
+
 		public Task (Action action) : this (action, TaskCreationOptions.None)
 		{
 			
 		}
 		
-		public Task (Action action, TaskCreationOptions options) : this (action, CancellationToken.None, options)
+		public Task (Action action, TaskCreationOptions creationOptions) : this (action, CancellationToken.None, creationOptions)
 		{
 			
 		}
 		
-		public Task (Action action, CancellationToken token) : this (action, token, TaskCreationOptions.None)
+		public Task (Action action, CancellationToken cancellationToken) : this (action, cancellationToken, TaskCreationOptions.None)
 		{
 			
 		}
 		
-		public Task (Action action, CancellationToken token, TaskCreationOptions options)
-			: this ((o) => { if (action != null) action (); }, null, token, options)
+		public Task (Action action, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
+			: this ((o) => { if (action != null) action (); }, null, cancellationToken, creationOptions)
 		{
 		}
 		
@@ -90,24 +92,24 @@ namespace System.Threading.Tasks
 		{	
 		}
 		
-		public Task (Action<object> action, object state, TaskCreationOptions options)
-			: this (action, state, CancellationToken.None, options)
+		public Task (Action<object> action, object state, TaskCreationOptions creationOptions)
+			: this (action, state, CancellationToken.None, creationOptions)
 		{
 		}
 		
-		public Task (Action<object> action, object state, CancellationToken token)
-			: this (action, state, token, TaskCreationOptions.None)
+		public Task (Action<object> action, object state, CancellationToken cancellationToken)
+			: this (action, state, cancellationToken, TaskCreationOptions.None)
 		{	
 		}
 		
-		public Task (Action<object> action, object state, CancellationToken token, TaskCreationOptions options)
+		public Task (Action<object> action, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
 		{
-			this.taskCreationOptions = options;
+			this.taskCreationOptions = creationOptions;
 			this.action              = action == null ? EmptyFunc : action;
 			this.state               = state;
 			this.taskId              = Interlocked.Increment (ref id);
 			this.status              = TaskStatus.Created;
-			this.token               = token;
+			this.token               = cancellationToken;
 
 			// Process taskCreationOptions
 			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent)) {
@@ -138,9 +140,9 @@ namespace System.Threading.Tasks
 			Start (TaskScheduler.Current);
 		}
 		
-		public void Start (TaskScheduler tscheduler)
+		public void Start (TaskScheduler scheduler)
 		{
-			Start (ProxifyScheduler (tscheduler));
+			Start (ProxifyScheduler (scheduler));
 		}
 		
 		void Start (IScheduler scheduler)
@@ -172,75 +174,82 @@ namespace System.Threading.Tasks
 			RunSynchronously (TaskScheduler.Current);
 		}
 		
-		public void RunSynchronously (TaskScheduler tscheduler) 
+		public void RunSynchronously (TaskScheduler scheduler)
 		{
-			// TODO
-			// Adopt this scheme for the moment
-			ThreadStart ();
+			if (scheduler.TryExecuteTask (this))
+				return;
+
+			Start (scheduler);
+			Wait ();
 		}
 		#endregion
 		
 		#region ContinueWith
-		public Task ContinueWith (Action<Task> a)
+		public Task ContinueWith (Action<Task> continuationAction)
 		{
-			return ContinueWith (a, TaskContinuationOptions.None);
+			return ContinueWith (continuationAction, TaskContinuationOptions.None);
 		}
 		
-		public Task ContinueWith (Action<Task> a, TaskContinuationOptions kind)
+		public Task ContinueWith (Action<Task> continuationAction, TaskContinuationOptions continuationOptions)
 		{
-			return ContinueWith (a, CancellationToken.None, kind, TaskScheduler.Current);
+			return ContinueWith (continuationAction, CancellationToken.None, continuationOptions, TaskScheduler.Current);
 		}
 		
-		public Task ContinueWith (Action<Task> a, CancellationToken token)
+		public Task ContinueWith (Action<Task> continuationAction, CancellationToken cancellationToken)
 		{
-			return ContinueWith (a, token, TaskContinuationOptions.None, TaskScheduler.Current);
+			return ContinueWith (continuationAction, cancellationToken, TaskContinuationOptions.None, TaskScheduler.Current);
 		}
 		
-		public Task ContinueWith (Action<Task> a, TaskScheduler scheduler)
+		public Task ContinueWith (Action<Task> continuationAction, TaskScheduler scheduler)
 		{
-			return ContinueWith (a, CancellationToken.None, TaskContinuationOptions.None, scheduler);
+			return ContinueWith (continuationAction, CancellationToken.None, TaskContinuationOptions.None, scheduler);
 		}
 		
-		public Task ContinueWith (Action<Task> a, CancellationToken token, TaskContinuationOptions kind, TaskScheduler scheduler)
+		public Task ContinueWith (Action<Task> continuationAction, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			Task continuation = new Task ((o) => a ((Task)o), this, token, GetCreationOptions (kind));
-			ContinueWithCore (continuation, kind, scheduler);
+			Task continuation = new Task ((o) => continuationAction ((Task)o), this, cancellationToken, GetCreationOptions (continuationOptions));
+			ContinueWithCore (continuation, continuationOptions, scheduler);
 			return continuation;
 		}
 		
-		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> a)
+		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> continuationFunction)
 		{
-			return ContinueWith<TResult> (a, TaskContinuationOptions.None);
+			return ContinueWith<TResult> (continuationFunction, TaskContinuationOptions.None);
 		}
 		
-		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> a, TaskContinuationOptions options)
+		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> continuationFunction, TaskContinuationOptions continuationOptions)
 		{
-			return ContinueWith<TResult> (a, CancellationToken.None, options, TaskScheduler.Current);
+			return ContinueWith<TResult> (continuationFunction, CancellationToken.None, continuationOptions, TaskScheduler.Current);
 		}
 		
-		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> a, CancellationToken token)
+		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> continuationFunction, CancellationToken cancellationToken)
 		{
-			return ContinueWith<TResult> (a, token, TaskContinuationOptions.None, TaskScheduler.Current);
+			return ContinueWith<TResult> (continuationFunction, cancellationToken, TaskContinuationOptions.None, TaskScheduler.Current);
 		}
 		
-		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> a, TaskScheduler scheduler)
+		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> continuationFunction, TaskScheduler scheduler)
 		{
-			return ContinueWith<TResult> (a, CancellationToken.None, TaskContinuationOptions.None, scheduler);
+			return ContinueWith<TResult> (continuationFunction, CancellationToken.None, TaskContinuationOptions.None, scheduler);
 		}
 		
-		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> a, CancellationToken token,
-		                                            TaskContinuationOptions kind, TaskScheduler scheduler)
+		public Task<TResult> ContinueWith<TResult> (Func<Task, TResult> continuationFunction, CancellationToken cancellationToken,
+		                                            TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			Task<TResult> t = new Task<TResult> ((o) => a ((Task)o), this, token, GetCreationOptions (kind));
+			if (continuationFunction == null)
+				throw new ArgumentNullException ("continuationFunction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			Task<TResult> t = new Task<TResult> ((o) => continuationFunction ((Task)o), this, cancellationToken, GetCreationOptions (continuationOptions));
 			
-			ContinueWithCore (t, kind, scheduler);
+			ContinueWithCore (t, continuationOptions, scheduler);
 			
 			return t;
 		}
 		
-		internal void ContinueWithCore (Task continuation, TaskContinuationOptions kind, TaskScheduler scheduler)
+		internal void ContinueWithCore (Task continuation, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			ContinueWithCore (continuation, kind, scheduler, () => true);
+			ContinueWithCore (continuation, continuationOptions, scheduler, () => true);
 		}
 		
 		internal void ContinueWithCore (Task continuation, TaskContinuationOptions kind,
@@ -358,7 +367,7 @@ namespace System.Threading.Tasks
 		}
 		
 		void ThreadStart ()
-		{			
+		{
 			current = this;
 			TaskScheduler.Current = taskScheduler;
 			
@@ -483,14 +492,14 @@ namespace System.Threading.Tasks
 				throw new AggregateException (new TaskCanceledException (this));
 		}
 
-		public void Wait (CancellationToken token)
+		public void Wait (CancellationToken cancellationToken)
 		{
-			Wait (-1, token);
+			Wait (-1, cancellationToken);
 		}
 		
-		public bool Wait (TimeSpan ts)
+		public bool Wait (TimeSpan timeout)
 		{
-			return Wait (CheckTimeout (ts), CancellationToken.None);
+			return Wait (CheckTimeout (timeout), CancellationToken.None);
 		}
 		
 		public bool Wait (int millisecondsTimeout)
@@ -498,7 +507,7 @@ namespace System.Threading.Tasks
 			return Wait (millisecondsTimeout, CancellationToken.None);
 		}
 
-		public bool Wait (int millisecondsTimeout, CancellationToken token)
+		public bool Wait (int millisecondsTimeout, CancellationToken cancellationToken)
 		{
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
@@ -511,12 +520,12 @@ namespace System.Threading.Tasks
 			Watch watch = Watch.StartNew ();
 
 			if (scheduler == null) {
-				schedWait.Wait (millisecondsTimeout, token);
+				schedWait.Wait (millisecondsTimeout, cancellationToken);
 				millisecondsTimeout = ComputeTimeout (millisecondsTimeout, watch);
 			}
 
 			Func<bool> stopFunc
-				= delegate { token.ThrowIfCancellationRequested (); return watch.ElapsedMilliseconds > millisecondsTimeout; };
+				= delegate { cancellationToken.ThrowIfCancellationRequested (); return watch.ElapsedMilliseconds > millisecondsTimeout; };
 			bool result = scheduler.ParticipateUntil (this, stopFunc);
 
 			if (exception != null)
@@ -538,7 +547,7 @@ namespace System.Threading.Tasks
 				t.Wait ();
 		}
 
-		public static void WaitAll (Task[] tasks, CancellationToken token)
+		public static void WaitAll (Task[] tasks, CancellationToken cancellationToken)
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
@@ -546,10 +555,10 @@ namespace System.Threading.Tasks
 				throw new ArgumentException ("tasks is empty", "tasks");
 			
 			foreach (var t in tasks)
-				t.Wait (token);
+				t.Wait (cancellationToken);
 		}
 		
-		public static bool WaitAll (Task[] tasks, TimeSpan ts)
+		public static bool WaitAll (Task[] tasks, TimeSpan timeout)
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
@@ -558,7 +567,7 @@ namespace System.Threading.Tasks
 			
 			bool result = true;
 			foreach (var t in tasks)
-				result &= t.Wait (ts);
+				result &= t.Wait (timeout);
 			return result;
 		}
 		
@@ -575,7 +584,7 @@ namespace System.Threading.Tasks
 			return result;
 		}
 		
-		public static bool WaitAll (Task[] tasks, int millisecondsTimeout, CancellationToken token)
+		public static bool WaitAll (Task[] tasks, int millisecondsTimeout, CancellationToken cancellationToken)
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
@@ -584,7 +593,7 @@ namespace System.Threading.Tasks
 			
 			bool result = true;
 			foreach (var t in tasks)
-				result &= t.Wait (millisecondsTimeout, token);
+				result &= t.Wait (millisecondsTimeout, cancellationToken);
 			return result;
 		}
 		
@@ -593,9 +602,9 @@ namespace System.Threading.Tasks
 			return WaitAny (tasks, -1, CancellationToken.None);
 		}
 
-		public static int WaitAny (Task[] tasks, TimeSpan ts)
+		public static int WaitAny (Task[] tasks, TimeSpan timeout)
 		{
-			return WaitAny (tasks, CheckTimeout (ts));
+			return WaitAny (tasks, CheckTimeout (timeout));
 		}
 		
 		public static int WaitAny (Task[] tasks, int millisecondsTimeout)
@@ -609,19 +618,19 @@ namespace System.Threading.Tasks
 			return WaitAny (tasks, millisecondsTimeout, CancellationToken.None);
 		}
 
-		public static int WaitAny (Task[] tasks, CancellationToken token)
+		public static int WaitAny (Task[] tasks, CancellationToken cancellationToken)
 		{
-			return WaitAny (tasks, -1, token);
+			return WaitAny (tasks, -1, cancellationToken);
 		}
 
-		public static int WaitAny (Task[] tasks, int millisecondsTimeout, CancellationToken token)
+		public static int WaitAny (Task[] tasks, int millisecondsTimeout, CancellationToken cancellationToken)
 		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
 			if (tasks.Length == 0)
 				throw new ArgumentException ("tasks is empty", "tasks");
 			if (tasks.Length == 1) {
-				tasks[0].Wait (millisecondsTimeout, token);
+				tasks[0].Wait (millisecondsTimeout, cancellationToken);
 				return 0;
 			}
 			
@@ -629,6 +638,7 @@ namespace System.Threading.Tasks
 			int indexFirstFinished = -1;
 			int index = 0;
 			IScheduler sched = null;
+			Task task = null;
 			Watch watch = Watch.StartNew ();
 
 			foreach (Task t in tasks) {
@@ -643,8 +653,10 @@ namespace System.Threading.Tasks
 						indexFirstFinished = indexResult;
 				}, TaskContinuationOptions.ExecuteSynchronously);
 
-				if (sched == null && t.scheduler != null)
+				if (sched == null && t.scheduler != null) {
+					task = t;
 					sched = t.scheduler;
+				}
 			}
 
 			// If none of task have a scheduler we are forced to wait for at least one to start
@@ -654,6 +666,7 @@ namespace System.Threading.Tasks
 				if ((shandle = WaitHandle.WaitAny (handles, millisecondsTimeout)) == WaitHandle.WaitTimeout)
 					return -1;
 				sched = tasks[shandle].scheduler;
+				task = tasks[shandle];
 				millisecondsTimeout = ComputeTimeout (millisecondsTimeout, watch);
 			}
 			
@@ -662,11 +675,11 @@ namespace System.Threading.Tasks
 				return indexFirstFinished;
 			
 			// All tasks are supposed to use the same TaskScheduler
-			sched.ParticipateUntil (delegate {
+			sched.ParticipateUntil (task, delegate {
 				if (millisecondsTimeout != -1 && watch.ElapsedMilliseconds > millisecondsTimeout)
 					return true;
 
-				token.ThrowIfCancellationRequested ();
+				cancellationToken.ThrowIfCancellationRequested ();
 
 				return numFinished >= 1;
 			});
@@ -703,11 +716,11 @@ namespace System.Threading.Tasks
 			Dispose (true);
 		}
 		
-		protected virtual void Dispose (bool disposeManagedRes)
+		protected virtual void Dispose (bool disposing)
 		{
 			// Set action to null so that the GC can collect the delegate and thus
 			// any big object references that the user might have captured in a anonymous method
-			if (disposeManagedRes) {
+			if (disposing) {
 				action = null;
 				completed.Clear ();
 				state = null;

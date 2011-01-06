@@ -2658,6 +2658,14 @@ class Tester
 		Assert (null, e3.Compile ().Invoke (null));
 	}
 
+	void TypeAsTest_4 ()
+	{
+		Expression<Func<int, IConvertible>> e = a => a as IConvertible;
+		AssertNodeType (e, ExpressionType.TypeAs);
+		Assert (ExpressionType.Parameter, ((UnaryExpression) e.Body).Operand.NodeType);
+		Assert (5, e.Compile ().Invoke (5));
+	}
+	
 	void TypeIsTest ()
 	{
 		Expression<Func<object, bool>> e = (object a) => a is Tester;

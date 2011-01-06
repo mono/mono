@@ -1,5 +1,6 @@
 <Type Name="MethodEntryEventRequest" FullName="Mono.Debugger.Soft.MethodEntryEventRequest">
   <TypeSignature Language="C#" Value="public sealed class MethodEntryEventRequest : Mono.Debugger.Soft.EventRequest" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MethodEntryEventRequest extends Mono.Debugger.Soft.EventRequest" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

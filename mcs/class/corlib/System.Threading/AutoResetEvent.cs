@@ -33,12 +33,10 @@
 
 using System;
 using System.Runtime.CompilerServices;
-
 using System.Runtime.InteropServices;
 
 namespace System.Threading 
 {
-
 	[ComVisible (true)]
  	public sealed class AutoResetEvent : EventWaitHandle
 	{
@@ -47,25 +45,5 @@ namespace System.Threading
 			: base(initialState, EventResetMode.AutoReset)
 		{
 		}
-
-		// Methods
-
-/* Need BOOTSTRAP_NET_2_0 because System.Threading.Timer wants to use
- * the Set and Reset methods that have moved to EventWaitHandle in the
- * 2.0 profile
- */
-#if BOOTSTRAP_NET_2_0
-		public bool Set() {
-			CheckDisposed ();
-			
-			return(NativeEventCalls.SetEvent_internal(Handle));
-		}
-
-		public bool Reset() {
-			CheckDisposed ();
-			
-			return(NativeEventCalls.ResetEvent_internal(Handle));
-		}
-#endif
 	}
 }

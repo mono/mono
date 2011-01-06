@@ -1,5 +1,6 @@
 <Type Name="EventType" FullName="Mono.Debugger.Soft.EventType">
   <TypeSignature Language="C#" Value="public enum EventType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed EventType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="AppDomainCreate">
       <MemberSignature Language="C#" Value="AppDomainCreate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType AppDomainCreate = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -28,6 +30,7 @@
     </Member>
     <Member MemberName="AppDomainUnload">
       <MemberSignature Language="C#" Value="AppDomainUnload" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType AppDomainUnload = int32(5)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -41,6 +44,7 @@
     </Member>
     <Member MemberName="AssemblyLoad">
       <MemberSignature Language="C#" Value="AssemblyLoad" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType AssemblyLoad = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -54,6 +58,7 @@
     </Member>
     <Member MemberName="AssemblyUnload">
       <MemberSignature Language="C#" Value="AssemblyUnload" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType AssemblyUnload = int32(9)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -67,6 +72,21 @@
     </Member>
     <Member MemberName="Breakpoint">
       <MemberSignature Language="C#" Value="Breakpoint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType Breakpoint = int32(10)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Exception">
+      <MemberSignature Language="C#" Value="Exception" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType Exception = int32(13)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -80,6 +100,7 @@
     </Member>
     <Member MemberName="MethodEntry">
       <MemberSignature Language="C#" Value="MethodEntry" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType MethodEntry = int32(6)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -93,6 +114,7 @@
     </Member>
     <Member MemberName="MethodExit">
       <MemberSignature Language="C#" Value="MethodExit" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType MethodExit = int32(7)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -106,6 +128,7 @@
     </Member>
     <Member MemberName="Step">
       <MemberSignature Language="C#" Value="Step" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType Step = int32(11)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -119,6 +142,7 @@
     </Member>
     <Member MemberName="ThreadDeath">
       <MemberSignature Language="C#" Value="ThreadDeath" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType ThreadDeath = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -132,6 +156,7 @@
     </Member>
     <Member MemberName="ThreadStart">
       <MemberSignature Language="C#" Value="ThreadStart" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType ThreadStart = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -145,6 +170,7 @@
     </Member>
     <Member MemberName="TypeLoad">
       <MemberSignature Language="C#" Value="TypeLoad" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType TypeLoad = int32(12)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -158,6 +184,7 @@
     </Member>
     <Member MemberName="VMDeath">
       <MemberSignature Language="C#" Value="VMDeath" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType VMDeath = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -171,6 +198,7 @@
     </Member>
     <Member MemberName="VMDisconnect">
       <MemberSignature Language="C#" Value="VMDisconnect" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType VMDisconnect = int32(99)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -184,6 +212,7 @@
     </Member>
     <Member MemberName="VMStart">
       <MemberSignature Language="C#" Value="VMStart" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Debugger.Soft.EventType VMStart = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

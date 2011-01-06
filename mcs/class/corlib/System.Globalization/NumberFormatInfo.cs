@@ -119,13 +119,9 @@ namespace System.Globalization {
 			// CultureInfo uses this one also.
 			if (lcid != 0x007F)
 				lcid = 0x007F;
-			
-			switch (lcid){
 
-				// The Invariant Culture Info ID.
-			case 0x007f:
-				isReadOnly = false;
-				
+			// The Invariant Culture Info ID.
+			if (lcid == 0x007f) {
 				// Currency Related Format Info
 				currencyDecimalDigits =       2;
 				currencyDecimalSeparator =    ".";
@@ -133,7 +129,7 @@ namespace System.Globalization {
 				currencyGroupSizes =          new int[1] { 3 };
 				currencyNegativePattern =     0;
 				currencyPositivePattern =     0;
-				currencySymbol =              "$";
+				currencySymbol =              "\u00a4";
 				
 				nanSymbol =                   "NaN";
 				negativeInfinitySymbol =      "-Infinity";
@@ -158,7 +154,6 @@ namespace System.Globalization {
 				perMilleSymbol =              "\u2030";
 				positiveInfinitySymbol =      "Infinity";
 				positiveSign =                "+";
-				break;
 			}
 		}
 
@@ -513,11 +508,9 @@ namespace System.Globalization {
 		public static NumberFormatInfo InvariantInfo {
 			get {
 				// This uses invariant info, which is same as in the constructor
-				NumberFormatInfo nfi = new NumberFormatInfo ();
-				nfi.NumberNegativePattern = 1;
-				nfi.isReadOnly = true;
+				NumberFormatInfo nfi = new NumberFormatInfo (true);
 				return nfi;
-			}		       
+			}
 		}
 
 		public bool IsReadOnly {

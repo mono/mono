@@ -129,29 +129,32 @@ namespace Mono.CSharp
 		//
 		// Initializes the code generator
 		//
-		public bool Create (Universe domain)
+		public bool Create (StaticLoader loader)
 		{
 			ResolveAssemblySecurityAttributes ();
 			var an = CreateAssemblyName ();
 
-			Builder = domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Save, Path.GetDirectoryName (file_name));
+			Builder = loader.Domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Save, Path.GetDirectoryName (file_name));
 
-			// Sets output file metadata version, this makes sense for mscorlib
-			// compilation only but won't restrict that for now
-			switch (RootContext.StdLibRuntimeVersion){
-			case RuntimeVersion.v4:
-				Builder.__SetImageRuntimeVersion ("v4.0.30319", 0x20000);
-				break;
-			case RuntimeVersion.v2:
-				Builder.__SetImageRuntimeVersion ("v2.0.50727", 0x20000);
-				break;
-			case RuntimeVersion.v1:
-				// Compiler does not do any checks whether the produced metadata
-				// are valid in the context of 1.0 stream version
-				Builder.__SetImageRuntimeVersion ("v1.1.4322", 0x10000);
-				break;
-			default:
-				throw new NotImplementedException ();
+			if (loader.Corlib != null) {
+				Builder.__SetImageRuntimeVersion (loader.Corlib.ImageRuntimeVersion, 0x20000);
+			} else {
+				// Sets output file metadata version when there is no mscorlib
+				switch (RootContext.StdLibRuntimeVersion) {
+				case RuntimeVersion.v4:
+					Builder.__SetImageRuntimeVersion ("v4.0.30319", 0x20000);
+					break;
+				case RuntimeVersion.v2:
+					Builder.__SetImageRuntimeVersion ("v2.0.50727", 0x20000);
+					break;
+				case RuntimeVersion.v1:
+					// Compiler does not do any checks whether the produced metadata
+					// are valid in the context of 1.0 stream version
+					Builder.__SetImageRuntimeVersion ("v1.1.4322", 0x10000);
+					break;
+				default:
+					throw new NotImplementedException ();
+				}
 			}
 
 			builder_extra = new AssemblyBuilderIKVM (Builder, Compiler);
@@ -181,6 +184,9 @@ namespace Mono.CSharp
 			this.importer = importer;
 			domain = new Universe ();
 			domain.AssemblyResolve += AssemblyReferenceResolver;
+
+			// TODO: profile specific
+			paths.Add (Path.GetDirectoryName (typeof (object).Assembly.Location));
 		}
 
 		public Assembly Corlib {
@@ -219,17 +225,10 @@ namespace Mono.CSharp
 			// For now the "default config" is harcoded into the compiler
 			// we can move this outside later
 			//
-			var default_references = new List<string> (8);
+			var default_references = new List<string> (4);
 
 			default_references.Add ("System.dll");
 			default_references.Add ("System.Xml.dll");
-#if NET_2_1
-			default_references.Add ("System.Net.dll");
-			default_references.Add ("System.Windows.dll");
-			default_references.Add ("System.Windows.Browser.dll");
-#endif
-
-			// TODO: Will have to do it based on mscorlib version or something like that
 
 			if (RootContext.Version > LanguageVersion.ISO_2)
 				default_references.Add ("System.Core.dll");
@@ -365,7 +364,7 @@ namespace Mono.CSharp
 	//
 	// Represents missing assembly reference
 	//
-	class MissingAssembly : Assembly
+	public class MissingAssembly : Assembly
 	{
 		class MissingModule : Module
 		{
@@ -578,7 +577,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class MissingType : MetaType
+	public class MissingType : MetaType
 	{
 		readonly string full_name;
 		readonly MissingAssembly assembly;

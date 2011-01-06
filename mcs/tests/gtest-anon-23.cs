@@ -20,6 +20,13 @@ class MemberAccessData
 	}
 }
 
+enum E
+{
+	E1,
+	E2,
+	E3
+}
+
 public class B
 {
 	protected virtual void BaseM ()
@@ -33,6 +40,11 @@ public class C : B
 	
 	static void Test (D d)
 	{
+	}
+	
+	static void Test (Action<E> func)
+	{
+		func (E.E1);
 	}
 	
 	void InstanceTests ()
@@ -81,6 +93,17 @@ public class C : B
 				VolatileValue = 2, StringValues = new string [] { "sv" }, MyTypeProperty = null
 			};
 		});
+		
+		Test (x => {
+			switch (x) {
+			case E.E1:
+				goto case E.E2;
+			case E.E2:
+				break;
+			default:
+				break;
+			}
+		});		
 		
 		var c = new C ();
 		c.InstanceTests ();

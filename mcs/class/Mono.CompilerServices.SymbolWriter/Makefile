@@ -5,7 +5,7 @@ include ../../build/rules.make
 LIBRARY = Mono.CompilerServices.SymbolWriter.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll
+LIB_MCS_FLAGS = /r:System.dll
 NO_TEST = yes
 
 ifneq (basic, $(PROFILE))

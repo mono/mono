@@ -1,0 +1,23 @@
+<Type Name="LaunchOptions+ProcessLauncher" FullName="Mono.Debugger.Soft.LaunchOptions+ProcessLauncher">
+  <TypeSignature Language="C#" Value="public delegate System.Diagnostics.Process LaunchOptions.ProcessLauncher(ProcessStartInfo info);" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed LaunchOptions/ProcessLauncher extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="info" Type="System.Diagnostics.ProcessStartInfo" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Diagnostics.Process</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="info">To be added.</param>
+    <summary>To be added.</summary>
+    <returns>To be added.</returns>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

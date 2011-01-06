@@ -37,7 +37,7 @@ namespace System.Threading
 			return (state & value) > 0;
 		}
 
-#if !NET_4_0 && !NET_4_0_BOOTSTRAP
+#if !NET_4_0
 		internal static bool Wait (this ManualResetEvent self, int timeout)
 		{
 			return self.WaitOne (timeout);

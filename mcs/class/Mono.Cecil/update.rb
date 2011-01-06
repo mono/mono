@@ -9,9 +9,7 @@ sources = {
 	"Mono.Security.Cryptography/*.cs" => "Mono.Security.Cryptography",
 	"Mono/*.cs" => "Mono",
 	"System.Runtime.CompilerServices/*.cs" => "System.Runtime.CompilerServices",
-	"Mono.Cecil.nunit" => ".",
 	"NOTES.txt" => ".",
-	"Mono.Cecil.csproj" => ".",
 
 	"symbols/mdb/Mono.Cecil.Mdb/*.cs" => "../Mono.Cecil.Mdb/Mono.Cecil.Mdb/",
 }
@@ -25,8 +23,18 @@ sources.each { |source, destination|
 	}
 }
 
-log = IO.popen("git log -n1")
+dir = Dir.pwd
 
-File.open("revision", File::WRONLY|File::TRUNC|File::CREAT, 0644) { |f|
-	f << log.gets[("commit ".length)..-1]
-}
+begin
+	Dir.chdir(repository) 
+
+	log = IO.popen("git log -n1")
+
+	Dir.chdir(dir)
+
+	File.open("revision", File::WRONLY|File::TRUNC|File::CREAT, 0644) do |f|
+		f << log.gets[("commit ".length)..-1]
+	end
+rescue
+	Dir.chdir(dir)
+end

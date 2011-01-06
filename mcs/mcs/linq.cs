@@ -112,7 +112,7 @@ namespace Mono.CSharp.Linq
 				if (source_type != null) {
 					Argument a = arguments[0];
 
-					if (TypeManager.IsGenericType (source_type) && TypeManager.ContainsGenericParameters (source_type)) {
+					if (TypeManager.IsGenericType (source_type) && InflatedTypeSpec.ContainsTypeParameter (source_type)) {
 						TypeInferenceContext tic = new TypeInferenceContext (source_type.TypeArguments);
 						tic.OutputTypeInference (rc, a.Expr, source_type);
 						if (tic.FixAllTypes (rc)) {

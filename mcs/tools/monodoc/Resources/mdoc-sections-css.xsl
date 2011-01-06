@@ -31,15 +31,11 @@
 					<xsl:value-of select="$id" />
 				</xsl:attribute>
 			</xsl:if>
-			<a href="javascript:toggle_display('{$child-id}')">
-				<span id="{$child-id}:toggle"><xsl:call-template name="CreateExpandedToggle" /></span>
-				<xsl:value-of select="' '"/>
-				<xsl:value-of select="$name" />
-			</a>
+			<xsl:value-of select="$name" />
 		</h2>
-		<blockquote class="SectionBox" id="{$child-id}">
+		<div class="SectionBox" id="{$child-id}">
 			<xsl:copy-of select="$content" />
-		</blockquote>
+		</div>
 	</xsl:template>
 
 	<xsl:template name="CreateH3Section">
@@ -60,11 +56,7 @@
 					<xsl:value-of select="$id" />
 				</xsl:attribute>
 			</xsl:if>
-			<a href="javascript:toggle_display('{$child-id}')">
-				<span id="{$child-id}:toggle"><xsl:call-template name="CreateExpandedToggle" /></span>
-				<xsl:value-of select="' '"/>
-				<xsl:value-of select="$name" />
-			</a>
+			<xsl:value-of select="$name" />
 		</h3>
 		<blockquote id="{$child-id}">
 			<xsl:copy-of select="$content" />
@@ -83,11 +75,7 @@
 					<xsl:value-of select="$id" />
 				</xsl:attribute>
 			</xsl:if>
-			<a href="javascript:toggle_display('{$child-id}')">
-				<span id="{$child-id}:toggle"><xsl:call-template name="CreateExpandedToggle" /></span>
-				<xsl:value-of select="' '"/>
-				<xsl:value-of select="$name" />
-			</a>
+			<xsl:value-of select="$name" />
 		</h4>
 		<blockquote class="SubsectionBox" id="{$child-id}">
 			<xsl:copy-of select="$content" />
@@ -104,9 +92,7 @@
 
 	<xsl:template name="CreateHeader">
 		<xsl:param name="content" />
-		<div class="Header">
-			<xsl:copy-of select="$content" />
-		</div>
+		<xsl:copy-of select="$content" />
 	</xsl:template>
 
 	<xsl:template name="CreateListTable">
@@ -127,6 +113,7 @@
 
 	<xsl:template name="CreateSignature">
 		<xsl:param name="content" />
+		<h2>Syntax</h2>
 		<div class="Signature">
 			<xsl:copy-of select="$content" />
 		</div>

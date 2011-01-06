@@ -1215,16 +1215,6 @@ namespace Mono.CSharp {
 			}
 
 			if (base_type != null) {
-				var imported = base_type.MemberDefinition as ImportedTypeDefinition;
-				if (imported != null) {
-					var missing = imported.GetMissingBaseType ();
-					if (missing != null) {
-						Report.Error (12, Location,
-							"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-							missing.Name, missing.Assembly.FullName);
-					}
-				}
-
 				spec.BaseType = base_type;
 
 				// Set base type after type creation
@@ -1523,6 +1513,11 @@ namespace Mono.CSharp {
 				var ct = base_type_expr as GenericTypeExpr;
 				if (ct != null)
 					ct.CheckConstraints (this);
+
+				if (base_type.Interfaces != null) {
+					foreach (var iface in base_type.Interfaces)
+						spec.AddInterface (iface);
+				}
 
 				var baseContainer = base_type.MemberDefinition as ClassOrStruct;
 				if (baseContainer != null) {
@@ -1880,7 +1875,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void CloseType ()
+		public virtual void CloseType ()
 		{
 			if ((caching_flags & Flags.CloseTypeCreated) != 0)
 				return;

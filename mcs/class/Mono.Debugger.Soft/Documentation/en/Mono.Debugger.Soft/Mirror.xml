@@ -1,5 +1,6 @@
 <Type Name="Mirror" FullName="Mono.Debugger.Soft.Mirror">
   <TypeSignature Language="C#" Value="public abstract class Mirror : Mono.Debugger.Soft.IMirror" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Mirror extends System.Object implements class Mono.Debugger.Soft.IMirror" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -20,6 +21,7 @@
   <Members>
     <Member MemberName="CheckMirror">
       <MemberSignature Language="C#" Value="protected void CheckMirror (Mono.Debugger.Soft.Mirror m);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void CheckMirror(class Mono.Debugger.Soft.Mirror m) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -38,6 +40,7 @@
     </Member>
     <Member MemberName="id">
       <MemberSignature Language="C#" Value="protected long id;" />
+      <MemberSignature Language="ILAsm" Value=".field family int64 id" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -52,6 +55,7 @@
     </Member>
     <Member MemberName="SetVirtualMachine">
       <MemberSignature Language="C#" Value="protected void SetVirtualMachine (Mono.Debugger.Soft.VirtualMachine vm);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void SetVirtualMachine(class Mono.Debugger.Soft.VirtualMachine vm) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -70,6 +74,7 @@
     </Member>
     <Member MemberName="VirtualMachine">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.VirtualMachine VirtualMachine { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.VirtualMachine VirtualMachine" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -85,6 +90,7 @@
     </Member>
     <Member MemberName="vm">
       <MemberSignature Language="C#" Value="protected Mono.Debugger.Soft.VirtualMachine vm;" />
+      <MemberSignature Language="ILAsm" Value=".field family class Mono.Debugger.Soft.VirtualMachine vm" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

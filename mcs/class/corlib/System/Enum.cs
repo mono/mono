@@ -619,7 +619,7 @@ namespace System
 			return true;
 		}
 
-#if BOOTSTRAP_NET_4_0 || NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT
 		public static bool TryParse<TEnum> (string value, out TEnum result) where TEnum : struct
 		{
 			return TryParse (value, false, out result);

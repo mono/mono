@@ -1,5 +1,6 @@
 <Type Name="AppDomainMirror" FullName="Mono.Debugger.Soft.AppDomainMirror">
   <TypeSignature Language="C#" Value="public class AppDomainMirror : Mono.Debugger.Soft.Mirror" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AppDomainMirror extends Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="Corlib">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AssemblyMirror Corlib { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.AssemblyMirror Corlib" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -28,8 +30,29 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="CreateBoxedValue">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ObjectMirror CreateBoxedValue (Mono.Debugger.Soft.Value value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.ObjectMirror CreateBoxedValue(class Mono.Debugger.Soft.Value value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.ObjectMirror</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="Mono.Debugger.Soft.Value" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="CreateString">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.StringMirror CreateString (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.StringMirror CreateString(string s) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -49,6 +72,7 @@
     </Member>
     <Member MemberName="FriendlyName">
       <MemberSignature Language="C#" Value="public string FriendlyName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FriendlyName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -64,6 +88,7 @@
     </Member>
     <Member MemberName="GetAssemblies">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AssemblyMirror[] GetAssemblies ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.AssemblyMirror[] GetAssemblies() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -78,8 +103,29 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="GetCorrespondingType">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror GetCorrespondingType (Type t);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.TypeMirror GetCorrespondingType(class System.Type t) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.TypeMirror</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="t">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="GetEntryAssembly">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AssemblyMirror GetEntryAssembly ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Debugger.Soft.AssemblyMirror GetEntryAssembly() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

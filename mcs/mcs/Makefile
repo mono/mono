@@ -6,20 +6,20 @@ EXTRA_DISTFILES = \
 	*mcs.csproj		\
 	compiler.doc		\
 	*mcs.sln		\
-	*cs-parser.jay		\
+	cs-parser.jay		\
 	*.sources		\
 	NOTES			\
 	TODO			\
-	*mcs.exe.config
+	*mcs.exe.config		\
+	ikvm.cs
 
-COMPILER_NAME = gmcs
-
-ifeq (net_2_0, $(PROFILE))
-INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/gmcs.exe
+ifeq (basic, $(PROFILE))
+LOCAL_MCS_FLAGS += -d:STATIC
+COMPILER_NAME = mcs
 endif
 
-ifeq (moonlight_bootstrap, $(PROFILE))
-INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/gmcs.exe
+ifeq (net_2_0, $(PROFILE))
+COMPILER_NAME = gmcs
 endif
 
 ifeq (2.1, $(FRAMEWORK_VERSION))

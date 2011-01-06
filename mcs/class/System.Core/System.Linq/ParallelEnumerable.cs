@@ -48,12 +48,12 @@ namespace System.Linq
 			return (new RangeList (start, count)).AsParallel ();
 		}
 
-		public static ParallelQuery<TResult> Repeat<TResult> (TResult obj, int count)
+		public static ParallelQuery<TResult> Repeat<TResult> (TResult element, int count)
 		{
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "count is less than 0");
 
-			return (new RepeatList<TResult> (obj, count)).AsParallel ();
+			return (new RepeatList<TResult> (element, count)).AsParallel ();
 		}
 		#endregion
 
@@ -176,14 +176,14 @@ namespace System.Linq
 		}
 
 		public static ParallelQuery<TSource> WithDegreeOfParallelism<TSource> (this ParallelQuery<TSource> source,
-		                                                                       int degreeParallelism)
+		                                                                       int degreeOfParallelism)
 		{
-			if (degreeParallelism < 1 || degreeParallelism > 63)
-				throw new ArgumentException ("degreeOfParallelism is less than 1 or greater than 63", "degreeParallelism");
+			if (degreeOfParallelism < 1 || degreeOfParallelism > 63)
+				throw new ArgumentException ("degreeOfParallelism is less than 1 or greater than 63", "degreeOfParallelism");
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return new ParallelQuery<TSource> (new DegreeOfParallelismNode<TSource> (degreeParallelism, source.Node));
+			return new ParallelQuery<TSource> (new DegreeOfParallelismNode<TSource> (degreeOfParallelism, source.Node));
 		}
 
 		internal static ParallelQuery<TSource> WithImplementerToken<TSource> (this ParallelQuery<TSource> source,
@@ -334,15 +334,15 @@ namespace System.Linq
 		}
 
 		public static TResult Aggregate<TSource, TAccumulate, TResult> (this ParallelQuery<TSource> source,
-		                                                                  Func<TAccumulate> seedFunc,
+		                                                                  Func<TAccumulate> seedFactory,
 		                                                                  Func<TAccumulate, TSource, TAccumulate> updateAccumulatorFunc,
 		                                                                  Func<TAccumulate, TAccumulate, TAccumulate> combineAccumulatorsFunc,
 		                                                                  Func<TAccumulate, TResult> resultSelector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (seedFunc == null)
-				throw new ArgumentNullException ("seedFunc");
+			if (seedFactory == null)
+				throw new ArgumentNullException ("seedFactory");
 			if (updateAccumulatorFunc == null)
 				throw new ArgumentNullException ("updateAccumulatorFunc");
 			if (combineAccumulatorsFunc == null)
@@ -352,7 +352,7 @@ namespace System.Linq
 
 			TAccumulate accumulator = default (TAccumulate);
 
-			ParallelExecuter.ProcessAndAggregate<TSource, TAccumulate> (source.Node, seedFunc, updateAccumulatorFunc, (list) => {
+			ParallelExecuter.ProcessAndAggregate<TSource, TAccumulate> (source.Node, seedFactory, updateAccumulatorFunc, (list) => {
 				accumulator = list [0];
 				for (int i = 1; i < list.Count; i++)
 					accumulator = combineAccumulatorsFunc (accumulator, list[i]);
@@ -1215,104 +1215,104 @@ namespace System.Linq
 			return source.Select ((e) => e.HasValue ? e.Value : 0).Average ();
 		}
 
-		public static double Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, int> func)
+		public static double Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, int> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 
-		public static double Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, long> func)
+		public static double Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, long> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 
-		public static float Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, float> func)
+		public static float Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, float> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 
-		public static double Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, double> func)
+		public static double Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, double> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 
-		public static decimal Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal> func)
+		public static decimal Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 
-		public static double? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, int?> func)
+		public static double? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, int?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 
-		public static double? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, long?> func)
+		public static double? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, long?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 
-		public static float? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, float?> func)
+		public static float? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, float?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 
-		public static double? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, double?> func)
+		public static double? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, double?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 
-		public static decimal? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal?> func)
+		public static decimal? Average<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Average ();
+			return source.Select (selector).Average ();
 		}
 		#endregion
 
@@ -1394,104 +1394,104 @@ namespace System.Linq
 			return source.Select ((e) => e.HasValue ? e.Value : 0).Sum ();
 		}
 
-		public static int Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, int> func)
+		public static int Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, int> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 
-		public static long Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, long> func)
+		public static long Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, long> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 
-		public static decimal Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal> func)
+		public static decimal Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 
-		public static float Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, float> func)
+		public static float Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, float> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 
-		public static double Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, double> func)
+		public static double Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, double> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 
-		public static int? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, int?> func)
+		public static int? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, int?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 
-		public static long? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, long?> func)
+		public static long? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, long?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 
-		public static decimal? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal?> func)
+		public static decimal? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 
-		public static float? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, float?> func)
+		public static float? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, float?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 
-		public static double? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, double?> func)
+		public static double? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, double?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Sum ();
+			return source.Select (selector).Sum ();
 		}
 		#endregion
 
@@ -1542,14 +1542,14 @@ namespace System.Linq
 			return BestOrder (source, (first, second) => comparer.Compare (first, second) < 0, default (TSource));
 		}
 
-		public static TResult Min<TSource, TResult> (this ParallelQuery<TSource> source, Func<TSource, TResult> func)
+		public static TResult Min<TSource, TResult> (this ParallelQuery<TSource> source, Func<TSource, TResult> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
 		public static int? Min (this ParallelQuery<int?> source)
@@ -1592,104 +1592,104 @@ namespace System.Linq
 			return source.Select ((e) => e.HasValue ? e.Value : decimal.MaxValue).Min ();
 		}
 
-		public static int Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, int> func)
+		public static int Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, int> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
-		public static long Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, long> func)
+		public static long Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, long> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
-		public static float Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, float> func)
+		public static float Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, float> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
-		public static double Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, double> func)
+		public static double Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, double> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
-		public static decimal Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal> func)
+		public static decimal Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
-		public static int? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, int?> func)
+		public static int? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, int?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
-		public static long? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, long?> func)
+		public static long? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, long?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
-		public static float? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, float?> func)
+		public static float? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, float?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
-		public static double? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, double?> func)
+		public static double? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, double?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
-		public static decimal? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal?> func)
+		public static decimal? Min<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Min ();
+			return source.Select (selector).Min ();
 		}
 
 		public static int Max (this ParallelQuery<int> source)
@@ -1724,14 +1724,14 @@ namespace System.Linq
 			return BestOrder (source, (first, second) => comparer.Compare (first, second) > 0, default (TSource));
 		}
 
-		public static TResult Max<TSource, TResult> (this ParallelQuery<TSource> source, Func<TSource, TResult> func)
+		public static TResult Max<TSource, TResult> (this ParallelQuery<TSource> source, Func<TSource, TResult> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
 		public static int? Max (this ParallelQuery<int?> source)
@@ -1774,104 +1774,104 @@ namespace System.Linq
 			return source.Select ((e) => e.HasValue ? e.Value : decimal.MinValue).Max ();
 		}
 
-		public static int Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, int> func)
+		public static int Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, int> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
-		public static long Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, long> func)
+		public static long Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, long> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
-		public static float Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, float> func)
+		public static float Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, float> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
-		public static double Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, double> func)
+		public static double Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, double> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
-		public static decimal Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal> func)
+		public static decimal Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
-		public static int? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, int?> func)
+		public static int? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, int?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
-		public static long? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, long?> func)
+		public static long? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, long?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
-		public static float? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, float?> func)
+		public static float? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, float?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
-		public static double? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, double?> func)
+		public static double? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, double?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 
-		public static decimal? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal?> func)
+		public static decimal? Max<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal?> selector)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
 
-			return source.Select (func).Max ();
+			return source.Select (selector).Max ();
 		}
 		#endregion
 

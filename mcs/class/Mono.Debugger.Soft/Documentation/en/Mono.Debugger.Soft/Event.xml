@@ -1,5 +1,6 @@
 <Type Name="Event" FullName="Mono.Debugger.Soft.Event">
   <TypeSignature Language="C#" Value="public abstract class Event" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Event extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -19,6 +20,7 @@
   <Members>
     <Member MemberName="EventType">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.EventType EventType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Debugger.Soft.EventType EventType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -34,6 +36,7 @@
     </Member>
     <Member MemberName="Request">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.EventRequest Request { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.EventRequest Request" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -49,6 +52,7 @@
     </Member>
     <Member MemberName="Thread">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ThreadMirror Thread { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.ThreadMirror Thread" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -64,6 +68,7 @@
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -80,6 +85,7 @@
     </Member>
     <Member MemberName="vm">
       <MemberSignature Language="C#" Value="protected Mono.Debugger.Soft.VirtualMachine vm;" />
+      <MemberSignature Language="ILAsm" Value=".field family class Mono.Debugger.Soft.VirtualMachine vm" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

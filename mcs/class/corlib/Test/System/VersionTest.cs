@@ -251,7 +251,7 @@ namespace MonoTests.System
 		}
 #endif
 
-#if BOOTSTRAP_NET_4_0 || NET_4_0
+#if NET_4_0
 		[Test]
 		public void Parse ()
 		{

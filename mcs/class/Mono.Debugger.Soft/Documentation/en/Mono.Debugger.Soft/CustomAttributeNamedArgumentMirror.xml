@@ -1,5 +1,6 @@
 <Type Name="CustomAttributeNamedArgumentMirror" FullName="Mono.Debugger.Soft.CustomAttributeNamedArgumentMirror">
   <TypeSignature Language="C#" Value="public struct CustomAttributeNamedArgumentMirror" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit CustomAttributeNamedArgumentMirror extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="Field">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.FieldInfoMirror Field { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.FieldInfoMirror Field" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -30,6 +32,7 @@
     </Member>
     <Member MemberName="Property">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.PropertyInfoMirror Property { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.PropertyInfoMirror Property" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -45,6 +48,7 @@
     </Member>
     <Member MemberName="TypedValue">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.CustomAttributeTypedArgumentMirror TypedValue { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Debugger.Soft.CustomAttributeTypedArgumentMirror TypedValue" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

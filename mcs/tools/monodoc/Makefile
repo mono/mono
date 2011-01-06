@@ -5,6 +5,51 @@ include ../../build/rules.make
 LIBRARY = monodoc.dll
 LIBRARY_PACKAGE = monodoc
 
+IMAGES = \
+	Resources/images/bc_bg.png		\
+	Resources/images/bc_separator.png	\
+	Resources/images/error.png		\
+	Resources/images/hatch.png		\
+	Resources/images/headerbg.png		\
+	Resources/images/help.png		\
+	Resources/images/house.png		\
+	Resources/images/members.png		\
+	Resources/images/namespace.png		\
+	Resources/images/privclass.png		\
+	Resources/images/privdelegate.png	\
+	Resources/images/privenumeration.png	\
+	Resources/images/privevent.png		\
+	Resources/images/privextension.png	\
+	Resources/images/privfield.png		\
+	Resources/images/privinterface.png	\
+	Resources/images/privmethod.png		\
+	Resources/images/privproperty.png	\
+	Resources/images/privstructure.png	\
+	Resources/images/protclass.png		\
+	Resources/images/protdelegate.png	\
+	Resources/images/protenumeration.png	\
+	Resources/images/protevent.png		\
+	Resources/images/protextension.png	\
+	Resources/images/protfield.png		\
+	Resources/images/protinterface.png	\
+	Resources/images/protmethod.png		\
+	Resources/images/protproperty.png	\
+	Resources/images/protstructure.png	\
+	Resources/images/pubclass.png		\
+	Resources/images/pubdelegate.png	\
+	Resources/images/pubenumeration.png	\
+	Resources/images/pubevent.png		\
+	Resources/images/pubextension.png	\
+	Resources/images/pubfield.png		\
+	Resources/images/pubinterface.png	\
+	Resources/images/pubmethod.png		\
+	Resources/images/pubproperty.png	\
+	Resources/images/pubstructure.png	\
+	Resources/images/reference.png		\
+	Resources/images/treebg.png		
+
+IMAGE_RESOURCE_COMMAND = $(foreach file,$(IMAGES),/resource:$(file),$(notdir $(file)))
+
 RESOURCE_FILES = \
 	../../docs/monodoc.xml            \
 	Resources/base.css                \
@@ -22,7 +67,8 @@ RESOURCE_FILES = \
 	Resources/mono-ecma-css.xsl       \
 	Resources/mono-ecma-impl.xsl      \
 	Resources/mono-ecma.css           \
-	Resources/mono-ecma.xsl
+	Resources/mono-ecma.xsl		\
+	$(IMAGES)
 
 MAN_TEST_FILES = \
 	Test/man-provider-test.cs   \
@@ -61,6 +107,7 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/mono-ecma-impl.xsl,mono-ecma-impl.xsl         \
 	/resource:Resources/mono-ecma.css,mono-ecma.css                   \
 	/resource:Resources/mono-ecma.xsl,mono-ecma.xsl                   \
+	$(IMAGE_RESOURCE_COMMAND)					  \
 	/r:ICSharpCode.SharpZipLib                                        \
 	/r:$(corlib)                                                      \
 	/r:System.dll                                                     \

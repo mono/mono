@@ -45,8 +45,6 @@ using Mono.Security;
 
 namespace System.Reflection {
 
-#pragma warning disable 659 // overrides Equals but not GetHashCode
-
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
@@ -597,9 +595,7 @@ namespace System.Reflection {
 			return LoadFrom (assemblyFile, true);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly LoadWithPartialName (string partialName)
 		{
 			return LoadWithPartialName (partialName, null);
@@ -624,9 +620,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern Assembly load_with_partial_name (string name, Evidence e);
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
 			return LoadWithPartialName (partialName, securityEvidence, true);
@@ -779,6 +773,11 @@ namespace System.Reflection {
 		public virtual extern bool ReflectionOnly {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
+		}
+		
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
 		}
 
 		public override bool Equals (object o)
@@ -946,11 +945,6 @@ namespace System.Reflection {
 			get { return false; }
 		}
 
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
-		}
-
 		public static bool operator == (Assembly left, Assembly right)
 		{
 			if ((object)left == (object)right)
@@ -971,5 +965,3 @@ namespace System.Reflection {
 #endif
 	}
 }
-
-#pragma warning restore 659

@@ -276,11 +276,8 @@ namespace System.Reflection
 			if (type.IsArray) {
 				if (type.GetArrayRank () > 1)
 					return InflateType (type.GetElementType (), type_args, method_args).MakeArrayType (type.GetArrayRank ());
-#if BOOTSTRAP_NET_2_0
-				if (type.ToString ().EndsWith ("[*]"))
-#else
+				
 				if (type.ToString ().EndsWith ("[*]", StringComparison.Ordinal)) /*FIXME, the reflection API doesn't offer a way around this*/
-#endif
 					return InflateType (type.GetElementType (), type_args, method_args).MakeArrayType (1);
 				return InflateType (type.GetElementType (), type_args, method_args).MakeArrayType ();
 			}

@@ -35,54 +35,60 @@ namespace MonoTests.System.Web.Caching
 	[TestFixture]
 	public partial class CacheItemPriorityQueueTest
 	{
-		enum QueueOperation
-		{
-			Enqueue,
-			Dequeue,
-			Disable,
-			Peek,
-			QueueSize
-		}
-		
-		sealed class TestItem
-		{
-			public int ListIndex;
-			public int QueueCount;
-			public QueueOperation Operation;
-			public bool IsDisabled;
-			public bool IsNull;
-			public bool Disable;
-			public int OperationCount;
-			public string Guid;
-		}
-
 		sealed class TestCacheItem : CacheItem
 		{
 			public Guid Guid;
 
-			public TestCacheItem ()
+			public TestCacheItem (ref int index, object[] data)
 			{
-				Guid = Guid.NewGuid ();
+				Key = LoadField <string> (index++, data);
+				AbsoluteExpiration = DateTime.Parse (LoadField <string> (index++, data));
+				SlidingExpiration = TimeSpan.Parse (LoadField <string> (index++, data));
+				Priority = LoadField <CacheItemPriority> (index++, data);
+				LastChange = DateTime.Parse (LoadField <string> (index++, data));
+				ExpiresAt = LoadField <long> (index++, data);
+				Disabled = LoadField <bool> (index++, data);
+				Guid = new Guid (LoadField <string> (index++, data));
 			}
 
 			public override string ToString ()
 			{
 				return String.Format ("CacheItem [{0}]\n[{1}][{2}][{3}]", this.Guid, Key, Disabled, ExpiresAt > 0 ? new DateTime (ExpiresAt).ToString () : "0");
 			}
+
+			T LoadField <T> (int index, object[] data)
+			{
+				if (data == null || data.Length <= index)
+					throw new ArgumentOutOfRangeException ("index");
+                
+				object o = data [index];
+				if (o == null)
+					return default (T);
+                
+				if (o.GetType () != typeof (T))
+					throw new InvalidOperationException (String.Format ("Field at index {0} is not a {1}", index, typeof (T)));
+                
+				return (T)o;
+			}
 		}
 		
-		void RunTest (List <TestItem> tests, List <TestCacheItem> list)
+		void RunTest (string[] tests, object[] list)
 		{
 			var queue = new CacheItemPriorityQueue ();
+			var cacheItems = new List <TestCacheItem> ();
+			int index = 0;
 
-			foreach (TestItem item in tests)
-				RunItem (item, queue, list);
+			while (index < list.Length)
+				cacheItems.Add (new TestCacheItem (ref index, list));
+
+			for (int i = 0; i < tests.Length; i++)
+				RunItem (new CacheItemPriorityQueueTestItem (tests [i]), queue, cacheItems, i);
 		}
 
-		void RunItem (TestItem item, CacheItemPriorityQueue queue, List <TestCacheItem> list)
+		void RunItem (CacheItemPriorityQueueTestItem item, CacheItemPriorityQueue queue, List <TestCacheItem> list, int testNum)
 		{
 			TestCacheItem ci;
-			string messagePrefix = String.Format ("{0}-{1:00000}-", item.Operation, item.OperationCount);
+			string messagePrefix = String.Format ("{0}-{1:00000}-{2:00000}-", item.Operation, item.OperationCount, testNum);
 			
 			switch (item.Operation) {
 				case QueueOperation.Enqueue:

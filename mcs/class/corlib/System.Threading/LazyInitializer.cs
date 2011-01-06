@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 
 using System;
 
@@ -37,27 +37,27 @@ namespace System.Threading
 			return EnsureInitialized (ref target, GetDefaultCtorValue<T>);
 		}
 		
-		public static T EnsureInitialized<T> (ref T target, Func<T> initFunc) where T : class
+		public static T EnsureInitialized<T> (ref T target, Func<T> valueFactory) where T : class
 		{
 			if (target == null)
-				Interlocked.CompareExchange (ref target, initFunc (), null);
+				Interlocked.CompareExchange (ref target, valueFactory (), null);
 			
 			return target;
 		}
 
-		public static T EnsureInitialized<T> (ref T target, ref bool initialized, ref object syncRoot)
+		public static T EnsureInitialized<T> (ref T target, ref bool initialized, ref object syncLock)
 		{
-			return EnsureInitialized (ref target, ref initialized, ref syncRoot, GetDefaultCtorValue<T>);
+			return EnsureInitialized (ref target, ref initialized, ref syncLock, GetDefaultCtorValue<T>);
 		}
 		
-		public static T EnsureInitialized<T> (ref T target, ref bool initialized, ref object syncRoot, Func<T> initFunc)
+		public static T EnsureInitialized<T> (ref T target, ref bool initialized, ref object syncLock, Func<T> valueFactory)
 		{
-			lock (syncRoot) {
+			lock (syncLock) {
 				if (initialized)
 					return target;
 				
 				initialized = true;
-				return target = initFunc ();
+				return target = valueFactory ();
 			}
 		}
 		
@@ -69,6 +69,11 @@ namespace System.Threading
 				throw new MissingMemberException ("The type being lazily initialized does not have a "
 				                                  + "public, parameterless constructor.");
 			}
+		}
+
+		internal static T GetDefaultValueFactory<T> ()
+		{
+			return default (T);
 		}
 	}
 }

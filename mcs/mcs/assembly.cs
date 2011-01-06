@@ -569,19 +569,20 @@ namespace Mono.CSharp
 
 		public void Resolve ()
 		{
-			if (RootContext.Unsafe) {
+			if (RootContext.Unsafe && module.PredefinedTypes.SecurityAction.Define ()) {
 				//
 				// Emits [assembly: SecurityPermissionAttribute (SecurityAction.RequestMinimum, SkipVerification = true)]
 				// when -unsafe option was specified
 				//
-				
 				Location loc = Location.Null;
 
 				MemberAccess system_security_permissions = new MemberAccess (new MemberAccess (
 					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Security", loc), "Permissions", loc);
 
+				var req_min = (ConstSpec) module.PredefinedTypes.SecurityAction.GetField ("RequestMinimum", module.PredefinedTypes.SecurityAction.TypeSpec, loc);
+
 				Arguments pos = new Arguments (1);
-				pos.Add (new Argument (new MemberAccess (new MemberAccess (system_security_permissions, "SecurityAction", loc), "RequestMinimum")));
+				pos.Add (new Argument (req_min.GetConstant (null)));
 
 				Arguments named = new Arguments (1);
 				named.Add (new NamedArgument ("SkipVerification", loc, new BoolLiteral (true, loc)));
@@ -721,6 +722,7 @@ namespace Mono.CSharp
 				if (RootContext.Target == Target.Module) {
 					Report.Error (1507, "Cannot link resource file when building a module");
 				} else {
+					int counter = 0;
 					foreach (var res in RootContext.Resources) {
 						if (!File.Exists (res.FileName)) {
 							Report.Error (1566, "Error reading resource file `{0}'", res.FileName);
@@ -728,7 +730,16 @@ namespace Mono.CSharp
 						}
 
 						if (res.IsEmbeded) {
-							var stream = File.OpenRead (res.FileName);
+							Stream stream;
+							if (counter++ < 10) {
+								stream = File.OpenRead (res.FileName);
+							} else {
+								// TODO: SRE API requires resource stream to be available during AssemblyBuilder::Save
+								// we workaround it by reading everything into memory to compile projects with
+								// many embedded resource (over 3500) references
+								stream = new MemoryStream (File.ReadAllBytes (res.FileName));
+							}
+
 							module.Builder.DefineManifestResource (res.Name, stream, res.Attributes);
 						} else {
 							Builder.AddResourceFile (res.Name, Path.GetFileName (res.FileName), res.Attributes);

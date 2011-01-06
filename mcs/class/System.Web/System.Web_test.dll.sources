@@ -36,6 +36,7 @@ mainsoft/NunitWeb/NunitWeb/Response.cs
 mainsoft/NunitWeb/NunitWeb/StandardUrl.cs
 mainsoft/NunitWeb/NunitWeb/TestRoleProvider.cs
 mainsoft/NunitWeb/NunitWeb/WebTest.cs
+mainsoft/NunitWeb/NunitWeb/WebTestLocal.cs
 mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
 mainsoft/NunitWeb/NunitWeb/Tests/TagsNestedInClientTag.cs
 mainsoft/NunitWeb/NunitWeb/Tests/TestSiteMapProvider.cs
@@ -350,6 +351,7 @@ System.Web.Caching/AggregateCacheDependencyTest.cs
 System.Web.Caching/CacheCas.cs
 System.Web.Caching/CacheDependencyCas.cs
 System.Web.Caching/CacheItemPriorityQueueTest.cs
+System.Web.Caching/CacheItemPriorityQueueTestSupport.cs
 System.Web.Caching/CacheItemPriorityQueueTest_generated.cs
 System.Web.Caching/FileResponseElementTest.cs
 System.Web.Caching/HeaderElementTest.cs

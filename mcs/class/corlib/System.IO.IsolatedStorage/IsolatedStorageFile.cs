@@ -292,12 +292,12 @@ namespace System.IO.IsolatedStorage {
 
 			if ((scope & IsolatedStorageScope.User) != 0) {
 				if ((scope & IsolatedStorageScope.Roaming) != 0) {
-					root = Environment.InternalGetFolderPath (Environment.SpecialFolder.LocalApplicationData);
+					root = Environment.UnixGetFolderPath (Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create);
 				} else {
-					root = Environment.InternalGetFolderPath (Environment.SpecialFolder.ApplicationData);
+					root = Environment.UnixGetFolderPath (Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
 				}
 			} else if ((scope & IsolatedStorageScope.Machine) != 0) {
-				root = Environment.InternalGetFolderPath (Environment.SpecialFolder.CommonApplicationData);
+				root = Environment.UnixGetFolderPath (Environment.SpecialFolder.CommonApplicationData, Environment.SpecialFolderOption.Create);
 			}
 
 			if (root == null) {

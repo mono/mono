@@ -1,5 +1,6 @@
 <Type Name="ModuleMirror" FullName="Mono.Debugger.Soft.ModuleMirror">
   <TypeSignature Language="C#" Value="public class ModuleMirror : Mono.Debugger.Soft.Mirror" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ModuleMirror extends Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="Assembly">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AssemblyMirror Assembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.AssemblyMirror Assembly" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -31,6 +33,7 @@
     </Member>
     <Member MemberName="FullyQualifiedName">
       <MemberSignature Language="C#" Value="public string FullyQualifiedName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullyQualifiedName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -46,6 +49,7 @@
     </Member>
     <Member MemberName="ModuleVersionId">
       <MemberSignature Language="C#" Value="public Guid ModuleVersionId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Guid ModuleVersionId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -61,6 +65,7 @@
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -76,6 +81,7 @@
     </Member>
     <Member MemberName="ScopeName">
       <MemberSignature Language="C#" Value="public string ScopeName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ScopeName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

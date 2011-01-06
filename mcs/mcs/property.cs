@@ -1122,7 +1122,7 @@ namespace Mono.CSharp
 			{
 				this.method = method;
 				this.ModFlags = method.ModFlags;
-				this.parameters = ParametersCompiled.CreateImplicitParameter (method.TypeExpression, loc);;
+				this.parameters = ParametersCompiled.CreateImplicitParameter (method.TypeExpression, loc);
 			}
 
 			public bool IsInterfaceImplementation {

@@ -153,7 +153,6 @@ namespace System.Net.Policy {
 			{
 				Domains = new List<string> ();
 				HttpRequestHeaders = new Headers ();
-				Scheme = String.Empty;
 			}
 
 			public bool AllowAnyDomain { get; set; }
@@ -164,23 +163,8 @@ namespace System.Net.Policy {
 
 			public bool AllowAnyMethod { get; set; }
 
-			public string Scheme { get; internal set; }
-
 			public bool IsAllowed (Uri uri, string method)
 			{
-				// check scheme
-				if ((Scheme.Length > 0) && (Scheme == uri.Scheme)) {
-					switch (Scheme) {
-					case "http":
-						return (uri.Port == 80);
-					case "https":
-						return (uri.Port == 443);
-					case "file":
-						return true;
-					default:
-						return false;
-					}
-				}
 				// check methods
 				if (!AllowAnyMethod) {
 					// if not all methods are allowed (*) then only GET and POST request are possible
@@ -195,12 +179,16 @@ namespace System.Net.Policy {
 				if (AllowAnyDomain)
 					return true;
 
-				if (Domains.All (domain => !CheckDomainUri (domain)))
+				if (Domains.All (domain => !CheckDomainUri (uri, domain)))
 					return false;
 				return true;
 			}
 
-			static bool CheckDomainUri (string policy)
+			const string AllHttpScheme = "http://*";
+			const string AllHttpsScheme = "https://*";
+			const string AllFileScheme = "file:///";
+
+			static bool CheckDomainUri (Uri applicationUri, string policy)
 			{
 				Uri uri;
 				if (Uri.TryCreate (policy, UriKind.Absolute, out uri)) {
@@ -218,7 +206,22 @@ namespace System.Net.Policy {
 				// check for matching protocol
 				if (!policy.StartsWith (ApplicationUri.Scheme))
 					return false;
-				// check for the wirld card immediately after the scheme
+
+				switch (ApplicationUri.Scheme) {
+				case "http":
+					if (policy == AllHttpScheme)
+						return (applicationUri.Port == 80);
+					break;
+				case "https":
+					if (policy == AllHttpsScheme)
+						return (applicationUri.Port == 443);
+					break;
+				case "file":
+					if (policy == AllFileScheme)
+						return true;
+					break;
+				}
+
 				if (policy.IndexOf ("://*.", ApplicationUri.Scheme.Length) != ApplicationUri.Scheme.Length)
 					return false;
 				// remove *. from uri

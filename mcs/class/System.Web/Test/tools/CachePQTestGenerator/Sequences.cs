@@ -74,7 +74,7 @@ namespace Tester
 			sb.FormatList (initialIndent, listName, cacheItems);
 
 			sb.AppendLine ();
-			sb.AppendFormat ("{0}List <TestItem> {1} = new List <TestItem> () {{\n", initialIndent, testsName);
+			sb.AppendFormat ("{0} string[] {1} = {{\n", initialIndent, testsName);
 
 			string indent = initialIndent + "\t";
 			int idx;

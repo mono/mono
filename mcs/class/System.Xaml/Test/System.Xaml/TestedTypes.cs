@@ -593,4 +593,143 @@ namespace MonoTests.System.Xaml
 			return null;
 		}
 	}
+	
+	public class Attachable
+	{
+		public static readonly AttachableMemberIdentifier FooIdentifier = new AttachableMemberIdentifier (typeof (Attachable), "Foo");
+		public static readonly AttachableMemberIdentifier ProtectedIdentifier = new AttachableMemberIdentifier (typeof (Attachable), "Protected");
+		
+		public static string GetFoo (object target)
+		{
+			string v;
+			return AttachablePropertyServices.TryGetProperty (target, FooIdentifier, out v) ? v : null;
+		}
+		
+		public static void SetFoo (object target, string value)
+		{
+			AttachablePropertyServices.SetProperty (target, FooIdentifier, value);
+		}
+
+		public static string GetBar (object target, object signatureMismatch)
+		{
+			return null;
+		}
+		
+		public static void SetBar (object signatureMismatch)
+		{
+		}
+
+		public static void GetBaz (object noReturnType)
+		{
+		}
+		
+		public static string SetBaz (object target, object extraReturnType)
+		{
+			return null;
+		}
+
+		protected static string GetProtected (object target)
+		{
+			string v;
+			return AttachablePropertyServices.TryGetProperty (target, ProtectedIdentifier, out v) ? v : null;
+		}
+		
+		protected static void SetProtected (object target, string value)
+		{
+			AttachablePropertyServices.SetProperty (target, ProtectedIdentifier, value);
+		}
+
+		static Dictionary<object,List<EventHandler>> handlers = new Dictionary<object,List<EventHandler>> ();
+
+		public static void AddXHandler (object target, EventHandler handler)
+		{
+			List<EventHandler> l;
+			if (!handlers.TryGetValue (target, out l)) {
+				l = new List<EventHandler> ();
+				handlers [target] = l;
+			}
+			l.Add (handler);
+		}
+
+		public static void RemoveXHandler (object target, EventHandler handler)
+		{
+			handlers [target].Remove (handler);
+		}
+	}
+	
+	public class AttachedPropertyStore : IAttachedPropertyStore
+	{
+		public AttachedPropertyStore ()
+		{
+		}
+		
+		Dictionary<AttachableMemberIdentifier,object> props = new Dictionary<AttachableMemberIdentifier,object> ();
+
+		public int PropertyCount {
+			get { return props.Count; }
+		}
+		
+		public void CopyPropertiesTo (KeyValuePair<AttachableMemberIdentifier, object> [] array, int index)
+		{
+			((ICollection<KeyValuePair<AttachableMemberIdentifier, object>>) props).CopyTo (array, index);
+		}
+		
+		public bool RemoveProperty (AttachableMemberIdentifier attachableMemberIdentifier)
+		{
+			return props.Remove (attachableMemberIdentifier);
+		}
+		
+		public void SetProperty (AttachableMemberIdentifier attachableMemberIdentifier, object value)
+		{
+			props [attachableMemberIdentifier] = value;
+		}
+		
+		public bool TryGetProperty (AttachableMemberIdentifier attachableMemberIdentifier, out object value)
+		{
+			return props.TryGetValue (attachableMemberIdentifier, out value);
+		}
+	}
+
+	public class AttachedWrapper : AttachedPropertyStore
+	{
+		public AttachedWrapper ()
+		{
+			Value = new Attached ();
+		}
+
+		public Attached Value { get; set; }
+	}
+
+	public class AttachedWrapper2
+	{
+		public static readonly AttachableMemberIdentifier FooIdentifier = new AttachableMemberIdentifier (typeof (AttachedWrapper2), "Foo");
+
+		static AttachedPropertyStore store = new AttachedPropertyStore ();
+
+		public static string GetFoo (object target)
+		{
+			object v;
+			return store.TryGetProperty (FooIdentifier, out v) ? (string) v : null;
+		}
+		
+		public static void SetFoo (object target, string value)
+		{
+			store.SetProperty (FooIdentifier, value);
+		}
+
+		public static int PropertyCount {
+			get { return store.PropertyCount; }
+		}
+
+		public AttachedWrapper2 ()
+		{
+			Value = new Attached ();
+		}
+
+		public Attached Value { get; set; }
+	}
+
+	public class Attached : Attachable
+	{
+	}
 }

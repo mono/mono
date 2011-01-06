@@ -4934,9 +4934,9 @@ namespace PEAPI {
 		private static readonly uint max3BitSmlIx = 0x1FFF;
 		private static readonly uint max5BitSmlIx = 0x7FF;
 		// NOTE: version and stream name strings MUST always be quad padded
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0
 		private static readonly string version = "v4.0.30319\0\0";
-#elif NET_2_0 || BOOTSTRAP_NET_2_0
+#elif NET_2_0
 		private static readonly string version = "v2.0.50727\0\0";
 #else
 		private static readonly string version = "v1.1.4322\0\0\0";
@@ -5345,7 +5345,7 @@ namespace PEAPI {
 		{
 			long startTilde = output.Seek(0,SeekOrigin.Current);
 			output.Write((uint)0); // Reserved
-#if NET_2_0 || BOOTSTRAP_NET_2_0
+#if NET_2_0
 			output.Write((byte)2); // MajorVersion
 			output.Write((byte)0); // MinorVersion
 #else
@@ -5400,7 +5400,7 @@ namespace PEAPI {
 			BuildTable(metaDataTables[(int)MDTable.TypeDef]);
 			BuildTable(metaDataTables[(int)MDTable.TypeSpec]);
 			BuildTable(metaDataTables[(int)MDTable.MemberRef]);
-#if NET_2_0 || BOOTSTRAP_NET_2_0
+#if NET_2_0
 			BuildTable(metaDataTables[(int)MDTable.GenericParam]);
 			BuildTable(metaDataTables[(int)MDTable.MethodSpec]);
 			BuildTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
@@ -5449,7 +5449,7 @@ namespace PEAPI {
 			SortTable(metaDataTables[(int)MDTable.DeclSecurity]);
 			SortTable(metaDataTables[(int)MDTable.MethodSemantics]);
 			SortTable(metaDataTables[(int)MDTable.ImplMap]);
-#if NET_2_0 || BOOTSTRAP_NET_2_0
+#if NET_2_0
 			if (metaDataTables[(int)MDTable.GenericParam] != null) {
 				SortTable(metaDataTables[(int)MDTable.GenericParam]);
 				// Now add GenericParamConstraints

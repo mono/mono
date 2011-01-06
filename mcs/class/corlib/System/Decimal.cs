@@ -38,6 +38,7 @@ using System.Globalization;
 using System.Text;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.Serialization;
 
 #if MSTEST
 using System.Runtime.InteropServices;
@@ -53,6 +54,9 @@ namespace System
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public struct Decimal: IFormattable, IConvertible, IComparable, IComparable<Decimal>, IEquatable <Decimal>
+#if NET_4_0
+		, IDeserializationCallback
+#endif
 	{
 		public const decimal MinValue = -79228162514264337593543950335m;
 		public const decimal MaxValue =  79228162514264337593543950335m;
@@ -1336,6 +1340,12 @@ namespace System
 		{
 			return ToString ("G", provider);
 		}
+		
+#if NET_4_0
+		void IDeserializationCallback.OnDeserialization(object sender)
+		{
+		}
+#endif
 
 #if !MSTEST
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

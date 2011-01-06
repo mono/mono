@@ -41,7 +41,7 @@ public class Int32Test
 	private CultureInfo old_culture;
 
 	[TestFixtureSetUp]
-	public void SetUp() 
+	public void SetUpFixture() 
 	{
 		old_culture = Thread.CurrentThread.CurrentCulture;
 
@@ -60,6 +60,12 @@ public class Int32Test
 		
 		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,647.00000";
 		Results2 [6] = perPattern.Replace ("n","214,748,364,700.00000");
+	}
+	
+	[SetUp]
+	public void Setup ()
+	{
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
 	}
 
 	[TestFixtureTearDown]

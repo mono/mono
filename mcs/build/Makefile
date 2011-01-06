@@ -17,13 +17,10 @@ common/Consts.cs: common/Consts.cs.in $(wildcard config.make)
 PLATFORMS = darwin linux win32
 PROFILES = \
 	basic \
-	net_2_0_bootstrap \
 	net_2_0 \
-	moonlight_bootstrap \
 	moonlight_raw \
 	moonlight \
 	net_3_5	\
-	net_4_0_bootstrap \
 	net_4_0	
 
 COMMON_SRCS = \

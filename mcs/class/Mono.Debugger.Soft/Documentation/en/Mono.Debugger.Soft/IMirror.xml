@@ -1,5 +1,6 @@
 <Type Name="IMirror" FullName="Mono.Debugger.Soft.IMirror">
   <TypeSignature Language="C#" Value="public interface IMirror" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMirror" />
   <AssemblyInfo>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -16,6 +17,7 @@
   <Members>
     <Member MemberName="VirtualMachine">
       <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.VirtualMachine VirtualMachine { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Debugger.Soft.VirtualMachine VirtualMachine" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
