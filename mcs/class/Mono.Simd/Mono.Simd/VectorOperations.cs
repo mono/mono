@@ -988,6 +988,29 @@ namespace Mono.Simd
 			return new Vector4ui (*(p1 + ((idx >> 0) & 0x3)), *(p1 + ((idx >> 2) & 0x3)), *(p2 + ((idx >> 4) & 0x3)), *(p2 + ((idx >> 6) & 0x3))); 
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector2d Shuffle (this Vector2d v1, Vector2d v2, int sel)
+		{
+			double *p1 = (double*)&v1;
+			double *p2 = (double*)&v2;
+			return new Vector2d (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector2l Shuffle (this Vector2l v1, Vector2l v2, int sel)
+		{
+			long *p1 = (long*)&v1;
+			long *p2 = (long*)&v2;
+			return new Vector2l (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector2ul Shuffle (this Vector2ul v1, Vector2ul v2, int sel)
+		{
+			ulong *p1 = (ulong*)&v1;
+			ulong *p2 = (ulong*)&v2;
+			return new Vector2ul (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+		}
 
 		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector4f Shuffle (this Vector4f v1, ShuffleSel sel)
