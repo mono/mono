@@ -3420,23 +3420,51 @@ namespace Mono.CSharp {
 		static int BetterExpressionConversion (ResolveContext ec, Argument a, TypeSpec p, TypeSpec q)
 		{
 			TypeSpec argument_type = a.Type;
+
+			//
+			// If argument is an anonymous function
+			//
 			if (argument_type == InternalType.AnonymousMethod && RootContext.Version > LanguageVersion.ISO_2) {
 				//
-				// Uwrap delegate from Expression<T>
+				// p and q are delegate types or expression tree types
 				//
-				if (p.GetDefinition () == TypeManager.expression_type) {
+				if (p.GetDefinition () == TypeManager.expression_type || q.GetDefinition () == TypeManager.expression_type) {
+					if (q.MemberDefinition != p.MemberDefinition) {
+						return 0;
+					}
+
+					//
+					// Uwrap delegate from Expression<T>
+					//
+					q = TypeManager.GetTypeArguments (q)[0];
 					p = TypeManager.GetTypeArguments (p)[0];
 				}
-				if (q.GetDefinition () == TypeManager.expression_type) {
-					q = TypeManager.GetTypeArguments (q)[0];
+
+				var p_m = Delegate.GetInvokeMethod (ec.Compiler, p);
+				var q_m = Delegate.GetInvokeMethod (ec.Compiler, q);
+
+				//
+				// With identical parameter lists
+				//
+				if (!TypeSpecComparer.Equals (p_m.Parameters.Types,q_m.Parameters.Types))
+					return 0;
+
+				p = p_m.ReturnType;
+				q = q_m.ReturnType;
+
+				//
+				// if p is void returning, and q has a return type Y, then C2 is the better conversion.
+				//
+				if (p == TypeManager.void_type) {
+					return q != TypeManager.void_type ? 2 : 0;
 				}
 
-				p = Delegate.GetInvokeMethod (ec.Compiler, p).ReturnType;
-				q = Delegate.GetInvokeMethod (ec.Compiler, q).ReturnType;
-				if (p == TypeManager.void_type && q != TypeManager.void_type)
-					return 2;
-				if (q == TypeManager.void_type && p != TypeManager.void_type)
-					return 1;
+				//
+				// if p has a return type Y, and q is void returning, then C1 is the better conversion.
+				//
+				if (q == TypeManager.void_type) {
+					return p != TypeManager.void_type ? 1: 0;
+				}
 			} else {
 				if (argument_type == p)
 					return 1;
