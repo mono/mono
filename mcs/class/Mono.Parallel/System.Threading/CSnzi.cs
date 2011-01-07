@@ -41,12 +41,12 @@ namespace System.Threading
 		Closed
 	}
 	
-	public struct QueryReturn
+	public struct CSnziQueryReturn
 	{
 		public readonly bool NonZero;
 		public readonly bool Open;
 		
-		public QueryReturn (bool nonzero, bool open)
+		internal CSnziQueryReturn (bool nonzero, bool open)
 		{
 			NonZero = nonzero;
 			Open = open;
@@ -240,11 +240,11 @@ namespace System.Threading
 			root.Open ();
 		}
 		
-		public QueryReturn Query ()
+		public CSnziQueryReturn Query ()
 		{
 			CSnziRootNode copy = root;
 			
-			return new QueryReturn (copy.Count > 0, copy.State == CSnziState.Open);
+			return new CSnziQueryReturn (copy.Count > 0, copy.State == CSnziState.Open);
 		}
 		
 		int GetLeafIndex ()
