@@ -1,0 +1,48 @@
+<Type Name="CSnziQueryReturn" FullName="System.Threading.CSnziQueryReturn">
+  <TypeSignature Language="C#" Value="public struct CSnziQueryReturn" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit CSnziQueryReturn extends System.ValueType" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Parallel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Result returned by <see cref="M:System.Threading.CSnzi.Query()" /></summary>
+    <remarks />
+  </Docs>
+  <Members>
+    <Member MemberName="NonZero">
+      <MemberSignature Language="C#" Value="public readonly bool NonZero;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly bool NonZero" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Zero state of the CSnzi object.</summary>
+        <remarks />
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public readonly bool Open;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly bool Open" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Tells if a CSnzi object is currently closed.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

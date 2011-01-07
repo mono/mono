@@ -1,0 +1,45 @@
+<Type Name="CSnziState" FullName="System.Threading.CSnziState">
+  <TypeSignature Language="C#" Value="public enum CSnziState" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CSnziState extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Parallel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>Define the state of a CSnzi object.</summary>
+    <remarks />
+  </Docs>
+  <Members>
+    <Member MemberName="Closed">
+      <MemberSignature Language="C#" Value="Closed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.CSnziState Closed = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.CSnziState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Object is closed and Arrive/Close won't work</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="Open" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.CSnziState Open = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.CSnziState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Object is opened and Arrive/Close work as expected.</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
