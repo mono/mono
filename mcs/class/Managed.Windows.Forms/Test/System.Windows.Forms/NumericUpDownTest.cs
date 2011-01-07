@@ -91,6 +91,9 @@ namespace MonoTests.System.Windows.Forms
 			nud.Hexadecimal = true;
 			Assert.AreEqual ("DDD5", nud.Text, "#A1");
 			Assert.AreEqual (56789, nud.Value, "#A2");
+			nud.Value = 0; // bug 661750
+			Assert.AreEqual ("0", nud.Text, "#A3");
+			Assert.AreEqual (0, nud.Value, "#A4");
 			f.Dispose ();
 		}
 
