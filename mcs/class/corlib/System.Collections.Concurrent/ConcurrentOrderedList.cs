@@ -32,7 +32,10 @@ using System.Runtime.Serialization;
 
 namespace System.Collections.Concurrent
 {
-	internal class ConcurrentOrderedList<T>
+#if INSIDE_MONO_PARALLEL
+	public
+#endif
+	class ConcurrentOrderedList<T>
 	{
 		class Node
 		{
