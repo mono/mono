@@ -145,5 +145,27 @@ namespace MonoTests.System.Windows.Forms
 			nud.Value = 4;
 			nud.Dispose ();
 		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void TestHexadecimalMaximum ()
+		{
+			NumericUpDown nud = new NumericUpDown ();
+			nud.Hexadecimal = true;
+			nud.Maximum = Decimal.MaxValue;
+			nud.Value = Int64.MaxValue;
+			nud.Value++;
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void TestHexadecimalMinimum ()
+		{
+			NumericUpDown nud = new NumericUpDown ();
+			nud.Hexadecimal = true;
+			nud.Minimum = Decimal.MinValue;
+			nud.Value = Int64.MinValue;
+			nud.Value--;
+		}
 	}
 }
