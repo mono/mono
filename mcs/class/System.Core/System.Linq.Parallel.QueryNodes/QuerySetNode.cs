@@ -71,8 +71,8 @@ namespace System.Linq.Parallel.QueryNodes
 			var first = Parent.GetEnumerables (options);
 			var second = Second.GetEnumerables (options);
 			
-			var checker = new ConcurrentSkipList<TSource> (comparer);
-			InitConcurrentSkipList (checker, second, (e) => e);
+			var checker = new ConcurrentDictionary<TSource, object> (comparer);
+			InitConcurrentDictionary (checker, second, (e) => e);
 
 			return first
 				.Select ((f, i) => GetEnumerable<TSource> (f, second[i], checker, (e) => e))
@@ -84,29 +84,29 @@ namespace System.Linq.Parallel.QueryNodes
 			var first = Parent.GetOrderedEnumerables (options);
 			var second = Second.GetOrderedEnumerables (options);
 
-			var checker = new ConcurrentSkipList<TSource> (comparer);			
-			InitConcurrentSkipList (checker, second, (e) => e.Value);
+			var checker = new ConcurrentDictionary<TSource, object> (comparer);
+			InitConcurrentDictionary (checker, second, (e) => e.Value);
 
 			return first
 				.Select ((f, i) => GetEnumerable<KeyValuePair<long, TSource>> (f, second[i], checker, (e) => e.Value))
 				.ToList ();
 		}
 				
-		void InitConcurrentSkipList<TExtract> (ConcurrentSkipList<TSource> checker,
-		                                       IList<IEnumerable<TExtract>> feeds,
-		                                       Func<TExtract, TSource> extractor)
+		void InitConcurrentDictionary<TExtract> (ConcurrentDictionary<TSource, object> checker,
+		                                         IList<IEnumerable<TExtract>> feeds,
+		                                         Func<TExtract, TSource> extractor)
 		{
 			if ((setInclusion & SetInclusion.Preload) == 0)
 				return;
 			
 			foreach (IEnumerable<TExtract> feed in feeds)
 				foreach (TExtract item in feed)
-					checker.TryAdd (extractor (item));
+					checker.TryAdd (extractor (item), null);
 		}
 
 		IEnumerable<TExtract> GetEnumerable<TExtract> (IEnumerable<TExtract> first,
 		                                               IEnumerable<TExtract> second,
-		                                               ConcurrentSkipList<TSource> checker,
+		                                               ConcurrentDictionary<TSource, object> checker,
 		                                               Func<TExtract, TSource> extractor)
 		{
 			IEnumerator<TExtract> eFirst = first.GetEnumerator ();
@@ -121,7 +121,7 @@ namespace System.Linq.Parallel.QueryNodes
 				while (current != null) {
 					while (current.MoveNext ()) {
 						bool result = relaxed ?
-							checker.Contains (extractor (current.Current)) : checker.TryAdd (extractor (current.Current));
+							checker.ContainsKey (extractor (current.Current)) : checker.TryAdd (extractor (current.Current), null);
 
 						if ((result && outInclusion)
 						    || (!result && !outInclusion))
