@@ -962,6 +962,57 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4f Shuffle (this Vector4f v1, Vector4f v2, ShuffleSel sel)
+		{
+			float *p1 = (float*)&v1;
+			float *p2 = (float*)&v2;
+			int idx = (int)sel;
+			return new Vector4f (*(p1 + ((idx >> 0) & 0x3)), *(p1 + ((idx >> 2) & 0x3)), *(p2 + ((idx >> 4) & 0x3)), *(p2 + ((idx >> 6) & 0x3))); 
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4i Shuffle (this Vector4i v1, Vector4i v2, ShuffleSel sel)
+		{
+			int *p1 = (int*)&v1;
+			int *p2 = (int*)&v2;
+			int idx = (int)sel;
+			return new Vector4i (*(p1 + ((idx >> 0) & 0x3)), *(p1 + ((idx >> 2) & 0x3)), *(p2 + ((idx >> 4) & 0x3)), *(p2 + ((idx >> 6) & 0x3))); 
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4ui Shuffle (this Vector4ui v1, Vector4ui v2, ShuffleSel sel)
+		{
+			uint *p1 = (uint*)&v1;
+			uint *p2 = (uint*)&v2;
+			int idx = (int)sel;
+			return new Vector4ui (*(p1 + ((idx >> 0) & 0x3)), *(p1 + ((idx >> 2) & 0x3)), *(p2 + ((idx >> 4) & 0x3)), *(p2 + ((idx >> 6) & 0x3))); 
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector2d Shuffle (this Vector2d v1, Vector2d v2, int sel)
+		{
+			double *p1 = (double*)&v1;
+			double *p2 = (double*)&v2;
+			return new Vector2d (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector2l Shuffle (this Vector2l v1, Vector2l v2, int sel)
+		{
+			long *p1 = (long*)&v1;
+			long *p2 = (long*)&v2;
+			return new Vector2l (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector2ul Shuffle (this Vector2ul v1, Vector2ul v2, int sel)
+		{
+			ulong *p1 = (ulong*)&v1;
+			ulong *p2 = (ulong*)&v2;
+			return new Vector2ul (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+		}
+
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector4f Shuffle (this Vector4f v1, ShuffleSel sel)
 		{
 			float *ptr = (float*)&v1;

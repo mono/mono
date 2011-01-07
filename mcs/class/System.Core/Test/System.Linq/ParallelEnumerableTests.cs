@@ -278,6 +278,28 @@ namespace MonoTests.System.Linq
 				AreEquivalent (result, first.AsReallyParallel ().Union (second.AsParallel ()), 1);
 			});
 		}
+
+		[Test]
+		public void TestBigUnion ()
+		{
+			ParallelTestHelper.Repeat (() => {
+				int [] first = Enumerable.Range (1, 10000).ToArray ();
+				int [] second = Enumerable.Range (323, 757).ToArray ();
+
+				AreEquivalent (first, first.AsReallyParallel ().Union (second.AsParallel ()), 1);
+			}, 10);
+		}
+
+		[Test]
+		public void TestBigIntersect ()
+		{
+			ParallelTestHelper.Repeat (() => {
+				int [] first = Enumerable.Range (1, 10000).ToArray ();
+				int [] second = Enumerable.Range (323, 757).ToArray ();
+
+				AreEquivalent (second, first.AsReallyParallel ().Intersect (second.AsParallel ()), 1);
+			}, 10);
+		}
 		
 		class Foo {}
 		class Bar : Foo {}

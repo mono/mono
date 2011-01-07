@@ -45,8 +45,18 @@ namespace System.IO {
 
 		public DriveInfo (string driveName)
 		{
-			DriveInfo [] drives = GetDrives ();
+			if (!Environment.IsUnix) {
+				if (driveName == null || driveName.Length == 0)
+					throw new ArgumentException ("The drive name is null or empty", "driveName");
 
+				if (driveName.Length >= 2 && driveName [1] != ':')
+					throw new ArgumentException ("Invalid drive name", "driveName");
+
+				// Convert the path to a standard format so we can find it later.
+				driveName = String.Concat (Char.ToUpper (driveName [0]).ToString (), ":\\");
+			}
+
+			DriveInfo [] drives = GetDrives ();
 			foreach (DriveInfo d in drives){
 				if (d.path == driveName){
 					this.path = d.path;
@@ -232,10 +242,16 @@ namespace System.IO {
 
 		static DriveInfo [] WindowsGetDrives ()
 		{
-			throw new NotImplementedException ();
+			string [] drives = Environment.GetLogicalDrives ();
+			DriveInfo [] infos = new DriveInfo [drives.Length];
+			int i = 0;
+			foreach (string s in drives) {
+				infos [i++] = new DriveInfo (_DriveType.Windows, s, "Fixed");
+			}
+			return infos;
 		}
 		
-		[MonoTODO("Currently only implemented on Mono/Linux")]
+		[MonoTODO("In windows, alldrives are 'Fixed'")]
 		public static DriveInfo[] GetDrives ()
 		{
 			if (Environment.IsUnix)

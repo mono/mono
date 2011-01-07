@@ -1545,7 +1545,6 @@ System.Collections.Concurrent/OrderablePartitioner.cs
 System.Collections.Concurrent/ConcurrentDictionary.cs
 System.Collections.Concurrent/Partitioner.cs
 System.Collections.Concurrent/ConcurrentQueue.cs
-System.Collections.Concurrent/ConcurrentSkipList.cs
 System.Collections.Concurrent.Partitioners/ListPartitioner.cs
 System.Collections.Concurrent.Partitioners/EnumerablePartitioner.cs
 System.Collections.Concurrent.Partitioners/UserRangePartitioner.cs
@@ -1556,9 +1555,7 @@ System.Collections.Concurrent/ConcurrentOrderedList.cs
 System.Threading/LazyInitializer.cs
 System.Threading/CountdownEvent.cs
 System.Threading/CancellationTokenSource.cs
-System.Threading/Snzi.cs
 System.Threading/CancellationToken.cs
-System.Threading/CSnzi.cs
 System.Threading/SpinWait.cs
 System.Threading/SemaphoreSlim.cs
 System.Threading/CancellationTokenRegistration.cs

@@ -1119,5 +1119,25 @@ namespace MonoTests.System
 			Assert.AreEqual (1, attributes.Length);
 			Assert.AreEqual ("Derived.baz", attributes [0].Data);
 		}
+
+		[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+		public class MyCAttr : Attribute {}
+
+		class Base {
+			[MyCAttr]
+			public override string ToString () { return null; }
+		}
+
+		class Derived : Base {
+			public override string ToString () { return null; }
+		}
+
+		[Test] //one ton of bugs
+		public void GetCustomAttributesOnMethodOverride ()
+		{
+			var m = typeof (Derived).GetMethod ("ToString");
+			var attrs = Attribute.GetCustomAttributes (m, true);
+			Assert.AreEqual (1, attrs.Length);	
+		}
 	}
 }
