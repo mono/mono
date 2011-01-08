@@ -3088,33 +3088,31 @@ namespace Mono.CSharp {
 
 			if ((base_classp & (Modifiers.PROTECTED | Modifiers.INTERNAL)) == (Modifiers.PROTECTED | Modifiers.INTERNAL)) {
 				//
+				// It must be at least "protected"
+				//
+				if ((thisp & Modifiers.PROTECTED) == 0) {
+					return false;
+				}
+
+				//
 				// when overriding protected internal, the method can be declared
 				// protected internal only within the same assembly or assembly
 				// which has InternalsVisibleTo
 				//
-				if ((thisp & (Modifiers.PROTECTED | Modifiers.INTERNAL)) == (Modifiers.PROTECTED | Modifiers.INTERNAL)) {
+				if ((thisp & Modifiers.INTERNAL) != 0) {
 					return base_member.DeclaringType.MemberDefinition.IsInternalAsPublic (this_member.Module.DeclaringAssembly);
-				} 
-				if ((thisp & Modifiers.PROTECTED) != Modifiers.PROTECTED) {
-					//
-					// if it's not "protected internal", it must be "protected"
-					//
+				}
 
-					return false;
+				//
+				// protected overriding protected internal inside same assembly
+				// requires internal modifier as well
+				//
+				if (base_member.DeclaringType.MemberDefinition.IsInternalAsPublic (this_member.Module.DeclaringAssembly)) {
+					// HACK: Ignore the check for System.Web assembly which requires some clean up to pass this check
+					if (this_member.Module.DeclaringAssembly.Name != "System.Web")
+						return false;
 				}
-				if (this_member.Parent.PartialContainer.DeclaringAssembly == base_member.DeclaringType.MemberDefinition.DeclaringAssembly) {
-					//
-					// protected within the same assembly - an error
-					//
-					return false;
-				}
-				if ((thisp & ~(Modifiers.PROTECTED | Modifiers.INTERNAL)) !=
-					   (base_classp & ~(Modifiers.PROTECTED | Modifiers.INTERNAL))) {
-					//
-					// protected ok, but other attributes differ - report an error
-					//
-					return false;
-				}
+
 				return true;
 			}
 
