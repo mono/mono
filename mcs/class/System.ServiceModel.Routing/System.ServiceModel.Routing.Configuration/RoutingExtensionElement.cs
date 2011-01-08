@@ -34,7 +34,7 @@ namespace System.ServiceModel.Routing.Configuration
 			set { base ["soapProcessingEnabled"] = value; }
 		}
 
-		protected override object CreateBehavior ()
+		protected internal override object CreateBehavior ()
 		{
 			var table = RoutingSection.CreateFilterTable (FilterTableName);
 

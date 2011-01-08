@@ -455,7 +455,7 @@ namespace System.Web.UI
 				AsyncPostBackError (this, e);
 		}
 
-		protected override void OnInit (EventArgs e) {
+		protected internal override void OnInit (EventArgs e) {
 			base.OnInit (e);
 
 			if (GetCurrentInternal (Page) != null)
@@ -471,7 +471,7 @@ namespace System.Web.UI
 				OnAsyncPostBackError (new AsyncPostBackErrorEventArgs (Context.Error));
 		}
 
-		protected override void OnPreRender (EventArgs e) {
+		protected internal override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
 			Page.PreRenderComplete += new EventHandler (OnPreRenderComplete);
@@ -1086,7 +1086,7 @@ namespace System.Web.UI
 			scriptList.Add (new RegisteredScript (control, type, key, script, url, addScriptTag, scriptType));
 		}
 
-		protected override void Render (HtmlTextWriter writer) {
+		protected internal override void Render (HtmlTextWriter writer) {
 			// MSDN: This method is used by control developers to extend the ScriptManager control. 
 			// Notes to Inheritors: 
 			// When overriding this method, call the base Render(HtmlTextWriter) method 

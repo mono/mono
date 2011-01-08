@@ -59,7 +59,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			get { return properties; }
 		}
 		
-		protected override object CreateBehavior ()
+		protected internal override object CreateBehavior ()
 		{
 			throw new NotImplementedException ();
 		}

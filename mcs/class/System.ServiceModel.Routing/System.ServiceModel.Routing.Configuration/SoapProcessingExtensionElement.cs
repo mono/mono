@@ -22,7 +22,7 @@ namespace System.ServiceModel.Routing.Configuration
 			set { base ["processMessages"] = value; }
 		}
 
-		protected override object CreateBehavior ()
+		protected internal override object CreateBehavior ()
 		{
 			return new SoapProcessingBehavior () { ProcessMessages = this.ProcessMessages };
 		}

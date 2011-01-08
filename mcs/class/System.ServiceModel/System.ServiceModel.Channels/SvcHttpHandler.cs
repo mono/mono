@@ -128,10 +128,10 @@ namespace System.ServiceModel.Channels
 
 			//ServiceHost for this not created yet
 			var baseUri = new Uri (new Uri (HttpContext.Current.Request.Url.GetLeftPart (UriPartial.Authority)), path);
-			if (factory_type != null) {
-				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type, new Uri [] {baseUri});
-			}
-			else
+//			if (factory_type != null) {
+//				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type, new Uri [] {baseUri});
+//			}
+//			else
 				host = new ServiceHost (type, baseUri);
 			host.Extensions.Add (new VirtualPathExtension (baseUri.AbsolutePath));
 

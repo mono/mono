@@ -117,7 +117,7 @@ namespace System.Web.UI
 			}
 		}
 
-		protected override void OnInit (EventArgs e) {
+		protected internal override void OnInit (EventArgs e) {
 			base.OnInit (e);
 			ScriptManager.RegisterProxy (this);
 		}

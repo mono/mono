@@ -92,14 +92,14 @@ namespace System.ServiceModel.Discovery.Configuration
 			FindCriteria.CopyFrom (ce.FindCriteria);
 		}
 
-		protected override BindingElement CreateBindingElement ()
+		protected internal override BindingElement CreateBindingElement ()
 		{
 			var be = new DiscoveryClientBindingElement ();
 			ApplyConfiguration (be);
 			return be;
 		}
 
-		protected override void InitializeFrom (BindingElement bindingElement)
+		protected internal override void InitializeFrom (BindingElement bindingElement)
 		{
 			if (bindingElement == null)
 				throw new ArgumentNullException ("bindingElement");

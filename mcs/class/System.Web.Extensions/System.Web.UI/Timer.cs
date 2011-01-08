@@ -112,7 +112,7 @@ namespace System.Web.UI
 			yield return script;
 		}
 
-		protected override void OnPreRender (EventArgs e) {
+		protected internal override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 			ScriptManager.RegisterScriptControl (this);
 		}
@@ -126,7 +126,7 @@ namespace System.Web.UI
 			OnTick (EventArgs.Empty);
 		}
 
-		protected override void Render (HtmlTextWriter writer) {
+		protected internal override void Render (HtmlTextWriter writer) {
 
 			Page.ClientScript.RegisterForEventValidation (UniqueID);
 

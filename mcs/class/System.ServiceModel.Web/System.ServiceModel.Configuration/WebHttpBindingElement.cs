@@ -279,7 +279,7 @@ namespace System.ServiceModel.Configuration
 			Security.ApplyConfiguration (webBinding.Security);
 		}
 
-		protected override void InitializeFrom (Binding binding)
+		protected internal override void InitializeFrom (Binding binding)
 		{
 			WebHttpBinding b = (WebHttpBinding)binding;
 			

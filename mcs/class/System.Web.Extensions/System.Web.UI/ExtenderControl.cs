@@ -84,7 +84,7 @@ namespace System.Web.UI
 
 		protected abstract IEnumerable<ScriptReference> GetScriptReferences ();
 
-		protected override void OnPreRender (EventArgs e) {
+		protected internal override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
 			if (String.IsNullOrEmpty (TargetControlID))
@@ -96,7 +96,7 @@ namespace System.Web.UI
 			ScriptManager.RegisterExtenderControl (this, c);
 		}
 
-		protected override void Render (HtmlTextWriter writer) {
+		protected internal override void Render (HtmlTextWriter writer) {
 			ScriptManager.RegisterScriptDescriptors (this);
 			base.Render (writer);
 		}
