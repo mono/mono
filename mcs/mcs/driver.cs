@@ -946,7 +946,7 @@ namespace Mono.CSharp
 			case "/res":
 			case "/resource":
 				AssemblyResource res = null;			
-				string[] s = value.Split (argument_value_separator);
+				string[] s = value.Split (argument_value_separator, StringSplitOptions.RemoveEmptyEntries);
 				switch (s.Length) {
 				case 1:
 					if (s[0].Length == 0)
