@@ -33,7 +33,7 @@ using System.Security;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the System.ServiceModel assembly
+// General Information about the System.ServiceModel.Discovery assembly
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
@@ -44,11 +44,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany ("MONO development team")]
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark ("")]
 
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDefaultAlias ("System.ServiceModel.Discovery.dll")]
-[assembly: AssemblyInformationalVersion ("3.5.594.0")]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
