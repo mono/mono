@@ -130,6 +130,7 @@ namespace System.Web
 			mimeTypes.Add ("elc", "application/x-elc");
 			mimeTypes.Add ("el", "text/x-script.elisp");
 			mimeTypes.Add ("eml", "message/rfc822");
+			mimeTypes.Add ("eot", "application/vnd.bw-fontobject");
 			mimeTypes.Add ("eps", "application/postscript");
 			mimeTypes.Add ("es", "application/x-esrehber");
 			mimeTypes.Add ("etx", "text/x-setext");
@@ -433,6 +434,7 @@ namespace System.Web
 			mimeTypes.Add ("tsi", "audio/tsp-audio");
 			mimeTypes.Add ("tsp", "audio/tsplayer");
 			mimeTypes.Add ("tsv", "text/tab-separated-values");
+			mimeTypes.Add ("ttf", "application/x-font-ttf");
 			mimeTypes.Add ("turbot", "image/florian");
 			mimeTypes.Add ("txt", "text/plain");
 			mimeTypes.Add ("uil", "text/x-uil");
@@ -483,6 +485,7 @@ namespace System.Web
 			mimeTypes.Add ("wmlsc", "application/vnd.wap.wmlscriptc");
 			mimeTypes.Add ("wmls", "text/vnd.wap.wmlscript");
 			mimeTypes.Add ("wml", "text/vnd.wap.wml");
+			mimeTypes.Add ("woff", "application/x-woff");
 			mimeTypes.Add ("word", "application/msword");
 			mimeTypes.Add ("wp5", "application/wordperfect");
 			mimeTypes.Add ("wp6", "application/wordperfect");
