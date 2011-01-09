@@ -993,7 +993,7 @@ namespace Mono.Simd
 		{
 			double *p1 = (double*)&v1;
 			double *p2 = (double*)&v2;
-			return new Vector2d (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+			return new Vector2d (*(p1 + ((sel >> 0) & 0x1)), *(p2 + ((sel >> 1) & 0x1))); 
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -1001,7 +1001,7 @@ namespace Mono.Simd
 		{
 			long *p1 = (long*)&v1;
 			long *p2 = (long*)&v2;
-			return new Vector2l (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+			return new Vector2l (*(p1 + ((sel >> 0) & 0x1)), *(p2 + ((sel >> 1) & 0x1)));
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -1009,7 +1009,7 @@ namespace Mono.Simd
 		{
 			ulong *p1 = (ulong*)&v1;
 			ulong *p2 = (ulong*)&v2;
-			return new Vector2ul (*(p1 + ((sel >> 0) & 0x3)), *(p2 + ((sel >> 2) & 0x3))); 
+			return new Vector2ul (*(p1 + ((sel >> 0) & 0x1)), *(p2 + ((sel >> 1) & 0x1))); 
 		}
 
 		[Acceleration (AccelMode.SSE2)]
