@@ -42,6 +42,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		static string DotConfigExtensionsPath = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
 								Path.Combine ("xbuild", "tasks"));
+		static string MacOSXXBuildExternalDir = "/Library/Frameworks/Mono.framework/External/xbuild";
 	
 		internal Import (XmlElement importElement, Project project, ImportedProject originalProject)
 		{
@@ -117,7 +118,11 @@ namespace Microsoft.Build.BuildEngine {
 			// project.
 
 			string envvar = Environment.GetEnvironmentVariable (property_name);
-			envvar = (envvar ?? String.Empty) + ":" + DotConfigExtensionsPath;
+			envvar = String.Join (":", new string [] {
+						(envvar ?? String.Empty),
+						DotConfigExtensionsPath,
+						// For mac osx, see bug #663180
+						(int)Environment.OSVersion.Platform == 6 ? MacOSXXBuildExternalDir : String.Empty });
 
 			string [] paths = envvar.Split (new char [] {':'}, StringSplitOptions.RemoveEmptyEntries);
 			foreach (string path in paths) {
