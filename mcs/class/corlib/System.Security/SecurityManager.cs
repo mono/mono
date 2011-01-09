@@ -70,6 +70,9 @@ namespace System.Security {
 
 		// properties
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		extern public static bool CheckExecutionRights {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
@@ -114,6 +117,9 @@ namespace System.Security {
 			origin = new ArrayList ();
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static bool IsGranted (IPermission perm)
 		{
 			if (perm == null)
@@ -214,6 +220,9 @@ namespace System.Security {
 			return null;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
 		{
@@ -231,6 +240,9 @@ namespace System.Security {
 			return pl;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static PolicyLevel LoadPolicyLevelFromString (string str, PolicyLevelType type)
 		{
@@ -248,12 +260,18 @@ namespace System.Security {
 			return pl;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static IEnumerator PolicyHierarchy ()
 		{
 			return Hierarchy;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static PermissionSet ResolvePolicy (Evidence evidence)
 		{
 			// no evidence, no permission
@@ -275,6 +293,9 @@ namespace System.Security {
 			return ps;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		[MonoTODO ("(2.0) more tests are needed")]
 		public static PermissionSet ResolvePolicy (Evidence[] evidences)
 		{
@@ -291,6 +312,9 @@ namespace System.Security {
 			return ps;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static PermissionSet ResolveSystemPolicy (Evidence evidence)
 		{
 			// no evidence, no permission
@@ -314,6 +338,9 @@ namespace System.Security {
 
 		static private SecurityPermission _execution = new SecurityPermission (SecurityPermissionFlag.Execution);
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static PermissionSet ResolvePolicy (Evidence evidence, PermissionSet reqdPset, PermissionSet optPset, PermissionSet denyPset, out PermissionSet denied)
 		{
 			PermissionSet resolved = ResolvePolicy (evidence);
@@ -348,6 +375,9 @@ namespace System.Security {
 			return resolved;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static IEnumerator ResolvePolicyGroups (Evidence evidence)
 		{
 			if (evidence == null)
@@ -364,6 +394,9 @@ namespace System.Security {
 			return al.GetEnumerator ();
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static void SavePolicy () 
 		{
@@ -374,6 +407,9 @@ namespace System.Security {
 			}
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static void SavePolicyLevel (PolicyLevel level) 
 		{
@@ -749,7 +785,22 @@ namespace System.Security {
 		{
 			throw new SecurityException ("SecurityAction.DemandChoice was removed from 2.0");
 		}
-#pragma warning restore 169		
+#pragma warning restore 169
+
+#if NET_4_0
+		public static PermissionSet GetStandardSandbox (Evidence evidence)
+		{
+			if (evidence == null)
+				throw new ArgumentNullException ("evidence");
+
+			throw new NotImplementedException ();
+		}
+
+		public static bool CurrentThreadRequiresSecurityContextCapture ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
 
