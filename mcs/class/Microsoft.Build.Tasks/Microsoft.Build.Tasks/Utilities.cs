@@ -29,19 +29,41 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.Build.Tasks {
 	internal static class Utilities {
 
-		public static bool RunningOnWindows {
-			get {
-				// Code from Mono.GetOptions/Options.cs
-				// check for non-Unix platforms - see FAQ for more details
-				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
-				int platform = (int) Environment.OSVersion.Platform;
-				return ((platform != 4) && (platform != 128));
-			}
+		public readonly static bool RunningOnMac;
+		public readonly static bool RunningOnWindows;
 
+		static Utilities ()
+		{
+			RunningOnWindows = Path.DirectorySeparatorChar == '\\';
+			RunningOnMac = !RunningOnWindows && IsRunningOnMac ();
+		}
+
+		[DllImport ("libc")]
+		static extern int uname (IntPtr buf);
+
+		//From Managed.Windows.Forms/XplatUI
+		static bool IsRunningOnMac ()
+		{
+			IntPtr buf = IntPtr.Zero;
+			try {
+				buf = System.Runtime.InteropServices.Marshal.AllocHGlobal (8192);
+				// This is a hacktastic way of getting sysname from uname ()
+				if (uname (buf) == 0) {
+					string os = System.Runtime.InteropServices.Marshal.PtrToStringAnsi (buf);
+					if (os == "Darwin")
+						return true;
+				}
+			} catch {
+			} finally {
+				if (buf != IntPtr.Zero)
+					System.Runtime.InteropServices.Marshal.FreeHGlobal (buf);
+			}
+			return false;
 		}
 
 		internal static string FromMSBuildPath (string relPath)
