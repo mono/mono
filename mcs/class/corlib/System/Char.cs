@@ -54,12 +54,18 @@ namespace System
 		static Char ()
 		{
 			unsafe {
-				GetDataTablePointers (out category_data, out numeric_data, out numeric_data_values,
-					out to_lower_data_low, out to_lower_data_high, out to_upper_data_low, out to_upper_data_high);
+				GetDataTablePointers (CategoryDataVersion,
+					out category_data, out category_astral_index, out numeric_data,
+					out numeric_data_values, out to_lower_data_low, out to_lower_data_high,
+					out to_upper_data_low, out to_upper_data_high);
+				category_check_pair = category_astral_index != null
+					? (byte)UnicodeCategory.Surrogate
+					: (byte)0xff;
 			}
 		}
 
 		private readonly unsafe static byte *category_data;
+		private readonly unsafe static ushort *category_astral_index;
 		private readonly unsafe static byte *numeric_data;
 		private readonly unsafe static double *numeric_data_values;
 		private readonly unsafe static ushort *to_lower_data_low;
@@ -67,11 +73,21 @@ namespace System
 		private readonly unsafe static ushort *to_upper_data_low;
 		private readonly unsafe static ushort *to_upper_data_high;
 
+		// UnicodeCategory.Surrogate if astral plane
+		// categories are available, 0xff otherwise.
+		private readonly static byte category_check_pair;
+
+#if NET_4_0
+		private const int CategoryDataVersion = 4;
+#else
+		private const int CategoryDataVersion = 2;
+#endif
+
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		private unsafe static extern void GetDataTablePointers (out byte *category_data,
-				out byte *numeric_data, out double *numeric_data_values,
-				out ushort *to_lower_data_low, out ushort *to_lower_data_high,
-				out ushort *to_upper_data_low, out ushort *to_upper_data_high);
+		private unsafe static extern void GetDataTablePointers (int category_data_version,
+			out byte *category_data, out ushort *category_astral_index, out byte *numeric_data,
+			out double *numeric_data_values, out ushort *to_lower_data_low, out ushort *to_lower_data_high,
+			out ushort *to_upper_data_low, out ushort *to_upper_data_high);
 
 		public int CompareTo (object value)
 		{
@@ -202,7 +218,20 @@ namespace System
 		public static UnicodeCategory GetUnicodeCategory (string s, int index)
 		{
 			CheckParameter (s, index);
-			return GetUnicodeCategory (s[index]);
+			UnicodeCategory c = GetUnicodeCategory (s [index]);
+
+			if ((byte)c == category_check_pair &&
+			    IsSurrogatePair (s, index)) {
+				int u = ConvertToUtf32 (s [index], s [index + 1]);
+				unsafe {
+					// ConvertToUtf32 guarantees 0x10000 <= u <= 0x10ffff
+					int x = (category_astral_index [(u - 0x10000) >> 8] << 8) + (u & 0xff);
+
+					c = (UnicodeCategory)category_data [x];
+				}
+			}
+
+			return c;
 		}
 
 		public static bool IsControl (char c)
