@@ -41,5 +41,14 @@ namespace Mono.Cecil {
 				return signature.ToString ();
 			}
 		}
+
+		public override ModuleDefinition Module {
+			get { return ReturnType.Module; }
+		}
+
+		public override MethodDefinition Resolve ()
+		{
+			return null;
+		}
 	}
 }

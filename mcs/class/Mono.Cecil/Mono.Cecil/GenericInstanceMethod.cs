@@ -70,11 +70,11 @@ namespace Mono.Cecil {
 			get {
 				var signature = new StringBuilder ();
 				var method = this.ElementMethod;
-				signature.Append (method.ReturnType.FullName);
-				signature.Append (" ");
-				signature.Append (method.DeclaringType.FullName);
-				signature.Append ("::");
-				signature.Append (method.Name);
+				signature.Append (method.ReturnType.FullName)
+					.Append (" ")
+					.Append (method.DeclaringType.FullName)
+					.Append ("::")
+					.Append (method.Name);
 				this.GenericInstanceFullName (signature);
 				this.MethodSignatureFullName (signature);
 				return signature.ToString ();

@@ -103,6 +103,10 @@ namespace Mono.Cecil {
 			get { return constructor.DeclaringType; }
 		}
 
+		public bool IsResolved {
+			get { return resolved; }
+		}
+
 		public bool HasConstructorArguments {
 			get {
 				Resolve ();
@@ -195,12 +199,23 @@ namespace Mono.Cecil {
 			if (resolved || !HasImage)
 				return;
 
-			Module.Read (this, (attribute, reader) => {
-				reader.ReadCustomAttributeSignature (attribute);
-				return this;
-			});
+			try {
+				Module.Read (this, (attribute, reader) => {
+					reader.ReadCustomAttributeSignature (attribute);
+					return this;
+				});
 
-			resolved = true;
+				resolved = true;
+			} catch (ResolutionException) {
+				if (arguments != null)
+					arguments.Clear ();
+				if (fields != null)
+					fields.Clear ();
+				if (properties != null)
+					properties.Clear ();
+
+				resolved = false;
+			}
 		}
 	}
 

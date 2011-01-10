@@ -319,7 +319,7 @@ namespace Mono.Cecil {
 		{
 			var type = self.Resolve ();
 			if (type == null)
-				throw new InvalidOperationException (string.Format ("Failed to resolve type: {0}", self.FullName));
+				throw new ResolutionException (self);
 
 			return type;
 		}
