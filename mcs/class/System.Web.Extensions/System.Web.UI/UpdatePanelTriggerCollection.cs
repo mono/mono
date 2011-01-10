@@ -37,7 +37,8 @@ namespace System.Web.UI
 	public class UpdatePanelTriggerCollection : Collection<UpdatePanelTrigger>
 	{
 		UpdatePanel _owner;
-
+		bool initialized;
+		
 		public UpdatePanelTriggerCollection (UpdatePanel owner)
 		{
 			_owner = owner;
@@ -58,6 +59,11 @@ namespace System.Web.UI
 		{
 			base.InsertItem (index, item);
 			item.Owner = Owner;
+
+			if (!initialized || item == null)
+				return;
+
+			item.Initialize ();
 		}
 
 		protected override void RemoveItem (int index)
@@ -69,6 +75,17 @@ namespace System.Web.UI
 		{
 			base.SetItem (index, item);
 			item.Owner = Owner;
+		}
+
+		internal void Initialize ()
+		{
+			if (initialized)
+				return;
+
+			for (int i = 0; i < Count; i++)
+				this [i].Initialize ();
+
+			initialized = true;
 		}
 	}
 }
