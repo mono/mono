@@ -38,7 +38,8 @@
         <Parameter Name="enableTracking" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="enableTracking">true to enable thread tracking, false otherwise.</param>
+        <param name="enableTracking">
+          <see langword="true" /> to enable thread tracking, <see langword="false" /> otherwise.</param>
         <summary>Initialize underlying <see cref="T:System.Threading.SpinLock" /> with provided value.</summary>
         <remarks />
       </Docs>

@@ -102,7 +102,8 @@
       <Docs>
         <param name="data">The data to locate in the list.</param>
         <summary>Checks if the supplied element is in the ConcurrentOrderedList.</summary>
-        <returns>true if the item is found, false otherwise.</returns>
+        <returns>
+          <see langword="true" /> if the item is found, <see langword="false" /> otherwise.</returns>
         <remarks />
       </Docs>
     </Member>
@@ -122,7 +123,8 @@
       <Docs>
         <param name="key">Hash value to check.</param>
         <summary>Checks if the supplied hash corresponds to an element in the ConcurrentOrderedList.</summary>
-        <returns>true if an item corresponding to the given hash is found, false otherwise.</returns>
+        <returns>
+          <see langword="true" /> if an item corresponding to the given hash is found, <see langword="false" /> otherwise.</returns>
         <remarks>A call to <see cref="M:ConcurrentOrderedList&lt;T&gt;.Contains()" /> is equivalent to calling this method using the <see cref="T:System.Collections.Generic.IEqualityComparer&lt;T&gt;.GetHashCode(T)" /> method with <see cref="P:ConcurrentOrderedList&lt;T&gt;.Comparer" />.</remarks>
       </Docs>
     </Member>
@@ -268,7 +270,7 @@
       <Docs>
         <param name="data">Data to add in the collection.</param>
         <summary>Try to add an element to the collection.</summary>
-        <returns>True if the insertion was successful, false otherwise.</returns>
+        <returns>True if the insertion was successful, <see langword="false" /> otherwise.</returns>
         <remarks>This method add the supplied element only if there is no other element with an identical hash already in the list.</remarks>
       </Docs>
     </Member>

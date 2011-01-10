@@ -71,7 +71,7 @@
       </ReturnValue>
       <Docs>
         <summary>Query if Snzi is has a zero value or not.</summary>
-        <value>True if Snzi is zero, false otherwise.</value>
+        <value>True if Snzi is zero, <see langword="false" /> otherwise.</value>
         <remarks />
       </Docs>
     </Member>

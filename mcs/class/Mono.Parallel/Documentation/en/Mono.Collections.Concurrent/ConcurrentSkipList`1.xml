@@ -86,7 +86,8 @@
       <Docs>
         <param name="value">To be added.</param>
         <summary>Test if an element is in the collection</summary>
-        <returns>true if the element supplied was found, false otherwise</returns>
+        <returns>
+          <see langword="true" /> if the element supplied was found, <see langword="false" /> otherwise</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -106,7 +107,8 @@
       <Docs>
         <param name="hash">Hash value to check.</param>
         <summary>Checks if the supplied hash corresponds to an element in the ConcurrentOrderedList.</summary>
-        <returns>true if an item corresponding to the given hash is found, false otherwise.</returns>
+        <returns>
+          <see langword="true" /> if an item corresponding to the given hash is found, <see langword="false" /> otherwise.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -291,7 +293,8 @@
         <param name="hash">Hash value to check.</param>
         <param name="value">Will be set to the element corresponding to the provided hash if it was found.</param>
         <summary>Check if an element with the provided hash exists in the list and provide it.</summary>
-        <returns>true if an element with the provided hash was found and if value point to it, false otherwise.</returns>
+        <returns>
+          <see langword="true" /> if an element with the provided hash was found and if value point to it, <see langword="false" /> otherwise.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

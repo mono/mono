@@ -57,7 +57,7 @@
       <Parameters />
       <Docs>
         <summary>Close the CSnzi object to subsequent Arrive or Depart action until <see cref="M:Mono.Threading.CSnzi.Open()" /> is called.</summary>
-        <returns>True if the state of the CSnzi was zero or if it was already closed, false otherwise.</returns>
+        <returns>True if the state of the CSnzi was zero or if it was already closed, <see langword="false" /> otherwise.</returns>
         <remarks />
       </Docs>
     </Member>
@@ -77,7 +77,7 @@
       <Docs>
         <param name="node">The node to execute the decrement operation on.</param>
         <summary>Decrement the state of the CSnzi object.</summary>
-        <returns>True if the CSnzi is open and its state is zero, false otherwise.</returns>
+        <returns>True if the CSnzi is open and its state is zero, <see langword="false" /> otherwise.</returns>
         <remarks>Node argument must have been returned by a prior <see cref="M:Mono.Threading.CSnzi.Arrive()" /> call.</remarks>
       </Docs>
     </Member>
