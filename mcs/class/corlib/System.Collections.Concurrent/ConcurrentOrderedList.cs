@@ -102,7 +102,7 @@ namespace System.Collections.Concurrent
 
 		public bool ContainsHash (int key)
 		{
-			Node node;			
+			Node node;
 
 			if (!ListFind (key, out node))
 				return false;
@@ -114,13 +114,19 @@ namespace System.Collections.Concurrent
 		public bool TryGetFromHash (int key, out T data)
 		{
 			data = default (T);
-			Node node;			
+			Node node;
 
 			if (!ListFind (key, out node))
 				return false;
 
 			data = node.Data;
 			return true;
+		}
+
+		public IEqualityComparer<T> Comparer {
+			get {
+				return comparer;
+			}
 		}
 
 		Node ListSearch (int key, ref Node left)
