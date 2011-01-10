@@ -20,8 +20,8 @@
       <Type Name="AtomicBoolean" Kind="Class" />
       <Type Name="AtomicBooleanValue" Kind="Structure" />
       <Type Name="CSnzi" Kind="Class" />
+      <Type Name="CSnziNode" Kind="Class" />
       <Type Name="CSnziState" Kind="Enumeration" />
-      <Type Name="ICSnziNode" Kind="Interface" />
       <Type Name="Snzi" Kind="Class" />
       <Type Name="SpinLockWrapper" Kind="Class" />
     </Namespace>

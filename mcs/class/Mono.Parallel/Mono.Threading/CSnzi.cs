@@ -30,10 +30,10 @@ using System.Threading;
 
 namespace Mono.Threading
 {
-	public interface ICSnziNode
+	public abstract class CSnziNode
 	{
-		bool Arrive ();
-		bool Depart ();
+		internal abstract bool Arrive ();
+		internal abstract bool Depart ();
 	}
 	
 	public enum CSnziState
@@ -42,18 +42,18 @@ namespace Mono.Threading
 		Closed
 	}
 	
-	internal class CSnziLeafNode : ICSnziNode
+	internal class CSnziLeafNode : CSnziNode
 	{
 		int count;
-		readonly ICSnziNode parent;
+		readonly CSnziNode parent;
 		
-		public CSnziLeafNode (ICSnziNode parent)
+		public CSnziLeafNode (CSnziNode parent)
 		{
 			this.parent = parent;
 		}
 
-		#region ICSnziNode implementation
-		public bool Arrive ()
+		#region CSnziNode implementation
+		internal override bool Arrive ()
 		{
 			bool arrivedAtParent = false;
 			int x;
@@ -74,7 +74,7 @@ namespace Mono.Threading
 			return true;
 		}
 		
-		public bool Depart ()
+		internal override bool Depart ()
 		{
 			int x = Interlocked.Decrement (ref count);
 			if (x == 1)
@@ -86,7 +86,7 @@ namespace Mono.Threading
 		
 	}
 	
-	internal class CSnziRootNode : ICSnziNode
+	internal class CSnziRootNode : CSnziNode
 	{
 		int root;
 		
@@ -112,8 +112,8 @@ namespace Mono.Threading
 			root = Encode (count, state);
 		}
 
-		#region ICSnziNode implementation
-		public bool Arrive ()
+		#region CSnziNode implementation
+		internal override bool Arrive ()
 		{
 			int old;
 			int c;
@@ -131,7 +131,7 @@ namespace Mono.Threading
 			return true;
 		}
 		
-		public bool Depart ()
+		internal override bool Depart ()
 		{
 			int old;
 			int c;
@@ -199,13 +199,13 @@ namespace Mono.Threading
 			}
 		}
 		
-		public ICSnziNode Arrive ()
+		public CSnziNode Arrive ()
 		{
 			while (true) {
 				if (root.State != CSnziState.Open)
 					return null;
 				
-				ICSnziNode leaf = leafs[GetLeafIndex ()];
+				CSnziNode leaf = leafs[GetLeafIndex ()];
 				if (leaf.Arrive ())
 					return leaf;
 				else {
@@ -214,7 +214,7 @@ namespace Mono.Threading
 			}
 		}
 		
-		public bool Depart (ICSnziNode node)
+		public bool Depart (CSnziNode node)
 		{
 			return node.Depart ();
 		}

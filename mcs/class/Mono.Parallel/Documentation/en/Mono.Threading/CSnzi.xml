@@ -28,14 +28,14 @@
       </Docs>
     </Member>
     <Member MemberName="Arrive">
-      <MemberSignature Language="C#" Value="public Mono.Threading.ICSnziNode Arrive ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Threading.ICSnziNode Arrive() cil managed" />
+      <MemberSignature Language="C#" Value="public Mono.Threading.CSnziNode Arrive ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Threading.CSnziNode Arrive() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Threading.ICSnziNode</ReturnType>
+        <ReturnType>Mono.Threading.CSnziNode</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -62,8 +62,8 @@
       </Docs>
     </Member>
     <Member MemberName="Depart">
-      <MemberSignature Language="C#" Value="public bool Depart (Mono.Threading.ICSnziNode node);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Depart(class Mono.Threading.ICSnziNode node) cil managed" />
+      <MemberSignature Language="C#" Value="public bool Depart (Mono.Threading.CSnziNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Depart(class Mono.Threading.CSnziNode node) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -72,7 +72,7 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="node" Type="Mono.Threading.ICSnziNode" />
+        <Parameter Name="node" Type="Mono.Threading.CSnziNode" />
       </Parameters>
       <Docs>
         <param name="node">The node to execute the decrement operation on.</param>
