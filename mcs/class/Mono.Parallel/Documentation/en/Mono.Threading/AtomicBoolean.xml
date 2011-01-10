@@ -44,7 +44,7 @@
       <Docs>
         <param name="expected">To be added.</param>
         <param name="newVal">To be added.</param>
-        <summary>To be added.</summary>
+        <summary>Same behavior than <see cref="M:System.Threading.Interlocked.CompareExchange(System.Int32@,System.Int32,System.Int32)" /></summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
@@ -104,7 +104,7 @@
       </Parameters>
       <Docs>
         <param name="newVal">To be added.</param>
-        <summary>To be added.</summary>
+        <summary>Same behavior than <see cref="M:System.Threading.Interlocked.Exchange(System.Int32@,System.Int32)" /></summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
@@ -124,7 +124,7 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <summary>To be added.</summary>
+        <summary>Provide a static facility method for creating new AtomicBoolean value initialized with specific boolean.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
@@ -198,9 +198,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>Try to atomically change the value from false to true.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>This method is lighter than <see cref="M:Mono.Threading.AtomicBoolean.TrySet()" /> in the case the AtomicBoolean is already set to true because it first uses a normal read to check the value.</remarks>
       </Docs>
     </Member>
     <Member MemberName="TrySet">
@@ -215,9 +215,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>Try to atomically change the value from false to true.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>This method is essentially a shortand for `!AtomicBoolean.Exchange (true)'</remarks>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -231,7 +231,7 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The boolean value represented by this instance.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
