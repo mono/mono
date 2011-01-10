@@ -75,7 +75,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 			this.inputString = s;
 			this.position = 0;
-			this.token = new Token (null, TokenType.BOF);
+			this.token = new Token (null, TokenType.BOF, 0);
 
 			GetNextToken ();
 		}
@@ -151,7 +151,9 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		
 			if (token.Type == TokenType.EOF)
-				throw new ExpressionParseException ("Cannot read past the end of stream.");
+				throw new ExpressionParseException (String.Format (
+							"Error while parsing condition \"{0}\", ended abruptly.",
+							inputString));
 			
 			SkipWhiteSpace ();
 			
@@ -161,7 +163,7 @@ namespace Microsoft.Build.BuildEngine {
 			int i = ReadChar ();
 			
 			if (i == -1) {
-				token = new Token (null, TokenType.EOF);
+				token = new Token (null, TokenType.EOF, tokenPosition);
 				return;
 			}
 			
@@ -172,7 +174,7 @@ namespace Microsoft.Build.BuildEngine {
 			// maybe we should treat item reference as a token
 			if (ch == '-' && PeekChar () == '>') {
 				ReadChar ();
-				token = new Token ("->", TokenType.Transform);
+				token = new Token ("->", TokenType.Transform, tokenPosition);
 			} else if (Char.IsDigit (ch) || ch == '-') {
 				StringBuilder sb = new StringBuilder ();
 				
@@ -187,8 +189,8 @@ namespace Microsoft.Build.BuildEngine {
 						break;
 				}
 				
-				token = new Token (sb.ToString (), TokenType.Number);
-			} else if (ch == '\'') {
+				token = new Token (sb.ToString (), TokenType.Number, tokenPosition);
+			} else if (ch == '\'' && position < inputString.Length) {
 				StringBuilder sb = new StringBuilder ();
 				string temp;
 				
@@ -215,7 +217,7 @@ namespace Microsoft.Build.BuildEngine {
 				
 				temp = sb.ToString ();
 				
-				token = new Token (temp.Substring (1, temp.Length - 2), TokenType.String);
+				token = new Token (temp.Substring (1, temp.Length - 2), TokenType.String, tokenPosition);
 				
 			} else 	if (ch == '_' || Char.IsLetter (ch)) {
 				StringBuilder sb = new StringBuilder ();
@@ -232,25 +234,25 @@ namespace Microsoft.Build.BuildEngine {
 				string temp = sb.ToString ();
 				
 				if (keywords.ContainsKey (temp))
-					token = new Token (temp, keywords [temp]);
+					token = new Token (temp, keywords [temp], tokenPosition);
 				else
-					token = new Token (temp, TokenType.String);
+					token = new Token (temp, TokenType.String, tokenPosition);
 					
 			} else if (ch == '!' && PeekChar () == (int) '=') {
-				token = new Token ("!=", TokenType.NotEqual);
+				token = new Token ("!=", TokenType.NotEqual, tokenPosition);
 				ReadChar ();
 			} else if (ch == '<' && PeekChar () == (int) '=') {
-				token = new Token ("<=", TokenType.LessOrEqual);
+				token = new Token ("<=", TokenType.LessOrEqual, tokenPosition);
 				ReadChar ();
 			} else if (ch == '>' && PeekChar () == (int) '=') {
-				token = new Token (">=", TokenType.GreaterOrEqual);
+				token = new Token (">=", TokenType.GreaterOrEqual, tokenPosition);
 				ReadChar ();
 			} else if (ch == '=' && PeekChar () == (int) '=') {
-				token = new Token ("==", TokenType.Equal);
+				token = new Token ("==", TokenType.Equal, tokenPosition);
 				ReadChar ();
 			} else if (ch >= 32 && ch < 128) {
 				if (charIndexToTokenType [ch] != TokenType.Invalid) {
-					token = new Token (new String (ch, 1), charIndexToTokenType [ch]);
+					token = new Token (new String (ch, 1), charIndexToTokenType [ch], tokenPosition);
 					return;
 				} else
 					throw new ExpressionParseException (String.Format ("Invalid punctuation: {0}", ch));

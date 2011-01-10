@@ -67,7 +67,7 @@ namespace Microsoft.Build.BuildEngine {
 			ConditionExpression e = parser.ParseExpression ();
 			
 			if (!parser.tokenizer.IsEOF ())
-				throw new ExpressionParseException (String.Format ("Unexpected token at end of condition: \"{0}\"", parser.tokenizer.Token.Value));
+				throw new ExpressionParseException (String.Format ("Unexpected token found, {0}, in condition \"{1}\"", parser.tokenizer.Token, condition));
 			
 			return e;
 		}
@@ -173,7 +173,7 @@ namespace Microsoft.Build.BuildEngine {
 			} else if (token.Type == TokenType.Not) {
 				e = ParseNotExpression ();
 			} else
-				throw new ExpressionParseException (String.Format ("Unexpected token type {0}, while parsing {1}", token.Type, conditionStr));
+				throw new ExpressionParseException (String.Format ("Unexpected token {0}, while parsing condition \"{1}\"", token, conditionStr));
 			
 			return e;
 		}
@@ -215,7 +215,11 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			ExpectToken (TokenType.LeftParen);
+			string ref_type = prefix [0] == '$' ? "a property" : "an item list";
+			int token_pos = tokenizer.Token.Position;
+			IsAtToken (TokenType.LeftParen, String.Format (
+						"Expected {0} at position {1} in condition \"{2}\". Missing opening parantheses after the '{3}'.",
+						ref_type, token_pos, conditionStr, prefix));
 			tokenizer.GetNextToken ();
 
 			sb.AppendFormat ("{0}({1}", prefix, tokenizer.Token.Value);
@@ -233,20 +237,33 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			}
 
-			ExpectToken (TokenType.RightParen);
+			IsAtToken (TokenType.RightParen, String.Format (
+						"Expected {0} at position {1} in condition \"{2}\". Missing closing parantheses'.",
+						ref_type, token_pos, conditionStr, prefix));
 			tokenizer.GetNextToken ();
 
 			sb.Append (")");
 
 			//FIXME: HACKY!
-			return new ConditionFactorExpression (new Token (sb.ToString (), TokenType.String));
+			return new ConditionFactorExpression (new Token (sb.ToString (), TokenType.String, token_pos));
 		}
 
-		void ExpectToken (TokenType type)
+		// used to check current token type
+		void IsAtToken (TokenType type, string error_msg)
 		{
-			if (tokenizer.Token.Type != type)
-				throw new ExpressionParseException ("Expected token type of type: " + type + ", got " +
-						tokenizer.Token.Type + " (" + tokenizer.Token.Value + "), while parsing " + conditionStr);
+			if (tokenizer.Token.Type != type) {
+				if (!String.IsNullOrEmpty (error_msg))
+					throw new ExpressionParseException (error_msg);
+
+				if (tokenizer.Token.Type == TokenType.EOF)
+					throw new ExpressionParseException (String.Format (
+								"Expected a \"{0}\" but the condition ended abruptly, while parsing condition \"{1}\"",
+								Token.TypeAsString (type), conditionStr));
+
+				throw new ExpressionParseException (String.Format (
+								"Expected \"{0}\" token,  but got {1}, while parsing \"{2}\"",
+								Token.TypeAsString (type), tokenizer.Token, conditionStr));
+			}
 		}
 	}
 }
