@@ -123,7 +123,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			Expression oe = new Expression ();
 			oe.Parse (token.Value, ParseOptions.AllowItemsMetadataAndSplit);
-			return new Token ((string) oe.ConvertTo (context, typeof (string)), token.Type);
+			return new Token ((string) oe.ConvertTo (context, typeof (string)), token.Type, token.Position);
 		}
 	}
 }
