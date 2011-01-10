@@ -37,12 +37,12 @@ namespace MonoTests.System.Web.UI
 {
 	class MyScriptReference : ScriptReferenceBase
 	{
-		protected internal override string GetUrl (ScriptManager scriptManager, bool zip)
+		protected override string GetUrl (ScriptManager scriptManager, bool zip)
 		{
 			return null;
 		}
 	
-		protected internal override bool IsFromSystemWebExtensions ()
+		protected override bool IsFromSystemWebExtensions ()
 		{
 			return false;
 		}

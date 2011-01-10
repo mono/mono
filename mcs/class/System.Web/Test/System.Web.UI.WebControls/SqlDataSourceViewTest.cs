@@ -453,6 +453,9 @@ namespace MonoTests.System.Web.UI.WebControls
 				evaluateCount = 0;
 			}
 
+#if NET_4_0
+			internal
+#endif
 			protected override object Evaluate (HttpContext context, Control control) {
 				evaluateCount++;
 				return String.Format ("{0}{1}", DefaultValue, evaluateCount);
