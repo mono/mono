@@ -125,7 +125,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			set { onPreRender = value; }
 		}
 
-		protected override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			onPreRender = true;
 			base.OnPreRender (e);

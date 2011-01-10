@@ -56,7 +56,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				Assert.IsFalse (RequiresDataBinding);
 			}
 
-			protected override void PerformDataBinding (IEnumerable data)
+			protected internal override void PerformDataBinding (IEnumerable data)
 			{
 				Assert.IsFalse (RequiresDataBinding);
 				base.PerformDataBinding (data);
@@ -119,7 +119,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				dataBindTrace.Append ("[End PerformSelect]");
 			}
 			
-			protected override void PerformDataBinding (IEnumerable data) {
+			protected internal override void PerformDataBinding (IEnumerable data) {
 				dataBindTrace.Append ("[Start PerformDataBinding]");
 				base.PerformDataBinding (data);
 				dataBindTrace.Append ("[End PerformDataBinding]");
@@ -360,7 +360,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		class MyDataBoundControlAdapter : DataBoundControlAdapter
 		{
 			internal bool perform_data_binding_called;
-			protected override void PerformDataBinding (IEnumerable data)
+			protected internal override void PerformDataBinding (IEnumerable data)
 			{
 				perform_data_binding_called = true;
 			}

@@ -43,7 +43,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		private HttpContext ctx;
 
 		// don't call base class (so _context is never set to a non-null value)
-		protected override HttpContext Context {
+		protected internal override HttpContext Context {
 			get {
 				if (ctx == null) {
 					ctx = new HttpContext (

@@ -281,7 +281,7 @@ namespace MonoTests.System.Web.UI.Adapters
 		{
 			NameValueCollection post_back_mode = new NameValueCollection ();
 			
-			override protected NameValueCollection DeterminePostBackMode ()
+			override protected internal NameValueCollection DeterminePostBackMode ()
 			{
 				return post_back_mode;
 			}

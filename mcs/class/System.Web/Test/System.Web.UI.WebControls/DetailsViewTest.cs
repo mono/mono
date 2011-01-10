@@ -314,7 +314,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				ensureCreateChildControls = true;
 			}
 
-			protected override void CreateChildControls ()
+			protected internal override void CreateChildControls ()
 			{
 				base.CreateChildControls ();
 				createChildControls1 = true;
@@ -362,7 +362,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				PerformDataBinding (data);
 			}
 
-			protected override void PrepareControlHierarchy ()
+			protected internal override void PrepareControlHierarchy ()
 			{
 				base.PrepareControlHierarchy ();
 				controlHierarchy = true;

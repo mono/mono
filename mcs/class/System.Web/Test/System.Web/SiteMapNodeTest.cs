@@ -55,7 +55,7 @@ namespace MonoTests.System.Web
 			throw new Exception ("The method or operation is not implemented.");
 		}
 
-		protected override SiteMapNode GetRootNodeCore ()
+		protected internal override SiteMapNode GetRootNodeCore ()
 		{
 			throw new Exception ("The method or operation is not implemented.");
 		}
