@@ -31,7 +31,7 @@ using System.Collections.Concurrent;
 
 namespace Mono.Collections.Concurrent
 {
-	public class ConcurrentSkipList<T> : IProducerConsumerCollection<T>
+	public class ConcurrentSkipList<T> : ICollection<T>, IEnumerable<T>
 	{
 		// Used for randomSeed
 		[ThreadStatic]
@@ -94,14 +94,17 @@ namespace Mono.Collections.Concurrent
 
 		void Init ()
 		{
-			leftSentinel = new Node (int.MinValue, default (T), MaxHeight);
-			rightSentinel = new Node (int.MaxValue, default (T), MaxHeight);
+			var left = new Node (int.MinValue, default (T), MaxHeight);
+			var right = new Node (int.MaxValue, default (T), MaxHeight);
 
 			for (int i = 0; i < MaxHeight; i++) {
-				leftSentinel.Nexts [i] = rightSentinel;
+				left.Nexts [i] = right;
 			}
 			// The or ensures that randomSeed != 0
 			randomSeed = ((uint)System.Math.Abs (Next())) | 0x0100;
+
+			leftSentinel = left;
+			rightSentinel = right;
 		}
 
 		public bool TryAdd (T value)
@@ -149,9 +152,9 @@ namespace Mono.Collections.Concurrent
 			}
 		}
 
-		bool IProducerConsumerCollection<T>.TryTake (out T value)
+		void ICollection<T>.Add (T item)
 		{
-			throw new NotSupportedException ();
+			TryAdd (item);
 		}
 
 		public T[] ToArray ()
@@ -166,6 +169,13 @@ namespace Mono.Collections.Concurrent
 
 		public void CopyTo (T[] array, int startIndex)
 		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex");
+			if (count > array.Length - startIndex)
+				throw new ArgumentException ("array", "The number of elements is greater than the available space from startIndex to the end of the destination array.");
+
 			IEnumerator<T> e = GetInternalEnumerator ();
 			for (int i = startIndex; i < array.Length; i++) {
 				if (!e.MoveNext ())
@@ -173,27 +183,6 @@ namespace Mono.Collections.Concurrent
 				array [i] = e.Current;
 			}
 			e.Dispose ();
-		}
-
-		void ICollection.CopyTo (Array array, int startIndex)
-		{
-			T[] temp = array as T[];
-			if (temp == null)
-				return;
-
-			CopyTo (temp, startIndex);
-		}
-
-		object ICollection.SyncRoot {
-			get {
-				return this;
-			}
-		}
-
-		bool ICollection.IsSynchronized {
-			get {
-				return true;
-			}
 		}
 
 		public bool Remove (T value)
@@ -254,17 +243,17 @@ namespace Mono.Collections.Concurrent
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			return ContainsFromHash (GetKey (value));
+			return ContainsHash (GetKey (value));
 		}
 
-		internal bool ContainsFromHash (int hash)
+		public bool ContainsHash (int hash)
 		{
 			CleanArrays ();
 			int found = FindNode (hash, precedents, succedings);
 			return found != -1 && succedings [found].FullyLinked && !succedings [found].Marked;
 		}
 
-		internal bool GetFromHash (int hash, out T value)
+		public bool TryGetFromHash (int hash, out T value)
 		{
 			value = default (T);
 			CleanArrays ();
@@ -292,6 +281,11 @@ namespace Mono.Collections.Concurrent
 			return false;
 		}
 
+		public void Clear ()
+		{
+			Init ();
+		}
+
 		public int Count {
 			get {
 				return count;
@@ -311,7 +305,7 @@ namespace Mono.Collections.Concurrent
 		IEnumerator<T> GetInternalEnumerator ()
 		{
 			Node curr = leftSentinel;
-			while ((curr = curr.Nexts [0]) != rightSentinel) {
+			while ((curr = curr.Nexts [0]) != rightSentinel && curr != null) {
 				// If there is an Add operation ongoing we wait a little
 				// Possible optimization : use a helping scheme
 				SpinWait sw = new SpinWait ();
@@ -319,6 +313,12 @@ namespace Mono.Collections.Concurrent
 					sw.SpinOnce ();
 
 				yield return curr.Value;
+			}
+		}
+
+		bool ICollection<T>.IsReadOnly {
+			get {
+				return false;
 			}
 		}
 

@@ -76,6 +76,9 @@ namespace System.Collections.Concurrent
 
 		public ConcurrentOrderedList (IEqualityComparer<T> comparer)
 		{
+			if (comparer == null)
+				throw new ArgumentNullException ("comparer");
+
 			this.comparer = comparer;
 
 			head = new Node ();
