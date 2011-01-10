@@ -64,6 +64,7 @@ namespace Mono.PkgConfig
 	internal abstract class PcFileCache<TP> where TP:PackageInfo, new()
 	{
 		const string CACHE_VERSION = "2";
+		const string MacOSXExternalPkgConfigDir = "/Library/Frameworks/Mono.framework/External/pkgconfig";
 		
 		Dictionary<string, TP> infos = new Dictionary<string, TP> ();
 		Dictionary<string, List<TP>> filesByFolder = new Dictionary<string, List<TP>> ();
@@ -351,7 +352,12 @@ namespace Mono.PkgConfig
 		IEnumerable<string> GetDefaultPaths ()
 		{
 			if (defaultPaths == null) {
-				string pkgConfigPath = Environment.GetEnvironmentVariable ("PKG_CONFIG_PATH");
+				// For mac osx, look in the 'External' dir on macosx,
+				// see bug #663180
+				string pkgConfigPath = String.Format ("{0}:{1}",
+						Microsoft.Build.Tasks.Utilities.RunningOnMac ? MacOSXExternalPkgConfigDir : String.Empty,
+						Environment.GetEnvironmentVariable ("PKG_CONFIG_PATH") ?? String.Empty);
+
 				string pkgConfigDir = Environment.GetEnvironmentVariable ("PKG_CONFIG_LIBDIR");
 				defaultPaths = GetPkgconfigPaths (null, pkgConfigPath, pkgConfigDir);
 			}

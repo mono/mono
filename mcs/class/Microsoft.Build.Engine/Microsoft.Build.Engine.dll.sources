@@ -2,6 +2,7 @@
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 ../Microsoft.Build.Framework/Mono.XBuild.Framework/AssemblyLoadInfo.cs
+../Microsoft.Build.Tasks/Microsoft.Build.Tasks/Utilities.cs
 ../Microsoft.Build.Utilities/Mono.XBuild.Utilities/ReservedNameUtils.cs
 ../../tools/xbuild/SolutionParser.cs
 Microsoft.Build.BuildEngine/BatchingImplBase.cs
