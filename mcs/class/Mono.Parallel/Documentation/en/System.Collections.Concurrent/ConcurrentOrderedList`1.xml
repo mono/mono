@@ -58,9 +58,9 @@
         <ReturnType>System.Collections.Generic.IEqualityComparer&lt;T&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Returns the comparer used in this instance of ConcurrentOrderedList.</summary>
+        <value>Comparer currently used.</value>
+        <remarks />
       </Docs>
     </Member>
     <Member MemberName="Contains">
