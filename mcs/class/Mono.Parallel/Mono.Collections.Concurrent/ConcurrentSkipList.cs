@@ -75,21 +75,19 @@ namespace Mono.Collections.Concurrent
 		const int MaxHeight = 200;
 		uint randomSeed;
 
-		Func<T, int> GetKey;
+		IEqualityComparer<T> comparer;
 
-		public ConcurrentSkipList () : this ((value) => value.GetHashCode ())
+		public ConcurrentSkipList () : this (EqualityComparer<T>.Default)
 		{
+
 		}
 
 		public ConcurrentSkipList (IEqualityComparer<T> comparer)
-			: this ((value) => comparer.GetHashCode (value))
 		{
-		}
+			if (comparer == null)
+				throw new ArgumentNullException ("comparer");
 
-		public ConcurrentSkipList(Func<T, int> hasher)
-		{
-			GetKey = hasher;
-			Init ();
+			this.comparer = comparer;
 		}
 
 		void Init ()
@@ -115,7 +113,7 @@ namespace Mono.Collections.Concurrent
 			CleanArrays ();
 			int topLayer = GetRandomLevel ();
 
-			int v = GetKey (value);
+			int v = comparer.GetHashCode (value);
 
 			while (true) {
 				int found = FindNode (v, precedents, succedings);
@@ -194,7 +192,7 @@ namespace Mono.Collections.Concurrent
 			Node toDelete = null;
 			bool isMarked = false;
 			int topLayer = -1;
-			int v = GetKey (value);
+			int v = comparer.GetHashCode (value);
 
 			while (true) {
 				int found = FindNode (v, precedents, succedings);
@@ -243,7 +241,7 @@ namespace Mono.Collections.Concurrent
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			return ContainsHash (GetKey (value));
+			return ContainsHash (comparer.GetHashCode (value));
 		}
 
 		public bool ContainsHash (int hash)
