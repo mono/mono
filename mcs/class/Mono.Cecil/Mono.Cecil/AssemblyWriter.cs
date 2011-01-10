@@ -2279,8 +2279,11 @@ namespace Mono.Cecil {
 			}
 
 			if (type.etype == ElementType.Object) {
-				WriteCustomAttributeFieldOrPropType (argument.Type);
-				WriteCustomAttributeElement (argument.Type, argument);
+				argument = (CustomAttributeArgument) argument.Value;
+				type = argument.Type;
+
+				WriteCustomAttributeFieldOrPropType (type);
+				WriteCustomAttributeElement (type, argument);
 				return;
 			}
 

@@ -41,6 +41,21 @@ namespace Mono.Cecil {
 		AssemblyDefinition Resolve (string fullName, ReaderParameters parameters);
 	}
 
+	public class ResolutionException : Exception {
+
+		readonly MemberReference member;
+
+		public MemberReference Member {
+			get { return member; }
+		}
+
+		public ResolutionException (MemberReference member)
+			: base ("Failed to resolve " + member.FullName)
+		{
+			this.member = member;
+		}
+	}
+
 	static class MetadataResolver {
 
 		public static TypeDefinition Resolve (IAssemblyResolver resolver, TypeReference type)

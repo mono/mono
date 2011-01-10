@@ -1884,6 +1884,8 @@ namespace Mono.Cecil {
 
 			ReadMethodSignature (signature, call_site);
 
+			call_site.MetadataToken = token;
+
 			return call_site;
 		}
 
@@ -2803,10 +2805,11 @@ namespace Mono.Cecil {
 			if (type.IsArray)
 				return ReadCustomAttributeFixedArrayArgument ((ArrayType) type);
 
-			if (type.etype == ElementType.Object)
-				return ReadCustomAttributeElement (ReadCustomAttributeFieldOrPropType ());
-
-			return new CustomAttributeArgument (type, ReadCustomAttributeElementValue (type));
+			return new CustomAttributeArgument (
+				type,
+				type.etype == ElementType.Object
+					? ReadCustomAttributeElement (ReadCustomAttributeFieldOrPropType ())
+					: ReadCustomAttributeElementValue (type));
 		}
 
 		object ReadCustomAttributeElementValue (TypeReference type)
