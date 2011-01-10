@@ -3108,8 +3108,7 @@ namespace Mono.CSharp {
 				// requires internal modifier as well
 				//
 				if (base_member.DeclaringType.MemberDefinition.IsInternalAsPublic (this_member.Module.DeclaringAssembly)) {
-					// HACK: Ignore the check for System.Web assembly which requires some clean up to pass this check
-						return false;
+					return false;
 				}
 
 				return true;
@@ -3232,11 +3231,18 @@ namespace Mono.CSharp {
 
 		protected void Error_CannotChangeAccessModifiers (MemberCore member, MemberSpec base_member)
 		{
+			var base_modifiers = base_member.Modifiers;
+
+			// Remove internal modifier from types which are not internally accessible
+			if ((base_modifiers & Modifiers.AccessibilityMask) == (Modifiers.PROTECTED | Modifiers.INTERNAL) &&
+				!base_member.DeclaringType.MemberDefinition.IsInternalAsPublic (member.Module.DeclaringAssembly))
+				base_modifiers = Modifiers.PROTECTED;
+
 			Report.SymbolRelatedToPreviousError (base_member);
 			Report.Error (507, member.Location,
 				"`{0}': cannot change access modifiers when overriding `{1}' inherited member `{2}'",
 				member.GetSignatureForError (),
-				ModifiersExtensions.AccessibilityName (base_member.Modifiers),
+				ModifiersExtensions.AccessibilityName (base_modifiers),
 				base_member.GetSignatureForError ());
 		}
 
