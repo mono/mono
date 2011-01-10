@@ -24,7 +24,13 @@
 
 using System;
 
+#if INSIDE_MONO_PARALLEL
+using System.Threading;
+
+namespace Mono.Threading
+#else
 namespace System.Threading
+#endif
 {
 #if INSIDE_MONO_PARALLEL
 	public

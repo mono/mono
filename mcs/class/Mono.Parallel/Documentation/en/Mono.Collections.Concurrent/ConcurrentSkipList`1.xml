@@ -1,4 +1,4 @@
-<Type Name="ConcurrentSkipList&lt;T&gt;" FullName="System.Collections.Concurrent.ConcurrentSkipList&lt;T&gt;">
+<Type Name="ConcurrentSkipList&lt;T&gt;" FullName="Mono.Collections.Concurrent.ConcurrentSkipList&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class ConcurrentSkipList&lt;T&gt; : System.Collections.Concurrent.IProducerConsumerCollection&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ConcurrentSkipList`1&lt;T&gt; extends System.Object implements class System.Collections.Concurrent.IProducerConsumerCollection`1&lt;!T&gt;, class System.Collections.Generic.IEnumerable`1&lt;!T&gt;, class System.Collections.ICollection, class System.Collections.IEnumerable" />
   <AssemblyInfo>

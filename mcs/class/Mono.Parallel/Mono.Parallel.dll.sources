@@ -1,9 +1,9 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 Assembly/AssemblyInfo.cs
-System.Collections.Concurrent/ConcurrentSkipList.cs
-System.Threading/CSnzi.cs
-System.Threading/Snzi.cs
-System.Threading/SpinLockWrapper.cs
+Mono.Collections.Concurrent/ConcurrentSkipList.cs
+Mono.Threading/CSnzi.cs
+Mono.Threading/Snzi.cs
+Mono.Threading/SpinLockWrapper.cs
 ../corlib/System.Threading/AtomicBoolean.cs
 ../corlib/System.Collections.Concurrent/ConcurrentOrderedList.cs

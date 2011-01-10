@@ -30,7 +30,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
+#if INSIDE_MONO_PARALLEL
+using System.Collections.Concurrent;
+
+namespace Mono.Collections.Concurrent
+#else
 namespace System.Collections.Concurrent
+#endif
 {
 #if INSIDE_MONO_PARALLEL
 	public

@@ -26,8 +26,9 @@
 
 #if NET_4_0
 using System;
+using System.Threading;
 
-namespace System.Threading
+namespace Mono.Threading
 {
 	public interface ICSnziNode
 	{
@@ -39,18 +40,6 @@ namespace System.Threading
 	{
 		Open,
 		Closed
-	}
-	
-	public struct CSnziQueryReturn
-	{
-		public readonly bool NonZero;
-		public readonly bool Open;
-		
-		internal CSnziQueryReturn (bool nonzero, bool open)
-		{
-			NonZero = nonzero;
-			Open = open;
-		}
 	}
 	
 	internal class CSnziLeafNode : ICSnziNode
@@ -240,11 +229,11 @@ namespace System.Threading
 			root.Open ();
 		}
 		
-		public CSnziQueryReturn Query ()
+		public Tuple<bool, CSnziState> Query ()
 		{
 			CSnziRootNode copy = root;
 			
-			return new CSnziQueryReturn (copy.Count > 0, copy.State == CSnziState.Open);
+			return Tuple.Create (copy.Count > 0, copy.State);
 		}
 		
 		int GetLeafIndex ()

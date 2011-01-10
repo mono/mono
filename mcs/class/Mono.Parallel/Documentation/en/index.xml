@@ -12,15 +12,14 @@
   <Remarks>To be added.</Remarks>
   <Copyright>To be added.</Copyright>
   <Types>
-    <Namespace Name="System.Collections.Concurrent">
+    <Namespace Name="Mono.Collections.Concurrent">
       <Type Name="ConcurrentOrderedList`1" DisplayName="ConcurrentOrderedList&lt;T&gt;" Kind="Class" />
       <Type Name="ConcurrentSkipList`1" DisplayName="ConcurrentSkipList&lt;T&gt;" Kind="Class" />
     </Namespace>
-    <Namespace Name="System.Threading">
+    <Namespace Name="Mono.Threading">
       <Type Name="AtomicBoolean" Kind="Class" />
       <Type Name="AtomicBooleanValue" Kind="Structure" />
       <Type Name="CSnzi" Kind="Class" />
-      <Type Name="CSnziQueryReturn" Kind="Structure" />
       <Type Name="CSnziState" Kind="Enumeration" />
       <Type Name="ICSnziNode" Kind="Interface" />
       <Type Name="Snzi" Kind="Class" />

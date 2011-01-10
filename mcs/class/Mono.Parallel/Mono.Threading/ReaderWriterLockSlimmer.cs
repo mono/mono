@@ -27,7 +27,7 @@
 using System;
 using System.Threading;
 
-namespace System.Threading
+namespace Mono.Threading
 {
 	public struct ReaderWriterLockSlimmer
 	{

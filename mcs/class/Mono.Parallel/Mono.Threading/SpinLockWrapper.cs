@@ -25,12 +25,13 @@
 #if NET_4_0
 
 using System;
+using System.Threading;
 using System.Collections.Concurrent;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-namespace System.Threading
+namespace Mono.Threading
 {
 	public class SpinLockWrapper
 	{

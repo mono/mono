@@ -1,4 +1,4 @@
-<Type Name="SpinLockWrapper" FullName="System.Threading.SpinLockWrapper">
+<Type Name="SpinLockWrapper" FullName="Mono.Threading.SpinLockWrapper">
   <TypeSignature Language="C#" Value="public class SpinLockWrapper" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SpinLockWrapper extends System.Object" />
   <AssemblyInfo>

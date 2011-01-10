@@ -27,8 +27,9 @@ using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
-namespace System.Collections.Concurrent
+namespace Mono.Collections.Concurrent
 {
 	public class ConcurrentSkipList<T> : IProducerConsumerCollection<T>
 	{
@@ -100,7 +101,7 @@ namespace System.Collections.Concurrent
 				leftSentinel.Nexts [i] = rightSentinel;
 			}
 			// The or ensures that randomSeed != 0
-			randomSeed = ((uint)Math.Abs (Next())) | 0x0100;
+			randomSeed = ((uint)System.Math.Abs (Next())) | 0x0100;
 		}
 
 		public bool TryAdd (T value)
