@@ -73,9 +73,10 @@ to $prefix/lib/mono/xbuild . When used in Import, like:
 
 xbuild tries various values for the msbuild property $(MSBuildExtensionsPath), in order:
 
-  1. Paths specified in the environment variable $MSBuildExtensionsPath.
-  2. $XDG_CONFIG_HOME/xbuild/tasks (or Environment.SpecialFolder.ApplicationData)
-  3. $prefix/lib/mono/xbuild (default location)
+  1. /Library/Frameworks/Mono.framework/External/xbuild on Mac OSX.
+  2. Paths specified in the environment variable $MSBuildExtensionsPath.
+  3. $XDG_CONFIG_HOME/xbuild/tasks (or Environment.SpecialFolder.ApplicationData)
+  4. $prefix/lib/mono/xbuild (default location)
 
 Anywhere else in the project files, $(MSBuildExtensionsPath) will always resolve to the default
 location. This is a xbuild-only feature.
@@ -110,6 +111,10 @@ For example, you could set this variable from your shell:
 
 You can disable the built-in color scheme by setting this variable to
 "disable".
+
+.SH NOTES
+On Mac OSX, for locating pkg-config (.pc) files, xbuild additionally
+looks in "/Library/Frameworks/Mono.framework/External/pkgconfig" .
 
 .SH SEE ALSO
 .BR mono(1), mcs(1)
