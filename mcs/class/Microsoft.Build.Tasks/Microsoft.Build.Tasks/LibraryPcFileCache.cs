@@ -30,6 +30,10 @@ using System.Xml;
 using System.IO;
 using System.Collections.Generic;
 
+// IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT
+// This code is shared with xbuild, which has to build with .NET 2.0,
+// so no c# 3.0 syntax is allowed here.
+
 namespace Mono.PkgConfig
 {
 	internal class LibraryPcFileCache: PcFileCache<LibraryPackageInfo>

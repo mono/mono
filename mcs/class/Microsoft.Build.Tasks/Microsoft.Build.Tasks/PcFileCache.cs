@@ -30,6 +30,10 @@ using System.Xml;
 using System.IO;
 using System.Collections.Generic;
 
+// IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT
+// This code is shared with xbuild, which has to build with .NET 2.0,
+// so no c# 3.0 syntax is allowed here.
+
 namespace Mono.PkgConfig
 {
 	internal interface IPcFileCacheContext<TP> where TP:PackageInfo, new()
@@ -155,7 +159,7 @@ namespace Mono.PkgConfig
 			try {
 				info = ParsePackageInfo (file);
 			} catch (Exception ex) {
-				ctx.ReportError ("Error while parsing .pc file", ex);
+				ctx.ReportError ("Error while parsing .pc file: " + file, ex);
 				info = new TP ();
 			}
 			
@@ -263,6 +267,8 @@ namespace Mono.PkgConfig
 					tw.WriteAttributeString ("version", pinfo.Version);
 				if (!string.IsNullOrEmpty (pinfo.Description))
 					tw.WriteAttributeString ("description", pinfo.Description);
+				if (!string.IsNullOrEmpty (pinfo.Requires))
+					tw.WriteAttributeString ("requires", pinfo.Requires);
 				if (pinfo.CustomData != null) {
 					foreach (KeyValuePair<string,string> cd in pinfo.CustomData)
 						tw.WriteAttributeString (cd.Key, cd.Value);
@@ -289,6 +295,7 @@ namespace Mono.PkgConfig
 					case "name": pinfo.Name = tr.Value; break;
 					case "version": pinfo.Version = tr.Value; break;
 					case "description": pinfo.Description = tr.Value; break;
+					case "requires": pinfo.Requires = tr.Value; break;
 					default: pinfo.SetData (tr.LocalName, tr.Value); break;
 				}
 			} while (tr.MoveToNextAttribute ());
@@ -329,8 +336,10 @@ namespace Mono.PkgConfig
 			if (!file.HasErrors) {
 				pinfo.Version = file.Version;
 				pinfo.Description = file.Description;
+				pinfo.Requires = file.Requires;
 				ParsePackageInfo (file, pinfo);
-				ctx.StoreCustomData (file, pinfo);
+				if (pinfo.IsValidPackage)
+					ctx.StoreCustomData (file, pinfo);
 			}
 			return pinfo;
 		}
@@ -386,10 +395,11 @@ namespace Mono.PkgConfig
 					yield return dir;
 			} else if (systemPrefixes != null) {
 				string[] suffixes = new string [] {
+					//FIXME: is this the correct order? share should be before lib but not sure about others.
+					Path.Combine ("share", "pkgconfig"),
 					Path.Combine ("lib", "pkgconfig"),
 					Path.Combine ("lib64", "pkgconfig"),
 					Path.Combine ("libdata", "pkgconfig"),
-					Path.Combine ("share", "pkgconfig"),
 				};
 				foreach (string prefix in systemPrefixes)
 					foreach (string suffix in suffixes)
@@ -437,12 +447,47 @@ namespace Mono.PkgConfig
 	{
 		Dictionary<string,string> variables = new Dictionary<string, string> ();
 		
-		public string FilePath { get; set; }
-		public string Name { get; set; }
-		public string Description { get; set; }
-		public string Version { get; set; }
-		public string Libs { get; set; }
-		public bool HasErrors { get; set; }
+		string description;
+		public string Description {
+			get { return description; }
+			set { description = value; }
+		}
+		
+		string filePath;
+		public string FilePath {
+			get { return filePath; }
+			set { filePath = value; }
+		}
+		
+		bool hasErrors;
+		public bool HasErrors {
+			get { return hasErrors; }
+			set { hasErrors = value; }
+		}
+		
+		string libs;
+		public string Libs {
+			get { return libs; }
+			set { libs = value; }
+		}
+		
+		string name;
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+		
+		string version;
+		public string Version {
+			get { return version; }
+			set { version = value; }
+		}
+		
+		string requires;
+		public string Requires {
+			get { return requires; }
+			set { requires = value; }
+		}
 		
 		public string GetVariable (string varName)
 		{
@@ -477,6 +522,7 @@ namespace Mono.PkgConfig
 							case "Description": Description = value; break;
 							case "Version": Version = value; break;
 							case "Libs": Libs = value; break;
+							case "Requires": Requires = value; break;
 						}
 					}
 				}
@@ -515,7 +561,7 @@ namespace Mono.PkgConfig
 				} else
 					last = i++;
 				
-				if (i < value.Length - 1)
+				if (i < value.Length)
 					i = value.IndexOf ("${", i);
 			}
 			sb.Append (value.Substring (last, value.Length - last));
@@ -526,12 +572,31 @@ namespace Mono.PkgConfig
 	internal class PackageInfo
 	{
 		Dictionary<string,string> customData;
-
-		public string Name { get; set; }
+		DateTime lastWriteTime;
 		
-		public string Version { get; set; }
+		string name;
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
 		
-		public string Description { get; set; }
+		string version;
+		public string Version {
+			get { return version; }
+			set { version = value; }
+		}
+		
+		string description;
+		public string Description {
+			get { return description; }
+			set { description = value; }
+		}
+		
+		string requires;
+		public string Requires {
+			get { return requires; }
+			set { requires = value; }
+		}
 		
 		public string GetData (string name)
 		{
@@ -559,7 +624,10 @@ namespace Mono.PkgConfig
 			get { return customData; }
 		}
 		
-		internal DateTime LastWriteTime { get; set; }
+		internal DateTime LastWriteTime {
+			get { return lastWriteTime; }
+			set { lastWriteTime = value; }
+		}
 		
 		internal bool HasCustomData {
 			get { return customData != null && customData.Count > 0; }
