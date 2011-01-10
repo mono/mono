@@ -126,7 +126,7 @@ namespace System.Web.Configuration
 			get { return "user"; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

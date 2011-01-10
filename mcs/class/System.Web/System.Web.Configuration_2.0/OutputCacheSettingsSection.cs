@@ -55,7 +55,7 @@ namespace System.Web.Configuration {
 			get { return (OutputCacheProfileCollection) base [outputCacheProfilesProp];}
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

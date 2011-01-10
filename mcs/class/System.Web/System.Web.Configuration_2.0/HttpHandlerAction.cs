@@ -118,7 +118,7 @@ namespace System.Web.Configuration
 			set { base[verbProp] = value; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return _properties; }
 		}
 

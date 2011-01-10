@@ -62,13 +62,13 @@ namespace System.Web.Configuration {
 		}
 
 		// Why override?
-		protected override void DeserializeSection (XmlReader reader)
+		protected internal override void DeserializeSection (XmlReader reader)
 		{
 			base.DeserializeSection (reader);
 		}
 
 		// Why override?
-		protected override void Reset (ConfigurationElement parentElement)
+		protected internal override void Reset (ConfigurationElement parentElement)
 		{
 			base.Reset (parentElement);
 		}
@@ -90,7 +90,7 @@ namespace System.Web.Configuration {
 			set { base[modeProp] = value; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

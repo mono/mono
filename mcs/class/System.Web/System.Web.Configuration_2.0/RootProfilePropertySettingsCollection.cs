@@ -100,7 +100,7 @@ namespace System.Web.Configuration
 
 		// LAMESPEC: this is missing from MSDN, but is present in the 2.0sp1 version of the
 		// class
-		protected override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
+		protected internal override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 		{
 			// Why override?
 			base.Unmerge (sourceElement, parentElement, saveMode);
@@ -111,7 +111,7 @@ namespace System.Web.Configuration
 			get { return groupSettings; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 
@@ -120,18 +120,18 @@ namespace System.Web.Configuration
 		}
 
 		// Why override?
-		protected override bool IsModified ()
+		protected internal override bool IsModified ()
 		{
 			return base.IsModified ();
 		}
 
 		// Why override?
-		protected override void ResetModified ()
+		protected internal override void ResetModified ()
 		{
 			base.ResetModified ();
 		}
 		
-		protected override void Reset (ConfigurationElement parentElement)
+		protected internal override void Reset (ConfigurationElement parentElement)
 		{
 			base.Reset (parentElement);
 

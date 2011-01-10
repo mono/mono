@@ -117,7 +117,7 @@ namespace System.Web.Configuration {
 			set { Set (index, value); }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

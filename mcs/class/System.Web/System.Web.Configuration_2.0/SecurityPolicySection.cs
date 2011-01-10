@@ -54,7 +54,7 @@ namespace System.Web.Configuration {
 			get { return (TrustLevelCollection) base [Prop];}
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

@@ -119,7 +119,7 @@ namespace System.Web.Configuration {
 			get { return (RuleSettingsCollection) base [rulesProp];}
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

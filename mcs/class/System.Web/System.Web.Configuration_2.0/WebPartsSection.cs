@@ -59,7 +59,7 @@ namespace System.Web.Configuration {
 		}
 
 		[MonoTODO ("why override this?")]
-		protected override object GetRuntimeObject ()
+		protected internal override object GetRuntimeObject ()
 		{
 			return this;
 		}
@@ -80,7 +80,7 @@ namespace System.Web.Configuration {
 			get { return (TransformerInfoCollection) base [transformersProp];}
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

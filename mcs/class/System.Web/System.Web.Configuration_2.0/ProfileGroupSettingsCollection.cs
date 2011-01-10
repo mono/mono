@@ -61,13 +61,13 @@ namespace System.Web.Configuration
 		}
 
 		// Why override?
-		protected override bool IsModified ()
+		protected internal override bool IsModified ()
 		{
 			return base.IsModified ();
 		}
 
 		// Why override?
-		protected override void ResetModified ()
+		protected internal override void ResetModified ()
 		{
 			base.ResetModified ();
 		}
@@ -140,7 +140,7 @@ namespace System.Web.Configuration
 			get { return (ProfileGroupSettings) BaseGet (name); }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 		

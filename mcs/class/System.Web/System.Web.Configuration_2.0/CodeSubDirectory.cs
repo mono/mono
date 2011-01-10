@@ -63,7 +63,7 @@ namespace System.Web.Configuration
 			set { base[directoryNameProp] = value; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 	}

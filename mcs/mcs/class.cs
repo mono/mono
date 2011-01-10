@@ -3109,7 +3109,6 @@ namespace Mono.CSharp {
 				//
 				if (base_member.DeclaringType.MemberDefinition.IsInternalAsPublic (this_member.Module.DeclaringAssembly)) {
 					// HACK: Ignore the check for System.Web assembly which requires some clean up to pass this check
-					if (this_member.Module.DeclaringAssembly.Name != "System.Web")
 						return false;
 				}
 
