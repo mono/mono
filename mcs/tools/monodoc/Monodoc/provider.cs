@@ -881,9 +881,14 @@ public class RootTree : Tree {
 		string layout = Path.Combine (basedir, "monodoc.xml");
 		doc.Load (layout);
 
+		string osxExternalDir = "/Library/Frameworks/Mono.framework/External/monodoc";
+		string[] osxExternalSources = Directory.Exists (osxExternalDir)
+			? Directory.GetFiles (osxExternalDir, "*.source")
+			: new string[0];
+
 		return LoadTree (basedir, doc, 
-				Directory.GetFiles (Path.Combine (basedir, "sources"))
-				.Where (file => file.EndsWith (".source")));
+				Directory.GetFiles (Path.Combine (basedir, "sources"), "*.source")
+				.Concat (osxExternalSources));
 	}
 
 
