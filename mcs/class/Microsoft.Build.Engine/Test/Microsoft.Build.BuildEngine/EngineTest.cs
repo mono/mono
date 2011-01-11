@@ -862,9 +862,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
 				null, null,
-				4, 3, 12,
+				4, 3, 13,
 				new string [] {
-					"foofoo;barbar;foofoo;barbar: F.Unique: true",
+					"foofoo;barbar: F.Unique: true",
+					"foofoo;barbar: F.Unique: false",
 					"from_second: F.Unique: unique",
 					"foofoo;foofoo;from_second: F.Prop1: false",
 					"barbar;barbar: F.Prop1: bar_false",
