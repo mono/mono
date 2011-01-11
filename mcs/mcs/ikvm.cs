@@ -55,14 +55,13 @@ namespace Mono.CSharp
 		{
 			string name = baseType.Name;
 
-			// TODO: namespace check
-			if (name == "ValueType")
+			if (name == "ValueType" && baseType.Namespace == "System")
 				return MemberKind.Struct;
 
-			if (name == "Enum")
+			if (name == "Enum" && baseType.Namespace == "System")
 				return MemberKind.Enum;
 
-			if (name == "MulticastDelegate")
+			if (name == "MulticastDelegate" && baseType.Namespace == "System")
 				return MemberKind.Delegate;
 
 			return MemberKind.Class;
