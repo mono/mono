@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007,2011 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -337,6 +337,9 @@ public class CryptoConfigTest {
 		MapNameToOID ("SHA512", "2.16.840.1.101.3.4.2.3");
 		MapNameToOID ("System.Security.Cryptography.SHA512", "2.16.840.1.101.3.4.2.3");
 		MapNameToOID ("System.Security.Cryptography.SHA512Managed", "2.16.840.1.101.3.4.2.3");
+		MapNameToOID ("RIPEMD160", "1.3.36.3.2.1");
+		MapNameToOID ("System.Security.Cryptography.RIPEMD160", "1.3.36.3.2.1");
+		MapNameToOID ("System.Security.Cryptography.RIPEMD160Managed", "1.3.36.3.2.1");
 #else
 		MapNameToOID ("SHA256", "2.16.840.1.101.3.4.1");
 //		MapNameToOID ("SHA-256", "2.16.840.1.101.3.4.1");

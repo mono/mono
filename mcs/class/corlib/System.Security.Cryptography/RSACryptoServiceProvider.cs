@@ -278,19 +278,21 @@ namespace System.Security.Cryptography {
 		private string GetHashNameFromOID (string oid) 
 		{
 			switch (oid) {
-				case "1.3.14.3.2.26":
-					return "SHA1";
-				case "1.2.840.113549.2.5":
-					return "MD5";
-				default:
-					throw new NotSupportedException (oid + " is an unsupported hash algorithm for RSA signing");
+			case "1.3.14.3.2.26":
+				return "SHA1";
+			case "1.2.840.113549.2.5":
+				return "MD5";
+			case "2.16.840.1.101.3.4.2.1":
+				return "SHA256";
+			case "2.16.840.1.101.3.4.2.2":
+				return "SHA384";
+			case "2.16.840.1.101.3.4.2.3":
+				return "SHA512";
+			default:
+				throw new CryptographicException (oid + " is an unsupported hash algorithm for RSA signing");
 			}
 		}
 
-		// LAMESPEC: str is not the hash name but an OID
-		// NOTE: this method is LIMITED to SHA1 and MD5 like the MS framework 1.0 
-		// and 1.1 because there's no method to get a hash algorithm from an OID. 
-		// However there's no such limit when using the [De]Formatter class.
 		public byte[] SignHash (byte[] rgbHash, string str) 
 		{
 			if (rgbHash == null)
@@ -315,10 +317,6 @@ namespace System.Security.Cryptography {
 			return PKCS1.Verify_v15 (this, hash, toBeVerified, signature);
 		}
 	
-		// LAMESPEC: str is not the hash name but an OID
-		// NOTE: this method is LIMITED to SHA1 and MD5 like the MS framework 1.0 
-		// and 1.1 because there's no method to get a hash algorithm from an OID. 
-		// However there's no such limit when using the [De]Formatter class.
 		public bool VerifyHash (byte[] rgbHash, string str, byte[] rgbSignature) 
 		{
 			if (rgbHash == null) 

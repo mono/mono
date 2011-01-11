@@ -7,7 +7,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007,2011 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -104,6 +104,7 @@ public partial      class CryptoConfig {
 	private const string oidSHA256 = "2.16.840.1.101.3.4.2.1";
 	private const string oidSHA384 = "2.16.840.1.101.3.4.2.2";
 	private const string oidSHA512 = "2.16.840.1.101.3.4.2.3";
+	private const string oidRIPEMD160 = "1.3.36.3.2.1";
 	// new in 2.0
 //	private const string oidRSA = "1.2.840.113549.1.1.1";
 //	private const string oidDSA = "1.2.840.10040.4.1";
@@ -353,6 +354,10 @@ public partial      class CryptoConfig {
 		oid.Add (defaultSHA512, oidSHA512);
 		oid.Add (nameSHA512a, oidSHA512);
 		oid.Add (nameSHA512c, oidSHA512);
+
+		oid.Add (defaultRIPEMD160, oidRIPEMD160);
+		oid.Add (nameRIPEMD160a, oidRIPEMD160);
+		oid.Add (nameRIPEMD160c, oidRIPEMD160);
 
 		// surprise! documented in ".NET Framework Security" book
 		oid.Add (name3DESKeyWrap, oid3DESKeyWrap);
