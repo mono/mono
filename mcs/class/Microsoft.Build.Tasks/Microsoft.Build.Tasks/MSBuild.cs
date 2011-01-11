@@ -66,7 +66,6 @@ namespace Microsoft.Build.Tasks {
 			Hashtable outputs;
 		
 			var global_properties = SplitPropertiesToDictionary ();
-			Dictionary<string, ITaskItem> projectsByFileName = new Dictionary<string, ITaskItem> ();
 
 			Log.LogMessage (MessageImportance.Low, "Global Properties:");
 			if (global_properties != null)
@@ -104,11 +103,6 @@ namespace Microsoft.Build.Tasks {
 				}
 
 				if (result) {
-					// Metadata from the first item for the project file is copied
-					ITaskItem first_item;
-					if (!projectsByFileName.TryGetValue (filename, out first_item))
-						projectsByFileName [filename] = first_item = project;
-
 					foreach (DictionaryEntry de in outputs) {
 						ITaskItem [] array = (ITaskItem []) de.Value;
 						foreach (ITaskItem item in array) {
@@ -117,7 +111,7 @@ namespace Microsoft.Build.Tasks {
 
 							// copy the metadata from original @project to here
 							// CopyMetadataTo does _not_ overwrite
-							first_item.CopyMetadataTo (new_item);
+							project.CopyMetadataTo (new_item);
 
 							outputItems.Add (new_item);
 
