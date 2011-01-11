@@ -126,6 +126,7 @@ System.Web.UI.HtmlControls/HtmlAnchorTest.cs
 System.Web.UI.HtmlControls/HtmlButtonTest.cs
 System.Web.UI.HtmlControls/HtmlContainerControlTest.cs
 System.Web.UI.HtmlControls/HtmlFormTest.cs
+System.Web.UI.HtmlControls/HtmlHeadTest.cs
 System.Web.UI.HtmlControls/HtmlImageTest.cs
 System.Web.UI.HtmlControls/HtmlInputButtonTest.cs
 System.Web.UI.HtmlControls/HtmlInputCheckBoxTest.cs
