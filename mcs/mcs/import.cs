@@ -1694,10 +1694,16 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public static void Error_MissingDependency (CompilerContext ctx, List<MissingType> types, Location loc)
+		public static void Error_MissingDependency (IMemberContext ctx, List<MissingType> types, Location loc)
 		{
 			foreach (var t in types) {
-				ctx.Report.Error (12, loc,
+				if (t.Module.Assembly.GetName ().Name == ctx.Module.DeclaringAssembly.Name) {
+					ctx.Compiler.Report.Warning (1683, 1, loc,
+						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
+						t.Name);
+				}
+
+				ctx.Compiler.Report.Error (12, loc,
 					"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
 					t.Name, t.Module.Assembly.FullName);
 			}

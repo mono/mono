@@ -492,7 +492,7 @@ namespace Mono.CSharp
 
 		public override AssemblyName GetName ()
 		{
-			throw new NotImplementedException ();
+			return new AssemblyName (full_name);
 		}
 
 		public override string ImageRuntimeVersion {

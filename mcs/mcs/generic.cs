@@ -2025,7 +2025,7 @@ namespace Mono.CSharp {
 					if (mc == null)
 						return false;
 
-					ImportedTypeDefinition.Error_MissingDependency (mc.Compiler, dep, loc);
+					ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
 					ok = false;
 				}
 
@@ -2056,7 +2056,7 @@ namespace Mono.CSharp {
 							if (mc == null)
 								return false;
 
-							ImportedTypeDefinition.Error_MissingDependency (mc.Compiler, dep, loc);
+							ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
 							ok = false;
 
 							// return immediately to avoid duplicate errors because we are scanning
