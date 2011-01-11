@@ -65,6 +65,7 @@ namespace UnityProfileShaper
 			p.AppendStep(new RegenerateGuidStep());
 			p.AppendStep(new OutputStep());
 			p.AppendStep(new OutputMarkBacktraceReportStep());
+			p.AppendStep(new FailIfWeMissTypesThatWeShippedInAPreviousVersionStep());
 
 			LinkContext context = new LinkContext(p);
 			context.CoreAction = AssemblyAction.Link;

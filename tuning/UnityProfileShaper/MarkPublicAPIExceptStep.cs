@@ -34,6 +34,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Mono.Cecil;
+using UnityProfileShaper;
 
 namespace Mono.Linker.Steps
 {
@@ -88,25 +89,10 @@ namespace Mono.Linker.Steps
 		{
 			if (s_ExceptionListRegexes==null)
 			{
-				var lines = ReadLinesFromDataFileWithoutPlus("MarkEverythingExceptTheseTypes.txt");
+				var lines = Tools.ReadLinesFromDataFileWithoutPlus("MarkEverythingExceptTheseTypes.txt");
 				s_ExceptionListRegexes = CreateRegexes(new List<string>(lines));
 			}
 			return s_ExceptionListRegexes;
-		}
-
-		static private IEnumerable<string> ReadLinesFromDataFileWithPlus(string file)
-		{
-			return ReadLinesFromDataFile(file).Where(l => l.StartsWith("+")).Select(l => l.Substring(1));
-		}
-		static private IEnumerable<string> ReadLinesFromDataFileWithoutPlus(string file)
-		{
-			return ReadLinesFromDataFile(file).Where(l => !l.StartsWith("+"));
-		}
-		static private string[] ReadLinesFromDataFile(string filename)
-		{
-			var fileinfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
-			var datafile = Path.Combine(fileinfo.Directory.Parent.Parent.Parent.FullName, "TuningInput/"+filename);
-			return File.ReadAllLines(datafile).Where(l => !l.StartsWith("#")).ToArray();
 		}
 
 		private static List<Regex> s_ExceptionListOverrideRegexes;
@@ -114,7 +100,7 @@ namespace Mono.Linker.Steps
 		{
 			if (s_ExceptionListOverrideRegexes == null)
 			{
-				s_ExceptionListOverrideRegexes = CreateRegexes(new List<string>(ReadLinesFromDataFileWithPlus("MarkEverythingExceptTheseTypes.txt")));
+				s_ExceptionListOverrideRegexes = CreateRegexes(new List<string>(Tools.ReadLinesFromDataFileWithPlus("MarkEverythingExceptTheseTypes.txt")));
 			}
 			return s_ExceptionListOverrideRegexes;
 		}
