@@ -162,7 +162,7 @@ namespace Mono.CSharp
 		static void Usage ()
 		{
 			Console.WriteLine (
-				"Mono C# compiler, Copyright 2001 - 2008 Novell, Inc.\n" +
+				"Mono C# compiler, Copyright 2001 - 2011 Novell, Inc.\n" +
 				"mcs [options] source-files\n" +
 				"   --about              About the Mono C# compiler\n" +
 				"   -addmodule:M1[,Mn]   Adds the module to the generated assembly\n" + 
@@ -217,7 +217,7 @@ namespace Mono.CSharp
 		static void About ()
 		{
 			Console.WriteLine (
-				"The Mono C# compiler is Copyright 2001-2008, Novell, Inc.\n\n" +
+				"The Mono C# compiler is Copyright 2001-2011, Novell, Inc.\n\n" +
 				"The compiler source code is released under the terms of the \n"+
 				"MIT X11 or GNU GPL licenses\n\n" +
 
