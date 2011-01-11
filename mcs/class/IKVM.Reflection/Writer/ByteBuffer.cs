@@ -153,18 +153,7 @@ namespace IKVM.Reflection.Writer
 
 		internal void Write(float value)
 		{
-			byte[] s = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) {
-				Write(s);
-			} else {
-				if (pos + 4 > buffer.Length)
-					Grow(4);
-
-				buffer[pos++] = s [3];
-				buffer[pos++] = s [2];
-				buffer[pos++] = s [1];
-				buffer[pos++] = s [0];
-			}            
+			Write(SingleConverter.SingleToInt32Bits(value));
 		}
 
 		internal void Write(double value)
