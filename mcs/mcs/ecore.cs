@@ -3731,7 +3731,12 @@ namespace Mono.CSharp {
 		//
 		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, IParametersMember pm, ref bool params_expanded_form, ref bool dynamicArgument, ref TypeSpec returnType)
 		{
+			// Parameters of most-derived type used mainly for named and optional parameters
 			var pd = pm.Parameters;
+
+			// Used for params modifier only, that's legacy of C# 1.0 which uses base type for
+			// params modifier instead of most-derived type
+			var cpd = ((IParametersMember) candidate).Parameters;
 			int param_count = pd.Count;
 			int optional_count = 0;
 			int score;
@@ -3751,7 +3756,7 @@ namespace Mono.CSharp {
 						return int.MaxValue - 10000 + args_gap - optional_count;
 
 					// Readjust expected number when params used
-					if (pd.HasParams) {
+					if (cpd.HasParams) {
 						optional_count--;
 						if (arg_count < param_count)
 							param_count--;
@@ -3759,7 +3764,7 @@ namespace Mono.CSharp {
 						return int.MaxValue - 10000 + args_gap;
 					}
 				} else if (arg_count != param_count) {
-					if (!pd.HasParams)
+					if (!cpd.HasParams)
 						return int.MaxValue - 10000 + args_gap;
 					if (arg_count < param_count - 1)
 						return int.MaxValue - 10000 + args_gap;
@@ -3808,7 +3813,7 @@ namespace Mono.CSharp {
 							Argument temp;
 							if (index >= param_count) {
 								// When using parameters which should not be available to the user
-								if ((pd.FixedParameters[index].ModFlags & Parameter.Modifier.PARAMS) == 0)
+								if ((cpd.FixedParameters[index].ModFlags & Parameter.Modifier.PARAMS) == 0)
 									break;
 
 								arguments.Add (null);
@@ -3844,6 +3849,7 @@ namespace Mono.CSharp {
 			//
 			// 1. Handle generic method using type arguments when specified or type inference
 			//
+			TypeSpec[] ptypes;
 			var ms = candidate as MethodSpec;
 			if (ms != null && ms.IsGeneric) {
 				// Setup constraint checker for probing only
@@ -3901,10 +3907,12 @@ namespace Mono.CSharp {
 				}
 
 				candidate = ms;
-
+				ptypes = ms.Parameters.Types;
 			} else {
 				if (type_arguments != null)
 					return int.MaxValue - 15000;
+
+				ptypes = cpd.Types;
 			}
 
 			//
@@ -3912,7 +3920,6 @@ namespace Mono.CSharp {
 			//
 			Parameter.Modifier p_mod = 0;
 			TypeSpec pt = null;
-			TypeSpec[] ptypes = ((IParametersMember) candidate).Parameters.Types;
 
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = arguments[i];
@@ -3946,7 +3953,7 @@ namespace Mono.CSharp {
 				}
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
-					p_mod = pd.FixedParameters[i].ModFlags;
+					p_mod = (pd.FixedParameters[i].ModFlags & ~Parameter.Modifier.PARAMS) | (cpd.FixedParameters[i].ModFlags & Parameter.Modifier.PARAMS);
 					pt = ptypes [i];
 				} else if (!params_expanded_form) {
 					params_expanded_form = true;
@@ -4004,7 +4011,7 @@ namespace Mono.CSharp {
 			//
 			// When params parameter has no argument it will be provided later if the method is the best candidate
 			//
-			if (arg_count + 1 == pd.Count && (pd.FixedParameters [arg_count].ModFlags & Parameter.Modifier.PARAMS) != 0)
+			if (arg_count + 1 == pd.Count && (cpd.FixedParameters [arg_count].ModFlags & Parameter.Modifier.PARAMS) != 0)
 				params_expanded_form = true;
 
 			//
@@ -4469,7 +4476,7 @@ namespace Mono.CSharp {
 			// For candidates which match on parameters count report more details about incorrect arguments
 			//
 			if (pm != null) {
-				int unexpanded_count = pm.Parameters.HasParams ? pm.Parameters.Count - 1 : pm.Parameters.Count;
+				int unexpanded_count = ((IParametersMember) best_candidate).Parameters.HasParams ? pm.Parameters.Count - 1 : pm.Parameters.Count;
 				if (pm.Parameters.Count == arg_count || params_expanded || unexpanded_count == arg_count) {
 					// Reject any inaccessible member
 					if (!best_candidate.IsAccessible (rc.CurrentType) || !best_candidate.DeclaringType.IsAccessible (rc.CurrentType)) {
