@@ -30,6 +30,7 @@ Microsoft.Win32
 +System.Net.IPHostEntry
 +System.Net.Sockets
 +System.Net.Dns
++System.Security.VerificationException
 +System.Security.SecurityCriticalAttribute
 +System.Security.SecuritySafeCriticalAttribute
 +System\.Runtime\.InteropServices\.\w*Attribute
