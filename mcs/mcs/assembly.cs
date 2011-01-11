@@ -214,7 +214,7 @@ namespace Mono.CSharp
 				if (value == null || value.Length == 0)
 					return;
 
-				var vinfo = IsValidAssemblyVersion (value);
+				var vinfo = IsValidAssemblyVersion (value, true);
 				if (vinfo == null) {
 					a.Error_AttributeEmitError (string.Format ("Specified version `{0}' is not valid", value));
 					return;
@@ -336,7 +336,15 @@ namespace Mono.CSharp
 				}
 			} else if (a.Type == pa.RuntimeCompatibility) {
 				wrap_non_exception_throws_custom = true;
+			} else if (a.Type == pa.AssemblyFileVersion) {
+				string value = a.GetString ();
+				if (string.IsNullOrEmpty (value) || IsValidAssemblyVersion (value, false) == null) {
+					Report.Warning (1607, 1, a.Location, "The version number `{0}' specified for `{1}' is invalid",
+						value, a.Name);
+					return;
+				}
 			}
+
 
 			SetCustomAttribute (ctor, cdata);
 		}
@@ -871,7 +879,7 @@ namespace Mono.CSharp
 			Report.Error (1548, "Error during assembly signing. " + text);
 		}
 
-		static Version IsValidAssemblyVersion (string version)
+		static Version IsValidAssemblyVersion (string version, bool allowGenerated)
 		{
 			string[] parts = version.Split ('.');
 			if (parts.Length < 1 || parts.Length > 4)
@@ -880,7 +888,7 @@ namespace Mono.CSharp
 			var values = new int[4];
 			for (int i = 0; i < parts.Length; ++i) {
 				if (!int.TryParse (parts[i], out values[i])) {
-					if (parts[i].Length == 1 && parts[i][0] == '*') {
+					if (parts[i].Length == 1 && parts[i][0] == '*' && allowGenerated) {
 						if (i == 2) {
 							// Nothing can follow *
 							if (parts.Length > 3)

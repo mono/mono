@@ -1637,6 +1637,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute AssemblyVersion;
 		public readonly PredefinedAttribute AssemblyAlgorithmId;
 		public readonly PredefinedAttribute AssemblyFlags;
+		public readonly PredefinedAttribute AssemblyFileVersion;
 		public readonly PredefinedAttribute ComImport;
 		public readonly PredefinedAttribute CoClass;
 		public readonly PredefinedAttribute AttributeUsage;
@@ -1690,6 +1691,7 @@ namespace Mono.CSharp {
 			AssemblyVersion = new PredefinedAttribute (module, "System.Reflection", "AssemblyVersionAttribute");
 			AssemblyAlgorithmId = new PredefinedAttribute (module, "System.Reflection", "AssemblyAlgorithmIdAttribute");
 			AssemblyFlags = new PredefinedAttribute (module, "System.Reflection", "AssemblyFlagsAttribute");
+			AssemblyFileVersion = new PredefinedAttribute (module, "System.Reflection", "AssemblyFileVersionAttribute");
 			ComImport = new PredefinedAttribute (module, "System.Runtime.InteropServices", "ComImportAttribute");
 			CoClass = new PredefinedAttribute (module, "System.Runtime.InteropServices", "CoClassAttribute");
 			AttributeUsage = new PredefinedAttribute (module, "System", "AttributeUsageAttribute");
