@@ -234,7 +234,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/GridView_Bug595567.aspx \
 	Test/mainsoft/NunitWebResources/CheckBoxList_Bug600415.aspx \
 	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx \
-	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx.cs
+	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx.cs \
+	Test/mainsoft/NunitWebResources/HtmlTitleCodeRender_Bug662918.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
