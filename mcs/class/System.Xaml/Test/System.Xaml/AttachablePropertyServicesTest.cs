@@ -23,49 +23,49 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Windows.Markup;
+using System.Xaml;
+using NUnit.Framework;
 
-namespace System.Xaml
+namespace MonoTests.System.Xaml
 {
-	public class XamlNodeQueue
+	[TestFixture]
+	public class AttachablePropertyServicesTest
 	{
-		Queue<XamlNodeInfo> queue = new Queue<XamlNodeInfo> ();
-		XamlSchemaContext ctx;
-		XamlReader reader;
-		XamlWriter writer;
-
-		public XamlNodeQueue (XamlSchemaContext schemaContext)
+		[Test]
+		public void NullArgument ()
 		{
-			if (schemaContext == null)
-				throw new ArgumentNullException ("schemaContext");
-			this.ctx = schemaContext;
-			reader = new XamlNodeQueueReader (this);
-			writer = new XamlNodeQueueWriter (this);
+			// null is not rejected
+			AttachablePropertyServices.GetAttachedPropertyCount (null);
+			AttachablePropertyServices.CopyPropertiesTo (null, null, 0);
 		}
 
-		internal Queue<XamlNodeInfo> Queue {
-			get { return queue; }
+		[Test]
+		public void NonStoreArgument ()
+		{
+			// non-store object either.
+			AttachablePropertyServices.GetAttachedPropertyCount (new object ());
 		}
 
-		internal XamlSchemaContext SchemaContext {
-			get { return ctx; }
+		[Test]
+		public void NonStoreGetSet ()
+		{
+			var a = new object ();
+			AttachablePropertyServices.SetProperty (a, Attachable.FooIdentifier, "x");
+			string v;
+			Assert.IsTrue (AttachablePropertyServices.TryGetProperty<string> (a, Attachable.FooIdentifier, out v), "#1");
+			Assert.AreEqual ("x", v, "#2");
 		}
 
-		public int Count {
-			get { return queue.Count; }
-		}
+		[Test]
+		public void StoreGetSet ()
+		{
+			var a = new AttachedWrapper2 ();
+			AttachedWrapper2.SetFoo (a, "x");
+			string v;
+			Assert.IsFalse (AttachablePropertyServices.TryGetProperty<string> (a, AttachedWrapper2.FooIdentifier, out v), "#1");
+			Assert.AreEqual ("x", AttachedWrapper2.GetFoo (a), "#2");
 
-		public bool IsEmpty {
-			get { return queue.Count == 0; }
-		}
-
-		public XamlReader Reader {
-			get { return reader; }
-		}
-
-		public XamlWriter Writer {
-			get { return writer; }
+			Assert.AreEqual (1, AttachedWrapper2.PropertyCount, "#3");
 		}
 	}
 }

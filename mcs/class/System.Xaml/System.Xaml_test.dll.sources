@@ -21,6 +21,7 @@ System.Xaml/XamlDirectiveTest.cs
 System.Xaml/XamlDuplicateMemberExceptionTest.cs
 System.Xaml/XamlLanguageTest.cs
 System.Xaml/XamlMemberTest.cs
+System.Xaml/XamlNodeQueueTest.cs
 System.Xaml/XamlObjectEventArgsTest.cs
 System.Xaml/XamlObjectReaderSettingsTest.cs
 System.Xaml/XamlObjectReaderTest.cs

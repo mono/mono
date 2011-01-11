@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2010 Novell Inc. http://novell.com
+// Copyright (C) 2011 Novell Inc. http://novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,49 +23,37 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Windows.Markup;
+using System.Xaml;
+using NUnit.Framework;
 
-namespace System.Xaml
+namespace MonoTests.System.Xaml
 {
-	public class XamlNodeQueue
+	[TestFixture]
+	public class XamlNodeQueueTest
 	{
-		Queue<XamlNodeInfo> queue = new Queue<XamlNodeInfo> ();
-		XamlSchemaContext ctx;
-		XamlReader reader;
-		XamlWriter writer;
-
-		public XamlNodeQueue (XamlSchemaContext schemaContext)
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorNull ()
 		{
-			if (schemaContext == null)
-				throw new ArgumentNullException ("schemaContext");
-			this.ctx = schemaContext;
-			reader = new XamlNodeQueueReader (this);
-			writer = new XamlNodeQueueWriter (this);
+			new XamlNodeQueue (null);
 		}
+	
+		[Test]
+		public void Read ()
+		{
+			var q = new XamlNodeQueue (new XamlSchemaContext ());
+			Assert.IsFalse (q.Reader.Read (), "#1");
+			Assert.IsTrue (q.Reader.IsEof, "#1-2");
 
-		internal Queue<XamlNodeInfo> Queue {
-			get { return queue; }
-		}
+			q.Writer.WriteStartObject (XamlLanguage.String);
+			Assert.IsTrue (q.Reader.Read (), "#2");
+			Assert.IsFalse (q.Reader.IsEof, "#2-2");
+			Assert.AreEqual (XamlLanguage.String, q.Reader.Type, "#2-3");
+			Assert.IsNull (q.Reader.Member, "#2-4");
+			Assert.IsNull (q.Reader.Value, "#2-5");
 
-		internal XamlSchemaContext SchemaContext {
-			get { return ctx; }
-		}
-
-		public int Count {
-			get { return queue.Count; }
-		}
-
-		public bool IsEmpty {
-			get { return queue.Count == 0; }
-		}
-
-		public XamlReader Reader {
-			get { return reader; }
-		}
-
-		public XamlWriter Writer {
-			get { return writer; }
+			Assert.IsFalse (q.Reader.Read (), "#3");
+			Assert.IsTrue (q.Reader.IsEof, "#3-2");
 		}
 	}
 }

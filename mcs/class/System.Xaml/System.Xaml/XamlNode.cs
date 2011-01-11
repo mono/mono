@@ -48,13 +48,20 @@ namespace System.Xaml
 			this.member = member;
 		}
 		
-		public XamlNodeInfo (string value)
+		public XamlNodeInfo (object value)
 		{
 			node_type = XamlNodeType.Value;
 			this.value = value;
 			member = default (XamlNodeMember);
 		}
 		
+		public XamlNodeInfo (NamespaceDeclaration ns)
+		{
+			node_type = XamlNodeType.NamespaceDeclaration;
+			this.value = ns;
+			member = default (XamlNodeMember);
+		}
+
 		XamlNodeType node_type;
 		object value;
 		XamlNodeMember member;

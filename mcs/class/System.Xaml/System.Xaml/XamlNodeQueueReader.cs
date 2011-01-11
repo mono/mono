@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2010 Novell Inc. http://novell.com
+// Copyright (C) 2011 Novell Inc. http://novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,44 +28,53 @@ using System.Windows.Markup;
 
 namespace System.Xaml
 {
-	public class XamlNodeQueue
+	internal class XamlNodeQueueReader : XamlReader
 	{
-		Queue<XamlNodeInfo> queue = new Queue<XamlNodeInfo> ();
-		XamlSchemaContext ctx;
-		XamlReader reader;
-		XamlWriter writer;
+		XamlNodeQueue source;
+		XamlNodeInfo node;
 
-		public XamlNodeQueue (XamlSchemaContext schemaContext)
+		public XamlNodeQueueReader (XamlNodeQueue source)
 		{
-			if (schemaContext == null)
-				throw new ArgumentNullException ("schemaContext");
-			this.ctx = schemaContext;
-			reader = new XamlNodeQueueReader (this);
-			writer = new XamlNodeQueueWriter (this);
+			this.source = source;
+			node = default (XamlNodeInfo);
 		}
 
-		internal Queue<XamlNodeInfo> Queue {
-			get { return queue; }
+		public override bool IsEof {
+			get { return node.NodeType == XamlNodeType.None; }
+		}
+		
+		public override XamlMember Member {
+			get { return NodeType != XamlNodeType.StartMember ? null : node.Member.Member; }
 		}
 
-		internal XamlSchemaContext SchemaContext {
-			get { return ctx; }
+		public override NamespaceDeclaration Namespace {
+			get { return NodeType != XamlNodeType.NamespaceDeclaration ? null : (NamespaceDeclaration) node.Value; }
 		}
 
-		public int Count {
-			get { return queue.Count; }
+		public override XamlNodeType NodeType {
+			get { return node.NodeType; }
 		}
 
-		public bool IsEmpty {
-			get { return queue.Count == 0; }
+		public override XamlSchemaContext SchemaContext {
+			get { return source.SchemaContext; }
 		}
 
-		public XamlReader Reader {
-			get { return reader; }
+		public override XamlType Type {
+			get { return NodeType != XamlNodeType.StartObject ? null : node.Object.Type; }
 		}
 
-		public XamlWriter Writer {
-			get { return writer; }
+		public override object Value {
+			get { return NodeType != XamlNodeType.Value ? null : node.Value; }
+		}
+
+		public override bool Read ()
+		{
+			if (source.IsEmpty) {
+				node = default (XamlNodeInfo);
+				return false;
+			}
+			node = source.Queue.Dequeue ();
+			return true;
 		}
 	}
 }
