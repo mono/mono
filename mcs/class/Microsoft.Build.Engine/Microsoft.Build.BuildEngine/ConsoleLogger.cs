@@ -456,9 +456,11 @@ namespace Microsoft.Build.BuildEngine {
 				StringBuilder sb = new StringBuilder ();
 				for (int i = 0; i < indent; i++)
 					sb.Append ('\t');
-				sb.Append (message);
 
-				writeHandler (sb.ToString ());
+				string indent_str = sb.ToString ();
+
+				foreach (string line in message.Split (new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries))
+					writeHandler (indent_str + line);
 			} else {
 				writeHandler (message);
 			}
