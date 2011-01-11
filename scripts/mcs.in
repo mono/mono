@@ -1,0 +1,2 @@
+#!/bin/sh
+exec @bindir@/mono $MONO_OPTIONS @mono_instdir@/2.0/mcs.exe -lib:@mono_instdir@/2.0 -lib:@mono_instdir@/3.5 "$@"
