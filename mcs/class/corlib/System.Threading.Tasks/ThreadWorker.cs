@@ -40,7 +40,7 @@ namespace System.Threading.Tasks
 		[ThreadStatic]
 		static ThreadWorker autoReference;
 		
-		readonly IDequeOperations<Task> dDeque;
+		readonly IConcurrentDeque<Task> dDeque;
 		readonly ThreadWorker[]         others;
 		readonly ManualResetEvent       waitHandle;
 		readonly IProducerConsumerCollection<Task> sharedWorkQueue;

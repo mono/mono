@@ -33,7 +33,7 @@ namespace System.Threading.Tasks
 
 	internal class SimpleConcurrentBag<T>
 	{
-		readonly IDequeOperations<T>[] deques;
+		readonly IConcurrentDeque<T>[] deques;
 		readonly bool unique;
 		int index = -1;
 		

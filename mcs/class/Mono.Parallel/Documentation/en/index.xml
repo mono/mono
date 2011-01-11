@@ -26,6 +26,11 @@
       <Type Name="Snzi" Kind="Class" />
       <Type Name="SpinLockWrapper" Kind="Class" />
     </Namespace>
+    <Namespace Name="Mono.Threading.Tasks">
+      <Type Name="CyclicDeque`1" DisplayName="CyclicDeque&lt;T&gt;" Kind="Class" />
+      <Type Name="IConcurrentDeque`1" DisplayName="IConcurrentDeque&lt;T&gt;" Kind="Interface" />
+      <Type Name="PopResult" Kind="Enumeration" />
+    </Namespace>
   </Types>
   <Title>Mono.Parallel</Title>
 </Overview>

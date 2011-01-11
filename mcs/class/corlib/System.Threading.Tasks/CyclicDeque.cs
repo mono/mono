@@ -30,22 +30,36 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
+#if INSIDE_MONO_PARALLEL
+namespace Mono.Threading.Tasks
+#else
 namespace System.Threading.Tasks
+#endif
 {
-	internal enum PopResult	{
+#if INSIDE_MONO_PARALLEL
+	public
+#endif
+	enum PopResult	{
 		Succeed,
 		Empty,
 		Abort
 	}
 
-	internal interface IDequeOperations<T>
+#if INSIDE_MONO_PARALLEL
+	public
+#endif
+	interface IConcurrentDeque<T>
 	{
 		void PushBottom (T obj);
 		PopResult PopBottom (out T obj);
 		PopResult PopTop (out T obj);
+		IEnumerable<T> GetEnumerable ();
 	}
 
-	internal class CyclicDeque<T> : IDequeOperations<T>
+#if INSIDE_MONO_PARALLEL
+	public
+#endif
+	class CyclicDeque<T> : IConcurrentDeque<T>
 	{
 		const int BaseSize = 11;
 		
