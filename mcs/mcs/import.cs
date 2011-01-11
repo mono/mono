@@ -53,28 +53,26 @@ namespace Mono.CSharp
 			//
 			// Returns true when object at local position has dynamic attribute flag
 			//
-			public bool IsDynamicObject {
-				get {
-					if (provider != null)
-						ReadAttribute ();
+			public bool IsDynamicObject (MetadataImporter importer)
+			{
+				if (provider != null)
+					ReadAttribute (importer);
 
-					return flags != null && Position < flags.Length && flags[Position];
-				}
+				return flags != null && Position < flags.Length && flags[Position];
 			}
 
 			//
 			// Returns true when DynamicAttribute exists
 			//
-			public bool HasDynamicAttribute {
-				get {
-					if (provider != null)
-						ReadAttribute ();
+			public bool HasDynamicAttribute (MetadataImporter importer)
+			{
+				if (provider != null)
+					ReadAttribute (importer);
 
-					return flags != null;
-				}
+				return flags != null;
 			}
 
-			void ReadAttribute ()
+			void ReadAttribute (MetadataImporter importer)
 			{
 				IList<CustomAttributeData> cad;
 				if (provider is MemberInfo) {
@@ -87,9 +85,10 @@ namespace Mono.CSharp
 				}
 
 				if (cad.Count > 0) {
+					string ns, name;
 					foreach (var ca in cad) {
-						var type = ca.Constructor.DeclaringType;
-						if (type.Name != "DynamicAttribute" && type.Namespace != CompilerServicesNamespace)
+						importer.GetCustomAttributeTypeName (ca, out ns, out name);
+						if (name != "DynamicAttribute" && ns != CompilerServicesNamespace)
 							continue;
 
 						if (ca.ConstructorArguments.Count == 0) {
@@ -634,7 +633,7 @@ namespace Mono.CSharp
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
 				if (spec == TypeManager.object_type) {
-					if (dtype.IsDynamicObject)
+					if (dtype.IsDynamicObject (this))
 						return InternalType.Dynamic;
 
 					return spec;
@@ -643,7 +642,7 @@ namespace Mono.CSharp
 				if (!spec.IsGeneric || type.IsGenericTypeDefinition)
 					return spec;
 
-				if (!dtype.HasDynamicAttribute)
+				if (!dtype.HasDynamicAttribute (this))
 					return spec;
 
 				// We've found same object in the cache but this one has a dynamic custom attribute
