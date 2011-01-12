@@ -36,11 +36,13 @@ bin_SCRIPTS = \
 	mono-test-install	\
 	peverify			\
 	mcs					\
+	gmcs				\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
 if INSTALL_4_0
 bin_SCRIPTS += $(scripts_4_0)
+bin_SCRIPTS += dmcs
 endif
 
 scripts_4_0_umask = \
@@ -55,14 +57,12 @@ scripts_2_0 = \
 	al2$(SCRIPT_SUFFIX)			\
 	csharp2$(SCRIPT_SUFFIX)			\
 	gacutil2$(SCRIPT_SUFFIX)		\
-	gmcs$(SCRIPT_SUFFIX)			\
 	mdoc$(SCRIPT_SUFFIX)                    \
 	monop2$(SCRIPT_SUFFIX) 			\
 	resgen2$(SCRIPT_SUFFIX)			\
 	wsdl2$(SCRIPT_SUFFIX)
 
 scripts_4_0 = \
-	dmcs$(SCRIPT_SUFFIX)			\
 	disco$(SCRIPT_SUFFIX)			\
 	dtd2xsd$(SCRIPT_SUFFIX)			\
 	dtd2rng$(SCRIPT_SUFFIX)			\
@@ -148,6 +148,7 @@ EXTRA_DIST =			\
 	mono-find-requires.in	\
 	peverify.in			\
 	mcs.in				\
+	dmcs.in				\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
@@ -199,6 +200,14 @@ peverify: peverify.in Makefile
 
 mcs: mcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
+	mv -f $@.tmp $@
+
+gmcs: mcs.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
+	mv -f $@.tmp $@
+
+dmcs: dmcs.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/dmcs.in > $@.tmp
 	mv -f $@.tmp $@
 
 mono-service: mono-service.in Makefile
