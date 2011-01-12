@@ -741,7 +741,7 @@ namespace IKVM.Reflection
 			return GetNestedType(name, BindingFlags.Public);
 		}
 
-		public Type GetNestedType(string name, BindingFlags bindingAttr)
+		public virtual Type GetNestedType(string name, BindingFlags bindingAttr)
 		{
 			foreach (Type type in GetNestedTypes(bindingAttr))
 			{

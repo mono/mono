@@ -611,6 +611,11 @@ namespace Mono.CSharp
 			return new MissingType ("#" + index.ToString (), assembly);
 		}
 
+		public override MetaType GetNestedType (string name, BindingFlags bindingAttr)
+		{
+			return new MissingType (full_name + name, assembly);
+		}
+
 		public override bool IsGenericTypeDefinition {
 			get {
 				return full_name.IndexOf ('`') > 0;
