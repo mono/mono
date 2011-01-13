@@ -63,33 +63,35 @@ namespace System.Threading.Tasks
 		{
 			if (task.IsCompleted)
 				return;
+
+			ManualResetEventSlim evt = new ManualResetEventSlim (false);
+			task.ContinueWith (_ => evt.Set (), TaskContinuationOptions.ExecuteSynchronously);
+			if (evt.IsSet)
+				return;
 			
-			ParticipateUntilInternal (task, TaskCompletedPredicate);
+			ParticipateUntilInternal (task, evt, -1);
 		}
 		
-		public bool ParticipateUntil (Task task, Func<bool> predicate)
+		public bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
 			if (task.IsCompleted)
 				return false;
+
+			bool isFromPredicate = true;
+			task.ContinueWith (_ => { isFromPredicate = false; evt.Set (); }, TaskContinuationOptions.ExecuteSynchronously);
 			
-			bool isFromPredicate = false;
-			
-			ParticipateUntilInternal (task, delegate {
-				if (predicate ()) {
-					isFromPredicate = true;
-					return true;
-				}
-				return task.IsCompleted;
-			});
+			ParticipateUntilInternal (task, evt, millisecondsTimeout);
 
 			return isFromPredicate;
 		}
 		
 		// Called with Task.WaitAll(someTasks) or Task.WaitAny(someTasks) so that we can remove ourselves
 		// also when our wait condition is ok
-		public void ParticipateUntilInternal (Task self, Func<Task, bool> predicate)
-		{	
-			ThreadWorker.WorkerMethod (self, predicate, workQueue, workers, pulseHandle);
+		public void ParticipateUntilInternal (Task self, ManualResetEventSlim evt, int millisecondsTimeout)
+		{
+			if (millisecondsTimeout == -1)
+				millisecondsTimeout = int.MaxValue;
+			ThreadWorker.WorkerMethod (self, evt, millisecondsTimeout, workQueue, workers, pulseHandle);
 		}
 
 		static bool TaskCompletedPredicate (Task self)

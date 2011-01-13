@@ -33,7 +33,7 @@ namespace System.Threading.Tasks
 	{
 		void AddWork (Task t);
 		void ParticipateUntil (Task task);
-		bool ParticipateUntil (Task task, Func<bool> predicate);
+		bool ParticipateUntil (Task task, ManualResetEventSlim predicateEvt, int millisecondsTimeout);
 		void PulseAll ();
 	}
 }
