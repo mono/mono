@@ -61,11 +61,12 @@ namespace System.Threading.Tasks
 		                     ThreadWorker[] others,
 		                     int workerPosition,
 		                     IProducerConsumerCollection<Task> sharedWorkQueue,
+		                     IConcurrentDeque<Task> dDeque,
 		                     ThreadPriority priority,
 		                     ManualResetEvent handle)
 		{
 			this.others          = others;
-			this.dDeque          = new CyclicDeque<Task> ();
+			this.dDeque          = dDeque;
 			this.sched           = sched;
 			this.sharedWorkQueue = sharedWorkQueue;
 			this.workerLength    = others.Length;

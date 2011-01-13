@@ -46,7 +46,7 @@ namespace System.Threading.Tasks
 			workers = new ThreadWorker [maxWorker];
 			
 			for (int i = 0; i < maxWorker; i++) {
-				workers [i] = new ThreadWorker (this, workers, i, workQueue, priority, pulseHandle);
+				workers [i] = new ThreadWorker (this, workers, i, workQueue, new CyclicDeque<Task> (), priority, pulseHandle);
 				workers [i].Pulse ();
 			}
 		}
@@ -85,12 +85,8 @@ namespace System.Threading.Tasks
 			return isFromPredicate;
 		}
 		
-		// Called with Task.WaitAll(someTasks) or Task.WaitAny(someTasks) so that we can remove ourselves
-		// also when our wait condition is ok
-		public void ParticipateUntilInternal (Task self, ManualResetEventSlim evt, int millisecondsTimeout)
+		internal void ParticipateUntilInternal (Task self, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
-			if (millisecondsTimeout == -1)
-				millisecondsTimeout = int.MaxValue;
 			ThreadWorker.WorkerMethod (self, evt, millisecondsTimeout, workQueue, workers, pulseHandle);
 		}
 
