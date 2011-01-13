@@ -6939,7 +6939,10 @@ debugger_thread (void *arg)
 
 	mono_set_is_debugger_attached (FALSE);
 	
-	if (! (vm_death_event_sent || mono_runtime_is_shutting_down ())) {
+#ifdef TARGET_WIN32
+	if (! (vm_death_event_sent || mono_runtime_is_shutting_down ())) 
+#endif
+	{
 		mono_mutex_lock (&debugger_thread_exited_mutex);
 		debugger_thread_exited = TRUE;
 		mono_cond_signal (&debugger_thread_exited_cond);
@@ -6947,7 +6950,7 @@ debugger_thread (void *arg)
 
 		DEBUG (1, printf ("[dbg] Debugger thread exited.\n"));
 		
-		if (command_set == CMD_SET_VM && command == CMD_VM_DISPOSE) {
+		if (command_set == CMD_SET_VM && command == CMD_VM_DISPOSE && !(vm_death_event_sent || mono_runtime_is_shutting_down ())) {
 			DEBUG (2, fprintf (log_file, "[dbg] Detached - restarting clean debugger thread.\n"));
 			start_debugger_thread ();
 		}
