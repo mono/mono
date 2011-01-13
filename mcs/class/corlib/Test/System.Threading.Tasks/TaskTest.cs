@@ -194,6 +194,21 @@ namespace MonoTests.System.Threading.Tasks
 			});
 		}
 
+		[Test]
+		public void ContinueWithChildren ()
+		{
+			ParallelTestHelper.Repeat (delegate {
+			    bool result = false;
+
+			    var t = Task.Factory.StartNew (() => Task.Factory.StartNew (() => Thread.Sleep (100), TaskCreationOptions.AttachedToParent));
+			    t.ContinueWith (_ => result = true);
+			    while (!t.IsCompleted)
+				    Thread.Sleep (200);
+
+			    Assert.IsTrue (result);
+			}, 2);
+		}
+
 		[TestAttribute]
 		public void MultipleTaskTestCase()
 		{
@@ -248,7 +263,7 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.IsTrue(r3, "#2");
 				Assert.IsTrue(r1, "#3");
 				Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#4");
-			}, 10);
+				}, 10);
 		}
 
 		[Test]

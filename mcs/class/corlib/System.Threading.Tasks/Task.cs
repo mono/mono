@@ -447,8 +447,6 @@ namespace System.Threading.Tasks
 			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null){
 				parent.ChildCompleted ();
 			}
-			
-			Dispose ();
 		}
 
 		void ProcessCompleteDelegates ()
@@ -722,7 +720,6 @@ namespace System.Threading.Tasks
 			// any big object references that the user might have captured in a anonymous method
 			if (disposing) {
 				action = null;
-				completed.Clear ();
 				state = null;
 			}
 		}
