@@ -299,8 +299,10 @@ namespace Microsoft.Build.BuildEngine {
 				   BuildSettings buildFlags)
 		{
 			CheckUnloaded ();
-			if (buildFlags == BuildSettings.None)
+			if (buildFlags == BuildSettings.None) {
+				needToReevaluate = false;
 				Reevaluate ();
+			}
 			
 			if (targetNames == null || targetNames.Length == 0) {
 				if (defaultTargets != null && defaultTargets.Length != 0)
