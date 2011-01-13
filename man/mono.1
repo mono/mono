@@ -163,11 +163,11 @@ hardware configurations like the cell phones and video gaming
 consoles). 
 .TP
 .I static
-Create an ELF object file (.o) which can be statically linked into an executable
-when embedding the mono runtime. When this option is used, the object file needs to
-be registered with the embedded runtime using the mono_aot_register_module function
-which takes as its argument the mono_aot_module_<ASSEMBLY NAME>_info global symbol 
-from the object file:
+Create an ELF object file (.o) or .s file which can be statically linked into an
+executable when embedding the mono runtime. When this option is used, the object file
+needs to be registered with the embedded runtime using the mono_aot_register_module
+function which takes as its argument the mono_aot_module_<ASSEMBLY NAME>_info global
+symbol from the object file:
 
 .nf
 extern void *mono_aot_module_hello_info;
@@ -175,6 +175,23 @@ extern void *mono_aot_module_hello_info;
 mono_aot_register_module (mono_aot_module_hello_info);
 .fi
 .ne
+.TP
+.I mtriple=<TRIPLE>
+Use the GNU style target triple <TRIPLE> to determine some code generation options, i.e.
+--mtriple=armv7-linux-gnueabi will generate code that targets ARMv7. This is currently
+only supported by the ARM backend. In LLVM mode, this triple is passed on to the LLVM
+llc compiler.
+.TP
+.I tool-prefix=<PREFIX>
+Prepends <PREFIX> to the name of tools ran by the AOT compiler, i.e. 'as'/'ld'. For
+example, --tool=prefix=arm-linux-gnueabi- will make the AOT compiler run
+'arm-linux-gnueabi-as' instead of 'as'.
+.TP
+.I llvm-path=<PREFIX>
+Same for the llvm tools 'opt' and 'llc'.
+.TP
+.I stats
+Print various stats collected during AOT compilation.
 
 .PP
 For more information about AOT, see: http://www.mono-project.com/AOT
