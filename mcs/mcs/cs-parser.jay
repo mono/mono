@@ -4318,6 +4318,11 @@ opt_type_parameter_constraints_clauses
 	  {
 		$$ = $1;
 	  }
+	| error
+	 {
+		Error_SyntaxError (yyToken);
+		$$ = null;
+	 }
 	;
 
 type_parameter_constraints_clauses
