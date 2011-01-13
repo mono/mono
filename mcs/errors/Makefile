@@ -33,6 +33,7 @@ TEST_SUPPORT_FILES = \
 	CS0730-lib.dll \
 	CS1542-lib.dll CS1577-lib.dll \
 	CS1685-2-lib.dll \
+	dlls/first/CS1701-lib.dll dlls/second/CS1701-lib.dll CS1701-lib.dll dlls/first/CS1702-lib.dll dlls/second/CS1702-lib.dll CS1702-lib.dll dlls/first/CS1705-lib.dll dlls/second/CS1705-lib.dll CS1705-lib.dll \
 	CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll CSExternAlias-lib.dll \
 	CSFriendAssembly-lib.dll \
 	dlls/first/CS1703-lib.dll dlls/first/CS1704-lib.dll \
@@ -81,14 +82,23 @@ run-mcs-tests: $(TEST_SUPPORT_FILES)
 endif
 
 clean-local:
-	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
+	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk dlls/first/*.dll dlls/second/*.dll
 
 dist-local: dist-default
 
 csproj-local install-local uninstall-local:
 
+CS1701-lib.dll : CS1701-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /r:dlls/first/CS1701-lib.dll /out:$@ $<
+
+CS1702-lib.dll : CS1702-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /r:dlls/first/CS1702-lib.dll /out:$@ $<
+
+CS1705-lib.dll : CS1705-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /r:dlls/first/CS1705-lib.dll /out:$@ $<
+
 %-lib.dll: %-lib.cs
-	$(CSCOMPILE) /target:library /out:$@ $<
+	$(CSCOMPILE) /target:library /warn:0 /out:$@ $<
 
 %-module.dll: %-module.cs
 	$(CSCOMPILE) /target:module /out:$@ $<

@@ -207,8 +207,51 @@ namespace Mono.CSharp
 
 		Assembly AssemblyReferenceResolver (object sender, IKVM.Reflection.ResolveEventArgs args)
 		{
-			if (args.Name == "mscorlib")
+			var refname = args.Name;
+			if (refname == "mscorlib")
 				return corlib;
+
+			Assembly version_mismatch = null;
+			foreach (var assembly in domain.GetAssemblies ()) {
+				AssemblyComparisonResult result;
+				if (!Fusion.CompareAssemblyIdentity (refname, false, assembly.FullName, false, out result)) {
+					if ((result == AssemblyComparisonResult.NonEquivalentVersion || result == AssemblyComparisonResult.NonEquivalentPartialVersion) &&
+						(version_mismatch == null || version_mismatch.GetName ().Version < assembly.GetName ().Version)) {
+						version_mismatch = assembly;
+					}
+
+					continue;
+				}
+
+				if (result == AssemblyComparisonResult.EquivalentFXUnified ||
+					result == AssemblyComparisonResult.EquivalentFullMatch ||
+					result == AssemblyComparisonResult.EquivalentPartialMatch) {
+					return assembly;
+				}
+
+				throw new NotImplementedException ("Assembly equality = " + result.ToString ());
+			}
+
+			if (version_mismatch != null) {
+				var v1 = new AssemblyName (refname).Version;
+				var v2 = version_mismatch.GetName ().Version;
+
+				if (v1 > v2) {
+//					compiler.Report.SymbolRelatedToPreviousError (args.RequestingAssembly.Location);
+					compiler.Report.Error (1705, "Assembly `{0}' references `{1}' which has higher version number than imported assembly `{2}'",
+						args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName);
+				} else if (v1.Major != v2.Major || v1.Minor != v2.Minor) {
+					compiler.Report.Warning (1701, 2,
+						"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
+						refname, version_mismatch.GetName ().FullName);
+				} else {
+					compiler.Report.Warning (1702, 3,
+						"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
+						refname, version_mismatch.GetName ().FullName);
+				}
+
+				return version_mismatch;
+			}
 
 			// AssemblyReference has not been found in the domain
 			// create missing reference and continue

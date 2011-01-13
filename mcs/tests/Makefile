@@ -107,3 +107,5 @@ setup:
 
 	$(CSCOMPILE) -t:library dlls/test-679-2/test-679-lib-2.cs
 	$(CSCOMPILE) -t:library dlls/test-679-1/test-679-lib.cs -r:dlls/test-679-2/test-679-lib-2.dll
+	$(CSCOMPILE) -t:library dlls/first/test-804-lib.cs
+	$(CSCOMPILE) -t:library dlls/second/test-804-lib.cs -r:dlls/first/test-804-lib.dll
