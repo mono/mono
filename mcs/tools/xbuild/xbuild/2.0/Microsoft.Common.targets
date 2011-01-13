@@ -57,7 +57,8 @@
 	<PropertyGroup>
 		<TargetName Condition="'$(TargetName)' == '' ">$(AssemblyName)</TargetName>
 		<TargetFileName Condition="'$(TargetFileName)' == '' ">$(TargetName)$(TargetExt)</TargetFileName>
-		<TargetPath>@(_OutDirItem->'%(FullPath)\$(TargetFileName)')</TargetPath>
+		<TargetDir Condition=" '$(TargetDir)' == '' ">@(_OutDirItem->'%(FullPath)')</TargetDir>
+		<TargetPath Condition=" '$(TargetPath)' == '' ">@(_OutDirItem->'%(FullPath)\$(TargetFileName)')</TargetPath>
 		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildProjectFullPath);$(MSBuildToolsPath)\Microsoft.Common.targets</MSBuildAllProjects>
 
 		<KeyOriginatorFile Condition=" '$(SignAssembly)' == 'true' ">$(AssemblyOriginatorKeyFile)</KeyOriginatorFile>
