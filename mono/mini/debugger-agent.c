@@ -6791,8 +6791,8 @@ static gboolean
 wait_for_attach (void)
 {
 	if (listen_fd == -1) {
-		DEBUG (1, fprintf (log_file, "[dbg] Invalid listening socket, exiting\n"));
-		exit (1);
+		DEBUG (1, fprintf (log_file, "[dbg] Invalid listening socket\n"));
+		return FALSE;
 	}
 
 	/* Block and wait for client connection */
@@ -6828,6 +6828,7 @@ debugger_thread (void *arg)
 	Buffer buf;
 	ErrorCode err;
 	gboolean no_reply;
+	gboolean attach_failed = FALSE;
 
 	DEBUG (1, fprintf (log_file, "[dbg] Agent thread started, pid=%p\n", (gpointer)GetCurrentThreadId ()));
 
@@ -6840,13 +6841,16 @@ debugger_thread (void *arg)
 	mono_set_is_debugger_attached (TRUE);
 	
 	if (agent_config.defer) {
-		wait_for_attach ();
+		if (!wait_for_attach ()) {
+			DEBUG (1, fprintf (log_file, "[dbg] Can't attach, aborting debugger thread.\n"));
+			attach_failed = TRUE; // Don't abort process when we can't listen
+		}
 		
 		/* Send start event to client */
 		process_profiler_event (EVENT_KIND_VM_START, mono_thread_get_main ());
 	}
 	
-	while (TRUE) {
+	while (!attach_failed) {
 		res = recv_length (conn_fd, header, HEADER_LENGTH, 0);
 
 		/* This will break if the socket is closed during shutdown too */
@@ -6950,7 +6954,7 @@ debugger_thread (void *arg)
 
 		DEBUG (1, printf ("[dbg] Debugger thread exited.\n"));
 		
-		if (command_set == CMD_SET_VM && command == CMD_VM_DISPOSE && !(vm_death_event_sent || mono_runtime_is_shutting_down ())) {
+		if (command_set == CMD_SET_VM && command == CMD_VM_DISPOSE && !(vm_death_event_sent || mono_runtime_is_shutting_down () || attach_failed)) {
 			DEBUG (2, fprintf (log_file, "[dbg] Detached - restarting clean debugger thread.\n"));
 			start_debugger_thread ();
 		}
