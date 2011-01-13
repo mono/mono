@@ -392,7 +392,12 @@ namespace Mono.CSharp
 					continue;
 
 				try {
-					return domain.LoadFile (file);
+					var a = domain.LoadFile (file);
+					if (a != null) {
+						loaded_names.Add (Tuple.Create (a.GetName (), assembly));
+					}
+
+					return a;
 				} catch {
 					// Default assemblies can fail to load without error
 					return null;
