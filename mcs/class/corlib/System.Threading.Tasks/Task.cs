@@ -133,7 +133,7 @@ namespace System.Threading.Tasks
 		static void EmptyFunc (object o)
 		{
 		}
-		
+
 		#region Start
 		public void Start ()
 		{
@@ -209,6 +209,7 @@ namespace System.Threading.Tasks
 		{
 			Task continuation = new Task ((o) => continuationAction ((Task)o), this, cancellationToken, GetCreationOptions (continuationOptions));
 			ContinueWithCore (continuation, continuationOptions, scheduler);
+
 			return continuation;
 		}
 		
@@ -522,9 +523,13 @@ namespace System.Threading.Tasks
 				millisecondsTimeout = ComputeTimeout (millisecondsTimeout, watch);
 			}
 
-			Func<bool> stopFunc
-				= delegate { cancellationToken.ThrowIfCancellationRequested (); return watch.ElapsedMilliseconds > millisecondsTimeout; };
-			bool result = scheduler.ParticipateUntil (this, stopFunc);
+			ManualResetEventSlim predicateEvt = new ManualResetEventSlim (false);
+			if (cancellationToken != CancellationToken.None) {
+				cancellationToken.Register (predicateEvt.Set);
+				cancellationToken.ThrowIfCancellationRequested ();
+			}
+
+			bool result = scheduler.ParticipateUntil (this, predicateEvt, millisecondsTimeout);
 
 			if (exception != null)
 				throw exception;
@@ -638,6 +643,7 @@ namespace System.Threading.Tasks
 			IScheduler sched = null;
 			Task task = null;
 			Watch watch = Watch.StartNew ();
+			ManualResetEventSlim predicateEvt = new ManualResetEventSlim (false);
 
 			foreach (Task t in tasks) {
 				int indexResult = index++;
@@ -649,6 +655,9 @@ namespace System.Threading.Tasks
 					// Check if we are the first to have finished
 					if (result == 1)
 						indexFirstFinished = indexResult;
+
+					// Stop waiting
+					predicateEvt.Set ();
 				}, TaskContinuationOptions.ExecuteSynchronously);
 
 				if (sched == null && t.scheduler != null) {
@@ -667,20 +676,17 @@ namespace System.Threading.Tasks
 				task = tasks[shandle];
 				millisecondsTimeout = ComputeTimeout (millisecondsTimeout, watch);
 			}
-			
+
 			// One task already finished
 			if (indexFirstFinished != -1)
 				return indexFirstFinished;
-			
-			// All tasks are supposed to use the same TaskScheduler
-			sched.ParticipateUntil (task, delegate {
-				if (millisecondsTimeout != -1 && watch.ElapsedMilliseconds > millisecondsTimeout)
-					return true;
 
+			if (cancellationToken != CancellationToken.None) {
+				cancellationToken.Register (predicateEvt.Set);
 				cancellationToken.ThrowIfCancellationRequested ();
+			}
 
-				return numFinished >= 1;
-			});
+			sched.ParticipateUntil (task, predicateEvt, millisecondsTimeout);
 
 			// Index update is still not done
 			if (indexFirstFinished == -1) {
@@ -688,7 +694,7 @@ namespace System.Threading.Tasks
 				while (indexFirstFinished == -1)
 					wait.SpinOnce ();
 			}
-			
+
 			return indexFirstFinished;
 		}
 

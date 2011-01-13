@@ -208,12 +208,18 @@ namespace System.Threading.Tasks
 		// Predicate should be really fast and not blocking as it is called a good deal of time
 		// Also, the method skip tasks that are LongRunning to avoid blocking (Task are not LongRunning by default)
 		public static void WorkerMethod (Task self,
-		                                 Func<Task, bool> predicate,
+		                                 ManualResetEventSlim predicateEvt,
+		                                 int millisecondsTimeout,
 		                                 IProducerConsumerCollection<Task> sharedWorkQueue,
 		                                 ThreadWorker[] others,
 		                                 ManualResetEvent evt)
 		{
-			while (!predicate (self)) {
+			const int stage1 = 5, stage2 = 0;
+			int tries = 8;
+			WaitHandle[] handles = null;
+			Watch watch = Watch.StartNew ();
+
+			while (!predicateEvt.IsSet && watch.ElapsedMilliseconds < millisecondsTimeout) {
 				Task value;
 				
 				// If we are in fact a normal ThreadWorker, use our own deque
@@ -227,50 +233,66 @@ namespace System.Threading.Tasks
 							evt.Set ();
 						}
 
-						if (predicate (self))
+						if (predicateEvt.IsSet || watch.ElapsedMilliseconds > millisecondsTimeout)
 							return;
 					}
 				}
 
+				int count = sharedWorkQueue.Count;
+
 				// Dequeue only one item as we have restriction
-				while (sharedWorkQueue.TryTake (out value) && value != null) {
+				while (--count >= 0 && sharedWorkQueue.TryTake (out value) && value != null) {
 					evt.Set ();
 					if (CheckTaskFitness (self, value))
 						value.Execute (null);
 					else {
-						sharedWorkQueue.TryAdd (value);
+						if (autoReference == null)
+							sharedWorkQueue.TryAdd (value);
+						else
+							autoReference.dDeque.PushBottom (value);
 						evt.Set ();
 					}
 
-					if (predicate (self))
+					if (predicateEvt.IsSet || watch.ElapsedMilliseconds > millisecondsTimeout)
 						return;
 				}
 
 				// First check to see if we comply to predicate
-				if (predicate (self))
+				if (predicateEvt.IsSet || watch.ElapsedMilliseconds > millisecondsTimeout)
 					return;
 				
 				// Try to complete other work by stealing since our desired tasks may be in other worker
 				ThreadWorker other;
 				for (int i = 0; i < others.Length; i++) {
-					if ((other = others [i]) == null)
+					if ((other = others [i]) == autoReference || other == null)
 						continue;
-					
+
 					if (other.dDeque.PopTop (out value) == PopResult.Succeed && value != null) {
 						evt.Set ();
 						if (CheckTaskFitness (self, value))
 							value.Execute (null);
 						else {
-							sharedWorkQueue.TryAdd (value);
+							if (autoReference == null)
+								sharedWorkQueue.TryAdd (value);
+							else
+								autoReference.dDeque.PushBottom (value);
 							evt.Set ();
 						}
 					}
-					
-					if (predicate (self))
+
+					if (predicateEvt.IsSet || watch.ElapsedMilliseconds > millisecondsTimeout)
 						return;
 				}
 
-				Thread.Yield ();
+				if (--tries > stage1)
+					Thread.Yield ();
+				else if (tries >= stage2)
+					predicateEvt.Wait (ComputeTimeout (100, millisecondsTimeout, watch));
+				else {
+					if (tries == stage2 - 1)
+						handles = new [] { predicateEvt.WaitHandle, evt };
+					WaitHandle.WaitAny (handles, ComputeTimeout (1000, millisecondsTimeout, watch));
+				}
 			}
 		}
 
@@ -283,6 +305,11 @@ namespace System.Threading.Tasks
 		static bool CheckTaskFitness (Task self, Task t)
 		{
 			return ((t.CreationOptions & TaskCreationOptions.LongRunning) == 0 && t.Id < self.Id) || t.Parent == self || t == self;
+		}
+
+		static int ComputeTimeout (int proposedTimeout, int timeout, Watch watch)
+		{
+			return timeout == -1 ? proposedTimeout : Math.Min (proposedTimeout, Math.Max (0, (int)(timeout - watch.ElapsedMilliseconds)));
 		}
 		
 		public bool Finished {

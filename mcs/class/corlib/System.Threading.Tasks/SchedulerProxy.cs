@@ -50,16 +50,15 @@ namespace System.Threading.Tasks
 			ParticipateUntil (() => task.IsCompleted);
 		}
 		
-		public bool ParticipateUntil (Task task, Func<bool> predicate)
+		public bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
 			bool fromPredicate = false;
 			
 			ParticipateUntil (() => {
-				if (predicate ()) {
+				if (evt.IsSet) {
 					fromPredicate = true;
 					return true;
 				}
-				
 				return task.IsCompleted;
 			});
 			
@@ -69,7 +68,7 @@ namespace System.Threading.Tasks
 		public void ParticipateUntil (Func<bool> predicate)
 		{
 			SpinWait sw = new SpinWait ();
-			
+
 			while (!predicate ())
 				sw.SpinOnce ();
 		}
