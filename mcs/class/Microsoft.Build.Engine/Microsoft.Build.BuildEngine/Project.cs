@@ -914,7 +914,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			foreach (BuildProperty gp in GlobalProperties) {
 				bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
-				EvaluatedProperties.AddProperty (bp);
+				evaluatedProperties.AddProperty (bp);
 			}
 			
 			foreach (BuildProperty gp in GlobalProperties)
@@ -923,38 +923,38 @@ namespace Microsoft.Build.BuildEngine {
 			// add properties that we dont have from parent engine's
 			// global properties
 			foreach (BuildProperty gp in ParentEngine.GlobalProperties) {
-				if (EvaluatedProperties [gp.Name] == null) {
+				if (evaluatedProperties [gp.Name] == null) {
 					bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
-					EvaluatedProperties.AddProperty (bp);
+					evaluatedProperties.AddProperty (bp);
 				}
 			}
 
 			foreach (DictionaryEntry de in Environment.GetEnvironmentVariables ()) {
 				bp = new BuildProperty ((string) de.Key, (string) de.Value, PropertyType.Environment);
-				EvaluatedProperties.AddProperty (bp);
+				evaluatedProperties.AddProperty (bp);
 			}
 
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectFile", Path.GetFileName (fullFileName),
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectFile", Path.GetFileName (fullFileName),
 						PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectFullPath", fullFileName, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectName",
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectFullPath", fullFileName, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectName",
 						Path.GetFileNameWithoutExtension (fullFileName),
 						PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectExtension",
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectExtension",
 						Path.GetExtension (fullFileName),
 						PropertyType.Reserved));
 
 			string toolsPath = parentEngine.Toolsets [effective_tools_version].ToolsPath;
 			if (toolsPath == null)
 				throw new Exception (String.Format ("Invalid tools version '{0}', no tools path set for this.", effective_tools_version));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", toolsPath, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", toolsPath, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsVersion", effective_tools_version, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath32", ExtensionsPath, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath64", ExtensionsPath, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", toolsPath, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", toolsPath, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsVersion", effective_tools_version, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath32", ExtensionsPath, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath64", ExtensionsPath, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
 
 			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
 			string projectDir;
@@ -963,7 +963,7 @@ namespace Microsoft.Build.BuildEngine {
 			else
 				projectDir = Path.GetDirectoryName (FullFileName);
 
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDirectory", projectDir, PropertyType.Reserved));
+			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDirectory", projectDir, PropertyType.Reserved));
 		}
 
 		// precedence:
