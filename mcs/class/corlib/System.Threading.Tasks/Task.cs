@@ -263,7 +263,7 @@ namespace System.Threading.Tasks
 			
 			AtomicBoolean launched = new AtomicBoolean ();
 			EventHandler action = delegate (object sender, EventArgs e) {
-				if (!launched.Value && launched.TrySet ()) {
+				if (launched.TryRelaxedSet ()) {
 					if (!predicate ())
 						return;
 
@@ -405,8 +405,7 @@ namespace System.Threading.Tasks
 
 		internal void ChildCompleted ()
 		{
-			childTasks.Signal ();
-			if (childTasks.IsSet && status == TaskStatus.WaitingForChildrenToComplete) {
+			if (childTasks.Signal () && status == TaskStatus.WaitingForChildrenToComplete) {
 				status = TaskStatus.RanToCompletion;
 				
 				ProcessCompleteDelegates ();
