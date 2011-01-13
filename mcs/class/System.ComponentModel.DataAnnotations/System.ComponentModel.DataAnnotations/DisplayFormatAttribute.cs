@@ -39,5 +39,8 @@ namespace System.ComponentModel.DataAnnotations
 		public bool ConvertEmptyStringToNull { get; set; }
 		public string DataFormatString { get; set; }
 		public string NullDisplayText { get; set; }
+#if NET_4_0
+		public bool HtmlEncode { get; set; }
+#endif
 	}
 }

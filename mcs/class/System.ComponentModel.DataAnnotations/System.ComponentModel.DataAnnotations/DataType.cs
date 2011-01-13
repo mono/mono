@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2011 Novell Inc. http://novell.com
 //
 
 //
@@ -44,6 +44,9 @@ namespace System.ComponentModel.DataAnnotations
 		MultilineText,
 		EmailAddress,
 		Password,
-		Url
+		Url,
+#if NET_4_0
+		ImageUrl
+#endif
 	}
 }
