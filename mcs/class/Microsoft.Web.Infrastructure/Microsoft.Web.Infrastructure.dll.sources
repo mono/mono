@@ -1,0 +1,9 @@
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
+
+./Assembly/AssemblyInfo.cs
+./Microsoft.Web.Infrastructure.DynamicModuleHelper/DynamicModuleUtility.cs
+./Microsoft.Web.Infrastructure.DynamicValidationHelper/ValidationUtility.cs
+./Microsoft.Web.Infrastructure/HttpContextHelper.cs
+./Microsoft.Web.Infrastructure/InfrastructureHelper.cs

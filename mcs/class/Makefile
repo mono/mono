@@ -163,7 +163,9 @@ net_4_0_dirs := \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
 	System.Runtime.DurableInstancing \
-	Mono.CodeContracts
+	Mono.CodeContracts \
+	Microsoft.Web.Infrastructure
+>>>>>>> c372ab7... [asp.net] Added the Microsoft.Web.Infrastructure assembly
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
 moonlight_raw_SUBDIRS := $(moonlight_dirs)
