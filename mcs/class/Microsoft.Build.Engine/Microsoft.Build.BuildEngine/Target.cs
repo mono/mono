@@ -165,7 +165,6 @@ namespace Microsoft.Build.BuildEngine {
 			}
 
 			project.ParentEngine.BuiltTargetsOutputByName [built_targets_key] = (ITaskItem[]) Outputs.Clone ();
-			project.BuiltTargetKeys.Add (built_targets_key);
 
 			return result;
 		}

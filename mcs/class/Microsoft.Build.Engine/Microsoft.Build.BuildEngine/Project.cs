@@ -73,7 +73,6 @@ namespace Microsoft.Build.BuildEngine {
 		XmlDocument			xmlDocument;
 		bool				unloaded;
 		bool				initialTargetsBuilt;
-		List<string>			builtTargetKeys;
 		bool				building;
 		BuildSettings			current_settings;
 		Stack<Batch>			batches;
@@ -111,7 +110,6 @@ namespace Microsoft.Build.BuildEngine {
 
 			encoding = null;
 
-			builtTargetKeys = new List<string> ();
 			initialTargets = new List<string> ();
 			defaultTargets = new string [0];
 			batches = new Stack<Batch> ();
@@ -352,8 +350,15 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal string GetKeyForTarget (string target_name)
 		{
+			return GetKeyForTarget (target_name, true);
+		}
+
+		internal string GetKeyForTarget (string target_name, bool include_global_properties)
+		{
 			// target name is case insensitive
-			return fullFileName + ":" + target_name.ToLower () + ":" + GlobalPropertiesToString (GlobalProperties);
+			return fullFileName + ":" + target_name.ToLower () +
+					(include_global_properties ? (":" + GlobalPropertiesToString (GlobalProperties))
+					 			   : String.Empty);
 		}
 
 		string GlobalPropertiesToString (BuildPropertyGroup bgp)
@@ -896,8 +901,7 @@ namespace Microsoft.Build.BuildEngine {
 		// Removes entries of all earlier built targets for this project
 		void RemoveBuiltTargets ()
 		{
-			foreach (string key in builtTargetKeys)
-				ParentEngine.BuiltTargetsOutputByName.Remove (key);
+			ParentEngine.ClearBuiltTargetsForProject (this);
 		}
 
 		void InitializeProperties (string effective_tools_version)
@@ -1394,10 +1398,6 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public string ToolsVersion {
 			get; internal set;
-		}
-
-		internal List<string> BuiltTargetKeys {
-			get { return builtTargetKeys; }
 		}
 
 		internal Dictionary <string, BuildItemGroup> LastItemGroupContaining {
