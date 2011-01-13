@@ -732,4 +732,75 @@ namespace MonoTests.System.Xaml
 	public class Attached : Attachable
 	{
 	}
+
+	public class EventStore
+	{
+		public bool Method1Invoked;
+
+		public event EventHandler<EventArgs> Event1;
+		public event Func<object> Event2;
+
+		public object Examine ()
+		{
+			if (Event1 != null)
+				Event1 (this, EventArgs.Empty);
+			if (Event2 != null)
+				return Event2 ();
+			else
+				return null;
+		}
+
+		public void Method1 ()
+		{
+			throw new Exception ();
+		}
+
+		public void Method1 (object o, EventArgs e)
+		{
+			Method1Invoked = true;
+		}
+
+		public object Method2 ()
+		{
+			return "foo";
+		}
+	}
+
+	public class EventStore2<TEventArgs> where TEventArgs : EventArgs
+	{
+		public bool Method1Invoked;
+
+		public event EventHandler<TEventArgs> Event1;
+		public event Func<object> Event2;
+
+		public object Examine ()
+		{
+			if (Event1 != null)
+				Event1 (this, default (TEventArgs));
+			if (Event2 != null)
+				return Event2 ();
+			else
+				return null;
+		}
+
+		public void Method1 ()
+		{
+			throw new Exception ();
+		}
+
+		public void Method1 (object o, EventArgs e)
+		{
+			throw new Exception ();
+		}
+
+		public void Method1 (object o, TEventArgs e)
+		{
+			Method1Invoked = true;
+		}
+
+		public object Method2 ()
+		{
+			return "foo";
+		}
+	}
 }

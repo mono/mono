@@ -323,9 +323,34 @@ namespace System.Xaml
 				string name = (string) CurrentMemberState.Value;
 				name_scope.RegisterName (name, state.Value);
 			} else {
-				if (!xm.IsReadOnly) // exclude read-only object such as collection item.
+				if (xm.IsEvent)
+					SetEvent (xm, (string) CurrentMemberState.Value);
+				else if (!xm.IsReadOnly) // exclude read-only object such as collection item.
 					SetValue (xm, CurrentMemberState.Value);
 			}
+		}
+
+		void SetEvent (XamlMember member, string value)
+		{
+			if (member.UnderlyingMember == null)
+				throw new XamlObjectWriterException (String.Format ("Event {0} has no underlying member to attach event", member));
+
+			int idx = value.LastIndexOf ('.');
+			var xt = idx < 0 ? member.DeclaringType : ResolveTypeFromName (value.Substring (0, idx));
+			if (xt == null)
+				throw new XamlObjectWriterException (String.Format ("Referenced type {0} in event {1} was not found", value, member));
+			if (xt.UnderlyingType == null)
+				throw new XamlObjectWriterException (String.Format ("Referenced type {0} in event {1} has no underlying type", value, member));
+			string mn = idx < 0 ? value : value.Substring (idx + 1);
+			var ev = (EventInfo) member.UnderlyingMember;
+			// get an appropriate MethodInfo overload whose signature matches the event's handler type.
+			// FIXME: this may need more strict match. RuntimeBinder may be useful here.
+			var eventMethodParams = ev.EventHandlerType.GetMethod ("Invoke").GetParameters ();
+			var mi = xt.UnderlyingType.GetMethod (mn, (from pi in eventMethodParams select pi.ParameterType).ToArray ());
+			if (mi == null)
+				throw new XamlObjectWriterException (String.Format ("Referenced value method {0} in type {1} indicated by event {2} was not found", mn, value, member));
+			var obj = object_states.Peek ().Value;
+			ev.AddEventHandler (obj, Delegate.CreateDelegate (ev.EventHandlerType, obj, mi));
 		}
 
 		void SetValue (XamlMember member, object value)
@@ -377,8 +402,10 @@ namespace System.Xaml
 				if (xm == XamlLanguage.Initialization) {
 					state.Value = GetCorrectlyTypedValue (xt, obj);
 					state.IsInstantiated = true;
-				}
-				else if (xm.Type.IsXData) {
+				} else if (xm.IsEvent) {
+					ms.Value = (string) obj; // save name of value delegate (method).
+					state.IsInstantiated = true;
+				} else if (xm.Type.IsXData) {
 					var xdata = (XData) obj;
 					var ixser = xm.Invoker.GetValue (state.Value) as IXmlSerializable;
 					if (ixser != null)
@@ -448,10 +475,8 @@ namespace System.Xaml
 				return value;
 
 			// FIXME: this could be generalized by some means, but I cannot find any.
-			if (xt.UnderlyingType == typeof (XamlType) && value is string) {
-				var nsr = (IXamlNamespaceResolver) service_provider.GetService (typeof (IXamlNamespaceResolver));
-				value = sctx.GetXamlType (XamlTypeName.Parse ((string) value, nsr));
-			}
+			if (xt.UnderlyingType == typeof (XamlType) && value is string)
+				value = ResolveTypeFromName ((string) value);
 
 			// FIXME: this could be generalized by some means, but I cannot find any.
 			if (xt.UnderlyingType == typeof (Type))
@@ -470,6 +495,12 @@ namespace System.Xaml
 			}
 
 			throw new XamlObjectWriterException (String.Format ("Value '{1}' (of type {2}) is not of or convertible to type {0}", xt, value, value != null ? (object) value.GetType () : "(null)"));
+		}
+
+		XamlType ResolveTypeFromName (string name)
+		{
+			var nsr = (IXamlNamespaceResolver) service_provider.GetService (typeof (IXamlNamespaceResolver));
+			return sctx.GetXamlType (XamlTypeName.Parse (name, nsr));
 		}
 
 		bool IsAllowedType (XamlType xt, object value)

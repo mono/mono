@@ -1225,5 +1225,44 @@ namespace MonoTests.System.Xaml
 				}
 			}
 		}
+
+		[Test]
+		public void Write_EventStore ()
+		{
+			using (var xr = GetReader ("EventStore.xml")) {
+				var res = (EventStore) XamlServices.Load (xr);
+				Assert.AreEqual ("foo", res.Examine (), "#1");
+				Assert.IsTrue (res.Method1Invoked, "#2");
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (XamlDuplicateMemberException))] // for two occurence of Event1 ...
+		public void Write_EventStore2 ()
+		{
+			using (var xr = GetReader ("EventStore2.xml")) {
+				XamlServices.Load (xr);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (XamlObjectWriterException))] // attaching nonexistent method
+		public void Write_EventStore3 ()
+		{
+			using (var xr = GetReader ("EventStore3.xml")) {
+				XamlServices.Load (xr);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // type resolution failure.
+		public void Write_EventStore4 ()
+		{
+			using (var xr = GetReader ("EventStore4.xml")) {
+				var res = (EventStore2<EventArgs>) XamlServices.Load (xr);
+				Assert.AreEqual ("foo", res.Examine (), "#1");
+				Assert.IsTrue (res.Method1Invoked, "#2");
+			}
+		}
 	}
 }

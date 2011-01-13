@@ -244,6 +244,64 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void ReadEventStore ()
+		{
+			var r = GetReader ("EventStore2.xml");
+
+			var xt = r.SchemaContext.GetXamlType (typeof (EventStore));
+			var xm = xt.GetMember ("Event1");
+			Assert.IsNotNull (xt, "premise#1");
+			Assert.IsNotNull (xm, "premise#2");
+			Assert.IsTrue (xm.IsEvent, "premise#3");
+			while (true) {
+				r.Read ();
+				if (r.Member != null && r.Member.IsEvent)
+					break;
+				if (r.IsEof)
+					Assert.Fail ("Items did not appear");
+			}
+
+			Assert.AreEqual (xm, r.Member, "#x1");
+			Assert.AreEqual ("Event1", r.Member.Name, "#x2");
+
+			Assert.IsTrue (r.Read (), "#x11");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#x12");
+			Assert.AreEqual ("Method1", r.Value, "#x13");
+
+			Assert.IsTrue (r.Read (), "#x21");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#x22");
+
+			xm = xt.GetMember ("Event2");
+			Assert.IsTrue (r.Read (), "#x31");
+			Assert.AreEqual (xm, r.Member, "#x32");
+			Assert.AreEqual ("Event2", r.Member.Name, "#x33");
+
+			Assert.IsTrue (r.Read (), "#x41");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#x42");
+			Assert.AreEqual ("Method2", r.Value, "#x43");
+
+			Assert.IsTrue (r.Read (), "#x51");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#x52");
+
+			Assert.IsTrue (r.Read (), "#x61");
+			Assert.AreEqual ("Event1", r.Member.Name, "#x62");
+
+			Assert.IsTrue (r.Read (), "#x71");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#x72");
+			Assert.AreEqual ("Method3", r.Value, "#x73"); // nonexistent, but no need to raise an error.
+
+			Assert.IsTrue (r.Read (), "#x81");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#x82");
+
+			while (!r.IsEof)
+				r.Read ();
+
+			r.Close ();
+		}
+
+		// common XamlReader tests.
+
+		[Test]
 		public void Read_String ()
 		{
 			var r = GetReader ("String.xml");
