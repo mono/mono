@@ -176,6 +176,7 @@ namespace Mono.CSharp
 		readonly StaticImporter importer;
 		readonly Universe domain;
 		Assembly corlib;
+		List<Tuple<AssemblyName, string>> loaded_names;
 
 		public StaticLoader (StaticImporter importer, CompilerContext compiler)
 			: base (compiler)
@@ -183,6 +184,7 @@ namespace Mono.CSharp
 			this.importer = importer;
 			domain = new Universe ();
 			domain.AssemblyResolve += AssemblyReferenceResolver;
+			loaded_names = new List<Tuple<AssemblyName, string>> ();
 
 			// TODO: profile specific
 			paths.Add (Path.GetDirectoryName (typeof (object).Assembly.Location));
@@ -266,6 +268,39 @@ namespace Mono.CSharp
 							return null;
 						}
 
+						//
+						// check whether the assembly can be actually imported without
+						// collision
+						//
+						var an = module.GetAssemblyName ();
+						foreach (var entry in loaded_names) {
+							var loaded_name = entry.Item1;
+							if (an.Name != loaded_name.Name)
+								continue;
+
+							if (an.CodeBase == loaded_name.CodeBase)
+								return null;
+							
+							if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
+								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+								compiler.Report.SymbolRelatedToPreviousError (fileName);
+								compiler.Report.Error (1704,
+									"An assembly with the same name `{0}' has already been imported. Consider removing one of the references or sign the assembly",
+									an.Name);
+								return null;
+							}
+
+							if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
+								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+								compiler.Report.SymbolRelatedToPreviousError (fileName);
+								compiler.Report.Error (1703,
+									"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
+									an.FullName);
+								return null;
+							}
+						}
+
+						loaded_names.Add (Tuple.Create (an, fileName));
 						return domain.LoadAssembly (module);
 					}
 				} catch {

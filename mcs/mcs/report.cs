@@ -170,7 +170,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void SymbolRelatedToPreviousError (Location loc, string symbol)
 		{
-			SymbolRelatedToPreviousError (loc.ToString (), symbol);
+			SymbolRelatedToPreviousError (loc.ToString ());
 		}
 
 		public void SymbolRelatedToPreviousError (MemberSpec ms)
@@ -193,7 +193,7 @@ namespace Mono.CSharp {
 				var imported_type = ms.MemberDefinition as ImportedTypeDefinition;
 				if (imported_type != null) {
 					var iad = imported_type.DeclaringAssembly as ImportedAssemblyDefinition;
-					SymbolRelatedToPreviousError (iad.Location, "");
+					SymbolRelatedToPreviousError (iad.Location);
 				}
 			}
 		}
@@ -203,7 +203,7 @@ namespace Mono.CSharp {
 			SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
 		}
 
-		void SymbolRelatedToPreviousError (string loc, string symbol)
+		public void SymbolRelatedToPreviousError (string loc)
 		{
 			string msg = String.Format ("{0} (Location of the symbol related to previous ", loc);
 			if (extra_information.Contains (msg))

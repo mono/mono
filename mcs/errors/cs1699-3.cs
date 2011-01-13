@@ -4,4 +4,4 @@
 
 using System.Reflection;
 
-[assembly:AssemblyKeyFile ("InternalsVisibleTest.snk")]
+[assembly:AssemblyKeyFile ("key.snk")]

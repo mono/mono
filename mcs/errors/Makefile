@@ -17,7 +17,9 @@ DISTFILES = \
 	$(wildcard *.pub)	\
 	$(wildcard *.snk)	\
 	$(wildcard *.response)	\
-	$(wildcard known-issues-*)
+	$(wildcard known-issues-*)	\
+	$(wildcard dlls/first/*.cs)	\
+	$(wildcard dlls/second/*.cs)
 
 TEST_SUPPORT_FILES = \
 	CS0012-lib.dll CS0012-2-lib.dll CS0012-3-lib.dll CS0012-4-lib.dll CS0012-5-lib.dll CS0012-6-lib.dll CS0012-9-lib.dll CS0012-10-lib.dll CS0012-11-lib.dll \
@@ -32,7 +34,9 @@ TEST_SUPPORT_FILES = \
 	CS1542-lib.dll CS1577-lib.dll \
 	CS1685-2-lib.dll \
 	CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll CSExternAlias-lib.dll \
-	CSFriendAssembly-lib.dll
+	CSFriendAssembly-lib.dll \
+	dlls/first/CS1703-lib.dll dlls/first/CS1704-lib.dll \
+	dlls/second/CS1703-lib.dll dlls/second/CS1704-lib.dll
 
 # mention all targets
 all-local $(STD_TARGETS:=-local):
