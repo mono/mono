@@ -89,7 +89,7 @@ namespace System.Net.Sockets {
 			public Socket Sock;
 			public IntPtr handle;
 			object state;
-			AsyncCallback callback;
+			AsyncCallback callback; // used from the runtime
 			WaitHandle waithandle;
 
 			Exception delayedException;

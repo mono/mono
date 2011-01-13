@@ -55,12 +55,11 @@ namespace System.Net
 		bool useConnect;
 		object locker = new object ();
 		object hostE = new object ();
-#if NET_1_1
 		bool useNagle;
-#endif
-#if NET_2_0
 		BindIPEndPoint endPointCallback = null;
-#endif
+		bool tcp_keepalive;
+		int tcp_keepalive_time;
+		int tcp_keepalive_interval;
 		
 		// Constructors
 
@@ -191,7 +190,48 @@ namespace System.Net
 			set { sendContinue = value; }
 		}
 		// Methods
-		
+
+		public void SetTcpKeepAlive (bool enabled, int keepAliveTime, int keepAliveInterval)
+		{
+			if (enabled) {
+				if (keepAliveTime <= 0)
+					throw new ArgumentOutOfRangeException ("keepAliveTime", "Must be greater than 0");
+				if (keepAliveInterval <= 0)
+					throw new ArgumentOutOfRangeException ("keepAliveInterval", "Must be greater than 0");
+			}
+
+			tcp_keepalive = enabled;
+			tcp_keepalive_time = keepAliveTime;
+			tcp_keepalive_interval = keepAliveInterval;
+		}
+
+		internal void KeepAliveSetup (Socket socket)
+		{
+			if (!tcp_keepalive)
+				return;
+
+			byte [] bytes = new byte [12];
+			PutBytes (bytes, (uint) (tcp_keepalive ? 1 : 0), 0);
+			PutBytes (bytes, (uint) tcp_keepalive_time, 4);
+			PutBytes (bytes, (uint) tcp_keepalive_interval, 8);
+			socket.IOControl (IOControlCode.KeepAliveValues, bytes, null);
+		}
+
+		static void PutBytes (byte [] bytes, uint v, int offset)
+		{
+			if (BitConverter.IsLittleEndian) {
+				bytes [offset] = (byte) (v & 0x000000ff);
+				bytes [offset + 1] = (byte) ((v & 0x0000ff00) >> 8);
+				bytes [offset + 2] = (byte) ((v & 0x00ff0000) >> 16);
+				bytes [offset + 3] = (byte) ((v & 0xff000000) >> 24);
+			} else {
+				bytes [offset + 3] = (byte) (v & 0x000000ff);
+				bytes [offset + 2] = (byte) ((v & 0x0000ff00) >> 8);
+				bytes [offset + 1] = (byte) ((v & 0x00ff0000) >> 16);
+				bytes [offset] = (byte) ((v & 0xff000000) >> 24);
+			}
+		}
+
 #if !NET_2_0
 		public override int GetHashCode() 
 		{

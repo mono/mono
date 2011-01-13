@@ -1515,7 +1515,8 @@ namespace System.Net.Sockets
 		// See Socket.IOControl, WSAIoctl documentation in MSDN. The
 		// common options between UNIX and Winsock are FIONREAD,
 		// FIONBIO and SIOCATMARK. Anything else will depend on the
-		// system.
+		// system except SIO_KEEPALIVE_VALS which is properly handled
+		// on both windows and linux.
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static int WSAIoctl (IntPtr sock, int ioctl_code, byte [] input,
 			byte [] output, out int error);
@@ -1538,13 +1539,9 @@ namespace System.Net.Sockets
 			return result;
 		}
 
-		[MonoTODO]
 		public int IOControl (IOControlCode ioControlCode, byte[] optionInValue, byte[] optionOutValue)
 		{
-			/* Probably just needs to mirror the int
-			 * overload, but more investigation needed.
-			 */
-			throw new NotImplementedException ();
+			return IOControl ((int) ioControlCode, optionInValue, optionOutValue);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

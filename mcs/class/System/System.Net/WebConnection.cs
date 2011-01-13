@@ -171,8 +171,13 @@ namespace System.Net
 				foreach (IPAddress address in hostEntry.AddressList) {
 					socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 					IPEndPoint remote = new IPEndPoint (address, sPoint.Address.Port);
-					socket.SetSocketOption (SocketOptionLevel.Tcp, SocketOptionName.NoDelay, sPoint.UseNagleAlgorithm ? 0 : 1);
 					socket.NoDelay = !sPoint.UseNagleAlgorithm;
+					try {
+						sPoint.KeepAliveSetup (socket);
+					} catch {
+						// Ignore. Not supported in all platforms.
+					}
+
 					if (!sPoint.CallEndPointDelegate (socket, remote)) {
 						socket.Close ();
 						socket = null;
