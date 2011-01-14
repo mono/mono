@@ -1,0 +1,5 @@
+#!/bin/sh
+. $(dirname $0)/mono-env-unity
+
+$MONO $MONO_PATH/smcs.exe "$@"
+
