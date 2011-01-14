@@ -27,10 +27,12 @@
 
 using System;
 using System.Threading;
+using Mono.Threading;
 
 using NUnit.Framework;
+using MonoTests.Mono.Threading.Tasks;
 
-namespace MonoTests.System.Threading.Tasks
+namespace MonoTests.Mono.Threading
 {
 	[TestFixtureAttribute]
 	public class SnziTests

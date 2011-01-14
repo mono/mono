@@ -26,11 +26,12 @@
 using System;
 using System.Threading;
 using System.Collections.Concurrent;
+using Mono.Collections.Concurrent;
 
 using NUnit;
 using NUnit.Framework;
 
-namespace MonoTests.System.Collections.Concurrent
+namespace MonoTests.Mono.Collections.Concurrent
 {
 	[TestFixtureAttribute]
 	public class ConcurrentSkipListTests

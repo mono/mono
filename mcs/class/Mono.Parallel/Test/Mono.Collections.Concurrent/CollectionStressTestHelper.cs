@@ -32,12 +32,13 @@ using System.Collections.Concurrent;
 
 using System.Threading;
 using System.Linq;
-using MonoTests.System.Threading.Tasks;
+using System.Threading.Tasks;
 
 using NUnit;
 using NUnit.Framework;
+using MonoTests.Mono.Threading.Tasks;
 
-namespace MonoTests.System.Collections.Concurrent
+namespace MonoTests.Mono.Collections.Concurrent
 {
 	public enum CheckOrderingType {
 		InOrder,
