@@ -29,8 +29,34 @@
     <Namespace Name="Mono.Threading.Tasks">
       <Type Name="CyclicDeque`1" DisplayName="CyclicDeque&lt;T&gt;" Kind="Class" />
       <Type Name="IConcurrentDeque`1" DisplayName="IConcurrentDeque&lt;T&gt;" Kind="Interface" />
+      <Type Name="MonoTaskExtensions" Kind="Class" />
       <Type Name="PopResult" Kind="Enumeration" />
     </Namespace>
   </Types>
   <Title>Mono.Parallel</Title>
+  <ExtensionMethods>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Threading.Tasks.Task" />
+      </Targets>
+      <Member MemberName="Execute">
+        <MemberSignature Language="C#" Value="public static void Execute (this System.Threading.Tasks.Task task, Action&lt;System.Threading.Tasks.Task&gt; childWorkAdder);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Execute(class System.Threading.Tasks.Task task, class System.Action`1&lt;class System.Threading.Tasks.Task&gt; childWorkAdder) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Void</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="task" Type="System.Threading.Tasks.Task" RefType="this" />
+          <Parameter Name="childWorkAdder" Type="System.Action&lt;System.Threading.Tasks.Task&gt;" />
+        </Parameters>
+        <Docs>
+          <param name="task">To be added.</param>
+          <param name="childWorkAdder">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="Mono.Threading.Tasks.MonoTaskExtensions" Member="M:Mono.Threading.Tasks.MonoTaskExtensions.Execute(System.Threading.Tasks.Task,System.Action{System.Threading.Tasks.Task})" />
+      </Member>
+    </ExtensionMethod>
+  </ExtensionMethods>
 </Overview>

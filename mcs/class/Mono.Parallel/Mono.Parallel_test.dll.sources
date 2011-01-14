@@ -2,3 +2,4 @@ Mono.Collections.Concurrent/CollectionStressTestHelper.cs
 Mono.Collections.Concurrent/ConcurrentSkipListTests.cs
 Mono.Threading/ParallelTestHelper.cs
 Mono.Threading/SnziTests.cs
+Mono.Threading.Tasks/MonoTaskExtensionsTests.cs
