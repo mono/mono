@@ -1,5 +1,6 @@
 /*
   Copyright (C) 2010 Jeroen Frijters
+  Copyright (C) 2011 Marek Safar
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -110,6 +111,11 @@ namespace IKVM.Reflection
 					result = AssemblyComparisonResult.EquivalentPartialMatch;
 					return true;
 				}
+				else if (IsFrameworkAssembly(name2))
+				{
+					result = partial ? AssemblyComparisonResult.EquivalentPartialFXUnified : AssemblyComparisonResult.EquivalentFXUnified;
+					return true;
+				}
 				else if (name1.Version < name2.Version)
 				{
 					if (unified2)
@@ -152,6 +158,62 @@ namespace IKVM.Reflection
 				result = partial ? AssemblyComparisonResult.EquivalentPartialWeakNamed : AssemblyComparisonResult.EquivalentWeakNamed;
 				return true;
 			}
+		}
+
+		static bool IsFrameworkAssembly(ParsedAssemblyName name)
+		{
+			// A list of FX assemblies which require some form of remapping
+			// When 4.0 + 1 version  is release, assemblies introduced in v4.0
+			// will have to be added
+			switch (name.Name)
+			{
+				case "System":
+				case "System.Core":
+				case "System.Data":
+				case "System.Data.DataSetExtensions":
+				case "System.Data.Linq":
+				case "System.Data.OracleClient":
+				case "System.Data.Services":
+				case "System.Data.Services.Client":
+				case "System.IdentityModel":
+				case "System.IdentityModel.Selectors":
+				case "System.Runtime.Remoting":
+				case "System.Runtime.Serialization":
+				case "System.ServiceModel":
+				case "System.Transactions":
+				case "System.Windows.Forms":
+				case "System.Xml":
+				case "System.Xml.Linq":
+					return name.PublicKeyToken == "b77a5c561934e089";
+
+				case "System.Configuration":
+				case "System.Configuration.Install":
+				case "System.Design":
+				case "System.DirectoryServices":
+				case "System.Drawing":
+				case "System.Drawing.Design":
+				case "System.EnterpriseServices":
+				case "System.Management":
+				case "System.Messaging":
+				case "System.Runtime.Serialization.Formatters.Soap":
+				case "System.Security":
+				case "System.ServiceProcess":
+				case "System.Web":
+				case "System.Web.Mobile":
+				case "System.Web.Services":
+					return name.PublicKeyToken == "b03f5f7f11d50a3a";
+
+				case "System.ComponentModel.DataAnnotations":
+				case "System.ServiceModel.Web":
+				case "System.Web.Abstractions":
+				case "System.Web.Extensions":
+				case "System.Web.Extensions.Design":
+				case "System.Web.DynamicData":
+				case "System.Web.Routing":
+					return name.PublicKeyToken == "31bf3856ad364e35";
+			}
+
+			return false;
 		}
 
 		// note that this is the fusion specific parser, it is not the same as System.Reflection.AssemblyName
