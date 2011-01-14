@@ -214,7 +214,7 @@ namespace Mono.CSharp
 			Assembly version_mismatch = null;
 			foreach (var assembly in domain.GetAssemblies ()) {
 				AssemblyComparisonResult result;
-				if (!Fusion.CompareAssemblyIdentity (refname, false, assembly.FullName, false, out result)) {
+				if (!Fusion.CompareAssemblyIdentityPure (refname, false, assembly.FullName, false, out result)) {
 					if ((result == AssemblyComparisonResult.NonEquivalentVersion || result == AssemblyComparisonResult.NonEquivalentPartialVersion) &&
 						(version_mismatch == null || version_mismatch.GetName ().Version < assembly.GetName ().Version)) {
 						version_mismatch = assembly;
@@ -225,6 +225,7 @@ namespace Mono.CSharp
 
 				if (result == AssemblyComparisonResult.EquivalentFXUnified ||
 					result == AssemblyComparisonResult.EquivalentFullMatch ||
+					result == AssemblyComparisonResult.EquivalentWeakNamed ||
 					result == AssemblyComparisonResult.EquivalentPartialMatch) {
 					return assembly;
 				}
