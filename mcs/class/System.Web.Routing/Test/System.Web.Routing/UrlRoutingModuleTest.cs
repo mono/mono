@@ -155,6 +155,17 @@ namespace MonoTests.System.Web.Routing
 #endif
 			// it internally stores the handler 
 		}
+		
+		[Test]
+		public void PostResolveRequestCacheStopRoutingHttpHandler ()
+		{
+			var m = new UrlRoutingModule ();
+			RouteTable.Routes.Add (new MyRoute ("foo/bar", new StopRoutingHandler ()));
+			var hc = new HttpContextStub3 ("~/foo/bar", String.Empty, "apppath", false);
+			m.PostResolveRequestCache (hc);
+			Assert.IsNull (hc.RewrittenPath, "StopRoutingHandler should stop before the path is rewritten");
+		}
+
 
 		[Test]
 		[Ignore ("looks like RouteExistingFiles ( = false) does not affect... so this test needs more investigation")]
