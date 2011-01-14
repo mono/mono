@@ -305,12 +305,18 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			
 			if (targetNames == null || targetNames.Length == 0) {
-				if (defaultTargets != null && defaultTargets.Length != 0)
+				if (defaultTargets != null && defaultTargets.Length != 0) {
 					targetNames = defaultTargets;
-				else if (firstTargetName != null)
+				} else if (firstTargetName != null) {
 					targetNames = new string [1] { firstTargetName};
-				else
+				} else {
+					if (targets == null || targets.Count == 0) {
+						LogError (fullFileName, "No target found in the project");
+						return false;
+					}
+
 					return false;
+				}
 			}
 
 			if (!initialTargetsBuilt) {
