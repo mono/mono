@@ -213,6 +213,10 @@ namespace Mono.CSharp
 
 			Assembly version_mismatch = null;
 			foreach (var assembly in domain.GetAssemblies ()) {
+				// TODO: Cannot handle unification into current assembly yet
+				if (assembly is AssemblyBuilder)
+					continue;
+
 				AssemblyComparisonResult result;
 				if (!Fusion.CompareAssemblyIdentityPure (refname, false, assembly.FullName, false, out result)) {
 					if ((result == AssemblyComparisonResult.NonEquivalentVersion || result == AssemblyComparisonResult.NonEquivalentPartialVersion) &&
