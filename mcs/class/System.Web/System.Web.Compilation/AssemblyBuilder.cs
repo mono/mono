@@ -761,8 +761,8 @@ namespace System.Web.Compilation
 			if (units.Length == 0 && files.Count == 0 && resources.Count == 0 && options.EmbeddedResources.Count == 0)
 				return null;
 
+			string compilerOptions = options.CompilerOptions;
 			if (options.IncludeDebugInformation) {
-				string compilerOptions = options.CompilerOptions;
 				if (String.IsNullOrEmpty (compilerOptions))
 					compilerOptions = "/d:DEBUG";
 				else if (compilerOptions.IndexOf ("d:DEBUG", StringComparison.OrdinalIgnoreCase) == -1)
@@ -770,6 +770,18 @@ namespace System.Web.Compilation
 				
 				options.CompilerOptions = compilerOptions;
 			}
+
+			// HACK, HACK
+			// We need to pass /noconfig to mcs because otherwise it will error out
+			// complaining that another assembly with the same identity is already
+			// loaded. This is due to the fact that we pass full assembly path as
+			// reported by Assembly.CodeBase while mcs uses its own resolver and the
+			// paths differ.
+			if (String.IsNullOrEmpty (compilerOptions))
+				compilerOptions = "/noconfig";
+			else if (compilerOptions.IndexOf ("noconfig", StringComparison.OrdinalIgnoreCase) == -1)
+				compilerOptions += " /noconfig";
+			options.CompilerOptions = compilerOptions;
 			
 			string filename;
 			StreamWriter sw = null;
