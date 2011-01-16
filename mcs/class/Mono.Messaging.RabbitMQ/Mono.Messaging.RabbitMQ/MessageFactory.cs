@@ -220,7 +220,7 @@ namespace Mono.Messaging.RabbitMQ {
 			return epoch.AddSeconds (ats.UnixTime).ToLocalTime ();
 		}
 
-		public static int TimeSpanToInt32 (TimeSpan timespan)
+		public static int TimeSpanToMillis (TimeSpan timespan)
 		{
 			if (timespan == TimeSpan.MaxValue)
 				return -1;

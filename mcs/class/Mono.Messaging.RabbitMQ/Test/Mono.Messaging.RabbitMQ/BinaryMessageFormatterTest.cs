@@ -41,7 +41,6 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
     [TestFixture]
     public class BinaryMessageFormatterTest
     {
-    
         DynamicMock mock1;
         IMessage msg1;
         DynamicMock mock2;
