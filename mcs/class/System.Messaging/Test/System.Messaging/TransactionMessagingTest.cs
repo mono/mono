@@ -56,17 +56,17 @@ namespace MonoTests.System.Messaging
 				mq.Send (sent2, tx);
 				
 				tx.Commit ();
-				
-				Message received1 = mq.Receive ();
-				Assert.IsNotNull (received1.TransactionId, "TransactionId not set");
-				Message received2 = mq.Receive ();
-				Assert.IsNotNull (received2.TransactionId, "TransactionId not set");
-				
-				Assert.AreEqual (received1.TransactionId, received2.TransactionId, "Messages have differing TransactionIds");
-				Assert.IsTrue (received1.TransactionId.Length > 1);
-				Assert.AreEqual (sent1.Body, received1.Body, "Message 1 not delivered correctly");
-				Assert.AreEqual (sent2.Body, received2.Body, "Message 2 not delivered correctly");
 			}
+			
+			Message received1 = mq.Receive ();
+			Assert.IsNotNull (received1.TransactionId, "TransactionId not set");
+			Message received2 = mq.Receive ();
+			Assert.IsNotNull (received2.TransactionId, "TransactionId not set");
+			
+			Assert.AreEqual (received1.TransactionId, received2.TransactionId, "Messages have differing TransactionIds");
+			Assert.IsTrue (received1.TransactionId.Length > 1);
+			Assert.AreEqual (sent1.Body, received1.Body, "Message 1 not delivered correctly");
+			Assert.AreEqual (sent2.Body, received2.Body, "Message 2 not delivered correctly");
 		}
 		
 		[Test]

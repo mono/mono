@@ -50,6 +50,11 @@ namespace Mono.Messaging.RabbitMQ {
 	/// </summary>
 	public class RabbitMQMessageQueue : MessageQueueBase, IMessageQueue {
 		
+		private readonly RabbitMQMessagingProvider provider;
+		private readonly MessageFactory helper;
+		private readonly bool transactional;
+		private readonly TimeSpan noTime = new TimeSpan(0, 0, 0, 0, 500);
+		
 		private bool authenticate = false;
 		private short basePriority = 0;
 		private Guid category = Guid.Empty;
@@ -60,9 +65,6 @@ namespace Mono.Messaging.RabbitMQ {
 		private ISynchronizeInvoke synchronizingObject = null;
 		private bool useJournalQueue = false;
 		private QueueReference qRef = QueueReference.DEFAULT;
-		private readonly RabbitMQMessagingProvider provider;
-		private readonly MessageFactory helper;
-		private readonly bool transactional;
 		
 		public RabbitMQMessageQueue (RabbitMQMessagingProvider provider,
 		                             bool transactional)
@@ -166,16 +168,7 @@ namespace Mono.Messaging.RabbitMQ {
 			set { qRef = value; }
 		}
 		
-		private static long GetVersion (IConnection cn)
-		{
-			long version = cn.Protocol.MajorVersion;
-			version = version << 32;
-			version += cn.Protocol.MinorVersion;
-			return version;
-		}
-		
-		private void SetDeliveryInfo (IMessage msg, long senderVersion,
-		                              string transactionId)
+		private void SetDeliveryInfo (IMessage msg, string transactionId)
 		{
 			msg.SetDeliveryInfo (Acknowledgment.None,
 			                     DateTime.MinValue,
@@ -183,7 +176,7 @@ namespace Mono.Messaging.RabbitMQ {
 			                     Guid.NewGuid ().ToString () + "\\0",
 			                     MessageType.Normal,
 			                     new byte[0],
-			                     senderVersion,
+			                     0,
 			                     DateTime.UtcNow,
 			                     null,
 			                     transactionId);
@@ -191,15 +184,13 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		public void Close ()
 		{
-			// No-op (Queue are currently stateless)
 		}
 		
 		public static void Delete (QueueReference qRef)
 		{
-			using (IConnection cn = CreateConnection (qRef)) {
-				using (IModel model = cn.CreateModel ()) {
-					model.QueueDelete (qRef.Queue, false, false, false);
-				}
+			RabbitMQMessagingProvider provider = (RabbitMQMessagingProvider) MessagingProviderLocator.GetProvider ();
+			using (IMessagingContext context = provider.CreateContext (qRef.Host)) {
+				context.Delete (qRef);
 			}
 		}			
 		
@@ -209,17 +200,15 @@ namespace Mono.Messaging.RabbitMQ {
 				throw new MonoMessagingException ("Path has not been specified");
 			
 			if (msg.BodyStream == null)
-				throw new ArgumentException ("Message is not serialized properly");
-		
-			try {
-				using (IConnection cn = CreateConnection (QRef)) {
-					SetDeliveryInfo (msg, GetVersion (cn), null);
-					using (IModel ch = cn.CreateModel ()) {
-						Send (ch, msg);
-					}
+				throw new ArgumentException ("BodyStream is null, Message is not serialized properly");
+			
+			using (IMessagingContext context = CurrentContext) {
+				try {
+					SetDeliveryInfo (msg, null);
+					context.Send (QRef, msg);
+				} catch (BrokerUnreachableException e) {
+					throw new ConnectionException (QRef, e);
 				}
-			} catch (BrokerUnreachableException e) {
-				throw new ConnectionException (QRef, e);
 			}
 		}
 		
@@ -233,14 +222,15 @@ namespace Mono.Messaging.RabbitMQ {
 			
 			RabbitMQMessageQueueTransaction tx = (RabbitMQMessageQueueTransaction) transaction;
 			
-			tx.RunSend (SendInContext, msg);
+			SetDeliveryInfo (msg, tx.Id);
+			tx.Send (QRef, msg);
 		}
 		
 		public void Send (IMessage msg, MessageQueueTransactionType transactionType)
 		{
 			switch (transactionType) {
 			case MessageQueueTransactionType.Single:
-				using (IMessageQueueTransaction tx = provider.CreateMessageQueueTransaction ()) {
+				using (IMessageQueueTransaction tx = NewTx ()) {
 					try {
 						Send (msg, tx);
 						tx.Commit ();
@@ -260,177 +250,141 @@ namespace Mono.Messaging.RabbitMQ {
 			}
 		}
 		
-		private void SendInContext (ref string host, ref IConnection cn, 
-		                            ref IModel model, IMessage msg, string txId)
-		{
-			if (host == null)
-				host = QRef.Host;
-			else if (host != QRef.Host)
-				throw new MonoMessagingException ("Transactions can not span multiple hosts");
-			
-			if (cn == null)
-				cn = CreateConnection (QRef);
-			
-			if (model == null) {
-				model = cn.CreateModel ();
-				model.TxSelect ();
-			}
-			
-			SetDeliveryInfo (msg, GetVersion (cn), txId);
-			Send (model, msg);
-		}
-		
-		private void Send (IModel model, IMessage msg)
-		{
-			string finalName = model.QueueDeclare (QRef.Queue, false);
-			IMessageBuilder mb = helper.WriteMessage (model, msg);
-
-			model.BasicPublish ("", finalName,
-			                    (IBasicProperties) mb.GetContentHeader(),
-			                    mb.GetContentBody ());
-		}
-		
 		public void Purge ()
 		{
-			using (IConnection cn = CreateConnection (QRef)) {
-				using (IModel model = cn.CreateModel ()) {
-					model.QueuePurge (QRef.Queue, false);
-				}
+			using (IMessagingContext context = CurrentContext) {
+				context.Purge (QRef);
 			}
 		}
 		
 		public IMessage Peek ()
 		{
-			using (IConnection cn = CreateConnection (QRef)) {
-				using (IModel ch = cn.CreateModel ()) {
-					return Receive (ch, -1, false);
-				}
-			}
+			return DoReceive (TimeSpan.MaxValue, null, false);
 		}
 		
 		public IMessage Peek (TimeSpan timeout)
 		{
-			return Run (Peeker (timeout));
+			return DoReceive (timeout, null, false);
 		}
 		
 		public IMessage PeekById (string id)
 		{
-			return Run (Peeker (ById (id)));
+			return DoReceive (noTime, ById (id), false);
 		}
 
 		public IMessage PeekById (string id, TimeSpan timeout)
 		{
-			return Run (Peeker (timeout, ById (id)));
+			return DoReceive (timeout, ById (id), false);
 		}
 		
 		public IMessage PeekByCorrelationId (string id)
 		{
-			return Run (Peeker (ByCorrelationId (id)));
+			return DoReceive (noTime, ByCorrelationId (id), false);
 		}
 
 		public IMessage PeekByCorrelationId (string id, TimeSpan timeout)
 		{
-			return Run (Peeker (timeout, ByCorrelationId (id)));
+			return DoReceive (timeout, ByCorrelationId (id), false);
 		}
 		
 		public IMessage Receive ()
 		{
-			return Run (Receiver ());
+			return DoReceive (TimeSpan.MaxValue, null, true);
 		}
 		
 		public IMessage Receive (TimeSpan timeout)
 		{
-			return Run (Receiver (timeout));
+			return DoReceive (timeout, null, true);
 		}
 		
 		public IMessage Receive (TimeSpan timeout,
 		                         IMessageQueueTransaction transaction)
 		{
-			return Run (transaction, Receiver (timeout));
+			return DoReceive (transaction, timeout, null, true);
 		}
 		
 		public IMessage Receive (TimeSpan timeout,
 		                         MessageQueueTransactionType transactionType)
 		{
-			return Run (transactionType, Receiver (timeout));
+			return DoReceive (transactionType, timeout, null, true);
 		}
 		
 		public IMessage Receive (IMessageQueueTransaction transaction)
 		{
-			return Run (transaction, Receiver());
+			return DoReceive (transaction, TimeSpan.MaxValue, null, true);
 		}
 		
 		public IMessage Receive (MessageQueueTransactionType transactionType)
 		{
-			return Run (transactionType, Receiver ());
-		}		
+			return DoReceive (transactionType, TimeSpan.MaxValue, null, true);
+		}
 
 		public IMessage ReceiveById (string id)
 		{
-			return Run (Receiver (ById (id)));
+			return DoReceive (noTime, ById (id), true);
 		}
 
 		public IMessage ReceiveById (string id, TimeSpan timeout)
 		{
-			return Run (Receiver (timeout, ById (id)));
+			return DoReceive (timeout, ById (id), true);
 		}
 		
 		public IMessage ReceiveById (string id,
 		                             IMessageQueueTransaction transaction)
 		{
-			return Run (transaction, Receiver (ById (id)));
+			return DoReceive (transaction, noTime, ById (id), true);
 		}
 		
 		public IMessage ReceiveById (string id,
 		                             MessageQueueTransactionType transactionType)
 		{
-			return Run (transactionType, Receiver (ById (id)));
+			return DoReceive (transactionType, noTime, ById (id), true);
 		}
 		
 		public IMessage ReceiveById (string id, TimeSpan timeout,
 		                             IMessageQueueTransaction transaction)
 		{
-			return Run (transaction, Receiver (timeout, ById (id)));
+			return DoReceive (transaction, timeout, ById (id), true);
 		}
 		
 		public IMessage ReceiveById (string id, TimeSpan timeout,
 		                             MessageQueueTransactionType transactionType)
 		{
-			return Run (transactionType, Receiver (timeout, ById (id)));
+			return DoReceive (transactionType, timeout, ById (id), true);
 		}
 		
 		public IMessage ReceiveByCorrelationId (string id)
 		{
-			return Run (Receiver (ByCorrelationId (id)));
+			return DoReceive (noTime, ByCorrelationId (id), true);
 		}
 		
 		public IMessage ReceiveByCorrelationId (string id, TimeSpan timeout)
 		{
-			return Run (Receiver (timeout, ByCorrelationId (id)));
+			return DoReceive (timeout, ByCorrelationId (id), true);
 		}
 		
 		public IMessage ReceiveByCorrelationId (string id,
 		                                        IMessageQueueTransaction transaction)
 		{
-			return Run (transaction, Receiver (ByCorrelationId (id)));
+			return DoReceive (transaction, noTime, ByCorrelationId (id), true);
 		}
 		
 		public IMessage ReceiveByCorrelationId (string id,
 		                                        MessageQueueTransactionType transactionType)
 		{
-			return Run (transactionType, Receiver (ByCorrelationId (id)));
+			return DoReceive (transactionType, noTime, ByCorrelationId (id), true);
 		}
 		
 		public IMessage ReceiveByCorrelationId (string id, TimeSpan timeout,
 		                                        IMessageQueueTransaction transaction)
 		{
-			return Run (transaction, Receiver (timeout, ByCorrelationId (id)));
+			return DoReceive (transaction, timeout, ByCorrelationId (id), true);
 		}
 		
 		public IMessage ReceiveByCorrelationId (string id, TimeSpan timeout,
 		                                        MessageQueueTransactionType transactionType)
 		{
-			return Run (transactionType, Receiver (timeout, ByCorrelationId (id)));
+			return DoReceive (transactionType, timeout, ByCorrelationId (id), true);
 		}
 		
 		public IMessageEnumerator GetMessageEnumerator ()
@@ -438,18 +392,15 @@ namespace Mono.Messaging.RabbitMQ {
 			return new RabbitMQMessageEnumerator (helper, QRef);
 		}
 		
-		private delegate IMessage RecieveDelegate (RabbitMQMessageQueue q,
-		                                           IModel model);
-		
-		private IMessage Run (MessageQueueTransactionType transactionType,
-		                      RecieveDelegate r)
+		private IMessage DoReceive (MessageQueueTransactionType transactionType,
+									TimeSpan timeout, IsMatch matcher, bool ack)
 		{
 			switch (transactionType) {
 			case MessageQueueTransactionType.Single:
-				using (RabbitMQMessageQueueTransaction tx = GetTx ()) {
+				using (RabbitMQMessageQueueTransaction tx = NewTx ()) {
 					bool success = false;
 					try {
-						IMessage msg = Run (tx, r);
+						IMessage msg = DoReceive ((IMessagingContext) tx, timeout, matcher, ack);
 						tx.Commit ();
 						success = true;
 						return msg;
@@ -460,132 +411,38 @@ namespace Mono.Messaging.RabbitMQ {
 				}
 
 			case MessageQueueTransactionType.None:
-				return Run (r);
+				return DoReceive (timeout, matcher, true);
 
 			default:
-				throw new NotSupportedException(transactionType + " not supported");
-			}
-		}		
-
-		private IMessage Run (IMessageQueueTransaction transaction, 
-		                      RecieveDelegate r)
-		{
-			TxReceiver txr = new TxReceiver (this, r);
-			RabbitMQMessageQueueTransaction tx = 
-				(RabbitMQMessageQueueTransaction) transaction;
-			return tx.RunReceive (txr.ReceiveInContext);			
-		}
-		
-		private IMessage Run (RecieveDelegate r)
-		{
-			using (IConnection cn = CreateConnection (QRef)) {
-				using (IModel model = cn.CreateModel ()) {
-					return r (this, model);
-				}
+				throw new NotSupportedException (transactionType + " not supported");
 			}
 		}
 		
-		private class TxReceiver
+		private IMessage DoReceive (IMessageQueueTransaction transaction,
+									TimeSpan timeout, IsMatch matcher, bool ack)
 		{
-			private readonly RecieveDelegate doReceive;
-			private readonly RabbitMQMessageQueue q;
-			
-			public TxReceiver(RabbitMQMessageQueue q, RecieveDelegate doReceive) {
-				this.q = q;
-				this.doReceive = doReceive;
-			}
-						
-			public IMessage ReceiveInContext (ref string host, ref IConnection cn, 
-			                                  ref IModel model, string txId)
-			{
-				if (host == null)
-					host = q.QRef.Host;
-				else if (host != q.QRef.Host)
-					throw new MonoMessagingException ("Transactions can not span multiple hosts");
-				
-				if (cn == null)
-					cn = CreateConnection (q.QRef);
-				
-				if (model == null) {
-					model = cn.CreateModel ();
-					model.TxSelect ();
-				}
-				
-				return doReceive (q, model);
+			RabbitMQMessageQueueTransaction tx = (RabbitMQMessageQueueTransaction) transaction;
+			return DoReceive ((IMessagingContext) tx, timeout, matcher, ack);
+		}
+		
+		private IMessage DoReceive (TimeSpan timeout, IsMatch matcher, bool ack)
+		{
+			using (IMessagingContext context = CurrentContext) {
+				return DoReceive (context, timeout, matcher, ack);
 			}
 		}
 		
-		private class RecieveDelegateFactory
+		private IMessage DoReceive (IMessagingContext context, TimeSpan timeout,
+									IsMatch matcher, bool ack)
 		{
-			private readonly int timeout;
-			private readonly IsMatch matcher;
-			private readonly bool ack;
-			
-			public RecieveDelegateFactory (int timeout, IsMatch matcher)
-				: this (timeout, matcher, true)
-			{
-			}
-			
-			public RecieveDelegateFactory (int timeout, IsMatch matcher, bool ack)
-			{
-				if (matcher != null && timeout == -1)
-					this.timeout = 500;
-				else 
-					this.timeout = timeout;
-				this.matcher = matcher;
-				this.ack = ack;
-			}
-			
-			public IMessage RecieveDelegate (RabbitMQMessageQueue q, IModel model)
-			{
-				if (matcher == null)
-					return q.Receive (model, timeout, ack);
-				else
-					return q.Receive (model, timeout, ack, matcher);
+			return context.Receive (QRef, timeout, matcher, ack);
+		}
+		
+		private IMessagingContext CurrentContext {
+			get {
+				return provider.CreateContext (qRef.Host);
 			}
 		}
-		
-		private static RecieveDelegate Receiver (TimeSpan timeout,
-		                                         IsMatch matcher)
-		{
-			int to = MessageFactory.TimeSpanToInt32 (timeout);
-			return new RecieveDelegateFactory (to, matcher).RecieveDelegate;
-		}
-		
-		private static RecieveDelegate Receiver (IsMatch matcher)
-		{
-			return new RecieveDelegateFactory (-1, matcher).RecieveDelegate;
-		}
-		
-		private static RecieveDelegate Receiver (TimeSpan timeout)
-		{
-			int to = MessageFactory.TimeSpanToInt32 (timeout);
-			return new RecieveDelegateFactory (to, null).RecieveDelegate;
-		}
-
-		private RecieveDelegate Receiver ()
-		{
-			return new RecieveDelegateFactory (-1, null).RecieveDelegate;
-		}		
-		
-		private RecieveDelegate Peeker (TimeSpan timeout)
-		{
-			int to = MessageFactory.TimeSpanToInt32 (timeout);
-			return new RecieveDelegateFactory (to, null, false).RecieveDelegate;
-		}		
-		
-		private RecieveDelegate Peeker (IsMatch matcher)
-		{
-			return new RecieveDelegateFactory (-1, matcher, false).RecieveDelegate;
-		}		
-		
-		private RecieveDelegate Peeker (TimeSpan timeout, IsMatch matcher)
-		{
-			int to = MessageFactory.TimeSpanToInt32 (timeout);
-			return new RecieveDelegateFactory (to, matcher, false).RecieveDelegate;
-		}
-		
-		delegate bool IsMatch (BasicDeliverEventArgs result);		
 		
 		private class IdMatcher
 		{
@@ -625,54 +482,9 @@ namespace Mono.Messaging.RabbitMQ {
 			return new CorrelationIdMatcher (correlationId).MatchById;
 		}
 		
-		private IMessage Receive (IModel model, int timeout, bool doAck)
-		{
-			string finalName = model.QueueDeclare (QRef.Queue, false);
-			
-			using (Subscription sub = new Subscription (model, finalName)) {
-				BasicDeliverEventArgs result;
-				if (sub.Next (timeout, out result)) {
-					IMessage m = helper.ReadMessage (QRef, result);
-					if (doAck)
-						sub.Ack (result);
-					return m;
-				} else {
-					throw new MonoMessagingException ("No Message Available");
-				}
-			}
-		}
-				
-		private IMessage Receive (IModel model, int timeout, 
-		                          bool doAck, IsMatch matcher)
-		{
-			string finalName = model.QueueDeclare (QRef.Queue, false);
-			
-			using (Subscription sub = new Subscription (model, finalName)) {
-				BasicDeliverEventArgs result;
-				while (sub.Next (timeout, out result)) {
-					
-					if (matcher (result)) {
-						IMessage m = helper.ReadMessage (QRef, result);
-						if (doAck)
-							sub.Ack (result);
-						return m;
-					}
-				}
-				
-				throw new MessageUnavailableException ("Message not available");
-			}
-		}
-		
-		private RabbitMQMessageQueueTransaction GetTx ()
+		private RabbitMQMessageQueueTransaction NewTx ()
 		{
 			return (RabbitMQMessageQueueTransaction) provider.CreateMessageQueueTransaction ();
 		}
-
-		private static IConnection CreateConnection (QueueReference qRef)
-		{
-			ConnectionFactory cf = new ConnectionFactory ();
-			cf.Address = qRef.Host;
-			return cf.CreateConnection ();
-		}		
 	}
 }

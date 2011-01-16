@@ -5,6 +5,7 @@
 ./Mono.Messaging/Acknowledgment.cs
 ./Mono.Messaging/CompletedEventArgs.cs
 ./Mono.Messaging/CompletedEventHandler.cs
+./Mono.Messaging/ConcurrentLinkedQueue.cs
 ./Mono.Messaging/ConnectionException.cs
 ./Mono.Messaging/CryptographicProviderType.cs
 ./Mono.Messaging/EncryptionAlgorithm.cs

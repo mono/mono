@@ -24,7 +24,7 @@
 
 	* Updated to version 1.6 of the RabbitMQ libraries
 
-2009-05-26  Andrew Jorgensen  <ajorgensen@novell.com>
+2009-05-26  Andrew Jorgensen  <ajorgensen@novell.com>Rabbit
 
 	* Makefile: Fixed dist from last commit here
 

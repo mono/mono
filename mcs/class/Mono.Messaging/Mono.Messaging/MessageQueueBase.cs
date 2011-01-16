@@ -33,7 +33,7 @@ using System.Threading;
 using System.Collections;
 
 namespace Mono.Messaging
-{
+{                                              
 	
 	public abstract class MessageQueueBase
 	{

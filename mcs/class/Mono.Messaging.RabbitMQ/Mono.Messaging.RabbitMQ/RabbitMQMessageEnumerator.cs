@@ -139,8 +139,8 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		public bool MoveNext (TimeSpan timeout)
 		{
-			int to = MessageFactory.TimeSpanToInt32 (timeout);
-			return Subscription.Next (to, out current);
+			int timeoutMillis = MessageFactory.TimeSpanToMillis (timeout);
+			return Subscription.Next (timeoutMillis, out current);
 		}
 
 		public IMessage RemoveCurrent ()
@@ -178,12 +178,12 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		public IMessage RemoveCurrent (TimeSpan timeout, IMessageQueueTransaction transaction)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Unable to remove messages within a transaction");
 		}
 		
 		public IMessage RemoveCurrent (TimeSpan timeout, MessageQueueTransactionType transactionType)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Unable to remove messages within a transaction");
 		}
 		
 		private IMessage CreateMessage (BasicDeliverEventArgs result)

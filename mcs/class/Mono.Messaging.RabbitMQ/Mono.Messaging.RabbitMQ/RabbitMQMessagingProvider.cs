@@ -36,21 +36,25 @@ using System.Threading;
 
 using Mono.Messaging;
 
+using RabbitMQ.Client;
+
 namespace Mono.Messaging.RabbitMQ {
 
 	public class RabbitMQMessagingProvider : IMessagingProvider {
 		
 		private int txCounter = 0;
 		private readonly uint localIp;
+		private readonly MessagingContextPool contextPool;
 		
-		public RabbitMQMessagingProvider()
+		public RabbitMQMessagingProvider ()
 		{
 			localIp = GetLocalIP ();
+			contextPool = new MessagingContextPool (new MessageFactory (this),
+													CreateConnection);
 		}
 		
 		private static uint GetLocalIP ()
 		{
-			//IPHostEntry host = Dns.GetHostEntry (Dns.GetHostName ());
 			String strHostName = Dns.GetHostName ();
 			IPHostEntry ipEntry = Dns.GetHostByName (strHostName);
 			foreach (IPAddress ip in ipEntry.AddressList) {
@@ -74,8 +78,21 @@ namespace Mono.Messaging.RabbitMQ {
 		public IMessageQueueTransaction CreateMessageQueueTransaction ()
 		{
 			Interlocked.Increment (ref txCounter);
-			string txId = localIp.ToString () + txCounter.ToString (); 
-			return new RabbitMQMessageQueueTransaction (txId);
+			string txId = localIp.ToString () + txCounter.ToString ();
+			
+			return new RabbitMQMessageQueueTransaction (txId, contextPool);
+		}
+		
+		public IMessagingContext CreateContext (string host)
+		{
+			return contextPool.GetContext (host);
+		}
+		
+		private IConnection CreateConnection (string host)
+		{
+			ConnectionFactory cf = new ConnectionFactory ();
+			cf.Address = host;
+			return cf.CreateConnection ();
 		}
 		
 		public void DeleteQueue (QueueReference qRef)
@@ -116,8 +133,7 @@ namespace Mono.Messaging.RabbitMQ {
 		{
 			qLock.AcquireWriterLock (TIMEOUT);
 			try {
-				IMessageQueue mq = new RabbitMQMessageQueue (this, qRef,
-				                                             transactional);
+				IMessageQueue mq = new RabbitMQMessageQueue (this, qRef, transactional);
 				queues[qRef] = mq;
 				return mq;
 			} finally {
@@ -134,8 +150,7 @@ namespace Mono.Messaging.RabbitMQ {
 				else {
 					LockCookie lc = qLock.UpgradeToWriterLock (TIMEOUT);
 					try {
-						IMessageQueue mq = new RabbitMQMessageQueue (this, qRef,
-						                                             false);
+						IMessageQueue mq = new RabbitMQMessageQueue (this, qRef, false);
 						queues[qRef] = mq;
 						return mq;
 					} finally {

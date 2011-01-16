@@ -1,7 +1,10 @@
 ./Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
+./Mono.Messaging.RabbitMQ/IMessagingContext.cs
 ./Mono.Messaging.RabbitMQ/MessageFactory.cs
+./Mono.Messaging.RabbitMQ/MessagingContext.cs
+./Mono.Messaging.RabbitMQ/MessagingContextPool.cs
 ./Mono.Messaging.RabbitMQ/RabbitMQMessageEnumerator.cs
 ./Mono.Messaging.RabbitMQ/RabbitMQMessageQueue.cs
 ./Mono.Messaging.RabbitMQ/RabbitMQMessageQueueTransaction.cs
