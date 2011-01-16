@@ -347,11 +347,7 @@ namespace System.Windows.Forms {
 				if (!hexadecimal) {
 					Value = Check (decimal.Parse (Text, CultureInfo.CurrentCulture));
 				} else {
-#if !NET_2_0
 					Value = Check (Convert.ToDecimal (Convert.ToInt32 (Text, 16)));
-#else
-					Value = Check (Convert.ToDecimal (Convert.ToInt32 (Text, 10)));
-#endif
 				}
 			}
 			catch { }
