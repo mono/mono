@@ -43,6 +43,9 @@ namespace Pdb2Mdb {
 
 		void ConvertFunction (PdbFunction function)
 		{
+			if (function.lines == null)
+				return;
+
 			var method = new SourceMethod { Name = function.name, Token = (int) function.token };
 
 			var file = GetSourceFile (mdb, function);
@@ -58,9 +61,6 @@ namespace Pdb2Mdb {
 
 		void ConvertSequencePoints (PdbFunction function, SourceFile file, SourceMethodBuilder builder)
 		{
-			if (function.lines == null)
-				return;
-
 			foreach (var line in function.lines.SelectMany (lines => lines.lines))
 				builder.MarkSequencePoint (
 					(int) line.offset,
