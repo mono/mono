@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 
 // Notes:
 //
@@ -46,12 +46,16 @@ using Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 
+#if NET_4_0
+	public static class X509Certificate2UI {
+#else
 	public sealed class X509Certificate2UI {
 
 		// sadly this isn't a static class
 		private X509Certificate2UI ()
 		{
 		}
+#endif
 
 		[MonoTODO]
 		public static void DisplayCertificate (X509Certificate2 certificate)
