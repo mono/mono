@@ -707,7 +707,7 @@ namespace System.Web
 					// Setting this before calling the validator prevents
 					// possible endless recursion
 					checked_form = true;
-					ValidateNameValueCollection ("Form", query_string_nvc, RequestValidationSource.Form);
+					ValidateNameValueCollection ("Form", form, RequestValidationSource.Form);
 				} else
 #endif
 					if (validate_form && !checked_form){
