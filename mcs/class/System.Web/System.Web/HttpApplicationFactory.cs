@@ -406,6 +406,7 @@ namespace System.Web
 					}
 #if NET_4_0
 					BuildManager.CallPreStartMethods ();
+					BuildManager.CompilingTopLevelAssemblies = true;
 #endif
 #if !TARGET_J2EE
 					AppResourcesCompiler ac = new AppResourcesCompiler (context);
@@ -447,7 +448,9 @@ namespace System.Web
 						app_browsers_files = Directory.GetFiles (app_browsers_path, "*.browser");
 					}
 #endif
-
+#if NET_4_0
+					BuildManager.CompilingTopLevelAssemblies = false;
+#endif
 					app_type = BuildManager.GetPrecompiledApplicationType ();
 					if (app_type == null && app_file != null) {
 #if TARGET_J2EE

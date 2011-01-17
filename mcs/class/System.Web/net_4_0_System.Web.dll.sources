@@ -37,6 +37,7 @@ System.Web.UI.WebControls/RouteParameter.cs
 System.Web.UI.WebControls/StyleBlock.cs
 System.Web.UI.WebControls/WizardLayoutContainer.cs
 System.Web.UI.WebControls/WizardLayoutNavigationContainer.cs
+System.Web.Util/SimpleWebObjectFactory.cs
 System.Web.Util/RequestValidationSource.cs
 System.Web.Util/RequestValidator.cs
 
