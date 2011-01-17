@@ -351,6 +351,11 @@ shell will perform globbing, so you might want to use it like this:
 		$ mcs -recurse:'*.cs' 
 .fi
 .TP
+.I \-sdk:VERSION
+Used to specify the version of Base Class Library assemblies. The possible
+values are: 2 (default), 4. The version number means which .NET version
+should the produced assembly be compatible with.
+.TP
 .I \-\-shell
 Starts up the compiler in interactive mode, providing a C# shell for
 statements and expressions.   A shortcut is to use the

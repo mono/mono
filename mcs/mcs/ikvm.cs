@@ -177,6 +177,14 @@ namespace Mono.CSharp
 		readonly Universe domain;
 		Assembly corlib;
 		List<Tuple<AssemblyName, string>> loaded_names;
+		static readonly Dictionary<SdkVersion, string[]> sdk_directory;
+
+		static StaticLoader ()
+		{
+			sdk_directory = new Dictionary<SdkVersion, string[]> ();
+			sdk_directory.Add (SdkVersion.v2, new string[] { "2.0", "net_2_0", "v2.0.50727" });
+			sdk_directory.Add (SdkVersion.v4, new string[] { "4.0", "net_4_0", "v4.0.30319" });
+		}
 
 		public StaticLoader (StaticImporter importer, CompilerContext compiler)
 			: base (compiler)
@@ -186,8 +194,23 @@ namespace Mono.CSharp
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string>> ();
 
-			// TODO: profile specific
-			paths.Add (Path.GetDirectoryName (typeof (object).Assembly.Location));
+			var corlib_path = Path.GetDirectoryName (typeof (object).Assembly.Location);
+			string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
+			string sdk_path = null;
+
+			foreach (var dir in sdk_directory[RootContext.SdkVersion]) {
+				sdk_path = Path.Combine (fx_path, dir);
+				if (Directory.Exists (sdk_path))
+					break;
+
+				sdk_path = null;
+			}
+
+			if (sdk_path == null) {
+				compiler.Report.Warning (-1, 1, "SDK path could not be resolved");
+			} else {
+				paths.Add (sdk_path);
+			}
 		}
 
 		public Assembly Corlib {
@@ -348,6 +371,9 @@ namespace Mono.CSharp
 							}
 						}
 
+						if (Report.DebugFlags > 0)
+							Console.WriteLine ("Loading assembly `{0}'", fileName);
+
 						loaded_names.Add (Tuple.Create (an, fileName));
 						return domain.LoadAssembly (module);
 					}
@@ -397,6 +423,9 @@ namespace Mono.CSharp
 					continue;
 
 				try {
+					if (Report.DebugFlags > 0)
+						Console.WriteLine ("Loading default assembly `{0}'", file);
+
 					var a = domain.LoadFile (file);
 					if (a != null) {
 						loaded_names.Add (Tuple.Create (a.GetName (), assembly));
