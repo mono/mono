@@ -39,19 +39,44 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 		[SecuritySafeCritical]
 		public static void EnableDynamicValidation (HttpContext context)
 		{
-			throw new NotImplementedException ();
+			// No-op on Mono. We just split form/cookie/query string validation in two
+			// parts and the code in GetUnvalidatedCollections below accesses the first,
+			// unvalidated part.
 		}
 
 		[SecuritySafeCritical]
-		public static Nullable <bool> IsValidationEnabled (HttpContext context)
+		public static bool? IsValidationEnabled (HttpContext context)
 		{
-			throw new NotImplementedException ();
+			HttpRequest req = context != null ? context.Request : null;
+			if (req == null)
+				return true;
+
+			return req.InputValidationEnabled;
 		}
 
 		[SecuritySafeCritical]
 		public static void GetUnvalidatedCollections (HttpContext context, out Func <NameValueCollection> formGetter, out Func <NameValueCollection> queryStringGetter)
 		{
-			throw new NotImplementedException ();
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			formGetter = null;
+			queryStringGetter = null;
+			
+			// This is *very* simplified. We should probably create a wrapper class
+			// which would iterate over the collections on demand
+			formGetter = () => {
+				HttpRequest req = context != null ? context.Request : null;
+				if (req == null)
+					return null;
+				return req.FormUnvalidated;
+			};
+
+			queryStringGetter = () => {
+				HttpRequest req = context != null ? context.Request : null;
+				if (req == null)
+					return null;
+				return req.QueryStringUnvalidated;
+			};
 		}
 	}
 }
