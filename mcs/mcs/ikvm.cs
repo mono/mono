@@ -428,7 +428,7 @@ namespace Mono.CSharp
 
 					var a = domain.LoadFile (file);
 					if (a != null) {
-						loaded_names.Add (Tuple.Create (a.GetName (), assembly));
+						loaded_names.Add (Tuple.Create (a.GetName (), file));
 					}
 
 					return a;
