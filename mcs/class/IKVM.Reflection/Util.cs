@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -263,6 +263,29 @@ namespace IKVM.Reflection
 				}
 			}
 			return h;
+		}
+	}
+
+	[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
+	struct SingleConverter
+	{
+		[System.Runtime.InteropServices.FieldOffset(0)]
+		private int i;
+		[System.Runtime.InteropServices.FieldOffset(0)]
+		private float f;
+
+		internal static int SingleToInt32Bits(float v)
+		{
+			SingleConverter c = new SingleConverter();
+			c.f = v;
+			return c.i;
+		}
+
+		internal static float Int32BitsToSingle(int v)
+		{
+			SingleConverter c = new SingleConverter();
+			c.i = v;
+			return c.f;
 		}
 	}
 }
