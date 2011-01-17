@@ -117,6 +117,10 @@ namespace System.Web.Compilation
 		}
 
 #if NET_4_0
+		internal static bool CompilingTopLevelAssemblies {
+			get; set;
+		}
+		
 		internal static bool PreStartMethodsRunning {
 			get { return preStartMethodsRunning; }
 		}
@@ -667,10 +671,39 @@ namespace System.Web.Compilation
 				dynamicallyRegisteredAssemblies.Add (assembly);
 		}
 
-		[MonoTODO ("A no-op until we use IWebObjectFactory internally. Always returns null.")]
+		[MonoDocumentationNote ("Not used by Mono internally. Needed for MVC3")]
 		public static IWebObjectFactory GetObjectFactory (string virtualPath, bool throwIfNotFound)
 		{
-			return null;
+			if (CompilingTopLevelAssemblies)
+				throw new HttpException ("Method must not be called while compiling the top level assemblies.");
+
+			Type type;
+			if (is_precompiled) {
+				type = GetPrecompiledType (virtualPath);
+				if (type == null) {
+					if (throwIfNotFound)
+						throw new HttpException (String.Format ("Virtual path '{0}' not found in precompiled application type cache.", virtualPath));
+					else
+						return null;
+				}
+				return new SimpleWebObjectFactory (type);
+			}
+
+			Exception compileException = null;
+			try {
+				type = GetCompiledType (virtualPath);
+			} catch (Exception ex) {
+				compileException = ex;
+				type = null;
+			}
+			
+			if (type == null) {
+				if (throwIfNotFound)
+					throw new HttpException (String.Format ("Virtual path '{0}' does not exist.", virtualPath), compileException);
+				return null;
+			}
+			
+			return new SimpleWebObjectFactory (type);
 		}
 #endif
 		public static object CreateInstanceFromVirtualPath (string virtualPath, Type requiredBaseType)
