@@ -108,6 +108,7 @@ namespace System.Web
 		static readonly UrlMappingCollection urlMappings;
 		readonly static char [] queryTrimChars = {'?'};
 #if NET_4_0
+		bool inputValidationEnabled;
 		RequestContext requestContext;
 		
 		static bool validateRequestNewMode;
@@ -115,6 +116,10 @@ namespace System.Web
 			get { return validateRequestNewMode; }
 		}
 
+		internal bool InputValidationEnabled {
+			get { return inputValidationEnabled; }
+		}
+		
 		private static char[] RequestPathInvalidCharacters {
 			get; set;
 		}
