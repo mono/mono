@@ -225,7 +225,7 @@ namespace Mono.CSharp {
 
 			var dep = te.type.GetMissingDependencies ();
 			if (dep != null) {
-				ImportedTypeDefinition.Error_MissingDependency (ec.Compiler, dep, loc);
+				ImportedTypeDefinition.Error_MissingDependency (ec, dep, loc);
 			}
 
 			//
@@ -2700,7 +2700,7 @@ namespace Mono.CSharp {
 
 			var dep = member.GetMissingDependencies ();
 			if (dep != null) {
-				ImportedTypeDefinition.Error_MissingDependency (rc.Compiler, dep, loc);
+				ImportedTypeDefinition.Error_MissingDependency (rc, dep, loc);
 			}
 
 			if (!rc.IsObsolete) {
@@ -4389,7 +4389,7 @@ namespace Mono.CSharp {
 
 			var dep = best_candidate.GetMissingDependencies ();
 			if (dep != null) {
-				ImportedTypeDefinition.Error_MissingDependency (rc.Compiler, dep, loc);
+				ImportedTypeDefinition.Error_MissingDependency (rc, dep, loc);
 			}
 
 			best_candidate.MemberDefinition.SetIsUsed ();

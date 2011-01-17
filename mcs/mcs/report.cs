@@ -62,8 +62,8 @@ namespace Mono.CSharp {
 			809,
 			1030, 1058, 1066,
 			1522, 1570, 1571, 1572, 1573, 1574, 1580, 1581, 1584, 1587, 1589, 1590, 1591, 1592,
-			1607, 1616, 1633, 1634, 1635, 1685, 1690, 1691, 1692, 1695, 1696, 1699,
-			1700, 1709, 1717, 1718, 1720,
+			1607, 1616, 1633, 1634, 1635, 1685, 1690, 1691, 1692, 1695, 1696, 1699, 1683,
+			1700, 1701, 1702, 1709, 1717, 1718, 1720,
 			1901, 1981,
 			2002, 2023, 2029,
 			3000, 3001, 3002, 3003, 3005, 3006, 3007, 3008, 3009,
@@ -170,7 +170,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void SymbolRelatedToPreviousError (Location loc, string symbol)
 		{
-			SymbolRelatedToPreviousError (loc.ToString (), symbol);
+			SymbolRelatedToPreviousError (loc.ToString ());
 		}
 
 		public void SymbolRelatedToPreviousError (MemberSpec ms)
@@ -193,7 +193,7 @@ namespace Mono.CSharp {
 				var imported_type = ms.MemberDefinition as ImportedTypeDefinition;
 				if (imported_type != null) {
 					var iad = imported_type.DeclaringAssembly as ImportedAssemblyDefinition;
-					SymbolRelatedToPreviousError (iad.Location, "");
+					SymbolRelatedToPreviousError (iad.Location);
 				}
 			}
 		}
@@ -203,7 +203,7 @@ namespace Mono.CSharp {
 			SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
 		}
 
-		void SymbolRelatedToPreviousError (string loc, string symbol)
+		public void SymbolRelatedToPreviousError (string loc)
 		{
 			string msg = String.Format ("{0} (Location of the symbol related to previous ", loc);
 			if (extra_information.Contains (msg))

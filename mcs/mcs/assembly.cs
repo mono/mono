@@ -214,7 +214,7 @@ namespace Mono.CSharp
 				if (value == null || value.Length == 0)
 					return;
 
-				var vinfo = IsValidAssemblyVersion (value);
+				var vinfo = IsValidAssemblyVersion (value, true);
 				if (vinfo == null) {
 					a.Error_AttributeEmitError (string.Format ("Specified version `{0}' is not valid", value));
 					return;
@@ -336,7 +336,15 @@ namespace Mono.CSharp
 				}
 			} else if (a.Type == pa.RuntimeCompatibility) {
 				wrap_non_exception_throws_custom = true;
+			} else if (a.Type == pa.AssemblyFileVersion) {
+				string value = a.GetString ();
+				if (string.IsNullOrEmpty (value) || IsValidAssemblyVersion (value, false) == null) {
+					Report.Warning (1607, 1, a.Location, "The version number `{0}' specified for `{1}' is invalid",
+						value, a.Name);
+					return;
+				}
 			}
+
 
 			SetCustomAttribute (ctor, cdata);
 		}
@@ -475,7 +483,7 @@ namespace Mono.CSharp
 			byte[] hash = ha.ComputeHash (public_key);
 			// we need the last 8 bytes in reverse order
 			public_key_token = new byte[8];
-			Array.Copy (hash, (hash.Length - 8), public_key_token, 0, 8);
+			Buffer.BlockCopy (hash, hash.Length - 8, public_key_token, 0, 8);
 			Array.Reverse (public_key_token, 0, 8);
 			return public_key_token;
 		}
@@ -534,11 +542,19 @@ namespace Mono.CSharp
 					byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
 
 					// AssemblyName.SetPublicKey requires an additional header
-					byte[] publicKeyHeader = new byte[12] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00 };
+					byte[] publicKeyHeader = new byte[8] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00 };
 
 					// Encode public key
 					public_key = new byte[12 + publickey.Length];
-					Buffer.BlockCopy (publicKeyHeader, 0, public_key, 0, 12);
+					Buffer.BlockCopy (publicKeyHeader, 0, public_key, 0, publicKeyHeader.Length);
+
+					// Length of Public Key (in bytes)
+					byte[] lastPart = BitConverter.GetBytes (public_key.Length - 12);
+					public_key[8] = lastPart[0];
+					public_key[9] = lastPart[1];
+					public_key[10] = lastPart[2];
+					public_key[11] = lastPart[3];
+
 					Buffer.BlockCopy (publickey, 0, public_key, 12, publickey.Length);
 				} catch {
 					Error_AssemblySigning ("The specified key file `" + keyFile + "' has incorrect format");
@@ -871,7 +887,7 @@ namespace Mono.CSharp
 			Report.Error (1548, "Error during assembly signing. " + text);
 		}
 
-		static Version IsValidAssemblyVersion (string version)
+		static Version IsValidAssemblyVersion (string version, bool allowGenerated)
 		{
 			string[] parts = version.Split ('.');
 			if (parts.Length < 1 || parts.Length > 4)
@@ -880,7 +896,7 @@ namespace Mono.CSharp
 			var values = new int[4];
 			for (int i = 0; i < parts.Length; ++i) {
 				if (!int.TryParse (parts[i], out values[i])) {
-					if (parts[i].Length == 1 && parts[i][0] == '*') {
+					if (parts[i].Length == 1 && parts[i][0] == '*' && allowGenerated) {
 						if (i == 2) {
 							// Nothing can follow *
 							if (parts.Length > 3)

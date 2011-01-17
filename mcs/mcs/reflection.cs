@@ -176,6 +176,12 @@ namespace Mono.CSharp
 				throw new NotSupportedException ();
 			}
 		}
+
+		public string Namespace {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
 	}
 
 #endif

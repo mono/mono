@@ -55,14 +55,13 @@ namespace Mono.CSharp
 		{
 			string name = baseType.Name;
 
-			// TODO: namespace check
-			if (name == "ValueType")
+			if (name == "ValueType" && baseType.Namespace == "System")
 				return MemberKind.Struct;
 
-			if (name == "Enum")
+			if (name == "Enum" && baseType.Namespace == "System")
 				return MemberKind.Enum;
 
-			if (name == "MulticastDelegate")
+			if (name == "MulticastDelegate" && baseType.Namespace == "System")
 				return MemberKind.Delegate;
 
 			return MemberKind.Class;
@@ -177,6 +176,7 @@ namespace Mono.CSharp
 		readonly StaticImporter importer;
 		readonly Universe domain;
 		Assembly corlib;
+		List<Tuple<AssemblyName, string>> loaded_names;
 
 		public StaticLoader (StaticImporter importer, CompilerContext compiler)
 			: base (compiler)
@@ -184,6 +184,7 @@ namespace Mono.CSharp
 			this.importer = importer;
 			domain = new Universe ();
 			domain.AssemblyResolve += AssemblyReferenceResolver;
+			loaded_names = new List<Tuple<AssemblyName, string>> ();
 
 			// TODO: profile specific
 			paths.Add (Path.GetDirectoryName (typeof (object).Assembly.Location));
@@ -206,8 +207,56 @@ namespace Mono.CSharp
 
 		Assembly AssemblyReferenceResolver (object sender, IKVM.Reflection.ResolveEventArgs args)
 		{
-			if (args.Name == "mscorlib")
+			var refname = args.Name;
+			if (refname == "mscorlib")
 				return corlib;
+
+			Assembly version_mismatch = null;
+			foreach (var assembly in domain.GetAssemblies ()) {
+				// TODO: Cannot handle unification into current assembly yet
+				if (assembly is AssemblyBuilder)
+					continue;
+
+				AssemblyComparisonResult result;
+				if (!Fusion.CompareAssemblyIdentityPure (refname, false, assembly.FullName, false, out result)) {
+					if ((result == AssemblyComparisonResult.NonEquivalentVersion || result == AssemblyComparisonResult.NonEquivalentPartialVersion) &&
+						(version_mismatch == null || version_mismatch.GetName ().Version < assembly.GetName ().Version)) {
+						version_mismatch = assembly;
+					}
+
+					continue;
+				}
+
+				if (result == AssemblyComparisonResult.EquivalentFXUnified ||
+					result == AssemblyComparisonResult.EquivalentFullMatch ||
+					result == AssemblyComparisonResult.EquivalentWeakNamed ||
+					result == AssemblyComparisonResult.EquivalentPartialMatch) {
+					return assembly;
+				}
+
+				throw new NotImplementedException ("Assembly equality = " + result.ToString ());
+			}
+
+			if (version_mismatch != null) {
+				var v1 = new AssemblyName (refname).Version;
+				var v2 = version_mismatch.GetName ().Version;
+
+				if (v1 > v2) {
+//					compiler.Report.SymbolRelatedToPreviousError (args.RequestingAssembly.Location);
+					compiler.Report.Error (1705, "Assembly `{0}' references `{1}' which has higher version number than imported assembly `{2}'",
+						args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName);
+				} else if (v1.Major != v2.Major || v1.Minor != v2.Minor) {
+					compiler.Report.Warning (1701, 2,
+						"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
+						refname, version_mismatch.GetName ().FullName);
+				} else {
+					compiler.Report.Warning (1702, 3,
+						"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
+						refname, version_mismatch.GetName ().FullName);
+				}
+
+				return version_mismatch;
+			}
 
 			// AssemblyReference has not been found in the domain
 			// create missing reference and continue
@@ -267,6 +316,39 @@ namespace Mono.CSharp
 							return null;
 						}
 
+						//
+						// check whether the assembly can be actually imported without
+						// collision
+						//
+						var an = module.GetAssemblyName ();
+						foreach (var entry in loaded_names) {
+							var loaded_name = entry.Item1;
+							if (an.Name != loaded_name.Name)
+								continue;
+
+							if (an.CodeBase == loaded_name.CodeBase)
+								return null;
+							
+							if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
+								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+								compiler.Report.SymbolRelatedToPreviousError (fileName);
+								compiler.Report.Error (1704,
+									"An assembly with the same name `{0}' has already been imported. Consider removing one of the references or sign the assembly",
+									an.Name);
+								return null;
+							}
+
+							if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
+								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+								compiler.Report.SymbolRelatedToPreviousError (fileName);
+								compiler.Report.Error (1703,
+									"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
+									an.FullName);
+								return null;
+							}
+						}
+
+						loaded_names.Add (Tuple.Create (an, fileName));
 						return domain.LoadAssembly (module);
 					}
 				} catch {
@@ -315,7 +397,12 @@ namespace Mono.CSharp
 					continue;
 
 				try {
-					return domain.LoadFile (file);
+					var a = domain.LoadFile (file);
+					if (a != null) {
+						loaded_names.Add (Tuple.Create (a.GetName (), assembly));
+					}
+
+					return a;
 				} catch {
 					// Default assemblies can fail to load without error
 					return null;
@@ -493,7 +580,7 @@ namespace Mono.CSharp
 
 		public override AssemblyName GetName ()
 		{
-			throw new NotImplementedException ();
+			return new AssemblyName (full_name);
 		}
 
 		public override string ImageRuntimeVersion {
@@ -610,6 +697,11 @@ namespace Mono.CSharp
 		internal override MetaType GetGenericTypeArgument (int index)
 		{
 			return new MissingType ("#" + index.ToString (), assembly);
+		}
+
+		public override MetaType GetNestedType (string name, BindingFlags bindingAttr)
+		{
+			return new MissingType (full_name + name, assembly);
 		}
 
 		public override bool IsGenericTypeDefinition {
