@@ -691,8 +691,8 @@ namespace System.Web
 
 			return String.Compare (ContentType, ct, true, Helpers.InvariantCulture) == 0;
 		}
-		
-		public NameValueCollection Form {
+
+		internal NameValueCollection FormUnvalidated {
 			get {
 				if (form == null){
 					form = new WebROCollection ();
@@ -707,6 +707,13 @@ namespace System.Web
 					form.Protect ();
 				}
 
+				return form;
+			}
+		}
+		
+		public NameValueCollection Form {
+			get {
+				NameValueCollection form = FormUnvalidated;
 #if NET_4_0
 				if (validateRequestNewMode && !checked_form) {
 					// Setting this before calling the validator prevents
@@ -1128,7 +1135,7 @@ namespace System.Web
 			}
 		}
 
-		public NameValueCollection QueryString {
+		internal NameValueCollection QueryStringUnvalidated {
 			get {
 				if (query_string_nvc == null) {
 					query_string_nvc = new WebROCollection ();
@@ -1142,6 +1149,14 @@ namespace System.Web
 					
 					query_string_nvc.Protect();
 				}
+
+				return query_string_nvc;
+			}
+		}
+		
+		public NameValueCollection QueryString {
+			get {
+				NameValueCollection query_string_nvc = QueryStringUnvalidated;
 #if NET_4_0
 				if (validateRequestNewMode && !checked_query_string) {
 					// Setting this before calling the validator prevents
