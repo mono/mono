@@ -26,6 +26,8 @@
 
 #if NET_4_0
 using System;
+using System.Threading;
+using System.Reflection;
 
 namespace System.Threading.Tasks
 {
@@ -33,10 +35,41 @@ namespace System.Threading.Tasks
 	internal class SchedulerProxy : IScheduler
 	{
 		TaskScheduler scheduler;
-		
+
+		Action<Task> participateUntil1;
+		Func<Task, ManualResetEventSlim, int, bool> participateUntil2;
+
 		public SchedulerProxy (TaskScheduler scheduler)
 		{
 			this.scheduler = scheduler;
+			FindMonoSpecificImpl ();
+		}
+
+		void FindMonoSpecificImpl ()
+		{
+			Console.WriteLine (scheduler.GetType ());
+
+			// participateUntil1
+			FetchMethod<Action<Task>> ("ParticipateUntil",
+			                           new[] { typeof(Task) },
+			                           ref participateUntil1);
+			// participateUntil2
+			FetchMethod<Func<Task, ManualResetEventSlim, int, bool>> ("ParticipateUntil",
+			                                                          new[] { typeof(Task), typeof(ManualResetEventSlim), typeof(int) },
+			                                                          ref participateUntil2);
+		}
+
+		void FetchMethod<TDelegate> (string name, Type[] types, ref TDelegate field) where TDelegate : class
+		{
+			var method = scheduler.GetType ().GetMethod (name,
+			                                             BindingFlags.Instance | BindingFlags.Public,
+			                                             null,
+			                                             types,
+			                                             null);
+			if (method == null)
+				return;
+			field = Delegate.CreateDelegate (typeof(TDelegate), scheduler, method) as TDelegate;
+			Console.WriteLine ("Created delegate for " + name);
 		}
 		
 		#region IScheduler implementation
@@ -47,6 +80,11 @@ namespace System.Threading.Tasks
 		
 		public void ParticipateUntil (Task task)
 		{
+			if (participateUntil1 != null) {
+				participateUntil1 (task);
+				return;
+			}
+
 			ManualResetEventSlim evt = new ManualResetEventSlim (false);
 			task.ContinueWith (_ => evt.Set (), TaskContinuationOptions.ExecuteSynchronously);
 
@@ -55,6 +93,9 @@ namespace System.Threading.Tasks
 		
 		public bool ParticipateUntil (Task task, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
+			if (participateUntil2 != null)
+				return participateUntil2 (task, evt, millisecondsTimeout);
+
 			bool fromPredicate = true;
 			task.ContinueWith (_ => { fromPredicate = false; evt.Set (); }, TaskContinuationOptions.ExecuteSynchronously);
 

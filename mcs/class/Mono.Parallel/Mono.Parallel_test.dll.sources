@@ -3,3 +3,4 @@ Mono.Collections.Concurrent/ConcurrentSkipListTests.cs
 Mono.Threading/ParallelTestHelper.cs
 Mono.Threading/SnziTests.cs
 Mono.Threading.Tasks/MonoTaskExtensionsTests.cs
+Mono.Threading.Tasks/MonoTaskSchedulerTests.cs
