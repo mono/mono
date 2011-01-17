@@ -483,7 +483,7 @@ namespace Mono.CSharp
 			byte[] hash = ha.ComputeHash (public_key);
 			// we need the last 8 bytes in reverse order
 			public_key_token = new byte[8];
-			Array.Copy (hash, (hash.Length - 8), public_key_token, 0, 8);
+			Buffer.BlockCopy (hash, hash.Length - 8, public_key_token, 0, 8);
 			Array.Reverse (public_key_token, 0, 8);
 			return public_key_token;
 		}
@@ -542,11 +542,19 @@ namespace Mono.CSharp
 					byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
 
 					// AssemblyName.SetPublicKey requires an additional header
-					byte[] publicKeyHeader = new byte[12] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00 };
+					byte[] publicKeyHeader = new byte[8] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00 };
 
 					// Encode public key
 					public_key = new byte[12 + publickey.Length];
-					Buffer.BlockCopy (publicKeyHeader, 0, public_key, 0, 12);
+					Buffer.BlockCopy (publicKeyHeader, 0, public_key, 0, publicKeyHeader.Length);
+
+					// Length of Public Key (in bytes)
+					byte[] lastPart = BitConverter.GetBytes (public_key.Length - 12);
+					public_key[8] = lastPart[0];
+					public_key[9] = lastPart[1];
+					public_key[10] = lastPart[2];
+					public_key[11] = lastPart[3];
+
 					Buffer.BlockCopy (publickey, 0, public_key, 12, publickey.Length);
 				} catch {
 					Error_AssemblySigning ("The specified key file `" + keyFile + "' has incorrect format");
