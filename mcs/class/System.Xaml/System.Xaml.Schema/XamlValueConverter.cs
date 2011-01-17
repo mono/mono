@@ -89,7 +89,10 @@ namespace System.Xaml.Schema
 			if (!typeof (TConverterBase).IsAssignableFrom (ConverterType))
 				throw new XamlSchemaException (String.Format ("ConverterType '{0}' is not derived from '{1}' type", ConverterType, typeof (TConverterBase)));
 
-			return (TConverterBase) Activator.CreateInstance (ConverterType);
+			if (ConverterType.GetConstructor (Type.EmptyTypes) == null)
+				return null;
+
+			return (TConverterBase) Activator.CreateInstance (ConverterType, true);
 		}
 
 		public override int GetHashCode ()
