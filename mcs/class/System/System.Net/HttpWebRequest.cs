@@ -110,6 +110,7 @@ namespace System.Net
 			Response
 		}
 		NtlmAuthState ntlm_auth_state;
+		string host;
 
 		// Constructors
 		static HttpWebRequest ()
@@ -163,6 +164,7 @@ namespace System.Net
 			sendChunked = info.GetBoolean ("sendChunked");
 			timeout = info.GetInt32 ("timeout");
 			redirects = info.GetInt32 ("redirects");
+			host = info.GetString ("host");
 		}
 		
 		// Properties
@@ -353,7 +355,55 @@ namespace System.Net
 				webHeaders = newHeaders;
 			}
 		}
-		
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		string Host {
+			get {
+				if (host == null)
+					return actualUri.Authority;
+				return host;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
+				if (!CheckValidHost (value))
+					throw new ArgumentException ("Invalid host: " + value);
+
+				host = value;
+			}
+		}
+
+		static char [] colon = { ':' };
+		static bool CheckValidHost (string val)
+		{
+			if (val == null)
+				throw new ArgumentNullException ("value");
+
+			if (val.Length == 0)
+				return false;
+
+			if (val [0] == '.')
+				return false;
+
+			string [] parts = val.Split ('.');
+			int l = parts.Length;
+			string [] last = parts [l - 1].Split (colon, 2);
+			if (last.Length == 2) {
+				parts [l - 1] = last [0];
+				ushort port;
+				if (!UInt16.TryParse (parts [1], out port))
+					return false;
+			}
+
+			// MS does not enforce a max. 255 length
+			// MS does not complain about a leading dash or all numbers...
+			return true;
+		}
+
 		public DateTime IfModifiedSince {
 			get { 
 				string str = webHeaders ["If-Modified-Since"];
@@ -881,6 +931,7 @@ namespace System.Net
 			info.AddValue ("sendChunked", sendChunked);
 			info.AddValue ("timeout", timeout);
 			info.AddValue ("redirects", redirects);
+			info.AddValue ("host", host);
 		}
 		
 		void CheckRequestStarted () 
@@ -951,8 +1002,7 @@ namespace System.Net
 									WebExceptionStatus.ProtocolError);
 			}
 
-			hostChanged = (actualUri.Scheme != prev.Scheme || actualUri.Host != prev.Host ||
-					actualUri.Port != prev.Port);
+			hostChanged = (actualUri.Scheme != prev.Scheme || Host != prev.Authority);
 			return true;
 		}
 
@@ -998,7 +1048,7 @@ namespace System.Net
 				webHeaders.RemoveAndAdd (connectionHeader, "close");
 			}
 
-			webHeaders.SetInternal ("Host", actualUri.Authority);
+			webHeaders.SetInternal ("Host", Host);
 			if (cookieContainer != null) {
 				string cookieHeader = cookieContainer.GetCookieHeader (actualUri);
 				if (cookieHeader != "")
@@ -1064,15 +1114,10 @@ namespace System.Net
 			string query;
 			if (!ProxyQuery) {
 				query = actualUri.PathAndQuery;
-			} else if (actualUri.IsDefaultPort) {
-				query = String.Format ("{0}://{1}{2}",  actualUri.Scheme,
-									actualUri.Host,
-									actualUri.PathAndQuery);
 			} else {
-				query = String.Format ("{0}://{1}:{2}{3}", actualUri.Scheme,
-									   actualUri.Host,
-									   actualUri.Port,
-									   actualUri.PathAndQuery);
+				query = String.Format ("{0}://{1}{2}",  actualUri.Scheme,
+									Host,
+									actualUri.PathAndQuery);
 			}
 			
 			if (!force_version && servicePoint.ProtocolVersion != null && servicePoint.ProtocolVersion < version) {

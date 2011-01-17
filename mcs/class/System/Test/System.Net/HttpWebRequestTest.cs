@@ -2312,6 +2312,79 @@ namespace MonoTests.System.Net
 			}
 		}
 
+#if NET_4_0
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void NullHost ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = null;
+		}
+
+		[Test]
+		public void NoHost ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			Assert.AreEqual (req.Host, "go-mono.com");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void EmptyHost ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = "";
+		}
+
+		[Test]
+		public void HostAndPort ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:80");
+			Assert.AreEqual ("go-mono.com", req.Host, "#01");
+			req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:9000");
+			Assert.AreEqual ("go-mono.com:9000", req.Host, "#02");
+		}
+
+		[Test]
+		public void PortRange ()
+		{
+			for (int i = 0; i < 65536; i++) {
+				if (i == 80)
+					continue;
+				string s = i.ToString ();
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:" + s);
+				Assert.AreEqual ("go-mono.com:" + s, req.Host, "#" + s);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void PortBelow ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = "go-mono.com:-1";
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void PortAbove ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = "go-mono.com:65536";
+		}
+
+		[Test]
+		public void InvalidNamesThatWork ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Host = "-";
+			req.Host = "-.-";
+			req.Host = "á";
+			req.Host = new string ('a', 64); // Should fail. Max. is 63.
+			string s = new string ('a', 100);
+			req.Host = s + "." + s + "." + s + "." + s + "." + s + "." + s; // Over 255 bytes
+		}
+#endif
 		class ListenerScope : IDisposable {
 			EventWaitHandle completed;
 			public HttpListener listener;
