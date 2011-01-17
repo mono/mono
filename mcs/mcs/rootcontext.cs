@@ -35,6 +35,12 @@ namespace Mono.CSharp {
 		v4
 	}
 
+	public enum SdkVersion
+	{
+		v2,
+		v4
+	}
+
 	public enum Target
 	{
 		Library, Exe, Module, WinExe
@@ -58,6 +64,7 @@ namespace Mono.CSharp {
 		public static LanguageVersion Version;
 		public static bool EnhancedWarnings;
 		public static bool LoadDefaultReferences;
+		public static SdkVersion SdkVersion;
 
 		//
 		// We keep strongname related info here because
@@ -205,6 +212,7 @@ namespace Mono.CSharp {
 			MainClass = null;
 			OutputFile = null;
 			Target = Target.Exe;
+			SdkVersion = SdkVersion.v2;
 			TargetExt = ".exe";
 			Platform = Platform.AnyCPU;
 			Version = LanguageVersion.Default;

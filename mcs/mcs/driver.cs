@@ -167,8 +167,8 @@ namespace Mono.CSharp
 				"   --about              About the Mono C# compiler\n" +
 				"   -addmodule:M1[,Mn]   Adds the module to the generated assembly\n" + 
 				"   -checked[+|-]        Sets default aritmetic overflow context\n" +
-				"   -codepage:ID         Sets code page to the one in ID (number, utf8, reset)\n" +
 				"   -clscheck[+|-]       Disables CLS Compliance verifications\n" +
+				"   -codepage:ID         Sets code page to the one in ID (number, utf8, reset)\n" +
 				"   -define:S1[;S2]      Defines one or more conditional symbols (short: -d)\n" +
 				"   -debug[+|-], -g      Generate debugging information\n" + 
 				"   -delaysign[+|-]      Only insert the public key into the assembly (no signing)\n" +
@@ -191,7 +191,9 @@ namespace Mono.CSharp
 				"                        ARCH can be one of: anycpu, x86, x64 or itanium\n" +
 				"   -recurse:SPEC        Recursively compiles files according to SPEC pattern\n" + 
 				"   -reference:A1[,An]   Imports metadata from the specified assembly (short: -r)\n" +
-				"   -reference:ALIAS=A   Imports metadata using specified extern alias (short: -r)\n" +				
+				"   -reference:ALIAS=A   Imports metadata using specified extern alias (short: -r)\n" +
+				"   -sdk:VERSION         Specifies SDK version of referenced assemlies\n" +
+				"                        VERSION can be one of: 2 (default), 4\n" +
 				"   -target:KIND         Specifies the format of the output assembly (short: -t)\n" +
 				"                        KIND can be one of: exe, winexe, library, module\n" +
 				"   -unsafe[+|-]         Allows to compile code which uses unsafe keyword\n" +
@@ -1189,6 +1191,26 @@ namespace Mono.CSharp
 				default:
 					Report.Error (1672, "Invalid platform type for -platform. Valid options are `anycpu', `x86', `x64' or `itanium'");
 					break;
+				}
+
+				return true;
+
+			case "/sdk":
+				if (value.Length == 0) {
+					Error_RequiresArgument (option);
+					break;
+				}
+
+				switch (value.ToLowerInvariant ()) {
+					case "2":
+						RootContext.SdkVersion = SdkVersion.v2;
+						break;
+					case "4":
+						RootContext.SdkVersion = SdkVersion.v4;
+						break;
+					default:
+						Report.Error (-26, "Invalid sdk version name");
+						break;
 				}
 
 				return true;
