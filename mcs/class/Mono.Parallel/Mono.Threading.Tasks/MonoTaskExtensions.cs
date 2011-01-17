@@ -34,16 +34,18 @@ namespace Mono.Threading.Tasks
 {
 	public static class MonoTaskExtensions
 	{
-		static Action<Task, Action<Task>> internalExecute = null;
+		readonly static Action<Task, Action<Task>> internalExecute = null;
+
+		static MonoTaskExtensions ()
+		{
+			// Initialize internal execute
+			var method = typeof(Task).GetMethod ("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
+			internalExecute = (Action<Task, Action<Task>>)Delegate.CreateDelegate (typeof(Action<Task, Action<Task>>), method);
+		}
 
 		// Allow external worker to call into the otherwise internal corresponding method of Task
 		public static void Execute (this Task task, Action<Task> childWorkAdder)
 		{
-			if (internalExecute == null) {
-				var method = typeof(Task).GetMethod ("Execute", BindingFlags.Instance | BindingFlags.NonPublic);
-				internalExecute = (Action<Task, Action<Task>>)Delegate.CreateDelegate (typeof(Action<Task, Action<Task>>), method);
-			}
-
 			internalExecute (task, childWorkAdder);
 		}
 	}
