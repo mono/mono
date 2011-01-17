@@ -2340,7 +2340,9 @@ mono_opcode_to_type (int opcode, int cmp_opcode)
 		switch (cmp_opcode) {
 		case OP_ICOMPARE:
 		case OP_ICOMPARE_IMM:
+#if !defined(__ia64__)
 		case OP_LCOMPARE_IMM:
+#endif
 			return CMP_TYPE_I;
 		default:
 			return CMP_TYPE_L;
