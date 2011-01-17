@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.Web.Infrastructure.dll
 LIB_MCS_FLAGS = -r:System.dll \
+		-r:System.Configuration.dll \
 		-r:System.Web.dll
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)
