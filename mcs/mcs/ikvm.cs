@@ -208,9 +208,10 @@ namespace Mono.CSharp
 
 			if (sdk_path == null) {
 				compiler.Report.Warning (-1, 1, "SDK path could not be resolved");
-			} else {
-				paths.Add (sdk_path);
+				sdk_path = corlib_path;
 			}
+
+			paths.Add (sdk_path);
 		}
 
 		public Assembly Corlib {
