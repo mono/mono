@@ -938,10 +938,12 @@ namespace Mono.CSharp
 
 			MetaType[] ifaces;
 #if STATIC
-			ifaces = type.__GetDeclaredInterfaces ();
-			while (ifaces.Length != 0) {
-				foreach (var iface in ifaces)
-					spec.AddInterface (CreateType (iface));
+			while (true) {
+				ifaces = type.__GetDeclaredInterfaces ();
+				if (ifaces.Length != 0) {
+					foreach (var iface in ifaces)
+						spec.AddInterface (CreateType (iface));
+				}
 
 				type = type.BaseType;
 				if (type == null || type.__ContainsMissingType)
