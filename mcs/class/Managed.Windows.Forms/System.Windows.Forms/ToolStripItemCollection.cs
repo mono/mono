@@ -25,7 +25,6 @@
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
 //
-#if NET_2_0
 
 using System.Drawing;
 using System.Collections;
@@ -383,4 +382,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	internal enum ToolStripItemEventType
@@ -41,4 +40,3 @@ namespace System.Windows.Forms
 		Click = 8
 	}
 }
-#endif
