@@ -458,13 +458,14 @@ namespace System.Xaml
 		// assign.
 		// When it is passed null, then it returns a default instance.
 		// For example, passing null as Int32 results in 0.
+		// But do not immediately try to instantiate with the type, since the type might be abstract.
 		object DoGetCorrectlyTypedValue (XamlType xt, object value)
 		{
 			if (value == null) {
 				if (xt.IsContentValue (service_provider)) // it is for collection/dictionary key and item
 					return null;
 				else
-					return xt.Invoker.CreateInstance (new object [0]);
+					return xt.IsNullable ? null : xt.Invoker.CreateInstance (new object [0]);
 			}
 			if (xt == null)
 				return value;

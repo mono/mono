@@ -803,4 +803,20 @@ namespace MonoTests.System.Xaml
 			return "foo";
 		}
 	}
+
+	public class AbstractContainer
+	{
+		public AbstractObject Value1 { get; set; }
+		public AbstractObject Value2 { get; set; }
+	}
+	
+	public abstract class AbstractObject
+	{
+		public abstract string Foo { get; set; }
+	}
+
+	public class DerivedObject : AbstractObject
+	{
+		public override string Foo { get; set; }
+	}
 }

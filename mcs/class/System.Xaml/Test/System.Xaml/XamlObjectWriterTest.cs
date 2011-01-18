@@ -1264,5 +1264,16 @@ namespace MonoTests.System.Xaml
 				Assert.IsTrue (res.Method1Invoked, "#2");
 			}
 		}
+
+		[Test]
+		public void Write_AbstractWrapper ()
+		{
+			using (var xr = GetReader ("AbstractContainer.xml")) {
+				var res = (AbstractContainer) XamlServices.Load (xr);
+				Assert.IsNull (res.Value1, "#1");
+				Assert.IsNotNull (res.Value2, "#2");
+				Assert.AreEqual ("x", res.Value2.Foo, "#3");
+			}
+		}
 	}
 }

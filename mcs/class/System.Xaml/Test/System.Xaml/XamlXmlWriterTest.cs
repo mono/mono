@@ -980,6 +980,14 @@ namespace MonoTests.System.Xaml
 				Attachable.SetFoo (obj.Value, null);
 			}
 		}
+
+		[Test]
+		[Category ("NotWorking")] // cosmetic attribute order difference
+		public void Write_AbstractWrapper ()
+		{
+			var obj = new AbstractContainer () { Value2 = new DerivedObject () { Foo = "x" } };
+			Assert.AreEqual (ReadXml ("AbstractContainer.xml").Trim (), XamlServices.Save (obj), "#1");
+		}
 	}
 
 	public class TestXmlWriterClass1

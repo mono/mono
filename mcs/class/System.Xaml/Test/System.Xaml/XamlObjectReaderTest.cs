@@ -645,5 +645,16 @@ namespace MonoTests.System.Xaml
 				AttachedWrapper2.SetFoo (obj.Value, null);
 			}
 		}
+
+		[Test]
+		public void Read_AbstractWrapper ()
+		{
+			var obj = new AbstractContainer () { Value2 = new DerivedObject () { Foo = "x" } };
+using (var fs = File.CreateText ("Test/XmlFiles/AbstractWrapper.xml"))
+fs.WriteLine (XamlServices.Save (obj));
+			var xr = new XamlObjectReader (obj);
+			while (!xr.IsEof)
+				xr.Read ();
+		}
 	}
 }

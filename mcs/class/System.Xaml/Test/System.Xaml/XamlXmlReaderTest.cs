@@ -604,5 +604,13 @@ namespace MonoTests.System.Xaml
 			var r = GetReader ("AttachedProperty.xml");
 			Read_AttachedProperty (r);
 		}
+
+		[Test]
+		public void Read_AbstractWrapper ()
+		{
+			var r = GetReader ("AbstractContainer.xml");
+			while (!r.IsEof)
+				r.Read ();
+		}
 	}
 }
