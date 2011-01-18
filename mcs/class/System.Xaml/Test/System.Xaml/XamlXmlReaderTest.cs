@@ -612,5 +612,13 @@ namespace MonoTests.System.Xaml
 			while (!r.IsEof)
 				r.Read ();
 		}
+
+		[Test]
+		public void Read_ReadOnlyPropertyContainer ()
+		{
+			var r = GetReader ("ReadOnlyPropertyContainer.xml");
+			while (!r.IsEof)
+				r.Read ();
+		}
 	}
 }

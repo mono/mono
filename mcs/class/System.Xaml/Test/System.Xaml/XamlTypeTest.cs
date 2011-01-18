@@ -774,6 +774,15 @@ namespace MonoTests.System.Xaml
 			var x = apl.First (ap => ap.Name == "X");
 			Assert.IsTrue (x.IsEvent, "#6");
 		}
+
+		[Test]
+		public void ReadOnlyPropertyContainer ()
+		{
+			var xt = new XamlType (typeof (ReadOnlyPropertyContainer), sctx);
+			var xm = xt.GetMember ("Bar");
+			Assert.IsNotNull (xm, "#1");
+			Assert.IsFalse (xm.IsWritePublic, "#2");
+		}
 	}
 
 	class MyXamlType : XamlType

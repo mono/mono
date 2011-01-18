@@ -819,4 +819,14 @@ namespace MonoTests.System.Xaml
 	{
 		public override string Foo { get; set; }
 	}
+
+	public class ReadOnlyPropertyContainer
+	{
+		string foo;
+		public string Foo {
+			get { return foo; }
+			set { foo = Bar = value; }
+		}
+		public string Bar { get; private set; }
+	}
 }

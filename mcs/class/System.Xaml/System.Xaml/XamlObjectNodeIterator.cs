@@ -222,7 +222,7 @@ namespace System.Xaml
 			}
 
 			// FIXME: find out why root Reference has PositionalParameters.
-			if (xobj.GetRawValue() != root && xobj.Type == XamlLanguage.Reference)
+			if (xobj.GetRawValue () != root && xobj.Type == XamlLanguage.Reference)
 				yield return new XamlNodeMember (xobj, XamlLanguage.PositionalParameters);
 			else {
 				var inst = xobj.GetRawValue ();

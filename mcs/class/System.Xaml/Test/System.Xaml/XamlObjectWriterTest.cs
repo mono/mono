@@ -1275,5 +1275,15 @@ namespace MonoTests.System.Xaml
 				Assert.AreEqual ("x", res.Value2.Foo, "#3");
 			}
 		}
+
+		[Test]
+		public void Write_ReadOnlyPropertyContainer ()
+		{
+			using (var xr = GetReader ("ReadOnlyPropertyContainer.xml")) {
+				var res = (ReadOnlyPropertyContainer) XamlServices.Load (xr);
+				Assert.AreEqual ("x", res.Foo, "#1");
+				Assert.AreEqual ("x", res.Bar, "#2");
+			}
+		}
 	}
 }

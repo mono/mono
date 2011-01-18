@@ -190,8 +190,14 @@ namespace System.Xaml
 				// do not read constructor arguments twice (they are written inside Arguments).
 				if (args != null && args.Contains (m))
 					continue;
-				// do not return non-public members. Not sure why .NET filters out them though.
+				// do not return non-public members (of non-collection/xdata). Not sure why .NET filters out them though.
 				if (!m.IsReadPublic)
+					continue;
+				if (!m.IsWritePublic &&
+				    !m.Type.IsXData &&
+				    !m.Type.IsArray &&
+				    !m.Type.IsCollection &&
+				    !m.Type.IsDictionary)
 					continue;
 
 				yield return m;

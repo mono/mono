@@ -145,6 +145,16 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Skip3 ()
+		{
+			var r = new XamlObjectReader (new ReadOnlyPropertyContainer () { Foo = "x" });
+			while (r.NodeType != XamlNodeType.StartMember)
+				r.Read ();
+			r.Skip ();
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#1");
+		}
+
+		[Test]
 		public void Read_XmlDocument ()
 		{
 			var doc = new XmlDocument ();
@@ -647,12 +657,24 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		public void Read_AbstractWrapper ()
+		public void Read_AbstractContainer ()
 		{
 			var obj = new AbstractContainer () { Value2 = new DerivedObject () { Foo = "x" } };
-using (var fs = File.CreateText ("Test/XmlFiles/AbstractWrapper.xml"))
-fs.WriteLine (XamlServices.Save (obj));
 			var xr = new XamlObjectReader (obj);
+			while (!xr.IsEof)
+				xr.Read ();
+		}
+
+		[Test]
+		public void Read_ReadOnlyPropertyContainer ()
+		{
+			var obj = new ReadOnlyPropertyContainer () { Foo = "x" };
+			var xr = new XamlObjectReader (obj);
+			var xt = xr.SchemaContext.GetXamlType (obj.GetType ());
+			while (xr.Read ())
+				if (xr.NodeType == XamlNodeType.StartMember)
+					break;
+			Assert.AreEqual (xt.GetMember ("Foo"), xr.Member, "#1");
 			while (!xr.IsEof)
 				xr.Read ();
 		}
