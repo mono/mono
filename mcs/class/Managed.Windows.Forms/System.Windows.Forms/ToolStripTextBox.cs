@@ -25,7 +25,7 @@
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
 //
-#if NET_2_0
+
 using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms.Design;
@@ -587,4 +587,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-#endif

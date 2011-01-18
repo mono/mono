@@ -43,12 +43,10 @@ using System.Timers;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
-{	
-#if NET_2_0
+{
 	[DefaultBindingProperty ("Value")]
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-#endif
 	[Designer("System.Windows.Forms.Design.TrackBarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultEvent ("Scroll")]
 	[DefaultProperty("Value")]
@@ -73,20 +71,16 @@ namespace System.Windows.Forms
 		internal int mouse_down_x_offset; // how far from left side of thumb was the mouse clicked.
 		internal bool mouse_moved; // has the mouse moved since it was clicked?
 		private const int size_of_autosize = 45;
-#if NET_2_0
 		private bool right_to_left_layout;
-#endif
 		bool thumb_entered;
 	
 		#region events
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[Browsable (true)]
 		public new event EventHandler AutoSizeChanged {
 			add {base.AutoSizeChanged += value;}
 			remove {base.AutoSizeChanged -= value;}
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -95,7 +89,6 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 		
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		public new event EventHandler BackgroundImageLayoutChanged
@@ -103,7 +96,6 @@ namespace System.Windows.Forms
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -140,7 +132,6 @@ namespace System.Windows.Forms
 			remove { base.ImeModeChanged -= value; }
 		}
 		
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseClick {
@@ -164,8 +155,6 @@ namespace System.Windows.Forms
 			remove { base.PaddingChanged -= value; }
 		}
 		
-#endif
-		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint {
@@ -173,12 +162,10 @@ namespace System.Windows.Forms
 			remove { base.Paint -= value; }
 		}
 
-#if NET_2_0
 		public event EventHandler RightToLeftLayoutChanged {
 			add {Events.AddHandler (RightToLeftLayoutChangedEvent, value);}
 			remove {Events.RemoveHandler (RightToLeftLayoutChangedEvent, value);}
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -187,9 +174,7 @@ namespace System.Windows.Forms
 			remove { base.TextChanged -= value; }
 		}
 
-#if NET_2_0
 		static object RightToLeftLayoutChangedEvent = new object ();
-#endif
 		static object ScrollEvent = new object ();
 		static object ValueChangedEvent = new object ();
 
@@ -206,7 +191,6 @@ namespace System.Windows.Forms
 		#endregion // Events
 
 		#region UIA FrameWork Events
-#if NET_2_0
 		static object UIAValueParamChangedEvent = new object ();
 
 		internal event EventHandler UIAValueParamChanged {
@@ -220,7 +204,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, EventArgs.Empty);
 		}
-#endif
 		#endregion
 
 		public TrackBar ()
@@ -244,11 +227,7 @@ namespace System.Windows.Forms
 			GotFocus += new EventHandler (OnGotFocusTB);
 			holdclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
 
-			SetStyle (ControlStyles.UserPaint | ControlStyles.Opaque
-#if NET_2_0
-				| ControlStyles.UseTextForAccessibility
-#endif
-				, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.Opaque | ControlStyles.UseTextForAccessibility, false);
 		}
 
 		#region Private & Internal Properties
@@ -286,17 +265,11 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
-#endif
 		[DefaultValue (true)]
-#if NET_2_0
 		public override bool AutoSize {
-#else
-		public bool AutoSize {
-#endif
 			get { return autosize; }
 			set { autosize = value;}
 		}
@@ -308,7 +281,6 @@ namespace System.Windows.Forms
 			set { base.BackgroundImage = value; }
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		public override ImageLayout BackgroundImageLayout {
@@ -319,7 +291,6 @@ namespace System.Windows.Forms
 				base.BackgroundImageLayout = value;
 			}
 		}
-#endif
 
 		protected override CreateParams CreateParams {
 			get {
@@ -335,7 +306,6 @@ namespace System.Windows.Forms
 			get { return ThemeEngine.Current.TrackBarDefaultSize; }
 		}	
 		
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get {
@@ -345,7 +315,6 @@ namespace System.Windows.Forms
 				base.DoubleBuffered = value;
 			}
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -373,19 +342,12 @@ namespace System.Windows.Forms
 		{
 			get { return largeChange; }
 			set {
-#if NET_2_0
 				if (value < 0)
 					throw new ArgumentOutOfRangeException (string.Format ("Value '{0}' must be greater than or equal to 0.", value));
-#else
-				if ( value < 0 )
-					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
-#endif
 				
 				largeChange = value;				
 
-#if NET_2_0
-					OnUIAValueParamChanged ();
-#endif
+				OnUIAValueParamChanged ();
 			}
 		}
 
@@ -402,9 +364,7 @@ namespace System.Windows.Forms
 
 					Refresh ();
 
-#if NET_2_0
 					OnUIAValueParamChanged ();
-#endif
 				}
 			}
 		}
@@ -423,9 +383,7 @@ namespace System.Windows.Forms
 
 					Refresh ();
 
-#if NET_2_0
 					OnUIAValueParamChanged ();
-#endif
 				}
 			}
 		}
@@ -450,7 +408,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -476,25 +433,18 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#endif
 
 		[DefaultValue (1)]
 		public int SmallChange {
 			get { return smallChange;}
 			set {
-#if NET_2_0
 				if (value < 0)
 					throw new ArgumentOutOfRangeException (string.Format ("Value '{0}' must be greater than or equal to 0.", value));
-#else
-				if ( value < 0 )
-					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
-#endif
+
 				if (smallChange != value) {
 					smallChange = value;					
 
-#if NET_2_0
 					OnUIAValueParamChanged ();
-#endif
 				}
 			}
 		}
@@ -644,7 +594,6 @@ namespace System.Windows.Forms
 				SmallIncrement ();    					
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnRightToLeftLayoutChanged (EventArgs e)
 		{
@@ -652,7 +601,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		protected virtual void OnScroll (EventArgs e) 
 		{
@@ -661,13 +609,12 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-#if NET_2_0
 		protected override void OnSystemColorsChanged (EventArgs e)
 		{
 			base.OnSystemColorsChanged (e);
 			Invalidate ();
 		}
-#endif
+
 		protected virtual void OnValueChanged (EventArgs e) 
 		{
 			EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);

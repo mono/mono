@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 
@@ -47,4 +46,3 @@ namespace System.Windows.Forms
 		All = 15
 	}
 }
-#endif
