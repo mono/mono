@@ -83,12 +83,25 @@ namespace MonoTests.Mono.Threading.Tasks
 		{
 			DummyScheduler sched = new DummyScheduler ();
 
-			Task t = new Task (delegate { Thread.Sleep (50); });
+			Task t = new Task (delegate { Thread.Sleep (100); });
 			t.Start (sched);
 			t.Wait ();
 
 			Assert.IsTrue (sched.ParticipateMethod1);
 		}
+
+		[Test]
+		public void Method2RegisteringTest ()
+		{
+			DummyScheduler sched = new DummyScheduler ();
+
+			Task t = new Task (delegate { Thread.Sleep (100); });
+			t.Start (sched);
+			t.Wait (100);
+
+			Assert.IsTrue (sched.ParticipateMethod2);
+		}
+
 	}
 }
 
