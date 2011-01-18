@@ -7,9 +7,9 @@
 TestResult-*.log
 TestResult-*.xml
 TestResult*.xml
-errors/?mcs.log
+errors/*.log
 errors/dummy.xml
-tests/?mcs.log
+tests/*.log
 tests/gtest-*.dll
 tests/test-*.dll
 tests/xml-*.xml

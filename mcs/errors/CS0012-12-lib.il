@@ -15,13 +15,13 @@
 .module 'CS0012-12-lib.dll'
 
 .class public auto ansi beforefieldinit Lib1.Class1`1<T>
-       extends class ['cs0012-12-missing']Lib2.Class1`1<class ['cs0012-12-missing']Lib2.Class2>
+       extends class ['CS0012-lib-missing']Lib2.Class1`1<class ['CS0012-lib-missing']Lib2.Class2>
 {
   .method public hidebysig specialname rtspecialname 
           instance void  .ctor() cil managed
   {
     IL_0000:  ldarg.0
-    IL_0001:  call       instance void class ['cs0012-12-missing']Lib2.Class1`1<class ['cs0012-12-missing']Lib2.Class2>::.ctor()
+    IL_0001:  call       instance void class ['CS0012-lib-missing']Lib2.Class1`1<class ['CS0012-lib-missing']Lib2.Class2>::.ctor()
     IL_0006:  ret
   }
 
