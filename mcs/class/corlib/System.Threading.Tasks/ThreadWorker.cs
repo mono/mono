@@ -245,6 +245,8 @@ namespace System.Threading.Tasks
 			int tries = 8;
 			WaitHandle[] handles = null;
 			Watch watch = Watch.StartNew ();
+			if (millisecondsTimeout == -1)
+				millisecondsTimeout = int.MaxValue;
 
 			while (!predicateEvt.IsSet && watch.ElapsedMilliseconds < millisecondsTimeout) {
 				Task value;
@@ -349,7 +351,7 @@ namespace System.Threading.Tasks
 
 		static int ComputeTimeout (int proposed, int timeout, Watch watch)
 		{
-			return timeout == -1 ? proposed : System.Math.Min (proposed, System.Math.Max (0, (int)(timeout - watch.ElapsedMilliseconds)));
+			return timeout == int.MaxValue ? proposed : System.Math.Min (proposed, System.Math.Max (0, (int)(timeout - watch.ElapsedMilliseconds)));
 		}
 		
 		public bool Finished {
