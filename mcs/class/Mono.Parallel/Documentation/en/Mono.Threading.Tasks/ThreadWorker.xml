@@ -1,0 +1,280 @@
+<Type Name="ThreadWorker" FullName="Mono.Threading.Tasks.ThreadWorker">
+  <TypeSignature Language="C#" Value="public class ThreadWorker : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ThreadWorker extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Parallel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>This class wraps a <see cref="T:System.Threading.Thread" /> to provide a suitable ParallelFx worker (i.e. something that process <see cref="T:System.Threading.Tasks.Task" />).</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ThreadWorker (Mono.Threading.Tasks.ThreadWorker[] others, int workerPosition, System.Collections.Concurrent.IProducerConsumerCollection&lt;System.Threading.Tasks.Task&gt; sharedWorkQueue, Mono.Threading.Tasks.IConcurrentDeque&lt;System.Threading.Tasks.Task&gt; dDeque, System.Threading.ThreadPriority priority, System.Threading.ManualResetEvent handle);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class Mono.Threading.Tasks.ThreadWorker[] others, int32 workerPosition, class System.Collections.Concurrent.IProducerConsumerCollection`1&lt;class System.Threading.Tasks.Task&gt; sharedWorkQueue, class Mono.Threading.Tasks.IConcurrentDeque`1&lt;class System.Threading.Tasks.Task&gt; dDeque, valuetype System.Threading.ThreadPriority priority, class System.Threading.ManualResetEvent handle) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="others" Type="Mono.Threading.Tasks.ThreadWorker[]" />
+        <Parameter Name="workerPosition" Type="System.Int32" />
+        <Parameter Name="sharedWorkQueue" Type="System.Collections.Concurrent.IProducerConsumerCollection&lt;System.Threading.Tasks.Task&gt;" />
+        <Parameter Name="dDeque" Type="Mono.Threading.Tasks.IConcurrentDeque&lt;System.Threading.Tasks.Task&gt;" />
+        <Parameter Name="priority" Type="System.Threading.ThreadPriority" />
+        <Parameter Name="handle" Type="System.Threading.ManualResetEvent" />
+      </Parameters>
+      <Docs>
+        <param name="others">This is an array containing all other workers created. It's necessary if you want worker cooperating together for getting extra work.</param>
+        <param name="workerPosition">The position in the previous array where this worker will be placed.</param>
+        <param name="sharedWorkQueue">This is the global data structures that holds the Task when the system starts and is not yet bootstraped. It's also where tasks end up if they are executed with fairness enabled.</param>
+        <param name="dDeque">The personnal instance of a deque type used by the worker when storing the tasks its responsible of and letting other workers retrieve them.</param>
+        <param name="priority">The priority of the underlying thread.</param>
+        <param name="handle">This is a handle shared (ideally) by all workers to synchronize and deep sleep when there is no more work to do. Setting the handle will wake them up.</param>
+        <summary>Build a new worker instance.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AutoReference">
+      <MemberSignature Language="C#" Value="public static Mono.Threading.Tasks.ThreadWorker AutoReference { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class Mono.Threading.Tasks.ThreadWorker AutoReference" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Threading.Tasks.ThreadWorker</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>This [ThreadStatic] field is automatically updated when WorkerMethod method run so that you can check if you are making a re-entrant call on the same thread.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ChildWorkAdder">
+      <MemberSignature Language="C#" Value="protected virtual void ChildWorkAdder (System.Threading.Tasks.Task t);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void ChildWorkAdder(class System.Threading.Tasks.Task t) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="t" Type="System.Threading.Tasks.Task" />
+      </Parameters>
+      <Docs>
+        <param name="t">Task being scheduled</param>
+        <summary>This method is called when the currently executing Task tries to schedule another Task as part of its computation. This method allows to redirect the scheduling to a specific place.</summary>
+        <remarks>By default the supplied task is added to the ThreadWorker deque via the PushBottom operation.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public virtual void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (Mono.Threading.Tasks.ThreadWorker other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(class Mono.Threading.Tasks.ThreadWorker other) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="Mono.Threading.Tasks.ThreadWorker" />
+      </Parameters>
+      <Docs>
+        <param name="other">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Finished">
+      <MemberSignature Language="C#" Value="public bool Finished { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Finished" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Tells if the underlying thread has exited or not.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Id">
+      <MemberSignature Language="C#" Value="public int Id { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Id" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The position of the current thread worker in the existing ThreadWorker array.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializeUnderlyingThread">
+      <MemberSignature Language="C#" Value="protected virtual void InitializeUnderlyingThread ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void InitializeUnderlyingThread() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Pulse">
+      <MemberSignature Language="C#" Value="public virtual void Pulse ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Pulse() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Stop">
+      <MemberSignature Language="C#" Value="public virtual void Stop ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Stop() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Stop the underlying thread of this ThreadWorker.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WorkerMethod">
+      <MemberSignature Language="C#" Value="protected virtual bool WorkerMethod ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool WorkerMethod() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This is the method executed by WorkerMethod to do the actual processing of tasks.</summary>
+        <returns><see langword="true" /> if the method processed a <see cref="T:System.Threading.Tasks.Task" /> while it ran, <see langword="false" /> otherwise.</returns>
+        <remarks>By default this method applies the following algorithm:
+<list type="bullet">
+  <item>
+    <term>Check if the global data structures contains task and fetch as much as possible into its own deque</term>
+  </item>
+  <item>
+    <term>Execute whatever its deque contains</term>
+  </item>
+  <item>
+    <term>Do a couple of pass over the other workers to try to steal some work to do</term>
+  </item>
+</list></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WorkerMethodWrapper">
+      <MemberSignature Language="C#" Value="protected virtual void WorkerMethodWrapper ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void WorkerMethodWrapper() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>This is the method executed by the underlying thread.</summary>
+        <remarks>By default this method consists of a while loop calling repeatedly <see cref="M:Mono.Threading.Tasks.ThreadWorker.WorkerMethodWrapper()" /> and sleeping accordingly when there is no more work to do.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

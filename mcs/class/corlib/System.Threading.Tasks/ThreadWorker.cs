@@ -27,9 +27,19 @@ using System;
 using System.Threading;
 using System.Collections.Concurrent;
 
+#if INSIDE_MONO_PARALLEL
+using System.Threading.Tasks;
+using Watch = System.Diagnostics.Stopwatch;
+
+namespace Mono.Threading.Tasks
+#else
 namespace System.Threading.Tasks
+#endif
 {
-	internal class ThreadWorker : IDisposable
+#if INSIDE_MONO_PARALLEL
+	public
+#endif
+	class ThreadWorker : IDisposable
 	{
 		Thread workerThread;
 
@@ -44,7 +54,6 @@ namespace System.Threading.Tasks
 		readonly ThreadWorker[]         others;
 		readonly ManualResetEvent       waitHandle;
 		readonly IProducerConsumerCollection<Task> sharedWorkQueue;
-		readonly IScheduler             sched;
 		readonly ThreadPriority         threadPriority;
 
 		// Flag to tell if workerThread is running
@@ -57,8 +66,7 @@ namespace System.Threading.Tasks
 		const int sleepThreshold = 100;
 		int deepSleepTime = 8;
 		
-		public ThreadWorker (IScheduler sched,
-		                     ThreadWorker[] others,
+		public ThreadWorker (ThreadWorker[] others,
 		                     int workerPosition,
 		                     IProducerConsumerCollection<Task> sharedWorkQueue,
 		                     IConcurrentDeque<Task> dDeque,
@@ -67,7 +75,6 @@ namespace System.Threading.Tasks
 		{
 			this.others          = others;
 			this.dDeque          = dDeque;
-			this.sched           = sched;
 			this.sharedWorkQueue = sharedWorkQueue;
 			this.workerLength    = others.Length;
 			this.workerPosition  = workerPosition;
@@ -76,7 +83,10 @@ namespace System.Threading.Tasks
 
 			InitializeUnderlyingThread ();
 		}
-		
+
+#if INSIDE_MONO_PARALLEL
+		protected virtual
+#endif
 		void InitializeUnderlyingThread ()
 		{
 			this.workerThread = new Thread (WorkerMethodWrapper);
@@ -86,13 +96,19 @@ namespace System.Threading.Tasks
 			this.workerThread.Name = "ParallelFxThreadWorker";
 		}
 
+#if INSIDE_MONO_PARALLEL
+		virtual
+#endif
 		public void Dispose ()
 		{
 			Stop ();
 			if (workerThread.ThreadState != ThreadState.Stopped)
 				workerThread.Abort ();
 		}
-		
+
+#if INSIDE_MONO_PARALLEL
+		virtual
+#endif
 		public void Pulse ()
 		{
 			if (started == 1)
@@ -109,7 +125,10 @@ namespace System.Threading.Tasks
 
 			workerThread.Start ();
 		}
-		
+
+#if INSIDE_MONO_PARALLEL
+		virtual
+#endif
 		public void Stop ()
 		{
 			// Set the flag to stop so that the while in the thread will stop
@@ -117,6 +136,9 @@ namespace System.Threading.Tasks
 			started = 0;
 		}
 		
+#if INSIDE_MONO_PARALLEL
+		protected virtual
+#endif
 		// This is the actual method called in the Thread
 		void WorkerMethodWrapper ()
 		{
@@ -147,7 +169,10 @@ namespace System.Threading.Tasks
 
 			started = 0;
 		}
-		
+
+#if INSIDE_MONO_PARALLEL
+		protected virtual
+#endif
 		// Main method, used to do all the logic of retrieving, processing and stealing work.
 		bool WorkerMethod ()
 		{
@@ -202,18 +227,19 @@ namespace System.Threading.Tasks
 			
 			return result;
 		}
-		
+
+#if !INSIDE_MONO_PARALLEL
 		// Almost same as above but with an added predicate and treating one item at a time. 
 		// It's used by Scheduler Participate(...) method for special waiting case like
 		// Task.WaitAll(someTasks) or Task.WaitAny(someTasks)
 		// Predicate should be really fast and not blocking as it is called a good deal of time
 		// Also, the method skip tasks that are LongRunning to avoid blocking (Task are not LongRunning by default)
-		public static void WorkerMethod (Task self,
-		                                 ManualResetEventSlim predicateEvt,
-		                                 int millisecondsTimeout,
-		                                 IProducerConsumerCollection<Task> sharedWorkQueue,
-		                                 ThreadWorker[] others,
-		                                 ManualResetEvent evt)
+		public static void ParticipativeWorkerMethod (Task self,
+		                                              ManualResetEventSlim predicateEvt,
+		                                              int millisecondsTimeout,
+		                                              IProducerConsumerCollection<Task> sharedWorkQueue,
+		                                              ThreadWorker[] others,
+		                                              ManualResetEvent evt)
 		{
 			const int stage1 = 5, stage2 = 0;
 			int tries = 8;
@@ -297,20 +323,33 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		internal void ChildWorkAdder (Task t)
-		{
-			dDeque.PushBottom (t);
-			sched.PulseAll ();
-		}
-		
 		static bool CheckTaskFitness (Task self, Task t)
 		{
 			return ((t.CreationOptions & TaskCreationOptions.LongRunning) == 0 && t.Id < self.Id) || t.Parent == self || t == self;
 		}
+#else
+		public static ThreadWorker AutoReference {
+			get {
+				return autoReference;
+			}
+			set {
+				autoReference = value;
+			}
+		}
+#endif
 
-		static int ComputeTimeout (int proposedTimeout, int timeout, Watch watch)
+#if INSIDE_MONO_PARALLEL
+		protected virtual
+#endif
+		internal void ChildWorkAdder (Task t)
 		{
-			return timeout == -1 ? proposedTimeout : Math.Min (proposedTimeout, Math.Max (0, (int)(timeout - watch.ElapsedMilliseconds)));
+			dDeque.PushBottom (t);
+			waitHandle.Set ();
+		}
+
+		static int ComputeTimeout (int proposed, int timeout, Watch watch)
+		{
+			return timeout == -1 ? proposed : System.Math.Min (proposed, System.Math.Max (0, (int)(timeout - watch.ElapsedMilliseconds)));
 		}
 		
 		public bool Finished {

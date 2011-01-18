@@ -46,7 +46,7 @@ namespace System.Threading.Tasks
 			workers = new ThreadWorker [maxWorker];
 			
 			for (int i = 0; i < maxWorker; i++) {
-				workers [i] = new ThreadWorker (this, workers, i, workQueue, new CyclicDeque<Task> (), priority, pulseHandle);
+				workers [i] = new ThreadWorker (workers, i, workQueue, new CyclicDeque<Task> (), priority, pulseHandle);
 				workers [i].Pulse ();
 			}
 		}
@@ -87,7 +87,7 @@ namespace System.Threading.Tasks
 		
 		internal void ParticipateUntilInternal (Task self, ManualResetEventSlim evt, int millisecondsTimeout)
 		{
-			ThreadWorker.WorkerMethod (self, evt, millisecondsTimeout, workQueue, workers, pulseHandle);
+			ThreadWorker.ParticipativeWorkerMethod (self, evt, millisecondsTimeout, workQueue, workers, pulseHandle);
 		}
 
 		static bool TaskCompletedPredicate (Task self)

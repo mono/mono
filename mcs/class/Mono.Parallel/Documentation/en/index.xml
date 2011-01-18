@@ -32,6 +32,7 @@
       <Type Name="IMonoTaskScheduler" Kind="Interface" />
       <Type Name="MonoTaskExtensions" Kind="Class" />
       <Type Name="PopResult" Kind="Enumeration" />
+      <Type Name="ThreadWorker" Kind="Class" />
     </Namespace>
   </Types>
   <Title>Mono.Parallel</Title>
@@ -52,9 +53,9 @@
           <Parameter Name="childWorkAdder" Type="System.Action&lt;System.Threading.Tasks.Task&gt;" />
         </Parameters>
         <Docs>
-          <param name="task">To be added.</param>
-          <param name="childWorkAdder">To be added.</param>
-          <summary>To be added.</summary>
+          <param name="task">Task to run.</param>
+          <param name="childWorkAdder">Action that will be called with the Task that is being scheduled while above Task is executed as a parameter.</param>
+          <summary>Execute a <see cref="T:System.Threading.Tasks.Task" /> body and track any other Task scheduling during it which is then passed to the supplied action for specific scheduling.</summary>
         </Docs>
         <Link Type="Mono.Threading.Tasks.MonoTaskExtensions" Member="M:Mono.Threading.Tasks.MonoTaskExtensions.Execute(System.Threading.Tasks.Task,System.Action{System.Threading.Tasks.Task})" />
       </Member>
