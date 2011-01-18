@@ -24,8 +24,6 @@
 //
 
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public interface IDataGridViewEditingControl {
@@ -53,5 +51,3 @@ namespace System.Windows.Forms {
 	}
 
 }
-
-#endif

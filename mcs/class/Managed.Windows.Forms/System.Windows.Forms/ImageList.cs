@@ -74,9 +74,7 @@ namespace System.Windows.Forms
 {
 	[DefaultProperty("Images")]
 	[Designer("System.Windows.Forms.Design.ImageListDesigner, " + Consts.AssemblySystem_Design)]
-#if NET_2_0
 	[DesignerSerializer("System.Windows.Forms.Design.ImageListCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
-#endif
 	[ToolboxItemFilter("System.Windows.Forms")]
 	[TypeConverter(typeof(ImageListConverter))]
 	public sealed class ImageList : System.ComponentModel.Component
@@ -85,10 +83,7 @@ namespace System.Windows.Forms
 		private const ColorDepth DefaultColorDepth = ColorDepth.Depth8Bit;
 		private static readonly Size DefaultImageSize = new Size(16, 16);
 		private static readonly Color DefaultTransparentColor = Color.Transparent;
-
-#if NET_2_0
 		private object tag;
-#endif
 		private readonly ImageCollection images;
 		#endregion // Private Fields
 
@@ -98,19 +93,8 @@ namespace System.Windows.Forms
 		{
 			private const int AlphaMask = unchecked((int)0xFF000000);
 
-			private
-#if NET_2_0
-			static
-#else
-			sealed
-#endif
-			class IndexedColorDepths
+			private static class IndexedColorDepths
 			{
-#if !NET_2_0
-				private IndexedColorDepths()
-				{
-				}
-#endif
 				internal static readonly ColorPalette Palette4Bit;
 				internal static readonly ColorPalette Palette8Bit;
 				private static readonly int[] squares;
@@ -219,14 +203,10 @@ namespace System.Windows.Forms
 			private Size imageSize = DefaultImageSize;
 			private Color transparentColor = DefaultTransparentColor;
 			private ArrayList list = new ArrayList();
-#if NET_2_0
 			private ArrayList keys = new ArrayList();
-#endif
 			private int count;
 			private bool handleCreated;
-#if NET_2_0
 			private int lastKeyIndex = -1;
-#endif
 			private readonly ImageList owner;
 			#endregion // ImageCollection Private Fields
 
@@ -299,27 +279,21 @@ namespace System.Windows.Forms
 					Image[] streamImages;
 
 					if (value == null) {
-#if NET_2_0
 						if (this.handleCreated)
 							DestroyHandle();
 						else
 							this.Clear();
-#endif
 					}
 					// Only deserialized ImageListStreamers are used.
 					else if ((streamImages = value.Images) != null) {
 						this.list = new ArrayList(streamImages.Length);
 						this.count = 0;
 						this.handleCreated = true;
-#if NET_2_0
 						this.keys = new ArrayList(streamImages.Length);
-#endif
 
 						for (index = 0; index < streamImages.Length; index++) {
 							list.Add((Image)streamImages[index].Clone());
-#if NET_2_0
 							keys.Add(null);
-#endif
 						}
 
 						// Invalid ColorDepth values are ignored.
@@ -327,10 +301,8 @@ namespace System.Windows.Forms
 							this.colorDepth = (ColorDepth)value.ColorDepth;
 						this.imageSize = value.ImageSize;
 
-#if NET_2_0
 						// Event is raised even when handle was not created yet.
 						owner.OnRecreateHandle();
-#endif
 					}
 				}
 			}
@@ -392,7 +364,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			public Image this[string key] {
 				get {
 					int index;
@@ -417,11 +388,9 @@ namespace System.Windows.Forms
 					return keyCollection;
 				}
 			}
-#endif
 			#endregion // ImageCollection Public Instance Properties
 
 			#region ImageCollection Private Static Methods
-#if NET_2_0
 			private static bool CompareKeys(string key1, string key2)
 			{
 				// Keys are case-insensitive and keys with different length
@@ -432,20 +401,13 @@ namespace System.Windows.Forms
 
 				return string.Compare(key1, key2, true, CultureInfo.InvariantCulture) == 0;
 			}
-#endif
 			#endregion // ImageCollection Private Static Methods
 
 			#region ImageCollection Private Instance Methods
-#if NET_2_0
 			private int AddItem(string key, ImageListItem item)
-#else
-			private int AddItem(ImageListItem item)
-#endif
 			{
 				int itemIndex;
-#if NET_2_0
 				int index;
-#endif
 
 				if (this.handleCreated)
 					itemIndex = AddItemInternal(item);
@@ -457,13 +419,11 @@ namespace System.Windows.Forms
 					this.count += item.ImageCount;
 				}
 
-#if NET_2_0
 				if ((item.Flags & ItemFlags.ImageStrip) == 0)
 					keys.Add(key);
 				else
 					for (index = 0; index < item.ImageCount; index++)
 						keys.Add(null);
-#endif
 
 				return itemIndex;
 			}
@@ -659,9 +619,7 @@ namespace System.Windows.Forms
 					this.list = new ArrayList();
 					this.count = 0;
 					this.handleCreated = false;
-#if NET_2_0
 					keys = new ArrayList();
-#endif
 				}
 			}
 
@@ -691,32 +649,19 @@ namespace System.Windows.Forms
 			#region ImageCollection Public Instance Methods
 			public void Add(Icon value)
 			{
-#if NET_2_0
 				Add(null, value);
-#else
-				AddItem(new ImageListItem(value));
-#endif
 			}
 
 			public void Add(Image value)
 			{
-#if NET_2_0
 				Add(null, value);
-#else
-				AddItem(new ImageListItem(value));
-#endif
 			}
 
 			public int Add(Image value, Color transparentColor)
 			{
-#if NET_2_0
 				return AddItem(null, new ImageListItem(value, transparentColor));
-#else
-				return AddItem(new ImageListItem(value, transparentColor));
-#endif
 			}
 
-#if NET_2_0
 			public void Add(string key, Icon icon)
 			{
 				// Argument has name icon but exceptions use name value.
@@ -739,7 +684,6 @@ namespace System.Windows.Forms
 				for (index = 0; index < images.Length; index++)
 					Add(images[index]);
 			}
-#endif
 
 			public int AddStrip(Image value)
 			{
@@ -755,11 +699,7 @@ namespace System.Windows.Forms
 				if (value.Height != this.imageSize.Height)
 					throw new ArgumentException("Height of image strip must be equal to ImageSize.Height.", "value");
 
-#if NET_2_0
 				return AddItem(null, new ImageListItem(value, width / imageWidth));
-#else
-				return AddItem(new ImageListItem(value, width / imageWidth));
-#endif
 			}
 
 			public void Clear()
@@ -767,25 +707,19 @@ namespace System.Windows.Forms
 				list.Clear();
 				if (this.handleCreated)
 					this.count = 0;
-#if NET_2_0
 				keys.Clear();
-#endif
 			}
 
-#if NET_2_0
 			[EditorBrowsable(EditorBrowsableState.Never)]
-#endif
 			public bool Contains(Image image)
 			{
 				throw new NotSupportedException();
 			}
 
-#if NET_2_0
 			public bool ContainsKey(string key)
 			{
 				return IndexOfKey(key) != -1;
 			}
-#endif
 
 			public IEnumerator GetEnumerator()
 			{
@@ -803,15 +737,12 @@ namespace System.Windows.Forms
 				return images.GetEnumerator();
 			}
 
-#if NET_2_0
 			[EditorBrowsable(EditorBrowsableState.Never)]
-#endif
 			public int IndexOf(Image image)
 			{
 				throw new NotSupportedException();
 			}
 
-#if NET_2_0
 			public int IndexOfKey(string key)
 			{
 				int index;
@@ -833,11 +764,8 @@ namespace System.Windows.Forms
 
 				return this.lastKeyIndex = -1;
 			}
-#endif
 
-#if NET_2_0
 			[EditorBrowsable(EditorBrowsableState.Never)]
-#endif
 			public void Remove(Image image)
 			{
 				throw new NotSupportedException();
@@ -850,14 +778,11 @@ namespace System.Windows.Forms
 
 				CreateHandle();
 				list.RemoveAt(index);
-#if NET_2_0
 				keys.RemoveAt(index);
-#endif
 				if (Changed != null)
 					Changed (this, EventArgs.Empty);
 			}
 
-#if NET_2_0
 			public void RemoveByKey(string key)
 			{
 				int index;
@@ -874,7 +799,6 @@ namespace System.Windows.Forms
 
 				keys[index] = name;
 			}
-#endif
 			#endregion // ImageCollection Public Instance Methods
 
 			#region ImageCollection Interface Properties
@@ -996,20 +920,14 @@ namespace System.Windows.Forms
 		{
 			// ImageSize is serialized in ImageStream when non-empty.
 			// It is serialized even if it has its default value when empty.
-#if NET_2_0
 			return images.Empty;
-#else
-			return this.ImageSize != DefaultImageSize;
-#endif
 		}
-
 
 		internal void ResetColorDepth ()
 		{
 			this.ColorDepth = DefaultColorDepth;
 		}
 
-#if NET_2_0
 		internal void ResetImageSize ()
 		{
 			this.ImageSize = DefaultImageSize;
@@ -1019,13 +937,9 @@ namespace System.Windows.Forms
 		{
 			this.TransparentColor = Color.LightGray;
 		}
-#endif
 		#endregion // Private Instance Methods
 
 		#region Public Instance Properties
-#if !NET_2_0
-		[DefaultValue(DefaultColorDepth)]
-#endif
 		public ColorDepth ColorDepth {
 			get {
 				return images.ColorDepth;
@@ -1087,7 +1001,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Bindable(true)]
 		[DefaultValue(null)]
 		[Localizable(false)]
@@ -1101,7 +1014,6 @@ namespace System.Windows.Forms
 				this.tag = value;
 			}
 		}
-#endif
 
 		public Color TransparentColor {
 			get {

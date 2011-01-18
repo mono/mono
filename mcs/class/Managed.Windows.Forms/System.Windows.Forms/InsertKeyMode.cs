@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum InsertKeyMode
@@ -37,4 +36,3 @@ namespace System.Windows.Forms
 		Overwrite = 2
 	}
 }
-#endif

@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public class ItemCheckedEventArgs : EventArgs
@@ -47,4 +46,3 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 	}
 }
-#endif

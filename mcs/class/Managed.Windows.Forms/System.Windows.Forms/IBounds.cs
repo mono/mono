@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -39,4 +38,3 @@ namespace System.Windows.Forms
 		Rectangle Bounds { get; }
 	}
 }
-#endif

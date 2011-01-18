@@ -20,7 +20,6 @@
 // Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
 //
 
-#if NET_2_0
 
 using System;
 using System.ComponentModel;
@@ -33,5 +32,3 @@ namespace System.Windows.Forms {
 		ControlBindingsCollection DataBindings { get; }
 	}
 }
-
-#endif
