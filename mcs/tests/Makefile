@@ -61,7 +61,7 @@ build-compiler-lib:
 	cd ../class/Mono.CSharp && $(MAKE) NO_DIR_CHECK=yes
 
 qcheck: build-compiler-lib
-	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(COMPILER_NAME).log -il:ver-il-$(PROFILE).xml $(DEFINES)
+	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(COMPILER_NAME).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
 
 test-local:
 	@:

@@ -7030,7 +7030,7 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>127</size>
+        <size>122</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
@@ -10264,7 +10264,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>76</size>
+        <size>66</size>
       </method>
     </type>
   </test>
@@ -10393,7 +10393,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>222</size>
+        <size>217</size>
       </method>
     </type>
     <type name="MyType">
@@ -10671,7 +10671,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>39</size>
+        <size>29</size>
       </method>
     </type>
   </test>
@@ -11565,7 +11565,7 @@
         <size>7</size>
       </method>
       <method name="Void M[T]()">
-        <size>28</size>
+        <size>23</size>
       </method>
       <method name="Int32 Main()">
         <size>7</size>
@@ -14720,7 +14720,7 @@
         <size>26</size>
       </method>
       <method name="System.Func`1[T] Using[T](T)">
-        <size>57</size>
+        <size>52</size>
       </method>
       <method name="System.Func`1[T] Switch[T](T)">
         <size>38</size>
@@ -14729,7 +14729,7 @@
         <size>26</size>
       </method>
       <method name="Int32 Main()">
-        <size>570</size>
+        <size>565</size>
       </method>
     </type>
     <type name="Test+&lt;For&gt;c__AnonStorey0`1[T]">
@@ -14777,7 +14777,7 @@
     </type>
     <type name="Test+&lt;Lock&gt;c__AnonStorey4`1[T]">
       <method name="T &lt;&gt;m__4()">
-        <size>65</size>
+        <size>60</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -14785,7 +14785,7 @@
     </type>
     <type name="Test+&lt;Catch&gt;c__AnonStorey5`1[T]">
       <method name="T &lt;&gt;m__5()">
-        <size>48</size>
+        <size>38</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -18062,7 +18062,7 @@
         <size>110</size>
       </method>
       <method name="Void MultiplyCheckedTest()">
-        <size>122</size>
+        <size>117</size>
       </method>
       <method name="Void MultiplyCheckedTest_2()">
         <size>192</size>
@@ -18104,7 +18104,7 @@
         <size>87</size>
       </method>
       <method name="Void NegateTestChecked()">
-        <size>91</size>
+        <size>86</size>
       </method>
       <method name="Void NegateTestChecked_2()">
         <size>137</size>
@@ -18302,7 +18302,7 @@
         <size>157</size>
       </method>
       <method name="Void SubtractCheckedTest()">
-        <size>127</size>
+        <size>122</size>
       </method>
       <method name="Void SubtractCheckedTest_2()">
         <size>185</size>
@@ -18365,7 +18365,7 @@
         <size>8</size>
       </method>
       <method name="Boolean RunTest(System.Reflection.MethodInfo)">
-        <size>87</size>
+        <size>77</size>
       </method>
       <method name="Int32 Main()">
         <size>179</size>
@@ -18592,7 +18592,7 @@
         <size>122</size>
       </method>
       <method name="Void ArrayIndexTest_7()">
-        <size>128</size>
+        <size>123</size>
       </method>
       <method name="Void NewArrayBoundsTest_3()">
         <size>85</size>
@@ -21449,7 +21449,7 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>45</size>
+        <size>40</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
@@ -22425,7 +22425,7 @@
         <size>77</size>
       </method>
       <method name="System.String &lt;Main&gt;m__0(System.String)">
-        <size>27</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -24742,7 +24742,7 @@
         <size>23</size>
       </method>
       <method name="Void Evaluate(System.String, System.String, System.Object)">
-        <size>80</size>
+        <size>75</size>
       </method>
       <method name="Void Main()">
         <size>561</size>
@@ -25912,7 +25912,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>47</size>
+        <size>42</size>
       </method>
     </type>
   </test>
@@ -26462,13 +26462,13 @@
         <size>38</size>
       </method>
       <method name="Boolean Test1()">
-        <size>41</size>
+        <size>31</size>
       </method>
       <method name="Boolean Test2()">
-        <size>42</size>
+        <size>32</size>
       </method>
       <method name="Boolean Test3()">
-        <size>37</size>
+        <size>27</size>
       </method>
     </type>
   </test>
@@ -26924,7 +26924,7 @@
         <size>33</size>
       </method>
       <method name="Int32 test5(Single ByRef, Int64)">
-        <size>73</size>
+        <size>68</size>
       </method>
       <method name="Int32 test6(Single ByRef)">
         <size>10</size>
@@ -26945,7 +26945,7 @@
         <size>44</size>
       </method>
       <method name="Void test12(Single ByRef)">
-        <size>25</size>
+        <size>20</size>
       </method>
       <method name="Void test13(Int32, Single ByRef)">
         <size>23</size>
@@ -26963,19 +26963,19 @@
         <size>62</size>
       </method>
       <method name="Void test18(Int32, Int32 ByRef)">
-        <size>35</size>
+        <size>30</size>
       </method>
       <method name="Int32 test19()">
-        <size>49</size>
+        <size>39</size>
       </method>
       <method name="Int32 test20()">
-        <size>22</size>
+        <size>12</size>
       </method>
       <method name="Int32 test21()">
-        <size>28</size>
+        <size>23</size>
       </method>
       <method name="Int32 test22()">
-        <size>27</size>
+        <size>22</size>
       </method>
       <method name="Int32 test23(System.Object, Int32, Boolean ByRef)">
         <size>29</size>
@@ -26984,7 +26984,7 @@
         <size>67</size>
       </method>
       <method name="Int64 test25(Int32)">
-        <size>44</size>
+        <size>34</size>
       </method>
       <method name="Void test26()">
         <size>22</size>
@@ -26993,13 +26993,13 @@
         <size>12</size>
       </method>
       <method name="Void test28(System.Object ByRef)">
-        <size>23</size>
+        <size>18</size>
       </method>
       <method name="Boolean test29(Int32 ByRef)">
-        <size>33</size>
+        <size>23</size>
       </method>
       <method name="System.String test30(System.String ByRef)">
-        <size>36</size>
+        <size>31</size>
       </method>
       <method name="System.String test31(Int32)">
         <size>78</size>
@@ -27955,10 +27955,10 @@
         <size>7</size>
       </method>
       <method name="Void m()">
-        <size>60</size>
+        <size>55</size>
       </method>
       <method name="Int32 ret(Int32)">
-        <size>40</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()">
         <size>62</size>
@@ -29529,7 +29529,7 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>44</size>
+        <size>39</size>
       </method>
       <method name="Void Foo()">
         <size>23</size>
@@ -30172,7 +30172,7 @@
         <size>8</size>
       </method>
       <method name="Void call(Int32 ByRef)">
-        <size>25</size>
+        <size>20</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -31351,7 +31351,7 @@
     </type>
     <type name="A+B">
       <method name="Void .ctor()">
-        <size>24</size>
+        <size>19</size>
       </method>
     </type>
     <type name="A+B+C">
@@ -31447,7 +31447,7 @@
     </type>
     <type name="A+B">
       <method name="Void .ctor()">
-        <size>24</size>
+        <size>19</size>
       </method>
     </type>
     <type name="A+B+C">
@@ -32827,7 +32827,7 @@
         <size>17</size>
       </method>
       <method name="Void Test()">
-        <size>26</size>
+        <size>11</size>
       </method>
     </type>
   </test>
@@ -36042,7 +36042,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>33</size>
+        <size>23</size>
       </method>
     </type>
   </test>
@@ -36068,10 +36068,10 @@
         <size>7</size>
       </method>
       <method name="Int32 f()">
-        <size>19</size>
+        <size>18</size>
       </method>
       <method name="Void Main()">
-        <size>38</size>
+        <size>33</size>
       </method>
     </type>
   </test>
@@ -36132,7 +36132,7 @@
         <size>14</size>
       </method>
       <method name="Void Method(Int32 ByRef)">
-        <size>17</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -36313,7 +36313,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>19</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -36323,10 +36323,10 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>32</size>
+        <size>22</size>
       </method>
       <method name="Void f()">
-        <size>29</size>
+        <size>18</size>
       </method>
     </type>
   </test>
@@ -36418,16 +36418,16 @@
         <size>7</size>
       </method>
       <method name="Int32 stuff()">
-        <size>20</size>
+        <size>15</size>
       </method>
       <method name="Int32 stuff2()">
-        <size>44</size>
+        <size>29</size>
       </method>
       <method name="Int32 stuff3()">
-        <size>44</size>
+        <size>29</size>
       </method>
       <method name="Void stuff4()">
-        <size>20</size>
+        <size>10</size>
       </method>
       <method name="Void stuff_finally()">
         <size>1</size>
@@ -36443,7 +36443,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>91</size>
+        <size>81</size>
       </method>
     </type>
   </test>
@@ -36456,13 +36456,13 @@
         <size>36</size>
       </method>
       <method name="Int32 Test1()">
-        <size>33</size>
+        <size>28</size>
       </method>
       <method name="Void Test2()">
-        <size>66</size>
+        <size>56</size>
       </method>
       <method name="Void Main()">
-        <size>39</size>
+        <size>34</size>
       </method>
     </type>
   </test>
@@ -36538,7 +36538,7 @@
     </type>
     <type name="X">
       <method name="Int32 Main()">
-        <size>257</size>
+        <size>247</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -36748,7 +36748,7 @@
         <size>7</size>
       </method>
       <method name="Boolean v()">
-        <size>26</size>
+        <size>16</size>
       </method>
       <method name="Int32 Main()">
         <size>2</size>
@@ -37563,7 +37563,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>31</size>
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -38843,7 +38843,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>96</size>
+        <size>81</size>
       </method>
     </type>
   </test>
@@ -38858,7 +38858,7 @@
         <size>7</size>
       </method>
       <method name="Int32 test(Int32)">
-        <size>37</size>
+        <size>27</size>
       </method>
       <method name="Int32 Main()">
         <size>70</size>
@@ -39231,7 +39231,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>130</size>
+        <size>120</size>
       </method>
       <method name="Int32* Conversions(Int64)">
         <size>3</size>
@@ -39432,7 +39432,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test()">
-        <size>50</size>
+        <size>40</size>
       </method>
       <method name="Void Test2()">
         <size>32</size>
@@ -39995,7 +39995,7 @@
         <size>73</size>
       </method>
       <method name="Int32 Main()">
-        <size>198</size>
+        <size>188</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -40433,6 +40433,22 @@
       </method>
     </type>
   </test>
+  <test name="test-704.cs">
+    <type name="NObjective.Program">
+      <method name="Void ArglistMethod(...)">
+        <size>51</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-705.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -40641,7 +40657,7 @@
         <size>11</size>
       </method>
       <method name="Boolean TryThing()">
-        <size>46</size>
+        <size>41</size>
       </method>
       <method name="Void Main()">
         <size>7</size>
@@ -44576,7 +44592,7 @@
   <test name="test-anon-35.cs">
     <type name="ExceptionWithAnonMethod">
       <method name="Int32 Main()">
-        <size>96</size>
+        <size>91</size>
       </method>
       <method name="Void AnonHandler(ExceptionWithAnonMethod+EmptyCallback)">
         <size>13</size>
@@ -46352,7 +46368,7 @@
     </type>
     <type name="T">
       <method name="Void &lt;Main&gt;m__0(System.Object)">
-        <size>15</size>
+        <size>10</size>
       </method>
       <method name="Void &lt;Test_1&gt;m__1(System.Object)">
         <size>29</size>
@@ -48998,7 +49014,7 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>103</size>
+        <size>98</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
@@ -49034,7 +49050,7 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>127</size>
+        <size>122</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
@@ -49073,7 +49089,7 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>37</size>
+        <size>32</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
