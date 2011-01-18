@@ -106,6 +106,9 @@ namespace System.Windows.Forms
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
+			
+			if (Contains (value))
+				return IndexOf (value);
 
 			value.InternalOwner = owner;
 				
