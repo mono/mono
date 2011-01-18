@@ -39,10 +39,8 @@ namespace System.Windows.Forms {
 		internal Thread thread;
 		internal bool Busy;
 		internal IntPtr window;
-
-#if NET_2_0
 		object control_tag;
-#endif
+
 		internal static readonly int Minimum = 15;
 
 		public Timer ()
@@ -84,11 +82,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				if (value <= 0)
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("Interval", string.Format ("'{0}' is not a valid value for Interval. Interval must be greater than 0.", value));
-#else				
-					throw new ArgumentException (string.Format("'{0}' is not a valid value for Interval. Interval must be greater than 0.", value));
-#endif					
 
 				if (interval == value) {
 					return;
@@ -106,7 +100,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if NET_2_0
 		[Localizable(false)]
 		[Bindable(true)]
 		[TypeConverter(typeof(StringConverter))]
@@ -121,7 +114,6 @@ namespace System.Windows.Forms {
 				control_tag = value;
 			}
 		}
-#endif
 
 		public void Start ()
 		{

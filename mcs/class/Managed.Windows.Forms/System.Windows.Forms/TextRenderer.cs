@@ -45,17 +45,13 @@ using System.Drawing.Text;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public sealed 
-#endif
-	class TextRenderer
+	public sealed class TextRenderer
 	{
 		private TextRenderer ()
 		{
 		}
 
 		#region Public Methods
-#if NET_2_0
 		public static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor)
 		{
 			DrawTextInternal (dc, text, font, pt, foreColor, Color.Transparent, TextFormatFlags.Default, false);
@@ -70,31 +66,22 @@ namespace System.Windows.Forms
 		{
 			DrawTextInternal (dc, text, font, pt, foreColor, backColor, TextFormatFlags.Default, false);
 		}
-#endif
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, TextFormatFlags flags)
+		public static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, TextFormatFlags flags)
 		{
 			DrawTextInternal (dc, text, font, pt, foreColor, Color.Transparent, flags, false);
 		}
 
-#if NET_2_0
 		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, Color backColor)
 		{
 			DrawTextInternal (dc, text, font, bounds, foreColor, backColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter, false);
 		}
-#endif
 
 		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags)
 		{
 			DrawTextInternal (dc, text, font, bounds, foreColor, Color.Transparent, flags, false);
 		}
 
-#if NET_2_0
 		public static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor, TextFormatFlags flags)
 		{
 			DrawTextInternal (dc, text, font, pt, foreColor, backColor, flags, false);
@@ -104,19 +91,12 @@ namespace System.Windows.Forms
 		{
 			DrawTextInternal (dc, text, font, bounds, foreColor, backColor, flags, false);
 		}
-#endif
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static Size MeasureText (string text, Font font)
+		public static Size MeasureText (string text, Font font)
 		{
 			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, Size.Empty, TextFormatFlags.Default, false);
 		}
 
-#if NET_2_0
 		public static Size MeasureText (IDeviceContext dc, string text, Font font)
 		{
 			return MeasureTextInternal (dc, text, font, Size.Empty, TextFormatFlags.Default, false);
@@ -141,15 +121,10 @@ namespace System.Windows.Forms
 		{
 			return MeasureTextInternal (dc, text, font, proposedSize, flags, false);
 		}
-#endif
 		#endregion
 
 		#region Internal Methods That Do Stuff
-#if NET_2_0
 		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, Color backColor, TextFormatFlags flags, bool useDrawString)
-#else
-		internal static void DrawTextInternal (Graphics dc, string text, Font font, Rectangle bounds, Color foreColor, Color backColor, TextFormatFlags flags, bool useDrawString)
-#endif
 		{
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
@@ -217,11 +192,7 @@ namespace System.Windows.Forms
 				if (clear_clip_region)
 					SelectClipRgn (hdc, IntPtr.Zero);
 
-#if NET_2_0
 				dc.ReleaseHdc ();
-#else
-				dc.ReleaseHdc (hdc);
-#endif
 			}
 			// Use Graphics.DrawString as a fallback method
 			else {
@@ -243,20 +214,12 @@ namespace System.Windows.Forms
 
 				if (!(dc is Graphics)) {
 					g.Dispose ();
-#if NET_2_0
 					dc.ReleaseHdc ();
-#else
-					if (hdc != IntPtr.Zero) dc.ReleaseHdc (hdc);
-#endif
 				}
 			}
 		}
 
-#if NET_2_0
 		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
-#else
-		internal static Size MeasureTextInternal (Graphics dc, string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
-#endif
 		{
 			if (!useMeasureString && !XplatUI.RunningOnUnix) {
 				// Tell DrawText to calculate size instead of draw
@@ -278,11 +241,7 @@ namespace System.Windows.Forms
 					Win32DrawText (hdc, text, text.Length, ref r, (int)flags);
 				}
 
-#if NET_2_0
 				dc.ReleaseHdc ();
-#else
-				dc.ReleaseHdc (hdc);
-#endif
 
 				// Really, I am just making something up here, which as far as I can tell, MS
 				// just makes something up as well.  This will require lots of tweaking to match MS.  :(
@@ -314,7 +273,6 @@ namespace System.Windows.Forms
 		#endregion
 
 #region Internal Methods That Are Just Overloads
-#if NET_2_0
 		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, bool useDrawString)
 		{
 			DrawTextInternal (dc, text, font, pt, foreColor, Color.Transparent, TextFormatFlags.Default, useDrawString);
@@ -341,9 +299,6 @@ namespace System.Windows.Forms
 		}
 
 		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags, bool useDrawString)
-#else
-		internal static void DrawTextInternal (Graphics dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags, bool useDrawString)
-#endif
 		{
 			DrawTextInternal (dc, text, font, bounds, foreColor, Color.Transparent, flags, useDrawString);
 		}
@@ -364,7 +319,6 @@ namespace System.Windows.Forms
 			return MeasureTextInternal (dc, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
 		}
 
-#if NET_2_0
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, bool useMeasureString)
 		{
 			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
@@ -375,7 +329,6 @@ namespace System.Windows.Forms
 			return MeasureTextInternal (dc, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
 		}
 
-#endif
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
 		{
 			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, proposedSize, flags, useMeasureString);

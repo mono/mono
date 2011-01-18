@@ -37,10 +37,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-#endif
 	[DefaultEvent ("ButtonClick")]
 	[DefaultProperty ("Buttons")]
 	[Designer ("System.Windows.Forms.Design.ToolBarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -57,14 +55,12 @@ namespace System.Windows.Forms
 		static object ButtonClickEvent = new object ();
 		static object ButtonDropDownEvent = new object ();
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -80,14 +76,12 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif
 
 		public event ToolBarButtonClickEventHandler ButtonClick {
 			add { Events.AddHandler (ButtonClickEvent, value); }
@@ -181,13 +175,11 @@ namespace System.Windows.Forms
 			get { return ThemeEngine.Current.ToolBarDefaultSize; }
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get { return base.DoubleBuffered; }
 			set { base.DoubleBuffered = value; }
 		}
-#endif
 		#endregion
 
 		ToolBarAppearance appearance = ToolBarAppearance.Normal;
@@ -208,18 +200,12 @@ namespace System.Windows.Forms
 
 		bool autosize = true;
 
-#if NET_2_0
 		[Browsable (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
-#endif
 		[DefaultValue (true)]
 		[Localizable (true)]
-		public 
-#if NET_2_0
-		override
-#endif
-		bool AutoSize {
+		public override bool AutoSize {
 			get { return autosize; }
 			set {
 				if (value == autosize)
@@ -253,14 +239,12 @@ namespace System.Windows.Forms
 			set { base.BackgroundImage = value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 
 		[DefaultValue (BorderStyle.None)]
 		[DispIdAttribute (-504)]
@@ -524,7 +508,6 @@ namespace System.Windows.Forms
 			base.Dispose (disposing);
 		}
 
-#if NET_2_0
 		private ToolBarButton button_for_focus = null;
 		
 		internal void UIAPerformClick (ToolBarButton button)
@@ -546,7 +529,6 @@ namespace System.Windows.Forms
 				current_item = previous_item;
 			}
 		}
-#endif
 		
 		void PerformButtonClick (ToolBarButtonClickEventArgs e)
 		{
@@ -561,10 +543,9 @@ namespace System.Windows.Forms
 			current_item.Pressed = false;
 			current_item.Invalidate ();
 			
-#if NET_2_0
 			button_for_focus = current_item.Button;
 			button_for_focus.UIAHasFocus = true;
-#endif
+
 			OnButtonClick (e);
 		}
 
@@ -614,7 +595,6 @@ namespace System.Windows.Forms
 			LayoutToolBar ();
 		}
 
-#if NET_2_0
 		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
 		{
 			specified &= ~BoundsSpecified.Height;
@@ -629,7 +609,6 @@ namespace System.Windows.Forms
 			
 			base.ScaleCore (dx, dy);
 		}
-#endif
 
 		private int requested_size = -1;
 
@@ -682,11 +661,9 @@ namespace System.Windows.Forms
 
 		private void FocusChanged (object sender, EventArgs args)
 		{
-#if NET_2_0
 			if (!Focused && button_for_focus != null)
 				button_for_focus.UIAHasFocus = false;
 			button_for_focus = null;
-#endif
 			
 			if (Appearance != ToolBarAppearance.Flat || Buttons.Count == 0)
 				return;
@@ -1206,7 +1183,6 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region UIA Framework Events
-#if NET_2_0
 			static object UIACollectionChangedEvent = new object ();
 			
 			internal event CollectionChangeEventHandler UIACollectionChanged {
@@ -1221,7 +1197,6 @@ namespace System.Windows.Forms
 				if (eh != null)
 					eh (owner, e);
 			}
-#endif
 			#endregion
 
 			#region constructors
@@ -1246,24 +1221,18 @@ namespace System.Windows.Forms
 			public virtual ToolBarButton this [int index] {
 				get { return (ToolBarButton) list [index]; }
 				set {
-#if NET_2_0
 					// UIA Framework Event: Button Removed
 					OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
-#endif
 
 					value.SetParent (owner);
 					list [index] = value;
 					owner.Redraw (true);
 
-#if NET_2_0
-
 				// UIA Framework Event: Button Added
 				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
-#endif
 				}
 			}
 
-#if NET_2_0
 			public virtual ToolBarButton this[string key] {
 				get {
 					if (string.IsNullOrEmpty (key))
@@ -1276,7 +1245,6 @@ namespace System.Windows.Forms
 					return null;
 				}
 			}
-#endif
 
 			bool ICollection.IsSynchronized {
 				get { return list.IsSynchronized; }
@@ -1315,10 +1283,8 @@ namespace System.Windows.Forms
 				if (redraw)
 					owner.Redraw (true);
 
-#if NET_2_0
 				// UIA Framework Event: Button Added
 				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, result));
-#endif
 
 				return result;
 			}
@@ -1341,10 +1307,8 @@ namespace System.Windows.Forms
 				list.Clear ();
 				owner.Redraw (false);
 
-#if NET_2_0
 				// UIA Framework Event: Button Cleared
 				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
-#endif
 			}
 
 			public bool Contains (ToolBarButton button)
@@ -1352,12 +1316,10 @@ namespace System.Windows.Forms
 				return list.Contains (button);
 			}
 
-#if NET_2_0
 			public virtual bool ContainsKey (string key)
 			{
 				return !(this[key] == null);
 			}
-#endif
 
 			public IEnumerator GetEnumerator ()
 			{
@@ -1419,22 +1381,18 @@ namespace System.Windows.Forms
 				return list.IndexOf (button);
 			}
 
-#if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
 				return IndexOf (this[key]);
 			}
-#endif
 
 			public void Insert (int index, ToolBarButton button)
 			{
 				list.Insert (index, button);
 				owner.Redraw (true);
 
-#if NET_2_0
 				// UIA Framework Event: Button Added
 				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
-#endif
 			}
 
 			public void Remove (ToolBarButton button)
@@ -1448,18 +1406,14 @@ namespace System.Windows.Forms
 				list.RemoveAt (index);
 				owner.Redraw (true);
 
-#if NET_2_0
 				// UIA Framework Event: Button Removed
 				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
-#endif
 			}
 
-#if NET_2_0
 			public virtual void RemoveByKey (string key)
 			{
 				Remove (this[key]);
 			}
-#endif
 			#endregion methods
 		}
 		

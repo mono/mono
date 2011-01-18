@@ -103,7 +103,7 @@ namespace System.Windows.Forms
 			return PushButtonState.Normal;
 		}
 		#endregion
-#if NET_2_0
+
 		#region Button 2.0
 		public override void DrawButtonBackground (Graphics g, Button button, Rectangle clipArea)
 		{
@@ -115,7 +115,7 @@ namespace System.Windows.Forms
 			ButtonRenderer.GetPushButtonRenderer (GetPushButtonState (button)).DrawBackground (g, new Rectangle (Point.Empty, button.Size));
 		}
 		#endregion
-#endif
+
 		#region CheckBox
 		protected override void CheckBox_DrawCheckBox (Graphics dc, CheckBox checkbox, ButtonState state, Rectangle checkbox_rectangle)
 		{
@@ -196,26 +196,22 @@ namespace System.Windows.Forms
 		{
 			if (!RenderClientAreas)
 				return base.ComboBoxDropDownButtonHasHotElementStyle (comboBox);
-#if NET_2_0
 			switch (comboBox.FlatStyle) {
 			case FlatStyle.Flat:
 			case FlatStyle.Popup:
 				return base.ComboBoxDropDownButtonHasHotElementStyle (comboBox);
 			}
-#endif
 			return true;
 		}
 		static bool ComboBoxShouldPaintBackground (ComboBox comboBox)
 		{
 			if (comboBox.DropDownStyle == ComboBoxStyle.Simple)
 				return false;
-#if NET_2_0
 			switch (comboBox.FlatStyle) {
 			case FlatStyle.Flat:
 			case FlatStyle.Popup:
 				return false;
 			}
-#endif 
 			return true;
 		}
 		public override void ComboBoxDrawBackground (ComboBox comboBox, Graphics g, Rectangle clippingArea, FlatStyle style)
@@ -502,7 +498,7 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#endregion
-#if NET_2_0
+
 		#region DataGridView
 		#region DataGridViewHeaderCell
 		#region DataGridViewRowHeaderCell
@@ -608,7 +604,7 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#endregion
-#endif
+
 		#region DateTimePicker
 		#region Border
 		protected override void DateTimePickerDrawBorder (DateTimePicker dateTimePicker, Graphics g, Rectangle clippingArea)
@@ -1142,11 +1138,8 @@ namespace System.Windows.Forms
 			int draw_mode = 0;
 			int max_blocks = int.MaxValue;
 			int start_pixel = client_area.X;
-#if NET_2_0
 			draw_mode = (int)ctrl.Style;
-#endif
 			switch (draw_mode) {
-#if NET_2_0
 			case 1: // Continuous
 				client_area.Width = (int)(client_area.Width * ((double)(ctrl.Value - ctrl.Minimum) / (double)(Math.Max (ctrl.Maximum - ctrl.Minimum, 1))));
 				renderer.DrawBackground (dc, client_area, clip_rect);
@@ -1158,7 +1151,6 @@ namespace System.Windows.Forms
 				max_blocks = 5;
 				start_pixel = client_area.X + (int)(client_area.Width * percent_done);
 				goto default;
-#endif
 			default: // Blocks
 				int block_width = renderer.GetInteger (IntegerProperty.ProgressChunkSize);
 				block_width = Math.Max (block_width, 0); // block_width is used to break out the loop below, it must be >= 0!
@@ -2143,7 +2135,6 @@ namespace System.Windows.Forms
 		#endregion
 		#endregion
 
-#if NET_2_0
 		static bool AreEqual (VisualStyleElement value1, VisualStyleElement value2)
 		{
 			return
@@ -2151,7 +2142,7 @@ namespace System.Windows.Forms
 				value1.Part == value2.Part &&
 				value1.State == value2.State;
 		}
-#endif
+
 		#region Measurement device context
 		static Control control;
 		static IDeviceContext GetMeasurementDeviceContext ()

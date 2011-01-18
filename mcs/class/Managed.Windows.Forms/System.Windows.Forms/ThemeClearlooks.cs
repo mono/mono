@@ -162,9 +162,8 @@ namespace System.Windows.Forms {
 		}
 		
 		static readonly Color info_border_color = Color.FromArgb (218, 178, 85);
-#if NET_2_0
 		static readonly Color info_second_color = Color.FromArgb (220, 220, 160);
-#endif	
+
 		public override Image Images(UIIcon index, int size) {
 			switch (index) {
 			case UIIcon.PlacesRecentDocuments:
@@ -3171,7 +3170,6 @@ namespace System.Windows.Forms {
 		#endregion	// ToolTip
 
 		#region BalloonWindow
-#if NET_2_0
 		NotifyIcon.BalloonWindow balloon_window;
 		
 		public override void ShowBalloonWindow (IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
@@ -3274,7 +3272,6 @@ namespace System.Windows.Forms {
 			
 			return rect;
 		}
-#endif
 		#endregion	// BalloonWindow
 		
 	} //class
