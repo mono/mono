@@ -34,6 +34,7 @@
 using System;
 using System.Collections;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Net.Cache;
 using System.Net.Sockets;
@@ -295,7 +296,23 @@ namespace System.Net
 			get { return credentials; }
 			set { credentials = value; }
 		}
-
+#if NET_4_0
+		public DateTime Date {
+			get {
+				string date = webHeaders ["Date"];
+				if (date == null)
+					return DateTime.MinValue;
+				return DateTime.ParseExact (date, "r", CultureInfo.InvariantCulture).ToLocalTime ();
+			}
+			set {
+				if (value == null) {
+					webHeaders.RemoveInternal ("Date");
+				} else {
+					webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
+				}
+			}
+		}
+#endif
 		[MonoTODO]
 		public static new RequestCachePolicy DefaultCachePolicy
 		{

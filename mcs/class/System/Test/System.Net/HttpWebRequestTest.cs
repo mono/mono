@@ -2384,6 +2384,31 @@ namespace MonoTests.System.Net
 			string s = new string ('a', 100);
 			req.Host = s + "." + s + "." + s + "." + s + "." + s + "." + s; // Over 255 bytes
 		}
+
+		[Test]
+		public void NoDate ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			Assert.AreEqual (DateTime.MinValue, req.Date);
+		}
+
+		[Test]
+		public void UtcDate ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Date = DateTime.UtcNow;
+			DateTime date = req.Date;
+			Assert.AreEqual (DateTimeKind.Local, date.Kind);
+		}
+
+		[Test]
+		public void AddAndRemoveDate ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			req.Date = DateTime.UtcNow;
+			req.Date = DateTime.MinValue;
+			Assert.AreEqual (DateTime.MinValue, req.Date);
+		}
 #endif
 		class ListenerScope : IDisposable {
 			EventWaitHandle completed;

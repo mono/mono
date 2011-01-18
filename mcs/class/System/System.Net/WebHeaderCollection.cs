@@ -406,7 +406,7 @@ namespace System.Net
 			Set (ResponseHeaderToString (header), value);
 		}
 
-		string RequestHeaderToString (HttpRequestHeader value)
+		static string RequestHeaderToString (HttpRequestHeader value)
 		{
 			switch (value){
 			case HttpRequestHeader.CacheControl:
