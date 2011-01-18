@@ -338,6 +338,36 @@ namespace System.Threading.Tasks
 				autoReference = value;
 			}
 		}
+
+		protected IConcurrentDeque<Task> Deque {
+			get {
+				return dDeque;
+			}
+		}
+
+		protected ThreadWorker[] Others {
+			get {
+				return others;
+			}
+		}
+
+		protected ManualResetEvent WaitHandle {
+			get {
+				return waitHandle;
+			}
+		}
+
+		protected ThreadPriority Priority {
+			get {
+				return threadPriority;
+			}
+		}
+
+		protected int WorkerPosition {
+			get {
+				return workerPosition;
+			}
+		}
 #endif
 
 #if INSIDE_MONO_PARALLEL
@@ -366,7 +396,7 @@ namespace System.Threading.Tasks
 			}
 		}
 		
-		public bool Equals (ThreadWorker other)
+		public virtual bool Equals (ThreadWorker other)
 		{
 			return (other == null) ? false : object.ReferenceEquals (this.dDeque, other.dDeque);	
 		}
