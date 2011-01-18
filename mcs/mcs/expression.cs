@@ -5323,7 +5323,7 @@ namespace Mono.CSharp
 			//
 			// It's non-virtual and will never be null
 			//
-			if (!method.IsVirtual && (instance is This || instance is New || instance is ArrayCreation || instance is DelegateCreation || instance is TypeOf))
+			if (!method.IsVirtual && (instance is This || instance is New || instance is ArrayCreation || instance is DelegateCreation))
 				return false;
 
 			return true;
