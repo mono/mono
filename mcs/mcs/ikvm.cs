@@ -176,7 +176,7 @@ namespace Mono.CSharp
 		readonly StaticImporter importer;
 		readonly Universe domain;
 		Assembly corlib;
-		List<Tuple<AssemblyName, string>> loaded_names;
+		List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<SdkVersion, string[]> sdk_directory;
 
 		static StaticLoader ()
@@ -192,7 +192,7 @@ namespace Mono.CSharp
 			this.importer = importer;
 			domain = new Universe ();
 			domain.AssemblyResolve += AssemblyReferenceResolver;
-			loaded_names = new List<Tuple<AssemblyName, string>> ();
+			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
 
 			var corlib_path = Path.GetDirectoryName (typeof (object).Assembly.Location);
 			string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
@@ -321,6 +321,9 @@ namespace Mono.CSharp
 			bool? has_extension = null;
 			foreach (var path in paths) {
 				var file = Path.Combine (path, fileName);
+				if (Report.DebugFlags > 0)
+					Console.WriteLine ("Probing assembly location `{0}'", file);
+
 				if (!File.Exists (file)) {
 					if (!has_extension.HasValue)
 						has_extension = fileName.EndsWith (".dll", StringComparison.Ordinal) || fileName.EndsWith (".exe", StringComparison.Ordinal);
@@ -351,7 +354,7 @@ namespace Mono.CSharp
 								continue;
 
 							if (an.CodeBase == loaded_name.CodeBase)
-								return null;
+								return entry.Item3;
 							
 							if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
 								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
@@ -375,8 +378,11 @@ namespace Mono.CSharp
 						if (Report.DebugFlags > 0)
 							Console.WriteLine ("Loading assembly `{0}'", fileName);
 
-						loaded_names.Add (Tuple.Create (an, fileName));
-						return domain.LoadAssembly (module);
+						var assembly = domain.LoadAssembly (module);
+						if (assembly != null)
+							loaded_names.Add (Tuple.Create (an, fileName, assembly));
+
+						return assembly;
 					}
 				} catch {
 					Error_FileCorrupted (file);
@@ -420,6 +426,10 @@ namespace Mono.CSharp
 		{
 			foreach (var path in paths) {
 				var file = Path.Combine (path, assembly);
+
+				if (Report.DebugFlags > 0)
+					Console.WriteLine ("Probing default assembly location `{0}'", file);
+
 				if (!File.Exists (file))
 					continue;
 
@@ -429,7 +439,7 @@ namespace Mono.CSharp
 
 					var a = domain.LoadFile (file);
 					if (a != null) {
-						loaded_names.Add (Tuple.Create (a.GetName (), file));
+						loaded_names.Add (Tuple.Create (a.GetName (), file, a));
 					}
 
 					return a;
