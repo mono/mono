@@ -27,7 +27,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	public enum DockingBehavior
@@ -37,4 +36,3 @@ namespace System.Windows.Forms
 		AutoDock = 2
 	}
 }
-#endif

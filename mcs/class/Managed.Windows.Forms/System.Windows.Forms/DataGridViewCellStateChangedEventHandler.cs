@@ -24,12 +24,8 @@
 //
 
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	public delegate void DataGridViewCellStateChangedEventHandler (object sender, DataGridViewCellStateChangedEventArgs e);
 
 }
-
-#endif

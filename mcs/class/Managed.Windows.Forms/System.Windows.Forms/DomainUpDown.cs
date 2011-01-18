@@ -38,11 +38,9 @@ namespace System.Windows.Forms
 {
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedItemChanged")]
-#if NET_2_0
 	[DefaultBindingProperty ("SelectedItem")]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class DomainUpDown : UpDownBase {
 		#region Local Variables
 		private DomainUpDownItemCollection	items;
@@ -448,7 +446,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -456,7 +453,6 @@ namespace System.Windows.Forms
 			get { return Padding.Empty; }
 			set { }
 		}
-#endif
 
 		[Browsable(false)]
 		[DefaultValue(-1)]
@@ -535,10 +531,8 @@ namespace System.Windows.Forms
 
 			SelectedIndex = new_index;
 
-#if NET_2_0
 			// UIA Framework Event: DownButton Click
 			OnUIADownButtonClick (EventArgs.Empty);
-#endif
 		}
 
 		public override string ToString() {
@@ -561,10 +555,8 @@ namespace System.Windows.Forms
 
 			SelectedIndex = new_index;
 
-#if NET_2_0
 			// UIA Framework Event: UpButton Click
 			OnUIAUpButtonClick (EventArgs.Empty);
-#endif
 		}
 		#endregion	// Public Instance Methods
 
@@ -595,27 +587,19 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		protected override void OnTextBoxKeyPress (object source, KeyPressEventArgs e)
 		{
 			base.OnTextBoxKeyPress (source, e);
 		}
-#else
-		protected override void OnTextBoxKeyDown(object source, KeyEventArgs e) {
-			base.OnTextBoxKeyDown (source, e);
-		}
-#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler PaddingChanged {
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
 		}
-#endif
 
 		static object SelectedItemChangedEvent = new object ();
 		public event EventHandler SelectedItemChanged {

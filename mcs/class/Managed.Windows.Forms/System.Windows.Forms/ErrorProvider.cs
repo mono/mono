@@ -34,13 +34,8 @@ namespace System.Windows.Forms {
 	[ProvideProperty("IconAlignment", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
 	[ProvideProperty("IconPadding", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
 	[ProvideProperty("Error", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
-#if NET_2_0
 	[ComplexBindingProperties ("DataSource", "DataMember")]
-#endif
-	public class ErrorProvider : Component, IExtenderProvider
-#if NET_2_0
-	    , ISupportInitialize
-#endif
+	public class ErrorProvider : Component, IExtenderProvider, ISupportInitialize
 	{
 		private class ErrorWindow : UserControl
 		{
@@ -79,7 +74,6 @@ namespace System.Windows.Forms {
 				window.Width = ep.icon.Width;
 				window.Height = ep.icon.Height;
 
-#if NET_2_0
 				// UIA Framework: Associate ErrorProvider with Control
 				ErrorProvider.OnUIAErrorProviderHookUp (ep, new ControlEventArgs (control));
 
@@ -90,13 +84,10 @@ namespace System.Windows.Forms {
 					else 
 						ErrorProvider.OnUIAControlUnhookUp (control, new ControlEventArgs (window));
 				};
-#endif
 
 				if (control.Parent != null) {
-#if NET_2_0
 					// UIA Framework: Generate event to associate UserControl with ErrorProvider
 					ErrorProvider.OnUIAControlHookUp (control, new ControlEventArgs (window));
-#endif
 					control.Parent.Controls.Add(window);
 					control.Parent.Controls.SetChildIndex(window, control.Parent.Controls.IndexOf (control) + 1);
 				}
@@ -249,10 +240,8 @@ namespace System.Windows.Forms {
 						ep.tooltip.Top = pt.Y - size.Height;
 					}
 
-#if NET_2_0
 					// UIA Framework: Associate Control with ToolTip, used on Popup events
 					ep.UIAControl = control;
-#endif
 
 					ep.tooltip.Visible = true;
 				}
@@ -276,18 +265,14 @@ namespace System.Windows.Forms {
 			private void control_ParentChanged (object sender, EventArgs e)
 			{
 				if (control.Parent != null) {
-#if NET_2_0
 
 					// UIA Framework: Generate event to disassociate UserControl with ErrorProvider
 					ErrorProvider.OnUIAControlUnhookUp (control, new ControlEventArgs (window));
-#endif
 					control.Parent.Controls.Add (window);
 					control.Parent.Controls.SetChildIndex (window, control.Parent.Controls.IndexOf (control) + 1);
 	
-#if NET_2_0
 					// UIA Framework: Generate event to associate UserControl with ErrorProvider
 					ErrorProvider.OnUIAControlHookUp (control, new ControlEventArgs (window));
-#endif
 				}
 			}
 
@@ -334,10 +319,8 @@ namespace System.Windows.Forms {
 		private Hashtable		controls;
 		private ToolTip.ToolTipWindow	tooltip;
 
-#if NET_2_0
 		private bool right_to_left;
 		private object tag;
-#endif
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -350,7 +333,7 @@ namespace System.Windows.Forms {
 
 			icon = ResourceImageLoader.GetIcon ("errorProvider.ico");
 			tooltip = new ToolTip.ToolTipWindow();
-#if NET_2_0
+
 			//UIA Framework: Event used to indicate the ToolTip is shown/hidden.
 			tooltip.VisibleChanged += delegate (object sender, EventArgs args) {
 				if (tooltip.Visible == true)
@@ -358,7 +341,6 @@ namespace System.Windows.Forms {
 				else if (tooltip.Visible == false)
 					OnUIAUnPopup (this, new PopupEventArgs (UIAControl, UIAControl, false, Size.Empty));
 			};
-#endif
 		}
 
 		public ErrorProvider(ContainerControl parentControl) : this ()
@@ -366,12 +348,10 @@ namespace System.Windows.Forms {
 			container = parentControl;
 		}
 		
-#if NET_2_0
 		public ErrorProvider (IContainer container) : this ()
 		{
 			container.Add (this);
 		}
-#endif
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
@@ -425,11 +405,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO ("Stub, does nothing")]
 		[DefaultValue (null)]
-#if NET_2_0
 		[AttributeProvider (typeof (IListSource))]
-#else
-		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
-#endif
 		public object DataSource {
 			get {
 				return datasource;
@@ -461,7 +437,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO ("RTL not supported")]
 		[Localizable (true)]
 		[DefaultValue (false)]
@@ -479,7 +454,6 @@ namespace System.Windows.Forms {
 			get { return this.tag; }
 			set { this.tag = value; }
 		}
-#endif
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
@@ -503,13 +477,11 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-#if NET_2_0
 		public void Clear ()
 		{
 			foreach (ErrorProperty ep in controls.Values)
 				ep.Text = string.Empty;
 		}
-#endif
 
 		[Localizable(true)]
 		[DefaultValue("")]
@@ -552,7 +524,6 @@ namespace System.Windows.Forms {
 			base.Dispose (disposing);
 		}
 
-#if NET_2_0
 		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
 		protected virtual void OnRightToLeftChanged (EventArgs e)
 		{
@@ -560,7 +531,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		#endregion	// Protected Instance Methods
 
 		#region Private Methods
@@ -574,7 +544,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Private Methods
 
-#if NET_2_0
 		void ISupportInitialize.BeginInit ()
 		{
 		}
@@ -582,21 +551,17 @@ namespace System.Windows.Forms {
 		void ISupportInitialize.EndInit ()
 		{
 		}
-#endif
 
 		#region Public Events
-#if NET_2_0
 		static object RightToLeftChangedEvent = new object ();
 
 		public event EventHandler RightToLeftChanged {
 			add { Events.AddHandler (RightToLeftChangedEvent, value); }
 			remove { Events.RemoveHandler (RightToLeftChangedEvent, value); }
 		}
-#endif
 		#endregion
 
 		#region UIA Framework: Events, Properties and Methods
-#if NET_2_0
 		// NOTE: 
 		//	We are using Reflection to add/remove internal events.
 		//      Class ToolTipListener uses the events.
@@ -661,8 +626,6 @@ namespace System.Windows.Forms {
 			if (UIAErrorProviderUnhookUp != null)
 				UIAErrorProviderUnhookUp (sender, args);
 		}
-
-#endif
 		#endregion
 	}
 }

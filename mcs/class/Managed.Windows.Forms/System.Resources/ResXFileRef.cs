@@ -26,9 +26,7 @@
 
 using System;
 using System.ComponentModel;
-#if NET_2_0
 using System.Drawing;
-#endif
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -67,13 +65,10 @@ namespace System.Resources {
 				}
 
 				string [] parts = ResXFileRef.Parse ((string) value);
-#if NET_2_0
 				if (parts.Length == 1)
 					throw new ArgumentException ("value");
-#endif
 
 				Type type = Type.GetType (parts [1]);
-#if NET_2_0
 				if (type == typeof(string)) {
 					Encoding encoding;
 					if (parts.Length > 2) {
@@ -86,14 +81,12 @@ namespace System.Resources {
 						return reader.ReadToEnd();
 					}
 				}
-#endif
 
 				using (FileStream file = new FileStream (parts [0], FileMode.Open, FileAccess.Read, FileShare.Read)) {
 					buffer = new byte [file.Length];
 					file.Read(buffer, 0, (int) file.Length);
 				}
 
-#if NET_2_0
 				if (type == typeof(System.Byte[]))
 					return buffer;
 
@@ -104,7 +97,6 @@ namespace System.Resources {
 
 				if (type == typeof (MemoryStream))
 					return new MemoryStream (buffer);
-#endif
 
 				return Activator.CreateInstance(type, BindingFlags.CreateInstance
 					| BindingFlags.Public | BindingFlags.Instance, null, 
@@ -126,52 +118,30 @@ namespace System.Resources {
 
 		public ResXFileRef (string fileName, string typeName)
 		{
-#if NET_2_0
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
 			if (typeName == null)
 				throw new ArgumentNullException ("typeName");
-#endif
 
 			this.filename = fileName;
 			this.typename = typeName;
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		ResXFileRef (string fileName, string typeName, Encoding textFileEncoding)
+		public ResXFileRef (string fileName, string typeName, Encoding textFileEncoding)
 			: this (fileName, typeName) 
 		{
 			this.textFileEncoding = textFileEncoding;
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		string FileName {
+		public string FileName {
 			get { return filename; }
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		Encoding TextFileEncoding {
+		public Encoding TextFileEncoding {
 			get { return textFileEncoding; }
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		string TypeName {
+		public string TypeName {
 			get { return typename; }
 		}
 

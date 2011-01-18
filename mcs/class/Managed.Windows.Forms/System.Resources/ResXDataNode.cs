@@ -24,7 +24,6 @@
 //  Olivier Dufour  olivier.duff@gmail.com
 //
 
-#if NET_2_0
 using System;
 using System.Runtime.Serialization;
 using System.Drawing;
@@ -148,4 +147,3 @@ namespace System.Resources
 		#endregion
 	}
 }
-#endif

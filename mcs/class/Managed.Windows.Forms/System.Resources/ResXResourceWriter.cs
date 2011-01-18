@@ -49,9 +49,7 @@ namespace System.Resources
 		private TextWriter	textwriter;
 		private XmlTextWriter	writer;
 		private bool		written;
-#if NET_2_0		
 		private string		base_path;
-#endif		
 		#endregion	// Local Variables
 
 		#region Static Fields
@@ -61,11 +59,7 @@ namespace System.Resources
 		public static readonly string ResMimeType			= "text/microsoft-resx";
 		public static readonly string ResourceSchema			= schema;
 		public static readonly string SoapSerializedObjectMimeType	= "application/x-microsoft.net.object.soap.base64";
-#if NET_2_0
 		public static readonly string Version				= "2.0";
-#else
-		public static readonly string Version				= "1.3";
-#endif
 		#endregion	// Static Fields
 
 		#region Constructors & Destructor
@@ -314,7 +308,6 @@ namespace System.Resources
 			WriteString (name, value, null, comment);
 		}
 
-#if NET_2_0
 		[MonoTODO ("Stub, not implemented")]
 		public virtual void AddAlias (string aliasName, AssemblyName assemblyName)
 		{
@@ -467,7 +460,6 @@ namespace System.Resources
 			writer.WriteEndElement ();
 			ms.Close ();
 		}
-#endif
 
 		public void Close ()
 		{
@@ -536,12 +528,10 @@ namespace System.Resources
 ".Replace ("'", "\"");
 
 		#region Public Properties
-#if NET_2_0
 		public string BasePath {
 			get { return base_path; }
 			set { base_path = value; }
 		}
-#endif
 		#endregion
 	}
 }

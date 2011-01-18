@@ -24,8 +24,6 @@
 //
 
 
-#if NET_2_0
-
 namespace System.Windows.Forms {
 
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
@@ -71,5 +69,3 @@ namespace System.Windows.Forms {
 	}
 
 }
-
-#endif

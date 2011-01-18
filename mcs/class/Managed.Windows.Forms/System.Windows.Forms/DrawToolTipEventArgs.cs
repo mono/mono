@@ -30,10 +30,7 @@ using System.Drawing;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public
-#endif
-	class DrawToolTipEventArgs : EventArgs
+	public class DrawToolTipEventArgs : EventArgs
 	{
 		private Control associated_control;
 		private IWin32Window associated_window;
