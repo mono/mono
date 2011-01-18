@@ -29,6 +29,7 @@
     <Namespace Name="Mono.Threading.Tasks">
       <Type Name="CyclicDeque`1" DisplayName="CyclicDeque&lt;T&gt;" Kind="Class" />
       <Type Name="IConcurrentDeque`1" DisplayName="IConcurrentDeque&lt;T&gt;" Kind="Interface" />
+      <Type Name="IMonoTaskScheduler" Kind="Interface" />
       <Type Name="MonoTaskExtensions" Kind="Class" />
       <Type Name="PopResult" Kind="Enumeration" />
     </Namespace>
