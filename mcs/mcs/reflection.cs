@@ -163,27 +163,6 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class MissingType
-	{
-		public Module Module {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public string Name {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public string Namespace {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-	}
-
 #endif
 
 	public class AssemblyDefinitionDynamic : AssemblyDefinition
