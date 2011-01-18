@@ -26,8 +26,6 @@
 //      Daniel Nauck    (dna(at)mono-project(dot)de)
 //      Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
-#if NET_2_0
-
 using System;
 using System.Text;
 using System.Collections;
@@ -332,4 +330,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-#endif

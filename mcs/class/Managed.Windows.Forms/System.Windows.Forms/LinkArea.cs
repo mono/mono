@@ -162,7 +162,6 @@ namespace System.Windows.Forms
 			return start << 4 | length;
 		}
 		
-#if NET_2_0
 		public override string ToString ()
 		{
 			return string.Format ("{{Start={0}, Length={1}}}", this.start.ToString (), this.length.ToString ());
@@ -177,7 +176,6 @@ namespace System.Windows.Forms
 		{
 			return !(linkArea1 == linkArea2);
 		}
-#endif
 		#endregion //Methods
 		
 	}

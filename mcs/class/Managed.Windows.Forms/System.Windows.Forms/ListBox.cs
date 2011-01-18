@@ -35,21 +35,16 @@ using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
-
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.Windows.Forms
 {
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedIndexChanged")]
 	[Designer ("System.Windows.Forms.Design.ListBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[DefaultBindingProperty ("SelectedValue")]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class ListBox : ListControl
 	{
 		public const int DefaultItemHeight = 13;
@@ -95,11 +90,9 @@ namespace System.Windows.Forms
 		private Rectangle items_area;
 		private int focused_item = -1;
 		private ObjectCollection items;
-#if NET_2_0
 		private IntegerCollection custom_tab_offsets;
 		private Padding padding;
 		private bool use_custom_tab_offsets;
-#endif
 
 		public ListBox ()
 		{
@@ -143,9 +136,7 @@ namespace System.Windows.Forms
 			
 			SetStyle (ControlStyles.UserPaint, false);
 
-#if NET_2_0
 			custom_tab_offsets = new IntegerCollection (this);
-#endif
 		}
 
 		#region Events
@@ -160,7 +151,6 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
@@ -170,10 +160,6 @@ namespace System.Windows.Forms
 
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
-#else
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public new event EventHandler Click {
 			add { base.Click += value; }
 			remove { base.Click -= value; }
@@ -189,7 +175,6 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (MeasureItemEvent, value); }
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event MouseEventHandler MouseClick {
@@ -203,7 +188,6 @@ namespace System.Windows.Forms
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -226,7 +210,6 @@ namespace System.Windows.Forms
 		#endregion // Events
 
 		#region UIA Framework Events 
-#if NET_2_0
 		//NOTE:
 		//	We are using Reflection to add/remove internal events.
 		//	Class ListProvider uses the events.
@@ -259,8 +242,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, EventArgs.Empty);
 		}
-
-#endif
 		#endregion UIA Framework Events 
 
 		#region Public Properties
@@ -285,14 +266,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 
 		[DefaultValue (BorderStyle.Fixed3D)]
 		[DispId(-504)]
@@ -327,13 +306,11 @@ namespace System.Windows.Forms
 			get { return base.CreateParams;}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public IntegerCollection CustomTabOffsets {
 			get { return custom_tab_offsets; }
 		}
-#endif
 
 		protected override Size DefaultSize {
 			get { return new Size (120, 96); }
@@ -366,12 +343,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public override Font Font {
 			get { return base.Font; }
 			set { base.Font = value; }
 		}
-#endif
 
 		public override Color ForeColor {
 			get { return base.ForeColor; }
@@ -454,9 +429,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
 		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-#if NET_2_0
 		[MergableProperty (false)]
-#endif
 		public ObjectCollection Items {
 			get { return items; }
 		}
@@ -477,7 +450,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -485,7 +457,6 @@ namespace System.Windows.Forms
 			get { return padding; }
 			set { padding = value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -614,10 +585,8 @@ namespace System.Windows.Forms
 					break;
 				}
 
-#if NET_2_0
 				// UIA Framework: Generates SelectionModeChanged event.
 				OnUIASelectionModeChangedEvent ();
-#endif
 			}
 		}
 
@@ -688,7 +657,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DefaultValue (false)]
 		public bool UseCustomTabOffsets {
@@ -700,7 +668,7 @@ namespace System.Windows.Forms
 				}
 			 }
 		}
-#endif
+
 		[DefaultValue (true)]
 		public bool UseTabStops {
 			get { return use_tabstops; }
@@ -713,14 +681,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		protected override bool AllowSelection {
 			get {
 				return SelectionMode != SelectionMode.None;
 			}
 		}
-#endif
-
 		#endregion Public Properties
 
 		#region Private Properties
@@ -752,9 +717,7 @@ namespace System.Windows.Forms
 		#endregion UIA Framework Properties
 
 		#region Public Methods
-#if NET_2_0
 		[Obsolete ("this method has been deprecated")]
-#endif
 		protected virtual void AddItemsCore (object[] value)
 		{
 			Items.AddRange (value);
@@ -903,7 +866,6 @@ namespace System.Windows.Forms
 			return rect;
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
 		{
@@ -911,7 +873,6 @@ namespace System.Windows.Forms
 
 			return base.GetScaledBounds (bounds, factor, specified);
 		}
-#endif
 
 		public bool GetSelected (int index)
 		{
@@ -1076,7 +1037,6 @@ namespace System.Windows.Forms
 				item_heights.Remove (Items [index]);
 		}
 
-#if NET_2_0
 		protected override void RefreshItems ()
 		{
 			for (int i = 0; i < Items.Count; i++) {
@@ -1101,7 +1061,6 @@ namespace System.Windows.Forms
 		{
 			base.ScaleControl (factor, specified);
 		}
-#endif
 
 		private int SnapHeightToIntegral (int height)
 		{
@@ -1225,14 +1184,12 @@ namespace System.Windows.Forms
 		private void CalculateTabStops ()
 		{
 			if (use_tabstops) {
-#if NET_2_0
 				if (use_custom_tab_offsets) {
 					float[] f = new float[custom_tab_offsets.Count];
 					custom_tab_offsets.CopyTo (f, 0);
 					StringFormat.SetTabStops (0, f);
 				}
 				else
-#endif
 					StringFormat.SetTabStops (0, new float[] { (float)(Font.Height * 3.7) });
 			} else
 				StringFormat.SetTabStops (0, new float[0]);
@@ -1911,15 +1868,11 @@ namespace System.Windows.Forms
 
 			if (e.Clicks > 1) {
 				OnDoubleClick (EventArgs.Empty);
-#if NET_2_0
 				OnMouseDoubleClick (e);
-#endif
 			}
 			else if (e.Clicks == 1) {
 				OnClick (EventArgs.Empty);
-#if NET_2_0
 				OnMouseClick (e);
-#endif
 			}
 			
 			if (!button_pressed)
@@ -2096,10 +2049,8 @@ namespace System.Windows.Forms
 				if (value != -1)
 					InvalidateItem (value);
 
-#if NET_2_0
 				// UIA Framework: Generates FocusedItemChanged event.
 				OnUIAFocusedItemChangedEvent ();
-#endif
 			}
 		}
 
@@ -2285,7 +2236,6 @@ namespace System.Windows.Forms
 
 		#endregion Private Methods
 
-#if NET_2_0
 		public class IntegerCollection : IList, ICollection, IEnumerable
 		{
 			private ListBox owner;
@@ -2471,7 +2421,6 @@ namespace System.Windows.Forms
 			}
 			#endregion
 		}
-#endif
 
 		[ListBindable (false)]
 		public class ObjectCollection : IList, ICollection, IEnumerable
@@ -2490,7 +2439,6 @@ namespace System.Windows.Forms
 			internal ArrayList object_items = new ArrayList ();
 			
 			#region UIA Framework Events 
-#if NET_2_0
 			//NOTE:
 			//	We are using Reflection to add/remove internal events.
 			//	Class ListProvider uses the events.
@@ -2510,8 +2458,6 @@ namespace System.Windows.Forms
 				if (eh != null)
 					eh (owner, args);
 			}
-
-#endif
 			#endregion UIA Framework Events 
 
 			public ObjectCollection (ListBox owner)
@@ -2555,17 +2501,13 @@ namespace System.Windows.Forms
 					if (value == null)
 						throw new ArgumentNullException ("value");
 						
-#if NET_2_0
 					//UIA Framework event: Item Removed
 					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, object_items [index]));
-#endif
 
 					object_items[index] = value;
 					
-#if NET_2_0
 					//UIA Framework event: Item Added
 					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
-#endif					
 
 					owner.CollectionChanged ();
 				}
@@ -2615,12 +2557,6 @@ namespace System.Windows.Forms
 				if (items == null)
 					throw new ArgumentNullException ("items");
 
-#if ONLY_1_1
-				foreach (object mi in items)
-					if (mi == null)
-						throw new ArgumentNullException ("item");
-#endif
-
 				foreach (object mi in items)
 					AddItem (mi);
 
@@ -2633,10 +2569,8 @@ namespace System.Windows.Forms
 				object_items.Clear ();
 				owner.CollectionChanged ();
 
-#if NET_2_0
 				//UIA Framework event: Items list cleared
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
-#endif
 			}
 
 			public bool Contains (object value)
@@ -2647,26 +2581,14 @@ namespace System.Windows.Forms
 				return object_items.Contains (value);
 			}
 
-#if NET_2_0
 			public void CopyTo (object[] destination, int arrayIndex)
 			{
-				object [] dest = destination;
-#else
-			public void CopyTo (object [] dest, int arrayIndex)
-			{
-#endif
-				object_items.CopyTo (dest, arrayIndex);
+				object_items.CopyTo (destination, arrayIndex);
 			}
 
-#if NET_2_0
 			void ICollection.CopyTo (Array destination, int index)
 			{
-				Array dest = destination;
-#else
-			void ICollection.CopyTo (Array dest, int index)
-			{
-#endif
-				object_items.CopyTo (dest, index);
+				object_items.CopyTo (destination, index);
 			}
 
 			public IEnumerator GetEnumerator ()
@@ -2699,10 +2621,8 @@ namespace System.Windows.Forms
 				owner.CollectionChanged ();
 				owner.EndUpdate ();
 				
-#if NET_2_0
 				//UIA Framework event: Item Added
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
-#endif
 			}
 
 			public void Remove (object value)
@@ -2720,19 +2640,14 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
-
-#if NET_2_0
 				//UIA Framework element removed
 				object removed = object_items [index];
-#endif
 				UpdateSelection (index);
 				object_items.RemoveAt (index);
 				owner.CollectionChanged ();
-				
-#if NET_2_0
+
 				//UIA Framework event: Item Removed
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, removed));
-#endif
 			}
 			#endregion Public Methods
 
@@ -2745,10 +2660,8 @@ namespace System.Windows.Forms
 				int cnt = object_items.Count;
 				object_items.Add (item);
 
-#if NET_2_0
 				//UIA Framework event: Item Added
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
-#endif
 
 				return cnt;
 			}
@@ -2790,7 +2703,7 @@ namespace System.Windows.Forms
 			bool sorting_needed; // Selection state retrieval is done sorted - we do it lazyly
 
 			#region UIA Framework Events 
-#if NET_2_0
+
 			//NOTE:
 			//	We are using Reflection to add/remove internal events.
 			//	Class ListProvider uses the events.
@@ -2811,7 +2724,6 @@ namespace System.Windows.Forms
 					eh (owner, args);
 			}
 
-#endif
 			#endregion UIA Framework Events 
 
 
@@ -2856,12 +2768,7 @@ namespace System.Windows.Forms
 			#endregion Public Properties
 
 			#region Public Methods
-#if NET_2_0
-			public 
-#else
-			internal
-#endif
-			void Add (int index)
+			public void Add (int index)
 			{
 				if (AddCore (index)) {
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
@@ -2891,20 +2798,14 @@ namespace System.Windows.Forms
 				owner.EnsureVisible (index);
 				owner.FocusedItem = index;
 				owner.InvalidateItem (index);
-#if NET_2_0
+
 				// UIA Framework event: Selected item added
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
-#endif 
 
 				return true;
 			}
 
-#if NET_2_0
-			public 
-#else
-			internal
-#endif
-			void Clear ()
+			public void Clear ()
 			{
 				if (ClearCore ()) {
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
@@ -2921,10 +2822,10 @@ namespace System.Windows.Forms
 					owner.InvalidateItem (index);
 
 				selection.Clear ();
-#if NET_2_0
+
 				// UIA Framework event: Selected items list updated
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
-#endif 
+
 				return true;
 			}
 
@@ -2936,16 +2837,10 @@ namespace System.Windows.Forms
 				return false;
 			}
 
-#if NET_2_0
 			public void CopyTo (Array destination, int index)
 			{
-				Array dest = destination;
-#else
-			public void CopyTo (Array dest, int index)
-			{
-#endif
 				CheckSorted ();
-				selection.CopyTo (dest, index);
+				selection.CopyTo (destination, index);
 			}
 
 			public IEnumerator GetEnumerator ()
@@ -2957,12 +2852,7 @@ namespace System.Windows.Forms
 			// FIXME: Probably we can avoid sorting when calling
 			// IndexOf (imagine a scenario where multiple removal of items
 			// happens)
-#if NET_2_0
-			public 
-#else
-			internal
-#endif
-			void Remove (int index)
+			public void Remove (int index)
 			{
 				// Separate logic from events here too
 				if (RemoveCore (index)) {
@@ -2980,11 +2870,8 @@ namespace System.Windows.Forms
 				selection.RemoveAt (idx);
 				owner.InvalidateItem (index);
 
-#if NET_2_0
 				// UIA Framework event: Selected item removed from selection
 				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
-#endif 
-
 
 				return true;
 			}
@@ -3101,7 +2988,6 @@ namespace System.Windows.Forms
 			#endregion Public Properties
 
 			#region Public Methods
-#if NET_2_0
 			public void Add (object value)
 			{
 				if (owner.selection_mode == SelectionMode.None)
@@ -3118,7 +3004,6 @@ namespace System.Windows.Forms
 			{
 				owner.selected_indices.Clear ();
 			}
-#endif
 
 			public bool Contains (object selectedObject)
 			{
@@ -3126,19 +3011,12 @@ namespace System.Windows.Forms
 				return idx == -1 ? false : owner.selected_indices.Contains (idx);
 			}
 
-#if NET_2_0
 			public void CopyTo (Array destination, int index)
 			{
-				Array dest = destination;
-#else
-			public void CopyTo (Array dest, int index)
-			{
-#endif
 				for (int i = 0; i < Count; i++)
-					dest.SetValue (this [i], index++);
+					destination.SetValue (this [i], index++);
 			}
 
-#if NET_2_0
 			public void Remove (object value)
 			{
 				if (value == null)
@@ -3150,7 +3028,6 @@ namespace System.Windows.Forms
 
 				owner.selected_indices.Remove (idx);
 			}
-#endif
 
 			int IList.Add (object value)
 			{

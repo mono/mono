@@ -25,8 +25,6 @@
 // Author:
 //	Daniel Nauck		(dna(at)mono-project(dot)de)
 
-#if NET_2_0
-
 using System;
 using System.Text;
 using System.Runtime.Serialization;
@@ -265,4 +263,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-#endif

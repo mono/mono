@@ -33,10 +33,8 @@ namespace System.Windows.Forms {
 	[Flags]
 	[ComVisible(true)]
 	[TypeConverter(typeof(KeysConverter))]
-#if NET_2_0
 	[Editor ("System.Windows.Forms.Design.ShortcutKeysEditor, " + Consts.AssemblySystem_Design,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#endif
 	public enum Keys {
 		None		= 0x00000000,
 		LButton		= 0x00000001,
@@ -221,7 +219,6 @@ namespace System.Windows.Forms {
 		Control		= 0x00020000,
 		Alt		= 0x00040000,
 		Modifiers	= unchecked((int)0xFFFF0000),
-#if NET_2_0
 		IMEAccept	= 0x0000001E,
 		Oem1		= 0x000000BA,
 		Oem102		= 0x000000E2,
@@ -233,6 +230,5 @@ namespace System.Windows.Forms {
 		Oem7		= 0x000000DE,
 		Packet		= 0x000000E7,
 		Sleep		= 0x0000005F
-#endif
 	}
 }

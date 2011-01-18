@@ -35,11 +35,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[LookupBindingProperties ("DataSource", "DisplayMember", "ValueMember", "SelectedValue")]
-#endif
 	public abstract class ListControl : Control
 	{
 		private object data_source;
@@ -47,32 +45,24 @@ namespace System.Windows.Forms
 		private string display_member;
 		private CurrencyManager data_manager;
 		private BindingContext last_binding_context;
-#if NET_2_0
 		private IFormatProvider format_info;
 		private string format_string = string.Empty;
 		private bool formatting_enabled;
-#endif
 
 		protected ListControl ()
 		{
 			value_member = new BindingMemberInfo (string.Empty);
 			display_member = string.Empty;
-			SetStyle (ControlStyles.StandardClick | ControlStyles.UserPaint
-#if NET_2_0
-				| ControlStyles.UseTextForAccessibility
-#endif
-				, false);
+			SetStyle (ControlStyles.StandardClick | ControlStyles.UserPaint | ControlStyles.UseTextForAccessibility, false);
 		}
 
 		#region Events
 		static object DataSourceChangedEvent = new object ();
 		static object DisplayMemberChangedEvent = new object ();
-#if NET_2_0
 		static object FormatEvent = new object ();
 		static object FormatInfoChangedEvent = new object ();
 		static object FormatStringChangedEvent = new object ();
 		static object FormattingEnabledChangedEvent = new object ();
-#endif
 		static object SelectedValueChangedEvent = new object ();
 		static object ValueMemberChangedEvent = new object ();
 
@@ -86,7 +76,6 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (DisplayMemberChangedEvent, value); }
 		}
 
-#if NET_2_0
 		public event ListControlConvertEventHandler Format {
 			add { Events.AddHandler (FormatEvent, value); }
 			remove { Events.RemoveHandler (FormatEvent, value); }
@@ -108,7 +97,6 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (FormattingEnabledChangedEvent, value); }
 			remove { Events.RemoveHandler (FormattingEnabledChangedEvent, value); }
 		}
-#endif
 
 		public event EventHandler SelectedValueChanged {
 			add { Events.AddHandler (SelectedValueChangedEvent, value); }
@@ -123,7 +111,6 @@ namespace System.Windows.Forms
 		#endregion // Events
 
 		#region .NET 2.0 Public Properties
-#if NET_2_0
 		[Browsable (false)]
 		[DefaultValue (null)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -163,18 +150,13 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#endif
 		#endregion
 
 		#region Public Properties
 
 		[DefaultValue(null)]
 		[RefreshProperties(RefreshProperties.Repaint)]
-#if NET_2_0
 		[AttributeProvider (typeof (IListSource))]
-#else
-		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
-#endif
 		[MWFCategory("Data")]
 		public object DataSource {
 			get { return data_source; }
@@ -275,10 +257,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		bool AllowSelection {
+		protected virtual bool AllowSelection {
 			get { return true; }
 		}
 
@@ -332,7 +311,6 @@ namespace System.Windows.Forms
 
 			string retval = o.ToString ();
 			
-#if NET_2_0
 			if (FormattingEnabled) {
 				ListControlConvertEventArgs e = new ListControlConvertEventArgs (o, typeof (string), item);
 				OnFormat (e);
@@ -344,7 +322,6 @@ namespace System.Windows.Forms
 				if (o is IFormattable)
 					return ((IFormattable)o).ToString (string.IsNullOrEmpty (FormatString) ? null : FormatString, FormatInfo);
 			}
-#endif
 				
 			return retval;
 		}
@@ -408,7 +385,6 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-#if NET_2_0
 		protected virtual void OnFormat (ListControlConvertEventArgs e)
 		{
 			ListControlConvertEventHandler eh = (ListControlConvertEventHandler)(Events[FormatEvent]);
@@ -436,7 +412,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
 		{
@@ -463,11 +438,9 @@ namespace System.Windows.Forms
 
 		protected abstract void RefreshItem (int index);
 		
-#if NET_2_0
 		protected virtual void RefreshItems ()
 		{
 		}
-#endif
 
 		protected virtual void SetItemCore (int index,	object value)
 		{
