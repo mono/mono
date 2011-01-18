@@ -32,11 +32,9 @@ using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ComVisible (true)]
 	[Docking (DockingBehavior.Ask)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-#endif
 	[DefaultProperty("Nodes")]
 	[DefaultEvent("AfterSelect")]
 	[Designer("System.Windows.Forms.Design.TreeViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -61,7 +59,6 @@ namespace System.Windows.Forms {
 		private int image_index = -1;
 		private int selected_image_index = -1;
 
-#if NET_2_0
 		private string image_key;
 		private bool is_hovering;
 		private TreeNode mouse_click_node;
@@ -71,7 +68,6 @@ namespace System.Windows.Forms {
 		private ImageList state_image_list;
 		private TreeNode tooltip_currently_showing;
 		private ToolTip tooltip_window;
-#endif
 		private bool full_row_select;
 		private bool hot_tracking;
 		private int indent = 19;
@@ -109,9 +105,7 @@ namespace System.Windows.Forms {
 
 		private TreeViewDrawMode draw_mode;
 
-#if NET_2_0
 		IComparer tree_view_node_sorter;
-#endif
 		#endregion	// Fields
 
 		#region Public Constructors	
@@ -140,11 +134,7 @@ namespace System.Windows.Forms {
 			MouseWheel += new MouseEventHandler(MouseWheelHandler);
 			VisibleChanged += new EventHandler (VisibleChangedHandler);
 
-			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
-#if NET_2_0
-				| ControlStyles.UseTextForAccessibility
-#endif
-				, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick | ControlStyles.UseTextForAccessibility, false);
 
 			string_format = new StringFormat ();
 			string_format.LineAlignment = StringAlignment.Center;
@@ -160,7 +150,6 @@ namespace System.Windows.Forms {
 			Controls.AddImplicit (hbar);
 			ResumeLayout ();
 		}
-
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
@@ -204,10 +193,9 @@ namespace System.Windows.Forms {
 					root_node.CollapseAllUncheck ();
 
 				Invalidate ();
-#if NET_2_0
+
 				// UIA Framework Event: CheckBoxes Changed
 				OnUIACheckBoxesChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -242,15 +230,10 @@ namespace System.Windows.Forms {
 			set { hot_tracking = value; }
 		}
 
-#if NET_2_0
 		[DefaultValue (-1)]
 		[RelatedImageList ("ImageList")]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
-#else
-		[DefaultValue (0)]
-		[TypeConverter (typeof (TreeViewImageIndexConverter))]
-#endif
 		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
 		public int ImageIndex {
@@ -267,9 +250,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		[DefaultValue(null)]
 		public ImageList ImageList {
 			get { return image_list; }
@@ -298,9 +279,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if !NET_2_0
-		[Localizable(true)]
-#endif
 		public int ItemHeight {
 			get {
 				if (item_height == -1)
@@ -329,10 +307,9 @@ namespace System.Windows.Forms {
 			get { return label_edit; }
 			set {
 				label_edit = value;
-#if NET_2_0
+
 				// UIA Framework Event: LabelEdit Changed
 				OnUIALabelEditChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -343,7 +320,6 @@ namespace System.Windows.Forms {
 			get { return nodes; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -351,7 +327,6 @@ namespace System.Windows.Forms {
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}
-#endif
 
 		[DefaultValue("\\")]
 		public string PathSeparator {
@@ -359,7 +334,6 @@ namespace System.Windows.Forms {
 			set { path_separator = value; }
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[DefaultValue (false)]
 		public virtual bool RightToLeftLayout {
@@ -371,7 +345,6 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif
 
 		[DefaultValue(true)]
 		public bool Scrollable {
@@ -384,14 +357,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (-1)]
 		[RelatedImageList ("ImageList")]
 		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
-#else
-		[DefaultValue (0)]
-		[TypeConverter (typeof (TreeViewImageIndexConverter))]
-#endif
 		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
 		public int SelectedImageIndex {
@@ -489,13 +457,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		public bool ShowNodeToolTips {
 			get { return show_node_tool_tips; }
 			set { show_node_tool_tips = value; }
 		}
-#endif
 
 		[DefaultValue(true)]
 		public bool ShowPlusMinus {
@@ -519,15 +485,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		[DefaultValue(false)]
 		public bool Sorted {
 			get { return sorted; }
 			set {
-#if NET_2_0
 				if (sorted == value)
 					return;
 				sorted = value;
@@ -536,17 +499,9 @@ namespace System.Windows.Forms {
 				if (sorted && tree_view_node_sorter == null) {
 					Sort (null);
 				}
-#else
-				if (sorted != value)
-					sorted = value;
-				if (sorted) {
-					Sort (null);
-				}
-#endif
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (null)]
 		public ImageList StateImageList {
 			get { return state_image_list; }
@@ -555,7 +510,6 @@ namespace System.Windows.Forms {
 				Invalidate ();
 			}
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -577,14 +531,11 @@ namespace System.Windows.Forms {
 					one.MoveNext ();
 				return one.CurrentNode;
 			}
-#if NET_2_0
 			set {
 				SetTop (value);
 			}
-#endif
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IComparer TreeViewNodeSorter {
@@ -601,7 +552,6 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -611,22 +561,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		/// According to MSDN this property has no effect on the treeview
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get { return base.DoubleBuffered; }
 			set { base.DoubleBuffered = value; }
 		}
-#endif
 
-#if NET_2_0
 		[DefaultValue ("Color [Black]")]
-		public
-#else
-		private
-#endif
-		Color LineColor {
+		public Color LineColor {
 			get {
 				if (line_color == Color.Empty) {
 					Color res = ControlPaint.Dark (BackColor);
@@ -644,7 +587,7 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-#if NET_2_0
+
 		[Localizable (true)]
 		[DefaultValue ("")]
 		[RelatedImageList ("ImageList")]
@@ -678,29 +621,22 @@ namespace System.Windows.Forms {
 				UpdateNode (SelectedNode);
 			}
 		}
-#endif
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 
-#if NET_2_0
 		[DefaultValue (TreeViewDrawMode.Normal)]
 		public TreeViewDrawMode DrawMode {
 			get { return draw_mode; }
 			set { draw_mode = value; }
 		}
-#endif
 		#endregion	// Public Instance Properties
 
 		#region UIA Framework Properties
-
-#if NET_2_0
 		internal ScrollBar UIAHScrollBar {
 			get { return hbar; }
 		}
@@ -708,7 +644,6 @@ namespace System.Windows.Forms {
 		internal ScrollBar UIAVScrollBar {
 			get { return vbar; }
 		}
-#endif
 		#endregion	// UIA Framework Properties
 
 		#region Protected Instance Properties
@@ -748,12 +683,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		public	void Sort ()
 		{
 			Sort (tree_view_node_sorter);
 		}
-#endif
 
 		void Sort (IComparer sorter) 
 		{
@@ -785,10 +718,8 @@ namespace System.Windows.Forms {
 			/// Everything below this is basically an emulation of a strange bug on MS
 			/// where they don't always scroll to the last node on ExpandAll
 			///
-#if NET_2_0
 			if (!IsHandleCreated)
 				return;
-#endif
 			
 			bool found = false;
 			foreach (TreeNode child in Nodes) {
@@ -812,7 +743,6 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-
 		
 		public void CollapseAll ()
 		{
@@ -845,7 +775,6 @@ namespace System.Windows.Forms {
 			return root_node.GetNodeCount (includeSubTrees);
 		}
 
-#if NET_2_0
 		public TreeViewHitTestInfo HitTest (Point pt)
 		{
 			return HitTest (pt.X, pt.Y);
@@ -871,7 +800,6 @@ namespace System.Windows.Forms {
 			else
 				return new TreeViewHitTestInfo (null, TreeViewHitTestLocations.Indent);
 		}
-#endif
 
 		public override string ToString () {
 			int count = Nodes.Count;
@@ -880,7 +808,6 @@ namespace System.Windows.Forms {
 			return String.Concat (base.ToString (), ", Nodes.Count: ", count, ", Nodes[0]: ", Nodes [0]);
 						
 		}
-
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
@@ -1052,7 +979,6 @@ namespace System.Windows.Forms {
 				e.Handled = true;
 		}
 
-#if NET_2_0
 		protected override void OnMouseHover (EventArgs e)
 		{
 			base.OnMouseHover (e);
@@ -1095,7 +1021,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		protected virtual void OnItemDrag (ItemDragEventArgs e)
 		{
@@ -1104,7 +1029,6 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-#if NET_2_0
 		protected virtual void OnDrawNode(DrawTreeNodeEventArgs e) {
 			DrawTreeNodeEventHandler eh = (DrawTreeNodeEventHandler)(Events[DrawNodeEvent]);
 			if (eh != null)
@@ -1117,7 +1041,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		protected internal virtual void OnAfterCheck (TreeViewEventArgs e) {
 			TreeViewEventHandler eh = (TreeViewEventHandler)(Events [AfterCheckEvent]);
@@ -1193,17 +1116,15 @@ namespace System.Windows.Forms {
 			case Msg.WM_LBUTTONDBLCLK:
 				int val = m.LParam.ToInt32();
 				DoubleClickHandler (null, new
-						MouseEventArgs (MouseButtons.Left,
-								2, val & 0xffff,
-								(val>>16) & 0xffff, 0));
-					break;
-#if NET_2_0
-				case Msg.WM_CONTEXTMENU:
-					if (WmContextMenu (ref m))
-						return;
-						
-					break;
-#endif
+					MouseEventArgs (MouseButtons.Left,
+							2, val & 0xffff,
+							(val>>16) & 0xffff, 0));
+				break;
+			case Msg.WM_CONTEXTMENU:
+				if (WmContextMenu (ref m))
+					return;
+					
+				break;
 			}
 			base.WndProc (ref m);
 		}
@@ -1226,17 +1147,11 @@ namespace System.Windows.Forms {
 		{
 			if (GetNodeAt (me.Location) != null) {
 				if ((clicks > 1) && GetStyle (ControlStyles.StandardDoubleClick)) {
-#if !NET_2_0
-					OnDoubleClick(EventArgs.Empty);
-				} else {
-					OnClick(EventArgs.Empty);
-#else
 					OnDoubleClick (me);
 					OnMouseDoubleClick (me);
 				} else {
 					OnClick (me);
 					OnMouseClick (me);
-#endif
 				}
 			}
 		}
@@ -1321,11 +1236,9 @@ namespace System.Windows.Forms {
 				l -= ImageList.ImageSize.Width + 3;
 			if (checkboxes)
 				l -= 19;
-#if NET_2_0
 			// StateImage is basically a custom checkbox
 			else if (node.StateImage != null)
 				l -= 19;
-#endif
 			return (x > l && x < l + 8);
 		}
 
@@ -1335,7 +1248,6 @@ namespace System.Windows.Forms {
 			return (x > l && x < l + 10);
 		}
 
-#if NET_2_0
 		private bool IsImage (TreeNode node, int x)
 		{
 			if (ImageList == null)
@@ -1350,7 +1262,6 @@ namespace System.Windows.Forms {
 				
 			return false;
 		}
-#endif
 		
 		private int CheckBoxLeft (TreeNode node)
 		{
@@ -1536,7 +1447,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		private void DrawNodeState (TreeNode node, Graphics dc, int x, int y)
 		{
 			if (node.Checked) {
@@ -1547,7 +1457,6 @@ namespace System.Windows.Forms {
 					dc.DrawImage (StateImageList.Images[0], new Rectangle (x, y, 16, 16));
 			}
 		}
-#endif
 
 		private void DrawNodeCheckBox (TreeNode node, Graphics dc, int x, int middle)
 		{
@@ -1785,7 +1694,6 @@ namespace System.Windows.Forms {
 				if ((show_root_lines || node.Parent != null) && show_plus_minus && child_count > 0)
 					ThemeEngine.Current.TreeViewDrawNodePlusMinus (this, node, dc, node.GetLinesX () - Indent + 5, middle);
 
-#if NET_2_0
 				if (checkboxes && state_image_list == null)
 					DrawNodeCheckBox (node, dc, CheckBoxLeft (node) - 3, middle);
 
@@ -1794,10 +1702,6 @@ namespace System.Windows.Forms {
 
 				if (!checkboxes && node.StateImage != null)
 					dc.DrawImage (node.StateImage, new Rectangle (CheckBoxLeft (node) - 3, y, 16, 16));
-#else
-				if (checkboxes)
-					DrawNodeCheckBox (node, dc, CheckBoxLeft (node) - 3, middle);
-#endif
 
 				if (show_lines)
 					DrawNodeLines (node, dc, clip, dash, node.GetLinesX (), y, middle);
@@ -1806,8 +1710,6 @@ namespace System.Windows.Forms {
 					DrawNodeImage (node, dc, clip, node.GetImageX (), y);
 			}
 
-			
-#if NET_2_0
 			if (draw_mode != TreeViewDrawMode.Normal) {
 				dc.FillRectangle (Brushes.White, node.Bounds);
 				TreeNodeStates tree_node_state = TreeNodeStates.Default;;
@@ -1832,7 +1734,6 @@ namespace System.Windows.Forms {
 				if (!e.DrawDefault)
 					return;
 			}
-#endif
 
 			if (!node.IsEditing)
 				DrawStaticNode (node, dc);
@@ -2106,9 +2007,7 @@ namespace System.Windows.Forms {
 			if (node == null)
 				return;
 
-#if NET_2_0
 			mouse_click_node = node;
-#endif
 
 			if (show_plus_minus && IsPlusMinusArea (node, e.X) && e.Button == MouseButtons.Left) {
 				node.Toggle ();
@@ -2143,7 +2042,6 @@ namespace System.Windows.Forms {
 		}
 
 		private void MouseUpHandler (object sender, MouseEventArgs e) {
-#if NET_2_0
 			TreeNode node = GetNodeAt (e.Y);
 			
 			if (node != null && node == mouse_click_node) {
@@ -2154,7 +2052,6 @@ namespace System.Windows.Forms {
 			}
 			
 			mouse_click_node = null;
-#endif
 
 			drag_begin_x = -1;
 			drag_begin_y = -1;
@@ -2209,7 +2106,6 @@ namespace System.Windows.Forms {
 		}
 
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {
-#if NET_2_0
 			// XXX - This should use HitTest and only fire when we are over
 			// the important parts of a node, not things like gridlines or
 			// whitespace
@@ -2220,7 +2116,6 @@ namespace System.Windows.Forms {
 				
 			if (tn != null && tn != tooltip_currently_showing)
 				MouseEnteredItem (tn);
-#endif
 			
 			if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right) {
 				if (drag_begin_x != -1 && drag_begin_y != -1) {
@@ -2271,7 +2166,6 @@ namespace System.Windows.Forms {
 					(r.Top > top + height) || (r.Bottom < top));
 		}
 
-#if NET_2_0
 		// Return true if message was handled, false to send it to base
 		private bool WmContextMenu (ref Message m)
 		{
@@ -2309,10 +2203,8 @@ namespace System.Windows.Forms {
 			// The node we found did not have its own menu, let the parent try to display its menu
 			return false;
 		}
-#endif
 
 		#region Stuff for ToolTips
-#if NET_2_0
 		private void MouseEnteredItem (TreeNode item)
 		{
 			tooltip_currently_showing = item;
@@ -2340,7 +2232,6 @@ namespace System.Windows.Forms {
 				return tooltip_window;
 			}
 		}
-#endif
 		#endregion
 		
 		#endregion	// Internal & Private Methods and Properties
@@ -2357,13 +2248,11 @@ namespace System.Windows.Forms {
 		static object BeforeExpandEvent = new object ();
 		static object BeforeLabelEditEvent = new object ();
 		static object BeforeSelectEvent = new object ();
-#if NET_2_0
 		static object DrawNodeEvent = new object ();
 		static object NodeMouseClickEvent = new object ();
 		static object NodeMouseDoubleClickEvent = new object();
 		static object NodeMouseHoverEvent = new object ();
 		static object RightToLeftLayoutChangedEvent = new object ();
-#endif
 
 		public event ItemDragEventHandler ItemDrag {
 			add { Events.AddHandler (ItemDragEvent, value); }
@@ -2420,7 +2309,6 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (BeforeSelectEvent, value); }
 		}
 
-#if NET_2_0
 		public event DrawTreeNodeEventHandler DrawNode {
 			add { Events.AddHandler (DrawNodeEvent, value); }
 			remove { Events.RemoveHandler (DrawNodeEvent, value); }
@@ -2446,7 +2334,6 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
 			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
 		}
-#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]	
@@ -2455,7 +2342,6 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged {
@@ -2469,7 +2355,6 @@ namespace System.Windows.Forms {
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
 		}
-#endif
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	
 		[Browsable (false)]
@@ -2486,7 +2371,6 @@ namespace System.Windows.Forms {
 		}
 
 		#region UIA Framework Events
-#if NET_2_0
 		static object UIACheckBoxesChangedEvent = new object ();
 
 		internal event EventHandler UIACheckBoxesChanged {
@@ -2547,7 +2431,6 @@ namespace System.Windows.Forms {
 				eh (sender, e);
 			}
 		}
-#endif
 		#endregion	// UIA Framework Events
 		#endregion	// Events
 	}

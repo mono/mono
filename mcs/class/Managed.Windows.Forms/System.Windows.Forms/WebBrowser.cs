@@ -22,7 +22,6 @@
 // Authors:
 //	Andreia Gaita	<avidigal@novell.com>
 
-#if NET_2_0
 
 using System;
 using System.ComponentModel;
@@ -701,5 +700,3 @@ namespace System.Windows.Forms
 	{
 	}
 }
-
-#endif
