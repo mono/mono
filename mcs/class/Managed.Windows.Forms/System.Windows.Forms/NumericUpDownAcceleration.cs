@@ -22,7 +22,6 @@
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
 
-#if NET_2_0
 
 using System;
 
@@ -61,5 +60,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-
-#endif

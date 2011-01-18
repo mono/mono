@@ -42,11 +42,7 @@ namespace System.Windows.Forms
 	public class MessageBox
 	{
 		#region Private MessageBoxForm class
-#if NET_2_0 // UIA Framework
 		internal class MessageBoxForm : Form
-#else
-		private class MessageBoxForm : Form
-#endif
 		{
 			#region MessageBoxFrom Local Variables
 			const int space_border = 10;
@@ -412,7 +408,6 @@ namespace System.Windows.Forms
 						}
 					}
 
-#if NET_2_0
 					if (show_help) {
 						for (int i = 0; i <= 3; i++) {
 							if (buttons [i] == null) {
@@ -421,7 +416,7 @@ namespace System.Windows.Forms
 							}
 						}
 					}
-#endif
+
 					buttons_placed = true;
 				}
 			}
@@ -483,14 +478,12 @@ namespace System.Windows.Forms
 				return AddButton ("No", left, new EventHandler (NoClick));
 			}
 
-#if NET_2_0
 			private Button AddHelpButton (int left)
 			{
 				Button button = AddButton ("Help", left, null);
 				button.Click += delegate { Owner.RaiseHelpRequested (new HelpEventArgs (Owner.Location)); };
 				return button;
 			}
-#endif
 			#endregion
 
 			#region Button click handlers
@@ -537,8 +530,6 @@ namespace System.Windows.Forms
 			}
 			#endregion
 
-#if NET_2_0
-		
 			#region UIA Framework: Methods, Properties and Events
 
 			internal string UIAMessage {
@@ -564,8 +555,6 @@ namespace System.Windows.Forms
 			}
 
 			#endregion
-
-#endif
 		}
 		#endregion	// Private MessageBoxForm class
 
@@ -677,7 +666,6 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Public Static Methods
 
-#if NET_2_0
 		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
 						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
 						 bool displayHelpButton)
@@ -774,7 +762,6 @@ namespace System.Windows.Forms
 			form.SetHelpData (helpFilePath, null, navigator, param);
 			return form.RunDialog ();
 		}
-#endif
 	}
 }
 

@@ -78,13 +78,9 @@ namespace System.Windows.Forms {
 				return this.y;
 			}
 		}
-#if NET_2_0
-	    	public
-#else
-		internal
-#endif
-	    	Point Location {
-		    	get {
+
+		public Point Location {
+			get {
 				return new Point (this.x, this.y);
 			}
 		}

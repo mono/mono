@@ -38,10 +38,7 @@ using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
-	public class NativeWindow : MarshalByRefObject
-#if NET_2_0
-		, IWin32Window
-#endif
+	public class NativeWindow : MarshalByRefObject, IWin32Window
 	{
 		IntPtr window_handle = IntPtr.Zero;
 		static Hashtable window_collection = new Hashtable();

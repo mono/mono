@@ -32,9 +32,6 @@ using System.Drawing;
 using System.IO;
 
 namespace System.Windows.Forms {
-#if !NET_2_0
-	[Designer ("System.Windows.Forms.Design.OpenFileDialogDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#endif
 	public sealed class OpenFileDialog : FileDialog {
 		#region Public Constructors
 		public OpenFileDialog ()
@@ -87,7 +84,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SafeFileName {
@@ -106,7 +102,6 @@ namespace System.Windows.Forms {
 				return files;
 			 }
 		}
-#endif
 
 		[DefaultValue(false)]
 		public new bool ShowReadOnly {

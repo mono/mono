@@ -148,10 +148,8 @@ namespace System.Windows.Forms {
 		{
 			mdi_container.SetParentText (false);
 
-#if NET_2_0
 			if (form.MdiParent.MainMenuStrip != null)
 				form.MdiParent.MainMenuStrip.RefreshMdiItems ();
-#endif
 		}
 
 		private void FormLocationChangedHandler (object sender, EventArgs e)
@@ -207,10 +205,8 @@ namespace System.Windows.Forms {
 		{
 			Form parent = (Form) mdi_container.Parent;
 
-#if NET_2_0
 			if (form.MainMenuStrip != null || parent.MainMenuStrip != null)
 				return null;
-#endif
 
 			MainMenu res = new MainMenu ();
 
@@ -272,7 +268,6 @@ namespace System.Windows.Forms {
 		
 		internal void ShowPopup (Point pnt)
 		{
-#if NET_2_0
 			// If we are using MainMenuStrip, display that menu instead
 			if (form.WindowState == FormWindowState.Maximized && form.MdiParent.MainMenuStrip != null)
 				if (form.MdiParent.MainMenuStrip.Items.Count > 0) {
@@ -283,7 +278,6 @@ namespace System.Windows.Forms {
 						return;
 					}
 				}
-#endif
 				
 			icon_popup_menu.MenuItems[0].Enabled = form.window_state != FormWindowState.Normal;    // restore
 			icon_popup_menu.MenuItems[1].Enabled = form.window_state != FormWindowState.Maximized; // move
@@ -404,12 +398,10 @@ namespace System.Windows.Forms {
 		{
 			mdi_container.ChildFormClosed (form);
 
-#if NET_2_0
 			if (form.MdiParent.MainMenuStrip != null)
 				form.MdiParent.MainMenuStrip.RefreshMdiItems ();
 
 			mdi_container.RemoveControlMenuItems (this);
-#endif
 		}
 
 		public override void DrawMaximizedButtons (object sender, PaintEventArgs pe)

@@ -170,7 +170,7 @@ namespace System.Windows.Forms
 		}
 		
 		#region UIA Framework Events
-#if NET_2_0
+
 		static object UIACheckedChangedEvent = new object ();
 
 		internal event EventHandler UIACheckedChanged {
@@ -226,7 +226,7 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
+
 		#endregion
 		#endregion // Events
 
@@ -254,10 +254,9 @@ namespace System.Windows.Forms
 					return;
 				
 				checked_ = value;
-#if NET_2_0
+
 				// UIA Framework Event: Checked Changed
 				OnUIACheckedChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -276,10 +275,10 @@ namespace System.Windows.Forms
 					return;
 					
 				enabled = value;
-#if NET_2_0
+
 				// UIA Framework Event: Enabled Changed
 				OnUIAEnabledChanged (EventArgs.Empty);
-#endif
+
 				Invalidate ();
 			}
 		}
@@ -362,10 +361,9 @@ namespace System.Windows.Forms
 					return;
 				
 				radiocheck = value;
-#if NET_2_0
+
 				// UIA Framework Event: Checked Changed
 				OnUIARadioCheckChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
@@ -399,10 +397,9 @@ namespace System.Windows.Forms
 					separator = true;
 				else
 					separator = false;
-#if NET_2_0
+
 				// UIA Framework Event: Text Changed
 				OnUIATextChanged (EventArgs.Empty);
-#endif
 
 				ProcessMnemonic ();
 				Invalidate ();
@@ -571,11 +568,9 @@ namespace System.Windows.Forms
 			ShowShortcut = itemSrc.ShowShortcut;
 			Text = itemSrc.Text;
 			Visible = itemSrc.Visible;
-			
-#if NET_2_0
 			Name = itemSrc.Name;
 			Tag = itemSrc.Tag;
-#endif
+
 			// Events
 			Events[ClickEvent] = itemSrc.Events[ClickEvent];
 			Events[DrawItemEvent] = itemSrc.Events[DrawItemEvent];

@@ -32,15 +32,10 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Reflection;
 using System.Runtime.InteropServices;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.Windows.Forms
 {
-#if !NET_2_0
-	[Designer ("Microsoft.VisualStudio.Windows.Forms.MenuDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, "System.ComponentModel.Design.IDesigner")]
-#endif
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	[ListBindable(false)]
 	public abstract class Menu : Component
@@ -52,12 +47,8 @@ namespace System.Windows.Forms
 		// UIA Framework Note: Used to keep track of expanded menus
 		internal Control Wnd;
 		internal MenuTracker tracker;
-
-#if NET_2_0
 		private string control_name;
 		private object control_tag;
-#endif
-
 		public const int FindHandle = 0;
 		public const int FindShortcut = 1;
 
@@ -111,8 +102,6 @@ namespace System.Windows.Forms
 			get { return menu_items; }
 		}
 		
-#if NET_2_0
-
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public string Name { 
@@ -129,7 +118,6 @@ namespace System.Windows.Forms
 			get { return control_tag; }
 			set { control_tag = value; }
 		}
-#endif
 
 		#endregion Public Properties
 
@@ -381,7 +369,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			public virtual MenuItem this [string key] {
 				get {
 					if (string.IsNullOrEmpty (key))
@@ -394,7 +381,6 @@ namespace System.Windows.Forms
 					return null;
 				}
 			}
-#endif
 
 			object IList.this[int index] {
 				get { return items[index]; }
@@ -522,19 +508,16 @@ namespace System.Windows.Forms
 				return items.Contains (value);
 			}
 
-#if NET_2_0
 			public virtual bool ContainsKey (string key)
 			{
 				return !(this[key] == null);
 			}
-#endif
 
 			public void CopyTo (Array dest, int index)
 			{
 				items.CopyTo (dest, index);
 			}
 
-#if NET_2_0
 			public MenuItem[] Find (string key, bool searchAllChildren)
 			{
 				if (string.IsNullOrEmpty (key))
@@ -552,7 +535,6 @@ namespace System.Windows.Forms
 						
 				return list.ToArray ();
 			}
-#endif
 
 			public IEnumerator GetEnumerator ()
 			{
@@ -589,7 +571,6 @@ namespace System.Windows.Forms
 				return items.IndexOf (value);
 			}
 
-#if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
 				if (string.IsNullOrEmpty (key))
@@ -597,7 +578,6 @@ namespace System.Windows.Forms
 					
 				return IndexOf (this[key]);
 			}
-#endif
 
 			public virtual void Remove (MenuItem item)
 			{
@@ -621,12 +601,11 @@ namespace System.Windows.Forms
 				owner.OnMenuChanged (EventArgs.Empty);
 			}
 
-#if NET_2_0
 			public virtual void RemoveByKey (string key)
 			{
 				Remove (this[key]);
 			}
-#endif
+
 			#endregion Public Methods
 
 			#region Private Methods
