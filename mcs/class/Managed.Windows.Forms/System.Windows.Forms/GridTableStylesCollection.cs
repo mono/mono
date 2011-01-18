@@ -167,16 +167,10 @@ namespace System.Windows.Forms
 			RemoveAt (index);
 		}
 
-#if NET_2_0
 		protected void OnCollectionChanged (CollectionChangeEventArgs e)
 		{
-			CollectionChangeEventArgs ccevent = e;
-#else
-		protected void OnCollectionChanged (CollectionChangeEventArgs ccevent)
-		{
-#endif
 			if (CollectionChanged != null)
-				CollectionChanged (this, ccevent);
+				CollectionChanged (this, e);
 		}
 
 		public void Remove (DataGridTableStyle table)

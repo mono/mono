@@ -90,9 +90,7 @@ namespace System.Windows.Forms {
 		private KeyPressEventHandler	HideToolTipKeyHandler;
 		private MouseEventHandler	HideToolTipMouseHandler;
 		private HelpEventHandler	HelpRequestHandler;
-#if NET_2_0
 		private object tag;
-#endif
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -100,7 +98,6 @@ namespace System.Windows.Forms {
 			controls = new Hashtable();
 			tooltip = new ToolTip.ToolTipWindow();
 
-#if NET_2_0
 			//UIA Framework: Event used to indicate that ToolTip is shown
 			tooltip.VisibleChanged += delegate (object sender, EventArgs args) {
 				if (tooltip.Visible == true)
@@ -108,7 +105,6 @@ namespace System.Windows.Forms {
 				else 
 					OnUIAHelpUnRequested (this, new ControlEventArgs (UIAControl));
 			};
-#endif
 
 			HideToolTipHandler = new EventHandler(HideToolTip);
 			HideToolTipKeyHandler = new KeyPressEventHandler(HideToolTipKey);
@@ -131,7 +127,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if NET_2_0
 		[Localizable (false)]
 		[Bindable (true)]
 		[TypeConverter (typeof (StringConverter))]
@@ -142,7 +137,6 @@ namespace System.Windows.Forms {
 			get { return this.tag; }
 			set { this.tag = value; }
 		}
-#endif
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
@@ -264,10 +258,8 @@ namespace System.Windows.Forms {
 
 			control = (Control)sender;
 
-#if NET_2_0
 			//UIA Framework: Associates requested control with internal variable to generate event
 			UIAControl = control;
-#endif
 
 			if (GetHelpProperty(control).Text == null) {
 				return;
@@ -308,7 +300,6 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region UIA Framework: Events, Delegates and Methods
-#if NET_2_0
 		private Control uia_control;
 
 		private Control UIAControl {
@@ -334,8 +325,6 @@ namespace System.Windows.Forms {
 			if (UIAHelpUnRequested != null)
 				UIAHelpUnRequested (provider, args);
 		}
-
-#endif
 		#endregion
 	}
 }

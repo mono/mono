@@ -32,10 +32,7 @@ using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	sealed
-#endif
-	public class GridTablesFactory
+	public sealed class GridTablesFactory
 	{
 		#region Constructors
 		internal GridTablesFactory ()

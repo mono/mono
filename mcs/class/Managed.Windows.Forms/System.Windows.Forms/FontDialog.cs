@@ -441,9 +441,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("Color [Black]")]
-#endif
 		public Color Color
 		{
 			set {

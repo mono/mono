@@ -39,12 +39,10 @@ namespace System.Windows.Forms {
 	[DesignTimeVisible(false)]
 	[Designer("System.Windows.Forms.Design.FormDocumentDesigner, " + Consts.AssemblySystem_Design, typeof(IRootDesigner))]
 	[DefaultEvent("Load")]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[InitializationEvent ("Load")]
 	[ComVisible (true)]
 	[ToolboxItemFilter ("System.Windows.Forms.Control.TopLevel")]
-#endif
 	[ToolboxItem(false)]
 	public class Form : ContainerControl {
 		#region Local Variables
@@ -96,17 +94,12 @@ namespace System.Windows.Forms {
 		internal bool			waiting_showwindow; // for XplatUIX11
 		private bool                    is_minimizing;
 		private bool			show_icon = true;
-
-#if NET_2_0
 		private MenuStrip		main_menu_strip;
 		private bool			right_to_left_layout;
 		private Rectangle		restore_bounds;
 		private bool			autoscale_base_size_set;
-#endif
-
 		internal ArrayList disabled_by_showdialog = new ArrayList();
 		internal static ArrayList modal_dialogs = new ArrayList();
-		
 		#endregion	// Local Variables
 
 		#region Private & Internal Methods
@@ -154,26 +147,18 @@ namespace System.Windows.Forms {
 			CancelEventArgs cea = new CancelEventArgs (cancel);
 			this.OnClosing (cea);
 			
-#if NET_2_0
 			FormClosingEventArgs fcea = new FormClosingEventArgs (reason, cea.Cancel);
 			this.OnFormClosing (fcea);
 			return fcea.Cancel;
-#else
-			return cea.Cancel;
-#endif
 		}
 
 		// Convenience method for fire BOTH OnClosed and OnFormClosed events
 		private void FireClosedEvents (CloseReason reason)
 		{
 			this.OnClosed (EventArgs.Empty);
-
-#if NET_2_0
 			this.OnFormClosed (new FormClosedEventArgs (reason));
-#endif
 		}
 		
-#if NET_2_0
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
 			Size retsize = Size.Empty;
@@ -237,7 +222,6 @@ namespace System.Windows.Forms {
 		{
 			base.ScaleControl (factor, specified);
 		}
-#endif
 
 		internal void OnActivatedInternal ()
 		{
@@ -376,9 +360,7 @@ namespace System.Windows.Forms {
 		#endregion	// Private & Internal Methods
 
 		#region Public Classes
-#if NET_2_0
 		[ComVisible (false)]
-#endif		
 		public new class ControlCollection : Control.ControlCollection {
 			Form	form_owner;
 
@@ -435,10 +417,7 @@ namespace System.Windows.Forms {
 			transparency_key = Color.Empty;
 			CreateDockPadding ();
 			InternalClientSize = new Size (this.Width - (SystemInformation.FrameBorderSize.Width * 2), this.Height - (SystemInformation.FrameBorderSize.Height * 2) - SystemInformation.CaptionHeight);
-			
-#if NET_2_0
 			restore_bounds = Bounds;
-#endif
 		}
 		#endregion	// Public Constructor & Destructor
 
@@ -516,14 +495,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Obsolete ("This property has been deprecated in favor of AutoScaleMode.")]
-#else
-		[DefaultValue(true)]
-#endif
 		[MWFCategory("Layout")]
 		public bool AutoScale {
 			get {
@@ -531,21 +506,15 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-#if NET_2_0
 				if (value)
 					AutoScaleMode = AutoScaleMode.None;
-#endif
 
 				autoscale = value;
 			}
 		}
 
-#if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-#else
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-#endif
 		[Localizable(true)]
 		[Browsable(false)]
 		public virtual Size AutoScaleBaseSize {
@@ -555,10 +524,7 @@ namespace System.Windows.Forms {
 			[MonoTODO ("Setting this is probably unintentional and can cause Forms to be improperly sized.  See http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details.")]
 			set {
 				autoscale_base_size = value;
-				
-#if NET_2_0
 				autoscale_base_size_set = true;
-#endif
 			}
 		}
 
@@ -577,7 +543,6 @@ namespace System.Windows.Forms {
 			return this.AutoScroll != false;
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
@@ -618,7 +583,6 @@ namespace System.Windows.Forms {
 			get { return base.AutoValidate; }
 			set { base.AutoValidate = value; }
 		}
-#endif
 
 		public override Color BackColor {
 			get {
@@ -844,7 +808,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (null)]
 		[TypeConverter (typeof (ReferenceConverter))]
 		public MenuStrip MainMenuStrip {
@@ -863,7 +826,6 @@ namespace System.Windows.Forms {
 			get { return base.Margin; }
 			set { base.Margin = value; }
 		}
-#endif
 
 		[DefaultValue(true)]
 		[MWFCategory("Window Style")]
@@ -883,11 +845,7 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[MWFCategory("Layout")]
-		public
-#if NET_2_0
-		override
-#endif
-		Size MaximumSize {
+		public override Size MaximumSize {
 			get {
 				return maximum_size;
 			}
@@ -975,10 +933,8 @@ namespace System.Windows.Forms {
 			get { return window_manager; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[TypeConverter (typeof (ReferenceConverter))]
-#endif
 		[DefaultValue(null)]
 		[MWFCategory("Window Style")]
 		public MainMenu Menu {
@@ -1005,10 +961,9 @@ namespace System.Windows.Forms {
 						}
 					} else
 						UpdateBounds ();
-#if NET_2_0
+
 					// UIA Framework Event: Menu Changed
 					OnUIAMenuChanged (EventArgs.Empty);
-#endif
 				}
 			}
 		}
@@ -1069,17 +1024,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if !NET_2_0
-		[DefaultValue("{Width=0, Height=0}")]
-#endif
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[MWFCategory("Layout")]
-		public
-#if NET_2_0
-		override
-#endif
-		Size MinimumSize {
+		public override Size MinimumSize {
 			get {
 				return minimum_size;
 			}
@@ -1192,7 +1140,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Rectangle RestoreBounds {
@@ -1220,8 +1167,7 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
-		}			
-#endif
+		}
 	
 		[DefaultValue(true)]
 		[MWFCategory("Window Style")]
@@ -1283,7 +1229,6 @@ namespace System.Windows.Forms {
 			set { base.TabIndex = value; }
 		}
 
-#if NET_2_0
 		[Browsable(false)]
 		[DefaultValue (true)]
 		[DispIdAttribute (-516)]
@@ -1292,7 +1237,6 @@ namespace System.Windows.Forms {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -1322,10 +1266,8 @@ namespace System.Windows.Forms {
 					if (IsHandleCreated)
 						XplatUI.SetTopmost(window.Handle, value);
 
-#if NET_2_0
 					// UIA Framework: Raises internal event
 					OnUIATopMostChanged ();
-#endif
 				}
 			}
 		}
@@ -1382,12 +1324,9 @@ namespace System.Windows.Forms {
 					XplatUI.SetWindowState(Handle, value);
 				}
 
-#if NET_2_0
 				// UIA Framework: Raises internal event
 				if (old_state != window_state) 
 					OnUIAWindowStateChanged ();
-#endif
-
 			}
 		}
 
@@ -1544,11 +1483,10 @@ namespace System.Windows.Forms {
 					cp.Style |= (int)WindowStyles.WS_SYSMENU;
 				}
 
-#if NET_2_0
 				if (!this.show_icon) {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_DLGMODALFRAME;
 				}
-#endif
+
 				cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTROLPARENT;
 
 				if (HelpButton && !MaximizeBox && !MinimizeBox) {
@@ -1617,25 +1555,16 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-#if !NET_2_0
-		internal
-#else
 		[Browsable (false)]
 		[MonoTODO ("Implemented for Win32, needs X11 implementation")]
-		protected 
-#endif
-		virtual bool ShowWithoutActivation {
+		protected virtual bool ShowWithoutActivation {
 			get { return false; }
 		}
 		#endregion	// Protected Instance Properties
 
 		#region Public Static Methods
-#if NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[Obsolete ("This method has been deprecated.  Use AutoScaleDimensions instead")]
-#else
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-#endif
 		public static SizeF GetAutoScaleSize (Font font)
 		{
 			return XplatUI.GetAutoScaleSize(font);
@@ -1670,9 +1599,7 @@ namespace System.Windows.Forms {
 				return;
 
 			if (!IsHandleCreated) {
-#if NET_2_0
 				base.Dispose ();
-#endif
 				return;
 			}
  
@@ -1702,7 +1629,6 @@ namespace System.Windows.Forms {
 			DesktopLocation = new Point(x, y);
 		}
 
-#if NET_2_0
 		public void Show (IWin32Window owner)
 		{
 			if (owner == null)
@@ -1721,7 +1647,6 @@ namespace System.Windows.Forms {
 
 			base.Show ();
 		}
-#endif
 
 		public DialogResult ShowDialog() {
 			return ShowDialog (null);
@@ -1835,7 +1760,6 @@ namespace System.Windows.Forms {
 			return GetType().FullName + ", Text: " + Text;
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public override bool ValidateChildren ()
@@ -1849,35 +1773,6 @@ namespace System.Windows.Forms {
 		{
 			return base.ValidateChildren (validationConstraints);
 		}
-#else
-		private bool ValidateChildren ()
-		{
-			return ValidateChildren (this);
-		}
-
-		private bool ValidateChildren (Control c)
-		{
-			if (!ValidateControl (c))
-				return false;
-
-			foreach (Control child in c.Controls) {
-				if (!ValidateChildren (child))
-					return false;
-			}
-
-			return true;
-		}
-
-		private bool ValidateControl (Control c)
-		{
-			CancelEventArgs e = new CancelEventArgs ();
-			c.FireValidating (e);
-			if (e.Cancel)
-				return false;
-			c.FireValidated ();
-			return true;
-		}
-#endif
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
@@ -1893,12 +1788,8 @@ namespace System.Windows.Forms {
 			base.AdjustFormScrollbars (displayScrollbars);
 		}
 
-#if NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[Obsolete ("This method has been deprecated")] // XXX what to use instead?
-#else
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-#endif
 		protected void ApplyAutoScaling()
 		{
 			SizeF current_size_f = GetAutoScaleSize (Font);
@@ -2135,12 +2026,10 @@ namespace System.Windows.Forms {
 		protected override void OnFontChanged(EventArgs e) {
 			base.OnFontChanged (e);
 			
-#if NET_2_0
 			if (!autoscale_base_size_set) {
 				SizeF sizef = Form.GetAutoScaleSize (Font);
 				autoscale_base_size = new Size ((int)Math.Round (sizef.Width), (int)Math.Round (sizef.Height));
 			}
-#endif
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -2364,11 +2253,7 @@ namespace System.Windows.Forms {
 			return control_activated;
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#else
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		protected override void ScaleCore (float x, float y)
 		{
 			base.ScaleCore (x, y);
@@ -2424,13 +2309,11 @@ namespace System.Windows.Forms {
 				
 			base.SetBoundsCore (x, y, width, height, specified);
 
-#if NET_2_0
 			int restore_x = (specified & BoundsSpecified.X) == BoundsSpecified.X ? x : restore_bounds.X;
 			int restore_y = (specified & BoundsSpecified.Y) == BoundsSpecified.Y ? y : restore_bounds.Y;
 			int restore_w = (specified & BoundsSpecified.Width) == BoundsSpecified.Width ? width : restore_bounds.Width;
 			int restore_h = (specified & BoundsSpecified.Height) == BoundsSpecified.Height ? height : restore_bounds.Height;
 			restore_bounds = new Rectangle (restore_x, restore_y, restore_w, restore_h);
-#endif			
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -2504,9 +2387,7 @@ namespace System.Windows.Forms {
 			
 			// Shown event is only called once, the first time the form is made visible
 			if (value && !shown_raised) {
-#if NET_2_0
 				this.OnShown (EventArgs.Empty);
-#endif
 				shown_raised = true;
 			}
 			
@@ -2550,12 +2431,10 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-#if NET_2_0
 			case Msg.WM_SYSCOMMAND: {
 				WmSysCommand (ref m);
 				break;
 			}
-#endif
 
 			case Msg.WM_ACTIVATE: {
 				WmActivate (ref m);
@@ -2613,7 +2492,6 @@ namespace System.Windows.Forms {
 				break;
 			}
 			
-#if NET_2_0
 			case Msg.WM_ENTERSIZEMOVE: {
 				OnResizeBegin (EventArgs.Empty);
 				break;
@@ -2623,7 +2501,6 @@ namespace System.Windows.Forms {
 				OnResizeEnd (EventArgs.Empty);
 				break;
 			}
-#endif
 
 			default: {
 				base.WndProc (ref m);
@@ -2744,13 +2621,10 @@ namespace System.Windows.Forms {
 				}
 			}
 
-#if NET_2_0
 			if (WindowState == FormWindowState.Normal)
 				restore_bounds = Bounds;
-#endif
 		}
 
-#if NET_2_0
 		private void WmSysCommand (ref Message m)
 		{
 			// Let *Strips know the app's title bar was clicked
@@ -2759,7 +2633,7 @@ namespace System.Windows.Forms {
 
 			base.WndProc (ref m);
 		}
-#endif	
+
 		private void WmActivate (ref Message m)
 		{
 			if (!this.Enabled && modal_dialogs.Count > 0)
@@ -2778,10 +2652,8 @@ namespace System.Windows.Forms {
 
 				IsActive = true;
 			} else {
-#if NET_2_0
 				if (XplatUI.IsEnabled (Handle) && XplatUI.GetParent (m.LParam) != Handle)
 					ToolStripManager.FireAppFocusChanged (this);
-#endif
 				IsActive = false;
 			}
 		}
@@ -3055,19 +2927,15 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (ActivatedEvent, value); }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		public event EventHandler Closed {
 			add { Events.AddHandler (ClosedEvent, value); }
 			remove { Events.RemoveHandler (ClosedEvent, value); }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		public event CancelEventHandler Closing {
 			add { Events.AddHandler (ClosingEvent, value); }
 			remove { Events.RemoveHandler (ClosingEvent, value); }
@@ -3108,17 +2976,13 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (MdiChildActivateEvent, value); }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		public event EventHandler MenuComplete {
 			add { Events.AddHandler (MenuCompleteEvent, value); }
 			remove { Events.RemoveHandler (MenuCompleteEvent, value); }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		public event EventHandler MenuStart {
 			add { Events.AddHandler (MenuStartEvent, value); }
 			remove { Events.RemoveHandler (MenuStartEvent, value); }
@@ -3137,7 +3001,6 @@ namespace System.Windows.Forms {
 			remove { base.TabIndexChanged -= value; }
 		}
 
-#if NET_2_0
 		[SettingsBindable (true)]
 		public override string Text {
 			get {
@@ -3337,10 +3200,8 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		#region UIA Framework Events
-#if NET_2_0
 		static object UIAMenuChangedEvent = new object ();
 		static object UIATopMostChangedEvent = new object ();
 		static object UIAWindowStateChangedEvent = new object ();
@@ -3380,7 +3241,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, EventArgs.Empty);
 		}
-#endif
 		#endregion	// UIA Framework Events
 		#endregion	// Events
 	}

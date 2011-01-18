@@ -193,9 +193,7 @@ namespace System.Windows.Forms {
 		[Browsable(true)]
 		[DefaultValue(Environment.SpecialFolder.Desktop)]
 		[Localizable(false)]
-#if NET_2_0
 		[TypeConverter (typeof (SpecialFolderEnumConverter))]
-#endif
 		public Environment.SpecialFolder RootFolder {
 			set {
 				int v = (int)value;
@@ -752,7 +750,6 @@ namespace System.Windows.Forms {
 		}
 	}
 	
-#if NET_2_0
 	internal class SpecialFolderEnumConverter : TypeConverter
 	{
 		public override object ConvertFrom (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
@@ -771,5 +768,4 @@ namespace System.Windows.Forms {
 			return ((Environment.SpecialFolder)value).ToString ();
 		}
 	}
-#endif
 }
