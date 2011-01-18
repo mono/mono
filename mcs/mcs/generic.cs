@@ -1355,6 +1355,9 @@ namespace Mono.CSharp {
 					break;
 				}
 			}
+
+			if (open_type.Kind == MemberKind.MissingType)
+				MemberCache = MemberCache.Empty;
 		}
 
 		#region Properties

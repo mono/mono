@@ -27,7 +27,7 @@ using IKVM.Reflection.Metadata;
 
 namespace IKVM.Reflection
 {
-	public class ManifestResourceInfo
+	public sealed class ManifestResourceInfo
 	{
 		private readonly ModuleReader module;
 		private readonly int index;

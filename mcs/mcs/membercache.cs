@@ -38,6 +38,7 @@ namespace Mono.CSharp {
 		ArrayType = 1 << 19,
 		PointerType = 1 << 20,
 		InternalCompilerType = 1 << 21,
+		MissingType = 1 << 22,
 
 		NestedMask = Class | Struct | Delegate | Enum | Interface,
 		GenericMask = Method | Class | Struct | Delegate | Interface,

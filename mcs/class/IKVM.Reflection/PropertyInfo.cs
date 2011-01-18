@@ -27,6 +27,11 @@ namespace IKVM.Reflection
 {
 	public abstract class PropertyInfo : MemberInfo
 	{
+		// prevent external subclasses
+		internal PropertyInfo()
+		{
+		}
+
 		public sealed override MemberTypes MemberType
 		{
 			get { return MemberTypes.Property; }

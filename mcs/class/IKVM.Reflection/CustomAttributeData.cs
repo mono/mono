@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -381,13 +381,17 @@ namespace IKVM.Reflection
 			return null;
 		}
 
-		public void __ReadTypeName(out string ns, out string name)
+		public bool __TryReadTypeName(out string ns, out string name)
 		{
 			if (lazyConstructor == null)
 			{
 				ModuleReader mod = module as ModuleReader;
 				if (mod != null)
 				{
+					// Note that we only need to manually handle the MemberRef case here,
+					// because a MethodDef will result in a lazy MethodInfo object being returned
+					// when the constructor is resolved, so we can safely do that without
+					// triggering an assembly load.
 					int methodToken = mod.CustomAttribute.records[index].Type;
 					if ((methodToken >> 24) == MemberRefTable.Index)
 					{
@@ -396,16 +400,31 @@ namespace IKVM.Reflection
 						if ((typeToken >> 24) == TypeRefTable.Index)
 						{
 							int typeIndex = (typeToken & 0xFFFFFF) - 1;
+							if ((mod.TypeRef.records[typeIndex].ResolutionScope >> 24) == TypeRefTable.Index)
+							{
+								// nested types can't be represented using only a namespace and name,
+								// so we fail
+								ns = null;
+								name = null;
+								return false;
+							}
 							int typeNameSpace = mod.TypeRef.records[typeIndex].TypeNameSpace;
 							ns = typeNameSpace == 0 ? null : mod.GetString(typeNameSpace);
 							name = mod.GetString(mod.TypeRef.records[typeIndex].TypeName);
-							return;
+							return true;
 						}
 					}
 				}
 			}
-			ns = Constructor.DeclaringType.Namespace;
-			name = Constructor.DeclaringType.Name;
+			if (Constructor.DeclaringType.IsNested)
+			{
+				ns = null;
+				name = null;
+				return false;
+			}
+			ns = Constructor.DeclaringType.__Namespace;
+			name = Constructor.DeclaringType.__Name;
+			return true;
 		}
 
 		public ConstructorInfo Constructor
@@ -565,6 +584,10 @@ namespace IKVM.Reflection
 
 		public static IList<CustomAttributeData> __GetDeclarativeSecurity(Assembly assembly)
 		{
+			if (assembly.__IsMissing)
+			{
+				throw new MissingAssemblyException((MissingAssembly)assembly);
+			}
 			return assembly.ManifestModule.GetDeclarativeSecurity(0x20000001);
 		}
 

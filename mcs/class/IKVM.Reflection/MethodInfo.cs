@@ -28,6 +28,11 @@ namespace IKVM.Reflection
 {
 	public abstract class MethodInfo : MethodBase, IGenericContext, IGenericBinder
 	{
+		// prevent external subclasses
+		internal MethodInfo()
+		{
+		}
+
 		public sealed override MemberTypes MemberType
 		{
 			get { return MemberTypes.Method; }

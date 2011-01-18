@@ -337,6 +337,11 @@ namespace Mono.CSharp
 			fs.metaInfo = MemberCache.GetMember (TypeParameterMutator.GetMemberDeclaringType (DeclaringType), this).metaInfo;
 			return fs;
 		}
+
+		public override List<TypeSpec> ResolveMissingDependencies ()
+		{
+			return memberType.ResolveMissingDependencies ();
+		}
 	}
 
 	/// <summary>

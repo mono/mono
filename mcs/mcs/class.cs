@@ -1219,6 +1219,8 @@ namespace Mono.CSharp {
 
 				// Set base type after type creation
 				TypeBuilder.SetParent (base_type.GetMetaInfo ());
+			} else {
+				TypeBuilder.SetParent (null);
 			}
 
 			return true;

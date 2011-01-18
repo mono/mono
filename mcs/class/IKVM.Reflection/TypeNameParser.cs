@@ -407,7 +407,7 @@ namespace IKVM.Reflection
 			{
 				foreach (string nest in nested)
 				{
-					type = type.GetNestedType(nest, BindingFlags.Public | BindingFlags.NonPublic);
+					type = type.GetNestedTypeCorrectly(TypeNameParser.Unescape(nest));
 					if (type == null)
 					{
 						if (throwOnError)

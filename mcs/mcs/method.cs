@@ -449,6 +449,23 @@ namespace Mono.CSharp {
 			return ms;
 		}
 
+		public override List<TypeSpec> ResolveMissingDependencies ()
+		{
+			var missing = returnType.ResolveMissingDependencies ();
+			foreach (var pt in parameters.Types) {
+				var m = pt.GetMissingDependencies ();
+				if (m == null)
+					continue;
+
+				if (missing == null)
+					missing = new List<TypeSpec> ();
+
+				missing.AddRange (m);
+			}
+
+			return missing;			
+		}
+
 		public void SetMetaInfo (MethodInfo info)
 		{
 			if (this.metaInfo != null)

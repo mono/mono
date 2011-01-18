@@ -26,6 +26,11 @@ namespace IKVM.Reflection
 {
 	public abstract class EventInfo : MemberInfo
 	{
+		// prevent external subclasses
+		internal EventInfo()
+		{
+		}
+
 		public sealed override MemberTypes MemberType
 		{
 			get { return MemberTypes.Event; }

@@ -45,6 +45,7 @@
                 <include name="MethodImplMap.cs" />
                 <include name="MethodInfo.cs" />
                 <include name="MethodSignature.cs" />
+                <include name="Missing.cs" />
                 <include name="Module.cs" />
                 <include name="ParameterInfo.cs" />
                 <include name="ParameterModifier.cs" />

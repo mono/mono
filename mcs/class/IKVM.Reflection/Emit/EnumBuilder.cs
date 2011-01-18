@@ -38,6 +38,26 @@ namespace IKVM.Reflection.Emit
 			this.fieldBuilder = fieldBuilder;
 		}
 
+		public override string __Name
+		{
+			get { return typeBuilder.__Name; }
+		}
+
+		public override string __Namespace
+		{
+			get { return typeBuilder.__Namespace; }
+		}
+
+		public override string Name
+		{
+			get { return typeBuilder.Name; }
+		}
+
+		public override string FullName
+		{
+			get { return typeBuilder.FullName; }
+		}
+
 		public override Type UnderlyingSystemType
 		{
 			get { return typeBuilder.UnderlyingSystemType; }

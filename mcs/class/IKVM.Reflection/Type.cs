@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -44,6 +44,11 @@ namespace IKVM.Reflection
 	public abstract class Type : MemberInfo, IGenericContext, IGenericBinder
 	{
 		public static readonly Type[] EmptyTypes = Empty<Type>.Array;
+
+		// prevent subclassing by outsiders
+		internal Type()
+		{
+		}
 
 		public static Binder DefaultBinder
 		{
@@ -185,13 +190,19 @@ namespace IKVM.Reflection
 			get { return null; }
 		}
 
-		public override string Name
+		public virtual string __Name
 		{
-			get
-			{
-				string fullname = FullName;
-				return fullname.Substring(fullname.LastIndexOf('.') + 1);
-			}
+			get { throw new InvalidOperationException(); }
+		}
+
+		public virtual string __Namespace
+		{
+			get { throw new InvalidOperationException(); }
+		}
+
+		public abstract override string Name
+		{
+			get;
 		}
 
 		public virtual string Namespace
@@ -200,11 +211,9 @@ namespace IKVM.Reflection
 			{
 				if (IsNested)
 				{
-					return null;
+					return DeclaringType.Namespace;
 				}
-				string fullname = FullName;
-				int index = fullname.LastIndexOf('.');
-				return index < 0 ? null : fullname.Substring(0, index);
+				return __Namespace;
 			}
 		}
 
@@ -327,33 +336,35 @@ namespace IKVM.Reflection
 			return FullName;
 		}
 
-		public virtual string FullName
+		public abstract string FullName
 		{
-			get
+			get;
+		}
+
+		protected string GetFullName()
+		{
+			string ns = TypeNameParser.Escape(this.__Namespace);
+			Type decl = this.DeclaringType;
+			if (decl == null)
 			{
-				Type decl = this.DeclaringType;
-				string ns = this.Namespace;
 				if (ns == null)
 				{
-					if (decl == null)
-					{
-						return this.Name;
-					}
-					else
-					{
-						return decl.FullName + "+" + this.Name;
-					}
+					return this.Name;
 				}
 				else
 				{
-					if (decl == null)
-					{
-						return ns + "." + this.Name;
-					}
-					else
-					{
-						return decl.FullName + "+" + ns + "." + this.Name;
-					}
+					return ns + "." + this.Name;
+				}
+			}
+			else
+			{
+				if (ns == null)
+				{
+					return decl.FullName + "+" + this.Name;
+				}
+				else
+				{
+					return decl.FullName + "+" + ns + "." + this.Name;
 				}
 			}
 		}
@@ -736,16 +747,54 @@ namespace IKVM.Reflection
 			return GetConstructor(bindingAttr, binder, types, modifiers);
 		}
 
+		private static bool MatchTypeNames(string ns, string name, string fullName)
+		{
+			if (ns == null)
+			{
+				return name == fullName;
+			}
+			else if (ns.Length + 1 + name.Length == fullName.Length)
+			{
+				return fullName[ns.Length] == '.'
+					&& String.CompareOrdinal(ns, 0, fullName, 0, ns.Length) == 0
+					&& String.CompareOrdinal(name, 0, fullName, ns.Length + 1, name.Length) == 0;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		internal virtual Type ResolveNestedType(string ns, string name)
+		{
+			return GetNestedTypeCorrectly(ns == null ? name : ns + "." + name);
+		}
+
+		// unlike the public API, this takes the namespace and name into account
+		internal Type GetNestedTypeCorrectly(string name)
+		{
+			CheckBaked();
+			foreach (Type type in __GetDeclaredTypes())
+			{
+				if (MatchTypeNames(type.__Namespace, type.__Name, name))
+				{
+					return type;
+				}
+			}
+			return null;
+		}
+
 		public Type GetNestedType(string name)
 		{
 			return GetNestedType(name, BindingFlags.Public);
 		}
 
-		public virtual Type GetNestedType(string name, BindingFlags bindingAttr)
+		public Type GetNestedType(string name, BindingFlags bindingAttr)
 		{
 			foreach (Type type in GetNestedTypes(bindingAttr))
 			{
-				if (type.Name == name)
+				// FXBUG the namespace is ignored
+				if (type.__Name == name)
 				{
 					return type;
 				}
@@ -1104,6 +1153,30 @@ namespace IKVM.Reflection
 			// FXBUG we check the declaring type (like .NET) and this results
 			// in IsNested returning true for a generic type parameter
 			get { return this.DeclaringType != null; }
+		}
+
+		public bool __IsMissing
+		{
+			get { return this is MissingType; }
+		}
+
+		public virtual bool __ContainsMissingType
+		{
+			get
+			{
+				if (this.__IsMissing)
+				{
+					return true;
+				}
+				foreach (Type arg in this.GetGenericArguments())
+				{
+					if (arg.__ContainsMissingType)
+					{
+						return true;
+					}
+				}
+				return false;
+			}
 		}
 
 		public Type MakeArrayType()
@@ -1574,6 +1647,11 @@ namespace IKVM.Reflection
 			get { return elementType.Name + GetSuffix(); }
 		}
 
+		public sealed override string Namespace
+		{
+			get { return elementType.Namespace; }
+		}
+
 		public sealed override string FullName
 		{
 			get { return elementType.FullName + GetSuffix(); }
@@ -1618,6 +1696,19 @@ namespace IKVM.Reflection
 					type = type.GetElementType();
 				}
 				return type.ContainsGenericParameters;
+			}
+		}
+
+		public sealed override bool __ContainsMissingType
+		{
+			get
+			{
+				Type type = elementType;
+				while (type.HasElementType)
+				{
+					type = type.GetElementType();
+				}
+				return type.__ContainsMissingType;
 			}
 		}
 
@@ -2058,7 +2149,7 @@ namespace IKVM.Reflection
 		internal static Type Make(Type type, Type[] typeArguments, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
 			bool identity = true;
-			if (type is TypeBuilder || type is BakedType)
+			if (type is TypeBuilder || type is BakedType || type.__IsMissing)
 			{
 				// a TypeBuiler identity must be instantiated
 				identity = false;
@@ -2280,7 +2371,7 @@ namespace IKVM.Reflection
 				{
 					return null;
 				}
-				StringBuilder sb = new StringBuilder(base.FullName);
+				StringBuilder sb = new StringBuilder(this.type.FullName);
 				sb.Append('[');
 				foreach (Type type in args)
 				{
@@ -2348,6 +2439,21 @@ namespace IKVM.Reflection
 				foreach (Type type in args)
 				{
 					if (type.ContainsGenericParameters)
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+
+		public override bool __ContainsMissingType
+		{
+			get
+			{
+				foreach (Type type in args)
+				{
+					if (type.__ContainsMissingType)
 					{
 						return true;
 					}

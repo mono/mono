@@ -52,6 +52,15 @@ namespace IKVM.Reflection
 
 		internal abstract Type GetTypeImpl(string typeName);
 
+		// The differences between ResolveType and GetTypeImpl are:
+		// - ResolveType is only used when a type is assumed to exist (because another module's metadata claim it)
+		// - ResolveType takes the unescaped namespace and name parts as they exist in the metadata
+		// - ResolveType is overridden in MissingAssembly to return a MissingType
+		internal virtual Type ResolveType(string ns, string name)
+		{
+			return GetTypeImpl(TypeNameParser.Escape(ns == null ? name : ns + "." + name));
+		}
+
 		public Module[] GetModules()
 		{
 			return GetModules(true);
@@ -152,6 +161,11 @@ namespace IKVM.Reflection
 				}
 				return "file://" + path;
 			}
+		}
+
+		public virtual bool __IsMissing
+		{
+			get { return false; }
 		}
 
 		internal abstract IList<CustomAttributeData> GetCustomAttributesData(Type attributeType);

@@ -27,6 +27,11 @@ namespace IKVM.Reflection
 {
 	public abstract class ParameterInfo : ICustomAttributeProvider
 	{
+		// prevent external subclasses
+		internal ParameterInfo()
+		{
+		}
+
 		public sealed override bool Equals(object obj)
 		{
 			ParameterInfo other = obj as ParameterInfo;

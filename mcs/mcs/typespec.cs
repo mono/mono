@@ -433,6 +433,42 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		public override List<TypeSpec> ResolveMissingDependencies ()
+		{
+			List<TypeSpec> missing = null;
+
+			if (Kind == MemberKind.MissingType) {
+				missing = new List<TypeSpec> ();
+				missing.Add (this);
+				return missing;
+			}
+
+			foreach (var targ in TypeArguments) {
+				if (targ.Kind == MemberKind.MissingType) {
+					if (missing == null)
+						missing = new List<TypeSpec> ();
+
+					missing.Add (targ);
+				}
+			}
+
+			if (Interfaces != null) {
+				foreach (var iface in Interfaces) {
+					if (iface.Kind == MemberKind.MissingType) {
+						if (missing == null)
+							missing = new List<TypeSpec> ();
+
+						missing.Add (iface);
+					}
+				}
+			}
+
+			if (missing != null || BaseType == null)
+				return missing;
+
+			return BaseType.ResolveMissingDependencies ();
+		}
+
 		public void SetMetaInfo (MetaType info)
 		{
 			if (this.info != null)

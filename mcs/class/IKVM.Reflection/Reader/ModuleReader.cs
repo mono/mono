@@ -263,7 +263,7 @@ namespace IKVM.Reflection.Reader
 					if (implementation >> 24 == AssemblyRefTable.Index)
 					{
 						string typeName = GetTypeName(ExportedType.records[i].TypeNamespace, ExportedType.records[i].TypeName);
-						forwardedTypes.Add(typeName, new LazyForwardedType((implementation & 0xFFFFFF) - 1));
+						forwardedTypes.Add(TypeNameParser.Escape(typeName), new LazyForwardedType((implementation & 0xFFFFFF) - 1));
 					}
 				}
 			}
@@ -362,10 +362,10 @@ namespace IKVM.Reflection.Reader
 								case AssemblyRefTable.Index:
 									{
 										Assembly assembly = ResolveAssemblyRef((scope & 0xFFFFFF) - 1);
-										string typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
-										Type type = assembly.GetType(typeName);
+										Type type = assembly.ResolveType(GetString(TypeRef.records[index].TypeNameSpace), GetString(TypeRef.records[index].TypeName));
 										if (type == null)
 										{
+											string typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
 											throw new TypeLoadException(String.Format("Type '{0}' not found in assembly '{1}'", typeName, assembly.FullName));
 										}
 										typeRefs[index] = type;
@@ -374,7 +374,7 @@ namespace IKVM.Reflection.Reader
 								case TypeRefTable.Index:
 									{
 										Type outer = ResolveType(scope, null);
-										typeRefs[index] = outer.GetNestedType(GetString(TypeRef.records[index].TypeName), BindingFlags.Public | BindingFlags.NonPublic);
+										typeRefs[index] = outer.ResolveNestedType(GetString(TypeRef.records[index].TypeNameSpace), GetString(TypeRef.records[index].TypeName));
 										break;
 									}
 								case ModuleTable.Index:
@@ -382,13 +382,13 @@ namespace IKVM.Reflection.Reader
 									{
 										throw new NotImplementedException("self reference scope?");
 									}
-									typeRefs[index] = GetType(GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName));
+									typeRefs[index] = GetType(TypeNameParser.Escape(GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName)));
 									break;
 								case ModuleRefTable.Index:
 									{
 										Module module = ResolveModuleRef(ModuleRef.records[(scope & 0xFFFFFF) - 1]);
 										string typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
-										Type type = assembly.GetType(typeName);
+										Type type = module.GetType(TypeNameParser.Escape(typeName));
 										if (type == null)
 										{
 											throw new TypeLoadException(String.Format("Type '{0}' not found in module '{1}'", typeName, module.Name));

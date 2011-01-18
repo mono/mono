@@ -318,7 +318,7 @@ namespace Mono.CSharp
 					//
 					// TODO: Is full logic from CreateType needed here as well?
 					//
-					if (type.IsGenericTypeDefinition) {
+					if (!IsMissingType (type) && type.IsGenericTypeDefinition) {
 						var targs = CreateGenericArguments (0, type.GetGenericArguments (), dtype);
 						spec = spec.MakeGenericType (targs);
 					}
@@ -652,6 +652,13 @@ namespace Mono.CSharp
 				// TODO: Handle cases where they still unify
 			}
 
+			if (IsMissingType (type)) {
+				spec = new TypeSpec (MemberKind.MissingType, declaringType, new ImportedTypeDefinition (type, this), type, Modifiers.PUBLIC);
+				spec.MemberCache = MemberCache.Empty;
+				import_cache.Add (type, spec);
+				return spec;
+			}
+
 			if (type.IsGenericType && !type.IsGenericTypeDefinition) {
 				var type_def = type.GetGenericTypeDefinition ();
 				var targs = CreateGenericArguments (0, type.GetGenericArguments (), dtype);
@@ -830,28 +837,6 @@ namespace Mono.CSharp
 				ImportTypeBase (spec, type);
 		}
 
-		void ImportTypeBase (TypeSpec spec, MetaType type)
-		{
-			if (spec.Kind == MemberKind.Interface)
-				spec.BaseType = TypeManager.object_type;
-			else if (type.BaseType != null) {
-				TypeSpec base_type;
-				if (type.BaseType.IsGenericType)
-					base_type = CreateType (type.BaseType, new DynamicTypeReader (type), true);
-				else
-					base_type = CreateType (type.BaseType);
-
-				spec.BaseType = base_type;
-			}
-
-			var ifaces = type.GetInterfaces ();
-			if (ifaces.Length > 0) {
-				foreach (var iface in ifaces) {
-					spec.AddInterface (CreateType (iface));
-				}
-			}
-		}
-
 		TypeParameterSpec CreateTypeParameter (MetaType type, TypeSpec declaringType)
 		{
 			Variance variance;
@@ -901,7 +886,7 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				if (ct.IsClass) {
+				if (!IsMissingType (ct) && ct.IsClass) {
 					spec.BaseType = CreateType (ct);
 					continue;
 				}
@@ -935,6 +920,44 @@ namespace Mono.CSharp
 			}
 
 			return false;
+		}
+
+		void ImportTypeBase (TypeSpec spec, MetaType type)
+		{
+			if (spec.Kind == MemberKind.Interface)
+				spec.BaseType = TypeManager.object_type;
+			else if (type.BaseType != null) {
+				TypeSpec base_type;
+				if (!IsMissingType (type.BaseType) && type.BaseType.IsGenericType)
+					base_type = CreateType (type.BaseType, new DynamicTypeReader (type), true);
+				else
+					base_type = CreateType (type.BaseType);
+
+				spec.BaseType = base_type;
+			}
+
+			MetaType[] ifaces;
+#if STATIC
+			ifaces = type.__GetDeclaredInterfaces ();
+			while (ifaces != null && ifaces.Length != 0) {
+				foreach (var iface in ifaces)
+					spec.AddInterface (CreateType (iface));
+
+				type = type.BaseType;
+				if (type == null || type.__ContainsMissingType)
+					ifaces = null;
+				else
+					ifaces = type.__GetDeclaredInterfaces ();
+			}
+#else
+			ifaces = type.GetInterfaces ();
+
+			if (ifaces.Length > 0) {
+				foreach (var iface in ifaces) {
+					spec.AddInterface (CreateType (iface));
+				}
+			}
+#endif
 		}
 
 		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool hasExtensionTypes)
@@ -1033,6 +1056,15 @@ namespace Mono.CSharp
 			}
 
 			return CreateType (type, dtype, true);
+		}
+
+		static bool IsMissingType (MetaType type)
+		{
+#if STATIC
+			return type.__IsMissing;
+#else
+			return false;
+#endif
 		}
 
 		//
@@ -1261,8 +1293,6 @@ namespace Mono.CSharp
 		}
 
 		#endregion
-
-		public abstract List<MissingType> ResolveMissingDependencies ();
 
 		public string[] ConditionalConditions ()
 		{
@@ -1498,6 +1528,11 @@ namespace Mono.CSharp
 
 		public void ReadAttributes ()
 		{
+#if STATIC
+			if (assembly.__IsMissing)
+				return;
+#endif
+
 			IList<CustomAttributeData> attrs = CustomAttributeData.GetCustomAttributes (assembly);
 
 			string ns, name;
@@ -1560,11 +1595,6 @@ namespace Mono.CSharp
 		}
 
 		#endregion
-
-		public override List<MissingType> ResolveMissingDependencies ()
-		{
-			return type.GetMissingDependencies ();
-		}
 	}
 
 	class ImportedParameterMemberDefinition : ImportedMemberDefinition, IParametersMember
@@ -1592,23 +1622,6 @@ namespace Mono.CSharp
 		}
 
 		#endregion
-
-		public override List<MissingType> ResolveMissingDependencies ()
-		{
-			var missing = base.ResolveMissingDependencies ();
-			foreach (var pt in parameters.Types) {
-				var m = pt.GetMissingDependencies ();
-				if (m == null)
-					continue;
-
-				if (missing == null)
-					missing = new List<MissingType> ();
-
-				missing.AddRange (m);
-			}
-
-			return missing;
-		}
 	}
 
 	class ImportedGenericMethodDefinition : ImportedParameterMemberDefinition, IGenericMethodDefinition
@@ -1694,14 +1707,12 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public static void Error_MissingDependency (IMemberContext ctx, List<MissingType> types, Location loc)
+		public static void Error_MissingDependency (IMemberContext ctx, List<TypeSpec> types, Location loc)
 		{
 			foreach (var t in types) {
-				string name = t.Name;
-				if (t.Namespace != null)
-					name = t.Namespace + "." + name;
+				string name = t.GetSignatureForError ();
 
-				if (t.Module.Assembly.GetName ().Name == ctx.Module.DeclaringAssembly.Name) {
+				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
 					ctx.Compiler.Report.Warning (1683, 1, loc,
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
@@ -1709,7 +1720,7 @@ namespace Mono.CSharp
 
 				ctx.Compiler.Report.Error (12, loc,
 					"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-					name, t.Module.Assembly.FullName);
+					name, t.MemberDefinition.DeclaringAssembly.FullName);
 			}
 		}
 
@@ -1940,36 +1951,6 @@ namespace Mono.CSharp
 				}
 			}
 		}
-
-		public override List<MissingType> ResolveMissingDependencies ()
-		{
-#if STATIC
-			List<MissingType> missing = null;
-
-			MetaType mt = (MetaType) provider;
-			do {
-				if (mt is MissingType) {
-					missing = new List<MissingType> ();
-					missing.Add ((MissingType) mt);
-				}
-
-				foreach (var iface in mt.GetInterfaces ()) {
-					if (iface is MissingType) {
-						if (missing == null)
-							missing = new List<MissingType> ();
-
-						missing.Add ((MissingType) iface);
-					}
-				}
-
-				if (missing != null)
-					return missing;
-
-				mt = mt.BaseType;
-			} while (mt != null);
-#endif
-			return null;
-		}
 	}
 
 	class ImportedTypeParameterDefinition : ImportedDefinition, ITypeDefinition
@@ -2030,11 +2011,6 @@ namespace Mono.CSharp
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			throw new NotImplementedException ();
-		}
-
-		public override List<MissingType> ResolveMissingDependencies ()
-		{
-			return null;
 		}
 	}
 }

@@ -91,7 +91,7 @@ namespace IKVM.Reflection
 					throw new BadImageFormatException();
 			}
 			Type type = ReadTypeDefOrRefEncoded(module, br, context);
-			if (!type.IsGenericTypeDefinition)
+			if (!type.__IsMissing && !type.IsGenericTypeDefinition)
 			{
 				throw new BadImageFormatException();
 			}

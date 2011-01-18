@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -229,7 +229,8 @@ namespace IKVM.Reflection.Emit
 		private Type baseType;
 		private readonly int typeName;
 		private readonly int typeNameSpace;
-		private readonly string nameOrFullName;
+		private readonly string ns;
+		private readonly string name;
 		private readonly List<MethodBuilder> methods = new List<MethodBuilder>();
 		private readonly List<FieldBuilder> fields = new List<FieldBuilder>();
 		private List<PropertyBuilder> properties;
@@ -248,22 +249,14 @@ namespace IKVM.Reflection.Emit
 			Baked = 4,
 		}
 
-		internal TypeBuilder(ITypeOwner owner, string name, Type baseType, TypeAttributes attribs)
+		internal TypeBuilder(ITypeOwner owner, string ns, string name, TypeAttributes attribs)
 		{
 			this.owner = owner;
 			this.token = this.ModuleBuilder.TypeDef.AllocToken();
-			this.nameOrFullName = TypeNameParser.Escape(name);
-			SetParent(baseType);
+			this.ns = ns;
+			this.name = name;
 			this.attribs = attribs;
-			if (!this.IsNested)
-			{
-				int lastdot = name.LastIndexOf('.');
-				if (lastdot > 0)
-				{
-					this.typeNameSpace = this.ModuleBuilder.Strings.Add(name.Substring(0, lastdot));
-					name = name.Substring(lastdot + 1);
-				}
-			}
+			this.typeNameSpace = ns == null ? 0 : this.ModuleBuilder.Strings.Add(ns);
 			this.typeName = this.ModuleBuilder.Strings.Add(name);
 		}
 
@@ -442,20 +435,47 @@ namespace IKVM.Reflection.Emit
 
 		public TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent)
 		{
-			this.typeFlags |= TypeFlags.HasNestedTypes;
-			return this.ModuleBuilder.DefineNestedTypeHelper(this, name, attr, parent, PackingSize.Unspecified, 0);
+			return DefineNestedType(name, attr, parent, 0);
 		}
 
 		public TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent, int typeSize)
 		{
-			this.typeFlags |= TypeFlags.HasNestedTypes;
-			return this.ModuleBuilder.DefineNestedTypeHelper(this, name, attr, parent, PackingSize.Unspecified, typeSize);
+			return DefineNestedType(name, attr, parent, PackingSize.Unspecified, typeSize);
 		}
 
 		public TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent, PackingSize packSize)
 		{
+			return DefineNestedType(name, attr, parent, packSize, 0);
+		}
+
+		private TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent, PackingSize packSize, int typeSize)
+		{
+			string ns = null;
+			int lastdot = name.LastIndexOf('.');
+			if (lastdot > 0)
+			{
+				ns = name.Substring(0, lastdot);
+				name = name.Substring(lastdot + 1);
+			}
+			TypeBuilder typeBuilder = __DefineNestedType(ns, name, attr);
+			if (parent == null && (attr & TypeAttributes.Interface) == 0)
+			{
+				parent = this.ModuleBuilder.universe.System_Object;
+			}
+			typeBuilder.SetParent(parent);
+			this.ModuleBuilder.SetPackingSizeAndTypeSize(typeBuilder, PackingSize.Unspecified, typeSize);
+			return typeBuilder;
+		}
+
+		public TypeBuilder __DefineNestedType(string ns, string name, TypeAttributes attr)
+		{
 			this.typeFlags |= TypeFlags.HasNestedTypes;
-			return this.ModuleBuilder.DefineNestedTypeHelper(this, name, attr, parent, packSize, 0);
+			TypeBuilder typeBuilder = this.ModuleBuilder.DefineType(this, ns, name, attr);
+			NestedClassTable.Record rec = new NestedClassTable.Record();
+			rec.NestedClass = typeBuilder.MetadataToken;
+			rec.EnclosingClass = this.MetadataToken;
+			this.ModuleBuilder.NestedClass.AddRecord(rec);
+			return typeBuilder;
 		}
 
 		public void SetParent(Type parent)
@@ -716,28 +736,33 @@ namespace IKVM.Reflection.Emit
 			{
 				if (this.IsNested)
 				{
-					return this.DeclaringType.FullName + "+" + nameOrFullName;
+					return this.DeclaringType.FullName + "+" + TypeNameParser.Escape(name);
+				}
+				if (ns == null)
+				{
+					return TypeNameParser.Escape(name);
 				}
 				else
 				{
-					return nameOrFullName;
+					return TypeNameParser.Escape(ns) + "." + TypeNameParser.Escape(name);
 				}
 			}
 		}
 
+		public override string __Name
+		{
+			get { return name; }
+		}
+
+		public override string __Namespace
+		{
+			get { return ns; }
+		}
+
 		public override string Name
 		{
-			get
-			{
-				if (this.IsNested)
-				{
-					return nameOrFullName;
-				}
-				else
-				{
-					return base.Name;
-				}
-			}
+			// FXBUG for a TypeBuilder the name is not escaped
+			get { return name; }
 		}
 
 		public override string Namespace
@@ -745,15 +770,9 @@ namespace IKVM.Reflection.Emit
 			get
 			{
 				// for some reason, TypeBuilder doesn't return null (and mcs depends on this)
-				return base.Namespace ?? "";
+				// note also that we don't return the declaring type namespace for nested types
+				return ns ?? "";
 			}
-		}
-
-		internal string GetBakedNamespace()
-		{
-			// if you refer to the TypeBuilder via its baked Type, Namespace will return null
-			// for the empty namespace (instead of "" like TypeBuilder.Namespace above does)
-			return base.Namespace;
 		}
 
 		public override TypeAttributes Attributes
@@ -1039,19 +1058,25 @@ namespace IKVM.Reflection.Emit
 			get { return typeBuilder.BaseType; }
 		}
 
-		public override string Name
+		public override string __Name
 		{
-			get { return typeBuilder.Name; }
+			get { return typeBuilder.__Name; }
 		}
 
-		public override string Namespace
+		public override string __Namespace
 		{
-			get { return typeBuilder.GetBakedNamespace(); }
+			get { return typeBuilder.__Namespace; }
+		}
+
+		public override string Name
+		{
+			// we need to escape here, because TypeBuilder.Name does not escape
+			get { return TypeNameParser.Escape(typeBuilder.__Name); }
 		}
 
 		public override string FullName
 		{
-			get { return typeBuilder.FullName; }
+			get { return GetFullName(); }
 		}
 
 		public override TypeAttributes Attributes

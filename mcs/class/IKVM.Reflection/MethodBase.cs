@@ -27,6 +27,11 @@ namespace IKVM.Reflection
 {
 	public abstract class MethodBase : MemberInfo
 	{
+		// prevent external subclasses
+		internal MethodBase()
+		{
+		}
+
 		internal abstract MethodSignature MethodSignature { get; }
 		internal abstract int ParameterCount { get; }
 		public abstract ParameterInfo[] GetParameters();

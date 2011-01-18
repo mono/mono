@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -32,7 +32,7 @@ using IKVM.Reflection.Emit;
 
 namespace IKVM.Reflection
 {
-	public class ResolveEventArgs : EventArgs
+	public sealed class ResolveEventArgs : EventArgs
 	{
 		private readonly string name;
 		private readonly Assembly requestingAssembly;
@@ -790,6 +790,11 @@ namespace IKVM.Reflection
 					mod.Dispose();
 				}
 			}
+		}
+
+		public Assembly CreateMissingAssembly(string assemblyName)
+		{
+			return new MissingAssembly(this, assemblyName);
 		}
 	}
 }

@@ -25,7 +25,7 @@ using System;
 
 namespace IKVM.Reflection.Emit
 {
-	public class OpCodes
+	public sealed class OpCodes
 	{
 		public static readonly OpCode Nop = new OpCode(4888);
 		public static readonly OpCode Break = new OpCode(4199116);

@@ -28,6 +28,11 @@ namespace IKVM.Reflection
 {
 	public abstract class ConstructorInfo : MethodBase
 	{
+		// prevent external subclasses
+		internal ConstructorInfo()
+		{
+		}
+
 		public static readonly string ConstructorName = ".ctor";
 		public static readonly string TypeConstructorName = ".cctor";
 

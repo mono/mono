@@ -27,6 +27,11 @@ namespace IKVM.Reflection
 {
 	public abstract class FieldInfo : MemberInfo
 	{
+		// prevent external subclasses
+		internal FieldInfo()
+		{
+		}
+
 		public sealed override MemberTypes MemberType
 		{
 			get { return MemberTypes.Field; }

@@ -25,7 +25,7 @@ using System;
 
 namespace IKVM.Reflection
 {
-	public class LocalVariableInfo
+	public sealed class LocalVariableInfo
 	{
 		private readonly int index;
 		private readonly Type type;
@@ -38,17 +38,17 @@ namespace IKVM.Reflection
 			this.pinned = pinned;
 		}
 
-		public virtual bool IsPinned
+		public bool IsPinned
 		{
 			get { return pinned; }
 		}
 
-		public virtual int LocalIndex
+		public int LocalIndex
 		{
 			get { return index; }
 		}
 
-		public virtual Type LocalType
+		public Type LocalType
 		{
 			get { return type; }
 		}

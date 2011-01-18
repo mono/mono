@@ -308,22 +308,22 @@ namespace IKVM.Reflection.Reader
 							callingConvention = System.Runtime.InteropServices.CallingConvention.Winapi;
 							break;
 					}
-					list.Add(MakeNamedArgument(type, "EntryPoint", entryPoint));
-					list.Add(MakeNamedArgument(type, "ExactSpelling", flags, NoMangle));
-					list.Add(MakeNamedArgument(type, "SetLastError", flags, SupportsLastError));
-					list.Add(MakeNamedArgument(type, "PreserveSig", (int)GetMethodImplementationFlags(), (int)MethodImplAttributes.PreserveSig));
-					list.Add(MakeNamedArgument(type, "CallingConvention", (int)callingConvention));
+					AddNamedArgument(list, type, "EntryPoint", entryPoint);
+					AddNamedArgument(list, type, "ExactSpelling", flags, NoMangle);
+					AddNamedArgument(list, type, "SetLastError", flags, SupportsLastError);
+					AddNamedArgument(list, type, "PreserveSig", (int)GetMethodImplementationFlags(), (int)MethodImplAttributes.PreserveSig);
+					AddNamedArgument(list, type, "CallingConvention", (int)callingConvention);
 					if (charSet.HasValue)
 					{
-						list.Add(MakeNamedArgument(type, "CharSet", (int)charSet.Value));
+						AddNamedArgument(list, type, "CharSet", (int)charSet.Value);
 					}
 					if ((flags & (BestFitOn | BestFitOff)) != 0)
 					{
-						list.Add(MakeNamedArgument(type, "BestFitMapping", flags, BestFitOn));
+						AddNamedArgument(list, type, "BestFitMapping", flags, BestFitOn);
 					}
 					if ((flags & (CharMapErrorOn | CharMapErrorOff)) != 0)
 					{
-						list.Add(MakeNamedArgument(type, "ThrowOnUnmappableChar", flags, CharMapErrorOn));
+						AddNamedArgument(list, type, "ThrowOnUnmappableChar", flags, CharMapErrorOn);
 					}
 					attribs.Add(new CustomAttributeData(constructor, new object[] { dllName }, list));
 					return;
@@ -331,19 +331,29 @@ namespace IKVM.Reflection.Reader
 			}
 		}
 
-		private static CustomAttributeNamedArgument MakeNamedArgument(Type type, string field, string value)
+		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type type, string fieldName, string value)
 		{
-			return new CustomAttributeNamedArgument(type.GetField(field), new CustomAttributeTypedArgument(type.Module.universe.System_String, value));
+			AddNamedArgument(list, type, fieldName, type.Module.universe.System_String, value);
 		}
 
-		private static CustomAttributeNamedArgument MakeNamedArgument(Type type, string field, int value)
+		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type type, string fieldName, int value)
 		{
-			return new CustomAttributeNamedArgument(type.GetField(field), new CustomAttributeTypedArgument(type.Module.universe.System_Int32, value));
+			AddNamedArgument(list, type, fieldName, type.Module.universe.System_Int32, value);
 		}
 
-		private static CustomAttributeNamedArgument MakeNamedArgument(Type type, string field, int flags, int flagMask)
+		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type type, string fieldName, int flags, int flagMask)
 		{
-			return new CustomAttributeNamedArgument(type.GetField(field), new CustomAttributeTypedArgument(type.Module.universe.System_Boolean, (flags & flagMask) != 0));
+			AddNamedArgument(list, type, fieldName, type.Module.universe.System_Boolean, (flags & flagMask) != 0);
+		}
+
+		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type attributeType, string fieldName, Type valueType, object value)
+		{
+			// some fields are not available on the .NET Compact Framework version of DllImportAttribute
+			FieldInfo field = attributeType.GetField(fieldName);
+			if (field != null)
+			{
+				list.Add(new CustomAttributeNamedArgument(field, new CustomAttributeTypedArgument(valueType, value)));
+			}
 		}
 
 		internal override MethodSignature MethodSignature

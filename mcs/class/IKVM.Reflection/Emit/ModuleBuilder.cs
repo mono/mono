@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2010 Jeroen Frijters
+  Copyright (C) 2008-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -109,7 +109,7 @@ namespace IKVM.Reflection.Emit
 				symbolWriter = SymbolSupport.CreateSymbolWriterFor(this);
 			}
 			// <Module> must be the first record in the TypeDef table
-			moduleType = new TypeBuilder(this, "<Module>", null, 0);
+			moduleType = new TypeBuilder(this, null, "<Module>", 0);
 			types.Add(moduleType);
 		}
 
@@ -201,44 +201,38 @@ namespace IKVM.Reflection.Emit
 
 		public TypeBuilder DefineType(string name, TypeAttributes attr, Type parent, PackingSize packingSize, int typesize)
 		{
+			string ns = null;
+			int lastdot = name.LastIndexOf('.');
+			if (lastdot > 0)
+			{
+				ns = name.Substring(0, lastdot);
+				name = name.Substring(lastdot + 1);
+			}
+			TypeBuilder typeBuilder = __DefineType(ns, name, attr);
 			if (parent == null && (attr & TypeAttributes.Interface) == 0)
 			{
 				parent = universe.System_Object;
 			}
-			TypeBuilder typeBuilder = new TypeBuilder(this, name, parent, attr);
-			PostDefineType(typeBuilder, packingSize, typesize);
+			typeBuilder.SetParent(parent);
+			SetPackingSizeAndTypeSize(typeBuilder, packingSize, typesize);
 			return typeBuilder;
 		}
 
-		public EnumBuilder DefineEnum(string name, TypeAttributes visibility, Type underlyingType)
+		public TypeBuilder __DefineType(string ns, string name, TypeAttributes attr)
 		{
-			TypeBuilder tb = DefineType(name, (visibility & TypeAttributes.VisibilityMask) | TypeAttributes.Sealed, universe.System_Enum);
-			FieldBuilder fb = tb.DefineField("value__", underlyingType, FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
-			return new EnumBuilder(tb, fb);
+			return DefineType(this, ns, name, attr);
 		}
 
-		internal TypeBuilder DefineNestedTypeHelper(TypeBuilder enclosingType, string name, TypeAttributes attr, Type parent, PackingSize packingSize, int typesize)
+		internal TypeBuilder DefineType(ITypeOwner owner, string ns, string name, TypeAttributes attr)
 		{
-			if (parent == null && (attr & TypeAttributes.Interface) == 0)
-			{
-				parent = universe.System_Object;
-			}
-			TypeBuilder typeBuilder = new TypeBuilder(enclosingType, name, parent, attr);
-			PostDefineType(typeBuilder, packingSize, typesize);
-			if (enclosingType != null)
-			{
-				NestedClassTable.Record rec = new NestedClassTable.Record();
-				rec.NestedClass = typeBuilder.MetadataToken;
-				rec.EnclosingClass = enclosingType.MetadataToken;
-				this.NestedClass.AddRecord(rec);
-			}
-			return typeBuilder;
-		}
-
-		private void PostDefineType(TypeBuilder typeBuilder, PackingSize packingSize, int typesize)
-		{
+			TypeBuilder typeBuilder = new TypeBuilder(owner, ns, name, attr);
 			types.Add(typeBuilder);
 			fullNameToType.Add(typeBuilder.FullName, typeBuilder);
+			return typeBuilder;
+		}
+
+		internal void SetPackingSizeAndTypeSize(TypeBuilder typeBuilder, PackingSize packingSize, int typesize)
+		{
 			if (packingSize != PackingSize.Unspecified || typesize != 0)
 			{
 				ClassLayoutTable.Record rec = new ClassLayoutTable.Record();
@@ -247,6 +241,13 @@ namespace IKVM.Reflection.Emit
 				rec.Parent = typeBuilder.MetadataToken;
 				this.ClassLayout.AddRecord(rec);
 			}
+		}
+
+		public EnumBuilder DefineEnum(string name, TypeAttributes visibility, Type underlyingType)
+		{
+			TypeBuilder tb = DefineType(name, (visibility & TypeAttributes.VisibilityMask) | TypeAttributes.Sealed, universe.System_Enum);
+			FieldBuilder fb = tb.DefineField("value__", underlyingType, FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
+			return new EnumBuilder(tb, fb);
 		}
 
 		public FieldBuilder __DefineField(string name, Type type, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers, FieldAttributes attributes)
@@ -314,7 +315,7 @@ namespace IKVM.Reflection.Emit
 		{
 			ExportedTypeTable.Record rec = new ExportedTypeTable.Record();
 			rec.TypeDefId = type.MetadataToken;
-			rec.TypeName = this.Strings.Add(TypeNameParser.Unescape(type.Name));
+			rec.TypeName = this.Strings.Add(type.__Name);
 			if (type.IsNested)
 			{
 				rec.Flags = 0;
@@ -324,8 +325,8 @@ namespace IKVM.Reflection.Emit
 			else
 			{
 				rec.Flags = 0x00200000;	// CorTypeAttr.tdForwarder
-				string ns = type.Namespace;
-				rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(TypeNameParser.Unescape(ns));
+				string ns = type.__Namespace;
+				rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(ns);
 				rec.Implementation = ImportAssemblyRef(type.Assembly);
 			}
 			return 0x27000000 | this.ExportedType.FindOrAddRecord(rec);
@@ -617,16 +618,14 @@ namespace IKVM.Reflection.Emit
 					if (type.IsNested)
 					{
 						rec.ResolutionScope = GetTypeToken(type.DeclaringType).Token;
-						rec.TypeName = this.Strings.Add(TypeNameParser.Unescape(type.Name));
-						rec.TypeNameSpace = 0;
 					}
 					else
 					{
 						rec.ResolutionScope = ImportAssemblyRef(type.Assembly);
-						rec.TypeName = this.Strings.Add(TypeNameParser.Unescape(type.Name));
-						string ns = type.Namespace;
-						rec.TypeNameSpace = ns == null ? 0 : this.Strings.Add(TypeNameParser.Unescape(ns));
 					}
+					rec.TypeName = this.Strings.Add(type.__Name);
+					string ns = type.__Namespace;
+					rec.TypeNameSpace = ns == null ? 0 : this.Strings.Add(ns);
 					token = 0x01000000 | this.TypeRef.AddRecord(rec);
 				}
 				typeTokens.Add(type, token);
@@ -890,9 +889,9 @@ namespace IKVM.Reflection.Emit
 					ExportedTypeTable.Record rec = new ExportedTypeTable.Record();
 					rec.Flags = (int)type.Attributes;
 					rec.TypeDefId = type.MetadataToken & 0xFFFFFF;
-					rec.TypeName = this.Strings.Add(TypeNameParser.Unescape(type.Name));
-					string ns = type.Namespace;
-					rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(TypeNameParser.Unescape(ns));
+					rec.TypeName = this.Strings.Add(type.__Name);
+					string ns = type.__Namespace;
+					rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(ns);
 					if (type.IsNested)
 					{
 						rec.Implementation = declaringTypes[type.DeclaringType];
