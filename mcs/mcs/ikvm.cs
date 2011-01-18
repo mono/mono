@@ -200,7 +200,7 @@ namespace Mono.CSharp
 
 			foreach (var dir in sdk_directory[RootContext.SdkVersion]) {
 				sdk_path = Path.Combine (fx_path, dir);
-				if (Directory.Exists (sdk_path))
+				if (File.Exists (Path.Combine (sdk_path, "mscorlib.dll")))
 					break;
 
 				sdk_path = null;
