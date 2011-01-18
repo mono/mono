@@ -1,6 +1,6 @@
 <Type Name="MonoTaskExtensions" FullName="Mono.Threading.Tasks.MonoTaskExtensions">
   <TypeSignature Language="C#" Value="public static class MonoTaskExtensions" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit MonoTaskExtensions extends System.Object" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed MonoTaskExtensions extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Parallel</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -32,23 +32,21 @@
         <param name="task">Task to run.</param>
         <param name="childWorkAdder">Action that will be called with the Task that is being scheduled while above Task is executed as a parameter.</param>
         <summary>Execute a <see cref="T:System.Threading.Tasks.Task" /> body and track any other Task scheduling during it which is then passed to the supplied action for specific scheduling.</summary>
-        <remarks><block subset="none" type="note">
-  <para>
-	If the inner Task that is scheduled has been created with TaskCreationOptions.PreferFairness, the supplied action won't be called and instead the Task will be scheduled normally on the current <see cref="T:System.Threading.Tasks.TaskScheduler" />
-  </para>
-</block>
+        <remarks>
+          <block subset="none" type="note">
+            <para>
+	If the inner Task that is scheduled has been created with TaskCreationOptions.PreferFairness, the supplied action won't be called and instead the Task will be scheduled normally on the current <see cref="T:System.Threading.Tasks.TaskScheduler" /></para>
+          </block>
 
 The following example retrieve a task from a local deque, execute it and add any eventual child Task created/scheduled to its local deque using PushBottom (safe since we are on the same thread the whole time).
 
-<example>
-  <code lang="C#">
+<example><code lang="C#">
 	Task task;
 	IConcurrentDeque&lt;Task&gt; deque = new CyclicDeque&lt;Task&gt; ();
 
 	if (deque.PopBottom (out task) == PopResult.Succeed))
 		task.Execute (deque.PushBottom);
-  </code>
-</example></remarks>
+  </code></example></remarks>
       </Docs>
     </Member>
   </Members>
