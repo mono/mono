@@ -29,9 +29,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms 
 {
-#if !NET_2_0
-	[Serializable]
-#endif
 	[ComVisible(true)]
 	public enum SelectionMode
 	{

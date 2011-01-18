@@ -31,10 +31,7 @@ using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public
-#endif
-	sealed class RadioButtonRenderer
+	public sealed class RadioButtonRenderer
 	{
 		private static bool always_use_visual_styles = false;
 

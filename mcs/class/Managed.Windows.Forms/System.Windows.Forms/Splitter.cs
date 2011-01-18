@@ -36,17 +36,12 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-#endif
 	[DefaultEvent("SplitterMoved")]
 	[Designer("System.Windows.Forms.Design.SplitterDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Dock")]
 	public class Splitter : Control
-#if !NET_2_0
-	, IMessageFilter
-#endif
 	{
 		#region Local Variables
 		static private Cursor		splitter_ns;
@@ -127,14 +122,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
 		}
-#endif
 
 		[DispId(-504)]
 		[DefaultValue (BorderStyle.None)]
@@ -373,11 +366,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		protected override Cursor DefaultCursor {
 			get { return base.DefaultCursor; }
 		}
-#endif
 
 		protected override ImeMode DefaultImeMode {
 			get {
@@ -393,12 +384,6 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
-#if !NET_2_0
-		public bool PreFilterMessage(ref Message m) {
-			return false;
-		}
-#endif
-
 		public override string ToString() {
 			return base.ToString () + String.Format(", MinExtra: {0}, MinSize: {1}", min_extra, min_size);
 		}
@@ -627,7 +612,6 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged
@@ -635,8 +619,6 @@ namespace System.Windows.Forms {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-		
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]

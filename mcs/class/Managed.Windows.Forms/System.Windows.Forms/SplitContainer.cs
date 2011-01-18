@@ -28,7 +28,6 @@
 //	Ivan N. Zlatev (contact@i-nz.net)
 //
 
-#if NET_2_0
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -132,7 +131,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region UIA Framework Events
-#if NET_2_0
 		static object UIACanResizeChangedEvent = new object ();
 
 		internal event EventHandler UIACanResizeChanged {
@@ -146,7 +144,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		#endregion
 
 		#region Public Constructors
@@ -333,10 +330,8 @@ namespace System.Windows.Forms
 					this.panel1_collapsed = value;
 					panel1.Visible = !value;
 
-#if NET_2_0
 					// UIA Framework Event: CanResize Changed
 					OnUIACanResizeChanged (EventArgs.Empty);
-#endif
 
 					PerformLayout ();
 				}
@@ -365,10 +360,8 @@ namespace System.Windows.Forms
 					this.panel2_collapsed = value;
 					panel2.Visible = !value;
 
-#if NET_2_0
 					// UIA Framework Event: CanResize Changed
 					OnUIACanResizeChanged (EventArgs.Empty);
-#endif
 
 					PerformLayout ();
 				}
@@ -826,4 +819,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

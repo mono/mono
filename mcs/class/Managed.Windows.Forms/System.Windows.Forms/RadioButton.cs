@@ -31,13 +31,11 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[DefaultProperty("Checked")]
 	[DefaultEvent("CheckedChanged")]
-#if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[DefaultBindingProperty ("Checked")]
 	[ToolboxItem ("System.Windows.Forms.Design.AutoSizeToolboxItem," + Consts.AssemblySystem_Design)]
 	[Designer ("System.Windows.Forms.Design.RadioButtonDesigner, " + Consts.AssemblySystem_Design)]
-#endif
 	public class RadioButton : ButtonBase {
 		#region Local Variables
 		internal Appearance		appearance;
@@ -48,11 +46,7 @@ namespace System.Windows.Forms {
 
 		#region RadioButtonAccessibleObject Subclass
 		[ComVisible(true)]
-#if NET_2_0
 		public class RadioButtonAccessibleObject : ButtonBaseAccessibleObject {
-#else
-		public class RadioButtonAccessibleObject : ControlAccessibleObject {
-#endif
 			#region RadioButtonAccessibleObject Local Variables
 			private new RadioButton	owner;
 			#endregion	// RadioButtonAccessibleObject Local Variables
@@ -170,7 +164,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Draw (PaintEventArgs pe) {
-#if NET_2_0
 			// FIXME: This should be called every time something that can affect it
 			// is changed, not every paint.  Can only change so many things at a time.
 
@@ -186,12 +179,8 @@ namespace System.Windows.Forms {
 				ThemeEngine.Current.DrawRadioButton (pe.Graphics, this, glyph_rectangle, text_rectangle, image_rectangle, pe.ClipRectangle);
 			else
 				ThemeEngine.Current.DrawRadioButton (pe.Graphics, this.ClientRectangle, this);
-#else
-			ThemeEngine.Current.DrawRadioButton (pe.Graphics, this.ClientRectangle, this);
-#endif
 		}
 
-#if NET_2_0
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
 			if (this.AutoSize)
@@ -199,7 +188,6 @@ namespace System.Windows.Forms {
 
 			return base.GetPreferredSizeCore (proposedSize);
 		}
-#endif
 		#endregion	// Private Methods
 
 		#region Public Instance Properties
@@ -234,9 +222,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if !NET_2_0
-		[Bindable(true)]
-#endif
 		[Localizable(true)]
 		[DefaultValue(ContentAlignment.MiddleLeft)]
 		public ContentAlignment CheckAlign {
@@ -254,10 +239,8 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
-#if NET_2_0
 		[SettingsBindable (true)]
 		[Bindable (true, BindingDirection.OneWay)]
-#endif
 		public bool Checked {
 			get {
 				if (check_state != CheckState.Unchecked) {
@@ -395,14 +378,12 @@ namespace System.Windows.Forms {
 			remove { base.DoubleClick -= value; }
 		}
 		
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseDoubleClick { 
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }
 		}
-#endif
 		#endregion	// Events
 	}
 }
