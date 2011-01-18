@@ -38,10 +38,8 @@ namespace System.Windows.Forms
 		{
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int ActiveWindowTrackingDelay { get { return XplatUI.ActiveWindowTrackingDelay; } }
-#endif
 
 		public static ArrangeDirection ArrangeDirection {
 			get {
@@ -67,10 +65,8 @@ namespace System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int BorderMultiplierFactor { get { return ThemeEngine.Current.BorderMultiplierFactor; } }
-#endif
 
 		public static Size BorderSize {
 			get {
@@ -90,12 +86,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int CaretBlinkTime { get { return XplatUI.CaretBlinkTime; } }
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int CaretWidth { get { return XplatUI.CaretWidth; } }
-#endif
 
 		public static string ComputerName {
 			get {
@@ -151,12 +145,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int FontSmoothingContrast { get { return XplatUI.FontSmoothingContrast; } }
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int FontSmoothingType { get { return XplatUI.FontSmoothingType; } }
-#endif
 
 		public static Size FrameBorderSize {
 			get {
@@ -170,12 +162,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int HorizontalFocusThickness { get { return ThemeEngine.Current.HorizontalFocusThickness; } }
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int HorizontalResizeBorderThickness { get { return XplatUI.HorizontalResizeBorderThickness; } }
-#endif
 
 		public static int HorizontalScrollBarArrowWidth {
 			get {
@@ -201,7 +191,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public static int IconHorizontalSpacing {
 			get {
 				return IconSpacingSize.Width;
@@ -213,7 +202,6 @@ namespace System.Windows.Forms
 				return IconSpacingSize.Height;
 			}
 		}
-#endif
 
 		public static Size IconSpacingSize {
 			get {
@@ -221,7 +209,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static bool IsActiveWindowTrackingEnabled {
 			get { return XplatUI.IsActiveWindowTrackingEnabled; }
@@ -300,7 +287,6 @@ namespace System.Windows.Forms
 		public static bool IsToolTipAnimationEnabled {
 			get { return XplatUI.IsToolTipAnimationEnabled; }
 		}
-#endif
 
 		public static int KanjiWindowHeight {
 			get {
@@ -308,23 +294,13 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static int KeyboardDelay {
+		public static int KeyboardDelay {
 			get {
 				return XplatUI.KeyboardDelay;
 			}
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static int KeyboardSpeed {
+		public static int KeyboardSpeed {
 			get {
 				return XplatUI.KeyboardSpeed;
 			}
@@ -336,23 +312,16 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static bool MenuAccessKeysUnderlined {
+		public static bool MenuAccessKeysUnderlined {
 			get {
 				return ThemeEngine.Current.MenuAccessKeysUnderlined;
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static Size MenuBarButtonSize {
 			get { return ThemeEngine.Current.MenuBarButtonSize; }
 		}
-#endif
 
 		public static Size MenuButtonSize {
 			get {
@@ -381,10 +350,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int MenuShowDelay { get { return XplatUI.MenuShowDelay; } }
-#endif
 
 		public static bool MidEastEnabled {
 			get {
@@ -440,7 +407,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public static Size MouseHoverSize {
 			get {
 				return XplatUI.MouseHoverSize;
@@ -464,8 +430,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Never)]		
-#endif
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public static bool MousePresent {
 			get {
 				return true;
@@ -502,7 +467,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static LeftRightAlignment PopupMenuAlignment {
 			get { return XplatUI.PopupMenuAlignment; }
@@ -512,7 +476,6 @@ namespace System.Windows.Forms
 		public static PowerStatus PowerStatus {
 			get { return XplatUI.PowerStatus; }
 		}
-#endif
 
 		public static Size PrimaryMonitorMaximizedWindowSize {
 			get {
@@ -532,11 +495,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public static ScreenOrientation ScreenOrientation {
 			get { return ScreenOrientation.Angle0; }
 		}
-#endif
 
 		public static bool Secure {
 			get {
@@ -550,7 +511,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int SizingBorderWidth {
 			get { return XplatUI.SizingBorderWidth; }
@@ -560,7 +520,6 @@ namespace System.Windows.Forms
 		public static Size SmallCaptionButtonSize {
 			get { return XplatUI.SmallCaptionButtonSize; }
 		}
-#endif
 
 		public static Size SmallIconSize {
 			get {
@@ -568,13 +527,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		public static bool TerminalServerSession {
 			get {
 				return false;
 			}
 		}
-#endif
 
 		public static Size ToolWindowCaptionButtonSize {
 			get {
@@ -588,12 +545,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static bool UIEffectsEnabled {
 			get { return XplatUI.UIEffectsEnabled; }
 		}
-#endif
 
 		public static string UserDomainName {
 			get {
@@ -613,12 +568,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int VerticalFocusThickness { get { return ThemeEngine.Current.VerticalFocusThickness; } }
 		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
 		public static int VerticalResizeBorderThickness { get { return XplatUI.VerticalResizeBorderThickness; } }
-#endif
 
 		public static int VerticalScrollBarArrowHeight {
 			get {

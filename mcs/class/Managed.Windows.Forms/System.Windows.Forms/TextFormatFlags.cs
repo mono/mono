@@ -28,10 +28,7 @@
 namespace System.Windows.Forms {
 	
 	[FlagsAttribute()]
-#if NET_2_0
-	public 
-#endif
-	enum TextFormatFlags {
+	public enum TextFormatFlags {
 		Left = 0,
 		Top = 0,
 		Default = 0,

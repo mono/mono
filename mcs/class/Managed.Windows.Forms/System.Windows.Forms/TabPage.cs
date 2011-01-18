@@ -30,10 +30,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-#endif
 	[DefaultEvent("Click")]
 	[DesignTimeVisible(false)]
 	[DefaultProperty("Text")]
@@ -42,15 +40,11 @@ namespace System.Windows.Forms {
 	public class TabPage : Panel {
 		#region Fields
 		private int imageIndex = -1;
-#if NET_2_0
 		private string imageKey;
-#endif
 		private string tooltip_text = String.Empty;
 		private Rectangle tab_bounds;
 		private int row;
-#if NET_2_0
 		private bool use_visual_style_back_color;
-#endif
 		#endregion	// Fields
 		
 		#region Public Constructors
@@ -69,7 +63,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region .NET 2.0 Public Instance Properties
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -118,7 +111,6 @@ namespace System.Windows.Forms {
 			get { return base.BackColor; }
 			set { use_visual_style_back_color = false; base.BackColor = value; }
 		}
-#endif
 		#endregion
 
 		#region Public Instance Properties
@@ -143,9 +135,7 @@ namespace System.Windows.Forms {
 			set { base.Enabled = value; }
 		}
 
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-#endif
 		[DefaultValue(-1)]
 		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
@@ -160,7 +150,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[DefaultValue ("")]
@@ -179,8 +168,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#endif
-
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new int TabIndex {
@@ -195,9 +182,7 @@ namespace System.Windows.Forms {
 			set { base.TabStop = value; }
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Always)]
-#endif
 		[Browsable(true)]
 		[Localizable(true)]
 		public override string Text {
@@ -303,7 +288,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		protected override void OnEnter (EventArgs e)
 		{
 			base.OnEnter (e);
@@ -318,18 +302,15 @@ namespace System.Windows.Forms {
 		{
 			base.OnPaintBackground (e);
 		}
-#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -345,14 +326,12 @@ namespace System.Windows.Forms {
 			remove { base.EnabledChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler LocationChanged {
 			add { base.LocationChanged += value; }
 			remove { base.LocationChanged -= value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -368,14 +347,12 @@ namespace System.Windows.Forms {
 			remove { base.TabStopChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler TextChanged {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -386,7 +363,6 @@ namespace System.Windows.Forms {
 
 		#endregion	// Events
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new Point Location {
@@ -398,11 +374,9 @@ namespace System.Windows.Forms {
 				base.Location = value;
 			}
 		}
-#endif
+
 		#region Class TabPageControlCollection
-#if NET_2_0
 		[ComVisible (false)]
-#endif
 		public class TabPageControlCollection : ControlCollection {
 
 			//private TabPage owner;

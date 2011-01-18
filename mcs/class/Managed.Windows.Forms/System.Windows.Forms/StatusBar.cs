@@ -36,10 +36,8 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-#endif
 	[DefaultEvent("PanelClick")]
 	[Designer("System.Windows.Forms.Design.StatusBarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Text")]
@@ -84,7 +82,6 @@ namespace System.Windows.Forms {
 			set { base.BackgroundImage = value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
@@ -95,7 +92,6 @@ namespace System.Windows.Forms {
 				base.BackgroundImageLayout = value;
 			}
 		}
-#endif
 
 		[Localizable(true)]
 		[DefaultValue(DockStyle.Bottom)]
@@ -104,7 +100,6 @@ namespace System.Windows.Forms {
 			set { base.Dock = value; }
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get {
@@ -114,7 +109,7 @@ namespace System.Windows.Forms {
 				base.DoubleBuffered = value;
 			}
 		}
-#endif
+
 		[Localizable(true)]
 		public override Font Font {
 			get { return base.Font; }
@@ -484,7 +479,6 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged
@@ -492,7 +486,6 @@ namespace System.Windows.Forms {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
-#endif	
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -531,20 +524,15 @@ namespace System.Windows.Forms {
 		
 
 		#region Subclass StatusBarPanelCollection
-#if NET_2_0
 		[ListBindable (false)]
-#endif
 		public class StatusBarPanelCollection :	 IList, ICollection, IEnumerable {
 			#region Fields
 			private StatusBar owner;
 			private ArrayList panels = new ArrayList ();
-#if NET_2_0
 			private int last_index_by_key;
-#endif
 			#endregion	// Fields
 
 			#region UIA Framework Events
-#if NET_2_0
 			static object UIACollectionChangedEvent = new object ();
 
 			internal event CollectionChangeEventHandler UIACollectionChanged {
@@ -559,7 +547,6 @@ namespace System.Windows.Forms {
 				if (eh != null)
 					eh (owner, e);
 			}
-#endif
 			#endregion
 
 			#region Public Constructors
@@ -583,10 +570,8 @@ namespace System.Windows.Forms {
 					owner.Refresh ();
 				}
 
-#if NET_2_0
 				// UIA Framework Event: Panel Added
 				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, res));
-#endif
 
 				return res;
 			}
@@ -616,24 +601,18 @@ namespace System.Windows.Forms {
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("index");
 
-#if NET_2_0
 					// UIA Framework Event: Panel Removed
 					OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
-#endif
 
 					value.SetParent (owner);
 
 					panels [index] = value;
 
-#if NET_2_0
 					// UIA Framework Event: Panel Added
 					OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
-#endif
 				}
 			}
 			
-#if NET_2_0
-
 			public virtual StatusBarPanel this [string key] {
 				get {
 					int index = IndexOfKey (key);
@@ -643,7 +622,6 @@ namespace System.Windows.Forms {
 					return null;
 				}
 			}
-#endif
 
 			#endregion	// Public Instance Properties
 
@@ -675,23 +653,19 @@ namespace System.Windows.Forms {
 
 				owner.Refresh ();
 
-#if NET_2_0
 				// UIA Framework Event: Panel Cleared
 				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
-#endif
 			}
 
 			public bool Contains (StatusBarPanel panel) {
 				return panels.Contains (panel);
 			}
 
-#if NET_2_0
 			public virtual bool ContainsKey (string key)
 			{
 				int index = IndexOfKey (key);
 				return index >= 0 && index < Count;
 			}
-#endif
 
 			public IEnumerator GetEnumerator () {
 				return panels.GetEnumerator ();
@@ -701,7 +675,6 @@ namespace System.Windows.Forms {
 				return panels.IndexOf (panel);
 			}
 			
-#if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
 				if (key == null || key == string.Empty)
@@ -723,7 +696,6 @@ namespace System.Windows.Forms {
 				
 				return -1;
 			}
-#endif
 
 			public virtual void Insert (int index, StatusBarPanel value) {
 				if (value == null)
@@ -737,40 +709,32 @@ namespace System.Windows.Forms {
 				panels.Insert(index, value);
 				owner.Refresh ();
 
-#if NET_2_0
 				// UIA Framework Event: Panel Added
 				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
-#endif
 			}
 
 			public virtual void Remove (StatusBarPanel value) {
 				int index = IndexOf (value);
 				panels.Remove (value);
 
-#if NET_2_0
 				// UIA Framework Event: Panel Removed
 				if (index >= 0)
 					OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
-#endif
 			}
 
 			public virtual void RemoveAt (int index) {
 				panels.RemoveAt (index);
 
-#if NET_2_0
 				// UIA Framework Event: Panel Removed
 				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
-#endif
 			}
 
-#if NET_2_0
 			public virtual void RemoveByKey (string key)
 			{
 				int index = IndexOfKey (key);
 				if (index >= 0 && index < Count)
 					RemoveAt (index);
 			}
-#endif
 
 			#endregion	// Public Instance Methods
 

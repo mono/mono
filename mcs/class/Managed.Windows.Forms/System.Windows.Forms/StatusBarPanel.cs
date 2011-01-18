@@ -31,9 +31,7 @@ using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-#if NET_2_0
 	[ToolboxItem (false)]
-#endif
 	[DefaultProperty("Text")]
 	[DesignTimeVisible(false)]
 	public class StatusBarPanel : Component, ISupportInitialize {
@@ -53,14 +51,11 @@ namespace System.Windows.Forms {
 		private int min_width = 10;
 		internal int X;
 		
-#if NET_2_0
 		private string name;
 		private object tag;
-#endif
 		#endregion	// Local Variables
 
 		#region UIA Framework Events
-#if NET_2_0
 		static object UIATextChangedEvent = new object ();
 
 		internal event EventHandler UIATextChanged {
@@ -74,7 +69,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		#endregion
 
 		#region Constructors
@@ -93,9 +87,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.All)]
-#endif
 		[DefaultValue(StatusBarPanelAutoSize.None)]
 		public StatusBarPanelAutoSize AutoSize {
 			get { return auto_size; }
@@ -137,13 +129,9 @@ namespace System.Windows.Forms {
 				return min_width;
 			}
 			set {
-#if NET_2_0
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ("value");
-#else
-				if (value < 0)
-					throw new ArgumentException ("value");
-#endif
+
 				min_width = value;
 				if (min_width > width)
 					width = min_width;
@@ -151,7 +139,7 @@ namespace System.Windows.Forms {
 				Invalidate ();
 			}
 		}
-#if NET_2_0
+
 		[Localizable (true)]
 		public string Name {
 			get {
@@ -163,7 +151,6 @@ namespace System.Windows.Forms {
 				name = value;
 			}
 		}
-#endif
 		
 		[DefaultValue(100)]
 		[Localizable(true)]
@@ -190,7 +177,7 @@ namespace System.Windows.Forms {
 				Invalidate ();
 			}
 		}
-#if NET_2_0
+
 		[TypeConverter (typeof (StringConverter))]
 		[Localizable (false)]
 		[Bindable (true)]
@@ -203,7 +190,6 @@ namespace System.Windows.Forms {
 				tag = value;
 			}
 		}
-#endif
 
 		[DefaultValue("")]
 		[Localizable(true)]
@@ -213,10 +199,8 @@ namespace System.Windows.Forms {
 				text = value; 
 				InvalidateContents ();
 
-#if NET_2_0
 				// UIA Framework Event: Text Changed
 				OnUIATextChanged (EventArgs.Empty);
-#endif
 			}
 		}
 
