@@ -32,10 +32,7 @@ using System.Drawing;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
-	public
-#endif
-	class PopupEventArgs : CancelEventArgs
+	public class PopupEventArgs : CancelEventArgs
 	{
 		private Control associated_control;
 		private IWin32Window associated_window;

@@ -26,7 +26,6 @@
 
 // COMPLETE
 
-#if NET_2_0
 namespace System.Windows.Forms {
 	public enum ProgressBarStyle {
 		Blocks		= 0,
@@ -34,4 +33,3 @@ namespace System.Windows.Forms {
 		Marquee		= 2
 	}
 }
-#endif

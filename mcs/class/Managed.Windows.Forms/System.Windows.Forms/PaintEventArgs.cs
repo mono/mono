@@ -38,10 +38,9 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public PaintEventArgs (Graphics graphics, Rectangle clipRect)
 		{
-#if NET_2_0
 			if (graphics == null)
 				throw new ArgumentNullException ("graphics");
-#endif
+
 			this.graphics=graphics;
 			this.clip_rectangle=clipRect;
 		}
@@ -90,11 +89,6 @@ namespace System.Windows.Forms {
 		protected virtual void Dispose (bool disposing)
 		{
 			if (!disposed) {
-#if !NET_2_0
-
-				if (graphics != null)
-					graphics.Dispose ();
-#endif
 				disposed = true;
 			}
 		}

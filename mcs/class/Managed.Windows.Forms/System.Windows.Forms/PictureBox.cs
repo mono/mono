@@ -37,28 +37,21 @@ using System.Net;
 namespace System.Windows.Forms {
 	[DefaultProperty("Image")]
 	[Designer("System.Windows.Forms.Design.PictureBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[Docking (DockingBehavior.Ask)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[DefaultBindingProperty ("Image")]
-#endif
-	public class PictureBox : Control 
-#if NET_2_0
-					, ISupportInitialize
-#endif
+	public class PictureBox : Control, ISupportInitialize
 	{
 		#region Fields
 		private Image	image;
 		private PictureBoxSizeMode size_mode;
-#if NET_2_0
 		private Image	error_image;
 		private string	image_location;
 		private Image	initial_image;
 		private bool	wait_on_load;
 		private WebClient image_download;
 		private bool image_from_url;
-#endif
 		private int	no_update;
 		#endregion	// Fields
 
@@ -69,19 +62,14 @@ namespace System.Windows.Forms {
 		{
 			//recalc = true;
 			no_update = 0;
-#if NET_2_0
+
 			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
-#else
-			SetStyle (ControlStyles.DoubleBuffer, true);
-#endif
 			SetStyle (ControlStyles.Opaque, false);
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 			HandleCreated += new EventHandler(PictureBox_HandleCreated);
-#if NET_2_0
 			initial_image = ResourceImageLoader.Get ("image-x-generic.png");
 			error_image = ResourceImageLoader.Get ("image-missing.png");
-#endif
 		}
 		#endregion	// Public Constructor
 
@@ -96,7 +84,6 @@ namespace System.Windows.Forms {
 					return;
 				size_mode = value;
 				
-#if NET_2_0
 				if (size_mode == PictureBoxSizeMode.AutoSize) {
 					AutoSize = true;
 					SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
@@ -104,7 +91,7 @@ namespace System.Windows.Forms {
 					AutoSize = false;
 					SetAutoSizeMode (AutoSizeMode.GrowOnly);
 				}
-#endif
+
 				UpdateSize ();
 				if (no_update == 0) {
 					Invalidate ();
@@ -114,11 +101,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Bindable (true)]
-#else
-		[DefaultValue(null)]
-#endif
 		[Localizable(true)]
 		public Image Image {
 			get { return image; }
@@ -139,7 +122,6 @@ namespace System.Windows.Forms {
 			set { base.CausesValidation = value; }
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[RefreshProperties (RefreshProperties.All)]
 		public Image ErrorImage {
@@ -178,7 +160,6 @@ namespace System.Windows.Forms {
 			get { return wait_on_load; }
 			set { wait_on_load = value; }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -259,9 +240,7 @@ namespace System.Windows.Forms {
 				StopAnimation ();
 				image = null;
 			}
-#if NET_2_0
 			initial_image = null;
-#endif
 
 			base.Dispose (disposing);
 		}
@@ -289,7 +268,6 @@ namespace System.Windows.Forms {
 			base.OnEnabledChanged (e);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnHandleCreated (EventArgs e)
 		{
@@ -315,7 +293,6 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
 		protected override void OnParentChanged (EventArgs e)
 		{
@@ -329,7 +306,6 @@ namespace System.Windows.Forms {
 			Invalidate ();
 		}
 
-#if NET_2_0
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
 			if (image == null)
@@ -337,19 +313,8 @@ namespace System.Windows.Forms {
 			else
 				return image.Size;
 		}
-#else
-		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
-		{
-			if (size_mode == PictureBoxSizeMode.AutoSize && image != null) {
-				width = image.Width;
-				height = image.Height;
-			}
-			base.SetBoundsCore (x, y, width, height, specified);
-		}
-#endif
 		#endregion	// Protected Instance Methods
 
-#if NET_2_0
 		#region ISupportInitialize Interface
 		void System.ComponentModel.ISupportInitialize.BeginInit() {
 			no_update++;
@@ -364,10 +329,8 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion	// ISupportInitialize Interface
-#endif
 
 		#region Private Properties
-#if NET_2_0
 		private WebClient ImageDownload {
 			get { 
 				if (image_download == null)
@@ -376,7 +339,6 @@ namespace System.Windows.Forms {
 				return image_download;
 			}
 		}
-#endif
 		#endregion
 		
 		#region Private Methods
@@ -385,9 +347,7 @@ namespace System.Windows.Forms {
 		{
 			StopAnimation ();
 
-#if NET_2_0
 			image_from_url = from_url;
-#endif
 			image = value;
 
 			if (IsHandleCreated) {
@@ -414,13 +374,9 @@ namespace System.Windows.Forms {
 		{
 			if (image == null)
 				return;
-#if NET_2_0
+
 			if (Parent != null)
 				Parent.PerformLayout (this, "AutoSize");
-#else
-			if (size_mode == PictureBoxSizeMode.AutoSize)
-				ClientSize = image.Size; 
-#endif
 		}
 
 		private void OnAnimateImage (object sender, EventArgs e)
@@ -458,7 +414,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		void ImageDownload_DownloadDataCompleted (object sender, DownloadDataCompletedEventArgs e)
 		{
 			if (e.Error != null && !e.Cancelled)
@@ -478,11 +433,9 @@ namespace System.Windows.Forms {
 		{
 			OnLoadProgressChanged (new ProgressChangedEventArgs (e.ProgressPercentage, e.UserState));
 		}
-#endif
 		#endregion	// Private Methods
 
 		#region Public Instance Methods
-#if NET_2_0
 		public void CancelAsync ()
 		{
 			if (image_download != null)
@@ -541,7 +494,6 @@ namespace System.Windows.Forms {
 			ImageDownload.DownloadDataCompleted += new DownloadDataCompletedEventHandler (ImageDownload_DownloadDataCompleted);
 			ImageDownload.DownloadDataAsync (uri);
 		}
-#endif
 
 		public override string ToString() {
 			return String.Format("{0}, SizeMode: {1}", base.ToString (), SizeMode);
@@ -612,7 +564,6 @@ namespace System.Windows.Forms {
 			remove { base.Leave -= value; }
 		}
 
-#if NET_2_0
 		static object LoadCompletedEvent = new object ();
 		static object LoadProgressChangedEvent = new object ();
 
@@ -625,7 +576,6 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (LoadProgressChangedEvent, value); }
 			remove { Events.RemoveHandler (LoadProgressChangedEvent, value); }
 		}
-#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]

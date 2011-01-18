@@ -37,16 +37,12 @@ using System.Reflection;
 
 namespace System.Windows.Forms
 {
-#if NET_2_0
 	[Designer ("System.Windows.Forms.Design.PrintDialogDesigner, " + Consts.AssemblySystem_Design,
 		   "System.ComponentModel.Design.IDesigner")]
-#endif
 	[DefaultProperty("Document")]
 	public sealed class PrintDialog : CommonDialog {
 		PrintDocument document;
-#if NET_2_0
 		bool allow_current_page;
-#endif
 		bool allow_print_to_file;
 		bool allow_selection;
 		bool allow_some_pages;
@@ -76,9 +72,7 @@ namespace System.Windows.Forms
 		private Label label_where;
 		private Label label_comment;
 		private CollatePreview collate;
-#if NET_2_0
 		private bool use_ex_dialog;
-#endif
 
 		public PrintDialog ()
 		{
@@ -102,7 +96,6 @@ namespace System.Windows.Forms
 			ShowNetwork = true;
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		public bool AllowCurrentPage {
 			get {
@@ -114,7 +107,6 @@ namespace System.Windows.Forms
 				radio_pages.Enabled = value;
 			}
 		}
-#endif
 
 		[DefaultValue(true)]
 		public bool AllowPrintToFile {
@@ -178,10 +170,8 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PrinterSettings PrinterSettings {
 			get {
-#if NET_2_0
 				if (current_settings == null)
 					current_settings = new PrinterSettings ();
-#endif
 				return current_settings;
 			}
 
@@ -228,22 +218,15 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO ("Stub, not implemented, will always use default dialog")]
 		[DefaultValue (false)]
 		public bool UseEXDialog {
 			get { return use_ex_dialog; }
 			set { use_ex_dialog = value; }
 		}
-#endif
 
 		protected override bool RunDialog (IntPtr hwndOwner)
 		{
-#if ONLY_1_1
-			if (PrinterSettings == null)
-				throw new ArgumentException ("PrintDialog needs a PrinterSettings object to display.");
-#endif
-
 			if (allow_some_pages && PrinterSettings.FromPage > PrinterSettings.ToPage)
 				throw new ArgumentException ("FromPage out of range");
 

@@ -63,9 +63,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private Brush inactive_text_brush;
 		private ListBox dropdown_list;
 		private Point last_click;
-#if NET_2_0
 		private Padding dropdown_form_padding;
-#endif
 		#endregion
 
 		#region Contructors
@@ -89,9 +87,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dialog_form.StartPosition = FormStartPosition.Manual;
 			dialog_form.FormBorderStyle = FormBorderStyle.None;
 			dialog_form.ShowInTaskbar = false;
-#if NET_2_0
+
 			dropdown_form_padding = new Padding (0, 0, 2, 2);
-#endif
+
 			row_height = Font.Height + font_height_padding;
 
 			grid_textbox.Visible = false;
@@ -959,20 +957,16 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_form.Size = control.Size;
 			control.Dock = DockStyle.Fill;
 
-			if (resizeable) { // always false on .Net 1.1 as UITypeEditor.IsDropDownResizable is a 2.0 property
-#if NET_2_0
+			if (resizeable) {
 				dropdown_form.Padding = dropdown_form_padding;
 				dropdown_form.Width += dropdown_form_padding.Right;
 				dropdown_form.Height += dropdown_form_padding.Bottom;
-#endif
 				dropdown_form.FormBorderStyle = FormBorderStyle.Sizable;
 				dropdown_form.SizeGripStyle = SizeGripStyle.Show;
 			} else {
 				dropdown_form.FormBorderStyle = FormBorderStyle.None;
 				dropdown_form.SizeGripStyle = SizeGripStyle.Hide;
-#if NET_2_0
 				dropdown_form.Padding = Padding.Empty;
-#endif
 			}
 
 			dropdown_form.Controls.Add (control);
