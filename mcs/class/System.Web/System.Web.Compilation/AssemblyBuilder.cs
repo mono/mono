@@ -771,12 +771,6 @@ namespace System.Web.Compilation
 				options.CompilerOptions = compilerOptions;
 			}
 
-			// HACK, HACK
-			// We need to pass /noconfig to mcs because otherwise it will error out
-			// complaining that another assembly with the same identity is already
-			// loaded. This is due to the fact that we pass full assembly path as
-			// reported by Assembly.CodeBase while mcs uses its own resolver and the
-			// paths differ.
 			if (String.IsNullOrEmpty (compilerOptions))
 				compilerOptions = "/noconfig";
 			else if (compilerOptions.IndexOf ("noconfig", StringComparison.OrdinalIgnoreCase) == -1)
