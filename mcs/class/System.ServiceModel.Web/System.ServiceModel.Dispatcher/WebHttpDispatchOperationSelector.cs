@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -39,7 +40,7 @@ namespace System.ServiceModel.Dispatcher
 	{
 		public const string HttpOperationSelectorUriMatchedPropertyName = "UriMatched";
 
-		UriTemplateTable table;
+		Dictionary<string,UriTemplateTable> tables = new Dictionary<string,UriTemplateTable> ();
 
 		protected WebHttpDispatchOperationSelector ()
 		{
@@ -52,12 +53,16 @@ namespace System.ServiceModel.Dispatcher
 			if (endpoint.Address == null)
 				throw new InvalidOperationException ("EndpointAddress must be set in the argument ServiceEndpoint");
 
-			table = new UriTemplateTable (endpoint.Address.Uri);
-
 			foreach (OperationDescription od in endpoint.Contract.Operations) {
 				WebAttributeInfo info = od.GetWebAttributeInfo ();
-				if (info != null)
+				if (info != null) {
+					UriTemplateTable table;
+					if (!tables.TryGetValue (info.Method, out table)) {
+						 table = new UriTemplateTable (endpoint.Address.Uri);
+						 tables.Add (info.Method, table);
+					}
 					table.KeyValuePairs.Add (new TemplateTablePair (info.BuildUriTemplate (od, null), od));
+				}
 			}
 		}
 
@@ -71,14 +76,26 @@ namespace System.ServiceModel.Dispatcher
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
-			if (message.Properties.ContainsKey (WebBodyFormatMessageProperty.Name))
-				throw new ArgumentException ("There is already message property for Web body format");
+			// FIXME: something like this check is required here or somewhere else. See WebHttpDispatchOperationSelectorTest.SelectOperationCheckExistingProperty()
+//			if (message.Properties.ContainsKey (WebBodyFormatMessageProperty.Name))
+//				throw new ArgumentException ("There is already message property for Web body format");
 			uriMatched = false;
 			Uri to = message.Headers.To;
 			if (to == null)
 				return String.Empty;
 
-			UriTemplateMatch match = table.MatchSingle (to);
+			// First, UriTemplateTable with corresponding HTTP method is tested. Then other tables can be tested for match.
+			UriTemplateTable table;
+			var hp = (HttpRequestMessageProperty) message.Properties [HttpRequestMessageProperty.Name];
+			tables.TryGetValue (hp == null ? null : hp.Method, out table);
+			UriTemplateMatch match = table == null ? null : table.MatchSingle (to);
+			if (match == null)
+				foreach (var tab in tables.Values)
+					if ((match = tab.MatchSingle (to)) != null) {
+						table = tab;
+						break;
+					}
+
 			OperationDescription od = null;
 			if (match != null) {
 				uriMatched = true;
