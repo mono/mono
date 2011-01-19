@@ -750,6 +750,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			// Empty IEnumerable, that also implements IList
 			source.DataSource = lv.Items;
 			source.DataMember = "Text";
+			// FIXME: The test below does not pass with .NET (type is BindingList<char>)
 			Assert.IsTrue (source.List is BindingList<string>, "1");
 			Assert.AreEqual (0, source.List.Count, "2");
 		}
