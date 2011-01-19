@@ -139,6 +139,19 @@ namespace System.ServiceModel.Dispatcher
 			throw new SystemException ("INTERNAL ERROR: should not happen");
 		}
 
+		protected string GetMediaTypeString (WebContentFormat fmt)
+		{
+			switch (fmt) {
+			case WebContentFormat.Raw:
+				return "application/octet-stream";
+			case WebContentFormat.Json:
+				return "application/json";
+			case WebContentFormat.Xml:
+			default:
+				return "application/xml";
+			}
+		}
+
 		protected void CheckMessageVersion (MessageVersion messageVersion)
 		{
 			if (messageVersion == null)
@@ -264,24 +277,36 @@ namespace System.ServiceModel.Dispatcher
 				if (parameters.Length != md.Body.Parts.Count)
 					throw new ArgumentException ("Parameter array length does not match the number of message body parts");
 
+				object msgpart = null;
+
 				for (int i = 0; i < parameters.Length; i++) {
 					var p = md.Body.Parts [i];
 					string name = p.Name.ToUpper (CultureInfo.InvariantCulture);
 					if (UriTemplate.PathSegmentVariableNames.Contains (name) ||
 					    UriTemplate.QueryValueVariableNames.Contains (name))
 						c.Add (name, parameters [i] != null ? Converter.ConvertValueToString (parameters [i], parameters [i].GetType ()) : null);
-					else
+					else {
 						// FIXME: bind as a message part
-						throw new NotImplementedException (String.Format ("parameter {0} is not contained in the URI template {1} {2} {3}", p.Name, UriTemplate, UriTemplate.PathSegmentVariableNames.Count, UriTemplate.QueryValueVariableNames.Count));
+						if (msgpart == null)
+							msgpart = parameters [i];
+						else
+							throw new  NotImplementedException (String.Format ("More than one parameters including {0} that are not contained in the URI template {1} was found.", p.Name, UriTemplate));
+					}
 				}
 
 				Uri to = UriTemplate.BindByName (Endpoint.Address.Uri, c);
 
-				Message ret = Message.CreateMessage (messageVersion, (string) null);
+				Message ret = Message.CreateMessage (messageVersion, (string) null, msgpart);
 				ret.Headers.To = to;
 
 				var hp = new HttpRequestMessageProperty ();
 				hp.Method = Info.Method;
+
+				WebMessageFormat msgfmt = Info.IsResponseFormatSetExplicitly ? Info.ResponseFormat : Behavior.DefaultOutgoingResponseFormat;
+				var contentFormat = ToContentFormat (msgfmt, msgpart);
+				string mediaType = GetMediaTypeString (contentFormat);
+				// FIXME: get encoding from somewhere
+				hp.Headers ["Content-Type"] = mediaType + "; charset=utf-8";
 
 #if !NET_2_1
 				if (WebOperationContext.Current != null)
@@ -449,7 +474,6 @@ namespace System.ServiceModel.Dispatcher
 
 				WebMessageFormat msgfmt = Info.IsResponseFormatSetExplicitly ? Info.ResponseFormat : Behavior.DefaultOutgoingResponseFormat;
 
-				string mediaType = null;
 				XmlObjectSerializer serializer = null;
 
 				// FIXME: serialize ref/out parameters as well.
@@ -459,19 +483,18 @@ namespace System.ServiceModel.Dispatcher
 				switch (msgfmt) {
 				case WebMessageFormat.Xml:
 					serializer = GetSerializer (WebContentFormat.Xml);
-					mediaType = "application/xml";
 					name = IsResponseBodyWrapped ? md.Body.WrapperName : null;
 					ns = IsResponseBodyWrapped ? md.Body.WrapperNamespace : null;
 					break;
 				case WebMessageFormat.Json:
 					serializer = GetSerializer (WebContentFormat.Json);
-					mediaType = "application/json";
 					name = IsResponseBodyWrapped ? (BodyName ?? md.Body.ReturnValue.Name) : null;
 					ns = String.Empty;
 					break;
 				}
 
 				var contentFormat = ToContentFormat (msgfmt, result);
+				string mediaType = GetMediaTypeString (contentFormat);
 				Message ret = contentFormat == WebContentFormat.Raw ? new RawMessage ((Stream) result) : Message.CreateMessage (MessageVersion.None, null, new WrappedBodyWriter (result, serializer, name, ns, contentFormat));
 
 				// Message properties
