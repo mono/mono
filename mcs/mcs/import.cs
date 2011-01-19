@@ -1806,7 +1806,7 @@ namespace Mono.CSharp
 						continue;
 
 					imported = importer.CreateNestedType (t, declaringType);
-					cache.AddMember (imported);
+					cache.AddMemberImported (imported);
 				}
 
 				foreach (var member in all) {
@@ -1943,7 +1943,7 @@ namespace Mono.CSharp
 						throw new NotImplementedException (member.ToString ());
 					}
 
-					cache.AddMember (imported);
+					cache.AddMemberImported (imported);
 				}
 			}
 

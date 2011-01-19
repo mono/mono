@@ -4235,7 +4235,7 @@ namespace Mono.CSharp {
 								if (best_candidate.DeclaringType.IsInterface && member.DeclaringType.ImplementsInterface (best_candidate.DeclaringType, false)) {
 									//
 									// We pack all interface members into top level type which makes the overload resolution
-									// more complicated for interfaces. We accomodate for this by removing methods with same
+									// more complicated for interfaces. We compensate it by removing methods with same
 									// signature when building the cache hence this path should not really be hit often
 									//
 									// Example:

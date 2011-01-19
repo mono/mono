@@ -1571,6 +1571,10 @@ namespace Mono.CSharp {
 			ComputeIndexerName();
 			CheckEqualsAndGetHashCode();
 
+			if (Kind == MemberKind.Interface && iface_exprs != null) {
+				MemberCache.RemoveHiddenMembers (spec);
+			}
+
 			return true;
 		}
 
