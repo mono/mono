@@ -549,11 +549,11 @@ namespace Mono.CSharp
 					Buffer.BlockCopy (publicKeyHeader, 0, public_key, 0, publicKeyHeader.Length);
 
 					// Length of Public Key (in bytes)
-					byte[] lastPart = BitConverter.GetBytes (public_key.Length - 12);
-					public_key[8] = lastPart[0];
-					public_key[9] = lastPart[1];
-					public_key[10] = lastPart[2];
-					public_key[11] = lastPart[3];
+					int lastPart = public_key.Length - 12;
+					public_key[8] = (byte) (lastPart & 0xFF);
+					public_key[9] = (byte) ((lastPart >> 8) & 0xFF);
+					public_key[10] = (byte) ((lastPart >> 16) & 0xFF);
+					public_key[11] = (byte) ((lastPart >> 24) & 0xFF);
 
 					Buffer.BlockCopy (publickey, 0, public_key, 12, publickey.Length);
 				} catch {
