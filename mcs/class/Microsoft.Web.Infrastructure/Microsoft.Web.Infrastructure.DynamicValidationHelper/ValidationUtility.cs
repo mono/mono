@@ -24,12 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using Microsoft.Web.Infrastructure.DynamicValidationHelper;
 using System;
 using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Security;
 using System.Web;
+using System.Web.Util;
 
 namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 {
@@ -39,9 +39,14 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 		[SecuritySafeCritical]
 		public static void EnableDynamicValidation (HttpContext context)
 		{
-			// No-op on Mono. We just split form/cookie/query string validation in two
-			// parts and the code in GetUnvalidatedCollections below accesses the first,
-			// unvalidated part.
+			HttpRequest req = context != null ? context.Request : null;
+			if (req == null)
+				return;
+
+			// Just to be safe, make sure it's on
+			req.ValidateInput ();
+			req.SetFormCollection (new LazyWebROCollection (RequestValidationSource.Form, req.FormUnvalidated), true);
+			req.SetQueryStringCollection (new LazyWebROCollection (RequestValidationSource.QueryString, req.QueryStringUnvalidated), true);
 		}
 
 		[SecuritySafeCritical]
@@ -62,8 +67,6 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 			formGetter = null;
 			queryStringGetter = null;
 			
-			// This is *very* simplified. We should probably create a wrapper class
-			// which would iterate over the collections on demand
 			formGetter = () => {
 				HttpRequest req = context != null ? context.Request : null;
 				if (req == null)
