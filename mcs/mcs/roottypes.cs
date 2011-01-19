@@ -110,7 +110,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public CharSet DefaultCharSet = CharSet.Ansi;
+		public CharSet? DefaultCharSet;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
 
 		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
@@ -123,7 +123,6 @@ namespace Mono.CSharp
 
 		ModuleBuilder builder;
 
-		bool has_default_charset;
 		bool has_extenstion_method;
 
 		PredefinedAttributes predefined_attributes;
@@ -172,7 +171,7 @@ namespace Mono.CSharp
 
 		public bool HasDefaultCharSet {
 			get {
-				return has_default_charset;
+				return DefaultCharSet.HasValue;
 			}
 		}
 
@@ -261,7 +260,25 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (a.Type == pa.CLSCompliant) {
+			if (a.Type == pa.DefaultCharset) {
+				switch (a.GetCharSetValue ()) {
+				case CharSet.Ansi:
+				case CharSet.None:
+					break;
+				case CharSet.Auto:
+					DefaultCharSet = CharSet.Auto;
+					DefaultCharSetType = TypeAttributes.AutoClass;
+					break;
+				case CharSet.Unicode:
+					DefaultCharSet = CharSet.Unicode;
+					DefaultCharSetType = TypeAttributes.UnicodeClass;
+					break;
+				default:
+					Report.Error (1724, a.Location, "Value specified for the argument to `{0}' is not valid",
+						a.GetSignatureForError ());
+					break;
+				}
+			} else if (a.Type == pa.CLSCompliant) {
 				Attribute cls = DeclaringAssembly.CLSCompliantAttribute;
 				if (cls == null) {
 					Report.Warning (3012, 1, a.Location,
@@ -318,10 +335,6 @@ namespace Mono.CSharp
 
 			// FIXME: Temporary hack for repl to reset
 			static_data = null;
-
-			// TODO: It should be done much later when the types are resolved
-			// but that require DefineType clean-up
-			ResolveGlobalAttributes ();
 
 			foreach (TypeContainer tc in types)
 				tc.CreateType ();
@@ -444,54 +457,9 @@ namespace Mono.CSharp
 			base.RemoveMemberType (ds);
 		}
 
-		/// <summary>
-		/// It is called very early therefore can resolve only predefined attributes
-		/// </summary>
-		void ResolveGlobalAttributes ()
-		{
-			if (OptAttributes == null)
-				return;
-
-			if (!OptAttributes.CheckTargets ())
-				return;
-
-			// FIXME: Define is wrong as the type may not exist yet
-			var DefaultCharSet_attr = new PredefinedAttribute (this, "System.Runtime.InteropServices", "DefaultCharSetAttribute");
-			DefaultCharSet_attr.Define ();
-			Attribute a = ResolveModuleAttribute (DefaultCharSet_attr);
-			if (a != null) {
-				has_default_charset = true;
-				DefaultCharSet = a.GetCharSetValue ();
-				switch (DefaultCharSet) {
-				case CharSet.Ansi:
-				case CharSet.None:
-					break;
-				case CharSet.Auto:
-					DefaultCharSetType = TypeAttributes.AutoClass;
-					break;
-				case CharSet.Unicode:
-					DefaultCharSetType = TypeAttributes.UnicodeClass;
-					break;
-				default:
-					Report.Error (1724, a.Location, "Value specified for the argument to `{0}' is not valid", 
-						DefaultCharSet_attr.GetSignatureForError ());
-					break;
-				}
-			}
-		}
-
 		public Attribute ResolveAssemblyAttribute (PredefinedAttribute a_type)
 		{
 			Attribute a = OptAttributes.Search ("assembly", a_type);
-			if (a != null) {
-				a.Resolve ();
-			}
-			return a;
-		}
-
-		Attribute ResolveModuleAttribute (PredefinedAttribute a_type)
-		{
-			Attribute a = OptAttributes.Search ("module", a_type);
 			if (a != null) {
 				a.Resolve ();
 			}

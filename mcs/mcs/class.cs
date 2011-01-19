@@ -656,7 +656,7 @@ namespace Mono.CSharp {
 
 		protected override TypeAttributes TypeAttr {
 			get {
-				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) | base.TypeAttr;
+				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel);
 			}
 		}
 
@@ -1772,6 +1772,11 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (TypeBuilder);
+
+#if STATIC
+			if ((TypeBuilder.Attributes & TypeAttributes.StringFormatMask) == 0 && Module.HasDefaultCharSet)
+				TypeBuilder.__SetAttributes (TypeBuilder.Attributes | Module.DefaultCharSetType);
+#endif
 
 			base.Emit ();
 		}

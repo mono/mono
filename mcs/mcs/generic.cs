@@ -2243,6 +2243,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override TypeAttributes TypeAttr {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
+
 		public override void DefineType ()
 		{
 			throw new Exception ();

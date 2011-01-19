@@ -410,10 +410,6 @@ namespace Mono.CSharp {
 			// Add [module: DefaultCharSet] to all DllImport import attributes
 			//
 			var module = context.Module;
-			// HACK: Needed for broken ModuleContainer::ResolveGlobalAttributes
-			if (module.PredefinedAttributes == null)
-				return ctor;
-
 			if (Type == module.PredefinedAttributes.DllImport && module.HasDefaultCharSet) {
 				AddModuleCharSet (rc);
 			}
@@ -1646,7 +1642,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute UnverifiableCode;
 
 		// New in .NET 2.0
-		//public readonly PredefinedAttribute DefaultCharset;
+		public readonly PredefinedAttribute DefaultCharset;
 		public readonly PredefinedAttribute TypeForwarder;
 		public readonly PredefinedAttribute FixedBuffer;
 		public readonly PredefinedAttribute CompilerGenerated;
@@ -1699,7 +1695,7 @@ namespace Mono.CSharp {
 			OptionalParameter = new PredefinedAttribute (module, "System.Runtime.InteropServices", "OptionalAttribute");
 			UnverifiableCode = new PredefinedAttribute (module, "System.Security", "UnverifiableCodeAttribute");
 
-			//DefaultCharset = new PredefinedAttribute (module, "System.Runtime.InteropServices", "DefaultCharSetAttribute");
+			DefaultCharset = new PredefinedAttribute (module, "System.Runtime.InteropServices", "DefaultCharSetAttribute");
 			TypeForwarder = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "TypeForwardedToAttribute");
 			FixedBuffer = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "FixedBufferAttribute");
 			CompilerGenerated = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CompilerGeneratedAttribute");

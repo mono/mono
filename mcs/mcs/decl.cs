@@ -1339,9 +1339,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected virtual TypeAttributes TypeAttr {
-			get { return Module.DefaultCharSetType; }
-		}
+		protected abstract TypeAttributes TypeAttr { get; }
 
 		/// <remarks>
 		///  Should be overriten by the appropriate declaration space

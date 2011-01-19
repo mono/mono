@@ -405,7 +405,7 @@ namespace Mono.CSharp
 			
 			// Create nested fixed buffer container
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
-			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name, Parent.Module.DefaultCharSetType |
+			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name,
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type.GetMetaInfo ());
 
 			fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
@@ -455,6 +455,11 @@ namespace Mono.CSharp
 
 			EmitFieldSize (buffer_size);
 
+#if STATIC
+			if (Module.HasDefaultCharSet)
+				fixed_buffer_type.__SetAttributes (fixed_buffer_type.Attributes | Module.DefaultCharSetType);
+#endif
+
 			Module.PredefinedAttributes.UnsafeValueType.EmitAttribute (fixed_buffer_type);
 			Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (fixed_buffer_type);
 			fixed_buffer_type.CreateType ();
@@ -480,7 +485,7 @@ namespace Mono.CSharp
 			if (field_size == null || field_charset == null)
 				return;
 
-			var char_set = CharSet ?? Module.DefaultCharSet;
+			var char_set = CharSet ?? Module.DefaultCharSet ?? 0;
 
 			encoder = new AttributeEncoder (false);
 			encoder.Encode ((short)LayoutKind.Sequential);
