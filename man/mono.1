@@ -1021,6 +1021,16 @@ Enables or disables concurrent sweep for the Mark&Sweep collector.  If
 enabled, the sweep phase of the garbage collection is done in a thread
 concurrently with the application.  Concurrent sweep is disabled by
 default.
+.TP
+\fBstack-mark=\fImark-mode\fR
+Specifies how application threads should be scanned. Options are
+`precise` and `conservative`. Precise marking allow the collector
+to know what values on stack are references and what are not.
+Conservative marking threats all values as potentially references
+and leave them untouched. Precise marking reduces floating garbage
+and can speed up nursery collection and allocation rate, it has
+the downside of requiring a significant extra memory per compiled
+method. The right option, unfortunately, requires experimentation.
 .ne
 .RE
 .TP
