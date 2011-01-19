@@ -29,16 +29,14 @@
         <summary>This method will be called when a thread decides to wait on a task completion. Developpers are free to simply wait on the supplied Task or provide a smarter cooperative waiting mechanism.</summary>
         <remarks>A simple waiting mechanism can be achieved via the following pattern:
 
-<example>
-  <code lang="C#">
+<example><code lang="C#">
 public void PartiticipateUntil (Task task)
 {
 	ManualResetEventSlim evt = new ManualResetEventSlim (false);
 	task.ContinueWith (_ =&gt; evt.Set (), TaskContinuationOptions.ExecuteSynchronously);
 	evt.Wait ();
 }
-  </code>
-</example></remarks>
+  </code></example></remarks>
       </Docs>
     </Member>
     <Member MemberName="ParticipateUntil">
@@ -61,7 +59,8 @@ public void PartiticipateUntil (Task task)
         <param name="predicateEvt">Additional preemptive conditions for stopping the waiting.</param>
         <param name="millisecondsTimeout">An countdown specifying the maximum amount of time the method can last before returning.</param>
         <summary>This method will be called when a thread decides to wait on a task completion or a set of condition summarized via the given <see cref="T:System.Threading.ManualResetEventSlim" />. Developpers are free to simply wait on the supplied Task/event or provide a smarter cooperative waiting mechanism.</summary>
-        <returns><see langword="true" /> if the method returns because of either event was set or timeout was reached, <see langword="false" /> if the task completed.</returns>
+        <returns>
+          <see langword="true" /> if the method returns because of either event was set or timeout was reached, <see langword="false" /> if the task completed.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

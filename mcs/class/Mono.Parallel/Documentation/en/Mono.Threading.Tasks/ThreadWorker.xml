@@ -79,6 +79,22 @@
         <remarks>By default the supplied task is added to the ThreadWorker deque via the PushBottom operation.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Deque">
+      <MemberSignature Language="C#" Value="protected Mono.Threading.Tasks.IConcurrentDeque&lt;System.Threading.Tasks.Task&gt; Deque { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Threading.Tasks.IConcurrentDeque`1&lt;class System.Threading.Tasks.Task&gt; Deque" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Threading.Tasks.IConcurrentDeque&lt;System.Threading.Tasks.Task&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Allow access to the <see cref="T:Mono.Threading.Tasks.IConcurrentDeque&lt;T&gt;" /> used by the ThreadWorker.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public virtual void Dispose ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
@@ -96,8 +112,8 @@
       </Docs>
     </Member>
     <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public bool Equals (Mono.Threading.Tasks.ThreadWorker other);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(class Mono.Threading.Tasks.ThreadWorker other) cil managed" />
+      <MemberSignature Language="C#" Value="public virtual bool Equals (Mono.Threading.Tasks.ThreadWorker other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(class Mono.Threading.Tasks.ThreadWorker other) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -179,7 +195,7 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The position of the current thread worker in the existing ThreadWorker array.</summary>
+        <summary>Return the Id of the underlying thread used by the ThreadWorker.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -197,6 +213,38 @@
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Others">
+      <MemberSignature Language="C#" Value="protected Mono.Threading.Tasks.ThreadWorker[] Others { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Threading.Tasks.ThreadWorker[] Others" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Threading.Tasks.ThreadWorker[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the array of existing ThreadWorker that been initially supplied.</summary>
+        <value>To be added.</value>
+        <remarks>If you are iterating the array, make sure you skip the current instance of ThreadWorker with value of <see cref="P:Mono.Threading.Tasks.ThreadWorker.WorkerPosition" /></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Priority">
+      <MemberSignature Language="C#" Value="protected System.Threading.ThreadPriority Priority { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Threading.ThreadPriority Priority" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.ThreadPriority</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The priority the underlying thread is running with.</summary>
+        <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -232,6 +280,22 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="WaitHandle">
+      <MemberSignature Language="C#" Value="protected System.Threading.ManualResetEvent WaitHandle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.ManualResetEvent WaitHandle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.ManualResetEvent</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Acces the WaitHandle normally shared by all your ThreadWorker instances to deep sleep or otherwise synchronize on.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="WorkerMethod">
       <MemberSignature Language="C#" Value="protected virtual bool WorkerMethod ();" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool WorkerMethod() cil managed" />
@@ -245,19 +309,10 @@
       <Parameters />
       <Docs>
         <summary>This is the method executed by WorkerMethod to do the actual processing of tasks.</summary>
-        <returns><see langword="true" /> if the method processed a <see cref="T:System.Threading.Tasks.Task" /> while it ran, <see langword="false" /> otherwise.</returns>
+        <returns>
+          <see langword="true" /> if the method processed a <see cref="T:System.Threading.Tasks.Task" /> while it ran, <see langword="false" /> otherwise.</returns>
         <remarks>By default this method applies the following algorithm:
-<list type="bullet">
-  <item>
-    <term>Check if the global data structures contains task and fetch as much as possible into its own deque</term>
-  </item>
-  <item>
-    <term>Execute whatever its deque contains</term>
-  </item>
-  <item>
-    <term>Do a couple of pass over the other workers to try to steal some work to do</term>
-  </item>
-</list></remarks>
+<list type="bullet"><item><term>Check if the global data structures contains task and fetch as much as possible into its own deque</term></item><item><term>Execute whatever its deque contains</term></item><item><term>Do a couple of pass over the other workers to try to steal some work to do</term></item></list></remarks>
       </Docs>
     </Member>
     <Member MemberName="WorkerMethodWrapper">
@@ -274,6 +329,22 @@
       <Docs>
         <summary>This is the method executed by the underlying thread.</summary>
         <remarks>By default this method consists of a while loop calling repeatedly <see cref="M:Mono.Threading.Tasks.ThreadWorker.WorkerMethodWrapper()" /> and sleeping accordingly when there is no more work to do.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WorkerPosition">
+      <MemberSignature Language="C#" Value="protected int WorkerPosition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WorkerPosition" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Position of the current instance in the <see cref="P:Mono.Threading.Tasks.ThreadWorker.Others" /> array.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
   </Members>
