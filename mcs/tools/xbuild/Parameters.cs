@@ -43,7 +43,6 @@ namespace Mono.XBuild.CommandLine {
 	
 		string			consoleLoggerParameters;
 		bool			displayHelp;
-		bool			displayVersion;
 		IList			flatArguments;
 		IList			loggers;
 		LoggerVerbosity		loggerVerbosity;
@@ -64,7 +63,6 @@ namespace Mono.XBuild.CommandLine {
 		{
 			consoleLoggerParameters = "";
 			displayHelp = false;
-			displayVersion = true;
 			loggers = new ArrayList ();
 			loggerVerbosity = LoggerVerbosity.Normal;
 			noConsoleLogger = false;
@@ -352,10 +350,6 @@ namespace Mono.XBuild.CommandLine {
 		
 		public bool NoLogo {
 			get { return noLogo; }
-		}
-		
-		public bool DisplayVersion {
-			get { return displayVersion; }
 		}
 		
 		public string ProjectFile {
