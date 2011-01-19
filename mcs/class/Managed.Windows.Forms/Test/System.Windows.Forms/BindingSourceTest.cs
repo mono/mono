@@ -1980,6 +1980,18 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (ListChangedType.Reset, iblist_changed_args.ListChangedType, "B2");
 			Assert.AreEqual (-1, iblist_changed_args.NewIndex, "B3");
 		}
+
+		[Test] // bug 664833
+		public void TestDataMemberValue ()
+		{
+			BindingSource bs = new BindingSource ();
+			bs.DataMember = "TestField";
+			DataTable table = new DataTable ();
+			table.Columns.Add ("TestField");
+			bs.DataSource = table;
+
+			Assert.AreEqual ("TestField", bs.DataMember, "#1");
+		}
 	}
 }
 
