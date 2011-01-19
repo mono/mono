@@ -123,9 +123,6 @@ namespace Mono.CSharp
 
 		ModuleBuilder builder;
 
-		// HACK
-		public List<Enum> hack_corlib_enums = new List<Enum> ();
-
 		bool has_default_charset;
 		bool has_extenstion_method;
 
@@ -282,8 +279,6 @@ namespace Mono.CSharp
 
 		public override void CloseType ()
 		{
-			HackCorlibEnums ();
-
 			foreach (TypeContainer tc in types) {
 				tc.CloseType ();
 			}
@@ -442,18 +437,6 @@ namespace Mono.CSharp
 			args[3] = TypeManager.void_type.GetMetaInfo ();
 			set_corlib_type_builders.Invoke (assembly.Builder, args);
 #endif
-		}
-
-		void HackCorlibEnums ()
-		{
-			if (RootContext.StdLib)
-				return;
-
-			// Another Mono corlib HACK
-			// mono_class_layout_fields requires to have enums created
-			// before creating a class which used the enum for any of its fields
-			foreach (var e in hack_corlib_enums)
-				e.CloseType ();
 		}
 
 		public void InitializePredefinedTypes ()

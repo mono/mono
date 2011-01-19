@@ -207,9 +207,6 @@ namespace Mono.CSharp {
 			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType.GetMetaInfo (),
 				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
 
-			if (!RootContext.StdLib)
-				Module.hack_corlib_enums.Add (this);
-
 			return true;
 		}
 
