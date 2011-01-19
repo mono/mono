@@ -344,7 +344,7 @@ namespace System.Windows.Forms {
 			get { return datasource; }
 			set {
 				if (datasource != value) {
-					if (datasource == null)
+					if (value == null)
 						datamember = String.Empty;
 
 					DisconnectDataSourceEvents (datasource);
