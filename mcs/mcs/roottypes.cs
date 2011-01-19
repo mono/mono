@@ -357,8 +357,6 @@ namespace Mono.CSharp
 			foreach (var tc in types)
 				tc.DefineConstants ();
 
-			HackCorlib ();
-
 			foreach (TypeContainer tc in types)
 				tc.EmitType ();
 
@@ -403,40 +401,6 @@ namespace Mono.CSharp
 		public override string GetSignatureForError ()
 		{
 			return "<module>";
-		}
-
-		void HackCorlib ()
-		{
-#if !STATIC
-			if (RootContext.StdLib)
-				return;
-
-			//
-			// HACK: When building corlib mcs uses loaded mscorlib which
-			// has different predefined types and this method sets mscorlib types
-			// to be same to avoid type check errors in CreateType.
-			//
-			var type = typeof (Type);
-			var system_4_type_arg = new[] { type, type, type, type };
-
-			MethodInfo set_corlib_type_builders =
-				typeof (System.Reflection.Emit.AssemblyBuilder).GetMethod (
-				"SetCorlibTypeBuilders", BindingFlags.NonPublic | BindingFlags.Instance, null,
-				system_4_type_arg, null);
-
-			if (set_corlib_type_builders == null) {
-				Compiler.Report.Warning (-26, 3,
-					"The compilation may fail due to missing `System.Reflection.Emit.AssemblyBuilder.SetCorlibTypeBuilders(...)' method");
-				return;
-			}
-
-			object[] args = new object[4];
-			args[0] = TypeManager.object_type.GetMetaInfo ();
-			args[1] = TypeManager.value_type.GetMetaInfo ();
-			args[2] = TypeManager.enum_type.GetMetaInfo ();
-			args[3] = TypeManager.void_type.GetMetaInfo ();
-			set_corlib_type_builders.Invoke (assembly.Builder, args);
-#endif
 		}
 
 		public void InitializePredefinedTypes ()
