@@ -320,6 +320,22 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void MatchNullArgument1 ()
+		{
+			var t = new UriTemplate ("/hooray");
+			t.Match (null, new Uri ("http://localhost/"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void MatchNullArgument2 ()
+		{
+			var t = new UriTemplate ("/hooray");
+			t.Match (new Uri ("http://localhost/"), null);
+		}
+
+		[Test]
 		public void MatchNoTemplateItem ()
 		{
 			var t = new UriTemplate ("/hooray");
