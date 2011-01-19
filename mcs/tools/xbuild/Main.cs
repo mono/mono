@@ -76,7 +76,7 @@ namespace Mono.XBuild.CommandLine {
 				show_stacktrace = (parameters.LoggerVerbosity == LoggerVerbosity.Detailed ||
 					parameters.LoggerVerbosity == LoggerVerbosity.Diagnostic);
 				
-				if (parameters.DisplayVersion)
+				if (!parameters.NoLogo)
 					ErrorUtilities.ShowVersion (false);
 				
 				engine  = Engine.GlobalEngine;
