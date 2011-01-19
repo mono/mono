@@ -133,12 +133,17 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
 		public void SelectOperationCheckExistingProperty ()
 		{
 			var d = Create ();
-			var msg = Message.CreateMessage (MessageVersion.None, "http://temuri.org/MyService/Echo");
+			var msg = Message.CreateMessage (MessageVersion.None, "http://temuri.org/MyService/Echo"); // heh, I mistyped it and turned to prove that Action does not matter.
+			msg.Headers.To = new Uri ("http://localhost:8080/Echo");
+
+			// LAMESPEC: .NET does returns String.Empty, while we return the name of the operation (as IOperationSelector.SelectOperation is expected to do!)
+			// Assert.AreEqual (String.Empty, d.SelectOperation (ref msg), "#1");
 			d.SelectOperation (ref msg);
+
+			// The second invocation should raise the expected exception
 			d.SelectOperation (ref msg);
 		}
 
