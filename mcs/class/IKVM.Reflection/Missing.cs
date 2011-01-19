@@ -350,13 +350,13 @@ namespace IKVM.Reflection
 
 	sealed class MissingType : Type
 	{
-		private readonly MissingModule module;
+		private readonly Module module;
 		private readonly Type declaringType;
 		private readonly string ns;
 		private readonly string name;
 		private Dictionary<string, Type> types;
 
-		internal MissingType(MissingModule module, Type declaringType, string ns, string name)
+		internal MissingType(Module module, Type declaringType, string ns, string name)
 		{
 			this.module = module;
 			this.declaringType = declaringType;

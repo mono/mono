@@ -529,9 +529,9 @@ namespace IKVM.Reflection
 
 		public RawModule OpenRawModule(Stream stream, string location)
 		{
-			if (!stream.CanRead || !stream.CanSeek)
+			if (!stream.CanRead || !stream.CanSeek || stream.Position != 0)
 			{
-				throw new NotSupportedException();
+				throw new ArgumentException("Stream must support read/seek and current position must be zero.", "stream");
 			}
 			return new RawModule(new ModuleReader(null, this, stream, location));
 		}

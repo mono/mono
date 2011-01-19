@@ -39,20 +39,39 @@ namespace IKVM.Reflection
 
 	static class Fusion
 	{
-		private static readonly bool UseNativeFusion = Environment.OSVersion.Platform == PlatformID.Win32NT && System.Type.GetType("Mono.Runtime") == null && Environment.GetEnvironmentVariable("IKVM_DISABLE_FUSION") == null;
+		private static readonly bool UseNativeFusion = GetUseNativeFusion();
+
+		private static bool GetUseNativeFusion()
+		{
+			try
+			{
+				return Environment.OSVersion.Platform == PlatformID.Win32NT
+					&& System.Type.GetType("Mono.Runtime") == null
+					&& Environment.GetEnvironmentVariable("IKVM_DISABLE_FUSION") == null;
+			}
+			catch (System.Security.SecurityException)
+			{
+				return false;
+			}
+		}
 
 		internal static bool CompareAssemblyIdentity(string assemblyIdentity1, bool unified1, string assemblyIdentity2, bool unified2, out AssemblyComparisonResult result)
 		{
 			if (UseNativeFusion)
 			{
-				bool equivalent;
-				Marshal.ThrowExceptionForHR(CompareAssemblyIdentity(assemblyIdentity1, unified1, assemblyIdentity2, unified2, out equivalent, out result));
-				return equivalent;
+				return CompareAssemblyIdentityNative(assemblyIdentity1, unified1, assemblyIdentity2, unified2, out result);
 			}
 			else
 			{
 				return CompareAssemblyIdentityPure(assemblyIdentity1, unified1, assemblyIdentity2, unified2, out result);
 			}
+		}
+
+		private static bool CompareAssemblyIdentityNative(string assemblyIdentity1, bool unified1, string assemblyIdentity2, bool unified2, out AssemblyComparisonResult result)
+		{
+			bool equivalent;
+			Marshal.ThrowExceptionForHR(CompareAssemblyIdentity(assemblyIdentity1, unified1, assemblyIdentity2, unified2, out equivalent, out result));
+			return equivalent;
 		}
 
 		[DllImport("fusion", CharSet = CharSet.Unicode)]

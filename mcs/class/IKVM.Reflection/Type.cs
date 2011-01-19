@@ -773,7 +773,6 @@ namespace IKVM.Reflection
 		// unlike the public API, this takes the namespace and name into account
 		internal Type GetNestedTypeCorrectly(string name)
 		{
-			CheckBaked();
 			foreach (Type type in __GetDeclaredTypes())
 			{
 				if (MatchTypeNames(type.__Namespace, type.__Name, name))
@@ -2458,7 +2457,7 @@ namespace IKVM.Reflection
 						return true;
 					}
 				}
-				return false;
+				return this.type.__IsMissing;
 			}
 		}
 

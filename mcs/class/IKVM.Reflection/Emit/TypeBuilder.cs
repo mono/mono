@@ -1037,6 +1037,11 @@ namespace IKVM.Reflection.Emit
 		{
 			get { return token == 0x02000001; }
 		}
+
+		internal override Type ResolveNestedType(string ns, string name)
+		{
+			return base.ResolveNestedType(ns, name) ?? ((AssemblyBuilder)ModuleBuilder.Assembly).GetMissingType(this.Module, this, ns, name);
+		}
 	}
 
 	sealed class BakedType : Type

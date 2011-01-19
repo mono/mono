@@ -1186,6 +1186,20 @@ namespace IKVM.Reflection.Emit
 
 		public void __Save(PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
 		{
+			SaveImpl(null, portableExecutableKind, imageFileMachine);
+		}
+
+		public void __Save(Stream stream, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
+		{
+			if (!stream.CanRead || !stream.CanWrite || !stream.CanSeek || stream.Position != 0)
+			{
+				throw new ArgumentException("Stream must support read/write/seek and current position must be zero.", "stream");
+			}
+			SaveImpl(stream, portableExecutableKind, imageFileMachine);
+		}
+
+		private void SaveImpl(Stream streamOrNull, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
+		{
 			PopulatePropertyAndEventTables();
 			IList<CustomAttributeData> attributes = asm.GetCustomAttributesData(null);
 			if (attributes.Count > 0)
@@ -1224,7 +1238,7 @@ namespace IKVM.Reflection.Emit
 				}
 			}
 			FillAssemblyRefTable();
-			ModuleWriter.WriteModule(null, null, this, PEFileKinds.Dll, portableExecutableKind, imageFileMachine, unmanagedResources, 0);
+			ModuleWriter.WriteModule(null, null, this, PEFileKinds.Dll, portableExecutableKind, imageFileMachine, unmanagedResources, 0, streamOrNull);
 		}
 
 		public void __AddAssemblyReference(AssemblyName assemblyName)
