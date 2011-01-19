@@ -366,7 +366,7 @@ namespace Mono.CSharp {
 				}
 
 				if (member.DeclaringType.ImplementsInterface (entry.DeclaringType, false)) {
-					if (existing is MemberSpec[]) {
+					if (existing.Count == 1) {
 						existing = new MemberSpec[] { member };
 						return true;
 					}
@@ -380,7 +380,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			if (existing is MemberSpec[]) {
+			if (existing.Count == 1) {
 				existing = new List<MemberSpec> () { existing[0], member };
 				return true;
 			}
