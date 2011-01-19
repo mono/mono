@@ -64,14 +64,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void SelectOperation2 ()
 		{
 			SelectOperationCore (Create2 ());
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void SelectOperation3 ()
 		{
 			ContractDescription cd = ContractDescription.GetContract (typeof (MyService2));
