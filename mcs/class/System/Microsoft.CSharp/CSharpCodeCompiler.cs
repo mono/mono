@@ -77,25 +77,11 @@ namespace Mono.CSharp
 						"mono\\mono\\mini\\mono.exe");
 				if (!File.Exists (windowsMonoPath))
 					throw new FileNotFoundException ("Windows mono path not found: " + windowsMonoPath);
-#if NET_4_0
-				windowsMcsPath =
-					Path.Combine (p, "4.0\\dmcs.exe");
-#else
-				windowsMcsPath =
-					Path.Combine (p, "2.0\\gmcs.exe");
-#endif
+
+				windowsMcsPath = Path.Combine (p, "2.0\\mcs.exe");
 				if (!File.Exists (windowsMcsPath))
-#if NET_4_0
-					windowsMcsPath =
-						Path.Combine(
-							Path.GetDirectoryName (p),
-							"lib\\net_4_0\\dmcs.exe");
-#else
-					windowsMcsPath = 
-						Path.Combine(
-							Path.GetDirectoryName (p),
-							"lib\\net_2_0\\gmcs.exe");
-#endif
+					windowsMcsPath = Path.Combine(Path.GetDirectoryName (p), "lib\\basic\\mcs.exe");
+				
 				if (!File.Exists (windowsMcsPath))
 					throw new FileNotFoundException ("Windows mcs path not found: " + windowsMcsPath);
 			}
@@ -179,19 +165,14 @@ namespace Mono.CSharp
 
 			CompilerResults results=new CompilerResults(options.TempFiles);
 			Process mcs=new Process();
-			
+
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
 				mcs.StartInfo.FileName = windowsMonoPath;
 				mcs.StartInfo.Arguments = "\"" + windowsMcsPath + "\" " +
 					BuildArgs (options, fileNames, ProviderOptions);
 			} else {
-				// FIXME: This is a temporary hack to make code genaration work in 2.0+
-#if NET_4_0
-				mcs.StartInfo.FileName="dmcs";
-#else
-				mcs.StartInfo.FileName="gmcs";
-#endif
+				mcs.StartInfo.FileName="mcs";
 				mcs.StartInfo.Arguments=BuildArgs(options, fileNames, ProviderOptions);
 			}
 
@@ -365,7 +346,7 @@ namespace Mono.CSharp
 
 				switch (langver) {
 					case "2.0":
-						args.Append ("/langversion:ISO-2");
+						args.Append ("/langversion:ISO-2 ");
 						break;
 
 					case "3.5":
@@ -373,6 +354,12 @@ namespace Mono.CSharp
 						break;
 				}
 			}
+			
+#if NET_4_0
+			args.Append("/sdk:4");
+#else
+			args.Append("/sdk:2");
+#endif
 
 			args.Append (" -- ");
 			foreach (string source in fileNames)
