@@ -15,7 +15,6 @@
 ../../mcs/decl.cs
 ../../mcs/delegate.cs
 ../../mcs/doc.cs
-../../mcs/doc-bootstrap.cs
 ../../mcs/driver.cs
 ../../mcs/dynamic.cs
 ../../mcs/ecore.cs
