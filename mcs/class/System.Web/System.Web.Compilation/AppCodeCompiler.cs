@@ -34,6 +34,7 @@ using System.CodeDom.Compiler;
 using System.Configuration;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -80,8 +81,9 @@ namespace System.Web.Compilation
 				if (asm == null)
 					throw new HttpException (String.Format ("Unable to find assembly {0}", assemblyName), error);
 
-				assemblyCache.Add (assemblyName, asm.Location);
-				return asm.Location;
+				string path = new Uri (asm.CodeBase).LocalPath;
+				assemblyCache.Add (assemblyName, path);
+				return path;
 			}
 		}
 	}
@@ -221,8 +223,15 @@ namespace System.Web.Compilation
 			CompilerParameters parameters = compilerInfo.CreateDefaultCompilerParameters ();
 			parameters.IncludeDebugInformation = compilationSection.Debug;
 			
-			if (binAssemblies != null && binAssemblies.Length > 0)
-				parameters.ReferencedAssemblies.AddRange (binAssemblies);
+			if (binAssemblies != null && binAssemblies.Length > 0) {
+				StringCollection parmRefAsm = parameters.ReferencedAssemblies;
+				foreach (string binAsm in binAssemblies) {
+					if (parmRefAsm.Contains (binAsm))
+						continue;
+					
+					parmRefAsm.Add (binAsm);
+				}
+			}
 			
 			if (compilationSection != null) {
 				foreach (AssemblyInfo ai in compilationSection.Assemblies)
