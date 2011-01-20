@@ -520,7 +520,7 @@ namespace System.Xaml
 		}
 
 		// This implementation is not verified. (No place to use.)
-		protected virtual XamlCollectionKind LookupCollectionKind ()
+		protected internal virtual XamlCollectionKind LookupCollectionKind ()
 		{
 			if (UnderlyingType == null)
 				return BaseType != null ? BaseType.LookupCollectionKind () : XamlCollectionKind.None;
