@@ -508,15 +508,13 @@ namespace System.Xaml
 			return GetAllAttachableMembers ().FirstOrDefault (m => m.Name == name);
 		}
 
-		[MonoTODO]
 		protected virtual XamlType LookupBaseType ()
 		{
 			if (base_type == null) {
 				if (UnderlyingType == null)
-					// FIXME: probably something advanced is needed here.
-					base_type = new XamlType (typeof (object), SchemaContext, Invoker);
+					base_type = SchemaContext.GetXamlType (typeof (object));
 				else
-					base_type = type.BaseType == null || type.BaseType == typeof (object) ? null : new XamlType (type.BaseType, SchemaContext, Invoker);
+					base_type = type.BaseType == null || type.BaseType == typeof (object) ? null : SchemaContext.GetXamlType (type.BaseType);
 			}
 			return base_type;
 		}

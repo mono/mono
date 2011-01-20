@@ -783,6 +783,16 @@ namespace MonoTests.System.Xaml
 			Assert.IsNotNull (xm, "#1");
 			Assert.IsFalse (xm.IsWritePublic, "#2");
 		}
+
+		[Test]
+		public void UnknownType ()
+		{
+			var xt = new XamlType ("urn:foo", "MyUnknown", null, sctx);
+			Assert.IsTrue (xt.IsUnknown, "#1");
+			Assert.IsNotNull (xt.BaseType, "#2");
+			Assert.IsFalse (xt.BaseType.IsUnknown, "#3");
+			Assert.AreEqual (typeof (object), xt.BaseType.UnderlyingType, "#4");
+		}
 	}
 
 	class MyXamlType : XamlType

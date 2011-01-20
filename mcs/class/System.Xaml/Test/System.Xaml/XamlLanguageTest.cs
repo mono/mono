@@ -565,6 +565,7 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Object;
 			TestXamlTypePrimitive (t, "Object", typeof (object), true, false);
+			Assert.IsNull (t.BaseType, "#x1");
 
 			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
 			var l = t.GetAllAttachableMembers ().ToArray ();
