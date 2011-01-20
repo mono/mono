@@ -7,7 +7,7 @@ EXTRA_DISTFILES = \
 	compiler.doc		\
 	mcs.sln		\
 	cs-parser.jay		\
-	mcs.sources		\
+	mcs.exe.sources		\
 	NOTES			\
 	TODO			\
 	ikvm.cs
