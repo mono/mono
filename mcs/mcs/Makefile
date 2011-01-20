@@ -3,14 +3,13 @@ SUBDIRS :=
 include ../build/rules.make
 
 EXTRA_DISTFILES = \
-	*mcs.csproj		\
+	mcs.csproj		\
 	compiler.doc		\
-	*mcs.sln		\
+	mcs.sln		\
 	cs-parser.jay		\
 	*.sources		\
 	NOTES			\
 	TODO			\
-	*mcs.exe.config		\
 	ikvm.cs
 
 ifeq (basic, $(PROFILE))
