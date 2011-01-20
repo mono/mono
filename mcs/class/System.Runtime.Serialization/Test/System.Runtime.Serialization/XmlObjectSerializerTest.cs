@@ -1499,6 +1499,19 @@ namespace MonoTests.System.Runtime.Serialization
 			
 			var ds = (DataSet) x.ReadObject (r);
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))] // BaseConstraintType1 is neither DataContract nor Serializable.
+		public void BaseConstraint1 ()
+		{
+			new DataContractSerializer (typeof (BaseConstraintType3)).WriteObject (XmlWriter.Create (TextWriter.Null), new BaseConstraintType3 ());
+		}
+
+		[Test]
+		public void BaseConstraint2 ()
+		{
+			new DataContractSerializer (typeof (BaseConstraintType4)).WriteObject (XmlWriter.Create (TextWriter.Null), new BaseConstraintType4 ());
+		}
 	}
 	
 	[DataContract]
@@ -1799,6 +1812,25 @@ namespace MonoTests.System.Runtime.Serialization
 		public NestedContractType Nested;
 		[DataMember]
 		public string X = "x";
+	}
+
+	class BaseConstraintType1 // non-serializable
+	{
+	}
+	
+	[Serializable]
+	class BaseConstraintType2
+	{
+	}
+	
+	[DataContract]
+	class BaseConstraintType3 : BaseConstraintType1
+	{
+	}
+	
+	[DataContract]
+	class BaseConstraintType4 : BaseConstraintType2
+	{
 	}
 }
 

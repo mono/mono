@@ -124,6 +124,8 @@ namespace System.Runtime.Serialization
 
 		public QName XmlName { get; set; }
 
+		public abstract bool IsContractAllowedType { get; }
+
 		protected void HandleId (XmlReader reader, XmlFormatterDeserializer deserializer, object instance)
 		{
 			HandleId (reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace), deserializer, instance);
@@ -381,6 +383,8 @@ namespace System.Runtime.Serialization
 
 	internal partial class XmlSerializableMap : SerializationMap
 	{
+		public override bool IsContractAllowedType { get { return true; } }
+
 		public XmlSerializableMap (Type type, QName qname, KnownTypeCollection knownTypes)
 			: base (type, qname, knownTypes)
 		{
@@ -418,6 +422,8 @@ namespace System.Runtime.Serialization
 			: base (type, qname, knownTypes)
 		{
 		}
+
+		public override bool IsContractAllowedType { get { return true; } }
 
 		internal void Initialize ()
 		{
@@ -483,6 +489,8 @@ namespace System.Runtime.Serialization
 		{
 		}
 
+		public override bool IsContractAllowedType { get { return false; } }
+
 		internal void Initialize ()
 		{
 			Members.AddRange (GetDefaultMembers ());
@@ -529,6 +537,8 @@ namespace System.Runtime.Serialization
 		internal override string CurrentNamespace {
 			get { return XmlName.Namespace; }
 		}
+
+		public override bool IsContractAllowedType { get { return true; } }
 	}
 
 	internal interface ICollectionTypeMap
@@ -573,6 +583,8 @@ namespace System.Runtime.Serialization
 
 			return null;
 		}
+
+		public override bool IsContractAllowedType { get { return false; } }
 
 		public override bool OutputXsiType {
 			get { return false; }
@@ -716,6 +728,8 @@ namespace System.Runtime.Serialization
 		string ContractNamespace {
 			get { return a != null && !String.IsNullOrEmpty (a.Namespace) ? a.Namespace : KnownTypeCollection.MSArraysNamespace; }
 		}
+
+		public override bool IsContractAllowedType { get { return a != null; } }
 
 		public Type KeyType { get { return key_type; } }
 		public Type ValueType { get { return value_type; } }
@@ -872,6 +886,8 @@ namespace System.Runtime.Serialization
 		{
 		}
 
+		public override bool IsContractAllowedType { get { return true; } }
+
 		public void Initialize ()
 		{
 			Members = GetMembers (RuntimeType, XmlName, false);
@@ -943,6 +959,8 @@ namespace System.Runtime.Serialization
 				enum_members.Add (new EnumMemberInfo (name, fi.GetValue (null)));
 			}
 		}
+
+		public override bool IsContractAllowedType { get { return false; } }
 
 		private EnumMemberAttribute GetEnumMemberAttribute (
 			MemberInfo mi)

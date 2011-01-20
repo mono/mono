@@ -792,6 +792,12 @@ namespace System.Runtime.Serialization
 			contracts.Add (ret);
 			ret.Initialize ();
 
+			if (type.BaseType != typeof (object)) {
+				TryRegister (type.BaseType);
+				if (!FindUserMap (type.BaseType).IsContractAllowedType)
+					throw new InvalidDataContractException (String.Format ("To be serializable by data contract, type '{0}' cannot inherit from non-contract and non-Serializable type '{1}'", type, type.BaseType));
+			}
+
 			object [] attrs = type.GetCustomAttributes (typeof (KnownTypeAttribute), true);
 			for (int i = 0; i < attrs.Length; i++) {
 				KnownTypeAttribute kt = (KnownTypeAttribute) attrs [i];
