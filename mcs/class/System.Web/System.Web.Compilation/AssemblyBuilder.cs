@@ -740,7 +740,6 @@ namespace System.Web.Compilation
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
-
 			options.TempFiles = temp_files;
 			if (options.OutputAssembly == null)
 				options.OutputAssembly = OutputAssemblyName;
@@ -803,9 +802,12 @@ namespace System.Web.Compilation
 				options.EmbeddedResources.Add (de.Value);
 
 			AddAssemblyReference (BuildManager.GetReferencedAssemblies ());
+			StringCollection optRefAsm = options.ReferencedAssemblies;
 			foreach (Assembly refasm in ReferencedAssemblies) {
 				string path = new Uri (refasm.CodeBase).LocalPath;
-				options.ReferencedAssemblies.Add (path);
+				string originalPath = refasm.Location;
+				if (!optRefAsm.Contains (path) && !optRefAsm.Contains (originalPath))
+					optRefAsm.Add (path);
 			}
 			
 			results = provider.CompileAssemblyFromFile (options, files.ToArray ());
