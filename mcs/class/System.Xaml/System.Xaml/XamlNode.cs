@@ -79,6 +79,18 @@ namespace System.Xaml
 			get { return value; }
 		}
 	}
+
+	internal struct XamlNodeLineInfo
+	{
+		public readonly XamlNodeInfo Node;
+		public readonly int LineNumber, LinePosition;
+		public XamlNodeLineInfo (XamlNodeInfo node, int line, int column)
+		{
+			Node = node;
+			LineNumber = line;
+			LinePosition = column;
+		}
+	}
 	
 	internal struct XamlObject
 	{

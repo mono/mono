@@ -43,37 +43,37 @@ namespace System.Xaml
 
 		public override void WriteEndMember ()
 		{
-			source.Queue.Enqueue (new XamlNodeInfo (XamlNodeType.EndMember, default (XamlNodeMember)));
+			source.Enqueue (new XamlNodeInfo (XamlNodeType.EndMember, default (XamlNodeMember)));
 		}
 
 		public override void WriteEndObject ()
 		{
-			source.Queue.Enqueue (new XamlNodeInfo (XamlNodeType.EndObject, default (XamlObject)));
+			source.Enqueue (new XamlNodeInfo (XamlNodeType.EndObject, default (XamlObject)));
 		}
 
 		public override void WriteGetObject ()
 		{
-			source.Queue.Enqueue (new XamlNodeInfo (XamlNodeType.GetObject, default (XamlObject)));
+			source.Enqueue (new XamlNodeInfo (XamlNodeType.GetObject, default (XamlObject)));
 		}
 
 		public override void WriteNamespace (NamespaceDeclaration ns)
 		{
-			source.Queue.Enqueue (new XamlNodeInfo (ns));
+			source.Enqueue (new XamlNodeInfo (ns));
 		}
 
 		public override void WriteStartMember (XamlMember xamlMember)
 		{
-			source.Queue.Enqueue (new XamlNodeInfo (XamlNodeType.StartMember, new XamlNodeMember (default (XamlObject), xamlMember)));
+			source.Enqueue (new XamlNodeInfo (XamlNodeType.StartMember, new XamlNodeMember (default (XamlObject), xamlMember)));
 		}
 
 		public override void WriteStartObject (XamlType type)
 		{
-			source.Queue.Enqueue (new XamlNodeInfo (XamlNodeType.StartObject, new XamlObject (type, null)));
+			source.Enqueue (new XamlNodeInfo (XamlNodeType.StartObject, new XamlObject (type, null)));
 		}
 
 		public override void WriteValue (object value)
 		{
-			source.Queue.Enqueue (new XamlNodeInfo (value));
+			source.Enqueue (new XamlNodeInfo (value));
 		}
 	}
 }

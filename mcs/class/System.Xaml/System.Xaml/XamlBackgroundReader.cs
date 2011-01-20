@@ -33,7 +33,7 @@ namespace System.Xaml
 			if (wrappedReader == null)
 				throw new ArgumentNullException ("wrappedReader");
 			r = wrappedReader;
-			q = new XamlNodeQueue (r.SchemaContext);
+			q = new XamlNodeQueue (r.SchemaContext) { LineInfoProvider = r as IXamlLineInfo };
 		}
 		
 		Thread thread;
@@ -42,23 +42,21 @@ namespace System.Xaml
 		bool read_all_done, do_work = true;
 		ManualResetEvent wait = new ManualResetEvent (true);
 
-		[MonoTODO ("always returns false")]
 		public bool HasLineInfo {
-			get { return false; }
+			get { return ((IXamlLineInfo) q.Reader).HasLineInfo; }
 		}
 		
 		public override bool IsEof {
 			get { return read_all_done && q.IsEmpty; }
 		}
 		
-		[MonoTODO ("always returns 0")]
 		public int LineNumber {
-			get { return 0; }
+			get { return ((IXamlLineInfo) q.Reader).LineNumber; }
 		}
 		
 		[MonoTODO ("always returns 0")]
 		public int LinePosition {
-			get { return 0; }
+			get { return ((IXamlLineInfo) q.Reader).LinePosition; }
 		}
 		
 		public override XamlMember Member {

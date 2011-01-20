@@ -30,7 +30,7 @@ namespace System.Xaml
 {
 	public class XamlNodeQueue
 	{
-		Queue<XamlNodeInfo> queue = new Queue<XamlNodeInfo> ();
+		Queue<XamlNodeLineInfo> queue = new Queue<XamlNodeLineInfo> ();
 		XamlSchemaContext ctx;
 		XamlReader reader;
 		XamlWriter writer;
@@ -43,10 +43,8 @@ namespace System.Xaml
 			reader = new XamlNodeQueueReader (this);
 			writer = new XamlNodeQueueWriter (this);
 		}
-
-		internal Queue<XamlNodeInfo> Queue {
-			get { return queue; }
-		}
+		
+		internal IXamlLineInfo LineInfoProvider { get; set; }
 
 		internal XamlSchemaContext SchemaContext {
 			get { return ctx; }
@@ -66,6 +64,17 @@ namespace System.Xaml
 
 		public XamlWriter Writer {
 			get { return writer; }
+		}
+
+		internal XamlNodeLineInfo Dequeue ()
+		{
+			return queue.Dequeue ();
+		}
+
+		internal void Enqueue (XamlNodeInfo info)
+		{
+			var nli = (LineInfoProvider != null && LineInfoProvider.HasLineInfo) ? new XamlNodeLineInfo (info, LineInfoProvider.LineNumber, LineInfoProvider.LinePosition) : new XamlNodeLineInfo (info, 0, 0);
+			queue.Enqueue (nli);
 		}
 	}
 }
