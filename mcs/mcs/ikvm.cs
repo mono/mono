@@ -236,6 +236,8 @@ namespace Mono.CSharp
 				return corlib;
 
 			Assembly version_mismatch = null;
+			bool is_fx_assembly = false;
+
 			foreach (var assembly in domain.GetAssemblies ()) {
 				// TODO: Cannot handle unification into current assembly yet
 				if (assembly is AssemblyBuilder)
@@ -244,18 +246,27 @@ namespace Mono.CSharp
 				AssemblyComparisonResult result;
 				if (!Fusion.CompareAssemblyIdentityPure (refname, false, assembly.FullName, false, out result)) {
 					if ((result == AssemblyComparisonResult.NonEquivalentVersion || result == AssemblyComparisonResult.NonEquivalentPartialVersion) &&
-						(version_mismatch == null || version_mismatch.GetName ().Version < assembly.GetName ().Version)) {
+						(version_mismatch == null || version_mismatch.GetName ().Version < assembly.GetName ().Version) &&
+						!is_fx_assembly) {
 						version_mismatch = assembly;
 					}
 
 					continue;
 				}
 
-				if (result == AssemblyComparisonResult.EquivalentFXUnified ||
-					result == AssemblyComparisonResult.EquivalentFullMatch ||
+				if (result == AssemblyComparisonResult.EquivalentFullMatch ||
 					result == AssemblyComparisonResult.EquivalentWeakNamed ||
 					result == AssemblyComparisonResult.EquivalentPartialMatch) {
 					return assembly;
+				}
+
+				if (result == AssemblyComparisonResult.EquivalentFXUnified) {
+					is_fx_assembly = true;
+
+					if (version_mismatch == null || version_mismatch.GetName ().Version < assembly.GetName ().Version)
+						version_mismatch = assembly;
+
+					continue;
 				}
 
 				throw new NotImplementedException ("Assembly equality = " + result.ToString ());
@@ -269,14 +280,20 @@ namespace Mono.CSharp
 //					compiler.Report.SymbolRelatedToPreviousError (args.RequestingAssembly.Location);
 					compiler.Report.Error (1705, "Assembly `{0}' references `{1}' which has higher version number than imported assembly `{2}'",
 						args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName);
-				} else if (v1.Major != v2.Major || v1.Minor != v2.Minor) {
-					compiler.Report.Warning (1701, 2,
-						"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
-						refname, version_mismatch.GetName ().FullName);
-				} else {
-					compiler.Report.Warning (1702, 3,
-						"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
-						refname, version_mismatch.GetName ().FullName);
+
+					return domain.CreateMissingAssembly (args.Name);
+				}
+
+				if (!is_fx_assembly) {
+					if (v1.Major != v2.Major || v1.Minor != v2.Minor) {
+						compiler.Report.Warning (1701, 2,
+							"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
+							refname, version_mismatch.GetName ().FullName);
+					} else {
+						compiler.Report.Warning (1702, 3,
+							"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
+							refname, version_mismatch.GetName ().FullName);
+					}
 				}
 
 				return version_mismatch;
