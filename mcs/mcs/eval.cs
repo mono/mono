@@ -989,7 +989,7 @@ namespace Mono.CSharp
 			return DateTime.Now - start;
 		}
 		
-#if !SMCS_SOURCE && !STATIC
+#if !STATIC
 		/// <summary>
 		///   Loads the assemblies from a package
 		/// </summary>

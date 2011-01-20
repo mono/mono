@@ -7,35 +7,16 @@ EXTRA_DISTFILES = \
 	compiler.doc		\
 	mcs.sln		\
 	cs-parser.jay		\
-	*.sources		\
+	mcs.sources		\
 	NOTES			\
 	TODO			\
 	ikvm.cs
 
-ifeq (basic, $(PROFILE))
 LOCAL_MCS_FLAGS += -d:STATIC
-COMPILER_NAME = mcs
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/2.0
-endif
-
-ifeq (net_2_0, $(PROFILE))
-COMPILER_NAME = gmcs
-endif
-
-ifeq (2.1, $(FRAMEWORK_VERSION))
-LOCAL_MCS_FLAGS += -d:SMCS_SOURCE
-COMPILER_NAME = smcs
-endif
-
-ifeq (4.0, $(FRAMEWORK_VERSION))
-COMPILER_NAME = dmcs
-endif
-
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
+PROGRAM = $(topdir)/class/lib/basic/mcs.exe
 
 BUILT_SOURCES = cs-parser.cs
-
-PROGRAM_COMPILE = $(BOOT_COMPILE)
 
 CLEAN_FILES += y.output
 

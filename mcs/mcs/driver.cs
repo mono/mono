@@ -184,9 +184,7 @@ namespace Mono.CSharp
 				"   -nowarn:W1[,Wn]      Suppress one or more compiler warnings\n" + 
 				"   -optimize[+|-]       Enables advanced compiler optimizations (short: -o)\n" + 
 				"   -out:FILE            Specifies output assembly name\n" +
-#if !SMCS_SOURCE
 				"   -pkg:P1[,Pn]         References packages P1..Pn\n" + 
-#endif
 				"   -platform:ARCH       Specifies the target platform of the output assembly\n" +
 				"                        ARCH can be one of: anycpu, x86, x64 or itanium\n" +
 				"   -recurse:SPEC        Recursively compiles files according to SPEC pattern\n" + 
@@ -784,7 +782,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-#if !SMCS_SOURCE
 		public static string GetPackageFlags (string packages, bool fatal, Report report)
 		{
 			ProcessStartInfo pi = new ProcessStartInfo ();
@@ -821,7 +818,6 @@ namespace Mono.CSharp
 
 			return pkgout;
 		}
-#endif
 
 		//
 		// This parses the -arg and /arg options to the compiler, even if the strings
@@ -923,7 +919,7 @@ namespace Mono.CSharp
 				//
 				Console.WriteLine ("To file bug reports, please visit: http://www.mono-project.com/Bugs");
 				return true;
-#if !SMCS_SOURCE
+
 			case "/pkg": {
 				string packages;
 
@@ -942,7 +938,7 @@ namespace Mono.CSharp
 				
 				return true;
 			}
-#endif
+
 			case "/linkres":
 			case "/linkresource":
 			case "/res":
