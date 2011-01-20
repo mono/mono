@@ -283,8 +283,21 @@ mono_arch_create_trampoline_code_full (MonoTrampolineType tramp_type, guint32 *c
 		code += 4;
 	}
 
+	/* Align stack to 8 */
+	/* FIXME: Do this properly at the beginning */
+	g_assert (STACK % 8 == 4);
+	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 4);
+	cfa_offset += 4;
+	mono_add_unwind_op_def_cfa (unwind_ops, code, buf, ARMREG_SP, cfa_offset);
+
 	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
 	code = emit_bx (code, ARMREG_IP);
+
+	/* Restore stack */
+	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 4);
+	cfa_offset -= 4;
+	mono_add_unwind_op_def_cfa (unwind_ops, code, buf, ARMREG_SP, cfa_offset);
+
 	
 	/* OK, code address is now on r0. Move it to the place on the stack
 	 * where IP was saved (it is now no more useful to us and it can be
