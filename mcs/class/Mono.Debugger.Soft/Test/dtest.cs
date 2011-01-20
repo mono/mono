@@ -1999,6 +1999,8 @@ public class DebuggerTests
 
 		Assert.IsTrue (e.Thread.ThreadId > 0);
 
+		Assert.AreEqual (e.Thread.TID, e.Thread.TID);
+
 		vm.EnableEvents (EventType.ThreadStart, EventType.ThreadDeath);
 
 		vm.Resume ();
