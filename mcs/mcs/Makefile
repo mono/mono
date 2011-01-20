@@ -16,6 +16,8 @@ LOCAL_MCS_FLAGS += -d:STATIC
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/2.0
 PROGRAM = $(topdir)/class/lib/basic/mcs.exe
 
+PROGRAM_COMPILE = $(BOOT_COMPILE)
+
 BUILT_SOURCES = cs-parser.cs
 
 CLEAN_FILES += y.output
