@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace System.Threading.Tasks
 {
@@ -156,7 +157,7 @@ namespace System.Threading.Tasks
 			Action workerMethod = delegate {
 				int localWorker = Interlocked.Increment (ref currentIndex);
 				StealRange range = ranges[localWorker];
-				int index = range.Actual;
+				int index = range.V.Actual;
 				int stopIndex = localWorker + 1 == num ? toExclusive : Math.Min (toExclusive, index + step);
 				TLocal local = localInit ();
 
@@ -164,18 +165,22 @@ namespace System.Threading.Tasks
 				CancellationToken token = parallelOptions.CancellationToken;
 
 				try {
-					for (int i = index; i < stopIndex; range.Actual = ++i) {
+					for (int i = index; i < stopIndex; i = Interlocked.Increment (ref range.V.Actual)) {
 						if (infos.IsStopped)
 							return;
 
 						token.ThrowIfCancellationRequested ();
+
+						if (i >= stopIndex - range.V.Stolen)
+							break;
 
 						if (infos.LowestBreakIteration != null && infos.LowestBreakIteration > i)
 							return;
 
 						state.CurrentIteration = i;
 						local = body (i, state, local);
-						if (i >= stopIndex - range.Stolen)
+
+						if (i + 1 >= stopIndex - range.V.Stolen)
 							break;
 					}
 
@@ -187,19 +192,27 @@ namespace System.Threading.Tasks
 
 						stopIndex = extWorker + 1 == num ? toExclusive : Math.Min (toExclusive, fromInclusive + (extWorker + 1) * step);
 
+						StealValue val;
+						long old;
 						int stolen;
+
 						do {
-							stolen = range.Stolen;
-							if (stopIndex - stolen > range.Actual)
-								goto next;
-						} while (Interlocked.CompareExchange (ref range.Stolen, stolen + 1, stolen) != stolen);
+							do {
+								val = range.V;
+								old = val.Value;
 
-						stolen = stopIndex - stolen - 1;
+								if (val.Actual >= stopIndex - val.Stolen - 1)
+									goto next;
+								val.Stolen += 1;
+							} while (Interlocked.CompareExchange (ref range.V.Value, val.Value, old) != old);
 
-						if (stolen > range.Actual)
-							local = body (stolen, state, local);
+							stolen = stopIndex - val.Stolen;
 
-					next:
+							if (stolen > range.V.Actual || (stolen == range.V.Actual && range.V.Actual == val.Actual + 1))
+								local = body (stolen, state, local);
+						} while (stolen >= 0);
+
+						next:
 						continue;
 					}
 				} finally {
@@ -218,14 +231,23 @@ namespace System.Threading.Tasks
 			return new ParallelLoopResult (infos.LowestBreakIteration, !(infos.IsStopped || infos.IsExceptional));
 		}
 
+		[StructLayout(LayoutKind.Explicit)]
+		struct StealValue {
+			[FieldOffset(0)]
+			public long Value;
+			[FieldOffset(0)]
+			public int Actual;
+			[FieldOffset(4)]
+			public int Stolen;
+		}
+
 		class StealRange
 		{
-			public int Stolen;
-			public int Actual;
+			public StealValue V;
 
 			public StealRange (int fromInclusive, int i, int step)
 			{
-				Actual = fromInclusive + i * step;
+				V.Actual = fromInclusive + i * step;
 			}
 		}
 
