@@ -57,6 +57,8 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			new WebHttpDispatchOperationSelector (se);
 		}
 
+		#region SelectOperation
+
 		[Test]
 		public void SelectOperation ()
 		{
@@ -212,5 +214,63 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			//se.Contract.Operations [0].Behaviors.Add (new WebGetAttribute ());
 			return new MySelector (se);
 		}
+
+		#endregion
+
+		#region "bug #656020"
+
+		[DataContract]
+		public class User
+		{
+			[DataMember]
+			public string Name { get; set; }
+		}
+
+		[ServiceContract]
+		interface IHello
+		{
+			[WebGet(UriTemplate = "{name}?age={age}&blah={blah}")]
+			[OperationContract]
+			string SayHi (string name, int age, string blah);
+
+			[WebInvoke(UriTemplate = "blah")]
+			[OperationContract]
+			string SayHi2 (User user);
+		}
+
+		class Hello : IHello
+		{
+			public string SayHi (string name, int age, string blah)
+			{
+				return string.Format ("Hi {0}: {1}, {2}", name, age, blah == null);
+			}
+		
+			public string SayHi2 (User user)
+			{
+				return string.Format ("Hi {0}.", user.Name);
+			}
+		}
+
+		[Test]
+		public void WebMessageFormats ()
+		{
+			var host = new WebServiceHost (typeof (Hello));
+			host.AddServiceEndpoint (typeof (IHello), new WebHttpBinding (), "http://localhost:37564/");
+			host.Open ();
+			try {
+				// run client
+				using (ChannelFactory<IHello> factory = new ChannelFactory<IHello> (new WebHttpBinding (), "http://localhost:37564/"))
+				{
+					factory.Endpoint.Behaviors.Add (new WebHttpBehavior ());
+					IHello h = factory.CreateChannel ();
+					//Console.WriteLine(h.SayHi("Joe", 42, null));
+					Assert.AreEqual ("Hi Joe.", h.SayHi2 (new User { Name = "Joe" }), "#1");
+				}
+			} finally {
+				host.Close ();
+			}
+		}
+		
+		#endregion
 	}
 }
