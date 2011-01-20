@@ -380,7 +380,9 @@ namespace Mono.Debugger.Soft
 			GET_STATE = 3,
 			GET_INFO = 4,
 			/* FIXME: Merge into GET_INFO when the major protocol version is increased */
-			GET_ID = 5
+			GET_ID = 5,
+			/* Ditto */
+			GET_TID = 6
 		}
 
 		enum CmdEventRequest {
@@ -1553,6 +1555,10 @@ namespace Mono.Debugger.Soft
 
 		public long Thread_GetId (long id) {
 			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_ID, new PacketWriter ().WriteId (id)).ReadLong ();
+		}
+
+		public long Thread_GetTID (long id) {
+			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_TID, new PacketWriter ().WriteId (id)).ReadLong ();
 		}
 
 		/*
