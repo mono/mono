@@ -27,7 +27,9 @@
 #if NET_4_0
 
 using System;
+using System.Threading;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace System.Collections.Concurrent.Partitioners
 {
@@ -35,7 +37,6 @@ namespace System.Collections.Concurrent.Partitioners
 	internal class ListPartitioner<T> : OrderablePartitioner<T>
 	{
 		IList<T> source;
-		readonly bool chunking = Environment.GetEnvironmentVariable ("PLINQ_PARTITIONING_HINT") == "chunking";
 		
 		public ListPartitioner (IList<T> source) : base (true, true, true)
 		{
@@ -53,37 +54,57 @@ namespace System.Collections.Concurrent.Partitioners
 			int count = source.Count / partitionCount;
 			if (count <= 1)
 				count = 1;
+
+			int extra = count == 1 ? 0 : source.Count % partitionCount;
+			if (extra > 0)
+				++count;
+
+			int currentIndex = 0;
+
+			StealRange[] ranges = new StealRange[enumerators.Length];
+			for (int i = 0; i < ranges.Length; i++) {
+				ranges[i] = new StealRange (currentIndex,
+				                            currentIndex + count);
+				currentIndex += count;
+				if (--extra == 0)
+					--count;
+			}
 			
 			for (int i = 0; i < enumerators.Length; i++) {
-				if (chunking) {
-					const int step = 64;
-					enumerators[i] = GetEnumeratorForRange (i * step, enumerators.Length, source.Count, step);
-					continue;
-				}
-
-				if (i != enumerators.Length - 1)
-					enumerators[i] = GetEnumeratorForRange (i * count, i * count + count);
-				else
-					enumerators[i] = GetEnumeratorForRange (i * count, source.Count);
+				enumerators[i] = GetEnumeratorForRange (ranges, i);
 			}
 			
 			return enumerators;
 		}
-		
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (int startIndex, int lastIndex)
+
+		[StructLayout(LayoutKind.Explicit)]
+		struct StealValue {
+			[FieldOffset(0)]
+			public long Value;
+			[FieldOffset(0)]
+			public int Actual;
+			[FieldOffset(4)]
+			public int Stolen;
+		}
+
+		class StealRange
 		{
-			if (startIndex >= source.Count)
-			  return GetEmpty ();
-			
-			return GetEnumeratorForRangeInternal (startIndex, lastIndex);
+			public StealValue V = new StealValue ();
+			public readonly int LastIndex;
+
+			public StealRange (int frm, int lastIndex)
+			{
+				V.Actual = frm;
+				LastIndex = lastIndex;
+			}
 		}
 		
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (int startIndex, int stride, int count, int step)
+		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (StealRange[] ranges, int workerIndex)
 		{
-			if (startIndex >= source.Count)
+			if (ranges[workerIndex].V.Actual >= source.Count)
 			  return GetEmpty ();
 			
-			return GetEnumeratorForRangeInternal (startIndex, stride, count, step);
+			return GetEnumeratorForRangeInternal (ranges, workerIndex);
 		}
 
 		IEnumerator<KeyValuePair<long, T>> GetEmpty ()
@@ -91,19 +112,54 @@ namespace System.Collections.Concurrent.Partitioners
 			yield break;
 		}
 		
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int lastIndex)
-		{	
-			for (int i = startIndex; i < lastIndex; i++) {
-				yield return new KeyValuePair<long, T> (i, source[i]);
-			}
-		}
-
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int stride, int count, int step)
+		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (StealRange[] ranges, int workerIndex)
 		{
-			for (int i = startIndex; i < count; i += stride * step) {
-				for (int j = i; j < i + step && j < count; j++) {
-					yield return new KeyValuePair<long, T> (j, source[j]);
-				}
+			StealRange range = ranges[workerIndex];
+			int lastIndex = range.LastIndex;
+			int index = range.V.Actual;
+
+			// HACK: The algorithm here shouldn't need the following Int.Incr call (or a Thread.MemoryBarrier)
+			// but for weird reasons it does.
+			for (int i = index; i < lastIndex; i = Interlocked.Increment (ref range.V.Actual)) {
+				if (i >= lastIndex - range.V.Stolen)
+					break;
+
+				yield return new KeyValuePair<long, T> (i, source[i]);
+
+				if (i + 1 >= lastIndex - range.V.Stolen)
+					break;
+			}
+
+			int num = ranges.Length;
+			int len = num + workerIndex;
+
+			for (int sIndex = workerIndex + 1; sIndex < len; ++sIndex) {
+				int extWorker = sIndex % num;
+				range = ranges[extWorker];
+				lastIndex = range.LastIndex;
+
+				StealValue val;
+				long old;
+				int stolen;
+
+				do {
+					do {
+						val = range.V;
+						old = val.Value;
+
+						if (val.Actual >= lastIndex - val.Stolen - 1)
+							goto next;
+						val.Stolen += 1;
+					} while (Interlocked.CompareExchange (ref range.V.Value, val.Value, old) != old);
+
+					stolen = lastIndex - val.Stolen;
+
+					if (stolen > range.V.Actual || (stolen == range.V.Actual && range.V.Actual == val.Actual + 1))
+						yield return new KeyValuePair<long, T> (stolen, source[stolen]);
+				} while (stolen >= 0);
+
+				next:
+				continue;
 			}
 		}
 	}
