@@ -180,28 +180,22 @@ namespace System.Net.Sockets
 			}
 		}
 
-
-		[MonoTODO]
 		public Socket (SocketInformation socketInformation)
 		{
-			throw new NotImplementedException ("SocketInformation not figured out yet");
+			var options = socketInformation.Options;
+			islistening = (options & SocketInformationOptions.Listening) != 0;
+			connected   = (options & SocketInformationOptions.Connected) != 0;
+			blocking    = (options & SocketInformationOptions.NonBlocking) == 0;
+			useoverlappedIO = (options & SocketInformationOptions.UseOnlyOverlappedIO) != 0;
 
-			// ifdef to avoid the warnings.
-#if false
-			//address_family = socketInformation.address_family;
-			//socket_type = socketInformation.socket_type;
-			//protocol_type = socketInformation.protocol_type;
-			address_family = AddressFamily.InterNetwork;
-			socket_type = SocketType.Stream;
-			protocol_type = ProtocolType.IP;
+			var result = Mono.DataConverter.Unpack ("iiiil", socketInformation.ProtocolInformation, 0);
 			
-			int error;
-			socket = Socket_internal (address_family, socket_type, protocol_type, out error);
-			if (error != 0)
-				throw new SocketException (error);
-
+			address_family = (AddressFamily) (int) result [0];
+			socket_type = (SocketType) (int) result [1];
+			protocol_type = (ProtocolType) (int) result [2];
+			isbound = (ProtocolType) (int) result [3] != 0;
+			socket = (IntPtr) (long) result [4];
 			SocketDefaults ();
-#endif
 		}
 
 #if !TARGET_JVM
@@ -1320,15 +1314,20 @@ namespace System.Net.Sockets
 			}
 		}
 
-		[MonoTODO ("Not implemented")]
+		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
 		public SocketInformation DuplicateAndClose (int targetProcessId)
 		{
-			/* Need to serialize this socket into a
-			 * SocketInformation struct, but must study
-			 * the MS implementation harder to figure out
-			 * behaviour as documentation is lacking
-			 */
-			throw new NotImplementedException ();
+			var si = new SocketInformation ();
+			si.Options =
+				(islistening ? SocketInformationOptions.Listening : 0) |
+				(connected ? SocketInformationOptions.Connected : 0) |
+				(blocking ? 0 : SocketInformationOptions.NonBlocking) |
+				(useoverlappedIO ? SocketInformationOptions.UseOnlyOverlappedIO : 0);
+
+			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)address_family, (int)socket_type, (int)protocol_type, isbound ? 1 : 0, (long)socket);
+			socket = (IntPtr) (-1);
+
+			return si;
 		}
 
 		public Socket EndAccept (IAsyncResult result)
