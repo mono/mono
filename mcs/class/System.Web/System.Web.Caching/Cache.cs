@@ -147,6 +147,9 @@ namespace System.Web.Caching
 				return null;
 
 			CacheItem ret = cache [key];
+			if (ret == null)
+				return null;
+			
 			if (timedItems != null)
 				timedItems.OnItemDisable (ret);
 			
