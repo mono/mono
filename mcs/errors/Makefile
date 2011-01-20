@@ -10,7 +10,6 @@ ILASM = $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
 DISTFILES = \
 	CONTRIBUTORS_README 	\
 	errors.txt 		\
-	do-tests.pl		\
 	$(wildcard *.cs)	\
 	$(wildcard *.il)	\
 	$(wildcard *.inc)	\
