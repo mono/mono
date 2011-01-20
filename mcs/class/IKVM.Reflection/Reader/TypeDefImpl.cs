@@ -305,12 +305,17 @@ namespace IKVM.Reflection.Reader
 			return sb.ToString();
 		}
 
+		internal bool IsNestedByFlags
+		{
+			get { return (this.Attributes & TypeAttributes.VisibilityMask & ~TypeAttributes.Public) != 0; }
+		}
+
 		public override Type DeclaringType
 		{
 			get
 			{
 				// note that we cannot use Type.IsNested for this, because that calls DeclaringType
-				if ((this.Attributes & TypeAttributes.VisibilityMask & ~TypeAttributes.Public) == 0)
+				if (!IsNestedByFlags)
 				{
 					return null;
 				}

@@ -48,7 +48,6 @@ namespace IKVM.Reflection.Emit
 		private readonly List<TypeBuilder> types = new List<TypeBuilder>();
 		private readonly Dictionary<Type, int> typeTokens = new Dictionary<Type, int>();
 		private readonly Dictionary<Type, int> memberRefTypeTokens = new Dictionary<Type, int>();
-		private readonly Dictionary<string, TypeBuilder> fullNameToType = new Dictionary<string, TypeBuilder>();
 		internal readonly ByteBuffer methodBodies = new ByteBuffer(128 * 1024);
 		internal readonly List<int> tokenFixupOffsets = new List<int>();
 		internal readonly ByteBuffer initializedData = new ByteBuffer(512);
@@ -109,7 +108,7 @@ namespace IKVM.Reflection.Emit
 				symbolWriter = SymbolSupport.CreateSymbolWriterFor(this);
 			}
 			// <Module> must be the first record in the TypeDef table
-			moduleType = new TypeBuilder(this, null, "<Module>", 0);
+			moduleType = new TypeBuilder(this, null, "<Module>");
 			types.Add(moduleType);
 		}
 
@@ -208,7 +207,8 @@ namespace IKVM.Reflection.Emit
 				ns = name.Substring(0, lastdot);
 				name = name.Substring(lastdot + 1);
 			}
-			TypeBuilder typeBuilder = __DefineType(ns, name, attr);
+			TypeBuilder typeBuilder = __DefineType(ns, name);
+			typeBuilder.__SetAttributes(attr);
 			if (parent == null && (attr & TypeAttributes.Interface) == 0)
 			{
 				parent = universe.System_Object;
@@ -218,16 +218,15 @@ namespace IKVM.Reflection.Emit
 			return typeBuilder;
 		}
 
-		public TypeBuilder __DefineType(string ns, string name, TypeAttributes attr)
+		public TypeBuilder __DefineType(string ns, string name)
 		{
-			return DefineType(this, ns, name, attr);
+			return DefineType(this, ns, name);
 		}
 
-		internal TypeBuilder DefineType(ITypeOwner owner, string ns, string name, TypeAttributes attr)
+		internal TypeBuilder DefineType(ITypeOwner owner, string ns, string name)
 		{
-			TypeBuilder typeBuilder = new TypeBuilder(owner, ns, name, attr);
+			TypeBuilder typeBuilder = new TypeBuilder(owner, ns, name);
 			types.Add(typeBuilder);
-			fullNameToType.Add(typeBuilder.FullName, typeBuilder);
 			return typeBuilder;
 		}
 
@@ -433,11 +432,16 @@ namespace IKVM.Reflection.Emit
 			get { return asm; }
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName name)
 		{
-			TypeBuilder type;
-			fullNameToType.TryGetValue(typeName, out type);
-			return type;
+			foreach (Type type in types)
+			{
+				if (type.__Namespace == name.Namespace && type.__Name == name.Name)
+				{
+					return type;
+				}
+			}
+			return null;
 		}
 
 		internal override void GetTypesImpl(List<Type> list)

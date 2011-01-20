@@ -50,15 +50,29 @@ namespace IKVM.Reflection
 		public abstract ManifestResourceInfo GetManifestResourceInfo(string resourceName);
 		public abstract System.IO.Stream GetManifestResourceStream(string resourceName);
 
-		internal abstract Type GetTypeImpl(string typeName);
-
-		// The differences between ResolveType and GetTypeImpl are:
-		// - ResolveType is only used when a type is assumed to exist (because another module's metadata claim it)
-		// - ResolveType takes the unescaped namespace and name parts as they exist in the metadata
-		// - ResolveType is overridden in MissingAssembly to return a MissingType
-		internal virtual Type ResolveType(string ns, string name)
+		internal Type GetTypeImpl(string typeName)
 		{
-			return GetTypeImpl(TypeNameParser.Escape(ns == null ? name : ns + "." + name));
+			Type type = FindType(TypeName.Split(TypeNameParser.Unescape(typeName)));
+			if (type == null && __IsMissing)
+			{
+				throw new MissingAssemblyException((MissingAssembly)this);
+			}
+			return type;
+		}
+
+		internal abstract Type FindType(TypeName name);
+
+		// The differences between ResolveType and FindType are:
+		// - ResolveType is only used when a type is assumed to exist (because another module's metadata claims it)
+		// - ResolveType can return a MissingType
+		internal Type ResolveType(TypeName typeName)
+		{
+			return FindType(typeName) ?? GetMissingType(typeName);
+		}
+
+		internal virtual Type GetMissingType(TypeName name)
+		{
+			return null;
 		}
 
 		public Module[] GetModules()

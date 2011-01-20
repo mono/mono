@@ -149,7 +149,11 @@ namespace IKVM.Reflection
 
 		private Type ImportMscorlibType(System.Type type)
 		{
-			return Mscorlib.GetTypeImpl(type.FullName);
+			// We use FindType instead of ResolveType here, because on some versions of mscorlib some of
+			// the special types we use/support are missing and the type properties are defined to
+			// return null in that case.
+			// Note that we don't have to unescape type.Name here, because none of the names contain special characters.
+			return Mscorlib.FindType(new TypeName(type.Namespace, type.Name));
 		}
 
 		internal Type System_Object

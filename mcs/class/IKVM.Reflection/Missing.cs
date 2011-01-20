@@ -98,7 +98,7 @@ namespace IKVM.Reflection
 
 	sealed class MissingAssembly : Assembly
 	{
-		private readonly Dictionary<string, Type> types = new Dictionary<string, Type>();
+		private readonly Dictionary<TypeName, Type> types = new Dictionary<TypeName, Type>();
 		private readonly MissingModule module;
 		private readonly string name;
 
@@ -109,14 +109,13 @@ namespace IKVM.Reflection
 			this.name = name;
 		}
 
-		internal override Type ResolveType(string ns, string name)
+		internal override Type GetMissingType(TypeName name)
 		{
-			string fullName = ns == null ? name : ns + "." + name;
 			Type type;
-			if (!types.TryGetValue(fullName, out type))
+			if (!types.TryGetValue(name, out type))
 			{
-				type = new MissingType(module, null, ns, name);
-				types.Add(fullName, type);
+				type = new MissingType(module, null, name.Namespace, name.Name);
+				types.Add(name, type);
 			}
 			return type;
 		}
@@ -196,9 +195,9 @@ namespace IKVM.Reflection
 			get { return true; }
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName typeName)
 		{
-			throw new MissingAssemblyException(this);
+			return null;
 		}
 
 		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
@@ -277,9 +276,9 @@ namespace IKVM.Reflection
 			get { throw new MissingModuleException(this); }
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName typeName)
 		{
-			throw new MissingModuleException(this);
+			return null;
 		}
 
 		internal override void GetTypesImpl(System.Collections.Generic.List<Type> list)
@@ -354,7 +353,7 @@ namespace IKVM.Reflection
 		private readonly Type declaringType;
 		private readonly string ns;
 		private readonly string name;
-		private Dictionary<string, Type> types;
+		private Dictionary<TypeName, Type> types;
 
 		internal MissingType(Module module, Type declaringType, string ns, string name)
 		{
@@ -364,18 +363,17 @@ namespace IKVM.Reflection
 			this.name = name;
 		}
 
-		internal override Type ResolveNestedType(string ns, string name)
+		internal override Type ResolveNestedType(TypeName typeName)
 		{
 			if (types == null)
 			{
-				types = new Dictionary<string, Type>();
+				types = new Dictionary<TypeName, Type>();
 			}
-			string fullName = ns == null ? name : ns + "." + name;
 			Type type;
-			if (!types.TryGetValue(fullName, out type))
+			if (!types.TryGetValue(typeName, out type))
 			{
-				type = new MissingType(module, this, ns, name);
-				types.Add(fullName, type);
+				type = new MissingType(module, this, typeName.Namespace, typeName.Name);
+				types.Add(typeName, type);
 			}
 			return type;
 		}

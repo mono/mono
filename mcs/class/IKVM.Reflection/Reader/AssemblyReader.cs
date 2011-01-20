@@ -101,14 +101,14 @@ namespace IKVM.Reflection.Reader
 			return list.ToArray();
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName typeName)
 		{
-			Type type = manifestModule.GetType(typeName);
+			Type type = manifestModule.FindType(typeName);
 			for (int i = 0; type == null && i < externalModules.Length; i++)
 			{
 				if ((manifestModule.File.records[i].Flags & ContainsNoMetaData) == 0)
 				{
-					type = GetModule(i).GetType(typeName);
+					type = GetModule(i).FindType(typeName);
 				}
 			}
 			return type;

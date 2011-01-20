@@ -249,13 +249,12 @@ namespace IKVM.Reflection.Emit
 			Baked = 4,
 		}
 
-		internal TypeBuilder(ITypeOwner owner, string ns, string name, TypeAttributes attribs)
+		internal TypeBuilder(ITypeOwner owner, string ns, string name)
 		{
 			this.owner = owner;
 			this.token = this.ModuleBuilder.TypeDef.AllocToken();
 			this.ns = ns;
 			this.name = name;
-			this.attribs = attribs;
 			this.typeNameSpace = ns == null ? 0 : this.ModuleBuilder.Strings.Add(ns);
 			this.typeName = this.ModuleBuilder.Strings.Add(name);
 		}
@@ -457,7 +456,8 @@ namespace IKVM.Reflection.Emit
 				ns = name.Substring(0, lastdot);
 				name = name.Substring(lastdot + 1);
 			}
-			TypeBuilder typeBuilder = __DefineNestedType(ns, name, attr);
+			TypeBuilder typeBuilder = __DefineNestedType(ns, name);
+			typeBuilder.__SetAttributes(attr);
 			if (parent == null && (attr & TypeAttributes.Interface) == 0)
 			{
 				parent = this.ModuleBuilder.universe.System_Object;
@@ -467,10 +467,10 @@ namespace IKVM.Reflection.Emit
 			return typeBuilder;
 		}
 
-		public TypeBuilder __DefineNestedType(string ns, string name, TypeAttributes attr)
+		public TypeBuilder __DefineNestedType(string ns, string name)
 		{
 			this.typeFlags |= TypeFlags.HasNestedTypes;
-			TypeBuilder typeBuilder = this.ModuleBuilder.DefineType(this, ns, name, attr);
+			TypeBuilder typeBuilder = this.ModuleBuilder.DefineType(this, ns, name);
 			NestedClassTable.Record rec = new NestedClassTable.Record();
 			rec.NestedClass = typeBuilder.MetadataToken;
 			rec.EnclosingClass = this.MetadataToken;
@@ -1038,9 +1038,9 @@ namespace IKVM.Reflection.Emit
 			get { return token == 0x02000001; }
 		}
 
-		internal override Type ResolveNestedType(string ns, string name)
+		internal override Type ResolveNestedType(TypeName typeName)
 		{
-			return base.ResolveNestedType(ns, name) ?? ((AssemblyBuilder)ModuleBuilder.Assembly).GetMissingType(this.Module, this, ns, name);
+			return base.ResolveNestedType(typeName) ?? ((AssemblyBuilder)ModuleBuilder.Assembly).GetMissingType(this.Module, this, typeName);
 		}
 	}
 

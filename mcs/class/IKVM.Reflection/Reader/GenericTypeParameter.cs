@@ -131,7 +131,7 @@ namespace IKVM.Reflection.Reader
 				get { throw new InvalidOperationException(); }
 			}
 
-			internal override Type GetTypeImpl(string typeName)
+			internal override Type FindType(TypeName typeName)
 			{
 				throw new InvalidOperationException();
 			}

@@ -287,8 +287,19 @@ namespace IKVM.Reflection
 		public abstract Type[] __ResolveOptionalParameterTypes(int metadataToken);
 		public abstract string ScopeName { get; }
 
-		internal abstract Type GetTypeImpl(string typeName);
 		internal abstract void GetTypesImpl(List<Type> list);
+
+		internal Type GetTypeImpl(string typeName)
+		{
+			Type type = FindType(TypeName.Split(TypeNameParser.Unescape(typeName)));
+			if (type == null && __IsMissing)
+			{
+				throw new MissingModuleException((MissingModule)this);
+			}
+			return type;
+		}
+
+		internal abstract Type FindType(TypeName name);
 
 		public Type GetType(string className)
 		{

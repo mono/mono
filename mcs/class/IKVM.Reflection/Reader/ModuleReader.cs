@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 Jeroen Frijters
+  Copyright (C) 2009-2011 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -74,8 +74,8 @@ namespace IKVM.Reflection.Reader
 		private MethodBase[] methods;
 		private MemberInfo[] memberRefs;
 		private Dictionary<int, string> strings = new Dictionary<int, string>();
-		private Dictionary<string, Type> types = new Dictionary<string, Type>();
-		private Dictionary<string, LazyForwardedType> forwardedTypes = new Dictionary<string, LazyForwardedType>();
+		private Dictionary<TypeName, Type> types = new Dictionary<TypeName, Type>();
+		private Dictionary<TypeName, LazyForwardedType> forwardedTypes = new Dictionary<TypeName, LazyForwardedType>();
 
 		private sealed class LazyForwardedType
 		{
@@ -87,12 +87,16 @@ namespace IKVM.Reflection.Reader
 				this.assemblyRef = assemblyRef;
 			}
 
-			internal Type GetType(ModuleReader module, string typeName)
+			internal Type GetType(ModuleReader module, TypeName typeName)
 			{
 				if (type == null)
 				{
 					Assembly asm = module.ResolveAssemblyRef(assemblyRef);
-					type = asm.GetType(typeName, true);
+					type = asm.ResolveType(typeName);
+					if (type == null)
+					{
+						throw new TypeLoadException(typeName.ToString());
+					}
 				}
 				return type;
 			}
@@ -251,9 +255,9 @@ namespace IKVM.Reflection.Reader
 					{
 						moduleType = type;
 					}
-					else
+					else if (!type.IsNestedByFlags)
 					{
-						types.Add(type.FullName, type);
+						types.Add(new TypeName(type.__Namespace, type.__Name), type);
 					}
 				}
 				// add forwarded types to forwardedTypes dictionary (because Module.GetType(string) should return them)
@@ -262,8 +266,8 @@ namespace IKVM.Reflection.Reader
 					int implementation = ExportedType.records[i].Implementation;
 					if (implementation >> 24 == AssemblyRefTable.Index)
 					{
-						string typeName = GetTypeName(ExportedType.records[i].TypeNamespace, ExportedType.records[i].TypeName);
-						forwardedTypes.Add(TypeNameParser.Escape(typeName), new LazyForwardedType((implementation & 0xFFFFFF) - 1));
+						TypeName typeName = GetTypeName(ExportedType.records[i].TypeNamespace, ExportedType.records[i].TypeName);
+						forwardedTypes.Add(typeName, new LazyForwardedType((implementation & 0xFFFFFF) - 1));
 					}
 				}
 			}
@@ -362,10 +366,10 @@ namespace IKVM.Reflection.Reader
 								case AssemblyRefTable.Index:
 									{
 										Assembly assembly = ResolveAssemblyRef((scope & 0xFFFFFF) - 1);
-										Type type = assembly.ResolveType(GetString(TypeRef.records[index].TypeNameSpace), GetString(TypeRef.records[index].TypeName));
+										TypeName typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
+										Type type = assembly.ResolveType(typeName);
 										if (type == null)
 										{
-											string typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
 											throw new TypeLoadException(String.Format("Type '{0}' not found in assembly '{1}'", typeName, assembly.FullName));
 										}
 										typeRefs[index] = type;
@@ -374,7 +378,8 @@ namespace IKVM.Reflection.Reader
 								case TypeRefTable.Index:
 									{
 										Type outer = ResolveType(scope, null);
-										typeRefs[index] = outer.ResolveNestedType(GetString(TypeRef.records[index].TypeNameSpace), GetString(TypeRef.records[index].TypeName));
+										TypeName typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
+										typeRefs[index] = outer.ResolveNestedType(typeName);
 										break;
 									}
 								case ModuleTable.Index:
@@ -382,13 +387,13 @@ namespace IKVM.Reflection.Reader
 									{
 										throw new NotImplementedException("self reference scope?");
 									}
-									typeRefs[index] = GetType(TypeNameParser.Escape(GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName)));
+									typeRefs[index] = FindType(GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName));
 									break;
 								case ModuleRefTable.Index:
 									{
 										Module module = ResolveModuleRef(ModuleRef.records[(scope & 0xFFFFFF) - 1]);
-										string typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
-										Type type = module.GetType(TypeNameParser.Escape(typeName));
+										TypeName typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
+										Type type = module.FindType(typeName);
 										if (type == null)
 										{
 											throw new TypeLoadException(String.Format("Type '{0}' not found in module '{1}'", typeName, module.Name));
@@ -477,16 +482,9 @@ namespace IKVM.Reflection.Reader
 			}
 		}
 
-		private string GetTypeName(int typeNamespace, int typeName)
+		private TypeName GetTypeName(int typeNamespace, int typeName)
 		{
-			if (typeNamespace == 0)
-			{
-				return GetString(typeName);
-			}
-			else
-			{
-				return GetString(typeNamespace) + "." + GetString(typeName);
-			}
+			return new TypeName(GetString(typeNamespace), GetString(typeName));
 		}
 
 		private Assembly ResolveAssemblyRef(int index)
@@ -561,7 +559,7 @@ namespace IKVM.Reflection.Reader
 			get { return assembly; }
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName typeName)
 		{
 			PopulateTypeDef();
 			Type type;
@@ -981,21 +979,21 @@ namespace IKVM.Reflection.Reader
 
 		public override IList<CustomAttributeData> __GetPlaceholderAssemblyCustomAttributes(bool multiple, bool security)
 		{
-			string typeName;
+			TypeName typeName;
 			switch ((multiple ? 1 : 0) + (security ? 2 : 0))
 			{
 				case 0:
-					typeName = "System.Runtime.CompilerServices.AssemblyAttributesGoHere";
+					typeName = new TypeName("System.Runtime.CompilerServices", "AssemblyAttributesGoHere");
 					break;
 				case 1:
-					typeName = "System.Runtime.CompilerServices.AssemblyAttributesGoHereM";
+					typeName = new TypeName("System.Runtime.CompilerServices", "AssemblyAttributesGoHereM");
 					break;
 				case 2:
-					typeName = "System.Runtime.CompilerServices.AssemblyAttributesGoHereS";
+					typeName = new TypeName("System.Runtime.CompilerServices", "AssemblyAttributesGoHereS");
 					break;
 				case 3:
 				default:
-					typeName = "System.Runtime.CompilerServices.AssemblyAttributesGoHereSM";
+					typeName = new TypeName("System.Runtime.CompilerServices", "AssemblyAttributesGoHereSM");
 					break;
 			}
 			List<CustomAttributeData> list = new List<CustomAttributeData>();

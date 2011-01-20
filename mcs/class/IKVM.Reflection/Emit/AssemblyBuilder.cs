@@ -64,13 +64,41 @@ namespace IKVM.Reflection.Emit
 		private readonly List<CustomAttributeBuilder> customAttributes = new List<CustomAttributeBuilder>();
 		private readonly List<CustomAttributeBuilder> declarativeSecurity = new List<CustomAttributeBuilder>();
 		private readonly List<Type> typeForwarders = new List<Type>();
-		private Dictionary<string, Type> missingTypes;
+		private Dictionary<ScopedTypeName, Type> missingTypes;
 
 		private struct ResourceFile
 		{
 			internal string Name;
 			internal string FileName;
 			internal ResourceAttributes Attributes;
+		}
+
+		private struct ScopedTypeName : IEquatable<ScopedTypeName>
+		{
+			private readonly Type declaringType;
+			private readonly TypeName name;
+
+			internal ScopedTypeName(Type declaringType, TypeName name)
+			{
+				this.declaringType = declaringType;
+				this.name = name;
+			}
+
+			public override bool Equals(object obj)
+			{
+				ScopedTypeName? other = obj as ScopedTypeName?;
+				return other != null && ((IEquatable<ScopedTypeName>)other.Value).Equals(this);
+			}
+
+			public override int GetHashCode()
+			{
+				return declaringType == null ? name.GetHashCode() : declaringType.GetHashCode() * 7 + name.GetHashCode();
+			}
+
+			bool IEquatable<ScopedTypeName>.Equals(ScopedTypeName other)
+			{
+				return other.declaringType == declaringType && other.name == name;
+			}
 		}
 
 		internal AssemblyBuilder(Universe universe, AssemblyName name, string dir, PermissionSet requiredPermissions, PermissionSet optionalPermissions, PermissionSet refusedPermissions)
@@ -508,11 +536,11 @@ namespace IKVM.Reflection.Emit
 			return list.ToArray();
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName typeName)
 		{
 			foreach (ModuleBuilder mb in modules)
 			{
-				Type type = mb.GetTypeImpl(typeName);
+				Type type = mb.FindType(typeName);
 				if (type != null)
 				{
 					return type;
@@ -520,7 +548,7 @@ namespace IKVM.Reflection.Emit
 			}
 			foreach (Module module in addedModules)
 			{
-				Type type = module.GetTypeImpl(typeName);
+				Type type = module.FindType(typeName);
 				if (type != null)
 				{
 					return type;
@@ -529,23 +557,23 @@ namespace IKVM.Reflection.Emit
 			return null;
 		}
 
-		internal override Type ResolveType(string ns, string name)
+		internal override Type GetMissingType(TypeName name)
 		{
-			return base.ResolveType(ns, name) ?? GetMissingType(this.ManifestModule, null, ns, name);
+			return GetMissingType(this.ManifestModule, null, name);
 		}
 
-		internal Type GetMissingType(Module module, Type declaringType, string ns, string name)
+		internal Type GetMissingType(Module module, Type declaringType, TypeName name)
 		{
 			if (missingTypes == null)
 			{
 				return null;
 			}
-			Type mt = new MissingType(module, declaringType, ns, name);
+			ScopedTypeName stn = new ScopedTypeName(declaringType, name);
 			Type type;
-			if (!missingTypes.TryGetValue(mt.FullName, out type))
+			if (!missingTypes.TryGetValue(stn, out type))
 			{
-				missingTypes.Add(mt.FullName, mt);
-				type = mt;
+				type = new MissingType(module, declaringType, name.Namespace, name.Name);
+				missingTypes.Add(stn, type);
 			}
 			return type;
 		}
@@ -554,7 +582,7 @@ namespace IKVM.Reflection.Emit
 		{
 			if (missingTypes == null)
 			{
-				missingTypes = new Dictionary<string, Type>();
+				missingTypes = new Dictionary<ScopedTypeName, Type>();
 			}
 		}
 
@@ -692,7 +720,7 @@ namespace IKVM.Reflection.Emit
 			get { return assembly; }
 		}
 
-		internal override Type GetTypeImpl(string typeName)
+		internal override Type FindType(TypeName typeName)
 		{
 			return null;
 		}
