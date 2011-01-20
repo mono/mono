@@ -71,6 +71,7 @@
 			Utf8Output="$(Utf8Output)"
 			WarningLevel="$(WarningLevel)"
 			WarningsAsErrors="$(WarningsAsErrors)"
+			WarningsNotAsErrors="$(WarningsNotAsErrors)"
 			Win32Icon="$(Win32Icon)"
 			Win32Resource="$(Win32Resource)"
 			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
