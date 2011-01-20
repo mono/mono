@@ -343,5 +343,58 @@ namespace MonoTests.System.Xaml.Schema
 			Assert.AreEqual (new KeyValuePair<int,string> (5, "foo"), arr [0], "#1");
 			Assert.AreEqual (new KeyValuePair<int,string> (0, "baz"), arr [2], "#1");
 		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void UnknownInvokerCreateInstance ()
+		{
+			XamlTypeInvoker.UnknownInvoker.CreateInstance (new object [0]);
+		}
+
+		[Test]
+		public void UnknownInvokerGetItems ()
+		{
+			var items = XamlTypeInvoker.UnknownInvoker.GetItems (new object [] {1});
+			Assert.IsNotNull (items, "#1");
+			Assert.IsTrue (items.MoveNext (), "#2");
+			Assert.AreEqual (1, items.Current, "#3");
+			Assert.IsFalse (items.MoveNext (), "#4");
+		}
+
+		[Test]
+		public void UnknownInvokerAddToCollection ()
+		{
+			// this does not check Unknown-ness.
+			var c = new List<object> ();
+			XamlTypeInvoker.UnknownInvoker.AddToCollection (c, 1);
+			Assert.AreEqual (1, c.Count, "#1");
+		}
+
+		[Test]
+		public void UnknownInvokerAddToDictionary ()
+		{
+			var dic = new Dictionary<object,object> ();
+			// this does not check Unknown-ness.
+			XamlTypeInvoker.UnknownInvoker.AddToDictionary (dic, 1, 2);
+			Assert.AreEqual (1, dic.Count, "#1");
+		}
+
+		[Test]
+		public void UnknownInvokerGetEnumeratorMethod ()
+		{
+			try {
+				Assert.IsNull (XamlTypeInvoker.UnknownInvoker.GetEnumeratorMethod (), "#1");
+			} catch (Exception) {
+				// .NET is buggy, returns NRE.
+			}
+		}
+
+		[Test]
+		public void UnknownInvoker ()
+		{
+			Assert.IsNull (XamlTypeInvoker.UnknownInvoker.SetMarkupExtensionHandler, "#1");
+			Assert.IsNull (XamlTypeInvoker.UnknownInvoker.SetTypeConverterHandler, "#2");
+			Assert.IsNull (XamlTypeInvoker.UnknownInvoker.GetAddMethod (XamlLanguage.Object), "#3");
+		}
 	}
 }

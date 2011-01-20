@@ -30,8 +30,9 @@ namespace System.Xaml.Schema
 {
 	public class XamlTypeInvoker
 	{
+		static readonly XamlTypeInvoker unknown = new XamlTypeInvoker ();
 		public static XamlTypeInvoker UnknownInvoker {
-			get { throw new NotImplementedException (); }
+			get { return unknown; }
 		}
 
 		protected XamlTypeInvoker ()
@@ -49,16 +50,16 @@ namespace System.Xaml.Schema
 
 		void ThrowIfUnknown ()
 		{
-			if (type.UnderlyingType == null)
+			if (type == null || type.UnderlyingType == null)
 				throw new NotSupportedException (String.Format ("Current operation is valid only when the underlying type on a XamlType is known, but it is unknown for '{0}'", type));
 		}
 
 		public EventHandler<XamlSetMarkupExtensionEventArgs> SetMarkupExtensionHandler {
-			get { return type.SetMarkupExtensionHandler; }
+			get { return type == null ? null : type.SetMarkupExtensionHandler; }
 		}
 
 		public EventHandler<XamlSetTypeConverterEventArgs> SetTypeConverterHandler {
-			get { return type.SetTypeConverterHandler; }
+			get { return type == null ? null : type.SetTypeConverterHandler; }
 		}
 
 		public virtual void AddToCollection (object instance, object item)
@@ -69,10 +70,10 @@ namespace System.Xaml.Schema
 				throw new ArgumentNullException ("item");
 
 			var ct = instance.GetType ();
-			var xct = type.SchemaContext.GetXamlType (ct);
+			var xct = type == null ? null : type.SchemaContext.GetXamlType (ct);
 			MethodInfo mi = null;
 
-			if (type.UnderlyingType != null) {
+			if (type != null && type.UnderlyingType != null) {
 				if (!xct.IsCollection) // not sure why this check is done only when UnderlyingType exists...
 					throw new NotSupportedException (String.Format ("Non-collection type '{0}' does not support this operation", xct));
 				if (ct.IsAssignableFrom (type.UnderlyingType))
@@ -80,7 +81,7 @@ namespace System.Xaml.Schema
 			}
 
 			if (mi == null) {
-				if (xct.IsGeneric)
+				if (ct.IsGenericType)
 					mi = ct.GetMethod ("Add", ct.GetGenericArguments ());
 				else
 					mi = ct.GetMethod ("Add", new Type [] {typeof (object)});
@@ -111,7 +112,7 @@ namespace System.Xaml.Schema
 
 		public virtual MethodInfo GetAddMethod (XamlType contentType)
 		{
-			return type.UnderlyingType == null || type.ItemType == null || type.LookupCollectionKind () == XamlCollectionKind.None ? null : type.UnderlyingType.GetMethod ("Add", new Type [] {contentType.UnderlyingType});
+			return type == null || type.UnderlyingType == null || type.ItemType == null || type.LookupCollectionKind () == XamlCollectionKind.None ? null : type.UnderlyingType.GetMethod ("Add", new Type [] {contentType.UnderlyingType});
 		}
 
 		public virtual MethodInfo GetEnumeratorMethod ()
