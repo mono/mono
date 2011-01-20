@@ -28,8 +28,9 @@ namespace System.Xaml.Schema
 {
 	public class XamlMemberInvoker
 	{
+		static readonly XamlMemberInvoker unknown = new XamlMemberInvoker ();
 		public static XamlMemberInvoker UnknownInvoker {
-			get { throw new NotImplementedException (); }
+			get { return unknown; }
 		}
 
 		protected XamlMemberInvoker ()
@@ -53,8 +54,15 @@ namespace System.Xaml.Schema
 			get { return member != null ? member.UnderlyingSetter : null; }
 		}
 
+		void ThrowIfUnknown ()
+		{
+			if (member == null)
+				throw new NotSupportedException ("Current operation is invalid for unknown member.");
+		}
+
 		public virtual object GetValue (object instance)
 		{
+			ThrowIfUnknown ();
 			if (instance == null)
 				throw new ArgumentNullException ("instance");
 			if (member is XamlDirective)
@@ -65,6 +73,7 @@ namespace System.Xaml.Schema
 		}
 		public virtual void SetValue (object instance, object value)
 		{
+			ThrowIfUnknown ();
 			if (instance == null)
 				throw new ArgumentNullException ("instance");
 			if (member is XamlDirective)
