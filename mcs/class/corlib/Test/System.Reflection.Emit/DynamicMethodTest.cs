@@ -400,6 +400,20 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue (function ());
 		}
 
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GetMethodBody ()
+		{
+			var method = new DynamicMethod ("method", typeof (object), new Type [] { typeof (object) });
+
+			var il = method.GetILGenerator ();
+			il.Emit (OpCodes.Ldarg_0);
+			il.Emit (OpCodes.Ret);
+
+			var f = (Func<object, object>) method.CreateDelegate (typeof (Func<object, object>));
+			f.Method.GetMethodBody ();
+		}
+
 	public delegate object RetObj();
 		[Test] //#640702
 		public void GetCurrentMethodWorksWithDynamicMethods ()
