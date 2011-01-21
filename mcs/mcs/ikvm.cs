@@ -51,6 +51,16 @@ namespace Mono.CSharp
 		{
 		}
 
+		public void AddCompiledAssembly (AssemblyDefinitionStatic assembly)
+		{
+			assembly_2_definition.Add (assembly.Builder, assembly);
+		}
+
+		public override void AddCompiledType (TypeBuilder type, TypeSpec spec)
+		{
+			compiled_types.Add (type, spec);
+		}
+
 		protected override MemberKind DetermineKindFromBaseType (MetaType baseType)
 		{
 			string name = baseType.Name;
@@ -109,7 +119,7 @@ namespace Mono.CSharp
 			// Setup mapping for build-in types to avoid duplication of their definition
 			//
 			foreach (var type in buildin.AllTypes) {
-				buildin_types.Add (corlib.GetType (type.FullName), type);
+				compiled_types.Add (corlib.GetType (type.FullName), type);
 			}
 		}
 	}
@@ -200,6 +210,7 @@ namespace Mono.CSharp
 		{
 			this.importer = importer;
 			domain = new Universe ();
+			domain.EnableMissingTypeResolution ();
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
 
@@ -258,10 +269,6 @@ namespace Mono.CSharp
 			bool is_fx_assembly = false;
 
 			foreach (var assembly in domain.GetAssemblies ()) {
-				// TODO: Cannot handle unification into current assembly yet
-				if (assembly is AssemblyBuilder)
-					continue;
-
 				AssemblyComparisonResult result;
 				if (!Fusion.CompareAssemblyIdentityPure (refname, false, assembly.FullName, false, out result)) {
 					if ((result == AssemblyComparisonResult.NonEquivalentVersion || result == AssemblyComparisonResult.NonEquivalentPartialVersion) &&
@@ -292,6 +299,9 @@ namespace Mono.CSharp
 			}
 
 			if (version_mismatch != null) {
+				if (version_mismatch is AssemblyBuilder)
+					return version_mismatch;
+
 				var v1 = new AssemblyName (refname).Version;
 				var v2 = version_mismatch.GetName ().Version;
 

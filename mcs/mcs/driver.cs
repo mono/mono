@@ -1495,11 +1495,13 @@ namespace Mono.CSharp
 			assembly.Create (references_loader.Domain);
 
 			// Create compiler types first even before any referenced
-			// assembly is loaded to allow back reference types from
-			// loaded assembly into compiled ont
+			// assembly is loaded to allow forward referenced types from
+			// loaded assembly into compiled builder to be resolved
+			// correctly
 			module.CreateType ();
 			ShowTime ("Creating compiled types");
 
+			importer.AddCompiledAssembly (assembly);
 			references_loader.LoadReferences (module);
 			ShowTime ("Imporing referenced assemblies");
 

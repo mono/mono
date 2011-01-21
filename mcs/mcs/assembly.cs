@@ -37,9 +37,11 @@ namespace Mono.CSharp
 		string FullName { get; }
 		bool HasExtensionMethod { get; }
 		bool IsCLSCompliant { get; }
+		bool IsMissing { get; }
 		string Name { get; }
 
 		byte[] GetPublicKeyToken ();
+		bool IsFriendAssemblyTo (IAssemblyDefinition assembly);
 	}
                 
 	public abstract class AssemblyDefinition : IAssemblyDefinition
@@ -143,12 +145,18 @@ namespace Mono.CSharp
 
 		// TODO: This should not exist here but will require more changes
 		public MetadataImporter Importer {
-		    protected get; set;
+		    get; set;
 		}
 
 		public bool IsCLSCompliant {
 			get {
 				return is_cls_compliant;
+			}
+		}
+
+		bool IAssemblyDefinition.IsMissing {
+			get {
+				return false;
 			}
 		}
 
@@ -358,7 +366,11 @@ namespace Mono.CSharp
 		{
 			// TODO: It should check only references assemblies but there is
 			// no working SRE API
-			foreach (var a in Importer.Assemblies) {
+			foreach (var entry in Importer.Assemblies) {
+				var a = entry as ImportedAssemblyDefinition;
+				if (a == null)
+					continue;
+
 				if (public_key != null && !a.HasStrongName) {
 					Report.Error (1577, "Referenced assembly `{0}' does not have a strong name",
 						a.FullName);
@@ -885,6 +897,11 @@ namespace Mono.CSharp
 		void Error_AssemblySigning (string text)
 		{
 			Report.Error (1548, "Error during assembly signing. " + text);
+		}
+
+		public bool IsFriendAssemblyTo (IAssemblyDefinition assembly)
+		{
+			return false;
 		}
 
 		static Version IsValidAssemblyVersion (string version, bool allowGenerated)

@@ -16,9 +16,11 @@ using System.Collections.Generic;
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
 using IKVM.Reflection;
+using IKVM.Reflection.Emit;
 #else
 using MetaType = System.Type;
 using System.Reflection;
+using System.Reflection.Emit;
 #endif
 
 namespace Mono.CSharp
@@ -116,22 +118,22 @@ namespace Mono.CSharp
 		}
 
 		protected readonly Dictionary<MetaType, TypeSpec> import_cache;
-		protected readonly Dictionary<MetaType, BuildinTypeSpec> buildin_types;
-		readonly Dictionary<Assembly, ImportedAssemblyDefinition> assembly_2_definition;
+		protected readonly Dictionary<MetaType, TypeSpec> compiled_types;
+		protected readonly Dictionary<Assembly, IAssemblyDefinition> assembly_2_definition;
 
 		public static readonly string CompilerServicesNamespace = "System.Runtime.CompilerServices";
 
 		protected MetadataImporter ()
 		{
 			import_cache = new Dictionary<MetaType, TypeSpec> (1024, ReferenceEquality<MetaType>.Default);
-			buildin_types = new Dictionary<MetaType, BuildinTypeSpec> (40, ReferenceEquality<MetaType>.Default);
-			assembly_2_definition = new Dictionary<Assembly, ImportedAssemblyDefinition> (ReferenceEquality<Assembly>.Default);
+			compiled_types = new Dictionary<MetaType, TypeSpec> (40, ReferenceEquality<MetaType>.Default);
+			assembly_2_definition = new Dictionary<Assembly, IAssemblyDefinition> (ReferenceEquality<Assembly>.Default);
 			IgnorePrivateMembers = true;
 		}
 
 		#region Properties
 
-		public ICollection<ImportedAssemblyDefinition> Assemblies {
+		public ICollection<IAssemblyDefinition> Assemblies {
 			get {
 				return assembly_2_definition.Values;
 			}
@@ -141,6 +143,7 @@ namespace Mono.CSharp
 
 		#endregion
 
+		public abstract void AddCompiledType (TypeBuilder builder, TypeSpec spec);
 		protected abstract MemberKind DetermineKindFromBaseType (MetaType baseType);
 		protected abstract bool HasVolatileModifier (MetaType[] modifiers);
 		public abstract void GetCustomAttributeTypeName (CustomAttributeData cad, out string typeNamespace, out string typeName);
@@ -768,7 +771,7 @@ namespace Mono.CSharp
 			}
 
 			var definition = new ImportedTypeDefinition (type, this);
-			BuildinTypeSpec pt;
+			TypeSpec pt;
 
 			if (kind == MemberKind.Enum) {
 				const BindingFlags underlying_member = BindingFlags.DeclaredOnly |
@@ -794,9 +797,16 @@ namespace Mono.CSharp
 				if (import_cache.TryGetValue (type, out spec))
 					return spec;
 
-			} else if (buildin_types.TryGetValue (type, out pt)) {
+			} else if (compiled_types.TryGetValue (type, out pt)) {
+				//
+				// Same type was found in inside compiled types. It's
+				// either build-in type or forward referenced typed
+				// which point into just compiled assembly.
+				//
 				spec = pt;
-				pt.SetDefinition (definition, type, mod);
+				BuildinTypeSpec bts = pt as BuildinTypeSpec;
+				if (bts != null)
+					bts.SetDefinition (definition, type, mod);
 			}
 
 			if (spec == null)
@@ -816,18 +826,19 @@ namespace Mono.CSharp
 			return spec;
 		}
 
-		public ImportedAssemblyDefinition GetAssemblyDefinition (Assembly assembly)
+		public IAssemblyDefinition GetAssemblyDefinition (Assembly assembly)
 		{
-			ImportedAssemblyDefinition def;
-			if (!assembly_2_definition.TryGetValue (assembly, out def)) {
+			IAssemblyDefinition found;
+			if (!assembly_2_definition.TryGetValue (assembly, out found)) {
 
 				// This can happen in dynamic context only
-				def = new ImportedAssemblyDefinition (assembly, this);
+				var def = new ImportedAssemblyDefinition (assembly, this);
 				assembly_2_definition.Add (assembly, def);
 				def.ReadAttributes ();
+				found = def;
 			}
 
-			return def;
+			return found;
 		}
 
 		public void ImportTypeBase (MetaType type)
@@ -1461,6 +1472,16 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsMissing {
+			get {
+#if STATIC
+				return assembly.__IsMissing;
+#else
+				return false;
+#endif
+			}
+		}
+
 		public bool IsCLSCompliant {
 			get {
 				return cls_compliant;
@@ -1711,18 +1732,28 @@ namespace Mono.CSharp
 
 		public static void Error_MissingDependency (IMemberContext ctx, List<TypeSpec> types, Location loc)
 		{
+			// 
+			// Report details about missing type and most likely cause of the problem.
+			// csc reports 1683, 1684 as warnings but we report them only when used
+			// or referenced from the user core in which case compilation error has to
+			// be reported because compiler cannot continue anyway
+			//
 			foreach (var t in types) {
 				string name = t.GetSignatureForError ();
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
-					ctx.Compiler.Report.Warning (1683, 1, loc,
+					ctx.Compiler.Report.Error (1683, loc,
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
+				} else if (t.MemberDefinition.DeclaringAssembly.IsMissing) {
+					ctx.Compiler.Report.Error (12, loc,
+						"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
+						name, t.MemberDefinition.DeclaringAssembly.FullName);
+				} else {
+					ctx.Compiler.Report.Error (1684, loc,
+						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
+						name, t.MemberDefinition.DeclaringAssembly.FullName);
 				}
-
-				ctx.Compiler.Report.Error (12, loc,
-					"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-					name, t.MemberDefinition.DeclaringAssembly.FullName);
 			}
 		}
 

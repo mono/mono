@@ -1026,6 +1026,9 @@ namespace Mono.CSharp {
 				TypeBuilder = Parent.TypeBuilder.DefineNestedType (Basename, TypeAttr, null, type_size);
 			}
 
+			if (DeclaringAssembly.Importer != null)
+				DeclaringAssembly.Importer.AddCompiledType (TypeBuilder, spec);
+
 			spec.SetMetaInfo (TypeBuilder);
 			spec.MemberCache = new MemberCache (this);
 			spec.DeclaringType = Parent.CurrentType;
