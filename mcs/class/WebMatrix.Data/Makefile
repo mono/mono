@@ -6,5 +6,5 @@ LIBRARY = WebMatrix.Data.dll
 
 include ../../build/library.make
 
-LIB_MCS_FLAGS += -r:$(corlib) -r:System.dll -r:System.Data.dll
+LIB_MCS_FLAGS += -r:$(corlib) -r:System.dll -r:System.Data.dll -r:System.Core.dll
 TEST_MCS_FLAGS += -r:System.dll -r:System.Data.dll
