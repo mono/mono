@@ -15,14 +15,19 @@ namespace System.Runtime.Serialization.Json
 		public class BufferedStreamReader : StreamReader
 		{
 			public BufferedStreamReader (Stream stream)
-				: base (stream, JavaScriptObjectDeserializer.DetectEncoding (stream.ReadByte (), stream.ReadByte ()))
+				: base (new BufferedStream (stream))
+			{
+			}
+			
+			BufferedStreamReader (BufferedStream stream)
+				: base (stream, JavaScriptObjectDeserializer.DetectEncoding (stream.first, stream.second))
 			{
 			}
 		}
 
 		class BufferedStream : Stream
 		{
-			int first, second;
+			internal int first, second;
 			long pos;
 			Stream source;
 
@@ -39,15 +44,23 @@ namespace System.Runtime.Serialization.Json
 					throw new ArgumentNullException ("buffer");
 				if (index < 0 || index >= buffer.Length)
 					throw new ArgumentOutOfRangeException ("index");
-				if (count < 0 || index + count >= buffer.Length)
+				if (count < 0 || index + count > buffer.Length)
 					throw new ArgumentOutOfRangeException ("count");
 
 				if (count == 0)
 					return 0;
-				if (pos < 2) {
-					buffer [pos] = pos == 0 ? (byte) first : (byte) second;
+				int iniCount = count;
+				if (pos == 0) {
+					buffer [index++] = (byte) first;
 					pos++;
-					return Read (buffer, index + 1, count - 1) + 1;
+					if (--count == 0)
+						return iniCount;
+				}
+				if (pos == 1) {
+					buffer [index++] = (byte) second;
+					pos++;
+					if (--count == 0)
+						return iniCount;
 				}
 				return source.Read (buffer, index, count);
 			}
@@ -128,16 +141,24 @@ namespace System.Runtime.Serialization.Json
 
 		public static Encoding DetectEncoding (int byte1, int byte2)
 		{
-			if (byte1 == 0) {
+			switch (byte1) {
+			case 0:
 				if (byte2 == 0)
 					throw new XmlException ("UTF-32BE is detected, which is not supported");
 				else
+					return Encoding.UTF8;
+			case 0xFE:
+				if (byte2 == 0xFF)
 					return Encoding.BigEndianUnicode;
-			} else {
-				if (byte2 == 0) // could be UTF-32LE, but there is no way to detect that only within two bytes.
+				else
+					return Encoding.UTF8;
+			case 0xFF:
+				if (byte2 == 0xFE) // could be UTF-32LE, but there is no way to detect that only within two bytes.
 					return Encoding.Unicode;
 				else
 					return Encoding.UTF8;
+			default:
+				return Encoding.UTF8;
 			}
 		}
 	}
