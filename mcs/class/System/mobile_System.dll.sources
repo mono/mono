@@ -3,6 +3,8 @@
 ../../build/common/MonoTODOAttribute.cs
 ../corlib/System.Collections.Generic/CollectionDebuggerView.cs
 ../corlib/System.Collections/CollectionDebuggerView.cs
+../corlib/Mono/DataConverter.cs
+
 Assembly/AssemblyInfo.cs
 Mono.Http/NtlmClient.cs
 System.CodeDom.Compiler/GeneratedCodeAttribute.cs
