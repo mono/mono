@@ -74,6 +74,11 @@ namespace Mono.Debugger.Soft
 		EventSet current_es;
 		int current_es_index;
 
+		/*
+		 * It is impossible to determine when to resume when using this method, since
+		 * the debuggee is suspended only once per event-set, not event.
+		 */
+		[Obsolete ("Use GetNextEventSet () instead")]
 		public Event GetNextEvent () {
 			lock (queue_monitor) {
 				if (current_es == null || current_es_index == current_es.Events.Length) {
@@ -102,6 +107,7 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		[Obsolete ("Use GetNextEventSet () instead")]
 		public T GetNextEvent<T> () where T : Event {
 			return GetNextEvent () as T;
 		}
