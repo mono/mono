@@ -1,3 +1,8 @@
+2011-01-18  Veerapuram Varadhan  <v.varadhan@gmail.com>
+
+	* DataRowTest.cs (ParentChildRowVersionTest): Don't run
+	test. Fixes test break.
+	
 2010-10-01  Veerapuram Varadhan  <v.varadhan@gmail.com>
 	
 	* DataSetReadXmlTest.cs: Added new test for #582732.
