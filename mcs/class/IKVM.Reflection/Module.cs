@@ -289,16 +289,6 @@ namespace IKVM.Reflection
 
 		internal abstract void GetTypesImpl(List<Type> list);
 
-		internal Type GetTypeImpl(string typeName)
-		{
-			Type type = FindType(TypeName.Split(TypeNameParser.Unescape(typeName)));
-			if (type == null && __IsMissing)
-			{
-				throw new MissingModuleException((MissingModule)this);
-			}
-			return type;
-		}
-
 		internal abstract Type FindType(TypeName name);
 
 		public Type GetType(string className)
@@ -333,7 +323,12 @@ namespace IKVM.Reflection
 					return null;
 				}
 			}
-			return parser.Expand(GetTypeImpl(parser.FirstNamePart), this.Assembly, throwOnError, className);
+			Type type = FindType(TypeName.Split(TypeNameParser.Unescape(parser.FirstNamePart)));
+			if (type == null && __IsMissing)
+			{
+				throw new MissingModuleException((MissingModule)this);
+			}
+			return parser.Expand(type, this.Assembly, throwOnError, className);
 		}
 
 		public Type[] GetTypes()

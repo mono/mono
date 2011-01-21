@@ -64,41 +64,12 @@ namespace IKVM.Reflection.Emit
 		private readonly List<CustomAttributeBuilder> customAttributes = new List<CustomAttributeBuilder>();
 		private readonly List<CustomAttributeBuilder> declarativeSecurity = new List<CustomAttributeBuilder>();
 		private readonly List<Type> typeForwarders = new List<Type>();
-		private Dictionary<ScopedTypeName, Type> missingTypes;
 
 		private struct ResourceFile
 		{
 			internal string Name;
 			internal string FileName;
 			internal ResourceAttributes Attributes;
-		}
-
-		private struct ScopedTypeName : IEquatable<ScopedTypeName>
-		{
-			private readonly Type declaringType;
-			private readonly TypeName name;
-
-			internal ScopedTypeName(Type declaringType, TypeName name)
-			{
-				this.declaringType = declaringType;
-				this.name = name;
-			}
-
-			public override bool Equals(object obj)
-			{
-				ScopedTypeName? other = obj as ScopedTypeName?;
-				return other != null && ((IEquatable<ScopedTypeName>)other.Value).Equals(this);
-			}
-
-			public override int GetHashCode()
-			{
-				return declaringType == null ? name.GetHashCode() : declaringType.GetHashCode() * 7 + name.GetHashCode();
-			}
-
-			bool IEquatable<ScopedTypeName>.Equals(ScopedTypeName other)
-			{
-				return other.declaringType == declaringType && other.name == name;
-			}
 		}
 
 		internal AssemblyBuilder(Universe universe, AssemblyName name, string dir, PermissionSet requiredPermissions, PermissionSet optionalPermissions, PermissionSet refusedPermissions)
@@ -555,35 +526,6 @@ namespace IKVM.Reflection.Emit
 				}
 			}
 			return null;
-		}
-
-		internal override Type GetMissingType(TypeName name)
-		{
-			return GetMissingType(this.ManifestModule, null, name);
-		}
-
-		internal Type GetMissingType(Module module, Type declaringType, TypeName name)
-		{
-			if (missingTypes == null)
-			{
-				return null;
-			}
-			ScopedTypeName stn = new ScopedTypeName(declaringType, name);
-			Type type;
-			if (!missingTypes.TryGetValue(stn, out type))
-			{
-				type = new MissingType(module, declaringType, name.Namespace, name.Name);
-				missingTypes.Add(stn, type);
-			}
-			return type;
-		}
-
-		public void __EnableMissingTypeResolution()
-		{
-			if (missingTypes == null)
-			{
-				missingTypes = new Dictionary<ScopedTypeName, Type>();
-			}
 		}
 
 		public override string ImageRuntimeVersion

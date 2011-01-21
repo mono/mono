@@ -98,7 +98,6 @@ namespace IKVM.Reflection
 
 	sealed class MissingAssembly : Assembly
 	{
-		private readonly Dictionary<TypeName, Type> types = new Dictionary<TypeName, Type>();
 		private readonly MissingModule module;
 		private readonly string name;
 
@@ -107,17 +106,6 @@ namespace IKVM.Reflection
 		{
 			module = new MissingModule(this);
 			this.name = name;
-		}
-
-		internal override Type GetMissingType(TypeName name)
-		{
-			Type type;
-			if (!types.TryGetValue(name, out type))
-			{
-				type = new MissingType(module, null, name.Namespace, name.Name);
-				types.Add(name, type);
-			}
-			return type;
 		}
 
 		public override Type[] GetTypes()
@@ -353,7 +341,6 @@ namespace IKVM.Reflection
 		private readonly Type declaringType;
 		private readonly string ns;
 		private readonly string name;
-		private Dictionary<TypeName, Type> types;
 
 		internal MissingType(Module module, Type declaringType, string ns, string name)
 		{
@@ -363,19 +350,9 @@ namespace IKVM.Reflection
 			this.name = name;
 		}
 
-		internal override Type ResolveNestedType(TypeName typeName)
+		internal override Type FindNestedType(TypeName name)
 		{
-			if (types == null)
-			{
-				types = new Dictionary<TypeName, Type>();
-			}
-			Type type;
-			if (!types.TryGetValue(typeName, out type))
-			{
-				type = new MissingType(module, this, typeName.Namespace, typeName.Name);
-				types.Add(typeName, type);
-			}
-			return type;
+			return null;
 		}
 
 		public override Type DeclaringType

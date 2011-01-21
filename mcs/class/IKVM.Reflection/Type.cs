@@ -747,13 +747,13 @@ namespace IKVM.Reflection
 			return GetConstructor(bindingAttr, binder, types, modifiers);
 		}
 
-		internal virtual Type ResolveNestedType(TypeName typeName)
+		internal Type ResolveNestedType(TypeName typeName)
 		{
-			return FindNestedType(typeName);
+			return FindNestedType(typeName) ?? Module.universe.GetMissingType(Module, this, typeName);
 		}
 
 		// unlike the public API, this takes the namespace and name into account
-		internal Type FindNestedType(TypeName name)
+		internal virtual Type FindNestedType(TypeName name)
 		{
 			foreach (Type type in __GetDeclaredTypes())
 			{

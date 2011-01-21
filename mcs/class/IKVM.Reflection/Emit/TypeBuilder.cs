@@ -460,7 +460,7 @@ namespace IKVM.Reflection.Emit
 			typeBuilder.__SetAttributes(attr);
 			if (parent == null && (attr & TypeAttributes.Interface) == 0)
 			{
-				parent = this.ModuleBuilder.universe.System_Object;
+				//parent = this.ModuleBuilder.universe.System_Object;
 			}
 			typeBuilder.SetParent(parent);
 			this.ModuleBuilder.SetPackingSizeAndTypeSize(typeBuilder, PackingSize.Unspecified, typeSize);
@@ -1036,11 +1036,6 @@ namespace IKVM.Reflection.Emit
 		internal override bool IsModulePseudoType
 		{
 			get { return token == 0x02000001; }
-		}
-
-		internal override Type ResolveNestedType(TypeName typeName)
-		{
-			return base.ResolveNestedType(typeName) ?? ((AssemblyBuilder)ModuleBuilder.Assembly).GetMissingType(this.Module, this, typeName);
 		}
 	}
 

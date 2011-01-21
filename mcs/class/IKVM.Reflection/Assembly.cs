@@ -67,12 +67,7 @@ namespace IKVM.Reflection
 		// - ResolveType can return a MissingType
 		internal Type ResolveType(TypeName typeName)
 		{
-			return FindType(typeName) ?? GetMissingType(typeName);
-		}
-
-		internal virtual Type GetMissingType(TypeName name)
-		{
-			return null;
+			return FindType(typeName) ?? universe.GetMissingType(this.ManifestModule, null, typeName);
 		}
 
 		public Module[] GetModules()

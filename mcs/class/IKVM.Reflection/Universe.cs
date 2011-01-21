@@ -84,6 +84,8 @@ namespace IKVM.Reflection
 		private readonly List<AssemblyBuilder> dynamicAssemblies = new List<AssemblyBuilder>();
 		private readonly Dictionary<string, Assembly> assembliesByName = new Dictionary<string, Assembly>();
 		private readonly Dictionary<System.Type, Type> importedTypes = new Dictionary<System.Type, Type>();
+		private Dictionary<ScopedTypeName, Type> missingTypes;
+		private bool resolveMissingTypes;
 		private Type typeof_System_Object;
 		private Type typeof_System_ValueType;
 		private Type typeof_System_Enum;
@@ -799,6 +801,59 @@ namespace IKVM.Reflection
 		public Assembly CreateMissingAssembly(string assemblyName)
 		{
 			return new MissingAssembly(this, assemblyName);
+		}
+
+		public void EnableMissingTypeResolution()
+		{
+			resolveMissingTypes = true;
+		}
+
+		private struct ScopedTypeName : IEquatable<ScopedTypeName>
+		{
+			private readonly object scope;
+			private readonly TypeName name;
+
+			internal ScopedTypeName(object scope, TypeName name)
+			{
+				this.scope = scope;
+				this.name = name;
+			}
+
+			public override bool Equals(object obj)
+			{
+				ScopedTypeName? other = obj as ScopedTypeName?;
+				return other != null && ((IEquatable<ScopedTypeName>)other.Value).Equals(this);
+			}
+
+			public override int GetHashCode()
+			{
+				return scope.GetHashCode() * 7 + name.GetHashCode();
+			}
+
+			bool IEquatable<ScopedTypeName>.Equals(ScopedTypeName other)
+			{
+				return other.scope == scope && other.name == name;
+			}
+		}
+
+		internal Type GetMissingType(Module module, Type declaringType, TypeName typeName)
+		{
+			if (resolveMissingTypes || module.Assembly.__IsMissing)
+			{
+				if (missingTypes == null)
+				{
+					missingTypes = new Dictionary<ScopedTypeName, Type>();
+				}
+				ScopedTypeName stn = new ScopedTypeName(declaringType ?? (object)module, typeName);
+				Type type;
+				if (!missingTypes.TryGetValue(stn, out type))
+				{
+					type = new MissingType(module, declaringType, typeName.Namespace, typeName.Name);
+					missingTypes.Add(stn, type);
+				}
+				return type;
+			}
+			return null;
 		}
 	}
 }

@@ -211,7 +211,7 @@ namespace IKVM.Reflection.Emit
 			typeBuilder.__SetAttributes(attr);
 			if (parent == null && (attr & TypeAttributes.Interface) == 0)
 			{
-				parent = universe.System_Object;
+				//parent = universe.System_Object;
 			}
 			typeBuilder.SetParent(parent);
 			SetPackingSizeAndTypeSize(typeBuilder, packingSize, typesize);
