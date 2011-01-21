@@ -71,6 +71,11 @@ namespace WebMatrix.Data
 			return new Database (conn);
 		}
 
+		public void Close ()
+		{
+			Dispose ();
+		}
+
 		public void Dispose ()
 		{
 			Dispose (true);
