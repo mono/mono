@@ -73,7 +73,7 @@ namespace Mono.CSharp
 
 					var pa = Module.PredefinedAttributes.StructLayout;
 					if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.short_type)) {
-						var argsEncoded = new AttributeEncoder (false);
+						var argsEncoded = new AttributeEncoder ();
 						argsEncoded.Encode ((short) LayoutKind.Explicit);
 
 						var field_size = pa.GetField ("Size", TypeManager.int32_type, Location);

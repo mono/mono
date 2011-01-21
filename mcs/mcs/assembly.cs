@@ -460,7 +460,7 @@ namespace Mono.CSharp
 				if (pa.IsDefined && pa.ResolveBuilder ()) {
 					var prop = pa.GetProperty ("WrapNonExceptionThrows", TypeManager.bool_type, Location.Null);
 					if (prop != null) {
-						AttributeEncoder encoder = new AttributeEncoder (false);
+						AttributeEncoder encoder = new AttributeEncoder ();
 						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (true, Location.Null));
 						SetCustomAttribute (pa.Constructor, encoder.ToArray ());
 					}

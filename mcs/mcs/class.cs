@@ -1654,7 +1654,7 @@ namespace Mono.CSharp {
 				!pa.ResolveConstructor (Location, TypeManager.string_type))
 				return;
 
-			var encoder = new AttributeEncoder (false);
+			var encoder = new AttributeEncoder ();
 			encoder.Encode (GetAttributeDefaultMember ());
 			encoder.EncodeEmptyNamedArguments ();
 

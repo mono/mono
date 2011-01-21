@@ -1003,75 +1003,80 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			AttributeEncoder encoder = new AttributeEncoder (false);
+			byte[] cdata;
+			if (PosArguments == null && named_values == null) {
+				cdata = AttributeEncoder.Empty;
+			} else {
+				AttributeEncoder encoder = new AttributeEncoder ();
 
-			if (PosArguments != null) {
-				var param_types = ctor.Parameters.Types;
-				for (int j = 0; j < PosArguments.Count; ++j) {
-					var pt = param_types[j];
-					var arg_expr = PosArguments[j].Expr;
-					if (j == 0) {
-						if (Type == predefined.IndexerName || Type == predefined.Conditional) {
-							string v = ((StringConstant) arg_expr).Value;
-							if (!Tokenizer.IsValidIdentifier (v) || Tokenizer.IsKeyword (v)) {
-								context.Compiler.Report.Error (633, arg_expr.Location,
-									"The argument to the `{0}' attribute must be a valid identifier", GetSignatureForError ());
-							}
-						} else if (Type == predefined.Guid) {
-							try {
+				if (PosArguments != null) {
+					var param_types = ctor.Parameters.Types;
+					for (int j = 0; j < PosArguments.Count; ++j) {
+						var pt = param_types[j];
+						var arg_expr = PosArguments[j].Expr;
+						if (j == 0) {
+							if (Type == predefined.IndexerName || Type == predefined.Conditional) {
 								string v = ((StringConstant) arg_expr).Value;
-								new Guid (v);
-							} catch (Exception e) {
-								Error_AttributeEmitError (e.Message);
+								if (!Tokenizer.IsValidIdentifier (v) || Tokenizer.IsKeyword (v)) {
+									context.Compiler.Report.Error (633, arg_expr.Location,
+										"The argument to the `{0}' attribute must be a valid identifier", GetSignatureForError ());
+								}
+							} else if (Type == predefined.Guid) {
+								try {
+									string v = ((StringConstant) arg_expr).Value;
+									new Guid (v);
+								} catch (Exception e) {
+									Error_AttributeEmitError (e.Message);
+									return;
+								}
+							} else if (Type == predefined.AttributeUsage) {
+								int v = ((IntConstant) ((EnumConstant) arg_expr).Child).Value;
+								if (v == 0) {
+									context.Compiler.Report.Error (591, Location, "Invalid value for argument to `{0}' attribute",
+										"System.AttributeUsage");
+								}
+							} else if (Type == predefined.MarshalAs) {
+								if (PosArguments.Count == 1) {
+									var u_type = (UnmanagedType) System.Enum.Parse (typeof (UnmanagedType), ((Constant) PosArguments[0].Expr).GetValue ().ToString ());
+									if (u_type == UnmanagedType.ByValArray && !(Owner is FieldBase)) {
+										Error_AttributeEmitError ("Specified unmanaged type is only valid on fields");
+									}
+								}
+							} else if (Type == predefined.DllImport) {
+								if (PosArguments.Count == 1) {
+									var value = ((Constant) PosArguments[0].Expr).GetValue () as string;
+									if (string.IsNullOrEmpty (value))
+										Error_AttributeEmitError ("DllName cannot be empty");
+								}
+							} else if (Type == predefined.MethodImpl && pt == TypeManager.short_type &&
+								!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
+								Error_AttributeEmitError ("Incorrect argument value.");
 								return;
 							}
-						} else if (Type == predefined.AttributeUsage) {
-							int v = ((IntConstant)((EnumConstant) arg_expr).Child).Value;
-							if (v == 0) {
-								context.Compiler.Report.Error (591, Location, "Invalid value for argument to `{0}' attribute",
-									"System.AttributeUsage");
-							}
-						} else if (Type == predefined.MarshalAs) {
-							if (PosArguments.Count == 1) {
-								var u_type = (UnmanagedType) System.Enum.Parse (typeof (UnmanagedType), ((Constant) PosArguments[0].Expr).GetValue ().ToString ());
-								if (u_type == UnmanagedType.ByValArray && !(Owner is FieldBase)) {
-									Error_AttributeEmitError ("Specified unmanaged type is only valid on fields");
-								}
-							}
-						} else if (Type == predefined.DllImport) {
-							if (PosArguments.Count == 1) {
-								var value = ((Constant) PosArguments[0].Expr).GetValue () as string;
-								if (string.IsNullOrEmpty (value))
-									Error_AttributeEmitError ("DllName cannot be empty");
-							}
-						} else if (Type == predefined.MethodImpl && pt == TypeManager.short_type &&
-							!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
-							Error_AttributeEmitError ("Incorrect argument value.");
-							return;
 						}
+
+						arg_expr.EncodeAttributeValue (context, encoder, pt);
 					}
-
-					arg_expr.EncodeAttributeValue (context, encoder, pt);
 				}
-			}
 
-			if (named_values != null) {
-				encoder.Stream.Write ((ushort) named_values.Count);
-				foreach (var na in named_values) {
-					if (na.Key is FieldExpr)
-						encoder.Stream.Write ((byte) 0x53);
-					else
-						encoder.Stream.Write ((byte) 0x54);
+				if (named_values != null) {
+					encoder.Encode ((ushort) named_values.Count);
+					foreach (var na in named_values) {
+						if (na.Key is FieldExpr)
+							encoder.Encode ((byte) 0x53);
+						else
+							encoder.Encode ((byte) 0x54);
 
-					encoder.Encode (na.Key.Type);
-					encoder.Encode (na.Value.Name);
-					na.Value.Expr.EncodeAttributeValue (context, encoder, na.Key.Type);
+						encoder.Encode (na.Key.Type);
+						encoder.Encode (na.Value.Name);
+						na.Value.Expr.EncodeAttributeValue (context, encoder, na.Key.Type);
+					}
+				} else {
+					encoder.EncodeEmptyNamedArguments ();
 				}
-			} else {
-				encoder.EncodeEmptyNamedArguments ();
-			}
 
-			byte[] cdata = encoder.ToArray ();
+				cdata = encoder.ToArray ();
+			}
 
 			try {
 				foreach (Attributable target in targets)
@@ -1345,7 +1350,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public struct AttributeEncoder
+	public sealed class AttributeEncoder
 	{
 		[Flags]
 		public enum EncodedTypeProperties
@@ -1355,101 +1360,159 @@ namespace Mono.CSharp {
 			TypeParameter = 1 << 1
 		}
 
-		const ushort Version = 1;
-
 		public static readonly byte[] Empty;
 
-		public readonly BinaryWriter Stream;
+		byte[] buffer;
+		int pos;
+		const ushort Version = 1;
 
 		static AttributeEncoder ()
 		{
 			Empty = new byte[4];
-			Array.Copy (BitConverter.GetBytes (Version), Empty, 2);
+			Empty[0] = (byte) Version;
 		}
 
-		public AttributeEncoder (bool empty)
+		public AttributeEncoder ()
 		{
-			if (empty) {
-				Stream = null;
-				return;
-			}
+			buffer = new byte[32];
+			Encode (Version);
+		}
 
-			Stream = new BinaryWriter (new MemoryStream ());
-			Stream.Write (Version);
+		public void Encode (bool value)
+		{
+			Encode (value ? (byte) 1 : (byte) 0);
 		}
 
 		public void Encode (byte value)
 		{
-			Stream.Write (value);
+			if (pos == buffer.Length)
+				Grow (1);
+
+			buffer [pos++] = value;
+		}
+
+		public void Encode (sbyte value)
+		{
+			Encode ((byte) value);
 		}
 
 		public void Encode (short value)
 		{
-			Stream.Write (value);
+			if (pos + 2 > buffer.Length)
+				Grow (2);
+
+			buffer[pos++] = (byte) value;
+			buffer[pos++] = (byte) (value >> 8);
+		}
+
+		public void Encode (ushort value)
+		{
+			Encode ((short) value);
 		}
 
 		public void Encode (int value)
 		{
-			Stream.Write (value);
+			if (pos + 4 > buffer.Length)
+				Grow (4);
+
+			buffer[pos++] = (byte) value;
+			buffer[pos++] = (byte) (value >> 8);
+			buffer[pos++] = (byte) (value >> 16);
+			buffer[pos++] = (byte) (value >> 24);
 		}
 
 		public void Encode (uint value)
 		{
-			Stream.Write (value);
+			Encode ((int) value);
+		}
+
+		public void Encode (long value)
+		{
+			if (pos + 8 > buffer.Length)
+				Grow (8);
+
+			buffer[pos++] = (byte) value;
+			buffer[pos++] = (byte) (value >> 8);
+			buffer[pos++] = (byte) (value >> 16);
+			buffer[pos++] = (byte) (value >> 24);
+			buffer[pos++] = (byte) (value >> 32);
+			buffer[pos++] = (byte) (value >> 40);
+			buffer[pos++] = (byte) (value >> 48);
+			buffer[pos++] = (byte) (value >> 56);
+		}
+
+		public void Encode (ulong value)
+		{
+			Encode ((long) value);
+		}
+
+		public void Encode (float value)
+		{
+			Encode (SingleConverter.SingleToInt32Bits (value));
+		}
+
+		public void Encode (double value)
+		{
+			Encode (BitConverter.DoubleToInt64Bits (value));
 		}
 
 		public void Encode (string value)
 		{
 			if (value == null) {
-				Stream.Write ((byte) 0xFF);
+				Encode ((byte) 0xFF);
 				return;
 			}
 
 			var buf = Encoding.UTF8.GetBytes(value);
 			WriteCompressedValue (buf.Length);
-			Stream.Write (buf);
+
+			if (pos + buf.Length > buffer.Length)
+				Grow (buf.Length);
+
+			Buffer.BlockCopy (buf, 0, buffer, pos, buf.Length);
+			pos += buf.Length;
 		}
 
 		public EncodedTypeProperties Encode (TypeSpec type)
 		{
 			if (type == TypeManager.bool_type) {
-				Stream.Write ((byte) 0x02);
+				Encode ((byte) 0x02);
 			} else if (type == TypeManager.char_type) {
-				Stream.Write ((byte) 0x03);
+				Encode ((byte) 0x03);
 			} else if (type == TypeManager.sbyte_type) {
-				Stream.Write ((byte) 0x04);
+				Encode ((byte) 0x04);
 			} else if (type == TypeManager.byte_type) {
-				Stream.Write ((byte) 0x05);
+				Encode ((byte) 0x05);
 			} else if (type == TypeManager.short_type) {
-				Stream.Write ((byte) 0x06);
+				Encode ((byte) 0x06);
 			} else if (type == TypeManager.ushort_type) {
-				Stream.Write ((byte) 0x07);
+				Encode ((byte) 0x07);
 			} else if (type == TypeManager.int32_type) {
-				Stream.Write ((byte) 0x08);
+				Encode ((byte) 0x08);
 			} else if (type == TypeManager.uint32_type) {
-				Stream.Write ((byte) 0x09);
+				Encode ((byte) 0x09);
 			} else if (type == TypeManager.int64_type) {
-				Stream.Write ((byte) 0x0A);
+				Encode ((byte) 0x0A);
 			} else if (type == TypeManager.uint64_type) {
-				Stream.Write ((byte) 0x0B);
+				Encode ((byte) 0x0B);
 			} else if (type == TypeManager.float_type) {
-				Stream.Write ((byte) 0x0C);
+				Encode ((byte) 0x0C);
 			} else if (type == TypeManager.double_type) {
-				Stream.Write ((byte) 0x0D);
+				Encode ((byte) 0x0D);
 			} else if (type == TypeManager.string_type) {
-				Stream.Write ((byte) 0x0E);
+				Encode ((byte) 0x0E);
 			} else if (type == TypeManager.type_type) {
-				Stream.Write ((byte) 0x50);
+				Encode ((byte) 0x50);
 			} else if (type == TypeManager.object_type) {
-				Stream.Write ((byte) 0x51);
+				Encode ((byte) 0x51);
 			} else if (TypeManager.IsEnumType (type)) {
-				Stream.Write ((byte) 0x55);
+				Encode ((byte) 0x55);
 				EncodeTypeName (type);
 			} else if (type.IsArray) {
-				Stream.Write ((byte) 0x1D);
+				Encode ((byte) 0x1D);
 				return Encode (TypeManager.GetElementType (type));
 			} else if (type == InternalType.Dynamic) {
-				Stream.Write ((byte) 0x51);
+				Encode ((byte) 0x51);
 				return EncodedTypeProperties.DynamicType;
 			}
 
@@ -1467,8 +1530,8 @@ namespace Mono.CSharp {
 		//
 		public void EncodeNamedPropertyArgument (PropertySpec property, Constant value)
 		{
-			Stream.Write ((ushort) 1);	// length
-			Stream.Write ((byte) 0x54); // property
+			Encode ((ushort) 1);	// length
+			Encode ((byte) 0x54); // property
 			Encode (property.MemberType);
 			Encode (property.Name);
 			value.EncodeAttributeValue (null, this, property.MemberType);
@@ -1479,8 +1542,8 @@ namespace Mono.CSharp {
 		//
 		public void EncodeNamedFieldArgument (FieldSpec field, Constant value)
 		{
-			Stream.Write ((ushort) 1);	// length
-			Stream.Write ((byte) 0x53); // field
+			Encode ((ushort) 1);	// length
+			Encode ((byte) 0x53); // field
 			Encode (field.MemberType);
 			Encode (field.Name);
 			value.EncodeAttributeValue (null, this, field.MemberType);
@@ -1488,16 +1551,16 @@ namespace Mono.CSharp {
 
 		public void EncodeNamedArguments<T> (T[] members, Constant[] values) where T : MemberSpec, IInterfaceMemberSpec
 		{
-			Stream.Write ((ushort) members.Length);
+			Encode ((ushort) members.Length);
 
 			for (int i = 0; i < members.Length; ++i)
 			{
 				var member = members[i];
 
 				if (member.Kind == MemberKind.Field)
-					Stream.Write ((byte) 0x53);
+					Encode ((byte) 0x53);
 				else if (member.Kind == MemberKind.Property)
-					Stream.Write ((byte) 0x54);
+					Encode ((byte) 0x54);
 				else
 					throw new NotImplementedException (member.Kind.ToString ());
 
@@ -1509,28 +1572,36 @@ namespace Mono.CSharp {
 
 		public void EncodeEmptyNamedArguments ()
 		{
-			Stream.Write ((ushort) 0);
+			Encode ((ushort) 0);
+		}
+
+		void Grow (int inc)
+		{
+			int size = System.Math.Max (pos * 4, pos + inc + 2);
+			Array.Resize (ref buffer, size);
 		}
 
 		void WriteCompressedValue (int value)
 		{
 			if (value < 0x80) {
-				Stream.Write ((byte) value);
+				Encode ((byte) value);
 				return;
 			}
 
 			if (value < 0x4000) {
-				Stream.Write ((byte) (0x80 | (value >> 8)));
-				Stream.Write ((byte) value);
+				Encode ((byte) (0x80 | (value >> 8)));
+				Encode ((byte) value);
 				return;
 			}
 
-			Stream.Write (value);
+			Encode (value);
 		}
 
 		public byte[] ToArray ()
 		{
-			return ((MemoryStream) Stream.BaseStream).ToArray ();
+			byte[] buf = new byte[pos];
+			Array.Copy (buffer, buf, pos);
+			return buf;
 		}
 	}
 
@@ -1900,7 +1971,7 @@ namespace Mono.CSharp {
 				return;
 
 			int[] bits = decimal.GetBits (value);
-			AttributeEncoder encoder = new AttributeEncoder (false);
+			AttributeEncoder encoder = new AttributeEncoder ();
 			encoder.Encode ((byte) (bits[3] >> 16));
 			encoder.Encode ((byte) (bits[3] >> 31));
 			encoder.Encode ((uint) bits[2]);
@@ -1920,7 +1991,7 @@ namespace Mono.CSharp {
 				return;
 
 			int[] bits = decimal.GetBits (value);
-			AttributeEncoder encoder = new AttributeEncoder (false);
+			AttributeEncoder encoder = new AttributeEncoder ();
 			encoder.Encode ((byte) (bits[3] >> 16));
 			encoder.Encode ((byte) (bits[3] >> 31));
 			encoder.Encode ((uint) bits[2]);

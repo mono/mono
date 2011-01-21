@@ -487,7 +487,7 @@ namespace Mono.CSharp
 
 			var char_set = CharSet ?? Module.DefaultCharSet ?? 0;
 
-			encoder = new AttributeEncoder (false);
+			encoder = new AttributeEncoder ();
 			encoder.Encode ((short)LayoutKind.Sequential);
 			encoder.EncodeNamedArguments (
 				new [] { field_size, field_charset },
@@ -506,7 +506,7 @@ namespace Mono.CSharp
 			if (pa.Constructor == null && !pa.ResolveConstructor (Location, TypeManager.type_type, TypeManager.int32_type))
 				return;
 
-			encoder = new AttributeEncoder (false);
+			encoder = new AttributeEncoder ();
 			encoder.EncodeTypeName (MemberType);
 			encoder.Encode (buffer_size);
 			encoder.EncodeEmptyNamedArguments ();

@@ -167,6 +167,22 @@ namespace Mono.CSharp
 		}
 	}
 
+	[System.Runtime.InteropServices.StructLayout (System.Runtime.InteropServices.LayoutKind.Explicit)]
+	struct SingleConverter
+	{
+		[System.Runtime.InteropServices.FieldOffset (0)]
+		int i;
+		[System.Runtime.InteropServices.FieldOffset (0)]
+		float f;
+
+		public static int SingleToInt32Bits (float v)
+		{
+			SingleConverter c = new SingleConverter ();
+			c.f = v;
+			return c.i;
+		}
+	}
+
 #endif
 
 	public class AssemblyDefinitionDynamic : AssemblyDefinition
