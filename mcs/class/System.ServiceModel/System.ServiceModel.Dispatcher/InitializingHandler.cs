@@ -30,7 +30,7 @@ namespace System.ServiceModel.Dispatcher
 				iCtx = new InstanceContext (dispatchRuntime.ChannelDispatcher.Host, null, false);
 			}
 
-			iCtx.Behavior = new InstanceBehavior (dispatchRuntime);
+			iCtx.InstanceManager = new InstanceManager (dispatchRuntime);
 			return iCtx;
 		}		
 	}

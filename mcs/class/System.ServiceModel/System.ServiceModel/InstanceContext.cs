@@ -39,7 +39,7 @@ namespace System.ServiceModel
 		ServiceHostBase host;
 		object implementation;
 		int manual_flow_limit;
-		InstanceBehavior _behavior;
+		InstanceManager instance_manager;
 		bool is_user_instance_provider;
 		bool is_user_context_provider;
 
@@ -79,12 +79,12 @@ namespace System.ServiceModel
 			}
 		}
 
-		internal InstanceBehavior Behavior {
+		internal InstanceManager InstanceManager {
 			get {
-				return _behavior;
+				return instance_manager;
 			}
 			set {
-				_behavior = value;
+				instance_manager = value;
 			}
 		}
 
@@ -124,8 +124,8 @@ namespace System.ServiceModel
 
 		public object GetServiceInstance (Message message)
 		{
-			if (implementation == null && Behavior != null) {
-				implementation = Behavior.GetServiceInstance (this, message, ref is_user_instance_provider);				
+			if (implementation == null && instance_manager != null) {
+				implementation = instance_manager.GetServiceInstance (this, message, ref is_user_instance_provider);				
 			}
 			return implementation;				
 		}
@@ -136,9 +136,9 @@ namespace System.ServiceModel
 		}
 
 		internal void CloseIfIdle () {
-			if (Behavior.InstanceContextProvider != null && !IsUserProvidedContext) {
-				if (!Behavior.InstanceContextProvider.IsIdle (this)) {
-					Behavior.InstanceContextProvider.NotifyIdle (IdleCallback, this);
+			if (instance_manager.InstanceContextProvider != null && !IsUserProvidedContext) {
+				if (!instance_manager.InstanceContextProvider.IsIdle (this)) {
+					instance_manager.InstanceContextProvider.NotifyIdle (IdleCallback, this);
 				}
 				else {
 					if (State != CommunicationState.Closed)
@@ -159,7 +159,7 @@ namespace System.ServiceModel
 
 		public void ReleaseServiceInstance ()
 		{			
-			Behavior.ReleaseServiceInstance (this, implementation);
+			instance_manager.ReleaseServiceInstance (this, implementation);
 			implementation = null;
 		}
 
@@ -188,8 +188,8 @@ namespace System.ServiceModel
 		protected override void OnOpening ()
 		{
 			base.OnOpening ();
-			if (Behavior != null)
-				Behavior.Initialize (this);
+			if (instance_manager != null)
+				instance_manager.Initialize (this);
 		}
 
 		protected override IAsyncResult OnBeginOpen (
