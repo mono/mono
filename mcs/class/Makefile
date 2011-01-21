@@ -165,7 +165,8 @@ net_4_0_dirs := \
 	System.Runtime.DurableInstancing \
 	Mono.CodeContracts \
 	Mono.Parallel \
-	Microsoft.Web.Infrastructure
+	Microsoft.Web.Infrastructure \
+	WebMatrix.Data
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
 moonlight_raw_SUBDIRS := $(moonlight_dirs)
