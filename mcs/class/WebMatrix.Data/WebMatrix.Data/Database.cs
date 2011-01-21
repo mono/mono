@@ -70,7 +70,13 @@ namespace WebMatrix.Data
 
 		public void Dispose ()
 		{
+			Dispose (true);
+		}
 
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				connection.Dispose ();
 		}
 
 		public int Execute (string commandText, params object[] args)
@@ -81,6 +87,7 @@ namespace WebMatrix.Data
 			connection.Open ();
 			var result = command.ExecuteNonQuery ();
 			connection.Close ();
+			command.Dispose ();
 
 			return result;
 		}
@@ -127,6 +134,7 @@ namespace WebMatrix.Data
 			}
 
 			connection.Close ();
+			command.Dispose ();
 
 			return result;
 		}
@@ -139,6 +147,7 @@ namespace WebMatrix.Data
 			connection.Open ();
 			var result = command.ExecuteScalar ();
 			connection.Close ();
+			command.Dispose ();
 
 			return result;
 		}
