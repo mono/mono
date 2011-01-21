@@ -282,7 +282,7 @@ namespace System.Web.Compilation
 		
 		VirtualPath PhysicalToVirtual (string file)
 		{
-			return new VirtualPath (file.Replace (HttpRuntime.AppDomainAppPath, "/").Replace (Path.DirectorySeparatorChar, '/'));
+			return new VirtualPath (file.Replace (HttpRuntime.AppDomainAppPath, "~/").Replace (Path.DirectorySeparatorChar, '/'));
 		}
 		
 		BuildProvider GetBuildProviderFor (string file, BuildProviderCollection buildProviders)
