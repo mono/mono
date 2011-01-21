@@ -506,6 +506,13 @@ namespace System.Reflection {
 #endif
 
 #if NET_4_0
+		public static Assembly UnsafeLoadFrom (String assemblyFile)
+		{
+			return LoadFrom (assemblyFile);
+		}
+#endif
+
+#if NET_4_0
 		[Obsolete]
 #endif
 		public static Assembly LoadFile (String path, Evidence securityEvidence)
