@@ -219,6 +219,7 @@ namespace System.ServiceModel.Channels
 					Via = this.Via };
 				frame.ProcessPreambleInitiator ();
 				frame.ProcessPreambleAckInitiator ();
+				session = new TcpDuplexSession (this); // make sure to shutdown the session once it has initiated one.
 			} else {
 				// server side
 				Stream s = client.GetStream ();
