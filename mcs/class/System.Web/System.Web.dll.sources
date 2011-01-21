@@ -257,6 +257,12 @@ System.Web.Configuration_2.0/XhtmlConformanceSection.cs
 System.Web.Configuration.Internal/IInternalConfigWebHost.cs
 System.Web/DefaultHttpHandler.cs
 System.Web/EndEventHandler.cs
+System.Web/DefaultExceptionPageTemplate.cs
+System.Web/ExceptionPageTemplate.cs
+System.Web/ExceptionPageTemplateType.cs
+System.Web/ExceptionPageTemplateFragment.cs
+System.Web/ExceptionPageTemplateFragmentValue.cs
+System.Web/ExceptionPageTemplateValues.cs
 System.Web.Handlers/AssemblyResourceLoader.cs
 System.Web.Handlers/TraceHandler.cs
 System.Web.Hosting/AppDomainFactory.cs

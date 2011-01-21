@@ -68,6 +68,14 @@ RESOURCE_FILES_2 = \
 	resources/transparent.gif \
 	resources/webform.js \
 	resources/WebUIValidation_2.0.js \
+	resources/ErrorTemplateCommon_Top.html \
+	resources/DefaultErrorTemplate_CustomErrorDefault.html \
+	resources/ErrorTemplateCommon_Bottom.html \
+	resources/DefaultErrorTemplate_StandardPage.html \
+	resources/HtmlizedExceptionPage_Top.html \
+	resources/HtmlizedExceptionPage_FileLongSource.html \
+	resources/HtmlizedExceptionPage_FileShortSource.html \
+	resources/HtmlizedExceptionPage_CompilerOutput.html \
 	System.Web.UI.WebControls/GridView.js \
 	System.Web.UI.WebControls/DetailsView.js \
 	System.Web.UI.WebControls/TreeView.js \

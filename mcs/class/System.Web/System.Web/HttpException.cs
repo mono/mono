@@ -54,9 +54,15 @@ namespace System.Web
 		int http_code = 500;
 		string resource_name;
 		string description;
-		
-		const string errorStyleFonts = "\"Verdana\",\"DejaVu Sans\",sans-serif";
+		ExceptionPageTemplate pageTemplate;
 
+		ExceptionPageTemplate PageTemplate {
+			get {
+				if (pageTemplate == null)
+					pageTemplate = GetPageTemplate ();
+				return pageTemplate;
+			}
+		}
 #if NET_4_0
 		public
 #else
@@ -133,34 +139,66 @@ namespace System.Web
 		{
 			resource_name = resourceName;
 		}
+
+		[MonoTODO ("For now just the default template is created. Means of user-provided templates are to be implemented yet.")]
+		ExceptionPageTemplate GetPageTemplate ()
+		{
+			ExceptionPageTemplate template = new DefaultExceptionPageTemplate ();
+			template.Init ();
+
+			return template;
+		}
 		
 		public string GetHtmlErrorMessage ()
 		{
+			var values = new ExceptionPageTemplateValues ();
+			ExceptionPageTemplate template = PageTemplate;
+
 			try {
+				values.Add (ExceptionPageTemplate.Template_RuntimeVersionInformationName, RuntimeHelpers.MonoVersion);
+				values.Add (ExceptionPageTemplate.Template_AspNetVersionInformationName, Environment.Version.ToString ());
+				
 				HttpContext ctx = HttpContext.Current;
+				ExceptionPageTemplateType pageType = ExceptionPageTemplateType.Standard;
+
 				if (ctx != null && ctx.IsCustomErrorEnabled) {
-					if (http_code != 404 && http_code != 403)
-						return GetCustomErrorDefaultMessage ();
-					else
-						return GetDefaultErrorMessage (false, null);
+					if (http_code != 404 && http_code != 403) {
+						FillDefaultCustomErrorValues (values);
+						pageType = ExceptionPageTemplateType.CustomErrorDefault;
+					} else
+						FillDefaultErrorValues (false, false, null, values);
+				} else {
+					Exception ex = GetBaseException ();
+					if (ex == null)
+						ex = this;
+
+					values.Add (ExceptionPageTemplate.Template_FullStackTraceName, FormatFullStackTrace ());
+					HtmlizedException htmlException = ex as HtmlizedException;
+					if (htmlException == null)
+						FillDefaultErrorValues (true, true, ex, values);
+					else {
+						pageType = ExceptionPageTemplateType.Htmlized;
+						FillHtmlizedErrorValues (values, htmlException, ref pageType);
+					}
 				}
 				
-				Exception ex = GetBaseException ();
-				if (ex == null)
-					ex = this;
-				
-				HtmlizedException htmlException = ex  as HtmlizedException;
-				if (htmlException == null)
-					return GetDefaultErrorMessage (true, ex);
-				
-				return GetHtmlizedErrorMessage (htmlException);
+				return template.Render (values, pageType);
 			} catch (Exception ex) {
-				Console.WriteLine (ex);
-				
+				Console.Error.WriteLine ("An exception has occurred while generating HttpException page:");
+				Console.Error.WriteLine (ex);
+				Console.Error.WriteLine ();
+				Console.Error.WriteLine ("The actual exception which was being reported was:");
+				Console.Error.WriteLine (this);
+
 				// we need the try/catch block in case the
 				// problem was with MapPath, which will cause
 				// IsCustomErrorEnabled to throw an exception
-				return GetCustomErrorDefaultMessage ();
+				try {
+					FillDefaultCustomErrorValues (values);
+					return template.Render (values, ExceptionPageTemplateType.CustomErrorDefault);
+				} catch {
+					return DoubleFaultExceptionMessage;
+				}
 			}
 		}
 
@@ -233,173 +271,167 @@ namespace System.Web
 			this.webEventCode = webEventCode;
 		}
 		
-		void WriteFileTop (StringBuilder builder, string title)
+		string FormatFullStackTrace ()
+		{
+			Exception ex = this;
+			var builder = new StringBuilder ("\r\n<!--");
+			string trace;
+			string message;
+			bool haveTrace, first = true;
+			
+			while (ex != null) {
+				trace = ex.StackTrace;
+				message = ex.Message;
+				haveTrace = !String.IsNullOrEmpty (trace);
+				
+				if (!haveTrace && String.IsNullOrEmpty (message)) {
+					ex = ex.InnerException;
+					continue;
+				}
+
+				if (first)
+					first = false;
+				else
+					builder.Append ("\r\n");
+				
+				builder.Append ("\r\n[" + ex.GetType () + "]: " + HtmlEncode (message) + "\r\n");
+				if (haveTrace)
+					builder.Append (ex.StackTrace);
+				
+				ex = ex.InnerException;
+			}
+			builder.Append ("\r\n-->\r\n");
+
+			return builder.ToString ();
+		}
+
+		void FillHtmlizedErrorValues (ExceptionPageTemplateValues values, HtmlizedException exc, ref ExceptionPageTemplateType pageType)
 		{
 #if TARGET_J2EE
-			builder.AppendFormat ("<html><head><title>{0}</title><style type=\"text/css\">", title);
-			builder.AppendFormat (
-				@"body {{font-family:{0};font-weight:normal;font-size: 9pt;color:black;background-color: white}}
-p {{font-family:{0};font-weight:normal;color:black;margin-top: -5px}}
-b {{font-family:{0};font-weight:bold;color:black;margin-top: -5px}}
-h1 {{ font-family:{0};font-weight:normal;font-size:18pt;color:red }}
-h2 {{ font-family:{0};font-weight:normal;font-size:14pt;color:maroon }}
-pre {{font-family:""Lucida Console"",""DejaVu Sans Mono"",monospace;font-size: 10pt}}
-div.bodyText {{font-family: {0}}}
-table.sampleCode {{width: 100%; background-color: #ffffcc; }}
-.errorText {{color: red; font-weight: bold}}
-.marker {{font-weight: bold; color: black;text-decoration: none;}}
-.version {{color: gray;}}
-.error {{margin-bottom: 10px;}}
-.expandable {{ text-decoration:underline; font-weight:bold; color:navy; cursor:pointer; }}", errorStyleFonts);
+			bool isParseException = false;
+			bool isCompileException = false;
 #else
-			builder.Append ("<?xml version=\"1.0\" ?>\n");
-			builder.Append ("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-			builder.AppendFormat ("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"><head><title>{0}</title><style type=\"text/css\">", title);
-			builder.AppendFormat (
-				@"body {{font-family:{0};font-weight:normal;font-size: .7em;color:black;background-color: white}}
-p {{font-family:{0};font-weight:normal;color:black;margin-top: -5px}}
-b {{font-family:{0};font-weight:bold;color:black;margin-top: -5px}}
-h1 {{ font-family:{0};font-weight:normal;font-size:18pt;color:red }}
-h2 {{ font-family:{0};font-weight:normal;font-size:14pt;color:maroon }}
-pre,code {{font-family:""Lucida Console"",""DejaVu Sans Mono"",monospace;font-size: 0.9em,white-space: pre-line}}
-div.bodyText {{font-family: {0}}}
-table.sampleCode {{width: 100%; background-color: #ffffcc; }}
-.errorText {{color: red; font-weight: bold}}
-.marker {{font-weight: bold; color: black;text-decoration: none;}}
-.version {{color: gray;}}
-.error {{margin-bottom: 10px;}}
-.expandable {{ text-decoration:underline; font-weight:bold; color:navy; cursor:pointer; }}", errorStyleFonts);
+			bool isParseException = exc is ParseException;
+			bool isCompileException = (!isParseException && exc is CompilationException);
 #endif
+			values.Add (ExceptionPageTemplate.Template_PageTitleName, HtmlEncode (exc.Title));
+			values.Add (ExceptionPageTemplate.Template_DescriptionName, HtmlEncode (exc.Description));
+			values.Add (ExceptionPageTemplate.Template_StackTraceName, HtmlEncode (exc.StackTrace));
+			values.Add (ExceptionPageTemplate.Template_ExceptionTypeName, exc.GetType ().ToString ());
+			values.Add (ExceptionPageTemplate.Template_ExceptionMessageName, HtmlEncode (exc.Message));
+			values.Add (ExceptionPageTemplate.Template_DetailsName, HtmlEncode (exc.ErrorMessage));
 
-			builder.AppendFormat (
-				"</style></head><body><h1>Server Error in '{0}' Application</h1><hr style=\"color: silver\"/>",
-				HtmlEncode (HttpRuntime.AppDomainAppVirtualPath));
-		}
-		
-		void WriteFileBottom (StringBuilder builder, bool showTrace)
-		{
-			if (showTrace) {
-				builder.Append ("<hr style=\"color: silver\"/>");
-				builder.AppendFormat ("<strong>Version information: </strong> Mono Runtime Version: <tt>{0}</tt>; ASP.NET Version: <tt>{1}</tt></body></html>\r\n",
-						      RuntimeHelpers.MonoVersion, Environment.Version);
-			
-				string trace, message;
-				bool haveTrace;
-				Exception ex = this;
-
-				builder.Append ("\r\n<!--");
-				while (ex != null) {
-					trace = ex.StackTrace;
-					message = ex.Message;
-					haveTrace = (trace != null && trace.Length > 0);
+			string origin;
+			if (isParseException)
+				origin = "Parser";
+			else if (isCompileException)
+				origin = "Compiler";
+			else
+				origin = "Other";
+			values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionOriginName, origin);
+			if (exc.FileText != null) {
+				pageType |= ExceptionPageTemplateType.SourceError;
+				StringBuilder shortSource = new StringBuilder ();
+				StringBuilder longSource;
 				
-					if (!haveTrace && (message == null || message.Length == 0)) {
-						ex = ex.InnerException;
-						continue;
+				if (isCompileException)
+					longSource = new StringBuilder ();
+				else
+					longSource = null;
+				FormatSource (shortSource, longSource, exc);
+				values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionShortSourceName, shortSource.ToString ());
+				values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionLongSourceName, longSource != null ? longSource.ToString () : null);
+				
+				if (exc.SourceFile != exc.FileName)
+					values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionSourceFileName, FormatSourceFile (exc.SourceFile));
+				else
+					values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionSourceFileName, FormatSourceFile (exc.FileName));
+				if (isParseException || isCompileException) {
+					int[] errorLines = exc.ErrorLines;
+					int numErrors = errorLines != null ? errorLines.Length : 0;
+					var lines = new StringBuilder ();
+					for (int i = 0; i < numErrors; i++) {
+						if (i > 0)
+							lines.Append (", ");
+						lines.Append (errorLines [i]);
 					}
-
-					builder.Append ("\r\n[" + ex.GetType () + "]: " + HtmlEncode (message) + "\r\n");
-					if (haveTrace)
-						builder.Append (ex.StackTrace);
-				
-					ex = ex.InnerException;
+					values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionErrorLinesName, lines.ToString ());
 				}
-			
-				builder.Append ("\r\n-->");
 			} else
-				builder.Append ("</body></html>\r\n");
-		}
+				values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionSourceFileName, FormatSourceFile (exc.FileName));
 
-		string GetCustomErrorDefaultMessage ()
-		{
-			StringBuilder builder = new StringBuilder ();
-			WriteFileTop (builder, "Runtime Error");
-#if TARGET_J2EE //on portal we cannot know if we run locally
-			if (!HttpContext.Current.IsServletRequest)
-				builder.Append (
-@"<p><strong>Description:</strong> An application error occurred on the server. The current custom error settings for this application prevent the details of the application error from being viewed (for security reasons).</p>
-<p><strong>Details:</strong> To enable the details of this specific error message to be viewable, please create a &lt;customErrors&gt; tag within a &quot;web.config&quot; configuration file located in the root directory of the current web application. This &lt;customErrors&gt; tag should then have its &quot;mode&quot; attribute set to &quot;Off&quot;.</p>
-<table class=""sampleCode""><tr><td><pre>
+#if !TARGET_J2EE
+			if (isCompileException) {
+				CompilationException cex = exc as CompilationException;
+				StringCollection output = cex.CompilerOutput;
 
-&lt;!-- Web.Config Configuration File --&gt;
-
-&lt;configuration&gt;
-    &lt;system.web&gt;
-
-        &lt;customErrors mode=&quot;Off&quot;/&gt;
-    &lt;/system.web&gt;
-&lt;/configuration&gt;</pre>
-    </td></tr></table><br/>
-");
-			else
+				if (output != null && output.Count > 0) {
+					pageType |= ExceptionPageTemplateType.CompilerOutput;
+					var sb = new StringBuilder ();
+					bool first = true;
+					foreach (string s in output) {
+						sb.Append (HtmlEncode (s));
+						if (first) {
+							sb.Append ("<br/>");
+							first = false;
+						}
+						sb.Append ("<br/>");
+					}
+					
+					values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionCompilerOutputName, sb.ToString ());
+				}
+			}
 #endif
-			builder.Append (@"<p><strong>Description:</strong> An application error occurred on the server. The current custom error settings for this application prevent the details of the application error from being viewed remotely (for security reasons)." + (
-				" It could, however, be viewed by browsers running on the local server machine.") 
-				+ @"</p>
-<p><strong>Details:</strong> To enable the details of this specific error message to be viewable on remote machines, please create a &lt;customErrors&gt; tag within a &quot;web.config&quot; configuration file located in the root directory of the current web application. This &lt;customErrors&gt; tag should then have its &quot;mode&quot; attribute set to &quot;Off&quot;.</p>
-<table class=""sampleCode""><tr><td><pre>
-
-&lt;!-- Web.Config Configuration File --&gt;
-
-&lt;configuration&gt;
-    &lt;system.web&gt;
-
-        &lt;customErrors mode=&quot;Off&quot;/&gt;
-    &lt;/system.web&gt;
-&lt;/configuration&gt;</pre>
-    </td></tr></table><br/>
-<p><strong>Notes:</strong> The current error page you are seeing can be replaced by a custom error page by modifying the &quot;defaultRedirect&quot; attribute of the application's &lt;customErrors&gt; configuration tag to point to a custom error page URL.</p>
-<table class=""sampleCode""><tr><td><pre>
-&lt;!-- Web.Config Configuration File --&gt;
-
-&lt;configuration&gt;
-    &lt;system.web&gt;
-        &lt;customErrors mode=&quot;RemoteOnly&quot; defaultRedirect=&quot;mycustompage.htm&quot;/&gt;
-
-    &lt;/system.web&gt;
-&lt;/configuration&gt;</pre></td></tr></table>");
-			WriteFileBottom (builder, false);
-			return builder.ToString ();
 		}
 		
-		string GetDefaultErrorMessage (bool showTrace, Exception baseEx)
+		void FillDefaultCustomErrorValues (ExceptionPageTemplateValues values)
 		{
-			Exception ex;
-			ex = baseEx;
-			if (ex == null)
-				ex = this;
-
-			StringBuilder builder = new StringBuilder ();
-			WriteFileTop (builder, String.Format ("Error{0}", http_code != 0 ? " " + http_code : String.Empty));
-			builder.Append ("<h2><em>");
-			if (http_code == 404)
-				builder.Append ("The resource cannot be found.");
-			else
-				builder.Append (HtmlEncode (ex.Message));
-			builder.Append ("</em></h2>\r\n<p><strong>Description: </strong>");
-			
-			if (http_code != 0)
-				builder.AppendFormat ("HTTP {0}. ", http_code);
-			builder.Append (http_code == 404 ? ERROR_404_DESCRIPTION : HtmlEncode (Description));
-			builder.Append ("</p>\r\n");
-
-			if (resource_name != null && resource_name.Length > 0)
-				builder.AppendFormat ("<p><strong>Requested URL: </strong>{0}</p>\r\n", resource_name);
-			
-			if (showTrace && baseEx != null && http_code != 404 && http_code != 403) {
-				builder.Append ("<p><strong>Stack Trace: </strong></p>");
-				builder.Append ("<table summary=\"Stack Trace\" class=\"sampleCode\">\r\n<tr><td>");
-				WriteTextAsCode (builder, baseEx.ToString ());
-				builder.Append ("</td></tr>\r\n</table>\r\n");
-			}
-			WriteFileBottom (builder, showTrace);
-			
-			return builder.ToString ();
+			values.Add (ExceptionPageTemplate.Template_PageTitleName, "Runtime Error");
+			values.Add (ExceptionPageTemplate.Template_ExceptionTypeName, "Runtime Error");
+			values.Add (ExceptionPageTemplate.Template_ExceptionMessageName, "A runtime error has occurred");
+			values.Add (ExceptionPageTemplate.Template_DescriptionName, "An application error occurred on the server. The current custom error settings for this application prevent the details of the application error from being viewed (for security reasons).");
+			values.Add (ExceptionPageTemplate.Template_DetailsName, "To enable the details of this specific error message to be viewable, please create a &lt;customErrors&gt; tag within a &quot;web.config&quot; configuration file located in the root directory of the current web application. This &lt;customErrors&gt; tag should then have its &quot;mode&quot; attribute set to &quot;Off&quot;.");
 		}
+		
+		void FillDefaultErrorValues (bool showTrace, bool showExceptionType, Exception baseEx, ExceptionPageTemplateValues values)
+		{
+			if (baseEx == null)
+				baseEx = this;
+			
+			values.Add (ExceptionPageTemplate.Template_PageTitleName, String.Format ("Error{0}", http_code != 0 ? " " + http_code : String.Empty));
+			values.Add (ExceptionPageTemplate.Template_ExceptionTypeName, showExceptionType ? baseEx.GetType ().ToString () : "Runtime error");
+			values.Add (ExceptionPageTemplate.Template_ExceptionMessageName, http_code == 404 ? "The resource cannot be found." : HtmlEncode (baseEx.Message));
 
+			string tmp = http_code != 0 ? "HTTP " + http_code + "." : String.Empty;
+			values.Add (ExceptionPageTemplate.Template_DescriptionName, tmp + (http_code == 404 ? ERROR_404_DESCRIPTION : HtmlEncode (Description)));
+
+			if (!String.IsNullOrEmpty (resource_name))
+				values.Add (ExceptionPageTemplate.Template_DetailsName, "Requested URL: " + HtmlEncode (resource_name));
+			else if (http_code == 404)
+				values.Add (ExceptionPageTemplate.Template_DetailsName, "No virtual path information available.");
+			else if (baseEx is HttpException) {
+				tmp = ((HttpException)baseEx).Description;
+				values.Add (ExceptionPageTemplate.Template_DetailsName, !String.IsNullOrEmpty (tmp) ? HtmlEncode (tmp) : "Web exception occurred but no additional error description given.");
+			} else {
+				var sb = new StringBuilder ("Non-web exception.");
+
+				tmp = baseEx.Source;
+				if (!String.IsNullOrEmpty (tmp))
+					sb.AppendFormat (" Exception origin (name of application or object): {0}.", HtmlEncode (tmp));
+				tmp = baseEx.HelpLink;
+				if (!String.IsNullOrEmpty (tmp))
+					sb.AppendFormat (" Additional information is available at {0}", HtmlEncode (tmp));
+				
+				values.Add (ExceptionPageTemplate.Template_DetailsName, sb.ToString ());
+			}
+			
+			if (showTrace)
+				values.Add (ExceptionPageTemplate.Template_StackTraceName, HtmlEncode (baseEx.StackTrace.ToString ()));
+		}
+		
 		static string HtmlEncode (string s)
 		{
-			if (s == null)
+			if (String.IsNullOrEmpty (s))
 				return s;
 
 			string res = HttpUtility.HtmlEncode (s);
@@ -412,151 +444,21 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				return String.Empty;
 
 			if (filename.StartsWith ("@@"))
-				return "[internal] <!-- " + filename + " -->";
+				return "[internal] <!-- " + HttpUtility.HtmlEncode (filename) + " -->";
 
-			return filename;
+			return HttpUtility.HtmlEncode (filename);
 		}
 		
-		string GetHtmlizedErrorMessage (HtmlizedException exc)
+		static void FormatSource (StringBuilder builder, StringBuilder longVersion, HtmlizedException e)
 		{
-			StringBuilder builder = new StringBuilder ();
-#if TARGET_J2EE
-			bool isParseException = false;
-			bool isCompileException = false;
-#else
-			bool isParseException = exc is ParseException;
-			bool isCompileException = (!isParseException && exc is CompilationException);
-#endif
-			
-			WriteFileTop (builder, exc.Title);
-			builder.AppendFormat ("<h2><em>{0}</em></h2>\r\n", exc.Title);
-			builder.AppendFormat ("<p><strong>Description: </strong>{0}\r\n</p>\r\n", HtmlEncode (exc.Description));
-			string errorMessage = HtmlEncode (exc.ErrorMessage);
-			
-			builder.Append ("<p><strong>");
-			if (isParseException)
-				builder.Append ("Parser ");
-			else if (isCompileException)
-				builder.Append ("Compiler ");
-			
-			builder.Append ("Error Message: </strong>");
-			builder.AppendFormat ("<code>{0}</code></p>", errorMessage);
-
-			StringBuilder longCodeVersion = null;
-			
-			if (exc.FileText != null) {
-				if (isParseException || isCompileException) {
-					builder.Append ("<p><strong>Source Error: </strong></p>\r\n");
-					builder.Append ("<table summary=\"Source error\" class=\"sampleCode\">\r\n<tr><td>");
-
-					if (isCompileException)
-						longCodeVersion = new StringBuilder ();
-					WriteSource (builder, longCodeVersion, exc);
-					builder.Append ("</pre></code></td></tr>\r\n</table>\r\n");
-				} else {
-					builder.Append ("<table summary=\"Source file\" class=\"sampleCode\">\r\n<tr><td>");
-					WriteSource (builder, null, exc);
-					builder.Append ("</pre></code></td></tr>\r\n</table>\r\n");
-				}
-
-				builder.Append ("<br/><p><strong>Source File: </strong>");
-				if (exc.SourceFile != exc.FileName)
-					builder.Append (FormatSourceFile (exc.SourceFile));
-				else
-					builder.Append (FormatSourceFile (exc.FileName));
-
-				if (isParseException || isCompileException) {
-					int[] errorLines = exc.ErrorLines;
-					int numErrors = errorLines != null ? errorLines.Length : 0;
-					if (numErrors > 0) {
-						builder.AppendFormat ("&nbsp;&nbsp;<strong>Line{0}: </strong>", numErrors > 1 ? "s" : String.Empty);
-						for (int i = 0; i < numErrors; i++) {
-							if (i > 0)
-								builder.Append (", ");
-							builder.Append (exc.ErrorLines [i]);
-						}
-					}
-				}
-				builder.Append ("</p>");
-			} else if (exc.FileName != null)
-				builder.AppendFormat ("{0}</p>", HtmlEncode (exc.FileName));
-
-			bool needToggleJS = false;
-			
 #if !TARGET_J2EE
-			if (isCompileException) {
-				CompilationException cex = exc as CompilationException;
-				StringCollection output = cex.CompilerOutput;
-
-				if (output != null && output.Count > 0) {
-					needToggleJS = true;
-					StringBuilder sb = new StringBuilder ();
-					foreach (string s in output)
-						sb.Append (s + "\r\n");
-					WriteExpandableBlock (builder, "compilerOutput", "Show Detailed Compiler Output", sb.ToString ());
-				}
-			}
-#endif
-			
-			if (longCodeVersion != null && longCodeVersion.Length > 0) {
-				WriteExpandableBlock (builder, "fullCode", "Show Complete Compilation Source", longCodeVersion.ToString ());
-				needToggleJS = true;
-			}
-
-			if (needToggleJS)
-				builder.Append ("<script type=\"text/javascript\">\r\n" +
-						"function ToggleVisible (id)\r\n" +
-						"{\r\n" +
-						"\tvar e = document.getElementById (id);\r\n" +
-						"\tif (e.style.display == 'none')\r\n" +
-						"\t{\r\n" +
-						"\t\te.style.display = '';\r\n" +
-						"\t} else {\r\n" +
-						"\t\te.style.display = 'none';\r\n" +
-						"\t}\r\n" +
-						"}\r\n" +
-						"</script>\r\n");
-			
-			WriteFileBottom (builder, true);
-			
-			return builder.ToString ();
-		}
-
-		static void WriteExpandableBlock (StringBuilder builder, string id, string title, string contents)
-		{
-			builder.AppendFormat ("<br><div class=\"expandable\" onclick=\"ToggleVisible ('{1}')\">{0}:</div><br/>" +
-					      "<div id=\"{1}\" style=\"display: none\"><table summary=\"Details\" class=\"sampleCode\"><tr><td>" +
-					      "<code><pre>\r\n", title, id);
-			builder.Append (contents);
-			builder.Append ("</pre></code></td></tr></table></div>");
-		}
-		
-		static void WriteTextAsCode (StringBuilder builder, string text)
-		{
-			builder.AppendFormat ("<pre>{0}</pre>", HtmlEncode (text));
-		}
-
-#if TARGET_J2EE
-		static void WriteSource (StringBuilder builder, StringBuilder longVersion, HtmlizedException e)
-		{
-			builder.Append ("<code><pre>");
-			WritePageSource (builder, e);
-			builder.Append ("</code></pre>\r\n");
-		}
-
-#else
-		static void WriteSource (StringBuilder builder, StringBuilder longVersion, HtmlizedException e)
-		{
-			builder.Append ("<code><pre>");
 			if (e is CompilationException)
 				WriteCompilationSource (builder, longVersion, e);
 			else
-				WritePageSource (builder, e);
-
-			builder.Append ("<code></pre>\r\n");
-		}
 #endif
-		
+				WritePageSource (builder, e);
+		}
+
 		static void WriteCompilationSource (StringBuilder builder, StringBuilder longVersion, HtmlizedException e)
 		{
 			int [] a = e.ErrorLines;
@@ -580,17 +482,17 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 					line++;
 					if (line < begin || line > end) {
 						if (longVersion != null)
-							longVersion.AppendFormat ("Line {0}: {1}\r\n", line, HtmlEncode (s));
+							longVersion.AppendFormat ("{0}: {1}\r\n", line, HtmlEncode (s));
 						continue;
 					}
 				
 					if (errline == line) {
 						if (longVersion != null)
-							longVersion.Append ("<span style=\"color: red\">");
-						builder.Append ("<span style=\"color: red\">");
+							longVersion.Append ("<span class=\"sourceErrorLine\">");
+						builder.Append ("<span class=\"sourceErrorLine\">");
 					}
 					
-					tmp = String.Format ("Line {0}: {1}\r\n", line, HtmlEncode (s));
+					tmp = String.Format ("{0}: {1}\r\n", line, HtmlEncode (s));
 					builder.Append (tmp);
 					if (longVersion != null)
 						longVersion.Append (tmp);
@@ -626,9 +528,9 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 					break;
 
 				if (beginerror == line)
-					builder.Append ("<span style=\"color: red\">");
+					builder.Append ("<span class=\"sourceErrorLine\">");
 
-				builder.AppendFormat ("Line {0}: {1}\r\n", line, HtmlEncode (s));
+				builder.AppendFormat ("{0}: {1}\r\n", line, HtmlEncode (s));
 
 				if (enderror <= line) {
 					builder.Append ("</span>");
@@ -647,6 +549,49 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			WebTrace.WriteLine ("CreateFromLastError");
 			return new HttpException (message, 0);
 		}
+
+		// Putting this at the end so that the code above isn't bloated
+		const string DoubleFaultExceptionMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.0 Transitional//EN"" ""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"">
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<head>
+<style type=""text/css"">
+body { background-color: #FFFFFF; font-size: .75em; font-family: Verdana, Helvetica, Sans-Serif; margin: 0; padding: 0; color: #696969; }
+a:link { color: #000000; text-decoration: underline; }
+a:visited { color: #000000; }
+a:hover { color: #000000; text-decoration: none; }
+a:active { color: #12eb87; }
+p, ul { margin-bottom: 20px; line-height: 1.6em; }
+pre { font-size: 1.2em; margin-left: 20px; margin-top: 0px; }
+h1, h2, h3, h4, h5, h6 { font-size: 1.6em; color: #000; font-family: Arial, Helvetica, sans-serif; }
+h1 { font-weight: bold; margin-bottom: 0; margin-top: 0; padding-bottom: 0; }
+h2 { font-size: 1em; padding: 0 0 0px 0; color: #696969; font-weight: normal; margin-top: 0; margin-bottom: 20px; }
+h3 { font-size: 1.2em; }
+h4 { font-size: 1.1em; }
+h5, h6 { font-size: 1em; }
+#header { position: relative; margin-bottom: 0px; color: #000; padding: 0; background-color: #5c87b2; height: 38px; padding-left: 10px; }
+#header h1 { font-weight: bold; padding: 5px 0; margin: 0; color: #fff; border: none; line-height: 2em; font-family: Arial, Helvetica, sans-serif; font-size: 32px !important; }
+#header-image { float: left; padding: 3px; margin-left: 1px; margin-right: 1px; }
+#header-text { color: #fff; font-size: 1.4em; line-height: 38px; font-weight: bold; }
+#main { padding: 20px 20px 15px 20px; background-color: #fff; _height: 1px; }
+#footer { color: #999; padding: 5px 0; text-align: left; line-height: normal; margin: 20px 0px 0px 0px; font-size: .9em; border-top: solid 1px #5C87B2; }
+#footer-powered-by { float: right; }
+.details { font-family: monospace; border: solid 1px #e8eef4; white-space: pre; font-size: 1.2em; overflow: auto; padding: 6px; margin-top: 6px }
+.details-wrapped { white-space: normal }
+.details-header { margin-top: 1.5em }
+.details-header a { font-weight: bold; text-decoration: none }
+p { margin-bottom: 0.3em; margin-top: 0.1em }
+.sourceErrorLine { color: #770000; font-weight: bold; }
+</style>
+
+<title>Double fault in exception reporting code</title>
+</head>
+<body>
+<h1>Double fault in exception reporting code</h1>
+<p>While generating HTML with exception report, a double fault has occurred. Please consult your server's console and/or log file to see the actual exception.</p>
+</body>
+</html>
+";
 	}
 }
 
