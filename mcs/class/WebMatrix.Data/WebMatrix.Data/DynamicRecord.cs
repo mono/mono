@@ -37,8 +37,12 @@ namespace WebMatrix.Data
 {
 	public sealed class DynamicRecord : DynamicObject, ICustomTypeDescriptor
 	{
-		internal DynamicRecord ()
+		readonly Dictionary<string, object> fields;
+
+		internal DynamicRecord (Dictionary<string, object> fields)
 		{
+			this.fields = fields;
+			Columns = fields.Keys;
 		}
 
 		public IList<string> Columns {
@@ -46,27 +50,26 @@ namespace WebMatrix.Data
 			private set;
 		}
 
-		public dynamic this[string name] {
+		public object this[string name] {
 			get {
-				return null;
+				return fields[name];
 			}
 		}
 
-		public dynamic this[int index] {
-			get {
-				return null;
+		public object this[int index] {
+			get {				
+				return fields.Keys[index];
 			}
 		}
 
 		public override IEnumerable<string> GetDynamicMemberNames ()
 		{
-			return null;
+			return Columns;
 		}
 
 		public override bool TryGetMember (GetMemberBinder binder, out object result)
 		{
-			result = null;
-			return false;
+			return fields.TryGetValue (binder.Name, out result);
 		}
 
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
