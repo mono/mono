@@ -63,6 +63,7 @@ namespace System.Threading.Tasks
 		
 		Action<object> action;
 		object         state;
+		AtomicBooleanValue executing;
 
 		ConcurrentQueue<EventHandler> completed = new ConcurrentQueue<EventHandler> ();
 
@@ -371,6 +372,13 @@ namespace System.Threading.Tasks
 		
 		void ThreadStart ()
 		{
+			/* Allow scheduler to break fairness of deque ordering without
+			 * breaking its semantic (the task can be executed twice but the
+			 * second time it will return immediately
+			 */
+			if (!executing.TryRelaxedSet ())
+				return;
+
 			current = this;
 			TaskScheduler.Current = taskScheduler;
 			
