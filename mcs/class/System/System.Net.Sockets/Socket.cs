@@ -180,6 +180,7 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if !MOBILE
 		public Socket (SocketInformation socketInformation)
 		{
 			var options = socketInformation.Options;
@@ -197,7 +198,8 @@ namespace System.Net.Sockets
 			socket = (IntPtr) (long) result [4];
 			SocketDefaults ();
 		}
-
+#endif
+	
 #if !TARGET_JVM
 		// Returns the amount of data waiting to be read on socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1314,6 +1316,7 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if !MOBILE
 		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
 		public SocketInformation DuplicateAndClose (int targetProcessId)
 		{
@@ -1329,7 +1332,8 @@ namespace System.Net.Sockets
 
 			return si;
 		}
-
+#endif
+	
 		public Socket EndAccept (IAsyncResult result)
 		{
 			int bytes;
