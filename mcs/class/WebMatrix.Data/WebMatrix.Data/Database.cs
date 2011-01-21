@@ -39,6 +39,8 @@ namespace WebMatrix.Data
 {
 	public class Database : IDisposable
 	{
+		public static event EventHandler<ConnectionEventArgs> ConnectionOpened;
+
 		DbConnection connection;
 
 		private Database (DbConnection connection)
@@ -86,7 +88,10 @@ namespace WebMatrix.Data
 			PrepareCommandParameters (command, args);
 
 			connection.Open ();
+			TriggerConnectionOpened (this, connection);
+
 			var result = command.ExecuteNonQuery ();
+
 			connection.Close ();
 			command.Dispose ();
 
@@ -115,6 +120,7 @@ namespace WebMatrix.Data
 			var rows = new List<Dictionary<string, object>> ();
 
 			connection.Open ();
+			TriggerConnectionOpened (this, connection);
 
 			using (var reader = command.ExecuteReader ()) {
 				if (!reader.Read () || !reader.HasRows)
@@ -148,7 +154,10 @@ namespace WebMatrix.Data
 			PrepareCommandParameters (command, args);
 
 			connection.Open ();
+			TriggerConnectionOpened (this, connection);
+
 			var result = command.ExecuteScalar ();
+
 			connection.Close ();
 			command.Dispose ();
 
@@ -173,6 +182,13 @@ namespace WebMatrix.Data
 				param.Value = args[index++];
 				command.Parameters.Add (param);
 			}
+		}
+
+		static TriggerConnectionOpened (Database self, DbConnection connection)
+		{
+			EventHandler<ConnectionEventArgs> evt = ConnectionOpened;
+			if (evt != null)
+				evt (self, new ConnectionEventArgs (connection));
 		}
 
 		public DbConnection Connection {
