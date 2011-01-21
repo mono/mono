@@ -153,7 +153,7 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
-			if (loader.Corlib != null) {
+			if (loader.Corlib != null && !(loader.Corlib is AssemblyBuilder)) {
 				Builder.__SetImageRuntimeVersion (loader.Corlib.ImageRuntimeVersion, 0x20000);
 			} else {
 				// Sets output file metadata version when there is no mscorlib
