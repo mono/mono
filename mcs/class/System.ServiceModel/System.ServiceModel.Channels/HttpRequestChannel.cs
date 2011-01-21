@@ -294,7 +294,7 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnAbort ()
 		{
-			foreach (var web_request in web_requests)
+			foreach (var web_request in web_requests.ToArray ())
 				web_request.Abort ();
 			web_requests.Clear ();
 		}
