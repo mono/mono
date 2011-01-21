@@ -169,6 +169,14 @@ namespace WebMatrix.Data
 			return result;
 		}
 
+		// TODO: I don't think this is actually quite generic (SQL Server specific)
+		public object GetLastInsertId ()
+		{
+			const string sql = "select @@IDENTITY";
+
+			return QueryValue (sql);
+		}
+
 		DbCommand PrepareCommand (string commandText)
 		{
 			var command = connection.CreateCommand ();
@@ -179,6 +187,9 @@ namespace WebMatrix.Data
 
 		static void PrepareCommandParameters (DbCommand command, object[] args)
 		{
+			if (args.Length == 0)
+				return;
+
 			int index = 0;
 
 			foreach (var arg in args) {
