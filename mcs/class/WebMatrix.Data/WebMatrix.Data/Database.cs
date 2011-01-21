@@ -28,6 +28,7 @@
 #if NET_4_0
 
 using System;
+using System.Linq;
 using System.Dynamic;
 using System.Data.Common;
 using System.Configuration;
@@ -92,9 +93,11 @@ namespace WebMatrix.Data
 			return result;
 		}
 
-		public dynamic Query (string commandText, params object[] args)
+		public IEnumerable<dynamic> Query (string commandText, params object[] args)
 		{
-			
+			var result = QueryInternal (commandText, args, false);
+
+			return result != null ? result.Select (r => new DynamicRecord (r)) : null;
 		}
 
 		public dynamic QuerySingle (string commandText, params object[] args)
@@ -104,7 +107,7 @@ namespace WebMatrix.Data
 			return result != null ? new DynamicRecord (result[0]) : null;
 		}
 
-		List<Dictionary<string, object>> QueryInternal (string commandText, params object[] args, bool unique)
+		List<Dictionary<string, object>> QueryInternal (string commandText, object[] args, bool unique)
 		{
 			var command = PrepareCommand (commandText);
 			PrepareCommandParameters (command, args);
@@ -113,7 +116,7 @@ namespace WebMatrix.Data
 
 			connection.Open ();
 
-			using (var reader = var.ExecuteReader ()) {				
+			using (var reader = command.ExecuteReader ()) {
 				if (!reader.Read () || !reader.HasRows)
 					return null;
 
@@ -136,7 +139,7 @@ namespace WebMatrix.Data
 			connection.Close ();
 			command.Dispose ();
 
-			return result;
+			return rows;
 		}
 
 		public object QueryValue (string commandText, params object[] args)

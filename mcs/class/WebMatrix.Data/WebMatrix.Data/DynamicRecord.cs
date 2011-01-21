@@ -42,7 +42,7 @@ namespace WebMatrix.Data
 		internal DynamicRecord (Dictionary<string, object> fields)
 		{
 			this.fields = fields;
-			Columns = fields.Keys;
+			Columns = new List<string> (fields.Keys).AsReadOnly ();
 		}
 
 		public IList<string> Columns {
@@ -58,13 +58,13 @@ namespace WebMatrix.Data
 
 		public object this[int index] {
 			get {				
-				return fields.Keys[index];
+				return fields[Columns[index]];
 			}
 		}
 
 		public override IEnumerable<string> GetDynamicMemberNames ()
 		{
-			return Columns;
+			return fields.Keys;
 		}
 
 		public override bool TryGetMember (GetMemberBinder binder, out object result)
