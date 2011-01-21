@@ -2241,6 +2241,34 @@ add_generic_class (MonoAotCompile *acfg, MonoClass *klass)
 	add_generic_class_with_depth (acfg, klass, 0);
 }
 
+static gboolean
+check_type_depth (MonoType *t, int depth)
+{
+	int i;
+
+	if (depth > 8)
+		return TRUE;
+
+	switch (t->type) {
+	case MONO_TYPE_GENERICINST: {
+		MonoGenericClass *gklass = t->data.generic_class;
+		MonoGenericInst *ginst = gklass->context.class_inst;
+
+		if (ginst) {
+			for (i = 0; i < ginst->type_argc; ++i) {
+				if (check_type_depth (ginst->type_argv [i], depth + 1))
+					return TRUE;
+			}
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+	return FALSE;
+}
+
 /*
  * add_generic_class:
  *
@@ -2264,6 +2292,9 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth)
 		return;
 
 	if (!klass->generic_class && !klass->rank)
+		return;
+
+	if (check_type_depth (&klass->byval_arg, 0))
 		return;
 
 	iter = NULL;
