@@ -241,12 +241,19 @@ namespace System.Threading.Tasks
 		                                              ThreadWorker[] others,
 		                                              ManualResetEvent evt)
 		{
+			// Before anything, we try to execute the self task as it may be the simplest way to unlock
+			// the situation
+			self.Execute (autoReference != null ? autoReference.ChildWorkAdder : (Action<Task>)null);
+			if (predicateEvt.IsSet)
+				return;
+
 			const int stage1 = 5, stage2 = 0;
 			int tries = 8;
 			WaitHandle[] handles = null;
 			Watch watch = Watch.StartNew ();
 			if (millisecondsTimeout == -1)
 				millisecondsTimeout = int.MaxValue;
+			bool aggressive = false;
 
 			while (!predicateEvt.IsSet && watch.ElapsedMilliseconds < millisecondsTimeout) {
 				Task value;
@@ -255,7 +262,7 @@ namespace System.Threading.Tasks
 				if (autoReference != null) {
 					while (autoReference.dDeque.PopBottom (out value) == PopResult.Succeed && value != null) {
 						evt.Set ();
-						if (CheckTaskFitness (self, value))
+						if (CheckTaskFitness (self, value) || aggressive)
 							value.Execute (autoReference.ChildWorkAdder);
 						else {
 							sharedWorkQueue.TryAdd (value);
@@ -272,7 +279,7 @@ namespace System.Threading.Tasks
 				// Dequeue only one item as we have restriction
 				while (--count >= 0 && sharedWorkQueue.TryTake (out value) && value != null) {
 					evt.Set ();
-					if (CheckTaskFitness (self, value))
+					if (CheckTaskFitness (self, value) || aggressive)
 						value.Execute (null);
 					else {
 						if (autoReference == null)
@@ -298,7 +305,7 @@ namespace System.Threading.Tasks
 
 					if (other.dDeque.PopTop (out value) == PopResult.Succeed && value != null) {
 						evt.Set ();
-						if (CheckTaskFitness (self, value))
+						if (CheckTaskFitness (self, value) || aggressive)
 							value.Execute (null);
 						else {
 							if (autoReference == null)
@@ -313,6 +320,13 @@ namespace System.Threading.Tasks
 						return;
 				}
 
+				/* Waiting is split in 4 phases
+				 *   - until stage 1 we simply yield the thread to let others add data
+				 *   - between stage 1 and stage2 we use ManualResetEventSlim light waiting mechanism
+				 *   - after stage2 we fall back to the heavier WaitHandle waiting mechanism
+				 *   - if really the situation isn't evolving after a couple of sleep, we disable
+				 *     task fitness check altogether
+				 */
 				if (--tries > stage1)
 					Thread.Yield ();
 				else if (tries >= stage2)
@@ -321,6 +335,8 @@ namespace System.Threading.Tasks
 					if (tries == stage2 - 1)
 						handles = new [] { predicateEvt.WaitHandle, evt };
 					WaitHandle.WaitAny (handles, ComputeTimeout (1000, millisecondsTimeout, watch));
+					if (tries == stage2 - 10)
+						aggressive = true;
 				}
 			}
 		}
