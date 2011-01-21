@@ -176,6 +176,8 @@ namespace System.Threading.Tasks
 		
 		public void RunSynchronously (TaskScheduler scheduler)
 		{
+			if (this.Status != TaskStatus.Created)
+				throw new InvalidOperationException ("The task is not in a valid state to be started");
 			if (scheduler.TryExecuteTask (this))
 				return;
 
