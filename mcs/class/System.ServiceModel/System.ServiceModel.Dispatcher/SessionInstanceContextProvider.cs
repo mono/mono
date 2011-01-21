@@ -46,13 +46,13 @@ namespace System.ServiceModel.Dispatcher
 		public InstanceContext GetExistingInstanceContext (Message message, IContextChannel channel)
 		{
 			InstanceContext ctx;
-			var key = channel.SessionId;
+			var key = channel.SessionId ?? String.Empty;
 			return pool.TryGetValue (key, out ctx) ? ctx : null;
 		}
 
 		public void InitializeInstanceContext (InstanceContext instanceContext, Message message, IContextChannel channel)
 		{
-			var key = channel.SessionId;
+			var key = channel.SessionId ?? String.Empty;
 			pool [key] = instanceContext;
 		}
 
