@@ -6609,13 +6609,13 @@ namespace Mono.CSharp
 				if (ic == null || !ic.IsDefaultValue) {
 					base.EncodeAttributeValue (rc, enc, targetType);
 				} else {
-					enc.Stream.Write (0);
+					enc.Encode (0);
 				}
 
 				return;
 			}
 
-			enc.Stream.Write ((int) array_data.Count);
+			enc.Encode (array_data.Count);
 			foreach (var element in array_data) {
 				element.EncodeAttributeValue (rc, enc, array_element_type);
 			}
