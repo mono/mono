@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -44,6 +45,7 @@ namespace System.ServiceModel
 
 		ServiceEndpoint service_endpoint;
 		IChannelFactory factory;
+		List<IClientChannel> opened_channels = new List<IClientChannel> ();
 
 		protected ChannelFactory ()
 		{
@@ -61,6 +63,10 @@ namespace System.ServiceModel
 			private set {
 				factory = value;
 			}
+		}
+
+		internal List<IClientChannel> OpenedChannels {
+			get { return opened_channels; }
 		}
 
 		public ServiceEndpoint Endpoint {
@@ -341,8 +347,11 @@ namespace System.ServiceModel
 
 		protected override void OnClose (TimeSpan timeout)
 		{
+			DateTime start = DateTime.Now;
+			foreach (var ch in opened_channels.ToArray ())
+				ch.Close (timeout - (DateTime.Now - start));
 			if (OpenedChannelFactory != null)
-				OpenedChannelFactory.Close (timeout);
+				OpenedChannelFactory.Close (timeout - (DateTime.Now - start));
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
