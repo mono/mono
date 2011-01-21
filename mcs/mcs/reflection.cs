@@ -221,6 +221,7 @@ namespace Mono.CSharp
 				throw;
 			}
 
+			module.Create (this, CreateModuleBuilder ());
 			builder_extra = new AssemblyBuilderMonoSpecific (Builder, Compiler);
 			return true;
 #endif

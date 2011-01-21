@@ -1488,15 +1488,19 @@ namespace Mono.CSharp
 				stopwatch = Stopwatch.StartNew ();
 
 #if STATIC
-			var assembly = new AssemblyDefinitionStatic (module, output_file_name, output_file);
-			module.SetDeclaringAssembly (assembly);
-
 			var importer = new StaticImporter ();
-			assembly.Importer = importer;
+			var references_loader = new StaticLoader (importer, ctx);
 
-			var loader = new StaticLoader (importer, ctx);
-			loader.LoadReferences (module);
+			var assembly = new AssemblyDefinitionStatic (module, references_loader, output_file_name, output_file);
+			assembly.Create (references_loader.Domain);
 
+			// Create compiler types first even before any referenced
+			// assembly is loaded to allow back reference types from
+			// loaded assembly into compiled ont
+			module.CreateType ();
+			ShowTime ("Creating compiled types");
+
+			references_loader.LoadReferences (module);
 			ShowTime ("Imporing referenced assemblies");
 
 			if (!ctx.BuildinTypes.CheckDefinitions (module))
@@ -1504,14 +1508,7 @@ namespace Mono.CSharp
 
 			ShowTime ("Initializing predefined types");
 
-			if (!assembly.Create (loader))
-				return false;
-
-			// System.Object was not loaded, use compiled assembly as corlib
-			if (loader.Corlib == null)
-				loader.Corlib = assembly.Builder;
-
-			loader.LoadModules (assembly, module.GlobalRootNamespace);
+			references_loader.LoadModules (assembly, module.GlobalRootNamespace);
 #else
 			var assembly = new AssemblyDefinitionDynamic (module, output_file_name, output_file);
 			module.SetDeclaringAssembly (assembly);
@@ -1594,7 +1591,7 @@ namespace Mono.CSharp
 			assembly.Save ();
 
 #if STATIC
-			loader.Dispose ();
+			references_loader.Dispose ();
 #endif
 
 			ShowTime ("Saving output assembly");

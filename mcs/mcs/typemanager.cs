@@ -166,11 +166,11 @@ namespace Mono.CSharp
 				if (found == null || found == p)
 					continue;
 
-				if (!RootContext.StdLib) {
+				var tc = found.MemberDefinition as TypeContainer;
+				if (tc != null) {
 					var ns = module.GlobalRootNamespace.GetNamespace (p.Namespace, false);
 					ns.ReplaceTypeWithPredefined (found, p);
 
-					var tc = found.MemberDefinition as TypeContainer;
 					tc.SetPredefinedSpec (p);
 					p.SetDefinition (found);
 				}

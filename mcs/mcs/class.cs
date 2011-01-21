@@ -1348,7 +1348,20 @@ namespace Mono.CSharp {
 		//
 		public void SetPredefinedSpec (BuildinTypeSpec spec)
 		{
+			// When compiling build-in types we start with two
+			// version of same type. One is of BuildinTypeSpec and
+			// second one is ordinary TypeSpec. The unification
+			// happens at later stage when we know which type
+			// really matches the buildin type signature. However
+			// that means TypeSpec create during CreateType of this
+			// type has to be replaced with buildin one
+			// 
+			spec.SetMetaInfo (TypeBuilder);
+			spec.MemberCache = this.spec.MemberCache;
+			spec.DeclaringType = this.spec.DeclaringType;
+
 			this.spec = spec;
+			current_type = null;
 		}
 
 		void UpdateTypeParameterConstraints (TypeContainer part)

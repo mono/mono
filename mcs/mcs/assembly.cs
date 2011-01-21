@@ -143,7 +143,7 @@ namespace Mono.CSharp
 
 		// TODO: This should not exist here but will require more changes
 		public MetadataImporter Importer {
-			get ; set;
+		    protected get; set;
 		}
 
 		public bool IsCLSCompliant {
@@ -414,7 +414,7 @@ namespace Mono.CSharp
 			return Builder.DefineDynamicModule (module_name, module_name, false);
 		}
 
-		public void Emit ()
+		public virtual void Emit ()
 		{
 			if (RootContext.Target == Target.Module) {
 				module_target_attrs = new AssemblyAttributesPlaceholder (module, name);

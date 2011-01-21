@@ -411,6 +411,7 @@ namespace Mono.CSharp
 					var a = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, "temp");
 					a.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Run);
 					RootContext.ToplevelTypes.SetDeclaringAssembly (a);
+					RootContext.ToplevelTypes.CreateType ();
 					RootContext.ToplevelTypes.Define ();
 					if (ctx.Report.Errors != 0)
 						return null;
@@ -700,7 +701,7 @@ namespace Mono.CSharp
 			}
 
 			assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.RunAndSave);
-			RootContext.ToplevelTypes.SetDeclaringAssembly (assembly);
+			RootContext.ToplevelTypes.CreateType ();
 			RootContext.ToplevelTypes.Define ();
 
 			if (Report.Errors != 0){
@@ -779,7 +780,7 @@ namespace Mono.CSharp
 			
 			return (CompiledMethod) System.Delegate.CreateDelegate (typeof (CompiledMethod), mi);
 		}
-#endif		
+#endif
 		static internal void LoadAliases (NamespaceEntry ns)
 		{
 			ns.Populate (using_alias_list, using_list);

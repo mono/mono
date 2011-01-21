@@ -117,24 +117,32 @@ namespace Mono.CSharp
 
 	class AssemblyDefinitionStatic : AssemblyDefinition
 	{
+		readonly StaticLoader loader;
+
 		//
 		// Assembly container with file output
 		//
-		public AssemblyDefinitionStatic (ModuleContainer module, string name, string fileName)
+		public AssemblyDefinitionStatic (ModuleContainer module, StaticLoader loader, string name, string fileName)
 			: base (module, name, fileName)
 		{
+			this.loader = loader;
+			Importer = loader.MetadataImporter;
 		}
 
 		//
-		// Initializes the code generator
+		// Initializes the assembly SRE domain
 		//
-		public bool Create (StaticLoader loader)
+		public void Create (Universe domain)
 		{
 			ResolveAssemblySecurityAttributes ();
 			var an = CreateAssemblyName ();
 
-			Builder = loader.Domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Save, Path.GetDirectoryName (file_name));
+			Builder = domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Save, Path.GetDirectoryName (file_name));
+			module.Create (this, CreateModuleBuilder ());
+		}
 
+		public override void Emit ()
+		{
 			if (loader.Corlib != null) {
 				Builder.__SetImageRuntimeVersion (loader.Corlib.ImageRuntimeVersion, 0x20000);
 			} else {
@@ -157,7 +165,8 @@ namespace Mono.CSharp
 			}
 
 			builder_extra = new AssemblyBuilderIKVM (Builder, Compiler);
-			return true;
+
+			base.Emit ();
 		}
 
 		public Module IncludeModule (RawModule moduleFile)
@@ -214,6 +223,8 @@ namespace Mono.CSharp
 			paths.Add (sdk_path);
 		}
 
+		#region Properties
+
 		public Assembly Corlib {
 			get {
 				return corlib;
@@ -228,6 +239,14 @@ namespace Mono.CSharp
 				return domain;
 			}
 		}
+
+		public StaticImporter MetadataImporter {
+			get {
+				return importer;
+			}
+		}
+
+		#endregion
 
 		Assembly AssemblyReferenceResolver (object sender, IKVM.Reflection.ResolveEventArgs args)
 		{
@@ -474,7 +493,10 @@ namespace Mono.CSharp
 			List<Tuple<RootNamespace, Assembly>> loaded;
 			base.LoadReferencesCore (module, out corlib, out loaded);
 
-			if (corlib != null) {
+			if (corlib == null) {
+				// System.Object was not found in any referenced assembly, use compiled assembly as corlib
+				corlib = module.DeclaringAssembly.Builder;
+			} else {
 				importer.InitializeBuildinTypes (compiler.BuildinTypes, corlib);
 				importer.ImportAssembly (corlib, module.GlobalRootNamespace);
 			}

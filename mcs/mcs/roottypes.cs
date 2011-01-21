@@ -329,15 +329,22 @@ namespace Mono.CSharp
 			return rn;
 		}
 
-		public new void Define ()
+		public void Create (AssemblyDefinition assembly, ModuleBuilder moduleBuilder)
 		{
-			builder = assembly.CreateModuleBuilder ();
+			this.assembly = assembly;
+			builder = moduleBuilder;
+		}
 
-			// FIXME: Temporary hack for repl to reset
-			static_data = null;
-
+		public new void CreateType ()
+		{
 			foreach (TypeContainer tc in types)
 				tc.CreateType ();
+		}
+
+		public new void Define ()
+		{
+			// FIXME: Temporary hack for repl to reset
+			static_data = null;
 
 			InitializePredefinedTypes ();
 
