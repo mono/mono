@@ -774,6 +774,7 @@ Mono implementation of ASP.NET, Remoting and Web Services.
 %_prefix/lib/mono/4.0/System.Runtime.Serialization.Formatters.Soap.dll
 %_prefix/lib/mono/4.0/System.Web.Abstractions.dll
 %_prefix/lib/mono/4.0/System.Web.ApplicationServices.dll
+%_prefix/lib/mono/4.0/System.Web.Infrastructure.dll
 %_prefix/lib/mono/4.0/System.Web.Routing.dll
 %_prefix/lib/mono/4.0/System.Web.Services.dll
 %_prefix/lib/mono/4.0/System.Web.dll
@@ -791,6 +792,7 @@ Mono implementation of ASP.NET, Remoting and Web Services.
 %_prefix/lib/mono/gac/System.Web
 %_prefix/lib/mono/gac/System.Web.Abstractions
 %_prefix/lib/mono/gac/System.Web.ApplicationServices
+%_prefix/lib/mono/gac/System.Web.Infrastructure
 %_prefix/lib/mono/gac/System.Web.Routing
 %_prefix/lib/mono/gac/System.Web.Services
 
