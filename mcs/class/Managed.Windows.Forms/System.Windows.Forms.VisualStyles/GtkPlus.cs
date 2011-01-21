@@ -118,12 +118,10 @@ namespace System.Windows.Forms.VisualStyles
 		readonly GtkWidgetPointer @fixed;
 		readonly GtkStylePointer [] styles;
 		#region ComboBox
-#if NET_2_0
 		readonly GtkWidgetPointer combo_box_drop_down_toggle_button;
 		readonly GtkWidgetPointer combo_box_drop_down_arrow;
 		GtkStylePointer combo_box_drop_down_toggle_button_style;
 		GtkStylePointer combo_box_drop_down_arrow_style;
-#endif
 		#endregion
 		#region ToolBar
 		readonly GtkWidgetPointer tool_bar_button;
@@ -141,10 +139,8 @@ namespace System.Windows.Forms.VisualStyles
 		readonly CheckBoxPainter check_box_painter = new CheckBoxPainter ();
 		readonly RadioButtonPainter radio_button_painter = new RadioButtonPainter ();
 		#region ComboBox
-#if NET_2_0
 		readonly ComboBoxDropDownButtonPainter combo_box_drop_down_button_painter = new ComboBoxDropDownButtonPainter ();
 		readonly ComboBoxBorderPainter combo_box_border_painter = new ComboBoxBorderPainter ();
-#endif
 		#endregion
 		#region GroupBox
 		readonly GroupBoxPainter group_box_painter = new GroupBoxPainter ();
@@ -199,7 +195,6 @@ namespace System.Windows.Forms.VisualStyles
 			gtk_container_add (@fixed, widgets [(int)WidgetType.CheckBox] = gtk_check_button_new ());
 			#endregion
 			#region ComboBox
-#if NET_2_0
 			gtk_container_add (@fixed, widgets [(int)WidgetType.ComboBox] = gtk_combo_box_entry_new ());
 			gtk_widget_realize (widgets [(int)WidgetType.ComboBox]);
 			combo_box_drop_down_toggle_button = GetFirstChildWidgetOfType.Get (widgets [(int)WidgetType.ComboBox], gtk_toggle_button_get_type ());
@@ -207,7 +202,6 @@ namespace System.Windows.Forms.VisualStyles
 			combo_box_drop_down_arrow = GetFirstChildWidgetOfType.Get (combo_box_drop_down_toggle_button, gtk_arrow_get_type ());
 			g_object_ref (combo_box_drop_down_toggle_button_style = GetWidgetStyle (combo_box_drop_down_toggle_button));
 			g_object_ref (combo_box_drop_down_arrow_style = GetWidgetStyle (combo_box_drop_down_arrow));
-#endif
 			#endregion
 			#region GroupBox
 			gtk_container_add (@fixed, widgets [(int)WidgetType.GroupBox] = gtk_frame_new (null));
@@ -270,10 +264,8 @@ namespace System.Windows.Forms.VisualStyles
 			for (int widget_index = 0; widget_index < WidgetTypeCount; widget_index++)
 				g_object_unref (styles [widget_index]);
 			#region ComboBox
-#if NET_2_0
 			g_object_unref (combo_box_drop_down_toggle_button_style);
 			g_object_unref (combo_box_drop_down_arrow_style);
-#endif
 			#endregion
 			#region ToolBar
 			g_object_unref (tool_bar_button_style);
@@ -309,7 +301,6 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		#endregion
 		#region ComboBox
-#if NET_2_0
 		public void ComboBoxPaintDropDownButton (IDeviceContext dc, Rectangle bounds, Rectangle clippingArea, GtkPlusState state)
 		{
 			combo_box_drop_down_button_painter.Configure (state);
@@ -319,7 +310,6 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			Paint (WidgetType.ComboBox, bounds, dc, clippingArea, combo_box_border_painter);
 		}
-#endif
 		#endregion
 		#region GroupBox
 		public void GroupBoxPaint (IDeviceContext dc, Rectangle bounds, Rectangle excludedArea, GtkPlusState state)
@@ -529,9 +519,7 @@ namespace System.Windows.Forms.VisualStyles
 			g_object_unref (drawable);
 			Bitmap bitmap = new Bitmap (painted_area.Width, painted_area.Height, rowstride, PixelFormat.Format32bppPArgb, pixel_data);
 			Graphics g;
-#if NET_2_0
 			bool graphics_is_from_hdc = false;
-#endif
 			switch (deviceContextType) {
 			case DeviceContextType.Graphics:
 				g = (Graphics)dc;
@@ -540,16 +528,12 @@ namespace System.Windows.Forms.VisualStyles
 				g = Graphics.FromHdc (dc.GetHdc ());
 				break;
 			default:
-#if NET_2_0
 				g = dc as Graphics;
 				if (g == null) {
 					graphics_is_from_hdc = true;
 					g = Graphics.FromHdc (dc.GetHdc ());
 				} else
 					graphics_is_from_hdc = false;
-#else
-				g = (Graphics)dc;
-#endif
 				break;
 			}
 			painted_area.Offset (bounds.X, bounds.Y);
@@ -562,12 +546,10 @@ namespace System.Windows.Forms.VisualStyles
 				dc.ReleaseHdc ();
 				break;
 			default:
-#if NET_2_0
 				if (graphics_is_from_hdc) {
 					g.Dispose ();
 					dc.ReleaseHdc ();
 				}
-#endif
 				break;
 			}
 			bitmap.Dispose ();
@@ -698,7 +680,6 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		#endregion
 		#region ComboBox
-#if NET_2_0
 		class ComboBoxDropDownButtonPainter : Painter
 		{
 			GtkPlusState state;
@@ -766,7 +747,6 @@ namespace System.Windows.Forms.VisualStyles
 					 x, y, width, height);
 			}
 		}
-#endif
 		#endregion
 		#region GroupBox
 		class GroupBoxPainter : Painter
@@ -1246,9 +1226,7 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			Button,
 			CheckBox,
-#if NET_2_0
 			ComboBox,
-#endif
 			GroupBox,
 			ProgressBar,
 			RadioButton,
@@ -1281,14 +1259,12 @@ namespace System.Windows.Forms.VisualStyles
 			gtk_widget_style_get (widget, propertyName, out result, IntPtr.Zero);
 			return result;
 		}
-#if NET_2_0
 		static float GetWidgetStyleSingle (GtkWidgetPointer widget, string propertyName)
 		{
 			gfloat result;
 			gtk_widget_style_get (widget, propertyName, out result, IntPtr.Zero);
 			return result;
 		}
-#endif
 		static bool GetWidgetStyleBoolean (GtkWidgetPointer widget, string propertyName)
 		{
 			gboolean result;
@@ -1296,7 +1272,6 @@ namespace System.Windows.Forms.VisualStyles
 			return result;
 		}
 		#region GetFirstChildWidgetOfType
-#if NET_2_0
 		static class GetFirstChildWidgetOfType
 		{
 			public static GtkWidgetPointer Get (GtkContainerPointer parent, GType childType)
@@ -1331,7 +1306,6 @@ namespace System.Windows.Forms.VisualStyles
 			static GtkWidgetPointer Result;
 			static ArrayList ContainersToSearch;
 		}
-#endif
 		#endregion
 		static GtkStylePointer GetWidgetStyle (GtkWidgetPointer widget)
 		{
@@ -1410,28 +1384,22 @@ namespace System.Windows.Forms.VisualStyles
 		static extern IntPtr gtk_check_version (guint required_major, guint required_minor, guint required_micro);
 		[DllImport (GtkLibraryName)]
 		static extern void gtk_container_add (GtkContainerPointer container, GtkWidgetPointer widget);
-#if NET_2_0
 		[DllImport (GtkLibraryName)]
 		static extern void gtk_container_forall (GtkContainerPointer container, GtkCallback callback, gpointer callback_data);
 		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate void GtkCallback (GtkWidgetPointer widget, gpointer data);
-#endif
 		[DllImport (GtkLibraryName)]
 		static extern void gtk_object_destroy (GtkObjectPointer @object);
 		[DllImport (GtkLibraryName)]
 		static extern GtkStylePointer gtk_rc_get_style (GtkWidgetPointer widget);
 		[DllImport (GtkLibraryName)]
 		static extern GtkStylePointer gtk_style_attach (GtkStylePointer style, GdkWindowPointer window);
-#if NET_2_0
 		[DllImport (GtkLibraryName)]
 		static extern void gtk_widget_realize (GtkWidgetPointer widget);
-#endif
 		[DllImport (GtkLibraryName)]
 		static extern void gtk_widget_style_get (GtkWidgetPointer widget, string property, out gint value, IntPtr nullTerminator);
-#if NET_2_0
 		[DllImport (GtkLibraryName)]
 		static extern void gtk_widget_style_get (GtkWidgetPointer widget, string property, out gfloat value, IntPtr nullTerminator);
-#endif
 		[DllImport (GtkLibraryName)]
 		static extern void gtk_widget_style_get (GtkWidgetPointer widget, string property1, out gint value1, string property2, out gint value2, IntPtr nullTerminator);
 		[DllImport (GtkLibraryName)]
@@ -1461,24 +1429,20 @@ namespace System.Windows.Forms.VisualStyles
 		[DllImport (GtkLibraryName)]
 		static extern GtkWidgetPointer gtk_bin_get_child (GtkBinPointer bin);
 		#region Widget type
-#if NET_2_0
 		[DllImport (GtkLibraryName)]
 		static extern GType gtk_arrow_get_type ();
 		[DllImport (GtkLibraryName)]
 		static extern GType gtk_container_get_type ();
 		[DllImport (GtkLibraryName)]
 		static extern GType gtk_toggle_button_get_type ();
-#endif
 		#endregion
 		#region Widget creation
 		[DllImport (GtkLibraryName)]
 		static extern GtkWidgetPointer gtk_button_new ();
 		[DllImport (GtkLibraryName)]
 		static extern GtkWidgetPointer gtk_check_button_new ();
-#if NET_2_0
 		[DllImport (GtkLibraryName)]
 		static extern GtkWidgetPointer gtk_combo_box_entry_new ();
-#endif
 		[DllImport (GtkLibraryName)]
 		static extern GtkWidgetPointer gtk_entry_new ();
 		[DllImport (GtkLibraryName)]
@@ -1765,10 +1729,8 @@ namespace System.Windows.Forms.VisualStyles
 		static extern gpointer g_object_ref (gpointer @object);
 		[DllImport (GobjectLibraryName)]
 		static extern void g_object_unref (gpointer @object);
-#if NET_2_0
 		[DllImport (GobjectLibraryName)]
 		static extern gboolean g_type_check_instance_is_a (GTypeInstancePointer type_instance, GType iface_type);
-#endif
 		[DllImport (GobjectLibraryName)]
 		static extern void g_object_get (gpointer @object, string property_name, out gboolean value, IntPtr nullTerminator);
 		const int G_TYPE_FUNDAMENTAL_SHIFT = 2;

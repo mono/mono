@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	public enum VerticalAlignment
@@ -36,4 +35,3 @@ namespace System.Windows.Forms.VisualStyles
 		Bottom = 2
 	}
 }
-#endif

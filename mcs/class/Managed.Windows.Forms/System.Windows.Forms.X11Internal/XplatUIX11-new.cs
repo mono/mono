@@ -1015,7 +1015,6 @@ namespace System.Windows.Forms.X11Internal {
 			display.SystrayRemove (handle, ref tt);
 		}
 
-#if NET_2_0
 		NotifyIcon.BalloonWindow balloon_window;
 
 		internal override void SystrayBalloon(IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
@@ -1038,7 +1037,6 @@ namespace System.Windows.Forms.X11Internal {
 			
 			SendMessage(handle, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONSHOW);	
 		}
-#endif
 
 		internal override bool Text (IntPtr handle, string text)
 		{

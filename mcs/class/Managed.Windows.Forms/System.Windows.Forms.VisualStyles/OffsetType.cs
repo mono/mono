@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	public enum OffsetType
@@ -47,4 +46,3 @@ namespace System.Windows.Forms.VisualStyles
 		BelowLastButton = 13
 	}
 }
-#endif

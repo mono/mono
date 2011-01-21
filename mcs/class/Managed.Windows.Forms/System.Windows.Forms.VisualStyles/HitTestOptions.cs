@@ -29,10 +29,7 @@
 namespace System.Windows.Forms.VisualStyles
 {
 	[Flags]
-#if NET_2_0
-	public
-#endif
-	enum HitTestOptions
+	public enum HitTestOptions
 	{
 		BackgroundSegment = 0,
 		FixedBorder = 2,

@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 
 #undef TABLE_DEBUG
 
@@ -526,4 +525,3 @@ namespace System.Windows.Forms.Layout
 #endif
 	}
 }
-#endif

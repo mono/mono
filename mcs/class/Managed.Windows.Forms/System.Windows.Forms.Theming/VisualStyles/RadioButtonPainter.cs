@@ -22,7 +22,6 @@
 // Authors:
 //	George Giolfan (georgegiolfan@yahoo.com)
 
-#if NET_2_0
 using System.Drawing;
 using System.Windows.Forms.VisualStyles;
 namespace System.Windows.Forms.Theming.VisualStyles
@@ -55,4 +54,3 @@ namespace System.Windows.Forms.Theming.VisualStyles
 		}
 	}
 }
-#endif

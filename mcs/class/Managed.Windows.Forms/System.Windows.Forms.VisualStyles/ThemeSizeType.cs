@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum ThemeSizeType
+	public enum ThemeSizeType
 	{
 		Minimum = 0,
 		True = 1,

@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum GroupBoxState
+	public enum GroupBoxState
 	{
 		Normal = 1,
 		Disabled = 2

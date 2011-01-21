@@ -26,7 +26,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-#if NET_2_0
 namespace System.Windows.Forms.Theming.Default
 {
 	/// <summary>
@@ -238,4 +237,3 @@ namespace System.Windows.Forms.Theming.Default
 		#endregion
 	}
 }
-#endif

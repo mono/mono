@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	public enum ScrollBarArrowButtonState
@@ -49,4 +48,3 @@ namespace System.Windows.Forms.VisualStyles
 		RightDisabled = 16
 	}
 }
-#endif

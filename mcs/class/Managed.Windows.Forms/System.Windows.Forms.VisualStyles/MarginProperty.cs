@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum MarginProperty
+	public enum MarginProperty
 	{
 		SizingMargins = 3601,
 		ContentMargins = 3602,

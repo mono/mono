@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum RadioButtonState
+	public enum RadioButtonState
 	{
 		UncheckedNormal = 1,
 		UncheckedHot = 2,

@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	struct TextMetrics
+	public struct TextMetrics
 	{
 		#region Private Variables
 		private int ascent;

@@ -27,11 +27,7 @@
 //#define TRACE
 
 using System;
-#if NET_2_0
 using System.Collections.Generic;
-#else
-using System.Collections;
-#endif
 using System.Reflection;
 using System.Text;
 using System.IO;
@@ -53,22 +49,8 @@ namespace System.Windows.Forms
 				this.args = a;
 			}
 		}
-#if NET_2_0		
+
 		static Stack<Data> methods = new Stack<Data>();
-#else
-		class DataStack : System.Collections.Stack {
-			public new Data Peek () {
-				return (Data) base.Peek ();
-			}
-			public new Data Pop () {
-				return (Data) base.Pop ();
-			}
-			public DataStack (int initialCapacity) : base (initialCapacity) {}
-			public DataStack () : base () {}
-			public DataStack (ICollection icol) : base (icol) {}
-		}
-		static DataStack methods = new DataStack();
-#endif
 		
 		[Conditional("DEBUG")]
 		internal static void DumpCallers () {
@@ -151,11 +133,8 @@ namespace System.Windows.Forms
 			if (methods.Count == 0 || methods.Count <= index || index < 0)
 				return;
 
-#if NET_2_0
 			Stack<Data> temp = new Stack<Data>(index-1);
-#else
-			DataStack temp = new DataStack(index-1);
-#endif
+
 			for (int i = 0; i < index; i++)
 				temp.Push (methods.Pop ());
 
@@ -172,12 +151,9 @@ namespace System.Windows.Forms
 		{
 			if (methods.Count == 0)
 				return;
-			
-#if NET_2_0
+
 			Stack<Data> temp = new Stack<Data>();
-#else
-			DataStack temp = new DataStack();
-#endif
+
 			Data data = methods.Peek ();
 			bool foundit = false;
 			for (int i = 0; i < methods.Count; i++)

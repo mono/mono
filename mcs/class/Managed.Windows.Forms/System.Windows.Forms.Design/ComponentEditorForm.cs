@@ -29,10 +29,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms.Design {
 	[ToolboxItem (false)]
-#if NET_2_0
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-#endif
 	public class ComponentEditorForm : Form {
 
 		[MonoTODO]
@@ -40,7 +38,6 @@ namespace System.Windows.Forms.Design {
 		}
 
 		#region Public Properties
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -48,7 +45,6 @@ namespace System.Windows.Forms.Design {
 			get { return base.AutoSize; }
 			set { base.AutoSize = value; }
 		}
-#endif
 		#endregion
 		
 		[MonoTODO]
@@ -89,14 +85,12 @@ namespace System.Windows.Forms.Design {
 		}
 
 		#region Public Events
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
-#endif
 		#endregion
 	}
 }

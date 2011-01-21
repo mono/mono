@@ -65,7 +65,6 @@ namespace System.Windows.Forms.Theming
 			}
 		}
 
-#if NET_2_0
 		protected Default.ToolStripPainter toolStripPainter;
 		public virtual Default.ToolStripPainter ToolStripPainter {
 			get {
@@ -92,6 +91,5 @@ namespace System.Windows.Forms.Theming
 				return radioButtonPainter;
 			}
 		}
-#endif
 	}
 }

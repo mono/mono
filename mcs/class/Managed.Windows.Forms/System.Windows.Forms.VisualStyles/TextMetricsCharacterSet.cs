@@ -28,10 +28,7 @@
 
 namespace System.Windows.Forms.VisualStyles
 {
-#if NET_2_0
-	public
-#endif
-	enum TextMetricsCharacterSet
+	public enum TextMetricsCharacterSet
 	{
 		Ansi = 0,
 		Default = 1,

@@ -25,7 +25,6 @@
 using System;
 using System.Drawing;
 
-#if NET_2_0
 namespace System.Windows.Forms.Theming.Default
 {
 	internal class ToolStripPainter
@@ -188,4 +187,3 @@ namespace System.Windows.Forms.Theming.Default
 		#endregion
 	}
 }
-#endif

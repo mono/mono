@@ -29,10 +29,7 @@
 namespace System.Windows.Forms.VisualStyles
 {
 	[Flags]
-#if NET_2_0
-	public
-#endif
-	enum TextMetricsPitchAndFamilyValues
+	public enum TextMetricsPitchAndFamilyValues
 	{
 		FixedPitch = 1,
 		Vector = 2,

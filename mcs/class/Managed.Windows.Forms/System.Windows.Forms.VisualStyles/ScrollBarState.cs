@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	public enum ScrollBarState
@@ -37,4 +36,3 @@ namespace System.Windows.Forms.VisualStyles
 		Disabled = 4
 	}
 }
-#endif
