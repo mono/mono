@@ -66,7 +66,7 @@ namespace MonoTests.System.Threading.Tasks
 		static Task<int> CreateNestedFuture(int level)
 		{
 			if (level == 0)
-				return Task.Factory.StartNew(() => { Thread.Sleep (10); return 1; });
+				return Task.Factory.StartNew(() => { Thread.Sleep (1); return 1; });
 
 			var t = CreateNestedFuture(level - 1);
 			return Task.Factory.StartNew(() => t.Result + 1);
@@ -75,10 +75,15 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void NestedFutureTest ()
 		{
-			var t = CreateNestedFuture(10);
-			var t2 = CreateNestedFuture(100);
-			Assert.AreEqual (11, t.Result);
-			Assert.AreEqual (101, t2.Result);
+			ParallelTestHelper.Repeat (delegate {
+				var t = CreateNestedFuture(10);
+				var t2 = CreateNestedFuture(100);
+				var t3 = CreateNestedFuture(100);
+
+				Assert.AreEqual (11, t.Result);
+				Assert.AreEqual (101, t2.Result);
+				Assert.AreEqual (101, t3.Result);
+		   }, 50);
 		}
 	}
 }
