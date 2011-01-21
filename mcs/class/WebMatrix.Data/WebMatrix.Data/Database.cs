@@ -189,7 +189,7 @@ namespace WebMatrix.Data
 			}
 		}
 
-		static TriggerConnectionOpened (Database self, DbConnection connection)
+		static void TriggerConnectionOpened (Database self, DbConnection connection)
 		{
 			EventHandler<ConnectionEventArgs> evt = ConnectionOpened;
 			if (evt != null)
