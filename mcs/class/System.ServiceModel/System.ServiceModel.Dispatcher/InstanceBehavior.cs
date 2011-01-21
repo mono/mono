@@ -8,11 +8,11 @@ using System.Text;
 
 namespace System.ServiceModel.Dispatcher
 {
-	internal class InstanceBehavior
+	internal class InstanceManager
 	{
 		DispatchRuntime dispatch_runtime;
 
-		internal InstanceBehavior (DispatchRuntime runtime) {
+		internal InstanceManager (DispatchRuntime runtime) {
 			dispatch_runtime = runtime;
 		}
 
