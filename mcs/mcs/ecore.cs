@@ -285,28 +285,16 @@ namespace Mono.CSharp {
 			if (type == InternalType.AnonymousMethod)
 				return;
 
-/*
-			if (TypeManager.IsGenericParameter (Type) && TypeManager.IsGenericParameter (target) && type.Name == target.Name) {
-				string sig1 = type.DeclaringMethod == null ?
-					TypeManager.CSharpName (type.DeclaringType) :
-					TypeManager.CSharpSignature (type.DeclaringMethod);
-				string sig2 = target.DeclaringMethod == null ?
-					TypeManager.CSharpName (target.DeclaringType) :
-					TypeManager.CSharpSignature (target.DeclaringMethod);
-				ec.Report.ExtraInformation (loc,
-					String.Format (
-						"The generic parameter `{0}' of `{1}' cannot be converted to the generic parameter `{0}' of `{2}' (in the previous ",
-						Type.Name, sig1, sig2));
-			} else if (Type.MetaInfo.FullName == target.MetaInfo.FullName) {
-				ec.Report.ExtraInformation (loc,
-					String.Format (
-					"The type `{0}' has two conflicting definitions, one comes from `{1}' and the other from `{2}' (in the previous ",
-					Type.MetaInfo.FullName, Type.Assembly.FullName, target.Assembly.FullName));
+			string from_type = type.GetSignatureForError ();
+			string to_type = target.GetSignatureForError ();
+			if (from_type == to_type) {
+				from_type = string.Format ("{0} [{1}]", from_type, type.MemberDefinition.DeclaringAssembly.FullName);
+				to_type = string.Format ("{0} [{1}]", to_type, target.MemberDefinition.DeclaringAssembly.FullName);
 			}
-*/
+
 			if (expl) {
 				ec.Report.Error (30, loc, "Cannot convert type `{0}' to `{1}'",
-					TypeManager.CSharpName (type), TypeManager.CSharpName (target));
+					from_type, to_type);
 				return;
 			}
 
@@ -315,14 +303,13 @@ namespace Mono.CSharp {
 			ec.Report.EnableReporting ();
 
 			if (expl_exists) {
-				ec.Report.Error (266, loc, "Cannot implicitly convert type `{0}' to `{1}'. " +
-					      "An explicit conversion exists (are you missing a cast?)",
-					TypeManager.CSharpName (Type), TypeManager.CSharpName (target));
-				return;
+				ec.Report.Error (266, loc,
+					"Cannot implicitly convert type `{0}' to `{1}'. An explicit conversion exists (are you missing a cast?)",
+					from_type, to_type);
+			} else {
+				ec.Report.Error (29, loc, "Cannot implicitly convert type `{0}' to `{1}'",
+					from_type, to_type);
 			}
-
-			ec.Report.Error (29, loc, "Cannot implicitly convert type `{0}' to `{1}'",
-				type.GetSignatureForError (), target.GetSignatureForError ());
 		}
 
 		public void Error_TypeArgumentsCannotBeUsed (Report report, Location loc, MemberSpec member, int arity)
