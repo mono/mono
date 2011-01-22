@@ -150,8 +150,22 @@ namespace System.Web.Routing
 			string s = constraint as string;
 			if (s != null) {
 				string v = values [parameterName] as string;
-				if (!String.IsNullOrEmpty (v))
+				if (!String.IsNullOrEmpty (v)) {
+					int slen = s.Length;
+					if (slen > 0) {
+						// Bug #651966 - regexp constraints must be treated
+						// as absolute expressions
+						if (s [0] != '^') {
+							s = "^" + s;
+							slen++;
+						}
+						
+						if (s [slen - 1] != '$')
+							s += "$";
+					}
+
 					return Regex.Match (v, s).Success;
+				}
 				return false;
 			}
 

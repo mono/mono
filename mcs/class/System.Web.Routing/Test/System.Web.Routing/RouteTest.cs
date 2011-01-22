@@ -960,6 +960,25 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsNull (rd, "#2");
 		}
 
+		[Test (Description="Bug #651966")]
+		public void GetRouteData47 ()
+		{
+			var r = new Route ("Foo/{id}", new StopRoutingHandler ()) {
+				Defaults = new RouteValueDictionary (new {
+					controller = "Foo",
+					action = "Retrieve"
+				}),
+				Constraints = new RouteValueDictionary (new {
+					id = @"\d{1,10}"
+				})
+			};
+			
+			var hc = new HttpContextStub ("/Foo/x123", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#1");
+		}
+		
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetVirtualPathNullContext ()
