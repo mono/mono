@@ -112,11 +112,13 @@ namespace Mono.CSharp {
 			lock (evaluator_lock){
 				if (inited)
 					return new string [0];
-				
-				driver = Driver.Create (args, false, new ConsoleReportPrinter ());
+
+				var crp = new ConsoleReportPrinter ();
+				driver = Driver.Create (args, false, crp);
 				if (driver == null)
 					throw new Exception ("Failed to create compiler driver with the given arguments");
 
+				crp.Fatal = driver.fatal_errors;
 				ctx = driver.ctx;
 
 				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
@@ -244,7 +246,7 @@ namespace Mono.CSharp {
 				compiled = null;
 				return null;
 			}
-			
+
 			lock (evaluator_lock){
 				if (!inited)
 					Init ();
@@ -266,10 +268,12 @@ namespace Mono.CSharp {
 				
 				if (!(parser_result is Class)){
 					int errors = ctx.Report.Errors;
-					
+
 					NamespaceEntry.VerifyAllUsing ();
 					if (errors == ctx.Report.Errors)
 						parser.CurrentNamespace.Extract (using_alias_list, using_list);
+					else
+						NamespaceEntry.Reset ();
 				}
 
 				compiled = CompileBlock (parser_result as Class, parser.undo, ctx.Report);
