@@ -1033,7 +1033,7 @@ namespace Mono.Terminal {
 
 			public void Dump ()
 			{
-				Console.WriteLine ("Head={0} Tail={1} Cursor={2}", head, tail, cursor);
+				Console.WriteLine ("Head={0} Tail={1} Cursor={2} count={3}", head, tail, cursor, count);
 				for (int i = 0; i < history.Length;i++){
 					Console.WriteLine (" {0} {1}: {2}", i == cursor ? "==>" : "   ", i, history[i]);
 				}
@@ -1042,21 +1042,16 @@ namespace Mono.Terminal {
 
 			public string SearchBackward (string term)
 			{
-				for (int i = 1; i < count; i++){
-					int slot = cursor-i;
+				for (int i = 0; i < count; i++){
+					int slot = cursor-i-1;
 					if (slot < 0)
-						slot = history.Length-1;
+						slot = history.Length+slot;
+					if (slot >= history.Length)
+						slot = 0;
 					if (history [slot] != null && history [slot].IndexOf (term) != -1){
 						cursor = slot;
 						return history [slot];
 					}
-
-					// Will the next hit tail?
-					slot--;
-					if (slot < 0)
-						slot = history.Length-1;
-					if (slot == tail)
-						break;
 				}
 
 				return null;
@@ -1069,7 +1064,7 @@ namespace Mono.Terminal {
 	class Demo {
 		static void Main ()
 		{
-			LineEditor le = new LineEditor (null);
+			LineEditor le = new LineEditor ("foo");
 			string s;
 			
 			while ((s = le.Edit ("shell> ", "")) != null){
