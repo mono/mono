@@ -58,14 +58,11 @@ namespace System.Net {
 		bool ka_set;
 		bool keep_alive;
 		static byte [] _100continue = Encoding.ASCII.GetBytes ("HTTP/1.1 100 Continue\r\n\r\n");
-		static readonly string [] no_body_methods = new string [] {
-			"GET", "HEAD", "DELETE" };
 
 		internal HttpListenerRequest (HttpListenerContext context)
 		{
 			this.context = context;
 			headers = new WebHeaderCollection ();
-			input_stream = Stream.Null;
 			version = HttpVersion.Version10;
 		}
 
@@ -169,32 +166,25 @@ namespace System.Net {
 
 			CreateQueryString (url.Query);
 
-			string t_encoding = null;
 			if (version >= HttpVersion.Version11) {
-				t_encoding = Headers ["Transfer-Encoding"];
+				string t_encoding = Headers ["Transfer-Encoding"];
+				is_chunked = (t_encoding != null && String.Compare (t_encoding, "chunked", StringComparison.OrdinalIgnoreCase) == 0);
 				// 'identity' is not valid!
-				if (t_encoding != null && t_encoding != "chunked") {
+				if (t_encoding != null && !is_chunked) {
 					context.Connection.SendError (null, 501);
 					return;
 				}
 			}
 
-			is_chunked = (t_encoding == "chunked");
-
-			foreach (string m in no_body_methods)
-				if (string.Compare (method, m, StringComparison.InvariantCultureIgnoreCase) == 0)
-					return;
-
 			if (!is_chunked && !cl_set) {
-				context.Connection.SendError (null, 411);
-				return;
+				if (String.Compare (method, "POST", StringComparison.OrdinalIgnoreCase) == 0 ||
+				    String.Compare (method, "PUT", StringComparison.OrdinalIgnoreCase) == 0) {
+					context.Connection.SendError (null, 411);
+					return;
+				}
 			}
 
-			if (is_chunked || content_length > 0) {
-				input_stream = context.Connection.GetRequestStream (is_chunked, content_length);
-			}
-
-			if (Headers ["Expect"] == "100-continue") {
+			if (String.Compare (Headers ["Expect"], "100-continue", StringComparison.OrdinalIgnoreCase) == 0) {
 				ResponseStream output = context.Connection.GetResponseStream ();
 				output.InternalWrite (_100continue, 0, _100continue.Length);
 			}
@@ -369,7 +359,16 @@ namespace System.Net {
 		}
 
 		public Stream InputStream {
-			get { return input_stream; }
+			get {
+				if (input_stream == null) {
+					if (is_chunked || content_length > 0)
+						input_stream = context.Connection.GetRequestStream (is_chunked, content_length);
+					else
+						input_stream = Stream.Null;
+				}
+
+				return input_stream;
+			}
 		}
 
 		[MonoTODO ("Always returns false")]
