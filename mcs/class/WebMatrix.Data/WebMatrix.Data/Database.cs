@@ -1,5 +1,5 @@
 //
-// DynamicRecord.cs
+// Database.cs
 //
 // Copyright (c) 2011 Novell
 //
