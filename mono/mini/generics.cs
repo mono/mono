@@ -563,6 +563,26 @@ class Tests {
 		return 0;
 	}
 
+	struct FooStruct {
+	}
+
+	bool IsNull2 <T> (object value) where T : struct {
+		T? item = (T?) value;
+
+		if (item.HasValue)
+			return false;
+
+		return true;
+	}
+
+	public static int test_0_full_aot_nullable_unbox_from_gshared_code () {
+		if (!new Tests ().IsNull2<FooStruct> (null))
+			return 1;
+		if (new Tests ().IsNull2<FooStruct> (new FooStruct ()))
+			return 2;
+		return 0;
+	}
+
     public class Class1<T> {
 		public virtual void Do (Class2<T> t) {
 			t.Foo ();
