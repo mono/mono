@@ -1,5 +1,5 @@
 // 
-// DynamicRecordTests.cs
+// DatabaseTests.cs
 //  
 // Author:
 //       Jérémie "garuma" Laval <jeremie.laval@gmail.com>
@@ -27,6 +27,9 @@
 #if NET_4_0
 
 using System;
+using System.IO;
+using System.Linq;
+using System.Data.Common;
 using System.Collections.Generic;
 
 using WebMatrix.Data;
@@ -36,63 +39,55 @@ using NUnit.Framework;
 namespace MonoTests.WebMatrix.Data
 {
 	[TestFixtureAttribute]
-	public class DynamicRecordTests
+	public class DatabaseTests
 	{
-		DynamicRecord record;
+		Database database;
 
 		[SetUp]
 		public void Setup ()
 		{
-			var fields = new Dictionary<string, object> () {
-				{ "foo", 1 },
-				{ "bar", 4.1f },
-				{ "foobar", "foobar" }
-			};
-			record = new DynamicRecord (fields);
+			string path = Path.Combine ("Test", "testsqlite.db");
+			database = Database.OpenConnectionString ("Data Source="+path+";Version=3;", "Mono.Data.Sqlite");
 		}
 
 		[Test]
-		public void ColumnsTest ()
+		public void QuerySingleTest ()
 		{
-			var columns = record.Columns;
-			Assert.AreEqual (3, columns.Count);
+			var result = database.QuerySingle ("select * from memos where Text=@0 limit 1", "Grendel");
 
-			Assert.AreEqual ("foo", columns[0]);
-			Assert.AreEqual ("bar", columns[1]);
-			Assert.AreEqual ("foobar", columns[2]);
+			Assert.IsNotNull (result);
+			Assert.AreEqual ("Grendel", result.Text);
+			Assert.AreEqual (5, result.Priority);
 		}
 
 		[Test]
-		public void AccessByNameTest ()
+		public void SimpleQueryTest ()
 		{
-			Assert.AreEqual (1, record["foo"]);
-			Assert.AreEqual (4.1f, record["bar"]);
-			Assert.AreEqual ("foobar", record["foobar"]);
+			var result = database.Query ("select * from memos");
+
+			Assert.IsNotNull (result);
+			Assert.AreEqual (5, result.Count ());
+
+			var col1 = new string[] { "Webmatrix", "Grendel", "Garuma", "jpobst", "Gonzalo" };
+			var col2 = new object[] { 10, 5, -1, 6, 4 };
+			int index = 0;
+
+			foreach (var row in result) {
+				Assert.AreEqual (col1[index], row.Text);
+				Assert.AreEqual (col2[index], row.Priority);
+				index++;
+			}
 		}
 
 		[Test]
-		public void AccessByIndexTest ()
+		public void ConnectionOpenedTest ()
 		{
-			Assert.AreEqual (1, record[0]);
-			Assert.AreEqual (4.1f, record[1]);
-			Assert.AreEqual ("foobar", record[2]);
-		}
+			bool opened = false;
+			Database.ConnectionOpened += (sender, e) => opened = sender == database;
 
-		[Test]
-		public void AccesByDynamicTest ()
-		{
-			dynamic r = record;
+			var result = database.QuerySingle ("select * from memos where Text=@0 limit 1", "Grendel");
 
-			Assert.AreEqual (1, r.foo);
-			Assert.AreEqual (4.1f, r.bar);
-			Assert.AreEqual ("foobar", r.foobar);
-		}
-
-		[Test]
-		public void GetDynamicMemberNamesTest ()
-		{
-			var expected = new string[] { "foo", "bar", "foobar" };
-			CollectionAssert.AreEquivalent (expected, record.GetDynamicMemberNames ());
+			Assert.IsTrue (opened);
 		}
 	}
 }
