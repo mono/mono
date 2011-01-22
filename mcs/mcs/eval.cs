@@ -773,7 +773,7 @@ namespace Mono.CSharp
 						}
 					}
 
-					fields [field.Name] = Tuple.Create (old.Item1, fi);
+					fields [field.Name] = Tuple.Create (field.Spec, fi);
 				} else {
 					fields.Add (field.Name, Tuple.Create (field.Spec, fi));
 				}
