@@ -157,6 +157,8 @@ namespace Mono.CSharp {
 		// Compiler debug flags only
 		public static bool ParseOnly, TokenizeOnly;
 
+		public static bool ShowFullPaths;
+
 		//
 		// Whether we are being linked against the standard libraries.
 		// This is only used to tell whether `System.Object' should
@@ -232,6 +234,7 @@ namespace Mono.CSharp {
 			Modules = new List<string> ();
 			ReferencesLookupPaths = new List<string> ();
 			StdLibRuntimeVersion = RuntimeVersion.v2;
+			ShowFullPaths = false;
 
 			//
 			// Setup default defines

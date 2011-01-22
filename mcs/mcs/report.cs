@@ -641,7 +641,11 @@ namespace Mono.CSharp {
 		{
 			StringBuilder txt = new StringBuilder ();
 			if (!msg.Location.IsNull) {
-				txt.Append (msg.Location.ToString ());
+				if (RootContext.ShowFullPaths)
+					txt.Append (msg.Location.ToStringFullName ());
+				else
+					txt.Append (msg.Location.ToString ());
+
 				txt.Append (" ");
 			}
 

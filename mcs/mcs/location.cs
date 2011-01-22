@@ -288,7 +288,7 @@ namespace Mono.CSharp {
 			}
 
 			int index = (int) source_files [path];
-			return (SourceFile) source_list [index - 1];
+			return source_list [index - 1];
 		}
 
 		static public void Push (CompilationUnit compile_unit, SourceFile file)
@@ -363,14 +363,24 @@ namespace Mono.CSharp {
 			}
 			checkpoints [checkpoint_index] = new Checkpoint (compile_unit, file, row);
 		}
+
+		string FormatLocation (string fileName)
+		{
+			if (column_bits == 0 || InEmacs)
+				return fileName + "(" + Row.ToString () + "):";
+
+			return fileName + "(" + Row.ToString () + "," + Column.ToString () +
+				(Column == column_mask ? "+):" : "):");
+		}
 		
 		public override string ToString ()
 		{
-			if (column_bits == 0 || InEmacs)
-				return Name + "(" + Row.ToString () + "):";
-			else
-				return Name + "(" + Row.ToString () + "," + Column.ToString () +
-					(Column == column_mask ? "+):" : "):");
+			return FormatLocation (Name);
+		}
+
+		public string ToStringFullName ()
+		{
+			return FormatLocation (NameFullPath);
 		}
 		
 		/// <summary>
@@ -386,8 +396,18 @@ namespace Mono.CSharp {
 				if (token == 0 || index == 0)
 					return "Internal";
 
-				SourceFile file = (SourceFile) source_list [index - 1];
+				SourceFile file = source_list [index - 1];
 				return file.Name;
+			}
+		}
+
+		public string NameFullPath {
+			get {
+				int index = File;
+				if (token == 0 || index == 0)
+					return "Internal";
+
+				return source_list [index - 1].Path;
 			}
 		}
 

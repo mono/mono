@@ -148,6 +148,11 @@ generate an exception that can be caught by a debugger.
 This flag is ignored by Mono's C# compiler and is present only to
 allow MCS to be used as a CSC replacement for msbuild/xbuild.
 .TP
+.I \-fullpaths
+Any source code error or warning issued by the compiler includes file
+name only by default. This option causes compiler to issue absolute file
+path instead.
+.TP
 .I \-keyfile:KEYFILE
 Strongname (sign) the output assembly using the key pair present in 
 the specified strong name key file (snk). A full key pair is required

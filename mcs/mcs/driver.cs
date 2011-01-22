@@ -173,6 +173,7 @@ namespace Mono.CSharp
 				"   -debug[+|-], -g      Generate debugging information\n" + 
 				"   -delaysign[+|-]      Only insert the public key into the assembly (no signing)\n" +
 				"   -doc:FILE            Process documentation comments to XML file\n" + 
+				"   -fullpaths           Any issued error or warning uses absolute file path\n" +
 				"   -help                Lists all compiler options (short: -?)\n" + 
 				"   -keycontainer:NAME   The key pair container used to sign the output assembly\n" +
 				"   -keyfile:FILE        The key file used to strongname the ouput assembly\n" +
@@ -1251,6 +1252,7 @@ namespace Mono.CSharp
 				return true;
 
 			case "/fullpaths":
+				RootContext.ShowFullPaths = true;
 				return true;
 
 			case "/keyfile":
