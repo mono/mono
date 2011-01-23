@@ -156,7 +156,7 @@ namespace C5UnitTests.hashtable.dictionary
 
 
     [Test]
-    [ExpectedException(typeof(DuplicateNotAllowedException), "Key being added: 'A'")]
+    [ExpectedException(typeof(DuplicateNotAllowedException), ExpectedMessage="Key being added: 'A'")]
     public void IllegalAdd()
     {
       dict.Add("A", "B");

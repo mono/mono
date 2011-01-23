@@ -276,7 +276,7 @@ namespace C5UnitTests.heaps
     }
 
     /// <summary>
-    /// Bug by Viet Yen Nguyen <v.y.nguyen@alumnus.utwente.nl>
+    /// bug20070504.txt by Viet Yen Nguyen 
     /// </summary>
     [Test]
     public void Replace3()
@@ -285,6 +285,109 @@ namespace C5UnitTests.heaps
       queue.Add(ref handle, 10);
       Assert.AreEqual(10, queue.Replace(handle, 12));
       Assert.IsTrue(queue.Check());
+    }
+
+    /// <summary>
+    /// bug20080222.txt by Thomas Dufour
+    /// </summary>
+    [Test]
+    public void Replace4a()
+    {
+      IPriorityQueueHandle<int> handle1 = null;
+      queue.Add(ref handle1, 4);
+      Assert.AreEqual(4, queue.FindMin());
+      queue.Add(3);
+      Assert.AreEqual(3, queue.FindMin());
+      Assert.AreEqual(4, queue.Replace(handle1, 2));
+      Assert.AreEqual(2, queue.FindMin());
+    }
+
+    [Test]
+    public void Replace4b()
+    {
+      IPriorityQueueHandle<int> handle1 = null;
+      queue.Add(ref handle1, 2);
+      Assert.AreEqual(2, queue.FindMax());
+      queue.Add(3);
+      Assert.AreEqual(3, queue.FindMax());
+      Assert.AreEqual(2, queue.Replace(handle1, 4));
+      Assert.AreEqual(4, queue.FindMax());
+    }
+
+    [Test]
+    public void Replace5a()
+    {
+      for (int size = 0; size < 130; size++)
+      {
+        IPriorityQueue<double> q = new IntervalHeap<double>();
+        IPriorityQueueHandle<double> handle1 = null;
+        q.Add(ref handle1, 3.0);
+        Assert.AreEqual(3.0, q.FindMin());
+        for (int i = 1; i < size; i++)
+          q.Add(i + 3.0);
+        Assert.AreEqual(3.0, q.FindMin());
+        for (int min = 2; min >= -10; min--)
+        {
+          Assert.AreEqual(min + 1.0, q.Replace(handle1, min));
+          Assert.AreEqual(min, q.FindMin());
+        }
+        Assert.AreEqual(-10.0, q.DeleteMin());
+        for (int i = 1; i < size; i++)
+          Assert.AreEqual(i + 3.0, q.DeleteMin());
+        Assert.IsTrue(q.IsEmpty);
+      }
+    }
+
+    [Test]
+    public void Replace5b()
+    {
+      for (int size = 0; size < 130; size++)
+      {
+        IPriorityQueue<double> q = new IntervalHeap<double>();
+        IPriorityQueueHandle<double> handle1 = null;
+        q.Add(ref handle1, -3.0);
+        Assert.AreEqual(-3.0, q.FindMax());
+        for (int i = 1; i < size; i++)
+          q.Add(-i - 3.0);
+        Assert.AreEqual(-3.0, q.FindMax());
+        for (int max = -2; max <= 10; max++)
+        {
+          Assert.AreEqual(max - 1.0, q.Replace(handle1, max));
+          Assert.AreEqual(max, q.FindMax());
+        }
+        Assert.AreEqual(10.0, q.DeleteMax());
+        for (int i = 1; i < size; i++)
+          Assert.AreEqual(- i - 3.0, q.DeleteMax());
+        Assert.IsTrue(q.IsEmpty);
+      }
+    }
+
+    [Test]
+    public void Delete1a()
+    {
+      IPriorityQueueHandle<int> handle1 = null;
+      queue.Add(ref handle1, 4);
+      Assert.AreEqual(4, queue.FindMin());
+      queue.Add(3);
+      Assert.AreEqual(3, queue.FindMin());
+      queue.Add(2);
+      Assert.AreEqual(4, queue.Delete(handle1));
+      Assert.AreEqual(2, queue.FindMin());
+      Assert.AreEqual(3, queue.FindMax());
+    }
+
+    [Test]
+    public void Delete1b()
+    {
+      IPriorityQueueHandle<int> handle1 = null;
+      queue.Add(ref handle1, 2);
+      Assert.AreEqual(2, queue.FindMax());
+      queue.Add(3);
+      Assert.AreEqual(3, queue.FindMax());
+      queue.Add(4);
+      Assert.AreEqual(2, queue.Delete(handle1));
+      Assert.AreEqual(3, queue.FindMin());
+      Assert.AreEqual(4, queue.FindMax());
     }
 
     [Test]

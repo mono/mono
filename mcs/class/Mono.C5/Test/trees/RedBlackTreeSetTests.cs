@@ -767,7 +767,7 @@ namespace C5UnitTests.trees.TreeSet
 
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException), "Index out of range for sequenced collectionvalue")]
+		[ExpectedException(typeof(IndexOutOfRangeException), ExpectedMessage="Index out of range for sequenced collectionvalue")]
 		public void Empty()
 		{
 			tree.Clear();
@@ -776,7 +776,7 @@ namespace C5UnitTests.trees.TreeSet
 
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException), "Index out of range for sequenced collectionvalue")]
+		[ExpectedException(typeof(IndexOutOfRangeException), ExpectedMessage="Index out of range for sequenced collectionvalue")]
 		public void HighIndex()
 		{
 			tree.RemoveAt(tree.Count);
@@ -784,7 +784,7 @@ namespace C5UnitTests.trees.TreeSet
 
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException), "Index out of range for sequenced collectionvalue")]
+		[ExpectedException(typeof(IndexOutOfRangeException), ExpectedMessage="Index out of range for sequenced collectionvalue")]
 		public void LowIndex()
 		{
 			tree.RemoveAt(-1);
@@ -1662,7 +1662,7 @@ namespace C5UnitTests.trees.TreeSet
 
 
 			[Test]
-			[ExpectedException(typeof(NotSupportedException), "Indexing not supported for snapshots")]
+			[ExpectedException(typeof(NotSupportedException), ExpectedMessage="Indexing not supported for snapshots")]
 			public void CountTo()
 			{
 				int j = snap.CountTo(15);
@@ -1670,7 +1670,7 @@ namespace C5UnitTests.trees.TreeSet
 
 
 			[Test]
-			[ExpectedException(typeof(NotSupportedException), "Indexing not supported for snapshots")]
+			[ExpectedException(typeof(NotSupportedException), ExpectedMessage="Indexing not supported for snapshots")]
 			public void Indexing()
 			{
 				int j = snap[4];
@@ -1678,7 +1678,7 @@ namespace C5UnitTests.trees.TreeSet
 
 
 			[Test]
-			[ExpectedException(typeof(NotSupportedException), "Indexing not supported for snapshots")]
+			[ExpectedException(typeof(NotSupportedException), ExpectedMessage="Indexing not supported for snapshots")]
 			public void Indexing2()
 			{
 				int j = snap.IndexOf(5);
@@ -1904,7 +1904,7 @@ namespace C5UnitTests.trees.TreeSet
 
 
 			[Test]
-			[ExpectedException(typeof(InvalidOperationException), "Cannot snapshot a snapshot")]
+			[ExpectedException(typeof(InvalidOperationException), ExpectedMessage="Cannot snapshot a snapshot")]
 			public void SnapSnap()
 			{
 				TreeSet<int> snap = (TreeSet<int>)tree.Snapshot();
@@ -2206,7 +2206,7 @@ namespace C5UnitTests.trees.TreeSet
 
 
 			[Test]
-			[ExpectedException(typeof(ArgumentException), "mapper not monotonic")]
+			[ExpectedException(typeof(ArgumentException), ExpectedMessage="mapper not monotonic")]
 			public void BadMap()
 			{
 				for (int i = 0; i < 11; i++)
@@ -2447,7 +2447,7 @@ namespace C5UnitTests.trees.TreeSet
 			}
 
 			[Test]
-			[ExpectedException(typeof(ArgumentException), "Argument not sorted")]
+			[ExpectedException(typeof(ArgumentException), ExpectedMessage="Argument not sorted")]
 			public void EmptyBad()
 			{
 				tree.AddSorted(new FunEnumerable(9, new Fun<int,int>(bad)));
@@ -2598,10 +2598,9 @@ namespace C5UnitTests.trees.TreeSet
 			[Test]
 			public void GetRange()
 			{
-				SCG.IEnumerable<int> e = tree[3, 6];
-
+				SCG.IEnumerable<int> e = tree[3, 3];
 				Assert.IsTrue(IC.eq(e, 3, 4, 5));
-				e = tree[3, 3];
+				e = tree[3, 0];
 				Assert.IsTrue(IC.eq(e));
 			}
 
@@ -2618,7 +2617,7 @@ namespace C5UnitTests.trees.TreeSet
 			[ExpectedException(typeof(ArgumentOutOfRangeException))]
 			public void GetRangeBad2()
 			{
-				object foo = tree[3, 2];
+				object foo = tree[3, -1];
 			}
 
 
@@ -2626,7 +2625,7 @@ namespace C5UnitTests.trees.TreeSet
       [ExpectedException(typeof(ArgumentOutOfRangeException))]
       public void GetRangeBad3()
 			{
-				object foo = tree[3, 11];
+				object foo = tree[3, 8];
 			}
 
 

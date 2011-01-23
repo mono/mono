@@ -328,7 +328,7 @@ namespace C5UnitTests
             return a.Index == o.Index && itemequalityComparer.Equals(a.Item, o.Item);
           }
       }
-      throw new ApplicationException("Illegat Act: " + Act);
+      throw new ApplicationException("Illegal Act: " + Act);
     }
 
     public override string ToString()

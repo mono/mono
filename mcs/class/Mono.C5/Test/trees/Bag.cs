@@ -29,6 +29,50 @@ namespace C5UnitTests.trees.TreeBag
 {
   using CollectionOfInt = TreeBag<int>;
 
+
+  [TestFixture]
+  public class NewTest
+  {
+    // Repro for bug20091113:
+    [Test]
+    public void A()
+    {
+      var list = new TreeBag<long>();
+      // Sequence generated in FindNodeRandomTest
+      // Manually pruned by sestoft 2009-11-14
+      list.Add(553284);
+      list.Add(155203);
+      list.Add(316201);
+      list.Add(263469);
+      list.Add(263469);
+
+      //list.dump();   // OK
+      list.Remove(316201);
+      //list.dump();   // Not OK
+      Assert.IsTrue(list.Check());
+    }
+    [Test]
+    public void B()
+    {
+      var l = 100;
+      for (int r = 0; r < l; r++)
+      {
+        var list = new TreeBag<int>();
+        for (int i = 0; i < l; i++)
+        {
+          list.Add(l - i);
+          list.Add(l - i);
+          list.Add(l - i);
+        }
+        list.Remove(r);
+        list.Remove(r);
+        //list.dump();
+        list.Remove(r);
+        Assert.IsTrue(list.Check("removing" + r));
+      }
+    }
+  }
+
   [TestFixture]
   public class GenericTesters
   {
@@ -949,7 +993,7 @@ namespace C5UnitTests.trees.TreeBag
 
 
     [Test]
-    [ExpectedException(typeof(IndexOutOfRangeException), "Index out of range for sequenced collectionvalue")]
+    [ExpectedException(typeof(IndexOutOfRangeException), ExpectedMessage="Index out of range for sequenced collectionvalue")]
     public void Empty()
     {
       tree.Clear();
@@ -958,7 +1002,7 @@ namespace C5UnitTests.trees.TreeBag
 
 
     [Test]
-    [ExpectedException(typeof(IndexOutOfRangeException), "Index out of range for sequenced collectionvalue")]
+    [ExpectedException(typeof(IndexOutOfRangeException), ExpectedMessage="Index out of range for sequenced collectionvalue")]
     public void HighIndex()
     {
       tree.RemoveAt(tree.Count);
@@ -966,7 +1010,7 @@ namespace C5UnitTests.trees.TreeBag
 
 
     [Test]
-    [ExpectedException(typeof(IndexOutOfRangeException), "Index out of range for sequenced collectionvalue")]
+    [ExpectedException(typeof(IndexOutOfRangeException), ExpectedMessage="Index out of range for sequenced collectionvalue")]
     public void LowIndex()
     {
       tree.RemoveAt(-1);
@@ -1691,7 +1735,7 @@ namespace C5UnitTests.trees.TreeBag
 
 
       [Test]
-      [ExpectedException(typeof(NotSupportedException), "Indexing not supported for snapshots")]
+      [ExpectedException(typeof(NotSupportedException), ExpectedMessage="Indexing not supported for snapshots")]
       public void CountTo()
       {
         int j = snap.CountTo(15);
@@ -1699,7 +1743,7 @@ namespace C5UnitTests.trees.TreeBag
 
 
       [Test]
-      [ExpectedException(typeof(NotSupportedException), "Indexing not supported for snapshots")]
+      [ExpectedException(typeof(NotSupportedException), ExpectedMessage="Indexing not supported for snapshots")]
       public void Indexing()
       {
         int j = snap[4];
@@ -1707,7 +1751,7 @@ namespace C5UnitTests.trees.TreeBag
 
 
       [Test]
-      [ExpectedException(typeof(NotSupportedException), "Indexing not supported for snapshots")]
+      [ExpectedException(typeof(NotSupportedException), ExpectedMessage="Indexing not supported for snapshots")]
       public void Indexing2()
       {
         int j = snap.IndexOf(5);
@@ -1947,7 +1991,7 @@ namespace C5UnitTests.trees.TreeBag
 
 
       [Test]
-      [ExpectedException(typeof(InvalidOperationException), "Cannot snapshot a snapshot")]
+      [ExpectedException(typeof(InvalidOperationException), ExpectedMessage="Cannot snapshot a snapshot")]
       public void SnapSnap()
       {
         TreeBag<int> snap = (TreeBag<int>)tree.Snapshot();
@@ -2255,7 +2299,7 @@ namespace C5UnitTests.trees.TreeBag
 
 
       [Test]
-      [ExpectedException(typeof(ArgumentException), "mapper not monotonic")]
+      [ExpectedException(typeof(ArgumentException), ExpectedMessage="mapper not monotonic")]
       public void BadMap()
       {
         for (int i = 0; i < 11; i++)
@@ -2512,7 +2556,7 @@ namespace C5UnitTests.trees.TreeBag
 
 
       [Test]
-      [ExpectedException(typeof(ArgumentException), "Argument not sorted")]
+      [ExpectedException(typeof(ArgumentException), ExpectedMessage="Argument not sorted")]
       public void EmptyBad()
       {
         tree.AddSorted(new FunEnumerable(9, new Fun<int, int>(bad)));
@@ -2676,45 +2720,69 @@ namespace C5UnitTests.trees.TreeBag
       [Test]
       public void GetRange()
       {
-        Assert.IsTrue(IC.eq(tree[3, 3]));
-        Assert.IsTrue(IC.eq(tree[3, 4], 3));
-        Assert.IsTrue(IC.eq(tree[3, 5], 3, 4));
-        Assert.IsTrue(IC.eq(tree[3, 6], 3, 4, 4));
-        Assert.IsTrue(IC.eq(tree[3, 7], 3, 4, 4, 5));
-        Assert.IsTrue(IC.eq(tree[4, 4]));
-        Assert.IsTrue(IC.eq(tree[4, 5], 4));
-        Assert.IsTrue(IC.eq(tree[4, 6], 4, 4));
-        Assert.IsTrue(IC.eq(tree[4, 7], 4, 4, 5));
-        Assert.IsTrue(IC.eq(tree[4, 8], 4, 4, 5, 6));
-        Assert.IsTrue(IC.eq(tree[5, 5]));
-        Assert.IsTrue(IC.eq(tree[5, 6], 4));
-        Assert.IsTrue(IC.eq(tree[5, 7], 4, 5));
-        Assert.IsTrue(IC.eq(tree[5, 8], 4, 5, 6));
-        Assert.IsTrue(IC.eq(tree[5, 9], 4, 5, 6, 7));
-        Assert.IsTrue(IC.eq(tree[5, 11], 4, 5, 6, 7, 8, 9));
+        Assert.IsTrue(IC.eq(tree[3, 0]));
+        Assert.IsTrue(IC.eq(tree[3, 1], 3));
+        Assert.IsTrue(IC.eq(tree[3, 2], 3, 4));
+        Assert.IsTrue(IC.eq(tree[3, 3], 3, 4, 4));
+        Assert.IsTrue(IC.eq(tree[3, 4], 3, 4, 4, 5));
+        Assert.IsTrue(IC.eq(tree[4, 0]));
+        Assert.IsTrue(IC.eq(tree[4, 1], 4));
+        Assert.IsTrue(IC.eq(tree[4, 2], 4, 4));
+        Assert.IsTrue(IC.eq(tree[4, 3], 4, 4, 5));
+        Assert.IsTrue(IC.eq(tree[4, 4], 4, 4, 5, 6));
+        Assert.IsTrue(IC.eq(tree[5, 0]));
+        Assert.IsTrue(IC.eq(tree[5, 1], 4));
+        Assert.IsTrue(IC.eq(tree[5, 2], 4, 5));
+        Assert.IsTrue(IC.eq(tree[5, 3], 4, 5, 6));
+        Assert.IsTrue(IC.eq(tree[5, 4], 4, 5, 6, 7));
+        Assert.IsTrue(IC.eq(tree[5, 6], 4, 5, 6, 7, 8, 9));
       }
 
+      [Test]
+      public void GetRangeBug20090616()
+      {
+        C5.TreeBag<double> tree = new C5.TreeBag<double>() { 
+          0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 3.0, 4.0 };
+        for (int start = 0; start <= tree.Count - 2; start++)
+        {
+          double[] range = tree[start, 2].ToArray();
+          Assert.AreEqual(range[0], tree[start]);
+          Assert.AreEqual(range[1], tree[start+1]);
+        }
+      }
 
       [Test]
       public void GetRangeBackwards()
       {
-        Assert.IsTrue(IC.eq(tree[3, 3].Backwards()));
-        Assert.IsTrue(IC.eq(tree[3, 4].Backwards(), 3));
-        Assert.IsTrue(IC.eq(tree[3, 5].Backwards(), 4, 3));
-        Assert.IsTrue(IC.eq(tree[3, 6].Backwards(), 4, 4, 3));
-        Assert.IsTrue(IC.eq(tree[3, 7].Backwards(), 5, 4, 4, 3));
-        Assert.IsTrue(IC.eq(tree[4, 4].Backwards()));
-        Assert.IsTrue(IC.eq(tree[4, 5].Backwards(), 4));
-        Assert.IsTrue(IC.eq(tree[4, 6].Backwards(), 4, 4));
-        Assert.IsTrue(IC.eq(tree[4, 7].Backwards(), 5, 4, 4));
-        Assert.IsTrue(IC.eq(tree[4, 8].Backwards(), 6, 5, 4, 4));
-        Assert.IsTrue(IC.eq(tree[5, 5].Backwards()));
-        Assert.IsTrue(IC.eq(tree[5, 6].Backwards(), 4));
-        Assert.IsTrue(IC.eq(tree[5, 7].Backwards(), 5, 4));
-        Assert.IsTrue(IC.eq(tree[5, 8].Backwards(), 6, 5, 4));
-        Assert.IsTrue(IC.eq(tree[5, 9].Backwards(), 7, 6, 5, 4));
+        Assert.IsTrue(IC.eq(tree[3, 0].Backwards()));
+        Assert.IsTrue(IC.eq(tree[3, 1].Backwards(), 3));
+        Assert.IsTrue(IC.eq(tree[3, 2].Backwards(), 4, 3));
+        Assert.IsTrue(IC.eq(tree[3, 3].Backwards(), 4, 4, 3));
+        Assert.IsTrue(IC.eq(tree[3, 4].Backwards(), 5, 4, 4, 3));
+        Assert.IsTrue(IC.eq(tree[4, 0].Backwards()));
+        Assert.IsTrue(IC.eq(tree[4, 1].Backwards(), 4));
+        Assert.IsTrue(IC.eq(tree[4, 2].Backwards(), 4, 4));
+        Assert.IsTrue(IC.eq(tree[4, 3].Backwards(), 5, 4, 4));
+        Assert.IsTrue(IC.eq(tree[4, 4].Backwards(), 6, 5, 4, 4));
+        Assert.IsTrue(IC.eq(tree[5, 0].Backwards()));
+        Assert.IsTrue(IC.eq(tree[5, 1].Backwards(), 4));
+        Assert.IsTrue(IC.eq(tree[5, 2].Backwards(), 5, 4));
+        Assert.IsTrue(IC.eq(tree[5, 3].Backwards(), 6, 5, 4));
+        Assert.IsTrue(IC.eq(tree[5, 4].Backwards(), 7, 6, 5, 4));
       }
 
+      [Test]
+      public void GetRangeBackwardsBug20090616()
+      {
+        C5.TreeBag<double> tree = new C5.TreeBag<double>() { 
+          0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 3.0, 4.0 };
+        for (int start = 0; start <= tree.Count - 2; start++)
+        {
+          double[] range = tree[start, 2].Backwards().ToArray();
+          Assert.AreEqual(range[1], tree[start]);
+          Assert.AreEqual(range[0], tree[start + 1]);
+        }
+      }
 
       [Test]
       [ExpectedException(typeof(ArgumentOutOfRangeException))]
@@ -2728,7 +2796,7 @@ namespace C5UnitTests.trees.TreeBag
       [ExpectedException(typeof(ArgumentOutOfRangeException))]
       public void GetRangeBad2()
       {
-        object foo = tree[3, 2];
+        object foo = tree[3, -1];
       }
 
 
@@ -2736,7 +2804,7 @@ namespace C5UnitTests.trees.TreeBag
       [ExpectedException(typeof(ArgumentOutOfRangeException))]
       public void GetRangeBad3()
       {
-        object foo = tree[3, 12];
+        object foo = tree[3, 9];
       }
 
 
