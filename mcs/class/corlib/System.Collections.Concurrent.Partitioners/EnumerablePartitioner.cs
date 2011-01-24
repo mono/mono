@@ -90,7 +90,9 @@ namespace System.Collections.Concurrent.Partitioners
 			try {
 				do {
 					lock (state.SyncLock) {
-						if (!src.MoveNext ())
+						if (state.Finished)
+							break;
+						if (state.Finished = !src.MoveNext ())
 							break;
 
 						index = state.Index++;
@@ -98,7 +100,7 @@ namespace System.Collections.Concurrent.Partitioners
 					}
 
 					yield return new KeyValuePair<long, T> (index, value);
-				} while (true);
+				} while (!state.Finished);
 			} finally {
 				if (last)
 					src.Dispose ();
@@ -110,15 +112,18 @@ namespace System.Collections.Concurrent.Partitioners
 			int count = initialPartitionSize;
 			List<T> list = new List<T> ();
 			
-			while (true) {
+			while (!state.Finished) {
 				list.Clear ();
 				long ind = -1;
 				
 				lock (state.SyncLock) {
+					if (state.Finished)
+						break;
+
 					ind = state.Index;
 					
 					for (int i = 0; i < count; i++) {
-						if (!src.MoveNext ()) {
+						if (state.Finished = !src.MoveNext ()) {
 							if (list.Count == 0)
 								yield break;
 							else
@@ -139,6 +144,7 @@ namespace System.Collections.Concurrent.Partitioners
 
 		class PartitionerState
 		{
+			public bool Finished;
 			public long Index = 0;
 			public readonly object SyncLock = new object ();
 		}
