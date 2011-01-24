@@ -2450,7 +2450,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (caller_is_taking && eval (arg)) {
+				if (eval (arg) && caller_is_taking) {
 					ifstack.Push (flags | TAKING);
 					return true;
 				}

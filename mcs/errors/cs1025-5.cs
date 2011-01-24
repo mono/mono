@@ -1,6 +1,4 @@
 // CS1025: Single-line comment or end-of-line expected
-// Line: 6
+// Line: 4
 
-#if DEBUG
-// ...
-#endif DEBUG
+#if RELEASE #endif
