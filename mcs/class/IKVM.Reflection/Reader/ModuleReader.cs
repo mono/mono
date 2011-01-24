@@ -367,12 +367,7 @@ namespace IKVM.Reflection.Reader
 									{
 										Assembly assembly = ResolveAssemblyRef((scope & 0xFFFFFF) - 1);
 										TypeName typeName = GetTypeName(TypeRef.records[index].TypeNameSpace, TypeRef.records[index].TypeName);
-										Type type = assembly.ResolveType(typeName);
-										if (type == null)
-										{
-											throw new TypeLoadException(String.Format("Type '{0}' not found in assembly '{1}'", typeName, assembly.FullName));
-										}
-										typeRefs[index] = type;
+										typeRefs[index] = assembly.ResolveType(typeName);
 										break;
 									}
 								case TypeRefTable.Index:

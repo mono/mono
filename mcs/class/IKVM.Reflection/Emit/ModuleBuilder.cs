@@ -209,10 +209,6 @@ namespace IKVM.Reflection.Emit
 			}
 			TypeBuilder typeBuilder = __DefineType(ns, name);
 			typeBuilder.__SetAttributes(attr);
-			if (parent == null && (attr & TypeAttributes.Interface) == 0)
-			{
-				//parent = universe.System_Object;
-			}
 			typeBuilder.SetParent(parent);
 			SetPackingSizeAndTypeSize(typeBuilder, packingSize, typesize);
 			return typeBuilder;

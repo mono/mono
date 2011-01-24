@@ -51,6 +51,11 @@ namespace IKVM.Reflection.Writer
 				{
 					WriteModuleImpl(keyPair, publicKey, moduleBuilder, fileKind, portableExecutableKind, imageFileMachine, resources, entryPointToken, fs);
 				}
+				// if we're running on Mono, mark the module as executable by using a Mono private API extension
+				if (System.Type.GetType("Mono.Runtime") != null)
+				{
+					File.SetAttributes(moduleBuilder.FullyQualifiedName, (FileAttributes)(unchecked((int)0x80000000)));
+				}
 			}
 			else
 			{

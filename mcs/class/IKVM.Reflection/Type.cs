@@ -749,7 +749,7 @@ namespace IKVM.Reflection
 
 		internal Type ResolveNestedType(TypeName typeName)
 		{
-			return FindNestedType(typeName) ?? Module.universe.GetMissingType(Module, this, typeName);
+			return FindNestedType(typeName) ?? Module.universe.GetMissingTypeOrThrow(Module, this, typeName);
 		}
 
 		// unlike the public API, this takes the namespace and name into account

@@ -158,114 +158,128 @@ namespace IKVM.Reflection
 			return Mscorlib.FindType(new TypeName(type.Namespace, type.Name));
 		}
 
+		private Type ResolvePrimitive(string name)
+		{
+			// Primitive here means that these types have a special metadata encoding, which means that
+			// there can be references to them without refering to them by name explicitly.
+			// When 'resolve missing type' mode is enabled, we want these types to be usable even when
+			// they don't exist in mscorlib or there is no mscorlib loaded.
+			return Mscorlib.ResolveType(new TypeName("System", name));
+		}
+
 		internal Type System_Object
 		{
-			get { return typeof_System_Object ?? (typeof_System_Object = ImportMscorlibType(typeof(System.Object))); }
+			get { return typeof_System_Object ?? (typeof_System_Object = ResolvePrimitive("Object")); }
 		}
 
 		internal Type System_ValueType
 		{
-			get { return typeof_System_ValueType ?? (typeof_System_ValueType = ImportMscorlibType(typeof(System.ValueType))); }
+			// System.ValueType is not a primitive, but generic type parameters can have a ValueType constraint
+			// (we also don't want to return null here)
+			get { return typeof_System_ValueType ?? (typeof_System_ValueType = ResolvePrimitive("ValueType")); }
 		}
 
 		internal Type System_Enum
 		{
-			get { return typeof_System_Enum ?? (typeof_System_Enum = ImportMscorlibType(typeof(System.Enum))); }
+			// System.Enum is not a primitive, but we don't want to return null
+			get { return typeof_System_Enum ?? (typeof_System_Enum = ResolvePrimitive("Enum")); }
 		}
 
 		internal Type System_Void
 		{
-			get { return typeof_System_Void ?? (typeof_System_Void = ImportMscorlibType(typeof(void))); }
+			get { return typeof_System_Void ?? (typeof_System_Void = ResolvePrimitive("Void")); }
 		}
 
 		internal Type System_Boolean
 		{
-			get { return typeof_System_Boolean ?? (typeof_System_Boolean = ImportMscorlibType(typeof(System.Boolean))); }
+			get { return typeof_System_Boolean ?? (typeof_System_Boolean = ResolvePrimitive("Boolean")); }
 		}
 
 		internal Type System_Char
 		{
-			get { return typeof_System_Char ?? (typeof_System_Char = ImportMscorlibType(typeof(System.Char))); }
+			get { return typeof_System_Char ?? (typeof_System_Char = ResolvePrimitive("Char")); }
 		}
 
 		internal Type System_SByte
 		{
-			get { return typeof_System_SByte ?? (typeof_System_SByte = ImportMscorlibType(typeof(System.SByte))); }
+			get { return typeof_System_SByte ?? (typeof_System_SByte = ResolvePrimitive("SByte")); }
 		}
 
 		internal Type System_Byte
 		{
-			get { return typeof_System_Byte ?? (typeof_System_Byte = ImportMscorlibType(typeof(System.Byte))); }
+			get { return typeof_System_Byte ?? (typeof_System_Byte = ResolvePrimitive("Byte")); }
 		}
 
 		internal Type System_Int16
 		{
-			get { return typeof_System_Int16 ?? (typeof_System_Int16 = ImportMscorlibType(typeof(System.Int16))); }
+			get { return typeof_System_Int16 ?? (typeof_System_Int16 = ResolvePrimitive("Int16")); }
 		}
 
 		internal Type System_UInt16
 		{
-			get { return typeof_System_UInt16 ?? (typeof_System_UInt16 = ImportMscorlibType(typeof(System.UInt16))); }
+			get { return typeof_System_UInt16 ?? (typeof_System_UInt16 = ResolvePrimitive("UInt16")); }
 		}
 
 		internal Type System_Int32
 		{
-			get { return typeof_System_Int32 ?? (typeof_System_Int32 = ImportMscorlibType(typeof(System.Int32))); }
+			get { return typeof_System_Int32 ?? (typeof_System_Int32 = ResolvePrimitive("Int32")); }
 		}
 
 		internal Type System_UInt32
 		{
-			get { return typeof_System_UInt32 ?? (typeof_System_UInt32 = ImportMscorlibType(typeof(System.UInt32))); }
+			get { return typeof_System_UInt32 ?? (typeof_System_UInt32 = ResolvePrimitive("UInt32")); }
 		}
 
 		internal Type System_Int64
 		{
-			get { return typeof_System_Int64 ?? (typeof_System_Int64 = ImportMscorlibType(typeof(System.Int64))); }
+			get { return typeof_System_Int64 ?? (typeof_System_Int64 = ResolvePrimitive("Int64")); }
 		}
 
 		internal Type System_UInt64
 		{
-			get { return typeof_System_UInt64 ?? (typeof_System_UInt64 = ImportMscorlibType(typeof(System.UInt64))); }
+			get { return typeof_System_UInt64 ?? (typeof_System_UInt64 = ResolvePrimitive("UInt64")); }
 		}
 
 		internal Type System_Single
 		{
-			get { return typeof_System_Single ?? (typeof_System_Single = ImportMscorlibType(typeof(System.Single))); }
+			get { return typeof_System_Single ?? (typeof_System_Single = ResolvePrimitive("Single")); }
 		}
 
 		internal Type System_Double
 		{
-			get { return typeof_System_Double ?? (typeof_System_Double = ImportMscorlibType(typeof(System.Double))); }
+			get { return typeof_System_Double ?? (typeof_System_Double = ResolvePrimitive("Double")); }
 		}
 
 		internal Type System_String
 		{
-			get { return typeof_System_String ?? (typeof_System_String = ImportMscorlibType(typeof(System.String))); }
+			get { return typeof_System_String ?? (typeof_System_String = ResolvePrimitive("String")); }
 		}
 
 		internal Type System_IntPtr
 		{
-			get { return typeof_System_IntPtr ?? (typeof_System_IntPtr = ImportMscorlibType(typeof(System.IntPtr))); }
+			get { return typeof_System_IntPtr ?? (typeof_System_IntPtr = ResolvePrimitive("IntPtr")); }
 		}
 
 		internal Type System_UIntPtr
 		{
-			get { return typeof_System_UIntPtr ?? (typeof_System_UIntPtr = ImportMscorlibType(typeof(System.UIntPtr))); }
+			get { return typeof_System_UIntPtr ?? (typeof_System_UIntPtr = ResolvePrimitive("UIntPtr")); }
 		}
 
 		internal Type System_TypedReference
 		{
-			get { return typeof_System_TypedReference ?? (typeof_System_TypedReference = ImportMscorlibType(typeof(System.TypedReference))); }
+			get { return typeof_System_TypedReference ?? (typeof_System_TypedReference = ResolvePrimitive("TypedReference")); }
 		}
 
 		internal Type System_Type
 		{
-			get { return typeof_System_Type ?? (typeof_System_Type = ImportMscorlibType(typeof(System.Type))); }
+			// System.Type is not a primitive, but it does have a special encoding in custom attributes
+			get { return typeof_System_Type ?? (typeof_System_Type = ResolvePrimitive("Type")); }
 		}
 
 		internal Type System_Array
 		{
-			get { return typeof_System_Array ?? (typeof_System_Array = ImportMscorlibType(typeof(System.Array))); }
+			// System.Array is not a primitive, but it used as a base type for array types (that are primitives)
+			get { return typeof_System_Array ?? (typeof_System_Array = ResolvePrimitive("Array")); }
 		}
 
 		internal Type System_DateTime
@@ -836,7 +850,7 @@ namespace IKVM.Reflection
 			}
 		}
 
-		internal Type GetMissingType(Module module, Type declaringType, TypeName typeName)
+		internal Type GetMissingTypeOrThrow(Module module, Type declaringType, TypeName typeName)
 		{
 			if (resolveMissingTypes || module.Assembly.__IsMissing)
 			{
@@ -853,7 +867,12 @@ namespace IKVM.Reflection
 				}
 				return type;
 			}
-			return null;
+			string fullName = TypeNameParser.Escape(typeName.ToString());
+			if (declaringType != null)
+			{
+				fullName = declaringType.FullName + "+" + fullName;
+			}
+			throw new TypeLoadException(String.Format("Type '{0}' not found in assembly '{1}'", fullName, module.Assembly.FullName));
 		}
 	}
 }

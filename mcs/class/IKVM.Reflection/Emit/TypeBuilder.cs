@@ -226,7 +226,7 @@ namespace IKVM.Reflection.Emit
 		private readonly ITypeOwner owner;
 		private readonly int token;
 		private int extends;
-		private Type baseType;
+		private Type lazyBaseType;		// (lazyBaseType == null && attribs & TypeAttributes.Interface) == 0) => BaseType == System.Object
 		private readonly int typeName;
 		private readonly int typeNameSpace;
 		private readonly string ns;
@@ -264,7 +264,7 @@ namespace IKVM.Reflection.Emit
 			ConstructorBuilder cb = DefineConstructor(attributes, CallingConventions.Standard, Type.EmptyTypes);
 			ILGenerator ilgen = cb.GetILGenerator();
 			ilgen.Emit(OpCodes.Ldarg_0);
-			ilgen.Emit(OpCodes.Call, baseType.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null));
+			ilgen.Emit(OpCodes.Call, BaseType.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null));
 			ilgen.Emit(OpCodes.Ret);
 			return cb;
 		}
@@ -458,10 +458,6 @@ namespace IKVM.Reflection.Emit
 			}
 			TypeBuilder typeBuilder = __DefineNestedType(ns, name);
 			typeBuilder.__SetAttributes(attr);
-			if (parent == null && (attr & TypeAttributes.Interface) == 0)
-			{
-				//parent = this.ModuleBuilder.universe.System_Object;
-			}
 			typeBuilder.SetParent(parent);
 			this.ModuleBuilder.SetPackingSizeAndTypeSize(typeBuilder, PackingSize.Unspecified, typeSize);
 			return typeBuilder;
@@ -480,7 +476,7 @@ namespace IKVM.Reflection.Emit
 
 		public void SetParent(Type parent)
 		{
-			baseType = parent;
+			lazyBaseType = parent;
 		}
 
 		public void AddInterfaceImplementation(Type interfaceType)
@@ -682,6 +678,7 @@ namespace IKVM.Reflection.Emit
 			{
 				this.ModuleBuilder.AddDeclarativeSecurity(token, declarativeSecurity);
 			}
+			Type baseType = this.BaseType;
 			if (baseType != null)
 			{
 				extends = this.ModuleBuilder.GetTypeToken(baseType).Token;
@@ -727,7 +724,18 @@ namespace IKVM.Reflection.Emit
 
 		public override Type BaseType
 		{
-			get { return baseType; }
+			get
+			{
+				if (lazyBaseType == null && !IsInterface)
+				{
+					Type obj = Module.universe.System_Object;
+					if (this != obj)
+					{
+						lazyBaseType = obj;
+					}
+				}
+				return lazyBaseType;
+			}
 		}
 
 		public override string FullName
