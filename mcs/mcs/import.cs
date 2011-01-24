@@ -1563,8 +1563,12 @@ namespace Mono.CSharp
 				importer.GetCustomAttributeTypeName (a, out ns, out name);
 
 				if (name == "CLSCompliantAttribute") {
-					if (ns == "System")
-						cls_compliant = (bool) a.ConstructorArguments[0].Value;
+					if (ns == "System") {
+						try {
+							cls_compliant = (bool) a.ConstructorArguments[0].Value;
+						} catch {
+						}
+					}
 					continue;
 				}
 
@@ -1572,7 +1576,13 @@ namespace Mono.CSharp
 					if (ns != MetadataImporter.CompilerServicesNamespace)
 						continue;
 
-					string s = a.ConstructorArguments[0].Value as string;
+					string s;
+					try {
+						s = a.ConstructorArguments[0].Value as string;
+					} catch {
+						s = null;
+					}
+
 					if (s == null)
 						continue;
 
