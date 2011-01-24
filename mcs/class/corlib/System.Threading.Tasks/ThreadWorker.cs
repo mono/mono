@@ -263,18 +263,20 @@ namespace System.Threading.Tasks
 				Task value;
 				
 				// If we are in fact a normal ThreadWorker, use our own deque
-				if (autoReference != null) {
-					while (autoReference.dDeque.PopBottom (out value) == PopResult.Succeed && value != null) {
-						evt.Set ();
-						if (CheckTaskFitness (self, value) || aggressive)
-							value.Execute (autoReference.ChildWorkAdder);
-						else {
-							sharedWorkQueue.TryAdd (value);
-							evt.Set ();
-						}
+				if (hasAutoReference) {
+					var enumerable = autoReference.dDeque.GetEnumerable ();
 
-						if (predicateEvt.IsSet || watch.ElapsedMilliseconds > millisecondsTimeout)
-							return;
+					if (enumerable != null) {
+						foreach (var t in enumerable) {
+							if (t == null)
+								continue;
+
+							if (CheckTaskFitness (self, t))
+								t.Execute (autoReference.ChildWorkAdder);
+
+							if (predicateEvt.IsSet || watch.ElapsedMilliseconds > millisecondsTimeout)
+								return;
+						}
 					}
 				}
 
