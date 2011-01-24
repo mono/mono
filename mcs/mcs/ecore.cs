@@ -1922,15 +1922,23 @@ namespace Mono.CSharp {
 			return new ReducedExpressionStatement (s, orig);
 		}
 
-		//
-		// Creates unresolved reduce expression. The original expression has to be
-		// already resolved
-		//
 		public static Expression Create (Expression expr, Expression original_expr)
 		{
-			Constant c = expr as Constant;
-			if (c != null)
-				return Create (c, original_expr);
+			return Create (expr, original_expr, true);
+		}
+
+		//
+		// Creates unresolved reduce expression. The original expression has to be
+		// already resolved. Created expression is constant based based on `expr'
+		// value unless canBeConstant is used
+		//
+		public static Expression Create (Expression expr, Expression original_expr, bool canBeConstant)
+		{
+			if (canBeConstant) {
+				Constant c = expr as Constant;
+				if (c != null)
+					return Create (c, original_expr);
+			}
 
 			ExpressionStatement s = expr as ExpressionStatement;
 			if (s != null)
