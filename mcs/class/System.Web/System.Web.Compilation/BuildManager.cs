@@ -1147,20 +1147,61 @@ namespace System.Web.Compilation
 		{
 			return GetType (typeName, throwOnError, false);
 		}
-
+		
 		public static Type GetType (string typeName, bool throwOnError, bool ignoreCase)
 		{
+			if (String.IsNullOrEmpty (typeName))
+				throw new HttpException ("Type name must not be empty.");
+			
 			Type ret = null;
+			Exception ex = null;
 			try {
-				foreach (Assembly asm in TopLevel_Assemblies) {
-					ret = asm.GetType (typeName, throwOnError, ignoreCase);
-					if (ret != null)
-						break;
+				string wantedAsmName;
+				string wantedTypeName;
+				int comma = typeName.IndexOf (',');
+
+				if (comma > 0 && comma < typeName.Length - 1) {
+					var aname = new AssemblyName (typeName.Substring (comma + 1));
+					wantedAsmName = aname.ToString ();
+					wantedTypeName = typeName.Substring (0, comma);
+				} else {
+					wantedAsmName = null;
+					wantedTypeName = typeName;
 				}
-			} catch (Exception ex) {
-				throw new HttpException ("Failed to find the specified type.", ex);
+
+				var assemblies = new List <Assembly> ();
+				assemblies.AddRange (BuildManager.GetReferencedAssemblies () as List <Assembly>);
+				assemblies.AddRange (TopLevel_Assemblies);
+				Type appType = HttpApplicationFactory.AppType;
+				if (appType != null)
+					assemblies.Add (appType.Assembly);
+				
+				foreach (Assembly asm in assemblies) {
+					if (asm == null)
+						continue;
+
+					if (wantedAsmName != null) {
+						// So dumb...
+						if (String.Compare (wantedAsmName, asm.GetName ().ToString (), StringComparison.Ordinal) == 0) {
+							ret = asm.GetType (wantedTypeName, throwOnError, ignoreCase);
+							if (ret != null)
+								return ret;
+						}
+						continue;
+					}
+					
+					ret = asm.GetType (wantedTypeName, false, ignoreCase);
+					if (ret != null)
+						return ret;
+				}
+			} catch (Exception e) {
+				ex = e;
 			}
-			return ret;
+
+			if (throwOnError)
+				throw new HttpException ("Failed to find the specified type.", ex);
+
+			return null;
 		}
 
 		public static ICollection GetVirtualPathDependencies (string virtualPath)
@@ -1422,11 +1463,11 @@ namespace System.Web.Compilation
 			if (suppressDebugModeMessages)
 				return;
 			
-			Console.WriteLine ();
-			Console.WriteLine ("******* DEBUG MODE MESSAGE *******");
-			Console.WriteLine (msg);
-			Console.WriteLine ("******* DEBUG MODE MESSAGE *******");
-			Console.WriteLine ();
+			Console.Error.WriteLine ();
+			Console.Error.WriteLine ("******* DEBUG MODE MESSAGE *******");
+			Console.Error.WriteLine (msg);
+			Console.Error.WriteLine ("******* DEBUG MODE MESSAGE *******");
+			Console.Error.WriteLine ();
 		}
 
 		static void StoreInCache (BuildProvider bp, Assembly compiledAssembly, CompilerResults results)
