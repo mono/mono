@@ -178,6 +178,7 @@ namespace System.Threading.Tasks
 		{
 			bool result = false;
 			bool hasStolenFromOther;
+
 			do {
 				hasStolenFromOther = false;
 				
@@ -241,12 +242,6 @@ namespace System.Threading.Tasks
 		                                              ThreadWorker[] others,
 		                                              ManualResetEvent evt)
 		{
-			// Before anything, we try to execute the self task as it may be the simplest way to unlock
-			// the situation
-			self.Execute (autoReference != null ? autoReference.ChildWorkAdder : (Action<Task>)null);
-			if (predicateEvt.IsSet)
-				return;
-
 			const int stage1 = 5, stage2 = 0;
 			int tries = 8;
 			WaitHandle[] handles = null;
@@ -254,8 +249,17 @@ namespace System.Threading.Tasks
 			if (millisecondsTimeout == -1)
 				millisecondsTimeout = int.MaxValue;
 			bool aggressive = false;
+			bool hasAutoReference = autoReference != null;
 
 			while (!predicateEvt.IsSet && watch.ElapsedMilliseconds < millisecondsTimeout) {
+				// We try to execute the self task as it may be the simplest way to unlock
+				// the situation
+				if (self.Status == TaskStatus.WaitingToRun) {
+					self.Execute (hasAutoReference ? autoReference.ChildWorkAdder : (Action<Task>)null);
+					if (predicateEvt.IsSet || watch.ElapsedMilliseconds > millisecondsTimeout)
+						return;
+				}
+
 				Task value;
 				
 				// If we are in fact a normal ThreadWorker, use our own deque
