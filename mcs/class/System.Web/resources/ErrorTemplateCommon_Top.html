@@ -13,6 +13,7 @@ pre { font-size: 1.2em;	margin-left: 20px; margin-top: 0px; }
 h1, h2, h3, h4, h5, h6 { font-size: 1.6em; color: #000;	font-family: Arial, Helvetica, sans-serif; }
 h1 { font-weight: bold;	margin-bottom: 0; margin-top: 0; padding-bottom: 0; }
 h2 { font-size: 1em; padding: 0 0 0px 0; color: #696969; font-weight: normal; margin-top: 0; margin-bottom: 20px; }
+h2.exceptionMessage { white-space: pre; }
 h3 { font-size: 1.2em; }
 h4 { font-size: 1.1em; }
 h5, h6 { font-size: 1em; }
@@ -65,5 +66,5 @@ p { margin-bottom: 0.3em; margin-top: 0.1em }
 </div>
 <div id="main">
   <h1>@ExceptionType@</h1>
-  <h2>@ExceptionMessage@</h2>
+  <h2 class="exceptionMessage">@ExceptionMessage@</h2>
   <p><strong>Description:</strong> @Description@</p><p><strong>Details:</strong> @Details@</p>
