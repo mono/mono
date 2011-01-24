@@ -102,8 +102,18 @@ namespace System.Threading.Tasks
 			: this (action, state, cancellationToken, TaskCreationOptions.None)
 		{	
 		}
-		
+
 		public Task (Action<object> action, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
+			: this (action, state, cancellationToken, creationOptions, current)
+		{
+
+		}
+
+		internal Task (Action<object> action,
+		               object state,
+		               CancellationToken cancellationToken,
+		               TaskCreationOptions creationOptions,
+		               Task parent)
 		{
 			this.taskCreationOptions = creationOptions;
 			this.action              = action == null ? EmptyFunc : action;
@@ -111,15 +121,13 @@ namespace System.Threading.Tasks
 			this.taskId              = Interlocked.Increment (ref id);
 			this.status              = TaskStatus.Created;
 			this.token               = cancellationToken;
+			this.parent              = parent;
 
 			// Process taskCreationOptions
-			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent)) {
-				parent = current;
-				if (parent != null)
-					parent.AddChild ();
-			}
+			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
+				parent.AddChild ();
 		}
-		
+
 		~Task ()
 		{
 			if (exception != null && !exceptionObserved)
@@ -210,7 +218,11 @@ namespace System.Threading.Tasks
 		
 		public Task ContinueWith (Action<Task> continuationAction, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			Task continuation = new Task ((o) => continuationAction ((Task)o), this, cancellationToken, GetCreationOptions (continuationOptions));
+			Task continuation = new Task ((o) => continuationAction ((Task)o),
+			                              this,
+			                              cancellationToken,
+			                              GetCreationOptions (continuationOptions),
+			                              this);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
@@ -244,7 +256,11 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			Task<TResult> t = new Task<TResult> ((o) => continuationFunction ((Task)o), this, cancellationToken, GetCreationOptions (continuationOptions));
+			Task<TResult> t = new Task<TResult> ((o) => continuationFunction ((Task)o),
+			                                     this,
+			                                     cancellationToken,
+			                                     GetCreationOptions (continuationOptions),
+			                                     this);
 			
 			ContinueWithCore (t, continuationOptions, scheduler);
 			

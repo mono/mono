@@ -94,9 +94,20 @@ namespace System.Threading.Tasks
 		{
 			
 		}
-		
+
 		public Task (Func<object, TResult> function, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
 			: base (null, state, cancellationToken, creationOptions)
+		{
+			this.function = function;
+			this.state = state;
+		}
+
+		internal Task (Func<object, TResult> function,
+		               object state,
+		               CancellationToken cancellationToken,
+		               TaskCreationOptions creationOptions,
+		               Task parent)
+		: base (null, state, cancellationToken, creationOptions, parent)
 		{
 			this.function = function;
 			this.state = state;
@@ -139,7 +150,11 @@ namespace System.Threading.Tasks
 			if (scheduler == null)
 				throw new ArgumentNullException ("scheduler");
 
-			Task t = new Task ((o) => continuationAction ((Task<TResult>)o), this, cancellationToken, GetCreationOptions (continuationOptions));
+			Task t = new Task ((o) => continuationAction ((Task<TResult>)o),
+			                   this,
+			                   cancellationToken,
+			                   GetCreationOptions (continuationOptions),
+			                   this);
 			ContinueWithCore (t, continuationOptions, scheduler);
 			
 			return t;
@@ -173,7 +188,8 @@ namespace System.Threading.Tasks
 			Task<TNewResult> t = new Task<TNewResult> ((o) => continuationFunction ((Task<TResult>)o),
 			                                           this,
 			                                           cancellationToken,
-			                                           GetCreationOptions (continuationOptions));
+			                                           GetCreationOptions (continuationOptions),
+			                                           this);
 			ContinueWithCore (t, continuationOptions, scheduler);
 			
 			return t;

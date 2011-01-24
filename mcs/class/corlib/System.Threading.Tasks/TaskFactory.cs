@@ -196,7 +196,7 @@ namespace System.Threading.Tasks
 			Task commonContinuation = new Task (null);
 			
 			foreach (Task t in ourTasks) {
-				Task cont = new Task ((o) => continuationAction ((Task)o), t, cancellationToken, creationOptions);
+				Task cont = new Task ((o) => continuationAction ((Task)o), t, cancellationToken, creationOptions, t);
 				t.ContinueWithCore (cont, continuationOptions, scheduler, trigger.TrySet);
 				cont.ContinueWithCore (commonContinuation, TaskContinuationOptions.None, scheduler);
 			}
@@ -265,7 +265,7 @@ namespace System.Threading.Tasks
 			TaskCompletionSource<TResult> source = new TaskCompletionSource<TResult> ();
 
 			foreach (Task t in ourTasks) {
-				Task cont = new Task ((o) => source.SetResult (continuationFunction ((Task)o)), t, cancellationToken, creationOptions);
+				Task cont = new Task ((o) => source.SetResult (continuationFunction ((Task)o)), t, cancellationToken, creationOptions, t);
 				t.ContinueWithCore (cont, continuationOptions, scheduler, trigger.TrySet);
 			}
 
