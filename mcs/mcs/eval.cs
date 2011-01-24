@@ -191,6 +191,9 @@ namespace Mono.CSharp
 			if (type == null)
 				throw new ArgumentNullException ();
 
+			if (!inited)
+				throw new Exception ("Evaluator has to be initiated before seting custom InteractiveBase class");
+
 			lock (evaluator_lock)
 				interactive_base_class = loader.Importer.ImportType (type);
 		}
