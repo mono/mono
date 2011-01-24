@@ -317,8 +317,11 @@ namespace Mono.CSharp
 		{
 			int dyn_args_count = arguments == null ? 0 : arguments.Count;
 			TypeExpr site_type = CreateSiteType (ec, arguments, dyn_args_count, isStatement);
+			var field = CreateSiteField (ec, site_type);
+			if (field == null)
+				return;
 
-			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (ec, site_type), loc);
+			FieldExpr site_field_expr = new FieldExpr (field, loc);
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec);
 
