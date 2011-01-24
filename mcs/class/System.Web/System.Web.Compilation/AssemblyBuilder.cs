@@ -802,13 +802,20 @@ namespace System.Web.Compilation
 				options.EmbeddedResources.Add (de.Value);
 
 			AddAssemblyReference (BuildManager.GetReferencedAssemblies ());
+			List <Assembly> referencedAssemblies = ReferencedAssemblies;
 			StringCollection optRefAsm = options.ReferencedAssemblies;
+			Type appType = HttpApplicationFactory.AppType;
+			if (appType != null && !referencedAssemblies.Contains (appType.Assembly))
+				referencedAssemblies.Add (appType.Assembly);
+
 			foreach (Assembly refasm in ReferencedAssemblies) {
 				string path = new Uri (refasm.CodeBase).LocalPath;
 				string originalPath = refasm.Location;
 				if (!optRefAsm.Contains (path) && !optRefAsm.Contains (originalPath))
 					optRefAsm.Add (path);
 			}
+
+			
 			
 			results = provider.CompileAssemblyFromFile (options, files.ToArray ());
 
