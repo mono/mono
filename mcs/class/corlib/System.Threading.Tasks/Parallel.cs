@@ -165,7 +165,7 @@ namespace System.Threading.Tasks
 				CancellationToken token = parallelOptions.CancellationToken;
 
 				try {
-					for (int i = index; i < stopIndex; i = Interlocked.Increment (ref range.V.Actual)) {
+					for (int i = index; i < stopIndex; i = ++range.V.Actual) {
 						if (infos.IsStopped)
 							return;
 
@@ -201,15 +201,16 @@ namespace System.Threading.Tasks
 								val = range.V;
 								old = val.Value;
 
-								if (val.Actual >= stopIndex - val.Stolen - 1)
+								if (val.Actual >= stopIndex - val.Stolen - 2)
 									goto next;
 								val.Stolen += 1;
 							} while (Interlocked.CompareExchange (ref range.V.Value, val.Value, old) != old);
 
 							stolen = stopIndex - val.Stolen;
 
-							if (stolen > range.V.Actual || (stolen == range.V.Actual && range.V.Actual == val.Actual + 1))
+							if (stolen > range.V.Actual) {
 								local = body (stolen, state, local);
+							}
 						} while (stolen >= 0);
 
 						next:
