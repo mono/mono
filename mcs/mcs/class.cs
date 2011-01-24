@@ -3227,10 +3227,10 @@ namespace Mono.CSharp {
 			// We are more strict than csc and report this as an error because SRE does not allow emit that
 			if ((ModFlags & Modifiers.EXTERN) != 0 && !is_external_implementation) {
 				if (this is Constructor) {
-					Report.Error (824, Location,
+					Report.Warning (824, 1, Location,
 						"Constructor `{0}' is marked `external' but has no external implementation specified", GetSignatureForError ());
 				} else {
-					Report.Error (626, Location,
+					Report.Warning (626, 1, Location,
 						"`{0}' is marked as an external but has no DllImport attribute. Consider adding a DllImport attribute to specify the external implementation",
 						GetSignatureForError ());
 				}
