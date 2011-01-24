@@ -3675,7 +3675,7 @@ namespace Mono.CSharp {
 			var best_def_pd = ((IParametersMember) best.MemberDefinition).Parameters;
 
 			bool specific_at_least_once = false;
-			for (j = 0; j < candidate_param_count; ++j) {
+			for (j = 0; j < args_count; ++j) {
 				NamedArgument na = args_count == 0 ? null : args [j] as NamedArgument;
 				if (na != null) {
 					ct = candidate_def_pd.Types[cparam.GetParameterIndexByName (na.Name)];
