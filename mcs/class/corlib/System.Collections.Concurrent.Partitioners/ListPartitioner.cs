@@ -52,12 +52,15 @@ namespace System.Collections.Concurrent.Partitioners
 				= new IEnumerator<KeyValuePair<long, T>>[partitionCount];
 			
 			int count = source.Count / partitionCount;
-			if (count <= 1)
-				count = 1;
+			int extra = 0;
 
-			int extra = count == 1 ? 0 : source.Count % partitionCount;
-			if (extra > 0)
-				++count;
+			if (source.Count < partitionCount) {
+				count = 1;
+			} else {
+				extra = source.Count % partitionCount;
+				if (extra > 0)
+					++count;
+			}
 
 			int currentIndex = 0;
 
