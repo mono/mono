@@ -60,6 +60,11 @@ namespace Mono.CSharp {
 			base.Error_ValueCannotBeConverted (ec, loc, t, expl);
 		}
 
+		public override string GetValueAsLiteral ()
+		{
+			return "null";
+		}
+
 		public override bool IsLiteral {
 			get { return true; }
 		}

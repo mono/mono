@@ -1224,16 +1224,6 @@ namespace Mono.CSharp {
 			this.type = type;
 		}
 
-		public override string AsString ()
-		{
-			return child.AsString ();
-		}
-
-		public override object GetValue ()
-		{
-			return child.GetValue ();
-		}
-
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (child.Type == target_type)
@@ -1297,6 +1287,16 @@ namespace Mono.CSharp {
 		public override void EmitSideEffect (EmitContext ec)
 		{
 			child.EmitSideEffect (ec);
+		}
+
+		public override object GetValue ()
+		{
+			return child.GetValue ();
+		}
+
+		public override string GetValueAsLiteral ()
+		{
+			return child.GetValueAsLiteral ();
 		}
 
 		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec target_type)
@@ -1377,10 +1377,10 @@ namespace Mono.CSharp {
 			return System.Enum.ToObject (type.GetMetaInfo (), Child.GetValue ());
 		}
 #endif
-		
-		public override string AsString ()
+
+		public override string GetValueAsLiteral ()
 		{
-			return Child.AsString ();
+			return Child.GetValueAsLiteral ();
 		}
 
 		public EnumConstant Increment()
