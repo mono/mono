@@ -3411,7 +3411,7 @@ array_creation_expression
 
 		$$ = new ArrayCreation ((FullNamedExpression) $2, (ComposedTypeSpecifier) $3, (ArrayInitializer) $4, GetLocation ($1));
 	  }
-	| NEW rank_specifiers array_initializer
+	| NEW rank_specifier array_initializer
 	  {
 		if (RootContext.Version <= LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "implicitly typed arrays");
