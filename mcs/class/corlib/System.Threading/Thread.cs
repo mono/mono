@@ -360,7 +360,7 @@ namespace System.Threading {
 			ResetAbort_internal ();
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[HostProtectionAttribute (SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static bool Yield ();

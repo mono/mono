@@ -31,7 +31,7 @@ using System.Runtime.CompilerServices;
 
 namespace System
 {
-#if NET_4_0
+#if NET_4_0 || MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 	public delegate void Action ();
 	

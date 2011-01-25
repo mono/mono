@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0 || INSIDE_SYSTEM_WEB
+#if NET_4_0 || INSIDE_SYSTEM_WEB || MOBILE
 
 using System;
 using System.Threading;
