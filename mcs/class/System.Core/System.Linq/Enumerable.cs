@@ -637,7 +637,7 @@ namespace System.Linq
 			int counter = 0;
 			using (var enumerator = source.GetEnumerator ())
 				while (enumerator.MoveNext ())
-					counter++;
+					checked { counter++; }
 
 			return counter;
 		}
@@ -649,7 +649,7 @@ namespace System.Linq
 			int counter = 0;
 			foreach (var element in source)
 				if (predicate (element))
-					counter++;
+					checked { counter++; }
 
 			return counter;
 		}
