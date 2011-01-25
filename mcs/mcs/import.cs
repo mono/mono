@@ -397,6 +397,7 @@ namespace Mono.CSharp
 					const Modifiers conflict_mask = Modifiers.AccessibilityMask & ~Modifiers.INTERNAL;
 					if (candidate == null || (candidate.Modifiers & conflict_mask) != (mod & conflict_mask) || candidate.IsStatic) {
 						mod &= ~Modifiers.OVERRIDE;
+						mod |= Modifiers.VIRTUAL;
 					}
 				}
 			}
