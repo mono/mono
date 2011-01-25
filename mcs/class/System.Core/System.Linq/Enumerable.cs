@@ -2206,12 +2206,10 @@ namespace System.Linq
 
 		static IEnumerable<TSource> CreateReverseIterator<TSource> (IEnumerable<TSource> source)
 		{
-			var list = source as IList<TSource>;
-			if (list == null)
-				list = new List<TSource> (source);
+			var array = source.ToArray ();
 
-			for (int i = list.Count - 1; i >= 0; i--)
-				yield return list [i];
+			for (int i = array.Length - 1; i >= 0; i--)
+				yield return array [i];
 		}
 
 		#endregion
