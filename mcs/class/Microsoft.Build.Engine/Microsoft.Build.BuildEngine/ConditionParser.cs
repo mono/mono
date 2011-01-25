@@ -53,12 +53,22 @@ namespace Microsoft.Build.BuildEngine {
 			if (String.IsNullOrEmpty (condition))
 				return true;
 
-			ConditionExpression ce = ParseCondition (condition);
+			try {
+				ConditionExpression ce = ParseCondition (condition);
 
-			if (!ce.CanEvaluateToBool (context))
-				throw new InvalidProjectFileException (String.Format ("Can not evaluate \"{0}\" to bool.", condition));
+				if (!ce.CanEvaluateToBool (context))
+					throw new InvalidProjectFileException (String.Format ("Can not evaluate \"{0}\" to bool.", condition));
 
-			return ce.BoolEvaluate (context);
+				return ce.BoolEvaluate (context);
+			} catch (ExpressionParseException epe) {
+				throw new InvalidProjectFileException (
+						String.Format ("Unable to parse condition \"{0}\" : {1}", condition, epe.Message),
+						epe);
+			} catch (ExpressionEvaluationException epe) {
+				throw new InvalidProjectFileException (
+						String.Format ("Unable to evaluate condition \"{0}\" : {1}", condition, epe.Message),
+						epe);
+			}
 		}
 
 		public static ConditionExpression ParseCondition (string condition)

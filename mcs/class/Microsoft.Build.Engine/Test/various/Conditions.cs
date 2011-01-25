@@ -502,5 +502,24 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			proj.LoadXml (documentString);
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void TestIncorrectCondition6 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<A Include='a' Condition=""'$(NonExistant)' != '' or $(NonExistant)""/>
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+		}
+
 	}
 }

@@ -77,7 +77,9 @@ namespace Microsoft.Build.BuildEngine {
 			else if (falseValues [evaluatedToken.Value] != null)
 				return false;
 			else
-				throw new InvalidProjectFileException ();
+				throw new ExpressionEvaluationException (
+						String.Format ("Expression \"{0}\" evaluated to \"{1}\" instead of a boolean value",
+								token.Value, evaluatedToken.Value));
 		}
 		
 		public override float NumberEvaluate (Project context)
