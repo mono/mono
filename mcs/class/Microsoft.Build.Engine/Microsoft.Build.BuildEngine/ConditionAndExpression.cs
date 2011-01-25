@@ -72,7 +72,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public override bool CanEvaluateToBool (Project context)
 		{
-			return left.CanEvaluateToBool (context) && right.CanEvaluateToBool (context);
+			// Short-circuiting, check only left expr, right
+			// would be required only if left == true
+			return left.CanEvaluateToBool (context);
 		}
 		
 		public override bool CanEvaluateToNumber (Project context)
