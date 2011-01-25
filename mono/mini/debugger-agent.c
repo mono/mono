@@ -1198,7 +1198,7 @@ stop_debugger_thread ()
 		if (!debugger_thread_exited)
 		{
 #ifdef HOST_WIN32
-			if (WAIT_TIMEOUT == WaitForSingleObject(debugger_thread_exited_cond, 0)) {
+			if (WAIT_TIMEOUT == WaitForSingleObject(debugger_thread_exited_cond, 10)) {
 				mono_mutex_unlock (&debugger_thread_exited_mutex);
 				Sleep(0);
 				mono_mutex_lock (&debugger_thread_exited_mutex);
@@ -2310,7 +2310,7 @@ suspend_current (void)
 	while (suspend_count - tls->resume_count > 0) {
 #ifdef HOST_WIN32
 		/* FIXME: https://bugzilla.novell.com/show_bug.cgi?id=587470 */
-		if (WAIT_TIMEOUT == WaitForSingleObject(suspend_cond, 0))
+		if (WAIT_TIMEOUT == WaitForSingleObject(suspend_cond, 10))
 		{
 			mono_mutex_unlock (&suspend_mutex);
 			Sleep(0);
