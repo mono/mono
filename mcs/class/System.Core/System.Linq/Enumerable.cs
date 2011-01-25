@@ -2163,18 +2163,16 @@ namespace System.Linq
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			long upto = ((long) start + count) - 1;
-
-			if (upto > int.MaxValue)
+			if (((long) start + count) - 1L > int.MaxValue)
 				throw new ArgumentOutOfRangeException ();
 
-			return CreateRangeIterator (start, (int) upto);
+			return CreateRangeIterator (start, count);
 		}
 
-		static IEnumerable<int> CreateRangeIterator (int start, int upto)
+		static IEnumerable<int> CreateRangeIterator (int start, int count)
 		{
-			for (int i = start; i <= upto; i++)
-				yield return i;
+			for (int i = 0; i < count; i++)
+				yield return start + i;
 		}
 
 		#endregion
