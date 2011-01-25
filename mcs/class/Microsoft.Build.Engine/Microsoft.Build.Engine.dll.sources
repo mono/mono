@@ -37,6 +37,7 @@ Microsoft.Build.BuildEngine/Engine.cs
 Microsoft.Build.BuildEngine/EventSource.cs
 Microsoft.Build.BuildEngine/Expression.cs
 Microsoft.Build.BuildEngine/ExpressionCollection.cs
+Microsoft.Build.BuildEngine/ExpressionEvaluationException.cs
 Microsoft.Build.BuildEngine/ExpressionParseException.cs
 Microsoft.Build.BuildEngine/FileLogger.cs
 Microsoft.Build.BuildEngine/GroupingCollection.cs
