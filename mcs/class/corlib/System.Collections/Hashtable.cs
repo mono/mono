@@ -259,7 +259,12 @@ namespace System.Collections {
 		{
 		}
 
-		protected Hashtable (SerializationInfo info, StreamingContext context)
+#if NET_2_1 && !MONOTOUCH
+		public // for serialization to work under the coreclr security model
+#else
+		protected
+#endif
+		Hashtable (SerializationInfo info, StreamingContext context)
 		{
 			serializationInfo = info;
 		}
