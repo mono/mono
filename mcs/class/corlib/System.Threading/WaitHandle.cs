@@ -213,7 +213,7 @@ namespace System.Threading
 			GC.SuppressFinalize (this);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		public void Dispose ()
 #else		
 		void IDisposable.Dispose ()
