@@ -12,10 +12,17 @@
 	}
 }
 
-.class public auto ansi Bar extends Foo {
+.class public auto ansi Bar extends Foo
+{
+	.method public hidebysig specialname rtspecialname 
+		instance void  .ctor() cil managed
+	{
+		ldarg.0
+		call       instance void Foo::.ctor()
+		ret
+	}
 
-    .method public virtual 
-           instance default object clone ()  cil managed
+	.method public virtual instance default object clone ()  cil managed
 	{
 		.maxstack 8
 		ldarg.0
