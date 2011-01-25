@@ -217,6 +217,25 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		public void ReverseArrays ()
+		{
+			int[] source = { 1, 2, 3 };
+
+			var query = source.Reverse ();
+			using (var enumerator = query.GetEnumerator ()) {
+				enumerator.MoveNext ();
+				Assert.AreEqual (3, enumerator.Current);
+
+				source [1] = 42;
+				enumerator.MoveNext ();
+				Assert.AreEqual (2, enumerator.Current);
+
+				enumerator.MoveNext ();
+				Assert.AreEqual (1, enumerator.Current);
+			}
+		}
+
+		[Test]
 		public void TestSum ()
 		{
 			int [] data = {1, 2, 3, 4};
