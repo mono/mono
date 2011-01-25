@@ -595,9 +595,7 @@ namespace IKVM.Reflection
 				for (int i = 0; i < assemblies.Count; i++)
 				{
 					AssemblyComparisonResult result;
-					// We won't allow FX unification here, because our own (non-Fusion) implementation of CompareAssemblyIdentity doesn't support it and
-					// we don't want to create a fundamental functional difference based on that.
-					if (CompareAssemblyIdentity(refname, false, assemblies[i].FullName, false, out result) && result != AssemblyComparisonResult.EquivalentFXUnified)
+					if (CompareAssemblyIdentity(refname, false, assemblies[i].FullName, false, out result))
 					{
 						asm = assemblies[i];
 						assembliesByName.Add(refname, asm);
@@ -613,9 +611,7 @@ namespace IKVM.Reflection
 			foreach (AssemblyBuilder asm in dynamicAssemblies)
 			{
 				AssemblyComparisonResult result;
-				// We won't allow FX unification here, because our own (non-Fusion) implementation of CompareAssemblyIdentity doesn't support it and
-				// we don't want to create a fundamental functional difference based on that.
-				if (CompareAssemblyIdentity(refname, false, asm.FullName, false, out result) && result != AssemblyComparisonResult.EquivalentFXUnified)
+				if (CompareAssemblyIdentity(refname, false, asm.FullName, false, out result))
 				{
 					return asm;
 				}
@@ -814,7 +810,9 @@ namespace IKVM.Reflection
 
 		public Assembly CreateMissingAssembly(string assemblyName)
 		{
-			return new MissingAssembly(this, assemblyName);
+			Assembly asm = new MissingAssembly(this, assemblyName);
+			assembliesByName.Add(asm.FullName, asm);
+			return asm;
 		}
 
 		public void EnableMissingTypeResolution()
