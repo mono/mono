@@ -103,8 +103,8 @@ net_2_0_dirs := \
 	Mono.CSharp			\
 	Moonlight.Build.Tasks		\
 	WindowsBase			\
-	System.Data.Services	\
-	System.Data.Services.Client \
+	System.Data.Services		\
+	System.Data.Services.Client 	\
 	System.Net
 
 net_2_0_only_dirs := \
