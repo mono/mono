@@ -57,6 +57,9 @@ using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X
 
 namespace System.Net.Mail {
 	public class SmtpClient
+#if NET_4_0
+	: IDisposable
+#endif
 	{
 		#region Fields
 
@@ -255,7 +258,18 @@ namespace System.Net.Mail {
 		#endregion // Events 
 
 		#region Methods
+#if NET_4_0
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
 
+		[MonoTODO ("Does nothing at the moment.")]
+		protected virtual void Dispose (bool disposing)
+		{
+			// TODO: We should close all the connections and abort any async operations here
+		}
+#endif
 		private void CheckState ()
 		{
 			if (messageInProcess != null)
