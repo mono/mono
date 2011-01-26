@@ -4,8 +4,6 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.Services.Client.dll
 
-LIBRARY_SNK = ../mono.snk
-
 LIB_MCS_FLAGS = \
 	-d:NET_3_5	\
 	-r:System.dll \
