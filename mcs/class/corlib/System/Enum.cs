@@ -619,7 +619,7 @@ namespace System
 			return true;
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public static bool TryParse<TEnum> (string value, out TEnum result) where TEnum : struct
 		{
 			return TryParse (value, false, out result);
@@ -1012,7 +1012,7 @@ namespace System
 			}
 			return retVal;
 		}
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public bool HasFlag (Enum flag)
 		{
 			ulong mvalue = Convert.ToUInt64 (get_value (), null);

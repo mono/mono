@@ -84,7 +84,7 @@ namespace System {
 			ProgramFiles = 0x26,
 			MyPictures = 0x27,
 			CommonProgramFiles = 0x2b,
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			MyVideos = 0x0e,
 #endif
 #if NET_4_0
@@ -609,7 +609,7 @@ namespace System {
 			
 			case SpecialFolder.Templates:
 				return ReadXdgUserDir (config, home, "XDG_TEMPLATES_DIR", "Templates");
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			case SpecialFolder.MyVideos:
 				return ReadXdgUserDir (config, home, "XDG_VIDEOS_DIR", "Videos");
 #endif
@@ -812,7 +812,7 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{

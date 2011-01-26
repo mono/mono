@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#if MONODROID
+#if (INSIDE_CORLIB && ANDROID)
 
 using System;
 using System.Collections.Generic;

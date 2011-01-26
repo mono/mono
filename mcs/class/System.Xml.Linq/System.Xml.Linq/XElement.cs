@@ -454,7 +454,7 @@ namespace System.Xml.Linq
 			}
 		}
 
-#if MOONLIGHT || NET_4_0
+#if MOONLIGHT || MOBILE || NET_4_0
 		public static XElement Load (Stream stream)
 		{
 			return Load (stream, LoadOptions.None);
@@ -536,7 +536,7 @@ namespace System.Xml.Linq
 
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
 				s.Indent = true;
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
@@ -556,7 +556,7 @@ namespace System.Xml.Linq
 			
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
 				s.Indent = true;
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
@@ -570,7 +570,7 @@ namespace System.Xml.Linq
 			WriteTo (w);
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public void Save (Stream stream)
 		{
 			Save (stream, SaveOptions.None);
