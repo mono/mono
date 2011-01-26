@@ -580,65 +580,72 @@ public abstract class Encoding : ICloneable
 	}
 #endif // NET_2_1
 
-	// Table of builtin web encoding names and the corresponding code pages.
-	private static readonly object[] encodings =
-		{
-			ASCIIEncoding.ASCII_CODE_PAGE,
-			"ascii", "us_ascii", "us", "ansi_x3.4_1968",
-			"ansi_x3.4_1986", "cp367", "csascii", "ibm367",
-			"iso_ir_6", "iso646_us", "iso_646.irv:1991",
-
-			UTF7Encoding.UTF7_CODE_PAGE,
-			"utf_7", "csunicode11utf7", "unicode_1_1_utf_7",
-			"unicode_2_0_utf_7", "x_unicode_1_1_utf_7",
-			"x_unicode_2_0_utf_7",
-
-			UTF8Encoding.UTF8_CODE_PAGE,
-			"utf_8", "unicode_1_1_utf_8", "unicode_2_0_utf_8",
-			"x_unicode_1_1_utf_8", "x_unicode_2_0_utf_8",
-
-			UnicodeEncoding.UNICODE_CODE_PAGE,
-			"utf_16", "UTF_16LE", "ucs_2", "unicode",
-			"iso_10646_ucs2",
-
-			UnicodeEncoding.BIG_UNICODE_CODE_PAGE,
-			"unicodefffe", "utf_16be",
-
-			UTF32Encoding.UTF32_CODE_PAGE,
-			"utf_32", "UTF_32LE", "ucs_4",
-
-			UTF32Encoding.BIG_UTF32_CODE_PAGE,
-			"UTF_32BE",
-
-#if !MOONLIGHT
-			Latin1Encoding.ISOLATIN_CODE_PAGE,
-			"iso_8859_1", "latin1"
-#endif // !NET_2_1
-		};
-
 	// Get an encoding object for a specific web encoding name.
-	public static Encoding GetEncoding (String name)
+	public static Encoding GetEncoding (string name)
 	{
 		// Validate the parameters.
 		if (name == null) {
 			throw new ArgumentNullException ("name");
 		}
-
+		
 		string converted = name.ToLowerInvariant ().Replace ('-', '_');
 		
-		// Search the table for a name match.
-		int code = 0;
-		for (int i = 0; i < encodings.Length; ++i) {
-			object o = encodings [i];
-			
-			if (o is int){
-				code = (int) o;
-				continue;
-			}
-			
-			if (converted == ((string)encodings [i]))
-				return GetEncoding (code);
+		// Builtin web encoding names and the corresponding code pages.
+		switch (converted) {
+		case "ascii":
+		case "us_ascii":
+		case "us":
+		case "ansi_x3.4_1968":
+		case "ansi_x3.4_1986":
+		case "cp367":
+		case "csascii":
+		case "ibm367":
+		case "iso_ir_6":
+		case "iso646_us":
+		case "iso_646.irv:1991":
+			return GetEncoding (ASCIIEncoding.ASCII_CODE_PAGE);
+
+		case "utf_7":
+		case "csunicode11utf7":
+		case "unicode_1_1_utf_7":
+		case "unicode_2_0_utf_7":
+		case "x_unicode_1_1_utf_7":
+		case "x_unicode_2_0_utf_7":
+			return GetEncoding (UTF7Encoding.UTF7_CODE_PAGE);
+		
+		case "utf_8":
+		case "unicode_1_1_utf_8":
+		case "unicode_2_0_utf_8":
+		case "x_unicode_1_1_utf_8":
+		case "x_unicode_2_0_utf_8":
+			return GetEncoding (UTF8Encoding.UTF8_CODE_PAGE);
+		
+		case "utf_16":
+		case "UTF_16LE":
+		case "ucs_2":
+		case "unicode":
+		case "iso_10646_ucs2":
+			return GetEncoding (UnicodeEncoding.UNICODE_CODE_PAGE);
+
+		case "unicodefffe":
+		case "utf_16be":
+			return GetEncoding (UnicodeEncoding.BIG_UNICODE_CODE_PAGE);
+		
+		case "utf_32":
+		case "UTF_32LE":
+		case "ucs_4":
+			return GetEncoding (UTF32Encoding.UTF32_CODE_PAGE);
+
+		case "UTF_32BE":
+			return GetEncoding (UTF32Encoding.BIG_UTF32_CODE_PAGE);
+
+#if !MOONLIGHT
+		case "iso_8859_1":
+		case "latin1":
+			return GetEncoding (Latin1Encoding.ISOLATIN_CODE_PAGE);
+#endif
 		}
+		
 #if !MOONLIGHT
 		// Try to obtain a web encoding handler from the I18N handler.
 		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", name));
