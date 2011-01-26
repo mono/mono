@@ -4193,7 +4193,7 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 		if (frame->il_offset != -1) {
 			/* FIXME: Sort the table and use a binary search */
 			sp = find_seq_point (frame->domain, frame->method, frame->il_offset, &info);
-			g_assert (sp);
+			if (!sp) return ERR_NOT_IMPLEMENTED; // This can happen with exceptions when stepping
 			method = frame->method;
 		}
 	}
@@ -4239,11 +4239,11 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 	GSList *events;
 	MonoJitInfo *ji;
 	EventInfo ei;
+	MonoInternalThread *thread = mono_thread_internal_current ();
+	DebuggerTlsData *tls;
+
 
 	if (thread_to_tls != NULL) {
-		MonoInternalThread *thread = mono_thread_internal_current ();
-		DebuggerTlsData *tls;
-
 		mono_loader_lock ();
 		tls = mono_g_hash_table_lookup (thread_to_tls, thread);
 		mono_loader_unlock ();
@@ -4313,6 +4313,11 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 					// Make so that we stop at this exception
 					suspend_policy = SUSPEND_POLICY_ALL;
 					ei.caught = FALSE;
+					// Flush pending invocations since we're halting
+					if (tls && tls->pending_invoke) {
+						g_free (tls->pending_invoke);
+						tls->pending_invoke = NULL;
+					}
 				}
 			}
 		}
@@ -5401,6 +5406,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			err = ss_create (THREAD_TO_INTERNAL (step_thread), size, depth, req);
 			if (err) {
 				g_free (req);
+				resume_vm (); // Make sure we resume if we can't step
 				return err;
 			}
 		} else if (req->event_kind == EVENT_KIND_METHOD_ENTRY) {
