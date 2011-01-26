@@ -40,7 +40,7 @@ namespace System.Linq
 		#region Range & Repeat
 		public static ParallelQuery<int> Range (int start, int count)
 		{
-			if (int.MaxValue - start < count)
+			if (int.MaxValue - start < count - 1)
 				throw new ArgumentOutOfRangeException ("count", "start + count - 1 is larger than Int32.MaxValue");
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "count is less than 0");
