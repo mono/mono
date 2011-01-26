@@ -63,6 +63,8 @@ TESTER_OPTIONS =-compiler-options:-v
 ifeq (net_4_0, $(PROFILE))
 TEST_PATTERN = 'v4'
 TESTER_OPTIONS = -compiler-options:"-v -d:NET_4_0 -sdk:4"
+
+TEST_SUPPORT_FILES += DCS0266-lib.dll
 endif
 
 COMPILER = $(topdir)/class/lib/basic/mcs.exe
