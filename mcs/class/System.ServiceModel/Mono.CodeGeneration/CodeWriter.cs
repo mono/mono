@@ -21,6 +21,7 @@
 // Copyright (C) Lluis Sanchez Gual, 2004
 //
 
+#if !MONOTOUCH
 using System;
 using System.IO;
 
@@ -89,3 +90,4 @@ public class CodeWriter
 }
 
 }
+#endif
