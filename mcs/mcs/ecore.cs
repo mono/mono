@@ -5151,7 +5151,7 @@ namespace Mono.CSharp {
 			bool need_copy;
 			if (spec.IsReadOnly){
 				need_copy = true;
-				if (ec.HasSet (EmitContext.Options.ConstructorScope)){
+				if (ec.HasSet (EmitContext.Options.ConstructorScope) && spec.DeclaringType == ec.CurrentType) {
 					if (IsStatic){
 						if (ec.IsStatic)
 							need_copy = false;
