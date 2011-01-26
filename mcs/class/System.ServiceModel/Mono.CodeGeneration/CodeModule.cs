@@ -21,6 +21,7 @@
 // Copyright (C) Lluis Sanchez Gual, 2004
 //
 
+#if !MONOTOUCH
 using System;
 using System.IO;
 using System.Collections;
@@ -78,3 +79,4 @@ namespace Mono.CodeGeneration
 	}
 }
 
+#endif
