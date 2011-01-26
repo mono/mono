@@ -9,3 +9,4 @@ System.ComponentModel.DataAnnotations/StringLengthAttributeTest.cs
 System.ComponentModel.DataAnnotations/ValidationAttributeTest.cs
 System.ComponentModel.DataAnnotations/ValidationContextTest.cs
 System.ComponentModel.DataAnnotations/ValidationResultTest.cs
+System.ComponentModel.DataAnnotations/RegularExpressionAttributeTest.cs
