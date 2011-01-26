@@ -1536,7 +1536,7 @@ namespace System {
 		}
 #endif
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		List<string> compatibility_switch;
 
 		public bool? IsCompatibilitySwitchSet (string value)

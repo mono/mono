@@ -31,7 +31,7 @@
 //
 
 // Since 4.0 (both FX and SL) this type is defined in mscorlib - before 4.0 it was in System.Core.dll
-#if (INSIDE_CORLIB && (NET_4_0 || MOONLIGHT)) || (!INSIDE_CORLIB && !NET_4_0 && !MOONLIGHT)
+#if (INSIDE_CORLIB && (NET_4_0 || MOONLIGHT || MOBILE)) || (!INSIDE_CORLIB && !NET_4_0 && !MOONLIGHT && !MOBILE)
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -44,7 +44,7 @@ namespace System.Security.Cryptography {
 
 #if INSIDE_CORLIB
 	// since 4.0 (both FX and SL) this type now resides inside mscorlib.dll and link back to System.Core.dll
-	#if MOONLIGHT
+	#if MOONLIGHT || MOBILE
 	// version has not changed between SL3 (System.Core) and SL4
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
 	#elif NET_4_0

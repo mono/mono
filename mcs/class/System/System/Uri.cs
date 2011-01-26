@@ -326,7 +326,7 @@ namespace System {
 				query = relativeUri.Substring (pos);
 				if (!userEscaped)
 					query = EscapeString (query);
-#if !NET_4_0 && !MOONLIGHT
+#if !NET_4_0 && !MOONLIGHT && !MOBILE
 				consider_query = query.Length > 0;
 #endif
 				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
@@ -1004,7 +1004,7 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -2011,7 +2011,7 @@ namespace System {
 
 		public bool IsBaseOf (Uri uri)
 		{
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -2182,7 +2182,7 @@ namespace System {
 			result = null;
 			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 			if (relativeUri == null)
 				return false;
 #endif

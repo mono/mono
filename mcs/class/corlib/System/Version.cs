@@ -306,7 +306,7 @@ namespace System {
 			return v1.CompareTo (v2) <= 0;
 		}
 
-#if BOOSTRAP_NET_4_0 || NET_4_0 || MOONLIGHT
+#if BOOSTRAP_NET_4_0 || NET_4_0 || MOONLIGHT || MOBILE
 		public static Version Parse (string input)
 		{
 			// Exactly the same as calling Version(string) .ctor

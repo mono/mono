@@ -2217,7 +2217,7 @@ namespace System
 			return InternalIsInterned (str);
 		}
 	
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || MOONLIGHT || MOBILE
 		public static string Join (string separator, params string [] value)
 #else
 		public static string Join (string separator, string [] value)
@@ -2525,7 +2525,7 @@ namespace System
 			}
 		}
 
-#if MOONLIGHT || NET_4_0
+#if MOONLIGHT || MOBILE || NET_4_0
 		[ComVisible(false)]
 		public static string Concat (IEnumerable<string> values)
 		{
