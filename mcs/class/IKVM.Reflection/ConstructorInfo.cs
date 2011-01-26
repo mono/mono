@@ -201,6 +201,11 @@ namespace IKVM.Reflection
 			get { return method.MetadataToken; }
 		}
 
+		public override bool __IsMissing
+		{
+			get { return method.__IsMissing; }
+		}
+
 		internal override MethodInfo GetMethodInfo()
 		{
 			return method;

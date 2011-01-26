@@ -1136,11 +1136,6 @@ namespace IKVM.Reflection
 			get { return this.DeclaringType != null; }
 		}
 
-		public bool __IsMissing
-		{
-			get { return this is MissingType; }
-		}
-
 		public virtual bool __ContainsMissingType
 		{
 			get
@@ -1525,7 +1520,7 @@ namespace IKVM.Reflection
 			}
 		}
 
-		internal MethodBase FindMethod(string name, MethodSignature signature)
+		internal virtual MethodBase FindMethod(string name, MethodSignature signature)
 		{
 			foreach (MethodBase method in __GetDeclaredMethods())
 			{

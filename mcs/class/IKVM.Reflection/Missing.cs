@@ -22,6 +22,7 @@
   
 */
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -350,9 +351,24 @@ namespace IKVM.Reflection
 			this.name = name;
 		}
 
+		internal override MethodBase FindMethod(string name, MethodSignature signature)
+		{
+			MethodInfo method = new MissingMethod(this, name, signature);
+			if (name == ".ctor")
+			{
+				return new ConstructorInfoImpl(method);
+			}
+			return method;
+		}
+
 		internal override Type FindNestedType(TypeName name)
 		{
 			return null;
+		}
+
+		public override bool __IsMissing
+		{
+			get { return true; }
 		}
 
 		public override Type DeclaringType
@@ -478,6 +494,179 @@ namespace IKVM.Reflection
 		internal override Type BindTypeParameters(IGenericBinder binder)
 		{
 			return this;
+		}
+	}
+
+	sealed class MissingMethod : MethodInfo
+	{
+		private readonly Type declaringType;
+		private readonly string name;
+		private readonly MethodSignature signature;
+
+		internal MissingMethod(Type declaringType, string name, MethodSignature signature)
+		{
+			this.declaringType = declaringType;
+			this.name = name;
+			this.signature = signature;
+		}
+
+		public override bool __IsMissing
+		{
+			get { return true; }
+		}
+
+		public override Type ReturnType
+		{
+			get { return signature.GetReturnType(this); }
+		}
+
+		public override ParameterInfo ReturnParameter
+		{
+			get { return new ParameterInfoImpl(this, -1); }
+		}
+
+		internal override MethodSignature MethodSignature
+		{
+			get { return signature; }
+		}
+
+		internal override int ParameterCount
+		{
+			get { throw new MissingMemberException(this); }
+		}
+
+		private sealed class ParameterInfoImpl : ParameterInfo
+		{
+			private readonly MissingMethod method;
+			private readonly int index;
+
+			internal ParameterInfoImpl(MissingMethod method, int index)
+			{
+				this.method = method;
+				this.index = index;
+			}
+
+			public override string Name
+			{
+				get { throw new MissingMemberException(method); }
+			}
+
+			public override Type ParameterType
+			{
+				get { return index == -1 ? method.signature.GetReturnType(method) : method.signature.GetParameterType(method, index); }
+			}
+
+			public override ParameterAttributes Attributes
+			{
+				get { throw new MissingMemberException(method); }
+			}
+
+			public override int Position
+			{
+				get { return index; }
+			}
+
+			public override object RawDefaultValue
+			{
+				get { throw new MissingMemberException(method); }
+			}
+
+			public override Type[] GetOptionalCustomModifiers()
+			{
+				if (index == -1)
+				{
+					return Util.Copy(method.signature.GetReturnTypeOptionalCustomModifiers(method));
+				}
+				return Util.Copy(method.signature.GetParameterOptionalCustomModifiers(method, index));
+			}
+
+			public override Type[] GetRequiredCustomModifiers()
+			{
+				if (index == -1)
+				{
+					return Util.Copy(method.signature.GetReturnTypeRequiredCustomModifiers(method));
+				}
+				return Util.Copy(method.signature.GetParameterRequiredCustomModifiers(method, index));
+			}
+
+			public override MemberInfo Member
+			{
+				get { return method; }
+			}
+
+			public override int MetadataToken
+			{
+				get { throw new MissingMemberException(method); }
+			}
+
+			internal override Module Module
+			{
+				get { return method.Module; }
+			}
+		}
+
+		public override ParameterInfo[] GetParameters()
+		{
+			ParameterInfoImpl[] parameters = new ParameterInfoImpl[signature.GetParameterCount()];
+			for (int i = 0; i < parameters.Length; i++)
+			{
+				parameters[i] = new ParameterInfoImpl(this, i);
+			}
+			return parameters;
+		}
+
+		public override MethodAttributes Attributes
+		{
+			get { throw new MissingMemberException(this); }
+		}
+
+		public override MethodImplAttributes GetMethodImplementationFlags()
+		{
+			throw new MissingMemberException(this);
+		}
+
+		public override MethodBody GetMethodBody()
+		{
+			throw new MissingMemberException(this);
+		}
+
+		public override CallingConventions CallingConvention
+		{
+			get { return signature.CallingConvention; }
+		}
+
+		internal override int ImportTo(IKVM.Reflection.Emit.ModuleBuilder module)
+		{
+			throw new MissingMemberException(this);
+		}
+
+		public override string Name
+		{
+			get { return name; }
+		}
+
+		public override Type DeclaringType
+		{
+			get { return declaringType.IsModulePseudoType ? null : declaringType; }
+		}
+
+		public override Module Module
+		{
+			get { return declaringType.Module; }
+		}
+
+		public override bool Equals(object obj)
+		{
+			MissingMethod other = obj as MissingMethod;
+			return other != null
+				&& other.declaringType == declaringType
+				&& other.name == name
+				&& other.signature.Equals(signature);
+		}
+
+		public override int GetHashCode()
+		{
+			return declaringType.GetHashCode() ^ name.GetHashCode() ^ signature.GetHashCode();
 		}
 	}
 }

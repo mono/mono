@@ -99,16 +99,20 @@ namespace IKVM.Reflection.Reader
 		public override Type[] __GetDeclaredInterfaces()
 		{
 			int token = this.MetadataToken;
-			List<Type> list = new List<Type>();
+			List<Type> list = null;
 			// TODO use binary search?
 			for (int i = 0; i < module.InterfaceImpl.records.Length; i++)
 			{
 				if (module.InterfaceImpl.records[i].Class == token)
 				{
+					if (list == null)
+					{
+						list = new List<Type>();
+					}
 					list.Add(module.ResolveType(module.InterfaceImpl.records[i].Interface, this));
 				}
 			}
-			return list.ToArray();
+			return Util.ToArray(list, Type.EmptyTypes);
 		}
 
 		public override MethodBase[] __GetDeclaredMethods()

@@ -318,11 +318,12 @@ namespace IKVM.Reflection.Writer
 		internal int Add(ByteBuffer bb)
 		{
 			Debug.Assert(!frozen);
-			if (bb.Length == 0)
+			int bblen = bb.Length;
+			if (bblen == 0)
 			{
 				return 0;
 			}
-			int lenlen = MetadataWriter.GetCompressedIntLength(bb.Length);
+			int lenlen = MetadataWriter.GetCompressedIntLength(bblen);
 			int hash = bb.Hash();
 			int index = (hash & 0x7FFFFFFF) % map.Length;
 			Key[] keys = map;
@@ -330,8 +331,8 @@ namespace IKVM.Reflection.Writer
 			while (keys[index].offset != 0)
 			{
 				if (keys[index].hash == hash
-					&& keys[index].len == bb.Length
-					&& buf.Match(keys[index].offset + lenlen, bb, 0, bb.Length))
+					&& keys[index].len == bblen
+					&& buf.Match(keys[index].offset + lenlen, bb, 0, bblen))
 				{
 					return keys[index].offset;
 				}
@@ -351,9 +352,9 @@ namespace IKVM.Reflection.Writer
 				index++;
 			}
 			int offset = buf.Position;
-			buf.WriteCompressedInt(bb.Length);
+			buf.WriteCompressedInt(bblen);
 			buf.Write(bb);
-			keys[index].len = bb.Length;
+			keys[index].len = bblen;
 			keys[index].hash = hash;
 			keys[index].offset = offset;
 			return offset;

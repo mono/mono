@@ -375,13 +375,14 @@ namespace IKVM.Reflection.Emit
 
 		internal int WriteBlob(ModuleBuilder moduleBuilder)
 		{
-			ByteBuffer bb = new ByteBuffer(100);
+			ByteBuffer bb;
 			if (blob != null)
 			{
-				bb.Write(blob);
+				bb = ByteBuffer.Wrap(blob);
 			}
 			else
 			{
+				bb = new ByteBuffer(100);
 				BlobWriter bw = new BlobWriter(moduleBuilder, this, bb);
 				bw.WriteCustomAttributeBlob();
 			}

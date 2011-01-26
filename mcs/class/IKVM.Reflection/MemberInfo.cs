@@ -52,6 +52,11 @@ namespace IKVM.Reflection
 			get;
 		}
 
+		public virtual bool __IsMissing
+		{
+			get { return false; }
+		}
+
 		public bool IsDefined(Type attributeType, bool inherit)
 		{
 			return CustomAttributeData.__GetCustomAttributes(this, attributeType, inherit).Count != 0;
