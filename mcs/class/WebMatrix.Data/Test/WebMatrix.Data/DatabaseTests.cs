@@ -42,12 +42,13 @@ namespace MonoTests.WebMatrix.Data
 	public class DatabaseTests
 	{
 		Database database;
+		string dbPath;
 
 		[SetUp]
 		public void Setup ()
 		{
-			string path = Path.Combine ("Test", "testsqlite.db");
-			database = Database.OpenConnectionString ("Data Source="+path+";Version=3;", "Mono.Data.Sqlite");
+			dbPath = Path.Combine ("Test", "testsqlite.db");
+			database = Database.OpenConnectionString ("Data Source="+dbPath+";Version=3;", "Mono.Data.Sqlite");
 		}
 
 		[Test]
@@ -77,6 +78,28 @@ namespace MonoTests.WebMatrix.Data
 				Assert.AreEqual (col2[index], row.Priority);
 				index++;
 			}
+		}
+
+		[Test]
+		public void InsertTest ()
+		{
+			string newPath = dbPath + ".tmp";
+			File.Copy (dbPath, newPath, true);
+
+			database = Database.OpenConnectionString ("Data Source="+newPath+";Version=3;", "Mono.Data.Sqlite");
+			database.Execute ("insert into memos values ('foo', @0);", 42);
+
+			Assert.AreEqual (42, database.QueryValue ("select Priority from memos where Text='foo'"));
+			Assert.AreEqual (6, database.GetLastInsertId ());
+
+			File.Delete (newPath);
+		}
+
+		[Test]
+		public void QueryValueTest ()
+		{
+			var res = database.QueryValue ("select Priority from memos where Text='Webmatrix'");
+			Assert.AreEqual (10, res);
 		}
 
 		[Test]
