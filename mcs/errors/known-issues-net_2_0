@@ -21,17 +21,7 @@ cs1540-6.cs NO ERROR Is it real error
 
 # all the following are from bug #628673
 cs0122-35.cs
-cs0012.cs
-cs0012-2.cs
-cs0012-3.cs NO ERROR
-cs0012-4.cs NO ERROR
-cs0012-5.cs NO ERROR
-cs0012-6.cs
-cs0012-7.cs
 cs0012-8.cs
-cs0012-9.cs
-cs0012-10.cs
-cs0012-11.cs
 cs0023-11.cs
 cs0111-3.cs
 cs0122-19.cs
@@ -41,9 +31,7 @@ cs0168-2.cs
 cs0177-8.cs NO ERROR
 cs0307-6.cs
 cs0308-7.cs
-cs0315.cs NO ERROR
 cs0520.cs
-cs1509.cs
 cs1542.cs NO ERROR
 cs1574-3.cs NO ERROR
 cs1574-6.cs NO ERROR
@@ -52,9 +40,4 @@ cs1581-2.cs
 cs1581.cs
 cs1584.cs
 cs1612-6.cs NO ERROR
-cs1701.cs
-cs1702.cs
-cs1703.cs NO ERROR
-cs1704.cs NO ERROR
-cs1705.cs
 cs3006-7.cs NO ERROR

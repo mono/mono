@@ -1,4 +1,4 @@
-// CS1509: Referenced file `CS1509-module.dll' is not an assembly. Consider using `-addmodule' option instead
+// CS1509: Referenced assembly file `CS1509-module.dll' is a module. Consider using `-addmodule' option to add the module
 // Line: 0
 // Compiler options: -r:CS1509-module.dll
 
