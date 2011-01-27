@@ -17066,6 +17066,29 @@
       </method>
     </type>
   </test>
+  <test name="gtest-551.cs">
+    <type name="Base`1[T]">
+      <method name="Void .ctor()">
+        <size>48</size>
+      </method>
+    </type>
+    <type name="Derived`1[T]">
+      <method name="Void .ctor()">
+        <size>28</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="System.Object Clone()">
+        <size>2</size>
+      </method>
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -27762,6 +27785,19 @@
       </method>
       <method name="Int32 Main()">
         <size>63</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-optional-16.cs">
+    <type name="MainClass">
+      <method name="Int32 TestParams(System.Object, System.Object[])">
+        <size>58</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>49</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -38663,6 +38699,14 @@
         <size>21</size>
       </method>
     </type>
+    <type name="B">
+      <method name="System.Object clone()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="test-484.cs">
     <type name="Test.TestBit">
@@ -45934,6 +45978,89 @@
     <type name="A">
       <method name="Int32 Main()">
         <size>26</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-804.cs">
+    <type name="A">
+      <method name="Int32 get_Foo()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.String get_Foo()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Char IB_2.get_Foo()">
+        <size>3</size>
+      </method>
+      <method name="Byte get_Foo()">
+        <size>2</size>
+      </method>
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-805.cs">
+    <type name="TestClass">
+      <method name="Int32 Main()">
+        <size>29</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 ReturnValue()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-806.cs">
+    <type name="A1">
+      <method name="Void .ctor(Single)">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor(UInt64)">
+        <size>16</size>
+      </method>
+    </type>
+    <type name="T1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="T2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>86</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
