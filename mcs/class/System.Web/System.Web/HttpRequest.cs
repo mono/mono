@@ -1361,9 +1361,9 @@ namespace System.Web
 					baseVirtualDir = appVirtualPath;
 				virtualPath = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (baseVirtualDir), virtualPath);
 				if (!VirtualPathUtility.IsAbsolute (virtualPath))
-					virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
+					virtualPath = VirtualPathUtility.ToAbsolute (virtualPath, false);
 			} else if (!VirtualPathUtility.IsAbsolute (virtualPath))
-				virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
+				virtualPath = VirtualPathUtility.ToAbsolute (virtualPath, false);
 
 			if (!allowCrossAppMapping){
 				if (!StrUtils.StartsWith (virtualPath, appVirtualPath, true))
