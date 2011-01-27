@@ -3745,20 +3745,18 @@ namespace Mono.CSharp {
 					}
 				}
 
-				int args_gap = System.Math.Abs (arg_count - param_count);
 				if (optional_count != 0) {
-					if (args_gap > optional_count)
-						return int.MaxValue - 10000 + args_gap - optional_count;
-
 					// Readjust expected number when params used
 					if (cpd.HasParams) {
 						optional_count--;
 						if (arg_count < param_count)
 							param_count--;
 					} else if (arg_count > param_count) {
+						int args_gap = System.Math.Abs (arg_count - param_count);
 						return int.MaxValue - 10000 + args_gap;
 					}
 				} else if (arg_count != param_count) {
+					int args_gap = System.Math.Abs (arg_count - param_count);
 					if (!cpd.HasParams)
 						return int.MaxValue - 10000 + args_gap;
 					if (arg_count < param_count - 1)
