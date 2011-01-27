@@ -471,20 +471,13 @@ namespace System.Net {
 				headers.SetInternal ("Location", location);
 
 			if (cookies != null) {
-				bool firstDone = false;
-				StringBuilder cookieSB = new StringBuilder ();
-				foreach (Cookie cookie in cookies) {
-					if (firstDone)
-						cookieSB.Append (",");
-					firstDone = true;
-					cookieSB.Append (cookie.ToClientString ());
-				}
-				headers.SetInternal("Set-Cookie2", cookieSB.ToString ());
+				foreach (Cookie cookie in cookies)
+					headers.SetInternal ("Set-Cookie", cookie.ToClientString ());
 			}
 
 			StreamWriter writer = new StreamWriter (ms, encoding);
 			writer.Write ("HTTP/{0} {1} {2}\r\n", version, status_code, status_description);
-			string headers_str = headers.ToString ();
+			string headers_str = headers.ToStringMultiValue ();
 			writer.Write (headers_str);
 			writer.Flush ();
 			int preamble = encoding.GetPreamble ().Length;
