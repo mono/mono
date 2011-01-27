@@ -168,12 +168,12 @@ net_4_0_dirs := \
 	Microsoft.Web.Infrastructure \
 	WebMatrix.Data
 
-net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
+net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 moonlight_raw_SUBDIRS := $(moonlight_dirs)
 monodroid_SUBDIRS := $(mobile_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
-net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
+net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) aot-compiler
 
 include ../build/rules.make
 
