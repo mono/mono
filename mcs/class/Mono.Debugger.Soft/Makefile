@@ -15,9 +15,14 @@ dtest-app.exe: Test/dtest-app.cs
 	$(CSCOMPILE) -out:$@ -unsafe -debug Test/dtest-app.cs
 
 dtest-excfilter.exe: Test/dtest-excfilter.il
-	$(INTERNAL_ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
+	MONO_PATH=$(topdir)/class/lib/$(PROFILE) $(INTERNAL_ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
 
-CLEAN_FILES = dtest-app.exe dtest-app.exe.mdb
+CLEAN_FILES = dtest-app.exe dtest-app.exe.mdb dtest-excfilter.exe dtest-excfilter.exe.mdb
+
+EXTRA_DISTFILES = \
+	Test/dtest-app.cs \
+	Test/dtest.cs \
+	Test/dtest-excfilter.il
 
 #NO_TEST = yes
 
