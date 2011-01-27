@@ -184,6 +184,10 @@ namespace System.Threading.Tasks
 							break;
 					}
 
+					// FIXME: the following code is failing at the moment on 32bits, disable it for now
+					if (!Environment.Is64BitProcess)
+						return;
+
 					// Try toExclusive steal fromInclusive our right neighbor (cyclic)
 					int len = num + localWorker;
 					for (int sIndex = localWorker + 1; sIndex < len; ++sIndex) {
