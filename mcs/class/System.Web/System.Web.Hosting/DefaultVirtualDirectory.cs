@@ -28,15 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace System.Web.Hosting {
 
-	class DefaultVirtualDirectory : VirtualDirectory
+	sealed class DefaultVirtualDirectory : VirtualDirectory
 	{
 		string phys_dir;
 		string virtual_dir;
@@ -50,33 +49,37 @@ namespace System.Web.Hosting {
 		{
 			if (phys_dir == null) {
 				string vpath = VirtualPath;
-				virtual_dir = VirtualPathUtility.GetDirectory (vpath);
-				phys_dir = HostingEnvironment.MapPath (virtual_dir);
+				string path = HostingEnvironment.MapPath (vpath);
+				if (File.Exists (path)) {
+					virtual_dir = VirtualPathUtility.GetDirectory (vpath);
+					phys_dir = HostingEnvironment.MapPath (virtual_dir);
+				} else {
+					virtual_dir = VirtualPathUtility.AppendTrailingSlash (vpath);
+					phys_dir = path;
+				}
 			}
 		}
 
-		ArrayList AddDirectories (ArrayList list, string dir)
+		List <VirtualFileBase> AddDirectories (List <VirtualFileBase> list, string dir)
 		{
-			foreach (string name in Directory.GetDirectories (phys_dir)) {
-				string vdir = VirtualPathUtility.Combine (virtual_dir, Path.GetFileName (name));
-				list.Add (new DefaultVirtualDirectory (vdir));
-			}
+			foreach (string name in Directory.GetDirectories (phys_dir))
+				list.Add (new DefaultVirtualDirectory (VirtualPathUtility.Combine (virtual_dir, Path.GetFileName (name))));
+
 			return list;
 		}
 
-		ArrayList AddFiles (ArrayList list, string dir)
+		List <VirtualFileBase> AddFiles (List <VirtualFileBase> list, string dir)
 		{
-			foreach (string name in Directory.GetFiles (phys_dir)) {
-				string vdir = VirtualPathUtility.Combine (virtual_dir, Path.GetFileName (name));
-				list.Add (new DefaultVirtualFile (vdir));
-			}
+			foreach (string name in Directory.GetFiles (phys_dir))
+				list.Add (new DefaultVirtualFile (VirtualPathUtility.Combine (virtual_dir, Path.GetFileName (name))));
+
 			return list;
 		}
 
 		public override IEnumerable Children {
 			get {
 				Init ();
-				ArrayList list = new ArrayList ();
+				var list = new List <VirtualFileBase> ();
 				AddDirectories (list, phys_dir);
 				return AddFiles (list, phys_dir);
 			}
@@ -85,19 +88,17 @@ namespace System.Web.Hosting {
 		public override IEnumerable Directories {
 			get {
 				Init ();
-				ArrayList list = new ArrayList ();
-				return AddDirectories (list, phys_dir);
+				return AddDirectories (new List <VirtualFileBase> (), phys_dir);
 			}
 		}
 		
 		public override IEnumerable Files {
 			get {
 				Init ();
-				ArrayList list = new ArrayList ();
-				return AddFiles (list, phys_dir);
+				return AddFiles (new List <VirtualFileBase> (), phys_dir);
 			}
 		}
 	}
 }
-#endif
+
 

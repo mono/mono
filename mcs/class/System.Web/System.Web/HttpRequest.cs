@@ -1387,9 +1387,9 @@ namespace System.Web
 					baseVirtualDir = appVirtualPath;
 				virtualPath = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (baseVirtualDir), virtualPath);
 				if (!VirtualPathUtility.IsAbsolute (virtualPath))
-					virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
+					virtualPath = VirtualPathUtility.ToAbsolute (virtualPath, false);
 			} else if (!VirtualPathUtility.IsAbsolute (virtualPath))
-				virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
+				virtualPath = VirtualPathUtility.ToAbsolute (virtualPath, false);
 
 			bool isAppVirtualPath = String.Compare (virtualPath, appVirtualPath, RuntimeHelpers.StringComparison) == 0;
 			appVirtualPath = VirtualPathUtility.AppendTrailingSlash (appVirtualPath);
