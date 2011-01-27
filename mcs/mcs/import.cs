@@ -1968,13 +1968,19 @@ namespace Mono.CSharp
 						//
 						if (imported_events != null) {
 							// The backing event field should be private but it may not
-							int index = imported_events.FindIndex (l => l.Name == fi.Name);
-							if (index >= 0) {
-								event_spec = imported_events[index];
-								event_spec.BackingField = (FieldSpec) imported;
-								imported_events.RemoveAt (index);
-								continue;
+							int i;
+							for (i = 0; i < imported_events.Count; ++i) {
+								var ev = imported_events[i];
+								if (ev.Name == fi.Name) {
+									ev.BackingField = (FieldSpec) imported;
+									imported_events.RemoveAt (i);
+									i = -1;
+									break;
+								}
 							}
+
+							if (i < 0)
+								continue;
 						}
 
 						break;
