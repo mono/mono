@@ -29,6 +29,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Dynamic;
 using System.Data.Common;
 using System.Configuration;
@@ -41,11 +42,25 @@ namespace WebMatrix.Data
 	{
 		public static event EventHandler<ConnectionEventArgs> ConnectionOpened;
 
+		bool opened;
 		DbConnection connection;
+		readonly string providerName;
 
-		private Database (DbConnection connection)
+		static readonly Dictionary<string, string> lastInsertedIdStmts = new Dictionary<string, string> ();
+
+		static Database ()
+		{
+			// Add your own DB-specific way to do so
+			lastInsertedIdStmts.Add ("System.Data.SqlClient", "select @@IDENTITY;");
+			lastInsertedIdStmts.Add ("Mono.Data.Sqlite", "select last_insert_rowid ();");
+			lastInsertedIdStmts.Add ("MySql.Data", "SELECT LAST_INSERT_ID();");
+			lastInsertedIdStmts.Add ("Npgsql", "SELECT lastval();");
+		}
+
+		private Database (DbConnection connection, string providerName)
 		{
 			this.connection = connection;
+			this.providerName = providerName;
 		}
 
 		public static Database Open (string name)
@@ -68,12 +83,13 @@ namespace WebMatrix.Data
 			var conn = factory.CreateConnection ();
 			conn.ConnectionString = connectionString;
 
-			return new Database (conn);
+			return new Database (conn, providerName);
 		}
 
 		public void Close ()
 		{
-			Dispose ();
+			opened = false;
+			connection.Close ();
 		}
 
 		public void Dispose ()
@@ -83,8 +99,11 @@ namespace WebMatrix.Data
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
+			if (disposing) {
+				if (opened)
+					connection.Close ();
 				connection.Dispose ();
+			}
 		}
 
 		public int Execute (string commandText, params object[] args)
@@ -92,12 +111,10 @@ namespace WebMatrix.Data
 			var command = PrepareCommand (commandText);
 			PrepareCommandParameters (command, args);
 
-			connection.Open ();
-			TriggerConnectionOpened (this, connection);
+			EnsureConnectionOpened ();
 
 			var result = command.ExecuteNonQuery ();
 
-			connection.Close ();
 			command.Dispose ();
 
 			return result;
@@ -119,13 +136,12 @@ namespace WebMatrix.Data
 
 		List<Dictionary<string, object>> QueryInternal (string commandText, object[] args, bool unique)
 		{
+			EnsureConnectionOpened ();
+
 			var command = PrepareCommand (commandText);
 			PrepareCommandParameters (command, args);
 			string[] columnsNames;
 			var rows = new List<Dictionary<string, object>> ();
-
-			connection.Open ();
-			TriggerConnectionOpened (this, connection);
 
 			using (var reader = command.ExecuteReader ()) {
 				if (!reader.Read () || !reader.HasRows)
@@ -147,7 +163,6 @@ namespace WebMatrix.Data
 				} while (!unique && reader.Read ());
 			}
 
-			connection.Close ();
 			command.Dispose ();
 
 			return rows;
@@ -155,24 +170,23 @@ namespace WebMatrix.Data
 
 		public object QueryValue (string commandText, params object[] args)
 		{
+			EnsureConnectionOpened ();
+
 			var command = PrepareCommand (commandText);
 			PrepareCommandParameters (command, args);
 
-			connection.Open ();
-			TriggerConnectionOpened (this, connection);
-
 			var result = command.ExecuteScalar ();
 
-			connection.Close ();
 			command.Dispose ();
 
 			return result;
 		}
 
-		// TODO: I don't think this is actually quite generic (SQL Server specific)
 		public object GetLastInsertId ()
 		{
-			const string sql = "select @@IDENTITY";
+			string sql;
+			if (!lastInsertedIdStmts.TryGetValue (providerName, out sql))
+				throw new NotSupportedException ("This operation is not available for your database");
 
 			return QueryValue (sql);
 		}
@@ -205,6 +219,16 @@ namespace WebMatrix.Data
 			EventHandler<ConnectionEventArgs> evt = ConnectionOpened;
 			if (evt != null)
 				evt (self, new ConnectionEventArgs (connection));
+		}
+
+		void EnsureConnectionOpened ()
+		{
+			if (opened)
+				return;
+
+			connection.Open ();
+			opened = true;
+			TriggerConnectionOpened (this, connection);
 		}
 
 		public DbConnection Connection {
