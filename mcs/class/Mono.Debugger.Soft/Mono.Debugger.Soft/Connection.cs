@@ -21,6 +21,16 @@ namespace Mono.Debugger.Soft
 		public int MinorVersion {
 			get; set;
 		}
+
+		/*
+		 * Check that this version is at least major:minor
+		 */
+		public bool AtLeast (int major, int minor) {
+			if ((MajorVersion > major) || ((MajorVersion == major && MinorVersion >= minor)))
+				return true;
+			else
+				return false;
+		}
 	}
 
 	class DebugInfo {
