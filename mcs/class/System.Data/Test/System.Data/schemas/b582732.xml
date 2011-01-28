@@ -1,0 +1,35 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns=""
+xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true"
+msdata:UseCurrentLocale="true" msprop:DS1="extended0">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="TABLE1" msprop:T1="extended1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="C1" type="xs:int" minOccurs="0"
+msprop:C1Ext1="extended2" />
+                <xs:element name="C2" type="xs:string" minOccurs="0"
+msprop:C2Ext1="extended3" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <TABLE1>
+    <C1>1</C1>
+    <C2>One</C2>
+  </TABLE1>
+  <TABLE1>
+    <C1>2</C1>
+    <C2>Two</C2>
+  </TABLE1>
+</NewDataSet>
+
+
