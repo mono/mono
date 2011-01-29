@@ -503,8 +503,10 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 			ji = NULL;
 
 		/* Avoid recursion */
-		if (!(ji && ji->method->wrapper_type == MONO_WRAPPER_SYNCHRONIZED))
+		if (!(ji && ji->method->wrapper_type == MONO_WRAPPER_SYNCHRONIZED)) {
 			m = mono_marshal_get_synchronized_wrapper (m);
+			need_rgctx_tramp = FALSE;
+		}
 	}
 
 	/* Calls made through delegates on platforms without delegate trampolines */
