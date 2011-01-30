@@ -92,6 +92,11 @@ namespace Mono.CSharp
 			return ctx.Report.SetPrinter (report_printer);
 		}				
 
+		public static string [] InitAndGetStartupFiles (string [] args)
+		{
+			return InitAndGetStartupFiles (args, null);
+		}
+
 		/// <summary>
 		///   Optional initialization for the Evaluator.
 		/// </summary>
@@ -108,8 +113,13 @@ namespace Mono.CSharp
 		///
 		///  This method return an array of strings that contains any
 		///  files that were specified in `args'.
+		///
+		///  If the unknownOptionParser is not null, this function is invoked
+		///  with the current args array and the index of the option that is not
+		///  known.  A value of true means that the value was processed, otherwise
+		///  it will be reported as an error
 		/// </remarks>
-		public static string [] InitAndGetStartupFiles (string [] args)
+		public static string [] InitAndGetStartupFiles (string [] args, Func<string [], int, int> unknownOptionParser)
 		{
 			lock (evaluator_lock){
 				if (inited)
@@ -117,7 +127,7 @@ namespace Mono.CSharp
 
 				CompilerCallableEntryPoint.Reset ();
 				var crp = new ConsoleReportPrinter ();
-				driver = Driver.Create (args, false, crp);
+				driver = Driver.Create (args, false, unknownOptionParser, crp);
 				if (driver == null)
 					throw new Exception ("Failed to create compiler driver with the given arguments");
 
@@ -145,12 +155,6 @@ namespace Mono.CSharp
 				inited = true;
 
 				return startup_files.ToArray ();
-			}
-		}
-
-		public static string StartupEvalExpression {
-			get {
-				return Driver.EvalExpression;
 			}
 		}
 

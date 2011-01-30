@@ -32,6 +32,7 @@ using Mono.CSharp;
 namespace Mono {
 
 	public class Driver {
+		public static string StartupEvalExpression;
 		
 		static int Main (string [] args)
 		{
@@ -53,7 +54,7 @@ namespace Mono {
 		{
 			string[] startup_files;
 			try {
-				startup_files = Evaluator.InitAndGetStartupFiles (args);
+				startup_files = Evaluator.InitAndGetStartupFiles (args, HandleExtraArguments);
 				Evaluator.DescribeTypeExpressions = true;
 				Evaluator.SetInteractiveBaseClass (typeof (InteractiveBaseShell));
 			} catch {
@@ -61,6 +62,16 @@ namespace Mono {
 			}
 			return new CSharpShell ().Run (startup_files);
 		}
+
+		static int HandleExtraArguments (string [] args, int pos)
+		{
+			if (args [pos] == "-e" && pos+1 < args.Length){
+				StartupEvalExpression = args [pos+1];
+				return pos+1;
+			}
+			return -1;
+		}
+		
 	}
 
 	public class InteractiveBaseShell : InteractiveBase {
@@ -201,11 +212,11 @@ namespace Mono {
 
 		void ExecuteSources (IEnumerable<string> sources, bool ignore_errors)
 		{
-			bool first = true;
-			
 			foreach (string file in sources){
 				try {
 					try {
+						bool first = true;
+			
 						using (System.IO.StreamReader r = System.IO.File.OpenText (file)){
 							ReadEvalPrintLoopWith (p => {
 								var line = r.ReadLine ();
@@ -273,23 +284,18 @@ namespace Mono {
 		public int ReadEvalPrintLoop ()
 		{
 			if (startup_files != null && startup_files.Length == 0)
-				InitTerminal (startup_files.Length == 0 && Evaluator.StartupEvalExpression == null);
+				InitTerminal (startup_files.Length == 0 && Driver.StartupEvalExpression == null);
 
 			InitializeUsing ();
 
 			LoadStartupFiles ();
 
-			//
-			// Interactive or startup files provided?
-			//
-			string startup_expression = Evaluator.StartupEvalExpression;
-			
 			if (startup_files.Length != 0)
 				ExecuteSources (startup_files, false);
-			else if (Evaluator.StartupEvalExpression != null){
+			else if (Driver.StartupEvalExpression != null){
 				ReadEvalPrintLoopWith (p => {
-					var ret = startup_expression;
-					startup_expression = null;
+					var ret = Driver.StartupEvalExpression;
+					Driver.StartupEvalExpression = null;
 					return ret;
 					});
 			} else
