@@ -1,3 +1,9 @@
+2010-01-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #667236 - Based on patch by Kalyanov.Dmitry@gmail.com
+	* OracleParameter.cs (GetOutValue): Handle OciDataType.Integer 
+	appropriately using the underlying dbType.
+	
 2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #322695
