@@ -115,6 +115,7 @@ namespace Mono.CSharp
 				if (inited)
 					return new string [0];
 
+				CompilerCallableEntryPoint.Reset ();
 				var crp = new ConsoleReportPrinter ();
 				driver = Driver.Create (args, false, crp);
 				if (driver == null)
@@ -123,7 +124,6 @@ namespace Mono.CSharp
 				crp.Fatal = driver.fatal_errors;
 				ctx = driver.ctx;
 
-				CompilerCallableEntryPoint.Reset ();
 				RootContext.ToplevelTypes = new ModuleContainer (ctx);
 				
 				var startup_files = new List<string> ();
@@ -1051,6 +1051,16 @@ namespace Mono.CSharp
 		{
 			Evaluator.LoadAssembly (assembly);
 		}
+
+		static public void print (string text)
+		{
+			Output.WriteLine (text);
+		}
+
+		static public void print (string fmt, params object [] args)
+		{
+			Output.WriteLine (fmt, args);
+		}
 #endif
 		
 		/// <summary>
@@ -1067,6 +1077,7 @@ namespace Mono.CSharp
 					"  Prompt                  - The prompt used by the C# shell\n" +
 					"  ContinuationPrompt      - The prompt for partial input\n" +
 					"  Time(() -> { })         - Times the specified code\n" +
+					"  print (obj)             - Shorthand for Console.WriteLine\n" +
 					"  quit;                   - You'll never believe it - this quits the repl!\n" +
 					"  help;                   - This help text\n";
 			}

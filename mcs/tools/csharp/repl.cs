@@ -59,7 +59,6 @@ namespace Mono {
 			} catch {
 				return 1;
 			}
-
 			return new CSharpShell ().Run (startup_files);
 		}
 	}
@@ -202,11 +201,20 @@ namespace Mono {
 
 		void ExecuteSources (IEnumerable<string> sources, bool ignore_errors)
 		{
+			bool first = true;
+			
 			foreach (string file in sources){
 				try {
 					try {
 						using (System.IO.StreamReader r = System.IO.File.OpenText (file)){
-							ReadEvalPrintLoopWith (p => r.ReadLine ());
+							ReadEvalPrintLoopWith (p => {
+								var line = r.ReadLine ();
+								if (first && line.StartsWith ("#!")){
+									line = r.ReadLine ();
+									first = false;
+								}
+								return line;
+							});
 						}
 					} catch (FileNotFoundException){
 						Console.Error.WriteLine ("cs2001: Source file `{0}' not found", file);
