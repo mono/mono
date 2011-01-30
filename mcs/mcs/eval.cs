@@ -148,6 +148,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public static string StartupEvalExpression {
+			get {
+				return Driver.EvalExpression;
+			}
+		}
+
 		static void Init ()
 		{
 			Init (new string [0]);

@@ -42,6 +42,11 @@ namespace Mono.CSharp
 
 		static readonly char[] argument_value_separator = new char [] { ';', ',' };
 
+#if !STATIC
+		// The expression to evaluate if -e is passed to the REPL
+		public static string EvalExpression;
+#endif
+
 		private Driver (CompilerContext ctx)
 		{
 			this.ctx = ctx;
@@ -748,6 +753,17 @@ namespace Mono.CSharp
 				RootContext.LoadDefaultReferences = false;
 				return true;
 
+#if !STATIC
+			case "-e":
+				if ((i + 1) >= args.Length){
+					Report.Error (
+						1900,
+						"-e requires an expression");
+					Environment.Exit (1);
+				}
+				EvalExpression = args [++i];
+				return true;
+#endif
 			default:
 				if (arg.StartsWith ("--fatal")){
 					if (arg.StartsWith ("--fatal=")){
@@ -1646,7 +1662,7 @@ namespace Mono.CSharp
 		{
 			CSharpParser.yacc_verbose_flag = 0;
 			Location.Reset ();
-
+			
 			if (!full_flag)
 				return;
 

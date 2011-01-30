@@ -173,7 +173,7 @@ namespace Mono {
 			Evaluate ("using System; using System.Linq; using System.Collections.Generic; using System.Collections;");
 		}
 
-		void InitTerminal ()
+		void InitTerminal (bool show_banner)
 		{
 #if ON_DOTNET
 			is_unix = false;
@@ -195,7 +195,7 @@ namespace Mono {
 //			Report.Stderr = Console.Out;
 			SetupConsole ();
 
-			if (isatty)
+			if (isatty && show_banner)
 				Console.WriteLine ("Mono C# Shell, type \"help;\" for help\n\nEnter statements below.");
 
 		}
@@ -265,7 +265,7 @@ namespace Mono {
 		public int ReadEvalPrintLoop ()
 		{
 			if (startup_files != null && startup_files.Length == 0)
-				InitTerminal ();
+				InitTerminal (startup_files.Length == 0 && Evaluator.StartupEvalExpression == null);
 
 			InitializeUsing ();
 
@@ -274,9 +274,17 @@ namespace Mono {
 			//
 			// Interactive or startup files provided?
 			//
+			string startup_expression = Evaluator.StartupEvalExpression;
+			
 			if (startup_files.Length != 0)
 				ExecuteSources (startup_files, false);
-			else
+			else if (Evaluator.StartupEvalExpression != null){
+				ReadEvalPrintLoopWith (p => {
+					var ret = startup_expression;
+					startup_expression = null;
+					return ret;
+					});
+			} else
 				ReadEvalPrintLoopWith (GetLine);
 
 			return 0;
