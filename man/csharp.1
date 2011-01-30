@@ -29,6 +29,16 @@ target process.
 .PP
 Files specified in the command line will be loaded and executed as
 scripts.
+.PP
+Starting with Mono 2.10, the 
+.I csharp
+command can be used as an interpreter executed by executables flagged
+with the Unix execute attribute.   To do this, make the first line of
+your C# source code look like this:
+.nf
+"#!/usr/bin/csharp" 
+Console.WriteLine ("Hello, World");
+.fi
 .SH OPTIONS
 .TP 
 .I "\-\-attach"
