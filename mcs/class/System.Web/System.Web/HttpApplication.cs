@@ -956,7 +956,13 @@ namespace System.Web
 				stop_processing = true;
 				PipelineDone ();
 			} catch (Exception e) {
-				ProcessError (e);
+				ThreadAbortException inner = e.InnerException as ThreadAbortException;
+				if (inner != null && FlagEnd.Value == inner.ExceptionState && !HttpRuntime.DomainUnloading) {
+					context.ClearError ();
+					Thread.ResetAbort ();
+				} else {
+					ProcessError (e);
+				}
 				stop_processing = true;
 				PipelineDone ();
 			}
