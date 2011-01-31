@@ -185,8 +185,12 @@ namespace System.Threading.Tasks
 					}
 
 					// FIXME: the following code is failing at the moment on 32bits, disable it for now
+#if MOONLIGHT || MOBILE
+					return;
+#else
 					if (!Environment.Is64BitProcess)
 						return;
+#endif
 
 					// Try toExclusive steal fromInclusive our right neighbor (cyclic)
 					int len = num + localWorker;
