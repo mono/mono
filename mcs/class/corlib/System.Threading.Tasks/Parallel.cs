@@ -27,11 +27,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace System.Threading.Tasks
 {
 	public static class Parallel
 	{
+#if MOONLIGHT || MOBILE
+		static readonly bool sixtyfour = IntPtr.Size == 8;
+#else
+		static readonly bool sixtyfour = Environment.Is64BitProcess;
+#endif
+
 		internal static int GetBestWorkerNumber ()
 		{
 			return GetBestWorkerNumber (TaskScheduler.Current);
@@ -156,7 +163,7 @@ namespace System.Threading.Tasks
 			Action workerMethod = delegate {
 				int localWorker = Interlocked.Increment (ref currentIndex);
 				StealRange range = ranges[localWorker];
-				int index = range.Actual;
+				int index = range.V64.Actual;
 				int stopIndex = localWorker + 1 == num ? toExclusive : Math.Min (toExclusive, index + step);
 				TLocal local = localInit ();
 
@@ -164,19 +171,25 @@ namespace System.Threading.Tasks
 				CancellationToken token = parallelOptions.CancellationToken;
 
 				try {
-					for (int i = index; i < stopIndex; range.Actual = ++i) {
+					for (int i = index; i < stopIndex;) {
 						if (infos.IsStopped)
 							return;
 
 						token.ThrowIfCancellationRequested ();
+
+						if (i >= stopIndex - range.V64.Stolen)
+							break;
 
 						if (infos.LowestBreakIteration != null && infos.LowestBreakIteration > i)
 							return;
 
 						state.CurrentIteration = i;
 						local = body (i, state, local);
-						if (i >= stopIndex - range.Stolen)
+
+						if (i + 1 >= stopIndex - range.V64.Stolen)
 							break;
+
+						range.V64.Actual = ++i;
 					}
 
 					// Try toExclusive steal fromInclusive our right neighbor (cyclic)
@@ -186,20 +199,33 @@ namespace System.Threading.Tasks
 						range = ranges[extWorker];
 
 						stopIndex = extWorker + 1 == num ? toExclusive : Math.Min (toExclusive, fromInclusive + (extWorker + 1) * step);
+						int stolen = -1;
 
-						int stolen;
 						do {
-							stolen = range.Stolen;
-							if (stopIndex - stolen > range.Actual)
-								goto next;
-						} while (Interlocked.CompareExchange (ref range.Stolen, stolen + 1, stolen) != stolen);
+							do {
+								long old;
+								StealValue64 val = new StealValue64 ();
 
-						stolen = stopIndex - stolen - 1;
+								old = sixtyfour ? range.V64.Value : Interlocked.CompareExchange (ref range.V64.Value, 0, 0);
+								val.Value = old;
 
-						if (stolen > range.Actual)
-							local = body (stolen, state, local);
+								if (val.Actual >= stopIndex - val.Stolen - 2)
+									goto next;
+								stolen = (val.Stolen += 1);
 
-					next:
+								if (Interlocked.CompareExchange (ref range.V64.Value, val.Value, old) == old)
+									break;
+							} while (true);
+
+							stolen = stopIndex - stolen;
+
+							if (stolen > range.V64.Actual)
+								local = body (stolen, state, local);
+							else
+								break;
+						} while (true);
+
+						next:
 						continue;
 					}
 				} finally {
@@ -218,14 +244,23 @@ namespace System.Threading.Tasks
 			return new ParallelLoopResult (infos.LowestBreakIteration, !(infos.IsStopped || infos.IsExceptional));
 		}
 
+		[StructLayout(LayoutKind.Explicit)]
+		struct StealValue64 {
+			[FieldOffset(0)]
+			public long Value;
+			[FieldOffset(0)]
+			public int Actual;
+			[FieldOffset(4)]
+			public int Stolen;
+		}
+
 		class StealRange
 		{
-			public int Stolen;
-			public int Actual;
+			public StealValue64 V64 = new StealValue64 ();
 
 			public StealRange (int fromInclusive, int i, int step)
 			{
-				Actual = fromInclusive + i * step;
+				V64.Actual = fromInclusive + i * step;
 			}
 		}
 
