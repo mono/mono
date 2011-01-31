@@ -644,6 +644,8 @@ static void suspend_current (void);
 
 static void clear_event_requests_for_assembly (MonoAssembly *assembly);
 
+static void clear_types_for_assembly (MonoAssembly *assembly);
+
 static void clear_breakpoints_for_domain (MonoDomain *domain);
 
 static void process_profiler_event (EventKind event, gpointer arg);
