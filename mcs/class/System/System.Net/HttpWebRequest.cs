@@ -75,6 +75,7 @@ namespace System.Net
 		bool preAuthenticate;
 		bool usedPreAuth;
 		Version version = HttpVersion.Version11;
+		bool force_version;
 		Version actualVersion;
 		IWebProxy proxy;
 		bool sendChunked;
@@ -450,6 +451,7 @@ namespace System.Net
 				if (value != HttpVersion.Version10 && value != HttpVersion.Version11)
 					throw new ArgumentException ("value");
 
+				force_version = true;
 				version = value; 
 			}
 		}
@@ -1073,7 +1075,7 @@ namespace System.Net
 									   actualUri.PathAndQuery);
 			}
 			
-			if (servicePoint.ProtocolVersion != null && servicePoint.ProtocolVersion < version) {
+			if (!force_version && servicePoint.ProtocolVersion != null && servicePoint.ProtocolVersion < version) {
 				actualVersion = servicePoint.ProtocolVersion;
 			} else {
 				actualVersion = version;
