@@ -92,6 +92,7 @@ namespace System.Xml.Schema
 			groups = new XmlSchemaObjectTable();
 			notations = new XmlSchemaObjectTable();
 			schemaTypes = new XmlSchemaObjectTable();
+			compilationItems = new XmlSchemaObjectCollection ();
 		}
 
 		#region Properties
@@ -360,7 +361,6 @@ namespace System.Xml.Schema
 
 			// Compile the content of this schema
 
-			compilationItems = new XmlSchemaObjectCollection ();
 			for (int i = 0; i < Items.Count; i++) {
 				compilationItems.Add (Items [i]);
 			}
@@ -574,7 +574,7 @@ namespace System.Xml.Schema
 			} else if (includedSchema != null) {
 				if (TargetNamespace == null && 
 					includedSchema.TargetNamespace != null) {
-					error (handler, "Target namespace is required to include a schema which has its own target namespace");
+					includedSchema.error (handler, String.Format ("On {0} element, targetNamespace is required to include a schema which has its own target namespace", ext.GetType ().Name));
 					return;
 				}
 				else if (TargetNamespace != null && 
@@ -591,11 +591,13 @@ namespace System.Xml.Schema
 		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items, ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver, XmlSchemaSet col)
 		{
 			foreach (XmlSchemaExternal ext in s.Includes)
-				ProcessExternal (handler, handledUris, resolver, ext, col);
-//				if (ext.Schema != null)
-//					AddExternalComponentsTo (ext.Schema, items);
-			foreach (XmlSchemaObject obj in s.Items)
+				s.ProcessExternal (handler, handledUris, resolver, ext, col);
+			foreach (XmlSchemaObject obj in s.compilationItems)
 				items.Add (obj);
+			// Items might be already resolved (recursive schema imports), or might not be (other cases), so we add items only when appropriate here. (duplicate check is anyways done elsewhere)
+			foreach (XmlSchemaObject obj in s.Items)
+				if (!items.Contains (obj))
+					items.Add (obj);
 		}
 
 		internal bool IsNamespaceAbsent (string ns)
