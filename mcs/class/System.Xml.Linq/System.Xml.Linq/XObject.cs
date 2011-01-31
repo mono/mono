@@ -162,5 +162,21 @@ namespace System.Xml.Linq
 			if ((options & LoadOptions.SetBaseUri) != LoadOptions.None)
 				BaseUri = r.BaseURI;
 		}
+		
+		internal virtual void OnAddingObject ()
+		{
+			if (Parent != null)
+				Parent.OnAddingObject ();
+			if (Changing != null)
+				Changing.Invoke (this, null);
+		}
+		
+		internal virtual void OnAddedObject ()
+		{
+			if (Parent != null)
+				Parent.OnAddedObject ();
+			if (Changed != null)
+				Changed.Invoke (this, null);
+		}
 	}
 }

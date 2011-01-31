@@ -71,10 +71,16 @@ namespace System.Xml.Linq
 				return;
 
 			foreach (object o in XUtil.ExpandArray (content))
+			{
 				if (!OnAddingObject (o, false, last, false))
+				{
+					OnAddingObject ();
 					AddNode (XUtil.ToNode (o));
+					OnAddedObject ();
+				}
+			}
 		}
-
+		
 		void AddNode (XNode n)
 		{
 			CheckChildType (n, false);
@@ -121,7 +127,7 @@ namespace System.Xml.Linq
 		{
 			return false;
 		}
-
+		
 		public XmlWriter CreateWriter ()
 		{
 			return new XNodeWriter (this);
