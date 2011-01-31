@@ -310,9 +310,12 @@ namespace Mono.Remoting.Channels.Unix
             }
             finally
             {
-                _stream.Close();
-				_client.Close ();
-                _serverChannel.ReleaseConnection (Thread.CurrentThread);
+				try {
+	                _serverChannel.ReleaseConnection (Thread.CurrentThread);
+	                _stream.Close();
+					_client.Close ();
+				} catch {
+				}
             }
         }
         
