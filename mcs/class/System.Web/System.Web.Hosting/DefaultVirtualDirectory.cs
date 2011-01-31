@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (c) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2006-2011 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -62,6 +62,9 @@ namespace System.Web.Hosting {
 
 		List <VirtualFileBase> AddDirectories (List <VirtualFileBase> list, string dir)
 		{
+			if (String.IsNullOrEmpty (dir) || !Directory.Exists (dir))
+				return list;
+			
 			foreach (string name in Directory.GetDirectories (phys_dir))
 				list.Add (new DefaultVirtualDirectory (VirtualPathUtility.Combine (virtual_dir, Path.GetFileName (name))));
 
@@ -70,6 +73,9 @@ namespace System.Web.Hosting {
 
 		List <VirtualFileBase> AddFiles (List <VirtualFileBase> list, string dir)
 		{
+			if (String.IsNullOrEmpty (dir) || !Directory.Exists (dir))
+				return list;
+			
 			foreach (string name in Directory.GetFiles (phys_dir))
 				list.Add (new DefaultVirtualFile (VirtualPathUtility.Combine (virtual_dir, Path.GetFileName (name))));
 
