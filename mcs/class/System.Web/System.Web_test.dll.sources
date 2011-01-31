@@ -379,6 +379,7 @@ System.Web.Security/FormsAuthenticationEventArgsCas.cs
 System.Web.Security/FormsAuthenticationModuleCas.cs
 System.Web.Security/FormsAuthenticationTicketCas.cs
 System.Web.Security/FormsIdentityCas.cs
+System.Web.Security/MachineKeyTest.cs
 System.Web.Security/PassportAuthenticationEventArgsCas.cs
 System.Web.Security/PassportAuthenticationModuleCas.cs
 System.Web.Security/PassportIdentityCas.cs
