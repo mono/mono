@@ -18,6 +18,8 @@ System.Web.Compilation/FolderLevelBuildProviderAppliesTo.cs
 System.Web.Compilation/FolderLevelBuildProviderAppliesToAttribute.cs
 System.Web.Compilation/RouteUrlExpressionBuilder.cs
 System.Web.Compilation/RouteValueExpressionBuilder.cs
+System.Web.Security/MachineKey.cs
+System.Web.Security/MachineKeyProtection.cs
 System.Web.SessionState_2.0/SessionStateBehavior.cs
 System.Web.Routing/PageRouteHandler.cs
 System.Web.UI/ClientIDMode.cs
