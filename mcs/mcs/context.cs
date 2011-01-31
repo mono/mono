@@ -582,6 +582,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		internal TimeReporter TimeReporter { get; set; }
+
 		#endregion
 	}
 

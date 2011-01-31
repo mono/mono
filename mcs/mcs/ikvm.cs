@@ -503,6 +503,8 @@ namespace Mono.CSharp
 			List<Tuple<RootNamespace, Assembly>> loaded;
 			base.LoadReferencesCore (module, out corlib, out loaded);
 
+			compiler.TimeReporter.Start (TimeReporter.TimerType.ReferencesImporting);
+
 			if (corlib == null) {
 				// System.Object was not found in any referenced assembly, use compiled assembly as corlib
 				corlib = module.DeclaringAssembly.Builder;
@@ -514,6 +516,8 @@ namespace Mono.CSharp
 			foreach (var entry in loaded) {
 				importer.ImportAssembly (entry.Item2, entry.Item1);
 			}
+
+			compiler.TimeReporter.Stop (TimeReporter.TimerType.ReferencesImporting);
 		}
 
 		public void LoadModules (AssemblyDefinitionStatic assembly, RootNamespace targetNamespace)

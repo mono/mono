@@ -802,6 +802,7 @@ namespace Mono.CSharp
 				break;
 			}
 
+			Compiler.TimeReporter.Start (TimeReporter.TimerType.OutputSave);
 			try {
 				if (RootContext.Target == Target.Module) {
 					SaveModule (pekind, machine);
@@ -811,11 +812,14 @@ namespace Mono.CSharp
 			} catch (Exception e) {
 				Report.Error (16, "Could not write to file `" + name + "', cause: " + e.Message);
 			}
+			Compiler.TimeReporter.Stop (TimeReporter.TimerType.OutputSave);
 
 			// Save debug symbols file
 			if (symbol_writer != null) {
 				// TODO: it should run in parallel
+				Compiler.TimeReporter.Start (TimeReporter.TimerType.DebugSave);
 				symbol_writer.WriteSymbolFile (SymbolWriter.GetGuid (module.Builder));
+				Compiler.TimeReporter.Stop (TimeReporter.TimerType.DebugSave);
 			}
 		}
 
@@ -1112,6 +1116,8 @@ namespace Mono.CSharp
 
 		protected void LoadReferencesCore (ModuleContainer module, out T corlib_assembly, out List<Tuple<RootNamespace, T>> loaded)
 		{
+			compiler.TimeReporter.Start (TimeReporter.TimerType.ReferencesLoading);
+
 			loaded = new List<Tuple<RootNamespace, T>> ();
 
 			//
@@ -1159,6 +1165,8 @@ namespace Mono.CSharp
 
 				loaded.Add (key);
 			}
+
+			compiler.TimeReporter.Stop (TimeReporter.TimerType.ReferencesLoading);
 		}
 	}
 }

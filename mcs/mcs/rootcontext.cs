@@ -155,7 +155,7 @@ namespace Mono.CSharp {
 		static public bool GenerateDebugInfo;
 
 		// Compiler debug flags only
-		public static bool ParseOnly, TokenizeOnly;
+		public static bool ParseOnly, TokenizeOnly, Timestamps;
 
 		public static bool ShowFullPaths;
 
@@ -225,6 +225,7 @@ namespace Mono.CSharp {
 			GenerateDebugInfo = false;
 			ParseOnly = false;
 			TokenizeOnly = false;
+			Timestamps = false;
 			Win32IconFile = null;
 			Win32ResourceFile = null;
 			Resources = null;

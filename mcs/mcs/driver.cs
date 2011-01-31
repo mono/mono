@@ -29,15 +29,8 @@ namespace Mono.CSharp
 	{
 		string first_source;
 
-		bool timestamps;
 		internal int fatal_errors;
 		
-		//
-		// Last time we took the time
-		//
-		Stopwatch stopwatch;
-		DateTime first_time;
-
 		internal readonly CompilerContext ctx;
 
 		static readonly char[] argument_value_separator = new char [] { ';', ',' };
@@ -60,32 +53,7 @@ namespace Mono.CSharp
 		Report Report {
 			get { return ctx.Report; }
 		}
-
-		void ShowTime (string msg)
-		{
-			if (!timestamps)
-				return;
-
-			stopwatch.Stop ();
-
-			Console.WriteLine ("{0,5}ms {1}", stopwatch.ElapsedMilliseconds, msg);
-
-			stopwatch = Stopwatch.StartNew ();
-		}
-
-		void ShowTotalTime (string msg)
-		{
-			if (!timestamps)
-				return;
-
-			DateTime now = DateTime.Now;
-			TimeSpan span = now - first_time;
-
-			Console.WriteLine (
-				"[{0:00}:{1:000}] {2}",
-				(int) span.TotalSeconds, span.Milliseconds, msg);
-		}	       
-	       
+       
 		void tokenize_file (CompilationUnit file, CompilerContext ctx)
 		{
 			Stream input;
@@ -743,7 +711,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--timestamp":
-				timestamps = true;
+				RootContext.Timestamps = true;
 				return true;
 
 			case "--debug": case "-g":
@@ -1448,16 +1416,16 @@ namespace Mono.CSharp
 		//
 		public bool Compile ()
 		{
+			TimeReporter tr = new TimeReporter (RootContext.Timestamps);
+			ctx.TimeReporter = tr;
+			tr.StartTotal ();
+
 			var module = new ModuleContainer (ctx);
 			RootContext.ToplevelTypes = module;
 
-			if (timestamps) {
-				stopwatch = Stopwatch.StartNew ();
-				first_time = DateTime.Now;
-			}
-
+			tr.Start (TimeReporter.TimerType.ParseTotal);
 			Parse (module);
-			ShowTime ("Parsing source files");
+			tr.Stop (TimeReporter.TimerType.ParseTotal);
 
 			if (Report.Errors > 0)
 				return false;
@@ -1491,34 +1459,31 @@ namespace Mono.CSharp
 				output_file_name = Path.GetFileName (output_file);
 			}
 
-			//
-			// Load assemblies required
-			//
-			if (timestamps)
-				stopwatch = Stopwatch.StartNew ();
-
 #if STATIC
 			var importer = new StaticImporter ();
 			var references_loader = new StaticLoader (importer, ctx);
 
+			tr.Start (TimeReporter.TimerType.AssemblyBuilderSetup);
 			var assembly = new AssemblyDefinitionStatic (module, references_loader, output_file_name, output_file);
 			assembly.Create (references_loader.Domain);
+			tr.Stop (TimeReporter.TimerType.AssemblyBuilderSetup);
 
 			// Create compiler types first even before any referenced
 			// assembly is loaded to allow forward referenced types from
 			// loaded assembly into compiled builder to be resolved
 			// correctly
+			tr.Start (TimeReporter.TimerType.CreateTypeTotal);
 			module.CreateType ();
-			ShowTime ("Creating compiled types");
-
 			importer.AddCompiledAssembly (assembly);
-			references_loader.LoadReferences (module);
-			ShowTime ("Imporing referenced assemblies");
+			tr.Stop (TimeReporter.TimerType.CreateTypeTotal);
 
+			references_loader.LoadReferences (module);
+
+			tr.Start (TimeReporter.TimerType.PredefinedTypesInit);
 			if (!ctx.BuildinTypes.CheckDefinitions (module))
 				return false;
 
-			ShowTime ("Initializing predefined types");
+			tr.Stop (TimeReporter.TimerType.PredefinedTypesInit);
 
 			references_loader.LoadModules (assembly, module.GlobalRootNamespace);
 #else
@@ -1531,27 +1496,24 @@ namespace Mono.CSharp
 			var loader = new DynamicLoader (importer, ctx);
 			loader.LoadReferences (module);
 
-			ShowTime ("Imporing referenced assemblies");
-
 			if (!ctx.BuildinTypes.CheckDefinitions (module))
 				return false;
-
-			ShowTime ("Initializing predefined types");
 
 			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))
 				return false;
 
+			module.CreateType ();
+
 			loader.LoadModules (assembly, module.GlobalRootNamespace);
 #endif
+			tr.Start (TimeReporter.TimerType.ModuleDefinitionTotal);
 			module.Define ();
-
-			ShowTime ("Types definition");
+			tr.Stop (TimeReporter.TimerType.ModuleDefinitionTotal);
 
 			if (Report.Errors > 0)
 				return false;
 
-			if (Report.Errors == 0 &&
-				RootContext.Documentation != null &&
+			if (RootContext.Documentation != null &&
 				!RootContext.Documentation.OutputDocComment (
 					output_file, Report))
 				return false;
@@ -1559,7 +1521,9 @@ namespace Mono.CSharp
 			//
 			// Verify using aliases now
 			//
+			tr.Start (TimeReporter.TimerType.UsingVerification);
 			NamespaceEntry.VerifyAllUsing ();
+			tr.Stop (TimeReporter.TimerType.UsingVerification);
 			
 			if (Report.Errors > 0){
 				return false;
@@ -1569,48 +1533,34 @@ namespace Mono.CSharp
 			
 			if (Report.Errors > 0)
 				return false;
-			
-			//
-			// The code generator
-			//
-			if (timestamps)
-				stopwatch = Stopwatch.StartNew ();
 
+
+			tr.Start (TimeReporter.TimerType.EmitTotal);
 			assembly.Emit ();
-
-			ShowTime ("Resolving and emitting members blocks");
+			tr.Stop (TimeReporter.TimerType.EmitTotal);
 
 			if (Report.Errors > 0){
 				return false;
 			}
 
+			tr.Start (TimeReporter.TimerType.CloseTypes);
 			module.CloseType ();
+			tr.Stop (TimeReporter.TimerType.CloseTypes);
 
-			ShowTime ("Closing types");
-
-			if (timestamps)
-				stopwatch = Stopwatch.StartNew ();
-
+			tr.Start (TimeReporter.TimerType.Resouces);
 			assembly.EmbedResources ();
-			ShowTime ("Embedding resources");
+			tr.Stop (TimeReporter.TimerType.Resouces);
 
 			if (Report.Errors > 0)
 				return false;
 
-			if (timestamps)
-				stopwatch = Stopwatch.StartNew ();
-			
 			assembly.Save ();
 
 #if STATIC
 			references_loader.Dispose ();
 #endif
-
-			ShowTime ("Saving output assembly");
-
-			ShowTotalTime ("Total");
-
-			Timer.ShowTimers ();
+			tr.StopTotal ();
+			tr.ShowStats ();
 
 			return (Report.Errors == 0);
 		}
