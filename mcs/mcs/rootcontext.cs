@@ -214,7 +214,7 @@ namespace Mono.CSharp {
 			MainClass = null;
 			OutputFile = null;
 			Target = Target.Exe;
-			SdkVersion = SdkVersion.v2;
+			SdkVersion = SdkVersion.v4;
 			TargetExt = ".exe";
 			Platform = Platform.AnyCPU;
 			Version = LanguageVersion.Default;
