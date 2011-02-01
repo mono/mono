@@ -87,6 +87,9 @@ namespace System.Web.Security
 
 		internal static FormsAuthenticationTicket FromByteArray (byte [] bytes)
 		{
+			if (bytes == null)
+				throw new ArgumentNullException ("bytes");
+			
 			MemoryStream ms = new MemoryStream (bytes);
 			BinaryReader reader = new BinaryReader (ms);
 			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket ();
