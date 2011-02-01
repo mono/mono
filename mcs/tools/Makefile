@@ -12,6 +12,7 @@ per_profile_dirs = \
 	mono-service	\
 	mono-xsd	\
 	resgen		\
+	gacutil		\
 	wsdl		\
 	xbuild
 
