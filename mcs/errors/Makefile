@@ -41,7 +41,7 @@ TEST_SUPPORT_FILES = \
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_2_0 moonlight net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 
 qcheck: run-mcs-tests 
@@ -67,7 +67,7 @@ TESTER_OPTIONS = -compiler-options:"-v -d:NET_4_0 -sdk:4"
 TEST_SUPPORT_FILES += DCS0266-lib.dll
 endif
 
-COMPILER = $(topdir)/class/lib/basic/mcs.exe
+COMPILER = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 run-mcs-tests: $(TEST_SUPPORT_FILES)

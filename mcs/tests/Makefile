@@ -19,7 +19,7 @@ USE_MCS_FLAGS :=
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_2_0 moonlight net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 # casts
 bootstrap-cast.exe: gen-cast-test.cs
@@ -52,7 +52,7 @@ DEFINES = -compiler-options:"-d:NET_4_0 -sdk:4"
 endif
 
 LOCAL_RUNTIME_FLAGS = --verify-all
-COMPILER = $(topdir)/class/lib/basic/mcs.exe
+COMPILER = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 TEST_ILS := $(wildcard *-lib.il)

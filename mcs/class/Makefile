@@ -2,7 +2,15 @@ thisdir = class
 
 # Note that Mono.Security and System.Security aren't listed.
 # We may have to add those if 'mcs' starts using them.
-basic_SUBDIRS := corlib System System.XML System Mono.Security Mono.CompilerServices.SymbolWriter System.Core aot-compiler
+basic_SUBDIRS := corlib System System.XML System Mono.Security System.Core 
+
+build_SUBDIRS :=  \
+	corlib \
+	System \
+	System.XML \
+	System Mono.Security \
+	Mono.Posix \
+	System.Core
 
 net_1_1_java_SUBDIRS = \
 	System.Xml					\

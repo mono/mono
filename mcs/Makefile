@@ -2,14 +2,14 @@ thisdir := .
 
 SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs
 
-basic_SUBDIRS := build jay mcs class tools
+basic_SUBDIRS := build jay mcs class
+build_SUBDIRS := build class mcs class/aot-compiler tools
 net_2_0_SUBDIRS := build class nunit24 ilasm tools tests errors
-moonlight_raw_SUBDIRS := build class tools
-moonlight_SUBDIRS := tools
+moonlight_raw_SUBDIRS := build class
 monodroid_SUBDIRS := build class
 monotouch_SUBDIRS := build class
 net_3_5_SUBDIRS := build class tools/xbuild
-net_4_0_SUBDIRS := build class nunit24 ilasm tools tests errors docs
+net_4_0_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
 
 # List of test subdirs that should pass 100%
 centum_tests := \
@@ -100,13 +100,14 @@ profiles-do--run-test:
 
 # Orchestrate the bootstrap here.
 _boot_ = all clean install
-$(_boot_:%=profile-do--net_4_0--%):           profile-do--net_4_0--%:           profile-do--basic--%
+$(_boot_:%=profile-do--net_4_0--%):           profile-do--net_4_0--%:           profile-do--build--%
 $(_boot_:%=profile-do--net_3_5--%):           profile-do--net_3_5--%:           profile-do--net_2_0--%
 $(_boot_:%=profile-do--moonlight--%):         profile-do--moonlight--%:         profile-do--moonlight_raw--%
-$(_boot_:%=profile-do--monodroid--%):         profile-do--monodroid--%:         profile-do--basic--%
-$(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--basic--%
-$(_boot_:%=profile-do--moonlight_raw--%):     profile-do--moonlight_raw--%:     profile-do--basic--%
-$(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--basic--%
+$(_boot_:%=profile-do--monodroid--%):         profile-do--monodroid--%:         profile-do--build--%
+$(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--build--%
+$(_boot_:%=profile-do--moonlight_raw--%):     profile-do--moonlight_raw--%:     profile-do--build--%
+$(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--build--%
+$(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test

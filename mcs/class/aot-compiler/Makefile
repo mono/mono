@@ -10,9 +10,9 @@ include ../../build/rules.make
 
 the_libdir = $(topdir)/class/lib/$(PROFILE)/
 
-# mcs is in the basic profile, but the aot image should be compiled against the current
+# mcs.exe is only in the build profile, but the aot image should be compiled against the current
 # profile
-mcs_exe = $(topdir)/class/lib/basic/mcs.exe
+mcs_exe = $(topdir)/class/lib/build/mcs.exe
 mcs_aot_image = $(the_libdir)/mcs.exe$(PLATFORM_AOT_SUFFIX)
 
 mscorlib_dll = $(the_libdir)/mscorlib.dll
@@ -36,12 +36,13 @@ ifdef ENABLE_AOT
 clean-local:
 	-rm -f $(mscorlib_aot_image) $(mcs_aot_image) $(PROFILE)_aot.log
 
-ifeq ($(PROFILE),basic)
+# AOT build profile mcs to speed up build
+ifeq ($(PROFILE),build)
 all-local: $(mscorlib_aot_image) $(mcs_aot_image)
 install-local:
 endif
 
-ifeq ($(PROFILE),net_2_0)
+ifeq ($(PROFILE),net_4_0)
 all-local: $(mscorlib_aot_image) $(mcs_aot_image)
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
@@ -49,8 +50,8 @@ install-local:
 	$(INSTALL_LIB) $(mcs_aot_image) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 endif
 
-# No mcs in net 4.0
-ifeq ($(PROFILE),net_4_0)
+# No mcs in net 2.0
+ifeq ($(PROFILE),net_2_0)
 all-local: $(mscorlib_aot_image)
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)

@@ -148,6 +148,7 @@ EXTRA_DIST =			\
 	mono-find-requires.in	\
 	peverify.in			\
 	mcs.in				\
+	gmcs.in				\
 	dmcs.in				\
 	mono-test-install	\
 	mono-heapviz		\
@@ -202,8 +203,8 @@ mcs: mcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
 	mv -f $@.tmp $@
 
-gmcs: mcs.in Makefile
-	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
+gmcs: gmcs.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/gmcs.in > $@.tmp
 	mv -f $@.tmp $@
 
 dmcs: dmcs.in Makefile

@@ -22,7 +22,7 @@ PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 DISTFILES = README TESTS $(SECURITY_SOURCES)
 
-ifeq (basic, $(PROFILE))
+ifeq (build, $(PROFILE))
 all-local: $(topdir)/class/lib/$(PROFILE)/sn.exe
 else
 all-local: $(SECURITY_TARGETS)

@@ -12,9 +12,16 @@ EXTRA_DISTFILES = \
 	TODO			\
 	ikvm.cs
 
-LOCAL_MCS_FLAGS += -d:STATIC
-PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/2.0
+ifeq (basic, $(PROFILE))
 PROGRAM = $(topdir)/class/lib/basic/mcs.exe
+else
+PROGRAM = $(topdir)/class/lib/build/mcs.exe
+LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build
+endif
+
+LOCAL_MCS_FLAGS += -d:STATIC
+
+PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.0
 
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 

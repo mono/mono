@@ -66,8 +66,8 @@ library_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_lib
 ifdef NO_SIGN_ASSEMBLY
 SN = :
 else
-sn = $(topdir)/class/lib/basic/sn.exe
-SN = $(Q) MONO_PATH="$(topdir)/class/lib/basic$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
+sn = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/sn.exe
+SN = $(Q) MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
 SNFLAGS = -q
 endif
 
