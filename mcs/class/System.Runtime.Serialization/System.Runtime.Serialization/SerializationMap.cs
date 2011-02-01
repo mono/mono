@@ -462,7 +462,7 @@ namespace System.Runtime.Serialization
 				if (!pi.CanRead || (!pi.CanWrite && !(map is ICollectionTypeMap)))
 					throw new InvalidDataContractException (String.Format (
 							"DataMember property '{0}' on type '{1}' must have both getter and setter.", pi, pi.DeclaringType));
-				data_members.Add (CreateDataMemberInfo (dma, pi, pi.PropertyType, qname.Namespace));
+				data_members.Add (CreateDataMemberInfo (dma, pi, pi.PropertyType, KnownTypeCollection.GetStaticQName (pi.DeclaringType).Namespace));
 			}
 
 			foreach (FieldInfo fi in type.GetFields (flags)) {
@@ -470,7 +470,7 @@ namespace System.Runtime.Serialization
 					GetDataMemberAttribute (fi);
 				if (dma == null)
 					continue;
-				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, qname.Namespace));
+				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, KnownTypeCollection.GetStaticQName (fi.DeclaringType).Namespace));
 			}
 
 			return data_members;
@@ -510,7 +510,8 @@ namespace System.Runtime.Serialization
 					continue;
 				if (mi.GetCustomAttributes (typeof (IgnoreDataMemberAttribute), false).Length != 0)
 					continue;
-				l.Add (CreateDataMemberInfo (new DataMemberAttribute (), mi, mt, XmlName.Namespace));
+				string ns = KnownTypeCollection.GetStaticQName (mi.DeclaringType).Namespace;
+				l.Add (CreateDataMemberInfo (new DataMemberAttribute (), mi, mt, ns));
 			}
 			l.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 			return l;
@@ -908,7 +909,7 @@ namespace System.Runtime.Serialization
 					if (fi.IsInitOnly)
 						throw new InvalidDataContractException (String.Format ("DataMember field {0} must not be read-only.", fi));
 					DataMemberAttribute dma = new DataMemberAttribute ();
-					data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, qname.Namespace));
+					data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType, KnownTypeCollection.GetStaticQName (fi.DeclaringType).Namespace));
 				}
 			}
 

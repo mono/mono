@@ -1512,6 +1512,27 @@ namespace MonoTests.System.Runtime.Serialization
 		{
 			new DataContractSerializer (typeof (BaseConstraintType4)).WriteObject (XmlWriter.Create (TextWriter.Null), new BaseConstraintType4 ());
 		}
+
+		[Test] // bug #652331
+		public void MembersNamespacesInBaseType ()
+		{
+			string xml1 = @"<Currency>JPY</Currency><Description i:nil=""true"" />";
+			string xml2 = @"<Currency xmlns=""http://schemas.datacontract.org/2004/07/SLProto5"">JPY</Currency><Description i:nil=""true"" xmlns=""http://schemas.datacontract.org/2004/07/SLProto5"" />";
+			Assert.AreEqual ("JPY", MembersNamespacesInBaseType_Part<SLProto5.CashAmount> (new SLProto5.CashAmount () { Currency = "JPY" }, xml1, "#1").Currency, "r#1");
+			Assert.AreEqual ("JPY", MembersNamespacesInBaseType_Part<SLProto5_Different.CashAmount> (new SLProto5_Different.CashAmount () { Currency = "JPY" }, xml2, "#2").Currency, "r#2");
+			Assert.AreEqual ("JPY", MembersNamespacesInBaseType_Part<SLProto5.CashAmountDC> (new SLProto5.CashAmountDC () { Currency = "JPY" }, xml1, "#3").Currency, "r#3");
+			Assert.AreEqual ("JPY", MembersNamespacesInBaseType_Part<SLProto5_Different.CashAmountDC> (new SLProto5_Different.CashAmountDC () { Currency = "JPY" }, xml2, "#4").Currency, "r#4");
+		}
+
+		T MembersNamespacesInBaseType_Part<T> (T instance, string expectedPart, string assert)
+		{
+			var ds = new DataContractSerializer (typeof (T));
+			var sw = new StringWriter ();
+			using (var w = XmlWriter.Create (sw))
+				ds.WriteObject (w, instance);
+			Assert.IsTrue (sw.ToString ().IndexOf (expectedPart) > 0, assert);
+			return (T) ds.ReadObject (XmlReader.Create (new StringReader (sw.ToString ())));
+		}
 	}
 	
 	[DataContract]
@@ -2035,6 +2056,45 @@ public class Child
 	
 	[DataMember]
 	public Parent Parent;
+}
+
+namespace SLProto5
+{
+	public class CashAmount : Amount
+	{
+	}
+
+	[DataContract]
+	public class CashAmountDC : AmountDC
+	{
+	}
+
+	public class Amount
+	{
+		public string Currency { get; set; }
+		public string Description { get; set; }
+	}
+
+	[DataContract]
+	public class AmountDC
+	{
+		[DataMember]
+		public string Currency { get; set; }
+		[DataMember]
+		public string Description { get; set; }
+	}
+}
+
+namespace SLProto5_Different
+{
+	public class CashAmount : SLProto5.Amount
+	{
+	}
+
+	[DataContract]
+	public class CashAmountDC : SLProto5.AmountDC
+	{
+	}
 }
 
 #endregion
