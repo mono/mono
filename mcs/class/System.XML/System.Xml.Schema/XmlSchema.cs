@@ -328,6 +328,7 @@ namespace System.Xml.Schema
 			groups.Clear ();
 			notations.Clear ();
 			schemaTypes.Clear ();
+			compilationItems.Clear ();
 
 			//1. Union and List are not allowed in block default
 			if (BlockDefault != XmlSchemaDerivationMethod.All) {
