@@ -699,7 +699,7 @@ print_usage (void)
 	fprintf (stderr, "  logfile=<file>\t\tFile to log to (defaults to stdout)\n");
 	fprintf (stderr, "  suspend=y/n\t\t\tWhether to suspend after startup.\n");
 	fprintf (stderr, "  timeout=<n>\t\t\tTimeout for connecting in milliseconds.\n");
-	fprintf (stderr, "  defer=y/n\t\t\tWhether to allow deferred client attaching.\n");
+	fprintf (stderr, "  server=y/n\t\t\tWhether to listen for a client connection.\n");
 	fprintf (stderr, "  help\t\t\t\tPrint this help.\n");
 }
 
@@ -753,8 +753,6 @@ mono_debugger_agent_parse_options (char *options)
 			agent_config.suspend = parse_flag ("suspend", arg + 8);
 		} else if (strncmp (arg, "server=", 7) == 0) {
 			agent_config.server = parse_flag ("server", arg + 7);
-			if (!agent_config.server)
-				agent_config.defer = FALSE;
 		} else if (strncmp (arg, "onuncaught=", 11) == 0) {
 			agent_config.onuncaught = parse_flag ("onuncaught", arg + 11);
 		} else if (strncmp (arg, "onthrow=", 8) == 0) {
@@ -771,17 +769,17 @@ mono_debugger_agent_parse_options (char *options)
 			agent_config.launch = g_strdup (arg + 7);
 		} else if (strncmp (arg, "embedding=", 10) == 0) {
 			agent_config.embedding = atoi (arg + 10) == 1;
-		} else if (strncmp (arg, "defer=", 6) == 0) {
-			agent_config.defer = parse_flag ("defer", arg + 6);
-			if (agent_config.defer) {
-				agent_config.server = TRUE;
-				if (agent_config.address == NULL) {
-					agent_config.address = g_strdup_printf ("0.0.0.0:%u", 56000 + (GetCurrentProcessId () % 1000));
-				}
-			}
 		} else {
 			print_usage ();
 			exit (1);
+		}
+	}
+
+	if (agent_config.server && !agent_config.suspend) {
+		/* Waiting for deferred attachment */
+		agent_config.defer = TRUE;
+		if (agent_config.address == NULL) {
+			agent_config.address = g_strdup_printf ("0.0.0.0:%u", 56000 + (GetCurrentProcessId () % 1000));
 		}
 	}
 
