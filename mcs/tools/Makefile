@@ -42,7 +42,8 @@ net_4_0_dirs := \
 	installvst	\
 	lc		\
 	mono-configuration-crypto \
-	ccrewrite
+	ccrewrite	\
+	security
 
 net_2_0_dirs := \
 	$(per_profile_dirs) \
