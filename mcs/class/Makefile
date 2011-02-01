@@ -103,14 +103,14 @@ net_2_0_dirs := \
 	Mono.CSharp			\
 	Moonlight.Build.Tasks		\
 	System.Data.Services	\
-	System.Data.Services.Client \
 	System.Net
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
 	System.Web.Extensions.Design_1.0	\
 	Compat.ICSharpCode.SharpZipLib	\
-	WindowsBase
+	WindowsBase			\
+	System.Data.Services.Client
 
 moonlight_dirs := \
 	corlib			\
@@ -160,6 +160,7 @@ net_4_0_dirs := \
 	System.ComponentModel.Composition \
 	System.Xaml \
 	WindowsBase \
+	System.Data.Services.Client \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
