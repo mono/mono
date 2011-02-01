@@ -117,25 +117,45 @@ namespace System.ServiceModel
 
 			string contractName = Endpoint.Contract.ConfigurationName;
 			ClientSection client = ConfigUtil.ClientSection;
-			ChannelEndpointElement res = null;
+			ChannelEndpointElement endpoint = null;
+
 			foreach (ChannelEndpointElement el in client.Endpoints) {
 				if (el.Contract == contractName && (endpointConfig == el.Name || endpointConfig == "*")) {
-					if (res != null)
+					if (endpoint != null)
 						throw new InvalidOperationException (String.Format ("More then one endpoint matching contract {0} was found.", contractName));
-					res = el;
+					endpoint = el;
 				}
 			}
 
-			if (res == null)
+			if (endpoint == null)
 				throw new InvalidOperationException (String.Format ("Client endpoint configuration '{0}' was not found in {1} endpoints.", endpointConfig, client.Endpoints.Count));
 
-			if (Endpoint.Binding == null)
-				Endpoint.Binding = ConfigUtil.CreateBinding (res.Binding, res.BindingConfiguration);
-			if (Endpoint.Address == null)
-				Endpoint.Address = new EndpointAddress (res.Address);
+#if NET_4_0
+			var binding = String.IsNullOrEmpty (endpoint.Binding) ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
+			var contract = String.IsNullOrEmpty (endpoint.Contract) ? Endpoint.Contract : ContractDescription.GetContract (ConfigUtil.GetTypeFromConfigString (endpoint.Contract));
 
-			if (res.BehaviorConfiguration != "")
-				ApplyBehavior (res.BehaviorConfiguration);
+			if (!String.IsNullOrEmpty (endpoint.Kind)) {
+				var se = ConfigUtil.ConfigureStandardEndpoint (contract, endpoint);
+				if (se.Binding == null)
+					se.Binding = binding;
+				if (se.Address == null && se.Binding != null) // standard endpoint might have empty address
+					se.Address = new EndpointAddress (endpoint.Address);
+				if (se.Binding == null && se.Address != null) // look for protocol mapping
+					se.Binding = ConfigUtil.GetBindingByProtocolMapping (se.Address.Uri);
+
+				service_endpoint = se;
+			} else {
+				if (binding == null && endpoint.Address != null) // look for protocol mapping
+					Endpoint.Binding = ConfigUtil.GetBindingByProtocolMapping (endpoint.Address);
+			}
+#endif
+			if (Endpoint.Binding == null)
+				Endpoint.Binding = ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
+			if (Endpoint.Address == null)
+				Endpoint.Address = new EndpointAddress (endpoint.Address);
+
+			if (endpoint.BehaviorConfiguration != "")
+				ApplyBehavior (endpoint.BehaviorConfiguration);
 #endif
 		}
 

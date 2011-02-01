@@ -99,6 +99,49 @@ namespace System.ServiceModel.Configuration
 		}
 
 #if NET_4_0
+		public static Binding GetBindingByProtocolMapping (Uri address)
+		{
+			ProtocolMappingElement el = ConfigUtil.ProtocolMappingSection.ProtocolMappingCollection [address.Scheme];
+			if (el == null)
+				return null;
+			return ConfigUtil.CreateBinding (el.Binding, el.BindingConfiguration);
+		}
+
+		public static ServiceEndpoint ConfigureStandardEndpoint (ContractDescription cd, ChannelEndpointElement element)
+		{
+			string kind = element.Kind;
+			string endpointConfiguration = element.EndpointConfiguration;
+
+			EndpointCollectionElement section = ConfigUtil.StandardEndpointsSection [kind];
+			if (section == null)
+				throw new ArgumentException (String.Format ("standard endpoint section for '{0}' was not found.", kind));
+
+			StandardEndpointElement e = section.GetDefaultStandardEndpointElement ();
+
+			ServiceEndpoint inst = e.CreateServiceEndpoint (cd);
+
+			foreach (StandardEndpointElement el in section.ConfiguredEndpoints) {
+				if (el.Name == endpointConfiguration) {
+					el.InitializeAndValidate (element);
+					el.ApplyConfiguration (inst, element);
+					break;
+				}
+			}
+			
+			return inst;
+		}
+
+		public static Type GetTypeFromConfigString (string name)
+		{
+			Type type = Type.GetType (name);
+			if (type != null)
+				return type;
+			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ())
+				if ((type = ass.GetType (name)) != null)
+					return type;
+			return null;
+		}
+
 		public static ServiceEndpoint ConfigureStandardEndpoint (ContractDescription cd, ServiceEndpointElement element)
 		{
 			string kind = element.Kind;

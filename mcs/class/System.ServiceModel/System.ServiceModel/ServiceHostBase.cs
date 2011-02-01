@@ -380,7 +380,7 @@ namespace System.ServiceModel
 			// behaviors
 			AddServiceBehaviors (service.BehaviorConfiguration, true);
 
-			// services
+			// endpoints
 			foreach (ServiceEndpointElement endpoint in service.Endpoints) {
 				ServiceEndpoint se;
 
@@ -395,13 +395,13 @@ namespace System.ServiceModel
 					if (se.Address == null && se.Binding != null) // standard endpoint might have empty address
 						se.Address = new EndpointAddress (CreateUri (se.Binding.Scheme, endpoint.Address));
 					if (se.Binding == null && se.Address != null) // look for protocol mapping
-						se.Binding = GetBindingByProtocolMapping (se.Address.Uri);
+						se.Binding = ConfigUtil.GetBindingByProtocolMapping (se.Address.Uri);
 
 					AddServiceEndpoint (se);
 				}
 				else {
 					if (binding == null && endpoint.Address != null) // look for protocol mapping
-						binding = GetBindingByProtocolMapping (endpoint.Address);
+						binding = ConfigUtil.GetBindingByProtocolMapping (endpoint.Address);
 					se = AddServiceEndpoint (endpoint.Contract, binding, endpoint.Address);
 				}
 #else
@@ -418,16 +418,6 @@ namespace System.ServiceModel
 				}
 			}
 		}
-
-#if NET_4_0
-		Binding GetBindingByProtocolMapping (Uri address)
-		{
-			ProtocolMappingElement el = ConfigUtil.ProtocolMappingSection.ProtocolMappingCollection [address.Scheme];
-			if (el == null)
-				return null;
-			return ConfigUtil.CreateBinding (el.Binding, el.BindingConfiguration);
-		}
-#endif
 
 		private ServiceElement GetServiceElement() {
 			Type serviceType = Description.ServiceType;
@@ -506,7 +496,7 @@ namespace System.ServiceModel
 						foreach (var baddr in BaseAddresses) {
 							if (!baddr.IsAbsoluteUri)
 								continue;
-							var binding = GetBindingByProtocolMapping (baddr);
+							var binding = ConfigUtil.GetBindingByProtocolMapping (baddr);
 							if (binding == null)
 								continue;
 							AddServiceEndpoint (iface.FullName, binding, baddr);
