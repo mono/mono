@@ -62,6 +62,7 @@ namespace System.Threading.Tasks
 		TaskStatus          status;
 		
 		Action<object> action;
+		Action         simpleAction;
 		object         state;
 		AtomicBooleanValue executing;
 
@@ -85,8 +86,9 @@ namespace System.Threading.Tasks
 		}
 		
 		public Task (Action action, CancellationToken cancellationToken, TaskCreationOptions creationOptions)
-			: this ((o) => { if (action != null) action (); }, null, cancellationToken, creationOptions)
+			: this (null, null, cancellationToken, creationOptions)
 		{
+			this.simpleAction = action;
 		}
 		
 		public Task (Action<object> action, object state) : this (action, state, TaskCreationOptions.None)
@@ -116,7 +118,7 @@ namespace System.Threading.Tasks
 		               Task parent)
 		{
 			this.taskCreationOptions = creationOptions;
-			this.action              = action == null ? EmptyFunc : action;
+			this.action              = action;
 			this.state               = state;
 			this.taskId              = Interlocked.Increment (ref id);
 			this.status              = TaskStatus.Created;
@@ -137,10 +139,6 @@ namespace System.Threading.Tasks
 		bool CheckTaskOptions (TaskCreationOptions opt, TaskCreationOptions member)
 		{
 			return (opt & member) == member;
-		}
-
-		static void EmptyFunc (object o)
-		{
 		}
 
 		#region Start
@@ -442,11 +440,14 @@ namespace System.Threading.Tasks
 
 		internal virtual void InnerInvoke ()
 		{
-			if (action != null)
+			if (action == null && simpleAction != null)
+				simpleAction ();
+			else if (action != null)
 				action (state);
 			// Set action to null so that the GC can collect the delegate and thus
 			// any big object references that the user might have captured in an anonymous method
 			action = null;
+			simpleAction = null;
 			state = null;
 		}
 		

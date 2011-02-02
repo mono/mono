@@ -103,7 +103,10 @@ namespace System.Threading.Tasks
 		
 		public Task StartNew (Action action, CancellationToken cancellationToken, TaskCreationOptions creationOptions, TaskScheduler scheduler)
 		{
-			return StartNew ((o) => action (), null, cancellationToken, creationOptions, scheduler);
+			Task t = new Task (action, cancellationToken, creationOptions);
+			t.Start (scheduler);
+
+			return t;
 		}
 		
 		public Task StartNew (Action<object> action, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions,
