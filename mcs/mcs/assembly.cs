@@ -385,6 +385,7 @@ namespace Mono.CSharp
 				if (ArrayComparer.IsEqual (GetPublicKeyToken (), atoken))
 					continue;
 
+				Report.SymbolRelatedToPreviousError (a.Location);
 				Report.Error (281,
 					"Friend access was granted to `{0}', but the output assembly is named `{1}'. Try adding a reference to `{0}' or change the output assembly name to match it",
 					attr.FullName, FullName);
