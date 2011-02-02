@@ -132,13 +132,21 @@ namespace System.ServiceModel.Description
 
 		static ContractDescription GetContract (Type givenContractType, Type givenServiceType, Type serviceTypeForCallback)
 		{
+			var ret = GetContractInternal (givenContractType, givenServiceType, serviceTypeForCallback);
+			if (ret == null)
+				throw new InvalidOperationException (String.Format ("Attempted to get contract type from '{0}' which neither is a service contract nor does it inherit service contract.", serviceTypeForCallback ?? givenContractType));
+			return ret;
+		}
+
+		internal static ContractDescription GetContractInternal (Type givenContractType, Type givenServiceType, Type serviceTypeForCallback)
+		{
 			// FIXME: serviceType should be used for specifying attributes like OperationBehavior.
 
 			Type exactContractType = null;
 			ServiceContractAttribute sca = null;
 			Dictionary<Type, ServiceContractAttribute> contracts = 
 				GetServiceContractAttributes (serviceTypeForCallback ?? givenServiceType ?? givenContractType);
-			if (contracts.ContainsKey(givenContractType)) {
+			if (contracts.ContainsKey (givenContractType)) {
 				exactContractType = givenContractType;
 				sca = contracts [givenContractType];
 			} else {
@@ -158,7 +166,7 @@ namespace System.ServiceModel.Description
 				if (serviceTypeForCallback != null)
 					sca = contracts.Values.First ();
 				else
-					throw new InvalidOperationException (String.Format ("Attempted to get contract type from '{0}' which neither is a service contract nor does it inherit service contract.", serviceTypeForCallback ?? givenContractType));
+					return null; // no contract
 			}
 			string name = sca.Name ?? exactContractType.Name;
 			string ns = sca.Namespace ?? "http://tempuri.org/";
