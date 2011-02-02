@@ -66,7 +66,7 @@ namespace System.Threading.Tasks
 
 			ManualResetEventSlim evt = new ManualResetEventSlim (false);
 			task.ContinueWith (_ => evt.Set (), TaskContinuationOptions.ExecuteSynchronously);
-			if (evt.IsSet)
+			if (evt.IsSet || task.IsCompleted)
 				return;
 			
 			ParticipateUntilInternal (task, evt, -1);
@@ -79,8 +79,11 @@ namespace System.Threading.Tasks
 
 			bool isFromPredicate = true;
 			task.ContinueWith (_ => { isFromPredicate = false; evt.Set (); }, TaskContinuationOptions.ExecuteSynchronously);
-			
+
 			ParticipateUntilInternal (task, evt, millisecondsTimeout);
+
+			if (task.IsCompleted)
+				return false;
 
 			return isFromPredicate;
 		}

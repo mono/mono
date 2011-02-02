@@ -254,7 +254,7 @@ namespace System.Threading.Tasks
 			bool hasAutoReference = autoReference != null;
 			Action<Task> adder = null;
 
-			while (!predicateEvt.IsSet && watch.ElapsedMilliseconds < millisecondsTimeout) {
+			while (!predicateEvt.IsSet && watch.ElapsedMilliseconds < millisecondsTimeout && !self.IsCompleted) {
 				// We try to execute the self task as it may be the simplest way to unlock
 				// the situation
 				if (self.Status == TaskStatus.WaitingToRun) {
