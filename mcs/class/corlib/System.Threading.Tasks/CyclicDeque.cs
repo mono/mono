@@ -161,10 +161,10 @@ namespace System.Threading.Tasks
 		
 		public T this[long index] {
 			get {
-				return segment[index % Size];
+				return segment[index % size];
 			}
 			set {
-				segment[index % Size] = value;
+				segment[index % size] = value;
 			}
 		}
 		
@@ -173,7 +173,7 @@ namespace System.Threading.Tasks
 			var grow = new CircularArray<T> (baseSize + 1);
 			
 			for (long i = top; i < bottom; i++) {
-				grow[i] = this[i];
+				grow.segment[i] = segment[i % size];
 			}
 			
 			return grow;
