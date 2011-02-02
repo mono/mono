@@ -277,6 +277,11 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			bool result = false;
 			ParentEngine.StartProjectBuild (this, targetNames);
+
+			// Invoking this to emit a warning in case of unsupported
+			// ToolsVersion
+			GetToolsVersionToUse (true);
+
 			string current_directory = Environment.CurrentDirectory;
 			try {
 				current_settings = buildFlags;
@@ -811,7 +816,7 @@ namespace Microsoft.Build.BuildEngine {
 			targets = new TargetCollection (this);
 			last_item_group_containing = new Dictionary <string, BuildItemGroup> ();
 			
-			string effective_tools_version = GetToolsVersionToUse ();
+			string effective_tools_version = GetToolsVersionToUse (false);
 			taskDatabase = new TaskDatabase ();
 			taskDatabase.CopyTasks (ParentEngine.GetDefaultTasks (effective_tools_version));
 
@@ -976,7 +981,7 @@ namespace Microsoft.Build.BuildEngine {
 		// ToolsVersion property
 		// ToolsVersion attribute on the project
 		// parentEngine's DefaultToolsVersion
-		string GetToolsVersionToUse ()
+		string GetToolsVersionToUse (bool emitWarning)
 		{
 			if (!String.IsNullOrEmpty (ToolsVersion))
 				return ToolsVersion;
@@ -985,7 +990,8 @@ namespace Microsoft.Build.BuildEngine {
 				return parentEngine.DefaultToolsVersion;
 
 			if (parentEngine.Toolsets [DefaultToolsVersion] == null) {
-				LogWarning (FullFileName, "Project has unknown ToolsVersion '{0}'. Using the default tools version '{1}' instead.",
+				if (emitWarning)
+					LogWarning (FullFileName, "Project has unknown ToolsVersion '{0}'. Using the default tools version '{1}' instead.",
 						DefaultToolsVersion, parentEngine.DefaultToolsVersion);
 				return parentEngine.DefaultToolsVersion;
 			}
