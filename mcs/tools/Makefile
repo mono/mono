@@ -50,7 +50,7 @@ net_2_0_dirs := \
 	monodoc		\
 	mdoc
 
-build_SUBDIRS = gacutil resgen security culevel
+build_SUBDIRS = gacutil security culevel
 net_2_0_SUBDIRS := $(basic_SUBDIRS) $(net_2_0_dirs)
 net_4_0_SUBDIRS := $(net_4_0_dirs) $(basic_SUBDIRS)
 
