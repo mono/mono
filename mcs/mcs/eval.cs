@@ -1056,9 +1056,9 @@ namespace Mono.CSharp
 			Evaluator.LoadAssembly (assembly);
 		}
 
-		static public void print (string text)
+		static public void print (string obj)
 		{
-			Output.WriteLine (text);
+			Output.WriteLine (obj);
 		}
 
 		static public void print (string fmt, params object [] args)
