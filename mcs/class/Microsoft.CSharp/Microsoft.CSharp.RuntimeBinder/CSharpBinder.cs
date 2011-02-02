@@ -69,7 +69,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			Expression res;
 			try {
-				var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, ctx.ImportType (callingType)), ResolveOptions);
+				var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType), ResolveOptions);
 
 				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {

@@ -1,4 +1,4 @@
-﻿//
+//
 // RuntimeBinderContext.cs
 //
 // Authors:
@@ -35,18 +35,39 @@ namespace Microsoft.CSharp.RuntimeBinder
 	class RuntimeBinderContext : Compiler.IMemberContext
 	{
 		readonly Compiler.ModuleContainer module;
-		readonly Compiler.TypeSpec currentType;
+		readonly Type callingType;
+		readonly DynamicContext ctx;
+		Compiler.TypeSpec callingTypeImported;
 
-		public RuntimeBinderContext (DynamicContext ctx, Compiler.TypeSpec currentType)
+		public RuntimeBinderContext (DynamicContext ctx, Compiler.TypeSpec callingType)
 		{
+			this.ctx = ctx;
 			this.module = ctx.Module;
-			this.currentType = currentType;
+			this.callingTypeImported = callingType;
+		}
+
+		public RuntimeBinderContext (DynamicContext ctx, Type callingType)
+		{
+			this.ctx = ctx;
+			this.module = ctx.Module;
+			this.callingType = callingType;
 		}
 
 		#region IMemberContext Members
 
 		public Compiler.TypeSpec CurrentType {
-			get { return currentType; }
+			get {
+				//
+				// Delay importing of calling type to be compatible with .net
+				// Some libraries are setting it to null which is invalid
+				// but the NullReferenceException is thrown only when the context
+				// is used and not during initialization
+				//
+				if (callingTypeImported == null)
+					callingTypeImported = ctx.ImportType (callingType);
+
+				return callingTypeImported;
+			}
 		}
 
 		public Compiler.TypeParameter[] CurrentTypeParameters {
