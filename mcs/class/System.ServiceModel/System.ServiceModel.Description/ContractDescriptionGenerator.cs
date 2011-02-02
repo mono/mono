@@ -183,7 +183,14 @@ namespace System.ServiceModel.Description
 			if (sca.HasProtectionLevel)
 				cd.ProtectionLevel = sca.ProtectionLevel;
 
+			foreach (var icd in cd.GetInheritedContracts ()) {
+				FillOperationsForInterface (icd, icd.ContractType, givenServiceType, false);
+				foreach (var od in icd.Operations)
+					cd.Operations.Add (od);
+			}
+			
 			FillOperationsForInterface (cd, cd.ContractType, givenServiceType, false);
+			
 			if (cd.CallbackContractType != null && cd.CallbackContractType != cd.ContractType)
 				FillOperationsForInterface (cd, cd.CallbackContractType, null, true);
 
@@ -198,7 +205,7 @@ namespace System.ServiceModel.Description
 		static void FillOperationsForInterface (ContractDescription cd, Type exactContractType, Type givenServiceType, bool isCallback)
 		{
 			// FIXME: load Behaviors
-			MethodInfo [] contractMethods = exactContractType.IsInterface ? GetAllMethods (exactContractType) : exactContractType.GetMethods ();
+			MethodInfo [] contractMethods = /*exactContractType.IsInterface ? GetAllMethods (exactContractType) :*/ exactContractType.GetMethods (BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 			MethodInfo [] serviceMethods = contractMethods;
 			if (givenServiceType != null && exactContractType.IsInterface) {
 				var l = new List<MethodInfo> ();
@@ -263,7 +270,7 @@ namespace System.ServiceModel.Description
 		{
 			string name = oca.Name ?? (oca.AsyncPattern ? mi.Name.Substring (5) : mi.Name);
 
-			OperationDescription od = cd.Operations.FirstOrDefault (o => o.Name == name);
+			OperationDescription od = isCallback ? null : cd.Operations.FirstOrDefault (o => o.Name == name);
 			if (od == null) {
 				od = new OperationDescription (name, cd);
 				od.IsOneWay = oca.IsOneWay;
@@ -290,8 +297,8 @@ namespace System.ServiceModel.Description
 				}
 				cd.Operations.Add (od);
 			}
-			else if (oca.AsyncPattern && od.BeginMethod != null && od.BeginMethod != mi ||
-				 !oca.AsyncPattern && od.SyncMethod != null && od.SyncMethod != mi)
+			else if ((oca.AsyncPattern && od.BeginMethod != null && od.BeginMethod != mi ||
+				 !oca.AsyncPattern && od.SyncMethod != null && od.SyncMethod != mi) && od.InCallbackContract == isCallback)
 				throw new InvalidOperationException (String.Format ("contract '{1}' cannot have two operations for '{0}' that have the identical names and different set of parameters.", name, cd.Name));
 
 			if (oca.AsyncPattern)
