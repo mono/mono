@@ -116,13 +116,6 @@ namespace Microsoft.Build.BuildEngine {
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version30)));
 			Toolsets.Add (new Toolset ("3.5",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35)));
-#if NET_4_0
-			Toolsets.Add (new Toolset ("4.0",
-						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
-#else
-			Toolsets.Add (new Toolset ("4.0",
-						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35)));
-#endif
 		}
 		
 		[MonoTODO]
