@@ -4,6 +4,10 @@ thisdir = class
 # We may have to add those if 'mcs' starts using them.
 basic_SUBDIRS := corlib System System.XML System Mono.Security System.Core 
 
+# resgen is corlib specific so we need to wait until corlib is build
+# and build it just a step before first dll needs it
+resgen_dir = ../tools/resgen
+
 build_SUBDIRS :=  \
 	corlib \
 	System \
@@ -35,6 +39,7 @@ common_dirs := \
 	System				\
 	System.XML			\
 	I18N				\
+	$(resgen_dir)			\
 	System.Drawing			\
 	System.Transactions		\
 	System.EnterpriseServices	\
