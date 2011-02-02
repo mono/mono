@@ -29,6 +29,7 @@ System.Xaml/XamlObjectReaderTest.cs
 System.Xaml/XamlObjectWriterSettingsTest.cs
 System.Xaml/XamlObjectWriterTest.cs
 System.Xaml/XamlReaderSettingsTest.cs
+System.Xaml/XamlReaderTest.cs
 System.Xaml/XamlReaderTestBase.cs
 System.Xaml/XamlSchemaContextSettingsTest.cs
 System.Xaml/XamlSchemaContextTest.cs

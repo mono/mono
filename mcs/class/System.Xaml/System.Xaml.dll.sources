@@ -111,6 +111,7 @@ System.Xaml/XamlSchemaContext.cs
 System.Xaml/XamlSchemaContextSettings.cs
 System.Xaml/XamlSchemaException.cs
 System.Xaml/XamlServices.cs
+System.Xaml/XamlSubtreeReader.cs
 System.Xaml/XamlType.cs
 System.Xaml/XamlWriter.cs
 System.Xaml/XamlWriterInternalBase.cs

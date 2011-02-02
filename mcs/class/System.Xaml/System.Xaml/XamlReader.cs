@@ -54,10 +54,9 @@ namespace System.Xaml
 		
 		public abstract bool Read ();
 		
-		[MonoTODO]
 		public virtual XamlReader ReadSubtree ()
 		{
-			throw new NotImplementedException ();
+			return new XamlSubtreeReader (this);
 		}
 		
 		public virtual void Skip ()
