@@ -190,9 +190,10 @@ namespace System.Threading.Tasks
 				
 				// We fill up our work deque concurrently with other ThreadWorker
 				while (sharedWorkQueue.Count > 0) {
+					waitHandle.Set ();
+
 					while (sharedWorkQueue.TryTake (out value)) {
 						dDeque.PushBottom (value);
-						waitHandle.Set ();
 					}
 
 					// Now we process our work
