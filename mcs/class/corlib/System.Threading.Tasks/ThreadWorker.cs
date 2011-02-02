@@ -146,14 +146,16 @@ namespace System.Threading.Tasks
 		{
 			int sleepTime = 0;
 			autoReference = this;
+			bool wasWokenUp = true;
 			
 			// Main loop
 			while (started == 1) {
 				bool result = false;
 
 				result = WorkerMethod ();
-				if (!result)
+				if (!result && wasWokenUp)
 					waitHandle.Reset ();
+				wasWokenUp = false;
 
 				Thread.Yield ();
 
@@ -165,7 +167,7 @@ namespace System.Threading.Tasks
 
 				// If we are spinning too much, have a deeper sleep
 				if (++sleepTime > sleepThreshold && sharedWorkQueue.Count == 0) {
-					waitHandle.WaitOne ((deepSleepTime =  deepSleepTime >= 0x4000 ? 0x4000 : deepSleepTime << 1));
+					wasWokenUp = waitHandle.WaitOne ((deepSleepTime = deepSleepTime >= 0x4000 ? 0x4000 : deepSleepTime << 1));
 				}
 			}
 
