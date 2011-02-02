@@ -219,8 +219,10 @@ namespace System.Threading.Tasks
 							continue;
 						
 						// Maybe make this steal more than one item at a time, see TODO.
-						if (other.dDeque.PopTop (out value) == PopResult.Succeed) {
-							waitHandle.Set ();
+						while (other.dDeque.PopTop (out value) == PopResult.Succeed) {
+							if (!hasStolenFromOther)
+								waitHandle.Set ();
+
 							hasStolenFromOther = true;
 							if (value != null) {
 								value.Execute (adder);
