@@ -65,7 +65,7 @@ namespace System.Threading.Tasks
 		object         state;
 		AtomicBooleanValue executing;
 
-		ConcurrentQueue<EventHandler> completed = new ConcurrentQueue<EventHandler> ();
+		ConcurrentQueue<EventHandler> completed;
 
 		CancellationToken token;
 
@@ -303,6 +303,8 @@ namespace System.Threading.Tasks
 				return;
 			}
 			
+			if (completed == null)
+				Interlocked.CompareExchange (ref completed, new ConcurrentQueue<EventHandler> (), null);
 			completed.Enqueue (action);
 			
 			// Retry in case completion was achieved but event adding was too late
@@ -476,6 +478,9 @@ namespace System.Threading.Tasks
 
 		void ProcessCompleteDelegates ()
 		{
+			if (completed == null)
+				return;
+
 			EventHandler handler;
 			while (completed.TryDequeue (out handler))
 				handler (this, EventArgs.Empty);
