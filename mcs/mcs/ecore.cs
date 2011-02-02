@@ -1986,7 +1986,7 @@ namespace Mono.CSharp {
 	//
 	public abstract class CompositeExpression : Expression
 	{
-		Expression expr;
+		protected Expression expr;
 
 		protected CompositeExpression (Expression expr)
 		{
