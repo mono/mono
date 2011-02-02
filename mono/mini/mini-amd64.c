@@ -7126,6 +7126,8 @@ mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
 			lmf_tls_offset = -1;
 		if (thread_tls_offset >= 64)
 			thread_tls_offset = -1;
+		if (lmf_addr_tls_offset >= 64)
+			lmf_addr_tls_offset = -1;
 #else
 		tls_offset_inited = TRUE;
 #ifdef MONO_XEN_OPT
