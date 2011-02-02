@@ -80,11 +80,11 @@ namespace System.Threading.Tasks
 			if (b - upperBound >= a.Size - 1) {
 				upperBound = Interlocked.Read (ref top);
 				a = a.Grow (b, upperBound);
-				Interlocked.Exchange (ref array, a);
+				array = a;
 			}
 			
 			// Register the new value
-			a[b] = obj;
+			a.segment[b % a.size] = obj;
 			Interlocked.Increment (ref bottom);
 		}
 		
@@ -103,7 +103,7 @@ namespace System.Threading.Tasks
 				return PopResult.Empty;
 			}
 			
-			obj = a[b];
+			obj = a.segment[b % a.size];
 			if (size > 0)
 				return PopResult.Succeed;
 			Interlocked.Add (ref bottom, t + 1 - b);
@@ -128,7 +128,7 @@ namespace System.Threading.Tasks
 				return PopResult.Abort;
 			
 			var a = array;
-			obj = a[t];
+			obj = a.segment[t % a.size];
 			
 			return PopResult.Succeed;
 		}
@@ -143,8 +143,8 @@ namespace System.Threading.Tasks
 	internal class CircularArray<T>
 	{
 		readonly int baseSize;
-		readonly int size;
-		readonly T[] segment;
+		public readonly int size;
+		public readonly T[] segment;
 		
 		public CircularArray (int baseSize)
 		{
