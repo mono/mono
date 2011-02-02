@@ -60,16 +60,11 @@ namespace System.ServiceModel.Description
 
 		protected override void InsertItem (int index, OperationDescription item)
 		{
-			if (Find (item.Name) == null)
-				base.InsertItem (index, item);
-			else
-				throw new InvalidOperationException ("A contract cannot have two operations that have the identical names and different set of parameters.");
+			base.InsertItem (index, item);
 		}
 
 		protected override void SetItem (int index, OperationDescription item)
 		{
-			if (Find (item.Name) != null)
-				base.RemoveItem (index);
 			base.SetItem (index, item);
 		}
 	}
