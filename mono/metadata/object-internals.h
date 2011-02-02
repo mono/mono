@@ -1448,9 +1448,6 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error) MONO_INTERNAL;
 gboolean
 mono_class_is_reflection_method_or_constructor (MonoClass *class) MONO_INTERNAL;
 
-void
-mono_reflection_shutdown (void) MONO_INTERNAL;
-
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 
 
