@@ -65,6 +65,7 @@ namespace System.Threading.Tasks
 		
 		const int sleepThreshold = 100;
 		int deepSleepTime = 8;
+		readonly Action<Task> adder;
 		
 		public ThreadWorker (ThreadWorker[] others,
 		                     int workerPosition,
@@ -80,6 +81,7 @@ namespace System.Threading.Tasks
 			this.workerPosition  = workerPosition;
 			this.waitHandle      = handle;
 			this.threadPriority  = priority;
+			this.adder           = new Action<Task> (ChildWorkAdder);
 
 			InitializeUnderlyingThread ();
 		}
@@ -195,7 +197,7 @@ namespace System.Threading.Tasks
 					while (dDeque.PopBottom (out value) == PopResult.Succeed) {
 						waitHandle.Set ();
 						if (value != null) {
-							value.Execute (ChildWorkAdder);
+							value.Execute (adder);
 							result = true;
 						}
 					}
@@ -218,7 +220,7 @@ namespace System.Threading.Tasks
 							waitHandle.Set ();
 							hasStolenFromOther = true;
 							if (value != null) {
-								value.Execute (ChildWorkAdder);
+								value.Execute (adder);
 								result = true;
 							}
 						}
@@ -250,12 +252,13 @@ namespace System.Threading.Tasks
 				millisecondsTimeout = int.MaxValue;
 			bool aggressive = false;
 			bool hasAutoReference = autoReference != null;
+			Action<Task> adder = null;
 
 			while (!predicateEvt.IsSet && watch.ElapsedMilliseconds < millisecondsTimeout) {
 				// We try to execute the self task as it may be the simplest way to unlock
 				// the situation
 				if (self.Status == TaskStatus.WaitingToRun) {
-					self.Execute (hasAutoReference ? autoReference.ChildWorkAdder : (Action<Task>)null);
+					self.Execute (hasAutoReference ? autoReference.adder : (Action<Task>)null);
 					if (predicateEvt.IsSet || watch.ElapsedMilliseconds > millisecondsTimeout)
 						return;
 				}
@@ -265,6 +268,8 @@ namespace System.Threading.Tasks
 				// If we are in fact a normal ThreadWorker, use our own deque
 				if (hasAutoReference) {
 					var enumerable = autoReference.dDeque.GetEnumerable ();
+					if (adder == null)
+						adder = hasAutoReference ? autoReference.adder : (Action<Task>)null;
 
 					if (enumerable != null) {
 						foreach (var t in enumerable) {
@@ -272,7 +277,7 @@ namespace System.Threading.Tasks
 								continue;
 
 							if (CheckTaskFitness (self, t))
-								t.Execute (autoReference.ChildWorkAdder);
+								t.Execute (adder);
 
 							if (predicateEvt.IsSet || watch.ElapsedMilliseconds > millisecondsTimeout)
 								return;
