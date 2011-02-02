@@ -1552,7 +1552,7 @@ fixed_parameter
 		lbag.AddLocation ($$, GetLocation ($5));
 		
 		if ($7 != null)
-			((Parameter) $$).DefaultValue = (Expression) $7;
+			((Parameter) $$).DefaultValue = new DefaultParameterValueExpression ((Expression) $7);
 	  }
 	;
 

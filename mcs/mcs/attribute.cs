@@ -191,6 +191,11 @@ namespace Mono.CSharp {
 			target.OptAttributes = null;
 		}
 
+		public ResolveContext CreateResolveContext ()
+		{
+			return new ResolveContext (context, ResolveContext.Options.ConstantScope);
+		}
+
 		static void Error_InvalidNamedArgument (ResolveContext rc, NamedArgument name)
 		{
 			rc.Report.Error (617, name.Location, "`{0}' is not a valid named attribute argument. Named attribute arguments " +
@@ -400,7 +405,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ResolveContext rc = new ResolveContext (context, ResolveContext.Options.ConstantScope);
+			ResolveContext rc = CreateResolveContext ();
 			ctor = ResolveConstructor (rc);
 			if (ctor == null) {
 				return null;
@@ -952,22 +957,19 @@ namespace Mono.CSharp {
 		// 
 		public bool IsExplicitLayoutKind ()
 		{
-			if (PosArguments.Count != 1)
+			if (PosArguments == null || PosArguments.Count != 1)
 				return false;
 
 			var value = (LayoutKind) System.Enum.Parse (typeof (LayoutKind), ((Constant) PosArguments[0].Expr).GetValue ().ToString ());
 			return value == LayoutKind.Explicit;
 		}
 
-		public Constant GetParameterDefaultValue (out TypeSpec type)
+		public Expression GetParameterDefaultValue ()
 		{
-			var expr = PosArguments[0].Expr;
+			if (PosArguments == null)
+				return null;
 
-			if (expr is TypeCast)
-				expr = ((TypeCast) expr).Child;
-
-			type = expr.Type;
-			return expr as Constant;
+			return PosArguments[0].Expr;
 		}
 
 		public override bool Equals (object obj)
