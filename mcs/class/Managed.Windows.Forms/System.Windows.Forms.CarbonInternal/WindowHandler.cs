@@ -148,7 +148,7 @@ namespace System.Windows.Forms.CarbonInternal {
 						Control c = Control.FromHandle (hwnd.client_window);
 						if (c != null) {
 							Form form = c.FindForm ();
-							if (form != null) {
+							if (form != null && XplatUICarbon.UnactiveWindow != form.Handle) {
 								Driver.SendMessage (form.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
 								XplatUICarbon.ActiveWindow = IntPtr.Zero;
 							}
