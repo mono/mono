@@ -201,19 +201,31 @@ namespace Mono.Debugger.Soft
 		public static IAsyncResult BeginListen (IPEndPoint dbg_ep, AsyncCallback callback) {
 			return BeginListen (dbg_ep, null, callback);
 		}
+		
+		public static IAsyncResult BeginListen (IPEndPoint dbg_ep, IPEndPoint con_ep, AsyncCallback callback)
+		{
+			int dbg_port, con_port;
+			return BeginListen (dbg_ep, con_ep, callback, out dbg_port, out con_port);
+		}
 
-		public static IAsyncResult BeginListen (IPEndPoint dbg_ep, IPEndPoint con_ep, AsyncCallback callback) {
+		public static IAsyncResult BeginListen (IPEndPoint dbg_ep, IPEndPoint con_ep, AsyncCallback callback,
+			out int dbg_port, out int con_port)
+		{
+			dbg_port = con_port = 0;
+			
 			Socket dbg_sock = null;
 			Socket con_sock = null;
 
 			dbg_sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			dbg_sock.Bind (dbg_ep);
 			dbg_sock.Listen (1000);
+			dbg_port = ((IPEndPoint) dbg_sock.LocalEndPoint).Port;
 
 			if (con_ep != null) {
 				con_sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 				con_sock.Bind (con_ep);
 				con_sock.Listen (1000);
+				con_port = ((IPEndPoint) con_sock.LocalEndPoint).Port;
 			}
 			
 			ListenCallback c = new ListenCallback (ListenInternal);
