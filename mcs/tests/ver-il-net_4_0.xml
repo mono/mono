@@ -27491,7 +27491,7 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>240</size>
+        <size>236</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -27804,6 +27804,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-17.cs">
+    <type name="BI">
+      <method name="BI op_Implicit(Int32)">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void M(BI)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>96</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void M2(System.Object)">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()">
@@ -27842,22 +27863,6 @@
     <type name="C">
       <method name="Void Main()">
         <size>1</size>
-      </method>
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-repl-01.cs">
-    <type name="MyTest">
-      <method name="Void Run(System.String, System.String)">
-        <size>23</size>
-      </method>
-      <method name="Void Evaluate(System.String, System.String, System.Object)">
-        <size>75</size>
-      </method>
-      <method name="Void Main()">
-        <size>561</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
