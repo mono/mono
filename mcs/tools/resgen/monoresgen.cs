@@ -15,9 +15,7 @@ using System.IO;
 using System.Collections;
 using System.Resources;
 using System.Reflection;
-#if NET_2_0
 using System.Xml;
-#endif
 
 class ResGen {
 
@@ -42,25 +40,18 @@ class ResGen {
 	}
 
 	static void Usage () {
-#if NET_2_0
+
 		string Usage = @"Mono Resource Generator version " + Consts.MonoVersion +
-		    @" for the 2.0 profile
-Usage:
-		resgen2 source.ext [dest.ext]
-		resgen2 [options] /compile source.ext[,dest.resources] [...]";
-#else
-		string Usage = @"Mono Resource Generator version " + Consts.MonoVersion +
-		    @" for the 1.0 profile
+		    @"
 Usage:
 		resgen source.ext [dest.ext]
-		resgen /compile source.ext[,dest.resources] [...]";
-#endif
+		resgen [options] /compile source.ext[,dest.resources] [...]";
 		Usage += @"
 
 Convert a resource file from one format to another.
 The currently supported formats are: '.txt' '.resources' '.resx' '.po'.
 If the destination file is not specified, source.resources will be used.";
-#if NET_2_0
+
 		Usage += @"
 
 Options:
@@ -71,12 +62,6 @@ Options:
 -usesourcepath, /useSourcePath
 	to resolve relative file paths, use the directory of the resource 
 	file as current directory.";
-#else
-		Usage += @"
-The /compile option takes a list of .resX or .txt files to convert to
-.resources files in one bulk operation, replacing .ext with .resources for
-the output file name (if not set).";
-#endif
 		Usage += @"
 ";
 		Console.WriteLine( Usage );
@@ -157,7 +142,7 @@ the output file name (if not set).";
 		} catch (Exception e) {
 			Console.WriteLine ("Error: {0}", e.Message);
 			Exception inner = e.InnerException;
-#if NET_2_0
+
 			// under 2.0 ResXResourceReader can wrap an exception into an XmlException
 			// and this hides some helpful message from the original exception
 			XmlException xex = (inner as XmlException);
@@ -166,7 +151,7 @@ the output file name (if not set).";
 				Console.WriteLine ("Position: Line {0}, Column {1}.", xex.LineNumber, xex.LinePosition);
 				inner = inner.InnerException;
 			}
-#endif
+
 			if (inner is TargetInvocationException && inner.InnerException != null)
 				inner = inner.InnerException;
 			if (inner != null)
@@ -215,7 +200,7 @@ the output file name (if not set).";
 				}
 				compileMultiple = true;
 				break;
-#if NET_2_0
+
 			case "/usesourcepath":
 			case "-usesourcepath":
 				if (compileMultiple) {
@@ -228,7 +213,7 @@ the output file name (if not set).";
 				}
 				useSourcePath = true;
 				break;
-#endif
+
 			default:
 				if (!IsFileArgument (args [i])) {
 					Usage ();
@@ -437,13 +422,11 @@ class TxtResourceReader : IResourceReader {
 				case 't':
 					b.Append ('\t');
 					break;
-#if NET_2_0
 				case 'u':
 					int ch = int.Parse (value.Substring (++i, 4), NumberStyles.HexNumber);
 					b.Append (char.ConvertFromUtf32 (ch));
 					i += 3;
 					break;
-#endif
 				case '\\':
 					b.Append ('\\');
 					break;
