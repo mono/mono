@@ -18,6 +18,8 @@ mcs_aot_image = $(the_libdir)/mcs.exe$(PLATFORM_AOT_SUFFIX)
 mscorlib_dll = $(the_libdir)/mscorlib.dll
 mscorlib_aot_image = $(mscorlib_dll)$(PLATFORM_AOT_SUFFIX)
 
+runtime_dep = $(topdir)/../mono/mini/mono
+
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
@@ -25,10 +27,10 @@ ifndef SKIP_AOT
 
 ifdef PLATFORM_AOT_SUFFIX
 Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
-$(mcs_aot_image): $(mcs_exe)
+$(mcs_aot_image): $(mcs_exe) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version,outfile=$(mcs_aot_image) --debug $(mcs_exe) || cat $(PROFILE)_aot.log || (cat $(PROFILE)_aot.log; exit 1)
 
-$(mscorlib_aot_image): $(mscorlib_dll)
+$(mscorlib_aot_image): $(mscorlib_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version --debug $(mscorlib_dll) || (cat $(PROFILE)_aot.log; exit 1)
 
 ifdef ENABLE_AOT
