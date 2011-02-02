@@ -61,7 +61,7 @@ namespace System.Threading.Tasks
 		
 		readonly int  workerLength;
 		readonly int  workerPosition;
-		const    int  maxRetry = 5;
+		const    int  maxRetry = 3;
 		
 		const int sleepThreshold = 100;
 		int deepSleepTime = 8;
@@ -247,7 +247,7 @@ namespace System.Threading.Tasks
 		                                              ManualResetEvent evt)
 		{
 			const int stage1 = 5, stage2 = 0;
-			int tries = 8;
+			int tries = 50;
 			WaitHandle[] handles = null;
 			Watch watch = Watch.StartNew ();
 			if (millisecondsTimeout == -1)
@@ -343,7 +343,7 @@ namespace System.Threading.Tasks
 				if (--tries > stage1)
 					Thread.Yield ();
 				else if (tries >= stage2)
-					predicateEvt.Wait (ComputeTimeout (100, millisecondsTimeout, watch));
+					predicateEvt.Wait (ComputeTimeout (5, millisecondsTimeout, watch));
 				else {
 					if (tries == stage2 - 1)
 						handles = new [] { predicateEvt.WaitHandle, evt };
