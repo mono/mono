@@ -2890,6 +2890,21 @@
       </method>
     </type>
   </test>
+  <test name="dtest-error-03.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>97</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-etree-01.cs">
     <type name="C">
       <method name="Void Conv1(System.Linq.Expressions.Expression`1[System.Func`2[System.Object,System.Object]])">
@@ -27863,6 +27878,22 @@
     <type name="C">
       <method name="Void Main()">
         <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-repl-01.cs">
+    <type name="MyTest">
+      <method name="Void Run(System.String, System.String)">
+        <size>23</size>
+      </method>
+      <method name="Void Evaluate(System.String, System.String, System.Object)">
+        <size>75</size>
+      </method>
+      <method name="Void Main()">
+        <size>561</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
