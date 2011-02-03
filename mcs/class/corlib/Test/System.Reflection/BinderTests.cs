@@ -20,6 +20,12 @@ namespace MonoTests.System.Reflection
 		One,
 		Two
 	}
+
+	class ParamsArrayTest
+	{
+		public ParamsArrayTest (params string[] strings)
+		{}
+	}
 	
 	class SampleClass {
 		public static void SampleMethod (object o) { }
@@ -100,6 +106,14 @@ namespace MonoTests.System.Reflection
 	{
 		Binder binder = Type.DefaultBinder;
 
+		[Test]
+		public void ParamsArrayTestCast ()
+		{
+			string[] test_args = { "one", "two", "three" };
+			var o = Activator.CreateInstance (typeof (ParamsArrayTest), new object[] { test_args });
+			Assert.IsNotNull (o, "#A1");
+		}
+		
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void SelectPropertyTestNull1 ()
