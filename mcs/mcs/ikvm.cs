@@ -307,7 +307,7 @@ namespace Mono.CSharp
 
 				if (v1 > v2) {
 //					compiler.Report.SymbolRelatedToPreviousError (args.RequestingAssembly.Location);
-					compiler.Report.Error (1705, "Assembly `{0}' references `{1}' which has higher version number than imported assembly `{2}'",
+					compiler.Report.Error (1705, "Assembly `{0}' references `{1}' which has a higher version number than imported assembly `{2}'",
 						args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName);
 
 					return domain.CreateMissingAssembly (args.Name);
