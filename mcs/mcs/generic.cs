@@ -1503,13 +1503,13 @@ namespace Mono.CSharp {
 			return open_type.GetAttributeObsolete ();
 		}
 
-		protected override bool IsNotCLSCompliant ()
+		protected override bool IsNotCLSCompliant (out bool attrValue)
 		{
-			if (base.IsNotCLSCompliant ())
+			if (base.IsNotCLSCompliant (out attrValue))
 				return true;
 
 			foreach (var ta in TypeArguments) {
-				if (ta.MemberDefinition.IsNotCLSCompliant ())
+				if (ta.MemberDefinition.CLSAttributeValue == false)
 					return true;
 			}
 

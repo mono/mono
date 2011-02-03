@@ -1,10 +1,20 @@
-// This code issues CS3014 error in csc ersion 1.1
+// Compiler options: -warnaserror
+
+// This code used to issue CS3014 errors in csc version 1.1
 
 using System;
 
 [assembly: CLSCompliant(false)]
 
 [CLSCompliant(true)]
-public class Foo {
+public enum E
+{
+	Value
+}
+
+[CLSCompliant(true)]
+public class Foo
+{
+	public E e;
 	public static void Main () {}
 }

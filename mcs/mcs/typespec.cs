@@ -1119,9 +1119,10 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		bool IMemberDefinition.IsNotCLSCompliant ()
-		{
-			return false;
+		bool? IMemberDefinition.CLSAttributeValue {
+			get {
+				return null;
+			}
 		}
 
 		void IMemberDefinition.SetIsAssigned ()
@@ -1252,9 +1253,10 @@ namespace Mono.CSharp
 			return Element.MemberDefinition.ConditionalConditions ();
 		}
 
-		bool IMemberDefinition.IsNotCLSCompliant ()
-		{
-			return Element.MemberDefinition.IsNotCLSCompliant ();
+		bool? IMemberDefinition.CLSAttributeValue {
+			get {
+				return Element.MemberDefinition.CLSAttributeValue;
+			}
 		}
 
 		public void SetIsAssigned ()

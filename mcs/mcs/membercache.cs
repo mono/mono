@@ -1115,7 +1115,7 @@ namespace Mono.CSharp {
 					if ((name_entry.Kind & MemberKind.MaskType) == 0)
 						continue;
 
-					if (name_entry.MemberDefinition.IsNotCLSCompliant ())
+					if (name_entry.MemberDefinition.CLSAttributeValue == false)
 					    continue;
 
 					IParametersMember p_a = name_entry as IParametersMember;

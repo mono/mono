@@ -1169,7 +1169,7 @@ namespace Mono.CSharp
 			public ObsoleteAttribute Obsolete;
 			public string[] Conditionals;
 			public string DefaultIndexerName;
-			public bool IsNotCLSCompliant;
+			public bool? CLSAttributeValue;
 			public TypeSpec CoClass;
 			
 			public static AttributesBag Read (MemberInfo mi, MetadataImporter importer)
@@ -1224,7 +1224,7 @@ namespace Mono.CSharp
 						if (bag == null)
 							bag = new AttributesBag ();
 
-						bag.IsNotCLSCompliant = !(bool) a.ConstructorArguments[0].Value;
+						bag.CLSAttributeValue = (bool) a.ConstructorArguments[0].Value;
 						continue;
 					}
 
@@ -1324,12 +1324,13 @@ namespace Mono.CSharp
 			return cattrs.Obsolete;
 		}
 
-		public bool IsNotCLSCompliant ()
-		{
-			if (cattrs == null)
-				ReadAttributes ();
+		public bool? CLSAttributeValue {
+			get {
+				if (cattrs == null)
+					ReadAttributes ();
 
-			return cattrs.IsNotCLSCompliant;
+				return cattrs.CLSAttributeValue;
+			}
 		}
 
 		protected void ReadAttributes ()
