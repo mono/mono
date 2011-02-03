@@ -339,8 +339,13 @@ namespace System.Web.Services.Description
 		
 		void AddExtensionNamespaces (XmlSerializerNamespaces ns, ServiceDescriptionFormatExtensionCollection extensions)
 		{
-			foreach (ServiceDescriptionFormatExtension ext in extensions)
+			foreach (object o in extensions)
 			{
+				ServiceDescriptionFormatExtension ext = o as ServiceDescriptionFormatExtension;
+				if (ext == null)
+					// o can be XmlElement, skipping that
+					continue;
+
 				ExtensionInfo einf = ExtensionManager.GetFormatExtensionInfo (ext.GetType ());
 				foreach (XmlQualifiedName qname in einf.NamespaceDeclarations)
 					ns.Add (qname.Name, qname.Namespace);
@@ -352,8 +357,12 @@ namespace System.Web.Services.Description
 			ServiceDescriptionFormatExtensionCollection extensions = ExtensionManager.GetExtensionPoint (ob);
 			if (extensions != null)
 			{
-				foreach (ServiceDescriptionFormatExtension ext in extensions)
-					WriteExtension (writer, ext);
+				foreach (object o in extensions) {
+					if (o is ServiceDescriptionFormatExtension)
+						WriteExtension (writer, (ServiceDescriptionFormatExtension)o);
+					else if (o is XmlElement)
+						((XmlElement)o).WriteTo (writer);
+				}
 			}
 		}
 		

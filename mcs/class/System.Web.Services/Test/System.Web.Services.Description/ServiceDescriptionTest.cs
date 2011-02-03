@@ -141,6 +141,14 @@ namespace MonoTests.System.Web.Services.Description
 		    Assert.AreEqual (typeof (SoapAddressBinding), sd.Services [0].Ports [0].Extensions [0].GetType ());	
 		    CheckXmlElement (sd.Services [0].Ports [0].Extensions [1], "portElem");
 
+		    string out_file = Path.GetTempFileName ();
+		    try {
+			    using (FileStream out_fs = new FileStream(out_file, FileMode.Create))
+				    sd.Write (out_fs);
+		    } finally {
+			    if (!String.IsNullOrEmpty (out_file))
+				    File.Delete (out_file);
+		    }
 		}
 
 		void CheckExtensions (DocumentableItem di, string elemName, string val)
