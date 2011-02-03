@@ -1790,7 +1790,7 @@ namespace Mono.CSharp
 					var t = (MetaType) member;
 
 					// Ignore compiler generated types, mostly lambda containers
-					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate)
+					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate && importer.IgnorePrivateMembers)
 						continue;
 
 					imported = importer.CreateNestedType (t, declaringType);
@@ -1803,7 +1803,7 @@ namespace Mono.CSharp
 
 					var t = (MetaType) member;
 
-					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate)
+					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate && importer.IgnorePrivateMembers)
 						continue;
 
 					importer.ImportTypeBase (t);
