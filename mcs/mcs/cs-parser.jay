@@ -1225,15 +1225,18 @@ variable_initializer
 	;
 
 method_declaration
-	: method_header {
+	: method_header
+	  {
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
+
+		// Add it early in the case of body being eof for full aot
+		current_container.AddMethod ((Method) $1);
 	  }
 	  method_body
 	  {
 		Method method = (Method) $1;
 		method.Block = (ToplevelBlock) $3;
-		current_container.AddMethod (method);
 		
 		if (current_container.Kind == MemberKind.Interface && method.Block != null) {
 			Report.Error (531, method.Location, "`{0}': interface members cannot have a definition", method.GetSignatureForError ());
