@@ -60,11 +60,11 @@ namespace System.Xml
 		private ValidationType validationType;
 #endif
 		private XmlResolver xmlResolver;
-#if MOONLIGHT || NET_4_0
+#if NET_4_0
 		private DtdProcessing dtdProcessing;
+#endif
 		private long maxCharactersFromEntities;
 		private long maxCharactersInDocument;
-#endif
 
 		public XmlReaderSettings ()
 		{
@@ -118,7 +118,7 @@ namespace System.Xml
 			get { return conformance; }
 			set { conformance = value; }
 		}
-#if MOONLIGHT || NET_4_0
+#if NET_4_0
 		public DtdProcessing DtdProcessing {
 			get { return dtdProcessing; }
 			set {
@@ -126,7 +126,7 @@ namespace System.Xml
 				prohibitDtd = (value == DtdProcessing.Prohibit);
 			}
 		}
-
+#endif
 		public long MaxCharactersFromEntities {
 			get { return maxCharactersFromEntities; }
 			set { maxCharactersFromEntities = value; }
@@ -137,7 +137,6 @@ namespace System.Xml
 			get { return maxCharactersInDocument; }
 			set { maxCharactersInDocument = value; }
 		}
-#endif
 
 		public bool IgnoreComments {
 			get { return ignoreComments; }
