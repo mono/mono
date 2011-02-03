@@ -63,7 +63,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				// but the NullReferenceException is thrown only when the context
 				// is used and not during initialization
 				//
-				if (callingTypeImported == null)
+				if (callingTypeImported == null && callingType != null)
 					callingTypeImported = ctx.ImportType (callingType);
 
 				return callingTypeImported;
