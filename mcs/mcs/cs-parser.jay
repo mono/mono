@@ -5664,9 +5664,9 @@ where_clause
 	  {
 	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  }
-	  boolean_expression
+	  expression
 	  {
-		$$ = new Linq.Where ((Linq.QueryBlock)current_block, (BooleanExpression)$3, GetLocation ($1));
+		$$ = new Linq.Where ((Linq.QueryBlock)current_block, (Expression)$3, GetLocation ($1));
 
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
