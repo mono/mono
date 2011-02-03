@@ -27400,6 +27400,40 @@
       </method>
     </type>
   </test>
+  <test name="gtest-linq-26.cs">
+    <type name="Test.S`1[T]">
+      <method name="System.String Where(System.Func`2[Test.C,System.String])">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.Extension">
+      <method name="System.String Is(Test.C)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test.Program">
+      <method name="Void Main()">
+        <size>79</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__0(Test.C)">
+        <size>7</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__1(Test.C)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-named-01.cs">
     <type name="C">
       <method name="Int32 Test(Int32, Int32, System.String)">
