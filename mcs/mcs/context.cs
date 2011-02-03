@@ -557,6 +557,8 @@ namespace Mono.CSharp
 	//
 	public class CompilerContext
 	{
+		static readonly TimeReporter DisabledTimeReporter = new TimeReporter (false);
+
 		readonly Report report;
 		readonly BuildinTypes buildin_types;
 
@@ -564,6 +566,7 @@ namespace Mono.CSharp
 		{
 			this.report = report;
 			this.buildin_types = new BuildinTypes ();
+			this.TimeReporter = DisabledTimeReporter;
 		}
 
 		#region Properties
