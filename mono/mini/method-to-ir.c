@@ -5168,6 +5168,10 @@ mono_decompose_soft_float (MonoCompile *cfg)
 						call2->inst.dreg = mono_alloc_ireg (cfg);
 						MONO_ADD_INS (cfg->cbb, (MonoInst*)call2);
 
+						/* Remap OUTARG_VT instructions referencing this call */
+						for (l = call->outarg_vts; l; l = l->next)
+							((MonoInst*)(l->data))->inst_p0 = call2;
+
 						/* FIXME: Optimize this */
 
 						/* Emit an r4->r8 conversion */
