@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.ServiceModel.Channels;
@@ -576,11 +577,15 @@ namespace System.ServiceModel.MonoInternal
 		{
 			if (RequestChannel != null)
 				return RequestChannel.Request (msg, timeout);
-			else {
-				DateTime startTime = DateTime.Now;
-				OutputChannel.Send (msg, timeout);
-				return ((IDuplexChannel) OutputChannel).Receive (timeout - (DateTime.Now - startTime));
-			}
+			else
+				return RequestCorrelated (msg, timeout, OutputChannel);
+		}
+
+		internal virtual Message RequestCorrelated (Message msg, TimeSpan timeout, IOutputChannel channel)
+		{
+			DateTime startTime = DateTime.Now;
+			OutputChannel.Send (msg, timeout);
+			return ((IDuplexChannel) channel).Receive (timeout - (DateTime.Now - startTime));
 		}
 
 		internal IAsyncResult BeginRequest (Message msg, TimeSpan timeout, AsyncCallback callback, object state)
