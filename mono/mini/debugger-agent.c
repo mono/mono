@@ -915,6 +915,10 @@ mono_debugger_agent_cleanup (void)
 		
 	stop_debugger_thread ();
 
+	
+	mono_mutex_destroy (&debugger_thread_exited_mutex);
+	mono_cond_destroy (&debugger_thread_exited_cond);
+	
 	breakpoints_cleanup ();
 	objrefs_cleanup ();
 	ids_cleanup ();
@@ -1215,9 +1219,6 @@ stop_debugger_thread ()
 #else
 	shutdown (conn_fd, SHUT_RDWR);
 #endif
-	
-	mono_mutex_destroy (&debugger_thread_exited_mutex);
-	mono_cond_destroy (&debugger_thread_exited_cond);
 }
 
 static void
