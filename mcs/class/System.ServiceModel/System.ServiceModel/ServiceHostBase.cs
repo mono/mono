@@ -684,6 +684,8 @@ namespace System.ServiceModel
 			foreach (IEndpointBehavior b in endPoint.Behaviors)
 				b.ApplyDispatchBehavior (endPoint, ed);
 			foreach (OperationDescription operation in endPoint.Contract.Operations) {
+				if (operation.InCallbackContract)
+					continue; // irrelevant
 				foreach (IOperationBehavior b in operation.Behaviors)
 					b.ApplyDispatchBehavior (operation, ed.DispatchRuntime.Operations [operation.Name]);
 			}
