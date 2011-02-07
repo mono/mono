@@ -60,6 +60,7 @@ namespace System.ServiceModel.Dispatcher
 			}
 			else
 				contextChannel = new ServiceRuntimeChannel (reply_or_input, dispatch_runtime);
+			contextChannel.Open (); // FIXME: timeout?
 			OperationContext opCtx = new OperationContext (contextChannel);
 			opCtx.IncomingMessage = incoming;
 			opCtx.EndpointDispatcher = dispatch_runtime.EndpointDispatcher;
