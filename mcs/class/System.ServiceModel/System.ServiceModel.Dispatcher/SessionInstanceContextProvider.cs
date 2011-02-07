@@ -54,6 +54,10 @@ namespace System.ServiceModel.Dispatcher
 		{
 			var key = channel.SessionId ?? String.Empty;
 			pool [key] = instanceContext;
+			channel.Closed += delegate {
+				pool.Remove (key);
+				instanceContext.Close (); // FIXME: timeout?
+			};
 		}
 
 		public bool IsIdle (InstanceContext instanceContext)

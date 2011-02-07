@@ -118,6 +118,7 @@ namespace System.ServiceModel.MonoInternal
 		public ServiceRuntimeChannel (IChannel channel, DispatchRuntime runtime)
 		{
 			this.channel = channel;
+			channel.Closing += delegate { Close (); };
 			this.runtime = runtime;
 		}
 
@@ -197,7 +198,8 @@ namespace System.ServiceModel.MonoInternal
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			channel.Close (timeout);
+			if (channel.State == CommunicationState.Opened)
+				channel.Close (timeout);
 		}
 
 		protected override IAsyncResult OnBeginOpen (
@@ -213,7 +215,8 @@ namespace System.ServiceModel.MonoInternal
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			channel.Open (timeout);
+			if (channel.State == CommunicationState.Created)
+				channel.Open (timeout);
 		}
 
 		// IChannel

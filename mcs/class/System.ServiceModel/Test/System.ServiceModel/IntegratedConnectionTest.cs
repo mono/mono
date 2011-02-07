@@ -34,6 +34,8 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
+using System.Threading;
 using System.Xml;
 using NUnit.Framework;
 
@@ -133,6 +135,81 @@ namespace MonoTests.System.ServiceModel
 				if (host.State == CommunicationState.Opened)
 					host.Close ();
 			}
+		}
+
+		[ServiceContract(SessionMode = SessionMode.Required)]
+		interface IFoo3
+		{
+			[OperationContract]
+			int GetInstanceCounter ();
+		}
+
+			[ServiceBehavior (InstanceContextMode = InstanceContextMode.PerSession)]
+		class Foo3 : IFoo3, IDisposable
+		{
+			public static int CreatedInstances { get; set; }
+			public static int DisposedInstances { get; set; }
+
+			public static int InstanceCounter {
+				get { return CreatedInstances - DisposedInstances; }
+			}
+
+			public Foo3 ()
+			{
+				CreatedInstances++;
+			}
+
+			public int GetInstanceCounter ()
+			{
+				return InstanceCounter;
+			}
+
+			public virtual void Dispose ()
+			{
+				DisposedInstances++;
+			}
+
+		}
+
+		private void TestSessionbehaviour (Binding binding, Uri address)
+		{
+			ServiceHost host = new ServiceHost (typeof (Foo3), address);
+			host.AddServiceEndpoint (typeof (IFoo3), binding, address);
+			host.Description.Behaviors.Add (new ServiceThrottlingBehavior () { MaxConcurrentSessions = 1 });
+			Foo3.CreatedInstances = Foo3.DisposedInstances = 0; // Reset
+			host.Open ();
+			Assert.AreEqual (0, Foo3.InstanceCounter, "Initial state wrong"); // just to be sure
+			var cd = (ChannelDispatcher) host.ChannelDispatchers [0];
+			for (int i = 1; i <= 3; ++i) {
+				var factory = new ChannelFactory<IFoo3Client> (binding, address.ToString ());
+				var proxy = factory.CreateChannel ();
+				Assert.AreEqual (1, proxy.GetInstanceCounter (), "One server instance after first call in session #" + i);
+				Assert.AreEqual (1, proxy.GetInstanceCounter (), "One server instance after second call in session #" + i);
+				factory.Close (); // should close session even when no IsTerminating method has been invoked
+				Thread.Sleep (500); // give WCF time to dispose service object
+				Assert.AreEqual (0, Foo3.InstanceCounter, "Service instances must be disposed after channel is closed");
+				Assert.AreEqual (i, Foo3.CreatedInstances, "One new instance per session");
+			}
+			host.Close ();
+		}
+
+		interface IFoo3Client : IFoo3, IClientChannel {}
+
+		[Test (Description = "Tests InstanceContextMode.PerSession behavior for NetTcp binding")]
+		public void TestSessionInstancesNetTcp ()
+		{
+			Binding binding = new NetTcpBinding (SecurityMode.None, false);
+			Uri address = new Uri (binding.Scheme + "://localhost:9999/test");
+			TestSessionbehaviour (binding, address);
+		}
+
+		[Test (Description = "Tests InstanceContextMode.PerSession behavior for WsHttp binding")]
+		[Category ("NotWorking")] // no working WSHttpBinding in mono.
+		public void TestSessionInstancesWsHttp ()
+		{
+			Binding binding = new WSHttpBinding (SecurityMode.None, true);
+			Uri address = new Uri (binding.Scheme + "://localhost:9999/test");
+			TestSessionbehaviour(binding, address);
 		}
 	}
 
