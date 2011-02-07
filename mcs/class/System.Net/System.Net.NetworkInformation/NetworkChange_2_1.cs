@@ -34,7 +34,7 @@ namespace System.Net.NetworkInformation {
 		static NetworkChange ()
 		{
 			state_changed_callback = new NetworkStateChangedCallback (StateChangedCallback);
-			moon_network_service_set_network_state_changed_callback (runtime_get_network_service(),
+			_moonlight_cbinding_moon_network_service_set_network_state_changed_callback (_moonlight_cbinding_runtime_get_network_service(),
 										 state_changed_callback,
 										 IntPtr.Zero);
 		}
@@ -63,14 +63,14 @@ namespace System.Net.NetworkInformation {
 		public static event NetworkAddressChangedEventHandler NetworkAddressChanged;
 
 		[DllImport ("moon")]
-		internal extern static IntPtr runtime_get_network_service ();
+		internal extern static IntPtr _moonlight_cbinding_runtime_get_network_service ();
 
 		[DllImport ("moon")]
-		internal extern static void moon_network_service_set_network_state_changed_callback (IntPtr service,
+		internal extern static void _moonlight_cbinding_moon_network_service_set_network_state_changed_callback (IntPtr service,
 												     NetworkStateChangedCallback handler, IntPtr data);
 
 		[DllImport ("moon")]
-		internal extern static bool moon_network_service_get_is_network_available (IntPtr service);
+		internal extern static bool _moonlight_cbinding_moon_network_service_get_is_network_available (IntPtr service);
 	}
 }
 #endif
