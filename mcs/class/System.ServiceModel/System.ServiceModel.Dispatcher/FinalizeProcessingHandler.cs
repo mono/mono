@@ -15,10 +15,11 @@ namespace System.ServiceModel.Dispatcher
 		}
 
 		void FinishRequest (MessageProcessingContext mrc)
-		{				
-			if (mrc.Operation != null &&  mrc.Operation.ReleaseInstanceAfterCall) {
+		{
+			if (mrc.Operation != null &&  mrc.Operation.IsTerminating && mrc.OperationContext.Channel.InputSession != null)
+				mrc.OperationContext.Channel.Close (); // FIXME: timeout?
+			if (mrc.Operation != null &&  mrc.Operation.ReleaseInstanceAfterCall)
 				mrc.InstanceContext.ReleaseServiceInstance ();
-			}
 			mrc.InstanceContext.CloseIfIdle ();			
 		}
 	}
