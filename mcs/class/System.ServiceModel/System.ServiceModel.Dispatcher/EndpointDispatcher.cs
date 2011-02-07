@@ -153,6 +153,7 @@ namespace System.ServiceModel.Dispatcher
 				od.IsOneWay ?
 				new DispatchOperation (db, od.Name, reqA) :
 				new DispatchOperation (db, od.Name, reqA, resA);
+			o.IsTerminating = od.IsTerminating;
 			bool no_serialized_reply = od.IsOneWay;
 			foreach (MessageDescription md in od.Messages) {
 				if (md.IsRequest &&
