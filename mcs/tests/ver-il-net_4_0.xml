@@ -27434,6 +27434,61 @@
       </method>
     </type>
   </test>
+  <test name="gtest-linq-27.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>144</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__0(System.String)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;b&gt;__T,&lt;t&gt;__T]">
+      <method name="&lt;b&gt;__T get_b()">
+        <size>7</size>
+      </method>
+      <method name="&lt;t&gt;__T get_t()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>142</size>
+      </method>
+      <method name="Void .ctor(&lt;b&gt;__T, &lt;t&gt;__T)">
+        <size>21</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0">
+      <method name="IEnumerable`1 &lt;&gt;m__1(System.String)">
+        <size>75</size>
+      </method>
+      <method name="&lt;&gt;__AnonType0`2[System.String,System.Boolean] &lt;&gt;m__2(System.String)">
+        <size>47</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__3(&lt;&gt;__AnonType0`2[System.String,System.Boolean])">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0+&lt;Main&gt;c__AnonStorey1">
+      <method name="Boolean &lt;&gt;m__4(Char)">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-named-01.cs">
     <type name="C">
       <method name="Int32 Test(Int32, Int32, System.String)">
