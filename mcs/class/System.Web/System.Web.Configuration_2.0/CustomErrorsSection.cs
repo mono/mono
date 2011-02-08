@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2011 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -32,33 +32,36 @@ using System;
 using System.Configuration;
 using System.Xml;
 
-#if NET_2_0
-
-namespace System.Web.Configuration {
-
+namespace System.Web.Configuration
+{
 	public sealed class CustomErrorsSection : ConfigurationSection
 	{
 		static ConfigurationProperty defaultRedirectProp;
 		static ConfigurationProperty errorsProp;
 		static ConfigurationProperty modeProp;
+		static ConfigurationProperty redirectModeProp;
 		static ConfigurationPropertyCollection properties;
 
 		static CustomErrorsSection ()
 		{
 			defaultRedirectProp = new ConfigurationProperty ("defaultRedirect", typeof (string), null);
-			errorsProp = new ConfigurationProperty ("", typeof (CustomErrorCollection), null,
+			errorsProp = new ConfigurationProperty (String.Empty, typeof (CustomErrorCollection), null,
 								null, PropertyHelper.DefaultValidator,
 								ConfigurationPropertyOptions.IsDefaultCollection);
 			modeProp = new ConfigurationProperty ("mode", typeof (CustomErrorsMode), CustomErrorsMode.RemoteOnly,
 							      new GenericEnumConverter (typeof (CustomErrorsMode)),
 							      PropertyHelper.DefaultValidator,
 							      ConfigurationPropertyOptions.None);
+			redirectModeProp = new ConfigurationProperty ("redirectMode", typeof (CustomErrorsRedirectMode), CustomErrorsRedirectMode.ResponseRedirect,
+								      new GenericEnumConverter (typeof (CustomErrorsRedirectMode)),
+								      PropertyHelper.DefaultValidator, ConfigurationPropertyOptions.None);
+			
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (defaultRedirectProp);
 			properties.Add (errorsProp);
 			properties.Add (modeProp);
-
+			properties.Add (redirectModeProp);
 		}
 
 		// Why override?
@@ -90,6 +93,12 @@ namespace System.Web.Configuration {
 			set { base[modeProp] = value; }
 		}
 
+		[ConfigurationProperty ("redirectMode", DefaultValue = CustomErrorsRedirectMode.ResponseRedirect)]
+		public CustomErrorsRedirectMode RedirectMode {
+			get { return (CustomErrorsRedirectMode) base [redirectModeProp]; }
+			set { base [redirectModeProp] = value; }
+		}
+
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
@@ -97,6 +106,4 @@ namespace System.Web.Configuration {
 	}
 
 }
-
-#endif
 

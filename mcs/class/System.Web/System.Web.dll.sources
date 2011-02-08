@@ -150,6 +150,7 @@ System.Web.Configuration_2.0/CustomError.cs
 System.Web.Configuration_2.0/CustomErrorCollection.cs
 System.Web.Configuration_2.0/CustomErrorsMode.cs
 System.Web.Configuration_2.0/CustomErrorsSection.cs
+System.Web.Configuration_2.0/CustomErrorsRedirectMode.cs
 System.Web.Configuration_2.0/DeploymentSection.cs
 System.Web.Configuration_2.0/EventMappingSettings.cs
 System.Web.Configuration_2.0/EventMappingSettingsCollection.cs
