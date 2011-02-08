@@ -5,7 +5,7 @@ BOOTSTRAP_PROFILE = build
 BOOTSTRAP_MCS = mcs
 MCS = $(BOOTSTRAP_MCS)
 
-profile-check:
+profile-check: $(depsdir)/.stamp
 	@:
 
 DEFAULT_REFERENCES = -r:mscorlib.dll
