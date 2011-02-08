@@ -2104,6 +2104,8 @@ namespace Mono.CSharp {
 #endif
 
 			clonectx.AddBlockMap (this, target);
+			if (original != this)
+				clonectx.AddBlockMap (original, target);
 
 			target.ParametersBlock = (ParametersBlock) (ParametersBlock == this ? target : clonectx.RemapBlockCopy (ParametersBlock));
 			target.Explicit = (ExplicitBlock) (Explicit == this ? target : clonectx.LookupBlock (Explicit));
@@ -2505,14 +2507,9 @@ namespace Mono.CSharp {
 			return new ParameterReference (parameter_info[index], loc);
 		}
 
-		public Statement PerformClone (Block currentParent)
+		public Statement PerformClone ()
 		{
 			CloneContext clonectx = new CloneContext ();
-
-			if (currentParent != null && currentParent.Original != currentParent) {
-				clonectx.AddBlockMap (currentParent.Original, currentParent);
-			}
-
 			return Clone (clonectx);
 		}
 

@@ -349,8 +349,6 @@ namespace Mono.CSharp.Linq
 
 		public Expression CreateReferenceExpression (ResolveContext rc, Location loc)
 		{
-			Expression expr = null;
-
 			// 
 			// We know the variable name is somewhere in the scope. This generates
 			// an access expression from current block
@@ -363,6 +361,7 @@ namespace Mono.CSharp.Linq
 						if (p.Name == Name)
 							return pb.GetParameterReference (i, loc);
 
+						Expression expr = null;
 						var tp = p as QueryBlock.TransparentParameter;
 						while (tp != null) {
 							if (expr == null)
@@ -379,8 +378,6 @@ namespace Mono.CSharp.Linq
 							tp = tp.Parent as QueryBlock.TransparentParameter;
 						}
 					}
-
-					expr = null;
 				}
 
 				if (pb == block)
