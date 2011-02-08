@@ -1015,8 +1015,9 @@ namespace System
 #if NET_4_0 || MOONLIGHT || MOBILE
 		public bool HasFlag (Enum flag)
 		{
-			ulong mvalue = Convert.ToUInt64 (get_value (), null);
-			ulong fvalue = Convert.ToUInt64 (flag, null);
+			var val = get_value ();
+			ulong mvalue = GetValue (val, Type.GetTypeCode (val.GetType ()));
+			ulong fvalue = GetValue (flag, Type.GetTypeCode (flag.GetType ()));
 
 			return ((mvalue & fvalue) == fvalue);
 		}
