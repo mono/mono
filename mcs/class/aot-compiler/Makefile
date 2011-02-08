@@ -18,7 +18,9 @@ mcs_aot_image = $(the_libdir)/mcs.exe$(PLATFORM_AOT_SUFFIX)
 mscorlib_dll = $(the_libdir)/mscorlib.dll
 mscorlib_aot_image = $(mscorlib_dll)$(PLATFORM_AOT_SUFFIX)
 
-runtime_dep = $(topdir)/../mono/mini/mono
+# The $(dir $(RUNTIME)) is necessary to get path to the mono binary in case when we cross-compile
+# or just compile from a different directory than the top source dir
+runtime_dep = $(dir $(RUNTIME))/../mono/mini/mono
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
