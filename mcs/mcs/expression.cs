@@ -6470,6 +6470,7 @@ namespace Mono.CSharp
 #endif
 		}
 #endif
+#if STATIC
 		//
 		// Emits the initializers for the array
 		//
@@ -6497,6 +6498,7 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Ldtoken, fb);
 			ec.Emit (OpCodes.Call, TypeManager.void_initializearray_array_fieldhandle);
 		}
+#endif
 
 		//
 		// Emits pieces of the array that can not be computed at compile
@@ -6566,6 +6568,7 @@ namespace Mono.CSharp
 			if (initializers == null)
 				return;
 
+#if STATIC
 			// Emit static initializer for arrays which have contain more than 2 items and
 			// the static initializer will initialize at least 25% of array values or there
 			// is more than 10 items to be initialized
@@ -6576,7 +6579,9 @@ namespace Mono.CSharp
 
 				if (!only_constant_initializers)
 					EmitDynamicInitializers (ec, false);
-			} else {
+			} else
+#endif
+			{
 				EmitDynamicInitializers (ec, true);
 			}
 

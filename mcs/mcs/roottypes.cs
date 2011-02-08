@@ -30,6 +30,7 @@ namespace Mono.CSharp
 	//
 	public class ModuleContainer : TypeContainer
 	{
+#if STATIC
 		//
 		// Compiler generated container for static data
 		//
@@ -37,9 +38,6 @@ namespace Mono.CSharp
 		{
 			Dictionary<int, Struct> size_types;
 			new int fields;
-#if !STATIC
-			static MethodInfo set_data;
-#endif
 
 			public StaticDataContainer (ModuleContainer module)
 				: base (module, new MemberName ("<PrivateImplementationDetails>" + module.builder.ModuleVersionId.ToString ("B"), Location.Null), Modifiers.STATIC)
@@ -93,28 +91,35 @@ namespace Mono.CSharp
 				++fields;
 				const Modifiers fmod = Modifiers.STATIC | Modifiers.INTERNAL;
 				var fbuilder = TypeBuilder.DefineField (name, size_type.CurrentType.GetMetaInfo (), ModifiersExtensions.FieldAttr (fmod) | FieldAttributes.HasFieldRVA);
-#if STATIC
 				fbuilder.__SetDataAndRVA (data);
-#else
-				if (set_data == null)
-					set_data = typeof (FieldBuilder).GetMethod ("SetRVAData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-				try {
-					set_data.Invoke (fbuilder, new object[] { data });
-				} catch {
-					Report.RuntimeMissingSupport (loc, "SetRVAData");
-				}
-#endif
 
 				return new FieldSpec (CurrentType, null, size_type.CurrentType, fbuilder, fmod);
 			}
 		}
 
+		StaticDataContainer static_data;
+
+		//
+		// Makes const data field inside internal type container
+		//
+		public FieldSpec MakeStaticData (byte[] data, Location loc)
+		{
+			if (static_data == null) {
+				static_data = new StaticDataContainer (this);
+				static_data.CreateType ();
+				static_data.DefineType ();
+
+				AddCompilerGeneratedClass (static_data);
+			}
+
+			return static_data.DefineInitializedData (data, loc);
+		}
+#endif
+
 		public CharSet? DefaultCharSet;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
 
 		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
-		StaticDataContainer static_data;
 
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
@@ -343,9 +348,6 @@ namespace Mono.CSharp
 
 		public new void Define ()
 		{
-			// FIXME: Temporary hack for repl to reset
-			static_data = null;
-
 			InitializePredefinedTypes ();
 
 			foreach (TypeContainer tc in types)
@@ -432,22 +434,6 @@ namespace Mono.CSharp
 		public override bool IsClsComplianceRequired ()
 		{
 			return DeclaringAssembly.IsCLSCompliant;
-		}
-
-		//
-		// Makes const data field inside internal type container
-		//
-		public FieldSpec MakeStaticData (byte[] data, Location loc)
-		{
-			if (static_data == null) {
-				static_data = new StaticDataContainer (this);
-				static_data.CreateType ();
-				static_data.DefineType ();
-
-				AddCompilerGeneratedClass (static_data);
-			}
-
-			return static_data.DefineInitializedData (data, loc);
 		}
 
 		protected override bool AddMemberType (TypeContainer ds)
