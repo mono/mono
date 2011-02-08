@@ -1500,25 +1500,17 @@ namespace MonoTests.System.Runtime.Serialization
 			var ds = (DataSet) x.ReadObject (r);
 		}
 
-		[Test] // bug #652331
-		public void MembersNamespacesInBaseType ()
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))] // BaseConstraintType1 is neither DataContract nor Serializable.
+		public void BaseConstraint1 ()
 		{
-			string xml1 = @"<Currency>JPY</Currency><Description i:nil=""true"" />";
-			string xml2 = @"<Currency xmlns=""http://schemas.datacontract.org/2004/07/SLProto5"">JPY</Currency><Description i:nil=""true"" xmlns=""http://schemas.datacontract.org/2004/07/SLProto5"" />";
-			Assert.AreEqual ("JPY", MembersNamespacesInBaseType_Part<SLProto5.CashAmount> (new SLProto5.CashAmount () { Currency = "JPY" }, xml1, "#1").Currency, "r#1");
-			Assert.AreEqual ("JPY", MembersNamespacesInBaseType_Part<SLProto5_Different.CashAmount> (new SLProto5_Different.CashAmount () { Currency = "JPY" }, xml2, "#2").Currency, "r#2");
-			Assert.AreEqual ("JPY", MembersNamespacesInBaseType_Part<SLProto5.CashAmountDC> (new SLProto5.CashAmountDC () { Currency = "JPY" }, xml1, "#3").Currency, "r#3");
-			Assert.AreEqual ("JPY", MembersNamespacesInBaseType_Part<SLProto5_Different.CashAmountDC> (new SLProto5_Different.CashAmountDC () { Currency = "JPY" }, xml2, "#4").Currency, "r#4");
+			new DataContractSerializer (typeof (BaseConstraintType3)).WriteObject (XmlWriter.Create (TextWriter.Null), new BaseConstraintType3 ());
 		}
 
-		T MembersNamespacesInBaseType_Part<T> (T instance, string expectedPart, string assert)
+		[Test]
+		public void BaseConstraint2 ()
 		{
-			var ds = new DataContractSerializer (typeof (T));
-			var sw = new StringWriter ();
-			using (var w = XmlWriter.Create (sw))
-				ds.WriteObject (w, instance);
-			Assert.IsTrue (sw.ToString ().IndexOf (expectedPart) > 0, assert);
-			return (T) ds.ReadObject (XmlReader.Create (new StringReader (sw.ToString ())));
+			new DataContractSerializer (typeof (BaseConstraintType4)).WriteObject (XmlWriter.Create (TextWriter.Null), new BaseConstraintType4 ());
 		}
 
 		[Test] // bug #652331
@@ -1841,6 +1833,25 @@ namespace MonoTests.System.Runtime.Serialization
 		public NestedContractType Nested;
 		[DataMember]
 		public string X = "x";
+	}
+
+	class BaseConstraintType1 // non-serializable
+	{
+	}
+	
+	[Serializable]
+	class BaseConstraintType2
+	{
+	}
+	
+	[DataContract]
+	class BaseConstraintType3 : BaseConstraintType1
+	{
+	}
+	
+	[DataContract]
+	class BaseConstraintType4 : BaseConstraintType2
+	{
 	}
 }
 

@@ -386,7 +386,7 @@ namespace System.Runtime.Serialization
 		}
 #endif
 
-		[MonoTODO ("support arrays; support Serializable; support SharedType; use DataContractSurrogate")]
+		[MonoTODO ("use DataContractSurrogate")]
 		/*
 			when writeContentOnly is true, then the input XmlWriter
 			must be at element state. This is to write possible
