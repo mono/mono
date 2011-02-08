@@ -1200,7 +1200,7 @@ namespace Mono.CSharp {
 			if (p == null)
 				return null;
 
-			ParametersBlock b = ec.IsInProbingMode ? (ParametersBlock) Block.PerformClone () : Block;
+			ParametersBlock b = ec.IsInProbingMode ? (ParametersBlock) Block.PerformClone (ec.CurrentBlock) : Block;
 
 			return CompatibleMethodFactory (return_type, delegate_type, p, b);
 
