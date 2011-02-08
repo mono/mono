@@ -2,14 +2,15 @@
 
 BOOTSTRAP_PROFILE = build
 
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
-MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
+BOOTSTRAP_MCS = mcs
+MCS = $(BOOTSTRAP_MCS)
 
 profile-check:
 	@:
 
 DEFAULT_REFERENCES = -r:mscorlib.dll
-PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_2_1 -d:MOONLIGHT -nowarn:1699 -nostdlib -lib:$(topdir)/class/lib/$(PROFILE) $(DEFAULT_REFERENCES)
+PROFILE_MCS_FLAGS = -lib:$(topdir)/class/lib/moonlight_raw -d:NET_1_1 -d:NET_2_0 -d:NET_2_1 -d:MOONLIGHT -d:SILVERLIGHT -nowarn:1699 -nostdlib -lib:$(topdir)/class/lib/$(PROFILE) $(DEFAULT_REFERENCES)
+SN = sn
 FRAMEWORK_VERSION = 2.1
 NO_TEST = yes
 

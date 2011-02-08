@@ -66,9 +66,11 @@ library_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_lib
 ifdef NO_SIGN_ASSEMBLY
 SN = :
 else
+ifeq ("$(SN)","")
 sn = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/sn.exe
 SN = $(Q) MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
 SNFLAGS = -q
+endif
 endif
 
 ifeq ($(PLATFORM), win32)

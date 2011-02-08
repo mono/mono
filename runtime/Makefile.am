@@ -26,16 +26,10 @@ SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
 if MOONLIGHT
 moon-do-basic: Makefile $(SUPPORT_FILES)
-	cd $(mcs_topdir)/class/Mono.Cecil && $(MAKE) PROFILE=basic
-	cd $(mcs_topdir)/class/Mono.Cecil.Mdb && $(MAKE) PROFILE=basic
-	cd $(mcs_topdir)/tools/linker && $(MAKE) PROFILE=basic
-	cd $(mcs_topdir)/tools/tuner && $(MAKE) PROFILE=basic
+	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw
 
 moon-do-basic-clean:
-	cd $(mcs_topdir)/class/Mono.Cecil && $(MAKE) PROFILE=basic clean
-	cd $(mcs_topdir)/class/Mono.Cecil.Mdb && $(MAKE) PROFILE=basic clean
-	cd $(mcs_topdir)/tools/linker && $(MAKE) PROFILE=basic clean
-	cd $(mcs_topdir)/tools/tuner && $(MAKE) PROFILE=basic clean
+	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw clean
 endif
 
 if ONLY_MOONLIGHT
