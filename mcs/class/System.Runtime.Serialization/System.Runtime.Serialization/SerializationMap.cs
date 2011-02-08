@@ -266,7 +266,7 @@ namespace System.Runtime.Serialization
 			reader.MoveToContent ();
 			if (!isEmpty && reader.NodeType == XmlNodeType.EndElement)
 				reader.ReadEndElement ();
-			else if (!isEmpty && reader.NodeType != XmlNodeType.None) {
+			else if (!isEmpty && !reader.EOF && reader.NodeType != XmlNodeType.EndElement) {
 				var li = reader as IXmlLineInfo;
 				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.{4}",
 					reader.NodeType,
@@ -302,36 +302,48 @@ namespace System.Runtime.Serialization
 
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			bool [] filled = new bool [Members.Count];
+			bool [] nsmatched = new bool [Members.Count];
 			int memberInd = -1, ordered = -1;
 			while (!empty && reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				DataMemberInfo dmi = null;
 				int i = 0;
+				bool nsmatchedOne = false;
 				for (; i < Members.Count; i++) { // unordered
 					if (Members [i].Order >= 0)
 						break;
-					if (reader.LocalName == Members [i].XmlName &&
-						(Members [i].XmlRootNamespace == null || reader.NamespaceURI == Members [i].XmlRootNamespace)) {
+					if (reader.LocalName == Members [i].XmlName) {
 						memberInd = i;
 						dmi = Members [i];
-						break;
+						nsmatchedOne = (dmi.XmlRootNamespace == null || reader.NamespaceURI == dmi.XmlRootNamespace);
+						if (nsmatchedOne)
+							break;
 					}
 				}
 				for (i = Math.Max (i, ordered); i < Members.Count; i++) { // ordered
 					if (dmi != null)
 						break;
-					if (reader.LocalName == Members [i].XmlName &&
-						(Members [i].XmlRootNamespace == null || reader.NamespaceURI == Members [i].XmlRootNamespace)) {
-						memberInd = i;
+					if (reader.LocalName == Members [i].XmlName) {
 						ordered = i;
+						memberInd = i;
 						dmi = Members [i];
-						break;
+						nsmatchedOne = (dmi.XmlRootNamespace == null || reader.NamespaceURI == dmi.XmlRootNamespace);
+						if (nsmatchedOne)
+							break;
 					}
 				}
-
+				
 				if (dmi == null) {
 					reader.Skip ();
+					reader.MoveToContent ();
 					continue;
 				}
+				if (filled [memberInd] && nsmatched [memberInd]) {
+					// The strictly-corresponding member (i.e. that matches namespace URI too, not only local name) already exists, so skip this element.
+					reader.Skip ();
+					reader.MoveToContent ();
+					continue;
+				}
+				nsmatched [memberInd] = nsmatchedOne;
 				SetValue (dmi, instance, deserializer.Deserialize (dmi.MemberType, reader));
 				filled [memberInd] = true;
 				reader.MoveToContent ();
@@ -1016,7 +1028,7 @@ namespace System.Runtime.Serialization
 
 			if (value != String.Empty) {
 				if (flag_attr && value.IndexOf (' ') != -1) {
-					long flags = 0l;
+					long flags = 0L;
 					foreach (string flag in value.Split (' ')) {
 						foreach (EnumMemberInfo emi in enum_members) {
 							if (emi.XmlName == flag) {
