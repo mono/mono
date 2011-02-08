@@ -196,13 +196,13 @@ namespace Mono.CSharp
 		readonly Universe domain;
 		Assembly corlib;
 		List<Tuple<AssemblyName, string, Assembly>> loaded_names;
-		static readonly Dictionary<SdkVersion, string[]> sdk_directory;
+		static readonly Dictionary<string, string[]> sdk_directory;
 
 		static StaticLoader ()
 		{
-			sdk_directory = new Dictionary<SdkVersion, string[]> ();
-			sdk_directory.Add (SdkVersion.v2, new string[] { "2.0", "net_2_0", "v2.0.50727" });
-			sdk_directory.Add (SdkVersion.v4, new string[] { "4.0", "net_4_0", "v4.0.30319" });
+			sdk_directory = new Dictionary<string, string[]> ();
+			sdk_directory.Add ("2", new string[] { "2.0", "net_2_0", "v2.0.50727" });
+			sdk_directory.Add ("4", new string[] { "4.0", "net_4_0", "v4.0.30319" });
 		}
 
 		public StaticLoader (StaticImporter importer, CompilerContext compiler)
@@ -218,7 +218,13 @@ namespace Mono.CSharp
 			string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
 			string sdk_path = null;
 
-			foreach (var dir in sdk_directory[RootContext.SdkVersion]) {
+			string sdk_version = RootContext.SdkVersion ?? "4";
+			string[] sdk_sub_dirs;
+
+			if (!sdk_directory.TryGetValue (sdk_version, out sdk_sub_dirs))
+				sdk_sub_dirs = new string[] { sdk_version };
+
+			foreach (var dir in sdk_sub_dirs) {
 				sdk_path = Path.Combine (fx_path, dir);
 				if (File.Exists (Path.Combine (sdk_path, "mscorlib.dll")))
 					break;
