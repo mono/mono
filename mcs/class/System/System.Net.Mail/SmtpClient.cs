@@ -278,8 +278,11 @@ namespace System.Net.Mail {
 		
 		private static string EncodeAddress(MailAddress address)
 		{
-			string encodedDisplayName = ContentType.EncodeSubjectRFC2047 (address.DisplayName, Encoding.UTF8);
-			return "\"" + encodedDisplayName + "\" <" + address.Address + ">";
+			if (!String.IsNullOrEmpty (address.DisplayName)) {
+				string encodedDisplayName = ContentType.EncodeSubjectRFC2047 (address.DisplayName, Encoding.UTF8);
+				return "\"" + encodedDisplayName + "\" <" + address.Address + ">";
+			}
+			return address.ToString ();
 		}
 
 		private static string EncodeAddresses(MailAddressCollection addresses)
