@@ -221,6 +221,7 @@ namespace System.Web.Compilation
 			
 			string [] parts;
 			int skip = -1;
+			string appVirtualRoot = VirtualPathUtility.AppendTrailingSlash (HttpRuntime.AppDomainAppVirtualPath);
 			foreach (string vpath in precompiled.Keys) {
 				parts = vpath.Split ('/');
 				for (int i = 0; i < parts.Length; i++) {
@@ -229,7 +230,7 @@ namespace System.Web.Compilation
 					// The path must be rooted, otherwise PhysicalPath returned
 					// below will be relative to the current request path and
 					// File.Exists will return a false negative. See bug #546053
-					string test_path = "/" + String.Join ("/", parts, i, parts.Length - i);
+					string test_path = appVirtualRoot + String.Join ("/", parts, i, parts.Length - i);
 					VirtualPath result = GetAbsoluteVirtualPath (test_path);
 					if (result != null && File.Exists (result.PhysicalPath)) {
 						skip = i - 1;
