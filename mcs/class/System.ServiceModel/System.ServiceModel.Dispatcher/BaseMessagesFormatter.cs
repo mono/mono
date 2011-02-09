@@ -111,6 +111,7 @@ namespace System.ServiceModel.Dispatcher
 		bool isAsync;
 		ParameterInfo [] requestMethodParams;
 		ParameterInfo [] replyMethodParams;
+		List<Type> operation_known_types = new List<Type> ();
 
 		public BaseMessagesFormatter (MessageDescriptionCollection messages)
 		{
@@ -133,6 +134,7 @@ namespace System.ServiceModel.Dispatcher
 			methodParams = desc.EndMethod.GetParameters ();
 			replyMethodParams = new ParameterInfo [methodParams.Length - 1];
 			Array.Copy (methodParams, replyMethodParams, replyMethodParams.Length);
+			operation_known_types.AddRange (desc.KnownTypes);
 		}
 
 		public static BaseMessagesFormatter Create (OperationDescription desc)
@@ -150,6 +152,10 @@ namespace System.ServiceModel.Dispatcher
 			if (attrs != null && attrs.Length > 0)
 				dataAttr = (DataContractFormatAttribute) attrs [0];
 			return new DataContractMessagesFormatter (desc, dataAttr);
+		}
+
+		public IEnumerable<Type> OperationKnownTypes {
+			get { return operation_known_types; }
 		}
 
 		protected abstract Message PartsToMessage (
@@ -334,7 +340,6 @@ namespace System.ServiceModel.Dispatcher
 			return (object []) GetSerializer (md.Body).Deserialize (r);
 		}
 
-		// FIXME: Handle ServiceKnownTypes
 		XmlSerializer GetSerializer (MessageBodyDescription desc)
 		{
 			if (bodySerializers.ContainsKey (desc))
@@ -350,8 +355,10 @@ namespace System.ServiceModel.Dispatcher
 			foreach (MessagePartDescription partDesc in desc.Parts)
 				members [ind++] = CreateReflectionMember (partDesc, false);
 
-			// FIXME: Register known types into xmlImporter.
 			XmlReflectionImporter xmlImporter = new XmlReflectionImporter ();
+			// Register known types into xmlImporter.
+			foreach (var type in OperationKnownTypes)
+				xmlImporter.IncludeType (type);
 			XmlMembersMapping [] partsMapping = new XmlMembersMapping [1];
 			partsMapping [0] = xmlImporter.ImportMembersMapping (desc.WrapperName, desc.WrapperNamespace, members, true);
 			bodySerializers [desc] = XmlSerializer.FromMappings (partsMapping) [0];
@@ -440,12 +447,11 @@ namespace System.ServiceModel.Dispatcher
 			return parts;
 		}
 
-		// FIXME: Handle ServiceKnownTypes
 		XmlObjectSerializer GetSerializer (MessagePartDescription partDesc)
 		{
 			if (!serializers.ContainsKey (partDesc))
 				serializers [partDesc] = new DataContractSerializer (
-					partDesc.Type, partDesc.Name, partDesc.Namespace);
+					partDesc.Type, partDesc.Name, partDesc.Namespace, OperationKnownTypes);
 			return serializers [partDesc];
 		}
 
