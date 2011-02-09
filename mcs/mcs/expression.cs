@@ -8626,9 +8626,10 @@ namespace Mono.CSharp
 		{
 			base.Emit (ec);
 
-			if (ec.CurrentType.IsStruct) {
-				ec.Emit (OpCodes.Ldobj, ec.CurrentType);
-				ec.Emit (OpCodes.Box, ec.CurrentType);
+			var context_type = ec.CurrentType;
+			if (context_type.IsStruct) {
+				ec.Emit (OpCodes.Ldobj, context_type);
+				ec.Emit (OpCodes.Box, context_type);
 			}
 		}
 

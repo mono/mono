@@ -5065,7 +5065,7 @@ namespace Mono.CSharp {
 					EmitInstance (ec, false);
 
 				// Optimization for build-in types
-				if (TypeManager.IsStruct (type) && type == ec.MemberContext.CurrentType && InstanceExpression.Type == type) {
+				if (TypeManager.IsStruct (type) && type == ec.CurrentType && InstanceExpression.Type == type) {
 					ec.EmitLoadFromPtr (type);
 				} else {
 					var ff = spec as FixedFieldSpec;
