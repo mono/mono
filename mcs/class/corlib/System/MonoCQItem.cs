@@ -35,6 +35,6 @@ namespace System {
 		int tail;
 
 	}
-#pragma warning disable 169
+#pragma warning restore 169
 }
 
