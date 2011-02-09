@@ -166,6 +166,7 @@ System/MissingFieldException.cs
 System/MissingMemberException.cs
 System/MissingMethodException.cs
 System/MonoAsyncCall.cs
+System/MonoCQItem.cs
 System/MonoCustomAttrs.cs
 System/MonoListItem.cs
 System/MonoType.cs
