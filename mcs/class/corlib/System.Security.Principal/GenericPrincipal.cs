@@ -54,6 +54,10 @@ namespace System.Security.Principal {
 			}
 		}
 
+		internal string [] Roles {
+			get { return m_roles; }
+		}
+
 		public virtual IIdentity Identity {
 			get { return m_identity; }
 		}
