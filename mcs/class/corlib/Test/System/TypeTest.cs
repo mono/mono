@@ -3887,6 +3887,13 @@ PublicKeyToken=b77a5c561934e089"));
 			MustTLE (string.Format ("{0}ZZZZ,{1}", typeof (MyRealEnum).FullName, aqn));
 		}
 
+	   	delegate void MyAction<in T>(T ag);
+
+		[Test] //bug #668506
+		public void IsAssignableFromWithVariantDelegate () {
+			Assert.IsFalse (typeof(MyAction<string>).IsAssignableFrom(typeof(MyAction<>)), "#1");
+		}
+
 #endif
 
 		public abstract class Stream : IDisposable
