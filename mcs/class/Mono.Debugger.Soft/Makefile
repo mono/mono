@@ -26,8 +26,4 @@ EXTRA_DISTFILES = \
 
 #NO_TEST = yes
 
-ifneq (net_2_0, $(PROFILE))
-NO_INSTALL = yes
-endif
-
 include ../../build/library.make
