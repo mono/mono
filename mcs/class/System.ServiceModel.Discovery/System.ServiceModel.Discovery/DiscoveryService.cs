@@ -189,18 +189,6 @@ namespace System.ServiceModel.Discovery
 			cb.ReplyFind (CreateFindResponse11 ());
 		}
 
-		IAsyncResult IDiscoveryTargetContract11.BeginReplyFind (MessageContracts11.FindResponse message, AsyncCallback callback, object state)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
-		}
-
-		void IDiscoveryTargetContract11.EndReplyFind (IAsyncResult result)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
-		}
-
 		IAsyncResult IDiscoveryTargetContract11.BeginResolve (MessageContracts11.ResolveRequest message, AsyncCallback callback, object state)
 		{
 			return OnBeginResolve (message.Body.ToResolveCriteria (), callback, state);
@@ -209,18 +197,6 @@ namespace System.ServiceModel.Discovery
 		void IDiscoveryTargetContract11.EndResolve (IAsyncResult result)
 		{
 			OnEndResolve (result);
-		}
-
-		IAsyncResult IDiscoveryTargetContract11.BeginReplyResolve (MessageContracts11.ResolveResponse message, AsyncCallback callback, object state)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
-		}
-
-		void IDiscoveryTargetContract11.EndReplyResolve (IAsyncResult result)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
 		}
 
 		IAsyncResult IDiscoveryTargetContract11.BeginOnlineAnnouncement (MessageContracts11.OnlineAnnouncement message, AsyncCallback callback, object state)
@@ -249,18 +225,6 @@ namespace System.ServiceModel.Discovery
 			cb.ReplyFind (CreateFindResponseApril2005 ());
 		}
 
-		IAsyncResult IDiscoveryTargetContractApril2005.BeginReplyFind (MessageContractsApril2005.FindResponse message, AsyncCallback callback, object state)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
-		}
-
-		void IDiscoveryTargetContractApril2005.EndReplyFind (IAsyncResult result)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
-		}
-
 		IAsyncResult IDiscoveryTargetContractApril2005.BeginResolve (MessageContractsApril2005.ResolveRequest message, AsyncCallback callback, object state)
 		{
 			return OnBeginResolve (message.Body.ToResolveCriteria (), callback, state);
@@ -269,18 +233,6 @@ namespace System.ServiceModel.Discovery
 		void IDiscoveryTargetContractApril2005.EndResolve (IAsyncResult result)
 		{
 			OnEndResolve (result);
-		}
-
-		IAsyncResult IDiscoveryTargetContractApril2005.BeginReplyResolve (MessageContractsApril2005.ResolveResponse message, AsyncCallback callback, object state)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
-		}
-
-		void IDiscoveryTargetContractApril2005.EndReplyResolve (IAsyncResult result)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
 		}
 
 		IAsyncResult IDiscoveryTargetContractApril2005.BeginOnlineAnnouncement (MessageContractsApril2005.OnlineAnnouncement message, AsyncCallback callback, object state)
@@ -309,18 +261,6 @@ namespace System.ServiceModel.Discovery
 			cb.ReplyFind (CreateFindResponseCD1 ());
 		}
 
-		IAsyncResult IDiscoveryTargetContractCD1.BeginReplyFind (MessageContractsCD1.FindResponse message, AsyncCallback callback, object state)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
-		}
-
-		void IDiscoveryTargetContractCD1.EndReplyFind (IAsyncResult result)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
-		}
-
 		IAsyncResult IDiscoveryTargetContractCD1.BeginResolve (MessageContractsCD1.ResolveRequest message, AsyncCallback callback, object state)
 		{
 			return OnBeginResolve (message.Body.ToResolveCriteria (), callback, state);
@@ -329,18 +269,6 @@ namespace System.ServiceModel.Discovery
 		void IDiscoveryTargetContractCD1.EndResolve (IAsyncResult result)
 		{
 			OnEndResolve (result);
-		}
-
-		IAsyncResult IDiscoveryTargetContractCD1.BeginReplyResolve (MessageContractsCD1.ResolveResponse message, AsyncCallback callback, object state)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
-		}
-
-		void IDiscoveryTargetContractCD1.EndReplyResolve (IAsyncResult result)
-		{
-			// is it expected to be invoked??
-			throw new NotImplementedException ();
 		}
 
 		IAsyncResult IDiscoveryTargetContractCD1.BeginOnlineAnnouncement (MessageContractsCD1.OnlineAnnouncement message, AsyncCallback callback, object state)
