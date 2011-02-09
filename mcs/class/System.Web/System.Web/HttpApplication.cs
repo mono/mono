@@ -1723,29 +1723,34 @@ namespace System.Web
 		bool RedirectCustomError (ref HttpException httpEx)
 		{
 			try {
-			if (!context.IsCustomErrorEnabledUnsafe)
-				return false;
+				if (!context.IsCustomErrorEnabledUnsafe)
+					return false;
 			
-			CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetSection ("system.web/customErrors");			
-			if (config == null) {
-				if (context.ErrorPage != null)
-					return RedirectErrorPage (context.ErrorPage);
+				CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetSection ("system.web/customErrors");			
+				if (config == null) {
+					if (context.ErrorPage != null)
+						return RedirectErrorPage (context.ErrorPage);
 				
-				return false;
-			}
+					return false;
+				}
 			
-			CustomError err = config.Errors [context.Response.StatusCode.ToString()];
-			string redirect = err == null ? null : err.Redirect;
-			if (redirect == null) {
-				redirect = context.ErrorPage;
+				CustomError err = config.Errors [context.Response.StatusCode.ToString()];
+				string redirect = err == null ? null : err.Redirect;
+				if (redirect == null) {
+					redirect = context.ErrorPage;
+					if (redirect == null)
+						redirect = config.DefaultRedirect;
+				}
+			
 				if (redirect == null)
-					redirect = config.DefaultRedirect;
-			}
-			
-			if (redirect == null)
-				return false;
-			
-			return RedirectErrorPage (redirect);
+					return false;
+
+				if (config.RedirectMode == CustomErrorsRedirectMode.ResponseRewrite) {
+					context.Server.Execute (redirect);
+					return true;
+				}
+				
+				return RedirectErrorPage (redirect);
 			}
 			catch (Exception ex) {
 				httpEx = HttpException.NewWithCode (500, String.Empty, ex, WebEventCodes.WebErrorOtherError);

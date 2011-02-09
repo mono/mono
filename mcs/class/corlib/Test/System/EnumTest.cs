@@ -1124,7 +1124,22 @@ namespace MonoTests.System
 			Assert.AreEqual ("long_Dd", Enum.GetName (typeof (EnumLong), unchecked ((EnumLong)(0xFFFFFFFFFFFFFFFF))));
 			Assert.AreEqual ("long_Dd", r.GetValue (5).ToString ());
 		}
-		
+
+		[Flags]
+		enum Foo {
+			negative = -1
+		}
+
+#if NET_4_0
+		// Our first implementation used to crash
+		[Test]
+		public void HasFlagTest ()
+		{
+			Foo f = Foo.negative;
+			bool has = f.HasFlag (Foo.negative);
+		}
+#endif
+
 		[Flags]
 		enum SomeEnum
 		{

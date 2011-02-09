@@ -41,7 +41,7 @@ namespace System.Web.Security
 	public sealed class DefaultAuthenticationModule : IHttpModule
 	{
 		static readonly object authenticateEvent = new object ();
-		static GenericIdentity defaultIdentity = new GenericIdentity ("", "");
+		static IPrincipal generic_principal = new GenericPrincipal (new GenericIdentity ("", ""), new string [0]);
 
 		EventHandlerList events = new EventHandlerList ();
 		
@@ -74,7 +74,7 @@ namespace System.Web.Security
 				eh (this, new DefaultAuthenticationEventArgs (context));
 
 			if (context.User == null)
-				context.User = new GenericPrincipal (defaultIdentity, new string [0]);
+				context.User = generic_principal;
 
 			Thread.CurrentPrincipal = context.User;
 		}
