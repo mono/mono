@@ -58,7 +58,7 @@ CFLAGS="\
 -D_POSIX_PATH_MAX=256 -DS_IWRITE=S_IWUSR \
 -DHAVE_PTHREAD_MUTEX_TIMEDLOCK \
 -fpic -g -I$PLATFORM_ROOT/usr/include \
--fvisibility=hidden -ffunction-sections -fdata-sections"
+-ffunction-sections -fdata-sections"
 CXXFLAGS=$CFLAGS
 LDFLAGS="\
 -Wl,--no-undefined \
@@ -73,7 +73,6 @@ CONFIG_OPTS="\
 --host=arm-eabi-linux \
 --disable-mcs-build \
 --disable-parallel-mark \
---enable-shared=no \
 --with-sigaltstack=no \
 --with-tls=pthread \
 --with-glib=embedded \
@@ -108,7 +107,8 @@ function clean_build
 	make && echo "Build SUCCESS!" || exit 1
 
 	mkdir -p `dirname $3`
-	cp mono/mini/.libs/libmono.a $3
+	cp mono/mini/.libs/libmono.a $3.a
+	cp mono/mini/.libs/libmono.so $3.so
 }
 
 CCFLAGS_ARMv5_CPU="-DARM_FPU_NONE=1 -march=armv5te -mtune=xscale -msoft-float"
@@ -117,15 +117,17 @@ CCFLAGS_ARMv7_VFP="-DARM_FPU_VFP=1  -march=armv7-a                            -m
 LDFLAGS_ARMv5=""
 LDFLAGS_ARMv7="-Wl,--fix-cortex-a8"
 
-clean_build "$CCFLAGS_ARMv5_CPU" "$LDFLAGS_ARMv5" "$OUTDIR/libmono_armv5.a"
-clean_build "$CCFLAGS_ARMv5_VFP" "$LDFLAGS_ARMv5" "$OUTDIR/libmono_armv5_vfp.a"
-clean_build "$CCFLAGS_ARMv7_VFP" "$LDFLAGS_ARMv7" "$OUTDIR/libmono_armv7a.a"
+rm -rf $OUTDIR
+
+clean_build "$CCFLAGS_ARMv5_CPU" "$LDFLAGS_ARMv5" "$OUTDIR/libmono_armv5"
+clean_build "$CCFLAGS_ARMv5_VFP" "$LDFLAGS_ARMv5" "$OUTDIR/libmono_armv5_vfp"
+clean_build "$CCFLAGS_ARMv7_VFP" "$LDFLAGS_ARMv7" "$OUTDIR/libmono_armv7a"
 
 NUM_LIBS_BUILT=`ls -Al $OUTDIR | grep libmono | wc -l`
-if [ $NUM_LIBS_BUILT -eq 3 ]; then
-	echo "Android STATIC libraries are found here: $OUTDIR"
+if [ $NUM_LIBS_BUILT -eq 6 ]; then
+	echo "Android STATIC/SHARED libraries are found here: $OUTDIR"
 else
-	echo "Build failed? Android STATIC library cannot be found... Found $NUM_LIBS_BUILT libs under $OUTDIR"
+	echo "Build failed? Android STATIC/SHARED library cannot be found... Found $NUM_LIBS_BUILT libs under $OUTDIR"
 	ls -Al $OUTDIR
 	exit 1
 fi
