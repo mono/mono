@@ -1228,7 +1228,7 @@ namespace Mono.CSharp {
 		}
 
 		public ModuleContainer Module {
-			get { return SlaveDeclSpace.Module; }
+			get { return ctx; }
 		}
 
 		#endregion
