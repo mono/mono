@@ -1754,15 +1754,15 @@ namespace Mono.CSharp
 				string name = t.GetSignatureForError ();
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
-					ctx.Compiler.Report.Error (1683, loc,
+					ctx.Module.Compiler.Report.Error (1683, loc,
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
 				} else if (t.MemberDefinition.DeclaringAssembly.IsMissing) {
-					ctx.Compiler.Report.Error (12, loc,
+					ctx.Module.Compiler.Report.Error (12, loc,
 						"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
 						name, t.MemberDefinition.DeclaringAssembly.FullName);
 				} else {
-					ctx.Compiler.Report.Error (1684, loc,
+					ctx.Module.Compiler.Report.Error (1684, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
 						name, t.MemberDefinition.DeclaringAssembly.FullName);
 				}

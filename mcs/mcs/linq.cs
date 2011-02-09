@@ -623,7 +623,7 @@ namespace Mono.CSharp.Linq
 			} else {
 				result_selector_expr = CreateRangeVariableType (ec, parameter, target, new SimpleName (target.Name, target.Location));
 
-				result_block = new QueryBlock (ec.Compiler, block.Parent, block.StartLocation);
+				result_block = new QueryBlock (block.Parent, block.StartLocation);
 				result_block.SetParameters (parameter, target_param);
 			}
 
@@ -729,7 +729,7 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		public QueryBlock (CompilerContext ctx, Block parent, Location start)
+		public QueryBlock (Block parent, Location start)
 			: base (parent, ParametersCompiled.EmptyReadOnlyParameters, start)
 		{
 			flags |= Flags.CompilerGenerated;

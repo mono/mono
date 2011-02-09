@@ -357,7 +357,7 @@ namespace Mono.CSharp {
 		}
 
 
-		public static MethodSpec GetConstructor (CompilerContext ctx, TypeSpec container_type, TypeSpec delType)
+		public static MethodSpec GetConstructor (TypeSpec delType)
 		{
 			var ctor = MemberCache.FindMember (delType, MemberFilter.Constructor (null), BindingRestriction.DeclaredOnly);
 			return (MethodSpec) ctor;
@@ -366,7 +366,7 @@ namespace Mono.CSharp {
 		//
 		// Returns the "Invoke" from a delegate type
 		//
-		public static MethodSpec GetInvokeMethod (CompilerContext ctx, TypeSpec delType)
+		public static MethodSpec GetInvokeMethod (TypeSpec delType)
 		{
 			var invoke = MemberCache.FindMember (delType,
 				MemberFilter.Method (InvokeMethodName, 0, null, null),
@@ -375,9 +375,9 @@ namespace Mono.CSharp {
 			return (MethodSpec) invoke;
 		}
 
-		public static AParametersCollection GetParameters (CompilerContext ctx, TypeSpec delType)
+		public static AParametersCollection GetParameters (TypeSpec delType)
 		{
-			var invoke_mb = GetInvokeMethod (ctx, delType);
+			var invoke_mb = GetInvokeMethod (delType);
 			return invoke_mb.Parameters;
 		}
 
@@ -472,9 +472,9 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			constructor_method = Delegate.GetConstructor (ec.Compiler, ec.CurrentType, type);
+			constructor_method = Delegate.GetConstructor (type);
 
-			var invoke_method = Delegate.GetInvokeMethod (ec.Compiler, type);
+			var invoke_method = Delegate.GetInvokeMethod (type);
 
 			Arguments arguments = CreateDelegateMethodArguments (invoke_method.Parameters, invoke_method.Parameters.Types, loc);
 			method_group = method_group.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.CovariantDelegate);
@@ -549,7 +549,7 @@ namespace Mono.CSharp {
 
 		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, Expression return_type)
 		{
-			var invoke_method = Delegate.GetInvokeMethod (ec.Compiler, type);
+			var invoke_method = Delegate.GetInvokeMethod (type);
 			string member_name = method_group.InstanceExpression != null ?
 				Delegate.FullDelegateDesc (method) :
 				TypeManager.GetFullNameSignature (method);
@@ -579,7 +579,7 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.delegate_type || target_type == TypeManager.multicast_delegate_type)
 				return false;
 
-			var invoke = Delegate.GetInvokeMethod (ec.Compiler, target_type);
+			var invoke = Delegate.GetInvokeMethod (target_type);
 
 			Arguments arguments = CreateDelegateMethodArguments (invoke.Parameters, invoke.Parameters.Types, mg.Location);
 			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.CovariantDelegate | OverloadResolver.Restrictions.ProbingOnly) != null;
@@ -683,7 +683,7 @@ namespace Mono.CSharp {
 				//
 				// An argument is not a method but another delegate
 				//
-				method_group = new MethodGroupExpr (Delegate.GetInvokeMethod (ec.Compiler, e.Type), e.Type, loc);
+				method_group = new MethodGroupExpr (Delegate.GetInvokeMethod (e.Type), e.Type, loc);
 				method_group.InstanceExpression = e;
 			}
 
@@ -725,7 +725,7 @@ namespace Mono.CSharp {
 			// Do only core overload resolution the rest of the checks has been
 			// done on primary expression
 			//
-			method = Delegate.GetInvokeMethod (ec.Compiler, del_type);
+			method = Delegate.GetInvokeMethod (del_type);
 			var res = new OverloadResolver (new MemberSpec[] { method }, OverloadResolver.Restrictions.DelegateInvoke, loc);
 			var valid = res.ResolveMember<MethodSpec> (ec, ref arguments);
 			if (valid == null && !res.BestCandidateIsDynamic)

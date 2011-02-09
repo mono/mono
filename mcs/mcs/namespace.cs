@@ -66,7 +66,7 @@ namespace Mono.CSharp {
 
 		public override void Error_NamespaceDoesNotExist (Location loc, string name, int arity, IMemberContext ctx)
 		{
-			ctx.Compiler.Report.Error (400, loc,
+			ctx.Module.Compiler.Report.Error (400, loc,
 				"The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
 				name);
 		}
@@ -161,19 +161,19 @@ namespace Mono.CSharp {
 
 		public virtual void Error_NamespaceDoesNotExist (Location loc, string name, int arity, IMemberContext ctx)
 		{
-			FullNamedExpression retval = Lookup (ctx.Compiler, name, -System.Math.Max (1, arity), loc);
+			FullNamedExpression retval = Lookup (ctx, name, -System.Math.Max (1, arity), loc);
 			if (retval != null) {
-				Error_TypeArgumentsCannotBeUsed (ctx.Compiler.Report, loc, retval.Type, arity);
+				Error_TypeArgumentsCannotBeUsed (ctx.Module.Compiler.Report, loc, retval.Type, arity);
 				return;
 			}
 
 			Namespace ns;
 			if (arity > 0 && namespaces.TryGetValue (name, out ns)) {
-				ns.Error_TypeArgumentsCannotBeUsed (ctx.Compiler.Report, loc, null, arity);
+				ns.Error_TypeArgumentsCannotBeUsed (ctx.Module.Compiler.Report, loc, null, arity);
 				return;
 			}
 
-			ctx.Compiler.Report.Error (234, loc,
+			ctx.Module.Compiler.Report.Error (234, loc,
 				"The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 				name, GetSignatureForError ());
 		}
@@ -208,7 +208,7 @@ namespace Mono.CSharp {
 			return ns;
 		}
 
-		public TypeExpr LookupType (CompilerContext ctx, string name, int arity, bool silent, Location loc)
+		public TypeExpr LookupType (IMemberContext ctx, string name, int arity, bool silent, Location loc)
 		{
 			if (types == null)
 				return null;
@@ -234,11 +234,11 @@ namespace Mono.CSharp {
 						pts = ts as BuildinTypeSpec;
 
 					if (pts != null) {
-						ctx.Report.SymbolRelatedToPreviousError (best);
-						ctx.Report.SymbolRelatedToPreviousError (ts);
+						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (best);
+						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ts);
 
 						// TODO: This should use different warning number but we want to be csc compatible
-						ctx.Report.Warning (1685, 1, loc,
+						ctx.Module.Compiler.Report.Warning (1685, 1, loc,
 							"The predefined type `{0}.{1}' is redefined in the source code. Ignoring the local type definition",
 							pts.Namespace, pts.Name);
 						best = pts;
@@ -246,14 +246,14 @@ namespace Mono.CSharp {
 					}
 
 					if (best.MemberDefinition.IsImported && ts.MemberDefinition.IsImported) {
-						ctx.Report.SymbolRelatedToPreviousError (best);
-						ctx.Report.SymbolRelatedToPreviousError (ts);
+						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (best);
+						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ts);
 						if (silent) {
-							ctx.Report.Warning (1685, 1, loc,
+							ctx.Module.Compiler.Report.Warning (1685, 1, loc,
 								"The predefined type `{0}' is defined in multiple assemblies. Using definition from `{1}'",
 								ts.GetSignatureForError (), best.MemberDefinition.DeclaringAssembly.Name);
 						} else {
-							ctx.Report.Error (433, loc, "The imported type `{0}' is defined multiple times", ts.GetSignatureForError ());
+							ctx.Module.Compiler.Report.Error (433, loc, "The imported type `{0}' is defined multiple times", ts.GetSignatureForError ());
 						}
 
 						break;
@@ -269,9 +269,9 @@ namespace Mono.CSharp {
 						continue;
 
 					if (ts.MemberDefinition.IsImported)
-						ctx.Report.SymbolRelatedToPreviousError (ts);
+						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ts);
 
-					ctx.Report.Warning (436, 2, loc,
+					ctx.Module.Compiler.Report.Warning (436, 2, loc,
 						"The type `{0}' conflicts with the imported type of same name'. Ignoring the imported type definition",
 						best.GetSignatureForError ());
 				}
@@ -334,7 +334,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public FullNamedExpression Lookup (CompilerContext ctx, string name, int arity, Location loc)
+		public FullNamedExpression Lookup (IMemberContext ctx, string name, int arity, Location loc)
 		{
 			if (arity == 0 && namespaces.ContainsKey (name))
 				return namespaces [name];
@@ -578,8 +578,8 @@ namespace Mono.CSharp {
 
 				resolved = fne as Namespace;
 				if (resolved == null) {
-					rc.Compiler.Report.SymbolRelatedToPreviousError (fne.Type);
-					rc.Compiler.Report.Error (138, Location,
+					rc.Module.Compiler.Report.SymbolRelatedToPreviousError (fne.Type);
+					rc.Module.Compiler.Report.Error (138, Location,
 						"`{0}' is a type not a namespace. A using namespace directive can only be applied to namespaces",
 						GetSignatureForError ());
 				}
@@ -606,7 +606,7 @@ namespace Mono.CSharp {
 			{
 				FullNamedExpression fne = rc.Module.GetRootNamespace (Alias);
 				if (fne == null) {
-					rc.Compiler.Report.Error (430, Location,
+					rc.Module.Compiler.Report.Error (430, Location,
 						"The extern alias `{0}' was not specified in -reference option",
 						Alias);
 				}
@@ -988,7 +988,7 @@ namespace Mono.CSharp {
 			//
 			// Check whether it's in the namespace.
 			//
-			FullNamedExpression fne = ns.Lookup (Compiler, name, arity, loc);
+			FullNamedExpression fne = ns.Lookup (this, name, arity, loc);
 
 			//
 			// Check aliases. 
@@ -1029,7 +1029,7 @@ namespace Mono.CSharp {
 			foreach (Namespace using_ns in GetUsingTable ()) {
 				// A using directive imports only types contained in the namespace, it
 				// does not import any nested namespaces
-				fne = using_ns.LookupType (Compiler, name, arity, false, loc);
+				fne = using_ns.LookupType (this, name, arity, false, loc);
 				if (fne == null)
 					continue;
 

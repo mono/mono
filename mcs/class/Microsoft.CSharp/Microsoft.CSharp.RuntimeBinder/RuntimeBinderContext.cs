@@ -32,7 +32,7 @@ using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	class RuntimeBinderContext : Compiler.IMemberContext
+	sealed class RuntimeBinderContext : Compiler.IMemberContext
 	{
 		readonly Compiler.ModuleContainer module;
 		readonly Type callingType;
@@ -132,10 +132,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			// No namespace aliases in this context
 			return null;
-		}
-
-		public Compiler.CompilerContext Compiler {
-			get { return module.Compiler; }
 		}
 
 		#endregion

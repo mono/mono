@@ -55,9 +55,6 @@ namespace Mono.CSharp
 		IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope);
 		FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
-
-		// TODO: It has been replaced by module
-		CompilerContext Compiler { get; }
 	}
 
 	//
@@ -367,9 +364,7 @@ namespace Mono.CSharp
 			flags |= options;
 		}
 
-		public CompilerContext Compiler {
-			get { return MemberContext.Compiler; }
-		}
+		#region Properties
 
 		public virtual ExplicitBlock ConstructorBlock {
 			get {
@@ -413,7 +408,34 @@ namespace Mono.CSharp
 		}
 
 		public bool IsInProbingMode {
-			get { return (flags & Options.ProbingMode) != 0; }
+			get {
+				return (flags & Options.ProbingMode) != 0;
+			}
+		}
+
+		public bool IsObsolete {
+			get {
+				// Disables obsolete checks when probing is on
+				return MemberContext.IsObsolete;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				return MemberContext.IsStatic;
+			}
+		}
+
+		public bool IsUnsafe {
+			get {
+				return HasSet (Options.UnsafeScope) || MemberContext.IsUnsafe;
+			}
+		}
+
+		public bool IsRuntimeBinder {
+			get {
+				return Module.Compiler.IsRuntimeBinder;
+			}
 		}
 
 		public bool IsVariableCapturingRequired {
@@ -431,6 +453,14 @@ namespace Mono.CSharp
 		public bool OmitStructFlowAnalysis {
 			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
 		}
+
+		public Report Report {
+			get {
+				return Module.Compiler.Report;
+			}
+		}
+
+		#endregion
 
 		public bool MustCaptureVariable (INamedBlockVariable local)
 		{
@@ -455,11 +485,6 @@ namespace Mono.CSharp
 			return (this.flags & options) != 0;
 		}
 
-		public Report Report {
-			get {
-				return Compiler.Report;
-			}
-		}
 
 		// Temporarily set all the given flags to the given value.  Should be used in an 'using' statement
 		public FlagsHandle Set (Options options)
@@ -477,21 +502,6 @@ namespace Mono.CSharp
 		public string GetSignatureForError ()
 		{
 			return MemberContext.GetSignatureForError ();
-		}
-
-		public bool IsObsolete {
-			get {
-				// Disables obsolete checks when probing is on
-				return MemberContext.IsObsolete;
-			}
-		}
-
-		public bool IsStatic {
-			get { return MemberContext.IsStatic; }
-		}
-
-		public bool IsUnsafe {
-			get { return HasSet (Options.UnsafeScope) || MemberContext.IsUnsafe; }
 		}
 
 		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
@@ -577,6 +587,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		// Used for special handling of runtime dynamic context mostly
+		// by error reporting but also by member accessibility checks
 		public bool IsRuntimeBinder { get; set; }
 
 		public Report Report {

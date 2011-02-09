@@ -31,13 +31,13 @@ namespace Mono.CSharp
 	public class EmitContext : BuilderContext
 	{
 		// TODO: Has to be private
-		public ILGenerator ig;
+		public readonly ILGenerator ig;
 
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
-		TypeSpec return_type;
+		readonly TypeSpec return_type;
 
 		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
@@ -83,14 +83,13 @@ namespace Mono.CSharp
 		/// </summary>
 		public AnonymousExpression CurrentAnonymousMethod;
 		
-		public readonly IMemberContext MemberContext;
+		readonly IMemberContext member_context;
 
 		DynamicSiteClass dynamic_site_container;
 
-		// TODO: Replace IMemberContext with MemberCore
 		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type)
 		{
-			this.MemberContext = rc;
+			this.member_context = rc;
 			this.ig = ig;
 
 			this.return_type = return_type;
@@ -103,19 +102,19 @@ namespace Mono.CSharp
 		#region Properties
 
 		public TypeSpec CurrentType {
-			get { return MemberContext.CurrentType; }
+			get { return member_context.CurrentType; }
 		}
 
 		public TypeParameter[] CurrentTypeParameters {
-			get { return MemberContext.CurrentTypeParameters; }
+			get { return member_context.CurrentTypeParameters; }
 		}
 
 		public MemberCore CurrentTypeDefinition {
-			get { return MemberContext.CurrentMemberDefinition; }
+			get { return member_context.CurrentMemberDefinition; }
 		}
 
 		public bool IsStatic {
-			get { return MemberContext.IsStatic; }
+			get { return member_context.IsStatic; }
 		}
 
 		bool IsAnonymousStoreyMutateRequired {
@@ -126,9 +125,24 @@ namespace Mono.CSharp
 			}
 		}
 
-		// Has to be used for emitter errors only
+		public IMemberContext MemberContext {
+			get {
+				return member_context;
+			}
+		}
+
+		public ModuleContainer Module {
+			get {
+				return member_context.Module;
+			}
+		}
+
+		// Has to be used for specific emitter errors only any
+		// possible resolver errors have to be reported during Resolve
 		public Report Report {
-			get { return MemberContext.Compiler.Report; }
+			get {
+				return member_context.Module.Compiler.Report;
+			}
 		}
 
 		public TypeSpec ReturnType {
@@ -191,7 +205,7 @@ namespace Mono.CSharp
 		public DynamicSiteClass CreateDynamicSite ()
 		{
 			if (dynamic_site_container == null) {
-				var mc = MemberContext.CurrentMemberDefinition as MemberBase;
+				var mc = member_context.CurrentMemberDefinition as MemberBase;
 				dynamic_site_container = new DynamicSiteClass (CurrentTypeDefinition.Parent.PartialContainer, mc, CurrentTypeParameters);
 
 				CurrentTypeDefinition.Module.AddCompilerGeneratedClass (dynamic_site_container);

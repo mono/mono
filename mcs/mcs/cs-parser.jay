@@ -5480,7 +5480,7 @@ query_expression
 first_from_clause
 	: FROM_FIRST IDENTIFIER IN expression
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $2;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5488,7 +5488,7 @@ first_from_clause
 	  }
 	| FROM_FIRST type IDENTIFIER IN expression
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $3;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5503,7 +5503,7 @@ first_from_clause
 nested_from_clause
 	: FROM IDENTIFIER IN expression
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $2;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5511,7 +5511,7 @@ nested_from_clause
 	  }
 	| FROM type IDENTIFIER IN expression
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $3;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5526,7 +5526,7 @@ nested_from_clause
 from_clause
 	: FROM IDENTIFIER IN
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5541,7 +5541,7 @@ from_clause
 	  }	  
 	| FROM type IDENTIFIER IN
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5586,7 +5586,7 @@ query_body
 select_or_group_clause
 	: SELECT
 	  {
-	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5600,7 +5600,7 @@ select_or_group_clause
 	  	if (linq_clause_blocks == null)
 	  		linq_clause_blocks = new Stack<Linq.QueryBlock> ();
 	  		
-	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  	linq_clause_blocks.Push ((Linq.QueryBlock)current_block);
 	  }
 	  expression
@@ -5608,7 +5608,7 @@ select_or_group_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  BY expression
 	  {
@@ -5644,7 +5644,7 @@ query_body_clause
 let_clause
 	: LET IDENTIFIER ASSIGN 
 	  {
-	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5662,7 +5662,7 @@ let_clause
 where_clause
 	: WHERE
 	  {
-	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5679,7 +5679,7 @@ join_clause
 		if (linq_clause_blocks == null)
 			linq_clause_blocks = new Stack<Linq.QueryBlock> ();
 	  		
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression ON
@@ -5687,7 +5687,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression EQUALS
@@ -5696,7 +5696,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression opt_join_into
 	  {
@@ -5739,7 +5739,7 @@ join_clause
 		if (linq_clause_blocks == null)
 			linq_clause_blocks = new Stack<Linq.QueryBlock> ();
 	  		
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression ON
@@ -5747,7 +5747,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression EQUALS
@@ -5756,7 +5756,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression opt_join_into
 	  {
@@ -5811,7 +5811,7 @@ opt_join_into
 orderby_clause
 	: ORDERBY
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  orderings
 	  {
@@ -5829,7 +5829,7 @@ orderings
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  orderings_then_by
 	  {
@@ -5845,7 +5845,7 @@ orderings_then_by
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
-		current_block = new Linq.QueryBlock (compiler, (Linq.QueryBlock) current_block, lexer.Location);	 
+		current_block = new Linq.QueryBlock ((Linq.QueryBlock) current_block, lexer.Location);	 
 	 }
 	 then_by
 	 {
@@ -5896,7 +5896,7 @@ opt_query_continuation
 		current_block.SetEndLocation (GetLocation ($1));
 		current_block = current_block.Parent;
 	
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		
 		if (linq_clause_blocks == null)
 			linq_clause_blocks = new Stack<Linq.QueryBlock> ();

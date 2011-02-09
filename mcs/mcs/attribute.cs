@@ -213,7 +213,7 @@ namespace Mono.CSharp {
 
 		public static void Error_AttributeArgumentIsDynamic (IMemberContext context, Location loc)
 		{
-			context.Compiler.Report.Error (1982, loc, "An attribute argument cannot be dynamic expression");
+			context.Module.Compiler.Report.Error (1982, loc, "An attribute argument cannot be dynamic expression");
 		}
 		
 		public void Error_MissingGuidAttribute ()
@@ -279,7 +279,7 @@ namespace Mono.CSharp {
 		void ResolveAttributeType ()
 		{
 			SessionReportPrinter resolve_printer = new SessionReportPrinter ();
-			ReportPrinter prev_recorder = context.Compiler.Report.SetPrinter (resolve_printer);
+			ReportPrinter prev_recorder = context.Module.Compiler.Report.SetPrinter (resolve_printer);
 
 			bool t1_is_attr = false;
 			bool t2_is_attr = false;
@@ -300,7 +300,7 @@ namespace Mono.CSharp {
 
 				resolve_printer.EndSession ();
 			} finally {
-				context.Compiler.Report.SetPrinter (prev_recorder);
+				context.Module.Compiler.Report.SetPrinter (prev_recorder);
 			}
 
 			if (t1_is_attr && t2_is_attr) {
@@ -369,7 +369,7 @@ namespace Mono.CSharp {
 		}
 
 		public Report Report {
-			get { return context.Compiler.Report; }
+			get { return context.Module.Compiler.Report; }
 		}
 
 		public MethodSpec Resolve ()
@@ -1020,7 +1020,7 @@ namespace Mono.CSharp {
 							if (Type == predefined.IndexerName || Type == predefined.Conditional) {
 								string v = ((StringConstant) arg_expr).Value;
 								if (!Tokenizer.IsValidIdentifier (v) || Tokenizer.IsKeyword (v)) {
-									context.Compiler.Report.Error (633, arg_expr.Location,
+									context.Module.Compiler.Report.Error (633, arg_expr.Location,
 										"The argument to the `{0}' attribute must be a valid identifier", GetSignatureForError ());
 								}
 							} else if (Type == predefined.Guid) {
@@ -1034,7 +1034,7 @@ namespace Mono.CSharp {
 							} else if (Type == predefined.AttributeUsage) {
 								int v = ((IntConstant) ((EnumConstant) arg_expr).Child).Value;
 								if (v == 0) {
-									context.Compiler.Report.Error (591, Location, "Invalid value for argument to `{0}' attribute",
+									context.Module.Compiler.Report.Error (591, Location, "Invalid value for argument to `{0}' attribute",
 										"System.AttributeUsage");
 								}
 							} else if (Type == predefined.MarshalAs) {
@@ -1107,12 +1107,12 @@ namespace Mono.CSharp {
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (Owner.IsClsComplianceRequired ()) {
 				if (PosArguments != null)
-					PosArguments.CheckArrayAsAttribute (context.Compiler);
+					PosArguments.CheckArrayAsAttribute (context.Module.Compiler);
 			
 				if (NamedArguments == null)
 					return;
 
-				NamedArguments.CheckArrayAsAttribute (context.Compiler);
+				NamedArguments.CheckArrayAsAttribute (context.Module.Compiler);
 			}
 		}
 

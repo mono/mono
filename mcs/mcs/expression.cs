@@ -623,7 +623,7 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			if (!TypeManager.VerifyUnmanaged (ec.Compiler, Expr.Type, loc)) {
+			if (!TypeManager.VerifyUnmanaged (ec.Module, Expr.Type, loc)) {
 				return null;
 			}
 
@@ -5703,7 +5703,7 @@ namespace Mono.CSharp
 
 		bool DoEmitTypeParameter (EmitContext ec)
 		{
-			var activator = ec.MemberContext.Module.PredefinedTypes.Activator;
+			var activator = ec.Module.PredefinedTypes.Activator;
 			var t = activator.Resolve (loc);
 			if (t == null)
 				return true;
@@ -7195,7 +7195,7 @@ namespace Mono.CSharp
 				var gt = typearg;
 				while (gt != null) {
 					if (InflatedTypeSpec.ContainsTypeParameter (gt)) {
-						rc.Compiler.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
+						rc.Module.Compiler.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
 							typearg.GetSignatureForError ());
 						return;
 					}
@@ -7443,7 +7443,7 @@ namespace Mono.CSharp
 				return new IntConstant (size_of, loc).Resolve (ec);
 			}
 
-			if (!TypeManager.VerifyUnmanaged (ec.Compiler, type_queried, loc)){
+			if (!TypeManager.VerifyUnmanaged (ec.Module, type_queried, loc)){
 				return null;
 			}
 
@@ -7501,11 +7501,11 @@ namespace Mono.CSharp
 				return base.ResolveAsTypeStep (ec, silent);
 			}
 
-			int errors = ec.Compiler.Report.Errors;
+			int errors = ec.Module.Compiler.Report.Errors;
 			expr = ec.LookupNamespaceAlias (alias);
 			if (expr == null) {
-				if (errors == ec.Compiler.Report.Errors)
-					ec.Compiler.Report.Error (432, loc, "Alias `{0}' not found", alias);
+				if (errors == ec.Module.Compiler.Report.Errors)
+					ec.Module.Compiler.Report.Error (432, loc, "Alias `{0}' not found", alias);
 				return null;
 			}
 
@@ -7515,7 +7515,7 @@ namespace Mono.CSharp
 
 			if (expr.eclass == ExprClass.Type) {
 				if (!silent) {
-					ec.Compiler.Report.Error (431, loc,
+					ec.Module.Compiler.Report.Error (431, loc,
 						"Alias `{0}' cannot be used with '::' since it denotes a type. Consider replacing '::' with '.'", alias);
 				}
 				return null;
@@ -7531,7 +7531,7 @@ namespace Mono.CSharp
 
 		protected override void Error_IdentifierNotFound (IMemberContext rc, TypeSpec expr_type, string identifier)
 		{
-			rc.Compiler.Report.Error (687, loc,
+			rc.Module.Compiler.Report.Error (687, loc,
 				"A namespace alias qualifier `{0}' did not resolve to a namespace or a type",
 				GetSignatureForError ());
 		}
@@ -7659,7 +7659,7 @@ namespace Mono.CSharp
 
 			Namespace ns = expr as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.Lookup (rc.Compiler, Name, Arity, loc);
+				FullNamedExpression retval = ns.Lookup (rc, Name, Arity, loc);
 
 				if (retval == null) {
 					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
@@ -7688,7 +7688,7 @@ namespace Mono.CSharp
 				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
 
 			if ((expr_type.Kind & dot_kinds) == 0 || expr_type == TypeManager.void_type) {
-				if (expr_type == InternalType.Null && rc.Compiler.IsRuntimeBinder)
+				if (expr_type == InternalType.Null && rc.IsRuntimeBinder)
 					rc.Report.Error (Report.RuntimeErrorId, loc, "Cannot perform member binding on `null' value");
 				else
 					Unary.Error_OperatorCannotBeApplied (rc, loc, ".", expr_type);
@@ -7814,7 +7814,7 @@ namespace Mono.CSharp
 
 			Namespace ns = expr_resolved as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.Lookup (rc.Compiler, Name, Arity, loc);
+				FullNamedExpression retval = ns.Lookup (rc, Name, Arity, loc);
 
 				if (retval == null) {
 					if (!silent)
@@ -7832,7 +7832,7 @@ namespace Mono.CSharp
 
 			TypeSpec expr_type = tnew_expr.Type;
 			if (TypeManager.IsGenericParameter (expr_type)) {
-				rc.Compiler.Report.Error (704, loc, "A nested type cannot be specified through a type parameter `{0}'",
+				rc.Module.Compiler.Report.Error (704, loc, "A nested type cannot be specified through a type parameter `{0}'",
 					tnew_expr.GetSignatureForError ());
 				return null;
 			}
@@ -7881,23 +7881,23 @@ namespace Mono.CSharp
 			var nested = MemberCache.FindNestedType (expr_type, Name, -System.Math.Max (1, Arity));
 
 			if (nested != null) {
-				Error_TypeArgumentsCannotBeUsed (rc.Compiler.Report, expr.Location, nested, Arity);
+				Error_TypeArgumentsCannotBeUsed (rc.Module.Compiler.Report, expr.Location, nested, Arity);
 				return;
 			}
 
 			var any_other_member = MemberLookup (null, rc.CurrentType, expr_type, Name, 0, MemberLookupRestrictions.None, loc);
 			if (any_other_member != null) {
-				any_other_member.Error_UnexpectedKind (rc.Compiler.Report, null, "type", loc);
+				any_other_member.Error_UnexpectedKind (rc.Module.Compiler.Report, null, "type", loc);
 				return;
 			}
 
-			rc.Compiler.Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
+			rc.Module.Compiler.Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
 				Name, expr_type.GetSignatureForError ());
 		}
 
 		protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
 		{
-			if (RootContext.Version > LanguageVersion.ISO_2 && !ec.Compiler.IsRuntimeBinder && MethodGroupExpr.IsExtensionMethodArgument (expr)) {
+			if (RootContext.Version > LanguageVersion.ISO_2 && !ec.IsRuntimeBinder && MethodGroupExpr.IsExtensionMethodArgument (expr)) {
 				ec.Report.SymbolRelatedToPreviousError (type);
 				ec.Report.Error (1061, loc,
 					"Type `{0}' does not contain a definition for `{1}' and no extension method `{1}' of type `{0}' could be found (are you missing a using directive or an assembly reference?)",
@@ -8931,11 +8931,11 @@ namespace Mono.CSharp
 
 				single_spec = single_spec.Next;
 			} else if (single_spec.IsPointer) {
-				if (!TypeManager.VerifyUnmanaged (ec.Compiler, type, loc))
+				if (!TypeManager.VerifyUnmanaged (ec.Module, type, loc))
 					return null;
 
 				if (!ec.IsUnsafe) {
-					UnsafeError (ec.Compiler.Report, loc);
+					UnsafeError (ec.Module.Compiler.Report, loc);
 				}
 
 				do {
@@ -8946,10 +8946,10 @@ namespace Mono.CSharp
 
 			if (single_spec != null && single_spec.Dimension > 0) {
 				if (TypeManager.IsSpecialType (type)) {
-					ec.Compiler.Report.Error (611, loc, "Array elements cannot be of type `{0}'", type.GetSignatureForError ());
+					ec.Module.Compiler.Report.Error (611, loc, "Array elements cannot be of type `{0}'", type.GetSignatureForError ());
 				} else if (type.IsStatic) {
-					ec.Compiler.Report.SymbolRelatedToPreviousError (type);
-					ec.Compiler.Report.Error (719, loc, "Array elements cannot be of static type `{0}'",
+					ec.Module.Compiler.Report.SymbolRelatedToPreviousError (type);
+					ec.Module.Compiler.Report.Error (719, loc, "Array elements cannot be of static type `{0}'",
 						type.GetSignatureForError ());
 				} else {
 					MakeArray (single_spec);
@@ -9112,7 +9112,7 @@ namespace Mono.CSharp
 
 			otype = texpr.Type;
 
-			if (!TypeManager.VerifyUnmanaged (ec.Compiler, otype, loc))
+			if (!TypeManager.VerifyUnmanaged (ec.Module, otype, loc))
 				return null;
 
 			type = PointerContainer.MakeType (otype);
@@ -9626,7 +9626,7 @@ namespace Mono.CSharp
 			if (type != null)
 				return type;
 
-			type = AnonymousTypeClass.Create (ec.Compiler, parent, parameters, loc);
+			type = AnonymousTypeClass.Create (parent, parameters, loc);
 			if (type == null)
 				return null;
 

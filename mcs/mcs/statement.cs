@@ -4487,7 +4487,7 @@ namespace Mono.CSharp {
 					//
 					// Provided that array_type is unmanaged,
 					//
-					if (!TypeManager.VerifyUnmanaged (bc.Compiler, array_type, loc))
+					if (!TypeManager.VerifyUnmanaged (bc.Module, array_type, loc))
 						return null;
 
 					//
