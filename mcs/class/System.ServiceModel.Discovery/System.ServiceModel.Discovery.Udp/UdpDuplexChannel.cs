@@ -123,7 +123,7 @@ namespace System.ServiceModel.Discovery.Udp
 			var ms = new MemoryStream ();
 			message_encoder.WriteMessage (message, ms);
 			// It seems .NET sends the same Message a couple of times so that the receivers don't miss it. So, do the same hack.
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < 3; i++) {
 				// FIXME: use MaxAnnouncementDelay. It is fixed now.
 				Thread.Sleep (rnd.Next (50, 500));
 				cli.Send (ms.GetBuffer (), (int) ms.Length);
@@ -159,19 +159,23 @@ namespace System.ServiceModel.Discovery.Udp
 
 			byte [] bytes = null;
 			IPEndPoint ip = new IPEndPoint (IPAddress.Any, 0);
+			ManualResetEvent wait = new ManualResetEvent (false);
 			var ar = client.BeginReceive (delegate (IAsyncResult result) {
-if (result == null) throw new ArgumentNullException ("result");
-				UdpClient cli = (UdpClient) result.AsyncState;
 				try {
-					bytes = cli.EndReceive (result, ref ip);
-				} catch (ObjectDisposedException) {
-					if (State == CommunicationState.Opened)
-						throw;
-					// Otherwise, called during shutdown. Ignore it.
+					UdpClient cli = (UdpClient) result.AsyncState;
+					try {
+						bytes = cli.EndReceive (result, ref ip);
+					} catch (ObjectDisposedException) {
+						if (State == CommunicationState.Opened)
+							throw;
+						// Otherwise, called during shutdown. Ignore it.
+					}
+				} finally {
+					wait.Set ();
 				}
 			}, client);
 
-			if (!ar.IsCompleted && !ar.AsyncWaitHandle.WaitOne (timeout))
+			if (!ar.IsCompleted && !wait.WaitOne (timeout))
 				return false;
 			if (bytes == null || bytes.Length == 0)
 				return false;
