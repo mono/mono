@@ -175,9 +175,9 @@ namespace System.Net.Sockets
 				IsCompleted = true;
 
 				Queue queue = null;
-				if (operation == SocketOperation.Receive || operation == SocketOperation.ReceiveFrom) {
+				if (operation == SocketOperation.Receive || operation == SocketOperation.ReceiveFrom || operation == SocketOperation.ReceiveGeneric) {
 					queue = Sock.readQ;
-				} else if (operation == SocketOperation.Send || operation == SocketOperation.SendTo) {
+				} else if (operation == SocketOperation.Send || operation == SocketOperation.SendTo || operation == SocketOperation.SendGeneric) {
 					queue = Sock.writeQ;
 				}
 
