@@ -660,13 +660,7 @@ namespace System.Net
 			byte [] bytes = writeBuffer.GetBuffer ();
 			int length = (int) writeBuffer.Length;
 			// Headers already written to the stream
-			try {
-				return (length > 0) ? cnc.BeginWrite (request, bytes, 0, length, cb, state) : null;
-			} catch {
-				if (!IgnoreIOErrors)
-					throw;
-				return null;
-			}
+			return (length > 0) ? cnc.BeginWrite (request, bytes, 0, length, cb, state) : null;
 		}
 
 		void WriteHeaders ()
