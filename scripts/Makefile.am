@@ -55,7 +55,6 @@ deprecated = 					\
 
 scripts_2_0 = \
 	al2$(SCRIPT_SUFFIX)			\
-	csharp2$(SCRIPT_SUFFIX)			\
 	gacutil2$(SCRIPT_SUFFIX)		\
 	mdoc$(SCRIPT_SUFFIX)                    \
 	monop2$(SCRIPT_SUFFIX) 			\
