@@ -43,6 +43,7 @@ using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Mono.XBuild.Tasks.GenerateResourceInternal;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public sealed class GenerateResource : TaskExtension {
@@ -155,7 +156,7 @@ namespace Microsoft.Build.Tasks {
 
 					string [] parts = value.Split (';');
 					if (parts.Length > 0) {
-						string referenced_filename = Utilities.FromMSBuildPath (
+						string referenced_filename = MSBuildUtils.FromMSBuildPath (
 								Path.Combine (basepath, parts [0]).Trim ());
 						if (File.Exists (referenced_filename) &&
 							IsFileNewerThan (referenced_filename, resources_filename))
@@ -383,7 +384,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		protected override string ToolName {
-			get { return Utilities.RunningOnWindows ? "resgen2.bat" : "resgen2"; }
+			get { return MSBuildUtils.RunningOnWindows ? "resgen2.bat" : "resgen2"; }
 		}
 
 		public string SourceFile { get; set; }

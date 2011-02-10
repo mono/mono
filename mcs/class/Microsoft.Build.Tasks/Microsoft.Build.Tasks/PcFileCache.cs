@@ -355,7 +355,7 @@ namespace Mono.PkgConfig
 				// For mac osx, look in the 'External' dir on macosx,
 				// see bug #663180
 				string pkgConfigPath = String.Format ("{0}:{1}",
-						Microsoft.Build.Tasks.Utilities.RunningOnMac ? MacOSXExternalPkgConfigDir : String.Empty,
+						Mono.XBuild.Utilities.MSBuildUtils.RunningOnMac ? MacOSXExternalPkgConfigDir : String.Empty,
 						Environment.GetEnvironmentVariable ("PKG_CONFIG_PATH") ?? String.Empty);
 
 				string pkgConfigDir = Environment.GetEnvironmentVariable ("PKG_CONFIG_LIBDIR");

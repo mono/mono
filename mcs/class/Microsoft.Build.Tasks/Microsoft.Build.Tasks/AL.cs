@@ -237,7 +237,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string ToolName {
 			get {
-				return Utilities.RunningOnWindows ? "al.bat" : "al";
+				return MSBuildUtils.RunningOnWindows ? "al.bat" : "al";
 			}
 		}
 
