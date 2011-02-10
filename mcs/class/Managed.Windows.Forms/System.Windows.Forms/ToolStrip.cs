@@ -726,6 +726,10 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (!IsDisposed) {
+
+				// Event Handler must be stopped before disposing Items.
+				Events.Dispose();
+
 				CloseToolTip (null);
 				// ToolStripItem.Dispose modifes the collection,
 				// so we iterate it in reverse order
