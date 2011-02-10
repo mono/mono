@@ -879,13 +879,13 @@ namespace System.Reflection.Emit
 
 			}
 		}
-
+/*
 		internal bool IsCollectible {
 			get {
 				return access == (uint)AssemblyBuilderAccess.RunAndCollect;
 			}
 		}
-
+*/
 		internal string AssemblyDir {
 			get {
 				return dir;
