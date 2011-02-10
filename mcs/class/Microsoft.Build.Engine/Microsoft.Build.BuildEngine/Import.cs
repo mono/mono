@@ -32,6 +32,7 @@ using System.IO;
 using System.Xml;
 
 using Microsoft.Build.Framework;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
 	public class Import {
@@ -121,7 +122,7 @@ namespace Microsoft.Build.BuildEngine {
 			envvar = String.Join (":", new string [] {
 						// For mac osx, look in the 'External' dir on macosx,
 						// see bug #663180
-						Microsoft.Build.Tasks.Utilities.RunningOnMac ? MacOSXExternalXBuildDir : String.Empty,
+						MSBuildUtils.RunningOnMac ? MacOSXExternalXBuildDir : String.Empty,
 						(envvar ?? String.Empty),
 						DotConfigExtensionsPath});
 
@@ -173,7 +174,7 @@ namespace Microsoft.Build.BuildEngine {
 					file = Path.Combine (dir, EvaluatedProjectPath);
 			}
 			
-			return Utilities.FromMSBuildPath (file);
+			return MSBuildUtils.FromMSBuildPath (file);
 		}
 		
 		public string Condition {
