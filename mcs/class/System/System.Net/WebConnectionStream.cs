@@ -46,7 +46,7 @@ namespace System.Net
 		int readBufferSize;
 		int contentLength;
 		int totalRead;
-		long totalWritten;
+		internal long totalWritten;
 		bool nextReadCalled;
 		int pendingReads;
 		int pendingWrites;
@@ -65,6 +65,7 @@ namespace System.Net
 		int read_timeout;
 		int write_timeout;
 		AsyncCallback cb_wrapper; // Calls to ReadCallbackWrapper or WriteCallbacWrapper
+		internal bool IgnoreIOErrors;
 
 		public WebConnectionStream (WebConnection cnc)
 		{
@@ -292,7 +293,10 @@ namespace System.Net
 				result.InnerAsyncResult = r;
 				result.DoCallback ();
 			} else {
-				EndWrite (r);
+				try {
+					EndWrite (r);
+				} catch {
+				}
 			}
 		}
 
@@ -530,7 +534,14 @@ namespace System.Net
 				size = chunkSize;
 			}
 
-			result.InnerAsyncResult = cnc.BeginWrite (request, buffer, offset, size, callback, result);
+			try {
+				result.InnerAsyncResult = cnc.BeginWrite (request, buffer, offset, size, callback, result);
+			} catch (Exception) {
+				if (!IgnoreIOErrors)
+					throw;
+				result.SetCompleted (true, 0);
+				result.DoCallback ();
+			}
 			totalWritten += size;
 			return result;
 		}
@@ -582,9 +593,13 @@ namespace System.Net
 				result.SetCompleted (false, 0);
 				result.DoCallback ();
 			} catch (Exception e) {
-				result.SetCompleted (false, e);
+				if (IgnoreIOErrors)
+					result.SetCompleted (false, 0);
+				else
+					result.SetCompleted (false, e);
 				result.DoCallback ();
-				throw;
+				if (!IgnoreIOErrors)
+					throw;
 			} finally {
 				if (sendChunked) {
 					lock (locker) {
@@ -645,7 +660,13 @@ namespace System.Net
 			byte [] bytes = writeBuffer.GetBuffer ();
 			int length = (int) writeBuffer.Length;
 			// Headers already written to the stream
-			return (length > 0) ? cnc.BeginWrite (request, bytes, 0, length, cb, state) : null;
+			try {
+				return (length > 0) ? cnc.BeginWrite (request, bytes, 0, length, cb, state) : null;
+			} catch {
+				if (!IgnoreIOErrors)
+					throw;
+				return null;
+			}
 		}
 
 		void WriteHeaders ()
