@@ -98,7 +98,7 @@ void* mono_gc_alloc_fixed            (size_t size, void *descr) MONO_INTERNAL;
 void  mono_gc_free_fixed             (void* addr) MONO_INTERNAL;
 
 /* make sure the gchandle was allocated for an object in domain */
-gboolean mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain) MONO_INTERNAL;
+gboolean mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain) /*MONO_INTERNAL*/;
 void     mono_gchandle_free_domain  (MonoDomain *domain) MONO_INTERNAL;
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);

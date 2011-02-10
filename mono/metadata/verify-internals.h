@@ -12,7 +12,7 @@ typedef enum {
 	MONO_VERIFIER_MODE_STRICT
 } MiniVerifierMode;
 
-void mono_verifier_set_mode (MiniVerifierMode mode) MONO_INTERNAL;
+void mono_verifier_set_mode (MiniVerifierMode mode) /*MONO_INTERNAL*/;
 void mono_verifier_enable_verify_all (void) MONO_INTERNAL;
 
 gboolean mono_verifier_is_enabled_for_image (MonoImage *image) MONO_INTERNAL;

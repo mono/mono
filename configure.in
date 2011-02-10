@@ -2351,6 +2351,15 @@ case "$host" in
 	if test "x$X11" = "xlibX11.so"; then
 		AC_MSG_WARN([Could not find X development libs. Do you have the -devel package installed? WinForms may not work...]);
 	fi
+
+	case $ANDROID_PLATFORM in
+		android-*)
+			soname_spec='${libname}${release}${shared_ext}'
+			;;
+		*)
+			soname_spec='${libname}${release}${shared_ext}$major'
+			;;
+	esac
 	;;
 esac
 

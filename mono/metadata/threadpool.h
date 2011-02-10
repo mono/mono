@@ -15,7 +15,7 @@ MonoObject *
 mono_thread_pool_finish (MonoAsyncResult *ares, MonoArray **out_args, 
 			 MonoObject **exc) MONO_INTERNAL;
 
-void mono_thread_pool_cleanup (void) MONO_INTERNAL;
+void mono_thread_pool_cleanup (void) /*MONO_INTERNAL*/;
 
 gboolean mono_thread_pool_remove_domain_jobs (MonoDomain *domain, int timeout) MONO_INTERNAL;
 

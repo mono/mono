@@ -3,7 +3,7 @@
 # NB! Prereq : ANDROID_NDK_ROOT=/usr/local/android-ndk-xxx or similar
 # Todo: set appropriate ARM flags for hard floats
 
-ANDROID_PLATFORM=android-5
+export ANDROID_PLATFORM=android-5
 GCC_VERSION=4.4.0
 OUTDIR=builds/embedruntimes/android
 PREFIX=`pwd`/builds/android
@@ -106,9 +106,9 @@ function clean_build
 
 	make && echo "Build SUCCESS!" || exit 1
 
-	mkdir -p `dirname $3`
-	cp mono/mini/.libs/libmono.a $3.a
-	cp mono/mini/.libs/libmono.so $3.so
+	mkdir -p $3
+	cp mono/mini/.libs/libmono.a $3
+	cp mono/mini/.libs/libmono.so $3
 }
 
 CCFLAGS_ARMv5_CPU="-DARM_FPU_NONE=1 -march=armv5te -mtune=xscale -msoft-float"
@@ -119,11 +119,11 @@ LDFLAGS_ARMv7="-Wl,--fix-cortex-a8"
 
 rm -rf $OUTDIR
 
-clean_build "$CCFLAGS_ARMv5_CPU" "$LDFLAGS_ARMv5" "$OUTDIR/libmono_armv5"
-clean_build "$CCFLAGS_ARMv5_VFP" "$LDFLAGS_ARMv5" "$OUTDIR/libmono_armv5_vfp"
-clean_build "$CCFLAGS_ARMv7_VFP" "$LDFLAGS_ARMv7" "$OUTDIR/libmono_armv7a"
+clean_build "$CCFLAGS_ARMv5_CPU" "$LDFLAGS_ARMv5" "$OUTDIR/armv5"
+clean_build "$CCFLAGS_ARMv5_VFP" "$LDFLAGS_ARMv5" "$OUTDIR/armv5_vfp"
+clean_build "$CCFLAGS_ARMv7_VFP" "$LDFLAGS_ARMv7" "$OUTDIR/armv7a"
 
-NUM_LIBS_BUILT=`ls -Al $OUTDIR | grep libmono | wc -l`
+NUM_LIBS_BUILT=`ls -AlR $OUTDIR | grep libmono | wc -l`
 if [ $NUM_LIBS_BUILT -eq 6 ]; then
 	echo "Android STATIC/SHARED libraries are found here: $OUTDIR"
 else

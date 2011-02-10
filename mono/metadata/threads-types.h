@@ -159,7 +159,7 @@ gboolean mono_thread_test_state (MonoThread *thread, MonoThreadState test) MONO_
 void mono_thread_init_apartment_state (void) MONO_INTERNAL;
 void mono_thread_cleanup_apartment_state (void) MONO_INTERNAL;
 
-void mono_threads_set_shutting_down (void) MONO_INTERNAL;
+void mono_threads_set_shutting_down (void) /*MONO_INTERNAL*/;
 gboolean mono_threads_is_shutting_down (void) MONO_INTERNAL;
 
 gunichar2* mono_thread_get_name (MonoThread *this_obj, guint32 *name_len) MONO_INTERNAL;

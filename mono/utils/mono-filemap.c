@@ -22,9 +22,29 @@
 
 #include "mono-mmap.h"
 
+static MonoFileMapOpen     file_open_func     = 0;
+static MonoFileMapSize     file_size_func     = 0;
+static MonoFileMapFd       file_fd_func       = 0;
+static MonoFileMapClose    file_close_func    = 0;
+       MonoFileMapMap      file_map_func      = 0;
+       MonoFileMapUnmap    file_unmap_func    = 0;
+
+#if defined(ANDROID)
+void mono_file_map_override(MonoFileMapOpen open_func, MonoFileMapSize size_func, MonoFileMapFd fd_func, MonoFileMapClose close_func, MonoFileMapMap map_func, MonoFileMapUnmap unmap_func)
+{
+	file_open_func     = open_func;
+	file_size_func     = size_func;
+	file_fd_func       = fd_func;
+	file_close_func    = close_func;
+	file_map_func      = map_func;
+	file_unmap_func    = unmap_func;
+}
+#endif
+
 MonoFileMap *
 mono_file_map_open (const char* name)
 {
+	if (file_open_func) return file_open_func(name);
 	return (MonoFileMap *)fopen (name, "rb");
 }
 
@@ -32,6 +52,7 @@ guint64
 mono_file_map_size (MonoFileMap *fmap)
 {
 	struct stat stat_buf;
+	if (file_size_func) return file_size_func(fmap);
 	if (fstat (fileno ((FILE*)fmap), &stat_buf) < 0)
 		return 0;
 	return stat_buf.st_size;
@@ -40,12 +61,14 @@ mono_file_map_size (MonoFileMap *fmap)
 int
 mono_file_map_fd (MonoFileMap *fmap)
 {
+	if (file_fd_func) return file_fd_func(fmap);
 	return fileno ((FILE*)fmap);
 }
 
 int 
 mono_file_map_close (MonoFileMap *fmap)
 {
+	if (file_close_func) return file_close_func(fmap);
 	return fclose ((FILE*)fmap);
 }
 

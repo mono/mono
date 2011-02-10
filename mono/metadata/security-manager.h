@@ -74,7 +74,7 @@ void mono_secman_inheritancedemand_class (MonoClass *klass, MonoClass *parent) M
 void mono_secman_inheritancedemand_method (MonoMethod *override, MonoMethod *base) MONO_INTERNAL;
 
 /* Security mode */
-void mono_security_set_mode (MonoSecurityMode mode) MONO_INTERNAL;
+void mono_security_set_mode (MonoSecurityMode mode) /*MONO_INTERNAL*/;
 MonoSecurityMode mono_security_get_mode (void) MONO_INTERNAL;
 
 /* internal calls */

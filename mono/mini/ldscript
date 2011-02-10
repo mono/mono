@@ -5,6 +5,10 @@ VER_1 {
               GC_start_blocking;
               GC_end_blocking;
               gc_thread_vtable;
+              GC_lookup_thread;
+              GC_delete_thread;
+              GC_notify_event;
+              g_free;
       local:
               *;
 };
