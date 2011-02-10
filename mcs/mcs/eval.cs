@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace Mono.CSharp
 {
@@ -661,13 +662,7 @@ namespace Mono.CSharp
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
 				RootContext.StatementMode = true;
 			} else {
-				//
-				// Do not activate EvalCompilationUnitParserCharacter until
-				// I have figured out all the limitations to invoke methods
-				// in the generated classes.  See repl.txt
-				//
-				parser.Lexer.putback_char = Tokenizer.EvalUsingDeclarationsParserCharacter;
-				//parser.Lexer.putback_char = Tokenizer.EvalCompilationUnitParserCharacter;
+				parser.Lexer.putback_char = Tokenizer.EvalCompilationUnitParserCharacter;
 				RootContext.StatementMode = false;
 			}
 
@@ -1195,12 +1190,12 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class Undo {
-		List<KeyValuePair<TypeContainer, TypeContainer>> undo_types;
+	public class Undo
+	{
+		List<Action> undo_actions;
 		
 		public Undo ()
 		{
-			undo_types = new List<KeyValuePair<TypeContainer, TypeContainer>> ();
 		}
 
 		public void AddTypeContainer (TypeContainer current_container, TypeContainer tc)
@@ -1210,23 +1205,28 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (undo_types == null)
-				undo_types = new List<KeyValuePair<TypeContainer, TypeContainer>> ();
+			if (undo_actions == null)
+				undo_actions = new List<Action> ();
 
-			undo_types.Add (new KeyValuePair<TypeContainer, TypeContainer> (current_container, tc));
+			var existing = current_container.Types.FirstOrDefault (l => l.MemberName.Basename == tc.MemberName.Basename);
+			if (existing != null) {
+				current_container.RemoveTypeContainer (existing);
+				undo_actions.Add (() => current_container.AddTypeContainer (existing));
+			}
+
+			undo_actions.Add (() => current_container.RemoveTypeContainer (tc));
 		}
 
 		public void ExecuteUndo ()
 		{
-			if (undo_types == null)
+			if (undo_actions == null)
 				return;
 
-			foreach (var p in undo_types){
-				TypeContainer current_container = p.Key;
-
-				current_container.RemoveTypeContainer (p.Value);
+			foreach (var p in undo_actions){
+				p ();
 			}
-			undo_types = null;
+
+			undo_actions = null;
 		}
 	}
 	
