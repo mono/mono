@@ -39,9 +39,9 @@ static MonoW32ExceptionHandler fpe_handler;
 static MonoW32ExceptionHandler ill_handler;
 static MonoW32ExceptionHandler segv_handler;
 
-LPTOP_LEVEL_EXCEPTION_FILTER old_win_toplevel_exception_filter;
-guint64 win_chained_exception_filter_result;
-gboolean win_chained_exception_filter_didrun;
+LPTOP_LEVEL_EXCEPTION_FILTER mono_old_win_toplevel_exception_filter;
+guint64 mono_win_chained_exception_filter_result;
+gboolean mono_win_chained_exception_filter_didrun;
 
 #ifndef PROCESS_CALLBACK_FILTER_ENABLED
 #	define PROCESS_CALLBACK_FILTER_ENABLED 1
@@ -178,7 +178,7 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 	struct sigcontext* sctx;
 	LONG res;
 
-	win_chained_exception_filter_didrun = FALSE;
+	mono_win_chained_exception_filter_didrun = FALSE;
 	res = EXCEPTION_CONTINUE_EXECUTION;
 
 	er = ep->ExceptionRecord;
@@ -231,8 +231,8 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 
 	g_free (sctx);
 
-	if (win_chained_exception_filter_didrun)
-		res = win_chained_exception_filter_result;
+	if (mono_win_chained_exception_filter_didrun)
+		res = mono_win_chained_exception_filter_result;
 
 	return res;
 }
@@ -243,12 +243,12 @@ void win32_seh_init()
 	if (!restore_stack)
 		restore_stack = mono_win32_get_handle_stackoverflow ();
 
-	old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_handler);
+	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_handler);
 }
 
 void win32_seh_cleanup()
 {
-	if (old_win_toplevel_exception_filter) SetUnhandledExceptionFilter(old_win_toplevel_exception_filter);
+	if (mono_old_win_toplevel_exception_filter) SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
 }
 
 void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
