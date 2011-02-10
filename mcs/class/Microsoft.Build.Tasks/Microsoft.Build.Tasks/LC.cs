@@ -115,7 +115,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string ToolName {
 			get {
-				return Utilities.RunningOnWindows ? "lc.bat" : "lc";
+				return MSBuildUtils.RunningOnWindows ? "lc.bat" : "lc";
 			}
 		}
 	}

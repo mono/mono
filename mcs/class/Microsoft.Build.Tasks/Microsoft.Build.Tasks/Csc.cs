@@ -32,6 +32,7 @@ using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Tasks.Hosting;
 using Microsoft.Build.Utilities;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public class Csc : ManagedCompiler {
@@ -195,9 +196,9 @@ namespace Microsoft.Build.Tasks {
 		protected override string ToolName {
 			get {
 #if NET_4_0
-				return Utilities.RunningOnWindows ? "dmcs.bat" : "dmcs";
+				return MSBuildUtils.RunningOnWindows ? "dmcs.bat" : "dmcs";
 #else
-				return Utilities.RunningOnWindows ? "gmcs.bat" : "gmcs";
+				return MSBuildUtils.RunningOnWindows ? "gmcs.bat" : "gmcs";
 #endif
 			}
 		}

@@ -30,6 +30,7 @@
 using System;
 using System.IO;
 using Microsoft.Build.Framework;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public class AspNetCompiler : ToolTaskExtension {
@@ -142,7 +143,7 @@ namespace Microsoft.Build.Tasks {
 		}
 		
 		protected override string ToolName {
-			get { return Utilities.RunningOnWindows ? "aspnet_compiler.bat" : "aspnet_compiler"; }
+			get { return MSBuildUtils.RunningOnWindows ? "aspnet_compiler.bat" : "aspnet_compiler"; }
 		}
 	}
 }
