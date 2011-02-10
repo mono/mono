@@ -6055,7 +6055,7 @@ void Error_NamedArgumentExpected (NamedArgument a)
 void push_current_class (TypeContainer tc, object partial_token)
 {
 	if (RootContext.EvalMode){
-		tc.ModFlags = (tc.ModFlags & ~(Modifiers.PRIVATE|Modifiers.INTERNAL)) | Modifiers.PUBLIC;
+		tc.Definition.Modifiers = tc.ModFlags = (tc.ModFlags & ~Modifiers.AccessibilityMask) | Modifiers.PUBLIC;
 		undo.AddTypeContainer (current_container, tc);
 	}
 
