@@ -57,8 +57,6 @@ namespace Mono.CSharp
 		static int count;
 		static Thread invoke_thread;
 
-		static List<NamespaceEntry.UsingAliasEntry> using_alias_list = new List<NamespaceEntry.UsingAliasEntry> ();
-		internal static List<NamespaceEntry.UsingEntry> using_list = new List<NamespaceEntry.UsingEntry> ();
 		static Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields = new Dictionary<string, Tuple<FieldSpec, FieldInfo>> ();
 
 		static TypeSpec interactive_base_class;
@@ -67,6 +65,7 @@ namespace Mono.CSharp
 
 		static CompilerContext ctx;
 		static DynamicLoader loader;
+		static NamespaceEntry ns;
 		
 		public static TextWriter MessageOutput = Console.Out;
 
@@ -276,22 +275,11 @@ namespace Mono.CSharp
 					return null;
 				}
 				
-				object parser_result = parser.InteractiveResult;
-				
-				if (!(parser_result is Class)){
-					int errors = ctx.Report.Errors;
-
-					NamespaceEntry.VerifyAllUsing ();
-					if (errors == ctx.Report.Errors)
-						parser.CurrentNamespace.Extract (using_alias_list, using_list);
-					else
-						NamespaceEntry.Reset ();
-				}
-
 #if STATIC
 				throw new NotSupportedException ();
 #else
-				compiled = CompileBlock (parser_result as Class, parser.undo, ctx.Report);
+				Class parser_result = parser.InteractiveResult;
+				compiled = CompileBlock (parser_result, parser.undo, ctx.Report);
 				return null;
 #endif
 			}
@@ -417,13 +405,7 @@ namespace Mono.CSharp
 					return null;
 				}
 				
-				Class parser_result = parser.InteractiveResult as Class;
-				
-				if (parser_result == null){
-					if (CSharpParser.yacc_verbose_flag != 0)
-						Console.WriteLine ("Do not know how to cope with !Class yet");
-					return null;
-				}
+				Class parser_result = parser.InteractiveResult;
 
 				try {
 					var a = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, "temp");
@@ -431,6 +413,9 @@ namespace Mono.CSharp
 					RootContext.ToplevelTypes.SetDeclaringAssembly (a);
 					RootContext.ToplevelTypes.CreateType ();
 					RootContext.ToplevelTypes.Define ();
+
+					parser_result.CreateType ();
+					parser_result.Define ();
 					if (ctx.Report.Errors != 0)
 						return null;
 					
@@ -656,7 +641,10 @@ namespace Mono.CSharp
 			}
 			seekable.Position = 0;
 
-			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0], RootContext.ToplevelTypes);
+			if (ns == null)
+				ns = new NamespaceEntry (RootContext.ToplevelTypes, null, Location.SourceFiles[0], null);
+
+			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0], RootContext.ToplevelTypes, ns);
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
@@ -704,15 +692,28 @@ namespace Mono.CSharp
 		static CompiledMethod CompileBlock (Class host, Undo undo, Report Report)
 		{
 			AssemblyDefinitionDynamic assembly;
+			AssemblyBuilderAccess access;
 
 			if (Environment.GetEnvironmentVariable ("SAVE") != null) {
+				access = AssemblyBuilderAccess.RunAndSave;
 				assembly = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, current_debug_name, current_debug_name);
 				assembly.Importer = loader.Importer;
 			} else {
+#if NET_4_0
+				access = AssemblyBuilderAccess.RunAndCollect;
+#else
+				access = AssemblyBuilderAccess.Run;
+#endif
 				assembly = new AssemblyDefinitionDynamic (RootContext.ToplevelTypes, current_debug_name);
 			}
 
-			assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.RunAndSave);
+			assembly.Create (AppDomain.CurrentDomain, access);
+
+			if (host != null) {
+				host.CreateType ();
+				host.Define ();
+			}
+
 			RootContext.ToplevelTypes.CreateType ();
 			RootContext.ToplevelTypes.Define ();
 
@@ -738,6 +739,8 @@ namespace Mono.CSharp
 
 				if (mb == null)
 					throw new Exception ("Internal error: did not find the method builder for the generated method");
+
+				host.EmitType ();
 			}
 			
 			RootContext.ToplevelTypes.Emit ();
@@ -747,8 +750,10 @@ namespace Mono.CSharp
 			}
 
 			RootContext.ToplevelTypes.CloseType ();
+			if (host != null)
+				host.CloseType ();
 
-			if (Environment.GetEnvironmentVariable ("SAVE") != null)
+			if (access == AssemblyBuilderAccess.RunAndSave)
 				assembly.Save ();
 
 			if (host == null)
@@ -786,17 +791,11 @@ namespace Mono.CSharp
 					fields.Add (field.Name, Tuple.Create (field.Spec, fi));
 				}
 			}
-			//types.Add (tb);
-
 			queued_fields.Clear ();
 			
 			return (CompiledMethod) System.Delegate.CreateDelegate (typeof (CompiledMethod), mi);
 		}
 #endif
-		static internal void LoadAliases (NamespaceEntry ns)
-		{
-			ns.Populate (using_alias_list, using_list);
-		}
 		
 		/// <summary>
 		///   A sentinel value used to indicate that no value was
@@ -841,13 +840,18 @@ namespace Mono.CSharp
 		static public string GetUsing ()
 		{
 			lock (evaluator_lock){
+				if (ns == null)
+					return null;
+
 				StringBuilder sb = new StringBuilder ();
-				
-				foreach (object x in using_alias_list)
-					sb.Append (String.Format ("using {0};\n", x));
-				
-				foreach (object x in using_list)
-					sb.Append (String.Format ("using {0};\n", x));
+				// TODO:
+				//foreach (object x in ns.using_alias_list)
+				//    sb.AppendFormat ("using {0};\n", x);
+
+				foreach (var ue in ns.Usings) {
+					sb.AppendFormat ("using {0};", ue.ToString ());
+					sb.Append (Environment.NewLine);
+				}
 				
 				return sb.ToString ();
 			}
@@ -855,8 +859,9 @@ namespace Mono.CSharp
 
 		static internal ICollection<string> GetUsingList ()
 		{
-			var res = new List<string> (using_list.Count);
-			foreach (object ue in using_list)
+			var res = new List<string> ();
+
+			foreach (var ue in ns.Usings)
 				res.Add (ue.ToString ());
 			return res;
 		}

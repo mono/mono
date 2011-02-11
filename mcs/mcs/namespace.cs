@@ -708,24 +708,9 @@ namespace Mono.CSharp {
 			this.SlaveDeclSpace = slave ? new RootDeclSpace (this) : null;
 		}
 
-		//
-		// Populates the Namespace with some using declarations, used by the
-		// eval mode. 
-		//
-		public void Populate (List<UsingAliasEntry> source_using_aliases, List<UsingEntry> source_using_clauses)
-		{
-			foreach (UsingAliasEntry uae in source_using_aliases){
-				if (using_aliases == null)
-					using_aliases = new List<UsingAliasEntry> ();
-				
-				using_aliases.Add (uae);
-			}
-
-			foreach (UsingEntry ue in source_using_clauses){
-				if (using_clauses == null)
-					using_clauses = new List<UsingEntry> ();
-				
-				using_clauses.Add (ue);
+		public List<UsingEntry> Usings {
+			get {
+				return using_clauses;
 			}
 		}
 

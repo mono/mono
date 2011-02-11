@@ -115,7 +115,7 @@ namespace Mono.CSharp
 
 		/// When using the interactive parser, this holds the
 		/// resulting expression
-		public object InteractiveResult;
+		public Class InteractiveResult;
 
 		//
 		// Keeps track of global data changes to undo on parser error
@@ -124,9 +124,6 @@ namespace Mono.CSharp
 		
 		Stack<Linq.QueryBlock> linq_clause_blocks;
 
-		// A counter to create new class names in interactive mode
-		static int class_count;
-		
 		ModuleContainer module;
 		
 		CompilerContext compiler;
@@ -5930,11 +5927,10 @@ opt_query_continuation
 interactive_parsing
 	: EVAL_STATEMENT_PARSER EOF 
 	| EVAL_USING_DECLARATIONS_UNIT_PARSER using_directives opt_COMPLETE_COMPLETION
-	| EVAL_STATEMENT_PARSER { 
-	        Evaluator.LoadAliases (current_namespace);
-
-		push_current_class (new Class (current_namespace, current_class, new MemberName ("Class" + class_count++),
-			Modifiers.PUBLIC, null), null);
+	| EVAL_STATEMENT_PARSER
+	 { 
+		current_container = new Class (current_namespace, current_class, new MemberName ("<InteractiveExpressionClass>"), Modifiers.PUBLIC, null);
+		current_class = current_container;
 
 		var baseclass_list = new List<FullNamedExpression> ();
 		baseclass_list.Add (new TypeExpression (Evaluator.InteractiveBaseClass, lexer.Location));
@@ -5954,9 +5950,11 @@ interactive_parsing
 			new MemberName ("Host"),
 			pars,
 			null /* attributes */);
+			
+		current_container.AddMethod (method);			
 
 		oob_stack.Push (method);
-	        ++lexer.parsing_block;
+		++lexer.parsing_block;
 		start_block (lexer.Location);
 	  }		
 	  interactive_statement_list opt_COMPLETE_COMPLETION
@@ -5965,16 +5963,11 @@ interactive_parsing
 		Method method = (Method) oob_stack.Pop ();
 
 		method.Block = (ToplevelBlock) end_block(lexer.Location);
-		current_container.AddMethod (method);
 
-		--lexer.parsing_declaration;
-		InteractiveResult = pop_current_class ();
+		InteractiveResult = (Class) pop_current_class ();
 		current_local_parameters = null;
 	  } 
-	| EVAL_COMPILATION_UNIT_PARSER {
-	        Evaluator.LoadAliases (current_namespace);
-	  }
-	  interactive_compilation_unit
+	| EVAL_COMPILATION_UNIT_PARSER interactive_compilation_unit
 	;
 
 interactive_compilation_unit
@@ -6157,6 +6150,11 @@ static CSharpParser ()
 }
 
 public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ModuleContainer module)
+	: this (reader, file, module, new NamespaceEntry (module, null, file, null))
+{
+}
+
+public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ModuleContainer module, NamespaceEntry ns)
 {
 	if (RootContext.EvalMode)
 		undo = new Undo ();
@@ -6164,7 +6162,7 @@ public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ModuleCo
 	this.file = file;
 	this.module = module;
 	this.compiler = module.Compiler;
-	current_namespace = new NamespaceEntry (module, null, file, null);
+	current_namespace = ns;
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();
