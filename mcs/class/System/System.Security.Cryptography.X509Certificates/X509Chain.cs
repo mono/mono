@@ -888,7 +888,9 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			string subject = caCertificate.SubjectName.Decode (X500DistinguishedNameFlags.None);
 			string ski = GetSubjectKeyIdentifier (caCertificate);
-			MX.X509Crl result = CheckCrls (subject, ski, LMCAStore.Store.Crls);
+
+			// consider that the LocalMachine directories could not exists... and cannot be created by the user
+			MX.X509Crl result = (LMCAStore.Store == null) ? null : CheckCrls (subject, ski, LMCAStore.Store.Crls);
 			if (result != null)
 				return result;
 			if (location == StoreLocation.CurrentUser) {
@@ -896,7 +898,9 @@ namespace System.Security.Cryptography.X509Certificates {
 				if (result != null)
 					return result;
 			}
-			result = CheckCrls (subject, ski, LMRootStore.Store.Crls);
+
+			// consider that the LocalMachine directories could not exists... and cannot be created by the user
+			result = (LMRootStore.Store == null) ? null : CheckCrls (subject, ski, LMRootStore.Store.Crls);
 			if (result != null)
 				return result;
 			if (location == StoreLocation.CurrentUser) {
