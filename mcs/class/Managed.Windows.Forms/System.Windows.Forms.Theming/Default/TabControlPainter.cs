@@ -446,6 +446,16 @@ namespace System.Windows.Forms.Theming.Default
 				} else {
 					Rectangle str_rect = interior;
 
+					if (is_selected) {
+						// Reduce the interior size to match the inner size of non-selected tabs
+						str_rect.X += selectedTabDelta.X;
+						str_rect.Y += selectedTabDelta.Y;
+						str_rect.Width -= selectedTabDelta.Width;
+						str_rect.Height -= selectedTabDelta.Height;
+
+						str_rect.Y -= selectedTabDelta.Y; // Move up the text / image of the selected tab
+					}
+
 					if (tab.ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < tab.ImageList.Images.Count) {
 						int image_x;
 						if (tab.SizeMode != TabSizeMode.Fixed) {
