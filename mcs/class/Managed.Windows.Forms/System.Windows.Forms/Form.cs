@@ -33,6 +33,7 @@ using System.ComponentModel.Design.Serialization;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms {
 	[DesignerCategory("Form")]
@@ -1717,13 +1718,13 @@ namespace System.Windows.Forms {
 				XplatUI.UngrabWindow(capture_window);
 			}
 
+			var disable = new List<Form> ();
 			foreach (Form form in Application.OpenForms)
-			{
-				if (form.Enabled == true)
-				{
-					disabled_by_showdialog.Add(form);
-					form.Enabled = false;
-				}
+				if (form.Enabled)
+					disable.Add (form);
+			foreach (Form form in disable){
+				disabled_by_showdialog.Add (form);
+				form.Enabled = false;
 			}
 			modal_dialogs.Add(this);
 
