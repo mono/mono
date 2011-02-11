@@ -94,14 +94,14 @@ endif
 
 csproj-local: 
 	config_file=`basename $(LIBRARY) .dll`-$(PROFILE).input; \
-	echo $(thisdir):$$config_file >> $(topdir)/../mono/msvc/scripts/order; \
+	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(MCS);	\
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
-	echo $(response)) > $(topdir)/../mono/msvc/scripts/inputs/$$config_file
+	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 
 install-local: all-local
