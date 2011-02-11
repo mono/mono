@@ -891,8 +891,10 @@ namespace System.Threading {
 		{
 			if (start == null)
 				throw new ArgumentNullException ("start");
-			if (maxStackSize < 131072)
-				throw new ArgumentException ("< 128 kb", "maxStackSize");
+			if (maxStackSize < 0)
+				throw new ArgumentOutOfRangeException ("less than zero", "maxStackSize");
+			if (maxStackSize < 131072) //make sure stack is at least 128k big
+				maxStackSize = 131072;
 
 			threadstart = start;
 			Internal.stack_size = maxStackSize;
@@ -910,8 +912,10 @@ namespace System.Threading {
 		{
 			if (start == null)
 				throw new ArgumentNullException ("start");
-			if (maxStackSize < 131072)
-				throw new ArgumentException ("< 128 kb", "maxStackSize");
+			if (maxStackSize < 0)
+				throw new ArgumentOutOfRangeException ("less than zero", "maxStackSize");
+			if (maxStackSize < 131072) //make sure stack is at least 128k big
+				maxStackSize = 131072;
 
 			threadstart = start;
 			Internal.stack_size = maxStackSize;
