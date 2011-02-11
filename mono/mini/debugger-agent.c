@@ -914,7 +914,7 @@ mono_debugger_agent_cleanup (void)
 #ifdef HOST_WIN32
 			if (WAIT_TIMEOUT == WaitForSingleObject(debugger_thread_exited_cond, 0)) {
 				mono_mutex_unlock (&debugger_thread_exited_mutex);
-				Sleep(0);
+				Sleep(1);
 				mono_mutex_lock (&debugger_thread_exited_mutex);
 			}
 #else
@@ -2229,7 +2229,7 @@ suspend_current (void)
 		if (WAIT_TIMEOUT == WaitForSingleObject(suspend_cond, 0))
 		{
 			mono_mutex_unlock (&suspend_mutex);
-			Sleep(0);
+			Sleep(1);
 			mono_mutex_lock (&suspend_mutex);
 		}
 		else
