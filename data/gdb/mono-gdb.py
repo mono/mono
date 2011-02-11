@@ -288,6 +288,8 @@ def lookup_pretty_printer(val):
         return ObjectPrinter (val)    
     if t == "string":
         return StringPrinter (val)
+    if t == "MonoString *":
+        return StringPrinter (val)
     if t == "MonoMethod *":
         return MonoMethodPrinter (val)
     if t == "MonoClass *":
