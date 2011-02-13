@@ -331,8 +331,8 @@ namespace System.Net {
 
 		void Close (bool force)
 		{
-			context.Connection.Close (force);
 			disposed = true;
+			context.Connection.Close (force);
 		}
 
 		public void Close ()
