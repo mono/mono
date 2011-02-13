@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Mono.Debugger.Soft\CustomAttributeTypedArgumentMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\ExceptionEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\ModuleMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\AppDomainMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\AssemblyLoadEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\AssemblyUnloadEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\VMStartEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\StackFrame.cs" />
+   <Compile Include="Mono.Debugger.Soft\CustomAttributeDataMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\ThreadStartEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\ILInstruction.cs" />
+   <Compile Include="Mono.Debugger.Soft\PrimitiveValue.cs" />
+   <Compile Include="Mono.Debugger.Soft\VMDisconnectedException.cs" />
+   <Compile Include="Mono.Debugger.Soft\Mirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\EnumMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\FieldInfoMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\TypeMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\CustomAttributeNamedArgumentMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\DataConverter.cs" />
+   <Compile Include="Mono.Debugger.Soft\AssemblyMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\VirtualMachine.cs" />
+   <Compile Include="Mono.Debugger.Soft\VMMismatchException.cs" />
+   <Compile Include="Mono.Debugger.Soft\AppDomainUnloadEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\ExceptionEventRequest.cs" />
+   <Compile Include="Mono.Debugger.Soft\EventType.cs" />
+   <Compile Include="Mono.Debugger.Soft\StructMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\InvocationException.cs" />
+   <Compile Include="Mono.Debugger.Soft\IMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\VMDeathEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\MethodBodyMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\MethodEntryEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\MethodMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\BreakpointEventRequest.cs" />
+   <Compile Include="Mono.Debugger.Soft\MethodEntryEventRequest.cs" />
+   <Compile Include="Mono.Debugger.Soft\AssemblyLoadEventRequest.cs" />
+   <Compile Include="Mono.Debugger.Soft\LocalVariable.cs" />
+   <Compile Include="Mono.Debugger.Soft\ParameterInfoMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\Event.cs" />
+   <Compile Include="Mono.Debugger.Soft\EventSet.cs" />
+   <Compile Include="Mono.Debugger.Soft\AppDomainCreateEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\ThreadDeathEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\SuspendPolicy.cs" />
+   <Compile Include="Mono.Debugger.Soft\VirtualMachineManager.cs" />
+   <Compile Include="Mono.Debugger.Soft\MethodExitEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\MethodExitEventRequest.cs" />
+   <Compile Include="Mono.Debugger.Soft\EventQueueImpl.cs" />
+   <Compile Include="Mono.Debugger.Soft\ObjectMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\Value.cs" />
+   <Compile Include="Mono.Debugger.Soft\StepEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\Location.cs" />
+   <Compile Include="Mono.Debugger.Soft\ObjectCollectedException.cs" />
+   <Compile Include="Mono.Debugger.Soft\EventRequest.cs" />
+   <Compile Include="Mono.Debugger.Soft\InvalidStackFrameException.cs" />
+   <Compile Include="Mono.Debugger.Soft\BreakpointEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\StringMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\PropertyInfoMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\ArrayMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\StepEventRequest.cs" />
+   <Compile Include="Mono.Debugger.Soft\Connection.cs" />
+   <Compile Include="Mono.Debugger.Soft\ThreadMirror.cs" />
+   <Compile Include="Mono.Debugger.Soft\TypeLoadEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\VMDisconnectEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\InvokeOptions.cs" />
+   <Compile Include="Mono.Debugger.Soft\IInvokeAsyncResult.cs" />
+   <Compile Include="Mono.Debugger.Soft\ITargetProcess.cs" />
+   <Compile Include="Mono.Debugger.Soft\AbsentInformationException.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+
