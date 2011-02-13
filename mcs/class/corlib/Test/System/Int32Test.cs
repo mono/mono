@@ -431,6 +431,31 @@ public class Int32Test
 
 		Assert.AreEqual ("254", def, "ToString(G)");
 	}
+
+	[Test]
+	public void ParseRespectCurrentCulture ()
+	{
+		var old = Thread.CurrentThread.CurrentCulture;
+		var cur = (CultureInfo)old.Clone ();
+
+		NumberFormatInfo ninfo = new NumberFormatInfo ();
+		ninfo.NegativeSign = ">";
+		ninfo.PositiveSign = "%";
+		cur.NumberFormat = ninfo;
+
+		Thread.CurrentThread.CurrentCulture = cur;
+
+		int val = 0;
+
+		try {
+			Assert.IsTrue (int.TryParse (">11", out val), "#1");
+			Assert.AreEqual (-11, val, "#2");
+			Assert.IsTrue (int.TryParse ("%11", out val), "#3");
+			Assert.AreEqual (11, val, "#4");
+		} finally {
+			Thread.CurrentThread.CurrentCulture = old;
+		}
+	}
 }
 
 }
