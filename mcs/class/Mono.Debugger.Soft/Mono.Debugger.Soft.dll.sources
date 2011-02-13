@@ -1,3 +1,6 @@
+./Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
+../../build/common/Locale.cs
 Mono.Debugger.Soft/CustomAttributeTypedArgumentMirror.cs
 Mono.Debugger.Soft/ExceptionEvent.cs
 Mono.Debugger.Soft/ModuleMirror.cs
