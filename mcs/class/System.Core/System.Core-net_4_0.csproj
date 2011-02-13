@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699,1720</NoWarn>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>System.Core</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699,1720</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699,1720</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
+   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+   <Compile Include="..\corlib\Mono.Security.Cryptography\CryptoTools.cs" />
+   <Compile Include="..\corlib\Mono.Security.Cryptography\SymmetricTransform.cs" />
+   <Compile Include="..\corlib\System.Collections.Concurrent.Partitioners\EnumerablePartitioner.cs" />
+   <Compile Include="..\corlib\System.Collections.Generic\CollectionDebuggerView.cs" />
+   <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\BinaryOperationBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\BindingRestrictions.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\CallInfo.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\CallSiteBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\CallSite.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\CallSiteHelpers.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\CallSiteOps.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\ConvertBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\CreateInstanceBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\DeleteIndexBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\DeleteMemberBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\DynamicMetaObjectBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\DynamicMetaObject.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\DynamicObject.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\ExpandoClass.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\ExpandoObject.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\GetIndexBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\GetMemberBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\IDynamicMetaObjectProvider.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\IInvokeOnGetBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\InvokeBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\InvokeMemberBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\RuleCache.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\SetIndexBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\SetMemberBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\UnaryOperationBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\UpdateDelegates.Generated.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\BinaryExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\BlockExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\CatchBlock.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ConditionalExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ConstantExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\DebugInfoExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\DebugViewWriter.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\DefaultExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\DynamicExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ElementInit.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\Expression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\Expression.DebuggerProxy.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ExpressionStringBuilder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ExpressionType.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ExpressionVisitor.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\GotoExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\IArgumentProvider.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\IndexExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\InvocationExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\LabelExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\LabelTarget.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\LambdaExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ListArgumentProvider.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ListInitExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\LoopExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\MemberAssignment.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\MemberBinding.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\MemberExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\MemberInitExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\MemberListBinding.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\MemberMemberBinding.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\MethodCallExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\NewArrayExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\NewExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ParameterExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\RuntimeVariablesExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\SwitchCase.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\SwitchExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\SymbolDocumentInfo.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\TryExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\TypeBinaryExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\TypeUtils.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\UnaryExpression.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\AnalyzedTree.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\AssemblyGen.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\BoundConstants.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\Closure.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\CompilerScope.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\CompilerScope.Storage.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\ConstantCheck.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\DebugInfoGenerator.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\DelegateHelpers.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\DelegateHelpers.Generated.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\ExpressionQuoter.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\HoistedLocals.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\ILGen.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\KeyedQueue.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LabelInfo.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.Address.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.Binary.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.ControlFlow.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.Expressions.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.Generated.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.Lambda.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.Logical.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.Statements.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\LambdaCompiler.Unary.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\OffsetTrackingILGenerator.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\RuntimeVariableList.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\Set.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\StackSpiller.Bindings.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\StackSpiller.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\StackSpiller.Generated.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\StackSpiller.Temps.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\SymbolDocumentGenerator.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\VariableBinder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\CacheDict.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\CollectionExtensions.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\ContractUtils.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\ExceptionFactory.Generated.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\Helpers.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\IRuntimeVariables.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\ReadOnlyCollectionBuilder.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\ReadOnlyDictionary.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\ReferenceEqualityComparer.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\TrueReadOnlyCollection.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\TypeExtensions.cs" />
+   <Compile Include="Microsoft.Win32.SafeHandles\SafeMemoryMappedFileHandle.cs" />
+   <Compile Include="Microsoft.Win32.SafeHandles\SafeMemoryMappedViewHandle.cs" />
+   <Compile Include="Microsoft.Win32.SafeHandles\SafePipeHandle.cs" />
+   <Compile Include="System\Actions.cs" />
+   <Compile Include="System.Collections.Generic\HashSet.cs" />
+   <Compile Include="System\Funcs.cs" />
+   <Compile Include="System\InvalidTimeZoneException.cs" />
+   <Compile Include="System.IO\HandleInheritability.cs" />
+   <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileAccess.cs" />
+   <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFile.cs" />
+   <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileOptions.cs" />
+   <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileRights.cs" />
+   <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileSecurity.cs" />
+   <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedViewAccessor.cs" />
+   <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedViewStream.cs" />
+   <Compile Include="System.IO.Pipes\AnonymousPipeClientStream.cs" />
+   <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.cs" />
+   <Compile Include="System.IO.Pipes\NamedPipeClientStream.cs" />
+   <Compile Include="System.IO.Pipes\NamedPipeServerStream.cs" />
+   <Compile Include="System.IO.Pipes\PipeAccessRights.cs" />
+   <Compile Include="System.IO.Pipes\PipeAccessRule.cs" />
+   <Compile Include="System.IO.Pipes\PipeAuditRule.cs" />
+   <Compile Include="System.IO.Pipes\PipeDirection.cs" />
+   <Compile Include="System.IO.Pipes\PipeInterfaces.cs" />
+   <Compile Include="System.IO.Pipes\PipeOptions.cs" />
+   <Compile Include="System.IO.Pipes\PipeSecurity.cs" />
+   <Compile Include="System.IO.Pipes\PipeStream.cs" />
+   <Compile Include="System.IO.Pipes\PipeStreamImpersonationWorker.cs" />
+   <Compile Include="System.IO.Pipes\PipeTransmissionMode.cs" />
+   <Compile Include="System.IO.Pipes\PipeUnix.cs" />
+   <Compile Include="System.IO.Pipes\PipeWin32.cs" />
+   <Compile Include="System.Linq\Check.cs" />
+   <Compile Include="System.Linq\Enumerable.cs" />
+   <Compile Include="System.Linq\EnumerableExecutor.cs" />
+   <Compile Include="System.Linq\EnumerableExecutor_T.cs" />
+   <Compile Include="System.Linq\EnumerableQuery.cs" />
+   <Compile Include="System.Linq\EnumerableQuery_T.cs" />
+   <Compile Include="System.Linq.Expressions\ExpressionTransformer.cs" />
+   <Compile Include="System.Linq.Expressions\Extensions.cs" />
+   <Compile Include="System.Linq\Grouping.cs" />
+   <Compile Include="System.Linq\IGrouping.cs" />
+   <Compile Include="System.Linq\ILookup_T.cs" />
+   <Compile Include="System.Linq\IOrderedEnumerable_T.cs" />
+   <Compile Include="System.Linq\IOrderedQueryable.cs" />
+   <Compile Include="System.Linq\IOrderedQueryable_T.cs" />
+   <Compile Include="System.Linq\IQueryable.cs" />
+   <Compile Include="System.Linq\IQueryable_T.cs" />
+   <Compile Include="System.Linq\IQueryProvider.cs" />
+   <Compile Include="System.Linq\Lookup.cs" />
+   <Compile Include="System.Linq\OrderedEnumerable.cs" />
+   <Compile Include="System.Linq\OrderedParallelQuery.cs" />
+   <Compile Include="System.Linq\OrderedSequence.cs" />
+   <Compile Include="System.Linq.Parallel\AggregationList.cs" />
+   <Compile Include="System.Linq.Parallel\ConcurrentGrouping.cs" />
+   <Compile Include="System.Linq.Parallel\ConcurrentLookup.cs" />
+   <Compile Include="System.Linq\ParallelEnumerable.cs" />
+   <Compile Include="System.Linq\ParallelExecutionMode.cs" />
+   <Compile Include="System.Linq.Parallel\INodeVisitor.cs" />
+   <Compile Include="System.Linq.Parallel\IVisitableNode.cs" />
+   <Compile Include="System.Linq\ParallelMergeOptions.cs" />
+   <Compile Include="System.Linq.Parallel\OrderingEnumerator.cs" />
+   <Compile Include="System.Linq.Parallel\ParallelExecuter.cs" />
+   <Compile Include="System.Linq.Parallel\ParallelPartitioner.cs" />
+   <Compile Include="System.Linq.Parallel\ParallelQueryEnumerator.cs" />
+   <Compile Include="System.Linq.Parallel\ParallelQuickSort.cs" />
+   <Compile Include="System.Linq.Parallel\QueryCheckerVisitor.cs" />
+   <Compile Include="System.Linq\ParallelQuery.cs" />
+   <Compile Include="System.Linq.Parallel\QueryIsOrderedVisitor.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryBaseNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryCastNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryChildNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryConcatNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryDefaultEmptyNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryGroupByNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryHeadWorkerNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryJoinNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryMuxNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryOptionNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryOrderByNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryOrderedStreamNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryOrderGuardNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryReverseNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QuerySelectManyNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QuerySelectNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QuerySetNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryStartNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryStreamNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryWhereNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\QueryZipNode.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\SetInclusion.cs" />
+   <Compile Include="System.Linq.Parallel.QueryNodes\WrapHelper.cs" />
+   <Compile Include="System.Linq.Parallel\QueryOptions.cs" />
+   <Compile Include="System.Linq.Parallel\RangeList.cs" />
+   <Compile Include="System.Linq.Parallel\RepeatList.cs" />
+   <Compile Include="System.Linq.Parallel\ReverseList.cs" />
+   <Compile Include="System.Linq.Parallel\StripPartitioner.cs" />
+   <Compile Include="System.Linq\Queryable.cs" />
+   <Compile Include="System.Linq\QueryableEnumerable.cs" />
+   <Compile Include="System.Linq\QueryableTransformer.cs" />
+   <Compile Include="System.Linq\QuickSort.cs" />
+   <Compile Include="System.Linq\SortContext.cs" />
+   <Compile Include="System.Linq\SortDirection.cs" />
+   <Compile Include="System.Linq\SortSequenceContext.cs" />
+   <Compile Include="System.Runtime.CompilerServices\DynamicAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\ExtensionAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\IStrongBox.cs" />
+   <Compile Include="System.Runtime.CompilerServices\StrongBox_T.cs" />
+   <Compile Include="System.Security.Cryptography\AesCryptoServiceProvider.cs" />
+   <Compile Include="System.Security.Cryptography\AesManaged.cs" />
+   <Compile Include="System.Security.Cryptography\AesTransform.cs" />
+   <Compile Include="System.Security.Cryptography\CngAlgorithm.cs" />
+   <Compile Include="System.Security.Cryptography\CngAlgorithmGroup.cs" />
+   <Compile Include="System.Security.Cryptography\MD5Cng.cs" />
+   <Compile Include="System.Security.Cryptography\SHA1Cng.cs" />
+   <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
+   <Compile Include="System.Security.Cryptography\SHA256CryptoServiceProvider.cs" />
+   <Compile Include="System.Security.Cryptography\SHA384Cng.cs" />
+   <Compile Include="System.Security.Cryptography\SHA384CryptoServiceProvider.cs" />
+   <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
+   <Compile Include="System.Security.Cryptography\SHA512CryptoServiceProvider.cs" />
+   <Compile Include="System.Threading\LockRecursionException.cs" />
+   <Compile Include="System.Threading\LockRecursionPolicy.cs" />
+   <Compile Include="System.Threading\ReaderWriterLockSlim.cs" />
+   <Compile Include="System.Threading\ReaderWriterLockSlimExtensions.cs" />
+   <Compile Include="System.Threading.Tasks\TaskExtensions.cs" />
+   <Compile Include="System.Threading\ThreadLockState.cs" />
+   <Compile Include="System\TimeZoneInfo.AdjustmentRule.cs" />
+   <Compile Include="System\TimeZoneInfo.cs" />
+   <Compile Include="System\TimeZoneInfo.TransitionTime.cs" />
+   <Compile Include="System\TimeZoneNotFoundException.cs" />
+   <Compile Include="System\Util.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Posix.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\Mono.Posix.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

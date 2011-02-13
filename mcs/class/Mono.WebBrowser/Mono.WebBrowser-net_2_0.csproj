@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699,108</NoWarn>
+    <OutputPath>./../../class/lib/net_2_0</OutputPath>
+    <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mscorlib</RootNamespace>
+    <AssemblyName>Mono.WebBrowser</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699,108</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699,108</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="Mono.Mozilla\AsciiString.cs" />
+   <Compile Include="Mono.Mozilla\Base.cs" />
+   <Compile Include="Mono.Mozilla\Callback.cs" />
+   <Compile Include="Mono.Mozilla\DOM\ContentListener.cs" />
+   <Compile Include="Mono.Mozilla\DOM\DocumentEncoder.cs" />
+   <Compile Include="Mono.Mozilla\DOM\DocumentType.cs" />
+   <Compile Include="Mono.Mozilla\DOM\DOMImplementation.cs" />
+   <Compile Include="Mono.Mozilla\DOM\EventListener.cs" />
+   <Compile Include="Mono.Mozilla\DOM\NamedNodeMap.cs" />
+   <Compile Include="Mono.Mozilla\DOM\Stream.cs" />
+   <Compile Include="Mono.Mozilla\DOM\Stylesheet.cs" />
+   <Compile Include="Mono.Mozilla\DOM\StylesheetList.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\extras\DocumentEncoderFlags.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\extras\nsIReadSegmentFun.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\extras\nsITimerCallbackDelegate.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIAccessibilityService.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIAccessible.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIAccessibleDocument.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIAccessibleRelation.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIAccessibleRetrieval.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIAccessNode.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIArray.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsICancelable.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIChannel.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIClassInfo.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDocumentEncoder.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDocumentEncoderNodeFixup.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMCounter.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSPrimitiveValue.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSRule.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSRuleList.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSStyleDeclaration.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSStyleSheet.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSValue.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentEvent.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentStyle.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMDOMStringList.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMEvent.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMEventListener.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMEventTarget.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLStyleElement.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMKeyEvent.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMMediaList.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMMouseEvent.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMNSRange.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMRect.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMRGBColor.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMStyleSheet.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMStyleSheetList.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMUIEvent.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMViewCSS.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIErrorService.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIFile.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIIOService.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsILoadGroup.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIObserver.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIOutputStream.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIPersistentProperties.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIPrefBranch.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIPrefService.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIProperties.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIProtocolHandler.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIRequest.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIRequestObserver.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIServiceManager.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIStreamListener.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsITimer.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsITimerCallback.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIURIContentListener.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWeakReference.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWebBrowser.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWebBrowserChrome.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWebBrowserPersist.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWebBrowserStream.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWebProgress.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWebProgressListener.cs" />
+   <Compile Include="Mono.Mozilla\UniString.cs" />
+   <Compile Include="Mono.Mozilla\WebBrowser.cs" />
+   <Compile Include="Mono.Mozilla\DOM\Attribute.cs" />
+   <Compile Include="Mono.Mozilla\DOM\AttributeCollection.cs" />
+   <Compile Include="Mono.Mozilla\DOM\Document.cs" />
+   <Compile Include="Mono.Mozilla\DOM\DOMObject.cs" />
+   <Compile Include="Mono.Mozilla\DOM\Element.cs" />
+   <Compile Include="Mono.Mozilla\DOM\HTMLElement.cs" />
+   <Compile Include="Mono.Mozilla\DOM\HTMLElementCollection.cs" />
+   <Compile Include="Mono.Mozilla\DOM\History.cs" />
+   <Compile Include="Mono.Mozilla\DOM\Navigation.cs" />
+   <Compile Include="Mono.Mozilla\DOM\Node.cs" />
+   <Compile Include="Mono.Mozilla\DOM\NodeList.cs" />
+   <Compile Include="Mono.Mozilla\DOM\Window.cs" />
+   <Compile Include="Mono.Mozilla\DOM\WindowCollection.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDocCharset.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMAbstractView.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMBarProp.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentView.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMWindow.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMWindowCollection.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIInterfaceRequestor.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsISelection.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWebBrowserChromeFocus.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWebBrowserFocus.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMAttr.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMCDATASection.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMCharacterData.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMComment.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocument.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentFragment.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentRange.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentType.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMDOMImplementation.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMElement.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMEntityReference.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLBodyElement.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLCollection.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLDocument.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLElement.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMNamedNodeMap.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMNode.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMNodeList.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMNSHTMLElement.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMProcessingInstruction.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMRange.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIDOMText.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIHistoryEntry.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIInputStream.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsISHistory.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsISHistoryListener.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsISimpleEnumerator.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIURI.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\nsIWebNavigation.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\extras\NodeType.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\extras\nsIWriteSegmentFun.cs" />
+   <Compile Include="Mono.Mozilla\interfaces\extras\Options.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IDocumentType.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IDOMImplementation.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IMediaList.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\INamedNodeMap.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IStylesheet.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IStylesheetList.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\EventArgs.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\EventHandlers.cs" />
+   <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
+   <Compile Include="Mono.WebBrowser\Manager.cs" />
+   <Compile Include="Mono.WebBrowser\Exception.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IAttribute.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IAttributeCollection.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IDocument.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IElement.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IElementCollection.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IHistory.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\INavigation.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\INode.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\INodeList.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IWindow.cs" />
+   <Compile Include="Mono.WebBrowser\DOM\IWindowCollection.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\\lib\build\System.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+
