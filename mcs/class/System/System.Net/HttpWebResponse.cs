@@ -421,6 +421,9 @@ namespace System.Net
 				}
 			}
 
+			if (cookie == null)
+				return;
+
 			if (cookieCollection == null)
 				cookieCollection = new CookieCollection ();
 
