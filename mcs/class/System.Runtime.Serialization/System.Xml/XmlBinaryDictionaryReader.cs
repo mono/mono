@@ -72,14 +72,12 @@ namespace System.Xml
 
 			public int ReadByte ()
 			{
-				if (reader.PeekChar () < 0)
-					return -1;
-				return reader.ReadByte ();
+				return reader.BaseStream.ReadByte ();
 			}
 
 			public int Read (byte [] data, int offset, int count)
 			{
-				return reader.Read (data, offset, count);
+				return reader.BaseStream.Read (data, offset, count);
 			}
 		}
 
