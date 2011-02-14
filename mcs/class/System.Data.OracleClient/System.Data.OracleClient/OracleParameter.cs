@@ -763,7 +763,11 @@ namespace System.Data.OracleClient
 					if (direction == ParameterDirection.Input || 
 						direction == ParameterDirection.InputOutput) {
 						byteCount = 0;
-						byte[] val = v as byte[];
+						byte[] val;
+						if (dbType == DbType.Guid)
+							val = ((Guid)v).ToByteArray();
+						else
+							val = v as byte[];
 						if (val.Length > 0) {	
 							byteCount = val.Length;
 							// LONG VARRAW prepends a 4-byte length
@@ -771,7 +775,7 @@ namespace System.Data.OracleClient
 								byteArrayLen = BitConverter.GetBytes ((ushort) byteCount);
 								bytes[0] = byteArrayLen[0];
 								bytes[1] = byteArrayLen[1];
-								Array.ConstrainedCopy (val, 2, bytes, 0, byteCount);
+								Array.ConstrainedCopy (val, 0, bytes, 2, byteCount);
 							}
 						}
 					}
@@ -795,7 +799,7 @@ namespace System.Data.OracleClient
 								bytes[1] = byteArrayLen[1];
 								bytes[2] = byteArrayLen[2];
 								bytes[3] = byteArrayLen[3];
-								Array.ConstrainedCopy (val, 4, bytes, 0, byteCount);
+								Array.ConstrainedCopy (val, 0, bytes, 4, byteCount);
 							}
 						}
 					}
@@ -1022,6 +1026,12 @@ namespace System.Data.OracleClient
 			case OciDataType.RSet: // REF CURSOR
 				newSize = -1;
 				break;
+			case OciDataType.Raw:
+				if (dbType == DbType.Guid)
+					newSize = ((Guid)value).ToByteArray().Length;
+				else
+					newSize = (value as byte[]).Length;
+				break;
 			default:
 				if (value == null || value == DBNull.Value)
 					newSize = 0;
@@ -1107,6 +1117,7 @@ namespace System.Data.OracleClient
 		private void SetOracleType (OracleType type, bool inferring)
 		{
 			FreeHandle ();
+			Type valType = value.GetType ();
 			string exception = String.Format ("No mapping exists from OracleType {0} to a known DbType.", type);
 			switch (type) {
 			case OracleType.BFile:
@@ -1116,7 +1127,10 @@ namespace System.Data.OracleClient
 				break;
 			case OracleType.LongRaw:
 			case OracleType.Raw:
-				dbType = DbType.Binary;
+				if (valType.FullName == "System.Guid")
+					dbType = DbType.Guid;
+				else
+					dbType = DbType.Binary;
 				ociType = OciDataType.Raw;
 				break;
 			case OracleType.Byte:

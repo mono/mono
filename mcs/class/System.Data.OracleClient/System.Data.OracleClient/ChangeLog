@@ -1,3 +1,10 @@
+2010-02-14  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes 667855
+	* OracleParameter.cs (InferSize): For Raw types, use the appropriate 
+	methods to convert value to bytearray and use them to bind.
+	(Bind): Fix index parameters in call to Array.ConstrainedCopy. 
+	
 2010-01-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #667236 - Based on patch by Kalyanov.Dmitry@gmail.com
