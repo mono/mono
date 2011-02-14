@@ -1410,7 +1410,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class BlockConstantDeclaration : BlockVariableDeclaration
+	public class BlockConstantDeclaration : BlockVariableDeclaration
 	{
 		public BlockConstantDeclaration (FullNamedExpression type, LocalVariable li)
 			: base (type, li)

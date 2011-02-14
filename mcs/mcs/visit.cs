@@ -17,7 +17,7 @@ namespace Mono.CSharp
 	{
 		public virtual void Visit (MemberCore member)
 		{
-			Console.WriteLine ("unknown member: " + member);
+			Console.WriteLine ("unknown member type: " + member.GetType ());
 		}
 
 		void VisitTypeContainer (TypeContainer tc)
@@ -53,6 +53,10 @@ namespace Mono.CSharp
 		}
 
 		public virtual void Visit (FixedField f)
+		{
+		}
+
+		public virtual void Visit (Const c)
 		{
 		}
 
@@ -100,7 +104,17 @@ namespace Mono.CSharp
 			Console.WriteLine ("unknown statement:" + stmt);
 			return null;
 		}
-
+		
+		public virtual object Visit (BlockVariableDeclaration blockVariableDeclaration)
+		{
+			return null;
+		}
+		
+		public virtual object Visit (BlockConstantDeclaration blockConstantDeclaration)
+		{
+			return null;
+		}
+		
 		public virtual object Visit (EmptyStatement emptyStatement)
 		{
 			return null;
@@ -193,14 +207,17 @@ namespace Mono.CSharp
 		{
 			return null;
 		}
-
-
+		
 		public virtual object Visit (Switch switchStatement)
 		{
 			return null;
 		}
-
-
+		
+		public virtual object Visit (StatementList statementList)
+		{
+			return null;
+		}
+		
 		public virtual object Visit (Lock lockStatement)
 		{
 			return null;
@@ -338,7 +355,12 @@ namespace Mono.CSharp
 		{
 			return null;
 		}
-
+		
+		public virtual object Visit (DefaultParameterValueExpression defaultParameterValueExpression)
+		{
+			return null;
+		}
+		
 		public virtual object Visit (Binary binaryExpression)
 		{
 			return null;
@@ -435,16 +457,31 @@ namespace Mono.CSharp
 			return null;
 		}
 
+		public virtual object Visit (TypeExpression typeExpression)
+		{
+			return null;
+		}
+
 		public virtual object Visit (AnonymousMethodExpression anonymousMethodExpression)
 		{
 			return null;
 		}
-
+		
 		public virtual object Visit (LambdaExpression lambdaExpression)
 		{
 			return null;
 		}
-
+		
+		public virtual object Visit (ConstInitializer constInitializer)
+		{
+			return null;
+		}
+		
+		public virtual object Visit (ArrayInitializer arrayInitializer)
+		{
+			return null;
+		}
+		
 		public virtual object Visit (Linq.QueryExpression queryExpression)
 		{
 			return null;

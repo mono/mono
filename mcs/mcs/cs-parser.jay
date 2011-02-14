@@ -3523,10 +3523,12 @@ rank_specifier
 	: OPEN_BRACKET CLOSE_BRACKET
 	  {
 		$$ = ComposedTypeSpecifier.CreateArrayDimension (1, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| OPEN_BRACKET dim_separators CLOSE_BRACKET
 	  {
 		$$ = ComposedTypeSpecifier.CreateArrayDimension ((int)$2, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 	;
 
@@ -3564,7 +3566,11 @@ array_initializer
 	  {
 		var ai = new ArrayInitializer ((List<Expression>) $2, GetLocation ($1));
 		ai.VariableDeclaration = current_variable;
-		lbag.AddLocation (ai, GetLocation ($3));
+		if ($3 != null) {
+			lbag.AddLocation (ai, GetLocation ($3), GetLocation ($4));
+		} else {
+			lbag.AddLocation (ai, GetLocation ($4));
+		}
 		$$ = ai;
 	  }
 	;
@@ -4113,7 +4119,7 @@ lambda_expression
 	  lambda_expression_body 
 	  {
 		$$ = end_anonymous ((ParametersBlock) $7);
-		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($4));
+		lbag.AddLocation ($$, GetLocation ($4), GetLocation ($5));
 	  }
 	;
 
@@ -5364,6 +5370,7 @@ fixed_statement
 	  {
 	    start_block (GetLocation ($2));
 	    
+		current_block.IsCompilerGenerated = true;
 		var lt = (Tokenizer.LocatedToken) $4;
 		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.FixedVariable | LocalVariable.Flags.Used, lt.Location);
 		current_block.AddLocalName (li);
@@ -5390,6 +5397,7 @@ using_statement
 	  {
 	    start_block (GetLocation ($2));
 	    
+		current_block.IsCompilerGenerated = true;
 		var lt = (Tokenizer.LocatedToken) $4;
 		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.UsingVariable | LocalVariable.Flags.Used, lt.Location);
 		current_block.AddLocalName (li);
