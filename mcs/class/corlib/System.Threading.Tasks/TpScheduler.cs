@@ -42,7 +42,15 @@ namespace System.Threading.Tasks
 
 		public void AddWork (Task t)
 		{
-			ThreadPool.QueueUserWorkItem (_ => t.Execute (null));
+			ThreadPool.QueueUserWorkItem (TaskExecuterCallback, t);
+		}
+
+		static void TaskExecuterCallback (object obj)
+		{
+			Task task = obj as Task;
+			if (task == null)
+				return;
+			task.Execute (null);
 		}
 
 		public void ParticipateUntil (Task task)
