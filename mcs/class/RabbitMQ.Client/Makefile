@@ -1,3 +1,4 @@
+.NOPARALLEL
 thisdir = class/RabbitMQ.Client
 SUBDIRS = src/apigen docs/specs src/client
 #SUBDIRS = src/client
