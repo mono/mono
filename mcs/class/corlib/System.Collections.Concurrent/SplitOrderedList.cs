@@ -36,33 +36,59 @@ namespace System.Collections.Concurrent
 	{
 		class Node
 		{
-			public readonly bool Marked;
-			public readonly ulong Key;
-			public readonly TKey SubKey;
+			public bool Marked;
+			public ulong Key;
+			public TKey SubKey;
 			public T Data;
 			public Node Next;
-			
-			public Node (ulong key, TKey subKey, T data)
+
+			public Node Init (ulong key, TKey subKey, T data)
 			{
 				this.Key = key;
 				this.SubKey = subKey;
 				this.Data = data;
+
+				this.Marked = false;
+				this.Next = null;
+				this.SubKey = default (TKey);
+
+				return this;
 			}
 
 			// Used to create dummy node
-			public Node (ulong key)
+			public Node Init (ulong key)
 			{
 				this.Key = key;
 				this.Data = default (T);
+
+				this.Next = null;
+				this.Marked = false;
+				this.SubKey = default (TKey);
+
+				return this;
 			}
 
 			// Used to create marked node
-			public Node (Node wrapped)
+			public Node Init (Node wrapped)
 			{
 				this.Marked = true;
 				this.Next = wrapped;
+
+				this.Key = 0;
+				this.Data = default (T);
+				this.SubKey = default (TKey);
+
+				return this;
 			}
 		}
+
+		class NodeObjectPool : ObjectPool<Node> {
+			protected override Node Creator ()
+			{
+				return new Node ();
+			}
+		}
+		static readonly NodeObjectPool pool = new NodeObjectPool ();
 
 		const int MaxLoad = 5;
 		const uint BucketSize = 512;
@@ -81,8 +107,8 @@ namespace System.Collections.Concurrent
 		public SplitOrderedList (IEqualityComparer<TKey> comparer)
 		{
 			this.comparer = comparer;
-			head = new Node (0);
-			tail = new Node (ulong.MaxValue);
+			head = new Node ().Init (0);
+			tail = new Node ().Init (ulong.MaxValue);
 			head.Next = tail;
 			SetBucket (0, head);
 		}
@@ -130,7 +156,7 @@ namespace System.Collections.Concurrent
 
 		bool InsertInternal (uint key, TKey subKey, T data, Func<T> dataCreator, out Node current)
 		{
-			Node node = new Node (ComputeRegularKey (key), subKey, data);
+			Node node = pool.Take ().Init (ComputeRegularKey (key), subKey, data);
 
 			uint b = key % (uint)size;
 			Node bucket;
@@ -227,7 +253,7 @@ namespace System.Collections.Concurrent
 			if ((bucket = GetBucket (parent)) == null)
 				bucket = InitializeBucket (parent);
 
-			Node dummy = new Node (ComputeDummyKey (b));
+			Node dummy = pool.Take ().Init (ComputeDummyKey (b));
 			if (!ListInsert (dummy, bucket, out current, null))
 				return current;
 
@@ -331,6 +357,7 @@ namespace System.Collections.Concurrent
 				}
 				
 				if (Interlocked.CompareExchange (ref left.Next, rightNode, leftNodeNext) == leftNodeNext) {
+					pool.Release (leftNodeNext);
 					if (rightNode != tail && rightNode.Next.Marked)
 						continue;
 					else
@@ -343,6 +370,7 @@ namespace System.Collections.Concurrent
 		{
 			Node rightNode = null, rightNodeNext = null, leftNode = null;
 			data = default (T);
+			Node markedNode = null;
 			
 			do {
 				rightNode = ListSearch (key, subKey, ref leftNode, startPoint);
@@ -350,15 +378,22 @@ namespace System.Collections.Concurrent
 					return false;
 
 				data = rightNode.Data;
-				
 				rightNodeNext = rightNode.Next;
-				if (!rightNodeNext.Marked)
-					if (Interlocked.CompareExchange (ref rightNode.Next, new Node (rightNodeNext), rightNodeNext) == rightNodeNext)
+
+				if (!rightNodeNext.Marked) {
+					if (markedNode == null)
+						markedNode = pool.Take ();
+					markedNode.Init (rightNodeNext);
+
+					if (Interlocked.CompareExchange (ref rightNode.Next, markedNode, rightNodeNext) == rightNodeNext)
 						break;
+				}
 			} while (true);
 			
 			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNode)
 				ListSearch (rightNode.Key, subKey, ref leftNode, startPoint);
+			else
+				pool.Release (rightNode);
 			
 			return true;
 		}
