@@ -577,7 +577,7 @@ namespace Mono.CSharp
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stind_I);
 			else if (TypeManager.IsStruct (type) || TypeManager.IsGenericParameter (type))
-				ig.Emit (OpCodes.Stobj, type.GetMetaInfo ());
+				Emit (OpCodes.Stobj, type);
 			else
 				ig.Emit (OpCodes.Stind_Ref);
 		}
