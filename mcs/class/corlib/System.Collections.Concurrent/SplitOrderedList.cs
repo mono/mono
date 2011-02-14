@@ -357,7 +357,7 @@ namespace System.Collections.Concurrent
 						break;
 			} while (true);
 			
-			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNodeNext)
+			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNode)
 				ListSearch (rightNode.Key, subKey, ref leftNode, startPoint);
 			
 			return true;
