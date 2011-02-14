@@ -48,6 +48,21 @@ namespace System.Collections.Concurrent
 		Node tail;
 		int count;
 
+		class NodeObjectPool : ObjectPool<Node> {
+			protected override Node Creator ()
+			{
+				return new Node ();
+			}
+		}
+		static readonly NodeObjectPool pool = new NodeObjectPool ();
+
+		static Node ZeroOut (Node node)
+		{
+			node.Value = default(T);
+			node.Next = null;
+			return node;
+		}
+
 		public ConcurrentQueue ()
 		{
 			tail = head;
@@ -61,7 +76,7 @@ namespace System.Collections.Concurrent
 		
 		public void Enqueue (T item)
 		{
-			Node node  = new Node ();
+			Node node = pool.Take ();
 			node.Value = item;
 			
 			Node oldTail = null;
@@ -118,6 +133,8 @@ namespace System.Collections.Concurrent
 					} else {
 						result = oldNext.Value;
 						advanced = Interlocked.CompareExchange (ref head, oldNext, oldHead) == oldHead;
+						if (advanced)
+							pool.Release (ZeroOut (oldHead));
 					}
 				}
 			}

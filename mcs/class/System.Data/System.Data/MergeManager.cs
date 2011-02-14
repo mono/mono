@@ -148,7 +148,8 @@ namespace System.Data
 			if (targetRow == null)
 			{ 
 				DataRow newRow = targetTable.NewNotInitializedRow();
-				row.CopyValuesToRow(newRow);
+				// Don't check for ReadOnly, when cloning data to new uninitialized row.
+				row.CopyValuesToRow(newRow, false);
 				targetTable.Rows.AddInternal (newRow);
 			}
 			// row exists in target table, and presere changes is false - 

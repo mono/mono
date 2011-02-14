@@ -121,7 +121,7 @@ namespace System.Net {
 		{
 			HttpListenerRequest req = context.Request;
 			ListenerPrefix prefix;
-			HttpListener listener = SearchListener (req.UserHostName, req.Url, out prefix);
+			HttpListener listener = SearchListener (req.Url, out prefix);
 			if (listener == null)
 				return false;
 
@@ -138,24 +138,19 @@ namespace System.Net {
 
 			HttpListenerRequest req = context.Request;
 			ListenerPrefix prefix;
-			HttpListener listener = SearchListener (req.UserHostName, req.Url, out prefix);
+			HttpListener listener = SearchListener (req.Url, out prefix);
 			if (listener != null)
 				listener.UnregisterContext (context);
 		}
 
-		HttpListener SearchListener (string host, Uri uri, out ListenerPrefix prefix)
+		HttpListener SearchListener (Uri uri, out ListenerPrefix prefix)
 		{
 			prefix = null;
 			if (uri == null)
 				return null;
 
-			//TODO: We should use a ReaderWriterLock between this and the add/remove operations.
-			if (host != null) {
-				int colon = host.IndexOf (':');
-				if (colon >= 0)
-					host = host.Substring (0, colon);
-			}
-
+			string host = uri.Host;
+			int port = uri.Port;
 			string path = HttpUtility.UrlDecode (uri.AbsolutePath);
 			string path_slash = path [path.Length - 1] == '/' ? path : path + "/";
 			
@@ -170,7 +165,10 @@ namespace System.Net {
 						if (ppath.Length < best_length)
 							continue;
 
-						if (p.Host == host && (path.StartsWith (ppath) || path_slash.StartsWith (ppath))) {
+						if (p.Host != host || p.Port != port)
+							continue;
+
+						if (path.StartsWith (ppath) || path_slash.StartsWith (ppath)) {
 							best_length = ppath.Length;
 							best_match = (HttpListener) prefixes [p];
 							prefix = p;

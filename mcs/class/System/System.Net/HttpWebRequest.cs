@@ -907,11 +907,6 @@ namespace System.Net
 		public override WebResponse GetResponse()
 		{
 			WebAsyncResult result = (WebAsyncResult) BeginGetResponse (null, null);
-			if (!result.IsCompleted && !result.AsyncWaitHandle.WaitOne (timeout, false)) {
-				Abort ();
-				throw new WebException ("The request timed out", WebExceptionStatus.Timeout);
-			}
-
 			return EndGetResponse (result);
 		}
 		

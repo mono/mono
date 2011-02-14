@@ -1575,3 +1575,4 @@ System.Threading.Tasks/ParallelLoopState.cs
 System/AggregateException.cs
 System.Threading.Tasks/SimpleConcurrentBag.cs
 System.Threading.Tasks/UnobservedTaskExceptionEventArgs.cs
+System.Collections.Concurrent/ObjectPool.cs
