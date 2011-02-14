@@ -47,6 +47,12 @@ namespace System.Threading.Tasks
 
 		public void ParticipateUntil (Task task)
 		{
+			if (task.Status == TaskStatus.WaitingToRun)
+				task.Execute (null);
+
+			if (task.IsCompleted)
+				return;
+
 			ParticipateUntil (task, new ManualResetEventSlim (false), -1);
 		}
 
