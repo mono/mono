@@ -265,6 +265,9 @@ namespace System.ServiceModel.Discovery.Udp
 			client.EnableBroadcast = true;
 
 			// FIXME: apply UdpTransportSetting here.
+			var settings = binding_element.TransportSettings;
+			if (settings.MulticastInterfaceId != null)
+				client.Client.SetSocketOption (SocketOptionLevel.Udp, SocketOptionName.MulticastInterface, settings.MulticastInterfaceId);
 		}
 		
 		Func<TimeSpan,Message> receive_delegate;
